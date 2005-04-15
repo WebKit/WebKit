@@ -1,3 +1,40 @@
+2005-04-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/4089734> JavaScript iBench can be sped up ~10% with custom allocator
+
+	- use custom single-threaded malloc for all non-GC JavaScriptCore
+	allocations, for a 9.1% speedup on JavaScript iBench
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate): Use dlmalloc to allocate the collector blocks.
+        (KJS::Collector::collect): And dlfree to free it.
+        * kjs/fast_malloc.cpp: Added, just the standard dlmalloc here.
+        * kjs/fast_malloc.h: Added. Declarations for the functions. Also added a handy
+	macro to give a class custom operator new/delete
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add): Use dlmalloc/dlfree.
+        * kjs/nodes.h: make nodes KJS_FAST_ALLOCATED.
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::~PropertyMap): Use dlmalloc/dlfree.
+        (KJS::PropertyMap::rehash): ditto
+        * kjs/scope_chain.h:
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::createCopying): New named constructor that copies a passed-in
+	buffer, to hide allocation details from webcore.
+        (KJS::UString::UString): use createCopying when appropriate.
+        (KJS::UString::Rep::destroy): Use dlmalloc/dlfree.
+        (KJS::UString::expandedSize): likewise
+        (KJS::UString::expandCapacity): likewise
+        (KJS::UString::expandPreCapacity): likewise
+        (KJS::UString::spliceSubstringsWithSeparators): likewise
+        (KJS::UString::append): likewise
+        (KJS::UString::operator=): likewise
+        (KJS::UString::detach): likewise
+        * kjs/ustring.h: make UString and UString::Rep KJS_FAST_ALLOCATED.
+
 2005-04-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

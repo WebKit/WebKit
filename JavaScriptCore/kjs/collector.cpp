@@ -21,9 +21,10 @@
 
 #include "collector.h"
 
-#include "value.h"
+#include "fast_malloc.h"
 #include "internal.h"
 #include "list.h"
+#include "value.h"
 
 #if APPLE_CHANGES
 #include <CoreFoundation/CoreFoundation.h>
@@ -103,10 +104,10 @@ void* Collector::allocate(size_t s)
     // oversize allocator
     if (heap.usedOversizeCells == heap.numOversizeCells) {
       heap.numOversizeCells = MAX(MIN_ARRAY_SIZE, heap.numOversizeCells * GROWTH_FACTOR);
-      heap.oversizeCells = (CollectorCell **)realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
+      heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
     }
     
-    void *newCell = malloc(s);
+    void *newCell = kjs_fast_malloc(s);
     heap.oversizeCells[heap.usedOversizeCells] = (CollectorCell *)newCell;
     heap.usedOversizeCells++;
     heap.numLiveObjects++;
@@ -136,10 +137,10 @@ void* Collector::allocate(size_t s)
     
     if (heap.usedBlocks == heap.numBlocks) {
       heap.numBlocks = MAX(MIN_ARRAY_SIZE, heap.numBlocks * GROWTH_FACTOR);
-      heap.blocks = (CollectorBlock **)realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+      heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
     }
     
-    targetBlock = (CollectorBlock *)calloc(1, sizeof(CollectorBlock));
+    targetBlock = (CollectorBlock *)kjs_fast_calloc(1, sizeof(CollectorBlock));
     targetBlock->freeList = targetBlock->cells;
     heap.blocks[heap.usedBlocks] = targetBlock;
     heap.usedBlocks++;
@@ -475,7 +476,7 @@ bool Collector::collect()
       emptyBlocks++;
       if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
 #if !DEBUG_COLLECTOR
-	free(heap.blocks[block]);
+	kjs_fast_free(heap.blocks[block]);
 #endif
 	// swap with the last block so we compact as we go
 	heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
@@ -484,7 +485,7 @@ bool Collector::collect()
 
 	if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
 	  heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-	  heap.blocks = (CollectorBlock **)realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+	  heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
 	}
       } 
     }
@@ -509,7 +510,7 @@ bool Collector::collect()
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
 #else
-      free((void *)imp);
+      kjs_fast_free((void *)imp);
 #endif
 
       // swap with the last oversize cell so we compact as we go
@@ -521,7 +522,7 @@ bool Collector::collect()
 
       if (heap.numOversizeCells > MIN_ARRAY_SIZE && heap.usedOversizeCells < heap.numOversizeCells / LOW_WATER_FACTOR) {
 	heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
-	heap.oversizeCells = (CollectorCell **)realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
+	heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
       }
 
     } else {

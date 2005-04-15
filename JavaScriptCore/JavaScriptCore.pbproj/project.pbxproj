@@ -265,6 +265,7 @@
 				51CA3B5006CC2166005600E3,
 				51DFF2CA06CC36F6006F1ECC,
 				84ABF1DF070B628C00A3AC05,
+				651BDC7A080F10CC00F10856,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -342,6 +343,7 @@
 				51863FC506542D3100E9E8DD,
 				517EF37406D695930007C1BA,
 				8442A378074175C2000AE2ED,
+				651BDC79080F10CC00F10856,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1367,6 +1369,34 @@
 				);
 			};
 		};
+		651BDC77080F10CC00F10856 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = fast_malloc.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		651BDC78080F10CC00F10856 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = fast_malloc.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		651BDC79080F10CC00F10856 = {
+			fileRef = 651BDC77080F10CC00F10856;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		651BDC7A080F10CC00F10856 = {
+			fileRef = 651BDC78080F10CC00F10856;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		651F6412039D5B5F0078395C = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2110,6 +2140,8 @@
 		};
 		F5C290E50284F960018635CA = {
 			children = (
+				651BDC77080F10CC00F10856,
+				651BDC78080F10CC00F10856,
 				45E12D8806A49B0F00E9DF84,
 				F692A8540255597D01FF60F7,
 				F692A8C802555BA201FF60F7,

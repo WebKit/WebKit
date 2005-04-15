@@ -22,6 +22,8 @@
 #ifndef KJS_SCOPE_CHAIN_H
 #define KJS_SCOPE_CHAIN_H
 
+#include "fast_malloc.h"
+
 namespace KJS {
 
     class ObjectImp;
@@ -30,6 +32,8 @@ namespace KJS {
     public:
         ScopeChainNode(ScopeChainNode *n, ObjectImp *o)
             : next(n), object(o), refCount(1) { }
+
+        KJS_FAST_ALLOCATED;
 
         ScopeChainNode *next;
         ObjectImp *object;
