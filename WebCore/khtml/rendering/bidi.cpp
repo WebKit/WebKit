@@ -1721,12 +1721,9 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, BidiI
 bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiIterator& endLineStart, 
                                  RootInlineBox*& endLine, int& endYPos)
 {
-    if (start == endLineStart) {
-        // Need to return false in case the first "clean" line is indirectly dirty from
-        // line wrap changes (i.e. could need to shift this line left or right in
-        // response to changes on the previous line).
-        return false; 
-    } else {
+    if (start == endLineStart)
+        return true; // The common case. All the data we already have is correct.
+    else {
         // The first clean line doesn't match, but we can check a handful of following lines to try
         // to match back up.
         static int numLines = 8; // The # of lines we're willing to match against.
