@@ -1123,13 +1123,14 @@ void RenderTableSection::calcRowHeight()
 		|| va == SUPER || va == SUB)
 	    {
 		int b=cell->baselinePosition();
+                if (b > cell->borderTop() + cell->paddingTop()) {
+                    if (b>baseline)
+                        baseline=b;
 
-		if (b>baseline)
-		    baseline=b;
-
-		int td = rowPos[ indx ] + ch - b;
-		if (td>bdesc)
-		    bdesc = td;
+                    int td = rowPos[ indx ] + ch - b;
+                    if (td>bdesc)
+                        bdesc = td;
+                }
 	    }
 	}
 
@@ -1665,14 +1666,18 @@ bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)
 
 short RenderTableCell::baselinePosition( bool ) const
 {
-    RenderObject *o = firstChild();
+    RenderObject* o = firstChild();
     int offset = paddingTop() + borderTop();
-    if ( !o ) return offset;
-    while ( o->firstChild() ) {
-	if ( !o->isInline() )
+    if (!o) return offset + contentHeight();
+    while (o->firstChild()) {
+	if (!o->isInline())
 	    offset += o->paddingTop() + o->borderTop();
 	o = o->firstChild();
     }
+    
+    if (!o->isInline())
+        return paddingTop() + borderTop() + contentHeight();
+
     offset += o->baselinePosition( true );
     return offset;
 }

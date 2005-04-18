@@ -1,3 +1,20 @@
+2005-04-18  David Hyatt  <hyatt@apple.com>
+
+	Fix the smile in the Acid2 test.  Floats should not grow to contain other floats unless height is auto.  Otherwise
+	the float should use the specified height.
+
+	Also fix row 14 of the Acid2 test.  Although ambiguous, just modify the table cell baseline alignment code to align
+	to the bottom of the cell's content height if no suitable baseline could be found.
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::firstRootBox):
+        (khtml::RenderBlock::lastRootBox):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::calcRowHeight):
+        (RenderTableCell::baselinePosition):
+        
 2005-04-15  David Hyatt  <hyatt@apple.com>
 
 	Make sure empty tables honor CSS-specified heights when they have no rows or sections.  This is done only
