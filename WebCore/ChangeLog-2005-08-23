@@ -1,5 +1,13 @@
 2005-04-18  David Hyatt  <hyatt@apple.com>
 
+	Fix min-height so that when it resolves to auto it does not use the box's intrinsic height.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHeight):
+        (RenderBox::calcHeightUsing):
+
+2005-04-18  David Hyatt  <hyatt@apple.com>
+
         Back out fix for 4032346, since it is causing garbled image content on many sites.
 
 	The bug tracking the fix is 4069093.

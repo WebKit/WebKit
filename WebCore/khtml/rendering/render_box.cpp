@@ -988,8 +988,12 @@ void RenderBox::calcHeight()
         int height;
         if (checkMinMaxHeight) {
             height = calcHeightUsing(style()->height());
-            int minH = calcHeightUsing(style()->minHeight());
+            if (height == -1)
+                height = m_height;
+            int minH = calcHeightUsing(style()->minHeight()); // Leave as -1 if unset.
             int maxH = style()->maxHeight().value == UNDEFINED ? height : calcHeightUsing(style()->maxHeight());
+            if (maxH == -1)
+                maxH = height;
             height = kMin(maxH, height);
             height = kMax(minH, height);
         }
@@ -1026,8 +1030,8 @@ void RenderBox::calcHeight()
 
 int RenderBox::calcHeightUsing(const Length& h)
 {
+    int height = -1;
     if (!h.isVariable()) {
-        int height = -1;
         if (h.isFixed())
             height = h.value;
         else if (h.isPercent())
@@ -1037,7 +1041,7 @@ int RenderBox::calcHeightUsing(const Length& h)
             return height;
         }
     }
-    return m_height;
+    return height;
 }
 
 int RenderBox::calcPercentageHeight(const Length& height)
