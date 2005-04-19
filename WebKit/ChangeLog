@@ -1,3 +1,20 @@
+2005-04-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/4092614> REGRESSION (Tiger): progressively loaded background images "scroll around" instead of just appearing
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _imageSourceOptions]): Moved a global inside this function, since it's only used here.
+        (-[WebImageData _cacheImages:allImages:]): Fixed a sizeof that was getting the size of the wrong thing.
+        (-[WebImageData _isSizeAvailable]): Used calloc in a more consistent way.
+        (drawPattern): Removed an unneeded cast.
+        (-[WebImageData tileInRect:fromPoint:context:]): Here's the actual bug fix. Don't use the image size
+        when deciding whether the image needs to be tiled as a pattern nor when creating the pattern: in both
+        cases, use the tile size. The old way was wrong, and the new way works perfectly. Also removed uneeded
+        error message when the image is not yet loaded enough to create a CGImageRef for it -- it's fine to
+        draw nothing in that case.
+
 2005-04-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

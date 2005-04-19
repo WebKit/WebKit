@@ -20,8 +20,6 @@
 
 #import <ImageIO/CGImageSourcePrivate.h>
 
-static CFDictionaryRef imageSourceOptions;
-
 // Forward declarations of internal methods.
 @interface WebImageData (WebInternal)
 - (void)_commonTermination;
@@ -165,6 +163,7 @@ static CFDictionaryRef imageSourceOptions;
 
 - (CFDictionaryRef)_imageSourceOptions
 {
+    static CFDictionaryRef imageSourceOptions;
     if (!imageSourceOptions) {
         const void * keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
         const void * values[2] = { kCFBooleanTrue, kCFBooleanTrue };
@@ -310,7 +309,7 @@ static CFDictionaryRef imageSourceOptions;
     }
     for (i = from; i < to; i++) {
         if (!images) {
-            images = (CGImageRef *)calloc (imagesSize, sizeof(CGImageRef *));
+            images = (CGImageRef *)calloc (imagesSize, sizeof(CGImageRef));
         }
 
         images[i] = CGImageSourceCreateImageAtIndex (imageSource, i, [self _imageSourceOptions]);
@@ -393,7 +392,7 @@ static CFDictionaryRef imageSourceOptions;
             }
             else {
                 imagePropertiesSize = [self numberOfImages];
-                imageProperties = (CFDictionaryRef *)calloc (imagePropertiesSize * sizeof(CFDictionaryRef), 1);
+                imageProperties = (CFDictionaryRef *)calloc (imagePropertiesSize, sizeof(CFDictionaryRef));
             }
                 
             imageProperties[0] = image0Properties;
@@ -551,13 +550,13 @@ static void drawPattern (void * info, CGContextRef context)
 {
     WebImageData *data = (WebImageData *)info;
     
-    CGImageRef image = (CGImageRef)[data imageAtIndex:[data currentFrame]];
+    CGImageRef image = [data imageAtIndex:[data currentFrame]];
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
     CGContextDrawImage (context, CGRectMake(0, [data size].height-h, w, h), image);    
 }
 
-CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
+static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (void)tileInRect:(CGRect)rect fromPoint:(CGPoint)point context:(CGContextRef)aContext
 {
@@ -568,7 +567,6 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     size_t frame = [self currentFrame];
     CGImageRef image = [self imageAtIndex:frame];
     if (!image) {
-        ERROR ("unable to find image");
         [decodeLock unlock];
         return;
     }
@@ -578,13 +576,13 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         
     } else {
         CGSize tileSize = [self size];
-        NSSize imageSize = NSMakeSize(CGImageGetWidth(image),CGImageGetHeight(image));
         
         // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
         NSRect oneTileRect;
         oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
         oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
-        oneTileRect.size = imageSize;
+        oneTileRect.size.height = tileSize.height;
+        oneTileRect.size.width = tileSize.width;
 
         // If the single image draw covers the whole area, then just draw once.
         if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
@@ -612,7 +610,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         CGSize phase = CGSizeMake(fmodf(originInWindow.x, tileSize.width), fmodf(originInWindow.y, tileSize.height));
 
         // Possible optimization:  We may want to cache the CGPatternRef    
-        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, imageSize.width, imageSize.height), CGAffineTransformIdentity, tileSize.width, tileSize.height, 
+        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, tileSize.width, tileSize.height), CGAffineTransformIdentity, tileSize.width, tileSize.height, 
             kCGPatternTilingConstantSpacing, true, &patternCallbacks);
         if (pattern) {
             CGContextSaveGState (aContext);
