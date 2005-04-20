@@ -29,6 +29,12 @@ namespace KJS {
 
   class ExecState;
 
+#if APPLE_CHANGES
+  inline bool isNaN(double d) { return isnan(d); }
+  inline bool isInf(double d) { return isinf(d); }
+  inline bool isPosInf(double d) { return isinf(d) && d > 0; }
+  inline bool isNegInf(double d) { return isinf(d) && d < 0; }
+#else
   /**
    * @return True if d is not a number (platform support required).
    */
@@ -39,6 +45,8 @@ namespace KJS {
   bool isInf(double d);
   bool isPosInf(double d);
   bool isNegInf(double d);
+#endif
+
   bool equal(ExecState *exec, const Value& v1, const Value& v2);
   bool strictEqual(ExecState *exec, const Value &v1, const Value &v2);
   /**

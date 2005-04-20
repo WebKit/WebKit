@@ -120,6 +120,7 @@ namespace KJS {
   inline String::String(StringImp *imp) : Value(imp) { }
 
   class NumberImp : public ValueImp {
+    friend class Value;
     friend class Number;
     friend class InterpreterImp;
   public:

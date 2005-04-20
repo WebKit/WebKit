@@ -31,7 +31,7 @@
 
 using namespace KJS;
 
-static bool keysMatch(const UChar *c, unsigned len, const char *s)
+static inline bool keysMatch(const UChar *c, unsigned len, const char *s)
 {
   for (unsigned i = 0; i != len; i++, c++, s++)
     if (c->uc != (unsigned char)*s)

@@ -1,3 +1,142 @@
+2005-04-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - speedups, total 12% on JavaScript iBench
+
+        I ran the benchmark under Shark and followed its advice a lot, mainly.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate): Take out special case for 0; costing speed but unexercised.
+        Use numLiveObjectsAtLastCollect instead of numAllocationsSinceLastCollect so we don't
+        have to bump it each time we call allocate. Put numLiveObjects into a local variable to
+        cut down on global variable accesses. Make "next" cell pointer be a byte offset rather
+        than a pointer so we don't need a special case for NULL. Allow freeList to point to some
+        bogus item when the entire block is full rather than going out of our way to make it
+        point to NULL.
+        (KJS::Collector::markProtectedObjects): Get table size and pointer into locals outside
+        the loop to avoid re-loading them over and over again.
+        (KJS::Collector::collect): Put numLiveObjects into a local variable to cut down on global
+        variable accesses. Make "next" cell pointer be a byte offset as above. Put numLiveObjects
+        into a local variable to cut down on global variable accesses. Set numLiveObjectsAtLastCollect
+        rather than numAllocationsSinceLastCollect.
+        (KJS::Collector::numReferencedObjects): Get table size and pointer into locals outside
+        the loop to avoid re-loading them over and over again.
+        (KJS::Collector::rootObjectClasses): Ditto.
+
+        * kjs/internal.h: Make Value be a friend of NumberImp so it can construct number objects
+        directly, avoiding the conversion from Number to Value.
+
+        * kjs/internal.cpp: (StringImp::toObject): Don't use Object::dynamicCast, because we know
+        the thing is an object and we don't want to do all the extra work; just cast directly.
+
+        * kjs/list.cpp: (KJS::List::List): Construct valueRefCount in a way that avoids the need for
+        a branch -- in the hot case this just meant avoiding checking a variable we just set to false.
+
+        * kjs/lookup.cpp: (keysMatch): Marked this inline.
+
+        * kjs/nodes.cpp: Disabled KJS_BREAKPOINT, to avoid calling hitStatement all the time.
+        (BooleanNode::evaluate): Make a Value directly, rather than making a Boolean which is converted
+        into a Value.
+        (NumberNode::evaluate): Ditto.
+        (StringNode::evaluate): Ditto.
+        (ArrayNode::evaluate): Ditto.
+        (FunctionCallNode::evaluate): Use new inline baseIfMutable to avoid unnecessary getBase function.
+        Also just use a pointer for func, rather than an Object.
+        (PostfixNode::evaluate): Change code so that it doesn't make an excess Number, and so that it
+        passes a "known to be integer" boolean in, often avoiding a conversion from floating point to
+        integer and back.
+        (DeleteNode::evaluate): Make a Value directly.
+        (TypeOfNode::evaluate): Use new inline baseIfMutable and make Value directly.
+        (PrefixNode::evaluate): Change code so that it doesn't make an excess Number, and so that it
+        passes a "known to be integer" boolean in, often avoiding a conversion from floating point to
+        integer and back.
+        (UnaryPlusNode::evaluate): Make a Value directly.
+        (NegateNode::evaluate): Change code so that it doesn't make an excess Number, and so that it
+        passes a "known to be integer" boolean in, often avoiding a conversion from floating point to
+        integer and back.
+        (BitwiseNotNode::evaluate): Make a Value directly.
+        (LogicalNotNode::evaluate): Ditto.
+        (ShiftNode::evaluate): Don't convert to a double before making a Value.
+        (RelationalNode::evaluate): Make a Value directly.
+        (EqualNode::evaluate): Ditto.
+        (BitOperNode::evaluate): Ditto.
+        (AssignNode::evaluate): Make a Value directly. Change code so that it passes a "known to be integer"
+        boolean in, often avoiding a conversion from floating point to integer and back.
+        (VarDeclNode::evaluate): Make a Value directly.
+        (ForNode::execute): Remove unused local variable.
+
+        * kjs/operations.h:
+        (KJS::isNaN): Inlined.
+        (KJS::isInf): Ditto.
+        (KJS::isPosInf): Ditto.
+        (KJS::isNegInf): Ditto.
+
+        * kjs/operations.cpp: Change isNaN, isInf, isPosInf, and isNegInf to be inlines.
+        (KJS::equal): Rewrite to avoid creating values and recursing back into the function.
+        (KJS::relation): Rearranged code so that we don't need explicit isNaN checks.
+        (KJS::add): Changed code to make Value directly, and so that it passes a "known to be integer"
+        boolean in, often avoiding a conversion from floating point to integer and back.
+        (KJS::mult): Ditto.
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::~PropertyMap): Get size and entries pointer outside loop to avoid
+        re-getting them inside the loop.
+        (KJS::PropertyMap::clear): Ditto. Clear value pointer in addition to key, so we can just
+        look at the value pointer in the mark function.
+        (KJS::PropertyMap::get): Get sizeMask and entries pointer outside loop to avoid
+        re-getting them inside the loop.
+        (KJS::PropertyMap::put): Ditto.
+        (KJS::PropertyMap::insert): Ditto.
+        (KJS::PropertyMap::remove): Ditto.
+        (KJS::PropertyMap::mark): Get size and entries pointer outside loop to avoid
+        re-getting them inside the loop. Don't bother checking key for 0, since we already have
+        to check value for 0. (Also had to change clear() to set value to 0.)
+        (KJS::PropertyMap::addEnumerablesToReferenceList): Get size and entries pointer outside
+        loop to avoid re-getting them inside the loop.
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList): Ditto.
+        (KJS::PropertyMap::save): Ditto.
+
+        - other changes
+
+        * kjs/protected_values.h: Remove unneeded class name qualifiers.
+
+        * kjs/reference.h:
+        (KJS::Reference::baseIfMutable): New inline function: replaces isMutable().
+        (KJS::Reference::Reference): Inlined.
+        * kjs/reference.cpp:
+        (KJS::Reference::getValue): Rewrite to not use getBase.
+        (KJS::Reference::putValue): Ditto.
+        (KJS::Reference::deleteValue): Dittol
+
+        * kjs/simple_number.h:
+        (KJS::SimpleNumber::integerFits): Added. For use when the parameter is known to be integral.
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Create the number without first converting
+        to double in various cases that involve integers.
+
+        * kjs/ustring.h:
+        (KJS::UString::attach): Inlined.
+        (KJS::UString::release): Inlined.
+        * kjs/ustring.cpp:
+        (KJS::UString::find): Get first character outside the loop instead of re-fetching it each time.
+
+        * kjs/value.cpp:
+        (Value::Value): Added overloads for all the various specific types of values, so you don't have
+        to convert from, say, Number to Value, just to create one.
+        (Number::Number): Added an overload that takes a boolean to indicate the number is already
+        known to be an integer.
+
+        * kjs/value.h: Added more Value constructors, added a version of toNumber that returns
+        a boolean to indicate if the number is known to be an integer (because it was a "simple number").
+        (KJS::ValueImp::marked): Inlined.
+        (KJS::ValueImp::dispatchType): Inlined.
+        (KJS::ValueImp::dispatchToPrimitive): Inlined.
+        (KJS::ValueImp::dispatchToBoolean): Inlined.
+        (KJS::ValueImp::dispatchToNumber): Inlined.
+        (KJS::ValueImp::dispatchToString): Inlined.
+        (KJS::ValueImp::dispatchToUInt32): Inlined.
+
 2005-04-14  Maciej Stachowiak  <mjs@apple.com>
 
         - make fast_malloc.h a private header, not project

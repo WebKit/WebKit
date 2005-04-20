@@ -68,10 +68,10 @@ namespace KJS {
     void putValue(ExecState *exec, const Value &w);
     bool deleteValue(ExecState *exec);
 
-    bool isMutable();
+    ValueImp *baseIfMutable() const { return baseIsValue ? 0 : base.imp(); }
 
   private:
-    Reference();
+    Reference() { }
 
     Value base;
     unsigned propertyNameAsNumber;

@@ -225,7 +225,7 @@ Object StringImp::toObject(ExecState *exec) const
 {
   List args;
   args.append(const_cast<StringImp*>(this));
-  return Object::dynamicCast(exec->lexicalInterpreter()->builtinString().construct(exec,args));
+  return Object(static_cast<ObjectImp *>(exec->lexicalInterpreter()->builtinString().construct(exec, args).imp()));
 }
 
 // ------------------------------ NumberImp ------------------------------------

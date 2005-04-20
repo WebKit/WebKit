@@ -86,22 +86,6 @@ void ValueImp::mark()
 #endif
 }
 
-bool ValueImp::marked() const
-{
-  // Simple numbers are always considered marked.
-#if USE_CONSERVATIVE_GC
-  return SimpleNumber::is(this) || _marked;
-#elif TEST_CONSERVATIVE_GC
-  if (conservativeMark) {
-    return SimpleNumber::is(this) || (_flags & VI_CONSERVATIVE_MARKED);
-  } else {
-    return SimpleNumber::is(this) || (_flags & VI_MARKED);
-  }
-#else
-  return SimpleNumber::is(this) || (_flags & VI_MARKED);
-#endif
-}
-
 #if !USE_CONSERVATIVE_GC
 void ValueImp::setGcAllowed()
 {
@@ -190,61 +174,11 @@ uint16_t ValueImp::toUInt16(ExecState *exec) const
   return static_cast<uint16_t>(d16);
 }
 
-// Dispatchers for virtual functions, to special-case simple numbers which
-// won't be real pointers.
-
-Type ValueImp::dispatchType() const
-{
-  if (SimpleNumber::is(this))
-    return NumberType;
-  return type();
-}
-
-Value ValueImp::dispatchToPrimitive(ExecState *exec, Type preferredType) const
-{
-  if (SimpleNumber::is(this))
-    return Value(const_cast<ValueImp *>(this));
-  return toPrimitive(exec, preferredType);
-}
-
-bool ValueImp::dispatchToBoolean(ExecState *exec) const
-{
-  if (SimpleNumber::is(this))
-    return SimpleNumber::value(this);
-  return toBoolean(exec);
-}
-
-double ValueImp::dispatchToNumber(ExecState *exec) const
-{
-  if (SimpleNumber::is(this))
-    return SimpleNumber::value(this);
-  return toNumber(exec);
-}
-
-UString ValueImp::dispatchToString(ExecState *exec) const
-{
-  if (SimpleNumber::is(this))
-    return UString::from(SimpleNumber::value(this));
-  return toString(exec);
-}
-
 Object ValueImp::dispatchToObject(ExecState *exec) const
 {
   if (SimpleNumber::is(this))
     return static_cast<const NumberImp *>(this)->NumberImp::toObject(exec);
   return toObject(exec);
-}
-
-bool ValueImp::dispatchToUInt32(uint32_t& result) const
-{
-  if (SimpleNumber::is(this)) {
-    long i = SimpleNumber::value(this);
-    if (i < 0)
-      return false;
-    result = i;
-    return true;
-  }
-  return toUInt32(result);
 }
 
 // ------------------------------ Value ----------------------------------------
@@ -304,6 +238,36 @@ Value& Value::operator=(const Value &v)
   return *this;
 }
 #endif
+
+Value::Value(bool b) : rep(b ? BooleanImp::staticTrue : BooleanImp::staticFalse) { }
+
+Value::Value(int i)
+    : rep(SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i))) { }
+
+Value::Value(unsigned u)
+    : rep(SimpleNumber::fits(u) ? SimpleNumber::make(u) : new NumberImp(static_cast<double>(u))) { }
+
+Value::Value(double d)
+    : rep(SimpleNumber::fits(d)
+        ? SimpleNumber::make(static_cast<long>(d))
+        : (KJS::isNaN(d) ? NumberImp::staticNaN : new NumberImp(d)))
+{ }
+
+Value::Value(double d, bool knownToBeInteger)
+    : rep((knownToBeInteger ? SimpleNumber::integerFits(d) : SimpleNumber::fits(d))
+        ? SimpleNumber::make(static_cast<long>(d))
+        : ((!knownToBeInteger && KJS::isNaN(d)) ? NumberImp::staticNaN : new NumberImp(d)))
+{ }
+
+Value::Value(long l)
+    : rep(SimpleNumber::fits(l) ? SimpleNumber::make(l) : new NumberImp(static_cast<double>(l))) { }
+
+Value::Value(unsigned long l)
+    : rep(SimpleNumber::fits(l) ? SimpleNumber::make(l) : new NumberImp(static_cast<double>(l))) { }
+
+Value::Value(const char *s) : rep(new StringImp(s)) { }
+
+Value::Value(const UString &s) : rep(new StringImp(s)) { }
 
 // ------------------------------ Undefined ------------------------------------
 
@@ -383,7 +347,16 @@ Number::Number(unsigned int u)
   : Value(SimpleNumber::fits(u) ? SimpleNumber::make(u) : new NumberImp(static_cast<double>(u))) { }
 
 Number::Number(double d)
-  : Value(SimpleNumber::fits(d) ? SimpleNumber::make((long)d) : (KJS::isNaN(d) ? NumberImp::staticNaN : new NumberImp(d))) { }
+  : Value(SimpleNumber::fits(d)
+        ? SimpleNumber::make(static_cast<long>(d))
+        : (KJS::isNaN(d) ? NumberImp::staticNaN : new NumberImp(d)))
+{ }
+
+Number::Number(double d, bool knownToBeInteger)
+  : Value((knownToBeInteger ? SimpleNumber::integerFits(d) : SimpleNumber::fits(d))
+        ? SimpleNumber::make(static_cast<long>(d))
+        : ((!knownToBeInteger && KJS::isNaN(d)) ? NumberImp::staticNaN : new NumberImp(d)))
+{ }
 
 Number::Number(long int l)
   : Value(SimpleNumber::fits(l) ? SimpleNumber::make(l) : new NumberImp(static_cast<double>(l))) { }

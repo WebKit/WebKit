@@ -46,14 +46,13 @@ namespace KJS {
 	static void rehash(int newTableSize);
 	static unsigned computeHash(ValueImp *pointer);
 
-	// let the collector scan the table directly for protected
-	// values
+	// let the collector scan the table directly for protected values
 	friend class Collector;
 
-	static KeyValue * ProtectedValues::_table;
-	static int ProtectedValues::_tableSize;
-	static int ProtectedValues::_tableSizeMask;
-	static int ProtectedValues::_keyCount;
+	static KeyValue *_table;
+	static int _tableSize;
+	static int _tableSizeMask;
+	static int _keyCount;
     };
 }
 

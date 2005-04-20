@@ -1047,8 +1047,10 @@ int UString::find(const UString &f, int pos) const
   const UChar *end = data() + sz - fsz;
   long fsizeminusone = (fsz - 1) * sizeof(UChar);
   const UChar *fdata = f.data();
+  unsigned short fchar = fdata->uc;
+  ++fdata;
   for (const UChar *c = data() + pos; c <= end; c++)
-    if (*c == *fdata && !memcmp(c + 1, fdata + 1, fsizeminusone))
+    if (c->uc == fchar && !memcmp(c + 1, fdata, fsizeminusone))
       return (c-data());
 
   return -1;
@@ -1125,12 +1127,6 @@ UString UString::substr(int pos, int len) const
   return result;
 }
 
-void UString::attach(Rep *r)
-{
-  rep = r;
-  rep->ref();
-}
-
 void UString::detach()
 {
   if (rep->rc > 1 || rep->baseString) {
@@ -1140,11 +1136,6 @@ void UString::detach()
     release();
     rep = Rep::create(n, l);
   }
-}
-
-void UString::release()
-{
-  rep->deref();
 }
 
 bool KJS::operator==(const UString& s1, const UString& s2)

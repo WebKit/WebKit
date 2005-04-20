@@ -470,9 +470,9 @@ namespace KJS {
 #endif
   private:
     UString(Rep *r) { attach(r); }
-    void attach(Rep *r);
+    void attach(Rep *r) { rep = r; r->ref(); }
     void detach();
-    void release();
+    void release() { rep->deref(); }
     int expandedSize(int size, int otherSize) const;
     int usedCapacity() const;
     int usedPreCapacity() const;
