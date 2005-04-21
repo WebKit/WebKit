@@ -1,3 +1,10 @@
+2005-04-21  Vicki Murley  <vicki@apple.com>
+
+	- layout test for 4065447, outerHTML on images
+
+        * layout-tests/fast/dynamic/outerHTML-img-expected.txt: Added.
+        * layout-tests/fast/dynamic/outerHTML-img.html: Added.
+
 2005-04-20  Vicki Murley  <vicki@apple.com>
 
         Reviewed by hyatt.
