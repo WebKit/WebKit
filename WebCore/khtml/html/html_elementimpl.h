@@ -36,7 +36,7 @@ class HTMLFormElementImpl;
 class DocumentFragmentImpl;
 
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
-    eTable, eCell, eCaption };
+    eTable, eCell, eCaption, eLastEntry };
 
 class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {

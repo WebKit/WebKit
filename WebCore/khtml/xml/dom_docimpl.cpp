@@ -364,6 +364,9 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_jsEditor = 0;
 
     m_markers.setAutoDelete(true);
+    
+    static int docID = 0;
+    m_docID = docID++;
 }
 
 DocumentImpl::~DocumentImpl()

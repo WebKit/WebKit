@@ -1,3 +1,20 @@
+2005-04-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4095839, wrong background image used on flechtwerk.de.  Make sure that the global mapped
+	attribute cache hashed background attributes into per-document buckets.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::mapToEntry):
+        * khtml/html/html_elementimpl.h:
+        (DOM::):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::mapToEntry):
+        (HTMLTablePartElementImpl::mapToEntry):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::docID):
+
 2005-04-21  Vicki Murley  <vicki@apple.com>
 
 	- layout test for 4065447, outerHTML on images

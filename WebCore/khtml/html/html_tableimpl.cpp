@@ -365,10 +365,12 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
 bool HTMLTableElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
     switch(attr) {
+        case ATTR_BACKGROUND:
+            result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+            return false;
         case ATTR_WIDTH:
         case ATTR_HEIGHT:
         case ATTR_BGCOLOR:
-        case ATTR_BACKGROUND:
         case ATTR_CELLSPACING:
         case ATTR_VSPACE:
         case ATTR_HSPACE:
@@ -622,8 +624,10 @@ bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
 bool HTMLTablePartElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
     switch(attr) {
-        case ATTR_BGCOLOR:
         case ATTR_BACKGROUND:
+            result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+            return false;
+        case ATTR_BGCOLOR:
         case ATTR_BORDERCOLOR:
         case ATTR_VALIGN:
         case ATTR_HEIGHT:
