@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4091082> Google Suggest no longer works due to lack of "frameElement"
+
+        * khtml/ecma/kjs_window.h: Added FrameElement.
+        * khtml/ecma/kjs_window.cpp: (Window::get): Added "frameElement".
+        * khtml/ecma/kjs_window.lut.h: Regenerated.
+
+2005-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - a small editing-related code cleanup
 
         * khtml/rendering/render_text.h: Added positionForOffset and made offsetForPosition const.

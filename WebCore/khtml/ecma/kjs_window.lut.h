@@ -76,7 +76,7 @@ const struct HashEntry WindowTableEntries[] = {
    { "innerWidth", Window::InnerWidth, DontDelete|ReadOnly, 0, &WindowTableEntries[119] },
    { "defaultstatus", Window::DefaultStatus, DontDelete, 0, 0 },
    { "name", Window::Name, DontDelete, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "frameElement", Window::FrameElement, DontDelete|ReadOnly, 0, 0 },
    { "offscreenBuffering", Window::OffscreenBuffering, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "onscroll", Window::Onscroll, DontDelete, 0, 0 },
