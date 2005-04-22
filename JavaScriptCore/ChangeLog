@@ -1,3 +1,14 @@
+2005-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4090046> JavaScript throw statement causes parse error when no semicolon is present
+
+        * kjs/grammar.y: Added an additional rule for throw like the ones we have for all the other semicolon rules.
+        Not sure why we missed this one earlier.
+
+        * kjs/grammar.cpp: Regenerated.
+
 2005-04-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -566,6 +566,7 @@ LabelledStatement:
 
 ThrowStatement:
     THROW Expr ';'                 { $$ = new ThrowNode($2); }
+  | THROW Expr error               { if (automatic()) $$ = new ThrowNode($2); else YYABORT; }
 ;
 
 TryStatement:
