@@ -1,3 +1,16 @@
+2005-04-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4096681, fix regression in how the list-style property is parsed.  It no longer parses when it hits
+	a url in the property value list now, because the list pointer did not get advanced.  This fixes alistapart.com.
+	
+        Reviewed by john
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * layout-tests/fast/lists/009-expected.txt: Added.
+        * layout-tests/fast/lists/009.html: Added.
+        * layout-tests/fast/lists/resources/listmark.gif: Added.
+
 2005-04-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

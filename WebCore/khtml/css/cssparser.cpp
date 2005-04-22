@@ -723,6 +723,7 @@ bool CSSParser::parseValue( int propId, bool important )
 		parsedValue = new CSSImageValueImpl(
 		    DOMString(KURL( styleElement->baseURL().string(), uri.string()).url()),
 		    styleElement);
+                valueList->next();
 	    }
 	}
         break;
