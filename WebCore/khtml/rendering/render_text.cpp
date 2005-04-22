@@ -739,13 +739,30 @@ long RenderText::nextOffset (long current) const
     return current + 1;
 }
 
-#define LOCAL_WIDTH_BUF_SIZE	1024
-
-int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs)
+int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 {
     RenderText* text = static_cast<RenderText*>(m_object);
     const Font* f = text->htmlFont(m_firstLine);
     return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - m_x, m_reversed, includePartialGlyphs);
+}
+
+int InlineTextBox::positionForOffset(int offset) const
+{
+    RenderText *text = static_cast<RenderText *>(m_object);
+    const QFontMetrics &fm = text->metrics(m_firstLine);
+
+    int left;
+    if (m_reversed) {
+	long len = m_start + m_len - offset;
+	QString string(text->str->s + offset, len);
+	left = m_x + fm.boundingRect(string, len).right();
+    } else {
+	long len = offset - m_start;
+	QString string(text->str->s + m_start, len);
+	left = m_x + fm.boundingRect(string, len).right();
+    }
+    // FIXME: Do we need to add rightBearing here?
+    return left;
 }
 
 // -------------------------------------------------------------------------------------
@@ -1063,17 +1080,7 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     int height = box->root()->bottomOverflow() - box->root()->topOverflow();
     int top = box->root()->topOverflow();
 
-    const QFontMetrics &fm = metrics(box->isFirstLineStyle());
-    int left;
-    if (box->m_reversed) {
-	long len = box->m_start+box->m_len-offset;
-	QString string(str->s +offset,len);
-	left = box->m_x + fm.boundingRect(string,len).right();
-    } else {
-	long len = offset - box->m_start; // the number of characters we are into the string
-	QString string(str->s + box->m_start,len);
-	left = box->m_x + fm.boundingRect(string,len).right();
-    }
+    int left = box->positionForOffset(offset);
 
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?

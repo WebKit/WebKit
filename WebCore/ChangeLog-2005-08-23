@@ -1,3 +1,15 @@
+2005-04-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - a small editing-related code cleanup
+
+        * khtml/rendering/render_text.h: Added positionForOffset and made offsetForPosition const.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::offsetForPosition): Made const.
+        (InlineTextBox::positionForOffset): Added. Moved code here from caretRect.
+        (RenderText::caretRect): Call positionForOffset instead of doing the work here.
+
 2005-04-21  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4095839, wrong background image used on flechtwerk.de.  Make sure that the global mapped

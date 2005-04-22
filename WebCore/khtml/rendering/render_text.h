@@ -124,7 +124,8 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
     
-    int offsetForPosition(int _x, bool includePartialGlyphs = true);
+    int offsetForPosition(int _x, bool includePartialGlyphs = true) const;
+    int positionForOffset(int offset) const;
     
     /**
      * if this text run was rendered @ref _ty pixels below the upper edge
