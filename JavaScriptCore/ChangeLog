@@ -1,5 +1,11 @@
 2005-04-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        * kjs/ustring.cpp: (KJS::UString::UTF8String): Fix off-by-one error in surrogate pair logic.
+
+2005-04-22  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/4090046> JavaScript throw statement causes parse error when no semicolon is present

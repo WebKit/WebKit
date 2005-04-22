@@ -1327,7 +1327,7 @@ CString UString::UTF8String() const
     } else if (c < 0x800) {
       *p++ = (char)((c >> 6) | 0xC0); // C0 is the 2-byte flag for UTF-8
       *p++ = (char)((c | 0x80) & 0xBF); // next 6 bits, with high bit set
-    } else if (c >= 0xD800 && c <= 0xDBFF && i < length && d[i+1].uc >= 0xDC00 && d[i+2].uc <= 0xDFFF) {
+    } else if (c >= 0xD800 && c <= 0xDBFF && i < length && d[i+1].uc >= 0xDC00 && d[i+1].uc <= 0xDFFF) {
       unsigned sc = 0x10000 + (((c & 0x3FF) << 10) | (d[i+1].uc & 0x3FF));
       *p++ = (char)((sc >> 18) | 0xF0); // F0 is the 4-byte flag for UTF-8
       *p++ = (char)(((sc >> 12) | 0x80) & 0xBF); // next 6 bits, with high bit set
