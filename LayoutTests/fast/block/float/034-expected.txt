@@ -1,0 +1,7 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (0,0) size 224x524 [border: (10px solid #0000FF)]
+        RenderImage {IMG} at (-290,10) size 504x504 [border: (2px solid #000000)]

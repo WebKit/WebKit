@@ -3092,12 +3092,10 @@ void RenderBlock::calcBlockMinMaxWidth()
             marginLeft += ml.value;
         else if (ml.type == Percent)
             marginLeft += child->marginLeft();
-        marginLeft = kMax(0, marginLeft);
         if (mr.type == Fixed)
             marginRight += mr.value;
         else if (mr.type == Percent)
             marginRight += child->marginRight();
-        marginRight = kMax(0, marginRight);
         margin = marginLeft + marginRight;
 
         int w = child->minWidth() + margin;
@@ -3112,10 +3110,12 @@ void RenderBlock::calcBlockMinMaxWidth()
         if (!child->isFloating()) {
             if (child->avoidsFloats()) {
                 // Determine a left and right max value based off whether or not the floats can fit in the
-                // margins of the object.
-                int maxLeft = kMax(floatLeftWidth, marginLeft);
-                int maxRight = kMax(floatRightWidth, marginRight);
+                // margins of the object.  For negative margins, we will attempt to overlap the float if the negative margin
+                // is smaller than the float width.
+                int maxLeft = marginLeft > 0 ? kMax(floatLeftWidth, marginLeft) : floatLeftWidth + marginLeft;
+                int maxRight = marginRight > 0 ? kMax(floatRightWidth, marginRight) : floatRightWidth + marginRight;
                 w = child->maxWidth() + maxLeft + maxRight;
+                w = kMax(w, floatLeftWidth + floatRightWidth);
             }
             else
                 m_maxWidth = kMax(floatLeftWidth + floatRightWidth, m_maxWidth);
@@ -3155,7 +3155,11 @@ void RenderBlock::calcBlockMinMaxWidth()
         
         child = child->nextSibling();
     }
-    
+
+    // Always make sure these values are non-negative.
+    m_minWidth = kMax(0, m_minWidth);
+    m_maxWidth = kMax(0, m_maxWidth);
+
     m_maxWidth = kMax(floatLeftWidth + floatRightWidth, m_maxWidth);
 }
 

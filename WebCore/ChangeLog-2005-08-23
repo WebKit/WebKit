@@ -1,5 +1,19 @@
 2005-04-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for 4096878, drop shadow effect not displayed correctly on tbray.org/ongoing/.  Block minmaxwidth was
+	broken when negative margins were used and did not properly decrease the max width.
+	
+        Reviewed by Maciej
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::calcBlockMinMaxWidth):
+        * layout-tests/fast/block/float/034-expected.txt: Added.
+        * layout-tests/fast/block/float/034.html: Added.
+        * layout-tests/fast/block/float/035-expected.txt: Added.
+	* layout-tests/fast/block/float/035.html: Added.
+	
+2005-04-22  David Hyatt  <hyatt@apple.com>
+
         Remove some dead code from css_valueimpl.  It wasn't used at all.
 
         * khtml/css/css_valueimpl.cpp:
