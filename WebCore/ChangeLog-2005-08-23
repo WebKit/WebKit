@@ -1,3 +1,10 @@
+2005-04-22  David Hyatt  <hyatt@apple.com>
+
+        Remove some dead code from css_valueimpl.  It wasn't used at all.
+
+        * khtml/css/css_valueimpl.cpp:
+        * khtml/css/css_valueimpl.h:
+
 2005-04-22  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_html.h: Removed unnecessary bogus class name qualifiers.

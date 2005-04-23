@@ -1277,36 +1277,6 @@ DOMString ShadowValueImpl::cssText() const
     return text;
 }
 
-// Used for box-flex-transition-group
-FlexGroupTransitionValueImpl::FlexGroupTransitionValueImpl()
-:autoValue(true), group1(0), group2(0), length(0)
-{}
-
-FlexGroupTransitionValueImpl::FlexGroupTransitionValueImpl(unsigned int _group1, 
-                                                           unsigned int _group2,
-                                                           CSSPrimitiveValueImpl* _length)
-:autoValue(false), group1(_group1), group2(_group2), length(_length)
-{}
-
-FlexGroupTransitionValueImpl::~FlexGroupTransitionValueImpl()
-{
-    delete length;
-}
-
-DOMString FlexGroupTransitionValueImpl::cssText() const
-{
-    DOMString text(QString::number(group1));
-    if (group2) {
-        text += "/";
-        text += QString::number(group2);
-    }
-    if (length) {
-        text += " ";
-        text += length->cssText();
-    }
-    return text;
-}
-
 DOMString CSSProperty::cssText() const
 {
     return getPropertyName(m_id) + DOMString(": ") + m_value->cssText() + (m_bImportant ? DOMString(" !important") : DOMString()) + DOMString("; ");
