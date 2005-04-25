@@ -215,6 +215,9 @@ public:
     ElementImpl *createHTMLElement(const DOMString &tagName, int &exceptioncode);
     ElementImpl *createHTMLElement(unsigned short tagID);
 
+    virtual DOMStringImpl *HTMLElementNamespace() const;
+    virtual bool isHTMLNamespace(DOMStringImpl *) const;
+
     khtml::CSSStyleSelector *styleSelector() { return m_styleSelector; }
 
     ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key );

@@ -2,6 +2,35 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4097849> REGRESSION (162-163): importNode creates non-HTML elements, thus style attributes (and some others) don't work
+
+        * khtml/xml/dom_docimpl.h: Add virtual functions HTMLElementNamespace and isHTMLNamespace.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode): Rearranged this function and fixed the following problems: 1) made sure to ref node while attributes are
+        being set on it so it doesn't get destroyed; 2) fixed code to get namespace from the element we are importing to use the IDs from
+        the source document, not the destination document; 3) removed unneeded getDocument() call which just returns this; 4) fixed error
+        handling for cases where an exception happens while processing the children.
+        (DocumentImpl::HTMLElementNamespace): Added. Returns XHTML_NAMESPACE.
+        (DocumentImpl::isHTMLNamespace): Added. Returns true for any namespace that matches XHTML_NAMESPACE (case insensitive).
+        (DocumentImpl::createElementNS): Changed to call isHTMLNamespace, which will cause it to accept the null namespace in an HTML document.
+        This is the change that fixes the bug. Also fixed the code path to do a little less wasteful work in the non-XHTML case.
+        (DocumentImpl::createHTMLElement): Pass in HTMLElementNamespace() rather than 0 to tagId.
+        (DocumentImpl::attrId): Use isHTMLNamespace instead of allowing the null namespace explicitly.
+        (DocumentImpl::tagId): Ditto.
+
+        * khtml/html/html_documentimpl.h: Add overrides for HTMLElementNamespace and isHTMLNamespace.
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::HTMLElementNamespace): Added. Returns 0 so we use the null string for HTML elements inside HTML documents (as before).
+        (HTMLDocumentImpl::isHTMLNamespace): Added. Allows 0, and then calls base class to check for the actual XHTML namespace. Thus, we allow
+        both no namespace at all and the XHTML namespace inside HTML documents.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::namespaceURI): Changed to call HTMLElementNamespace rather than checking
+        isHTMLDocument. Same result as before, but better division of responsibilities.
+
+2005-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/4091956> JavaScript drop handlers don't receive more than one dropped item
 
         * kwq/KWQClipboard.mm:

@@ -961,15 +961,9 @@ bool HTMLElementImpl::setOuterText( const DOMString &text )
     return true;
 }
 
-
 DOMString HTMLElementImpl::namespaceURI() const
 {
-    // For HTML documents, we treat HTML elements as having no namespace. But for XML documents
-    // the elements have the namespace defined in the XHTML spec
-    if (getDocument()->isHTMLDocument())
-        return DOMString();
-    else
-        return XHTML_NAMESPACE;
+    return getDocument()->HTMLElementNamespace();
 }
 
 void HTMLElementImpl::addHTMLAlignment(HTMLAttributeImpl* attr)

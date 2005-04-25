@@ -531,83 +531,99 @@ CSSStyleDeclarationImpl *DocumentImpl::createCSSStyleDeclaration()
 
 NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &exceptioncode)
 {
-	NodeImpl *result = 0;
+    exceptioncode = 0;
 
-	if(importedNode->nodeType() == Node::ELEMENT_NODE)
-	{
-		ElementImpl *tempElementImpl = createElementNS(getDocument()->namespaceURI(id()), importedNode->nodeName(), exceptioncode);
-                if (exceptioncode)
-                    return 0;
-		result = tempElementImpl;
+    switch (importedNode->nodeType()) {
+        case Node::TEXT_NODE:
+            return createTextNode(importedNode->nodeValue());
+        case Node::CDATA_SECTION_NODE:
+            return createCDATASection(importedNode->nodeValue());
+        case Node::ENTITY_REFERENCE_NODE:
+            return createEntityReference(importedNode->nodeName());
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue());
+        case Node::COMMENT_NODE:
+            return createComment(importedNode->nodeValue());
+        case Node::ELEMENT_NODE: {
+            ElementImpl *e = createElementNS(importedNode->getDocument()->namespaceURI(importedNode->id()), importedNode->nodeName(), exceptioncode);
+            if (exceptioncode)
+                return 0;
 
-		if(static_cast<ElementImpl *>(importedNode)->attributes(true) && static_cast<ElementImpl *>(importedNode)->attributes(true)->length())
-		{
-			NamedNodeMapImpl *attr = static_cast<ElementImpl *>(importedNode)->attributes();
+            e->ref();
+            if (static_cast<ElementImpl *>(importedNode)->attributes(true) && static_cast<ElementImpl *>(importedNode)->attributes(true)->length()) {
+                NamedAttrMapImpl *attrs = static_cast<ElementImpl *>(importedNode)->attributes();
+                unsigned length = attrs->length();
+                for (unsigned i = 0; i < length; i++) {
+                    AttrImpl *attr = attrs->item(i);
+                    DOMString qualifiedName = attr->nodeName();
+                    DOMString value = attr->nodeValue();
 
-			for(unsigned int i = 0; i < attr->length(); i++)
-			{
-				DOMString qualifiedName = attr->item(i)->nodeName();
-				DOMString value = attr->item(i)->nodeValue();
+                    int colonpos = qualifiedName.find(':');
+                    DOMString localName = qualifiedName;
+                    if (colonpos >= 0) {
+                        localName.remove(0, colonpos + 1);
+                        // ### extract and set new prefix
+                    }
 
-				int colonpos = qualifiedName.find(':');
-				DOMString localName = qualifiedName;
-				if(colonpos >= 0)
-				{
-					localName.remove(0, colonpos + 1);
-					// ### extract and set new prefix
-				}
+                    NodeImpl::Id nodeId = attrId(importedNode->getDocument()->namespaceURI(attr->attrImpl()->id()), localName.implementation(), false /* allocate */);
+                    e->setAttribute(nodeId, value.implementation(), exceptioncode);
+                    if (exceptioncode != 0) {
+                        e->deref();
+                        return 0;
+                    }
+                }
+            }
 
-				NodeImpl::Id nodeId = getDocument()->attrId(getDocument()->namespaceURI(id()), localName.implementation(), false /* allocate */);
-				tempElementImpl->setAttribute(nodeId, value.implementation(), exceptioncode);
+            if (deep) {
+                for (NodeImpl *n = importedNode->firstChild(); n; n = n->nextSibling()) {
+                    NodeImpl *newNode = importNode(n, true, exceptioncode);
+                    if (exceptioncode != 0) {
+                        e->deref();
+                        return 0;
+                    }
+                    newNode->ref();
+                    e->appendChild(newNode, exceptioncode);
+                    if (exceptioncode != 0) {
+                        newNode->deref();
+                        e->deref();
+                        return 0;
+                    }
+                }
+            }
 
-				if(exceptioncode != 0)
-					break;
-			}
-		}
-	}
-	else if(importedNode->nodeType() == Node::TEXT_NODE)
-	{
-		result = createTextNode(importedNode->nodeValue());
-		deep = false;
-	}
-	else if(importedNode->nodeType() == Node::CDATA_SECTION_NODE)
-	{
-		result = createCDATASection(importedNode->nodeValue());
-		deep = false;
-	}
-	else if(importedNode->nodeType() == Node::ENTITY_REFERENCE_NODE)
-		result = createEntityReference(importedNode->nodeName());
-	else if(importedNode->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
-	{
-		result = createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue());
-		deep = false;
-	}
-	else if(importedNode->nodeType() == Node::COMMENT_NODE)
-	{
-		result = createComment(importedNode->nodeValue());
-		deep = false;
-	}
-	else
-		exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+            // Trick to get the result back to the floating state, with 0 refs but not destroyed.
+            e->setParent(this);
+            e->deref();
+            e->setParent(0);
 
-	if(deep)
-	{
-		for(Node n = importedNode->firstChild(); !n.isNull(); n = n.nextSibling())
-			result->appendChild(importNode(n.handle(), true, exceptioncode), exceptioncode);
-	}
+            return e;
+        }
+    }
+    exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+    return 0;
+}
 
-	return result;
+DOMStringImpl *DocumentImpl::HTMLElementNamespace() const
+{
+    // For XML documents, HTML elements have the namespace defined in the XHTML specification.
+    static DOMString result = XHTML_NAMESPACE;
+    return result.implementation();
+}
+
+bool DocumentImpl::isHTMLNamespace(DOMStringImpl *n) const
+{
+    return strcasecmp(DOMString(n), XHTML_NAMESPACE) == 0;
 }
 
 ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
 {
     ElementImpl *e = 0;
-    QString qName = _qualifiedName.string();
-    int colonPos = qName.find(':',0);
 
-    if (_namespaceURI == XHTML_NAMESPACE) {
+    if (isHTMLNamespace(_namespaceURI.implementation())) {
         // User requested an element in the XHTML namespace - this means we create a HTML element
         // (elements not in this namespace are treated as normal XML elements)
+        QString qName = _qualifiedName.string();
+        int colonPos = qName.find(':',0);
         e = createHTMLElement(qName.mid(colonPos+1), exceptioncode);
         if (exceptioncode)
             return 0;
@@ -741,7 +757,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &except
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
-    return createHTMLElement(tagId(0, name.implementation(), false));
+    return createHTMLElement(tagId(HTMLElementNamespace(), name.implementation(), false));
 }
 
 ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
@@ -2058,9 +2074,9 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
 
     // First see if it's a HTML attribute name
     QConstString n(_name->s, _name->l);
-    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
+    if (isHTMLNamespace(_namespaceURI)) {
         // we're in HTML namespace if we know the tag.
-        // xhtml is lower case - case sensitive, easy to implement
+        // XHTML is lower case - case sensitive, easy to implement
         if ( htmlMode() == XHtml && (id = getAttrID(n.string().ascii(), _name->l)) )
             return id;
         // compatibility: upper case - case insensitive
@@ -2138,7 +2154,7 @@ NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_n
 
     // First see if it's a HTML element name
     QConstString n(_name->s, _name->l);
-    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
+    if (isHTMLNamespace(_namespaceURI)) {
         // we're in HTML namespace if we know the tag.
         // xhtml is lower case - case sensitive, easy to implement
         if ( htmlMode() == XHtml && (id = getTagID(n.string().ascii(), _name->l)) )
