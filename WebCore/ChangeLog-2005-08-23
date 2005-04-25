@@ -1,3 +1,15 @@
+2005-04-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Harrison.
+        
+        - fixed <rdar://problem/4098731> [DOMHTMLTextAreaElement cols] returns wrong value (usually zero)
+
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLTextAreaElement cols]):
+        use ATTR_COLS instead of ATTR_ACCESSKEY (D'oh!)
+        (-[DOMHTMLTextAreaElement setCols:]):
+        fixed whitespace
+
 2005-04-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

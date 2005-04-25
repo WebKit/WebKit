@@ -1505,12 +1505,12 @@ using DOM::NodeImpl;
 
 - (long)cols
 {
-    return [self _textAreaElementImpl]->getAttribute(ATTR_ACCESSKEY).toInt();
+    return [self _textAreaElementImpl]->getAttribute(ATTR_COLS).toInt();
 }
 
 - (void)setCols:(long)cols
 {
-	DOMString value(QString::number(cols));
+    DOMString value(QString::number(cols));
     [self _textAreaElementImpl]->setAttribute(ATTR_COLS, value);
 }
 
