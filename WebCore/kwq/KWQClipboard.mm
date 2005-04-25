@@ -63,23 +63,25 @@ KWQClipboard::AccessPolicy KWQClipboard::accessPolicy() const
     return m_policy;
 }
 
-// FIXME hardwired for now, will use UTI
-static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
+static NSString *cocoaTypeFromMIMEType(const DOMString &type)
+{
     QString qType = type.string().stripWhiteSpace();
 
     // two special cases for IE compatibility
     if (qType == "Text") {
         return NSStringPboardType;
-    } else if (qType == "URL") {
+    }
+    if (qType == "URL") {
         return NSURLPboardType;
     } 
 
-    // Ignore any trailing charset - JS String are Unicode, which encapsulates the charset issue
-    if (!qType.compare("text/plain") || qType.startsWith("text/plain;")) {
+    // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue
+    if (qType == "text/plain" || qType.startsWith("text/plain;")) {
         return NSStringPboardType;
-    } else if (!qType.compare("text/uri-list")) {
+    }
+    if (qType == "text/uri-list") {
         // special case because UTI doesn't work with Cocoa's URL type
-        return NSURLPboardType;     // note fallback to NSFilenamesPboardType in caller
+        return NSURLPboardType; // note special case in getData to read NSFilenamesType
     }
     
     // Try UTI now
@@ -89,8 +91,7 @@ static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
         CFStringRef pbType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassNSPboardType);
         CFRelease(UTIType);
         if (pbType) {
-            [(NSString *)pbType autorelease];
-            return (NSString *)pbType;
+            return KWQCFAutorelease(pbType);
         }
     }
 
@@ -103,8 +104,8 @@ static QString MIMETypeFromCocoaType(NSString *type)
     // UTI may not do these right, so make sure we get the right, predictable result
     if ([type isEqualToString:NSStringPboardType]) {
         return QString("text/plain");
-    } else if ([type isEqualToString:NSURLPboardType]
-               || [type isEqualToString:NSFilenamesPboardType]) {
+    }
+    if ([type isEqualToString:NSURLPboardType] || [type isEqualToString:NSFilenamesPboardType]) {
         return QString("text/uri-list");
     }
     
@@ -114,7 +115,7 @@ static QString MIMETypeFromCocoaType(NSString *type)
         CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(UTIType, kUTTagClassMIMEType);
         CFRelease(UTIType);
         if (mimeType) {
-            QString result = QString::fromNSString((NSString *)mimeType);
+            QString result = QString::fromCFString(mimeType);
             CFRelease(mimeType);
             return result;
         }
@@ -159,42 +160,44 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
     NSArray *availableTypes = [m_pasteboard types];
 
     // Fetch the data in different ways for the different Cocoa types
-    if (cocoaType == NSURLPboardType) {
-        NSURL *url = nil;
-        // must check this or we get a printf from CF when there's no data of this type
-        if ([availableTypes containsObject:NSURLPboardType]) {
-            url = [NSURL URLFromPasteboard:m_pasteboard];
-        }
-        if (url) {
-            cocoaValue = [url absoluteString];
-        } else {
-            // Try Filenames type (in addition to URL type) when client requests text/uri-list
-            cocoaType = NSFilenamesPboardType;
-            cocoaValue = nil;
-        }
-    }
 
-    if (cocoaType == NSFilenamesPboardType) {
-        NSArray *fileList = nil;
+    if ([cocoaType isEqualToString:NSURLPboardType]) {
+        // When both URL and filenames are present, filenames is superior since it can contain a list.
         // must check this or we get a printf from CF when there's no data of this type
         if ([availableTypes containsObject:NSFilenamesPboardType]) {
-            fileList = [m_pasteboard propertyListForType:cocoaType];
-        }
-        if (fileList && [fileList count] > 0) {
-            NSMutableString *urls = [NSMutableString string];
-            unsigned i;
-            for (i = 0; i < [fileList count]; i++) {
-                if (i > 0) {
-                    [urls appendString:@"\n"];
+            NSArray *fileList = [m_pasteboard propertyListForType:NSFilenamesPboardType];
+            if (fileList && [fileList isKindOfClass:[NSArray class]]) {
+                unsigned count = [fileList count];
+                if (count > 0) {
+                    if (type != "text/uri-list")
+                        count = 1;
+                    NSMutableString *URLs = [NSMutableString string];
+                    unsigned i;
+                    for (i = 0; i < count; i++) {
+                        if (i > 0) {
+                            [URLs appendString:@"\n"];
+                        }
+                        NSString *string = [fileList objectAtIndex:i];
+                        if (![string isKindOfClass:[NSString class]])
+                            break;
+                        NSURL *URL = [NSURL fileURLWithPath:string];
+                        [URLs appendString:[URL absoluteString]];
+                    }
+                    if (i == count)
+                        cocoaValue = URLs;
                 }
-                NSURL *url = [NSURL fileURLWithPath:[fileList objectAtIndex:i]];
-                [urls appendString:[url absoluteString]];
             }
-            cocoaValue = urls;
-        } else {
-            cocoaValue = nil;
         }
-    } else if (cocoaType && !cocoaValue) {        
+        if (!cocoaValue) {
+            // must check this or we get a printf from CF when there's no data of this type
+            if ([availableTypes containsObject:NSURLPboardType]) {
+                NSURL *url = [NSURL URLFromPasteboard:m_pasteboard];
+                if (url) {
+                    cocoaValue = [url absoluteString];
+                }
+            }
+        }
+    } else if (cocoaType) {        
         cocoaValue = [m_pasteboard stringForType:cocoaType];
     }
 
@@ -203,9 +206,9 @@ DOMString KWQClipboard::getData(const DOMString &type, bool &success) const
     if (cocoaValue && m_changeCount == [m_pasteboard changeCount]) {
         success = true;
         return DOMString(QString::fromNSString(cocoaValue));
-    } else {
-        return DOMString();
     }
+
+    return DOMString();
 }
 
 bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
@@ -217,11 +220,12 @@ bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
     NSString *cocoaData = data.string().getNSString();
-    if (cocoaType == NSURLPboardType) {
+
+    if ([cocoaType isEqualToString:NSURLPboardType]) {
         [m_pasteboard addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
         NSURL *url = [[NSURL alloc] initWithString:cocoaData];
         [url writeToPasteboard:m_pasteboard];
-        
+
         if ([url isFileURL]) {
             [m_pasteboard addTypes:[NSArray arrayWithObject:NSFilenamesPboardType] owner:nil];
             NSArray *fileList = [NSArray arrayWithObject:[url path]];
@@ -230,13 +234,15 @@ bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
 
         [url release];
         return true;
-    } else if (cocoaType) {
+    }
+
+    if (cocoaType) {
         // everything else we know of goes on the pboard as a string
         [m_pasteboard addTypes:[NSArray arrayWithObject:cocoaType] owner:nil];
         return [m_pasteboard setString:cocoaData forType:cocoaType];
-    } else {
-        return false;
     }
+
+    return false;
 }
 
 QStringList KWQClipboard::types() const

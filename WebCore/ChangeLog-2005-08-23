@@ -1,3 +1,19 @@
+2005-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4091956> JavaScript drop handlers don't receive more than one dropped item
+
+        * kwq/KWQClipboard.mm:
+        (cocoaTypeFromMIMEType): Remove some use of compare -- less efficient than a simpler "==" check.
+        Fixed non-GC-safe code to use KWQCFAutorelease instead.
+        (MIMETypeFromCocoaType): Use fromCFString instead of fromNSString to avoid a cast.
+        (KWQClipboard::getData): Rearrange so that we'll use filenames if both filenames and a URL are present, since
+        filenames can accomodate multiple items. Fix bug where we'd return multiple filenames when the type requested
+        is "URL". Fixed loop that computed the count over and over again for the loop termination condition. Check
+        that the data for NSFilenamesPboardType is an NSArray instead of assuming it is.
+        (KWQClipboard::setData): Use isEqualToString: instead of == when comparing types.
+
 2005-04-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4096878, drop shadow effect not displayed correctly on tbray.org/ongoing/.  Block minmaxwidth was
