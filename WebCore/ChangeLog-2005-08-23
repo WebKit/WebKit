@@ -1,3 +1,16 @@
+2005-04-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4097842, changing 1st line of a url that wraps doesn't update the second line.  Make sure to
+	update line break info for the last dirty line so that when a clean line tries to figure out where it
+	started, it will get an accurate position taking into account the updated string.  By doing this, the code
+	will be able to properly distinguish between the old and new positions and not accidentally assume they are
+	the same.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setTextWithOffset):
+
 2005-04-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
