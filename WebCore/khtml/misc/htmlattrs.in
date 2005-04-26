@@ -117,6 +117,7 @@ onmousemove
 onmouseout
 onmouseover
 onmouseup
+onmousewheel
 onpaste
 onreset
 onresize

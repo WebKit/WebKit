@@ -1954,6 +1954,25 @@ void KHTMLView::setIgnoreWheelEvents( bool e )
 
 void KHTMLView::viewportWheelEvent(QWheelEvent* e)
 {
+    DocumentImpl *doc = m_part->xmlDocImpl();
+    if (doc) {
+        RenderObject *docRenderer = doc->renderer();
+        if (docRenderer) {
+            int x, y;
+            viewportToContents(e->x(), e->y(), x, y);
+
+            RenderObject::NodeInfo hitTestResult(true, false);
+            doc->renderer()->layer()->hitTest(hitTestResult, x, y); 
+            NodeImpl *node = hitTestResult.innerNode();
+
+            if (node) {
+                node->dispatchWheelEvent(e);
+                if (e->isAccepted())
+                    return;
+            }
+        }
+    }
+
 #if !APPLE_CHANGES
     if ( d->ignoreWheelEvents && !verticalScrollBar()->isVisible() && m_part->parentPart() ) {
         if ( m_part->parentPart()->view() )
@@ -1969,6 +1988,7 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
     }
 #endif
 }
+
 #endif
 
 #if !APPLE_CHANGES

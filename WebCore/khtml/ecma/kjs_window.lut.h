@@ -55,7 +55,7 @@ const struct HashEntry WindowTableEntries[] = {
    { "onmousemove", Window::Onmousemove, DontDelete, 0, 0 },
    { "scrollTo", Window::ScrollTo, DontDelete|Function, 2, &WindowTableEntries[121] },
    { "onsearch", Window::Onsearch, DontDelete, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "onmousewheel", Window::OnWindowMouseWheel, DontDelete, 0, 0 },
    { "screenLeft", Window::ScreenLeft, DontDelete|ReadOnly, 0, &WindowTableEntries[100] },
    { "onmouseover", Window::Onmouseover, DontDelete, 0, 0 },
    { "crypto", Window::Crypto, DontDelete|ReadOnly, 0, 0 },

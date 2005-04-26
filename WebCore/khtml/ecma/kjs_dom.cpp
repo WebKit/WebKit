@@ -147,6 +147,7 @@ bool DOMNode::toBoolean(ExecState *) const
   onmouseout	DOMNode::OnMouseOut		DontDelete
   onmouseover	DOMNode::OnMouseOver		DontDelete
   onmouseup	DOMNode::OnMouseUp		DontDelete
+  onmousewheel	DOMNode::OnMouseWheel		DontDelete
   onmove	DOMNode::OnMove			DontDelete
   onreset	DOMNode::OnReset		DontDelete
   onresize	DOMNode::OnResize		DontDelete
@@ -249,6 +250,8 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(DOM::EventImpl::MOUSEOVER_EVENT);
   case OnMouseUp:
     return getListener(DOM::EventImpl::MOUSEUP_EVENT);      
+  case OnMouseWheel:
+    return getListener(DOM::EventImpl::MOUSEWHEEL_EVENT);      
   case OnBeforeCut:
     return getListener(DOM::EventImpl::BEFORECUT_EVENT);
   case OnCut:
@@ -414,6 +417,9 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     break;
   case OnMouseUp:
     setListener(exec,DOM::EventImpl::MOUSEUP_EVENT,value);
+    break;
+  case OnMouseWheel:
+    setListener(exec,DOM::EventImpl::MOUSEWHEEL_EVENT,value);
     break;
   case OnBeforeCut:
     setListener(exec,DOM::EventImpl::BEFORECUT_EVENT,value);

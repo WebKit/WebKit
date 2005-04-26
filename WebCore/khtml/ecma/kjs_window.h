@@ -140,7 +140,7 @@ namespace KJS {
            ReleaseEvents, AddEventListener, RemoveEventListener, XMLHttpRequest, XMLSerializer,
 	   Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
 	   Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
-           Onmouseout, Onmouseover, Onmouseup, Onmove, Onreset, Onresize, Onscroll, Onsearch,
+           Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload,
            Statusbar, Toolbar, FrameElement };
   protected:

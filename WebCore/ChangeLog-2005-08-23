@@ -1,3 +1,103 @@
+2005-04-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3655817> please add support for mouse wheel events and the onmousewheel handler
+
+        Loose ends:
+
+            - need to test behavior of Windows IE with horizontal scroll wheeling; we currently send a distinct event
+              for that relatively obscure case, which means the event handlers won't fire at all; might be incorrect
+            - overflow scrolling is done after all DOM event handling, but ideally should be done in the overflowing
+              element's default event handler; not important in practice
+            - frame scrolling is done after all DOM event handling, but probably should be done in a default event handler;
+              not sure about this, but it's probably not important in practice and definitely not required
+
+        - JavaScript
+
+        * khtml/ecma/kjs_events.h: Added DOMWheelEvent.
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::getDOMEvent): Added a case for wheel event. To be forward looking, I use the event's impl pointer
+        instead of a C++ DOM wrapper. Eventually it will all work this way.
+        (offsetFromTarget): Added. Factored out code to compute offsetX/Y for an event.
+        (DOMMouseEvent::getValueProperty): Changed to call offsetFromTarget for offsetX/Y.
+        (DOMWheelEvent::DOMWheelEvent): Added.
+        (DOMWheelEvent::tryGet): Added.
+        (DOMWheelEvent::getValueProperty): Added.
+        (DOMWheelEventProtoFunc::tryCall): Added. Nothing at the moment, but might get contents later.
+
+        * khtml/ecma/kjs_dom.h: Added OnMouseWheel to the enum with the list of properties.
+        * khtml/ecma/kjs_dom.cpp: Added onmousewheel as a property of DOM nodes.
+        (DOMNode::getValueProperty): Return the mouse wheel event handler.
+        (DOMNode::putValue): Set the mouse wheel event handler.
+
+        * khtml/ecma/kjs_window.cpp: Added onmousewheel as a property of the window.
+        (Window::get): Return the mouse wheel event handler.
+        (Window::put): Set the mouse wheel event handler.
+
+        * khtml/ecma/kjs_window.h: Added OnWindowMouseWheel to the enum with the list of properties.
+        (Other properties distinguish the window handler by lower-casing the initial letter, way too subtle,
+        so I did this one a good way.)
+
+        * khtml/dom/dom2_events.h: Made the constructors for Event and UIEvent public. There's no good reason
+        for them to be private, and I had to use the UIEvent one in the JavaScript implementation.
+
+        - DOM
+        
+        * khtml/xml/dom2_eventsimpl.h: Added events for mouse wheel and horizontal mouse wheel.
+        Added isWheelEvent function to EventImpl.
+        (DOM::UIEventWithKeyStateImpl): Added. Base class shared by mouse, wheel, and keyboard events.
+        (DOM::MouseRelatedEventImpl): Added. Base class shared by mouse and wheel events.
+        (DOM::WheelEventImpl): Added.
+
+        * khtml/xml/dom2_eventsimpl.cpp: Added "mousewheel" to list of event names and a placeholder for
+        the horizontal mouse wheel.
+        (EventImpl::isWheelEvent): Added. Returns false.
+        (MouseRelatedEventImpl::MouseRelatedEventImpl): Added. Factored out what's shared between mouse
+        events and wheel events to avoid duplicated code.
+        (MouseRelatedEventImpl::computeLayerPos): Moved to MouseRelatedWheelEventImpl.
+        (MouseEventImpl::MouseEventImpl): Changed since MouseRelatedWheelEventImpl is now the base class
+        so we can share more code with wheel events.
+        (KeyboardEventImpl::KeyboardEventImpl): Changed since UIEventWithKeyStateImpl is now the base class
+        so we can share more code with mouse and wheel events.
+        (WheelEventImpl::WheelEventImpl): Added.
+        (WheelEventImpl::isWheelEvent): Added. Returns true.
+
+        * khtml/misc/htmlattrs.in: Added "onmousewheel" attribute name.
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseHTMLAttribute): Added parsing of the
+        "onmousewheel" atribute, consistent with other event handler attributes.
+
+        - event handling
+
+        * kwq/WebCoreBridge.h: Renamed scrollOverflowWithScrollWheelEvent to sendScrollWheelEvent.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge sendScrollWheelEvent:]): Renamed.
+
+        * kwq/KWQEvent.h: Added Wheel as an event type value.
+        (QWheelEvent::QWheelEvent): Added.
+        * kwq/KWQEvent.mm:
+        (positionForEvent): Updated to know that wheel events have valid positions in them.
+        (orientationForEvent): Added.
+        (deltaForEvent): Added.
+        (QWheelEvent::QWheelEvent): Added.
+
+        * kwq/KWQKHTMLPart.h: Renamed scrollOverflowWithScrollWheelEvent to wheelEvent.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::wheelEvent): Renamed and added code to construct a QWheelEvent
+        and send it along to KHTMLView::viewportWheelEvent, consistent with how mouse events work.
+
+        * khtml/khtmlview.cpp: (KHTMLView::viewportWheelEvent): Do a hit test to figure out which node to
+        send the event to, and then call dispatchWheelEvent.
+
+        * khtml/xml/dom_nodeimpl.h: Added dispatchWheelEvent.
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::dispatchWheelEvent): Added.
+
+        - generated files
+
+        * khtml/ecma/kjs_dom.lut.h: Regenerated.
+        * khtml/ecma/kjs_events.lut.h: Regenerated.
+        * khtml/ecma/kjs_window.lut.h: Regenerated.
+        * khtml/misc/htmlattrs.c: Regenerated.
+        * khtml/misc/htmlattrs.h: Regenerated.
+
 2005-04-26  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin, Maciej.

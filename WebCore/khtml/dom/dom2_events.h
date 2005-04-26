@@ -255,8 +255,9 @@ public:
     bool getCancelBubble() const;
     bool defaultPrevented() const;
 
-protected:
     Event(EventImpl *i);
+
+protected:
     EventImpl *impl;
 };
 
@@ -380,7 +381,7 @@ public:
                                  bool cancelableArg,
                                  const AbstractView &viewArg,
                                  long detailArg);
-protected:
+
     UIEvent(UIEventImpl *impl);
 };
 

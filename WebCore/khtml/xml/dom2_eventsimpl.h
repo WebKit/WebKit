@@ -118,6 +118,9 @@ public:
 	KHTML_ORIGCLICK_MOUSEUP_EVENT,
 	// XMLHttpRequest events
 	KHTML_READYSTATECHANGE_EVENT,
+        // extensions
+        MOUSEWHEEL_EVENT,
+        HORIZONTALMOUSEWHEEL_EVENT,
         numEventIds
     };
 
@@ -149,6 +152,7 @@ public:
     virtual bool isKeyboardEvent() const;
     virtual bool isDragEvent() const;   // a subset of mouse events
     virtual bool isClipboardEvent() const;
+    virtual bool isWheelEvent() const;
 
     bool propagationStopped() const { return m_propagationStopped; }
     bool defaultPrevented() const { return m_defaultPrevented; }
@@ -207,11 +211,62 @@ protected:
 
 };
 
+class UIEventWithKeyStateImpl : public UIEventImpl {
+public:
+    UIEventWithKeyStateImpl() : m_ctrlKey(false), m_altKey(false), m_shiftKey(false), m_metaKey(false) { }
+    UIEventWithKeyStateImpl(EventId eventID, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg,
+        long detailArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg)
+        : UIEventImpl(eventID, canBubbleArg, cancelableArg, viewArg, detailArg)
+        , m_ctrlKey(ctrlKeyArg), m_altKey(altKeyArg), m_shiftKey(shiftKeyArg), m_metaKey(metaKeyArg) { }
 
+    bool ctrlKey() const { return m_ctrlKey; }
+    bool shiftKey() const { return m_shiftKey; }
+    bool altKey() const { return m_altKey; }
+    bool metaKey() const { return m_metaKey; }
 
+protected: // expose these so init functions can set them
+    bool m_ctrlKey : 1;
+    bool m_altKey : 1;
+    bool m_shiftKey : 1;
+    bool m_metaKey : 1;
+};
 
-// Introduced in DOM Level 2: - internal
-class MouseEventImpl : public UIEventImpl {
+// Internal only: Helper class for what's common between mouse and wheel events.
+class MouseRelatedEventImpl : public UIEventWithKeyStateImpl {
+public:
+    MouseRelatedEventImpl();
+    MouseRelatedEventImpl(EventId _id,
+                          bool canBubbleArg,
+                          bool cancelableArg,
+                          AbstractViewImpl *viewArg,
+                          long detailArg,
+                          long screenXArg,
+                          long screenYArg,
+                          long clientXArg,
+                          long clientYArg,
+                          bool ctrlKeyArg,
+                          bool altKeyArg,
+                          bool shiftKeyArg,
+                          bool metaKeyArg);
+    long screenX() const { return m_screenX; }
+    long screenY() const { return m_screenY; }
+    long clientX() const { return m_clientX; }
+    long clientY() const { return m_clientY; }
+    long layerX() const { return m_layerX; }
+    long layerY() const { return m_layerY; }
+protected: // expose these so MouseEventImpl::initMouseEvent can set them
+    long m_screenX;
+    long m_screenY;
+    long m_clientX;
+    long m_clientY;
+    void computeLayerPos();
+private:
+    long m_layerX;
+    long m_layerY;
+};
+
+// Introduced in DOM Level 2
+class MouseEventImpl : public MouseRelatedEventImpl {
 public:
     MouseEventImpl();
     MouseEventImpl(EventId _id,
@@ -231,16 +286,6 @@ public:
 		   NodeImpl *relatedTargetArg,
                    ClipboardImpl *clipboardArg=0);
     virtual ~MouseEventImpl();
-    long screenX() const { return m_screenX; }
-    long screenY() const { return m_screenY; }
-    long clientX() const { return m_clientX; }
-    long clientY() const { return m_clientY; }
-    long layerX() const { return m_layerX; }
-    long layerY() const { return m_layerY; }
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
     unsigned short button() const { return m_button; }
     NodeImpl *relatedTarget() const { return m_relatedTarget; }
     ClipboardImpl *clipboard() const { return m_clipboard; }
@@ -261,27 +306,15 @@ public:
 			const Node &relatedTargetArg);
     virtual bool isMouseEvent() const;
     virtual bool isDragEvent() const;
-protected:
-    long m_screenX;
-    long m_screenY;
-    long m_clientX;
-    long m_clientY;
-    long m_layerX;
-    long m_layerY;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_shiftKey;
-    bool m_metaKey;
+private:
     unsigned short m_button;
     NodeImpl *m_relatedTarget;
     ClipboardImpl *m_clipboard;
- private:
-    void computeLayerPos();
 };
 
 
 // Introduced in DOM Level 3
-class KeyboardEventImpl : public UIEventImpl {
+class KeyboardEventImpl : public UIEventWithKeyStateImpl {
 public:
     KeyboardEventImpl();
     KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view);
@@ -313,10 +346,6 @@ public:
     DOMString keyIdentifier() const { return m_keyIdentifier; }
     unsigned long keyLocation() const { return m_keyLocation; }
     
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
     bool altGraphKey() const { return m_altGraphKey; }
     
     QKeyEvent *qKeyEvent() const { return m_keyEvent; }
@@ -330,10 +359,6 @@ private:
     QKeyEvent *m_keyEvent;
     DOMStringImpl *m_keyIdentifier;
     unsigned long m_keyLocation;
-    bool m_ctrlKey : 1;
-    bool m_shiftKey : 1;
-    bool m_altKey : 1;
-    bool m_metaKey : 1;
     bool m_altGraphKey : 1;
 };
 
@@ -385,6 +410,25 @@ protected:
     ClipboardImpl *m_clipboard;
 };
 
+// extension: mouse wheel event
+class WheelEventImpl : public MouseRelatedEventImpl
+{
+public:
+    WheelEventImpl();
+    WheelEventImpl(bool horizontal, long wheelDelta, AbstractViewImpl *,
+                   long screenXArg, long screenYArg,
+                   long clientXArg, long clientYArg,
+                   bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg);
+    bool isHorizontal() const { return m_horizontal; }
+    long wheelDelta() const { return m_wheelDelta; }
+
+private:
+    virtual bool isWheelEvent() const;
+
+    bool m_horizontal;
+    long m_wheelDelta;
+};
+
 class RegisteredEventListener {
 public:
     RegisteredEventListener(EventImpl::EventId _id, EventListener *_listener, bool _useCapture);
@@ -405,7 +449,7 @@ private:
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardImpl : public khtml::Shared<ClipboardImpl> {
 public:
-    ClipboardImpl();
+    ClipboardImpl() { }
     virtual ~ClipboardImpl();
 
     MAIN_THREAD_ALLOCATED;
@@ -433,5 +477,6 @@ public:
     virtual void setDragImageElement(const Node &, const QPoint &) = 0;
 };
 
-}; //namespace
+} // namespace
+
 #endif

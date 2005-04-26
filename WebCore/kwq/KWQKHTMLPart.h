@@ -145,7 +145,6 @@ public:
     void jumpToSelection();
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     bool scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity);
-    bool scrollOverflowWithScrollWheelEvent(NSEvent *event);
     
     void setEncoding(const QString &encoding, bool userChosen);
     void addData(const char *bytes, int length);
@@ -253,9 +252,11 @@ public:
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
     void mouseUp(NSEvent *);
-    void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
+    bool wheelEvent(NSEvent *);
+
+    void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
 
     bool lastEventIsMouseUp() const;
     void setActivationEventNumber(int num) { _activationEventNumber = num; }

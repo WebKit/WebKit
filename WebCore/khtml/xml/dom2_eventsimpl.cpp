@@ -223,6 +223,8 @@ static const char * const eventNames[EventImpl::numEventIds] = {
     0, // KHTML_MOVE_EVENT
     0, // KHTML_ORIGCLICK_MOUSEUP_EVENT
     "readystatechange",
+    "mousewheel",
+    0, // horizontal mouse wheel
 };
 
 EventImpl::EventId EventImpl::typeToId(const DOMString &type)
@@ -288,6 +290,11 @@ bool EventImpl::isClipboardEvent() const
     return false;
 }
 
+bool EventImpl::isWheelEvent() const
+{
+    return false;
+}
+
 // -----------------------------------------------------------------------------
 
 UIEventImpl::UIEventImpl()
@@ -336,22 +343,14 @@ bool UIEventImpl::isUIEvent() const
 
 // -----------------------------------------------------------------------------
 
-MouseEventImpl::MouseEventImpl()
+// -----------------------------------------------------------------------------
+
+MouseRelatedEventImpl::MouseRelatedEventImpl()
+    : m_screenX(0), m_screenY(0), m_clientX(0), m_clientY(0), m_layerX(0), m_layerY(0)
 {
-    m_screenX = 0;
-    m_screenY = 0;
-    m_clientX = 0;
-    m_clientY = 0;
-    m_ctrlKey = false;
-    m_altKey = false;
-    m_shiftKey = false;
-    m_metaKey = false;
-    m_button = 0;
-    m_relatedTarget = 0;
-    m_clipboard = 0;
 }
 
-MouseEventImpl::MouseEventImpl(EventId _id,
+MouseRelatedEventImpl::MouseRelatedEventImpl(EventId _id,
 			       bool canBubbleArg,
 			       bool cancelableArg,
 			       AbstractViewImpl *viewArg,
@@ -363,31 +362,18 @@ MouseEventImpl::MouseEventImpl(EventId _id,
 			       bool ctrlKeyArg,
 			       bool altKeyArg,
 			       bool shiftKeyArg,
-			       bool metaKeyArg,
-			       unsigned short buttonArg,
-			       NodeImpl *relatedTargetArg,
-                               ClipboardImpl *clipboardArg)
-		   : UIEventImpl(_id,canBubbleArg,cancelableArg,viewArg,detailArg)
+			       bool metaKeyArg)
+    : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, detailArg,
+        ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
     m_screenX = screenXArg;
     m_screenY = screenYArg;
     m_clientX = clientXArg;
     m_clientY = clientYArg;
-    m_ctrlKey = ctrlKeyArg;
-    m_altKey = altKeyArg;
-    m_shiftKey = shiftKeyArg;
-    m_metaKey = metaKeyArg;
-    m_button = buttonArg;
-    m_relatedTarget = relatedTargetArg;
-    if (m_relatedTarget)
-	m_relatedTarget->ref();
-    m_clipboard = clipboardArg;
-    if (m_clipboard)
-	m_clipboard->ref();
     computeLayerPos();
 }
 
-void MouseEventImpl::computeLayerPos()
+void MouseRelatedEventImpl::computeLayerPos()
 {
     m_layerX = m_clientX;
     m_layerY = m_clientY;
@@ -416,6 +402,44 @@ void MouseEventImpl::computeLayerPos()
 	m_layerX -= layer->xPos();
 	m_layerY -= layer->yPos();
     }
+}
+
+// -----------------------------------------------------------------------------
+
+MouseEventImpl::MouseEventImpl()
+{
+    m_button = 0;
+    m_relatedTarget = 0;
+    m_clipboard = 0;
+}
+
+MouseEventImpl::MouseEventImpl(EventId _id,
+			       bool canBubbleArg,
+			       bool cancelableArg,
+			       AbstractViewImpl *viewArg,
+			       long detailArg,
+			       long screenXArg,
+			       long screenYArg,
+			       long clientXArg,
+			       long clientYArg,
+			       bool ctrlKeyArg,
+			       bool altKeyArg,
+			       bool shiftKeyArg,
+			       bool metaKeyArg,
+			       unsigned short buttonArg,
+			       NodeImpl *relatedTargetArg,
+                               ClipboardImpl *clipboardArg)
+    : MouseRelatedEventImpl(_id, canBubbleArg, cancelableArg, viewArg, detailArg,
+        screenXArg, screenYArg, clientXArg, clientYArg,
+        ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
+{
+    m_button = buttonArg;
+    m_relatedTarget = relatedTargetArg;
+    if (m_relatedTarget)
+	m_relatedTarget->ref();
+    m_clipboard = clipboardArg;
+    if (m_clipboard)
+	m_clipboard->ref();
 }
 
 MouseEventImpl::~MouseEventImpl()
@@ -482,16 +506,16 @@ KeyboardEventImpl::KeyboardEventImpl()
   m_keyEvent = 0;
   m_keyIdentifier = 0;
   m_keyLocation = KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
-  m_ctrlKey = false;
-  m_shiftKey = false;
-  m_altKey = false;
-  m_metaKey = false;
   m_altGraphKey = false;
 }
 
 KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
-  : UIEventImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KEYPRESS_EVENT : KEYDOWN_EVENT,
-                true,true,view,0)
+  : UIEventWithKeyStateImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KEYPRESS_EVENT : KEYDOWN_EVENT,
+    true, true, view, 0,
+    key->state() & Qt::ControlButton,
+    key->state() & Qt::ShiftButton,
+    key->state() & Qt::AltButton,
+    key->state() & Qt::MetaButton)
 {
 #if APPLE_CHANGES
     m_keyEvent = new QKeyEvent(*key);
@@ -510,10 +534,6 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
 
     int keyState = key->state();
 
-    m_ctrlKey = keyState & Qt::ControlButton;
-    m_shiftKey = keyState & Qt::ShiftButton;
-    m_altKey = keyState & Qt::AltButton;
-    m_metaKey = keyState & Qt::MetaButton;
     m_altGraphKey = false; // altGraphKey is not supported by Qt.
     
     // Note: we only support testing for num pad
@@ -531,17 +551,13 @@ KeyboardEventImpl::KeyboardEventImpl(EventId _id,
                                         bool altKeyArg, 
                                         bool metaKeyArg, 
                                         bool altGraphKeyArg)
-  : UIEventImpl(_id,canBubbleArg,cancelableArg,viewArg,0)
+  : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, shiftKeyArg, altKeyArg, metaKeyArg)
 {
     m_keyEvent = 0;
     m_keyIdentifier = keyIdentifierArg.implementation();
     if (m_keyIdentifier)
         m_keyIdentifier->ref();
     m_keyLocation = keyLocationArg;
-    m_ctrlKey = ctrlKeyArg;
-    m_shiftKey = shiftKeyArg;
-    m_altKey = altKeyArg;
-    m_metaKey = metaKeyArg;
     m_altGraphKey = altGraphKeyArg;
 }
 
@@ -729,6 +745,25 @@ bool ClipboardEventImpl::isClipboardEvent() const
 
 // -----------------------------------------------------------------------------
 
+WheelEventImpl::WheelEventImpl() : m_horizontal(false), m_wheelDelta(0)
+{
+}
+
+WheelEventImpl::WheelEventImpl(bool h, long d, AbstractViewImpl *v,
+    long sx, long sy, long cx, long cy, bool ctrl, bool alt, bool shift, bool meta)
+    : MouseRelatedEventImpl(h ? HORIZONTALMOUSEWHEEL_EVENT : MOUSEWHEEL_EVENT,
+        true, true, v, 0, sx, sy, cx, cy, ctrl, alt, shift, meta)
+    , m_horizontal(h), m_wheelDelta(d)
+{
+}
+
+bool WheelEventImpl::isWheelEvent() const
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
 RegisteredEventListener::RegisteredEventListener(EventImpl::EventId _id, EventListener *_listener, bool _useCapture)
 {
     id = _id;
@@ -749,10 +784,6 @@ bool RegisteredEventListener::operator==(const RegisteredEventListener &other)
 }
 
 // -----------------------------------------------------------------------------
-
-ClipboardImpl::ClipboardImpl()
-{
-}
 
 ClipboardImpl::~ClipboardImpl()
 {

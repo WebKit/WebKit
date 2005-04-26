@@ -34,9 +34,13 @@
 
 using namespace KJS;
 
-using DOM::KeyboardEvent;
+using DOM::DocumentImpl;
 using DOM::EventImpl;
+using DOM::KeyboardEvent;
+using DOM::MouseRelatedEventImpl;
 using DOM::NodeImpl;
+
+using khtml::RenderObject;
 
 // -------------------------------------------------------------------------
 
@@ -367,7 +371,7 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
   timeStamp	DOMEvent::TimeStamp	DontDelete|ReadOnly
   returnValue   DOMEvent::ReturnValue   DontDelete
   cancelBubble  DOMEvent::CancelBubble  DontDelete
-  dataTransfer	DOMMouseEvent::DataTransfer DontDelete|ReadOnly
+  dataTransfer	DOMEvent::DataTransfer  DontDelete|ReadOnly
   clipboardData  DOMEvent::ClipboardData  DontDelete|ReadOnly
 @end
 @begin DOMEventProtoTable 3
@@ -515,6 +519,8 @@ Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
       ret = new DOMKeyboardEvent(exec, e);
     else if (ei->isMouseEvent())
       ret = new DOMMouseEvent(exec, e);
+    else if (ei->isWheelEvent())
+      ret = new DOMWheelEvent(exec, static_cast<DOM::WheelEventImpl *>(ei));
     else if (ei->isUIEvent())
       ret = new DOMUIEvent(exec, e);
     else if (ei->isMutationEvent())
@@ -689,6 +695,29 @@ Value DOMMouseEvent::tryGet(ExecState *exec, const Identifier &p) const
   return DOMObjectLookupGetValue<DOMMouseEvent,DOMUIEvent>(exec,p,&DOMMouseEventTable,this);
 }
 
+static QPoint offsetFromTarget(const MouseRelatedEventImpl *e)
+{
+    int x = e->clientX();
+    int y = e->clientX();
+
+    NodeImpl *n = e->target();
+    if (n) {
+        DocumentImpl *doc = n->getDocument();
+        if (doc) {
+            doc->updateRendering();
+            RenderObject *r = n->renderer();
+            if (r) {
+                int rx, ry;
+                if (r->absolutePosition(rx, ry)) {
+                    x -= rx;
+                    x -= ry;
+                }
+            }
+        }
+    }
+    return QPoint(x, y);
+}
+
 Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
@@ -702,24 +731,10 @@ Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   case ClientY:
   case Y:
     return Number(static_cast<DOM::MouseEvent>(event).clientY());
-  case OffsetX:
+  case OffsetX: // MSIE extension
+    return Number(offsetFromTarget(static_cast<MouseRelatedEventImpl *>(event.handle())).x());
   case OffsetY: // MSIE extension
-  {
-    DOM::Node node = event.target();
-    node.handle()->getDocument()->updateRendering();
-    khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
-    int x = static_cast<DOM::MouseEvent>(event).clientX();
-    int y = static_cast<DOM::MouseEvent>(event).clientY();
-    if ( rend ) {
-      int xPos, yPos;
-      if ( rend->absolutePosition( xPos, yPos ) ) {
-        kdDebug() << "DOMMouseEvent::getValueProperty rend=" << rend << "  xPos=" << xPos << "  yPos=" << yPos << endl;
-        x -= xPos;
-        y -= yPos;
-      }
-    }
-    return Number( token == OffsetX ? x : y );
-  }
+    return Number(offsetFromTarget(static_cast<MouseRelatedEventImpl *>(event.handle())).y());
   case CtrlKey:
     return Boolean(static_cast<DOM::MouseEvent>(event).ctrlKey());
   case ShiftKey:
@@ -967,6 +982,84 @@ Value DOMMutationEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
       return Undefined();
   }
   return Undefined();
+}
+
+// -------------------------------------------------------------------------
+
+const ClassInfo DOMWheelEvent::info = { "WheelEvent", &DOMEvent::info, &DOMWheelEventTable, 0 };
+/*
+@begin DOMWheelEventTable 10
+    altKey      DOMWheelEvent::AltKey       DontDelete|ReadOnly
+    clientX     DOMWheelEvent::ClientX      DontDelete|ReadOnly
+    clientY     DOMWheelEvent::ClientY      DontDelete|ReadOnly
+    ctrlKey     DOMWheelEvent::CtrlKey      DontDelete|ReadOnly
+    metaKey     DOMWheelEvent::MetaKey      DontDelete|ReadOnly
+    offsetX     DOMWheelEvent::OffsetX      DontDelete|ReadOnly
+    offsetY     DOMWheelEvent::OffsetY      DontDelete|ReadOnly
+    screenX     DOMWheelEvent::ScreenX      DontDelete|ReadOnly
+    screenY     DOMWheelEvent::ScreenY      DontDelete|ReadOnly
+    shiftKey    DOMWheelEvent::ShiftKey     DontDelete|ReadOnly
+    wheelDelta  DOMWheelEvent::WheelDelta   DontDelete|ReadOnly
+    x           DOMWheelEvent::X            DontDelete|ReadOnly
+    y           DOMWheelEvent::Y            DontDelete|ReadOnly
+@end
+@begin DOMWheelEventProtoTable 1
+@end
+*/
+DEFINE_PROTOTYPE("DOMWheelEvent",DOMWheelEventProto)
+IMPLEMENT_PROTOFUNC(DOMWheelEventProtoFunc)
+IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMWheelEventProto,DOMWheelEventProtoFunc,DOMEventProto)
+
+DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
+    : DOMUIEvent(exec, DOM::UIEvent(e))
+{
+}
+
+Value DOMWheelEvent::tryGet(ExecState *exec, const Identifier &p) const
+{
+    return DOMObjectLookupGetValue<DOMWheelEvent,DOMEvent>(exec, p, &DOMWheelEventTable, this);
+}
+
+Value DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
+{
+    DOM::WheelEventImpl *e = static_cast<DOM::WheelEventImpl *>(event.handle());
+    switch (token) {
+        case AltKey:
+            return Boolean(e->altKey());
+        case ClientX:
+        case X:
+            return Number(e->clientX());
+        case ClientY:
+        case Y:
+            return Number(e->clientY());
+        case CtrlKey:
+            return Number(e->ctrlKey());
+        case MetaKey:
+            return Number(e->metaKey());
+        case OffsetX:
+            return Number(offsetFromTarget(e).x());
+        case OffsetY:
+            return Number(offsetFromTarget(e).y());
+        case ScreenX:
+            return Number(e->screenX());
+        case ScreenY:
+            return Number(e->screenY());
+        case ShiftKey:
+            return Boolean(e->shiftKey());
+        case WheelDelta:
+            return Number(e->wheelDelta());
+    }
+    return Undefined();
+}
+
+Value DOMWheelEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+    if (!thisObj.inherits(&DOMWheelEvent::info)) {
+        Object error = Error::create(exec,TypeError);
+        exec->setException(error);
+        return error;
+    }
+    return Undefined();
 }
 
 // -------------------------------------------------------------------------

@@ -141,7 +141,7 @@ findAttr (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 181,
+      TOTAL_KEYWORDS = 182,
       MIN_WORD_LENGTH = 2,
       MAX_WORD_LENGTH = 15,
       MIN_HASH_VALUE = 3,
@@ -150,13 +150,13 @@ findAttr (register const char *str, register unsigned int len)
 
   static const struct attrs wordlist_attr[] =
     {
-#line 177 "htmlattrs.gperf"
+#line 178 "htmlattrs.gperf"
       {"top", ATTR_TOP},
 #line 118 "htmlattrs.gperf"
       {"ondrop", ATTR_ONDROP},
-#line 167 "htmlattrs.gperf"
+#line 168 "htmlattrs.gperf"
       {"src", ATTR_SRC},
-#line 159 "htmlattrs.gperf"
+#line 160 "htmlattrs.gperf"
       {"scope", ATTR_SCOPE},
 #line 52 "htmlattrs.gperf"
       {"coords", ATTR_COORDS},
@@ -164,13 +164,13 @@ findAttr (register const char *str, register unsigned int len)
       {"onerror", ATTR_ONERROR},
 #line 42 "htmlattrs.gperf"
       {"code", ATTR_CODE},
-#line 132 "htmlattrs.gperf"
+#line 133 "htmlattrs.gperf"
       {"onreset", ATTR_ONRESET},
 #line 84 "htmlattrs.gperf"
       {"loop", ATTR_LOOP},
 #line 109 "htmlattrs.gperf"
       {"oncopy", ATTR_ONCOPY},
-#line 131 "htmlattrs.gperf"
+#line 132 "htmlattrs.gperf"
       {"onpaste", ATTR_ONPASTE},
 #line 46 "htmlattrs.gperf"
       {"cols", ATTR_COLS},
@@ -178,7 +178,7 @@ findAttr (register const char *str, register unsigned int len)
       {"color", ATTR_COLOR},
 #line 14 "htmlattrs.gperf"
       {"accept", ATTR_ACCEPT},
-#line 180 "htmlattrs.gperf"
+#line 181 "htmlattrs.gperf"
       {"type", ATTR_TYPE},
 #line 125 "htmlattrs.gperf"
       {"onload", ATTR_ONLOAD},
@@ -190,15 +190,15 @@ findAttr (register const char *str, register unsigned int len)
       {"border", ATTR_BORDER},
 #line 73 "htmlattrs.gperf"
       {"id", ATTR_ID},
-#line 136 "htmlattrs.gperf"
+#line 137 "htmlattrs.gperf"
       {"onselect", ATTR_ONSELECT},
 #line 53 "htmlattrs.gperf"
       {"data", ATTR_DATA},
-#line 150 "htmlattrs.gperf"
+#line 151 "htmlattrs.gperf"
       {"prompt", ATTR_PROMPT},
 #line 101 "htmlattrs.gperf"
       {"onabort", ATTR_ONABORT},
-#line 134 "htmlattrs.gperf"
+#line 135 "htmlattrs.gperf"
       {"onscroll", ATTR_ONSCROLL},
 #line 12 "htmlattrs.gperf"
       {"abbr", ATTR_ABBR},
@@ -206,9 +206,9 @@ findAttr (register const char *str, register unsigned int len)
       {"alt", ATTR_ALT},
 #line 32 "htmlattrs.gperf"
       {"char", ATTR_CHAR},
-#line 164 "htmlattrs.gperf"
+#line 165 "htmlattrs.gperf"
       {"shape", ATTR_SHAPE},
-#line 137 "htmlattrs.gperf"
+#line 138 "htmlattrs.gperf"
       {"onselectstart", ATTR_ONSELECTSTART},
 #line 23 "htmlattrs.gperf"
       {"axis", ATTR_AXIS},
@@ -228,21 +228,21 @@ findAttr (register const char *str, register unsigned int len)
       {"compact", ATTR_COMPACT},
 #line 62 "htmlattrs.gperf"
       {"for", ATTR_FOR},
-#line 133 "htmlattrs.gperf"
+#line 134 "htmlattrs.gperf"
       {"onresize", ATTR_ONRESIZE},
 #line 117 "htmlattrs.gperf"
       {"ondragstart", ATTR_ONDRAGSTART},
-#line 174 "htmlattrs.gperf"
+#line 175 "htmlattrs.gperf"
       {"target", ATTR_TARGET},
-#line 152 "htmlattrs.gperf"
+#line 153 "htmlattrs.gperf"
       {"rel", ATTR_REL},
 #line 75 "htmlattrs.gperf"
       {"ismap", ATTR_ISMAP},
-#line 161 "htmlattrs.gperf"
+#line 162 "htmlattrs.gperf"
       {"scrolldelay", ATTR_SCROLLDELAY},
 #line 49 "htmlattrs.gperf"
       {"composite", ATTR_COMPOSITE},
-#line 142 "htmlattrs.gperf"
+#line 143 "htmlattrs.gperf"
       {"pagey", ATTR_PAGEY},
 #line 40 "htmlattrs.gperf"
       {"classid", ATTR_CLASSID},
@@ -250,29 +250,29 @@ findAttr (register const char *str, register unsigned int len)
       {"label", ATTR_LABEL},
 #line 110 "htmlattrs.gperf"
       {"oncut", ATTR_ONCUT},
-#line 163 "htmlattrs.gperf"
+#line 164 "htmlattrs.gperf"
       {"selected", ATTR_SELECTED},
 #line 61 "htmlattrs.gperf"
       {"face", ATTR_FACE},
-#line 169 "htmlattrs.gperf"
+#line 170 "htmlattrs.gperf"
       {"start", ATTR_START},
 #line 55 "htmlattrs.gperf"
       {"declare", ATTR_DECLARE},
-#line 166 "htmlattrs.gperf"
+#line 167 "htmlattrs.gperf"
       {"span", ATTR_SPAN},
 #line 54 "htmlattrs.gperf"
       {"datetime", ATTR_DATETIME},
-#line 179 "htmlattrs.gperf"
+#line 180 "htmlattrs.gperf"
       {"truespeed", ATTR_TRUESPEED},
-#line 173 "htmlattrs.gperf"
+#line 174 "htmlattrs.gperf"
       {"tableborder", ATTR_TABLEBORDER},
 #line 89 "htmlattrs.gperf"
       {"mayscript", ATTR_MAYSCRIPT},
 #line 63 "htmlattrs.gperf"
       {"frame", ATTR_FRAME},
-#line 149 "htmlattrs.gperf"
+#line 150 "htmlattrs.gperf"
       {"profile", ATTR_PROFILE},
-#line 170 "htmlattrs.gperf"
+#line 171 "htmlattrs.gperf"
       {"style", ATTR_STYLE},
 #line 102 "htmlattrs.gperf"
       {"onbeforecopy", ATTR_ONBEFORECOPY},
@@ -286,7 +286,7 @@ findAttr (register const char *str, register unsigned int len)
       {"onblur", ATTR_ONBLUR},
 #line 87 "htmlattrs.gperf"
       {"max", ATTR_MAX},
-#line 175 "htmlattrs.gperf"
+#line 176 "htmlattrs.gperf"
       {"text", ATTR_TEXT},
 #line 37 "htmlattrs.gperf"
       {"cellborder", ATTR_CELLBORDER},
@@ -298,9 +298,9 @@ findAttr (register const char *str, register unsigned int len)
       {"left", ATTR_LEFT},
 #line 90 "htmlattrs.gperf"
       {"media", ATTR_MEDIA},
-#line 182 "htmlattrs.gperf"
+#line 183 "htmlattrs.gperf"
       {"usemap", ATTR_USEMAP},
-#line 141 "htmlattrs.gperf"
+#line 142 "htmlattrs.gperf"
       {"pagex", ATTR_PAGEX},
 #line 38 "htmlattrs.gperf"
       {"cite", ATTR_CITE},
@@ -316,39 +316,39 @@ findAttr (register const char *str, register unsigned int len)
       {"noresize", ATTR_NORESIZE},
 #line 94 "htmlattrs.gperf"
       {"name", ATTR_NAME},
-#line 176 "htmlattrs.gperf"
+#line 177 "htmlattrs.gperf"
       {"title", ATTR_TITLE},
 #line 114 "htmlattrs.gperf"
       {"ondragenter", ATTR_ONDRAGENTER},
 #line 83 "htmlattrs.gperf"
       {"longdesc", ATTR_LONGDESC},
-#line 165 "htmlattrs.gperf"
+#line 166 "htmlattrs.gperf"
       {"size", ATTR_SIZE},
 #line 70 "htmlattrs.gperf"
       {"hspace", ATTR_HSPACE},
-#line 153 "htmlattrs.gperf"
+#line 154 "htmlattrs.gperf"
       {"results", ATTR_RESULTS},
-#line 135 "htmlattrs.gperf"
+#line 136 "htmlattrs.gperf"
       {"onsearch", ATTR_ONSEARCH},
-#line 148 "htmlattrs.gperf"
+#line 149 "htmlattrs.gperf"
       {"precision", ATTR_PRECISION},
-#line 144 "htmlattrs.gperf"
+#line 145 "htmlattrs.gperf"
       {"plain", ATTR_PLAIN},
 #line 34 "htmlattrs.gperf"
       {"charoff", ATTR_CHAROFF},
 #line 78 "htmlattrs.gperf"
       {"lang", ATTR_LANG},
-#line 157 "htmlattrs.gperf"
-      {"rules", ATTR_RULES},
-#line 189 "htmlattrs.gperf"
-      {"vspace", ATTR_VSPACE},
-#line 138 "htmlattrs.gperf"
-      {"onsubmit", ATTR_ONSUBMIT},
 #line 158 "htmlattrs.gperf"
+      {"rules", ATTR_RULES},
+#line 190 "htmlattrs.gperf"
+      {"vspace", ATTR_VSPACE},
+#line 139 "htmlattrs.gperf"
+      {"onsubmit", ATTR_ONSUBMIT},
+#line 159 "htmlattrs.gperf"
       {"scheme", ATTR_SCHEME},
 #line 26 "htmlattrs.gperf"
       {"bgcolor", ATTR_BGCOLOR},
-#line 151 "htmlattrs.gperf"
+#line 152 "htmlattrs.gperf"
       {"readonly", ATTR_READONLY},
 #line 103 "htmlattrs.gperf"
       {"onbeforecut", ATTR_ONBEFORECUT},
@@ -356,13 +356,13 @@ findAttr (register const char *str, register unsigned int len)
       {"content", ATTR_CONTENT},
 #line 59 "htmlattrs.gperf"
       {"disabled", ATTR_DISABLED},
-#line 162 "htmlattrs.gperf"
+#line 163 "htmlattrs.gperf"
       {"scrolling", ATTR_SCROLLING},
 #line 13 "htmlattrs.gperf"
       {"accept-charset", ATTR_ACCEPT_CHARSET},
 #line 74 "htmlattrs.gperf"
       {"incremental", ATTR_INCREMENTAL},
-#line 139 "htmlattrs.gperf"
+#line 140 "htmlattrs.gperf"
       {"onunload", ATTR_ONUNLOAD},
 #line 68 "htmlattrs.gperf"
       {"href", ATTR_HREF},
@@ -370,9 +370,9 @@ findAttr (register const char *str, register unsigned int len)
       {"align", ATTR_ALIGN},
 #line 121 "htmlattrs.gperf"
       {"oninput", ATTR_ONINPUT},
-#line 154 "htmlattrs.gperf"
+#line 155 "htmlattrs.gperf"
       {"rev", ATTR_REV},
-#line 178 "htmlattrs.gperf"
+#line 179 "htmlattrs.gperf"
       {"topmargin", ATTR_TOPMARGIN},
 #line 116 "htmlattrs.gperf"
       {"ondragover", ATTR_ONDRAGOVER},
@@ -386,31 +386,31 @@ findAttr (register const char *str, register unsigned int len)
       {"headers", ATTR_HEADERS},
 #line 33 "htmlattrs.gperf"
       {"challenge", ATTR_CHALLENGE},
-#line 143 "htmlattrs.gperf"
+#line 144 "htmlattrs.gperf"
       {"placeholder", ATTR_PLACEHOLDER},
-#line 168 "htmlattrs.gperf"
+#line 169 "htmlattrs.gperf"
       {"standby", ATTR_STANDBY},
-#line 155 "htmlattrs.gperf"
+#line 156 "htmlattrs.gperf"
       {"rows", ATTR_ROWS},
-#line 192 "htmlattrs.gperf"
+#line 193 "htmlattrs.gperf"
       {"z-index", ATTR_Z_INDEX},
 #line 21 "htmlattrs.gperf"
       {"autocomplete", ATTR_AUTOCOMPLETE},
-#line 191 "htmlattrs.gperf"
+#line 192 "htmlattrs.gperf"
       {"wrap", ATTR_WRAP},
 #line 123 "htmlattrs.gperf"
       {"onkeypress", ATTR_ONKEYPRESS},
 #line 91 "htmlattrs.gperf"
       {"method", ATTR_METHOD},
-#line 140 "htmlattrs.gperf"
+#line 141 "htmlattrs.gperf"
       {"oversrc", ATTR_OVERSRC},
 #line 115 "htmlattrs.gperf"
       {"ondragleave", ATTR_ONDRAGLEAVE},
-#line 171 "htmlattrs.gperf"
+#line 172 "htmlattrs.gperf"
       {"summary", ATTR_SUMMARY},
 #line 98 "htmlattrs.gperf"
       {"noshade", ATTR_NOSHADE},
-#line 172 "htmlattrs.gperf"
+#line 173 "htmlattrs.gperf"
       {"tabindex", ATTR_TABINDEX},
 #line 15 "htmlattrs.gperf"
       {"accesskey", ATTR_ACCESSKEY},
@@ -418,7 +418,7 @@ findAttr (register const char *str, register unsigned int len)
       {"multiple", ATTR_MULTIPLE},
 #line 97 "htmlattrs.gperf"
       {"nosave", ATTR_NOSAVE},
-#line 160 "htmlattrs.gperf"
+#line 161 "htmlattrs.gperf"
       {"scrollamount", ATTR_SCROLLAMOUNT},
 #line 92 "htmlattrs.gperf"
       {"min", ATTR_MIN},
@@ -434,7 +434,7 @@ findAttr (register const char *str, register unsigned int len)
       {"html", ATTR_HTML},
 #line 31 "htmlattrs.gperf"
       {"cellspacing", ATTR_CELLSPACING},
-#line 184 "htmlattrs.gperf"
+#line 185 "htmlattrs.gperf"
       {"value", ATTR_VALUE},
 #line 129 "htmlattrs.gperf"
       {"onmouseover", ATTR_ONMOUSEOVER},
@@ -446,7 +446,7 @@ findAttr (register const char *str, register unsigned int len)
       {"nohref", ATTR_NOHREF},
 #line 76 "htmlattrs.gperf"
       {"keytype", ATTR_KEYTYPE},
-#line 185 "htmlattrs.gperf"
+#line 186 "htmlattrs.gperf"
       {"valuetype", ATTR_VALUETYPE},
 #line 111 "htmlattrs.gperf"
       {"ondblclick", ATTR_ONDBLCLICK},
@@ -458,21 +458,21 @@ findAttr (register const char *str, register unsigned int len)
       {"onmousemove", ATTR_ONMOUSEMOVE},
 #line 99 "htmlattrs.gperf"
       {"nowrap", ATTR_NOWRAP},
-#line 156 "htmlattrs.gperf"
+#line 157 "htmlattrs.gperf"
       {"rowspan", ATTR_ROWSPAN},
 #line 22 "htmlattrs.gperf"
       {"autosave", ATTR_AUTOSAVE},
-#line 186 "htmlattrs.gperf"
+#line 187 "htmlattrs.gperf"
       {"version", ATTR_VERSION},
-#line 145 "htmlattrs.gperf"
-      {"pluginpage", ATTR_PLUGINPAGE},
 #line 146 "htmlattrs.gperf"
+      {"pluginpage", ATTR_PLUGINPAGE},
+#line 147 "htmlattrs.gperf"
       {"pluginspage", ATTR_PLUGINSPAGE},
 #line 20 "htmlattrs.gperf"
       {"archive", ATTR_ARCHIVE},
 #line 81 "htmlattrs.gperf"
       {"leftmargin", ATTR_LEFTMARGIN},
-#line 183 "htmlattrs.gperf"
+#line 184 "htmlattrs.gperf"
       {"valign", ATTR_VALIGN},
 #line 69 "htmlattrs.gperf"
       {"hreflang", ATTR_HREFLANG},
@@ -480,7 +480,7 @@ findAttr (register const char *str, register unsigned int len)
       {"hidden", ATTR_HIDDEN},
 #line 18 "htmlattrs.gperf"
       {"alink", ATTR_ALINK},
-#line 147 "htmlattrs.gperf"
+#line 148 "htmlattrs.gperf"
       {"pluginurl", ATTR_PLUGINURL},
 #line 108 "htmlattrs.gperf"
       {"oncontextmenu", ATTR_ONCONTEXTMENU},
@@ -490,7 +490,7 @@ findAttr (register const char *str, register unsigned int len)
       {"behavior", ATTR_BEHAVIOR},
 #line 88 "htmlattrs.gperf"
       {"maxlength", ATTR_MAXLENGTH},
-#line 187 "htmlattrs.gperf"
+#line 188 "htmlattrs.gperf"
       {"visibility", ATTR_VISIBILITY},
 #line 126 "htmlattrs.gperf"
       {"onmousedown", ATTR_ONMOUSEDOWN},
@@ -498,19 +498,21 @@ findAttr (register const char *str, register unsigned int len)
       {"link", ATTR_LINK},
 #line 24 "htmlattrs.gperf"
       {"background", ATTR_BACKGROUND},
-#line 190 "htmlattrs.gperf"
+#line 191 "htmlattrs.gperf"
       {"width", ATTR_WIDTH},
 #line 72 "htmlattrs.gperf"
       {"http-equiv", ATTR_HTTP_EQUIV},
-#line 188 "htmlattrs.gperf"
+#line 189 "htmlattrs.gperf"
       {"vlink", ATTR_VLINK},
+#line 131 "htmlattrs.gperf"
+      {"onmousewheel", ATTR_ONMOUSEWHEEL},
 #line 122 "htmlattrs.gperf"
       {"onkeydown", ATTR_ONKEYDOWN},
 #line 85 "htmlattrs.gperf"
       {"marginheight", ATTR_MARGINHEIGHT},
 #line 86 "htmlattrs.gperf"
       {"marginwidth", ATTR_MARGINWIDTH},
-#line 181 "htmlattrs.gperf"
+#line 182 "htmlattrs.gperf"
       {"unknown", ATTR_UNKNOWN}
     };
 
@@ -568,25 +570,25 @@ findAttr (register const char *str, register unsigned int len)
       173,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1, 174,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1, 175,  -1,  -1,  -1,  -1,
-      176,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+      176,  -1,  -1,  -1,  -1,  -1,  -1, 177,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, 177,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1, 178,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1, 178,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1, 179,  -1,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1,  -1, 179,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1, 180,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-       -1,  -1,  -1,  -1,  -1,  -1,  -1, 180
+       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
+       -1,  -1,  -1,  -1,  -1,  -1,  -1, 181
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
@@ -608,7 +610,7 @@ findAttr (register const char *str, register unsigned int len)
     }
   return 0;
 }
-#line 193 "htmlattrs.gperf"
+#line 194 "htmlattrs.gperf"
 
 
 
@@ -732,6 +734,7 @@ static const char * const attrList[] = {
     "ONMOUSEOUT",
     "ONMOUSEOVER",
     "ONMOUSEUP",
+    "ONMOUSEWHEEL",
     "ONPASTE",
     "ONRESET",
     "ONRESIZE",

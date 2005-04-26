@@ -445,12 +445,9 @@ static bool initializedKJS = FALSE;
     return _part->scrollOverflow((KWQScrollDirection)direction, (KWQScrollGranularity)granularity);
 }
 
-- (BOOL)scrollOverflowWithScrollWheelEvent:(NSEvent *)event
+- (BOOL)sendScrollWheelEvent:(NSEvent *)event
 {
-    if (_part == NULL) {
-        return NO;
-    }    
-    return _part->scrollOverflowWithScrollWheelEvent(event);
+    return _part ? _part->wheelEvent(event) : NO;
 }
 
 - (BOOL)saveDocumentToPageCache

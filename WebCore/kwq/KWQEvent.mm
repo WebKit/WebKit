@@ -759,7 +759,28 @@ static QPoint positionForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
         case NSMouseMoved:
+        case NSScrollWheel:
             return QPoint([event locationInWindow]);
+        default:
+            return QPoint();
+    }
+}
+
+static QPoint globalPositionForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+        case NSMouseMoved:
+        case NSScrollWheel:
+            return QPoint([[event window] convertBaseToScreen:[event locationInWindow]]);
         default:
             return QPoint();
     }
@@ -778,6 +799,26 @@ static int clickCountForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
             return [event clickCount];
+        default:
+            return 0;
+    }
+}
+
+static Qt::Orientation orientationForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSScrollWheel:
+            return [event deltaX] != 0 ? Qt::Horizontal : Qt::Vertical;
+        default:
+            return Qt::Vertical;
+    }
+}
+
+static int deltaForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSScrollWheel:
+            return lrint((orientationForEvent(event) == Qt::Horizontal ? [event deltaX] : [event deltaY]) * 120);
         default:
             return 0;
     }
@@ -860,4 +901,17 @@ QKeyEvent::QKeyEvent(NSEvent *event, bool forceAutoRepeat)
     if (_unmodifiedText == "\x7F") {
         _unmodifiedText = "\x8";
     }
+}
+
+// ======== 
+
+QWheelEvent::QWheelEvent(NSEvent *event)
+    : QEvent(Wheel)
+    , _position(positionForEvent(event))
+    , _globalPosition(globalPositionForEvent(event))
+    , _delta(deltaForEvent(event))
+    , _state(nonMouseButtonsForEvent(event))
+    , _orientation(orientationForEvent(event))
+    , _isAccepted(false)
+{
 }

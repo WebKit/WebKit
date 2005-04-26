@@ -464,6 +464,10 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
+    case ATTR_ONMOUSEWHEEL:
+        setHTMLEventListener(EventImpl::MOUSEWHEEL_EVENT,
+	    getDocument()->createHTMLEventListener(attr->value().string(), this));
+        break;
     case ATTR_ONFOCUS:
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string(), this));

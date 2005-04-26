@@ -1038,27 +1038,20 @@ bool KWQKHTMLPart::scrollOverflow(KWQScrollDirection direction, KWQScrollGranula
     return false;
 }
 
-bool KWQKHTMLPart::scrollOverflowWithScrollWheelEvent(NSEvent *event)
+bool KWQKHTMLPart::wheelEvent(NSEvent *event)
 {
-    RenderObject *r = renderer();
-    if (r == 0) {
-        return false;
+    KHTMLView *v = d->m_view;
+
+    if (v) {
+        QWheelEvent qEvent(event);
+        v->viewportWheelEvent(&qEvent);
+        if (qEvent.isAccepted())
+            return true;
     }
-    
-    NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
-    RenderObject::NodeInfo nodeInfo(true, true);
-    r->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);    
-    
-    NodeImpl *node = nodeInfo.innerNode();
-    if (node == 0) {
-        return false;
-    }
-    
-    r = node->renderer();
-    if (r == 0) {
-        return false;
-    }
-    
+
+    // FIXME: The scrolling done here should be done in the default handlers
+    // of the elements rather than here in the part.
+
     KWQScrollDirection direction;
     float multiplier;
     float deltaX = [event deltaX];
@@ -1078,6 +1071,26 @@ bool KWQKHTMLPart::scrollOverflowWithScrollWheelEvent(NSEvent *event)
     } else {
         return false;
     }
+
+    RenderObject *r = renderer();
+    if (r == 0) {
+        return false;
+    }
+    
+    NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
+    RenderObject::NodeInfo nodeInfo(true, true);
+    r->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);    
+    
+    NodeImpl *node = nodeInfo.innerNode();
+    if (node == 0) {
+        return false;
+    }
+    
+    r = node->renderer();
+    if (r == 0) {
+        return false;
+    }
+    
     return r->scroll(direction, KWQScrollWheel, multiplier);
 }
 

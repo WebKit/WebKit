@@ -230,7 +230,6 @@ typedef enum {
 - (void)scrollToAnchorWithURL:(NSURL *)URL;
 
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity;
-- (BOOL)scrollOverflowWithScrollWheelEvent:(NSEvent *)event;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
@@ -253,7 +252,9 @@ typedef enum {
 - (void)mouseMoved:(NSEvent *)event;
 - (void)mouseDragged:(NSEvent *)event;
 
-- (BOOL)sendContextMenuEvent:(NSEvent *)event; // return YES if event is eaten by WebCore
+// these return YES if event is eaten by WebCore
+- (BOOL)sendScrollWheelEvent:(NSEvent *)event;
+- (BOOL)sendContextMenuEvent:(NSEvent *)event;
 
 - (NSView *)nextKeyView;
 - (NSView *)previousKeyView;

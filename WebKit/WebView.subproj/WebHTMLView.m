@@ -2574,7 +2574,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [self retain];
     
-    if (![[self _bridge] scrollOverflowWithScrollWheelEvent:event]) {
+    if (![[self _bridge] sendScrollWheelEvent:event]) {
         [[self nextResponder] scrollWheel:event];
     }    
     

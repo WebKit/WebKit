@@ -1,3 +1,12 @@
+2005-04-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3655817> please add support for mouse wheel events and the onmousewheel handler
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView scrollWheel:]): Call sendScrollWheelEvent: method
+        instead of the old scrollOverflowWithScrollWheelEvent: (just a name change).
+
 2005-04-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
