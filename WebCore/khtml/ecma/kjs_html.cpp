@@ -3899,8 +3899,8 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             float cp1y = (float)args[1].toNumber(exec);
             float cp2x = (float)args[2].toNumber(exec);
             float cp2y = (float)args[3].toNumber(exec);
-            float x = (float)args[2].toNumber(exec);
-            float y = (float)args[3].toNumber(exec);
+            float x = (float)args[4].toNumber(exec);
+            float y = (float)args[5].toNumber(exec);
             CGContextAddCurveToPoint (drawingContext, cp1x, cp1y, cp2x, cp2y, x, y);
             renderer->setNeedsImageUpdate();
             break;

@@ -1,3 +1,12 @@
+2005-04-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4098826> Bezier curves broken in new Safari canvas object (last two parameters parsed incorrectly)
+
+        * khtml/ecma/kjs_html.cpp: (KJS::Context2DFunction::tryCall): Fixed incorrect argument indices.
+        Thanks to Brian Campbell who figured out what was wrong.
+
 2005-04-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
