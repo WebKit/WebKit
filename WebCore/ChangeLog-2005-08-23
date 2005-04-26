@@ -1,3 +1,9 @@
+2005-04-26  Darin Adler  <darin@apple.com>
+
+        - fixed development builds
+
+        * khtml/misc/main_thread_malloc.h: Use inlines instead of macros for allocation functions.
+
 2005-04-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4097842, changing 1st line of a url that wraps doesn't update the second line.  Make sure to

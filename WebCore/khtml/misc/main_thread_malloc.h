@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef KHTMLMAINTTHREADMALLOC_H
 #define KHTMLMAINTTHREADMALLOC_H
 
@@ -30,31 +29,30 @@
 // while holding the collector lock (this is true whenenever the interpreter is
 // executing or GC is taking place).
 
+namespace khtml {
 
 #ifndef NDEBUG
 
-#define main_thread_malloc malloc
-#define main_thread_calloc calloc
-#define main_thread_free free
-#define main_thread_realloc realloc
+inline void *main_thread_malloc(size_t n) { return malloc(n); }
+inline void *main_thread_calloc(size_t n_elements, size_t element_size) { return calloc(n_elements, element_size); }
+inline void main_thread_free(void* p) { free(p); }
+inline void *main_thread_realloc(void* p, size_t n) { return realloc(p, n); }
 
 #define MAIN_THREAD_ALLOCATED
 
 #else
-
-namespace khtml {
 
 void *main_thread_malloc(size_t n);
 void *main_thread_calloc(size_t n_elements, size_t element_size);
 void main_thread_free(void* p);
 void *main_thread_realloc(void* p, size_t n);
 
-};
-
 #define MAIN_THREAD_ALLOCATED \
 void* operator new(size_t s) { return khtml::main_thread_malloc(s); } \
 void operator delete(void* p) { khtml::main_thread_free(p); }
 
 #endif
+
+};
 
 #endif /* KHTMLMAINTTHREADMALLOC_H */
