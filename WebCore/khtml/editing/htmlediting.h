@@ -228,11 +228,10 @@ protected:
     void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
     void rebalanceWhitespace();
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
-    void removeFullySelectedNodePreservingPosition(DOM::NodeImpl *node, DOM::Position &pos);
+    void removeFullySelectedNode(DOM::NodeImpl *node);
     void removeNodeAttribute(DOM::ElementImpl *, int attribute);
-    void removeChildrenInRangePreservingPosition(DOM::NodeImpl *node, int from, int to, DOM::Position &pos);
+    void removeChildrenInRange(DOM::NodeImpl *node, int from, int to);
     void removeNode(DOM::NodeImpl *removeChild);
-    void removeNodePreservingPosition(DOM::NodeImpl *removeChild, DOM::Position &pos);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
     void replaceTextInNode(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);

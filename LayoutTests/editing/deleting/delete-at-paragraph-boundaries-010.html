@@ -1,0 +1,67 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    font-size: 24px; 
+}
+.explanation { 
+    border: 2px solid blue; 
+    padding: 12px; 
+    font-size: 24px; 
+    margin-bottom: 24px;
+}
+.scenario { margin-bottom: 16px;}
+.scenario:first-line { font-weight: bold; margin-bottom: 16px;}
+.expected-results:first-line { font-weight: bold }
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
+    extendSelectionForwardByLineCommand();
+	for (i = 0; i < 2; i++)
+		extendSelectionForwardByCharacterCommand();    
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Deleting when a selection starts at the beginning of a text following a nested block, and extends out of the enclosing block into the following block.
+<br>
+FIXME: Currently broken!  See rdar://problem/4099839/.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+Should see a total of five lines in the red box, with the third line inside of a nested red box. First line should be "one". Next line should be "two".  Next line should be "cha cha cha", inside of a nested red box. Next line should be "ur".  The last line should be "cha cha cha".  Insertion point should be blinking at the start of the fourth line ("ur").
+</div>
+</div>
+
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+one
+<div>two</div>
+<div class="editing"><div>cha cha cha</div>three</div>
+<div>four</div><div>cha cha cha</div>
+</div>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body></html>

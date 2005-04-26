@@ -19,16 +19,16 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (0,28) size 682x56
             text run at (0,28) width 682: "Should see the two lines in the red box. Each should contain \"A\" only."
             text run at (0,56) width 620: "Insertion point should be blinking at the start of the second line."
-      RenderBlock {DIV} at (0,264) size 784x50
-        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,264) size 784x60
+        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
           RenderBlock {P} at (2,2) size 780x28
             RenderText {TEXT} at (0,0) size 17x28
               text run at (0,0) width 17: "A"
           RenderBlock (anonymous) at (2,30) size 780x0
-        RenderBlock (anonymous) at (0,32) size 784x18
-          RenderText {TEXT} at (0,0) size 12x18
-            text run at (0,0) width 12: "A"
+          RenderBlock {P} at (2,30) size 780x28
+            RenderText {TEXT} at (0,0) size 17x28
+              text run at (0,0) width 17: "A"
 selection is CARET:
-start:      position 0 of child 2 {TEXT} of root {DIV}
-upstream:   position 0 of child 2 {TEXT} of root {DIV}
-downstream: position 0 of child 2 {TEXT} of root {DIV}
+start:      position 0 of child 1 {TEXT} of child 3 {P} of child 1 {DIV} of root {DIV}
+upstream:   position 0 of child 3 {P} of child 1 {DIV} of root {DIV}
+downstream: position 0 of child 1 {TEXT} of child 3 {P} of child 1 {DIV} of root {DIV}

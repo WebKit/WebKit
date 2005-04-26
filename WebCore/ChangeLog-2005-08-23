@@ -1,3 +1,35 @@
+2005-04-26  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin, Maciej.
+
+        <rdar://problem/4075576> Deleting text in new message borks content
+        
+        Fixed by removing the methods that attempted to preserve the position.  The idea
+        of preserving position is a very recent one, and turned out to not actually address
+        the problem it was intended to fix (see below).  Further, is unclear how the position
+        could be preserved in a form that could be properly used later on.   Therefore,
+        removing the code to work like before is the preferred alternative for this software
+        update.  I've written <rdar://problem/4099839> to cover the bug that position
+        preservation was supposed to fix (but did not).  Added layout tests for
+        both this bug and 4099839.  Also, updated existing tests with correct expected results
+        (delete-at-paragraph-boundaries-003 and 004).
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeFullySelectedNode):
+        (khtml::CompositeEditCommand::removeChildrenInRange):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        * khtml/editing/htmlediting.h:
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-007-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-007.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-008.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-009-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-009.html: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-010-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-010.html: Added.
+
 2005-04-26  Darin Adler  <darin@apple.com>
 
         - fixed development builds
