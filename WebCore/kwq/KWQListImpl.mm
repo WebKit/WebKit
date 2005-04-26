@@ -29,11 +29,14 @@
 #import <algorithm>
 #import <CoreFoundation/CFArray.h>
 #import "KWQAssertions.h"
+#import "misc/main_thread_malloc.h"
 
 class KWQListNode
 {
 public:
     KWQListNode(void *d) : data(d), next(NULL), prev(NULL) { }
+
+    MAIN_THREAD_ALLOCATED;
 
     void *data;
     KWQListNode *next;

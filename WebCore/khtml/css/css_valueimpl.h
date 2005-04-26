@@ -230,6 +230,8 @@ public:
 
 class CounterImpl : public khtml::Shared<CounterImpl> {
 public:
+    MAIN_THREAD_ALLOCATED;
+
     DOMString identifier() const { return m_identifier; }
     DOMString listStyle() const { return m_listStyle; }
     DOMString separator() const { return m_separator; }
@@ -243,6 +245,8 @@ class RectImpl : public khtml::Shared<RectImpl> {
 public:
     RectImpl();
     virtual ~RectImpl();
+
+    MAIN_THREAD_ALLOCATED;
 
     CSSPrimitiveValueImpl *top() { return m_top; }
     CSSPrimitiveValueImpl *right() { return m_right; }
@@ -386,6 +390,8 @@ public:
     ~CSSProperty() {
 	if(m_value) m_value->deref();
     }
+
+    MAIN_THREAD_ALLOCATED;
 
     void setValue(CSSValueImpl *val) {
 	if (val) val->ref();

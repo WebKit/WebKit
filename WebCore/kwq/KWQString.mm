@@ -33,15 +33,16 @@
 #import "KWQString.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
+#import "misc/main_thread_malloc.h"
+
+using khtml::main_thread_malloc;
+using khtml::main_thread_realloc;
+using khtml::main_thread_free;
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
-// Why can't I find this in a header anywhere?  It's too bad we have
-// to wire knowledge of allocation sizes, but it makes a huge diffence.
-extern "C" int malloc_good_size(int size);
-
-#define ALLOC_QCHAR_GOOD_SIZE(X) (malloc_good_size(X*sizeof(QChar))/sizeof(QChar))
-#define ALLOC_CHAR_GOOD_SIZE(X) (malloc_good_size(X))
+#define ALLOC_QCHAR_GOOD_SIZE(X) (X)
+#define ALLOC_CHAR_GOOD_SIZE(X) (X)
 
 #ifdef QSTRING_DEBUG_ALLOCATIONS
 
@@ -93,7 +94,7 @@ static CFMutableDictionaryRef allocatedBuffers()
 
 static char *ALLOC_CHAR(int n)
 {
-    char *ptr = (char *)malloc(n);
+    char *ptr = (char *)main_thread_malloc(n);
 
     CFDictionarySetValue (allocatedBuffers(), ptr, (void *)n);
     
@@ -126,7 +127,7 @@ static void DELETE_CHAR(void *p)
 static QChar *ALLOC_QCHAR(int n)
 {
     size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)malloc(size);
+    QChar *ptr = (QChar *)main_thread_malloc(size);
 
     CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
     if (size >= ALLOCATION_HISTOGRAM_SIZE)
@@ -206,13 +207,13 @@ void _printQStringAllocationStatistics()
 
 #else
 
-#define ALLOC_CHAR( N ) (char*) malloc(N)
-#define REALLOC_CHAR( P, N ) (char *) realloc(P,N)
-#define DELETE_CHAR( P ) free(P)
+#define ALLOC_CHAR( N ) (char*) main_thread_malloc(N)
+#define REALLOC_CHAR( P, N ) (char *) main_thread_realloc(P,N)
+#define DELETE_CHAR( P ) main_thread_free(P)
 
-#define ALLOC_QCHAR( N ) (QChar*) malloc(sizeof(QChar)*( N ))
-#define REALLOC_QCHAR( P, N ) (QChar *) realloc(P,sizeof(QChar)*( N ))
-#define DELETE_QCHAR( P ) free( P )
+#define ALLOC_QCHAR( N ) (QChar*) main_thread_malloc(sizeof(QChar)*( N ))
+#define REALLOC_QCHAR( P, N ) (QChar *) main_thread_realloc(P,sizeof(QChar)*( N ))
+#define DELETE_QCHAR( P ) main_thread_free( P )
 
 #endif // QSTRING_DEBUG_ALLOCATIONS
 
@@ -757,14 +758,14 @@ void QString::setBufferFromCFString(CFStringRef cfs)
     UniChar fixedSizeBuffer[1024];
     UniChar *buffer;
     if (size > (CFIndex)(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-        buffer = (UniChar *)malloc(size * sizeof(UniChar));
+        buffer = (UniChar *)main_thread_malloc(size * sizeof(UniChar));
     } else {
         buffer = fixedSizeBuffer;
     }
     CFStringGetCharacters(cfs, CFRangeMake (0, size), buffer);
     setUnicode((const QChar *)buffer, (uint)size);
     if (buffer != fixedSizeBuffer) {
-        free(buffer);
+        main_thread_free(buffer);
     }
 }
 
@@ -2989,7 +2990,7 @@ static HandleNode *initializeHandleNodeBlock(HandlePageNode *pageNode)
 
 static HandlePageNode *allocatePageNode()
 {
-    HandlePageNode *node = (HandlePageNode *)malloc(sizeof(HandlePageNode));
+    HandlePageNode *node = (HandlePageNode *)main_thread_malloc(sizeof(HandlePageNode));
     node->next = node->previous = 0;
     node->nodes = initializeHandleNodeBlock(node);
     return node;

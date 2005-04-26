@@ -42,6 +42,7 @@
 #include <qapplication.h>
 
 #include "dom/dom_misc.h"
+#include "misc/main_thread_malloc.h"
 #include "misc/khtmllayout.h"
 #include "misc/shared.h"
 #include "rendering/font.h"
@@ -443,6 +444,8 @@ public:
     BackgroundLayer();
     ~BackgroundLayer();
 
+    MAIN_THREAD_ALLOCATED;
+
     CachedImage* backgroundImage() const { return m_image; }
     Length backgroundXPosition() const { return m_xPosition; }
     Length backgroundYPosition() const { return m_yPosition; }
@@ -591,6 +594,8 @@ struct ShadowData {
     ShadowData(const ShadowData& o);
     
     ~ShadowData() { delete next; }
+
+    MAIN_THREAD_ALLOCATED;
 
     bool operator==(const ShadowData& o) const;
     bool operator!=(const ShadowData &o) const {

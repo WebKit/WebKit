@@ -30,6 +30,7 @@
 
 #include "KWQCString.h"
 #include "WebCoreUnicode.h"
+#include "misc/main_thread_malloc.h"
 
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300
@@ -347,6 +348,8 @@ struct KWQStringData {
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     void* operator new(size_t s);
     void operator delete(void*p);
+#else
+    MAIN_THREAD_ALLOCATED;
 #endif
 
     inline void ref() { refCount++; }

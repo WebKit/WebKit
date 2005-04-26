@@ -1,3 +1,46 @@
+2005-04-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- use single-threaded malloc in places where malloc is hot for an
+	8% speed improvement on cvs-base
+
+        * ForwardingHeaders/misc/fast_malloc.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_base.h:
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.h:
+        * khtml/misc/arena.cpp:
+        (ArenaAllocate):
+        (FreeArenaList):
+        (ArenaFinish):
+        * khtml/misc/main_thread_malloc.cpp: Added.
+        * khtml/misc/main_thread_malloc.h: Added.
+        * khtml/rendering/render_style.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_traversalimpl.h:
+        * khtml/xml/dom2_viewsimpl.h:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::NamedAttrMapImpl):
+        (NamedAttrMapImpl::clearAttributes):
+        (NamedAttrMapImpl::operator=):
+        (NamedAttrMapImpl::addAttribute):
+        (NamedAttrMapImpl::removeAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_stringimpl.h:
+        * kwq/KWQFontFamily.h:
+        * kwq/KWQListImpl.mm:
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (ALLOC_CHAR):
+        (ALLOC_QCHAR):
+        (QString::setBufferFromCFString):
+        (allocatePageNode):
+
 2005-04-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Harrison.

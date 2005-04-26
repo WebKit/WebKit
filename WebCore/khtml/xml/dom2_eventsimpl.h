@@ -125,6 +125,8 @@ public:
     EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg);
     virtual ~EventImpl();
 
+    MAIN_THREAD_ALLOCATED;
+
     EventId id() const { return m_id; }
 
     DOMString type() const;
@@ -388,6 +390,8 @@ public:
     RegisteredEventListener(EventImpl::EventId _id, EventListener *_listener, bool _useCapture);
     ~RegisteredEventListener();
 
+    MAIN_THREAD_ALLOCATED;
+    
     bool operator==(const RegisteredEventListener &other);
 
     EventImpl::EventId id;
@@ -403,6 +407,9 @@ class ClipboardImpl : public khtml::Shared<ClipboardImpl> {
 public:
     ClipboardImpl();
     virtual ~ClipboardImpl();
+
+    MAIN_THREAD_ALLOCATED;
+    
     // Is this operation a drag-drop or a copy-paste?
     virtual bool isForDragging() const = 0;
 

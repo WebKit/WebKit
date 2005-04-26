@@ -26,6 +26,7 @@
 #include "dom/dom_misc.h"
 #include "css/css_valueimpl.h"
 #include "misc/shared.h"
+#include "misc/main_thread_malloc.h"
 
 namespace DOM {
 
@@ -40,6 +41,9 @@ class AbstractViewImpl : public khtml::Shared<AbstractViewImpl>
 public:
     AbstractViewImpl(DocumentImpl *_document);
     ~AbstractViewImpl();
+
+    MAIN_THREAD_ALLOCATED;
+    
     DocumentImpl *document() const { return m_document; }
     CSSStyleDeclarationImpl *getComputedStyle(ElementImpl *elt, DOMStringImpl *pseudoElt);
 protected:
