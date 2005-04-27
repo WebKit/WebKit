@@ -1,3 +1,23 @@
+2005-04-26  Adele Peterson  <adele@apple.com>
+
+        Fixed by Darin, reviewed by me.
+
+        Fix for <rdar://problem/4084029> designMode doesn't allow editing when iframe src = "" or = about:blank
+        
+        This change will add an HTML element for empty documents.  Now that there will be an HTMLDocument in this case, 
+        a body will also be created (see rdar://problem/3758785). This was preventing frames with empty documents from 
+        being editable.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::finished):
+
+        Updated these tests to expect the HTML and BODY elements
+        * layout-tests/fast/flexbox/016-expected.txt:
+        * layout-tests/fast/frames/001-expected.txt:
+        * layout-tests/fast/frames/002-expected.txt:
+        * layout-tests/fast/frames/contentWindow_Frame-expected.txt:
+        * layout-tests/fast/frames/contentWindow_iFrame-expected.txt:
+        * layout-tests/fast/frames/empty-frame-src-expected.txt:
+
 2005-04-26  Maciej Stachowiak  <mjs@apple.com>
 
         New test case for <rdar://problem/4092136> reproducible crash in KJS::kjs_fast_realloc loading maps.google.com

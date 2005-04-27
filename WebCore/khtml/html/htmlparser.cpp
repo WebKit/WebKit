@@ -1511,6 +1511,11 @@ void KHTMLParser::startBody()
 
 void KHTMLParser::finished()
 {
+    // In the case of a completely empty document, here's the place to create the HTML element.
+    if (current->isDocumentNode() && current->firstChild() == 0) {
+        insertNode(new HTMLHtmlElementImpl(document));
+    }
+
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();
     setCurrent(0);

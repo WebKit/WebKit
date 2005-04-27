@@ -15,6 +15,9 @@ layer at (0,0) size 812x585
         RenderPartObject {IFRAME} at (0,54) size 812x513 [bgcolor=#008000] [border: (10px solid #808000)]
           layer at (0,0) size 777x493
             RenderCanvas at (0,0) size 777x493
+          layer at (0,0) size 777x8
+            RenderBlock {HTML} at (0,0) size 777x8
+              RenderBody {BODY} at (8,8) size 761x0
         RenderBlock {DIV} at (0,567) size 800x18
           RenderText {TEXT} at (0,0) size 664x18
             text run at (0,0) width 407: "This footer should remain at the bottom of the browser window. "
