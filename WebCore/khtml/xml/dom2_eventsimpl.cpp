@@ -513,8 +513,8 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
   : UIEventWithKeyStateImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KEYPRESS_EVENT : KEYDOWN_EVENT,
     true, true, view, 0,
     key->state() & Qt::ControlButton,
-    key->state() & Qt::ShiftButton,
     key->state() & Qt::AltButton,
+    key->state() & Qt::ShiftButton,
     key->state() & Qt::MetaButton)
 {
 #if APPLE_CHANGES
@@ -547,11 +547,11 @@ KeyboardEventImpl::KeyboardEventImpl(EventId _id,
                                         const DOMString &keyIdentifierArg, 
                                         unsigned long keyLocationArg, 
                                         bool ctrlKeyArg, 
-                                        bool shiftKeyArg, 
                                         bool altKeyArg, 
+                                        bool shiftKeyArg, 
                                         bool metaKeyArg, 
                                         bool altGraphKeyArg)
-  : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, shiftKeyArg, altKeyArg, metaKeyArg)
+  : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
     m_keyEvent = 0;
     m_keyIdentifier = keyIdentifierArg.implementation();
@@ -575,8 +575,8 @@ void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
                         const DOMString &keyIdentifierArg, 
                         unsigned long keyLocationArg, 
                         bool ctrlKeyArg, 
-                        bool shiftKeyArg, 
                         bool altKeyArg, 
+                        bool shiftKeyArg, 
                         bool metaKeyArg, 
                         bool altGraphKeyArg)
 {

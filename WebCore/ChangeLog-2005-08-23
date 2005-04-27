@@ -1,3 +1,20 @@
+2005-04-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed problem with mouse wheel patch where alt and shift keys were switched
+
+        * khtml/xml/dom2_eventsimpl.h:
+        use the order cntl, alt, shift, meta in KeyboardEventImpl constructors to match
+        superclass. This isn't necessary to fix the bug, but is better for clarity.
+        
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (KeyboardEventImpl::KeyboardEventImpl):
+        switch parameter order to match superclass. Then pass the parameters to superclass's
+        constructor in the right order.
+        (KeyboardEventImpl::initKeyboardEvent):
+        Pass parameters to superclass's constructor in the right order.
+
 2005-04-26  Adele Peterson  <adele@apple.com>
 
         Fixed by Darin, reviewed by me.
