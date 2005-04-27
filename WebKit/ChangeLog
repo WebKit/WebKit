@@ -1,3 +1,19 @@
+2005-04-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Harrison.
+        
+        - fixed <rdar://problem/3547489> pop-up window blocking preference and 
+        menu item can easily get out of sync.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _setStringValue:forKey:]):
+        save local value before setting value in NSUserDefaults, so clients reacting to NSUserDefaults
+        change notification but calling back on WebPreferences API will see the updated value.
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        ditto
+        (-[WebPreferences _setBoolValue:forKey:]):
+        ditto
+
 2005-04-26  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla

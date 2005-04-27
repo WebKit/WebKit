@@ -241,9 +241,9 @@ NS_ENDHANDLER
 - (void)_setStringValue:(NSString *)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
+    [_private->values setObject:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
-    [_private->values setObject:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -257,9 +257,9 @@ NS_ENDHANDLER
 - (void)_setIntegerValue:(int)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
+    [_private->values _web_setInt:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
-    [_private->values _web_setInt:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -271,9 +271,9 @@ NS_ENDHANDLER
 - (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
+    [_private->values _web_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
-    [_private->values _web_setBool:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
