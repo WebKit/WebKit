@@ -1,3 +1,12 @@
+2005-04-26  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla
+
+        Reviewed by Chris.
+
+        * Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+
 2005-04-26  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

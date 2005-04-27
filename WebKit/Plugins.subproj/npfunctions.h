@@ -50,7 +50,7 @@ typedef bool (*NPN_SetPropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier  pr
 typedef bool (*NPN_HasPropertyProcPtr) (NPP, NPObject *npobj, NPIdentifier propertyName);
 typedef bool (*NPN_HasMethodProcPtr) (NPP npp, NPObject *npobj, NPIdentifier methodName);
 typedef bool (*NPN_RemovePropertyProcPtr) (NPP npp, NPObject *obj, NPIdentifier propertyName);
-typedef void (*NPN_SetExceptionProcPtr) (NPObject *obj, NPString *message);
+typedef void (*NPN_SetExceptionProcPtr) (NPObject *obj, const NPUTF8 *message);
 
 typedef NPError	(*NPP_NewProcPtr)(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
 typedef NPError	(*NPP_DestroyProcPtr)(NPP instance, NPSavedData** save);

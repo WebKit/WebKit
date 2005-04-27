@@ -50,7 +50,7 @@ extern bool _NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName
 extern bool _NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName);
 extern bool _NPN_HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName);
 extern bool _NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName);
-extern void _NPN_SetException(NPObject *obj, NPString *message);
+extern void _NPN_SetException(NPObject *obj, const NPUTF8 *message);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

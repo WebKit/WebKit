@@ -411,17 +411,13 @@ bool _NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
     return false;
 }
 
-void _NPN_SetException (NPObject *o, NPString *message)
+void _NPN_SetException (NPObject *o, const NPUTF8 *message)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
         ExecState *exec = obj->executionContext->interpreter()->globalExec();
         Interpreter::lock();
-        char *msg = (char *)malloc (message->UTF8Length + 1);
-        strncpy (msg, message->UTF8Characters, message->UTF8Length);
-        msg[message->UTF8Length] = 0;
-        Object err = Error::create(exec, GeneralError, msg);
-        free (msg);
+        Object err = Error::create(exec, GeneralError, message);
         exec->setException (err);
         Interpreter::unlock();
     }

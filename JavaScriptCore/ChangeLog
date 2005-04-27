@@ -1,3 +1,34 @@
+2005-04-26  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla
+	
+	We were incompatible with Mozilla's implementation of the scripting APIs in
+	two ways:
+
+	Their NPN_SetException has the following signature:
+
+            void NPN_SetException(NPObject *npobj, const NPUTF8 *message);
+
+	ours has:
+
+            void NPN_SetException (NPObject * npobj, const NPString *message);
+
+	Also, they expect the string returned from NPN_UTF8FromIdentifier() to be freed by caller.
+	We do not.
+
+	I changed both behaviors to match Mozilla.
+
+        Reviewed by Chris.
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_SetException):
+        * bindings/npruntime.cpp:
+        (_NPN_UTF8FromIdentifier):
+        (_NPN_IntFromIdentifier):
+        (_NPN_SetExceptionWithUTF8):
+        * bindings/npruntime.h:
+        * bindings/npruntime_impl.h:
+
 2005-04-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.

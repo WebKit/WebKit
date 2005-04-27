@@ -329,7 +329,7 @@ bool NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName);
     NPN_SetException may be called to trigger a script exception upon return
     from entry points into NPObjects.
 */
-void NPN_SetException (NPObject *obj, NPString *message);
+void NPN_SetException (NPObject *obj, const NPUTF8 *message);
 
 #ifdef __cplusplus
 }
