@@ -1,3 +1,10 @@
+2005-04-26  Maciej Stachowiak  <mjs@apple.com>
+
+        New test case for <rdar://problem/4092136> reproducible crash in KJS::kjs_fast_realloc loading maps.google.com
+
+        * layout-tests/fast/js/string-from-char-code-expected.txt: Added.
+        * layout-tests/fast/js/string-from-char-code.html: Added.
+
 2005-04-26  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
