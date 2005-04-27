@@ -25,11 +25,15 @@
 
 #import "KWQTextArea.h"
 
+#import "DOMHTML.h"
+#import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "KWQTextEdit.h"
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
+
+// #define ALLOW_RESIZING_TEXTAREAS 1
 
 using DOM::EventImpl;
 using DOM::NodeImpl;
@@ -63,6 +67,12 @@ using khtml::RenderWidget;
 @interface NSTextStorage (KWQTextArea)
 - (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction;
 @end
+
+#if ALLOW_RESIZING_TEXTAREAS
+@interface KWQTextArea (KWQTextAreaTextView)
+- (void)getNumColumns:(long*)numColumns andNumRows:(long*)numRows forSize:(NSSize)frameSize;
+@end
+#endif
 
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
@@ -554,10 +564,38 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 @end
 
+#if ALLOW_RESIZING_TEXTAREAS
+@implementation KWQTextArea (KWQTextAreaTextView)
+
+- (void)getNumColumns:(long*)numColumns andNumRows:(long*)numRows forSize:(NSSize)frameSize
+{
+    ASSERT_ARG(numColumns, numColumns != nil);
+    ASSERT_ARG(numRows, numRows != nil);
+    NSSize textViewSize = [[self class] contentSizeForFrameSize:frameSize
+                                          hasHorizontalScroller:[self hasHorizontalScroller]
+                                            hasVerticalScroller:[self hasVerticalScroller]
+                                                     borderType:[self borderType]];
+    NSSize textContainerInset = [textView textContainerInset];
+    NSSize textContainerSize = NSMakeSize(textViewSize.width - textContainerInset.width, textViewSize.height - textContainerInset.width);
+    NSSize textSize = NSMakeSize(textContainerSize.width - [[textView textContainer] lineFragmentPadding] * 2, textContainerSize.height);
+    *numColumns = (long)(textSize.width/[_font widthOfString:@"0"]);
+    *numRows = (long)(textSize.height/[_font defaultLineHeightForFont]);
+}
+
+@end
+#endif
+
 @implementation KWQTextAreaTextView
 
 static BOOL _spellCheckingInitiallyEnabled = NO;
 static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
+
+#if ALLOW_RESIZING_TEXTAREAS
+const long MinimumColsWhileResizing = 10;
+const long MinimumRowsWhileResizing = 2;
+const float ResizeCornerWidth = 16;
+const float ResizeCornerHeight = 16;
+#endif
 
 + (void)_setContinuousSpellCheckingEnabledForNewTextAreas:(BOOL)flag
 {
@@ -695,10 +733,74 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     return widget;
 }
 
+#if ALLOW_RESIZING_TEXTAREAS
+- (void)_trackResizeFromMouseDown:(NSEvent *)event
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    DOMHTMLTextAreaElement *element = [bridge elementForView:self];
+    ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
+    
+    long minCols = kMin([element cols], MinimumColsWhileResizing);
+    long minRows = kMin([element rows], MinimumRowsWhileResizing);
+    
+    // FIXME: there has got to be a better way to find the textarea view.
+    KWQTextArea *textArea = [[self superview] superview];
+    ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
+    
+    NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSSize initialTextAreaSize = [textArea frame].size;
+
+    for (;;) {
+        if ([event type] == NSRightMouseDown || [event type] == NSRightMouseUp) {
+            // Ignore right mouse button events and remove them from the queue.
+        } else {
+            NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+            if ([event type] == NSLeftMouseUp) {
+                break;
+            }
+
+            // FIXME: ideally we'd autoscroll the window as necessary to keep the point under
+            // the cursor in view.
+            NSSize newTextAreaSize = NSMakeSize(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x), 
+                                                initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y));
+            long newCols, newRows;
+            [textArea getNumColumns:&newCols andNumRows:&newRows forSize:newTextAreaSize];
+            [element setCols:kMax(newCols, minCols)];
+            [element setRows:kMax(newRows, minRows)];
+            [bridge part]->forceLayout();
+        }
+        
+        // Go get the next event.
+        event = [[self window] nextEventMatchingMask:
+            NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSRightMouseDownMask | NSRightMouseUpMask];
+    }    
+}
+#endif
+
 - (void)mouseDown:(NSEvent *)event
 {
     if (disabled)
         return;
+    
+#if ALLOW_RESIZING_TEXTAREAS
+    NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+    // FIXME: visibleRect works here as long as there are no views overlapping the NSTextView.
+    // Might be safer to compute the rect of the document that's visible in the scrollview
+    // FIXME: At minimum, need a cursor change over the "hot resize corner". Maybe the right design
+    // is to only have a resize corner when a scroll bar is present, and put it in the bottom-right
+    // corner (below and/or to the right of  the scroll bar?).
+    // FIXME: With this "bottom right corner" design, we'd need to distinguish between a click in text
+    // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
+    // FIXME: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
+    // to drag the bottom-right corner to make the bottom-left corner move.
+    NSRect visibleRect = [self visibleRect];
+    BOOL inResizeCorner = NSPointInRect(localPoint, NSMakeRect(NSMaxX(visibleRect) - ResizeCornerWidth, NSMaxY(visibleRect) - ResizeCornerHeight, ResizeCornerWidth, ResizeCornerHeight));
+    if (inResizeCorner) {
+        [self _trackResizeFromMouseDown:event];
+        return;
+    }
+#endif
+    
     [super mouseDown:event];
     if (widget) {
         widget->sendConsumedMouseUp();

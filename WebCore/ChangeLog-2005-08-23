@@ -1,5 +1,30 @@
 2005-04-27  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin.
+        
+        Experimental prototype of user-resizable textareas. All the new code is guarded by
+        #if ALLOW_RESIZING_TEXTAREAS, which is false unless you remove a comment and rebuild.
+        
+        This code allows you to press near the bottom-right corner of any textarea and drag
+        to resize the textarea on the page. It works correctly with textareas in left-aligned
+        or centered blocks, but is weird in right-aligned blocks. It also does something
+        sensible if the width is specified as a % (in that case, you can resize vertically only).
+        The user-created-size survives resizing the window and survives the back/forward cache.
+        It does not survive reloading the page.
+        
+        This complete-lack-of-affordance UI is obviously not shippable, but this proof of concept
+        code could lead to a real user feature.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea getNumColumns:andNumRows:forSize:]):
+        new method that determines cols and rows for a given textarea frame size
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        new method that tracks a drag and does a live resize-and-relayout
+        (-[KWQTextAreaTextView mouseDown:]):
+        if the mouse down is in the bottom-right corner, call _trackResizeFromMouseDown:
+
+2005-04-27  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Adele.
 
         - fixed problem with mouse wheel patch where alt and shift keys were switched
