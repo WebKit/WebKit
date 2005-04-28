@@ -1,3 +1,27 @@
+2005-04-27 Adele Peterson  <adele@apple.com>
+
+        Rolling out fix for <rdar://problem/4097849> because the following layout tests were failing:
+
+        fast/css/namespaces/001
+        fast/css/namespaces/002
+        fast/css/namespaces/004
+        fast/css/namespaces/005
+        fast/css/namespaces/006
+        fast/overflow/003
+        
+
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::namespaceURI):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode):
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::createHTMLElement):
+        (DocumentImpl::attrId):
+        (DocumentImpl::tagId):
+        * khtml/xml/dom_docimpl.h:
+
 2005-04-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
