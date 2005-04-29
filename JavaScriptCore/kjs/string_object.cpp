@@ -318,17 +318,16 @@ static Value replace(ExecState *exec, const UString &source, const Value &patter
     delete [] replacements;
 
     return String(result);
-  } else { // First arg is a string
-    UString patternString = pattern.toString(exec);
-    int matchPos = source.find(patternString);
-    int matchLen = patternString.size();
-    // Do the replacement
-    if (matchPos == -1)
-      return String(source);
-    else {
-      return String(source.substr(0, matchPos) + replacement.toString(exec) + source.substr(matchPos + matchLen));
-    }
   }
+  
+  // First arg is a string
+  UString patternString = pattern.toString(exec);
+  int matchPos = source.find(patternString);
+  int matchLen = patternString.size();
+  // Do the replacement
+  if (matchPos == -1)
+    return String(source);
+  return String(source.substr(0, matchPos) + replacement.toString(exec) + source.substr(matchPos + matchLen));
 }
 
 // ECMA 15.5.4.2 - 15.5.4.20

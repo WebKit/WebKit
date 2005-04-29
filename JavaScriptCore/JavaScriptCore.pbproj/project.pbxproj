@@ -147,7 +147,9 @@
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/JavaScriptCore.order";
 				STYLE_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
 				USE_GCC3_PFE_SUPPORT = YES;
-				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double";
+				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS) -Wmissing-prototypes";
+				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wno-long-double";
+				WARNING_CPLUSPLUSFLAGS = "$(WARNING_COMMONFLAGS)";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (

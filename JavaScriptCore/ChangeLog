@@ -1,3 +1,32 @@
+2005-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        - fixed problems preventing us from compiling with gcc 4.0
+
+        * JavaScriptCore.pbproj/project.pbxproj: Removed -Wmissing-prototypes from
+        WARNING_CPLUSPLUSFLAGS since it's now a C-only warning.
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::getSlot): Changed some %d to %ld where the parameters where long ints.
+        (JSObject::setSlot): Ditto.
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJavaVM): Ditto.
+        (KJS::Bindings::getJNIEnv): Ditto.
+        * bindings/objc/objc_utility.mm: Fixed include of <JavascriptCore/internal.h> that needed the
+        letter "S" capitalized.
+        * kjs/bool_object.cpp: (BooleanProtoFuncImp::call): Rearranged how this function returns to
+        avoid incorrect gcc 4.0 warning.
+        * kjs/collector.cpp: (KJS::Collector::markStackObjectsConservatively): Changed code to check
+        the alignment of the passed-in pointers to only require pointer-level alignment, not 8-byte alignment.
+        Prevents a crash on garbage collect when compiled with gcc 4.0.
+        * kjs/nodes.cpp:
+        (WhileNode::execute): Added a redundant return after an infinite loop to work around incorrect gcc 4.0 warning.
+        (ForNode::execute): Ditto.
+        (SwitchNode::execute):Rearranged how this function returns to avoid incorrect gcc 4.0 warning.
+        (LabelNode::execute): Ditto.
+        * kjs/string_object.cpp: (replace): Ditto.
+
 2005-04-26  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4098713> Scripting API is incompatible with Mozilla

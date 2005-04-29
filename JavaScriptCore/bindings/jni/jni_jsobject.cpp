@@ -254,7 +254,7 @@ void JSObject::removeMember(jstring memberName) const
 
 jobject JSObject::getSlot(jint index) const
 {
-    JS_LOG ("index = %d\n", index);
+    JS_LOG ("index = %ld\n", index);
 
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();
@@ -267,7 +267,7 @@ jobject JSObject::getSlot(jint index) const
 
 void JSObject::setSlot(jint index, jobject value) const
 {
-    JS_LOG ("index = %d, value = %p\n", index, value);
+    JS_LOG ("index = %ld, value = %p\n", index, value);
 
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();

@@ -24,7 +24,7 @@
  */
 #include <Foundation/Foundation.h>
 
-#include <JavascriptCore/internal.h>
+#include <JavaScriptCore/internal.h>
 
 #include <objc_instance.h>
 #include <objc_utility.h>

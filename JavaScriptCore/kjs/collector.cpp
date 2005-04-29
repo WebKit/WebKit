@@ -214,9 +214,10 @@ void Collector::registerThread()
   }
 }
 
+#define IS_POINTER_ALIGNED(p) (((int)(p) & (sizeof(char *) - 1)) == 0)
 
-// cells are 8-byte aligned 
-#define IS_POINTER_ALIGNED(p) (((int)(p) & 7) == 0)
+// cells are 8-byte aligned
+#define IS_CELL_ALIGNED(p) (((int)(p) & 7) == 0)
 
 void Collector::markStackObjectsConservatively(void *start, void *end)
 {
@@ -235,7 +236,7 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   
   while (p != e) {
     char *x = *p++;
-    if (IS_POINTER_ALIGNED(x) && x) {
+    if (IS_CELL_ALIGNED(x) && x) {
       bool good = false;
       for (int block = 0; block < heap.usedBlocks; block++) {
 	size_t offset = x - (char *)heap.blocks[block];
