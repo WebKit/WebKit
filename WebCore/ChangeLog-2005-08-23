@@ -1,3 +1,19 @@
+2005-04-29  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4083333> When deleting link at end of sentence, entire sentence gets deleted
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        Work around bug #4103339 (whose real fix is somewhat risky), so this fix can get into a software update.
+        
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        Add isAncestor check when comparing m_downstreamEnd.node() and m_startNode.
+
+        * layout-tests/editing/deleting/delete-4083333-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-4083333-fix.html: Added.
+
 2005-04-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.
