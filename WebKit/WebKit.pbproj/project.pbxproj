@@ -158,7 +158,7 @@
 				LOCAL_SEG1_ADDR = 0x7000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OPTIMIZATION_CFLAGS = "-Os";
-				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit -fobjc-exceptions";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
 				OTHER_LDFLAGS = "$(COMMON_LDFLAGS) -sub_umbrella WebCore -sub_umbrella JavaScriptCore";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
@@ -167,7 +167,7 @@
 				TIGER_FRAMEWORKS_LDFLAGS = "-framework \"`if [ -f /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils ]; then echo \\\"security_cdsa_utils\\\"; else echo \\\"System\\\"; fi`\"";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wbad-function-cast -Wmissing-declarations -Wnested-externs";
-				WARNING_CPLUSPLUSFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				WARNING_CPLUSPLUSFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (

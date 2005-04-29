@@ -727,7 +727,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     }
 }
 
-- pageCache
+- (NSMutableDictionary *)pageCache
 {
     return _private->pageCache;
 }

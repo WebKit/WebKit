@@ -49,8 +49,6 @@
 #define NO_BREAK_SPACE 0x00A0
 #define ZERO_WIDTH_SPACE 0x200B
 
-#define ROUND_TO_INT(x) (int)((x)+.5)
-
 // Lose precision beyond 1000ths place. This is to work around an apparent
 // bug in CoreGraphics where there seem to be small errors to some metrics.
 #define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
@@ -876,7 +874,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     spaceWidth = width;
 
     treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:font];
-    adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : ROUND_TO_INT(width);
+    adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : (int)ROUND_TO_INT(width);
     
     return YES;
 }
@@ -925,7 +923,7 @@ static NSString *pathFromFont (NSFont *font)
         if (err == noErr){
             status = FSRefMakePath(&fileRef,_filePathBuffer, PATH_MAX);
             if (status == noErr){
-                filePath = [NSString stringWithUTF8String:&_filePathBuffer[0]];
+                filePath = [NSString stringWithUTF8String:(const char *)&_filePathBuffer[0]];
             }
         }
     }

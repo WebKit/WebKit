@@ -1,3 +1,33 @@
+2005-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed problems preventing us from compiling with gcc 4.0
+
+        * WebKit.pbproj/project.pbxproj: Removed -fobjc-exceptions because I can't figure out an easy
+        way to pass it only when compiling Objective-C/C++. Removed -Wmissing-prototypes from
+        WARNING_CPLUSPLUSFLAGS since it's now a C-only warning.
+
+        * History.subproj/WebHistoryItem.m: (-[WebHistoryItem pageCache]): Changed return type
+        to match the declaration.
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]):
+        Fixed a BOOL that should have been a Boolean.
+        * WebCoreSupport.subproj/WebTextRenderer.m: Removed redundant copy of ROUND_TO_INT, also in
+        a WebCore header.
+        (-[WebTextRenderer _computeWidthForSpace]): Had to add cast because of difference in type of
+        ROUND_TO_INT vs. CEIL_TO_INT.
+        (pathFromFont): Added a cast to convert UInt8 * to char *.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _setDocumentView:]): Fixed parameter type to match the declaration.
+        (-[WebFrameView documentView]): Fixed return type to match the declaration.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        Initialized a variable to quiet an incorrect gcc 4.0 uninitialized variable warning.
+        (-[WebHTMLView deleteToMark:]): Switched from @try style to NS_DURING style of exception handler
+        because we can't pass -fobjc-exceptions just to Objective-C at the moment (see above).
+        (-[WebHTMLView selectToMark:]): Ditto.
+        (-[WebHTMLView swapWithMark:]): Ditto.
+
 2005-04-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Harrison.
