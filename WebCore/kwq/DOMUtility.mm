@@ -33,14 +33,21 @@
 // This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
 // headers are included to avoid naming conflicts.
 
-void *KJS::ScriptInterpreter::createObjcInstanceForValue (ExecState *exec, const Object &value, const KJS::Bindings::RootObject *origin, const KJS::Bindings::RootObject *current)
+inline id createObjCDOMNode(DOM::NodeImpl *node)
 {
-    if (value.inherits(&KJS::DOMNode::info)) {
-	KJS::DOMNode *imp = static_cast<KJS::DOMNode *>(value.imp());
+    return [DOMNode _nodeWithImpl:node];
+}
+
+namespace KJS {
+
+void *ScriptInterpreter::createObjcInstanceForValue (ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+{
+    if (value.inherits(&DOMNode::info)) {
+	DOMNode *imp = static_cast<DOMNode *>(value.imp());
 	DOM::Node node = imp->toNode();
 
-	id newObjcNode = [DOMNode _nodeWithImpl:node.handle()];
-	KJS::ObjectImp *scriptImp = static_cast<KJS::ObjectImp *>(KJS::getDOMNode (exec, node).imp());
+	id newObjcNode = createObjCDOMNode(node.handle());
+	ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, node).imp());
 
 	[newObjcNode _initializeWithObjectImp:scriptImp originExecutionContext:origin executionContext:current];
 	
@@ -49,3 +56,4 @@ void *KJS::ScriptInterpreter::createObjcInstanceForValue (ExecState *exec, const
     return 0;
 }
 
+}

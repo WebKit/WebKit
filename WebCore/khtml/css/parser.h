@@ -12,6 +12,7 @@ typedef union {
     int element;
     CSSSelector::Relation relation;
     bool b;
+    int i;
     char tok;
     Value value;
     ValueList *valueList;

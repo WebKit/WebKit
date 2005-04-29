@@ -155,8 +155,8 @@
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/WebCore.order";
 				USE_GCC3_PFE_SUPPORT = YES;
-				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS)";
-				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS) -Wmissing-prototypes";
+				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WARNING_CPLUSPLUSFLAGS = "$(WARNING_COMMONFLAGS)";
 				WRAPPER_EXTENSION = framework;
 			};

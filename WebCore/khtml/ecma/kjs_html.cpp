@@ -4125,8 +4125,8 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
 
-            float w;
-            float h;
+            float w = 0; // quiet incorrect gcc 4.0 warning
+            float h = 0; // quiet incorrect gcc 4.0 warning
             QPixmap pixmap;
             CGContextRef sourceContext = 0;
             

@@ -97,6 +97,7 @@ static inline int getValueID(const char *tagStr, int len)
     int element;
     CSSSelector::Relation relation;
     bool b;
+    int i;
     char tok;
     Value value;
     ValueList *valueList;
@@ -219,8 +220,8 @@ static int cssyylex( YYSTYPE *yylval ) {
 
 %type <b> prio
 
-%type <val> match
-%type <val> unary_operator
+%type <i> match
+%type <i> unary_operator
 %type <tok> operator
 
 %type <valueList> expr

@@ -1029,24 +1029,24 @@ void Selection::debugPosition() const
         Position pos = m_start;
         Position upstream = pos.upstream();
         Position downstream = pos.downstream();
-        fprintf(stderr, "upstream:   %s %p:%d\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
-        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
-        fprintf(stderr, "downstream: %s %p:%d\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
+        fprintf(stderr, "upstream:   %s %p:%ld\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
+        fprintf(stderr, "pos:        %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "downstream: %s %p:%ld\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
     }
     else {
         Position pos = m_start;
         Position upstream = pos.upstream();
         Position downstream = pos.downstream();
-        fprintf(stderr, "upstream:   %s %p:%d\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
-        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
-        fprintf(stderr, "downstream: %s %p:%d\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
+        fprintf(stderr, "upstream:   %s %p:%ld\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
+        fprintf(stderr, "start:      %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "downstream: %s %p:%ld\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
         fprintf(stderr, "-----------------------------------\n");
         pos = m_end;
         upstream = pos.upstream();
         downstream = pos.downstream();
-        fprintf(stderr, "upstream:   %s %p:%d\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
-        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
-        fprintf(stderr, "downstream: %s %p:%d\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
+        fprintf(stderr, "upstream:   %s %p:%ld\n", upstream.node()->nodeName().string().latin1(), upstream.node(), upstream.offset());
+        fprintf(stderr, "end:        %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "downstream: %s %p:%ld\n", downstream.node()->nodeName().string().latin1(), downstream.node(), downstream.offset());
         fprintf(stderr, "-----------------------------------\n");
     }
           

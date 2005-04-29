@@ -285,6 +285,8 @@ __ZNK8QCString6lengthEv
 __ZNK8QCString7isEmptyEv
 __ZNK8QCString8containsEcb
 __ZNK9QDateTime6secsToERKS_
+__ZTI10KWQMapImpl
+__ZTI14QPtrCollection
 __ZTV14QPtrCollection
 __ZeqRK5QRectS1_
 __ZeqRK5QSizeS1_

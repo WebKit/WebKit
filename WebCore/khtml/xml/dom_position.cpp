@@ -665,7 +665,7 @@ void Position::debugPosition(const char *msg) const
     if (isNull())
         fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().string().latin1(), node(), offset());
+        fprintf(stderr, "Position [%s]: %s [%p] at %ld\n", msg, node()->nodeName().string().latin1(), node(), offset());
 }
 
 #ifndef NDEBUG

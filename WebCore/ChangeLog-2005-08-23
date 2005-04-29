@@ -1,5 +1,51 @@
 2005-04-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave Harrison.
+
+        - fixed problems preventing us from compiling with gcc 4.0
+
+        * WebCore.pbproj/project.pbxproj: Removed -fobjc-exceptions because I can't figure out an easy
+        way to pass it only when compiling Objective-C/C++. Removed -Wmissing-prototypes from
+        WARNING_CPLUSPLUSFLAGS since it's now a C-only warning.
+
+        * khtml/css/parser.y: Changed some rules that were using a float to pass around an enum to use an
+        int instead to avoid a warning.
+        * khtml/css/parser.cpp: Regenerated.
+        * khtml/css/parser.h: Regenerated.
+
+        * khtml/ecma/kjs_dom.cpp: (DOMTextProtoFunc::tryCall): Rearranged a return statement to avoid an incorrect
+        warning.
+        * khtml/ecma/kjs_html.cpp: (KJS::Context2DFunction::tryCall): Initialized a couple of variables to avoid
+        an incorrect warning.
+        * khtml/ecma/kjs_proxy.cpp: (KJSProxyImpl::evaluate): Rearranged how we exit from the function to avoid
+        an incorret warning.
+        * khtml/editing/selection.cpp: (khtml::Selection::debugPosition): Changed some %d to %ld where the
+        parameters where long ints.
+        * khtml/editing/visible_position.cpp: (khtml::VisiblePosition::debugPosition): Ditto.
+        * khtml/xml/dom_position.cpp: (DOM::Position::debugPosition): Ditto.
+        * kwq/DOMEvents.mm: (-[DOMMouseEvent initMouseEvent:::::::::::::::]): Rearranged code to avoid a cast
+        that was causing an incorrect warning.
+        * kwq/DOMUtility.mm:
+        (createObjCDOMNode): Broke out as a separate function.
+        (KJS::ScriptInterpreter::createObjcInstanceForValue): Rearranged code to avoid a namespace collision with
+        KJS::DOMNode and the Objective-C DOMNode class.
+        * kwq/KWQFileButton.mm: Made fields of KWQFileButtonAdapter public to avoid an error, new to gcc 4.0,
+        about accessing protected Objective-C fields.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::matchLabelsAgainstElement): Rearranged a return statement to avoid an incorrect warning.
+        (KWQKHTMLPart::imageFromRect): Rearranged how this function does its exception handling to avoid a
+        "may be clobbered" warning.
+        * kwq/KWQKJavaAppletWidget.mm: Fixed incorrect import that said "KHTMLView.h" instead of "khtmlview.h".
+        * kwq/KWQObject.mm: Made fields of KWQObjectTimerTarget public to avoid an error, new to gcc 4.0,
+        about accessing protected Objective-C fields.
+        * kwq/WebCoreBridge.mm: (partHasSelection): Used [bridge part] instead of getting directly at instance
+        variable to avoid an error, new to gcc 4.0, about accessing protected Objective-C fields.
+
+        * WebCore-combined.exp: Regenerated.
+        * WebCore-tests.exp: Added some additional symbols needed by the tests under gcc 4.0.
+
+2005-04-28  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Add back the main_thread_malloc files, rolled out by accident.
 
 2005-04-27 Adele Peterson  <adele@apple.com>

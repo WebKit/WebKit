@@ -198,10 +198,11 @@ ALLOW_DOM_CAST(EventImpl)
 
 - (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
+    DOMNode *relatedTarget = relatedTargetArg;
     [self _mouseEventImpl]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
         [viewArg _abstractViewImpl], detailArg, screenXArg, screenYArg, clientX, clientY,
         shiftKeyArg, ctrlKeyArg, altKeyArg, metaKeyArg, buttonArg,
-        [static_cast<DOMNode *>(relatedTargetArg) _nodeImpl]);
+        [relatedTarget _nodeImpl]);
 }
 
 @end

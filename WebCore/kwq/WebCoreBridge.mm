@@ -201,7 +201,7 @@ static BOOL partHasSelection(WebCoreBridge *bridge)
     if (!bridge)
         return NO;
     
-    KHTMLPart *part = bridge->_part;
+    KHTMLPart *part = [bridge part];
     if (!part)
         return NO;
         

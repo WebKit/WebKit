@@ -34,6 +34,7 @@
 
 @interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
 {
+@public
     KWQFileButton *button;
 }
 

@@ -595,9 +595,8 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
 
     if (bestPos != -1) {
         return name.mid(bestPos, bestLength).getNSString();
-    } else {
-        return nil;
     }
+    return nil;
 }
 
 // Search from the end of the currently selected location if we are first responder, or from
@@ -3375,11 +3374,11 @@ NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
         return nil;
     }
     
-    NSRect bounds = [view bounds];
-    NSImage *resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
-    
     KWQ_BLOCK_EXCEPTIONS;
     
+    NSRect bounds = [view bounds];
+    NSImage *resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
+
     if (rect.size.width != 0 && rect.size.height != 0) {
         [resultImage setFlipped:YES];
         [resultImage lockFocus];
@@ -3406,10 +3405,12 @@ NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
         [resultImage unlockFocus];
         [resultImage setFlipped:NO];
     }
-    
+
+    return resultImage;
+
     KWQ_UNBLOCK_EXCEPTIONS;
     
-    return resultImage;
+    return nil;
 }
 
 NSImage *KWQKHTMLPart::selectionImage() const

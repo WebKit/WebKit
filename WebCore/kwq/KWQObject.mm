@@ -42,6 +42,7 @@ static bool deferringTimers;
 
 @interface KWQObjectTimerTarget : NSObject
 {
+@public
     QObject *target;
     int timerId;
     NSTimeInterval remainingTime;
