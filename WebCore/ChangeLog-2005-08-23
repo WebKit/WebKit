@@ -1,3 +1,9 @@
+2005-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Harrison.
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::displayNode): Turn newlines into \n for better dumping.
+
 2005-04-29  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

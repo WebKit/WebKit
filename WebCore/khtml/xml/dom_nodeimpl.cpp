@@ -1535,14 +1535,18 @@ NodeImpl::Id NodeImpl::identifier() const
 #endif
 
 #ifndef NDEBUG
+
 void NodeImpl::displayNode(const char *prefix)
 {
     if (!prefix)
         prefix = "";
-    if (isTextNode())
-        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().string().latin1(), this, nodeValue().string().latin1());
-    else
-        fprintf(stderr, "%s%s\t%p\n", prefix, nodeName().string().latin1(), this);
+    if (isTextNode()) {
+        QString value = nodeValue().string();
+        value.replace('\\', "\\\\");
+        value.replace('\n', "\\n");
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().string().local8Bit().data(), this, value.local8Bit().data());
+    } else
+        fprintf(stderr, "%s%s\t%p\n", prefix, nodeName().string().local8Bit().data(), this);
 }
 
 void NodeImpl::displayTree()
@@ -1573,6 +1577,7 @@ void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
           
     strncpy(buffer, result.string().latin1(), length - 1);
 }
+
 #endif
 
 //-------------------------------------------------------------------------
