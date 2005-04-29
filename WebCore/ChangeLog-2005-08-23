@@ -1,3 +1,17 @@
+2005-04-28  Darin Adler  <darin@apple.com>
+
+        * WebCore.pbproj/project.pbxproj: Add back the main_thread_malloc files, rolled out by accident.
+
+2005-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed security for new frameElement feature (fix for 4091082 below)
+
+        * khtml/ecma/kjs_window.cpp:
+        (frameElement): Refactored into separate function; added isSafeScript check.
+        (Window::get): Call the new frameElement function.
+
 2005-04-27 Adele Peterson  <adele@apple.com>
 
         Rolling out fix for <rdar://problem/4097849> because the following layout tests were failing:
