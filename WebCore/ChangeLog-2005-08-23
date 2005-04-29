@@ -1,3 +1,40 @@
+2005-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        Added two layout tests for regression testing.
+
+        - fixed <rdar://problem/4097849> REGRESSION (162-163): importNode creates non-HTML elements, thus style attributes (and some others) don't work
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode): Reorganized and partly rewrote this. The change that fixes the bug at
+        hand is to explicitly use XHTML_NAMESPACE for HTML elements, since the old way of getting the namespace
+        will return the null string for HTML elements, and createElementNS will not create an HTML element
+        if passed a null string for the namespace.
+        (DocumentImpl::processHttpEquiv): Removed some bogus getDocument() calls -- no need to call getDocument()
+        in a document object.
+        (DocumentImpl::attrName): Ditto.
+        (DocumentImpl::tagName): Ditto.
+        (DocumentImpl::setFocusNode): Ditto.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::cloneNode): Moved the actual cloning here
+        from ElementImpl::cloneNode, because XMLElementImpl already had its own version, and in here
+        we can use createHTMLElement, which will work properly even in an XML document, and is also slightly
+        more efficient.
+
+        * khtml/xml/dom_nodeimpl.h: Added a namespaceURI method function to go along with localName.
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::namespaceURI): Added. Returns null string to be consistent
+        with localName (only works on certain types of elements as documented).
+        * khtml/xml/dom_elementimpl.h: Removed ElementImpl::cloneNode (see above). Added an override of
+        namespaceURI for XMLElementImpl.
+        * khtml/xml/dom_elementimpl.cpp: (XMLElementImpl::namespaceURI): Added. Returns the namespace
+        (consistent with localName).
+
+        * layout-tests/fast/dom/importNodeHTML.html: Added. Tests both importNode and cloneNode (for comparison).
+        * layout-tests/fast/dom/importNodeHTML-expected.txt: Added.
+        * layout-tests/fast/dom/importNodeXML.xhtml: Added. XML version of the same test as above. Tests a different
+        code path, so useful to have.
+        * layout-tests/fast/dom/importNodeXML-expected.txt: Added.
+
 2005-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.

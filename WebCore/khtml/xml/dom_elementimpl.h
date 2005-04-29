@@ -176,7 +176,7 @@ public:
     // DOM methods overridden from  parent classes
     virtual DOMString tagName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep );
+    virtual NodeImpl *cloneNode ( bool deep ) = 0;
     virtual DOMString nodeName() const;
     virtual bool isElementNode() const { return true; }
     virtual void insertedIntoDocument();
@@ -252,7 +252,7 @@ public:
     ~XMLElementImpl();
 
     // DOM methods overridden from  parent classes
-
+    virtual DOMString namespaceURI() const;
     virtual DOMString localName() const;
     virtual NodeImpl *cloneNode ( bool deep );
 
