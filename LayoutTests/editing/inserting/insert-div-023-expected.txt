@@ -35,7 +35,4 @@ layer at (0,0) size 800x688
       RenderBlock {P} at (0,600) size 784x56 [border: (2px solid #0000FF)]
         RenderText {TEXT} at (14,14) size 55x28
           text run at (14,14) width 55: "line 3"
-selection is CARET:
-start:      position 1 of child 1 {TEXT} of child 1 {B} of child 12 {P} of root {BODY}
-upstream:   position 1 of child 1 {TEXT} of child 1 {B} of child 12 {P} of root {BODY}
-downstream: position 1 of child 1 {TEXT} of child 1 {B} of child 12 {P} of root {BODY}
+caret: position 1 of child 0 {TEXT} of child 0 {B} of child 11 {P} of child 1 {BODY} of child 0 {HTML} of document

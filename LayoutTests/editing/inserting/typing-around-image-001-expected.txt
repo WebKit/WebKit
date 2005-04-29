@@ -18,7 +18,4 @@ layer at (0,0) size 800x600
           RenderImage {IMG} at (292,14) size 76x103
           RenderText {TEXT} at (368,95) size 36x28
             text run at (368,95) width 36: "xxx"
-selection is CARET:
-start:      position 3 of child 8 {TEXT} of child 2 {SPAN} of root {DIV}
-upstream:   position 3 of child 8 {TEXT} of child 2 {SPAN} of root {DIV}
-downstream: position 3 of child 8 {TEXT} of child 2 {SPAN} of root {DIV}
+caret: position 3 of child 7 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

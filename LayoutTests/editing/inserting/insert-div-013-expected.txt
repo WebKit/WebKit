@@ -20,7 +20,4 @@ layer at (0,0) size 800x600
           text run at (14,14) width 32: "foo"
       RenderBlock {DIV} at (0,260) size 784x56 [border: (2px solid #FF0000)]
         RenderBR {BR} at (14,14) size 0x28
-selection is CARET:
-start:      position 0 of child 6 {TEXT} of root {BODY}
-upstream:   position 0 of child 6 {TEXT} of root {BODY}
-downstream: position 0 of child 6 {TEXT} of root {BODY}
+caret: position 0 of child 5 {TEXT} of child 1 {BODY} of child 0 {HTML} of document

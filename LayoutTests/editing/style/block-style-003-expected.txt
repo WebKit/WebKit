@@ -19,10 +19,5 @@ layer at (0,0) size 800x600
             text run at (486,14) width 89: "centered"
         RenderText {TEXT} at (575,14) size 6x28
           text run at (575,14) width 6: "."
-selection is RANGE:
-start:      position 1 of child 1 {TEXT} of child 1 {DIV} of root {BODY}
-upstream:   position 0 of child 1 {DIV} of root {BODY}
-downstream: position 1 of child 1 {TEXT} of child 1 {DIV} of root {BODY}
-end:        position 12 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
-upstream:   position 12 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
-downstream: position 12 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
+selection start: position 1 of child 0 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 12 of child 0 {TEXT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

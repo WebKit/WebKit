@@ -1,5 +1,17 @@
 2005-04-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave Harrison.
+
+        - changed layout tests to dump more minimal information about caret and selection
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (nodePosition): Changed name; now does position relative to document.
+        (writeSelection): Removed upstream/downstream code and changed format slightly.
+
+        * layout-tests/editing/*-expected.txt: Regenerated in new format.
+
+2005-04-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris Blumenberg.
         Added two layout tests for regression testing.
 

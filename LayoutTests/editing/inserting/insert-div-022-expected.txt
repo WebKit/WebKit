@@ -26,7 +26,4 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (14,42) size 31x28
           text run at (14,42) width 31: "bar"
-selection is CARET:
-start:      position 1 of child 1 {TEXT} of child 1 {B} of child 7 {P} of root {BODY}
-upstream:   position 1 of child 1 {TEXT} of child 1 {B} of child 7 {P} of root {BODY}
-downstream: position 0 of child 2 {BR} of child 1 {B} of child 7 {P} of root {BODY}
+caret: position 1 of child 0 {TEXT} of child 0 {B} of child 6 {P} of child 1 {BODY} of child 0 {HTML} of document

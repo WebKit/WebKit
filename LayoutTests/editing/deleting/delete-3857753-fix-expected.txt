@@ -17,7 +17,4 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 40x28
           RenderText {TEXT} at (54,0) size 40x28
             text run at (54,0) width 40: "four"
-selection is CARET:
-start:      position 2 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {BODY}
-upstream:   position 2 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {BODY}
-downstream: position 0 of child 1 {TEXT} of child 2 {I} of child 1 {DIV} of root {BODY}
+caret: position 2 of child 0 {TEXT} of child 0 {B} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

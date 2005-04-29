@@ -19,7 +19,4 @@ layer at (0,0) size 800x600
             text run at (298,14) width 90: "flush left"
         RenderText {TEXT} at (388,14) size 6x28
           text run at (388,14) width 6: "."
-selection is CARET:
-start:      position 1 of child 1 {TEXT} of child 1 {DIV} of root {BODY}
-upstream:   position 0 of child 1 {DIV} of root {BODY}
-downstream: position 1 of child 1 {TEXT} of child 1 {DIV} of root {BODY}
+caret: position 1 of child 0 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

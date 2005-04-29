@@ -66,7 +66,4 @@ layer at (0,0) size 800x600
               RenderListMarker at (0,0) size 0x22
               RenderText {TEXT} at (0,0) size 92x28
                 text run at (0,0) width 92: "line three"
-selection is CARET:
-start:      position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
-upstream:   position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
-downstream: position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
+caret: position 3 of child 1 {TEXT} of child 0 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -33,7 +33,4 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 50x28
             RenderText {TEXT} at (2,2) size 50x28
               text run at (2,2) width 50: "hello"
-selection is CARET:
-start:      position 5 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {DIV}
-upstream:   position 5 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {DIV}
-downstream: position 5 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {DIV}
+caret: position 5 of child 0 {TEXT} of child 0 {B} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

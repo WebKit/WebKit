@@ -22,7 +22,4 @@ layer at (0,0) size 800x600
           text run at (14,14) width 197: "Upon such a full sea"
         RenderText {TEXT} at (211,14) size 185x28
           text run at (211,14) width 185: " are we now afloat,"
-selection is CARET:
-start:      position 20 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
-upstream:   position 20 of child 1 {TEXT} of child 3 {DIV} of root {BODY}
-downstream: position 0 of child 2 {TEXT} of child 3 {DIV} of root {BODY}
+caret: position 20 of child 0 {TEXT} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document

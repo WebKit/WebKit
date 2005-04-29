@@ -358,26 +358,21 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
     }
 }
 
-static QString nodePositionRelativeToRoot(NodeImpl *node, NodeImpl *root)
+static QString nodePosition(NodeImpl *node)
 {
     QString result;
 
-    NodeImpl *n = node;
-    while (1) {
-        NodeImpl *p = n->parentNode();
-        if (!p || n == root) {
-            result += " of root {" + getTagName(n) + "}";
-            break;
-        }
+    NodeImpl *p;
+    for (NodeImpl *n = node; n; n = p) {
+        p = n->parentNode();
         if (n != node)
-            result +=  " of ";
-        int count = 1;
-        for (NodeImpl *search = p->firstChild(); search != n; search = search->nextSibling())
-            count++;
-        result +=  "child " + QString::number(count) + " {" + getTagName(n) + "}";
-        n = p;
+            result += " of ";
+        if (p)
+            result += "child " + QString::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
+        else
+            result += "document";
     }
-    
+
     return result;
 }
 
@@ -388,53 +383,16 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
         return;
 
     DocumentImpl *doc = static_cast<DocumentImpl *>(n);
-    if (!doc->part())
-        return;
-    
-    Selection selection = doc->part()->selection();
-    if (selection.isNone())
+    KHTMLPart *part = doc->part();
+    if (!part)
         return;
 
-    if (!selection.start().node()->isContentEditable() || !selection.end().node()->isContentEditable())
-        return;
-
-    Position startPosition = selection.start();
-    Position endPosition = selection.end();
-
-    QString startNodeTagName(getTagName(startPosition.node()));
-    QString endNodeTagName(getTagName(endPosition.node()));
-    
-    NodeImpl *rootNode = doc->getElementById("root");
-    
+    Selection selection = part->selection();
     if (selection.isCaret()) {
-        Position upstream = startPosition.upstream(DOM::StayInBlock);
-        Position downstream = startPosition.downstream(DOM::StayInBlock);
-        QString positionString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
-        QString upstreamString = nodePositionRelativeToRoot(upstream.node(), rootNode);
-        QString downstreamString = nodePositionRelativeToRoot(downstream.node(), rootNode);
-        ts << "selection is CARET:\n" << 
-            "start:      position " << startPosition.offset() << " of " << positionString << "\n"
-            "upstream:   position " << upstream.offset() << " of " << upstreamString << "\n"
-            "downstream: position " << downstream.offset() << " of " << downstreamString << "\n"; 
-    }
-    else if (selection.isRange()) {
-        QString startString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
-        Position upstreamStart = startPosition.upstream(DOM::StayInBlock);
-        QString upstreamStartString = nodePositionRelativeToRoot(upstreamStart.node(), rootNode);
-        Position downstreamStart = startPosition.downstream(DOM::StayInBlock);
-        QString downstreamStartString = nodePositionRelativeToRoot(downstreamStart.node(), rootNode);
-        QString endString = nodePositionRelativeToRoot(endPosition.node(), rootNode);
-        Position upstreamEnd = endPosition.upstream(DOM::StayInBlock);
-        QString upstreamEndString = nodePositionRelativeToRoot(upstreamEnd.node(), rootNode);
-        Position downstreamEnd = endPosition.downstream(DOM::StayInBlock);
-        QString downstreamEndString = nodePositionRelativeToRoot(downstreamEnd.node(), rootNode);
-        ts << "selection is RANGE:\n" <<
-            "start:      position " << startPosition.offset() << " of " << startString << "\n" <<
-            "upstream:   position " << upstreamStart.offset() << " of " << upstreamStartString << "\n"
-            "downstream: position " << downstreamStart.offset() << " of " << downstreamStartString << "\n"
-            "end:        position " << endPosition.offset() << " of " << endString << "\n"
-            "upstream:   position " << upstreamEnd.offset() << " of " << upstreamEndString << "\n"
-            "downstream: position " << downstreamEnd.offset() << " of " << downstreamEndString << "\n"; 
+        ts << "caret: position " << selection.start().offset() << " of " << nodePosition(selection.start().node()) << "\n"; 
+    } else if (selection.isRange()) {
+        ts << "selection start: position " << selection.start().offset() << " of " << nodePosition(selection.start().node()) << "\n"
+           << "selection end:   position " << selection.end().offset() << " of " << nodePosition(selection.end().node()) << "\n"; 
     }
 }
 

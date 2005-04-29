@@ -23,7 +23,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 22: "baz"
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-selection is CARET:
-start:      position 3 of child 3 {TEXT} of root {BODY}
-upstream:   position 3 of child 3 {TEXT} of root {BODY}
-downstream: position 0 of child 8 {TEXT} of root {BODY}
+caret: position 3 of child 2 {TEXT} of child 1 {BODY} of child 0 {HTML} of document

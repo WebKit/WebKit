@@ -35,10 +35,5 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,342) size 756x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-selection is RANGE:
-start:      position 0 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
-upstream:   position 0 of  of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
-end:        position 562 of child 1 {TEXT} of child 2 {P} of child 2 {SPAN} of root {DIV}
-upstream:   position 562 of child 1 {TEXT} of child 2 {P} of child 2 {SPAN} of root {DIV}
-downstream: position 563 of child 1 {TEXT} of child 2 {P} of child 2 {SPAN} of root {DIV}
+selection start: position 0 of child 0 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 562 of child 0 {TEXT} of child 1 {P} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

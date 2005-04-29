@@ -7,7 +7,4 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (14,14) size 0x28
         RenderText {TEXT} at (14,42) size 38x28
           text run at (14,42) width 38: " foo"
-selection is CARET:
-start:      position 1 of child 2 {TEXT} of child 1 {DIV} of root {BODY}
-upstream:   position 1 of child 2 {TEXT} of child 1 {DIV} of root {BODY}
-downstream: position 1 of child 2 {TEXT} of child 1 {DIV} of root {BODY}
+caret: position 1 of child 1 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

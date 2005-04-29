@@ -23,10 +23,5 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (14,70) size 220x28
             text run at (14,70) width 220: "men are created equal."
         RenderText {TEXT} at (0,0) size 0x0
-selection is RANGE:
-start:      position 5 of child 1 {TEXT} of child 1 {I} of child 2 {SPAN} of root {DIV}
-upstream:   position 2 of child 1 {TEXT} of child 1 {I} of child 2 {SPAN} of root {DIV}
-downstream: position 5 of child 1 {TEXT} of child 1 {I} of child 2 {SPAN} of root {DIV}
-end:        position 21 of child 6 {TEXT} of child 2 {SPAN} of root {DIV}
-upstream:   position 21 of child 6 {TEXT} of child 2 {SPAN} of root {DIV}
-downstream: position 21 of child 6 {TEXT} of child 2 {SPAN} of root {DIV}
+selection start: position 5 of child 0 {TEXT} of child 0 {I} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 21 of child 5 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

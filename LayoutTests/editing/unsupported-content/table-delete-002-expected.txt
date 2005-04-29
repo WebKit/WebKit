@@ -43,7 +43,4 @@ layer at (0,0) size 800x600
           RenderInline {FONT} at (0,0) size 0x22
             RenderInline {SPAN} at (0,0) size 0x18
               RenderBR {BR} at (0,0) size 0x0
-selection is CARET:
-start:      position 7 of child 1 {TEXT} of child 1 {DIV} of root {DIV}
-upstream:   position 7 of child 1 {TEXT} of child 1 {DIV} of root {DIV}
-downstream: position 0 of child 1 {BR} of child 1 {SPAN} of child 2 {FONT} of child 1 {DIV} of root {DIV}
+caret: position 7 of child 0 {TEXT} of child 0 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -11,7 +11,4 @@ layer at (0,0) size 800x600
           text run at (14,98) width 360: "xxxxx xxxxxxxxxxxx xxxxxxxx xxx "
         RenderInline {SPAN} at (0,0) size 0x28
         RenderText {TEXT} at (0,0) size 0x0
-selection is CARET:
-start:      position 233 of child 1 {TEXT} of root {DIV}
-upstream:   position 233 of child 1 {TEXT} of root {DIV}
-downstream: position 1 of child 4 {TEXT} of root {DIV}
+caret: position 233 of child 0 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

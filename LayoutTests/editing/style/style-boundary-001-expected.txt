@@ -28,10 +28,5 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 13x28
             RenderText {TEXT} at (14,2) size 13x28
               text run at (14,2) width 13: "b"
-selection is RANGE:
-start:      position 0 of child 1 {TEXT} of child 2 {B} of child 1 {DIV} of root {DIV}
-upstream:   position 1 of child 1 {TEXT} of child 1 {B} of child 1 {DIV} of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 2 {B} of child 1 {DIV} of root {DIV}
-end:        position 1 of child 1 {TEXT} of child 2 {B} of child 1 {DIV} of root {DIV}
-upstream:   position 1 of child 1 {TEXT} of child 2 {B} of child 1 {DIV} of root {DIV}
-downstream: position 1 of child 1 {TEXT} of child 2 {B} of child 1 {DIV} of root {DIV}
+selection start: position 0 of child 0 {TEXT} of child 1 {B} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {TEXT} of child 1 {B} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -9,7 +9,4 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,28) size 241x28
           text run at (0,28) width 241: "Which taken at the flood"
-selection is CARET:
-start:      position 0 of child 3 {TEXT} of child 1 {DIV} of root {BODY}
-upstream:   position 1 of child 2 {BR} of child 1 {DIV} of root {BODY}
-downstream: position 0 of child 3 {TEXT} of child 1 {DIV} of root {BODY}
+caret: position 0 of child 2 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document

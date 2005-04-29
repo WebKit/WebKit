@@ -37,7 +37,4 @@ layer at (0,0) size 800x600
                     text run at (31,2) width 46: "cde"
             RenderText {TEXT} at (77,8) size 24x28
               text run at (77,8) width 24: "fg"
-selection is CARET:
-start:      position 3 of child 1 {TEXT} of child 1 {B} of child 1 {SPAN} of child 2 {FONT} of child 2 {SPAN} of child 1 {DIV} of root {DIV}
-upstream:   position 3 of child 1 {TEXT} of child 1 {B} of child 1 {SPAN} of child 2 {FONT} of child 2 {SPAN} of child 1 {DIV} of root {DIV}
-downstream: position 0 of child 3 {TEXT} of child 2 {SPAN} of child 1 {DIV} of root {DIV}
+caret: position 3 of child 0 {TEXT} of child 0 {B} of child 0 {SPAN} of child 1 {FONT} of child 1 {SPAN} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

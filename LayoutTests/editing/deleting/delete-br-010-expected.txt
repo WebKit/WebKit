@@ -9,7 +9,4 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (54,14) size 44x28
           text run at (54,14) width 44: "Two"
       RenderBlock (anonymous) at (0,56) size 784x0
-selection is CARET:
-start:      position 3 of child 1 {TEXT} of child 2 {DIV} of root {BODY}
-upstream:   position 3 of child 1 {TEXT} of child 2 {DIV} of root {BODY}
-downstream: position 0 of child 2 {TEXT} of child 2 {DIV} of root {BODY}
+caret: position 3 of child 0 {TEXT} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

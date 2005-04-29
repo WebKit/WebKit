@@ -104,7 +104,4 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (30,50) size 12x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
                   RenderText {TEXT} at (2,2) size 8x18
                     text run at (2,2) width 8: "9"
-selection is CARET:
-start:      position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
-upstream:   position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
-downstream: position 3 of child 2 {TEXT} of child 1 {DIV} of root {DIV}
+caret: position 3 of child 1 {TEXT} of child 0 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
