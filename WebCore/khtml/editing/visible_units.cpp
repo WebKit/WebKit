@@ -864,12 +864,12 @@ bool inSameEditableContent(const VisiblePosition &a, const VisiblePosition &b)
 
 bool isStartOfEditableContent(const VisiblePosition &p)
 {
-    return inSameEditableContent(p, p.previous());
+    return !inSameEditableContent(p, p.previous());
 }
 
 bool isEndOfEditableContent(const VisiblePosition &p)
 {
-    return inSameEditableContent(p, p.next());
+    return !inSameEditableContent(p, p.next());
 }
 
 } // namespace khtml
