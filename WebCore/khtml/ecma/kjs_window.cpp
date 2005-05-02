@@ -460,6 +460,32 @@ UString Window::toString(ExecState *) const
   return "[object Window]";
 }
 
+static ElementImpl *frameElement(ExecState *exec, KHTMLPart *part)
+{
+    // Find the frame element.
+    DocumentImpl *document = part->xmlDocImpl();
+    if (!document)
+        return 0;
+    ElementImpl *frameElement = document->ownerElement();
+    if (!frameElement)
+        return 0;
+
+    // Find the window object for the frame element, and do a cross-domain check.
+    DocumentImpl *frameElementDocument = frameElement->getDocument();
+    if (!frameElementDocument)
+        return 0;
+    KHTMLPart *frameElementPart = frameElementDocument->part();
+    if (!frameElementPart)
+        return 0;
+    Window *frameElementWindow = Window::retrieveWindow(frameElementPart);
+    if (!frameElementWindow)
+        return 0;
+    if (!frameElementWindow->isSafeScript(exec))
+        return 0;
+
+    return frameElement;
+}
+
 Value Window::get(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
@@ -833,13 +859,10 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       else
         return Undefined();
     case FrameElement: {
-        DocumentImpl *document = m_part->xmlDocImpl();
-        if (!document)
-            return Undefined();
-        ElementImpl *frameElement = document->ownerElement();
-        if (!frameElement)
-            return Undefined();
-        return Value(frameElement);
+      ElementImpl *fe = frameElement(exec, m_part);
+      if (!fe)
+        return Undefined();
+      return getDOMNode(exec, fe);
     }
     }
   }

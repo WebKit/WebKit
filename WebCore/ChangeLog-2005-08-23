@@ -1,3 +1,22 @@
+2005-05-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+        Added two layout tests for regression testing.
+
+        - redid frameElement (fix for 4091082 below)
+
+        The first version lacked a security check, and was also broken.
+
+        * khtml/ecma/kjs_window.cpp:
+        (frameElement): Refactored into separate function; added isSafeScript check.
+        (Window::get): Call the new frameElement function.
+
+        * fast/frames/frameElement-frame.html: Added.
+        * fast/frames/frameElement-frame-expected.txt: Added.
+        * fast/frames/frameElement-iframe.html: Added.
+        * fast/frames/frameElement-iframe-expected.txt: Added.
+        * fast/frames/resources/frameElement-contents.html: Added.
+
 2005-05-02  David Harrison  <harrison@apple.com>
 
         Reviewed by Vicki.
