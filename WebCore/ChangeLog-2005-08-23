@@ -11,11 +11,11 @@
         (frameElement): Refactored into separate function; added isSafeScript check.
         (Window::get): Call the new frameElement function.
 
-        * fast/frames/frameElement-frame.html: Added.
-        * fast/frames/frameElement-frame-expected.txt: Added.
-        * fast/frames/frameElement-iframe.html: Added.
-        * fast/frames/frameElement-iframe-expected.txt: Added.
-        * fast/frames/resources/frameElement-contents.html: Added.
+        * layout-tests/fast/frames/frameElement-frame.html: Added.
+        * layout-tests/fast/frames/frameElement-frame-expected.txt: Added.
+        * layout-tests/fast/frames/frameElement-iframe.html: Added.
+        * layout-tests/fast/frames/frameElement-iframe-expected.txt: Added.
+        * layout-tests/fast/frames/resources/frameElement-contents.html: Added.
 
 2005-05-02  David Harrison  <harrison@apple.com>
 
