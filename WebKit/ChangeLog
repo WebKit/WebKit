@@ -1,3 +1,7 @@
+2005-05-03  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebUIDelegate.h: Fixed incorrect comment.
+
 2005-05-01  Darin Adler  <darin@apple.com>
 
         - move to Xcode native targets and stop checking in generated files
