@@ -1,3 +1,9 @@
+2005-05-03  Darin Adler  <darin@apple.com>
+
+        - fix the build
+
+        * WebCore.pbproj/project.pbxproj: Fix some SYMROOTS that should have been SYMROOT.
+
 2005-05-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4098281, news.com missing a bunch of content.  Make sure not to apply strict SGML parsing
