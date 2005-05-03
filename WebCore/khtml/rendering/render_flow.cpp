@@ -211,7 +211,7 @@ void RenderFlow::detach()
             }
         }
         else if (isInline() && parent())
-            parent()->dirtyLinesFromChangedChild(this, false);
+            parent()->dirtyLinesFromChangedChild(this);
     }
 
     deleteLineBoxes();
@@ -219,7 +219,7 @@ void RenderFlow::detach()
     RenderContainer::detach();
 }
 
-void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child, bool adding)
+void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
 {
     if (!parent() || selfNeedsLayout() || isTable())
         return;

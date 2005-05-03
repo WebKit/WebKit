@@ -62,7 +62,7 @@ public:
     void deleteLineBoxes();
     virtual void detach();
 
-    virtual void dirtyLinesFromChangedChild(RenderObject* child, bool adding = true);
+    virtual void dirtyLinesFromChangedChild(RenderObject* child);
     
     virtual short lineHeight(bool firstLine, bool isRootLineBox=false) const;
     

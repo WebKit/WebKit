@@ -1,3 +1,37 @@
+2005-05-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+        No new layout tests needed.
+
+        - eliminated the bogus kMin/kMax macros that we had in addition to inline functions
+          of the same name
+
+        * kwq/KWQKGlobal.h: Remove the kMin/kMax macros.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty): Change type of constant so both sides
+        of kMin calls match.
+        (khtml::CSSStyleSelector::fontSizeForKeyword): Ditto.
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::parseEntity): Ditto.
+
+        - remove unused parameter to dirtyLinesFromChangedChild for clarity
+
+        * khtml/rendering/render_object.h: Don't take the parameter.
+        * khtml/rendering/render_object.cpp: (RenderObject::dirtyLinesFromChangedChild): Ditto.
+
+        * khtml/rendering/render_flow.h: Don't take the parameter.
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::detach): Don't pass the parameter.
+        (RenderFlow::dirtyLinesFromChangedChild): Don't take the parameter.
+
+        * khtml/rendering/render_text.cpp: (RenderText::detach): Don't pass the parameter.
+
+        - convert DOM::NodeImpl into an abstract base class by making a couple of functions
+          pure virtual for clarity
+
+        * khtml/xml/dom_nodeimpl.h: Made nodeName and nodeType pure virtual.
+        * khtml/xml/dom_nodeimpl.cpp: Remove bodies of nodeName and nodeType.
+
 2005-05-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for object element to support fallback content.  WIth this change Safari passes the Acid2 test.

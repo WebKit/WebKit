@@ -34,9 +34,6 @@ class KLocale;
 class KStandardDirs;
 class KConfig;
 
-#define kMin(a, b) ((a) < (b) ? (a) : (b))
-#define kMax(a, b) ((a) > (b) ? (a) : (b))
-
 class KGlobal {
 public:
     static KInstance *instance() { return 0; }

@@ -3461,7 +3461,7 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             return; // Error case.
         
         // Clamp opacity to the range 0-1
-        style->setOpacity(kMin(1.0f, kMax(0, primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER))));
+        style->setOpacity(kMin(1.0, kMax(0.0, primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER))));
         return;
     case CSS_PROP__KHTML_BOX_ALIGN:
         HANDLE_INHERIT_AND_INITIAL(boxAlign, BoxAlign)
@@ -4060,7 +4060,7 @@ float CSSStyleSelector::fontSizeForKeyword(int keyword, bool quirksMode) const
     }
     
     // Value is outside the range of the table. Apply the scale factor instead.
-    float minLogicalSize = kMax(settings->minLogicalFontSize(), 1.0f);
+    float minLogicalSize = kMax(settings->minLogicalFontSize(), 1);
     return kMax(fontSizeFactors[keyword - CSS_VAL_XX_SMALL]*mediumSize, minLogicalSize);
 }
 

@@ -99,10 +99,10 @@ public:
     MAIN_THREAD_ALLOCATED;
 
     // DOM methods & attributes for Node
-    virtual DOMString nodeName() const;
+    virtual DOMString nodeName() const = 0;
     virtual DOMString nodeValue() const;
     virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
-    virtual unsigned short nodeType() const;
+    virtual unsigned short nodeType() const = 0;
     NodeImpl *parentNode() const { return m_parent; }
     NodeImpl *previousSibling() const { return m_previous; }
     NodeImpl *nextSibling() const { return m_next; }

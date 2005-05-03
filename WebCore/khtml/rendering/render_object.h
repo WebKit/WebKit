@@ -523,7 +523,7 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
-    virtual void dirtyLinesFromChangedChild(RenderObject* child, bool adding = true);
+    virtual void dirtyLinesFromChangedChild(RenderObject* child);
     
     // Set the style of the object and update the state of the object accordingly.
     virtual void setStyle(RenderStyle* style);
