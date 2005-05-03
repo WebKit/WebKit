@@ -111,10 +111,8 @@ __ZN4KURL7setPortEt
 __ZN4KURL8setQueryERK7QString
 __ZN4KURLC1EPKc
 __ZN4KURLC1ERK7QString
-__ZN4KURLC1ERKS_
 __ZN4KURLC1ERKS_RK7QStringPK10QTextCodec
 __ZN4KURLC1Ev
-__ZN4KURLD1Ev
 __ZN5QChar13lowerNonASCIIEt
 __ZN5QChar13upperNonASCIIEt
 __ZN5QChar15isDigitNonASCIIEt
@@ -132,7 +130,6 @@ __ZN5QSizeC1Eii
 __ZN5QSizeC1Ev
 __ZN5QTime7restartEv
 __ZN5QTimeC1Eii
-__ZN5QTimeC1Ev
 __ZN6QPointC1Eii
 __ZN6QPointC1Ev
 __ZN7QBuffer10writeBlockEPKcj
@@ -166,9 +163,6 @@ __ZN7QStringC1ERK9QMemArrayIcE
 __ZN7QStringC1ERKS_
 __ZN7QStringC1Ev
 __ZN7QStringD1Ev
-__ZN7QStringpLE5QChar
-__ZN7QStringpLERKS_
-__ZN7QStringpLEc
 __ZN8QCString6appendEPKc
 __ZN8QCString6appendEc
 __ZN8QCString8truncateEj
@@ -176,8 +170,6 @@ __ZN8QCStringC1EPKc
 __ZN8QCStringC1EPKcj
 __ZN8QCStringC1Ei
 __ZN8QCStringC1Ev
-__ZN8QCStringpLEPKc
-__ZN8QCStringpLEc
 __ZN9QDateTimeC1ERK5QDateRK5QTime
 __ZNK10KWQMapImpl11endInternalEv
 __ZNK10KWQMapImpl12findInternalEP14KWQMapNodeImpl
@@ -188,7 +180,6 @@ __ZNK11KWQListImpl11containsRefEPKv
 __ZNK11KWQListImpl7currentEv
 __ZNK11KWQListImpl7getLastEv
 __ZNK11QStringList4joinERK7QString
-__ZNK12KWQArrayImpl2atEm
 __ZNK12KWQArrayImpl4dataEv
 __ZNK12KWQArrayImpl4sizeEv
 __ZNK12KWQArrayImpleqERKS_
@@ -213,7 +204,6 @@ __ZNK3DOM8Position17formatForDebuggerEPcj
 __ZNK3DOM8TextImpl17formatForDebuggerEPcj
 __ZNK3DOM9RangeImpl17formatForDebuggerEPcj
 __ZNK4KURL3refEv
-__ZNK4KURL3urlEv
 __ZNK4KURL4hostEv
 __ZNK4KURL4passEv
 __ZNK4KURL4pathEv
@@ -221,15 +211,9 @@ __ZNK4KURL4portEv
 __ZNK4KURL4userEv
 __ZNK4KURL5queryEv
 __ZNK4KURL7hasPathEv
-__ZNK4KURL7isEmptyEv
 __ZNK4KURL8protocolEv
 __ZNK4KURL9prettyURLEv
-__ZNK5QChar16isLetterOrNumberEv
-__ZNK5QChar5lowerEv
-__ZNK5QChar5upperEv
-__ZNK5QChar7isDigitEv
 __ZNK5QChar7isPunctEv
-__ZNK5QChar7isSpaceEv
 __ZNK5QFile4sizeEv
 __ZNK5QFile6existsEv
 __ZNK5QRect4sizeEv
@@ -267,7 +251,6 @@ __ZNK7QString5lowerEv
 __ZNK7QString5rightEj
 __ZNK7QString5toIntEPbi
 __ZNK7QString6isNullEv
-__ZNK7QString6latin1Ev
 __ZNK7QString6toLongEPbi
 __ZNK7QString6toUIntEPbi
 __ZNK7QString7compareERKS_

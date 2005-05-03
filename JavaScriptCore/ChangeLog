@@ -1,3 +1,32 @@
+2005-05-01  Darin Adler  <darin@apple.com>
+
+        - move to Xcode native targets and stop checking in generated files
+
+        * JavaScriptCore.pbproj/project.pbxproj: Updated to use native targets and generate all the generated
+        files, so we don't have to check them in any more.
+        * Info.plist: Added. Native targets use a separate file for this.
+
+        * Makefile.am: Removed pcre and kjs SUBDIRS. Also removed code that deleted the embedded copy of this
+        framework, since we haven't been embedding it for some time.
+
+        * kjs/grammar_wrapper.cpp: Added. Shell used to compile grammar.cpp since we can't add a generated file
+        easily to the list of files to be compiled.
+
+        * kjs/.cvsignore: Removed.
+        * kjs/Makefile.am: Removed.
+        * kjs/array_object.lut.h: Removed.
+        * kjs/date_object.lut.h: Removed.
+        * kjs/grammar.cpp: Removed.
+        * kjs/grammar.cpp.h: Removed.
+        * kjs/grammar.h: Removed.
+        * kjs/lexer.lut.h: Removed.
+        * kjs/math_object.lut.h: Removed.
+        * kjs/number_object.lut.h: Removed.
+        * kjs/string_object.lut.h: Removed.
+        * pcre/.cvsignore: Removed.
+        * pcre/Makefile.am: Removed.
+        * pcre/chartables.c: Removed.
+
 2005-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Harrison.

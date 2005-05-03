@@ -3,7 +3,7 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import "npapi.h"
+#import <WebKit/npapi.h>
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
 #import <WebKit/WebKitLogging.h>

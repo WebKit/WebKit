@@ -1,3 +1,36 @@
+2005-05-01  Darin Adler  <darin@apple.com>
+
+        - move to Xcode native targets and stop checking in generated files
+
+        * WebKit.pbproj/project.pbxproj: Updated to use native targets and generate all the generated
+        files, so we don't have to check them in any more.
+        * Info.plist: Added. Native targets use a separate file for this.
+
+        * Plugins.subproj/npapi.m: Fixed import statement to get npapi.h from <WebKit/> rather than current directory.
+
+        * Makefile.am: Removed timestamp cleaning rules since we don't use it any more.
+
+        * .cvsignore: Removed various timestamp files.
+
+        * DOM.subproj/DOM-compat.h: Removed.
+        * DOM.subproj/DOM.h: Removed.
+        * DOM.subproj/DOMCSS.h: Removed.
+        * DOM.subproj/DOMCore.h: Removed.
+        * DOM.subproj/DOMEvents.h: Removed.
+        * DOM.subproj/DOMExtensions.h: Removed.
+        * DOM.subproj/DOMHTML.h: Removed.
+        * DOM.subproj/DOMPrivate.h: Removed.
+        * DOM.subproj/DOMRange.h: Removed.
+        * DOM.subproj/DOMStylesheets.h: Removed.
+        * DOM.subproj/DOMTraversal.h: Removed.
+        * DOM.subproj/DOMViews.h: Removed.
+        * Plugins.subproj/WebScriptObject.h: Removed.
+        * Plugins.subproj/npapi.h: Removed.
+        * Plugins.subproj/npruntime.h: Removed.
+        * copy-webcore-files-to-webkit: Removed.
+        * embed-frameworks.sh: Removed.
+        * force-clean-timestamp: Removed.
+
 2005-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -59,6 +59,7 @@
 #include "editing/selection.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
 #include "xml/dom_position.h"
 #include "html/html_documentimpl.h"
 

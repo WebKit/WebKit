@@ -1,7 +1,0 @@
-Makefile.in
-Makefile
-*.gperf
-cssvalues.strip
-cssproperties.strip
-.deps
-*-stamp

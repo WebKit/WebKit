@@ -1,3 +1,65 @@
+2005-05-01  Darin Adler  <darin@apple.com>
+
+        - move to Xcode native targets and stop checking in generated files
+
+        * WebCore.pbproj/project.pbxproj: Updated to use native targets and generate all the generated
+        files, so we don't have to check them in any more.
+        * Info.plist: Added. Native targets use a separate file for this.
+
+        * Makefile.am: Removed rule to generate WebCore-combined.exp since this is now handled by the
+        Xcode project. Removed the code to remove the embedded copy of the framework since we don't
+        do that any more. Removed timestamp cleaning rules since we don't use those any more.
+
+        * WebCore-tests.exp: Removed symbols that aren't really needed. The native target gives an
+        error when you mention a nonexistent symbol, so we can't have them any more.
+
+        * khtml/css/parser_wrapper.cpp: Added. Shell used to compile parser.cpp since we can't add
+        a generated file easily to the list of files to be compiled.
+
+        * .cvsignore: Removed various timestamp files.
+
+        * WebCore-combined.exp: Removed.
+        * force-clean-timestamp: Removed.
+        * force-js-clean-timestamp: Removed.
+        * khtml/.cvsignore: Removed.
+        * khtml/Makefile.am: Removed.
+        * khtml/css/.cvsignore: Removed.
+        * khtml/css/Makefile.am: Removed.
+        * khtml/css/cssproperties.c: Removed.
+        * khtml/css/cssproperties.h: Removed.
+        * khtml/css/cssvalues.c: Removed.
+        * khtml/css/cssvalues.h: Removed.
+        * khtml/css/parser.cpp: Removed.
+        * khtml/css/parser.h: Removed.
+        * khtml/css/tokenizer.cpp: Removed.
+        * khtml/ecma/.cvsignore: Removed.
+        * khtml/ecma/Makefile.am: Removed.
+        * khtml/ecma/kjs_css.lut.h: Removed.
+        * khtml/ecma/kjs_dom.lut.h: Removed.
+        * khtml/ecma/kjs_events.lut.h: Removed.
+        * khtml/ecma/kjs_html.lut.h: Removed.
+        * khtml/ecma/kjs_navigator.lut.h: Removed.
+        * khtml/ecma/kjs_range.lut.h: Removed.
+        * khtml/ecma/kjs_traversal.lut.h: Removed.
+        * khtml/ecma/kjs_views.lut.h: Removed.
+        * khtml/ecma/kjs_window.lut.h: Removed.
+        * khtml/ecma/xmlhttprequest.lut.h: Removed.
+        * khtml/ecma/xmlserializer.lut.h: Removed.
+        * khtml/html/.cvsignore: Removed.
+        * khtml/html/Makefile.am: Removed.
+        * khtml/html/doctypes.cpp: Removed.
+        * khtml/html/kentities.c: Removed.
+        * khtml/misc/.cvsignore: Removed.
+        * khtml/misc/Makefile.am: Removed.
+        * khtml/misc/htmlattrs.c: Removed.
+        * khtml/misc/htmlattrs.h: Removed.
+        * khtml/misc/htmltags.c: Removed.
+        * khtml/misc/htmltags.h: Removed.
+        * kwq/.cvsignore: Removed.
+        * kwq/KWQCharsetData.c: Removed.
+        * kwq/KWQColorData.c: Removed.
+        * kwq/Makefile.am: Removed.
+
 2005-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
