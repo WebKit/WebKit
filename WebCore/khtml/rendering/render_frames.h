@@ -119,11 +119,13 @@ public:
      */
     virtual bool partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType );
 
-    virtual int intrinsicWidth() const;
-    virtual int intrinsicHeight() const;
+    bool hasFallbackContent() const { return m_hasFallbackContent; }
 
 public slots:
     virtual void slotViewCleared();
+
+protected:
+    bool m_hasFallbackContent;
 };
 
 class RenderFrame : public RenderPart

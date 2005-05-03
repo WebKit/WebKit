@@ -501,6 +501,11 @@ static bool initializedKJS = FALSE;
     _part->stop();
 }
 
+- (void)mainResourceError
+{
+    _part->handleFallbackContent();
+}
+
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
 {
     // If we own the view, delete the old one - otherwise the render _part will take care of deleting the view.

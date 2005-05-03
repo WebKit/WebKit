@@ -612,26 +612,6 @@ bool RenderPart::partLoadingErrorNotify(khtml::ChildFrame *, const KURL& , const
     return false;
 }
 
-int RenderPart::intrinsicWidth() const
-{
-  // KDE may need a non-zero width here, although this will mess up pages (e.g., thinker.org).
-#if APPLE_CHANGES
-    return 0;
-#else
-    return 300;
-#endif
-}
-
-int RenderPart::intrinsicHeight() const
-{
-  // KDE may need a non-zero height here, although this will mess up pages (e.g., thinker.org).
-#if APPLE_CHANGES
-    return 0;
-#else
-    return 200;
-#endif
-}
-
 void RenderPart::slotViewCleared()
 {
 }
@@ -681,6 +661,7 @@ RenderPartObject::RenderPartObject( DOM::HTMLElementImpl* element )
 {
     // init RenderObject attributes
     setInline(true);
+    m_hasFallbackContent = false;
 }
 
 void RenderPartObject::updateWidget()
@@ -831,7 +812,16 @@ void RenderPartObject::updateWidget()
       params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
 #endif
 
-      part->requestObject( this, url, serviceType, paramNames, paramValues );
+      // Find out if we support fallback content.
+      m_hasFallbackContent = false;
+      for (NodeImpl *child = o->firstChild(); child && !m_hasFallbackContent; child = child->nextSibling()) {
+          if ((!child->isTextNode() && child->id() != ID_EMBED && child->id() != ID_PARAM) || // Discount <embed> and <param>
+              (child->isTextNode() && !child->containsOnlyWhitespace()))
+              m_hasFallbackContent = true;
+      }
+      bool success = part->requestObject( this, url, serviceType, paramNames, paramValues );
+      if (!success && m_hasFallbackContent)
+          o->renderFallbackContent();
   } else if ( element()->id() == ID_EMBED ) {
 
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());

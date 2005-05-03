@@ -87,11 +87,6 @@ q:after {
     /* FIXME: content: close-quote; */
 }
 
-iframe, embed, object {
-    width: 300px;
-    height: 150px
-}
-
 center {
     display: block;
     /* special centering to be able to emulate the html4/netscape behaviour */

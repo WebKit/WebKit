@@ -1,3 +1,43 @@
+2005-05-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for object element to support fallback content.  WIth this change Safari passes the Acid2 test.
+	
+        Reviewed by Maciej
+
+        * khtml/css/html4.css:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (HTMLObjectElementImpl::parseHTMLAttribute):
+        (HTMLObjectElementImpl::rendererIsNeeded):
+        (HTMLObjectElementImpl::createRenderer):
+        (HTMLObjectElementImpl::attach):
+        (HTMLObjectElementImpl::detach):
+        (HTMLObjectElementImpl::recalcStyle):
+        (HTMLObjectElementImpl::childrenChanged):
+        (HTMLObjectElementImpl::isURLAttribute):
+        (HTMLObjectElementImpl::isImageType):
+        (HTMLObjectElementImpl::renderFallbackContent):
+        * khtml/html/html_objectimpl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestObject):
+        (KHTMLPart::selectFrameElementInParentIfFullySelected):
+        (KHTMLPart::handleFallbackContent):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (khtml::ChildFrame::ChildFrame):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::RenderPartObject):
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_frames.h:
+        (khtml::RenderPart::hasFallbackContent):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::RenderReplaced):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mainResourceError]):
+
 2005-05-01  Darin Adler  <darin@apple.com>
 
         - move to Xcode native targets and stop checking in generated files

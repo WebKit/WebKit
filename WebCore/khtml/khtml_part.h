@@ -1295,6 +1295,8 @@ public:
   // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
   void selectFrameElementInParentIfFullySelected();
   
+  void handleFallbackContent();
+
 private:
   khtml::ChildFrame *childFrame( const QObject *obj );
 

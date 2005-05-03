@@ -798,8 +798,17 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     KWQ_BLOCK_EXCEPTIONS;
     ReadOnlyPart *part;
 
-    BOOL needFrame = [_bridge frameRequiredForMIMEType:mimeType.getNSString() URL:url.getNSURL()];
-    if (child.m_type == ChildFrame::Object && !needFrame) {
+    ObjectElementType objectType = ObjectElementFrame;
+    if (child.m_type == ChildFrame::Object)
+        objectType = [_bridge determineObjectFromMIMEType:mimeType.getNSString() URL:url.getNSURL()];
+    
+    if (objectType == ObjectElementNone) {
+        if (child.m_hasFallbackContent)
+            return NULL;
+        objectType = ObjectElementPlugin; // Since no fallback content exists, we'll make a plugin and show the error dialog.
+    }
+
+    if (objectType == ObjectElementPlugin) {
         KWQPluginPart *newPart = new KWQPluginPart;
         newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
                                                       attributeNames:child.m_paramNames.getNSArray()
@@ -827,9 +836,8 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
 	// This call needs to return an object with a ref, since the caller will expect to own it.
 	// childBridge owns the only ref so far.
         part = [childBridge part];
-        if (part) {
+        if (part)
             part->ref();
-        }
     }
 
     return part;

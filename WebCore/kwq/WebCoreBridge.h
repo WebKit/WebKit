@@ -164,6 +164,14 @@ typedef enum {
     WebUndoActionTyping,
 } WebUndoAction;
 
+typedef enum
+{
+    ObjectElementNone,
+    ObjectElementImage,
+    ObjectElementFrame,
+    ObjectElementPlugin,
+} ObjectElementType;
+
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also
 // used in the opposite direction, for simple access to WebCore functions without dealing
@@ -216,6 +224,8 @@ typedef enum {
 
 - (void)end;
 - (void)stop;
+
+- (void)mainResourceError;
 
 - (NSURL *)URL;
 - (NSURL *)baseURL;
@@ -547,7 +557,7 @@ typedef enum {
 
 - (int)getObjectCacheSize;
 
-- (BOOL)frameRequiredForMIMEType:(NSString*)MIMEType URL:(NSURL *)URL;
+- (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL;
 
 - (void)loadEmptyDocumentSynchronously;
 

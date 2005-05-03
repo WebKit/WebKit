@@ -139,6 +139,10 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
+    bool isImageType();
+
+    void renderFallbackContent();
+
 #if APPLE_CHANGES
     KJS::Bindings::Instance *getObjectInstance() const;
 #endif
@@ -146,7 +150,8 @@ public:
     QString serviceType;
     QString url;
     QString classId;
-    bool needWidgetUpdate;
+    bool needWidgetUpdate : 1;
+    bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;
 
 #if APPLE_CHANGES
