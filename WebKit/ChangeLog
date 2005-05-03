@@ -1,3 +1,16 @@
+2005-05-03  David Hyatt  <hyatt@apple.com>
+
+	Fix object element support so that fallback content works.  With this change Safari passes the Acid2 test.
+	
+        Reviewed by Maciej
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge determineObjectFromMIMEType:URL:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+
 2005-05-03  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebUIDelegate.h: Fixed incorrect comment.

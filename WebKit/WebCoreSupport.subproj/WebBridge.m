@@ -22,6 +22,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewInternal.h>
+#import <WebKit/WebImageView.h>
 #import <WebKit/WebJavaPlugIn.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebKitErrorsPrivate.h>
@@ -1053,30 +1054,36 @@ static BOOL loggedObjectCacheSize = NO;
     return cacheSize * multiplier;
 }
 
-- (BOOL)frameRequiredForMIMEType:(NSString *)MIMEType URL:(NSURL *)URL
+- (ObjectElementType)determineObjectFromMIMEType:(NSString*)MIMEType URL:(NSURL*)URL
 {
     if ([MIMEType length] == 0) {
+        // Try to guess the MIME type based off the extension.
         NSString *extension = [[URL path] pathExtension];
-        if ([extension length] > 0 && [[WebPluginDatabase installedPlugins] pluginForExtension:extension] != nil) {
-            // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
-            return NO;
-        } else {
-            // Else, create a frame and attempt to load the URL in there.
-            return YES;
+        if ([extension length] > 0) {
+            MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+            if ([MIMEType length] == 0 && [[WebPluginDatabase installedPlugins] pluginForExtension:extension])
+                // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
+                return ObjectElementPlugin;
         }
     }
-    
+
+    if ([MIMEType length] == 0)
+        return ObjectElementFrame; // Go ahead and hope that we can display the content.
+                
     Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
-    if (!viewClass) {
-        // Want to display a "plugin not found" dialog/image, so let a plugin get made.
-        return NO;
-    }
-        
+    if (!viewClass)
+        // Nothing is registered at all.
+        return ObjectElementNone;
+    
+    if ([viewClass isSubclassOfClass:[WebImageView class]])
+        return ObjectElementImage;
+    
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
-    return !([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] || 
-             [viewClass isSubclassOfClass:[WebPluginDocumentView class]]);
+    if ([viewClass isSubclassOfClass:[WebNetscapePluginDocumentView class]] || [viewClass isSubclassOfClass:[WebPluginDocumentView class]])
+        return ObjectElementPlugin;
+    return ObjectElementFrame;
 }
 
 - (void)loadEmptyDocumentSynchronously

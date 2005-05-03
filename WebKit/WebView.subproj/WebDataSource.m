@@ -815,7 +815,9 @@
     if (isComplete) {
         // Can't call [self _bridge] because we might not have commited yet
         [[[self webFrame] _bridge] stop];
-    }        
+        [[[self webFrame] _bridge] mainResourceError];
+    }
+
     [[self webFrame] _receivedMainResourceError:error];
     [[self _webView] _mainReceivedError:error
                            fromDataSource:self
