@@ -90,7 +90,7 @@ static const int computedProperties[] = {
     CSS_PROP_CLEAR,
     CSS_PROP_COLOR,
     CSS_PROP_CURSOR,
-    CSS_PROP__APPLE_DASHBOARD_REGION,
+    CSS_PROP__KHTML_DASHBOARD_REGION,
     CSS_PROP_DIRECTION,
     CSS_PROP_DISPLAY,
     CSS_PROP_EMPTY_CELLS,
@@ -104,7 +104,7 @@ static const int computedProperties[] = {
     CSS_PROP_LEFT,
     CSS_PROP_LETTER_SPACING,
     CSS_PROP__KHTML_LINE_BREAK,
-    CSS_PROP__APPLE_LINE_CLAMP,
+    CSS_PROP__KHTML_LINE_CLAMP,
     CSS_PROP_LINE_HEIGHT,
     CSS_PROP_LIST_STYLE_IMAGE,
     CSS_PROP_LIST_STYLE_POSITION,
@@ -682,7 +682,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         if (style->letterSpacing() == 0)
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
         return new CSSPrimitiveValueImpl(style->letterSpacing(), CSSPrimitiveValue::CSS_PX);
-    case CSS_PROP__APPLE_LINE_CLAMP:
+    case CSS_PROP__KHTML_LINE_CLAMP:
         return new CSSPrimitiveValueImpl(style->lineClamp(), CSSPrimitiveValue::CSS_PERCENTAGE);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
@@ -993,7 +993,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         return valueForLength(style->textIndent());
     case CSS_PROP_TEXT_SHADOW:
         return valueForShadow(style->textShadow());
-    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
         if (style->textSizeAdjust()) 
             return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
         else
@@ -1185,7 +1185,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         break;
 #endif
 #if APPLE_CHANGES
-        case CSS_PROP__APPLE_DASHBOARD_REGION: {
+        case CSS_PROP__KHTML_DASHBOARD_REGION: {
             QValueList<StyleDashboardRegion> regions = style->dashboardRegions();
             uint i, count = regions.count();
             if (count == 1 && regions[0].type == StyleDashboardRegion::None)

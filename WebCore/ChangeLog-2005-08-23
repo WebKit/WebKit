@@ -1,3 +1,26 @@
+2005-05-03  David Hyatt  <hyatt@apple.com>
+
+	Normalize all our custom properties in our implementation to be -khtml (remove all the -apple).
+
+	Make sure that -apple, -khtml, and -moz are all able to be used.  -apple and -moz just map to -khtml.
+
+	Add support for automatically converting -khtml-opacity to opacity (for legacy Safari 1.1 compat).
+	
+        Reviewed by darin
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::):
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyDeclarations):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/parser.y:
+        * khtml/ecma/kjs_css.cpp:
+        (cssPropertyName):
+
 2005-05-03  Darin Adler  <darin@apple.com>
 
         - fix the build

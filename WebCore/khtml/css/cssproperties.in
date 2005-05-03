@@ -67,7 +67,7 @@ font-weight
 height
 left
 letter-spacing
--apple-line-clamp
+-khtml-line-clamp
 line-height
 list-style-image
 list-style-position
@@ -135,8 +135,8 @@ text-underline-color
 text-underline-mode
 text-underline-style
 text-underline-width
--apple-text-size-adjust
--apple-dashboard-region
+-khtml-text-size-adjust
+-khtml-dashboard-region
 top
 unicode-bidi
 -khtml-user-drag

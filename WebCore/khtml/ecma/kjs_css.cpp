@@ -57,7 +57,7 @@ static QString cssPropertyName(const Identifier &p, bool *hadPixelOrPosPrefix = 
         prop = prop.mid(4);
         if (hadPixelOrPosPrefix)
             *hadPixelOrPosPrefix = true;
-    } else if (prop.startsWith("khtml-") || prop.startsWith("apple-")) {
+    } else if (prop.startsWith("khtml-") || prop.startsWith("apple-") || prop.startsWith("moz-")) {
         prop.insert(0, '-');
     }
 

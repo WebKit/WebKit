@@ -1730,7 +1730,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     case CSS_PROP_FONT_FAMILY:
                     case CSS_PROP_FONT_WEIGHT:
 #if APPLE_CHANGES
-                    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+                    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
 #endif
                         // these have to be applied first, because other properties use the computed
                         // values of these porperties.
@@ -3772,20 +3772,20 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
 
 #if APPLE_CHANGES
     // Apple-specific changes.  Do not merge these properties into KHTML.
-    case CSS_PROP__APPLE_LINE_CLAMP: {
+    case CSS_PROP__KHTML_LINE_CLAMP: {
         HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
         if (!primitiveValue) return;
         style->setLineClamp((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE));
         break;
     }
-    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST: {
+    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;
         style->setTextSizeAdjust(primitiveValue->getIdent() == CSS_VAL_AUTO);
         fontDirty = true;
         break;
     }
-    case CSS_PROP__APPLE_DASHBOARD_REGION: {
+    case CSS_PROP__KHTML_DASHBOARD_REGION: {
         HANDLE_INHERIT_AND_INITIAL(dashboardRegions, DashboardRegions)
         if (!primitiveValue)
             return;

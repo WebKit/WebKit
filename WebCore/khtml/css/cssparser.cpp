@@ -511,7 +511,7 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
 #if APPLE_CHANGES
-    case CSS_PROP__APPLE_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
+    case CSS_PROP__KHTML_DASHBOARD_REGION:                 // <dashboard-region> | <dashboard-region> 
 	if ( value->unit == Value::Function || id == CSS_VAL_NONE)
 	    return parseDashboardRegions( propId, important );
 	break;
@@ -1119,10 +1119,10 @@ bool CSSParser::parseValue( int propId, bool important )
 #if APPLE_CHANGES
     // Apple specific properties.  These will never be standardized and are purely to
     // support custom WebKit-based Apple applications.
-    case CSS_PROP__APPLE_LINE_CLAMP:
+    case CSS_PROP__KHTML_LINE_CLAMP:
         valid_primitive = (!id && validUnit(value, FPercent, false));
         break;
-    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+    case CSS_PROP__KHTML_TEXT_SIZE_ADJUST:
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;

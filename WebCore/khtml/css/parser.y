@@ -59,6 +59,27 @@ using namespace DOM;
 
 int DOM::getPropertyID(const char *tagStr, int len)
 {
+    if (len && tagStr && tagStr[0] == '-') {
+        QString prop(tagStr);
+        if (prop.startsWith("-apple")) {
+            prop = prop.mid(6);
+            prop.insert(0, "-khtml");
+            tagStr = prop.ascii();
+        }
+        else if (prop.startsWith("-moz")) {
+            prop = prop.mid(4);
+            prop.insert(0, "-khtml");
+            len += 2;
+            tagStr = prop.ascii();
+        }
+        
+        // Honor the use of -khtml-opacity (for Safari 1.1) and also the use of -moz-opacity in Mozilla.
+        if (prop == "-khtml-opacity") {
+            tagStr = "opacity";
+            len = 7;
+        }
+    }
+    
     const struct props *propsPtr = findProp(tagStr, len);
     if (!propsPtr)
         return 0;
@@ -68,6 +89,21 @@ int DOM::getPropertyID(const char *tagStr, int len)
 
 static inline int getValueID(const char *tagStr, int len)
 {
+    if (len && tagStr && tagStr[0] == '-') {
+        QString prop(tagStr);
+        if (prop.startsWith("-apple")) {
+            prop = prop.mid(6);
+            prop.insert(0, "-khtml");
+            tagStr = prop.ascii();
+        }
+        else if (prop.startsWith("-moz")) {
+            prop = prop.mid(4);
+            prop.insert(0, "-khtml");
+            len += 2;
+            tagStr = prop.ascii();
+        }
+    }
+
     const struct css_value *val = findValue(tagStr, len);
     if (!val)
         return 0;
