@@ -657,7 +657,8 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
 
 void HTMLTokenizer::parseComment(TokenizerString &src)
 {
-    bool strict = !parser->doc()->inCompatMode();
+    // FIXME: Why does this code even run for comments inside <script>? This seems bogus.
+    bool strict = !parser->doc()->inCompatMode() && !script;
     int delimiterCount = 0;
     bool canClose = false;
     checkScriptBuffer(src.length());
