@@ -3259,12 +3259,7 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     KParts::ReadOnlyPart *part = createPart( d->m_view->viewport(), child->m_name.ascii(), this, child->m_name.ascii(), mimetype, child->m_serviceName, child->m_services, child->m_params );
 #endif
 
-    if ( !part )
-    {
-        if ( child->m_frame )
-          if (child->m_frame->partLoadingErrorNotify( child, url, mimetype ))
-            return true; // we succeeded after all (a fallback was used)
-
+    if (!part) {
         checkEmitLoadEvent();
         return false;
     }

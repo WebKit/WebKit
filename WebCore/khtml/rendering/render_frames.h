@@ -105,19 +105,6 @@ public:
     // layouts using WebCore when objects resize.
     void updateWidgetPositions();
 #endif
-    
-    /**
-     * Called by KHTMLPart to notify the frame object that loading the
-     * part was not successfuly. (called either asyncroniously after a
-     * after the servicetype of the given url (the one passed with requestObject)
-     * has been determined or syncroniously from within requestObject)
-     *
-     * The default implementation does nothing.
-     *
-     * Return false in the normal case, return true if a fallback was found
-     * and the url was successfully opened.
-     */
-    virtual bool partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType );
 
     bool hasFallbackContent() const { return m_hasFallbackContent; }
 
@@ -155,14 +142,10 @@ public:
     virtual void layout( );
     virtual void updateWidget();
 
-    virtual bool partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType );
-
 public slots:
     void slotViewCleared();
-private slots:
-    void slotPartLoadingErrorNotify();
 };
 
-};
+}
 
 #endif

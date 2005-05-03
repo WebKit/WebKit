@@ -1,3 +1,15 @@
+2005-05-03  David Hyatt  <hyatt@apple.com>
+
+	Remove unused notification to avoid ERROR messages spewing on the acid2 test.
+	
+        Reviewed by darin
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::processObjectRequest):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_frames.h:
+
 2005-05-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

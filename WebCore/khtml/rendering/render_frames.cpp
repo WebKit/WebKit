@@ -607,11 +607,6 @@ void RenderPart::setWidget( QWidget *widget )
     slotViewCleared();
 }
 
-bool RenderPart::partLoadingErrorNotify(khtml::ChildFrame *, const KURL& , const QString& )
-{
-    return false;
-}
-
 void RenderPart::slotViewCleared()
 {
 }
@@ -864,94 +859,6 @@ void RenderPartObject::updateWidget()
 	  }
       }
   }
-}
-
-bool RenderPartObject::partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType )
-{
-    KHTMLPart *part = static_cast<KHTMLView *>(m_view)->part();
-    //kdDebug() << "RenderPartObject::partLoadingErrorNotify serviceType=" << serviceType << endl;
-    // Check if we just tried with e.g. nsplugin
-    // and fallback to the activexhandler if there is a classid
-    // and a codebase, where we may download the ocx if it's missing
-    if( serviceType != "application/x-activex-handler" && element()->id()==ID_OBJECT ) {
-
-        // check for embed child object
-        HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
-        HTMLEmbedElementImpl *embed = 0;
-        NodeImpl *child = o->firstChild();
-        while ( child ) {
-            if ( child->id() == ID_EMBED )
-                embed = static_cast<HTMLEmbedElementImpl *>( child );
-
-            child = child->nextSibling();
-        }
-        if( embed && !o->classId.isEmpty() &&
-            !( static_cast<ElementImpl *>(o)->getAttribute(ATTR_CODEBASE).string() ).isEmpty() )
-        {
-            KParts::URLArgs args;
-            args.serviceType = "application/x-activex-handler";
-            if (part->requestObject( childFrame, url, args ))
-                return true; // success
-        }
-    }
-    // Dissociate ourselves from the current event loop (to prevent crashes
-    // due to the message box staying up)
-    QTimer::singleShot( 0, this, SLOT( slotPartLoadingErrorNotify() ) );
-    Tokenizer *tokenizer = static_cast<DOM::DocumentImpl *>(part->document().handle())->tokenizer();
-    if (tokenizer) tokenizer->setOnHold( true );
-    slotPartLoadingErrorNotify();
-    if (tokenizer) tokenizer->setOnHold( false );
-    return false;
-}
-
-void RenderPartObject::slotPartLoadingErrorNotify()
-{
-#if APPLE_CHANGES
-    // FIXME: What are we going to do for this case?
-#else
-    // First we need to find out the servicetype - again - this code is too duplicated !
-    HTMLEmbedElementImpl *embed = 0;
-    QString serviceType;
-    if( element()->id()==ID_OBJECT ) {
-
-        // check for embed child object
-        HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
-        serviceType = o->serviceType;
-        NodeImpl *child = o->firstChild();
-        while ( child ) {
-            if ( child->id() == ID_EMBED )
-                embed = static_cast<HTMLEmbedElementImpl *>( child );
-
-            child = child->nextSibling();
-        }
-
-    } else if( element()->id()==ID_EMBED ) {
-        embed = static_cast<HTMLEmbedElementImpl *>(element());
-    }
-    if ( embed )
-	serviceType = embed->serviceType;
-
-    KHTMLPart *part = static_cast<KHTMLView *>(m_view)->part();
-    KParts::BrowserExtension *ext = part->browserExtension();
-    if( embed && !embed->pluginPage.isEmpty() && ext ) {
-        // Prepare the mimetype to show in the question (comment if available, name as fallback)
-        QString mimeName = serviceType;
-        KMimeType::Ptr mime = KMimeType::mimeType(serviceType);
-        if ( mime->name() != KMimeType::defaultMimeType() )
-            mimeName = mime->comment();
-        // Prepare the URL to show in the question (host only if http, to make it short)
-        KURL pluginPageURL( embed->pluginPage );
-        QString shortURL = pluginPageURL.protocol() == "http" ? pluginPageURL.host() : pluginPageURL.prettyURL();
-        int res = KMessageBox::questionYesNo( m_view,
-            i18n("No plugin found for '%1'.\nDo you want to download one from %2?").arg(mimeName).arg(shortURL),
-	    i18n("Missing plugin"), QString::null, QString::null, QString("plugin-")+serviceType);
-	if ( res == KMessageBox::Yes )
-	{
-          // Display vendor download page
-          ext->createNewWindow( pluginPageURL );
-	}
-    }
-#endif // APPLE_CHANGES
 }
 
 void RenderPartObject::layout( )
