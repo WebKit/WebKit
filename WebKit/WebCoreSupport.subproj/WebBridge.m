@@ -458,14 +458,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
-    // Pass NO for copyData since the data doesn't need to be copied since it won't be modified. 
-    // Copying it will also cause a performance regression. 
-    WebResource *resource = [[WebResource alloc] _initWithData:data
-                                                           URL:URL
-                                                      MIMEType:[response MIMEType]
-                                              textEncodingName:[response textEncodingName]
-                                                     frameName:nil
-                                                      copyData:NO];
+    WebResource *resource = [[WebResource alloc] _initWithData:data URL:URL response:response];
     ASSERT(resource != nil);
     [[self dataSource] addSubresource:resource];
     [resource release];

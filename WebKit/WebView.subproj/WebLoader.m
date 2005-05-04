@@ -164,7 +164,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     }
 }
 
-// This is copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
+// The following 2 methods are copied from [NSHTTPURLProtocol _cachedResponsePassesValidityChecks] and modified for our needs.
 // FIXME: It would be nice to eventually to share this code somehow.
 - (BOOL)_canUseResourceForRequest:(NSURLRequest *)theRequest
 {
@@ -185,6 +185,17 @@ static BOOL NSURLConnectionSupportsBufferedData;
     } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
 	return NO;
     } else if ([[theRequest HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+- (BOOL)_canUseResourceWithResponse:(NSURLResponse *)theResponse
+{
+    if ([theResponse _mustRevalidate]) {
+        return NO;
+    } else if ([theResponse _calculatedExpiration] - CFAbsoluteTimeGetCurrent() < 1) {
         return NO;
     } else {
         return YES;
@@ -215,11 +226,15 @@ static BOOL NSURLConnectionSupportsBufferedData;
     
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
         resource = [dataSource subresourceForURL:originalURL];
-        if (resource) {
-            [resource retain];
-            // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-            [self deliverResourceAfterDelay];
-            return YES;
+        if (resource != nil) {
+            if ([self _canUseResourceWithResponse:[resource _response]]) {
+                [resource retain];
+                // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+                [self deliverResourceAfterDelay];
+                return YES;
+            } else {
+                resource = nil;
+            }
         }
     }
     
@@ -305,15 +320,9 @@ static BOOL NSURLConnectionSupportsBufferedData;
     if (resource == nil) {
         NSData *data = [self resourceData];
         if ([data length] > 0) {
-            // Don't have WebResource copy the data since the data is a NSMutableData that we know won't get modified. 
             ASSERT(originalURL);
             ASSERT([response MIMEType]);
-            WebResource *newResource = [[WebResource alloc] _initWithData:data
-                                                                      URL:originalURL
-                                                                 MIMEType:[response MIMEType]
-                                                         textEncodingName:[response textEncodingName]
-                                                                frameName:nil
-                                                                 copyData:NO];
+            WebResource *newResource = [[WebResource alloc] _initWithData:data URL:originalURL response:response];
             if (newResource != nil) {
                 [dataSource addSubresource:newResource];
                 [newResource release];

@@ -1,3 +1,31 @@
+2005-05-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 
+	<rdar://problem/4078417> REGRESSION (125-412): MLB gameday page doesn't update (Flash)
+	<rdar://problem/4072280> XMLHttpRequest calls onReadyStateChange callback with bogus status value
+        
+	Reviewed by john.
+
+	Our WebKit-level caching of subresources "dumbed-down" information held in NSURLResponse. This caused some loads to lack response headers and thus disabling cache directives. Status codes were also not retained and this caused XMLHttpRequest to fail frequently. The fix is to have WebResource retain the NSURLResponse and to use the NSURLResponse when we decide to load from WebResources.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]): call new [WebResource _initWithData:URL:response:]
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _canUseResourceWithResponse:]): new, checks response cache directives
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): call _canUseResourceWithResponse:
+        (-[WebBaseResourceHandleDelegate saveResource]): call new [WebResource _initWithData:URL:response:]
+        * WebView.subproj/WebResource.m:
+        (-[WebResourcePrivate dealloc]):
+        (-[WebResource initWithData:URL:MIMEType:textEncodingName:frameName:]): call renamed _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:
+        (-[WebResource initWithCoder:]): decode the NSURLReponse
+        (-[WebResource encodeWithCoder:]): encode the NSURLReponse
+        (-[WebResource _initWithData:URL:MIMEType:textEncodingName:frameName:response:copyData:]): take the NSURLReponse
+        (-[WebResource _initWithData:URL:response:]): new
+        (-[WebResource _initWithPropertyList:]): decode the NSURLReponse
+        (-[WebResource _propertyListRepresentation]): encode the NSURLReponse
+        (-[WebResource _response]): return ivar if we have one
+        * WebView.subproj/WebResourcePrivate.h:
+
 2005-05-03  David Hyatt  <hyatt@apple.com>
 
 	Fix object element support so that fallback content works.  With this change Safari passes the Acid2 test.
