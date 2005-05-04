@@ -1,3 +1,20 @@
+2005-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fixed layout tests
+
+        * WebKit.pbproj/project.pbxproj: Set deployment target to 10.3 in the build styles.
+        When built without a build style (by Apple B&I) we want to get the target from the
+        environment. But when built with a build style (by Safari engineers and others), we want
+        to use 10.3. Because our deployment target was not set, we ran into this bug:
+
+            <rdar://problem/4108717> CTFontGetGlyphWithName doesn't work with some strings
+
+        * Makefile.am: Took out extra parameters that make command-line building different from
+        Xcode building. Now that this is fixed, you should not get a full rebuild if you switch
+        from command line to Xcode or back.
+
 2005-05-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 
@@ -43,6 +60,7 @@
 
         * WebView.subproj/WebUIDelegate.h: Fixed incorrect comment.
 
+>>>>>>> 1.3131
 2005-05-01  Darin Adler  <darin@apple.com>
 
         - move to Xcode native targets and stop checking in generated files
