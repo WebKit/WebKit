@@ -1,3 +1,14 @@
+2005-05-03  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4102644> Crash in LiveConnect below KJS::Bindings::JavaInstance::stringValue() const
+
+	Correctly handle accessing nil objects from a Java object array.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::valueAt):
+
 2005-05-01  Darin Adler  <darin@apple.com>
 
         - move to Xcode native targets and stop checking in generated files
