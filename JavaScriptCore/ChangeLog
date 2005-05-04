@@ -1,3 +1,18 @@
+2005-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fixed build rules to match other projects
+
+        * JavaScriptCore.pbproj/project.pbxproj: Set deployment target to 10.3 in the build styles.
+        When built without a build style (by Apple B&I) we want to get the target from the
+        environment. But when built with a build style (by Safari engineers and others), we want
+        to use 10.3.
+
+        * Makefile.am: Took out extra parameters that make command-line building different from
+        Xcode building. Now that this is fixed, you should not get a full rebuild if you switch
+        from command line to Xcode or back.
+
 2005-05-04  Maciej Stachowiak  <mjs@apple.com>
 
         - revert presumably accidental change to mozilla JS test expected results, this

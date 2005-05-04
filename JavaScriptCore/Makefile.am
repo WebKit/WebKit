@@ -1,6 +1,4 @@
 all-am:
-	xcodebuild -target All -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
+	xcodebuild -target All -buildstyle $(BUILDSTYLE)
 clean-am:
-	xcodebuild -target All clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
-	rm -rf $(SYMROOTS)/JavaScriptCore.build
-	rm -rf $(SYMROOTS)/JavaScriptCore.framework
+	xcodebuild -target All clean
