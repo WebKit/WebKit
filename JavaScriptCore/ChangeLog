@@ -1,3 +1,10 @@
+2005-05-04  Maciej Stachowiak  <mjs@apple.com>
+
+        - revert presumably accidental change to mozilla JS test expected results, this
+	was making the tests fail.
+
+        * tests/mozilla/expected.html:
+
 2005-05-03  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4102644> Crash in LiveConnect below KJS::Bindings::JavaInstance::stringValue() const
