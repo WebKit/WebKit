@@ -943,6 +943,13 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         if (!includesCommentsInDOM)
             return 0;
         break;
+
+    case ID_SCRIPT:
+        {
+            HTMLScriptElementImpl *scriptElement = new HTMLScriptElementImpl(document);
+            scriptElement->setCreatedByParser(true);
+            return scriptElement;
+        }
     }
 
     return document->document()->createHTMLElement(t->id);

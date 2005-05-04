@@ -32,7 +32,8 @@ class KHTMLView;
 
 namespace khtml {
     class CachedCSSStyleSheet;
-};
+    class CachedScript;
+}
 
 
 namespace DOM {
@@ -137,17 +138,24 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLScriptElementImpl : public HTMLElementImpl
+class HTMLScriptElementImpl : public HTMLElementImpl, public khtml::CachedObjectClient
 {
 public:
     HTMLScriptElementImpl(DocumentPtr *doc);
-
     ~HTMLScriptElementImpl();
+    
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    virtual void notifyFinished(khtml::CachedObject *finishedObj);
 
     virtual Id id() const;
-    
     virtual bool isURLAttribute(AttributeImpl *attr) const;
-    
+
+    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+
+private:
+    khtml::CachedScript *m_cachedScript;
+    bool m_createdByParser;
 };
 
 // -------------------------------------------------------------------------
