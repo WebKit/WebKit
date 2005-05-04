@@ -12,6 +12,7 @@
 				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
@@ -22,6 +23,7 @@
 		014CEA450018CDF011CA2923 = {
 			buildSettings = {
 				CREATE_HASH_TABLE = "$(SYMROOT)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
@@ -10810,6 +10812,7 @@
 			buildSettings = {
 				CREATE_HASH_TABLE = "$(SYMROOT)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
