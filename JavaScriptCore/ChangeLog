@@ -2,6 +2,15 @@
 
         Reviewed by Dave Hyatt.
 
+        - another gcc-4.0-related fix
+
+        * bindings/runtime_root.h: Take off extra namespace prefixes that apparently cause problems
+        compiling with gcc 4.0, although I have not observed the problems.
+
+2005-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - fixed build rules to match other projects
 
         * JavaScriptCore.pbproj/project.pbxproj: Set deployment target to 10.3 in the build styles.
