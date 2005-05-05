@@ -599,7 +599,7 @@ void HTMLTitleElementImpl::childrenChanged()
     // Only allow title to be set by first <title> encountered.
     if (inDocument() && getDocument()->title().isEmpty())
 #else
-    if (inDocument()))
+    if (inDocument())
 #endif
 	getDocument()->setTitle(m_title);
 }
