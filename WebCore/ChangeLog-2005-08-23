@@ -1,6 +1,12 @@
-2005-05-05  David Harrison  <harrison@apple.com>
+2005-05-05  Darin Adler  <darin@apple.com>
 
-        Reviewed by me.
+        Reviewed by Dave Hyatt.
+
+        - fixed <rdar://problem/4109564> REGRESSION (Atlanta): maps.google.com doesn't always center California correctly
+
+        * khtml/ecma/kjs_events.cpp: (offsetFromTarget): Fix two places that said X where they should say Y.
+
+2005-05-05  David Harrison  <harrison@apple.com>
 
         Restore fixed setEndingSelection.  Fixed method was ifdef'd out
         because change was at end of Tiger development, but method is
