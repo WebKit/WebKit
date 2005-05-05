@@ -175,7 +175,7 @@ protected:
 /**
  * @internal
  */
-class DocumentImpl : public QObject, public NodeBaseImpl
+class DocumentImpl : public QObject, public ContainerNodeImpl
 {
     Q_OBJECT
 public:
@@ -780,7 +780,7 @@ private:
 #endif
 };
 
-class DocumentFragmentImpl : public NodeBaseImpl
+class DocumentFragmentImpl : public ContainerNodeImpl
 {
 public:
     DocumentFragmentImpl(DocumentPtr *doc);

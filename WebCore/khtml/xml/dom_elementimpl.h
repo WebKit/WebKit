@@ -99,7 +99,7 @@ protected:
 // is to dynamically allocate a textchild and store the
 // resulting nodevalue in the AttributeImpl upon
 // destruction. however, this is not yet implemented.
-class AttrImpl : public NodeBaseImpl
+class AttrImpl : public ContainerNodeImpl
 {
     friend class ElementImpl;
     friend class NamedAttrMapImpl;
@@ -148,7 +148,7 @@ protected:
 };
 
 
-class ElementImpl : public NodeBaseImpl
+class ElementImpl : public ContainerNodeImpl
 {
     friend class DocumentImpl;
     friend class NamedAttrMapImpl;

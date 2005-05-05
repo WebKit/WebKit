@@ -592,13 +592,11 @@ Value DOMNodeProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &ar
       return getDOMNode(exec,node.replaceChild(toNode(args[0]), toNode(args[1])));
     case DOMNode::Contains:
     {
-        int exceptioncode=0;
 	DOM::Node other = toNode(args[0]);
 	if (!other.isNull() && node.nodeType()==DOM::Node::ELEMENT_NODE)
 	{
-	    DOM::NodeBaseImpl *impl = static_cast<DOM::NodeBaseImpl *>(node.handle());
-	    bool retval = !impl->checkNoOwner(other.handle(),exceptioncode);
-	    return Boolean(retval && exceptioncode == 0);
+	    DOM::NodeImpl *impl = node.handle();
+	    return Boolean(impl->isAncestor(other.handle()));
 	}
         return Undefined();
     }

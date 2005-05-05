@@ -1,3 +1,73 @@
+2005-05-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+	- renamed NodeBaseImpl to ContainerNodeImpl
+
+        * khtml/ecma/kjs_dom.cpp:
+	(DOMNodeProtoFunc::tryCall): Avoid use of NodeBaseImpl and avoid
+	use of obsolete checkNoOwner call, use isAncestor instead.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setOuterText): Avoid gratuitous use of
+	NodeBaseImpl.
+	* khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::checkNoOwner): Removed.
+	
+	Ther rest is all just simple renaming.
+        
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::attach):
+        (DocumentImpl::detach):
+        (DocumentFragmentImpl::DocumentFragmentImpl):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::AttrImpl):
+        (ElementImpl::ElementImpl):
+        (ElementImpl::insertedIntoDocument):
+        (ElementImpl::removedFromDocument):
+        (ElementImpl::attach):
+        (ElementImpl::dump):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (ContainerNodeImpl::ContainerNodeImpl):
+        (ContainerNodeImpl::~ContainerNodeImpl):
+        (ContainerNodeImpl::firstChild):
+        (ContainerNodeImpl::lastChild):
+        (ContainerNodeImpl::insertBefore):
+        (ContainerNodeImpl::replaceChild):
+        (ContainerNodeImpl::removeChild):
+        (ContainerNodeImpl::removeChildren):
+        (ContainerNodeImpl::appendChild):
+        (ContainerNodeImpl::hasChildNodes):
+        (ContainerNodeImpl::setFirstChild):
+        (ContainerNodeImpl::setLastChild):
+        (ContainerNodeImpl::checkSameDocument):
+        (ContainerNodeImpl::checkIsChild):
+        (ContainerNodeImpl::addChild):
+        (ContainerNodeImpl::attach):
+        (ContainerNodeImpl::detach):
+        (ContainerNodeImpl::insertedIntoDocument):
+        (ContainerNodeImpl::removedFromDocument):
+        (ContainerNodeImpl::cloneChildNodes):
+        (ContainerNodeImpl::getElementsByTagNameNS):
+        (ContainerNodeImpl::getUpperLeftCorner):
+        (ContainerNodeImpl::getLowerRightCorner):
+        (ContainerNodeImpl::getRect):
+        (ContainerNodeImpl::setFocus):
+        (ContainerNodeImpl::setActive):
+        (ContainerNodeImpl::childNodeCount):
+        (ContainerNodeImpl::childNode):
+        (ContainerNodeImpl::dispatchChildInsertedEvents):
+        (ContainerNodeImpl::dispatchChildRemovalEvents):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::EntityImpl::EntityImpl):
+        (DOM::EntityReferenceImpl::EntityReferenceImpl):
+        (DOM::NotationImpl::NotationImpl):
+        (DOM::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        * khtml/xml/dom_xmlimpl.h:
+
 2005-05-04  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.
