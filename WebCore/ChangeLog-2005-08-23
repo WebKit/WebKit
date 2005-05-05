@@ -1,3 +1,23 @@
+2005-05-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4109667, sIFR flash replacement technique often malfunctions.  This bug occurs when the plugin
+	widget update causes the onload for the document to fire.  Because you can be in the middle of a style
+	recalc when doing an attach (in response to a stylesheet load), the onload fires in the middle of the attach
+	process when the tree is in a bogus state.
+
+	The fix is to add a bit to the document that tells style recalc that the implicitClose() method was invoked
+	during the style recalc process and the code has been patched so that when this situation occurs, the close is
+	deferred until after the style recalc has finished.
+	
+        Reviewed by John Sullivan
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::implicitClose):
+        * khtml/xml/dom_docimpl.h:
+        * layout-tests/fast/dynamic/flash-replacement-test.html: Added.
+
 2005-05-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

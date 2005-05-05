@@ -1,0 +1,39 @@
+		
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Reduced Test Case</title>
+
+<link href="bogus.css" rel="stylesheet" type="text/css" media="screen" />
+
+<script language="javascript" type="text/javascript">
+
+function measure2() {
+	document.getElementById('result').innerHTML = 'The resulting width is ' + document.getElementById('hello').offsetWidth;
+}
+
+// BEGIN PROXY FUNCTION
+// If we call the above function using this as a proxy, it works. Even with a "0" as our delay.
+
+function measure() {
+	setTimeout("measure2()",0);
+}
+
+// END PROXY FUNCTION
+
+
+</script>		
+
+</head>
+<body onload="measure2()">
+
+<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="249" height="154"><param name="movie" value="bogus.swf"><param name="bgcolor" value="#000000"><param name="quality" value="high"><embed src="featuredcase.swf" bgcolor="#000000" quality="high" width="249" height="154" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"></embed></object>
+
+<br />
+<h1 id="hello" style="background-color: #FF0000">Measure Me</h1>
+
+ 
+<div id="result"></div>
+
+</body>
+</html>

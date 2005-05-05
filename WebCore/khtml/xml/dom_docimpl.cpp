@@ -342,6 +342,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_inDocument = true;
     m_styleSelectorDirty = false;
     m_inStyleRecalc = false;
+    m_closeAfterStyleRecalc = false;
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
 
@@ -1104,6 +1105,12 @@ bail_out:
     setDocumentChanged( false );
     
     m_inStyleRecalc = false;
+    
+    // If we wanted to emit the implicitClose() during recalcStyle, do so now that we're finished.
+    if (m_closeAfterStyleRecalc) {
+        m_closeAfterStyleRecalc = false;
+        implicitClose();
+    }
 }
 
 void DocumentImpl::updateRendering()
@@ -1417,6 +1424,12 @@ void DocumentImpl::close()
 
 void DocumentImpl::implicitClose()
 {
+    // If we're in the middle of recalcStyle, we need to defer the close until the style information is accurate and all elements are re-attached.
+    if (m_inStyleRecalc) {
+        m_closeAfterStyleRecalc = true;
+        return;
+    }
+
     // First fire the onload.
     
     bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
