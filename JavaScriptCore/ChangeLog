@@ -1,3 +1,13 @@
+2005-05-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4086570> Crash in JavaScriptCore with RSS Visualizer
+	
+        * kjs/internal.cpp:
+        (InterpreterImp::mark): mark staticNaN, it is usually protected by the Number
+	prototype but there is a small window where it can get collected.
+
 2005-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

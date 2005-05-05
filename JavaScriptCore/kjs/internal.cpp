@@ -753,6 +753,8 @@ void InterpreterImp::mark()
     UndefinedImp::staticUndefined->mark();
   if (NullImp::staticNull && !NullImp::staticNull->marked())
     NullImp::staticNull->mark();
+  if (NumberImp::staticNaN && !NumberImp::staticNaN->marked())
+    NumberImp::staticNaN->mark();
   if (BooleanImp::staticTrue && !BooleanImp::staticTrue->marked())
     BooleanImp::staticTrue->mark();
   if (BooleanImp::staticFalse && !BooleanImp::staticFalse->marked())
