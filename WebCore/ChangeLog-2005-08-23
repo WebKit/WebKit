@@ -1,3 +1,14 @@
+2005-05-05  David Harrison  <harrison@apple.com>
+
+        Reviewed by me.
+
+        Restore fixed setEndingSelection.  Fixed method was ifdef'd out
+        because change was at end of Tiger development, but method is
+        unused.  You just can never be _too_ safe.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::setEndingSelection):
+
 2005-05-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.

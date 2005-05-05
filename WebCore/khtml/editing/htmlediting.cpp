@@ -363,16 +363,11 @@ void EditCommandPtr::setEndingSelection(const Selection &s) const
     get()->setEndingSelection(s);
 }
 
-#if 0
-// Implementation mistakenly used get()->setStartingSelection(), but it is
-// too late in Tiger to change, even though this method is unused.  Safest, then,
-// to fix but comment out until post-Tiger.
 void EditCommandPtr::setEndingSelection(const VisiblePosition &p) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setEndingSelection(p);
 }
-#endif
 
 void EditCommandPtr::setEndingSelection(const Position &p, EAffinity affinity) const
 {
