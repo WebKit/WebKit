@@ -1,5 +1,20 @@
 2005-05-05  David Hyatt  <hyatt@apple.com>
 
+	Eliminate the FOUCS on wired.com.  innerWidth and innerHeight on window should not do a layout that ignores
+	pending stylesheets, since even if stylesheets are loading the correct window dimensions can be determined with
+	a normal layout.
+
+	The radar # is 4109888.
+	
+        Reviewed by rjw
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (Window::updateLayout):
+        * khtml/ecma/kjs_window.h:
+
+2005-05-05  David Hyatt  <hyatt@apple.com>
+
 	Fix for 4109667, sIFR flash replacement technique often malfunctions.  This bug occurs when the plugin
 	widget update causes the onload for the document to fire.  Because you can be in the middle of a style
 	recalc when doing an attach (in response to a stylesheet load), the onload fires in the middle of the attach

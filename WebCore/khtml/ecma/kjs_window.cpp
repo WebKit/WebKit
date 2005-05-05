@@ -572,12 +572,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case InnerHeight:
       if (!m_part->view())
         return Undefined();
-      updateLayout();
+      updateLayout(false);
       return Number(m_part->view()->visibleHeight());
     case InnerWidth:
       if (!m_part->view())
         return Undefined();
-      updateLayout();
+      updateLayout(false);
       return Number(m_part->view()->visibleWidth());
     case Length:
       return Number(m_part->frames().count());
@@ -1876,11 +1876,14 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   return Undefined();
 }
 
-void Window::updateLayout() const
+void Window::updateLayout(bool ignoreStylesheets) const
 {
   DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(m_part->document().handle());
   if (docimpl) {
-    docimpl->updateLayoutIgnorePendingStylesheets();
+    if (ignoreStylesheets)
+      docimpl->updateLayoutIgnorePendingStylesheets();
+    else
+      docimpl->updateLayout();
   }
 }
 
