@@ -82,12 +82,13 @@ IMPLEMENT_PROTOTYPE(DOMNodeProto,DOMNodeProtoFunc)
 const ClassInfo DOMNode::info = { "Node", 0, &DOMNodeTable, 0 };
 
 DOMNode::DOMNode(ExecState *exec, const DOM::Node &n)
-  : DOMObject(DOMNodeProto::self(exec)), node(n)
+  : node(n)
 {
+  setPrototype(DOMNodeProto::self(exec));
 }
 
-DOMNode::DOMNode(const Object &proto, const DOM::Node &n)
-  : DOMObject(proto), node(n)
+DOMNode::DOMNode(const DOM::Node &n)
+  : node(n)
 {
 }
 
@@ -830,10 +831,15 @@ const ClassInfo DOMDocument::info = { "Document", &DOMNode::info, &DOMDocumentTa
 */
 
 DOMDocument::DOMDocument(ExecState *exec, const DOM::Document &d)
-  : DOMNode(DOMDocumentProto::self(exec), d) { }
+  : DOMNode(d) 
+{ 
+  setPrototype(DOMDocumentProto::self(exec));
+}
 
-DOMDocument::DOMDocument(const Object &proto, const DOM::Document &d)
-  : DOMNode(proto, d) { }
+DOMDocument::DOMDocument(const DOM::Document &d)
+  : DOMNode(d) 
+{ 
+}
 
 DOMDocument::~DOMDocument()
 {
@@ -1053,10 +1059,15 @@ const ClassInfo DOMElement::info = { "Element", &DOMNode::info, &DOMElementTable
 @end
 */
 DOMElement::DOMElement(ExecState *exec, const DOM::Element &e)
-  : DOMNode(DOMElementProto::self(exec), e) { }
+  : DOMNode(e) 
+{
+  setPrototype(DOMElementProto::self(exec));
+}
 
-DOMElement::DOMElement(const Object &proto, const DOM::Element &e)
-  : DOMNode(proto, e) { }
+DOMElement::DOMElement(const DOM::Element &e)
+  : DOMNode(e) 
+{ 
+}
 
 Value DOMElement::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
@@ -1184,7 +1195,10 @@ IMPLEMENT_PROTOTYPE(DOMDOMImplementationProto,DOMDOMImplementationProtoFunc)
 const ClassInfo DOMDOMImplementation::info = { "DOMImplementation", 0, 0, 0 };
 
 DOMDOMImplementation::DOMDOMImplementation(ExecState *exec, const DOM::DOMImplementation &i)
-  : DOMObject(DOMDOMImplementationProto::self(exec)), implementation(i) { }
+  : implementation(i) 
+{ 
+  setPrototype(DOMDOMImplementationProto::self(exec));
+}
 
 DOMDOMImplementation::~DOMDOMImplementation()
 {
@@ -1284,7 +1298,10 @@ IMPLEMENT_PROTOTYPE(DOMNamedNodeMapProto,DOMNamedNodeMapProtoFunc)
 const ClassInfo DOMNamedNodeMap::info = { "NamedNodeMap", 0, 0, 0 };
 
 DOMNamedNodeMap::DOMNamedNodeMap(ExecState *exec, const DOM::NamedNodeMap &m)
-  : DOMObject(DOMNamedNodeMapProto::self(exec)), map(m) { }
+  : map(m) 
+{ 
+  setPrototype(DOMNamedNodeMapProto::self(exec));
+}
 
 DOMNamedNodeMap::~DOMNamedNodeMap()
 {
@@ -1746,7 +1763,7 @@ Object KJS::getDOMExceptionConstructor(ExecState *exec)
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
 DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const QValueList<DOM::Node>& nodes )
-  : DOMObject(), m_nodes(nodes)
+  : m_nodes(nodes)
 {
   // Maybe we should ref (and deref in the dtor) the nodes, though ?
 }
@@ -1809,10 +1826,15 @@ IMPLEMENT_PROTOFUNC(DOMCharacterDataProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMCharacterDataProto,DOMCharacterDataProtoFunc, DOMNodeProto)
 
 DOMCharacterData::DOMCharacterData(ExecState *exec, const DOM::CharacterData &d)
- : DOMNode(DOMCharacterDataProto::self(exec), d) {}
+ : DOMNode(d) 
+{
+  setPrototype(DOMCharacterDataProto::self(exec));
+}
 
-DOMCharacterData::DOMCharacterData(const Object &proto, const DOM::CharacterData &d)
- : DOMNode(proto, d) {}
+DOMCharacterData::DOMCharacterData(const DOM::CharacterData &d)
+ : DOMNode(d) 
+{
+}
 
 Value DOMCharacterData::tryGet(ExecState *exec, const Identifier &p) const
 {
@@ -1898,7 +1920,10 @@ IMPLEMENT_PROTOFUNC(DOMTextProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMTextProto,DOMTextProtoFunc,DOMCharacterDataProto)
 
 DOMText::DOMText(ExecState *exec, const DOM::Text &t)
-  : DOMCharacterData(DOMTextProto::self(exec), t) { }
+  : DOMCharacterData(t) 
+{ 
+  setPrototype(DOMTextProto::self(exec));
+}
 
 Value DOMText::tryGet(ExecState *exec, const Identifier &p) const
 {

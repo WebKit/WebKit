@@ -57,7 +57,7 @@ namespace KJS {
     // Build a DOMStyleSheet
     DOMStyleSheet(ExecState *, DOM::StyleSheet ss) : styleSheet(ss) { }
     // Constructor for inherited classes
-    DOMStyleSheet(Object proto, DOM::StyleSheet ss) : DOMObject(proto), styleSheet(ss) { }
+    DOMStyleSheet(DOM::StyleSheet ss) : styleSheet(ss) { }
     virtual ~DOMStyleSheet();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -184,7 +184,7 @@ namespace KJS {
   class DOMCSSValue : public DOMObject {
   public:
     DOMCSSValue(ExecState *, DOM::CSSValue v) : cssValue(v) { }
-    DOMCSSValue(Object proto, DOM::CSSValue v) : DOMObject(proto), cssValue(v) { }
+    DOMCSSValue(DOM::CSSValue v) : cssValue(v) { }
     virtual ~DOMCSSValue();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);

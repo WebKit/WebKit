@@ -64,7 +64,10 @@ IMPLEMENT_PROTOFUNC(DOMRangeProtoFunc)
 IMPLEMENT_PROTOTYPE(DOMRangeProto,DOMRangeProtoFunc)
 
 DOMRange::DOMRange(ExecState *exec, DOM::Range r)
- : DOMObject(DOMRangeProto::self(exec)), range(r) {}
+ : range(r) 
+{
+  setPrototype(DOMRangeProto::self(exec));
+}
 
 DOMRange::~DOMRange()
 {

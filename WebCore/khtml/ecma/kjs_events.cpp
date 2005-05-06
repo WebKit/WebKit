@@ -385,7 +385,10 @@ IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
 IMPLEMENT_PROTOTYPE(DOMEventProto, DOMEventProtoFunc)
 
 DOMEvent::DOMEvent(ExecState *exec, DOM::Event e)
-  : DOMObject(DOMEventProto::self(exec)), event(e), clipboard(0) { }
+  : event(e), clipboard(0) 
+{
+  setPrototype(DOMEventProto::self(exec));
+}
 
 DOMEvent::~DOMEvent()
 {
@@ -1085,8 +1088,10 @@ IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
 IMPLEMENT_PROTOTYPE(ClipboardProto, ClipboardProtoFunc)
 
 Clipboard::Clipboard(ExecState *exec, DOM::ClipboardImpl *cb)
-: DOMObject(ClipboardProto::self(exec)), clipboard(cb)
+  : clipboard(cb)
 {
+    setPrototype(ClipboardProto::self(exec));
+  
     if (clipboard)
         clipboard->ref();
 }

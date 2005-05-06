@@ -1,3 +1,53 @@
+2005-05-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4058167> Unit Converter and Weather widgets crashed in KJS::Collector::markCurrentThreadConservatively
+        
+	Avoid possibly allocating new prototype objects as parameters to
+	superclass constructors - there may be an allocated but
+	uninitilized object so this is a bad time to allocate. Instead,
+	set the prototype in the constructor body, since the object is
+	happily allocated by then.
+
+	* khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (DOMCSSStyleDeclaration::DOMCSSStyleDeclaration):
+        (DOMMediaList::DOMMediaList):
+        (DOMCSSStyleSheet::DOMCSSStyleSheet):
+        (DOMCSSPrimitiveValue::DOMCSSPrimitiveValue):
+        (DOMCSSValueList::DOMCSSValueList):
+        * khtml/ecma/kjs_css.h:
+        (KJS::DOMStyleSheet::DOMStyleSheet):
+        (KJS::DOMCSSValue::DOMCSSValue):
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::DOMNode):
+        (DOMDocument::DOMDocument):
+        (DOMElement::DOMElement):
+        (DOMDOMImplementation::DOMDOMImplementation):
+        (DOMNamedNodeMap::DOMNamedNodeMap):
+        (DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (DOMCharacterData::DOMCharacterData):
+        (DOMText::DOMText):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::NodeConstructor::NodeConstructor):
+        (KJS::DOMExceptionConstructor::DOMExceptionConstructor):
+        * khtml/ecma/kjs_events.cpp:
+        (DOMEvent::DOMEvent):
+        (Clipboard::Clipboard):
+        * khtml/ecma/kjs_html.cpp:
+        (HTMLCollection::HTMLCollection):
+        * khtml/ecma/kjs_range.cpp:
+        (DOMRange::DOMRange):
+        * khtml/ecma/kjs_traversal.cpp:
+        (DOMNodeIterator::DOMNodeIterator):
+        (DOMNodeFilter::DOMNodeFilter):
+        (DOMTreeWalker::DOMTreeWalker):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::XMLHttpRequest):
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializer::XMLSerializer):
+
 2005-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -58,6 +108,7 @@
         * khtml/editing/htmlediting.cpp:
         (khtml::EditCommandPtr::setEndingSelection):
 
+>>>>>>> 1.4172
 2005-05-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
