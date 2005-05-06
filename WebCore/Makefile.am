@@ -1,6 +1,8 @@
 all-am:
-	xcodebuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
+	defaults write com.apple.Xcode PBXProductDirectory "$(SYMROOTS)"
+	defaults delete com.apple.Xcode PBXIntermediatesDirectory || echo -n
+	xcodebuild -buildstyle $(BUILDSTYLE)
 clean-am:
-	xcodebuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
-	rm -rf $(SYMROOTS)/WebCore.build
-	rm -rf $(SYMROOTS)/WebCore.framework
+	defaults write com.apple.Xcode PBXProductDirectory "$(SYMROOTS)"
+	defaults delete com.apple.Xcode PBXIntermediatesDirectory || echo -n
+	xcodebuild clean

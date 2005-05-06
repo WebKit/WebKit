@@ -1,3 +1,11 @@
+2005-05-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - make building multiple trees with make work better
+
+        * Makefile.am: Set up Xcode build directory before invoking xcodebuild.
+
 2005-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.
