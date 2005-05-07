@@ -1,4 +1,15 @@
 2005-05-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4110366> Deleting text at the end of email moves insertion point to the top of the document
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        Update m_upstreamStart when deleting m_downstreamEnd.node() if the former is no longer in the document.
+        Better to update here than trying to recover later in calculateEndingPosition().
+
+2005-05-07  David Harrison  <harrison@apple.com>
         
         Remove workaround for <rdar://problem/4103339>.
         

@@ -2881,7 +2881,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 // need to delete whole node
                 // we can get here if this is the last node in the block
                 // remove an ancestor of m_downstreamEnd.node(), and thus m_downstreamEnd.node() itself
-                if (m_upstreamStart.node() == m_downstreamEnd.node() ||
+                if (!m_upstreamStart.node()->inDocument() ||
+                    m_upstreamStart.node() == m_downstreamEnd.node() ||
                     m_upstreamStart.node()->isAncestor(m_downstreamEnd.node())) {
                     m_upstreamStart = Position(m_downstreamEnd.node()->parentNode(), m_downstreamEnd.node()->nodeIndex());
                 }
