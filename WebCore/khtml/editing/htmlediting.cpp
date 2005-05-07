@@ -2611,10 +2611,7 @@ void DeleteSelectionCommand::initializePositionData()
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
     //
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition(m_selectionToDelete.startAffinity());
-    // NOTE: Workaround for bug <rdar://problem/4103339> is to avoid calculating trailingWhitespacePosition
-    // if the m_downstreamEnd is at the end of a paragraph.
-    if (!isEndOfParagraph(VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY)))
-        m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
+    m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition(VP_DEFAULT_AFFINITY);
 
     if (m_smartDelete) {
     

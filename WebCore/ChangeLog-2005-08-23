@@ -1,3 +1,10 @@
+2005-05-07  David Harrison  <harrison@apple.com>
+        
+        Remove workaround for <rdar://problem/4103339>.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+
 2005-05-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Harrison.
