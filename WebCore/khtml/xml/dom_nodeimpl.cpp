@@ -1391,6 +1391,18 @@ long NodeImpl::maxOffset() const
     return 1;
 }
 
+// method for editing madness, which allows BR,1 as a position, though that is incorrect
+long NodeImpl::maxDeepOffset() const
+{
+    if (offsetInCharacters(nodeType()))
+        return static_cast<const TextImpl*>(this)->length();
+        
+    if (id() == ID_BR || (renderer() && renderer()->isReplaced()))
+        return 1;
+
+    return childNodeCount();
+}
+
 long NodeImpl::caretMinOffset() const
 {
     return renderer() ? renderer()->caretMinOffset() : 0;

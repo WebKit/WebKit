@@ -35,7 +35,6 @@
 #include "dom_elementimpl.h"
 #include "dom_nodeimpl.h"
 #include "dom_position.h"
-#include "dom_positioniterator.h"
 #include "dom_stringimpl.h"
 #include "dom_textimpl.h"
 #include "dom2_range.h"
@@ -83,7 +82,6 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
 using DOM::Position;
-using DOM::PositionIterator;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::StayInBlock;

@@ -1,3 +1,52 @@
+2005-05-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej, Darin.
+
+        <rdar://problem/4103339> VisiblePosition and PositionIterator iterators do not return positions in order
+
+        * WebCore.pbproj/project.pbxproj:
+        Removed dom_positioniterator.h and dom_positioniterator.cpp.
+        
+        * khtml/editing/htmlediting.cpp:
+        Removed unused include of dom_positioniterator.h and "using" of PositionIterator.
+        
+        * khtml/editing/selection.cpp:
+        Removed unused include of dom_positioniterator.h.
+
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousVisiblePosition):
+        (khtml::VisiblePosition::nextVisiblePosition):
+        (khtml::VisiblePosition::downstreamDeepEquivalent):
+        Use Position::next(), Position::previous(), Position::atStart(), Position::atEnd() instead of duplicated code.
+        
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::maxDeepOffset):
+        Added to support Position::next(), Position::previous(), Position::atStart(), Position::atEnd()
+        
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previous):
+        (DOM::Position::next):
+        (DOM::Position::atStart):
+        (DOM::Position::atEnd):
+        Moved here, replacing VisiblePosition's duplicate and PositionIterator.  Fixed to
+        return positions in order and not skip positions.
+        
+        (DOM::Position::previousCharacterPosition):
+        (DOM::Position::nextCharacterPosition):
+        Use Position::next(), Position::previous(), Position::atStart(), Position::atEnd() instead of PositionIterator.
+
+        (DOM::isStreamer):
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        Use Position::next(), Position::previous(), Position::atStart(), Position::atEnd() instead of PositionIterator.
+
+        * khtml/xml/dom_positioniterator.cpp: Removed.
+        * khtml/xml/dom_positioniterator.h: Removed.
+        Removed in favor of Position::next(), Position::previous(), Position::atStart(), Position::atEnd()
+
 2005-05-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

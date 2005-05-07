@@ -42,7 +42,6 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
-#include "xml/dom_positioniterator.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
 

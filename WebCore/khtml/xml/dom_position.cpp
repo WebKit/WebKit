@@ -31,7 +31,6 @@
 #include "css_valueimpl.h"
 #include "dom_elementimpl.h"
 #include "dom_nodeimpl.h"
-#include "dom_positioniterator.h"
 #include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
@@ -160,6 +159,82 @@ CSSComputedStyleDeclarationImpl *Position::computedStyle() const
     return new CSSComputedStyleDeclarationImpl(elem);
 }
 
+Position Position::previous(EUsingComposedCharacters usingComposedCharacters) const
+{
+    NodeImpl *n = node();
+    if (!n)
+        return *this;
+    
+    long o = offset();
+    assert(o >= 0);
+
+    if (o > 0) {
+        NodeImpl *child = n->childNode(o - 1);
+        if (child) {
+            return Position(child, child->maxDeepOffset());
+        }
+        // There are two reasons child might be 0:
+        //   1) The node is node like a text node that is not an element, and therefore has no children.
+        //      Going backward one character at a time is correct.
+        //   2) The old offset was a bogus offset like (<br>, 1), and there is no child.
+        //      Going from 1 to 0 is correct.
+        return Position(n, usingComposedCharacters ? n->previousOffset(o) : o - 1);
+    }
+
+    NodeImpl *parent = n->parentNode();
+    if (!parent)
+        return *this;
+
+    return Position(parent, n->nodeIndex());
+}
+
+Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
+{
+    NodeImpl *n = node();
+    if (!n)
+        return *this;
+    
+    long o = offset();
+    assert(o >= 0);
+
+    if (o < n->maxDeepOffset()) {
+        NodeImpl *child = n->childNode(o);
+        if (child) {
+            return Position(child, 0);
+        }
+        // There are two reasons child might be 0:
+        //   1) The node is node like a text node that is not an element, and therefore has no children.
+        //      Going forward one character at a time is correct.
+        //   2) The new offset is a bogus offset like (<br>, 1), and there is no child.
+        //      Going from 0 to 1 is correct.
+        return Position(n, usingComposedCharacters ? n->nextOffset(o) : o + 1);
+    }
+
+    NodeImpl *parent = n->parentNode();
+    if (!parent)
+        return *this;
+
+    return Position(parent, n->nodeIndex() + 1);
+}
+
+bool Position::atStart() const
+{
+    NodeImpl *n = node();
+    if (!n)
+        return true;
+    
+    return offset() <= 0 && n->parent() == 0;
+}
+
+bool Position::atEnd() const
+{
+    NodeImpl *n = node();
+    if (!n)
+        return true;
+    
+    return offset() >= n->maxDeepOffset() && n->parent() == 0;
+}
+
 long Position::renderedOffset() const
 {
     if (!node()->isTextNode())
@@ -184,196 +259,273 @@ long Position::renderedOffset() const
     return result;
 }
 
+// return first preceding DOM position rendered at a different location, or "this"
 Position Position::previousCharacterPosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
 
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
-    PositionIterator it(*this);
 
     bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
-    while (!it.atStart()) {
-        Position pos = it.previous();
+    Position currentPos = *this;
+    while (!currentPos.atStart()) {
+        currentPos = currentPos.previous();
 
-        if (pos.node()->rootEditableElement() != fromRootEditableElement)
+        if (currentPos.node()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atStartOfLine || !rendered) {
-            if (pos.inRenderedContent())
-                return pos;
-        }
-        else if (rendersInDifferentPosition(pos))
-            return pos;
+            if (currentPos.inRenderedContent())
+                return currentPos;
+        } else if (rendersInDifferentPosition(currentPos))
+            return currentPos;
     }
     
     return *this;
 }
 
+// return first following position rendered at a different location, or "this"
 Position Position::nextCharacterPosition(EAffinity affinity) const
 {
     if (isNull())
         return Position();
 
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
-    PositionIterator it(*this);
 
     bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
-    while (!it.atEnd()) {
-        Position pos = it.next();
+    Position currentPos = *this;
+    while (!currentPos.atEnd()) {
+        currentPos = currentPos.next();
 
-        if (pos.node()->rootEditableElement() != fromRootEditableElement)
+        if (currentPos.node()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atEndOfLine || !rendered) {
-            if (pos.inRenderedContent())
-                return pos;
-        }
-        else if (rendersInDifferentPosition(pos))
-            return pos;
+            if (currentPos.inRenderedContent())
+                return currentPos;
+        } else if (rendersInDifferentPosition(currentPos))
+            return currentPos;
     }
     
     return *this;
 }
 
+// upstream() and downstream() want to return positions that are either in a
+// text node or at just before a non-text node.  This method checks for that.
+static bool     isStreamer (Position pos)
+{
+    NodeImpl *currentNode = pos.node();
+    if (!currentNode)
+        return true;
+        
+    if (currentNode->isAtomicNode())
+        return true;
+        
+    return (pos.offset() == 0);
+}
+
+// AFAIK no one has a clear, complete definition for this method and how it is used.
+// Here is what I have come to understand from re-working the code after fixing PositionIterator
+// for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, upstream()
+// scans backward in the DOM starting at "this" to return a visible DOM position that is either in
+// a text node, or just after a replaced or BR element (btw downstream() also considers empty blocks).
+// If "stayInBlock" is specified, the search stops when it would have entered into a part of the DOM
+// with a different enclosing block, including a nested one.  Otherwise, the search stops at the start
+// of the entire DOM tree.  If "stayInBlock" stops the search, this method returns the highest previous
+// position that is either in an atomic node (i.e. text) or is the end of a non-atomic node
+// (_regardless_ of visibility).  If the end-of-DOM stopped the search, this method returns the 
+// highest previous visible node that is either in an atomic node (i.e. text) or is the end of a
+// non-atomic node.
 Position Position::upstream(EStayInBlock stayInBlock) const
 {
+    // start at equivalent deep position
     Position start = equivalentDeepPosition();
     NodeImpl *startNode = start.node();
     if (!startNode)
         return Position();
-
-    NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
-    Position lastVisible;
     
-    PositionIterator it(start);
-    for (; !it.atStart(); it.previous()) {
-        NodeImpl *currentNode = it.current().node();
+    // iterate backward from there, looking for a qualified position
+    NodeImpl *block = stayInBlock ? startNode->enclosingBlockFlowOrTableElement() : 0;
+    Position lastVisible = *this;
+    Position lastStreamer = *this;
+    Position currentPos = start;
+    for (; !currentPos.atStart(); currentPos = currentPos.previous()) {
+        NodeImpl *currentNode = currentPos.node();
+        int currentOffset = currentPos.offset();
 
-        if (stayInBlock) {
-            NodeImpl *currentBlock = currentNode->enclosingBlockFlowOrTableElement();
-            if (block != currentBlock)
-                return it.next();
-        }
+        // limit traversal to block or table enclosing the original element
+        // NOTE: This includes not going into nested blocks
+        if (stayInBlock && block != currentNode->enclosingBlockFlowOrTableElement())
+            return lastStreamer;
 
+        // track last streamer position (regardless of visibility)
+        if (isStreamer(currentPos))
+            lastStreamer = currentPos;
+
+        // skip position in unrendered or invisible node
         RenderObject *renderer = currentNode->renderer();
-        if (!renderer)
+        if (!renderer || renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if (renderer->style()->visibility() != VISIBLE)
-            continue;
+        // track last visible streamer position
+        if (isStreamer(currentPos))
+            lastVisible = currentPos;
 
-        lastVisible = it.current();
-
+        // return position after replaced or BR elements
         if (renderer->isReplaced() || renderer->isBR()) {
-            if (it.current().offset() >= renderer->caretMaxOffset())
+            if (currentOffset >= renderer->caretMaxOffset())
                 return Position(currentNode, renderer->caretMaxOffset());
-            else
-                continue;
+
+            // we could not have iterated here because we would have returned
+            // this node, caretMaxOffset, so we must have started here
+            assert(currentPos == start);
+            continue;
         }
 
+        // return current position if it is in rendered text
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
-            if (currentNode != startNode)
+            if (currentNode != startNode) {
+                assert(currentOffset >= renderer->caretMaxOffset());
                 return Position(currentNode, renderer->caretMaxOffset());
+            }
 
-            if (it.current().offset() < 0)
+            if (currentOffset < 0)
                 continue;
-            uint textOffset = it.current().offset();
 
+            uint textOffset = currentOffset;
             RenderText *textRenderer = static_cast<RenderText *>(renderer);
             for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset > box->start() && textOffset <= box->start() + box->len())
-                    return it.current();
-                else if (box != textRenderer->lastTextBox() && 
-                         !box->nextOnLine() && 
-                         textOffset == box->start() + box->len() + 1)
-                    return it.current();
+                    return currentPos;
+                    
+                if (box != textRenderer->lastTextBox() && 
+                    !box->nextOnLine() && 
+                    textOffset == box->start() + box->len() + 1)
+                    return currentPos;
             }
         }
     }
-    
-    return lastVisible.isNotNull() ? lastVisible : *this;
+
+    return lastVisible;
 }
 
+// AFAIK no one has a clear, complete definition for this method and how it is used.
+// Here is what I have come to understand from re-working the code after fixing PositionIterator
+// for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, downstream()
+// scans forward in the DOM starting at "this" to return the first visible DOM position that is
+// either in a text node, or just before a replaced, BR element, or empty block flow element (i.e.
+// non-text nodes with no children).  If "stayInBlock" is specified, the search stops when it would
+// have entered into a part of the DOM with a different enclosing block, including a nested one.
+// Otherwise, the search stops at the end of the entire DOM tree.  If "stayInBlock" stops the search,
+// this method returns the first previous position that is either in an atomic node (i.e. text) or is
+// at offset 0 (_regardless_ of visibility).  If the end-of-DOM stopped the search, this method returns
+// the first previous visible node that is either in an atomic node (i.e. text) or is at offset 0.
 Position Position::downstream(EStayInBlock stayInBlock) const
 {
+    // start at equivalent deep position
     Position start = equivalentDeepPosition();
     NodeImpl *startNode = start.node();
     if (!startNode)
         return Position();
 
-    NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
-    Position lastVisible;
-    
-    PositionIterator it(start);            
-    for (; !it.atEnd(); it.next()) {   
-        NodeImpl *currentNode = it.current().node();
+    // iterate forward from there, looking for a qualified position
+    NodeImpl *block = stayInBlock ? startNode->enclosingBlockFlowOrTableElement() : 0;
+    Position lastVisible = *this;
+    Position lastStreamer = *this;
+    Position currentPos = start;
+    for (; !currentPos.atEnd(); currentPos = currentPos.next()) {   
+        NodeImpl *currentNode = currentPos.node();
+        int currentOffset = currentPos.offset();
 
-        if (stayInBlock) {
-            NodeImpl *currentBlock = currentNode->enclosingBlockFlowOrTableElement();
-            if (block != currentBlock)
-                return it.previous();
-        }
+        // stop before going above the body, up into the head
+        // return the last visible streamer position
+        if (currentNode->id() == ID_BODY && currentOffset >= (int) currentNode->childNodeCount())
+            break;
+            
+        // limit traversal to block or table enclosing the original element
+        // return the last streamer position regardless of visibility
+        // NOTE: This includes not going into nested blocks
+        if (stayInBlock && block != currentNode->enclosingBlockFlowOrTableElement())
+            return lastStreamer;
+        
+        // track last streamer position (regardless of visibility)
+        if (isStreamer(currentPos))
+            lastStreamer = currentPos;
 
+        // skip position in unrendered or invisible node
         RenderObject *renderer = currentNode->renderer();
-        if (!renderer)
+        if (!renderer || renderer->style()->visibility() != VISIBLE)
             continue;
+        
+        // track last visible streamer position
+        if (isStreamer(currentPos))
+            lastVisible = currentPos;
 
-        if (renderer->style()->visibility() != VISIBLE)
-            continue;
+        // if now at a offset 0 of a rendered block flow element...
+        //      - return current position if the element has no children (i.e. is a leaf)
+        //      - return child node, offset 0, if the first visible child is not a block flow element
+        //      - otherwise, skip this position (first visible child is a block, and we will
+        //          get there eventually via the iterator)
+        if ((currentNode != startNode && renderer->isBlockFlow()) && (currentOffset == 0)) {
+            if (!currentNode->firstChild())
+                return currentPos;
+                
+            for (NodeImpl *child = currentNode->firstChild(); child; child = child->nextSibling()) {
+                RenderObject *r = child->renderer();
+                if (r && r->style()->visibility() == VISIBLE) {
+                    if (r->isBlockFlow())
+                        break; // break causes continue code below to run.
 
-        lastVisible = it.current();
-
-        if (currentNode != startNode && renderer->isBlockFlow()) {
-            if (it.current().offset() == 0) {
-                // If no first child, or first visible child is a not a block, return; otherwise continue.
-                if (!currentNode->firstChild())
-                    return Position(currentNode, 0);
-                for (NodeImpl *child = currentNode->firstChild(); child; child = child->nextSibling()) {
-                    RenderObject *r = child->renderer();
-                    if (r && r->style()->visibility() == VISIBLE) {
-                         if (r->isBlockFlow())
-                            break; // break causes continue code below to run.
-                         else
-                            return Position(child, 0);
-                    }
+                    return Position(child, 0);
                 }
-                continue;
             }
+
+            continue;
         }
 
+        // return position before replaced or BR elements
         if (renderer->isReplaced() || renderer->isBR()) {
-            if (it.current().offset() <= renderer->caretMinOffset())
+            if (currentOffset <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
-            else
-                continue;
+            
+            // we could not have iterated here because we would have returned
+            // this node, offset 0, so we must have started here
+            assert(currentPos == start);
+            continue;
         }
 
+        // return current position if it is in rendered text
         if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
-            if (currentNode != start.node())
+            if (currentNode != startNode) {
+                assert(currentOffset == 0);
                 return Position(currentNode, renderer->caretMinOffset());
+            }
 
-            if (it.current().offset() < 0)
+            if (currentOffset < 0)
                 continue;
-            uint textOffset = it.current().offset();
+
+            uint textOffset = currentOffset;
 
             RenderText *textRenderer = static_cast<RenderText *>(renderer);
             for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset >= box->start() && textOffset <= box->end())
-                    return it.current();
-                else if (box != textRenderer->lastTextBox() && 
-                         !box->nextOnLine() && 
-                         textOffset == box->start() + box->len())
-                    return it.current();
+                    return currentPos;
+                
+                if (box != textRenderer->lastTextBox() && 
+                     !box->nextOnLine() && 
+                     textOffset == box->start() + box->len()) {
+                    return currentPos;
+                }
             }
         }
     }
     
-    return lastVisible.isNotNull() ? lastVisible : *this;
+    return lastVisible;
 }
 
 Position Position::equivalentRangeCompliantPosition() const

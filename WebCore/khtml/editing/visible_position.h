@@ -103,12 +103,6 @@ private:
     static Position previousVisiblePosition(const Position &);
     static Position nextVisiblePosition(const Position &);
 
-    static Position previousPosition(const Position &);
-    static Position nextPosition(const Position &);
-
-    static bool atStart(const Position &);
-    static bool atEnd(const Position &);
-
     static bool isCandidate(const Position &);
         
     Position m_deepPosition;

@@ -1788,7 +1788,6 @@
 				93F199E508245E59001E9ABC,
 				93F199E608245E59001E9ABC,
 				93F199E708245E59001E9ABC,
-				93F199E808245E59001E9ABC,
 				93F199E908245E59001E9ABC,
 				93F199EA08245E59001E9ABC,
 				93F199EB08245E59001E9ABC,
@@ -3735,12 +3734,6 @@
 			settings = {
 			};
 		};
-		93F199E808245E59001E9ABC = {
-			fileRef = BE02F482066E1C550013A9F6;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		93F199E908245E59001E9ABC = {
 			fileRef = BE02D4E6066F908A0076809F;
 			isa = PBXBuildFile;
@@ -4220,7 +4213,6 @@
 				93F19AFD08245E59001E9ABC,
 				93F19AFE08245E59001E9ABC,
 				93F19AFF08245E59001E9ABC,
-				93F19B0008245E59001E9ABC,
 				93F19B0108245E59001E9ABC,
 				93F19B0208245E59001E9ABC,
 				93F19B0308245E59001E9ABC,
@@ -5695,12 +5687,6 @@
 			settings = {
 			};
 		};
-		93F19B0008245E59001E9ABC = {
-			fileRef = BE02F483066E1C550013A9F6;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		93F19B0108245E59001E9ABC = {
 			fileRef = BE02D4E7066F908A0076809F;
 			isa = PBXBuildFile;
@@ -6358,22 +6344,6 @@
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = jsediting.cpp;
 			path = editing/jsediting.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BE02F482066E1C550013A9F6 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = dom_positioniterator.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BE02F483066E1C550013A9F6 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = dom_positioniterator.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -8584,8 +8554,6 @@
 				F523D2FA02DE4476018635CA,
 				BE91FC8B06133666005E3790,
 				BE91FC8C06133666005E3790,
-				BE02F482066E1C550013A9F6,
-				BE02F483066E1C550013A9F6,
 				F523D2FB02DE4476018635CA,
 				F523D2FC02DE4476018635CA,
 				F523D2FD02DE4476018635CA,
