@@ -81,8 +81,8 @@ public:
     // same position as the caller's position. The same goes for downstream position
     // except that it is the latest position for earliest position in the above 
     // description.
-    Position upstream(EStayInBlock stayInBlock = DoNotStayInBlock) const;
-    Position downstream(EStayInBlock stayInBlock = DoNotStayInBlock) const;
+    Position upstream(EStayInBlock stayInBlock) const;
+    Position downstream(EStayInBlock stayInBlock) const;
     
     Position equivalentRangeCompliantPosition() const;
     Position equivalentDeepPosition() const;

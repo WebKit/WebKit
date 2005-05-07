@@ -1,3 +1,24 @@
+2005-05-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Harrison.
+
+	- make StayInBlock vs DoNotStayInBlock explicit in all calls to
+	upstream/downstream, in preparation for phasing out the
+	DoNotStayInBlock variant.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::nodeFullySelected):
+        (khtml::ApplyStyleCommand::nodeFullyUnselected):
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+        (khtml::InsertTextCommand::insertSpace):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::debugPosition):
+        * khtml/xml/dom_position.h:
+
 2005-05-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej, Darin.
