@@ -1,3 +1,20 @@
+2005-05-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- remove some of the uses of upstream/downstream DoNotStayInBlock
+	
+        * khtml/editing/markup.cpp:
+	(khtml::createMarkup): Instead of using upstream to decide if a	line break should be 
+	added at the end, use inSameParagraph.
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::debugPosition): Remove the code to print upstream and downstream,
+	the selection endpoints themselves are adequate for debugging and are what we use for
+	layout tests.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::editingStartPosition): Skip a possible paragraph break at the start
+	of the selection in a more explicit way to avoid DoNotStayInBlock.
+
 2005-05-07  David Harrison  <harrison@apple.com>
 
         Reviewed by John.

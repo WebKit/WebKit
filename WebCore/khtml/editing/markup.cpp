@@ -434,12 +434,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     }
 
     if (annotate) {
-        Position pos(endPosition(range));
-        NodeImpl *block = pos.node()->enclosingBlockFlowElement();
-        NodeImpl *upstreamBlock = pos.upstream(DOM::DoNotStayInBlock).node()->enclosingBlockFlowElement();
-        if (block != upstreamBlock) {
+        if (!inSameBlock(visibleEnd, visibleEnd.previous()))
             markups.append(interchangeNewlineString);
-        }
     }
 
     // Retain the Mail quote level by including all ancestor mail block quotes.

@@ -32,6 +32,7 @@
 #include "misc/htmltags.h"
 #include "editing/markup.h"
 #include "editing/visible_position.h"
+#include "editing/visible_units.h"
 #include "editing/visible_text.h"
 #include "xml/dom_position.h"
 
@@ -41,7 +42,8 @@ using khtml::createMarkup;
 using khtml::RenderBlock;
 using khtml::RenderObject;
 using khtml::VisiblePosition;
-using khtml::UPSTREAM;
+using khtml::DOWNSTREAM;
+using khtml::isEndOfParagraph;
 
 namespace DOM {
 
@@ -1302,19 +1304,28 @@ NodeImpl *RangeImpl::startNode() const
 
 Position RangeImpl::editingStartPosition() const
 {
-    // This function is used to avoid bugs like:
+    // This function is used by range style computations to avoid bugs like:
     // <rdar://problem/4017641> REGRESSION (Mail): you can only bold/unbold a selection starting from end of line once
-    // The issue here is that calculating the selection using the start of a range sometimes considers nodes that
-    // should not be considered. In the case of this bug, we need to move past the offset after the last character
-    // in a text node in order to make the right style calculation, so we do not wind up with a false "mixed"
-    // style.
+    // It is important to skip certain irrelevant content at the start of the selection, so we do not wind up 
+    // with a spurious "mixed" style.
     
-    Position pos(m_startContainer, m_startOffset);    
+    VisiblePosition pos(m_startContainer, m_startOffset, VP_DEFAULT_AFFINITY);
     if (pos.isNull())
         return Position();
-    
+
     int exceptionCode = 0;
-    return collapsed(exceptionCode) ? VisiblePosition(pos, UPSTREAM).deepEquivalent() : pos.downstream(DoNotStayInBlock);
+    // if the selection is a caret, just return the position, since the style
+    // behind us is relevant
+    if (collapsed(exceptionCode))
+        return pos.position();
+
+    // if the selection starts just before a paragraph break, skip over it
+    if (isEndOfParagraph(pos))
+        return pos.next().position().downstream(StayInBlock);
+
+    // otherwise, make sure to be at the start of the first selected node,
+    // instead of possibly at the end of the last node before the selection
+    return pos.position().downstream(StayInBlock);
 }
 
 NodeImpl *RangeImpl::pastEndNode() const
