@@ -1,3 +1,28 @@
+2005-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Harrison.
+
+	- remove remaining uses of upstream/downstream DoNotStayInBlock
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (khtml::ApplyStyleCommand::nodeFullySelected):
+        (khtml::ApplyStyleCommand::nodeFullyUnselected):
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+        (khtml::InsertTextCommand::insertSpace):
+        (khtml::ReplaceSelectionCommand::doApply):
+	
+        * khtml/editing/visible_position.cpp:
+        (khtml::enclosingBlockFlowElement): New helper function.
+	* khtml/editing/visible_position.h:
+
+        * khtml/editing/visible_units.cpp:
+        (khtml::inSameBlock): Check enclosing block flows instead of comparing
+	visible block starts. Two nested blocks may have the same visible start but
+	different visible ends, so the old check would give false positives.
+
 2005-05-09  David Harrison  <harrison@apple.com>
 
         Add layout test for <rdar://problem/4110366>.
@@ -234,7 +259,6 @@
         * khtml/editing/htmlediting.cpp:
         (khtml::EditCommandPtr::setEndingSelection):
 
->>>>>>> 1.4172
 2005-05-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
