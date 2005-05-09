@@ -1,3 +1,88 @@
+2005-05-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - turn on conservative GC unconditionally and start on SPI changes to
+          eliminate the now-unneeded smart pointers since we don't ref count any more
+
+        * kjs/value.h: Removed macros to turn conservative GC on and off.
+        Removed ref and deref functions.
+        (KJS::ValueImp::ValueImp): Removed non-conservative-GC code path.
+        (KJS::ValueImp::isUndefined): Added. New SPI to make it easier to deal with ValueImp directly.
+        (KJS::ValueImp::isNull): Ditto.
+        (KJS::ValueImp::isBoolean): Ditto.
+        (KJS::ValueImp::isNumber): Ditto.
+        (KJS::ValueImp::isString): Ditto.
+        (KJS::ValueImp::isObject): Ditto.
+        (KJS::Value::Value): Removed non-conservative-GC code path and made constructor no
+        longer explicit so we can quietly create Value wrappers from ValueImp *; inexpensive with
+        conservative GC and eases the transition.
+        (KJS::Value::operator ValueImp *): Added. Quietly creates ValueImp * from Value.
+        (KJS::ValueImp::marked): Removed non-conservative-GC code path.
+
+        * kjs/value.cpp:
+        (KJS::ValueImp::mark): Removed non-conservative-GC code path.
+        (KJS::ValueImp::isUndefinedOrNull): Added. New SPI to make it easier to deal with ValueImp directly.
+        (KJS::ValueImp::isBoolean): Ditto.
+        (KJS::ValueImp::isNumber): Ditto.
+        (KJS::ValueImp::isString): Ditto.
+        (KJS::ValueImp::asString): Ditto.
+        (KJS::ValueImp::isObject): Ditto.
+        (KJS::undefined): Ditto.
+        (KJS::null): Ditto.
+        (KJS::boolean): Ditto.
+        (KJS::string): Ditto.
+        (KJS::zero): Ditto.
+        (KJS::one): Ditto.
+        (KJS::two): Ditto.
+        (KJS::number): Ditto.
+
+        * kjs/object.h: Made constructor no longer explicit so we can quietly create Object
+        wrappers from ObjectImp *; inexpensive with conservative GC and eases the transition.
+        (KJS::Object::operator ObjectImp *): Added. Quietly creates ObjectImp * from Object.
+        (KJS::ValueImp::isObject): Added. Implementation of new object-related ValueImp function.
+        (KJS::ValueImp::asObject): Ditto.
+
+        * kjs/object.cpp:
+        (KJS::ObjectImp::setInternalValue): Remove non-conservative-GC code path.
+        (KJS::ObjectImp::putDirect): Ditto.
+        (KJS::error): Added. Function in the new SPI style to create an error object.
+
+        * kjs/internal.h: Added the new number-constructing functions as friends of NumberImp.
+        There may be a more elegant way to do this later; what's important now is the new SPI.
+
+        * kjs/collector.h:  Remove non-conservative-GC code path and also take out some
+        unneeded APPLE_CHANGES.
+
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::addNativeReference): Remove non-conservative-GC code path.
+        (KJS::Bindings::removeNativeReference): Ditto.
+        (RootObject::removeAllNativeReferences): Ditto.
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::~RootObject): Ditto.
+        (KJS::Bindings::RootObject::setRootObjectImp): Ditto.
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate): Ditto.
+        (KJS::Collector::collect): Ditto.
+        (KJS::Collector::numGCNotAllowedObjects): Ditto.
+        (KJS::Collector::numReferencedObjects): Ditto.
+        (KJS::Collector::rootObjectClasses): Ditto.
+        * kjs/internal.cpp:
+        (NumberImp::create): Ditto.
+        (InterpreterImp::globalInit): Ditto.
+        (InterpreterImp::globalClear): Ditto.
+        * kjs/list.cpp:
+        (KJS::List::markProtectedLists): Ditto.
+        (KJS::List::clear): Ditto.
+        (KJS::List::append): Ditto.
+        * kjs/list.h:
+        (KJS::List::List): Ditto.
+        (KJS::List::deref): Ditto.
+        (KJS::List::operator=): Ditto.
+        * kjs/protect.h:
+        (KJS::gcProtect): Ditto.
+        (KJS::gcUnprotect): Ditto.
+
 2005-05-09  Chris Blumenberg  <cblu@apple.com>
 
 	Workaround gcc 3.3 internal compiler errors.

@@ -236,11 +236,7 @@ ValueImp *NumberImp::create(int i)
 {
     if (SimpleNumber::fits(i))
         return SimpleNumber::make(i);
-    NumberImp *imp = new NumberImp(static_cast<double>(i));
-#if !USE_CONSERVATIVE_GC
-    imp->setGcAllowedFast();
-#endif
-    return imp;
+    return new NumberImp(static_cast<double>(i));
 }
 
 ValueImp *NumberImp::create(double d)
@@ -249,11 +245,7 @@ ValueImp *NumberImp::create(double d)
         return SimpleNumber::make((int)d);
     if (isNaN(d))
         return staticNaN;
-    NumberImp *imp = new NumberImp(d);
-#if !USE_CONSERVATIVE_GC
-    imp->setGcAllowedFast();
-#endif
-    return imp;
+    return new NumberImp(d);
 }
 
 Value NumberImp::toPrimitive(ExecState *, Type) const
@@ -488,54 +480,19 @@ void InterpreterImp::globalInit()
 {
   //fprintf( stderr, "InterpreterImp::globalInit()\n" );
   UndefinedImp::staticUndefined = new UndefinedImp();
-#if !USE_CONSERVATIVE_GC
-  UndefinedImp::staticUndefined->ref();
-#endif
   NullImp::staticNull = new NullImp();
-#if !USE_CONSERVATIVE_GC
-  NullImp::staticNull->ref();
-#endif
   BooleanImp::staticTrue = new BooleanImp(true);
-#if !USE_CONSERVATIVE_GC
-  BooleanImp::staticTrue->ref();
-#endif
   BooleanImp::staticFalse = new BooleanImp(false);
-#if !USE_CONSERVATIVE_GC
-  BooleanImp::staticFalse->ref();
-#endif
   NumberImp::staticNaN = new NumberImp(NaN);
-#if !USE_CONSERVATIVE_GC
-  NumberImp::staticNaN->ref();
-#endif
 }
 
 void InterpreterImp::globalClear()
 {
   //fprintf( stderr, "InterpreterImp::globalClear()\n" );
-#if !USE_CONSERVATIVE_GC
-  UndefinedImp::staticUndefined->deref();
-  UndefinedImp::staticUndefined->setGcAllowed();
-#endif
-  UndefinedImp::staticUndefined = 0L;
-#if !USE_CONSERVATIVE_GC
-  NullImp::staticNull->deref();
-  NullImp::staticNull->setGcAllowed();
-#endif
-  NullImp::staticNull = 0L;
-#if !USE_CONSERVATIVE_GC
-  BooleanImp::staticTrue->deref();
-  BooleanImp::staticTrue->setGcAllowed();
-#endif
-  BooleanImp::staticTrue = 0L;
-#if !USE_CONSERVATIVE_GC
-  BooleanImp::staticFalse->deref();
-  BooleanImp::staticFalse->setGcAllowed();
-#endif
-  BooleanImp::staticFalse = 0L;
-#if !USE_CONSERVATIVE_GC
-  NumberImp::staticNaN->deref();
-  NumberImp::staticNaN->setGcAllowed();
-#endif
+  UndefinedImp::staticUndefined = 0;
+  NullImp::staticNull = 0;
+  BooleanImp::staticTrue = 0;
+  BooleanImp::staticFalse = 0;
   NumberImp::staticNaN = 0;
 }
 

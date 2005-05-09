@@ -25,9 +25,6 @@
 #ifndef _KJS_VALUE_H_
 #define _KJS_VALUE_H_
 
-#define USE_CONSERVATIVE_GC 1
-#define TEST_CONSERVATIVE_GC 0
-
 #ifndef NDEBUG // protection against problems if committing with KJS_VERBOSE on
 
 // Uncomment this to enable very verbose output from KJS
@@ -68,6 +65,7 @@ namespace KJS {
   class ListImp;
   class Completion;
   class ExecState;
+  class ClassInfo;
 
   /**
    * Primitive types
@@ -96,35 +94,13 @@ namespace KJS {
     friend class ContextImp;
     friend class FunctionCallNode;
   public:
-#if USE_CONSERVATIVE_GC
-    ValueImp() : _marked(0) {}
-    virtual ~ValueImp() {}
-#else
-    ValueImp();
-    virtual ~ValueImp();
-#endif
-
-#if !USE_CONSERVATIVE_GC
-    ValueImp* ref() { if (!SimpleNumber::is(this)) refcount++; return this; }
-    bool deref() { if (SimpleNumber::is(this)) return false; else return (!--refcount); }
-#endif
+    ValueImp() : _marked(false) { }
+    virtual ~ValueImp() { }
 
     virtual void mark();
     bool marked() const;
     void* operator new(size_t);
     void operator delete(void*);
-
-#if !USE_CONSERVATIVE_GC
-    /**
-     * @internal
-     *
-     * set by Object() so that the collector is allowed to delete us
-     */
-    void setGcAllowed();
-    
-    // Will crash if called on a simple number.
-    void setGcAllowedFast() { _flags |= VI_GCALLOWED; }
-#endif
 
     double toInteger(ExecState *exec) const;
     int32_t toInt32(ExecState *exec) const;
@@ -142,9 +118,24 @@ namespace KJS {
     bool dispatchToUInt32(uint32_t&) const;
     Object dispatchToObject(ExecState *exec) const;
 
-#if !USE_CONSERVATIVE_GC
-    unsigned short int refcount;
-#endif
+    bool isUndefined() const { return dispatchType() == UndefinedType; }
+    bool isNull() const { return dispatchType() == NullType; }
+    bool isUndefinedOrNull() const;
+
+    bool isBoolean() const { return dispatchType() == BooleanType; }
+    bool isBoolean(bool &booleanValue) const;
+
+    bool isNumber() const { return dispatchType() == NumberType; }
+    bool isNumber(double &numericValue) const;
+
+    bool isString() const { return dispatchType() == StringType; }
+    bool isString(UString &stringValue) const;
+    UString asString() const; // null string if not a string
+
+    bool isObject() const { return dispatchType() == ObjectType; }
+    bool isObject(ObjectImp *&object);
+    ObjectImp *asObject(); // 0 if not an object
+    bool isObject(const ClassInfo *) const; // combine an isObject check with an inherits check
 
   private:
     virtual Type type() const = 0;
@@ -158,30 +149,37 @@ namespace KJS {
     virtual Object toObject(ExecState *exec) const = 0;
     virtual bool toUInt32(unsigned&) const;
 
-#if USE_CONSERVATIVE_GC
     bool _marked;
-#else
-    unsigned short int _flags;
-
-    enum {
-      VI_MARKED = 1,
-      VI_GCALLOWED = 2,
-      VI_CREATED = 4
-#if TEST_CONSERVATIVE_GC
-      , VI_CONSERVATIVE_MARKED = 8
-#endif // TEST_CONSERVATIVE_GC
-    }; // VI means VALUEIMPL
-#endif // USE_CONSERVATIVE_GC
 
     // Give a compile time error if we try to copy one of these.
     ValueImp(const ValueImp&);
     ValueImp& operator=(const ValueImp&);
-
-#if TEST_CONSERVATIVE_GC
-    static void useConservativeMark(bool);
-#endif
   };
+  
+  ValueImp *undefined();
+  ValueImp *null();
 
+  ValueImp *boolean(bool = false);
+
+  ValueImp *string(const char * = ""); // returns empty string if passed 0
+  ValueImp *string(const UString &); // returns empty string if passed null string
+
+  ValueImp *zero();
+  ValueImp *one();
+  ValueImp *two();
+  ValueImp *number(int);
+  ValueImp *number(unsigned);
+  ValueImp *number(long);
+  ValueImp *number(unsigned long);
+  ValueImp *number(double);
+  ValueImp *number(double, bool knownToBeInteger);
+
+  /**
+   * FIXME: Now that we have conservative GC, we will be deprecating the
+   * Value wrappers and programming in terms of the ValueImp objects.
+   * Eventually we will remove Value and rename ValueImp to Value.
+   * We'll need to move the comments from Value to ValueImp too.
+   */
   /**
    * Value objects are act as wrappers ("smart pointers") around ValueImp
    * objects and their descendents. Instead of using ValueImps
@@ -200,17 +198,8 @@ namespace KJS {
   class Value {
   public:
     Value() : rep(0) { }
-#if USE_CONSERVATIVE_GC
-    explicit Value(ValueImp *v) : rep(v) {}
-    Value(const Value &v) : rep (v.rep) {}
-    ~Value() {}
-    Value& operator=(const Value &v) { rep = v.rep; return *this; } 
-#else
-    explicit Value(ValueImp *v);
-    Value(const Value &v);
-    ~Value();
-    Value& operator=(const Value &v);
-#endif
+    Value(ValueImp *v) : rep(v) { }
+    operator ValueImp *() const { return rep; }
 
     explicit Value(bool);
 
@@ -440,17 +429,7 @@ namespace KJS {
 inline bool ValueImp::marked() const
 {
   // Simple numbers are always considered marked.
-#if USE_CONSERVATIVE_GC
   return SimpleNumber::is(this) || _marked;
-#elif TEST_CONSERVATIVE_GC
-  if (conservativeMark) {
-    return SimpleNumber::is(this) || (_flags & VI_CONSERVATIVE_MARKED);
-  } else {
-    return SimpleNumber::is(this) || (_flags & VI_MARKED);
-  }
-#else
-  return SimpleNumber::is(this) || (_flags & VI_MARKED);
-#endif
 }
 
 // Dispatchers for virtual functions, to special-case simple numbers which

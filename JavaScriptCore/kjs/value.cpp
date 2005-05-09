@@ -39,63 +39,14 @@
 #include "nodes.h"
 #include "simple_number.h"
 
-using namespace KJS;
+namespace KJS {
 
 // ----------------------------- ValueImp -------------------------------------
 
-#if !USE_CONSERVATIVE_GC
-ValueImp::ValueImp() :
-  refcount(0),
-  // Tell the garbage collector that this memory block corresponds to a real object now
-  _flags(VI_CREATED)
-{
-  //fprintf(stderr,"ValueImp::ValueImp %p\n",(void*)this);
-}
-
-ValueImp::~ValueImp()
-{
-  //fprintf(stderr,"ValueImp::~ValueImp %p\n",(void*)this);
-}
-#endif
-
-#if TEST_CONSERVATIVE_GC
-static bool conservativeMark = false;
-
-void ValueImp::useConservativeMark(bool use)
-{
-  conservativeMark = use;
-}
-#endif
-
 void ValueImp::mark()
 {
-  //fprintf(stderr,"ValueImp::mark %p\n",(void*)this);
-#if USE_CONSERVATIVE_GC
   _marked = true;
-#elif TEST_CONSERVATIVE_GC
-  if (conservativeMark) {
-    _flags |= VI_CONSERVATIVE_MARKED;
-  } else {
-    if (!(_flags & VI_CONSERVATIVE_MARKED)) {
-      printf("Conservative collector missed ValueImp 0x%x. refcount %d, protect count %d\n", (int)this, refcount, ProtectedValues::getProtectCount(this));
-    }
-    _flags |= VI_MARKED;
-  }
-#else
-  _flags |= VI_MARKED;
-#endif
 }
-
-#if !USE_CONSERVATIVE_GC
-void ValueImp::setGcAllowed()
-{
-  //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
-  // simple numbers are never seen by the collector so setting this
-  // flag is irrelevant
-  if (!SimpleNumber::is(this))
-    _flags |= VI_GCALLOWED;
-}
-#endif
 
 void* ValueImp::operator new(size_t s)
 {
@@ -181,63 +132,62 @@ Object ValueImp::dispatchToObject(ExecState *exec) const
   return toObject(exec);
 }
 
+bool ValueImp::isUndefinedOrNull() const
+{
+    switch (dispatchType()) {
+        case BooleanType:
+        case NumberType:
+        case ObjectType:
+        case StringType:
+            break;
+        case NullType:
+        case UndefinedType:
+            return true;
+        case UnspecifiedType:
+            assert(false);
+            break;
+    }
+    return false;
+}
+
+bool ValueImp::isBoolean(bool &booleanValue) const
+{
+    if (!isBoolean())
+        return false;
+    booleanValue = static_cast<const BooleanImp *>(this)->value();
+    return true;
+}
+
+bool ValueImp::isNumber(double &numericValue) const
+{
+    if (!isNumber())
+        return false;
+    numericValue = static_cast<const NumberImp *>(this)->value();
+    return true;
+}
+
+bool ValueImp::isString(UString &stringValue) const
+{
+    if (!isString())
+        return false;
+    stringValue = static_cast<const StringImp *>(this)->value();
+    return true;
+}
+
+UString ValueImp::asString() const
+{
+    return isString() ? static_cast<const StringImp *>(this)->value() : UString();
+}
+
+bool ValueImp::isObject(ObjectImp *&object)
+{
+    if (!isObject())
+        return false;
+    object = static_cast<ObjectImp *>(this);
+    return true;
+}
+
 // ------------------------------ Value ----------------------------------------
-
-#if !USE_CONSERVATIVE_GC
-
-Value::Value(ValueImp *v)
-{
-  rep = v;
-#if DEBUG_COLLECTOR
-  assert (!(rep && !SimpleNumber::is(rep) && *((uint32_t *)rep) == 0 ));
-  assert (!(rep && !SimpleNumber::is(rep) && rep->_flags & ValueImp::VI_MARKED));
-#endif
-  if (v)
-  {
-    v->ref();
-    //fprintf(stderr, "Value::Value(%p) imp=%p ref=%d\n", this, rep, rep->refcount);
-    v->setGcAllowed();
-  }
-}
-
-Value::Value(const Value &v)
-{
-  rep = v.imp();
-#if DEBUG_COLLECTOR
-  assert (!(rep && !SimpleNumber::is(rep) && *((uint32_t *)rep) == 0 ));
-  assert (!(rep && !SimpleNumber::is(rep) && rep->_flags & ValueImp::VI_MARKED));
-#endif
-  if (rep)
-  {
-    rep->ref();
-    //fprintf(stderr, "Value::Value(%p)(copying %p) imp=%p ref=%d\n", this, &v, rep, rep->refcount);
-  }
-}
-
-Value::~Value()
-{
-  if (rep)
-  {
-    rep->deref();
-    //fprintf(stderr, "Value::~Value(%p) imp=%p ref=%d\n", this, rep, rep->refcount);
-  }
-}
-
-Value& Value::operator=(const Value &v)
-{
-  if (rep) {
-    rep->deref();
-    //fprintf(stderr, "Value::operator=(%p)(copying %p) old imp=%p ref=%d\n", this, &v, rep, rep->refcount);
-  }
-  rep = v.imp();
-  if (rep)
-  {
-    rep->ref();
-    //fprintf(stderr, "Value::operator=(%p)(copying %p) imp=%p ref=%d\n", this, &v, rep, rep->refcount);
-  }
-  return *this;
-}
-#endif
 
 Value::Value(bool b) : rep(b ? BooleanImp::staticTrue : BooleanImp::staticFalse) { }
 
@@ -397,4 +347,80 @@ bool Number::isInf() const
   if (SimpleNumber::is(rep))
     return false;
   return KJS::isInf(((NumberImp*)rep)->value());
+}
+
+ValueImp *undefined()
+{
+    return UndefinedImp::staticUndefined;
+}
+
+ValueImp *null()
+{
+    return NullImp::staticNull;
+}
+
+ValueImp *boolean(bool b)
+{
+    return b ? BooleanImp::staticTrue : BooleanImp::staticFalse;
+}
+
+ValueImp *string(const char *s)
+{
+    return new StringImp(s ? s : "");
+}
+
+ValueImp *string(const UString &s)
+{
+    return s.isNull() ? new StringImp("") : new StringImp(s);
+}
+
+ValueImp *zero()
+{
+    return SimpleNumber::make(0);
+}
+
+ValueImp *one()
+{
+    return SimpleNumber::make(1);
+}
+
+ValueImp *two()
+{
+    return SimpleNumber::make(2);
+}
+
+ValueImp *number(int i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
+ValueImp *number(unsigned i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
+ValueImp *number(long i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
+ValueImp *number(unsigned long i)
+{
+    return SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i));
+}
+
+ValueImp *number(double d)
+{
+    return SimpleNumber::fits(d)
+        ? SimpleNumber::make(static_cast<long>(d))
+        : (isNaN(d) ? NumberImp::staticNaN : new NumberImp(d));
+}
+
+ValueImp *number(double d, bool knownToBeInteger)
+{
+    return (knownToBeInteger ? SimpleNumber::integerFits(d) : SimpleNumber::fits(d))
+        ? SimpleNumber::make(static_cast<long>(d))
+        : ((!knownToBeInteger && isNaN(d)) ? NumberImp::staticNaN : new NumberImp(d));
+}
+
 }

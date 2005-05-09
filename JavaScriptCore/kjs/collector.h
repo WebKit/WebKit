@@ -63,26 +63,23 @@ namespace KJS {
     static void finalCheck();
 #endif
 
-#if APPLE_CHANGES
     static int numInterpreters();
     static int numGCNotAllowedObjects();
     static int numReferencedObjects();
+#if APPLE_CHANGES
     static const void *rootObjectClasses(); // actually returns CFSetRef
 #endif
-#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
-    class Thread;
 
+    class Thread;
     static void registerThread();
-#endif
+
   private:
 
-#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
     static void markProtectedObjects();
     static void markCurrentThreadConservatively();
     static void markOtherThreadConservatively(Thread *thread);
     static void markStackObjectsConservatively();
     static void markStackObjectsConservatively(void *start, void *end);
-#endif
 
     static bool memoryFull;
   };

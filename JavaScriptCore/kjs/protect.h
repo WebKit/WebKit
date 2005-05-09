@@ -33,15 +33,11 @@ namespace KJS {
 
     inline void gcProtect(ValueImp *val) 
       { 
-#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
 	ProtectedValues::increaseProtectCount(val);
-#endif
       }
     inline void gcUnprotect(ValueImp *val)
       { 
-#if TEST_CONSERVATIVE_GC | USE_CONSERVATIVE_GC
 	ProtectedValues::decreaseProtectCount(val);
-#endif
       }
 
     inline void gcProtectNullTolerant(ValueImp *val) 

@@ -89,7 +89,8 @@ namespace KJS {
   class Object : public Value {
   public:
     Object() { }
-    explicit Object(ObjectImp *v);
+    Object(ObjectImp *);
+    operator ObjectImp *() const { return imp(); }
     
     ObjectImp *imp() const;
 
@@ -621,6 +622,9 @@ namespace KJS {
                    TypeError      = 5,
                    URIError       = 6};
 
+  ObjectImp *error(ExecState *exec, ErrorType type = GeneralError,
+    const char *message = 0, int lineno = -1, int sourceId = -1, const UString *sourceURL = 0);
+
   /**
    * @short Factory methods for error objects.
    */
@@ -645,9 +649,16 @@ namespace KJS {
     static const char * const * const errorNames;
   };
 
-  inline Object::Object(ObjectImp *v) : Value(v) { }
+  inline bool ValueImp::isObject(const ClassInfo *info) const
+    { return isObject() && static_cast<const ObjectImp *>(this)->inherits(info); }
 
-  inline ObjectImp *Object::imp() const { return static_cast<ObjectImp*>(rep); }
+  inline ObjectImp *ValueImp::asObject()
+    { return isObject() ? static_cast<ObjectImp *>(this) : 0; }
+
+  inline Object::Object(ObjectImp *o) : Value(o) { }
+
+  inline ObjectImp *Object::imp() const
+    { return static_cast<ObjectImp *>(Value::imp()); }
 
   inline const ClassInfo *Object::classInfo() const
     { return imp()->classInfo(); }
@@ -729,6 +740,6 @@ namespace KJS {
   inline void Object::restoreProperties(const SavedProperties &p)
     { imp()->restoreProperties(p); }
 
-}; // namespace
+} // namespace
 
 #endif // _KJS_OBJECT_H_
