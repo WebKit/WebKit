@@ -1,3 +1,13 @@
+2005-05-09  Chris Blumenberg  <cblu@apple.com>
+
+	Turned assertion into error message to prevent crash when encountering this bug:
+	<rdar://problem/4067625> connection:willCacheResponse: is called inside of [NSURLConnection initWithRequest:delegate:]
+	
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): set flag to track when we're initializing the connection
+        (-[WebBaseResourceHandleDelegate connection:willCacheResponse:]): log error
+
 2005-05-09  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Don't set up PBXIntermediatesDirectory explicitly;

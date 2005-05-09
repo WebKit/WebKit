@@ -41,6 +41,9 @@
     NSURL *originalURL;
     NSMutableData *resourceData;
     WebResource *resource;
+#ifndef NDEBUG
+    BOOL isInitializingConnection;
+#endif
 }
 
 - (BOOL)loadWithRequest:(NSURLRequest *)request;

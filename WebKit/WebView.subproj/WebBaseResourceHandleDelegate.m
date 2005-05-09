@@ -238,7 +238,13 @@ static BOOL NSURLConnectionSupportsBufferedData;
         }
     }
     
+#ifndef NDEBUG
+    isInitializingConnection = YES;
+#endif
     connection = [[NSURLConnection alloc] initWithRequest:r delegate:self];
+#ifndef NDEBUG
+    isInitializingConnection = NO;
+#endif
     if (defersCallbacks) {
         [connection setDefersCallbacks:YES];
     }
@@ -615,7 +621,11 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
 - (NSCachedURLResponse *)connection:(NSURLConnection *)con willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
-    ASSERT_WITH_MESSAGE(con == connection, "parameter con (%@) is not equal to instance variable connection (%@)", con, connection);
+#ifndef NDEBUG
+    if (connection == nil && isInitializingConnection) {
+        ERROR("connection:willCacheResponse: was called inside of [NSURLConnection initWithRequest:delegate:] (40676250)");
+    }
+#endif
     return [self willCacheResponse:cachedResponse];
 }
 
