@@ -1321,11 +1321,11 @@ Position RangeImpl::editingStartPosition() const
 
     // if the selection starts just before a paragraph break, skip over it
     if (isEndOfParagraph(pos))
-        return pos.next().position().downstream(StayInBlock);
+        return pos.next().position().downstream();
 
     // otherwise, make sure to be at the start of the first selected node,
     // instead of possibly at the end of the last node before the selection
-    return pos.position().downstream(StayInBlock);
+    return pos.position().downstream();
 }
 
 NodeImpl *RangeImpl::pastEndNode() const

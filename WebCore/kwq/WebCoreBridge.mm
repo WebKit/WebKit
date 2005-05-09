@@ -1759,10 +1759,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     Position start(startContainer, [proposedRange startOffset]);
     Position end(endContainer, [proposedRange endOffset]);
-    Position newStart = start.upstream(DOM::StayInBlock).leadingWhitespacePosition(khtml::DOWNSTREAM, true);
+    Position newStart = start.upstream().leadingWhitespacePosition(khtml::DOWNSTREAM, true);
     if (newStart.isNull())
         newStart = start;
-    Position newEnd = end.downstream(DOM::StayInBlock).trailingWhitespacePosition(khtml::DOWNSTREAM, true);
+    Position newEnd = end.downstream().trailingWhitespacePosition(khtml::DOWNSTREAM, true);
     if (newEnd.isNull())
         newEnd = end;
 

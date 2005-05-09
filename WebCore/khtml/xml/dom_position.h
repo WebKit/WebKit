@@ -36,7 +36,6 @@ class NodeImpl;
 class Range;
 class RangeImpl;
 
-enum EStayInBlock { DoNotStayInBlock = false, StayInBlock = true };
 enum EUsingComposedCharacters { NotUsingComposedCharacters = false, UsingComposedCharacters = true };
 
 class Position
@@ -71,7 +70,7 @@ public:
     Position leadingWhitespacePosition(khtml::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
     Position trailingWhitespacePosition(khtml::EAffinity affinity, bool considerNonCollapsibleWhitespace = false) const;
 
-    // These functions only consider leaf nodes, and if stayInBlock is true, blocks.
+    // These functions only consider leaf nodes and blocks.
     // Hence, the results from these functions are idiosyncratic, and until you
     // become familiar with the results, you may find using these functions confusing.
     // I have hopes to make the results of these functions less ambiguous in the near
@@ -81,8 +80,8 @@ public:
     // same position as the caller's position. The same goes for downstream position
     // except that it is the latest position for earliest position in the above 
     // description.
-    Position upstream(EStayInBlock stayInBlock) const;
-    Position downstream(EStayInBlock stayInBlock) const;
+    Position upstream() const;
+    Position downstream() const;
     
     Position equivalentRangeCompliantPosition() const;
     Position equivalentDeepPosition() const;

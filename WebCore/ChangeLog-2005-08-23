@@ -1,3 +1,51 @@
+2005-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- remove code for DoNotStayInBlock variant of upstream/downstream and make
+	the methods take no parameters
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantTextDownstream):
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::ApplyStyleCommand::removeInlineStyle):
+        (khtml::ApplyStyleCommand::nodeFullySelected):
+        (khtml::ApplyStyleCommand::nodeFullyUnselected):
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        (khtml::DeleteSelectionCommand::fixupWhitespace):
+        (khtml::InsertLineBreakCommand::insertNodeAfterPosition):
+        (khtml::InsertLineBreakCommand::insertNodeBeforePosition):
+        (khtml::InsertLineBreakCommand::doApply):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::input):
+        (khtml::InsertTextCommand::insertSpace):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::toRange):
+        (khtml::Selection::validate):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousVisiblePosition):
+        (khtml::VisiblePosition::nextVisiblePosition):
+        (khtml::VisiblePosition::downstreamDeepEquivalent):
+        (khtml::isFirstVisiblePositionInParagraph):
+        (khtml::isFirstVisiblePositionInBlock):
+        (khtml::isLastVisiblePositionInParagraph):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::editingStartPosition):
+        * khtml/xml/dom_position.cpp:
+        (DOM::isStreamer):
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        (DOM::Position::leadingWhitespacePosition):
+        (DOM::Position::trailingWhitespacePosition):
+        * khtml/xml/dom_position.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge smartDeleteRangeForProposedRange:]):
+
 2005-05-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Harrison.

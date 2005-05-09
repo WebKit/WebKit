@@ -317,7 +317,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
 
 // upstream() and downstream() want to return positions that are either in a
 // text node or at just before a non-text node.  This method checks for that.
-static bool     isStreamer (Position pos)
+static bool isStreamer (Position pos)
 {
     NodeImpl *currentNode = pos.node();
     if (!currentNode)
@@ -334,14 +334,11 @@ static bool     isStreamer (Position pos)
 // for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, upstream()
 // scans backward in the DOM starting at "this" to return a visible DOM position that is either in
 // a text node, or just after a replaced or BR element (btw downstream() also considers empty blocks).
-// If "stayInBlock" is specified, the search stops when it would have entered into a part of the DOM
-// with a different enclosing block, including a nested one.  Otherwise, the search stops at the start
-// of the entire DOM tree.  If "stayInBlock" stops the search, this method returns the highest previous
-// position that is either in an atomic node (i.e. text) or is the end of a non-atomic node
-// (_regardless_ of visibility).  If the end-of-DOM stopped the search, this method returns the 
-// highest previous visible node that is either in an atomic node (i.e. text) or is the end of a
-// non-atomic node.
-Position Position::upstream(EStayInBlock stayInBlock) const
+// The search stops when it would have entered into a part of the DOM with a different enclosing 
+// block, including a nested one. Then this method returns the highest previous position that is
+// either in an atomic node (i.e. text) or is the end of a non-atomic node (_regardless_ of 
+// visibility).  
+Position Position::upstream() const
 {
     // start at equivalent deep position
     Position start = equivalentDeepPosition();
@@ -350,7 +347,7 @@ Position Position::upstream(EStayInBlock stayInBlock) const
         return Position();
     
     // iterate backward from there, looking for a qualified position
-    NodeImpl *block = stayInBlock ? startNode->enclosingBlockFlowOrTableElement() : 0;
+    NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position lastStreamer = *this;
     Position currentPos = start;
@@ -360,7 +357,7 @@ Position Position::upstream(EStayInBlock stayInBlock) const
 
         // limit traversal to block or table enclosing the original element
         // NOTE: This includes not going into nested blocks
-        if (stayInBlock && block != currentNode->enclosingBlockFlowOrTableElement())
+        if (block != currentNode->enclosingBlockFlowOrTableElement())
             return lastStreamer;
 
         // track last streamer position (regardless of visibility)
@@ -419,13 +416,11 @@ Position Position::upstream(EStayInBlock stayInBlock) const
 // for <rdar://problem/4103339>.  See also Ken's comments in the header.  Fundamentally, downstream()
 // scans forward in the DOM starting at "this" to return the first visible DOM position that is
 // either in a text node, or just before a replaced, BR element, or empty block flow element (i.e.
-// non-text nodes with no children).  If "stayInBlock" is specified, the search stops when it would
+// non-text nodes with no children).  The search stops when it would
 // have entered into a part of the DOM with a different enclosing block, including a nested one.
-// Otherwise, the search stops at the end of the entire DOM tree.  If "stayInBlock" stops the search,
-// this method returns the first previous position that is either in an atomic node (i.e. text) or is
-// at offset 0 (_regardless_ of visibility).  If the end-of-DOM stopped the search, this method returns
-// the first previous visible node that is either in an atomic node (i.e. text) or is at offset 0.
-Position Position::downstream(EStayInBlock stayInBlock) const
+// If the search stops, this method returns the first previous position that is either in an
+//  atomic node (i.e. text) or is at offset 0 (_regardless_ of visibility).
+Position Position::downstream() const
 {
     // start at equivalent deep position
     Position start = equivalentDeepPosition();
@@ -434,7 +429,7 @@ Position Position::downstream(EStayInBlock stayInBlock) const
         return Position();
 
     // iterate forward from there, looking for a qualified position
-    NodeImpl *block = stayInBlock ? startNode->enclosingBlockFlowOrTableElement() : 0;
+    NodeImpl *block = startNode->enclosingBlockFlowOrTableElement();
     Position lastVisible = *this;
     Position lastStreamer = *this;
     Position currentPos = start;
@@ -450,7 +445,7 @@ Position Position::downstream(EStayInBlock stayInBlock) const
         // limit traversal to block or table enclosing the original element
         // return the last streamer position regardless of visibility
         // NOTE: This includes not going into nested blocks
-        if (stayInBlock && block != currentNode->enclosingBlockFlowOrTableElement())
+        if (block != currentNode->enclosingBlockFlowOrTableElement())
             return lastStreamer;
         
         // track last streamer position (regardless of visibility)
@@ -768,7 +763,7 @@ Position Position::leadingWhitespacePosition(EAffinity affinity, bool considerNo
     if (isNull())
         return Position();
     
-    if (upstream(StayInBlock).node()->id() == ID_BR)
+    if (upstream().node()->id() == ID_BR)
         return Position();
 
     Position prev = previousCharacterPosition(affinity);
@@ -798,7 +793,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity, bool considerN
         }
     }
 
-    if (downstream(StayInBlock).node()->id() == ID_BR)
+    if (downstream().node()->id() == ID_BR)
         return Position();
 
     Position next = nextCharacterPosition(affinity);
