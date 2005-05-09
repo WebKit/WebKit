@@ -49,7 +49,7 @@ using namespace KJS::Bindings;
 
 #define LOG_EXCEPTION(exec) \
     if (Interpreter::shouldPrintExceptions()) \
-        NSLog (@"%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii());
+        printf("%s:%d:[%d]  JavaScript exception:  %s\n", __FILE__, __LINE__, getpid(), exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii());
 
 @implementation WebScriptObjectPrivate
 
@@ -339,7 +339,8 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 - (NSString *)stringRepresentation
 {
     if (![self _isSafeScript])
-	return @"Undefined";
+        // This is a workaround for a gcc 3.3 internal compiler error.
+	return [NSString stringWithCString:"Undefined" encoding:NSASCIIStringEncoding];
 
     Interpreter::lock();
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));

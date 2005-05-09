@@ -1,3 +1,12 @@
+2005-05-09  Chris Blumenberg  <cblu@apple.com>
+
+	Workaround gcc 3.3 internal compiler errors.
+
+        Reviewed by darin.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject stringRepresentation]): call [NSString stringWithCString:encoding] rather than using @""
+
 2005-05-09  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Don't set up PBXIntermediatesDirectory explicitly;
