@@ -1,3 +1,8 @@
+2005-05-09  Darin Adler  <darin@apple.com>
+
+        * Makefile.am: Don't set up PBXIntermediatesDirectory explicitly;
+        Not needed to make builds work, spews undesirable error messages too.
+
 2005-05-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
