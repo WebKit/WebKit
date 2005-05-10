@@ -2399,6 +2399,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 	return [self canMakeTextLarger];
     } else if (action == @selector(makeTextSmaller:)) {
 	return [self canMakeTextSmaller];
+    } else if (action == @selector(makeTextStandardSize:)) {
+	return [self canMakeTextStandardSize];
     } else if (action == @selector(reload:)) {
 	return [[self mainFrame] dataSource] != nil;
     } else if (action == @selector(stopLoading:)) {
@@ -2503,6 +2505,28 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if ([self isEditable]) {
         [self setContinuousGrammarCheckingEnabled:![self isContinuousGrammarCheckingEnabled]];
     }
+}
+
+
+- (BOOL)canMakeTextStandardSize
+{
+    if ([[self mainFrame] dataSource] == nil) {
+        return NO;
+    }
+    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
+    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
+        return NO;
+    }
+    
+    return [self textSizeMultiplier] != 1;
+}
+
+- (IBAction)makeTextStandardSize:(id)sender
+{
+    if (![self canMakeTextStandardSize]) {
+        return;
+    }
+    [self setTextSizeMultiplier:1];
 }
 
 @end

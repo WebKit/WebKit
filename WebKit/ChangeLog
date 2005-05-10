@@ -1,5 +1,23 @@
 2005-05-10  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Kevin.
+        
+        - WebKit support for <rdar://problem/3795701> Menu item/keyboard shortcut to 
+        restore text zoom to normal
+
+        * WebView.subproj/WebView.m:
+        (-[WebView validateUserInterfaceItem:]):
+        validate makeTextStandardSize by calling canMakeTextStandardSize
+        (-[WebView canMakeTextStandardSize]):
+        new method, returns YES unless text size multiplier is currently 1
+        (-[WebView makeTextStandardSize:]):
+        new method, sets text size multiplier to 1
+        
+        * WebView.subproj/WebViewPrivate.h:
+        add makeTextStandardSize: and canMakeTextStandardSize to pending public category
+
+2005-05-10  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Chris.
         
         - fixed <rdar://problem/4067981> Mail places RTF flavor before RTFD flavor when dragging 
