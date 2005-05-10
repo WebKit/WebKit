@@ -339,7 +339,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLin
     VisiblePosition result = VisiblePosition(endNode, endOffset, DOWNSTREAM);
     VisiblePosition temp = result;
     temp.setAffinity(UPSTREAM);
-    if (visiblePositionsOnDifferentLines(temp, result))
+    if (!inSameLine(temp, result))
         result.setAffinity(UPSTREAM);
     
     return result;
@@ -410,7 +410,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
                 // (whereupon the next VP is returned, which could be
                 // back on c's line)
                 VisiblePosition c2 = VisiblePosition(pos, DOWNSTREAM);
-                if (visiblePositionsOnDifferentLines(c, c2))
+                if (!inSameLine(c, c2))
                     return c2;
             }
             n = n->previousEditable();
@@ -696,7 +696,6 @@ VisiblePosition startOfBlock(const VisiblePosition &c)
     return VisiblePosition(Position(startNode->enclosingBlockFlowElement(), 0), DOWNSTREAM);
 }
 
-// written, but not yet tested
 VisiblePosition endOfBlock(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();

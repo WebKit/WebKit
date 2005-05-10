@@ -2652,7 +2652,7 @@ void DeleteSelectionCommand::initializePositionData()
     // This is one of the tests that determines if block merging of content needs to be done.
     //
     VisiblePosition visibleEnd(end, m_selectionToDelete.endAffinity());
-    if (isFirstVisiblePositionInParagraph(visibleEnd) || isLastVisiblePositionInParagraph(visibleEnd)) {
+    if (isStartOfParagraph(visibleEnd) || isEndOfParagraph(visibleEnd)) {
         Position previousLineStart = previousLinePosition(visibleEnd, 0).deepEquivalent();
         if (previousLineStart.isNull() || RangeImpl::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
             m_mergeBlocksAfterDelete = false;
@@ -3455,7 +3455,7 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
     // a paragraph. Otherwise, content that is moved as part of the work of the command
     // will lend their styles to the new paragraph without any extra work needed.
     VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
-    if (!isFirstVisiblePositionInParagraph(visiblePos) && !isLastVisiblePositionInParagraph(visiblePos))
+    if (!isStartOfParagraph(visiblePos) && !isEndOfParagraph(visiblePos))
         return;
     
     if (m_style)
@@ -3896,7 +3896,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     assert(text.find('\n') == -1);
 
     Selection selection = endingSelection();
-    bool adjustDownstream = isFirstVisiblePositionOnLine(VisiblePosition(selection.start().downstream(), DOWNSTREAM));
+    bool adjustDownstream = isStartOfLine(VisiblePosition(selection.start().downstream(), DOWNSTREAM));
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.isRange())
@@ -4895,7 +4895,7 @@ void ReplaceSelectionCommand::doApply()
         downstream = positionOutsideContainingSpecialElement(downstream);
         if (downstream.node()->id() == ID_BR && downstream.offset() == 0 && 
             m_fragment.hasInterchangeNewlineAtEnd() &&
-            isFirstVisiblePositionOnLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
+            isStartOfLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
     }
     
@@ -4907,14 +4907,14 @@ void ReplaceSelectionCommand::doApply()
     if (m_smartReplace) {
         VisiblePosition visiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
         assert(visiblePos.isNotNull());
-        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isFirstVisiblePositionOnLine(visiblePos);
+        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfLine(visiblePos);
         if (addLeadingSpace) {
             QChar previousChar = visiblePos.previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
-        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isLastVisiblePositionOnLine(visiblePos);
+        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfLine(visiblePos);
         if (addTrailingSpace) {
             QChar thisChar = visiblePos.character();
             if (!thisChar.isNull()) {
@@ -5124,7 +5124,7 @@ void ReplaceSelectionCommand::removeLinePlaceholderIfNeeded(NodeImpl *linePlaceh
     if (linePlaceholder->inDocument()) {
         VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
         if (placeholderPos.next().isNull() ||
-            !(isFirstVisiblePositionOnLine(placeholderPos) && isLastVisiblePositionOnLine(placeholderPos))) {
+            !(isStartOfLine(placeholderPos) && isEndOfLine(placeholderPos))) {
             NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
             removeNode(linePlaceholder);
             document()->updateLayout();

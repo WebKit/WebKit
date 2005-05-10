@@ -1795,7 +1795,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (startVisiblePos.isNull() || endVisiblePos.isNull())
         return;
 
-    bool addLeadingSpace = startPos.leadingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isFirstVisiblePositionInParagraph(startVisiblePos);
+    bool addLeadingSpace = startPos.leadingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isStartOfParagraph(startVisiblePos);
     if (addLeadingSpace) {
         QChar previousChar = startVisiblePos.previous().character();
         if (!previousChar.isNull()) {
@@ -1803,7 +1803,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         }
     }
     
-    bool addTrailingSpace = endPos.trailingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isLastVisiblePositionInParagraph(endVisiblePos);
+    bool addTrailingSpace = endPos.trailingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isEndOfParagraph(endVisiblePos);
     if (addTrailingSpace) {
         QChar thisChar = endVisiblePos.character();
         if (!thisChar.isNull()) {

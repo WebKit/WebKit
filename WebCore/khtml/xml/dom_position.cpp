@@ -38,6 +38,7 @@
 #include "htmltags.h"
 #include "text_affinity.h"
 #include "visible_position.h"
+#include "visible_units.h"
 #include "rendering/render_block.h"
 #include "rendering/render_flow.h"
 #include "rendering/render_line.h"
@@ -267,7 +268,7 @@ Position Position::previousCharacterPosition(EAffinity affinity) const
 
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
 
-    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this, affinity));
+    bool atStartOfLine = isStartOfLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
     Position currentPos = *this;
@@ -295,7 +296,7 @@ Position Position::nextCharacterPosition(EAffinity affinity) const
 
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
 
-    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this, affinity));
+    bool atEndOfLine = isEndOfLine(VisiblePosition(*this, affinity));
     bool rendered = inRenderedContent();
     
     Position currentPos = *this;

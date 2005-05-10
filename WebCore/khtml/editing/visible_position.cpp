@@ -177,7 +177,7 @@ VisiblePosition VisiblePosition::previous() const
     if (result.isNotNull() && m_affinity == UPSTREAM) {
         VisiblePosition temp = result;
         temp.setAffinity(UPSTREAM);
-        ASSERT(!visiblePositionsOnDifferentLines(temp, result));
+        ASSERT(inSameLine(temp, result));
     }
 #endif
     return result;
@@ -444,7 +444,7 @@ void setAffinityUsingLinePosition(VisiblePosition &pos)
     if (pos.isNotNull() && pos.affinity() == UPSTREAM) {
         VisiblePosition temp(pos);
         temp.setAffinity(DOWNSTREAM);
-        if (!visiblePositionsOnDifferentLines(temp, pos))
+        if (inSameLine(temp, pos))
             pos.setAffinity(DOWNSTREAM);
     }
 }
@@ -457,90 +457,6 @@ DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &vp)
     return vp.position().node()->enclosingBlockFlowElement();
 }
 
-bool visiblePositionsOnDifferentLines(const VisiblePosition &pos1, const VisiblePosition &pos2)
-{
-    if (pos1.isNull() || pos2.isNull())
-        return false;
-    if (pos1 == pos2)
-        return false;
-    
-    Position p1 = pos1.deepEquivalent();
-    Position p2 = pos2.deepEquivalent();
-    RenderObject *r1 = p1.node()->renderer();
-    RenderObject *r2 = p2.node()->renderer();
-    if (r1->isBlockFlow() || r2->isBlockFlow())
-        return r1 == r2 ? false : true;
-    InlineBox *b1 = r1 ? r1->inlineBox(p1.offset(), pos1.affinity()) : 0;
-    InlineBox *b2 = r2 ? r2->inlineBox(p2.offset(), pos2.affinity()) : 0;
-    return (b1 && b2 && b1->root() != b2->root());
-}
-
-enum EBlockRelationship { 
-    NoBlockRelationship, 
-    SameBlockRelationship, 
-    PeerBlockRelationship, 
-    AncestorBlockRelationship, 
-    DescendantBlockRelationship, 
-    OtherBlockRelationship 
-};
-
-static EBlockRelationship blockRelationship(const VisiblePosition &pos1, const VisiblePosition &pos2)
-{
-    if (pos1.isNull() || pos2.isNull())
-        return NoBlockRelationship;
-    if (pos1 == pos2)
-        return SameBlockRelationship;
-
-    Position p1 = pos1.deepEquivalent();
-    Position p2 = pos2.deepEquivalent();
-    NodeImpl *b1 = p1.node()->enclosingBlockFlowElement();
-    NodeImpl *b2 = p2.node()->enclosingBlockFlowElement();
-    if (!b1 || !b2)
-        return NoBlockRelationship;
-    if (b1 == b2) 
-        return SameBlockRelationship;
-    if (b1->parentNode() == b2->parentNode())
-        return PeerBlockRelationship;
-    if (b2->isAncestor(b1))
-        return AncestorBlockRelationship;
-    if (b1->isAncestor(b2))
-        return DescendantBlockRelationship;
-    return OtherBlockRelationship;
-}
-
-bool visiblePositionsInDifferentBlocks(const VisiblePosition &pos1, const VisiblePosition &pos2)
-{
-    switch (blockRelationship(pos1, pos2)) {
-        case NoBlockRelationship:
-        case SameBlockRelationship:
-            return false;
-        case PeerBlockRelationship:
-        case AncestorBlockRelationship:
-        case DescendantBlockRelationship:
-        case OtherBlockRelationship:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool isFirstVisiblePositionOnLine(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-        
-    VisiblePosition previous = pos.previous();
-    return previous.isNull() || visiblePositionsOnDifferentLines(pos, previous);
-}
-
-bool isFirstVisiblePositionInParagraph(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-
-    return pos.deepEquivalent().upstream().node()->id() == ID_BR || isStartOfBlock(pos);
-}
-
 bool isFirstVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
 {
     if (pos.isNull())
@@ -548,23 +464,6 @@ bool isFirstVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *no
         
     VisiblePosition previous = pos.previous();
     return previous.isNull() || !previous.deepEquivalent().node()->isAncestor(node);
-}
-
-bool isLastVisiblePositionOnLine(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-        
-    VisiblePosition next = pos.next();
-    return next.isNull() || visiblePositionsOnDifferentLines(pos, next);
-}
-
-bool isLastVisiblePositionInParagraph(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-
-    return pos.deepEquivalent().downstream().node()->id() == ID_BR || isEndOfBlock(pos);
 }
 
 bool isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
