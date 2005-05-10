@@ -163,10 +163,6 @@ public:
 
     virtual DOMString toString() const;
     
-#if APPLE_CHANGES
-    static ProcessingInstruction createInstance(ProcessingInstructionImpl *impl);
-#endif
-
 protected:
     DOMStringImpl *m_target;
     DOMStringImpl *m_data;

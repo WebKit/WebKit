@@ -2,6 +2,192 @@
 
         Reviewed by David Harrison.
 
+        - next pass of moving code from C++ DOM wrappers into the DOM impl. classes
+          (this step adds more member functions missing from the DOM impl. and
+           changes some of the Objective-C DOM to call the new ones; also changes some
+           parameter types in the DOM impl.)
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::initUIEvent):
+        (MouseEvent::initMouseEvent):
+        (MutationEvent::initMutationEvent):
+        (KeyboardEvent::initKeyboardEvent):
+        * khtml/dom/dom_doc.cpp:
+        (DOM::DOMImplementation::createDocument):
+        (DOM::Document::getElementsByTagName):
+        (DOM::Document::getElementsByTagNameNS):
+        * khtml/dom/dom_element.cpp:
+        (Element::removeAttributeNode):
+        (Element::getElementsByTagName):
+        (Element::getElementsByTagNameNS):
+        (Element::setAttributeNodeNS):
+        * khtml/dom/dom_node.cpp:
+        (NamedNodeMap::setNamedItemNS):
+        (NamedNodeMap::removeNamedItemNS):
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/ecma/kjs_events.cpp:
+        (ClipboardProtoFunc::tryCall):
+        * khtml/editing/jsediting.cpp:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::applyEditingStyleToBodyElement):
+        (KHTMLPart::removeEditingStyleFromBodyElement):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseMoveEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::dispatchMouseEvent):
+        * khtml/misc/shared.h:
+        (khtml::SharedPtr::reset):
+        (khtml::::operator):
+        (khtml::static_pointer_cast):
+        (khtml::const_pointer_cast):
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (UIEventImpl::initUIEvent):
+        (UIEventImpl::keyCode):
+        (UIEventImpl::charCode):
+        (UIEventImpl::layerX):
+        (UIEventImpl::layerY):
+        (UIEventImpl::pageX):
+        (UIEventImpl::pageY):
+        (UIEventImpl::which):
+        (MouseRelatedEventImpl::pageX):
+        (MouseRelatedEventImpl::pageY):
+        (MouseEventImpl::initMouseEvent):
+        (MouseEventImpl::which):
+        (KeyboardEventImpl::initKeyboardEvent):
+        (KeyboardEventImpl::which):
+        (MutationEventImpl::MutationEventImpl):
+        (MutationEventImpl::initMutationEvent):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::MutationEventImpl::relatedNode):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeFilterImpl::acceptNode):
+        * khtml/xml/dom2_traversalimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument):
+        (DOMImplementationImpl::createCSSStyleSheet):
+        (DOMImplementationImpl::createHTMLDocument):
+        (DocumentImpl::createAttribute):
+        (DocumentImpl::createHTMLElement):
+        (DocumentImpl::getOverrideStyle):
+        (DocumentImpl::defaultEventHandler):
+        (DocumentImpl::completeURL):
+        (DocumentImpl::topDocument):
+        (DocumentImpl::createAttributeNS):
+        (DocumentImpl::images):
+        (DocumentImpl::applets):
+        (DocumentImpl::embeds):
+        (DocumentImpl::objects):
+        (DocumentImpl::links):
+        (DocumentImpl::forms):
+        (DocumentImpl::anchors):
+        (DocumentImpl::all):
+        (DocumentImpl::nameableItems):
+        (DocumentImpl::getElementsByName):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::realDocType):
+        (DOM::DocumentImpl::createAttribute):
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::nodeName):
+        (AttrImpl::nodeValue):
+        (AttrImpl::name):
+        (AttrImpl::value):
+        (ElementImpl::attributes):
+        (ElementImpl::isURLAttribute):
+        (ElementImpl::setAttributeNode):
+        (ElementImpl::removeAttributeNode):
+        (ElementImpl::setAttributeNS):
+        (ElementImpl::removeAttributeNS):
+        (ElementImpl::getAttributeNodeNS):
+        (ElementImpl::hasAttributeNS):
+        (ElementImpl::style):
+        (XMLElementImpl::cloneNode):
+        (NamedAttrMapImpl::setNamedItem):
+        (NamedAttrMapImpl::removeNamedItem):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::hasAttribute):
+        (DOM::ElementImpl::getAttribute):
+        (DOM::ElementImpl::setAttribute):
+        (DOM::ElementImpl::removeAttribute):
+        (DOM::ElementImpl::getAttributeNode):
+        (DOM::ElementImpl::setAttributeNodeNS):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::handleLocalEvents):
+        (NodeImpl::isAncestor):
+        (NodeImpl::addEventListener):
+        (NodeImpl::removeEventListener):
+        (NodeImpl::getElementsByTagNameNS):
+        (NodeImpl::isSupported):
+        (NodeImpl::ownerDocument):
+        (NodeImpl::hasAttributes):
+        (NodeImpl::attributes):
+        (ContainerNodeImpl::removeChildren):
+        (NamedNodeMapImpl::~NamedNodeMapImpl):
+        (NamedNodeMapImpl::getNamedItemNS):
+        (NamedNodeMapImpl::removeNamedItemNS):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::getElementsByTagName):
+        (DOM::NamedNodeMapImpl::NamedNodeMapImpl):
+        (DOM::NamedNodeMapImpl::getNamedItem):
+        (DOM::NamedNodeMapImpl::removeNamedItem):
+        (DOM::NamedNodeMapImpl::setNamedItemNS):
+        (DOM::NamedNodeMapImpl::isReadOnly):
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_xmlimpl.h:
+        * kwq/DOM.mm:
+        (-[DOMNode isSupported::]):
+        (-[DOMNode namespaceURI]):
+        (-[DOMNode hasAttributes]):
+        (-[DOMNamedNodeMap getNamedItem:]):
+        (-[DOMNamedNodeMap setNamedItem:]):
+        (-[DOMNamedNodeMap removeNamedItem:]):
+        (-[DOMNamedNodeMap getNamedItemNS::]):
+        (-[DOMNamedNodeMap setNamedItemNS:]):
+        (-[DOMNamedNodeMap removeNamedItemNS::]):
+        (-[DOMImplementation createDocument:::]):
+        (-[DOMImplementation createCSSStyleSheet::]):
+        (-[DOMDocument createAttribute:]):
+        (-[DOMDocument getElementsByTagName:]):
+        (-[DOMDocument createAttributeNS::]):
+        (-[DOMDocument getElementsByTagNameNS::]):
+        (-[DOMElement setAttribute::]):
+        (-[DOMElement removeAttribute:]):
+        (-[DOMElement getAttributeNode:]):
+        (-[DOMElement setAttributeNode:]):
+        (-[DOMElement removeAttributeNode:]):
+        (-[DOMElement getElementsByTagName:]):
+        (-[DOMElement getAttributeNS::]):
+        (-[DOMElement setAttributeNS:::]):
+        (-[DOMElement removeAttributeNS::]):
+        (-[DOMElement getAttributeNodeNS::]):
+        (-[DOMElement setAttributeNodeNS:]):
+        (-[DOMElement getElementsByTagNameNS::]):
+        (-[DOMElement hasAttribute:]):
+        (-[DOMElement hasAttributeNS::]):
+        (-[DOMElement style]):
+        (-[DOMDocumentType _documentTypeImpl]):
+        (ObjCNodeFilterCondition::acceptNode):
+        * kwq/DOMEvents.mm:
+        (-[DOMMutationEvent relatedNode]):
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::KWQClipboard):
+        (KWQClipboard::setDragImage):
+        (KWQClipboard::dragImageElement):
+        (KWQClipboard::setDragImageElement):
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::passSubframeEventToSubframe):
+        (KWQKHTMLPart::sendContextMenuEvent):
+
+2005-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by David Harrison.
+
         - first pass of moving code from C++ DOM wrappers into the DOM impl. classes
           (this step mostly adds member functions missing from the DOM impl.; later steps
            will change the C++, JavaScript, and ObjC wrappers to call these functions)

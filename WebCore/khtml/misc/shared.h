@@ -72,6 +72,7 @@ public:
     bool notNull() const { return m_ptr != 0; }
 
     void reset() { if (m_ptr) m_ptr->deref(); m_ptr = 0; }
+    void reset(T *o) { if (o) o->ref(); if (m_ptr) m_ptr->deref(); m_ptr = o; }
     
     T * get() const { return m_ptr; }
     T &operator*() const { return *m_ptr; }
@@ -91,13 +92,11 @@ private:
 
 template <class T> SharedPtr<T> &SharedPtr<T>::operator=(const SharedPtr<T> &o) 
 {
-    if (m_ptr != o.m_ptr) {
-        if (m_ptr)
-            m_ptr->deref();
-        m_ptr = o.m_ptr;
-        if (m_ptr) 
-            m_ptr->ref();
-    }
+    if (o.m_ptr) 
+        o.m_ptr->ref();
+    if (m_ptr)
+        m_ptr->deref();
+    m_ptr = o.m_ptr;
     return *this;
 }
 
@@ -105,6 +104,9 @@ template <class T> inline bool operator!=(const SharedPtr<T> &a, const SharedPtr
 template <class T> inline bool operator!=(const SharedPtr<T> &a, const T *b) { return !(a == b); }
 template <class T> inline bool operator!=(const T *a, const SharedPtr<T> &b) { return !(a == b); }
 
-};
+template <class T, class U> inline SharedPtr<T> static_pointer_cast(const SharedPtr<U> &p) { return SharedPtr<T>(static_cast<T *>(p.get())); }
+template <class T, class U> inline SharedPtr<T> const_pointer_cast(const SharedPtr<U> &p) { return SharedPtr<T>(const_cast<T *>(p.get())); }
+
+}
 
 #endif

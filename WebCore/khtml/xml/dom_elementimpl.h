@@ -43,10 +43,11 @@ namespace khtml {
 
 namespace DOM {
 
-class ElementImpl;
-class DocumentImpl;
-class NamedAttrMapImpl;
 class AtomicStringList;
+class DocumentImpl;
+class CSSStyleDeclarationImpl;
+class ElementImpl;
+class NamedAttrMapImpl;
 
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.
@@ -114,11 +115,12 @@ private:
 public:
 
     // DOM methods & attributes for Attr
+    DOMString name() const;
     bool specified() const { return m_specified; }
     ElementImpl* ownerElement() const { return m_element; }
     AttributeImpl* attrImpl() const { return m_attribute; }
 
-    //DOMString value() const;
+    DOMString value() const;
     void setValue( const DOMString &v, int &exceptioncode );
 
     // DOM methods overridden from  parent classes
@@ -137,10 +139,6 @@ public:
     virtual bool childTypeAllowed( unsigned short type );
 
     virtual DOMString toString() const;
-
-#if APPLE_CHANGES
-    static Attr createInstance(AttrImpl *impl);
-#endif
 
 protected:
     ElementImpl* m_element;
@@ -162,16 +160,34 @@ public:
     // Used to quickly determine whether or not an element has a given CSS class.
     virtual const AtomicStringList* getClassList() const;
     const AtomicString& getIDAttribute() const;
-    const AtomicString& getAttribute( NodeImpl::Id id ) const;
-    const AtomicString& getAttribute(const DOMString& localName) const { return getAttributeNS(QString::null, localName); }
-    const AtomicString& getAttributeNS(const DOMString &namespaceURI,
-                                       const DOMString &localName) const;
-    void setAttribute( NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode );
-    void removeAttribute( NodeImpl::Id id, int &exceptioncode );
+    const AtomicString& getAttribute(Id id ) const;
+    void setAttribute( Id id, DOMStringImpl* value, int &exceptioncode );
+    void removeAttribute( Id id, int &exceptioncode );
+
     bool hasAttributes() const;
+
+    bool hasAttribute(const DOMString &name) const { return hasAttributeNS(DOMString(), name); }
+    bool hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+
+    const AtomicString& getAttribute(const DOMString& name) const { return getAttributeNS(DOMString(), name); }
+    const AtomicString& getAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+
+    void setAttribute(const DOMString &name, const DOMString &value, int &exception) { setAttributeNS(DOMString(), name, value, exception); }
+    void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception);
+
+    void removeAttribute(const DOMString &name, int &exception) { removeAttributeNS(DOMString(), name, exception); }
+    void removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
+
+    AttrImpl *getAttributeNode(const DOMString &name) { return getAttributeNodeNS(DOMString(), name); }
+    AttrImpl *getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName);
+    SharedPtr<AttrImpl> setAttributeNode(AttrImpl *newAttr, int &exception);
+    SharedPtr<AttrImpl> setAttributeNodeNS(AttrImpl *newAttr, int &exception) { return setAttributeNode(newAttr, exception); }
+    SharedPtr<AttrImpl> removeAttributeNode(AttrImpl *oldAttr, int &exception);
     
     DOMString prefix() const { return m_prefix; }
     void setPrefix(const DOMString &_prefix, int &exceptioncode );
+
+    virtual CSSStyleDeclarationImpl *style();
 
     // DOM methods overridden from  parent classes
     virtual DOMString tagName() const;
@@ -183,9 +199,10 @@ public:
     virtual void removedFromDocument();
 
     // convenience methods which ignore exceptions
-    void setAttribute (NodeImpl::Id id, const DOMString &value);
+    void setAttribute(Id id, const DOMString &value);
 
-    NamedAttrMapImpl* attributes(bool readonly = false) const;
+    virtual NamedAttrMapImpl *attributes() const;
+    NamedAttrMapImpl* attributes(bool readonly) const;
 
     // This method is called whenever an attribute is added, changed or removed.
     virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls = false) {}
@@ -205,7 +222,7 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
  
-    virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
+    virtual AttributeImpl* createAttribute(Id id, DOMStringImpl* value);
     
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
@@ -218,10 +235,6 @@ public:
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
-#endif
-
-#if APPLE_CHANGES
-    static Element createInstance(ElementImpl *impl);
 #endif
 
 #ifndef NDEBUG
@@ -276,9 +289,8 @@ public:
 
     // DOM methods & attributes for NamedNodeMap
     virtual AttrImpl *getNamedItem ( NodeImpl::Id id ) const;
-    virtual Node removeNamedItem ( NodeImpl::Id id, int &exceptioncode );
-    virtual Node setNamedItem ( NodeImpl* arg, int &exceptioncode );
-
+    virtual SharedPtr<NodeImpl> removeNamedItem ( NodeImpl::Id id, int &exceptioncode );
+    virtual SharedPtr<NodeImpl> setNamedItem ( NodeImpl* arg, int &exceptioncode );
 
     virtual AttrImpl *item ( unsigned long index ) const;
     unsigned long length() const { return len; }

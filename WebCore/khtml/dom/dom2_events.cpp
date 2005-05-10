@@ -21,6 +21,8 @@
  *
  */
 
+#include "dom/dom2_events.h"
+
 #include "dom/dom2_views.h"
 #include "dom/dom_exception.h"
 #include "xml/dom2_eventsimpl.h"
@@ -378,7 +380,7 @@ void UIEvent::initUIEvent(const DOMString &typeArg,
 	throw DOMException(DOMException::INVALID_STATE_ERR);
 
     static_cast<UIEventImpl*>(impl)->initUIEvent(typeArg,canBubbleArg,cancelableArg,
-						 viewArg,detailArg);
+						 viewArg.handle(),detailArg);
 }
 
 // -----------------------------------------------------------------------------
@@ -522,9 +524,9 @@ void MouseEvent::initMouseEvent(const DOMString &typeArg,
 	throw DOMException(DOMException::INVALID_STATE_ERR);
 
     static_cast<MouseEventImpl*>(impl)->initMouseEvent(typeArg,canBubbleArg,
-	cancelableArg,viewArg,detailArg,screenXArg,screenYArg,clientXArg,
+	cancelableArg,viewArg.handle(),detailArg,screenXArg,screenYArg,clientXArg,
 	clientYArg,ctrlKeyArg,altKeyArg,shiftKeyArg,metaKeyArg,buttonArg,
-	relatedTargetArg);
+	relatedTargetArg.handle());
 }
 
 
@@ -623,7 +625,7 @@ void MutationEvent::initMutationEvent(const DOMString &typeArg,
 	throw DOMException(DOMException::INVALID_STATE_ERR);
 
     static_cast<MutationEventImpl*>(impl)->initMutationEvent(typeArg,
-	canBubbleArg,cancelableArg,relatedNodeArg,prevValueArg,
+	canBubbleArg,cancelableArg,relatedNodeArg.handle(),prevValueArg,
 	newValueArg,attrNameArg,attrChangeArg);
 }
 
@@ -741,7 +743,7 @@ void KeyboardEvent::initKeyboardEvent(const DOMString &typeArg,
 	throw DOMException(DOMException::INVALID_STATE_ERR);
 
     static_cast<KeyboardEventImpl*>(impl)->initKeyboardEvent(typeArg,canBubbleArg,
-	cancelableArg,viewArg,keyIdentifierArg,keyLocationArg,ctrlKeyArg,altKeyArg,
+	cancelableArg,viewArg.handle(),keyIdentifierArg,keyLocationArg,ctrlKeyArg,altKeyArg,
         shiftKeyArg,metaKeyArg,altGraphKeyArg);
 }
                                     

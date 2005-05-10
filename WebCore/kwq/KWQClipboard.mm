@@ -33,10 +33,11 @@
 #import <AppKit/AppKit.h>
 
 using DOM::DOMString;
+using DOM::NodeImpl;
 
 KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part)
   : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging),
-    m_dragImageElement(0), m_policy(policy), m_dragStarted(false), m_part(part)
+    m_policy(policy), m_dragStarted(false), m_part(part)
 {
     m_changeCount = [m_pasteboard changeCount];
 }
@@ -292,25 +293,25 @@ QPixmap KWQClipboard::dragImage() const
 
 void KWQClipboard::setDragImage(const QPixmap &pm, const QPoint &loc)
 {
-    setDragImage(pm, DOM::Node(0), loc);
+    setDragImage(pm, 0, loc);
 }
 
-const DOM::Node KWQClipboard::dragImageElement()
+DOM::NodeImpl *KWQClipboard::dragImageElement()
 {
-    return m_dragImageElement;
+    return m_dragImageElement.get();
 }
 
-void KWQClipboard::setDragImageElement(const DOM::Node &node, const QPoint &loc)
+void KWQClipboard::setDragImageElement(NodeImpl *node, const QPoint &loc)
 {
     setDragImage(QPixmap(), node, loc);
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm, const DOM::Node &node, const QPoint &loc)
+void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const QPoint &loc)
 {
     if (m_policy == ImageWritable || m_policy == Writable) {
         m_dragImage = pm;
         m_dragLoc = loc;
-        m_dragImageElement = node;
+        m_dragImageElement.reset(node);
         
         if (m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
             NSPoint cocoaLoc;
@@ -332,7 +333,7 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
         if (m_part) {
             NSRect imageRect;
             NSRect elementRect;
-            result = m_part->snapshotDragImage(m_dragImageElement, &imageRect, &elementRect);
+            result = m_part->snapshotDragImage(m_dragImageElement.get(), &imageRect, &elementRect);
             if (loc) {
                 // Client specifies point relative to element, not the whole image, which may include child
                 // layers spread out all over the place.

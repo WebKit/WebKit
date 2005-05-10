@@ -1232,7 +1232,7 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
             DOM::Node node = toNode(args[0]);
             if (!node.isNull()) {
                 if (node.nodeType() == DOM::Node::ELEMENT_NODE) {
-                    cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
+                    cb->clipboard->setDragImageElement(node.handle(), QPoint(x,y));                    
                     return Undefined();
                 } else {
                     Object err = Error::create(exec, SyntaxError,"setDragImageFromElement: Invalid first argument");

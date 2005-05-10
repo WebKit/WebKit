@@ -26,6 +26,7 @@
 
 #include "dom/dom_exception.h"
 #include "dom/dom2_range.h"
+#include "dom/dom2_events.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include <kdebug.h>

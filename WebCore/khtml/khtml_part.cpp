@@ -5709,13 +5709,11 @@ void KHTMLPart::applyEditingStyleToBodyElement() const
     if (!d->m_doc)
         return;
         
-    static DOMString body = "body";
-    NodeListImpl *list = d->m_doc->getElementsByTagNameNS(0, body.implementation());
-    list->ref();
-    for (unsigned i = 0; i < list->length(); i++) {
+    SharedPtr<NodeListImpl> list = d->m_doc->getElementsByTagName("body");
+    unsigned len = list->length();
+    for (unsigned i = 0; i < len; i++) {
         applyEditingStyleToElement(static_cast<ElementImpl *>(list->item(i)));    
     }
-    list->deref();
 }
 
 void KHTMLPart::removeEditingStyleFromBodyElement() const
@@ -5723,13 +5721,11 @@ void KHTMLPart::removeEditingStyleFromBodyElement() const
     if (!d->m_doc)
         return;
         
-    static DOMString body = "body";
-    NodeListImpl *list = d->m_doc->getElementsByTagNameNS(0, body.implementation());
-    list->ref();
-    for (unsigned i = 0; i < list->length(); i++) {
+    SharedPtr<NodeListImpl> list = d->m_doc->getElementsByTagName("body");
+    unsigned len = list->length();
+    for (unsigned i = 0; i < len; i++) {
         removeEditingStyleFromElement(static_cast<ElementImpl *>(list->item(i)));    
     }
-    list->deref();
 }
 
 void KHTMLPart::applyEditingStyleToElement(ElementImpl *element) const

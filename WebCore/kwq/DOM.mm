@@ -62,6 +62,11 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
+// Temporary: Remove when the real FilterNode is checked in.
+namespace DOM {
+    typedef const Node &FilterNode;
+}
+
 using DOM::Attr;
 using DOM::AttrImpl;
 using DOM::CharacterDataImpl;
@@ -76,6 +81,7 @@ using DOM::DOMStringImpl;
 using DOM::Element;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
+using DOM::FilterNode;
 using DOM::HTMLElementImpl;
 using DOM::NamedNodeMap;
 using DOM::NamedNodeMapImpl;
@@ -95,10 +101,15 @@ using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
 using khtml::RenderObject;
+using khtml::SharedPtr;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
 - (AttrImpl *)_attrImpl;
+@end
+
+@interface DOMDocumentType (WebCoreInternal)
+- (DOM::DocumentTypeImpl *)_documentTypeImpl;
 @end
 
 @interface DOMImplementation (WebCoreInternal)
@@ -109,34 +120,6 @@ using khtml::RenderObject;
 @interface DOMNamedNodeMap (WebCoreInternal)
 + (DOMNamedNodeMap *)_namedNodeMapWithImpl:(NamedNodeMapImpl *)impl;
 @end
-
-//------------------------------------------------------------------------------------------
-// Factory methods
-
-inline NamedNodeMap NamedNodeMapImpl::createInstance(NamedNodeMapImpl *impl)
-{
-    return NamedNodeMap(impl);
-}
-
-inline Attr AttrImpl::createInstance(AttrImpl *impl)
-{
-    return Attr(impl);
-}
-
-inline Element ElementImpl::createInstance(ElementImpl *impl)
-{
-    return Element(impl);
-}
-
-inline DocumentType DocumentTypeImpl::createInstance(DocumentTypeImpl *impl)
-{
-    return DocumentType(impl);
-}
-
-inline Document DocumentImpl::createInstance(DocumentImpl *impl)
-{
-    return Document(impl);
-}
 
 //------------------------------------------------------------------------------------------
 // DOMObject
@@ -349,14 +332,12 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(feature);
     ASSERT(version);
 
-    // Method not reflected in DOM::NodeImpl interface
-    return Node([self _nodeImpl]).isSupported(feature, version);
+    return [self _nodeImpl]->isSupported(feature, version);
 }
 
 - (NSString *)namespaceURI
 {
-    // Method not reflected in DOM::NodeImpl interface
-    return Node([self _nodeImpl]).namespaceURI();
+    return [self _nodeImpl]->namespaceURI();
 }
 
 - (NSString *)prefix
@@ -380,8 +361,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (BOOL)hasAttributes
 {
-    // Method not reflected in DOM::NodeImpl interface
-    return Node([self _nodeImpl]).hasAttributes();
+    return [self _nodeImpl]->hasAttributes();
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
@@ -683,42 +663,27 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-    Node result(map.getNamedItem(name));
-    return [DOMNode _nodeWithImpl:result.handle()];
+    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItem(name)];
 }
 
 - (DOMNode *)setNamedItem:(DOMNode *)arg
 {
     ASSERT(arg);
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    try {
-        NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-        Node result(map.setNamedItem([arg _nodeImpl]));
-        return [DOMNode _nodeWithImpl:result.handle()];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->setNamedItem([arg _nodeImpl], exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNode *)removeNamedItem:(NSString *)name
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    try {
-        NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-        Node result(map.removeNamedItem(name));
-        return [DOMNode _nodeWithImpl:result.handle()];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->removeNamedItem(name, exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNode *)item:(unsigned long)index
@@ -737,26 +702,17 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return nil;
     }
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-    Node result(map.getNamedItemNS(namespaceURI, localName));
-    return [DOMNode _nodeWithImpl:result.handle()];
+    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItemNS(namespaceURI, localName)];
 }
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)arg
 {
     ASSERT(arg);
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    try {
-        NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-        Node result(map.setNamedItemNS([arg _nodeImpl]));
-        return [DOMNode _nodeWithImpl:result.handle()];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->setNamedItemNS([arg _nodeImpl], exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNode *)removeNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
@@ -764,16 +720,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    // Method not reflected in DOM::NamedNodeMapImpl interface
-    try {
-        NamedNodeMap map = NamedNodeMapImpl::createInstance([self _namedNodeMapImpl]);
-        Node result(map.removeNamedItemNS(namespaceURI, localName));
-        return [DOMNode _nodeWithImpl:result.handle()];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->removeNamedItemNS(namespaceURI, localName, exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 @end
@@ -919,8 +869,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(qualifiedName);
 
     int exceptionCode = 0;
-    DocumentType dt = DocumentTypeImpl::createInstance(static_cast<DocumentTypeImpl *>([doctype _nodeImpl]));
-    DocumentImpl *impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, dt, exceptionCode);
+    DocumentImpl *impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], exceptionCode);
     raiseOnDOMError(exceptionCode);
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
 }
@@ -935,9 +884,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(media);
 
     int exceptionCode = 0;
-    DOMString titleString(title);
-    DOMString mediaString(media);
-    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(titleString.implementation(), mediaString.implementation(), exceptionCode)];
+    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, exceptionCode)];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1068,16 +1015,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::DocumentImpl interface
-    try {
-        Document doc(DocumentImpl::createInstance([self _documentImpl]));
-        Attr result(doc.createAttribute(name));
-        return static_cast<DOMAttr *>([DOMNode _nodeWithImpl:result.handle()]);
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttribute(name, exception)];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMEntityReference *)createEntityReference:(NSString *)name
@@ -1092,7 +1033,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname
 {
     ASSERT(tagname);
-    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagNameNS(0, DOMString(tagname).implementation())];
+    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagName(tagname).get()];
 }
 
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
@@ -1119,16 +1060,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(qualifiedName);
 
-    // Method not reflected in DOM::DocumentImpl interface
-    try {
-        Document doc(DocumentImpl::createInstance([self _documentImpl]));
-        Attr result(doc.createAttributeNS(namespaceURI, qualifiedName));
-        return static_cast<DOMAttr *>([DOMNode _nodeWithImpl:result.handle()]);
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttributeNS(namespaceURI, qualifiedName, exception)];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1136,7 +1071,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagNameNS(DOMString(namespaceURI).implementation(), DOMString(localName).implementation())];
+    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagNameNS(namespaceURI, localName).get()];
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
@@ -1364,79 +1299,52 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(name);
     ASSERT(value);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        element.setAttribute(name, value);
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-    }
+    int exception = 0;
+    [self _elementImpl]->setAttribute(name, value, exception);
+    raiseOnDOMError(exception);
 }
 
 - (void)removeAttribute:(NSString *)name
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        element.removeAttribute(name);
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-    }
+    int exception = 0;
+    [self _elementImpl]->removeAttribute(name, exception);
+    raiseOnDOMError(exception);
 }
 
 - (DOMAttr *)getAttributeNode:(NSString *)name
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::ElementImpl interface
-    Element element(ElementImpl::createInstance([self _elementImpl]));
-    Attr result(element.getAttributeNode(name));
-    return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNode(name)];
 }
 
 - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr
 {
     ASSERT(newAttr);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        Attr attr(AttrImpl::createInstance([newAttr _attrImpl]));
-        Attr result(element.setAttributeNode(attr));
-        return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->setAttributeNode([newAttr _attrImpl], exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMAttr *)removeAttributeNode:(DOMAttr *)oldAttr
 {
     ASSERT(oldAttr);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        Attr attr(AttrImpl::createInstance([oldAttr _attrImpl]));
-        Attr result(element.removeAttributeNode(attr));
-        return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->removeAttributeNode([oldAttr _attrImpl], exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)name
 {
     ASSERT(name);
 
-    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagNameNS(0, DOMString(name).implementation())];
+    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagName(name).get()];
 }
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1444,8 +1352,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    Element element(ElementImpl::createInstance([self _elementImpl]));
-    return element.getAttributeNS(namespaceURI, localName);
+    return [self _elementImpl]->getAttributeNS(namespaceURI, localName);
 }
 
 - (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value
@@ -1454,14 +1361,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(qualifiedName);
     ASSERT(value);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        element.setAttributeNS(namespaceURI, qualifiedName, value);
-    }
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-    }
+    int exception = 0;
+    [self _elementImpl]->setAttributeNS(namespaceURI, qualifiedName, value, exception);
+    raiseOnDOMError(exception);
 }
 
 - (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1469,14 +1371,9 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        element.removeAttributeNS(namespaceURI, localName);
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-    }
+    int exception = 0;
+    [self _elementImpl]->removeAttributeNS(namespaceURI, localName, exception);
+    raiseOnDOMError(exception);
 }
 
 - (DOMAttr *)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1484,27 +1381,17 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    // Method not reflected in DOM::ElementImpl interface
-    Element element(ElementImpl::createInstance([self _elementImpl]));
-    Attr result(element.getAttributeNodeNS(namespaceURI, localName));
-    return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
+    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNodeNS(namespaceURI, localName)];
 }
 
 - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr
 {
     ASSERT(newAttr);
 
-    // Method not reflected in DOM::ElementImpl interface
-    try {
-        Element element(ElementImpl::createInstance([self _elementImpl]));
-        Attr attr(AttrImpl::createInstance([newAttr _attrImpl]));
-        Attr result(element.setAttributeNodeNS(attr));
-        return [DOMAttr _attrWithImpl:static_cast<AttrImpl *>(result.handle())];
-    } 
-    catch (const DOM::DOMException &e) {
-        raiseOnDOMError(e.code);
-        return nil;
-    }
+    int exception = 0;
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->setAttributeNodeNS([newAttr _attrImpl], exception).get()];
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNodeList *)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1512,16 +1399,14 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagNameNS(DOMString(namespaceURI).implementation(), DOMString(localName).implementation())];
+    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagNameNS(namespaceURI, localName).get()];
 }
 
 - (BOOL)hasAttribute:(NSString *)name
 {
     ASSERT(name);
 
-    // Method not reflected in DOM::ElementImpl interface
-    Element element(ElementImpl::createInstance([self _elementImpl]));
-    return element.hasAttribute(name);
+    return [self _elementImpl]->hasAttribute(name);
 }
 
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1529,9 +1414,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    // Method not reflected in DOM::ElementImpl interface
-    Element element(ElementImpl::createInstance([self _elementImpl]));
-    return element.hasAttributeNS(namespaceURI, localName);
+    return [self _elementImpl]->hasAttributeNS(namespaceURI, localName);
 }
 
 @end
@@ -1540,10 +1423,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DOMCSSStyleDeclaration *)style
 {
-    ElementImpl *impl = [self _elementImpl];
-    if (impl->isHTMLElement())
-        return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:static_cast<HTMLElementImpl *>(impl)->getInlineStyleDecl()];
-    return nil;
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _elementImpl]->style()];
 }
 
 @end
@@ -1622,11 +1502,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @implementation DOMDocumentType
 
-- (DocumentTypeImpl *)_documentTypeImpl
-{
-    return static_cast<DocumentTypeImpl *>(DOM_cast<NodeImpl *>(_internal));
-}
-
 - (NSString *)name
 {
     return [self _documentTypeImpl]->publicId();
@@ -1655,6 +1530,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (NSString *)internalSubset
 {
     return [self _documentTypeImpl]->internalSubset();
+}
+
+@end
+
+@implementation DOMDocumentType (WebCoreInternal)
+
+- (DocumentTypeImpl *)_documentTypeImpl
+{
+    return static_cast<DocumentTypeImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -2294,7 +2178,7 @@ class ObjCNodeFilterCondition : public NodeFilterCondition
 public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
     virtual ~ObjCNodeFilterCondition();
-    virtual short acceptNode(const Node &) const;
+    virtual short acceptNode(FilterNode) const;
 
 private:
     ObjCNodeFilterCondition(const ObjCNodeFilterCondition &);
@@ -2315,7 +2199,7 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
     CFRelease(m_filter);
 }
 
-short ObjCNodeFilterCondition::acceptNode(const Node &n) const
+short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
 {
     if (n.isNull())
         return NodeFilter::FILTER_REJECT;

@@ -2326,7 +2326,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     if (_dragSrcIsDHTML) {
                         int srcX, srcY;
                         _dragSrc.handle()->renderer()->absolutePosition(srcX, srcY);
-                        _dragClipboard->setDragImageElement(_dragSrc, QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
+                        _dragClipboard->setDragImageElement(_dragSrc.handle(), QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
                     _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownWinX, _mouseDownWinY));
@@ -2530,7 +2530,7 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
 
     switch ([_currentEvent type]) {
     	case NSLeftMouseDown: {
-            NodeImpl *node = event.innerNode.handle();
+            NodeImpl *node = event.innerNode.get();
             if (!node) {
                 return false;
             }
@@ -2797,10 +2797,11 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     doc->prepareMouseEvent(false, xm, ym, &mev);
 
     bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
-        mev.innerNode.handle(), true, 0, &qev, true, NodeImpl::MousePress);
+        mev.innerNode.get(), true, 0, &qev, true, NodeImpl::MousePress);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
-        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode.handle()->isContentEditable())) {
-        selectClosestWordFromMouseEvent(&qev, mev.innerNode, xm, ym);
+        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode->isContentEditable())) {
+        DOM::Node node(mev.innerNode.get());
+        selectClosestWordFromMouseEvent(&qev, node, xm, ym);
     }
 
     ASSERT(_currentEvent == event);

@@ -25,10 +25,12 @@
 
 #include "jsediting.h"
 
-#include "cssproperties.h"
+#include "css/css_valueimpl.h"
+#include "css/cssproperties.h"
+
 #include "htmlediting.h"
 #include "khtml_part.h"
-#include "qstring.h"
+#include <qstring.h>
 #include "selection.h"
 
 #if APPLE_CHANGES

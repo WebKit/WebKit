@@ -21,12 +21,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "dom/dom2_views.h"
-
 #include "xml/dom2_eventsimpl.h"
+
+#include "dom/dom2_events.h"
+#include "dom/dom2_views.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom2_viewsimpl.h"
 #include "rendering/render_object.h"
 #include "rendering/render_layer.h"
 
@@ -322,7 +324,7 @@ UIEventImpl::~UIEventImpl()
 void UIEventImpl::initUIEvent(const DOMString &typeArg,
 			      bool canBubbleArg,
 			      bool cancelableArg,
-			      const AbstractView &viewArg,
+			      AbstractViewImpl *viewArg,
 			      long detailArg)
 {
     EventImpl::initEvent(typeArg,canBubbleArg,cancelableArg);
@@ -330,7 +332,7 @@ void UIEventImpl::initUIEvent(const DOMString &typeArg,
     if (m_view)
 	m_view->deref();
 
-    m_view = viewArg.handle();
+    m_view = viewArg;
     if (m_view)
 	m_view->ref();
     m_detail = detailArg;
@@ -341,7 +343,40 @@ bool UIEventImpl::isUIEvent() const
     return true;
 }
 
-// -----------------------------------------------------------------------------
+int UIEventImpl::keyCode() const
+{
+    return 0;
+}
+
+int UIEventImpl::charCode() const
+{
+    return 0;
+}
+
+long UIEventImpl::layerX() const
+{
+    return 0;
+}
+
+long UIEventImpl::layerY() const
+{
+    return 0;
+}
+
+long UIEventImpl::pageX() const
+{
+    return 0;
+}
+
+long UIEventImpl::pageY() const
+{
+    return 0;
+}
+
+long UIEventImpl::which() const
+{
+    return 0;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -404,6 +439,16 @@ void MouseRelatedEventImpl::computeLayerPos()
     }
 }
 
+long MouseRelatedEventImpl::pageX() const
+{
+    return m_clientX;
+}
+
+long MouseRelatedEventImpl::pageY() const
+{
+    return m_clientY;
+}
+
 // -----------------------------------------------------------------------------
 
 MouseEventImpl::MouseEventImpl()
@@ -453,7 +498,7 @@ MouseEventImpl::~MouseEventImpl()
 void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
                                     bool canBubbleArg,
                                     bool cancelableArg,
-                                    const AbstractView &viewArg,
+                                    AbstractViewImpl *viewArg,
                                     long detailArg,
                                     long screenXArg,
                                     long screenYArg,
@@ -464,7 +509,7 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
                                     bool shiftKeyArg,
                                     bool metaKeyArg,
                                     unsigned short buttonArg,
-                                    const Node &relatedTargetArg)
+                                    NodeImpl *relatedTargetArg)
 {
     UIEventImpl::initUIEvent(typeArg,canBubbleArg,cancelableArg,viewArg,detailArg);
 
@@ -480,7 +525,7 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
     m_shiftKey = shiftKeyArg;
     m_metaKey = metaKeyArg;
     m_button = buttonArg;
-    m_relatedTarget = relatedTargetArg.handle();
+    m_relatedTarget = relatedTargetArg;
     if (m_relatedTarget)
 	m_relatedTarget->ref();
     computeLayerPos();
@@ -497,6 +542,14 @@ bool MouseEventImpl::isDragEvent() const
             || m_id == EventImpl::DRAGLEAVE_EVENT || m_id == EventImpl::DROP_EVENT 
             || m_id == EventImpl::DRAGSTART_EVENT || m_id == EventImpl::DRAG_EVENT
             || m_id == EventImpl::DRAGEND_EVENT);
+}
+
+long MouseEventImpl::which() const
+{
+    // For KHTML, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
+    // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
+    // So we must add 1.
+    return m_button + 1;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -571,7 +624,7 @@ KeyboardEventImpl::~KeyboardEventImpl()
 void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
                         bool canBubbleArg,
                         bool cancelableArg,
-                        const AbstractView &viewArg, 
+                        AbstractViewImpl *viewArg, 
                         const DOMString &keyIdentifierArg, 
                         unsigned long keyLocationArg, 
                         bool ctrlKeyArg, 
@@ -630,6 +683,13 @@ bool KeyboardEventImpl::isKeyboardEvent() const
     return true;
 }
 
+long KeyboardEventImpl::which() const
+{
+    // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
+    // That's exactly what IE's "keyCode" returns. So they are the same for keyboard events.
+    return keyCode();
+}
+
 // -----------------------------------------------------------------------------
 
 MutationEventImpl::MutationEventImpl()
@@ -644,14 +704,14 @@ MutationEventImpl::MutationEventImpl()
 MutationEventImpl::MutationEventImpl(EventId _id,
 				     bool canBubbleArg,
 				     bool cancelableArg,
-				     const Node &relatedNodeArg,
+				     NodeImpl *relatedNodeArg,
 				     const DOMString &prevValueArg,
 				     const DOMString &newValueArg,
 				     const DOMString &attrNameArg,
 				     unsigned short attrChangeArg)
 		      : EventImpl(_id,canBubbleArg,cancelableArg)
 {
-    m_relatedNode = relatedNodeArg.handle();
+    m_relatedNode = relatedNodeArg;
     if (m_relatedNode)
 	m_relatedNode->ref();
     m_prevValue = prevValueArg.implementation();
@@ -681,7 +741,7 @@ MutationEventImpl::~MutationEventImpl()
 void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
 					  bool canBubbleArg,
 					  bool cancelableArg,
-					  const Node &relatedNodeArg,
+					  NodeImpl *relatedNodeArg,
 					  const DOMString &prevValueArg,
 					  const DOMString &newValueArg,
 					  const DOMString &attrNameArg,
@@ -698,7 +758,7 @@ void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
     if (m_attrName)
 	m_attrName->deref();
 
-    m_relatedNode = relatedNodeArg.handle();
+    m_relatedNode = relatedNodeArg;
     if (m_relatedNode)
 	m_relatedNode->ref();
     m_prevValue = prevValueArg.implementation();

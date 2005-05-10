@@ -32,7 +32,6 @@
 
 #import "dom_docimpl.h"
 #import "dom2_eventsimpl.h"
-#import "dom2_views.h"
 #import "dom2_viewsimpl.h"
 
 using DOM::EventImpl;
@@ -216,7 +215,7 @@ ALLOW_DOM_CAST(EventImpl)
 
 - (DOMNode *)relatedNode
 {
-    return [DOMNode _nodeWithImpl:[self _mutationEventImpl]->relatedNode().handle()];
+    return [DOMNode _nodeWithImpl:[self _mutationEventImpl]->relatedNode()];
 }
 
 - (NSString *)prevValue

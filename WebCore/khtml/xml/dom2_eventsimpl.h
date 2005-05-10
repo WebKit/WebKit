@@ -25,13 +25,14 @@
 #ifndef _DOM_EventsImpl_h_
 #define _DOM_EventsImpl_h_
 
-#include "dom/dom2_events.h"
-#include "misc/shared.h"
-#include "xml/dom2_viewsimpl.h"
 #include <qdatetime.h>
-#include <qevent.h>
+#include "dom/dom_node.h"
+#include "dom/dom_string.h"
+#include "misc/shared.h"
 
 class KHTMLPart;
+class QKeyEvent;
+class QPixmap;
 class QPoint;
 class QStringList;
 
@@ -39,6 +40,7 @@ namespace DOM {
 
 class AbstractViewImpl;
 class DOMStringImpl;
+class EventListener;
 class NodeImpl;
 class ClipboardImpl;
 
@@ -201,9 +203,20 @@ public:
     void initUIEvent(const DOMString &typeArg,
 		     bool canBubbleArg,
 		     bool cancelableArg,
-		     const AbstractView &viewArg,
+		     AbstractViewImpl *viewArg,
 		     long detailArg);
     virtual bool isUIEvent() const;
+
+    virtual int keyCode() const;
+    virtual int charCode() const;
+
+    virtual long layerX() const;
+    virtual long layerY() const;
+
+    virtual long pageX() const;
+    virtual long pageY() const;
+
+    virtual long which() const;
 
 protected:
     AbstractViewImpl *m_view;
@@ -254,6 +267,8 @@ public:
     long clientY() const { return m_clientY; }
     long layerX() const { return m_layerX; }
     long layerY() const { return m_layerY; }
+    virtual long pageX() const;
+    virtual long pageY() const;
 protected: // expose these so MouseEventImpl::initMouseEvent can set them
     long m_screenX;
     long m_screenY;
@@ -292,7 +307,7 @@ public:
     void initMouseEvent(const DOMString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,
-			const AbstractView &viewArg,
+			AbstractViewImpl *viewArg,
 			long detailArg,
 			long screenXArg,
 			long screenYArg,
@@ -303,9 +318,10 @@ public:
 			bool shiftKeyArg,
 			bool metaKeyArg,
 			unsigned short buttonArg,
-			const Node &relatedTargetArg);
+			NodeImpl *relatedTargetArg);
     virtual bool isMouseEvent() const;
     virtual bool isDragEvent() const;
+    virtual long which() const;
 private:
     unsigned short m_button;
     NodeImpl *m_relatedTarget;
@@ -334,7 +350,7 @@ public:
     void initKeyboardEvent(const DOMString &typeArg,
                 bool canBubbleArg,
                 bool cancelableArg,
-                const AbstractView &viewArg,
+                AbstractViewImpl *viewArg,
                 const DOMString &keyIdentifierArg,
                 unsigned long keyLocationArg,
                 bool ctrlKeyArg,
@@ -354,6 +370,7 @@ public:
     int charCode() const;
     
     virtual bool isKeyboardEvent() const;
+    virtual long which() const;
 
 private:
     QKeyEvent *m_keyEvent;
@@ -369,14 +386,14 @@ public:
     MutationEventImpl(EventId _id,
 		      bool canBubbleArg,
 		      bool cancelableArg,
-		      const Node &relatedNodeArg,
+		      NodeImpl *relatedNodeArg,
 		      const DOMString &prevValueArg,
 		      const DOMString &newValueArg,
 		      const DOMString &attrNameArg,
 		      unsigned short attrChangeArg);
     ~MutationEventImpl();
 
-    Node relatedNode() const { return m_relatedNode; }
+    NodeImpl *relatedNode() const { return m_relatedNode; }
     DOMString prevValue() const { return m_prevValue; }
     DOMString newValue() const { return m_newValue; }
     DOMString attrName() const { return m_attrName; }
@@ -384,7 +401,7 @@ public:
     void initMutationEvent(const DOMString &typeArg,
 			   bool canBubbleArg,
 			   bool cancelableArg,
-			   const Node &relatedNodeArg,
+			   NodeImpl *relatedNodeArg,
 			   const DOMString &prevValueArg,
 			   const DOMString &newValueArg,
 			   const DOMString &attrNameArg,
@@ -473,8 +490,8 @@ public:
     virtual QPoint dragLocation() const = 0;
     virtual QPixmap dragImage() const = 0;
     virtual void setDragImage(const QPixmap &, const QPoint &) = 0;
-    virtual const Node dragImageElement() = 0;
-    virtual void setDragImageElement(const Node &, const QPoint &) = 0;
+    virtual NodeImpl *dragImageElement() = 0;
+    virtual void setDragImageElement(NodeImpl *, const QPoint &) = 0;
 };
 
 } // namespace

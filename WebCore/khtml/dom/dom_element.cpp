@@ -173,15 +173,10 @@ Attr Element::setAttributeNode( const Attr &newAttr )
 
 Attr Element::removeAttributeNode( const Attr &oldAttr )
 {
-    if (!impl || oldAttr.isNull() || oldAttr.ownerElement() != *this)
+    if (!impl)
         throw DOMException(DOMException::NOT_FOUND_ERR);
-    if (impl->getDocument() != oldAttr.handle()->getDocument())
-        throw DOMException(DOMException::WRONG_DOCUMENT_ERR);
-
-    NodeImpl::Id attrName = static_cast<AttrImpl*>(oldAttr.handle())->attrImpl()->id();
-
     int exceptioncode = 0;
-    Attr r = static_cast<ElementImpl*>(impl)->attributes(true)->removeNamedItem(attrName, exceptioncode);
+    Attr r = static_cast<ElementImpl*>(impl)->removeAttributeNode(static_cast<AttrImpl *>(oldAttr.handle()), exceptioncode).get();
     if ( exceptioncode )
         throw DOMException( exceptioncode );
     return r;
@@ -190,16 +185,14 @@ Attr Element::removeAttributeNode( const Attr &oldAttr )
 NodeList Element::getElementsByTagName( const DOMString &name )
 {
     if (!impl) return 0;
-    return static_cast<ElementImpl*>(impl)->
-        getElementsByTagNameNS(0, name.implementation());
+    return static_cast<ElementImpl*>(impl)->getElementsByTagName(name).get();
 }
 
 NodeList Element::getElementsByTagNameNS( const DOMString &namespaceURI,
                                           const DOMString &localName )
 {
     if (!impl) return 0;
-    return static_cast<ElementImpl*>(impl)->
-        getElementsByTagNameNS(namespaceURI.implementation(), localName.implementation());
+    return static_cast<ElementImpl*>(impl)->getElementsByTagNameNS(namespaceURI, localName).get();
 }
 
 DOMString Element::getAttributeNS( const DOMString &namespaceURI,
@@ -264,7 +257,7 @@ Attr Element::setAttributeNodeNS( const Attr &newAttr )
         throw DOMException(DOMException::NOT_FOUND_ERR);
 
     int exceptioncode = 0;
-    Attr r = static_cast<ElementImpl*>(impl)->attributes(false)->setNamedItem(newAttr.handle(), exceptioncode);
+    Attr r = static_cast<ElementImpl*>(impl)->setAttributeNodeNS(static_cast<AttrImpl *>(newAttr.handle()), exceptioncode).get();
     if ( exceptioncode )
         throw DOMException( exceptioncode );
     return r;

@@ -22,12 +22,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "dom_docimpl.h"
+
 #include "dom/dom_exception.h"
+#include "dom/dom2_events.h"
 
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/dom2_viewsimpl.h"
 #include "xml/xml_tokenizer.h"
 
 #include "xml_namespace_table.h"
@@ -167,7 +171,7 @@ DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*fe
 }
 
 DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
-                                                     const DocumentType &doctype, int &exceptioncode )
+                                                     DocumentTypeImpl *doctype, int &exceptioncode )
 {
     exceptioncode = 0;
 
@@ -205,10 +209,9 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
         return 0;
     }
 
-    DocumentTypeImpl *dtype = static_cast<DocumentTypeImpl*>(doctype.handle());
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
-    if (dtype && (dtype->getDocument() || dtype->implementation() != this)) {
+    if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
         exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -217,22 +220,19 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     DocumentImpl *doc = new DocumentImpl(this, 0);
 
     // now get the interesting parts of the doctype
-    // ### create new one if not there (currently always there)
-    if (doc->doctype() && dtype)
-        doc->doctype()->copyFrom(*dtype);
+    if (doctype)
+        doc->realDocType()->copyFrom(*doctype);
 
     return doc;
 }
 
-CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(DOMStringImpl */*title*/, DOMStringImpl *media,
-                                                              int &/*exceptioncode*/)
+CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(const DOMString &/*title*/, const DOMString &media, int &/*exception*/)
 {
-    // ### TODO : title should be set, and media could have wrong syntax, in which case we should
-	// generate an exception.
-	CSSStyleSheetImpl *parent = 0L;
-	CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent, DOMString());
-	sheet->setMedia(new MediaListImpl(sheet, media));
-	return sheet;
+    // ### TODO : title should be set, and media could have wrong syntax, in which case we should generate an exception.
+    CSSStyleSheetImpl * const nullSheet = 0;
+    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(nullSheet);
+    sheet->setMedia(new MediaListImpl(sheet, media));
+    return sheet;
 }
 
 DocumentImpl *DOMImplementationImpl::createDocument( KHTMLView *v )
@@ -253,6 +253,15 @@ DOMImplementationImpl *DOMImplementationImpl::instance()
     }
 
     return m_instance;
+}
+
+HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument(const DOMString &title)
+{
+    HTMLDocumentImpl *d = createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
+    d->open();
+    // FIXME: Need to escape special characters in the title?
+    d->write("<html><head><title>" + title.string() + "</title></head>");
+    return d;
 }
 
 // ------------------------------------------------------------------------
@@ -508,7 +517,7 @@ ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOM
     return new ProcessingInstructionImpl( docPtr(),target,data);
 }
 
-Attr DocumentImpl::createAttribute( NodeImpl::Id id )
+AttrImpl *DocumentImpl::createAttribute( NodeImpl::Id id )
 {
     // Assume this is an HTML attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
     // documents if we're wrong.
@@ -859,7 +868,7 @@ ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
 // ins/del
     case ID_DEL:
     case ID_INS:
-        return new HTMLGenericElementImpl(docPtr(), tagID);
+        return new HTMLModElementImpl(docPtr(), tagID);
 
 // anchor
     case ID_A:
@@ -909,7 +918,7 @@ ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
     case ID_BR:
         return new HTMLBRElementImpl(docPtr());
     case ID_Q:
-        return new HTMLGenericElementImpl(docPtr(), tagID);
+        return new HTMLQuoteElementImpl(docPtr());
 
 // elements with no special representation in the DOM
 
@@ -1998,7 +2007,7 @@ bool DocumentImpl::prepareMouseEvent( bool readonly, int _x, int _y, MouseEvent 
         assert(m_render->isCanvas());
         RenderObject::NodeInfo renderInfo(readonly, ev->type == MousePress);
         bool isInside = m_render->layer()->hitTest(renderInfo, _x, _y);
-        ev->innerNode = renderInfo.innerNode();
+        ev->innerNode.reset(renderInfo.innerNode());
 
         if (renderInfo.URLElement()) {
             assert(renderInfo.URLElement()->isElementNode());
@@ -2661,7 +2670,7 @@ EventImpl *DocumentImpl::createEvent(const DOMString &eventType, int &exceptionc
     }
 }
 
-CSSStyleDeclarationImpl *DocumentImpl::getOverrideStyle(ElementImpl */*elt*/, DOMStringImpl */*pseudoElt*/)
+CSSStyleDeclarationImpl *DocumentImpl::getOverrideStyle(ElementImpl */*elt*/, const DOMString &/*pseudoElt*/)
 {
     return 0; // ###
 }
@@ -2958,6 +2967,8 @@ QString DocumentImpl::completeURL(const QString &URL)
 
 DOMString DocumentImpl::completeURL(const DOMString &URL)
 {
+    if (URL.isNull())
+        return URL;
     return completeURL(URL.string());
 }
 
@@ -3329,6 +3340,85 @@ DocumentImpl *DocumentImpl::topDocument() const
     }
     
     return doc;
+}
+
+AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception)
+{
+    if (qualifiedName.isNull()) {
+        exception = DOMException::NAMESPACE_ERR;
+        return 0;
+    }
+
+    DOMString localName(qualifiedName.copy());
+    DOMString prefix;
+    int colonpos;
+    if ((colonpos = qualifiedName.find(':')) >= 0) {
+        prefix = qualifiedName.copy();
+        prefix.truncate(colonpos);
+        localName.remove(0, colonpos+1);
+    }
+
+    if (!isValidName(localName)) {
+        exception = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
+    }
+    // ### check correctness of namespace, prefix?
+
+    Id id = attrId(namespaceURI.implementation(), localName.implementation(), false /* allocate */);
+    AttrImpl *attr = createAttribute(id);
+    if (!prefix.isNull())
+        attr->setPrefix(prefix.implementation(), exception);
+    return attr;
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::images()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_IMAGES));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::applets()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_APPLETS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::embeds()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_EMBEDS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::objects()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_OBJECTS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::links()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_LINKS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::forms()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_FORMS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::anchors()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ANCHORS));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::all()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_ALL));
+}
+
+SharedPtr<HTMLCollectionImpl> DocumentImpl::nameableItems()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_NAMEABLE_ITEMS));
+}
+
+SharedPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
+{
+    return SharedPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));
 }
 
 // ----------------------------------------------------------------------------

@@ -80,7 +80,7 @@ AttrImpl::~AttrImpl()
 
 DOMString AttrImpl::nodeName() const
 {
-    return getDocument()->attrName(m_attribute->id());
+    return name();
 }
 
 unsigned short AttrImpl::nodeType() const
@@ -102,8 +102,9 @@ void AttrImpl::setPrefix(const DOMString &_prefix, int &exceptioncode )
     m_attribute->setPrefix(_prefix.implementation());
 }
 
-DOMString AttrImpl::nodeValue() const {
-    return m_attribute->value();
+DOMString AttrImpl::nodeValue() const
+{
+    return value();
 }
 
 void AttrImpl::setValue( const DOMString &v, int &exceptioncode )
@@ -187,6 +188,16 @@ DOMString AttrImpl::toString() const
     return result;
 }
 
+DOMString AttrImpl::name() const
+{
+    return getDocument()->attrName(m_attribute->id());
+}
+
+DOMString AttrImpl::value() const
+{
+    return m_attribute->value();
+}
+
 // -------------------------------------------------------------------------
 
 ElementImpl::ElementImpl(DocumentPtr *doc)
@@ -223,11 +234,17 @@ void ElementImpl::setAttribute(NodeImpl::Id id, const DOMString &value)
     setAttribute(id,value.implementation(),exceptioncode);
 }
 
+// Virtual function, defined in base class.
+NamedAttrMapImpl *ElementImpl::attributes() const
+{
+    return attributes(false);
+}
+
 NamedAttrMapImpl* ElementImpl::attributes(bool readonly) const
 {
     updateStyleAttributeIfNeeded();
-
-    if (!readonly && !namedAttrMap) createAttributeMap();
+    if (!readonly && !namedAttrMap)
+        createAttributeMap();
     return namedAttrMap;
 }
 
@@ -373,7 +390,6 @@ void ElementImpl::createAttributeMap() const
 bool ElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return false;
-    
 }
 
 RenderStyle *ElementImpl::styleForRenderer(RenderObject *parentRenderer)
@@ -663,6 +679,82 @@ void ElementImpl::formatForDebugger(char *buffer, unsigned length) const
 }
 #endif
 
+SharedPtr<AttrImpl> ElementImpl::setAttributeNode(AttrImpl *attr, int &exception)
+{
+    return static_pointer_cast<AttrImpl>(attributes(false)->setNamedItem(attr, exception));
+}
+
+SharedPtr<AttrImpl> ElementImpl::removeAttributeNode(AttrImpl *attr, int &exception)
+{
+    if (!attr || attr->ownerElement() != this) {
+        exception = DOMException::NOT_FOUND_ERR;
+        return SharedPtr<AttrImpl>();
+    }
+    if (getDocument() != attr->getDocument()) {
+        exception = DOMException::WRONG_DOCUMENT_ERR;
+        return SharedPtr<AttrImpl>();
+    }
+
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (!attrs)
+        return SharedPtr<AttrImpl>();
+
+    return static_pointer_cast<AttrImpl>(attrs->removeNamedItem(attr->m_attribute->id(), exception));
+}
+
+void ElementImpl::setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception)
+{
+    int colonpos = qualifiedName.find(':');
+    DOMString localName = qualifiedName;
+    if (colonpos >= 0) {
+        localName.remove(0, colonpos+1);
+        // ### extract and set new prefix
+    }
+
+    if (!DocumentImpl::isValidName(localName)) {
+        exception = DOMException::INVALID_CHARACTER_ERR;
+        return;
+    }
+
+    Id id = getDocument()->attrId(namespaceURI.implementation(), localName.implementation(), false /* allocate */);
+    setAttribute(id, value.implementation(), exception);
+}
+
+void ElementImpl::removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
+{
+    Id id = getDocument()->attrId(namespaceURI.implementation(), localName.implementation(), true);
+    if (!id)
+        return;
+    removeAttribute(id, exception);
+}
+
+AttrImpl *ElementImpl::getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName)
+{
+    Id id = getDocument()->attrId(namespaceURI.implementation(), localName.implementation(), true);
+    if (!id)
+        return 0;
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (!attrs)
+        return 0;
+    return attrs->getNamedItem(id);
+}
+
+bool ElementImpl::hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const
+{
+    Id id = getDocument()->attrId(namespaceURI.implementation(), localName.implementation(), true);
+    if (!id)
+        return false;
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (!attrs)
+        return false;
+    return attrs->getAttributeItem(id);
+}
+
+CSSStyleDeclarationImpl *ElementImpl::style()
+{
+    return 0;
+}
+
 // -------------------------------------------------------------------------
 
 XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_tagName)
@@ -722,7 +814,7 @@ NodeImpl *XMLElementImpl::cloneNode ( bool deep )
 
     // clone attributes
     if (namedAttrMap)
-        *clone->attributes() = *namedAttrMap;
+        *clone->attributes(false) = *namedAttrMap;
 
     if (deep)
         cloneChildNodes(clone);
@@ -760,41 +852,42 @@ AttrImpl *NamedAttrMapImpl::getNamedItem ( NodeImpl::Id id ) const
     return a->attrImpl();
 }
 
-Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
+SharedPtr<NodeImpl> NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
 {
     if (!element) {
         exceptioncode = DOMException::NOT_FOUND_ERR;
-        return 0;
+        return SharedPtr<NodeImpl>();
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
     if (isReadOnly()) {
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-        return 0;
+        return SharedPtr<NodeImpl>();
     }
 
     // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
     if (arg->getDocument() != element->getDocument()) {
         exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
-        return 0;
+        return SharedPtr<NodeImpl>();
     }
 
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
     if (!arg->isAttributeNode()) {
         exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-        return 0;
+        return SharedPtr<NodeImpl>();
     }
     AttrImpl *attr = static_cast<AttrImpl*>(arg);
 
     AttributeImpl* a = attr->attrImpl();
     AttributeImpl* old = getAttributeItem(a->id());
-    if (old == a) return arg; // we know about it already
+    if (old == a)
+        return SharedPtr<NodeImpl>(arg); // we know about it already
 
     // INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attr->ownerElement()) {
         exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
-        return 0;
+        return SharedPtr<NodeImpl>();
     }
 
     if (a->id() == ATTR_ID) {
@@ -802,11 +895,11 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
     }
 
     // ### slightly inefficient - resizes attribute array twice.
-    Node r;
+    SharedPtr<NodeImpl> r;
     if (old) {
         if (!old->attrImpl())
             old->allocateImpl(element);
-        r = old->_impl;
+        r.reset(old->_impl);
         removeAttribute(a->id());
     }
 
@@ -817,23 +910,23 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
 // The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
 // if the attribute is not found, but at this level we have to throw NOT_FOUND_ERR
 // because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
-Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
+SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
 {
     // ### should this really be raised when the attribute to remove isn't there at all?
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
     if (isReadOnly()) {
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-        return Node();
+        return SharedPtr<NodeImpl>();
     }
 
     AttributeImpl* a = getAttributeItem(id);
     if (!a) {
         exceptioncode = DOMException::NOT_FOUND_ERR;
-        return Node();
+        return SharedPtr<NodeImpl>();
     }
 
     if (!a->attrImpl())  a->allocateImpl(element);
-    Node r(a->attrImpl());
+    SharedPtr<NodeImpl> r(a->attrImpl());
 
     if (id == ATTR_ID) {
 	element->updateId(a->value(), nullAtom);

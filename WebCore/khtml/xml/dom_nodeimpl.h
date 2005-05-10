@@ -25,7 +25,6 @@
 #ifndef _DOM_NodeImpl_h_
 #define _DOM_NodeImpl_h_
 
-#include "dom/dom_misc.h"
 #include "dom/dom_string.h"
 #include "dom/dom_node.h"
 #include "misc/main_thread_malloc.h"
@@ -52,10 +51,14 @@ namespace khtml {
 
 namespace DOM {
 
+using khtml::SharedPtr;
+
 class DocumentImpl;
 class ElementImpl;
 class EventImpl;
+class EventListener;
 class NodeListImpl;
+class NamedAttrMapImpl;
 class RegisteredEventListener;
 
 // The namespace used for XHTML elements
@@ -109,6 +112,9 @@ public:
     virtual NodeListImpl *childNodes();
     virtual NodeImpl *firstChild() const;
     virtual NodeImpl *lastChild() const;
+    virtual bool hasAttributes() const;
+    virtual NamedAttrMapImpl *attributes() const;
+    virtual DocumentImpl *ownerDocument() const;
     virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
     virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
@@ -121,6 +127,7 @@ public:
     virtual DOMString prefix() const;
     virtual void setPrefix(const DOMString &_prefix, int &exceptioncode );
     void normalize ();
+    static bool isSupported(const DOMString &feature, const DOMString &version);
 
     NodeImpl *lastDescendent() const;
 
@@ -225,14 +232,14 @@ public:
             {
                 button = _button; type = _type;
                 url = _url; target = _target;
-                innerNode = _innerNode;
+                innerNode.reset(_innerNode);
             }
 
         int button;
         MouseEventType type;
         DOMString url; // url under mouse or empty
         DOMString target;
-        Node innerNode;
+        SharedPtr<NodeImpl> innerNode;
     };
 
     // for LINK and STYLE
@@ -285,7 +292,10 @@ public:
 
     void setDocument(DocumentPtr *doc);
 
-    void addEventListener(int id, EventListener *listener, const bool useCapture);
+    void addEventListener(const DOMString &, EventListener *listener, bool useCapture);
+    void removeEventListener(const DOMString &, EventListener *listener, bool useCapture);
+
+    void addEventListener(int id, EventListener *listener, bool useCapture);
     void removeEventListener(int id, EventListener *listener, bool useCapture);
     void removeHTMLEventListener(int id);
     void setHTMLEventListener(int id, EventListener *listener);
@@ -467,6 +477,9 @@ public:
     void notifyNodeListsSubtreeModified();
     void notifyLocalNodeListsSubtreeModified();
 
+    SharedPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS(DOMString(), name); }
+    SharedPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
+
 private: // members
     DocumentPtr *document;
     NodeImpl *m_previous;
@@ -522,9 +535,6 @@ public:
     virtual void attach();
     virtual void detach();
 
-    virtual NodeListImpl *getElementsByTagNameNS ( DOMStringImpl* namespaceURI,
-                                                   DOMStringImpl* localName );
-
     virtual QRect getRect() const;
     bool getUpperLeftCorner(int &xPos, int &yPos) const;
     bool getLowerRightCorner(int &xPos, int &yPos) const;
@@ -576,9 +586,6 @@ public:
 
     void rootNodeSubtreeModified();
 
-#if APPLE_CHANGES
-    static NodeList createInstance(NodeListImpl *impl);
-#endif
 protected:
     // helper functions for searching all ElementImpls in a tree
     unsigned long recursiveLength(NodeImpl *start = 0) const;
@@ -659,15 +666,22 @@ protected:
 class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>
 {
 public:
-    NamedNodeMapImpl();
+    NamedNodeMapImpl() { }
     virtual ~NamedNodeMapImpl();
 
     MAIN_THREAD_ALLOCATED;
 
+    NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
+    SharedPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
+
+    NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const;
+    SharedPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
+    SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
+
     // DOM methods & attributes for NamedNodeMap
     virtual NodeImpl *getNamedItem ( NodeImpl::Id id ) const = 0;
-    virtual Node removeNamedItem ( NodeImpl::Id id, int &exceptioncode ) = 0;
-    virtual Node setNamedItem ( NodeImpl* arg, int &exceptioncode ) = 0;
+    virtual SharedPtr<NodeImpl> removeNamedItem ( NodeImpl::Id id, int &exceptioncode ) = 0;
+    virtual SharedPtr<NodeImpl> setNamedItem ( NodeImpl* arg, int &exceptioncode ) = 0;
 
     virtual NodeImpl *item ( unsigned long index ) const = 0;
     virtual unsigned long length(  ) const = 0;
@@ -675,10 +689,6 @@ public:
     // Other methods (not part of DOM)
     virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly) = 0;
     virtual bool isReadOnly() { return false; }
-
-#if APPLE_CHANGES
-    static NamedNodeMap createInstance(NamedNodeMapImpl *impl);
-#endif
 };
 
 

@@ -43,7 +43,7 @@ NodeFilterImpl::~NodeFilterImpl()
         m_condition->deref();
 }
 
-short NodeFilterImpl::acceptNode(const Node &node) const
+short NodeFilterImpl::acceptNode(NodeImpl *node) const
 {
     // cast to short silences "enumeral and non-enumeral types in return" warning
     return m_condition ? m_condition->acceptNode(node) : static_cast<short>(NodeFilter::FILTER_ACCEPT);

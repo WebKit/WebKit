@@ -25,6 +25,7 @@
 #include "xml/dom_nodeimpl.h"
 
 #include "dom/dom_exception.h"
+#include "dom/dom2_events.h"
 #include "misc/htmlattrs.h"
 #include "misc/htmltags.h"
 #include "xml/dom_elementimpl.h"
@@ -907,8 +908,9 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
     QPtrListIterator<RegisteredEventListener> it(listenersCopy);
     Event ev = evt;
     for (; it.current(); ++it) {
-        if (it.current()->id == evt->id() && it.current()->useCapture == useCapture)
+        if (it.current()->id == evt->id() && it.current()->useCapture == useCapture) {
             it.current()->listener->handleEvent(ev, false);
+        }
     }
 
 }
@@ -1091,6 +1093,8 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
 bool NodeImpl::isAncestor(const NodeImpl *other) const
 {
     // Return true if other is an ancestor of this, otherwise false
+    if (!other)
+        return false;
     for (const NodeImpl *n = parentNode(); n; n = n->parentNode()) {
         if (n == other)
             return true;
@@ -1529,6 +1533,58 @@ bool NodeImpl::inSameContainingBlockFlowElement(NodeImpl *n)
     return n ? enclosingBlockFlowElement() == n->enclosingBlockFlowElement() : false;
 }
 
+void NodeImpl::addEventListener(const DOMString &type, EventListener *listener, bool useCapture)
+{
+    addEventListener(EventImpl::typeToId(type), listener, useCapture);
+}
+
+void NodeImpl::removeEventListener(const DOMString &type, EventListener *listener, bool useCapture)
+{
+    removeEventListener(EventImpl::typeToId(type), listener, useCapture);
+}
+
+SharedPtr<NodeListImpl> NodeImpl::getElementsByTagNameNS ( const DOMString &namespaceURI, const DOMString &localName )
+{
+    if (localName.isNull())
+        return SharedPtr<NodeListImpl>();
+
+    Id idMask = namespaceMask | localNameMask;
+    if (localName[0] == '*')
+        idMask &= ~localNameMask;
+    if (namespaceURI.isNull() || namespaceURI[0] == '*')
+        idMask &= ~namespaceMask;
+
+    Id id = 0; // 0 means "all items"
+    if ((idMask & localNameMask) || !namespaceURI.isNull()) { // not getElementsByTagName("*")
+        id = getDocument()->tagId(namespaceURI.implementation(), localName.implementation(), true);
+        if ( !id ) // not found -> we want to return an empty list, not "all items"
+            id = (Id)-1; // HACK. HEAD has a cleaner implementation of TagNodeListImpl it seems.
+    }
+
+    return SharedPtr<NodeListImpl>(new TagNodeListImpl(this, id, idMask));
+}
+
+bool NodeImpl::isSupported(const DOMString &feature, const DOMString &version)
+{
+    return DOMImplementationImpl::instance()->hasFeature(feature, version);
+}
+
+DocumentImpl *NodeImpl::ownerDocument() const
+{
+    DocumentImpl *doc = getDocument();
+    return doc == this ? 0 : doc;
+}
+
+bool NodeImpl::hasAttributes() const
+{
+    return false;
+}
+
+NamedAttrMapImpl *NodeImpl::attributes() const
+{
+    return 0;
+}
+
 #if APPLE_CHANGES
 NodeImpl::Id NodeImpl::identifier() const
 {
@@ -1857,6 +1913,9 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
 
 void ContainerNodeImpl::removeChildren()
 {
+    if (!_first)
+        return;
+
     int exceptionCode;
     while (NodeImpl *n = _first) {
         NodeImpl *next = n->nextSibling();
@@ -2074,28 +2133,6 @@ void ContainerNodeImpl::cloneChildNodes(NodeImpl *clone)
     {
         clone->appendChild(n->cloneNode(true),exceptioncode);
     }
-}
-
-NodeListImpl* ContainerNodeImpl::getElementsByTagNameNS ( DOMStringImpl* namespaceURI,
-                                                     DOMStringImpl* localName )
-{
-    if (!localName) return 0;
-
-    NodeImpl::Id idMask = namespaceMask | localNameMask;
-    if (localName->l && localName->s[0] == '*')
-        idMask &= ~localNameMask;
-    if (!namespaceURI || (namespaceURI->l && namespaceURI->s[0] == '*'))
-        idMask &= ~namespaceMask;
-
-    Id id = 0; // 0 means "all items"
-    if ( (idMask & localNameMask) || namespaceURI ) // not getElementsByTagName("*")
-    {
-        id = getDocument()->tagId( namespaceURI, localName, true);
-        if ( !id ) // not found -> we want to return an empty list, not "all items"
-            id = (Id)-1; // HACK. HEAD has a cleaner implementation of TagNodeListImpl it seems.
-    }
-
-    return new TagNodeListImpl( this, id, idMask );
 }
 
 // I don't like this way of implementing the method, but I didn't find any
@@ -2509,12 +2546,18 @@ bool NameNodeListImpl::nodeMatches( NodeImpl *testNode ) const
 
 // ---------------------------------------------------------------------------
 
-NamedNodeMapImpl::NamedNodeMapImpl()
+NamedNodeMapImpl::~NamedNodeMapImpl()
 {
 }
 
-NamedNodeMapImpl::~NamedNodeMapImpl()
+NodeImpl *NamedNodeMapImpl::getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const
 {
+    return getNamedItem(const_cast<NamedNodeMapImpl *>(this)->mapId(namespaceURI, localName, true));
+}
+
+SharedPtr<NodeImpl> NamedNodeMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
+{
+    return removeNamedItem(mapId(namespaceURI, localName, true), exception);
 }
 
 // ----------------------------------------------------------------------------

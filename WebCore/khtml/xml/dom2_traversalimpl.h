@@ -27,8 +27,6 @@
 #define _dom2_traversal_h
 
 #include "dom/dom2_traversal.h"
-#include "dom/dom_node.h"
-#include "dom/dom_misc.h"
 #include "misc/shared.h"
 #include "misc/main_thread_malloc.h"
 
@@ -45,7 +43,7 @@ public:
     
     MAIN_THREAD_ALLOCATED;
     
-    short acceptNode(const Node &) const;
+    short acceptNode(NodeImpl *) const;
     
 private:
     NodeFilterImpl(const NodeFilterImpl &);
