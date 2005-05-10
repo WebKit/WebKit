@@ -24,6 +24,7 @@
  */
 
 #include "visible_position.h"
+#include "visible_units.h"
 
 #include "misc/htmltags.h"
 #include "rendering/render_line.h"
@@ -537,16 +538,7 @@ bool isFirstVisiblePositionInParagraph(const VisiblePosition &pos)
     if (pos.isNull())
         return false;
 
-    return pos.deepEquivalent().upstream().node()->id() == ID_BR || isFirstVisiblePositionInBlock(pos);
-}
-
-bool isFirstVisiblePositionInBlock(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-
-    Position upstream = pos.deepEquivalent().upstream();
-    return upstream.node()->isBlockFlow() && upstream.offset() == 0;
+    return pos.deepEquivalent().upstream().node()->id() == ID_BR || isStartOfBlock(pos);
 }
 
 bool isFirstVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
@@ -572,30 +564,7 @@ bool isLastVisiblePositionInParagraph(const VisiblePosition &pos)
     if (pos.isNull())
         return false;
 
-    return pos.deepEquivalent().downstream().node()->id() == ID_BR || isLastVisiblePositionInBlock(pos);
-}
-
-bool isLastVisiblePositionInBlock(const VisiblePosition &pos)
-{
-    if (pos.isNull())
-        return false;
-        
-    VisiblePosition next = pos.next();
-    if (next.isNull())
-        return true;
-    
-    switch (blockRelationship(pos, next)) {
-        case NoBlockRelationship:
-        case SameBlockRelationship:
-        case AncestorBlockRelationship:
-            return false;
-        case OtherBlockRelationship:
-        case PeerBlockRelationship:
-        case DescendantBlockRelationship:
-            return true;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return pos.deepEquivalent().downstream().node()->id() == ID_BR || isEndOfBlock(pos);
 }
 
 bool isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)

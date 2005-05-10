@@ -67,7 +67,7 @@ bool isEndOfParagraph(const VisiblePosition &);
 
 // blocks (true paragraphs; line break elements don't break blocks)
 VisiblePosition startOfBlock(const VisiblePosition &);
-VisiblePosition endOfBlock(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition endOfBlock(const VisiblePosition &);
 bool inSameBlock(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfBlock(const VisiblePosition &);
 bool isEndOfBlock(const VisiblePosition &);

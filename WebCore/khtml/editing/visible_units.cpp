@@ -697,7 +697,7 @@ VisiblePosition startOfBlock(const VisiblePosition &c)
 }
 
 // written, but not yet tested
-VisiblePosition endOfBlock(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
+VisiblePosition endOfBlock(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();
 
@@ -706,37 +706,8 @@ VisiblePosition endOfBlock(const VisiblePosition &c, EIncludeLineBreak includeLi
         return VisiblePosition();
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-    NodeImpl *stayInsideBlock = includeLineBreak ? 0 : startBlock;
     
-    NodeImpl *node = startNode;
-    long offset = p.offset();
-
-    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
-        RenderObject *r = n->renderer();
-        if (!r)
-            continue;
-        RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
-            continue;
-        if (r->isBlockFlow()) {
-            if (includeLineBreak)
-                return VisiblePosition(n, 0, DOWNSTREAM);
-            break;
-        }
-        if (r->isText()) {
-            if (includeLineBreak && !n->isAncestor(startBlock))
-                return VisiblePosition(n, 0, DOWNSTREAM);
-            node = n;
-            offset = static_cast<RenderText *>(r)->length();
-        } else if (r->isReplaced()) {
-            node = n;
-            offset = 1;
-            if (includeLineBreak && !n->isAncestor(startBlock))
-                break;
-        }
-    }
-
-    return VisiblePosition(node, offset, DOWNSTREAM);
+    return VisiblePosition(startBlock, startBlock->childNodeCount(), VP_DEFAULT_AFFINITY);   
 }
 
 bool inSameBlock(const VisiblePosition &a, const VisiblePosition &b)
@@ -751,7 +722,7 @@ bool isStartOfBlock(const VisiblePosition &pos)
 
 bool isEndOfBlock(const VisiblePosition &pos)
 {
-    return pos.isNotNull() && isEqualIgnoringAffinity(pos, endOfBlock(pos, DoNotIncludeLineBreak));
+    return pos.isNotNull() && isEqualIgnoringAffinity(pos, endOfBlock(pos));
 }
 
 // ---------

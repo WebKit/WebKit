@@ -1,3 +1,38 @@
+2005-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- remove isFirstVisiblePositionInBlock and isLastVisiblePositionInBlock, in favor of isStartOfBlock and isEndOfBlock
+
+	It turned out that both isEndOfBlock and isLastVisiblePositionInBlock had (different) bugs,
+	and there was code relying on the bugs of each. So in addition I fixed isEndOfBlock and fixed 
+	the parts of the code relying on buggy behavior.
+
+	I also removed the includeEndOfLine parameter to endOfBlock since no one used it and it's not
+	clear if it would ever be useful.
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertLineBreakCommand::doApply): Use new calls.
+        (khtml::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): Don't gratuitously make
+	an UPSTREAM VisiblePosition, as this will cause trouble comparing it to end of block.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Use new calls.
+        (khtml::ReplaceSelectionCommand::doApply): Use new calls. Also, don't make a position <BR,0> and test
+	if it is the end of a block, that can never be true, although the buggy code in 
+	isLastVisiblePositionInBlock would say it is. Make <BR,1> instead.
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup): Instead of checking isEndOfBlock on the start position, check if the start's
+	next is in a different block, to avoid relying on the buggy old isEndOfBlock behavior.
+        * khtml/editing/visible_position.cpp:
+        (khtml::isFirstVisiblePositionInParagraph): Use isStartOfBlock.
+        (khtml::isLastVisiblePositionInParagraph): Use isEndOfBlock.
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfBlock): Greatly simplify, and no longer consider the start of a descendant
+	block to be the end of the block. That's inconsistent with how startOfBlock works. Also
+	remove include end of line parameter.
+        (khtml::isEndOfBlock): Don't pass unneeded parameter.
+        * khtml/editing/visible_units.h:
+
 2005-05-09  Adele Peterson  <adele@apple.com>
 
         fix for <rdar://problem/4110775> Crash will occur when double-clicking outerHTML link on W3 DOM test

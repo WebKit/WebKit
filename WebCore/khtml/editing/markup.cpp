@@ -333,7 +333,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     NodeImpl *startNode = range->startNode();
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
-    if (isEndOfBlock(visibleStart)) {
+    if (!inSameBlock(visibleStart, visibleStart.next())) {
         if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
         markups.append(interchangeNewlineString);
