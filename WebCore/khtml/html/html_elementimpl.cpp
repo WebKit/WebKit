@@ -861,7 +861,7 @@ bool HTMLElementImpl::setInnerHTML( const DOMString &html )
 bool HTMLElementImpl::setOuterHTML( const DOMString &html )
 {
     NodeImpl *p = parent();
-    if (!p->isHTMLElement())
+    if (!p || !p->isHTMLElement())
         return false;
     HTMLElementImpl *parent = static_cast<HTMLElementImpl *>(p);
     DocumentFragmentImpl *fragment = parent->createContextualFragment( html );

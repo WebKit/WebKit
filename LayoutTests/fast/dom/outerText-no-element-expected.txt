@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 122x18
+          text run at (0,0) width 122: "Expected behavior:"
+      RenderBlock {P} at (0,34) size 784x36
+        RenderText {TEXT} at (0,0) size 767x36
+          text run at (0,0) width 767: "This page will try to set the outerText on an element that is no longer in the DOM tree. You should see a description of an"
+          text run at (0,18) width 94: "expected error."
+      RenderBlock {DIV} at (0,86) size 784x18
+        RenderText {TEXT} at (0,0) size 182x18
+          text run at (0,0) width 182: "this is a big test or something"
+      RenderBlock {DIV} at (0,104) size 784x18
+        RenderText {TEXT} at (0,0) size 267x18
+          text run at (0,0) width 267: "Expected error - Error - DOM exception 7"

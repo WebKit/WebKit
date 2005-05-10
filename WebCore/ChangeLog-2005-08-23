@@ -1,3 +1,22 @@
+2005-05-09  Adele Peterson  <adele@apple.com>
+
+        fix for <rdar://problem/4110775> Crash will occur when double-clicking outerHTML link on W3 DOM test
+
+        Reviewed by Darin.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::setOuterHTML): added nil check.  
+        This was causing a crash when you tried to set the outerHTML on an element that was no longer in the DOM tree.
+
+        * layout-tests/fast/dom/outerText-no-element.html: Added. Tests case where you try to set outerText on an element no longer in the DOM tree.
+        * layout-tests/fast/dom/outerText-no-element-expected.txt: Added.
+        * layout-tests/fast/dynamic/outerHTML-doc.html: Added.  Tests case where someone tries to set outerHTML on the document.
+        * layout-tests/fast/dynamic/outerHTML-doc-expected.txt: Added..
+        * layout-tests/fast/dynamic/outerHTML-no-element.html: Added. Tests case where you try to set outerHTML on an element no longer in the DOM tree.
+        * layout-tests/fast/dynamic/outerHTML-no-element-expected.txt: Added.
+        * layout-tests/fast/dynamic/outerHTML-img.html: moved images to resources directory
+        * layout-tests/fast/dynamic/resources/apple.gif: Added.
+        * layout-tests/fast/dynamic/resources/mozilla.gif: Added.
+
 2005-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
