@@ -1,3 +1,14 @@
+2005-05-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - fixed <rdar://problem/4067981> Mail places RTF flavor before RTFD flavor when dragging 
+        mixed image/text content.
+
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _selectionPasteboardTypes]):
+        put RTFD type before RTF type in array of types to declare
+
 2005-05-09  Chris Blumenberg  <cblu@apple.com>
 
 	Turned assertion into error message to prevent crash when encountering this bug:
