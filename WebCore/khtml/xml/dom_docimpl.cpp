@@ -2956,6 +2956,11 @@ QString DocumentImpl::completeURL(const QString &URL)
     return KURL(baseURL(), URL, m_decoder ? m_decoder->codec() : 0).url();
 }
 
+DOMString DocumentImpl::completeURL(const DOMString &URL)
+{
+    return completeURL(URL.string());
+}
+
 bool DocumentImpl::inPageCache()
 {
     return m_inPageCache;

@@ -32,8 +32,6 @@
 namespace DOM
 {
 
-class DOMString;
-
 class HTMLUListElementImpl : public HTMLElementImpl
 {
 public:
@@ -45,7 +43,13 @@ public:
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 
-    virtual int start() const { return 1; }
+    virtual long start() const { return 1; }
+
+    bool compact() const;
+    void setCompact(bool);
+
+    DOMString type() const;
+    void setType(const DOMString &);
 };
 
 // -------------------------------------------------------------------------
@@ -54,9 +58,11 @@ class HTMLDirectoryElementImpl : public HTMLElementImpl
 {
 public:
     HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
-    virtual ~HTMLDirectoryElementImpl() {}
 
     virtual Id id() const;
+
+    bool compact() const;
+    void setCompact(bool);
 };
 
 // -------------------------------------------------------------------------
@@ -65,9 +71,11 @@ class HTMLMenuElementImpl : public HTMLElementImpl
 {
 public:
     HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
-    virtual ~HTMLMenuElementImpl() {}
 
     virtual Id id() const;
+
+    bool compact() const;
+    void setCompact(bool);
 };
 
 // -------------------------------------------------------------------------
@@ -77,14 +85,21 @@ class HTMLOListElementImpl : public HTMLUListElementImpl
 public:
     HTMLOListElementImpl(DocumentPtr *doc)
         : HTMLUListElementImpl(doc) { _start = 1; }
-    virtual ~HTMLOListElementImpl() {}
 
     virtual Id id() const;
     
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 
-    int start() const { return _start; }
+    bool compact() const;
+    void setCompact(bool);
+
+    long start() const { return _start; }
+    void setStart(long);
+
+    DOMString type() const;
+    void setType(const DOMString &);
+
 private:
     int _start;
 };
@@ -105,6 +120,12 @@ public:
 
     virtual void attach();
 
+    DOMString type() const;
+    void setType(const DOMString &);
+
+    long value() const;
+    void setValue(long);
+
 private:
     bool isValued;
     long requestedValue;
@@ -119,8 +140,11 @@ public:
     virtual ~HTMLDListElementImpl() {}
 
     virtual Id id() const;
+
+    bool compact() const;
+    void setCompact(bool);
 };
 
-}; //namespace
+} //namespace
 
 #endif

@@ -36,16 +36,54 @@ public:
     HTMLAnchorElementImpl(DocumentPtr *doc);
     ~HTMLAnchorElementImpl();
 
-#if APPLE_CHANGES
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable() const;
-#endif
     virtual bool isFocusable() const;
     virtual Id id() const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual void accessKeyAction(bool fullAction);
     virtual bool isURLAttribute(AttributeImpl *attr) const;
+
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    DOMString charset() const;
+    void setCharset(const DOMString &);
+
+    DOMString coords() const;
+    void setCoords(const DOMString &);
+
+    DOMString href() const;
+    void setHref(const DOMString &);
+
+    DOMString hreflang() const;
+    void setHreflang(const DOMString &);
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    DOMString rel() const;
+    void setRel(const DOMString &);
+
+    DOMString rev() const;
+    void setRev(const DOMString &);
+
+    DOMString shape() const;
+    void setShape(const DOMString &);
+
+    long tabIndex() const;
+    void setTabIndex(long);
+
+    DOMString target() const;
+    void setTarget(const DOMString &);
+
+    DOMString type() const;
+    void setType(const DOMString &);
+
+    void blur();
+    void focus();
+
 protected:
     bool m_hasTarget : 1;
 };
@@ -62,10 +100,13 @@ public:
 
     virtual Id id() const;
     
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+
+    DOMString clear() const;
+    void setClear(const DOMString &);
 };
 
 // -------------------------------------------------------------------------
@@ -78,10 +119,46 @@ public:
 
     virtual Id id() const;
     
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+
+    DOMString color() const;
+    void setColor(const DOMString &);
+
+    DOMString face() const;
+    void setFace(const DOMString &);
+
+    DOMString size() const;
+    void setSize(const DOMString &);
 };
 
-}; //namespace
+// -------------------------------------------------------------------------
+
+class HTMLModElementImpl : public HTMLGenericElementImpl
+{
+public:
+    HTMLModElementImpl(DocumentPtr *doc, ushort elementId);
+
+    DOMString cite() const;
+    void setCite(const DOMString &);
+
+    DOMString dateTime() const;
+    void setDateTime(const DOMString &);
+};
+
+// -------------------------------------------------------------------------
+
+class HTMLQuoteElementImpl : public HTMLElementImpl
+{
+public:
+    HTMLQuoteElementImpl(DocumentPtr *doc);
+
+    virtual Id id() const;
+    
+    DOMString cite() const;
+    void setCite(const DOMString &);
+};
+
+} //namespace
 
 #endif

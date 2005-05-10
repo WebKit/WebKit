@@ -50,6 +50,16 @@ NodeImpl::Id HTMLBlockquoteElementImpl::id() const
     return ID_BLOCKQUOTE;
 }
 
+DOMString HTMLBlockquoteElementImpl::cite() const
+{
+    return getAttribute(ATTR_CITE);
+}
+
+void HTMLBlockquoteElementImpl::setCite(const DOMString &value)
+{
+    setAttribute(ATTR_CITE, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLDivElementImpl::HTMLDivElementImpl(DocumentPtr *doc)
@@ -95,6 +105,16 @@ void HTMLDivElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
     }
+}
+
+DOMString HTMLDivElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLDivElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
 }
 
 // -------------------------------------------------------------------------
@@ -190,11 +210,61 @@ void HTMLHRElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     }
 }
 
+DOMString HTMLHRElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLHRElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+bool HTMLHRElementImpl::noShade() const
+{
+    return !getAttribute(ATTR_NOSHADE).isNull();
+}
+
+void HTMLHRElementImpl::setNoShade(bool noShade)
+{
+    setAttribute(ATTR_NOSHADE, noShade ? "" : 0);
+}
+
+DOMString HTMLHRElementImpl::size() const
+{
+    return getAttribute(ATTR_SIZE);
+}
+
+void HTMLHRElementImpl::setSize(const DOMString &value)
+{
+    setAttribute(ATTR_SIZE, value);
+}
+
+DOMString HTMLHRElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLHRElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLHeadingElementImpl::HTMLHeadingElementImpl(DocumentPtr *doc, ushort _tagid)
     : HTMLGenericElementImpl(doc, _tagid)
 {
+}
+
+DOMString HTMLHeadingElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLHeadingElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
 }
 
 // -------------------------------------------------------------------------
@@ -240,6 +310,16 @@ void HTMLParagraphElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     }
 }
 
+DOMString HTMLParagraphElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLParagraphElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLPreElementImpl::HTMLPreElementImpl(DocumentPtr *doc, unsigned short _tagid)
@@ -249,13 +329,12 @@ HTMLPreElementImpl::HTMLPreElementImpl(DocumentPtr *doc, unsigned short _tagid)
 
 long HTMLPreElementImpl::width() const
 {
-    // ###
-    return 0;
+    return getAttribute(ATTR_WIDTH).toInt();
 }
 
-void HTMLPreElementImpl::setWidth( long /*w*/ )
+void HTMLPreElementImpl::setWidth(long width)
 {
-    // ###
+    setAttribute(ATTR_WIDTH, QString::number(width));
 }
 
 // -------------------------------------------------------------------------

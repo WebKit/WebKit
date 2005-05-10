@@ -41,7 +41,8 @@
 #include <kdebug.h>
 
 using namespace khtml;
-using namespace DOM;
+
+namespace DOM {
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
@@ -244,6 +245,141 @@ bool HTMLAnchorElementImpl::isURLAttribute(AttributeImpl *attr) const
     return attr->id() == ATTR_HREF;
 }
 
+DOMString HTMLAnchorElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLAnchorElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLAnchorElementImpl::charset() const
+{
+    return getAttribute(ATTR_CHARSET);
+}
+
+void HTMLAnchorElementImpl::setCharset(const DOMString &value)
+{
+    setAttribute(ATTR_CHARSET, value);
+}
+
+DOMString HTMLAnchorElementImpl::coords() const
+{
+    return getAttribute(ATTR_COORDS);
+}
+
+void HTMLAnchorElementImpl::setCoords(const DOMString &value)
+{
+    setAttribute(ATTR_COORDS, value);
+}
+
+DOMString HTMLAnchorElementImpl::href() const
+{
+    DOMString href = getAttribute(ATTR_HREF);
+    if (href.isNull())
+        return href;
+    return getDocument()->completeURL(href);
+}
+
+void HTMLAnchorElementImpl::setHref(const DOMString &value)
+{
+    setAttribute(ATTR_HREF, value);
+}
+
+DOMString HTMLAnchorElementImpl::hreflang() const
+{
+    return getAttribute(ATTR_HREFLANG);
+}
+
+void HTMLAnchorElementImpl::setHreflang(const DOMString &value)
+{
+    setAttribute(ATTR_HREFLANG, value);
+}
+
+DOMString HTMLAnchorElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLAnchorElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLAnchorElementImpl::rel() const
+{
+    return getAttribute(ATTR_REL);
+}
+
+void HTMLAnchorElementImpl::setRel(const DOMString &value)
+{
+    setAttribute(ATTR_REL, value);
+}
+
+DOMString HTMLAnchorElementImpl::rev() const
+{
+    return getAttribute(ATTR_REV);
+}
+
+void HTMLAnchorElementImpl::setRev(const DOMString &value)
+{
+    setAttribute(ATTR_REV, value);
+}
+
+DOMString HTMLAnchorElementImpl::shape() const
+{
+    return getAttribute(ATTR_SHAPE);
+}
+
+void HTMLAnchorElementImpl::setShape(const DOMString &value)
+{
+    setAttribute(ATTR_SHAPE, value);
+}
+
+long HTMLAnchorElementImpl::tabIndex() const
+{
+    return getAttribute(ATTR_TABINDEX).toInt();
+}
+
+void HTMLAnchorElementImpl::setTabIndex(long tabIndex)
+{
+    setAttribute(ATTR_TABINDEX, QString::number(tabIndex));
+}
+
+DOMString HTMLAnchorElementImpl::target() const
+{
+    return getAttribute(ATTR_TARGET);
+}
+
+void HTMLAnchorElementImpl::setTarget(const DOMString &value)
+{
+    setAttribute(ATTR_TARGET, value);
+}
+
+DOMString HTMLAnchorElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLAnchorElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
+}
+
+void HTMLAnchorElementImpl::blur()
+{
+    DocumentImpl *d = getDocument();
+    if (d->focusNode() == this)
+        d->setFocusNode(0);
+}
+
+void HTMLAnchorElementImpl::focus()
+{
+    getDocument()->setFocusNode(this);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
@@ -294,6 +430,16 @@ void HTMLBRElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 RenderObject *HTMLBRElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
      return new (arena) RenderBR(this);
+}
+
+DOMString HTMLBRElementImpl::clear() const
+{
+    return getAttribute(ATTR_CLEAR);
+}
+
+void HTMLBRElementImpl::setClear(const DOMString &value)
+{
+    setAttribute(ATTR_CLEAR, value);
 }
 
 // -------------------------------------------------------------------------
@@ -410,4 +556,85 @@ void HTMLFontElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
     }
+}
+
+DOMString HTMLFontElementImpl::color() const
+{
+    return getAttribute(ATTR_COLOR);
+}
+
+void HTMLFontElementImpl::setColor(const DOMString &value)
+{
+    setAttribute(ATTR_COLOR, value);
+}
+
+DOMString HTMLFontElementImpl::face() const
+{
+    return getAttribute(ATTR_FACE);
+}
+
+void HTMLFontElementImpl::setFace(const DOMString &value)
+{
+    setAttribute(ATTR_FACE, value);
+}
+
+DOMString HTMLFontElementImpl::size() const
+{
+    return getAttribute(ATTR_SIZE);
+}
+
+void HTMLFontElementImpl::setSize(const DOMString &value)
+{
+    setAttribute(ATTR_SIZE, value);
+}
+
+// -------------------------------------------------------------------------
+
+HTMLModElementImpl::HTMLModElementImpl(DocumentPtr *doc, ushort elementId)
+    : HTMLGenericElementImpl(doc, elementId)
+{
+}
+
+DOMString HTMLModElementImpl::cite() const
+{
+    return getAttribute(ATTR_CITE);
+}
+
+void HTMLModElementImpl::setCite(const DOMString &value)
+{
+    setAttribute(ATTR_CITE, value);
+}
+
+DOMString HTMLModElementImpl::dateTime() const
+{
+    return getAttribute(ATTR_DATETIME);
+}
+
+void HTMLModElementImpl::setDateTime(const DOMString &value)
+{
+    setAttribute(ATTR_DATETIME, value);
+}
+
+// -------------------------------------------------------------------------
+
+HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentPtr *doc)
+    : HTMLElementImpl(doc)
+{
+}
+
+NodeImpl::Id HTMLQuoteElementImpl::id() const
+{
+    return ID_Q;
+}
+    
+DOMString HTMLQuoteElementImpl::cite() const
+{
+    return getAttribute(ATTR_CITE);
+}
+
+void HTMLQuoteElementImpl::setCite(const DOMString &value)
+{
+    setAttribute(ATTR_CITE, value);
+}
+
 }

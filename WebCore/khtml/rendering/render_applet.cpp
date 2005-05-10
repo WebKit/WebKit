@@ -105,7 +105,7 @@ void RenderApplet::createWidgetIfNecessary()
             while (child) {
                 if (child->id() == ID_PARAM) {
                     HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                    m_args.insert(p->name(), p->value());
+                    m_args.insert(p->name().string(), p->value().string());
                 }
                 child = child->nextSibling();
             }

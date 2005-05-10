@@ -267,6 +267,20 @@ unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
     return m_lstCSSRules->insertRule( newRule, index );
 }
 
+// ---------------------------------------------------------------------------
+
+CSSRuleListImpl::CSSRuleListImpl(StyleListImpl *lst)
+{
+    if (lst) {
+        unsigned long len = lst->length();
+        for (unsigned long i = 0; i < len; ++i) {
+            StyleBaseImpl *style = lst->item(i);
+            if (style->isRule())
+                append(static_cast<CSSRuleImpl *>(style));
+        }
+    }
+}
+
 CSSRuleListImpl::~CSSRuleListImpl()
 {
     CSSRuleImpl* rule;

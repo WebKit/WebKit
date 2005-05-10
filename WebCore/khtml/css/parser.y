@@ -57,7 +57,9 @@ using namespace DOM;
 #include "cssvalues.c"
 #undef __inline
 
-int DOM::getPropertyID(const char *tagStr, int len)
+namespace DOM {
+
+int getPropertyID(const char *tagStr, int len)
 {
     if (len && tagStr && tagStr[0] == '-') {
         QString prop(tagStr);
@@ -85,6 +87,8 @@ int DOM::getPropertyID(const char *tagStr, int len)
         return 0;
 
     return propsPtr->id;
+}
+
 }
 
 static inline int getValueID(const char *tagStr, int len)

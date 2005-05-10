@@ -28,19 +28,15 @@
 #include "xml/dom_stringimpl.h"
 #include "java/kjavaappletcontext.h"
 
-#include <qstringlist.h>
-
 #if APPLE_CHANGES
 #include <JavaScriptCore/runtime.h>
 #endif
 
-class KHTMLView;
+class QStringList;
 
-// -------------------------------------------------------------------------
 namespace DOM {
 
 class HTMLFormElementImpl;
-class DOMStringImpl;
 
 class HTMLAppletElementImpl : public HTMLElementImpl
 {
@@ -51,7 +47,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
     
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -61,6 +57,39 @@ public:
     bool getMember(const QString &, JType &, QString &);
     bool callMember(const QString &, const QStringList &, JType &, QString &);
     
+    DOMString align() const;
+    void setAlign(const DOMString &);
+
+    DOMString alt() const;
+    void setAlt(const DOMString &);
+
+    DOMString archive() const;
+    void setArchive(const DOMString &);
+
+    DOMString code() const;
+    void setCode(const DOMString &);
+
+    DOMString codeBase() const;
+    void setCodeBase(const DOMString &);
+
+    DOMString height() const;
+    void setHeight(const DOMString &);
+
+    DOMString hspace() const;
+    void setHspace(const DOMString &);
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    DOMString object() const;
+    void setObject(const DOMString &);
+
+    DOMString vspace() const;
+    void setVspace(const DOMString &);
+
+    DOMString width() const;
+    void setWidth(const DOMString &);
+
 #if APPLE_CHANGES
     virtual bool allParamsAvailable();
     void setupApplet() const;
@@ -88,7 +117,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
@@ -124,7 +153,7 @@ public:
 
     HTMLFormElementImpl *form() const;
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
     virtual void attach();
@@ -142,6 +171,57 @@ public:
     bool isImageType();
 
     void renderFallbackContent();
+
+    DOMString code() const;
+    void setCode(const DOMString &);
+
+    DOMString align() const;
+    void setAlign(const DOMString &);
+
+    DOMString archive() const;
+    void setArchive(const DOMString &);
+
+    DOMString border() const;
+    void setBorder(const DOMString &);
+
+    DOMString codeBase() const;
+    void setCodeBase(const DOMString &);
+
+    DOMString codeType() const;
+    void setCodeType(const DOMString &);
+
+    DOMString data() const;
+    void setData(const DOMString &);
+
+    bool declare() const;
+    void setDeclare(bool);
+
+    DOMString height() const;
+    void setHeight(const DOMString &);
+
+    DOMString hspace() const;
+    void setHspace(const DOMString &);
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    DOMString standby() const;
+    void setStandby(const DOMString &);
+
+    long tabIndex() const;
+    void setTabIndex(long);
+
+    DOMString type() const;
+    void setType(const DOMString &);
+
+    DOMString useMap() const;
+    void setUseMap(const DOMString &);
+
+    DOMString vspace() const;
+    void setVspace(const DOMString &);
+
+    DOMString width() const;
+    void setWidth(const DOMString &);
 
 #if APPLE_CHANGES
     KJS::Bindings::Instance *getObjectInstance() const;
@@ -174,15 +254,25 @@ public:
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
-    QString name() const { return m_name.string(); }
-    QString value() const { return m_value.string(); }
-    
     virtual bool isURLAttribute(AttributeImpl *attr) const;
+
+    DOMString name() const { return m_name; }
+    void setName(const DOMString &);
+
+    DOMString type() const;
+    void setType(const DOMString &);
+
+    DOMString value() const { return m_value; }
+    void setValue(const DOMString &);
+
+    DOMString valueType() const;
+    void setValueType(const DOMString &);
 
  protected:
     AtomicString m_name;
     AtomicString m_value;
 };
 
-};
+}
+
 #endif

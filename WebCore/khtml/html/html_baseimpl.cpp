@@ -227,17 +227,77 @@ bool HTMLBodyElementImpl::isURLAttribute(AttributeImpl *attr) const
     return attr->id() == ATTR_BACKGROUND;
 }
 
+DOMString HTMLBodyElementImpl::aLink() const
+{
+    return getAttribute(ATTR_ALINK);
+}
+
+void HTMLBodyElementImpl::setALink(const DOMString &value)
+{
+    setAttribute(ATTR_ALINK, value);
+}
+
+DOMString HTMLBodyElementImpl::background() const
+{
+    return getAttribute(ATTR_BACKGROUND);
+}
+
+void HTMLBodyElementImpl::setBackground(const DOMString &value)
+{
+    setAttribute(ATTR_BACKGROUND, value);
+}
+
+DOMString HTMLBodyElementImpl::bgColor() const
+{
+    return getAttribute(ATTR_BGCOLOR);
+}
+
+void HTMLBodyElementImpl::setBgColor(const DOMString &value)
+{
+    setAttribute(ATTR_BGCOLOR, value);
+}
+
+DOMString HTMLBodyElementImpl::link() const
+{
+    return getAttribute(ATTR_LINK);
+}
+
+void HTMLBodyElementImpl::setLink(const DOMString &value)
+{
+    setAttribute(ATTR_LINK, value);
+}
+
+DOMString HTMLBodyElementImpl::text() const
+{
+    return getAttribute(ATTR_TEXT);
+}
+
+void HTMLBodyElementImpl::setText(const DOMString &value)
+{
+    setAttribute(ATTR_TEXT, value);
+}
+
+DOMString HTMLBodyElementImpl::vLink() const
+{
+    return getAttribute(ATTR_VLINK);
+}
+
+void HTMLBodyElementImpl::setVLink(const DOMString &value)
+{
+    setAttribute(ATTR_VLINK, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
-    frameBorder = true;
-    frameBorderSet = false;
-    marginWidth = -1;
-    marginHeight = -1;
-    scrolling = QScrollView::Auto;
-    noresize = false;
+    m_frameBorder = true;
+    m_frameBorderSet = false;
+    m_marginWidth = -1;
+    m_marginHeight = -1;
+    m_scrolling = QScrollView::Auto;
+    m_noResize = false;
 }
 
 HTMLFrameElementImpl::~HTMLFrameElementImpl()
@@ -313,7 +373,7 @@ void HTMLFrameElementImpl::updateForNewURL()
         return;
     }
     
-    if (!isURLAllowed(url)) {
+    if (!isURLAllowed(m_URL)) {
         return;
     }
 
@@ -328,18 +388,18 @@ void HTMLFrameElementImpl::openURL()
         return;
     }
     
-    AtomicString relativeURL = url;
+    AtomicString relativeURL = m_URL;
     if (relativeURL.isEmpty()) {
         relativeURL = "about:blank";
     }
 
     // Load the frame contents.
     KHTMLPart *part = w->part();
-    KHTMLPart *framePart = part->findFrame(name.string());
+    KHTMLPart *framePart = part->findFrame(m_name.string());
     if (framePart) {
         framePart->openURL(getDocument()->completeURL(relativeURL.string()));
     } else {
-        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.string(), name.string());
+        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.string(), m_name.string());
     }
 }
 
@@ -356,26 +416,26 @@ void HTMLFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         HTMLElementImpl::parseHTMLAttribute(attr);
         // fall through
     case ATTR_NAME:
-        name = attr->value();
+        m_name = attr->value();
         // FIXME: If we are already attached, this doesn't actually change the frame's name.
         // FIXME: If we are already attached, this doesn't check for frame name
         // conflicts and generate a unique frame name.
         break;
     case ATTR_FRAMEBORDER:
-        frameBorder = attr->value().toInt();
-        frameBorderSet = !attr->isNull();
+        m_frameBorder = attr->value().toInt();
+        m_frameBorderSet = !attr->isNull();
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_MARGINWIDTH:
-        marginWidth = attr->value().toInt();
+        m_marginWidth = attr->value().toInt();
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_MARGINHEIGHT:
-        marginHeight = attr->value().toInt();
+        m_marginHeight = attr->value().toInt();
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_NORESIZE:
-        noresize = true;
+        m_noResize = true;
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_SCROLLING:
@@ -384,9 +444,9 @@ void HTMLFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	// "don't allow scrolling."
         if( strcasecmp( attr->value(), "auto" ) == 0 ||
             strcasecmp( attr->value(), "yes" ) == 0 )
-            scrolling = QScrollView::Auto;
+            m_scrolling = QScrollView::Auto;
         else if( strcasecmp( attr->value(), "no" ) == 0 )
-            scrolling = QScrollView::AlwaysOff;
+            m_scrolling = QScrollView::AlwaysOff;
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_ONLOAD:
@@ -405,7 +465,7 @@ void HTMLFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 bool HTMLFrameElementImpl::rendererIsNeeded(RenderStyle *style)
 {
     // Ignore display: none.
-    return isURLAllowed(url);
+    return isURLAllowed(m_URL);
 }
 
 RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -417,23 +477,20 @@ void HTMLFrameElementImpl::attach()
 {
     // we should first look up via id, then via name.
     // this shortterm hack fixes the ugly case. ### rewrite needed for next release
-    name = getAttribute(ATTR_NAME);
-    if (name.isNull())
-        name = getAttribute(ATTR_ID);
+    m_name = getAttribute(ATTR_NAME);
+    if (m_name.isNull())
+        m_name = getAttribute(ATTR_ID);
 
     // inherit default settings from parent frameset
-    HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
-    while(node)
-    {
-        if(node->id() == ID_FRAMESET)
-        {
+    for (NodeImpl *node = parentNode(); node; node = node->parentNode())
+        if (node->id() == ID_FRAMESET) {
             HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
-            if(!frameBorderSet)  frameBorder = frameset->frameBorder();
-            if(!noresize)  noresize = frameset->noResize();
+            if (!m_frameBorderSet)
+                m_frameBorder = frameset->frameBorder();
+            if (!m_noResize)
+                m_noResize = frameset->noResize();
             break;
         }
-        node = static_cast<HTMLElementImpl*>(node->parentNode());
-    }
 
     HTMLElementImpl::attach();
 
@@ -447,17 +504,17 @@ void HTMLFrameElementImpl::attach()
 
     part->incrementFrameCount();
     
-    AtomicString relativeURL = url;
+    AtomicString relativeURL = m_URL;
     if (relativeURL.isEmpty()) {
         relativeURL = "about:blank";
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if (name.isEmpty() || part->frameExists( name.string() ) )
-      name = AtomicString(part->requestFrameName());
+    if (m_name.isEmpty() || part->frameExists(m_name.string()))
+        m_name = AtomicString(part->requestFrameName());
 
     // load the frame contents
-    part->requestFrame( static_cast<RenderFrame*>(m_render), relativeURL.string(), name.string() );
+    part->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.string(), m_name.string());
 }
 
 void HTMLFrameElementImpl::detach()
@@ -466,7 +523,7 @@ void HTMLFrameElementImpl::detach()
 
     if (m_render && part) {
 	part->decrementFrameCount();
-        KHTMLPart *framePart = part->findFrame( name.string() );
+        KHTMLPart *framePart = part->findFrame(m_name.string());
         if (framePart)
             framePart->frameDetached();
     }
@@ -476,8 +533,9 @@ void HTMLFrameElementImpl::detach()
 
 void HTMLFrameElementImpl::setLocation( const DOMString& str )
 {
-    if (url == str) return;
-    url = AtomicString(str);
+    if (m_URL == str)
+        return;
+    m_URL = AtomicString(str);
     updateForNewURL();
 }
 
@@ -507,7 +565,7 @@ KHTMLPart* HTMLFrameElementImpl::contentPart() const
     }
 
     // Find the part for the subframe that this element represents.
-    return ownerDocumentPart->findFrame(name.string());
+    return ownerDocumentPart->findFrame(m_name.string());
 }
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
@@ -524,6 +582,81 @@ DocumentImpl* HTMLFrameElementImpl::contentDocument() const
 bool HTMLFrameElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_SRC;
+}
+
+DOMString HTMLFrameElementImpl::frameBorder() const
+{
+    return getAttribute(ATTR_FRAMEBORDER);
+}
+
+void HTMLFrameElementImpl::setFrameBorder(const DOMString &value)
+{
+    setAttribute(ATTR_FRAMEBORDER, value);
+}
+
+DOMString HTMLFrameElementImpl::longDesc() const
+{
+    return getAttribute(ATTR_LONGDESC);
+}
+
+void HTMLFrameElementImpl::setLongDesc(const DOMString &value)
+{
+    setAttribute(ATTR_LONGDESC, value);
+}
+
+DOMString HTMLFrameElementImpl::marginHeight() const
+{
+    return getAttribute(ATTR_MARGINHEIGHT);
+}
+
+void HTMLFrameElementImpl::setMarginHeight(const DOMString &value)
+{
+    setAttribute(ATTR_MARGINHEIGHT, value);
+}
+
+DOMString HTMLFrameElementImpl::marginWidth() const
+{
+    return getAttribute(ATTR_MARGINWIDTH);
+}
+
+void HTMLFrameElementImpl::setMarginWidth(const DOMString &value)
+{
+    setAttribute(ATTR_MARGINWIDTH, value);
+}
+
+DOMString HTMLFrameElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLFrameElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+void HTMLFrameElementImpl::setNoResize(bool noResize)
+{
+    setAttribute(ATTR_NORESIZE, noResize ? "" : 0);
+}
+
+DOMString HTMLFrameElementImpl::scrolling() const
+{
+    return getAttribute(ATTR_SCROLLING);
+}
+
+void HTMLFrameElementImpl::setScrolling(const DOMString &value)
+{
+    setAttribute(ATTR_SCROLLING, value);
+}
+
+DOMString HTMLFrameElementImpl::src() const
+{
+    return getAttribute(ATTR_SRC);
+}
+
+void HTMLFrameElementImpl::setSrc(const DOMString &value)
+{
+    setAttribute(ATTR_SRC, value);
 }
 
 // -------------------------------------------------------------------------
@@ -662,6 +795,26 @@ void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
     HTMLElementImpl::recalcStyle( ch );
 }
 
+DOMString HTMLFrameSetElementImpl::cols() const
+{
+    return getAttribute(ATTR_COLS);
+}
+
+void HTMLFrameSetElementImpl::setCols(const DOMString &value)
+{
+    setAttribute(ATTR_COLS, value);
+}
+
+DOMString HTMLFrameSetElementImpl::rows() const
+{
+    return getAttribute(ATTR_ROWS);
+}
+
+void HTMLFrameSetElementImpl::setRows(const DOMString &value)
+{
+    setAttribute(ATTR_ROWS, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentPtr *doc)
@@ -676,6 +829,16 @@ HTMLHeadElementImpl::~HTMLHeadElementImpl()
 NodeImpl::Id HTMLHeadElementImpl::id() const
 {
     return ID_HEAD;
+}
+
+DOMString HTMLHeadElementImpl::profile() const
+{
+    return getAttribute(ATTR_PROFILE);
+}
+
+void HTMLHeadElementImpl::setProfile(const DOMString &value)
+{
+    setAttribute(ATTR_PROFILE, value);
 }
 
 // -------------------------------------------------------------------------
@@ -694,13 +857,23 @@ NodeImpl::Id HTMLHtmlElementImpl::id() const
     return ID_HTML;
 }
 
+DOMString HTMLHtmlElementImpl::version() const
+{
+    return getAttribute(ATTR_VERSION);
+}
+
+void HTMLHtmlElementImpl::setVersion(const DOMString &value)
+{
+    setAttribute(ATTR_VERSION, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(doc)
 {
-    frameBorder = false;
-    marginWidth = -1;
-    marginHeight = -1;
+    m_frameBorder = false;
+    m_marginWidth = -1;
+    m_marginHeight = -1;
     needWidgetUpdate = false;
 }
 
@@ -751,7 +924,7 @@ void HTMLIFrameElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr )
 bool HTMLIFrameElementImpl::rendererIsNeeded(RenderStyle *style)
 {
     // Don't ignore display: none the way frame does.
-    return isURLAllowed(url) && style->display() != NONE;
+    return isURLAllowed(m_URL) && style->display() != NONE;
 }
 
 RenderObject *HTMLIFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -767,8 +940,8 @@ void HTMLIFrameElementImpl::attach()
     if (m_render && part) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
 	part->incrementFrameCount();
-        if(name.isEmpty() || part->frameExists( name.string() ))
-            name = AtomicString(part->requestFrameName());
+        if (m_name.isEmpty() || part->frameExists(m_name.string()))
+            m_name = AtomicString(part->requestFrameName());
 
         static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;
@@ -793,4 +966,39 @@ void HTMLIFrameElementImpl::openURL()
 bool HTMLIFrameElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_SRC;
+}
+
+DOMString HTMLIFrameElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLIFrameElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLIFrameElementImpl::height() const
+{
+    return getAttribute(ATTR_HEIGHT);
+}
+
+void HTMLIFrameElementImpl::setHeight(const DOMString &value)
+{
+    setAttribute(ATTR_HEIGHT, value);
+}
+
+DOMString HTMLIFrameElementImpl::src() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_SRC));
+}
+
+DOMString HTMLIFrameElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLIFrameElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
 }

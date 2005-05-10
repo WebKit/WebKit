@@ -47,7 +47,8 @@
 #include <kglobal.h>
 
 using namespace khtml;
-using namespace DOM;
+
+namespace DOM {
 
 HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
   : HTMLElementImpl(doc)
@@ -619,6 +620,106 @@ bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
     return attr->id() == ATTR_BACKGROUND;
 }
 
+SharedPtr<HTMLCollectionImpl> HTMLTableElementImpl::rows()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_ROWS));
+}
+
+SharedPtr<HTMLCollectionImpl> HTMLTableElementImpl::tBodies()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_TBODIES));
+}
+
+DOMString HTMLTableElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLTableElementImpl::bgColor() const
+{
+    return getAttribute(ATTR_BGCOLOR);
+}
+
+void HTMLTableElementImpl::setBgColor(const DOMString &value)
+{
+    setAttribute(ATTR_BGCOLOR, value);
+}
+
+DOMString HTMLTableElementImpl::border() const
+{
+    return getAttribute(ATTR_BORDER);
+}
+
+void HTMLTableElementImpl::setBorder(const DOMString &value)
+{
+    setAttribute(ATTR_BORDER, value);
+}
+
+DOMString HTMLTableElementImpl::cellPadding() const
+{
+    return getAttribute(ATTR_CELLPADDING);
+}
+
+void HTMLTableElementImpl::setCellPadding(const DOMString &value)
+{
+    setAttribute(ATTR_CELLPADDING, value);
+}
+
+DOMString HTMLTableElementImpl::cellSpacing() const
+{
+    return getAttribute(ATTR_CELLSPACING);
+}
+
+void HTMLTableElementImpl::setCellSpacing(const DOMString &value)
+{
+    setAttribute(ATTR_CELLSPACING, value);
+}
+
+DOMString HTMLTableElementImpl::frame() const
+{
+    return getAttribute(ATTR_FRAME);
+}
+
+void HTMLTableElementImpl::setFrame(const DOMString &value)
+{
+    setAttribute(ATTR_FRAME, value);
+}
+
+DOMString HTMLTableElementImpl::rules() const
+{
+    return getAttribute(ATTR_RULES);
+}
+
+void HTMLTableElementImpl::setRules(const DOMString &value)
+{
+    setAttribute(ATTR_RULES, value);
+}
+
+DOMString HTMLTableElementImpl::summary() const
+{
+    return getAttribute(ATTR_SUMMARY);
+}
+
+void HTMLTableElementImpl::setSummary(const DOMString &value)
+{
+    setAttribute(ATTR_SUMMARY, value);
+}
+
+DOMString HTMLTableElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLTableElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
+
 // --------------------------------------------------------------------------
 
 bool HTMLTablePartElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -709,10 +810,6 @@ HTMLTableSectionElementImpl::HTMLTableSectionElementImpl(DocumentPtr *doc,
     m_implicit = implicit;
 }
 
-HTMLTableSectionElementImpl::~HTMLTableSectionElementImpl()
-{
-}
-
 NodeImpl::Id HTMLTableSectionElementImpl::id() const
 {
     return _id;
@@ -775,7 +872,6 @@ void HTMLTableSectionElementImpl::deleteRow( long index, int &exceptioncode )
     delete children;
 }
 
-
 int HTMLTableSectionElementImpl::numRows() const
 {
     int rows = 0;
@@ -787,6 +883,51 @@ int HTMLTableSectionElementImpl::numRows() const
     }
 
     return rows;
+}
+
+DOMString HTMLTableSectionElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableSectionElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLTableSectionElementImpl::ch() const
+{
+    return getAttribute(ATTR_CHAR);
+}
+
+void HTMLTableSectionElementImpl::setCh(const DOMString &value)
+{
+    setAttribute(ATTR_CHAR, value);
+}
+
+DOMString HTMLTableSectionElementImpl::chOff() const
+{
+    return getAttribute(ATTR_CHAROFF);
+}
+
+void HTMLTableSectionElementImpl::setChOff(const DOMString &value)
+{
+    setAttribute(ATTR_CHAROFF, value);
+}
+
+DOMString HTMLTableSectionElementImpl::vAlign() const
+{
+    return getAttribute(ATTR_VALIGN);
+}
+
+void HTMLTableSectionElementImpl::setVAlign(const DOMString &value)
+{
+    setAttribute(ATTR_VALIGN, value);
+}
+
+SharedPtr<HTMLCollectionImpl> HTMLTableSectionElementImpl::rows()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_ROWS));
 }
 
 // -------------------------------------------------------------------------
@@ -900,6 +1041,66 @@ void HTMLTableRowElementImpl::deleteCell( long index, int &exceptioncode )
     delete children;
 }
 
+SharedPtr<HTMLCollectionImpl> HTMLTableRowElementImpl::cells()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TR_CELLS));
+}
+
+void HTMLTableRowElementImpl::setCells(HTMLCollectionImpl *, int &exception)
+{
+    exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+}
+
+DOMString HTMLTableRowElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableRowElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLTableRowElementImpl::bgColor() const
+{
+    return getAttribute(ATTR_BGCOLOR);
+}
+
+void HTMLTableRowElementImpl::setBgColor(const DOMString &value)
+{
+    setAttribute(ATTR_BGCOLOR, value);
+}
+
+DOMString HTMLTableRowElementImpl::ch() const
+{
+    return getAttribute(ATTR_CHAR);
+}
+
+void HTMLTableRowElementImpl::setCh(const DOMString &value)
+{
+    setAttribute(ATTR_CHAR, value);
+}
+
+DOMString HTMLTableRowElementImpl::chOff() const
+{
+    return getAttribute(ATTR_CHAROFF);
+}
+
+void HTMLTableRowElementImpl::setChOff(const DOMString &value)
+{
+    setAttribute(ATTR_CHAROFF, value);
+}
+
+DOMString HTMLTableRowElementImpl::vAlign() const
+{
+    return getAttribute(ATTR_VALIGN);
+}
+
+void HTMLTableRowElementImpl::setVAlign(const DOMString &value)
+{
+    setAttribute(ATTR_VALIGN, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLTableCellElementImpl::HTMLTableCellElementImpl(DocumentPtr *doc, int tag)
@@ -1004,6 +1205,136 @@ bool HTMLTableCellElementImpl::isURLAttribute(AttributeImpl *attr) const
     return attr->id() == ATTR_BACKGROUND;
 }
 
+DOMString HTMLTableCellElementImpl::abbr() const
+{
+    return getAttribute(ATTR_ABBR);
+}
+
+void HTMLTableCellElementImpl::setAbbr(const DOMString &value)
+{
+    setAttribute(ATTR_ABBR, value);
+}
+
+DOMString HTMLTableCellElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableCellElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLTableCellElementImpl::axis() const
+{
+    return getAttribute(ATTR_AXIS);
+}
+
+void HTMLTableCellElementImpl::setAxis(const DOMString &value)
+{
+    setAttribute(ATTR_AXIS, value);
+}
+
+DOMString HTMLTableCellElementImpl::bgColor() const
+{
+    return getAttribute(ATTR_BGCOLOR);
+}
+
+void HTMLTableCellElementImpl::setBgColor(const DOMString &value)
+{
+    setAttribute(ATTR_BGCOLOR, value);
+}
+
+DOMString HTMLTableCellElementImpl::ch() const
+{
+    return getAttribute(ATTR_CHAR);
+}
+
+void HTMLTableCellElementImpl::setCh(const DOMString &value)
+{
+    setAttribute(ATTR_CHAR, value);
+}
+
+DOMString HTMLTableCellElementImpl::chOff() const
+{
+    return getAttribute(ATTR_CHAROFF);
+}
+
+void HTMLTableCellElementImpl::setChOff(const DOMString &value)
+{
+    setAttribute(ATTR_CHAROFF, value);
+}
+
+void HTMLTableCellElementImpl::setColSpan(long n)
+{
+    setAttribute(ATTR_COLSPAN, QString::number(n));
+}
+
+DOMString HTMLTableCellElementImpl::headers() const
+{
+    return getAttribute(ATTR_HEADERS);
+}
+
+void HTMLTableCellElementImpl::setHeaders(const DOMString &value)
+{
+    setAttribute(ATTR_HEADERS, value);
+}
+
+DOMString HTMLTableCellElementImpl::height() const
+{
+    return getAttribute(ATTR_HEIGHT);
+}
+
+void HTMLTableCellElementImpl::setHeight(const DOMString &value)
+{
+    setAttribute(ATTR_HEIGHT, value);
+}
+
+bool HTMLTableCellElementImpl::noWrap() const
+{
+    return !getAttribute(ATTR_NOWRAP).isNull();
+}
+
+void HTMLTableCellElementImpl::setNoWrap(bool b)
+{
+    setAttribute(ATTR_NOWRAP, b ? "" : 0);
+}
+
+void HTMLTableCellElementImpl::setRowSpan(long n)
+{
+    setAttribute(ATTR_ROWSPAN, QString::number(n));
+}
+
+DOMString HTMLTableCellElementImpl::scope() const
+{
+    return getAttribute(ATTR_SCOPE);
+}
+
+void HTMLTableCellElementImpl::setScope(const DOMString &value)
+{
+    setAttribute(ATTR_SCOPE, value);
+}
+
+DOMString HTMLTableCellElementImpl::vAlign() const
+{
+    return getAttribute(ATTR_VALIGN);
+}
+
+void HTMLTableCellElementImpl::setVAlign(const DOMString &value)
+{
+    setAttribute(ATTR_VALIGN, value);
+}
+
+DOMString HTMLTableCellElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLTableCellElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLTableColElementImpl::HTMLTableColElementImpl(DocumentPtr *doc, ushort i)
@@ -1049,6 +1380,61 @@ void HTMLTableColElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 
 }
 
+DOMString HTMLTableColElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableColElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLTableColElementImpl::ch() const
+{
+    return getAttribute(ATTR_CHAR);
+}
+
+void HTMLTableColElementImpl::setCh(const DOMString &value)
+{
+    setAttribute(ATTR_CHAR, value);
+}
+
+DOMString HTMLTableColElementImpl::chOff() const
+{
+    return getAttribute(ATTR_CHAROFF);
+}
+
+void HTMLTableColElementImpl::setChOff(const DOMString &value)
+{
+    setAttribute(ATTR_CHAROFF, value);
+}
+
+void HTMLTableColElementImpl::setSpan(long n)
+{
+    setAttribute(ATTR_SPAN, QString::number(n));
+}
+
+DOMString HTMLTableColElementImpl::vAlign() const
+{
+    return getAttribute(ATTR_VALIGN);
+}
+
+void HTMLTableColElementImpl::setVAlign(const DOMString &value)
+{
+    setAttribute(ATTR_VALIGN, value);
+}
+
+DOMString HTMLTableColElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLTableColElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
+
 // -------------------------------------------------------------------------
 
 NodeImpl::Id HTMLTableCaptionElementImpl::id() const
@@ -1076,5 +1462,16 @@ void HTMLTableCaptionElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
     }
+}
+
+DOMString HTMLTableCaptionElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLTableCaptionElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
 
 }

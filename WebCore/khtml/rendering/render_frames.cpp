@@ -626,7 +626,7 @@ void RenderFrame::slotViewCleared()
         kdDebug(6031) << "frame is a scrollview!" << endl;
 #endif
         QScrollView *view = static_cast<QScrollView *>(m_widget);
-        if(!element()->frameBorder || !((static_cast<HTMLFrameSetElementImpl *>(element()->parentNode()))->frameBorder()))
+        if(!element()->m_frameBorder || !(static_cast<HTMLFrameSetElementImpl *>(element()->parentNode()))->frameBorder())
             view->setFrameStyle(QFrame::NoFrame);
 #if APPLE_CHANGES
         // Qt creates QScrollView w/ a default style of QFrame::StyledPanel | QFrame::Sunken.
@@ -643,8 +643,8 @@ void RenderFrame::slotViewCleared()
             kdDebug(6031) << "frame is a KHTMLview!" << endl;
 #endif
             KHTMLView *htmlView = static_cast<KHTMLView *>(view);
-            if(element()->marginWidth != -1) htmlView->setMarginWidth(element()->marginWidth);
-            if(element()->marginHeight != -1) htmlView->setMarginHeight(element()->marginHeight);
+            if(element()->m_marginWidth != -1) htmlView->setMarginWidth(element()->m_marginWidth);
+            if(element()->m_marginHeight != -1) htmlView->setMarginHeight(element()->m_marginHeight);
         }
     }
 }
@@ -721,12 +721,12 @@ void RenderPartObject::updateWidget()
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->id() == ID_PARAM) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
-              QString name = p->name().lower();
+              QString name = p->name().string().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
-                  url = p->value();
+                  url = p->value().string();
               }
               if (serviceType.isEmpty() && name == "type") {
-                  serviceType = p->value();
+                  serviceType = p->value().string();
                   int pos = serviceType.find( ";" );
                   if (pos != -1) {
                       serviceType = serviceType.left(pos);
@@ -734,9 +734,9 @@ void RenderPartObject::updateWidget()
               }
               if (!embed) {
                   bool dummyValue = true;
-                  uniqueParamNames.insert(p->name(), &dummyValue);
-                  paramNames.append(p->name());
-                  paramValues.append(p->value());
+                  uniqueParamNames.insert(p->name().string(), &dummyValue);
+                  paramNames.append(p->name().string());
+                  paramValues.append(p->value().string());
               }
           }
           child = child->nextSibling();
@@ -846,14 +846,14 @@ void RenderPartObject::updateWidget()
   } else {
       assert(element()->id() == ID_IFRAME);
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
-      url = o->url.string();
+      url = o->m_URL.string();
       if (url.isEmpty()) {
 	  url = "about:blank";
       }
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
-      bool requestSucceeded = v->part()->requestFrame( this, url, o->name.string(), QStringList(), QStringList(), true );
+      bool requestSucceeded = v->part()->requestFrame( this, url, o->m_name.string(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
-	  KHTMLPart *newPart = v->part()->findFrame( o->name.string() );
+	  KHTMLPart *newPart = v->part()->findFrame( o->m_name.string() );
 	  if (newPart && newPart->xmlDocImpl()) {
 	      newPart->xmlDocImpl()->setBaseURL( v->part()->baseURL().url() );
 	  }
@@ -892,11 +892,11 @@ void RenderPartObject::slotViewCleared()
       int marginh = -1;
       if ( element()->id() == ID_IFRAME) {
 	  HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
-	  if(frame->frameBorder)
+	  if(frame->m_frameBorder)
 	      frameStyle = QFrame::Box;
-          scroll = frame->scrolling;
-	  marginw = frame->marginWidth;
-	  marginh = frame->marginHeight;
+          scroll = frame->m_scrolling;
+	  marginw = frame->m_marginWidth;
+	  marginh = frame->m_marginHeight;
       }
       view->setFrameStyle(frameStyle);
 

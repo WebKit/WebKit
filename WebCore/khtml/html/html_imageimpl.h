@@ -43,6 +43,7 @@ namespace DOM {
 
 class DOMString;
 
+class HTMLCollectionImpl;
 class HTMLFormElementImpl;
     
 class HTMLImageLoader: public khtml::CachedObjectClient {
@@ -97,11 +98,47 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
-#if APPLE_CHANGES
     QString compositeOperator() const { return _compositeOperator; }
+
     const QPixmap &pixmap() { return m_imageLoader.image()->pixmap(); }
-#endif
     
+    DOMString name() const;
+    void setName( const DOMString & );
+
+    DOMString align() const;
+    void setAlign( const DOMString & );
+
+    DOMString alt() const;
+    void setAlt( const DOMString & );
+
+    long border() const;
+    void setBorder( long );
+
+    void setHeight( long );
+
+    long hspace() const;
+    void setHspace( long );
+
+    bool isMap() const;
+    void setIsMap( bool );
+
+    DOMString longDesc() const;
+    void setLongDesc( const DOMString & );
+
+    DOMString src() const;
+    void setSrc( const DOMString & );
+
+    DOMString useMap() const;
+    void setUseMap( const DOMString & );
+
+    long vspace() const;
+    void setVspace( long );
+
+    void setWidth( long );
+
+    long x() const;
+    long y() const;
+
 protected:
     HTMLImageLoader m_imageLoader;
     DOMString usemap;
@@ -109,9 +146,7 @@ protected:
     HTMLFormElementImpl *m_form;
     QString oldIdAttr;
     QString oldNameAttr;
-#if APPLE_CHANGES
     QString _compositeOperator;
-#endif
 };
 
 
@@ -130,12 +165,36 @@ public:
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
-    bool isDefault() const { return shape==Default; }
+    bool isDefault() const { return m_shape == Default; }
 
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
                        khtml::RenderObject::NodeInfo& info);
 
     virtual QRect getRect(khtml::RenderObject* obj) const;
+
+    DOMString accessKey() const;
+    void setAccessKey( const DOMString & );
+
+    DOMString alt() const;
+    void setAlt( const DOMString & );
+
+    DOMString coords() const;
+    void setCoords( const DOMString & );
+
+    DOMString href() const;
+    void setHref( const DOMString & );
+
+    bool noHref() const;
+    void setNoHref( bool );
+
+    DOMString shape() const;
+    void setShape( const DOMString & );
+
+    long tabIndex() const;
+    void setTabIndex( long );
+
+    DOMString target() const;
+    void setTarget( const DOMString & );
 
 protected:
     QRegion getRegion(int width_, int height) const;
@@ -143,7 +202,7 @@ protected:
     khtml::Length* m_coords;
     int m_coordsLen;
     int lastw, lasth;
-    Shape shape;
+    Shape m_shape;
 };
 
 
@@ -158,18 +217,22 @@ public:
 
     virtual Id id() const;
 
-    virtual DOMString getName() const { return name; }
+    virtual DOMString getName() const { return m_name; }
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
                        khtml::RenderObject::NodeInfo& info);
-private:
 
-    DOMString name;
+    khtml::SharedPtr<HTMLCollectionImpl> areas();
+
+    DOMString name() const;
+    void setName( const DOMString & );
+
+private:
+    DOMString m_name;
 };
 
-
-}; //namespace
+} //namespace
 
 #endif

@@ -50,8 +50,9 @@
 #include "KWQKHTMLPart.h"
 #endif
 
-using namespace DOM;
 using namespace khtml;
+
+namespace DOM {
 
 // -------------------------------------------------------------------------
 
@@ -227,6 +228,116 @@ bool HTMLAppletElementImpl::allParamsAvailable()
     return m_allParamsAvailable;
 }
 #endif
+
+DOMString HTMLAppletElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLAppletElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLAppletElementImpl::alt() const
+{
+    return getAttribute(ATTR_ALT);
+}
+
+void HTMLAppletElementImpl::setAlt(const DOMString &value)
+{
+    setAttribute(ATTR_ALT, value);
+}
+
+DOMString HTMLAppletElementImpl::archive() const
+{
+    return getAttribute(ATTR_ARCHIVE);
+}
+
+void HTMLAppletElementImpl::setArchive(const DOMString &value)
+{
+    setAttribute(ATTR_ARCHIVE, value);
+}
+
+DOMString HTMLAppletElementImpl::code() const
+{
+    return getAttribute(ATTR_CODE);
+}
+
+void HTMLAppletElementImpl::setCode(const DOMString &value)
+{
+    setAttribute(ATTR_CODE, value);
+}
+
+DOMString HTMLAppletElementImpl::codeBase() const
+{
+    return getAttribute(ATTR_CODEBASE);
+}
+
+void HTMLAppletElementImpl::setCodeBase(const DOMString &value)
+{
+    setAttribute(ATTR_CODEBASE, value);
+}
+
+DOMString HTMLAppletElementImpl::height() const
+{
+    return getAttribute(ATTR_HEIGHT);
+}
+
+void HTMLAppletElementImpl::setHeight(const DOMString &value)
+{
+    setAttribute(ATTR_HEIGHT, value);
+}
+
+DOMString HTMLAppletElementImpl::hspace() const
+{
+    return getAttribute(ATTR_HSPACE);
+}
+
+void HTMLAppletElementImpl::setHspace(const DOMString &value)
+{
+    setAttribute(ATTR_HSPACE, value);
+}
+
+DOMString HTMLAppletElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLAppletElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLAppletElementImpl::object() const
+{
+    return getAttribute(ATTR_OBJECT);
+}
+
+void HTMLAppletElementImpl::setObject(const DOMString &value)
+{
+    setAttribute(ATTR_OBJECT, value);
+}
+
+DOMString HTMLAppletElementImpl::vspace() const
+{
+    return getAttribute(ATTR_VSPACE);
+}
+
+void HTMLAppletElementImpl::setVspace(const DOMString &value)
+{
+    setAttribute(ATTR_VSPACE, value);
+}
+
+DOMString HTMLAppletElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLAppletElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
 
 // -------------------------------------------------------------------------
 
@@ -631,6 +742,176 @@ void HTMLObjectElementImpl::renderFallbackContent()
     attach();
 }
 
+DOMString HTMLObjectElementImpl::code() const
+{
+    return getAttribute(ATTR_CODE);
+}
+
+void HTMLObjectElementImpl::setCode(const DOMString &value)
+{
+    setAttribute(ATTR_CODE, value);
+}
+
+DOMString HTMLObjectElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLObjectElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLObjectElementImpl::archive() const
+{
+    return getAttribute(ATTR_ARCHIVE);
+}
+
+void HTMLObjectElementImpl::setArchive(const DOMString &value)
+{
+    setAttribute(ATTR_ARCHIVE, value);
+}
+
+DOMString HTMLObjectElementImpl::border() const
+{
+    return getAttribute(ATTR_BORDER);
+}
+
+void HTMLObjectElementImpl::setBorder(const DOMString &value)
+{
+    setAttribute(ATTR_BORDER, value);
+}
+
+DOMString HTMLObjectElementImpl::codeBase() const
+{
+    return getAttribute(ATTR_CODEBASE);
+}
+
+void HTMLObjectElementImpl::setCodeBase(const DOMString &value)
+{
+    setAttribute(ATTR_CODEBASE, value);
+}
+
+DOMString HTMLObjectElementImpl::codeType() const
+{
+    return getAttribute(ATTR_CODETYPE);
+}
+
+void HTMLObjectElementImpl::setCodeType(const DOMString &value)
+{
+    setAttribute(ATTR_CODETYPE, value);
+}
+
+DOMString HTMLObjectElementImpl::data() const
+{
+    return getAttribute(ATTR_DATA);
+}
+
+void HTMLObjectElementImpl::setData(const DOMString &value)
+{
+    setAttribute(ATTR_DATA, value);
+}
+
+bool HTMLObjectElementImpl::declare() const
+{
+    return !getAttribute(ATTR_DECLARE).isNull();
+}
+
+void HTMLObjectElementImpl::setDeclare(bool declare)
+{
+    setAttribute(ATTR_DECLARE, declare ? "" : 0);
+}
+
+DOMString HTMLObjectElementImpl::height() const
+{
+    return getAttribute(ATTR_HEIGHT);
+}
+
+void HTMLObjectElementImpl::setHeight(const DOMString &value)
+{
+    setAttribute(ATTR_HEIGHT, value);
+}
+
+DOMString HTMLObjectElementImpl::hspace() const
+{
+    return getAttribute(ATTR_HSPACE);
+}
+
+void HTMLObjectElementImpl::setHspace(const DOMString &value)
+{
+    setAttribute(ATTR_HSPACE, value);
+}
+
+DOMString HTMLObjectElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLObjectElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLObjectElementImpl::standby() const
+{
+    return getAttribute(ATTR_STANDBY);
+}
+
+void HTMLObjectElementImpl::setStandby(const DOMString &value)
+{
+    setAttribute(ATTR_STANDBY, value);
+}
+
+long HTMLObjectElementImpl::tabIndex() const
+{
+    return getAttribute(ATTR_TABINDEX).toInt();
+}
+
+void HTMLObjectElementImpl::setTabIndex(long tabIndex)
+{
+    setAttribute(ATTR_TABINDEX, QString::number(tabIndex));
+}
+
+DOMString HTMLObjectElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLObjectElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
+}
+
+DOMString HTMLObjectElementImpl::useMap() const
+{
+    return getAttribute(ATTR_USEMAP);
+}
+
+void HTMLObjectElementImpl::setUseMap(const DOMString &value)
+{
+    setAttribute(ATTR_USEMAP, value);
+}
+
+DOMString HTMLObjectElementImpl::vspace() const
+{
+    return getAttribute(ATTR_VSPACE);
+}
+
+void HTMLObjectElementImpl::setVspace(const DOMString &value)
+{
+    setAttribute(ATTR_VSPACE, value);
+}
+
+DOMString HTMLObjectElementImpl::width() const
+{
+    return getAttribute(ATTR_WIDTH);
+}
+
+void HTMLObjectElementImpl::setWidth(const DOMString &value)
+{
+    setAttribute(ATTR_WIDTH, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
@@ -677,4 +958,36 @@ bool HTMLParamElementImpl::isURLAttribute(AttributeImpl *attr) const
         }
     }
     return false;
+}
+
+void HTMLParamElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLParamElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLParamElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
+}
+
+void HTMLParamElementImpl::setValue(const DOMString &value)
+{
+    setAttribute(ATTR_VALUE, value);
+}
+
+DOMString HTMLParamElementImpl::valueType() const
+{
+    return getAttribute(ATTR_VALUETYPE);
+}
+
+void HTMLParamElementImpl::setValueType(const DOMString &value)
+{
+    setAttribute(ATTR_VALUETYPE, value);
+}
+
 }

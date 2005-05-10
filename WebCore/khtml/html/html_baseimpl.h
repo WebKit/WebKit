@@ -66,6 +66,19 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
+    DOMString aLink() const;
+    void setALink(const DOMString &);
+    DOMString background() const;
+    void setBackground(const DOMString &);
+    DOMString bgColor() const;
+    void setBgColor(const DOMString &);
+    DOMString link() const;
+    void setLink(const DOMString &);
+    DOMString text() const;
+    void setText(const DOMString &);
+    DOMString vLink() const;
+    void setVLink(const DOMString &);
+
 protected:
     CSSMutableStyleDeclarationImpl* m_linkDecl;
 };
@@ -90,8 +103,9 @@ public:
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
-    bool noResize() { return noresize; }
-    void setLocation( const DOMString& str );
+    bool noResize() { return m_noResize; }
+
+    void setLocation(const DOMString&);
 
     virtual bool isFocusable() const;
     virtual void setFocus(bool);
@@ -101,26 +115,47 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
-#if APPLE_CHANGES
-    QScrollView::ScrollBarMode scrollingMode() const { return scrolling; }
-    int getMarginWidth() const { return marginWidth; }
-    int getMarginHeight() const { return marginHeight; }
-#endif
+    QScrollView::ScrollBarMode scrollingMode() const { return m_scrolling; }
+    int getMarginWidth() const { return m_marginWidth; }
+    int getMarginHeight() const { return m_marginHeight; }
+
+    DOMString frameBorder() const;
+    void setFrameBorder(const DOMString &);
+
+    DOMString longDesc() const;
+    void setLongDesc(const DOMString &);
+
+    DOMString marginHeight() const;
+    void setMarginHeight(const DOMString &);
+
+    DOMString marginWidth() const;
+    void setMarginWidth(const DOMString &);
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    void setNoResize(bool);
+
+    DOMString scrolling() const;
+    void setScrolling(const DOMString &);
+
+    virtual DOMString src() const;
+    void setSrc(const DOMString &);
 
 protected:
     bool isURLAllowed(const AtomicString &) const;
     virtual void openURL();
 
-    AtomicString url;
-    AtomicString name;
+    AtomicString m_URL;
+    AtomicString m_name;
 
-    int marginWidth;
-    int marginHeight;
-    QScrollView::ScrollBarMode scrolling;
+    int m_marginWidth;
+    int m_marginHeight;
+    QScrollView::ScrollBarMode m_scrolling;
 
-    bool frameBorder : 1;
-    bool frameBorderSet : 1;
-    bool noresize : 1;
+    bool m_frameBorder : 1;
+    bool m_frameBorderSet : 1;
+    bool m_noResize : 1;
 
 private:
     void updateForNewURL();
@@ -155,6 +190,12 @@ public:
 
     virtual void recalcStyle( StyleChange ch );
     
+    DOMString cols() const;
+    void setCols(const DOMString &);
+
+    DOMString rows() const;
+    void setRows(const DOMString &);
+
 protected:
     khtml::Length* m_rows;
     khtml::Length* m_cols;
@@ -179,6 +220,9 @@ public:
     ~HTMLHeadElementImpl();
 
     virtual Id id() const;
+
+    DOMString profile() const;
+    void setProfile(const DOMString &);
 };
 
 // -------------------------------------------------------------------------
@@ -190,6 +234,9 @@ public:
     ~HTMLHtmlElementImpl();
 
     virtual Id id() const;
+
+    DOMString version() const;
+    void setVersion(const DOMString &);
 };
 
 
@@ -214,12 +261,22 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
+    DOMString align() const;
+    void setAlign(const DOMString &);
+
+    DOMString height() const;
+    void setHeight(const DOMString &);
+
+    DOMString width() const;
+    void setWidth(const DOMString &);
+
+    virtual DOMString src() const;
+
 protected:
     virtual void openURL();
 
     bool needWidgetUpdate;
 };
-
 
 } //namespace
 

@@ -391,6 +391,139 @@ bool HTMLImageElementImpl::isURLAttribute(AttributeImpl *attr) const
     return (attr->id() == ATTR_SRC || (attr->id() == ATTR_USEMAP && attr->value().domString()[0] != '#'));
 }
 
+DOMString HTMLImageElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLImageElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLImageElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLImageElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLImageElementImpl::alt() const
+{
+    return getAttribute(ATTR_ALT);
+}
+
+void HTMLImageElementImpl::setAlt(const DOMString &value)
+{
+    setAttribute(ATTR_ALT, value);
+}
+
+long HTMLImageElementImpl::border() const
+{
+    // ### return value in pixels
+    return getAttribute(ATTR_BORDER).toInt();
+}
+
+void HTMLImageElementImpl::setBorder(long value)
+{
+    setAttribute(ATTR_BORDER, QString::number(value));
+}
+
+void HTMLImageElementImpl::setHeight(long value)
+{
+    setAttribute(ATTR_HEIGHT, QString::number(value));
+}
+
+long HTMLImageElementImpl::hspace() const
+{
+    // ### return actual value
+    return getAttribute(ATTR_HSPACE).toInt();
+}
+
+void HTMLImageElementImpl::setHspace(long value)
+{
+    setAttribute(ATTR_HSPACE, QString::number(value));
+}
+
+bool HTMLImageElementImpl::isMap() const
+{
+    return !getAttribute(ATTR_ISMAP).isNull();
+}
+
+void HTMLImageElementImpl::setIsMap(bool isMap)
+{
+    setAttribute(ATTR_ISMAP, isMap ? "" : 0);
+}
+
+DOMString HTMLImageElementImpl::longDesc() const
+{
+    return getAttribute(ATTR_LONGDESC);
+}
+
+void HTMLImageElementImpl::setLongDesc(const DOMString &value)
+{
+    setAttribute(ATTR_LONGDESC, value);
+}
+
+DOMString HTMLImageElementImpl::src() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_SRC));
+}
+
+void HTMLImageElementImpl::setSrc(const DOMString &value)
+{
+    setAttribute(ATTR_SRC, value);
+}
+
+DOMString HTMLImageElementImpl::useMap() const
+{
+    return getAttribute(ATTR_USEMAP);
+}
+
+void HTMLImageElementImpl::setUseMap(const DOMString &value)
+{
+    setAttribute(ATTR_USEMAP, value);
+}
+
+long HTMLImageElementImpl::vspace() const
+{
+    // ### return actual vspace
+    return getAttribute(ATTR_VSPACE).toInt();
+}
+
+void HTMLImageElementImpl::setVspace(long value)
+{
+    setAttribute(ATTR_VSPACE, QString::number(value));
+}
+
+void HTMLImageElementImpl::setWidth(long value)
+{
+    setAttribute(ATTR_WIDTH, QString::number(value));
+}
+
+long HTMLImageElementImpl::x() const
+{
+    RenderObject *r = renderer();
+    if (!r)
+        return 0;
+    int x, y;
+    r->absolutePosition(x, y);
+    return x;
+}
+
+long HTMLImageElementImpl::y() const
+{
+    RenderObject *r = renderer();
+    if (!r)
+        return 0;
+    int x, y;
+    r->absolutePosition(x, y);
+    return y;
+}
+
 // -------------------------------------------------------------------------
 
 HTMLMapElementImpl::HTMLMapElementImpl(DocumentPtr *doc)
@@ -460,14 +593,29 @@ void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         // fall through
     case ATTR_NAME:
         getDocument()->removeImageMap(this);
-        name = attr->value();
-        if (name.length() != 0 && name[0] == '#')
-            name.remove(0, 1);
+        m_name = attr->value();
+        if (m_name.length() != 0 && m_name[0] == '#')
+            m_name.remove(0, 1);
         getDocument()->addImageMap(this);
         break;
     default:
         HTMLElementImpl::parseHTMLAttribute(attr);
     }
+}
+
+SharedPtr<HTMLCollectionImpl> HTMLMapElementImpl::areas()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::MAP_AREAS));
+}
+
+DOMString HTMLMapElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLMapElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
 }
 
 // -------------------------------------------------------------------------
@@ -477,7 +625,7 @@ HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
 {
     m_coords=0;
     m_coordsLen = 0;
-    shape = Unknown;
+    m_shape = Unknown;
     lasth = lastw = -1;
 }
 
@@ -497,13 +645,13 @@ void HTMLAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     {
     case ATTR_SHAPE:
         if ( strcasecmp( attr->value(), "default" ) == 0 )
-            shape = Default;
+            m_shape = Default;
         else if ( strcasecmp( attr->value(), "circle" ) == 0 )
-            shape = Circle;
+            m_shape = Circle;
         else if ( strcasecmp( attr->value(), "poly" ) == 0 )
-            shape = Poly;
+            m_shape = Poly;
         else if ( strcasecmp( attr->value(), "rect" ) == 0 )
-            shape = Rect;
+            m_shape = Rect;
         break;
     case ATTR_COORDS:
         if (m_coords) delete [] m_coords;
@@ -560,7 +708,7 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
     // what the HTML author tried to tell us.
 
     // a Poly needs at least 3 points (6 coords), so this is correct
-    if ((shape==Poly || shape==Unknown) && m_coordsLen > 5) {
+    if ((m_shape==Poly || m_shape==Unknown) && m_coordsLen > 5) {
         // make sure its even
         int len = m_coordsLen >> 1;
         QPointArray points(len);
@@ -569,22 +717,102 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
                             m_coords[(i<<1)+1].minWidth(height_));
         region = QRegion(points);
     }
-    else if (shape==Circle && m_coordsLen>=3 || shape==Unknown && m_coordsLen == 3) {
+    else if (m_shape==Circle && m_coordsLen>=3 || m_shape==Unknown && m_coordsLen == 3) {
         int r = kMin(m_coords[2].minWidth(width_), m_coords[2].minWidth(height_));
         region = QRegion(m_coords[0].minWidth(width_)-r,
                          m_coords[1].minWidth(height_)-r, 2*r, 2*r,QRegion::Ellipse);
     }
-    else if (shape==Rect && m_coordsLen>=4 || shape==Unknown && m_coordsLen == 4) {
+    else if (m_shape==Rect && m_coordsLen>=4 || m_shape==Unknown && m_coordsLen == 4) {
         int x0 = m_coords[0].minWidth(width_);
         int y0 = m_coords[1].minWidth(height_);
         int x1 = m_coords[2].minWidth(width_);
         int y1 = m_coords[3].minWidth(height_);
         region = QRegion(x0,y0,x1-x0,y1-y0);
     }
-    else if (shape==Default)
+    else if (m_shape==Default)
         region = QRegion(0,0,width_,height_);
     // else
        // return null region
 
     return region;
+}
+
+DOMString HTMLAreaElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLAreaElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLAreaElementImpl::alt() const
+{
+    return getAttribute(ATTR_ALT);
+}
+
+void HTMLAreaElementImpl::setAlt(const DOMString &value)
+{
+    setAttribute(ATTR_ALT, value);
+}
+
+DOMString HTMLAreaElementImpl::coords() const
+{
+    return getAttribute(ATTR_COORDS);
+}
+
+void HTMLAreaElementImpl::setCoords(const DOMString &value)
+{
+    setAttribute(ATTR_COORDS, value);
+}
+
+DOMString HTMLAreaElementImpl::href() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_HREF));
+}
+
+void HTMLAreaElementImpl::setHref(const DOMString &value)
+{
+    setAttribute(ATTR_HREF, value);
+}
+
+bool HTMLAreaElementImpl::noHref() const
+{
+    return !getAttribute(ATTR_NOHREF).isNull();
+}
+
+void HTMLAreaElementImpl::setNoHref(bool noHref)
+{
+    setAttribute(ATTR_NOHREF, noHref ? "" : 0);
+}
+
+DOMString HTMLAreaElementImpl::shape() const
+{
+    return getAttribute(ATTR_SHAPE);
+}
+
+void HTMLAreaElementImpl::setShape(const DOMString &value)
+{
+    setAttribute(ATTR_SHAPE, value);
+}
+
+long HTMLAreaElementImpl::tabIndex() const
+{
+    return getAttribute(ATTR_TABINDEX).toInt();
+}
+
+void HTMLAreaElementImpl::setTabIndex(long tabIndex)
+{
+    setAttribute(ATTR_TABINDEX, QString::number(tabIndex));
+}
+
+DOMString HTMLAreaElementImpl::target() const
+{
+    return getAttribute(ATTR_TARGET);
+}
+
+void HTMLAreaElementImpl::setTarget(const DOMString &value)
+{
+    setAttribute(ATTR_TARGET, value);
 }

@@ -329,6 +329,8 @@ public:
     QString completeURL(const QString& url) { return KURL(baseURL(),url).url(); };
 #endif
 
+    DOM::DOMString completeURL(const DOM::DOMString &);
+
     // from cachedObjectClient
     virtual void setStyleSheet(const DOMString &url, const DOMString &sheetStr);
     void setUserStyleSheet(const QString& sheet);

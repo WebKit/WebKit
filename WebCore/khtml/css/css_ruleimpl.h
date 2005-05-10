@@ -132,8 +132,8 @@ class MediaList;
 class CSSRuleListImpl : public khtml::Shared<CSSRuleListImpl>
 {
 public:
-    CSSRuleListImpl() {}
-
+    CSSRuleListImpl() { }
+    CSSRuleListImpl(StyleListImpl *);
     ~CSSRuleListImpl();
 
     MAIN_THREAD_ALLOCATED;
@@ -141,12 +141,11 @@ public:
     unsigned long length() const { return m_lstCSSRules.count(); }
     CSSRuleImpl *item ( unsigned long index ) { return m_lstCSSRules.at( index ); }
 
-
     /* not part of the DOM */
     unsigned long insertRule ( CSSRuleImpl *rule, unsigned long index );
     void deleteRule ( unsigned long index );
-
     void append( CSSRuleImpl *rule );
+
 protected:
     QPtrList<CSSRuleImpl> m_lstCSSRules;
 };
