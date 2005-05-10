@@ -179,7 +179,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     // NOTE: this assumes that any non-image with an anchor is an HTMLAnchorElementImpl
     NodeImpl* elt = currRenderer->element();
     for ( ; elt; elt = elt->parentNode()) {
-        if (elt->hasAnchor() && elt->renderer() && !elt->renderer()->isImage())
+        if (elt->isLink() && elt->renderer() && !elt->renderer()->isImage())
             return static_cast<HTMLAnchorElementImpl*>(elt);
     }
   
@@ -317,7 +317,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
                 // add an <area> element for this child if it has a link
                 // NOTE: can't cache these because they all have the same renderer, which is the cache key, right?
                 // plus there may be little reason to since they are being added to the handy array
-                if (current->hasAnchor()) {
+                if (current->isLink()) {
                     KWQAccObject* obj = [[[KWQAccObject alloc] initWithRenderer: m_renderer] autorelease];
                     obj->m_areaElement = static_cast<HTMLAreaElementImpl*>(current);
                     [array addObject: obj];
@@ -367,7 +367,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 
     if (m_areaElement)
         return @"AXLink";
-    if (m_renderer->element() && m_renderer->element()->hasAnchor()) {
+    if (m_renderer->element() && m_renderer->element()->isLink()) {
         if (m_renderer->isImage())
             return @"AXImageMap";
         return @"AXLink";
@@ -554,7 +554,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     
     if (m_renderer->element()->isHTMLElement() && Node(m_renderer->element()).elementId() == ID_BUTTON)
         return [self textUnderElement];
-    if (m_renderer->element()->hasAnchor())
+    if (m_renderer->element()->isLink())
         return [self textUnderElement];
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
@@ -633,7 +633,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if ([self isAttachment])
         return [[self attachmentView] accessibilityIsIgnored];
         
-    if (m_areaElement || (m_renderer->element() && m_renderer->element()->hasAnchor()))
+    if (m_areaElement || (m_renderer->element() && m_renderer->element()->isLink()))
         return NO;
 
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
@@ -728,7 +728,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     
     if (m_renderer && m_renderer->isCanvas())
         return webAreaAttrs;
-    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))
+    if (m_areaElement || (m_renderer && !m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))
         return anchorAttrs;
     return attributes;
 }
@@ -911,7 +911,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
     
     if ([attributeName isEqualToString: @"AXURL"] && 
-        (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->hasAnchor()))) {
+        (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))) {
         HTMLAnchorElementImpl* anchor = [self anchorElement];
         if (anchor) {
             QString s = anchor->getAttribute(ATTR_HREF).string();

@@ -2277,7 +2277,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             } else {
                 // remember some facts about this source, while we have a NodeInfo handy
                 NodeImpl *node = nodeInfo.URLElement();
-                _dragSrcIsLink = node ? node->hasAnchor() : false;
+                _dragSrcIsLink = node ? node->isLink() : false;
 
                 node = nodeInfo.innerNonSharedNode();
                 _dragSrcIsImage = (node && node->renderer() && node->renderer()->isImage());

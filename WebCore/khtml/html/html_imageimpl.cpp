@@ -220,7 +220,7 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
             // the map is on the same html page....
             usemap = url;
         }
-        m_hasAnchor = !attr->isNull();
+        m_isLink = !attr->isNull();
     case ATTR_ISMAP:
         ismap = true;
         break;

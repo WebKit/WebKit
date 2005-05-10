@@ -82,7 +82,7 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
       m_changed( false ),
       m_hasChangedChild( false ),
       m_inDocument( false ),
-      m_hasAnchor( false ),
+      m_isLink( false ),
       m_specified( false ),
       m_focused( false ),
       m_active( false ),

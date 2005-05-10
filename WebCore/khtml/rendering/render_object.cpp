@@ -1324,7 +1324,7 @@ QString RenderObject::information() const
     if (mouseInside()) ts << "mi ";
     if (style() && style()->zIndex()) ts << "zI: " << style()->zIndex();
     if (element() && element()->active()) ts << "act ";
-    if (element() && element()->hasAnchor()) ts << "anchor ";
+    if (element() && element()->isLink()) ts << "anchor ";
     if (element() && element()->focused()) ts << "focus ";
     if (element()) ts << " <" <<  getTagName(element()->id()).string() << ">";
     ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"

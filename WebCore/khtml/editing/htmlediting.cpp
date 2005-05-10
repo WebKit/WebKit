@@ -1250,7 +1250,7 @@ static bool isSpecialElement(NodeImpl *n)
     if (!n->isHTMLElement())
         return false;
 
-    if (n->id() == ID_A && n->hasAnchor())
+    if (n->id() == ID_A && n->isLink())
         return true;
 
     if (n->id() == ID_UL || n->id() == ID_OL || n->id() == ID_DL)

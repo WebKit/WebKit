@@ -551,7 +551,7 @@ static void cleanpath(QString &path)
 
 static void checkPseudoState( DOM::ElementImpl *e, bool checkVisited = true )
 {
-    if (!e->hasAnchor()) {
+    if (!e->isLink()) {
         pseudoState = PseudoNone;
         return;
     }
@@ -626,7 +626,7 @@ bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
         if (s->renderer() && (s->id() == element->id()) && !s->hasID() &&
             (s->hasClass() == element->hasClass()) && !s->inlineStyleDecl() &&
             (s->hasMappedAttributes() == htmlElement->hasMappedAttributes()) &&
-            (s->hasAnchor() == element->hasAnchor()) && 
+            (s->isLink() == element->isLink()) && 
             !s->renderer()->style()->affectedByAttributeSelectors() &&
             (s->renderer()->mouseInside() == mouseInside) &&
             (s->active() == element->active()) &&
@@ -643,18 +643,18 @@ bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
                 if (s->hasMappedAttributes())
                     mappedAttrsMatch = s->htmlAttributes()->mapsEquivalent(htmlElement->htmlAttributes());
                 if (mappedAttrsMatch) {
-                    bool anchorsMatch = true;
-                    if (s->hasAnchor()) {
+                    bool linksMatch = true;
+                    if (s->isLink()) {
                         // We need to check to see if the visited state matches.
                         QColor linkColor = element->getDocument()->linkColor();
                         QColor visitedColor = element->getDocument()->visitedLinkColor();
                         if (pseudoState == PseudoUnknown)
                             checkPseudoState(element, s->renderer()->style()->pseudoState() != PseudoAnyLink ||
                                              linkColor != visitedColor);
-                        anchorsMatch = (pseudoState == s->renderer()->style()->pseudoState());
+                        linksMatch = (pseudoState == s->renderer()->style()->pseudoState());
                     }
                     
-                    if (anchorsMatch)
+                    if (linksMatch)
                         return true;
                 }
             }
@@ -816,7 +816,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     adjustRenderStyle(style, e);
 
     // If we are a link, cache the determined pseudo-state.
-    if (e->hasAnchor())
+    if (e->isLink())
         style->setPseudoState(pseudoState);
 
     // Now return the style.
@@ -1303,7 +1303,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             case CSSSelector::PseudoHover: {
                 // If we're in quirks mode, then hover should never match anchors with no
                 // href.  This is important for sites like wsj.com.
-                if (strictParsing || e->id() != ID_A || e->hasAnchor()) {
+                if (strictParsing || e->id() != ID_A || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByHoverRules(true);
                     if (e->renderer()) {
@@ -1334,7 +1334,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             case CSSSelector::PseudoActive:
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href. 
-                if (strictParsing || e->id() != ID_A || e->hasAnchor()) {
+                if (strictParsing || e->id() != ID_A || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByActiveRules(true);
                     else if (e->renderer())

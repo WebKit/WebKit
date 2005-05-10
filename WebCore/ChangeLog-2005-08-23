@@ -1,3 +1,43 @@
+2005-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- rename hasAnchor method to isLink
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseHTMLAttribute):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::isFocusable):
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        (DOM::HTMLAnchorElementImpl::parseHTMLAttribute):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::hitTest):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::information):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::NodeImpl):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::isLink):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject anchorElement]):
+        (-[KWQAccObject addChildrenToArray:]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject title]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+
 2005-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

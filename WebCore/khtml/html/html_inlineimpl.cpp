@@ -61,7 +61,7 @@ bool HTMLAnchorElementImpl::isFocusable() const
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Dave wants to fix that some day with a "has visible content" flag or the like.
-    if (!(m_hasAnchor && m_render && m_render->style()->visibility() == VISIBLE))
+    if (!(m_isLink && m_render && m_render->style()->visibility() == VISIBLE))
         return false;
 
     // Before calling absoluteRects, check for the common case where the renderer
@@ -115,7 +115,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
     if ( ( evt->id() == EventImpl::KHTML_CLICK_EVENT ||
-         ( evt->id() == EventImpl::KEYDOWN_EVENT && m_focused)) && m_hasAnchor) {
+         ( evt->id() == EventImpl::KEYDOWN_EVENT && m_focused)) && m_isLink) {
         MouseEventImpl *e = 0;
         if ( evt->id() == EventImpl::KHTML_CLICK_EVENT )
             e = static_cast<MouseEventImpl*>( evt );
@@ -219,7 +219,7 @@ void HTMLAnchorElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_HREF:
-        m_hasAnchor = !attr->isNull();
+        m_isLink = !attr->isNull();
         break;
     case ATTR_TARGET:
         m_hasTarget = !attr->isNull();
