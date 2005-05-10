@@ -53,14 +53,14 @@ using DOM::TextImpl;
 
 namespace khtml {
 
-VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity, EInitHint initHint)
+VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 {
-    init(pos, initHint, affinity);
+    init(pos, affinity);
 }
 
-VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity, EInitHint initHint)
+VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity)
 {
-    init(Position(node, offset), initHint, affinity);
+    init(Position(node, offset), affinity);
 }
 
 VisiblePosition::VisiblePosition(const VisiblePosition &other)
@@ -69,26 +69,15 @@ VisiblePosition::VisiblePosition(const VisiblePosition &other)
     m_affinity = other.m_affinity;
 }
 
-void VisiblePosition::init(const Position &pos, EInitHint initHint, EAffinity affinity)
+void VisiblePosition::init(const Position &pos, EAffinity affinity)
 {
     m_affinity = affinity;
 
-    // A first step toward eliminating the initHint parameter.
     // For <br> 0, it's important not to move past the <br>.
     if (pos.node() && pos.node()->id() == ID_BR && pos.offset() == 0)
-        initHint = INIT_UP;
-
-    switch (initHint) {
-        case INIT_UP:
-            initUpstream(pos);
-            break;
-        case INIT_DOWN:
-            initDownstream(pos);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-    }
+        initUpstream(pos);
+    else
+        initDownstream(pos);
 }
 
 void VisiblePosition::initUpstream(const Position &pos)

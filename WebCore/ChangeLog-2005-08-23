@@ -1,3 +1,23 @@
+2005-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- remove init hint argument from VisiblePosition 
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::VisiblePosition):
+        (khtml::VisiblePosition::init):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::styleForSelectionStart):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:closeTyping:]):
+
 2005-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by David Harrison.

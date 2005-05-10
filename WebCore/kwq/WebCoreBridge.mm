@@ -1610,7 +1610,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // If that bug wasn't an issue, we could just make the position from the range directly.
     Position start(startContainer, [range startOffset]);
     Position end(endContainer, [range endOffset]);
-    VisiblePosition visibleStart(start, affinity, khtml::VisiblePosition::INIT_UP);
+    VisiblePosition visibleStart(start, affinity);
     start = visibleStart.deepEquivalent();
 
     if (rangeCollapsed) {

@@ -3466,7 +3466,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     if (d->m_selection.isNone())
         return 0;
     
-    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity(), khtml::VisiblePosition::INIT_UP).deepEquivalent();
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
     if (!pos.inRenderedContent())
         return 0;
     NodeImpl *node = pos.node();
