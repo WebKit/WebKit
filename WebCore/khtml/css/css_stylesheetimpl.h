@@ -43,7 +43,7 @@ class StyleSheet;
 class CSSStyleSheet;
 class MediaListImpl;
 class CSSRuleImpl;
-class CSSRuleList;
+class CSSRuleListImpl;
 class CSSStyleRuleImpl;
 class CSSValueImpl;
 class NodeImpl;
@@ -99,7 +99,7 @@ public:
     virtual DOM::DOMString type() const { return "text/css"; }
 
     CSSRuleImpl *ownerRule() const;
-    CSSRuleList cssRules();
+    CSSRuleListImpl *cssRules();
     unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index, int &exceptioncode );
     void deleteRule ( unsigned long index, int &exceptioncode );
     unsigned long addRule ( const DOMString &selector, const DOMString &style, long index, int &exceptioncode );

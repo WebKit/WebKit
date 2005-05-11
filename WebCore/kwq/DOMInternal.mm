@@ -25,11 +25,11 @@
 
 #import "DOMInternal.h"
 
-#import <dom/dom2_range.h>
-#import <dom/dom_exception.h>
-#import <dom/dom_string.h>
-#import <xml/dom_docimpl.h>
-#import <xml/dom_stringimpl.h>
+#import "css_stylesheet.h"
+#import "dom2_range.h"
+#import "dom_exception.h"
+#import "dom_string.h"
+#import "dom_docimpl.h"
 
 #import "kjs_proxy.h"
 
@@ -40,17 +40,23 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
-//#import "kjs_dom.h"
-// We can't include kjs_dom.h here because of ObjC and C++ namespace compiler craziness.
-// kjs_dom.h:169: error: statically allocated instance of Objective-C class `DOMImplementation'
-// Declaring getDOMNode directly instead.
-namespace KJS {
-    Value getDOMNode(ExecState *exec, const DOM::Node &n);
-}
-
+using DOM::CSSException;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
+using DOM::NodeImpl;
 using DOM::RangeException;
+
+using KJS::ExecState;
+using KJS::Interpreter;
+using KJS::ObjectImp;
+
+using KJS::Bindings::RootObject;
+
+// FIXME: Can't include kjs_dom.h because of name conflict (for the moment).
+// So re-declare this here.
+namespace KJS {
+  Value getDOMNode(ExecState *exec, const DOM::Node &n);
+};
 
 //------------------------------------------------------------------------------------------
 // Wrapping khtml implementation objects
@@ -86,19 +92,22 @@ void removeDOMWrapper(DOMObjectInternal *impl)
 
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
+NSString * const DOMCSSException = @"DOMCSSException";
 
 void raiseDOMException(int code)
 {
     ASSERT(code);
-    
-    NSString *name;
-    if (code >= RangeException::_EXCEPTION_OFFSET) {
+
+    NSString *name = DOMException;
+
+    if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
         name = DOMRangeException;
         code -= RangeException::_EXCEPTION_OFFSET;
+    } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
+        name = DOMCSSException;
+        code -= CSSException::_EXCEPTION_OFFSET;
     }
-    else {
-        name = DOMException;
-    }
+
     NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
     NSException *exception = [NSException exceptionWithName:name reason:reason
         userInfo:[NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:name]];
@@ -170,20 +179,19 @@ DOMString::DOMString(NSString *str)
     
     // Extract the DOM::NodeImpl from the ObjectiveC wrapper.
     DOMNode *n = (DOMNode *)self;
-    DOM::NodeImpl *nodeImpl = [n _nodeImpl];
+    NodeImpl *nodeImpl = [n _nodeImpl];
 
     // Dig up Interpreter and ExecState.
     KHTMLPart *part = nodeImpl->getDocument()->part();
-    KJS::Interpreter *interpreter = KJSProxy::proxy(part)->interpreter();
-    KJS::ExecState *exec = interpreter->globalExec();
+    Interpreter *interpreter = KJSProxy::proxy(part)->interpreter();
+    ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    KJS::ObjectImp *scriptImp = static_cast<KJS::ObjectImp *>(KJS::getDOMNode (exec, DOM::Node (nodeImpl)).imp());
+    ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, nodeImpl).imp());
 
-    const KJS::Bindings::RootObject *executionContext = KWQ(part)->bindingRootObject();
+    const RootObject *executionContext = KWQ(part)->bindingRootObject();
+
     [self _initializeWithObjectImp:scriptImp originExecutionContext:executionContext executionContext:executionContext];
 }
 
 @end
-
-

@@ -128,6 +128,7 @@ public:
     HTMLCollection();
     HTMLCollection(const HTMLCollection &other);
     HTMLCollection(NodeImpl *base, int type);
+    HTMLCollection(HTMLCollectionImpl *imp);
 
 public:
 

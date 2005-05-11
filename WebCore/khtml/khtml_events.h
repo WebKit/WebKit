@@ -21,8 +21,11 @@
 
 #include <kparts/event.h>
 
-#include "dom/dom_node.h"
 #include "dom/dom_string.h"
+
+namespace DOM {
+    class NodeImpl;
+}
 
 namespace khtml
 {
@@ -32,7 +35,7 @@ class MouseEvent : public KParts::Event
 public:
   MouseEvent( const char *name, QMouseEvent *qmouseEvent, int x, int y,
               const DOM::DOMString &url, const DOM::DOMString& target,
-              const DOM::Node &innerNode);
+              DOM::NodeImpl *innerNode);
   virtual ~MouseEvent();
 
   QMouseEvent *qmouseEvent() const { return m_qmouseEvent; }
@@ -43,7 +46,7 @@ public:
 
   DOM::DOMString url() const { return m_url; }
   DOM::DOMString target() const { return m_target; }
-  DOM::Node innerNode() const { return m_innerNode; }
+  DOM::NodeImpl *innerNode() const { return m_innerNode.get(); }
 
   // return the offset of innerNode
   long offset() const;
@@ -55,7 +58,7 @@ private:
   int m_nodeAbsX, m_nodeAbsY;
   DOM::DOMString m_url;
   DOM::DOMString m_target;
-  DOM::Node m_innerNode;
+  SharedPtr<DOM::NodeImpl> m_innerNode;
   class MouseEventPrivate;
   MouseEventPrivate *d;
 };
@@ -65,7 +68,7 @@ class MousePressEvent : public MouseEvent
 public:
   MousePressEvent( QMouseEvent *mouseEvent, int x, int y,
                    const DOM::DOMString &url, const DOM::DOMString& target,
-                   const DOM::Node &innerNode)
+                   DOM::NodeImpl *innerNode)
   : MouseEvent( s_strMousePressEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 
@@ -81,7 +84,7 @@ class MouseDoubleClickEvent : public MouseEvent
 public:
   MouseDoubleClickEvent( QMouseEvent *mouseEvent, int x, int y,
                          const DOM::DOMString &url, const DOM::DOMString& target,
-		         const DOM::Node &innerNode)
+		         DOM::NodeImpl *innerNode)
   : MouseEvent( s_strMouseDoubleClickEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 
@@ -98,7 +101,7 @@ class MouseMoveEvent : public MouseEvent
 public:
   MouseMoveEvent( QMouseEvent *mouseEvent, int x, int y,
                   const DOM::DOMString &url, const DOM::DOMString& target,
-		   const DOM::Node &innerNode)
+		   DOM::NodeImpl *innerNode)
   : MouseEvent( s_strMouseMoveEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 
@@ -113,7 +116,7 @@ class MouseReleaseEvent : public MouseEvent
 public:
   MouseReleaseEvent( QMouseEvent *mouseEvent, int x, int y,
                      const DOM::DOMString &url, const DOM::DOMString& target,
-		     const DOM::Node &innerNode, long = 0 )
+		     DOM::NodeImpl *innerNode, long = 0 )
   : MouseEvent( s_strMouseReleaseEvent, mouseEvent, x, y, url, target, innerNode )
   {}
 

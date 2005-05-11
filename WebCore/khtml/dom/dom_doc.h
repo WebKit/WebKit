@@ -802,6 +802,10 @@ public:
     bool queryCommandSupported(const DOMString &command);
     DOMString queryCommandValue(const DOMString &command);
 
+    /**
+     * @internal
+     * not part of the DOM
+     */
     Document( DocumentImpl *i);
 
 protected:
@@ -966,9 +970,9 @@ public:
      */
     DOMString internalSubset() const;
 
-protected:
     DocumentType(DocumentTypeImpl *impl);
 };
 
-}; //namespace
+} //namespace
+
 #endif

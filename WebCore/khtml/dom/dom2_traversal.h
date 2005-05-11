@@ -26,22 +26,36 @@
  */
 #ifndef _dom2_traversal_h_
 #define _dom2_traversal_h_
-#include <dom/dom_node.h>
+
 #include <dom/dom_misc.h>
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
+#include <dom/dom_node.h>
+
+#endif
 
 namespace DOM {
 
-class Node;
 class NodeImpl;
 class NodeFilterImpl;
 class NodeIteratorImpl;
 class TreeWalkerImpl;
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
+typedef const Node &FilterNode;
+
+#else
+
+typedef NodeImpl *FilterNode;
+
+#endif
+
 class NodeFilterCondition : public DomShared
 {
 public:
-    virtual short acceptNode(const Node &) const;
+    virtual short acceptNode(FilterNode) const;
 };
 
 /**
@@ -70,12 +84,17 @@ public:
 class NodeFilter
 {
 public:
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     NodeFilter();
     NodeFilter(NodeFilterCondition *);
     NodeFilter(NodeFilterImpl *);
     NodeFilter(const NodeFilter &other);
     NodeFilter &operator=(const NodeFilter &other);
     ~NodeFilter();
+
+#endif
 
     /**
      * The following constants are returned by the acceptNode()
@@ -111,6 +130,8 @@ public:
         SHOW_NOTATION                  = 0x00000800
     };
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     /**
      * Test whether a specified node is visible in the logical view of
      * a TreeWalker or NodeIterator. This function will be called by
@@ -132,7 +153,12 @@ public:
 
 private:
     NodeFilterImpl *impl;
+
+#endif
+
 };
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 /**
  * NodeIterators are used to step through a set of nodes, e.g. the set
@@ -246,9 +272,10 @@ public:
     friend class NodeIteratorImpl;
     friend class Document;
 
+    NodeIterator(NodeIteratorImpl *);
+
 private:
     NodeIterator();
-    NodeIterator(NodeIteratorImpl *);
     NodeIteratorImpl *impl;
 };
 
@@ -453,12 +480,13 @@ public:
     TreeWalkerImpl *handle() const { return impl; }
     bool isNull() const { return impl == 0; }
 
+    TreeWalker(TreeWalkerImpl *);
+
     friend class Document;
     friend class TreeWalkerImpl;
 
 private:
     TreeWalker();
-    TreeWalker(TreeWalkerImpl *);
     TreeWalkerImpl *impl;
 };
 
@@ -545,6 +573,8 @@ public:
 				  const NodeFilter &filter, bool expandEntityReferences );
 };
 */
+
+#endif
 
 } // namespace
 

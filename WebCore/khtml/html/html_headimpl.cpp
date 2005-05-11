@@ -106,6 +106,16 @@ void HTMLBaseElementImpl::process()
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }
 
+void HTMLBaseElementImpl::setHref(const DOMString &value)
+{
+    setAttribute(ATTR_HREF, value);
+}
+
+void HTMLBaseElementImpl::setTarget(const DOMString &value)
+{
+    setAttribute(ATTR_TARGET, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
@@ -321,6 +331,96 @@ bool HTMLLinkElementImpl::isURLAttribute(AttributeImpl *attr) const
     return attr->id() == ATTR_HREF;
 }
 
+bool HTMLLinkElementImpl::disabled() const
+{
+    return !getAttribute(ATTR_DISABLED).isNull();
+}
+
+void HTMLLinkElementImpl::setDisabled(bool disabled)
+{
+    setAttribute(ATTR_DISABLED, disabled ? "" : 0);
+}
+
+DOMString HTMLLinkElementImpl::charset() const
+{
+    return getAttribute(ATTR_CHARSET);
+}
+
+void HTMLLinkElementImpl::setCharset(const DOMString &value)
+{
+    setAttribute(ATTR_CHARSET, value);
+}
+
+DOMString HTMLLinkElementImpl::href() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_HREF));
+}
+
+void HTMLLinkElementImpl::setHref(const DOMString &value)
+{
+    setAttribute(ATTR_HREF, value);
+}
+
+DOMString HTMLLinkElementImpl::hreflang() const
+{
+    return getAttribute(ATTR_HREFLANG);
+}
+
+void HTMLLinkElementImpl::setHreflang(const DOMString &value)
+{
+    setAttribute(ATTR_HREFLANG, value);
+}
+
+DOMString HTMLLinkElementImpl::media() const
+{
+    return getAttribute(ATTR_MEDIA);
+}
+
+void HTMLLinkElementImpl::setMedia(const DOMString &value)
+{
+    setAttribute(ATTR_MEDIA, value);
+}
+
+DOMString HTMLLinkElementImpl::rel() const
+{
+    return getAttribute(ATTR_REL);
+}
+
+void HTMLLinkElementImpl::setRel(const DOMString &value)
+{
+    setAttribute(ATTR_REL, value);
+}
+
+DOMString HTMLLinkElementImpl::rev() const
+{
+    return getAttribute(ATTR_REV);
+}
+
+void HTMLLinkElementImpl::setRev(const DOMString &value)
+{
+    setAttribute(ATTR_REV, value);
+}
+
+DOMString HTMLLinkElementImpl::target() const
+{
+    return getAttribute(ATTR_TARGET);
+}
+
+void HTMLLinkElementImpl::setTarget(const DOMString &value)
+{
+    setAttribute(ATTR_TARGET, value);
+}
+
+DOMString HTMLLinkElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLLinkElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
@@ -369,6 +469,46 @@ void HTMLMetaElementImpl::process()
 	getDocument()->processHttpEquiv(m_equiv,m_content);
 }
 
+DOMString HTMLMetaElementImpl::content() const
+{
+    return getAttribute(ATTR_CONTENT);
+}
+
+void HTMLMetaElementImpl::setContent(const DOMString &value)
+{
+    setAttribute(ATTR_CONTENT, value);
+}
+
+DOMString HTMLMetaElementImpl::httpEquiv() const
+{
+    return getAttribute(ATTR_HTTP_EQUIV);
+}
+
+void HTMLMetaElementImpl::setHttpEquiv(const DOMString &value)
+{
+    setAttribute(ATTR_HTTP_EQUIV, value);
+}
+
+DOMString HTMLMetaElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLMetaElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLMetaElementImpl::scheme() const
+{
+    return getAttribute(ATTR_SCHEME);
+}
+
+void HTMLMetaElementImpl::setScheme(const DOMString &value)
+{
+    setAttribute(ATTR_SCHEME, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentPtr *doc)
@@ -380,6 +520,16 @@ HTMLScriptElementImpl::~HTMLScriptElementImpl()
 {
     if (m_cachedScript)
         m_cachedScript->deref(this);
+}
+
+NodeImpl::Id HTMLScriptElementImpl::id() const
+{
+    return ID_SCRIPT;
+}
+
+bool HTMLScriptElementImpl::isURLAttribute(AttributeImpl *attr) const
+{
+    return attr->id() == ATTR_SRC;
 }
 
 void HTMLScriptElementImpl::insertedIntoDocument()
@@ -412,7 +562,7 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     if (!proxy)
         return;
 
-    proxy->evaluate(doc->URL(), 0, scriptString.string(), Node());
+    proxy->evaluate(doc->URL(), 0, scriptString.string(), 0);
     DocumentImpl::updateDocumentsRendering();
 }
 
@@ -436,7 +586,7 @@ void HTMLScriptElementImpl::notifyFinished(CachedObject* o)
     if (part) {
         KJSProxy *proxy = KJSProxy::proxy(part);
         if (proxy) {
-            proxy->evaluate(cs->url().string(), 0, cs->script().string(), Node()); 
+            proxy->evaluate(cs->url().string(), 0, cs->script().string(), 0); 
             DocumentImpl::updateDocumentsRendering();
         }
     }
@@ -445,14 +595,76 @@ void HTMLScriptElementImpl::notifyFinished(CachedObject* o)
     m_cachedScript = 0;
 }
 
-NodeImpl::Id HTMLScriptElementImpl::id() const
+DOMString HTMLScriptElementImpl::text() const
 {
-    return ID_SCRIPT;
+    return getAttribute(ATTR_TEXT);
 }
 
-bool HTMLScriptElementImpl::isURLAttribute(AttributeImpl *attr) const
+void HTMLScriptElementImpl::setText(const DOMString &value)
 {
-    return attr->id() == ATTR_SRC;
+    setAttribute(ATTR_TEXT, value);
+}
+
+DOMString HTMLScriptElementImpl::htmlFor() const
+{
+    // DOM Level 1 says: reserved for future use.
+    return DOMString();
+}
+
+void HTMLScriptElementImpl::setHtmlFor(const DOMString &/*value*/)
+{
+    // DOM Level 1 says: reserved for future use.
+}
+
+DOMString HTMLScriptElementImpl::event() const
+{
+    // DOM Level 1 says: reserved for future use.
+    return DOMString();
+}
+
+void HTMLScriptElementImpl::setEvent(const DOMString &/*value*/)
+{
+    // DOM Level 1 says: reserved for future use.
+}
+
+DOMString HTMLScriptElementImpl::charset() const
+{
+    return getAttribute(ATTR_CHARSET);
+}
+
+void HTMLScriptElementImpl::setCharset(const DOMString &value)
+{
+    setAttribute(ATTR_CHARSET, value);
+}
+
+bool HTMLScriptElementImpl::defer() const
+{
+    return !getAttribute(ATTR_DEFER).isNull();
+}
+
+void HTMLScriptElementImpl::setDefer(bool defer)
+{
+    setAttribute(ATTR_DEFER, defer ? "" : 0);
+}
+
+DOMString HTMLScriptElementImpl::src() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_SRC));
+}
+
+void HTMLScriptElementImpl::setSrc(const DOMString &value)
+{
+    setAttribute(ATTR_SRC, value);
+}
+
+DOMString HTMLScriptElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLScriptElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
 }
 
 // -------------------------------------------------------------------------
@@ -551,6 +763,36 @@ void HTMLStyleElementImpl::sheetLoaded()
         getDocument()->stylesheetLoaded();
 }
 
+bool HTMLStyleElementImpl::disabled() const
+{
+    return !getAttribute(ATTR_DISABLED).isNull();
+}
+
+void HTMLStyleElementImpl::setDisabled(bool disabled)
+{
+    setAttribute(ATTR_DISABLED, disabled ? "" : 0);
+}
+
+DOMString HTMLStyleElementImpl::media() const
+{
+    return getAttribute(ATTR_MEDIA);
+}
+
+void HTMLStyleElementImpl::setMedia(const DOMString &value)
+{
+    setAttribute(ATTR_MEDIA, value);
+}
+
+DOMString HTMLStyleElementImpl::type() const
+{
+    return getAttribute(ATTR_TYPE);
+}
+
+void HTMLStyleElementImpl::setType(const DOMString &value)
+{
+    setAttribute(ATTR_TYPE, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentPtr *doc)
@@ -570,13 +812,9 @@ NodeImpl::Id HTMLTitleElementImpl::id() const
 void HTMLTitleElementImpl::insertedIntoDocument()
 {
     HTMLElementImpl::insertedIntoDocument();
-#if APPLE_CHANGES
     // Only allow title to be set by first <title> encountered.
     if (getDocument()->title().isEmpty())
         getDocument()->setTitle(m_title);
-#else
-        getDocument()->setTitle(m_title);
-#endif
 }
 
 void HTMLTitleElementImpl::removedFromDocument()
@@ -595,11 +833,21 @@ void HTMLTitleElementImpl::childrenChanged()
 	if ((c->nodeType() == Node::TEXT_NODE) || (c->nodeType() == Node::CDATA_SECTION_NODE))
 	    m_title += c->nodeValue();
     }
-#if APPLE_CHANGES
     // Only allow title to be set by first <title> encountered.
     if (inDocument() && getDocument()->title().isEmpty())
-#else
-    if (inDocument())
-#endif
 	getDocument()->setTitle(m_title);
+}
+
+DOMString HTMLTitleElementImpl::text() const
+{
+    // FIXME: Obviously wrong! There's no "text" attribute on a title element.
+    // Need to do something with the children perhaps?
+    return getAttribute(ATTR_TEXT);
+}
+
+void HTMLTitleElementImpl::setText(const DOMString &value)
+{
+    // FIXME: Obviously wrong! There's no "text" attribute on a title element.
+    // Need to do something with the children perhaps?
+    setAttribute(ATTR_TEXT, value);
 }

@@ -194,9 +194,9 @@ unsigned long CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMSt
     return insertRule(selector + " { " + style + " }", index, exceptioncode);
 }
 
-CSSRuleList CSSStyleSheetImpl::cssRules()
+CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
 {
-    return this;
+    return new CSSRuleListImpl(this);
 }
 
 void CSSStyleSheetImpl::deleteRule( unsigned long index, int &exceptioncode )

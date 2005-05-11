@@ -69,8 +69,7 @@ Attr::~Attr()
 DOMString Attr::name() const
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return impl->getDocument()->attrName(
-        static_cast<AttrImpl*>(impl)->attrImpl()->id());
+    return static_cast<AttrImpl *>(impl)->name();
 }
 
 
@@ -89,7 +88,7 @@ Element Attr::ownerElement() const
 DOMString Attr::value() const
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return impl->nodeValue();
+    return static_cast<AttrImpl *>(impl)->value();
 }
 
 void Attr::setValue( const DOMString &newValue )
@@ -148,58 +147,72 @@ DOMString Element::tagName() const
 
 DOMString Element::getAttribute( const DOMString &name )
 {
-    return getAttributeNS(DOMString(), name);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    return static_cast<ElementImpl*>(impl)->getAttribute(name);
 }
 
 void Element::setAttribute( const DOMString &name, const DOMString &value )
 {
-    setAttributeNS(DOMString(), name, value);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    static_cast<ElementImpl*>(impl)->setAttribute(name, value, exception);
+    if (exception)
+        throw DOMException(exception);
 }
 
 void Element::removeAttribute( const DOMString &name )
 {
-    removeAttributeNS(DOMString(), name);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    static_cast<ElementImpl*>(impl)->removeAttribute(name, exception);
+    if (exception)
+        throw DOMException(exception);
 }
 
 Attr Element::getAttributeNode( const DOMString &name )
 {
-    return getAttributeNodeNS(DOMString(), name);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    return static_cast<ElementImpl*>(impl)->getAttributeNode(name);
 }
 
 Attr Element::setAttributeNode( const Attr &newAttr )
 {
-    return setAttributeNodeNS(newAttr);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    Attr result = static_cast<ElementImpl*>(impl)->setAttributeNode(static_cast<AttrImpl *>(newAttr.handle()), exception).get();
+    if (exception)
+        throw DOMException(exception);
+    return result;
 }
 
 Attr Element::removeAttributeNode( const Attr &oldAttr )
 {
-    if (!impl)
-        throw DOMException(DOMException::NOT_FOUND_ERR);
-    int exceptioncode = 0;
-    Attr r = static_cast<ElementImpl*>(impl)->removeAttributeNode(static_cast<AttrImpl *>(oldAttr.handle()), exceptioncode).get();
-    if ( exceptioncode )
-        throw DOMException( exceptioncode );
-    return r;
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    Attr result = static_cast<ElementImpl*>(impl)->removeAttributeNode(static_cast<AttrImpl *>(oldAttr.handle()), exception).get();
+    if (exception)
+        throw DOMException(exception);
+    return result;
 }
 
 NodeList Element::getElementsByTagName( const DOMString &name )
 {
     if (!impl) return 0;
-    return static_cast<ElementImpl*>(impl)->getElementsByTagName(name).get();
+    return impl->getElementsByTagName(name).get();
 }
 
 NodeList Element::getElementsByTagNameNS( const DOMString &namespaceURI,
                                           const DOMString &localName )
 {
     if (!impl) return 0;
-    return static_cast<ElementImpl*>(impl)->getElementsByTagNameNS(namespaceURI, localName).get();
+    return impl->getElementsByTagNameNS(namespaceURI, localName).get();
 }
 
 DOMString Element::getAttributeNS( const DOMString &namespaceURI,
                                    const DOMString &localName)
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return static_cast<ElementImpl*>(impl)->getAttributeNS(namespaceURI, localName).domString();
+    return static_cast<ElementImpl*>(impl)->getAttributeNS(namespaceURI, localName);
 }
 
 void Element::setAttributeNS( const DOMString &namespaceURI,
@@ -207,18 +220,8 @@ void Element::setAttributeNS( const DOMString &namespaceURI,
                               const DOMString &value)
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-
-    int colonpos = qualifiedName.find(':');
-    DOMString localName = qualifiedName;
-    if (colonpos >= 0) {
-        localName.remove(0, colonpos+1);
-        // ### extract and set new prefix
-    }
-    if (!DocumentImpl::isValidName(localName)) throw DOMException(DOMException::INVALID_CHARACTER_ERR);
-    NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
-                                                    localName.implementation(), false /* allocate */);
     int exceptioncode = 0;
-    static_cast<ElementImpl*>(impl)->setAttribute(id, value.implementation(), exceptioncode);
+    static_cast<ElementImpl*>(impl)->setAttributeNS(namespaceURI, qualifiedName, value, exceptioncode);
     if (exceptioncode)
         throw DOMException(exceptioncode);
 }
@@ -227,12 +230,8 @@ void Element::removeAttributeNS( const DOMString &namespaceURI,
                                  const DOMString &localName )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
-                                                    localName.implementation(), true);
-    if (!id) return;
-
     int exceptioncode = 0;
-    ((ElementImpl *)impl)->removeAttribute(id, exceptioncode);
+    ((ElementImpl *)impl)->removeAttributeNS(namespaceURI, localName, exceptioncode);
     if ( exceptioncode )
         throw DOMException( exceptioncode );
 }
@@ -241,44 +240,30 @@ Attr Element::getAttributeNodeNS( const DOMString &namespaceURI,
                                   const DOMString &localName )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
-                                                    localName.implementation(), true);
-    if (!id) return 0;
-
-    ElementImpl* e = static_cast<ElementImpl*>(impl);
-    if (!e->attributes()) return 0; // exception ?
-
-    return e->attributes()->getNamedItem(id);
+    return static_cast<ElementImpl *>(impl)->getAttributeNodeNS(namespaceURI, localName);
 }
 
 Attr Element::setAttributeNodeNS( const Attr &newAttr )
 {
-    if (!impl)
-        throw DOMException(DOMException::NOT_FOUND_ERR);
-
-    int exceptioncode = 0;
-    Attr r = static_cast<ElementImpl*>(impl)->setAttributeNodeNS(static_cast<AttrImpl *>(newAttr.handle()), exceptioncode).get();
-    if ( exceptioncode )
-        throw DOMException( exceptioncode );
-    return r;
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    Attr result = static_cast<ElementImpl*>(impl)->setAttributeNodeNS(static_cast<AttrImpl *>(newAttr.handle()), exception).get();
+    if (exception)
+        throw DOMException(exception);
+    return result;
 }
-
 
 bool Element::hasAttribute( const DOMString& name )
 {
-    return hasAttributeNS(DOMString(), name);
+    if (!impl) return false; // ### throw ?
+    return static_cast<ElementImpl*>(impl)->hasAttribute(name);
 }
 
 bool Element::hasAttributeNS( const DOMString &namespaceURI,
                               const DOMString &localName )
 {
-    if (!impl || !static_cast<ElementImpl*>(impl)->attributes()) return false; // ### throw ?
-    NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
-                                                    localName.implementation(), true);
-    if (!id) return false;
-
-    if (!static_cast<ElementImpl*>(impl)->attributes(true /*readonly*/)) return false;
-    return static_cast<ElementImpl*>(impl)->attributes(true)->getAttributeItem(id) != 0;
+    if (!impl) return false; // ### throw ?
+    return static_cast<ElementImpl*>(impl)->hasAttributeNS(namespaceURI, localName);
 }
 
 bool Element::isHTMLElement() const
@@ -287,11 +272,9 @@ bool Element::isHTMLElement() const
     return ((ElementImpl *)impl)->isHTMLElement();
 }
 
-// FIXME: This should move down to HTMLElement.
 CSSStyleDeclaration Element::style()
 {
-    if (isHTMLElement())
-        return ((HTMLElementImpl *)impl)->getInlineStyleDecl();
+    if (impl) return ((ElementImpl *)impl)->style();
     return 0;
 }
 

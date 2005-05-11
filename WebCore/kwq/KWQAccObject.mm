@@ -887,26 +887,26 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     if (m_renderer->isCanvas()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
-            NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
-            HTMLCollection coll(m_renderer->document(), HTMLCollectionImpl::DOC_LINKS);
-            if (coll.isNull())
-                return links;
-            Node curr = coll.firstItem();
-            while (!curr.isNull()) {
-                RenderObject* obj = curr.handle()->renderer();
+            NSMutableArray *links = [NSMutableArray arrayWithCapacity: 32];
+            HTMLCollectionImpl *coll = new HTMLCollectionImpl(m_renderer->document(), HTMLCollectionImpl::DOC_LINKS);
+            coll->ref();
+            NodeImpl *curr = coll->firstItem();
+            while (curr) {
+                RenderObject *obj = curr->renderer();
                 if (obj) {
                     KWQAccObject *axobj = obj->document()->getAccObjectCache()->accObject(obj);
                     ASSERT([[axobj role] isEqualToString:@"AXLink"]);
                     if (![axobj accessibilityIsIgnored])
                         [links addObject: axobj];
                 }
-                curr = coll.nextItem();
+                curr = coll->nextItem();
             }
+            coll->deref();
             return links;
         }
-        else if ([attributeName isEqualToString: @"AXLoaded"])
+        if ([attributeName isEqualToString: @"AXLoaded"])
             return [NSNumber numberWithBool: (!m_renderer->document()->tokenizer())];
-        else if ([attributeName isEqualToString: @"AXLayoutCount"])
+        if ([attributeName isEqualToString: @"AXLayoutCount"])
             return [NSNumber numberWithInt: (static_cast<RenderCanvas*>(m_renderer)->view()->layoutCount())];
     }
     

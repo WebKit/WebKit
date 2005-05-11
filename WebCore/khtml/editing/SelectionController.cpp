@@ -55,7 +55,6 @@
 
 using DOM::DOMString;
 using DOM::ElementImpl;
-using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;

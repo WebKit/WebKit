@@ -33,7 +33,6 @@
 
 namespace DOM {
 
-
 /**
  * DOM operations only raise exceptions in &quot;exceptional&quot;
  * circumstances, i.e., when an operation is impossible to perform
@@ -57,6 +56,9 @@ namespace DOM {
 class DOMException
 {
 public:
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     DOMException(unsigned short _code) { code = _code; }
     DOMException(const DOMException &other) { code = other.code; }
 
@@ -64,6 +66,9 @@ public:
 	{ code = other.code; return *this; }
 
     virtual ~DOMException() {}
+
+#endif
+
     /**
      * An integer indicating the type of error generated.
      *
@@ -85,8 +90,15 @@ public:
         NAMESPACE_ERR = 14,
         INVALID_ACCESS_ERR = 15
     };
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     unsigned short code;
+
+#endif
+
 };
 
-}; //namespace
+} //namespace
+
 #endif

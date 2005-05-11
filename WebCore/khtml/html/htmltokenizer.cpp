@@ -63,7 +63,6 @@ using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::DocumentImpl;
 using DOM::FORBIDDEN;
-using DOM::Node;
 using DOM::emptyAtom;
 using DOM::endTagRequirement;
 
@@ -617,7 +616,7 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
         printf("beginning script execution at %d\n", parser->doc()->elapsedTime());
 #endif
 
-    view->part()->executeScript(url,baseLine,Node(),str);
+    view->part()->executeScript(url,baseLine,0,str);
 
     allowYield = true;
 

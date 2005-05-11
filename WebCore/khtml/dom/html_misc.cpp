@@ -107,6 +107,13 @@ HTMLCollection::HTMLCollection(NodeImpl *base, int type)
     impl->ref();
 }
 
+HTMLCollection::HTMLCollection(HTMLCollectionImpl *other)
+{
+    impl = other;
+    if (other)
+        impl->ref();
+}
+
 HTMLCollection &HTMLCollection::operator = (const HTMLCollection &other)
 {
     if(impl != other.impl) {
@@ -145,7 +152,7 @@ Node HTMLCollection::base() const
     if ( !impl )
         return 0;
 
-    return static_cast<HTMLCollectionImpl*>( impl )->base;
+    return static_cast<HTMLCollectionImpl*>( impl )->base();
 }
 
 Node HTMLCollection::firstItem() const
@@ -174,7 +181,15 @@ QValueList<Node> HTMLCollection::namedItems( const DOMString & name ) const
     if ( !impl )
         return QValueList<Node>();
 
-    return static_cast<HTMLCollectionImpl*>( impl )->namedItems( name );
+    QValueList< SharedPtr<NodeImpl> > list = static_cast<HTMLCollectionImpl*>( impl )->namedItems( name );
+
+    QValueList<Node> copiedList;
+
+    QValueListConstIterator< SharedPtr<NodeImpl> > end = list.end();
+    for (QValueListConstIterator< SharedPtr<NodeImpl> > it = list.begin(); it != end; ++it)
+        copiedList.append((*it).get());
+
+    return copiedList;
 }
 
 

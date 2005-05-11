@@ -151,7 +151,7 @@ public:
 	underMouse = 0;
         linkPressed = false;
         useSlowRepaints = false;
-        dragTarget = 0;
+        dragTarget.reset();
 	borderTouched = false;
 #if !APPLE_CHANGES
 #ifndef KHTML_NO_SCROLLBARS
@@ -245,7 +245,7 @@ public:
     // after all layout has been completed.
     QPtrList<RenderObject::RepaintInfo>* repaintRects;
     
-    Node dragTarget;
+    SharedPtr<NodeImpl> dragTarget;
 };
 
 #ifndef QT_NO_TOOLTIP
@@ -808,7 +808,9 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
             d->mousePressed = false;
         }
 #endif        
+#if !KHTML_NO_CPLUSPLUS_DOM
 	emit m_part->nodeActivated(mev.innerNode.get());
+#endif
     }
 }
 
@@ -857,11 +859,11 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     // single and double-click events as separate (only the detail, i.e. number of clicks differs)
     // In other words an even detail value for a mouse click event means a double click, and an
     // odd detail value means a single click
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.handle(),true,
+    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.get(),true,
                                            d->clickCount,_mouse,true,DOM::NodeImpl::MouseDblClick);
 
     if (!swallowEvent) {
-	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
 	QApplication::sendEvent( m_part, &event );
 
 	// ###
@@ -1208,7 +1210,7 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
     DOM::NodeImpl::MouseEvent mev( _ce->state(), DOM::NodeImpl::MouseMove ); // ### not a mouse event!
     m_part->xmlDocImpl()->prepareMouseEvent( xm, ym, &mev );
 
-    NodeImpl *targetNode = mev.innerNode.handle();
+    NodeImpl *targetNode = mev.innerNode.get();
     if (targetNode && targetNode->renderer() && targetNode->renderer()->isWidget()) {
         int absx = 0;
         int absy = 0;
@@ -1262,25 +1264,25 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     viewportToContents(loc.x(), loc.y(), xm, ym);
     DOM::NodeImpl::MouseEvent mev(0, DOM::NodeImpl::MouseMove);
     m_part->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
-    DOM::Node newTarget = mev.innerNode.get();
+    NodeImpl *newTarget = mev.innerNode.get();
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
-    if (newTarget.nodeType() == Node::TEXT_NODE) {
-        newTarget = newTarget.parentNode();
+    if (newTarget->isTextNode()) {
+        newTarget = newTarget->parentNode();
     }
 
     if (d->dragTarget != newTarget) {
         // note this ordering is explicitly chosen to match WinIE
-        if (!newTarget.isNull()) {
-            accept = dispatchDragEvent(EventImpl::DRAGENTER_EVENT, newTarget.handle(), loc, clipboard);
+        if (newTarget) {
+            accept = dispatchDragEvent(EventImpl::DRAGENTER_EVENT, newTarget, loc, clipboard);
         }
         if (!d->dragTarget.isNull()) {
-            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
+            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.get(), loc, clipboard);
         }
-    } else if (!newTarget.isNull()) {
-        accept = dispatchDragEvent(EventImpl::DRAGOVER_EVENT, newTarget.handle(), loc, clipboard);
+    } else if (newTarget) {
+        accept = dispatchDragEvent(EventImpl::DRAGOVER_EVENT, newTarget, loc, clipboard);
     }
-    d->dragTarget = newTarget;
+    d->dragTarget.reset(newTarget);
 
     return accept;
 }
@@ -1288,18 +1290,18 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
 void KHTMLView::cancelDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
 {
     if (!d->dragTarget.isNull()) {
-        dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
+        dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.get(), loc, clipboard);
     }
-    d->dragTarget = 0;
+    d->dragTarget.reset();
 }
 
 bool KHTMLView::performDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
 {
     bool accept = false;
     if (!d->dragTarget.isNull()) {
-        accept = dispatchDragEvent(EventImpl::DROP_EVENT, d->dragTarget.handle(), loc, clipboard);
+        accept = dispatchDragEvent(EventImpl::DROP_EVENT, d->dragTarget.get(), loc, clipboard);
     }
-    d->dragTarget = 0;
+    d->dragTarget.reset();
     return accept;
 }
 
@@ -1499,7 +1501,9 @@ void KHTMLView::focusNextPrevNode(bool next)
     }
     // Set focus node on the document
     m_part->xmlDocImpl()->setFocusNode(newFocusNode);
-    emit m_part->nodeActivated(Node(newFocusNode));
+#if !KHTML_NO_CPLUSPLUS_DOM
+    emit m_part->nodeActivated(newFocusNode);
+#endif
 
 #if 0
     if (newFocusNode) {

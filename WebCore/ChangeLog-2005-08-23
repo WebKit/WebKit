@@ -1,3 +1,432 @@
+2005-05-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        - next pass of moving code from C++ DOM wrappers into the DOM impl. classes
+          (this step adds still more member functions missing from the DOM impl. and
+           changes some of the C++ and Objective-C DOM to call the new ones; also
+           changes various places that use the C++ DOM to use the DOM impl. instead)
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_computedstyle.h:
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::cssRules):
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (DOM::CSSStyleDeclarationImpl::getPropertyValue):
+        (DOM::CSSStyleDeclarationImpl::getPropertyPriority):
+        (DOM::CSSStyleDeclarationImpl::setProperty):
+        (DOM::CSSStyleDeclarationImpl::removeProperty):
+        (DOM::CSSMutableStyleDeclarationImpl::getPropertyValue):
+        (DOM::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (DOM::operator==):
+        (DOM::CSSStyleDeclarationImpl::propertyID):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSValueImpl::setCssText):
+        (DOM::CSSPrimitiveValueImpl::getDashboardRegionValue):
+        * khtml/dom/css_rule.cpp:
+        * khtml/dom/css_rule.h:
+        * khtml/dom/css_stylesheet.h:
+        (DOM::CSSException::):
+        * khtml/dom/css_value.cpp:
+        (DOM::CSSStyleDeclaration::getPropertyValue):
+        (DOM::CSSStyleDeclaration::getPropertyCSSValue):
+        (DOM::CSSStyleDeclaration::removeProperty):
+        (DOM::CSSStyleDeclaration::getPropertyPriority):
+        (DOM::CSSStyleDeclaration::setProperty):
+        * khtml/dom/css_value.h:
+        * khtml/dom/dom2_events.cpp:
+        (EventListener::handleEvent):
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_traversal.h:
+        * khtml/dom/dom_doc.cpp:
+        (DOM::DOMImplementation::createHTMLDocument):
+        (DOM::DOMImplementation::createCSSStyleSheet):
+        (DOM::Document::doctype):
+        (DOM::Document::createAttribute):
+        (DOM::Document::createAttributeNS):
+        (DOM::Document::queryCommandValue):
+        (DOM::Document::handle):
+        * khtml/dom/dom_doc.h:
+        * khtml/dom/dom_element.cpp:
+        (Attr::name):
+        (Attr::value):
+        (Element::getAttribute):
+        (Element::setAttribute):
+        (Element::removeAttribute):
+        (Element::getAttributeNode):
+        (Element::setAttributeNode):
+        (Element::removeAttributeNode):
+        (Element::getElementsByTagName):
+        (Element::getElementsByTagNameNS):
+        (Element::getAttributeNS):
+        (Element::setAttributeNS):
+        (Element::removeAttributeNS):
+        (Element::getAttributeNodeNS):
+        (Element::setAttributeNodeNS):
+        (Element::hasAttribute):
+        (Element::hasAttributeNS):
+        (Element::style):
+        * khtml/dom/dom_exception.h:
+        * khtml/dom/dom_misc.cpp:
+        (DOM::DomShared::deleteMe):
+        * khtml/dom/dom_misc.h:
+        (DOM::DomShared::deleteMe):
+        * khtml/dom/dom_node.cpp:
+        (NamedNodeMap::getNamedItemNS):
+        (NamedNodeMap::setNamedItemNS):
+        (NamedNodeMap::removeNamedItemNS):
+        (Node::ownerDocument):
+        (Node::hasAttributes):
+        (Node::isSupported):
+        (Node::addEventListener):
+        (Node::removeEventListener):
+        * khtml/dom/dom_node.h:
+        * khtml/dom/html_document.cpp:
+        (HTMLDocument::setTitle):
+        (HTMLDocument::completeURL):
+        (HTMLDocument::getElementsByName):
+        * khtml/dom/html_element.cpp:
+        (HTMLElement::setInnerHTML):
+        (HTMLElement::setInnerText):
+        (HTMLElement::setOuterHTML):
+        (HTMLElement::setOuterText):
+        * khtml/dom/html_form.cpp:
+        (HTMLLabelElement::form):
+        (HTMLSelectElement::setValue):
+        (HTMLSelectElement::options):
+        (HTMLOptionElement::setValue):
+        * khtml/dom/html_inline.cpp:
+        (HTMLAnchorElement::accessKey):
+        (HTMLAnchorElement::setAccessKey):
+        (HTMLAnchorElement::charset):
+        (HTMLAnchorElement::setCharset):
+        (HTMLAnchorElement::coords):
+        (HTMLAnchorElement::setCoords):
+        (HTMLAnchorElement::href):
+        (HTMLAnchorElement::setHref):
+        (HTMLAnchorElement::hreflang):
+        (HTMLAnchorElement::setHreflang):
+        (HTMLAnchorElement::name):
+        (HTMLAnchorElement::setName):
+        (HTMLAnchorElement::rel):
+        (HTMLAnchorElement::setRel):
+        (HTMLAnchorElement::rev):
+        (HTMLAnchorElement::setRev):
+        (HTMLAnchorElement::shape):
+        (HTMLAnchorElement::setShape):
+        (HTMLAnchorElement::tabIndex):
+        (HTMLAnchorElement::setTabIndex):
+        (HTMLAnchorElement::target):
+        (HTMLAnchorElement::setTarget):
+        (HTMLAnchorElement::type):
+        (HTMLAnchorElement::setType):
+        (HTMLAnchorElement::blur):
+        (HTMLAnchorElement::focus):
+        (HTMLBRElement::clear):
+        (HTMLBRElement::setClear):
+        (HTMLFontElement::color):
+        (HTMLFontElement::setColor):
+        (HTMLFontElement::face):
+        (HTMLFontElement::setFace):
+        (HTMLFontElement::size):
+        (HTMLFontElement::setSize):
+        (HTMLModElement::cite):
+        (HTMLModElement::setCite):
+        (HTMLModElement::dateTime):
+        (HTMLModElement::setDateTime):
+        (HTMLQuoteElement::cite):
+        (HTMLQuoteElement::setCite):
+        * khtml/dom/html_misc.cpp:
+        (HTMLCollection::HTMLCollection):
+        (HTMLCollection::base):
+        (HTMLCollection::namedItems):
+        * khtml/dom/html_misc.h:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/selection.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::determineParseMode):
+        (DOM::HTMLDocumentImpl::doctype):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setInnerHTML):
+        (HTMLElementImpl::setOuterHTML):
+        (HTMLElementImpl::setInnerText):
+        (HTMLElementImpl::setOuterText):
+        (HTMLElementImpl::style):
+        (HTMLElementImpl::idDOM):
+        (HTMLElementImpl::setId):
+        (HTMLElementImpl::title):
+        (HTMLElementImpl::setTitle):
+        (HTMLElementImpl::lang):
+        (HTMLElementImpl::setLang):
+        (HTMLElementImpl::dir):
+        (HTMLElementImpl::setDir):
+        (HTMLElementImpl::className):
+        (HTMLElementImpl::setClassName):
+        (HTMLElementImpl::children):
+        (HTMLGenericElementImpl::HTMLGenericElementImpl):
+        (HTMLGenericElementImpl::id):
+        * khtml/html/html_elementimpl.h:
+        (DOM::HTMLElementImpl::isGenericFormElement):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseEnctype):
+        (DOM::HTMLFormElementImpl::parseHTMLAttribute):
+        (DOM::HTMLFormElementImpl::elements):
+        (DOM::HTMLFormElementImpl::name):
+        (DOM::HTMLFormElementImpl::setName):
+        (DOM::HTMLFormElementImpl::acceptCharset):
+        (DOM::HTMLFormElementImpl::setAcceptCharset):
+        (DOM::HTMLFormElementImpl::action):
+        (DOM::HTMLFormElementImpl::setAction):
+        (DOM::HTMLFormElementImpl::setEnctype):
+        (DOM::HTMLFormElementImpl::method):
+        (DOM::HTMLFormElementImpl::setMethod):
+        (DOM::HTMLFormElementImpl::target):
+        (DOM::HTMLFormElementImpl::setTarget):
+        (DOM::HTMLGenericFormElementImpl::HTMLGenericFormElementImpl):
+        (DOM::HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl):
+        (DOM::HTMLGenericFormElementImpl::parseHTMLAttribute):
+        (DOM::HTMLGenericFormElementImpl::name):
+        (DOM::HTMLGenericFormElementImpl::setName):
+        (DOM::HTMLGenericFormElementImpl::setOverrideName):
+        (DOM::HTMLGenericFormElementImpl::setDisabled):
+        (DOM::HTMLGenericFormElementImpl::setReadOnly):
+        (DOM::HTMLGenericFormElementImpl::tabIndex):
+        (DOM::HTMLGenericFormElementImpl::setTabIndex):
+        (DOM::HTMLButtonElementImpl::accessKey):
+        (DOM::HTMLButtonElementImpl::setAccessKey):
+        (DOM::HTMLButtonElementImpl::value):
+        (DOM::HTMLButtonElementImpl::setValue):
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl):
+        (DOM::HTMLInputElementImpl::parseHTMLAttribute):
+        (DOM::HTMLInputElementImpl::defaultValue):
+        (DOM::HTMLInputElementImpl::setDefaultValue):
+        (DOM::HTMLInputElementImpl::defaultChecked):
+        (DOM::HTMLInputElementImpl::setDefaultChecked):
+        (DOM::HTMLInputElementImpl::accept):
+        (DOM::HTMLInputElementImpl::setAccept):
+        (DOM::HTMLInputElementImpl::accessKey):
+        (DOM::HTMLInputElementImpl::setAccessKey):
+        (DOM::HTMLInputElementImpl::align):
+        (DOM::HTMLInputElementImpl::setAlign):
+        (DOM::HTMLInputElementImpl::alt):
+        (DOM::HTMLInputElementImpl::setAlt):
+        (DOM::HTMLInputElementImpl::setMaxLength):
+        (DOM::HTMLInputElementImpl::sizeDOM):
+        (DOM::HTMLInputElementImpl::setSize):
+        (DOM::HTMLInputElementImpl::src):
+        (DOM::HTMLInputElementImpl::setSrc):
+        (DOM::HTMLInputElementImpl::useMap):
+        (DOM::HTMLInputElementImpl::setUseMap):
+        (DOM::HTMLLabelElementImpl::form):
+        (DOM::HTMLLabelElementImpl::accessKey):
+        (DOM::HTMLLabelElementImpl::setAccessKey):
+        (DOM::HTMLLabelElementImpl::htmlFor):
+        (DOM::HTMLLabelElementImpl::setHtmlFor):
+        (DOM::HTMLLegendElementImpl::accessKey):
+        (DOM::HTMLLegendElementImpl::setAccessKey):
+        (DOM::HTMLLegendElementImpl::align):
+        (DOM::HTMLLegendElementImpl::setAlign):
+        (DOM::HTMLSelectElementImpl::setValue):
+        (DOM::HTMLSelectElementImpl::optionsHTMLCollection):
+        (DOM::HTMLSelectElementImpl::setMultiple):
+        (DOM::HTMLSelectElementImpl::setSize):
+        (DOM::HTMLOptGroupElementImpl::label):
+        (DOM::HTMLOptGroupElementImpl::setLabel):
+        (DOM::HTMLOptionElementImpl::setText):
+        (DOM::HTMLOptionElementImpl::setIndex):
+        (DOM::HTMLOptionElementImpl::setValue):
+        (DOM::HTMLOptionElementImpl::defaultSelected):
+        (DOM::HTMLOptionElementImpl::setDefaultSelected):
+        (DOM::HTMLOptionElementImpl::label):
+        (DOM::HTMLOptionElementImpl::setLabel):
+        (DOM::HTMLTextAreaElementImpl::accessKey):
+        (DOM::HTMLTextAreaElementImpl::setAccessKey):
+        (DOM::HTMLTextAreaElementImpl::setCols):
+        (DOM::HTMLTextAreaElementImpl::setRows):
+        (DOM::HTMLIsIndexElementImpl::HTMLIsIndexElementImpl):
+        (DOM::HTMLIsIndexElementImpl::parseHTMLAttribute):
+        (DOM::HTMLIsIndexElementImpl::prompt):
+        (DOM::HTMLIsIndexElementImpl::setPrompt):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::setHref):
+        (HTMLBaseElementImpl::setTarget):
+        (HTMLLinkElementImpl::disabled):
+        (HTMLLinkElementImpl::setDisabled):
+        (HTMLLinkElementImpl::charset):
+        (HTMLLinkElementImpl::setCharset):
+        (HTMLLinkElementImpl::href):
+        (HTMLLinkElementImpl::setHref):
+        (HTMLLinkElementImpl::hreflang):
+        (HTMLLinkElementImpl::setHreflang):
+        (HTMLLinkElementImpl::media):
+        (HTMLLinkElementImpl::setMedia):
+        (HTMLLinkElementImpl::rel):
+        (HTMLLinkElementImpl::setRel):
+        (HTMLLinkElementImpl::rev):
+        (HTMLLinkElementImpl::setRev):
+        (HTMLLinkElementImpl::target):
+        (HTMLLinkElementImpl::setTarget):
+        (HTMLLinkElementImpl::type):
+        (HTMLLinkElementImpl::setType):
+        (HTMLMetaElementImpl::content):
+        (HTMLMetaElementImpl::setContent):
+        (HTMLMetaElementImpl::httpEquiv):
+        (HTMLMetaElementImpl::setHttpEquiv):
+        (HTMLMetaElementImpl::name):
+        (HTMLMetaElementImpl::setName):
+        (HTMLMetaElementImpl::scheme):
+        (HTMLMetaElementImpl::setScheme):
+        (HTMLScriptElementImpl::id):
+        (HTMLScriptElementImpl::isURLAttribute):
+        (HTMLScriptElementImpl::insertedIntoDocument):
+        (HTMLScriptElementImpl::notifyFinished):
+        (HTMLScriptElementImpl::text):
+        (HTMLScriptElementImpl::setText):
+        (HTMLScriptElementImpl::htmlFor):
+        (HTMLScriptElementImpl::setHtmlFor):
+        (HTMLScriptElementImpl::event):
+        (HTMLScriptElementImpl::setEvent):
+        (HTMLScriptElementImpl::charset):
+        (HTMLScriptElementImpl::setCharset):
+        (HTMLScriptElementImpl::defer):
+        (HTMLScriptElementImpl::setDefer):
+        (HTMLScriptElementImpl::src):
+        (HTMLScriptElementImpl::setSrc):
+        (HTMLScriptElementImpl::type):
+        (HTMLScriptElementImpl::setType):
+        (HTMLStyleElementImpl::disabled):
+        (HTMLStyleElementImpl::setDisabled):
+        (HTMLStyleElementImpl::media):
+        (HTMLStyleElementImpl::setMedia):
+        (HTMLStyleElementImpl::type):
+        (HTMLStyleElementImpl::setType):
+        (HTMLTitleElementImpl::insertedIntoDocument):
+        (HTMLTitleElementImpl::childrenChanged):
+        (HTMLTitleElementImpl::text):
+        (HTMLTitleElementImpl::setText):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLBaseFontElementImpl::id):
+        (DOM::HTMLBaseFontElementImpl::color):
+        (DOM::HTMLBaseFontElementImpl::setColor):
+        (DOM::HTMLBaseFontElementImpl::face):
+        (DOM::HTMLBaseFontElementImpl::setFace):
+        (DOM::HTMLBaseFontElementImpl::size):
+        (DOM::HTMLBaseFontElementImpl::setSize):
+        (DOM::HTMLCollectionImpl::HTMLCollectionImpl):
+        (DOM::HTMLCollectionImpl::~HTMLCollectionImpl):
+        (DOM::HTMLCollectionImpl::resetCollectionInfo):
+        (DOM::HTMLCollectionImpl::traverseNextItem):
+        (DOM::HTMLCollectionImpl::calcLength):
+        (DOM::HTMLCollectionImpl::item):
+        (DOM::HTMLCollectionImpl::namedItem):
+        (DOM::HTMLCollectionImpl::updateNameCache):
+        (DOM::HTMLCollectionImpl::namedItems):
+        (DOM::HTMLCollectionImpl::nextNamedItem):
+        (DOM::HTMLFormCollectionImpl::HTMLFormCollectionImpl):
+        (DOM::HTMLFormCollectionImpl::calcLength):
+        (DOM::HTMLFormCollectionImpl::item):
+        (DOM::HTMLFormCollectionImpl::getNamedFormItem):
+        (DOM::HTMLFormCollectionImpl::nextNamedItemInternal):
+        (DOM::HTMLFormCollectionImpl::namedItem):
+        (DOM::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::base):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptExecution):
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::MouseEvent):
+        (khtml::MouseEvent::offset):
+        * khtml/khtml_events.h:
+        (khtml::MouseEvent::innerNode):
+        (khtml::MousePressEvent::MousePressEvent):
+        (khtml::MouseDoubleClickEvent::MouseDoubleClickEvent):
+        (khtml::MouseMoveEvent::MouseMoveEvent):
+        (khtml::MouseReleaseEvent::MouseReleaseEvent):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL):
+        (KHTMLPart::executeScript):
+        (KHTMLPart::scheduleScript):
+        (KHTMLPart::executeScheduledScript):
+        (KHTMLPart::clear):
+        (KHTMLPart::selectClosestWordFromMouseEvent):
+        (KHTMLPart::handleMousePressEventDoubleClick):
+        (KHTMLPart::handleMousePressEventTripleClick):
+        (KHTMLPart::handleMousePressEventSingleClick):
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::handleMouseMoveEventDrag):
+        (KHTMLPart::handleMouseMoveEventOver):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        (KHTMLPart::selectionHasStyle):
+        (KHTMLPart::selectionStartHasStyle):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::contentsContextMenuEvent):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::cancelDragAndDrop):
+        (KHTMLView::performDragAndDrop):
+        (KHTMLView::focusNextPrevNode):
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleSheet cssRules]):
+        (-[DOMCSSStyleDeclaration getPropertyValue:]):
+        (-[DOMCSSStyleDeclaration getPropertyCSSValue:]):
+        (-[DOMCSSStyleDeclaration removeProperty:]):
+        (-[DOMCSSStyleDeclaration getPropertyPriority:]):
+        (-[DOMCSSStyleDeclaration setProperty:::]):
+        (-[DOMCSSValue setCssText:]):
+        * kwq/DOMCSS.h:
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLElement setInnerHTML:]):
+        (-[DOMHTMLElement setOuterHTML:]):
+        (-[DOMHTMLElement setInnerText:]):
+        (-[DOMHTMLElement setOuterText:]):
+        (-[DOMHTMLSelectElement setLength:]):
+        (-[DOMHTMLTableSectionElement insertRow:]):
+        * kwq/DOMInternal.h:
+        * kwq/DOMInternal.mm:
+        (raiseDOMException):
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * kwq/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::scrollOverflow):
+        (KWQKHTMLPart::paint):
+        (KWQKHTMLPart::openURLFromPageCache):
+        (KWQKHTMLPart::khtmlMousePressEvent):
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        (KWQKHTMLPart::dispatchDragSrcEvent):
+        (KWQKHTMLPart::eventMayStartDrag):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::dragSourceEndedAt):
+        (KWQKHTMLPart::mouseDown):
+        (KWQKHTMLPart::sendContextMenuEvent):
+        (listParent):
+        (isTextFirstInListItem):
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::snapshotDragImage):
+        (KWQKHTMLPart::mousePressNode):
+        * kwq/WebCoreBridge.mm:
+        (updateRenderingForBindings):
+        (-[WebCoreBridge _documentTypeString]):
+
 2005-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

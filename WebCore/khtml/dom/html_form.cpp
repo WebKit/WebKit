@@ -592,10 +592,7 @@ HTMLLabelElement::~HTMLLabelElement()
 HTMLFormElement HTMLLabelElement::form() const
 {
     if(!impl) return 0;
-    ElementImpl *formElement = ((HTMLLabelElementImpl *)impl)->formElement();
-    if (!formElement)
-	return 0;
-    return ((HTMLGenericFormElementImpl *)formElement)->form();
+    return static_cast<HTMLLabelElementImpl*>(impl)->form();
 }
 
 DOMString HTMLLabelElement::accessKey() const
@@ -787,8 +784,8 @@ DOMString HTMLSelectElement::value() const
 
 void HTMLSelectElement::setValue( const DOMString &value )
 {
-    if(!impl || value.isNull()) return;
-    static_cast<HTMLSelectElementImpl*>(impl)->setValue(value.implementation());
+    if(!impl) return;
+    static_cast<HTMLSelectElementImpl*>(impl)->setValue(value);
 }
 
 long HTMLSelectElement::length() const
@@ -806,7 +803,7 @@ HTMLFormElement HTMLSelectElement::form() const
 HTMLCollection HTMLSelectElement::options() const
 {
     if(!impl) return HTMLCollection();
-    return HTMLCollection(impl, HTMLCollectionImpl::SELECT_OPTIONS);
+    return HTMLCollection(static_cast<HTMLSelectElementImpl *>(impl)->optionsHTMLCollection().get());
 }
 
 bool HTMLSelectElement::disabled() const
@@ -1166,7 +1163,7 @@ DOMString HTMLOptionElement::value() const
 
 void HTMLOptionElement::setValue( const DOMString &value )
 {
-    if(impl) static_cast<HTMLOptionElementImpl*>(impl)->setValue(value.implementation());
+    if(impl) static_cast<HTMLOptionElementImpl*>(impl)->setValue(value);
 }
 
 // -----------------------------------------------------------------------------

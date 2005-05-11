@@ -23,8 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "kjs_binding.h"
 #import "kjs_dom.h"
+#import "dom_nodeimpl.h"
+
 #import "DOM.h"
 #import "DOMInternal.h"
 
@@ -40,17 +41,12 @@ inline id createObjCDOMNode(DOM::NodeImpl *node)
 
 namespace KJS {
 
-void *ScriptInterpreter::createObjcInstanceForValue (ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     if (value.inherits(&DOMNode::info)) {
 	DOMNode *imp = static_cast<DOMNode *>(value.imp());
-	DOM::Node node = imp->toNode();
-
-	id newObjcNode = createObjCDOMNode(node.handle());
-	ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, node).imp());
-
-	[newObjcNode _initializeWithObjectImp:scriptImp originExecutionContext:origin executionContext:current];
-	
+	id newObjcNode = createObjCDOMNode(imp->toNode().handle());
+	[newObjcNode _initializeWithObjectImp:imp originExecutionContext:origin executionContext:current];	
 	return newObjcNode;
     }
     return 0;

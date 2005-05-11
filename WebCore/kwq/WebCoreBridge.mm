@@ -103,7 +103,6 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
-using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
@@ -191,7 +190,7 @@ static void updateRenderingForBindings (ExecState *exec, ObjectImp *rootObject)
     if (!window)
         return;
         
-    DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->part()->document().handle());
+    DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->part()->xmlDocImpl());
     if (doc)
         doc->updateRendering();
 }
@@ -554,7 +553,7 @@ static bool initializedKJS = FALSE;
     NSString *documentTypeString = nil;
     DOM::DocumentImpl *doc = _part->xmlDocImpl();
     if (doc) {
-        DocumentTypeImpl *doctype = doc->doctype();
+        DocumentTypeImpl *doctype = doc->realDocType();
         if (doctype) {
             documentTypeString = doctype->toString().string().getNSString();
         }

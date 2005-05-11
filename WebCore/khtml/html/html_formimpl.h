@@ -73,13 +73,14 @@ public:
     virtual void attach();
     virtual void detach();
 
+    SharedPtr<HTMLCollectionImpl> elements();
     long length() const;
 
     DOMString enctype() const { return m_enctype; }
-    void setEnctype( const DOMString & );
+    void setEnctype(const DOMString &);
 
     DOMString boundary() const { return m_boundary; }
-    void setBoundary( const DOMString & );
+    void setBoundary(const DOMString &);
 
     bool autoComplete() const { return m_autocomplete; }
 
@@ -94,7 +95,7 @@ public:
     void removeImgElement(HTMLImageElementImpl *);
 
     bool prepareSubmit();
-    void submit(bool activateSubmitButton);
+    void submit(bool activateSubmitButton = false);
     void reset();
 
     void setMalformed(bool malformed) { m_malformed = malformed; }
@@ -102,11 +103,24 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
     
-#if APPLE_CHANGES
     void submitClick();
     bool formWouldHaveSecureSubmission(const DOMString &url);
-#endif
-   
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    DOMString acceptCharset() const;
+    void setAcceptCharset(const DOMString &);
+
+    DOMString action() const;
+    void setAction(const DOMString &);
+
+    DOMString method() const;
+    void setMethod(const DOMString &);
+
+    DOMString target() const;
+    void setTarget(const DOMString &);
+
     static void i18nData();
 
     friend class HTMLFormElement;
@@ -131,6 +145,7 @@ public:
     bool m_malformed : 1;
 
  private:
+    void parseEnctype(const DOMString &);
     bool formData(khtml::FormData &) const;
 
     QString oldIdAttr;
@@ -162,7 +177,7 @@ public:
     void onSelect();
     void onChange();
 
-    virtual bool disabled() const;
+    bool disabled() const;
     void setDisabled(bool _disabled);
 
     virtual bool isFocusable() const;
@@ -171,12 +186,14 @@ public:
     virtual bool isEnumeratable() const { return false; }
 
     bool readOnly() const { return m_readOnly; }
-    void setReadOnly(bool _readOnly) { m_readOnly = _readOnly; }
+    void setReadOnly(bool _readOnly);
 
     virtual void recalcStyle( StyleChange );
 
     DOMString name() const;
     void setName(const DOMString& name);
+
+    void setOverrideName(const DOMString& name);
 
     virtual bool isGenericFormElement() const { return true; }
 
@@ -197,10 +214,13 @@ public:
     virtual bool isActivatedSubmit() const { return false; }
     virtual void setActivatedSubmit(bool flag) { }
 
+    long tabIndex() const;
+    void setTabIndex(long);
+
 protected:
     HTMLFormElementImpl *getForm() const;
 
-    DOMStringImpl* m_name;
+    DOMString m_overrideName;
     HTMLFormElementImpl *m_form;
     bool m_disabled, m_readOnly;
 
@@ -236,6 +256,13 @@ public:
 
     virtual void click(bool sendMouseEvents);
     virtual void accessKeyAction(bool sendToAnyElement);
+
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    DOMString value() const;
+    void setValue(const DOMString &);
+
     void blur();
     void focus();
     
@@ -332,7 +359,7 @@ public:
 
     void select();
     
-    virtual void click(bool sendMouseEvents);
+    virtual void click(bool sendMouseEvents = false);
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
@@ -362,10 +389,37 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
-#if APPLE_CHANGES
     long maxResults() const { return m_maxResults; }
-#endif
+
+    DOMString defaultValue() const;
+    void setDefaultValue(const DOMString &);
     
+    bool defaultChecked() const;
+    void setDefaultChecked(bool);
+
+    DOMString accept() const;
+    void setAccept(const DOMString &);
+
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    DOMString align() const;
+    void setAlign(const DOMString &);
+
+    DOMString alt() const;
+    void setAlt(const DOMString &);
+
+    DOMString sizeDOM() const; // FIXME: rename to size after renaming existing size attribute
+    void setSize(const DOMString &);
+
+    DOMString src() const;
+    void setSrc(const DOMString &);
+
+    void setMaxLength(long);
+
+    DOMString useMap() const;
+    void setUseMap(const DOMString &);
+
 protected:
     bool storesValueSeparateFromAttribute() const;
 
@@ -375,9 +429,7 @@ protected:
     short     m_size;
     short     yPos;
 
-#if APPLE_CHANGES
     short     m_maxResults;
-#endif
 
     HTMLImageLoader* m_imageLoader;
 
@@ -412,6 +464,14 @@ public:
      */
     ElementImpl *formElement();
 
+    HTMLFormElementImpl *form();
+
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    DOMString htmlFor() const;
+    void setHtmlFor(const DOMString &);
+
  private:
     DOMString m_formElementID;
 };
@@ -430,6 +490,12 @@ public:
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     virtual DOMString type() const;
+
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    DOMString align() const;
+    void setAlign(const DOMString &);
 };
 
 // -------------------------------------------------------------------------
@@ -466,9 +532,10 @@ public:
     void focus();
 
     DOMString value();
-    void setValue(DOMStringImpl* value);
+    void setValue(const DOMString &);
     
     HTMLOptionsCollectionImpl *options();
+    SharedPtr<HTMLCollectionImpl> optionsHTMLCollection(); // FIXME: Remove this and migrate to options().
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
@@ -502,11 +569,12 @@ public:
     virtual void reset();
     void notifyOptionSelected(HTMLOptionElementImpl *selectedOption, bool selected);
 
-#if APPLE_CHANGES
     virtual void defaultEventHandler(EventImpl *evt);
-#endif
-
     virtual void accessKeyAction(bool sendToAnyElement);
+
+    void setMultiple(bool);
+
+    void setSize(long);
 
 private:
     void recalcListItems();
@@ -562,6 +630,8 @@ public:
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     void recalcSelectOptions();
 
+    DOMString label() const;
+    void setLabel(const DOMString &);
 };
 
 
@@ -581,12 +651,13 @@ public:
     DOMString type() const;
 
     DOMString text() const;
+    void setText(const DOMString &, int &exception);
 
     long index() const;
-    void setIndex( long );
+    void setIndex(long, int &exception);
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     DOMString value() const;
-    void setValue(DOMStringImpl* value);
+    void setValue(const DOMString &);
 
     bool selected() const { return m_selected; }
     void setSelected(bool _selected);
@@ -594,6 +665,12 @@ public:
     HTMLSelectElementImpl *getSelect() const;
 
     virtual void childrenChanged();
+
+    bool defaultSelected() const;
+    void setDefaultSelected( bool );
+
+    DOMString label() const;
+    void setLabel( const DOMString & );
 
 protected:
     DOMString m_value;
@@ -658,6 +735,13 @@ public:
     
     virtual void accessKeyAction(bool sendToAnyElement);
     
+    DOMString accessKey() const;
+    void setAccessKey(const DOMString &);
+
+    void setCols(long);
+
+    void setRows(long);
+
 protected:
     int m_rows;
     int m_cols;
@@ -676,6 +760,9 @@ public:
 
     virtual Id id() const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+
+    DOMString prompt() const;
+    void setPrompt(const DOMString &);
 
 protected:
     DOMString m_prompt;

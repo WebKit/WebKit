@@ -27,13 +27,21 @@
 #ifndef _CSS_css_rule_h_
 #define _CSS_css_rule_h_
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 #include <dom/dom_string.h>
 #include <dom/css_stylesheet.h>
 #include <dom/css_value.h>
 
+#endif
+
 namespace DOM {
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 class CSSRuleImpl;
+
+#endif
 
 /**
  * The <code> CSSRule </code> interface is the abstract base interface
@@ -51,7 +59,11 @@ class CSSRuleImpl;
  */
 class CSSRule
 {
+
 public:
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     CSSRule();
     CSSRule(const CSSRule &other);
     CSSRule(CSSRuleImpl *impl);
@@ -60,6 +72,9 @@ public:
     CSSRule & operator = (const CSSRule &other);
 
     ~CSSRule();
+
+#endif
+
     /**
      * An integer indicating which type of rule this is.
      *
@@ -74,6 +89,8 @@ public:
         PAGE_RULE = 6,
         QUIRKS_RULE = 100 // Not part of the official DOM
     };
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
     /**
      * The type of the rule, as defined above. The expectation is that
@@ -136,7 +153,12 @@ protected:
     CSSRuleImpl *impl;
 
     void assignOther( const CSSRule &other, RuleType thisType );
+
+#endif
+
 };
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 class CSSCharsetRuleImpl;
 
@@ -528,7 +550,8 @@ protected:
     CSSRuleListImpl *impl;
 };
 
+#endif
 
-}; // namespace
+} // namespace
 
 #endif

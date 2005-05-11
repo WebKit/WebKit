@@ -38,6 +38,8 @@ namespace DOM {
 
 class CSSMutableStyleDeclarationImpl;
 class CounterImpl;
+class DashboardRegionImpl;
+class RectImpl;
 
 extern const int inheritableProperties[];
 extern const unsigned numInheritableProperties;
@@ -47,6 +49,8 @@ class CSSStyleDeclarationImpl : public StyleBaseImpl
 public:
     virtual bool isStyleDeclaration();
 
+    static int propertyID(const DOMString &propertName, bool *hadPixelOrPosPrefix = 0);
+
     CSSRuleImpl *parentRule() const;
 
     virtual DOMString cssText() const = 0;
@@ -55,10 +59,15 @@ public:
     virtual unsigned long length() const = 0;
     virtual DOMString item(unsigned long index) const = 0;
 
+    CSSValueImpl *getPropertyCSSValue(const DOMString &propertyName);
+    DOMString getPropertyValue(const DOMString &propertyName);
+    DOMString getPropertyPriority(const DOMString &propertyName);
     virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const = 0;
     virtual DOMString getPropertyValue(int propertyID) const = 0;
     virtual bool getPropertyPriority(int propertyID) const = 0;
 
+    void setProperty(const DOMString &propertyName, const DOMString &value, const DOMString &priority, int &exception);
+    DOMString removeProperty(const DOMString &propertyName, int &exception);
     virtual void setProperty(int propertyId, const DOMString &value, bool important, int &exceptionCode) = 0;
     virtual DOMString removeProperty(int propertyID, int &exceptionCode) = 0;
 
@@ -83,6 +92,7 @@ class CSSValueImpl : public StyleBaseImpl
 public:
     virtual unsigned short cssValueType() const = 0;
     virtual DOMString cssText() const = 0;
+    void setCssText(const DOMString &) { } // FIXME: Not implemented.
 
     virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
@@ -124,11 +134,6 @@ protected:
 };
 
 
-class Counter;
-class RGBColor;
-class Rect;
-class DashboardRegionImpl;
-
 class CSSPrimitiveValueImpl : public CSSValueImpl
 {
 public:
@@ -136,7 +141,7 @@ public:
     CSSPrimitiveValueImpl(int ident);
     CSSPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type);
     CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type);
-    CSSPrimitiveValueImpl(const Counter &c);
+    CSSPrimitiveValueImpl(CounterImpl *c);
     CSSPrimitiveValueImpl(RectImpl *r);
     CSSPrimitiveValueImpl(DashboardRegionImpl *r);
     CSSPrimitiveValueImpl(QRgb color);
@@ -186,11 +191,9 @@ public:
 	return ( m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor );
     }
 
-#if APPLE_CHANGES
     DashboardRegionImpl *getDashboardRegionValue () const {
 	return ( m_type != CSSPrimitiveValue::CSS_DASHBOARD_REGION ? 0 : m_value.region );
     }
-#endif
 
     virtual bool isPrimitiveValue() const { return true; }
     virtual unsigned short cssValueType() const;

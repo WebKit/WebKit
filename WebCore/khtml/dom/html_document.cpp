@@ -94,12 +94,8 @@ DOMString HTMLDocument::title() const
 
 void HTMLDocument::setTitle( const DOMString &v )
 {
-#if APPLE_CHANGES
     if (!impl) return;
     ((HTMLDocumentImpl *)impl)->setTitle(v);
-#else
-    // ###
-#endif
 }
 
 DOMString HTMLDocument::referrer() const
@@ -111,7 +107,7 @@ DOMString HTMLDocument::referrer() const
 DOMString HTMLDocument::completeURL(const DOMString& str) const
 {
     if(!impl) return str;
-    return ((HTMLDocumentImpl *)impl)->completeURL(str.string());
+    return ((HTMLDocumentImpl *)impl)->completeURL(str);
 }
 
 DOMString HTMLDocument::domain() const
@@ -215,15 +211,11 @@ void HTMLDocument::setCookie( const DOMString & value )
 
 }
 
-#if APPLE_CHANGES
-
 void HTMLDocument::setPolicyBaseURL( const DOMString &s )
 {
    if (impl)
         ((HTMLDocumentImpl *)impl)->setPolicyBaseURL(s);
 }
-
-#endif
 
 void HTMLDocument::open(  )
 {
@@ -252,5 +244,5 @@ void HTMLDocument::writeln( const DOMString &text )
 NodeList HTMLDocument::getElementsByName( const DOMString &elementName )
 {
     if(!impl) return 0;
-    return new NameNodeListImpl(impl, elementName);
+    return static_cast<HTMLDocumentImpl *>(impl)->getElementsByName(elementName).get();
 }

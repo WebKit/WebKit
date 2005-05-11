@@ -109,15 +109,7 @@ Document DOMImplementation::createDocument ( const DOMString &namespaceURI,
 HTMLDocument DOMImplementation::createHTMLDocument( const DOMString& title )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-
-    HTMLDocumentImpl* r = impl->createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
-
-    r->open();
-
-    r->write(QString::fromLatin1("<HTML><HEAD><TITLE>") + title.string() +
-             QString::fromLatin1("</TITLE></HEAD>"));
-
-    return r;
+    return impl->createHTMLDocument(title);
 }
 
 DOMImplementation DOMImplementation::getInterface(const DOMString &feature) const
@@ -134,8 +126,7 @@ CSSStyleSheet DOMImplementation::createCSSStyleSheet(const DOMString &title, con
         throw DOMException(DOMException::NOT_FOUND_ERR);
 
     int exceptioncode = 0;
-    CSSStyleSheetImpl *r = impl->createCSSStyleSheet(title.implementation(), media.implementation(),
-                                                     exceptioncode);
+    CSSStyleSheetImpl *r = impl->createCSSStyleSheet(title, media, exceptioncode);
     if ( exceptioncode )
         throw DOMException( exceptioncode );
     return r;
@@ -211,13 +202,7 @@ Document::~Document()
 
 DocumentType Document::doctype() const
 {
-    if (impl) {
-      // Doctype is null for HTML documents.
-      if (((DocumentImpl*)impl)->isHTMLDocument())
-	return 0;
-      else
-	return ((DocumentImpl *)impl)->doctype();
-    }
+    if (impl) return ((DocumentImpl *)impl)->doctype();
     return 0;
 }
 
@@ -288,34 +273,22 @@ ProcessingInstruction Document::createProcessingInstruction( const DOMString &ta
 
 Attr Document::createAttribute( const DOMString &name )
 {
-    return createAttributeNS(DOMString(), name);
+    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
+    int exception = 0;
+    Attr result = static_cast<DocumentImpl*>(impl)->createAttribute(name, exception);
+    if (exception)
+        throw DOMException(exception);
+    return result;
 }
 
 Attr Document::createAttributeNS( const DOMString &namespaceURI, const DOMString &qualifiedName )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    if (qualifiedName.isNull()) throw DOMException(DOMException::NAMESPACE_ERR);
-
-    DOMString localName(qualifiedName.copy());
-    DOMString prefix;
-    int colonpos;
-    if ((colonpos = qualifiedName.find(':')) >= 0) {
-        prefix = qualifiedName.copy();
-        prefix.truncate(colonpos);
-        localName.remove(0, colonpos+1);
-    }
-
-    if (!DocumentImpl::isValidName(localName)) throw DOMException(DOMException::INVALID_CHARACTER_ERR);
-    // ### check correctness of namespace, prefix?
-
-    NodeImpl::Id id = static_cast<DocumentImpl*>(impl)->attrId(namespaceURI.implementation(), localName.implementation(), false /* allocate */);
-    Attr r = static_cast<DocumentImpl*>(impl)->createAttribute(id);
-    int exceptioncode = 0;
-    if (r.handle() && prefix.implementation())
-        r.handle()->setPrefix(prefix.implementation(), exceptioncode);
-    if (exceptioncode)
-        throw DOMException(exceptioncode);
-    return r;
+    int exception = 0;
+    Attr result = static_cast<DocumentImpl*>(impl)->createAttributeNS(namespaceURI, qualifiedName, exception);
+    if (exception)
+        throw DOMException(exception);
+    return result;
 }
 
 EntityReference Document::createEntityReference( const DOMString &name )

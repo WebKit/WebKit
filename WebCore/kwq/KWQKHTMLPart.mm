@@ -176,9 +176,13 @@ void KHTMLPart::completed(bool arg)
     KWQ(this)->_completed.call(arg);
 }
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 void KHTMLPart::nodeActivated(const Node &)
 {
 }
+
+#endif
 
 bool KHTMLPart::openURL(const KURL &URL)
 {
@@ -227,9 +231,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
-    , _dragSrc(0)
     , _dragClipboard(0)
-    , _elementToDraw(0)
     , m_markedTextUsesUnderlines(false)
     , m_windowHasFocus(false)
 {
@@ -953,7 +955,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     }
     
     // topNode defines the whole range we want to operate on 
-    Node topNode(editableNodeImpl->rootEditableElement());
+    NodeImpl *topNode = editableNodeImpl->rootEditableElement();
     searchRange.setEndAfter(topNode);
 
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
@@ -976,7 +978,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // We go to the end of our first range instead of the start of it, just to be sure
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
-    Node searchEndAfterWrapNode = it.range().endContainer();
+    NodeImpl *searchEndAfterWrapNode = it.range().endContainer().handle();
     long searchEndAfterWrapOffset = it.range().endOffset();
 
     while (1) {
@@ -1032,7 +1034,7 @@ bool KWQKHTMLPart::scrollOverflow(KWQScrollDirection direction, KWQScrollGranula
     
     NodeImpl *node = xmlDocImpl()->focusNode();
     if (node == 0) {
-        node = d->m_mousePressNode.handle();
+        node = d->m_mousePressNode.get();
     }
     
     if (node != 0) {
@@ -1133,7 +1135,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
         fillWithRed = false; // Transparent, don't fill with red.
     else if (_drawSelectionOnly)
         fillWithRed = false; // Selections are transparent, don't fill with red.
-    else if (_elementToDraw != 0)
+    else if (_elementToDraw.notNull())
         fillWithRed = false; // Element images are transparent, don't fill with red.
     else
         fillWithRed = true;
@@ -1145,7 +1147,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 
     if (renderer()) {
         // _elementToDraw is used to draw only one element
-        RenderObject *eltRenderer = (_elementToDraw != 0) ? _elementToDraw.handle()->renderer() : 0;
+        RenderObject *eltRenderer = _elementToDraw.notNull() ? _elementToDraw->renderer() : 0;
         renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
 
 #if APPLE_CHANGES
@@ -1584,7 +1586,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     d->m_doc = doc;
     d->m_doc->ref();
     
-    d->m_mousePressNode = Node(mousePressNode);
+    d->m_mousePressNode.reset(mousePressNode);
     
     Decoder *decoder = doc->decoder();
     if (decoder) {
@@ -1991,7 +1993,7 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
-    d->m_mousePressNode = event->innerNode();
+    d->m_mousePressNode.reset(event->innerNode());
     
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -2020,7 +2022,7 @@ void KWQKHTMLPart::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 {
     // Figure out which view to send the event to.
-    RenderObject *target = event->innerNode().handle() ? event->innerNode().handle()->renderer() : 0;
+    RenderObject *target = event->innerNode() ? event->innerNode()->renderer() : 0;
     if (!target)
         return false;
 
@@ -2211,7 +2213,7 @@ bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocatio
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
 bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc) const
 {
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventId, _dragSrc.handle(), loc, _dragClipboard);
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventId, _dragSrc.get(), loc, _dragClipboard);
     return !noDefaultProc;
 }
 
@@ -2237,8 +2239,7 @@ bool KWQKHTMLPart::eventMayStartDrag(NSEvent *event) const
     RenderObject::NodeInfo nodeInfo(true, false);
     renderer()->layer()->hitTest(nodeInfo, mouseDownX, mouseDownY);
     bool srcIsDHTML;
-    Node possibleSrc = nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
-    return !possibleSrc.isNull();
+    return nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
 }
 
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
@@ -2271,7 +2272,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->hitTest(nodeInfo, _mouseDownX, _mouseDownY);
-            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML);
+            _dragSrc.reset(nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML));
             if (_dragSrc.isNull()) {
                 _mouseDownMayStartDrag = false;     // no element is draggable
             } else {
@@ -2325,8 +2326,8 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     // WebKit will generate the default, the element doesn't override.
                     if (_dragSrcIsDHTML) {
                         int srcX, srcY;
-                        _dragSrc.handle()->renderer()->absolutePosition(srcX, srcY);
-                        _dragClipboard->setDragImageElement(_dragSrc.handle(), QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
+                        _dragSrc->renderer()->absolutePosition(srcX, srcY);
+                        _dragClipboard->setDragImageElement(_dragSrc.get(), QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
                     _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownWinX, _mouseDownWinY));
@@ -2364,7 +2365,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                 if (!_mouseDownMayStartDrag) {
                     // something failed to start the drag, cleanup
                     freeClipboard();
-                    _dragSrc = 0;
+                    _dragSrc.reset();
                 }
             }
 
@@ -2410,7 +2411,7 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operatio
         dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc);
     }
     freeClipboard();
-    _dragSrc = 0;
+    _dragSrc.reset();
 }
 
 // Returns whether caller should continue with "the default processing", which is the same as 
@@ -2592,7 +2593,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     prepareForUserAction();
 
     _mouseDownView = nil;
-    _dragSrc = 0;
+    _dragSrc.reset();
     
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
@@ -2800,8 +2801,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
         mev.innerNode.get(), true, 0, &qev, true, NodeImpl::MousePress);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode->isContentEditable())) {
-        DOM::Node node(mev.innerNode.get());
-        selectClosestWordFromMouseEvent(&qev, node, xm, ym);
+        selectClosestWordFromMouseEvent(&qev, mev.innerNode.get(), xm, ym);
     }
 
     ASSERT(_currentEvent == event);
@@ -2850,26 +2850,26 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 static ElementImpl *listParent(ElementImpl *item)
 {
     // Ick!  Avoid use of item->id() which confuses ObjC++.
-    unsigned short _id = Node(item).elementId();
+    unsigned short _id = item->identifier();
     
     while (_id != ID_UL && _id != ID_OL) {
         item = static_cast<ElementImpl *>(item->parentNode());
         if (!item)
             break;
-        _id = Node(item).elementId();
+        _id = item->identifier();
     }
     return item;
 }
 
 static NodeImpl* isTextFirstInListItem(NodeImpl *e)
 {
-    if (Node(e).nodeType() != Node::TEXT_NODE)
+    if (!e->isTextNode())
         return 0;
     NodeImpl* par = e->parentNode();
     while (par) {
         if (par->firstChild() != e)
             return 0;
-        if (Node(par).elementId() == ID_LI)
+        if (par->identifier() == ID_LI)
             return par;
         e = par;
         par = par->parentNode();
@@ -2905,11 +2905,11 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
     QValueList<ListItemInfo> listItemLocations;
     float maxMarkerWidth = 0;
     
-    Node n = _startNode;
+    NodeImpl *n = _startNode;
     
     // If the first item is the entire text of a list item, use the list item node as the start of the 
     // selection, not the text node.  The user's intent was probably to select the list.
-    if (n.nodeType() == Node::TEXT_NODE && startOffset == 0) {
+    if (n->isTextNode() && startOffset == 0) {
         NodeImpl *startListNode = isTextFirstInListItem(_startNode);
         if (startListNode){
             _startNode = startListNode;
@@ -2917,13 +2917,13 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         }
     }
     
-    while (!n.isNull()) {
-        RenderObject *renderer = n.handle()->renderer();
+    while (n) {
+        RenderObject *renderer = n->renderer();
         if (renderer) {
             RenderStyle *style = renderer->style();
             NSFont *font = style->font().getNSFont();
             bool needSpace = pendingStyledSpace != nil;
-            if (n.nodeType() == Node::TEXT_NODE) {
+            if (n->isTextNode()) {
                 if (hasNewLine) {
                     addedSpace = true;
                     needSpace = false;
@@ -2932,7 +2932,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     hasNewLine = false;
                 }
                 QString text;
-                QString str = n.nodeValue().string();
+                QString str = n->nodeValue().string();
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
@@ -3023,14 +3023,14 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
             } else {
                 // This is our simple HTML -> ASCII transformation:
                 QString text;
-                unsigned short _id = n.elementId();
+                NodeImpl::Id _id = n->identifier();
                 switch(_id) {
                     case ID_A:
                         // Note the start of the <a> element.  We will add the NSLinkAttributeName
                         // attribute to the attributed string when navigating to the next sibling 
                         // of this node.
                         linkStartLocation = [result length];
-                        linkStartNode = static_cast<ElementImpl*>(n.handle());
+                        linkStartNode = static_cast<ElementImpl*>(n);
                         break;
 
                     case ID_BR:
@@ -3041,13 +3041,13 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     case ID_LI:
                         {
                             QString listText;
-                            ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n.handle()));
+                            ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n));
                             
                             if (!hasNewLine)
                                 listText += '\n';
                             hasNewLine = true;
     
-                            listItems.append(static_cast<ElementImpl*>(n.handle()));
+                            listItems.append(static_cast<ElementImpl*>(n));
                             ListItemInfo info;
                             info.start = [result length];
                             info.end = 0;
@@ -3152,7 +3152,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                             [pendingStyledSpace release];
                             pendingStyledSpace = nil;
                         }
-                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n.handle()));
+                        NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<ElementImpl *>(n));
                         NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                         NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
                         [result appendAttributedString: iString];
@@ -3168,25 +3168,25 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         if (n == endNode)
             break;
 
-        Node next = n.firstChild();
-        if (next.isNull()){
-            next = n.nextSibling();
+        NodeImpl *next = n->firstChild();
+        if (!next) {
+            next = n->nextSibling();
         }
 
-        while (next.isNull() && !n.parentNode().isNull()) {
+        while (!next && n->parentNode()) {
             QString text;
-            n = n.parentNode();
+            n = n->parentNode();
             if (n == endNode)
                 break;
-            next = n.nextSibling();
+            next = n->nextSibling();
 
-            unsigned short _id = n.elementId();
+            NodeImpl::Id _id = n->identifier();
             switch(_id) {
                 case ID_A:
                     // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
                     // for the range of the link.  Note that we create the attributed string from the DOM, which
                     // will have corrected any illegally nested <a> elements.
-                    if (linkStartNode && n.handle() == linkStartNode){
+                    if (linkStartNode && n == linkStartNode){
                         DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
                         KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
                         
@@ -3207,7 +3207,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     {
                         int i, count = listItems.count();
                         for (i = 0; i < count; i++){
-                            if (listItems.at(i) == n.handle()){
+                            if (listItems.at(i) == n){
                                 listItemLocations[i].end = [result length];
                                 break;
                             }
@@ -3430,9 +3430,9 @@ NSImage *KWQKHTMLPart::selectionImage() const
     return result;
 }
 
-NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const
+NSImage *KWQKHTMLPart::snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const
 {
-    RenderObject *renderer = node.handle()->renderer();
+    RenderObject *renderer = node->renderer();
     if (!renderer) {
         return nil;
     }
@@ -3443,10 +3443,10 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRe
     QRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    _elementToDraw = node;              // invoke special sub-tree drawing mode
+    _elementToDraw.reset(node);              // invoke special sub-tree drawing mode
     NSImage *result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
-    _elementToDraw = 0;
+    _elementToDraw.reset();
 
     if (elementRect) {
         *elementRect = topLevelRect;
@@ -4269,5 +4269,5 @@ bool KWQKHTMLPart::isKHTMLPart() const
 
 DOM::NodeImpl *KWQKHTMLPart::mousePressNode()
 {
-    return d->m_mousePressNode.handle();
+    return d->m_mousePressNode.get();
 }

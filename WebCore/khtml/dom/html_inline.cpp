@@ -62,151 +62,143 @@ HTMLAnchorElement::~HTMLAnchorElement()
 DOMString HTMLAnchorElement::accessKey() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_ACCESSKEY);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->accessKey();
 }
 
 void HTMLAnchorElement::setAccessKey( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_ACCESSKEY, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setAccessKey(value);
 }
 
 DOMString HTMLAnchorElement::charset() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_CHARSET);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->charset();
 }
 
 void HTMLAnchorElement::setCharset( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_CHARSET, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setCharset(value);
 }
 
 DOMString HTMLAnchorElement::coords() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_COORDS);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->coords();
 }
 
 void HTMLAnchorElement::setCoords( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_COORDS, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setCoords(value);
 }
 
 DOMString HTMLAnchorElement::href() const
 {
     if(!impl) return DOMString();
-    DOMString s = ((ElementImpl *)impl)->getAttribute(ATTR_HREF);
-    if (!s.isNull())
-	s = ownerDocument().completeURL( s );
-    return s;
+    return static_cast<HTMLAnchorElementImpl *>(impl)->href();
 }
 
 void HTMLAnchorElement::setHref( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HREF, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setHref(value);
 }
 
 DOMString HTMLAnchorElement::hreflang() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_HREFLANG);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->hreflang();
 }
 
 void HTMLAnchorElement::setHreflang( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_HREFLANG, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setHreflang(value);
 }
 
 DOMString HTMLAnchorElement::name() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_NAME);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->name();
 }
 
 void HTMLAnchorElement::setName( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_NAME, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setName(value);
 }
 
 DOMString HTMLAnchorElement::rel() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_REL);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->rel();
 }
 
 void HTMLAnchorElement::setRel( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_REL, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setRel(value);
 }
 
 DOMString HTMLAnchorElement::rev() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_REV);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->rev();
 }
 
 void HTMLAnchorElement::setRev( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_REV, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setRev(value);
 }
 
 DOMString HTMLAnchorElement::shape() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_SHAPE);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->shape();
 }
 
 void HTMLAnchorElement::setShape( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_SHAPE, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setShape(value);
 }
 
 long HTMLAnchorElement::tabIndex() const
 {
     if(!impl) return 0;
-    return ((ElementImpl *)impl)->getAttribute(ATTR_TABINDEX).toInt();
+    return static_cast<HTMLAnchorElementImpl *>(impl)->tabIndex();
 }
 
 void HTMLAnchorElement::setTabIndex( long _tabIndex )
 {
-    if(impl) {
-	DOMString value(QString::number(_tabIndex));
-        ((ElementImpl *)impl)->setAttribute(ATTR_TABINDEX,value);
-    }
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setTabIndex(_tabIndex);
 }
 
 DOMString HTMLAnchorElement::target() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_TARGET);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->target();
 }
 
 void HTMLAnchorElement::setTarget( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_TARGET, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setTarget(value);
 }
 
 DOMString HTMLAnchorElement::type() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_TYPE);
+    return static_cast<HTMLAnchorElementImpl *>(impl)->type();
 }
 
 void HTMLAnchorElement::setType( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_TYPE, value);
+    if(impl) static_cast<HTMLAnchorElementImpl *>(impl)->setType(value);
 }
 
 void HTMLAnchorElement::blur(  )
 {
-    if(impl && impl->getDocument()->focusNode()==impl)
-        impl->getDocument()->setFocusNode(0);
+    if (impl) static_cast<HTMLAnchorElementImpl *>(impl)->blur();
 }
 
 void HTMLAnchorElement::focus(  )
 {
-    if(impl)
-        impl->getDocument()->setFocusNode(static_cast<ElementImpl*>(impl));
+    if (impl) static_cast<HTMLAnchorElementImpl *>(impl)->focus();
 }
 
 // --------------------------------------------------------------------------
@@ -242,12 +234,12 @@ HTMLBRElement::~HTMLBRElement()
 DOMString HTMLBRElement::clear() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_CLEAR);
+    return static_cast<HTMLBRElementImpl *>(impl)->clear();
 }
 
 void HTMLBRElement::setClear( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_CLEAR, value);
+    if(impl) static_cast<HTMLBRElementImpl *>(impl)->setClear(value);
 }
 
 // --------------------------------------------------------------------------
@@ -283,34 +275,34 @@ HTMLFontElement::~HTMLFontElement()
 DOMString HTMLFontElement::color() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_COLOR);
+    return static_cast<HTMLFontElementImpl *>(impl)->color();
 }
 
 void HTMLFontElement::setColor( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_COLOR, value);
+    if(impl) static_cast<HTMLFontElementImpl *>(impl)->setColor(value);
 }
 
 DOMString HTMLFontElement::face() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_FACE);
+    return static_cast<HTMLFontElementImpl *>(impl)->face();
 }
 
 void HTMLFontElement::setFace( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_FACE, value);
+    if(impl) static_cast<HTMLFontElementImpl *>(impl)->setFace(value);
 }
 
 DOMString HTMLFontElement::size() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_SIZE);
+    return static_cast<HTMLFontElementImpl *>(impl)->size();
 }
 
 void HTMLFontElement::setSize( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_SIZE, value);
+    if(impl) static_cast<HTMLFontElementImpl *>(impl)->setSize(value);
 }
 
 
@@ -360,23 +352,23 @@ HTMLModElement::~HTMLModElement()
 DOMString HTMLModElement::cite() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_CITE);
+    return static_cast<HTMLModElementImpl *>(impl)->cite();
 }
 
 void HTMLModElement::setCite( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_CITE, value);
+    if(impl) static_cast<HTMLModElementImpl *>(impl)->setCite(value);
 }
 
 DOMString HTMLModElement::dateTime() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_DATETIME);
+    return static_cast<HTMLModElementImpl *>(impl)->dateTime();
 }
 
 void HTMLModElement::setDateTime( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_DATETIME, value);
+    if(impl) static_cast<HTMLModElementImpl *>(impl)->setDateTime(value);
 }
 
 // --------------------------------------------------------------------------
@@ -418,11 +410,10 @@ HTMLQuoteElement::~HTMLQuoteElement()
 DOMString HTMLQuoteElement::cite() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_CITE);
+    return static_cast<HTMLQuoteElementImpl *>(impl)->cite();
 }
 
 void HTMLQuoteElement::setCite( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_CITE, value);
+    if(impl) static_cast<HTMLQuoteElementImpl *>(impl)->setCite(value);
 }
-

@@ -124,11 +124,11 @@ DOMString HTMLElement::innerHTML() const
 
 void HTMLElement::setInnerHTML( const DOMString &html )
 {
-    bool ok = false;
+    int exception = 0;
     if( impl )
-	ok = ((HTMLElementImpl *)impl)->setInnerHTML( html );
-    if ( !ok )
-	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+	((HTMLElementImpl *)impl)->setInnerHTML( html, exception );
+    if ( exception )
+	throw DOMException(exception);
 }
 
 DOMString HTMLElement::innerText() const
@@ -139,11 +139,11 @@ DOMString HTMLElement::innerText() const
 
 void HTMLElement::setInnerText( const DOMString &text )
 {
-    bool ok = false;
+    int exception = 0;
     if( impl )
-	ok = ((HTMLElementImpl *)impl)->setInnerText( text );
-    if ( !ok )
-	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+	((HTMLElementImpl *)impl)->setInnerText( text, exception );
+    if ( exception )
+	throw DOMException(exception);
 }
 
 DOMString HTMLElement::outerHTML() const
@@ -154,11 +154,11 @@ DOMString HTMLElement::outerHTML() const
 
 void HTMLElement::setOuterHTML( const DOMString &html )
 {
-    bool ok = false;
+    int exception = 0;
     if( impl )
-	ok = ((HTMLElementImpl *)impl)->setOuterHTML( html );
-    if ( !ok )
-	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+	((HTMLElementImpl *)impl)->setOuterHTML( html, exception );
+    if ( exception )
+	throw DOMException(exception);
 }
 
 DOMString HTMLElement::outerText() const
@@ -169,11 +169,11 @@ DOMString HTMLElement::outerText() const
 
 void HTMLElement::setOuterText( const DOMString &text )
 {
-    bool ok = false;
+    int exception = 0;
     if( impl )
-	ok = ((HTMLElementImpl *)impl)->setOuterText( text );
-    if ( !ok )
-	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+	((HTMLElementImpl *)impl)->setOuterText( text, exception );
+    if ( exception )
+	throw DOMException(exception);
 }
 
 HTMLCollection HTMLElement::children() const

@@ -34,6 +34,16 @@
 @class DOMRect;
 @class DOMRGBColor;
 
+extern NSString * const DOMCSSException;
+
+enum {
+    //
+    // CSS exception codes
+    //
+    DOM_CSS_SYNTAX_ERR                = 0,
+    DOM_CSS_INVALID_MODIFICATION_ERR  = 1,
+};
+
 @interface DOMCSSRuleList : DOMObject
 - (unsigned long)length;
 - (DOMCSSRule *)item:(unsigned long)index;

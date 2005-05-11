@@ -36,6 +36,7 @@
 #include "misc/htmlhashes.h"
 #include "misc/formdata.h"
 
+#include "dom/dom_exception.h"
 #include "css/cssstyleselector.h"
 #include "css/cssproperties.h"
 #include "css/csshelper.h"
@@ -472,7 +473,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
     return true;
 }
 
-void HTMLFormElementImpl::setEnctype( const DOMString& type )
+void HTMLFormElementImpl::parseEnctype( const DOMString& type )
 {
     if(type.string().find("multipart", 0, false) != -1 || type.string().find("form-data", 0, false) != -1)
     {
@@ -656,7 +657,7 @@ void HTMLFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
             m_post = false;
         break;
     case ATTR_ENCTYPE:
-        setEnctype( attr->value() );
+        parseEnctype(attr->value());
         break;
     case ATTR_ACCEPT_CHARSET:
         // space separated list of charsets the server
@@ -772,13 +773,72 @@ void HTMLFormElementImpl::removeImgElement(HTMLImageElementImpl *e)
     removeFromVector(imgElements, e);
 }
 
+SharedPtr<HTMLCollectionImpl> HTMLFormElementImpl::elements()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLFormCollectionImpl(this));
+}
+
+DOMString HTMLFormElementImpl::name() const
+{
+    return getAttribute(ATTR_NAME);
+}
+
+void HTMLFormElementImpl::setName(const DOMString &value)
+{
+    setAttribute(ATTR_NAME, value);
+}
+
+DOMString HTMLFormElementImpl::acceptCharset() const
+{
+    return getAttribute(ATTR_ACCEPT_CHARSET);
+}
+
+void HTMLFormElementImpl::setAcceptCharset(const DOMString &value)
+{
+    setAttribute(ATTR_ACCEPT_CHARSET, value);
+}
+
+DOMString HTMLFormElementImpl::action() const
+{
+    return getAttribute(ATTR_ACTION);
+}
+
+void HTMLFormElementImpl::setAction(const DOMString &value)
+{
+    setAttribute(ATTR_ACTION, value);
+}
+
+void HTMLFormElementImpl::setEnctype(const DOMString &value)
+{
+    setAttribute(ATTR_ENCTYPE, value);
+}
+
+DOMString HTMLFormElementImpl::method() const
+{
+    return getAttribute(ATTR_METHOD);
+}
+
+void HTMLFormElementImpl::setMethod(const DOMString &value)
+{
+    setAttribute(ATTR_METHOD, value);
+}
+
+DOMString HTMLFormElementImpl::target() const
+{
+    return getAttribute(ATTR_TARGET);
+}
+
+void HTMLFormElementImpl::setTarget(const DOMString &value)
+{
+    setAttribute(ATTR_TARGET, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
     : HTMLElementImpl(doc)
 {
     m_disabled = m_readOnly = false;
-    m_name = 0;
     m_dormant = false;
 
     if (f)
@@ -793,7 +853,6 @@ HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl()
 {
     if (m_form)
         m_form->removeFormElement(this);
-    if (m_name) m_name->deref();
 }
 
 void HTMLGenericFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
@@ -802,14 +861,17 @@ void HTMLGenericFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     {
     case ATTR_NAME:
         break;
-    case ATTR_DISABLED:
-        setDisabled( !attr->isNull() );
+    case ATTR_DISABLED: {
+        bool oldDisabled = m_disabled;
+        m_disabled = !attr->isNull();
+        if (oldDisabled != m_disabled)
+            setChanged();
         break;
-    case ATTR_READONLY:
-    {
-        bool m_oldreadOnly = m_readOnly;
+    }
+    case ATTR_READONLY: {
+        bool oldReadOnly = m_readOnly;
         m_readOnly = !attr->isNull();
-        if (m_oldreadOnly != m_readOnly) setChanged();
+        if (oldReadOnly != m_readOnly) setChanged();
         break;
     }
     default:
@@ -890,23 +952,21 @@ HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
 
 DOMString HTMLGenericFormElementImpl::name() const
 {
-    if (m_name) return m_name;
+    if (!m_overrideName.isNull())
+        return m_overrideName;
 
-// ###
-//     DOMString n = getDocument()->htmlMode() != DocumentImpl::XHtml ?
-//                   getAttribute(ATTR_NAME) : getAttribute(ATTR_ID);
     DOMString n = getAttribute(ATTR_NAME);
-    if (n.isNull())
-        return new DOMStringImpl("");
-
-    return n;
+    return n.isNull() ? "" : n;
 }
 
-void HTMLGenericFormElementImpl::setName(const DOMString& name)
+void HTMLGenericFormElementImpl::setName(const DOMString &value)
 {
-    if (m_name) m_name->deref();
-    m_name = name.implementation();
-    if (m_name) m_name->ref();
+    setAttribute(ATTR_NAME, value);
+}
+
+void HTMLGenericFormElementImpl::setOverrideName(const DOMString& value)
+{
+    m_overrideName = value;
 }
 
 void HTMLGenericFormElementImpl::onSelect()
@@ -926,12 +986,14 @@ bool HTMLGenericFormElementImpl::disabled() const
     return m_disabled;
 }
 
-void HTMLGenericFormElementImpl::setDisabled( bool _disabled )
+void HTMLGenericFormElementImpl::setDisabled(bool b)
 {
-    if ( m_disabled != _disabled ) {
-        m_disabled = _disabled;
-        setChanged();
-    }
+    setAttribute(ATTR_DISABLED, b ? "" : 0);
+}
+
+void HTMLGenericFormElementImpl::setReadOnly(bool b)
+{
+    setAttribute(ATTR_READONLY, b ? "" : 0);
 }
 
 void HTMLGenericFormElementImpl::recalcStyle( StyleChange ch )
@@ -1085,6 +1147,16 @@ QString HTMLGenericFormElementImpl::findMatchingState(QStringList &states)
     return QString::null;
 }
 
+long HTMLGenericFormElementImpl::tabIndex() const
+{
+    return getAttribute(ATTR_TABINDEX).toInt();
+}
+
+void HTMLGenericFormElementImpl::setTabIndex(long value)
+{
+    setAttribute(ATTR_TABINDEX, QString::number(value));
+}
+
 // -------------------------------------------------------------------------
 
 HTMLButtonElementImpl::HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -1215,6 +1287,26 @@ void HTMLButtonElementImpl::accessKeyAction(bool sendToAnyElement)
     click(sendToAnyElement);
 }
 
+DOMString HTMLButtonElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLButtonElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLButtonElementImpl::value() const
+{
+    return getAttribute(ATTR_VALUE);
+}
+
+void HTMLButtonElementImpl::setValue(const DOMString &value)
+{
+    setAttribute(ATTR_VALUE, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -1266,9 +1358,7 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
     xPos = 0;
     yPos = 0;
 
-#if APPLE_CHANGES
     m_maxResults = -1;
-#endif
 
     if ( m_form )
         m_autocomplete = f->autoComplete();
@@ -1616,7 +1706,6 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::INPUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
-#if APPLE_CHANGES
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     case ATTR_ONSEARCH:
@@ -1634,7 +1723,6 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_PRECISION:
         setChanged();
         break;
-#endif
     default:
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
     }
@@ -2134,6 +2222,101 @@ bool HTMLInputElementImpl::isURLAttribute(AttributeImpl *attr) const
     return (attr->id() == ATTR_SRC);
 }
 
+DOMString HTMLInputElementImpl::defaultValue() const
+{
+    return getAttribute(ATTR_VALUE);
+}
+
+void HTMLInputElementImpl::setDefaultValue(const DOMString &value)
+{
+    setAttribute(ATTR_VALUE, value);
+}
+
+bool HTMLInputElementImpl::defaultChecked() const
+{
+    return !getAttribute(ATTR_CHECKED).isNull();
+}
+
+void HTMLInputElementImpl::setDefaultChecked(bool defaultChecked)
+{
+    setAttribute(ATTR_CHECKED, defaultChecked ? "" : 0);
+}
+
+DOMString HTMLInputElementImpl::accept() const
+{
+    return getAttribute(ATTR_ACCEPT);
+}
+
+void HTMLInputElementImpl::setAccept(const DOMString &value)
+{
+    setAttribute(ATTR_ACCEPT, value);
+}
+
+DOMString HTMLInputElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLInputElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLInputElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLInputElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
+}
+
+DOMString HTMLInputElementImpl::alt() const
+{
+    return getAttribute(ATTR_ALT);
+}
+
+void HTMLInputElementImpl::setAlt(const DOMString &value)
+{
+    setAttribute(ATTR_ALT, value);
+}
+
+void HTMLInputElementImpl::setMaxLength(long _maxLength)
+{
+    setAttribute(ATTR_MAXLENGTH, QString::number(_maxLength));
+}
+
+DOMString HTMLInputElementImpl::sizeDOM() const
+{
+    return getAttribute(ATTR_SIZE);
+}
+
+void HTMLInputElementImpl::setSize(const DOMString &value)
+{
+    setAttribute(ATTR_SIZE, value);
+}
+
+DOMString HTMLInputElementImpl::src() const
+{
+    return getDocument()->completeURL(getAttribute(ATTR_SRC));
+}
+
+void HTMLInputElementImpl::setSrc(const DOMString &value)
+{
+    setAttribute(ATTR_SRC, value);
+}
+
+DOMString HTMLInputElementImpl::useMap() const
+{
+    return getAttribute(ATTR_USEMAP);
+}
+
+void HTMLInputElementImpl::setUseMap(const DOMString &value)
+{
+    setAttribute(ATTR_USEMAP, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLLabelElementImpl::HTMLLabelElementImpl(DocumentPtr *doc)
@@ -2200,6 +2383,34 @@ void HTMLLabelElementImpl::accessKeyAction(bool sendToAnyElement)
         element->accessKeyAction(sendToAnyElement);
 }
 
+HTMLFormElementImpl *HTMLLabelElementImpl::form()
+{
+    ElementImpl *element = formElement();
+    if (element && isGenericFormElement())
+        return static_cast<HTMLGenericFormElementImpl *>(element)->form();
+    return 0;
+}
+
+DOMString HTMLLabelElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLLabelElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLLabelElementImpl::htmlFor() const
+{
+    return getAttribute(ATTR_FOR);
+}
+
+void HTMLLabelElementImpl::setHtmlFor(const DOMString &value)
+{
+    setAttribute(ATTR_FOR, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLLegendElementImpl::HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -2229,6 +2440,26 @@ RenderObject* HTMLLegendElementImpl::createRenderer(RenderArena* arena, RenderSt
 DOMString HTMLLegendElementImpl::type() const
 {
     return "legend";
+}
+
+DOMString HTMLLegendElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLLegendElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+DOMString HTMLLegendElementImpl::align() const
+{
+    return getAttribute(ATTR_ALIGN);
+}
+
+void HTMLLegendElementImpl::setAlign(const DOMString &value)
+{
+    setAttribute(ATTR_ALIGN, value);
 }
 
 // -------------------------------------------------------------------------
@@ -2364,8 +2595,10 @@ DOMString HTMLSelectElementImpl::value( )
     return DOMString("");
 }
 
-void HTMLSelectElementImpl::setValue(DOMStringImpl* value)
+void HTMLSelectElementImpl::setValue(const DOMString &value)
 {
+    if (value.isNull())
+        return;
     // find the option with value() matching the given parameter
     // and make it the current selection.
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
@@ -2585,6 +2818,12 @@ HTMLOptionsCollectionImpl *HTMLSelectElementImpl::options()
     return m_options;
 }
 
+// FIXME: Delete once the above function is working well enough to use for real.
+SharedPtr<HTMLCollectionImpl> HTMLSelectElementImpl::optionsHTMLCollection()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::SELECT_OPTIONS));
+}
+
 void HTMLSelectElementImpl::recalcListItems()
 {
     NodeImpl* current = firstChild();
@@ -2667,8 +2906,6 @@ void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selected
     setChanged(true);
 }
 
-#if APPLE_CHANGES
-
 void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
 {
     // Use key press event here since sending simulated mouse events
@@ -2688,11 +2925,19 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
 }
 
-#endif // APPLE_CHANGES
-
 void HTMLSelectElementImpl::accessKeyAction(bool sendToAnyElement)
 {
     focus();
+}
+
+void HTMLSelectElementImpl::setMultiple(bool multiple)
+{
+    setAttribute(ATTR_MULTIPLE, multiple ? "" : 0);
+}
+
+void HTMLSelectElementImpl::setSize(long size)
+{
+    setAttribute(ATTR_SIZE, QString::number(size));
 }
 
 // -------------------------------------------------------------------------
@@ -2844,6 +3089,16 @@ void HTMLOptGroupElementImpl::recalcSelectOptions()
         static_cast<HTMLSelectElementImpl*>(select)->setRecalcListItems();
 }
 
+DOMString HTMLOptGroupElementImpl::label() const
+{
+    return getAttribute(ATTR_LABEL);
+}
+
+void HTMLOptGroupElementImpl::setLabel(const DOMString &value)
+{
+    setAttribute(ATTR_LABEL, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLOptionElementImpl::HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -2887,6 +3142,19 @@ DOMString HTMLOptionElementImpl::text() const
     return text;
 }
 
+void HTMLOptionElementImpl::setText(const DOMString &text, int &exception)
+{
+    // Handle the common special case where there's exactly 1 child node, and it's a text node.
+    NodeImpl *child = firstChild();
+    if (child && child->isTextNode() && !child->nextSibling()) {
+        static_cast<TextImpl *>(child)->setData(text, exception);
+        return;
+    }
+
+    removeChildren();
+    appendChild(new TextImpl(docPtr(), text), exception);
+}
+
 long HTMLOptionElementImpl::index() const
 {
     // Let's do this dynamically. Might be a bit slow, but we're sure
@@ -2906,8 +3174,9 @@ long HTMLOptionElementImpl::index() const
     return 0;
 }
 
-void HTMLOptionElementImpl::setIndex( long  )
+void HTMLOptionElementImpl::setIndex(long, int &exception)
 {
+    exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
     kdWarning() << "Unimplemented HTMLOptionElementImpl::setIndex(long) called" << endl;
     // ###
 }
@@ -2935,7 +3204,7 @@ DOMString HTMLOptionElementImpl::value() const
     return text().string().stripWhiteSpace();
 }
 
-void HTMLOptionElementImpl::setValue(DOMStringImpl* value)
+void HTMLOptionElementImpl::setValue(const DOMString &value)
 {
     setAttribute(ATTR_VALUE, value);
 }
@@ -2963,6 +3232,26 @@ HTMLSelectElementImpl *HTMLOptionElementImpl::getSelect() const
     while (select && select->id() != ID_SELECT)
         select = select->parentNode();
     return static_cast<HTMLSelectElementImpl*>(select);
+}
+
+bool HTMLOptionElementImpl::defaultSelected() const
+{
+    return !getAttribute(ATTR_SELECTED).isNull();
+}
+
+void HTMLOptionElementImpl::setDefaultSelected(bool b)
+{
+    setAttribute(ATTR_SELECTED, b ? "" : 0);
+}
+
+DOMString HTMLOptionElementImpl::label() const
+{
+    return getAttribute(ATTR_LABEL);
+}
+
+void HTMLOptionElementImpl::setLabel(const DOMString &value)
+{
+    setAttribute(ATTR_LABEL, value);
 }
 
 // -------------------------------------------------------------------------
@@ -3179,13 +3468,33 @@ void HTMLTextAreaElementImpl::detach()
     m_valueMatchesRenderer = false;
 }
 
+DOMString HTMLTextAreaElementImpl::accessKey() const
+{
+    return getAttribute(ATTR_ACCESSKEY);
+}
+
+void HTMLTextAreaElementImpl::setAccessKey(const DOMString &value)
+{
+    setAttribute(ATTR_ACCESSKEY, value);
+}
+
+void HTMLTextAreaElementImpl::setCols(long cols)
+{
+    setAttribute(ATTR_COLS, QString::number(cols));
+}
+
+void HTMLTextAreaElementImpl::setRows(long rows)
+{
+    setAttribute(ATTR_ROWS, QString::number(rows));
+}
+
 // -------------------------------------------------------------------------
 
 HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
     : HTMLInputElementImpl(doc, f)
 {
     m_type = TEXT;
-    setName("isindex");
+    setOverrideName("isindex");
 }
 
 NodeImpl::Id HTMLIsIndexElementImpl::id() const
@@ -3204,6 +3513,16 @@ void HTMLIsIndexElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
         // accept attributes this element does not support
         HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
     }
+}
+
+DOMString HTMLIsIndexElementImpl::prompt() const
+{
+    return getAttribute(ATTR_PROMPT);
+}
+
+void HTMLIsIndexElementImpl::setPrompt(const DOMString &value)
+{
+    setAttribute(ATTR_PROMPT, value);
 }
 
 // -------------------------------------------------------------------------

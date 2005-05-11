@@ -76,7 +76,6 @@ using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::NamedAttrMapImpl;
-using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
 using DOM::Position;

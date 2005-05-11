@@ -30,16 +30,12 @@
 #include "misc/htmlhashes.h"
 #include "dom/dom_node.h"
 
-using namespace DOM;
-
 #include <kdebug.h>
+
+namespace DOM {
 
 HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
-{
-}
-
-HTMLBaseFontElementImpl::~HTMLBaseFontElementImpl()
 {
 }
 
@@ -48,20 +44,48 @@ NodeImpl::Id HTMLBaseFontElementImpl::id() const
     return ID_BASEFONT;
 }
 
+DOMString HTMLBaseFontElementImpl::color() const
+{
+    return getAttribute(ATTR_COLOR);
+}
+
+void HTMLBaseFontElementImpl::setColor(const DOMString &value)
+{
+    setAttribute(ATTR_COLOR, value);
+}
+
+DOMString HTMLBaseFontElementImpl::face() const
+{
+    return getAttribute(ATTR_FACE);
+}
+
+void HTMLBaseFontElementImpl::setFace(const DOMString &value)
+{
+    setAttribute(ATTR_FACE, value);
+}
+
+DOMString HTMLBaseFontElementImpl::size() const
+{
+    return getAttribute(ATTR_SIZE);
+}
+
+void HTMLBaseFontElementImpl::setSize(const DOMString &value)
+{
+    setAttribute(ATTR_SIZE, value);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLCollectionImpl::HTMLCollectionImpl(NodeImpl *_base, int _type)
+    : m_base(_base)
 {
-    base = _base;
-    base->ref();
     type = _type;
     idsDone = false;
-    info = base->isDocumentNode() && base->getDocument()->isHTMLDocument() ? static_cast<HTMLDocumentImpl*>(base->getDocument())->collectionInfo(type) : 0;
+    info = _base->isDocumentNode() && _base->getDocument()->isHTMLDocument() ? static_cast<HTMLDocumentImpl*>(_base->getDocument())->collectionInfo(type) : 0;
 }
 
 HTMLCollectionImpl::~HTMLCollectionImpl()
 {
-    base->deref();
 }
 
 HTMLCollectionImpl::CollectionInfo::CollectionInfo() :
@@ -86,7 +110,7 @@ void HTMLCollectionImpl::CollectionInfo::reset()
 
 void HTMLCollectionImpl::resetCollectionInfo() const
 {
-    unsigned int docversion = static_cast<HTMLDocumentImpl*>(base->getDocument())->domTreeVersion();
+    unsigned int docversion = static_cast<HTMLDocumentImpl*>(m_base->getDocument())->domTreeVersion();
 
     if (!info) {
         info = new CollectionInfo;
@@ -105,7 +129,7 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
 {
     assert(current);
 
-    current = current->traverseNextNode(base);
+    current = current->traverseNextNode(m_base.get());
 
     while (current) {
         if(current->nodeType() == Node::ELEMENT_NODE) {
@@ -196,11 +220,11 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
                 return current;
             }
             if (deep) {
-                current = current->traverseNextNode(base);
+                current = current->traverseNextNode(m_base.get());
                 continue;
             } 
         }
-        current = current->traverseNextSibling(base);
+        current = current->traverseNextSibling(m_base.get());
     }
     return 0;
 }
@@ -210,7 +234,7 @@ unsigned long HTMLCollectionImpl::calcLength() const
 {
     unsigned long len = 0;
 
-    for (NodeImpl *current = traverseNextItem(base); current; current = traverseNextItem(current)) {
+    for (NodeImpl *current = traverseNextItem(m_base.get()); current; current = traverseNextItem(current)) {
         len++;
     }
 
@@ -239,7 +263,7 @@ NodeImpl *HTMLCollectionImpl::item( unsigned long index ) const
          return 0;
      }
      if (!info->current || info->position > index) {
-         info->current = traverseNextItem(base);
+         info->current = traverseNextItem(m_base.get());
          info->position = 0;
          if (!info->current)
              return 0;
@@ -316,7 +340,7 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensiti
     idsDone = false;
 
     NodeImpl *n;
-    for (n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+    for (n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
         if (checkForNameMatch(n, idsDone, name, caseSensitive)) {
             break;
         }
@@ -327,7 +351,7 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensiti
         return info->current;
     idsDone = true;
 
-    for (n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+    for (n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
         if (checkForNameMatch(n, idsDone, name, caseSensitive)) {
             break;
         }
@@ -351,7 +375,7 @@ void HTMLCollectionImpl::updateNameCache() const
     if (info->hasNameCache)
         return;
     
-    for (NodeImpl *n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+    for (NodeImpl *n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
         ElementImpl *e = static_cast<ElementImpl *>(n);
         QString idAttr = e->getAttribute(ATTR_ID).string();
         QString nameAttr = e->getAttribute(ATTR_NAME).string();
@@ -382,9 +406,9 @@ void HTMLCollectionImpl::updateNameCache() const
     info->hasNameCache = true;
 }
 
-QValueList<Node> HTMLCollectionImpl::namedItems(const DOMString &name) const
+QValueList< SharedPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const DOMString &name) const
 {
-    QValueList<Node> result;
+    QValueList< SharedPtr<NodeImpl> > result;
 
     if (name.isEmpty())
         return result;
@@ -396,11 +420,11 @@ QValueList<Node> HTMLCollectionImpl::namedItems(const DOMString &name) const
     QPtrVector<NodeImpl> *nameResults = info->nameCache.find(name.string());
     
     for (unsigned i = 0; idResults && i < idResults->count(); ++i) {
-        result.append(idResults->at(i));
+        result.append(SharedPtr<NodeImpl>(idResults->at(i)));
     }
 
     for (unsigned i = 0; nameResults && i < nameResults->count(); ++i) {
-        result.append(nameResults->at(i));
+        result.append(SharedPtr<NodeImpl>(nameResults->at(i)));
     }
 
     return result;
@@ -411,7 +435,7 @@ NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
 {
     resetCollectionInfo();
 
-    for (NodeImpl *n = traverseNextItem(info->current ? info->current : base); n; n = traverseNextItem(n)) {
+    for (NodeImpl *n = traverseNextItem(info->current ? info->current : m_base.get()); n; n = traverseNextItem(n)) {
         if (checkForNameMatch(n, idsDone, name, true)) {
             info->current = n;
             return n;
@@ -424,7 +448,7 @@ NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
     }
     idsDone = true;
 
-    for (NodeImpl *n = traverseNextItem(info->current ? info->current : base); n; n = traverseNextItem(n)) {
+    for (NodeImpl *n = traverseNextItem(info->current ? info->current : m_base.get()); n; n = traverseNextItem(n)) {
         if (checkForNameMatch(n, idsDone, name, true)) {
             info->current = n;
             return n;
@@ -439,7 +463,7 @@ NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
 HTMLFormCollectionImpl::HTMLFormCollectionImpl(NodeImpl* _base)
     : HTMLCollectionImpl(_base, 0)
 {
-    HTMLFormElementImpl *formBase = static_cast<HTMLFormElementImpl*>(base);
+    HTMLFormElementImpl *formBase = static_cast<HTMLFormElementImpl*>(m_base.get());
     if (!formBase->collectionInfo) {
         formBase->collectionInfo = new CollectionInfo();
     }
@@ -452,7 +476,7 @@ HTMLFormCollectionImpl::~HTMLFormCollectionImpl()
 
 unsigned long HTMLFormCollectionImpl::calcLength() const
 {
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
+    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
 
     int len = 0;
     for ( unsigned i = 0; i < l.count(); i++ )
@@ -478,7 +502,7 @@ NodeImpl *HTMLFormCollectionImpl::item(unsigned long index) const
         info->elementsArrayPosition = 0;
     }
 
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
+    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
     unsigned currentIndex = info->position;
     
     for (unsigned i = info->elementsArrayPosition; i < l.count(); i++) {
@@ -505,9 +529,9 @@ NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, int attr_id, const DOM
 
 NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const
 {
-    if(base->nodeType() == Node::ELEMENT_NODE)
+    if(m_base->nodeType() == Node::ELEMENT_NODE)
     {
-        HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(base);
+        HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
         bool foundInputElements = false;
         if(baseElement->id() == ID_FORM)
         {
@@ -572,7 +596,7 @@ NodeImpl * HTMLFormCollectionImpl::nextNamedItemInternal( const DOMString &name 
         return 0;
     // After doing all ATTR_ID, do ATTR_NAME
     idsDone = true;
-    return getNamedItem(base->firstChild(), ATTR_NAME, name, true);
+    return getNamedItem(m_base->firstChild(), ATTR_NAME, name, true);
 }
 
 NodeImpl *HTMLFormCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
@@ -584,11 +608,11 @@ NodeImpl *HTMLFormCollectionImpl::namedItem( const DOMString &name, bool caseSen
     // that are allowed a name attribute.
     resetCollectionInfo();
     idsDone = false;
-    info->current = getNamedItem(base->firstChild(), ATTR_ID, name, true);
+    info->current = getNamedItem(m_base->firstChild(), ATTR_ID, name, true);
     if(info->current)
         return info->current;
     idsDone = true;
-    info->current = getNamedItem(base->firstChild(), ATTR_NAME, name, true);
+    info->current = getNamedItem(m_base->firstChild(), ATTR_NAME, name, true);
     return info->current;
 }
 
@@ -623,12 +647,12 @@ void HTMLFormCollectionImpl::updateNameCache() const
 
     QDict<char> foundInputElements;
 
-    if (base->nodeType() != Node::ELEMENT_NODE ||static_cast<HTMLElementImpl*>(base)->id() != ID_FORM) {
+    if (m_base->id() != ID_FORM) {
         info->hasNameCache = true;
         return;
     }
 
-    HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(base);
+    HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
 
     HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
     for (unsigned i = 0; i < f->formElements.count(); ++i) {
@@ -684,4 +708,6 @@ void HTMLFormCollectionImpl::updateNameCache() const
     }
 
     info->hasNameCache = true;
+}
+
 }

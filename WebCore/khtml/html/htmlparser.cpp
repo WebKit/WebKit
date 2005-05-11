@@ -238,7 +238,7 @@ void KHTMLParser::parseToken(Token *t)
     if(!n)
         return;
 
-    Node protectNode(n);
+    SharedPtr<NodeImpl> protectNode(n);
 
     // set attributes
     if(n->isElementNode())
@@ -302,7 +302,7 @@ static bool isTableRelatedTag(int id)
 
 bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 {
-    Node protectNode(n);
+    SharedPtr<NodeImpl> protectNode(n);
 
     int id = n->id();
 

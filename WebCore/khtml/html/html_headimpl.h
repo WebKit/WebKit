@@ -59,6 +59,9 @@ public:
 
     void process();
     
+    void setHref(const DOMString &);
+    void setTarget(const DOMString &);
+
 protected:
     DOMString m_href;
     DOMString m_target;
@@ -75,6 +78,33 @@ public:
     ~HTMLLinkElementImpl();
 
     virtual Id id() const;
+
+    bool disabled() const;
+    void setDisabled(bool);
+
+    DOMString charset() const;
+    void setCharset(const DOMString &);
+
+    DOMString href() const;
+    void setHref(const DOMString &);
+
+    DOMString hreflang() const;
+    void setHreflang(const DOMString &);
+
+    DOMString media() const;
+    void setMedia(const DOMString &);
+
+    DOMString rel() const;
+    void setRel(const DOMString &);
+
+    DOMString rev() const;
+    void setRev(const DOMString &);
+
+    DOMString target() const;
+    void setTarget(const DOMString &);
+
+    DOMString type() const;
+    void setType(const DOMString &);
 
     StyleSheetImpl* sheet() const { return m_sheet; }
 
@@ -131,6 +161,18 @@ public:
 
     void process();
 
+    DOMString content() const;
+    void setContent(const DOMString &);
+
+    DOMString httpEquiv() const;
+    void setHttpEquiv(const DOMString &);
+
+    DOMString name() const;
+    void setName(const DOMString &);
+
+    DOMString scheme() const;
+    void setScheme(const DOMString &);
+
 protected:
     DOMString m_equiv;
     DOMString m_content;
@@ -152,6 +194,27 @@ public:
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+
+    DOMString text() const;
+    void setText(const DOMString &);
+
+    DOMString htmlFor() const;
+    void setHtmlFor(const DOMString &);
+
+    DOMString event() const;
+    void setEvent(const DOMString &);
+
+    DOMString charset() const;
+    void setCharset(const DOMString &);
+
+    bool defer() const;
+    void setDefer(bool);
+
+    DOMString src() const;
+    void setSrc(const DOMString &);
+
+    DOMString type() const;
+    void setType(const DOMString &);
 
 private:
     khtml::CachedScript *m_cachedScript;
@@ -179,6 +242,15 @@ public:
     bool isLoading() const;
     void sheetLoaded();
 
+    bool disabled() const;
+    void setDisabled(bool);
+
+    DOMString media() const;
+    void setMedia(const DOMString &);
+
+    DOMString type() const;
+    void setType(const DOMString &);
+
 protected:
     CSSStyleSheetImpl *m_sheet;
     bool m_loading;
@@ -201,10 +273,13 @@ public:
     virtual void removedFromDocument();
     virtual void childrenChanged();
 
+    DOMString text() const;
+    void setText(const DOMString &);
+
 protected:
     DOMString m_title;
 };
 
-}; //namespace
+} //namespace
 
 #endif

@@ -309,7 +309,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
 
 CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
-    NodeImpl *node = m_node.handle();
+    NodeImpl *node = m_node.get();
     if (!node)
         return 0;
 

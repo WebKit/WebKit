@@ -366,7 +366,9 @@ using DOM::NodeImpl;
 
 - (void)setInnerHTML:(NSString *)innerHTML
 {
-    [self _HTMLElementImpl]->setInnerHTML(innerHTML);
+    int exception = 0;
+    [self _HTMLElementImpl]->setInnerHTML(innerHTML, exception);
+    raiseOnDOMError(exception);
 }
 
 - (NSString *)outerHTML
@@ -376,7 +378,9 @@ using DOM::NodeImpl;
 
 - (void)setOuterHTML:(NSString *)outerHTML
 {
-    [self _HTMLElementImpl]->setOuterHTML(outerHTML);
+    int exception = 0;
+    [self _HTMLElementImpl]->setOuterHTML(outerHTML, exception);
+    raiseOnDOMError(exception);
 }
 
 - (NSString *)innerText
@@ -386,9 +390,10 @@ using DOM::NodeImpl;
 
 - (void)setInnerText:(NSString *)innerText
 {
-    [self _HTMLElementImpl]->setInnerText(innerText);
+    int exception = 0;
+    [self _HTMLElementImpl]->setInnerText(innerText, exception);
+    raiseOnDOMError(exception);
 }
-
 
 - (NSString *)outerText
 {
@@ -397,7 +402,9 @@ using DOM::NodeImpl;
 
 - (void)setOuterText:(NSString *)outerText
 {
-    [self _HTMLElementImpl]->setOuterText(outerText);
+    int exception = 0;
+    [self _HTMLElementImpl]->setOuterText(outerText, exception);
+    raiseOnDOMError(exception);
 }
 
 - (DOMHTMLCollection *)children
@@ -1071,7 +1078,9 @@ using DOM::NodeImpl;
 
 - (void)setLength:(long)length
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented by khtml");
+    // FIXME: Not yet clear what to do about this one.
+    // There's some JavaScript-specific hackery in the JavaScript bindings for this.
+    //[self _selectElementImpl]->setLength(length);
 }
 
 - (DOMHTMLFormElement *)form
@@ -3111,9 +3120,9 @@ using DOM::NodeImpl;
 - (DOMHTMLElement *)insertRow:(long)index
 {
     int exceptioncode = 0;
-    HTMLTableElementImpl *impl = static_cast<HTMLTableElementImpl *>([self _tableSectionElementImpl]->insertRow(index, exceptioncode));
+    HTMLElementImpl *impl = [self _tableSectionElementImpl]->insertRow(index, exceptioncode);
     raiseOnDOMError(exceptioncode);
-    return [DOMHTMLTableElement _tableElementWithImpl:impl];
+    return [DOMHTMLElement _elementWithImpl:impl];
 }
 
 - (void)deleteRow:(long)index

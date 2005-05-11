@@ -643,11 +643,15 @@ bool KHTMLPart::closeURL()
   // Stop any started redirections as well!! (DA)
   cancelRedirection();
 
+#if !KHTML_NO_CPLUSPLUS_DOM
   // null node activated.
   emit nodeActivated(Node());
+#endif
 
   return true;
 }
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 DOM::HTMLDocument KHTMLPart::htmlDocument() const
 {
@@ -662,6 +666,7 @@ DOM::Document KHTMLPart::document() const
     return d->m_doc;
 }
 
+#endif
 
 KParts::BrowserExtension *KHTMLPart::browserExtension() const
 {
@@ -759,13 +764,22 @@ void KHTMLPart::replaceContentsWithScriptResult( const KURL &url )
 
 QVariant KHTMLPart::executeScript( const QString &script, bool forceUserGesture )
 {
-    return executeScript( DOM::Node(), script, forceUserGesture );
+    return executeScript( 0, script, forceUserGesture );
 }
 
 //Enable this to see all JS scripts being executed
 //#define KJS_VERBOSE
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script, bool forceUserGesture )
+{
+    return executeScript(n.handle(), script, forceUserGesture);
+}
+
+#endif
+
+QVariant KHTMLPart::executeScript( DOM::NodeImpl *n, const QString &script, bool forceUserGesture )
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KHTMLPart::executeScript n=" << n.nodeName().string().latin1() << "(" << (n.isNull() ? 0 : n.nodeType()) << ") " << script << endl;
@@ -790,12 +804,12 @@ QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script, bo
   return ret;
 }
 
-bool KHTMLPart::scheduleScript(const DOM::Node &n, const QString& script)
+bool KHTMLPart::scheduleScript(DOM::NodeImpl *n, const QString& script)
 {
     //kdDebug(6050) << "KHTMLPart::scheduleScript "<< script << endl;
 
     d->scheduledScript = script;
-    d->scheduledScriptNode = n;
+    d->scheduledScriptNode.reset(n);
 
     return true;
 }
@@ -807,9 +821,9 @@ QVariant KHTMLPart::executeScheduledScript()
 
   //kdDebug(6050) << "executing delayed " << d->scheduledScript << endl;
 
-  QVariant ret = executeScript( d->scheduledScriptNode, d->scheduledScript );
+  QVariant ret = executeScript( d->scheduledScriptNode.get(), d->scheduledScript );
   d->scheduledScript = QString();
-  d->scheduledScriptNode = DOM::Node();
+  d->scheduledScriptNode.reset();
 
   return ret;
 }
@@ -1020,7 +1034,7 @@ void KHTMLPart::clear()
   findTextBegin(); // resets d->m_findNode and d->m_findPos
 #endif
 
-  d->m_mousePressNode = DOM::Node();
+  d->m_mousePressNode.reset();
 
 
   if ( d->m_doc )
@@ -4190,10 +4204,14 @@ void KHTMLPart::hide()
 
 #endif // APPLE_CHANGES
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 DOM::Node KHTMLPart::nodeUnderMouse() const
 {
     return d->m_view->nodeUnderMouse();
 }
+
+#endif
 
 void KHTMLPart::emitSelectionChanged()
 {
@@ -4513,12 +4531,12 @@ bool KHTMLPart::isPointInsideSelection(int x, int y)
    return false;
 }
 
-void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &innerNode, int x, int y)
+void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *innerNode, int x, int y)
 {
     Selection selection;
 
-    if (!innerNode.isNull() && innerNode.handle()->renderer() && innerNode.handle()->renderer()->shouldSelect()) {
-        VisiblePosition pos(innerNode.handle()->renderer()->positionForCoordinates(x, y));
+    if (innerNode && innerNode->renderer() && innerNode->renderer()->shouldSelect()) {
+        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(WORD);
@@ -4545,8 +4563,7 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
             // from setting caret selection.
             d->m_beganSelectingText = true;
         } else {
-            DOM::Node node = event->innerNode();
-            selectClosestWordFromMouseEvent(event->qmouseEvent(), node, event->x(), event->y());
+            selectClosestWordFromMouseEvent(event->qmouseEvent(), event->innerNode(), event->x(), event->y());
         }
     }
 }
@@ -4554,13 +4571,13 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
 void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
 {
     QMouseEvent *mouse = event->qmouseEvent();
-    DOM::Node innerNode = event->innerNode();
+    NodeImpl *innerNode = event->innerNode();
     
     Selection selection;
     
-    if (mouse->button() == LeftButton && !innerNode.isNull() && innerNode.handle()->renderer() &&
-        innerNode.handle()->renderer()->shouldSelect()) {
-        VisiblePosition pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y()));
+    if (mouse->button() == LeftButton && innerNode && innerNode->renderer() &&
+        innerNode->renderer()->shouldSelect()) {
+        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(PARAGRAPH);
@@ -4579,13 +4596,13 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
 void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
 {
     QMouseEvent *mouse = event->qmouseEvent();
-    DOM::Node innerNode = event->innerNode();
+    NodeImpl *innerNode = event->innerNode();
     
     if (mouse->button() == LeftButton) {
         Selection sel;
 
-        if (!innerNode.isNull() && innerNode.handle()->renderer() &&
-            innerNode.handle()->renderer()->shouldSelect()) {
+        if (innerNode && innerNode->renderer() &&
+            innerNode->renderer()->shouldSelect()) {
             // Extend the selection if the Shift key is down, unless the click is in a link.
             bool extendSelection = (mouse->state() & ShiftButton) && (event->url().isNull());
 
@@ -4595,9 +4612,9 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
                 return;
             }
 
-            VisiblePosition visiblePos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y()));
+            VisiblePosition visiblePos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
             if (visiblePos.isNull())
-                visiblePos = VisiblePosition(innerNode.handle(), innerNode.handle()->caretMinOffset(), khtml::DOWNSTREAM);
+                visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), khtml::DOWNSTREAM);
             Position pos = visiblePos.deepEquivalent();
             
             sel = selection();
@@ -4633,9 +4650,9 @@ void KHTMLPart::khtmlMousePressEvent(khtml::MousePressEvent *event)
 {
     DOM::DOMString url = event->url();
     QMouseEvent *mouse = event->qmouseEvent();
-    DOM::Node innerNode = event->innerNode();
+    NodeImpl *innerNode = event->innerNode();
 
-    d->m_mousePressNode = innerNode;
+    d->m_mousePressNode.reset(innerNode);
     d->m_dragStartPos = mouse->pos();
 
     if (!event->url().isNull()) {
@@ -4689,9 +4706,9 @@ bool KHTMLPart::handleMouseMoveEventDrag(khtml::MouseMoveEvent *event)
 #else
 
 	QMouseEvent *mouse = event->qmouseEvent();
-	DOM::Node innerNode = event->innerNode();
+	NodeImpl *innerNode = event->innerNode();
 
-	if (d->m_bMousePressed && (!d->m_strSelectedURL.isEmpty() || (!innerNode.isNull() && innerNode.elementId() == ID_IMG)) &&
+	if (d->m_bMousePressed && (!d->m_strSelectedURL.isEmpty() || (innerNode && innerNode->id() == ID_IMG)) &&
 	   (d->m_dragStartPos - mouse->pos()).manhattanLength() > KGlobalSettings::dndEventDelay() &&
 	    d->m_bDnd && d->m_mousePressNode == innerNode) {
 
@@ -4706,7 +4723,7 @@ bool KHTMLPart::handleMouseMoveEventDrag(khtml::MouseMoveEvent *event)
 			p = KMimeType::pixmapForURL(u, 0, KIcon::Desktop, KIcon::SizeMedium);
 		} 
 		else {
-			HTMLImageElementImpl *i = static_cast<HTMLImageElementImpl *>(innerNode.handle());
+			HTMLImageElementImpl *i = static_cast<HTMLImageElementImpl *>(innerNode);
 			if (i) {
 				KMultipleDrag *mdrag = new KMultipleDrag( d->m_view->viewport());
 				mdrag->addDragObject(new QImageDrag(i->currentImage(), 0L));
@@ -4749,8 +4766,8 @@ bool KHTMLPart::handleMouseMoveEventOver(khtml::MouseMoveEvent *event)
 		bool shiftPressed = (mouse->state() & ShiftButton);
 
 		// Image map
-		if (!innerNode.isNull() && innerNode.elementId() == ID_IMG) {
-			HTMLImageElementImpl *i = static_cast<HTMLImageElementImpl *>(innerNode.handle());
+		if (innerNode && innerNode->id() == ID_IMG) {
+			HTMLImageElementImpl *i = static_cast<HTMLImageElementImpl *>(innerNode);
 			if (i && i->isServerMap()) {
 				khtml::RenderObject *r = i->renderer();
 				if(r) {
@@ -4808,14 +4825,14 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
 #else
 
     QMouseEvent *mouse = event->qmouseEvent();
-    DOM::Node innerNode = event->innerNode();
+    NodeImpl *innerNode = event->innerNode();
 
-    if (mouse->state() != LeftButton || !innerNode.handle() || !innerNode.handle()->renderer() ||
-        !innerNode.handle()->renderer()->shouldSelect())
+    if (mouse->state() != LeftButton || !innerNode || !innerNode->renderer() ||
+        !innerNode->renderer()->shouldSelect())
     	return;
 
     // handle making selection
-    VisiblePosition pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y()));
+    VisiblePosition pos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
 
     // Don't modify the selection if we're not on a node.
     if (pos.isNull())
@@ -4900,7 +4917,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             && d->m_dragStartPos.y() == event->qmouseEvent()->y()
             && d->m_selection.isRange()) {
         Selection selection;
-        NodeImpl *node = event->innerNode().handle();
+        NodeImpl *node = event->innerNode();
         if (node && node->isContentEditable() && node->renderer()) {
             VisiblePosition pos = node->renderer()->positionForCoordinates(event->x(), event->y());
             selection.moveTo(pos);
@@ -5213,7 +5230,7 @@ bool KHTMLPart::checkLinkSecurity(const KURL &linkURL,const QString &message, co
 
 #endif
 
-QVariant KHTMLPart::executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script)
+QVariant KHTMLPart::executeScript(QString filename, int baseLine, NodeImpl *n, const QString &script)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "executeScript: filename=" << filename << " baseLine=" << baseLine << " script=" << script << endl;
@@ -5277,6 +5294,8 @@ void KHTMLPart::slotActiveFrameChanged( KParts::Part *part )
 
 #endif
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 void KHTMLPart::setActiveNode(const DOM::Node &node)
 {
     if (!d->m_doc || !d->m_view)
@@ -5295,6 +5314,8 @@ DOM::Node KHTMLPart::activeNode() const
 {
     return DOM::Node(d->m_doc?d->m_doc->focusNode():0);
 }
+
+#endif
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code, NodeImpl *node )
 {
@@ -5552,7 +5573,7 @@ KHTMLPart::TriState KHTMLPart::selectionHasStyle(CSSStyleDeclarationImpl *style)
     TriState state = falseTriState;
 
     CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
-    CSSStyleDeclaration protectQueryStyle(mutableStyle);
+    SharedPtr<CSSStyleDeclarationImpl> protectQueryStyle(mutableStyle);
 
     if (!d->m_selection.isRange()) {
         NodeImpl *nodeToRemove;
@@ -5594,8 +5615,8 @@ bool KHTMLPart::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
 
     CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
 
-    CSSStyleDeclaration protectSelectionStyle(selectionStyle);
-    CSSStyleDeclaration protectQueryStyle(mutableStyle);
+    SharedPtr<CSSStyleDeclarationImpl> protectSelectionStyle(selectionStyle);
+    SharedPtr<CSSStyleDeclarationImpl> protectQueryStyle(mutableStyle);
 
     bool match = true;
     QValueListConstIterator<CSSProperty> end;

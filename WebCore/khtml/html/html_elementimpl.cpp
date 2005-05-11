@@ -39,6 +39,7 @@
 #include "khtmlview.h"
 #include "khtml_part.h"
 
+#include "dom/dom_exception.h"
 #include "rendering/render_object.h"
 #include "rendering/render_replaced.h"
 #include "css/css_valueimpl.h"
@@ -845,46 +846,47 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     return fragment;
 }
 
-bool HTMLElementImpl::setInnerHTML( const DOMString &html )
+void HTMLElementImpl::setInnerHTML(const DOMString &html, int &exception)
 {
     DocumentFragmentImpl *fragment = createContextualFragment( html );
     if (fragment == NULL) {
-	return false;
+	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
 
     removeChildren();
-    int ec = 0;
-    appendChild( fragment, ec );
-    return !ec;
+    appendChild(fragment, exception);
 }
 
-bool HTMLElementImpl::setOuterHTML( const DOMString &html )
+void HTMLElementImpl::setOuterHTML(const DOMString &html, int &exception)
 {
     NodeImpl *p = parent();
-    if (!p || !p->isHTMLElement())
-        return false;
+    if (!p || !p->isHTMLElement()) {
+	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
     HTMLElementImpl *parent = static_cast<HTMLElementImpl *>(p);
     DocumentFragmentImpl *fragment = parent->createContextualFragment( html );
 
-    if (fragment == NULL) {
-	return false;
+    if (!fragment) {
+	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
-    
-    int ec = 0;
     
     if (parentNode()) {
-        parentNode()->replaceChild(fragment, this, ec);
+        parentNode()->replaceChild(fragment, this, exception);
     }
-    
-    return !ec;
 }
 
 
-bool HTMLElementImpl::setInnerText( const DOMString &text )
+void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
 {
     // following the IE specs.
-    if( endTagRequirement(id()) == FORBIDDEN )
-        return false;
+    if (endTagRequirement(id()) == FORBIDDEN) {
+	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
     // IE disallows innerText on inline elements. I don't see why we should have this restriction, as our
     // dhtml engine can cope with it. Lars
     //if ( isInline() ) return false;
@@ -899,26 +901,23 @@ bool HTMLElementImpl::setInnerText( const DOMString &text )
         case ID_TFOOT:
         case ID_THEAD:
         case ID_TR:
-            return false;
+            exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+            return;
         default:
             break;
     }
 
     removeChildren();
-
-    TextImpl *t = new TextImpl( docPtr(), text );
-    int ec = 0;
-    appendChild( t, ec );
-    if ( !ec )
-        return true;
-    return false;
+    appendChild(new TextImpl(docPtr(), text), exception);
 }
 
-bool HTMLElementImpl::setOuterText( const DOMString &text )
+void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 {
     // following the IE specs.
-    if( endTagRequirement(id()) == FORBIDDEN )
-        return false;
+    if( endTagRequirement(id()) == FORBIDDEN ) {
+	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
     switch( id() ) {
         case ID_COL:
         case ID_COLGROUP:
@@ -930,7 +929,8 @@ bool HTMLElementImpl::setOuterText( const DOMString &text )
         case ID_TFOOT:
         case ID_THEAD:
         case ID_TR:
-            return false;
+            exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+            return;
         default:
             break;
     }
@@ -938,40 +938,39 @@ bool HTMLElementImpl::setOuterText( const DOMString &text )
     NodeImpl *parent = parentNode();
 
     if (!parent) {
-	return false;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
 
-    TextImpl *t = new TextImpl( docPtr(), text );
-    int ec = 0;
-    parent->replaceChild(t, this, ec);
-
-    if ( ec )
-        return false;
+    TextImpl *t = new TextImpl(docPtr(), text);
+    parent->replaceChild(t, this, exception);
+    if (exception)
+        return;
 
     // is previous node a text node? if so, merge into it
     NodeImpl *prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
 	TextImpl *textPrev = static_cast<TextImpl *>(prev);
-	textPrev->appendData(t->data(), ec);
-	t->parentNode()->removeChild(t, ec);
+	textPrev->appendData(t->data(), exception);
+        if (exception)
+            return;
+	t->parentNode()->removeChild(t, exception);
+        if (exception)
+            return;
 	t = textPrev;
     }
-
-    if ( ec )
-        return false;
 
     // is next node a text node? if so, merge it in
     NodeImpl *next = t->nextSibling();
     if (next && next->isTextNode()) {
 	TextImpl *textNext = static_cast<TextImpl *>(next);
-	t->appendData(textNext->data(), ec);
-	textNext->parentNode()->removeChild(textNext, ec);
+	t->appendData(textNext->data(), exception);
+        if (exception)
+            return;
+	textNext->parentNode()->removeChild(textNext, exception);
+        if (exception)
+            return;
     }
-
-    if ( ec )
-        return false;
-
-    return true;
 }
 
 
@@ -1143,14 +1142,75 @@ DOMString HTMLElementImpl::toString() const
     return ElementImpl::toString();
 }
 
+CSSStyleDeclarationImpl *HTMLElementImpl::style()
+{
+    return getInlineStyleDecl();
+}
+
+DOMString HTMLElementImpl::idDOM() const
+{
+    return getAttribute(ATTR_ID);
+}
+
+void HTMLElementImpl::setId(const DOMString &value)
+{
+    setAttribute(ATTR_ID, value);
+}
+
+DOMString HTMLElementImpl::title() const
+{
+    return getAttribute(ATTR_TITLE);
+}
+
+void HTMLElementImpl::setTitle(const DOMString &value)
+{
+    setAttribute(ATTR_TITLE, value);
+}
+
+DOMString HTMLElementImpl::lang() const
+{
+    return getAttribute(ATTR_LANG);
+}
+
+void HTMLElementImpl::setLang(const DOMString &value)
+{
+    setAttribute(ATTR_LANG, value);
+}
+
+DOMString HTMLElementImpl::dir() const
+{
+    return getAttribute(ATTR_DIR);
+}
+
+void HTMLElementImpl::setDir(const DOMString &value)
+{
+    setAttribute(ATTR_DIR, value);
+}
+
+DOMString HTMLElementImpl::className() const
+{
+    return getAttribute(ATTR_CLASS);
+}
+
+void HTMLElementImpl::setClassName(const DOMString &value)
+{
+    setAttribute(ATTR_CLASS, value);
+}
+
+SharedPtr<HTMLCollectionImpl> HTMLElementImpl::children()
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::NODE_CHILDREN));
+}
+
 // -------------------------------------------------------------------------
+
 HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)
     : HTMLElementImpl(doc)
 {
-    _id = i;
+    m_elementId = i;
 }
 
-HTMLGenericElementImpl::~HTMLGenericElementImpl()
+NodeImpl::Id HTMLGenericElementImpl::id() const
 {
+    return m_elementId;
 }
-

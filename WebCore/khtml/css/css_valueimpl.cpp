@@ -20,11 +20,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "css/css_valueimpl.h"
+
 #include "dom/css_value.h"
+#include "dom/css_stylesheet.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 
-#include "css/css_valueimpl.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssparser.h"
@@ -53,6 +55,9 @@ using khtml::FontDef;
 using khtml::CSSStyleSelector;
 
 namespace DOM {
+
+// Defined in parser.y, but not in any header, so just declare it here.
+int getPropertyID(const char *str, int len);
 
 #if 0
 
@@ -118,6 +123,47 @@ bool CSSStyleDeclarationImpl::isStyleDeclaration()
     return true;
 }
 
+CSSValueImpl *CSSStyleDeclarationImpl::getPropertyCSSValue(const DOMString &propertyName)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return 0;
+    return getPropertyCSSValue(propID);
+}
+
+DOMString CSSStyleDeclarationImpl::getPropertyValue(const DOMString &propertyName)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return DOMString();
+    return getPropertyValue(propID);
+}
+
+DOMString CSSStyleDeclarationImpl::getPropertyPriority(const DOMString &propertyName)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return DOMString();
+    return getPropertyPriority(propID) ? "important" : "";
+}
+
+void CSSStyleDeclarationImpl::setProperty(const DOMString &propertyName, const DOMString &value, const DOMString &priority, int &exception)
+{
+    int propID = propertyID(propertyName);
+    if (!propID) // set exception?
+        return;
+    bool important = priority.string().find("important", 0, false) != -1;
+    setProperty(propID, value, important, exception);
+}
+
+DOMString CSSStyleDeclarationImpl::removeProperty(const DOMString &propertyName, int &exception)
+{
+    int propID = propertyID(propertyName);
+    if (!propID)
+        return DOMString();
+    return removeProperty(propID, exception);
+}
+
 CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl()
     : m_node(0)
 {
@@ -158,7 +204,7 @@ DOMString CSSMutableStyleDeclarationImpl::getPropertyValue( int propertyID ) con
 {
     CSSValueImpl* value = getPropertyCSSValue( propertyID );
     if (value)
-        return CSSValue(value).cssText();
+        return value->cssText();
 
     // Shorthand and 4-values properties
     switch ( propertyID ) {
@@ -699,9 +745,9 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveV
     m_type = type;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(const Counter &c)
+CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CounterImpl *c)
 {
-    m_value.counter = c.handle();
+    m_value.counter = c;
     if (m_value.counter)
 	m_value.counter->ref();
     m_type = CSSPrimitiveValue::CSS_COUNTER;
@@ -1285,6 +1331,41 @@ DOMString CSSProperty::cssText() const
 bool operator==(const CSSProperty &a, const CSSProperty &b)
 {
     return a.m_id == b.m_id && a.m_bImportant == b.m_bImportant && a.m_value == b.m_value;
+}
+
+int CSSStyleDeclarationImpl::propertyID(const DOMString &s, bool *hadPixelOrPosPrefix)
+{
+    QString prop = s.string();
+
+    int i = prop.length();
+    while (--i) {
+	char c = prop[i].latin1();
+        if (!c)
+            return 0; // non-ASCII character
+	if (c >= 'A' && c <= 'Z')
+            prop.insert(i, '-');
+    }
+
+    prop = prop.lower();
+
+    if (hadPixelOrPosPrefix)
+        *hadPixelOrPosPrefix = false;
+
+    if (prop.startsWith("css-")) {
+        prop = prop.mid(4);
+    } else if (prop.startsWith("pixel-")) {
+        prop = prop.mid(6);
+        if (hadPixelOrPosPrefix)
+            *hadPixelOrPosPrefix = true;
+    } else if (prop.startsWith("pos-")) {
+        prop = prop.mid(4);
+        if (hadPixelOrPosPrefix)
+            *hadPixelOrPosPrefix = true;
+    } else if (prop.startsWith("khtml-") || prop.startsWith("apple-") || prop.startsWith("moz-")) {
+        prop.insert(0, '-');
+    }
+
+    return getPropertyID(prop.latin1(), prop.length());
 }
 
 }

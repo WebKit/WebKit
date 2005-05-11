@@ -37,9 +37,13 @@ public:
   DomShared() : _ref( 0 ) {}
   virtual ~DomShared();
 
+#if KHTML_NO_CPLUSPLUS_DOM
+  bool deleteMe() { return true; }
+#else
   /* Overload this function if you want a different deletion behaviour
    */
   virtual bool deleteMe();
+#endif
 
   void ref() { _ref++; }
   void deref() { if(_ref) _ref--; if(!_ref && deleteMe()) delete this; }

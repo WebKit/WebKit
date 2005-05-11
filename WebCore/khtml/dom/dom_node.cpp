@@ -91,14 +91,14 @@ Node NamedNodeMap::item( unsigned long index ) const
 Node NamedNodeMap::getNamedItemNS( const DOMString &namespaceURI, const DOMString &localName ) const
 {
     if (!impl) return 0;
-    return impl->getNamedItem(impl->mapId(namespaceURI, localName, true));
+    return impl->getNamedItemNS(namespaceURI, localName);
 }
 
 Node NamedNodeMap::setNamedItemNS( const Node &arg )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
     int exceptioncode = 0;
-    Node r = impl->setNamedItem(arg.impl, exceptioncode).get();
+    Node r = impl->setNamedItemNS(arg.impl, exceptioncode).get();
     if (exceptioncode)
         throw DOMException(exceptioncode);
     return r;
@@ -108,7 +108,7 @@ Node NamedNodeMap::removeNamedItemNS( const DOMString &namespaceURI, const DOMSt
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
     int exceptioncode = 0;
-    Node r = impl->removeNamedItem(impl->mapId(namespaceURI, localName, true), exceptioncode).get();
+    Node r = impl->removeNamedItemNS(namespaceURI, localName, exceptioncode).get();
     if (exceptioncode)
         throw DOMException(exceptioncode);
     return r;
@@ -247,13 +247,8 @@ NamedNodeMap Node::attributes() const
 
 Document Node::ownerDocument() const
 {
-    // braindead DOM spec says that ownerDocument
-    // should return null if called on the document node
-    // we don't do that in the *impl tree to avoid excessive if()'s
-    // so we simply hack it here in one central place.
-    if (!impl || impl->getDocument() == impl) return Document(false);
-
-    return impl->getDocument();
+    if (!impl) return Document();
+    return impl->ownerDocument();
 }
 
 Node Node::insertBefore( const Node &newChild, const Node &refChild )
@@ -299,9 +294,7 @@ Node Node::appendChild( const Node &newChild )
 bool Node::hasAttributes()
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    if (!impl->isElementNode()) return false;
-    ElementImpl* e = static_cast<ElementImpl*>(impl);
-    return e->attributes(true) && e->attributes(true)->length();
+    return impl->hasAttributes();
 }
 
 bool Node::hasChildNodes(  )
@@ -324,7 +317,8 @@ void Node::normalize (  )
 
 bool Node::isSupported( const DOMString &feature, const DOMString &version ) const
 {
-    return DOMImplementationImpl::instance()->hasFeature(feature, version);
+    if (!impl) return false;
+    return impl->isSupported(feature, version);
 }
 
 DOMString Node::namespaceURI(  ) const
@@ -359,7 +353,7 @@ void Node::addEventListener(const DOMString &type,
 			  const bool useCapture)
 {
     if (!impl) return;
-    impl->addEventListener(EventImpl::typeToId(type),listener,useCapture);
+    impl->addEventListener(type,listener,useCapture);
 }
 
 void Node::removeEventListener(const DOMString &type,
@@ -367,7 +361,7 @@ void Node::removeEventListener(const DOMString &type,
 			     bool useCapture)
 {
     if (!impl) return;
-    impl->removeEventListener(EventImpl::typeToId(type),listener,useCapture);
+    impl->removeEventListener(type,listener,useCapture);
 }
 
 bool Node::dispatchEvent(const Event &evt)

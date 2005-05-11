@@ -95,23 +95,6 @@ using DOM::StyleSheetListImpl;
 + (DOMCounter *)_counterWithImpl:(CounterImpl *)impl;
 @end
 
-static inline int getPropertyID(NSString *string)
-{
-    //use a fixed sized buffer to avoid malloc() allocations done by -[NSString UTF8String]
-    static char buffer[1024];
-    BOOL success = CFStringGetCString((CFStringRef)string, buffer, 1023, kCFStringEncodingUTF8);
-   
-    // CFStringGetCString returns false if conversion isn't possible
-    // (due to conversion error, or not enough space in the provided buffer)
-    // fall back to UTF8String instead
-    if (!success) {
-        const char *s = [string UTF8String];
-        return DOM::getPropertyID(s, strlen(s));
-    }
-
-    return DOM::getPropertyID(buffer, strlen(buffer));
-}
-
 //------------------------------------------------------------------------------------------
 // DOMStyleSheet
 
@@ -303,7 +286,7 @@ static inline int getPropertyID(NSString *string)
 
 - (DOMCSSRuleList *)cssRules
 {
-    return [DOMCSSRuleList _ruleListWithImpl:[self _CSSStyleSheetImpl]->cssRules().handle()];
+    return [DOMCSSRuleList _ruleListWithImpl:[self _CSSStyleSheetImpl]->cssRules()];
 }
 
 - (unsigned long)insertRule:(NSString *)rule :(unsigned long)index
@@ -794,50 +777,31 @@ static inline int getPropertyID(NSString *string)
 
 - (NSString *)getPropertyValue:(NSString *)propertyName
 {
-    int propid = getPropertyID(propertyName);
-    if (!propid) 
-        return nil;
-    return [self _styleDeclarationImpl]->getPropertyValue(propid);
+    return [self _styleDeclarationImpl]->getPropertyValue(propertyName);
 }
 
 - (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName
 {
-    int propid = getPropertyID(propertyName);
-    if (!propid) 
-        return nil;
-    return [DOMCSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propid)];
+    return [DOMCSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propertyName)];
 }
 
 - (NSString *)removeProperty:(NSString *)propertyName
 {
-    int propid = getPropertyID(propertyName);
-    if (!propid) 
-        return nil;
     int exceptionCode = 0;
-    DOMString result = [self _styleDeclarationImpl]->removeProperty(propid, exceptionCode);
+    DOMString result = [self _styleDeclarationImpl]->removeProperty(propertyName, exceptionCode);
     raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (NSString *)getPropertyPriority:(NSString *)propertyName
 {
-    int propid = getPropertyID(propertyName);
-    if (!propid) 
-        return nil;
-    if ([self _styleDeclarationImpl]->getPropertyPriority(propid))
-        return @"important";
-    else
-        return @"";
+    return [self _styleDeclarationImpl]->getPropertyPriority(propertyName);
 }
 
 - (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
 {
-    int propid = getPropertyID(propertyName);
-    if (!propid) 
-        return;
-    bool important = strcasecmp(DOMString(priority), "important") == 0;
     int exceptionCode;
-    [self _styleDeclarationImpl]->setProperty(propid, value, important, exceptionCode);
+    [self _styleDeclarationImpl]->setProperty(propertyName, value, priority, exceptionCode);
     raiseOnDOMError(exceptionCode);
 }
 
@@ -922,7 +886,7 @@ static inline int getPropertyID(NSString *string)
 
 - (void)setCssText:(NSString *)cssText
 {
-    ERROR("unimplemented");
+    [self _valueImpl]->setCssText(cssText);
 }
 
 - (unsigned short)cssValueType
