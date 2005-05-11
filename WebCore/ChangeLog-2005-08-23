@@ -1,5 +1,48 @@
 2005-05-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave Hyatt.
+        No new layout tests needed.
+
+        - remove all remaining uses of QMIN/QMAX and KMIN/KMAX.
+
+        * kwq/KWQDef.h: Remove the macros.
+
+        Remove all use of the macros (and fix a few compile errors by changing the types of
+        some integer and floating point constants).
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseColorFromValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::addHTMLColor):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLSelectElementImpl::parseHTMLAttribute):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseComment):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::nearestFloatBottom):
+        (khtml::RenderBlock::calcMinMaxWidth):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintOutlineForLine):
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::calcMinMaxWidth):
+        (RenderFieldset::layoutLegend):
+        (RenderFileButton::calcMinMaxWidth):
+        (RenderSelect::layout):
+        (RenderTextArea::calcMinMaxWidth):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::drawBorder):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::resizeWidget):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::recalcColumn):
+        (AutoTableLayout::calcEffectiveWidth):
+
+2005-05-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris Blumenberg.
 
         - next pass of moving code from C++ DOM wrappers into the DOM impl. classes

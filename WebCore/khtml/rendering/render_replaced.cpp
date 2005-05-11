@@ -266,8 +266,8 @@ void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
 {
 #if !APPLE_CHANGES
     // ugly hack to limit the maximum size of the widget (as X11 has problems if it's bigger)
-    h = QMIN( h, 3072 );
-    w = QMIN( w, 2000 );
+    h = kMin( h, 3072 );
+    w = kMin( w, 2000 );
 #endif
 
     if (element() && (widget->width() != w || widget->height() != h)) {

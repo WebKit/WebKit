@@ -2020,7 +2020,7 @@ RenderBlock::nearestFloatBottom(int height) const
     for ( ; (r = it.current()); ++it )
         if (r->endY>height && (r->endY<bottom || bottom==0))
             bottom=r->endY;
-    return QMAX(bottom, height);
+    return kMax(bottom, height);
 }
 
 int
@@ -2670,19 +2670,19 @@ void RenderBlock::calcMinMaxWidth()
 
     if (style()->width().isFixed() && style()->width().value > 0) {
         if (isTableCell())
-            m_maxWidth = KMAX(m_minWidth, style()->width().value);
+            m_maxWidth = kMax(m_minWidth, style()->width().value);
         else
             m_minWidth = m_maxWidth = style()->width().value;
     }
     
     if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
-        m_maxWidth = KMAX(m_maxWidth, style()->minWidth().value);
-        m_minWidth = KMAX(m_minWidth, style()->minWidth().value);
+        m_maxWidth = kMax(m_maxWidth, style()->minWidth().value);
+        m_minWidth = kMax(m_minWidth, style()->minWidth().value);
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value != UNDEFINED) {
-        m_maxWidth = KMIN(m_maxWidth, style()->maxWidth().value);
-        m_minWidth = KMIN(m_minWidth, style()->maxWidth().value);
+        m_maxWidth = kMin(m_maxWidth, style()->maxWidth().value);
+        m_minWidth = kMin(m_minWidth, style()->maxWidth().value);
     }
 
     int toAdd = 0;

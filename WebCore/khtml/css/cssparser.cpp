@@ -2219,9 +2219,9 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
 	if ( !validUnit( v, FInteger|FPercent, true ) )
 	    return 0;
 	int b = (int) ( v->fValue * (v->unit == CSSPrimitiveValue::CSS_PERCENTAGE ? 256./100. : 1.) );
-	r = QMAX( 0, QMIN( 255, r ) );
-	g = QMAX( 0, QMIN( 255, g ) );
-	b = QMAX( 0, QMIN( 255, b ) );
+	r = kMax( 0, kMin( 255, r ) );
+	g = kMax( 0, kMin( 255, g ) );
+	b = kMax( 0, kMin( 255, b ) );
 	c = qRgb( r, g, b );
     }
     else if ( value->unit == Value::Function &&
@@ -2253,10 +2253,10 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
         v = args->next();
         if ( !validUnit( v, FNumber, true ) )
             return 0;
-        r = QMAX( 0, QMIN( 255, r ) );
-        g = QMAX( 0, QMIN( 255, g ) );
-        b = QMAX( 0, QMIN( 255, b ) );
-        int a = (int)(QMAX( 0, QMIN( 1.0f, v->fValue ) ) * 255);
+        r = kMax( 0, kMin( 255, r ) );
+        g = kMax( 0, kMin( 255, g ) );
+        b = kMax( 0, kMin( 255, b ) );
+        int a = (int)(kMax( 0.0, kMin( 1.0, v->fValue ) ) * 255);
         c = qRgba( r, g, b, a );
     }
     else

@@ -39,12 +39,6 @@ typedef unsigned int Q_UINT32;
 typedef short Q_INT16;
 typedef unsigned short Q_UINT16;
 
-#define QMAX(a,b) ((a) > (b) ? (a) : (b))
-#define QMIN(a,b) ((a) < (b) ? (a) : (b))
-
-#define KMAX(a,b) kMax(a, b)
-#define KMIN(a,b) kMin(a, b)
-
 template<class T>
 inline const T& kMin ( const T& a, const T& b ) { return a < b ? a : b; }
 

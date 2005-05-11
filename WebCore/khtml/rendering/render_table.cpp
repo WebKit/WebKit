@@ -1184,7 +1184,7 @@ int RenderTableSection::layoutRows( int toAdd )
 		    int toAdd = kMin(dh, (totalHeight * grid[r].height.value / 100)-rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
-                    toAdd = QMAX(0, toAdd);
+                    toAdd = kMax(0, toAdd);
 		    add += toAdd;
 		    dh -= toAdd;
 		    totalPercent -= grid[r].height.value;

@@ -616,7 +616,7 @@ void RenderLineEdit::calcMinMaxWidth()
     int h = fm.lineSpacing();
     int w = fm.width( 'x' ) * (size > 0 ? size : 17); // "some"
     s = QSize(w + 2 + 2*widget()->frameWidth(),
-              QMAX(h, 14) + 2 + 2*widget()->frameWidth())
+              kMax(h, 14) + 2 + 2*widget()->frameWidth())
         .expandedTo(QApplication::globalStrut());
 #endif
 
@@ -721,8 +721,8 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
             xPos = m_width - paddingRight() - borderRight() - legend->width() - legend->marginRight();
         int b = borderTop();
         int h = legend->height();
-        legend->setPos(xPos, QMAX((b-h)/2, 0));
-        m_height = QMAX(b,h) + paddingTop();
+        legend->setPos(xPos, kMax((b-h)/2, 0));
+        m_height = kMax(b,h) + paddingTop();
     }
     return legend;
 }
@@ -887,7 +887,7 @@ void RenderFileButton::calcMinMaxWidth()
     int w = fm.width( 'x' ) * (size > 0 ? size : 17); // "some"
     w += 6 + fm.width( m_button->text() ) + 2*fm.width( ' ' );
     s = QSize(w + 2 + 2*m_edit->frameWidth(),
-              QMAX(h, 14) + 2 + 2*m_edit->frameWidth())
+              kMax(h, 14) + 2 + 2*m_edit->frameWidth())
         .expandedTo(QApplication::globalStrut());
 #endif
 
@@ -1241,20 +1241,20 @@ void RenderSelect::layout( )
         int width = 0;
         int height = 0;
         while(p) {
-            width = QMAX(width, p->width(p->listBox()));
-            height = QMAX(height, p->height(p->listBox()));
+            width = kMax(width, p->width(p->listBox()));
+            height = kMax(height, p->height(p->listBox()));
             p = p->next();
         }
 #endif
 
         int size = m_size;
         // check if multiple and size was not given or invalid
-        // Internet Exploder sets size to QMIN(number of elements, 4)
+        // Internet Exploder sets size to kMin(number of elements, 4)
         // Netscape seems to simply set it to "number of elements"
-        // the average of that is IMHO QMIN(number of elements, 10)
+        // the average of that is IMHO kMin(number of elements, 10)
         // so I did that ;-)
         if(size < 1)
-            size = QMIN(static_cast<KListBox*>(m_widget)->count(), 10);
+            size = kMin(static_cast<KListBox*>(m_widget)->count(), 10U);
 
 #if APPLE_CHANGES
         // Let the widget tell us how big it wants to be.
@@ -1496,13 +1496,13 @@ void RenderTextArea::calcMinMaxWidth()
 
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
 #if APPLE_CHANGES
-    QSize size(w->sizeWithColumnsAndRows(QMAX(element()->cols(), 1), QMAX(element()->rows(), 1)));
+    QSize size(w->sizeWithColumnsAndRows(kMax(element()->cols(), 1L), kMax(element()->rows(), 1L)));
 #else
     const QFontMetrics &m = style()->fontMetrics();
     w->setTabStopWidth(8 * m.width(" "));
-    QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
+    QSize size( kMax(element()->cols(), 1)*m.width('x') + w->frameWidth() +
                 w->verticalScrollBar()->sizeHint().width(),
-                QMAX(element()->rows(), 1)*m.height() + w->frameWidth()*2 +
+                kMax(element()->rows(), 1)*m.height() + w->frameWidth()*2 +
                 (w->wordWrap() == QTextEdit::NoWrap ?
                  w->horizontalScrollBar()->sizeHint().height() : 0)
         );

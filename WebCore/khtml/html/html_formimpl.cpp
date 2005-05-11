@@ -2711,10 +2711,10 @@ void HTMLSelectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_SIZE:
-        m_size = QMAX( attr->value().toInt(), 1 );
+        m_size = kMax( attr->value().toInt(), 1 );
         break;
     case ATTR_WIDTH:
-        m_minwidth = QMAX( attr->value().toInt(), 0 );
+        m_minwidth = kMax( attr->value().toInt(), 0 );
         break;
     case ATTR_MULTIPLE:
         m_multiple = (!attr->isNull());
