@@ -325,6 +325,36 @@
 //652
 //653
 //654
+		654D87B50831973B0082DCA1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = edit_command.cpp;
+			path = editing/edit_command.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		654D87B60831973B0082DCA1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = edit_command.h;
+			path = editing/edit_command.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		654D87B70831973B0082DCA1 = {
+			fileRef = 654D87B50831973B0082DCA1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		654D87B80831973B0082DCA1 = {
+			fileRef = 654D87B60831973B0082DCA1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		654E7EE00569FD4600358BD2 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1808,6 +1838,7 @@
 				93F199FA08245E59001E9ABC,
 				93F199FB08245E59001E9ABC,
 				93F199FC08245E59001E9ABC,
+				654D87B80831973B0082DCA1,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4231,6 +4262,7 @@
 				93F19B1008245E59001E9ABC,
 				93F19B1108245E59001E9ABC,
 				93276B4F0826F80F002E46CE,
+				654D87B70831973B0082DCA1,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6522,6 +6554,8 @@
 		BEB1DD0805C197DF00DD1F43 = {
 			children = (
 				EDA4AC97076FB89100DD23EC,
+				654D87B50831973B0082DCA1,
+				654D87B60831973B0082DCA1,
 				BE9185DD05EE59B80081354D,
 				BE9185E005EE59B80081354D,
 				BEA5DBDA075CEDA00098A432,

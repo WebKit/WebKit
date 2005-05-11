@@ -26,6 +26,7 @@
 #ifndef __htmlediting_h__
 #define __htmlediting_h__
 
+#include "edit_command.h"
 #include "dom_nodeimpl.h"
 #include "editing/edit_actions.h"
 #include "qmap.h"
@@ -48,52 +49,6 @@ namespace khtml {
 class EditCommand;
 class Selection;
 class VisiblePosition;
-
-//------------------------------------------------------------------------------------------
-// EditCommandPtr
-
-class EditCommandPtr : public SharedPtr<EditCommand>
-{
-public:
-    EditCommandPtr();
-    EditCommandPtr(EditCommand *);
-    EditCommandPtr(const EditCommandPtr &);
-    ~EditCommandPtr();
-
-    EditCommandPtr &operator=(const EditCommandPtr &);
-
-    bool isCompositeStep() const;
-
-    void apply() const;
-    void unapply() const;
-    void reapply() const;
-
-    EditAction editingAction() const;
-
-    DOM::DocumentImpl * const document() const;
-
-    Selection startingSelection() const;
-    Selection endingSelection() const;
-
-    void setStartingSelection(const Selection &s) const;
-    void setStartingSelection(const VisiblePosition &p) const;
-    void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
-    void setEndingSelection(const Selection &s) const;
-    void setEndingSelection(const VisiblePosition &p) const;
-    void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
-
-    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
-    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
-
-    EditCommandPtr parent() const;
-    void setParent(const EditCommandPtr &) const;
-
-    bool isInsertTextCommand() const;
-    bool isInsertLineBreakCommand() const;
-    bool isTypingCommand() const;
-
-    static EditCommandPtr &emptyCommand();
-};
 
 //------------------------------------------------------------------------------------------
 // StyleChange
@@ -132,69 +87,6 @@ private:
     DOM::DOMString m_applyFontFace;
     DOM::DOMString m_applyFontSize;
     bool m_usesLegacyStyles;
-};
-
-//------------------------------------------------------------------------------------------
-// EditCommand
-
-class EditCommand : public Shared<EditCommand>
-{
-public:
-    EditCommand(DOM::DocumentImpl *);
-    virtual ~EditCommand();
-
-    bool isCompositeStep() const { return m_parent != 0; }
-    EditCommand *parent() const { return m_parent; }
-    void setParent(EditCommand *parent) { m_parent = parent; }
-
-    enum ECommandState { NotApplied, Applied };
-    
-    void apply();	
-    void unapply();
-    void reapply();
-
-    virtual void doApply() = 0;
-    virtual void doUnapply() = 0;
-    virtual void doReapply();  // calls doApply()
-
-    virtual EditAction editingAction() const;
-
-    virtual DOM::DocumentImpl * const document() const { return m_document; }
-
-    Selection startingSelection() const { return m_startingSelection; }
-    Selection endingSelection() const { return m_endingSelection; }
-
-    void setEndingSelectionNeedsLayout(bool flag=true) { m_endingSelection.setNeedsLayout(flag); }
-        
-    ECommandState state() const { return m_state; }
-    void setState(ECommandState state) { m_state = state; }
-
-    void setStartingSelection(const Selection &s);
-    void setStartingSelection(const VisiblePosition &p);
-    void setStartingSelection(const DOM::Position &p, EAffinity affinity);
-    void setEndingSelection(const Selection &s);
-    void setEndingSelection(const VisiblePosition &p);
-    void setEndingSelection(const DOM::Position &p, EAffinity affinity);
-
-    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
-    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    
-    DOM::CSSMutableStyleDeclarationImpl *styleAtPosition(const DOM::Position &pos);
-    
-    virtual bool isInsertTextCommand() const;
-    virtual bool isTypingCommand() const;
-    
-private:
-    void assignTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
-
-    virtual bool preservesTypingStyle() const;
-
-    DOM::DocumentImpl *m_document;
-    ECommandState m_state;
-    Selection m_startingSelection;
-    Selection m_endingSelection;
-    DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
-    EditCommand *m_parent;
 };
 
 //------------------------------------------------------------------------------------------

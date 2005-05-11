@@ -1,3 +1,16 @@
+2005-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- start on splitting htmlediting.cpp into smaller files - pull
+	EditCommand and EditCommandPtr out.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/edit_command.cpp: Added.
+        * khtml/editing/edit_command.h: Added.
+        * khtml/editing/htmlediting.cpp: Took EditCommand and EditCommandPtr out.
+        * khtml/editing/htmlediting.h: Ditto.
+
 2005-05-10  David Hyatt  <hyatt@apple.com>
 
 	Refactor the DOM so that the concept of class/style/id is no longer unique to HTML elements.  This paves the way
