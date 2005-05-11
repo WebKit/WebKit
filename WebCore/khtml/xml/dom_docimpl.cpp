@@ -521,7 +521,7 @@ AttrImpl *DocumentImpl::createAttribute( NodeImpl::Id id )
 {
     // Assume this is an HTML attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
     // documents if we're wrong.
-    return new AttrImpl(0, docPtr(), new HTMLAttributeImpl(id, DOMString("").implementation()));
+    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(id, DOMString("").implementation()));
 }
 
 EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
@@ -624,7 +624,7 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
     int colonPos = qName.find(':',0);
 
     if (_namespaceURI == XHTML_NAMESPACE) {
-        // User requested an element in the XHTML namespace - this means we create a HTML element
+        // User requested an element in the XHTML namespace - this means we create a specific element
         // (elements not in this namespace are treated as normal XML elements)
         e = createHTMLElement(qName.mid(colonPos+1), exceptioncode);
         if (exceptioncode)
@@ -637,6 +637,7 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
             }
         }
     }
+
     if (!e)
         e = new XMLElementImpl( document, _qualifiedName.implementation(), _namespaceURI.implementation() );
 
@@ -920,6 +921,9 @@ ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
     case ID_Q:
         return new HTMLQuoteElementImpl(docPtr());
 
+    case ID_MARQUEE:
+        return new HTMLMarqueeElementImpl(docPtr());
+   
 // elements with no special representation in the DOM
 
 // block:
@@ -959,14 +963,6 @@ ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
     case ID_BDO:
     default:
         return new HTMLGenericElementImpl(docPtr(), tagID);
-
-    case ID_MARQUEE:
-        return new HTMLMarqueeElementImpl(docPtr());
-        
-// text
-    case ID_TEXT:
-        kdDebug( 6020 ) << "Use document->createTextNode()" << endl;
-        return 0;
     }
 
     return 0;

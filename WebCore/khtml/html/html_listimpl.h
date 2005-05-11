@@ -40,8 +40,8 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     virtual long start() const { return 1; }
 
@@ -88,8 +88,8 @@ public:
 
     virtual Id id() const;
     
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     bool compact() const;
     void setCompact(bool);
@@ -116,7 +116,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void attach();
 

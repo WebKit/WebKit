@@ -40,7 +40,7 @@ namespace DOM {
     class DocumentImpl;
     class NodeImpl;
     class ElementImpl;
-    class HTMLElementImpl;
+    class StyledElementImpl;
     class StyleSheetImpl;
     class CSSStyleSheetImpl;
     class CSSSelector;
@@ -211,7 +211,7 @@ public:
 	RenderStyle *style;
 	RenderStyle *parentStyle;
 	DOM::ElementImpl *element;
-        DOM::HTMLElementImpl *htmlElement;
+        DOM::StyledElementImpl *styledElement;
 	DOM::NodeImpl *parentNode;
         RenderStyle::PseudoId pseudoStyle;
 	KHTMLView *view;

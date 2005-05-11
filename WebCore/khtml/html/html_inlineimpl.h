@@ -40,7 +40,7 @@ public:
     virtual bool isKeyboardFocusable() const;
     virtual bool isFocusable() const;
     virtual Id id() const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual void accessKeyAction(bool fullAction);
     virtual bool isURLAttribute(AttributeImpl *attr) const;
@@ -101,7 +101,7 @@ public:
     virtual Id id() const;
     
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
@@ -120,7 +120,7 @@ public:
     virtual Id id() const;
     
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString color() const;
     void setColor(const DOMString &);

@@ -58,7 +58,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     virtual void insertedIntoDocument();
 
@@ -97,7 +97,7 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
     virtual void attach();
     virtual void detach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -173,7 +173,7 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -252,7 +252,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);

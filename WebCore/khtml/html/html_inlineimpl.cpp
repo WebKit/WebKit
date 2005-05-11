@@ -214,7 +214,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 }
 
 
-void HTMLAnchorElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLAnchorElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -229,7 +229,7 @@ void HTMLAnchorElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_REL:
 	break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -405,7 +405,7 @@ bool HTMLBRElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& resu
     return HTMLElementImpl::mapToEntry(attr, result);
 }
 
-void HTMLBRElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLBRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -423,7 +423,7 @@ void HTMLBRElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     }
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -520,7 +520,7 @@ bool HTMLFontElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& re
     return HTMLElementImpl::mapToEntry(attr, result);
 }
 
-void HTMLFontElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -548,13 +548,13 @@ void HTMLFontElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     }
     case ATTR_COLOR:
-        addHTMLColor(attr, CSS_PROP_COLOR, attr->value());
+        addCSSColor(attr, CSS_PROP_COLOR, attr->value());
         break;
     case ATTR_FACE:
         addCSSProperty(attr, CSS_PROP_FONT_FAMILY, attr->value());
         break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 

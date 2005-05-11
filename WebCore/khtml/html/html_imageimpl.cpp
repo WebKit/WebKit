@@ -171,7 +171,7 @@ bool HTMLImageElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& r
     return HTMLElementImpl::mapToEntry(attr, result);
 }
 
-void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -266,7 +266,7 @@ void HTMLImageElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	}
 	// fall through
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -582,13 +582,13 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
     return false;
 }
 
-void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLMapElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
     case ATTR_ID:
         // Must call base class so that hasID bit gets set.
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
         if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
         // fall through
     case ATTR_NAME:
@@ -599,7 +599,7 @@ void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         getDocument()->addImageMap(this);
         break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -639,7 +639,7 @@ NodeImpl::Id HTMLAreaElementImpl::id() const
     return ID_AREA;
 }
 
-void HTMLAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -665,7 +665,7 @@ void HTMLAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_ACCESSKEY:
         break;
     default:
-        HTMLAnchorElementImpl::parseHTMLAttribute(attr);
+        HTMLAnchorElementImpl::parseMappedAttribute(attr);
     }
 }
 

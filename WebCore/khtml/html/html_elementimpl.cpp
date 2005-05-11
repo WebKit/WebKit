@@ -56,188 +56,15 @@
 using namespace DOM;
 using namespace khtml;
 
-CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl() {
-    if (m_entryType != ePersistent)
-        HTMLElementImpl::removeMappedAttributeDecl(m_entryType, m_attrName, m_attrValue);
-}
-
-QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* HTMLElementImpl::m_mappedAttributeDecls = 0;
-
-CSSMappedAttributeDeclarationImpl* HTMLElementImpl::getMappedAttributeDecl(MappedAttributeEntry entryType, AttributeImpl* attr)
-{
-    if (!m_mappedAttributeDecls)
-        return 0;
-    
-    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
-    if (attrNameDict) {
-        QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attr->id());
-        if (attrValueDict)
-            return attrValueDict->find(attr->value().implementation());
-    }
-    return 0;
-}
-
-void HTMLElementImpl::setMappedAttributeDecl(MappedAttributeEntry entryType, AttributeImpl* attr, CSSMappedAttributeDeclarationImpl* decl)
-{
-    if (!m_mappedAttributeDecls)
-        m_mappedAttributeDecls = new QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >;
-    
-    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = 0;
-    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
-    if (!attrNameDict) {
-        attrNameDict = new QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >;
-        attrNameDict->setAutoDelete(true);
-        m_mappedAttributeDecls->insert((void*)entryType, attrNameDict);
-    }
-    else
-        attrValueDict = attrNameDict->find((void*)attr->id());
-    if (!attrValueDict) {
-        attrValueDict = new QPtrDict<CSSMappedAttributeDeclarationImpl>;
-        if (entryType == ePersistent)
-            attrValueDict->setAutoDelete(true);
-        attrNameDict->insert((void*)attr->id(), attrValueDict);
-    }
-    attrValueDict->replace(attr->value().implementation(), decl);
-}
-
-void HTMLElementImpl::removeMappedAttributeDecl(MappedAttributeEntry entryType, NodeImpl::Id attrName, const AtomicString& attrValue)
-{
-    if (!m_mappedAttributeDecls)
-        return;
-    
-    QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
-    if (!attrNameDict)
-        return;
-    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attrName);
-    if (!attrValueDict)
-        return;
-    attrValueDict->remove(attrValue.implementation());
-}
-
-void HTMLElementImpl::invalidateStyleAttribute()
-{
-    m_isStyleAttributeValid = false;
-}
-
-void HTMLElementImpl::updateStyleAttributeIfNeeded() const
-{
-    if (!m_isStyleAttributeValid) {
-        m_isStyleAttributeValid = true;
-        m_synchronizingStyleAttribute = true;
-        if (m_inlineStyleDecl)
-            const_cast<HTMLElementImpl*>(this)->setAttribute(ATTR_STYLE, m_inlineStyleDecl->cssText());
-        m_synchronizingStyleAttribute = false;
-    }
-}
-
-HTMLAttributeImpl::~HTMLAttributeImpl()
-{
-    if (m_styleDecl)
-        m_styleDecl->deref();
-}
-
-AttributeImpl* HTMLAttributeImpl::clone(bool preserveDecl) const
-{
-    return new HTMLAttributeImpl(m_id, _value, preserveDecl ? m_styleDecl : 0);
-}
-
-HTMLNamedAttrMapImpl::HTMLNamedAttrMapImpl(ElementImpl *e)
-:NamedAttrMapImpl(e), m_mappedAttributeCount(0)
-{}
-
-void HTMLNamedAttrMapImpl::clearAttributes()
-{
-    m_classList.clear();
-    m_mappedAttributeCount = 0;
-    NamedAttrMapImpl::clearAttributes();
-}
-
-bool HTMLNamedAttrMapImpl::isHTMLAttributeMap() const
-{
-    return true;
-}
-
-int HTMLNamedAttrMapImpl::declCount() const
-{
-    int result = 0;
-    for (uint i = 0; i < length(); i++) {
-        HTMLAttributeImpl* attr = attributeItem(i);
-        if (attr->decl())
-            result++;
-    }
-    return result;
-}
-
-bool HTMLNamedAttrMapImpl::mapsEquivalent(const HTMLNamedAttrMapImpl* otherMap) const
-{
-    // The # of decls must match.
-    if (declCount() != otherMap->declCount())
-        return false;
-    
-    // The values for each decl must match.
-    for (uint i = 0; i < length(); i++) {
-        HTMLAttributeImpl* attr = attributeItem(i);
-        if (attr->decl()) {
-            AttributeImpl* otherAttr = otherMap->getAttributeItem(attr->id());
-            if (!otherAttr || (attr->value() != otherAttr->value()))
-                return false;
-        }
-    }
-    return true;
-}
-
-void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
-{
-    m_classList.clear();
-    if (!element->hasClass())
-        return;
-    
-    DOMString classAttr = element->getDocument()->inCompatMode() ? 
-        (classStr.implementation()->isLower() ? classStr : DOMString(classStr.implementation()->lower())) :
-        classStr;
-    
-    if (classAttr.find(' ') == -1 && classAttr.find('\n') == -1)
-        m_classList.setString(AtomicString(classAttr));
-    else {
-        QString val = classAttr.string();
-        val.replace('\n', ' ');
-        QStringList list = QStringList::split(' ', val);
-        
-        AtomicStringList* curr = 0;
-        for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
-            const QString& singleClass = *it;
-            if (!singleClass.isEmpty()) {
-                if (curr) {
-                    curr->setNext(new AtomicStringList(AtomicString(singleClass)));
-                    curr = curr->next();
-                }
-                else {
-                    m_classList.setString(AtomicString(singleClass));
-                    curr = &m_classList;
-                }
-            }
-        }
-    }
-}
-
 // ------------------------------------------------------------------
 
 HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
-    : ElementImpl(doc)
+    : StyledElementImpl(doc)
 {
-    m_inlineStyleDecl = 0;
-    m_isStyleAttributeValid = true;
-    m_synchronizingStyleAttribute = false;
 }
 
 HTMLElementImpl::~HTMLElementImpl()
 {
-    destroyInlineStyleDecl();
-}
-
-AttributeImpl* HTMLElementImpl::createAttribute(NodeImpl::Id id, DOMStringImpl* value)
-{
-    return new HTMLAttributeImpl(id, value);
 }
 
 bool HTMLElementImpl::isInline() const
@@ -282,25 +109,6 @@ bool HTMLElementImpl::isInline() const
     }
 }
 
-void HTMLElementImpl::createInlineStyleDecl()
-{
-    m_inlineStyleDecl = new CSSMutableStyleDeclarationImpl;
-    m_inlineStyleDecl->ref();
-    m_inlineStyleDecl->setParent(getDocument()->elementSheet());
-    m_inlineStyleDecl->setNode(this);
-    m_inlineStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
-}
-
-void HTMLElementImpl::destroyInlineStyleDecl()
-{
-    if (m_inlineStyleDecl) {
-        m_inlineStyleDecl->setNode(0);
-        m_inlineStyleDecl->setParent(0);
-        m_inlineStyleDecl->deref();
-        m_inlineStyleDecl = 0;
-    }
-}
-
 NodeImpl *HTMLElementImpl::cloneNode(bool deep)
 {
     HTMLElementImpl *clone = static_cast<HTMLElementImpl *>(getDocument()->createHTMLElement(localNamePart(id())));
@@ -319,53 +127,6 @@ NodeImpl *HTMLElementImpl::cloneNode(bool deep)
     return clone;
 }
 
-void HTMLElementImpl::attributeChanged(AttributeImpl* attr, bool preserveDecls)
-{
-    HTMLAttributeImpl* htmlAttr = static_cast<HTMLAttributeImpl*>(attr);
-    if (htmlAttr->decl() && !preserveDecls) {
-        htmlAttr->setDecl(0);
-        setChanged();
-        if (namedAttrMap)
-            static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declRemoved();
-    }
-
-    bool checkDecl = true;
-    MappedAttributeEntry entry;
-    bool needToParse = mapToEntry(attr->id(), entry);
-    if (preserveDecls) {
-        if (htmlAttr->decl()) {
-            setChanged();
-            if (namedAttrMap)
-                static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
-            checkDecl = false;
-        }
-    }
-    else if (!attr->isNull() && entry != eNone) {
-        CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(entry, attr);
-        if (decl) {
-            htmlAttr->setDecl(decl);
-            setChanged();
-            if (namedAttrMap)
-                static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
-            checkDecl = false;
-        } else
-            needToParse = true;
-    }
-
-    if (needToParse)
-        parseHTMLAttribute(htmlAttr);
-    
-    if (checkDecl && htmlAttr->decl()) {
-        // Add the decl to the table in the appropriate spot.
-        setMappedAttributeDecl(entry, attr, htmlAttr->decl());
-        htmlAttr->decl()->setMappedState(entry, attr->id(), attr->value());
-        htmlAttr->decl()->setParent(0);
-        htmlAttr->decl()->setNode(0);
-        if (namedAttrMap)
-            static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->declAdded();
-    }
-}
-
 bool HTMLElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
     switch (attr)
@@ -375,19 +136,18 @@ bool HTMLElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result
         case ATTR_DIR:
             result = eUniversal;
             return false;
-        case ATTR_STYLE:
-            result = eNone;
-            return !m_synchronizingStyleAttribute;
         default:
             break;
     }
-    
-    result = eNone;
-    return true;
+
+    return StyledElementImpl::mapToEntry(attr, result);
 }
     
-void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
+    if (attr->id() == ATTR_ID || attr->id() == ATTR_CLASS || attr->id() == ATTR_STYLE)
+        return StyledElementImpl::parseMappedAttribute(attr);
+
     DOMString indexstring;
     switch (attr->id())
     {
@@ -397,37 +157,8 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
         break;
-// the core attributes...
-    case ATTR_ID:
-        // unique id
-        setHasID(!attr->isNull());
-        if (namedAttrMap) {
-            if (attr->isNull())
-                namedAttrMap->setID(nullAtom);
-            else if (getDocument()->inCompatMode() && !attr->value().implementation()->isLower())
-                namedAttrMap->setID(AtomicString(attr->value().domString().lower()));
-            else
-                namedAttrMap->setID(attr->value());
-        }
-        setChanged();
-        break;
-    case ATTR_CLASS:
-        // class
-        setHasClass(!attr->isNull());
-        if (namedAttrMap) static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->parseClassAttribute(attr->value());
-        setChanged();
-        break;
     case ATTR_CONTENTEDITABLE:
         setContentEditable(attr);
-        break;
-    case ATTR_STYLE:
-        setHasStyle(!attr->isNull());
-        if (attr->isNull())
-            destroyInlineStyleDecl();
-        else
-            getInlineStyleDecl()->parseDeclaration(attr->value());
-        m_isStyleAttributeValid = true;
-        setChanged();
         break;
     case ATTR_TABINDEX:
         indexstring=getAttribute(ATTR_TABINDEX);
@@ -562,184 +293,6 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 #endif
         break;
     }
-}
-
-void HTMLElementImpl::createAttributeMap() const
-{
-    namedAttrMap = new HTMLNamedAttrMapImpl(const_cast<HTMLElementImpl*>(this));
-    namedAttrMap->ref();
-}
-
-CSSMutableStyleDeclarationImpl* HTMLElementImpl::getInlineStyleDecl()
-{
-    if (!m_inlineStyleDecl)
-        createInlineStyleDecl();
-    return m_inlineStyleDecl;
-}
-
-CSSMutableStyleDeclarationImpl* HTMLElementImpl::additionalAttributeStyleDecl()
-{
-    return 0;
-}
-
-const AtomicStringList* HTMLElementImpl::getClassList() const
-{
-    return namedAttrMap ? static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->getClassList() : 0;
-}
-
-static inline bool isHexDigit( const QChar &c ) {
-    return ( c >= '0' && c <= '9' ) ||
-	   ( c >= 'a' && c <= 'f' ) ||
-	   ( c >= 'A' && c <= 'F' );
-}
-
-static inline int toHex( const QChar &c ) {
-    return ( (c >= '0' && c <= '9')
-             ? (c.unicode() - '0')
-             : ( ( c >= 'a' && c <= 'f' )
-                 ? (c.unicode() - 'a' + 10)
-                 : ( ( c >= 'A' && c <= 'F' )
-                     ? (c.unicode() - 'A' + 10)
-                     : -1 ) ) );
-}
-
-void HTMLElementImpl::addCSSProperty(HTMLAttributeImpl* attr, int id, const DOMString &value)
-{
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setProperty(id, value, false);
-}
-
-void HTMLElementImpl::addCSSProperty(HTMLAttributeImpl* attr, int id, int value)
-{
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setProperty(id, value, false);
-}
-
-void HTMLElementImpl::addCSSStringProperty(HTMLAttributeImpl* attr, int id, const DOMString &value, CSSPrimitiveValue::UnitTypes type)
-{
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setStringProperty(id, value, type, false);
-}
-
-void HTMLElementImpl::addCSSImageProperty(HTMLAttributeImpl* attr, int id, const DOMString &URL)
-{
-    if (!attr->decl()) createMappedDecl(attr);
-    attr->decl()->setImageProperty(id, URL, false);
-}
-
-void HTMLElementImpl::addCSSLength(HTMLAttributeImpl* attr, int id, const DOMString &value)
-{
-    // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
-    // length unit and make the appropriate parsed value.
-    if (!attr->decl()) createMappedDecl(attr);
-
-    // strip attribute garbage..
-    DOMStringImpl* v = value.implementation();
-    if ( v ) {
-        unsigned int l = 0;
-        
-        while ( l < v->l && v->s[l].unicode() <= ' ') l++;
-        
-        for ( ;l < v->l; l++ ) {
-            char cc = v->s[l].latin1();
-            if ( cc > '9' || ( cc < '0' && cc != '*' && cc != '%' && cc != '.') )
-                break;
-        }
-        if ( l != v->l ) {
-            attr->decl()->setLengthProperty(id, DOMString( v->s, l ), false);
-            return;
-        }
-    }
-    
-    attr->decl()->setLengthProperty(id, value, false);
-}
-
-/* color parsing that tries to match as close as possible IE 6. */
-void HTMLElementImpl::addHTMLColor(HTMLAttributeImpl* attr, int id, const DOMString &c)
-{
-    // this is the only case no color gets applied in IE.
-    if ( !c.length() )
-        return;
-
-    if (!attr->decl()) createMappedDecl(attr);
-    
-    if (attr->decl()->setProperty(id, c, false) )
-        return;
-    
-    QString color = c.string();
-    // not something that fits the specs.
-    
-    // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
-    // out of everyhting you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
-    
-    // the length of the color value is rounded up to the next
-    // multiple of 3. each part of the rgb triple then gets one third
-    // of the length.
-    //
-    // Each triplet is parsed byte by byte, mapping
-    // each number to a hex value (0-9a-fA-F to their values
-    // everything else to 0).
-    //
-    // The highest non zero digit in all triplets is remembered, and
-    // used as a normalization point to normalize to values between 0
-    // and 255.
-    
-    if ( color.lower() != "transparent" ) {
-        if ( color[0] == '#' )
-            color.remove( 0,  1 );
-        int basicLength = (color.length() + 2) / 3;
-        if ( basicLength > 1 ) {
-            // IE ignores colors with three digits or less
-            // 	    qDebug("trying to fix up color '%s'. basicLength=%d, length=%d",
-            // 		   color.latin1(), basicLength, color.length() );
-            int colors[3] = { 0, 0, 0 };
-            int component = 0;
-            int pos = 0;
-            int maxDigit = basicLength-1;
-            while ( component < 3 ) {
-                // search forward for digits in the string
-                int numDigits = 0;
-                while ( pos < (int)color.length() && numDigits < basicLength ) {
-                    int hex = toHex( color[pos] );
-                    colors[component] = (colors[component] << 4);
-                    if ( hex > 0 ) {
-                        colors[component] += hex;
-                        maxDigit = kMin( maxDigit, numDigits );
-                    }
-                    numDigits++;
-                    pos++;
-                }
-                while ( numDigits++ < basicLength )
-                    colors[component] <<= 4;
-                component++;
-            }
-            maxDigit = basicLength - maxDigit;
-            // 	    qDebug("color is %x %x %x, maxDigit=%d",  colors[0], colors[1], colors[2], maxDigit );
-            
-            // normalize to 00-ff. The highest filled digit counts, minimum is 2 digits
-            maxDigit -= 2;
-            colors[0] >>= 4*maxDigit;
-            colors[1] >>= 4*maxDigit;
-            colors[2] >>= 4*maxDigit;
-            // 	    qDebug("normalized color is %x %x %x",  colors[0], colors[1], colors[2] );
-            // 	assert( colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100 );
-            
-            color.sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2] );
-            // 	    qDebug( "trying to add fixed color string '%s'", color.latin1() );
-            if ( attr->decl()->setProperty(id, DOMString(color), false) )
-                return;
-        }
-    }
-    attr->decl()->setProperty(id, CSS_VAL_BLACK, false);
-}
-
-void HTMLElementImpl::createMappedDecl(HTMLAttributeImpl* attr)
-{
-    CSSMappedAttributeDeclarationImpl* decl = new CSSMappedAttributeDeclarationImpl(0);
-    attr->setDecl(decl);
-    decl->setParent(getDocument()->elementSheet());
-    decl->setNode(this);
-    decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 
 DOMString HTMLElementImpl::innerHTML() const
@@ -984,7 +537,7 @@ DOMString HTMLElementImpl::namespaceURI() const
         return XHTML_NAMESPACE;
 }
 
-void HTMLElementImpl::addHTMLAlignment(HTMLAttributeImpl* attr)
+void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
 {
     //qDebug("alignment is %s", alignment.string().latin1() );
     // vertical alignment with respect to the current baseline of the text
@@ -1060,7 +613,7 @@ DOMString HTMLElementImpl::contentEditable() const
     return "inherit";
 }
 
-void HTMLElementImpl::setContentEditable(HTMLAttributeImpl* attr) 
+void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr) 
 {
     KHTMLPart *part = getDocument()->part();
     const AtomicString& enabled = attr->value();
@@ -1140,11 +693,6 @@ DOMString HTMLElementImpl::toString() const
     }
 
     return ElementImpl::toString();
-}
-
-CSSStyleDeclarationImpl *HTMLElementImpl::style()
-{
-    return getInlineStyleDecl();
 }
 
 DOMString HTMLElementImpl::idDOM() const

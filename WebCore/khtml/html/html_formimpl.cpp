@@ -626,7 +626,7 @@ void HTMLFormElementImpl::reset(  )
     m_inreset = false;
 }
 
-void HTMLFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -701,7 +701,7 @@ void HTMLFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	}
 	// fall through
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -855,7 +855,7 @@ HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl()
         m_form->removeFormElement(this);
 }
 
-void HTMLGenericFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLGenericFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -875,7 +875,7 @@ void HTMLGenericFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     }
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -1192,7 +1192,7 @@ void HTMLButtonElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
-void HTMLButtonElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -1219,7 +1219,7 @@ void HTMLButtonElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -1414,7 +1414,7 @@ void HTMLInputElementImpl::setType(const DOMString& t)
     if (m_type != newType) {
         if (newType == FILE && m_haveType) {
             // Set the attribute back to the old value.
-            // Useful in case we were called from inside parseHTMLAttribute.
+            // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(ATTR_TYPE, type());
         } else {
             bool wasAttached = m_attached;
@@ -1620,7 +1620,7 @@ bool HTMLInputElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& r
     return HTMLElementImpl::mapToEntry(attr, result);
 }
 
-void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -1724,7 +1724,7 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setChanged();
         break;
     default:
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -2338,7 +2338,7 @@ NodeImpl::Id HTMLLabelElementImpl::id() const
     return ID_LABEL;
 }
 
-void HTMLLabelElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -2351,7 +2351,7 @@ void HTMLLabelElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -2706,7 +2706,7 @@ NodeImpl* HTMLSelectElementImpl::addChild(NodeImpl* newChild)
     return HTMLGenericFormElementImpl::addChild(newChild);
 }
 
-void HTMLSelectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -2735,7 +2735,7 @@ void HTMLSelectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
             getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -2963,7 +2963,7 @@ DOMString HTMLKeygenElementImpl::type() const
     return "keygen";
 }
 
-void HTMLKeygenElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
+void HTMLKeygenElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 {
     switch(attr->id())
     {
@@ -2975,7 +2975,7 @@ void HTMLKeygenElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
         break;
     default:
         // skip HTMLSelectElementImpl parsing!
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -3074,9 +3074,9 @@ NodeImpl* HTMLOptGroupElementImpl::addChild(NodeImpl* newChild)
     return HTMLGenericFormElementImpl::addChild(newChild);
 }
 
-void HTMLOptGroupElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLOptGroupElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+    HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     recalcSelectOptions();
 }
 
@@ -3181,7 +3181,7 @@ void HTMLOptionElementImpl::setIndex(long, int &exception)
     // ###
 }
 
-void HTMLOptionElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLOptionElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -3192,7 +3192,7 @@ void HTMLOptionElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         m_value = attr->value();
         break;
     default:
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -3306,7 +3306,7 @@ void HTMLTextAreaElementImpl::childrenChanged()
     setValue(defaultValue());
 }
     
-void HTMLTextAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -3354,7 +3354,7 @@ void HTMLTextAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	    getDocument()->createHTMLEventListener(attr->value().string(), this));
         break;
     default:
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -3502,16 +3502,16 @@ NodeImpl::Id HTMLIsIndexElementImpl::id() const
     return ID_ISINDEX;
 }
 
-void HTMLIsIndexElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
+void HTMLIsIndexElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 {
     switch(attr->id())
     {
     case ATTR_PROMPT:
 	setValue(attr->value());
     default:
-        // don't call HTMLInputElement::parseHTMLAttribute here, as it would
+        // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support
-        HTMLGenericFormElementImpl::parseHTMLAttribute(attr);
+        HTMLGenericFormElementImpl::parseMappedAttribute(attr);
     }
 }
 

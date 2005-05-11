@@ -1,3 +1,162 @@
+2005-05-10  David Hyatt  <hyatt@apple.com>
+
+	Refactor the DOM so that the concept of class/style/id is no longer unique to HTML elements.  This paves the way
+	for SVG and MathML elements to also support these capabilities.  In addition the concept of presentational
+	attributes has also been factored out.
+	
+        Reviewed by mjs
+
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSStyleRuleImpl::setDeclaration):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::parseUASheet):
+        (khtml::CSSStyleSelector::loadDefaultStyle):
+        (khtml::CSSStyleSelector::initElementAndPseudoState):
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        (HTMLFrameSetElementImpl::parseMappedAttribute):
+        (HTMLIFrameElementImpl::parseMappedAttribute):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::parseMappedAttribute):
+        (HTMLHRElementImpl::parseMappedAttribute):
+        (HTMLParagraphElementImpl::parseMappedAttribute):
+        (HTMLMarqueeElementImpl::parseMappedAttribute):
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::parseMappedAttribute):
+        * khtml/html/html_canvasimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::~HTMLElementImpl):
+        (HTMLElementImpl::mapToEntry):
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::addHTMLAlignment):
+        (HTMLElementImpl::setContentEditable):
+        (HTMLElementImpl::toString):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLGenericFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::setType):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLLabelElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::parseMappedAttribute):
+        (DOM::HTMLKeygenElementImpl::parseMappedAttribute):
+        (DOM::HTMLOptGroupElementImpl::parseMappedAttribute):
+        (DOM::HTMLOptionElementImpl::parseMappedAttribute):
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute):
+        (DOM::HTMLIsIndexElementImpl::parseMappedAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::parseMappedAttribute):
+        (HTMLLinkElementImpl::parseMappedAttribute):
+        (HTMLMetaElementImpl::parseMappedAttribute):
+        (HTMLStyleElementImpl::parseMappedAttribute):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseMappedAttribute):
+        (HTMLMapElementImpl::parseMappedAttribute):
+        (HTMLAreaElementImpl::parseMappedAttribute):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::parseMappedAttribute):
+        (DOM::HTMLBRElementImpl::parseMappedAttribute):
+        (DOM::HTMLFontElementImpl::parseMappedAttribute):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLUListElementImpl::parseMappedAttribute):
+        (DOM::HTMLOListElementImpl::parseMappedAttribute):
+        (DOM::HTMLLIElementImpl::parseMappedAttribute):
+        * khtml/html/html_listimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute):
+        (DOM::HTMLEmbedElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLParamElementImpl::parseMappedAttribute):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableElementImpl::additionalAttributeStyleDecl):
+        (DOM::HTMLTableElementImpl::getSharedCellDecl):
+        (DOM::HTMLTablePartElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableCellElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableColElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableCaptionElementImpl::parseMappedAttribute):
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmltokenizer.h:
+        (khtml::Token::addAttribute):
+        * khtml/misc/htmlattrs.in:
+        * khtml/misc/htmltags.in:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createAttribute):
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::createHTMLElement):
+        * khtml/xml/dom_elementimpl.cpp:
+        (XMLElementImpl::cloneNode):
+        (NamedAttrMapImpl::isMappedAttributeMap):
+        (CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl):
+        (StyledElementImpl::getMappedAttributeDecl):
+        (StyledElementImpl::setMappedAttributeDecl):
+        (StyledElementImpl::removeMappedAttributeDecl):
+        (StyledElementImpl::invalidateStyleAttribute):
+        (StyledElementImpl::updateStyleAttributeIfNeeded):
+        (MappedAttributeImpl::~MappedAttributeImpl):
+        (MappedAttributeImpl::clone):
+        (m_mappedAttributeCount):
+        (NamedMappedAttrMapImpl::clearAttributes):
+        (NamedMappedAttrMapImpl::isMappedAttributeMap):
+        (NamedMappedAttrMapImpl::declCount):
+        (NamedMappedAttrMapImpl::mapsEquivalent):
+        (NamedMappedAttrMapImpl::parseClassAttribute):
+        (StyledElementImpl::StyledElementImpl):
+        (StyledElementImpl::~StyledElementImpl):
+        (StyledElementImpl::createAttribute):
+        (StyledElementImpl::createInlineStyleDecl):
+        (StyledElementImpl::destroyInlineStyleDecl):
+        (StyledElementImpl::attributeChanged):
+        (StyledElementImpl::mapToEntry):
+        (StyledElementImpl::parseMappedAttribute):
+        (StyledElementImpl::createAttributeMap):
+        (StyledElementImpl::getInlineStyleDecl):
+        (StyledElementImpl::style):
+        (StyledElementImpl::additionalAttributeStyleDecl):
+        (StyledElementImpl::getClassList):
+        (isHexDigit):
+        (toHex):
+        (StyledElementImpl::addCSSProperty):
+        (StyledElementImpl::addCSSStringProperty):
+        (StyledElementImpl::addCSSImageProperty):
+        (StyledElementImpl::addCSSLength):
+        (StyledElementImpl::addCSSColor):
+        (StyledElementImpl::createMappedDecl):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::):
+        (DOM::CSSMappedAttributeDeclarationImpl::CSSMappedAttributeDeclarationImpl):
+        (DOM::CSSMappedAttributeDeclarationImpl::setMappedState):
+        (DOM::MappedAttributeImpl::MappedAttributeImpl):
+        (DOM::MappedAttributeImpl::decl):
+        (DOM::MappedAttributeImpl::setDecl):
+        (DOM::NamedMappedAttrMapImpl::getClassList):
+        (DOM::NamedMappedAttrMapImpl::hasMappedAttributes):
+        (DOM::NamedMappedAttrMapImpl::declRemoved):
+        (DOM::NamedMappedAttrMapImpl::declAdded):
+        (DOM::NamedMappedAttrMapImpl::attributeItem):
+        (DOM::StyledElementImpl::isStyledElement):
+        (DOM::StyledElementImpl::hasMappedAttributes):
+        (DOM::StyledElementImpl::mappedAttributes):
+        (DOM::StyledElementImpl::isMappedAttribute):
+        (DOM::StyledElementImpl::inlineStyleDecl):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::isStyledElement):
+
 2005-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -118,7 +118,7 @@ public:
     virtual NodeImpl *addChild(NodeImpl *child);
     
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     // Used to obtain either a solid or outset border decl.
     virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
@@ -152,7 +152,7 @@ public:
         { }
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 };
 
 // -------------------------------------------------------------------------
@@ -255,7 +255,7 @@ public:
     virtual Id id() const { return _id; }
     
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void attach();
 
@@ -329,7 +329,7 @@ public:
 
     // overrides
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     long span() const { return _span; }
 
@@ -370,10 +370,10 @@ public:
     virtual Id id() const;
     
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString align() const;
-    void setAlign( const DOMString & );
+    void setAlign(const DOMString&);
 };
 
 } //namespace

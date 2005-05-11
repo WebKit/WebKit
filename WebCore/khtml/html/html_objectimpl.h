@@ -48,7 +48,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl *token);
     
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -118,7 +118,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -154,7 +154,7 @@ public:
     HTMLFormElementImpl *form() const;
 
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl *token);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -252,7 +252,7 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl *token);
 
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 

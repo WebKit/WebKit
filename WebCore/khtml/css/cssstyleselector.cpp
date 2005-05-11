@@ -269,57 +269,43 @@ CSSStyleSelector::~CSSStyleSelector()
     delete m_userSheet;
 }
 
+static CSSStyleSheetImpl* parseUASheet(const KHTMLSettings* s, const char* sheetName)
+{
+    QFile f(locate( "data", sheetName));
+    f.open(IO_ReadOnly);
+
+    QCString file(f.size() + 1);
+    int readbytes = f.readBlock(file.data(), f.size());
+    f.close();
+    if (readbytes >= 0)
+        file[readbytes] = '\0';
+
+    QString style = QString::fromLatin1(file.data());
+    if (s)
+        style += s->settingsToCSS();
+    DOMString str(style);
+
+    CSSStyleSheetImpl* sheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl*)0);
+    sheet->parseString(str);
+    return sheet;
+}
+
 void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
 {
     if(defaultStyle) return;
+    defaultSheet = parseUASheet(s, "khtml/css/html4.css");
 
-    {
-        QFile f(locate( "data", "khtml/css/html4.css" ) );
-        f.open(IO_ReadOnly);
+    // Collect only strict-mode rules.
+    defaultStyle = new CSSRuleSet();
+    defaultStyle->addRulesFromSheet(defaultSheet, "screen");
 
-        QCString file( f.size()+1 );
-        int readbytes = f.readBlock( file.data(), f.size() );
-        f.close();
-        if ( readbytes >= 0 )
-            file[readbytes] = '\0';
+    defaultPrintStyle = new CSSRuleSet();
+    defaultPrintStyle->addRulesFromSheet(defaultSheet, "print");
 
-        QString style = QString::fromLatin1( file.data() );
-        if(s)
-            style += s->settingsToCSS();
-        DOMString str(style);
-
-        defaultSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
-        defaultSheet->parseString( str );
-
-        // Collect only strict-mode rules.
-        defaultStyle = new CSSRuleSet();
-        defaultStyle->addRulesFromSheet( defaultSheet, "screen" );
-        
-        defaultPrintStyle = new CSSRuleSet();
-        defaultPrintStyle->addRulesFromSheet( defaultSheet, "print" );
-    }
-    {
-        QFile f(locate( "data", "khtml/css/quirks.css" ) );
-        f.open(IO_ReadOnly);
-
-        QCString file( f.size()+1 );
-        int readbytes = f.readBlock( file.data(), f.size() );
-        f.close();
-        if ( readbytes >= 0 )
-            file[readbytes] = '\0';
-
-        QString style = QString::fromLatin1( file.data() );
-        DOMString str(style);
-
-        quirksSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
-        quirksSheet->parseString( str );
-
-        // Collect only quirks-mode rules.
-        defaultQuirksStyle = new CSSRuleSet();
-        defaultQuirksStyle->addRulesFromSheet( quirksSheet, "screen" );
-    }
-
-    //kdDebug() << "CSSStyleSelector: default style has " << defaultStyle->count() << " elements"<< endl;
+    // Collect only quirks-mode rules.
+    quirksSheet = parseUASheet(0, "khtml/css/quirks.css");
+    defaultQuirksStyle = new CSSRuleSet();
+    defaultQuirksStyle->addRulesFromSheet(quirksSheet, "screen");
 }
 
 void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
@@ -478,10 +464,10 @@ void CSSStyleSelector::sortMatchedRules(uint start, uint end)
 void CSSStyleSelector::initElementAndPseudoState(ElementImpl* e)
 {
     element = e;
-    if (element && element->isHTMLElement())
-        htmlElement = static_cast<HTMLElementImpl*>(element);
+    if (element && element->isStyledElement())
+        styledElement = static_cast<StyledElementImpl*>(element);
     else
-        htmlElement = 0;
+        styledElement = 0;
     ::encodedurl = &encodedurl;
     pseudoState = PseudoUnknown;
 }
@@ -620,12 +606,12 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
 
 bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
 {
-    if (n->isHTMLElement()) {
+    if (n->isStyledElement()) {
         bool mouseInside = element->renderer() ? element->renderer()->mouseInside() : false;
-        HTMLElementImpl* s = static_cast<HTMLElementImpl*>(n);
+        StyledElementImpl* s = static_cast<StyledElementImpl*>(n);
         if (s->renderer() && (s->id() == element->id()) && !s->hasID() &&
             (s->hasClass() == element->hasClass()) && !s->inlineStyleDecl() &&
-            (s->hasMappedAttributes() == htmlElement->hasMappedAttributes()) &&
+            (s->hasMappedAttributes() == styledElement->hasMappedAttributes()) &&
             (s->isLink() == element->isLink()) && 
             !s->renderer()->style()->affectedByAttributeSelectors() &&
             (s->renderer()->mouseInside() == mouseInside) &&
@@ -641,7 +627,7 @@ bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
             if (classesMatch) {
                 bool mappedAttrsMatch = true;
                 if (s->hasMappedAttributes())
-                    mappedAttrsMatch = s->htmlAttributes()->mapsEquivalent(htmlElement->htmlAttributes());
+                    mappedAttrsMatch = s->mappedAttributes()->mapsEquivalent(styledElement->mappedAttributes());
                 if (mappedAttrsMatch) {
                     bool linksMatch = true;
                     if (s->isLink()) {
@@ -665,8 +651,8 @@ bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
 
 RenderStyle* CSSStyleSelector::locateSharedStyle()
 {
-    if (htmlElement && !htmlElement->inlineStyleDecl() && !htmlElement->hasID() &&
-        !htmlElement->getDocument()->usesSiblingRules()) {
+    if (styledElement && !styledElement->inlineStyleDecl() && !styledElement->hasID() &&
+        !styledElement->getDocument()->usesSiblingRules()) {
         // Check previous siblings.
         int count = 0;
         DOM::NodeImpl* n;
@@ -741,13 +727,13 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     // 5. Now check author rules, beginning first with presentational attributes
     // mapped from HTML.
     int firstAuthorRule = -1, lastAuthorRule = -1;
-    if (htmlElement) {
+    if (styledElement) {
         // Ask if the HTML element has mapped attributes.
-        if (htmlElement->hasMappedAttributes()) {
+        if (styledElement->hasMappedAttributes()) {
             // Walk our attribute list and add in each decl.
-            const HTMLNamedAttrMapImpl* map = htmlElement->htmlAttributes();
+            const NamedMappedAttrMapImpl* map = styledElement->mappedAttributes();
             for (uint i = 0; i < map->length(); i++) {
-                HTMLAttributeImpl* attr = map->attributeItem(i);
+                MappedAttributeImpl* attr = map->attributeItem(i);
                 if (attr->decl()) {
                     if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
                     lastAuthorRule = m_matchedDeclCount;
@@ -759,7 +745,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        CSSMutableStyleDeclarationImpl* attributeDecl = htmlElement->additionalAttributeStyleDecl();
+        CSSMutableStyleDeclarationImpl* attributeDecl = styledElement->additionalAttributeStyleDecl();
         if (attributeDecl) {
             if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
             lastAuthorRule = m_matchedDeclCount;
@@ -771,8 +757,8 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     
     // 7. Now check our inline style attribute.
-    if (htmlElement) {
-        CSSMutableStyleDeclarationImpl* inlineDecl = htmlElement->inlineStyleDecl();
+    if (styledElement) {
+        CSSMutableStyleDeclarationImpl* inlineDecl = styledElement->inlineStyleDecl();
         if (inlineDecl) {
             if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
             lastAuthorRule = m_matchedDeclCount;
@@ -1122,7 +1108,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         }
         else if (sel->match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->value;
-        else if (style && (e != element || !htmlElement || !htmlElement->isMappedAttribute(sel->attr)))
+        else if (style && (e != element || !styledElement || !styledElement->isMappedAttribute(sel->attr)))
             style->setAffectedByAttributeSelectors();
 
         const AtomicString& value = e->getAttribute(sel->attr);

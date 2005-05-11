@@ -80,7 +80,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -163,7 +163,7 @@ public:
 
     virtual Id id() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     bool isDefault() const { return m_shape == Default; }
 
@@ -219,7 +219,7 @@ public:
 
     virtual DOMString getName() const { return m_name; }
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     bool mapMouseEvent(int x_, int y_, int width_, int height_,
                        khtml::RenderObject::NodeInfo& info);

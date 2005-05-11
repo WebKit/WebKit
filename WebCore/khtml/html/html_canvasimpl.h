@@ -49,7 +49,7 @@ public:
     virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);

@@ -30,12 +30,15 @@
 #include "dom/dom_element.h"
 #include "xml/dom_stringimpl.h"
 #include "misc/shared.h"
+#include "css/css_valueimpl.h"
 
 #if APPLE_CHANGES
 #ifdef __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
 #endif
+
+#include "dom_atomicstringlist.h"
 
 namespace khtml {
     class CSSStyleSelector;
@@ -289,6 +292,7 @@ public:
 
     // DOM methods & attributes for NamedNodeMap
     virtual AttrImpl *getNamedItem ( NodeImpl::Id id ) const;
+
     virtual SharedPtr<NodeImpl> removeNamedItem ( NodeImpl::Id id, int &exceptioncode );
     virtual SharedPtr<NodeImpl> setNamedItem ( NodeImpl* arg, int &exceptioncode );
 
@@ -310,7 +314,7 @@ public:
             newAttribute->deref();
     }
 
-    virtual bool isHTMLAttributeMap() const;
+    virtual bool isMappedAttributeMap() const;
 
     const AtomicString& id() const { return m_id; }
     void setID(const AtomicString& _id) { m_id = _id; }
@@ -328,6 +332,131 @@ protected:
     AttributeImpl **attrs;
     uint len;
     AtomicString m_id;
+};
+
+enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
+    eTable, eCell, eCaption, eLastEntry };
+
+class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
+{
+public:
+    CSSMappedAttributeDeclarationImpl(CSSRuleImpl *parentRule)
+    : CSSMutableStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(0)
+    {}
+    
+    virtual ~CSSMappedAttributeDeclarationImpl();
+
+    void setMappedState(MappedAttributeEntry type, NodeImpl::Id attr, const AtomicString& val)
+    {
+        m_entryType = type;
+        m_attrName = attr;
+        m_attrValue = val;
+    }
+
+private:
+    MappedAttributeEntry m_entryType;
+    NodeImpl::Id m_attrName;
+    AtomicString m_attrValue;
+};
+
+class MappedAttributeImpl : public AttributeImpl
+{
+public:
+    MappedAttributeImpl(NodeImpl::Id _id, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
+    : AttributeImpl(_id, value), m_styleDecl(decl)
+    {
+        if (decl)
+            decl->ref();
+    }
+
+    ~MappedAttributeImpl();
+
+    virtual AttributeImpl* clone(bool preserveDecl=true) const;
+
+    CSSMappedAttributeDeclarationImpl* decl() const { return m_styleDecl; }
+    void setDecl(CSSMappedAttributeDeclarationImpl* decl) 
+    { 
+        if (m_styleDecl) m_styleDecl->deref();
+        m_styleDecl = decl;
+        if (m_styleDecl) m_styleDecl->ref();
+    }
+
+private:
+    CSSMappedAttributeDeclarationImpl* m_styleDecl;
+};
+
+class NamedMappedAttrMapImpl : public NamedAttrMapImpl
+{
+public:
+    NamedMappedAttrMapImpl(ElementImpl *e);
+
+    virtual void clearAttributes();
+    
+    virtual bool isMappedAttributeMap() const;
+    
+    virtual void parseClassAttribute(const DOMString& classAttr);
+    const AtomicStringList* getClassList() const { return &m_classList; }
+    
+    virtual bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
+    void declRemoved() { m_mappedAttributeCount--; }
+    void declAdded() { m_mappedAttributeCount++; }
+    
+    bool mapsEquivalent(const NamedMappedAttrMapImpl* otherMap) const;
+    int declCount() const;
+
+    MappedAttributeImpl* attributeItem(unsigned long index) const
+    { return attrs ? static_cast<MappedAttributeImpl*>(attrs[index]) : 0; }
+    
+private:
+    AtomicStringList m_classList;
+    int m_mappedAttributeCount;
+};
+
+class StyledElementImpl : public ElementImpl
+{
+public:
+    StyledElementImpl(DocumentPtr *doc);
+    virtual ~StyledElementImpl();
+
+    virtual bool isStyledElement() const { return true; }
+
+    bool hasMappedAttributes() const { return namedAttrMap ? static_cast<NamedMappedAttrMapImpl*>(namedAttrMap)->hasMappedAttributes() : false; }
+    const NamedMappedAttrMapImpl* mappedAttributes() const { return static_cast<NamedMappedAttrMapImpl*>(namedAttrMap); }
+    bool isMappedAttribute(NodeImpl::Id attr) const { MappedAttributeEntry res = eNone; mapToEntry(attr, res); return res != eNone; }
+
+    void addCSSLength(MappedAttributeImpl* attr, int id, const DOMString &value);
+    void addCSSProperty(MappedAttributeImpl* attr, int id, const DOMString &value);
+    void addCSSProperty(MappedAttributeImpl* attr, int id, int value);
+    void addCSSStringProperty(MappedAttributeImpl* attr, int id, const DOMString &value, DOM::CSSPrimitiveValue::UnitTypes = DOM::CSSPrimitiveValue::CSS_STRING);
+    void addCSSImageProperty(MappedAttributeImpl* attr, int id, const DOMString &URL);
+    void addCSSColor(MappedAttributeImpl* attr, int id, const DOMString &c);
+    void createMappedDecl(MappedAttributeImpl* attr);
+    
+    static CSSMappedAttributeDeclarationImpl* getMappedAttributeDecl(MappedAttributeEntry type, AttributeImpl* attr);
+    static void setMappedAttributeDecl(MappedAttributeEntry type, AttributeImpl* attr, CSSMappedAttributeDeclarationImpl* decl);
+    static void removeMappedAttributeDecl(MappedAttributeEntry type, NodeImpl::Id attrName, const AtomicString& attrValue);
+    static QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* m_mappedAttributeDecls;
+    
+    CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
+    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
+    CSSMutableStyleDeclarationImpl* getInlineStyleDecl();
+    CSSStyleDeclarationImpl* style();
+    void createInlineStyleDecl();
+    void destroyInlineStyleDecl();
+    void invalidateStyleAttribute();
+    virtual void updateStyleAttributeIfNeeded() const;
+    
+    virtual const AtomicStringList* getClassList() const;
+    virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls = false);
+    virtual void parseMappedAttribute(MappedAttributeImpl* attr);
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual void createAttributeMap() const;
+    virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
+
+protected:
+    CSSMutableStyleDeclarationImpl* m_inlineStyleDecl;
+    mutable bool m_isStyleAttributeValid : 1;
+    mutable bool m_synchronizingStyleAttribute : 1;
 };
 
 }; //namespace

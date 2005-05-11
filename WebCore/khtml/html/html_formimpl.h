@@ -84,7 +84,7 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     void radioClicked( HTMLGenericFormElementImpl *caller );
 
@@ -167,7 +167,7 @@ public:
 
     virtual DOMString type() const = 0;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void attach();
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -246,7 +246,7 @@ public:
     virtual Id id() const;
     DOMString type() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool appendFormData(FormDataList&, bool);
 
@@ -363,7 +363,7 @@ public:
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -455,7 +455,7 @@ public:
     
     virtual Id id() const;
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual void accessKeyAction(bool sendToAnyElement);
 
@@ -549,7 +549,7 @@ public:
 
     virtual void childrenChanged();
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual bool appendFormData(FormDataList&, bool);
@@ -602,7 +602,7 @@ public:
     // ### this is just a rough guess
     virtual bool isEnumeratable() const { return false; }
 
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual bool appendFormData(FormDataList&, bool);
 protected:
     AtomicString m_challenge;
@@ -627,7 +627,7 @@ public:
     virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
     virtual NodeImpl *addChild( NodeImpl* newChild );
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     void recalcSelectOptions();
 
     DOMString label() const;
@@ -655,7 +655,8 @@ public:
 
     long index() const;
     void setIndex(long, int &exception);
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+
     DOMString value() const;
     void setValue(const DOMString &);
 
@@ -713,7 +714,7 @@ public:
     void select (  );
 
     virtual void childrenChanged();
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
     virtual bool appendFormData(FormDataList&, bool);
@@ -759,7 +760,8 @@ public:
     HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
     virtual Id id() const;
-    virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
+
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString prompt() const;
     void setPrompt(const DOMString &);

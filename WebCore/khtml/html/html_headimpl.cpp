@@ -59,7 +59,7 @@ NodeImpl::Id HTMLBaseElementImpl::id() const
     return ID_BASE;
 }
 
-void HTMLBaseElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLBaseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -72,7 +72,7 @@ void HTMLBaseElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 	process();
 	break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -177,7 +177,7 @@ void HTMLLinkElementImpl::setDisabledState(bool _disabled)
     }
 }
 
-void HTMLLinkElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -201,7 +201,7 @@ void HTMLLinkElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setDisabledState(!attr->isNull());
         break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -436,7 +436,7 @@ NodeImpl::Id HTMLMetaElementImpl::id() const
     return ID_META;
 }
 
-void HTMLMetaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLMetaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch(attr->id())
     {
@@ -451,7 +451,7 @@ void HTMLMetaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_NAME:
       break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
@@ -686,7 +686,7 @@ NodeImpl::Id HTMLStyleElementImpl::id() const
 }
 
 // other stuff...
-void HTMLStyleElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
+void HTMLStyleElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     switch (attr->id())
     {
@@ -697,7 +697,7 @@ void HTMLStyleElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         m_media = attr->value().string().lower();
         break;
     default:
-        HTMLElementImpl::parseHTMLAttribute(attr);
+        HTMLElementImpl::parseMappedAttribute(attr);
     }
 }
 
