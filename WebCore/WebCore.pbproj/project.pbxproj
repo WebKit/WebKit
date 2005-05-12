@@ -119,6 +119,7 @@
 			children = (
 				93F19B1908245E59001E9ABC,
 				84C0FA1E052B9652000440A1,
+				ED048ABB0833F132006E1E67,
 				F5A1B05302DE8B46018635CA,
 				BC8F62990405F45600A80004,
 			);
@@ -4004,6 +4005,7 @@
 				93F19A0908245E59001E9ABC,
 				93F19A0A08245E59001E9ABC,
 				93F19A0B08245E59001E9ABC,
+				ED048ABC0833F132006E1E67,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6719,6 +6721,20 @@
 //ED2
 //ED3
 //ED4
+		ED048ABB0833F132006E1E67 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = textAreaResizeCorner.tiff;
+			path = Resources/textAreaResizeCorner.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		ED048ABC0833F132006E1E67 = {
+			fileRef = ED048ABB0833F132006E1E67;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		EDA4AC97076FB89100DD23EC = {
 			fileEncoding = 4;
 			isa = PBXFileReference;

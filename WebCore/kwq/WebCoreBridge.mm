@@ -1135,9 +1135,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return KURL(doc->baseURL(), rel, doc->decoder() ? doc->decoder()->codec() : 0).getNSURL();
 }
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)inSelectionFlag
 {
-    return _part->findString(string, forward, caseFlag, wrapFlag);
+    return _part->findString(string, forward, caseFlag, wrapFlag, inSelectionFlag);
 }
 
 - (void)jumpToSelection

@@ -27,6 +27,7 @@ static WebFormDelegate *sharedDelegate = nil;
 
 - (void)controlTextDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame { }
 
+- (void)textDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame { }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame
 {

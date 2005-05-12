@@ -1206,6 +1206,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [formDelegate(self) controlTextDidChange:obj inFrame:_frame];
 }
 
+- (void)textDidChange:(NSNotification *)obj
+{
+    FormDelegateLog([obj object]);
+    [formDelegate(self) textDidChange:obj inFrame:_frame];
+}
+
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     FormDelegateLog(control);

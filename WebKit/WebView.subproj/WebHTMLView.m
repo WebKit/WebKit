@@ -2035,8 +2035,7 @@ static WebHTMLView *lastHitView = nil;
     if (nextResponder == self)
         return YES;
 
-    // non-editable views lose selection whenever losing first responder status
-    if (![[self _webView] isEditable])
+    if (![[self _webView] maintainsInactiveSelection])
         return NO;
     
     // editable views lose selection when losing first responder status
@@ -2327,9 +2326,18 @@ static WebHTMLView *lastHitView = nil;
 
 // Search from the end of the currently selected location, or from the beginning of the
 // document if nothing is selected.
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
+    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag findInSelection:NO];
+}
+
+// Private method that adds a findInSelection parameter; might be public someday
+// FIXME: this is currently discovered using respondsToSelector; no SPI or API yet
+// FIXME: this needs to be done for other WebDocumentSearching implementors also, such as
+// WebPDFView and WebSearchableTextView
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)inSelectionFlag
+{
+    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag findInSelection:inSelectionFlag];
 }
 
 - (DOMRange *)_documentRange

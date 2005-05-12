@@ -1,3 +1,94 @@
+2005-05-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+
+        - rolled in changes from experimental-ui-branch to support resizable textareas
+        and find-as-you-type and confirming unsubmitted form changes. The files/functions 
+        modified are listed just below. After that are the ChangeLog comments from the branch.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge textDidChange:]):
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate textDidChange:inFrame:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (-[WebHTMLView searchFor:direction:caseSensitive:wrap:]):
+        (-[WebHTMLView _searchFor:direction:caseSensitive:wrap:findInSelection:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _searchFor:direction:caseSensitive:wrap:findInSelection:]):
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        (-[WebView makeTextStandardSize:]):
+        (-[WebView maintainsInactiveSelection]):
+        * WebView.subproj/WebViewPrivate.h:
+        
+        2005-04-18  John Sullivan  <sullivan@apple.com>
+
+                WebKit support for notifying a form delegate when a
+                textarea's contents have changed (as opposed to a 
+                textfield, which was already handled).
+
+                Reviewed by Maciej.
+
+                * WebView.subproj/WebFormDelegate.h:
+                * WebView.subproj/WebFormDelegate.m:
+                (-[WebFormDelegate textDidChange:inFrame:]):
+                new form delegate method
+
+                * WebCoreSupport.subproj/WebBridge.m:
+                (-[WebBridge textDidChange:]):
+                new method, calls through to form delegate
+                
+        2005-04-11  John Sullivan  <sullivan@apple.com>
+
+                Fixed inability to wrap around in Find in Page 
+
+                * WebView.subproj/WebView.m:
+                (-[WebView _searchFor:direction:caseSensitive:wrap:findInSelection:]):
+                changed wrapFlag from NO to YES on two lines (copy/paste error)
+
+        2005-04-07  John Sullivan  <sullivan@apple.com>
+
+                WebKit support for find-as-you-type. Needed an additional parameter on
+                a method from WebDocumentSearching protocol. Since that's a public protocol, 
+                I couldn't just add the parameter. For now I hacked it with an undeclared
+                internal method that's discovered via respondsToSelector. Probably the right
+                long-term approach is to deprecate the WebDocumentSearching protocol and introduce
+                a replacement that has a more flexible set of parameters for possible future
+                expansion.
+
+                Reviewed by Dave Hyatt.
+
+                * WebView.subproj/WebHTMLView.m:
+                (-[WebHTMLView searchFor:direction:caseSensitive:wrap:]):
+                now calls new one-more-parameter version passing NO for new parameter to match old behavior
+                (-[WebHTMLView _searchFor:direction:caseSensitive:wrap:findInSelection:]):
+                new method, adds findInSelection parameter and passes it through to bridge
+                 
+                * WebView.subproj/WebView.m:
+                (-[WebView searchFor:direction:caseSensitive:wrap:]):
+                now calls new one-more-parameter version passing NO for new parameter to match old behavior
+                (-[WebView _searchFor:direction:caseSensitive:wrap:findInSelection:]):
+                new method, adds findInSelection parameter and passes it through
+
+        2005-04-07  John Sullivan  <sullivan@apple.com>
+
+                WebKit support to allow clients to control whether the selection is still
+                drawn when the first responder is elsewhere. Formerly this was hardwired
+                to be true only when -[WebView isEditable] was true.
+
+                Reviewed by Darin.
+
+                * WebView.subproj/WebHTMLView.m:
+                (-[WebHTMLView maintainsInactiveSelection]):
+                check [WebView maintainsInactiveSelection] rather than just [WebView isEditable]
+                
+                * WebView.subproj/WebViewPrivate.h:
+                * WebView.subproj/WebView.m:
+                (-[WebView maintainsInactiveSelection]):
+                new method for clients to override, returns -[self isEditable]
+        
+
 2005-05-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin.

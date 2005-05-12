@@ -29,6 +29,7 @@
 - (void)controlTextDidBeginEditing:(NSNotification *)obj inFrame:(WebFrame *)frame;
 - (void)controlTextDidEndEditing:(NSNotification *)obj inFrame:(WebFrame *)frame;
 - (void)controlTextDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame;
+- (void)textDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame;
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame;
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame;

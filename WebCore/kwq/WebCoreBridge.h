@@ -289,7 +289,7 @@ typedef enum
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)inSelectionFlag;
 - (void)jumpToSelection;
 
 - (NSString *)advanceToNextMisspelling;
@@ -577,6 +577,7 @@ typedef enum
 - (void)controlTextDidBeginEditing:(NSNotification *)obj;
 - (void)controlTextDidEndEditing:(NSNotification *)obj;
 - (void)controlTextDidChange:(NSNotification *)obj;
+- (void)textDidChange:(NSNotification *)obj;
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;

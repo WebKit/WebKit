@@ -179,6 +179,11 @@ macro(yankAndSelect) \
 @end
 #endif
 
+@interface NSObject (WebDocumentSearchingHack)
+// FIXME: this should be part of a protocol (new version of <WebDocumentSearching>)
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)inSelectionFlag;
+@end
+
 @interface WebView (WebFileInternal)
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
@@ -2147,7 +2152,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 // Search from the end of the currently selected location, or from the beginning of the
 // document if nothing is selected.  Deals with subframes.
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)findInSelection
 {
     // Get the frame holding the selection, or start with the main frame
     WebFrame *startFrame = [self _frameForCurrentSelection];
@@ -2175,7 +2180,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             
             // Note at this point we are assuming the search will be done top-to-bottom,
             // not starting at any selection that exists.  See 3228554.
-            BOOL success = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO];
+            BOOL success;
+            if ([searchView respondsToSelector:@selector(_searchFor:direction:caseSensitive:wrap:findInSelection:)]) {
+                success = [searchView _searchFor:string direction:forward caseSensitive:caseFlag wrap:NO findInSelection:findInSelection];
+            } else {
+                success = [searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO];
+            }
             if (success) {
                 [[self window] makeFirstResponder:searchView];
                 return YES;
@@ -2187,7 +2197,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
     if (wrapFlag && startHasSelection && startSearchView) {
-        BOOL success = [startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES];
+        BOOL success;
+        if ([startSearchView respondsToSelector:@selector(_searchFor:direction:caseSensitive:wrap:findInSelection:)]) {
+            success = [startSearchView _searchFor:string direction:forward caseSensitive:caseFlag wrap:YES findInSelection:findInSelection];
+        } else {
+            success = [startSearchView searchFor:string direction:forward caseSensitive:caseFlag wrap:YES];
+        }
         if (success) {
             [[self window] makeFirstResponder:startSearchView];
             return YES;
@@ -2195,6 +2210,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
     return NO;
 }
+
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+{
+    return [self _searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag findInSelection:NO];
+}
+
 
 + (void)registerViewClass:(Class)viewClass representationClass:(Class)representationClass forMIMEType:(NSString *)MIMEType
 {
@@ -2527,6 +2548,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
     }
     [self setTextSizeMultiplier:1];
+}
+
+- (BOOL)maintainsInactiveSelection
+{
+    return [self isEditable];
 }
 
 @end

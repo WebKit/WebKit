@@ -33,7 +33,7 @@
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
 
-// #define ALLOW_RESIZING_TEXTAREAS 1
+#define ALLOW_RESIZING_TEXTAREAS 1
 
 using DOM::EventImpl;
 using DOM::NodeImpl;
@@ -77,6 +77,9 @@ using khtml::RenderWidget;
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
     QTextEdit *widget;
+#if ALLOW_RESIZING_TEXTAREAS
+    NSTrackingRectTag resizeCornerTrackingRectTag;
+#endif
     BOOL disabled;
     BOOL editableIfEnabled;
     BOOL inCut;
@@ -177,10 +180,13 @@ const float LargeNumberForText = 1.0e7;
     [super dealloc];
 }
 
-- (void)textDidChange:(NSNotification *)aNotification
+- (void)textDidChange:(NSNotification *)notification
 {
     if (widget)
         widget->textChanged();
+    
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge textDidChange:notification];
 }
 
 - (void)setWordWrap:(BOOL)f
@@ -775,7 +781,65 @@ const float ResizeCornerHeight = 16;
             NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSRightMouseDownMask | NSRightMouseUpMask];
     }    
 }
+
+- (NSImage *)_resizeCornerImage
+{
+    NSImage *cornerImage = nil;
+    if (cornerImage == nil) {
+	cornerImage = [[NSImage alloc] initWithContentsOfFile:
+            [[NSBundle bundleForClass:[KWQTextAreaTextView class]]
+            pathForResource:@"textAreaResizeCorner" ofType:@"tiff"]];
+    }
+    ASSERT(cornerImage != nil);
+    return cornerImage;
+}
+
+- (NSRect)_resizeCornerRect
+{
+    NSClipView *clipView = [self superview];
+    NSRect visibleRect = [clipView documentVisibleRect];
+    NSImage *cornerImage = [self _resizeCornerImage];
+    NSSize imageSize = [cornerImage size];
+    // Add one pixel of whitespace at right and bottom of image to match normal resize corner appearance.
+    // This could be built into the image, alternatively.
+    return NSMakeRect(NSMaxX(visibleRect) - imageSize.width - 1, NSMaxY(visibleRect) - imageSize.height - 1, imageSize.width + 1, imageSize.height + 1);
+}
+
+- (void)resetCursorRects {
+    [super resetCursorRects];
+    
+    // FIXME: This is intended to change the cursor to the arrow cursor whenever it is
+    // over the resize corner. However, it currently only works when the cursor had
+    // been inside the textarea, presumably due to interactions with the way NSTextView
+    // sets the cursor via [NSClipView setDocumentCursor:]. Also, it stops working once
+    // the textview has been resized, for reasons not yet understood.
+    NSRect visibleRect = [self visibleRect];
+    if (resizeCornerTrackingRectTag != -1) {
+        [self removeTrackingRect:resizeCornerTrackingRectTag];
+        resizeCornerTrackingRectTag = -1;
+    }
+    if ([self isEnabled] && !NSIsEmptyRect(visibleRect)) {
+        NSRect resizeCornerRect = [self _resizeCornerRect];
+        [self addCursorRect:resizeCornerRect cursor:[NSCursor arrowCursor]];
+        resizeCornerTrackingRectTag = [self addTrackingRect:resizeCornerRect owner:self userData:NULL assumeInside:NO];
+    }
+}
+
 #endif
+
+- (void)drawRect:(NSRect)rect
+{
+    [super drawRect:rect];
+    
+#if ALLOW_RESIZING_TEXTAREAS
+    if ([self isEnabled]) {
+        NSImage *cornerImage = [self _resizeCornerImage];
+        NSPoint imagePoint = [self _resizeCornerRect].origin;
+        imagePoint.y += [cornerImage size].height;
+        [cornerImage compositeToPoint:imagePoint operation:NSCompositeSourceOver];
+    }
+#endif
+}
 
 - (void)mouseDown:(NSEvent *)event
 {
@@ -784,8 +848,6 @@ const float ResizeCornerHeight = 16;
     
 #if ALLOW_RESIZING_TEXTAREAS
     NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    // FIXME: visibleRect works here as long as there are no views overlapping the NSTextView.
-    // Might be safer to compute the rect of the document that's visible in the scrollview
     // FIXME: At minimum, need a cursor change over the "hot resize corner". Maybe the right design
     // is to only have a resize corner when a scroll bar is present, and put it in the bottom-right
     // corner (below and/or to the right of  the scroll bar?).
@@ -793,9 +855,10 @@ const float ResizeCornerHeight = 16;
     // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
     // FIXME: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
     // to drag the bottom-right corner to make the bottom-left corner move.
-    NSRect visibleRect = [self visibleRect];
-    BOOL inResizeCorner = NSPointInRect(localPoint, NSMakeRect(NSMaxX(visibleRect) - ResizeCornerWidth, NSMaxY(visibleRect) - ResizeCornerHeight, ResizeCornerWidth, ResizeCornerHeight));
+    BOOL inResizeCorner = NSPointInRect(localPoint, [self _resizeCornerRect]);
     if (inResizeCorner) {
+        // FIXME: if the cursor tracking worked perfectly, this next line wouldn't be necessary
+        [[NSCursor arrowCursor] set];
         [self _trackResizeFromMouseDown:event];
         return;
     }

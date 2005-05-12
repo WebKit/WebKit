@@ -599,9 +599,9 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
     return nil;
 }
 
-// Search from the end of the currently selected location if we are first responder, or from
-// the beginning of the document if nothing is selected or we're not first responder.
-bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
+// Searches from the beginning of the document if nothing is selected. Will search in selection if
+// findInSelection is true, otherwise starts just after (forward) or before (backward) the selection.
+bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag, bool findInSelection)
 {
     QString target = QString::fromNSString(string);
     if (target.isEmpty()) {
@@ -613,9 +613,9 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     searchRange.selectNodeContents(xmlDocImpl());
     if (selectionStart()) {
         if (forward) {
-            setStart(searchRange, VisiblePosition(selection().end(), selection().endAffinity()));
+            setStart(searchRange, VisiblePosition(findInSelection ? selection().start() : selection().end(), selection().endAffinity()));
         } else {
-            setEnd(searchRange, VisiblePosition(selection().start(), selection().startAffinity()));
+            setEnd(searchRange, VisiblePosition(findInSelection ? selection().end() : selection().start(), selection().startAffinity()));
         }
     }
 

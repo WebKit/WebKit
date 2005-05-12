@@ -1,3 +1,96 @@
+2005-05-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - rolled in changes from experimental-ui-branch to support resizable textareas
+        and find-as-you-type. The files/functions modified are listed just below. After
+        that are the ChangeLog comments from the branch.
+
+        * Resources/textAreaResizeCorner.tiff: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea textDidChange:]):
+        (-[KWQTextAreaTextView _resizeCornerImage]):
+        (-[KWQTextAreaTextView _resizeCornerRect]):
+        (-[KWQTextAreaTextView resetCursorRects]):
+        (-[KWQTextAreaTextView drawRect:]):
+        (-[KWQTextAreaTextView mouseDown:]):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge searchFor:direction:caseSensitive:wrap:findInSelection:]):
+
+        2005-05-05  John Sullivan  <sullivan@apple.com>
+
+                Reviewed by Chris.
+
+                * kwq/KWQTextArea.mm:
+                (-[KWQTextAreaTextView _resizeCornerRect]):
+                Get corner rect from enclosing clipView, rather than using visibleRect.
+                VisibleRect would return the wrong result when the textarea was clipped
+                by the bottom of the window, leading to redraw schmutz among other things.
+
+        2005-05-02  John Sullivan  <sullivan@apple.com>
+
+                Reviewed by Chris.
+                
+                Improvements to resizable textarea experiment:
+                - resize image is now drawn in the resize corner
+                - cursor sometimes tracks to arrow when over resize corner (but usually not)
+                - cursor changes to arrow on mouse down in any case
+
+                * Resources/textAreaResizeCorner.tiff: Added.
+                * WebCore.pbproj/project.pbxproj:
+                updated for added image file
+                
+                * kwq/KWQTextArea.mm:
+                (-[KWQTextAreaTextView _resizeCornerImage]):
+                new method, reads resize image once and caches it
+                (-[KWQTextAreaTextView _resizeCornerRect]):
+                new method, computes rect from image
+                (-[KWQTextAreaTextView resetCursorRects]):
+                overridden to attempt to make the cursor change to an arrow when over this
+                corner. Only works sometimes, as explained in comments.
+                (-[KWQTextAreaTextView drawRect:]):
+                overridden to draw resize image
+                (-[KWQTextAreaTextView mouseDown:]):
+                now uses _resizeCornerRect, and sets cursor to arrow when pressed in resize corner
+
+        2005-04-18  John Sullivan  <sullivan@apple.com>
+
+                WebCore support for notifying a form delegate when a
+                textarea's contents have changed (as opposed to a 
+                textfield, which was already handled).
+
+                Reviewed by Maciej.
+
+                * kwq/WebCoreBridge.h:
+                add textDidChange: method
+
+                * kwq/KWQTextArea.mm:
+                (-[KWQTextArea textDidChange:]):
+                call through to bridge
+
+        2005-04-07  John Sullivan  <sullivan@apple.com>
+
+                WebCore support for find-as-you-type; needed an additional parameter
+                to findString and searchFor:...
+
+                Reviewed by Dave Hyatt.
+
+                * kwq/KWQKHTMLPart.h:
+                * kwq/KWQKHTMLPart.mm:
+                (KWQKHTMLPart::findString):
+                new findInSelection parameter; if true, start from the beginning of the selection
+                when searching forward, or the end of the selection when searching backward
+                
+                * kwq/WebCoreBridge.h:
+                * kwq/WebCoreBridge.mm:
+                (-[WebCoreBridge searchFor:direction:caseSensitive:wrap:findInSelection:]):
+                new findInSelection parameter; passed through to findString
+
 2005-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej (except for some parts outside the ECMA directory).
