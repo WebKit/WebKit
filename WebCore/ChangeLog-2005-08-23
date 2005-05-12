@@ -1,3 +1,20 @@
+2005-05-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        fix for <rdar://problem/4061979> crash in DOM::ElementImpl::setAttribute at www.nitto-kohki.co.jp
+
+        * khtml/html/html_imageimpl.cpp: (HTMLImageLoader::updateFromElement): added a nil check for the document
+        * khtml/xml/dom_nodeimpl.h: (DOM::NodeImpl::inDocument): added check for document in case the document has been destroyed before the node has been removed.  A lot of code already assumes that if inDocument returns true, a document exists.
+ 
+        * layout-tests/fast/events/onload-re-entry.html: removed alert.
+        * layout-tests/fast/events/onload-re-entry-expected.txt: updated.
+        * layout-tests/fast/dom/attr_dead_doc-expected.txt: Added.
+        * layout-tests/fast/dom/attr_dead_doc.html: Added.
+        * layout-tests/fast/dom/resources/apple.gif: Added.
+        * layout-tests/fast/dom/resources/mozilla.gif: Added.
+        * layout-tests/fast/dom/resources/top.html: Added.
+
 2005-05-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.

@@ -255,7 +255,8 @@ public:
     bool changed() const    { return m_changed; }
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }
-    bool inDocument() const { return m_inDocument; }
+    // inDocument should also make sure a document exists in case the document has been destroyed before the node is removed from the document.
+    bool inDocument() const { return document->document() && m_inDocument; }
     bool styleElement() const { return m_styleElement; }
     bool implicitNode() const { return m_implicit; }
     void setHasID(bool b=true) { m_hasId = b; }
