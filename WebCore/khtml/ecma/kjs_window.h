@@ -147,7 +147,7 @@ namespace KJS {
     Value getListener(ExecState *exec, int eventId) const;
     void setListener(ExecState *exec, int eventId, Value func);
   private:
-    void updateLayout(bool ignoreStylesheets = true) const;
+    void updateLayout() const;
 
     QGuardedPtr<KHTMLPart> m_part;
     Screen *screen;

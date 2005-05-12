@@ -1,3 +1,20 @@
+2005-05-11  David Hyatt  <hyatt@apple.com>
+
+	Improve the display of apple.com.  innerWidth and innerHeight refer to the size of the visible view and
+	so they do not need to do a layout in order to yield correct values from JS.  Removing this stops an
+	early layout and paint before the apple.com images are typically loaded.
+
+	This is an improvement of the fix for wired.com's FOUC.  For that bug I eliminated the need to ignore pending
+	stylesheets, but now I'm going further and just eliminating the layout all together.  This means that the old
+	updateLayout function can be reverted to how it was before the wired.com fix.
+	
+        Reviewed by john
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (Window::updateLayout):
+        * khtml/ecma/kjs_window.h:
+
 2005-05-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
