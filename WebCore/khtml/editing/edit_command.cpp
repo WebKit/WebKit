@@ -24,6 +24,8 @@
  */
 
 #include "edit_command.h"
+#include "selection.h"
+#include "khtml_part.h"
 
 #include "xml/dom_position.h"
 #include "xml/dom_docimpl.h"
@@ -32,19 +34,8 @@
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
-#include "KWQLogging.h"
-#include "KWQKHTMLPart.h"
 #else
-#define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
-#define ASSERT_NOT_REACHED() ((void)0)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#define ERROR(formatAndArgs...) ((void)0)
 #define ASSERT(assertion) assert(assertion)
-#if LOG_DISABLED
-#define debugPosition(a,b) ((void)0)
-#define debugNode(a,b) ((void)0)
-#endif
 #endif
 
 using DOM::DocumentImpl;

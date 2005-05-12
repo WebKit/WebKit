@@ -27,6 +27,9 @@
 #define __htmlediting_h__
 
 #include "edit_command.h"
+#include "composite_edit_command.h"
+#include "apply_style_command.h"
+
 #include "dom_nodeimpl.h"
 #include "editing/edit_actions.h"
 #include "qmap.h"
@@ -46,184 +49,8 @@ namespace DOM {
 
 namespace khtml {
 
-class EditCommand;
 class Selection;
 class VisiblePosition;
-
-//------------------------------------------------------------------------------------------
-// StyleChange
-
-class StyleChange {
-public:
-    enum ELegacyHTMLStyles { DoNotUseLegacyHTMLStyles, UseLegacyHTMLStyles };
-
-    explicit StyleChange(DOM::CSSStyleDeclarationImpl *, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
-    StyleChange(DOM::CSSStyleDeclarationImpl *, const DOM::Position &, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
-
-    static ELegacyHTMLStyles styleModeForParseMode(bool);
-
-    DOM::DOMString cssStyle() const { return m_cssStyle; }
-    bool applyBold() const { return m_applyBold; }
-    bool applyItalic() const { return m_applyItalic; }
-    bool applyFontColor() const { return m_applyFontColor.length() > 0; }
-    bool applyFontFace() const { return m_applyFontFace.length() > 0; }
-    bool applyFontSize() const { return m_applyFontSize.length() > 0; }
-
-    DOM::DOMString fontColor() { return m_applyFontColor; }
-    DOM::DOMString fontFace() { return m_applyFontFace; }
-    DOM::DOMString fontSize() { return m_applyFontSize; }
-
-    bool usesLegacyStyles() const { return m_usesLegacyStyles; }
-
-private:
-    void init(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
-    bool checkForLegacyHTMLStyleChange(const DOM::CSSProperty *);
-    static bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *);
-    
-    DOM::DOMString m_cssStyle;
-    bool m_applyBold;
-    bool m_applyItalic;
-    DOM::DOMString m_applyFontColor;
-    DOM::DOMString m_applyFontFace;
-    DOM::DOMString m_applyFontSize;
-    bool m_usesLegacyStyles;
-};
-
-//------------------------------------------------------------------------------------------
-// CompositeEditCommand
-
-class CompositeEditCommand : public EditCommand
-{
-public:
-    CompositeEditCommand(DOM::DocumentImpl *);
-	
-    virtual void doUnapply();
-    virtual void doReapply();
-
-protected:
-    //
-    // sugary-sweet convenience functions to help create and apply edit commands in composite commands
-    //
-    void appendNode(DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
-    void applyCommandToComposite(EditCommandPtr &);
-    void applyStyle(DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes);
-    void deleteKeyPressed();
-    void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    void deleteSelection(const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    void deleteTextFromNode(DOM::TextImpl *node, long offset, long count);
-    void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
-    void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
-    void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    void insertParagraphSeparator();
-    void insertTextIntoNode(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
-    void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
-    void rebalanceWhitespace();
-    void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
-    void removeFullySelectedNode(DOM::NodeImpl *node);
-    void removeNodeAttribute(DOM::ElementImpl *, int attribute);
-    void removeChildrenInRange(DOM::NodeImpl *node, int from, int to);
-    void removeNode(DOM::NodeImpl *removeChild);
-    void removeNodePreservingChildren(DOM::NodeImpl *node);
-    void replaceTextInNode(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
-    void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
-    void splitTextNode(DOM::TextImpl *text, long offset);
-    void splitElement(DOM::ElementImpl *element, DOM::NodeImpl *atChild);
-    void mergeIdenticalElements(DOM::ElementImpl *first, DOM::ElementImpl *second);
-    void wrapContentsInDummySpan(DOM::ElementImpl *element);
-    void splitTextNodeContainingElement(DOM::TextImpl *text, long offset);
-
-    void deleteInsignificantText(DOM::TextImpl *, int start, int end);
-    void deleteInsignificantText(const DOM::Position &start, const DOM::Position &end);
-    void deleteInsignificantTextDownstream(const DOM::Position &);
-
-    DOM::NodeImpl *appendBlockPlaceholder(DOM::NodeImpl *);
-    DOM::NodeImpl *insertBlockPlaceholder(const DOM::Position &pos);
-    DOM::NodeImpl *addBlockPlaceholderIfNeeded(DOM::NodeImpl *);
-    bool removeBlockPlaceholder(DOM::NodeImpl *);
-    DOM::NodeImpl *findBlockPlaceholder(DOM::NodeImpl *);
-
-    void moveParagraphContentsToNewBlockIfNecessary(const DOM::Position &);
-
-    QValueList<EditCommandPtr> m_cmds;
-};
-
-//==========================================================================================
-// Concrete commands
-//------------------------------------------------------------------------------------------
-// AppendNodeCommand
-
-class AppendNodeCommand : public EditCommand
-{
-public:
-    AppendNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
-    virtual ~AppendNodeCommand();
-
-    virtual void doApply();
-    virtual void doUnapply();
-
-    DOM::NodeImpl *appendChild() const { return m_appendChild; }
-    DOM::NodeImpl *parentNode() const { return m_parentNode; }
-
-private:
-    DOM::NodeImpl *m_appendChild;
-    DOM::NodeImpl *m_parentNode;    
-};
-
-//------------------------------------------------------------------------------------------
-// ApplyStyleCommand
-
-class ApplyStyleCommand : public CompositeEditCommand
-{
-public:
-    enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
-
-    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
-    virtual ~ApplyStyleCommand();
-	
-    virtual void doApply();
-    virtual EditAction editingAction() const;
-
-    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style; }
-
-private:
-    // style-removal helpers
-    bool isHTMLStyleNode(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeHTMLStyleNode(DOM::HTMLElementImpl *);
-    void removeHTMLFontStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeCSSStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeBlockStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
-    void removeInlineStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
-    bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
-    bool nodeFullyUnselected(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end) const;
-    DOM::CSSMutableStyleDeclarationImpl *extractTextDecorationStyle(DOM::NodeImpl *node);
-    DOM::CSSMutableStyleDeclarationImpl *extractAndNegateTextDecorationStyle(DOM::NodeImpl *node);
-    void applyTextDecorationStyle(DOM::NodeImpl *node, DOM::CSSMutableStyleDeclarationImpl *style);
-    void pushDownTextDecorationStyleAroundNode(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end, bool force);
-    void pushDownTextDecorationStyleAtBoundaries(const DOM::Position &start, const DOM::Position &end);
-    
-    // style-application helpers
-    void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    void applyRelativeFontStyleChange(DOM::CSSMutableStyleDeclarationImpl *);
-    void applyInlineStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *);
-    void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
-    bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextElementAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextElementAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool mergeStartWithPreviousIfIdentical(const DOM::Position &start, const DOM::Position &end);
-    bool mergeEndWithNextIfIdentical(const DOM::Position &start, const DOM::Position &end);
-    void cleanUpEmptyStyleSpans(const DOM::Position &start, const DOM::Position &end);
-
-    void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
-    float computedFontSize(const DOM::NodeImpl *);
-    void joinChildTextNodes(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end);
-    
-    DOM::CSSMutableStyleDeclarationImpl *m_style;
-    EditAction m_editingAction;
-    EPropertyLevel m_propertyLevel;
-};
 
 //------------------------------------------------------------------------------------------
 // DeleteFromTextNodeCommand
@@ -849,12 +676,8 @@ private:
 
 //------------------------------------------------------------------------------------------
 
-DOM::ElementImpl *floatRefdElement(DOM::ElementImpl *element);
 DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
-DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
-DOM::ElementImpl *createFontElement(DOM::DocumentImpl *document);
-DOM::ElementImpl *createStyleSpanElement(DOM::DocumentImpl *document);
 
 bool isNodeRendered(const DOM::NodeImpl *);
 bool isProbablyBlock(const DOM::NodeImpl *);
@@ -864,6 +687,9 @@ DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *);
 bool isMailPasteAsQuotationNode(const DOM::NodeImpl *node);
 
 //------------------------------------------------------------------------------------------
+
+bool isTableStructureNode(const DOM::NodeImpl *node);
+DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
 
 } // end namespace khtml
 

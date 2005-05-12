@@ -37,53 +37,6 @@ namespace DOM {
 
 namespace khtml {
 
-class EditCommand;
-//------------------------------------------------------------------------------------------
-// EditCommandPtr
-
-class EditCommandPtr : public SharedPtr<EditCommand>
-{
-public:
-    EditCommandPtr();
-    EditCommandPtr(EditCommand *);
-    EditCommandPtr(const EditCommandPtr &);
-    ~EditCommandPtr();
-
-    EditCommandPtr &operator=(const EditCommandPtr &);
-
-    bool isCompositeStep() const;
-
-    void apply() const;
-    void unapply() const;
-    void reapply() const;
-
-    EditAction editingAction() const;
-
-    DOM::DocumentImpl * const document() const;
-
-    Selection startingSelection() const;
-    Selection endingSelection() const;
-
-    void setStartingSelection(const Selection &s) const;
-    void setStartingSelection(const VisiblePosition &p) const;
-    void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
-    void setEndingSelection(const Selection &s) const;
-    void setEndingSelection(const VisiblePosition &p) const;
-    void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
-
-    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
-    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
-
-    EditCommandPtr parent() const;
-    void setParent(const EditCommandPtr &) const;
-
-    bool isInsertTextCommand() const;
-    bool isInsertLineBreakCommand() const;
-    bool isTypingCommand() const;
-
-    static EditCommandPtr &emptyCommand();
-};
-
 //------------------------------------------------------------------------------------------
 // EditCommand
 
@@ -145,6 +98,49 @@ private:
     Selection m_endingSelection;
     DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
     EditCommand *m_parent;
+};
+
+class EditCommandPtr : public SharedPtr<EditCommand>
+{
+public:
+    EditCommandPtr();
+    EditCommandPtr(EditCommand *);
+    EditCommandPtr(const EditCommandPtr &);
+    ~EditCommandPtr();
+
+    EditCommandPtr &operator=(const EditCommandPtr &);
+
+    bool isCompositeStep() const;
+
+    void apply() const;
+    void unapply() const;
+    void reapply() const;
+
+    EditAction editingAction() const;
+
+    DOM::DocumentImpl * const document() const;
+
+    Selection startingSelection() const;
+    Selection endingSelection() const;
+
+    void setStartingSelection(const Selection &s) const;
+    void setStartingSelection(const VisiblePosition &p) const;
+    void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
+    void setEndingSelection(const Selection &s) const;
+    void setEndingSelection(const VisiblePosition &p) const;
+    void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
+
+    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
+    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
+
+    EditCommandPtr parent() const;
+    void setParent(const EditCommandPtr &) const;
+
+    bool isInsertTextCommand() const;
+    bool isInsertLineBreakCommand() const;
+    bool isTypingCommand() const;
+
+    static EditCommandPtr &emptyCommand();
 };
 
 } // namespace khtml

@@ -1,3 +1,25 @@
+2005-05-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- split some more individual classes out of htmlediting.cpp
+	(CompositeEditcommand, AppendnodeCommand, ApplyStyleCommand)
+
+	Also moves StyleChange directly into ApplyStyleCommand
+	implementation file, it doesn't need to be in a header at all.
+	
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/append_node_command.cpp: Added.
+        * khtml/editing/append_node_command.h: Added.
+        * khtml/editing/apply_style_command.cpp: Added.
+        * khtml/editing/apply_style_command.h: Added.
+        * khtml/editing/composite_edit_command.cpp: Added.
+        * khtml/editing/composite_edit_command.h: Added.
+        * khtml/editing/edit_command.cpp: Minor clean-ups.
+        * khtml/editing/edit_command.h:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/htmlediting.h:
+
 2005-05-11  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
