@@ -1,22 +1,17 @@
 #
-# all valid CSS2 properties.
+# CSS property names
 #
-# aural properties are commented out, as we don't support them anyway.
-#
-# some properties are used in khtml, but are not part of CSS. They are used to get
+# Some properties are used in khtml, but are not part of CSS. They are used to get
 # HTML4 compatibilty in the rendering engine.
 #
-# Mircosoft extensions are documented here:
+# Microsoft extensions are documented here:
 # http://msdn.microsoft.com/workshop/author/css/reference/attributes.asp
-#
-# CSS_PROP_BACKGROUND_COLOR: 
 #
 background-color
 background-image
 background-repeat
 background-attachment
 background-position
-# IE Extensions
 background-position-x
 background-position-y
 -khtml-binding

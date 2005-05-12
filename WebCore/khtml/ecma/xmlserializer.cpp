@@ -21,13 +21,16 @@
 #include "xmlserializer.h"
 #include "xmlserializer.lut.h"
 
+#include "kjs_dom.h"
+
 #include "dom/dom_exception.h"
-#include "dom/dom_doc.h"
 #include "xml/dom_docimpl.h"
 
 #include <kdebug.h>
 
-using namespace KJS;
+using DOM::DocumentImpl;
+
+namespace KJS {
 
 ////////////////////// XMLSerializer Object ////////////////////////
 
@@ -39,8 +42,6 @@ using namespace KJS;
 DEFINE_PROTOTYPE("XMLSerializer",XMLSerializerProto)
 IMPLEMENT_PROTOFUNC(XMLSerializerProtoFunc)
 IMPLEMENT_PROTOTYPE(XMLSerializerProto,XMLSerializerProtoFunc)
-
-namespace KJS {
 
 XMLSerializerConstructorImp::XMLSerializerConstructorImp(ExecState *)
     : ObjectImp()
@@ -88,28 +89,12 @@ Value XMLSerializerProtoFunc::tryCall(ExecState *exec, Object &thisObj, const Li
 	return Undefined();
       }
 
-      DOM::Node docNode = static_cast<KJS::DOMDocument *>(args[0].toObject(exec).imp())->toNode();
-      DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl *>(docNode.handle());
-
-      if (!doc) {
-	return Undefined();
-      }
-	  
-      QString body;
-
-      try {
-	  body = doc->toString().string();
-      } catch(DOM::DOMException& e) {
-	  Object err = Error::create(exec, GeneralError, "Exception serializing document");
-	  exec->setException(err);
-	  return err;
-      }
-    
-      return getStringOrNull(body);
+      DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0].toObject(exec).imp())->impl());
+      return getStringOrNull(doc->toString().string());
     }
   }
 
   return Undefined();
 }
 
-}; // end namespace
+} // end namespace

@@ -59,6 +59,24 @@ namespace DOM {
 // Defined in parser.y, but not in any header, so just declare it here.
 int getPropertyID(const char *str, int len);
 
+static int propertyID(const DOMString &s)
+{
+    char buffer[maxCSSPropertyNameLength];
+
+    unsigned len = s.length();
+    if (len > maxCSSPropertyNameLength)
+        return 0;
+
+    for (unsigned i = 0; i != len; ++i) {
+        unsigned short c = s[i].unicode();
+        if (c == 0 || c >= 0x7F)
+            return 0; // illegal character
+        buffer[i] = c;
+    }
+
+    return getPropertyID(buffer, len);
+}
+
 #if 0
 
 // Too risky to quote all legal identifiers right now.
@@ -163,6 +181,13 @@ DOMString CSSStyleDeclarationImpl::removeProperty(const DOMString &propertyName,
         return DOMString();
     return removeProperty(propID, exception);
 }
+
+bool CSSStyleDeclarationImpl::isPropertyName(const DOMString &propertyName)
+{
+    return propertyID(propertyName);
+}
+
+// --------------------------------------------------------------------------------------
 
 CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl()
     : m_node(0)
@@ -1331,41 +1356,6 @@ DOMString CSSProperty::cssText() const
 bool operator==(const CSSProperty &a, const CSSProperty &b)
 {
     return a.m_id == b.m_id && a.m_bImportant == b.m_bImportant && a.m_value == b.m_value;
-}
-
-int CSSStyleDeclarationImpl::propertyID(const DOMString &s, bool *hadPixelOrPosPrefix)
-{
-    QString prop = s.string();
-
-    int i = prop.length();
-    while (--i) {
-	char c = prop[i].latin1();
-        if (!c)
-            return 0; // non-ASCII character
-	if (c >= 'A' && c <= 'Z')
-            prop.insert(i, '-');
-    }
-
-    prop = prop.lower();
-
-    if (hadPixelOrPosPrefix)
-        *hadPixelOrPosPrefix = false;
-
-    if (prop.startsWith("css-")) {
-        prop = prop.mid(4);
-    } else if (prop.startsWith("pixel-")) {
-        prop = prop.mid(6);
-        if (hadPixelOrPosPrefix)
-            *hadPixelOrPosPrefix = true;
-    } else if (prop.startsWith("pos-")) {
-        prop = prop.mid(4);
-        if (hadPixelOrPosPrefix)
-            *hadPixelOrPosPrefix = true;
-    } else if (prop.startsWith("khtml-") || prop.startsWith("apple-") || prop.startsWith("moz-")) {
-        prop.insert(0, '-');
-    }
-
-    return getPropertyID(prop.latin1(), prop.length());
 }
 
 }

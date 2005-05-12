@@ -21,33 +21,32 @@
 #ifndef _KJS_VIEWS_H_
 #define _KJS_VIEWS_H_
 
-#include "ecma/kjs_dom.h"
-#include "dom/dom2_views.h"
+#include "kjs_dom.h"
+
+namespace DOM {
+    class AbstractViewImpl;
+}
 
 namespace KJS {
 
-
   class DOMAbstractView : public DOMObject {
   public:
-    DOMAbstractView(ExecState *, DOM::AbstractView av) : abstractView(av) {}
+    DOMAbstractView(ExecState *, DOM::AbstractViewImpl *av) : m_impl(av) { }
     ~DOMAbstractView();
     virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    virtual DOM::AbstractView toAbstractView() const { return abstractView; }
+    DOM::AbstractViewImpl *impl() const { return m_impl.get(); }
     enum { Document, GetComputedStyle };
-  protected:
-    DOM::AbstractView abstractView;
+  private:
+    khtml::SharedPtr<DOM::AbstractViewImpl> m_impl;
   };
 
-  Value getDOMAbstractView(ExecState *exec, DOM::AbstractView av);
+  ValueImp *getDOMAbstractView(ExecState *exec, DOM::AbstractViewImpl *av);
 
-  /**
-   * Convert an object to an AbstractView. Returns a null Node if not possible.
-   */
-  DOM::AbstractView toAbstractView(const Value&);
+  DOM::AbstractViewImpl *toAbstractView(ValueImp *);
 
-}; // namespace
+} // namespace
 
 #endif

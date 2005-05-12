@@ -27,20 +27,27 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/dom2_viewsimpl.h"
 #include "rendering/render_object.h"
 #include "misc/loader.h"
 
 #include <kdebug.h>
 
-using namespace KJS;
-
+using DOM::ClipboardEventImpl;
 using DOM::DocumentImpl;
 using DOM::EventImpl;
-using DOM::KeyboardEvent;
+using DOM::EventListenerEvent;
+using DOM::KeyboardEventImpl;
+using DOM::MouseEventImpl;
+using DOM::UIEventImpl;
+using DOM::MutationEventImpl;
 using DOM::MouseRelatedEventImpl;
 using DOM::NodeImpl;
+using DOM::WheelEventImpl;
 
 using khtml::RenderObject;
+
+namespace KJS {
 
 // -------------------------------------------------------------------------
 
@@ -53,12 +60,19 @@ JSAbstractEventListener::~JSAbstractEventListener()
 {
 }
 
-void JSAbstractEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
+void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowEvent)
 {
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance() && KJSDebugWin::instance()->inSession())
     return;
 #endif
+
+#if KHTML_NO_CPLUSPLUS_DOM
+  EventImpl *evt = ele;
+#else
+  EventImpl *evt = ele.handle();
+#endif
+
   Object listener = listenerObj();
   Object win = windowObj();
 
@@ -78,16 +92,16 @@ void JSAbstractEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
 
     Window *window = static_cast<Window*>(win.imp());
     // Set the event we're handling in the Window object
-    window->setCurrentEvent( &evt );
+    window->setCurrentEvent(evt);
     // ... and in the interpreter
-    interpreter->setCurrentEvent( &evt );
+    interpreter->setCurrentEvent(evt);
 
     Object thisObj;
     if (isWindowEvent) {
         thisObj = win;
     } else {
         KJS::Interpreter::lock();
-        thisObj = Object::dynamicCast(getDOMNode(exec,evt.currentTarget()));
+        thisObj = Object::dynamicCast(getDOMNode(exec, evt->currentTarget()));
         KJS::Interpreter::unlock();
     }
 
@@ -124,7 +138,7 @@ void JSAbstractEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
     {
         QVariant ret = ValueToVariant(exec, retval);
         if (ret.type() == QVariant::Bool && ret.toBool() == false)
-            evt.preventDefault();
+            evt->preventDefault();
     }
     DOM::DocumentImpl::updateDocumentsRendering();
     deref();
@@ -224,7 +238,7 @@ JSLazyEventListener::JSLazyEventListener(QString _code, const Object &_win, Node
     originalNode = _originalNode;
 }
 
-void JSLazyEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
+void JSLazyEventListener::handleEvent(EventListenerEvent evt, bool isWindowEvent)
 {
   parseCode();
   if (!listener.isNull()) { 
@@ -300,17 +314,14 @@ void JSLazyEventListener::parseCode() const
   }
 }
 
-Value KJS::getNodeEventListener(DOM::Node n, int eventId)
+ValueImp *getNodeEventListener(NodeImpl *n, int eventId)
 {
-    DOM::EventListener *listener = n.handle()->getHTMLEventListener(eventId);
-    JSEventListener *jsListener = static_cast<JSEventListener*>(listener);
-    if ( jsListener && jsListener->listenerObjImp() )
-	return jsListener->listenerObj();
-    else
-	return Null();
+  JSAbstractEventListener *listener = static_cast<JSAbstractEventListener *>(n->getHTMLEventListener(eventId));
+  if (listener)
+    if (ValueImp *obj = listener->listenerObjImp())
+      return obj;
+  return null();
 }
-
-
 
 // -------------------------------------------------------------------------
 
@@ -384,15 +395,15 @@ DEFINE_PROTOTYPE("DOMEvent", DOMEventProto)
 IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
 IMPLEMENT_PROTOTYPE(DOMEventProto, DOMEventProtoFunc)
 
-DOMEvent::DOMEvent(ExecState *exec, DOM::Event e)
-  : event(e), clipboard(0) 
+DOMEvent::DOMEvent(ExecState *exec, EventImpl *e)
+  : m_impl(e), clipboard(0) 
 {
   setPrototype(DOMEventProto::self(exec));
 }
 
 DOMEvent::~DOMEvent()
 {
-  ScriptInterpreter::forgetDOMObject(event.handle());
+  ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
 // pass marks through to JS objects we hold during garbage collection
@@ -413,14 +424,15 @@ Value DOMEvent::tryGet(ExecState *exec, const Identifier &p) const
 
 Value DOMEvent::getValueProperty(ExecState *exec, int token) const
 {
+  EventImpl &event = *m_impl;
   switch (token) {
   case Type:
     return String(event.type());
   case Target:
   case SrcElement: /*MSIE extension - "the object that fired the event"*/
-    return getDOMNode(exec,event.target());
+    return getDOMNode(exec, event.target());
   case CurrentTarget:
-    return getDOMNode(exec,event.currentTarget());
+    return getDOMNode(exec, event.currentTarget());
   case EventPhase:
     return Number((unsigned int)event.eventPhase());
   case Bubbles:
@@ -435,9 +447,8 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
     return Number((long unsigned int)event.timeStamp()); // ### long long ?
   case ClipboardData:
   {
-    DOM::EventImpl *ei = event.handle();
-    if (ei->isClipboardEvent()) {
-      DOM::ClipboardEventImpl *impl = static_cast<DOM::ClipboardEventImpl *>(event.handle());
+    if (event.isClipboardEvent()) {
+      ClipboardEventImpl *impl = static_cast<ClipboardEventImpl *>(&event);
       if (!clipboard) {
         clipboard = new Clipboard(exec, impl->clipboard());
       }
@@ -448,9 +459,8 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   }
   case DataTransfer:
   {
-    DOM::EventImpl *ei = event.handle();
-    if (ei->isDragEvent()) {
-      DOM::MouseEventImpl *impl = static_cast<DOM::MouseEventImpl *>(event.handle());
+    if (event.isDragEvent()) {
+      MouseEventImpl *impl = static_cast<MouseEventImpl *>(&event);
       if (!clipboard) {
         clipboard = new Clipboard(exec, impl->clipboard());
       }
@@ -474,6 +484,7 @@ void DOMEvent::tryPut(ExecState *exec, const Identifier &propertyName,
 
 void DOMEvent::putValue(ExecState *exec, int token, const Value& value, int)
 {
+  EventImpl &event = *m_impl;
   switch (token) {
   case ReturnValue:
     event.setDefaultPrevented(!value.toBoolean(exec));
@@ -493,7 +504,7 @@ Value DOMEventProtoFunc::tryCall(ExecState *exec, Object & thisObj, const List &
     exec->setException(err);
     return err;
   }
-  DOM::Event event = static_cast<DOMEvent *>( thisObj.imp() )->toEvent();
+  EventImpl &event = *static_cast<DOMEvent *>( thisObj.imp() )->impl();
   switch (id) {
     case DOMEvent::StopPropagation:
       event.stopPropagation();
@@ -507,46 +518,42 @@ Value DOMEventProtoFunc::tryCall(ExecState *exec, Object & thisObj, const List &
   return Undefined();
 }
 
-Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
+ValueImp *getDOMEvent(ExecState *exec, EventImpl *e)
 {
-  DOM::EventImpl *ei = e.handle();
-  if (!ei)
+  if (!e)
     return Null();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
   KJS::Interpreter::lock();
 
-  DOMObject *ret = interp->getDOMObject(ei);
+  DOMObject *ret = interp->getDOMObject(e);
   if (!ret) {
-    if (ei->isKeyboardEvent())
-      ret = new DOMKeyboardEvent(exec, e);
-    else if (ei->isMouseEvent())
-      ret = new DOMMouseEvent(exec, e);
-    else if (ei->isWheelEvent())
-      ret = new DOMWheelEvent(exec, static_cast<DOM::WheelEventImpl *>(ei));
-    else if (ei->isUIEvent())
-      ret = new DOMUIEvent(exec, e);
-    else if (ei->isMutationEvent())
-      ret = new DOMMutationEvent(exec, e);
+    if (e->isKeyboardEvent())
+      ret = new DOMKeyboardEvent(exec, static_cast<KeyboardEventImpl *>(e));
+    else if (e->isMouseEvent())
+      ret = new DOMMouseEvent(exec, static_cast<MouseEventImpl *>(e));
+    else if (e->isWheelEvent())
+      ret = new DOMWheelEvent(exec, static_cast<WheelEventImpl *>(e));
+    else if (e->isUIEvent())
+      ret = new DOMUIEvent(exec, static_cast<UIEventImpl *>(e));
+    else if (e->isMutationEvent())
+      ret = new DOMMutationEvent(exec, static_cast<MutationEventImpl *>(e));
     else
       ret = new DOMEvent(exec, e);
 
-    interp->putDOMObject(ei, ret);
+    interp->putDOMObject(e, ret);
   }
 
   KJS::Interpreter::unlock();
 
-  return Value(ret);
+  return ret;
 }
 
-DOM::Event KJS::toEvent(const Value& val)
+EventImpl *toEvent(ValueImp *val)
 {
-  Object obj = Object::dynamicCast(val);
-  if (obj.isNull() || !obj.inherits(&DOMEvent::info))
-    return DOM::Event();
-
-  const DOMEvent *dobj = static_cast<const DOMEvent*>(obj.imp());
-  return dobj->toEvent();
+    if (!val || !val->isObject(&DOMNode::info))
+        return 0;
+    return static_cast<DOMEvent *>(val)->impl();
 }
 
 // -------------------------------------------------------------------------
@@ -597,6 +604,11 @@ DEFINE_PROTOTYPE("DOMUIEvent",DOMUIEventProto)
 IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMUIEventProto,DOMUIEventProtoFunc,DOMEventProto)
 
+DOMUIEvent::DOMUIEvent(ExecState *exec, UIEventImpl *e)
+  : DOMEvent(exec, e)
+{
+}
+
 DOMUIEvent::~DOMUIEvent()
 {
 }
@@ -608,25 +620,26 @@ Value DOMUIEvent::tryGet(ExecState *exec, const Identifier &p) const
 
 Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
 {
+  UIEventImpl &event = *static_cast<UIEventImpl *>(impl());
   switch (token) {
   case View:
-    return getDOMAbstractView(exec,static_cast<DOM::UIEvent>(event).view());
+    return getDOMAbstractView(exec, event.view());
   case Detail:
-    return Number(static_cast<DOM::UIEvent>(event).detail());
+    return Number(event.detail());
   case KeyCode:
-    return Number(static_cast<DOM::UIEvent>(event).keyCode());
+    return Number(event.keyCode());
   case CharCode:
-    return Number(static_cast<DOM::UIEvent>(event).charCode());
+    return Number(event.charCode());
   case LayerX:
-    return Number(static_cast<DOM::UIEvent>(event).layerX());
+    return Number(event.layerX());
   case LayerY:
-    return Number(static_cast<DOM::UIEvent>(event).layerY());
+    return Number(event.layerY());
   case PageX:
-    return Number(static_cast<DOM::UIEvent>(event).pageX());
+    return Number(event.pageX());
   case PageY:
-    return Number(static_cast<DOM::UIEvent>(event).pageY());
+    return Number(event.pageY());
   case Which:
-    return Number(static_cast<DOM::UIEvent>(event).which());
+    return Number(event.which());
   default:
     kdWarning() << "Unhandled token in DOMUIEvent::getValueProperty : " << token << endl;
     return Undefined();
@@ -640,16 +653,14 @@ Value DOMUIEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List 
     exec->setException(err);
     return err;
   }
-  DOM::UIEvent uiEvent = static_cast<DOMUIEvent *>(thisObj.imp())->toUIEvent();
+  UIEventImpl &uiEvent = *static_cast<UIEventImpl *>(static_cast<DOMUIEvent *>(thisObj.imp())->impl());
   switch (id) {
-    case DOMUIEvent::InitUIEvent: {
-      DOM::AbstractView v = toAbstractView(args[3]);
-      static_cast<DOM::UIEvent>(uiEvent).initUIEvent(args[0].toString(exec).string(),
-                                                     args[1].toBoolean(exec),
-                                                     args[2].toBoolean(exec),
-                                                     v,
-                                                     args[4].toInt32(exec));
-      }
+    case DOMUIEvent::InitUIEvent:
+      uiEvent.initUIEvent(args[0].toString(exec).string(),
+                          args[1].toBoolean(exec),
+                          args[2].toBoolean(exec),
+                          toAbstractView(args[3]),
+                          args[4].toInt32(exec));
       return Undefined();
   }
   return Undefined();
@@ -685,6 +696,11 @@ const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMou
 DEFINE_PROTOTYPE("DOMMouseEvent",DOMMouseEventProto)
 IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIEventProto)
+
+DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEventImpl *e)
+  : DOMUIEvent(exec, e)
+{
+}
 
 DOMMouseEvent::~DOMMouseEvent()
 {
@@ -723,50 +739,51 @@ static QPoint offsetFromTarget(const MouseRelatedEventImpl *e)
 
 Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
 {
+  MouseEventImpl &event = *static_cast<MouseEventImpl *>(impl());
   switch (token) {
   case ScreenX:
-    return Number(static_cast<DOM::MouseEvent>(event).screenX());
+    return Number(event.screenX());
   case ScreenY:
-    return Number(static_cast<DOM::MouseEvent>(event).screenY());
+    return Number(event.screenY());
   case ClientX:
   case X:
-    return Number(static_cast<DOM::MouseEvent>(event).clientX());
+    return Number(event.clientX());
   case ClientY:
   case Y:
-    return Number(static_cast<DOM::MouseEvent>(event).clientY());
+    return Number(event.clientY());
   case OffsetX: // MSIE extension
-    return Number(offsetFromTarget(static_cast<MouseRelatedEventImpl *>(event.handle())).x());
+    return Number(offsetFromTarget(&event).x());
   case OffsetY: // MSIE extension
-    return Number(offsetFromTarget(static_cast<MouseRelatedEventImpl *>(event.handle())).y());
+    return Number(offsetFromTarget(&event).y());
   case CtrlKey:
-    return Boolean(static_cast<DOM::MouseEvent>(event).ctrlKey());
+    return Boolean(event.ctrlKey());
   case ShiftKey:
-    return Boolean(static_cast<DOM::MouseEvent>(event).shiftKey());
+    return Boolean(event.shiftKey());
   case AltKey:
-    return Boolean(static_cast<DOM::MouseEvent>(event).altKey());
+    return Boolean(event.altKey());
   case MetaKey:
-    return Boolean(static_cast<DOM::MouseEvent>(event).metaKey());
+    return Boolean(event.metaKey());
   case Button:
   {
     // Tricky. The DOM (and khtml) use 0 for LMB, 1 for MMB and 2 for RMB
     // but MSIE uses 1=LMB, 2=RMB, 4=MMB, as a bitfield
-    int domButton = static_cast<DOM::MouseEvent>(event).button();
+    int domButton = event.button();
     int button = domButton==0 ? 1 : domButton==1 ? 4 : domButton==2 ? 2 : 0;
     return Number( (unsigned int)button );
   }
   case ToElement:
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    if (event.handle()->id() == DOM::EventImpl::MOUSEOUT_EVENT)
-      return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
-    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).target());
+    if (event.id() == DOM::EventImpl::MOUSEOUT_EVENT)
+      return getDOMNode(exec, event.relatedTarget());
+    return getDOMNode(exec,event.target());
   case FromElement:
     // MSIE extension - "object from which activation
     // or the mouse pointer is exiting during the event" (huh?)
-    if (event.handle()->id() == DOM::EventImpl::MOUSEOUT_EVENT)
-      return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).target());
+    if (event.id() == DOM::EventImpl::MOUSEOUT_EVENT)
+      return getDOMNode(exec, event.target());
     /* fall through */
   case RelatedTarget:
-    return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
+    return getDOMNode(exec, event.relatedTarget());
   default:
     kdWarning() << "Unhandled token in DOMMouseEvent::getValueProperty : " << token << endl;
     return Value();
@@ -780,7 +797,7 @@ Value DOMMouseEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const Li
     exec->setException(err);
     return err;
   }
-  DOM::MouseEvent mouseEvent = static_cast<DOMMouseEvent *>(thisObj.imp())->toMouseEvent();
+  MouseEventImpl &mouseEvent = *static_cast<MouseEventImpl *>(static_cast<DOMMouseEvent *>(thisObj.imp())->impl());
   switch (id) {
     case DOMMouseEvent::InitMouseEvent:
       mouseEvent.initMouseEvent(args[0].toString(exec).string(), // typeArg
@@ -825,6 +842,11 @@ DEFINE_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto)
 IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMKeyboardEventProto, DOMKeyboardEventProtoFunc, DOMUIEventProto)
 
+DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEventImpl *e)
+  : DOMUIEvent(exec, e)
+{
+}
+
 DOMKeyboardEvent::~DOMKeyboardEvent()
 {
 }
@@ -844,21 +866,22 @@ Value DOMKeyboardEvent::tryGet(ExecState *exec, const Identifier &p) const
 
 Value DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
 {
+  KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(impl());
   switch (token) {
   case KeyIdentifier:
-    return String(static_cast<KeyboardEvent>(event).keyIdentifier());
+    return String(event.keyIdentifier());
   case KeyLocation:
-    return Number(static_cast<KeyboardEvent>(event).keyLocation());
+    return Number(event.keyLocation());
   case CtrlKey:
-    return Boolean(static_cast<KeyboardEvent>(event).ctrlKey());
+    return Boolean(event.ctrlKey());
   case ShiftKey:
-    return Boolean(static_cast<KeyboardEvent>(event).shiftKey());
+    return Boolean(event.shiftKey());
   case AltKey:
-    return Boolean(static_cast<KeyboardEvent>(event).altKey());
+    return Boolean(event.altKey());
   case MetaKey:
-    return Boolean(static_cast<KeyboardEvent>(event).metaKey());
+    return Boolean(event.metaKey());
   case AltGraphKey:
-    return Boolean(static_cast<KeyboardEvent>(event).altGraphKey());
+    return Boolean(event.altGraphKey());
   default:
     kdWarning() << "Unhandled token in DOMKeyboardEvent::getValueProperty : " << token << endl;
     return Value();
@@ -872,7 +895,7 @@ Value DOMKeyboardEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
     exec->setException(err);
     return err;
   }
-  KeyboardEvent event = static_cast<DOMKeyboardEvent *>(thisObj.imp())->toKeyboardEvent();
+  KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(static_cast<DOMUIEvent *>(thisObj.imp())->impl());
   switch (id) {
     case DOMKeyboardEvent::InitKeyboardEvent:
       event.initKeyboardEvent(args[0].toString(exec).string(), // typeArg
@@ -936,6 +959,11 @@ DEFINE_PROTOTYPE("DOMMutationEvent",DOMMutationEventProto)
 IMPLEMENT_PROTOFUNC(DOMMutationEventProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMutationEventProto,DOMMutationEventProtoFunc,DOMEventProto)
 
+DOMMutationEvent::DOMMutationEvent(ExecState *exec, MutationEventImpl *e)
+  : DOMEvent(exec, e)
+{
+}
+
 DOMMutationEvent::~DOMMutationEvent()
 {
 }
@@ -947,17 +975,18 @@ Value DOMMutationEvent::tryGet(ExecState *exec, const Identifier &p) const
 
 Value DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
 {
+  MutationEventImpl &event = *static_cast<MutationEventImpl *>(impl());
   switch (token) {
   case RelatedNode:
-    return getDOMNode(exec,static_cast<DOM::MutationEvent>(event).relatedNode());
+    return getDOMNode(exec, event.relatedNode());
   case PrevValue:
-    return String(static_cast<DOM::MutationEvent>(event).prevValue());
+    return String(event.prevValue());
   case NewValue:
-    return String(static_cast<DOM::MutationEvent>(event).newValue());
+    return String(event.newValue());
   case AttrName:
-    return String(static_cast<DOM::MutationEvent>(event).attrName());
+    return String(event.attrName());
   case AttrChange:
-    return Number((unsigned int)static_cast<DOM::MutationEvent>(event).attrChange());
+    return Number(event.attrChange());
   default:
     kdWarning() << "Unhandled token in DOMMutationEvent::getValueProperty : " << token << endl;
     return Value();
@@ -971,7 +1000,7 @@ Value DOMMutationEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
     exec->setException(err);
     return err;
   }
-  DOM::MutationEvent mutationEvent = static_cast<DOMMutationEvent *>(thisObj.imp())->toMutationEvent();
+  MutationEventImpl &mutationEvent = *static_cast<MutationEventImpl *>(static_cast<DOMEvent *>(thisObj.imp())->impl());
   switch (id) {
     case DOMMutationEvent::InitMutationEvent:
       mutationEvent.initMutationEvent(args[0].toString(exec).string(), // typeArg,
@@ -1014,7 +1043,7 @@ IMPLEMENT_PROTOFUNC(DOMWheelEventProtoFunc)
 IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMWheelEventProto,DOMWheelEventProtoFunc,DOMEventProto)
 
 DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
-    : DOMUIEvent(exec, DOM::UIEvent(e))
+    : DOMUIEvent(exec, e)
 {
 }
 
@@ -1025,7 +1054,7 @@ Value DOMWheelEvent::tryGet(ExecState *exec, const Identifier &p) const
 
 Value DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
 {
-    DOM::WheelEventImpl *e = static_cast<DOM::WheelEventImpl *>(event.handle());
+    DOM::WheelEventImpl *e = static_cast<DOM::WheelEventImpl *>(impl());
     switch (token) {
         case AltKey:
             return Boolean(e->altKey());
@@ -1229,10 +1258,10 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
             int y = (int)args[2].toNumber(exec);
 
             // See if they passed us a node
-            DOM::Node node = toNode(args[0]);
-            if (!node.isNull()) {
-                if (node.nodeType() == DOM::Node::ELEMENT_NODE) {
-                    cb->clipboard->setDragImageElement(node.handle(), QPoint(x,y));                    
+            NodeImpl *node = toNode(args[0]);
+            if (node) {
+                if (node->isElementNode()) {
+                    cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
                     return Undefined();
                 } else {
                     Object err = Error::create(exec, SyntaxError,"setDragImageFromElement: Invalid first argument");
@@ -1257,3 +1286,4 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
     return Undefined();
 }
 
+}

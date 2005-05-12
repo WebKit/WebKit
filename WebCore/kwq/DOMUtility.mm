@@ -34,7 +34,7 @@
 // This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
 // headers are included to avoid naming conflicts.
 
-inline id createObjCDOMNode(DOM::NodeImpl *node)
+static inline id createObjCDOMNode(DOM::NodeImpl *node)
 {
     return [DOMNode _nodeWithImpl:node];
 }
@@ -45,7 +45,7 @@ void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, const Objec
 {
     if (value.inherits(&DOMNode::info)) {
 	DOMNode *imp = static_cast<DOMNode *>(value.imp());
-	id newObjcNode = createObjCDOMNode(imp->toNode().handle());
+	id newObjcNode = createObjCDOMNode(imp->impl());
 	[newObjcNode _initializeWithObjectImp:imp originExecutionContext:origin executionContext:current];	
 	return newObjcNode;
     }

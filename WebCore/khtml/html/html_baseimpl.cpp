@@ -39,7 +39,6 @@
 #include "misc/loader.h"
 #include "misc/htmlhashes.h"
 #include "dom/dom_string.h"
-#include "dom/dom_doc.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include <kurl.h>

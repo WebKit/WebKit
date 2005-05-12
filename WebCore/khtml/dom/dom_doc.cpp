@@ -21,6 +21,9 @@
  *
  */
 
+#include "dom_doc.h"
+
+#include "dom/dom_element.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_xml.h"
 #include "dom/dom2_range.h"

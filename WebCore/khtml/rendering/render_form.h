@@ -42,7 +42,6 @@ class QListboxItem;
 #include <qhbox.h>
 #include <klistbox.h>
 #include <kcombobox.h>
-#include "dom/dom_misc.h"
 
 typedef class QTextEdit KTextEdit;
 class KHTMLPartBrowserExtension;

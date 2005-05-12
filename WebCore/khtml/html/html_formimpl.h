@@ -26,7 +26,6 @@
 #define HTML_FORMIMPL_H
 
 #include "html/html_elementimpl.h"
-#include "dom/html_element.h"
 #include "html/html_miscimpl.h"
 
 #include <qptrvector.h>

@@ -31,6 +31,7 @@
 #import "dom_string.h"
 #import "dom_docimpl.h"
 
+#import "kjs_dom.h"
 #import "kjs_proxy.h"
 
 #import "KWQAssertions.h"
@@ -51,12 +52,6 @@ using KJS::Interpreter;
 using KJS::ObjectImp;
 
 using KJS::Bindings::RootObject;
-
-// FIXME: Can't include kjs_dom.h because of name conflict (for the moment).
-// So re-declare this here.
-namespace KJS {
-  Value getDOMNode(ExecState *exec, const DOM::Node &n);
-};
 
 //------------------------------------------------------------------------------------------
 // Wrapping khtml implementation objects
@@ -187,7 +182,7 @@ DOMString::DOMString(NSString *str)
     ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, nodeImpl).imp());
+    ObjectImp *scriptImp = static_cast<ObjectImp *>(getDOMNode(exec, nodeImpl));
 
     const RootObject *executionContext = KWQ(part)->bindingRootObject();
 

@@ -83,6 +83,7 @@ public:
      *
      */
     virtual void handleEvent(EventListenerEvent evt, bool isWindowEvent);
+    void handleEventImpl(EventImpl *evt, bool isWindowEvent);
 
     /**
      * @internal

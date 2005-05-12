@@ -21,14 +21,20 @@
 #ifndef _KJS_TRAVERSAL_H_
 #define _KJS_TRAVERSAL_H_
 
-#include "ecma/kjs_dom.h"
+#include "kjs_dom.h"
 #include "dom/dom2_traversal.h"
+
+namespace DOM {
+    class NodeFilterImpl;
+    class NodeIteratorImpl;
+    class NodeTreeWalkerImpl;
+}
 
 namespace KJS {
 
   class DOMNodeIterator : public DOMObject {
   public:
-    DOMNodeIterator(ExecState *exec, DOM::NodeIterator ni);
+    DOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
     ~DOMNodeIterator();
     virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -37,9 +43,9 @@ namespace KJS {
     static const ClassInfo info;
     enum { Filter, Root, WhatToShow, ExpandEntityReferences, ReferenceNode, PointerBeforeReferenceNode,
            NextNode, PreviousNode, Detach };
-    DOM::NodeIterator toNodeIterator() const { return nodeIterator; }
-  protected:
-    DOM::NodeIterator nodeIterator;
+    DOM::NodeIteratorImpl *impl() const { return m_impl.get(); }
+  private:
+    khtml::SharedPtr<DOM::NodeIteratorImpl> m_impl;
   };
 
   // Constructor object NodeFilter
@@ -55,20 +61,20 @@ namespace KJS {
 
   class DOMNodeFilter : public DOMObject {
   public:
-    DOMNodeFilter(ExecState *exec, DOM::NodeFilter nf);
+    DOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
     ~DOMNodeFilter();
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    virtual DOM::NodeFilter toNodeFilter() const { return nodeFilter; }
+    DOM::NodeFilterImpl *impl() const { return m_impl.get(); }
     enum { AcceptNode };
-  protected:
-    DOM::NodeFilter nodeFilter;
+  private:
+    khtml::SharedPtr<DOM::NodeFilterImpl> m_impl;
   };
 
   class DOMTreeWalker : public DOMObject {
   public:
-    DOMTreeWalker(ExecState *exec, DOM::TreeWalker tw);
+    DOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
     ~DOMTreeWalker();
     virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -79,26 +85,23 @@ namespace KJS {
     enum { Root, WhatToShow, Filter, ExpandEntityReferences, CurrentNode,
            ParentNode, FirstChild, LastChild, PreviousSibling, NextSibling,
            PreviousNode, NextNode };
-    DOM::TreeWalker toTreeWalker() const { return treeWalker; }
-  protected:
-    DOM::TreeWalker treeWalker;
+    DOM::TreeWalkerImpl *impl() const { return m_impl.get(); }
+  private:
+    khtml::SharedPtr<DOM::TreeWalkerImpl> m_impl;
   };
 
-  Value getDOMNodeIterator(ExecState *exec, DOM::NodeIterator ni);
+  ValueImp *getDOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
   Value getNodeFilterConstructor(ExecState *exec);
-  Value getDOMNodeFilter(ExecState *exec, DOM::NodeFilter nf);
-  Value getDOMTreeWalker(ExecState *exec, DOM::TreeWalker tw);
+  ValueImp *getDOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
+  ValueImp *getDOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
 
-  /**
-   * Convert an object to a NodeFilter. Returns a null Node if not possible.
-   */
-  DOM::NodeFilter toNodeFilter(const Value&);
+  DOM::NodeFilterImpl *toNodeFilter(const ValueImp *); // returns 0 if value is not a DOMNodeFilter
 
   class JSNodeFilterCondition : public DOM::NodeFilterCondition {
   public:
     JSNodeFilterCondition(Object & _filter);
     virtual ~JSNodeFilterCondition() {}
-    virtual short acceptNode(const DOM::Node &) const;
+    virtual short acceptNode(DOM::FilterNode) const;
   protected:
     ProtectedObject filter;
   };

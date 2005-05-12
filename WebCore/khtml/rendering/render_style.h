@@ -41,7 +41,6 @@
 #include <qpalette.h>
 #include <qapplication.h>
 
-#include "dom/dom_misc.h"
 #include "misc/main_thread_malloc.h"
 #include "misc/khtmllayout.h"
 #include "misc/shared.h"

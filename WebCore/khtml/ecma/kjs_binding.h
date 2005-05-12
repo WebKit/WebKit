@@ -23,11 +23,8 @@
 #define _KJS_BINDING_H_
 
 #include <kjs/interpreter.h>
-#include <dom/dom_node.h>
-#include <dom/dom_doc.h>
 #include <qvariant.h>
 #include <qptrdict.h>
-#include <kurl.h>
 #include <kjs/lookup.h>
 #include <kjs/protect.h>
 
@@ -36,6 +33,11 @@
 #endif
 
 class KHTMLPart;
+
+namespace DOM {
+    class DocumentImpl;
+    class EventImpl;
+}
 
 namespace KJS {
 
@@ -123,7 +125,7 @@ namespace KJS {
     /**
      * Set the event that is triggering the execution of a script, if any
      */
-    void setCurrentEvent( DOM::Event *evt ) { m_evt = evt; }
+    void setCurrentEvent( DOM::EventImpl *evt ) { m_evt = evt; }
     void setInlineCode( bool inlineCode ) { m_inlineCode = inlineCode; }
     void setProcessingTimerCallback( bool timerCallback ) { m_timerCallback = timerCallback; }
     /**
@@ -133,7 +135,7 @@ namespace KJS {
 
     virtual void mark();
     
-    DOM::Event *getCurrentEvent() const { return m_evt; }
+    DOM::EventImpl *getCurrentEvent() const { return m_evt; }
 
 #if APPLE_CHANGES
     virtual bool isGlobalObject(const Value &v);
@@ -149,40 +151,49 @@ namespace KJS {
     static QPtrDict<DOMObject> &domObjects();
     static QPtrDict<QPtrDict<DOMObject> > &domObjectsPerDocument();
 
-    DOM::Event *m_evt;
+    DOM::EventImpl *m_evt;
     bool m_inlineCode;
     bool m_timerCallback;
   };
+
   /**
    * Retrieve from cache, or create, a KJS object around a DOM object
    */
   template<class DOMObj, class KJSDOMObj>
-  inline Value cacheDOMObject(ExecState *exec, DOMObj domObj)
+  inline ValueImp *cacheDOMObject(ExecState *exec, DOMObj *domObj)
   {
-    DOMObject *ret;
-    if (domObj.isNull())
-      return Null();
-    ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
-    if ((ret = interp->getDOMObject(domObj.handle())))
-      return Value(ret);
-    else {
-      ret = new KJSDOMObj(exec, domObj);
-      interp->putDOMObject(domObj.handle(),ret);
-      return Value(ret);
-    }
+    if (!domObj)
+      return null();
+    ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+    if (DOMObject *ret = interp->getDOMObject(domObj))
+      return ret;
+    DOMObject *ret = new KJSDOMObj(exec, domObj);
+    interp->putDOMObject(domObj, ret);
+    return ret;
   }
 
-  /**
-   * Convert an object to a Node. Returns a null Node if not possible.
-   */
-  DOM::Node toNode(const Value&);
+  // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
+  void setDOMException(ExecState *exec, int DOMExceptionCode);
+
+  // Helper class to call setDOMException on exit without adding lots of separate calls to that function.
+  class DOMExceptionTranslator {
+  public:
+    explicit DOMExceptionTranslator(ExecState *exec) : m_exec(exec), m_code(0) { }
+    ~DOMExceptionTranslator() { setDOMException(m_exec, m_code); }
+    operator int &() { return m_code; }
+  private:
+    ExecState *m_exec;
+    int m_code;
+  };
+
   /**
    *  Get a String object, or Null() if s is null
    */
   Value getStringOrNull(DOM::DOMString s);
 
   /**
-   * Convery a KJS value into a QVariant
+   * Convert a KJS value into a QVariant
+   * Deprecated: Use variant instead.
    */
   QVariant ValueToVariant(ExecState* exec, const Value& val);
 
@@ -255,17 +266,17 @@ namespace KJS {
    * that cached object. Note that the object constructor must take 1 argument, exec.
    */
   template <class ClassCtor>
-  inline Object cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
+  inline ObjectImp *cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
   {
-    ValueImp *obj = static_cast<ObjectImp*>(exec->lexicalInterpreter()->globalObject().imp())->getDirect(propertyName);
-    if (obj)
-      return Object::dynamicCast(Value(obj));
-    else
-    {
-      Object newObject(new ClassCtor(exec));
-      exec->lexicalInterpreter()->globalObject().put(exec, propertyName, newObject, Internal);
-      return newObject;
+    ObjectImp *globalObject = static_cast<ObjectImp *>(exec->lexicalInterpreter()->globalObject().imp());
+    ValueImp *obj = globalObject->getDirect(propertyName);
+    if (obj) {
+      assert(obj->isObject());
+      return static_cast<ObjectImp *>(obj);
     }
+    ObjectImp *newObject = new ClassCtor(exec);
+    globalObject->put(exec, propertyName, Value(newObject), Internal);
+    return newObject;
   }
 
   /**
@@ -285,11 +296,10 @@ namespace KJS {
    * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
    */
 #define DEFINE_PROTOTYPE(ClassName,ClassProto) \
-  namespace KJS { \
   class ClassProto : public ObjectImp { \
-    friend Object cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
+    friend ObjectImp *cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
   public: \
-    static Object self(ExecState *exec) \
+    static ObjectImp *self(ExecState *exec) \
     { \
       return cacheGlobalObject<ClassProto>( exec, "[[" ClassName ".prototype]]" ); \
     } \
@@ -303,38 +313,36 @@ namespace KJS {
     Value get(ExecState *exec, const Identifier &propertyName) const; \
     bool hasProperty(ExecState *exec, const Identifier &propertyName) const; \
   }; \
-  const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
-  };
+  const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 };
 
 #define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
-    Value KJS::ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
+    Value ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
     { \
       /*fprintf( stderr, "%sProto::get(%s) [in macro, no parent]\n", info.className, propertyName.ascii());*/ \
       return lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
+    bool ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
     { /*stupid but we need this to have a common macro for the declaration*/ \
       return ObjectImp::hasProperty(exec, propertyName); \
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
-    Value KJS::ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
+    Value ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
     { \
       /*fprintf( stderr, "%sProto::get(%s) [in macro]\n", info.className, propertyName.ascii());*/ \
       Value val = lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
       if ( val.type() != UndefinedType ) return val; \
       /* Not found -> forward request to "parent" prototype */ \
-      return ParentProto::self(exec).get( exec, propertyName ); \
+      return ParentProto::self(exec)->get( exec, propertyName ); \
     } \
-    bool KJS::ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
+    bool ClassProto::hasProperty(ExecState *exec, const Identifier &propertyName) const \
     { \
       if (ObjectImp::hasProperty(exec, propertyName)) \
         return true; \
-      return ParentProto::self(exec).hasProperty(exec, propertyName); \
+      return ParentProto::self(exec)->hasProperty(exec, propertyName); \
     }
 
 #define IMPLEMENT_PROTOFUNC(ClassFunc) \
-  namespace KJS { \
   class ClassFunc : public DOMFunction { \
   public: \
     ClassFunc(ExecState *exec, int i, int len) \
@@ -346,9 +354,8 @@ namespace KJS {
     virtual Value tryCall(ExecState *exec, Object &thisObj, const List &args); \
   private: \
     int id; \
-  }; \
   };
 
-}; // namespace
+} // namespace
 
 #endif

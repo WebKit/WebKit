@@ -27,7 +27,6 @@
 #define _DOM_ELEMENTImpl_h_
 
 #include "dom_nodeimpl.h"
-#include "dom/dom_element.h"
 #include "xml/dom_stringimpl.h"
 #include "misc/shared.h"
 #include "css/css_valueimpl.h"

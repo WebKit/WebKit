@@ -23,19 +23,31 @@
 #ifndef _KJS_CSS_H_
 #define _KJS_CSS_H_
 
-#include <dom/dom_node.h>
-#include <dom/dom_doc.h>
-#include <kjs/object.h>
-#include <dom/css_value.h>
-#include <dom/css_stylesheet.h>
-#include <dom/css_rule.h>
 #include "kjs_binding.h"
+
+#include <qcolor.h>
+#include "misc/shared.h"
+
+namespace DOM {
+    class CounterImpl;
+    class CSSPrimitiveValueImpl;
+    class CSSRuleImpl;
+    class CSSRuleListImpl;
+    class CSSStyleDeclarationImpl;
+    class CSSStyleSheetImpl;
+    class CSSValueImpl;
+    class CSSValueListImpl;
+    class MediaListImpl;
+    class RectImpl;
+    class StyleSheetImpl;
+    class StyleSheetListImpl;
+}
 
 namespace KJS {
 
   class DOMCSSStyleDeclaration : public DOMObject {
   public:
-    DOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclaration s);
+    DOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclarationImpl *s);
     virtual ~DOMCSSStyleDeclaration();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
@@ -45,19 +57,16 @@ namespace KJS {
     enum { CssText, Length, ParentRule,
            GetPropertyValue, GetPropertyCSSValue, RemoveProperty, GetPropertyPriority,
            SetProperty, Item };
-    DOM::CSSStyleDeclaration toStyleDecl() const { return styleDecl; }
-  protected:
-    DOM::CSSStyleDeclaration styleDecl;
+    DOM::CSSStyleDeclarationImpl *impl() const { return m_impl.get(); }
+  private:
+    khtml::SharedPtr<DOM::CSSStyleDeclarationImpl> m_impl;
   };
 
-  Value getDOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclaration n);
+  ValueImp *getDOMCSSStyleDeclaration(ExecState *exec, DOM::CSSStyleDeclarationImpl *d);
 
   class DOMStyleSheet : public DOMObject {
   public:
-    // Build a DOMStyleSheet
-    DOMStyleSheet(ExecState *, DOM::StyleSheet ss) : styleSheet(ss) { }
-    // Constructor for inherited classes
-    DOMStyleSheet(DOM::StyleSheet ss) : styleSheet(ss) { }
+    DOMStyleSheet(ExecState *, DOM::StyleSheetImpl *ss) : m_impl(ss) { }
     virtual ~DOMStyleSheet();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -66,35 +75,39 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Type, Disabled, OwnerNode, ParentStyleSheet, Href, Title, Media };
+    DOM::StyleSheetImpl *impl() const { return m_impl.get(); }
   protected:
-    DOM::StyleSheet styleSheet;
+    // Constructor for derived classes; doesn't set up a prototype.
+    DOMStyleSheet(DOM::StyleSheetImpl *ss) : m_impl(ss) { }
+  private:
+    khtml::SharedPtr<DOM::StyleSheetImpl> m_impl;
   };
 
-  Value getDOMStyleSheet(ExecState *exec, DOM::StyleSheet ss);
+  ValueImp *getDOMStyleSheet(ExecState *exec, DOM::StyleSheetImpl *ss);
 
   class DOMStyleSheetList : public DOMObject {
   public:
-    DOMStyleSheetList(ExecState *, DOM::StyleSheetList ssl, DOM::Document doc)
-      : styleSheetList(ssl), m_doc(doc) { }
+    DOMStyleSheetList(ExecState *, DOM::StyleSheetListImpl *ssl, DOM::DocumentImpl *doc)
+      : m_impl(ssl), m_doc(doc) { }
     virtual ~DOMStyleSheetList();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     virtual bool toBoolean(ExecState* ) const { return true; }
     static const ClassInfo info;
-    DOM::StyleSheetList toStyleSheetList() const { return styleSheetList; }
+    DOM::StyleSheetListImpl *impl() const { return m_impl.get(); }
     enum { Item, Length };
   private:
-    DOM::StyleSheetList styleSheetList;
-    DOM::Document m_doc;
+    khtml::SharedPtr<DOM::StyleSheetListImpl> m_impl;
+    khtml::SharedPtr<DOM::DocumentImpl> m_doc;
   };
 
   // The document is only used for get-stylesheet-by-name (make optional if necessary)
-  Value getDOMStyleSheetList(ExecState *exec, DOM::StyleSheetList ss, DOM::Document doc);
+  ValueImp *getDOMStyleSheetList(ExecState *exec, DOM::StyleSheetListImpl *ss, DOM::DocumentImpl *doc);
 
   class DOMMediaList : public DOMObject {
   public:
-    DOMMediaList(ExecState *, DOM::MediaList ml);
+    DOMMediaList(ExecState *, DOM::MediaListImpl *ml);
     virtual ~DOMMediaList();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
@@ -103,16 +116,16 @@ namespace KJS {
     static const ClassInfo info;
     enum { MediaText, Length,
            Item, DeleteMedium, AppendMedium };
-    DOM::MediaList toMediaList() const { return mediaList; }
+    DOM::MediaListImpl *impl() const { return m_impl.get(); }
   private:
-    DOM::MediaList mediaList;
+    khtml::SharedPtr<DOM::MediaListImpl> m_impl;
   };
 
-  Value getDOMMediaList(ExecState *exec, DOM::MediaList ss);
+  ValueImp *getDOMMediaList(ExecState *exec, DOM::MediaListImpl *ml);
 
   class DOMCSSStyleSheet : public DOMStyleSheet {
   public:
-    DOMCSSStyleSheet(ExecState *exec, DOM::CSSStyleSheet ss);
+    DOMCSSStyleSheet(ExecState *exec, DOM::CSSStyleSheetImpl *ss);
     virtual ~DOMCSSStyleSheet();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     // no put - all read-only
@@ -120,28 +133,27 @@ namespace KJS {
     static const ClassInfo info;
     enum { OwnerRule, CssRules, Rules,
            InsertRule, DeleteRule, AddRule };
-    DOM::CSSStyleSheet toCSSStyleSheet() const { return static_cast<DOM::CSSStyleSheet>(styleSheet); }
   };
 
   class DOMCSSRuleList : public DOMObject {
   public:
-    DOMCSSRuleList(ExecState *, DOM::CSSRuleList rl) : cssRuleList(rl) { }
+    DOMCSSRuleList(ExecState *, DOM::CSSRuleListImpl *rl) : m_impl(rl) { }
     virtual ~DOMCSSRuleList();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Item, Length };
-    DOM::CSSRuleList toCSSRuleList() const { return cssRuleList; }
-  protected:
-    DOM::CSSRuleList cssRuleList;
+    DOM::CSSRuleListImpl *impl() const { return m_impl.get(); }
+  private:
+    khtml::SharedPtr<DOM::CSSRuleListImpl> m_impl;
   };
 
-  Value getDOMCSSRuleList(ExecState *exec, DOM::CSSRuleList rl);
+  ValueImp *getDOMCSSRuleList(ExecState *exec, DOM::CSSRuleListImpl *rl);
 
   class DOMCSSRule : public DOMObject {
   public:
-    DOMCSSRule(ExecState *, DOM::CSSRule r) : cssRule(r) { }
+    DOMCSSRule(ExecState *, DOM::CSSRuleImpl *r) : m_impl(r) { }
     virtual ~DOMCSSRule();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -155,17 +167,12 @@ namespace KJS {
            Media_Media, Media_InsertRule, Media_DeleteRule, Media_CssRules,
            FontFace_Style, Page_SelectorText, Page_Style,
            Import_Href, Import_Media, Import_StyleSheet, Charset_Encoding };
-    DOM::CSSRule toCSSRule() const { return cssRule; }
-  protected:
-    DOM::CSSRule cssRule;
+    DOM::CSSRuleImpl *impl() const { return m_impl.get(); }
+  private:
+    khtml::SharedPtr<DOM::CSSRuleImpl> m_impl;
   };
 
-  Value getDOMCSSRule(ExecState *exec, DOM::CSSRule r);
-
-  /**
-   * Convert an object to a CSSRule. Returns a null CSSRule if not possible.
-   */
-  DOM::CSSRule toCSSRule(const Value&);
+  ValueImp *getDOMCSSRule(ExecState *exec, DOM::CSSRuleImpl *r);
 
   // Constructor for CSSRule - currently only used for some global values
   class CSSRuleConstructor : public DOMObject {
@@ -183,19 +190,22 @@ namespace KJS {
 
   class DOMCSSValue : public DOMObject {
   public:
-    DOMCSSValue(ExecState *, DOM::CSSValue v) : cssValue(v) { }
-    DOMCSSValue(DOM::CSSValue v) : cssValue(v) { }
+    DOMCSSValue(ExecState *, DOM::CSSValueImpl *v) : m_impl(v) { }
     virtual ~DOMCSSValue();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { CssText, CssValueType };
+    DOM::CSSValueImpl *impl() const { return m_impl.get(); }
   protected:
-    DOM::CSSValue cssValue;
+    // Constructor for derived classes; doesn't set up a prototype.
+    DOMCSSValue(DOM::CSSValueImpl *v) : m_impl(v) { }
+  private:
+    khtml::SharedPtr<DOM::CSSValueImpl> m_impl;
   };
 
-  Value getDOMCSSValue(ExecState *exec, DOM::CSSValue v);
+  ValueImp *getDOMCSSValue(ExecState *exec, DOM::CSSValueImpl *v);
 
   // Constructor for CSSValue - currently only used for some global values
   class CSSValueConstructor : public DOMObject {
@@ -213,12 +223,11 @@ namespace KJS {
 
   class DOMCSSPrimitiveValue : public DOMCSSValue {
   public:
-    DOMCSSPrimitiveValue(ExecState *exec, DOM::CSSPrimitiveValue v);
+    DOMCSSPrimitiveValue(ExecState *exec, DOM::CSSPrimitiveValueImpl *v);
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    DOM::CSSPrimitiveValue toCSSPrimitiveValue() const { return static_cast<DOM::CSSPrimitiveValue>(cssValue); }
     enum { PrimitiveType, SetFloatValue, GetFloatValue, SetStringValue, GetStringValue,
            GetCounterValue, GetRectValue, GetRGBColorValue };
   };
@@ -238,18 +247,17 @@ namespace KJS {
 
   class DOMCSSValueList : public DOMCSSValue {
   public:
-    DOMCSSValueList(ExecState *exec, DOM::CSSValueList v);
+    DOMCSSValueList(ExecState *exec, DOM::CSSValueListImpl *l);
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Item, Length };
-    DOM::CSSValueList toValueList() const { return static_cast<DOM::CSSValueList>(cssValue); }
   };
 
   class DOMRGBColor : public DOMObject {
   public:
-    DOMRGBColor(DOM::RGBColor c) : rgbColor(c) { }
+    DOMRGBColor(unsigned color) : m_color(color) { }
     ~DOMRGBColor();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -257,15 +265,15 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Red, Green, Blue };
-  protected:
-    DOM::RGBColor rgbColor;
+  private:
+    unsigned m_color;
   };
 
-  Value getDOMRGBColor(ExecState *exec, DOM::RGBColor c);
+  ValueImp *getDOMRGBColor(ExecState *exec, unsigned color);
 
   class DOMRect : public DOMObject {
   public:
-    DOMRect(ExecState *, DOM::Rect r) : rect(r) { }
+    DOMRect(ExecState *, DOM::RectImpl *r) : m_rect(r) { }
     ~DOMRect();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -273,15 +281,15 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Top, Right, Bottom, Left };
-  protected:
-    DOM::Rect rect;
+  private:
+    khtml::SharedPtr<DOM::RectImpl> m_rect;
   };
 
-  Value getDOMRect(ExecState *exec, DOM::Rect r);
+  ValueImp *getDOMRect(ExecState *exec, DOM::RectImpl *r);
 
   class DOMCounter : public DOMObject {
   public:
-    DOMCounter(ExecState *, DOM::Counter c) : counter(c) { }
+    DOMCounter(ExecState *, DOM::CounterImpl *c) : m_counter(c) { }
     ~DOMCounter();
     virtual Value tryGet(ExecState *exec,const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -290,11 +298,11 @@ namespace KJS {
     static const ClassInfo info;
     enum { identifier, listStyle, separator };
   protected:
-    DOM::Counter counter;
+    khtml::SharedPtr<DOM::CounterImpl> m_counter;
   };
 
-  Value getDOMCounter(ExecState *exec, DOM::Counter c);
+  ValueImp *getDOMCounter(ExecState *exec, DOM::CounterImpl *c);
 
-}; // namespace
+} // namespace
 
 #endif

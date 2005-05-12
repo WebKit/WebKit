@@ -22,20 +22,23 @@
 #ifndef _KJS_HTML_H_
 #define _KJS_HTML_H_
 
-#include "dom/html_document.h"
-#include "dom/html_base.h"
-#include "dom/html_misc.h"
-#include "dom/html_form.h"
-#include "misc/loader_client.h"
-
-#include "ecma/kjs_binding.h"
-#include "ecma/kjs_dom.h"
+#include "kjs_dom.h"
 
 #include <qguardedptr.h>
+#include "misc/loader_client.h"
 
+#if APPLE_CHANGES
 #include <ApplicationServices/ApplicationServices.h>
+#endif
 
-class HTMLElement;
+namespace DOM {
+    class HTMLCollectionImpl;
+    class HTMLDocumentImpl;
+    class HTMLElementImpl;
+    class HTMLSelectElementImpl;
+    class HTMLTableCaptionElementImpl;
+    class HTMLTableSectionElementImpl;
+};
 
 namespace KJS {
 
@@ -43,7 +46,7 @@ namespace KJS {
 
   class HTMLDocument : public DOMDocument {
   public:
-    HTMLDocument(ExecState *exec, const DOM::HTMLDocument &d) : DOMDocument(exec, d) { }
+    HTMLDocument(ExecState *exec, DOM::HTMLDocumentImpl *d);
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -54,12 +57,11 @@ namespace KJS {
            Images, Applets, Embeds, Links, Forms, Anchors, Scripts, All, Clear, Open, Close,
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
            BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };
-    DOM::Document toDocument() const { return static_cast<DOM::Document>( node ); }
   };
 
   class HTMLElement : public DOMElement {
   public:
-    HTMLElement(ExecState *exec, const DOM::HTMLElement &e) : DOMElement(exec, e) { }
+    HTMLElement(ExecState *exec, DOM::HTMLElementImpl *e);
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
@@ -67,13 +69,10 @@ namespace KJS {
     virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual UString toString(ExecState *exec) const;
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
-    virtual const ClassInfo* classInfo() const;
-    static const ClassInfo info;
-
-#if APPLE_CHANGES
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
     virtual bool implementsCall() const;
-#endif
+    virtual const ClassInfo* classInfo() const;
+    static const ClassInfo info;
 
     static const ClassInfo html_info, head_info, link_info, title_info,
       meta_info, base_info, isIndex_info, style_info, body_info, form_info,
@@ -159,22 +158,15 @@ namespace KJS {
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText};
-
-    DOM::HTMLElement toElement() const { return static_cast<DOM::HTMLElement>(node); }
   };
 
-
-  class HTMLElementFunction : public DOMFunction {
-  public:
-    HTMLElementFunction(ExecState *exec, int i, int len);
-    virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args);
-  private:
-    int id;
-  };
+  DOM::HTMLElementImpl *toHTMLElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object
+  DOM::HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableCaptionElementImpl
+  DOM::HTMLTableSectionElementImpl *toHTMLTableSectionElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object for a HTMLTableSectionElementImpl
 
   class HTMLCollection : public DOMObject {
   public:
-    HTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
+    HTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
     ~HTMLCollection();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
@@ -186,46 +178,45 @@ namespace KJS {
     Value getNamedItems(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    DOM::HTMLCollection toCollection() const { return collection; }
+    DOM::HTMLCollectionImpl *impl() const { return m_impl.get(); }
   protected:
-    DOM::HTMLCollection collection;
+    khtml::SharedPtr<DOM::HTMLCollectionImpl> m_impl;
   };
 
   class HTMLSelectCollection : public HTMLCollection {
   public:
-    HTMLSelectCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e)
-      : HTMLCollection(exec, c), element(e) { }
+    HTMLSelectCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
   private:
-    DOM::HTMLSelectElement element;
+    khtml::SharedPtr<DOM::HTMLSelectElementImpl> m_element;
   };
 
   ////////////////////// Option Object ////////////////////////
 
   class OptionConstructorImp : public ObjectImp {
   public:
-    OptionConstructorImp(ExecState *exec, const DOM::Document &d);
+    OptionConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     virtual bool implementsConstruct() const;
     virtual Object construct(ExecState *exec, const List &args);
   private:
-    DOM::Document doc;
+    khtml::SharedPtr<DOM::DocumentImpl> m_doc;
   };
 
   ////////////////////// Image Object ////////////////////////
 
   class ImageConstructorImp : public ObjectImp {
   public:
-    ImageConstructorImp(ExecState *exec, const DOM::Document &d);
+    ImageConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     virtual bool implementsConstruct() const;
     virtual Object construct(ExecState *exec, const List &args);
   private:
-    DOM::Document doc;
+    khtml::SharedPtr<DOM::DocumentImpl> m_doc;
   };
 
   class Image : public DOMObject, public khtml::CachedObjectClient {
   public:
-    Image(const DOM::Document &d, bool ws, int w, bool hs, int h);
+    Image(DOM::DocumentImpl *d, bool ws, int w, bool hs, int h);
     ~Image();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
@@ -255,13 +246,14 @@ namespace KJS {
   class Context2D : public DOMObject {
   friend class Context2DFunction;
   public:
-    Context2D(const DOM::HTMLElement &e);
+    Context2D(DOM::HTMLElementImpl *e);
     ~Context2D();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
+    virtual void mark();
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
@@ -293,35 +285,38 @@ namespace KJS {
         CreatePattern
     };
 
-    static CGColorRef colorRefFromValue(ExecState *exec, const Value &value);
-    static QColor colorFromValue(ExecState *exec, const Value &value);
-
 private:
-    
     void save();
     void restore();
     
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
     CGContextRef drawingContext();
+
     void setShadow(ExecState *exec);
 
-    DOM::HTMLElementImpl *_element;
-    unsigned int _needsFlushRasterCache;
+    khtml::SharedPtr<DOM::HTMLElementImpl> _element;
+    bool _needsFlushRasterCache;
     
     QPtrList<List> stateStack;
     
-    ProtectedValue _strokeStyle;
-    ProtectedValue _fillStyle;
-    ProtectedValue _lineWidth;
-    ProtectedValue _lineCap;
-    ProtectedValue _lineJoin;
-    ProtectedValue _miterLimit;
-    ProtectedValue _shadowOffsetX;
-    ProtectedValue _shadowOffsetY;
-    ProtectedValue _shadowBlur;
-    ProtectedValue _shadowColor;
-    ProtectedValue _globalAlpha;
-    ProtectedValue _globalComposite;
+    Value _strokeStyle;
+    Value _fillStyle;
+    Value _lineWidth;
+    Value _lineCap;
+    Value _lineJoin;
+    Value _miterLimit;
+    Value _shadowOffsetX;
+    Value _shadowOffsetY;
+    Value _shadowBlur;
+    Value _shadowColor;
+    Value _globalAlpha;
+    Value _globalComposite;
   };
+
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value);
+
+    QColor colorFromValue(ExecState *exec, ValueImp *value);
 
     struct ColorStop {
         float stop;
@@ -333,11 +328,9 @@ private:
         ColorStop(float s, float r, float g, float b, float a) : stop(s), red(r), green(g), blue(b), alpha(a) {};
     };
 
-
   class Gradient : public DOMObject {
   friend class Context2DFunction;
   public:
-    //Gradient(const DOM::HTMLElement &e);
     Gradient(float x0, float y0, float x1, float y1);
     Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
     ~Gradient();
@@ -357,6 +350,7 @@ private:
         Radial, Linear
     };
 
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
     CGShadingRef getShading();
     
     void addColorStop (float s, float r, float g, float b, float alpha);
@@ -370,6 +364,8 @@ private:
     
     int _gradientType;
     float _x0, _y0, _r0, _x1, _y1, _r1;
+
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
     CGShadingRef _shadingRef;
     
     int maxStops;
@@ -377,8 +373,8 @@ private:
     ColorStop *stops;
     mutable int adjustedStopCount;
     mutable ColorStop *adjustedStops;
-    mutable unsigned int stopsNeedAdjusting:1;
-    mutable unsigned int regenerateShading:1;
+    mutable unsigned stopsNeedAdjusting:1;
+    mutable unsigned regenerateShading:1;
   };
 
   class ImagePattern : public DOMObject {
@@ -393,6 +389,7 @@ private:
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
     CGPatternRef getPattern() { return _patternRef; }
     
     QPixmap pixmap() { return _pixmap; }
@@ -404,13 +401,14 @@ private:
 private:
     int _repetitionType;
     QPixmap _pixmap;
+
+    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPixmap.
     CGPatternRef _patternRef;
   };
 
-  Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
-  Value getSelectHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e);
+  ValueImp *getHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
+  ValueImp *getSelectHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
 
-
-}; // namespace
+} // namespace
 
 #endif

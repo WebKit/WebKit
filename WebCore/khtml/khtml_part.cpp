@@ -41,8 +41,6 @@
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
 #include "dom/dom_string.h"
-#include "dom/dom_element.h"
-#include "dom/html_document.h"
 #include "editing/markup.h"
 #include "editing/htmlediting.h"
 #include "editing/selection.h"
@@ -104,6 +102,10 @@ using namespace DOM;
 #include <private/qucomextra_p.h>
 
 #include "khtmlpart_p.h"
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+#include "dom/html_document.h"
+#endif
 
 #if APPLE_CHANGES
 #include <CoreServices/CoreServices.h>

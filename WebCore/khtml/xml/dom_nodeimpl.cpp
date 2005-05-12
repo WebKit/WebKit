@@ -1012,11 +1012,14 @@ void NodeImpl::checkSetPrefix(const DOMString &_prefix, int &exceptioncode)
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // ElementImpl::setPrefix() and AttrImpl::setPrefix()
 
+#if 0
+    // FIXME: Add this check (but not in a way that depends on the C++ DOM!)
     // INVALID_CHARACTER_ERR: Raised if the specified prefix contains an illegal character.
     if (!Element::khtmlValidPrefix(_prefix)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return;
     }
+#endif
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     if (isReadOnly()) {
@@ -1031,7 +1034,12 @@ void NodeImpl::checkSetPrefix(const DOMString &_prefix, int &exceptioncode)
     // - if this node is an attribute and the specified prefix is "xmlns" and
     //   the namespaceURI of this node is different from "http://www.w3.org/2000/xmlns/",
     // - or if this node is an attribute and the qualifiedName of this node is "xmlns" [Namespaces].
-    if (Element::khtmlMalformedPrefix(_prefix) || (namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
+    if (
+#if 0
+        // FIXME: Add this check (but not in a way that depends on the C++ DOM!)
+        Element::khtmlMalformedPrefix(_prefix) ||
+#endif
+        (namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
         (_prefix == "xml" && DOMString(getDocument()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
         exceptioncode = DOMException::NAMESPACE_ERR;
         return;

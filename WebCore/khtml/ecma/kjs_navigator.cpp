@@ -38,8 +38,6 @@
 #include "KWQKCookieJar.h"
 #endif
 
-using namespace KJS;
-
 namespace KJS {
 
     class PluginBase : public ObjectImp {
@@ -118,9 +116,6 @@ namespace KJS {
         MimeClassInfo *m_info;
     };
     const ClassInfo MimeType::info = { "MimeType", 0, 0, 0 };
-
-};
-
 
 QPtrList<PluginBase::PluginInfo> *KJS::PluginBase::plugins = 0;
 QPtrList<PluginBase::MimeClassInfo> *KJS::PluginBase::mimes = 0;
@@ -479,3 +474,5 @@ Value NavigatorFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
   // javaEnabled()
   return Boolean(nav->part()->javaEnabled());
 }
+
+} // namespace

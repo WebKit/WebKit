@@ -22,6 +22,8 @@
  */
 
 #include "dom/dom2_views.h"
+
+#include "dom/dom_element.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_doc.h"
 #include "xml/dom_elementimpl.h"

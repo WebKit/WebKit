@@ -23,7 +23,6 @@
 #ifndef _DOM_ViewsImpl_h_
 #define _DOM_ViewsImpl_h_
 
-#include "dom/dom_misc.h"
 #include "css/css_valueimpl.h"
 #include "misc/shared.h"
 #include "misc/main_thread_malloc.h"

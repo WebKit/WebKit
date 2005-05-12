@@ -37,6 +37,16 @@ EventListener::~EventListener()
 {
 }
 
+void EventListener::handleEventImpl(EventImpl *evt, bool isWindowEvent)
+{
+#if KHTML_NO_CPLUSPLUS_DOM
+    handleEvent(evt, isWindowEvent);
+#else
+    Event wrapper(evt);
+    handleEvent(wrapper, isWindowEvent);
+#endif
+}
+
 void EventListener::handleEvent(EventListenerEvent, bool)
 {
 }

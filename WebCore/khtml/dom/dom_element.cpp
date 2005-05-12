@@ -20,12 +20,11 @@
  *
  */
 
+#include "dom_element.h"
+
 #include "dom/dom_exception.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
-
-// FIXME: Remove when .style gets moved to html_element.cpp.
-#include "html/html_elementimpl.h"
 
 using namespace DOM;
 

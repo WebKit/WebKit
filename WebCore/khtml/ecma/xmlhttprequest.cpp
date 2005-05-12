@@ -20,11 +20,9 @@
 
 #include "xmlhttprequest.h"
 
-#include "xmlhttprequest.lut.h"
 #include "kjs_window.h"
 #include "kjs_events.h"
 
-#include "dom/dom_doc.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 #include "misc/loader.h"
@@ -43,8 +41,14 @@
 #include "KWQLoader.h"
 #endif
 
-using namespace KJS;
+#include "xmlhttprequest.lut.h"
+
+using DOM::DocumentImpl;
+using DOM::EventImpl;
+
 using khtml::Decoder;
+
+namespace KJS {
 
 ////////////////////// XMLHttpRequest Object ////////////////////////
 
@@ -62,8 +66,6 @@ using khtml::Decoder;
 DEFINE_PROTOTYPE("XMLHttpRequest",XMLHttpRequestProto)
 IMPLEMENT_PROTOFUNC(XMLHttpRequestProtoFunc)
 IMPLEMENT_PROTOTYPE(XMLHttpRequestProto,XMLHttpRequestProtoFunc)
-
-namespace KJS {
 
 XMLHttpRequestQObject::XMLHttpRequestQObject(XMLHttpRequest *_jsObject) 
 {
@@ -92,8 +94,12 @@ void XMLHttpRequestQObject::slotRedirection( KIO::Job* job, const KURL& url)
   jsObject->slotRedirection( job, url ); 
 }
 
-XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp(ExecState *, const DOM::Document &d)
+XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp(ExecState *, DOM::DocumentImpl *d)
     : doc(d)
+{
+}
+
+XMLHttpRequestConstructorImp::~XMLHttpRequestConstructorImp()
 {
 }
 
@@ -104,7 +110,7 @@ bool XMLHttpRequestConstructorImp::implementsConstruct() const
 
 Object XMLHttpRequestConstructorImp::construct(ExecState *exec, const List &)
 {
-  return Object(new XMLHttpRequest(exec, doc));
+  return Object(new XMLHttpRequest(exec, doc.get()));
 }
 
 const ClassInfo XMLHttpRequest::info = { "XMLHttpRequest", 0, &XMLHttpRequestTable, 0 };
@@ -153,9 +159,9 @@ Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
       
       if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
           mimeType == "text/xsl" || mimeType == "application/rss+xml" || mimeType == "application/atom+xml") {
-	responseXML = DOM::Document(doc->implementation()->createDocument());
+	responseXML.reset(doc->implementation()->createDocument());
 
-	DOM::DocumentImpl *docImpl = static_cast<DOM::DocumentImpl *>(responseXML.handle());
+	DocumentImpl *docImpl = responseXML.get();
 	
 	docImpl->open();
 	docImpl->write(response);
@@ -172,7 +178,7 @@ Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
       return Undefined();
     }
 
-    return getDOMNode(exec,responseXML);
+    return getDOMNode(exec, responseXML.get());
   case Status:
     return getStatus();
   case StatusText:
@@ -228,9 +234,9 @@ void XMLHttpRequest::mark()
 }
 
 
-XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
+XMLHttpRequest::XMLHttpRequest(ExecState *exec, DOM::DocumentImpl *d)
   : qObject(new XMLHttpRequestQObject(this)),
-    doc(static_cast<DOM::DocumentImpl*>(d.handle())),
+    doc(d),
     async(true),
     job(0),
     state(Uninitialized),
@@ -257,15 +263,21 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
     state = newState;
     
     if (onReadyStateChangeListener != 0 && doc->part()) {
-      DOM::Event ev = doc->part()->document().createEvent("HTMLEvents");
-      ev.initEvent("readystatechange", true, true);
-      onReadyStateChangeListener->handleEvent(ev, true);
+      int ignoreException;
+      EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
+      ev->ref();
+      ev->initEvent("readystatechange", true, true);
+      onReadyStateChangeListener->handleEventImpl(ev, true);
+      ev->deref();
     }
     
     if (state == Completed && onLoadListener != 0 && doc->part()) {
-      DOM::Event ev = doc->part()->document().createEvent("HTMLEvents");
-      ev.initEvent("load", true, true);
-      onLoadListener->handleEvent(ev, true);
+      int ignoreException;
+      EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
+      ev->ref();
+      ev->initEvent("load", true, true);
+      onLoadListener->handleEventImpl(ev, true);
+      ev->deref();
     }
   }
 }
@@ -299,7 +311,7 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
   responseHeaders = QString();
   response = QString();
   createdDocument = false;
-  responseXML = DOM::Document();
+  responseXML.reset();
 
   changeState(Uninitialized);
 
@@ -651,17 +663,9 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
 
       if (args.size() >= 1) {
 	if (args[0].toObject(exec).inherits(&DOMDocument::info)) {
-	  DOM::Node docNode = static_cast<KJS::DOMDocument *>(args[0].toObject(exec).imp())->toNode();
-	  DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl *>(docNode.handle());
-	  
-	  try {
-	    body = doc->toString().string();
-	    // FIXME: also need to set content type, including encoding!
-
-	  } catch(DOM::DOMException& e) {
-	     Object err = Error::create(exec, GeneralError, "Exception serializing document");
-	     exec->setException(err);
-	  }
+	  DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0].toObject(exec).imp())->impl());
+          body = doc->toString().string();
+          // FIXME: also need to set content type, including encoding!
 	} else {
 	  // converting certain values (like null) to object can set an exception
 	  exec->clearException();

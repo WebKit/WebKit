@@ -54,10 +54,8 @@
 #import "dom2_rangeimpl.h"
 #import "dom_position.h"
 #import "dom_textimpl.h"
-#import "html_document.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
-#import "html_misc.h"
 #import "html_tableimpl.h"
 #import "htmlattrs.h"
 #import "htmltokenizer.h"
@@ -1463,7 +1461,7 @@ bool KWQKHTMLPart::canCachePage()
     if (d->m_frames.count() ||
         parentPart() ||
         m_url.protocol().startsWith("https") || 
-	(d->m_doc && (htmlDocument().applets().length() != 0 ||
+	(d->m_doc && (d->m_doc->applets()->length() != 0 ||
                       d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
 		      d->m_doc->hasPasswordField()))) {
         return false;

@@ -20,20 +20,25 @@
  */
 
 #include "kjs_binding.h"
+
 #include "kjs_dom.h"
 #include "kjs_window.h"
 #include <kjs/internal.h> // for InterpreterImp
 
 #include "dom/dom_exception.h"
-#include "dom/dom2_range.h"
 #include "dom/dom2_events.h"
+#include "dom/dom2_range.h"
+#include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include <kdebug.h>
 
+using DOM::CSSException;
 using DOM::DOMString;
+using DOM::NodeImpl;
+using DOM::RangeException;
 
-using namespace KJS;
+namespace KJS {
 
 /* TODO:
  * The catch all (...) clauses below shouldn't be necessary.
@@ -246,7 +251,7 @@ bool ScriptInterpreter::wasRunByUserGesture() const
 {
   if ( m_evt )
   {
-    int id = m_evt->handle()->id();
+    int id = m_evt->id();
     bool eventOk = ( // mouse events
       id == DOM::EventImpl::CLICK_EVENT || id == DOM::EventImpl::MOUSEDOWN_EVENT ||
       id == DOM::EventImpl::MOUSEUP_EVENT || id == DOM::EventImpl::KHTML_DBLCLICK_EVENT ||
@@ -375,16 +380,6 @@ QString Identifier::qstring() const
   return QString((QChar*) data(), size());
 }
 
-DOM::Node KJS::toNode(const Value& val)
-{
-  Object obj = Object::dynamicCast(val);
-  if (obj.isNull() || !obj.inherits(&DOMNode::info))
-    return DOM::Node();
-
-  const DOMNode *dobj = static_cast<const DOMNode*>(obj.imp());
-  return dobj->toNode();
-}
-
 Value KJS::getStringOrNull(DOMString s)
 {
   if (s.isNull())
@@ -410,4 +405,30 @@ QVariant KJS::ValueToVariant(ExecState* exec, const Value &val) {
     break;
   }
   return res;
+}
+
+void setDOMException(ExecState *exec, int DOMExceptionCode)
+{
+  if (DOMExceptionCode == 0 || exec->hadException())
+    return;
+
+  const char *type = "DOM";
+  int code = DOMExceptionCode;
+
+  if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
+    type = "DOM Range";
+    code -= RangeException::_EXCEPTION_OFFSET;
+  } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
+    type = "CSS";
+    code -= CSSException::_EXCEPTION_OFFSET;
+  }
+
+  char buffer[100]; // needs to fit 20 characters, plus an integer in ASCII, plus a null character
+  sprintf(buffer, "%s exception %d", type, code);
+
+  Object errorObject = Error::create(exec, GeneralError, buffer);
+  errorObject.put(exec, "code", Number(code));
+  exec->setException(errorObject);
+}
+
 }

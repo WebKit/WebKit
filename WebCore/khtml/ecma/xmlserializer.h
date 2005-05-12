@@ -21,10 +21,7 @@
 #ifndef _XMLSERIALIZER_H_
 #define _XMLSERIALIZER_H_
 
-#include "ecma/kjs_binding.h"
-#include "ecma/kjs_dom.h"
-#include "misc/decoder.h"
-#include "kio/jobclasses.h"
+#include "kjs_binding.h"
 
 namespace KJS {
 
@@ -49,6 +46,6 @@ namespace KJS {
     friend class XMLSerializerProtoFunc;
   };
 
-}; // namespace
+} // namespace
 
 #endif

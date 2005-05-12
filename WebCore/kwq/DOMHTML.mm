@@ -25,10 +25,7 @@
 
 #import "DOMHTML.h"
 
-#import "dom_doc.h"
 #import "dom_string.h"
-#import "html_element.h"
-#import "html_misc.h"
 #import "html_baseimpl.h"
 #import "html_blockimpl.h"
 #import "html_documentimpl.h"

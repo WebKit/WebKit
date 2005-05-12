@@ -49,7 +49,7 @@ class CSSStyleDeclarationImpl : public StyleBaseImpl
 public:
     virtual bool isStyleDeclaration();
 
-    static int propertyID(const DOMString &propertName, bool *hadPixelOrPosPrefix = 0);
+    static bool isPropertyName(const DOMString &propertyName);
 
     CSSRuleImpl *parentRule() const;
 

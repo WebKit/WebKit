@@ -24,7 +24,6 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include "dom/dom2_events.h"
-#include "dom/dom2_views.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"

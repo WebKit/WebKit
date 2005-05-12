@@ -1,3 +1,375 @@
+2005-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej (except for some parts outside the ECMA directory).
+
+        - switch KJS wrappers over to using the DOM impl. classes rather than using
+          the DOM wrappers; will allow us to not even compile the DOM wrappers and
+          make the code smaller
+
+        * khtml/css/css_valueimpl.h: Added CSSStyleDeclarationImpl::isPropertyName,
+        removed CSSStyleDeclarationImpl::propertyID.
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::propertyID): Added. Gets property ID given a DOM string. Replaces the
+        previous version that had hacks that we want to leave in the JS wrapper for now.
+        (DOM::CSSStyleDeclarationImpl::isPropertyName): Added.
+
+        * khtml/css/cssproperties.in: Fixed up comments.
+
+        * khtml/css/makeprop: Added new maxCSSPropertyNameLength constant, used for
+        buffer size in the propertyID function.
+
+        * khtml/dom/dom2_events.h: Added handleEventImpl, making it easier to call
+        handleEvent in a way that works either with or without the C++ DOM wrappers.
+        * khtml/dom/dom2_events.cpp: (EventListener::handleEventImpl): Added.
+
+        * khtml/dom/dom2_views.cpp: Added now-needed include.
+        * khtml/dom/dom_doc.cpp: Added now-needed include.
+        * khtml/dom/dom_element.cpp: Tweaked includes.
+
+        * khtml/editing/htmlediting.cpp: Removed now-unneeded include.
+        * khtml/html/html_baseimpl.cpp: Ditto.
+        * khtml/html/html_formimpl.h: Ditto.
+        * khtml/rendering/render_form.h: Ditto.
+        * khtml/rendering/render_style.h: Ditto.
+        * khtml/xml/dom2_eventsimpl.cpp: Ditto.
+        * khtml/xml/dom2_viewsimpl.h: Ditto.
+        * khtml/xml/dom_elementimpl.h: Ditto.
+        * khtml/xml/dom_stringimpl.h: Ditto.
+        * kwq/DOM.mm: Ditto.
+        * kwq/DOMHTML.mm: Ditto.
+
+        * khtml/khtml_part.cpp: Tweaked incluudes.
+        * khtml/khtmlpart_p.h: Ditto.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::canCachePage): Change to use DOM impl. rather
+        than C++ DOM.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocumentType): Disabled the calls to the not-implemented
+        name checks in the C++ DOM wrappers. If we add name changes, we'll want them inside the
+        impl, not in the wrappers.
+        (DOMImplementationImpl::createDocument): Ditto.
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::checkSetPrefix): Ditto.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        (KJS::KJS::ValueToVariant):
+        (KJS::setDOMException):
+        * khtml/ecma/kjs_binding.h:
+        (KJS::ScriptInterpreter::setCurrentEvent):
+        (KJS::ScriptInterpreter::getCurrentEvent):
+        (KJS::cacheDOMObject):
+        (KJS::DOMExceptionTranslator::DOMExceptionTranslator):
+        (KJS::DOMExceptionTranslator::~DOMExceptionTranslator):
+        (KJS::DOMExceptionTranslator::operator int &):
+        (KJS::cacheGlobalObject):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::cssPropertyName):
+        (KJS::isCSSPropertyName):
+        (KJS::DOMCSSStyleDeclaration::DOMCSSStyleDeclaration):
+        (KJS::DOMCSSStyleDeclaration::~DOMCSSStyleDeclaration):
+        (KJS::DOMCSSStyleDeclaration::hasProperty):
+        (KJS::DOMCSSStyleDeclaration::tryGet):
+        (KJS::DOMCSSStyleDeclaration::tryPut):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::tryCall):
+        (KJS::getDOMCSSStyleDeclaration):
+        (KJS::DOMStyleSheet::~DOMStyleSheet):
+        (KJS::DOMStyleSheet::getValueProperty):
+        (KJS::DOMStyleSheet::tryPut):
+        (KJS::getDOMStyleSheet):
+        (KJS::DOMStyleSheetList::~DOMStyleSheetList):
+        (KJS::DOMStyleSheetList::tryGet):
+        (KJS::getDOMStyleSheetList):
+        (KJS::DOMStyleSheetListFunc::tryCall):
+        (KJS::DOMMediaList::DOMMediaList):
+        (KJS::DOMMediaList::~DOMMediaList):
+        (KJS::DOMMediaList::tryGet):
+        (KJS::DOMMediaList::tryPut):
+        (KJS::getDOMMediaList):
+        (KJS::KJS::DOMMediaListProtoFunc::tryCall):
+        (KJS::DOMCSSStyleSheet::DOMCSSStyleSheet):
+        (KJS::DOMCSSStyleSheet::tryGet):
+        (KJS::DOMCSSStyleSheetProtoFunc::tryCall):
+        (KJS::DOMCSSRuleList::~DOMCSSRuleList):
+        (KJS::DOMCSSRuleList::tryGet):
+        (KJS::DOMCSSRuleListFunc::tryCall):
+        (KJS::getDOMCSSRuleList):
+        (KJS::DOMCSSRule::~DOMCSSRule):
+        (KJS::DOMCSSRule::classInfo):
+        (KJS::DOMCSSRule::tryGet):
+        (KJS::DOMCSSRule::getValueProperty):
+        (KJS::DOMCSSRule::putValue):
+        (KJS::DOMCSSRuleFunc::tryCall):
+        (KJS::getDOMCSSRule):
+        (KJS::DOMCSSValue::~DOMCSSValue):
+        (KJS::DOMCSSValue::tryGet):
+        (KJS::DOMCSSValue::tryPut):
+        (KJS::getDOMCSSValue):
+        (KJS::DOMCSSPrimitiveValue::DOMCSSPrimitiveValue):
+        (KJS::DOMCSSPrimitiveValue::tryGet):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::tryCall):
+        (KJS::DOMCSSValueList::DOMCSSValueList):
+        (KJS::DOMCSSValueList::tryGet):
+        (KJS::DOMCSSValueListFunc::tryCall):
+        (KJS::DOMRGBColor::getValueProperty):
+        (KJS::getDOMRGBColor):
+        (KJS::DOMRect::~DOMRect):
+        (KJS::DOMRect::getValueProperty):
+        (KJS::getDOMRect):
+        (KJS::DOMCounter::~DOMCounter):
+        (KJS::DOMCounter::getValueProperty):
+        (KJS::getDOMCounter):
+        * khtml/ecma/kjs_css.h:
+        (KJS::DOMCSSStyleDeclaration::impl):
+        (KJS::DOMStyleSheet::DOMStyleSheet):
+        (KJS::DOMStyleSheet::impl):
+        (KJS::DOMStyleSheetList::DOMStyleSheetList):
+        (KJS::DOMStyleSheetList::impl):
+        (KJS::DOMMediaList::impl):
+        (KJS::DOMCSSStyleSheet::):
+        (KJS::DOMCSSRuleList::DOMCSSRuleList):
+        (KJS::DOMCSSRuleList::impl):
+        (KJS::DOMCSSRule::DOMCSSRule):
+        (KJS::DOMCSSRule::impl):
+        (KJS::DOMCSSValue::DOMCSSValue):
+        (KJS::DOMCSSValue::impl):
+        (KJS::DOMCSSValueList::):
+        (KJS::DOMRGBColor::DOMRGBColor):
+        (KJS::DOMRect::DOMRect):
+        (KJS::DOMCounter::DOMCounter):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeListFunc::):
+        (KJS::DOMNode::DOMNode):
+        (KJS::DOMNode::toBoolean):
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValue):
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNode::toString):
+        (KJS::DOMNode::setListener):
+        (KJS::DOMNode::getListener):
+        (KJS::DOMNodeProtoFunc::tryCall):
+        (KJS::toNode):
+        (KJS::DOMNodeList::~DOMNodeList):
+        (KJS::DOMNodeList::toPrimitive):
+        (KJS::DOMNodeList::tryGet):
+        (KJS::DOMNodeList::tryCall):
+        (KJS::DOMNodeListFunc::tryCall):
+        (KJS::DOMAttr::DOMAttr):
+        (KJS::DOMAttr::getValueProperty):
+        (KJS::DOMAttr::putValue):
+        (KJS::toAttr):
+        (KJS::DOMDocument::DOMDocument):
+        (KJS::DOMDocument::~DOMDocument):
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::DOMDocument::putValue):
+        (KJS::DOMDocumentProtoFunc::tryCall):
+        (KJS::DOMElement::DOMElement):
+        (KJS::DOMElement::tryGet):
+        (KJS::DOMElementProtoFunc::tryCall):
+        (KJS::toElement):
+        (KJS::DOMDOMImplementation::DOMDOMImplementation):
+        (KJS::DOMDOMImplementation::~DOMDOMImplementation):
+        (KJS::DOMDOMImplementationProtoFunc::tryCall):
+        (KJS::DOMDocumentType::DOMDocumentType):
+        (KJS::DOMDocumentType::getValueProperty):
+        (KJS::toDocumentType):
+        (KJS::DOMNamedNodeMap::DOMNamedNodeMap):
+        (KJS::DOMNamedNodeMap::~DOMNamedNodeMap):
+        (KJS::DOMNamedNodeMap::tryGet):
+        (KJS::DOMNamedNodeMapProtoFunc::tryCall):
+        (KJS::DOMProcessingInstruction::DOMProcessingInstruction):
+        (KJS::DOMProcessingInstruction::getValueProperty):
+        (KJS::DOMProcessingInstruction::tryPut):
+        (KJS::DOMNotation::DOMNotation):
+        (KJS::DOMNotation::getValueProperty):
+        (KJS::DOMEntity::DOMEntity):
+        (KJS::DOMEntity::getValueProperty):
+        (KJS::getDOMDocumentNode):
+        (KJS::checkNodeSecurity):
+        (KJS::getDOMNode):
+        (KJS::getDOMNamedNodeMap):
+        (KJS::getRuntimeObject):
+        (KJS::getDOMNodeList):
+        (KJS::getDOMDOMImplementation):
+        (KJS::getNodeConstructor):
+        (KJS::getDOMExceptionConstructor):
+        (KJS::DOMNamedNodesCollection::DOMNamedNodesCollection):
+        (KJS::DOMNamedNodesCollection::tryGet):
+        (KJS::DOMCharacterData::DOMCharacterData):
+        (KJS::DOMCharacterData::getValueProperty):
+        (KJS::DOMCharacterData::tryPut):
+        (KJS::DOMCharacterDataProtoFunc::tryCall):
+        (KJS::DOMText::DOMText):
+        (KJS::DOMTextProtoFunc::tryCall):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::impl):
+        (KJS::DOMNodeList::DOMNodeList):
+        (KJS::DOMNodeList::impl):
+        (KJS::DOMDOMImplementation::impl):
+        (KJS::DOMNamedNodeMap::impl):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::handleEvent):
+        (KJS::getNodeEventListener):
+        (KJS::DOMEvent::DOMEvent):
+        (KJS::DOMEvent::~DOMEvent):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMEvent::putValue):
+        (KJS::DOMEventProtoFunc::tryCall):
+        (KJS::getDOMEvent):
+        (KJS::toEvent):
+        (KJS::DOMUIEvent::DOMUIEvent):
+        (KJS::DOMUIEvent::getValueProperty):
+        (KJS::DOMUIEventProtoFunc::tryCall):
+        (KJS::DOMMouseEvent::DOMMouseEvent):
+        (KJS::DOMMouseEvent::getValueProperty):
+        (KJS::DOMMouseEventProtoFunc::tryCall):
+        (KJS::DOMKeyboardEvent::DOMKeyboardEvent):
+        (KJS::DOMKeyboardEvent::getValueProperty):
+        (KJS::DOMKeyboardEventProtoFunc::tryCall):
+        (KJS::DOMMutationEvent::DOMMutationEvent):
+        (KJS::DOMMutationEvent::getValueProperty):
+        (KJS::DOMMutationEventProtoFunc::tryCall):
+        (KJS::DOMWheelEvent::DOMWheelEvent):
+        (KJS::DOMWheelEvent::getValueProperty):
+        (KJS::ClipboardProtoFunc::tryCall):
+        * khtml/ecma/kjs_events.h:
+        (KJS::DOMEvent::impl):
+        (KJS::DOMUIEvent::):
+        (KJS::DOMMouseEvent::):
+        (KJS::DOMKeyboardEvent::):
+        (KJS::DOMMutationEvent::):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::tryCall):
+        (KJS::HTMLDocument::HTMLDocument):
+        (KJS::HTMLDocument::hasProperty):
+        (KJS::HTMLDocument::tryGet):
+        (KJS::KJS::HTMLDocument::putValue):
+        (KJS::KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::HTMLElement):
+        (KJS::KJS::HTMLElement::tryGet):
+        (KJS::KJS::HTMLElement::implementsCall):
+        (KJS::KJS::HTMLElement::call):
+        (KJS::KJS::HTMLElement::getValueProperty):
+        (KJS::KJS::HTMLElement::hasProperty):
+        (KJS::KJS::HTMLElement::toString):
+        (KJS::getForm):
+        (KJS::KJS::HTMLElement::pushEventHandlerScope):
+        (KJS::KJS::HTMLElementFunction::tryCall):
+        (KJS::KJS::HTMLElement::tryPut):
+        (KJS::HTMLElement::putValue):
+        (KJS::toHTMLElement):
+        (KJS::toHTMLTableCaptionElement):
+        (KJS::toHTMLTableSectionElement):
+        (KJS::HTMLCollection::HTMLCollection):
+        (KJS::HTMLCollection::~HTMLCollection):
+        (KJS::KJS::HTMLCollection::tryGet):
+        (KJS::KJS::HTMLCollection::tryCall):
+        (KJS::KJS::HTMLCollection::getNamedItems):
+        (KJS::KJS::HTMLCollectionProtoFunc::tryCall):
+        (KJS::HTMLSelectCollection::HTMLSelectCollection):
+        (KJS::KJS::HTMLSelectCollection::tryGet):
+        (KJS::KJS::HTMLSelectCollection::tryPut):
+        (KJS::OptionConstructorImp::OptionConstructorImp):
+        (KJS::OptionConstructorImp::construct):
+        (KJS::ImageConstructorImp::ImageConstructorImp):
+        (KJS::ImageConstructorImp::construct):
+        (KJS::Image::notifyFinished):
+        (KJS::Image::Image):
+        (KJS::KJS::Context2DFunction::tryCall):
+        (KJS::):
+        (KJS::colorRefFromValue):
+        (KJS::colorFromValue):
+        (KJS::Context2D::putValue):
+        (KJS::Context2D::Context2D):
+        (KJS::Context2D::mark):
+        (KJS::GradientFunction::tryCall):
+        (KJS::ImagePattern::tryGet):
+        (KJS::getHTMLCollection):
+        (KJS::getSelectHTMLCollection):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLDocument::):
+        (KJS::HTMLElement::):
+        (KJS::HTMLCollection::impl):
+        * khtml/ecma/kjs_navigator.cpp:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        (KJSProxyImpl::finishedWithEvent):
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::DOMRange):
+        (KJS::DOMRange::~DOMRange):
+        (KJS::DOMRange::tryGet):
+        (KJS::DOMRange::getValueProperty):
+        (KJS::DOMRangeProtoFunc::tryCall):
+        (KJS::getDOMRange):
+        (KJS::RangeConstructor::tryGet):
+        (KJS::getRangeConstructor):
+        (KJS::toRange):
+        * khtml/ecma/kjs_range.h:
+        (KJS::DOMRange::impl):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::DOMNodeIterator):
+        (KJS::DOMNodeIterator::~DOMNodeIterator):
+        (KJS::DOMNodeIterator::getValueProperty):
+        (KJS::DOMNodeIteratorProtoFunc::tryCall):
+        (KJS::getDOMNodeIterator):
+        (KJS::DOMNodeFilter::DOMNodeFilter):
+        (KJS::DOMNodeFilter::~DOMNodeFilter):
+        (KJS::DOMNodeFilterProtoFunc::tryCall):
+        (KJS::getDOMNodeFilter):
+        (KJS::toNodeFilter):
+        (KJS::DOMTreeWalker::DOMTreeWalker):
+        (KJS::DOMTreeWalker::~DOMTreeWalker):
+        (KJS::DOMTreeWalker::getValueProperty):
+        (KJS::DOMTreeWalker::tryPut):
+        (KJS::DOMTreeWalkerProtoFunc::tryCall):
+        (KJS::getDOMTreeWalker):
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_traversal.h:
+        (KJS::DOMNodeIterator::impl):
+        (KJS::DOMNodeFilter::impl):
+        (KJS::DOMTreeWalker::impl):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::~DOMAbstractView):
+        (KJS::DOMAbstractView::tryGet):
+        (KJS::DOMAbstractViewFunc::tryCall):
+        (KJS::getDOMAbstractView):
+        (KJS::toAbstractView):
+        * khtml/ecma/kjs_views.h:
+        (KJS::DOMAbstractView::DOMAbstractView):
+        (KJS::DOMAbstractView::impl):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::get):
+        (KJS::Window::hasProperty):
+        (KJS::Window::put):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::Window::setCurrentEvent):
+        (KJS::WindowFunc::tryCall):
+        (KJS::Location::put):
+        (KJS::LocationFunc::tryCall):
+        (KJS::Selection::get):
+        (KJS::SelectionFunc::tryCall):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp):
+        (KJS::XMLHttpRequestConstructorImp::~XMLHttpRequestConstructorImp):
+        (KJS::XMLHttpRequestConstructorImp::construct):
+        (KJS::XMLHttpRequest::getValueProperty):
+        (KJS::XMLHttpRequest::XMLHttpRequest):
+        (KJS::XMLHttpRequest::changeState):
+        (KJS::XMLHttpRequest::open):
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::tryCall):
+        * khtml/ecma/xmlserializer.h:
+        * kwq/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * kwq/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+
 2005-05-11  David Hyatt  <hyatt@apple.com>
 
 	Improve the display of apple.com.  innerWidth and innerHeight refer to the size of the visible view and
