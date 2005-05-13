@@ -1369,4 +1369,32 @@ void RangeImpl::formatForDebugger(char *buffer, unsigned length) const
 #undef FormatBufferSize
 #endif
 
+bool operator==(const RangeImpl &a, const RangeImpl &b)
+{
+    if (&a == &b)
+        return true;
+    // Not strictly legal C++, but in practice this can happen, and works fine with GCC.
+    if (!&a || !&b)
+        return false;
+    bool ad = a.isDetached();
+    bool bd = b.isDetached();
+    if (ad && bd)
+        return true;
+    if (ad || bd)
+        return false;
+    int exception = 0;
+    return a.startContainer(exception) == b.startContainer(exception)
+        && a.endContainer(exception) == b.endContainer(exception)
+        && a.startOffset(exception) == b.startOffset(exception)
+        && a.endOffset(exception) == b.endOffset(exception);
+}
+
+SharedPtr<RangeImpl> rangeOfContents(NodeImpl *node)
+{
+    RangeImpl *range = new RangeImpl(node->docPtr());
+    int exception = 0;
+    range->selectNodeContents(node, exception);
+    return SharedPtr<RangeImpl>(range);
+}
+
 }

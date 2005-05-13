@@ -2392,14 +2392,18 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
 
 #endif // APPLE_CHANGES
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 QString KHTMLPart::text(const DOM::Range &r) const
 {
-    return plainText(r);
+    return plainText(r.handle());
 }
+
+#endif
 
 QString KHTMLPart::selectedText() const
 {
-    return text(selection().toRange());
+    return plainText(selection().toRange().get());
 }
 
 bool KHTMLPart::hasSelection() const
@@ -5095,12 +5099,12 @@ void KHTMLPart::selectAll()
     selectFrameElementInParentIfFullySelected();
 }
 
-bool KHTMLPart::shouldBeginEditing(const Range &range) const
+bool KHTMLPart::shouldBeginEditing(const RangeImpl *range) const
 {
     return true;
 }
 
-bool KHTMLPart::shouldEndEditing(const Range &range) const
+bool KHTMLPart::shouldEndEditing(const RangeImpl *range) const
 {
     return true;
 }
@@ -5672,8 +5676,8 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
     if (d->m_selection.isNone())
         return 0;
 
-    Range range(d->m_selection.toRange());
-    Position pos = range.handle()->editingStartPosition();
+    SharedPtr<RangeImpl> range(d->m_selection.toRange());
+    Position pos = range->editingStartPosition();
 
     ElementImpl *elem = pos.element();
     if (!elem)

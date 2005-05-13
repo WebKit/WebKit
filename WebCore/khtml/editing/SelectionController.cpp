@@ -74,7 +74,7 @@ Selection::Selection(const Position &pos, EAffinity affinity)
     validate();
 }
 
-Selection::Selection(const Range &r, EAffinity baseAffinity, EAffinity extentAffinity)
+Selection::Selection(const RangeImpl *r, EAffinity baseAffinity, EAffinity extentAffinity)
     : m_base(startPosition(r)), m_extent(endPosition(r))
 {
     init(baseAffinity);
@@ -194,7 +194,7 @@ void Selection::moveTo(const Position &pos, EAffinity affinity)
     validate();
 }
 
-void Selection::moveTo(const Range &r, EAffinity baseAffinity, EAffinity extentAffinity)
+void Selection::moveTo(const RangeImpl *r, EAffinity baseAffinity, EAffinity extentAffinity)
 {
     // FIXME: use extentAffinity
     m_affinity = baseAffinity;
@@ -605,10 +605,10 @@ void Selection::setNeedsLayout(bool flag)
     m_needsLayout = flag;
 }
 
-Range Selection::toRange() const
+SharedPtr<RangeImpl> Selection::toRange() const
 {
     if (isNone())
-        return Range();
+        return SharedPtr<RangeImpl>();
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -650,21 +650,17 @@ Range Selection::toRange() const
         e = e.equivalentRangeCompliantPosition();
     }
 
-    // Use this roundabout way of creating the Range in order to have defined behavior
-    // when there is a DOM exception.
     int exceptionCode = 0;
-    Range result(s.node()->getDocument());
-    RangeImpl *handle = result.handle();
-    ASSERT(handle);
-    handle->setStart(s.node(), s.offset(), exceptionCode);
+    SharedPtr<RangeImpl> result(new RangeImpl(s.node()->docPtr()));
+    result->setStart(s.node(), s.offset(), exceptionCode);
     if (exceptionCode) {
         ERROR("Exception setting Range start from Selection: %d", exceptionCode);
-        return Range();
+        return SharedPtr<RangeImpl>();
     }
-    handle->setEnd(e.node(), e.offset(), exceptionCode);
+    result->setEnd(e.node(), e.offset(), exceptionCode);
     if (exceptionCode) {
         ERROR("Exception setting Range end from Selection: %d", exceptionCode);
-        return Range();
+        return SharedPtr<RangeImpl>();
     }
     return result;
 }

@@ -474,9 +474,6 @@ private:
     void throwException(int exceptioncode) const;
 };
 
-bool operator==(const Range &, const Range &);
-inline bool operator!=(const Range &a, const Range &b) { return !(a == b); }
-
 // Used determine how to interpret the offsets used in DOM Ranges.
 inline bool offsetInCharacters(unsigned short type)
 {

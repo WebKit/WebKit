@@ -402,24 +402,4 @@ void Range::throwException(int exceptioncode) const
         throw DOMException(exceptioncode);
 }
 
-bool operator==(const Range &a, const Range &b)
-{
-    RangeImpl *ai = a.handle();
-    RangeImpl *bi = b.handle();
-    if (ai == bi)
-        return true;
-    if (!ai || !bi)
-        return false;
-    bool ad = ai->isDetached();
-    bool bd = bi->isDetached();
-    if (ad && bd)
-        return true;
-    if (ad || bd)
-        return false;
-    return a.startContainer() == b.startContainer()
-        && a.endContainer() == b.endContainer()
-        && a.startOffset() == b.startOffset()
-        && a.endOffset() == b.endOffset();
-}
-
 }

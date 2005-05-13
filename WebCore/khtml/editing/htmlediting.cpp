@@ -78,7 +78,6 @@ using DOM::NamedAttrMapImpl;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
 using DOM::Position;
-using DOM::Range;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
@@ -423,7 +422,7 @@ void InsertLineBreakCommand::doApply()
         Selection selectionBeforeStyle = endingSelection();
 
         DOM::RangeImpl *rangeAroundNode = document()->createRange();
-        int exception;
+        int exception = 0;
         rangeAroundNode->selectNode(nodeToInsert, exception);
 
         // affinity is not really important since this is a temp selection

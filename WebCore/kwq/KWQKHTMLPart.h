@@ -29,7 +29,6 @@
 #import "khtml_part.h"
 
 #import "dom_nodeimpl.h"
-#import "dom2_range.h"
 
 #import "WebCoreKeyboardAccess.h"
 
@@ -343,8 +342,8 @@ public:
     void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
     void respondToChangedContents();
     virtual bool isContentEditable() const;
-    virtual bool shouldBeginEditing(const DOM::Range &) const;
-    virtual bool shouldEndEditing(const DOM::Range &) const;
+    virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;
+    virtual bool shouldEndEditing(const DOM::RangeImpl *) const;
 
     KJS::Bindings::RootObject *executionContextForDOM();
     KJS::Bindings::RootObject *bindingRootObject();
@@ -370,8 +369,8 @@ public:
         bool thick;
     };
     
-    void setMarkedTextRange(const DOM::Range &, NSArray *attributes, NSArray *ranges);
-    DOM::Range markedTextRange() const;
+    void setMarkedTextRange(const DOM::RangeImpl *, NSArray *attributes, NSArray *ranges);
+    DOM::RangeImpl *markedTextRange() const { return m_markedTextRange.get(); }
     bool markedTextUsesUnderlines() const;
     QValueList<MarkedTextUnderline> markedTextUnderlines() const;
 
@@ -473,7 +472,7 @@ private:
     
     mutable khtml::SharedPtr<DOM::NodeImpl> _elementToDraw;
 
-    DOM::Range m_markedTextRange;
+    khtml::SharedPtr<DOM::RangeImpl> m_markedTextRange;
     bool m_markedTextUsesUnderlines;
     QValueList<MarkedTextUnderline> m_markedTextUnderlines;
 

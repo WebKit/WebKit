@@ -64,6 +64,7 @@ namespace DOM
   class Node;
   class NodeImpl;
   class Range;
+  class RangeImpl;
 }
 
 namespace khtml
@@ -668,10 +669,12 @@ public:
    */
   int xPosForVerticalArrowNavigation() const;
 
+#if !KHTML_NO_CPLUSPLUS_DOM
   /**
    * Returns the text for a part of the document.
    */
   QString text(const DOM::Range &) const;
+#endif
 
   /**
    * Has the user selected anything?
@@ -691,12 +694,12 @@ public:
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldBeginEditing(const DOM::Range &) const;
+  virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;
 
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldEndEditing(const DOM::Range &) const;
+  virtual bool shouldEndEditing(const DOM::RangeImpl *) const;
 
   /**
    * Returns the contentEditable "override" value for the part

@@ -1,3 +1,126 @@
+2005-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        - more "getting off the C++ DOM wrappers" changes
+          This pass involves replacing uses of DOM::Range with use of DOM::RangeImpl
+          plus some more use of DOM::DocumentImpl instead of DOM::Document.
+
+        * khtml/dom/dom2_range.cpp:
+        * khtml/dom/dom2_range.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::get):
+        (KJS::WindowFunc::tryCall):
+        (KJS::Window::updateLayout):
+        (KJS::ScheduledAction::execute):
+        (KJS::Selection::toString):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::Selection):
+        (khtml::Selection::moveTo):
+        (khtml::Selection::toRange):
+        * khtml/editing/selection.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::makeRange):
+        (khtml::startVisiblePosition):
+        (khtml::endVisiblePosition):
+        (khtml::setStart):
+        (khtml::setEnd):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_range.h:
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::TextIterator):
+        (khtml::TextIterator::range):
+        (khtml::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (khtml::SimplifiedBackwardsTextIterator::range):
+        (khtml::CharacterIterator::CharacterIterator):
+        (khtml::CharacterIterator::range):
+        (khtml::WordAwareIterator::WordAwareIterator):
+        (khtml::WordAwareIterator::advance):
+        (khtml::TextIterator::rangeLength):
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        (khtml::plainText):
+        (khtml::findPlainText):
+        * khtml/editing/visible_text.h:
+        (khtml::WordAwareIterator::range):
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::innerText):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptExecution):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::text):
+        (KHTMLPart::selectedText):
+        (KHTMLPart::shouldBeginEditing):
+        (KHTMLPart::shouldEndEditing):
+        (KHTMLPart::selectionComputedStyle):
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::operator==):
+        (DOM::rangeOfContents):
+        * khtml/xml/dom2_rangeimpl.h:
+        (DOM::operator!=):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::relinquishesEditingFocus):
+        (DocumentImpl::acceptsEditingFocus):
+        (DocumentImpl::addMarker):
+        (DocumentImpl::removeMarker):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::startPosition):
+        * khtml/xml/dom_position.h:
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLLinkElement href]):
+        (-[DOMHTMLBaseElement href]):
+        (-[DOMHTMLInputElement src]):
+        (-[DOMHTMLAnchorElement href]):
+        (-[DOMHTMLImageElement src]):
+        (-[DOMHTMLAreaElement href]):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject doAXStringForTextMarkerRange:]):
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]):
+        * kwq/KWQKHTMLPart.h:
+        (KWQKHTMLPart::markedTextRange):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::fontForSelection):
+        (KWQKHTMLPart::markMisspellings):
+        (KWQKHTMLPart::respondToChangedSelection):
+        (KWQKHTMLPart::shouldBeginEditing):
+        (KWQKHTMLPart::shouldEndEditing):
+        (convertAttributesToUnderlines):
+        (KWQKHTMLPart::setMarkedTextRange):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:verticalDistance:]):
+        (-[WebCoreBridge selectedDOMRange]):
+        (-[WebCoreBridge convertToNSRange:DOM::]):
+        (-[WebCoreBridge convertToDOMRange:]):
+        (-[WebCoreBridge convertToObjCDOMRange:]):
+        (-[WebCoreBridge selectNSRange:]):
+        (-[WebCoreBridge selectedNSRange]):
+        (-[WebCoreBridge markDOMRange]):
+        (-[WebCoreBridge markedTextDOMRange]):
+        (-[WebCoreBridge markedTextNSRange]):
+        (-[WebCoreBridge replaceMarkedTextWithText:]):
+        (-[WebCoreBridge smartDeleteRangeForProposedRange:]):
+        (-[WebCoreBridge dragCaretDOMRange]):
+        (-[WebCoreBridge editableDOMRangeForPoint:]):
+        (-[WebCoreBridge rangeOfCharactersAroundCaret]):
+
 2005-05-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

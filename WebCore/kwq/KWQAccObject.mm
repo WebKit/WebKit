@@ -86,7 +86,6 @@ using DOM::HTMLMapElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
-using DOM::Range;
 
 using khtml::EAffinity;
 using khtml::EVerticalAlign;
@@ -489,20 +488,9 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         KHTMLPart* p = d->part();
         if (p) {
             // catch stale KWQAccObject (see <rdar://problem/3960196>)
-            if (p->document().handle() != d)
+            if (p->xmlDocImpl() != d)
                 return nil;
-                
-            Range r(p->document());
-            if (m_renderer->isText()) {
-                r.setStartBefore(e);
-                r.setEndAfter(e);
-                return p->text(r).getNSString();
-            }
-            if (e->firstChild()) {
-                r.setStartBefore(e->firstChild());
-                r.setEndAfter(e->lastChild());
-                return p->text(r).getNSString();
-            }
+            return plainText(rangeOfContents(e).get()).getNSString();
         }
     }
 
@@ -531,7 +519,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return nil;
             
-        QString qString   = plainText(makeRange(startVisiblePosition, endVisiblePosition));
+        QString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition).get());
         
         // transform it to a CFString and return that
         return (id)qString.getCFString();
@@ -1114,7 +1102,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return nil;
     
     // get the visible text in the range
-    QString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition));
+    QString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition).get());
     
     // transform it to a CFString and return that
     return (id)qString.getCFString();
@@ -1430,18 +1418,18 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     
     // iterate over the range to build the AX attributed string
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
-    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition));
+    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition).get());
     while (!it.atEnd()) {
         // locate the node for this range
-        Node node = it.range().startContainer();
-        ASSERT(node == it.range().endContainer());
-        NodeImpl *nodeImpl = node.handle();
+        int exception = 0;
+        NodeImpl *nodeImpl = it.range()->startContainer(exception);
+        ASSERT(nodeImpl == it.range()->endContainer(exception));
         
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
             AXAttributedStringAppendText (attrString, nodeImpl, it.characters(), it.length());
         } else {
-            AXAttributedStringAppendReplaced (attrString, nodeImpl->childNode(it.range().startOffset()));
+            AXAttributedStringAppendReplaced (attrString, nodeImpl->childNode(it.range()->startOffset(exception)));
         }
         
         it.advance();

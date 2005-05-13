@@ -2466,13 +2466,11 @@ bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
     assert(node);
     assert(node->isContentEditable());
 
-    NodeImpl *rootImpl = node->rootEditableElement();
-    if (!part() || !rootImpl)
+    NodeImpl *root = node->rootEditableElement();
+    if (!part() || !root)
         return false;
 
-    Node root(rootImpl);
-    Range range(root, 0, root, rootImpl->childNodeCount());
-    return part()->shouldEndEditing(range);
+    return part()->shouldEndEditing(rangeOfContents(root).get());
 }
 
 bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
@@ -2480,13 +2478,11 @@ bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
     assert(node);
     assert(node->isContentEditable());
 
-    NodeImpl *rootImpl = node->rootEditableElement();
-    if (!part() || !rootImpl)
+    NodeImpl *root = node->rootEditableElement();
+    if (!part() || !root)
         return false;
 
-    Node root(rootImpl);
-    Range range(root, 0, root, rootImpl->childNodeCount());
-    return part()->shouldBeginEditing(range);
+    return part()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
 const QValueList<DashboardRegionValue> & DocumentImpl::dashboardRegions() const
@@ -3100,23 +3096,25 @@ DOMString DocumentImpl::queryCommandValue(const DOMString &command)
 
 // ----------------------------------------------------------------------------
 
-void DocumentImpl::addMarker(Range range, DocumentMarker::MarkerType type)
+void DocumentImpl::addMarker(RangeImpl *range, DocumentMarker::MarkerType type)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
-        Range textPiece = markedText.range();
-        DocumentMarker marker = {type, textPiece.startOffset(), textPiece.endOffset()};
-        addMarker(textPiece.startContainer().handle(), marker);
+        SharedPtr<RangeImpl> textPiece = markedText.range();
+        int exception = 0;
+        DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception)};
+        addMarker(textPiece->startContainer(exception), marker);
     }
 }
 
-void DocumentImpl::removeMarker(Range range, DocumentMarker::MarkerType type)
+void DocumentImpl::removeMarker(RangeImpl *range, DocumentMarker::MarkerType type)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
-        Range textPiece = markedText.range();
-        DocumentMarker marker = {type, textPiece.startOffset(), textPiece.endOffset()};
-        removeMarker(textPiece.startContainer().handle(), marker);
+        SharedPtr<RangeImpl> textPiece = markedText.range();
+        int exception = 0;
+        DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception)};
+        removeMarker(textPiece->startContainer(exception), marker);
     }
 }
 

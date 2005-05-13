@@ -26,7 +26,7 @@
 #ifndef KHTML_EDITING_VISIBLE_TEXT_H
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
-#include "dom/dom2_range.h"
+#include "xml/dom2_rangeimpl.h"
 
 namespace khtml {
 
@@ -46,8 +46,8 @@ inline bool isCollapsibleWhitespace(const QChar &c)
     }
 }
 
-QString plainText(const DOM::Range &);
-DOM::Range findPlainText(const DOM::Range &, const QString &, bool forward, bool caseSensitive);
+QString plainText(const DOM::RangeImpl *);
+SharedPtr<DOM::RangeImpl> findPlainText(const DOM::RangeImpl *, const QString &, bool forward, bool caseSensitive);
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in
@@ -59,7 +59,7 @@ class TextIterator
 {
 public:
     TextIterator();
-    explicit TextIterator(const DOM::Range &, IteratorKind kind = CONTENT );
+    explicit TextIterator(const DOM::RangeImpl *, IteratorKind kind = CONTENT );
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -67,10 +67,10 @@ public:
     long length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    DOM::Range range() const;
+    SharedPtr<DOM::RangeImpl> range() const;
      
-    static long TextIterator::rangeLength(const DOM::Range &r);
-    static void TextIterator::setRangeFromLocationAndLength (const DOM::Range &range, DOM::Range &resultRange, long rangeLocation, long rangeLength);
+    static long TextIterator::rangeLength(const DOM::RangeImpl *r);
+    static DOM::RangeImpl *TextIterator::rangeFromLocationAndLength(DOM::DocumentImpl *doc, long rangeLocation, long rangeLength);
     
 private:
     void exitNode();
@@ -121,7 +121,7 @@ class SimplifiedBackwardsTextIterator
 {
 public:
     SimplifiedBackwardsTextIterator();
-    explicit SimplifiedBackwardsTextIterator(const DOM::Range &);
+    explicit SimplifiedBackwardsTextIterator(const DOM::RangeImpl *);
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -129,7 +129,7 @@ public:
     long length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    DOM::Range range() const;
+    SharedPtr<DOM::RangeImpl> range() const;
         
 private:
     void exitNode();
@@ -170,7 +170,7 @@ private:
 class CharacterIterator {
 public:
     CharacterIterator();
-    explicit CharacterIterator(const DOM::Range &r);
+    explicit CharacterIterator(const DOM::RangeImpl *r);
     
     void advance(long numCharacters);
     
@@ -182,7 +182,7 @@ public:
     QString string(long numChars);
     
     long characterOffset() const { return m_offset; }
-    DOM::Range range() const;
+    SharedPtr<DOM::RangeImpl> range() const;
         
 private:
     long m_offset;
@@ -197,7 +197,7 @@ private:
 class WordAwareIterator {
 public:
     WordAwareIterator();
-    explicit WordAwareIterator(const DOM::Range &r);
+    explicit WordAwareIterator(const DOM::RangeImpl *r);
 
     bool atEnd() const { return !m_didLookAhead && m_textIterator.atEnd(); }
     void advance();
@@ -206,7 +206,7 @@ public:
     const QChar *characters() const;
     
     // Range of the text we're currently returning
-    DOM::Range range() const { return m_range; }
+    SharedPtr<DOM::RangeImpl> range() const { return m_range; }
 
 private:
     // text from the previous chunk from the textIterator
@@ -219,7 +219,7 @@ private:
     // Did we have to look ahead in the textIterator to confirm the current chunk?
     bool m_didLookAhead;
 
-    DOM::Range m_range;
+    SharedPtr<DOM::RangeImpl> m_range;
 
     TextIterator m_textIterator;
 };

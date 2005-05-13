@@ -627,12 +627,7 @@ using DOM::NodeImpl;
 
 - (NSString *)href
 {
-    DOMString s = [self _linkElementImpl]->getAttribute(ATTR_HREF);
-    if (!s.isNull()) {
-        Document doc([self _linkElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _linkElementImpl]->href();
 }
 
 - (void)setHref:(NSString *)href
@@ -779,12 +774,7 @@ using DOM::NodeImpl;
 
 - (NSString *)href
 {
-    DOMString s = [self _baseElementImpl]->getAttribute(ATTR_HREF);
-    if (!s.isNull()) {
-        Document doc([self _baseElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _baseElementImpl]->href();
 }
 
 - (void)setHref:(NSString *)href
@@ -1402,12 +1392,7 @@ using DOM::NodeImpl;
 
 - (NSString *)src
 {
-    DOMString s = [self _inputElementImpl]->getAttribute(ATTR_SRC);
-    if (!s.isNull()) {
-        Document doc([self _inputElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _inputElementImpl]->src();
 }
 
 - (void)setSrc:(NSString *)src
@@ -2228,12 +2213,7 @@ using DOM::NodeImpl;
 
 - (NSString *)href
 {
-    DOMString s = [self _anchorElementImpl]->getAttribute(ATTR_HREF);
-    if (!s.isNull()) {
-        Document doc([self _anchorElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _anchorElementImpl]->href();
 }
 
 - (void)setHref:(NSString *)href
@@ -2428,12 +2408,7 @@ using DOM::NodeImpl;
 
 - (NSString *)src
 {
-    DOMString s = [self _imageElementImpl]->getAttribute(ATTR_SRC);
-    if (!s.isNull()) {
-        Document doc([self _imageElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _imageElementImpl]->src();
 }
 
 - (void)setSrc:(NSString *)src
@@ -2901,12 +2876,7 @@ using DOM::NodeImpl;
 
 - (NSString *)href
 {
-    DOMString s = [self _areaElementImpl]->getAttribute(ATTR_HREF);
-    if (!s.isNull()) {
-        Document doc([self _areaElementImpl]->getDocument());
-        s = doc.completeURL(s);
-    }
-    return s;
+    return [self _areaElementImpl]->href();
 }
 
 - (void)setHref:(NSString *)href

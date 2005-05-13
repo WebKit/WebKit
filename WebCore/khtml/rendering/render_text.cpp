@@ -24,11 +24,12 @@
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
 
+#include "rendering/render_text.h"
+
 #include "rendering/render_canvas.h"
 #include "rendering/render_object.h"
-#include "rendering/render_text.h"
 #include "rendering/break_lines.h"
-#include "dom/dom2_range.h"
+#include "xml/dom2_rangeimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
@@ -309,10 +310,10 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         return;
 
     // Determine whether or not we have marked text.
-    Range markedTextRange = KWQ(object()->document()->part())->markedTextRange();
-    bool haveMarkedText = markedTextRange.handle() != 0 && markedTextRange.startContainer() == object()->node();
+    RangeImpl *markedTextRange = KWQ(object()->document()->part())->markedTextRange();
+    int exception = 0;
+    bool haveMarkedText = markedTextRange && markedTextRange->startContainer(exception) == object()->node();
     bool markedTextUsesUnderlines = KWQ(object()->document()->part())->markedTextUsesUnderlines();
-
 
     // Set our font.
     RenderStyle* styleToUse = object()->style(m_firstLine);
@@ -325,7 +326,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     // and marked text.
     if ((haveSelection || haveMarkedText) && !markedTextUsesUnderlines && i.phase != PaintActionSelection && !isPrinting) {
         if (haveMarkedText)
-            paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange.startOffset(), markedTextRange.endOffset());
+            paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
 
         if (haveSelection)
             paintSelection(i.p, tx, ty, styleToUse, font);

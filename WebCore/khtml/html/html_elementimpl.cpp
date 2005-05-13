@@ -309,8 +309,7 @@ DOMString HTMLElementImpl::innerText() const
 {
     // We need to update layout, since plainText uses line boxes in the render tree.
     getDocument()->updateLayout();
-    return plainText(Range(const_cast<HTMLElementImpl *>(this), 0,
-        const_cast<HTMLElementImpl *>(this), childNodeCount()));
+    return plainText(rangeOfContents(const_cast<HTMLElementImpl *>(this)).get());
 }
 
 DOMString HTMLElementImpl::outerText() const

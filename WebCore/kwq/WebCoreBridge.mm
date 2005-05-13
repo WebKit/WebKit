@@ -105,7 +105,7 @@ using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
-using DOM::Range;
+using DOM::RangeImpl;
 
 using khtml::ChildrenOnly;
 using khtml::createMarkup;
@@ -127,6 +127,7 @@ using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::Selection;
+using khtml::SharedPtr;
 using khtml::setAffinityUsingLinePosition;
 using khtml::Tokenizer;
 using khtml::TextIterator;
@@ -1054,14 +1055,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
         const AtomicString& link = e->getAttribute(ATTR_HREF);
         if (!link.isNull()) {
-            if (e->firstChild()) {
-                Range r(doc);
-                r.setStartBefore(e->firstChild());
-                r.setEndAfter(e->lastChild());
-                QString t = _part->text(r);
-                if (!t.isEmpty()) {
-                    [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
-                }
+            QString t = plainText(rangeOfContents(e).get());
+            if (!t.isEmpty()) {
+                [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
             }
             QString URLString = parseURL(link).string();
             [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
@@ -1490,7 +1486,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
     selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
-    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+    return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
@@ -1503,7 +1499,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
-    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+    return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
@@ -1560,7 +1556,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     Selection selection(_part->selection());
     selection.modify(static_cast<Selection::EAlter>(alteration), static_cast<int>(verticalDistance));
-    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+    return [DOMRange _rangeWithImpl:selection.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
@@ -1624,57 +1620,45 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)selectedDOMRange
 {
-    return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
+    return [DOMRange _rangeWithImpl:_part->selection().toRange().get()];
 }
 
-- (NSRange)convertToNSRange:(DOM::RangeImpl *)drange
+- (NSRange)convertToNSRange:(DOM::RangeImpl *)range
 {
-    if (!drange) {
+    if (!range || range->isDetached()) {
         return NSMakeRange(NSNotFound, 0);
     }
 
-    Range toStartRange, toEndRange;
-    Range actualRange = Range(drange);
-    long startPosition, endPosition;
+    SharedPtr<RangeImpl> fromStartRange(_part->xmlDocImpl()->createRange());
+    int exception = 0;
 
-    toStartRange = Range (_part->xmlDocImpl()->createRange());
-    toStartRange.setEnd (actualRange.startContainer(), actualRange.startOffset());
-    toEndRange = Range (_part->xmlDocImpl()->createRange());
-    toEndRange.setEnd (actualRange.endContainer(), actualRange.endOffset());
-    
-    startPosition = TextIterator::rangeLength (toStartRange);
-    endPosition = TextIterator::rangeLength (toEndRange);
-    
+    fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);
+    long startPosition = TextIterator::rangeLength(fromStartRange.get());
+
+    fromStartRange->setEnd(range->endContainer(exception), range->endOffset(exception), exception);
+    long endPosition = TextIterator::rangeLength(fromStartRange.get());
+
     return NSMakeRange(startPosition, endPosition - startPosition);
 }
 
-- (DOM::Range)convertToDOMRange:(NSRange)nsrange
+- (RangeImpl *)convertToDOMRange:(NSRange)nsrange
 {
-    // Set the range to cover the entire document.  This assumes that the start
-    // and end node of the range are the document node.
-    DOM::Range docRange = Range (_part->xmlDocImpl()->createRange());
-    docRange.setEnd (docRange.endContainer(), docRange.endContainer().handle()->childNodeCount());
-
-    DOM::Range resultRange = Range (_part->xmlDocImpl()->createRange());
-    TextIterator::setRangeFromLocationAndLength (docRange, resultRange, nsrange.location, nsrange.length);
-    
-    return resultRange;
+    return TextIterator::rangeFromLocationAndLength(_part->xmlDocImpl(), nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)convertToObjCDOMRange:(NSRange)nsrange
 {
-    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange].handle()];
+    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange]];
 }
 
 - (void)selectNSRange:(NSRange)range
 {
-    DOM::Range replaceRange = [self convertToDOMRange:range];
-    _part->setSelection(Selection(replaceRange.handle(), khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
+    _part->setSelection(Selection([self convertToDOMRange:range], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
 {
-    return [self convertToNSRange:_part->selection().toRange().handle()];
+    return [self convertToNSRange:_part->selection().toRange().get()];
 }
 
 - (NSSelectionAffinity)selectionAffinity
@@ -1689,7 +1673,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)markDOMRange
 {
-    return [DOMRange _rangeWithImpl:_part->mark().toRange().handle()];
+    return [DOMRange _rangeWithImpl:_part->mark().toRange().get()];
 }
 
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges
@@ -1699,12 +1683,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)markedTextDOMRange
 {
-    return [DOMRange _rangeWithImpl:_part->markedTextRange().handle()];
+    return [DOMRange _rangeWithImpl:_part->markedTextRange()];
 }
 
 - (NSRange)markedTextNSRange
 {
-    return [self convertToNSRange:_part->markedTextRange().handle()];
+    return [self convertToNSRange:_part->markedTextRange()];
 }
 
 - (void)replaceMarkedTextWithText:(NSString *)text
@@ -1712,8 +1696,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!partHasSelection(self))
         return;
     
-    Range markedTextRange = _part->markedTextRange();
-    if (!markedTextRange.isNull() && !markedTextRange.collapsed())
+    int exception = 0;
+
+    RangeImpl *markedTextRange = _part->markedTextRange();
+    if (markedTextRange && !markedTextRange->collapsed(exception))
         TypingCommand::deleteKeyPressed(_part->xmlDocImpl(), NO);
     
     if ([text length] > 0)
@@ -1765,7 +1751,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (newEnd.isNull())
         newEnd = end;
 
-    return [DOMRange _rangeWithImpl:Range(newStart.node(), newStart.offset(), newEnd.node(), newEnd.offset()).handle()];
+    RangeImpl *range = _part->xmlDocImpl()->createRange();
+    int exception = 0;
+    range->setStart(newStart.node(), newStart.offset(), exception);
+    range->setEnd(newStart.node(), newStart.offset(), exception);
+    return [DOMRange _rangeWithImpl:range];
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
@@ -1952,13 +1942,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)dragCaretDOMRange
 {
-    return [DOMRange _rangeWithImpl:_part->dragCaret().toRange().handle()];
+    return [DOMRange _rangeWithImpl:_part->dragCaret().toRange().get()];
 }
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().handle()];
+    return position.isNull() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().get()];
 }
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete
@@ -2270,7 +2260,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (caret == next || caret == previous)
         return nil;
 
-    return [DOMRange _rangeWithImpl:makeRange(previous, next).handle()];
+    return [DOMRange _rangeWithImpl:makeRange(previous, next).get()];
 }
 
 - (NSMutableDictionary *)dashboardRegions

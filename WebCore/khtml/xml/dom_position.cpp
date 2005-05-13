@@ -841,26 +841,12 @@ void Position::formatForDebugger(char *buffer, unsigned length) const
 #endif
 
 
-Position startPosition(const Range &r)
-{
-    if (r.isNull() || r.isDetached())
-        return Position();
-    return Position(r.startContainer().handle(), r.startOffset());
-}
-
 Position startPosition(const RangeImpl *r)
 {
     if (!r || r->isDetached())
         return Position();
     int exceptionCode;
     return Position(r->startContainer(exceptionCode), r->startOffset(exceptionCode));
-}
-
-Position endPosition(const Range &r)
-{
-    if (r.isNull() || r.isDetached())
-        return Position();
-    return Position(r.endContainer().handle(), r.endOffset());
 }
 
 Position endPosition(const RangeImpl *r)

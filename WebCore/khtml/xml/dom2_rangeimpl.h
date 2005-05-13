@@ -124,6 +124,11 @@ private:
     bool containedByReadOnly() const;
 };
 
+khtml::SharedPtr<RangeImpl> rangeOfContents(NodeImpl *node);
+
+bool operator==(const RangeImpl &, const RangeImpl &);
+inline bool operator!=(const RangeImpl &a, const RangeImpl &b) { return !(a == b); }
+
 } // namespace
 
 #endif

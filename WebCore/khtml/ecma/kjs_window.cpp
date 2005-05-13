@@ -59,6 +59,7 @@
 #include "editing/htmlediting.h"
 #include "editing/selection.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/dom2_rangeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_position.h"
@@ -508,7 +509,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case Document:
       if (isSafeScript(exec))
       {
-        if (m_part->document().isNull()) {
+        if (!m_part->xmlDocImpl()) {
 #if APPLE_CHANGES
           KWQ(m_part)->createEmptyDocument();
 #endif
@@ -1610,7 +1611,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         khtmlpart->setOpener(part);
         khtmlpart->setOpenedByJS(true);
         
-        if (khtmlpart->document().isNull()) {
+        if (!khtmlpart->xmlDocImpl()) {
             DocumentImpl *oldDoc = part->xmlDocImpl();
             if (oldDoc && oldDoc->baseURL() != 0)
                 khtmlpart->begin(oldDoc->baseURL());
@@ -1833,7 +1834,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	    return Undefined();
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener) {
-	    DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(part->document().handle());
+	    DocumentImpl* docimpl = part->xmlDocImpl();
             if (docimpl)
                 docimpl->addWindowEventListener(DOM::EventImpl::typeToId(args[0].toString(exec).string()),listener,args[2].toBoolean(exec));
         }
@@ -1844,7 +1845,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	    return Undefined();
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener) {
-	    DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(part->document().handle());
+	    DocumentImpl* docimpl = part->xmlDocImpl();
             if (docimpl)
                 docimpl->removeWindowEventListener(DOM::EventImpl::typeToId(args[0].toString(exec).string()),listener,args[2].toBoolean(exec));
         }
@@ -1857,7 +1858,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
 void Window::updateLayout() const
 {
-  DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(m_part->document().handle());
+  DOM::DocumentImpl* docimpl = m_part->xmlDocImpl();
   if (docimpl)
     docimpl->updateLayoutIgnorePendingStylesheets();
 }
@@ -1926,8 +1927,8 @@ void ScheduledAction::execute(Window *window)
   }
 
   // Update our document's rendering following the execution of the timeout callback.
-  DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->m_part->document().handle());
-  doc->updateRendering();
+  if (DocumentImpl *doc = window->m_part->xmlDocImpl())
+    doc->updateRendering();
   
   interpreter->setProcessingTimerCallback(false);
 }
@@ -2450,7 +2451,8 @@ UString Selection::toString(ExecState *) const
 {
     if (!m_part->selection().isRange())
         return UString("");
-    return UString(m_part->selection().toRange().toString());
+    int exception = 0;
+    return UString(m_part->selection().toRange()->toString(exception));
 }
 
 Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)

@@ -630,7 +630,7 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
       }
     
       QString method = args[0].toString(exec).qstring();
-      KURL url = KURL(Window::retrieveActive(exec)->part()->document().completeURL(args[1].toString(exec).qstring()).string());
+      KURL url = KURL(Window::retrieveActive(exec)->part()->xmlDocImpl()->completeURL(args[1].toString(exec).qstring()));
 
       bool async = true;
       if (args.size() >= 3) {

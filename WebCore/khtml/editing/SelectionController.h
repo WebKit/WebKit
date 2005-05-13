@@ -29,6 +29,7 @@
 #include <qrect.h>
 #include "xml/dom_position.h"
 #include "text_granularity.h"
+#include "misc/shared.h"
 
 class KHTMLPart;
 class QPainter;
@@ -50,11 +51,11 @@ public:
 // but that would be the desired affinity"
 #define SEL_PREFER_UPSTREAM_AFFINITY DOWNSTREAM
 
-    typedef DOM::Range Range;
     typedef DOM::Position Position;
+    typedef DOM::RangeImpl RangeImpl;
 
     Selection();
-    Selection(const Range &, EAffinity baseAffinity, EAffinity extentAffinity);
+    Selection(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
     Selection(const VisiblePosition &);
     Selection(const VisiblePosition &, const VisiblePosition &);
     Selection(const Position &, EAffinity affinity);
@@ -64,7 +65,7 @@ public:
     Selection &operator=(const Selection &o);
     Selection &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
 
-    void moveTo(const Range &, EAffinity baseAffinity, EAffinity extentAffinity);
+    void moveTo(const RangeImpl *, EAffinity baseAffinity, EAffinity extentAffinity);
     void moveTo(const VisiblePosition &);
     void moveTo(const VisiblePosition &, const VisiblePosition &);
     void moveTo(const Position &, EAffinity);
@@ -109,7 +110,7 @@ public:
     bool isRange() const { return state() == RANGE; }
     bool isCaretOrRange() const { return state() != NONE; }
 
-    Range toRange() const;
+    SharedPtr<DOM::RangeImpl> toRange() const;
 
     void debugPosition() const;
     void debugRenderer(khtml::RenderObject *r, bool selected) const;

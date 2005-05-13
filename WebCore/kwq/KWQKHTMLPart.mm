@@ -139,6 +139,7 @@ using khtml::Selection;
 using khtml::setEnd;
 using khtml::setStart;
 using khtml::ShadowData;
+using khtml::SharedPtr;
 using khtml::startOfWord;
 using khtml::startVisiblePosition;
 using khtml::StyleDashboardRegion;
@@ -609,33 +610,33 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     }
 
     // Start on the correct edge of the selection, search to edge of document.
-    Range searchRange(xmlDocImpl());
-    searchRange.selectNodeContents(xmlDocImpl());
+    SharedPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     if (selectionStart()) {
         if (forward) {
-            setStart(searchRange, VisiblePosition(findInSelection ? selection().start() : selection().end(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(findInSelection ? selection().start() : selection().end(), selection().endAffinity()));
         } else {
-            setEnd(searchRange, VisiblePosition(findInSelection ? selection().end() : selection().start(), selection().startAffinity()));
+            setEnd(searchRange.get(), VisiblePosition(findInSelection ? selection().end() : selection().start(), selection().startAffinity()));
         }
     }
 
     // Do the search once, then do it a second time to handle wrapped search.
     // Searches some or all of document twice in the failure case, but that's probably OK.
-    Range resultRange = findPlainText(searchRange, target, forward, caseFlag);
-    if (resultRange.collapsed() && wrapFlag) {
-        searchRange.selectNodeContents(xmlDocImpl());
-        resultRange = findPlainText(searchRange, target, forward, caseFlag);
+    SharedPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
+    int exception = 0;
+    if (resultRange->collapsed(exception) && wrapFlag) {
+        searchRange = rangeOfContents(xmlDocImpl());
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
         // If we got back to the same place we started, that doesn't count as success.
-        if (resultRange == selection().toRange()) {
+        if (*resultRange == *selection().toRange()) {
             return false;
         }
     }
 
-    if (resultRange.collapsed()) {
+    if (resultRange->collapsed(exception)) {
         return false;
     }
 
-    setSelection(Selection(resultRange, DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+    setSelection(Selection(resultRange.get(), DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
     jumpToSelection();
     return true;
 }
@@ -921,13 +922,14 @@ void KWQKHTMLPart::jumpToSelection()
 
 QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
 {
+    int exception = 0;
+
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
     // then we wrap and search from the doc start to (approximately) where we started.
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
-    Range searchRange(xmlDocImpl());
-    searchRange.selectNodeContents(xmlDocImpl());
+    SharedPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     bool startedWithSelection = false;
     if (selectionStart()) {
         startedWithSelection = true;
@@ -935,49 +937,49 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
             VisiblePosition start(selection().start(), selection().startAffinity());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
-            setStart(searchRange, oneBeforeStart.isNotNull() ? oneBeforeStart : start);
+            setStart(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else {
-            setStart(searchRange, VisiblePosition(selection().end(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().endAffinity()));
         }
     }
 
     // If we're not in an editable node, try to find one, make that our range to work in
-    NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
+    NodeImpl *editableNodeImpl = searchRange->startContainer(exception);
     if (!editableNodeImpl->isContentEditable()) {
         editableNodeImpl = editableNodeImpl->nextEditable();
         if (!editableNodeImpl) {
             return QString();
         }
-        searchRange.setStartBefore(editableNodeImpl);
+        searchRange->setStartBefore(editableNodeImpl, exception);
         startedWithSelection = false;   // won't need to wrap
     }
     
     // topNode defines the whole range we want to operate on 
     NodeImpl *topNode = editableNodeImpl->rootEditableElement();
-    searchRange.setEndAfter(topNode);
+    searchRange->setEndAfter(topNode, exception);
 
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
-        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange, DOWNSTREAM).previous();
+        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange.get(), DOWNSTREAM).previous();
         if (oneBeforeStart.isNotNull()) {
-            setStart(searchRange, endOfWord(oneBeforeStart));
+            setStart(searchRange.get(), endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
     }
     
-    if (searchRange.collapsed()) {
+    if (searchRange->collapsed(exception)) {
         return QString();       // nothing to search in
     }
     
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    WordAwareIterator it(searchRange);
+    WordAwareIterator it(searchRange.get());
     bool wrapped = false;
     
     // We go to the end of our first range instead of the start of it, just to be sure
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
-    NodeImpl *searchEndAfterWrapNode = it.range().endContainer().handle();
-    long searchEndAfterWrapOffset = it.range().endOffset();
+    NodeImpl *searchEndAfterWrapNode = it.range()->endContainer(exception);
+    long searchEndAfterWrapOffset = it.range()->endOffset(exception);
 
     while (1) {
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
@@ -990,17 +992,17 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                 if (misspelling.length > 0) {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    Range misspellingRange(xmlDocImpl());
-                    CharacterIterator chars(it.range());
+                    SharedPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
-                    misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
+                    misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                     QString result = chars.string(misspelling.length);
-                    misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
+                    misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
-                    setSelection(Selection(misspellingRange, DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+                    setSelection(Selection(misspellingRange.get(), DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
                     jumpToSelection();
                     // Mark misspelling in document.
-                    xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
+                    xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
                     return result;
                 }
             }
@@ -1013,10 +1015,10 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
             } else {
                 // we've gone from the selection to the end of doc, now wrap around
                 wrapped = YES;
-                searchRange.setStartBefore(topNode);
+                searchRange->setStartBefore(topNode, exception);
                 // going until the end of the very first chunk we tested is far enough
-                searchRange.setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset);
-                it = WordAwareIterator(searchRange);
+                searchRange->setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset, exception);
+                it = WordAwareIterator(searchRange.get());
             }
         }   
     }
@@ -3520,8 +3522,7 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 
     NSFont *font = nil;
 
-    Range r = d->m_selection.toRange();
-    RangeImpl *range = r.handle();
+    SharedPtr<RangeImpl> range = d->m_selection.toRange();
     NodeImpl *startNode = range->editingStartPosition().node();
     if (startNode != nil) {
         NodeImpl *pastEnd = range->pastEndNode();
@@ -3999,17 +4000,18 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
     if (![_bridge isContinuousSpellCheckingEnabled])
         return;
 
-    Range searchRange(selection.toRange());
-    if (searchRange.isNull() || searchRange.isDetached())
+    SharedPtr<RangeImpl> searchRange(selection.toRange());
+    if (searchRange.get() || searchRange->isDetached())
         return;
     
     // If we're not in an editable node, bail.
-    NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
+    int exception = 0;
+    NodeImpl *editableNodeImpl = searchRange->startContainer(exception);
     if (!editableNodeImpl->isContentEditable())
         return;
     
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    WordAwareIterator it(searchRange);
+    WordAwareIterator it(searchRange.get());
     
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
         const QChar *chars = it.characters();
@@ -4026,14 +4028,14 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
                 else {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    Range misspellingRange(xmlDocImpl());
-                    CharacterIterator chars(it.range());
+                    SharedPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
-                    misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
+                    misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                     chars.advance(misspelling.length);
-                    misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
+                    misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                     // Mark misspelling in document.
-                    xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
+                    xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
                     startIndex = misspelling.location + misspelling.length;
                 }
             }
@@ -4069,7 +4071,7 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
 
                 // This only erases a marker in the first word of the selection.
                 // Perhaps peculiar, but it matches AppKit.
-                xmlDocImpl()->removeMarker(newAdjacentWords.toRange(), DocumentMarker::Spelling);
+                xmlDocImpl()->removeMarker(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
             }
         } else {
             // When continuous spell checking is off, no markers appear after the selection changes.
@@ -4095,28 +4097,24 @@ bool KWQKHTMLPart::isContentEditable() const
     return KHTMLPart::isContentEditable() || [_bridge isEditable];
 }
 
-bool KWQKHTMLPart::shouldBeginEditing(const Range &range) const
+bool KWQKHTMLPart::shouldBeginEditing(const RangeImpl *range) const
 {
-    ASSERT(!range.isNull());
-    return [_bridge shouldBeginEditing:[DOMRange _rangeWithImpl:range.handle()]];
+    ASSERT(range);
+    return [_bridge shouldBeginEditing:[DOMRange _rangeWithImpl:const_cast<RangeImpl *>(range)]];
 }
 
-bool KWQKHTMLPart::shouldEndEditing(const Range &range) const
+bool KWQKHTMLPart::shouldEndEditing(const RangeImpl *range) const
 {
-    ASSERT(!range.isNull());
-    return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:range.handle()]];
+    ASSERT(range);
+    return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:const_cast<RangeImpl *>(range)]];
 }
 
-DOM::Range KWQKHTMLPart::markedTextRange() const
-{
-    return m_markedTextRange;
-}
-
-static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlines(const DOM::Range &markedTextRange, NSArray *attributes, NSArray *ranges)
+static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlines(const DOM::RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
     QValueList<KWQKHTMLPart::MarkedTextUnderline> result;
 
-    int baseOffset = markedTextRange.startOffset();
+    int exception = 0;
+    int baseOffset = markedTextRange->startOffset(exception);
 
     unsigned length = [attributes count];
     ASSERT([ranges count] == length);
@@ -4145,10 +4143,12 @@ static QValueList<KWQKHTMLPart::MarkedTextUnderline> convertAttributesToUnderlin
     return result;
 }
 
-void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range, NSArray *attributes, NSArray *ranges)
+void KWQKHTMLPart::setMarkedTextRange(const DOM::RangeImpl *range, NSArray *attributes, NSArray *ranges)
 {
-    ASSERT(!range.handle() || range.startContainer() == range.endContainer());
-    ASSERT(!range.handle() || range.collapsed() || range.startContainer().nodeType() == Node::TEXT_NODE);
+    int exception = 0;
+
+    ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
+    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->nodeType() == Node::TEXT_NODE);
 
     if (attributes == nil) {
         m_markedTextUsesUnderlines = false;
@@ -4158,20 +4158,18 @@ void KWQKHTMLPart::setMarkedTextRange(const DOM::Range &range, NSArray *attribut
         m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
     }
 
-    if (m_markedTextRange.handle() && xmlDocImpl() 
-	&& m_markedTextRange.startContainer().handle()->renderer()) {
-	m_markedTextRange.startContainer().handle()->renderer()->repaint();
+    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {
+	m_markedTextRange->startContainer(exception)->renderer()->repaint();
     }
 
-    if ( range.handle() && range.collapsed() ) {
-        m_markedTextRange = DOM::Range(0);
+    if ( range && range->collapsed(exception) ) {
+        m_markedTextRange.reset();
     } else {
-        m_markedTextRange = range;
+        m_markedTextRange.reset(const_cast<RangeImpl *>(range));
     }
 
-    if (m_markedTextRange.handle() && xmlDocImpl() 
-	&& m_markedTextRange.startContainer().handle()->renderer()) {
-	m_markedTextRange.startContainer().handle()->renderer()->repaint();
+    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {
+	m_markedTextRange->startContainer(exception)->renderer()->repaint();
     }
 }
 

@@ -603,7 +603,7 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
     script = false;
     QString url;    
     if (scriptURL.isNull())
-      url = static_cast<DocumentImpl*>(view->part()->document().handle())->URL();
+      url = view->part()->xmlDocImpl()->URL();
     else
       url = scriptURL;
 

@@ -388,42 +388,42 @@ void VisiblePosition::formatForDebugger(char *buffer, unsigned length) const
 }
 #endif
 
-Range makeRange(const VisiblePosition &start, const VisiblePosition &end)
+SharedPtr<RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end)
 {
     Position s = start.position();
     Position e = end.position();
-    return Range(s.node(), s.offset(), e.node(), e.offset());
+    return SharedPtr<RangeImpl>(new RangeImpl(s.node()->docPtr(), s.node(), s.offset(), e.node(), e.offset()));
 }
 
-VisiblePosition startVisiblePosition(const Range &r, EAffinity affinity)
+VisiblePosition startVisiblePosition(const RangeImpl *r, EAffinity affinity)
 {
-    return VisiblePosition(r.startContainer().handle(), r.startOffset(), affinity);
+    int exception = 0;
+    return VisiblePosition(r->startContainer(exception), r->startOffset(exception), affinity);
 }
 
-VisiblePosition endVisiblePosition(const Range &r, EAffinity affinity)
+VisiblePosition endVisiblePosition(const RangeImpl *r, EAffinity affinity)
 {
-    return VisiblePosition(r.endContainer().handle(), r.endOffset(), affinity);
+    int exception = 0;
+    return VisiblePosition(r->endContainer(exception), r->endOffset(exception), affinity);
 }
 
-bool setStart(Range &r, const VisiblePosition &c)
+bool setStart(RangeImpl *r, const VisiblePosition &c)
 {
-    RangeImpl *ri = r.handle();
-    if (!ri)
+    if (!r)
         return false;
     Position p = c.position();
     int code = 0;
-    ri->setStart(p.node(), p.offset(), code);
+    r->setStart(p.node(), p.offset(), code);
     return code == 0;
 }
 
-bool setEnd(Range &r, const VisiblePosition &c)
+bool setEnd(RangeImpl *r, const VisiblePosition &c)
 {
-    RangeImpl *ri = r.handle();
-    if (!ri)
+    if (!r)
         return false;
     Position p = c.position();
     int code = 0;
-    ri->setEnd(p.node(), p.offset(), code);
+    r->setEnd(p.node(), p.offset(), code);
     return code == 0;
 }
 

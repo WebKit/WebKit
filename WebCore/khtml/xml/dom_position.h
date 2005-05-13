@@ -33,7 +33,6 @@ namespace DOM {
 class CSSComputedStyleDeclarationImpl;
 class ElementImpl;
 class NodeImpl;
-class Range;
 class RangeImpl;
 
 enum EUsingComposedCharacters { NotUsingComposedCharacters = false, UsingComposedCharacters = true };
@@ -117,9 +116,7 @@ inline bool operator!=(const Position &a, const Position &b)
     return !(a == b);
 }
 
-Position startPosition(const Range &);
 Position startPosition(const RangeImpl *);
-Position endPosition(const Range &);
 Position endPosition(const RangeImpl *);
 
 } // namespace DOM
