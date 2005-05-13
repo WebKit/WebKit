@@ -26,6 +26,9 @@
 #include "composite_edit_command.h"
 
 #include "append_node_command.h"
+#include "delete_from_text_node_command.h"
+#include "insert_into_text_node_command.h"
+#include "insert_node_before_command.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 
@@ -245,7 +248,7 @@ void CompositeEditCommand::inputText(const DOMString &text, bool selectInsertedT
 
 void CompositeEditCommand::insertTextIntoNode(TextImpl *node, long offset, const DOMString &text)
 {
-    EditCommandPtr cmd(new InsertIntoTextNode(document(), node, offset, text));
+    EditCommandPtr cmd(new InsertIntoTextNodeCommand(document(), node, offset, text));
     applyCommandToComposite(cmd);
 }
 
@@ -259,7 +262,7 @@ void CompositeEditCommand::replaceTextInNode(TextImpl *node, long offset, long c
 {
     EditCommandPtr deleteCommand(new DeleteFromTextNodeCommand(document(), node, offset, count));
     applyCommandToComposite(deleteCommand);
-    EditCommandPtr insertCommand(new InsertIntoTextNode(document(), node, offset, replacementText));
+    EditCommandPtr insertCommand(new InsertIntoTextNodeCommand(document(), node, offset, replacementText));
     applyCommandToComposite(insertCommand);
 }
 

@@ -326,6 +326,126 @@
 //652
 //653
 //654
+		652C6E9708331AE400714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = delete_from_text_node_command.cpp;
+			path = editing/delete_from_text_node_command.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6E9808331AE400714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = delete_from_text_node_command.h;
+			path = editing/delete_from_text_node_command.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6E9908331AE400714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = delete_selection_command.cpp;
+			path = editing/delete_selection_command.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6E9A08331AE400714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = delete_selection_command.h;
+			path = editing/delete_selection_command.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6E9B08331AE400714969 = {
+			fileRef = 652C6E9708331AE400714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6E9C08331AE400714969 = {
+			fileRef = 652C6E9808331AE400714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6E9D08331AE400714969 = {
+			fileRef = 652C6E9908331AE400714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6E9E08331AE400714969 = {
+			fileRef = 652C6E9A08331AE400714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6E9F083328A700714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = insert_into_text_node_command.cpp;
+			path = editing/insert_into_text_node_command.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6EA0083328A700714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = insert_into_text_node_command.h;
+			path = editing/insert_into_text_node_command.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6EA1083328A700714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = insert_node_before_command.cpp;
+			path = editing/insert_node_before_command.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6EA2083328A700714969 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = insert_node_before_command.h;
+			path = editing/insert_node_before_command.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		652C6EA3083328A700714969 = {
+			fileRef = 652C6E9F083328A700714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6EA4083328A700714969 = {
+			fileRef = 652C6EA0083328A700714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6EA5083328A700714969 = {
+			fileRef = 652C6EA1083328A700714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		652C6EA6083328A700714969 = {
+			fileRef = 652C6EA2083328A700714969;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		654D87B50831973B0082DCA1 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1933,6 +2053,10 @@
 				65DC16C50831DD6F0022744E,
 				65AC79A20831ED6D009385CE,
 				65AC79AA0831F006009385CE,
+				652C6E9C08331AE400714969,
+				652C6E9E08331AE400714969,
+				652C6EA4083328A700714969,
+				652C6EA6083328A700714969,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4361,6 +4485,10 @@
 				65DC16C40831DD6F0022744E,
 				65AC79A10831ED6D009385CE,
 				65AC79A90831F006009385CE,
+				652C6E9B08331AE400714969,
+				652C6E9D08331AE400714969,
+				652C6EA3083328A700714969,
+				652C6EA5083328A700714969,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6657,13 +6785,21 @@
 				65AC79A70831F006009385CE,
 				65DC16C30831DD6F0022744E,
 				65DC16C20831DD6F0022744E,
+				652C6E9808331AE400714969,
+				652C6E9708331AE400714969,
+				652C6E9A08331AE400714969,
+				652C6E9908331AE400714969,
 				EDA4AC97076FB89100DD23EC,
 				654D87B60831973B0082DCA1,
 				654D87B50831973B0082DCA1,
 				BE9185DD05EE59B80081354D,
 				BE9185E005EE59B80081354D,
-				BEA5DBDA075CEDA00098A432,
 				BEA5E01D075CEDAC0098A432,
+				BEA5DBDA075CEDA00098A432,
+				652C6EA0083328A700714969,
+				652C6E9F083328A700714969,
+				652C6EA2083328A700714969,
+				652C6EA1083328A700714969,
 				BE02D4E6066F908A0076809F,
 				BE02D4E7066F908A0076809F,
 				9378D9FA07640A46004B97BF,

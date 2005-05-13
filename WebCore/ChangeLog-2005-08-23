@@ -1,3 +1,22 @@
+2005-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- more splitting up of htmlediting.cpp
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_from_text_node_command.cpp: Added.
+        * khtml/editing/delete_from_text_node_command.h: Added.
+        * khtml/editing/delete_selection_command.cpp: Added.
+        * khtml/editing/delete_selection_command.h: Added.
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_into_text_node_command.cpp: Added.
+        * khtml/editing/insert_into_text_node_command.h: Added.
+        * khtml/editing/insert_node_before_command.cpp: Added.
+        * khtml/editing/insert_node_before_command.h: Added.
+
 2005-05-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

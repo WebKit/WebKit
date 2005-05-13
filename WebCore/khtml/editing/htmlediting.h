@@ -29,6 +29,7 @@
 #include "edit_command.h"
 #include "composite_edit_command.h"
 #include "apply_style_command.h"
+#include "delete_selection_command.h"
 
 #include "dom_nodeimpl.h"
 #include "editing/edit_actions.h"
@@ -51,119 +52,6 @@ namespace khtml {
 
 class Selection;
 class VisiblePosition;
-
-//------------------------------------------------------------------------------------------
-// DeleteFromTextNodeCommand
-
-class DeleteFromTextNodeCommand : public EditCommand
-{
-public:
-    DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
-    virtual ~DeleteFromTextNodeCommand();
-	
-    virtual void doApply();
-    virtual void doUnapply();
-
-    DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
-    long count() const { return m_count; }
-
-private:
-    DOM::TextImpl *m_node;
-    long m_offset;
-    long m_count;
-    DOM::DOMString m_text;
-};
-
-//------------------------------------------------------------------------------------------
-// DeleteSelectionCommand
-
-class DeleteSelectionCommand : public CompositeEditCommand
-{ 
-public:
-    DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    DeleteSelectionCommand(DOM::DocumentImpl *document, const Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-	
-    virtual void doApply();
-    virtual EditAction editingAction() const;
-    
-private:
-    virtual bool preservesTypingStyle() const;
-
-    void initializePositionData();
-    void saveTypingStyleState();
-    void insertPlaceholderForAncestorBlockContent();
-    bool handleSpecialCaseBRDelete();
-    void handleGeneralDelete();
-    void fixupWhitespace();
-    void moveNodesAfterNode();
-    void calculateEndingPosition();
-    void calculateTypingStyleAfterDelete(DOM::NodeImpl *insertedPlaceholder);
-    void clearTransientState();
-
-    void setStartNode(DOM::NodeImpl *);
-
-    bool m_hasSelectionToDelete;
-    bool m_smartDelete;
-    bool m_mergeBlocksAfterDelete;
-    bool m_trailingWhitespaceValid;
-
-    // This data is transient and should be cleared at the end of the doApply function.
-    Selection m_selectionToDelete;
-    DOM::Position m_upstreamStart;
-    DOM::Position m_downstreamStart;
-    DOM::Position m_upstreamEnd;
-    DOM::Position m_downstreamEnd;
-    DOM::Position m_endingPosition;
-    DOM::Position m_leadingWhitespace;
-    DOM::Position m_trailingWhitespace;
-    DOM::NodeImpl *m_startBlock;
-    DOM::NodeImpl *m_endBlock;
-    DOM::NodeImpl *m_startNode;
-    DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
-};
-
-//------------------------------------------------------------------------------------------
-// InsertIntoTextNode
-
-class InsertIntoTextNode : public EditCommand
-{
-public:
-    InsertIntoTextNode(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
-    virtual ~InsertIntoTextNode();
-	
-    virtual void doApply();
-    virtual void doUnapply();
-
-    DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
-    DOM::DOMString text() const { return m_text; }
-
-private:
-    DOM::TextImpl *m_node;
-    long m_offset;
-    DOM::DOMString m_text;
-};
-
-//------------------------------------------------------------------------------------------
-// InsertNodeBeforeCommand
-
-class InsertNodeBeforeCommand : public EditCommand
-{
-public:
-    InsertNodeBeforeCommand(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    virtual ~InsertNodeBeforeCommand();
-
-    virtual void doApply();
-    virtual void doUnapply();
-
-    DOM::NodeImpl *insertChild() const { return m_insertChild; }
-    DOM::NodeImpl *refChild() const { return m_refChild; }
-
-private:
-    DOM::NodeImpl *m_insertChild;
-    DOM::NodeImpl *m_refChild; 
-};
 
 //------------------------------------------------------------------------------------------
 // InsertLineBreakCommand
@@ -690,6 +578,12 @@ bool isMailPasteAsQuotationNode(const DOM::NodeImpl *node);
 
 bool isTableStructureNode(const DOM::NodeImpl *node);
 DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
+
+bool isFirstVisiblePositionInSpecialElement(const DOM::Position& pos);
+DOM::Position positionBeforeContainingSpecialElement(const DOM::Position& pos);
+bool isLastVisiblePositionInSpecialElement(const DOM::Position& pos);
+DOM::Position positionAfterContainingSpecialElement(const DOM::Position& pos);
+DOM::Position positionOutsideContainingSpecialElement(const DOM::Position &pos);
 
 } // end namespace khtml
 
