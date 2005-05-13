@@ -52,6 +52,9 @@
     // crash later when finishing button hit tracking.  So we make
     // sure it lives on a bit longer.
     [[panel retain] autorelease];
+    
+    // This is required as a workaround for AppKit issue 4118422
+    [[self retain] autorelease];
 
     [panel close];
     if (usingSheet) {

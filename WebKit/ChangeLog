@@ -1,3 +1,15 @@
+2005-05-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - fixed <rdar://problem/4093306> Safari crashes if Esc key is held down during series 
+        of authentication sheets
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel cancel:]):
+        retain and autorelease self. This is a workaround for an AppKit key-handling issue, which I wrote up as:
+        <rdar://problem/4118422> Key-down events can be sent to a closed window if a key is kept pressed down
+
 2005-05-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin.
