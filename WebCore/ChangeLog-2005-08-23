@@ -1,3 +1,13 @@
+2005-05-13  John Sullivan  <sullivan@apple.com>
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        added Radar numbers to FIXMEs about resizable textareas
+        (-[KWQTextAreaTextView resetCursorRects]):
+        ditto
+        (-[KWQTextAreaTextView mouseDown:]):
+        ditto
+
 2005-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris Blumenberg.

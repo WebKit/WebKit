@@ -749,7 +749,6 @@ const float ResizeCornerHeight = 16;
     long minCols = kMin([element cols], MinimumColsWhileResizing);
     long minRows = kMin([element rows], MinimumRowsWhileResizing);
     
-    // FIXME: there has got to be a better way to find the textarea view.
     KWQTextArea *textArea = [[self superview] superview];
     ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
     
@@ -765,7 +764,7 @@ const float ResizeCornerHeight = 16;
                 break;
             }
 
-            // FIXME: ideally we'd autoscroll the window as necessary to keep the point under
+            // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
             // the cursor in view.
             NSSize newTextAreaSize = NSMakeSize(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x), 
                                                 initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y));
@@ -808,7 +807,7 @@ const float ResizeCornerHeight = 16;
 - (void)resetCursorRects {
     [super resetCursorRects];
     
-    // FIXME: This is intended to change the cursor to the arrow cursor whenever it is
+    // FIXME Radar 4118575: This is intended to change the cursor to the arrow cursor whenever it is
     // over the resize corner. However, it currently only works when the cursor had
     // been inside the textarea, presumably due to interactions with the way NSTextView
     // sets the cursor via [NSClipView setDocumentCursor:]. Also, it stops working once
@@ -848,16 +847,15 @@ const float ResizeCornerHeight = 16;
     
 #if ALLOW_RESIZING_TEXTAREAS
     NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    // FIXME: At minimum, need a cursor change over the "hot resize corner". Maybe the right design
-    // is to only have a resize corner when a scroll bar is present, and put it in the bottom-right
-    // corner (below and/or to the right of  the scroll bar?).
-    // FIXME: With this "bottom right corner" design, we'd need to distinguish between a click in text
+    // FIXME Radar 4118510: Maybe the right design is to only have a resize corner when a scroll bar is 
+    // present, and put it in the bottom-right corner (below and/or to the right of  the scroll bar?).
+    // FIXME Radar 4118599: With this "bottom right corner" design, we'd need to distinguish between a click in text
     // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
-    // FIXME: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
+    // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
     // to drag the bottom-right corner to make the bottom-left corner move.
     BOOL inResizeCorner = NSPointInRect(localPoint, [self _resizeCornerRect]);
     if (inResizeCorner) {
-        // FIXME: if the cursor tracking worked perfectly, this next line wouldn't be necessary
+        // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
         [[NSCursor arrowCursor] set];
         [self _trackResizeFromMouseDown:event];
         return;
