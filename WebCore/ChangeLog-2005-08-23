@@ -1,3 +1,16 @@
+2005-05-16  Adele Peterson  <adele@apple.com>
+
+        Changes by Darin. Reviewed by myself.
+
+        Changed the Render Tree debug code to write out an indication that the affinity is upstream
+        when writing out caret position. Updated the one layout test with output affected by the change.
+        Also updated one test to use the new dumpAsText method in dumpRenderTree.
+
+        * kwq/KWQRenderTreeDebug.cpp: (writeSelection): writes out affinity if it's upstream in the caret case
+        * layout-tests/editing/style/create-block-for-style-004-expected.txt: new results that contain the affinity
+        * layout-tests/fast/js/char-at.html: now calls layoutController.dumpAsText()
+        * layout-tests/fast/js/char-at-expected.txt: plain text result (replaces old render tree result)
+
 2005-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

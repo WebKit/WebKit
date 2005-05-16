@@ -74,6 +74,10 @@ function test() {
 
 }
 
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
 </script>
 
 <body onload="test()">

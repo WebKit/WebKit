@@ -21,4 +21,4 @@ layer at (0,0) size 800x600
             RenderText {TEXT} at (361,14) size 34x28
               text run at (361,14) width 34: "baz"
           RenderBlock (anonymous) at (14,98) size 756x0
-caret: position 3 of child 0 {TEXT} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document (upstream affinity)

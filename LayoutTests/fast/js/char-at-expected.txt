@@ -1,122 +1,39 @@
-layer at (0,0) size 800x718
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x718
-  RenderBlock {HTML} at (0,0) size 800x718
-    RenderBody {BODY} at (8,8) size 784x702
-      RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 130x18
-          text run at (0,0) width 130: "\"\", omitted: \"\", NaN"
-      RenderBlock {DIV} at (0,18) size 784x18
-        RenderText {TEXT} at (0,0) size 146x18
-          text run at (0,0) width 146: "\"\", undefined: \"\", NaN"
-      RenderBlock {DIV} at (0,36) size 784x18
-        RenderText {TEXT} at (0,0) size 91x18
-          text run at (0,0) width 91: "\"\", 0: \"\", NaN"
-      RenderBlock {DIV} at (0,54) size 784x18
-        RenderText {TEXT} at (0,0) size 107x18
-          text run at (0,0) width 107: "\"\", null: \"\", NaN"
-      RenderBlock {DIV} at (0,72) size 784x18
-        RenderText {TEXT} at (0,0) size 112x18
-          text run at (0,0) width 112: "\"\", false: \"\", NaN"
-      RenderBlock {DIV} at (0,90) size 784x18
-        RenderText {TEXT} at (0,0) size 107x18
-          text run at (0,0) width 107: "\"\", true: \"\", NaN"
-      RenderBlock {DIV} at (0,108) size 784x18
-        RenderText {TEXT} at (0,0) size 91x18
-          text run at (0,0) width 91: "\"\", 0: \"\", NaN"
-      RenderBlock {DIV} at (0,126) size 784x18
-        RenderText {TEXT} at (0,0) size 103x18
-          text run at (0,0) width 103: "\"\", 0.1: \"\", NaN"
-      RenderBlock {DIV} at (0,144) size 784x18
-        RenderText {TEXT} at (0,0) size 107x18
-          text run at (0,0) width 107: "\"\", 999: \"\", NaN"
-      RenderBlock {DIV} at (0,162) size 784x18
-        RenderText {TEXT} at (0,0) size 129x18
-          text run at (0,0) width 129: "\"\", Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,180) size 784x18
-        RenderText {TEXT} at (0,0) size 96x18
-          text run at (0,0) width 96: "\"\", -1: \"\", NaN"
-      RenderBlock {DIV} at (0,198) size 784x18
-        RenderText {TEXT} at (0,0) size 134x18
-          text run at (0,0) width 134: "\"\", -Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,216) size 784x18
-        RenderText {TEXT} at (0,0) size 114x18
-          text run at (0,0) width 114: "\"\", NaN: \"\", NaN"
-      RenderBlock {DIV} at (0,234) size 784x18
-        RenderText {TEXT} at (0,0) size 139x18
-          text run at (0,0) width 139: "\"x\", omitted: \"x\", 120"
-      RenderBlock {DIV} at (0,252) size 784x18
-        RenderText {TEXT} at (0,0) size 155x18
-          text run at (0,0) width 155: "\"x\", undefined: \"x\", 120"
-      RenderBlock {DIV} at (0,270) size 784x18
-        RenderText {TEXT} at (0,0) size 100x18
-          text run at (0,0) width 100: "\"x\", 0: \"x\", 120"
-      RenderBlock {DIV} at (0,288) size 784x18
-        RenderText {TEXT} at (0,0) size 116x18
-          text run at (0,0) width 116: "\"x\", null: \"x\", 120"
-      RenderBlock {DIV} at (0,306) size 784x18
-        RenderText {TEXT} at (0,0) size 121x18
-          text run at (0,0) width 121: "\"x\", false: \"x\", 120"
-      RenderBlock {DIV} at (0,324) size 784x18
-        RenderText {TEXT} at (0,0) size 115x18
-          text run at (0,0) width 115: "\"x\", true: \"\", NaN"
-      RenderBlock {DIV} at (0,342) size 784x18
-        RenderText {TEXT} at (0,0) size 100x18
-          text run at (0,0) width 100: "\"x\", 0: \"x\", 120"
-      RenderBlock {DIV} at (0,360) size 784x18
-        RenderText {TEXT} at (0,0) size 112x18
-          text run at (0,0) width 112: "\"x\", 0.1: \"x\", 120"
-      RenderBlock {DIV} at (0,378) size 784x18
-        RenderText {TEXT} at (0,0) size 115x18
-          text run at (0,0) width 115: "\"x\", 999: \"\", NaN"
-      RenderBlock {DIV} at (0,396) size 784x18
-        RenderText {TEXT} at (0,0) size 137x18
-          text run at (0,0) width 137: "\"x\", Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,414) size 784x18
-        RenderText {TEXT} at (0,0) size 104x18
-          text run at (0,0) width 104: "\"x\", -1: \"\", NaN"
-      RenderBlock {DIV} at (0,432) size 784x18
-        RenderText {TEXT} at (0,0) size 142x18
-          text run at (0,0) width 142: "\"x\", -Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,450) size 784x18
-        RenderText {TEXT} at (0,0) size 122x18
-          text run at (0,0) width 122: "\"x\", NaN: \"\", NaN"
-      RenderBlock {DIV} at (0,468) size 784x18
-        RenderText {TEXT} at (0,0) size 147x18
-          text run at (0,0) width 147: "\"xy\", omitted: \"x\", 120"
-      RenderBlock {DIV} at (0,486) size 784x18
-        RenderText {TEXT} at (0,0) size 163x18
-          text run at (0,0) width 163: "\"xy\", undefined: \"x\", 120"
-      RenderBlock {DIV} at (0,504) size 784x18
-        RenderText {TEXT} at (0,0) size 108x18
-          text run at (0,0) width 108: "\"xy\", 0: \"x\", 120"
-      RenderBlock {DIV} at (0,522) size 784x18
-        RenderText {TEXT} at (0,0) size 124x18
-          text run at (0,0) width 124: "\"xy\", null: \"x\", 120"
-      RenderBlock {DIV} at (0,540) size 784x18
-        RenderText {TEXT} at (0,0) size 129x18
-          text run at (0,0) width 129: "\"xy\", false: \"x\", 120"
-      RenderBlock {DIV} at (0,558) size 784x18
-        RenderText {TEXT} at (0,0) size 124x18
-          text run at (0,0) width 124: "\"xy\", true: \"y\", 121"
-      RenderBlock {DIV} at (0,576) size 784x18
-        RenderText {TEXT} at (0,0) size 108x18
-          text run at (0,0) width 108: "\"xy\", 0: \"x\", 120"
-      RenderBlock {DIV} at (0,594) size 784x18
-        RenderText {TEXT} at (0,0) size 120x18
-          text run at (0,0) width 120: "\"xy\", 0.1: \"x\", 120"
-      RenderBlock {DIV} at (0,612) size 784x18
-        RenderText {TEXT} at (0,0) size 123x18
-          text run at (0,0) width 123: "\"xy\", 999: \"\", NaN"
-      RenderBlock {DIV} at (0,630) size 784x18
-        RenderText {TEXT} at (0,0) size 145x18
-          text run at (0,0) width 145: "\"xy\", Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,648) size 784x18
-        RenderText {TEXT} at (0,0) size 112x18
-          text run at (0,0) width 112: "\"xy\", -1: \"\", NaN"
-      RenderBlock {DIV} at (0,666) size 784x18
-        RenderText {TEXT} at (0,0) size 150x18
-          text run at (0,0) width 150: "\"xy\", -Infinity: \"\", NaN"
-      RenderBlock {DIV} at (0,684) size 784x18
-        RenderText {TEXT} at (0,0) size 130x18
-          text run at (0,0) width 130: "\"xy\", NaN: \"\", NaN"
+"", omitted: "", NaN
+"", undefined: "", NaN
+"", 0: "", NaN
+"", null: "", NaN
+"", false: "", NaN
+"", true: "", NaN
+"", 0: "", NaN
+"", 0.1: "", NaN
+"", 999: "", NaN
+"", Infinity: "", NaN
+"", -1: "", NaN
+"", -Infinity: "", NaN
+"", NaN: "", NaN
+"x", omitted: "x", 120
+"x", undefined: "x", 120
+"x", 0: "x", 120
+"x", null: "x", 120
+"x", false: "x", 120
+"x", true: "", NaN
+"x", 0: "x", 120
+"x", 0.1: "x", 120
+"x", 999: "", NaN
+"x", Infinity: "", NaN
+"x", -1: "", NaN
+"x", -Infinity: "", NaN
+"x", NaN: "", NaN
+"xy", omitted: "x", 120
+"xy", undefined: "x", 120
+"xy", 0: "x", 120
+"xy", null: "x", 120
+"xy", false: "x", 120
+"xy", true: "y", 121
+"xy", 0: "x", 120
+"xy", 0.1: "x", 120
+"xy", 999: "", NaN
+"xy", Infinity: "", NaN
+"xy", -1: "", NaN
+"xy", -Infinity: "", NaN
+"xy", NaN: "", NaN
