@@ -642,6 +642,12 @@ void MutationEvent::initMutationEvent(const DOMString &typeArg,
 
 // -----------------------------------------------------------------------------
 
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_LEFT;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_UNKNOWN;
+
 KeyboardEvent::KeyboardEvent()
 {
 }

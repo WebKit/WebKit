@@ -1,3 +1,43 @@
+2005-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed issues preventing us from compiling with newer versions of gcc 4.0
+
+        * khtml/dom/dom2_events.cpp: Add definitions of some static data member constants, as required
+        by the C++ standard and the gcc 4.0 compiler.
+
+        * khtml/editing/selection.h: Specified KHTMLPart friend class as ::KHTMLPart, since if it's
+        not explicitly qualified, it means DOM::KHTMLPart.
+
+        * khtml/dom/dom_string.cpp:
+        (DOM::strcasecmp): Removed redundant and illegal DOM:: prefix.
+        (DOM::operator==): Ditto.
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::getStringOrNull): Removed redundant and illegal KJS:: prefix.
+        (KJS::ValueToVariant): Ditto.
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::getCSSRuleConstructor): Ditto.
+        (KJS::getCSSValueConstructor): Ditto.
+        (KJS::getCSSPrimitiveValueConstructor): Ditto.
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::getEventConstructor): Ditto.
+        (KJS::getEventExceptionConstructor): Ditto.
+        (KJS::getMutationEventConstructor): Ditto.
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::getNodeFilterConstructor): Ditto.
+
+        * khtml/misc/loader_client.h: Added an empty virtual destructor to CachedObjectClient
+        to quiet the compiler. This doesn't really do any good, but also does no harm.
+        * khtml/misc/loader.cpp: (CachedObjectClient::~CachedObjectClient): Added.
+
+        * khtml/rendering/render_block.cpp: (khtml::RenderBlock::fillBlockSelectionGaps):
+        Initialize a couple of variables that should have been initialized to 0.
+        Not just about making the compiler happy -- warning found a real bug!
+
+        * kwq/KWQTextArea.mm: (RangeOfParagraph): Change else structure to work around compiler
+        warning bug.
+
 2005-05-13  John Sullivan  <sullivan@apple.com>
 
         * kwq/KWQTextArea.mm:

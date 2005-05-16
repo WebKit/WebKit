@@ -2539,6 +2539,7 @@ CachedObjectClient *CachedObjectClientWalker::next()
 
 // --------------------------------------
 
+CachedObjectClient::~CachedObjectClient() { }
 void CachedObjectClient::setPixmap(const QPixmap &, const QRect&, CachedImage *) {}
 void CachedObjectClient::setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/) {}
 #ifndef KHTML_NO_XBL

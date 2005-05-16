@@ -1543,7 +1543,8 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
         if (curr->isRelPositioned() && curr->layer()) {
             // If the relposition offset is anything other than 0, then treat this just like an absolute positioned element.
             // Just disregard it completely.
-            int x, y;
+            int x = 0;
+            int y = 0;
             curr->layer()->relativePositionOffset(x, y);
             if (x || y)
                 continue;

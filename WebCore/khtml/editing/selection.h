@@ -115,7 +115,7 @@ public:
     void debugPosition() const;
     void debugRenderer(khtml::RenderObject *r, bool selected) const;
 
-    friend class KHTMLPart;
+    friend class ::KHTMLPart;
 
 #ifndef NDEBUG
     void formatForDebugger(char *buffer, unsigned length) const;

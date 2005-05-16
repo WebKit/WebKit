@@ -360,12 +360,12 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     }
 
     if (paragraphSoFar < paragraph) {
-	return NSMakeRange(NSNotFound, 0);
-    } else if (searchRange.location == NSNotFound || newlineRange.location == NSNotFound) {
-	return searchRange;
-    } else {
-	return NSMakeRange(searchRange.location, newlineRange.location - searchRange.location);
+        return NSMakeRange(NSNotFound, 0);
     }
+    if (searchRange.location == NSNotFound || newlineRange.location == NSNotFound) {
+        return searchRange;
+    }
+    return NSMakeRange(searchRange.location, newlineRange.location - searchRange.location);
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
