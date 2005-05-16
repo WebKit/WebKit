@@ -1,3 +1,9 @@
+2005-05-16  Darin Adler  <darin@apple.com>
+
+        - attempt to get things building under "Saffron" development tools
+
+        * WebKit.pbproj/project.pbxproj: Use BUILT_PRODUCTS_DIR instead of SYMROOT.
+
 2005-05-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin.

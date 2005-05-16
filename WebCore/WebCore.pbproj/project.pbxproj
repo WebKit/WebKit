@@ -7,7 +7,7 @@
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(SYMROOT)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
+				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = "";
 				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -22,7 +22,7 @@
 		};
 		014CEA450018CDF011CA2923 = {
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(SYMROOT)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
+				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
@@ -11066,7 +11066,7 @@
 		};
 		F58C8A07025BD3BC018635CA = {
 			buildSettings = {
-				CREATE_HASH_TABLE = "$(SYMROOT)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
+				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				PREBINDING = NO;

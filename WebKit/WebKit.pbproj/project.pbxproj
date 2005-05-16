@@ -14,7 +14,7 @@
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(SYMROOT)";
+				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -25,7 +25,7 @@
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(SYMROOT)";
+				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -4896,7 +4896,7 @@
 				PREBINDING = NO;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(SYMROOT)";
+				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
 			};
 			isa = PBXBuildStyle;
 			name = OptimizedWithSymbols;
