@@ -1,3 +1,14 @@
+2005-05-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fixed issues preventing us from compiling with newer versions of gcc 4.0
+
+        * kjs/ustring.cpp:
+        (KJS::operator==): Remove redundant and illegal KJS:: prefix on this function's definition.
+        (KJS::operator<): Ditto.
+        (KJS::compare): Ditto.
+
 2005-05-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
