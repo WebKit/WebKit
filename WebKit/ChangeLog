@@ -1,3 +1,13 @@
+2005-05-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4120255> web archives on remote servers can be viewed directly (with major security issues); should download instead
+
+        Reviewed by mjs.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): if the WebKit client has chosen to "use" a remote web archive, stop the load with an error
+
 2005-05-16  Darin Adler  <darin@apple.com>
 
         - attempt to get things building under "Saffron" development tools
