@@ -6,16 +6,23 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebKit/WebAssertions.h>
-#import <Foundation/NSURLResponse.h>
-
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
+
+#import <Foundation/NSURLResponse.h>
+
+@interface NSTextView (AppKitSecret)
++ (NSURL *)_URLForString:(NSString *)string;
+@end
 
 @interface WebTextView (ForwardDeclarations)
 - (void)_updateTextSizeMultiplier;
@@ -325,6 +332,28 @@
         [self setSelectedRange:NSMakeRange(0,0)];
     }
     return resign;
+}
+
+- (void)clickedOnLink:(id)link atIndex:(unsigned)charIndex
+{
+    NSURL *URL = nil;
+    if ([link isKindOfClass:[NSURL class]]) {
+        URL = (NSURL *)link;
+    } else if ([link isKindOfClass:[NSString class]]) {
+        URL = [[self class] _URLForString:(NSString *)link];
+    }
+    if (URL != nil) {    
+        // Call the bridge because this is where our security checks are made.
+        WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+        [[frame _bridge] loadURL:URL 
+                        referrer:[[[[frame dataSource] request] URL] _web_originalDataAsString]
+                          reload:NO
+                     userGesture:YES       
+                          target:nil
+                 triggeringEvent:[[self window] currentEvent]
+                            form:nil 
+                      formValues:nil];
+    }
 }
 
 #pragma mark PRINTING

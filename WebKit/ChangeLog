@@ -1,4 +1,16 @@
 2005-05-17  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/4119282> clicking a link in an RTF file opens the link with NSWorkspace without the usual security checks or WebView delegate control
+
+        Reviewed by mjs.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]): pass the passed referrer to canLoadURL::: not [self referrer]
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): ditto
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView clickedOnLink:atIndex:]): call the loadURL bridge method so that security checks are made, command/option clicks work, policy delegate is consulted etc.
+
+2005-05-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4120255> web archives on remote servers can be viewed directly (with major security issues); should download instead
 

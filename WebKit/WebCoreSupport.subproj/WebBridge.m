@@ -627,7 +627,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
         return;
 
     if ([target length] == 0) {
@@ -657,7 +657,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
         return;
 
     if ([target length] == 0) {
