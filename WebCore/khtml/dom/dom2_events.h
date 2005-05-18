@@ -24,10 +24,18 @@
 #ifndef _DOM_Events_h_
 #define _DOM_Events_h_
 
-#include <dom/dom_node.h>
 #include <dom/dom_misc.h>
+#include <dom/dom_string.h>
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
+#include <dom/dom_node.h>
+
+#endif
 
 namespace DOM {
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 class Event;
 class EventException;
@@ -37,12 +45,15 @@ class MutationEvent;
 class KeyboardEvent;
 class AbstractView;
 
-class EventListenerImpl;
-class EventImpl;
 class UIEventImpl;
 class MouseEventImpl;
 class MutationEventImpl;
 class KeyboardEventImpl;
+
+#endif
+
+class EventListenerImpl;
+class EventImpl;
 
 #if KHTML_NO_CPLUSPLUS_DOM
 typedef EventImpl *EventListenerEvent;
@@ -728,9 +739,10 @@ class KeyboardEvent
 
 {
 
+public:
+
 #if !KHTML_NO_CPLUSPLUS_DOM
 
-public:
     KeyboardEvent();
     KeyboardEvent(const KeyboardEvent &other);
     KeyboardEvent(const Event &other);

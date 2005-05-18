@@ -35,6 +35,7 @@ namespace DOM {
 
 class DocumentFragmentImpl;
 class DocumentPtr;
+class DOMString;
 class NodeImpl;
 class Position;
 

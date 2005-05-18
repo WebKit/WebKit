@@ -29,9 +29,13 @@
 #ifndef _DOM_Node_h_
 #define _DOM_Node_h_
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 #include <qstring.h>
 
 class QRect;
+
+#endif
 
 namespace DOM {
 

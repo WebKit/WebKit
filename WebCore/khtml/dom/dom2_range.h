@@ -31,10 +31,18 @@
 #ifndef _dom2_range_h_
 #define _dom2_range_h_
 
+#include <dom/dom_node.h>
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 #include <dom/dom_doc.h>
 #include <dom/dom_misc.h>
 
+#endif
+
 namespace DOM {
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 class DocumentFragment;
 class Node;
@@ -44,9 +52,14 @@ class RangeImpl;
 
 class DOMException;
 
+#endif
+
 // Introduced in DOM Level 2:
 class RangeException {
 public:
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     RangeException(unsigned short _code) { code = _code; }
     RangeException(const RangeException &other) { code = other.code; }
 
@@ -54,6 +67,9 @@ public:
 	{ code = other.code; return *this; }
 
     virtual ~RangeException() {}
+
+#endif
+
     /**
      * An integer indicating the type of error generated.
      *
@@ -64,16 +80,29 @@ public:
         _EXCEPTION_OFFSET              = 2000,
         _EXCEPTION_MAX                 = 2999
     };
-    unsigned short code;
-};
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
+    unsigned short code;
+
+#endif
+};
 
 class Range
 {
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     friend class DocumentImpl;
     friend class Document;
     friend class RangeImpl;
+
+#endif
+
 public:
+
+#if !KHTML_NO_CPLUSPLUS_DOM
+
     Range();
     Range(const Document rootContainer);
     Range(const Range &other);
@@ -272,12 +301,16 @@ public:
      */
     void selectNodeContents ( const Node &refNode );
 
+#endif
+
     enum CompareHow {
 	START_TO_START = 0,
 	START_TO_END = 1,
 	END_TO_END = 2,
 	END_TO_START = 3
     };
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
     /**
      * Compare the end-points of two ranges in a document.
@@ -472,6 +505,9 @@ protected:
 
 private:
     void throwException(int exceptioncode) const;
+
+#endif
+
 };
 
 // Used determine how to interpret the offsets used in DOM Ranges.

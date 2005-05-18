@@ -105,6 +105,11 @@ public:
 public slots:
     virtual void slotClicked();
 
+#if APPLE_CHANGES
+    // Hack to make KWQSlot code work.
+    virtual void slotTextChanged(const QString &string);
+#endif
+
 protected:
     virtual bool isRenderButton() const { return false; }
     virtual bool isEditable() const { return false; }

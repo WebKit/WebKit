@@ -35,10 +35,8 @@ void QFrame::setFrameStyle(int s)
     _frameStyle = s;
 
     // Tell the other side of the bridge about the frame style change.
-    KHTMLView *view = dynamic_cast<KHTMLView *>(this);
-    if (view) {
-        KHTMLPart *part = view->part();
-        if (part) {
+    if (isKHTMLView()) {
+        if (KHTMLPart *part = static_cast<KHTMLView *>(this)->part()) {
 	    KWQ_BLOCK_EXCEPTIONS;
             [KWQ(part)->bridge() setHasBorder:(s != NoFrame)];
 	    KWQ_UNBLOCK_EXCEPTIONS;

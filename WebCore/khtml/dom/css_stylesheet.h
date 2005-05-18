@@ -25,13 +25,17 @@
  * Copyright © 2000 W3C® (MIT, INRIA, Keio), All Rights Reserved.
  *
  */
+
 #ifndef _CSS_css_stylesheet_h_
 #define _CSS_css_stylesheet_h_
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 #include <dom/dom_string.h>
 #include <dom/dom_node.h>
 #include <dom/dom_misc.h>
 
+#endif
 
 namespace DOM {
 

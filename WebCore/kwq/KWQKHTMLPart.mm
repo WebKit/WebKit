@@ -129,7 +129,6 @@ using khtml::RenderImage;
 using khtml::RenderLayer;
 using khtml::RenderListItem;
 using khtml::RenderObject;
-using khtml::RenderPart;
 using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
@@ -383,7 +382,7 @@ static HTMLFormElementImpl *scanForForm(NodeImpl *start)
 HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
 {
     // start looking either at the active (first responder) node, or where the selection is
-    NodeImpl *start = activeNode().handle();
+    NodeImpl *start = d->m_doc ? d->m_doc->focusNode() : 0;
     if (!start) {
         start = selectionStart();
     }
@@ -1220,10 +1219,11 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
         if (!node) {
             return nil;
         }
-        RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(node->renderer());
-        if (renderWidget) {
+        RenderObject *renderer = node->renderer();
+        if (renderer->isWidget()) {
+            RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
             QWidget *widget = renderWidget->widget();
-            KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
+            KHTMLView *childFrameWidget = widget->isKHTMLView() ? static_cast<KHTMLView *>(widget) : 0;
             NSView *view = nil;
             if (childFrameWidget) {
                 view = KWQ(childFrameWidget->part())->nextKeyViewInFrame(0, direction);
@@ -1315,7 +1315,7 @@ bool KWQKHTMLPart::currentEventIsMouseDownInWidget(QWidget *candidate)
     
     NodeImpl *node = nodeForWidget(candidate);
     ASSERT(node);
-    return partForNode(node)->nodeUnderMouse() == node;
+    return partForNode(node)->d->m_view->nodeUnderMouse() == node;
 }
 
 bool KWQKHTMLPart::currentEventIsKeyboardOptionTab()
@@ -1621,9 +1621,8 @@ KWQKHTMLPart *KWQKHTMLPart::partForWidget(const QWidget *widget)
     }
     
     // Assume all widgets are either form controls, or KHTMLViews.
-    const KHTMLView *view = dynamic_cast<const KHTMLView *>(widget);
-    ASSERT(view);
-    return KWQ(view->part());
+    ASSERT(widget->isKHTMLView());
+    return KWQ(static_cast<const KHTMLView *>(widget)->part());
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
@@ -2535,11 +2534,11 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             if (!node) {
                 return false;
             }
-            RenderPart *renderPart = dynamic_cast<RenderPart *>(node->renderer());
-            if (!renderPart) {
+            RenderObject *renderer = node->renderer();
+            if (!renderer || !renderer->isWidget()) {
                 return false;
             }
-            if (!passWidgetMouseDownEventToWidget(renderPart)) {
+            if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(renderer))) {
                 return false;
             }
             _mouseDownWasInSubframe = true;

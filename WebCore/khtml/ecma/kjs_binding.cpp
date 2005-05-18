@@ -30,6 +30,7 @@
 #include "dom/dom2_range.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "dom/css_stylesheet.h"
 
 #include <kdebug.h>
 
@@ -50,41 +51,13 @@ namespace KJS {
 
 Value DOMObject::get(ExecState *exec, const Identifier &p) const
 {
-  Value result;
-  try {
-    result = tryGet(exec,p);
-  }
-  catch (DOM::DOMException e) {
-    // ### translate code into readable string ?
-    // ### oh, and s/QString/i18n or I18N_NOOP (the code in kjs uses I18N_NOOP... but where is it translated ?)
-    //     and where does it appear to the user ?
-    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException( err );
-    result = Undefined();
-  }
-  catch (...) {
-    kdError(6070) << "Unknown exception in DOMObject::get()" << endl;
-    result = String("Unknown exception");
-  }
-
-  return result;
+  return tryGet(exec,p);
 }
 
 void DOMObject::put(ExecState *exec, const Identifier &propertyName,
                     const Value &value, int attr)
 {
-  try {
-    tryPut(exec, propertyName, value, attr);
-  }
-  catch (DOM::DOMException e) {
-    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (...) {
-    kdError(6070) << "Unknown exception in DOMObject::put()" << endl;
-  }
+  tryPut(exec, propertyName, value, attr);
 }
 
 UString DOMObject::toString(ExecState *) const
@@ -94,57 +67,12 @@ UString DOMObject::toString(ExecState *) const
 
 Value DOMFunction::get(ExecState *exec, const Identifier &propertyName) const
 {
-  Value result;
-  try {
-    result = tryGet(exec, propertyName);
-  }
-  catch (DOM::DOMException e) {
-    result = Undefined();
-    Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (...) {
-    kdError(6070) << "Unknown exception in DOMFunction::get()" << endl;
-    result = String("Unknown exception");
-  }
-
-  return result;
+  return tryGet(exec, propertyName);
 }
 
 Value DOMFunction::call(ExecState *exec, Object &thisObj, const List &args)
 {
-  Value val;
-  try {
-    val = tryCall(exec, thisObj, args);
-  }
-  // pity there's no way to distinguish between these in JS code
-  catch (DOM::DOMException e) {
-    Object err = Error::create(exec, GeneralError, QString("DOM Exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (DOM::RangeException e) {
-    Object err = Error::create(exec, GeneralError, QString("DOM Range Exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (DOM::CSSException e) {
-    Object err = Error::create(exec, GeneralError, QString("CSS Exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (DOM::EventException e) {
-    Object err = Error::create(exec, GeneralError, QString("DOM Event Exception %1").arg(e.code).local8Bit());
-    err.put(exec, "code", Number(e.code));
-    exec->setException(err);
-  }
-  catch (...) {
-    kdError(6070) << "Unknown exception in DOMFunction::call()" << endl;
-    Object err = Error::create(exec, GeneralError, "Unknown exception");
-    exec->setException(err);
-  }
-  return val;
+  return tryCall(exec, thisObj, args);
 }
 
 static QPtrDict<DOMObject> * staticDomObjects = 0;

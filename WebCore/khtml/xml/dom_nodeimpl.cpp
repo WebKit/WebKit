@@ -906,10 +906,9 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
 
     QPtrList<RegisteredEventListener> listenersCopy = *m_regdListeners;
     QPtrListIterator<RegisteredEventListener> it(listenersCopy);
-    Event ev = evt;
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id() && it.current()->useCapture == useCapture) {
-            it.current()->listener->handleEvent(ev, false);
+            it.current()->listener->handleEventImpl(evt, false);
         }
     }
 
@@ -1726,7 +1725,7 @@ NodeImpl *ContainerNodeImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChi
     if(!refChild)
         return appendChild(newChild, exceptioncode);
 
-    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+    SharedPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
 
     // Make sure adding the new child is ok
     checkAddChild(newChild, exceptioncode);
@@ -1795,7 +1794,7 @@ NodeImpl *ContainerNodeImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChi
 {
     exceptioncode = 0;
 
-    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+    SharedPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
 
     if ( oldChild == newChild ) // nothing to do
 	return oldChild;
@@ -1957,7 +1956,7 @@ NodeImpl *ContainerNodeImpl::appendChild ( NodeImpl *newChild, int &exceptioncod
 {
     exceptioncode = 0;
 
-    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+    SharedPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
 
     // Make sure adding the new child is ok
     checkAddChild(newChild, exceptioncode);
@@ -2065,7 +2064,7 @@ NodeImpl *ContainerNodeImpl::addChild(NodeImpl *newChild)
 {
     // do not add applyChanges here! This function is only used during parsing
 
-    Node protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
+    SharedPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
 
     // short check for consistency with DTD
     if(!isXMLElementNode() && !newChild->isXMLElementNode() && !childAllowed(newChild))

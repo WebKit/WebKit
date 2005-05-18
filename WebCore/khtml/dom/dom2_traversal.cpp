@@ -22,20 +22,26 @@
 
 #include "dom/dom2_traversal.h"
 
+#if !KHTML_NO_CPLUSPLUS_DOM
+
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 #include "xml/dom2_traversalimpl.h"
+
+#endif
 
 namespace DOM {
 
 // --------------------------------------------------------------
 
-short NodeFilterCondition::acceptNode(const Node &) const
+short NodeFilterCondition::acceptNode(FilterNode) const
 {
     return NodeFilter::FILTER_ACCEPT;
 }
 
 // --------------------------------------------------------------
+
+#if !KHTML_NO_CPLUSPLUS_DOM
 
 NodeFilter::NodeFilter() : impl(0)
 {
@@ -345,5 +351,6 @@ Node TreeWalker::nextNode()
     return 0;
 }
 
-} // namespace DOM
+#endif
 
+} // namespace DOM

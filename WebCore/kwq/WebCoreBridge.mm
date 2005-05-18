@@ -96,7 +96,6 @@ using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentTypeImpl;
 using DOM::DOMString;
-using DOM::Element;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;
@@ -616,7 +615,7 @@ static bool initializedKJS = FALSE;
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
-    QString text = _part->text([range _rangeImpl]);
+    QString text = plainText([range _rangeImpl]);
     text.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
     return [[text.getNSString() copy] autorelease];
 }
@@ -804,8 +803,8 @@ static BOOL nowPrinting(WebCoreBridge *self)
           
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    RenderPart *nodeRenderPart = dynamic_cast<RenderPart *>(node);
-    QWidget *widget = nodeRenderPart ? nodeRenderPart->widget() : 0;
+    RenderWidget *renderWidget = node->isWidget() ? static_cast<RenderWidget *>(node) : 0;
+    QWidget *widget = renderWidget ? renderWidget->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
     int nx, ny;

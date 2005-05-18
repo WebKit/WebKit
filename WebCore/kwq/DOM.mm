@@ -58,12 +58,6 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
-// Temporary: Remove when the real FilterNode is checked in.
-namespace DOM {
-    typedef const Node &FilterNode;
-}
-
-using DOM::Attr;
 using DOM::AttrImpl;
 using DOM::CharacterDataImpl;
 using DOM::DocumentFragmentImpl;
@@ -74,12 +68,10 @@ using DOM::DocumentImpl;
 using DOM::DOMImplementationImpl;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
-using DOM::Element;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::FilterNode;
 using DOM::HTMLElementImpl;
-using DOM::NamedNodeMap;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
 using DOM::NodeFilter;
@@ -2197,32 +2189,46 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
 
 short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
 {
-    if (n.isNull())
+#if KHTML_NO_CPLUSPLUS_DOM
+    NodeImpl *node = n;
+#else
+    NodeImpl *node = n.handle();
+#endif
+    if (!node)
         return NodeFilter::FILTER_REJECT;
-
-    return [m_filter acceptNode:[DOMNode _nodeWithImpl:n.handle()]];
+    return [m_filter acceptNode:[DOMNode _nodeWithImpl:node]];
 }
 
 @implementation DOMDocument (DOMDocumentTraversal)
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    NodeFilter cppFilter;
-    if (filter)
-        cppFilter = NodeFilter(new ObjCNodeFilterCondition(filter));
+    NodeFilterImpl *cppFilter = 0;
+    if (filter) {
+        cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
+        cppFilter->ref();
+    }
     int exceptionCode = 0;
-    NodeIteratorImpl *impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter.handle(), expandEntityReferences, exceptionCode);
+    NodeIteratorImpl *impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
+    if (cppFilter) {
+        cppFilter->deref();
+    }
     raiseOnDOMError(exceptionCode);
     return [DOMNodeIterator _nodeIteratorWithImpl:impl filter:filter];
 }
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    NodeFilter cppFilter;
-    if (filter)
-        cppFilter = NodeFilter(new ObjCNodeFilterCondition(filter));
+    NodeFilterImpl *cppFilter;
+    if (filter) {
+        cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
+        cppFilter->ref();
+    }
     int exceptionCode = 0;
-    TreeWalkerImpl *impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter.handle(), expandEntityReferences, exceptionCode);
+    TreeWalkerImpl *impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
+    if (cppFilter) {
+        cppFilter->deref();
+    }
     raiseOnDOMError(exceptionCode);
     return [DOMTreeWalker _treeWalkerWithImpl:impl filter:filter];
 }

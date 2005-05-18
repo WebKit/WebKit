@@ -28,6 +28,8 @@
 
 #include "xml/dom2_rangeimpl.h"
 
+#include <qstring.h>
+
 namespace khtml {
 
 class InlineTextBox;

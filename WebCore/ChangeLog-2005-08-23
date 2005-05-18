@@ -1,5 +1,90 @@
 2005-05-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+        No new layout tests required.
+
+        - remove all dependencies on exceptions and RTTI (but don't turn them off yet, that will be in a later patch)
+
+        * WebCore.pbproj/project.pbxproj: Set a new KHTML_NO_CPLUSPLUS_DOM define.
+        Removed all C++ DOM wrapper files that we don't need to compile any more.
+
+        * khtml/dom/css_stylesheet.h: Added more KHTML_NO_CPLUSPLUS_DOM checks so we don't include any
+        headers when including this file.
+
+        * khtml/dom/dom2_events.h: Fixed up KHTML_NO_CPLUSPLUS_DOM checks so that everything but EventListener
+        is turned off when that's on. Also moved the public so that the constants from KeyboardEvent are public.
+        * khtml/dom/dom2_events.cpp: Put everything except for EventListener inside KHTML_NO_CPLUSPLUS_DOM.
+
+        * khtml/dom/dom2_range.h: Added KHTML_NO_CPLUSPLUS_DOM checks so that only the constants are defined,
+        no classes.
+
+        * khtml/dom/dom2_traversal.cpp: Put everything except for NodeFilterCondition inside KHTML_NO_CPLUSPLUS_DOM.
+
+        * khtml/dom/dom_node.h: Added more KHTML_NO_CPLUSPLUS_DOM checks so we don't include any
+        headers when including this file.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::DOMObject::get): Removed exception-handling code. Now we can eliminate tryGet altogether.
+        (KJS::DOMObject::put): Ditto.
+        (KJS::DOMFunction::get): Ditto.
+        (KJS::DOMFunction::call): Ditto.
+
+        * khtml/editing/visible_text.h: Added an include of <qstring.h>.
+
+        * khtml/misc/loader.h: Added isKHTMLLoader.
+        * khtml/misc/loader.cpp: (Loader::isKHTMLLoader): Added. Poor-man's replacement for dynamic_cast.
+
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_form.cpp: (RenderFormElement::slotTextChanged): Added. Hack to make KWQSlot work
+        for this function.
+
+        * khtml/xml/dom2_rangeimpl.h: Added a forward declaration of class DOMString, needed now that the C++
+        DOM wrappers aren't defining it.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::defaultEventHandler): Changed to call handleEventImpl so we don't have to make the
+        C++ DOM wrapper for the event.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::handleLocalEvents): Ditto.
+        (ContainerNodeImpl::insertBefore): Used SharedPtr<NodeImpl> rather than Node to protect the child node.
+        (ContainerNodeImpl::replaceChild): Ditto.
+        (ContainerNodeImpl::appendChild): Ditto.
+        (ContainerNodeImpl::addChild): Ditto.
+
+        * kwq/DOM.mm:
+        (ObjCNodeFilterCondition::acceptNode): Update to add a KHTML_NO_CPLUSPLUS_DOM check since FilterCondition
+        has a different API depending on the state.
+        (-[DOMDocument createNodeIterator::::]): Rewrote to use NodeFilterImpl instead of NodeFilter.
+        (-[DOMDocument createTreeWalker::::]): Ditto.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject role]): Use identifier instead of casting to Node and using elementId.
+        (-[KWQAccObject title]): Ditto.
+        (-[KWQAccObject accessibilityIsIgnored]): Ditto.
+        (-[KWQAccObject rendererForView:]): Ditto.
+
+        * kwq/KWQFrame.mm: (QFrame::setFrameStyle): Use isKHTMLView instead of dynamic_cast.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::currentForm): Use focusNode instead of activeNode.
+        (KWQKHTMLPart::nextKeyViewInFrame): Use isWidget instead of dynamic_cast.
+        (KWQKHTMLPart::currentEventIsMouseDownInWidget): Use KHTMLView's nodeUnderMouse instead of our public one
+        that uses a DOM C++ wrapper.
+        (KWQKHTMLPart::partForWidget): Use isKHTMLView instead of dynamic_cast.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Use isWidget instead of dynamic_cast.
+
+        * kwq/KWQObject.h: Made isXXX functions all public since we use them in a few more places now.
+        Also added isKHTMLLoader.
+        * kwq/KWQObject.mm: (QObject::isKHTMLLoader): Added. Returns false by default.
+
+        * kwq/KWQSlot.mm: Removed all uses of dynamic_cast.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringForRange:]): Used plainText instead of text.
+        (-[WebCoreBridge copyRenderNode:copier:]): Used isWidget instead of dynamic_cast.
+
+2005-05-16  Darin Adler  <darin@apple.com>
+
         - attempt to get things building under "Saffron" development tools
 
         * WebCore.pbproj/project.pbxproj: Use BUILT_PRODUCTS_DIR instead of SYMROOT.

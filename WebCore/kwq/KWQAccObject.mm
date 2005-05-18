@@ -373,8 +373,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     }
     if (m_renderer->isListMarker())
         return @"AXListMarker";
-    if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-        Node(m_renderer->element()).elementId() == ID_BUTTON)
+    if (m_renderer->element() && m_renderer->element()->identifier() == ID_BUTTON)
         return NSAccessibilityButtonRole;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
@@ -540,7 +539,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return nil;
     
-    if (m_renderer->element()->isHTMLElement() && Node(m_renderer->element()).elementId() == ID_BUTTON)
+    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->identifier() == ID_BUTTON)
         return [self textUnderElement];
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
@@ -630,7 +629,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-              Node(m_renderer->element()).elementId() == ID_BUTTON));
+              m_renderer->element()->identifier() == ID_BUTTON));
 }
 
 - (NSArray *)accessibilityAttributeNames
@@ -1870,7 +1869,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!part)
         return NULL;
         
-    DocumentImpl *document = static_cast<DocumentImpl *>(part->document().handle());
+    DocumentImpl *document = part->xmlDocImpl();
     if (!document)
         return NULL;
         

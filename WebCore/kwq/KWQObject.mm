@@ -383,6 +383,11 @@ bool QObject::inherits(const char *className) const
     return false;
 }
 
+bool QObject::isKHTMLLoader() const
+{
+    return false;
+}
+
 bool QObject::isKHTMLPart() const
 {
     return false;
