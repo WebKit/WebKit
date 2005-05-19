@@ -1,4 +1,13 @@
-2005-05-16  Darin Adler  <darin@apple.com>
+2005-05-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris Petersen.
+
+        - fixed a mistake I introduced in my previous check-in that caused a Deployment build failure
+
+        * kwq/DOM.mm: (-[DOMDocument createTreeWalker::::]): Initialize cppFilter to 0, which fixes both
+        the build failure and a potential bug!
+
+2005-05-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
         No new layout tests required.

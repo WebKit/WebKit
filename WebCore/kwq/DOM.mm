@@ -2219,7 +2219,7 @@ short ObjCNodeFilterCondition::acceptNode(FilterNode n) const
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    NodeFilterImpl *cppFilter;
+    NodeFilterImpl *cppFilter = 0;
     if (filter) {
         cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
         cppFilter->ref();
