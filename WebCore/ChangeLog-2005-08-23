@@ -1,5 +1,13 @@
 2005-05-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+        
+        - turned off exceptions and RTTI; seems to cut WebCore code size by about 35%
+
+        * WebCore.pbproj/project.pbxproj: Turn off exceptions and RTTI for the framework.
+
+2005-05-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris Petersen.
 
         - fixed a mistake I introduced in my previous check-in that caused a Deployment build failure
