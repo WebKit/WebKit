@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - got rid of code that depended on RTTI
+
+        * kjs/collector.cpp:
+        (KJS::className): Added. Gets class name in a KJS way, rather than a C++ RTTI way.
+        (KJS::Collector::rootObjectClasses): Use className instead of typeid names.
+
+2005-05-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix a failure seen in the Mozilla JavaScript tests where a live object was garbage-collected
           when the only reference to it was in an argList on the stack
 

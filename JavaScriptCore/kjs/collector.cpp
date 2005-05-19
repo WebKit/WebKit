@@ -28,7 +28,6 @@
 
 #if APPLE_CHANGES
 #include <CoreFoundation/CoreFoundation.h>
-#include <cxxabi.h>
 #include <pthread.h>
 #include <mach/mach_port.h>
 #include <mach/task.h>
@@ -372,7 +371,7 @@ bool Collector::collect()
       if (cell->u.freeCell.zeroIfFree != 0) {
 	if (!imp->_marked)
 	{
-	  //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
+	  //fprintf(stderr, "Collector::deleting ValueImp %p (%s)\n", imp, className(imp));
 	  // emulate destructing part of 'operator delete()'
 	  imp->~ValueImp();
 	  curBlock->usedCells--;
@@ -502,6 +501,36 @@ int Collector::numReferencedObjects()
 
 #if APPLE_CHANGES
 
+static const char *className(ValueImp *val)
+{
+  const char *name = "???";
+  switch (val->dispatchType()) {
+    case UnspecifiedType:
+      break;
+    case UndefinedType:
+      name = "undefined";
+      break;
+    case NullType:
+      name = "null";
+      break;
+    case BooleanType:
+      name = "boolean";
+      break;
+    case StringType:
+      name = "string";
+      break;
+    case NumberType:
+      name = "number";
+      break;
+    case ObjectType: {
+      const ClassInfo *info = static_cast<ObjectImp *>(val)->classInfo();
+      name = info ? info->className : "Object";
+      break;
+    }
+  }
+  return name;
+}
+
 const void *Collector::rootObjectClasses()
 {
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
@@ -511,14 +540,9 @@ const void *Collector::rootObjectClasses()
   for (int i = 0; i < size; i++) {
     ValueImp *val = table[i].key;
     if (val) {
-      const char *mangled_name = typeid(*val).name();
-      int status;
-      char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
-      
-      CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
-      free(demangled_name);
-      CFSetAddValue(classes, className);
-      CFRelease(className);
+      CFStringRef name = CFStringCreateWithCString(NULL, className(val), kCFStringEncodingASCII);
+      CFSetAddValue(classes, name);
+      CFRelease(name);
     }
   }
   
