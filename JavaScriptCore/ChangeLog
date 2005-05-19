@@ -1,3 +1,15 @@
+2005-05-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix a failure seen in the Mozilla JavaScript tests where a live object was garbage-collected
+          when the only reference to it was in an argList on the stack
+
+        * kjs/list.h: Moved the operator= function into the .cpp file since it's too big to be
+        a good choice to inline.
+        * kjs/list.cpp: (KJS::List::operator=): Moved this formerly-inline function into a separate
+        file and added missing code to update valueRefCount. It's the latter that fixes the bug.
+
 2005-05-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

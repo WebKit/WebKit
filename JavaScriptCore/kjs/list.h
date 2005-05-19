@@ -185,15 +185,6 @@ namespace KJS {
     inline ListIterator List::begin() const { return ListIterator(*this); }
     inline ListIterator List::end() const { return ListIterator(*this, size()); }
  
-    inline List &List::operator=(const List &b)
-    {
-        ListImpBase *bImpBase = b._impBase;
-        ++bImpBase->refCount;
-        deref();
-        _impBase = bImpBase;
-        return *this;
-    }
-
 } // namespace KJS
 
 #endif // KJS_LIST_H
