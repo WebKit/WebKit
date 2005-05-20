@@ -77,9 +77,6 @@ using khtml::RenderWidget;
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
     QTextEdit *widget;
-#if ALLOW_RESIZING_TEXTAREAS
-    NSTrackingRectTag resizeCornerTrackingRectTag;
-#endif
     BOOL disabled;
     BOOL editableIfEnabled;
     BOOL inCut;
@@ -812,15 +809,8 @@ const float ResizeCornerHeight = 16;
     // been inside the textarea, presumably due to interactions with the way NSTextView
     // sets the cursor via [NSClipView setDocumentCursor:]. Also, it stops working once
     // the textview has been resized, for reasons not yet understood.
-    NSRect visibleRect = [self visibleRect];
-    if (resizeCornerTrackingRectTag != -1) {
-        [self removeTrackingRect:resizeCornerTrackingRectTag];
-        resizeCornerTrackingRectTag = -1;
-    }
-    if ([self isEnabled] && !NSIsEmptyRect(visibleRect)) {
-        NSRect resizeCornerRect = [self _resizeCornerRect];
-        [self addCursorRect:resizeCornerRect cursor:[NSCursor arrowCursor]];
-        resizeCornerTrackingRectTag = [self addTrackingRect:resizeCornerRect owner:self userData:NULL assumeInside:NO];
+    if ([self isEnabled] && !NSIsEmptyRect([self visibleRect])) {
+        [self addCursorRect:[self _resizeCornerRect] cursor:[NSCursor arrowCursor]];
     }
 }
 

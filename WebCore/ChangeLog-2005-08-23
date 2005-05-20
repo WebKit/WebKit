@@ -1,3 +1,16 @@
+2005-05-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - fixed <rdar://problem/4126160> Crash sending mouse-exited event after reloading 
+        page with resizable textarea
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView resetCursorRects]):
+        This was some side effect of tracking rect code used for resizable textareas. I discovered
+        that I didn't need the tracking rect code at all (at least to achieve the level of only-somewhat-working
+        cursor behavior that I already had). Removing it caused the bug to vanish.
+
 2005-05-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
