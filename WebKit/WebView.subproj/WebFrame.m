@@ -1053,9 +1053,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
             response = [responses objectAtIndex: i];
-            [self _sendResourceLoadDelegateMessagesForURL:[response URL]
-                                                 response:response
-                                                   length:[response expectedContentLength]];
+            // FIXME: If the WebKit client changes or cancels the request, this is not respected.
+            NSError *error;
+            NSString *identifier;
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
+            [self _requestFromDelegateForRequest:request identifier:&identifier error:&error];
+            [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[response expectedContentLength] error:error];
+            [request release];
         }
         
         // Release the resources kept in the page cache.  They will be
@@ -2551,42 +2555,89 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _private->internalLoadDelegate;
 }
 
-- (void)_sendResourceLoadDelegateMessagesForURL:(NSURL *)URL response:(NSURLResponse *)response length:(unsigned)length
+- (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(NSString **)identifier error:(NSError **)error
 {
-    ASSERT(response != nil);
+    ASSERT(request != nil);
     
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     WebView *wv = [self webView];
     id delegate = [wv resourceLoadDelegate];
     id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
-    id identifier;
     WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
     WebDataSource *dataSource = [self dataSource];
     
-    // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
-    if (implementations.delegateImplementsIdentifierForRequest)
-        identifier = [delegate webView:wv identifierForInitialRequest: request fromDataSource:dataSource];
-    else
-        identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+    if (implementations.delegateImplementsIdentifierForRequest) {
+        *identifier = [delegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+    } else {
+        *identifier = [sharedDelegate webView:wv identifierForInitialRequest:request fromDataSource:dataSource];
+    }
+        
+    NSURLRequest *newRequest;
+    if (implementations.delegateImplementsWillSendRequest) {
+        newRequest = [delegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
+    } else {
+        newRequest = [sharedDelegate webView:wv resource:*identifier willSendRequest:request redirectResponse:nil fromDataSource:dataSource];
+    }
     
-    if (implementations.delegateImplementsDidReceiveResponse)
-        [delegate webView:wv resource: identifier didReceiveResponse: response fromDataSource:dataSource];
-    else
-        [sharedDelegate webView:wv resource: identifier didReceiveResponse: response fromDataSource:dataSource];
+    if (newRequest == nil) {
+        *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled URL:[request URL]];
+    } else {
+        *error = nil;
+    }
     
-    if (implementations.delegateImplementsDidReceiveContentLength)
-        [delegate webView:wv resource: identifier didReceiveContentLength:length fromDataSource:dataSource];
-    else
-        [sharedDelegate webView:wv resource: identifier didReceiveContentLength:length fromDataSource:dataSource];
+    return newRequest;
+}
+
+- (void)_sendRemainingDelegateMessagesWithIdentifier:(NSString *)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 
+{    
+    WebView *wv = [self webView];
+    id delegate = [wv resourceLoadDelegate];
+    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
+    WebResourceDelegateImplementationCache implementations = [wv _resourceLoadDelegateImplementations];
+    WebDataSource *dataSource = [self dataSource];
+        
+    if (response != nil) {
+        if (implementations.delegateImplementsDidReceiveResponse) {
+            [delegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
+        } else {
+            [sharedDelegate webView:wv resource:identifier didReceiveResponse:response fromDataSource:dataSource];
+        }
+    }
     
-    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
-        [delegate webView:wv resource: identifier didFinishLoadingFromDataSource:dataSource];
-    else
-        [sharedDelegate webView:wv resource: identifier didFinishLoadingFromDataSource:dataSource];
+    if (length > 0) {
+        if (implementations.delegateImplementsDidReceiveContentLength) {
+            [delegate webView:wv resource:identifier didReceiveContentLength:length fromDataSource:dataSource];
+        } else {
+            [sharedDelegate webView:wv resource:identifier didReceiveContentLength:length fromDataSource:dataSource];
+        }
+    }
     
-    [wv _finishedLoadingResourceFromDataSource:dataSource];
-    
-    [request release];
+    if (error == nil) {
+        if (implementations.delegateImplementsDidFinishLoadingFromDataSource) {
+            [delegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
+        } else {
+            [sharedDelegate webView:wv resource:identifier didFinishLoadingFromDataSource:dataSource];
+        }
+        [wv _finishedLoadingResourceFromDataSource:dataSource];
+    } else {
+        [[wv _resourceLoadDelegateForwarder] webView:wv resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+    }
+}
+
+- (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
+                                                      identifier:(NSString *)identifier 
+                                                        response:(NSURLResponse *)response 
+                                                            data:(NSData *)data
+                                                           error:(NSError *)error
+{
+    unsigned length = [data length];
+    if (length > 0 && error == nil) {
+        ASSERT(request != nil);
+        WebResource *resource = [[WebResource alloc] _initWithData:data URL:[request URL] response:response];
+        ASSERT(resource != nil);    
+        [[self dataSource] addSubresource:resource];
+        [resource release];
+    }
+    [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:length error:error];
 }
 
 - (void)_unmarkAllMisspellings

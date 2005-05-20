@@ -458,12 +458,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
-    WebResource *resource = [[WebResource alloc] _initWithData:data URL:URL response:response];
-    ASSERT(resource != nil);
-    [[self dataSource] addSubresource:resource];
-    [resource release];
-    
-    [_frame _sendResourceLoadDelegateMessagesForURL:URL response:response length:[data length]];    
+    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
+    NSError *error;
+    NSString *identifier;
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    [_frame _requestFromDelegateForRequest:request identifier:&identifier error:&error];    
+    [_frame _saveResourceAndSendRemainingDelegateMessagesWithRequest:request identifier:identifier response:response data:data error:error];
+    [request release];
 }
 
 - (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
@@ -473,32 +474,39 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
-    NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
 
     if (postData) {
-        [newRequest setHTTPMethod:@"POST"];
-        webSetHTTPBody(newRequest, postData);
+        [request setHTTPMethod:@"POST"];
+        webSetHTTPBody(request, postData);
     }
 
     NSEnumerator *e = [requestHeaders keyEnumerator];
     NSString *key;
     while ((key = (NSString *)[e nextObject]) != nil) {
-        [newRequest addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
+        [request addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
     }
     
     // Never use cached data for these requests (xmlhttprequests).
-    [newRequest setCachePolicy:[[[self dataSource] request] cachePolicy]];
+    [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
     if (!hideReferrer)
-        [newRequest setHTTPReferrer:[self referrer]];
+        [request setHTTPReferrer:[self referrer]];
     
     WebView *webView = [_frame webView];
-    [newRequest setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
-    [newRequest setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
-
-    NSURLResponse *response = nil;
+    [request setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
+    [request setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
+    
     NSError *error = nil;
-    NSData *result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
-
+    NSString *identifier = nil;    
+    NSURLRequest *newRequest = [_frame _requestFromDelegateForRequest:request identifier:&identifier error:&error];
+    
+    NSURLResponse *response = nil;
+    NSData *result = nil;
+    if (error == nil) {
+        ASSERT(newRequest != nil);
+        result = [NSURLConnection sendSynchronousRequest:newRequest returningResponse:&response error:&error];
+    }
+    
     if (error == nil) {
         *finalURL = [response URL];
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -509,16 +517,19 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
             *responseHeaderDict = [NSDictionary dictionary];
             *statusCode = 200;
         }
-
-        // notify the delegates
-        // FIXME: Bridge method name "loaded from cache" doesn't make any sense here.
-        [self objectLoadedFromCacheWithURL:URL response:response data:result];
     } else {
         *finalURL = URL;
         *responseHeaderDict = [NSDictionary dictionary];
-        *statusCode = 404;
+        if ([error domain] == NSURLErrorDomain) {
+            *statusCode = [error code];
+        } else {
+            *statusCode = 404;
+        }
     }
-
+    
+    [_frame _saveResourceAndSendRemainingDelegateMessagesWithRequest:newRequest identifier:identifier response:response data:result error:error];
+    [request release];
+    
     return result;
 }
 

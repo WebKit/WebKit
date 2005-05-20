@@ -7,9 +7,15 @@
 - (void)_updateDrawsBackground;
 - (void)_setInternalLoadDelegate:(id)internalLoadDelegate;
 - (id)_internalLoadDelegate;
-- (void)_sendResourceLoadDelegateMessagesForURL:(NSURL *)URL response:(NSURLResponse *)response length:(unsigned)length;
 - (void)_unmarkAllMisspellings;
 
+- (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(NSString **)identifier error:(NSError **)error;
+- (void)_sendRemainingDelegateMessagesWithIdentifier:(NSString *)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
+- (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
+                                                      identifier:(NSString *)identifier 
+                                                        response:(NSURLResponse *)response 
+                                                            data:(NSData *)data
+                                                           error:(NSError *)error;
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

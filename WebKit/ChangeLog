@@ -1,3 +1,36 @@
+2005-05-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4098786> sync. XMLHttpRequest works w/o AllowNetworkAccess key because load delegate is not consulted
+
+	Synchronous loads did not cause the willSendRequest method on the resource load delegate to be called. This is the method that Dashboard uses to enforce AllowNetworkAccess and this must be called to avoid exploits.
+
+        Reviewed by sullivan.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]): call [WebFrame _requestFromDelegateForRequest:identifier:error:] then 
+	[WebFrame _saveResourceAndSendRemainingDelegateMessagesWithRequest:identifier:response:data:error:] so synthetic resource load delegate 
+	methods are called and the data is saved as a WebResource for resources in the WebCore cache.
+
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]): call [WebFrame _requestFromDelegateForRequest:identifier:error:],
+	respect its result, do the load and then call [WebFrame _saveResourceAndSendRemainingDelegateMessagesWithRequest:identifier:response:data:error:] 
+	for synchronous loads
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]): call [WebFrame _requestFromDelegateForRequest:identifier:error:] then 
+	[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:] so synthetic resource load delegate methods are called 
+	for subresrources in the page cache
+        
+	(-[WebFrame _requestFromDelegateForRequest:identifier:error:]): new, was part of the removed _sendResourceLoadDelegateMessagesForURL:::
+	This method calls identifierForInitialRequest and willSendRequest.
+
+        (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]): new, was part of the removed _sendResourceLoadDelegateMessagesForURL:::
+	This method calls the remaining resource load delegate messages.
+
+        (-[WebFrame _saveResourceAndSendRemainingDelegateMessagesWithRequest:identifier:response:data:error:]): new, saves the resource and calls
+	[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]
+
+        * WebView.subproj/WebFrameInternal.h:
+
 2005-05-17  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/4119282> clicking a link in an RTF file opens the link with NSWorkspace without the usual security checks or WebView delegate control
