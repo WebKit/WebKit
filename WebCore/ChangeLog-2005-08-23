@@ -1,3 +1,11 @@
+2005-05-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        fix for <rdar://problem/4122661> Regression: 10.3.8-10.3.9: Next lesson doesn't work on Dale Carnegie Action Systems page
+
+        * khtml/ecma/kjs_window.cpp: (KJS::WindowFunc::tryCall): added checks for NaN, in case it is passed into window.open for screenx, screeny, left, top, height, or width.
+
 2005-05-23  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
