@@ -25,6 +25,7 @@
 
 #import "KWQTextArea.h"
 
+#import "DOMCSS.h"
 #import "DOMHTML.h"
 #import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
@@ -67,12 +68,6 @@ using khtml::RenderWidget;
 @interface NSTextStorage (KWQTextArea)
 - (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction;
 @end
-
-#if ALLOW_RESIZING_TEXTAREAS
-@interface KWQTextArea (KWQTextAreaTextView)
-- (void)getNumColumns:(long*)numColumns andNumRows:(long*)numRows forSize:(NSSize)frameSize;
-@end
-#endif
 
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
@@ -567,35 +562,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 @end
 
-#if ALLOW_RESIZING_TEXTAREAS
-@implementation KWQTextArea (KWQTextAreaTextView)
-
-- (void)getNumColumns:(long*)numColumns andNumRows:(long*)numRows forSize:(NSSize)frameSize
-{
-    ASSERT_ARG(numColumns, numColumns != nil);
-    ASSERT_ARG(numRows, numRows != nil);
-    NSSize textViewSize = [[self class] contentSizeForFrameSize:frameSize
-                                          hasHorizontalScroller:[self hasHorizontalScroller]
-                                            hasVerticalScroller:[self hasVerticalScroller]
-                                                     borderType:[self borderType]];
-    NSSize textContainerInset = [textView textContainerInset];
-    NSSize textContainerSize = NSMakeSize(textViewSize.width - textContainerInset.width, textViewSize.height - textContainerInset.width);
-    NSSize textSize = NSMakeSize(textContainerSize.width - [[textView textContainer] lineFragmentPadding] * 2, textContainerSize.height);
-    *numColumns = (long)(textSize.width/[_font widthOfString:@"0"]);
-    *numRows = (long)(textSize.height/[_font defaultLineHeightForFont]);
-}
-
-@end
-#endif
-
 @implementation KWQTextAreaTextView
 
 static BOOL _spellCheckingInitiallyEnabled = NO;
 static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 
 #if ALLOW_RESIZING_TEXTAREAS
-const long MinimumColsWhileResizing = 10;
-const long MinimumRowsWhileResizing = 2;
+const int MinimumWidthWhileResizing = 100;
+const int MinimumHeightWhileResizing = 40;
 const float ResizeCornerWidth = 16;
 const float ResizeCornerHeight = 16;
 #endif
@@ -743,14 +717,23 @@ const float ResizeCornerHeight = 16;
     DOMHTMLTextAreaElement *element = [bridge elementForView:self];
     ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
     
-    long minCols = kMin([element cols], MinimumColsWhileResizing);
-    long minRows = kMin([element rows], MinimumRowsWhileResizing);
-    
     KWQTextArea *textArea = [[self superview] superview];
     ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
     
     NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSSize initialTextAreaSize = [textArea frame].size;
+
+    int minWidth = kMin((int)initialTextAreaSize.width, MinimumWidthWhileResizing);
+    int minHeight = kMin((int)initialTextAreaSize.height, MinimumHeightWhileResizing);
+    
+    BOOL handledIntrinsicMargins = NO;
+    DOMCSSStyleDeclaration *oldComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
+    NSString *oldMarginLeft = [oldComputedStyle marginLeft];
+    NSString *oldMarginRight = [oldComputedStyle marginRight];
+    NSString *oldMarginTop = [oldComputedStyle marginTop];
+    NSString *oldMarginBottom = [oldComputedStyle marginBottom];
+    
+    DOMCSSStyleDeclaration *inlineStyle = [element style];
 
     for (;;) {
         if ([event type] == NSRightMouseDown || [event type] == NSRightMouseUp) {
@@ -763,12 +746,28 @@ const float ResizeCornerHeight = 16;
 
             // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
             // the cursor in view.
-            NSSize newTextAreaSize = NSMakeSize(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x), 
-                                                initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y));
-            long newCols, newRows;
-            [textArea getNumColumns:&newCols andNumRows:&newRows forSize:newTextAreaSize];
-            [element setCols:kMax(newCols, minCols)];
-            [element setRows:kMax(newRows, minRows)];
+            int newWidth = kMax(minWidth, (int)(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x)));
+            int newHeight = kMax(minHeight, (int)(initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y)));
+            [inlineStyle setWidth:[NSString stringWithFormat:@"%dpx", newWidth]];
+            [inlineStyle setHeight:[NSString stringWithFormat:@"%dpx", newHeight]];
+            
+            // render_form.cpp has a mechanism to use intrinsic margins on form elements under certain conditions.
+            // Setting the width or height explicitly suppresses the intrinsic margins. We don't want the user's
+            // manual resizing to affect the margins, so we check whether the margin was changed and, if so, compensat
+            // with an explicit margin that matches the old implicit one. We only need to do this once per element.
+            if (!handledIntrinsicMargins) {
+                DOMCSSStyleDeclaration *newComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
+                if (![oldMarginLeft isEqualToString:[newComputedStyle marginLeft]])
+                    [inlineStyle setMarginLeft:oldMarginLeft];
+                if (![oldMarginRight isEqualToString:[newComputedStyle marginRight]])
+                    [inlineStyle setMarginRight:oldMarginRight];
+                if (![oldMarginTop isEqualToString:[newComputedStyle marginTop]])
+                    [inlineStyle setMarginTop:oldMarginTop];
+                if (![oldMarginBottom isEqualToString:[newComputedStyle marginBottom]])
+                    [inlineStyle setMarginBottom:oldMarginBottom];
+                handledIntrinsicMargins = YES;
+            }
+
             [bridge part]->forceLayout();
         }
         

@@ -1,3 +1,16 @@
+2005-05-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - fixed <rdar://problem/4123592> Can't resize textareas that have a width specified by a style
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea getNumColumns:andNumRows:forSize:]):
+        removed this method, which I had added earlier to set cols and rows correctly
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        set width and height instead of cols and rows; handle the intrinsic margin that sometimes appears
+        on form elements
+
 2005-05-22  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
