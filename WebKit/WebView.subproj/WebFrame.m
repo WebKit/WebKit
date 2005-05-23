@@ -1055,7 +1055,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             response = [responses objectAtIndex: i];
             // FIXME: If the WebKit client changes or cancels the request, this is not respected.
             NSError *error;
-            NSString *identifier;
+            id identifier;
             NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[response URL]];
             [self _requestFromDelegateForRequest:request identifier:&identifier error:&error];
             [self _sendRemainingDelegateMessagesWithIdentifier:identifier response:response length:[response expectedContentLength] error:error];
@@ -2555,7 +2555,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _private->internalLoadDelegate;
 }
 
-- (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(NSString **)identifier error:(NSError **)error
+- (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error
 {
     ASSERT(request != nil);
     
@@ -2587,7 +2587,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return newRequest;
 }
 
-- (void)_sendRemainingDelegateMessagesWithIdentifier:(NSString *)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 
+- (void)_sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error 
 {    
     WebView *wv = [self webView];
     id delegate = [wv resourceLoadDelegate];
@@ -2624,7 +2624,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 - (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
-                                                      identifier:(NSString *)identifier 
+                                                      identifier:(id)identifier 
                                                         response:(NSURLResponse *)response 
                                                             data:(NSData *)data
                                                            error:(NSError *)error

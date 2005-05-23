@@ -1,3 +1,19 @@
+2005-05-23  Chris Blumenberg  <cblu@apple.com>
+
+	Changed type for identifier parameter in WebResourceLoadDelegate-related calls to id from NSString.
+
+        Reviewed by kevin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]):
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _requestFromDelegateForRequest:identifier:error:]):
+        (-[WebFrame _sendRemainingDelegateMessagesWithIdentifier:response:length:error:]):
+        (-[WebFrame _saveResourceAndSendRemainingDelegateMessagesWithRequest:identifier:response:data:error:]):
+        * WebView.subproj/WebFrameInternal.h:
+
 2005-05-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4098786> sync. XMLHttpRequest works w/o AllowNetworkAccess key because load delegate is not consulted

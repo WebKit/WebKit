@@ -460,7 +460,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
     NSError *error;
-    NSString *identifier;
+    id identifier;
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [_frame _requestFromDelegateForRequest:request identifier:&identifier error:&error];    
     [_frame _saveResourceAndSendRemainingDelegateMessagesWithRequest:request identifier:identifier response:response data:data error:error];
@@ -497,7 +497,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [request setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
     
     NSError *error = nil;
-    NSString *identifier = nil;    
+    id identifier = nil;    
     NSURLRequest *newRequest = [_frame _requestFromDelegateForRequest:request identifier:&identifier error:&error];
     
     NSURLResponse *response = nil;
