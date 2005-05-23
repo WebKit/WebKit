@@ -1,3 +1,12 @@
+2005-05-22  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        fix for <rdar://problem/4127101> REGRESSION(412-TOT) crash when creating Option element
+
+        * khtml/ecma/kjs_html.cpp: (KJS::OptionConstructorImp::construct):
+        Changed ElementImpl pointer to a SharedPtr because it was getting destroyed before we were done with it.  
+
 2005-05-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

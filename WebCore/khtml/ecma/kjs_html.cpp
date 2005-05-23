@@ -3341,11 +3341,10 @@ bool OptionConstructorImp::implementsConstruct() const
 Object OptionConstructorImp::construct(ExecState *exec, const List &args)
 {
   int exception = 0;
-  ElementImpl *el = m_doc->createElement("option", exception);
+  SharedPtr<ElementImpl> el(m_doc->createElement("option", exception));
   HTMLOptionElementImpl *opt = 0;
-  if (el) {
-    el->ref();
-    opt = static_cast<HTMLOptionElementImpl *>(el);
+  if (el.notNull()) {
+    opt = static_cast<HTMLOptionElementImpl *>(el.get());
     int sz = args.size();
     TextImpl *t = m_doc->createTextNode("");
     t->ref();
@@ -3359,7 +3358,6 @@ Object OptionConstructorImp::construct(ExecState *exec, const List &args)
     if (exception == 0 && sz > 3)
       opt->setSelected(args[3].toBoolean(exec));
     t->deref();
-    el->deref();
   }
 
   setDOMException(exec, exception);
