@@ -4000,7 +4000,7 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
         return;
 
     SharedPtr<RangeImpl> searchRange(selection.toRange());
-    if (searchRange.get() || searchRange->isDetached())
+    if (searchRange.isNull() || searchRange->isDetached())
         return;
     
     // If we're not in an editable node, bail.
