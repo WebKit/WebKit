@@ -1,3 +1,10 @@
+2005-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        * WebCore.exp: Added exports for many classes in the public DOM headers that were omitted before.
+        Also removed one symbol that was listed twice.
+
 2005-05-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
