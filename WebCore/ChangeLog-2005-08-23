@@ -1,3 +1,46 @@
+2005-05-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - fixed these bugs:
+        <rdar://problem/4118510> Textareas with a vertical scroll bar should have their resize corner under the scroll bar
+        <rdar://problem/4118523> Resize image in textareas is drawn repeatedly when scrolling vertically with scrollbar
+
+        Test cases added: none; doesn't affect page layout
+
+        * kwq/KWQTextArea.h:
+        added inInitWithFrame ivar
+        * kwq/KWQTextArea.mm:
+        (+[KWQTextArea _resizeCornerImage]):
+        moved here from KWQTextAreaTextView; now it's a class method so we only look up the image once.
+        (-[KWQTextArea initWithFrame:]):
+        set and clear inInitWithFrame ivar, used by -tile
+        (-[KWQTextArea _isResizableByUser]):
+        renamed with an underscore for consistency
+        (-[KWQTextArea _textViewShouldHandleResizing]):
+        new method, returns YES if the textarea is user-resizable and the enclosed textview is responsible for drawing
+        and tracking the resize corner.
+        (-[KWQTextArea tile]):
+        shrink the vertical scroller if appropriate to account for the resize corner
+        (-[KWQTextArea _resizeCornerRect]):
+        new method, returns the bottom-right corner rect, where the resize image goes
+        (-[KWQTextArea _trackResizeFromMouseDown:]):
+        moved here from KWQTextAreaTextView. The only changes were to move the [NSCursor set] call inside here (was in
+        the caller), and to use self where it was using [self _enclosingTextArea], and to move a comment in here that
+        was in the caller
+        (-[KWQTextArea mouseDown:]):
+        track resizing if appropriate
+        (-[KWQTextArea drawRect:]):
+        draw the resize corner if appropriate
+        (-[KWQTextAreaTextView _resizeCornerRect]):
+        get the resize image from KWQTextArea
+        (-[KWQTextAreaTextView resetCursorRects]):
+        check _textViewShouldHandleResizing
+        (-[KWQTextAreaTextView drawRect:]):
+        ditto
+        (-[KWQTextAreaTextView mouseDown:]):
+        ditto; also, make the textarea handle the resize tracking now
+
 2005-05-24  Darin Adler  <darin@apple.com>
 
         - another gcc 4.0 fix

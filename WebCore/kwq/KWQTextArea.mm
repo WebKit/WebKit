@@ -68,8 +68,14 @@ using khtml::RenderWidget;
 @end
 
 @interface KWQTextArea (KWQTextAreaTextView)
-- (BOOL)isResizableByUser;
++ (NSImage *)_resizeCornerImage;
+- (BOOL)_isResizableByUser;
+- (BOOL)_textViewShouldHandleResizing;
+- (void)_trackResizeFromMouseDown:(NSEvent *)event;
 @end
+
+const int MinimumWidthWhileResizing = 100;
+const int MinimumHeightWhileResizing = 40;
 
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
@@ -94,6 +100,18 @@ using khtml::RenderWidget;
 @implementation KWQTextArea
 
 const float LargeNumberForText = 1.0e7;
+
++ (NSImage *)_resizeCornerImage
+{
+    static NSImage *cornerImage = nil;
+    if (cornerImage == nil) {
+	cornerImage = [[NSImage alloc] initWithContentsOfFile:
+            [[NSBundle bundleForClass:[self class]]
+            pathForResource:@"textAreaResizeCorner" ofType:@"tiff"]];
+    }
+    ASSERT(cornerImage != nil);
+    return cornerImage;
+}
 
 - (void)_configureTextViewForWordWrapMode
 {
@@ -128,13 +146,14 @@ const float LargeNumberForText = 1.0e7;
 {
     [super initWithFrame:frame];
 
+    inInitWithFrame = YES;
     wrap = YES;
 
     [self setBorderType:NSBezelBorder];
 
     [self _createTextView];
     [self _updateTextViewWidth];
-
+    
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
     // it causes some bad problems if that clip is cached between calls.
@@ -146,6 +165,8 @@ const float LargeNumberForText = 1.0e7;
     // <rdar://problem/3310943>: REGRESSION (Panther): textareas in forms sometimes draw blank (bugreporter)
     [[self contentView] releaseGState];
     [[self documentView] releaseGState];
+
+    inInitWithFrame = NO;
 
     return self;
 }
@@ -279,7 +300,7 @@ const float LargeNumberForText = 1.0e7;
     return [textView isEnabled];
 }
 
-- (BOOL)isResizableByUser
+- (BOOL)_isResizableByUser
 {
     // Compute the value once, then cache it. We don't react to changes in the settings, so each
     // instance needs to keep track of its own state. We can't compute this at init time, because
@@ -292,6 +313,33 @@ const float LargeNumberForText = 1.0e7;
     return resizableByUser;
 }
 
+- (BOOL)_textViewShouldHandleResizing
+{
+    // Only enabled textareas can be resized
+    if (![textView isEnabled]) {
+        return NO;
+    }
+    
+    // No need to handle resizing if we aren't user-resizable
+    if (![self _isResizableByUser]) {
+        return NO;
+    }
+    
+    // If either scroller is visible, the drawing and tracking for resizing are done by this class
+    // rather than by the enclosed textview.
+    NSScroller *verticalScroller = [self verticalScroller];
+    if (verticalScroller != nil && ![verticalScroller isHidden]) {
+        return NO;
+    }
+    
+    NSScroller *horizontalScroller = [self horizontalScroller];
+    if (horizontalScroller != nil && ![horizontalScroller isHidden]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void)tile
 {
     [super tile];
@@ -301,6 +349,18 @@ const float LargeNumberForText = 1.0e7;
     // Pre-Tiger, if we change the width here we re-enter in a way that makes NSText unhappy.
     [self performSelector:@selector(_updateTextViewWidth) withObject:nil afterDelay:0];
 #endif
+    
+    // If we're still initializing, it's too early to call _isResizableByUser. -tile will be called
+    // again before we're displayed, so just skip the resizable stuff.
+    if (!inInitWithFrame && [self _isResizableByUser]) {
+        // Shrink the vertical scroller to make room for the resize corner.
+        if ([self hasVerticalScroller]) {
+            NSScroller *verticalScroller = [self verticalScroller];
+            NSRect scrollerFrame = [verticalScroller frame];
+            // The 2 pixel offset matches NSScrollView's positioning when both scrollers are present.
+            [verticalScroller setFrameSize:NSMakeSize(scrollerFrame.size.width, NSHeight([self frame]) - scrollerFrame.size.width - 2)];
+        }
+    }
 }
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
@@ -459,10 +519,105 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     return YES;
 }
 
+- (NSRect)_resizeCornerRect
+{
+    NSRect bounds = [self bounds];
+    float cornerWidth = NSWidth([[self verticalScroller] frame]);
+//    NSImage *cornerImage = [KWQTextArea _resizeCornerImage];
+//    NSSize imageSize = [cornerImage size];
+    ASSERT([self borderType] == NSBezelBorder);
+    // Add one pixel to account for our border, and another to leave a pixel of whitespace at the right and
+    // bottom of the resize image to match normal resize corner appearance.
+//    return NSMakeRect(NSMaxX(bounds) - imageSize.width - 2, NSMaxY(bounds) - imageSize.height - 2, imageSize.width + 2, imageSize.height + 2);
+    return NSMakeRect(NSMaxX(bounds) - cornerWidth, NSMaxY(bounds) - cornerWidth, cornerWidth, cornerWidth);
+}
+
+- (void)_trackResizeFromMouseDown:(NSEvent *)event
+{
+    // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
+    [[NSCursor arrowCursor] set];
+    
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    DOMHTMLTextAreaElement *element = [bridge elementForView:self];
+    ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
+    
+    KWQTextArea *textArea = self;
+    NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSSize initialTextAreaSize = [textArea frame].size;
+    
+    int minWidth = kMin((int)initialTextAreaSize.width, MinimumWidthWhileResizing);
+    int minHeight = kMin((int)initialTextAreaSize.height, MinimumHeightWhileResizing);
+    
+    BOOL handledIntrinsicMargins = NO;
+    DOMCSSStyleDeclaration *oldComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
+    NSString *oldMarginLeft = [oldComputedStyle marginLeft];
+    NSString *oldMarginRight = [oldComputedStyle marginRight];
+    NSString *oldMarginTop = [oldComputedStyle marginTop];
+    NSString *oldMarginBottom = [oldComputedStyle marginBottom];
+    
+    DOMCSSStyleDeclaration *inlineStyle = [element style];
+    
+    for (;;) {
+        if ([event type] == NSRightMouseDown || [event type] == NSRightMouseUp) {
+            // Ignore right mouse button events and remove them from the queue.
+        } else {
+            NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+            if ([event type] == NSLeftMouseUp) {
+                break;
+            }
+            
+            // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
+            // to drag the bottom-right corner to make the bottom-left corner move.
+            // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
+            // the cursor in view.
+            int newWidth = kMax(minWidth, (int)(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x)));
+            int newHeight = kMax(minHeight, (int)(initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y)));
+            [inlineStyle setWidth:[NSString stringWithFormat:@"%dpx", newWidth]];
+            [inlineStyle setHeight:[NSString stringWithFormat:@"%dpx", newHeight]];
+            
+            // render_form.cpp has a mechanism to use intrinsic margins on form elements under certain conditions.
+            // Setting the width or height explicitly suppresses the intrinsic margins. We don't want the user's
+            // manual resizing to affect the margins, so we check whether the margin was changed and, if so, compensat
+            // with an explicit margin that matches the old implicit one. We only need to do this once per element.
+            if (!handledIntrinsicMargins) {
+                DOMCSSStyleDeclaration *newComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
+                if (![oldMarginLeft isEqualToString:[newComputedStyle marginLeft]])
+                    [inlineStyle setMarginLeft:oldMarginLeft];
+                if (![oldMarginRight isEqualToString:[newComputedStyle marginRight]])
+                    [inlineStyle setMarginRight:oldMarginRight];
+                if (![oldMarginTop isEqualToString:[newComputedStyle marginTop]])
+                    [inlineStyle setMarginTop:oldMarginTop];
+                if (![oldMarginBottom isEqualToString:[newComputedStyle marginBottom]])
+                    [inlineStyle setMarginBottom:oldMarginBottom];
+                handledIntrinsicMargins = YES;
+            }
+            
+            [bridge part]->forceLayout();
+        }
+        
+        // Go get the next event.
+        event = [[self window] nextEventMatchingMask:
+            NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSRightMouseDownMask | NSRightMouseUpMask];
+    }    
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    if ([textView isEnabled] && [self _isResizableByUser]) {
+        NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+       if (NSPointInRect(localPoint, [self _resizeCornerRect])) {
+            [self _trackResizeFromMouseDown:event];
+            return;
+        }
+    }
+    
+    [super mouseDown:event];
+}
+
 - (void)drawRect:(NSRect)rect
 {
     [super drawRect:rect];
-
+    
     if (![textView isEnabled]) {
         // draw a disabled bezel border
         [[NSColor controlColor] set];
@@ -475,10 +630,21 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
         rect = NSInsetRect(rect, 1, 1);
         [[NSColor textBackgroundColor] set];
         NSRectFill(rect);
-    }
-    else if (widget && [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
-        NSSetFocusRingStyle(NSFocusRingOnly);
-        NSRectFill([self bounds]);
+    } else {
+        if ([self _isResizableByUser]) {
+            NSImage *cornerImage = [KWQTextArea _resizeCornerImage];
+            NSRect cornerRect = [self _resizeCornerRect];
+            // one pixel to account for the border; a second to add a pixel of white space between image and border
+            NSPoint imagePoint = NSMakePoint(NSMaxX(cornerRect) - [cornerImage size].width - 2, NSMaxY(cornerRect) - 2);
+            [cornerImage compositeToPoint:imagePoint operation:NSCompositeSourceOver];            
+            // FIXME 4129417: we probably want some sort of border on the left side here, so the resize image isn't
+            // floating in space. Maybe we want to use a slightly larger resize image here that fits the scroller
+            // width better.
+        }
+        if (widget && [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
+            NSSetFocusRingStyle(NSFocusRingOnly);
+            NSRectFill([self bounds]);
+        }
     }
 }
 
@@ -581,11 +747,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 static BOOL _spellCheckingInitiallyEnabled = NO;
 static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
-
-const int MinimumWidthWhileResizing = 100;
-const int MinimumHeightWhileResizing = 40;
-const float ResizeCornerWidth = 16;
-const float ResizeCornerHeight = 16;
 
 + (void)_setContinuousSpellCheckingEnabledForNewTextAreas:(BOOL)flag
 {
@@ -730,87 +891,11 @@ const float ResizeCornerHeight = 16;
     return textArea;
 }
 
-- (void)_trackResizeFromMouseDown:(NSEvent *)event
-{
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    DOMHTMLTextAreaElement *element = [bridge elementForView:self];
-    ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
-    
-    KWQTextArea *textArea = [self _enclosingTextArea];
-    NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSSize initialTextAreaSize = [textArea frame].size;
-
-    int minWidth = kMin((int)initialTextAreaSize.width, MinimumWidthWhileResizing);
-    int minHeight = kMin((int)initialTextAreaSize.height, MinimumHeightWhileResizing);
-    
-    BOOL handledIntrinsicMargins = NO;
-    DOMCSSStyleDeclaration *oldComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
-    NSString *oldMarginLeft = [oldComputedStyle marginLeft];
-    NSString *oldMarginRight = [oldComputedStyle marginRight];
-    NSString *oldMarginTop = [oldComputedStyle marginTop];
-    NSString *oldMarginBottom = [oldComputedStyle marginBottom];
-    
-    DOMCSSStyleDeclaration *inlineStyle = [element style];
-
-    for (;;) {
-        if ([event type] == NSRightMouseDown || [event type] == NSRightMouseUp) {
-            // Ignore right mouse button events and remove them from the queue.
-        } else {
-            NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-            if ([event type] == NSLeftMouseUp) {
-                break;
-            }
-
-            // FIXME Radar 4118564: ideally we'd autoscroll the window as necessary to keep the point under
-            // the cursor in view.
-            int newWidth = kMax(minWidth, (int)(initialTextAreaSize.width + (localPoint.x - initialLocalPoint.x)));
-            int newHeight = kMax(minHeight, (int)(initialTextAreaSize.height + (localPoint.y - initialLocalPoint.y)));
-            [inlineStyle setWidth:[NSString stringWithFormat:@"%dpx", newWidth]];
-            [inlineStyle setHeight:[NSString stringWithFormat:@"%dpx", newHeight]];
-            
-            // render_form.cpp has a mechanism to use intrinsic margins on form elements under certain conditions.
-            // Setting the width or height explicitly suppresses the intrinsic margins. We don't want the user's
-            // manual resizing to affect the margins, so we check whether the margin was changed and, if so, compensat
-            // with an explicit margin that matches the old implicit one. We only need to do this once per element.
-            if (!handledIntrinsicMargins) {
-                DOMCSSStyleDeclaration *newComputedStyle = [[element ownerDocument] getComputedStyle:element :@""];
-                if (![oldMarginLeft isEqualToString:[newComputedStyle marginLeft]])
-                    [inlineStyle setMarginLeft:oldMarginLeft];
-                if (![oldMarginRight isEqualToString:[newComputedStyle marginRight]])
-                    [inlineStyle setMarginRight:oldMarginRight];
-                if (![oldMarginTop isEqualToString:[newComputedStyle marginTop]])
-                    [inlineStyle setMarginTop:oldMarginTop];
-                if (![oldMarginBottom isEqualToString:[newComputedStyle marginBottom]])
-                    [inlineStyle setMarginBottom:oldMarginBottom];
-                handledIntrinsicMargins = YES;
-            }
-
-            [bridge part]->forceLayout();
-        }
-        
-        // Go get the next event.
-        event = [[self window] nextEventMatchingMask:
-            NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSRightMouseDownMask | NSRightMouseUpMask];
-    }    
-}
-
-- (NSImage *)_resizeCornerImage
-{
-    NSImage *cornerImage = nil;
-    if (cornerImage == nil) {
-	cornerImage = [[NSImage alloc] initWithContentsOfFile:
-            [[NSBundle bundleForClass:[KWQTextAreaTextView class]]
-            pathForResource:@"textAreaResizeCorner" ofType:@"tiff"]];
-    }
-    ASSERT(cornerImage != nil);
-    return cornerImage;
-}
-
 - (NSRect)_resizeCornerRect
 {
     NSClipView *clipView = [self superview];
     NSRect visibleRect = [clipView documentVisibleRect];
-    NSImage *cornerImage = [self _resizeCornerImage];
+    NSImage *cornerImage = [KWQTextArea _resizeCornerImage];
     NSSize imageSize = [cornerImage size];
     // Add one pixel of whitespace at right and bottom of image to match normal resize corner appearance.
     // This could be built into the image, alternatively.
@@ -825,7 +910,9 @@ const float ResizeCornerHeight = 16;
     // been inside the textarea, presumably due to interactions with the way NSTextView
     // sets the cursor via [NSClipView setDocumentCursor:]. Also, it stops working once
     // the textview has been resized, for reasons not yet understood.
-    if ([self isEnabled] && !NSIsEmptyRect([self visibleRect])) {
+    // FIXME: need to test that the cursor rect we add here is removed when the return value of _textViewShouldHandleResizing
+    // changes for any reason
+    if (!NSIsEmptyRect([self visibleRect]) && [[self _enclosingTextArea] _textViewShouldHandleResizing]) {
         [self addCursorRect:[self _resizeCornerRect] cursor:[NSCursor arrowCursor]];
     }
 }
@@ -834,8 +921,8 @@ const float ResizeCornerHeight = 16;
 {
     [super drawRect:rect];
     
-    if ([self isEnabled] && [[self _enclosingTextArea] isResizableByUser]) {
-        NSImage *cornerImage = [self _resizeCornerImage];
+    if ([[self _enclosingTextArea] _textViewShouldHandleResizing]) {
+        NSImage *cornerImage = [KWQTextArea _resizeCornerImage];
         NSPoint imagePoint = [self _resizeCornerRect].origin;
         imagePoint.y += [cornerImage size].height;
         [cornerImage compositeToPoint:imagePoint operation:NSCompositeSourceOver];
@@ -847,19 +934,12 @@ const float ResizeCornerHeight = 16;
     if (disabled)
         return;
     
-    if ([[self _enclosingTextArea] isResizableByUser]) {
+    if ([[self _enclosingTextArea] _textViewShouldHandleResizing]) {
         NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-        // FIXME Radar 4118510: Maybe the right design is to only have a resize corner when a scroll bar is 
-        // present, and put it in the bottom-right corner (below and/or to the right of  the scroll bar?).
-        // FIXME Radar 4118599: With this "bottom right corner" design, we'd need to distinguish between a click in text
+        // FIXME Radar 4118599: With this "bottom right corner" design, we might want to distinguish between a click in text
         // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
-        // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
-        // to drag the bottom-right corner to make the bottom-left corner move.
-        BOOL inResizeCorner = NSPointInRect(localPoint, [self _resizeCornerRect]);
-        if (inResizeCorner) {
-            // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
-            [[NSCursor arrowCursor] set];
-            [self _trackResizeFromMouseDown:event];
+        if (NSPointInRect(localPoint, [self _resizeCornerRect])) {
+            [[self _enclosingTextArea] _trackResizeFromMouseDown:event];
             return;
         }
     }
