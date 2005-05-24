@@ -27,10 +27,24 @@
 
 #include "append_node_command.h"
 #include "delete_from_text_node_command.h"
+#include "htmlediting.h"
 #include "insert_into_text_node_command.h"
 #include "insert_node_before_command.h"
-#include "htmlediting.h"
+#include "insert_paragraph_separator_command.h"
+#include "insert_text_command.h"
+#include "join_text_nodes_command.h"
+#include "merge_identical_elements_command.h"
+#include "rebalance_whitespace_command.h"
+#include "remove_css_property_command.h"
+#include "remove_node_attribute_command.h"
+#include "remove_node_command.h"
+#include "remove_node_preserving_children_command.h"
+#include "set_node_attribute_command.h"
+#include "split_element_command.h"
+#include "split_text_node_command.h"
+#include "split_text_node_containing_element_command.h"
 #include "visible_units.h"
+#include "wrap_contents_in_dummy_span_command.h"
 
 #include "misc/htmlattrs.h"
 #include "misc/htmltags.h"
@@ -57,9 +71,6 @@ using DOM::TextImpl;
 namespace khtml {
 
 static const DOMString &blockPlaceholderClassString();
-
-//------------------------------------------------------------------------------------------
-// CompositeEditCommand
 
 CompositeEditCommand::CompositeEditCommand(DocumentImpl *document) 
     : EditCommand(document)

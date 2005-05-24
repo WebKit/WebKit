@@ -467,12 +467,6 @@ void DeleteSelectionCommand::handleGeneralDelete()
     }
 }
 
-static DOMString &nonBreakingSpaceString()
-{
-    static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
-    return nonBreakingSpaceString;
-}
-
 // FIXME: Can't really determine this without taking white-space mode into account.
 static inline bool nextCharacterIsCollapsibleWhitespace(const Position &pos)
 {

@@ -1,3 +1,57 @@
+2005-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- split remaining editing command classes out of htmlediting.cpp
+	- rename InsertParagraphSeparatorInQuotedContentCommand to BreakBlockquoteCommand
+
+	No layout tests needed - this is a pure refactoring change.
+	
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp: Added.
+        * khtml/editing/break_blockquote_command.h: Added.
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/edit_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_line_break_command.cpp: Added.
+        * khtml/editing/insert_line_break_command.h: Added.
+        * khtml/editing/insert_paragraph_separator_command.cpp: Added.
+        * khtml/editing/insert_paragraph_separator_command.h: Added.
+        * khtml/editing/insert_text_command.cpp: Added.
+        * khtml/editing/insert_text_command.h: Added.
+        * khtml/editing/join_text_nodes_command.cpp: Added.
+        * khtml/editing/join_text_nodes_command.h: Added.
+        * khtml/editing/merge_identical_elements_command.cpp: Added.
+        * khtml/editing/merge_identical_elements_command.h: Added.
+        * khtml/editing/move_selection_command.cpp: Added.
+        * khtml/editing/move_selection_command.h: Added.
+        * khtml/editing/rebalance_whitespace_command.cpp: Added.
+        * khtml/editing/rebalance_whitespace_command.h: Added.
+        * khtml/editing/remove_css_property_command.cpp: Added.
+        * khtml/editing/remove_css_property_command.h: Added.
+        * khtml/editing/remove_node_attribute_command.cpp: Added.
+        * khtml/editing/remove_node_attribute_command.h: Added.
+        * khtml/editing/remove_node_command.cpp: Added.
+        * khtml/editing/remove_node_command.h: Added.
+        * khtml/editing/remove_node_preserving_children_command.cpp: Added.
+        * khtml/editing/remove_node_preserving_children_command.h: Added.
+        * khtml/editing/replace_selection_command.cpp: Added.
+        * khtml/editing/replace_selection_command.h: Added.
+        * khtml/editing/set_node_attribute_command.cpp: Added.
+        * khtml/editing/set_node_attribute_command.h: Added.
+        * khtml/editing/split_element_command.cpp: Added.
+        * khtml/editing/split_element_command.h: Added.
+        * khtml/editing/split_text_node_command.cpp: Added.
+        * khtml/editing/split_text_node_command.h: Added.
+        * khtml/editing/split_text_node_containing_element_command.h: Added.
+        * khtml/editing/typing_command.cpp: Added.
+        * khtml/editing/typing_command.h: Added.
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp: Added.
+        * khtml/editing/wrap_contents_in_dummy_span_command.h: Added.
+
 2005-05-23  Darin Adler  <darin@apple.com>
 
         * WebCore.exp: Sorted file for more readable diffs.

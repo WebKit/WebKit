@@ -53,9 +53,6 @@ using DOM::CSSComputedStyleDeclarationImpl;
 
 namespace khtml {
 
-//------------------------------------------------------------------------------------------
-// EditCommandPtr
-
 EditCommandPtr::EditCommandPtr()
 {
 }
@@ -205,9 +202,6 @@ EditCommandPtr &EditCommandPtr::emptyCommand()
     static EditCommandPtr m_emptyCommand;
     return m_emptyCommand;
 }
-
-//------------------------------------------------------------------------------------------
-// EditCommand
 
 EditCommand::EditCommand(DocumentImpl *document) 
     : m_document(document), m_state(NotApplied), m_typingStyle(0), m_parent(0)
