@@ -10,6 +10,10 @@
 
         Reviewed by Vicki.
 
+        - fixed <rdar://problem/4128727> many DOM classes not exported (can't add categories or do other things that require class name linking)
+
+        No new test cases needed.
+
         * WebCore.exp: Added exports for many classes in the public DOM headers that were omitted before.
         Also removed one symbol that was listed twice.
 
