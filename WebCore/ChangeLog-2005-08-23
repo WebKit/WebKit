@@ -1,5 +1,13 @@
 2005-05-24  Darin Adler  <darin@apple.com>
 
+        - another gcc 4.0 fix
+
+        No new test cases needed.
+
+        * khtml/dom/dom2_events.cpp: Moved constants out of the KHTML_NO_CPLUSPLUS_DOM #if.
+
+2005-05-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Vicki.
 
         * WebCore.exp: Added exports for many classes in the public DOM headers that were omitted before.

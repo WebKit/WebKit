@@ -32,7 +32,15 @@
 
 #endif
 
-using namespace DOM;
+namespace DOM {
+
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_LEFT;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
+const unsigned long KeyboardEvent::DOM_KEY_LOCATION_UNKNOWN;
+
+// -----------------------------------------------------------------------------
 
 EventListener::EventListener()
 {
@@ -646,14 +654,7 @@ void MutationEvent::initMutationEvent(const DOMString &typeArg,
 	newValueArg,attrNameArg,attrChangeArg);
 }
 
-
 // -----------------------------------------------------------------------------
-
-const unsigned long KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
-const unsigned long KeyboardEvent::DOM_KEY_LOCATION_LEFT;
-const unsigned long KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
-const unsigned long KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
-const unsigned long KeyboardEvent::DOM_KEY_LOCATION_UNKNOWN;
 
 KeyboardEvent::KeyboardEvent()
 {
@@ -771,3 +772,5 @@ void KeyboardEvent::initKeyboardEvent(const DOMString &typeArg,
 }
                                     
 #endif
+
+} // namespace
