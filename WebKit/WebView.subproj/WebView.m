@@ -742,6 +742,7 @@ static bool debugWidget = true;
         [_private->settings setUserStyleSheetLocation:@""];
     }
     [_private->settings setShouldPrintBackgrounds:[preferences shouldPrintBackgrounds]];
+    [_private->settings setTextAreasAreResizable:[preferences textAreasAreResizable]];
 }
 
 - (void)_preferencesChangedNotification: (NSNotification *)notification

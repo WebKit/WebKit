@@ -307,6 +307,17 @@
     return shouldPrintBackgrounds;
 }
 
+- (void)setTextAreasAreResizable:(BOOL)resizable
+{
+    textAreasAreResizable = resizable;
+    settings->setTextAreasAreResizable(resizable);
+}
+
+- (BOOL)textAreasAreResizable
+{
+    return textAreasAreResizable;
+}
+
 - (void)setDefaultTextEncoding:(NSString *)s
 {
     if ([defaultTextEncoding isEqualToString:s]) {

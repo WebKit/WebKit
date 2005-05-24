@@ -49,6 +49,7 @@ class KHTMLSettings;
     BOOL JavaScriptCanOpenWindowsAutomatically;
     BOOL willLoadImagesAutomatically;
     BOOL shouldPrintBackgrounds;
+    BOOL textAreasAreResizable;
     NSString *userStyleSheetLocation;
     NSString *defaultTextEncoding;
     
@@ -105,6 +106,9 @@ class KHTMLSettings;
 
 - (void)setShouldPrintBackgrounds:(BOOL)enabled;
 - (BOOL)shouldPrintBackgrounds;
+
+- (void)setTextAreasAreResizable:(BOOL)resizable;
+- (BOOL)textAreasAreResizable;
 
 - (void)setDefaultTextEncoding:(NSString *)encoding;
 - (NSString *)defaultTextEncoding;

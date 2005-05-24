@@ -1,3 +1,28 @@
+2005-05-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - WebKit part of <rdar://problem/4125783> WebKit needs a way to control whether textareas are resizable
+
+        * WebView.subproj/WebPreferencesPrivate.h:
+        added private-for-now getter and setter for new preference
+        * WebView.subproj/WebPreferenceKeysPrivate.h:
+        added private preference key controlling whether textareas are resizable
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        initial value of new preference is NO, so other clients' behavior doesn't change
+        (-[WebPreferences textAreasAreResizable]):
+        new getter
+        (-[WebPreferences setTextAreasAreResizable:]):
+        new setter
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+        update this new setting in WebCore
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        updated for these changes
+
 2005-05-23  Chris Blumenberg  <cblu@apple.com>
 
 	Changed type for identifier parameter in WebResourceLoadDelegate-related calls to id from NSString.

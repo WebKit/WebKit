@@ -14,6 +14,9 @@
 - (BOOL)showsURLsInToolTips;
 - (void)setShowsURLsInToolTips:(BOOL)flag;
 
+- (BOOL)textAreasAreResizable;
+- (void)setTextAreasAreResizable:(BOOL)flag;
+
 // Other private methods
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;

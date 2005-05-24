@@ -77,6 +77,7 @@ public:
 
     const QString &userStyleSheet() const { return _userStyleSheetLocation; }
     bool shouldPrintBackgrounds() const { return _shouldPrintBackgrounds; }
+    bool textAreasAreResizable() const { return _textAreasAreResizable; }
 
     void setStdFontName(const QString &s) { _stdFontName = s; }
     void setFixedFontName(const QString &s) { _fixedFontName = s; }
@@ -100,6 +101,7 @@ public:
 
     void setUserStyleSheet(const QString &s) { _userStyleSheetLocation = s; }
     void setShouldPrintBackgrounds(bool f) { _shouldPrintBackgrounds = f; }
+    void setTextAreasAreResizable(bool f) { _textAreasAreResizable = f; }
     
 private:
     QString _stdFontName;
@@ -121,6 +123,7 @@ private:
     uint _JavaScriptEnabled:1;
     uint _JavaScriptCanOpenWindowsAutomatically:1;
     uint _shouldPrintBackgrounds:1;
+    uint _textAreasAreResizable:1;
     
 };
 

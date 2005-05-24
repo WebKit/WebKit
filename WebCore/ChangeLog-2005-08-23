@@ -1,3 +1,37 @@
+2005-05-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - WebCore part of <rdar://problem/4125783> WebKit needs a way to control whether textareas are resizable
+
+        * kwq/KWQKHTMLSettings.h:
+        (KHTMLSettings::textAreasAreResizable):
+        new getter
+        (KHTMLSettings::setTextAreasAreResizable):
+        new setter
+        
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        eliminated ALLOW_RESIZING_TEXT_AREAS #define in favor of using runtime setting
+        (-[KWQTextArea isResizableByUser]):
+        get value from settings, and cache it in KWQTextArea instance
+        (-[KWQTextAreaTextView _enclosingTextArea]):
+        new convenience method, extracted from _trackResizeFromMouseDown:
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        now uses extracted method
+        
+        (-[KWQTextAreaTextView drawRect:]):
+        now checks isResizableByUser
+        (-[KWQTextAreaTextView mouseDown:]):
+        ditto
+        
+        * kwq/WebCoreSettings.h:
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings setTextAreasAreResizable:]):
+        new setter
+        (-[WebCoreSettings textAreasAreResizable]):
+        new getter
+
 2005-05-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -192,6 +192,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitTextAreasAreResizablePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
@@ -554,6 +555,16 @@ NS_ENDHANDLER
 - (void)setShowsURLsInToolTips:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitShowsURLsInToolTipsPreferenceKey];
+}
+
+- (BOOL)textAreasAreResizable
+{
+    return [self _boolValueForKey: WebKitTextAreasAreResizablePreferenceKey];
+}
+
+- (void)setTextAreasAreResizable:(BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitTextAreasAreResizablePreferenceKey];
 }
 
 - (int)_pageCacheSize

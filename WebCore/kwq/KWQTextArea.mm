@@ -34,8 +34,6 @@
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
 
-#define ALLOW_RESIZING_TEXTAREAS 1
-
 using DOM::EventImpl;
 using DOM::NodeImpl;
 using khtml::RenderWidget;
@@ -67,6 +65,10 @@ using khtml::RenderWidget;
 
 @interface NSTextStorage (KWQTextArea)
 - (void)_KWQ_setBaseWritingDirection:(NSWritingDirection)direction;
+@end
+
+@interface KWQTextArea (KWQTextAreaTextView)
+- (BOOL)isResizableByUser;
 @end
 
 @interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
@@ -275,6 +277,19 @@ const float LargeNumberForText = 1.0e7;
 - (BOOL)isEnabled
 {
     return [textView isEnabled];
+}
+
+- (BOOL)isResizableByUser
+{
+    // Compute the value once, then cache it. We don't react to changes in the settings, so each
+    // instance needs to keep track of its own state. We can't compute this at init time, because
+    // the part isn't reachable, hence the settings aren't reachable, until the event filter has
+    // been installed.
+    if (!resizableByUserComputed) {
+        resizableByUser = [KWQKHTMLPart::bridgeForWidget(widget) part]->settings()->textAreasAreResizable();
+        resizableByUserComputed = YES;
+    }
+    return resizableByUser;
 }
 
 - (void)tile
@@ -567,12 +582,10 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 static BOOL _spellCheckingInitiallyEnabled = NO;
 static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
 
-#if ALLOW_RESIZING_TEXTAREAS
 const int MinimumWidthWhileResizing = 100;
 const int MinimumHeightWhileResizing = 40;
 const float ResizeCornerWidth = 16;
 const float ResizeCornerHeight = 16;
-#endif
 
 + (void)_setContinuousSpellCheckingEnabledForNewTextAreas:(BOOL)flag
 {
@@ -710,16 +723,20 @@ const float ResizeCornerHeight = 16;
     return widget;
 }
 
-#if ALLOW_RESIZING_TEXTAREAS
+- (KWQTextArea *)_enclosingTextArea
+{
+    KWQTextArea *textArea = [[self superview] superview];
+    ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
+    return textArea;
+}
+
 - (void)_trackResizeFromMouseDown:(NSEvent *)event
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     DOMHTMLTextAreaElement *element = [bridge elementForView:self];
     ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
     
-    KWQTextArea *textArea = [[self superview] superview];
-    ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
-    
+    KWQTextArea *textArea = [self _enclosingTextArea];
     NSPoint initialLocalPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSSize initialTextAreaSize = [textArea frame].size;
 
@@ -813,20 +830,16 @@ const float ResizeCornerHeight = 16;
     }
 }
 
-#endif
-
 - (void)drawRect:(NSRect)rect
 {
     [super drawRect:rect];
     
-#if ALLOW_RESIZING_TEXTAREAS
-    if ([self isEnabled]) {
+    if ([self isEnabled] && [[self _enclosingTextArea] isResizableByUser]) {
         NSImage *cornerImage = [self _resizeCornerImage];
         NSPoint imagePoint = [self _resizeCornerRect].origin;
         imagePoint.y += [cornerImage size].height;
         [cornerImage compositeToPoint:imagePoint operation:NSCompositeSourceOver];
     }
-#endif
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -834,22 +847,22 @@ const float ResizeCornerHeight = 16;
     if (disabled)
         return;
     
-#if ALLOW_RESIZING_TEXTAREAS
-    NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    // FIXME Radar 4118510: Maybe the right design is to only have a resize corner when a scroll bar is 
-    // present, and put it in the bottom-right corner (below and/or to the right of  the scroll bar?).
-    // FIXME Radar 4118599: With this "bottom right corner" design, we'd need to distinguish between a click in text
-    // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
-    // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
-    // to drag the bottom-right corner to make the bottom-left corner move.
-    BOOL inResizeCorner = NSPointInRect(localPoint, [self _resizeCornerRect]);
-    if (inResizeCorner) {
-        // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
-        [[NSCursor arrowCursor] set];
-        [self _trackResizeFromMouseDown:event];
-        return;
+    if ([[self _enclosingTextArea] isResizableByUser]) {
+        NSPoint localPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+        // FIXME Radar 4118510: Maybe the right design is to only have a resize corner when a scroll bar is 
+        // present, and put it in the bottom-right corner (below and/or to the right of  the scroll bar?).
+        // FIXME Radar 4118599: With this "bottom right corner" design, we'd need to distinguish between a click in text
+        // and a drag-to-resize. This code currently always does the drag-to-resize behavior.
+        // FIXME Radar 4118559: This behaves very oddly for textareas that are in blocks with right-aligned text; you have
+        // to drag the bottom-right corner to make the bottom-left corner move.
+        BOOL inResizeCorner = NSPointInRect(localPoint, [self _resizeCornerRect]);
+        if (inResizeCorner) {
+            // If the cursor tracking worked perfectly, this next line wouldn't be necessary, but it would be harmless still.
+            [[NSCursor arrowCursor] set];
+            [self _trackResizeFromMouseDown:event];
+            return;
+        }
     }
-#endif
     
     [super mouseDown:event];
     if (widget) {
