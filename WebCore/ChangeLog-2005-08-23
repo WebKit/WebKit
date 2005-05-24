@@ -1,3 +1,21 @@
+2005-05-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed <rdar://problem/3598589> onunload handler doesn't fire when a window is closed
+
+        Test cases added: 
+        * layout-tests/fast/events/onunload-expected.txt: Added.
+        * layout-tests/fast/events/onunload.html: Added.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::detach): Don't remove all event handlers from the document here...
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL): ...instead do it here, after firing the unload event, but only
+	if the document is not in the back/forward cache...
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState finalize]): ...and take care of the back/forward cache case here.
+
 2005-05-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin.

@@ -1241,10 +1241,6 @@ void DocumentImpl::detach()
     m_imageLoadEventDispatchSoonList.clear();
     m_imageLoadEventDispatchingList.clear();
     
-    
-    // FIXME: UNLOAD_EVENT will not dispatch due to deleting event listeners prior to closeURL(). 
-    removeAllEventListenersFromAllNodes();
-
     ContainerNodeImpl::detach();
 
     if ( render )

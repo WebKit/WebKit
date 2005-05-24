@@ -1,0 +1,15 @@
+ALERT: unload
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderText {TEXT} at (0,0) size 287x18
+        text run at (0,0) width 287: "You should have seen an unload alert appear."
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x34
+  RenderBlock {HTML} at (0,0) size 800x34
+    RenderBody {BODY} at (8,8) size 784x18
+      RenderText {TEXT} at (0,0) size 287x18
+        text run at (0,0) width 287: "You should have seen an unload alert appear."

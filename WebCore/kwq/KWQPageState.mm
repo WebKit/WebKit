@@ -134,6 +134,7 @@ using KJS::SavedBuiltins;
         document->setInPageCache(NO);
         if (detached) {
             document->detach();
+            document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
         
@@ -169,6 +170,7 @@ using KJS::SavedBuiltins;
         document->setInPageCache(NO);
         if (detached) {
             document->detach();
+            document->removeAllEventListenersFromAllNodes();
         }
         document->deref();
         
