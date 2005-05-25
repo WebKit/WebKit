@@ -2714,7 +2714,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
 {
-    NSView *view = [self hitTest:[[self superview] convertPoint:point toView:nil]];
+    NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
     return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
 }
 
