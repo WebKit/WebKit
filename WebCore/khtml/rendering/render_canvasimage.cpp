@@ -96,7 +96,7 @@ void RenderCanvasImage::createDrawingContext()
     int cHeight = contentHeight();
     size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
     size_t bytesPerRow = BYTES_PER_ROW(cWidth,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
-    _drawingContextData = malloc(height() * bytesPerRow);
+    _drawingContextData = calloc(height(), bytesPerRow);
     _drawingContext = CGBitmapContextCreate(_drawingContextData, cWidth, cHeight, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
     
 #ifdef DEBUG_CANVAS_BACKGROUND

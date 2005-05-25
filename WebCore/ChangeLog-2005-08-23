@@ -1,3 +1,14 @@
+2005-05-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4127061> <canvas> backing store should be zero filled
+
+	Use calloc instead of malloc to ensure zero filled backing store.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::createDrawingContext):
+
 2005-05-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
