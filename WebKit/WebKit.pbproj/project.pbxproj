@@ -198,9 +198,6 @@
 				F560BEBD030DAF4401C1A526,
 				F59668C802AD2923018635CA,
 				F59668C902AD2923018635CA,
-				517FA6A903709FCE00CA2D3A,
-				517FA6AA03709FCE00CA2D3A,
-				517FA6AB03709FCE00CA2D3A,
 				6578F5DE045F817400000128,
 				6578F5DF045F817400000128,
 			);
@@ -691,30 +688,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = WebHistoryItemPrivate.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		517FA6A903709FCE00CA2D3A = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = WebUnicode.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		517FA6AA03709FCE00CA2D3A = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			path = WebUnicode.m;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		517FA6AB03709FCE00CA2D3A = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			path = WebUnicodeTables.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1796,7 +1769,6 @@
 				939810250824BF01008DF038,
 				939810260824BF01008DF038,
 				939810270824BF01008DF038,
-				939810280824BF01008DF038,
 				939810290824BF01008DF038,
 				9398102A0824BF01008DF038,
 				9398102B0824BF01008DF038,
@@ -2138,12 +2110,6 @@
 				ATTRIBUTES = (
 					Private,
 				);
-			};
-		};
-		939810280824BF01008DF038 = {
-			fileRef = 517FA6A903709FCE00CA2D3A;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		939810290824BF01008DF038 = {
@@ -3135,8 +3101,6 @@
 				939810CA0824BF01008DF038,
 				939810CB0824BF01008DF038,
 				939810CC0824BF01008DF038,
-				939810CD0824BF01008DF038,
-				939810CE0824BF01008DF038,
 				939810CF0824BF01008DF038,
 				939810D00824BF01008DF038,
 				939810D10824BF01008DF038,
@@ -3326,18 +3290,6 @@
 		};
 		939810CC0824BF01008DF038 = {
 			fileRef = F59668C902AD2923018635CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		939810CD0824BF01008DF038 = {
-			fileRef = 517FA6AA03709FCE00CA2D3A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		939810CE0824BF01008DF038 = {
-			fileRef = 517FA6AB03709FCE00CA2D3A;
 			isa = PBXBuildFile;
 			settings = {
 			};

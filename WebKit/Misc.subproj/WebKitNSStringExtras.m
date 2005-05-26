@@ -9,18 +9,17 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 
-#import <WebCore/WebCoreUnicode.h>
-
 #import <Foundation/NSString_NSURLExtras.h>
+#import <unicode/uchar.h>
 
 @implementation NSString (WebKitExtras)
 
-static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
+static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 {
     unsigned i;
-    for (i = 0; i < length; i++){
-        WebCoreUnicodeDirection direction = WebCoreUnicodeDirectionFunction (buffer[i]);
-        if (direction == DirectionR || direction > DirectionON){
+    for (i = 0; i < length; i++) {
+        UCharDirection direction = u_charDirection(buffer[i]);
+        if (direction == U_RIGHT_TO_LEFT || direction > U_WHITE_SPACE_NEUTRAL) {
             return NO;
         }
     }

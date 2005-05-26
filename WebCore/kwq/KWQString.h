@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,10 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
+#include <unicode/uchar.h>
 #include <CoreFoundation/CoreFoundation.h>
-
-#include "KWQCString.h"
-#include "WebCoreUnicode.h"
 #include "misc/main_thread_malloc.h"
+#include "KWQCString.h"
 
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300
@@ -111,14 +110,6 @@ private:
 
     friend class QString;
     friend class QConstString;
-
-    static bool isDigitNonASCII(UniChar c);
-    static bool isLetterNonASCII(UniChar c);
-    static bool isNumberNonASCII(UniChar c);
-    static bool isLetterOrNumberNonASCII(UniChar c);
-    static int digitValueNonASCII(UniChar c);
-    static UniChar lowerNonASCII(UniChar c);
-    static UniChar upperNonASCII(UniChar c);
 };
 
 inline QChar::QChar() : c(0)
@@ -166,49 +157,77 @@ inline bool QChar::isNull() const
 
 inline bool QChar::isSpace() const
 {
-    // Use isspace() for basic latin1.  This will include newlines, which
-    // aren't included in unicode DirWS.
+    // Use isspace() for basic Latin-1.
+    // This will include newlines, which aren't included in unicode DirWS.
     return c <= 0x7F ? isspace(c) : direction() == DirWS;
 }
 
 inline bool QChar::isDigit() const
 {
-    return c <= 0x7F ? isdigit(c) : isDigitNonASCII(c);
+    // FIXME: If fast enough, we should just call u_isdigit directly.
+    return c <= 0x7F ? isdigit(c) : u_isdigit(c);
 }
 
 inline bool QChar::isLetter() const
 {
-    return c <= 0x7F ? isalpha(c) : isLetterNonASCII(c);
+    // FIXME: If fast enough, we should just call u_isalpha directly.
+    return c <= 0x7F ? isalpha(c) : u_isalpha(c);
 }
 
 inline bool QChar::isNumber() const
 {
-    return c <= 0x7F ? isdigit(c) : isNumberNonASCII(c);
+    // FIXME: If fast enough, we should just call u_isdigit directly.
+    return c <= 0x7F ? isdigit(c) : u_isdigit(c);
 }
 
 inline bool QChar::isLetterOrNumber() const
 {
-    return c <= 0x7F ? isalnum(c) : isLetterOrNumberNonASCII(c);
+    // FIXME: If fast enough, we should just call u_isalnum directly.
+    return c <= 0x7F ? isalnum(c) : u_isalnum(c);
+}
+
+inline bool QChar::isPunct() const
+{
+    return u_ispunct(c);
 }
 
 inline int QChar::digitValue() const
 {
-    return c <= '9' ? c - '0' : digitValueNonASCII(c);
+    // FIXME: If fast enough, we should just call u_charDigitValue directly.
+    return c <= '9' ? c - '0' : u_charDigitValue(c);
 }
 
 inline QChar QChar::lower() const
 {
-    return c <= 0x7F ? tolower(c) : lowerNonASCII(c);
+    // FIXME: If fast enough, we should just call u_tolower directly.
+    return c <= 0x7F ? tolower(c) : u_tolower(c);
 }
 
 inline QChar QChar::upper() const
 {
-    return c <= 0x7F ? toupper(c) : upperNonASCII(c);
+    // FIXME: If fast enough, we should just call u_toupper directly.
+    return c <= 0x7F ? toupper(c) : u_toupper(c);
 }
 
 inline QChar::Direction QChar::direction() const
 {
-    return static_cast<Direction>(WebCoreUnicodeDirectionFunction(c));
+#if BUILDING_ON_PANTHER
+    // Panther gets the direction of the hyphen wrong.
+    // It returns "ET" (European Terminator) when it should return "ES" (European Separator).
+    if (c == '-')
+        return DirES;
+#endif
+    return static_cast<Direction>(u_charDirection(c));
+}
+
+inline bool QChar::mirrored() const
+{
+    return u_isMirrored(c);
+}
+
+inline QChar QChar::mirroredChar() const
+{
+    return QChar(static_cast<uint>(u_charMirror(c)));
 }
 
 inline uchar QChar::row() const

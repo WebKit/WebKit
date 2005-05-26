@@ -113,10 +113,6 @@ __ZN4KURLC1EPKc
 __ZN4KURLC1ERK7QString
 __ZN4KURLC1ERKS_RK7QStringPK10QTextCodec
 __ZN4KURLC1Ev
-__ZN5QChar13lowerNonASCIIEt
-__ZN5QChar13upperNonASCIIEt
-__ZN5QChar15isDigitNonASCIIEt
-__ZN5QChar24isLetterOrNumberNonASCIIEt
 __ZN5QDateC1Eiii
 __ZN5QFile4openEi
 __ZN5QFile5closeEv
@@ -268,8 +264,6 @@ __ZNK8QCString6lengthEv
 __ZNK8QCString7isEmptyEv
 __ZNK8QCString8containsEcb
 __ZNK9QDateTime6secsToERKS_
-__ZTI10KWQMapImpl
-__ZTI14QPtrCollection
 __ZTV14QPtrCollection
 __ZeqRK5QRectS1_
 __ZeqRK5QSizeS1_

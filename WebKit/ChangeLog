@@ -1,3 +1,19 @@
+2005-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard and Dave Harrison.
+
+        - eliminate WebCoreUnicode and use ICU directly instead
+
+        * Misc.subproj/WebKitNSStringExtras.m: (canUseFastRenderer): Use u_charDirection directly.
+        * WebCoreSupport.subproj/WebTextRenderer.m: Removed import of <WebCore/WebCoreUnicode.h>.
+        * WebView.subproj/WebHTMLView.m: (+[WebHTMLView initialize]): Removed call to WebKitInitializeUnicode.
+
+        * Misc.subproj/WebUnicode.h: Removed.
+        * Misc.subproj/WebUnicode.m: Removed.
+        * Misc.subproj/WebUnicodeTables.m: Removed.
+
+        * WebKit.pbproj/project.pbxproj: Removed files.
+
 2005-05-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4097289> -[WebView elementAtPoint:] failing when WebView is nested and offset

@@ -41,7 +41,6 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
-#import <WebKit/WebUnicode.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -1715,7 +1714,6 @@ static WebHTMLView *lastHitView = nil;
 
 + (void)initialize
 {
-    WebKitInitializeUnicode();
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] 
                              returnTypes:[[self class] _insertablePasteboardTypes]];
     _NSInitializeKillRing();

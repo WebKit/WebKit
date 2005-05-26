@@ -1,3 +1,37 @@
+2005-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard and Dave Harrison.
+        No new test cases needed for this change.
+
+        - eliminate WebCoreUnicode and use ICU directly instead
+        - fixed compiling with gcc 4.0 (was broken for Development only)
+
+        * WebCore.exp: Removed the WebCoreXXXFunction exports.
+        * WebCore-tests.exp: Removed some QChar functions that are now inlines.
+        Removed some typeinfo exports that are no longer appropriate since we use -fno-rtti.
+
+        * kwq/KWQString.h:
+        (QChar::isDigit): Changed to call u_isdigit when non-ASCII. We should probably phase
+        this out since it's only used in places where we don't want to handle non-ASCII decimal digits.
+        (QChar::isLetter): Changed to call u_isalpha when non-ASCII.
+        (QChar::isNumber): Changed to call u_isdigit when non-ASCII. This probably should be removed, since
+        we always want to call isDigit instead.
+        (QChar::isLetterOrNumber): Changed to call u_isalnum when non-ASCII.
+        (QChar::isPunct): Changed to call u_ispunct when non-ASCII.
+        (QChar::digitValue): Changed to call u_charDigitValue when not '0'-'9'. We should probably phase
+        this out since it's only used in places where we don't want to handle non-ASCII decimal digits.
+        (QChar::lower): Changed to call u_tolower when non-ASCII.
+        (QChar::upper): Changed to call u_toupper when non-ASCII.
+        (QChar::direction): Made inline. Calls u_charDirection.
+        (QChar::mirrored): Made inline. Calls u_isMirrored.
+        (QChar::mirroredChar): Made inline. Calls u_charMirror.
+
+        * kwq/KWQChar.mm: Removed.
+        * kwq/WebCoreUnicode.cpp: Removed.
+        * kwq/WebCoreUnicode.h: Removed.
+
+        * WebCore.pbproj/project.pbxproj: Removed files.
+
 2005-05-26  David Harrison  <harrison@apple.com>
 
         Reviewed by John.

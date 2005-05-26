@@ -12,8 +12,6 @@
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <QD/ATSUnicodePriv.h>
 
-#import <WebCore/WebCoreUnicode.h>
-
 #import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebKitLogging.h>
