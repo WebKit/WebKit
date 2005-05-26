@@ -1,3 +1,11 @@
+2005-05-26  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4120518> Mail: control-T in an empty message crashes mail
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge issueTransposeCommand]):
+        New, to support transpose in JS.
+
 2005-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard and Dave Harrison.

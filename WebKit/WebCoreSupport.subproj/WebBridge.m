@@ -1418,6 +1418,14 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[_frame webView] pasteAsPlainText:nil];
 }
 
+- (void)issueTransposeCommand
+{
+    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        [(WebHTMLView *)view transpose:nil];
+    }
+}
+
 - (BOOL)canPaste
 {
     return [[_frame webView] _canPaste];
