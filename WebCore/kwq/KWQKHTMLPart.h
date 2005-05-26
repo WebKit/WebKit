@@ -339,6 +339,7 @@ public:
     void issueCopyCommand();
     void issuePasteCommand();
     void issuePasteAndMatchStyleCommand();
+    void issueTransposeCommand();
     void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
     void respondToChangedContents();
     virtual bool isContentEditable() const;

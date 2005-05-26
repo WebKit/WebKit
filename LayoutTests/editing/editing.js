@@ -9,6 +9,21 @@ var selection = window.getSelection();
 
 //-------------------------------------------------------------------------------------------------------
 
+function execTransposeCharactersCommand() {
+    document.execCommand("Transpose");
+}
+function transposeCharactersCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execTransposeCharactersCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execTransposeCharactersCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionForwardByCharacterCommand() {
     selection.modify("move", "forward", "character");
 }

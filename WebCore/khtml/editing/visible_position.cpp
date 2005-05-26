@@ -158,8 +158,21 @@ VisiblePosition VisiblePosition::next() const
 
 VisiblePosition VisiblePosition::previous() const
 {
-    VisiblePosition result =  VisiblePosition(previousVisiblePosition(m_deepPosition), DOWNSTREAM);
-
+    // find first previous DOM position that is visible
+    Position pos = m_deepPosition;
+    while (!pos.atStart()) {
+        pos = pos.previous(UsingComposedCharacters);
+        if (isCandidate(pos))
+            break;
+    }
+    
+    // return null visible position if there is no previous visible position
+    if (pos.atStart())
+        return VisiblePosition();
+        
+    VisiblePosition result = VisiblePosition(pos, DOWNSTREAM);
+    ASSERT(result != *this);
+    
 #ifndef NDEBUG
     // we should always be able to make the affinity DOWNSTREAM, because going previous from an
     // UPSTREAM position can never yield another UPSTREAM position (unless line wrap length is 0!).
@@ -181,6 +194,12 @@ Position VisiblePosition::previousVisiblePosition(const Position &pos)
     Position downstreamTest = test.downstream();
     bool acceptAnyVisiblePosition = !isCandidate(test);
 
+    // NOTE: The first position examined is the deepEquivalent of pos.  This,
+    // of course, is often after pos in the DOM.  Some care is taken to not return
+    // a position later than pos, but it is clearly possible to return pos
+    // itself (if it is a candidate) when iterating back from a deepEquivalent
+    // that is not a candidate.  That is wrong!  However, our clients seem to
+    // like it.  Gotta lose those clients! (initDownstream and initUpstream)
     Position current = test;
     while (!current.atStart()) {
         current = current.previous(UsingComposedCharacters);
@@ -188,8 +207,8 @@ Position VisiblePosition::previousVisiblePosition(const Position &pos)
             return current;
         }
     }
-    
-    return Position();
+
+     return Position();
 }
 
 Position VisiblePosition::nextVisiblePosition(const Position &pos)

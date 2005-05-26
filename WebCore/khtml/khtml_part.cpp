@@ -5451,6 +5451,13 @@ void KHTMLPart::pasteAndMatchStyle()
 #endif
 }
 
+void KHTMLPart::transpose()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issueTransposeCommand();
+#endif
+}
+
 void KHTMLPart::redo()
 {
 #if APPLE_CHANGES

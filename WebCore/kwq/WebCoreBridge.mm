@@ -2256,7 +2256,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     VisiblePosition caret(selection.start(), selection.startAffinity());
     VisiblePosition next = caret.next();
     VisiblePosition previous = caret.previous();
-    if (caret == next || caret == previous)
+    if (previous.isNull() || next.isNull() || caret == next || caret == previous)
         return nil;
 
     return [DOMRange _rangeWithImpl:makeRange(previous, next).get()];

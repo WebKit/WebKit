@@ -338,6 +338,12 @@ bool execSuperscript(KHTMLPart *part, bool userInterface, const DOMString &value
     return execStyleChange(part, CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
+bool execTranspose(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    part->transpose();
+    return true;
+}
+
 bool execUnderline(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     bool isUnderlined = selectionStartHasStyle(part, CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT, "underline");
@@ -519,6 +525,7 @@ QDict<CommandImp> createCommandDictionary()
         { "SelectAll", { execSelectAll, enabled, stateNone, valueNull } },
         { "Subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
         { "Superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
+        { "Transpose", { execTranspose, enabled, stateNone, valueNull } },
         { "Underline", { execUnderline, enabledAnySelection, stateUnderline, valueNull } },
         { "Undo", { execUndo, enabledUndo, stateNone, valueNull } },
         { "Unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
