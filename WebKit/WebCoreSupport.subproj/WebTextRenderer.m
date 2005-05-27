@@ -17,7 +17,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebUnicode.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <float.h>
@@ -842,10 +841,9 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     
     for (i = 0; i < numCharacters; i++) {
         UnicodeChar c = characters[i];
-        UniChar h = HighSurrogatePair(c);
-        UniChar l = LowSurrogatePair(c);
-        buffer[bufPos++] = h;
-        buffer[bufPos++] = l;
+        ASSERT(U16_LENGTH(c) == 2);
+        buffer[bufPos++] = U16_LEAD(c);
+        buffer[bufPos++] = U16_TRAIL(c);
     }
         
     OSStatus status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
@@ -1998,21 +1996,21 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     
     UnicodeChar c = *cp;
 
-    if (IsLowSurrogatePair(c))
+    if (U16_IS_TRAIL(c))
         return INVALID_WIDTH;
 
     // Do we have a surrogate pair?  If so, determine the full Unicode (32 bit)
     // code point before glyph lookup.
     unsigned clusterLength = 1;
-    if (IsHighSurrogatePair(c)) {
+    if (U16_IS_LEAD(c)) {
         // Make sure we have another character and it's a low surrogate.
         UniChar low;
-        if (currentCharacter + 1 >= run->length || !IsLowSurrogatePair((low = cp[1]))) {
+        if (currentCharacter + 1 >= run->length || !U16_IS_TRAIL((low = cp[1]))) {
             // Error!  The second component of the surrogate pair is missing.
             return INVALID_WIDTH;
         }
 
-        c = UnicodeValueForSurrogatePair(c, low);
+        c = U16_GET_SUPPLEMENTARY(c, low);
         clusterLength = 2;
     }
 
@@ -2102,8 +2100,8 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             characterArray[0] = c;
             characterArrayLength = 1;
         } else {
-            characterArray[0] = HighSurrogatePair(c);
-            characterArray[1] = LowSurrogatePair(c);
+            characterArray[0] = U16_LEAD(c);
+            characterArray[1] = U16_TRAIL(c);
             characterArrayLength = 2;
         }
         

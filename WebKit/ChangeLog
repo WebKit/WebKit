@@ -1,3 +1,14 @@
+2005-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix build failure from when I removed WebCoreUnicode
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Removed import of WebUnicode.h that I missed.
+        (-[WebTextRenderer _convertUnicodeCharacters:length:toGlyphs:]): Switch from our own macros
+        to the ICU macros for surrogate pairs.
+        (widthForNextCharacter): Ditto.
+
 2005-05-26  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4120518> Mail: control-T in an empty message crashes mail
