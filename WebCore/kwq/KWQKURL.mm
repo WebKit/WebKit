@@ -35,12 +35,7 @@
 // FIXME: Should get this from a header.
 extern "C" int malloc_good_size(int size);
 
-// You may have to turn this to 0 to compile without the headers for ICU installed.
-#define HAVE_ICU_LIBRARY 1
-
-#if HAVE_ICU_LIBRARY
 #import <unicode/uidna.h>
-#endif
 
 struct KWQIntegerPair {
     KWQIntegerPair(int s, int e) : start(s), end(e) { }
@@ -1506,8 +1501,6 @@ NSData *KURL::getNSData() const
     return [NSData dataWithBytes:bytes length:urlString.length()];
 }
 
-#if HAVE_ICU_LIBRARY
-
 static QString encodeHostname(const QString &s)
 {
     // Needs to be big enough to hold an IDN-encoded name.
@@ -1672,15 +1665,9 @@ static QString encodeHostnames(const QString &s)
     return s;
 }
 
-#endif // HAVE_ICU_LIBRARY
-
 static char *encodeRelativeString(const KURL &base, const QString &rel, const QTextCodec *codec)
 {
-#if HAVE_ICU_LIBRARY
     QString s = encodeHostnames(rel);
-#else
-    QString s = rel;
-#endif
 
     char *strBuffer;
 

@@ -43,15 +43,10 @@
 #include <kdebug.h>
 #include <assert.h>
 
-// You may have to turn this to 0 to compile without the headers for ICU installed.
-#define HAVE_ICU_LIBRARY 1
-
-#if HAVE_ICU_LIBRARY
 #include <unicode/ubrk.h>
 #include <unicode/uloc.h>
 #include <unicode/utypes.h>
 #include <unicode/parseerr.h>
-#endif
 
 using namespace khtml;
 using namespace DOM;
@@ -691,8 +686,6 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
     return m_start + m_len;
 }
 
-#if HAVE_ICU_LIBRARY
-
 static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
 {
     // The locale is currently ignored when determining character cluster breaks.  This may change
@@ -716,27 +709,21 @@ static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
     return iterator;
 }
 
-#endif
-
 long RenderText::previousOffset (long current) const
 {
-#if HAVE_ICU_LIBRARY
     UBreakIterator *iterator = getCharacterBreakIterator(str);
     if (iterator) {
         return ubrk_preceding(iterator, current);
     }
-#endif
     return current - 1;
 }
 
 long RenderText::nextOffset (long current) const
 {
-#if HAVE_ICU_LIBRARY
     UBreakIterator *iterator = getCharacterBreakIterator(str);
     if (iterator) {
         return ubrk_following(iterator, current);
     }
-#endif
     return current + 1;
 }
 

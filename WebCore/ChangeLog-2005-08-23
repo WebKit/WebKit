@@ -1,3 +1,12 @@
+2005-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - remove HAVE_ICU_LIBRARY ifdefs
+
+        * khtml/rendering/render_text.cpp: Just use ICU all the time; no ifdef.
+        * kwq/KWQKURL.mm: Ditto.
+
 2005-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by me, patch by Mitz Pettel.
