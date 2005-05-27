@@ -943,26 +943,25 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 case QChar::DirS:
                 case QChar::DirWS:
                 case QChar::DirON:
-                    if(dir != QChar::DirL) {
+                    if( bidi.status.eor != QChar::DirL ) {
                         //last stuff takes embedding dir
-                        if( bidi.context->dir == QChar::DirR ) {
-                            if(!(bidi.status.eor == QChar::DirR)) {
-                                // AN or EN
-                                appendRun( bidi );
-                                dir = QChar::DirR;
-                            }
-                            else
-                                bidi.eor = bidi.last;
+                        if(bidi.context->dir == QChar::DirL || bidi.status.lastStrong == QChar::DirL) { 
+                            if ( bidi.status.eor != QChar::DirEN && bidi.status.eor != QChar::DirAN && bidi.status.eor != QChar::DirON ) 
                             appendRun( bidi );
                             dir = QChar::DirL;
+                            bidi.eor = bidi.current; 
                             bidi.status.eor = QChar::DirL;
                         } else {
-                            if(bidi.status.eor == QChar::DirR) {
+                            if ( bidi.status.eor == QChar::DirEN || bidi.status.eor == QChar::DirAN ) 
+                            { 
+                                dir = bidi.status.eor; 
                                 appendRun( bidi );
-                                dir = QChar::DirL;
-                            } else {
-                                bidi.eor = bidi.current; bidi.status.eor = QChar::DirL; break;
                             }
+                            dir = QChar::DirR; 
+                            bidi.eor = bidi.last; 
+                            appendRun( bidi ); 
+                            dir = QChar::DirL; 
+                            bidi.status.eor = QChar::DirL; 
                         }
                     } else {
                         bidi.eor = bidi.current; bidi.status.eor = QChar::DirL;
@@ -998,12 +997,14 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 case QChar::DirON:
                     if( !(bidi.status.eor == QChar::DirR) && !(bidi.status.eor == QChar::DirAL) ) {
                         //last stuff takes embedding dir
-                        if(bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR) {
+                        if(bidi.context->dir == QChar::DirR || bidi.status.lastStrong == QChar::DirR 
+                            || bidi.status.lastStrong == QChar::DirAL) { 
                             appendRun( bidi );
                             dir = QChar::DirR;
                             bidi.eor = bidi.current;
 			    bidi.status.eor = QChar::DirR;
                         } else {
+                            dir = QChar::DirL; 
                             bidi.eor = bidi.last;
                             appendRun( bidi );
                             dir = QChar::DirR;
@@ -1027,9 +1028,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             if(!(bidi.status.lastStrong == QChar::DirAL)) {
                 // if last strong was AL change EN to AN
                 if(dir == QChar::DirON) {
-                    if(bidi.status.lastStrong == QChar::DirAL)
-                        dir = QChar::DirAN;
-                    else
                         dir = QChar::DirL;
                 }
                 switch(bidi.status.last)
@@ -1202,7 +1200,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 break;
             case QChar::DirEN:
                 if ( bidi.status.last == QChar::DirL ) {
-                    bidi.status.last = QChar::DirL;
                     break;
                 }
                 // fall through

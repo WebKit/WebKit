@@ -1,5 +1,18 @@
 2005-05-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by me, patch by Mitz Pettel.
+
+        - fixed <rdar://problem/4106907> bidi algorithm bug fixed for KHTML should be fixed in WebCore too
+
+        * khtml/rendering/bidi.cpp: (khtml::RenderBlock::bidiReorderLine): Integrated the patch that Mitz did
+        for the KDE bug, details at <http://www.mitzpettel.com/software/WebCorePatch2.html>.
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-neutral-directionality-paragraph-start.html: Added.
+
+2005-05-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard and Dave Harrison.
         No new test cases needed for this change.
 
