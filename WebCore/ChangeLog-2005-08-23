@@ -1,3 +1,20 @@
+2005-05-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        fix for <rdar://problem/4121747> Cannot log into Cingular.com account page (load event delivered while still processing incoming data)
+       
+        * khtml/misc/loader.cpp:
+        (DocLoader::DocLoader): Initialized m_loadInProgress to false.
+        (DocLoader::setLoadInProgress): Added.
+        (Loader::slotFinished): sets the m_loadInProgress flag to reflect the fact that we're not really done loading this request until we emit the signal with the request status.
+        (Loader::numRequests): If there's a load in progress, we increment the number of requests so it doesn't seem like the load is done.
+        * khtml/misc/loader.h: (khtml::DocLoader::loadInProgress): Added.
+
+        Test cases added: 
+        * layout-tests/fast/loader/loadInProgress.html: Added
+        * layout-tests/fast/loader/loadInProgress-expected.html: Added
+
 2005-05-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
