@@ -1,3 +1,10 @@
+2005-05-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+
+        * WebCore-tests.exp:
+        took out symbol __ZNK5QChar7isPunctEv; it was obsolete and causing build trouble
+
 2005-05-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

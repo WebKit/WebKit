@@ -209,7 +209,6 @@ __ZNK4KURL5queryEv
 __ZNK4KURL7hasPathEv
 __ZNK4KURL8protocolEv
 __ZNK4KURL9prettyURLEv
-__ZNK5QChar7isPunctEv
 __ZNK5QFile4sizeEv
 __ZNK5QFile6existsEv
 __ZNK5QRect4sizeEv
