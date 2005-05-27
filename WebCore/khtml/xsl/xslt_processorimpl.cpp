@@ -159,6 +159,7 @@ DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         result->determineParseMode(m_resultOutput); // Make sure we parse in the correct mode.
         result->write(m_resultOutput);
         result->finishParsing();
+        result->setParsing(false);
         if (view)
             view->part()->checkCompleted();
         else

@@ -1,3 +1,19 @@
+2005-05-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed <rdar://problem/4125212> form submission delayed until you are on the next page on XML/XSL page (security hole)
+
+        * khtml/xsl/xslt_processorimpl.cpp: (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+        Call setParsing(false) explicitly here. It's really annoying that setParsing(true) is done
+        inside DOM::DocumentImpl and setParsing(false) is done by KHTMLPart, so that should be fixed
+        some day, but for now this is the way to do it.
+
+        Test cases added:
+        * layout-tests/fast/events/xsl-onload-expected.txt: Added.
+        * layout-tests/fast/events/xsl-onload.xhtml: Added.
+        * layout-tests/fast/events/xsl-onload.xsl: Added.
+
 2005-05-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin
