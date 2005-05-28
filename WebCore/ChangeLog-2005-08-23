@@ -1,5 +1,22 @@
 2005-05-27  Adele Peterson  <adele@apple.com>
 
+        Change by Darin, reviewed by me.
+
+        fix for <rdar://problem/4067761> 8A425: reload stock widget over and over and crash in XMLHttpRequest::changeState
+
+        * khtml/khtml_part.cpp: (KHTMLPart::closeURL): now cancels XMLHttpRequests
+        * khtml/ecma/xmlhttprequest.h: Added cancelRequests, addToRequestsByDocument, and RemoveFromRequestsByDocument methods. Added requestsByDocument dictionary.
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send): calls addToRequestsByDocument
+        (KJS::XMLHttpRequest::abort): calls removeFromRequestsByDocument
+        (KJS::XMLHttpRequest::slotFinished): calls removeFromRequestsByDocument
+        (KJS::XMLHttpRequest::requestsByDocument):  creates dictionary to manage requests.
+        (KJS::XMLHttpRequest::addToRequestsByDocument): adds this request to dict.
+        (KJS::XMLHttpRequest::removeFromRequestsByDocument): removes this request from dict.
+        (KJS::XMLHttpRequest::cancelRequests): goes and cancels requests in the doc
+
+2005-05-27  Adele Peterson  <adele@apple.com>
+
         Reviewed by me, done by Darin.
 
         - Darin fixed a regression I found from Darin's recent DOM change that broke GMail

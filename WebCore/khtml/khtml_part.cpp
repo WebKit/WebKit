@@ -66,6 +66,7 @@ using namespace DOM;
 #include "khtmlview.h"
 #include <kparts/partmanager.h>
 #include "ecma/kjs_proxy.h"
+#include "ecma/xmlhttprequest.h"
 #include "khtml_settings.h"
 
 #include <sys/types.h>
@@ -115,6 +116,7 @@ using khtml::ApplyStyleCommand;
 using khtml::CHARACTER;
 using khtml::ChildFrame;
 using khtml::Decoder;
+using khtml::DocLoader;
 using khtml::EAffinity;
 using khtml::EditAction;
 using khtml::EditCommandPtr;
@@ -634,8 +636,11 @@ bool KHTMLPart::closeURL()
 
   d->m_workingURL = KURL();
 
-  if ( d->m_doc && d->m_doc->docLoader() )
-    khtml::Cache::loader()->cancelRequests( d->m_doc->docLoader() );
+  if (DocumentImpl *doc = d->m_doc) {
+    if (DocLoader *docLoader = doc->docLoader())
+      khtml::Cache::loader()->cancelRequests(docLoader);
+    KJS::XMLHttpRequest::cancelRequests(doc);
+  }
 
   // tell all subframes to stop as well
   ConstFrameIt it = d->m_frames.begin();
