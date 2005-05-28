@@ -876,7 +876,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
 
   // allow shortcuts like 'Image1' instead of document.images.Image1
   DocumentImpl *doc = m_part->xmlDocImpl();
-  if (isSafeScript(exec) && doc->isHTMLDocument()) { // might be XML
+  if (isSafeScript(exec) && doc && doc->isHTMLDocument()) { // might be XML
     NodeImpl *element = doc->all()->namedItem(p.string());
     if (element)
       return getDOMNode(exec, element);
@@ -912,7 +912,7 @@ bool Window::hasProperty(ExecState *exec, const Identifier &p) const
 
   if (isSafeScript(exec)) {
     DocumentImpl *doc = m_part->xmlDocImpl();
-    if (doc->isHTMLDocument() && doc->all()->namedItem(p.string()))
+    if (doc && doc->isHTMLDocument() && doc->all()->namedItem(p.string()))
       return true;
   }
 

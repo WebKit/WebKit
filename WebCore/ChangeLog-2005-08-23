@@ -1,5 +1,17 @@
 2005-05-27  Adele Peterson  <adele@apple.com>
 
+        Reviewed by me, done by Darin.
+
+        - Darin fixed a regression I found from Darin's recent DOM change that broke GMail
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::get): Added nil check for document.
+        (KJS::Window::hasProperty): Ditto.
+
+        Test cases added: None (Darin should write one).
+
+2005-05-27  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         fix for <rdar://problem/4121747> Cannot log into Cingular.com account page (load event delivered while still processing incoming data)
