@@ -398,7 +398,7 @@ DocumentImpl::~DocumentImpl()
     assert(m_savedRenderer == 0);
 #endif
     
-    KJS::ScriptInterpreter::forgetDOMObjectsForDocument(this);
+    KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
 
     if (changedDocuments && m_docChanged)
         changedDocuments->remove(this);

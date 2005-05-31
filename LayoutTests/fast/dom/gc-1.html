@@ -1,0 +1,41 @@
+<head>
+<script>
+function doit()
+{
+    document.getElementById("span-B").customProperty = "B";
+
+    // create lots of objects to force a garbage collection
+    var i = 0;
+    while (i < 1000) {
+        i = i+1;
+    }
+
+    var output= document.getElementById("output");
+
+    output.innerHTML += document.getElementById("span-B").customProperty + "<BR>";
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
+</script>
+</head>
+
+<body onload="doit()">
+<div style="border: 1px solid red">
+<p>
+This test verifies that JavaScript wrappers for DOM nodes are
+protected against garbage collection as long as the node remains in
+the document (so custom properties are preserved).
+</p>
+<p>
+The output should be the following pieces of text on lines by themselves: "original span", "B": 
+</p>
+</div>
+<div id="div">
+<span id="span-A"><span id="span-B"><span id="span-C">original span</span></span></span>
+</div>
+<div id="output">
+</div>
+</body>

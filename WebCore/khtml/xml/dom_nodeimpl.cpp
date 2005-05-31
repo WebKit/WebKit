@@ -1092,7 +1092,7 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
 
     // only do this once we know there won't be an exception
     if (shouldAdoptChild) {
-	KJS::ScriptInterpreter::updateDOMObjectDocument(newChild, newChild->getDocument(), getDocument());
+	KJS::ScriptInterpreter::updateDOMNodeDocument(newChild, newChild->getDocument(), getDocument());
 	newChild->setDocument(getDocument()->docPtr());
     }
 }

@@ -24,6 +24,7 @@
 #include "kjs_dom.h"
 #include "kjs_window.h"
 #include <kjs/internal.h> // for InterpreterImp
+#include <kjs/collector.h>
 
 #include "dom/dom_exception.h"
 #include "dom/dom2_events.h"
@@ -76,7 +77,7 @@ Value DOMFunction::call(ExecState *exec, Object &thisObj, const List &args)
 }
 
 static QPtrDict<DOMObject> * staticDomObjects = 0;
-QPtrDict< QPtrDict<DOMObject> > * staticDomObjectsPerDocument = 0;
+QPtrDict< QPtrDict<DOMNode> > * staticDOMNodesPerDocument = 0;
 
 QPtrDict<DOMObject> & ScriptInterpreter::domObjects()
 {
@@ -86,13 +87,13 @@ QPtrDict<DOMObject> & ScriptInterpreter::domObjects()
   return *staticDomObjects;
 }
 
-QPtrDict< QPtrDict<DOMObject> > & ScriptInterpreter::domObjectsPerDocument()
+QPtrDict< QPtrDict<DOMNode> > & ScriptInterpreter::domNodesPerDocument()
 {
-  if (!staticDomObjectsPerDocument) {
-    staticDomObjectsPerDocument = new QPtrDict<QPtrDict<DOMObject> >();
-    staticDomObjectsPerDocument->setAutoDelete(true);
+  if (!staticDOMNodesPerDocument) {
+    staticDOMNodesPerDocument = new QPtrDict<QPtrDict<DOMNode> >();
+    staticDOMNodesPerDocument->setAutoDelete(true);
   }
-  return *staticDomObjectsPerDocument;
+  return *staticDOMNodesPerDocument;
 }
 
 
@@ -117,62 +118,65 @@ void ScriptInterpreter::forgetDOMObject( void* objectHandle )
   deleteDOMObject( objectHandle );
 }
 
-DOMObject* ScriptInterpreter::getDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle )
+DOMNode *ScriptInterpreter::getDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node)
 {
-  QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)domObjectsPerDocument()[documentHandle];
-  if (documentDict) {
-    return (*documentDict)[objectHandle];
-  }
+  QPtrDict<DOMNode> *documentDict = (QPtrDict<DOMNode> *)domNodesPerDocument()[document];
+  if (documentDict)
+    return (*documentDict)[node];
 
   return NULL;
 }
 
-void ScriptInterpreter::putDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle, DOMObject *obj )
+void ScriptInterpreter::forgetDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *node)
 {
-  QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)domObjectsPerDocument()[documentHandle];
-  if (!documentDict) {
-    documentDict = new QPtrDict<DOMObject>();
-    domObjectsPerDocument().insert(documentHandle, documentDict);
-  }
-
-  documentDict->insert( objectHandle, obj );
+  QPtrDict<DOMNode> *documentDict = domNodesPerDocument()[document];
+  if (documentDict)
+    documentDict->remove(node);
 }
 
-bool ScriptInterpreter::deleteDOMObjectsForDocument( DOM::DocumentImpl* documentHandle )
+void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *nodeHandle, DOMNode *nodeWrapper)
 {
-  return domObjectsPerDocument().remove( documentHandle );
+  QPtrDict<DOMNode> *documentDict = domNodesPerDocument()[document];
+  if (!documentDict) {
+    documentDict = new QPtrDict<DOMNode>();
+    domNodesPerDocument().insert(document, documentDict);
+  }
+  
+  documentDict->insert(nodeHandle, nodeWrapper);
+}
+
+void ScriptInterpreter::forgetAllDOMNodesForDocument(DOM::DocumentImpl *document)
+{
+  domNodesPerDocument().remove(document);
 }
 
 void ScriptInterpreter::mark()
 {
-  QPtrDictIterator<QPtrDict<DOMObject> > dictIterator(domObjectsPerDocument());
+  QPtrDictIterator<QPtrDict<DOMNode> > dictIterator(domNodesPerDocument());
 
-  QPtrDict<DOMObject> *objectDict;
-  while ((objectDict = dictIterator.current())) {
-    QPtrDictIterator<DOMObject> objectIterator(*objectDict);
+  QPtrDict<DOMNode> *nodeDict;
+  while ((nodeDict = dictIterator.current())) {
+    QPtrDictIterator<DOMNode> nodeIterator(*nodeDict);
 
-    DOMObject *obj;
-    while ((obj = objectIterator.current())) {
-      if (!obj->marked()) {
-	obj->mark();
-      }
-      ++objectIterator;
+    DOMNode *node;
+    while ((node = nodeIterator.current())) {
+      // don't mark wrappers for nodes that are no longer in the
+      // document - they should not be saved if the node is not
+      // otherwise reachable from JS.
+      if (node->impl()->inDocument() && !node->marked())
+          node->mark();
+
+      ++nodeIterator;
     }
     ++dictIterator;
   }
 }
 
-void ScriptInterpreter::forgetDOMObjectsForDocument( DOM::DocumentImpl* documentHandle )
+void ScriptInterpreter::updateDOMNodeDocument(NodeImpl *node, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc)
 {
-  deleteDOMObjectsForDocument( documentHandle );
-}
-
-void ScriptInterpreter::updateDOMObjectDocument(void *objectHandle, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc)
-{
-  DOMObject* cachedObject = getDOMObjectForDocument(oldDoc, objectHandle);
-  if (cachedObject) {
-    putDOMObjectForDocument(newDoc, objectHandle, cachedObject);
-  }
+  DOMNode *cachedObject = getDOMNodeForDocument(oldDoc, node);
+  if (cachedObject)
+    putDOMNodeForDocument(newDoc, node, cachedObject);
 }
 
 bool ScriptInterpreter::wasRunByUserGesture() const

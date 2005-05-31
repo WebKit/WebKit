@@ -1,3 +1,46 @@
+2005-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed <rdar://problem/4125222> Dashboard heap size grows over time (leak caused by JavaScript DOM node wrappers?)
+
+	- changed per-document DOMObject caching to work with DOMNodes, since that is all it was used for anyway.
+	
+        Test cases added: (these tests actually ensure that DOM wrappers
+	are sufficiently protected from GC to match other browsers, they
+	do not verify that the leak is fixed since there's no way to test
+	that with layout tests).
+
+        * layout-tests/fast/dom/gc-1-expected.txt: Added.
+        * layout-tests/fast/dom/gc-1.html: Added.
+        * layout-tests/fast/dom/gc-2-expected.txt: Added.
+        * layout-tests/fast/dom/gc-2.html: Added.
+        * layout-tests/fast/dom/gc-3-expected.txt: Added.
+        * layout-tests/fast/dom/gc-3.html: Added.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::forgetDOMObjectForDocument): New function - allows nodes
+	that get removed from the document to go away from the cache if not referenced.
+        (KJS::ScriptInterpreter::mark): Don't mark nodes that aren't in the document,
+	they can stay in the cache but only if they have another source of life.
+        (KJS::ScriptInterpreter::domNodesPerDocument): Renamed and changed parameter types.
+        (KJS::ScriptInterpreter::getDOMNodeForDocument): Renamed and changed parameter types.
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument): Renamed and changed parameter types.
+        (KJS::ScriptInterpreter::putDOMNodeForDocument): Renamed and changed parameter types.
+        (KJS::ScriptInterpreter::forgetAllDOMNodesForDocument): Renamed and changed parameter types.
+        (KJS::ScriptInterpreter::updateDOMNodeDocument): Renamed and changed parameter types.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_dom.cpp: 
+        (KJS::DOMNode::~DOMNode): call forgetDOMObjectForDocument.
+        (KJS::DOMNode::mark): If the node is not in the document, make sure to mark
+	all wrappers in its detached piece of the tree.
+        (KJS::getDOMNode): Updated for renames
+        * khtml/ecma/kjs_dom.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::~DocumentImpl): Updated for renames.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::checkAddChild): Updated for renames.
+
 2005-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
