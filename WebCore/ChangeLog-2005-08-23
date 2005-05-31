@@ -1,3 +1,12 @@
+2005-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+        No test case added because our layout test system doesn't allow us to do inline input.
+
+        - fixed <rdar://problem/4094066> REGRESSION (1.2.5-1.3): unconfirmed inline input is ignored in <textarea>, lost when form is submitted
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea _createTextView]): Call setWantsNotificationForMarkedText:YES.
+
 2005-05-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

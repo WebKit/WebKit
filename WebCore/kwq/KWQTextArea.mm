@@ -38,6 +38,10 @@ using DOM::EventImpl;
 using DOM::NodeImpl;
 using khtml::RenderWidget;
 
+@interface NSTextView (WebCoreKnowsCertainAppKitSecrets)
+- (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;
+@end
+
 /*
     This widget is used to implement the <TEXTAREA> element.
     
@@ -52,7 +56,6 @@ using khtml::RenderWidget;
      SOFT|VIRTUAL - Text is wrapped, but not actually broken.  
     HARD|PHYSICAL - Text is wrapped, and text is broken into separate lines.
 */
-
 
 @interface NSView (KWQTextArea)
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
@@ -129,6 +132,7 @@ const float LargeNumberForText = 1.0e7;
     [textView setRichText:NO];
     [textView setAllowsUndo:YES];
     [textView setDelegate:self];
+    [textView setWantsNotificationForMarkedText:YES];
 
     [self setDocumentView:textView];
 
