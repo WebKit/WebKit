@@ -521,19 +521,22 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
 
     if (objectInstance)
         return objectInstance;
-    
-    RenderPartObject *r = static_cast<RenderPartObject*>(m_render);
-    if (r) {
-        if (r->widget()){
-            // Call into the part (and over the bridge) to pull the Bindings::Instance
-            // from the guts of the plugin.
-            void *_view = r->widget()->getView();
-            objectInstance = KWQ(part)->getObjectInstanceForView((NSView *)_view);
-            // Applet may specified with <object> tag.
-            if (!objectInstance)
-                objectInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
+
+    if (RenderObject *r = m_render) {
+        if (r->isWidget()) {
+            if (QWidget *widget = static_cast<RenderWidget *>(r)->widget()) {
+                if (NSView *view = widget->getView())  {
+                    // Call into the part (and over the bridge) to pull the Bindings::Instance
+                    // from the guts of the plugin.
+                    objectInstance = KWQ(part)->getObjectInstanceForView(view);
+                    // Applet may specified with <object> tag.
+                    if (!objectInstance)
+                        objectInstance = KWQ(part)->getAppletInstanceForView(view);
+                }
+            }
         }
     }
+
     return objectInstance;
 }
 #endif

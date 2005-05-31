@@ -1,3 +1,13 @@
+2005-05-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+        Could not figure out how to make an <object> fallback, so for now, no layout test.
+
+        - fixed <rdar://problem/4134124> REGRESSION (tip of tree): crash in QWidget::getView handling onunload event (yahoo.com)
+
+        * khtml/html/html_objectimpl.cpp: (DOM::HTMLObjectElementImpl::getObjectInstance):
+        Check type of RenderObject to be sure it is a RenderWidget before calling widget() on it.
+
 2005-05-27  Adele Peterson  <adele@apple.com>
 
         Change by Darin, reviewed by me.
