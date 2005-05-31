@@ -1,0 +1,15 @@
+This test checks to see if we can create and initialize events of various types. This wouldn't work in older versions because we had prototypes hooked up incorrectly.
+
+If the test passes, you should see one line below about each of ten different events being successfully created.
+
+Created an Event object.
+Created a UIEvent object.
+Created a MouseEvent object.
+Created a KeyboardEvent object.
+Created a MutationEvent object.
+Created an Event object with the old HTMLEvents event type.
+Created a UIEvent object with the old UIEvents event type.
+Created a MouseEvent object with the old MouseEvents event type.
+Created a KeyboardEvent object with the old KeyboardEvents event type.
+Created a MutationEvent object with the old MutationEvents event type.
+

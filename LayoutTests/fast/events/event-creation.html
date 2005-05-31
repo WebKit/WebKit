@@ -1,0 +1,43 @@
+<head>
+<script>
+function print(message)
+{
+    var paragraph = document.createElement("li");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.createEvent("Event").initEvent("generic", true, true);
+    print("Created an Event object.");
+    document.createEvent("UIEvent").initUIEvent("DOMActivate", true, true, document.defaultView, 1);
+    print("Created a UIEvent object.");
+    document.createEvent("MouseEvent").initMouseEvent("click", true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, document);
+    print("Created a MouseEvent object.");
+    document.createEvent("KeyboardEvent").initKeyboardEvent("keydown", true, true, document.defaultView, "Enter", 0, false, false, false, false, false);
+    print("Created a KeyboardEvent object.");
+    document.createEvent("MutationEvent").initMutationEvent("DOMSubtreeModified", true, false, document, null, null, null, 1);
+    print("Created a MutationEvent object.");
+
+    document.createEvent("HTMLEvents").initEvent("generic", true, true);
+    print("Created an Event object with the old HTMLEvents event type.");
+    document.createEvent("UIEvents").initUIEvent("DOMActivate", true, true, document.defaultView, 1);
+    print("Created a UIEvent object with the old UIEvents event type.");
+    document.createEvent("MouseEvents").initMouseEvent("click", true, true, document.defaultView, 1, 0, 0, 0, 0, false, false, false, false, 0, document);
+    print("Created a MouseEvent object with the old MouseEvents event type.");
+    document.createEvent("KeyboardEvents").initKeyboardEvent("keydown", true, true, document.defaultView, "Enter", 0, false, false, false, false, false);
+    print("Created a KeyboardEvent object with the old KeyboardEvents event type.");
+    document.createEvent("MutationEvents").initMutationEvent("DOMSubtreeModified", true, false, document, null, null, null, 1);
+    print("Created a MutationEvent object with the old MutationEvents event type.");
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks to see if we can create and initialize events of various types. This wouldn't work in older versions because we had prototypes hooked up incorrectly.</p>
+<p>If the test passes, you should see one line below about each of ten different events being successfully created.</p>
+<hr>
+<p><ol id=console></ol></p>
+</body>

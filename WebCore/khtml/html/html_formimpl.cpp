@@ -2176,34 +2176,64 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
     if (evt->id() == EventImpl::KEYPRESS_EVENT && evt->isKeyboardEvent()) {
+        bool clickElement = false;
+        bool clickDefaultFormButton = false;
+
         DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
-        switch (m_type) {
-            case BUTTON:
-            case CHECKBOX:
-            case FILE:
-            case IMAGE:
-            case RADIO:
-            case RESET:
-            case SUBMIT:
-                // Simulate mouse click for enter or spacebar for these types of elements.
-                // The AppKit already does this for spacebar for some, but not all, of them.
-                if (key == "U+000020" || key == "Enter") {
-                    click(false);
-                    evt->setDefaultHandled();
-                }
-                break;
-            case HIDDEN:
-            case ISINDEX:
-            case PASSWORD:
-            case RANGE:
-            case SEARCH:
-            case TEXT:
-                // Simulate mouse click on the default form button for enter for these types of elements.
-                if (key == "Enter" && m_form) {
-                    m_form->submitClick();
-                    evt->setDefaultHandled();
-                }
-                break;
+
+        if (key == "U+000020") {
+            switch (m_type) {
+                case BUTTON:
+                case CHECKBOX:
+                case FILE:
+                case IMAGE:
+                case RADIO:
+                case RESET:
+                case SUBMIT:
+                    // Simulate mouse click for spacebar for these types of elements.
+                    // The AppKit already does this for some, but not all, of them.
+                    clickElement = true;
+                    break;
+                case HIDDEN:
+                case ISINDEX:
+                case PASSWORD:
+                case RANGE:
+                case SEARCH:
+                case TEXT:
+                    break;
+            }
+        }
+
+        if (key == "Enter") {
+            switch (m_type) {
+                case BUTTON:
+                case CHECKBOX:
+                case HIDDEN:
+                case ISINDEX:
+                case PASSWORD:
+                case RANGE:
+                case SEARCH:
+                case TEXT:
+                    // Simulate mouse click on the default form button for enter for these types of elements.
+                    clickDefaultFormButton = true;
+                    break;
+                case FILE:
+                case IMAGE:
+                case RADIO:
+                case RESET:
+                case SUBMIT:
+                    // Simulate mouse click for enter for these types of elements.
+                    clickElement = true;
+                    break;
+            }
+        }
+
+        if (clickElement) {
+            click(false);
+            evt->setDefaultHandled();
+        } else if (clickDefaultFormButton && m_form) {
+            m_form->submitClick();
+            evt->setDefaultHandled();
         }
     }
 #endif

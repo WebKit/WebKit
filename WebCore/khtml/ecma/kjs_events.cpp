@@ -551,7 +551,7 @@ ValueImp *getDOMEvent(ExecState *exec, EventImpl *e)
 
 EventImpl *toEvent(ValueImp *val)
 {
-    if (!val || !val->isObject(&DOMNode::info))
+    if (!val || !val->isObject(&DOMEvent::info))
         return 0;
     return static_cast<DOMEvent *>(val)->impl();
 }
@@ -607,6 +607,7 @@ IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMUIEventProto,DOMUIEventProtoFunc,DOMEventProt
 DOMUIEvent::DOMUIEvent(ExecState *exec, UIEventImpl *e)
   : DOMEvent(exec, e)
 {
+  setPrototype(DOMUIEventProto::self(exec));
 }
 
 DOMUIEvent::~DOMUIEvent()
@@ -700,6 +701,7 @@ IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIE
 DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEventImpl *e)
   : DOMUIEvent(exec, e)
 {
+  setPrototype(DOMMouseEventProto::self(exec));
 }
 
 DOMMouseEvent::~DOMMouseEvent()
@@ -845,6 +847,7 @@ IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMKeyboardEventProto, DOMKeyboardEventProtoFunc
 DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEventImpl *e)
   : DOMUIEvent(exec, e)
 {
+  setPrototype(DOMKeyboardEventProto::self(exec));
 }
 
 DOMKeyboardEvent::~DOMKeyboardEvent()
@@ -962,6 +965,7 @@ IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMutationEventProto,DOMMutationEventProtoFunc,
 DOMMutationEvent::DOMMutationEvent(ExecState *exec, MutationEventImpl *e)
   : DOMEvent(exec, e)
 {
+  setPrototype(DOMMutationEventProto::self(exec));
 }
 
 DOMMutationEvent::~DOMMutationEvent()

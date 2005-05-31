@@ -1,0 +1,40 @@
+<head>
+<script>
+function print(message)
+{
+    var paragraph = document.createElement("li");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+function submitHandler(e)
+{
+    e.preventDefault();
+    print("Tried to submit form.");
+    if (document.getElementById("check").checked) {
+        print("Check box is checked.");
+    } else {
+        print("Check box is not checked.");
+    }
+}
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    document.getElementById("form").onsubmit = submitHandler;
+    var event = document.createEvent("KeyboardEvents");
+    event.initKeyboardEvent("keypress", true, true, document.defaultView, "Enter", 0, false, false, false, false, false);
+    document.getElementById("check").dispatchEvent(event);
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks to see if hitting the Enter key on a check box submits the form or checks the check box.</p>
+<p>If the test passes, the text below should say both "tried to submit form" and "check box is not checked".</p>
+<hr>
+<form id=form>
+<input id=check type=checkbox>
+</form>
+<hr>
+<p><ol id=console></ol></p>
+</body>

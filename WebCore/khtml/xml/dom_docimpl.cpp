@@ -2653,15 +2653,15 @@ AbstractViewImpl *DocumentImpl::defaultView() const
 
 EventImpl *DocumentImpl::createEvent(const DOMString &eventType, int &exceptioncode)
 {
-    if (eventType == "UIEvents")
+    if (eventType == "UIEvents" || eventType == "UIEvent")
         return new UIEventImpl();
-    else if (eventType == "MouseEvents")
+    else if (eventType == "MouseEvents" || eventType == "MouseEvent")
         return new MouseEventImpl();
-    else if (eventType == "MutationEvents")
+    else if (eventType == "MutationEvents" || eventType == "MutationEvent")
         return new MutationEventImpl();
-    else if (eventType == "KeyboardEvents")
+    else if (eventType == "KeyboardEvents" || eventType == "KeyboardEvent")
         return new KeyboardEventImpl();
-    else if (eventType == "HTMLEvents")
+    else if (eventType == "HTMLEvents" || eventType == "Event")
         return new EventImpl();
     else {
         exceptioncode = DOMException::NOT_SUPPORTED_ERR;

@@ -1,5 +1,40 @@
 2005-05-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by John (fix for Radar bug) and Vicki (all the rest).
+
+        - fixed <rdar://problem/4105097> REGRESSION (138-139): Hitting Enter on a checkbox toggles check mark instead of submitting form
+        - fixed other problems discovered while trying to make a layout test to test this work:
+            - added newer DOM 3 event type constants
+            - fixed prototype setup bug preventing event initialization functions from being called
+            - fixed bug where any function taking an event parameter would crash with a nil-deref
+            - fixed incorrect ref/deref bug in MutationEventImpl that would cause a crash crash
+
+        Test cases added:
+        * layout-tests/fast/forms/check-box-enter-key-expected.txt: Added.
+        * layout-tests/fast/forms/check-box-enter-key.html: Added.
+        * layout-tests/fast/events/event-creation-expected.txt: Added.
+        * layout-tests/fast/events/event-creation.html: Added.
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLInputElementImpl::defaultEventHandler): Separate the checks for
+        the space bar and the Enter key and make Enter submit the form on a check box or radio button.
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::toEvent): Fixed bug where this was checking for DOMNode rather than DOMEvent, so always returning 0.
+        Without this, both test cases above will crash.
+        (KJS::DOMUIEvent::DOMUIEvent): Set prototype; without this, the event-creation test case will fail.
+        (KJS::DOMMouseEvent::DOMMouseEvent): Set prototype; without this, the event-creation test case will fail.
+        (KJS::DOMKeyboardEvent::DOMKeyboardEvent): Set prototype; without this, both test cases above will fail.
+        (KJS::DOMMutationEvent::DOMMutationEvent): Set prototype; without this, both test cases above will fail.
+
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (MutationEventImpl::MutationEventImpl): Fix typo where the wrong object was ref'd.
+        (MutationEventImpl::initMutationEvent): Ditto. This was causing the layout tests to crash with the new tests above.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::createEvent): Added new event types to match the current DOM
+        Level 3 specification. The test above tests both the new event types and the old ones.
+
+2005-05-30  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
         No test case added because our layout test system doesn't allow us to do inline input.
 

@@ -720,8 +720,8 @@ MutationEventImpl::MutationEventImpl(EventId _id,
     if (m_newValue)
 	m_newValue->ref();
     m_attrName = attrNameArg.implementation();
-    if (m_newValue)
-	m_newValue->ref();
+    if (m_attrName)
+	m_attrName->ref();
     m_attrChange = attrChangeArg;
 }
 
@@ -767,8 +767,8 @@ void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
     if (m_newValue)
 	m_newValue->ref();
     m_attrName = attrNameArg.implementation();
-    if (m_newValue)
-	m_newValue->ref();
+    if (m_attrName)
+	m_attrName->ref();
     m_attrChange = attrChangeArg;
 }
 
