@@ -27,4 +27,7 @@ enum {
 // regions is an dictionary whose keys are regions label and values are arrays of WebDashboardRegions.
 - (void)webView:(WebView *)webView dashboardRegionsChanged:(NSDictionary *)regions;
 
+- (WebView *)webView:(WebView *)sender createWebViewModalDialogWithRequest:(NSURLRequest *)request;
+- (void)webViewRunModal:(WebView *)sender;
+
 @end

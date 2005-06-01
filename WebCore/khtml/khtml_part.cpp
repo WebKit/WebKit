@@ -2107,6 +2107,30 @@ void KHTMLPart::cancelRedirection(bool cancelWithLoadInProgress)
     }
 }
 
+void KHTMLPart::changeLocation(const QString &URL, const QString &referrer, bool lockHistory, bool userGesture)
+{
+    if (URL.find("javascript:", 0, false) == 0) {
+        QString script = KURL::decode_string(URL.mid(11));
+        QVariant result = executeScript(script, userGesture);
+        if (result.type() == QVariant::String) {
+            begin(url());
+            write(result.asString());
+            end();
+        }
+        return;
+    }
+
+    KParts::URLArgs args;
+
+    if (urlcmp(URL, m_url.url(), true, false))
+        args.reload = true;
+    args.setLockHistory(lockHistory);
+    if (!referrer.isEmpty())
+        args.metaData()["referrer"] = referrer;
+
+    urlSelected(URL, 0, 0, "_self", args);
+}
+
 void KHTMLPart::slotRedirect()
 {
     if (d->m_scheduledRedirection == historyNavigationScheduled) {
@@ -2127,34 +2151,18 @@ void KHTMLPart::slotRedirect()
         }
         return;
     }
-  
-  QString u = d->m_redirectURL;
 
-  d->m_scheduledRedirection = noRedirectionScheduled;
-  d->m_delayRedirect = 0;
-  d->m_redirectURL = QString::null;
-  if ( u.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
-  {
-    QString script = KURL::decode_string( u.right( u.length() - 11 ) );
-    //kdDebug( 6050 ) << "KHTMLPart::slotRedirect script=" << script << endl;
-    QVariant res = executeScript( script, d->m_redirectUserGesture );
-    if ( res.type() == QVariant::String ) {
-      begin( url() );
-      write( res.asString() );
-      end();
-    }
-    return;
-  }
-  KParts::URLArgs args;
-  if ( urlcmp( u, m_url.url(), true, false ) )
-    args.reload = true;
+    QString URL = d->m_redirectURL;
+    QString referrer = d->m_redirectReferrer;
+    bool lockHistory = d->m_redirectLockHistory;
+    bool userGesture = d->m_redirectUserGesture;
 
-  args.setLockHistory( d->m_redirectLockHistory );
-  if (!d->m_redirectReferrer.isEmpty())
-    args.metaData()["referrer"] = d->m_redirectReferrer;
-  d->m_redirectReferrer = QString::null;
+    d->m_scheduledRedirection = noRedirectionScheduled;
+    d->m_delayRedirect = 0;
+    d->m_redirectURL = QString::null;
+    d->m_redirectReferrer = QString::null;
 
-  urlSelected( u, 0, 0, "_self", args );
+    changeLocation(URL, referrer, lockHistory, userGesture);
 }
 
 void KHTMLPart::slotRedirection(KIO::Job*, const KURL& url)
@@ -2865,7 +2873,8 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 #endif
 
 #if APPLE_CHANGES
-  args.metaData()["referrer"] = d->m_referrer;
+  if (!d->m_referrer.isEmpty())
+    args.metaData()["referrer"] = d->m_referrer;
   KWQ(this)->urlSelected(cURL, button, state, args);
 #else
   if ( hasTarget )

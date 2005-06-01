@@ -128,7 +128,7 @@ public:
     m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
 #endif
     m_bClearing = false;
-    m_bCleared = false;
+    m_bCleared = true;
     m_zoomFactor = 100;
     m_bDnd = true;
 #if !APPLE_CHANGES

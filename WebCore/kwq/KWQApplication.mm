@@ -58,6 +58,16 @@ QRect QDesktopWidget::screenGeometry(int screenNumber)
     return QRect(rect);
 }
 
+QRect QDesktopWidget::availableGeometry(QWidget *widget)
+{
+    NSScreen *screen = widget ? [[widget->getView() window] screen] : nil;
+    if (!screen)
+        screen = [NSScreen mainScreen];
+    NSRect rect = [screen visibleFrame];
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return QRect(rect);
+}
+
 void QApplication::setOverrideCursor(const QCursor &c)
 {
     // FIXME: Should implement this so that frame border dragging has the proper cursor.

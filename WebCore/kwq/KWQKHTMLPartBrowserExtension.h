@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,6 @@
  */
 
 #include "KWQKPartsBrowserExtension.h"
-
 #include "KWQKPartsBrowserInterface.h"
 
 class QWidget;
@@ -33,6 +32,7 @@ class KHTMLPart;
 class KHTMLPartBrowserExtension : public KParts::BrowserExtension {
 public:
     KHTMLPartBrowserExtension(KHTMLPart *);
+
     void editableWidgetFocused(QWidget *) { }
     void editableWidgetBlurred(QWidget *) { }
     void setLocationBarURL(const QString &) { }
@@ -52,6 +52,10 @@ public:
 
     virtual void setIconURL(const KURL &url);
     virtual void setTypedIconURL(const KURL &url, const QString &type);
+
+    bool canRunModal();
+    bool canRunModalNow();
+    void runModal();
     
 private:
      void createNewWindow(const KURL &url, 

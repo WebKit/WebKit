@@ -81,6 +81,9 @@
 - (void)didFailWithError:(NSError *)error;
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse;
 
+// Used to work around the fact that you don't get any more NSURLConnection callbacks until you return from the first one.
++ (BOOL)inConnectionCallback;
+
 @end
 
 // Note: This interface can be removed once this method is declared

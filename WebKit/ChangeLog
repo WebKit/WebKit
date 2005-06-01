@@ -1,3 +1,47 @@
+2005-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit part of fix for <rdar://problem/3166090> add IE JavaScript extension window.showModalDialog
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createModalDialogWithURL:]): Added. Calls the UI delegate, falling back to the generic
+        "create WebView" method.
+        (-[WebBridge canRunModal]): Added. Checks the UI delegate to see if it implements runModal.
+        (-[WebBridge canRunModalNow]): Added. Checks the "inConnectionCallback" field so we can prevent
+        deadlock since we can't do any I/O while inside a connection callback until this aspect of NSURLConnection
+        is changed.
+        (-[WebBridge runModal]): Added. Sets "defersCallbacks" on all other web views in the group, then
+        calls runModal on the UI delegate.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Added inConnectionCallback class method.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]): Bump count and then
+        decrement count so we can tell if we are in a callback.
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:lengthReceived:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:willStopBufferingData:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:didFailWithError:]): Ditto.
+        (-[WebBaseResourceHandleDelegate connection:willCacheResponse:]): Ditto.
+        (+[WebBaseResourceHandleDelegate inConnectionCallback]): Added. Return YES if count is not 0.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]): Changed to use the method without the connection: parameter
+        in the base class, since we no longer are overriding the connection: version.
+        (-[WebMainResourceClient willSendRequest:redirectResponse:]): Change to override the version without
+        the connection prefix/parameter; now only the base class overrides the actual connection delegate methods.
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Ditto.
+        (-[WebMainResourceClient didReceiveResponse:]): Ditto.
+        (-[WebMainResourceClient didReceiveData:lengthReceived:]): Ditto.
+        (-[WebMainResourceClient didFinishLoading]): Ditto.
+        (-[WebMainResourceClient didFailWithError:]): Ditto.
+        (-[WebMainResourceClient loadWithRequestNow:]): Call the method without the connection parameter.
+
+        * WebView.subproj/WebUIDelegatePrivate.h: Added new SPI here that WebBrowser implements.
+
 2005-05-26  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

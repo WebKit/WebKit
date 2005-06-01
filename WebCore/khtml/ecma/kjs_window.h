@@ -127,6 +127,9 @@ namespace KJS {
     // Set the current "event" object
     void setCurrentEvent(DOM::EventImpl *evt);
 
+    // Set a place to put a dialog return value when the window is cleared.
+    void setReturnValueSlot(ValueImp **slot) { m_returnValueSlot = slot; }
+
     QPtrDict<JSEventListener> jsEventListeners;
     QPtrDict<JSUnprotectedEventListener> jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -145,7 +148,7 @@ namespace KJS {
 	   Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
            Onselect, Onsubmit, Onunload,
-           Statusbar, Toolbar, FrameElement };
+           Statusbar, Toolbar, FrameElement, ShowModalDialog };
   protected:
     Value getListener(ExecState *exec, int eventId) const;
     void setListener(ExecState *exec, int eventId, Value func);
@@ -166,6 +169,7 @@ namespace KJS {
     BarInfo *m_toolbar;
     WindowQObject *winq;
     DOM::EventImpl *m_evt;
+    ValueImp **m_returnValueSlot;
   };
 
   /**

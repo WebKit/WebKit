@@ -10,6 +10,7 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebBaseResourceHandleDelegate.h>
+#import "WebControllerSets.h"
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebEditingDelegate.h>
@@ -1596,6 +1597,81 @@ static NSCharacterSet *_getPostSmartSet(void)
 - (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter
 {
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
+}
+
+- (WebCoreBridge *)createModalDialogWithURL:(NSURL *)URL
+{
+    ASSERT(_frame != nil);
+
+    NSMutableURLRequest *request = nil;
+
+    if (URL != nil && ![URL _web_isEmpty]) {
+	request = [NSMutableURLRequest requestWithURL:URL];
+	[request setHTTPReferrer:[self referrer]];
+    }
+
+    WebView *currentWebView = [_frame webView];
+    id UIDelegate = [currentWebView UIDelegate];
+
+    WebView *newWebView = nil;
+    if ([UIDelegate respondsToSelector:@selector(webView:createWebViewModalDialogWithRequest:)])
+        newWebView = [UIDelegate webView:currentWebView createWebViewModalDialogWithRequest:request];
+    else if ([UIDelegate respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        newWebView = [UIDelegate webView:currentWebView createWebViewWithRequest:request];
+    else
+        newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
+
+    return [[newWebView mainFrame] _bridge];
+}
+
+- (BOOL)canRunModal
+{
+    WebView *webView = [_frame webView];
+    id UIDelegate = [webView UIDelegate];
+    return [UIDelegate respondsToSelector:@selector(webViewRunModal:)];
+}
+
+- (BOOL)canRunModalNow
+{
+    return [self canRunModal] && ![WebBaseResourceHandleDelegate inConnectionCallback];
+}
+
+- (void)runModal
+{
+    if (![self canRunModal])
+        return;
+
+    WebView *webView = [_frame webView];
+    if ([webView defersCallbacks]) {
+        ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
+        return;
+    }
+
+    // Defer callbacks in all the other views in this group, so we don't try to run JavaScript
+    // in a way that could interact with this view.
+    NSMutableArray *deferredWebViews = [NSMutableArray array];
+    NSString *setName = [webView groupName];
+    if (setName) {
+        NSEnumerator *enumerator = [WebViewSets webViewsInSetNamed:setName];
+        WebView *otherWebView;
+        while ((otherWebView = [enumerator nextObject]) != nil) {
+            if (otherWebView != webView && ![otherWebView defersCallbacks]) {
+                [otherWebView setDefersCallbacks:YES];
+                [deferredWebViews addObject:otherWebView];
+            }
+        }
+    }
+
+    // Go run the modal event loop.
+    [[webView UIDelegate] webViewRunModal:webView];
+
+    // Restore the callbacks for any views that we deferred them for.
+    unsigned count = [deferredWebViews count];
+    unsigned i;
+    for (i = 0; i < count; ++i) {
+        WebView *otherWebView = [deferredWebViews objectAtIndex:i];
+        [otherWebView setDefersCallbacks:NO];
+    }
 }
 
 @end

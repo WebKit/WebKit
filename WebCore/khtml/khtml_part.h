@@ -401,9 +401,10 @@ public:
   void scheduleRedirection(double delay, const QString &url, bool lockHistory = true);
 
   /**
-   * Schedules a location change.
-   * This is used for JavaScript-triggered location changes.
+   * Make a location change, or schedule one for later.
+   * These are used for JavaScript-triggered location changes.
    */
+  void changeLocation(const QString &URL, const QString &referrer, bool lockHistory = true, bool userGesture = false);
   void scheduleLocationChange(const QString &url, const QString &referrer, bool lockHistory = true, bool userGesture = false);
   bool isScheduledLocationChangePending() const;
 
@@ -1344,13 +1345,13 @@ private:
  public:
 #endif
   KHTMLPart *opener();
+  void setOpener(KHTMLPart *_opener);
+  bool openedByJS();
+  void setOpenedByJS(bool _openedByJS);
 #if APPLE_CHANGES
  private:
 #endif
   long cacheId() const;
-  void setOpener(KHTMLPart *_opener);
-  bool openedByJS();
-  void setOpenedByJS(bool _openedByJS);
 
   void checkEmitLoadEvent();
   void emitLoadEvent();

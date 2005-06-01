@@ -82,6 +82,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
         referrer = [_part->bridge() referrer];
     }
 
+    ASSERT(!winArgs.dialog || urlArgs.frameName.isEmpty());
+
+    if (partResult)
+	*partResult = NULL;
 
     if (frameName != nil) {
 	bridge = [_part->bridge() findFrameNamed:frameName];
@@ -97,7 +101,12 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	}
     }
     
-    bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
+    if (winArgs.dialog)
+        bridge = [_part->bridge() createModalDialogWithURL:url.getNSURL()];
+    else
+        bridge = [_part->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
+    if (!bridge)
+        return;
     
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -150,13 +159,8 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     if (partResult) {
 	*partResult = [bridge part];
     }
-    return;
 
     KWQ_UNBLOCK_EXCEPTIONS;
-
-    if (partResult) {
-	*partResult = NULL;
-    }
 }
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
@@ -170,5 +174,28 @@ void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &
 {
     KWQ_BLOCK_EXCEPTIONS;
     [_part->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+bool KHTMLPartBrowserExtension::canRunModal()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    return [_part->bridge() canRunModal];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return false;
+}
+
+bool KHTMLPartBrowserExtension::canRunModalNow()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    return [_part->bridge() canRunModalNow];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return false;
+}
+
+void KHTMLPartBrowserExtension::runModal()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    [_part->bridge() runModal];
     KWQ_UNBLOCK_EXCEPTIONS;
 }

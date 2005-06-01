@@ -1,3 +1,62 @@
+2005-06-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+        No layout tests added because showModalDialog won't work in DumpRenderTree at the moment.
+
+        - WebKit part of fix for <rdar://problem/3166090> add IE JavaScript extension window.showModalDialog
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::allowPopUp): Added. Used by showModalDialog now and should be used by window.open later.
+        (KJS::parseFeatures): Ditto.
+        (KJS::boolFeature): Ditto.
+        (KJS::intFeature): Ditto.
+        (KJS::createNewWindow): Ditto.
+        (KJS::canShowModalDialog): Added.
+        (KJS::canShowModalDialogNow): Added.
+        (KJS::showModalDialog): Added.
+        (KJS::Window::get): Return the showModalDialog function object if the extension can run modal.
+        (KJS::Window::clear): Add code to store the return value for the case where the window is a modal dialog.
+        (KJS::WindowFunc::tryCall): Add the call to the showModalDialog function.
+
+        * khtml/ecma/kjs_window.h: Add setReturnValueSlot function so showModalDialog can get the return
+        value from the dialog it creates. Also add a data member to keep track of the pointer and a constant
+        for the ShowModalDialog method.
+
+        * khtml/khtml_part.h: Added new changeLocation member function. Made setOpener, openedByJS, and
+        setOpenedByJS public.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::changeLocation): Broke out the part of slotRedirect that actually does the location change
+        into a separate function so it can be called when needed. The case using it now is to load the content
+        of a new window in KJS::createNewWindow.
+        (KHTMLPart::slotRedirect): Call changeLocation to do most of the work.
+        (KHTMLPart::urlSelected): Fixed a broken case where the "lack of referrer" in a new window would cause
+        the referrer passed in by JavaScript to be ignored when opening a new window -- match logic elsewhere
+        that leaves the referrer in the args alone if one is not set in the window.
+
+        * khtml/khtmlpart_p.h: Initialize m_bCleared to true to avoid an unnecessary clear before loading the
+        first URL in a new window. This change is needed to avoid blowing away the "dialogArguments" value in
+        a modal dialog window, but it also avoid unnecessary work for each new window.
+
+        * kwq/KWQApplication.h: Add availableGeometry function for QDesktopWidget. Used by the showModalDialog
+        function inside kjs_window.cpp (and should be used elsewhere eventually too). Matches a Qt function that
+        we just didn't have implemented before.
+        * kwq/KWQApplication.mm: (QDesktopWidget::availableGeometry): Added.
+
+        * kwq/KWQKHTMLPartBrowserExtension.h: Added new canRunModal, canRunModalNow, and runModal functions.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Call createModalDialogWithURL on the bridge if the
+        new window is a dialog. Also fixed the early return case for when the bridge returns nil.
+        (KHTMLPartBrowserExtension::canRunModal): Added. Calls bridge.
+        (KHTMLPartBrowserExtension::canRunModalNow): Ditto.
+        (KHTMLPartBrowserExtension::runModal): Ditto.
+
+        * kwq/KWQKPartsBrowserExtension.h:
+        (KParts::URLArgs::URLArgs): Initialize m_lockHistory to false.
+        (KParts::WindowArgs::WindowArgs): Add a dialog boolean.
+
+        * kwq/WebCoreBridge.h: Declared canRunModal, canRunModalNow, createModalDialogWithURL, and runModal methods.
+
 2005-06-01  Adele Peterson  <adele@apple.com>
 
         fix for <rdar://problem/4135705> REGRESSION (412-TOT) crash in TV Tracker widget - KJS::XMLHttpRequest::removeFromRequestsByDocument()

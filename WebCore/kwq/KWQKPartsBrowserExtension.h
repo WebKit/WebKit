@@ -50,7 +50,7 @@ struct URLArgs {
     int xOffset;
     int yOffset;
 
-    URLArgs() : reload(false), xOffset(0), yOffset(0), m_doPost(false) { }
+    URLArgs() : reload(false), xOffset(0), yOffset(0), m_doPost(false), m_lockHistory(false) { }
     
     QString contentType() const { return m_contentType; }
     void setContentType(const QString &t) { m_contentType = t; }
@@ -88,8 +88,14 @@ struct WindowArgs {
     bool ySet;
     bool widthSet;
     bool heightSet;
+    bool dialog;
 
-    WindowArgs() : x(0), y(0), width(0), height(0), menuBarVisible(false), statusBarVisible(true), toolBarsVisible(true), scrollbarsVisible(true), resizable(true), fullscreen(true), xSet(false), ySet(false), widthSet(false), heightSet(false) { }
+    WindowArgs() : x(0), y(0), width(0), height(0),
+        menuBarVisible(false), statusBarVisible(true), toolBarsVisible(true), scrollbarsVisible(true),
+        resizable(true), fullscreen(false),
+        xSet(false), ySet(false), widthSet(false), heightSet(false),
+        dialog(false)
+        { }
 
 };
 
