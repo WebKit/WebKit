@@ -1,3 +1,13 @@
+2005-06-01  Adele Peterson  <adele@apple.com>
+
+        fix for <rdar://problem/4135705> REGRESSION (412-TOT) crash in TV Tracker widget - KJS::XMLHttpRequest::removeFromRequestsByDocument()
+
+        Reviewed by Darin.
+
+        Synchronous loads don't get added to our requestsByDocument dictionary, so we should try to remove the request in this case. 
+
+        * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::removeFromRequestsByDocument): added checks to make sure request exists before trying to remove it.
+
 2005-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John (fix for Radar bug) and Vicki (all the rest).
