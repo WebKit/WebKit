@@ -528,6 +528,11 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [[self _web_originalDataAsString] _webkit_isJavaScriptURL];
 }
 
+- (BOOL)_webkit_isFileURL
+{
+    return [[self _web_originalDataAsString] _webkit_isFileURL];
+}
+
 - (NSString *)_webkit_scriptIfJavaScriptURL
 {
     return [[self _web_originalDataAsString] _webkit_scriptIfJavaScriptURL];
@@ -750,6 +755,11 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 - (BOOL)_webkit_isJavaScriptURL
 {
     return [self _web_hasCaseInsensitivePrefix:@"javascript:"];
+}
+
+- (BOOL)_webkit_isFileURL
+{
+    return [self _web_hasCaseInsensitivePrefix:@"file:"];
 }
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes

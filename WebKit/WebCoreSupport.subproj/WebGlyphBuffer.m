@@ -7,7 +7,7 @@
 
 #import "WebNSObjectExtras.h"
 
-#import <CoreGraphics/CoreGraphicsPrivate.h>
+#import <CoreGraphics/CGContext.h>
 
 @implementation WebGlyphBuffer
 

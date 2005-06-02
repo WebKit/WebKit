@@ -2,10 +2,11 @@
     WebImageDecoder.h
 	Copyright 2004, Apple, Inc. All rights reserved.
 */
-#import <WebKit/WebImageData.h>
-#import <WebKit/WebImageDecodeItem.h>
 
 #ifndef OMIT_TIGER_FEATURES
+
+#import <WebKit/WebImageDecodeItem.h>
+@class WebImageData;
 
 @interface WebImageDecoder : NSObject
 {

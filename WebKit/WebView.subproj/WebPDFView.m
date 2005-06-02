@@ -5,8 +5,6 @@
 
 #ifndef OMIT_TIGER_FEATURES
 
-#import <Foundation/NSString_NSURLExtras.h>
-
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebLocalizableStrings.h>

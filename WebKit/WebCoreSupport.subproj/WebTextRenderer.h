@@ -4,6 +4,7 @@
 */
 
 #import <WebCore/WebCoreTextRenderer.h>
+#import <QD/ATSUnicodePriv.h>
 
 typedef struct WidthMap WidthMap;
 typedef struct WidthEntry WidthEntry;

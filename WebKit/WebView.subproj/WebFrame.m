@@ -23,6 +23,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -508,7 +509,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebFrame *ancestor = self;
     while (ancestor != nil) {
         NSString *ancestorDomain = [[ancestor _bridge] domain];
-        if (ancestorDomain != nil && [sourceDomain _web_isCaseInsensitiveEqualToString:ancestorDomain]) {
+        if (ancestorDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:ancestorDomain]) {
             return YES;
         }
         ancestor = [ancestor parentFrame];
@@ -519,7 +520,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     //     recursion here.
     if ([self parentFrame] == nil) {
         NSString *openerDomain = [[[self _bridge] opener] domain];
-        if (openerDomain != nil && [sourceDomain _web_isCaseInsensitiveEqualToString:openerDomain]) {
+        if (openerDomain != nil && [sourceDomain _webkit_isCaseInsensitiveEqualToString:openerDomain]) {
             return YES;
         }
     }
@@ -2876,7 +2877,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+    if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
         [newDataSource _setTriggeringAction:action];
     }

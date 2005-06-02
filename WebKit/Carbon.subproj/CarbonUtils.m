@@ -7,6 +7,7 @@
  *
  */
 #import <AppKit/NSBitmapImageRep_Private.h>
+#import <Foundation/NSPrivateDecls.h>
 
 #include "CarbonUtils.h"
 

@@ -9,16 +9,15 @@
 #import <WebKit/WebAuthenticationPanel.h>
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <WebKit/WebAssertions.h>
-#import <Foundation/NSDictionary_NSURLExtras.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
 @interface NSMutableDictionary (WebExtras)
-- (void)_web_setObject:(id)object forUncopiedKey:(id)key;
+- (void)_webkit_setObject:(id)object forUncopiedKey:(id)key;
 @end
 
 @implementation NSMutableDictionary (WebExtras)
--(void)_web_setObject:(id)object forUncopiedKey:(id)key
+-(void)_webkit_setObject:(id)object forUncopiedKey:(id)key
 {
     CFDictionarySetValue((CFMutableDictionaryRef)self, key, object);
 }
@@ -62,7 +61,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     NSMutableArray *queue = [windowToChallengeQueue objectForKey:window];
     if (queue == nil) {
 	queue = [[NSMutableArray alloc] init];
-	[windowToChallengeQueue _web_setObject:queue forUncopiedKey:window];
+	[windowToChallengeQueue _webkit_setObject:queue forUncopiedKey:window];
 	[queue release];
     }
     [queue addObject:challenge];
@@ -114,8 +113,8 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 
     WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)];
-    [challengeToWindow _web_setObject:window forUncopiedKey:challenge];
-    [windowToPanel _web_setObject:panel forUncopiedKey:window];
+    [challengeToWindow _webkit_setObject:window forUncopiedKey:challenge];
+    [windowToPanel _webkit_setObject:panel forUncopiedKey:window];
     [panel release];
     
     if (window == WebModalDialogPretendWindow) {

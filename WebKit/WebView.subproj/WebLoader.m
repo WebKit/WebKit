@@ -13,7 +13,6 @@
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
 #import <Foundation/NSError_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataProtocol.h>
@@ -21,6 +20,7 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -185,7 +185,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
         return NO;
     } else if ([theRequest valueForHTTPHeaderField:@"Cache-Control"] != nil) {
 	return NO;
-    } else if ([[theRequest HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+    } else if ([[theRequest HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         return NO;
     } else {
         return YES;

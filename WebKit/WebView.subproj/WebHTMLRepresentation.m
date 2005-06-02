@@ -12,12 +12,12 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebView.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -81,7 +81,7 @@
 
 - (BOOL)_isDisplayingWebArchive
 {
-    return [[[_private->dataSource response] MIMEType] _web_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
+    return [[[_private->dataSource response] MIMEType] _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource

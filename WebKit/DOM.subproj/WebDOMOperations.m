@@ -11,8 +11,8 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebKitNSStringExtras.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 
 @implementation DOMNode (WebDOMNodeOperations)
 
@@ -136,7 +136,7 @@
 - (NSArray *)_subresourceURLs
 {
     NSString *rel = [self rel];
-    if ([rel _web_isCaseInsensitiveEqualToString:@"stylesheet"] || [rel _web_isCaseInsensitiveEqualToString:@"icon"]) {
+    if ([rel _webkit_isCaseInsensitiveEqualToString:@"stylesheet"] || [rel _webkit_isCaseInsensitiveEqualToString:@"icon"]) {
         return [self _URLsFromSelectors:@selector(href), nil];
     }
     return nil;
@@ -187,9 +187,9 @@
 - (NSArray *)_subresourceURLs
 {
     NSString *name = [self name];
-    if ([name _web_isCaseInsensitiveEqualToString:@"data"] ||
-        [name _web_isCaseInsensitiveEqualToString:@"movie"] ||
-        [name _web_isCaseInsensitiveEqualToString:@"src"]) {
+    if ([name _webkit_isCaseInsensitiveEqualToString:@"data"] ||
+        [name _webkit_isCaseInsensitiveEqualToString:@"movie"] ||
+        [name _webkit_isCaseInsensitiveEqualToString:@"src"]) {
         return [self _URLsFromSelectors:@selector(value), nil];
     }
     return nil;

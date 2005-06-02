@@ -8,12 +8,12 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 
 #import <Foundation/NSPrivateDecls.h>
-#import <Foundation/NSString_NSURLExtras.h>
 
 #import <CoreFoundation/CFBundlePriv.h>
 
@@ -372,16 +372,16 @@
 - (BOOL)isQuickTimePlugIn
 {
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
-    return [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCarbonPluginIdentifier] || 
-        [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCocoaPluginIdentifier];
+    return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:QuickTimeCarbonPluginIdentifier] || 
+        [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:QuickTimeCocoaPluginIdentifier];
 }
 
 - (BOOL)isJavaPlugIn
 {
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
-    return [bundleIdentifier _web_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
-        [bundleIdentifier _web_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
-        [[path lastPathComponent] _web_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
+    return [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
+        [bundleIdentifier _webkit_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
+        [[path lastPathComponent] _webkit_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
 @end

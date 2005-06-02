@@ -9,7 +9,6 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import <unicode/uchar.h>
 
 @implementation NSString (WebKitExtras)
@@ -155,7 +154,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     
     // Get the lproj directory name
     path = [path stringByDeletingLastPathComponent];
-    if (![[path pathExtension] _web_isCaseInsensitiveEqualToString:@"lproj"]) {
+    if (![[path pathExtension] _webkit_isCaseInsensitiveEqualToString:@"lproj"]) {
         return NSMacOSRomanStringEncoding;
     }
     
@@ -180,6 +179,11 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     }
     
     return CFStringConvertEncodingToNSStringEncoding(encoding);
+}
+
+- (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string
+{
+  return [self compare:string options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
 }
 
 @end

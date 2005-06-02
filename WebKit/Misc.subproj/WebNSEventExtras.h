@@ -15,6 +15,4 @@
 -(BOOL)_web_isReturnOrEnterKeyEvent;
 -(BOOL)_web_isTabKeyEvent;
 
-- (BOOL)_web_keyBindingManagerHasBinding;
-
 @end

@@ -3,8 +3,8 @@
     Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
-#import <Foundation/NSPrivateDecls.h>
 #import <WebKit/WebDatabase.h>
+#import <WebKit/WebAssertions.h>
 
 // implementation WebDatabase ------------------------------------------------------------------------
 
@@ -12,22 +12,22 @@
 
 -(void)setObject:(id)object forKey:(id)key
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(void)removeObjectForKey:(id)key
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(void)removeAllObjects
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(id)objectForKey:(id)key
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
     return nil;
 }
 
@@ -74,17 +74,17 @@
 
 -(void)open
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(void)close
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(void)sync
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(NSString *)path
@@ -99,7 +99,7 @@
 
 -(unsigned)count
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -110,7 +110,7 @@
 
 -(void)setSizeLimit:(unsigned)limit
 {
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
+    ASSERT_NOT_REACHED();
 }
 
 -(unsigned)usage

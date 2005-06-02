@@ -28,6 +28,7 @@
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -51,8 +52,8 @@
 
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLRequestPrivate.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -628,7 +629,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
     
     NSString *parentDomain = [[parentFrame _bridge] domain];
-    if (parentDomain != nil && [thisDomain _web_isCaseInsensitiveEqualToString:parentDomain]) {
+    if (parentDomain != nil && [thisDomain _webkit_isCaseInsensitiveEqualToString:parentDomain]) {
         // Allow if the domain of the parent of the targeted frame equals this domain.
         return YES;
     }
@@ -887,7 +888,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     unsigned count = [keys count];
     unsigned i;
     for (i = 0; i < count; i++) {
-        if ([[keys objectAtIndex:i] _web_isCaseInsensitiveEqualToString:key]) {
+        if ([[keys objectAtIndex:i] _webkit_isCaseInsensitiveEqualToString:key]) {
             return [values objectAtIndex:i];
         }
     }

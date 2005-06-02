@@ -1,3 +1,76 @@
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- first stage of cleaning up SPI usage in WebKit
+
+        * Carbon.subproj/CarbonUtils.m:
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMHTMLLinkElement _subresourceURLs]):
+        (-[DOMHTMLParamElement _subresourceURLs]):
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setFormInfoFromRequest:]):
+        * Misc.subproj/WebDatabase.m:
+        (-[WebDatabase setObject:forKey:]):
+        (-[WebDatabase removeObjectForKey:]):
+        (-[WebDatabase removeAllObjects]):
+        (-[WebDatabase objectForKey:]):
+        (-[WebDatabase open]):
+        (-[WebDatabase close]):
+        (-[WebDatabase sync]):
+        (-[WebDatabase count]):
+        (-[WebDatabase setSizeLimit:]):
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (+[NSString _web_encodingForResource:]):
+        (-[NSString _webkit_isCaseInsensitiveEqualToString:]):
+        * Misc.subproj/WebNSEventExtras.h:
+        * Misc.subproj/WebNSEventExtras.m:
+        (-[NSEvent _web_isTabKeyEvent]):
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _webkit_isFileURL]):
+        (-[NSString _webkit_isJavaScriptURL]):
+        (-[NSString _webkit_isFileURL]):
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[NSMutableDictionary _webkit_setObject:forUncopiedKey:]):
+        (-[WebPanelAuthenticationHandler enqueueChallenge:forWindow:]):
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage isQuickTimePlugIn]):
+        (-[WebBasePluginPackage isJavaPlugIn]):
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canTargetLoadInFrame:]):
+        (-[WebBridge valueForKey:keys:values:]):
+        * WebCoreSupport.subproj/WebGlyphBuffer.m:
+        * WebCoreSupport.subproj/WebImageDecodeItem.h:
+        * WebCoreSupport.subproj/WebImageDecodeItem.m:
+        * WebCoreSupport.subproj/WebImageDecoder.h:
+        * WebCoreSupport.subproj/WebImageDecoder.m:
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebKitPrefix.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _canUseResourceForRequest:]):
+        * WebView.subproj/WebDataProtocol.m:
+        (+[WebDataProtocol _webIsDataProtocolURL:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _shouldAllowAccessFrom:]):
+        (-[WebFrame reload]):
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation _isDisplayingWebArchive]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient didReceiveResponse:]):
+        * WebView.subproj/WebPDFView.m:
+        * WebView.subproj/WebView.m:
+        (+[WebView _MIMETypeForFile:]):
+
 2005-06-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

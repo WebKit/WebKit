@@ -7,7 +7,6 @@
 
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSError_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
@@ -27,6 +26,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
@@ -210,7 +210,7 @@
     {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         BOOL isRemote = ![URL isFileURL] && ![WebDataProtocol _webIsDataProtocolURL:URL];
-	BOOL isRemoteWebArchive = isRemote && [MIMEType _web_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
+	BOOL isRemoteWebArchive = isRemote && [MIMEType _webkit_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
         if (![WebView canShowMIMEType:MIMEType] || isRemoteWebArchive) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:URL];
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
@@ -313,7 +313,7 @@
     // FIXME: This is a workaround to make web archive files work with Foundations that
     // are too old to know about web archive files. We should remove this before we ship.
     NSURL *URL = [r URL];
-    if ([[[URL path] pathExtension] _web_isCaseInsensitiveEqualToString:@"webarchive"]) {
+    if ([[[URL path] pathExtension] _webkit_isCaseInsensitiveEqualToString:@"webarchive"]) {
         r = [[[NSURLResponse alloc] initWithURL:URL 
                                        MIMEType:@"application/x-webarchive"
                           expectedContentLength:[r expectedContentLength] 

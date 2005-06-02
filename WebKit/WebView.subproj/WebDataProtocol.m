@@ -5,11 +5,9 @@
 #import <WebKit/WebDataProtocol.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSError_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebKitNSStringExtras.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
@@ -207,7 +205,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 {
     ASSERT(URL);
     NSString *scheme = [URL scheme];
-    return scheme && [scheme _web_isCaseInsensitiveEqualToString:WebDataProtocolScheme];
+    return scheme && [scheme _webkit_isCaseInsensitiveEqualToString:WebDataProtocolScheme];
 }
 
 +(BOOL)canInitWithRequest:(NSURLRequest *)request

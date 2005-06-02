@@ -27,11 +27,9 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
-#import <QD/ATSUnicodePriv.h>
 
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
-#import <Foundation/NSPrivateDecls.h>
 #endif
 
 #endif

@@ -1088,13 +1088,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     for (i = 0; i < count; i++) {
         NSString *key = [keys objectAtIndex:i];
         NSString *value = [values objectAtIndex:i];
-        if ([key _web_isCaseInsensitiveEqualToString:@"height"]) {
+        if ([key _webkit_isCaseInsensitiveEqualToString:@"height"]) {
             specifiedHeight = [value intValue];
-        } else if ([key _web_isCaseInsensitiveEqualToString:@"width"]) {
+        } else if ([key _webkit_isCaseInsensitiveEqualToString:@"width"]) {
             specifiedWidth = [value intValue];
         }
         // Avoid Window Media Player crash when these attributes are present.
-        if (isWMP && ([key _web_isCaseInsensitiveEqualToString:@"SAMIStyle"] || [key _web_isCaseInsensitiveEqualToString:@"SAMILang"])) {
+        if (isWMP && ([key _webkit_isCaseInsensitiveEqualToString:@"SAMIStyle"] || [key _webkit_isCaseInsensitiveEqualToString:@"SAMILang"])) {
             continue;
         }
         cAttributes[argsCount] = strdup([key UTF8String]);

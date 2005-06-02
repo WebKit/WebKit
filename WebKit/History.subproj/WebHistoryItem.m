@@ -12,13 +12,13 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
@@ -453,7 +453,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSArray *newData = nil;
     NSString *newContentType = nil;
     NSString *newReferrer = nil;
-    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+    if ([[request HTTPMethod] _webkit_isCaseInsensitiveEqualToString:@"POST"]) {
         // save form state iff this is a POST
 
         // FIXME: Eventually we have to make this smart enough to handle the case where

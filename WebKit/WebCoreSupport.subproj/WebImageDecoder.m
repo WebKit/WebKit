@@ -4,6 +4,7 @@
 */
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageDecoder.h>
+#import <WebKit/WebImageData.h>
 
 #ifndef OMIT_TIGER_FEATURES
 

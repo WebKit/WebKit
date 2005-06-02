@@ -3,6 +3,7 @@
 	Copyright 2004, Apple, Inc. All rights reserved.
 */
 #import <WebKit/WebImageDecodeItem.h>
+#import <WebKit/WebImageData.h>
 
 #ifndef OMIT_TIGER_FEATURES
 

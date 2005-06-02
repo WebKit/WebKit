@@ -36,6 +36,7 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -59,7 +60,6 @@
 
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
@@ -506,7 +506,7 @@ static bool debugWidget = true;
 
     // FIXME: This is a workaround to make web archive files work with Foundations that
     // are too old to know about web archive files. We should remove this before we ship.
-    if ([extension  _web_isCaseInsensitiveEqualToString:@"webarchive"]) {
+    if ([extension  _webkit_isCaseInsensitiveEqualToString:@"webarchive"]) {
         return @"application/x-webarchive";
     }
     

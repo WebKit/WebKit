@@ -58,9 +58,10 @@
 - (NSString *)_web_encodeHostName; // turns Unicode into funny-looking ASCII form, returns self if no decoding needed, convenient cover
 
 // FIXME: change these names back to _web_ when identically-named
-// methods are removed from Foundation
+// methods are removed from or renamed in Foundation
 - (BOOL)_webkit_isJavaScriptURL;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
 - (BOOL)_webkit_isFTPDirectoryURL;
+- (BOOL)_webkit_isFileURL;
 
 @end
