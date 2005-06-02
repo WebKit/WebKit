@@ -6,8 +6,12 @@
 
 #import <Foundation/Foundation.h>
 
+#define WEB_GUESS_MIME_TYPE_PEEK_LENGTH 1024
+
 @interface NSData (WebNSURLExtras)
 
 -(BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string;
+-(NSMutableDictionary *)_webkit_parseRFC822HeaderFields;
+-(NSString *)_webkit_guessedMIMEType;
 
 @end

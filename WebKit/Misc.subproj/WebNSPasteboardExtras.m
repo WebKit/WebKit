@@ -17,7 +17,6 @@
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
@@ -119,7 +118,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
 
     if ([types containsObject:NSStringPboardType]) {
         NSString *URLString = [self stringForType:NSStringPboardType];
-        if ([URLString _web_looksLikeAbsoluteURL]) {
+        if ([URLString _webkit_looksLikeAbsoluteURL]) {
             NSURL *URL = [[NSURL _web_URLWithUserTypedString:URLString] _webkit_canonicalize];
             if (URL) {
                 return URL;

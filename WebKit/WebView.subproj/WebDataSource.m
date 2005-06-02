@@ -28,6 +28,7 @@
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -41,7 +42,6 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -494,7 +494,7 @@
     if (title == nil) {
         trimmed = nil;
     } else {
-        trimmed = [title _web_stringByTrimmingWhitespace];
+        trimmed = [title _webkit_stringByTrimmingWhitespace];
         if ([trimmed length] == 0)
             trimmed = nil;
     }

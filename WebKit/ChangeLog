@@ -1,5 +1,56 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Vicki.
+
+	- remove dependencies on NSString and NSData extras from Foundation
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _webkit_isCaseInsensitiveEqualToString:]):
+        (-[NSString _webkit_hasCaseInsensitivePrefix:]):
+        (-[NSString _webkit_stringByTrimmingWhitespace]):
+        (-[NSString _webkit_stringByCollapsingNonPrintingCharacters]):
+        (-[NSString _webkit_fixedCarbonPOSIXPath]):
+        * Misc.subproj/WebNSDataExtras.h:
+        * Misc.subproj/WebNSDataExtras.m:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        (-[NSData _web_isCaseInsensitiveEqualToCString:]):
+        (_findEOL):
+        (-[NSData _web_parseRFC822HeaderFields]):
+        (-[NSData _webkit_guessedMIMETypeForXML]):
+        (-[NSData _webkit_guessedMIMEType]):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]):
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (applyHostNameFunctionToURLString):
+        (+[NSURL _web_URLWithUserTypedString:relativeToURL:]):
+        (+[NSURL _web_URLWithDataAsString:relativeToURL:]):
+        (-[NSURL _webkit_shouldLoadAsEmptyDocument]):
+        (-[NSString _webkit_isJavaScriptURL]):
+        (-[NSString _webkit_isFileURL]):
+        (-[NSString _webkit_isFTPDirectoryURL]):
+        (-[NSString _web_encodeHostName]):
+        (-[NSString _webkit_rangeOfURLScheme]):
+        (-[NSString _webkit_looksLikeAbsoluteURL]):
+        (-[NSString _webkit_URLFragment]):
+        * Misc.subproj/WebNSViewExtras.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _postURL:target:len:buf:file:notifyData:sendNotification:allowHeaders:]):
+        * Plugins.subproj/WebPluginDatabase.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setTitle:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _setTitle:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences userStyleSheetLocation]):
+        * WebView.subproj/WebView.m:
+        (+[WebView _MIMETypeForFile:]):
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John.
 
 	- first stage of cleaning up SPI usage in WebKit

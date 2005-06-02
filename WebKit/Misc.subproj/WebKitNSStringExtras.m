@@ -8,6 +8,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
+#import <Foundation/NSFileManager_NSURLExtras.h>
 
 #import <unicode/uchar.h>
 
@@ -184,6 +185,106 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string
 {
   return [self compare:string options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+}
+
+-(BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)prefix
+{
+    return [self rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
+}
+
+-(NSString *)_webkit_stringByTrimmingWhitespace
+{
+    NSMutableString *trimmed = [[self mutableCopy] autorelease];
+    CFStringTrimWhitespace((CFMutableStringRef)trimmed);
+    return trimmed;
+}
+
+- (NSString *)_webkit_stringByCollapsingNonPrintingCharacters
+{
+    NSMutableString *result = [NSMutableString string];
+    static NSCharacterSet *charactersToTurnIntoSpaces = nil;
+    static NSCharacterSet *charactersToNotTurnIntoSpaces = nil;
+    
+    if (charactersToTurnIntoSpaces == nil) {
+        NSMutableCharacterSet *set = [[NSMutableCharacterSet alloc] init];
+        [set addCharactersInRange:NSMakeRange(0x00, 0x21)];
+        [set addCharactersInRange:NSMakeRange(0x7F, 0x01)];
+        charactersToTurnIntoSpaces = [set copy];
+        [set release];
+        charactersToNotTurnIntoSpaces = [[charactersToTurnIntoSpaces invertedSet] retain];
+    }
+    
+    unsigned length = [self length];
+    unsigned position = 0;
+    while (position != length) {
+        NSRange nonSpace = [self rangeOfCharacterFromSet:charactersToNotTurnIntoSpaces
+            options:0 range:NSMakeRange(position, length - position)];
+        if (nonSpace.location == NSNotFound) {
+            break;
+        }
+
+        NSRange space = [self rangeOfCharacterFromSet:charactersToTurnIntoSpaces
+            options:0 range:NSMakeRange(nonSpace.location, length - nonSpace.location)];
+        if (space.location == NSNotFound) {
+            space.location = length;
+        }
+
+        if (space.location > nonSpace.location) {
+            if (position != 0) {
+                [result appendString:@" "];
+            }
+            [result appendString:[self substringWithRange:
+                NSMakeRange(nonSpace.location, space.location - nonSpace.location)]];
+        }
+
+        position = space.location;
+    }
+    
+    return result;
+}
+
+-(NSString *)_webkit_fixedCarbonPOSIXPath
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:self]) {
+        // Files exists, no need to fix.
+        return self;
+    }
+
+    NSMutableArray *pathComponents = [[[self pathComponents] mutableCopy] autorelease];
+    NSString *volumeName = [pathComponents objectAtIndex:1];
+    if ([volumeName isEqualToString:@"Volumes"]) {
+        // Path starts with "/Volumes", so the volume name is the next path component.
+        volumeName = [pathComponents objectAtIndex:2];
+        // Remove "Volumes" from the path because it may incorrectly be part of the path (3163647).
+        // We'll add it back if we have to.
+        [pathComponents removeObjectAtIndex:1];
+    }
+
+    if (!volumeName) {
+        // Should only happen if self == "/", so this shouldn't happen because that always exists.
+        return self;
+    }
+
+    if ([[fileManager _web_startupVolumeName] isEqualToString:volumeName]) {
+        // Startup volume name is included in path, remove it.
+        [pathComponents removeObjectAtIndex:1];
+    } else if ([[fileManager directoryContentsAtPath:@"/Volumes"] containsObject:volumeName]) {
+        // Path starts with other volume name, prepend "/Volumes".
+        [pathComponents insertObject:@"Volumes" atIndex:1];
+    } else {
+        // It's valid.
+        return self;
+    }
+
+    NSString *path = [NSString pathWithComponents:pathComponents];
+
+    if (![fileManager fileExistsAtPath:path]) {
+        // File at canonicalized path doesn't exist, return original.
+        return self;
+    }
+
+    return path;
 }
 
 @end

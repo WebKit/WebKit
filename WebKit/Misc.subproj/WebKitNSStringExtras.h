@@ -23,5 +23,10 @@
 + (NSStringEncoding)_web_encodingForResource:(Handle)resource;
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string;
+- (BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)suffix;
+
+- (NSString *)_webkit_stringByTrimmingWhitespace;
+- (NSString *)_webkit_stringByCollapsingNonPrintingCharacters;
+- (NSString *)_webkit_fixedCarbonPOSIXPath;
 
 @end

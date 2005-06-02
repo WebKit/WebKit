@@ -53,7 +53,6 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -394,7 +393,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)setTitle:(NSString *)title
 {
-    [[self dataSource] _setTitle:[title _web_stringByCollapsingNonPrintingCharacters]];
+    [[self dataSource] _setTitle:[title _webkit_stringByCollapsingNonPrintingCharacters]];
 }
 
 - (void)setStatusText:(NSString *)status

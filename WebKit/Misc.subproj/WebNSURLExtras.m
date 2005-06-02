@@ -7,10 +7,10 @@
 #import <WebKit/WebNSURLExtras.h>
 
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLProtocolPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURL_NSURLExtras.h>
@@ -159,7 +159,7 @@ static void applyHostNameFunctionToURLString(NSString *string, StringRangeApplie
 
     // Maybe we should implement this using a character buffer instead?
 
-    if ([string _web_hasCaseInsensitivePrefix:@"mailto:"]) {
+    if ([string _webkit_hasCaseInsensitivePrefix:@"mailto:"]) {
         applyHostNameFunctionToMailToURLString(string, f, context);
         return;
     }
@@ -268,7 +268,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     if (string == nil) {
         return nil;
     }
-    string = mapHostNames([string _web_stringByTrimmingWhitespace], YES);
+    string = mapHostNames([string _webkit_stringByTrimmingWhitespace], YES);
 
     NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
     ASSERT(userTypedData);
@@ -319,7 +319,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     if (string == nil) {
         return nil;
     }
-    string = [string _web_stringByTrimmingWhitespace];
+    string = [string _webkit_stringByTrimmingWhitespace];
     NSData *data = [string dataUsingEncoding:NSISOLatin1StringEncoding];
     return [self _web_URLWithData:data relativeToURL:baseURL];
 }
@@ -545,7 +545,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 - (BOOL)_webkit_shouldLoadAsEmptyDocument
 {
-    return [[self _web_originalDataAsString] _web_hasCaseInsensitivePrefix:@"about:"] || [self _web_isEmpty];
+    return [[self _web_originalDataAsString] _webkit_hasCaseInsensitivePrefix:@"about:"] || [self _web_isEmpty];
 }
 
 - (NSURL *)_web_URLWithLowercasedScheme
@@ -754,12 +754,12 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 
 - (BOOL)_webkit_isJavaScriptURL
 {
-    return [self _web_hasCaseInsensitivePrefix:@"javascript:"];
+    return [self _webkit_hasCaseInsensitivePrefix:@"javascript:"];
 }
 
 - (BOOL)_webkit_isFileURL
 {
-    return [self _web_hasCaseInsensitivePrefix:@"file:"];
+    return [self _webkit_hasCaseInsensitivePrefix:@"file:"];
 }
 
 - (NSString *)_webkit_stringByReplacingValidPercentEscapes
@@ -783,7 +783,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 	return NO;
     }
     unichar lastChar = [self characterAtIndex:length - 1];
-    return lastChar == '/' && [self _web_hasCaseInsensitivePrefix:@"ftp:"];
+    return lastChar == '/' && [self _webkit_hasCaseInsensitivePrefix:@"ftp:"];
 }
 
 
@@ -945,6 +945,44 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
 {
     NSString *name = [self _web_mapHostNameWithRange:NSMakeRange(0, [self length]) encode:YES makeString:YES];
     return name == nil ? self : name;
+}
+
+-(NSRange)_webkit_rangeOfURLScheme
+{
+    NSRange colon = [self rangeOfString:@":"];
+    if (colon.location != NSNotFound && colon.location > 0) {
+        NSRange scheme = {0, colon.location};
+        static NSCharacterSet *InverseSchemeCharacterSet = nil;
+        if (!InverseSchemeCharacterSet) {
+            /*
+             This stuff is very expensive.  10-15 msec on a 2x1.2GHz.  If not cached it swamps
+             everything else when adding items to the autocomplete DB.  Makes me wonder if we
+             even need to enforce the character set here.
+            */
+            NSString *acceptableCharacters = @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+.-";
+            InverseSchemeCharacterSet = [[[NSCharacterSet characterSetWithCharactersInString:acceptableCharacters] invertedSet] retain];
+        }
+        NSRange illegals = [self rangeOfCharacterFromSet:InverseSchemeCharacterSet options:0 range:scheme];
+        if (illegals.location == NSNotFound)
+            return scheme;
+    }
+    return NSMakeRange(NSNotFound, 0);
+}
+
+-(BOOL)_webkit_looksLikeAbsoluteURL
+{
+    // Trim whitespace because _web_URLWithString allows whitespace.
+    return [[self _webkit_stringByTrimmingWhitespace] _webkit_rangeOfURLScheme].location != NSNotFound;
+}
+
+- (NSString *)_webkit_URLFragment
+{
+    NSRange fragmentRange;
+    
+    fragmentRange = [self rangeOfString:@"#" options:NSLiteralSearch];
+    if (fragmentRange.location == NSNotFound)
+        return nil;
+    return [self substringFromIndex:fragmentRange.location];
 }
 
 @end

@@ -20,7 +20,6 @@
 
 #import <CoreGraphics/CPSProcesses.h>
 
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 @implementation WebPluginDatabase

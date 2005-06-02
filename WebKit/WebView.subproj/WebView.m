@@ -38,6 +38,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSPrintOperationExtras.h>
@@ -58,7 +59,6 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
 
-#import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
@@ -518,10 +518,10 @@ static bool debugWidget = true;
     // If we can't get a known MIME type from the extension, sniff.
     if ([MIMEType length] == 0 || [MIMEType isEqualToString:@"application/octet-stream"]) {
         NSFileHandle *handle = [NSFileHandle fileHandleForReadingAtPath:path];
-        NSData *data = [handle readDataOfLength:GUESS_MIME_TYPE_PEEK_LENGTH];
+        NSData *data = [handle readDataOfLength:WEB_GUESS_MIME_TYPE_PEEK_LENGTH];
         [handle closeFile];
         if ([data length] != 0) {
-            MIMEType = [data _web_guessedMIMEType];
+            MIMEType = [data _webkit_guessedMIMEType];
         }
         if ([MIMEType length] == 0) {
             MIMEType = @"application/octet-stream";

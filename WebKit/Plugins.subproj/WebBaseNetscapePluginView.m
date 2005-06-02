@@ -15,6 +15,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -23,9 +24,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
@@ -1576,7 +1575,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         } else {
             path = bufString;
         }
-        postData = [NSData dataWithContentsOfFile:[path _web_fixedCarbonPOSIXPath]];
+        postData = [NSData dataWithContentsOfFile:[path _webkit_fixedCarbonPOSIXPath]];
         CFRelease(bufString);
         if (!postData) {
             return NPERR_FILE_NOT_FOUND;
@@ -1600,7 +1599,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             if (location != NSNotFound) {
                 // If the blank line is somewhere in the middle of postData, everything before is the header.
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
-                NSMutableDictionary *header = [headerData _web_parseRFC822HeaderFields];
+                NSMutableDictionary *header = [headerData _webkit_parseRFC822HeaderFields];
 		unsigned dataLength = [postData length] - location;
 
 		// Sometimes plugins like to set Content-Length themselves when they post,

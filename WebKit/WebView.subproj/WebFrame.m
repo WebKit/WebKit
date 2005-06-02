@@ -40,7 +40,6 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
 #import <objc/objc-runtime.h>
@@ -1331,7 +1330,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: form state might want to be saved here too
 
         // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
-        NSString *anchor = [[item URLString] _web_URLFragment];
+        NSString *anchor = [[item URLString] _webkit_URLFragment];
         if (anchor)
             [[_private->dataSource _bridge] scrollToAnchor: anchor];
     

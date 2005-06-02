@@ -11,7 +11,6 @@
 #import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSString_NSURLExtras.h>
 
 #import <WebCore/WebCoreSettings.h>
 
@@ -402,7 +401,7 @@ NS_ENDHANDLER
 {
     NSString *locationString = [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
     
-    if ([locationString _web_looksLikeAbsoluteURL]) {
+    if ([locationString _webkit_looksLikeAbsoluteURL]) {
         return [NSURL _web_URLWithDataAsString:locationString];
     } else {
         locationString = [locationString stringByExpandingTildeInPath];
