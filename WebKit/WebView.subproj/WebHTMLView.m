@@ -49,7 +49,6 @@
 #import <AppKit/NSResponder_Private.h>
 
 #import <Foundation/NSFileManager_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #import <CoreGraphics/CGContextGState.h>

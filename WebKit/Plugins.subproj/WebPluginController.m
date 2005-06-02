@@ -13,6 +13,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
@@ -24,7 +25,6 @@
 
 #import <WebCore/WebCoreBridge.h>
 
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
 @interface NSView (PluginSecrets)
@@ -228,7 +228,7 @@ static NSMutableSet *pluginViews = nil;
     if (!target) {
         target = @"_top";
     }
-    NSString *JSString = [[request URL] _web_scriptIfJavaScriptURL];
+    NSString *JSString = [[request URL] _webkit_scriptIfJavaScriptURL];
     if (JSString) {
         if ([frame findFrameNamed:target] != frame) {
             ERROR("JavaScript requests can only be made on the frame that contains the plug-in");

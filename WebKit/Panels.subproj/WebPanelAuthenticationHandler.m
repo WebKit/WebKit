@@ -6,23 +6,13 @@
 
 
 #import <WebKit/WebPanelAuthenticationHandler.h>
-#import <WebKit/WebAuthenticationPanel.h>
+
 #import <Foundation/NSURLAuthenticationChallenge.h>
+#import <WebKit/WebAuthenticationPanel.h>
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
-
-@interface NSMutableDictionary (WebExtras)
-- (void)_webkit_setObject:(id)object forUncopiedKey:(id)key;
-@end
-
-@implementation NSMutableDictionary (WebExtras)
--(void)_webkit_setObject:(id)object forUncopiedKey:(id)key
-{
-    CFDictionarySetValue((CFMutableDictionaryRef)self, key, object);
-}
-@end
-
 
 @implementation WebPanelAuthenticationHandler
 

@@ -24,6 +24,9 @@
 
 - (BOOL)_webkit_isCaseInsensitiveEqualToString:(NSString *)string;
 - (BOOL)_webkit_hasCaseInsensitivePrefix:(NSString *)suffix;
+- (BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix;
+- (BOOL)_webkit_hasCaseInsensitiveSubstring:(NSString *)substring;
+- (NSString *)_webkit_filenameByFixingIllegalCharacters;
 
 - (NSString *)_webkit_stringByTrimmingWhitespace;
 - (NSString *)_webkit_stringByCollapsingNonPrintingCharacters;

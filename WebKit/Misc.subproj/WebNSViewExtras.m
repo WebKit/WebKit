@@ -13,7 +13,6 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #define WebDragStartHysteresisX			5.0

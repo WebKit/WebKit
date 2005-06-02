@@ -39,7 +39,6 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
 #import <objc/objc-runtime.h>

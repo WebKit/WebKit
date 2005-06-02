@@ -36,7 +36,6 @@
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
 @interface NSClipView (AppKitSecretsIKnow)

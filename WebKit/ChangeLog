@@ -1,5 +1,58 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adele.
+
+	- remove dependencies on NSDictionary and NSURL extras
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _webkit_hasCaseInsensitiveSuffix:]):
+        (-[NSString _webkit_hasCaseInsensitiveSubstring:]):
+        (-[NSString _webkit_filenameByFixingIllegalCharacters]):
+        * Misc.subproj/WebNSDictionaryExtras.h: Added.
+        * Misc.subproj/WebNSDictionaryExtras.m: Added.
+        (-[NSDictionary _webkit_numberForKey:]):
+        (-[NSDictionary _webkit_intForKey:]):
+        (-[NSDictionary _webkit_stringForKey:]):
+        (-[NSDictionary _webkit_objectForMIMEType:]):
+        (-[NSMutableDictionary _webkit_setObject:forUncopiedKey:]):
+        (-[NSMutableDictionary _webkit_setInt:forKey:]):
+        (-[NSMutableDictionary _webkit_setBool:forKey:]):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _webkit_URLByRemovingFragment]):
+        (-[NSURL _webkit_scriptIfJavaScriptURL]):
+        (-[NSURL _webkit_isFileURL]):
+        (-[NSURL _web_hostString]):
+        (-[NSURL _webkit_suggestedFilenameWithMIMEType:]):
+        * Misc.subproj/WebNSViewExtras.m:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        * WebView.subproj/WebResource.m:
+        (-[WebResource _initWithPropertyList:]):
+        (-[WebResource _fileWrapperRepresentation]):
+        * WebView.subproj/WebView.m:
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Vicki.
 
 	- remove dependencies on NSString and NSData extras from Foundation

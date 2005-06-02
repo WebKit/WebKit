@@ -8,9 +8,8 @@
 
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-
-#import <Foundation/NSDictionary_NSURLExtras.h>
 
 #import <WebCore/WebCoreSettings.h>
 
@@ -257,7 +256,7 @@ NS_ENDHANDLER
 - (void)_setIntegerValue:(int)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
-    [_private->values _web_setInt:value forKey:_key];
+    [_private->values _webkit_setInt:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
     [self _postPreferencesChangesNotification];
@@ -271,7 +270,7 @@ NS_ENDHANDLER
 - (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
 {
     NSString *_key = KEY(key);
-    [_private->values _web_setBool:value forKey:_key];
+    [_private->values _webkit_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
     [self _postPreferencesChangesNotification];

@@ -42,6 +42,8 @@
 
 - (BOOL)_webkit_shouldLoadAsEmptyDocument;
 
+- (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType;
+
 @end
 
 @interface NSString (WebNSURLExtras)
@@ -60,10 +62,10 @@
 // FIXME: change these names back to _web_ when identically-named
 // methods are removed from or renamed in Foundation
 - (BOOL)_webkit_isJavaScriptURL;
-- (NSString *)_webkit_scriptIfJavaScriptURL;
 - (BOOL)_webkit_isFTPDirectoryURL;
 - (BOOL)_webkit_isFileURL;
 - (BOOL)_webkit_looksLikeAbsoluteURL;
 - (NSString *)_webkit_URLFragment;
+- (NSString *)_webkit_scriptIfJavaScriptURL;
 
 @end

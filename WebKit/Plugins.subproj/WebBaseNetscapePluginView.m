@@ -16,6 +16,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSDataExtras.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -24,8 +25,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
 #import <AppKit/NSEvent_Private.h>
@@ -1366,7 +1365,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     
     NSURL *URL = [[JSPluginRequest request] URL];
-    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     ASSERT(JSString);
     
     NSString *result = [[[self webFrame] _bridge] stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:[JSPluginRequest isCurrentEventUserGesture]];
@@ -1429,7 +1428,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     WebFrame *frame = nil;
     
     NSURL *URL = [request URL];
-    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     
     ASSERT(frameName || JSString);
     
@@ -1467,7 +1466,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                 ASSERT([view isKindOfClass:[WebBaseNetscapePluginView class]]);
                 [view webFrame:frame didFinishLoadWithReason:NPRES_USER_BREAK];
             }
-            [pendingFrameLoads _web_setObject:pluginRequest forUncopiedKey:frame];
+            [pendingFrameLoads _webkit_setObject:pluginRequest forUncopiedKey:frame];
             [frame _setInternalLoadDelegate:self];
         }
     }
@@ -1481,7 +1480,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return NPERR_INVALID_URL;
     }
     
-    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString != nil) {
         if (![[[self webView] preferences] isJavaScriptEnabled]) {
             // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.

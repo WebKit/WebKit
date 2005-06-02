@@ -192,6 +192,38 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     return [self rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
 }
 
+-(BOOL)_webkit_hasCaseInsensitiveSuffix:(NSString *)suffix
+{
+    return [self rangeOfString:suffix options:(NSCaseInsensitiveSearch | NSBackwardsSearch | NSAnchoredSearch)].location != NSNotFound;
+}
+
+-(BOOL)_webkit_hasCaseInsensitiveSubstring:(NSString *)substring
+{
+    return [self rangeOfString:substring options:NSCaseInsensitiveSearch].location != NSNotFound;
+}
+
+-(NSString *)_webkit_filenameByFixingIllegalCharacters
+{
+    NSMutableString *filename = [[self mutableCopy] autorelease];
+
+    // Strip null characters.
+	unichar nullChar = 0;
+    [filename replaceOccurrencesOfString:[NSString stringWithCharacters:&nullChar length:0] withString:@"" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace "/" with "-".
+    [filename replaceOccurrencesOfString:@"/" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+
+    // Replace ":" with "-".
+    [filename replaceOccurrencesOfString:@":" withString:@"-" options:0 range:NSMakeRange(0, [filename length])];
+    
+    // Strip leading dots.
+    while ([filename hasPrefix:@"."]) {
+        [filename deleteCharactersInRange:NSMakeRange(0,1)];
+    }
+    
+    return filename;
+}
+
 -(NSString *)_webkit_stringByTrimmingWhitespace
 {
     NSMutableString *trimmed = [[self mutableCopy] autorelease];

@@ -13,12 +13,12 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
@@ -574,12 +574,12 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
-    NSString *URLString = [dict _web_stringForKey:@""];
-    NSString *title = [dict _web_stringForKey:WebTitleKey];
+    NSString *URLString = [dict _webkit_stringForKey:@""];
+    NSString *title = [dict _webkit_stringForKey:WebTitleKey];
 
     // Do an existence check to avoid calling doubleValue on a nil string. Leave
     // time interval at 0 if there's no value in dict.
-    NSString *timeIntervalString = [dict _web_stringForKey:WebLastVisitedTimeIntervalKey];
+    NSString *timeIntervalString = [dict _webkit_stringForKey:WebLastVisitedTimeIntervalKey];
     NSTimeInterval lastVisited = timeIntervalString == nil ? 0 : [timeIntervalString doubleValue];
 
     self = [self initWithURLString:URLString title:title lastVisitedTimeInterval:lastVisited];
@@ -595,9 +595,9 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
         _private->originalURLString = [_private->URLString retain];
     }
 
-    [self setAlternateTitle:[dict _web_stringForKey:WebDisplayTitleKey]];
+    [self setAlternateTitle:[dict _webkit_stringForKey:WebDisplayTitleKey]];
 
-    _private->visitCount = [dict _web_intForKey:WebVisitCountKey];
+    _private->visitCount = [dict _webkit_intForKey:WebVisitCountKey];
 
     NSArray *childDicts = [dict objectForKey:WebChildrenKey];
     if (childDicts) {

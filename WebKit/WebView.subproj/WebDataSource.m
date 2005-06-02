@@ -41,7 +41,6 @@
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponsePrivate.h>

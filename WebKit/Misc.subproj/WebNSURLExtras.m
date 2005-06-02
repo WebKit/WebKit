@@ -10,10 +10,11 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
+#import <WebKit/WebLocalizableStrings.h>
 
 #import <Foundation/NSURLProtocolPrivate.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <unicode/uchar.h>
 #import <unicode/uidna.h>
@@ -508,19 +509,43 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return result;
 }
 
+typedef struct {
+    NSString *scheme;
+    NSString *user;
+    NSString *password;
+    NSString *host;
+    CFIndex port; // kCFNotFound means ignore/omit
+    NSString *path;
+    NSString *query;
+    NSString *fragment;
+} WebKitURLComponents;
+
+
+
 - (NSURL *)_webkit_URLByRemovingFragment
 {
+    CFRange fragRg = CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentFragment, NULL);
     // Check to see if a fragment exists before decomposing the URL.
-    CFStringRef frag = CFURLCopyFragment((CFURLRef)self, NULL);
-    if (!frag) {
+    if (fragRg.location == kCFNotFound) {
         return self;
     }
-    CFRelease(frag);
-    
-    WebURLComponents components = [self _web_URLComponents];
-    components.fragment = nil;
-    NSURL *result = [NSURL _web_URLWithComponents:components];
-    return result ? result : self;
+    UInt8 *urlBytes, buffer[2048];
+    CFIndex numBytes = CFURLGetBytes((CFURLRef)self, buffer, 2048);
+    if (numBytes == -1) {
+        numBytes = CFURLGetBytes((CFURLRef)self, NULL, 0);
+        urlBytes = malloc(numBytes);
+        CFURLGetBytes((CFURLRef)self, urlBytes, numBytes);
+    } else {
+        urlBytes = buffer;
+    }
+
+    NSURL *result = (NSURL *)CFMakeCollectable(CFURLCreateWithBytes(NULL, urlBytes, fragRg.location - 1, kCFStringEncodingUTF8, NULL));
+    if (!result) {
+        result = (NSURL *)CFMakeCollectable(CFURLCreateWithBytes(NULL, urlBytes, fragRg.location - 1, kCFStringEncodingISOLatin1, NULL));
+    }
+
+    if (urlBytes != buffer) free(urlBytes);
+    return result ? [result autorelease] : self;
 }
 
 - (BOOL)_webkit_isJavaScriptURL
@@ -528,14 +553,14 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [[self _web_originalDataAsString] _webkit_isJavaScriptURL];
 }
 
+- (NSString *)_webkit_scriptIfJavaScriptURL
+{
+    return [[self absoluteString] _webkit_scriptIfJavaScriptURL];
+}
+
 - (BOOL)_webkit_isFileURL
 {
     return [[self _web_originalDataAsString] _webkit_isFileURL];
-}
-
-- (NSString *)_webkit_scriptIfJavaScriptURL
-{
-    return [[self _web_originalDataAsString] _webkit_scriptIfJavaScriptURL];
 }
 
 - (BOOL)_webkit_isFTPDirectoryURL
@@ -701,6 +726,56 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         data = [NSData data];
     }
     return [[[NSString alloc] initWithData:[self _web_hostData] encoding:NSUTF8StringEncoding] autorelease];
+}
+
+- (NSString *)_webkit_suggestedFilenameWithMIMEType:(NSString *)MIMEType
+{
+    // Get the filename from the URL. Try the lastPathComponent first.
+    NSString *lastPathComponent = [[self path] lastPathComponent];
+    NSString *filename = [lastPathComponent _webkit_filenameByFixingIllegalCharacters];
+    NSString *extension = nil;
+
+    if ([filename length] == 0 || [lastPathComponent isEqualToString:@"/"]) {
+        // lastPathComponent is no good, try the host.
+        filename = [[self _web_hostString] _webkit_filenameByFixingIllegalCharacters];
+        if ([filename length] == 0) {
+            // Can't make a filename using this URL, use "unknown".
+            filename = UI_STRING("unknown", "Unknown filename");
+        }
+    } else {
+        // Save the extension for later correction. Only correct the extension of the lastPathComponent.
+        // For example, if the filename ends up being the host, we wouldn't want to correct ".com" in "www.apple.com".
+        extension = [filename pathExtension];
+    }
+
+    // No mime type reported. Just return the filename we have now.
+    if (!MIMEType) {
+        return filename;
+    }
+
+    // Do not correct filenames that are reported with a mime type of tar, and 
+    // have a filename which has .tar in it or ends in .tgz
+    if (([MIMEType isEqualToString:@"application/tar"] || [MIMEType isEqualToString:@"application/x-tar"]) &&
+        ([filename _webkit_hasCaseInsensitiveSubstring:@".tar"] || [filename _webkit_hasCaseInsensitiveSuffix:@".tgz"])) {
+        return filename;
+    }
+
+    // If the type is known, check the extension and correct it if necessary.
+    if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
+        NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
+        NSArray *extensions = [mappings extensionsForMIMEType:MIMEType];
+
+        if (![extension length] || (extensions && ![extensions containsObject:extension])) {
+            // The extension doesn't match the MIME type. Correct this.
+            NSString *correctExtension = [mappings preferredExtensionForMIMEType:MIMEType];
+            if ([correctExtension length] != 0) {
+                // Append the correct extension.
+                filename = [filename stringByAppendingPathExtension:correctExtension];
+            }
+        }
+    }
+
+    return filename;
 }
 
 @end

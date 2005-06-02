@@ -39,6 +39,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSDataExtras.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSPrintOperationExtras.h>
@@ -59,7 +60,6 @@
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
 
-#import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
@@ -341,8 +341,8 @@ static bool debugWidget = true;
     
     // Simple optimization that avoids loading the plug-in DB and image types for the HTML case.
     if ([self canShowMIMETypeAsHTML:MIMEType]) {
-        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
-        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
+        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
+        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _webkit_objectForMIMEType:MIMEType];
         if (viewClass && repClass) {
             if (vClass) {
                 *vClass = viewClass;
@@ -358,8 +358,8 @@ static bool debugWidget = true;
     [WebPluginDatabase installedPlugins];
         
     // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
-    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
-    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
+    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
+    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _webkit_objectForMIMEType:MIMEType];
     if (viewClass && repClass) {
         // Special-case WebTextView for text types that shouldn't be shown.
         if (viewClass == [WebTextView class] &&
@@ -1054,7 +1054,7 @@ static bool debugWidget = true;
     if (!_private->progressItems)
         _private->progressItems = [[NSMutableDictionary alloc] init];
         
-    [_private->progressItems _web_setObject:item forUncopiedKey:connectionDelegate];
+    [_private->progressItems _webkit_setObject:item forUncopiedKey:connectionDelegate];
     [item release];
 }
 

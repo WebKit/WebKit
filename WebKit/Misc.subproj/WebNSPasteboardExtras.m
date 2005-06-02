@@ -17,7 +17,6 @@
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #import <HIServices/CoreTranslationFlavorTypeNames.h>

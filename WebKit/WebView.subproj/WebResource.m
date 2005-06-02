@@ -4,10 +4,8 @@
 */
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebResourcePrivate.h>
+#import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-
-#import <Foundation/NSDictionary_NSURLExtras.h>
-#import <Foundation/NSURL_NSURLExtras.h>
 
 NSString *WebResourceDataKey =              @"WebResourceData";
 NSString *WebResourceFrameNameKey =         @"WebResourceFrameName";
@@ -225,12 +223,12 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
     }
 
     NSData *data = [propertyList objectForKey:WebResourceDataKey];
-    NSString *URLString = [propertyList _web_stringForKey:WebResourceURLKey];
+    NSString *URLString = [propertyList _webkit_stringForKey:WebResourceURLKey];
     return [self _initWithData:[data isKindOfClass:[NSData class]] ? data : nil
                            URL:URLString ? [NSURL _web_URLWithDataAsString:URLString] : nil
-                      MIMEType:[propertyList _web_stringForKey:WebResourceMIMETypeKey]
-              textEncodingName:[propertyList _web_stringForKey:WebResourceTextEncodingNameKey]
-                     frameName:[propertyList _web_stringForKey:WebResourceFrameNameKey]
+                      MIMEType:[propertyList _webkit_stringForKey:WebResourceMIMETypeKey]
+              textEncodingName:[propertyList _webkit_stringForKey:WebResourceTextEncodingNameKey]
+                     frameName:[propertyList _webkit_stringForKey:WebResourceFrameNameKey]
                       response:response
                       copyData:NO];
 }
@@ -238,7 +236,7 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
 - (NSFileWrapper *)_fileWrapperRepresentation
 {
     NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:_private->data] autorelease];
-    [wrapper setPreferredFilename:[_private->URL _web_suggestedFilenameWithMIMEType:_private->MIMEType]];
+    [wrapper setPreferredFilename:[_private->URL _webkit_suggestedFilenameWithMIMEType:_private->MIMEType]];
     return wrapper;
 }
 
