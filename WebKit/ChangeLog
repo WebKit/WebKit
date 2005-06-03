@@ -1,5 +1,26 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kevin.
+
+	- removed dependencies on NSError SPI
+	
+        * Misc.subproj/WebKitErrors.m:
+        (-[NSError _webkit_initWithDomain:code:URL:]):
+        (+[NSError _webkit_errorWithDomain:code:URL:]):
+        (+[NSError _webKitErrorWithDomain:code:URL:]):
+        (+[NSError _webKitErrorWithCode:failingURL:]):
+        (+[NSError _webkit_addErrorsWithCodesAndDescriptions:inDomain:]):
+        (registerErrors):
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didFailWithError:]):
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Vicki.
 
 	- remove use of _cfBundle SPI

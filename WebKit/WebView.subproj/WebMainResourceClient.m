@@ -6,7 +6,6 @@
 #import <WebKit/WebMainResourceClient.h>
 
 #import <Foundation/NSHTTPCookie.h>
-#import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
@@ -378,8 +377,6 @@
     ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _webView] defersCallbacks]);
-
-    LOG(Loading, "URL = %@, error = %@", [error _web_failingURL], [error _web_localizedDescription]);
 
     [self receivedError:error];
 }

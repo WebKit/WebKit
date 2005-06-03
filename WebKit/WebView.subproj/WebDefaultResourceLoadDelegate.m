@@ -9,7 +9,6 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSError_NSURLExtras.h>
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>

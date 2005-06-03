@@ -13,7 +13,6 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSError_NSURLExtras.h>
 
 @implementation WebNetscapePluginRepresentation
 

@@ -14,7 +14,6 @@
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>

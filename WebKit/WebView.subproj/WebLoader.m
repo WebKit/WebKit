@@ -11,7 +11,6 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSError_NSURLExtras.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataProtocol.h>

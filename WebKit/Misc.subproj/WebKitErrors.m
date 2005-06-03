@@ -13,8 +13,6 @@
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
 
-#import <Foundation/NSError_NSURLExtras.h>
-
 #import <pthread.h>
 
 NSString *WebKitErrorDomain = @"WebKitErrorDomain";
@@ -39,20 +37,43 @@ static void registerErrors(void);
 
 @implementation NSError (WebKitExtras)
 
+static NSMutableDictionary *descriptions = nil;
+
 + (void)_registerWebKitErrors
 {
     pthread_once(&registerErrorsControl, registerErrors);
 }
 
-+ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URLString
+-(id)_webkit_initWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
-    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL _web_URLWithUserTypedString:URLString]];
+    NSDictionary *descriptionsDict;
+    NSString *localizedDesc;
+    NSDictionary *dict;
+	// insert a localized string here for those folks not savvy to our category methods
+    descriptionsDict = [descriptions objectForKey:domain];
+    localizedDesc = descriptionsDict ? [descriptionsDict objectForKey:[NSNumber numberWithInt:code]] : nil;
+    dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        URL, @"NSErrorFailingURLKey",
+        [URL absoluteString], @"NSErrorFailingURLStringKey",
+        localizedDesc, NSLocalizedDescriptionKey,
+        nil];
+    return [self initWithDomain:domain code:code userInfo:dict];
+}
+
++(id)_webkit_errorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
+{
+    return [[[self alloc] _webkit_initWithDomain:domain code:code URL:URL] autorelease];
 }
 
 + (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
 {
     [self _registerWebKitErrors];
-    return [self _web_errorWithDomain:domain code:code URL:URL];
+    return [self _webkit_errorWithDomain:domain code:code URL:URL];
+}
+
++ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URLString
+{
+    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL _web_URLWithUserTypedString:URLString]];
 }
 
 - (id)_initWithPluginErrorCode:(int)code
@@ -86,7 +107,13 @@ static void registerErrors(void);
     return error;
 }
 
-@end
++ (void)_webkit_addErrorsWithCodesAndDescriptions:(NSDictionary *)dictionary inDomain:(NSString *)domain
+{
+	if (!descriptions)
+		descriptions = [[NSMutableDictionary alloc] init];
+
+    [descriptions setObject:dictionary forKey:domain];
+}
 
 static void registerErrors()
 {
@@ -107,7 +134,7 @@ static void registerErrors()
         WebKitErrorDescriptionPlugInCancelledConnection,[NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
         nil];
 
-    [NSError _web_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
+    [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
 
 #if BUILDING_ON_PANTHER
     [pool release];
@@ -115,3 +142,8 @@ static void registerErrors()
     [pool drain];
 #endif
 }
+
+
+
+@end
+
