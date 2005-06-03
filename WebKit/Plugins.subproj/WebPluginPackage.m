@@ -11,8 +11,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 
-#import <Foundation/NSPrivateDecls.h>
-
 NSString *WebPlugInBaseURLKey =     @"WebPlugInBaseURLKey";
 NSString *WebPlugInAttributesKey =  @"WebPlugInAttributesKey";
 NSString *WebPlugInContainerKey =   @"WebPlugInContainerKey";
@@ -37,7 +35,7 @@ extern NSString *WebPlugInContainingElementKey;
     
     if (![[pluginPath pathExtension] _webkit_isCaseInsensitiveEqualToString:@"webplugin"]) {
         UInt32 type = 0;
-        CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
+        CFBundleGetPackageInfo(cfBundle, &type, NULL);
         if (type != FOUR_CHAR_CODE('WBPL')) {
             [self release];
             return nil;

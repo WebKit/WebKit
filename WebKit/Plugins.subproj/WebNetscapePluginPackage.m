@@ -11,8 +11,6 @@
 
 #import <JavaScriptCore/npruntime_impl.h>
 
-#import <Foundation/NSPrivateDecls.h>
-
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
@@ -49,7 +47,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     OSErr err;
     
     if (isBundle) {
-        return CFBundleOpenBundleResourceMap([bundle _cfBundle]);
+        return CFBundleOpenBundleResourceMap(cfBundle);
     } else {
         err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
@@ -63,7 +61,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (void)closeResourceFile:(SInt16)resRef
 {
     if (isBundle) {
-        CFBundleCloseBundleResourceMap([bundle _cfBundle], resRef);
+        CFBundleCloseBundleResourceMap(cfBundle, resRef);
     } else {
         CloseResFile(resRef);
     }
@@ -181,7 +179,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     // Bundle
     if (bundle) {
         isBundle = YES;
-        CFBundleGetPackageInfo([bundle _cfBundle], &type, NULL);
+        CFBundleGetPackageInfo(cfBundle, &type, NULL);
     }
 #ifdef __ppc__
     // Single-file plug-in with resource fork
@@ -250,7 +248,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 
     if (isBundle) {
-        CFBundleUnloadExecutable([bundle _cfBundle]);
+        CFBundleUnloadExecutable(cfBundle);
     } else {
         CloseConnection(&connID);
     }
@@ -292,7 +290,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     if (isBundle) {
-        CFBundleRef cfBundle = [bundle _cfBundle];
         if (!CFBundleLoadExecutable(cfBundle)) {
             goto abort;
         }

@@ -1,5 +1,25 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Vicki.
+
+	- remove use of _cfBundle SPI
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage dealloc]):
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage closeResourceFile:]):
+        (-[WebNetscapePluginPackage initWithPath:]):
+        (-[WebNetscapePluginPackage unloadWithoutShutdown]):
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]):
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Adele.
 
 	- remove use of NSURLRequest and NSUserDefaults SPI
