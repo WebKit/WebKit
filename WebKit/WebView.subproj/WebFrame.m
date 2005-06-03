@@ -29,6 +29,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPlugin.h>
@@ -38,8 +39,6 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
-
-#import <Foundation/NSURLRequestPrivate.h>
 
 #import <objc/objc-runtime.h>
 
@@ -1381,9 +1380,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             NSDictionary *action;
             if (formData) {
                 [request setHTTPMethod:@"POST"];
-                [request setHTTPReferrer:[item formReferrer]];
+                [request _web_setHTTPReferrer:[item formReferrer]];
                 webSetHTTPBody(request, formData);
-                [request setHTTPContentType:[item formContentType]];
+                [request _web_setHTTPContentType:[item formContentType]];
 
                 // Slight hack to test if the WF cache contains the page we're going to.  We want
                 // to know this before talking to the policy delegate, since it affects whether we
@@ -1808,7 +1807,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f
 {
-    [request setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
+    [request _web_setHTTPUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
     // Don't set the cookie policy URL if it's already been set.
     if ([request mainDocumentURL] == nil){
@@ -1848,7 +1847,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     BOOL isFormSubmission = (values != nil);
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request setHTTPReferrer:referrer];
+    [request _web_setHTTPReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -1994,10 +1993,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [self _addExtraFieldsToRequest:request alwaysFromRequest:YES];
-    [request setHTTPReferrer:referrer];
+    [request _web_setHTTPReferrer:referrer];
     [request setHTTPMethod:@"POST"];
     webSetHTTPBody(request, postData);
-    [request setHTTPContentType:contentType];
+    [request _web_setHTTPContentType:contentType];
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;

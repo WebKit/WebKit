@@ -11,10 +11,10 @@
 #import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSError_NSURLExtras.h>
-#import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
@@ -62,11 +62,11 @@
     //    not affect any other resources. Such changes need to be done
     //    per request.
     [newRequest setCachePolicy:[[source _originalRequest] cachePolicy]];
-    [newRequest setHTTPReferrer:referrer];
+    [newRequest _web_setHTTPReferrer:referrer];
     
     WebView *_webView = [source _webView];
     [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
-    [newRequest setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
+    [newRequest _web_setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
             
     if (![client loadWithRequest:newRequest]) {
         client = nil;

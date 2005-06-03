@@ -16,10 +16,9 @@
 #import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
-
-#import <Foundation/NSURLRequestPrivate.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
@@ -465,8 +464,8 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
             [body release];
         }
 
-        newContentType = [[request HTTPContentType] copy];
-        newReferrer = [[request HTTPReferrer] copy];
+        newContentType = [[request _web_HTTPContentType] copy];
+        newReferrer = [[request _web_HTTPReferrer] copy];
     }
 
     [_private->formData release];

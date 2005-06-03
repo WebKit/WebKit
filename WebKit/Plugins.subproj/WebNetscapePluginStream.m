@@ -12,12 +12,12 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSURLRequestPrivate.h>
 
 @interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
 {
@@ -59,7 +59,7 @@
         
     request = [theRequest mutableCopy];
     if (hideReferrer) {
-        [(NSMutableURLRequest *)request setHTTPReferrer:nil];
+        [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
     }
 
     _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 

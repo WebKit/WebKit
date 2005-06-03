@@ -14,9 +14,8 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebView.h>
-
-#import <Foundation/NSURLRequestPrivate.h>
 
 @implementation WebNetscapePluginEmbeddedView
 
@@ -59,7 +58,7 @@
     // Check for this and don't start a load in this case.
     if (URL != nil && ![URL _web_isEmpty]) {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-        [request setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
+        [request _web_setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     }
 }

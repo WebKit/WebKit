@@ -35,6 +35,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
@@ -51,7 +52,6 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
@@ -186,7 +186,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     if (URL != nil && ![URL _web_isEmpty]) {
 	request = [NSMutableURLRequest requestWithURL:URL];
-	[request setHTTPReferrer:[self referrer]];
+	[request _web_setHTTPReferrer:[self referrer]];
     }
 
     WebView *currentWebView = [_frame webView];
@@ -490,11 +490,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     // Never use cached data for these requests (xmlhttprequests).
     [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
     if (!hideReferrer)
-        [request setHTTPReferrer:[self referrer]];
+        [request _web_setHTTPReferrer:[self referrer]];
     
     WebView *webView = [_frame webView];
     [request setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
-    [request setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
+    [request _web_setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
     
     NSError *error = nil;
     id identifier = nil;    
@@ -831,7 +831,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSString *)incomingReferrer
 {
-    return [[[self dataSource] request] HTTPReferrer];
+    return [[[self dataSource] request] _web_HTTPReferrer];
 }
 
 - (NSView *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
@@ -1606,7 +1606,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
     if (URL != nil && ![URL _web_isEmpty]) {
 	request = [NSMutableURLRequest requestWithURL:URL];
-	[request setHTTPReferrer:[self referrer]];
+	[request _web_setHTTPReferrer:[self referrer]];
     }
 
     WebView *currentWebView = [_frame webView];

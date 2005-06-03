@@ -45,6 +45,8 @@
 #import <WebKit/WebNSPrintOperationExtras.h>
 #import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
+#import <WebKit/WebNSUserDefaultsExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPolicyDelegate.h>
@@ -63,8 +65,6 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
-#import <Foundation/NSURLRequestPrivate.h>
-#import <Foundation/NSUserDefaults_NSURLExtras.h>
 
 #if !BUILDING_ON_PANTHER         
 #include <CoreGraphics/CGSConnection.h>
@@ -1230,7 +1230,7 @@ static bool debugWidget = true;
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [request setHTTPUserAgent:[self userAgentForURL:URL]];
+    [request _web_setHTTPUserAgent:[self userAgentForURL:URL]];
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     return cachedResponse;
@@ -1913,7 +1913,7 @@ NS_ENDHANDLER
     
     // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
 
-    NSString *language = [NSUserDefaults _web_preferredLanguageCode];
+    NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;

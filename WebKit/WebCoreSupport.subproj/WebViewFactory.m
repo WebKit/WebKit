@@ -8,12 +8,12 @@
 
 #import <WebKit/WebViewFactory.h>
 
-#import <Foundation/NSUserDefaults_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebNSUserDefaultsExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 
@@ -108,7 +108,7 @@
 
 - (NSString *)defaultLanguageCode
 {
-    return [NSUserDefaults _web_preferredLanguageCode];
+    return [NSUserDefaults _webkit_preferredLanguageCode];
 }
 
 @end

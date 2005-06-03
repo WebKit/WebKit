@@ -15,6 +15,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -25,7 +26,6 @@
 
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLRequestPrivate.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 
@@ -317,7 +317,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
-	[request setHTTPReferrer:referrer];
+	[request _web_setHTTPReferrer:referrer];
     }
     
     [webView _openNewWindowWithRequest:request];

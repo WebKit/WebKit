@@ -19,13 +19,12 @@
 #import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
-
-#import <Foundation/NSURLRequestPrivate.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
@@ -1351,7 +1350,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
     }
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-    [request setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
+    [request _web_setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
     return request;
 }
 

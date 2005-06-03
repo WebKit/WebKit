@@ -11,7 +11,6 @@
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
 

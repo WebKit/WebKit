@@ -1,5 +1,59 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adele.
+
+	- remove use of NSURLRequest and NSUserDefaults SPI
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setFormInfoFromRequest:]):
+        * Misc.subproj/WebNSURLRequestExtras.h: Added.
+        * Misc.subproj/WebNSURLRequestExtras.m: Added.
+        (-[NSURLRequest _web_HTTPReferrer]):
+        (-[NSURLRequest _web_HTTPContentType]):
+        (-[NSMutableURLRequest _web_setHTTPContentType:]):
+        (-[NSMutableURLRequest _web_setHTTPReferrer:]):
+        (-[NSMutableURLRequest _web_setHTTPUserAgent:]):
+        * Misc.subproj/WebNSUserDefaultsExtras.h: Added.
+        * Misc.subproj/WebNSUserDefaultsExtras.m: Added.
+        (-[NSString _webkit_HTTPStyleLanguageCode]):
+        (makeLock):
+        (+[NSUserDefaults _ensureAndLockPreferredLanguageLock]):
+        (+[NSUserDefaults _webkit_defaultsDidChange]):
+        (addDefaultsChangeObserver):
+        (+[NSUserDefaults _webkit_addDefaultsChangeObserver]):
+        (+[NSUserDefaults _webkit_preferredLanguageCode]):
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebBridge incomingReferrer]):
+        (-[WebBridge createModalDialogWithURL:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory defaultLanguageCode]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate willSendRequest:redirectResponse:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate openNewWindowWithURL:element:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebView.m:
+        (-[WebView _cachedResponseForURL:]):
+        (-[WebView userAgentForURL:]):
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Don.
 
 	- move private gunk from header to implementation file.

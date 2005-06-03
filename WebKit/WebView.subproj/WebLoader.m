@@ -9,7 +9,6 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
 #import <Foundation/NSError_NSURLExtras.h>
@@ -20,6 +19,7 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -367,7 +367,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
 
-    [mutableRequest setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
+    [mutableRequest _web_setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
 
     clientRequest = [newRequest _webDataRequestExternalRequest];
