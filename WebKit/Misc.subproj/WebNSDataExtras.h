@@ -1,5 +1,5 @@
 /*
-    WebNSURLExtras.h
+    WebNSDataExtras.h
     Private (SPI) header
     Copyright 2003, Apple, Inc. All rights reserved.
  */
@@ -8,7 +8,7 @@
 
 #define WEB_GUESS_MIME_TYPE_PEEK_LENGTH 1024
 
-@interface NSData (WebNSURLExtras)
+@interface NSData (WebNSDateExtras)
 
 -(BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string;
 -(NSMutableDictionary *)_webkit_parseRFC822HeaderFields;

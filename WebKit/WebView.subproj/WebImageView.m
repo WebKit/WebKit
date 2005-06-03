@@ -12,6 +12,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebNSFileManagerExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -19,8 +20,6 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-
-#import <Foundation/NSFileManager_NSURLExtras.h>
 
 @implementation WebImageView
 
@@ -275,7 +274,7 @@
 {
     // FIXME: Report an error if we fail to create a file.
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:[rep filename]];
-    path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
+    path = [[NSFileManager defaultManager] _webkit_pathWithUniqueFilenameForPath:path];
     [[rep data] writeToFile:path atomically:NO];
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }

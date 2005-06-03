@@ -6,8 +6,7 @@
 #import <WebKit/WebFileDatabase.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLRUFileList.h>
-
-#import <Foundation/NSFileManager_NSURLExtras.h>
+#import <WebKit/WebNSFileManagerExtras.h>
 
 #import <fcntl.h>
 #import <fts.h>
@@ -235,7 +234,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
                 break;
             }
             NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
-            [defaultManager _web_removeFileOnlyAtPath:filePath];
+            [defaultManager _webkit_removeFileOnlyAtPath:filePath];
             [filePath release];
             WebLRUFileListRemoveOldestFileFromList(lru);
         }
@@ -379,7 +378,7 @@ static void databaseInit()
     [removeCache removeAllObjects];
     [ops removeAllObjects];
     [self close];
-    [[NSFileManager defaultManager] _web_backgroundRemoveFileAtPath:path];
+    [[NSFileManager defaultManager] _webkit_backgroundRemoveFileAtPath:path];
     [self open];
     [mutex unlock];
 
@@ -493,7 +492,7 @@ static void databaseInit()
     WebLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
     [self _truncateToSizeLimit:[self sizeLimit]];
 
-    result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+    result = [defaultManager _webkit_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     if (!result) {
         WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
@@ -514,7 +513,7 @@ static void databaseInit()
 
     UniqueFilePathForKey(key, uniqueKey);
     filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
-    [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:filePath];
+    [[NSFileManager defaultManager] _webkit_removeFileOnlyAtPath:filePath];
     WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     [filePath release];
 }
@@ -543,11 +542,11 @@ static void databaseInit()
                 NULL
             ];
             
-	    isOpen = [manager _web_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
+	    isOpen = [manager _webkit_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
 	}
 
         // remove any leftover turds
-        [manager _web_backgroundRemoveLeftoverFiles:path];
+        [manager _webkit_backgroundRemoveLeftoverFiles:path];
         
         if (isOpen) {
             [NSThread detachNewThreadSelector:@selector(_createLRUList:) toTarget:self withObject:nil];

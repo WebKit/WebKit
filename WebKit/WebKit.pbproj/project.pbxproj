@@ -151,8 +151,6 @@
 //254
 		254DC334016E1D3F0ECA149E = {
 			children = (
-				65488D9F084FBCCB00831AD0,
-				65488DA0084FBCCB00831AD0,
 				3944607A020F50ED0ECA1767,
 				3944607B020F50ED0ECA1767,
 				F528E3E9031E91AD01CA2ACA,
@@ -179,10 +177,16 @@
 				BEE18F9A0472B73200CA289C,
 				9345DDB20365FFD0008635CE,
 				9345DDB30365FFD0008635CE,
+				65EEDE51084FFB920002DB25,
+				65EEDE52084FFB920002DB25,
 				BECD14290565830A005BB09C,
 				BECD142A0565830A005BB09C,
+				65488D9F084FBCCB00831AD0,
+				65488DA0084FBCCB00831AD0,
 				BE887BFF056D3A6E009BB3E7,
 				BE887C00056D3A6E009BB3E7,
+				65EEDE55084FFC9E0002DB25,
+				65EEDE56084FFC9E0002DB25,
 				8398847A03426FB000BC5F5E,
 				8398847B03426FB000BC5F5E,
 				93D1FE13067EB10B009CE68A,
@@ -944,6 +948,62 @@
 			path = WebPluginContainerCheck.m;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		65EEDE51084FFB920002DB25 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebNSCalendarDateExtras.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65EEDE52084FFB920002DB25 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebNSCalendarDateExtras.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65EEDE53084FFB920002DB25 = {
+			fileRef = 65EEDE51084FFB920002DB25;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65EEDE54084FFB920002DB25 = {
+			fileRef = 65EEDE52084FFB920002DB25;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65EEDE55084FFC9E0002DB25 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebNSFileManagerExtras.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65EEDE56084FFC9E0002DB25 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			path = WebNSFileManagerExtras.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65EEDE57084FFC9E0002DB25 = {
+			fileRef = 65EEDE55084FFC9E0002DB25;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65EEDE58084FFC9E0002DB25 = {
+			fileRef = 65EEDE56084FFC9E0002DB25;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 //650
 //651
@@ -1922,6 +1982,8 @@
 				939810B00824BF01008DF038,
 				939810B10824BF01008DF038,
 				65488DA1084FBCCB00831AD0,
+				65EEDE53084FFB920002DB25,
+				65EEDE57084FFC9E0002DB25,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3220,6 +3282,8 @@
 				939811250824BF01008DF038,
 				939811260824BF01008DF038,
 				65488DA2084FBCCB00831AD0,
+				65EEDE54084FFB920002DB25,
+				65EEDE58084FFC9E0002DB25,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

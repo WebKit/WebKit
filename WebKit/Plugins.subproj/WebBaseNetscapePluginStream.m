@@ -14,7 +14,6 @@
 
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSFileManager_NSURLExtras.h>
 
 static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 

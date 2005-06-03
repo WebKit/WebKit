@@ -12,12 +12,11 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSCalendarDateExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <Foundation/NSError.h>
 #import <WebKit/WebAssertions.h>
 #import <WebCore/WebCoreHistory.h>
-
-#import <Foundation/NSCalendarDate_NSURLExtras.h>
 
 
 NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
@@ -84,7 +83,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     //FIXME: just does linear search through days; inefficient if many days
     count = [_datesWithEntries count];
     for (*index = 0; *index < count; ++*index) {
-        NSComparisonResult result = [date _web_compareDay: [_datesWithEntries objectAtIndex: *index]];
+        NSComparisonResult result = [date _webkit_compareDay: [_datesWithEntries objectAtIndex: *index]];
         if (result == NSOrderedSame) {
             return YES;
         }
@@ -346,7 +345,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         NSArray *entries;
 
         // skip remaining days if they are older than the age limit
-        if ([[_datesWithEntries objectAtIndex:dateIndex] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
+        if ([[_datesWithEntries objectAtIndex:dateIndex] _webkit_compareDay:ageLimitDate] != NSOrderedDescending) {
             break;
         }
 
@@ -430,7 +429,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
         // test against date limit
         if (!ageLimitPassed) {
-            if ([[entry _lastVisitedDate] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
+            if ([[entry _lastVisitedDate] _webkit_compareDay:ageLimitDate] != NSOrderedDescending) {
                 continue;
             } else {
                 ageLimitPassed = YES;

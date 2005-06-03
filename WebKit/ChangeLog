@@ -1,5 +1,47 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kevin.
+
+	- remove dependency on NSFileManager and NSCalendarDate private extras from WebFou
+	
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate findIndex:forDay:]):
+        (-[WebHistoryPrivate arrayRepresentation]):
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase _truncateToSizeLimit:]):
+        (-[WebFileDatabase removeAllObjects]):
+        (-[WebFileDatabase performSetObject:forKey:]):
+        (-[WebFileDatabase performRemoveObjectForKey:]):
+        (-[WebFileDatabase open]):
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _webkit_fixedCarbonPOSIXPath]):
+        * Misc.subproj/WebNSCalendarDateExtras.h: Added.
+        * Misc.subproj/WebNSCalendarDateExtras.m: Added.
+        (-[NSCalendarDate _webkit_compareDay:]):
+        * Misc.subproj/WebNSDataExtras.h:
+        * Misc.subproj/WebNSDictionaryExtras.h:
+        * Misc.subproj/WebNSFileManagerExtras.h: Added.
+        * Misc.subproj/WebNSFileManagerExtras.m: Added.
+        (-[NSFileManager _webkit_fileExistsAtPath:isDirectory:traverseLink:]):
+        (-[NSFileManager _webkit_createIntermediateDirectoriesForPath:attributes:]):
+        (-[NSFileManager _webkit_createDirectoryAtPathWithIntermediateDirectories:attributes:]):
+        (-[NSFileManager _webkit_createFileAtPathWithIntermediateDirectories:contents:attributes:directoryAttributes:]):
+        (-[NSFileManager _webkit_removeFileOnlyAtPath:]):
+        (-[NSFileManager _webkit_backgroundRemoveFileAtPath:]):
+        (-[NSFileManager _webkit_backgroundRemoveLeftoverFiles:]):
+        (-[NSFileManager _webkit_carbonPathForPath:]):
+        (-[NSFileManager _webkit_startupVolumeName]):
+        (-[NSFileManager _webkit_pathWithUniqueFilenameForPath:]):
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]):
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Adele.
 
 	- remove dependencies on NSDictionary and NSURL extras

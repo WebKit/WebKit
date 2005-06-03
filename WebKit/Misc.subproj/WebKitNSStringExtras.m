@@ -8,7 +8,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <Foundation/NSFileManager_NSURLExtras.h>
+#import <WebKit/WebNSFileManagerExtras.h>
 
 #import <unicode/uchar.h>
 
@@ -298,7 +298,7 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         return self;
     }
 
-    if ([[fileManager _web_startupVolumeName] isEqualToString:volumeName]) {
+    if ([[fileManager _webkit_startupVolumeName] isEqualToString:volumeName]) {
         // Startup volume name is included in path, remove it.
         [pathComponents removeObjectAtIndex:1];
     } else if ([[fileManager directoryContentsAtPath:@"/Volumes"] containsObject:volumeName]) {

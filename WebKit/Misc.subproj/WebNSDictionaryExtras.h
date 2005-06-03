@@ -1,7 +1,7 @@
 /*
-    WebNSURLExtras.h
+    WebNSDictionaryExtras.h
     Private (SPI) header
-    Copyright 2003, Apple, Inc. All rights reserved.
+    Copyright 2005, Apple, Inc. All rights reserved.
  */
 
 #import <Foundation/Foundation.h>

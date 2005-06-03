@@ -27,6 +27,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSEventExtras.h>
+#import <WebKit/WebNSFileManagerExtras.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -48,7 +49,6 @@
 #import <AppKit/NSGraphicsContextPrivate.h>
 #import <AppKit/NSResponder_Private.h>
 
-#import <Foundation/NSFileManager_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
 #import <CoreGraphics/CGContextGState.h>
@@ -2761,7 +2761,7 @@ static WebHTMLView *lastHitView = nil;
     
     // FIXME: Report an error if we fail to create a file.
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
-    path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
+    path = [[NSFileManager defaultManager] _webkit_pathWithUniqueFilenameForPath:path];
     if (![wrapper writeToFile:path atomically:NO updateFilenames:YES]) {
         ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
     }
