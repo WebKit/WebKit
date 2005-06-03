@@ -1,5 +1,14 @@
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Don.
+
+	- move private gunk from header to implementation file.
+	
+        * WebCoreSupport.subproj/WebNewKeyGeneration.c:
+        * WebCoreSupport.subproj/WebNewKeyGeneration.h:
+
+2005-06-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Kevin.
 
 	- remove dependency on NSFileManager and NSCalendarDate private extras from WebFou
