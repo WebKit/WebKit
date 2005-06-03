@@ -1,3 +1,21 @@
+2005-06-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- replace use of CGCompositeOperation SPI with NSCompositingOperation API
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _fillSolidColorInRect:compositeOperation:context:]):
+        (-[WebImageData _PDFDrawFromRect:toRect:operation:alpha:flipped:context:]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawImageInRect:fromRect:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory CGCompositeOperationInContext:]):
+        (-[WebImageRendererFactory setCGCompositeOperation:inContext:]):
+        (-[WebImageRendererFactory setCGCompositeOperationFromString:inContext:]):
+
 2005-06-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.

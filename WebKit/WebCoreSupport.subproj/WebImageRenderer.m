@@ -14,8 +14,6 @@
 #import <WebCore/WebCoreImageRenderer.h>
 
 #import <CoreGraphics/CGContextPrivate.h>
-#import <CoreGraphics/CGContextGState.h>
-#import <CoreGraphics/CGColorSpacePrivate.h>
 
 
 #ifdef USE_CGIMAGEREF
@@ -139,7 +137,7 @@
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr
 {
     CGContextRef aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGCompositeOperation op = kCGCompositeSover;
+    NSCompositingOperation op = NSCompositeSourceOver;
 
     [self drawImageInRect:ir fromRect:fr compositeOperator:op context:aContext];
 }
@@ -149,9 +147,7 @@
     if (aContext == 0)
         aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     
-    CGCompositeOperation op = (CGCompositeOperation)operator;
-    if (op == kCGCompositeUnknown)
-        op = kCGCompositeSover;
+    NSCompositingOperation op = (NSCompositingOperation)operator;
         
     if (isSizeAdjusted) {
         [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 

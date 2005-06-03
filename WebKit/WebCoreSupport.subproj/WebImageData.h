@@ -5,9 +5,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-// Needed for CGCompositeOperation
-#import <CoreGraphics/CGContextPrivate.h>
-
 @class WebImageRenderer;
 
 @interface WebImageData : NSObject <NSCopying>
@@ -46,8 +43,8 @@
 - (size_t)numberOfImages;
 - (CGImageRef)imageAtIndex:(size_t)index;
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c;
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)size compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)size compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
 - (void)tileInRect:(CGRect)rect fromPoint:(CGPoint)point context:(CGContextRef)aContext;
 - (BOOL)isNull;
 - (CGSize)size;

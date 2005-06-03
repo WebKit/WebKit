@@ -12,7 +12,6 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
 #import <CoreGraphics/CGColorSpacePrivate.h>
 
@@ -32,7 +31,7 @@
 - (CFDictionaryRef)_imageSourceOptions;
 -(void)_createPDFWithData:(NSData *)data;
 - (CGPDFDocumentRef)_PDFDocumentRef;
-- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
 - (void)_cacheImages:(size_t)optionalIndex allImages:(BOOL)allImages;
 @end
 
@@ -442,7 +441,7 @@
     return YES;
 }
 
-- (void)_fillSolidColorInRect:(CGRect)rect compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext
+- (void)_fillSolidColorInRect:(CGRect)rect compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext
 {
     /*NSLog(@"WebImageData %p: filling with color %p, in {%.0f,%.0f, %.0f x %.0f}",
           self,solidColor,rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);*/
@@ -455,7 +454,7 @@
     }
 }
 
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)adjustedSize compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)adjustedSize compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
 {
     if (isPDF) {
         [self _PDFDrawFromRect:NSMakeRect(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height)
@@ -541,7 +540,7 @@
     }
 }
 
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
 {    
     [self drawImageAtIndex:index inRect:ir fromRect:fr adjustedSize:[self size] compositeOperation:op context:aContext];
 }
@@ -966,7 +965,7 @@ static NSMutableSet *activeAnimations;
     }
 }
 
-- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context
 {
     float hScale, vScale;
 

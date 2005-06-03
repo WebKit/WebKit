@@ -29,8 +29,6 @@
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
-#import <CoreGraphics/CGContextPrivate.h>
-
 @implementation WebImageRendererFactory
 
 + (void)createSharedFactory
@@ -141,54 +139,53 @@
 struct CompositeOperator
 {
     NSString *name;
-    CGCompositeOperation value;
+    NSCompositingOperation value;
 };
 
 #define NUM_COMPOSITE_OPERATORS 14
-struct CompositeOperator CGCompositeOperations[NUM_COMPOSITE_OPERATORS] = {
-    { @"clear", kCGCompositeClear },
-    { @"copy", kCGCompositeCopy },
-    { @"source-over", kCGCompositeSover },
-    { @"source-in", kCGCompositeSin },
-    { @"source-out", kCGCompositeSout },
-    { @"source-atop", kCGCompositeSatop },
-    { @"destination-over", kCGCompositeDover },
-    { @"destination-in", kCGCompositeDin },
-    { @"destination-out", kCGCompositeDout },
-    { @"destination-atop", kCGCompositeDatop },
-    { @"xor", kCGCompositeXor },
-    { @"darker", kCGCompositePlusd },
-    { @"highlight", kCGCompositePlusl },
-    { @"lighter", kCGCompositePlusl }    // Per AppKit
+struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
+    { @"clear", NSCompositeClear },
+    { @"copy", NSCompositeCopy },
+    { @"source-over", NSCompositeSourceOver },
+    { @"source-in", NSCompositeSourceIn },
+    { @"source-out", NSCompositeSourceOut },
+    { @"source-atop", NSCompositeSourceAtop },
+    { @"destination-over", NSCompositeDestinationOver },
+    { @"destination-in", NSCompositeDestinationIn },
+    { @"destination-out", NSCompositeDestinationOut },
+    { @"destination-atop", NSCompositeDestinationAtop },
+    { @"xor", NSCompositeXOR },
+    { @"darker", NSCompositePlusDarker },
+    { @"highlight", NSCompositeHighlight },
+    { @"lighter", NSCompositeHighlight }    // Per AppKit
 };
 
 - (int)CGCompositeOperationInContext:(CGContextRef)context
 {
-    CGCompositeOperation op = CGContextGetCompositeOperation (context);
-    return (int)op;
+	return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
 }
 
 - (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context
 {
-    CGContextSetCompositeOperation(context, (CGCompositeOperation)op);
+	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 }
 
 - (void)setCGCompositeOperationFromString:(NSString *)operatorString inContext:(CGContextRef)context
 {
-    CGCompositeOperation op = kCGCompositeSover;
+    NSCompositingOperation op = NSCompositeSourceOver;
     
     if (operatorString) {
         int i;
         
         for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-            if ([operatorString caseInsensitiveCompare:CGCompositeOperations[i].name] == NSOrderedSame) {
-                op = CGCompositeOperations[i].value;
+            if ([operatorString caseInsensitiveCompare:NSCompositingOperations[i].name] == NSOrderedSame) {
+                op = NSCompositingOperations[i].value;
                 break;
             }
         }
     }
     
-    CGContextSetCompositeOperation(context, op);
+	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 }
 
 
