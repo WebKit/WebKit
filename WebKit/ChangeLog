@@ -1,6 +1,20 @@
+2005-06-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+	- replace more use of CGCompositeOperation that I missed.
+	
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _checkSolidColor:]):
+        (-[WebImageData _fillSolidColorInRect:compositeOperation:context:]):
+        (-[WebImageData tileInRect:fromPoint:context:]):
+        (-[WebImageData _PDFDrawFromRect:toRect:operation:alpha:flipped:context:]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebInternalImage _PDFDrawFromRect:toRect:operation:alpha:flipped:]):
+
 2005-06-03  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Dave.
 
 	- replace use of CGCompositeOperation SPI with NSCompositingOperation API
 

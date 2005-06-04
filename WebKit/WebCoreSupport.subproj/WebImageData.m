@@ -12,7 +12,6 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <CoreGraphics/CGContextGState.h>
 #import <CoreGraphics/CGColorSpacePrivate.h>
 
 #ifdef USE_CGIMAGEREF
@@ -275,7 +274,8 @@
         CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
                                                   kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
         if( bmap ) {
-            CGContextSetCompositeOperation(bmap, kCGCompositeCopy);
+            [[NSGraphicsContext graphicsContextWithGraphicsPort:bmap flipped:NO] setCompositingOperation:NSCompositeCopy];
+
             CGRect dst = {{0,0},{1,1}};
             CGContextDrawImage(bmap,dst,image);
             if( pixel[3] > 0 )
@@ -448,7 +448,7 @@
     if( solidColor ) {
         CGContextSaveGState (aContext);
         CGContextSetFillColorWithColor(aContext, solidColor);
-        CGContextSetCompositeOperation (aContext, op);
+	[[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:op];
         CGContextFillRect (aContext, rect);
         CGContextRestoreGState (aContext);
     }
@@ -502,7 +502,7 @@
             }
             
             // Flip the coords.
-            CGContextSetCompositeOperation (aContext, op);
+            [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:op];
             CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
             CGContextScaleCTM (aContext, 1, -1);
             CGContextTranslateCTM (aContext, 0, -ir.size.height);
@@ -571,7 +571,7 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     }
 
     if( frame == 0 && isSolidColor ) {
-        [self _fillSolidColorInRect: rect compositeOperation: kCGCompositeSover context: aContext];
+        [self _fillSolidColorInRect: rect compositeOperation: NSCompositeSourceOver context: aContext];
         
     } else {
         CGSize tileSize = [self size];
@@ -593,7 +593,7 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
             [decodeLock unlock];
             
-            [self drawImageAtIndex:[self currentFrame] inRect:rect fromRect:fromRect compositeOperation:kCGCompositeSover context:aContext];
+            [self drawImageAtIndex:[self currentFrame] inRect:rect fromRect:fromRect compositeOperation:NSCompositeSourceOver context:aContext];
 
             return;
         }
@@ -623,7 +623,7 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             float patternAlpha = 1;
             CGContextSetFillPattern(aContext, pattern, &patternAlpha);
 
-            CGContextSetCompositeOperation (aContext, kCGCompositeSover);
+            [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:NSCompositeSourceOver];
 
             CGContextFillRect (aContext, rect);
 
@@ -971,7 +971,7 @@ static NSMutableSet *activeAnimations;
 
     CGContextSaveGState(context);
 
-    CGContextSetCompositeOperation (context, op);
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 
     // Scale and translate so the document is rendered in the correct location.
     hScale = dstRect.size.width  / srcRect.size.width;

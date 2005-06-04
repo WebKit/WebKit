@@ -1,3 +1,4 @@
+
 /*	
         WebImageRenderer.m
 	Copyright (c) 2002, 2003, Apple, Inc. All rights reserved.
@@ -931,8 +932,7 @@ static NSMutableSet *activeImageRenderers;
 
     CGContextSaveGState(_context);
 
-    CGContextSetCompositeOperation (_context, op);
-
+    [[NSGraphicsContext currentContext] setCompositingOperation:op];
     // Scale and translate so the document is rendered in the correct location.
     hScale = dstRect.size.width  / srcRect.size.width;
     vScale = dstRect.size.height / srcRect.size.height;
