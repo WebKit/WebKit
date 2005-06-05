@@ -1,3 +1,32 @@
+2005-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - first fix on the road to can compile without Apple Internal headers installed
+
+        * WebCore.pbproj/project.pbxproj: Added icu directory to header search path.
+
+        * icu/README: Added.
+        * icu/unicode/parseerr.h: Added.
+        * icu/unicode/platform.h: Added.
+        * icu/unicode/putil.h: Added.
+        * icu/unicode/ubrk.h: Added.
+        * icu/unicode/uchar.h: Added.
+        * icu/unicode/uconfig.h: Added.
+        * icu/unicode/uenum.h: Added.
+        * icu/unicode/uidna.h: Added.
+        * icu/unicode/uiter.h: Added.
+        * icu/unicode/uloc.h: Added.
+        * icu/unicode/umachine.h: Added.
+        * icu/unicode/urename.h: Added.
+        * icu/unicode/ustring.h: Added.
+        * icu/unicode/utf.h: Added.
+        * icu/unicode/utf16.h: Added.
+        * icu/unicode/utf8.h: Added.
+        * icu/unicode/utf_old.h: Added.
+        * icu/unicode/utypes.h: Added.
+        * icu/unicode/uversion.h: Added.
+
 2005-06-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

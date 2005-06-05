@@ -2255,7 +2255,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = "ForwardingHeaders /usr/include/libxslt /usr/include/libxml2";
+				HEADER_SEARCH_PATHS = "ForwardingHeaders icu /usr/include/libxslt /usr/include/libxml2";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				LIBRARY_SEARCH_PATHS = "$(DERIVED_FILE_DIR)";
