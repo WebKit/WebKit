@@ -6,8 +6,8 @@
 
 #import <WebKit/WebNSUserDefaultsExtras.h>
 
-#import <CoreFoundation/CFBundlePriv.h>
 #import <WebKit/WebAssertions.h>
+#import <WebKitSystemInterface.h>
 
 @implementation NSString (WebNSUserDefaultsPrivate)
 
@@ -15,13 +15,10 @@
 {
     // Look up the language code using CFBundle.
     NSString *languageCode = self;
-    SInt32 languageCodeNumber, regionCodeNumber;
-    if (CFBundleGetLocalizationInfoForLocalization((CFStringRef)self, &languageCodeNumber, &regionCodeNumber, NULL, NULL)) {
-        CFStringRef shortName = CFMakeCollectable(CFBundleCopyLocalizationForLocalizationInfo(languageCodeNumber, regionCodeNumber, -1, 0xFFFF));
-        if (shortName) {
-            languageCode = [(id)shortName autorelease];
-        }
-    }
+    NSString *preferredLanguageCode = [(id)WKCopyCFLocalizationPreferredName((CFStringRef)self) autorelease];
+
+    if (preferredLanguageCode)
+        languageCode = preferredLanguageCode;
     
     // Make the string lowercase.
     NSString *lowercaseLanguageCode = [languageCode lowercaseString];

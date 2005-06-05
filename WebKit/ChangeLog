@@ -1,3 +1,15 @@
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+
+	- link against libWebKitSystemInterface and use the first function in it.
+
+        * Misc.subproj/WebNSUserDefaultsExtras.m:
+        (-[NSString _webkit_HTTPStyleLanguageCode]): use WKCopyCFLocalizationPreferredName
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage preferredLocalizationName]): ditto
+        * WebKit.pbproj/project.pbxproj: link in libWebKitSystemInterface.a and find headers.
+
 2005-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

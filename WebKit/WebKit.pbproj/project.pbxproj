@@ -113,6 +113,7 @@
 				830E81E005853AC000AD0891,
 				93D623DD051E791F002F47DD,
 				F738C9E903FAD3DF0321FBE0,
+				65A0006808527D1A005620FA,
 				F738C9EA03FAD3DF0321FBE0,
 			);
 			isa = PBXGroup;
@@ -920,6 +921,19 @@
 			path = WebPluginContainerPrivate.h;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		65A0006808527D1A005620FA = {
+			isa = PBXFileReference;
+			lastKnownFileType = archive.ar;
+			path = libWebKitSystemInterface.a;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		65A0006908527D1A005620FA = {
+			fileRef = 65A0006808527D1A005620FA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		65A7D44A0568AB2600E70EF6 = {
 			fileEncoding = 30;
@@ -1852,7 +1866,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = icu;
+				HEADER_SEARCH_PATHS = "$(SYMROOT)/usr/local/include icu";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks;
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
@@ -3990,6 +4004,7 @@
 				9398112C0824BF01008DF038,
 				9398112E0824BF01008DF038,
 				9398112F0824BF01008DF038,
+				65A0006908527D1A005620FA,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;

@@ -13,7 +13,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 
-#import <CoreFoundation/CFBundlePriv.h>
+#import <WebKitSystemInterface.h>
 
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
@@ -41,13 +41,7 @@
 
 + (NSString *)preferredLocalizationName
 {
-    SInt32 languageCode;
-    SInt32 regionCode;
-    SInt32 scriptCode;
-    CFStringEncoding stringEncoding;
-    
-    CFBundleGetLocalizationInfoForLocalization(NULL, &languageCode, &regionCode, &scriptCode, &stringEncoding);
-    return WebCFAutorelease(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
+    return WebCFAutorelease(WKCopyCFLocalizationPreferredName(NULL));
 }
 
 - (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
