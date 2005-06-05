@@ -1,0 +1,7 @@
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+	- initial checkin of WebKitSystemInterface binary
+
+        * WebKitSystemInterface.h: Added.
+        * libWebKitSystemInterface.a: Added.
+
