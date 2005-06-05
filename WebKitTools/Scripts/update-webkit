@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+# Update script for Web Kit Open Source Project.
+
+use strict;
+
+# Check that we're in the right directory.
+if (! -d "WebKitTools") {
+    if (-d "../WebKitTools") {
+        chdir ".." or die;
+    }
+    if (! -d "WebKitTools") {
+        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+    }
+}
+
+# Read the CVS root out of one project that's guaranteed to already be checked out.
+open ROOT, "WebKitTools/CVS/Root" or die;
+my $root = <ROOT>;
+chomp $root;
+close ROOT;
+
+# Check out all the sources.
+print "CVS root is $root\n";
+print "Updating WebKitTools, JavaScriptCore, WebCore, WebKitLibraries, and WebKit\n";
+open CVS, "cvs -d '$root' co -P WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit |" or die;
+while (<CVS>) {
+    print;
+}
+close CVS;

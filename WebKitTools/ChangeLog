@@ -1,0 +1,10 @@
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        - created module, first cut at Web Kit Open Source Project scripts
+
+        * ChangeLog: Added.
+        * Scripts/build-webkit: Added.
+        * Scripts/run-safari: Added.
+        * Scripts/update-webkit: Added.
+        * checkout: Added.
+

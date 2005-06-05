@@ -1,0 +1,23 @@
+#!/usr/bin/perl -w
+
+# Simplified build script for Web Kit Open Source Project.
+
+use strict;
+use Getopt::Long;
+
+my $debug = 0;
+GetOptions("debug!" => \$debug);
+
+# Check that an Xcode product directory is set.
+open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+my $productDir = <PRODUCT>;
+chomp $productDir;
+close PRODUCT;
+if (!$productDir) {
+    die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
+}
+
+# Set up DYLD_FRAMEWORK_PATH to point to the product directory.
+print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+exec "/Applications/Safari.app/MacOS/Contents/Safari" or die;

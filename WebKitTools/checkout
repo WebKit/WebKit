@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+# First time check-out script for Web Kit Open Source Project.
+
+use strict;
+
+# Check that we're in the right directory.
+if (! -d "WebKitTools") {
+    if (-d "../WebKitTools") {
+        chdir ".." or die;
+    }
+    if (! -d "WebKitTools") {
+        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+    }
+}
+
+# Read the CVS root out of the project that's already checked out.
+open ROOT, "WebKitTools/CVS/Root" or die;
+my $root = <ROOT>;
+chomp $root;
+close ROOT;
+
+# Check out all the sources.
+print "CVS root is $root\n";
+print "Checking out WebKitTools (again), JavaScriptCore, WebCore, WebKitLibraries, and WebKit\n";
+open CVS, "cvs -d '$root' co -P WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit |" or die;
+while (<CVS>) {
+    print;
+}
+close CVS;
+
+# Ready to build.
+print "\n";
+print "===============================================================\n";
+print " Web Kit sources are now checked out and ready to build.\n";
+print " You can build by projects in Xcode or with the build-webkit\n";
+print " script. The build-webkit script is inside WebKitTools/Scripts\n";
+print " along with other useful scripts; it's a good idea to put that\n";
+print " directory into your shell's search path.\n";
+print "===============================================================\n";
