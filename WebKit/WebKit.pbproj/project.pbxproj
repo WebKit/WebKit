@@ -1237,22 +1237,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		83634A7106DA5ECD0026E290 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = WebNewKeyGeneration.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		83634A7206DA5ECD0026E290 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = WebNewKeyGeneration.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		83730F9803FB1E660004736E = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1831,10 +1815,8 @@
 				939811300824BF01008DF038,
 				933932420825A64800AADA6B,
 				9339323E0825A64200AADA6B,
-				93AF496408253CC7005D0156,
 				93AF52D608254E2D005D0156,
 				933932460825A65300AADA6B,
-				9398100C0824BF01008DF038,
 				9398100D0824BF01008DF038,
 				939810B20824BF01008DF038,
 				939810BB0824BF01008DF038,
@@ -1847,7 +1829,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks/WebKit.framework/Frameworks /System/Library/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks /System/Library/PrivateFrameworks /usr/local/SecurityPieces/Frameworks $(DERIVED_FILE_DIR)";
+				FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks/WebKit.framework/Frameworks /System/Library/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks /System/Library/PrivateFrameworks $(DERIVED_FILE_DIR)";
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -1863,7 +1845,7 @@
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_CFLAGS = "-Wbad-function-cast -Wmissing-declarations -Wnested-externs";
 				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS) $(OBJECT_FILE_DIR)/WebKitSecurity.a -framework security_cdsa_utils-WebKit";
+				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/WebKit.order";
 				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
@@ -1879,22 +1861,6 @@
 			productName = WebKit;
 			productReference = 939811330824BF01008DF038;
 			productType = "com.apple.product-type.framework";
-		};
-		9398100C0824BF01008DF038 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				WebKitSecurityDummy.c,
-			);
-			isa = PBXShellScriptBuildPhase;
-			name = WebKitSecurity.a;
-			outputPaths = (
-				"$(OBJECT_FILE_DIR)/WebKitSecurity.a",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "mkdir -p \"$OBJECT_FILE_DIR\"\nif [ -f /usr/local/lib/libnssasn1.a ]\nthen\n\tlibtool -static -o \"$OBJECT_FILE_DIR/WebKitSecurity.a\" /usr/local/lib/libnssasn1.a /usr/local/lib/libCdsaUtils.a\nelse\n\tgcc -c WebKitSecurityDummy.c -o \"$TEMP_DIR/WebKitSecurityDummy.o\"\n\tlibtool -static -o \"$OBJECT_FILE_DIR/WebKitSecurity.a\" \"$TEMP_DIR/WebKitSecurityDummy.o\"\nfi";
 		};
 		9398100D0824BF01008DF038 = {
 			buildActionMask = 2147483647;
@@ -2034,7 +2000,6 @@
 				939810A20824BF01008DF038,
 				939810A40824BF01008DF038,
 				939810A50824BF01008DF038,
-				939810A60824BF01008DF038,
 				939810A70824BF01008DF038,
 				939810A80824BF01008DF038,
 				939810A90824BF01008DF038,
@@ -3085,12 +3050,6 @@
 			settings = {
 			};
 		};
-		939810A60824BF01008DF038 = {
-			fileRef = 83634A7206DA5ECD0026E290;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		939810A70824BF01008DF038 = {
 			fileRef = 93B641FA06E292BC0055F610;
 			isa = PBXBuildFile;
@@ -3335,7 +3294,6 @@
 				9398111D0824BF01008DF038,
 				9398111E0824BF01008DF038,
 				9398111F0824BF01008DF038,
-				939811200824BF01008DF038,
 				939811210824BF01008DF038,
 				939811220824BF01008DF038,
 				939811230824BF01008DF038,
@@ -3936,12 +3894,6 @@
 			settings = {
 			};
 		};
-		939811200824BF01008DF038 = {
-			fileRef = 83634A7106DA5ECD0026E290;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		939811210824BF01008DF038 = {
 			fileRef = 93B641F906E292BC0055F610;
 			isa = PBXBuildFile;
@@ -4081,23 +4033,6 @@
 			path = WebKitLogging.m;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		93AF496408253CC7005D0156 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				/usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils,
-				/System/Library/Frameworks/System.framework,
-			);
-			isa = PBXShellScriptBuildPhase;
-			name = "security_cdsa_utils-WebKit.framework";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/security_cdsa_utils-WebKit.stamp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -rf \"$DERIVED_FILE_DIR/security_cdsa_utils-WebKit.framework\"\nmkdir \"$DERIVED_FILE_DIR/security_cdsa_utils-WebKit.framework\"\nif [ -f /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils ]\n    then ln -s /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework/security_cdsa_utils \"$DERIVED_FILE_DIR/security_cdsa_utils-WebKit.framework/security_cdsa_utils-WebKit\"\n    else ln -s /System/Library/Frameworks/System.framework \"$DERIVED_FILE_DIR/security_cdsa_utils-WebKit.framework/security_cdsa_utils-WebKit\"\nfi\ntouch \"$DERIVED_FILE_DIR/security_cdsa_utils-WebKit.stamp\"";
 		};
 		93AF528708254B33005D0156 = {
 			buildActionMask = 2147483647;
@@ -5144,8 +5079,6 @@
 				9345D4EB0365C5B2008635CE,
 				830E81830585375700AD0891,
 				830E81840585375700AD0891,
-				83634A7206DA5ECD0026E290,
-				83634A7106DA5ECD0026E290,
 				84723BE3056D719E0044BFEA,
 				84723BE4056D719E0044BFEA,
 				F5E0E10802BC45F8018635CA,

@@ -1,3 +1,16 @@
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- remove security code and use the stuff from WebKitSystemInterface instead
+
+        * WebCoreSupport.subproj/WebKeyGenerator.m:
+        (-[WebKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]):
+        (-[WebKeyGenerator addCertificatesToKeychainFromData:]):
+        * WebCoreSupport.subproj/WebNewKeyGeneration.c: Removed.
+        * WebCoreSupport.subproj/WebNewKeyGeneration.h: Removed.
+        * WebKit.pbproj/project.pbxproj:
+
 2005-06-05  Darin Adler  <darin@apple.com>
 
         - added appropriate license headers to most files and updated copyright to reflect publication dates
