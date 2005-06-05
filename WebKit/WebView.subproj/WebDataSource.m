@@ -36,7 +36,6 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
-#import <WebKit/WebException.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>

@@ -39,7 +39,6 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>

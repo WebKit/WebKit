@@ -43,7 +43,7 @@
 
     CFIndex i; 
     CFIndex len = CFStringGetLength(name);
-    UInt8 *charPtr = NULL;
+    char *charPtr = NULL;
     UniChar *uniCharPtr = NULL;
     Boolean useUniCharPtr = FALSE;
     Boolean shouldCapitalize = TRUE;
@@ -296,9 +296,9 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
     }
     
     int length = [self length];
-    const UInt8 *bytes = [self bytes];
+    const char *bytes = [self bytes];
 
-    const char *p = (const char *)bytes;
+    const char *p = bytes;
     int remaining = MIN(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
     while (remaining > 0) {
         // Look for a "<".
@@ -322,7 +322,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
 
     // Test for a broken server which has sent the content type as part of the content.
     // This code could be improved to look for other mime types.
-    p = (const char *)bytes;
+    p = bytes;
     remaining = MIN(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (TEXT_HTML_LENGTH - 1);
     while (remaining > 0) {
         // Look for a "t" or "T".

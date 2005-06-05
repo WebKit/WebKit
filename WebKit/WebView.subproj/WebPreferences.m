@@ -262,6 +262,8 @@ NS_ENDHANDLER
 
 - (void)_setStringValue:(NSString *)value forKey:(NSString *)key
 {
+    if ([[self _stringValueForKey:key] isEqualToString:value])
+        return;
     NSString *_key = KEY(key);
     [_private->values setObject:value forKey:_key];
     if (_private->autosaves)
@@ -278,6 +280,8 @@ NS_ENDHANDLER
 
 - (void)_setIntegerValue:(int)value forKey:(NSString *)key
 {
+    if ([self _integerValueForKey:key] == value)
+        return;
     NSString *_key = KEY(key);
     [_private->values _webkit_setInt:value forKey:_key];
     if (_private->autosaves)
@@ -292,6 +296,8 @@ NS_ENDHANDLER
 
 - (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
 {
+    if ([self _boolValueForKey:key] == value)
+        return;
     NSString *_key = KEY(key);
     [_private->values _webkit_setBool:value forKey:_key];
     if (_private->autosaves)

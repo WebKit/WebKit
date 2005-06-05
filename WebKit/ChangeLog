@@ -1,3 +1,21 @@
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed build that I broke with the license change (some includes of WebException were still around)
+
+        * WebKit.pbproj/project.pbxproj: Removed references to WebException.h/m.
+        * WebView.subproj/WebDataSource.m: Removed include of WebException.h.
+        * WebView.subproj/WebHTMLView.m: Ditto.
+        * WebView.subproj/WebView.m: Ditto.
+
+        - fixed build under gcc 4.0 (some code moved here from Foundation had warnings)
+
+        * Misc.subproj/WebNSDataExtras.m:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]): Use char instead of UInt8.
+        (-[NSData _webkit_guessedMIMEType]):  Use char instead of UInt8, and take out now-
+        unneeded type casts.
+
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.

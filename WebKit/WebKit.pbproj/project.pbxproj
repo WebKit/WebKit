@@ -152,8 +152,6 @@
 //254
 		254DC334016E1D3F0ECA149E = {
 			children = (
-				3944607A020F50ED0ECA1767,
-				3944607B020F50ED0ECA1767,
 				F528E3E9031E91AD01CA2ACA,
 				F528E3EA031E91AD01CA2ACA,
 				F528E3EB031E91AD01CA2ACA,
@@ -483,22 +481,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = WebFrame.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		3944607A020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = WebException.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		3944607B020F50ED0ECA1767 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			path = WebException.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1874,7 +1856,6 @@
 				939810140824BF01008DF038,
 				939810150824BF01008DF038,
 				939810160824BF01008DF038,
-				939810170824BF01008DF038,
 				939810180824BF01008DF038,
 				939810190824BF01008DF038,
 				9398101A0824BF01008DF038,
@@ -2099,12 +2080,6 @@
 				ATTRIBUTES = (
 					Private,
 				);
-			};
-		};
-		939810170824BF01008DF038 = {
-			fileRef = 3944607A020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		939810180824BF01008DF038 = {
@@ -3201,7 +3176,6 @@
 				939810BD0824BF01008DF038,
 				939810BE0824BF01008DF038,
 				939810BF0824BF01008DF038,
-				939810C00824BF01008DF038,
 				939810C10824BF01008DF038,
 				939810C20824BF01008DF038,
 				939810C30824BF01008DF038,
@@ -3329,12 +3303,6 @@
 		};
 		939810BF0824BF01008DF038 = {
 			fileRef = F59EAE410253C8DE018635CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		939810C00824BF01008DF038 = {
-			fileRef = 3944607B020F50ED0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
 			};
