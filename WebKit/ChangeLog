@@ -1,3 +1,43 @@
+2005-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+        - did some work to move SPI use from WebCore here (to be moved from here into WebKitSystemInterface)
+        - fixed so we can compile ICU includes without Apple Internal headers installed
+
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory objectIsTextMarker:]): Added.
+        (-[WebViewFactory objectIsTextMarkerRange:]): Added.
+        (-[WebViewFactory textMarkerWithBytes:length:]): Added.
+        (-[WebViewFactory getBytes:fromTextMarker:length:]): Added.
+        (-[WebViewFactory textMarkerRangeWithStart:end:]): Added.
+        (-[WebViewFactory startOfTextMarkerRange:]): Added.
+        (-[WebViewFactory endOfTextMarkerRange:]): Added.
+        (-[WebViewFactory accessibilityHandleFocusChanged]): Added.
+        (-[WebViewFactory AXUIElementForElement:]): Added.
+        (-[WebViewFactory unregisterUniqueIdForUIElement:]): Added.
+
+        * WebKit.pbproj/project.pbxproj: Added icu to the header search files.
+        Removed bogus DSTROOT thing from the framework paths (I meant to remove that a while back).
+
+        * icu/README: Added.
+        * icu/unicode/parseerr.h: Added.
+        * icu/unicode/platform.h: Added.
+        * icu/unicode/uchar.h: Added.
+        * icu/unicode/uconfig.h: Added.
+        * icu/unicode/uidna.h: Added.
+        * icu/unicode/uiter.h: Added.
+        * icu/unicode/umachine.h: Added.
+        * icu/unicode/unorm.h: Added.
+        * icu/unicode/urename.h: Added.
+        * icu/unicode/uscript.h: Added.
+        * icu/unicode/utf.h: Added.
+        * icu/unicode/utf16.h: Added.
+        * icu/unicode/utf8.h: Added.
+        * icu/unicode/utf_old.h: Added.
+        * icu/unicode/utypes.h: Added.
+        * icu/unicode/uversion.h: Added.
+
 2005-06-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.

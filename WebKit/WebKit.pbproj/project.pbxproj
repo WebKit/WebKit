@@ -1842,7 +1842,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = "$(DSTROOT) /System/Library/Frameworks/WebKit.framework/Frameworks /System/Library/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks /System/Library/PrivateFrameworks /usr/local/SecurityPieces/Frameworks $(DERIVED_FILE_DIR)";
+				FRAMEWORK_SEARCH_PATHS = "/System/Library/Frameworks/WebKit.framework/Frameworks /System/Library/Frameworks/ApplicationServices.framework/Frameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks /System/Library/PrivateFrameworks /usr/local/SecurityPieces/Frameworks $(DERIVED_FILE_DIR)";
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -1852,6 +1852,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				HEADER_SEARCH_PATHS = icu;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks;
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";

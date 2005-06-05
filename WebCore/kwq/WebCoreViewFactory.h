@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 @class NSString;
 @class NSView;
 @class WebCoreBridge;
+@class WebCoreTextMarker;
+@class WebCoreTextMarkerRange;
 
 @protocol WebCoreViewFactory
 
@@ -42,6 +44,21 @@
 - (NSMenu *)cellMenuForSearchField;
 
 - (NSString *)defaultLanguageCode;
+
+- (BOOL)objectIsTextMarker:(id)object;
+- (BOOL)objectIsTextMarkerRange:(id)object;
+
+- (WebCoreTextMarker *)textMarkerWithBytes:(const void *)bytes length:(size_t)length;
+- (BOOL)getBytes:(void *)bytes fromTextMarker:(WebCoreTextMarker *)textMarker length:(size_t)length;
+
+- (WebCoreTextMarkerRange *)textMarkerRangeWithStart:(WebCoreTextMarker *)start end:(WebCoreTextMarker *)end;
+- (WebCoreTextMarker *)startOfTextMarkerRange:(WebCoreTextMarkerRange *)range;
+- (WebCoreTextMarker *)endOfTextMarkerRange:(WebCoreTextMarkerRange *)range;
+
+- (void)accessibilityHandleFocusChanged;
+
+- (AXUIElementRef)AXUIElementForElement:(id)element;
+- (void)unregisterUniqueIdForUIElement:(id)element;
 
 - (WebCoreBridge *)bridgeForView:(NSView *)aView;
 

@@ -1,5 +1,65 @@
 2005-06-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+        - got rid of the rest of the dependencies on Apple Internal headers
+
+        * kwq/WebCoreBridge.mm: Remove include of unused SPI header.
+
+        * kwq/KWQAccObjectCache.h: Remove include of SPI header. Change use of AXTextMarkerRef to
+        use WebCoreTextMarker instead. Also ifdef less.
+        * kwq/KWQAccObjectCache.mm:
+        (KWQAccObjectCache::textMarkerForVisiblePosition): Change types, call new WebCoreViewFactory methods.
+        (KWQAccObjectCache::visiblePositionForTextMarker): Ditto.
+        (KWQAccObjectCache::handleFocusedUIElementChanged): Ditto.
+
+        * kwq/WebCoreViewFactory.h: Add new methods we can use instead of Accessibility SPI.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject detach]): Call new WebCoreViewFactory method instead of SPI.
+        (-[KWQAccObject accessibilityAttributeNames]): Use strings instead of constants only in SPI header.
+        (-[KWQAccObject textMarkerRangeFromMarkers:andEndMarker:]): Change parameter types from SPI type to
+        a new type defined by WebCoreViewFactory, use WebCoreViewFactory method.
+        (-[KWQAccObject textMarkerForVisiblePosition:]): Ditto.
+        (-[KWQAccObject visiblePositionForTextMarker:]): Ditto.
+        (-[KWQAccObject visiblePositionForStartOfTextMarkerRange:]): Ditto.
+        (-[KWQAccObject visiblePositionForEndOfTextMarkerRange:]): Ditto.
+        (-[KWQAccObject textMarkerRangeFromVisiblePositions:andEndPos:]): Just change type.
+        (-[KWQAccObject textMarkerRange]): Ditto.
+        (-[KWQAccObject accessibilityAttributeValue:]): String instead of constant.
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]): Ditto.
+        (-[KWQAccObject doAXUIElementForTextMarker:]): Just change type.
+        (-[KWQAccObject doAXLineForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXStringForTextMarkerRange:]): Ditto.
+        (-[KWQAccObject doAXBoundsForTextMarkerRange:]): Ditto.
+        (AXAttributeStringSetElement): Call new method.
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]): Just change type.
+        (-[KWQAccObject doAXTextMarkerRangeForUnorderedTextMarkers:]): Ditto.
+        (-[KWQAccObject doAXNextTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXPreviousTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXLeftWordTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXRightWordTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXLeftLineTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXSentenceTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXParagraphTextMarkerRangeForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXNextWordEndTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXPreviousWordStartTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXNextSentenceEndTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXPreviousSentenceStartTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXNextParagraphEndTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXPreviousParagraphStartTextMarkerForTextMarker:]): Ditto.
+        (-[KWQAccObject doAXLengthForTextMarkerRange:]): Ditto.
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]): Change types, use new methods, use strings
+        instead of constants.
+        (-[KWQAccObject accessibilityIsAttributeSettable:]): String instead of constant.
+        (-[KWQAccObject doSetAXSelectedTextMarkerRange:]): New type.
+        (-[KWQAccObject accessibilitySetValue:forAttribute:]): New types, methods.
+
+2005-06-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - first fix on the road to compiling without Apple Internal headers installed

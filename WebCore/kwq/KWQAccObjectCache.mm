@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "KWQDOMNode.h"
-#include "KWQAccObjectCache.h"
-#include "KWQAccObject.h"
-#include "KWQAssertions.h"
-#include "KWQFoundationExtras.h"
-#include <qstring.h>
-#include <render_object.h>
+#import "KWQAccObjectCache.h"
+
+#import "KWQAccObject.h"
+#import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
+#import "KWQString.h"
+#import "render_object.h"
+#import "WebCoreViewFactory.h"
 
 using khtml::EAffinity;
 using khtml::RenderObject;
 using khtml::VisiblePosition;
 
-// The simple Cocoa calls in this file can't throw.
+// The simple Cocoa calls in this file don't throw exceptions.
 
 bool KWQAccObjectCache::gAccessibilityEnabled = false;
 
@@ -154,20 +155,13 @@ void KWQAccObjectCache::removeAccObjectID(KWQAccObject* accObject)
     CFDictionaryRemoveValue(accCacheByID, (const void *)accObjectID);
 }
 
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
-AXTextMarkerRef   KWQAccObjectCache::textMarkerForVisiblePosition (const VisiblePosition & visiblePos)
+WebCoreTextMarker *KWQAccObjectCache::textMarkerForVisiblePosition (const VisiblePosition &visiblePos)
 {
-    KWQTextMarkerData   textMarkerData;
-    AXTextMarkerRef     textMarker = NULL;    
-
     DOM::Position deepPos = visiblePos.deepEquivalent();
     DOM::NodeImpl* domNode = deepPos.node();
-    if (domNode == NULL) {
-        ASSERT(domNode != NULL);
-        return NULL;
-    }
+    ASSERT(domNode != NULL);
+    if (domNode == NULL)
+        return nil;
     
     // locate the renderer, which must exist for a visible dom node
     khtml::RenderObject* renderer = domNode->renderer();
@@ -177,44 +171,28 @@ AXTextMarkerRef   KWQAccObjectCache::textMarkerForVisiblePosition (const Visible
     KWQAccObject* accObject = this->accObject(renderer);
     
     // create a text marker, adding an ID for the KWQAccObject if needed
+    KWQTextMarkerData textMarkerData;
     textMarkerData.accObjectID = getAccObjectID(accObject);
     textMarkerData.nodeImpl = domNode;
     textMarkerData.offset = deepPos.offset();
     textMarkerData.affinity = visiblePos.affinity();
-    textMarker = AXTextMarkerCreate(NULL, (const UInt8*)&textMarkerData, sizeof(textMarkerData));
-
-    // autorelease it because we will never see it again
-    KWQCFAutorelease(textMarker);
-    return textMarker; 
+    return [[WebCoreViewFactory sharedFactory] textMarkerWithBytes:&textMarkerData length:sizeof(textMarkerData)]; 
 }
 
-VisiblePosition   KWQAccObjectCache::visiblePositionForTextMarker (AXTextMarkerRef textMarker)
+VisiblePosition KWQAccObjectCache::visiblePositionForTextMarker(WebCoreTextMarker *textMarker)
 {
-    KWQTextMarkerData*  textMarkerData;
+    KWQTextMarkerData textMarkerData;
     
-    // catch some bad inputs
-    if (textMarker == NULL)
+    if (![[WebCoreViewFactory sharedFactory] getBytes:&textMarkerData fromTextMarker:textMarker length:sizeof(textMarkerData)])
         return VisiblePosition();
     
-    if (AXTextMarkerGetLength(textMarker) != sizeof(KWQTextMarkerData)) {
-        ASSERT (AXTextMarkerGetLength(textMarker) == sizeof(KWQTextMarkerData));
-        return VisiblePosition();
-    }
-    
-    textMarkerData = (KWQTextMarkerData*) AXTextMarkerGetBytePtr(textMarker);
-    if (textMarkerData == NULL) {
-        ASSERT(textMarkerData != NULL);
-        return VisiblePosition();
-    }
-
     // return empty position if the text marker is no longer valid
-    if (!accCacheByID || !CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData->accObjectID))
+    if (!accCacheByID || !CFDictionaryContainsKey(accCacheByID, (const void *)textMarkerData.accObjectID))
         return VisiblePosition();
 
     // return the position from the data we stored earlier
-    return VisiblePosition(textMarkerData->nodeImpl, textMarkerData->offset, textMarkerData->affinity);
+    return VisiblePosition(textMarkerData.nodeImpl, textMarkerData.offset, textMarkerData.affinity);
 }
-#endif
 
 void KWQAccObjectCache::detach(RenderObject* renderer)
 {
@@ -247,12 +225,7 @@ void KWQAccObjectCache::postNotification(RenderObject* renderer, const QString& 
         NSAccessibilityPostNotification(accObject(renderer), msg.getNSString());
 }
 
-extern "C" void NSAccessibilityHandleFocusChanged(void);
-void KWQAccObjectCache::handleFocusedUIElementChanged(void)
+void KWQAccObjectCache::handleFocusedUIElementChanged()
 {
-    // This is an internal AppKit call that does a number of things in addition to
-    // sending the AXFocusedUIElementChanged notification.  It will call
-    // will call accessibilityFocusedUIElement() to determine which element
-    // to include in the notification.
-    NSAccessibilityHandleFocusChanged();
+    [[WebCoreViewFactory sharedFactory] accessibilityHandleFocusChanged];
 }

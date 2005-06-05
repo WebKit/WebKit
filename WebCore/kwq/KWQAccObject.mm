@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "KWQAccObject.h"
+
 // need this until accesstool supports arrays of markers
 #define MARKERARRAY_SELF_TEST 0
 
-// for AXTextMarker support
-#import <ApplicationServices/ApplicationServicesPriv.h>
-
 #include <mach-o/dyld.h>
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
-extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
-#endif
 
-#import "KWQAccObject.h"
 #import "KWQAccObjectCache.h"
 #import "KWQAssertions.h"
 #import "KWQFoundationExtras.h"
 #import "KWQWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreFrameView.h"
+#import "WebCoreViewFactory.h"
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
@@ -130,11 +124,10 @@ using khtml::VisiblePosition;
     return m_renderer && m_renderer->isCanvas();
 }
 
-extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 -(void)detach
 {
     if ([self accessibilityShouldUseUniqueId])
-        NSAccessibilityUnregisterUniqueIdForUIElement(self);
+        [[WebCoreViewFactory sharedFactory] unregisterUniqueIdForUIElement:self];
     [m_data release];
     m_data = 0;
     [self removeAccObjectID];
@@ -655,10 +648,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-            (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,    // NOTE: <rdar://problem/3942582>
-            (NSString *) kAXStartTextMarkerAttribute,
-            (NSString *) kAXEndTextMarkerAttribute,
+            @"AXSelectedTextMarkerRange",
+            @"AXStartTextMarker",
+            @"AXEndTextMarker",
 #endif
             nil];
     }
@@ -679,10 +671,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-            (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: <rdar://problem/3942582>
-            (NSString *) kAXStartTextMarkerAttribute,
-            (NSString *) kAXEndTextMarkerAttribute,
+            @"AXSelectedTextMarkerRange",
+            @"AXStartTextMarker",
+            @"AXEndTextMarker",
 #endif
             nil];
     }
@@ -705,10 +696,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-            (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: NOTE: <rdar://problem/3942582>
-            (NSString *) kAXStartTextMarkerAttribute,
-            (NSString *) kAXEndTextMarkerAttribute,
+            @"AXSelectedTextMarkerRange",
+            @"AXStartTextMarker",
+            @"AXEndTextMarker",
 #endif
             nil];
     }
@@ -764,22 +754,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
 }
 
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
-- (AXTextMarkerRangeRef) textMarkerRangeFromMarkers: (AXTextMarkerRef) textMarker1 andEndMarker:(AXTextMarkerRef) textMarker2
+- (WebCoreTextMarkerRange *) textMarkerRangeFromMarkers: (WebCoreTextMarker *) textMarker1 andEndMarker:(WebCoreTextMarker *) textMarker2
 {
-    AXTextMarkerRangeRef textMarkerRange;
-    
-    // create the range
-    textMarkerRange = AXTextMarkerRangeCreate (nil, textMarker1, textMarker2);
-
-    // autorelease it because we will never see it again
-    KWQCFAutorelease(textMarkerRange);
-    return textMarkerRange;
+    return [[WebCoreViewFactory sharedFactory] textMarkerRangeWithStart:textMarker1 end:textMarker2];
 }
 
-- (AXTextMarkerRef) textMarkerForVisiblePosition: (VisiblePosition)visiblePos
+- (WebCoreTextMarker *) textMarkerForVisiblePosition: (VisiblePosition)visiblePos
 {
     if (visiblePos.isNull())
         return nil;
@@ -787,46 +767,37 @@ static QRect boundingBoxRect(RenderObject* obj)
     return m_renderer->document()->getAccObjectCache()->textMarkerForVisiblePosition(visiblePos);
 }
 
-- (VisiblePosition) visiblePositionForTextMarker: (AXTextMarkerRef)textMarker
+- (VisiblePosition) visiblePositionForTextMarker: (WebCoreTextMarker *)textMarker
 {
     return m_renderer->document()->getAccObjectCache()->visiblePositionForTextMarker(textMarker);
 }
 
-- (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
+- (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
 {
-    AXTextMarkerRef textMarker = AXTextMarkerRangeCopyStartMarker(textMarkerRange);
-    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    if (textMarker)
-        CFRelease(textMarker);
-    return visiblePos;
+    return [self visiblePositionForTextMarker:[[WebCoreViewFactory sharedFactory] startOfTextMarkerRange:textMarkerRange]];
 }
 
-- (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+- (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
 {
-    AXTextMarkerRef textMarker = AXTextMarkerRangeCopyEndMarker(textMarkerRange);
-    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
-    if (textMarker)
-        CFRelease(textMarker);
-    return visiblePos;
+    return [self visiblePositionForTextMarker:[[WebCoreViewFactory sharedFactory] endOfTextMarkerRange:textMarkerRange]];
 }
 
-- (AXTextMarkerRangeRef) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
+- (WebCoreTextMarkerRange *) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
 {
-    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: startPosition];
-    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
+    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: startPosition];
+    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (AXTextMarkerRangeRef)textMarkerRange
+- (WebCoreTextMarkerRange *)textMarkerRange
 {
     if (!m_renderer)
         return nil;
         
-    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), khtml::VP_DEFAULT_AFFINITY)];
-    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), khtml::VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker *startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), khtml::VP_DEFAULT_AFFINITY)];
+    WebCoreTextMarker *endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), khtml::VP_DEFAULT_AFFINITY)];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
-#endif
 
 - (DocumentImpl *)topDocument
 {
@@ -942,7 +913,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
+    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
         // get the selection from the document part
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
         // (there is a web archive of this page attached to <rdar://problem/3888973>)
@@ -960,13 +931,13 @@ static QRect boundingBoxRect(RenderObject* obj)
         return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
-    if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
+    if ([attributeName isEqualToString: @"AXStartTextMarker"]) {
         // FIXME: should use startOfDocument here
         VisiblePosition startPos = [self topRenderer]->positionForCoordinates (0, 0);
         return (id) [self textMarkerForVisiblePosition: startPos];
     }
 
-    if ([attributeName isEqualToString: (NSString *) kAXEndTextMarkerAttribute]) {
+    if ([attributeName isEqualToString: @"AXEndTextMarker"]) {
         // FIXME: should use endOfDocument here
         VisiblePosition endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX);
         return (id) [self textMarkerForVisiblePosition: endPos];
@@ -986,38 +957,37 @@ static QRect boundingBoxRect(RenderObject* obj)
         paramAttributes = [[NSArray alloc] initWithObjects:
             @"AXUIElementForTextMarker",
             @"AXTextMarkerRangeForUIElement",
-            kAXLineForTextMarkerParameterizedAttribute,
-            kAXTextMarkerRangeForLineParameterizedAttribute,
-            kAXStringForTextMarkerRangeParameterizedAttribute,
-            kAXTextMarkerForPositionParameterizedAttribute,
-            kAXBoundsForTextMarkerRangeParameterizedAttribute,
-//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,           // NOTE: <rdar://problem/3942606>
-            kAXAttributedStringForTextMarkerRangeParameterizedAttribute,
-            kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
-            kAXNextTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
-            kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
-            kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-            kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
-            kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
-            kAXLengthForTextMarkerRangeParameterizedAttribute,
+            @"AXLineForTextMarker",
+            @"AXTextMarkerRangeForLine",
+            @"AXStringForTextMarkerRange",
+            @"AXTextMarkerForPosition",
+            @"AXBoundsForTextMarkerRange",
+            @"AXAttributedStringForTextMarkerRange",
+            @"AXTextMarkerRangeForUnorderedTextMarkers",
+            @"AXNextTextMarkerForTextMarker",
+            @"AXPreviousTextMarkerForTextMarker",
+            @"AXLeftWordTextMarkerRangeForTextMarker",
+            @"AXRightWordTextMarkerRangeForTextMarker",
+            @"AXLeftLineTextMarkerRangeForTextMarker",
+            @"AXRightLineTextMarkerRangeForTextMarker",
+            @"AXSentenceTextMarkerRangeForTextMarker",
+            @"AXParagraphTextMarkerRangeForTextMarker",
+            @"AXNextWordEndTextMarkerForTextMarker",
+            @"AXPreviousWordStartTextMarkerForTextMarker",
+            @"AXNextLineEndTextMarkerForTextMarker",
+            @"AXPreviousLineStartTextMarkerForTextMarker",
+            @"AXNextSentenceEndTextMarkerForTextMarker",
+            @"AXPreviousSentenceStartTextMarkerForTextMarker",
+            @"AXNextParagraphEndTextMarkerForTextMarker",
+            @"AXPreviousParagraphStartTextMarkerForTextMarker",
+            @"AXLengthForTextMarkerRange",
             nil];
     }
 
     return paramAttributes;
 }
 
-- (id)doAXUIElementForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXUIElementForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1035,7 +1005,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (id)[uiElement textMarkerRange];
 }
 
-- (id)doAXLineForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXLineForTextMarker: (WebCoreTextMarker *) textMarker
 {
     unsigned int    lineCount = 0;
     VisiblePosition savedVisiblePos;
@@ -1089,7 +1059,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+- (id)doAXStringForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1155,7 +1125,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (id) [self textMarkerForVisiblePosition:pos];
 }
 
-- (id)doAXBoundsForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+- (id)doAXBoundsForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
 {
 
     // extract the start and end VisiblePosition
@@ -1324,7 +1294,7 @@ static void AXAttributeStringSetElement(NSMutableAttributedString *attrString, N
 {
     if (element != nil) {
         // make a serialiazable AX object
-        AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(element);
+        AXUIElementRef axElement = [[WebCoreViewFactory sharedFactory] AXUIElementForElement:element];
         if (axElement != NULL) {
             [attrString addAttribute:attribute value:(id)axElement range:range];
             CFRelease(axElement);
@@ -1404,7 +1374,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
 }
 
-- (id)doAXAttributedStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+- (id)doAXAttributedStringForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1440,18 +1410,18 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers
 {
 #if MARKERARRAY_SELF_TEST
-    AXTextMarkerRangeRef tmr = [self getSelectedTextMarkerRange];
-    AXTextMarkerRef tm1 = AXTextMarkerRangeCopyEndMarker(tmr);
-    AXTextMarkerRef tm2 = AXTextMarkerRangeCopyStartMarker(tmr);
+    WebCoreTextMarkerRange *tmr = [self getSelectedTextMarkerRange];
+    WebCoreTextMarker *tm1 = AXTextMarkerRangeCopyEndMarker(tmr);
+    WebCoreTextMarker *tm2 = AXTextMarkerRangeCopyStartMarker(tmr);
     markers = [NSArray arrayWithObjects: (id) tm1, (id) tm2, nil];
 #endif
     // get and validate the markers
     if ([markers count] < 2)
         return nil;
     
-    AXTextMarkerRef textMarker1 = (AXTextMarkerRef) [markers objectAtIndex:0];
-    AXTextMarkerRef textMarker2 = (AXTextMarkerRef) [markers objectAtIndex:1];
-    if (CFGetTypeID(textMarker1) != AXTextMarkerGetTypeID() || CFGetTypeID(textMarker2) != AXTextMarkerGetTypeID())
+    WebCoreTextMarker *textMarker1 = (WebCoreTextMarker *) [markers objectAtIndex:0];
+    WebCoreTextMarker *textMarker2 = (WebCoreTextMarker *) [markers objectAtIndex:1];
+    if (![[WebCoreViewFactory sharedFactory] objectIsTextMarker:textMarker1] || ![[WebCoreViewFactory sharedFactory] objectIsTextMarker:textMarker2])
         return nil;
     
     // convert to VisiblePosition
@@ -1462,8 +1432,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     
     // use the Selection class to do the ordering
     // NOTE: Perhaps we could add a Selection method to indicate direction, based on m_baseIsStart
-    AXTextMarkerRef startTextMarker;
-    AXTextMarkerRef endTextMarker;
+    WebCoreTextMarker *startTextMarker;
+    WebCoreTextMarker *endTextMarker;
     Selection   sel(visiblePos1, visiblePos2);
     if (sel.base() == sel.start()) {
         startTextMarker = textMarker1;
@@ -1477,7 +1447,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
 
-- (id)doAXNextTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXNextTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition nextVisiblePos = visiblePos.next();
@@ -1487,7 +1457,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:nextVisiblePos];
 }
 
-- (id)doAXPreviousTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXPreviousTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition previousVisiblePos = visiblePos.previous();
@@ -1497,7 +1467,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:previousVisiblePos];
 }
 
-- (id)doAXLeftWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXLeftWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
@@ -1506,7 +1476,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXRightWordTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXRightWordTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::RightWordIfOnBoundary);
@@ -1515,7 +1485,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXLeftLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXLeftLineTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1532,7 +1502,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXRightLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXRightLineTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1548,7 +1518,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXSentenceTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXSentenceTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1559,7 +1529,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXParagraphTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXParagraphTextMarkerRangeForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     VisiblePosition startPosition = startOfParagraph(visiblePos);
@@ -1568,7 +1538,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
-- (id)doAXNextWordEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXNextWordEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1583,7 +1553,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:endPosition];
 }
 
-- (id)doAXPreviousWordStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXPreviousWordStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1598,7 +1568,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition:startPosition];
 }
 
-- (id)doAXNextLineEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXNextLineEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1613,7 +1583,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousLineStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXPreviousLineStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1628,7 +1598,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXNextSentenceEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXNextSentenceEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1645,7 +1615,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousSentenceStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXPreviousSentenceStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     // NOTE: BUG FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -1662,7 +1632,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXNextParagraphEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXNextParagraphEndTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1677,7 +1647,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
-- (id)doAXPreviousParagraphStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
+- (id)doAXPreviousParagraphStartTextMarkerForTextMarker: (WebCoreTextMarker *) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
@@ -1692,7 +1662,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
-- (id)doAXLengthForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
+- (id)doAXLengthForTextMarkerRange: (WebCoreTextMarkerRange *) textMarkerRange
 {
     // NOTE: BUG Multi-byte support
     CFStringRef string = (CFStringRef) [self doAXStringForTextMarkerRange: textMarkerRange];
@@ -1704,14 +1674,13 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (id)accessibilityAttributeValue:(NSString *)attribute forParameter:(id)parameter
 {
-    AXTextMarkerRef         textMarker = nil;
-    AXTextMarkerRangeRef    textMarkerRange = nil;
+    WebCoreTextMarker *     textMarker = nil;
+    WebCoreTextMarkerRange *textMarkerRange = nil;
     NSNumber *              number = nil;
     NSArray *               array = nil;
     KWQAccObject *          uiElement = nil;
     NSPoint                 point = {0.0, 0.0};
     bool                    pointSet = false;
-    CFTypeID                paramType;
     
     // basic parameter validation
     if (!m_renderer || !attribute || !parameter)
@@ -1720,12 +1689,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
     // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
-    paramType = CFGetTypeID(parameter);
-    if (paramType == AXTextMarkerGetTypeID())
-        textMarker = (AXTextMarkerRef) parameter;
+    if ([[WebCoreViewFactory sharedFactory] objectIsTextMarker:parameter])
+        textMarker = (WebCoreTextMarker *) parameter;
 
-    else if (paramType == AXTextMarkerRangeGetTypeID())
-        textMarkerRange = (AXTextMarkerRangeRef) parameter;
+    else if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:parameter])
+        textMarkerRange = (WebCoreTextMarkerRange *) parameter;
 
     else if ([parameter isKindOfClass:[KWQAccObject self]])
         uiElement = (KWQAccObject *) parameter;
@@ -1754,76 +1722,76 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if ([attribute isEqualToString: @"AXTextMarkerRangeForUIElement"])
         return [self doAXTextMarkerRangeForUIElement: uiElement];
 
-    if ([attribute isEqualToString: (NSString *) kAXLineForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXLineForTextMarker"])
         return [self doAXLineForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXTextMarkerRangeForLineParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXTextMarkerRangeForLine"])
         return [self doAXTextMarkerRangeForLine: number];
 
-    if ([attribute isEqualToString: (NSString *) kAXStringForTextMarkerRangeParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXStringForTextMarkerRange"])
         return [self doAXStringForTextMarkerRange: textMarkerRange];
 
-    if ([attribute isEqualToString: (NSString *) kAXTextMarkerForPositionParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXTextMarkerForPosition"])
         return pointSet ? [self doAXTextMarkerForPosition: point] : nil;
 
-    if ([attribute isEqualToString: (NSString *) kAXBoundsForTextMarkerRangeParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXBoundsForTextMarkerRange"])
         return [self doAXBoundsForTextMarkerRange: textMarkerRange];
 
-    if ([attribute isEqualToString: (NSString *) kAXAttributedStringForTextMarkerRangeParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXAttributedStringForTextMarkerRange"])
         return [self doAXAttributedStringForTextMarkerRange: textMarkerRange];
 
-    if ([attribute isEqualToString: (NSString *) kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXTextMarkerRangeForUnorderedTextMarkers"])
         return [self doAXTextMarkerRangeForUnorderedTextMarkers: array];
 
-    if ([attribute isEqualToString: (NSString *) kAXNextTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXNextTextMarkerForTextMarker"])
         return [self doAXNextTextMarkerForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXPreviousTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXPreviousTextMarkerForTextMarker"])
         return [self doAXPreviousTextMarkerForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXLeftWordTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXLeftWordTextMarkerRangeForTextMarker"])
         return [self doAXLeftWordTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXRightWordTextMarkerRangeForTextMarker"])
         return [self doAXRightWordTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXLeftLineTextMarkerRangeForTextMarker"])
         return [self doAXLeftLineTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXRightLineTextMarkerRangeForTextMarker"])
         return [self doAXRightLineTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXSentenceTextMarkerRangeForTextMarker"])
         return [self doAXSentenceTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXParagraphTextMarkerRangeForTextMarker"])
         return [self doAXParagraphTextMarkerRangeForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXNextWordEndTextMarkerForTextMarker"])
         return [self doAXNextWordEndTextMarkerForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXPreviousWordStartTextMarkerForTextMarker"])
         return [self doAXPreviousWordStartTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXNextLineEndTextMarkerForTextMarker"])
         return [self doAXNextLineEndTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXPreviousLineStartTextMarkerForTextMarker"])
         return [self doAXPreviousLineStartTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXNextSentenceEndTextMarkerForTextMarker"])
         return [self doAXNextSentenceEndTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXPreviousSentenceStartTextMarkerForTextMarker"])
         return [self doAXPreviousSentenceStartTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXNextParagraphEndTextMarkerForTextMarker"])
         return [self doAXNextParagraphEndTextMarkerForTextMarker: textMarker];
 
-    if ([attribute isEqualToString: (NSString *) kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXPreviousParagraphStartTextMarkerForTextMarker"])
         return [self doAXPreviousParagraphStartTextMarkerForTextMarker: textMarker];
         
-    if ([attribute isEqualToString: (NSString *) kAXLengthForTextMarkerRangeParameterizedAttribute])
+    if ([attribute isEqualToString: @"AXLengthForTextMarkerRange"])
         return [self doAXLengthForTextMarkerRange: textMarkerRange];
 
     return nil;
@@ -1913,7 +1881,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute])
+    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
         return YES;
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         if ([[self role] isEqualToString:@"AXLink"])
@@ -1927,7 +1895,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
-- (void)doSetAXSelectedTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
+- (void)doSetAXSelectedTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
 {
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
@@ -1946,18 +1914,18 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName;
 {
-    AXTextMarkerRangeRef    textMarkerRange = nil;
+    WebCoreTextMarkerRange *textMarkerRange = nil;
     NSNumber *              number = nil;
 
     // decode the parameter
-    if (CFGetTypeID(value) == AXTextMarkerRangeGetTypeID())
-        textMarkerRange = (AXTextMarkerRangeRef) value;
+    if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:value])
+        textMarkerRange = (WebCoreTextMarkerRange *) value;
 
     else if ([value isKindOfClass:[NSNumber self]])
         number = value;
     
     // handle the command
-    if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
+    if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
         ASSERT(textMarkerRange);
         [self doSetAXSelectedTextMarkerRange:textMarkerRange];
         

@@ -25,8 +25,6 @@
 
 #import "WebCoreBridge.h"
 
-#include <CoreFoundation/CFCharacterSetPriv.h>
-
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
