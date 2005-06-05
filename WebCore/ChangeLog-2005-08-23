@@ -2,7 +2,7 @@
 
         Reviewed by Maciej.
 
-        - first fix on the road to can compile without Apple Internal headers installed
+        - first fix on the road to compiling without Apple Internal headers installed
 
         * WebCore.pbproj/project.pbxproj: Added icu directory to header search path.
 
