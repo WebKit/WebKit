@@ -1,5 +1,16 @@
 2005-06-05  Darin Adler  <darin@apple.com>
 
+        - add run-webkit-tests script; not working yet but the pieces are there
+
+        * Scripts/run-webkit-tests: Added.
+
+        * DumpRenderTree/DumpRenderTree.m: Added.
+        * DumpRenderTree/DumpRenderTree.xcode/.cvsignore: Added.
+        * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Added.
+        * DumpRenderTree/DumpRenderTreePrefix.h: Added.
+
+2005-06-05  Darin Adler  <darin@apple.com>
+
         - created module, first cut at Web Kit Open Source Project scripts
 
         * ChangeLog: Added.
@@ -8,3 +19,4 @@
         * Scripts/update-webkit: Added.
         * checkout: Added.
 
+=== creation of WebKitTools module ===

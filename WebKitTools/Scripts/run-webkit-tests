@@ -1,0 +1,230 @@
+#!/usr/bin/perl -w
+
+# Script to run the Web Kit Open Source Project layout tests.
+
+use strict;
+use IPC::Open2;
+
+# Run all the tests passed in on the command line.
+# If no tests are passed, find all the .html, .xml, and .xhtml files in the test directory.
+
+# Run each text.
+# Compare against the existing file xxx-expected.txt.
+# If there is a mismatch, generate xxx-actual.txt and xxx-diffs.txt.
+
+# At the end, report:
+#   the number of tests that got the expected results
+#   the number of tests that ran, but did not get the expected results
+#   the number of tests that failed to run
+#   the number of tests that were run but had no expected results to compare against
+
+# Check that we're in the right directory.
+if (! -d "WebKitTools") {
+    if (-d "../WebKitTools") {
+        chdir ".." or die;
+    }
+    if (! -d "WebKitTools") {
+        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+    }
+}
+
+# Check that an Xcode product directory is set.
+open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+my $productDir = <PRODUCT>;
+chomp $productDir;
+close PRODUCT;
+if (!$productDir) {
+    die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
+}
+
+my $tool = "$productDir/DumpRenderTree";
+
+die "can't find executable DumpRenderTree tool (looked in $productDir)\n" if !-x $tool;
+
+my $WebCoreDirectory = "WebCore";
+my $testDirectory = "$WebCoreDirectory/layout-tests";
+my $testResultsDirectory = "/tmp/layout-test-results";
+my $testResults = "$testResultsDirectory/results.html";
+
+$ENV{"DYLD_FRAMEWORK_PATH"} = $productDir;
+
+my @tests;
+
+my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
+if (@ARGV) {
+    for my $test (@ARGV) {
+        $test =~ s/^$testDirectory\///;
+        if ($test =~ /^\//) {
+            print "can't run test outside $testDirectory\n";
+        } elsif (-f "$testDirectory/$test") {
+            if ($test !~ /\.(html|xml|xhtml)$/) {
+                print "test $test does not have an .html extension\n";
+            } else {
+                push @tests, $test;
+            }
+        } elsif (-d "$testDirectory/$test") {
+            push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -s $testDirectory/$test $findArguments`;
+        } else {
+            print "test $test not found\n";
+        }
+    }
+} else {
+    @tests = map { chomp; s-^$testDirectory/--; $_; } `find -s $testDirectory $findArguments`;
+}
+
+die "no tests to run\n" if !@tests;
+
+my %counts;
+my %tests;
+my $count;
+
+open2(\*IN, \*OUT, $tool, "-") or die;
+
+$| = 1;
+
+for my $test (@tests) {
+    next if $test eq 'results.html';
+    
+    my $base = $test;
+    $base =~ s/\.(html|xml|xhtml)$//;
+    
+    print "running $base test";
+    
+    my $result;
+
+    print OUT "$testDirectory/$test\n";
+
+    my $actual = "";
+    while (<IN>) {
+        last if /#EOF$/;
+        $actual .= $_;
+    }
+    
+    my $expected;
+    if (open EXPECTED, "<", "$testDirectory/$base-expected.txt") {
+        $expected = "";
+        while (<EXPECTED>) {
+            $expected .= $_;
+        }
+        close EXPECTED;
+    }
+    if (!defined $expected) {
+        print " -> new test\n";        
+        $result = "new";
+        open EXPECTED, ">", "$testDirectory/$base-expected.txt" or die "could not create $testDirectory/$base-expected.txt\n";
+        print EXPECTED $actual;
+        close EXPECTED;
+        unlink "$testResultsDirectory/$base-actual.txt";
+        unlink "$testResultsDirectory/$base-diffs.txt";
+    } elsif ($actual eq $expected) {
+        print " -> succeeded\n";        
+        $result = "match";
+        unlink "$testResultsDirectory/$base-actual.txt";
+        unlink "$testResultsDirectory/$base-diffs.txt";
+    } else {
+        print " -> failed\n";        
+        $result = "mismatch";
+        my $dir = "$testResultsDirectory/$base";
+        $dir =~ s|/[^/]+$||;
+        system "mkdir", "-p", $dir;
+        open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
+        print ACTUAL $actual;
+        close ACTUAL;
+        system "diff -u $testDirectory/$base-expected.txt $testResultsDirectory/$base-actual.txt > $testResultsDirectory/$base-diffs.txt";
+    }
+    
+    $count += 1;
+    $counts{$result} += 1;
+    push @{$tests{$result}}, $test;
+}
+
+close IN;
+close OUT;
+
+my %text = (
+    match => "succeeded",
+    mismatch => "had incorrect layout",
+    new => "were new",
+    fail => "failed (tool did not execute successfully)",
+);
+
+print "\n";
+
+if ($counts{match} && $counts{match} == $count) {
+    print "all test cases succeeded\n";
+    unlink $testResults;
+} else {
+    for my $type ("match", "mismatch", "new", "fail") {
+        my $c = $counts{$type};
+        if ($c) {
+            my $t = $text{$type};
+            my $message;
+            if ($c == 1) {
+                $t =~ s/were/was/;
+                $message = sprintf "1 test case (%d%%) %s\n", 1 * 100 / $count, $t;
+            } else {
+                $message = sprintf "%d test cases (%d%%) %s\n", $c, $c * 100 / $count, $t;
+            }
+            $message =~ s-\(0%\)-(<1%)-;
+            print $message;
+        }
+    }
+    
+    system "mkdir", "-p", $testResultsDirectory;
+
+    open HTML, ">", $testResults or die;
+    print HTML "<html>\n";
+    print HTML "<head>\n";
+    print HTML "<title>Layout Test Results</title>\n";
+    print HTML "</head>\n";
+    print HTML "<body>\n";
+
+    if ($counts{mismatch}) {
+        print HTML "<p>Tests where results did not match expected results:</p>\n";
+        print HTML "<table>\n";
+        for my $test (@{$tests{mismatch}}) {
+            my $base = $test;
+            $base =~ s/\.(html|xml|xhtml)$//;
+            print HTML "<tr>\n";
+            print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
+            print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
+            print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
+            print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
+            print HTML "</tr>\n";
+        }
+        print HTML "</table>\n";
+    }
+
+    if ($counts{fail}) {
+        print HTML "<p>Tests that caused the DumpRenderTree tool to fail:</p>\n";
+        print HTML "<table>\n";
+        for my $test (@{$tests{fail}}) {
+            my $base = $test;
+            $base =~ s/\.(html|xml|xhtml)$//;
+            print HTML "<tr>\n";
+            print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
+            print HTML "</tr>\n";
+        }
+        print HTML "</table>\n";
+    }
+
+    if ($counts{new}) {
+        print HTML "<p>Tests that had no expected results (probably new):</p>\n";
+        print HTML "<table>\n";
+        for my $test (@{$tests{new}}) {
+            my $base = $test;
+            $base =~ s/\.(html|xml|xhtml)$//;
+            print HTML "<tr>\n";
+            print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
+            print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
+            print HTML "</tr>\n";
+        }
+        print HTML "</table>\n";
+    }
+
+    print HTML "</body>\n";
+    print HTML "</html>\n";
+    close HTML;
+    
+    system "open", $testResults;
+}
