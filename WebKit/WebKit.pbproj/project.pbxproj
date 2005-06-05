@@ -662,14 +662,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		515B878E05F5348600EABBF9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = NP_objc.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		515E27CC0458C86500CA2D3A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1446,7 +1438,6 @@
 		};
 		848DFF410365F6FB00CA2ACA = {
 			children = (
-				515B878E05F5348600EABBF9,
 				51C16E4006138EB400A1657B,
 				F5F717230288493C018635CA,
 				F5A672B90263866E01000102,
@@ -2030,7 +2021,6 @@
 				939810870824BF01008DF038,
 				939810880824BF01008DF038,
 				939810890824BF01008DF038,
-				9398108C0824BF01008DF038,
 				9398108D0824BF01008DF038,
 				939810970824BF01008DF038,
 				939810990824BF01008DF038,
@@ -3000,12 +2990,6 @@
 				ATTRIBUTES = (
 					Private,
 				);
-			};
-		};
-		9398108C0824BF01008DF038 = {
-			fileRef = 515B878E05F5348600EABBF9;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		9398108D0824BF01008DF038 = {

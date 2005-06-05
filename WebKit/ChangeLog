@@ -1,3 +1,17 @@
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        - added appropriate license headers to most files and updated copyright to reflect publication dates
+
+        * LICENSE: Added.
+        * <lots of files>: Added license header.
+
+        * WebKit.pbproj/project.pbxproj: Removed references to NP_objc.h.
+
+        * API-Issues.rtf: Removed.
+        * Misc.subproj/WebException.h: Removed.
+        * Misc.subproj/WebException.m: Removed.
+        * Plugins.subproj/NP_objc.h: Removed.
+
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.
