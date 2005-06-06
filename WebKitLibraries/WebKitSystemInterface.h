@@ -56,3 +56,14 @@ unsigned WKGetNSAutoreleasePoolCount();
 NSString *WKMouseMovedNotification();
 BOOL WKMouseIsDown();
 void WKSetNSWindowShouldPostEventNotifications(NSWindow *window, BOOL post);
+
+CFTypeID WKGetAXTextMarkerTypeID();
+CFTypeID WKGetAXTextMarkerRangeTypeID();
+CFTypeRef WKCreateAXTextMarker(const void *bytes, size_t len);
+BOOL WKGetBytesFromAXTextMarker(CFTypeRef textMarker, void *bytes, size_t length);
+CFTypeRef WKCreateAXTextMarkerRange(CFTypeRef start, CFTypeRef end);
+CFTypeRef WKCopyAXTextMarkerRangeStart(CFTypeRef range);
+CFTypeRef WKCopyAXTextMarkerRangeEnd(CFTypeRef range);
+void WKAccessibilityHandleFocusChanged();
+AXUIElementRef WKCreateAXUIElementRef(id element);
+void WKUnregisterUniqueIdForElement(id element);
