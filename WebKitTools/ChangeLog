@@ -1,5 +1,9 @@
 2005-06-05  Darin Adler  <darin@apple.com>
 
+        * Scripts/run-safari: Fix path to Safari executable. Add check for frameworks.
+
+2005-06-05  Darin Adler  <darin@apple.com>
+
         - add run-webkit-tests script; not working yet but the pieces are there
 
         * Scripts/run-webkit-tests: Added.

@@ -17,7 +17,24 @@ if (!$productDir) {
     die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
 }
 
+# Check to see that Safari is there.
+my $safariPath = "/Applications/Safari.app/Contents/MacOS/Safari";
+if (! -x $safariPath) {
+    die "Can't find executable at $safariPath.\n";
+}
+
+# Check to see that frameworks are there.
+if (! -x "$productDir/JavaScriptCore.framework/Versions/A/JavaScriptCore") {
+    die "Can't find executable at $productDir/JavaScriptCore.framework/Versions/A/JavaScriptCore; have you built successfully?\n";
+}
+if (! -x "$productDir/WebCore.framework/Versions/A/WebCore") {
+    die "Can't find executable at $productDir/WebCore.framework/Versions/A/WebCore; have you built successfully?\n";
+}
+if (! -x "$productDir/WebKit.framework/Versions/A/WebKit") {
+    die "Can't find executable at $productDir/WebKit.framework/Versions/A/WebKit; have you built successfully?\n";
+}
+
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-exec "/Applications/Safari.app/MacOS/Contents/Safari" or die;
+exec $safariPath or die;
