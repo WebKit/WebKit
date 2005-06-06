@@ -1,5 +1,21 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - remove use of AX SPI
+
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory objectIsTextMarker:]):
+        (-[WebViewFactory objectIsTextMarkerRange:]):
+        (-[WebViewFactory textMarkerWithBytes:length:]):
+        (-[WebViewFactory getBytes:fromTextMarker:length:]):
+        (-[WebViewFactory textMarkerRangeWithStart:end:]):
+        (-[WebViewFactory startOfTextMarkerRange:]):
+        (-[WebViewFactory endOfTextMarkerRange:]):
+        (-[WebViewFactory accessibilityHandleFocusChanged]):
+        (-[WebViewFactory AXUIElementForElement:]):
+        (-[WebViewFactory unregisterUniqueIdForUIElement:]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - removed more SPI
 
         * Carbon.subproj/CarbonUtils.m:

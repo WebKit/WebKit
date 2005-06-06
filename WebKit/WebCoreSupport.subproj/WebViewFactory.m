@@ -37,14 +37,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
-
-// FIXME: Move into WebKitSystemInterface
-#import <ApplicationServices/ApplicationServicesPriv.h>
-#import <AppKit/NSAccessibility_Private.h>
-
-// FIXME: Move into WebKitSystemInterface
-// Need this call even though it's in NSAccessibilityAPIBridge_Internal.h, so we can't include the header.
-AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
+#import <WebKitSystemInterface.h>
 
 @interface NSMenu (WebViewFactoryAdditions)
 - (NSMenuItem *)addItemWithTitle:(NSString *)title action:(SEL)action tag:(int)tag;
@@ -183,72 +176,62 @@ AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 - (BOOL)objectIsTextMarker:(id)object
 {
-    return object != nil && CFGetTypeID(object) == AXTextMarkerGetTypeID();
+    return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerTypeID();
 }
 
 - (BOOL)objectIsTextMarkerRange:(id)object
 {
-    return object != nil && CFGetTypeID(object) == AXTextMarkerRangeGetTypeID();
+    return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerRangeTypeID();
 }
 
 - (WebCoreTextMarker *)textMarkerWithBytes:(const void *)bytes length:(size_t)length
 {
-    return WebCFAutorelease(AXTextMarkerCreate(NULL, (const UInt8 *)bytes, length));
+    return WebCFAutorelease(WKCreateAXTextMarker(bytes, length));
 }
 
 - (BOOL)getBytes:(void *)bytes fromTextMarker:(WebCoreTextMarker *)textMarker length:(size_t)length
 {
-    if (textMarker == nil)
-        return NO;
-    AXTextMarkerRef ref = (AXTextMarkerRef)textMarker;
-    ASSERT(CFGetTypeID(ref) == AXTextMarkerGetTypeID());
-    if (CFGetTypeID(ref) != AXTextMarkerGetTypeID())
-        return NO;
-    CFIndex expectedLength = length;
-    if (AXTextMarkerGetLength(ref) != expectedLength)
-        return NO;
-    memcpy(bytes, AXTextMarkerGetBytePtr(ref), length);
-    return YES;
+	return WKGetBytesFromAXTextMarker(textMarker, bytes, length);
 }
 
 - (WebCoreTextMarkerRange *)textMarkerRangeWithStart:(WebCoreTextMarker *)start end:(WebCoreTextMarker *)end
 {
     ASSERT(start != nil);
     ASSERT(end != nil);
-    ASSERT(CFGetTypeID(start) == AXTextMarkerGetTypeID());
-    ASSERT(CFGetTypeID(end) == AXTextMarkerGetTypeID());
-    return WebCFAutorelease(AXTextMarkerRangeCreate(NULL, (AXTextMarkerRef)start, (AXTextMarkerRef)end));
+    ASSERT(CFGetTypeID(start) == WKGetAXTextMarkerTypeID());
+    ASSERT(CFGetTypeID(end) == WKGetAXTextMarkerTypeID());
+    return WebCFAutorelease(WKCreateAXTextMarkerRange(start, end));
 }
 
 - (WebCoreTextMarker *)startOfTextMarkerRange:(WebCoreTextMarkerRange *)range
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
-    return WebCFAutorelease(AXTextMarkerRangeCopyStartMarker((AXTextMarkerRangeRef)range));
+    ASSERT(CFGetTypeID(range) == WKGetAXTextMarkerRangeTypeID());
+    return WebCFAutorelease(WKCopyAXTextMarkerRangeStart(range));
 }
 
 - (WebCoreTextMarker *)endOfTextMarkerRange:(WebCoreTextMarkerRange *)range
 {
     ASSERT(range != nil);
-    ASSERT(CFGetTypeID(range) == AXTextMarkerRangeGetTypeID());
-    return WebCFAutorelease(AXTextMarkerRangeCopyEndMarker((AXTextMarkerRangeRef)range));
+    ASSERT(CFGetTypeID(range) == WKGetAXTextMarkerRangeTypeID());
+    return WebCFAutorelease(WKCopyAXTextMarkerRangeEnd(range));
 }
 
 #endif
 
 - (void)accessibilityHandleFocusChanged
 {
-    NSAccessibilityHandleFocusChanged();
+    WKAccessibilityHandleFocusChanged();
 }
 
 - (AXUIElementRef)AXUIElementForElement:(id)element
 {
-    return NSAccessibilityCreateAXUIElementRef(element);
+    return WKCreateAXUIElementRef(element);
 }
 
 - (void)unregisterUniqueIdForUIElement:(id)element
 {
-    NSAccessibilityUnregisterUniqueIdForUIElement(element);
+    WKUnregisterUniqueIdForElement(element);
 }
 
 @end
