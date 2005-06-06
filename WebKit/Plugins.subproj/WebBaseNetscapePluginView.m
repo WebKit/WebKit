@@ -48,15 +48,9 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
+#import <WebKitSystemInterface.h>
 
-#import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#import <HIToolbox/TextServicesPriv.h>
-#import <QD/QuickdrawPriv.h>
-
-// This is not yet in QuickdrawPriv.h, although it's supposed to be.
-void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int drawingType);
 
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive 	0.02
@@ -102,7 +96,6 @@ typedef struct {
 @end
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
-void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg);
 
 @interface WebBaseNetscapePluginView (ForwardDeclarations)
 - (void)setWindowIfNecessary;
@@ -112,8 +105,7 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
 + (void)initialize
 {
-    CGSRegisterNotifyProc(ConsoleConnectionChangeNotifyProc, kCGSessionConsoleConnect, NULL);
-    CGSRegisterNotifyProc(ConsoleConnectionChangeNotifyProc, kCGSessionConsoleDisconnect, NULL);
+	WKSendUserChangeNotifications();
 }
 
 #pragma mark EVENTS
@@ -165,7 +157,7 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
 - (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
-    if ([cocoaEvent _eventRef] && ConvertEventRefToEventRecord([cocoaEvent _eventRef], carbonEvent)) {
+    if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent)) {
         return;
     }
     
@@ -650,7 +642,7 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 
 - (void)keyUp:(NSEvent *)theEvent
 {
-    TSMProcessRawKeyEvent([theEvent _eventRef]);
+	WKSendKeyEventToTSM(theEvent);
     
     // TSM won't send keyUp events so we have to send them ourselves.
     // Only send keyUp events after we receive the TSM callback because this is what plug-in expect from OS 9.
@@ -671,7 +663,7 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
 - (void)keyDown:(NSEvent *)theEvent
 {
     suspendKeyUpEvents = YES;
-    TSMProcessRawKeyEvent([theEvent _eventRef]);
+    WKSendKeyEventToTSM(theEvent);
 }
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView)
@@ -1217,7 +1209,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     CGrafPtr port = GetWindowPort(windowRef);
     Rect bounds;
     GetPortBounds(port, &bounds);
-    CallDrawingNotifications(port, &bounds, kBitsProc);
+	WKCallDrawingNotification(port, &bounds);
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
@@ -1831,16 +1823,3 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 }
 
 @end
-
-void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg)
-{
-    NSString *notificationName = nil;
-    if (type == kCGSessionConsoleConnect) {
-        notificationName = LoginWindowDidSwitchToUserNotification;
-    } else if (type == kCGSessionConsoleDisconnect) {
-        notificationName = LoginWindowDidSwitchFromUserNotification;
-    } else {
-        ASSERT_NOT_REACHED();
-    }
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:nil];
-}

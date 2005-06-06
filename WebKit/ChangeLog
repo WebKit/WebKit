@@ -1,5 +1,16 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - remove plugin-related SPI calls
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (+[WebBaseNetscapePluginView initialize]):
+        (-[WebBaseNetscapePluginView getCarbonEvent:withEvent:]):
+        (-[WebBaseNetscapePluginView keyUp:]):
+        (-[WebBaseNetscapePluginView keyDown:]):
+        (-[WebBaseNetscapePluginView tellQuickTimeToChill]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - remove graphics SPI use
 
         * WebCoreSupport.subproj/WebGraphicsBridge.m:
