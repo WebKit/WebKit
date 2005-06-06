@@ -68,7 +68,7 @@ static void makeLock(void)
     preferredLanguageLock = [[NSLock alloc] init]; 
 }
 
-+ (void)_ensureAndLockPreferredLanguageLock
++ (void)_webkit_ensureAndLockPreferredLanguageLock
 {
     pthread_once(&preferredLanguageLockOnce, makeLock);
     [preferredLanguageLock lock];
@@ -76,7 +76,7 @@ static void makeLock(void)
 
 + (void)_webkit_defaultsDidChange
 {
-    [self _ensureAndLockPreferredLanguageLock];
+    [self _webkit_ensureAndLockPreferredLanguageLock];
 
     [preferredLanguageCode release];
     preferredLanguageCode = nil;
@@ -104,7 +104,7 @@ static void addDefaultsChangeObserver(void)
 
     BOOL addObserver = NO;
 
-    [self _ensureAndLockPreferredLanguageLock];
+    [self _webkit_ensureAndLockPreferredLanguageLock];
 
     if (!preferredLanguageCode) {
         NSArray *languages = [standardDefaults stringArrayForKey:@"AppleLanguages"];

@@ -2,6 +2,20 @@
 
         Reviewed by Hyatt.
 
+        - fixed hang we were seeing in Safari and layout tests
+
+        * Misc.subproj/WebNSUserDefaultsExtras.m:
+        (+[NSUserDefaults _webkit_ensureAndLockPreferredLanguageLock]): Change name to avoid conflict with Foundation
+        function. This was causing the hang.
+        (+[NSUserDefaults _webkit_defaultsDidChange]): Update caller.
+        (+[NSUserDefaults _webkit_preferredLanguageCode]): Ditto.
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.m: Remove some unneeded includes.
+
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
         - fixed crash in Acid2 layout test
 
         * Plugins.subproj/WebBasePluginPackage.m: (-[WebBasePluginPackage dealloc]): Added nil check for CFBundleRef.

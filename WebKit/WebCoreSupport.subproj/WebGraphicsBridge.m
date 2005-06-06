@@ -29,7 +29,6 @@
 #import "WebGraphicsBridge.h"
 
 #import <HIServices/CoreDrag.h>
-#import <HIServices/CoreDragPriv.h>
 
 #import "WebAssertions.h"
 
@@ -37,10 +36,7 @@
 #define USE_APPEARANCE 1
 #endif
 #import <AppKit/NSInterfaceStyle_Private.h>
-#import <AppKit/NSWindow_Private.h>
 #import <AppKit/NSView_Private.h>
-#import <CoreGraphics/CGContextGState.h>
-#import <CoreGraphics/CGStyle.h>
 
 #import "WebImageRenderer.h"
 
