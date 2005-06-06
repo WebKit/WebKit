@@ -2,6 +2,14 @@
 
         Reviewed by Hyatt.
 
+        - fixed crash in Acid2 layout test
+
+        * Plugins.subproj/WebBasePluginPackage.m: (-[WebBasePluginPackage dealloc]): Added nil check for CFBundleRef.
+
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
 	- remove more SPI usage
 
         * Carbon.subproj/CarbonWindowAdapter.m: Remove a bunch of stuff.

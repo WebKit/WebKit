@@ -98,7 +98,7 @@
     extensionToMIME = [[NSMutableDictionary alloc] init];
     path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
     bundle = [[NSBundle alloc] initWithPath:path];
-	cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
+    cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
     lastModifiedDate = [[[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] objectForKey:NSFileModificationDate] retain];
     return self;
 }
@@ -247,7 +247,8 @@
     [extensionToMIME release];
 
     [bundle release];
-	CFRelease(cfBundle);
+    if (cfBundle)
+        CFRelease(cfBundle);
 
     [lastModifiedDate release];
     
