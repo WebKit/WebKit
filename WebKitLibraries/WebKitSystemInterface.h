@@ -42,3 +42,11 @@ unsigned WKCarbonWindowMask(void);
 void *WKGetNativeWindowFromWindowRef(WindowRef);
 OSType WKCarbonWindowPropertyCreator(void);
 OSType WKCarbonWindowPropertyTag(void);
+
+typedef id WKNSURLConnectionDelegateProxyPtr;
+
+WKNSURLConnectionDelegateProxyPtr WKCreateNSURLConnectionDelegateProxy();
+
+void WKDisableCGDeferredUpdates();
+
+Class WKNSURLProtocolClassForReqest(NSURLRequest *request);
