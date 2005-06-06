@@ -67,3 +67,20 @@ CFTypeRef WKCopyAXTextMarkerRangeEnd(CFTypeRef range);
 void WKAccessibilityHandleFocusChanged();
 AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
+
+BOOL WKFontSmoothingModeIsLCD(int mode);
+void WKSetUpFontCache(size_t s);
+
+void WKSignalCFReadStreamEnd(CFReadStreamRef stream);
+void WKSignalCFReadStreamHasBytes(CFReadStreamRef stream);
+void WKSignalCFReadStreamError(CFReadStreamRef stream, CFStreamError *error);
+
+CFReadStreamRef WKCreateCustomCFReadStream(void *(*formCreate)(CFReadStreamRef, void *), 
+										   void (*formFinalize)(CFReadStreamRef, void *), 
+										   Boolean (*formOpen)(CFReadStreamRef, CFStreamError *, Boolean *, void *), 
+										   CFIndex (*formRead)(CFReadStreamRef, UInt8 *, CFIndex, CFStreamError *, Boolean *, void *), 
+										   Boolean (*formCanRead)(CFReadStreamRef, void *), 
+										   void (*formClose)(CFReadStreamRef, void *), 
+										   void (*formSchedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *), 
+										   void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
+										   void *context);
