@@ -38,9 +38,6 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <CoreGraphics/CGContextPrivate.h>
-
-
 #ifdef USE_CGIMAGEREF
 
 #import <WebKit/WebImageData.h>

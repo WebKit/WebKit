@@ -1,5 +1,11 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+	- remove unneeded header include
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - removed even more SPI use
 
         * Misc.subproj/WebDownload.m:
