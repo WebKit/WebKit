@@ -52,8 +52,6 @@ NSString *WebURLNamePboardType = nil;
 
 + (void)initialize
 {
-    // FIXME  The code below addresses 3446192.  However we can't enable until 3446669 has been fixed.
-#ifdef UTI_PB_API
     CFStringRef osTypeString = UTCreateStringForOSType('url ');
     CFStringRef utiTypeString = UTTypeCreatePreferredIdentifierForTag( kUTTagClassOSType, osTypeString, NULL );
     WebURLPboardType = (NSString *)UTTypeCopyPreferredTagWithClass( kUTTagClassNSPboardType, utiTypeString );
@@ -61,10 +59,6 @@ NSString *WebURLNamePboardType = nil;
     osTypeString = UTCreateStringForOSType('urln');
     utiTypeString = UTTypeCreatePreferredIdentifierForTag( kUTTagClassOSType, osTypeString, NULL );
     WebURLNamePboardType = (NSString *)UTTypeCopyPreferredTagWithClass( kUTTagClassNSPboardType, utiTypeString );
-#else
-    CreatePasteboardFlavorTypeName('url ', (CFStringRef*)&WebURLPboardType);
-    CreatePasteboardFlavorTypeName('urln', (CFStringRef*)&WebURLNamePboardType);
-#endif
 }
 
 + (NSArray *)_web_writableTypesForURL

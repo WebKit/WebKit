@@ -33,11 +33,9 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKitSystemInterface.h>
 
 #import <WebCore/WebCoreSettings.h>
-
-#import <Carbon/Carbon.h>                           // For TEC
-#import <CoreFoundation/CFStringDefaultEncoding.h>  // For __CFStringGetUserDefaultEncoding
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -674,20 +672,9 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
     // We must not use any encoding that has no IANA character set name.
     if (CFStringConvertEncodingToIANACharSetName(encoding) == NULL)
-        return kCFStringEncodingISOLatin1;
-#else
-    UInt32 script = 0;
-    UInt32 region = 0;
-    TextEncoding encoding;
-    OSErr err;
-    ItemCount dontcare;
-
-    // We can't use the Script Manager as it will not return things that use
-    // a script that is not supported on Mac OS X.
-    __CFStringGetUserDefaultEncoding(&script, &region);
-    err = TECGetWebTextEncodings(region, &encoding, 1, &dontcare);
-    if (err != noErr)
         encoding = kCFStringEncodingISOLatin1;
+#else
+	CFStringEncoding encoding = WKGetWebDefaultCFStringEncoding();
 #endif
 
     return encoding;

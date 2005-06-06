@@ -42,8 +42,7 @@
 #import <WebKit/WebNSURLRequestExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
-
-#import <CoreGraphics/CoreGraphicsPrivate.h>
+#import <WebKitSystemInterface.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"
@@ -720,11 +719,11 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 + (void)_releasePageCache: (NSTimer *)timer
 {
-    CGSRealTimeDelta userDelta;
+    float userDelta;
     CFAbsoluteTime loadDelta;
     
     loadDelta = CFAbsoluteTimeGetCurrent()-[WebFrame _timeOfLastCompletedLoad];
-    userDelta = CGSSecondsSinceLastInputEvent(kCGSAnyInputEventType);
+    userDelta = WKSecondsSinceLastInputEvent();
 
     [_pageCacheReleaseTimer release];
     _pageCacheReleaseTimer = nil;

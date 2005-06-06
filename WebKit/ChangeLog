@@ -1,5 +1,22 @@
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Don.
+
+	- remove more SPI usage
+	- fix <rdar://problem/3446192> CoreTranslation SPI is going away
+	
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem _releasePageCache:]):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard initialize]):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _setupFont]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences _systemCFStringEncoding]):
+
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- use WebKitSystemInterface wrappers for NSURLFileTypeMappings and NSURLResponse SPI

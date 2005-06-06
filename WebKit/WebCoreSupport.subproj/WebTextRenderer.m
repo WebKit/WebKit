@@ -909,7 +909,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
         return NO;
     }
 
-    if (ATSUGetStyleGroup(fontStyle, &styleGroup) != noErr) {
+    if (ATSUGetStyleGroup(fontStyle, (ATSStyleGroupPtr *)&styleGroup) != noErr) {
         ATSUDisposeStyle(fontStyle);
         return NO;
     }

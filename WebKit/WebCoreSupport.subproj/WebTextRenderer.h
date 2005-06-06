@@ -27,7 +27,6 @@
  */
 
 #import <WebCore/WebCoreTextRenderer.h>
-#import <QD/ATSUnicodePriv.h>
 
 typedef struct WidthMap WidthMap;
 typedef struct WidthEntry WidthEntry;
@@ -47,7 +46,7 @@ typedef struct CharacterWidthIterator CharacterWidthIterator;
     int lineSpacing;
     int lineGap;
     
-    ATSStyleGroupPtr styleGroup;
+    void *styleGroup;
     
 @public
     NSFont *font;
