@@ -38,8 +38,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 
-#import <HIServices/CoreTranslationFlavorTypeNames.h>
-
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
 
