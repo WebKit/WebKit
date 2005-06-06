@@ -1,5 +1,17 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - more SPI removal, for font cache and CFStream
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (getLCDScaleParameters):
+        (+[WebTextRendererFactory createSharedFactory]):
+        * WebView.subproj/WebFormDataStream.m:
+        (formCanRead):
+        (formEventCallback):
+        (webSetHTTPBody):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - remove use of AX SPI
 
         * WebCoreSupport.subproj/WebViewFactory.m:

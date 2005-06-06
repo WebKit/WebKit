@@ -33,10 +33,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
-
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#import <CoreGraphics/CGFontLCDSupport.h>
-#import <CoreGraphics/CGFontCache.h>
+#import <WebKitSystemInterface.h>
 
 #import <mach-o/dyld.h>
 
@@ -191,15 +188,10 @@ static int getLCDScaleParameters(void)
             return 1;
     }
 
-    switch (mode) {
-        case kCGFontSmoothingLCDLight:
-        case kCGFontSmoothingLCDMedium:
-        case kCGFontSmoothingLCDStrong:
-            return 4;
-        default:
-            return 1;
-    }
-
+	if (WKFontSmoothingModeIsLCD(mode))
+		return 4;
+	else
+		return 1;
 }
 
 static CFMutableDictionaryRef fontCache;
@@ -244,25 +236,15 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
 
-#if !defined(BUILDING_ON_PANTHER)
-	// Turn on local font cache, in addition to the system cache.
-	// See 3835148
-	CGFontSetShouldUseMulticache(true);
-#endif
-	
-        CGFontCache *fontCache;
-        fontCache = CGFontCacheGetLocalCache();
-        CGFontCacheSetShouldAutoExpire (fontCache, false);
-
-        size_t s;
-        if (WebSystemMainMemory() > 128 * 1024 * 1024)
-            s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
-        else
-            s = MINIMUM_GLYPH_CACHE_SIZE;
+	size_t s;
+	if (WebSystemMainMemory() > 128 * 1024 * 1024)
+		s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
+	else
+		s = MINIMUM_GLYPH_CACHE_SIZE;
 #ifndef NDEBUG
-        LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
+	LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
 #endif
-        CGFontCacheSetMaxSize (fontCache, s);
+	WKSetUpFontCache(s);
 
         // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
         // won't be told about changes to fonts.

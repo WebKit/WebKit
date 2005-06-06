@@ -33,10 +33,9 @@
 #import <sys/types.h>
 #import <sys/stat.h>
 
-#import <CoreFoundation/CFStreamAbstract.h>
-
 #import "WebAssertions.h"
 #import "WebNSObjectExtras.h"
+#import <WebKitSystemInterface.h>
 
 #if !BUILDING_ON_PANTHER
 
@@ -227,7 +226,7 @@ static Boolean formCanRead(CFReadStreamRef stream, void *context)
         openNextStream(form);
     }
     if (!form->currentStream) {
-        CFReadStreamSignalEvent(stream, kCFStreamEventEndEncountered, NULL);
+		WKSignalCFReadStreamEnd(stream);
         return FALSE;
     }
     return CFReadStreamHasBytesAvailable(form->currentStream);
@@ -268,17 +267,17 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
 
     switch (type) {
     case kCFStreamEventHasBytesAvailable:
-        CFReadStreamSignalEvent(form->formStream, kCFStreamEventHasBytesAvailable, NULL);
+        WKSignalCFReadStreamHasBytes(form->formStream);
         break;
     case kCFStreamEventErrorOccurred: {
         CFStreamError readStreamError = CFReadStreamGetError(stream);
-        CFReadStreamSignalEvent(form->formStream, kCFStreamEventErrorOccurred, &readStreamError);
+        WKSignalCFReadStreamError(form->formStream, &readStreamError);
         break;
     }
     case kCFStreamEventEndEncountered:
         openNextStream(form);
         if (!form->currentStream) {
-            CFReadStreamSignalEvent(form->formStream, kCFStreamEventEndEncountered, NULL);
+            WKSignalCFReadStreamEnd(form->formStream);
         }
         break;
     case kCFStreamEventNone:
@@ -335,12 +334,8 @@ void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
     [request setValue:[NSString stringWithFormat:@"%lld", length] forHTTPHeaderField:@"Content-Length"];
 
     // Create and set the stream.
-    CFReadStreamCallBacks callBacks = { 1, formCreate, formFinalize, NULL,
-        formOpen, NULL, formRead, NULL, formCanRead, formClose,
-        NULL, NULL, NULL, formSchedule, formUnschedule
-    };
-    CFReadStreamRef stream = CFReadStreamCreate(NULL, &callBacks, formData);
-    [request setHTTPBodyStream:(NSInputStream *)stream];
+	CFReadStreamRef stream = WKCreateCustomCFReadStream(formCreate, formFinalize, formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule, formData);
+	[request setHTTPBodyStream:(NSInputStream *)stream];
     CFRelease(stream);
 
 #else
