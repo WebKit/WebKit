@@ -26,6 +26,19 @@ NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSTimeInterval WKGetNSURLResponseCalculatedExpiration(NSURLResponse *response);
 BOOL WKGetNSURLResponseMustRevalidate(NSURLResponse *response);
 
-CFStringEncoding WKGetWebDefaultCFStringEncoding();
+CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
 float WKSecondsSinceLastInputEvent();
+CGColorSpaceRef WKCreateUncorrectedRGBColorSpace();
+CGColorSpaceRef WKCreateUncorrectedGrayColorSpace();
+CFStringRef WKPreferRGB32Key();
+
+void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
+float WKSecondsSinceLastInputEvent(void);
+
+void WKShowKeyAndMain(void);
+OSStatus WKSyncWindowWithCGAfterMove(WindowRef);
+unsigned WKCarbonWindowMask(void);
+void *WKGetNativeWindowFromWindowRef(WindowRef);
+OSType WKCarbonWindowPropertyCreator(void);
+OSType WKCarbonWindowPropertyTag(void);
