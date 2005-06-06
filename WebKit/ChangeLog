@@ -1,5 +1,11 @@
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
+        - remove another forgotten include
+
+        * Plugins.subproj/WebPluginDatabase.m:
+
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
 	- remove include that I forgot in last checkin
 
         * Misc.subproj/WebNSPasteboardExtras.m:

@@ -42,8 +42,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKitSystemInterface.h>
 
-#import <CoreGraphics/CPSProcesses.h>
-
 @implementation WebPluginDatabase
 
 static WebPluginDatabase *database = nil;
