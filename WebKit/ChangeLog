@@ -1,5 +1,13 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - remove graphics SPI use
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge setFocusRingStyle:radius:color:]):
+        (-[WebGraphicsBridge setDraggingImage:at:]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - more SPI removal, for font cache and CFStream
 
         * WebCoreSupport.subproj/WebTextRendererFactory.m:

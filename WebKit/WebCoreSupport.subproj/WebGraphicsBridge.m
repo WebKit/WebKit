@@ -28,21 +28,10 @@
 
 #import "WebGraphicsBridge.h"
 
-#import <HIServices/CoreDrag.h>
-
 #import "WebAssertions.h"
 
-#ifndef USE_APPEARANCE
-#define USE_APPEARANCE 1
-#endif
-#import <AppKit/NSInterfaceStyle_Private.h>
-#import <AppKit/NSView_Private.h>
-
 #import "WebImageRenderer.h"
-
-@interface NSView (AppKitSecretsWebGraphicsBridgeKnowsAbout)
-- (NSView *)_clipViewAncestor;
-@end
+#import <WebKitSystemInterface.h>
 
 @implementation WebGraphicsBridge
 
@@ -61,134 +50,15 @@
 
 - (void)setFocusRingStyle:(NSFocusRingPlacement)placement radius:(int)radius color:(NSColor *)color
 {
-    // get clip bounds
-    NSView *clipView = [[NSView focusView] _clipViewAncestor];
-    NSRect clipRect = [clipView convertRect:[clipView _focusRingVisibleRect] toView:nil];
-    
-#if SCALE
-    if (__NSHasDisplayScaleFactor(NULL)) {
-        float scaleFactor = [[view window] _scaleFactor];
-        clipRect.size.width *= scaleFactor;
-        clipRect.size.height *= scaleFactor;
-    }
-#endif
-    
-    // put together the style
-    CGFocusRingStyle focusRingStyle;
-    CGStyleRef focusRingStyleRef;
-    focusRingStyle.version    = 0;
-    focusRingStyle.ordering   = (CGFocusRingOrdering)placement;
-    focusRingStyle.alpha      = .5;
-    focusRingStyle.radius     = radius ? radius : kCGFocusRingRadiusDefault;
-    focusRingStyle.threshold  = kCGFocusRingThresholdDefault;
-    focusRingStyle.bounds     = *(CGRect*)&clipRect;
-    focusRingStyle.accumulate = 0;
-    focusRingStyle.tint = _NSDefaultControlTint() == NSBlueControlTint ? kCGFocusRingTintBlue : kCGFocusRingTintGraphite;
-    
-    NSColor *ringColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-    if (ringColor) {
-        float c[4];
-        [ringColor getRed:&c[0] green:&c[1] blue:&c[2] alpha:&c[3]];
-        CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
-        CGColorRef colorRef = CGColorCreate(colorSpace, c);
-        CGColorSpaceRelease(colorSpace);
-        focusRingStyleRef = CGStyleCreateFocusRingWithColor(&focusRingStyle, colorRef);
-        CGColorRelease(colorRef);
-    }
-    else {
-        focusRingStyleRef = CGStyleCreateFocusRing(&focusRingStyle);
-    }
-    CGContextSetStyle([[NSGraphicsContext currentContext] graphicsPort], focusRingStyleRef);
-    CGStyleRelease(focusRingStyleRef);
-}
-
-static void FlipImageSpec(CoreDragImageSpec* imageSpec) {    
-    // run through and swap each row. we'll need a temporary row to hold the swapped row
-    //
-    unsigned char* tempRow = malloc(imageSpec->bytesPerRow);
-    int            planes  = imageSpec->isPlanar ? imageSpec->samplesPerPixel : 1;
-    
-    int p;
-    for (p = 0; p < planes; p++) {
-	unsigned char* topRow = (unsigned char*)imageSpec->data[p];
-	unsigned char* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
-	int i;
-	for (i = 0; i < imageSpec->pixelsHigh / 2; i++, topRow += imageSpec->bytesPerRow, botRow -= imageSpec->bytesPerRow) {
-	    bcopy(topRow,  tempRow, imageSpec->bytesPerRow);
-	    bcopy(botRow,  topRow,  imageSpec->bytesPerRow);
-	    bcopy(tempRow, botRow,  imageSpec->bytesPerRow);
-	}
-    }
-    free(tempRow);
+	WKSetFocusRingStyle(placement, radius, color);
 }
 
 // Dashboard wants to set the drag image during dragging, but Cocoa does not allow this.  Instead we drop
 // down to the CG API.  Converting an NSImage to a CGImageSpec is copied from NSDragManager.
 - (void)setDraggingImage:(NSImage *)image at:(NSPoint)offset
 {
-    NSSize 		imageSize = [image size];
-    CGPoint             imageOffset = {-offset.x, -(imageSize.height - offset.y)};
-    CGRect		imageRect= CGRectMake(0, 0, imageSize.width, imageSize.height);
-    NSBitmapImageRep 	*bitmapImage;
-    CoreDragImageSpec	imageSpec;
-    CGSRegionObj 	imageShape;
-    BOOL                flipImage;
-    OSStatus		error;
-    
-    // if the image contains an NSBitmapImageRep, we are done
-    bitmapImage = (NSBitmapImageRep *)[image bestRepresentationForDevice:nil];    
-    if (bitmapImage == nil || ![bitmapImage isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes([bitmapImage size], imageSize)) {
-        // otherwise we need to render the image and get the bitmap data from it
-        [image lockFocus];
-        bitmapImage = [[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect *)&imageRect];
-        [image unlockFocus];
-        
-	// we may have to flip the bits we just read if the iamge was flipped since it means the cache was also
-	// and CoreDragSetImage can't take a transform for rendering.
-	flipImage = [image isFlipped];
-        
-    } else {
-        flipImage = NO;
-        [bitmapImage retain];
-    }
-    ASSERT_WITH_MESSAGE(bitmapImage, "dragging image does not contain bitmap");
-    
-    imageSpec.version = kCoreDragImageSpecVersionOne;
-    imageSpec.pixelsWide = [bitmapImage pixelsWide];
-    imageSpec.pixelsHigh = [bitmapImage pixelsHigh];
-    imageSpec.bitsPerSample = [bitmapImage bitsPerSample];
-    imageSpec.samplesPerPixel = [bitmapImage samplesPerPixel];
-    imageSpec.bitsPerPixel = [bitmapImage bitsPerPixel];
-    imageSpec.bytesPerRow = [bitmapImage bytesPerRow];
-    imageSpec.isPlanar = [bitmapImage isPlanar];
-    imageSpec.hasAlpha = [bitmapImage hasAlpha];
-    [bitmapImage getBitmapDataPlanes:(unsigned char **)imageSpec.data];
-    
-    // if image was flipped, we have an upside down bitmap since the cache is rendered flipped
-    //
-    if (flipImage) {
-	FlipImageSpec(&imageSpec);
-    }
-    
-    error = CGSNewRegionWithRect(&imageRect, &imageShape);
-    ASSERT_WITH_MESSAGE(error == kCGErrorSuccess, "Error getting shape for image: %d", error);
-    if (error != kCGErrorSuccess) {
-        [bitmapImage release];
-        return;
-    }
-    
-    // make sure image has integer offset
-    //
-    imageOffset.x = floor(imageOffset.x + 0.5);
-    imageOffset.y = floor(imageOffset.y + 0.5);
-    
-    // TODO: what is overallAlpha for window?
-    error = CoreDragSetImage(CoreDragGetCurrentDrag(), imageOffset, &imageSpec, imageShape, 1.0);
-    CGSReleaseRegion(imageShape);
-    ASSERT_WITH_MESSAGE(error == kCGErrorSuccess, "Error setting image for drag: %d", error);
-    
-    [bitmapImage release];
-
+	WKSetDragImage(image, offset);
+	
     // Hack:  We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CF drag manager is too lame to use the RunLoop by itself.  This
     // is the most innocuous event, per Kristen.
