@@ -34,6 +34,7 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebNSObjectExtras.h>
+#import <WebKitSystemInterface.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
 
@@ -1538,7 +1539,7 @@ CGColorSpaceRef WebCGColorSpaceCreateRGB(void)
 #if BUILDING_ONPANTHER
     return CGColorSpaceCreateDeviceRGB();
 #else // !BUILDING_ON_PANTHER
-    return CGColorSpaceCreateDisplayRGB();
+    return WKCreateUncorrectedRGBColorSpace();
 #endif // BUILDING_ON_PANTHER
 #endif    
 }
@@ -1555,7 +1556,7 @@ CGColorSpaceRef WebCGColorSpaceCreateGray(void)
 #if BUILDING_ONPANTHER
     return CGColorSpaceCreateDeviceGray();
 #else // !BUILDING_ON_PANTHER
-    return CGColorSpaceCreateDisplayGray();
+    return WKCreateUncorrectedGrayColorSpace();
 #endif // BUILDING_ON_PANTHER
 #endif    
 }

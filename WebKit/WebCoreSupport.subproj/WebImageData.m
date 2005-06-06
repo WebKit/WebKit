@@ -33,14 +33,11 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitSystemBits.h>
+#import <WebKitSystemInterface.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <CoreGraphics/CGColorSpacePrivate.h>
-
 #ifdef USE_CGIMAGEREF
-
-#import <ImageIO/CGImageSourcePrivate.h>
 
 // Forward declarations of internal methods.
 @interface WebImageData (WebInternal)
@@ -187,7 +184,8 @@
 {
     static CFDictionaryRef imageSourceOptions;
     if (!imageSourceOptions) {
-        const void * keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
+        const void * keys[2] = { kCGImageSourceShouldCache, 0 };
+		keys[1] = WKPreferRGB32Key();
         const void * values[2] = { kCFBooleanTrue, kCFBooleanTrue };
         imageSourceOptions = CFDictionaryCreate (NULL, keys, values, 2, 
                 &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
@@ -205,9 +203,9 @@
 	
 	if (colorModel) {
 	    if (CFStringCompare (colorModel, CFSTR("RGB"), 0) == kCFCompareEqualTo)
-		uncorrectedColorSpace = CGColorSpaceCreateDisplayRGB();
+		uncorrectedColorSpace = WKCreateUncorrectedRGBColorSpace();
 	    else if (CFStringCompare (colorModel, CFSTR("Gray"), 0) == kCFCompareEqualTo)
-		uncorrectedColorSpace = CGColorSpaceCreateDisplayGray();
+		uncorrectedColorSpace = WKCreateUncorrectedGrayColorSpace();
 	}
 	
 	if (uncorrectedColorSpace) {

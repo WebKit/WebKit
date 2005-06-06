@@ -30,7 +30,6 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 
@@ -269,7 +268,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
     isInitializingConnection = NO;
 #endif
     if (defersCallbacks) {
-        [connection setDefersCallbacks:YES];
+		WKSetNSURLConnectionDefersCallbacks(connection, YES);
     }
 
     return YES;
@@ -278,7 +277,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-    [connection setDefersCallbacks:defers];
+	WKSetNSURLConnectionDefersCallbacks(connection, defers);
     // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
     [self deliverResourceAfterDelay];
 }

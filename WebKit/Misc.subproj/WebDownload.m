@@ -30,9 +30,10 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLDownload.h>
-#import <Foundation/NSURLDownloadPrivate.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
+
+@class NSURLConnectionDelegateProxy;
 
 // FIXME: Remove these declarations because _initWithLoadingConnection is declared in NSURLDownloadPrivate.h
 // and _initWithLoadingResource is obsolete, once we compile only with the new Foundation.
@@ -47,6 +48,10 @@
                       response:(NSURLResponse *)response
                       delegate:(id)delegate
                          proxy:(NSURLConnectionDelegateProxy *)proxy;
+- (id)_initWithRequest:(NSURLRequest *)request
+			  delegate:(id)delegate
+			 directory:(NSString *)directory;
+						 
 @end
 
 @interface WebDownloadInternal : NSObject

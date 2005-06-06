@@ -30,7 +30,6 @@
 
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
@@ -311,7 +310,6 @@
 
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![connection defersCallbacks]);
     ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
     ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
 
@@ -354,7 +352,6 @@
 {
     ASSERT(data);
     ASSERT([data length] != 0);
-    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _webView] defersCallbacks]);
  
@@ -376,7 +373,6 @@
 
 - (void)didFinishLoading
 {
-    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![connection defersCallbacks]);
     ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
     ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
 
@@ -396,7 +392,6 @@
 
 - (void)didFailWithError:(NSError *)error
 {
-    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _webView] defersCallbacks]);
 

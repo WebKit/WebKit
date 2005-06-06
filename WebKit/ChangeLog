@@ -1,3 +1,22 @@
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
+        - removed even more SPI use
+
+        * Misc.subproj/WebDownload.m:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _imageSourceOptions]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (WebCGColorSpaceCreateRGB):
+        (WebCGColorSpaceCreateGray):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]):
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didReceiveResponse:]):
+        (-[WebMainResourceClient didReceiveData:lengthReceived:]):
+        (-[WebMainResourceClient didFinishLoading]):
+        (-[WebMainResourceClient didFailWithError:]):
+
 2005-06-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
