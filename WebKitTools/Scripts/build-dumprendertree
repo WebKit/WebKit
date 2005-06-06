@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+
+# Simplified build script for Web Kit Open Source Project.
+# Modified copy of build-webkit. Perhaps these could share code.
+
+use strict;
+
+# Check that we're in the right directory.
+if (! -d "WebKitTools") {
+    if (-d "../WebKitTools") {
+        chdir ".." or die;
+    }
+    if (! -d "WebKitTools") {
+        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+    }
+}
+
+# Check that an Xcode product directory is set.
+open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+my $productDir = <PRODUCT>;
+close PRODUCT;
+if (!$productDir) {
+    die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
+}
+
+# Build
+chdir "WebKitTools/DumpRenderTree" or die;
+exit system "xcodebuild";

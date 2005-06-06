@@ -37,11 +37,16 @@ if (!$productDir) {
     die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
 }
 
+my $result = system "WebKitTools/Scripts/build-dumprendertree";
+exit $result if $result;
+
 my $tool = "$productDir/DumpRenderTree";
 
 die "can't find executable DumpRenderTree tool (looked in $productDir)\n" if !-x $tool;
 
-my $WebCoreDirectory = "WebCore";
+my $workingDir = `pwd`;
+chomp $workingDir;
+my $WebCoreDirectory = "$workingDir/WebCore";
 my $testDirectory = "$WebCoreDirectory/layout-tests";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";

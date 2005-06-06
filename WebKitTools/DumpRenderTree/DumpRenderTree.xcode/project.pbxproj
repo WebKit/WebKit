@@ -7,13 +7,8 @@
 	objects = {
 		014CEA4F0018CE4811CA2923 = {
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,23 +18,6 @@
 //012
 //013
 //014
-//030
-//031
-//032
-//033
-//034
-		034768E6FF38A76511DB9C8B = {
-			explicitFileType = "compiled.mach-o.executable";
-			isa = PBXFileReference;
-			path = DumpRenderTree;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-//030
-//031
-//032
-//033
-//034
 //080
 //081
 //082
@@ -54,9 +32,10 @@
 			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 08FB7794FE84155DC02AAC07;
+			productRefGroup = 9340995508540CAF007F3BC8;
 			projectDirPath = "";
 			targets = (
-				08FB779FFE84155DC02AAC07,
+				9340994A08540CAE007F3BC8,
 			);
 		};
 		08FB7794FE84155DC02AAC07 = {
@@ -67,7 +46,7 @@
 				9335436903D75557008635CE,
 				9335436503D7553D008635CE,
 				9335435F03D75502008635CE,
-				034768E6FF38A76511DB9C8B,
+				9340995508540CAF007F3BC8,
 			);
 			isa = PBXGroup;
 			name = DumpRenderTree;
@@ -90,76 +69,6 @@
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		08FB779FFE84155DC02AAC07 = {
-			buildPhases = (
-				08FB77A0FE84155DC02AAC07,
-				08FB77A1FE84155DC02AAC07,
-				08FB77A3FE84155DC02AAC07,
-			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRECOMPILE_PREFIX_HEADER = YES;
-				PREFIX_HEADER = DumpRenderTreePrefix.h;
-				PRODUCT_NAME = DumpRenderTree;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wall -W -Wno-unused-parameter";
-			};
-			dependencies = (
-			);
-			isa = PBXToolTarget;
-			name = DumpRenderTree;
-			productInstallPath = "$(HOME)/bin";
-			productName = DumpRenderTree;
-			productReference = 034768E6FF38A76511DB9C8B;
-		};
-		08FB77A0FE84155DC02AAC07 = {
-			buildActionMask = 2147483647;
-			files = (
-				32A70AAC03705E1F00C91783,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		08FB77A1FE84155DC02AAC07 = {
-			buildActionMask = 2147483647;
-			files = (
-				08FB77A2FE84155DC02AAC07,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		08FB77A2FE84155DC02AAC07 = {
-			fileRef = 08FB7796FE84155DC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
-		08FB77A3FE84155DC02AAC07 = {
-			buildActionMask = 2147483647;
-			files = (
-				08FB77A4FE84155DC02AAC07,
-				9335436103D75502008635CE,
-				9335436603D7553D008635CE,
-				9335436A03D75557008635CE,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		08FB77A4FE84155DC02AAC07 = {
-			fileRef = 08FB779EFE84155DC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //080
 //081
 //082
@@ -178,12 +87,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		32A70AAC03705E1F00C91783 = {
-			fileRef = 32A70AAB03705E1F00C91783;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //320
 //321
 //322
@@ -201,24 +104,12 @@
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9335436103D75502008635CE = {
-			fileRef = 9335435F03D75502008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		9335436503D7553D008635CE = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			path = WebCore.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		9335436603D7553D008635CE = {
-			fileRef = 9335436503D7553D008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		9335436903D75557008635CE = {
 			isa = PBXFileReference;
@@ -227,11 +118,111 @@
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		9335436A03D75557008635CE = {
+		9340994A08540CAE007F3BC8 = {
+			buildPhases = (
+				9340994B08540CAE007F3BC8,
+				9340994D08540CAE007F3BC8,
+				9340994F08540CAE007F3BC8,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PRODUCT_NAME = DumpRenderTree;
+				WARNING_CFLAGS = "-Wall -W -Wno-unused-parameter";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = DumpRenderTree;
+			productInstallPath = "$(HOME)/bin";
+			productName = DumpRenderTree;
+			productReference = 9340995408540CAF007F3BC8;
+			productType = "com.apple.product-type.tool";
+		};
+		9340994B08540CAE007F3BC8 = {
+			buildActionMask = 2147483647;
+			files = (
+				9340994C08540CAE007F3BC8,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9340994C08540CAE007F3BC8 = {
+			fileRef = 32A70AAB03705E1F00C91783;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9340994D08540CAE007F3BC8 = {
+			buildActionMask = 2147483647;
+			files = (
+				9340994E08540CAE007F3BC8,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9340994E08540CAE007F3BC8 = {
+			fileRef = 08FB7796FE84155DC02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		9340994F08540CAE007F3BC8 = {
+			buildActionMask = 2147483647;
+			files = (
+				9340995008540CAE007F3BC8,
+				9340995108540CAE007F3BC8,
+				9340995208540CAE007F3BC8,
+				9340995308540CAE007F3BC8,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9340995008540CAE007F3BC8 = {
+			fileRef = 08FB779EFE84155DC02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9340995108540CAE007F3BC8 = {
+			fileRef = 9335435F03D75502008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9340995208540CAE007F3BC8 = {
+			fileRef = 9335436503D7553D008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9340995308540CAE007F3BC8 = {
 			fileRef = 9335436903D75557008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		9340995408540CAF007F3BC8 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = DumpRenderTree;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9340995508540CAF007F3BC8 = {
+			children = (
+				9340995408540CAF007F3BC8,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 	};
 	rootObject = 08FB7793FE84155DC02AAC07;

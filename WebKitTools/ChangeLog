@@ -1,5 +1,12 @@
 2005-06-05  Darin Adler  <darin@apple.com>
 
+        * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Tweak, simplify.
+        * Scripts/build-dumprendertree: Added.
+        * Scripts/build-webkit: Build All in the JavaScriptCore directory.
+        * Scripts/run-webkit-tests: Build DumpRenderTree before running.
+
+2005-06-05  Darin Adler  <darin@apple.com>
+
         * Scripts/run-safari: Fix path to Safari executable. Add check for frameworks.
 
 2005-06-05  Darin Adler  <darin@apple.com>

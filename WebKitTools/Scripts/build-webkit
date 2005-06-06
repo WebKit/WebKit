@@ -40,7 +40,12 @@ for my $dir (@projects, @otherDirs) {
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
-    my $result = system "xcodebuild", "-buildstyle", $style;
+    my $result;
+    if ($dir eq "JavaScriptCore") {
+        $result = system "xcodebuild", "-target", "All", "-buildstyle", $style;
+    } else {
+        $result = system "xcodebuild", "-buildstyle", $style;
+    }
     exit $result if $result;
     chdir ".." or die;
 }
