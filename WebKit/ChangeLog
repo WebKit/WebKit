@@ -1,3 +1,18 @@
+2005-06-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+	- remove more SPI usage
+
+        * Carbon.subproj/CarbonWindowAdapter.m: Remove a bunch of stuff.
+        (+[CarbonWindowAdapter frameViewClassForStyleMask:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter _oldPlaceWindow:]):
+        (-[CarbonWindowAdapter _termWindowIfOwner]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        (-[CarbonWindowAdapter makeKeyWindow]):
+
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
         - remove another forgotten include

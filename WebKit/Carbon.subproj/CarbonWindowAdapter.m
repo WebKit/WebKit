@@ -26,32 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//
-//  CarbonWindowAdapter.m
-//  Synergy
-//
-//  Created by Ed Voas on Fri Jan 17 2003.
-//  Copyright (c) 2004 Apple Computer, Inc. All rights reserved.
-//
-
-/*
-	NSCarbonWindow.m
-	Application Kit
-	Copyright (c) 2000-2002, Apple Computer, Inc.
-	All rights reserved.
-	Original Author: Mark Piccirelli
-	Responsibility: Mark Piccirelli
-
-The subclass of NSWindow that encapsulates a Carbon window, in such a manner that the encapsulated Carbon window can at least be shown as a app-modal dialog or document-modal sheet by the AppKit sheet-showing machinery.
-*/
-
+// I don't think this class belongs in WebKit. Lets move it out.
 
 // Things that I've never bothered working out:
 // For non-sheet windows, handle Carbon WindowMove events so as to do the same things as -[NSWindow _windowMoved].
 // Check to see how this stuff deals with various screen size change scenarious.
 // M.P. Warning - 9/17/01
-
-// Create an NSWindow(Private) to declare the private NSWindow methods we call from here, to do away with compiler warnings.  2776110.  M.P. To Do - 9/17/00
 
 // There are some invariants I'm maintaining for objects of this class which have been successfully initialized but not deallocated.  These all make it easier to not override every single method of NSWindow.
 // _auxiliaryStorage->auxWFlags.hasShadow will always be false if the Carbon window has a kWindowNoShadowAttribute, and vice versa.
@@ -75,43 +55,22 @@ The subclass of NSWindow that encapsulates a Carbon window, in such a manner tha
 
 // Some things would have to be made public if someone wanted to subclass this so as to support more menu item commands.  M.P. Warning - 9/19/00
 
-
 #import "CarbonWindowAdapter.h"
+
 #import "CarbonWindowFrame.h"
 #import "CarbonWindowContentView.h"
 #import "HIViewAdapter.h"
 
+#import <WebKitSystemInterface.h>
+
 #import <AppKit/AppKit.h>
-#import <AppKit/NSWindow_Private.h>
-#import <CoreGraphics/CGSWindow.h>
+//#import <CoreGraphics/CGSWindow.h>
 #import <HIToolbox/CarbonEvents.h>
-#import <HIToolbox/CarbonEventsPriv.h>
 #import <HIToolbox/Controls.h>
-#import <HIToolbox/ControlsPriv.h>
-#import <HIToolbox/WindowsPriv.h>
 #import <HIToolbox/HIView.h>
 #import <assert.h>
 
 #import "WebNSObjectExtras.h"
-
-// Carbon SPI functions.
-// The fact that these are declared here instead of in an HIToolbox header is a bad thing.  2776459.  M.P. To Do - 9/18/01
-OSStatus _SetWindowCGOrderingEnabled(WindowRef inWindow, Boolean inEnableWindow);
-OSStatus _SyncWindowWithCGAfterMove(WindowRef inWindow);
-OSStatus SyncWindowToCGSWindow(WindowRef inWindow, CGSWindowID inWindowID);
-
-// Copied-and-pasted AppKit miscellany.
-#define WINDOWSMENUWINDOW(w)   (!_wFlags.excludedFromWindowsMenu && \
-                                [w _miniaturizedOrCanBecomeMain] && [w _isDocWindow])
-extern float _NXScreenMaxYForRect(NSRect *rect);
-extern void _NXOrderKeyAndMain( void );
-extern void _NXShowKeyAndMain( void );
-
-// Constants that we use to fiddle with NSViewCarbonControls.
-extern const ControlFocusPart NSViewCarbonControlMagicPartCode;
-extern const OSType NSAppKitPropertyCreator;
-extern const OSType NSViewCarbonControlViewPropertyTag;
-extern const OSType NSCarbonWindowPropertyTag;
 
 @interface NSWindow(HIWebFrameView)
 - _initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
@@ -121,7 +80,6 @@ extern const OSType NSCarbonWindowPropertyTag;
 - (NSGraphicsContext *)_threadContext;
 - (void)_setFrame:(NSRect)newWindowFrameRect;
 - (void)_setVisible:(BOOL)flag;
-- (NSRect)_growBoxRect;
 @end
 
 @interface NSApplication(HIWebFrameView)
@@ -144,7 +102,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 + (Class)frameViewClassForStyleMask:(unsigned int)style {
 
     // There's only one appropriate window style, and only one appropriate window frame class.
-    assert(style & _NSCarbonWindowMask);
+    assert(style & WKCarbonWindowMask());
     return [CarbonWindowFrame class];
 
 }
@@ -189,7 +147,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	_carbon = inCarbon;
 
     // Find out the window's CoreGraphics window reference.
-    nativeWindow = GetNativeWindowFromWindowRef(inWindowRef);
+    nativeWindow = WKGetNativeWindowFromWindowRef(inWindowRef);
 
     // Find out the window's Carbon window attributes.
     GetWindowAttributes(inWindowRef, &windowAttributes);
@@ -205,7 +163,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     backingStoreType = NSBackingStoreRetained;
 
     // Figure out the window's style mask.
-    styleMask = _NSCarbonWindowMask;
+    styleMask = WKCarbonWindowMask();
     if (windowAttributes & kWindowCloseBoxAttribute) styleMask |= NSClosableWindowMask;
     if (windowAttributes & kWindowResizableAttribute) styleMask |= NSResizableWindowMask;
     if (windowFeatures & kWindowCanCollapse) styleMask |= NSMiniaturizableWindowMask;
@@ -268,7 +226,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // Put a pointer to this Cocoa NSWindow in a Carbon window property tag.
     // Right now, this is just used by NSViewCarbonControl.  M.P. Notice - 10/9/00
     windowAsProperty = self;
-    osStatus = SetWindowProperty(_windowRef, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), &windowAsProperty);
+    osStatus = SetWindowProperty(_windowRef, WKCarbonWindowPropertyCreator(), WKCarbonWindowPropertyTag(), sizeof(NSWindow *), &windowAsProperty);
     if (osStatus!=noErr) {
         [self release];
         return nil;
@@ -387,7 +345,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Set the frame rectangle of the border view and this window from the Carbon window's structure region bounds.
     newWindowFrameRect.origin.x = windowStructureBoundsRect.left;
-    newWindowFrameRect.origin.y = _NXScreenMaxYForRect(NULL) - windowStructureBoundsRect.bottom;
+    newWindowFrameRect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - windowStructureBoundsRect.bottom;
     newWindowFrameRect.size.width = windowStructureBoundsRect.right - windowStructureBoundsRect.left;
     newWindowFrameRect.size.height = windowStructureBoundsRect.bottom - windowStructureBoundsRect.top;
     if (!NSEqualRects(newWindowFrameRect, _frame)) {
@@ -577,7 +535,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Tell Carbon to update its various regions.
     // Despite its name, this function should be called early and often, even if the window isn't visible yet.  2702648.  M.P. Notice - 7/24/01
-    osStatus = _SyncWindowWithCGAfterMove(_windowRef);
+    osStatus = WKSyncWindowWithCGAfterMove(_windowRef);
     if (osStatus!=noErr) NSLog(@"A Carbon window's bounds couldn't be synchronized (%i).", (int)osStatus);
 
 }
@@ -610,7 +568,6 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 // Do what NSWindow would do, but for a Carbon window.
 // This function is mostly cut-and-pasted from -[NSWindow _termWindowIfOwner].  M.P. Notice - 8/7/00
 - (void)_termWindowIfOwner {
-    assert([self _doesOwnRealWindow]);
     [self _setWindowNumber:-1];
     _wFlags.isTerminating = YES;
     if (_windowRef && _windowRefIsOwned) DisposeWindow(_windowRef);
@@ -638,7 +595,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Let Carbon know that the window has been moved, unless this method is being called "early."
     if (_wFlags.visible) {
-        osStatus = _SyncWindowWithCGAfterMove(_windowRef);
+        osStatus = WKSyncWindowWithCGAfterMove(_windowRef);
         if (osStatus!=noErr) NSLog(@"A Carbon window's bounds couldn't be synchronized (%i).", (int)osStatus);
     }
 
@@ -689,7 +646,7 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 	[NSApp _setMouseActivationInProgress:NO];
 	[NSApp setIsActive:YES];
 	[super makeKeyWindow];
-	_NXShowKeyAndMain();
+	WKShowKeyAndMain();
 }
 
 
@@ -1069,20 +1026,5 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
       return retRect;
 }
-
-
-/*
-void _NSSetModalWindowClassLevel(int level) {
-    WindowGroupRef groupRef;
-    // Carbon will handle modality in its own way
- //   if (_NSIsCarbonApp()) {
-        return;
-  //  }//
-    groupRef = GetWindowGroupOfClass(kModalWindowClass);
-//    if (groupRef) {
-//        SetWindowGroupLevel(groupRef, level);
-//    }
-}
-*/
 
 @end // implementation CarbonWindowAdapter
