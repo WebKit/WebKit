@@ -26,10 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AppKit/NSBitmapImageRep_Private.h>
-#import <Foundation/NSPrivateDecls.h>
-
 #include "CarbonUtils.h"
+#import <WebKitSystemInterface.h>
 
 extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 
@@ -39,13 +37,6 @@ static NSAutoreleasePool*	sPool;
 static unsigned numPools;
 static EventLoopRef poolLoop;
 
-static unsigned getNumPools()
-{
-    void *v = NSPushAutoreleasePool(0);
-    unsigned numPools = (unsigned)(v);
-    NSPopAutoreleasePool (v);
-    return numPools;
-}
 
 void                    HIWebViewRegisterClass( void );
 
@@ -64,16 +55,14 @@ WebInitForCarbon()
         NSApplicationLoad();
                 
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-        numPools = getNumPools();
+        numPools = WKGetNSAutoreleasePoolCount();
         
         poolLoop = GetCurrentEventLoop ();
 
         InstallEventLoopIdleTimer( GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL );
         
-        sAppKitLoaded = true;     
-
-        [NSBitmapImageRep _setEnableFlippedImageFix:YES];
-        
+        sAppKitLoaded = true;
+                
         HIWebViewRegisterClass();
     }
 }
@@ -93,12 +82,12 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
         CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
         EventLoopRef thisLoop = GetCurrentEventLoop ();
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
-            unsigned currentNumPools = getNumPools()-1;            
+            unsigned currentNumPools = WKGetNSAutoreleasePoolCount()-1;            
             if (currentNumPools == numPools){
                 [sPool release];
                 
                 sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-                numPools = getNumPools();
+                numPools = WKGetNSAutoreleasePoolCount();
             }
         }
         CFRelease( mode );

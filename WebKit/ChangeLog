@@ -1,5 +1,20 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - removed more SPI
+
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+        (PoolCleaner):
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _postFlagsChangedEvent:]):
+        (-[WebHTMLView _autoscroll]):
+        (-[WebHTMLView addMouseMovedObserver]):
+        (-[WebHTMLView removeMouseMovedObserver]):
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        (-[WebHTMLView _interceptEditingKeyEvent:]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - more SPI use removal
 
         * Misc.subproj/WebDownload.h:

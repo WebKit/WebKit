@@ -69,14 +69,6 @@
 #import <WebKitSystemInterface.h>
 
 #import <AppKit/NSAccessibility.h>
-#import <AppKit/NSGraphicsContextPrivate.h>
-#import <AppKit/NSResponder_Private.h>
-
-#import <CoreGraphics/CGContextGState.h>
-
-// Included to help work around this bug:
-// <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
-#import <AppKit/NSKeyBindingManager.h>
 
 // Included so usage of _NSSoftLinkingGetFrameworkFuncPtr will compile
 #import <mach-o/dyld.h> 
@@ -675,7 +667,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
     // Pretend it's a mouse move.
     [[NSNotificationCenter defaultCenter]
-        postNotificationName:NSMouseMovedNotification object:self
+        postNotificationName:WKMouseMovedNotification() object:self
         userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
@@ -1448,11 +1440,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_autoscroll
 {
-    int isStillDown;
-    
     // Guarantee that the autoscroll timer is invalidated, even if we don't receive
     // a mouse up event.
-    PSstilldown([_private->autoscrollTriggerEvent eventNumber], &isStillDown);
+	BOOL isStillDown = WKMouseIsDown();   
     if (!isStillDown){
         [self _stopAutoscrollTimer];
         return;
@@ -2068,7 +2058,7 @@ static WebHTMLView *lastHitView = nil;
     if (([[self window] isKeyWindow] && ![self _insideAnotherHTMLView]) ||
         [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]){
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
-            name:NSMouseMovedNotification object:nil];
+            name:WKMouseMovedNotification() object:nil];
         [self _frameOrBoundsChanged];
     }
 }
@@ -2081,7 +2071,7 @@ static WebHTMLView *lastHitView = nil;
         
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-        name:NSMouseMovedNotification object:nil];
+        name:WKMouseMovedNotification() object:nil];
 }
 
 - (void)updateFocusState
@@ -2285,7 +2275,7 @@ static WebHTMLView *lastHitView = nil;
     
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
-    [[self window] _setShouldPostEventNotifications: YES];
+	WKSetNSWindowShouldPostEventNotifications([self window], YES);
 
     if (!_private->needsLayout) {
         return;
@@ -3234,10 +3224,6 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {   
-    // Work around this bug:
-    // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
-    [NSKeyBindingManager sharedKeyBindingManager];
-    
     // Use the isEditable state to determine whether or not to process tab key events.
     // The idea here is that isEditable will be NO when this WebView is being used
     // in a browser, and we desire the behavior where tab moves to the next element
