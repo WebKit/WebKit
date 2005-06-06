@@ -36,7 +36,6 @@
 
 #import <WebKitSystemInterface.h>
 
-#import <Foundation/NSURLProtocolPrivate.h>
 #import <Foundation/NSURLRequest.h>
 
 #import <unicode/uchar.h>
@@ -517,7 +516,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 - (NSURL *)_webkit_canonicalize
 {
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:self];
-    Class concreteClass = [NSURLProtocol _protocolClassForRequest:request];
+    Class concreteClass = WKNSURLProtocolClassForReqest(request);
     if (!concreteClass) {
         [request release];
         return self;

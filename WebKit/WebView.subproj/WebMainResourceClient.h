@@ -29,8 +29,8 @@
 #import <Foundation/Foundation.h>
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKitSystemInterface.h>
 
-@class NSURLConnectionDelegateProxy;
 @class WebPolicyDecisionListener;
 @class WebDataSource;
 
@@ -40,7 +40,7 @@
     int _bytesReceived; // for logging only
     WebPolicyDecisionListener *listener;
     NSURLResponse *policyResponse;
-    NSURLConnectionDelegateProxy *proxy;
+    WKNSURLConnectionDelegateProxyPtr proxy;
     NSURLRequest *_initialRequest;
 }
 

@@ -1,5 +1,18 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - more SPI use removal
+
+        * Misc.subproj/WebDownload.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _webkit_canonicalize]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
 	- remove unneeded header include
 
         * WebCoreSupport.subproj/WebImageRenderer.m:

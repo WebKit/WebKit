@@ -86,11 +86,6 @@
 #import <WebCore/WebCoreView.h>
 
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLDownloadPrivate.h>
-
-#if !BUILDING_ON_PANTHER         
-#include <CoreGraphics/CGSConnection.h>
-#endif
 
 #define FOR_EACH_RESPONDER_SELECTOR(macro) \
 macro(alignCenter) \
@@ -194,12 +189,6 @@ macro(yankAndSelect) \
 - (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
-
-#if !BUILDING_ON_PANTHER         
-@interface NSApplication (AppKitSecrectsIKnow)
-- (CGSConnectionID)contextID;
-@end
-#endif
 
 @interface NSObject (WebDocumentSearchingHack)
 // FIXME: this should be part of a protocol (new version of <WebDocumentSearching>)
@@ -1518,8 +1507,7 @@ static bool CGContextInitialized = false;
 {
 #if !BUILDING_ON_PANTHER         
     if (!CGContextInitialized) {
-        CFStringRef key = CFSTR(kCGSDisableDeferredUpdates);
-        CGSSetConnectionProperty([NSApp contextID], [NSApp contextID], (CGSValueObj)key, (CGSValueObj)kCFBooleanTrue);
+		WKDisableCGDeferredUpdates();
         CGContextInitialized = true;
     }
 #endif

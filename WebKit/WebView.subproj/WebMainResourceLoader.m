@@ -30,7 +30,6 @@
 
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
 
@@ -62,7 +61,7 @@
     
     if (self) {
         [self setDataSource:ds];
-        proxy = [[NSURLConnectionDelegateProxy alloc] init];
+        proxy = WKCreateNSURLConnectionDelegateProxy();
         [proxy setDelegate:self];
     }
 
