@@ -12,6 +12,13 @@
         * WebKitSystemInterface.h:
         * libWebKitSystemInterface.a:
 
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2005-06-05  Maciej Stachowiak  <mjs@apple.com>
 
         - added a few more bits of SPI
