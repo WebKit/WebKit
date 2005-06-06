@@ -73,12 +73,11 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <WebKit/WebLocalizableStrings.h>
 
@@ -578,7 +577,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     // Fall back to the older calculation
     time_t now = time(NULL);
-    NSTimeInterval lifetime = [response _freshnessLifetime];
+    NSTimeInterval lifetime = WKGetNSURLResponseFreshnessLifetime(response);
     if (lifetime < 0)
         lifetime = 0;
     
@@ -1087,7 +1086,7 @@ static BOOL loggedObjectCacheSize = NO;
         // Try to guess the MIME type based off the extension.
         NSString *extension = [[URL path] pathExtension];
         if ([extension length] > 0) {
-            MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+            MIMEType = WKGetMIMETypeForExtension(extension);
             if ([MIMEType length] == 0 && [[WebPluginDatabase installedPlugins] pluginForExtension:extension])
                 // If no MIME type is specified, use a plug-in if we have one that can handle the extension.
                 return ObjectElementPlugin;
@@ -1126,7 +1125,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     ASSERT(path);
     NSString *extension = [path pathExtension];
-    NSString *type = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    NSString *type = WKGetMIMETypeForExtension(extension);
     return [type length] == 0 ? @"application/octet-stream" : type;
 }
 

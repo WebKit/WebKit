@@ -39,7 +39,6 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLResponsePrivate.h>
 
 @interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
 {
@@ -161,7 +160,7 @@
         [super didReceiveResponse:theResponse];
         if (stream) {
             if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
-                [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
+                ([(NSHTTPURLResponse *)theResponse statusCode] >= 400 || [(NSHTTPURLResponse *)theResponse statusCode] < 100)) {
                 NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                             code:NSURLErrorFileDoesNotExist
                                                             URL:[theResponse URL]];

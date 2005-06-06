@@ -40,10 +40,9 @@
 #import <WebKit/WebPluginDocumentView.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <CoreGraphics/CPSProcesses.h>
-
-#import <Foundation/NSURLFileTypeMappings.h>
 
 @implementation WebPluginDatabase
 
@@ -120,7 +119,7 @@ static WebPluginDatabase *database = nil;
         // If no plug-in was found from the extension, attempt to map from the extension to a MIME type
         // and find the a plug-in from the MIME type. This is done in case the plug-in has not fully specified
         // an extension <-> MIME type mapping.
-        NSString *MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        NSString *MIMEType = WKGetMIMETypeForExtension(extension);
         if ([MIMEType length] > 0) {
             plugin = [self pluginForMIMEType:MIMEType];
         }

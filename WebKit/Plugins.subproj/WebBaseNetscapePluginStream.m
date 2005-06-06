@@ -34,9 +34,9 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKitSystemInterface.h>
 
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSURLResponsePrivate.h>
 
 static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
@@ -243,7 +243,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     [self startStreamResponseURL:[r URL]
            expectedContentLength:[r expectedContentLength]
-                lastModifiedDate:[r _lastModifiedDate]
+                lastModifiedDate:WKGetNSURLResponseLastModifiedDate(r)
                         MIMEType:[r MIMEType]];
 }
 

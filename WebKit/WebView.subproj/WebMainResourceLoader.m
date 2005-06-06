@@ -34,7 +34,6 @@
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSURLResponsePrivate.h>
 
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>

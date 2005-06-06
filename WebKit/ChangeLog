@@ -1,3 +1,41 @@
+2005-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- use WebKitSystemInterface wrappers for NSURLFileTypeMappings and NSURLResponse SPI
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]):
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _webkit_suggestedFilenameWithMIMEType:]):
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:rect:event:pasteboard:source:offset:]):
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate didReceiveResponse:]):
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForExtension:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge expiresTimeForResponse:]):
+        (-[WebBridge determineObjectFromMIMEType:URL:]):
+        (-[WebBridge MIMETypeForPath:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory supportedMIMETypes]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _canUseResourceWithResponse:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _commitIfReady:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _imageExistsAtPaths:]):
+        (-[WebHTMLView _documentFragmentWithPaths:]):
+        (-[WebHTMLView resourceForData:preferredFilename:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebView.m:
+        (+[WebView _supportedFileExtensions]):
+        (+[WebView suggestedFileExtensionForMIMEType:]):
+        (+[WebView _MIMETypeForFile:]):
+
 2005-06-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

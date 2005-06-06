@@ -34,9 +34,10 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebLocalizableStrings.h>
 
+#import <WebKitSystemInterface.h>
+
 #import <Foundation/NSURLProtocolPrivate.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <unicode/uchar.h>
 #import <unicode/uidna.h>
@@ -784,12 +785,11 @@ typedef struct {
 
     // If the type is known, check the extension and correct it if necessary.
     if (![MIMEType isEqualToString:@"application/octet-stream"] && ![MIMEType isEqualToString:@"text/plain"]) {
-        NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
-        NSArray *extensions = [mappings extensionsForMIMEType:MIMEType];
+        NSArray *extensions = WKGetExtensionsForMIMEType(MIMEType);
 
         if (![extension length] || (extensions && ![extensions containsObject:extension])) {
             // The extension doesn't match the MIME type. Correct this.
-            NSString *correctExtension = [mappings preferredExtensionForMIMEType:MIMEType];
+            NSString *correctExtension = WKGetPreferredExtensionForMIMEType(MIMEType);
             if ([correctExtension length] != 0) {
                 // Append the correct extension.
                 filename = [filename stringByAppendingPathExtension:correctExtension];

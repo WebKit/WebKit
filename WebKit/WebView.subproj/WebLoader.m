@@ -33,7 +33,6 @@
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <Foundation/NSURLResponsePrivate.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataProtocol.h>
@@ -48,6 +47,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 
 static unsigned inNSURLConnectionCallback;
 static BOOL NSURLConnectionSupportsBufferedData;
@@ -216,9 +216,9 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
 - (BOOL)_canUseResourceWithResponse:(NSURLResponse *)theResponse
 {
-    if ([theResponse _mustRevalidate]) {
+    if (WKGetNSURLResponseMustRevalidate(theResponse)) {
         return NO;
-    } else if ([theResponse _calculatedExpiration] - CFAbsoluteTimeGetCurrent() < 1) {
+    } else if (WKGetNSURLResponseCalculatedExpiration(theResponse) - CFAbsoluteTimeGetCurrent() < 1) {
         return NO;
     } else {
         return YES;

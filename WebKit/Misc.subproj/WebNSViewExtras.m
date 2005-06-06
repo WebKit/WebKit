@@ -35,8 +35,7 @@
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-
-#import <Foundation/NSURLFileTypeMappings.h>
+#import <WebKitSystemInterface.h>
 
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0
@@ -231,7 +230,7 @@
         origin.y = origin.y + originalSize.height;
         origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
     } else {
-        NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[wir MIMEType]];
+        NSString *extension = WKGetPreferredExtensionForMIMEType([wir MIMEType]);
         if (extension == nil) {
             extension = @"";
         }

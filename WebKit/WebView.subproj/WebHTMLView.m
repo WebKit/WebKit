@@ -66,12 +66,11 @@
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <AppKit/NSAccessibility.h>
 #import <AppKit/NSGraphicsContextPrivate.h>
 #import <AppKit/NSResponder_Private.h>
-
-#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <CoreGraphics/CGContextGState.h>
 
@@ -267,13 +266,12 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
 {
-    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
     NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
-        NSString *MIMEType = [mappings MIMETypeForExtension:[path pathExtension]];
+        NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
         if ([imageMIMETypes containsObject:MIMEType]) {
             return YES;
         }
@@ -285,14 +283,13 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
 {
     DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
-    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
     NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
     NSEnumerator *enumerator = [paths objectEnumerator];
     WebDataSource *dataSource = [self _dataSource];
     NSString *path;
     
     while ((path = [enumerator nextObject]) != nil) {
-        NSString *MIMEType = [mappings MIMETypeForExtension:[path pathExtension]];
+        NSString *MIMEType = WKGetMIMETypeForExtension([path pathExtension]);
         if ([imageMIMETypes containsObject:MIMEType]) {
             WebResource *resource = [[WebResource alloc] initWithData:[NSData dataWithContentsOfFile:path]
                                                                   URL:[NSURL fileURLWithPath:path]
@@ -435,7 +432,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     NSString *extension = [name pathExtension];
     NSString *MIMEType = nil;
     if ([extension length] != 0) {
-        MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        MIMEType = WKGetMIMETypeForExtension(extension);
     }
     // Only support image resources.
     if (MIMEType == nil || ![[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {

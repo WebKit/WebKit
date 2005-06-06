@@ -79,6 +79,7 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>
@@ -86,7 +87,6 @@
 
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLDownloadPrivate.h>
-#import <Foundation/NSURLFileTypeMappings.h>
 
 #if !BUILDING_ON_PANTHER         
 #include <CoreGraphics/CGSConnection.h>
@@ -343,9 +343,8 @@ static bool debugWidget = true;
     NSArray *MIMETypes = [self _supportedMIMETypes];
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
-    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
     while ((MIMEType = [enumerator nextObject]) != nil) {
-        NSArray *extensionsForType = [mappings extensionsForMIMEType:MIMEType];
+        NSArray *extensionsForType = WKGetExtensionsForMIMEType(MIMEType);
         if (extensionsForType) {
             [extensions addObjectsFromArray:extensionsForType];
         }
@@ -413,7 +412,7 @@ static bool debugWidget = true;
 
 + (NSString *)suggestedFileExtensionForMIMEType:(NSString *)type
 {
-    return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
+    return WKGetPreferredExtensionForMIMEType(type);
 }
 
 - (void)_close
@@ -534,7 +533,7 @@ static bool debugWidget = true;
     
     // Get the MIME type from the extension.
     if ([extension length] != 0) {
-        MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        MIMEType = WKGetMIMETypeForExtension(extension);
     }
 
     // If we can't get a known MIME type from the extension, sniff.

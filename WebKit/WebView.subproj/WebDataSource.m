@@ -62,10 +62,10 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLResponsePrivate.h>
 
 @implementation WebDataSourcePrivate 
 
@@ -780,7 +780,7 @@
                          reload:reload 
                     contentType:[_private->response MIMEType]
                         refresh:[headers objectForKey:@"Refresh"]
-                   lastModified:(pageCache ? nil : [_private->response _lastModifiedDate])
+                   lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(_private->response))
                       pageCache:pageCache];
 
         [frame _opened];

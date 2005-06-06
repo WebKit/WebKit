@@ -30,7 +30,7 @@
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebKit/WebAssertions.h>
-#import <Foundation/NSURLFileTypeMappings.h>
+#import <WebKitSystemInterface.h>
 
 @implementation WebImageRendererFactory
 
@@ -198,12 +198,11 @@ struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
 
     if (imageMIMETypes == nil) {
         NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
-        NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
         NSMutableSet *mimes = [NSMutableSet set];
         NSString *type;
 
         while ((type = [enumerator nextObject]) != nil) {
-            NSString *mime = [mappings MIMETypeForExtension:type];
+            NSString *mime = WKGetMIMETypeForExtension(type);
             if (mime != nil && ![mime isEqualToString:@"application/octet-stream"]) {
                 [mimes addObject:mime];
             }

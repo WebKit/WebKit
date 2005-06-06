@@ -36,8 +36,7 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
-
-#import <Foundation/NSURLFileTypeMappings.h>
+#import <WebKitSystemInterface.h>
 
 #import <HIServices/CoreTranslationFlavorTypeNames.h>
 
@@ -257,7 +256,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     [self _web_writeImage:image URL:URL title:title archive:archive types:types];
     [types release];
     
-    NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[image MIMEType]];
+    NSString *extension = WKGetPreferredExtensionForMIMEType([image MIMEType]);
     if (extension == nil) {
         extension = @"";
     }
