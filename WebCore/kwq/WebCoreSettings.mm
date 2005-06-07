@@ -41,6 +41,7 @@
     [cursiveFontFamily release];
     [fantasyFontFamily release];
     [defaultTextEncoding release];
+    [userStyleSheetLocation release];
 
     delete settings;
     
