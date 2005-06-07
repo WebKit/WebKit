@@ -1,3 +1,14 @@
+2005-06-07  Darin Adler  <darin@apple.com>
+
+        Change by Toby Peterson <toby@opendarwin.org>.
+        Reviewed by me.
+
+        - fixed the WebCore half of build failure with spaces in the path
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=3291
+
+        * WebCore.pbproj/project.pbxproj: Add quotes to make LIBRARY_SEARCH_PATHS work even when
+        the path has a space in it.
+
 2005-06-07  David Hyatt  <hyatt@apple.com>
 
 	Patch from Mark Rowe to fix a minor memory leak in WebCoreSettings.
