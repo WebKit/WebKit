@@ -37,6 +37,12 @@ for my $dir (@projects, @otherDirs) {
     }
 }
 
+chdir "WebKitLibraries" or die;
+`ditto libWebKitSystemInterface.a "${productDir}/libWebKitSystemInterface.a"`;
+`mkdir -p "${productDir}/usr/local/include"`;
+`ditto WebKitSystemInterface.h "${productDir}/usr/local/include/WebKitSystemInterface.h"`;
+chdir ".." or die;
+
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;

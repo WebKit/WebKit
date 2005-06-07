@@ -1,3 +1,7 @@
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
+        * Scripts/build-webkit: Install WebKitSystemInterface stuff into build products dir.
+
 2005-06-05  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Tweak, simplify.
