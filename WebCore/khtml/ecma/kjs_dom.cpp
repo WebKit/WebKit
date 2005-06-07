@@ -140,36 +140,56 @@ DOMNode::~DOMNode()
 
 void DOMNode::mark()
 {
-  static bool markingTree = false;
+  assert(!marked());
 
-  if (m_impl->inDocument() || markingTree) {
+  NodeImpl *node = m_impl.get();
+
+  // Nodes in the document are kept alive by ScriptInterpreter::mark,
+  // so we have no special responsibilities and can just call the base class here.
+  if (node->inDocument()) {
+    DOMObject::mark();
+    return;
+  }
+
+  // This is a node outside the document, so find the root of the tree it is in,
+  // and start marking from there.
+  NodeImpl *root = node;
+  for (NodeImpl *current = m_impl.get(); current; current = current->parentNode()) {
+    root = current;
+  }
+
+  static QPtrDict<NodeImpl> markingRoots;
+
+  // If we're already marking this tree, then we can simply mark this wrapper
+  // by calling the base class; our caller is iterating the tree.
+  if (markingRoots.find(root)) {
     DOMObject::mark();
     return;
   }
 
   DocumentImpl *document = m_impl->getDocument();
-  NodeImpl *outermostWrappedNode = m_impl.get();
-  for (NodeImpl *current = m_impl->parentNode(); current; current = current->parentNode()) {
-    if (ScriptInterpreter::getDOMNodeForDocument(document, current))
-      outermostWrappedNode = current;
-  }
 
-  markingTree = true;
-
-  NodeImpl *nodeToMark = outermostWrappedNode;
-  while (nodeToMark) {
+  // Mark the whole tree; use the global set of roots to avoid reentering.
+  markingRoots.insert(root, root);
+  for (NodeImpl *nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
     DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(document, nodeToMark);
-    if (!wrapper)
-      nodeToMark = nodeToMark->traverseNextNode();
-    else if (wrapper->marked())
-      nodeToMark = nodeToMark->traverseNextSibling();
-    else {
-      wrapper->mark();
-      nodeToMark = nodeToMark->traverseNextNode();
+    if (wrapper) {
+      if (!wrapper->marked())
+        wrapper->mark();
+    } else if (nodeToMark == node) {
+      // This is the case where the map from the document to wrappers has
+      // been cleared out, but a wrapper is being marked. For now, we'll
+      // let the rest of the tree of wrappers get collected, because we have
+      // no good way of finding them. Later we should test behavior of other
+      // browsers and see if we need to preserve other wrappers in this case.
+      if (!marked())
+        mark();
     }
   }
+  markingRoots.remove(root);
 
-  markingTree = false;
+  // Double check that we actually ended up marked. This assert caught problems in the past.
+  assert(marked());
 }
 
 bool DOMNode::toBoolean(ExecState *) const

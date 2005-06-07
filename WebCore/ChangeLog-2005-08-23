@@ -1,3 +1,25 @@
+2005-06-07  Adele Peterson  <adele@apple.com>
+
+        Change by Darin, reviewed by Maciej and me.
+
+        - fixed <rdar://problem/4139800> REGRESSION: Safari crashes at bebe.com
+
+        There were cases where the DOMNode mark function would end up not even
+        marking the node that it was called on. The old code tried to skip any
+        subtrees that were already marked, but that code was wrong.
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::DOMNode::mark): Changed three things:
+          1) Instead of a boolean, keep a set of trees that we are marking, that
+             prevents problems if we mark things that have references between
+             separate trees of DOM nodes.
+          2) Don't do the "outermost node with a wrapper" check, just start marking
+             at the root of the entire tree, because there's no way to have an
+             unreachable node pointing to a reachable node.
+          3) Handle the unusual case where the document's wrapper dictionary is
+             gone by marking just this node explicitly.
+        This passes the layout tests, still fixes the Dashboard memory leak from
+        bug 4125222, and makes bebe.com work again.
+
 2005-06-07  Darin Adler  <darin@apple.com>
 
         Change by Toby Peterson <toby@opendarwin.org>.
