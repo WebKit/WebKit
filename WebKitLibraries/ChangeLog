@@ -1,5 +1,11 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - updated for crashing bugfix
+
+        * libWebKitSystemInterface.a:
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - updated
 
         * WebKitSystemInterface.h:
