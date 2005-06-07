@@ -41,6 +41,7 @@ for my $dir (@projects, @otherDirs) {
 chdir "WebKitLibraries" or die;
 print "${productDir}/libWebKitSystemInterface.a";
 `ditto libWebKitSystemInterface.a "${productDir}/libWebKitSystemInterface.a"`;
+`ranlib "${productDir}/libWebKitSystemInterface.a"`;
 `mkdir -p "${productDir}/usr/local/include"`;
 `ditto WebKitSystemInterface.h "${productDir}/usr/local/include/WebKitSystemInterface.h"`;
 chdir ".." or die;
