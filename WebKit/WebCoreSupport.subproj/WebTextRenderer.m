@@ -31,16 +31,13 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 
-#import <AppKit/NSFont_Private.h>
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-#import <QD/ATSUnicodePriv.h>
-
 #import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <float.h>
 
@@ -50,19 +47,6 @@
 // FIXME: FATAL_ALWAYS seems like a bad idea; lets stop using it.
 
 // SPI from other frameworks.
-
-@interface NSLanguage : NSObject 
-+ (NSLanguage *)defaultLanguage;
-@end
-
-@interface NSFont (WebPrivate)
-- (ATSUFontID)_atsFontID;
-- (CGFontRef)_backingCGSFont;
-// Private method to find a font for a character.
-+ (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
-+ (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
-- (NSGlyph)_defaultGlyphForChar:(unichar)uu;
-@end
 
 // Macros
 #define SPACE 0x0020
@@ -87,7 +71,7 @@
 
 #define UNINITIALIZED_GLYPH_WIDTH 65535
 
-#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)[font _atsFontID]))
+#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)WKGetNSFontATSUFontId(font)))
 
 #define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7
 #define INVALID_WIDTH -(__FLT_MAX__)
@@ -242,14 +226,6 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
 #else
 
-static inline CGFontRenderingMode _AppkitGetCGRenderingMode(NSFont *font) {
-    switch ([font renderingMode]) {
-        case NSFontIntegerAdvancementsRenderingMode: return kCGFontRenderingMode1BitPixelAligned;
-        case NSFontAntialiasedIntegerAdvancementsRenderingMode: return kCGFontRenderingModeAntialiasedPixelAligned;
-        default: return kCGFontRenderingModeAntialiased;
-    }
-}
-
 static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
     float pointSize;
@@ -261,9 +237,9 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
     pointSize = [font pointSize];
     m = CGAffineTransformMakeScale(pointSize, pointSize);
-    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, _AppkitGetCGRenderingMode(font), &glyph, 1, &advance)) {
+    if (!WKGetGlyphTransformedAdvances(font, &m, &glyph, &advance)) {
         ERROR ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
-	return 0.;
+		return 0;
     }
 
     return advance.width;
@@ -426,15 +402,15 @@ static BOOL alwaysUseATSU = NO;
         [self _setupFont];
     }
     
-    // We emulate the appkit metrics by applying rounding as is done
-    // in the appkit.
-    CGFontRef cgFont = [font _backingCGSFont];
-    const CGFontHMetrics *metrics = CGFontGetHMetrics(cgFont);
-    unsigned unitsPerEm = CGFontGetUnitsPerEm(cgFont);
+    int iAscent;
+    int iDescent;
+    int iLineGap;
+	unsigned unitsPerEm;
+	WKGetFontMetrics(font, &iAscent, &iDescent, &iLineGap, &unitsPerEm); 
     float pointSize = [font pointSize];
-    float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
-    float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
-    float _lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
+    float asc = (ScaleEmToUnits(iAscent, unitsPerEm)*pointSize);
+    float dsc = (-ScaleEmToUnits(iDescent, unitsPerEm)*pointSize);
+    float _lineGap = ScaleEmToUnits(iLineGap, unitsPerEm)*pointSize;
     float adjustment;
 
     // We need to adjust Times, Helvetica, and Courier to closely match the
@@ -491,7 +467,7 @@ static BOOL alwaysUseATSU = NO;
     [smallCapsRenderer release];
 
     if (styleGroup)
-        ATSUDisposeStyleGroup(styleGroup);
+		WKReleaseStyleGroup(styleGroup);
 
     freeWidthMap(glyphToWidthMap);
     freeGlyphMap(characterToGlyphMap);
@@ -506,7 +482,7 @@ static BOOL alwaysUseATSU = NO;
 - (void)finalize
 {
     if (styleGroup)
-        ATSUDisposeStyleGroup(styleGroup);
+        WKReleaseStyleGroup(styleGroup);
 
     freeWidthMap(glyphToWidthMap);
     freeGlyphMap(characterToGlyphMap);
@@ -797,11 +773,12 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     
     // Now do string based lookup.
     if (substituteFont == nil)
-        substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
+        substituteFont = WKGetFontInLanguageForRange(font, string, NSMakeRange (0,[string length]));
+		
 
     // Now do character based lookup.
     if (substituteFont == nil && [string length] == 1)
-        substituteFont = [NSFont findFontLike:font forCharacter: [string characterAtIndex: 0] inLanguage:[NSLanguage defaultLanguage]];
+        substituteFont = WKGetFontInLanguageForCharacter(font, [string characterAtIndex: 0]);
 
     // Get the screen or printer variation of the font.
     substituteFont = usingPrinterFont ? [substituteFont printerFont] : [substituteFont screenFont];
@@ -830,29 +807,15 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     return substituteFont;
 }
 
-- (void)_convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
+- (void)_convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (WKGlyphVectorRef)glyphs
 {
-    OSStatus status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    OSStatus status = WKConvertCharToGlyphs(styleGroup, characters, numCharacters, glyphs);
     if (status != noErr){
         FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
     }
-
-#ifdef DEBUG_GLYPHS
-    int foundGlyphs = 0;
-    ATSLayoutRecord *glyphRecord;
-    for (i = 0; i < numCharacters; i++) {
-        glyphRecord = (ATSLayoutRecord *)glyphs->firstRecord;
-        for (i = 0; i < numCharacters; i++) {
-            if (glyphRecord->glyphID != 0)
-                foundGlyphs++;
-            glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphs->recordSize);
-        }
-    }
-    printf ("For %s found %d glyphs in range 0x%04x to 0x%04x\n", [[font displayName] cString], foundGlyphs, characters[0], characters[numCharacters-1]);
-#endif
 }
 
-- (void)_convertUnicodeCharacters: (const UnicodeChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
+- (void)_convertUnicodeCharacters: (const UnicodeChar *)characters length: (unsigned)numCharacters toGlyphs: (WKGlyphVectorRef)glyphs
 {
     UniChar localBuffer[LOCAL_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
@@ -869,7 +832,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
         buffer[bufPos++] = U16_TRAIL(c);
     }
         
-    OSStatus status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
+    OSStatus status = WKConvertCharToGlyphs(styleGroup, buffer, numCharacters*2, glyphs);
     if (status != noErr){
         FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
     }
@@ -909,7 +872,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
         return NO;
     }
 
-    if (ATSUGetStyleGroup(fontStyle, (ATSStyleGroupPtr *)&styleGroup) != noErr) {
+    if (WKGetATSStyleGroup(fontStyle, styleGroup) != noErr) {
         ATSUDisposeStyle(fontStyle);
         return NO;
     }
@@ -919,7 +882,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     if (![self _computeWidthForSpace]) {
         freeGlyphMap(characterToGlyphMap);
         characterToGlyphMap = NULL;
-        ATSUDisposeStyleGroup(styleGroup);
+        WKReleaseStyleGroup(styleGroup);
         styleGroup = NULL;
         return NO;
     }
@@ -967,7 +930,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
 	bool originalShouldUseFontSmoothing;
 	
-	originalShouldUseFontSmoothing = CGContextGetShouldSmoothFonts (cgContext);
+	originalShouldUseFontSmoothing = WKCGContextGetShouldSmoothFonts (cgContext);
 	CGContextSetShouldSmoothFonts (cgContext, [WebView _shouldUseFontSmoothing]);
         
 #if BUILDING_ON_PANTHER        
@@ -1007,13 +970,13 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         
 	NSView *v = [NSView focusView];
 
-        CGContextSetFont (cgContext, [drawFont _backingCGSFont]);
+        CGContextSetFont (cgContext, WKGetCGFontFromNSFont(drawFont));
         
         // Deal will flipping flippyness.
         const float *matrix = [drawFont matrix];
         float flip = [v isFlipped] ? -1 : 1;
         CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
-        CGContextSetFontRenderingMode (cgContext, _AppkitGetCGRenderingMode(drawFont));
+		WKSetCGFontRenderingMode(cgContext, drawFont);
         CGContextSetFontSize(cgContext, 1.0);
 #endif
 
@@ -1259,7 +1222,7 @@ static const char *joiningNames[] = {
 {
     UnicodeGlyphMap *map = (UnicodeGlyphMap *)calloc (1, sizeof(UnicodeGlyphMap));
     ATSLayoutRecord *glyphRecord;
-    ATSGlyphVector glyphVector;
+	char glyphVector[WKGlyphVectorSize];
     UnicodeChar end, start;
     unsigned blockSize;
     ATSGlyphRef glyphID;
@@ -1284,7 +1247,7 @@ static const char *joiningNames[] = {
     }
 
     OSStatus status;
-    status = ATSInitializeGlyphVector(count*2, 0, &glyphVector);
+    status = WKInitializeGlyphVector(count*2, &glyphVector);
     if (status != noErr){
         // This should never happen, indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
@@ -1293,7 +1256,7 @@ static const char *joiningNames[] = {
     }
     
     [self _convertUnicodeCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
-    unsigned numGlyphs = glyphVector.numGlyphs;
+    unsigned numGlyphs = WKGetGlyphVectorNumGlyphs(&glyphVector);
     if (numGlyphs != count){
         // This should never happen, indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
@@ -1302,13 +1265,13 @@ static const char *joiningNames[] = {
     }
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
-    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
+    glyphRecord = WKGetGlyphVectorFirstRecord(&glyphVector);
     for (i = 0; i < count; i++) {
         map->glyphs[i].glyph = glyphRecord->glyphID;
         map->glyphs[i].font = 0;
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + WKGetGlyphVectorRecordSize(&glyphVector));
     }
-    ATSClearGlyphVector(&glyphVector);
+    WKClearGlyphVector(&glyphVector);
     
     if (unicodeCharacterToGlyphMap == 0)
         unicodeCharacterToGlyphMap = map;
@@ -1344,7 +1307,7 @@ static const char *joiningNames[] = {
 {
     GlyphMap *map = (GlyphMap *)calloc (1, sizeof(GlyphMap));
     ATSLayoutRecord *glyphRecord;
-    ATSGlyphVector glyphVector;
+	char glyphVector[WKGlyphVectorSize];
     UniChar end, start;
     unsigned blockSize;
     ATSGlyphRef glyphID;
@@ -1379,7 +1342,7 @@ static const char *joiningNames[] = {
         buffer[NO_BREAK_SPACE] = ' ';
     }
 
-    OSStatus status = ATSInitializeGlyphVector(count, 0, &glyphVector);
+    OSStatus status = WKInitializeGlyphVector(count, &glyphVector);
     if (status != noErr) {
         // This should never happen, perhaps indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
@@ -1388,7 +1351,7 @@ static const char *joiningNames[] = {
     }
 
     [self _convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
-    unsigned numGlyphs = glyphVector.numGlyphs;
+    unsigned numGlyphs = WKGetGlyphVectorNumGlyphs(&glyphVector);
     if (numGlyphs != count){
         // This should never happen, perhaps indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
@@ -1397,13 +1360,13 @@ static const char *joiningNames[] = {
     }
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
-    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
+    glyphRecord = (ATSLayoutRecord *)WKGetGlyphVectorFirstRecord(glyphVector);
     for (i = 0; i < count; i++) {
         map->glyphs[i].glyph = glyphRecord->glyphID;
         map->glyphs[i].font = 0;
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + WKGetGlyphVectorRecordSize(glyphVector));
     }
-    ATSClearGlyphVector(&glyphVector);
+    WKClearGlyphVector(&glyphVector);
     
     if (characterToGlyphMap == 0)
         characterToGlyphMap = map;
@@ -1418,7 +1381,7 @@ static const char *joiningNames[] = {
     
     // Special case for characters 007F-00A0.
     if (glyphID == 0 && c >= 0x7F && c <= 0xA0){
-        glyphID = [font _defaultGlyphForChar: c];
+        glyphID = WKGetDefaultGlyphForChar(font, c);
         map->glyphs[c - start].glyph = glyphID;
         map->glyphs[c - start].font = 0;
     }
@@ -1493,7 +1456,7 @@ static const char *joiningNames[] = {
         if(status != noErr)
             FATAL_ALWAYS ("ATSUCreateStyle failed (%d)", status);
     
-        ATSUFontID fontID = [font _atsFontID];
+        ATSUFontID fontID = WKGetNSFontATSUFontId(font);
         if (fontID == 0){
             ATSUDisposeStyle(_ATSUSstyle);
             ERROR ("unable to get ATSUFontID for %@", font);
@@ -2224,7 +2187,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (theFont) {
-        ATSUFontID fontId = [theFont _atsFontID];
+        ATSUFontID fontId = WKGetNSFontATSUFontId(theFont);
         LOG (FontCache, "fillStyleWithAttributes:  font = %p,%@, _atsFontID = %x\n", theFont, theFont, (unsigned)fontId);
         ATSUAttributeTag tag = kATSUFontTag;
         ByteCount size = sizeof(ATSUFontID);

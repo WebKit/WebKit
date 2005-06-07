@@ -1,5 +1,37 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - removed carbon and text SPI
+
+        * Carbon.subproj/HIWebView.m:
+        (-[MenuItemProxy initWithAction:]):
+        (-[MenuItemProxy action]):
+        (-[MenuItemProxy tag]):
+        (GetWindowRef):
+        (Click):
+        (MouseUp):
+        (MouseMoved):
+        (MouseDragged):
+        (MouseWheelMoved):
+        (WindowHandler):
+        (HIWebViewEventHandler):
+        (UpdateObserver):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth):
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        (-[WebTextRenderer dealloc]):
+        (-[WebTextRenderer finalize]):
+        (-[WebTextRenderer _substituteFontForString:families:]):
+        (-[WebTextRenderer _convertCharacters:length:toGlyphs:]):
+        (-[WebTextRenderer _convertUnicodeCharacters:length:toGlyphs:]):
+        (-[WebTextRenderer _setupFont]):
+        (_drawGlyphs):
+        (-[WebTextRenderer _extendUnicodeCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _initializeATSUStyle]):
+        (fillStyleWithAttributes):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - remove plugin-related SPI calls
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
