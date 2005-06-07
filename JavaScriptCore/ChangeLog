@@ -2,7 +2,7 @@
 
         Reviewed by Maciej.
 
-        - fixed so we can compile without Apple Internal headers installed
+        - add libicue headers
 
         * JavaScriptCore.pbproj/project.pbxproj: Added icu directory to header search path.
 
