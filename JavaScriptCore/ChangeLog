@@ -1,8 +1,13 @@
+2005-06-06  Darin Adler  <darin@apple.com>
+
+        * tests/mozilla/run-mozilla-tests: Wrote a perl version of this so we don't require
+        the "jst" tool to run the tests.
+
 2005-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
 
-        - add libicue headers
+        - add libicu headers
 
         * JavaScriptCore.pbproj/project.pbxproj: Added icu directory to header search path.
 

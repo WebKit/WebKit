@@ -1,2 +1,65 @@
-perl jsDriver.pl -e kjs -L ecma/Date -f actual.html
-"$SYMROOTS/jst" expected.html actual.html
+#!/usr/bin/perl -w
+
+use strict;
+
+my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-L", "ecma/Date", "-f", "actual.html";
+
+exit $result if $result;
+
+my %failures;
+
+open EXPECTED, "expected.html" or die;
+while (<EXPECTED>) {
+    last if /failures reported\.$/;
+}
+while (<EXPECTED>) {
+    chomp;
+    $failures{$_} = 1;
+}
+close EXPECTED;
+
+my %newFailures;
+
+open ACTUAL, "actual.html" or die;
+while (<ACTUAL>) {
+    last if /failures reported\.$/;
+}
+while (<ACTUAL>) {
+    chomp;
+    if ($failures{$_}) {
+        delete $failures{$_};
+    } else {
+        $newFailures{$_} = 1;
+    }
+}
+close ACTUAL;
+
+my $numNewFailures = %newFailures + 0;
+if ($numNewFailures) {
+    print "\n** Danger, Will Robinson! Danger! The following failures have been introduced:\n";
+    foreach my $failure (sort keys %newFailures) {
+        print "\t$failure\n";
+    }
+}
+
+my $numOldFailures = %failures + 0;
+if ($numOldFailures) {
+    print "\nYou fixed the following test";
+    print "s" if $numOldFailures != 1;
+    print ":\n";
+    foreach my $failure (sort keys %failures) {
+        print "\t$failure\n";
+    }
+}
+
+print "\n";
+
+print "$numNewFailures regression";
+print "s" if $numNewFailures != 1;
+print " found.\n";
+
+print "$numOldFailures test";
+print "s" if $numOldFailures != 1;
+print " fixed.\n";
+
+print "OK.\n" if $numNewFailures == 0;
