@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>312.1, Copyright 2005 Apple Computer, Inc.</string>
+	<string>412+, Copyright 2005 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -17,8 +17,8 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>312.1</string>
+	<string>412+</string>
 	<key>CFBundleVersion</key>
-	<string>312.1</string>
+	<string>412+</string>
 </dict>
 </plist>
