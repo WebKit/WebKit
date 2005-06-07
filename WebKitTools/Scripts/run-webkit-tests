@@ -94,13 +94,13 @@ if (@ARGV) {
                 push @tests, $test;
             }
         } elsif (-d "$testDirectory/$test") {
-            push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -s $testDirectory/$test $findArguments`;
+            push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
         } else {
             print "test $test not found\n";
         }
     }
 } else {
-    @tests = map { chomp; s-^$testDirectory/--; $_; } `find -s $testDirectory $findArguments`;
+    @tests = map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory $findArguments`;
 }
 
 die "no tests to run\n" if !@tests;

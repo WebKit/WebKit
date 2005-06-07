@@ -1,5 +1,12 @@
 2005-06-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele Amchan.
+
+        * Scripts/run-webkit-tests: Pass -L to find command to follow symlinks. This allows symlinks in the
+        layout-tests directory to include additional sets of tests.
+
+2005-06-07  Darin Adler  <darin@apple.com>
+
         * checkout: Added license.
         * Scripts/build-dumprendertree: Ditto.
         * Scripts/run-webkit-tests: Ditto.
