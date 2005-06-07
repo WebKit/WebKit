@@ -1,5 +1,12 @@
 2005-06-07  Darin Adler  <darin@apple.com>
 
+        * checkout: Added license.
+        * Scripts/build-dumprendertree: Ditto.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/update-webkit: Ditto.
+
+2005-06-07  Darin Adler  <darin@apple.com>
+
         Change by Toby Peterson <toby@opendarwin.org>.
         Reviewed by me.
 
