@@ -1,5 +1,12 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix crashing problem in last change
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _setupFont]):
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         - removed carbon and text SPI
 
         * Carbon.subproj/HIWebView.m:
