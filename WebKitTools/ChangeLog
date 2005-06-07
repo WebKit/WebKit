@@ -1,3 +1,11 @@
+2005-06-07  Darin Adler  <darin@apple.com>
+
+        Change by Toby Peterson <toby@opendarwin.org>.
+        Reviewed by me.
+
+        * Scripts/build-webkit: Changes so you can build with Xcode 2.1. (I also added a license to this file.)
+        * Scripts/run-safari: Ditto.
+
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
         * Scripts/build-webkit: run ranlib on libWebKitSystemInterface.a
