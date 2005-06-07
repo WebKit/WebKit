@@ -2317,7 +2317,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "bison -d -p kjsyy kjs/grammar.y -o \"$DERIVED_FILE_DIR/grammar.cpp\"\ncat \"$DERIVED_FILE_DIR/grammar.cpp.h\" > \"$DERIVED_FILE_DIR/grammar.h\"";
+			shellScript = "bison -d -p kjsyy kjs/grammar.y -o \"$DERIVED_FILE_DIR/grammar.cpp\"\ncat \"$DERIVED_FILE_DIR/grammar.cpp.h\" \"$DERIVED_FILE_DIR/grammar.hpp\" > \"$DERIVED_FILE_DIR/grammar.h\" 2> /dev/null\nexit 0";
 		};
 		932FC3C10824BB61005B3C75 = {
 			children = (

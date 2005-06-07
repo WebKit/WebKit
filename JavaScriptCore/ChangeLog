@@ -3,6 +3,14 @@
         Change by Toby Peterson <toby@opendarwin.org>.
         Reviewed by me.
 
+        * JavaScriptCore.pbproj/project.pbxproj: Allow bison 2.0, which generates the file
+        with a different name.
+
+2005-06-07  Darin Adler  <darin@apple.com>
+
+        Change by Toby Peterson <toby@opendarwin.org>.
+        Reviewed by me.
+
         * kjs/grammar.y: Remove bogus extra line from grammar.y. Toby got this change from KDE KJS.
 
 2005-06-06  Darin Adler  <darin@apple.com>
