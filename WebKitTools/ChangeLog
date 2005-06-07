@@ -1,6 +1,6 @@
 2005-06-07  Darin Adler  <darin@apple.com>
 
-        Reviewed by Adele Amchan.
+        Reviewed by Adele Peterson.
 
         * Scripts/run-webkit-tests: Pass -L to find command to follow symlinks. This allows symlinks in the
         layout-tests directory to include additional sets of tests.
