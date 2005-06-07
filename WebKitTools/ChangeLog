@@ -1,5 +1,9 @@
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
+        * Scripts/build-webkit: Chop newline off of $productDir to avoid problems with logic to copy files ther.
+
+2005-06-06  Maciej Stachowiak  <mjs@apple.com>
+
         * Scripts/build-webkit: Install WebKitSystemInterface stuff into build products dir.
 
 2005-06-05  Darin Adler  <darin@apple.com>

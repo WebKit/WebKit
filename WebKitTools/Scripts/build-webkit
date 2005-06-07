@@ -23,6 +23,7 @@ if (! -d "WebKitTools") {
 # Check that an Xcode product directory is set.
 open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
 my $productDir = <PRODUCT>;
+chomp $productDir;
 close PRODUCT;
 if (!$productDir) {
     die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
@@ -38,6 +39,7 @@ for my $dir (@projects, @otherDirs) {
 }
 
 chdir "WebKitLibraries" or die;
+print "${productDir}/libWebKitSystemInterface.a";
 `ditto libWebKitSystemInterface.a "${productDir}/libWebKitSystemInterface.a"`;
 `mkdir -p "${productDir}/usr/local/include"`;
 `ditto WebKitSystemInterface.h "${productDir}/usr/local/include/WebKitSystemInterface.h"`;
