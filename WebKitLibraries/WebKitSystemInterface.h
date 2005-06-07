@@ -94,3 +94,29 @@ BOOL WKConvertNSEventToCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent
 void WKSendKeyEventToTSM(NSEvent *theEvent);
 void WKCallDrawingNotification(CGrafPtr port, Rect *bounds);
 
+BOOL WKGetGlyphTransformedAdvances(NSFont *font, CGAffineTransform *m, ATSGlyphRef *glyph, CGSize *advance);
+CGFontRef WKGetCGFontFromNSFont(NSFont *font);
+void WKGetFontMetrics(NSFont *font, int *ascent, int *descent, int *lineGap, unsigned *unitsPerEm);
+NSFont *WKGetFontInLanguageForRange(NSFont *font, NSString *string, NSRange range);
+NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
+void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font);
+ATSUFontID WKGetNSFontATSUFontId(NSFont *font);
+void WKReleaseStyleGroup(void *group);
+BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
+
+#define WKGlyphVectorSize (50 * 32)
+
+typedef void *WKGlyphVectorRef;
+OSStatus WKConvertCharToGlyphs(void *styleGroup, const UniChar *characters, unsigned numCharacters, WKGlyphVectorRef glyphs);
+OSStatus WKGetATSStyleGroup(ATSUStyle fontStyle, void **styleGroup);
+OSStatus WKInitializeGlyphVector(int count, WKGlyphVectorRef glyphs);
+void WKClearGlyphVector(WKGlyphVectorRef glyphs);
+
+int WKGetGlyphVectorNumGlyphs(WKGlyphVectorRef glyphVector);
+ATSLayoutRecord *WKGetGlyphVectorFirstRecord(WKGlyphVectorRef glyphVector);
+size_t WKGetGlyphVectorRecordSize(WKGlyphVectorRef glyphVector);
+ATSGlyphRef WKGetDefaultGlyphForChar(NSFont *font, UniChar c);
+
+NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
+NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);
+NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowRef);
