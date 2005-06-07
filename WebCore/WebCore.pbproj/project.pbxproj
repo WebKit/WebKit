@@ -1861,7 +1861,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/parser.cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" > \"$DERIVED_FILE_DIR/parser.h\"";
+			shellScript = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/parser.cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" \"$DERIVED_FILE_DIR/parser.hpp\" > \"$DERIVED_FILE_DIR/parser.h\" 2> /dev/null\nexit 0";
 		};
 		932FC38F0824BA30005B3C75 = {
 			buildActionMask = 2147483647;
