@@ -1,3 +1,14 @@
+2005-06-07  Darin Adler  <darin@apple.com>
+
+        Change by Mark Rowe <opendarwin.org@bdash.net.nz>.
+        Reviewed by me.
+
+        - fixed the WebKit half of build failure with spaces in the path
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=3291
+
+        * WebKit.pbproj/project.pbxproj: Quote DERIVED_FILE_DIR when it is substituted
+        into FRAMEWORK_SEARCH_PATHS, and SYMROOT when into HEADER_SEARCH_PATHS.
+
 2005-06-06  Darin Adler  <darin@apple.com>
 
         * Info.plist: Bumped version to 412+. For some reason it was set to 312.1!
