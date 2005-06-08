@@ -1,3 +1,26 @@
+2005-06-08  Anders Carlsson  <andersca@mac.com>
+
+	Reviewed and committed by Maciej.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3337
+	(Support the Mozilla DOMParser and XMLSerializer objects)
+
+	<rdar://problem/3533735> implement Mozilla "DOMParser" extension for use with XMLHTTPRequest
+
+        Test cases added:
+        * layout-tests/fast/dom/dom-parse-serialize-display-expected.txt: Added.
+        * layout-tests/fast/dom/dom-parse-serialize-display.html: Added.
+        * layout-tests/fast/dom/dom-parse-serialize-expected.txt: Added.
+        * layout-tests/fast/dom/dom-parse-serialize.html: Added.
+
+	* khtml/ecma/domparser.h:
+	* khtml/ecma/domparser.cpp:
+	Add files implementing the DOMParser object.
+
+	* khtml/ecma/kjs_window.h:
+	* khtml/ecma/kjs_window.cpp:
+	Expose DOMParser object.
+	
 2005-06-07  David Hyatt  <hyatt@apple.com>
 
 	Patch from Brian Campbell.  Make sure the min and max values of slider properly update.

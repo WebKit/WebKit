@@ -143,7 +143,7 @@ namespace KJS {
            ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
            Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
-           ReleaseEvents, AddEventListener, RemoveEventListener, XMLHttpRequest, XMLSerializer,
+           ReleaseEvents, AddEventListener, RemoveEventListener, XMLHttpRequest, XMLSerializer, DOMParser,
 	   Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
 	   Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
