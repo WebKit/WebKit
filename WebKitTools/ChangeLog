@@ -1,3 +1,12 @@
+2005-06-08  Maciej Stachowiak  <mjs@apple.com>
+
+	Code change by Toby Peterson <toby@opendarwin.org>
+        Reviewed by me.
+
+        * Scripts/run-safari: Fix to work with Xcode 2.0 again. The script would
+	get confused because build-webkit now makes even 2.0 build directories look
+	like 2.1.
+
 2005-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele Peterson.
