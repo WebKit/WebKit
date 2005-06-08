@@ -133,6 +133,61 @@
 //082
 //083
 //084
+//1A0
+//1A1
+//1A2
+//1A3
+//1A4
+		1A69D37F085627410009880D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = domparser.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1A69D380085627410009880D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = domparser.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1A69D381085627410009880D = {
+			fileRef = 1A69D37F085627410009880D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1A69D382085627410009880D = {
+			fileRef = 1A69D380085627410009880D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1A69D387085628650009880D = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(CREATE_HASH_TABLE)",
+				khtml/ecma/domparser.cpp,
+			);
+			isa = PBXShellScriptBuildPhase;
+			name = domparser.lut.h;
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/domparser.lut.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/domparser.cpp > \"$DERIVED_FILE_DIR/domparser.lut.h\"";
+		};
+//1A0
+//1A1
+//1A2
+//1A3
+//1A4
 //2D0
 //2D1
 //2D2
@@ -2229,6 +2284,7 @@
 				93F19B3A08246077001E9ABC,
 				932FC1710824A913005B3C75,
 				932FC1730824A919005B3C75,
+				1A69D387085628650009880D,
 				93F198A608245E59001E9ABC,
 				93F199FD08245E59001E9ABC,
 				93F19A0C08245E59001E9ABC,
@@ -2624,6 +2680,7 @@
 				65436057083D129100C20475,
 				65436058083D129100C20475,
 				65436072083DB9FB00C20475,
+				1A69D381085627410009880D,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5000,6 +5057,7 @@
 				65436080083DB9FC00C20475,
 				65436081083DB9FC00C20475,
 				65436082083DB9FC00C20475,
+				1A69D382085627410009880D,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8306,6 +8364,8 @@
 				654E7EE10569FD4600358BD2,
 				65912B0D0586921000123A69,
 				65912B0E0586921000123A69,
+				1A69D380085627410009880D,
+				1A69D37F085627410009880D,
 			);
 			isa = PBXGroup;
 			path = ecma;
