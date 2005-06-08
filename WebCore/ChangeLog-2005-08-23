@@ -1,3 +1,16 @@
+2005-06-07  David Hyatt  <hyatt@apple.com>
+
+	Patch from Brian Campbell.  Make sure the min and max values of slider properly update.
+	Fixes bugilla bug 3323, internal Radar # is 4098892.
+	
+        Reviewed by hyatt
+
+        Test cases added: (Not testable with a layout test)
+
+        * kwq/KWQSlider.mm:
+        (QSlider::setMinValue):
+        (QSlider::setMaxValue):
+
 2005-06-07  Adele Peterson  <adele@apple.com>
 
         Change by Darin, reviewed by Maciej and me.

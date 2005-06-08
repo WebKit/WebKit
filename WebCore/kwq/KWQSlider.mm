@@ -260,6 +260,7 @@ void QSlider::setMinValue(double v)
 
     KWQSlider* slider = (KWQSlider*)getView();
     [slider setMinValue: v];
+    m_minVal = v;
 }
 
 void QSlider::setMaxValue(double v)
@@ -268,6 +269,7 @@ void QSlider::setMaxValue(double v)
 
     KWQSlider* slider = (KWQSlider*)getView();
     [slider setMaxValue: v];
+    m_maxVal = v;
 }
 
 double QSlider::value() const
