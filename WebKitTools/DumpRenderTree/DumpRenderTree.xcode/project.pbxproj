@@ -28,6 +28,7 @@
 			};
 			buildStyles = (
 				014CEA4F0018CE4811CA2923,
+				93635D9F085674CB003EBDE4,
 			);
 			hasScannedForEncodings = 1;
 			isa = PBXProject;
@@ -223,6 +224,12 @@
 			name = Products;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		93635D9F085674CB003EBDE4 = {
+			buildSettings = {
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
 		};
 	};
 	rootObject = 08FB7793FE84155DC02AAC07;

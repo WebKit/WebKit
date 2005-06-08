@@ -2,6 +2,14 @@
 
         Reviewed by Adele Peterson.
 
+        * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Added Deployment build style.
+        * Scripts/build-dumprendertree: For now, always use Deployment build style. This may fix things
+        so we can run tests with Xcode 2.1.
+
+2005-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele Peterson.
+
         * Scripts/run-webkit-tests: Pass -L to find command to follow symlinks. This allows symlinks in the
         layout-tests directory to include additional sets of tests.
 

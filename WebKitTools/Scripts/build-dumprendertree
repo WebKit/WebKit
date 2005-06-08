@@ -28,6 +28,7 @@
 
 # Simplified build script for Web Kit Open Source Project.
 # Modified copy of build-webkit. Perhaps these could share code.
+# Currently only works for the Deployment build style.
 
 use strict;
 
@@ -51,4 +52,4 @@ if (!$productDir) {
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild";
+exit system "xcodebuild", "-buildstyle", "Deployment";
