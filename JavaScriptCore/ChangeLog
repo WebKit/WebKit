@@ -1,3 +1,14 @@
+2005-06-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Change by Mark Rowe <opendarwin.org@bdash.net.nz>
+	Reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3327
+	(Exception When Setting Style to Invalid Value Lacks Line/File Information)
+
+        * kjs/nodes.cpp: Include source file and line number when making exception in
+	KJS_CHECKEXCEPTIONVALUE.
+
 2005-06-07  Darin Adler  <darin@apple.com>
 
         Change by Toby Peterson <toby@opendarwin.org>.
