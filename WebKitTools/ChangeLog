@@ -1,3 +1,19 @@
+2005-06-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - some build script enhancements
+
+        * Scripts/build-dumprendertree: Changed to use webkitdirs.
+        * Scripts/build-webkit: Changed to use webkitdirs, also only copy files from WebKitLibraries if
+        they are newer.
+        * Scripts/run-safari: Reduce number of log messages, change to respect "-d" flag and get Development
+        before Deplyment in that case.
+        * Scripts/run-webkit-tests: Changed to use webkitdirs.
+        * Scripts/update-webkit: Changed to use webkitdirs.
+
+        * Scripts/webkitdirs.pm: Added.
+
 2005-06-08  Maciej Stachowiak  <mjs@apple.com>
 
 	Code change by Toby Peterson <toby@opendarwin.org>

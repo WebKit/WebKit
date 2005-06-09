@@ -1,5 +1,3 @@
-#!/usr/bin/perl -w
-
 # Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,45 +24,49 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified "run" script for Web Kit Open Source Project.
+# Module to share code to get to WebKit directories.
 
 use strict;
-use Getopt::Long;
-use webkitdirs;
+use warnings;
 
-my $debug = 0;
-GetOptions("debug!" => \$debug);
-
-my $productDir = productDir();
-
-# Check to see that Safari is in the usual place.
-my $safariPath = "/Applications/Safari.app/Contents/MacOS/Safari";
-if (! -x $safariPath) {
-    die "Can't find executable at $safariPath.\n";
+BEGIN {
+   use Exporter   ();
+   our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
+   $VERSION     = 1.00;
+   @ISA         = qw(Exporter);
+   @EXPORT      = qw(&chdirWebKit &productDir);
+   %EXPORT_TAGS = ( );
+   @EXPORT_OK   = ();
 }
 
-# Search for build products; first test Xcode 2.0 location, then Xcode 2.1 locations.
-# For Xcode 2.1, prefer Deployment if both directories are present.
-my @testDirs;
-if ($debug) {
-    @testDirs = ("$productDir", "$productDir/Deployment", "$productDir/Development");
-} else {
-    @testDirs = ("$productDir", "$productDir/Development", "$productDir/Deployment");
-}
-my $found = 0;
-for my $testDir (@testDirs) {
-    next if !-x "$testDir/JavaScriptCore.framework/Versions/A/JavaScriptCore";
-    next if !-x "$testDir/WebCore.framework/Versions/A/WebCore";
-    next if !-x "$testDir/WebKit.framework/Versions/A/WebKit";
-    $productDir = $testDir;
-    $found = 1;
-    last;
-}
-if (!$found) {
-    die "Could not locate frameworks.\n";
+our @EXPORT_OK;
+
+# Check that we're in the right directory.
+sub chdirWebKit
+{
+    if (! -d "WebKitTools") {
+        if (-d "../WebKitTools") {
+            chdir ".." or die;
+        }
+        if (-d "../../WebKitTools") {
+            chdir "../.." or die;
+        }
+        if (! -d "WebKitTools") {
+            die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+        }
+    }
 }
 
-# Set up DYLD_FRAMEWORK_PATH to point to the product directory.
-print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
-$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-exec $safariPath or die;
+# Check that an Xcode product directory is set.
+sub productDir
+{
+    open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+    my $productDir = <PRODUCT>;
+    chomp $productDir;
+    close PRODUCT;
+    $productDir = "~/WebKitBuilds" unless $productDir;
+    $productDir =~ s|^~/|$ENV{HOME}/|;
+    return $productDir;
+}
+
+1;

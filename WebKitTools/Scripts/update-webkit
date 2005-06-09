@@ -29,16 +29,9 @@
 # Update script for Web Kit Open Source Project.
 
 use strict;
+use webkitdirs;
 
-# Check that we're in the right directory.
-if (! -d "WebKitTools") {
-    if (-d "../WebKitTools") {
-        chdir ".." or die;
-    }
-    if (! -d "WebKitTools") {
-        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
-    }
-}
+chdirWebKit();
 
 # Read the CVS root out of one project that's guaranteed to already be checked out.
 open ROOT, "WebKitTools/CVS/Root" or die;

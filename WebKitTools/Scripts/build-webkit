@@ -30,30 +30,15 @@
 
 use strict;
 use Getopt::Long;
+use webkitdirs;
 
 my $debug = 0;
 GetOptions("debug!" => \$debug);
 
 my $style = $debug ? "Development" : "Deployment";
 
-# Check that we're in the right directory.
-if (! -d "WebKitTools") {
-    if (-d "../WebKitTools") {
-        chdir ".." or die;
-    }
-    if (! -d "WebKitTools") {
-        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
-    }
-}
-
-# Check that an Xcode product directory is set.
-open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
-my $productDir = <PRODUCT>;
-chomp $productDir;
-close PRODUCT;
-if (!$productDir) {
-    die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
-}
+chdirWebKit();
+my $productDir = productDir();
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
@@ -65,13 +50,20 @@ for my $dir (@projects, @otherDirs) {
 }
 
 # Copy library and header from WebKitLibraries to a findable place in the product directory.
-chdir "WebKitLibraries" or die;
-print "${productDir}/libWebKitSystemInterface.a\n";
-`ditto libWebKitSystemInterface.a "${productDir}/libWebKitSystemInterface.a"`;
-`ranlib "${productDir}/libWebKitSystemInterface.a"`;
-`mkdir -p "${productDir}/usr/local/include"`;
-`ditto WebKitSystemInterface.h "${productDir}/usr/local/include/WebKitSystemInterface.h"`;
-chdir ".." or die;
+my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
+my $lib = "${productDir}/libWebKitSystemInterface.a";
+if (!-e $lib || -M $lib > -M $srcLib) {
+    print "Updating $lib\n";
+    system "ditto", $srcLib, $lib;
+    system "ranlib", $lib;
+}
+my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
+my $header = "${productDir}/usr/local/include/WebKitSystemInterface.h";
+if (!-e $header || -M $header > -M $srcHeader) {
+    print "Updating $header\n";
+    system "mkdir", "-p", "${productDir}/usr/local/include";
+    system "ditto", $srcHeader, $header;
+}
 
 # Make symlinks so Xcode 2.1 can find the WebKitLibraries files.
 `mkdir -p "${productDir}/${style}"`;

@@ -31,24 +31,10 @@
 # Currently only works for the Deployment build style.
 
 use strict;
+use webkitdirs;
 
-# Check that we're in the right directory.
-if (! -d "WebKitTools") {
-    if (-d "../WebKitTools") {
-        chdir ".." or die;
-    }
-    if (! -d "WebKitTools") {
-        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
-    }
-}
-
-# Check that an Xcode product directory is set.
-open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
-my $productDir = <PRODUCT>;
-close PRODUCT;
-if (!$productDir) {
-    die "No product directory set. Please set the 'Place Build Products' preference to 'Customized location' in XCode Building Preferences.\n";
-}
+chdirWebKit();
+my $productDir = productDir();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
