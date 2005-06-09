@@ -57,14 +57,19 @@ sub chdirWebKit
     }
 }
 
-# Check that an Xcode product directory is set.
+# Check that an Xcode product directory is set, setting the SYMROOT environment variable
+# as a side effect in case it's not so that we will effectively have a temporary Xcode
+# product directory for xcodebuild commands called from the script.
 sub productDir
 {
     open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
     my $productDir = <PRODUCT>;
     chomp $productDir;
     close PRODUCT;
-    $productDir = "~/WebKitBuilds" unless $productDir;
+    if (!$productDir) {
+        $productDir = "$ENV{HOME}/WebKitBuild";
+        $ENV{SYMROOT} = $productDir;
+    }
     $productDir =~ s|^~/|$ENV{HOME}/|;
     return $productDir;
 }

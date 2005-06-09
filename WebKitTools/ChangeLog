@@ -1,3 +1,9 @@
+2005-06-09  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkitdirs.pm: Another try at making the default build directory of ~/WebKitBuild
+        work. Someone should try building without setting the Xcode build product directory now,
+        and let me know if it works.
+
 2005-06-08  Darin Adler  <darin@apple.com>
 
         - quick fix to try to get build scripts working again
