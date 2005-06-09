@@ -77,9 +77,9 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result;
     if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", "-target", "All", "-buildstyle", $style;
+        $result = system "xcodebuild", symrootXcodeOptions(), "-target", "All", "-buildstyle", $style;
     } else {
-        $result = system "xcodebuild", "-buildstyle", $style;
+        $result = system "xcodebuild", symrootXcodeOptions(), "-buildstyle", $style;
     }
     exit $result if $result;
     chdir ".." or die;

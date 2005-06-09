@@ -34,12 +34,15 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirWebKit &productDir);
+   @EXPORT      = qw(&chdirWebKit &productDir &symrootXcodeOptions);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
 
 our @EXPORT_OK;
+
+my $productDir;
+my @options;
 
 # Check that we're in the right directory.
 sub chdirWebKit
@@ -60,18 +63,34 @@ sub chdirWebKit
 # Check that an Xcode product directory is set, setting the SYMROOT environment variable
 # as a side effect in case it's not so that we will effectively have a temporary Xcode
 # product directory for xcodebuild commands called from the script.
-sub productDir
+sub findProductDir
 {
+    return if defined $productDir;
     open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
-    my $productDir = <PRODUCT>;
-    chomp $productDir;
+    $productDir = <PRODUCT>;
     close PRODUCT;
-    if (!$productDir) {
+    if ($productDir) {
+        chomp $productDir;
+        @options = ();
+    } else {
         $productDir = "$ENV{HOME}/WebKitBuild";
-        $ENV{SYMROOT} = $productDir;
+        @options = ("SYMROOT=$productDir");
     }
     $productDir =~ s|^~/|$ENV{HOME}/|;
+}
+
+# Get product directory.
+sub productDir
+{
+    findProductDir();
     return $productDir;
+}
+
+# Get SYMROOT options for Xcode.
+sub symrootXcodeOptions
+{
+    findProductDir();
+    return @options;
 }
 
 1;

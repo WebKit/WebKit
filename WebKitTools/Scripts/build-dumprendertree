@@ -40,4 +40,4 @@ my $productDir = productDir();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild", "-buildstyle", "Deployment";
+exit system "xcodebuild", symrootXcodeOptions(), "-buildstyle", "Deployment";

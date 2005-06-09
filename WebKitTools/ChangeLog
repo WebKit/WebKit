@@ -1,5 +1,22 @@
 2005-06-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3397
+          Build DumpRenderTree fails with unresolved NSAutoreleasePool, etc
+
+        * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Change type from "folder" to "wrapper.framework"
+        for Foundation.framework. How was it ever wrong?
+
+        - finally, I tested making the default build directory work; it works now
+
+        * Scripts/webkitdirs.pm: Changed structure of the code a little bit, added symrootXcodeOptions function
+        that sets SYMROOT on the command line in case there's no product directory set in Xcode preferences.
+        * Scripts/build-webkit: Pass symrootXcodeOptions when invoking Xcode.
+        * Scripts/build-dumprendertree: Ditto.
+
+2005-06-09  Darin Adler  <darin@apple.com>
+
         * Scripts/webkitdirs.pm: Another try at making the default build directory of ~/WebKitBuild
         work. Someone should try building without setting the Xcode build product directory now,
         and let me know if it works.

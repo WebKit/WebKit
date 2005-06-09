@@ -63,8 +63,8 @@
 			sourceTree = "<group>";
 		};
 		08FB779EFE84155DC02AAC07 = {
+			explicitFileType = wrapper.framework;
 			isa = PBXFileReference;
-			lastKnownFileType = folder;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
