@@ -1,5 +1,15 @@
 2005-06-08  Darin Adler  <darin@apple.com>
 
+        - quick fix to try to get build scripts working again
+
+        * Scripts/build-dumprendertree: Add FindBin.
+        * Scripts/build-webkit: Ditto.
+        * Scripts/run-safari: Ditto.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/update-webkit: Ditto.
+
+2005-06-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - some build script enhancements

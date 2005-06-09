@@ -30,6 +30,8 @@
 
 use strict;
 use IPC::Open2;
+use FindBin;
+use lib $FindBin::Bin;
 use webkitdirs;
 
 # Run all the tests passed in on the command line.

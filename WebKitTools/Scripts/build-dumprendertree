@@ -31,6 +31,8 @@
 # Currently only works for the Deployment build style.
 
 use strict;
+use FindBin;
+use lib $FindBin::Bin;
 use webkitdirs;
 
 chdirWebKit();

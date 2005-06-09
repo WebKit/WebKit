@@ -30,6 +30,8 @@
 
 use strict;
 use Getopt::Long;
+use FindBin;
+use lib $FindBin::Bin;
 use webkitdirs;
 
 my $debug = 0;
