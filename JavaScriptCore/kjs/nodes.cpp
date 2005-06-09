@@ -75,8 +75,8 @@ using namespace KJS;
 #define KJS_CHECKEXCEPTIONVALUE \
   if (exec->hadException()) {\
     Object exception = exec->exception().toObject(exec); \
-    exception.put(exec, "line", Number(this->line)); \
-    exception.put(exec, "sourceURL", String(this->sourceURL)); \
+    exception.put(exec, "line", Number(line)); \
+    exception.put(exec, "sourceURL", String(sourceURL)); \
     return exec->exception(); \
   }\
   if (Collector::outOfMemory()) \

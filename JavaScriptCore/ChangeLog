@@ -1,3 +1,10 @@
+2005-06-09  Darin Adler  <darin@apple.com>
+
+        Change by Mark Rowe <opendarwin.org@bdash.net.nz>
+	Reviewed by me.
+
+        * kjs/nodes.cpp: Get rid of unneeded this->.
+
 2005-06-08  Maciej Stachowiak  <mjs@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>
