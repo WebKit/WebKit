@@ -1,3 +1,14 @@
+2005-06-10  Darin Adler  <darin@apple.com>
+
+        Change by Mark Rowe <opendarwin.org@bdash.net.nz>.
+        Reviewed by me.
+
+        - further improvements to exception file/line number fix
+
+        * kjs/nodes.h: Added setExceptionDetailsIfNeeded function.
+        * kjs/nodes.cpp: Updated macros to call the new setExceptionDetailsIfNeeded function.
+        (Node::setExceptionDetailsIfNeeded): Added.
+
 2005-06-09  Darin Adler  <darin@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>
