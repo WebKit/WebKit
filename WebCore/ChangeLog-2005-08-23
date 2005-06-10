@@ -1,3 +1,20 @@
+2005-06-09  David Hyatt  <hyatt@apple.com>
+
+	Fix from Carston Guenther for bugzilla bug 3236.
+
+	attr(x) should work even if x is not present on the element.
+
+	This is Radar bug #3584466
+	
+        Reviewed by hyatt
+
+        Test cases added: fast/css-generated-content/013.html
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * layout-tests/fast/css-generated-content/013-expected.txt: Added.
+        * layout-tests/fast/css-generated-content/013.html: Added.
+
 2005-06-09  Darin Adler  <darin@apple.com>
 
         Tested by Mark Rowe.
