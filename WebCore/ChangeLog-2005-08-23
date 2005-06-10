@@ -1,3 +1,14 @@
+2005-06-10  Darin Adler  <darin@apple.com>
+
+        Change by Mark Rowe <opendarwin.org@bdash.net.nz>.
+        Refined and reviewed by me.
+
+        - test for exception file/line number fix
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=3327
+
+        * layout-tests/fast/js/exception-linenums-expected.txt: Added.
+        * layout-tests/fast/js/exception-linenums.html: Added.
+
 2005-06-09  David Hyatt  <hyatt@apple.com>
 
 	Fix from Carston Guenther for bugzilla bug 3236.

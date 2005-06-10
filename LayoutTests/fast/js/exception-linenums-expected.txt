@@ -1,0 +1,10 @@
+This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console.
+
+If the test passes, you should see five exceptions caught below, with the appropriate line number for each (increasing except for the last one).
+
+Exception at line 37 with sourceURL set
+Exception at line 45 with sourceURL set
+Exception at line 53 with sourceURL set
+Exception at line 61 with sourceURL set
+Exception at line 13 with sourceURL set
+
