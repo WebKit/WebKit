@@ -1,3 +1,10 @@
+2005-06-09  Darin Adler  <darin@apple.com>
+
+        Tested by Brian Dash.
+
+        * layout-tests/fast/js/date-parse-test.html: Updated this test to use a time zone offset
+        for one of the test cases that's time zone dependent; was working in CA, US, failing in NZ.
+
 2005-06-08  Anders Carlsson  <andersca@mac.com>
 
 	Reviewed and committed by Maciej.

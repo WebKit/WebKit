@@ -54,7 +54,7 @@ function testDateParse(date, numericResult)
 var o = Date.parse(" Dec 25 1995 1:30 ") - Date.parse(" Dec 25 1995 1:30 GMT ");
 
 testDateParse("Dec 25 1995 GMT", 819849600000);
-testDateParse("Dec 25 1995", 819878400000);
+testDateParse("Dec 25 1995", 819849600000 + o);
 
 testDateParse("Dec 25 1995 1:30 GMT", 819855000000);
 testDateParse("Dec 25 1995 1:30", 819855000000 + o);
