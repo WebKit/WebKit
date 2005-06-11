@@ -3042,12 +3042,8 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
                 // just the hardcoded HTML set.  Can a namespace be specified for
                 // an attr(foo)?
                 int attrID = element->getDocument()->attrId(0, val->getStringValue().implementation(), false);
-                if (attrID) {
-                    DOMStringImpl* v = element->getAttribute(attrID).implementation();
-                    if (!v)
-                        v = DOMStringImpl::empty(); // Don't allow v to be null, since we want to concatenate this string even if it's empty.
-                    style->setContent(v, i != 0);
-                }  
+                if (attrID)
+                    style->setContent(element->getAttribute(attrID).implementation(), i != 0);
             }
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI)
             {

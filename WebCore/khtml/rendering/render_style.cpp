@@ -924,10 +924,7 @@ void RenderStyle::setContent(DOMStringImpl* s, bool add)
         lastContent = lastContent->_nextContent;
 
     bool reuseContent = !add;
-    if (add) {
-        if (!lastContent)
-            return; // Something's wrong.  We had no previous content, and we should have.
-
+    if (add && lastContent) {
         if (lastContent->_contentType == CONTENT_TEXT) {
             // We can augment the existing string and share this ContentData node.
             DOMStringImpl* oldStr = lastContent->_content.text;

@@ -1,3 +1,16 @@
+2005-06-10  David Hyatt  <hyatt@apple.com>
+
+	Merge Allan Jensen's fix for 3236.
+	
+        Reviewed by hyatt
+
+        Test cases added: None, test case already added for the bug.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::setContent):
+
 2005-06-10  Darin Adler  <darin@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>.
