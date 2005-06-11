@@ -129,7 +129,10 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
 {
     assert(current);
 
-    current = current->traverseNextNode(m_base.get());
+    if (type == NODE_CHILDREN && m_base.get() != current)
+        current = current -> nextSibling();
+    else
+        current = current->traverseNextNode(m_base.get());
 
     while (current) {
         if(current->nodeType() == Node::ELEMENT_NODE) {

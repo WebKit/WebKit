@@ -1,5 +1,18 @@
 2005-06-11  Maciej Stachowiak  <mjs@apple.com>
 
+        Patch from Timothy Hatcher  <timothy@colloquy.info>, reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/dom/children-nodes-expected.txt: Added.
+        * layout-tests/fast/dom/children-nodes.html: Added.
+
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::traverseNextItem): For "children"
+	collection, use nextSibling() instead of traverseNextNext() to avoid
+	doing deep traversal.
+
+2005-06-11  Maciej Stachowiak  <mjs@apple.com>
+
         Added missing expected results from the background image patch.
 
         * layout-tests/fast/backgrounds/001-expected.txt: Added.
