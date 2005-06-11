@@ -128,8 +128,9 @@ namespace DOM {
 	{
 	    Descendant = 0,
 	    Child,
-	    Sibling,
-	    SubSelector
+	    DirectAdjacent,
+            IndirectAdjacent,
+            SubSelector
 	};
 
 	enum PseudoType
@@ -172,7 +173,7 @@ namespace DOM {
 	Q_UINT32     attr;
 	Q_UINT32     tag;
 
-        Relation relation     : 2;
+        Relation relation     : 3;
 	Match 	 match         : 4;
 	unsigned int pseudoId : 3;
 	mutable PseudoType _pseudoType : 5;

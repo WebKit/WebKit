@@ -1,5 +1,24 @@
 2005-06-10  David Hyatt  <hyatt@apple.com>
 
+	Fix for bugzilla bug 3335, add support for the CSS3 indirect adjacent sibling selector.  Patch merge
+	from KHTML tree by Nick Shanks.
+	
+        Reviewed by hyatt
+
+        Test cases added: fast/selectors/046.html
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::selectorText):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkSelector):
+        * khtml/css/parser.y:
+        * layout-tests/fast/selectors/046-expected.txt: Added.
+        * layout-tests/fast/selectors/046.html: Added.
+
+2005-06-10  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3237, background image repeats when it shouldn't.  The Radar bug is 4005553.  Patch from
 	Nate Cook.
 	

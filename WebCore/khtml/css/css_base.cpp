@@ -303,8 +303,10 @@ DOMString CSSSelector::selectorText() const
     }
     if ( cs->tagHistory ) {
         DOMString tagHistoryText = cs->tagHistory->selectorText();
-        if ( cs->relation == Sibling )
+		if ( cs->relation == DirectAdjacent )
             str = tagHistoryText + " + " + str;
+        else if ( cs->relation == IndirectAdjacent )
+            str = tagHistoryText + " ~ " + str;
         else if ( cs->relation == Child )
             str = tagHistoryText + " > " + str;
         else if ( cs->relation == SubSelector )

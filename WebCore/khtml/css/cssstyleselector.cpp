@@ -1026,17 +1026,32 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
             if (!checkOneSelector(sel, elem)) return false;
             break;
         }
-        case CSSSelector::Sibling:
+        case CSSSelector::DirectAdjacent:
         {
             n = n->previousSibling();
-	    while( n && !n->isElementNode() )
-		n = n->previousSibling();
-            if( !n ) return false;
-            ElementImpl *elem = static_cast<ElementImpl *>(n);
-            if (!checkOneSelector(sel, elem)) return false;
+            while (n && !n->isElementNode())
+                n = n->previousSibling();
+            if (!n) return false;
+            ElementImpl *elem = static_cast<ElementImpl*>(n);
+            if (!checkOneSelector(sel, elem))
+                return false;
             break;
         }
-        case CSSSelector::SubSelector:
+        case CSSSelector::IndirectAdjacent:
+        {
+            // FIXME: This match needs to know how to backtrack and be non-deterministic.
+            ElementImpl *elem = 0;
+            do {
+                n = n->previousSibling();
+                while (n && !n->isElementNode())
+                    n = n->previousSibling();
+                if (!n)
+                    return false;
+                elem = static_cast<ElementImpl*>(n);
+            } while (!checkOneSelector(sel, elem));
+            break;
+        }
+       case CSSSelector::SubSelector:
 	{
             if (onlyHoverActive)
                 onlyHoverActive = (sel->match == CSSSelector::Pseudo &&

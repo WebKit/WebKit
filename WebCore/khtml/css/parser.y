@@ -518,7 +518,8 @@ font_face:
 ;
 
 combinator:
-  '+' maybe_space { $$ = CSSSelector::Sibling; }
+    '+' maybe_space { $$ = CSSSelector::DirectAdjacent; }
+  | '~' maybe_space { $$ = CSSSelector::IndirectAdjacent; }
   | '>' maybe_space { $$ = CSSSelector::Child; }
   | /* empty */ { $$ = CSSSelector::Descendant; }
   ;
@@ -602,7 +603,8 @@ selector:
                 if ( doc )
                     doc->setUsesDescendantRules(true);
             }
-            else if ($2 == CSSSelector::Sibling) {
+            else if ($2 == CSSSelector::DirectAdjacent ||
+                     $2 == CSSSelector::IndirectAdjacent) {
                 CSSParser *p = static_cast<CSSParser *>(parser);
                 DOM::DocumentImpl *doc = p->document();
                 if (doc)
