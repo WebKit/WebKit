@@ -1,3 +1,9 @@
+2005-06-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Added missing expected results from the background image patch.
+
+        * layout-tests/fast/backgrounds/001-expected.txt: Added.
+
 2005-06-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for bugzilla bug 3335, add support for the CSS3 indirect adjacent sibling selector.  Patch merge
