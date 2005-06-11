@@ -1,3 +1,15 @@
+2005-06-10  John Sullivan  <sullivan@apple.com>
+
+        reviewed by Dave Harrison (first & second drafts) and Darin Adler (third draft)
+
+        - WebKit part of fix for 
+        <rdar://problem/4145214> REGRESSION (412+): Can't drag URLs from the location bar
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard initialize]):
+        Reinstate variation of old code that uses CreatePasteboardFlavorTypeName to set up our new pasteboard types.
+        The newfangled way didn't work.
+
 2005-06-07  Darin Adler  <darin@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>.

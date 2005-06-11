@@ -50,13 +50,33 @@ NSString *WebURLNamePboardType = nil;
 
 + (void)initialize
 {
+    // FIXME  The code below addresses 3446192.  It was awaiting a fix for 3446669. Now that bug has been fixed,
+    // but this code still does not work; UTTypeCopyPreferredTagWithClass returns nil, which caused 4145214. Some
+    // day we'll need to investigate why this code is still not working.
+#ifdef UTI_PB_API
     CFStringRef osTypeString = UTCreateStringForOSType('url ');
     CFStringRef utiTypeString = UTTypeCreatePreferredIdentifierForTag( kUTTagClassOSType, osTypeString, NULL );
     WebURLPboardType = (NSString *)UTTypeCopyPreferredTagWithClass( kUTTagClassNSPboardType, utiTypeString );
+    if (osTypeString != NULL) {
+        CFRelease(osTypeString);
+    }
+    if (utiTypeString != NULL) {
+        CFRelease(utiTypeString);
+    }
     
     osTypeString = UTCreateStringForOSType('urln');
     utiTypeString = UTTypeCreatePreferredIdentifierForTag( kUTTagClassOSType, osTypeString, NULL );
     WebURLNamePboardType = (NSString *)UTTypeCopyPreferredTagWithClass( kUTTagClassNSPboardType, utiTypeString );
+    if (osTypeString != NULL) {
+        CFRelease(osTypeString);
+    }
+    if (utiTypeString != NULL) {
+        CFRelease(utiTypeString);
+    }
+#else
+    WebURLPboardType = WKCreateURLPasteboardFlavorTypeName();
+    WebURLNamePboardType = WKCreateURLNPasteboardFlavorTypeName();
+#endif
 }
 
 + (NSArray *)_web_writableTypesForURL
