@@ -424,22 +424,25 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                     cx = _tx + xPosition;
                 else {
                     cx = _tx;
-                    if (pixw == 0)
-                        sx = 0;
-                    else {
+                    if (pixw > 0) {
                         sx = -xPosition;
                         cw += xPosition;
                     }
                 }
                 cx += bleft;
             } else {
+                // repeat over x or background is wider than box
                 cw = w;
                 cx = _tx;
-                if (pixw == 0)
-                    sx = 0;
-                else {
-                    sx =  pixw - ((bgLayer->backgroundXPosition().minWidth(pw-pixw)) % pixw );
-                    sx -= bleft % pixw;
+                if (pixw > 0) {
+					int xPosition = bgLayer->backgroundXPosition().minWidth(pw-pixw);
+					if ((xPosition > 0) && (bgr == NO_REPEAT)) {
+						cx += xPosition;
+						cw -= xPosition;
+					} else {
+						sx =  pixw - (xPosition % pixw );
+						sx -= bleft % pixw;
+					}
                 }
             }
 
@@ -450,9 +453,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                     cy = _ty + yPosition;
                 else {
                     cy = _ty;
-                    if (pixh == 0)
-                        sy = 0;
-                    else {
+                    if (pixh > 0) {
                         sy = -yPosition;
                         ch += yPosition;
                     }
@@ -460,13 +461,18 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                 
                 cy += borderTop();
             } else {
+                // repeat over y or background is taller than box
                 ch = h;
                 cy = _ty;
-                if(pixh == 0){
-                    sy = 0;
-                }else{
-                    sy = pixh - ((bgLayer->backgroundYPosition().minWidth(ph-pixh)) % pixh );
-                    sy -= borderTop() % pixh;
+                if (pixh > 0) {
+					int yPosition = bgLayer->backgroundYPosition().minWidth(ph-pixh);
+					if ((yPosition > 0) && (bgr == NO_REPEAT)) {
+						cy += yPosition;
+						ch -= yPosition;
+					} else {
+						sy = pixh - (yPosition % pixh );
+						sy -= borderTop() % pixh;
+					}
                 }
             }
         }
@@ -486,9 +492,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
             } else {
                 cw = pw;
                 cx = vr.x();
-                if(pixw == 0){
-                    sx = 0;
-                }else{
+                if (pixw > 0) {
                     sx =  pixw - ((bgLayer->backgroundXPosition().minWidth(pw-pixw)) % pixw );
                 }
             }
@@ -499,13 +503,11 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
             } else {
                 ch = ph;
                 cy = vr.y();
-                if(pixh == 0){
-                    sy = 0;
-                }else{
+                if (pixh > 0) {
                     sy = pixh - ((bgLayer->backgroundYPosition().minWidth(ph-pixh)) % pixh );
                 }
             }
-
+			
             QRect fix(cx,cy,cw,ch);
             QRect ele(_tx,_ty,w,h);
             QRect b = fix.intersect(ele);
@@ -516,7 +518,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
 
 
 //        kdDebug() << "cx="<<cx << " cy="<<cy<< " cw="<<cw << " ch="<<ch << " sx="<<sx << " sy="<<sy << endl;
-
+		
         if (cw>0 && ch>0)
             p->drawTiledPixmap(cx, cy, cw, ch, bg->tiled_pixmap(c), sx, sy);
     }
