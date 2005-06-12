@@ -1,5 +1,34 @@
 2005-06-11  Maciej Stachowiak  <mjs@apple.com>
 
+        Patch from Nicholas Shanks  <contact@nickshanks.com>, by me.
+
+	- Distinguish between pseudo-elements and pseudo-classes in CSS parsing.
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3375
+
+	Merge of svn log -v -r 399829 svn://anonsvn.kde.org/home/kde
+	
+        Test cases added: Added the following from CSS selector test suite,
+	unfortunately 159 and 117a do not show any difference with and without the
+	patch since layout tests do not dump selection style (yet).
+	
+        * layout-tests/fast/selectors/159.html: Added.
+        * layout-tests/fast/selectors/177a.html: Added.
+        * layout-tests/fast/selectors/177b.html: Added.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::specificity):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::selectorText):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::):
+        (DOM::CSSSelector::pseudoType):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/parser.y:
+
+2005-06-11  Maciej Stachowiak  <mjs@apple.com>
+
         Patch from Timothy Hatcher  <timothy@colloquy.info>, reviewed by me.
 
         Test cases added:

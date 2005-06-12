@@ -113,12 +113,13 @@ namespace DOM {
 	{
 	    None = 0,
 	    Id,
-            Class,
+        Class,
 	    Exact,
 	    Set,
 	    List,
 	    Hyphen,
-	    Pseudo,
+	    PseudoClass,
+	    PseudoElement,
 	    Contain,   // css3: E[foo*="bar"]
 	    Begin,     // css3: E[foo^="bar"]
 	    End        // css3: E[foo$="bar"]
@@ -138,7 +139,7 @@ namespace DOM {
 	    PseudoNotParsed = 0,
 	    PseudoOther,
 	    PseudoEmpty,
-	    PseudoFirstChild,
+            PseudoFirstChild,
             PseudoLastChild,
             PseudoOnlyChild,
 	    PseudoFirstLine,
@@ -160,11 +161,11 @@ namespace DOM {
 	};
 
 	inline PseudoType pseudoType() const
-	    {
-		if (_pseudoType == PseudoNotParsed)
-		    extractPseudoType();
-		return _pseudoType;
-	    }
+	{
+            if (_pseudoType == PseudoNotParsed)
+                extractPseudoType();
+            return _pseudoType;
+        }
 
 	mutable DOM::AtomicString value;
 	CSSSelector* tagHistory;
@@ -173,9 +174,9 @@ namespace DOM {
 	Q_UINT32     attr;
 	Q_UINT32     tag;
 
-        Relation relation     : 3;
-	Match 	 match         : 4;
-	unsigned int pseudoId : 3;
+        Relation relation              : 3;
+	mutable Match  match           : 4;
+	unsigned int pseudoId          : 3;
 	mutable PseudoType _pseudoType : 5;
 
     private:

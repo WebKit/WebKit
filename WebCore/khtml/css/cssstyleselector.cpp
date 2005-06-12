@@ -980,7 +980,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
     // so, we can't allow that to apply to every element on the page.  We assume the author intended
     // to apply the rules only to links.
     bool onlyHoverActive = (sel->tag == anyQName &&
-                            (sel->match == CSSSelector::Pseudo &&
+                            (sel->match == CSSSelector::PseudoClass &&
                               (sel->pseudoType() == CSSSelector::PseudoHover ||
                                sel->pseudoType() == CSSSelector::PseudoActive)));
     bool affectedByHover = style ? style->affectedByHoverRules() : false;
@@ -1054,7 +1054,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
        case CSSSelector::SubSelector:
 	{
             if (onlyHoverActive)
-                onlyHoverActive = (sel->match == CSSSelector::Pseudo &&
+                onlyHoverActive = (sel->match == CSSSelector::PseudoClass &&
                                    (sel->pseudoType() == CSSSelector::PseudoHover ||
                                     sel->pseudoType() == CSSSelector::PseudoActive));
             
@@ -1215,16 +1215,19 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 && str[selStr.length()] != '-') return false;
             break;
         }
+        case CSSSelector::PseudoClass:
+        case CSSSelector::PseudoElement:
         default:
             break;
         }
     }
-    if(sel->match == CSSSelector::Pseudo)
+    if(sel->match == CSSSelector::PseudoClass || sel->match == CSSSelector::PseudoElement)
     {
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
 //	kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
-	switch (sel->pseudoType()) {
+	    switch (sel->pseudoType()) {
+	        // Pseudo classes:
             case CSSSelector::PseudoEmpty:
                 if (!e->firstChild())
                     return true;
@@ -1267,18 +1270,6 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 }
                 break;
             }
-            case CSSSelector::PseudoFirstLine:
-                if ( subject ) {
-                    dynamicPseudo=RenderStyle::FIRST_LINE;
-                    return true;
-                }
-                break;
-            case CSSSelector::PseudoFirstLetter:
-                if ( subject ) {
-                    dynamicPseudo=RenderStyle::FIRST_LETTER;
-                    return true;
-                }
-                break;
             case CSSSelector::PseudoTarget:
                 if (e == e->getDocument()->getCSSTarget())
                     return true;
@@ -1361,6 +1352,24 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 }
                 break;
             }
+            case CSSSelector::PseudoLang:
+                /* not supported for now */
+            case CSSSelector::PseudoOther:
+                break;
+            
+            // Pseudo-elements:
+            case CSSSelector::PseudoFirstLine:
+                if ( subject ) {
+                    dynamicPseudo=RenderStyle::FIRST_LINE;
+                    return true;
+                }
+                break;
+            case CSSSelector::PseudoFirstLetter:
+                if ( subject ) {
+                    dynamicPseudo=RenderStyle::FIRST_LETTER;
+                    return true;
+                }
+                break;
             case CSSSelector::PseudoSelection:
                 dynamicPseudo = RenderStyle::SELECTION;
                 return true;
@@ -1374,12 +1383,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             case CSSSelector::PseudoNotParsed:
                 assert(false);
                 break;
-            case CSSSelector::PseudoLang:
-                /* not supported for now */
-            case CSSSelector::PseudoOther:
-                break;
         }
-	return false;
+	    return false;
     }
     // ### add the rest of the checks...
     return true;

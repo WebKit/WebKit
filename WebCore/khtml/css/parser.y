@@ -817,7 +817,7 @@ ident_or_string:
 pseudo:
     ':' IDENT {
         $$ = new CSSSelector();
-        $$->match = CSSSelector::Pseudo;
+        $$->match = CSSSelector::PseudoClass;
         $2.lower();
         $$->value = atomicString($2);
         if ($$->value == "empty" || $$->value == "only-child" ||
@@ -828,16 +828,15 @@ pseudo:
                 doc->setUsesSiblingRules(true);
         }
     }
-    |
-    ':' ':' IDENT {
+    | ':' ':' IDENT {
         $$ = new CSSSelector();
-        $$->match = CSSSelector::Pseudo;
+        $$->match = CSSSelector::PseudoElement;
         $3.lower();
         $$->value = atomicString($3);
     }
     | ':' FUNCTION maybe_space simple_selector maybe_space ')' {
         $$ = new CSSSelector();
-        $$->match = CSSSelector::Pseudo;
+        $$->match = CSSSelector::PseudoClass;
         $$->simpleSelector = $4;
         $2.lower();
         $$->value = atomicString($2);

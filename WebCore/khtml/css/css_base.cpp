@@ -118,7 +118,8 @@ unsigned int CSSSelector::specificity()
     case Set:
     case List:
     case Hyphen:
-    case Pseudo:
+    case PseudoClass:
+    case PseudoElement:
     case Contain:
     case Begin:
     case End:
@@ -134,7 +135,7 @@ unsigned int CSSSelector::specificity()
 
 void CSSSelector::extractPseudoType() const
 {
-    if (match != Pseudo)
+    if (match != PseudoClass && match != PseudoElement)
         return;
     
     static AtomicString active("active");
@@ -157,27 +158,33 @@ void CSSSelector::extractPseudoType() const
     static AtomicString selection("selection");
     static AtomicString target("target");
     static AtomicString visited("visited");
+    bool element = false;	// pseudo-element
+    bool compat = false;	// single colon compatbility mode
     
     _pseudoType = PseudoOther;
     if (value == active)
         _pseudoType = PseudoActive;
-    else if (value == after)
+    else if (value == after) {
         _pseudoType = PseudoAfter;
-    else if (value == anyLink)
+        element = compat = true;
+    } else if (value == anyLink)
         _pseudoType = PseudoAnyLink;
-    else if (value == before)
+    else if (value == before) {
         _pseudoType = PseudoBefore;
-    else if (value == drag)
+        element = compat = true;
+    } else if (value == drag)
         _pseudoType = PseudoDrag;
     else if (value == empty)
         _pseudoType = PseudoEmpty;
     else if (value == firstChild)
         _pseudoType = PseudoFirstChild;
-    else if (value == firstLetter)
+    else if (value == firstLetter) {
         _pseudoType = PseudoFirstLetter;
-    else if (value == firstLine)
+        element = compat = true;
+    } else if (value == firstLine) {
         _pseudoType = PseudoFirstLine;
-    else if (value == focus)
+        element = compat = true;
+    } else if (value == focus)
         _pseudoType = PseudoFocus;
     else if (value == hover)
         _pseudoType = PseudoHover;
@@ -193,13 +200,21 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoOnlyChild;
     else if (value == root)
         _pseudoType = PseudoRoot;
-    else if (value == selection)
+    else if (value == selection) {
         _pseudoType = PseudoSelection;
-    else if (value == target)
+        element = true;
+    } else if (value == target)
         _pseudoType = PseudoTarget;
     else if (value == visited)
         _pseudoType = PseudoVisited;
     
+    if (match == PseudoClass && element)
+        if (!compat) 
+            _pseudoType = PseudoOther;
+        else 
+           match = PseudoElement;
+    else if (match == PseudoElement && !element)
+        _pseudoType = PseudoOther;
     value = nullAtom;
 }
 
@@ -240,9 +255,14 @@ DOMString CSSSelector::selectorText() const
         str = ".";
         str += cs->value.string();
     }
-    else if ( tag == anyLocalName && cs->match == CSSSelector::Pseudo )
+    else if ( tag == anyLocalName && cs->match == CSSSelector::PseudoClass )
     {
         str = ":";
+        str += cs->value.string();
+    }
+    else if ( tag == anyLocalName && cs->match == CSSSelector::PseudoElement )
+    {
+        str = "::";
         str += cs->value.string();
     }
     else
@@ -261,9 +281,14 @@ DOMString CSSSelector::selectorText() const
             str += ".";
             str += cs->value.string();
         }
-        else if ( cs->match == CSSSelector::Pseudo )
+        else if ( cs->match == CSSSelector::PseudoClass )
         {
             str += ":";
+            str += cs->value.string();
+        }
+        else if ( cs->match == CSSSelector::PseudoElement )
+        {
+            str += "::";
             str += cs->value.string();
         }
         // optional attribute
@@ -277,7 +302,7 @@ DOMString CSSSelector::selectorText() const
                 break;
             case CSSSelector::Set:
                 str += " "; /// ## correct?
-                       break;
+                break;
             case CSSSelector::List:
                 str += "~=";
                 break;
