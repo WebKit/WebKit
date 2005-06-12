@@ -44,6 +44,9 @@
 
 use strict;
 
+my $startDir = `pwd`;
+chomp $startDir;
+
 my %paths;
 
 # Create list of paths to diff.
@@ -53,7 +56,7 @@ if (!@ARGV) {
     for my $file (@ARGV) {
         die "can't handle absolute paths like \"$file\"\n" if $file =~ m|^/|;
         die "can't handle empty string path\n" if $file eq "";
-        die "can't handle path with ' in the name like \"$file\"\n" if $file =~ /'/;
+        die "can't handle path with ' in the name like \"$file\"\n" if $file =~ /'/; # ' (keep Xcode syntax highlighting happy)
 
         my $untouchedFile = $file;
         
@@ -90,15 +93,31 @@ for my $path (keys %paths) {
     }
 }
 
+sub getDirAndBase
+{
+    my ($path) = @_;
+    return ($1, $2) if $path =~ m|^(.+)/([^/]+)$|;
+    $path !~ m|/| or die "Could not parse path name $path.\n";
+    return (".", $path);
+}
+
 # Function to generate a diff.
 sub diff
 {
     my ($path) = @_;
+    my ($dir, $base) = getDirAndBase($path);
     my $errors = "";
-    open DIFF, "cvs diff -lNpu '$path' |" or die;
+    chdir $dir or die;
+    open DIFF, "cvs diff -lNpu '$base' |" or die;
     my $indexPath;
     while (<DIFF>) {
-        $indexPath = $1 if /^Index: (.*)/;
+        if (/^Index: (.*)/) {
+            $indexPath = $1;
+            if ($dir ne ".") {
+                $indexPath = "$dir/$indexPath";
+                s/Index: .*/Index: $indexPath/;
+            }
+        }
         if ($indexPath) {
             # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
             s/\S+$/$indexPath/ if /^diff/;
@@ -112,6 +131,7 @@ sub diff
         }
     }
     close DIFF;
+    chdir $startDir or die;
     print STDERR $errors;
 }
 

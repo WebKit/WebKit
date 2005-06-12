@@ -1,5 +1,10 @@
 2005-06-11  Darin Adler  <darin@apple.com>
 
+        * Scripts/cvs-create-patch: Improve handling of directories with mixed CVS roots by going into each directory
+        to execute the cvs diff commands.
+
+2005-06-11  Darin Adler  <darin@apple.com>
+
         - added first cuts at some cvs scripts
 
             cvs-abandon is for throwing away changes; discards any local changes, reverting to the state in CVS
