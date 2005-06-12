@@ -35,9 +35,9 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+setConfiguration();
 chdirWebKit();
-my $productDir = productDir();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild", symrootXcodeOptions(), "-buildstyle", "Deployment";
+exit system "xcodebuild", XcodeOptions();

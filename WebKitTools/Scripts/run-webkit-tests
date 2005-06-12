@@ -50,12 +50,13 @@ use webkitdirs;
 chdirWebKit();
 my $productDir = productDir();
 
-my $result = system "WebKitTools/Scripts/build-dumprendertree";
+my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
 
 my $tool = "$productDir/DumpRenderTree";
-
 die "can't find executable DumpRenderTree tool (looked in $productDir)\n" if !-x $tool;
+
+checkFrameworks();
 
 my $workingDir = `pwd`;
 chomp $workingDir;
@@ -69,24 +70,26 @@ $ENV{"DYLD_FRAMEWORK_PATH"} = $productDir;
 my @tests;
 
 my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
-if (@ARGV) {
-    for my $test (@ARGV) {
-        $test =~ s/^$testDirectory\///;
-        if ($test =~ /^\//) {
-            print "can't run test outside $testDirectory\n";
-        } elsif (-f "$testDirectory/$test") {
-            if ($test !~ /\.(html|xml|xhtml)$/) {
-                print "test $test does not have an .html extension\n";
-            } else {
-                push @tests, $test;
-            }
-        } elsif (-d "$testDirectory/$test") {
-            push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
+my $foundTestName = 0;
+for my $test (@ARGV) {
+    next if $test =~ /^-/;
+    $foundTestName = 1;
+    $test =~ s/^$testDirectory\///;
+    if ($test =~ /^\//) {
+        print "can't run test outside $testDirectory\n";
+    } elsif (-f "$testDirectory/$test") {
+        if ($test !~ /\.(html|xml|xhtml)$/) {
+            print "test $test does not have an .html extension\n";
         } else {
-            print "test $test not found\n";
+            push @tests, $test;
         }
+    } elsif (-d "$testDirectory/$test") {
+        push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
+    } else {
+        print "test $test not found\n";
     }
-} else {
+}
+if (!$foundTestName) {
     @tests = map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory $findArguments`;
 }
 

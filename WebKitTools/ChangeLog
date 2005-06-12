@@ -1,3 +1,23 @@
+2005-06-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+        Includes changes by Stuart Morgan as well as my own.
+
+        * Scripts/build-dumprendertree: Call the new setConfiguration function, and use XcodeOptions instead of
+        symrootXcodeOptions to set the -buildstyle option.
+        * Scripts/build-webkit: Ditto. Also remove the old way of supporting Xcode 2.1 and the old --debug option.
+        The new --development option does the same thing.
+        * Scripts/run-safari: Ditto.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/update-webkit: Ditto.
+        * Scripts/set-webkit-configuration: Added. Sets the default configuration to Development or Deployment.
+
+        * Scripts/webkitdirs.pm: use FindBin to find the WebKit directory; works no matter what the current
+        directory is when invoking a script. Add code to determine the Xcode version so we can do the right
+        thing for 2.0 and 2.1. Change the productDir function to return the appropriate per-configuration
+        product directory. Read the default configuration from a file, overridable by a passed-in command-line
+        option.
+
 2005-06-11  Darin Adler  <darin@apple.com>
 
         * Scripts/cvs-create-patch: Improve handling of directories with mixed CVS roots by going into each directory

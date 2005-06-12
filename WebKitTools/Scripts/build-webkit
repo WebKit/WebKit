@@ -29,15 +29,11 @@
 # Simplified build script for Web Kit Open Source Project.
 
 use strict;
-use Getopt::Long;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $debug = 0;
-GetOptions("debug!" => \$debug);
-
-my $style = $debug ? "Development" : "Deployment";
+setConfiguration();
 
 chdirWebKit();
 my $productDir = productDir();
@@ -53,33 +49,28 @@ for my $dir (@projects, @otherDirs) {
 
 # Copy library and header from WebKitLibraries to a findable place in the product directory.
 my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
-my $lib = "${productDir}/libWebKitSystemInterface.a";
+my $lib = "$productDir/libWebKitSystemInterface.a";
 if (!-e $lib || -M $lib > -M $srcLib) {
     print "Updating $lib\n";
     system "ditto", $srcLib, $lib;
     system "ranlib", $lib;
 }
 my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
-my $header = "${productDir}/usr/local/include/WebKitSystemInterface.h";
+my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
 if (!-e $header || -M $header > -M $srcHeader) {
     print "Updating $header\n";
-    system "mkdir", "-p", "${productDir}/usr/local/include";
+    system "mkdir", "-p", "$productDir/usr/local/include";
     system "ditto", $srcHeader, $header;
 }
-
-# Make symlinks so Xcode 2.1 can find the WebKitLibraries files.
-`mkdir -p "${productDir}/${style}"`;
-`ln -fs "../usr" "${productDir}/${style}"`;
-`ln -fs "../libWebKitSystemInterface.a" "${productDir}/${style}"`;
 
 # Build, and abort if the build fails.
 for my $dir (@projects) {
     chdir $dir or die;
     my $result;
     if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", symrootXcodeOptions(), "-target", "All", "-buildstyle", $style;
+        $result = system "xcodebuild", XcodeOptions(), "-target", "All";
     } else {
-        $result = system "xcodebuild", symrootXcodeOptions(), "-buildstyle", $style;
+        $result = system "xcodebuild", XcodeOptions();
     }
     exit $result if $result;
     chdir ".." or die;

@@ -29,42 +29,19 @@
 # Simplified "run" script for Web Kit Open Source Project.
 
 use strict;
-use Getopt::Long;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my $debug = 0;
-GetOptions("debug!" => \$debug);
-
+setConfiguration();
 my $productDir = productDir();
 
 # Check to see that Safari is in the usual place.
 my $safariPath = "/Applications/Safari.app/Contents/MacOS/Safari";
-if (! -x $safariPath) {
-    die "Can't find executable at $safariPath.\n";
-}
+die "Can't find executable at $safariPath.\n" unless -x $safariPath;
 
-# Search for build products; first test Xcode 2.0 location, then Xcode 2.1 locations.
-# For Xcode 2.1, prefer Deployment if both directories are present.
-my @testDirs;
-if ($debug) {
-    @testDirs = ("$productDir", "$productDir/Deployment", "$productDir/Development");
-} else {
-    @testDirs = ("$productDir", "$productDir/Development", "$productDir/Deployment");
-}
-my $found = 0;
-for my $testDir (@testDirs) {
-    next if !-x "$testDir/JavaScriptCore.framework/Versions/A/JavaScriptCore";
-    next if !-x "$testDir/WebCore.framework/Versions/A/WebCore";
-    next if !-x "$testDir/WebKit.framework/Versions/A/WebKit";
-    $productDir = $testDir;
-    $found = 1;
-    last;
-}
-if (!$found) {
-    die "Could not locate frameworks.\n";
-}
+# Check to see that all the frameworks are built.
+checkFrameworks();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
