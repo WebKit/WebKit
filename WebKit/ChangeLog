@@ -1,3 +1,22 @@
+2005-06-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+	- fixed <rdar://problem/4142247> REGRESSION: List to browse widgets at Apple website failed. Closing tab afterwards caused Safari crash
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3445
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]): Stop loading the non-provisional data
+	source before swapping in the provisional.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): Stop only
+	the provisional load here, we would not want to stop loading if this navigation
+	later turns into a download or is cancelled before being committed.
+        (-[WebFrame stopLoading]): Factored a bit.
+        (-[WebFrame _cancelProvisionalLoad]): New method to stop only provisional load,
+	and cancel any pending policy deicions.
+        (-[WebFrame _stopNonProvisionalLoadOnly]): New mthod that stops only the main
+	load.
+
 2005-06-10  John Sullivan  <sullivan@apple.com>
 
         reviewed by Dave Harrison (first & second drafts) and Darin Adler (third draft)
