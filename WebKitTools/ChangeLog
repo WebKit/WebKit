@@ -1,3 +1,19 @@
+2005-06-11  Darin Adler  <darin@apple.com>
+
+        - added first cuts at some cvs scripts
+
+            cvs-abandon is for throwing away changes; discards any local changes, reverting to the state in CVS
+            cvs-create-patch is for making patches; runs cvs diff with all the right options and handles added/deleted files
+            cvs-apply is for applying patches; runs patch and cvs add and cvs rm
+            cvs-unapply is for unapplying patches; does the opposite of cvs-apply
+
+          An argument against these is "waste of time if we switch to Subversion", but they should be good for a while.
+
+        * Scripts/cvs-abandon: Added.
+        * Scripts/cvs-apply: Added.
+        * Scripts/cvs-create-patch: Added.
+        * Scripts/cvs-unapply: Added.
+
 2005-06-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
