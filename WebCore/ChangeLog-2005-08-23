@@ -1,3 +1,11 @@
+2005-06-12  Darin Adler  <darin@apple.com>
+
+        - added expected test results for new tests
+
+        * layout-tests/fast/selectors/159-expected.txt: Added.
+        * layout-tests/fast/selectors/177a-expected.txt: Added.
+        * layout-tests/fast/selectors/177b-expected.txt: Added.
+
 2005-06-11  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Nicholas Shanks  <contact@nickshanks.com>, by me.
