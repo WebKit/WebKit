@@ -1739,7 +1739,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (id)initWithFrame:(NSRect)frame
 {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
     
     // Make all drawing go through us instead of subviews.
     if (NSAppKitVersionNumber >= 711) {
@@ -5184,7 +5186,9 @@ static NSArray *validAttributes = nil;
 
 - (id)initWithHTMLView:(WebHTMLView *)view
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     _view = view;
     return self;
 }

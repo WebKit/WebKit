@@ -96,7 +96,9 @@ static WebPreferences *_standardPreferences = nil;
 
 - (id)initWithIdentifier:(NSString *)anIdentifier
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     _private = [[WebPreferencesPrivate alloc] init];
     _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];

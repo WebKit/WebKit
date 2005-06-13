@@ -63,14 +63,18 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 
 - (id)init
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     _private = [[WebArchivePrivate alloc] init];
     return self;
 }
 
 - (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
     
     _private->mainResource = [mainResource retain];
     _private->subresources = [subresources retain];
@@ -86,7 +90,9 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 
 - (id)_initWithPropertyList:(id)propertyList
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
     
     if (![propertyList isKindOfClass:[NSDictionary class]]) {
         [self release];
@@ -136,7 +142,10 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 - (id)initWithCoder:(NSCoder *)decoder
 {    
     NS_DURING
-        [self init];
+        self = [self init];
+        if (!self)
+            NS_VALUERETURN(nil, id);
+        
         _private->mainResource = [[decoder decodeObjectForKey:WebMainResourceKey] retain];
         _private->subresources = [[decoder decodeObjectForKey:WebSubresourcesKey] retain];
         _private->subframeArchives = [[decoder decodeObjectForKey:WebSubframeArchivesKey] retain];

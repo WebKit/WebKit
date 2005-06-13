@@ -40,7 +40,9 @@
 
 - initWithName:(NSString *)n value:(NSString *)v source:(NSString *)s children:(NSArray *)c
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     children = [c copy];
     name = [n copy];

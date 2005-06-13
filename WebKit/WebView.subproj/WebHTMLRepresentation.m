@@ -66,7 +66,9 @@
 
 - init
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     
     _private = [[WebHTMLRepresentationPrivate alloc] init];
     

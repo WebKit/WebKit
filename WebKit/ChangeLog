@@ -1,3 +1,43 @@
+2005-06-12  Darin Adler  <darin@apple.com>
+
+        Changes by Nick Zitzmann.
+        Reviewed by me.
+
+        - fixed init methods that don't handle return values from the init methods they call
+
+        * WebView.subproj/WebArchive.m:
+        (-[WebArchive init]): Use value returned by init, check it for nil too.
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]): Ditto.
+        (-[WebArchive _initWithPropertyList:]): Ditto.
+        (-[WebArchive initWithCoder:]): Ditto.
+        * WebView.subproj/WebClipView.m:
+        (-[WebClipView initWithFrame:]): Ditto.
+        * WebView.subproj/WebDebugDOMNode.m:
+        (-[WebDebugDOMNode initWithName:value:source:children:]): Ditto.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFormState initWithForm:values:sourceFrame:]): Ditto.
+        (-[WebFrame initWithName:webFrameView:webView:]): Ditto.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView initWithFrame:]): Ditto.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation init]): Ditto.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]): Ditto.
+        (-[WebTextCompleteController initWithHTMLView:]): Ditto.
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView initWithFrame:]): Ditto.
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithIdentifier:]): Ditto.
+        * WebView.subproj/WebRenderNode.m:
+        (-[WebRenderNode initWithName:position:rect:view:children:]): Ditto.
+        * WebView.subproj/WebResource.m:
+        (-[WebResource init]): Ditto.
+        (-[WebResource initWithCoder:]): Ditto.
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate init]): Call super init.
+        (-[_WebSafeForwarder initWithTarget:defaultTarget:templateClass:]): Use value returned by init, check it for nil too.
+        (-[WebView initWithFrame:]): Ditto.
+
 2005-06-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris Blumenberg.

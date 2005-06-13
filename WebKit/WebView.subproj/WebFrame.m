@@ -2676,7 +2676,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (id)initWithForm:(DOMElement *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
+    
     _form = [form retain];
     _values = [values copy];
     _sourceFrame = [sourceFrame retain];
@@ -2717,7 +2720,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - initWithName:(NSString *)n webFrameView:(WebFrameView *)fv webView:(WebView *)v
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     _private = [[WebFramePrivate alloc] init];
 

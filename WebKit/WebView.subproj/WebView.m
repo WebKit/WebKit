@@ -254,6 +254,10 @@ static BOOL shouldUseFontSmoothing = YES;
 
 - init 
 {
+    self = [super init];
+    if (!self)
+        return nil;
+    
     backForwardList = [[WebBackForwardList alloc] init];
     textSizeMultiplier = 1;
     progressNotificationInterval = 0.02;
@@ -1385,7 +1389,10 @@ static bool debugWidget = true;
 
 - initWithTarget: t defaultTarget: dt templateClass: (Class)aClass
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
+    
     target = t;		// Non retained.
     defaultTarget = dt;
     templateClass = aClass;
@@ -1555,13 +1562,15 @@ static bool CGContextInitialized = false;
 
 - initWithFrame: (NSRect)f
 {
-    [self initWithFrame: f frameName:nil groupName:nil];
-    return self;
+    return [self initWithFrame: f frameName:nil groupName:nil];
 }
 
 - initWithFrame: (NSRect)f frameName: (NSString *)frameName groupName: (NSString *)groupName;
 {
-    [super initWithFrame: f];
+    self = [super initWithFrame:f];
+    if (!self)
+        return nil;
+    
     _private = [[WebViewPrivate alloc] init];
     [self _commonInitializationWithFrameName:frameName groupName:groupName];
     [self setMaintainsBackForwardList: YES];

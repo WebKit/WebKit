@@ -45,7 +45,9 @@
 
 - (id)initWithFrame:(NSRect)frame
 {
-    [super initWithFrame:frame];
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
     
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,

@@ -42,7 +42,9 @@
 {
     NSMutableArray *collectChildren;
     
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
 
     collectChildren = [c mutableCopy];
 

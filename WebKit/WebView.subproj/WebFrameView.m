@@ -312,7 +312,9 @@ static NSMutableDictionary *viewTypes;
 
 - initWithFrame: (NSRect) frame
 {
-    [super initWithFrame: frame];
+    self = [super initWithFrame: frame];
+    if (!self)
+        return nil;
  
     [WebViewFactory createSharedFactory];
     [WebTextRendererFactory createSharedFactory];
