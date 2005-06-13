@@ -78,7 +78,9 @@ sub determineBaseProductDir
         @baseProductDirOption = ();
     } else {
         chdirWebKit();
-        $baseProductDir = `pwd` . "/WebKitBuild";
+        my $dir = `pwd`;
+        chomp $dir;
+        $baseProductDir = "$dir/WebKitBuild";
         @baseProductDirOption = ("SYMROOT=$baseProductDir");
     }
     $baseProductDir =~ s|^~/|$ENV{HOME}/|;
@@ -88,7 +90,7 @@ sub determineConfiguration
 {
     return if defined $configuration;
     determineBaseProductDir();
-    open CONFIGURATION, "$baseProductDir/Configuration" or die;
+    open CONFIGURATION, "$baseProductDir/Configuration";
     $configuration = <CONFIGURATION>;
     close CONFIGURATION;
     if ($configuration) {
