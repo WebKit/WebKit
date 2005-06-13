@@ -1,3 +1,16 @@
+2005-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+	Patch from Andrew Wellington <proton@wiretapped.net>
+        Reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3302
+	(Safari crashes when going to acid2 test page once it's in cache)
+	
+        No test cases addded since the repro steps require use of tabbed browsing.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleFallbackContent): check for nil
+
 2005-06-12  Darin Adler  <darin@apple.com>
 
         - added expected test results for new tests
@@ -8,7 +21,7 @@
 
 2005-06-11  Maciej Stachowiak  <mjs@apple.com>
 
-        Patch from Nicholas Shanks  <contact@nickshanks.com>, by me.
+        Patch from Nicholas Shanks <contact@nickshanks.com>, reviewed by me.
 
 	- Distinguish between pseudo-elements and pseudo-classes in CSS parsing.
 	http://bugzilla.opendarwin.org/show_bug.cgi?id=3375
