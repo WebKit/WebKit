@@ -69,6 +69,7 @@ patch($patch);
 sub patch
 {
     my ($patch) = @_;
+    return if !$patch;
     if ($patch !~ /\ndiff -N/) {
         # Standard patch, patch tool can handle this.
         open PATCH, "| patch -p0 -R" or die;

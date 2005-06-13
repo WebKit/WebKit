@@ -1,5 +1,10 @@
 2005-06-12  Darin Adler  <darin@apple.com>
 
+        * Scripts/cvs-apply: Handle case of an empty patch better.
+        * Scripts/cvs-unapply: Ditto.
+
+2005-06-12  Darin Adler  <darin@apple.com>
+
         Changes by Michael Gaiman.
         Reviewed by me.
 
