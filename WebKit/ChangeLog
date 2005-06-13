@@ -1,5 +1,18 @@
 2005-06-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4141569> REGRESSION (412+): printing fails on any page with images, and for standalone images
+          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3318>
+
+        * WebCoreSupport.subproj/WebImageData.m: Got rid of use of tabs instead of spaces throughout the file.
+        (-[WebImageData _checkSolidColor:]): Wrap use of NSGraphicsContext with an autorelease pool.
+        (-[WebImageData _fillSolidColorInRect:compositeOperation:context:]): Ditto.
+        (-[WebImageData tileInRect:fromPoint:context:]): Ditto.
+        (-[WebImageData _PDFDrawFromRect:toRect:operation:alpha:flipped:context:]): Ditto.
+
+2005-06-12  Darin Adler  <darin@apple.com>
+
         Changes by Nick Zitzmann.
         Reviewed by me.
 
