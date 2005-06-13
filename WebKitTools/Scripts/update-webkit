@@ -29,6 +29,11 @@
 # Update script for Web Kit Open Source Project.
 
 use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+chdirWebKit();
 
 # Read the CVS root out of one project that's guaranteed to already be checked out (this one).
 open ROOT, "WebKitTools/CVS/Root" or die;

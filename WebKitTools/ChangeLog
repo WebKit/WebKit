@@ -1,5 +1,9 @@
 2005-06-12  Darin Adler  <darin@apple.com>
 
+        * Scripts/update-webkit: Make this script work when called from any directory.
+
+2005-06-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
         Includes changes by Stuart Morgan as well as my own.
 
