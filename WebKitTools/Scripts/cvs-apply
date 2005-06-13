@@ -42,9 +42,9 @@
 #   When doing a removal, doesn't check that old file matches what's being removed.
 
 use strict;
+use Cwd;
 
-my $startDir = `pwd`;
-chomp $startDir;
+my $startDir = getcwd();
 
 my $indexPath;
 my $patch;

@@ -1,5 +1,17 @@
 2005-06-12  Darin Adler  <darin@apple.com>
 
+        Changes by Stuart Morgan.
+        Reviewed by me.
+
+        * Scripts/cvs-abandon: Use cwd instead of `pwd`.
+        * Scripts/cvs-apply: Ditto.
+        * Scripts/cvs-create-patch: Ditto.
+        * Scripts/cvs-unapply: Ditto.
+        * Scripts/run-webkit-tests: Ditto.
+        * Scripts/webkitdirs.pm: Ditto. Also improve handling when there's no "Configuration" file.
+
+2005-06-12  Darin Adler  <darin@apple.com>
+
         * Scripts/cvs-apply: Handle case of an empty patch better.
         * Scripts/cvs-unapply: Ditto.
 

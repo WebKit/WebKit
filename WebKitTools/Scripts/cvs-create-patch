@@ -43,9 +43,9 @@
 #   Handle binary files (some text form of the binary file).
 
 use strict;
+use Cwd;
 
-my $startDir = `pwd`;
-chomp $startDir;
+my $startDir = getcwd();
 
 my %paths;
 

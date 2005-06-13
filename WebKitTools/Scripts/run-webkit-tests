@@ -31,6 +31,7 @@
 use strict;
 use IPC::Open2;
 use FindBin;
+use Cwd;
 use lib $FindBin::Bin;
 use webkitdirs;
 
@@ -58,8 +59,7 @@ die "can't find executable DumpRenderTree tool (looked in $productDir)\n" if !-x
 
 checkFrameworks();
 
-my $workingDir = `pwd`;
-chomp $workingDir;
+my $workingDir = getcwd();
 my $WebCoreDirectory = "$workingDir/WebCore";
 my $testDirectory = "$WebCoreDirectory/layout-tests";
 my $testResultsDirectory = "/tmp/layout-test-results";

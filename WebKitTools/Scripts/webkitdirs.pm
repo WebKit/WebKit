@@ -29,6 +29,7 @@
 use strict;
 use warnings;
 use FindBin;
+use Cwd;
 
 BEGIN {
    use Exporter   ();
@@ -78,9 +79,7 @@ sub determineBaseProductDir
         @baseProductDirOption = ();
     } else {
         chdirWebKit();
-        my $dir = `pwd`;
-        chomp $dir;
-        $baseProductDir = "$dir/WebKitBuild";
+        $baseProductDir = getcwd() . "/WebKitBuild";
         @baseProductDirOption = ("SYMROOT=$baseProductDir");
     }
     $baseProductDir =~ s|^~/|$ENV{HOME}/|;
@@ -90,9 +89,10 @@ sub determineConfiguration
 {
     return if defined $configuration;
     determineBaseProductDir();
-    open CONFIGURATION, "$baseProductDir/Configuration";
-    $configuration = <CONFIGURATION>;
-    close CONFIGURATION;
+    if (open CONFIGURATION, "$baseProductDir/Configuration") {
+        $configuration = <CONFIGURATION>;
+        close CONFIGURATION;
+    }
     if ($configuration) {
         chomp $configuration;
     } else {
