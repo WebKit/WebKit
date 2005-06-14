@@ -7,4 +7,4 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 56x28
           RenderText {TEXT} at (14,14) size 56x28
             text run at (14,14) width 56: "foo    "
-caret: position 7 of child 0 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

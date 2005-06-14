@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
             text run at (14,70) width 94: " war. We "
             text run at (108,70) width 111: "of that war."
         RenderText {TEXT} at (0,0) size 0x0
-caret: position 0 of child 4 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 4 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

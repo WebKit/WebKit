@@ -9,4 +9,4 @@ layer at (0,0) size 820x585
             text run at (74,84) width 540: "Fourscore and seven years ago our fathers brought forth"
             text run at (74,132) width 304: "onthis continent a new nation..."
         RenderText {TEXT} at (0,0) size 0x0
-caret: position 58 of child 0 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 58 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

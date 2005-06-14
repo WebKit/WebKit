@@ -36,4 +36,4 @@ layer at (0,0) size 800x600
                 text run at (25,2) width 34: "cde"
             RenderText {TEXT} at (59,2) size 20x28
               text run at (59,2) width 20: "fg"
-caret: position 3 of child 0 {TEXT} of child 1 {FONT} of child 1 {SPAN} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 1 {FONT} of child 1 {SPAN} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

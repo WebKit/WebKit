@@ -25,5 +25,5 @@ layer at (0,0) size 800x600
             text run at (14,313) width 61: "nation"
           RenderImage {IMG} at (75,232) size 76x103
         RenderText {TEXT} at (0,0) size 0x0
-selection start: position 0 of child 0 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 6 of child 10 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 10 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

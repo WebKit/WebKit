@@ -39,4 +39,4 @@ layer at (0,0) size 800x600
             RenderInline {SPAN} at (0,0) size 30x69
               RenderText {TEXT} at (0,0) size 30x69
                 text run at (0,0) width 30: "x"
-caret: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 0 {FONT} of child 3 {DIV} of child 2 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 0 {FONT} of child 4 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -13,5 +13,5 @@ layer at (0,0) size 812x585
             RenderTableCell {TD} at (2,2) size 2x2 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (74,128) size 600x48
         RenderBR {BR} at (0,10) size 0x48
-selection start: position 1 of child 1 {TEXT} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 0 of child 3 {TEXT} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 2 {TEXT} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 0 of child 4 {TEXT} of child 1 {BODY} of child 0 {HTML} of document

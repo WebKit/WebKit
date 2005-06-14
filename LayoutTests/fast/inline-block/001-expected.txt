@@ -12,6 +12,8 @@ layer at (0,0) size 800x600
       RenderText {TEXT} at (59,26) size 4x18
         text run at (59,26) width 4: " "
       RenderBlock {P} at (63,0) size 113x40 [border: (2px solid #0000FF)]
+        RenderBlock (anonymous) at (2,2) size 109x0
+          RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {SPAN} at (2,2) size 109x36
           RenderText {TEXT} at (0,0) size 80x18
             text run at (0,0) width 80: "should all be"

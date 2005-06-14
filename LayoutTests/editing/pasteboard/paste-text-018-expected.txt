@@ -32,4 +32,4 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,0) size 0x0
           RenderText {TEXT} at (2,30) size 79x28
             text run at (2,30) width 79: "line two"
-caret: position 8 of child 0 {TEXT} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 8 of child 0 {TEXT} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

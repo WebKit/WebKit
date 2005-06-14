@@ -23,4 +23,4 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 39x18
             RenderText {TEXT} at (0,0) size 39x18
               text run at (0,0) width 39: "there"
-caret: position 5 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 4 {P} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 5 of child 0 {TEXT} of child 0 {B} of child 0 {FONT} of child 5 {P} of child 1 {BODY} of child 0 {HTML} of document

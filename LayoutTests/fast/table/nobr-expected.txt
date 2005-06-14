@@ -5,6 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {NOBR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,0) size 784x352
         RenderTable {TABLE} at (0,0) size 70x352 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 0x350

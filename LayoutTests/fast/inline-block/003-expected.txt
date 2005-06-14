@@ -18,6 +18,7 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (0,0) size 729x18
           text run at (0,0) width 729: "The two marquees below should be on separate lines, since marquees fill the width of a containing block by default."
         RenderInline {SPAN} at (0,0) size 784x36
+          RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
 layer at (8,66) size 784x22 clip at (10,68) size 780x18 scrollX -765

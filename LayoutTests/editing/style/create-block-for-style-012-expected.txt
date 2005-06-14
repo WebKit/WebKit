@@ -19,5 +19,5 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (14,98) size 756x56 [border: (2px solid #FF0000)]
             RenderText {TEXT} at (361,14) size 34x28
               text run at (361,14) width 34: "baz"
-selection start: position 0 of child 0 {TEXT} of child 1 {DIV} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 1 of child 0 {TEXT} of child 2 {DIV} of child 0 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 1 of child 0 {TEXT} of child 2 {DIV} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

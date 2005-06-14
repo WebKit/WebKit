@@ -7,6 +7,7 @@ layer at (0,0) size 800x1095
         RenderInline {SPAN} at (0,0) size 191x12
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 191x12
+            RenderText {TEXT} at (0,0) size 0x0
             RenderTable {TABLE} at (0,0) size 191x20
               RenderTableSection {TBODY} at (0,0) size 0x20
                 RenderTableRow {TR} at (0,0) size 0x0
@@ -24,6 +25,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,34) size 784x43
         RenderInline {SPAN} at (0,0) size 110x41
           RenderInline {SPAN} at (0,0) size 110x41
+            RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 110x17
               RenderText {TEXT} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 53x20
@@ -34,6 +36,7 @@ layer at (0,0) size 800x1095
             RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 104x15
               RenderText {TEXT} at (0,0) size 0x0
+              RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,83) size 784x2
@@ -41,6 +44,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,91) size 784x67
         RenderInline {SPAN} at (0,0) size 592x65
           RenderInline {SPAN} at (0,0) size 592x65
+            RenderText {TEXT} at (0,0) size 0x0
             RenderImage {IMG} at (0,1) size 62x20
             RenderText {TEXT} at (62,2) size 4x15
               text run at (62,2) width 4: " "
@@ -56,6 +60,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,172) size 784x40
         RenderInline {SPAN} at (0,0) size 126x38
           RenderInline {SPAN} at (0,0) size 126x38
+            RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 126x17
               RenderText {TEXT} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 59x20
@@ -75,6 +80,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,278) size 784x20
         RenderInline {SPAN} at (0,0) size 128x15
           RenderInline {SPAN} at (0,0) size 128x15
+            RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 128x17
               RenderText {TEXT} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 62x20
@@ -83,6 +89,7 @@ layer at (0,0) size 800x1095
                 text run at (66,0) width 62: "Itinerary"
             RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
+              RenderText {TEXT} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,298) size 784x60
@@ -116,6 +123,7 @@ layer at (0,0) size 800x1095
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,372) size 784x196
         RenderTable {TABLE} at (0,0) size 710x196
           RenderTableSection {TBODY} at (0,0) size 0x196
@@ -212,6 +220,7 @@ layer at (0,0) size 800x1095
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,582) size 784x196
         RenderTable {TABLE} at (0,0) size 599x196
           RenderTableSection {TBODY} at (0,0) size 0x196
@@ -308,6 +317,7 @@ layer at (0,0) size 800x1095
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
+                RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,792) size 784x114
         RenderTable {TABLE} at (0,0) size 614x114
           RenderTableSection {TBODY} at (0,0) size 0x114
@@ -362,6 +372,7 @@ layer at (0,0) size 800x1095
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 97x17
+            RenderText {TEXT} at (0,0) size 0x0
             RenderImage {IMG} at (0,0) size 20x20
             RenderText {TEXT} at (20,0) size 77x18
               text run at (20,0) width 4: " "
@@ -380,6 +391,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,984) size 784x20
         RenderInline {SPAN} at (0,0) size 182x15
           RenderInline {SPAN} at (0,0) size 182x17
+            RenderText {TEXT} at (0,0) size 0x0
             RenderImage {IMG} at (0,0) size 62x20
             RenderText {TEXT} at (62,0) size 4x18
               text run at (62,0) width 4: " "
@@ -398,6 +410,7 @@ layer at (0,0) size 800x1095
       RenderBlock (anonymous) at (0,1018) size 784x20
         RenderInline {SPAN} at (0,0) size 277x15
           RenderInline {SPAN} at (0,0) size 277x15
+            RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 277x17
               RenderText {TEXT} at (0,0) size 0x0
               RenderImage {IMG} at (0,0) size 20x20
@@ -426,6 +439,7 @@ layer at (23,42) size 104x15
   RenderInline (relative positioned) {SPAN} at (0,0) size 104x15
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {SPAN} at (0,0) size 104x15
+      RenderText {TEXT} at (0,0) size 0x0
       RenderImage {IMG} at (0,20) size 20x20
       RenderText {TEXT} at (20,28) size 4x15
         text run at (20,28) width 4: " "
@@ -438,8 +452,10 @@ layer at (23,42) size 104x15
     RenderText {TEXT} at (0,0) size 0x0
 layer at (48,42) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
+    RenderText {TEXT} at (0,0) size 0x0
 layer at (23,99) size 592x38
   RenderInline (relative positioned) {SPAN} at (0,0) size 592x38
+    RenderText {TEXT} at (0,0) size 0x0
     RenderImage {IMG} at (0,21) size 20x20
     RenderText {TEXT} at (20,29) size 572x15
       text run at (20,29) width 4: " "
@@ -455,6 +471,7 @@ layer at (23,99) size 592x38
       text run at (293,52) width 136: "DANVILLE CA Z/94526"
 layer at (23,180) size 20x12
   RenderInline (relative positioned) {SPAN} at (0,0) size 20x12
+    RenderText {TEXT} at (0,0) size 0x0
     RenderImage {IMG} at (0,20) size 20x20
     RenderText {TEXT} at (0,0) size 0x0
 layer at (28,205) size 529x52
@@ -488,6 +505,7 @@ layer at (23,272) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
 layer at (33,1026) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
+    RenderText {TEXT} at (0,0) size 0x0
     RenderInline {SPAN} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0

@@ -66,4 +66,4 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (2,134) size 780x28
             RenderText {TEXT} at (0,0) size 36x28
               text run at (0,0) width 36: "xxx"
-caret: position 3 of child 2 {TEXT} of child 0 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 2 {TEXT} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

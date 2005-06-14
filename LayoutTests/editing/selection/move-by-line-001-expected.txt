@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
                 RenderTableCell {TD} at (2,108) size 58x54 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
                   RenderText {TEXT} at (13,13) size 31x28
                     text run at (13,13) width 31: "bar"
-caret: position 3 of child 0 {TEXT} of child 0 {TD} of child 2 {TR} of child 1 {TBODY} of child 0 {TABLE} of child 1 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 0 {TD} of child 2 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

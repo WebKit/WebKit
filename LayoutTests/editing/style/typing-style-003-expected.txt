@@ -22,4 +22,4 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-caret: position 3 of child 0 {TEXT} of child 1 {SPAN} of child 1 {SPAN} of child 1 {I} of child 1 {B} of child 0 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 1 {SPAN} of child 1 {SPAN} of child 1 {I} of child 1 {B} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

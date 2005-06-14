@@ -25,5 +25,5 @@ layer at (0,0) size 820x900
             text run at (0,490) width 552: "Four score and seven years ago our fathers brought forth,"
             text run at (0,538) width 583: "upon this continent, a new nation, conceived in Liberty, and"
             text run at (0,586) width 571: "dedicated to the proposition that all men are created equal."
-selection start: position 0 of child 0 {TEXT} of child 1 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 180 of child 6 {TEXT} of child 1 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 1 of child 0 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 180 of child 6 {TEXT} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

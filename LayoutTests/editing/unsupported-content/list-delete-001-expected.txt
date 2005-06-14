@@ -41,4 +41,4 @@ layer at (0,0) size 800x600
             text run at (2,2) width 62: "before"
           RenderText {TEXT} at (64,2) size 45x28
             text run at (64,2) width 45: "after"
-caret: position 7 of child 0 {TEXT} of child 0 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 7 of child 0 {TEXT} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -13,4 +13,4 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (14,42) size 92x28
             text run at (14,42) width 92: "years ago"
         RenderText {TEXT} at (0,0) size 0x0
-caret: position 0 of child 2 {TEXT} of child 1 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 0 of child 2 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -16,4 +16,4 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 40x28
             RenderText {TEXT} at (0,0) size 40x28
               text run at (0,0) width 40: "four"
-caret: position 3 of child 0 {TEXT} of child 0 {B} of child 1 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 0 {B} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

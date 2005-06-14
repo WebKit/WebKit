@@ -1,3 +1,18 @@
+2005-06-14  David Hyatt  <hyatt@apple.com>
+
+	The behavior of <pre> is broken so that the newline
+	is not always properly being eaten after the open of the tag.  In addition we were eating the first newline
+	after all other tags.  This patch stops eating newlines after other tags and refines the behavior for pre
+	to catch all cases.
+	
+        Reviewed by sullivan
+
+        Test cases added: fast/text/whitespace/030.html
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::write):
+
 2005-06-13  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.

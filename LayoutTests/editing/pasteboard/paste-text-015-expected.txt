@@ -17,4 +17,4 @@ layer at (0,0) size 800x600
           RenderBlock {P} at (14,98) size 756x28
             RenderText {TEXT} at (0,0) size 31x28
               text run at (0,0) width 31: "bar"
-caret: position 3 of child 0 {TEXT} of child 3 {P} of child 1 {DIV} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+caret: position 3 of child 0 {TEXT} of child 3 {P} of child 1 {DIV} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

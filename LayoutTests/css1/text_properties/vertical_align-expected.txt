@@ -68,6 +68,7 @@ layer at (0,0) size 800x4407
         RenderText {TEXT} at (15,36) size 4x18
           text run at (15,36) width 4: " "
         RenderInline {SPAN} at (0,0) size 754x111
+          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 126x18
             RenderText {TEXT} at (19,21) size 126x18
               text run at (19,21) width 126: "The first four words"
@@ -86,6 +87,7 @@ layer at (0,0) size 800x4407
         RenderText {TEXT} at (15,15) size 4x18
           text run at (15,15) width 4: " "
         RenderInline {SPAN} at (0,0) size 733x124
+          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 126x18
             RenderText {TEXT} at (19,32) size 126x18
               text run at (19,32) width 126: "The first four words"
@@ -100,6 +102,7 @@ layer at (0,0) size 800x4407
         RenderText {TEXT} at (15,15) size 4x18
           text run at (15,15) width 4: " "
         RenderInline {SPAN} at (0,0) size 745x161
+          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 293x18
             RenderText {TEXT} at (19,19) size 293x18
               text run at (19,19) width 293: "The first eight words (\"eight\" has a descender)"
@@ -115,6 +118,7 @@ layer at (0,0) size 800x4407
         RenderText {TEXT} at (15,36) size 4x18
           text run at (15,36) width 4: " "
         RenderInline {SPAN} at (0,0) size 759x111
+          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 126x18
             RenderText {TEXT} at (19,36) size 126x18
               text run at (19,36) width 126: "The first four words"
@@ -413,6 +417,7 @@ layer at (0,0) size 800x4407
                 RenderText {TEXT} at (15,36) size 4x18
                   text run at (15,36) width 4: " "
                 RenderInline {SPAN} at (0,0) size 754x111
+                  RenderText {TEXT} at (0,0) size 0x0
                   RenderInline {SPAN} at (0,0) size 126x18
                     RenderText {TEXT} at (19,21) size 126x18
                       text run at (19,21) width 126: "The first four words"
@@ -431,6 +436,7 @@ layer at (0,0) size 800x4407
                 RenderText {TEXT} at (15,15) size 4x18
                   text run at (15,15) width 4: " "
                 RenderInline {SPAN} at (0,0) size 733x124
+                  RenderText {TEXT} at (0,0) size 0x0
                   RenderInline {SPAN} at (0,0) size 126x18
                     RenderText {TEXT} at (19,32) size 126x18
                       text run at (19,32) width 126: "The first four words"
@@ -445,6 +451,7 @@ layer at (0,0) size 800x4407
                 RenderText {TEXT} at (15,15) size 4x18
                   text run at (15,15) width 4: " "
                 RenderInline {SPAN} at (0,0) size 745x161
+                  RenderText {TEXT} at (0,0) size 0x0
                   RenderInline {SPAN} at (0,0) size 293x18
                     RenderText {TEXT} at (19,19) size 293x18
                       text run at (19,19) width 293: "The first eight words (\"eight\" has a descender)"
@@ -460,6 +467,7 @@ layer at (0,0) size 800x4407
                 RenderText {TEXT} at (15,36) size 4x18
                   text run at (15,36) width 4: " "
                 RenderInline {SPAN} at (0,0) size 759x111
+                  RenderText {TEXT} at (0,0) size 0x0
                   RenderInline {SPAN} at (0,0) size 126x18
                     RenderText {TEXT} at (19,36) size 126x18
                       text run at (19,36) width 126: "The first four words"

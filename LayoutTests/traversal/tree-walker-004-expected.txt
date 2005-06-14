@@ -1,8 +1,8 @@
-layer at (0,0) size 800x692
+layer at (0,0) size 800x722
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x692
-  RenderBlock {HTML} at (0,0) size 800x692
-    RenderBody {BODY} at (8,8) size 784x670
+layer at (0,0) size 800x722
+  RenderBlock {HTML} at (0,0) size 800x722
+    RenderBody {BODY} at (8,8) size 784x700
       RenderBlock {DIV} at (0,0) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
@@ -59,9 +59,12 @@ layer at (0,0) size 800x692
           RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderInline {SPAN} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,0) size 784x670
-        RenderBlock {P} at (0,0) size 784x320
+      RenderBlock {DIV} at (0,0) size 784x700
+        RenderBlock (anonymous) at (0,0) size 784x16
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderBlock {P} at (0,30) size 784x320
           RenderInline {B} at (0,0) size 104x16
             RenderText {TEXT} at (0,0) size 104x16
               text run at (0,0) width 104: "Tree Walker: "
@@ -123,7 +126,7 @@ layer at (0,0) size 800x692
           RenderText {TEXT} at (0,304) size 8x16
             text run at (0,304) width 8: "D"
           RenderBR {BR} at (0,0) size 0x0
-        RenderBlock {P} at (0,334) size 784x336
+        RenderBlock {P} at (0,364) size 784x336
           RenderInline {B} at (0,0) size 104x16
             RenderText {TEXT} at (0,0) size 104x16
               text run at (0,0) width 104: "Tree Walker: "

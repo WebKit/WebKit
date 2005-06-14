@@ -16,5 +16,5 @@ layer at (0,0) size 800x600
               text run at (164,14) width 78: " xxxxxx"
         RenderInline {SPAN} at (0,0) size 0x28
         RenderText {TEXT} at (0,0) size 0x0
-selection start: position 0 of child 0 {TEXT} of child 1 {B} of child 0 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 6 of child 0 {TEXT} of child 1 {B} of child 0 {SPAN} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 0 {TEXT} of child 1 {B} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 0 {TEXT} of child 1 {B} of child 0 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

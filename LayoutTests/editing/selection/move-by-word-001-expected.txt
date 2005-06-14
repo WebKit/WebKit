@@ -10,5 +10,5 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,42) size 756x28
           RenderText {TEXT} at (0,0) size 31x28
             text run at (0,0) width 31: "bar"
-selection start: position 0 of child 2 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 3 of child 2 {TEXT} of child 0 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection start: position 0 of child 2 {TEXT} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 3 of child 2 {TEXT} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
