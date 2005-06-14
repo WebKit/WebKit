@@ -520,6 +520,11 @@ static QMap<QString, QString> parseFeatures(ExecState *exec, ValueImp *featuresA
     for (QStringList::ConstIterator it = features.begin(); it != end; ++it) {
         QString s = *it;
         int pos = s.find('=');
+        int colonPos = s.find(':');
+        if (pos >= 0 && colonPos >= 0)
+            continue; // ignore any strings that have both = and :
+        if (pos < 0)
+            pos = colonPos;
         if (pos < 0) {
             // null string for value means key without value
             map.insert(s.stripWhiteSpace().lower(), QString());
