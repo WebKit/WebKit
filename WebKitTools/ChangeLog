@@ -1,3 +1,13 @@
+2005-06-14  Darin Adler  <darin@apple.com>
+
+        Changes by Anders Carlsson.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3496>
+          Add gdb-safari script to launch Safari under gdb
+
+        * Scripts/gdb-safari: Added.
+
 2005-06-12  Darin Adler  <darin@apple.com>
 
         Changes by Stuart Morgan.
