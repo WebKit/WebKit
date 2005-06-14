@@ -1,3 +1,13 @@
+2005-06-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _delayedEndPrintMode:]):
+        After discussing this with Dave, I made this method both more debugger-friendly with asserts for
+        the cases we don't think could ever happen, and more paranoid by handling these cases in deployment
+        builds.
+
 2005-06-14  Darin Adler  <darin@apple.com>
 
         - fixed build for Xcode 2.1

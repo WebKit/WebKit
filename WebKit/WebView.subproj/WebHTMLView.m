@@ -3157,10 +3157,26 @@ static WebHTMLView *lastHitView = nil;
 - (void)_delayedEndPrintMode:(NSPrintOperation *)initiatingOperation
 {
     ASSERT_ARG(initiatingOperation, initiatingOperation != nil);
-    // If the operation that initiated this is still underway, delay further
-    if (initiatingOperation == [NSPrintOperation currentOperation]) {
-        [self performSelector:@selector(_delayedEndPrintMode:) withObject:nil afterDelay:0];
+    NSPrintOperation *currentOperation = [NSPrintOperation currentOperation];
+    
+    if (initiatingOperation == currentOperation) {
+        // The print operation is still underway. We don't expect this to ever happen, hence the assert, but we're
+        // being extra paranoid here since the printing code is so fragile. Delay the cleanup
+        // further.
+        ASSERT_NOT_REACHED();
+        [self performSelector:@selector(_delayedEndPrintMode:) withObject:initiatingOperation afterDelay:0];
+    } else if ([currentOperation view] == self) {
+        // A new print job has started, but it is printing the same WebHTMLView again. We don't expect
+        // this to ever happen, hence the assert, but we're being extra paranoid here since the printing code is so
+        // fragile. Do nothing, because we don't want to break the print job currently in progress, and
+        // the print job currently in progress is responsible for its own cleanup.
+        ASSERT_NOT_REACHED();
     } else {
+        // The print job that kicked off this delayed call has finished, and this view is not being
+        // printed again. We expect that no other print job has started. Since this delayed call wasn't
+        // cancelled, beginDocument and endDocument must not have been called, and we need to clean up
+        // the print mode here.
+        ASSERT(currentOperation == nil);
         [self _endPrintMode];
     }
 }
