@@ -1,3 +1,24 @@
+2005-06-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Harrison and Maciej.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _endPrintMode]):
+        new method, extracted from identical code in beginDocument and endDocument. This method must be called
+        once to counterbalance the code called from knowsPageRange that turns on "printing mode".
+        (-[WebHTMLView _delayedEndPrintMode:]):
+        new method, called from "perform after delay". Checks whether the same print operation is still underway
+        and, if so, delays further. Otherwise calls _endPrintMode directly.
+        (-[WebHTMLView knowsPageRange:]):
+        after turning on "printing mode", queue up a delayed call to _delayedEndPrintMode:. If there's an early
+        error in the print mechanism such that beginDocument is never called, this will cleanly end "printing
+        mode" and make the webview usable again.
+        (-[WebHTMLView beginDocument]):
+        cancel any delayed call to _delayedEndPrintMode:. If we get this far along in printing, then we don't need
+        the failsafe call to _delayedEndPrintMode: that was set up in knowsPageRange:. Also, call extracted method.
+        (-[WebHTMLView endDocument]):
+        call extracted method
+
 2005-06-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris Blumenberg and Adele.

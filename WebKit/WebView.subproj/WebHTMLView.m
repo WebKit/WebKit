@@ -3148,6 +3148,22 @@ static WebHTMLView *lastHitView = nil;
     [self _setPrinting:YES minimumPageWidth:pageWidth maximumPageWidth:pageWidth adjustViewSize:YES];
 }
 
+- (void)_endPrintMode
+{
+    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
+    [[self window] setAutodisplay:YES];
+}
+
+- (void)_delayedEndPrintMode:(NSPrintOperation *)initiatingOperation
+{
+    ASSERT_ARG(initiatingOperation, initiatingOperation != nil);
+    // If the operation that initiated this is still underway, delay further
+    if (initiatingOperation == [NSPrintOperation currentOperation]) {
+        [self performSelector:@selector(_delayedEndPrintMode:) withObject:nil afterDelay:0];
+    } else {
+        [self _endPrintMode];
+    }
+}
 
 // Return the number of pages available for printing
 - (BOOL)knowsPageRange:(NSRangePointer)range {
@@ -3166,6 +3182,14 @@ static WebHTMLView *lastHitView = nil;
         maxLayoutWidth = paperWidth*PrintingMaximumShrinkFactor;
     }
     [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES]; // will relayout
+    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
+    // Certain types of errors, including invalid page ranges, can cause beginDocument and
+    // endDocument to be skipped after we've put ourselves in print mode (see 4145905). In those cases
+    // we need to get out of print mode without relying on any more callbacks from the printing mechanism.
+    // If we get as far as beginDocument without trouble, then this delayed request will be cancelled.
+    // If not cancelled, this delayed call will be invoked in the next pass through the main event loop,
+    // which is after beginDocument and endDocument would be called.
+    [self performSelector:@selector(_delayedEndPrintMode:) withObject:printOperation afterDelay:0];
     [[self _webView] _adjustPrintingMarginsForHeaderAndFooter];
     
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
@@ -3173,7 +3197,6 @@ static WebHTMLView *lastHitView = nil;
     // you'd simply see the printer fonts on screen. As of this writing, this does not happen with Safari.
 
     range->location = 1;
-    NSPrintOperation *printOperation = [NSPrintOperation currentOperation];
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
     [_private->pageRects release];
@@ -3207,12 +3230,16 @@ static WebHTMLView *lastHitView = nil;
 - (void)beginDocument
 {
     NS_DURING
+        // From now on we'll get a chance to call _endPrintMode in either beginDocument or
+        // endDocument, so we can cancel the "just in case" pending call.
+        [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                                 selector:@selector(_delayedEndPrintMode:)
+                                                   object:[NSPrintOperation currentOperation]];
         [super beginDocument];
     NS_HANDLER
         // Exception during [super beginDocument] means that endDocument will not get called,
         // so we need to clean up our "print mode" here.
-        [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
-        [[self window] setAutodisplay:YES];
+        [self _endPrintMode];
     NS_ENDHANDLER
 }
 
@@ -3220,8 +3247,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [super endDocument];
     // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
-    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
-    [[self window] setAutodisplay:YES];
+    [self _endPrintMode];
 }
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
