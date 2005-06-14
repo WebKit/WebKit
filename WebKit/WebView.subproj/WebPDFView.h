@@ -31,7 +31,9 @@
 @class PDFView;
 @class WebDataSource;
 
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching>
+@protocol _web_WebDocumentTextSizing;
+
+@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, _web_WebDocumentTextSizing>
 {
     PDFView *PDFSubview;
     WebDataSource *dataSource;

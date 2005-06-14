@@ -30,9 +30,12 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebFrame.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPDFView.h>
+#import <WebKit/WebView.h>
 
 #import <Quartz/Quartz.h>
 
@@ -188,10 +191,22 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return menu;
 }
 
+- (void)_updateScalingToReflectTextSize
+{
+    WebView *view = [[dataSource webFrame] webView];
+    
+    // The scale factor and text size multiplier conveniently use the same units, so we can just
+    // treat the values as interchangeable.
+    if (view != nil) {
+        [PDFSubview setScaleFactor:[view textSizeMultiplier]];		
+    }	
+}
+
 - (void)setDataSource:(WebDataSource *)ds
 {
     dataSource = ds;
     [self setFrame:[[self superview] frame]];
+    [self _updateScalingToReflectTextSize];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
@@ -229,6 +244,11 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
             // here?  We ignore the error elsewhere.
         }
     }
+}
+
+- (void)_web_textSizeMultiplierChanged
+{
+    [self _updateScalingToReflectTextSize];
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;

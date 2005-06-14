@@ -1,5 +1,22 @@
 2005-06-14  John Sullivan  <sullivan@apple.com>
 
+        Changes by Devin Lane.
+        Reviewed by me.
+
+        - fixed <rdar://problem/3766909> PDF viewing could use a zoom control other than the one in the context menu
+
+        * WebView.subproj/WebPDFView.h:
+        now implements protocol _web_WebDocumentTextSizing
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView _updateScalingToReflectTextSize]):
+        new method, sets the PDF scaling from the text size multiplier
+        (-[WebPDFView setDataSource:]):
+        call _updateScalingToReflectTextSize
+        (-[WebPDFView _web_textSizeMultiplierChanged]):
+        implementation of protocol _web_WebDocumentTextSizing, calls _updateScalingToReflectTextSize
+
+2005-06-14  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Dave Harrison.
 
         * WebView.subproj/WebHTMLView.m:
