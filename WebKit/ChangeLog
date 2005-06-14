@@ -1,3 +1,11 @@
+2005-06-14  Darin Adler  <darin@apple.com>
+
+        - fixed build for Xcode 2.1
+
+        * WebKit.pbproj/project.pbxproj: Use BUILT_PRODUCTS_DIR instead of SYMROOT to search for the
+        WebKitSystemInterface.h file. We could re-jigger this again later, but for now this is consistent
+        with both the .a file's location and where build-webkit puts the file.
+
 2005-06-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Harrison and Maciej.
