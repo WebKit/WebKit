@@ -344,20 +344,17 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
 Value ActivationImp::get(ExecState *exec, const Identifier &propertyName) const
 {
     if (propertyName == argumentsPropertyName) {
+        // check for locally declared arguments property
+        ValueImp *v = getDirect(propertyName);
+        if (v)
+            return Value(v);
+
+        // default: return builtin arguments array
         if (!_argumentsObject)
-            createArgumentsObject(exec);
+                createArgumentsObject(exec);
         return Value(_argumentsObject);
     }
     return ObjectImp::get(exec, propertyName);
-}
-
-void ActivationImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
-{
-    if (propertyName == argumentsPropertyName) {
-        // FIXME: Do we need to allow overwriting this?
-        return;
-    }
-    ObjectImp::put(exec, propertyName, value, attr);
 }
 
 bool ActivationImp::hasProperty(ExecState *exec, const Identifier &propertyName) const

@@ -1,3 +1,20 @@
+2005-06-14  Geoffrey Garen  <ggaren@apple.com>
+
+	Fixed: <rdar://problem/4147745> JavaScript discards locally defined "arguments" property
+
+	No layout tests added because this change fixes existing tests:
+	ecma/ExecutionContexts/10.1.6.js
+        ecma_3/Function/regress-94506.js
+        js1_4/Functions/function-001.js
+
+        Reviewed by cblu.
+
+        * kjs/function.cpp:
+        (KJS::ActivationImp::get): get now checks for an "arguments" property defined in the local variable object
+	before trying to return the built-in arguments array.
+	
+        * kjs/function.h: ActivationImp::put no longer overrides ObjectImp::put
+
 2005-06-10  Darin Adler  <darin@apple.com>
 
         Change by Mark Rowe <opendarwin.org@bdash.net.nz>.
