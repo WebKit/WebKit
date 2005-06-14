@@ -587,7 +587,7 @@ void KHTMLPart::didExplicitOpen()
 }
 
 
-bool KHTMLPart::closeURL()
+void KHTMLPart::stopLoading(bool sendUnload)
 {    
     if (d->m_doc && d->m_doc->tokenizer()) {
         d->m_doc->tokenizer()->stopParsing();
@@ -600,20 +600,22 @@ bool KHTMLPart::closeURL()
     d->m_job = 0;
   }
 
-  if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
-    HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
-
-    if ( hdoc->body() && d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
-      hdoc->body()->dispatchWindowEvent( EventImpl::UNLOAD_EVENT, false, false );
-      if ( d->m_doc )
-        d->m_doc->updateRendering();
-      d->m_bUnloadEventEmitted = true;
+  if (sendUnload) {
+    if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
+      HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
+      
+      if ( hdoc->body() && d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
+        hdoc->body()->dispatchWindowEvent( EventImpl::UNLOAD_EVENT, false, false );
+        if ( d->m_doc )
+          d->m_doc->updateRendering();
+        d->m_bUnloadEventEmitted = true;
+      }
     }
+    
+    if (d->m_doc && !d->m_doc->inPageCache())
+      d->m_doc->removeAllEventListenersFromAllNodes();
   }
 
-  if (d->m_doc && !d->m_doc->inPageCache())
-    d->m_doc->removeAllEventListenersFromAllNodes();
-    
   d->m_bComplete = true; // to avoid emitting completed() in slotFinishedParsing() (David)
   d->m_bLoadingMainResource = false;
   d->m_bLoadEventEmitted = true; // don't want that one either
@@ -645,9 +647,17 @@ bool KHTMLPart::closeURL()
   // tell all subframes to stop as well
   ConstFrameIt it = d->m_frames.begin();
   ConstFrameIt end = d->m_frames.end();
-  for (; it != end; ++it )
-    if ( !( *it ).m_part.isNull() )
-      ( *it ).m_part->closeURL();
+  for (; it != end; ++it ) {
+      KParts::ReadOnlyPart *part = (*it).m_part;
+      if (part) {
+          KHTMLPart *khtml_part = static_cast<KHTMLPart *>(part);
+
+          if (khtml_part->inherits("KHTMLPart"))
+              khtml_part->stopLoading(sendUnload);
+          else
+              part->closeURL();
+      }
+  }
 
   d->m_bPendingChildRedirection = false;
 
@@ -658,6 +668,11 @@ bool KHTMLPart::closeURL()
   // null node activated.
   emit nodeActivated(Node());
 #endif
+}
+
+bool KHTMLPart::closeURL()
+{    
+  stopLoading(true);
 
   return true;
 }

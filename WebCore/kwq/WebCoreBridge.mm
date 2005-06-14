@@ -372,6 +372,11 @@ static bool initializedKJS = FALSE;
     _part->closeURL();
 }
 
+- (void)stopLoading
+{
+    _part->stopLoading();
+}
+
 - (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache
 {
     _part->didNotOpenURL(KURL(URL).url());

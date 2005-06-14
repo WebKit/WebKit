@@ -1,5 +1,24 @@
 2005-06-13  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Chris Blumenberg and Adele.
+
+	- better fix for <rdar://problem/4142247> REGRESSION: List to browse widgets at Apple website failed. Closing tab afterwards caused Safari crash
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3445
+
+	With this change and the matching WebKit change we'll still stop loading the moment you click
+	a download link, but the unload event and detaching of event handlers will not happen early any more.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::stopLoading): Factored out from closeURL, make firing of unload
+	and detaching of event handlers optional.
+        (KHTMLPart::closeURL): call stopLoading(true)
+        * khtml/khtml_part.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stopLoading]): Call stopLoading(false).
+
+2005-06-13  Maciej Stachowiak  <mjs@apple.com>
+
 	Patch from Andrew Wellington <proton@wiretapped.net>
         Reviewed by me.
 
