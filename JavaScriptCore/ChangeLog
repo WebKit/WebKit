@@ -1,5 +1,13 @@
 2005-06-14  Geoffrey Garen  <ggaren@apple.com>
 
+	Updated expected.html to reflect fix to <rdar://problem/4147745>.
+
+        Reviewed by cblu.
+
+        * tests/mozilla/expected.html:
+
+2005-06-14  Geoffrey Garen  <ggaren@apple.com>
+
 	Fixed: <rdar://problem/4147745> JavaScript discards locally defined "arguments" property
 
 	No layout tests added because this change fixes existing tests:
