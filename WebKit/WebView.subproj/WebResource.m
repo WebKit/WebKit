@@ -84,12 +84,12 @@ NSString *WebResourceResponseKey =          @"WebResourceResponse";
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
-{    
+{
+    self = [self init];
+    if (!self)
+        return nil;
+
     NS_DURING
-        self = [self init];
-        if (!self)
-            NS_VALUERETURN(nil, id);
-        
         _private->data = [[decoder decodeObjectForKey:WebResourceDataKey] retain];
         _private->URL = [[decoder decodeObjectForKey:WebResourceURLKey] retain];
         _private->MIMEType = [[decoder decodeObjectForKey:WebResourceMIMETypeKey] retain];

@@ -1,3 +1,14 @@
+2005-06-13  Chris Petersen  <cpetersen@apple.com>
+
+        Changes by Darin.
+        Reviewed by me.
+
+        - fixed problems building deployment due to recent init change
+
+        * WebView.subproj/WebArchive.m: (-[WebArchive initWithCoder:]):
+        Put the [super init] call and check for nil outside the exception handler.
+        * WebView.subproj/WebResource.m: (-[WebResource initWithCoder:]): Ditto.
+
 2005-06-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

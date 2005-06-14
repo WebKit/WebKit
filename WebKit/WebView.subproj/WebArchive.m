@@ -141,11 +141,11 @@ NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
 
 - (id)initWithCoder:(NSCoder *)decoder
 {    
-    NS_DURING
-        self = [self init];
-        if (!self)
-            NS_VALUERETURN(nil, id);
+    self = [self init];
+    if (!self)
+        return nil;
         
+    NS_DURING
         _private->mainResource = [[decoder decodeObjectForKey:WebMainResourceKey] retain];
         _private->subresources = [[decoder decodeObjectForKey:WebSubresourcesKey] retain];
         _private->subframeArchives = [[decoder decodeObjectForKey:WebSubframeArchivesKey] retain];
