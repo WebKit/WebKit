@@ -183,8 +183,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 - (WebHistoryItem *)_currentBackForwardListItemToResetTo;
-- (void)_cancelProvisionalLoad;
-- (void)_stopNonProvisionalLoadOnly;
 @end
 
 @implementation WebFramePrivate
@@ -766,8 +764,9 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 [_private setProvisionalItem:nil];
             }
 
+            [[self _bridge] closeURL];
+
             // Set the committed data source on the frame.
-            [self _stopNonProvisionalLoadOnly];
             [self _setDataSource:_private->provisionalDataSource];
                 
             [self _setProvisionalDataSource: nil];
@@ -2328,7 +2327,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebFrameLoadType loadType = _private->policyLoadType;
     WebDataSource *dataSource = [_private->policyDataSource retain];
     
-    [self _cancelProvisionalLoad];
+    [self stopLoading];
     [self _setLoadType:loadType];
     [self _setProvisionalDataSource:dataSource];
     [dataSource release];
@@ -2863,13 +2862,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
-- (void)_cancelProvisionalLoad
-{
-    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-    [_private->provisionalDataSource _stopLoading];
-    [self _setProvisionalDataSource:nil];
-}
-
 - (void)stopLoading
 {
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
@@ -2877,19 +2869,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
     _private->isStoppingLoad = YES;
-    [self _cancelProvisionalLoad];
-    [_private->dataSource _stopLoading];
-    _private->isStoppingLoad = NO;
-}
+    
+    [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
-- (void)_stopNonProvisionalLoadOnly
-{
-    // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
-    if (_private->isStoppingLoad) {
-        return;
-    }
-    _private->isStoppingLoad = YES;
+    [_private->provisionalDataSource _stopLoading];
     [_private->dataSource _stopLoading];
+
+    // Release the provisional data source because there's no point in keeping it around since it is unused in this case.
+    [self _setProvisionalDataSource:nil];
+    
     _private->isStoppingLoad = NO;
 }
 

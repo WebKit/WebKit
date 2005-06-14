@@ -1,3 +1,20 @@
+2005-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris Blumenberg and Adele.
+
+	- better fix for <rdar://problem/4142247> REGRESSION: List to browse widgets at Apple website failed. Closing tab afterwards caused Safari crash
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3445
+
+	With this change and the matching WebKit change we'll still stop loading the moment you click
+	a download link, but the unload event and detaching of event handlers will not happen early any more.
+	
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stopLoadingInternal]): call stopLoading on bridge instead of closeURL.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]): Revert previous attempt at fix.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): ditto
+        (-[WebFrame stopLoading]): ditto
+
 2005-06-13  Chris Petersen  <cpetersen@apple.com>
 
         Changes by Darin.
