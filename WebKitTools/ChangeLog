@@ -1,3 +1,7 @@
+2005-06-15  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkitdirs.pm: Recognize all 1.X versions of Xcode as old too, not just 2.0.
+
 2005-06-14  Darin Adler  <darin@apple.com>
 
         Changes by Anders Carlsson.

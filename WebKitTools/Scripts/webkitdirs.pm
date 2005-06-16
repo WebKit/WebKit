@@ -58,7 +58,7 @@ sub chdirWebKit
     chdir "$FindBin::Bin/../.." or die;
 }
 
-sub determineXCodeVersion
+sub determineXcodeVersion
 {
     return if defined $XcodeVersion;
     # Could use "xcodebuild -version" instead.
@@ -100,11 +100,17 @@ sub determineConfiguration
     }
 }
 
+sub oldXcode
+{
+    determineXcodeVersion();
+    return $XcodeVersion =~ /^1\./ || $XcodeVersion eq "2.0";
+}
+
 sub determineConfigurationProductDir
 {
     determineConfiguration();
-    determineXCodeVersion();
-    if ($XcodeVersion eq "2.0") {
+    determineXcodeVersion();
+    if (oldXcode()) {
         $configurationProductDir = $baseProductDir;
     } else {
         $configurationProductDir = "$baseProductDir/$configuration";
@@ -127,7 +133,9 @@ sub XcodeOptions
 {
     determineBaseProductDir();
     determineConfiguration();
-    return (@baseProductDirOption, "-buildstyle", $configuration);
+    determineXcodeVersion();
+    return (@baseProductDirOption, "-buildstyle", $configuration) if oldXcode();
+    return (@baseProductDirOption, "-configuration", $configuration);
 }
 
 sub passedConfiguration
