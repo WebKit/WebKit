@@ -105,4 +105,14 @@ void QualifiedName::deref()
     m_impl->deref();
 }
 
+bool operator==(const AtomicString& a, const QualifiedName& q)
+{ 
+    return a == q.localName();
+}
+
+bool operator==(const QualifiedName& q, const AtomicString& a)
+{
+    return a == q.localName();
+}
+
 }

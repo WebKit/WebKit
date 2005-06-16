@@ -60,16 +60,16 @@ public:
 
 private:
 
-    void ref() { if (m_impl) m_impl->ref(); } // FIXME: Yank null check eventually.
+    void ref() { m_impl->ref(); } 
     void deref();
     
     QualifiedNameImpl* m_impl;
 };
 
-bool operator==(const AtomicString& a, const QualifiedName& q) { return a == q.localName(); }
-bool operator!=(const AtomicString& a, const QualifiedName& q) { return a != q.localName(); }
-bool operator==(const QualifiedName& q, const AtomicString& a) { return a == q.localName(); }
-bool operator!=(const QualifiedName& q, const AtomicString& a) { return a != q.localName(); }
+bool operator==(const AtomicString& a, const QualifiedName& q);
+inline bool operator!=(const AtomicString& a, const QualifiedName& q) { return a != q.localName(); }
+bool operator==(const QualifiedName& q, const AtomicString& a);
+inline bool operator!=(const QualifiedName& q, const AtomicString& a) { return a != q.localName(); }
 
 
 }
