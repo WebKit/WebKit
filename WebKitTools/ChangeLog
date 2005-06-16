@@ -1,3 +1,14 @@
+2005-06-16  Darin Adler  <darin@apple.com>
+
+        - recent changes to XcodeOptions made it depend on the current directory
+          The intent was to have the WebKitBuild directory be next to WebKitTools,
+          not inside the various build directories. Workaround for now is to call
+          XcodeOptions when the directory is set to the WebKit directory.
+
+        * Scripts/build-dumprendertree: Use a local variable for XcodeOptions and get it
+        at the start of the script.
+        * Scripts/build-webkit: Ditto.
+
 2005-06-15  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitdirs.pm: Recognize all 1.X versions of Xcode as old too, not just 2.0.

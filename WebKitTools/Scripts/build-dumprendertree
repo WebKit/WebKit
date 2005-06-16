@@ -37,7 +37,8 @@ use webkitdirs;
 
 setConfiguration();
 chdirWebKit();
+my @options = XcodeOptions();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild", XcodeOptions();
+exit system "xcodebuild", @options;

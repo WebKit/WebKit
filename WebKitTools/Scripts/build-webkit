@@ -34,9 +34,9 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 setConfiguration();
-
 chdirWebKit();
 my $productDir = productDir();
+my @options = XcodeOptions();
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "WebCore", "WebKit");
@@ -68,9 +68,9 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result;
     if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", XcodeOptions(), "-target", "All";
+        $result = system "xcodebuild", @options, "-target", "All";
     } else {
-        $result = system "xcodebuild", XcodeOptions();
+        $result = system "xcodebuild", @options;
     }
     exit $result if $result;
     chdir ".." or die;
