@@ -27,6 +27,8 @@
 namespace DOM
 {
 
+class QualifiedName;
+
 class HTMLNames
 {
 public:

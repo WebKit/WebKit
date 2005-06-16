@@ -21,6 +21,7 @@
  */
 
 #include "htmlnames.h"
+#include "dom_qname.h"
 
 namespace DOM {
 
