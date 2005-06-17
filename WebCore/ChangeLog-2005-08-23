@@ -1,3 +1,17 @@
+2005-06-17  Justin Garcia  <justin.garcia@apple.com>
+
+	Fix for rdar://3756860, (also listed as) http://bugzilla.opendarwin.org/show_bug.cgi?id=3295
+	The cellIndex property for HTMLTableCellElement was always zero because the method to support it was just a stub.  KHTML fix was to simply call nodeIndex(), but this is incorrect because a table row can have as children <script>s and <form>s (and perhaps others).
+	
+        Reviewed by hyatt and john
+
+        Test cases added:
+	* layout-tests/fast/table/cellindex.html: Added.  Illustrates the fix.
+
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableCellElementImpl::cellIndex): Iterate through siblings only counting <th> and <td> elements
+        * khtml/html/html_tableimpl.h:
+
 2005-06-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

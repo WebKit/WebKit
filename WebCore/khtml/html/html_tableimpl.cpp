@@ -1118,6 +1118,16 @@ HTMLTableCellElementImpl::~HTMLTableCellElementImpl()
 {
 }
 
+long HTMLTableCellElementImpl::cellIndex() const
+{
+    int index = 0;
+    for (const NodeImpl * node = previousSibling(); node; node = node->previousSibling()) {
+        if (node->id() == ID_TD || node->id() == ID_TH)
+            index++;
+    }
+    
+    return index;
+}
 
 bool HTMLTableCellElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
