@@ -1267,19 +1267,6 @@ bool HTMLButtonElementImpl::appendFormData(FormDataList& encoding, bool /*multip
     return true;
 }
 
-void HTMLButtonElementImpl::click(bool sendMouseEvents)
-{
-#if APPLE_CHANGES
-    QWidget *widget;
-    if (renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
-        // using this method gives us nice Cocoa user interface feedback
-        static_cast<QButton *>(widget)->click(sendMouseEvents);
-    }
-    else
-#endif
-        HTMLGenericFormElementImpl::click(sendMouseEvents);
-}
-
 void HTMLButtonElementImpl::accessKeyAction(bool sendToAnyElement)
 {   
     // send the mouse button events iff the

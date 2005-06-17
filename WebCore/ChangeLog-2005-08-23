@@ -1,3 +1,17 @@
+2005-06-17  Geoffrey Garen  <ggaren@apple.com>
+
+	Patch contributed by Joos de Valk <webkit@joostdevalk.nl>.
+
+	Fixes: http://bugzilla.opendarwin.org/show_bug.cgi?id=3408	
+
+        Reviewed by Darin.
+
+        Test cases added: None. Test requires manual interaction.
+	Manual test available at: http://bugzilla.opendarwin.org/attachment.cgi?id=2207
+
+        * khtml/html/html_formimpl.cpp: Eliminated HTMLButtonElementImpl::click. HTMLButtonElementImpl now inherits HTMLElementImpl::click. 
+        * khtml/html/html_formimpl.h: Ditto.
+
 2005-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
