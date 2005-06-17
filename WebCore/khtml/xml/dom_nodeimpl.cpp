@@ -1631,9 +1631,9 @@ void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1
         NodeImpl *tmpNode;
 		
         if (node == markedNode1)
-            fprintf(stderr, markedLabel1);
+            fprintf(stderr, "%s", markedLabel1);
         if (node == markedNode2)
-            fprintf(stderr, markedLabel2);
+            fprintf(stderr, "%s", markedLabel2);
 			
         for (tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentNode())
             fprintf(stderr, "\t");

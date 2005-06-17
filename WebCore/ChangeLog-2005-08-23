@@ -1,3 +1,14 @@
+2005-06-17  Justin Garcia  <justin.garcia@apple.com>
+
+	Fixed fprintf problem in gcc4.0
+	
+        Reviewed by Darin
+
+        Test cases added: See previous ChangeLog entry
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::showTreeAndMark): Fixed fprintf warning in gcc4
+
 2005-06-17  Geoffrey Garen  <ggaren@apple.com>
 
 	Patch contributed by Anders Carlsson<andersca@mac.com>.
