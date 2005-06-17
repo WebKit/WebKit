@@ -1,0 +1,854 @@
+#!/usr/bin/perl -w
+# -*- Mode: perl; indent-tabs-mode: nil; c-basic-offset: 2  -*-
+
+#
+#  Copyright (C) 2000, 2001 Eazel, Inc.
+#  Copyright (C) 2002, 2003 Apple Computer, Inc.
+#
+#  prepare-ChangeLog is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public
+#  License as published by the Free Software Foundation; either
+#  version 2 of the License, or (at your option) any later version.
+#
+#  prepare-ChangeLog is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public
+#  License along with this program; if not, write to the Free
+#  Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+
+
+# Perl script to create a ChangeLog entry with names of files
+# and functions from a cvs diff.
+#
+# Darin Adler <darin@bentspoon.com>, started 20 April 2000
+# Java support added by Maciej Stachowiak <mjs@eazel.com>
+# Objective-C, C++ and Objective-C++ support added by Maciej Stachowiak <mjs@apple.com>
+
+
+#
+# TODO:
+#   List functions that have been removed too.
+#   Decide what a good logical order is for the changed files
+#     other than a normal text "sort" (top level first?)
+#     (group directories?) (.h before .c?)
+#   Handle yacc source files too (other languages?).
+#   Help merge when there are ChangeLog conflicts or if there's
+#     already a partly written ChangeLog entry.
+#   Add command line option to put the ChangeLog into a separate
+#     file or just spew it out stdout.
+#   Figure out how to allow -z options from .cvsrc to work without
+#     letting other bad options work. Currently the -f disables
+#     everything from the .cvsrc.
+#   Add CVS version numbers for each file too (can't do that until
+#     the changes are checked in, though).
+#   Work around diff stupidity where deleting a function that starts
+#     with a comment makes diff think that the following function
+#     has been changed (if the following function starts with a comment
+#     with the same first line, such as /**)
+#   Work around diff stupidity where deleting an entire function and
+#     the blank lines before it makes diff think you've changed the
+#     previous function.
+
+use strict;
+
+use Getopt::Long;
+
+my $spewDiff = $ENV{"PREPARE_CHANGELOG_DIFF"};
+my $openChangeLogs = 0;
+GetOptions("diff|d!" => \$spewDiff,
+	   "open|o!" => \$openChangeLogs);
+
+# Find the list of modified files
+my @changed_files;
+my $changed_files_string;
+my %changed_line_ranges;
+my %function_lists;
+my @conflict_files;
+
+my $CVS = "cvs";
+
+print STDERR "  Running cvs -n update to find changed, added, or removed files.\n";
+open UPDATE, "$CVS -qn update 2> /dev/stdout |" or die "The cvs update failed: $!.\n";
+while (<UPDATE>)
+  {
+    if (/^[MA] (.+)$/)
+      {
+        my $file = $1;
+        $function_lists{$file} = "";
+        push @changed_files, $file if $file ne "ChangeLog" && $file !~ /\.nib$/;
+      }
+
+    push @conflict_files, $1 if /^[C] (.+)$/;
+
+    $function_lists{$1} = " Added." if /^A (.+)$/;
+    $function_lists{$1} = " Removed." if /^R (.+)$/;
+    
+    print unless /^[A-Z] ./ || /^cvs server: New directory/;
+  }
+close UPDATE;
+
+if (@conflict_files)
+  {
+    print STDERR "  The following files have conflicts. Run prepare-ChangeLog again after fixing the conflicts:\n";
+    print STDERR join("\n", @conflict_files), "\n";
+    exit 1;
+  }
+
+if (@changed_files)
+  {
+    $changed_files_string = "'" . join ("' '", @changed_files) . "'";
+
+    # For each file, build a list of modified lines.
+    # Use line numbers from the "after" side of each diff.
+    print STDERR "  Running cvs diff to determine which lines changed.\n";
+    my $file;
+    open DIFF, "$CVS -fq diff -N $changed_files_string |" or die "The cvs diff failed: $!.\n";
+    while (<DIFF>)
+      {
+        $file = $1 if /^Index: (\S+)$/;
+        if (defined $file) {
+          if (/^\d+(,\d+)?[acd](\d+)(,(\d+))?/)
+            { push @{$changed_line_ranges{$file}}, [ $2, $4 || $2 ]; }
+	  elsif (/DO_NOT_COMMIT/) {
+	    print STDERR "WARNING: file $file contains the string DO_NOT_COMMIT, line $.\n";
+	  }
+	}
+      }
+    close DIFF;
+  }
+
+# For each source file, convert line range to function list.
+if (%changed_line_ranges)
+  {
+    print STDERR "  Extracting affected function names from source files.\n";
+    foreach my $file (keys %changed_line_ranges)
+      {
+        # Only look for function names in .c files.
+        next unless $file =~ /\.(c|cpp|m|mm|h|java)/;
+    
+        # Find all the functions in the file.
+        open SOURCE, $file or next;
+        my @function_ranges = get_function_line_ranges(\*SOURCE, $file);
+        close SOURCE;
+    
+        # Find all the modified functions.
+        my @functions;
+        my %saw_function;
+        my @change_ranges = (@{$changed_line_ranges{$file}}, []);
+        my @change_range = (0, 0);
+        FUNCTION: foreach my $function_range_ref (@function_ranges)
+          {
+            my @function_range = @$function_range_ref;
+    
+            # Advance to successive change ranges.
+            for (;; @change_range = @{shift @change_ranges})
+              {
+                last FUNCTION unless @change_range;
+    
+                # If past this function, move on to the next one.
+                next FUNCTION if $change_range[0] > $function_range[1];
+    
+                # If an overlap with this function range, record the function name.
+                if ($change_range[1] >= $function_range[0]
+                    and $change_range[0] <= $function_range[1])
+                  {
+                    if (!$saw_function{$function_range[2]})
+                      {
+                        $saw_function{$function_range[2]} = 1;
+                        push @functions, $function_range[2];
+                      }
+                    next FUNCTION;
+                  }
+              }
+          }
+    
+        # Format the list of functions now.
+
+        if (@functions) {
+            $function_lists{$file} = "" if !defined $function_lists{$file};
+            $function_lists{$file} .= "\n        (" . join("):\n        (", @functions) . "):";
+        }
+      }
+  }
+
+if (!%function_lists)
+  {
+    print STDERR "  No changes found.\n";
+    exit 1;
+  }
+
+# Get some parameters for the ChangeLog we are about to write.
+my $date = sprintf "%d-%02d-%02d",
+  1900 + (localtime $^T)[5], # year
+  1 + (localtime $^T)[4], # month
+  (localtime $^T)[3]; # day within month
+my $name = $ENV{CHANGE_LOG_NAME}
+  || $ENV{REAL_NAME}
+  || (getpwuid $<)[6]
+  || "set REAL_NAME environment variable";
+my $email_address = $ENV{CHANGE_LOG_EMAIL_ADDRESS}
+  || $ENV{EMAIL_ADDRESS}
+  || "set EMAIL_ADDRESS environment variable";
+
+# Remove trailing parenthesized notes from user name (bit of hack).
+$name =~ s/\(.*?\)\s*$//g;
+
+# Find the change logs.
+my %has_log;
+my %files;
+foreach my $file (sort keys %function_lists)
+  {
+    my $prefix = $file;
+    my $has_log = 0;
+    while ($prefix)
+      {
+        $prefix =~ s-/[^/]+/?$-/- or $prefix = "";
+        $has_log = $has_log{$prefix};
+        if (!defined $has_log)
+          {
+            $has_log = -f "${prefix}ChangeLog";
+            $has_log{$prefix} = $has_log;
+          }
+        last if $has_log;
+      }
+    if (!$has_log)
+      {
+        print STDERR "No ChangeLog found for $file.\n";
+      }
+    else
+      {
+        push @{$files{$prefix}}, $file;
+      }
+  }
+
+# Get the latest ChangeLog files from cvs.
+my $logs = "";
+foreach my $prefix (sort keys %files)
+  {
+    $logs .= " ${prefix}ChangeLog";
+  }
+if ($logs)
+  {
+    print STDERR "  Running cvs update to update ChangeLog files.\n";
+    open ERRORS, "$CVS update$logs |" or die "The cvs update of ChangeLog files failed: $!.\n";
+    print STDERR "    $_" while <ERRORS>;
+    close ERRORS;
+  }
+
+# Write out a new ChangeLog file.
+foreach my $prefix (sort keys %files)
+  {
+    print STDERR "  Editing the ${prefix}ChangeLog file.\n";
+    open OLD_CHANGE_LOG, "${prefix}ChangeLog" or die "Could not open ${prefix}ChangeLog file: $!.\n";
+    # It's less efficient to read the whole thing into memory than it would be
+    # to read it while we prepend to it later, but I like doing this part first.
+    my @old_change_log = <OLD_CHANGE_LOG>;
+    close OLD_CHANGE_LOG;
+    open CHANGE_LOG, "> ${prefix}ChangeLog" or die "Could not write ${prefix}ChangeLog\n.";
+    print CHANGE_LOG "$date  $name  <$email_address>\n\n";
+    print CHANGE_LOG "        Reviewed by NOBODY (OOPS!).\n\n";
+    if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/) {
+        print CHANGE_LOG "        Test cases added: (NONE)\n\n";
+    }
+
+    foreach my $file (sort @{$files{$prefix}})
+      {
+        my $file_stem = substr $file, length $prefix;
+        print CHANGE_LOG "        * $file_stem:$function_lists{$file}\n";
+      }
+    print CHANGE_LOG "\n", @old_change_log;
+    close CHANGE_LOG;
+  }
+
+# Write out another diff.
+if ($spewDiff && @changed_files)
+  {
+    print STDERR "  Running cvs diff -u to help you write the ChangeLog entries.\n";
+    open DIFF, "$CVS -q diff -uN $changed_files_string |" or die "The cvs diff failed: $!.\n";
+    while (<DIFF>) { print; }
+    close DIFF;
+  }
+
+# Open ChangeLogs.
+if ($openChangeLogs && $logs)
+  {
+    print STDERR "  Opening the edited ChangeLog files.\n";
+    my $editor = $ENV{"CHANGE_LOG_EDIT_APPLICATION"};
+    if ($editor) {
+        system "open -a '$editor'$logs";
+    } else {
+        system "open -e$logs";
+    }
+  }
+
+# Done.
+exit;
+
+sub get_function_line_ranges
+  {
+    my ($file_handle, $file_name) = @_;
+
+    if ($file_name =~ /\.(c|cpp|m|mm|h)$/) {
+        return get_function_line_ranges_for_c ($file_handle, $file_name);
+    } elsif ($file_name =~ /\.java$/) {
+        return get_function_line_ranges_for_java ($file_handle, $file_name);
+    }
+    return ();
+  }
+
+
+sub method_decl_to_selector
+  {
+    (my $method_decl) = @_;
+
+    $_ = $method_decl;
+
+    if ((my $comment_stripped) = m-([^/]*)(//|/*).*-) 
+      {
+	$_ = $comment_stripped;
+      }
+
+    s/,\s*...//;
+
+    if (/:/) 
+      {
+        my @components = split /:/;
+	pop @components if (scalar @components > 1);
+	$_ = (join ':', map {s/.*[^[:word:]]//; scalar $_;} @components) . ':';
+      } else {
+        s/\s*$//;
+	s/.*[^[:word:]]//;
+      }
+
+    return $_;
+  }
+
+
+
+# Read a file and get all the line ranges of the things that look like C functions.
+# A function name is the last word before an open parenthesis before the outer
+# level open brace. A function starts at the first character after the last close
+# brace or semicolon before the function name and ends at the close brace.
+# Comment handling is simple-minded but will work for all but pathological cases.
+#
+# Result is a list of triples: [ start_line, end_line, function_name ].
+
+sub get_function_line_ranges_for_c
+  {
+    my ($file_handle, $file_name) = @_;
+
+    my @ranges;
+
+    my $in_comment = 0;
+    my $in_macro = 0;
+    my $in_method_declaration = 0;
+    my $in_parentheses = 0;
+    my $in_braces = 0;
+    my $brace_start = 0;
+    my $brace_end = 0;
+    my $skip_til_brace_or_semicolon = 0;
+
+    my $word = "";
+    my $interface_name = "";
+
+    my $potential_method_char = "";
+    my $potential_method_spec = "";
+
+    my $potential_start = 0;
+    my $potential_name = "";
+
+    my $start = 0;
+    my $name = "";
+
+    my $next_word_could_be_namespace = 0;
+    my $potential_namespace = "";
+    my @namespaces;
+
+    while (<$file_handle>)
+      {
+        # Handle continued multi-line comment.
+        if ($in_comment)
+          {
+            next unless s-.*\*/--;
+            $in_comment = 0;
+          }
+
+        # Handle continued macro.
+        if ($in_macro)
+          {
+            $in_macro = 0 unless /\\$/;
+            next;
+          }
+
+        # Handle start of macro (or any preprocessor directive).
+        if (/^\s*\#/)
+          {
+            $in_macro = 1 if /^([^\\]|\\.)*\\$/;
+            next;
+          }
+
+        # Handle comments and quoted text.
+        while (m-(/\*|//|\'|\")-) # \' and \" keep emacs perl mode happy
+          {
+            my $match = $1;
+            if ($match eq "/*")
+              {
+                if (!s-/\*.*?\*/--)
+                  {
+                    s-/\*.*--;
+                    $in_comment = 1;
+                  }
+              }
+            elsif ($match eq "//")
+              {
+                s-//.*--;
+              }
+            else # ' or "
+              {
+                if (!s-$match([^\\]|\\.)*?$match--)
+                  {
+                    warn "mismatched quotes at line $. in $file_name\n";
+                    s-$match.*--;
+                  }
+              }
+          }
+
+
+        # continued method declaration
+        if ($in_method_declaration) 
+          {
+              my $original = $_;
+              my $method_cont = $_;
+
+              chomp $method_cont;
+              $method_cont =~ s/[;\{].*//;
+              $potential_method_spec = "${potential_method_spec} ${method_cont}";
+
+              $_ = $original;
+              if (/;/) 
+                {
+                  $potential_start = 0;
+                  $potential_method_spec = "";
+                  $potential_method_char = "";
+                  $in_method_declaration = 0;
+                  s/^[^;\{]*//;
+                } elsif (/{/) {
+                  my $selector = method_decl_to_selector ($potential_method_spec);
+                  $potential_name = "${potential_method_char}\[${interface_name} ${selector}\]";
+                  
+                  $potential_method_spec = "";
+                  $potential_method_char = "";
+                  $in_method_declaration = 0;
+  
+                  $_ = $original;
+                  s/^[^;{]*//;
+                } else {
+                  next;
+                }
+          }
+
+        
+        # start of method declaration
+        if ((my $method_char, my $method_spec) = m&^([-+])([^0-9;][^;]*)$&)
+          {
+            my $original = $_;
+
+            if ($interface_name) 
+              {
+                chomp $method_spec;
+                $method_spec =~ s/\{.*//;
+            
+                $potential_method_char = $method_char;
+                $potential_method_spec = $method_spec;
+                $potential_start = $.;
+                $in_method_declaration = 1;
+              } else { 
+                warn "declaring a method but don't have interface on line $. in $file_name\n";
+              }
+            $_ = $original;
+            if (/\{/) {
+              my $selector = method_decl_to_selector ($potential_method_spec);
+              $potential_name = "${potential_method_char}\[${interface_name} ${selector}\]";
+              
+              $potential_method_spec = "";
+              $potential_method_char = "";
+              $in_method_declaration = 0;
+              $_ = $original;
+              s/^[^{]*//;
+            } else {
+              next;
+            }
+          }
+
+
+        # Find function, interface and method names.
+        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;])|\@(?:implementation|interface)\s+(\w+)[^{]*&g)
+          {
+            # interface name
+            if ($2) 
+              {
+                $interface_name = $2;
+                next;
+              }
+
+            # Open parenthesis.
+            if ($1 eq "(")
+              {
+                $potential_name = $word unless $in_parentheses || $skip_til_brace_or_semicolon;
+                $in_parentheses++;
+                next;
+              }
+
+            # Close parenthesis.
+            if ($1 eq ")")
+              {
+                $in_parentheses--;
+                next;
+              }
+
+            # C++ constructor initializers
+            if ($1 eq ":")
+              {
+                  $skip_til_brace_or_semicolon = 1 unless ($in_parentheses || $in_braces);
+              }
+
+            # Open brace.
+            if ($1 eq "{")
+              {
+                $skip_til_brace_or_semicolon = 0;
+
+                if ($potential_namespace) {
+                    push @namespaces, $potential_namespace;
+                    $potential_namespace = "";
+                    next;
+                }
+
+                # Promote potential name to real function name at the
+                # start of the outer level set of braces (function body?).
+                if (!$in_braces and $potential_start)
+                  {
+                    $start = $potential_start;
+                    $name = $potential_name;
+                    if (@namespaces && (length($name) < 2 || substr($name,1,1) ne "[")) {
+                        $name = join ('::', @namespaces, $name);
+                    }
+                  }
+
+                $in_method_declaration = 0;
+
+                $brace_start = $. if (!$in_braces);
+                $in_braces++;
+                next;
+              }
+
+            # Close brace.
+            if ($1 eq "}")
+              {
+                if (!$in_braces && @namespaces) {
+                    pop @namespaces;
+                    next;
+                }
+
+                $in_braces--;
+                $brace_end = $. if (!$in_braces);
+
+                # End of an outer level set of braces.
+                # This could be a function body.
+                if (!$in_braces and $name)
+                  {
+                    push @ranges, [ $start, $., $name ];
+                    $name = "";
+                  }
+
+                $potential_start = 0;
+                $potential_name = "";
+                next;
+              }
+
+            # Semicolon.
+            if ($1 eq ";")
+              {
+                $skip_til_brace_or_semicolon = 0;
+                $potential_start = 0;
+                $potential_name = "";
+                $in_method_declaration = 0;
+                next;
+              }
+
+            # Ignore "const" method qualifier.
+            if ($1 eq "const") {
+                next;
+            }
+
+            if ($1 eq "namespace" || $1 eq "class" || $1 eq "struct") {
+                $next_word_could_be_namespace = 1;
+                next;
+            }
+
+            # Word.
+            $word = $1;
+            if (!$skip_til_brace_or_semicolon) {
+              if ($next_word_could_be_namespace) {
+                $potential_namespace = $word;
+                $next_word_could_be_namespace = 0;
+              } elsif ($potential_namespace) {
+                $potential_namespace = "";
+              }
+
+              if (!$in_parentheses) {
+                $potential_start = 0;
+                $potential_name = "";
+              }
+              if (!$potential_start) {
+                $potential_start = $.;
+                $potential_name = "";
+              }
+            }
+          }
+      }
+
+    warn "missing close braces in $file_name (probable start at $brace_start)\n" if ($in_braces > 0);
+    warn "too many close braces in $file_name (probable start at $brace_end)\n" if ($in_braces < 0);
+
+    warn "mismatched parentheses in $file_name\n" if $in_parentheses;
+
+    return @ranges;
+  }
+
+
+
+# Read a file and get all the line ranges of the things that look like Java
+# classes, interfaces and methods.
+#
+# A class or interface name is the word that immediately follows
+# `class' or `interface' when followed by an open curly brace and not
+# a semicolon. It can appear at the top level, or inside another class
+# or interface block, but not inside a function block
+#
+# A class or interface starts at the first character after the first close
+# brace or after the function name and ends at the close brace.
+#
+# A function name is the last word before an open parenthesis before
+# an open brace rather than a semicolon. It can appear at top level or
+# inside a class or interface block, but not inside a function block.
+#
+# A function starts at the first character after the first close
+# brace or after the function name and ends at the close brace.
+#
+# Comment handling is simple-minded but will work for all but pathological cases.
+#
+# Result is a list of triples: [ start_line, end_line, function_name ].
+
+sub get_function_line_ranges_for_java
+  {
+    my ($file_handle, $file_name) = @_;
+
+    my @current_scopes;
+
+    my @ranges;
+
+    my $in_comment = 0;
+    my $in_macro = 0;
+    my $in_parentheses = 0;
+    my $in_braces = 0;
+    my $in_non_block_braces = 0;
+    my $class_or_interface_just_seen = 0;
+
+    my $word = "";
+
+    my $potential_start = 0;
+    my $potential_name = "";
+    my $potential_name_is_class_or_interface = 0;
+
+    my $start = 0;
+    my $name = "";
+    my $current_name_is_class_or_interface = 0;
+
+    while (<$file_handle>)
+      {
+        # Handle continued multi-line comment.
+        if ($in_comment)
+          {
+            next unless s-.*\*/--;
+            $in_comment = 0;
+          }
+
+        # Handle continued macro.
+        if ($in_macro)
+          {
+            $in_macro = 0 unless /\\$/;
+            next;
+          }
+
+        # Handle start of macro (or any preprocessor directive).
+        if (/^\s*\#/)
+          {
+            $in_macro = 1 if /^([^\\]|\\.)*\\$/;
+            next;
+          }
+
+        # Handle comments and quoted text.
+        while (m-(/\*|//|\'|\")-) # \' and \" keep emacs perl mode happy
+          {
+            my $match = $1;
+            if ($match eq "/*")
+              {
+                if (!s-/\*.*?\*/--)
+                  {
+                    s-/\*.*--;
+                    $in_comment = 1;
+                  }
+              }
+            elsif ($match eq "//")
+              {
+                s-//.*--;
+              }
+            else # ' or "
+              {
+                if (!s-$match([^\\]|\\.)*?$match--)
+                  {
+                    warn "mismatched quotes at line $. in $file_name\n";
+                    s-$match.*--;
+                  }
+              }
+          }
+
+        # Find function names.
+        while (m-(\w+|[(){};])-g)
+          {
+            # Open parenthesis.
+            if ($1 eq "(")
+              {
+                if (!$in_parentheses) {
+                    $potential_name = $word;
+                    $potential_name_is_class_or_interface = 0;
+                }
+                $in_parentheses++;
+                next;
+              }
+
+            # Close parenthesis.
+            if ($1 eq ")")
+              {
+                $in_parentheses--;
+                next;
+              }
+
+            # Open brace.
+            if ($1 eq "{")
+              {
+                # Promote potential name to real function name at the
+                # start of the outer level set of braces (function/class/interface body?).
+                if (!$in_non_block_braces
+                    and (!$in_braces or $current_name_is_class_or_interface)
+                    and $potential_start)
+                  {
+                    if ($name)
+                      {
+                          push @ranges, [ $start, ($. - 1),
+                                          join ('.', @current_scopes) ];
+                      }
+
+
+                    $current_name_is_class_or_interface = $potential_name_is_class_or_interface;
+
+                    $start = $potential_start;
+                    $name = $potential_name;
+
+                    push (@current_scopes, $name);
+                  } else {
+                      $in_non_block_braces++;
+                  }
+
+                $potential_name = "";
+                $potential_start = 0;
+
+                $in_braces++;
+                next;
+              }
+
+            # Close brace.
+            if ($1 eq "}")
+              {
+                $in_braces--;
+
+                # End of an outer level set of braces.
+                # This could be a function body.
+                if (!$in_non_block_braces)
+                  {
+                    if ($name)
+                      {
+                        push @ranges, [ $start, $.,
+                                        join ('.', @current_scopes) ];
+
+                        pop (@current_scopes);
+
+                        if (@current_scopes)
+                          {
+                            $current_name_is_class_or_interface = 1;
+
+                            $start = $. + 1;
+                            $name =  $current_scopes[$#current_scopes-1];
+                          }
+                        else
+                          {
+                            $current_name_is_class_or_interface = 0;
+                            $start = 0;
+                            $name =  "";
+                          }
+                    }
+                  }
+                else
+                  {
+                    $in_non_block_braces-- if $in_non_block_braces;
+                  }
+
+                $potential_start = 0;
+                $potential_name = "";
+                next;
+              }
+
+            # Semicolon.
+            if ($1 eq ";")
+              {
+                $potential_start = 0;
+                $potential_name = "";
+                next;
+              }
+
+            if ($1 eq "class" or $1 eq "interface")
+              {
+                $class_or_interface_just_seen = 1;
+                next;
+              }
+
+            # Word.
+            $word = $1;
+            if (!$in_parentheses)
+              {
+                if ($class_or_interface_just_seen) {
+                    $potential_name = $word;
+                    $potential_start = $.;
+                    $class_or_interface_just_seen = 0;
+                    $potential_name_is_class_or_interface = 1;
+                    next;
+                }
+              }
+            if (!$potential_start)
+              {
+                $potential_start = $.;
+                $potential_name = "";
+              }
+            $class_or_interface_just_seen = 0;
+          }
+      }
+
+    warn "mismatched braces in $file_name\n" if $in_braces;
+    warn "mismatched parentheses in $file_name\n" if $in_parentheses;
+
+    return @ranges;
+  }
