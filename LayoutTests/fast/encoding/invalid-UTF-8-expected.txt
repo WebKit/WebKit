@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 721x18
+          text run at (0,0) width 721: "This tests the rendering of invalid UTF-8 sequences. The way other browsers handle these is to omit them entirely."
+      RenderBlock {P} at (0,34) size 784x36
+        RenderText {TEXT} at (0,0) size 764x36
+          text run at (0,0) width 764: "The text before should show the word \"everywhere\" right next to the word \"including\" and the word \"cube\" right next to"
+          text run at (0,18) width 396: "the word \"showing\" without any visible characters in between."
+      RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,104) size 784x18
+        RenderText {TEXT} at (0,0) size 346x18
+          text run at (0,0) width 346: "everywhereincluding a 120-screen cubeshowing sports"

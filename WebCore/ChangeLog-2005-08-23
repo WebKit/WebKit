@@ -1,3 +1,20 @@
+2005-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3556
+          black diamond question mark shown for invalid UTF-8 sequences
+
+        Test cases added:
+        * layout-tests/fast/encoding/invalid-UTF-8-expected.txt: Added.
+        * layout-tests/fast/encoding/invalid-UTF-8.html: Added.
+
+        * kwq/KWQTextCodec.mm:
+        (unwanted): Added. Returns true for BOM, replacement, and null characters.
+        (KWQTextDecoder::appendOmittingUnwanted): Renamed from appendOmittingNullsAndBOMs and
+        changed to use the new "unwanted" function, which causes it to omit replacement characters.
+        (KWQTextDecoder::convertUsingTEC): Call append function by its new name.
+
 2005-06-16  Justin Garcia  <justin.garcia@apple.com>
 
 	Added a few debugging methods to highlight Selections, VisiblePositions and Nodes in the DOM tree.

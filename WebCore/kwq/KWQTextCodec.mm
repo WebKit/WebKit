@@ -28,6 +28,7 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 
+const UniChar replacementCharacter = 0xFFFD;
 const UniChar BOM = 0xFEFF;
 
 class KWQTextDecoder : public QTextDecoder {
@@ -48,7 +49,7 @@ private:
     OSStatus createTECConverter();
     OSStatus convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
         void *outputBuffer, int outputBufferLength, int &outputLength);
-    static void appendOmittingNullsAndBOMs(QString &s, const UniChar *characters, int byteCount);
+    static void appendOmittingUnwanted(QString &s, const UniChar *characters, int byteCount);
     
     KWQTextDecoder(const KWQTextDecoder &);
     KWQTextDecoder &operator=(const KWQTextDecoder &);
@@ -356,14 +357,30 @@ OSStatus KWQTextDecoder::createTECConverter()
     return noErr;
 }
 
-void KWQTextDecoder::appendOmittingNullsAndBOMs(QString &s, const UniChar *characters, int byteCount)
+// We strip NUL characters because other browsers (at least WinIE) do.
+// We strip replacement characters because the TEC converter for UTF-8 converts
+// invalid sequences into replacement characters, but other browsers discard them.
+// We strip BOM characters because they can show up both at the start of content
+// and inside content, and we never want them to end up in the decoded text.
+static inline bool unwanted(UniChar c)
+{
+    switch (c) {
+        case 0:
+        case replacementCharacter:
+        case BOM:
+            return true;
+        default:
+            return false;
+    }
+}
+
+void KWQTextDecoder::appendOmittingUnwanted(QString &s, const UniChar *characters, int byteCount)
 {
     ASSERT(byteCount % sizeof(UniChar) == 0);
     int start = 0;
     int characterCount = byteCount / sizeof(UniChar);
     for (int i = 0; i != characterCount; ++i) {
-        UniChar c = characters[i];
-        if (c == 0 || c == BOM) {
+        if (unwanted(characters[i])) {
             if (start != i) {
                 s.append(reinterpret_cast<const QChar *>(&characters[start]), i - start);
             }
@@ -498,7 +515,7 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
                 return QString();
         }
 
-        appendOmittingNullsAndBOMs(result, buffer, bytesWritten);
+        appendOmittingUnwanted(result, buffer, bytesWritten);
 
         bufferWasFull = status == kTECOutputBufferFullStatus;
     }
@@ -506,7 +523,7 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
     if (flush) {
         unsigned long bytesWritten = 0;
         TECFlushText(_converter, reinterpret_cast<unsigned char *>(buffer), sizeof(buffer), &bytesWritten);
-        appendOmittingNullsAndBOMs(result, buffer, bytesWritten);
+        appendOmittingUnwanted(result, buffer, bytesWritten);
     }
 
     // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
