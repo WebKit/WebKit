@@ -52,6 +52,8 @@
 #define SPACE 0x0020
 #define NO_BREAK_SPACE 0x00A0
 #define ZERO_WIDTH_SPACE 0x200B
+#define POP_DIRECTIONAL_FORMATTING 0x202C
+#define LEFT_TO_RIGHT_OVERRIDE 0x202D
 
 // Lose precision beyond 1000ths place. This is to work around an apparent
 // bug in CoreGraphics where there seem to be small errors to some metrics.
@@ -1570,16 +1572,15 @@ static const char *joiningNames[] = {
 static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
 {
     WebCoreTextRun swappedRun;
-    unsigned int i;
     
-    UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*run->length);
-    for (i = 0; i < run->length; i++) {
-        swappedCharacters[i] = run->characters[run->length-i-1];
-    }
+    UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*(run->length+2));
+    memcpy(swappedCharacters+1, run->characters, sizeof(UniChar)*run->length);
+    swappedRun.from = run->from;
+    swappedRun.to = (run->to == -1 ? -1 : run->to+2);
+    swappedRun.length = run->length+2;
+    swappedCharacters[(swappedRun.from == -1 ? 0 : swappedRun.from)] = LEFT_TO_RIGHT_OVERRIDE;
+    swappedCharacters[(swappedRun.to == -1 ? swappedRun.length : (unsigned)swappedRun.to) - 1] = POP_DIRECTIONAL_FORMATTING;
     swappedRun.characters = swappedCharacters;
-    swappedRun.from = run->length - (run->to == -1 ? (int)run->length : run->to);
-    swappedRun.to = run->length - (run->from == -1 ? 0 : run->from);
-    swappedRun.length = run->length;
 
     return swappedRun;
 }
@@ -1724,7 +1725,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
-    // Reverse the visually ordered characters.  ATSU will re-reverse.  Ick!
+    // Enclose in LRO-PDF to force ATSU to render visually.
     if (style->visuallyOrdered) {
         swappedRun = reverseCharactersInRun(run);
         aRun = &swappedRun;

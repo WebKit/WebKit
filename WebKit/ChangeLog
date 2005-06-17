@@ -1,3 +1,14 @@
+2005-06-17  Richard Williamson   <rjw@apple.com>
+
+	Changes by Mitz Pettel
+        Reviewed by Richard Williamson.
+
+	Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3545
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (reverseCharactersInRun):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+
 2005-06-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.
