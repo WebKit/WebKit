@@ -1,3 +1,18 @@
+2005-06-17  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej. 
+
+        Test cases added: None, since this test requires manual interaction.
+
+	- fixed <rdar://problem/4086793> Selects wrapped by Span or Label elements 
+	do not resize when options are added via javascript
+        
+	* khtml/rendering/render_form.cpp:
+        (RenderSelect::layout): remove call setting setNeedsLayout to true.  setNeedsLayout
+	is already true at this point, and this addtional call has the negative effect of 
+	marking m_normalChildNeedsLayout on the element's parent, which keeps layout from 
+	propagating all the way up to the root later on.
+
 2005-06-17  Justin Garcia  <justin.garcia@apple.com>
 
 	Fix for rdar://3756860, (also listed as) http://bugzilla.opendarwin.org/show_bug.cgi?id=3295
