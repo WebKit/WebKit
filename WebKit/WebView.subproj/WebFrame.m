@@ -2890,6 +2890,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     NSMutableURLRequest *initialRequest = [dataSource request];
+    
+    // If a window is created by javascript, its main frame can have an empty but non-nil URL.
+    // Reloading in this case will lose the current contents (see 4151001).
+    if ([[[[dataSource request] URL] absoluteString] length] == 0) {
+        return;
+    }
 
     // Replace error-page URL with the URL we were trying to reach.
     NSURL *unreachableURL = [initialRequest _webDataRequestUnreachableURL];

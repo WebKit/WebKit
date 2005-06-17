@@ -1,3 +1,13 @@
+2005-06-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/4151001> Reloading javascript-spawned window with no URL erases its contents
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload]):
+        do nothing if URL is zero-length
+
 2005-06-14  John Sullivan  <sullivan@apple.com>
 
         Changes by Devin Lane.
