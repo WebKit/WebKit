@@ -1,3 +1,17 @@
+2005-06-16  Geoffrey Garen  <ggaren@apple.com>
+
+	Fixed: <rdar://problem/4151759> 'delete' fails on variables declared inside 'eval' statements.
+
+        Reviewed by cblu.
+
+        * kjs/context.h:
+        (KJS::ContextImp::codeType): Added code type accessor for execution context objects.
+        * kjs/internal.cpp:
+        (ContextImp::ContextImp): Reflects change to ContextImp::codeType.
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate): Added separate code path for variable declarations inside 'eval' statements.
+        * tests/mozilla/expected.html: Updated expected test results to reflect fix.
+
 2005-06-14  Geoffrey Garen  <ggaren@apple.com>
 
 	Updated expected.html to reflect fix to <rdar://problem/4147745>.

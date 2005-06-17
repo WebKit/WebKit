@@ -1628,8 +1628,12 @@ Value VarDeclNode::evaluate(ExecState *exec)
 #endif
   // We use Internal to bypass all checks in derived objects, e.g. so that
   // "var location" creates a dynamic property instead of activating window.location.
-  variable.put(exec, ident, val, DontDelete | Internal);
-
+  if (exec->context().imp()->codeType() == EvalCode) {
+      // ECMA 10.2.2
+      variable.put(exec, ident, val, Internal); 
+  } else {
+      variable.put(exec, ident, val, DontDelete | Internal);
+  }
   return ident.ustring();
 }
 

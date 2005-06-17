@@ -40,6 +40,7 @@ namespace KJS  {
     ~ContextImp();
 
     const ScopeChain &scopeChain() const { return scope; }
+    CodeType codeType() { return m_codeType; }
     Object variableObject() const { return variable; }
     void setVariableObject(const Object &v) { variable = v; }
     Object thisValue() const { return thisVal; }
@@ -69,7 +70,7 @@ namespace KJS  {
     Object thisVal;
 
     LabelStack ls;
-    CodeType codeType;
+    CodeType m_codeType;
   };
 
 } // namespace KJS
