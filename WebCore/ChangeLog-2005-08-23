@@ -1,3 +1,25 @@
+2005-06-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3419
+        <rdar://problem/4111752> REGRESSION (125-312/412): Safari doesn't display edmunds.com pages first time through
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::parseTag): set 'script' flag when 
+          parsing <script src="foo" /> case.  In this case, parseTag calls the scriptHandler function which expects 
+          that flag to be set, and sets it back to false at the appropriate time.
+
+        Test cases added: These still don't test the cached script cases, but they're good regression 
+        tests for the tokenizer.  We'll have to come up with a good way to test the cached cases later.
+
+        * layout-tests/fast/tokenizer/external-script-document-write_2-expected.txt: Added.
+        * layout-tests/fast/tokenizer/external-script-document-write_2.html: Added.
+        * layout-tests/fast/tokenizer/resources/empty_script.js: Added.
+        * layout-tests/fast/tokenizer/script_extra_close-expected.txt: Added.
+        * layout-tests/fast/tokenizer/script_extra_close.html: Added.
+        * layout-tests/fast/tokenizer/script_quirk-expected.txt: Added.
+        * layout-tests/fast/tokenizer/script_quirk.html: Added.
+
 2005-06-17  Justin Garcia  <justin.garcia@apple.com>
 
 	Fixed fprintf problem in gcc4.0
