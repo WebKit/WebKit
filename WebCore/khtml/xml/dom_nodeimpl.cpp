@@ -1601,7 +1601,7 @@ NodeImpl::Id NodeImpl::identifier() const
 
 #ifndef NDEBUG
 
-void NodeImpl::displayNode(const char *prefix)
+void NodeImpl::showNode(const char *prefix)
 {
     if (!prefix)
         prefix = "";
@@ -1614,18 +1614,30 @@ void NodeImpl::displayNode(const char *prefix)
         fprintf(stderr, "%s%s\t%p\n", prefix, nodeName().string().local8Bit().data(), this);
 }
 
-void NodeImpl::displayTree()
+void NodeImpl::showTree()
 {
-    NodeImpl    *rootNode = rootEditableElement() ? : this;
-    NodeImpl    *node;
-    
+    showTreeAndMark(this, "*", NULL, NULL);
+}
+
+void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2)
+{
+    NodeImpl *rootNode;
+    NodeImpl *node = this;
+    while(node->parentNode() != NULL && node->id() != ID_BODY)
+        node = node->parentNode();
+    rootNode = node;
+	
     for (node = rootNode; node; node = node->traverseNextNode()) {
         NodeImpl *tmpNode;
-        if (node == this)
-            fprintf(stderr, "*");
+		
+        if (node == markedNode1)
+            fprintf(stderr, markedLabel1);
+        if (node == markedNode2)
+            fprintf(stderr, markedLabel2);
+			
         for (tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentNode())
             fprintf(stderr, "\t");
-        node->displayNode(0);
+        node->showNode(0);
     }
 }
 

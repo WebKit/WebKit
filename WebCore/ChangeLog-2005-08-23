@@ -1,3 +1,23 @@
+2005-06-16  Justin Garcia  <justin.garcia@apple.com>
+
+	Added a few debugging methods to highlight Selections, VisiblePositions and Nodes in the DOM tree.
+	
+        Reviewed by Dave Harrison
+
+        Test cases added: None, changes are only to aid debugging
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::showTree):
+        * khtml/editing/selection.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::showTree):
+        * khtml/editing/visible_position.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::showNode):
+        (NodeImpl::showTree):
+        (NodeImpl::showTreeAndMark): 
+        * khtml/xml/dom_nodeimpl.h:
+
 2005-06-14  David Hyatt  <hyatt@apple.com>
 
         Add an initial implementation of QualifiedName and HTMLNames.  These classes are not used by anyone yet.

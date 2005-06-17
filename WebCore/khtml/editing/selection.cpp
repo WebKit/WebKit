@@ -1093,6 +1093,11 @@ void Selection::formatForDebugger(char *buffer, unsigned length) const
     strncpy(buffer, result.string().latin1(), length - 1);
 }
 #undef FormatBufferSize
+
+void Selection::showTree()
+{
+    m_start.node()->showTreeAndMark(m_start.node(), "S", m_end.node(), "E");
+}
 #endif
 
 } // namespace DOM
