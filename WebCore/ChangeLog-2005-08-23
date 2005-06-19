@@ -4,6 +4,20 @@
         Reviewed by me.
 
         Test cases added:
+        * layout-tests/fast/replaced/object-align-hspace-vspace-expected.txt: Added.
+        * layout-tests/fast/replaced/object-align-hspace-vspace.html: Added.
+        * layout-tests/fast/replaced/resources/webkit-background.png: Added.
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::mapToEntry): Add cases for ATTR_ALIGN, ATTR_VSPACE and ATTR_HSPACE.
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute): Ditto.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
+        Change by Niels Leenheer (also done by Dave Hyatt on stage at WWDC).
+        Reviewed by me.
+
+        Test cases added:
         * layout-tests/fast/replaced/applet-hspace-expected.txt: Added.
         * layout-tests/fast/replaced/applet-hspace.html: Added.
         * layout-tests/fast/replaced/applet-vspace-expected.txt: Added.
