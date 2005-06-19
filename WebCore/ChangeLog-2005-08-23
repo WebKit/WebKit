@@ -1,5 +1,36 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        Changes by Anders Carlsson.
+        Reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/forms/focus-expected.txt: Added.
+        * layout-tests/fast/forms/focus.html: Added.
+        * layout-tests/fast/forms/legend-access-key-expected.txt: Added.
+        * layout-tests/fast/forms/legend-access-key.html: Added.
+
+        - fixed <rdar://problem/3481846> HTML4: accesskey not supported by HTML legend elements
+          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3407>
+        - added focus methods for <label> and <legend> elements
+        - fixed crash when using JavaScript-created events that prevented tests from running
+
+        * khtml/ecma/kjs_html.h: Added focus methods.
+        * khtml/ecma/kjs_html.cpp: (KJS::KJS::HTMLElementFunction::tryCall): Added bindings for
+        focus for <label> and <legend>. (Sorry about the merging, Dave.)
+
+        * khtml/html/html_formimpl.h: Added new functions.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLLabelElementImpl::focus): Added.
+        (DOM::HTMLLegendElementImpl::formElement): Added.
+        (DOM::HTMLLegendElementImpl::focus): Added.
+        (DOM::HTMLLegendElementImpl::accessKeyAction): Added.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::defaultEventHandler): If there's no QKeyEvent,
+        then get the key name from keyIdentifier() instead of the QKeyEvent's unmodifiedText().
+        The old code would just do a nil-deref.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         Change by Niels Leenheer (also done by Dave Hyatt on stage at WWDC).
         Reviewed by me.
 

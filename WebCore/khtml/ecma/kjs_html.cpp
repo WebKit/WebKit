@@ -876,18 +876,20 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   blur		KJS::HTMLElement::ButtonBlur		DontDelete|Function 0
   focus		KJS::HTMLElement::ButtonFocus		DontDelete|Function 0
 @end
-@begin HTMLLabelElementTable 3
+@begin HTMLLabelElementTable 4
   form		KJS::HTMLElement::LabelForm		DontDelete|ReadOnly
   accessKey	KJS::HTMLElement::LabelAccessKey	DontDelete
   htmlFor	KJS::HTMLElement::LabelHtmlFor		DontDelete
+  focus     KJS::HTMLElement::LabelFocus        DontDelete|Function 0
 @end
 @begin HTMLFieldSetElementTable 1
   form		KJS::HTMLElement::FieldSetForm		DontDelete|ReadOnly
 @end
-@begin HTMLLegendElementTable 3
+@begin HTMLLegendElementTable 4
   form		KJS::HTMLElement::LegendForm		DontDelete|ReadOnly
   accessKey	KJS::HTMLElement::LegendAccessKey	DontDelete
   align		KJS::HTMLElement::LegendAlign		DontDelete
+  focus     KJS::HTMLElement::LegendFocus     DontDelete|Function 0
 @end
 @begin HTMLUListElementTable 2
   compact	KJS::HTMLElement::UListCompact		DontDelete
@@ -2176,6 +2178,24 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
       else if (id == KJS::HTMLElement::InputClick) {
         input.click();
         return Undefined();
+      }
+    }
+    break;
+    case ID_LABEL: {
+      HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
+      
+      if (id == KJS::HTMLElement::LabelFocus) {
+          label.focus();
+          return Undefined();
+      }
+    }
+    break;
+    case ID_LEGEND: {
+      HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
+        
+      if (id == KJS::HTMLElement::LegendFocus) {
+          legend.focus();
+          return Undefined();
       }
     }
     break;

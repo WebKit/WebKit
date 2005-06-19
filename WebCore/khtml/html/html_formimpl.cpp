@@ -2377,20 +2377,21 @@ ElementImpl *HTMLLabelElementImpl::formElement()
     DOMString formElementId = getAttribute(ATTR_FOR);
     if (formElementId.isNull()) {
         // Search children of the label element for a form element.
-        NodeImpl *node = this;
-        while ((node = node->traverseNextNode(this))) {
-            if (node->isHTMLElement()) {
-                HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
-                if (element->isGenericFormElement()) {
-                    return element;
-                }
-            }
+        for (NodeImpl *node = this; node; node = node->traverseNextNode(this)) {
+            if (node->isHTMLElement() && static_cast<HTMLElementImpl *>(node)->isGenericFormElement())
+                return element;
         }
         return 0;
     }
     if (formElementId.isEmpty())
         return 0;
     return getDocument()->getElementById(formElementId);
+}
+
+void HTMLLabelElementImpl::focus()
+{
+    if (ElementImpl *element = formElement())
+        getDocument()->setFocusNode(element);
 }
 
 void HTMLLabelElementImpl::accessKeyAction(bool sendToAnyElement)
@@ -2477,6 +2478,40 @@ DOMString HTMLLegendElementImpl::align() const
 void HTMLLegendElementImpl::setAlign(const DOMString &value)
 {
     setAttribute(ATTR_ALIGN, value);
+}
+
+ElementImpl *HTMLLegendElementImpl::formElement()
+{
+    // Check if there's a fieldset belonging to this legend.
+    NodeImpl *fieldset = parentNode();
+    while (fieldset && fieldset->id() != ID_FIELDSET)
+        fieldset = fieldset->parentNode();
+    if (!fieldset)
+        return 0;
+
+    // Find first form element inside the fieldset.
+    // FIXME: Should we care about tabindex?
+    for (NodeImpl *node = fieldset; node; node = node->traverseNextNode(fieldset)) {
+        if (node->isHTMLElement()) {
+            HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+            if (element->id() != ID_LEGEND && element->isGenericFormElement())
+                return element;
+        }
+    }
+
+    return 0;
+}
+
+void HTMLLegendElementImpl::focus()
+{
+    if (ElementImpl *element = formElement())
+        getDocument()->setFocusNode(element);
+}
+
+void HTMLLegendElementImpl::accessKeyAction(bool sendToAnyElement)
+{
+    if (ElementImpl *element = formElement())
+        element->accessKeyAction(sendToAnyElement);
 }
 
 // -------------------------------------------------------------------------

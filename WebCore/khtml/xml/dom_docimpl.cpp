@@ -2689,7 +2689,8 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
     if (evt->id()==EventImpl::KEYDOWN_EVENT) {
         KeyboardEventImpl *kevt = static_cast<KeyboardEventImpl *>(evt);
         if (kevt->ctrlKey()) {
-            QString key = kevt->qKeyEvent()->unmodifiedText().lower();
+            QKeyEvent *qevt = kevt->qKeyEvent();
+            QString key = (qevt ? qevt->unmodifiedText() : kevt->keyIdentifier().string()).lower();
             ElementImpl *elem = getElementByAccessKey(key);
             if (elem) {
                 elem->accessKeyAction(false);
