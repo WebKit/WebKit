@@ -329,12 +329,12 @@ HTMLScriptElement::~HTMLScriptElement()
 DOMString HTMLScriptElement::text() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_TEXT);
+    return ((HTMLScriptElementImpl *)impl)->text();
 }
 
 void HTMLScriptElement::setText( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_TEXT, value);
+    if(impl) ((HTMLScriptElementImpl *)impl)->setText(value);
 }
 
 DOMString HTMLScriptElement::htmlFor() const

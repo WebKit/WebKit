@@ -1,5 +1,41 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        Changes by Anders Carlsson.
+        Reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/dom/resources/script3.js: Added.
+        * layout-tests/fast/dom/resources/script4.js: Added.
+        * layout-tests/fast/dom/resources/script5.js: Added.
+        * layout-tests/fast/dom/script-add-expected.txt: Added.
+        * layout-tests/fast/dom/script-add.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3526>
+          improve support for dynamically added <script> elements
+
+        * khtml/html/html_headimpl.h: Added override of childrenChanged, new evaluateScript
+        function, and m_evaluated boolean.
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::HTMLScriptElementImpl): Init m_evaluated to false.
+        (HTMLScriptElementImpl::childrenChanged): Added code to evaluate the script the first
+        time a child is added (except for nodes created by parsing).
+        (HTMLScriptElementImpl::insertedIntoDocument): Refactored to use the new text and
+        evaluateScript functions. Also changed to not try to evaluate the script if the element
+        is entirely empty. This allows you to declare an empty <script> element and fill the
+        content in later using DHTML.
+        (HTMLScriptElementImpl::notifyFinished): Refactored to use the new evaluateScript function.
+        (HTMLScriptElementImpl::evaluateScript): Added. Checks and sets a new m_evaluated boolean
+        to implement the "evaluate each script only once" rule.
+        (HTMLScriptElementImpl::text): Replaced bogus implementation with one that works.
+        (HTMLScriptElementImpl::setText): Ditto.
+
+        * khtml/dom/html_head.cpp:
+        (HTMLScriptElement::text): Replaced bogus implementation with one that calls through to
+        the implementation class. This change doesn't really matter since we don't compile this file.
+        (HTMLScriptElement::setText): Ditto.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         * khtml/html/html_formimpl.cpp: (DOM::HTMLLabelElementImpl::formElement):
         Oops, checked in a version that didn't even compile! Fixed now.
 

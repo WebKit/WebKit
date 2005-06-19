@@ -189,11 +189,14 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void notifyFinished(khtml::CachedObject *finishedObj);
-
+    virtual void childrenChanged();
+    
     virtual Id id() const;
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+
+    void evaluateScript(const QString &, const DOMString &);
 
     DOMString text() const;
     void setText(const DOMString &);
@@ -219,6 +222,7 @@ public:
 private:
     khtml::CachedScript *m_cachedScript;
     bool m_createdByParser;
+    bool m_evaluated;
 };
 
 // -------------------------------------------------------------------------
