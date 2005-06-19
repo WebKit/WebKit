@@ -2378,8 +2378,11 @@ ElementImpl *HTMLLabelElementImpl::formElement()
     if (formElementId.isNull()) {
         // Search children of the label element for a form element.
         for (NodeImpl *node = this; node; node = node->traverseNextNode(this)) {
-            if (node->isHTMLElement() && static_cast<HTMLElementImpl *>(node)->isGenericFormElement())
-                return element;
+            if (node->isHTMLElement()) {
+                HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+                if (element->isGenericFormElement())
+                    return element;
+            }
         }
         return 0;
     }

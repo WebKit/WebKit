@@ -1,5 +1,10 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLLabelElementImpl::formElement):
+        Oops, checked in a version that didn't even compile! Fixed now.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         Changes by Anders Carlsson.
         Reviewed by me.
 
