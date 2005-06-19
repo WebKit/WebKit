@@ -1,5 +1,16 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        - disabling the applet tests, since they are causing other tests to fail
+
+        * layout-tests/fast/replaced/applet-hspace-expected.txt: Removed.
+        * layout-tests/fast/replaced/applet-hspace.html: Removed.
+        * layout-tests/fast/replaced/applet-vspace-expected.txt: Removed.
+        * layout-tests/fast/replaced/applet-vspace.html: Removed.
+        * layout-tests/fast/replaced/resources/applet.class: Removed.
+        * layout-tests/fast/replaced/resources/applet.java: Removed.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         Changes by Anders Carlsson.
         Reviewed by me.
 
