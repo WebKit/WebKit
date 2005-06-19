@@ -1,3 +1,8 @@
+2005-06-18  Darin Adler  <darin@apple.com>
+
+        * Scripts/cvs-apply: Improve handling of patches with CR characters in them.
+        * Scripts/cvs-unapply: Ditto.
+
 2005-06-17  Maciej Stachowiak  <mjs@apple.com>
 
         - added prepare-ChangeLog script which we use internally to make ChangeLogs, for

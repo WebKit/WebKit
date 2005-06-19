@@ -49,6 +49,8 @@ my $startDir = getcwd();
 my $indexPath;
 my $patch;
 while (<>) {
+    s/\r//g;
+    chomp;
     if (/^Index: (.*)/) {
         $indexPath = $1;
         if ($patch) {
@@ -63,6 +65,7 @@ while (<>) {
         s/^\+\+\+ \S+/+++ $indexPath/;
     }
     $patch .= $_;
+    $patch .= "\n";
 }
 patch($patch);
 
