@@ -199,12 +199,12 @@ if (stringnumber < 0 || stringnumber >= stringcount)
   return PCRE_ERROR_NOSUBSTRING;
 stringnumber *= 2;
 yield = (ovector[stringnumber+1] - ovector[stringnumber]) * sizeof(pcre_char);
-substring = (pcre_char *)(pcre_malloc)(yield + 1);
+substring = (pcre_char *)(pcre_malloc)(yield + sizeof(pcre_char));
 if (substring == NULL) return PCRE_ERROR_NOMEMORY;
 memcpy(substring, subject + ovector[stringnumber], yield);
-substring[yield] = 0;
+substring[yield / sizeof(pcre_char)] = 0;
 *stringptr = substring;
-return yield;
+return yield / sizeof(pcre_char);
 }
 
 

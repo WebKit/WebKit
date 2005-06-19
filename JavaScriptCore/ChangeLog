@@ -1,5 +1,12 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric Seidel.
+
+        * pcre/get.c: (pcre_get_substring): Fix some computations so this works for UTF-16.
+        This is unused in the current JavaScriptCore, but still good to fix.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         Change by Finlay Dobbie.
         Reviewed by me.
 
