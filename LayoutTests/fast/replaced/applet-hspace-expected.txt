@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {H1} at (0,0) size 784x37
+        RenderText {TEXT} at (0,0) size 117x37
+          text run at (0,0) width 117: "Applet 1"
+      RenderBlock {P} at (0,58) size 784x60
+        RenderApplet {APPLET} at (100,0) size 300x60
+      RenderBlock {P} at (0,134) size 784x36
+        RenderText {TEXT} at (0,0) size 739x36
+          text run at (0,0) width 739: "Applet 1 is using HSPACE of 100 pixels. As a result, there show be extra whitespace on the left and right side of this"
+          text run at (0,18) width 42: "applet."
+      RenderBlock {H1} at (0,191) size 784x37
+        RenderText {TEXT} at (0,0) size 117x37
+          text run at (0,0) width 117: "Applet 2"
+      RenderBlock (anonymous) at (0,249) size 784x60
+        RenderApplet {APPLET} at (0,0) size 300x60
+      RenderBlock {P} at (0,325) size 784x0
+      RenderBlock {P} at (0,325) size 784x36
+        RenderText {TEXT} at (0,0) size 782x36
+          text run at (0,0) width 782: "As a comparison, this Applet 2 has NO hspace attribute specified. It should have no extra whitespace on the left or right side"
+          text run at (0,18) width 82: "of the applet."
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
