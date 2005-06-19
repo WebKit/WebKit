@@ -217,9 +217,12 @@ static void dumpRenderTree(const char *filename)
     dumpAsText = NO;
     waitLayoutTest = NO;
 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
-    NSDate *date = [NSDate distantPast];
+    [pool release];
     while (!done) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:date];
+        pool = [[NSAutoreleasePool alloc] init];
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+        [pool release];
     }
 }
