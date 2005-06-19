@@ -1,3 +1,14 @@
+2005-06-18  Darin Adler  <darin@apple.com>
+
+        - removed some unused code from one of the KWQ headers
+
+        * kwq/KWQKHTMLPartBrowserExtension.h:
+
+        - added a layout test for a bug that's already fixed
+
+        * layout-tests/fast/forms/element-by-name-expected.txt: Added.
+        * layout-tests/fast/forms/element-by-name.html: Added.
+
 2005-06-17  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej. 
