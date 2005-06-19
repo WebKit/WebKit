@@ -8,8 +8,8 @@
 	do not resize when options are added via javascript
         
 	* khtml/rendering/render_form.cpp:
-        (RenderSelect::layout): remove call setting setNeedsLayout to true.  setNeedsLayout
-	is already true at this point, and this addtional call has the negative effect of 
+        (RenderSelect::layout): Remove call setting setNeedsLayout to true. setNeedsLayout
+	is already true at this point, and this additional call has the negative effect of 
 	marking m_normalChildNeedsLayout on the element's parent, which keeps layout from 
 	propagating all the way up to the root later on.
 
