@@ -1,5 +1,25 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        Change by Niels Leenheer (also done by Dave Hyatt on stage at WWDC).
+        Reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/replaced/applet-hspace-expected.txt: Added.
+        * layout-tests/fast/replaced/applet-hspace.html: Added.
+        * layout-tests/fast/replaced/applet-vspace-expected.txt: Added.
+        * layout-tests/fast/replaced/applet-vspace.html: Added.
+        * layout-tests/fast/replaced/resources/applet.class: Added.
+        * layout-tests/fast/replaced/resources/applet.java: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3246>
+          HSPACE and VSPACE attributes are ignored in APPLET element
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::mapToEntry): Add cases for ATTR_VSPACE and ATTR_HSPACE.
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute): Ditto.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         - removed some unused code from one of the KWQ headers
 
         * kwq/KWQKHTMLPartBrowserExtension.h:

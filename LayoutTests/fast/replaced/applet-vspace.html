@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
+
+<html>
+<body>
+
+<h1>Applet 1</h1>
+<p><APPLET CODE="applet.class" CODEBASE="resources" HEIGHT="60" WIDTH="300" vspace="90"></APPLET></p>
+<p>Applet 1 is using VSPACE of 100 pixels. As a result, there show be extra whitespace above and below this applet.
+Even if there's no applet loaded, you can tell if this succeeds or fails by comparing with the other case below.</p>
+
+<H1>Applet 2</h1>
+<p><APPLET CODE="applet.class" CODEBASE="resources" HEIGHT="60" WIDTH="300">
+    <PARAM NAME="message"   VALUE="Scrolling banner text !!!">
+    <param name="bgcolor" value="0000FF">
+</APPLET></p>
+<p>As a comparison, this Applet 2 has NO vspace attribute specified. It should have no extra whitespace above or below it.</p>
+
+</body>
+</html>
