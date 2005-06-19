@@ -1,3 +1,15 @@
+2005-06-18  Darin Adler  <darin@apple.com>
+
+        Change by Finlay Dobbie.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3331>
+          10.3.9 Build Failure: NSString may not respond to `+stringWithCString:encoding:'
+
+        * bindings/objc/WebScriptObject.mm: (-[WebScriptObject stringRepresentation]):
+        Undo change we did a while back to work around the gcc 3.3 compiler error.
+        It no longer seems to happen, and the workaround code was 10.4-specific.
+
 2005-06-16  Geoffrey Garen  <ggaren@apple.com>
 
 	Fixed: <rdar://problem/4151759> 'delete' fails on variables declared inside 'eval' statements.

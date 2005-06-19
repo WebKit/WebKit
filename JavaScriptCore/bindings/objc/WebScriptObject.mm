@@ -340,7 +340,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 {
     if (![self _isSafeScript])
         // This is a workaround for a gcc 3.3 internal compiler error.
-	return [NSString stringWithCString:"Undefined" encoding:NSASCIIStringEncoding];
+	return @"Undefined";
 
     Interpreter::lock();
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
