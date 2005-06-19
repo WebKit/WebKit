@@ -512,11 +512,11 @@ unsigned long CSSMutableStyleDeclarationImpl::length() const
     return m_values.count();
 }
 
-DOMString CSSMutableStyleDeclarationImpl::item( unsigned long /*index*/ ) const
+DOMString CSSMutableStyleDeclarationImpl::item(unsigned long i) const
 {
-    // ###
-    //return m_lstValues->at(index);
-    return DOMString();
+    if (i >= m_values.count())
+       return DOMString();
+    return getPropertyName(m_values[i].id());
 }
 
 CSSRuleImpl *CSSStyleDeclarationImpl::parentRule() const

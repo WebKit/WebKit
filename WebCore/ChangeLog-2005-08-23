@@ -1,5 +1,20 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        Changes by Anders Carlsson.
+        Reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/dom/css-dom-read-expected.txt: Added.
+        * layout-tests/fast/dom/css-dom-read.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3534>
+          CSSMutableStyleDeclarationImpl::item is unimplemented
+
+        * khtml/css/css_valueimpl.cpp: (DOM::CSSMutableStyleDeclarationImpl::item):
+        Get the style from the m_values list.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         - undid a last minute change I made that broke a patch I landed
           (layout tests caught the mistake, all should work again now)
 
@@ -9,7 +24,7 @@
 
 2005-06-18  Darin Adler  <darin@apple.com>
 
-        - disabling the applet tests, since they are causing other tests to fail
+        - removing the applet tests, since they are causing other tests to fail
 
         * layout-tests/fast/replaced/applet-hspace-expected.txt: Removed.
         * layout-tests/fast/replaced/applet-hspace.html: Removed.
