@@ -2377,7 +2377,8 @@ ElementImpl *HTMLLabelElementImpl::formElement()
     DOMString formElementId = getAttribute(ATTR_FOR);
     if (formElementId.isNull()) {
         // Search children of the label element for a form element.
-        for (NodeImpl *node = this; node; node = node->traverseNextNode(this)) {
+        NodeImpl *node = this;
+        while ((node = node->traverseNextNode(this))) {
             if (node->isHTMLElement()) {
                 HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
                 if (element->isGenericFormElement())
@@ -2494,7 +2495,8 @@ ElementImpl *HTMLLegendElementImpl::formElement()
 
     // Find first form element inside the fieldset.
     // FIXME: Should we care about tabindex?
-    for (NodeImpl *node = fieldset; node; node = node->traverseNextNode(fieldset)) {
+    NodeImpl *node = fieldset;
+    while ((node = node->traverseNextNode(fieldset))) {
         if (node->isHTMLElement()) {
             HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
             if (element->id() != ID_LEGEND && element->isGenericFormElement())

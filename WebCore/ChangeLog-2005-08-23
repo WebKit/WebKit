@@ -1,5 +1,14 @@
 2005-06-18  Darin Adler  <darin@apple.com>
 
+        - undid a last minute change I made that broke a patch I landed
+          (layout tests caught the mistake, all should work again now)
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLLabelElementImpl::formElement): Don't include this when iterating.
+        (DOM::HTMLLegendElementImpl::formElement): Ditto.
+
+2005-06-18  Darin Adler  <darin@apple.com>
+
         - disabling the applet tests, since they are causing other tests to fail
 
         * layout-tests/fast/replaced/applet-hspace-expected.txt: Removed.
