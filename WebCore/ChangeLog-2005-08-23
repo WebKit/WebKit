@@ -1,3 +1,32 @@
+2005-06-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483
+	
+        Test cases added: 
+        * layout-tests/fast/js/hasOwnProperty-expected.txt: Added.
+        * layout-tests/fast/js/hasOwnProperty.html: Added.
+	- also fixed two mozilla JS tests
+	
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::hasOwnProperty):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::hasOwnProperty):
+        (KJS::DOMNamedNodeMap::hasOwnProperty):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasOwnProperty):
+        (KJS::KJS::HTMLElement::hasOwnProperty):
+        (KJS::KJS::HTMLCollection::hasOwnProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::hasOwnProperty):
+        (KJS::Konqueror::hasOwnProperty):
+        * khtml/ecma/kjs_window.h:
+
 2005-06-20  Geoffrey Garen  <ggaren@apple.com>
 
         Changes by Darin. Layout tests by me. Reviewed by me.

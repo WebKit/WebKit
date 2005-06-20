@@ -332,7 +332,7 @@ Value ObjcFallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &
     return result;
 }
 
-bool ObjcFallbackObjectImp::hasProperty(ExecState *exec,
+bool ObjcFallbackObjectImp::hasOwnProperty(ExecState *exec,
                          const Identifier &propertyName) const
 {
     return false;

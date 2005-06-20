@@ -50,7 +50,7 @@ namespace KJS {
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
-    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
@@ -66,7 +66,7 @@ namespace KJS {
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int);
-    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual UString toString(ExecState *exec) const;
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
@@ -173,7 +173,7 @@ namespace KJS {
     virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args);
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual bool hasProperty(ExecState *exec, const Identifier &p) const;
+    virtual bool hasOwnProperty(ExecState *exec, const Identifier &p) const;
     enum { Item, NamedItem, Tags };
     Value getNamedItems(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }

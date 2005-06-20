@@ -1,3 +1,43 @@
+2005-06-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483
+        
+        Test cases added: 
+        * tests/mozilla/expected.html: Updated for two fixed tests.
+	- also added a layout test
+
+	* bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::hasOwnProperty):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::hasOwnProperty):
+        * bindings/runtime_array.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::hasOwnProperty):
+        * bindings/runtime_object.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::hasOwnProperty):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::hasOwnProperty):
+        (KJS::ActivationImp::hasOwnProperty):
+        * kjs/function.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::hasProperty):
+        (KJS::ObjectImp::hasOwnProperty):
+        * kjs/object.h:
+        (KJS::Object::hasOwnProperty):
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::call):
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFuncImp::):
+        * kjs/string_object.cpp:
+        (StringInstanceImp::hasOwnProperty):
+        * kjs/string_object.h:
+
 2005-06-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric Seidel.
