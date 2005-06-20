@@ -59,6 +59,21 @@
 
 @end
 
+// Sent when all icons are removed from the databse. The object of the notification is 
+// the icon database. There is no userInfo. Clients should react by removing any cached
+// icon images from the user interface. Clients need not and should not call 
+// releaseIconForURL: in response to this notification.
+extern NSString *WebIconDatabaseDidRemoveAllIconsNotification;
+
+@interface WebIconDatabase (WebPendingPublic)
+/*!
+   @method removeAllIcons:
+   @discussion Causes the icon database to delete all of the images that it has stored,
+   and to send out the notification WebIconDatabaseDidRemoveAllIconsNotification.
+*/
+- (void)removeAllIcons;
+@end
+
 @interface WebIconDatabase (WebPrivate)
 
 - (BOOL)_isEnabled;

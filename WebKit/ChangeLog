@@ -1,3 +1,29 @@
+2005-06-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
+        - added support for emptying the icon database
+
+        * Misc.subproj/WebIconDatabase.h: just fixed a typo
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        added WebPendingPublic category with method removeAllIcons, and
+        declared WebIconDatabaseDidRemoveAllIconsNotification string.
+        
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase removeAllIcons]):
+        new method, removes all known icons from memory and disk. There's one loose end,
+        covered by radar bug 4155182, where it's possible for the icon database's retain
+        counts to get off after this operation. I plan to fix this next.
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        just fixed some extra whitespace
+        (-[WebIconDatabase _forgetIconForIconURLString:]):
+        new method, extracted from _releaseIconForIconURLString
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        now calls extracted method
+
+        * WebKit.exp:
+        added _WebIconDatabaseDidRemoveAllIconsNotification
+
 2005-06-19  Darin Adler  <darin@apple.com>
 
 	Changes by Mitz Pettel

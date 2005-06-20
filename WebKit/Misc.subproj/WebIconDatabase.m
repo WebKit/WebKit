@@ -42,8 +42,9 @@ NSString * const ObsoleteIconURLToURLsKey =     @"WebIconURLToSiteURLs";
 
 static const int WebIconDatabaseCurrentVersion = 2;
 
-NSString *WebIconDatabaseDidAddIconNotification =   @"WebIconDatabaseDidAddIconNotification";
-NSString *WebIconNotificationUserInfoURLKey =       @"WebIconNotificationUserInfoURLKey";
+NSString *WebIconDatabaseDidAddIconNotification =          @"WebIconDatabaseDidAddIconNotification";
+NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotificationUserInfoURLKey";
+NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidRemoveAllIconsNotification";
 
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
 NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
@@ -57,9 +58,11 @@ NSSize WebIconLargeSize = {128, 128};
 @end
 
 @interface WebIconDatabase (WebInternal)
+- (void)_clearDictionaries;
 - (void)_createFileDatabase;
 - (void)_loadIconDictionaries;
 - (void)_updateFileDatabase;
+- (void)_forgetIconForIconURLString:(NSString *)iconURLString;
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURL;
 - (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
 - (void)_retainIconForIconURLString:(NSString *)iconURL;
@@ -262,6 +265,68 @@ NSSize WebIconLargeSize = {128, 128};
 @end
 
 
+@implementation WebIconDatabase (WebPendingPublic)
+
+- (void)removeAllIcons
+{
+    NSEnumerator *keyEnumerator = [(NSDictionary *)_private->iconURLToRetainCount keyEnumerator];
+    NSString *iconURLString;
+    while ((iconURLString = [keyEnumerator nextObject]) != nil) {
+        [iconURLString retain];        
+        id URLsForIcon = [[_private->iconURLToURLs objectForKey:iconURLString] retain];
+
+        int iconRetainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToRetainCount, iconURLString);
+        [self _forgetIconForIconURLString:iconURLString];
+        
+        // Convert current retain count to future retain count, so clients don't need to do anything here
+        // about retaining and releasing icon URLs.
+        if ([URLsForIcon isKindOfClass:[NSMutableSet class]]) {
+            // FIXME 4155182: futureRetainCount was previously stored in multiple URLs, but they were all merged together
+            // when they were determined to use the same iconURL. For removing all icons to work perfectly, we'd 
+            // need a way to reset the futureRetainCounts the way they were before. Since we've lost this 
+            // information, we'll distribute the futureRetainCounts evenly among the multiple URLs. In some cases 
+            // this could cause an icon to be under- or over-released, but that should cause at worst some 
+            // debugging spew or a vanishing site icon later in this session. At the next launch of the client 
+            // everything will be back to normal.
+            NSArray *URLStrings = [(NSMutableSet *)URLsForIcon allObjects];
+            int count = [URLStrings count];
+            int retainCountPerURL = iconRetainCount / count;
+            int remainder = iconRetainCount % count;
+            int index;
+            for (index = 0; index < count; ++index) {
+                NSString *URLString = [URLStrings objectAtIndex:index];
+                ASSERT(!CFDictionaryContainsKey(_private->futureURLToRetainCount, URLString));
+                CFDictionarySetValue(_private->futureURLToRetainCount, URLString, index < remainder
+                                     ? (void *)(retainCountPerURL + 1)
+                                     : (void *)retainCountPerURL);
+            }
+        } else {
+            // Only one URL was retaining this iconURL; nothing tricky or approximate in this case.
+            ASSERT([URLsForIcon isKindOfClass:[NSString class]]);
+            ASSERT(!CFDictionaryContainsKey(_private->futureURLToRetainCount, URLsForIcon));
+            CFDictionarySetValue(_private->futureURLToRetainCount, URLsForIcon, (void *)iconRetainCount);
+        }
+        
+        [URLsForIcon release];
+        [iconURLString release];
+    }
+    
+    // Delete entire file database immediately. This has at least three advantages over waiting for
+    // _updateFileDatabase to execute:
+    // (1) _updateFileDatabase won't execute until an icon has been added
+    // (2) this is faster
+    // (3) this deletes all the on-disk hierarchy (especially useful if due to past problems there are
+    // some stale files in that hierarchy)
+    [_private->fileDatabase removeAllObjects];
+    [_private->iconsToEraseWithURLs removeAllObjects];
+    [_private->iconsToSaveWithURLs removeAllObjects];
+    [self _clearDictionaries];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification
+                                                        object:self
+                                                      userInfo:nil];
+}
+@end
+
 @implementation WebIconDatabase (WebPrivate)
 
 - (BOOL)_isEnabled
@@ -312,8 +377,8 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(iconURL);
     ASSERT(URL);
     ASSERT([self _isEnabled]);
-    ASSERT([self _hasIconForIconURL:iconURL]);    
-    
+    ASSERT([self _hasIconForIconURL:iconURL]);
+ 
     if ([[_private->URLToIconURL objectForKey:URL] isEqualToString:iconURL] &&
         [_private->iconsOnDiskWithURLs containsObject:iconURL]) {
         // Don't do any work if the icon URL is already bound to the site URL
@@ -592,6 +657,36 @@ NSSize WebIconLargeSize = {128, 128};
     }
 }
 
+- (void)_forgetIconForIconURLString:(NSString *)iconURLString
+{
+    ASSERT_ARG(iconURLString, iconURLString != nil);
+    if([_private->iconsOnDiskWithURLs containsObject:iconURLString]){
+        [_private->iconsToEraseWithURLs addObject:iconURLString];
+        [_private->iconsToSaveWithURLs removeObject:iconURLString];
+    }
+    
+    // Remove the icon's images
+    [_private->iconURLToIcons removeObjectForKey:iconURLString];
+    
+    // Remove negative cache item for icon, if any
+    [_private->iconURLsWithNoIcons removeObject:iconURLString];
+    
+    // Remove the icon's retain count
+    CFDictionaryRemoveValue(_private->iconURLToRetainCount, iconURLString);
+    
+    // Remove the icon's associated site URLs
+    [iconURLString retain];
+    id URLs = [_private->iconURLToURLs objectForKey:iconURLString];
+    if ([URLs isKindOfClass:[NSMutableSet class]]) {
+        [_private->URLToIconURL removeObjectsForKeys:[URLs allObjects]];
+    } else {
+        ASSERT([URLs isKindOfClass:[NSString class]]);
+        [_private->URLToIconURL removeObjectForKey:URLs];
+    }
+    [_private->iconURLToURLs removeObjectForKey:iconURLString];
+    [iconURLString release];
+}
+
 - (void)_releaseIconForIconURLString:(NSString *)iconURLString
 {
     ASSERT(iconURLString);
@@ -607,38 +702,14 @@ NSSize WebIconLargeSize = {128, 128};
     CFDictionarySetValue(_private->iconURLToRetainCount, iconURLString, (void *)newRetainCount);
 
     if (newRetainCount == 0) {
-        if([_private->iconsOnDiskWithURLs containsObject:iconURLString]){
-            [_private->iconsToEraseWithURLs addObject:iconURLString];
-            [_private->iconsToSaveWithURLs removeObject:iconURLString];
-        }
-
-        // Remove the icon's images
-        [_private->iconURLToIcons removeObjectForKey:iconURLString];
-
-        // Remove negative cache item for icon, if any
-        [_private->iconURLsWithNoIcons removeObject:iconURLString];
-
-        // Remove the icon's retain count
-        CFDictionaryRemoveValue(_private->iconURLToRetainCount, iconURLString);
-
-        // Remove the icon's associated site URLs
-        [iconURLString retain];
-        id URLs = [_private->iconURLToURLs objectForKey:iconURLString];
-        if ([URLs isKindOfClass:[NSMutableSet class]]) {
-            [_private->URLToIconURL removeObjectsForKeys:[URLs allObjects]];
-        } else {
-            ASSERT([URLs isKindOfClass:[NSString class]]);
-            [_private->URLToIconURL removeObjectForKey:URLs];
-        }
-        [_private->iconURLToURLs removeObjectForKey:iconURLString];
-        [iconURLString release];
+        [self _forgetIconForIconURLString:iconURLString];
     }
 }
 
 - (void)_retainFutureIconForURL:(NSString *)URL
 {
     ASSERT(URL);
-    
+
     int retainCount = (int)(void *)CFDictionaryGetValue(_private->futureURLToRetainCount, URL);
     CFDictionarySetValue(_private->futureURLToRetainCount, URL, (void *)(retainCount + 1));
 }
