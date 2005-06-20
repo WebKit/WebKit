@@ -1662,7 +1662,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
 
 - (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
-    // The only Cocoa calls made here are to NSColor, plus the self
+    // The only Cocoa calls made here are to NSColor and NSGraphicsContext, plus the self
     // calls to _createATSUTextLayoutForRun: and
     // _ATSU_drawHighlightForRun:. These are all exception-safe.
 
@@ -1695,11 +1695,12 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
 
     [style->textColor set];
 
-    status = ATSUDrawText(layout, 
-            aRun->from,
-            runLength,
-            FloatToFixed(geometry->point.x),   // these values are
-            FloatToFixed(geometry->point.y));  // also of type Fixed
+    // ATSUI can't draw beyond -32768 to +32767 so we translate the CTM and tell ATSUI to draw at (0, 0).
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextTranslateCTM(context, geometry->point.x, geometry->point.y);
+    status = ATSUDrawText(layout, aRun->from, runLength, 0, 0);
+    CGContextTranslateCTM(context, -geometry->point.x, -geometry->point.y);
+
     if (status != noErr){
         // Nothing to do but report the error (dev build only).
         ERROR ("ATSUDrawText() failed(%d)", status);

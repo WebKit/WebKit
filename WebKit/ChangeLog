@@ -1,3 +1,14 @@
+2005-06-19  Darin Adler  <darin@apple.com>
+
+	Changes by Mitz Pettel
+        Reviewed by me.
+        
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3466>
+          ATSUI text doesn't render at coordinates greater than 32K
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):
+        Translate the matrix of the CGContext instead of passing the appropriate coordinates to ATSU.
+
 2005-06-17  Richard Williamson   <rjw@apple.com>
 
 	Changes by Mitz Pettel
