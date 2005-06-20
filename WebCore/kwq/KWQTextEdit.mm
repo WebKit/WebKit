@@ -33,6 +33,7 @@
 QTextEdit::QTextEdit(QWidget *parent)
     : _clicked(this, SIGNAL(clicked()))
     , _textChanged(this, SIGNAL(textChanged()))
+    , _selectionChanged(this, SIGNAL(selectionChanged()))
 {
     KWQ_BLOCK_EXCEPTIONS;
     KWQTextArea *textView = [[KWQTextArea alloc] initWithQTextEdit:this];
@@ -183,6 +184,17 @@ void QTextEdit::setDisabled(bool flag)
     KWQ_BLOCK_EXCEPTIONS;
     [textView setEnabled:!flag];
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+bool QTextEdit::hasSelectedText() const
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    return [textView hasSelection];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return false;
 }
 
 void QTextEdit::selectAll()

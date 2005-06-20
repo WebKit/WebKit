@@ -104,7 +104,8 @@ public:
 
 public slots:
     virtual void slotClicked();
-
+    virtual void slotSelectionChanged();
+    
 #if APPLE_CHANGES
     // Hack to make KWQSlot code work.
     virtual void slotTextChanged(const QString &string);
@@ -256,6 +257,7 @@ public:
 public slots:
     void slotReturnPressed();
     void slotTextChanged(const QString &string);
+    void slotSelectionChanged();
 #if APPLE_CHANGES
     void slotPerformSearch();
 public:
@@ -475,7 +477,8 @@ public:
 
 protected slots:
     void slotTextChanged();
-
+    void slotSelectionChanged();
+    
 protected:
     virtual void handleFocusOut();
 

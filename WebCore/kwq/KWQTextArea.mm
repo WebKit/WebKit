@@ -86,6 +86,7 @@ const int MinimumHeightWhileResizing = 40;
     BOOL disabled;
     BOOL editableIfEnabled;
     BOOL inCut;
+    int inResponderChange;
 }
 
 - (void)setWidget:(QTextEdit *)widget;
@@ -97,6 +98,8 @@ const int MinimumHeightWhileResizing = 40;
 - (BOOL)isEditableIfEnabled;
 
 - (void)updateTextColor;
+
+- (BOOL)inResponderChange;
 
 @end
 
@@ -199,6 +202,12 @@ const float LargeNumberForText = 1.0e7;
     [super dealloc];
 }
 
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    if (widget && ![textView inResponderChange])
+        widget->selectionChanged();
+}
+
 - (void)textDidChange:(NSNotification *)notification
 {
     if (widget)
@@ -277,6 +286,11 @@ const float LargeNumberForText = 1.0e7;
 - (void)selectAll
 {
     [textView selectAll:nil];
+}
+
+- (BOOL)hasSelection
+{
+    return [textView selectedRange].length > 0;
 }
 
 - (void)setEditable:(BOOL)flag
@@ -813,6 +827,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled)
         return NO;
 
+    ++inResponderChange;
+
     BOOL become = [super becomeFirstResponder];
     
     if (become) {
@@ -821,11 +837,15 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
             [self selectAll:nil];
         }
+    }
+
+    --inResponderChange;
+
+    if (become) {
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
             [[self enclosingScrollView] _KWQ_scrollFrameToVisible];
         }
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
-
         if (widget) {
             QFocusEvent event(QEvent::FocusIn);
             const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
@@ -837,7 +857,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (BOOL)resignFirstResponder
 {
+    ++inResponderChange;
+
     BOOL resign = [super resignFirstResponder];
+
+    --inResponderChange;
 
     if (resign) {
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
@@ -906,7 +930,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     return NSMakeRect(NSMaxX(visibleRect) - imageSize.width - 1, NSMaxY(visibleRect) - imageSize.height - 1, imageSize.width + 1, imageSize.height + 1);
 }
 
-- (void)resetCursorRects {
+- (void)resetCursorRects
+{
     [super resetCursorRects];
     
     // FIXME Radar 4118575: This is intended to change the cursor to the arrow cursor whenever it is
@@ -1090,6 +1115,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
     [super pasteAsRichText:sender];
     [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+}
+
+- (BOOL)inResponderChange
+{
+    return inResponderChange != 0;
 }
 
 @end

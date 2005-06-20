@@ -36,6 +36,7 @@ class QLineEdit;
     QLineEdit *widget;
     KWQTextFieldFormatter *formatter;
     BOOL hasFocus;
+    BOOL hasFocusAndSelectionSet;
     BOOL edited;
     NSRange lastSelectedRange;
     BOOL inDrawingMachinery;
@@ -44,7 +45,7 @@ class QLineEdit;
 
 - (void)detachQLineEdit;
 
-- (void)setHasFocus:(BOOL)hasFocus;
+- (BOOL)hasSelection;
 
 - (void)setMaximumLength:(int)len;
 - (int)maximumLength;

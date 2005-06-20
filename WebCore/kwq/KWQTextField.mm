@@ -72,15 +72,19 @@
 - (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event;
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event;
 - (BOOL)textView:(NSTextView *)view shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string;
+- (void)textViewDidChangeSelection:(NSNotification *)notification;
 - (void)updateTextAttributes:(NSMutableDictionary *)attributes;
 - (NSString *)preprocessString:(NSString *)string;
+- (void)setHasFocus:(BOOL)hasFocus;
 @end
 
 @implementation KWQTextFieldController
 
 - (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
 
     // This is initialization that's shared by all types of text fields.
     widget = w;
@@ -166,8 +170,6 @@
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidEndEditing:notification];
     
-    [self setHasFocus:NO];
-
     if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
         widget->returnPressed();
 }
@@ -369,12 +371,18 @@
     }
 }
 
+- (BOOL)hasSelection
+{
+    return [self selectedRange].length > 0;
+}
+
 - (void)setHasFocus:(BOOL)nowHasFocus
 {
     if (!widget || nowHasFocus == hasFocus)
 	return;
 
     hasFocus = nowHasFocus;
+    hasFocusAndSelectionSet = NO;
     
     if (nowHasFocus) {
         // Select all the text if we are tabbing in, but otherwise preserve/remember
@@ -385,6 +393,8 @@
         if (lastSelectedRange.location != NSNotFound)
             [self setSelectedRange:lastSelectedRange];
         
+        hasFocusAndSelectionSet = YES;
+
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget))
             [field _KWQ_scrollFrameToVisible];
         
@@ -434,7 +444,7 @@
     // with the side effect of ending International inline input for these
     // password fields on Panther only, since it's fixed in Tiger.
     if ([field isKindOfClass:[NSSecureTextField class]]) {
-	    return [field stringValue];
+        return [field stringValue];
     }
 #endif
     // Calling stringValue can have a side effect of ending International inline input.
@@ -469,6 +479,12 @@
     return [result _KWQ_truncateToNumComposedCharacterSequences:[formatter maximumLength]];
 }
 
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    if (widget && hasFocusAndSelectionSet)
+        widget->selectionChanged();
+}
+
 @end
 
 @implementation KWQTextField
@@ -480,7 +496,9 @@
 
 - (id)initWithQLineEdit:(QLineEdit *)w 
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
     controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
     return self;
 }
@@ -601,6 +619,18 @@
         && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    [super textViewDidChangeSelection:notification];
+    [controller textViewDidChangeSelection:notification];
+}
+
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    [controller setHasFocus:NO];
+    [super textDidEndEditing:notification];
+}
+
 @end
 
 @implementation KWQTextFieldCell
@@ -646,7 +676,9 @@
 
 - (id)initWithQLineEdit:(QLineEdit *)w 
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
     controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
     return self;
 }
@@ -753,6 +785,12 @@
         && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    [super textViewDidChangeSelection:notification];
+    [controller textViewDidChangeSelection:notification];
+}
+
 // These next two methods are the workaround for bug 3024443.
 // Basically, setFrameSize ends up calling an inappropriate selectText, so we just ignore
 // calls to selectText while setFrameSize is running.
@@ -785,6 +823,7 @@
 
 - (void)textDidEndEditing:(NSNotification *)notification
 {
+    [controller setHasFocus:NO];
     [super textDidEndEditing:notification];
 
     // When tabbing from one secure text field to another, the super
@@ -851,7 +890,9 @@
 
 - (id)initWithQLineEdit:(QLineEdit *)w 
 {
-    [self init];
+    self = [self init];
+    if (!self)
+        return nil;
     controller = [[KWQTextFieldController alloc] initWithTextField:self QLineEdit:w];
     return self;
 }
@@ -972,6 +1013,18 @@
         && [super textView:view shouldChangeTextInRange:range replacementString:string];
 }
 
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+    [super textViewDidChangeSelection:notification];
+    [controller textViewDidChangeSelection:notification];
+}
+
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    [controller setHasFocus:NO];
+    [super textDidEndEditing:notification];
+}
+
 @end
 
 @implementation KWQSearchFieldCell
@@ -1011,7 +1064,9 @@
 
 - init
 {
-    [super init];
+    self = [super init];
+    if (!self)
+        return nil;
     maxLength = INT_MAX;
     return self;
 }

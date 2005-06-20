@@ -44,6 +44,7 @@ QLineEdit::QLineEdit(Type type)
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
     , m_clicked(this, SIGNAL(clicked()))
     , m_performSearch(this, SIGNAL(performSearch()))
+    , m_selectionChanged(this, SIGNAL(selectionChanged()))
     , m_type(type)
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -183,6 +184,11 @@ void QLineEdit::selectAll()
         [textField selectText:nil];
         KWQ_UNBLOCK_EXCEPTIONS;
     }
+}
+
+bool QLineEdit::hasSelectedText() const
+{
+    return [m_controller hasSelection];
 }
 
 bool QLineEdit::edited() const

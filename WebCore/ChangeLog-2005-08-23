@@ -1,3 +1,76 @@
+2005-06-19  Darin Adler  <darin@apple.com>
+
+        Changes by Anders Carlsson and me.
+        Reviewed by Maciej and me.
+
+        Test cases added: None. Could not figure out how to automate a test without
+        making enhancements to DumpRenderTree.
+
+        - fixed <rdar://problem/4141141> Onselect event is ignored with TEXTAREA and INPUT
+          also <http://bugzilla.opendarwin.org/show_bug.cgi?id=3256>
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLTextAreaElementImpl::select):
+        Remove unneeded explicit call to onSelect() here -- now handled by the renderer.
+
+        * khtml/rendering/render_form.h: Added declarations as needed below.
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::slotSelectionChanged): Add base class implementation that does nothing.
+        (RenderLineEdit::RenderLineEdit): Connect the selection changed signal to our slot.
+        (RenderLineEdit::slotSelectionChanged): Call onSelect when selection changes to something
+        that's a selection (not a caret).
+        (RenderTextArea::RenderTextArea): Connect as above.
+        (RenderTextArea::slotSelectionChanged): Call as above.
+
+        * kwq/KWQLineEdit.h: Added declarations as needed below.
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit): Added selectionChanged signal.
+        (QLineEdit::hasSelectedText): Added.
+
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Make selectionChanged work on any form element.
+        (KWQSlot::call): ditto.
+
+        * kwq/KWQTextArea.h: Added hasSelection method.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea textViewDidChangeSelection:]): Added. Sends selectionChanged signal, except if
+        we're in the middle of gaining or losing first responder.
+        (-[KWQTextArea hasSelection]): Added.
+        (-[KWQTextAreaTextView becomeFirstResponder]): Added. Sets flag to tell us we're in a responder
+        change (using a count to avoid trouble if we reenter).
+        (-[KWQTextAreaTextView resignFirstResponder]): Ditto.
+        (-[KWQTextAreaTextView inResponderChange]): Added.
+
+        * kwq/KWQTextEdit.h: Added declarations as needed below.
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::QTextEdit): Added selectionChanged signal.
+        (QTextEdit::hasSelectedText): Added.
+
+        * kwq/KWQTextField.h: Added declarations as needed below.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController initWithTextField:QLineEdit:]): Fixed up to do the right
+        thing with the result of the init function we call.
+        (-[KWQTextFieldController controlTextDidEndEditing:]): Removed call to setHasFocus:NO
+        since it's a little too late by the time the control is called; now handled by the
+        text view delegate methods below.
+        (-[KWQTextFieldController hasSelection]): Added.
+        (-[KWQTextFieldController setHasFocus:]): Sets the new hasFocusAndSelectionSet after
+        new focus and selection are both set up.
+        (-[KWQTextFieldController textViewDidChangeSelection:]): Added. Sends the selection
+        changed signal.
+        (-[KWQTextField initWithQLineEdit:]): Fixed up to do the right thing with the result
+        of the init function we call.
+        (-[KWQTextField textViewDidChangeSelection:]): Added. Calls super and then calls the
+        controller.
+        (-[KWQTextField textDidEndEditing:]): Added. Calls setHasFocus:NO and then calls super.
+        (-[KWQSecureTextField initWithQLineEdit:]): Same as above, but for secure text fields.
+        (-[KWQSecureTextField textViewDidChangeSelection:]): Ditto.
+        (-[KWQSecureTextField textDidEndEditing:]): Ditto.
+        (-[KWQSearchField initWithQLineEdit:]): Same as above, but for search fields.
+        (-[KWQSearchField textViewDidChangeSelection:]): Ditto.
+        (-[KWQSearchField textDidEndEditing:]): Ditto.
+        (-[KWQTextFieldFormatter init]): Fixed up to do the right thing with the result of
+        the init function we call.
+
 2005-06-18  Darin Adler  <darin@apple.com>
 
         Changes by Anders Carlsson.
@@ -168,7 +241,9 @@
 2005-06-17  Justin Garcia  <justin.garcia@apple.com>
 
 	Fix for rdar://3756860, (also listed as) http://bugzilla.opendarwin.org/show_bug.cgi?id=3295
-	The cellIndex property for HTMLTableCellElement was always zero because the method to support it was just a stub.  KHTML fix was to simply call nodeIndex(), but this is incorrect because a table row can have as children <script>s and <form>s (and perhaps others).
+	The cellIndex property for HTMLTableCellElement was always zero because the method to support it was just a stub.
+        KHTML fix was to simply call nodeIndex(), but this is incorrect because a table row can have as children <script>s
+        and <form>s (and perhaps others).
 	
         Reviewed by hyatt and john
 
