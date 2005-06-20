@@ -1,3 +1,9 @@
+2005-06-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        * Scripts/run-webkit-tests: Report number of tests when they succeed.
+
 2005-06-18  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/DumpRenderTree.m: (dumpRenderTree): Add more auto-release pools

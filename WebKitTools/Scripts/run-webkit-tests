@@ -172,7 +172,7 @@ my %text = (
 print "\n";
 
 if ($counts{match} && $counts{match} == $count) {
-    print "all test cases succeeded\n";
+    print "all $count test cases succeeded\n";
     unlink $testResults;
 } else {
     for my $type ("match", "mismatch", "new", "fail") {
