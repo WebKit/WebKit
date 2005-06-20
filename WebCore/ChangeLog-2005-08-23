@@ -1,3 +1,17 @@
+2005-06-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Changes by Darin. Layout tests by me. Reviewed by me.
+
+	Fixed <rdar://problem/4152454> crash in KJS::ExprStatementNode::execute(KJS::ExecState*) in World Clock widget with TOT.
+
+        Test cases added: 
+        * layout-tests/fast/dom/gc-4-expected.txt: Added.
+        * layout-tests/fast/dom/gc-4.html: Added.
+
+        * khtml/ecma/kjs_html.cpp: 
+        (KJS::Context2D::mark): mark now (1) checks for NULL pointers and (2) 
+	calls mark on its parent class (DOMObject::mark).
+
 2005-06-19  Darin Adler  <darin@apple.com>
 
         Changes by both Anders Carlsson and me.

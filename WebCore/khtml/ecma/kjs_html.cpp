@@ -4806,51 +4806,51 @@ void Context2D::mark()
     ValueImp *v;
 
     v = _strokeStyle;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _fillStyle;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _lineWidth;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _lineCap;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _lineJoin;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _miterLimit;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _shadowOffsetX;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _shadowOffsetY;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _shadowBlur;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _shadowColor;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
     v = _globalAlpha;
-    if (!v->marked())
+    if (v && !v->marked())
         v->mark();
 
-    v = _globalComposite;;
-    if (!v->marked())
+    v = _globalComposite;
+    if (v && !v->marked())
         v->mark();
 
     QPtrListIterator<List> it(stateStack);
@@ -4859,6 +4859,8 @@ void Context2D::mark()
         list->mark();
         ++it;
     }
+    
+    DOMObject::mark();
 }
 
 const ClassInfo KJS::Gradient::info = { "Gradient", 0, &GradientTable, 0 };
