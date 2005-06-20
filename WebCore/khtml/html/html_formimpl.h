@@ -147,6 +147,8 @@ public:
     void parseEnctype(const DOMString &);
     bool formData(khtml::FormData &) const;
 
+    unsigned formElementIndex(HTMLGenericFormElementImpl *);
+
     QString oldIdAttr;
     QString oldNameAttr;
 };

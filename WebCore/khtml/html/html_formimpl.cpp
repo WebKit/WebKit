@@ -717,32 +717,61 @@ void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
     }
 }
 
+template<class T> static void insertIntoVector(QPtrVector<T> &vec, unsigned pos, T* item)
+{
+    unsigned size = vec.size();
+    unsigned count = vec.count();
+    assert(pos <= count);
+    if (size == count)
+        vec.resize(size == 0 ? 8 : size * 3 / 2);
+    for (unsigned i = count; i > pos; --i)
+        vec.insert(i, vec[i - 1]);    
+    vec.insert(pos, item);
+}
+
 template<class T> static void appendToVector(QPtrVector<T> &vec, T *item)
 {
     unsigned size = vec.size();
     unsigned count = vec.count();
     if (size == count)
-        vec.resize(size == 0 ? 8 : (int)(size * 1.5));
+        vec.resize(size == 0 ? 8 : size * 3 / 2);
     vec.insert(count, item);
 }
 
 template<class T> static void removeFromVector(QPtrVector<T> &vec, T *item)
 {
     int pos = vec.findRef(item);
-    int count = vec.count();
-
     if (pos < 0)
         return;
-
-    for (int i = pos; i < count - 1; i++) {
-        vec.insert(i, vec[i+1]);
-    }
+    unsigned count = vec.count();
+    for (unsigned i = pos; i < count - 1; ++i)
+        vec.insert(i, vec[i + 1]);
     vec.remove(count - 1);
+}
+
+unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
+{
+    // Check for the special case where this element is the very last thing in
+    // the form's tree of children; we don't want to walk the entire tree in that
+    // common case that occurs during parsing; instead we'll just return a value
+    // that says "add this form element to the end of the array".
+    if (e->traverseNextNode(this)) {
+        unsigned i = 0;
+        for (NodeImpl *node = this; node; node = node->traverseNextNode(this)) {
+            if (node == e)
+                return i;
+            if (node->isHTMLElement()
+                    && static_cast<HTMLElementImpl *>(node)->isGenericFormElement()
+                    && static_cast<HTMLGenericFormElementImpl *>(node)->form() == this)
+                ++i;
+        }
+    }
+    return formElements.count();
 }
 
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
-    appendToVector(formElements, e);
+    insertIntoVector(formElements, formElementIndex(e), e);
     removeFromVector(dormantFormElements, e);
 }
 
@@ -921,7 +950,7 @@ void HTMLGenericFormElementImpl::insertedIntoDocument()
         m_form->registerFormElement(this);
 
     m_dormant = false;
-   
+
     HTMLElementImpl::insertedIntoDocument();
 }
 

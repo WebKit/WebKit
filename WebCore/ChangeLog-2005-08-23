@@ -1,5 +1,25 @@
 2005-06-19  Darin Adler  <darin@apple.com>
 
+        Changes by both Anders Carlsson and me.
+        Reviewed by Maciej and me.
+
+        Test cases added:
+        * layout-tests/fast/forms/element-order-expected.txt: Added.
+        * layout-tests/fast/forms/element-order.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3503>
+          form.elements[] not order-preserving when elements added via DOM
+
+        * khtml/html/html_formimpl.h: Added formElementIndex.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::insertIntoVector): Added.
+        (DOM::HTMLFormElementImpl::formElementIndex): Added. Computes an appropriate
+        index for a form element, given the document position relative to the other elements.
+        (DOM::HTMLFormElementImpl::registerFormElement): Use formElementIndex to determine
+        where to insert the element in the formElements array.
+
+2005-06-19  Darin Adler  <darin@apple.com>
+
         Changes by Anders Carlsson and me.
         Reviewed by Maciej and me.
 
