@@ -1601,6 +1601,17 @@ NodeImpl::Id NodeImpl::identifier() const
 
 #ifndef NDEBUG
 
+static void appendAttributeDesc(NodeImpl *node, QString &string, NodeImpl::Id attrID, QString attrDesc)
+{
+    if (node->isElementNode()) {
+        DOMString attr = static_cast<ElementImpl *>(node)->getAttribute(attrID);
+        if (!attr.isEmpty()) {
+            string += attrDesc;
+            string += attr.string();
+        }
+    }
+}
+
 void NodeImpl::showNode(const char *prefix)
 {
     if (!prefix)
@@ -1610,8 +1621,12 @@ void NodeImpl::showNode(const char *prefix)
         value.replace('\\', "\\\\");
         value.replace('\n', "\\n");
         fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().string().local8Bit().data(), this, value.local8Bit().data());
-    } else
-        fprintf(stderr, "%s%s\t%p\n", prefix, nodeName().string().local8Bit().data(), this);
+    } else {
+        QString attrs = "";
+        appendAttributeDesc(this, attrs, ATTR_CLASS, " CLASS=");
+        appendAttributeDesc(this, attrs, ATTR_STYLE, " STYLE=");
+        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().string().local8Bit().data(), this, attrs.ascii());
+    }
 }
 
 void NodeImpl::showTree()

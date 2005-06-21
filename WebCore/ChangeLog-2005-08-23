@@ -1,3 +1,30 @@
+2005-06-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+        
+        - show class and style attributes for element nodes
+        - nil check the node being showTree'd
+        - add Position::showTree()
+
+        Test cases added: None needed for this debug-only utility code.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::showTree):
+        - nil check the node
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousVisiblePosition):
+        - comments
+        (khtml::VisiblePosition::showTree):
+        - nil check the node
+        * khtml/xml/dom_nodeimpl.cpp:
+        (appendAttributeDesc):
+        (NodeImpl::showNode):
+        - show class and style attributes for element nodes
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::showTree):
+        * khtml/xml/dom_position.h:
+        - add Position::showTree()
+
 2005-06-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin(first pass) and Hyatt.
