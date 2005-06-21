@@ -1,3 +1,13 @@
+2005-06-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki Murley
+        
+        - fixed assertion failure Vicki ran into
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _forgetIconForIconURLString:]):
+        Handle the case where there are no associated page URLs for the icon URL
+
 2005-06-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.
