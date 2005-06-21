@@ -2779,7 +2779,12 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
   func.put(exec, lengthPropertyName, Number(plen), ReadOnly|DontDelete|DontEnum);
 
-  exec->context().imp()->variableObject().put(exec,ident,func);
+  if (exec->context().imp()->codeType() == EvalCode) {
+    // ECMA 10.2.2
+    exec->context().imp()->variableObject().put(exec, ident, func, Internal);
+  } else {
+    exec->context().imp()->variableObject().put(exec, ident, func, Internal | DontDelete);
+  }
 
   if (body) {
     // hack the scope so that the function gets put as a property of func, and it's scope

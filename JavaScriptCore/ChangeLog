@@ -1,3 +1,17 @@
+2005-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed <rdar://problem/4155532> 'delete' succeeds on functions
+        - fixed <rdar://problem/4155049> javascript function named as "opener" doesn't get called because of window.opener property
+        
+        Reviewed by cblu.
+
+        * kjs/nodes.cpp:
+        (FuncDeclNode::processFuncDecl): Functions now have DontDelete and Internal attributes set when appropriate.
+
+        Test cases:
+        * tests/mozilla/expected.html: Updated for one new success.
+        - see also test case added in WebCore.
+
 2005-06-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin(first pass) and Hyatt.
