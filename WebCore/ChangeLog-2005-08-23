@@ -1,3 +1,12 @@
+2005-06-21  Adele Peterson  <adele@apple.com>
+
+        Test cases for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3450>
+        <rdar://problem/3881901> String.replace() method not working when regex pattern contains {n, m}
+
+        * layout-tests/fast/js/string_replace-expected.txt: Added.
+        * layout-tests/fast/js/string_replace.html: Added.
+
 2005-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         Patch contributed by Niels Leenheer <niels.leenheer@gmail.com>

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>test replace</title>
+<script language="javascript">
+
+function init()
+{	
+	var dtFormat = "YY";
+	document.getElementById("r0c0").firstChild.nodeValue = "Change " + dtFormat + " to YYYY";
+	document.getElementById("r0c1").firstChild.nodeValue = "dtFormat.replace(/Y{1,4}/g,\"YYYY\")";
+	dtFormat = dtFormat.replace(/Y{1,4}/g,"YYYY");
+	document.getElementById("r0c2").firstChild.nodeValue =  dtFormat;
+
+	dtFormat = "MM";
+	document.getElementById("r1c0").firstChild.nodeValue = "Change " + dtFormat + " to M";
+	document.getElementById("r1c1").firstChild.nodeValue = "dtFormat.replace(/M{1,2}/g,\"M\")";
+	dtFormat = dtFormat.replace(/M{1,2}/g,"M");
+	document.getElementById("r1c2").firstChild.nodeValue =  dtFormat;
+
+	dtFormat = "YY";
+	document.getElementById("r2c0").firstChild.nodeValue = "Change " + dtFormat + " to MMMM";
+	document.getElementById("r2c1").firstChild.nodeValue = "dtFormat.replace(/Y{1,4}/g,\"MMMM\")";
+	dtFormat = dtFormat.replace(/Y{1,4}/g,"MMMM");
+	document.getElementById("r2c2").firstChild.nodeValue =  dtFormat;
+        
+        if (window.layoutTestController) {
+            window.layoutTestController.dumpAsText();
+        }
+}
+
+</script>
+</head>
+<body onload="init()">
+        This will test string.replace with {n, m} regexp patterns.
+	<table cellpadding="2" cellspacing="2" border="1">
+		<tbody>
+			<tr>
+				<td>Start Value</td>
+				<td>Replace</td>
+				<td>End Value</td>
+			</tr>
+			<tr>
+				<td id="r0c0">&nbsp;</td>
+				<td id="r0c1">&nbsp;</td>
+				<td id="r0c2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="r1c0">&nbsp;</td>
+				<td id="r1c1">&nbsp;</td>
+				<td id="r1c2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="r2c0">&nbsp;</td>
+				<td id="r2c1">&nbsp;</td>
+				<td id="r2c2">&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+
+</body>
+</html>
