@@ -1,5 +1,41 @@
 2005-06-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin(first pass) and Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3576
+        (roll in support for "const" keyword from KDE tree)
+        - make processVarDecls handle deletability of variables declared
+        in an eval block the same as evaluate would
+        - make eval() call processVarDecls - needed to match mozilla and
+        to make the second change testable
+
+        I started with the KDE implementation of const but I ended up changing it a bit
+        to avoid the use of a global variable. Now instead of the global variable it distinguishes
+        const and var at the grammar level so the appropriate node can know the right kind of
+        declaration.
+
+        Test cases:
+        * tests/mozilla/expected.html: Updated for one new test that is
+        failing - we used to bail on it entirely because it checks for
+        const support before starting.
+        - see also test cases added in WebCore
+
+        * kjs/grammar.y: Add rules for const declarations.
+        * kjs/keywords.table: Add const keyword.
+        * kjs/nodes.cpp:
+        (VarDeclNode::VarDeclNode): Add parameter.
+        (VarDeclNode::evaluate): Add const support.
+        (VarDeclNode::processVarDecls): Add const support.
+        (VarStatementNode::execute): Irrelevant change.
+        (ForInNode::ForInNode): Tell our variable node that it's a variable.
+        * kjs/nodes.h:
+        (KJS::VarDeclNode::): Add declaration of type enum, extra constructor parameter.
+        (KJS::VarStatementNode::VarStatementNode): Irrelevant change.
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::call): Process var decls before evaluating.
+
+2005-06-20  Maciej Stachowiak  <mjs@apple.com>
+
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
 	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483

@@ -8,6 +8,7 @@ false		FALSETOKEN
 break		BREAK
 case		CASE
 catch		CATCH
+const		CONST
 default		DEFAULT
 finally		FINALLY
 for		FOR
@@ -36,7 +37,6 @@ boolean		RESERVED
 byte		RESERVED
 char		RESERVED
 class		RESERVED
-const		RESERVED
 debugger	RESERVED
 double		RESERVED
 enum		RESERVED

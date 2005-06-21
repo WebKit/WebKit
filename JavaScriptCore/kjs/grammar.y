@@ -92,7 +92,7 @@ using namespace KJS;
 %token STRING NUMBER
 
 /* keywords */
-%token BREAK CASE DEFAULT FOR NEW VAR CONTINUE
+%token BREAK CASE DEFAULT FOR NEW VAR CONST CONTINUE
 %token FUNCTION RETURN VOID DELETE
 %token IF THIS DO WHILE ELSE IN INSTANCEOF TYPEOF
 %token SWITCH WITH RESERVED
@@ -136,7 +136,7 @@ using namespace KJS;
 %type <fnode> Finally
 
 %type <stat>  Statement Block
-%type <stat>  VariableStatement EmptyStatement ExprStatement
+%type <stat>  VariableStatement ConstStatement EmptyStatement ExprStatement
 %type <stat>  IfStatement IterationStatement ContinueStatement
 %type <stat>  BreakStatement ReturnStatement WithStatement
 %type <stat>  SwitchStatement LabelledStatement
@@ -153,8 +153,8 @@ using namespace KJS;
 %type <prog>  Program
 %type <args>  Arguments
 %type <alist> ArgumentList
-%type <vlist> VariableDeclarationList
-%type <decl>  VariableDeclaration
+%type <vlist> VariableDeclarationList ConstDeclarationList
+%type <decl>  VariableDeclaration ConstDeclaration
 %type <cblk>  CaseBlock
 %type <ccl>   CaseClause DefaultClause
 %type <clist> CaseClauses  CaseClausesOpt
@@ -386,6 +386,7 @@ Expr:
 Statement:
     Block
   | VariableStatement
+  | ConstStatement
   | EmptyStatement
   | ExprStatement
   | IfStatement
@@ -429,8 +430,31 @@ VariableDeclarationList:
 ;
 
 VariableDeclaration:
-    IDENT                          { $$ = new VarDeclNode(*$1, 0); }
-  | IDENT Initializer              { $$ = new VarDeclNode(*$1, $2); }
+    IDENT                          { $$ = new VarDeclNode(*$1, 0, VarDeclNode::Variable); }
+  | IDENT Initializer              { $$ = new VarDeclNode(*$1, $2, VarDeclNode::Variable); }
+;
+
+ConstStatement:
+    CONST ConstDeclarationList ';' { $$ = new VarStatementNode($2);
+                                      DBG($$, @1, @3); }
+  | CONST ConstDeclarationList error { if (automatic()) {
+                                          $$ = new VarStatementNode($2);
+					  DBG($$, @1, @2);
+                                        } else {
+					  YYABORT;
+					}
+                                      }
+;
+
+ConstDeclarationList:
+    ConstDeclaration            { $$ = new VarDeclListNode($1); }
+  | ConstDeclarationList ',' VariableDeclaration
+                                   { $$ = new VarDeclListNode($1, $3); }
+;
+
+ConstDeclaration:
+    IDENT                          { $$ = new VarDeclNode(*$1, 0, VarDeclNode::Constant); }
+  | IDENT Initializer              { $$ = new VarDeclNode(*$1, $2, VarDeclNode::Constant); }
 ;
 
 Initializer:

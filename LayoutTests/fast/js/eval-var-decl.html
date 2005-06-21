@@ -1,0 +1,24 @@
+<div> 
+This test case checks whether variables cause properties to be
+defined even before reaching the declaration statement in various
+cases. It should print true true true false on separate lines.
+</div>
+<br>
+<div>
+<script>
+if (window.layoutTestController) {
+   layoutTestController.dumpAsText();
+}
+
+document.write(window.hasOwnProperty('foo') + '<br>');
+var foo = 3;
+
+delete bar;
+document.write(window.hasOwnProperty('bar') + '<br>');
+var bar = 3;
+
+eval("document.write(window.hasOwnProperty('y') + '<br>'); var y = 3;");
+eval("delete x; document.write(window.hasOwnProperty('x') + '<br>'); var x = 3;");
+
+</script>
+</div>

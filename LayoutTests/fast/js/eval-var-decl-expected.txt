@@ -1,0 +1,7 @@
+This test case checks whether variables cause properties to be defined even before reaching the declaration statement in various cases. It should print true true true false on separate lines.
+
+true
+true
+true
+false
+

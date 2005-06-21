@@ -1,0 +1,19 @@
+<div>
+This test checks that const declarations in JavaScript work and are readonly. The text below should say RIGHT.
+</div>
+<br>
+<div>
+<script>
+if (window.layoutTestController) {
+   layoutTestController.dumpAsText();
+}
+
+try {
+    const x = "RIGHT";
+    x = "WRONG";
+    document.write(x);
+} catch (exc) {
+   document.write("EXCEPTION");
+}
+</script>
+</div>

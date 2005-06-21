@@ -1,5 +1,24 @@
 2005-06-20  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin(first pass) and Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3576
+        (roll in support for "const" keyword from KDE tree)
+        - make processVarDecls handle deletability of variables declared
+        in an eval block the same as evaluate would
+        - make eval() call processVarDecls - needed to match mozilla and
+        to make the second change testable
+
+	Test cases only, fix is in JavaScriptCore
+	
+        Test cases added:
+        * layout-tests/fast/js/const-expected.txt: Added.
+        * layout-tests/fast/js/const.html: Added.
+        * layout-tests/fast/js/eval-var-decl-expected.txt: Added.
+        * layout-tests/fast/js/eval-var-decl.html: Added.
+
+2005-06-20  Maciej Stachowiak  <mjs@apple.com>
+
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
 	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483

@@ -7,11 +7,11 @@
 <p class='results_summary'>
 Test List: All tests<br>
 Skip List: ecma/Date<br>
-967 test(s) selected, 962 test(s) completed, 125 failures reported (12.99% failed)<br>
+967 test(s) selected, 962 test(s) completed, 126 failures reported (13.09% failed)<br>
 Engine command line: /Users/mjs/Work/symroots/testkjs <br>
-OS type: Darwin maciej-stachowiaks-powerbook-g4-17.local 8.0.0 Darwin Kernel Version 8.0.0: Sat Mar 26 14:15:22 PST 2005; root:xnu-792.obj~1/RELEASE_PPC Power Macintosh powerpc<br>
-Testcase execution time: 2 minutes, 25 seconds.<br>
-Tests completed on Mon Jun 20 01:31:55 2005.<br><br>
+OS type: Darwin il0204a-dhcp15.apple.com 8.0.0 Darwin Kernel Version 8.0.0: Sat Mar 26 14:15:22 PST 2005; root:xnu-792.obj~1/RELEASE_PPC Power Macintosh powerpc<br>
+Testcase execution time: 2 minutes, 29 seconds.<br>
+Tests completed on Mon Jun 20 18:33:32 2005.<br><br>
 [ <a href='#fail_detail'>Failure Details</a> | <a href='#retest_list'>Retest List</a> | <a href='menu.html'>Test Selection Page</a> ]<br>
 <hr>
 <a name='fail_detail'></a>
@@ -192,8 +192,8 @@ Failure messages were:<br>
 --> (Mon Feb 28 2000 16:00:00 GMT-0800).toLocaleTimeString() = 4:00:00 PM PST FAILED! expected: 16:00:00<br>
 --> (Mon Feb 28 2000 15:59:59 GMT-0800).toLocaleTimeString() = 3:59:59 PM PST FAILED! expected: 15:59:59<br>
 --> (Tue Feb 29 2000 00:00:00 GMT-0800).toLocaleTimeString() = 12:00:00 AM PST FAILED! expected: 00:00:00<br>
---> (Mon Jun 20 2005 01:31:11 GMT-0700).toLocaleTimeString() = 1:31:11 AM PDT FAILED! expected: 01:31:11<br>
---> (Mon Jun 20 2005 09:31:11 GMT-0700).toLocaleTimeString() = 9:31:11 AM PDT FAILED! expected: 09:31:11<br>
+--> (Mon Jun 20 2005 18:32:42 GMT-0700).toLocaleTimeString() = 6:32:42 PM PDT FAILED! expected: 18:32:42<br>
+--> (Tue Jun 21 2005 02:32:42 GMT-0700).toLocaleTimeString() = 2:32:42 AM PDT FAILED! expected: 02:32:42<br>
 --> (Fri Dec 31 2004 16:00:00 GMT-0800).toLocaleTimeString() = 4:00:00 PM PST FAILED! expected: 16:00:00<br>
 --> (Fri Dec 31 2004 15:59:59 GMT-0800).toLocaleTimeString() = 3:59:59 PM PST FAILED! expected: 15:59:59<br>
 --> (Sat Jan 01 2005 00:00:00 GMT-0800).toLocaleTimeString() = 12:00:00 AM PST FAILED! expected: 00:00:00<br>
@@ -1670,29 +1670,40 @@ Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 50: TypeError - Object  (result of expression uneval) does not allow calls.<br>
 </tt><br>
-<a name='failure113'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-104077.js'>js1_5/Regress/regress-104077.js</a> failed</b> <br>
+<a name='failure113'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-103602.js'>js1_5/Regress/regress-103602.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=103602' target='other_window'>Bug Number 103602</a><br>
  [ <a href='#failure112'>Previous Failure</a> | <a href='#failure114'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<tt>--> STATUS: Reassignment to a const is NOT an error per ECMA<br>
+Failure messages were:<br>
+--> FAILED!: [reported from test()] Section 1 of test -<br>
+--> FAILED!: [reported from test()] Expected value '', Actual value 'Redeclaration of a const FAILED to cause an error'<br>
+--> FAILED!: [reported from test()] <br>
+--> FAILED!: [reported from test()] Section 3 of test -<br>
+--> FAILED!: [reported from test()] Expected value '1', Actual value '2'<br>
+--> FAILED!: [reported from test()] <br>
+</tt><br>
+<a name='failure114'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-104077.js'>js1_5/Regress/regress-104077.js</a> failed</b> <br>
+ [ <a href='#failure113'>Previous Failure</a> | <a href='#failure115'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 351: SyntaxError - Parse error<br>
 </tt><br>
-<a name='failure114'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-127557.js'>js1_5/Regress/regress-127557.js</a> failed</b> <br>
- [ <a href='#failure113'>Previous Failure</a> | <a href='#failure115'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure115'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-127557.js'>js1_5/Regress/regress-127557.js</a> failed</b> <br>
+ [ <a href='#failure114'>Previous Failure</a> | <a href='#failure116'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 76: TypeError - Object  (result of expression clone) does not allow calls.<br>
 </tt><br>
-<a name='failure115'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-156354.js'>js1_5/Regress/regress-156354.js</a> failed</b> <br>
- [ <a href='#failure114'>Previous Failure</a> | <a href='#failure116'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure116'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-156354.js'>js1_5/Regress/regress-156354.js</a> failed</b> <br>
+ [ <a href='#failure115'>Previous Failure</a> | <a href='#failure117'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 56: TypeError - Value undefined (result of expression this.propertyIsEnumerable) is not object.<br>
 </tt><br>
-<a name='failure116'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-168347.js'>js1_5/Regress/regress-168347.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=168347' target='other_window'>Bug Number 168347</a><br>
- [ <a href='#failure115'>Previous Failure</a> | <a href='#failure117'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure117'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-168347.js'>js1_5/Regress/regress-168347.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=168347' target='other_window'>Bug Number 168347</a><br>
+ [ <a href='#failure116'>Previous Failure</a> | <a href='#failure118'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Testing F.toString()<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Section 2 of test -<br>
@@ -1702,15 +1713,15 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value '{--f.i;print("--isucceededi="+f.i);}catch(e){print("--ifailedwith"+e+"i="+f.i);}try{f.i--;print("i--', Actual value '{f.i--;print("--isucceededi="+f.i);}catch(e){print("--ifailedwith"+e+"i="+f.i);}try{f.i--;print("i--'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure117'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-172699.js'>js1_5/Regress/regress-172699.js</a> failed</b> <br>
- [ <a href='#failure116'>Previous Failure</a> | <a href='#failure118'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure118'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-172699.js'>js1_5/Regress/regress-172699.js</a> failed</b> <br>
+ [ <a href='#failure117'>Previous Failure</a> | <a href='#failure119'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 62: URIError - URI error<br>
 </tt><br>
-<a name='failure118'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-179524.js'>js1_5/Regress/regress-179524.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=179524' target='other_window'>Bug Number 179524</a><br>
- [ <a href='#failure117'>Previous Failure</a> | <a href='#failure119'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure119'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-179524.js'>js1_5/Regress/regress-179524.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=179524' target='other_window'>Bug Number 179524</a><br>
+ [ <a href='#failure118'>Previous Failure</a> | <a href='#failure120'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Don't crash on extraneous arguments to str.match(), etc.<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Section 14 of test -<br>
@@ -1760,16 +1771,16 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value 'SHOULD HAVE FALLEN INTO CATCH-BLOCK!', Actual value 'ABC Zbc'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure119'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-185165.js'>js1_5/Regress/regress-185165.js</a> failed</b> <br>
- [ <a href='#failure118'>Previous Failure</a> | <a href='#failure120'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure120'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-185165.js'>js1_5/Regress/regress-185165.js</a> failed</b> <br>
+ [ <a href='#failure119'>Previous Failure</a> | <a href='#failure121'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 yylex: ERROR.<br>
 Exception, line 3: SyntaxError - Parse error<br>
 </tt><br>
-<a name='failure120'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-44009.js'>js1_5/Regress/regress-44009.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=44009' target='other_window'>Bug Number 44009</a><br>
- [ <a href='#failure119'>Previous Failure</a> | <a href='#failure121'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure121'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-44009.js'>js1_5/Regress/regress-44009.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=44009' target='other_window'>Bug Number 44009</a><br>
+ [ <a href='#failure120'>Previous Failure</a> | <a href='#failure122'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
@@ -1777,8 +1788,8 @@ Complete testcase output was:<br>
 --> STATUS: Testing that we don't crash on obj.toSource()<br>
 Exception, line 61: TypeError - Value undefined (result of expression obj.toSource) is not object.<br>
 </tt><br>
-<a name='failure121'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-68498-003.js'>js1_5/Regress/regress-68498-003.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=68498' target='other_window'>Bug Number 68498</a><br>
- [ <a href='#failure120'>Previous Failure</a> | <a href='#failure122'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure122'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-68498-003.js'>js1_5/Regress/regress-68498-003.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=68498' target='other_window'>Bug Number 68498</a><br>
+ [ <a href='#failure121'>Previous Failure</a> | <a href='#failure123'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Testing calling obj.eval(str)<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Testing calling obj.eval(str); currently at expect[1] within test -<br>
@@ -1786,16 +1797,16 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] Expected value '43', Actual value 'false'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure122'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-96128-n.js'>js1_5/Regress/regress-96128-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=96128' target='other_window'>Bug Number 96128</a><br>
- [ <a href='#failure121'>Previous Failure</a> | <a href='#failure123'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure123'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Regress/regress-96128-n.js'>js1_5/Regress/regress-96128-n.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=96128' target='other_window'>Bug Number 96128</a><br>
+ [ <a href='#failure122'>Previous Failure</a> | <a href='#failure124'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 3, got 0<br>
 Testcase terminated with signal 11<br>
 Complete testcase output was:<br>
 --> BUGNUMBER: 96128<br>
 --> STATUS: Testing that JS infinite recursion protection works<br>
 </tt><br>
-<a name='failure123'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-185485.js'>js1_5/Scope/regress-185485.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=185485' target='other_window'>Bug Number 185485</a><br>
- [ <a href='#failure122'>Previous Failure</a> | <a href='#failure124'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure124'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-185485.js'>js1_5/Scope/regress-185485.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=185485' target='other_window'>Bug Number 185485</a><br>
+ [ <a href='#failure123'>Previous Failure</a> | <a href='#failure125'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>--> STATUS: Testing |with (x) {function f() {}}| when |x.f| already exists<br>
 Failure messages were:<br>
 --> FAILED!: [reported from test()] Section 2 of test -<br>
@@ -1810,19 +1821,24 @@ Failure messages were:<br>
 --> FAILED!: [reported from test()] }', Actual value '0'<br>
 --> FAILED!: [reported from test()] <br>
 </tt><br>
-<a name='failure124'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-220584.js'>js1_5/Scope/regress-220584.js</a> failed</b> <br>
- [ <a href='#failure123'>Previous Failure</a> | <a href='#failure125'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<a name='failure125'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/regress-220584.js'>js1_5/Scope/regress-220584.js</a> failed</b> <br>
+ [ <a href='#failure124'>Previous Failure</a> | <a href='#failure126'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
 <tt>Expected exit code 0, got 3<br>
 Testcase terminated with signal 0<br>
 Complete testcase output was:<br>
 Exception, line 57: TypeError - Object  (result of expression Script) does not allow calls.<br>
 </tt><br>
-<a name='failure125'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/scope-001.js'>js1_5/Scope/scope-001.js</a> failed</b> <br>
- [ <a href='#failure124'>Previous Failure</a> | <a href='#failure126'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
-<tt>Expected exit code 0, got 3<br>
-Testcase terminated with signal 0<br>
-Complete testcase output was:<br>
-Exception, line 40: SyntaxError - Parse error<br>
+<a name='failure126'></a><dd><b>Testcase <a target='other_window' href='./js1_5/Scope/scope-001.js'>js1_5/Scope/scope-001.js</a> failed</b> <a href='http://bugzilla.mozilla.org/show_bug.cgi?id=53268' target='other_window'>Bug Number 53268</a><br>
+ [ <a href='#failure125'>Previous Failure</a> | <a href='#failure127'>Next Failure</a> | <a href='#tippy_top'>Top of Page</a> ]<br>
+<tt>--> STATUS: Testing scope after changing obj.__proto__<br>
+Failure messages were:<br>
+--> FAILED!: [reported from test()] Step 1:  setting obj.__proto__ = global object<br>
+--> FAILED!: [reported from test()] Expected value '5', Actual value '1'<br>
+--> FAILED!: [reported from test()] <br>
+--> FAILED!: [reported from test()] Step 2:  setting obj.__proto__ = null<br>
+--> FAILED!: [reported from test()] Type mismatch, expected type undefined, actual type number<br>
+--> FAILED!: [reported from test()] Expected value 'undefined', Actual value '1'<br>
+--> FAILED!: [reported from test()] <br>
 </tt><br>
 </dl>
 [ <a href='#tippy_top'>Top of Page</a> | <a href='#fail_detail'>Top of Failures</a> ]<br>
@@ -1830,9 +1846,9 @@ Exception, line 40: SyntaxError - Parse error<br>
 <pre>
 <a name='retest_list'></a>
 <h2>Retest List</h2><br>
-# Retest List, kjs, generated Mon Jun 20 01:31:55 2005.
+# Retest List, kjs, generated Mon Jun 20 18:33:32 2005.
 # Original test base was: All tests.
-# 962 of 967 test(s) were completed, 125 failures reported.
+# 962 of 967 test(s) were completed, 126 failures reported.
 ecma/GlobalObject/15.1.2.2-2.js
 ecma/LexicalConventions/7.7.3-1.js
 ecma/Statements/12.7-1-n.js
@@ -1945,6 +1961,7 @@ js1_5/Object/regress-90596-001.js
 js1_5/Object/regress-90596-002.js
 js1_5/Object/regress-96284-001.js
 js1_5/Object/regress-96284-002.js
+js1_5/Regress/regress-103602.js
 js1_5/Regress/regress-104077.js
 js1_5/Regress/regress-127557.js
 js1_5/Regress/regress-156354.js

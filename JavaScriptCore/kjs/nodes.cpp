@@ -1587,8 +1587,9 @@ Value AssignExprNode::evaluate(ExecState *exec)
 
 // ------------------------------ VarDeclNode ----------------------------------
 
-VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in)
-    : ident(id), init(in)
+    
+VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
+    : varType(t), ident(id), init(in)
 {
 }
 
@@ -1628,12 +1629,13 @@ Value VarDeclNode::evaluate(ExecState *exec)
 #endif
   // We use Internal to bypass all checks in derived objects, e.g. so that
   // "var location" creates a dynamic property instead of activating window.location.
-  if (exec->context().imp()->codeType() == EvalCode) {
-      // ECMA 10.2.2
-      variable.put(exec, ident, val, Internal); 
-  } else {
-      variable.put(exec, ident, val, DontDelete | Internal);
-  }
+  int flags = Internal;
+  if (exec->context().imp()->codeType() != EvalCode)
+    flags |= DontDelete;
+  if (varType == VarDeclNode::Constant)
+    flags |= ReadOnly;
+  variable.put(exec, ident, val, flags);
+
   return ident.ustring();
 }
 
@@ -1644,7 +1646,12 @@ void VarDeclNode::processVarDecls(ExecState *exec)
   // If a variable by this name already exists, don't clobber it -
   // it might be a function parameter
   if (!variable.hasProperty(exec, ident)) {
-    variable.put(exec,ident, Undefined(), DontDelete);
+    int flags = Internal;
+    if (exec->context().imp()->codeType() != EvalCode)
+      flags |= DontDelete;
+    if (varType == VarDeclNode::Constant)
+      flags |= ReadOnly;
+    variable.put(exec, ident, Undefined(), flags);
   }
 }
 
@@ -1710,7 +1717,7 @@ Completion VarStatementNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  (void) list->evaluate(exec); // returns 0L
+  (void) list->evaluate(exec);
   KJS_CHECKEXCEPTION
 
   return Completion(Normal);
@@ -2050,7 +2057,7 @@ ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, Statement
   : ident(i), init(in), expr(e), statement(s)
 {
   // for( var foo = bar in baz )
-  varDecl = new VarDeclNode(ident, init);
+  varDecl = new VarDeclNode(ident, init, VarDeclNode::Variable);
   lexpr = new ResolveNode(ident);
 }
 
