@@ -1,3 +1,16 @@
+2005-06-21  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed <rdar://problem/4155049> javascript function named as "opener" doesn't get called because of window.opener property
+
+        Test cases only, fix is in JavaScriptCore
+
+        Reviewed by cblu.
+
+        Test cases added: 
+
+        * layout-tests/fast/js/global-opener-function-expected.txt: Added.
+        * layout-tests/fast/js/global-opener-function.html: Added.
+
 2005-06-21  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
