@@ -2,6 +2,60 @@
 
         Reviewed by Chris Blumenberg.
         
+        - fixed <rdar://problem/4155182> icon database retain counts can be incorrect after removing all icons
+        
+        Replaced the concept of "future retain count per page URL" with a simpler concept of "retain count per
+        page URL", which is maintained even after the icon is actually loaded (unlike the future retain count).
+        The total retain count for an icon is now the sum of the retain counts per page URL along with any retain
+        count not associated with a page URL -- this is still needed for some internal housekeeping purposes.
+
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        renamed iconURLToURLs -> iconURLToPageURLs for clarity
+        renamed URLToIconURL -> pageURLToIconURL for clarity
+        renamed futureURLToRetainCount -> pageURLToRetainCount (there's no more "future" aspect)
+        renamed iconURLToRetainCount -> iconURLToExtraRetainCount (it now maintains only some of the retain count)
+        
+        * Misc.subproj/WebIconDatabase.m:
+        (+[WebIconDatabase sharedIconDatabase]):
+        updated for name changes only
+        (-[WebIconDatabase init]):
+        ditto
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        ditto
+        (-[WebIconDatabase iconURLForURL:]):
+        ditto
+        (-[WebIconDatabase retainIconForURL:]):
+        just bump the retain count in pageURLToRetainCount, instead of behaving differently based on whether 
+        an icon had been loaded for this URL; this let me delete the internal method _retainFutureIconForURL:
+        (-[WebIconDatabase releaseIconForURL:]):
+        decrement the retain count in pageURLToRetainCount, then handle the case where the retain count for 
+        this page has gone to zero. I deleted the internal method _releaseFutureIconForURL: formerly called here.
+        (-[WebIconDatabase removeAllIcons]):
+        remove all the code that dealt with retain counts; this operation no longer affects retain counts
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        remove the code that consolidated multiple retain counts for different page URLs into a single retain 
+        count; the multiple retain counts are now maintained even after the icon is loaded
+        (-[WebIconDatabase _clearDictionaries]):
+        updated for name changes only
+        (-[WebIconDatabase _loadIconDictionaries]):
+        ditto
+        (-[WebIconDatabase _updateFileDatabase]):
+        ditto
+        (-[WebIconDatabase _totalRetainCountForIconURLString:]):
+        new method, sums the retain counts associated with specific page URLs and the extra retain count
+        not associated with specific page URLs
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        updated for name changes
+        (-[WebIconDatabase _forgetIconForIconURLString:]):
+        no longer affects retain counts at all; this is up to callers
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        this now distinguishes the case where the retain count not associated with any page URLs hits 
+        zero from the case where the total retain count hits zero, and handles both
+
+2005-06-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
         - added support for emptying the icon database
 
         * Misc.subproj/WebIconDatabase.h: just fixed a typo

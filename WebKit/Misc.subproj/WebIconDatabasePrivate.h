@@ -37,10 +37,10 @@
     WebFileDatabase *fileDatabase;
 
     NSMutableDictionary *iconURLToIcons;
-    CFMutableDictionaryRef iconURLToRetainCount;
-    NSMutableDictionary *iconURLToURLs;
-    NSMutableDictionary *URLToIconURL;    
-    CFMutableDictionaryRef futureURLToRetainCount;
+    NSMutableDictionary *iconURLToPageURLs;
+    NSMutableDictionary *pageURLToIconURL;    
+    CFMutableDictionaryRef pageURLToRetainCount;
+    CFMutableDictionaryRef iconURLToExtraRetainCount;
     
     NSMutableSet *iconsOnDiskWithURLs;
     NSMutableSet *iconsToEraseWithURLs;
