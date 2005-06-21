@@ -1,3 +1,12 @@
+2005-06-21  Adele Peterson  <adele@apple.com>
+
+        Patch from Anders Carlsson <andersca@mac.com>, reviewed by Darin.
+
+        Fixed: <http://bugzilla.opendarwin.org/show_bug.cgi?id=3450>
+        <rdar://problem/3881901> String.replace() method not working when regex pattern contains {n, m}
+
+        * pcre/pcre.c: (pcre_compile): Remember the last char length so it can be subtracted correctly if needed.
+
 2005-06-21  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed <rdar://problem/4155532> 'delete' succeeds on functions
