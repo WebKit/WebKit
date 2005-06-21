@@ -54,6 +54,7 @@ public:
     int toInt() const { return m_string.toInt(); }
     bool percentage(int &_percentage) const { return m_string.percentage(_percentage); }
     khtml::Length* toLengthArray(int& len) const { return m_string.toLengthArray(len); }
+    khtml::Length* toCoordsArray(int& len) const { return m_string.toCoordsArray(len); }
     
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }

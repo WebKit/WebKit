@@ -1,5 +1,33 @@
 2005-06-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Patch contributed by Niels Leenheer <niels.leenheer@gmail.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3370
+        (Safari can't handle strange frame dimensions)
+
+        Reviewed by Darin.
+
+        * khtml/dom/dom_string.cpp:
+        (DOM::DOMString::toCoordsArray):
+        * khtml/dom/dom_string.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLAreaElementImpl::parseMappedAttribute):
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::AtomicString::toCoordsArray):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::parseLength):
+        (DOM::DOMStringImpl::toCoordsArray):
+        (DOM::DOMStringImpl::toLengthArray):
+        * khtml/xml/dom_stringimpl.h:
+
+        Test cases added: 
+        * layout-tests/fast/frames/invalid-expected.txt: Added.
+        * layout-tests/fast/frames/invalid.html: Added.
+        * layout-tests/fast/frames/valid-expected.txt: Added.
+        * layout-tests/fast/frames/valid.html: Added.
+
+2005-06-21  Geoffrey Garen  <ggaren@apple.com>
+
         - fixed <rdar://problem/4155049> javascript function named as "opener" doesn't get called because of window.opener property
 
         Test cases only, fix is in JavaScriptCore

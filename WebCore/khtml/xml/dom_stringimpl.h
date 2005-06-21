@@ -76,6 +76,7 @@ public:
     // ignores trailing garbage, unlike QString
     int toInt(bool* ok=0) const;
 
+    khtml::Length* toCoordsArray(int& len) const;
     khtml::Length* toLengthArray(int& len) const;
     bool isLower() const;
     DOMStringImpl *lower() const;

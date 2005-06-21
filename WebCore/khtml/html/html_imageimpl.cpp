@@ -656,7 +656,7 @@ void HTMLAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         break;
     case ATTR_COORDS:
         if (m_coords) delete [] m_coords;
-        m_coords = attr->value().toLengthArray(m_coordsLen);
+        m_coords = attr->value().toCoordsArray(m_coordsLen);
         break;
     case ATTR_TARGET:
         m_hasTarget = !attr->isNull();

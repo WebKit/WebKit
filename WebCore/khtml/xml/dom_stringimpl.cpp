@@ -220,37 +220,56 @@ DOMStringImpl *DOMStringImpl::substring(uint pos, uint len)
     return new DOMStringImpl(s + pos, len);
 }
 
-static Length parseLength(QChar *s, unsigned int l) {
-    const QChar* last = s+l-1;
-    
-    if ( *last == QChar('%')) {
-        // CSS allows one decimal after the point, like
-        //  42.2%, but not 42.22%
-        // we ignore the non-integer part for speed/space reasons
-        int i = QConstString(s, l).string().findRev('.');
-        if ( i >= 0 && i < (int)l-1 )
-            l = i + 1;
-
-        return Length(QConstString(s, l-1).string().toInt(), Percent);
+static Length parseLength(QChar *s, unsigned int l)
+{
+    if (l == 0) {
+        return Length(1, Relative);
     }
 
-    if ( *last == QChar('*'))
-    {
-        if(l == 1)
-            return Length(1, Relative);
-        else
-            return Length(QConstString(s, l-1).string().toInt(), Relative);
-    }
+    unsigned i = 0;
+    while (i < l && s[i].isSpace())
+        ++i;
+    if (i < l && (s[i] == '+' || s[i] == '-'))
+        ++i;
+    while (i < l && s[i].isDigit())
+        ++i;
 
-    // should we strip of the non-integer part here also?
-    // CSS says no, all important browsers do so, including Mozilla. sigh.
     bool ok;
-    // this ugly construct helps in case someone specifies a length as "100."
-    int v = (int) QConstString(s, l).string().toFloat(&ok);
-    if(ok) {
-        return Length(v, Fixed);
+    int r = QConstString(s, i).string().toInt(&ok);
+
+    /* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
+    while (i < l && (s[i].isDigit() || s[i] == '.'))
+        ++i;
+
+    /* IE Quirk: Skip any whitespace (20 % => 20%) */
+    while (i < l && s[i].isSpace())
+        ++i;
+
+    if (ok) {
+        if (i == l) {
+            return Length(r, Fixed);
+        } else {
+            const QChar* next = s+i;
+
+            if (*next == '%')
+                return Length(r, Percent);
+
+            if (*next == '*')
+                return Length(r, Relative);
+        }
+        return Length(r, Fixed);
+    } else {
+        if (i < l) {
+            const QChar* next = s+i;
+
+            if (*next == '*')
+                return Length(1, Relative);
+
+            if (*next == '%')
+                return Length(1, Relative);
+        }
     }
-    return Length(0, Variable);
+    return Length(0, Relative);
 }
 
 Length DOMStringImpl::toLength() const
@@ -258,51 +277,58 @@ Length DOMStringImpl::toLength() const
     return parseLength(s,l);
 }
 
-khtml::Length* DOMStringImpl::toLengthArray(int& len) const
+khtml::Length* DOMStringImpl::toCoordsArray(int& len) const
 {
-#if !APPLE_CHANGES
-    QString str(s, l);
-#endif /* APPLE_CHANGES not defined */
-    int pos = 0;
-    int pos2;
-
-    // web authors are so stupid. This is a workaround
-    // to fix lists like "1,2px 3 ,4"
-    // make sure not to break percentage or relative widths
-    // ### what about "auto" ?
-#if APPLE_CHANGES
-    // This alternate version works around a limitation in our QString implementation.
     QChar spacified[l];
     QChar space(' ');
     for(unsigned int i=0; i < l; i++) {
         QChar cc = s[i];
-        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') ){
+        if (cc > '9' || (cc < '0' && cc != '-' && cc != '*' && cc != '.'))
             spacified[i] = space;
-        }
-        else {
+        else
             spacified[i] = cc;
-        }
     }
     QString str(spacified, l);
-#else /* APPLE_CHANGES not defined */
-    QChar space(' ');
-    for(unsigned int i=0; i < l; i++) {
-        char cc = str[i].latin1();
-        if ( cc > '9' || ( cc < '0' && cc != '-' && cc != '*' && cc != '%' && cc != '.') )
-            str[i] = space;
-    }
-#endif /* APPLE_CHANGES not defined */
     str = str.simplifyWhiteSpace();
 
     len = str.contains(' ') + 1;
     khtml::Length* r = new khtml::Length[len];
+
     int i = 0;
-    while((pos2 = str.find(' ', pos)) != -1)
-    {
+    int pos = 0;
+    int pos2;
+
+    while((pos2 = str.find(' ', pos)) != -1) {
         r[i++] = parseLength((QChar *) str.unicode()+pos, pos2-pos);
         pos = pos2+1;
     }
     r[i] = parseLength((QChar *) str.unicode()+pos, str.length()-pos);
+
+    return r;
+}
+
+khtml::Length* DOMStringImpl::toLengthArray(int& len) const
+{
+    QString str(s, l);
+    str = str.simplifyWhiteSpace();
+
+    len = str.contains(',') + 1;
+    khtml::Length* r = new khtml::Length[len];
+
+    int i = 0;
+    int pos = 0;
+    int pos2;
+
+    while((pos2 = str.find(',', pos)) != -1) {
+        r[i++] = parseLength((QChar *) str.unicode()+pos, pos2-pos);
+        pos = pos2+1;
+    }
+
+    /* IE Quirk: If the last comma is the last char skip it and reduce len by one */
+    if (str.length()-pos > 0)
+        r[i] = parseLength((QChar *) str.unicode()+pos, str.length()-pos);
+    else
+        len--;
 
     return r;
 }

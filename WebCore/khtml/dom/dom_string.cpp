@@ -272,6 +272,11 @@ bool DOMString::isEmpty() const
     return (!impl || impl->l == 0);
 }
 
+khtml::Length* DOMString::toCoordsArray(int& len) const 
+{ 
+    return impl ? impl->toCoordsArray(len) : 0;
+}
+
 khtml::Length* DOMString::toLengthArray(int& len) const 
 { 
     return impl ? impl->toLengthArray(len) : 0;
