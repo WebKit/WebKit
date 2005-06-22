@@ -1,3 +1,18 @@
+2005-06-22  Darin Adler  <darin@apple.com>
+
+        Change by Anders Carlsson.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3294>
+          String.prototype.replace() fails with function as second param
+
+        * kjs/string_object.cpp: (replace): Added code to handle functions.
+
+        * tests/mozilla/expected.html: Updated since ecma_3/RegExp/regress-209067.js is fixed now.
+
+        * tests/mozilla/run-mozilla-tests: Fix a minor coding style issue that leads to a warning each
+        time we run the tests.
+
 2005-06-21  Adele Peterson  <adele@apple.com>
 
         rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3293, since it caused layout test failures.

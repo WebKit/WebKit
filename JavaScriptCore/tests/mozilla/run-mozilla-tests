@@ -34,7 +34,7 @@ while (<ACTUAL>) {
 }
 close ACTUAL;
 
-my $numNewFailures = %newFailures + 0;
+my $numNewFailures = keys %newFailures;
 if ($numNewFailures) {
     print "\n** Danger, Will Robinson! Danger! The following failures have been introduced:\n";
     foreach my $failure (sort keys %newFailures) {
@@ -42,7 +42,7 @@ if ($numNewFailures) {
     }
 }
 
-my $numOldFailures = %failures + 0;
+my $numOldFailures = keys %failures;
 if ($numOldFailures) {
     print "\nYou fixed the following test";
     print "s" if $numOldFailures != 1;
