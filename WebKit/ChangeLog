@@ -1,3 +1,14 @@
+2005-06-22  Darin Adler  <darin@apple.com>
+
+        Change by Michael Gaiman.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3436>
+          Missing implementation of -[NSData(WebNSDateExtras) _webkit_parseRFC822HeaderFields]
+
+        * Misc.subproj/WebNSDataExtras.h: Fixed name of category say NSData, not NSDate.
+        * Misc.subproj/WebNSDataExtras.m: (-[NSData _webkit_parseRFC822HeaderFields]): Fixed method name.
+
 2005-06-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Vicki Murley

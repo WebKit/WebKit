@@ -146,7 +146,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
     return NULL;
 }
 
--(NSMutableDictionary *)_web_parseRFC822HeaderFields
+-(NSMutableDictionary *)_webkit_parseRFC822HeaderFields
 {
     NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
 
