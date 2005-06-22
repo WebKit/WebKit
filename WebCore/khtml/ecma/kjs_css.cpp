@@ -216,8 +216,17 @@ void DOMCSSStyleDeclaration::tryPut(ExecState *exec, const Identifier &propertyN
       kdDebug(6070) << "DOMCSSStyleDeclaration: prop=" << prop << " propvalue=" << propvalue << endl;
 #endif
       styleDecl.removeProperty(prop, exception);
-      if (!exception && !propvalue.isEmpty())
-        styleDecl.setProperty(prop, DOMString(propvalue), "", exception); // ### is "" ok for priority?
+      if (!exception && !propvalue.isEmpty()) {
+        // We have to ignore exceptions here, because of the following unfortunate situation:
+        //   1) Older versions ignored exceptions here by accident, because the put function
+        //      that translated exceptions did not translate CSS exceptions.
+        //   2) Gecko does not raise an exception in this case, although WinIE does.
+        //   3) At least some Dashboard widgets are depending on this behavior.
+        // It would be nice to fix this some day, perhaps with some kind of "quirks mode",
+        // but it's likely that the Dashboard widgets are already using a strict mode DOCTYPE.
+        int ignoreException = 0;
+        styleDecl.setProperty(prop, DOMString(propvalue), "", ignoreException);
+      }
     } else {
       DOMObject::tryPut(exec, propertyName, value, attr);
     }

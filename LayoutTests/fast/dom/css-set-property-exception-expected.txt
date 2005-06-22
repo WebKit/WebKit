@@ -1,0 +1,13 @@
+This test checks to see whether you get exceptions when setting a property with a "bad value". We preserve our historic behavior of never raising an exception when you set a CSS property using JavaScript property syntax. But we do raise exceptions when setting a property with setProperty.
+
+The results below should show four successes, followed by two exceptions.
+
+This is the test element.
+
+Successfully set display to "block"; value is now "block".
+Successfully set display to ""; value is now "".
+Successfully set display to null; value is now "".
+Successfully set display to "block" with setProperty; value is now "block".
+Got exception trying to set display to "" with setProperty; value is now "".
+Got exception trying to set display to null with setProperty; value is now "".
+

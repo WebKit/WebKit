@@ -1,5 +1,23 @@
 2005-06-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Test cases added:
+        * layout-tests/fast/dom/css-set-property-exception-expected.txt: Added.
+        * layout-tests/fast/dom/css-set-property-exception.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3616>
+          RSS search field, Dashboard widgets failing due to CSS exception
+
+        * khtml/ecma/kjs_css.cpp: (KJS::DOMCSSStyleDeclaration::tryPut):
+        Ignore exceptions when setting properties.
+
+        * layout-tests/fast/js/exception-linenums.html: Changed test case that
+        involved setting style to one that involved setting another property that
+        raises an exception when you try to set it (setting prefix on a text node).
+
+2005-06-22  Darin Adler  <darin@apple.com>
+
         Change proposed by Eric Seidel.
 
         * WebCore.pbproj/project.pbxproj: Fix build rule to match the one in JavaScriptCore.

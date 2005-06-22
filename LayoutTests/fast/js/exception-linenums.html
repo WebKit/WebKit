@@ -42,7 +42,7 @@
 
                 try {
                     // Raises an exception that gets picked up by KJS_CHECKEXCEPTIONVALUE
-                    document.documentElement.style.backgroundColor = 'as';
+                    document.documentElement.appendChild('').prefix = '';
                     expectedException();
                 } catch (e) {
                     writeException(e);
