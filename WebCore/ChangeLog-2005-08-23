@@ -1,3 +1,11 @@
+2005-06-22  Darin Adler  <darin@apple.com>
+
+        Change proposed by Eric Seidel.
+
+        * WebCore.pbproj/project.pbxproj: Fix build rule to match the one in JavaScriptCore.
+        The one here accidentally had hard-coded paths in it and also had the $() vs. ${}
+        issue that broke building on Xcode 2.1 for no good reason (it didn't need $() or ${}).
+
 2005-06-21  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from KevinBallard <kevin@sb.org>, reviewed by me.
