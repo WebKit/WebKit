@@ -8,8 +8,10 @@
         * layout-tests/fast/dom/title-text-property-expected-2.txt: Added
         * layout-tests/fast/dom/title-text-property-2.html: Added
 
-        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3586>
-        Setting and getting title's text attribute does not work
+        - fixed <rdar://problem/3831364> getting or setting text for a <title> element doesn't work
+        - fixed <rdar://problem/4091225> REGRESSION (1.2.4-1.3): many titles with non-ASCII characters do not display properly (XHTML strict only)
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3586>
+          Setting and getting title's text attribute does not work
 
         * khtml/dom/html_head.cpp:
         (HTMLTitleElement::text):
