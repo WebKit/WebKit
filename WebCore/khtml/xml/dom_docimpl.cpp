@@ -284,6 +284,9 @@ QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : ContainerNodeImpl( new DocumentPtr() )
       , m_domtree_version(0)
+      , m_title("")
+      , m_titleSetExplicitly(false)
+      , m_titleElement(0)
       , m_imageLoadEventTimer(0)
 #ifndef KHTML_NO_XBL
       , m_bindingManager(new XBLBindingManager(this))
@@ -431,7 +434,10 @@ DocumentImpl::~DocumentImpl()
         m_focusNode->deref();
     if (m_hoverNode)
         m_hoverNode->deref();
-    
+
+    if (m_titleElement)
+        m_titleElement->deref();
+
     if (m_renderArena){
         delete m_renderArena;
         m_renderArena = 0;
@@ -725,15 +731,14 @@ ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
     return m_elementsByAccessKey.find(k);
 }
 
-void DocumentImpl::setTitle(DOMString _title)
+void DocumentImpl::updateTitle()
 {
-    m_title = _title;
-
-    if (!part())
+    KHTMLPart *p = part();
+    if (!p)
         return;
 
 #if APPLE_CHANGES
-    KWQ(part())->setTitle(_title);
+    KWQ(p)->setTitle(m_title);
 #else
     QString titleStr = m_title.string();
     for (int i = 0; i < titleStr.length(); ++i)
@@ -741,7 +746,7 @@ void DocumentImpl::setTitle(DOMString _title)
             titleStr[i] = ' ';
     titleStr = titleStr.stripWhiteSpace();
     titleStr.compose();
-    if ( !part()->parentPart() ) {
+    if ( !p->parentPart() ) {
 	if (titleStr.isNull() || titleStr.isEmpty()) {
 	    // empty title... set window caption as the URL
 	    KURL url = m_url;
@@ -750,9 +755,50 @@ void DocumentImpl::setTitle(DOMString _title)
 	    titleStr = url.url();
 	}
 
-	emit part()->setWindowCaption( KStringHandler::csqueeze( titleStr, 128 ) );
+	emit p->setWindowCaption( KStringHandler::csqueeze( titleStr, 128 ) );
     }
 #endif
+}
+
+void DocumentImpl::setTitle(DOMString title, NodeImpl *titleElement)
+{
+    if (!titleElement) {
+        // Title set by JavaScript -- overrides any title elements.
+        m_titleSetExplicitly = true;
+        if (m_titleElement) {
+            m_titleElement->deref();
+            m_titleElement = 0;
+        }
+    } else if (titleElement != m_titleElement) {
+        if (m_titleElement) {
+            // Only allow the first title element to change the title -- others have no effect.
+            return;
+        }
+        m_titleElement = titleElement;
+        titleElement->ref();
+    }
+
+    if (m_title == title)
+        return;
+
+    m_title = title;
+    updateTitle();
+}
+
+void DocumentImpl::removeTitle(NodeImpl *titleElement)
+{
+    if (m_titleElement != titleElement)
+        return;
+
+    // FIXME: Ideally we might want this to search for the first remaining title element, and use it.
+    m_titleElement = 0;
+
+    titleElement->deref();
+
+    if (!m_title.isEmpty()) {
+        m_title = "";
+        updateTitle();
+    }
 }
 
 DOMString DocumentImpl::nodeName() const

@@ -513,11 +513,11 @@ HTMLTitleElement::~HTMLTitleElement()
 DOMString HTMLTitleElement::text() const
 {
     if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_TEXT);
+    return ((HTMLTitleElementImpl *)impl)->text();
 }
 
 void HTMLTitleElement::setText( const DOMString &value )
 {
-    if(impl) ((ElementImpl *)impl)->setAttribute(ATTR_TEXT, value);
+    if(impl) ((HTMLTitleElementImpl *)impl)->setText(value);
 }
 

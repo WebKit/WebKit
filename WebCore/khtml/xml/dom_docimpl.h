@@ -196,7 +196,8 @@ public:
 
     // Actually part of HTMLDocument, but used for giving XML documents a window title as well
     DOMString title() const { return m_title; }
-    void setTitle(DOMString _title);
+    void setTitle(DOMString, NodeImpl *titleElement = 0);
+    void removeTitle(NodeImpl *titleElement);
 
     SharedPtr<HTMLCollectionImpl> images();
     SharedPtr<HTMLCollectionImpl> embeds();
@@ -677,6 +678,8 @@ protected:
     bool m_usesSiblingRules;
 
     DOMString m_title;
+    bool m_titleSetExplicitly;
+    NodeImpl *m_titleElement;
     
     RenderArena* m_renderArena;
 
@@ -748,6 +751,7 @@ public:
     void unregisterDisconnectedNodeWithEventListeners(NodeImpl *node);
 
 private:
+    void updateTitle();
     void removeAllDisconnectedNodeEventListeners();
 
     JSEditor *jsEditor();

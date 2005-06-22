@@ -1,3 +1,45 @@
+2005-06-22  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin Adler.
+
+        Test cases added: 
+        * layout-tests/fast/dom/title-text-property-expected.txt: Added
+        * layout-tests/fast/dom/title-text-property.html: Added
+        * layout-tests/fast/dom/title-text-property-expected-2.txt: Added
+        * layout-tests/fast/dom/title-text-property-2.html: Added
+
+        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3586>
+        Setting and getting title's text attribute does not work
+
+        * khtml/dom/html_head.cpp:
+        (HTMLTitleElement::text):
+        (HTMLTitleElement::setText):
+        Call HTMLTitleElementImpl::text() and ::setText().
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLTitleElementImpl::HTMLTitleElementImpl):
+        (HTMLTitleElementImpl::insertedIntoDocument):
+        (HTMLTitleElementImpl::removedFromDocument):
+        (HTMLTitleElementImpl::childrenChanged):
+        Pass the current title node to DocumentImpl::setTitle
+        and ::removeTitle.
+
+        (HTMLTitleElementImpl::text):
+        Return the title.
+
+        (HTMLTitleElementImpl::setText):
+        Set the new title.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::updateTitle):
+        (DocumentImpl::setTitle):
+        (DocumentImpl::removeTitle):
+        * khtml/xml/dom_docimpl.h:
+        Only update the title if it's done by setting document.title
+        or by changing the child nodes of the title element.
+
 2005-06-22  Darin Adler  <darin@apple.com>
 
         Changes by Mitz Pettel.
@@ -50,20 +92,20 @@
 
         Patch from KevinBallard <kevin@sb.org>, reviewed by me.
 
-	- fix build for Xcode 2.1, use ${} for INPUT_FILE_BASE to fix build with Xcode 2.1
+        - fix build for Xcode 2.1, use ${} for INPUT_FILE_BASE to fix build with Xcode 2.1
 
         * WebCore.pbproj/project.pbxproj:
 
 2005-06-21  Justin Garcia  <justin.garcia@apple.com>
 
-	- Fixes <rdar://problem/4114192>.
-	- Fixes a crash in TOT Mail/Blot if you Edit -> Add Hyperlink on a Selection 
-	   that ends at the end of the document
-	- Fixes a problem in TOT Mail/Blot where Edit -> Add Hyperlink creates 
-	   a link one character beyond what is expected.
-	
-	In replacement, during insertion, some special case code was being called inappropriately.
-	
+        - Fixes <rdar://problem/4114192>.
+        - Fixes a crash in TOT Mail/Blot if you Edit -> Add Hyperlink on a Selection 
+           that ends at the end of the document
+        - Fixes a problem in TOT Mail/Blot where Edit -> Add Hyperlink creates 
+           a link one character beyond what is expected.
+        
+        In replacement, during insertion, some special case code was being called inappropriately.
+        
         Reviewed by Harrison
 
         Test cases added: None, requires manual interaction
@@ -171,8 +213,8 @@
         - make eval() call processVarDecls - needed to match mozilla and
         to make the second change testable
 
-	Test cases only, fix is in JavaScriptCore
-	
+        Test cases only, fix is in JavaScriptCore
+        
         Test cases added:
         * layout-tests/fast/js/const-expected.txt: Added.
         * layout-tests/fast/js/const.html: Added.
@@ -183,12 +225,12 @@
 
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
-	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483
-	
+        - fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483
+        
         Test cases added: 
         * layout-tests/fast/js/hasOwnProperty-expected.txt: Added.
         * layout-tests/fast/js/hasOwnProperty.html: Added.
-	- also fixed two mozilla JS tests
+        - also fixed two mozilla JS tests
 	
         * khtml/ecma/kjs_binding.h:
         * khtml/ecma/kjs_css.cpp:
