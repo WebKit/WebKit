@@ -1,0 +1,21 @@
+This file lists changes to WebKit public header files that have been made since WebKit-412, which shipped with Mac OS X 10.4. All of these changes will have to be approved by the Apple API approval process, or rolled out, before Apple ships a new version of WebKit.
+
+When you make changes to public header files, please update this file, in the same general style as the ChangeLog file (new entries at top).
+===============================================
+
+2005-06-22  John Sullivan  <sullivan@apple.com>
+
+Added the following values to the enum of WebMenuItem tags in WebUIDelegate.h:
+
+    WebMenuItemTagOpenWithDefaultApplication,
+    WebMenuItemPDFActualSize,
+    WebMenuItemPDFZoomIn,
+    WebMenuItemPDFZoomOut,
+    WebMenuItemPDFAutoSize,
+    WebMenuItemPDFSinglePage,
+    WebMenuItemPDFFacingPages,
+    WebMenuItemPDFContinuous,
+    WebMenuItemPDFNextPage,
+    WebMenuItemPDFPreviousPage,
+
+These are all used by the context menu for PDF documents.

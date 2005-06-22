@@ -334,7 +334,7 @@
 {    
     WebView *webView = [self _web_parentWebView];
     ASSERT(webView);
-    return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]]];
+    return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]] defaultItems:nil];
 }
 
 - (NSArray *)pasteboardTypesForSelection

@@ -150,7 +150,7 @@ typedef enum {
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 
-- (NSMenu *)_menuForElement:(NSDictionary *)element;
+- (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items;
 
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(unsigned)modifierFlags;
 

@@ -35,7 +35,9 @@
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPDFView.h>
+#import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <Quartz/Quartz.h>
 
@@ -126,7 +128,6 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     *name = appName;
 }
 
-
 - (NSString *)path
 {
     // Generate path once.
@@ -169,10 +170,72 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return [super hitTest:point];
 }
 
+- (NSDictionary *)elementAtPoint:(NSPoint)point
+{
+    WebFrame *frame = [dataSource webFrame];
+    ASSERT(frame);
+
+    // FIXME 4158121: should determine whether the point is over a selection, and if so set WebElementIsSelectedKey
+    // as in WebTextView.m. Would need to convert coordinates, and make sure that the code that checks
+    // WebElementIsSelectedKey would work with PDF documents.
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        frame, WebElementFrameKey, nil];
+}
+
+- (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent
+{
+    NSMutableArray *copiedItems = [NSMutableArray array];
+    NSDictionary *actionsToTags = [[NSDictionary alloc] initWithObjectsAndKeys:
+        [NSNumber numberWithInt:WebMenuItemPDFActualSize], NSStringFromSelector(@selector(_setActualSize:)),
+        [NSNumber numberWithInt:WebMenuItemPDFZoomIn], NSStringFromSelector(@selector(zoomIn:)),
+        [NSNumber numberWithInt:WebMenuItemPDFZoomOut], NSStringFromSelector(@selector(zoomOut:)),
+        [NSNumber numberWithInt:WebMenuItemPDFAutoSize], NSStringFromSelector(@selector(_setAutoSize:)),
+        [NSNumber numberWithInt:WebMenuItemPDFSinglePage], NSStringFromSelector(@selector(_setSinglePage:)),
+        [NSNumber numberWithInt:WebMenuItemPDFFacingPages], NSStringFromSelector(@selector(_setDoublePage:)),
+        [NSNumber numberWithInt:WebMenuItemPDFContinuous], NSStringFromSelector(@selector(_toggleContinuous:)),
+        [NSNumber numberWithInt:WebMenuItemPDFNextPage], NSStringFromSelector(@selector(goToNextPage:)),
+        [NSNumber numberWithInt:WebMenuItemPDFPreviousPage], NSStringFromSelector(@selector(goToPreviousPage:)),
+        nil];
+    
+    NSEnumerator *e = [[[PDFSubview menuForEvent:theEvent] itemArray] objectEnumerator];
+    NSMenuItem *item;
+    while ((item = [e nextObject]) != nil) {
+        // Copy items since a menu item can be in only one menu at a time, and we don't
+        // want to modify the original menu supplied by PDFKit.
+        NSMenuItem *itemCopy = [item copy];
+        [copiedItems addObject:itemCopy];
+        
+        if ([itemCopy isSeparatorItem]) {
+            continue;
+        }
+        NSString *actionString = NSStringFromSelector([itemCopy action]);
+        NSNumber *tagNumber = [actionsToTags objectForKey:actionString];
+        
+        int tag;
+        if (tagNumber != nil) {
+            tag = [tagNumber intValue];
+        } else {
+            tag = WebMenuItemTagOther;
+            ERROR("no WebKit menu item tag found for PDF context menu item action \"%@\", using WebMenuItemTagOther", actionString);
+        }
+        if ([itemCopy tag] == 0) {
+            [itemCopy setTag:tag];
+        } else {
+            ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
+        }        
+    }
+    
+    [actionsToTags release];
+    
+    return copiedItems;
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    NSMenu *menu = [PDFSubview menuForEvent:theEvent];
-    
+    // Start with the menu items supplied by PDFKit, with WebKit tags applied
+    NSMutableArray *items = [self _menuItemsFromPDFKitForEvent:theEvent];
+
+    // Add in an "Open with <default PDF viewer>" item
     NSString *appName = nil;
     NSImage *appIcon = nil;
     
@@ -180,15 +243,22 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     if (!appName)
         appName = UI_STRING("Finder", "Default application name for Open With context menu");
     
-    NSString *title = [NSString stringWithFormat:UI_STRING("Open with %@", "Open document using the Finder"), appName];
-    
-    NSMenuItem *item = [menu insertItemWithTitle:title action:@selector(openWithFinder:) keyEquivalent:@"" atIndex:0];
+    NSString *title = [NSString stringWithFormat:UI_STRING("Open with %@", "context menu item for PDF"), appName];
+    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:title action:@selector(openWithFinder:) keyEquivalent:@""];
+    [item setTag:WebMenuItemTagOpenWithDefaultApplication];
     if (appIcon)
         [item setImage:appIcon];
-        
-    [menu insertItem:[NSMenuItem separatorItem] atIndex:1];
+    [items insertObject:item atIndex:0];
+    [item release];
     
-    return menu;
+    [items insertObject:[NSMenuItem separatorItem] atIndex:1];
+    
+    // pass the items off to the WebKit context menu mechanism
+    WebView *webView = [[dataSource webFrame] webView];
+    ASSERT(webView);
+    // Currently clicks anywhere in the PDF view are treated the same, so we just pass NSZeroPoint;
+    // we implement elementAtPoint: here just to be slightly forward-looking.
+    return [webView _menuForElement:[self elementAtPoint:NSZeroPoint] defaultItems:items];
 }
 
 - (void)_updateScalingToReflectTextSize

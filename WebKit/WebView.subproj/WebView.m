@@ -622,10 +622,10 @@ static bool debugWidget = true;
     return newWindowWebView;
 }
 
-- (NSMenu *)_menuForElement:(NSDictionary *)element
+- (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items
 {
     NSArray *defaultMenuItems = [[WebDefaultUIDelegate sharedUIDelegate]
-          webView:self contextMenuItemsForElement:element defaultMenuItems:nil];
+          webView:self contextMenuItemsForElement:element defaultMenuItems:items];
     NSArray *menuItems = defaultMenuItems;
     NSMenu *menu = nil;
     unsigned i;

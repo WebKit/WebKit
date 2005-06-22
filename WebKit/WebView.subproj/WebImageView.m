@@ -249,7 +249,7 @@
 {
     WebView *webView = [self webView];
     ASSERT(webView);
-    return [webView _menuForElement:[self elementAtPoint:NSZeroPoint]];
+    return [webView _menuForElement:[self elementAtPoint:NSZeroPoint] defaultItems:nil];
 }
 
 - (void)mouseDown:(NSEvent *)event

@@ -1,3 +1,58 @@
+2005-06-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
+        - fixed <rdar://problem/3764645> please add a way to allow WebKit clients to override the WebPDFView context menu
+
+        * PublicHeaderChangesFromTiger.txt: Added.
+        New file to keep track of changes made to public headers that haven't been through API review yet.
+        Initially lists the WebMenuItem enum tags added to WebUIDelegate.h as part of this change.
+        
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate appendDefaultItems:toArray:]):
+        new method, handles initial separator
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        now has defaultMenuItems: parameter. Any menu items in this array are appended at the end of
+        the standard set.
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        ditto
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        This had a defaultMenuItems parameter before but it was always nil. Now it passes the defaultMenuItems
+        parameter on to the two methods that construct lists (one for editing, the other for viewing). Also
+        tweaked variable name and type for clarity.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+        passes nil for new defaultItems parameter of _menuForElement:
+        
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView menuForEvent:]):
+        ditto
+        
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]):
+        ditto
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView elementAtPoint:]):
+        new method to create the element dictionary needed for _menuForElement:defaultItems:. Only supplies the
+        webFrame at this point.
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):
+        new method to return copies of the menu items that PDFKit would include in the context menu, with
+        WebKit tags applied
+        (-[WebPDFView menuForEvent:]):
+        now calls standard WebKit context menu mechanism, so clients' delegates can modify the context menu as
+        desired. The initial set of items are the ones WebKit was already displaying for PDF context menus.
+        
+        * WebView.subproj/WebUIDelegate.h:
+        added enum values for the menu items in the PDF context menu
+        
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _menuForElement:defaultItems:]):
+        Added the defaultItems: parameter to this method, which is then passed along to WebDefaultUIDelegate.
+        All callers pass nil except for WebPDFView, at least for now.
+
 2005-06-22  Darin Adler  <darin@apple.com>
 
         Change by Mitz Pettel.

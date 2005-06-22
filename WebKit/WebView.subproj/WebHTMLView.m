@@ -2329,7 +2329,7 @@ static WebHTMLView *lastHitView = nil;
     }
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:point];
-    return [[self _webView] _menuForElement:element];
+    return [[self _webView] _menuForElement:element defaultItems:nil];
 }
 
 // Search from the end of the currently selected location, or from the beginning of the

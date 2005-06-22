@@ -55,7 +55,17 @@ enum {
     WebMenuItemTagNoGuessesFound,
     WebMenuItemTagIgnoreSpelling,
     WebMenuItemTagLearnSpelling,
-    WebMenuItemTagOther
+    WebMenuItemTagOther,
+    WebMenuItemTagOpenWithDefaultApplication,
+    WebMenuItemPDFActualSize,
+    WebMenuItemPDFZoomIn,
+    WebMenuItemPDFZoomOut,
+    WebMenuItemPDFAutoSize,
+    WebMenuItemPDFSinglePage,
+    WebMenuItemPDFFacingPages,
+    WebMenuItemPDFContinuous,
+    WebMenuItemPDFNextPage,
+    WebMenuItemPDFPreviousPage,
 };
 
 /*!

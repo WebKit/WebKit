@@ -182,8 +182,27 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     return menuItem;
 }
 
-- (NSArray *)contextMenuItemsForElement:(NSDictionary *)element
+- (void)appendDefaultItems:(NSArray *)defaultItems toArray:(NSMutableArray *)menuItems
 {
+    ASSERT_ARG(menuItems, menuItems != nil);
+    if ([defaultItems count] > 0) {
+        ASSERT(![[menuItems lastObject] isSeparatorItem]);
+        if (![[defaultItems objectAtIndex:0] isSeparatorItem]) {
+            [menuItems addObject:[NSMenuItem separatorItem]];
+            
+            NSEnumerator *e = [defaultItems objectEnumerator];
+            NSMenuItem *item;
+            while ((item = [e nextObject]) != nil) {
+                [menuItems addObject:item];
+            }
+        }
+    }
+}
+
+- (NSArray *)contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
+{
+    // The defaultMenuItems here are ones supplied by the WebDocumentView protocol implementation. WebPDFView is
+    // one case that has non-nil default items here.
     NSMutableArray *menuItems = [NSMutableArray array];
     
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
@@ -242,16 +261,19 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         }
     }
     
+    // Add the default items at the end, if any, after a separator
+    [self appendDefaultItems:defaultMenuItems toArray:menuItems];
+
     // Attach element as the represented object to each item.
     [menuItems makeObjectsPerformSelector:@selector(setRepresentedObject:) withObject:element];
     
     return menuItems;
 }
 
-- (NSArray *)editingContextMenuItemsForElement:(NSDictionary *)element
+- (NSArray *)editingContextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems
 {
-    NSMenuItem *item;
     NSMutableArray *menuItems = [NSMutableArray array];
+    NSMenuItem *item;
     WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
     ASSERT([HTMLView isKindOfClass:[WebHTMLView class]]);
     
@@ -297,6 +319,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             textViewMenuNib = [[NSNib alloc] initWithNibNamed:@"WebViewEditingContextMenu" bundle:[NSBundle bundleForClass:[self class]]];
         }
         [textViewMenuNib instantiateNibWithOwner:self topLevelObjects:nil];
+        ASSERT(defaultMenu != nil);
     }
     
     // Add tags to the menu items because this is what the WebUIDelegate expects.
@@ -312,6 +335,8 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         } else if (action == @selector(paste:)) {
             tag = WebMenuItemTagPaste;
         } else {
+            // FIXME 4158153: we should supply tags for each known item so clients can make
+            // sensible decisions, like we do with PDF context menu items (see WebPDFView.m)
             tag = WebMenuItemTagOther;
         }
         [item setTag:tag];
@@ -319,16 +344,19 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
         [item release];
     }
     
+    // Add the default items at the end, if any, after a separator
+    [self appendDefaultItems:defaultMenuItems toArray:menuItems];
+        
     return menuItems;
 }
 
 - (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
 {
-    WebHTMLView *HTMLView = (WebHTMLView *)[[[element objectForKey:WebElementFrameKey] frameView] documentView];
-    if ([HTMLView isKindOfClass:[WebHTMLView class]] && [HTMLView _isEditable]) {
-        return [self editingContextMenuItemsForElement:element];
+    NSView *documentView = [[[element objectForKey:WebElementFrameKey] frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]] && [(WebHTMLView *)documentView _isEditable]) {
+        return [self editingContextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
     } else {
-        return [self contextMenuItemsForElement:element];
+        return [self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
     }
 }
 
