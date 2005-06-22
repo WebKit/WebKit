@@ -37,8 +37,8 @@ namespace KJS {
     virtual Value get(ExecState *exec, unsigned propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
-    virtual bool hasOwnProperty(ExecState *exec, unsigned propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
     virtual ReferenceList propList(ExecState *exec, bool recursive);

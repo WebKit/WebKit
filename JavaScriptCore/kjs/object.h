@@ -182,18 +182,6 @@ namespace KJS {
     bool hasProperty(ExecState *exec, unsigned propertyName) const;
 
     /**
-     * Checks to see whether the object has a property with the specified name.
-     *
-     * See ECMA 15.2.4.5
-     *
-     * @param exec The current execution state
-     * @param propertyName The name of the property to check for
-     * @return true if the object has the property, otherwise false
-     */
-    bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
-    bool hasOwnProperty(ExecState *exec, unsigned propertyName) const;
-
-    /**
      * Removes the specified property from the object.
      *
      * See ECMA 8.6.2.5
@@ -525,13 +513,9 @@ namespace KJS {
      *
      * @see Object::hasProperty()
      */
-    bool hasProperty(ExecState *exec,
+    virtual bool hasProperty(ExecState *exec,
 			     const Identifier &propertyName) const;
-    bool hasProperty(ExecState *exec, unsigned propertyName) const;
-
-    virtual bool hasOwnProperty(ExecState *exec,
-    		     const Identifier &propertyName) const;
-    virtual bool hasOwnProperty(ExecState *exec, unsigned propertyName) const;
+    virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
 
     /**
      * Implementation of the [[Delete]] internal property (implemented by all
@@ -708,12 +692,6 @@ namespace KJS {
 
   inline bool Object::hasProperty(ExecState *exec, unsigned propertyName) const
     { return imp()->hasProperty(exec, propertyName); }
-
-  inline bool Object::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-    { return imp()->hasOwnProperty(exec, propertyName); }
-
-  inline bool Object::hasOwnProperty(ExecState *exec, unsigned propertyName) const
-    { return imp()->hasOwnProperty(exec, propertyName); }
 
   inline bool Object::deleteProperty(ExecState *exec, const Identifier &propertyName)
     { return imp()->deleteProperty(exec,propertyName); }

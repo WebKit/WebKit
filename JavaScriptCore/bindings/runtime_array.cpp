@@ -96,7 +96,7 @@ void RuntimeArrayImp::put(ExecState *exec, unsigned index, const Value &value, i
 }
 
 
-bool RuntimeArrayImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
+bool RuntimeArrayImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
     if (propertyName == lengthPropertyName)
         return true;
@@ -109,10 +109,10 @@ bool RuntimeArrayImp::hasOwnProperty(ExecState *exec, const Identifier &property
         return true;
     }
     
-    return ObjectImp::hasOwnProperty(exec, propertyName);
+    return ObjectImp::hasProperty(exec, propertyName);
 }
 
-bool RuntimeArrayImp::hasOwnProperty(ExecState *exec, unsigned index) const
+bool RuntimeArrayImp::hasProperty(ExecState *exec, unsigned index) const
 {
     if (index >= getLength())
         return false;

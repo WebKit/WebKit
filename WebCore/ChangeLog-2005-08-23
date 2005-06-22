@@ -1,3 +1,32 @@
+2005-06-21  Adele Peterson  <adele@apple.com>
+
+        rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3293, since it caused layout test failures.
+	fast/forms/element-by-name
+        fast/loader/loadInProgress
+
+        * ChangeLog:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::hasProperty):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeList::hasProperty):
+        (KJS::DOMNamedNodeMap::hasProperty):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasProperty):
+        (KJS::KJS::HTMLElement::hasProperty):
+        (KJS::KJS::HTMLCollection::hasProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::hasProperty):
+        (KJS::Konqueror::hasProperty):
+        * khtml/ecma/kjs_window.h:
+        * layout-tests/fast/js/eval-var-decl-expected.txt: Removed. This test used hasOwnProperty
+        * layout-tests/fast/js/eval-var-decl.html: Removed. This test used hasOwnProperty
+        * layout-tests/fast/js/hasOwnProperty-expected.txt: Removed.
+        * layout-tests/fast/js/hasOwnProperty.html: Removed.
+
 2005-06-21  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Switched to a build rule rather than a build phase for the

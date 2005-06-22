@@ -237,11 +237,11 @@ void FunctionImp::put(ExecState *exec, const Identifier &propertyName, const Val
     InternalFunctionImp::put(exec, propertyName, value, attr);
 }
 
-bool FunctionImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
+bool FunctionImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
     if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
         return true;
-    return InternalFunctionImp::hasOwnProperty(exec, propertyName);
+    return InternalFunctionImp::hasProperty(exec, propertyName);
 }
 
 bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
@@ -357,11 +357,11 @@ Value ActivationImp::get(ExecState *exec, const Identifier &propertyName) const
     return ObjectImp::get(exec, propertyName);
 }
 
-bool ActivationImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
+bool ActivationImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
 {
     if (propertyName == argumentsPropertyName)
         return true;
-    return ObjectImp::hasOwnProperty(exec, propertyName);
+    return ObjectImp::hasProperty(exec, propertyName);
 }
 
 bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyName)

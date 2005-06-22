@@ -1,3 +1,39 @@
+2005-06-21  Adele Peterson  <adele@apple.com>
+
+        rolling out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3293, since it caused layout test failures.
+	fast/forms/element-by-name
+        fast/loader/loadInProgress
+
+        * ChangeLog:
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::hasProperty):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::hasProperty):
+        * bindings/runtime_array.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::hasProperty):
+        * bindings/runtime_object.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::hasProperty):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::hasProperty):
+        (KJS::ActivationImp::hasProperty):
+        * kjs/function.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::hasProperty):
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::call):
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFuncImp::):
+        * kjs/string_object.cpp:
+        (StringInstanceImp::hasProperty):
+        * kjs/string_object.h:
+        * tests/mozilla/expected.html:
+
 2005-06-21  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.pbproj/project.pbxproj: Switched to a build rule rather than a build phase for
@@ -69,7 +105,7 @@
 
         Patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
 
-	- fixed http://bugzilla.opendarwin.org/attachment.cgi?id=2483
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3293
         
         Test cases added: 
         * tests/mozilla/expected.html: Updated for two fixed tests.

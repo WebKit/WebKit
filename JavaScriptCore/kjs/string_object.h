@@ -34,7 +34,7 @@ namespace KJS {
 
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }

@@ -179,7 +179,7 @@ public:
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
-    virtual bool hasOwnProperty(ExecState *exec,
+    virtual bool hasProperty(ExecState *exec,
 			     const Identifier &propertyName) const;
 
 

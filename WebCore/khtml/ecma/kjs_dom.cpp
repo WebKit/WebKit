@@ -727,11 +727,11 @@ Value DOMNodeList::toPrimitive(ExecState *exec, Type /*preferred*/) const
 
 // We have to implement hasProperty since we don't use a hashtable for 'length' and 'item'
 // ## this breaks "for (..in..)" though.
-bool DOMNodeList::hasOwnProperty(ExecState *exec, const Identifier &p) const
+bool DOMNodeList::hasProperty(ExecState *exec, const Identifier &p) const
 {
   if (p == lengthPropertyName || p == "item")
     return true;
-  return ObjectImp::hasOwnProperty(exec, p);
+  return ObjectImp::hasProperty(exec, p);
 }
 
 Value DOMNodeList::tryGet(ExecState *exec, const Identifier &p) const
@@ -1430,11 +1430,11 @@ DOMNamedNodeMap::~DOMNamedNodeMap()
 
 // We have to implement hasProperty since we don't use a hashtable for 'length'
 // ## this breaks "for (..in..)" though.
-bool DOMNamedNodeMap::hasOwnProperty(ExecState *exec, const Identifier &p) const
+bool DOMNamedNodeMap::hasProperty(ExecState *exec, const Identifier &p) const
 {
   if (p == lengthPropertyName)
     return true;
-  return DOMObject::hasOwnProperty(exec, p);
+  return DOMObject::hasProperty(exec, p);
 }
 
 Value DOMNamedNodeMap::tryGet(ExecState* exec, const Identifier &p) const
