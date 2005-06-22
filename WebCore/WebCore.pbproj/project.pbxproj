@@ -2035,7 +2035,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).hpp\" > \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).h\" 2> /dev/null || echo -n";
+			script = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/${INPUT_FILE_BASE}.cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" \"$DERIVED_FILE_DIR/${INPUT_FILE_BASE}.hpp\" > \"$DERIVED_FILE_DIR/${INPUT_FILE_BASE}.h\" 2> /dev/null || echo -n";
 		};
 		937C34ED0868E4B4006F4B22 = {
 			fileRef = 934E43780414294A008635CE;

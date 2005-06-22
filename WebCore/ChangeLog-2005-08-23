@@ -1,3 +1,11 @@
+2005-06-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from KevinBallard <kevin@sb.org>, reviewed by me.
+
+	- fix build for Xcode 2.1, use ${} for INPUT_FILE_BASE to fix build with Xcode 2.1
+
+        * WebCore.pbproj/project.pbxproj:
+
 2005-06-21  Justin Garcia  <justin.garcia@apple.com>
 
 	- Fixes <rdar://problem/4114192>.
