@@ -1,3 +1,16 @@
+2005-06-22  Darin Adler  <darin@apple.com>
+
+        Change by Anders Carlsson.
+
+        - added support for dumping title changes
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didReceiveTitle:forFrame:]): Added. Dump title change
+        if requested by JavaScript.
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]): Added dumpTitleChanges.
+        (-[LayoutTestController dumpTitleChanges]): Added, sets flag.
+        (dumpRenderTree): Start flag as NO.
+
 2005-06-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin Garcia.

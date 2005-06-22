@@ -50,6 +50,7 @@ static volatile BOOL done;
 static WebFrame *frame;
 static BOOL waitLayoutTest;
 static BOOL dumpAsText;
+static BOOL dumpTitleChanges;
 
 int main(int argc, const char *argv[])
 {
@@ -171,13 +172,22 @@ static void dump(void)
     printf("ALERT: %s\n", [message UTF8String]);
 }
 
+- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
+{
+    if (dumpTitleChanges)
+        printf("TITLE CHANGED: %s\n", [title UTF8String]);
+}
+
 @end
 
 @implementation LayoutTestController
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
-    if (aSelector == @selector(waitUntilDone) || aSelector == @selector(notifyDone) || aSelector == @selector(dumpAsText))
+    if (aSelector == @selector(waitUntilDone)
+            || aSelector == @selector(notifyDone)
+            || aSelector == @selector(dumpAsText)
+            || aSelector == @selector(dumpTitleChanges))
         return NO;
     return YES;
 }
@@ -198,6 +208,11 @@ static void dump(void)
     dumpAsText = YES;
 }
 
+- (void)dumpTitleChanges
+{
+    dumpTitleChanges = YES;
+}
+
 @end
 
 static void dumpRenderTree(const char *filename)
@@ -215,6 +230,7 @@ static void dumpRenderTree(const char *filename)
 
     done = NO;
     dumpAsText = NO;
+    dumpTitleChanges = NO;
     waitLayoutTest = NO;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
