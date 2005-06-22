@@ -1,5 +1,12 @@
 2005-06-22  Darin Adler  <darin@apple.com>
 
+        - added test case for JavaScriptCore fix
+
+        * layout-tests/fast/js/string-replace-2-expected.txt: Added.
+        * layout-tests/fast/js/string-replace-2.html: Added.
+
+2005-06-22  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         Test cases added:

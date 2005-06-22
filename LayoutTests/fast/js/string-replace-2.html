@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>String.replace(&hellip;) test</title>
+	<style type="text/css" media="all">
+		label	{ background-color:yellow }
+	</style>
+</head>
+<body>
+<h1>String.replace(&hellip;) test</h1>
+
+<script>
+if (window.layoutTestController) layoutTestController.dumpAsText();
+</script>
+
+<div id="pagecontent">
+<h2>Support for <code>String.replace('&hellip;','&hellip;')</code></h2>
+<pre><code>var foo = 'It\'s the end of the world as we know it, and I feel fine.';
+var result = foo.replace('end','BEGINNING');</code></pre>
+
+<p><label><b>Expected</b> result:</label> "It's the BEGINNING of the world as we know it, and I feel fine."<br>
+<script type="text/javascript">
+	var foo = "It's the end of the world as we know it, and I feel fine.";
+	var result = foo.replace('end','BEGINNING');
+	document.write('<label><b>Your<\/b> result:<\/label> "'+result+'"');
+</script>
+</p>
+
+<h2>Support for <code>String.replace(/&hellip;/,'&hellip;')</code></h2>
+<pre><code>var vowels = /[aeiou]/gi;
+result = foo.replace(vowels,'-');</code></pre>
+
+<p><label><b>Expected</b> result:</label> "-t's th- -nd -f th- w-rld -s w- kn-w -t, -nd - f--l f-n-."<br>
+<script type="text/javascript">
+	var vowels = /[aeiou]/gi;
+	result = foo.replace(vowels,'-');
+	document.write('<label><b>Your<\/b> result:<\/label> "'+result+'"');
+</script>
+</p>
+
+<h2>Support for <code>String.replace(/&hellip;/,myFunction)</code></h2>
+<pre><code>function Capitalize(s){
+	return s.toUpperCase();
+}
+result = foo.replace(vowels,Capitalize);</code></pre>
+
+<p><label><b>Expected</b> result:</label> "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."<br>
+<script type="text/javascript">
+	function Capitalize(s){
+		return s.toUpperCase();
+	}
+	result = foo.replace(vowels,Capitalize);
+	document.write('<label><b>Your<\/b> result:<\/label> "'+result+'"');
+</script>
+</p>
+
+<h2>Support for <code>String.replace(/&hellip;/,myFunction)</code>, using <code>RegExp</code></h2>
+<pre><code>function Capitalize(){
+	return RegExp.$1.toUpperCase()+RegExp.$2;
+}
+result = foo.replace(/([aeiou])([a-z])/g,Capitalize);</code></pre>
+<p><label><b>Expected</b> result:</label> "It's the End Of the wOrld As we knOw It, And I fEel fIne."<br>
+<script type="text/javascript">
+	function Capitalize(){
+		return RegExp.$1.toUpperCase()+RegExp.$2;
+	}
+	result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
+	document.write('<label><b>Your<\/b> result:<\/label> "'+result+'"');
+</script>
+</p>
+
+<h2>Support for <code>String.replace(/&hellip;/,myFunction)</code>, using parameters</h2>
+<pre><code>function Capitalize(orig,re1,re2){
+	return re1.toUpperCase()+re2;
+}
+result = foo.replace(/([aeiou])([a-z])/g,Capitalize);</code></pre>
+
+<p><label><b>Expected</b> result:</label> "It's the End Of the wOrld As we knOw It, And I fEel fIne."<br>
+<script type="text/javascript">
+	function Capitalize(orig,re1,re2){
+		return re1.toUpperCase()+re2;
+	}
+	result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
+	document.write('<label><b>Your<\/b> result:<\/label> "'+result+'"');
+</script>
+</p>
+
+</div>
+
+</body>
+</html>
