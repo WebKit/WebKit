@@ -1,3 +1,11 @@
+2005-06-21  Darin Adler  <darin@apple.com>
+
+        * WebCore.pbproj/project.pbxproj: Switched to a build rule rather than a build phase for the
+        .y files -- this gets rid of the problem where modifying the .y file would not cause sufficient
+        compilation.
+
+        * khtml/css/parser_wrapper.cpp: Removed.
+
 2005-06-21  Adele Peterson  <adele@apple.com>
 
         Test cases for:

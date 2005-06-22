@@ -1625,20 +1625,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		93276B4E0826F80F002E46CE = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = parser_wrapper.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		93276B4F0826F80F002E46CE = {
-			fileRef = 93276B4E0826F80F002E46CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		932B9834070297DC0032804F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1957,23 +1943,6 @@
 			shellPath = /bin/sh;
 			shellScript = "cat khtml/css/cssproperties.in > \"$DERIVED_FILE_DIR/cssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\nsh \"$SRCROOT/khtml/css/makeprop\"";
 		};
-		932FC30E0824B63C005B3C75 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				khtml/css/parser.y,
-			);
-			isa = PBXShellScriptBuildPhase;
-			name = parser.cpp/h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/parser.cpp",
-				"$(DERIVED_FILE_DIR)/parser.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/parser.cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" \"$DERIVED_FILE_DIR/parser.hpp\" > \"$DERIVED_FILE_DIR/parser.h\" 2> /dev/null\nexit 0";
-		};
 		932FC38F0824BA30005B3C75 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2056,6 +2025,23 @@
 			path = editing/markup.h;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		937C34E90868E468006F4B22 = {
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.yacc;
+			isEditable = 1;
+			isa = PBXBuildRule;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
+			);
+			script = "bison -d -p cssyy khtml/css/parser.y -o \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).cpp\"\ncat \"$DERIVED_FILE_DIR/parser.cpp.h\" \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).hpp\" > \"$DERIVED_FILE_DIR/$(INPUT_FILE_BASE).h\" 2> /dev/null || echo -n";
+		};
+		937C34ED0868E4B4006F4B22 = {
+			fileRef = 934E43780414294A008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		93859E32065FCAD300CF54EE = {
 			fileEncoding = 4;
@@ -2335,7 +2321,6 @@
 				932FC0D20824A2C4005B3C75,
 				932FC0DA0824A337005B3C75,
 				93EA68440824979000687F56,
-				932FC30E0824B63C005B3C75,
 				932FC38F0824BA30005B3C75,
 				93F19B3A08246077001E9ABC,
 				932FC1710824A913005B3C75,
@@ -2347,6 +2332,7 @@
 				93F19B1208245E59001E9ABC,
 			);
 			buildRules = (
+				937C34E90868E468006F4B22,
 			);
 			buildSettings = {
 				CREATE_HASH_TABLE = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table;
@@ -4845,6 +4831,7 @@
 		93F19A0C08245E59001E9ABC = {
 			buildActionMask = 2147483647;
 			files = (
+				937C34ED0868E4B4006F4B22,
 				93F19A0D08245E59001E9ABC,
 				93F19A0E08245E59001E9ABC,
 				93F19A0F08245E59001E9ABC,
@@ -5080,7 +5067,6 @@
 				93F19B0F08245E59001E9ABC,
 				93F19B1008245E59001E9ABC,
 				93F19B1108245E59001E9ABC,
-				93276B4F0826F80F002E46CE,
 				654D87B70831973B0082DCA1,
 				65DC16C40831DD6F0022744E,
 				65AC79A10831ED6D009385CE,
@@ -7680,7 +7666,6 @@
 			children = (
 				BC8F61850405949900A80004,
 				934E43780414294A008635CE,
-				93276B4E0826F80F002E46CE,
 				BC8F618B040594BA00A80004,
 				BE9970C105F7DD1C00611115,
 				BE9970C205F7DD1C00611115,
