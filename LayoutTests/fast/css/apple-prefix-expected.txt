@@ -1,0 +1,74 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 764x18
+          text run at (0,0) width 764: "This tests use of the -apple-line-clamp function in a web page, from JavaScript, and using the \"apple\" prefix, not \"khtml\"."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 705x18
+          text run at (0,0) width 705: "If it works properly, the article below should show only the first few lines. Otherwise, it might show many lines."
+      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
+layer at (8,86) size 784x54 scrollHeight 576
+  RenderFlexibleBox {DIV} at (0,78) size 784x54
+    RenderBlock {DIV} at (0,0) size 784x36
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 781x36
+          text run at (0,0) width 771: "It was just last night, I think, that I was IM'ing with a friend and I said, \"Next week Simon starts going to school for 3 days"
+          text run at (0,18) width 106: "extended (until 3"
+          text run at (106,18) width 675: "pm) and Sophia starts swim camp! I won't know what to do with my free time! But I'm willing to find out.\""
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {TEXT} at (0,0) size 333x18
+          text run at (0,0) width 333: "You know the old saying: \"Man plans, God laughs.\""
+      RenderBlock {P} at (0,86) size 784x18
+        RenderText {TEXT} at (0,0) size 505x18
+          text run at (0,0) width 505: "Today I got a call from the preschool telling me that Sophia had broken her arm."
+      RenderBlock {P} at (0,120) size 784x108
+        RenderText {TEXT} at (0,0) size 773x54
+          text run at (0,0) width 770: "It happened on the playground. I imagined she had fallen off the monkey bars or something, but no: she had been sitting at"
+          text run at (0,18) width 773: "the Art Table, and as she was getting off the bench she slipped and fell on her arm. She was being very brave when I came"
+          text run at (0,36) width 452: "to get her\x{D1}no tears, stoically holding her arm covered in ice packs. She "
+        RenderInline {I} at (0,0) size 24x18
+          RenderText {TEXT} at (452,36) size 24x18
+            text run at (452,36) width 24: "had"
+        RenderText {TEXT} at (476,36) size 784x72
+          text run at (476,36) width 308: " cried, she told me. All of the teachers were quite"
+          text run at (0,54) width 780: "amazed at how brave she was being. I took her to the doctor and from there to the pediatric orthopedic doctor. She started to"
+          text run at (0,72) width 725: "lose her composure, though, after she had finally gotten the X-rays (\"Like Curious George got when he went to the"
+          text run at (0,90) width 303: "hospital\") and we had to wait in the exam room."
+      RenderBlock {P} at (0,244) size 784x18
+        RenderText {TEXT} at (0,0) size 424x18
+          text run at (0,0) width 424: "\"I want to go home now,\" she said. \"I wish I'd never hurt my arm.\""
+      RenderBlock {P} at (0,278) size 784x72
+        RenderText {TEXT} at (0,0) size 784x36
+          text run at (0,0) width 784: "The ortho tech came in to give her a splint (she'll have a splint for a couple of days and then get a cast on Thursday), and can"
+          text run at (0,18) width 382: "I tell you how worrisome it is to have an ortho tech who is a "
+        RenderInline {B} at (0,0) size 79x18
+          RenderText {TEXT} at (382,18) size 79x18
+            text run at (382,18) width 79: "dead ringer"
+        RenderText {TEXT} at (461,18) size 784x54
+          text run at (461,18) width 313: " for Ian McShane as Al Swearengen wrapping up"
+          text run at (0,36) width 784: "your daughter in gauze? (I'm totally serious. He didn't have grease in his hair, and he didn't have the little beard under his lip,"
+          text run at (0,54) width 155: "but other than that: yup.)"
+      RenderBlock {P} at (0,366) size 784x36
+        RenderText {TEXT} at (0,0) size 776x36
+          text run at (0,0) width 776: "So now she's on the couch, watching \"Dragontales\" with her arm propped up on a pillow (to keep it above the heart). She's"
+          text run at (0,18) width 600: "eating a couple of cut-up apples and cheese sticks (\"because that's all I can eat now, Mommy\")."
+      RenderBlock {P} at (0,418) size 784x54
+        RenderText {TEXT} at (0,0) size 771x54
+          text run at (0,0) width 771: "She's upset because she's not going to be able to do all the swimming she was planning. I'm upset because my little girl got"
+          text run at (0,18) width 746: "hurt. I assume that after a day or so we'll adjust to the new regimen. Of course, she can't go to her last day of preschool"
+          text run at (0,36) width 449: "tomorrow, because they're having \"Water Days,\" and she can't get wet."
+      RenderBlock {P} at (0,488) size 784x18
+        RenderText {TEXT} at (0,0) size 734x18
+          text run at (0,0) width 734: "The weather's finally gotten extremely hot around here, and she can't get her splint (and in a few days, her cast) wet. "
+        RenderInline {I} at (0,0) size 34x18
+          RenderText {TEXT} at (734,0) size 34x18
+            text run at (734,0) width 34: "Neat."
+      RenderBlock {P} at (0,522) size 784x54
+        RenderText {TEXT} at (0,0) size 773x54
+          text run at (0,0) width 767: "I've never broken anything (knock on nearest wood sprite)\x{D1}does it affect your outlook on life? She has an adventuresome"
+          text run at (0,18) width 773: "spirit and I hope she's just as energetic after this little incident as she was before. At the moment she's even lost her sense of"
+          text run at (0,36) width 45: "humor."
+    RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]

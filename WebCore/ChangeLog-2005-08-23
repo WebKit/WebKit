@@ -1,3 +1,22 @@
+2005-06-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        Test cases added:
+        * layout-tests/fast/css/apple-prefix-expected.txt: Added.
+        * layout-tests/fast/css/apple-prefix.html: Added.
+
+        - fixed <rdar://problem/4141650> REGRESSION: Safari RSS slider broken with TOT WebCore
+
+        * khtml/css/parser.y:
+        (getPropertyID): Fix lifetime problem on the QString. Also construct the QString
+        using length, since the passed-in char * is not necessarily null-terminated. Also do
+        the mapping only if it's a "-apple-" prefix -- the old code would do it for, e.g.,
+        "-applex-" too. The old code would not successfully map the "apple" in "appleLineClamp"
+        to "khtml", and Dave changed things so that the internal name of all CSS attributes
+        is "khtml" back in his 2005-05-03 check-in, breaking the use of appleLineClamp in RSS.
+        (getValueID): Ditto.
+
 2005-06-22  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin Adler.

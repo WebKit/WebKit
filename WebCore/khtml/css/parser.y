@@ -61,16 +61,15 @@ namespace DOM {
 
 int getPropertyID(const char *tagStr, int len)
 {
-    if (len && tagStr && tagStr[0] == '-') {
-        QString prop(tagStr);
-        if (prop.startsWith("-apple")) {
-            prop = prop.mid(6);
-            prop.insert(0, "-khtml");
+    QString prop;
+
+    if (len && tagStr[0] == '-') {
+        prop = QString(tagStr, len);
+        if (prop.startsWith("-apple-")) {
+            prop = "-khtml-" + prop.mid(7);
             tagStr = prop.ascii();
-        }
-        else if (prop.startsWith("-moz")) {
-            prop = prop.mid(4);
-            prop.insert(0, "-khtml");
+        } else if (prop.startsWith("-moz-")) {
+            prop = "-khtml-" + prop.mid(5);
             len += 2;
             tagStr = prop.ascii();
         }
@@ -93,16 +92,14 @@ int getPropertyID(const char *tagStr, int len)
 
 static inline int getValueID(const char *tagStr, int len)
 {
-    if (len && tagStr && tagStr[0] == '-') {
-        QString prop(tagStr);
-        if (prop.startsWith("-apple")) {
-            prop = prop.mid(6);
-            prop.insert(0, "-khtml");
+    QString prop;
+    if (len && tagStr[0] == '-') {
+        prop = QString(tagStr, len);
+        if (prop.startsWith("-apple-")) {
+            prop = "-khtml-" + prop.mid(7);
             tagStr = prop.ascii();
-        }
-        else if (prop.startsWith("-moz")) {
-            prop = prop.mid(4);
-            prop.insert(0, "-khtml");
+        } else if (prop.startsWith("-moz-")) {
+            prop = "-khtml-" + prop.mid(5);
             len += 2;
             tagStr = prop.ascii();
         }
