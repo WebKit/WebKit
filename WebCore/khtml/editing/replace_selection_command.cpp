@@ -785,7 +785,7 @@ void ReplaceSelectionCommand::doApply()
     if (mergeStart && !isFirstVisiblePositionInSpecialElementInFragment(Position(m_fragment.mergeStartNode(), 0))) {
         NodeImpl *refNode = m_fragment.mergeStartNode();
         if (refNode) {
-            NodeImpl *node = refNode ? refNode->nextSibling() : 0;
+            NodeImpl *node = refNode->nextSibling();
             insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
             while (node && !isProbablyBlock(node)) {
                 NodeImpl *next = node->nextSibling();
@@ -817,7 +817,8 @@ void ReplaceSelectionCommand::doApply()
             insertNodeBeforeAndUpdateNodesInserted(refNode, insertionBlock);
         else if (!insertionBlockIsRoot && isProbablyBlock(refNode) && isEndOfBlock(visiblePos)) {
             insertNodeAfterAndUpdateNodesInserted(refNode, insertionBlock);
-        } else if (mergeStart && !isProbablyBlock(refNode)) {
+        // Insert the rest of the fragment at the NEXT visible position ONLY IF part of the fragment was already merged AND !isProbablyBlock
+        } else if (m_lastNodeInserted && !isProbablyBlock(refNode)) {
             Position pos = visiblePos.next().deepEquivalent().downstream();
             insertNodeAtAndUpdateNodesInserted(refNode, pos.node(), pos.offset());
         } else {
