@@ -1,5 +1,20 @@
 2005-06-22  Darin Adler  <darin@apple.com>
 
+        Changes by Mitz Pettel.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3633>
+          Layout order of bidi level runs is incorrect
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-L2-run-reordering-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-L2-run-reordering.html: Added.
+
+        * khtml/rendering/bidi.cpp: (khtml::RenderBlock::bidiReorderLine): Fixed mistake
+        where we'd advance too far after reversing a run.
+
+2005-06-22  Darin Adler  <darin@apple.com>
+
         - added test case for JavaScriptCore fix
 
         * layout-tests/fast/js/string-replace-2-expected.txt: Added.
