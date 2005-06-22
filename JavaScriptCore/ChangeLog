@@ -1,3 +1,11 @@
+2005-06-21  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj: Switched to a build rule rather than a build phase for
+        .y files -- this gets rid of the problem where modifying the .y file would not cause sufficient
+        compilation.
+
+        * kjs/grammar_wrapper.cpp: Removed.
+
 2005-06-21  Adele Peterson  <adele@apple.com>
 
         Patch from Anders Carlsson <andersca@mac.com>, reviewed by Darin.

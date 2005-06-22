@@ -999,7 +999,6 @@
 				93F1982F08245B92001E9ABC,
 				93396BB50824516200AB803D,
 				93F1983708245BAA001E9ABC,
-				932FC32A0824B6E0005B3C75,
 				93F197EC08245819001E9ABC,
 				93F1983308245BA1001E9ABC,
 				93F1983108245B9E001E9ABC,
@@ -1009,6 +1008,7 @@
 				932F5BD20822A1C700736975,
 			);
 			buildRules = (
+				937C34BA0868E21B006F4B22,
 			);
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
@@ -1695,6 +1695,7 @@
 				932F5B970822A1C700736975,
 				932F5B980822A1C700736975,
 				932F5B990822A1C700736975,
+				93DE3E420868DCAB00B8897C,
 				932F5B9A0822A1C700736975,
 				932F5B9B0822A1C700736975,
 				932F5B9C0822A1C700736975,
@@ -1750,7 +1751,6 @@
 				932F5BCF0822A1C700736975,
 				932F5BD00822A1C700736975,
 				932F5BD10822A1C700736975,
-				93F471090826AE3B00098036,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2302,23 +2302,6 @@
 				);
 			};
 		};
-		932FC32A0824B6E0005B3C75 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				kjs/grammar.y,
-			);
-			isa = PBXShellScriptBuildPhase;
-			name = grammar.cpp/h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/grammar.cpp",
-				"$(DERIVED_FILE_DIR)/grammar.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "bison -d -p kjsyy kjs/grammar.y -o \"$DERIVED_FILE_DIR/grammar.cpp\"\ncat \"$DERIVED_FILE_DIR/grammar.cpp.h\" \"$DERIVED_FILE_DIR/grammar.hpp\" > \"$DERIVED_FILE_DIR/grammar.h\" 2> /dev/null\nexit 0";
-		};
 		932FC3C10824BB61005B3C75 = {
 			children = (
 				935F69F608244FEA003D1A45,
@@ -2468,6 +2451,17 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		937C34BA0868E21B006F4B22 = {
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.yacc;
+			isEditable = 1;
+			isa = PBXBuildRule;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
+				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
+			);
+			script = "bison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+		};
 		937F4F24048E5B9900CA2AC4 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2484,6 +2478,12 @@
 			path = array_instance.h;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		93DE3E420868DCAB00B8897C = {
+			fileRef = 933A3499038AE7C6008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		93F197EC08245819001E9ABC = {
 			buildActionMask = 12;
@@ -2595,20 +2595,6 @@
 			shellPath = /bin/sh;
 			shellScript = "kjs/create_hash_table kjs/date_object.cpp -i > \"$DERIVED_FILE_DIR/date_object.lut.h\"";
 		};
-		93F471080826AE3B00098036 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = grammar_wrapper.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		93F471090826AE3B00098036 = {
-			fileRef = 93F471080826AE3B00098036;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //930
 //931
 //932
@@ -2686,7 +2672,6 @@
 				F692A8540255597D01FF60F7,
 				93F1981A08245AAE001E9ABC,
 				933A3499038AE7C6008635CE,
-				93F471080826AE3B00098036,
 				F692A8650255597D01FF60F7,
 				F692A8660255597D01FF60F7,
 				F68EBB8C0255D4C601FF60F7,
