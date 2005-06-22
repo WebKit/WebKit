@@ -1,5 +1,16 @@
 2005-06-22  Darin Adler  <darin@apple.com>
 
+        Change by Mitz Pettel.
+        Reviewed by me.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3618>
+          RTL runs drawn by CG not reversed properly
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer _CG_drawRun:style:geometry:]):
+        Fix off-by-one mistake in order-swapping loops.
+
+2005-06-22  Darin Adler  <darin@apple.com>
+
         Change by Michael Gaiman.
         Reviewed by me.
 

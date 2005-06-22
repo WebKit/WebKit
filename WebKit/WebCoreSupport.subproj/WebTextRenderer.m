@@ -1102,19 +1102,19 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         CGSize aswap1, aswap2;
         NSFont *fswap1, *fswap2;
         
-        for (i = pos, end = numGlyphs-1; i < (numGlyphs - pos)/2; i++){
+        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
             gswap1 = glyphBuffer[i];
             gswap2 = glyphBuffer[--end];
             glyphBuffer[i] = gswap2;
             glyphBuffer[end] = gswap1;
         }
-        for (i = pos, end = numGlyphs - 1; i < (numGlyphs - pos)/2; i++){
+        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
             aswap1 = advances[i];
             aswap2 = advances[--end];
             advances[i] = aswap2;
             advances[end] = aswap1;
         }
-        for (i = pos, end = numGlyphs - 1; i < (numGlyphs - pos)/2; i++){
+        for (i = pos, end = numGlyphs; i < (numGlyphs - pos)/2; i++){
             fswap1 = fontBuffer[i];
             fswap2 = fontBuffer[--end];
             fontBuffer[i] = fswap2;
