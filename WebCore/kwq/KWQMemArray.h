@@ -46,6 +46,7 @@ public:
     uint size() const { return impl.size(); }
     uint count() const { return impl.size(); }
     bool resize(uint size) { return impl.resize(size); }
+    QMemArray<T>& duplicate(const QMemArray<T> &a) { impl.duplicate(a.data(), a.size()); return *this; }
     QMemArray<T>& duplicate(const T *data, int size) { impl.duplicate(data, size); return *this; }
     void detach() { impl.detach(); }
     bool fill(const T &item, int size=-1) { return impl.fill(&item, size); }

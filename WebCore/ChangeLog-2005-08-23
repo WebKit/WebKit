@@ -1,3 +1,25 @@
+2005-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Eric Seidel <macdome@opendarwin.org>
+
+        This patch contains several small additions to KWQ
+
+        Reviewed by Darin
+
+        Test cases added: None required
+
+        * kwq/KWQApplication.h:
+        (QApplication::palette):
+        * kwq/KWQDateTime.h:
+        (QDateTime::time):
+        * kwq/KWQDict.h:
+        (QDict::operator[]):
+        (QDictIterator::operator*):
+        * kwq/KWQKDebug.h:
+        (kdbgstream::operator<<):
+        * kwq/KWQMemArray.h:
+        (QMemArray::duplicate):
+
 2005-06-23  David Harrison  <harrison@apple.com>
 
         Test cases added: None needed for this debug-only utility code.

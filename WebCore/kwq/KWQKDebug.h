@@ -29,6 +29,8 @@
 #include "KWQString.h"
 #include "KWQTextStream.h"
 
+#define                k_funcinfo      "[" << __FILE__ << ":" << __LINE__ << "] "
+
 class kdbgstream;
 
 typedef kdbgstream & (*KDBGFUNC)(kdbgstream &);
@@ -40,9 +42,11 @@ public:
     kdbgstream &operator<<(int) { return *this; }
     kdbgstream &operator<<(unsigned int) { return *this; }
     kdbgstream &operator<<(long) { return *this; }
+    kdbgstream &operator<<(unsigned long) { return *this; }
     kdbgstream &operator<<(double) { return *this; }
     kdbgstream &operator<<(const char *) { return *this; }
     kdbgstream &operator<<(const void *) { return *this; }
+    kdbgstream &operator<<(const QChar &) { return *this; }
     kdbgstream &operator<<(const QString &) { return *this; }
     kdbgstream &operator<<(const QCString &) { return *this; }
     kdbgstream &operator<<(KDBGFUNC) { return *this; }

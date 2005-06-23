@@ -75,7 +75,7 @@ public:
     explicit QDateTime(CFAbsoluteTime d) : dateInSeconds(d) { }
     QDateTime(const QDate &, const QTime &);
     
-    QTime time() { return QTime(dateInSeconds); }
+    QTime time() const { return QTime(dateInSeconds); }
     int secsTo(const QDateTime &) const;
     
     static QDateTime currentDateTime() { return QDateTime(CFAbsoluteTimeGetCurrent()); }
