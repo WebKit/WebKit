@@ -66,4 +66,14 @@ private:
     QString *_string;
 };
 
+class QTextIStream : public QTextStream {
+public:
+    QTextIStream(QString *s) : QTextStream(s, IO_ReadOnly) { }
+};
+
+class QTextOStream : public QTextStream {
+public:
+    QTextOStream(QString *s) : QTextStream(s, IO_WriteOnly) { }
+};
+
 #endif

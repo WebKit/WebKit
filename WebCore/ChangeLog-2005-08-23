@@ -2,6 +2,20 @@
 
         Patch by Eric Seidel <macdome@opendarwin.org>
 
+        Adds QTextIStream, QTextOStream to KWQ
+
+        Reviewed by Darin
+
+        Test cases added: None required
+
+        * kwq/KWQTextStream.h:
+        (QTextIStream::QTextIStream):
+        (QTextOStream::QTextOStream):
+
+2005-06-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Eric Seidel <macdome@opendarwin.org>
+
         This patch contains several small additions to KWQ
 
         Reviewed by Darin
