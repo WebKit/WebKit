@@ -74,6 +74,9 @@ private:
     void* operator new(size_t sz) throw();
     
 public:
+#ifndef NDEBUG
+    void showTree() const;
+#endif
     virtual bool isInlineBox() { return false; }
     virtual bool isInlineFlowBox() { return false; }
     virtual bool isContainer() { return false; }

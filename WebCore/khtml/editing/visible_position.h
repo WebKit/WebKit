@@ -82,7 +82,7 @@ public:
 
 #ifndef NDEBUG
     void formatForDebugger(char *buffer, unsigned length) const;
-    void showTree();
+    void showTree() const;
 #endif
     
 private:

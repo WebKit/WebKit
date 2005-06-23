@@ -470,9 +470,9 @@ public:
 #ifndef NDEBUG
     virtual void formatForDebugger(char *buffer, unsigned length) const;
 
-    void showNode(const char *prefix="");
-    void showTree();
-    void showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2);
+    void showNode(const char *prefix="") const;
+    void showTree() const;
+    void showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2) const;
 	
 #endif
 

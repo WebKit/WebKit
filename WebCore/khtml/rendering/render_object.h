@@ -226,6 +226,7 @@ public:
     QString information() const;
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
+    void showTree() const;
 #endif
 
     static RenderObject *createObject(DOM::NodeImpl* node, RenderStyle* style);

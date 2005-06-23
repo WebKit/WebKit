@@ -409,10 +409,10 @@ void VisiblePosition::formatForDebugger(char *buffer, unsigned length) const
     m_deepPosition.formatForDebugger(buffer, length);
 }
 
-void VisiblePosition::showTree()
+void VisiblePosition::showTree() const
 {
     if (m_deepPosition.node())
-    m_deepPosition.node()->showTreeAndMark(m_deepPosition.node(), "*", NULL, NULL);
+        m_deepPosition.node()->showTreeAndMark(m_deepPosition.node(), "*", NULL, NULL);
 }
 #endif
 

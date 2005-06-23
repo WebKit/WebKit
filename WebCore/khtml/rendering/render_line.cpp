@@ -105,6 +105,14 @@ void InlineBox::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
+#ifndef NDEBUG
+void InlineBox::showTree() const
+{
+    if (m_object)
+        m_object->showTree();
+}
+#endif
+
 long InlineBox::caretMinOffset() const 
 { 
     return 0; 

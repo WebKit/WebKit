@@ -1601,10 +1601,10 @@ NodeImpl::Id NodeImpl::identifier() const
 
 #ifndef NDEBUG
 
-static void appendAttributeDesc(NodeImpl *node, QString &string, NodeImpl::Id attrID, QString attrDesc)
+static void appendAttributeDesc(const NodeImpl *node, QString &string, NodeImpl::Id attrID, QString attrDesc)
 {
     if (node->isElementNode()) {
-        DOMString attr = static_cast<ElementImpl *>(node)->getAttribute(attrID);
+        DOMString attr = static_cast<const ElementImpl *>(node)->getAttribute(attrID);
         if (!attr.isEmpty()) {
             string += attrDesc;
             string += attr.string();
@@ -1612,7 +1612,7 @@ static void appendAttributeDesc(NodeImpl *node, QString &string, NodeImpl::Id at
     }
 }
 
-void NodeImpl::showNode(const char *prefix)
+void NodeImpl::showNode(const char *prefix) const
 {
     if (!prefix)
         prefix = "";
@@ -1629,15 +1629,15 @@ void NodeImpl::showNode(const char *prefix)
     }
 }
 
-void NodeImpl::showTree()
+void NodeImpl::showTree() const
 {
-    showTreeAndMark(this, "*", NULL, NULL);
+    showTreeAndMark((NodeImpl *)this, "*", NULL, NULL);
 }
 
-void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2)
+void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2) const
 {
     NodeImpl *rootNode;
-    NodeImpl *node = this;
+    NodeImpl *node = (NodeImpl *)this;
     while(node->parentNode() != NULL && node->id() != ID_BODY)
         node = node->parentNode();
     rootNode = node;

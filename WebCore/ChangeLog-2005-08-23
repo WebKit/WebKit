@@ -1,3 +1,37 @@
+2005-06-23  David Harrison  <harrison@apple.com>
+
+        Test cases added: None needed for this debug-only utility code.
+
+        - Make showTree() const.
+        - Add showTree() for InlineBox.
+        - Add showTree() for RenderObject.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::showTree):
+        * khtml/editing/selection.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::showTree):
+        * khtml/editing/visible_position.h:
+        Make showTree() const.
+        
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::showTree):
+        * khtml/rendering/render_line.h:
+        Add showTree() for InlineBox.
+        
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::showTree):
+        * khtml/rendering/render_object.h:
+        Add showTree() for RenderObject.
+        
+        * khtml/xml/dom_nodeimpl.cpp:
+        (appendAttributeDesc):
+        (NodeImpl::showNode):
+        (NodeImpl::showTree):
+        (NodeImpl::showTreeAndMark):
+        * khtml/xml/dom_nodeimpl.h:
+        Make showTree() const.
+
 2005-06-23  Vicki Murley  <vicki@apple.com>
 
 	- added template to be used when writing manual tests
