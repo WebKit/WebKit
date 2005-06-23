@@ -1,3 +1,9 @@
+2005-06-23  Vicki Murley  <vicki@apple.com>
+
+	- added template to be used when writing manual tests
+
+        * manual-tests/template.html: Added.
+
 2005-06-22  Darin Adler  <darin@apple.com>
 
         - added forwarding headers as needed for Eric Seidel's KDOM work
