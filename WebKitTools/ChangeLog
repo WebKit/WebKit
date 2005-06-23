@@ -1,5 +1,9 @@
 2005-06-23  Darin Adler  <darin@apple.com>
 
+        * Scripts/webkitdirs.pm: Fixed a regular expression in the code I just landed.
+
+2005-06-23  Darin Adler  <darin@apple.com>
+
         Changes based on input from Michael Kahl.
 
         * Scripts/cvs-create-patch: Added code to handle getting changes in the top-level

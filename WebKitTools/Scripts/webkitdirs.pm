@@ -77,8 +77,8 @@ sub determineBaseProductDir
     close PRODUCT;
     if ($baseProductDir) {
         chomp $baseProductDir;
-        $baseProductDir =~ s|^\$(SRCROOT)/\.\.$|$sourceDir|;
-        $baseProductDir =~ s|^\$(SRCROOT)/\.\./|$sourceDir/|;
+        $baseProductDir =~ s|^\Q$(SRCROOT)/..\E$|$sourceDir|;
+        $baseProductDir =~ s|^\Q$(SRCROOT)/../|$sourceDir/|;
         $baseProductDir =~ s|^~/|$ENV{HOME}/|;
         die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
