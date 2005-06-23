@@ -1,5 +1,16 @@
 2005-06-22  Darin Adler  <darin@apple.com>
 
+        - added forwarding headers as needed for Eric Seidel's KDOM work
+          see <http://bugzilla.opendarwin.org/show_bug.cgi?id=3655>
+
+        * ForwardingHeaders/kjs/value.h: Added.
+        * ForwardingHeaders/qintdict.h: Added an include.
+        * ForwardingHeaders/qptrcollection.h: Added.
+        * ForwardingHeaders/qsize.h: Added.
+        * kwq/KWQIntDict.h: Added. Empty file.
+
+2005-06-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Vicki.
 
         Test cases added:
