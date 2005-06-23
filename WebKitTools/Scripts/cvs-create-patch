@@ -96,6 +96,10 @@ for my $path (keys %paths) {
 sub getDirAndBase
 {
     my ($path) = @_;
+    if (-d $path) {
+        $path =~ s|/+$||;
+        return ($path, ".");
+    }
     return ($1, $2) if $path =~ m|^(.+)/([^/]+)$|;
     $path !~ m|/| or die "Could not parse path name $path.\n";
     return (".", $path);

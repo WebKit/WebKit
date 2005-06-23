@@ -29,7 +29,6 @@
 use strict;
 use warnings;
 use FindBin;
-use Cwd;
 
 BEGIN {
    use Exporter   ();
@@ -47,15 +46,16 @@ my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
 my $configurationProductDir;
-my $didChdirWebKit;
 my $XcodeVersion;
+my $sourceDir;
 
-# Check that we're in the right directory.
-sub chdirWebKit
+sub determineSourceDir
 {
-    return if $didChdirWebKit;
-    $didChdirWebKit = 1;
-    chdir "$FindBin::Bin/../.." or die;
+    return if $sourceDir;
+    $sourceDir = $FindBin::Bin;
+    if ($sourceDir !~ s|/[^/]+/[^/]+$||) {
+        die "Could not find two levels above source directory using FindBin.\n";
+    }
 }
 
 sub determineXcodeVersion
@@ -71,18 +71,22 @@ sub determineXcodeVersion
 sub determineBaseProductDir
 {
     return if defined $baseProductDir;
+    determineSourceDir();
     open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
     $baseProductDir = <PRODUCT>;
     close PRODUCT;
     if ($baseProductDir) {
         chomp $baseProductDir;
+        $baseProductDir =~ s|^\$(SRCROOT)/\.\.$|$sourceDir|;
+        $baseProductDir =~ s|^\$(SRCROOT)/\.\./|$sourceDir/|;
+        $baseProductDir =~ s|^~/|$ENV{HOME}/|;
+        die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
+        die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
         @baseProductDirOption = ();
     } else {
-        chdirWebKit();
-        $baseProductDir = getcwd() . "/WebKitBuild";
+        $baseProductDir = "$sourceDir/WebKitBuild";
         @baseProductDirOption = ("SYMROOT=$baseProductDir");
     }
-    $baseProductDir =~ s|^~/|$ENV{HOME}/|;
 }
 
 sub determineConfiguration
@@ -115,6 +119,12 @@ sub determineConfigurationProductDir
     } else {
         $configurationProductDir = "$baseProductDir/$configuration";
     }
+}
+
+sub chdirWebKit
+{
+    determineSourceDir();
+    chdir $sourceDir or die;
 }
 
 sub baseProductDir

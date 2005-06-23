@@ -1,3 +1,14 @@
+2005-06-23  Darin Adler  <darin@apple.com>
+
+        Changes based on input from Michael Kahl.
+
+        * Scripts/cvs-create-patch: Added code to handle getting changes in the top-level
+        directory passed in.
+
+        * Scripts/webkitdirs.pm: Eliminate use of changing the current directory and using
+        getcwd() in the code to find the base product dir. Added code to handle unusual
+        base product directory values that use SRCROOT.
+
 2005-06-22  Darin Adler  <darin@apple.com>
 
         Change by Anders Carlsson.
