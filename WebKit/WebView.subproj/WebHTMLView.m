@@ -1524,7 +1524,9 @@ static WebHTMLView *lastHitView = nil;
 - (void)_changeSpellingFromMenu:(id)sender
 {
     ASSERT([[self selectedString] length] != 0);
-    [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES smartReplace:NO];
+    if ([self _shouldReplaceSelectionWithText:[sender title] givenAction:WebViewInsertActionPasted]) {
+        [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES smartReplace:NO];
+    }
 }
 
 - (void)_ignoreSpellingFromMenu:(id)sender

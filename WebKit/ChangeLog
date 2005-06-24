@@ -1,3 +1,17 @@
+2005-06-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch contributed by Duncan Wilcox <duncan@mclink.it>
+
+        Reviewed by Darin
+
+        - Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3535>
+            Spelling suggestions in the context menu don't call the should* delegate methods
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _changeSpellingFromMenu:]):
+        give delegate's webView:shouldInsertText:replacingDOMRange:givenAction: a chance
+        to prevent replacing of selected text
+
 2005-06-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.
