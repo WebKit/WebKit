@@ -35,7 +35,9 @@
 class QBuffer {
 public:
     QBuffer() : opened(false), pos(0) { }
+    QBuffer(QByteArray b) : opened(false), ba(b), pos(0) { }
 
+    bool setBuffer(QByteArray);
     QByteArray buffer() const { return ba; }
     uint size() const { return ba.size(); }
     bool isOpen() const { return opened; }

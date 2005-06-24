@@ -48,3 +48,12 @@ int QBuffer::writeBlock(const char *data, uint len)
 
     return len;
 }
+
+bool QBuffer::setBuffer(QByteArray newBuff)
+{
+    if (isOpen())
+        return false;
+    ba.duplicate(newBuff.data(), newBuff.size());
+    return true;
+}
+

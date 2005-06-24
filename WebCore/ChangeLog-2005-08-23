@@ -1,5 +1,19 @@
 2005-06-24  Justin Garcia  <justin.garcia@apple.com>
 
+        - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3673> 
+            Adds QBuffer::setBuffer(QByteArray) support to KWQBuffer, and adds a QBuffer(QByteArray) constructor.
+
+        Reviewed by Darin
+
+        Test cases added: Non required
+
+        * kwq/KWQBuffer.h:
+        (QBuffer::QBuffer):
+        * kwq/KWQBuffer.mm:
+        (QBuffer::setBuffer):
+
+2005-06-24  Justin Garcia  <justin.garcia@apple.com>
+
         - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3672> KWQRect -- CGRect and other small additions
         - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3670> Add remove and byteOrderMark support to KWQString for kdom
 
