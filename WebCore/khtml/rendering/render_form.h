@@ -248,7 +248,13 @@ public:
     virtual void updateFromElement();
     virtual void setStyle(RenderStyle *);
 
+    long selectionStart();
+    long selectionEnd();
+    void setSelectionStart(long);
+    void setSelectionEnd(long);
+    
     void select();
+    void setSelectionRange(long, long);
 
     KLineEdit *widget() const { return static_cast<KLineEdit*>(m_widget); }
     DOM::HTMLInputElementImpl* element() const
@@ -469,8 +475,14 @@ public:
 
     QString text();
 
+    long selectionStart();
+    long selectionEnd();
+    void setSelectionStart(long);
+    void setSelectionEnd(long);
+    
     void select();
-
+    void setSelectionRange(long, long);
+    
 #if APPLE_CHANGES
     virtual bool canHaveIntrinsicMargins() const { return true; }
 #endif

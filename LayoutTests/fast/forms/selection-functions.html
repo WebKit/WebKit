@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <script type="text/javascript">
+            function print(message)
+            {
+                var paragraph = document.createElement("div");
+                if (message == "") {
+                    paragraph.appendChild(document.createElement("br"));
+                } else {
+                    paragraph.appendChild(document.createTextNode(message));
+                }
+                document.getElementById("console").appendChild(paragraph);
+            }
+            function test()
+            {
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText();
+                }
+                var elt = document.getElementById("text");
+                print("===textarea===");
+                testElt(elt);
+                
+                elt = document.getElementById("input");
+                print("");
+                print("===input===");
+                testElt(elt);
+                
+                print("");
+                // test to make sure the selection stuff doesn't show up
+                // when iterating over a button's properties
+                elt = document.getElementById("button");
+                for (key in elt) {
+                    if (key == "selectionStart" || key == "selectionEnd" || key == "setSelectionRange") {
+                        print("Failed button iteration");
+                    }
+                }
+                
+                // Make sure selectionStart and selectionEnd are undefined on the button
+                if (elt.selectionStart != undefined) {
+                    print("Button.selectionStart defined");
+                }
+                if (elt.selectionEnd != undefined) {
+                    print("Button.selectionStart defined");
+                }
+            }
+            function testElt(elt)
+            {
+                // make sure that setSelectionRange is defined
+                if (elt.setSelectionRange == undefined) {
+                    print("Failed: no setSelectionRange");
+                    return;
+                }
+                elt.value = "This is a test value. Just filling in some text.";
+                // the value is 48 characters long
+                print("setSelectionRange():");
+                elt.setSelectionRange(3,7);
+                display(elt);
+                elt.setSelectionRange(-2,5);
+                display(elt);
+                elt.setSelectionRange(42,54);
+                display(elt);
+                elt.setSelectionRange(5,2);
+                display(elt);
+                
+                print("");
+                print("selectionStart:");
+                elt.selectionStart = 3;
+                display(elt);
+                elt.selectionStart = 7;
+                display(elt);
+                elt.selectionStart = -1;
+                display(elt);
+                elt.selectionStart = 54;
+                display(elt);
+                elt.selectionStart = 3;
+                display(elt);
+                
+                print("");
+                print("selectionEnd:");
+                elt.selectionEnd = 5;
+                display(elt);
+                elt.selectionEnd = 2;
+                display(elt);
+                elt.selectionEnd = -1;
+                display(elt);
+                elt.selectionEnd = 54;
+                display(elt);
+                elt.selectionStart = 7;
+                elt.selectionEnd = 7;
+                display(elt);
+                
+                elt.value = "";
+            }
+            function display(elt)
+            {
+                var actStart = elt.selectionStart;
+                var actEnd = elt.selectionEnd;
+                var txt = actStart.toString() + ", " + actEnd.toString();
+                print(txt);
+            }
+        </script>
+    </head>
+    <body onload="test();">
+        <p>This test checks if setSelectionRange(), selectionStart, and selectionEnd on a textarea and input work as expected. This includes checking edge cases such as out-of-bound values.</p>
+        <p>If this test passed you'll see a bunch of correct selection ranges below. Check the expected file for the correct ranges.</p>
+        <hr />
+        <form>
+            <textarea id="text"></textarea>
+            <input type="text" id="input" />
+            <input type="button" id="button" />
+        </form>
+        <hr />
+        <p id="console"></p>
+    </body>
+</html>

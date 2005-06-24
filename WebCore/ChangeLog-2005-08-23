@@ -1,3 +1,82 @@
+2005-06-23  Kevin Ballard  <kevin@sb.org>
+
+        Reviewed and landed by Darin Adler.
+
+        Test cases added:
+        * layout-tests/fast/forms/selection-functions-expected.txt: Added.
+        * layout-tests/fast/forms/selection-functions.html: Added.
+        * layout-tests/fast/forms/textarea-crlf-expected.txt: Added.
+        * layout-tests/fast/forms/textarea-crlf.html: Added.
+
+        - Fixes bug <http://bugzilla.opendarwin.org/show_bug.cgi?id=3401>.
+          Also fixes issue where setting text of a textarea in code and then
+          retrieving it would leave the \r\n sequences in the text, despite
+          the textarea translating to \n in all other cases.
+
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::getInputSelectionStart):
+        (KJS::getInputSelectionEnd):
+        (KJS::KJS::HTMLElement::getValueProperty):
+        (KJS::KJS::HTMLElement::hasProperty):
+        (KJS::KJS::HTMLElementFunction::tryCall):
+        (KJS::HTMLElement::putValue):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::canHaveSelection):
+        (DOM::HTMLInputElementImpl::selectionStart):
+        (DOM::HTMLInputElementImpl::selectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionStart):
+        (DOM::HTMLInputElementImpl::setSelectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionRange):
+        (DOM::HTMLInputElementImpl::setValue):
+        (DOM::HTMLTextAreaElementImpl::selectionStart):
+        (DOM::HTMLTextAreaElementImpl::selectionEnd):
+        (DOM::HTMLTextAreaElementImpl::setSelectionStart):
+        (DOM::HTMLTextAreaElementImpl::setSelectionEnd):
+        (DOM::HTMLTextAreaElementImpl::setSelectionRange):
+        (DOM::HTMLTextAreaElementImpl::setValue):
+        * khtml/html/html_formimpl.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::selectionStart):
+        (RenderLineEdit::selectionEnd):
+        (RenderLineEdit::setSelectionStart):
+        (RenderLineEdit::setSelectionEnd):
+        (RenderLineEdit::setSelectionRange):
+        (RenderTextArea::selectionStart):
+        (RenderTextArea::selectionEnd):
+        (RenderTextArea::setSelectionStart):
+        (RenderTextArea::setSelectionEnd):
+        (RenderTextArea::select):
+        (RenderTextArea::setSelectionRange):
+        * khtml/rendering/render_form.h:
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setCursorPosition):
+        (QLineEdit::cursorPosition):
+        (QLineEdit::selectAll):
+        (QLineEdit::selectionStart):
+        (QLineEdit::selectedText):
+        (QLineEdit::setSelection):
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea setSelectedRange:]):
+        (-[KWQTextArea selectedRange]):
+        (-[KWQTextArea getCursorPositionAsIndex:inParagraph:]):
+        (RangeOfParagraph):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::getCursorPosition):
+        (QTextEdit::selectionStart):
+        (QTextEdit::selectionEnd):
+        (QTextEdit::setSelectionStart):
+        (QTextEdit::setSelectionEnd):
+        (QTextEdit::selectAll):
+        (QTextEdit::setSelectionRange):
+        * kwq/KWQTextField.h:
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController selectedRange]):
+        (-[KWQTextFieldController setSelectedRange:]):
+
 2005-06-23  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Eric Seidel <macdome@opendarwin.org>

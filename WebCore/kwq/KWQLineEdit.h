@@ -68,6 +68,10 @@ public:
     void selectAll();
     bool hasSelectedText() const;
     
+    int selectionStart() const;
+    QString selectedText() const;
+    void setSelection(int, int);
+    
     QSize sizeForCharacterWidth(int numCharacters) const;
     int baselinePosition(int height) const;
     

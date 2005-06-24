@@ -718,9 +718,53 @@ void RenderLineEdit::slotTextChanged(const QString &string)
     element()->setValueFromRenderer(newText);
 }
 
+long RenderLineEdit::selectionStart()
+{
+    KLineEdit *lineEdit = static_cast<KLineEdit *>(m_widget);
+    int start = lineEdit->selectionStart();
+    if (start == -1)
+        start = lineEdit->cursorPosition();
+    return start;
+}
+
+long RenderLineEdit::selectionEnd()
+{
+    KLineEdit *lineEdit = static_cast<KLineEdit *>(m_widget);
+    int start = lineEdit->selectionStart();
+    if (start == -1)
+        return lineEdit->cursorPosition();
+    return start + (int)lineEdit->selectedText().length();
+}
+
+void RenderLineEdit::setSelectionStart(long start)
+{
+    int realStart = MAX(start, 0);
+    int length = MAX(selectionEnd() - realStart, 0);
+    static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
+}
+
+void RenderLineEdit::setSelectionEnd(long end)
+{
+    int start = selectionStart();
+    int realEnd = MAX(end, 0);
+    int length = realEnd - start;
+    if (length < 0) {
+        start = realEnd;
+        length = 0;
+    }
+    static_cast<KLineEdit *>(m_widget)->setSelection(start, length);
+}
+
 void RenderLineEdit::select()
 {
     static_cast<KLineEdit*>(m_widget)->selectAll();
+}
+
+void RenderLineEdit::setSelectionRange(long start, long end)
+{
+    int realStart = MAX(start, 0);
+    int length = MAX(end - realStart, 0);
+    static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
 // ---------------------------------------------------------------------------
@@ -1641,9 +1685,69 @@ void RenderTextArea::slotTextChanged()
     m_dirty = true;
 }
 
+long RenderTextArea::selectionStart()
+{
+    QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
+#if APPLE_CHANGES
+    return textEdit->selectionStart();
+#else
+    // FIXME: I have no way to test Qt, so I'll
+    // leave this alone for now
+#error Unimplemented method
+#endif
+}
+
+long RenderTextArea::selectionEnd()
+{
+    QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
+#if APPLE_CHANGES
+    return textEdit->selectionEnd();
+#else
+    // FIXME: I have no way to test Qt, so I'll
+    // leave this alone for now
+#error Unimplemented method
+#endif
+}
+
+void RenderTextArea::setSelectionStart(long start)
+{
+    QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
+#if APPLE_CHANGES
+    textEdit->setSelectionStart(start);
+#else
+    // FIXME: I have no way to test Qt, so I'll
+    // leave this alone for now
+#error Unimplemented method
+#endif
+}
+
+void RenderTextArea::setSelectionEnd(long end)
+{
+    QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
+#if APPLE_CHANGES
+    textEdit->setSelectionEnd(end);
+#else
+    // FIXME: I have no way to test Qt, so I'll
+    // leave this alone for now
+#error Unimplemented method
+#endif
+}
+
 void RenderTextArea::select()
 {
     static_cast<QTextEdit *>(m_widget)->selectAll();
+}
+
+void RenderTextArea::setSelectionRange(long start, long end)
+{
+    QTextEdit *textEdit = static_cast<QTextEdit *>(m_widget);
+#if APPLE_CHANGES
+    textEdit->setSelectionRange(start, end-start);
+#else
+    // FIXME: I have no way to test Qt, so I'll
+    // leave this alone for now
+#error Unimplemented method
+#endif
 }
 
 void RenderTextArea::slotSelectionChanged()

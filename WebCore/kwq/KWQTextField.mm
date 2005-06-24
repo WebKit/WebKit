@@ -357,7 +357,7 @@
 - (NSRange)selectedRange
 {
     NSText *editor = [field _KWQ_currentEditor];
-    return editor ? [editor selectedRange] : NSMakeRange(NSNotFound, 0);
+    return editor ? [editor selectedRange] : lastSelectedRange;
 }
 
 - (void)setSelectedRange:(NSRange)range
@@ -365,9 +365,30 @@
     // Range check just in case the saved range has gotten out of sync.
     // Even though we don't see this in testing, we really don't want
     // an exception in this case, so we protect ourselves.
-    NSText *editor = [field _KWQ_currentEditor];    
-    if (NSMaxRange(range) <= [[editor string] length]) {
+    NSText *editor = [field _KWQ_currentEditor];
+    if (editor) { // if we have no focus, we don't have a current editor
+        unsigned len = [[editor string] length];
+        if (NSMaxRange(range) > len) {
+            if (range.location > len) {
+                range.location = len;
+                range.length = 0;
+            } else {
+                range.length = len - range.location;
+            }
+        }
         [editor setSelectedRange:range];
+    } else {
+        // set the lastSavedRange, so it will be used when given focus
+        unsigned len = [[field stringValue] length];
+        if (NSMaxRange(range) > len) {
+            if (range.location > len) {
+                range.location = len;
+                range.length = 0;
+            } else {
+                range.length = len - range.location;
+            }
+        }
+        lastSelectedRange = range;
     }
 }
 

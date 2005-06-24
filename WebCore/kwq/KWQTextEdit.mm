@@ -82,10 +82,10 @@ void QTextEdit::getCursorPosition(int *paragraph, int *index) const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     if (index)
-	*index = 0;
+        *index = 0;
     if (paragraph)
-	*paragraph = 0;
-
+        *paragraph = 0;
+    
     KWQ_BLOCK_EXCEPTIONS;
     [textView getCursorPositionAsIndex:index inParagraph:paragraph];
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -186,6 +186,99 @@ void QTextEdit::setDisabled(bool flag)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+long QTextEdit::selectionStart()
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    NSRange range = [textView selectedRange];
+    if (range.location == NSNotFound)
+        return 0;
+    return range.location;
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return 0;
+}
+
+long QTextEdit::selectionEnd()
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    NSRange range = [textView selectedRange];
+    if (range.location == NSNotFound)
+        return 0;
+    return NSMaxRange(range);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return 0;
+}
+
+void QTextEdit::setSelectionStart(long start)
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    NSRange range = [textView selectedRange];
+    if (range.location == NSNotFound) {
+        range.location = 0;
+        range.length = 0;
+    }
+    
+    // coerce start to a valid value
+    long maxLength = [[textView text] length];
+    long newStart = start;
+    if (newStart < 0)
+        newStart = 0;
+    if (newStart > maxLength)
+        newStart = maxLength;
+    
+    if ((unsigned)newStart < range.location + range.length) {
+        // If we're expanding or contracting, but not collapsing the selection
+        range.length += range.location - newStart;
+        range.location = newStart;
+    } else {
+        // ok, we're collapsing the selection
+        range.location = newStart;
+        range.length = 0;
+    }
+    
+    [textView setSelectedRange:range];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void QTextEdit::setSelectionEnd(long end)
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    
+    KWQ_BLOCK_EXCEPTIONS;
+    NSRange range = [textView selectedRange];
+    if (range.location == NSNotFound) {
+        range.location = 0;
+        range.length = 0;
+    }
+    
+    // coerce end to a valid value
+    long maxLength = [[textView text] length];
+    long newEnd = end;
+    if (newEnd < 0)
+        newEnd = 0;
+    if (newEnd > maxLength)
+        newEnd = maxLength;
+    
+    if ((unsigned)newEnd >= range.location) {
+        // If we're just changing the selection length, but not location..
+        range.length = newEnd - range.location;
+    } else {
+        // ok, we've collapsed the selection and are moving it
+        range.location = newEnd;
+        range.length = 0;
+    }
+    
+    [textView setSelectedRange:range];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 bool QTextEdit::hasSelectedText() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
@@ -203,6 +296,32 @@ void QTextEdit::selectAll()
 
     KWQ_BLOCK_EXCEPTIONS;
     [textView selectAll];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void QTextEdit::setSelectionRange(long start, long length)
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+
+    KWQ_BLOCK_EXCEPTIONS;
+    long newStart = start;
+    long newLength = length;
+    if (newStart < 0) {
+        // truncate the length by the negative start
+        newLength = length + newStart;
+        newStart = 0;
+    }
+    if (newLength < 0) {
+        newLength = 0;
+    }
+    int maxlen = [[textView text] length];
+    if (newStart > maxlen) {
+        newStart = maxlen;
+    }
+    if (newStart + newLength > maxlen) {
+        newLength = maxlen - newStart;
+    }
+    [textView setSelectedRange:NSMakeRange(newStart, newLength)];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

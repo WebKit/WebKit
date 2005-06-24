@@ -76,14 +76,18 @@ QLineEdit::~QLineEdit()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QLineEdit::setCursorPosition(int)
+void QLineEdit::setCursorPosition(int pos)
 {
-    // Don't do anything here.
+    KWQ_BLOCK_EXCEPTIONS;
+    [m_controller setSelectedRange:NSMakeRange(pos, 0)];
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 int QLineEdit::cursorPosition() const
 {
-    // Not needed.  We ignore setCursorPosition().
+    KWQ_BLOCK_EXCEPTIONS;
+    return [m_controller selectedRange].location;
+    KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
 }
 
@@ -172,6 +176,7 @@ int QLineEdit::maxLength() const
     return [m_controller maximumLength];
 }
 
+
 void QLineEdit::selectAll()
 {
     if (!hasFocus()) {
@@ -184,6 +189,33 @@ void QLineEdit::selectAll()
         [textField selectText:nil];
         KWQ_UNBLOCK_EXCEPTIONS;
     }
+}
+
+int QLineEdit::selectionStart() const
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    if ([m_controller hasSelection]) {
+        return [m_controller selectedRange].location;
+    }
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return -1;
+}
+
+QString QLineEdit::selectedText() const
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    NSRange range = [m_controller selectedRange];
+    NSString *str = [m_controller string];
+    return QString::fromNSString([str substringWithRange:range]);
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return QString();
+}
+
+void QLineEdit::setSelection(int start, int length)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    [m_controller setSelectedRange:NSMakeRange(start, length)];
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool QLineEdit::hasSelectedText() const
