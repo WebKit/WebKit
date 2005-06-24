@@ -49,6 +49,10 @@ public:
         DirL = 0, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
+    
+    enum SpecialCharacter {
+        byteOrderMark = 0xfeff
+    };
 
     static const char null = 0; // not a QChar as in Qt (can't have static constructor), but close enough to be compatible in most cases
 
@@ -538,6 +542,8 @@ public:
     QString &insert(uint index, const char *insertChars, uint insertLength);
     QString &prepend(const QString &);
     QString &remove(uint, uint);
+    QString &remove(const QChar &c) { return replace(QString(c), ""); }
+    QString &remove(const QString &s) { return replace(s, ""); }
     QString &replace(uint index, uint len, const QString &s);
     QString &replace(char, const QString &);
     QString &replace(QChar, const QString &);

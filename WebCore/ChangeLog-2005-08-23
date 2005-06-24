@@ -1,3 +1,24 @@
+2005-06-24  Justin Garcia  <justin.garcia@apple.com>
+
+        - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3672> KWQRect -- CGRect and other small additions
+        - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3670> Add remove and byteOrderMark support to KWQString for kdom
+
+        Reviewed by Darin
+
+        Test cases added: None required
+
+        * kwq/KWQRect.h:
+        (QRect::contains):
+        * kwq/KWQRect.mm:
+        (QRect::QRect):
+        (QRect::topRight):
+        (QRect::bottomLeft):
+        (QRect::normalize):
+        (QRect::operator CGRect):
+        * kwq/KWQString.h:
+        (QChar::):
+        (QString::remove):
+
 2005-06-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin Garcia.

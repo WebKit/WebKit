@@ -42,7 +42,19 @@ QRect::QRect(QPoint p, QSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height
 {
 }
 
+QRect::QRect(const QPoint &topLeft, const QPoint &bottomRight)
+{
+    xp = topLeft.x();
+    yp = topLeft.y();
+    w = bottomRight.x() - topLeft.x() + 1;
+    h = bottomRight.y() - topLeft.y() + 1;
+}
+
 QRect::QRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
+{
+}
+
+QRect::QRect(const CGRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
 {
 }
 
@@ -76,9 +88,19 @@ QPoint QRect::topLeft() const
     return QPoint(xp,yp);
 }
 
+QPoint QRect::topRight() const
+{
+    return QPoint(right(),top());
+}
+
 QPoint QRect::bottomRight() const
 {
     return QPoint(right(),bottom());
+}
+
+QPoint QRect::bottomLeft() const
+{
+    return QPoint(left(),bottom());
 }
 
 QSize QRect::size() const
@@ -112,6 +134,19 @@ QRect QRect::unite(const QRect &r) const
     }
 
     return QRect(nx, ny, nw, nh);
+}
+
+QRect QRect::normalize() const
+{
+    QRect newRect;
+    
+    newRect.xp	= (w < 0) ? (xp - w) : xp;
+    newRect.w	= (w < 0) ? -w : w;
+    
+    newRect.yp	= (h < 0) ? (yp - h) : yp;
+    newRect.h	= (h < 0) ? -h : h;
+    
+    return newRect;
 }
 
 bool QRect::intersects(const QRect &r) const
@@ -152,6 +187,11 @@ void QRect::inflate(int s)
 QRect::operator NSRect() const
 {
     return NSMakeRect(xp, yp, w, h);
+}
+
+QRect::operator CGRect() const
+{
+    return CGRectMake(xp, yp, w, h);
 }
 
 bool operator==(const QRect &a, const QRect &b)
