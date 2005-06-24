@@ -1733,9 +1733,9 @@ static QString substituteBackslashes(const QString &string)
     int hashPos = string.find('#');
     unsigned pathEnd;
     
-    if (hashPos > 0 && (questionPos < 0 || questionPos > hashPos)) {
+    if (hashPos >= 0 && (questionPos < 0 || questionPos > hashPos)) {
 	pathEnd = hashPos;
-    } else if (questionPos > 0) {
+    } else if (questionPos >= 0) {
 	pathEnd = questionPos;
     } else {
 	pathEnd = string.length();

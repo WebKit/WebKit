@@ -1,3 +1,16 @@
+2005-06-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - fixed <rdar://problem/4151619> Safari changes "\" characters to "/" in the query part of links that start with "?"
+
+        Test cases added:
+        * layout-tests/fast/dom/anchor-backslash-expected.txt: Added.
+        * layout-tests/fast/dom/anchor-backslash.html: Added.
+
+        * kwq/KWQKURL.mm: (substituteBackslashes): Fix error where we'd ignore
+        "?" and "#" characters if they were the first character in the string.
+
 2005-06-23  Darin Adler  <darin@apple.com>
 
         * khtml/html/html_formimpl.cpp: (DOM::HTMLTextAreaElementImpl::setValue):
