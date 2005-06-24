@@ -3619,7 +3619,7 @@ void HTMLTextAreaElementImpl::setValue(const DOMString &value)
     m_value = value.string();
     m_valueMatchesRenderer = false;
     if (m_render)
-        static_cast<RenderTextArea *>(m_render)->updateFromElement();
+        m_render->updateFromElement();
     m_valueIsValid = false; // force the next access to fetch from the renderer
     setChanged(true);
 }

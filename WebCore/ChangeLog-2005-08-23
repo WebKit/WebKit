@@ -1,3 +1,8 @@
+2005-06-23  Darin Adler  <darin@apple.com>
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLTextAreaElementImpl::setValue):
+        Took out an unneeded type cast (meant to do that before committing).
+
 2005-06-23  Kevin Ballard  <kevin@sb.org>
 
         Reviewed and landed by Darin Adler.
