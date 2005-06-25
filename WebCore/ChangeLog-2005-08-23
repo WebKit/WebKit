@@ -4,6 +4,23 @@
         Reviewed by me.
 
         Test cases added:
+        * layout-tests/fast/text/international/bidi-explicit-embedding-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-explicit-embedding.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3599>
+          Incorrect layout of explicit embedding levels
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::embed): Set up the new run correctly following an embed/pop.
+        (khtml::RenderBlock::bidiReorderLine): Close the "dangling" run when we see an explicit
+        embedding character (or PDF).
+
+2005-06-24  Darin Adler  <darin@apple.com>
+
+        Changes by Mitz Pettel.
+        Reviewed by me.
+
+        Test cases added:
         * layout-tests/fast/text/international/bidi-CS-after-AN-expected.txt: Added.
         * layout-tests/fast/text/international/bidi-CS-after-AN.html: Added.
 

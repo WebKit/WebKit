@@ -626,10 +626,10 @@ static void embed( QChar::Direction d, BidiState &bidi )
 
 	    bidi.context = new BidiContext(level, runDir, bidi.context, override);
 	    bidi.context->ref();
-	    if ( override )
-		dir = runDir;
+            dir = runDir;
 	    bidi.status.last = runDir;
 	    bidi.status.lastStrong = runDir;
+	    bidi.status.eor = runDir;
 	}
     }
     adjustEmbedding = b;
@@ -917,7 +917,6 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
         case QChar::DirRLO:
         case QChar::DirLRO:
         case QChar::DirPDF:
-            bidi.eor = bidi.last;
             embed( dirCurrent, bidi );
             break;
 
