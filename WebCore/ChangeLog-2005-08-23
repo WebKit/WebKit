@@ -1,3 +1,10 @@
+2005-06-25  Darin Adler  <darin@apple.com>
+
+        - updated a layout test so that it doesn't depend on a remote resource via http
+
+        * layout-tests/fast/backgrounds/001.html: Change image URL to be relative.
+        * layout-tests/fast/backgrounds/resources/bg_position_larger.gif: Added.
+
 2005-06-24  Darin Adler  <darin@apple.com>
 
         Changes by Mitz Pettel.
