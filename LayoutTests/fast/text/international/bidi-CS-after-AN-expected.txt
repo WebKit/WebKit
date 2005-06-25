@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x84
+  RenderBlock {HTML} at (0,0) size 800x84
+    RenderBody {BODY} at (8,16) size 784x52
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 471x18
+          text run at (0,0) width 471: "The following should look like: Arabic characters 123.4 Arabic characters."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 74x18
+          text run at (0,0) width 18: " \x{644}\x{645}\x{646}"
+          text run at (18,0) width 36: "123.4"
+          text run at (54,0) width 20: "\x{627}\x{628}\x{62C} "

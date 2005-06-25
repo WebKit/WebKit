@@ -1,3 +1,18 @@
+2005-06-24  Darin Adler  <darin@apple.com>
+
+        Changes by Mitz Pettel.
+        Reviewed by me.
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-CS-after-AN-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-CS-after-AN.html: Added.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3693>
+          Bug_72578 in KHTML: bidi algorithm misbehaves with CS after AN
+
+        * khtml/rendering/bidi.cpp: (khtml::RenderBlock::bidiReorderLine): Rolled in the
+        patch from the KDE tree.
+
 2005-06-24  Justin Garcia  <justin.garcia@apple.com>
 
         - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3673> 
