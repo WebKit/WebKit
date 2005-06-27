@@ -1,3 +1,15 @@
+2005-06-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken.
+
+        Test cases added: None because this relies on mouse clicking.
+
+		<rdar://problem/4140688> assertion failure double-clicking text to select
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates):
+		Use setAffinityUsingLinePosition.
+
 2005-06-25  Darin Adler  <darin@apple.com>
 
         - updated a layout test so that it doesn't depend on a remote resource via http
