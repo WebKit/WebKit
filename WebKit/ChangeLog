@@ -1,3 +1,17 @@
+2005-06-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Anders Carlsson <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3489>
+        WebView's setSelectedDOMRange doesn't not implement clearing the selection as described in the WebView documentation:
+        <http://developer.apple.com/documentation/Cocoa/Reference/WebKit/ObjC_classic/Classes/WebView.html>
+	
+        * WebView.subproj/WebView.m:
+        (-[WebView setSelectedDOMRange:affinity:]):
+        If range is nil, call deselectText.
+
 2005-06-24  Justin Garcia  <justin.garcia@apple.com>
 
         Patch contributed by Duncan Wilcox <duncan@mclink.it>

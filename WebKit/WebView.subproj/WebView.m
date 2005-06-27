@@ -2769,10 +2769,14 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
-    // Derive the bridge to use from the range passed in.
-    // Using _bridgeForCurrentSelection could give us a different document than
-    // the one the range uses.
-    [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity closeTyping:YES];
+    if (range == nil) {
+        [[self _bridgeForCurrentSelection] deselectText];
+    } else {
+        // Derive the bridge to use from the range passed in.
+        // Using _bridgeForCurrentSelection could give us a different document than
+        // the one the range uses.
+        [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity closeTyping:YES];
+    }
 }
 
 - (DOMRange *)selectedDOMRange
