@@ -41,4 +41,4 @@ my @options = XcodeOptions();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild", @options;
+exit system "xcodebuild", "-project", "DumpRenderTree.xcode", @options;

@@ -1,3 +1,10 @@
+2005-06-26  Darin Adler  <darin@apple.com>
+
+        * Scripts/build-dumprendertree: Pass -project option so that having a second
+        copy of the project (like the one Xcode 2.1 offers to make for you) that's
+        out of date won't screw you up.
+        * Scripts/build-webkit: Ditto.
+
 2005-06-23  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitdirs.pm: Fixed a regular expression in the code I just landed.
