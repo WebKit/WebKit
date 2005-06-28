@@ -284,7 +284,7 @@ Decoder::~Decoder()
 void Decoder::setEncoding(const char *_encoding, EncodingType type)
 {
 #ifdef DECODE_DEBUG
-    kdDebug(6005) << "setEncoding " << _encoding << " " << force << endl;
+    kdDebug(6005) << "setEncoding " << _encoding << " " << type << endl;
 #endif
     enc = _encoding;
 #ifdef DECODE_DEBUG
@@ -329,7 +329,7 @@ void Decoder::setEncoding(const char *_encoding, EncodingType type)
     }
     
 #ifdef DECODE_DEBUG
-    kdDebug(6005) << "Decoder::encoding used is" << m_codec->name() << endl;
+    kdDebug(6005) << "Decoder::encoding used is " << m_codec->name() << endl;
 #endif
 }
 

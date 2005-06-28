@@ -1,3 +1,18 @@
+2005-06-28  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Alexey Proskuryakov <ap@nypop.com>
+        
+        - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3727>
+        When a DECODE_DEBUG preprocessor symbol is defined in khtml/misc/decoder.cpp, 
+        compilation fails because a non-existent variable "force" is used.
+
+        Reviewed by Darin
+
+        Test cases added: None required
+
+        * khtml/misc/decoder.cpp:
+        (Decoder::setEncoding):
+
 2005-06-28  David Harrison  <harrison@apple.com>
 
         Reviewed by Chris Blumenberg.
