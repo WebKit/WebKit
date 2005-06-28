@@ -1,3 +1,11 @@
+2005-06-27  Maciej Stachowiak  <mjs@apple.com>
+
+	Remove accidentally committed code that breaks the build. Oops!
+
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::expand):
+        (DOM::AtomicString::shrink):
+
 2005-06-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

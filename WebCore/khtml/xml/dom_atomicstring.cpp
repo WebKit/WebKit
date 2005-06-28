@@ -319,13 +319,11 @@ void AtomicString::remove(DOMStringImpl *r)
 
 void AtomicString::expand()
 {
-    printf("grow from size %d to size %d at keyCount %d\n", m_tableSize, m_minTableSize : m_tableSize * 2, m_keyCount); 
     rehash(_tableSize == 0 ? _minTableSize : _tableSize * 2);
 }
 
 void AtomicString::shrink()
 {
-    printf("shrink from size %d to size %d at keyCount %d\n", m_tableSize, m_tableSize/2, m_keyCount); 
     rehash(_tableSize / 2);
 }
 
