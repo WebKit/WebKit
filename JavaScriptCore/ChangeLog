@@ -1,3 +1,31 @@
+2005-06-28  Geoffrey Garen  <ggaren@apple.com>
+
+	Patch contributed by Carsten Guenther <cguenther@gmail.com>.
+
+	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
+	some US-centric date formats not parsed by JavaScript (clock at news8austin.com)
+
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (formatLocaleDate):
+        (day):
+        (dayFromYear):
+        (daysInYear):
+        (timeFromYear):
+        (yearFromTime):
+        (weekDay):
+        (timeZoneOffset):
+        (DateProtoFuncImp::call):
+        (DateObjectImp::construct):
+        (KJS::parseDate):
+        (ymdhms_to_seconds):
+        (KJS::makeTime):
+        (findMonth):
+        (KJS::KRFCDate_parseDate):
+        * kjs/date_object.h:
+        * tests/mozilla/expected.html: updated expected test results to reflect fix
+
 2005-06-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

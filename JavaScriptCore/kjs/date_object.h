@@ -120,8 +120,9 @@ namespace KJS {
 
   // helper functions
   double parseDate(const UString &u);
-  time_t KRFCDate_parseDate(const UString &_date); 
-  double timeClip(double);
+  double KRFCDate_parseDate(const UString &_date);
+  double timeClip(double t);
+  double makeTime(struct tm *t, int milli, bool utc);
 
 }; // namespace
 
