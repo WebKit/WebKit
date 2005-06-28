@@ -21,7 +21,10 @@
  */
 
 #include "protected_values.h"
+
+#include "pointer_hash.h"
 #include "simple_number.h"
+#include <stdint.h>
 
 namespace KJS {
 
@@ -183,57 +186,9 @@ void ProtectedValues::rehash(int newTableSize)
     free(oldTable);
 }
 
-// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-// or anything like that.
-const unsigned PHI = 0x9e3779b9U;
-
-template <int size> static unsigned hash(ValueImp *pointer);
-
-template <> static inline unsigned hash<4>(ValueImp *pointer) 
-{
-  int a = (int)PHI;
-  int b = (int)pointer;
-  int c = 0;
-
-  a -= b; a -= c; a ^= (c>>13);
-  b -= c; b -= a; b ^= (a<<8); 
-  c -= a; c -= b; c ^= (b>>13);
-  a -= b; a -= c; a ^= (c>>12);
-  b -= c; b -= a; b ^= (a<<16);
-  c -= a; c -= b; c ^= (b>>5);
-  a -= b; a -= c; a ^= (c>>3);
-  b -= c; b -= a; b ^= (a<<10);
-  c -= a; c -= b; c ^= (b>>15);
-  
-  return (unsigned)c;
-}
-
-template <> static inline unsigned hash<8>(ValueImp *pointer)
-{
-  int a = (int)PHI;
-  int b = (int)(long)pointer;
-  int c = (int)(((long)pointer >> 16) >> 16);
-
-  a -= b; a -= c; a ^= (c>>13);
-  b -= c; b -= a; b ^= (a<<8); 
-  c -= a; c -= b; c ^= (b>>13);
-  a -= b; a -= c; a ^= (c>>12);
-  b -= c; b -= a; b ^= (a<<16);
-  c -= a; c -= b; c ^= (b>>5);
-  a -= b; a -= c; a ^= (c>>3);
-  b -= c; b -= a; b ^= (a<<10);
-  c -= a; c -= b; c ^= (b>>15);
-  
-  return (unsigned)c;
-}
-
-
-// This hash algorithm comes from:
-// http://burtleburtle.net/bob/hash/hashfaq.html
-// http://burtleburtle.net/bob/hash/doobs.html
 unsigned ProtectedValues::computeHash(ValueImp *pointer)
 {
-  return hash<sizeof(ValueImp *)>(pointer);
+  return pointerHash(pointer);
 }
 
 } // namespace

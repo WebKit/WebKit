@@ -20,6 +20,7 @@
  */
 
 #include "interpreter_map.h"
+#include "pointer_hash.h"
 
 namespace KJS {
 
@@ -165,39 +166,9 @@ void InterpreterMap::rehash(int newTableSize)
     free(oldTable);
 }
 
-// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
-// or anything like that.
-const unsigned PHI = 0x9e3779b9U;
-
-// This hash algorithm comes from:
-// http://burtleburtle.net/bob/hash/hashfaq.html
-// http://burtleburtle.net/bob/hash/doobs.html
 unsigned InterpreterMap::computeHash(ObjectImp *pointer)
 {
-    int length = sizeof(ObjectImp *);
-    char s[sizeof(ObjectImp *)];
-		
-    memcpy((void *)s, (void *)&pointer, sizeof(ObjectImp *));
-
-    unsigned h = PHI;
-    h += length;
-    h += (h << 10); 
-    h ^= (h << 6); 
-
-    for (int i = 0; i < length; i++) {
-        h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
-    }
-
-    h += (h << 3);
-    h ^= (h >> 11);
-    h += (h << 15);
-
-    if (h == 0)
-        h = 0x80000000;
-
-    return h;
+    return pointerHash(pointer);
 }
 
 

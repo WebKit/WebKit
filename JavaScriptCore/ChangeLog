@@ -1,3 +1,19 @@
+2005-06-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- replace hash functions  with better ones
+
+        * JavaScriptCore.pbproj/project.pbxproj: Add new file to build.
+        * kjs/interpreter_map.cpp:
+        (KJS::InterpreterMap::computeHash): Use shared pointer hash.
+        * kjs/pointer_hash.h: Added.
+        (KJS::pointerHash): Pointer hash based on 32-bit mix and 64-bit mix hashes.
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::computeHash): Use shared pointer hash.
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::computeHash): Use SuperFastHash algorithm.
+
 2005-06-22  Darin Adler  <darin@apple.com>
 
         Change by Anders Carlsson.
