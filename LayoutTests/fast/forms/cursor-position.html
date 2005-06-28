@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <script type="text/javascript">
+            function print(message)
+            {
+                var paragraph = document.createElement("li");
+                paragraph.appendChild(document.createTextNode(message));
+                document.getElementById("console").appendChild(paragraph);
+            }
+            function test()
+            {
+                if (window.layoutTestController) {
+                    layoutTestController.dumpAsText();
+                }
+                var elt = document.getElementById("text");
+                txt = "this is\ra test\rof cursor";
+                txt2 = "this is\na test\nof cursor!";
+                
+                // test getCursorPosition...
+                elt.value = txt;
+                elt.setSelectionRange(10, 14);
+                elt.focus();
+                elt.value = txt2;
+                elt.focus();
+                print(elt.selectionStart.toString() + ", " + elt.selectionEnd.toString());
+                
+                // test setCursorPosition...
+                elt.value = txt2;
+                elt.setSelectionRange(10, 14);
+                elt.focus();
+                elt.value = txt;
+                elt.focus();
+                print(elt.selectionStart.toString() + ", " + elt.selectionEnd.toString());
+            }
+        </script>
+    </head>
+    <body onload="test();">
+        <p>This test sets a non-standard line endings, sets selection, then sets a standard line ending string, and checks selection.</p>
+        <p>If this test succeeded, you should see 2 lines saying "10, 10" below.</p>
+        <hr />
+        <form>
+            <textarea id="text"></textarea>
+        </form>
+        <hr />
+        <p><ol id="console"></ol></p>
+    </body>
+</html>

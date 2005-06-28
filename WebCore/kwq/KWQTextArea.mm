@@ -443,6 +443,9 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
 {
+    assert(paragraph != NULL);
+    assert(index != NULL);
+    
     NSString *text = [textView string];
     NSRange selectedRange = [textView selectedRange];
     
@@ -453,64 +456,69 @@ const float LargeNumberForText = 1.0e7;
     }
     
     int paragraphSoFar = 0;
-    NSRange searchRange = NSMakeRange(0, [text length]);
+    int paragraphStart = 0;
     
+    NSScanner *scanner = [NSScanner scannerWithString:text];
+    [scanner setCharactersToBeSkipped:nil];
+    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
+
     while (true) {
-        // FIXME: Doesn't work for CR-separated or CRLF-separated text.
-	NSRange newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
-	if (newlineRange.location == NSNotFound || selectedRange.location <= newlineRange.location) {
-	    break;
-	}
+        [scanner scanUpToCharactersFromSet:newlineSet intoString:NULL];
         
-	paragraphSoFar++;
+        if ([scanner isAtEnd] || selectedRange.location <= [scanner scanLocation]) {
+            break;
+        }
         
-        unsigned advance = newlineRange.location + 1 - searchRange.location;
+        paragraphSoFar++;
         
-	searchRange.length -= advance;
-	searchRange.location += advance;
+        unichar c = [text characterAtIndex:[scanner scanLocation]];
+        [scanner setScanLocation:[scanner scanLocation]+1]; // skip over the found char
+        if (c == '\r') {
+            [scanner scanString:@"\n" intoString:NULL]; // get the entire crlf if it is one
+        }
+        
+        paragraphStart = [scanner scanLocation];
     }
     
     *paragraph = paragraphSoFar;
-    *index = selectedRange.location - searchRange.location;
+    // It shouldn't happen, but it might be possible for the selection
+    // to be between the cr and lf if there's a crlf sequence
+    // that would result in a -1 index when it should be 0. Lets handle that
+    *index = MAX(selectedRange.location - paragraphStart, 0);
 }
 
 static NSRange RangeOfParagraph(NSString *text, int paragraph)
 {
     int paragraphSoFar = 0;
-    NSRange searchRange = NSMakeRange(0, [text length]);
+    int paragraphStart = 0;
     
-    NSRange newlineRange;
+    NSScanner *scanner = [NSScanner scannerWithString:text];
+    [scanner setCharactersToBeSkipped:nil];
+    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
+
     while (true) {
-        // FIXME: Doesn't work for CR-separated or CRLF-separated text.
-	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
-	if (newlineRange.location == NSNotFound) {
-	    break;
-	}
+        [scanner scanUpToCharactersFromSet:newlineSet intoString:NULL];
         
-	if (paragraphSoFar == paragraph) {
-	    break;
-	}
+        if ([scanner isAtEnd] || paragraphSoFar == paragraph) {
+            break;
+        }
         
-	paragraphSoFar++;
+        paragraphSoFar++;
         
-        unsigned advance = newlineRange.location + 1 - searchRange.location;
-	if (searchRange.length <= advance) {
-	    searchRange.location = NSNotFound;
-	    searchRange.length = 0;
-	    break;
-	}
+        unichar c = [text characterAtIndex:[scanner scanLocation]];
+        [scanner setScanLocation:[scanner scanLocation]+1]; // skip over the found char
+        if (c == '\r') {
+            [scanner scanString:@"\n" intoString:NULL]; // get the entire crlf if it is one
+        }
         
-	searchRange.length -= advance;
-	searchRange.location += advance;
+        paragraphStart = [scanner scanLocation];
     }
     
     if (paragraphSoFar < paragraph) {
         return NSMakeRange(NSNotFound, 0);
     }
-    if (searchRange.location == NSNotFound || newlineRange.location == NSNotFound) {
-        return searchRange;
-    }
-    return NSMakeRange(searchRange.location, newlineRange.location - searchRange.location);
+    
+    return NSMakeRange(paragraphStart, [scanner scanLocation]);
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
@@ -518,14 +526,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSString *text = [textView string];
     NSRange range = RangeOfParagraph(text, paragraph);
     if (range.location == NSNotFound) {
-	[textView setSelectedRange:NSMakeRange([text length], 0)];
+        [textView setSelectedRange:NSMakeRange([text length], 0)];
     } else {
         if (index < 0) {
             index = 0;
         } else if ((unsigned)index > range.length) {
             index = range.length;
         }
-	[textView setSelectedRange:NSMakeRange(range.location + index, 0)];
+        [textView setSelectedRange:NSMakeRange(range.location + index, 0)];
     }
 }
 

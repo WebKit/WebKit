@@ -1,5 +1,24 @@
 2005-06-28  Justin Garcia  <justin.garcia@apple.com>
 
+        Patch by Kevin Ballard <kevin@sb.org>
+
+        Reviewed by Darin
+        
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3654> 
+        Updating the value of a textarea wasn't saving the cursor position 
+        in a line ending-agnostic fashion.
+
+        Test cases added:
+        * layout-tests/fast/forms/cursor-position-expected.txt: Added.
+        * layout-tests/fast/forms/cursor-position.html: Added.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea getCursorPositionAsIndex:inParagraph:]):
+        (RangeOfParagraph):
+        (-[KWQTextArea setCursorPositionToIndex:inParagraph:]):
+
+2005-06-28  Justin Garcia  <justin.garcia@apple.com>
+
         Patch by Alexey Proskuryakov <ap@nypop.com>
         
         - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3727>
