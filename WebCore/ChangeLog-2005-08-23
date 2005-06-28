@@ -1,3 +1,32 @@
+2005-06-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        Test cases added: (NONE)
+        
+        (continued) <rdar://problem/4140688> assertion failure double-clicking text to select
+        Fixed my checkin from yesterday.
+
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarkedTextBackground):
+        (InlineTextBox::positionForOffset):
+        Changed tabs to spaces.
+        
+        (RenderText::positionForCoordinates):
+        Make sure affinity is downstream when in mid-line.
+        Changed tabs to spaces.
+
+        (RenderText::caretRect):
+        (RenderText::cacheWidths):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::minXPos):
+        (RenderText::width):
+        (RenderText::caretMaxOffset):
+        Changed tabs to spaces.
+
+        * layout-tests/editing/style/create-block-for-style-004-expected.txt:
+        Expected ending selection affinity is downstream.
+
 2005-06-27  Maciej Stachowiak  <mjs@apple.com>
 
 	Remove accidentally committed code that breaks the build. Oops!
@@ -38,11 +67,11 @@
 
         Test cases added: None because this relies on mouse clicking.
 
-		<rdar://problem/4140688> assertion failure double-clicking text to select
+        <rdar://problem/4140688> assertion failure double-clicking text to select
 
         * khtml/rendering/render_text.cpp:
         (RenderText::positionForCoordinates):
-		Use setAffinityUsingLinePosition.
+        Use setAffinityUsingLinePosition.
 
 2005-06-25  Darin Adler  <darin@apple.com>
 

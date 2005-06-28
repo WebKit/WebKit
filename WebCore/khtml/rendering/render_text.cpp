@@ -553,7 +553,7 @@ void InlineTextBox::paintMarkedTextBackground(QPainter* p, int tx, int ty, Rende
     int y = r->selectionTop();
     int h = r->selectionHeight();
     f->drawHighlightForText(p, x, y + ty, h, textObject()->str->s, textObject()->str->l, m_start, m_len,
-		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
+            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
     p->restore();
 }
 
@@ -741,13 +741,13 @@ int InlineTextBox::positionForOffset(int offset) const
 
     int left;
     if (m_reversed) {
-	long len = m_start + m_len - offset;
-	QString string(text->str->s + offset, len);
-	left = m_x + fm.boundingRect(string, len).right();
+        long len = m_start + m_len - offset;
+        QString string(text->str->s + offset, len);
+        left = m_x + fm.boundingRect(string, len).right();
     } else {
-	long len = offset - m_start;
-	QString string(text->str->s + m_start, len);
-	left = m_x + fm.boundingRect(string, len).right();
+        long len = offset - m_start;
+        QString string(text->str->s + m_start, len);
+        left = m_x + fm.boundingRect(string, len).right();
     }
     // FIXME: Do we need to add rightBearing here?
     return left;
@@ -954,9 +954,10 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
                 // check to see if position goes in this box
                 int offset = box->offsetForPosition(_x - absx);
                 if (offset != -1) {
-                    VisiblePosition result = VisiblePosition(element(), offset + box->m_start, UPSTREAM);
-					setAffinityUsingLinePosition(result);
-					return result;
+                    EAffinity affinity = offset >= box->m_len && !box->nextOnLine() ? UPSTREAM : DOWNSTREAM;
+                    VisiblePosition result = VisiblePosition(element(), offset + box->m_start, affinity);
+                    setAffinityUsingLinePosition(result);
+                    return result;
                 }
             }
             else if (!box->prevOnLine() && _x < absx + box->m_x) {
@@ -968,9 +969,9 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
                 // box is last on line
                 // and the x coordinate is to the right of the last text box right edge
                 VisiblePosition result = VisiblePosition(element(), box->m_start + box->m_len, UPSTREAM);
-				setAffinityUsingLinePosition(result);
-				return result;
-			}
+                setAffinityUsingLinePosition(result);
+                return result;
+            }
         }
     }
     
@@ -1049,18 +1050,18 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
                         return object->caretRect(0, affinity);
                 }
             } else {
-		InlineTextBox *prevBox = box->prevTextBox();
-		if (offset == box->m_start && affinity == UPSTREAM && prevBox && !box->prevOnLine()) {
-		    if (prevBox) {
-			box = prevBox;
-			offset = box->m_start + box->m_len;
-		    } else {
-			RenderObject *object = lastRendererOnPrevLine(box);
-			if (object)
-			    return object->caretRect(0, affinity);
-		    }
-		}
-	    }
+                InlineTextBox *prevBox = box->prevTextBox();
+                if (offset == box->m_start && affinity == UPSTREAM && prevBox && !box->prevOnLine()) {
+                    if (prevBox) {
+                        box = prevBox;
+                        offset = box->m_start + box->m_len;
+                    } else {
+                        RenderObject *object = lastRendererOnPrevLine(box);
+                        if (object)
+                            return object->caretRect(0, affinity);
+                    }
+                }
+            }
             break;
         }
     }
@@ -1147,7 +1148,7 @@ void RenderText::cacheWidths()
 {
     const Font *f = htmlFont( false );
     
-    if (shouldUseMonospaceCache(f)){	
+    if (shouldUseMonospaceCache(f)){
         float fw;
         QChar c(' ');
         f->floatCharacterWidths( &c, 1, 0, 1, 0, &fw);
@@ -1255,11 +1256,11 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
                 beginMaxW = 0;
                 firstLine = false;
             }
-	    
-	    if (i == len-1)
-	        // A <pre> run that ends with a newline, as in, e.g.,
-	        // <pre>Some text\n\n<span>More text</pre>
-	        endMaxW = 0;
+    
+            if (i == len-1)
+                // A <pre> run that ends with a newline, as in, e.g.,
+                // <pre>Some text\n\n<span>More text</pre>
+                endMaxW = 0;
         }
     }
 }
@@ -1421,7 +1422,7 @@ int RenderText::minXPos() const
     if (!m_firstTextBox) return 0;
     int retval=6666666;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-	retval = kMin(retval, (int)box->m_x);
+        retval = kMin(retval, (int)box->m_x);
     return retval;
 }
 
@@ -1674,13 +1675,13 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
 
     int w;
     if ( f == &style()->htmlFont() && from == 0 && len == str->l )
- 	 w = m_maxWidth;
+        w = m_maxWidth;
 #if APPLE_CHANGES
     else if (f == &style()->htmlFont())
         w = widthFromCache (f, from, len);
 #endif
     else
-	w = f->width(str->s, str->l, from, len );
+        w = f->width(str->s, str->l, from, len );
 
     //kdDebug( 6040 ) << "RenderText::width(" << from << ", " << len << ") = " << w << endl;
     return w;
@@ -1785,7 +1786,7 @@ long RenderText::caretMaxOffset() const
         return str->l;
     int maxOffset = box->m_start + box->m_len;
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
-	maxOffset = kMax(maxOffset,box->m_start + box->m_len);
+        maxOffset = kMax(maxOffset,box->m_start + box->m_len);
     return maxOffset;
 }
 
