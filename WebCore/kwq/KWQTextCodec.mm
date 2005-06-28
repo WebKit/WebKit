@@ -187,20 +187,35 @@ bool operator==(const QTextCodec &a, const QTextCodec &b)
     return a._encoding == b._encoding && a._flags == b._flags;
 }
 
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+// Adapted assuming _encoding is 32 bits and _flags is at most 16 bits
 unsigned QTextCodec::hash() const
 {
-    unsigned h = _encoding;
-
-    h += (h << 10);
-    h ^= (h << 6);
+    uint32_t hash = PHI;
+    uint32_t tmp;
     
-    h ^= _flags;
-
-    h += (h << 3);
-    h ^= (h >> 11);
-    h += (h << 15);
+    hash += _encoding & 0xffff;
+    tmp = ((_encoding >> 16) << 11) ^ hash;
+    hash = (hash << 16) ^ tmp;
+    hash += hash >> 11;
     
-    return h;
+    hash += _flags & 0xffff;
+    hash ^= hash << 11;
+    hash += hash >> 17;
+
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    return hash;
 }
 
 static Boolean QTextCodecsEqual(const void *a, const void *b)

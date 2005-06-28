@@ -561,8 +561,6 @@ public:
 
     void reserve(uint);
 
-    uint hash() const;
-
     bool operator!() const;
 
     const QChar operator[](int) const;
@@ -762,7 +760,5 @@ public:
     ~QConstString();
     const QString &string() const { return *this; }
 };
-
-extern const CFDictionaryKeyCallBacks CFDictionaryQStringKeyCallBacks;
 
 #endif

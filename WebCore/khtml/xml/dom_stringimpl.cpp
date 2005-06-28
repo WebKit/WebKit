@@ -443,73 +443,94 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
 // or anything like that.
 const unsigned PHI = 0x9e3779b9U;
 
-// This hash algorithm comes from:
-// http://burtleburtle.net/bob/hash/hashfaq.html
-// http://burtleburtle.net/bob/hash/doobs.html
-unsigned DOMStringImpl::computeHash(const QChar *s, int length)
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
+unsigned DOMStringImpl::computeHash(const QChar *s, int len)
 {
-    int prefixLength = length < 8 ? length : 8;
-    int suffixPosition = length < 16 ? 8 : length - 8;
+    unsigned l = len;
+    uint32_t hash = PHI;
+    uint32_t tmp;
     
-    unsigned h = PHI;
-    h += length;
-    h += (h << 10); 
-    h ^= (h << 6); 
+    int rem = l & 1;
+    l >>= 1;
     
-    for (int i = 0; i < prefixLength; i++) {
-        h += s[i].unicode(); 
-	h += (h << 10); 
-	h ^= (h << 6); 
-    }
-    for (int i = suffixPosition; i < length; i++){
-        h += s[i].unicode(); 
-	h += (h << 10); 
-	h ^= (h << 6); 
+    // Main loop
+    for (; l > 0; l--) {
+        hash += s[0].unicode();
+        tmp = (s[1].unicode() << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
     }
     
-    h += (h << 3);
-    h ^= (h >> 11);
-    h += (h << 15);
+    // Handle end case
+    if (rem) {
+        hash += s[0].unicode();
+        hash ^= hash << 11;
+        hash += hash >> 17;
+    }
+
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
     
-    if (h == 0)
-        h = 0x80000000;
-    
-    return h;
+    return hash;
 }
 
-// This hash algorithm comes from:
-// http://burtleburtle.net/bob/hash/hashfaq.html
-// http://burtleburtle.net/bob/hash/doobs.html
+// Paul Hsieh's SuperFastHash
+// http://www.azillionmonkeys.com/qed/hash.html
 unsigned DOMStringImpl::computeHash(const char *s)
 {
-    int length = strlen(s);
-    int prefixLength = length < 8 ? length : 8;
-    int suffixPosition = length < 16 ? 8 : length - 8;
+    // This hash is designed to work on 16-bit chunks at a time. But since the normal case
+    // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
+    // were 16-bit chunks, which should give matching results
+
+    unsigned l = strlen(s);
+    uint32_t hash = PHI;
+    uint32_t tmp;
     
-    unsigned h = PHI;
-    h += length;
-    h += (h << 10); 
-    h ^= (h << 6); 
+    int rem = l & 1;
+    l >>= 1;
     
-    for (int i = 0; i < prefixLength; i++) {
-        h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
+    // Main loop
+    for (; l > 0; l--) {
+        hash += (unsigned char)s[0];
+        tmp = ((unsigned char)s[1] << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
     }
-    for (int i = suffixPosition; i < length; i++) {
-        h += (unsigned char)s[i];
-	h += (h << 10); 
-	h ^= (h << 6); 
+    
+    // Handle end case
+    if (rem) {
+        hash += (unsigned char)s[0];
+        hash ^= hash << 11;
+        hash += hash >> 17;
     }
+
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
     
-    h += (h << 3);
-    h ^= (h >> 11);
-    h += (h << 15);
-    
-    if (h == 0)
-        h = 0x80000000;
-    
-    return h;
+    return hash;
 }
 
 const char *DOMStringImpl::ascii() const

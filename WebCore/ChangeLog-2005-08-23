@@ -1,3 +1,29 @@
+2005-06-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- replaced all our hash functions with the state of the art in hashing
+	- ~1% speedup on cvs-base
+	
+        No test cases added, perf effects only.
+
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicStringStatisticsExitLogger::~AtomicStringStatisticsExitLogger):
+	Improved stats gathering to track collisions in more detail and count reinserts
+	on remove.
+        (DOM::addToCollisionCount): ditto
+        (DOM::AtomicString::add): ditto
+        (DOM::AtomicString::insert): ditto
+        (DOM::AtomicString::remove): ditto
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::computeHash): Replace with SuperFastHash algorithm.
+        * kwq/KWQCharsets.mm:
+        (encodingNameHash): Clean up mistaken shift in the wrong direction.
+        * kwq/KWQString.h: Removed unused hashing code.
+        * kwq/KWQString.mm: ditto
+        * kwq/KWQTextCodec.mm:
+        (QTextCodec::hash): Use a variant of the SuperFastHash algorithm.
+
 2005-06-27  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken.

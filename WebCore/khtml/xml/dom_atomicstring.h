@@ -80,8 +80,7 @@ private:
     
     static bool equal(const AtomicString &a, const AtomicString &b)
     { return a.m_string.implementation() == b.m_string.implementation(); }
-    static bool equal(const AtomicString &a, const char *b)
-    { return equal(a.m_string.implementation(), b); }
+    static bool equal(const AtomicString &a, const char *b);
     
     static DOMStringImpl *add(const char *);
     static DOMStringImpl *add(const QChar *, int length);
