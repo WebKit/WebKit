@@ -1,3 +1,14 @@
+2005-06-28  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+ 
+	- fix our part of <rdar://problem/4122332> extra HTTP GET when iframe requests file 
+	already fetched by parent that should have been cached. Setting location via javascript
+	should not signal a full reload of the destination page and all its subresources.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::changeLocation): remove code that sets the reload flag
+
 2005-06-28  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Kevin Ballard <kevin@sb.org>
