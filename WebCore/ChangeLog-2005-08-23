@@ -1,3 +1,16 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	-added test case for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=3743
+	Incorrect error message given for certain calls
+	
+	See JavaScriptCore Changelog for details about the patch.
+
+        Reviewed by me.
+
+        Test cases added: 
+        * layout-tests/fast/js/toString-stack-overflow-expected.txt: Added.
+        * layout-tests/fast/js/toString-stack-overflow.html: Added.
+
 2005-06-29  Justin Garcia  <justin.garcia@apple.com>
 
         - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3714>

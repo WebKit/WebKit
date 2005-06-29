@@ -385,6 +385,9 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
     }
   }
 
+  if (exec->hadException())
+    return exec->exception();
+
   Object err = Error::create(exec, TypeError, I18N_NOOP("No default value"));
   exec->setException(err);
   return err;

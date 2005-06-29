@@ -1,5 +1,19 @@
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
+	Patch contributed by Oliver Hunt <ojh16@student.canterbury.ac.nz>
+
+	-fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3743
+	Incorrect error message given for certain calls
+
+	See WebCore Changelog for layout test added.
+
+        Reviewed by mjs.
+
+        * kjs/object.cpp:
+        (KJS::ObjectImp::defaultValue):
+
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
 	Rolling out date patch from 6-28-05 because it breaks 
 	fast/js/date-parse-test
 
