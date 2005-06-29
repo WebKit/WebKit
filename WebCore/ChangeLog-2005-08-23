@@ -1,5 +1,15 @@
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
+	DOM compatibility tests for HTMLDocument::write
+
+        Reviewed by justing.
+
+        Test cases added: 
+        * layout-tests/fast/dom/HTMLDocument/write/call-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/write/call.html: Added.
+
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
 	DOM compatibility tests for HTMLDocument::title
 
         Reviewed by justing.
