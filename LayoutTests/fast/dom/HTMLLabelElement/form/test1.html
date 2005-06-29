@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script language="javascript">
+        function print(message)
+        {
+            var paragraph = document.createElement("p");
+            paragraph.appendChild(document.createTextNode(message));
+            document.getElementById("console").appendChild(paragraph);
+        }
+        function test() 
+        {
+            if(window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            labelInsideForm = document.getElementById("labelInsideForm");
+            labelNotInsideForm = document.getElementById("labelNotInsideForm");
+        
+            form = document.getElementById("form");
+            
+            if(labelInsideForm.form == form)
+                print("Passed");
+            else
+                print("Failed");
+            
+            if(labelNotInsideForm.form == null)
+                print("Passed");
+            else
+                print("Failed");
+        }
+        </script>
+    </head>
+
+    <body onload="test();">
+        <p>This test attempts to access an HTMLLabelElement's form property. The first test accesses the form property of an label which is inside of a form.  The second test accesses the form property of an label which is not inside of a form</p>
+        
+        <div id="console"></div>  
+              
+        <form id="form">
+            <label id="labelInsideForm">
+            </label>
+        </form>
+        
+        <label id="labelNotInsideForm">
+        </label>
+    </body>   
+</html>
