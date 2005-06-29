@@ -1,5 +1,23 @@
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
+	Rolling out date patch from 6-28-05 because it breaks 
+	fast/js/date-parse-test
+
+        Reviewed by NOBODY.
+
+        * kjs/date_object.cpp:
+        (formatLocaleDate):
+        (DateProtoFuncImp::call):
+        (DateObjectImp::construct):
+        (KJS::parseDate):
+        (ymdhms_to_seconds):
+        (isSpaceOrTab):
+        (KJS::KRFCDate_parseDate):
+        * kjs/date_object.h:
+        * tests/mozilla/expected.html:
+
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Darin.
 
 	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3750
