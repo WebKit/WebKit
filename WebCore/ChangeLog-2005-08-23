@@ -1,3 +1,13 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	DOM compatibility tests for HTMLDocument::title
+
+        Reviewed by justing.
+
+        Test cases added: 
+        * layout-tests/fast/dom/HTMLDocument/title/get.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/title/set.html: Added.
+
 2005-06-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

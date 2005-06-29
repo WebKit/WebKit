@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>test</title>
+<script>
+function print(message) {
+	var paragraph = document.createElement("p");
+	paragraph.appendChild(document.createTextNode(message));
+	document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+	if (document.title == "test") {
+		print("passed");
+	} else {
+		print("failed");
+	}
+}
+</script>
+</head>
+<body onload="test()">
+<p>Tests: getting HTMLDocument::title</p>
+<p>Condition(s): </p>
+<p>Success message: passed</p>
+<p>Failure message: failed</p>
+<hr>
+<div id='console'/>
+</body>
+</html>
