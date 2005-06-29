@@ -1,3 +1,16 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	Patch by Joost de Valk <webkit@joostdevalk.nl>
+
+	- http://bugzilla.opendarwin.org/show_bug.cgi?id=3732
+	Testcase for accesskeys that will run with run-webkit-tests.
+
+        Reviewed by Darin.
+
+        Test cases added: 
+        * layout-tests/fast/forms/access-key-expected.txt: Added.
+        * layout-tests/fast/forms/access-key.html: Added.
+
 2005-06-29  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson  <andersca@mac.com>
