@@ -2538,9 +2538,11 @@ void HTMLLabelElementImpl::accessKeyAction(bool sendToAnyElement)
 
 HTMLFormElementImpl *HTMLLabelElementImpl::form()
 {
-    ElementImpl *element = formElement();
-    if (element && isGenericFormElement())
-        return static_cast<HTMLGenericFormElementImpl *>(element)->form();
+    for (NodeImpl *p = parentNode(); p != 0; p = p->parentNode()) {
+        if (p->id() == ID_FORM)
+            return static_cast<HTMLFormElementImpl *>(p);
+    }
+    
     return 0;
 }
 

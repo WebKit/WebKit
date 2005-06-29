@@ -1,3 +1,20 @@
+2005-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3714>
+        HTMLLabelElement's form property isn't implemented
+
+        Patch by Anders Carlsson <andersca@mac.com>
+
+        Reviewed by Darin
+
+        Test cases added:
+        * layout-tests/fast/dom/HTMLLabelElement/properties/form-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLLabelElement/properties/form.html: Added.
+        
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLLabelElementImpl::form):
+        Traverse upwards looking for a form element.
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	Patch by Joost de Valk <webkit@joostdevalk.nl>
