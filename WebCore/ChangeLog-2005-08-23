@@ -1,3 +1,21 @@
+2005-06-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Anders Carlsson  <andersca@mac.com>
+
+        - Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3715>
+        An HTMLObjectElement's form property was always null.
+
+        Reviewed by Darin
+
+        Test cases added:
+        * layout-tests/fast/dom/htmlobject-form-expected.txt: Added.
+        * layout-tests/fast/dom/htmlobject-form.html: Added.
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::form):
+        Implement this function by traversing the parent nodes looking
+        for a form element.
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	Patch by Antoine Quint <ml@graougraou.com>

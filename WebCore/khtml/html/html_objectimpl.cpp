@@ -36,6 +36,7 @@
 #include "css/csshelper.h"
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
+#include "html/html_formimpl.h"
 #include "rendering/render_applet.h"
 #include "rendering/render_frames.h"
 #include "rendering/render_image.h"
@@ -553,7 +554,12 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
 
 HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 {
-  return 0;
+    for (NodeImpl *p = parentNode(); p != 0; p = p->parentNode()) {
+        if (p->id() == ID_FORM)
+            return static_cast<HTMLFormElementImpl *>(p);
+    }
+    
+    return 0;
 }
 
 bool HTMLObjectElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
