@@ -1,3 +1,51 @@
+2005-06-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        Added iterator support to new hashtable class, the HashSet API is
+	now essentially complete.
+
+	Added support for consistency check mode.
+
+        * khtml/misc/hashset.h:
+        (khtml::HashSet::capacity): Added
+        (khtml::HashSet::begin): Added (both const and non-const)
+        (khtml::HashSet::end): Added (both const and non-const)
+        (khtml::HashSet::insert): Made both versions return an iterator
+        (khtml::HashSet::find): Added (both const and on-const, returning appropriate iterator)
+        (khtml::HashSet::contains): Added
+        (khtml::HashSet::remove): Added version that takes an iterator argument
+        (khtml::HashSet::clear): Added
+        * khtml/misc/hashtable.h:
+        (khtml::HashTableIterator): New class with all the obvious iterator stuff.
+        (khtml::HashTableConstIterator::HashTableConstIterator): New class with all the obvious
+	const iterator stuff.
+        (khtml::HashTable::begin): Added (both const and non-consts)
+        (khtml::HashTable::end): Added (both const and non-consts)
+        (khtml::HashTable::capacity): Added
+        (khtml::HashTable::insert): Implement non-template method in terms
+	of template method.
+        (khtml::HashTable::contains): Added (implemented in terms of find)
+        (khtml::HashTable::remove): Implemented key remove in terms of find and 
+	iterator remove.
+        (khtml::HashTable::hash): Made static
+        (khtml::HashTable::equal): Made static
+        (khtml::HashTable::identityConvert): Added - no-op convert method so template insert
+	method can be implemented in terms of non-template
+        (khtml::HashTable::insert): Changed to return iterator
+        (khtml::HashTable::reinsert): Recoded to be more like the other functions
+        (khtml::HashTable::find): Added
+        (khtml::HashTable::remove): Added iterator version
+        (khtml::HashTable::clear): Added
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::add): Updated to deal with the fact that insert returns an iterator
+        (khtml::HashTable::shouldExpand): New helper.
+        (khtml::HashTable::shouldShrink): ditto
+        (khtml::HashTable::makeIterator): ditto
+        (khtml::HashTable::makeConstIterator): ditto
+        (khtml::HashTable::checkConsistency): consistency check method
+        (khtml::HashTable::checkConsistencyExceptSize): consistency check method
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	-added test case for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=3743

@@ -29,16 +29,25 @@ namespace khtml {
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
 class HashSet {
- public:
+ private:
     typedef HashTable<Key, Hash, Equal> ImplType;
     typedef typename ImplType::KeyType KeyType;
+ public:
+    typedef typename ImplType::iterator iterator;
+    typedef typename ImplType::const_iterator const_iterator;
 
     HashSet() {}
 
     int size() const { return m_impl.count(); }
+    int capacity() const { return m_impl.capacity(); }
     bool isEmpty() const { return size() == 0; }
 
-    KeyType insert(const KeyType &key)
+    iterator begin() { m_impl.begin(); }
+    iterator end() { return m_impl.end(); }
+    const_iterator begin() const { m_impl.begin(); }
+    const_iterator end() const { m_impl.end(); }
+
+    iterator insert(const KeyType &key)
     {
         return m_impl.insert(key);
     }
@@ -46,26 +55,34 @@ class HashSet {
     // a special version of insert() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table
-    template<typename T, unsigned HashT(const T&), bool EqualT(const KeyType&, const T&), KeyType ConvertT(const T&, unsigned)> KeyType insert(const T& key)
+    template<typename T, unsigned HashT(const T&), bool EqualT(const KeyType&, const T&), KeyType ConvertT(const T&, unsigned)> iterator insert(const T& key)
     {
         return m_impl.insert<T, HashT, EqualT, ConvertT>(key);
     }
 
-#if 0
-    Iterator find(const KeyType& key)
+    iterator find(const KeyType& key)
     {
         return m_impl.find(key); 
     }
-#endif
 
     bool contains(const KeyType& key)
     {
-        return find(key) != 0;
+        return m_impl.contains(key);
     }
 
     void remove(const KeyType& key)
     {
         m_impl.remove(key);
+    }
+
+    void remove(iterator it) 
+    {
+        m_impl.remove(it);
+    }
+
+    void clear()
+    {
+        m_impl.clear();
     }
 
  private:

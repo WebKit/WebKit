@@ -28,9 +28,10 @@
 namespace khtml {
 
 #define DUMP_HASHTABLE_STATS 0
+#define CHECK_HASHTABLE_CONSISTENCY 0
 
 #if DUMP_HASHTABLE_STATS
-    
+   
 struct HashTableStats {
     ~HashTableStats(); 
     static int numAccesses;
@@ -45,16 +46,144 @@ struct HashTableStats {
 
 #endif
 
+#if !CHECK_HASHTABLE_CONSISTENCY
+#define checkConsistency() ((void)0)
+#define checkConsistencyExceptSize() ((void)0)
+#endif
+
 // FIXME: this template actually depends on Key being a pointer type in two ways:
 // it compares to 0 to check for empty slots, and assigns to 0 when deleting.
 
-// FIXME: add Iterator type, along with begin() and end() methods, change insert and
-// find to return Iterator
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+class HashTable;
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+class HashTableIterator {
+ private:
+    typedef HashTable<Key, Hash, Equal> HashTableType;
+    typedef HashTableType *HashTablePointerType;
+    typedef HashTableIterator<Key, Hash, Equal> iterator;
+    typedef Key KeyType;
+    typedef KeyType& ReferenceType;
+    typedef KeyType *PointerType;
+
+    friend class HashTableType;
+    
+    HashTableIterator(HashTablePointerType table, PointerType position, PointerType endPosition) 
+        : m_table(table), m_position(position), m_endPosition(endPosition) 
+    { 
+        skipEmptyBuckets();
+    }
+ public:
+    HashTableIterator() {}
+
+    // default copy, assignment and destructor are ok
+    
+    ReferenceType operator*() const { return *m_position; }
+    PointerType operator->() const { return &(operator*()); }
+    
+    void skipEmptyBuckets() 
+    {
+        while (m_position != m_endPosition && (m_table->isEmptyBucket(*m_position))) {
+            ++m_position;
+        }
+    }
+    
+    iterator& operator++()
+    {
+        ++m_position;
+        skipEmptyBuckets();
+        return *this;
+    }
+    
+    // postfix ++ intentionally omitted
+    
+    // Comparison.
+    bool operator==(const iterator& other) const
+    { 
+        return m_position == other.m_position; 
+    }
+    
+    bool operator!=(const iterator& other) const 
+    { 
+        return m_position != other.m_posisiton; 
+    }
+
+private:
+    HashTablePointerType m_table;
+    PointerType m_position;
+    PointerType m_endPosition;
+};
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+class HashTableConstIterator {
+ private:
+    typedef HashTable<Key, Hash, Equal> HashTableType;
+    typedef const HashTableType *HashTablePointerType;
+    typedef HashTableIterator<Key, Hash, Equal> iterator;
+    typedef HashTableConstIterator<Key, Hash, Equal> const_iterator;
+    typedef Key KeyType;
+    typedef const KeyType& ReferenceType;
+    typedef const KeyType *PointerType;
+
+    friend class HashTableType;
+    
+    HashTableConstIterator(HashTablePointerType table, PointerType position, PointerType endPosition) 
+        : m_table(table), m_position(position), m_endPosition(endPosition) 
+    { 
+        skipEmptyBuckets();
+    }
+ public:
+    HashTableConstIterator() {}
+    HashTableConstIterator(const iterator &other)
+        : m_table(other.ht), m_position(other.m_position), m_endPosition(other.m_endPosition) { }
+
+    // default copy, assignment and destructor are ok
+    
+    ReferenceType operator*() const { return *m_position; }
+    PointerType operator->() const { return &(operator*()); }
+    
+    void skipEmptyBuckets() 
+    {
+        while (m_position != m_endPosition && (m_table->isEmptyBucket(*m_position))) {
+            ++m_position;
+        }
+    }
+    
+    iterator& operator++()
+    {
+        ++m_position;
+        skipEmptyBuckets();
+        return *this;
+    }
+    
+    // postfix ++ intentionally omitted
+    
+    // Comparison.
+    bool operator==(const iterator& other) const
+    { 
+        return m_position == other.m_position; 
+    }
+    
+    bool operator!=(const iterator& other) const 
+    { 
+        return m_position != other.m_posisiton; 
+    }
+
+private:
+    HashTablePointerType m_table;
+    PointerType m_position;
+    PointerType m_endPosition;
+};
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
 class HashTable {
  public:
+    typedef HashTableIterator<Key, Hash, Equal> iterator;
+    typedef HashTableConstIterator<Key, Hash, Equal> const_iterator;
     typedef Key KeyType;
+    typedef const Key& ReferenceType;
+    typedef const Key *PointerType;
 
     HashTable() : m_table(0), m_tableSize(0), m_tableSizeMask(0), m_keyCount(0) {}
     ~HashTable() { main_thread_free(m_table); }
@@ -63,52 +192,67 @@ class HashTable {
     void swap(const HashTable& other);
     HashTable& operator=(const HashTable& other);
 
-    int size() const { return m_keyCount; }
+    iterator begin() { return makeIterator(m_table); }
+    iterator end() { return makeIterator(m_table + m_tableSize); }
+    const_iterator begin() const { return makeConstIterator(m_table); }
+    const_iterator end() const { return makeConstIterator(m_table + m_tableSize); }
 
-    KeyType insert(const KeyType& key);
+    int size() const { return m_keyCount; }
+    int capacity() const { return m_tableSize; }
+
+    iterator insert(const KeyType& key) { return insert<KeyType, hash, equal, identityConvert>(key); }
 
     // a special version of insert() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table
-    template<typename T, unsigned HashT(const T&), bool EqualT(const KeyType&, const T&), KeyType ConvertT(const T&, unsigned)> KeyType insert(const T& key);
+    template<typename T, unsigned HashT(const T&), bool EqualT(const Key&, const T&), KeyType ConvertT(const T&, unsigned)> iterator insert(const T& key);
 
-#if 0
-    Iterator find(const KeyType& key)
+    iterator find(const KeyType& key);
+
+    const_iterator find(const KeyType& key) const
     {
-        if (!m_table)
-            return 0;
-        
-        unsigned h = hash(key);
-        int i = h & m_tableSizeMask;
-        
-        KeyType *item;
-        while (*(item = m_table +i)) {
-            if (equal(*item, key))
-                return item;
-            i = (i + 1) & m_tableSizeMask;
-        }
-        
-        return 0;
+        return makeConstIterator(const_cast<HashTable *>(this)->find(key).m_position);
     }
-#endif
 
-    void remove(const KeyType& key);
+    bool contains(const KeyType& key) const 
+    {
+        return find(key) != end();
+    }
 
- private:
-    unsigned hash(const KeyType& key) const { return Hash(key); }
-    bool equal(const KeyType& a, const KeyType& b) const { return Equal(a, b); }                    
+    void remove(const KeyType& key) 
+    {
+        remove(find(key));
+    }
+    void remove(iterator it);
+    void clear();
+
+    bool isEmptyBucket(const KeyType& key) const { return key == 0; }
+
+private:
+    static unsigned hash(const KeyType& key) { return Hash(key); }
+    static bool equal(const KeyType& a, const KeyType& b) { return Equal(a, b); }                    
+    static KeyType identityConvert(const KeyType& key, unsigned) { return key; }
+
+    bool shouldExpand() const { return m_keyCount * m_maxLoad >= m_tableSize; }
     void expand() { rehash(m_tableSize == 0 ? m_minTableSize : m_tableSize * 2); }
-
+    bool shouldShrink() const { return m_keyCount * m_minLoad < m_tableSize && m_tableSize > m_minTableSize; }
     void shrink() { rehash(m_tableSize / 2); }
-
     void rehash(int newTableSize);
-
     void reinsert(const KeyType& key);
 
-    bool isEmptyBucket(const KeyType& key) { return key == 0; }
     void clearBucket(KeyType& key) { key = 0;}
 
+    iterator makeIterator(KeyType *pos) { return iterator(this, pos, m_table + m_tableSize); }
+    const_iterator makeConstIterator(KeyType *pos) const { return const_iterator(this, pos, m_table + m_tableSize); }
+
+#if CHECK_HASHTABLE_CONSISTENCY
+    void checkConsistency() const;
+    void checkConsistencyExceptSize() const;
+#endif
+
     static const int m_minTableSize = 64;
+    static const int m_maxLoad = 2;
+    static const int m_minLoad = 6;
 
     KeyType *m_table;
     int m_tableSize;
@@ -117,44 +261,13 @@ class HashTable {
 };
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
-Key HashTable<Key, Hash, Equal>::insert(const Key& key)
-{
-    if (!m_table)
-        expand();
-    
-    unsigned h = hash(key);
-    int i = h & m_tableSizeMask;
-#if DUMP_HASHTABLE_STATS
-    ++HashTableStats::numAccesses;
-    int collisionCount = 0;
-#endif
-    
-    KeyType entry;
-    while (!isEmptyBucket(entry = m_table[i])) {
-        if (equal(entry, key))
-            return entry;
-#if DUMP_HASHTABLE_STATS
-        ++collisionCount;
-        HashTableStats::recordCollisionAtCount(collisionCount);
-#endif
-        i = (i + 1) & m_tableSizeMask;
-    }
-    
-    m_table[i] = key;
-    ++m_keyCount;
-    
-    if (m_keyCount * 2 >= m_tableSize)
-        expand();
-    
-    return key;
-}
- 
-template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
 template<typename T, unsigned HashT(const T&), bool EqualT(const Key&, const T&), Key ConvertT(const T&, unsigned)> 
-Key HashTable<Key, Hash, Equal>::insert(const T& key)
+typename HashTable<Key, Hash, Equal>::iterator HashTable<Key, Hash, Equal>::insert(const T& key)
 {
     if (!m_table)
         expand();
+
+    checkConsistency();
     
     unsigned h = HashT(key);
     int i = h & m_tableSizeMask;
@@ -163,10 +276,11 @@ Key HashTable<Key, Hash, Equal>::insert(const T& key)
     int collisionCount = 0;
 #endif
     
-    KeyType entry;
-    while (!isEmptyBucket(entry = m_table[i])) {
-        if (EqualT(entry, key))
-            return entry;
+    KeyType *entry;
+    while (!isEmptyBucket(*(entry = m_table + i))) {
+        if (EqualT(*entry, key)) {
+            return makeIterator(entry);
+        }
 #if DUMP_HASHTABLE_STATS
         ++collisionCount;
         HashTableStats::recordCollisionAtCount(collisionCount);
@@ -174,18 +288,22 @@ Key HashTable<Key, Hash, Equal>::insert(const T& key)
         i = (i + 1) & m_tableSizeMask;
     }
     
-    KeyType convertedKey = ConvertT(key, h);
-    m_table[i] = convertedKey;
+    *entry = ConvertT(key, h);
     ++m_keyCount;
     
-    if (m_keyCount * 2 >= m_tableSize)
+    if (shouldExpand()) {
+        KeyType enteredKey = *entry;
         expand();
+        return find(enteredKey);
+    }
+
+    checkConsistency();
     
-    return convertedKey;
+    return makeIterator(entry);
 }
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
-void HashTable<Key, Hash, Equal>::reinsert(const Key& key)
+void HashTable<Key, Hash, Equal>::reinsert(const KeyType& key)
 {
     if (!m_table)
         expand();
@@ -197,8 +315,8 @@ void HashTable<Key, Hash, Equal>::reinsert(const Key& key)
     int collisionCount = 0;
 #endif
     
-    KeyType entry;
-    while (!isEmptyBucket(entry = m_table[i])) {
+    KeyType *entry;
+    while (!isEmptyBucket(*(entry = m_table + i))) {
 #if DUMP_HASHTABLE_STATS
         ++collisionCount;
         HashTableStats::recordCollisionAtCount(collisionCount);
@@ -206,45 +324,62 @@ void HashTable<Key, Hash, Equal>::reinsert(const Key& key)
         i = (i + 1) & m_tableSizeMask;
     }
     
-    m_table[i] = key;
+    *entry = key;
 }
  
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
-void HashTable<Key, Hash, Equal>::remove(const Key& key)
+typename HashTable<Key, Hash, Equal>::iterator HashTable<Key, Hash, Equal>::find(const Key& key)
 {
+    if (!m_table)
+        return end();
+    
     unsigned h = hash(key);
     int i = h & m_tableSizeMask;
 #if DUMP_HASHTABLE_STATS
     ++HashTableStats::numAccesses;
-    ++HashTableStats::numRemoves;
     int collisionCount = 0;
 #endif
     
-    KeyType entry;
-    while (!isEmptyBucket(entry = m_table[i])) {
-        if (equal(entry, key))
-            break;
+    KeyType *entry;
+    while (!isEmptyBucket(*(entry = m_table + i))) {
+        if (equal(*entry, key))
+            return makeIterator(entry);
 #if DUMP_HASHTABLE_STATS
         ++collisionCount;
         HashTableStats::recordCollisionAtCount(collisionCount);
 #endif
         i = (i + 1) & m_tableSizeMask;
     }
-    if (!key)
+
+    return end();
+}
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+void HashTable<Key, Hash, Equal>::remove(iterator it)
+{
+    checkConsistency();
+
+    if (it == end())
         return;
+
+#if DUMP_HASHTABLE_STATS
+    ++HashTableStats::numRemoves;
+#endif
     
-    m_table[i] = 0;
+    *it = 0;
     --m_keyCount;
     
-    if (m_keyCount * 6 < m_tableSize && m_tableSize > m_minTableSize) {
+    if (shouldShrink()) {
         shrink();
         return;
     }
+
+    int i = it.operator->() - m_table;
     
     // Reinsert all the items to the right in the same cluster.
     while (1) {
         i = (i + 1) & m_tableSizeMask;
-        entry = m_table[i];
+        KeyType entry = m_table[i];
         if (isEmptyBucket(entry))
             break;
 #if DUMP_HASHTABLE_STATS
@@ -253,11 +388,15 @@ void HashTable<Key, Hash, Equal>::remove(const Key& key)
         clearBucket(m_table[i]);
         reinsert(entry);
     }
+
+    checkConsistency();
 }
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
 void HashTable<Key, Hash, Equal>::rehash(int newTableSize)
 {
+    checkConsistencyExceptSize();
+
     int oldTableSize = m_tableSize;
     KeyType *oldTable = m_table;
 
@@ -271,12 +410,24 @@ void HashTable<Key, Hash, Equal>::rehash(int newTableSize)
     m_table = (KeyType *)main_thread_calloc(newTableSize, sizeof(KeyType));
     
     for (int i = 0; i != oldTableSize; ++i) {
-        KeyType key;
-        if (!isEmptyBucket(key = oldTable[i]))
+        KeyType key = oldTable[i];
+        if (!isEmptyBucket(key))
             reinsert(key);
     }
     
     main_thread_free(oldTable);
+
+    checkConsistency();
+}
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+void HashTable<Key, Hash, Equal>::clear()
+{
+    main_thread_free(m_table);
+    m_table = 0;
+    m_tableSize = 0;
+    m_tableSizeMask = 0;
+    m_keyCount = 0;
 }
 
 template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
@@ -319,6 +470,41 @@ HashTable<Key, Hash, Equal>& HashTable<Key, Hash, Equal>::operator=(const HashTa
     swap(tmp);
     return *this;
 }
+
+#if CHECK_HASHTABLE_CONSISTENCY
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+void HashTable<Key, Hash, Equal>::checkConsistency() const
+{
+    checkConsistencyExceptSize();
+    assert(!shouldExpand());
+    assert(!shouldShrink());
+}
+
+template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+void HashTable<Key, Hash, Equal>::checkConsistencyExceptSize() const
+{
+    if (!m_table)
+        return;
+
+    int count = 0;
+    for (int j = 0; j < m_tableSize; ++j) {
+        KeyType *entry = m_table + j;
+        if (isEmptyBucket(*entry))
+            continue;
+        
+        const_iterator it = find(*entry);
+        assert(entry == it.m_position);
+        ++count;
+    }
+
+    assert(count == m_keyCount);
+    assert(m_tableSize >= m_minTableSize);
+    assert(m_tableSizeMask);
+    assert(m_tableSize == m_tableSizeMask + 1);
+}
+
+#endif // CHECK_HASHTABLE_CONSISTENCY
 
 } // namespace khtml
 

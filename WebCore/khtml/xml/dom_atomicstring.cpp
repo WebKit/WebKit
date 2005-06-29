@@ -104,7 +104,7 @@ DOMStringImpl *AtomicString::add(const char *c)
     if (length == 0)
         return DOMStringImpl::empty();
     
-    return stringTable.insert<const char *, hash, DOM::equal, convert>(c);
+    return *stringTable.insert<const char *, hash, DOM::equal, convert>(c);
 }
 
 
@@ -150,7 +150,7 @@ DOMStringImpl *AtomicString::add(const QChar *s, int length)
         return DOMStringImpl::empty();
     
     QCharBuffer buf = {s, length}; 
-    return stringTable.insert<QCharBuffer, hash, DOM::equal, convert>(buf);
+    return *stringTable.insert<QCharBuffer, hash, DOM::equal, convert>(buf);
 }
 
 DOMStringImpl *AtomicString::add(DOMStringImpl *r)
@@ -161,7 +161,7 @@ DOMStringImpl *AtomicString::add(DOMStringImpl *r)
     if (r->l == 0)
         return DOMStringImpl::empty();
     
-    DOMStringImpl *result = stringTable.insert(r);
+    DOMStringImpl *result = *stringTable.insert(r);
     if (result == r)
         r->_inTable = true;
     return result;
