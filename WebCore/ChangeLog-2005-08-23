@@ -1,3 +1,20 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	Patch by Hanspeter Schaub <Hanspeterschaub@mac.com>
+
+	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3317
+	REGRESSION: CSS2: outline is applied to both <li> element 
+	and its enclosing text with context dependent selector
+
+        Reviewed by Hyatt.
+
+        Test cases added: 
+        * layout-tests/fast/css/list-outline-expected.txt: Added.
+        * layout-tests/fast/css/list-outline.html: Added.
+
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::paint):
+
 2005-06-28  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.
