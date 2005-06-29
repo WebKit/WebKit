@@ -1,5 +1,20 @@
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
+	Patch by Antoine Quint <ml@graougraou.com>
+
+	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3648
+	quadraticCurveTo() method in <canvas> APIs JS bindings does not exist
+
+        Reviewed by Darin.
+
+        Test cases added: 
+        * layout-tests/fast/dom/quadraticCurveTo-expected.txt: Added.
+        * layout-tests/fast/dom/quadraticCurveTo.xml: Added.
+
+        * khtml/ecma/kjs_html.cpp:
+
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
 	Patch by Hanspeter Schaub <Hanspeterschaub@mac.com>
 
 	-fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3317

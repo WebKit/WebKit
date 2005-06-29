@@ -4475,7 +4475,7 @@ const ClassInfo Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   stroke                   Context2D::Stroke                      DontDelete|Function 0
   moveTo                   Context2D::MoveTo                      DontDelete|Function 2
   lineTo                   Context2D::LineTo                      DontDelete|Function 2
-  quadraticCurveToPoint    Context2D::QuadraticCurveTo            DontDelete|Function 4
+  quadraticCurveTo         Context2D::QuadraticCurveTo            DontDelete|Function 4
   bezierCurveTo            Context2D::BezierCurveTo               DontDelete|Function 6
   arcTo                    Context2D::ArcTo                       DontDelete|Function 5
   arc                      Context2D::Arc                         DontDelete|Function 6
