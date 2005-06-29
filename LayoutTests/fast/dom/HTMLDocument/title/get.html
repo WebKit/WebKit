@@ -9,6 +9,10 @@ function print(message) {
 }
 
 function test() {
+	if (window.layoutTestController) {
+		window.layoutTestController.dumpAsText();
+	}
+
 	if (document.title == "test") {
 		print("passed");
 	} else {

@@ -8,6 +8,10 @@ function print(message) {
 }
 
 function test() {
+	if (window.layoutTestController) {
+		window.layoutTestController.dumpAsText();
+	}
+
 	document.title = "test";
 	if (document.title == "test") {
 		print("passed");

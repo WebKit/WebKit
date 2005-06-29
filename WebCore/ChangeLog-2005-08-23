@@ -5,7 +5,9 @@
         Reviewed by justing.
 
         Test cases added: 
+        * layout-tests/fast/dom/HTMLDocument/title/get-expected.txt: Added.
         * layout-tests/fast/dom/HTMLDocument/title/get.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/title/set-expected.txt: Added.
         * layout-tests/fast/dom/HTMLDocument/title/set.html: Added.
 
 2005-06-28  Maciej Stachowiak  <mjs@apple.com>
