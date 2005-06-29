@@ -2525,29 +2525,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
-- (BOOL)isContinuousGrammarCheckingEnabled
-{
-    return _private->continuousGrammarCheckingEnabled && [self _continuousCheckingAllowed];
-}
-
-- (void)setContinuousGrammarCheckingEnabled:(BOOL)flag
-{
-    _private->continuousGrammarCheckingEnabled = flag;
-    if ([self isContinuousGrammarCheckingEnabled]) {
-        [self _preflightSpellChecker];
-    } else {
-        // FIXME: Put code here to remove underlines for bad grammar.
-    }
-}
-
-- (void)toggleContinuousGrammarChecking:(id)sender
-{
-    if ([self isEditable]) {
-        [self setContinuousGrammarCheckingEnabled:![self isContinuousGrammarCheckingEnabled]];
-    }
-}
-
-
 - (BOOL)canMakeTextStandardSize
 {
     if ([[self mainFrame] dataSource] == nil) {

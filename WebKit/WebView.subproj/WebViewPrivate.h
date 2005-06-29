@@ -75,10 +75,6 @@ typedef enum {
 
 - (IBAction)toggleContinuousSpellChecking:(id)sender;
 
-- (BOOL)isContinuousGrammarCheckingEnabled;
-- (void)setContinuousGrammarCheckingEnabled:(BOOL)flag;
-- (void)toggleContinuousGrammarChecking:(id)sender;
-
 - (void)toggleSmartInsertDelete:(id)sender;
 
 - (BOOL)canMakeTextStandardSize;

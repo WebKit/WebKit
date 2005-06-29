@@ -106,7 +106,6 @@
     int spellCheckerDocumentTag;
 
     BOOL continuousSpellCheckingEnabled;
-    BOOL continuousGrammarCheckingEnabled;
     BOOL smartInsertDeleteEnabled;
     
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;

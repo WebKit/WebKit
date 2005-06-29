@@ -1,3 +1,13 @@
+2005-06-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - deleted some never-used stub code
+
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-06-27  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson <andersca@mac.com>
