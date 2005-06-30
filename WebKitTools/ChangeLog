@@ -1,3 +1,15 @@
+2005-06-29  Darin Adler  <darin@apple.com>
+
+        Changes by Timothy Hatcher.
+        Reviewed by me.
+
+        * Scripts/run-webkit-app: Added script to open an arbritrary application with
+        a CVS built WebKit. Example: ./run-webkit-app Colloquy
+
+        * Scripts/gdb-safari: Added support for WEBKIT_SAFARI environment variable to specify
+        a custom location to the Safari.app bundle. This is optional, script defaults to the stock location.
+        * Scripts/run-safari: Ditto.
+
 2005-06-26  Darin Adler  <darin@apple.com>
 
         * Scripts/build-dumprendertree: Pass -project option so that having a second

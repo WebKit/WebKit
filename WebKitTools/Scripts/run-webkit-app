@@ -36,15 +36,12 @@ use webkitdirs;
 setConfiguration();
 my $productDir = productDir();
 
-# Check to see that Safari is in the specified place.
-my $safariBundle = $ENV{WEBKIT_SAFARI} || "/Applications/Safari.app";
-my $safariPath = "$safariBundle/Contents/MacOS/Safari";
-die "Can't find executable at $safariPath.\n" unless -x $safariPath;
+die "Did not specify an application to open (e.g. run-webkit-app AppName).\n" unless length($ARGV[0]) > 0;
 
 # Check to see that all the frameworks are built.
 checkFrameworks();
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
-print "Start Safari with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+print "Start $ARGV[0] with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-exec $safariPath or die;
+exec "open -a $ARGV[0]";
