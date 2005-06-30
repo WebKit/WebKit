@@ -390,7 +390,7 @@ unsigned ArrayInstanceImp::pushUndefinedObjectsToEnd(ExecState *exec)
 const ClassInfo ArrayPrototypeImp::info = {"Array", &ArrayInstanceImp::info, &arrayTable, 0};
 
 /* Source for array_object.lut.h
-@begin arrayTable 13
+@begin arrayTable 16
   toString       ArrayProtoFuncImp::ToString       DontEnum|Function 0
   toLocaleString ArrayProtoFuncImp::ToLocaleString DontEnum|Function 0
   concat         ArrayProtoFuncImp::Concat         DontEnum|Function 1
@@ -403,6 +403,9 @@ const ClassInfo ArrayPrototypeImp::info = {"Array", &ArrayInstanceImp::info, &ar
   sort           ArrayProtoFuncImp::Sort           DontEnum|Function 1
   splice         ArrayProtoFuncImp::Splice         DontEnum|Function 2
   unshift        ArrayProtoFuncImp::UnShift        DontEnum|Function 1
+  every          ArrayProtoFuncImp::Every          DontEnum|Function 5
+  forEach        ArrayProtoFuncImp::ForEach        DontEnum|Function 5
+  some           ArrayProtoFuncImp::Some           DontEnum|Function 5
 @end
 */
 
@@ -443,6 +446,7 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
   unsigned int length = thisObj.get(exec,lengthPropertyName).toUInt32(exec);
 
   Value result;
+  
   switch (id) {
   case ToLocaleString:
     // TODO  - see 15.4.4.3
@@ -767,6 +771,51 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     thisObj.put(exec, lengthPropertyName, result, DontEnum | DontDelete);
     break;
   }
+  case Every:
+  case ForEach:
+  case Some: {
+    //Documentation for these three is available at:
+    //http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:every
+    //http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:forEach
+    //http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:some
+    
+    Object eachFunction = args[0].toObject(exec);
+    
+    if (!eachFunction.implementsCall()) {
+      Object err = Error::create(exec,TypeError);
+      exec->setException(err);
+      return err;
+    }
+    
+    Object applyThis = args[1].imp()->isUndefinedOrNull() ? exec->dynamicInterpreter()->globalObject() :  args[1].toObject(exec);
+    
+    if (id == Some || id == Every)
+      result = Boolean(id == Every);
+    else
+      result = thisObj;
+    
+    for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
+      
+      List eachArguments;
+      
+      eachArguments.append(thisObj.get(exec, k));
+      eachArguments.append(Number(k));
+      eachArguments.append(thisObj);
+      
+      bool predicateResult = eachFunction.call(exec, applyThis, eachArguments).toBoolean(exec);
+      
+      if (id == Every && !predicateResult) {
+        result = Boolean(false);
+        break;
+      }
+      if (id == Some && predicateResult) {
+        result = Boolean(true);
+        break;
+      }
+    }
+    break;
+  }
+    
   default:
     assert(0);
     break;

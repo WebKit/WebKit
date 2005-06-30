@@ -44,7 +44,8 @@ namespace KJS {
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
     enum { ToString, ToLocaleString, Concat, Join, Pop, Push,
-	   Reverse, Shift, Slice, Sort, Splice, UnShift };
+          Reverse, Shift, Slice, Sort, Splice, UnShift, 
+          Every, ForEach, Some };
   private:
     int id;
   };

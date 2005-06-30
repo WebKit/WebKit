@@ -1,0 +1,133 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function print(str) {
+    document.writeln(str+"<br/>");
+}
+
+if (window.layoutTestController)  layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+1.0 Single Argument Testing<br/>
+The following tests every with one argument, the callback.  It should print whether the arrays [12, 5, 8, 130, 44] and [12, 54, 18, 130, 44] solely contain numbers >= to 10 (false and true, respectively).<br/><br/>
+<script>
+function isBigEnough(element, index, array) {
+    return (element >= 10);
+}
+
+print([12, 5, 8, 130, 44].every(isBigEnough));
+print([12, 54, 18, 130, 44].every(isBigEnough));
+</script>
+<br/>
+
+2.0 Two Argument Testing<br/>
+The following tests every with two arguments, the callback and the applied "this" object.  It should print whether the arrays [12, 5, 11, 130, 44] and [12, 54, 18, 130, 44] solely contain numbers >= to 11 (false and true, respectively).<br/><br/>
+<script>
+    var predicate = {
+        comparison:     11,
+        isBigEnough:    function(s) {
+            return (s >= comparison);
+        }
+    };
+    
+    print([12, 5, 10, 130, 44].every(isBigEnough), predicate);
+    print([12, 54, 18, 130, 44].every(isBigEnough), predicate);
+
+</script>
+<br/>
+
+3.0 Array Mutation Tests<br/>
+These tests the affects of array mutation during execution of every.<br/><br/>
+3.1 Array Element Removal<br/>
+This test is equivalent to 1.0, with the exception that it removes elements from the array on each visit.  Both should thus yield "false" since undefined is not >= to 10.<br/><br/>
+
+<script>
+function isBigEnoughAndPop(element, index, array) {
+    array.pop();
+    return (element >= 10);
+}
+
+print([12, 5, 8, 130, 44].every(isBigEnoughAndPop));
+print([12, 54, 18, 130, 44].every(isBigEnoughAndPop));
+</script>
+<br/>
+
+3.3 Array Element Addition<br/>
+This test is equivalent to 1.0, with that it test whether elements are >= 131 and it adds elements greater than 131 to the end of the list.  However, both results should be false since every uses the original length to create the range it iterates over.<br/><br/>
+<script>
+function isBigEnoughAndPush(element, index, array) {
+    array.push(131);
+    return (element >= 131);
+}
+
+print([12, 5, 8, 130, 44].every(isBigEnoughAndPush));
+print([12, 54, 18, 130, 44].every(isBigEnoughAndPush));
+</script>
+<br/>
+
+3.2 Array Element Changing<br/>
+This test is equivalent to 1.0, with the exception that it changes elements in the array to be < 10 in reverse order. These elements should appear in their mutated form when reached by every, and thus both tests should result in "false".<br/><br/>
+<script>
+function isBigEnoughAndChange(element, index, array) {
+    array[array.length-1-index]= 5;
+    return (element >= 10);
+}
+
+print([12, 5, 8, 130, 44].every(isBigEnoughAndChange));
+print([12, 54, 18, 130, 44].every(isBigEnoughAndChange));
+</script>
+<br/>
+4.0 Exception Test<br/>
+This test uses a function that throws an exception, and thus halts the execution of every.  There should thus be no output.<br/><br/>
+<script>
+function isBigEnough(element, index, array) {
+    if(index==1) throw exception();
+    return (element >= 10);
+}
+
+print([12, 5, 8, 130, 44].every(isBigEnoughAndException));
+print([12, 54, 18, 130, 44].every(isBigEnoughAndException));
+
+</script>
+<br/>
+5.0 Wrong Type for Callback Test
+This test sends in incorrect types for the callback parameter of every.  An exception should be thrown in each case.  There should be 6 type errors (and no crashes!):<br/><br/>
+<script>
+
+try { [12, 5, 8, 130, 44].every(5) }
+catch (e) { print(e); }
+
+try { [12, 5, 8, 130, 44].every("wrong"); }
+catch (e) { print(e); }
+
+try { [12, 5, 8, 130, 44].every(new Object()); }
+catch (e) { print(e); }
+
+try { [12, 5, 8, 130, 44].every(null); }
+catch (e) { print(e); }
+
+try { [12, 5, 8, 130, 44].every(undefined); }
+catch (e) { print(e) }
+
+try { [12, 5, 8, 130, 44].every(); }
+catch (e) { print(e); }
+
+</script>
+<br/>
+6.0 Early Abortion ("Short Circuiting")
+This test is nearly identical to 1.0, except that it prints upon every call to the designated callback function.  Since every aborts as soon as it finds one element that does not qualify, the first array should print only twice, and the second all 5 times.<br/><br/>
+<script>
+function isBigEnough(element, index, array) {
+    print("Testing element "+element+"...");
+    return (element >= 10);
+}
+
+[12, 5, 8, 130, 44].every(isBigEnough);
+print("Done with first array.");
+[12, 54, 18, 130, 44].every(isBigEnough);
+print("Done with second array.");
+</script>
+</body>
+</html>

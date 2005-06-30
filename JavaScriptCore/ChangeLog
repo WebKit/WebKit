@@ -1,5 +1,21 @@
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
+	Patch by Francisco Tolmasky <tolmasky@gmail.com>
+
+	- fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3667
+	Core JavaScript 1.5 Reference:Objects:Array:forEach
+
+	See WebCore Changelog for layout tests added.
+
+        Reviewed by darin.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call):
+        * kjs/array_object.h:
+        (KJS::ArrayProtoFuncImp::):
+
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
 	Patch contributed by Oliver Hunt <ojh16@student.canterbury.ac.nz>
 
 	-fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3743

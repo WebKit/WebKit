@@ -1,3 +1,22 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	Contributed by Francisco Tolmasky <tolmasky@gmail.com>
+
+	-test cases for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=3667
+	Core JavaScript 1.5 Reference:Objects:Array:forEach
+
+	See JavaScriptCore Changelog for details on the patch.
+
+        Reviewed by darin.
+
+        Test cases added:
+        * layout-tests/fast/js/array-every-expected.txt: Added.
+        * layout-tests/fast/js/array-every.html: Added.
+        * layout-tests/fast/js/array-foreach-expected.txt: Added.
+        * layout-tests/fast/js/array-foreach.html: Added.
+        * layout-tests/fast/js/array-some-expected.txt: Added.
+        * layout-tests/fast/js/array-some.html: Added.
+
 2005-06-29  Bruce DiBello  <bdibello@apple.com>
 
         Reviewed by Geoff Garen
