@@ -1,3 +1,9 @@
+2005-06-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed - fixing build breakage with gcc 4.
+
+        * khtml/misc/hashtable.h: Don't use a typedef when declaring a class friend.
+
 2005-06-29  David Harrison  <harrison@apple.com>
 
 		Temporarily enable tab coalescing ahead of white-space:pre-wrap
