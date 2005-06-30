@@ -53,6 +53,9 @@ public:
     // Helpers
     void addToResult(const char* buffer, int len);
     
+    XSLStyleSheetImpl *stylesheet() { return m_stylesheet; }
+    DocumentImpl *sourceDocument() { return m_sourceDocument; }
+    
 protected:
     XSLStyleSheetImpl* m_stylesheet;
     QString m_resultOutput;

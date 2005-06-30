@@ -27,6 +27,9 @@
 #include "loader.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "KWQLoader.h"
+
+#include <kio/job.h>
 
 #include <libxslt/xsltutils.h>
 #include <libxslt/documents.h>
@@ -54,19 +57,49 @@ XSLTProcessorImpl::~XSLTProcessorImpl()
         m_sourceDocument->deref();
 }
 
-static XSLStyleSheetImpl* globalSheet = 0;
+static void parseErrorFunc(void *ctxt, const char *msg, ...)
+{
+    // FIXME: It would be nice to display error messages somewhere.
+}
+
+static XSLTProcessorImpl *globalProcessor = 0;
 static xmlDocPtr stylesheetLoadFunc(const xmlChar* uri,
                                     xmlDictPtr dict,
                                     int options,
                                     void* ctxt,
                                     xsltLoadType type)
 {
-    if (type != XSLT_LOAD_STYLESHEET)
-        return NULL; // FIXME: Add support for XSLT_LOAD_DOCUMENT for the document() function.
-    
-    if (!globalSheet)
+    if (!globalProcessor)
         return NULL;
-    return globalSheet->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
+    
+    switch (type) {
+        case XSLT_LOAD_DOCUMENT: {
+            KURL url = KURL((char *)uri);
+            KURL finalURL;
+            KIO::TransferJob *job = KIO::get(url, true, false);
+            QByteArray data;
+            QString headers;
+            xmlDocPtr doc;
+            xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
+            void *oldErrorContext = xmlGenericErrorContext;
+            
+            data = KWQServeSynchronousRequest(khtml::Cache::loader(), 
+                                              globalProcessor->sourceDocument()->docLoader(), job, finalURL, headers);
+        
+            xmlSetGenericErrorFunc(0, parseErrorFunc);
+            // We don't specify an encoding here. Neither Gecko nor WinIE respects
+            // the encoding specified in the HTTP headers.
+            doc = xmlReadMemory(data.data(), data.size(), (const char *)uri, 0, options);
+            xmlSetGenericErrorFunc(oldErrorContext, oldErrorFunc);
+            return doc;
+        }
+        case XSLT_LOAD_STYLESHEET:
+            return globalProcessor->stylesheet()->locateStylesheetSubResource(((xsltStylesheetPtr)ctxt)->doc, uri);
+        default:
+            break;
+    }
+    
+    return NULL;
 }
 
 DocumentImpl* XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
@@ -77,20 +110,26 @@ DocumentImpl* XSLTProcessorImpl::transformDocument(DocumentImpl* doc)
 
     if (!m_stylesheet || !m_stylesheet->document()) return 0;
         
-    globalSheet = m_stylesheet;
+    globalProcessor = this;
     xsltSetLoaderFunc(stylesheetLoadFunc);
 
     xsltStylesheetPtr sheet = m_stylesheet->compileStyleSheet();
 
-    globalSheet = 0;
-    xsltSetLoaderFunc(0);
-
-    if (!sheet) return 0;
+    if (!sheet) {
+        globalProcessor = 0;
+        xsltSetLoaderFunc(0);
+        return 0;
+    }
+    
     m_stylesheet->clearDocuments();
   
     // Get the parsed source document.
     xmlDocPtr sourceDoc = (xmlDocPtr)doc->transformSource();
     xmlDocPtr resultDoc = xsltApplyStylesheet(sheet, sourceDoc, NULL);
+    
+    globalProcessor = 0;
+    xsltSetLoaderFunc(0);
+
     DocumentImpl* result = documentFromXMLDocPtr(resultDoc, sheet);
     xsltFreeStylesheet(sheet);
     return result;
@@ -107,12 +146,14 @@ void XSLTProcessorImpl::addToResult(const char* buffer, int len)
     m_resultOutput += QString(buffer, len);
 }
 
-DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
+DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet)
 {
-    // FIXME: For now we serialize and then reparse.  It might be more optimal to write a DOM
-    // converter.
-    if (!resultDoc || !sheet) return 0;
-    DocumentImpl* result = 0;
+    // FIXME: For now we serialize and then reparse. It might be more optimal to write a DOM  converter.
+
+    if (!resultDoc || !sheet)
+        return 0;
+
+    DocumentImpl *result = 0;
     xmlOutputBufferPtr outputBuf = xmlAllocOutputBuffer(NULL);
     if (outputBuf) {
         outputBuf->context = this;
@@ -124,12 +165,12 @@ DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         // There are three types of output we need to be able to deal with:
         // HTML (create an HTML document), XML (create an XML document), and text (wrap in a <pre> and
         // make an XML document).
-        KHTMLView* view = m_sourceDocument->view();
-        const xmlChar* method;
+        KHTMLView *view = m_sourceDocument->view();
+        const xmlChar *method;
         XSLT_GET_IMPORT_PTR(method, sheet, method);
         if (method == NULL && resultDoc->type == XML_HTML_DOCUMENT_NODE)
-            method = (const xmlChar*)"html";
-        if (xmlStrEqual(method, (const xmlChar*)"html"))
+            method = (const xmlChar *)"html";
+        if (xmlStrEqual(method, (const xmlChar *)"html"))
             result = m_sourceDocument->implementation()->createHTMLDocument(view);
         else
             result = m_sourceDocument->implementation()->createDocument(view);
@@ -140,16 +181,20 @@ DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         result->docLoader()->setShowAnimations(m_sourceDocument->docLoader()->showAnimations());
         result->setTransformSourceDocument(m_sourceDocument);
 
-        if (xmlStrEqual(method, (const xmlChar*)"text")) {
-            // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing
-            // the text.
-            QString beforeString("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<body>\n<pre>\n<![CDATA[");
-            QString afterString("]]>\n</pre>\n</body>\n</html>\n");
-            m_resultOutput = beforeString + m_resultOutput + afterString;
+        if (xmlStrEqual(method, (const xmlChar *)"text")) {
+            // Modify the output so that it is a well-formed XHTML document with a <pre> tag enclosing the text.
+            m_resultOutput = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/strict.dtd\">\n"
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+                "<body>\n"
+                "<pre>\n"
+                "<![CDATA[" + m_resultOutput + "]]>\n"
+                "</pre>\n"
+                "</body>\n"
+                "</html>\n";
         }
         
         // Before parsing, we need to detach the old document completely and get the new document
-        // in place.  We have to do this only if we're rendering the result document.
+        // in place. We have to do this only if we're rendering the result document.
         if (view) {
             view->clear();
             view->part()->replaceDocImpl(result);
@@ -170,4 +215,5 @@ DocumentImpl* XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
 }
 
 }
+
 #endif
