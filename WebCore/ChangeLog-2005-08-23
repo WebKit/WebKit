@@ -1,3 +1,16 @@
+2005-06-29  Geoffrey Garen  <ggaren@apple.com>
+
+	DOM compatibility tests for HTMLDocument::writeln
+
+        Reviewed by justing.
+
+        Test cases added: 
+
+        * layout-tests/fast/dom/HTMLDocument/writeln/call-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln/call.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln/multiple-calls-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln/multiple-calls.html: Added.
+
 2005-06-29  Bruce DiBello  <bdibello@apple.com>
 
         Reviewed by Geoff Garen.
