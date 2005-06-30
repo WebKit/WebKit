@@ -1,5 +1,16 @@
 2005-06-29  Darin Adler  <darin@apple.com>
 
+        - fixed bug which would result in multiple unwanted dumps in a single layout test
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:locationChangeDone:forDataSource:]): Set new
+        "readyToDump" flag.
+        (-[LayoutTestController waitUntilDone]): Update for name change.
+        (-[LayoutTestController notifyDone]): Dump only if ready.
+        (dumpRenderTree): Set up new boolean and update for name change.
+
+2005-06-29  Darin Adler  <darin@apple.com>
+
         Changes by Timothy Hatcher.
         Reviewed by me.
 

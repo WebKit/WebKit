@@ -48,7 +48,8 @@ static void dumpRenderTree(const char *filename);
 
 static volatile BOOL done;
 static WebFrame *frame;
-static BOOL waitLayoutTest;
+static BOOL readyToDump;
+static BOOL waitToDump;
 static BOOL dumpAsText;
 static BOOL dumpTitleChanges;
 
@@ -139,8 +140,11 @@ static void dump(void)
 
 - (void)webView:(WebView *)c locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource
 {
-    if (!waitLayoutTest && [dataSource webFrame] == frame) {
-        dump();
+    if ([dataSource webFrame] == frame) {
+        if (waitToDump)
+            readyToDump = YES;
+        else
+            dump();
     }
 }
 
@@ -194,13 +198,14 @@ static void dump(void)
 
 - (void)waitUntilDone 
 {
-    waitLayoutTest = YES;
+    waitToDump = YES;
 }
 
 - (void)notifyDone
 {
-    dump();
-    waitLayoutTest = NO;
+    if (waitToDump && readyToDump)
+        dump();
+    waitToDump = NO;
 }
 
 - (void)dumpAsText
@@ -229,9 +234,10 @@ static void dumpRenderTree(const char *filename)
     }
 
     done = NO;
+    readyToDump = NO;
+    waitToDump = NO;
     dumpAsText = NO;
     dumpTitleChanges = NO;
-    waitLayoutTest = NO;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
