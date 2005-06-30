@@ -1,3 +1,14 @@
+2005-06-30  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by rjw.
+
+	fixed: <rdar://problem/4166838> failed assertion in`Interpreter::lockCount() > 0
+
+	no layout test added; this is in the bindings code.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]): make sure to lock and unlock the interpreter around allocations. 
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	Patch by Francisco Tolmasky <tolmasky@gmail.com>

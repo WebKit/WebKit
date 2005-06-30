@@ -421,12 +421,15 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
 	Interpreter *intepreter = executionContext->interpreter();
 	ExecState *exec = intepreter->globalExec();
-
-	if (objectImp->classInfo() != &KJS::RuntimeObjectImp::info) {
+        Interpreter::lock();
+	
+        if (objectImp->classInfo() != &KJS::RuntimeObjectImp::info) {
 	    Value runtimeObject = objectImp->get(exec, "__apple_runtime_object");
 	    if (!runtimeObject.isNull() && runtimeObject.type() == KJS::ObjectType)
 		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
 	}
+        
+        Interpreter::unlock();
 
         if (objectImp->classInfo() == &KJS::RuntimeObjectImp::info) {
             RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(objectImp);
