@@ -6,15 +6,29 @@ function test() {
 		window.layoutTestController.dumpAsText();
 	}
 
-	document.write("passed");
+	document.write("<pre>");
+	document.write("pa");
+	document.write("ssed");
+	document.write("</pre>");
 }
 </script>
 </head>
 <body>
 <p>Tests: calling HTMLDocument::write</p>
-<p>Condition(s):</p>
-<p>Success message: passed</p>
-<p>Failure message: [no output]</p>
+<p>Condition(s): multiple calls</p>
+<p>
+Success message: 
+<pre>
+passed
+</pre>
+</p>
+<p>
+Failure message: 
+<pre>
+pa
+ssed
+</pre>
+</p>
 <hr>
 </body>
 <script>test()</script>

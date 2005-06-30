@@ -15,6 +15,8 @@
         Test cases added: 
         * layout-tests/fast/dom/HTMLDocument/write/call-expected.txt: Added.
         * layout-tests/fast/dom/HTMLDocument/write/call.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/write/multiple-calls-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/write/multiple-calls.html: Added.
 
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
