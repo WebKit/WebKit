@@ -1,3 +1,11 @@
+2005-06-29  Bruce DiBello  <bdibello@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Test cases added: added DOM test for document.URL
+
+        * layout-tests/fast/dom/HTMLDocument/url/getset.html: Added.
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	DOM compatibility tests for HTMLDocument::write
