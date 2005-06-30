@@ -101,12 +101,12 @@ public:
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
 
-    void drawText(int x, int y, int, int, int alignmentFlags, const QString &);
-    void drawHighlightForText(int x, int y, int h, 
+    void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString &);
+    void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
                   const QChar *, int length, int from, int to, int toAdd,
                   const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
-    void drawText(int x, int y, const QChar *, int length, int from, int to, int toAdd,
+    void drawText(int x, int y, int tabWidth, int xpos, const QChar *, int length, int from, int to, int toAdd,
                   const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);

@@ -2796,7 +2796,7 @@ static void stripTrailingSpace(bool pre,
         RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
         const Font *f = t->htmlFont( false );
         QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1, 0);
+        int spaceWidth = f->width(space, 1, 0, 0);
         inlineMax -= spaceWidth;
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -2959,8 +2959,8 @@ void RenderBlock::calcInlineMinMaxWidth()
                 int beginMin, endMin;
                 bool beginWS, endWS;
                 int beginMax, endMax;
-                t->trimmedMinMaxWidth(beginMin, beginWS, endMin, endWS, hasBreakableChar,
-                                      hasBreak, beginMax, endMax,
+                t->trimmedMinMaxWidth(inlineMax, beginMin, beginWS, endMin, endWS,
+                                      hasBreakableChar, hasBreak, beginMax, endMax,
                                       childMin, childMax, stripFrontSpaces);
 
                 // This text object is insignificant and will not be rendered.  Just

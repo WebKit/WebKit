@@ -143,12 +143,12 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int selEnd = selStart;
     int selTop = rootBox->selectionTop();
     int selHeight = rootBox->selectionHeight();
-    
+
     // FIXME: For justified text, just return the entire text box's rect.  At the moment there's still no easy
     // way to get the width of a run including the justification padding.
     if (sPos > 0 && !m_toAdd) {
         // The selection begins in the middle of our run.
-        int w = textObject()->width(m_start, sPos, m_firstLine);
+        int w = textObject()->width(m_start, sPos, m_firstLine, m_x);
         if (m_reversed)
             selStart -= w;
         else
@@ -162,14 +162,14 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
             selEnd = m_x + m_width;
     }
     else {
-        // Our run is partially selected, and so we have to actually do a measurement.
+        // Our run is partially selected, and so we need to measure.
         int w = textObject()->width(sPos + m_start, ePos - sPos, m_firstLine);
         if (m_reversed)
             selEnd = selStart - w;
         else
             selEnd = selStart + w;
     }
-
+    
     int selLeft = m_reversed ? selEnd : selStart;
     int selRight = m_reversed ? selStart : selEnd;
 
@@ -383,7 +383,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         int endPoint = m_len;
         if (m_truncation != cNoTruncation)
             endPoint = m_truncation - m_start;
-        font->drawText(i.p, m_x + tx, m_y + ty + m_baseline,
+        font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
                        textObject()->string()->s, textObject()->string()->l, m_start, endPoint,
                        m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
     } else {
@@ -392,18 +392,18 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (paintSelectedTextSeparately) {
             // paint only the text that is not selected
             if (sPos >= ePos) {
-                font->drawText(i.p, m_x + tx, m_y + ty + m_baseline,
+                font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
                                textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
             } else {
                 if (sPos - 1 >= 0) {
-                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->string()->s,
-                                   textObject()->string()->l, m_start, m_len,
+                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), 0, sPos);
                 }
                 if (ePos < m_start + m_len) {
-                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->string()->s,
-                                   textObject()->string()->l, m_start, m_len,
+                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), ePos, -1);
                 }
             }
@@ -419,8 +419,8 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                                selectionTextShadow->y,
                                selectionTextShadow->blur,
                                selectionTextShadow->color);
-            font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->string()->s,
-                           textObject()->string()->l, m_start, m_len,
+            font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                           textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), sPos, ePos);
             if (selectionTextShadow)
                 i.p->clearShadow();
@@ -524,10 +524,9 @@ void InlineTextBox::paintSelection(QPainter* p, int tx, int ty, RenderStyle* sty
     p->save();
     p->setPen(c); // Don't draw text at all!
     RootInlineBox* r = root();
-    int x = m_x + tx;
     int y = r->selectionTop();
     int h = r->selectionHeight();
-    f->drawHighlightForText(p, x, y + ty, h,
+    f->drawHighlightForText(p, m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), 
                             textObject()->str->s, textObject()->str->l, m_start, m_len,
                             m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
     p->restore();
@@ -549,10 +548,9 @@ void InlineTextBox::paintMarkedTextBackground(QPainter* p, int tx, int ty, Rende
     p->setPen(c); // Don't draw text at all!
 
     RootInlineBox* r = root();
-    int x = m_x + tx;
     int y = r->selectionTop();
     int h = r->selectionHeight();
-    f->drawHighlightForText(p, x, y + ty, h, textObject()->str->s, textObject()->str->l, m_start, m_len,
+    f->drawHighlightForText(p, m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), textObject()->str->s, textObject()->str->l, m_start, m_len,
             m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
     p->restore();
 }
@@ -727,11 +725,21 @@ long RenderText::nextOffset (long current) const
     return current + 1;
 }
 
+int InlineTextBox::textPos() const
+{
+    if (xPos() == 0)
+        return 0;
+        
+    RenderBlock *blockElement = object()->containingBlock();
+    return m_reversed ? xPos() - blockElement->borderRight() - blockElement->paddingRight()
+                      : xPos() - blockElement->borderLeft() - blockElement->paddingLeft();
+}
+
 int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 {
     RenderText* text = static_cast<RenderText*>(m_object);
     const Font* f = text->htmlFont(m_firstLine);
-    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - m_x, m_reversed, includePartialGlyphs);
+    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, text->tabWidth(), textPos(), _x - m_x, m_reversed, includePartialGlyphs);
 }
 
 int InlineTextBox::positionForOffset(int offset) const
@@ -741,13 +749,13 @@ int InlineTextBox::positionForOffset(int offset) const
 
     int left;
     if (m_reversed) {
-        long len = m_start + m_len - offset;
-        QString string(text->str->s + offset, len);
-        left = m_x + fm.boundingRect(string, len).right();
+	long len = m_start + m_len - offset;
+	QString string(text->str->s + offset, len);
+	left = m_x + fm.boundingRect(string, text->tabWidth(), textPos(), len).right();
     } else {
-        long len = offset - m_start;
-        QString string(text->str->s + m_start, len);
-        left = m_x + fm.boundingRect(string, len).right();
+	long len = offset - m_start;
+	QString string(text->str->s + m_start, len);
+	left = m_x + fm.boundingRect(string, text->tabWidth(), textPos(), len).right();
     }
     // FIXME: Do we need to add rightBearing here?
     return left;
@@ -1141,7 +1149,7 @@ bool RenderText::shouldUseMonospaceCache(const Font *f) const
     return (f && f->isFixedPitch() && allAscii() && !style()->htmlFont().isSmallCaps());
 }
 
-// We cache the width of the ' ' character for <pre> text.  We could go futher
+// We cache the width of the ' ' character for <pre> text.  We could go further
 // and cache a widths array for all styles, at the expense of increasing the size of the
 // RenderText.
 void RenderText::cacheWidths()
@@ -1151,7 +1159,7 @@ void RenderText::cacheWidths()
     if (shouldUseMonospaceCache(f)){
         float fw;
         QChar c(' ');
-        f->floatCharacterWidths( &c, 1, 0, 1, 0, &fw);
+        f->floatCharacterWidths( &c, 1, 0, 1, 0, 0, 0, &fw);
         m_monospaceCharacterWidth = (int)fw;
     }
     else
@@ -1159,20 +1167,27 @@ void RenderText::cacheWidths()
 }
 
 
-inline int RenderText::widthFromCache(const Font *f, int start, int len) const
+inline int RenderText::widthFromCache(const Font *f, int start, int len, int tabWidth, int xpos) const
 {
     if (m_monospaceCharacterWidth != 0){
         int i, w = 0;
         for (i = start; i < start+len; i++){
-            int dir = str->s[i].direction();
-            if (dir != QChar::DirNSM && dir != QChar::DirBN)
-                w += m_monospaceCharacterWidth;
+            QChar c = str->s[i];
+            int dir = c.direction();
+            if (dir != QChar::DirNSM && dir != QChar::DirBN) {
+                if (c == '\t' && tabWidth != 0) {
+                    w += tabWidth - ((xpos + w) % tabWidth);
+                } else
+                    w += m_monospaceCharacterWidth;
+            }
         }
+
         return w;
     }
     
-    return f->width(str->s, str->l, start, len);
+    return f->width(str->s, str->l, start, len, tabWidth, xpos);
 }
+
 #ifdef XXX
 inline int RenderText::widthFromCache(const Font *f, int start, int len) const
 {
@@ -1186,7 +1201,8 @@ inline int RenderText::widthFromCache(const Font *f, int start, int len) const
 
 #endif
 
-void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS, 
+void RenderText::trimmedMinMaxWidth(int leadWidth,
+                                    int& beginMinW, bool& beginWS, 
                                     int& endMinW, bool& endWS,
                                     bool& hasBreakableChar, bool& hasBreak,
                                     int& beginMaxW, int& endMaxW,
@@ -1203,6 +1219,10 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
         return;
     }
     
+    // if the text has a variable width tab, we need to call 
+    if (m_hasTab)
+        calcMinMaxWidth(leadWidth);
+    
     minW = m_minWidth;
     maxW = m_maxWidth;
     beginWS = stripFrontSpaces ? false : m_hasBeginWS;
@@ -1214,10 +1234,10 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
     hasBreakableChar = m_hasBreakableChar;
     hasBreak = m_hasBreak;
 
-    if (stripFrontSpaces && (str->s[0] == ' ' || (!isPre && str->s[0] == '\n'))) {
+    if (stripFrontSpaces && (str->s[0] == ' ' || (!isPre && (str->s[0] == '\n' || str->s[0] == '\t')))) {
         const Font *f = htmlFont( false );
         QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1, 0);
+        int spaceWidth = f->width(space, 1, 0, 0);
         maxW -= spaceWidth;
     }
     
@@ -1242,12 +1262,13 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
             if (linelen)
             {
 #if !APPLE_CHANGES
-                endMaxW = f->width(str->s, str->l, i, linelen);
+                endMaxW = f->width(str->s, str->l, i, linelen, tabWidth(), leadWidth + endMaxW); 
 #else
-                endMaxW = widthFromCache(f, i, linelen);
+                endMaxW = widthFromCache(f, i, linelen, tabWidth(), leadWidth + endMaxW);
 #endif
                 if (firstLine) {
                     firstLine = false;
+                    leadWidth = 0;
                     beginMaxW = endMaxW;
                 }
                 i += linelen;
@@ -1255,6 +1276,7 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
             else if (firstLine) {
                 beginMaxW = 0;
                 firstLine = false;
+                leadWidth = 0;
             }
     
             if (i == len-1)
@@ -1267,8 +1289,14 @@ void RenderText::trimmedMinMaxWidth(int& beginMinW, bool& beginWS,
 
 void RenderText::calcMinMaxWidth()
 {
+    // Use 0 for the leadWidth.   If the text contains a variable width tab, the real width
+    // will get measured when trimmedMinMaxWidth calls again with the real leadWidth.
     KHTMLAssert( !minMaxKnown() );
+    calcMinMaxWidth(0);
+}
 
+void RenderText::calcMinMaxWidth(int leadWidth)
+{
     // ### calc Min and Max width...
     m_minWidth = m_beginMinWidth = m_endMinWidth = 0;
     m_maxWidth = 0;
@@ -1278,7 +1306,7 @@ void RenderText::calcMinMaxWidth()
         
     int currMinWidth = 0;
     int currMaxWidth = 0;
-    m_hasBreakableChar = m_hasBreak = m_hasBeginWS = m_hasEndWS = false;
+    m_hasBreakableChar = m_hasBreak = m_hasTab = m_hasBeginWS = m_hasEndWS = false;
     
     // ### not 100% correct for first-line
     const Font *f = htmlFont( false );
@@ -1301,8 +1329,13 @@ void RenderText::calcMinMaxWidth()
                 m_hasBreak = true;
                 isNewline = true;
                 isSpace = false;
-            }
-            else
+            } else
+                isSpace = true;
+        } else if (c == '\t') {
+            if (isPre) {
+                m_hasTab = true;
+                isSpace = false;
+            } else
                 isSpace = true;
         } else {
             isSpace = c == ' ';
@@ -1318,12 +1351,14 @@ void RenderText::calcMinMaxWidth()
         
         if (ignoringSpaces && !isSpace)
             ignoringSpaces = false;
-            
-        if (ignoringSpaces || (i > 0 && c.unicode() == SOFT_HYPHEN)) // Ignore spaces and soft hyphens
+        
+        // Ignore spaces and soft hyphens
+        if (ignoringSpaces || (i > 0 && c.unicode() == SOFT_HYPHEN)) {
             continue;
+        }
         
         int wordlen = 0;
-        while (i+wordlen < len && str->s[i+wordlen] != '\n' && str->s[i+wordlen] != ' ' &&
+        while (i+wordlen < len && str->s[i+wordlen] != '\n' && str->s[i+wordlen] != ' ' && str->s[i+wordlen] != '\t' &&
                (i+wordlen == 0 || str->s[i+wordlen].unicode() != SOFT_HYPHEN) && // Skip soft hyphens
                (wordlen == 0 || !isBreakable( str->s, i+wordlen, str->l)))
             wordlen++;
@@ -1331,20 +1366,20 @@ void RenderText::calcMinMaxWidth()
         if (wordlen)
         {
 #if !APPLE_CHANGES
-            int w = f->width(str->s, str->l, i, wordlen);
+            int w = f->width(str->s, str->l, i, wordlen, tabWidth(), leadWidth + currMaxWidth);
 #else
-            int w = widthFromCache(f, i, wordlen);
+            int w = widthFromCache(f, i, wordlen, tabWidth(), leadWidth + currMaxWidth);
 #endif
             currMinWidth += w;
             currMaxWidth += w;
             
-            bool isBreakableCharSpace = (i+wordlen < len) ? ((!isPre && str->s[i+wordlen] == '\n') || 
+            bool isBreakableCharSpace = (i+wordlen < len) ? ((!isPre && (str->s[i+wordlen] == '\n' || str->s[i+wordlen] == '\t')) || 
                                                              str->s[i+wordlen] == ' ') : false;
 
             if (i+wordlen < len && style()->whiteSpace() == NORMAL)
                 m_hasBreakableChar = true;
             
-            // Add in wordspacing to our maxwidth, but not if this is the last word on a line or the
+            // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
             // last word in the run.
             if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
                 currMaxWidth += wordSpacing;
@@ -1368,7 +1403,7 @@ void RenderText::calcMinMaxWidth()
         }
         else {
             // Nowrap can never be broken, so don't bother setting the
-            // breakable character boolean. Pre can only be broken if we encounter a newline.
+            // breakable character boolean. Pre can only be broken if we encounter a newline.     
             if (style()->whiteSpace() == NORMAL || isNewline)
                 m_hasBreakableChar = true;
 
@@ -1379,6 +1414,7 @@ void RenderText::calcMinMaxWidth()
             {
                 if (firstLine) {
                     firstLine = false;
+                    leadWidth = 0;
                     m_beginMinWidth = currMaxWidth;
                 }
                 
@@ -1387,14 +1423,14 @@ void RenderText::calcMinMaxWidth()
             }
             else
             {
-                currMaxWidth += f->width( str->s, str->l, i + wordlen );
+                currMaxWidth += f->width(str->s, str->l, i + wordlen, 1, tabWidth(), leadWidth + currMaxWidth);
             }
         }
     }
-    
+
     if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
     if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
-
+        
     if (style()->whiteSpace() != NORMAL)
         m_minWidth = m_maxWidth;
 
@@ -1412,7 +1448,7 @@ bool RenderText::containsOnlyWhitespace(unsigned int from, unsigned int len) con
 {
     unsigned int currPos;
     for (currPos = from; 
-         currPos < from+len && (str->s[currPos] == '\n' || str->s[currPos].unicode() == ' '); 
+         currPos < from+len && (str->s[currPos] == '\n' || str->s[currPos].unicode() == ' ' || str->s[currPos] == '\t'); 
          currPos++);
     return currPos >= (from+len);
 }
@@ -1659,37 +1695,37 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse)
     s->m_len = len;
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, bool firstLine) const
+unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bool firstLine) const
 {
     if(!str->s || from > str->l ) return 0;
     if ( from + len > str->l ) len = str->l - from;
 
     const Font *f = htmlFont( firstLine );
-    return width( from, len, f );
+    return width( from, len, f, xpos );
 }
 
-unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *f) const
+unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *f, int xpos) const
 {
     if(!str->s || from > str->l ) return 0;
     if ( from + len > str->l ) len = str->l - from;
 
     int w;
-    if ( f == &style()->htmlFont() && from == 0 && len == str->l )
+    if ( style()->whiteSpace() != PRE && f == &style()->htmlFont() && from == 0 && len == str->l ) {
         w = m_maxWidth;
 #if APPLE_CHANGES
-    else if (f == &style()->htmlFont())
-        w = widthFromCache (f, from, len);
+    } else if (f == &style()->htmlFont()) {
+        w = widthFromCache (f, from, len, tabWidth(), xpos);
 #endif
-    else
-        w = f->width(str->s, str->l, from, len );
-
+    } else {
+	w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
+    }
+        
     //kdDebug( 6040 ) << "RenderText::width(" << from << ", " << len << ") = " << w << endl;
     return w;
 }
 
 int RenderText::width() const
 {
-    int w;
     int minx = 100000000;
     int maxx = 0;
     // slooow
@@ -1700,9 +1736,7 @@ int RenderText::width() const
             maxx = s->m_x + s->m_width;
     }
 
-    w = kMax(0, maxx-minx);
-
-    return w;
+    return kMax(0, maxx-minx);
 }
 
 QRect RenderText::getAbsoluteRepaintRect()

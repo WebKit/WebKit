@@ -755,7 +755,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                 const unsigned short ellipsisAndSpace[2] = { 0x2026, ' ' };
                 static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
                 const Font& font = style(numVisibleLines == 1)->htmlFont();
-                int ellipsisAndSpaceWidth = font.width(const_cast<QChar*>(ellipsisAndSpaceStr.unicode()), 2, 0, 2);
+                int ellipsisAndSpaceWidth = font.width(const_cast<QChar*>(ellipsisAndSpaceStr.unicode()), 2, 0, 2, 0, 0);
 
                 // Get ellipsis width + " " + anchor width
                 int totalWidth = ellipsisAndSpaceWidth + anchorBox->width();

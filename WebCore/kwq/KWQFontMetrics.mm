@@ -158,7 +158,7 @@ float QFontMetrics::xHeight() const
     return [data->getRenderer() xHeight];
 }
 
-int QFontMetrics::width(QChar qc) const
+int QFontMetrics::width(QChar qc, int tabWidth, int xpos) const
 {
     if (data.isNull()) {
         ERROR("called width on an empty QFontMetrics");
@@ -175,16 +175,18 @@ int QFontMetrics::width(QChar qc) const
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
-int QFontMetrics::charWidth(const QString &s, int pos) const
+int QFontMetrics::charWidth(const QString &s, int pos, int tabWidth, int xpos) const
 {
-    return width(s[pos]);
+    return width(s[pos], tabWidth, xpos);
 }
 
-int QFontMetrics::width(char c) const
+int QFontMetrics::width(char c, int tabWidth, int xpos) const
 {
     if (data.isNull()) {
         ERROR("called width on an empty QFontMetrics");
@@ -201,11 +203,13 @@ int QFontMetrics::width(char c) const
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
-int QFontMetrics::width(const QString &qstring, int len) const
+int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len) const
 {
     if (data.isNull()) {
         ERROR("called width on an empty QFontMetrics");
@@ -222,11 +226,13 @@ int QFontMetrics::width(const QString &qstring, int len) const
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
-int QFontMetrics::width(const QChar *uchars, int len) const
+int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) const
 {
     if (data.isNull()) {
         ERROR("called width on an empty QFontMetrics");
@@ -241,12 +247,14 @@ int QFontMetrics::width(const QChar *uchars, int len) const
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
 
     return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
-                               int letterSpacing, int wordSpacing, bool smallCaps) const
+                               int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
     if (data.isNull()) {
         ERROR("called floatWidth on an empty QFontMetrics");
@@ -260,6 +268,8 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
@@ -268,7 +278,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
     return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
-float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, float *buffer, int letterSpacing, int wordSpacing, bool smallCaps) const
+float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, float *buffer, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
     if (data.isNull()) {
         ERROR("called floatCharacterWidths on an empty QFontMetrics");
@@ -286,12 +296,14 @@ float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos,
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
     style.padding = toAdd;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
     style.families = families;
 
     return [data->getRenderer() floatWidthForRun:&run style:&style widths:buffer];
 }
 
-int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
+int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const
 {
     if (data.isNull()) {
         ERROR("called floatWidth on an empty QFontMetrics");
@@ -309,23 +321,25 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     style.smallCaps = smallCaps;
     style.families = families;
     style.padding = toAdd;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
     style.rtl = reversed;
 
     return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
 
-QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
+QRect QFontMetrics::boundingRect(const QString &qstring, int tabWidth, int xpos, int len) const
 {
-    return QRect(0, 0, width(qstring, len), height());
+    return QRect(0, 0, width(qstring, tabWidth, xpos, len), height());
 }
 
-QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str) const
+QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags, const QString &str, int tabWidth, int xpos) const
 {
     // FIXME: need to support word wrapping?
-    return QRect(x, y, width, height).intersect(boundingRect(str));
+    return QRect(x, y, width, height).intersect(boundingRect(str, tabWidth, xpos));
 }
 
-QSize QFontMetrics::size(int, const QString &qstring) const
+QSize QFontMetrics::size(int, const QString &qstring, int tabWidth, int xpos) const
 {
-    return QSize(width(qstring), height());
+    return QSize(width(qstring, tabWidth, xpos), height());
 }

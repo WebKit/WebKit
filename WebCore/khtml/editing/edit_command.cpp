@@ -26,6 +26,7 @@
 #include "edit_command.h"
 #include "selection.h"
 #include "khtml_part.h"
+#include "htmlediting.h"
 
 #include "xml/dom_position.h"
 #include "xml/dom_docimpl.h"
@@ -389,7 +390,7 @@ bool EditCommand::isTypingCommand() const
 
 CSSMutableStyleDeclarationImpl *EditCommand::styleAtPosition(const Position &pos)
 {
-    CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
+    CSSComputedStyleDeclarationImpl *computedStyle = positionBeforeTabSpan(pos).computedStyle();
     computedStyle->ref();
     CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
     computedStyle->deref();

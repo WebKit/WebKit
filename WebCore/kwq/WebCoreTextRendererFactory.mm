@@ -42,6 +42,8 @@ void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, un
 void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
 {
     style->padding = 0;
+    style->tabWidth = 0;
+    style->xpos = 0;
     style->textColor = nil;
     style->backgroundColor = nil;
     style->rtl = false;

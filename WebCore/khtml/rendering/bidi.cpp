@@ -386,7 +386,7 @@ static void addRun(BidiRun* bidiRun)
         if (text->text()) {
             for (int i = bidiRun->start; i < bidiRun->stop; i++) {
                 const QChar c = text->text()[i];
-                if (c == ' ' || c == '\n')
+                if (c == ' ' || c == '\n' || c == '\t')
                     numSpaces++;
             }
         }
@@ -714,6 +714,20 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
     return lastRootBox();
 }
 
+// usage: tw - (xpos % tw);
+int RenderBlock::tabWidth(bool isWhitespacePre)
+{
+    if (!isWhitespacePre)
+        return 0;
+    
+    QChar   spaceChar(' ');
+    const Font& font = style()->htmlFont();
+    int tw = font.width(&spaceChar, 1, 0, 0);
+    tw *= 8;
+        
+    return tw;
+}
+
 void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi)
 {
     // First determine our total width.
@@ -725,7 +739,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.
         if (r->obj->isText()) {
-            int textWidth = static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine);
+            int textWidth = static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, totWidth, m_firstLine);
             if (!r->compact) {
                 RenderStyle *style = r->obj->style();
                 if (style->whiteSpace() == NORMAL && style->khtmlLineBreak() == AFTER_WHITE_SPACE) {
@@ -797,7 +811,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                 int spaces = 0;
                 for ( int i = r->start; i < r->stop; i++ ) {
                     const QChar c = static_cast<RenderText *>(r->obj)->text()[i];
-                    if (c == ' ' || c == '\n')
+                    if (c == ' ' || c == '\n' || c == '\t')
                         spaces++;
                 }
 
@@ -1776,7 +1790,7 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
     // object iteration process.
     int w = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
-          (it.current() == ' ' || it.current() == '\n' || 
+          (it.current() == ' ' || it.current() == '\t' || it.current() == '\n' || 
            skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
         if (it.obj->isFloatingOrPositioned()) {
             RenderObject *o = it.obj;
@@ -1986,12 +2000,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // item, then this is all moot. -dwh
                 RenderObject* next = Bidinext( start.par, o, bidi );
                 if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
-                    if (static_cast<RenderText*>(next)->text()[0].unicode() == nonBreakingSpace &&
-                        o->style()->whiteSpace() == NORMAL && o->style()->nbspMode() == SPACE) {
-                        currentCharacterIsWS = true;
-                    }
-                    if (static_cast<RenderText*>(next)->text()[0].unicode() == ' ' ||
-                        static_cast<RenderText*>(next)->text()[0] == '\n') {
+                    RenderText *nextText = static_cast<RenderText*>(next);
+                    QChar nextChar = nextText->text()[0];
+
+                    if (nextText->style()->whiteSpace() != PRE && 
+                        (nextChar == ' ' || nextChar == '\n' || nextChar == '\t' ||
+                        nextChar.unicode() == nonBreakingSpace && next->style()->nbspMode() == SPACE)) {
                         currentCharacterIsSpace = true;
                         currentCharacterIsWS = true;
                         ignoringSpaces = true;
@@ -2022,7 +2036,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
                 const QChar c = str[pos];
-                currentCharacterIsSpace = c == ' ' || (!isPre && c == '\n');
+                currentCharacterIsSpace = c == ' ' || (!isPre && (c == '\n' || c == '\t'));
                 
                 if (isPre || !currentCharacterIsSpace)
                     isLineEmpty = false;
@@ -2035,12 +2049,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         addMidpoint(endMid);
                         
                         // Add the width up to but not including the hyphen.
-                        tmpW += t->width(lastSpace, pos - lastSpace, f);
+                        tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW);
                         
                         // For whitespace normal only, include the hyphen.  We need to ensure it will fit
                         // on the line if it shows when we break.
                         if (o->style()->whiteSpace() == NORMAL)
-                            tmpW += t->width(pos, 1, f);
+                            tmpW += t->width(pos, 1, f, w+tmpW);
                         
                         BidiIterator startMid(0, o, pos+1);
                         addMidpoint(startMid);
@@ -2060,8 +2074,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c.unicode() == nonBreakingSpace);
 
                 if (breakWords)
-                    wrapW += t->width(pos, 1, f);
-                if ((isPre && c == '\n') || (!isPre && isBreakable(str, pos, strlen, breakNBSP)) || (breakWords && wrapW > width)) {
+                    wrapW += t->width(pos, 1, f, w+wrapW);
+                if (c == '\n' || (!isPre && isBreakable(str, pos, strlen, breakNBSP)) || (breakWords && wrapW > width)) {
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this
@@ -2078,7 +2092,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                     }
 
-                    tmpW += t->width(lastSpace, pos - lastSpace, f);
+                    tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW);
                     if (!appliedStartWidth) {
                         tmpW += inlineWidth(o, true, false);
                         appliedStartWidth = true;
@@ -2114,7 +2128,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if (o->style()->whiteSpace() == NORMAL) {
                         // In AFTER_WHITE_SPACE mode, consider the current character
                         // as candidate width for this line.
-                        int charWidth = o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE ? t->width(pos, 1, f) : 0;
+                        int charWidth = o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE ? t->width(pos, 1, f, w+tmpW) : 0;
                         if (w + tmpW + charWidth > width) {
                             if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE) {
                                 // Check if line is too big even without the extra space
@@ -2132,7 +2146,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                         else if (pos > 1 && str[pos-1].unicode() == SOFT_HYPHEN)
                             // Subtract the width of the soft hyphen out since we fit on a line.
-                            tmpW -= t->width(pos-1, 1, f);
+                            tmpW -= t->width(pos-1, 1, f, w+tmpW);
                     }
 
                     if( *(str+pos) == '\n' && isPre) {
@@ -2204,7 +2218,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             
             // IMPORTANT: pos is > length here!
             if (!ignoringSpaces)
-                tmpW += t->width(lastSpace, pos - lastSpace, f);
+                tmpW += t->width(lastSpace, pos - lastSpace, f, w+tmpW);
             if (!appliedStartWidth)
                 tmpW += inlineWidth(o, true, false);
             if (!appliedEndWidth)
@@ -2408,8 +2422,8 @@ void RenderBlock::checkLinesForTextOverflow()
     static AtomicString ellipsisStr(ellipsis);
     const Font& firstLineFont = style(true)->htmlFont();
     const Font& font = style()->htmlFont();
-    int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1, 0);
-    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1, 0);
+    int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1, 0, 0);
+    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1, 0, 0);
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and

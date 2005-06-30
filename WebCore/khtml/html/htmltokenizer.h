@@ -116,9 +116,6 @@ public:
     bool flat;
 };
 
-// The count of spaces used for each tab.
-#define TAB_SIZE 8
-
 //-----------------------------------------------------------------------------
 
 class HTMLTokenizer : public Tokenizer, public CachedObjectClient
@@ -207,7 +204,6 @@ protected:
         NonePending = 0,
         SpacePending,
         LFPending,
-        TabPending
     } pending;
 
     // Discard line breaks immediately after start-tags
@@ -254,12 +250,6 @@ protected:
 
     // are we in a <script> ... </script block
     bool script;
-
-    // Are we in a <pre> ... </pre> block
-    bool pre;
-
-    // if 'pre == true' we track in which column we are
-    int prePos;
 
     // Are we in a <style> ... </style> block
     bool style;

@@ -1736,6 +1736,11 @@ int RenderObject::paddingRight() const
     return w;
 }
 
+int RenderObject::tabWidth() const
+{
+    return containingBlock()->tabWidth(style()->whiteSpace() == PRE);
+}
+
 RenderCanvas* RenderObject::canvas() const
 {
     return static_cast<RenderCanvas*>(document()->renderer());
@@ -2048,9 +2053,6 @@ void RenderObject::recalcMinMaxWidths()
     
     RenderObject *child = firstChild();
     while( child ) {
-        // gcc sucks. if anybody knows a trick to get rid of the
-        // warning without adding an extra (unneeded) initialisation,
-        // go ahead
 	int cmin = 0;
 	int cmax = 0;
 	bool test = false;
