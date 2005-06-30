@@ -112,6 +112,7 @@ sub oldXcode
 
 sub determineConfigurationProductDir
 {
+    determineBaseProductDir();
     determineConfiguration();
     determineXcodeVersion();
     if (oldXcode()) {

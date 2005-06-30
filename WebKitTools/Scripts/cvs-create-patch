@@ -112,7 +112,7 @@ sub diff
     my ($dir, $base) = getDirAndBase($path);
     my $errors = "";
     chdir $dir or die;
-    open DIFF, "cvs diff -lNpu '$base' |" or die;
+    open DIFF, "cvs -f diff -lNpu '$base' |" or die;
     my $indexPath;
     while (<DIFF>) {
         if (/^Index: (.*)/) {
