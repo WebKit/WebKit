@@ -1,3 +1,11 @@
+2005-06-29  Bruce DiBello  <bdibello@apple.com>
+
+        Reviewed by Geoff Garen
+
+        Test cases added: added expected results for previous check in
+
+        * layout-tests/fast/dom/HTMLDocument/url/getset-expected.txt: Added.
+
 2005-06-29  Geoffrey Garen  <ggaren@apple.com>
 
 	DOM compatibility tests for HTMLDocument::writeln
