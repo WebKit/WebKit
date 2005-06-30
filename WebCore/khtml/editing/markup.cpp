@@ -518,7 +518,8 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
         // there is a tab after every entry, except the last entry
         // (if the last character is a tab, the list gets an extra empty entry)
         if (!tabList.isEmpty()) {
-#ifdef COALESCE_TAB_SPANS
+//#ifdef COALESCE_TAB_SPANS
+#if 1
             tabText += '\t';
 #else
             paragraph->appendChild(createTabSpanElement(document), exceptionCode);

@@ -1,5 +1,18 @@
 2005-06-29  David Harrison  <harrison@apple.com>
 
+		Temporarily enable tab coalescing ahead of white-space:pre-wrap
+		change because of problems with keeping the tabs separate.  Will
+		revert when problems are fixed or remove if I do pre-wrap
+		first.
+
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::insertTab):
+        * khtml/editing/markup.cpp:
+        (khtml::createParagraphContentsFromString):
+
+2005-06-29  David Harrison  <harrison@apple.com>
+
         Reviewed by Dave Hyatt (rendering) and Maciej (editing).
 
         Test cases added:  Coming soon.  Will include with next round of changes for this bug.
