@@ -1,3 +1,12 @@
+2005-06-30  Bruce DiBello  <bdibello@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Test cases added: getting and setting div.align
+
+        * layout-tests/fast/dom/HTMLDivElement/align/getset-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDivElement/align/getset.html: Added.
+
 2005-06-29  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin Adler.
