@@ -1,3 +1,16 @@
+2005-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed <rdar://problem/4168161> JavaScript fails to throw an exception 
+        for invalid function calls
+        
+        Reviewed by sullivan.
+
+        Relevant mozilla test: ecma_3/Exceptions/regress-95101.js 
+
+        * kjs/nodes.cpp:
+        (FunctionCallNode::evaluate): evaluate now checks for an exception
+        after resolving a function name (in case the function is undefined)
+
 2005-07-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
