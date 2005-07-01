@@ -4,6 +4,7 @@
 #
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
+# Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
 
 $file = $ARGV[0];
 shift;
@@ -13,6 +14,10 @@ my $includelookup = 0;
 $findSize = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-s");
 # Use -i as second argument to make it include "lookup.h"
 $includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
+# Use -n as second argument to make it use the third
+#      argument as namespace parameter ie. -n KDOM
+$useNameSpace = $ARGV[1] if (defined($ARGV[0]) && $ARGV[0] eq "-n");
+
 print STDERR "Creating hashtable for $file\n";
 open(IN, $file) or die "No such file $file";
 
@@ -35,10 +40,14 @@ while (<IN>) {
   s/^\s*//g;
   if (/^\#|^$/) {
       # comment. do nothing
-    } elsif (/^\@begin\s*(\w+)\s*(\d+)\s*$/ && !$inside) {
-      $inside = 1;
-      $name = $1;
-      $hashsize = $2;
+    } elsif (/^\@begin/ && !$inside) {
+      if (/^\@begin\s*([:_\w]+)\s*(\d+)\s*$/) {
+        $inside = 1;
+        $name = $1;
+        $hashsize = $2;
+      } else {
+         printf STDERR "WARNING: \@begin without table name and hashsize, skipping $_\n";
+      }
     } elsif (/^\@end\s*$/ && $inside) {
 
       if($findSize) {
@@ -55,7 +64,7 @@ while (<IN>) {
       @attrs = ();
       @params = ();
       $inside = 0;
-    } elsif (/^([\w\[\=\]]+)\s*([\w\:-]+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
+	} elsif (/^([-:\@\w\[\=\]]+)\s*([\w\:-]+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
       my $key = $1;
       my $val = $2;
       my $att = $3;
@@ -94,10 +103,17 @@ sub calcTable() {
 	$size++;
       }
     }
+    #print STDERR "table[$h] = $i\n";
     $table[$h] = $i;
     $i++;
     $maxdepth = $depth if ( $depth > $maxdepth);
   }
+
+  # Ensure table is big enough (in case of undef entries at the end)
+  if ( $#table+1 < $size ) {
+    $#table = $size-1;
+  }
+  #print STDERR "After loop: size=$size table=".($#table+1)."\n";
 
   if ($findSize) {
     my $emptycount = 0;
@@ -106,12 +122,12 @@ sub calcTable() {
     }
     print STDERR "Hashsize: $hashsize  Total Size: $size Empty: $emptycount MaxDepth: $maxdepth Collisions: $collisions\n";
   }
-#  my $i = 0;
+#  my $debugtable = 0;
 #  foreach $entry (@table) {
-#    print "$i " . $entry;
-#    print " -> " . $links[$i] if (defined($links[$i]));
-#    print "\n";
-#    $i++;
+#    print STDERR "$debugtable " . (defined $entry ? $entry : '<undefined>');
+#    print STDERR " -> " . $links[$debugtable] if (defined($links[$debugtable]));
+#    print STDERR "\n";
+#    $debugtable++;
 #  }
 }
 
@@ -130,10 +146,19 @@ sub output() {
     print "/* Automatically generated from $file using $0. DO NOT EDIT ! */\n";
   }
 
+  my $nameEntries = "${name}Entries";
+  $nameEntries =~ s/:/_/g;
+
   print "\n#include \"lookup.h\"\n" if ($includelookup);
-  print "\nnamespace KJS {\n";
-  print "\nconst struct HashEntry ${name}Entries[] = {\n";
+  if ($useNameSpace) {
+    print "\nnamespace ${useNameSpace}\n{\n";
+    print "\nusing namespace KJS;";
+  } else {
+    print "\nnamespace KJS {\n";
+  }
+  print "\nstatic const struct HashEntry ".$nameEntries."[] = {\n";
   my $i = 0;
+  #print STDERR "writing out table with ".($#table+1)." entries\n";
   foreach $entry (@table) {
     if (defined($entry)) {
       my $key = $keys[$entry];
@@ -143,7 +168,7 @@ sub output() {
       print ", " . $params[$entry];
       print ", ";
       if (defined($links[$i])) {
-	print "&${name}Entries[$links[$i]]" . " \}";
+	print "&${nameEntries}[$links[$i]]" . " \}";
       } else {
 	print "0 \}"
       }
@@ -154,8 +179,8 @@ sub output() {
     print "\n";
     $i++;
   }
-  print "};\n";
-  print "\nconst struct HashTable $name = ";
-  print "\{ 2, $size, ${name}Entries, $hashsize \};\n\n";
+  print "};\n\n";
+  print "const struct HashTable $name = ";
+  print "\{ 2, $size, ".$nameEntries.", $hashsize \};\n\n";
   print "} // namespace\n";
 }

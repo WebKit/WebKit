@@ -1,3 +1,11 @@
+2005-07-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * kjs/create_hash_table: rolled in changes from KDE, including
+	-n <namespace> support from KDOM and support for newer comments
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3771
+
 2005-06-30  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in KDE fix to <rdar://problem/4167660> JavaScript fails to 
