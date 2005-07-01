@@ -1,5 +1,23 @@
 2005-07-01  Geoffrey Garen  <ggaren@apple.com>
 
+        -fixed <rdar://problem/4168186> JavaScript fails to throw exceptions 
+        for invalid return statements
+        
+        relevant tests:
+            ecma/Statements/12.9-1-n.js
+            ecma_2/Exceptions/lexical-052.js
+            ecma_2/Exceptions/statement-009.js
+
+        Reviewed by sullivan.
+
+        * kjs/nodes.cpp:
+        (ReturnNode::execute): now throws exception if return is not inside
+        a function.
+
+        * tests/mozilla/expected.html: updated to reflect fix
+
+2005-07-01  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by sullivan.
 
         * tests/mozilla/expected.html: Updated test results for last fix.
