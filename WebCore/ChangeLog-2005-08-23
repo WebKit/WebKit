@@ -1,3 +1,14 @@
+2005-07-01  Beth Dakin  <bdakin@apple.com>
+
+        Adding createCaption test for HTMLTableElement.
+
+        Reviewed by Adele (sort of).
+
+        Test cases added:
+
+        * layout-tests/fast/dom/HTMLTableElement/createCaption-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLTableElement/createCaption.html: Added.
+
 2005-07-01  Geoffrey Garen  <ggaren@apple.com>
 
         Moving dom tests around to conform to new directory structure
