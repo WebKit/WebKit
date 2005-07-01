@@ -39,6 +39,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebKitSystemInterface.h>
 #import <Quartz/Quartz.h>
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
@@ -230,6 +231,28 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return copiedItems;
 }
 
+- (BOOL)_anyPDFTagsFoundInMenu:(NSMenu *)menu
+{
+    NSEnumerator *e = [[menu itemArray] objectEnumerator];
+    NSMenuItem *item;
+    while ((item = [e nextObject]) != nil) {
+        switch ([item tag]) {
+            case WebMenuItemTagOpenWithDefaultApplication:
+            case WebMenuItemPDFActualSize:
+            case WebMenuItemPDFZoomIn:
+            case WebMenuItemPDFZoomOut:
+            case WebMenuItemPDFAutoSize:
+            case WebMenuItemPDFSinglePage:
+            case WebMenuItemPDFFacingPages:
+            case WebMenuItemPDFContinuous:
+            case WebMenuItemPDFNextPage:
+            case WebMenuItemPDFPreviousPage:
+                return YES;
+        }
+    }
+    return NO;
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     // Start with the menu items supplied by PDFKit, with WebKit tags applied
@@ -258,7 +281,30 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     ASSERT(webView);
     // Currently clicks anywhere in the PDF view are treated the same, so we just pass NSZeroPoint;
     // we implement elementAtPoint: here just to be slightly forward-looking.
-    return [webView _menuForElement:[self elementAtPoint:NSZeroPoint] defaultItems:items];
+    NSMenu *menu = [webView _menuForElement:[self elementAtPoint:NSZeroPoint] defaultItems:items];
+    
+    // The delegate has now had the opportunity to add items to the standard PDF-related items, or to
+    // remove or modify some of the PDF-related items. In 10.4, the PDF context menu did not go through 
+    // the standard WebKit delegate path, and so the standard PDF-related items always appeared. For
+    // clients that create their own context menu by hand-picking specific items from the default list, such as
+    // Safari, none of the PDF-related items will appear until the client is rewritten to explicitly
+    // include these items. So for backwards compatibility we're going to include the entire set of PDF-related
+    // items if the executable was linked in 10.4 or earlier and the menu returned from the delegate mechanism
+    // contains none of the PDF-related items.
+    if (WKExecutableLinkedInTigerOrEarlier()) {
+        if (![self _anyPDFTagsFoundInMenu:menu]) {
+            [menu addItem:[NSMenuItem separatorItem]];
+            NSEnumerator *e = [items objectEnumerator];
+            NSMenuItem *menuItem;
+            while ((menuItem = [e nextObject]) != nil) {
+                // copy menuItem since a given menuItem can be in only one menu at a time, and we don't
+                // want to mess with the menu returned from PDFKit.
+                [menu addItem:[menuItem copy]];
+            }
+        }
+    }
+    
+    return menu;
 }
 
 - (void)_updateScalingToReflectTextSize

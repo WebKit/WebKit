@@ -1,3 +1,19 @@
+2005-07-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3711: Displayed PDF have limited options in contextual menu
+        
+        This was a problem with using Tiger's version of Safari with tip of tree WebKit.
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView _anyPDFTagsFoundInMenu:]):
+        new method, returns YES if the menu contains any items with any of the new PDF-related tags.
+        (-[WebPDFView menuForEvent:]):
+        If the executable was linked on Tiger or older (but it will never be older, since this code is
+        new to Tiger), force all of the PDF-related items into the menu if none of them were there 
+        after processing by the delegate.
+
 2005-06-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
