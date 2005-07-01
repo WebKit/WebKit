@@ -1,5 +1,19 @@
 2005-07-01  Geoffrey Garen  <ggaren@apple.com>
 
+        -landed patch by Eric Seidel <macdome@opendarwin.org>
+        
+        -for http://bugzilla.opendarwin.org/show_bug.cgi?id=3657
+        GroundWork:  Moving some functions from khtml->jsc following kjs TOT
+        
+        - no layout test necessary yet - only groundwork
+
+        Reviewed by darin.
+
+        * kjs/lookup.h:
+        (KJS::cacheGlobalObject):
+
+2005-07-01  Geoffrey Garen  <ggaren@apple.com>
+
         -landed patch by Carsten Guenther <cguenther@gmail.com>
 
         -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
