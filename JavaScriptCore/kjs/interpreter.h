@@ -108,6 +108,12 @@ namespace KJS {
      * @return The calling execution context
      */
     const Context callingContext() const;
+    
+    /**
+     * The line number on which the current statement begins
+     * NOTE: Only for source compatibility, JSC does not support this method.
+     */
+    int curStmtFirstLine() const { return 0; }
 
   private:
     ContextImp *rep;

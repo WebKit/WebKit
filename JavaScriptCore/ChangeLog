@@ -2,6 +2,16 @@
 
         Reviewed by darin.
 
+        * kjs/interpreter.h:
+        (KJS::Context::curStmtFirstLine): stub for compatibility with KDE
+        * kjs/value.h:
+        (KJS::Value::isValid): compatibility with KDE
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3687
+
+2005-07-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         * kjs/create_hash_table: rolled in changes from KDE, including
 	-n <namespace> support from KDOM and support for newer comments
 	http://bugzilla.opendarwin.org/show_bug.cgi?id=3771

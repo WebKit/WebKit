@@ -212,7 +212,18 @@ namespace KJS {
 
     explicit Value(const char *);
     Value(const UString &);
-
+    
+    /**
+     * Returns whether or not this is a valid value. An invalid value
+     * has a 0 implementation pointer and should not be used for
+     * any other operation than this check. Current use: as a
+     * distinct return value signalling failing dynamicCast() calls.
+     */
+    bool isValid() const { return rep != 0; }
+    /**
+     * @deprecated
+     * Use !isValid() instead.
+     */
     bool isNull() const { return rep == 0; }
     ValueImp *imp() const { return rep; }
 
