@@ -1,3 +1,10 @@
+2005-07-01  John Sullivan  <sullivan@apple.com>
+
+        - added WKExecutableLinkedInTigerOrEarlier
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+
 2005-06-06  Maciej Stachowiak  <mjs@apple.com>
 
         - updated for crashing bugfix

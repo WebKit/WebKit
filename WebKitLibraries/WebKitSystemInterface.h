@@ -123,3 +123,5 @@ ATSGlyphRef WKGetDefaultGlyphForChar(NSFont *font, UniChar c);
 NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
 NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);
 NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowRef);
+
+BOOL WKExecutableLinkedInTigerOrEarlier(void);
