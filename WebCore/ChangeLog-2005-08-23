@@ -1,3 +1,15 @@
+2005-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        -landed patch by Carsten Guenther <cguenther@gmail.com>
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3477
+
+        -corrects errors in date layout test
+
+        Reviewed by darin.
+
+        Test cases modified:
+        * layout-tests/fast/js/date-parse-test.html:
+
 2005-07-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

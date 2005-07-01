@@ -61,7 +61,7 @@ testDateParse("Dec 25 1995 1:30", 819855000000 + o);
 testDateParse("Dec 25 1995 1:30 ", 819855000000 + o);
 testDateParse("Dec 25 1995 1:30 AM GMT", 819855000000);
 testDateParse("Dec 25 1995 1:30 AM", 819855000000 + o);
-testDateParse("Dec 25 1995 1:30AM", 819855000000 + o);
+testDateParse("Dec 25 1995 1:30AM", NaN);
 testDateParse("Dec 25 1995 1:30 AM ", 819855000000 + o);
 
 testDateParse("Dec 25 1995 13:30 GMT", 819898200000);
@@ -69,7 +69,7 @@ testDateParse("Dec 25 1995 13:30", 819898200000 + o);
 testDateParse("Dec 25 1995 13:30 ", 819898200000 + o);
 testDateParse("Dec 25 1995 1:30 PM GMT", 819898200000);
 testDateParse("Dec 25 1995 1:30 PM", 819898200000 + o);
-testDateParse("Dec 25 1995 1:30PM", 819898200000 + o);
+testDateParse("Dec 25 1995 1:30PM", NaN);
 testDateParse("Dec 25 1995 1:30 PM ", 819898200000 + o);
 
 testDateParse("Dec 25 1995 UTC", 819849600000);
@@ -87,17 +87,17 @@ testDateParse("Dec 25 1995 1:30 PM UT", 819898200000);
 testDateParse("Dec 25 1995 1:30 PM PST", 819927000000);
 testDateParse("Dec 25 1995 1:30 PM PDT", 819923400000);
 
-testDateParse("Dec 25 1995 XXX", 819849600000);
-testDateParse("Dec 25 1995 1:30 XXX", 819855000000);
+testDateParse("Dec 25 1995 XXX", NaN);
+testDateParse("Dec 25 1995 1:30 XXX", NaN);
 
-testDateParse("Dec 25 1995 1:30 U", 819855000000);
-testDateParse("Dec 25 1995 1:30 V", 819855000000);
-testDateParse("Dec 25 1995 1:30 W", 819855000000);
-testDateParse("Dec 25 1995 1:30 X", 819855000000);
+testDateParse("Dec 25 1995 1:30 U", NaN);
+testDateParse("Dec 25 1995 1:30 V", NaN);
+testDateParse("Dec 25 1995 1:30 W", NaN);
+testDateParse("Dec 25 1995 1:30 X", NaN);
 
 testDateParse("Dec 25 1995 0:30 GMT", 819851400000);
-testDateParse("Dec 25 1995 0:30 AM GMT", NaN);
-testDateParse("Dec 25 1995 0:30 PM GMT", NaN);
+testDateParse("Dec 25 1995 0:30 AM GMT", 819851400000);
+testDateParse("Dec 25 1995 0:30 PM GMT", 819894600000);
 testDateParse("Dec 25 1995 12:30 AM GMT", 819851400000);
 testDateParse("Dec 25 1995 12:30 PM GMT", 819894600000);
 testDateParse("Dec 25 1995 13:30 AM GMT", NaN);
