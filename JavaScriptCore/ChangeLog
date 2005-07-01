@@ -1,3 +1,38 @@
+2005-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in KDE fix to <rdar://problem/4167660> JavaScript fails to 
+        throw exceptions for invalid break/continue statements
+
+        No layout tests because it's already covered by the Mozilla suite
+
+        Reviewed by mjs.
+
+        * kjs/internal.h: LabelStack now tracks where you are relative to
+        switch and iteration (loop) statements
+        
+        (KJS::LabelStack::LabelStack):
+        (KJS::LabelStack::pushIteration):
+        (KJS::LabelStack::popIteration):
+        (KJS::LabelStack::inIteration):
+        (KJS::LabelStack::pushSwitch):
+        (KJS::LabelStack::popSwitch):
+        (KJS::LabelStack::inSwitch):
+
+        * kjs/nodes.cpp: 
+        These files were updated to use the new LabelStack:
+        (DoWhileNode::execute): 
+        (WhileNode::execute):
+        (ForNode::execute):
+        (ForInNode::execute):
+        (SwitchNode::execute):
+        
+        These files were updated to throw exceptions for invalid
+        break/continue statements:
+        (BreakNode::execute): 
+        (ContinueNode::execute):
+
+        * tests/mozilla/expected.html: Updated expected results to reflect fix
+
 2005-06-30  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by rjw.
