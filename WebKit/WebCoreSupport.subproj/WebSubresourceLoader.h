@@ -28,25 +28,25 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 
 @class WebDataSource;
 
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 
-@interface WebSubresourceClient : WebBaseResourceHandleDelegate <WebCoreResourceHandle>
+@interface WebSubresourceLoader : WebLoader <WebCoreResourceHandle>
 {
-    id <WebCoreResourceLoader> loader;
+    id <WebCoreResourceLoader> coreLoader;
 }
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
                                        withURL:(NSURL *)URL 
                                  customHeaders:(NSDictionary *)customHeaders
                                       referrer:(NSString *)referrer 
                                  forDataSource:(WebDataSource *)source;
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
                                        withURL:(NSURL *)URL 
                                  customHeaders:(NSDictionary *)customHeaders
                                       postData:(NSArray *)postData 

@@ -35,11 +35,11 @@
 @class NSURLRequest;
 @class NSURLResponse;
 @class WebArchive;
-@class WebBaseResourceHandleDelegate;
+@class WebLoader;
 @class WebBridge;
 @class WebHistoryItem;
 @class WebIconLoader;
-@class WebMainResourceClient;
+@class WebMainResourceLoader;
 @class WebResource;
 @class WebView;
 
@@ -72,11 +72,11 @@
     NSURLResponse *response;
 
     // Client for main resource.
-    WebMainResourceClient *mainClient;
+    WebMainResourceLoader *mainResourceLoader;
     
     // Clients for other resources.
-    NSMutableArray *subresourceClients;
-    NSMutableArray *plugInStreamClients;
+    NSMutableArray *subresourceLoaders;
+    NSMutableArray *plugInStreamLoaders;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
@@ -168,10 +168,10 @@
 - (void)_stopLoadingInternal;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
-- (void)_addSubresourceClient:(WebBaseResourceHandleDelegate *)client;
-- (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client;
-- (void)_addPlugInStreamClient:(WebBaseResourceHandleDelegate *)client;
-- (void)_removePlugInStreamClient:(WebBaseResourceHandleDelegate *)client;
+- (void)_addSubresourceLoader:(WebLoader *)loader;
+- (void)_removeSubresourceLoader:(WebLoader *)loader;
+- (void)_addPlugInStreamLoader:(WebLoader *)loader;
+- (void)_removePlugInStreamLoader:(WebLoader *)loader;
 - (void)_setPrimaryLoadComplete:(BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;

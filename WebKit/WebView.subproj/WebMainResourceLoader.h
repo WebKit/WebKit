@@ -28,13 +28,13 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 #import <WebKitSystemInterface.h>
 
 @class WebPolicyDecisionListener;
 @class WebDataSource;
 
-@interface WebMainResourceClient : WebBaseResourceHandleDelegate
+@interface WebMainResourceLoader : WebLoader
 {
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only

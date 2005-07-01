@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNetscapePluginStream.h>
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
@@ -40,7 +40,7 @@
 
 #import <Foundation/NSURLConnection.h>
 
-@interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
+@interface WebNetscapePlugInStreamLoader : WebLoader
 {
     WebNetscapePluginStream *stream;
     WebBaseNetscapePluginView *view;
@@ -83,7 +83,7 @@
         [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
     }
 
-    _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
+    _loader = [[WebNetscapePlugInStreamLoader alloc] initWithStream:self view:view]; 
     [_loader setDataSource:[view dataSource]];
     
     isTerminated = NO;
@@ -102,11 +102,11 @@
 {
     ASSERT(request);
 
-    [[_loader dataSource] _addPlugInStreamClient:_loader];
+    [[_loader dataSource] _addPlugInStreamLoader:_loader];
 
     BOOL succeeded = [_loader loadWithRequest:request];
     if (!succeeded) {
-        [[_loader dataSource] _removePlugInStreamClient:_loader];
+        [[_loader dataSource] _removePlugInStreamLoader:_loader];
     }
 }
 
@@ -124,7 +124,7 @@
 
 @end
 
-@implementation WebNetscapePluginConnectionDelegate
+@implementation WebNetscapePlugInStreamLoader
 
 - initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
 {
@@ -183,10 +183,10 @@
 
 - (void)didFinishLoading
 {
-    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self dataSource] _removePlugInStreamClient:self];
+    [[self dataSource] _removePlugInStreamLoader:self];
     [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [stream finishedLoadingWithData:[self resourceData]];
     [super didFinishLoading];
@@ -196,12 +196,12 @@
 
 - (void)didFailWithError:(NSError *)error
 {
-    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     // The other additional processing can do anything including possibly releasing self;
     // one example of this is 3266216
     [self retain];
 
-    [[self dataSource] _removePlugInStreamClient:self];
+    [[self dataSource] _removePlugInStreamLoader:self];
     [[view webView] _receivedError:error fromDataSource:[self dataSource]];
     [stream destroyStreamWithError:error];
     [super didFailWithError:error];
@@ -211,10 +211,10 @@
 
 - (void)cancelWithError:(NSError *)error
 {
-    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
+    // Calling _removePlugInStreamLoader will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self dataSource] _removePlugInStreamClient:self];
+    [[self dataSource] _removePlugInStreamLoader:self];
     [super cancelWithError:error];
 
     [self release];

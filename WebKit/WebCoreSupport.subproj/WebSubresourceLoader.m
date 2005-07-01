@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebSubresourceLoader.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
@@ -41,13 +41,13 @@
 
 #import <WebCore/WebCoreResourceLoader.h>
 
-@implementation WebSubresourceClient
+@implementation WebSubresourceLoader
 
 - initWithLoader:(id <WebCoreResourceLoader>)l dataSource:(WebDataSource *)s
 {
     [super init];
     
-    loader = [l retain];
+    coreLoader = [l retain];
 
     [self setDataSource: s];
     
@@ -56,20 +56,19 @@
 
 - (void)dealloc
 {
-    [loader release];
+    [coreLoader release];
     [super dealloc];
 }
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
 				   withRequest:(NSMutableURLRequest *)newRequest
                                  customHeaders:(NSDictionary *)customHeaders
 				      referrer:(NSString *)referrer 
 				 forDataSource:(WebDataSource *)source
 {
-    WebSubresourceClient *client = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
+    WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
-    [source _addSubresourceClient:client];
-
+    [source _addSubresourceLoader:loader];
 
     NSEnumerator *e = [customHeaders keyEnumerator];
     NSString *key;
@@ -90,27 +89,27 @@
     [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
     [newRequest _web_setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
             
-    if (![client loadWithRequest:newRequest]) {
-        client = nil;
+    if (![loader loadWithRequest:newRequest]) {
+        loader = nil;
     }
     
-    return client;
+    return loader;
 }
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
 				       withURL:(NSURL *)URL
 				 customHeaders:(NSDictionary *)customHeaders
 				      referrer:(NSString *)referrer
 				 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
+    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 
-    return client;
+    return loader;
 }
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
++ (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
 				       withURL:(NSURL *)URL
 				 customHeaders:(NSDictionary *)customHeaders
 				      postData:(NSArray *)postData
@@ -122,10 +121,10 @@
     [newRequest setHTTPMethod:@"POST"];
     webSetHTTPBody(newRequest, postData);
 
-    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
+    WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 
-    return client;
+    return loader;
 
 }
 
@@ -140,7 +139,7 @@
     NSURLRequest *clientRequest = [super willSendRequest:newRequest redirectResponse:redirectResponse];
     
     if (clientRequest != nil && ![oldURL isEqual:[clientRequest URL]]) {
-	[loader redirectedToURL:[clientRequest URL]];
+	[coreLoader redirectedToURL:[clientRequest URL]];
     }
 
     return clientRequest;
@@ -155,7 +154,7 @@
     // essentially an infinite load and therefore a memory leak. Both this code and code in 
     // WebMainRecoureClient must be removed once multipart/x-mixed-replace is fully implemented. 
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        [dataSource _removeSubresourceClient:self];
+        [dataSource _removeSubresourceLoader:self];
         [[[dataSource _webView] mainFrame] _checkLoadComplete];
         [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                          code:NSURLErrorUnsupportedURL
@@ -166,7 +165,7 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [loader receivedResponse:r];
+    [coreLoader receivedResponse:r];
     [super didReceiveResponse:r];
     [self release];
 }
@@ -176,19 +175,19 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [loader addData:data];
+    [coreLoader addData:data];
     [super didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }
 
 - (void)didFinishLoading
 {
-    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // Calling _removeSubresourceLoader will likely result in a call to release, so we must retain.
     [self retain];
     
-    [loader finishWithData:[self resourceData]];
+    [coreLoader finishWithData:[self resourceData]];
     
-    [dataSource _removeSubresourceClient:self];
+    [dataSource _removeSubresourceLoader:self];
     
     [[dataSource _webView] _finishedLoadingResourceFromDataSource:dataSource];
 
@@ -199,11 +198,11 @@
 
 - (void)didFailWithError:(NSError *)error
 {
-    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // Calling _removeSubresourceLoader will likely result in a call to release, so we must retain.
     [self retain];
     
-    [loader reportError];
-    [dataSource _removeSubresourceClient:self];
+    [coreLoader reportError];
+    [dataSource _removeSubresourceLoader:self];
     [self receivedError:error];
     [super didFailWithError:error];
 
@@ -212,11 +211,11 @@
 
 - (void)cancel
 {
-    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // Calling _removeSubresourceLoader will likely result in a call to release, so we must retain.
     [self retain];
         
-    [loader cancel];
-    [dataSource _removeSubresourceClient:self];
+    [coreLoader cancel];
+    [dataSource _removeSubresourceLoader:self];
     [self receivedError:[self cancelledError]];
     [super cancel];
 

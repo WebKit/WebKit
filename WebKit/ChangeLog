@@ -1,3 +1,63 @@
+2005-06-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=3774>
+          do renaming so that loaders are called "loader", not "client" or "delegate"
+
+        * Misc.subproj/WebIconLoader.h:
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePlugInStreamLoader didFinishLoading]):
+        (-[WebNetscapePlugInStreamLoader didFailWithError:]):
+        (-[WebNetscapePlugInStreamLoader cancelWithError:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:customHeaders:]):
+        (-[WebBridge startLoadingResource:withURL:customHeaders:postData:]):
+        (-[WebBridge canRunModalNow]):
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Removed.
+        * WebCoreSupport.subproj/WebSubresourceClient.m: Removed.
+        * WebCoreSupport.subproj/WebSubresourceLoader.h:
+        * WebCoreSupport.subproj/WebSubresourceLoader.m:
+        (-[WebSubresourceLoader initWithLoader:dataSource:]):
+        (-[WebSubresourceLoader dealloc]):
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        (+[WebSubresourceLoader startLoadingResource:withURL:customHeaders:referrer:forDataSource:]):
+        (+[WebSubresourceLoader startLoadingResource:withURL:customHeaders:postData:referrer:forDataSource:]):
+        (-[WebSubresourceLoader didReceiveResponse:]):
+        (-[WebSubresourceLoader didReceiveData:lengthReceived:]):
+        (-[WebSubresourceLoader didFinishLoading]):
+        (-[WebSubresourceLoader didFailWithError:]):
+        (-[WebSubresourceLoader cancel]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h: Removed.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m: Removed.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setLoading:]):
+        (-[WebDataSource _updateLoading]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _addSubresourceLoader:]):
+        (-[WebDataSource _removeSubresourceLoader:]):
+        (-[WebDataSource _addPlugInStreamLoader:]):
+        (-[WebDataSource _removePlugInStreamLoader:]):
+        (-[WebDataSource _stopLoadingInternal]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource data]):
+        (-[WebDataSource isLoading]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebLoader.h:
+        * WebView.subproj/WebLoader.m:
+        * WebView.subproj/WebMainResourceClient.h: Removed.
+        * WebView.subproj/WebMainResourceClient.m: Removed.
+        * WebView.subproj/WebMainResourceLoader.h:
+        * WebView.subproj/WebMainResourceLoader.m:
+        (-[WebMainResourceLoader didReceiveResponse:]):
+
 2005-06-29  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt (rendering) and Maciej (editing).

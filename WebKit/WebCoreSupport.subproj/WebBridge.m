@@ -32,7 +32,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 #import "WebControllerSets.h"
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
@@ -69,7 +69,7 @@
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebSubresourceLoader.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
@@ -450,7 +450,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
-    return [WebSubresourceClient startLoadingResource:resourceLoader
+    return [WebSubresourceLoader startLoadingResource:resourceLoader
                                               withURL:URL
                                         customHeaders:customHeaders
                                              referrer:(hideReferrer ? nil : [self referrer])
@@ -470,7 +470,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     BOOL hideReferrer;
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
-    return [WebSubresourceClient startLoadingResource:resourceLoader
+    return [WebSubresourceLoader startLoadingResource:resourceLoader
                                               withURL:URL
  				        customHeaders:customHeaders
 				             postData:postData
@@ -1654,7 +1654,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)canRunModalNow
 {
-    return [self canRunModal] && ![WebBaseResourceHandleDelegate inConnectionCallback];
+    return [self canRunModal] && ![WebLoader inConnectionCallback];
 }
 
 - (void)runModal

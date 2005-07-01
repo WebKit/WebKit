@@ -52,7 +52,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebMainResourceLoader.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #ifndef OMIT_TIGER_FEATURES
@@ -80,9 +80,9 @@
     [request release];
     [originalRequest release];
     [originalRequestCopy release];
-    [mainClient release];
-    [subresourceClients release];
-    [plugInStreamClients release];
+    [mainResourceLoader release];
+    [subresourceLoaders release];
+    [plugInStreamLoaders release];
     [pageTitle release];
     [response release];
     [mainDocumentError release];
@@ -300,7 +300,7 @@
     } else {
         [_private->webView release];
         // FIXME: It would be cleanest to set webView to nil here. Keeping a non-retained reference
-        // to the WebView is dangerous. But WebSubresourceClient actually depends on this non-retained
+        // to the WebView is dangerous. But WebSubresourceLoader actually depends on this non-retained
         // reference when starting loads after the data source has stoppped loading.
         [self release];
     }
@@ -308,7 +308,7 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading:_private->mainClient || [_private->subresourceClients count]];
+    [self _setLoading:_private->mainResourceLoader || [_private->subresourceLoaders count]];
 }
 
 - (void)_setWebView: (WebView *)webView
@@ -339,10 +339,10 @@
 	// there's no callback for that.
         [self _loadIcon];
 
-        if (_private->mainClient != nil) {
-            [self _setData:[_private->mainClient resourceData]];
-            [_private->mainClient release];
-            _private->mainClient = nil;
+        if (_private->mainResourceLoader != nil) {
+            [self _setData:[_private->mainResourceLoader resourceData]];
+            [_private->mainResourceLoader release];
+            _private->mainResourceLoader = nil;
         }
         
         [self _updateLoading];
@@ -389,7 +389,7 @@
     if (pageCache){
         _private->loadingFromPageCache = YES;
         [self _commitIfReady: pageCache];
-    } else if (!_private->mainClient) {
+    } else if (!_private->mainResourceLoader) {
         _private->loadingFromPageCache = NO;
         
         id identifier;
@@ -399,46 +399,46 @@
         else
             identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
             
-        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
-        [_private->mainClient setIdentifier: identifier];
+        _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
+        [_private->mainResourceLoader setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
-        if (![_private->mainClient loadWithRequest:_private->request]) {
+        if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
             ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level",
                 [_private->request URL]);
-            [_private->mainClient release];
-            _private->mainClient = nil;
+            [_private->mainResourceLoader release];
+            _private->mainResourceLoader = nil;
             [self _updateLoading];
         }
     }
 }
 
-- (void)_addSubresourceClient:(WebBaseResourceHandleDelegate *)client
+- (void)_addSubresourceLoader:(WebLoader *)loader
 {
-    if (_private->subresourceClients == nil) {
-        _private->subresourceClients = [[NSMutableArray alloc] init];
+    if (_private->subresourceLoaders == nil) {
+        _private->subresourceLoaders = [[NSMutableArray alloc] init];
     }
-    [_private->subresourceClients addObject:client];
+    [_private->subresourceLoaders addObject:loader];
     [self _setLoading:YES];
 }
 
-- (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client
+- (void)_removeSubresourceLoader:(WebLoader *)loader
 {
-    [_private->subresourceClients removeObject:client];
+    [_private->subresourceLoaders removeObject:loader];
     [self _updateLoading];
 }
 
-- (void)_addPlugInStreamClient:(WebBaseResourceHandleDelegate *)client
+- (void)_addPlugInStreamLoader:(WebLoader *)loader
 {
-    if (_private->plugInStreamClients == nil) {
-        _private->plugInStreamClients = [[NSMutableArray alloc] init];
+    if (_private->plugInStreamLoaders == nil) {
+        _private->plugInStreamLoaders = [[NSMutableArray alloc] init];
     }
-    [_private->plugInStreamClients addObject:client];
+    [_private->plugInStreamLoaders addObject:loader];
     [self _setLoading:YES];
 }
 
-- (void)_removePlugInStreamClient:(WebBaseResourceHandleDelegate *)client
+- (void)_removePlugInStreamLoader:(WebLoader *)loader
 {
-    [_private->plugInStreamClients removeObject:client];
+    [_private->plugInStreamLoaders removeObject:loader];
     [self _updateLoading];
 }
 
@@ -459,9 +459,9 @@
 
     _private->stopping = YES;
 
-    if(_private->mainClient){
+    if(_private->mainResourceLoader){
         // Stop the main handle and let it set the cancelled error.
-        [_private->mainClient cancel];
+        [_private->mainResourceLoader cancel];
     }else{
         // Main handle is already done. Set the cancelled error.
         NSError *cancelledError = [NSError _webKitErrorWithDomain:NSURLErrorDomain
@@ -470,9 +470,9 @@
         [self _setMainDocumentError:cancelledError];
     }
     
-    NSArray *clients = [_private->subresourceClients copy];
-    [clients makeObjectsPerformSelector:@selector(cancel)];
-    [clients release];
+    NSArray *loaders = [_private->subresourceLoaders copy];
+    [loaders makeObjectsPerformSelector:@selector(cancel)];
+    [loaders release];
     
     if (_private->committed) {
 	[[self _bridge] stopLoading];        
@@ -932,16 +932,16 @@
     }
 
     _private->defersCallbacks = defers;
-    [_private->mainClient setDefersCallbacks:defers];
+    [_private->mainResourceLoader setDefersCallbacks:defers];
 
-    NSEnumerator *e = [_private->subresourceClients objectEnumerator];
-    WebBaseResourceHandleDelegate *client;
-    while ((client = [e nextObject])) {
-        [client setDefersCallbacks:defers];
+    NSEnumerator *e = [_private->subresourceLoaders objectEnumerator];
+    WebLoader *loader;
+    while ((loader = [e nextObject])) {
+        [loader setDefersCallbacks:defers];
     }
-    e = [_private->plugInStreamClients objectEnumerator];
-    while ((client = [e nextObject])) {
-        [client setDefersCallbacks:defers];
+    e = [_private->plugInStreamLoaders objectEnumerator];
+    while ((loader = [e nextObject])) {
+        [loader setDefersCallbacks:defers];
     }
 
     // It's OK to use the internal version of getting the child
@@ -1028,7 +1028,7 @@
 
 - (void)_stopLoadingWithError:(NSError *)error
 {
-    [_private->mainClient cancelWithError:error];
+    [_private->mainResourceLoader cancelWithError:error];
 }
 
 - (void)_setWebFrame:(WebFrame *)frame
@@ -1112,7 +1112,7 @@
 
 - (NSData *)data
 {
-    return _private->resourceData != nil ? _private->resourceData : [_private->mainClient resourceData];
+    return _private->resourceData != nil ? _private->resourceData : [_private->mainResourceLoader resourceData];
 }
 
 - (id <WebDocumentRepresentation>) representation
@@ -1165,7 +1165,7 @@
         if (!_private->primaryLoadComplete && _private->loading) {
             return YES;
         }
-        if ([_private->subresourceClients count]) {
+        if ([_private->subresourceLoaders count]) {
             return YES;
         }
         if (![[[self webFrame] _bridge] doneProcessingData])

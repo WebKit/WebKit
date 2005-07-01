@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebMainResourceLoader.h>
 
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSURLConnection.h>
@@ -51,9 +51,9 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebBridge.h>
 
-// FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
+// FIXME: More that is in common with WebSubresourceLoader should move up into WebLoader.
 
-@implementation WebMainResourceClient
+@implementation WebMainResourceLoader
 
 - initWithDataSource:(WebDataSource *)ds
 {
@@ -317,9 +317,9 @@
     // FIXME: Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not 
     // load multipart/x-mixed-replace content.  Pages with such content contain what is 
     // essentially an infinite load and therefore a memory leak. Both this code and code in
-    // SubresourceClient must be removed once multipart/x-mixed-replace is fully implemented. 
+    // SubresourceLoader must be removed once multipart/x-mixed-replace is fully implemented. 
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        [dataSource _removeSubresourceClient:self];
+        [dataSource _removeSubresourceLoader:self];
         [[[dataSource _webView] mainFrame] _checkLoadComplete];
         [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                          code:NSURLErrorUnsupportedURL

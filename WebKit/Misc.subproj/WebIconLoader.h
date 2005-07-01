@@ -26,14 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 
 @class WebIconLoaderPrivate;
 
 /*!
     @class WebIconLoader
 */
-@interface WebIconLoader : WebBaseResourceHandleDelegate
+@interface WebIconLoader : WebLoader
 {
     WebIconLoaderPrivate *_private;
 }

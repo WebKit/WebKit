@@ -33,12 +33,12 @@
 
 @class NSURLRequest;
 @class NSURLConnection;
-@class WebNetscapePluginConnectionDelegate;
+@class WebNetscapePlugInStreamLoader;
 
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {    
-    WebNetscapePluginConnectionDelegate *_loader;
+    WebNetscapePlugInStreamLoader *_loader;
     NSURLRequest *request;
 }
 

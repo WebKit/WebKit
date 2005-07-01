@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebLoader.h>
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLConnection.h>
@@ -55,10 +55,10 @@ static BOOL NSURLConnectionSupportsBufferedData;
 - (NSData *)_bufferedData;
 @end
 
-@interface WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
+@interface WebLoader (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
 @end
 
-@implementation WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) 
+@implementation WebLoader (WebNSURLAuthenticationChallengeSender) 
 
 - (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
@@ -107,7 +107,7 @@ static BOOL NSURLConnectionSupportsBufferedData;
 + (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
 @end
 
-@implementation WebBaseResourceHandleDelegate
+@implementation WebLoader
 
 + (void)initialize
 {
