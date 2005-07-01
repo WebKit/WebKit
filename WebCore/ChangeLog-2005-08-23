@@ -1,5 +1,43 @@
 2005-07-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Moving dom tests around to conform to new directory structure
+        specified in today's meeting.
+
+        Reviewed by justing.
+
+        Test cases added: 
+
+        * layout-tests/fast/dom/HTMLDocument/title-get-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/title-get.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/title-set-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/title-set.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/title/get-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/title/get.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/title/set-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/title/set.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/url-getset-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/url-getset.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/url/getset-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/url/getset.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/write-call-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/write-call.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/write-multiple-calls-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/write-multiple-calls.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/write/call-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/write/call.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/write/multiple-calls-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/write/multiple-calls.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/writeln-call-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln-call.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln-multiple-calls-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln-multiple-calls.html: Added.
+        * layout-tests/fast/dom/HTMLDocument/writeln/call-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/writeln/call.html: Removed.
+        * layout-tests/fast/dom/HTMLDocument/writeln/multiple-calls-expected.txt: Removed.
+        * layout-tests/fast/dom/HTMLDocument/writeln/multiple-calls.html: Removed.
+
+2005-07-01  Geoffrey Garen  <ggaren@apple.com>
+
         -landed patch by Eric Seidel <macdome@opendarwin.org>
         
         -for http://bugzilla.opendarwin.org/show_bug.cgi?id=3657
