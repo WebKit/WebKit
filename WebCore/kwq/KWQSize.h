@@ -33,6 +33,7 @@
 #endif
 
 typedef struct _NSSize NSSize;
+typedef struct CGSize CGSize;
 
 class QSize {
 public:
@@ -48,6 +49,7 @@ public:
     QSize expandedTo(const QSize &) const;
     
     operator NSSize() const;
+    operator CGSize() const;
 
     friend QSize operator+(const QSize &, const QSize &);
     friend bool operator==(const QSize &, const QSize &);

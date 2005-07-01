@@ -52,6 +52,11 @@ QSize::operator NSSize() const
     return NSMakeSize(w, h);
 }
 
+QSize::operator CGSize() const
+{
+    return CGSizeMake(w, h);
+}
+
 QSize operator+(const QSize &a, const QSize &b)
 {
     return QSize(a.w + b.w, a.h + b.h);

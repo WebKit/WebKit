@@ -1,3 +1,11 @@
+2005-07-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * kwq/KWQSize.h:
+        * kwq/KWQSize.mm:
+        (QSize::operator CGSize): adding CGSize conversion support
+
 2005-06-30  Bruce DiBello  <bdibello@apple.com>
 
         Reviewed by Geoff Garen.
