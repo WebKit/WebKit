@@ -76,7 +76,7 @@ void StringInstanceImp::put(ExecState *exec, const Identifier &propertyName, con
   ObjectImp::put(exec, propertyName, value, attr);
 }
 
-bool StringInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
+bool StringInstanceImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
 {
   if (propertyName == lengthPropertyName)
     return true;
@@ -89,7 +89,7 @@ bool StringInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyN
       return true;
   }
 
-  return ObjectImp::hasProperty(exec, propertyName);
+  return ObjectImp::hasOwnProperty(exec, propertyName);
 }
 
 bool StringInstanceImp::deleteProperty(ExecState *exec, const Identifier &propertyName)

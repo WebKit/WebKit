@@ -48,7 +48,7 @@ public:
 
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
 
-    virtual bool hasProperty(ExecState *exec,
+    virtual bool hasOwnProperty(ExecState *exec,
 			     const Identifier &propertyName) const;
 
 

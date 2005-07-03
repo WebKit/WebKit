@@ -131,7 +131,7 @@ bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) c
     return result;
 }
 
-bool RuntimeObjectImp::hasProperty(ExecState *exec,
+bool RuntimeObjectImp::hasOwnProperty(ExecState *exec,
                             const Identifier &propertyName) const
 {
     bool result = false;

@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Test of hasOwnProperty</title>
+        <script type="text/javascript">
+            function print(message)
+            {
+                var paragraph = document.createElement("li");
+                paragraph.appendChild(document.createTextNode(message));
+                document.getElementById("console").appendChild(paragraph);
+            }
+            
+            function test()
+            {
+            
+                var anObject = {foo : 'yum'};
+                var aString = '';
+                
+                if (anObject.hasOwnProperty)
+                {
+                    print("anObject has own property 'foo': " + anObject.hasOwnProperty('foo'));
+                    print("aString has own property 'length': " + ''.hasOwnProperty('length'));
+                    print("anObject has own property 'bar': " + anObject.hasOwnProperty('bar'));
+                    print("anObject has own property 'toString': " + anObject.hasOwnProperty('toString'));
+                    print("aString has own property 'toString': " + ''.hasOwnProperty('toString'));
+                }
+                else
+                {
+                    print("ERROR: ECMAScript hasOwnProperty() method missing!");
+                }
+            }        
+        </script>
+    </head>
+    <body onload="test()">
+        <p>This test verifies the behaviour of Object.prototype.hasOwnProperty, as documented in ECMA-262 rev3 section 15.2.4.5.</p>
+        <p>If the test passes, you should see two 'true' outputs followed by three 'false' outputs.</p>
+        <hr>
+        <p><ol id=console></ol></p>
+    </body>
+</html>

@@ -51,7 +51,7 @@ namespace KJS {
     virtual ~DOMCSSStyleDeclaration();
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
-    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     enum { CssText, Length, ParentRule,

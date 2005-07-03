@@ -727,11 +727,11 @@ Value DOMNodeList::toPrimitive(ExecState *exec, Type /*preferred*/) const
 
 // We have to implement hasProperty since we don't use a hashtable for 'length' and 'item'
 // ## this breaks "for (..in..)" though.
-bool DOMNodeList::hasProperty(ExecState *exec, const Identifier &p) const
+bool DOMNodeList::hasOwnProperty(ExecState *exec, const Identifier &p) const
 {
   if (p == lengthPropertyName || p == "item")
     return true;
-  return ObjectImp::hasProperty(exec, p);
+  return ObjectImp::hasOwnProperty(exec, p);
 }
 
 Value DOMNodeList::tryGet(ExecState *exec, const Identifier &p) const
@@ -1198,7 +1198,8 @@ Value DOMElement::tryGet(ExecState *exec, const Identifier &propertyName) const
   // We have to check in DOMNode before giving access to attributes, otherwise
   // onload="..." would make onload return the string (attribute value) instead of
   // the listener object (function).
-  if (DOMNode::hasProperty(exec, propertyName))
+  ValueImp *proto = prototype().imp();
+  if (DOMNode::hasOwnProperty(exec, propertyName) || (proto->dispatchType() == ObjectType && static_cast<ObjectImp *>(proto)->hasProperty(exec, propertyName)))
     return DOMNode::tryGet(exec, propertyName);
 
   DOM::DOMString attr = element.getAttribute( propertyName.string() );
@@ -1430,11 +1431,11 @@ DOMNamedNodeMap::~DOMNamedNodeMap()
 
 // We have to implement hasProperty since we don't use a hashtable for 'length'
 // ## this breaks "for (..in..)" though.
-bool DOMNamedNodeMap::hasProperty(ExecState *exec, const Identifier &p) const
+bool DOMNamedNodeMap::hasOwnProperty(ExecState *exec, const Identifier &p) const
 {
   if (p == lengthPropertyName)
     return true;
-  return DOMObject::hasProperty(exec, p);
+  return DOMObject::hasOwnProperty(exec, p);
 }
 
 Value DOMNamedNodeMap::tryGet(ExecState* exec, const Identifier &p) const
