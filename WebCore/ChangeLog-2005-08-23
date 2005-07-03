@@ -1,5 +1,12 @@
 2005-07-03  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        * ForwardingHeaders/qintdict.h: maps to KWQIntDict.h
+        * kwq/KWQIntDict.h: copy of KWQPtrDict.h replacing T * with int.
+
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
         * kwq/KWQPair.h: added newline, per mjs's request.
 
 2005-07-03  Eric Seidel  <eseidel@apple.com>
