@@ -1,5 +1,9 @@
 2005-07-03  Eric Seidel  <eseidel@apple.com>
 
+        * kwq/KWQPair.h: added newline, per mjs's request.
+
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         * ForwardingHeaders/qpair.h: Added.
