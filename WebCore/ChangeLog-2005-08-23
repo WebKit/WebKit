@@ -1,3 +1,12 @@
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * ForwardingHeaders/qpair.h: Added.
+        * kwq/KWQPair.h: Added.
+	Qt compatible QPair, built on std::pair
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3824
+
 2005-07-01  Beth Dakin  <bdakin@apple.com>
 
         Adding createCaption test for HTMLTableElement.
@@ -80,6 +89,7 @@
         * kwq/KWQSize.h:
         * kwq/KWQSize.mm:
         (QSize::operator CGSize): adding CGSize conversion support
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3669
 
 2005-06-30  Bruce DiBello  <bdibello@apple.com>
 
