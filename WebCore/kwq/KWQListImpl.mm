@@ -448,6 +448,27 @@ uint KWQListImpl::containsRef(const void *item) const
     return count;
 }
 
+// Only used for KDOM::NodeImpl::compareDocumentPosition(NodeImpl *other)
+// remove when no longer needed.
+int KWQListImpl::findRef(const void *item)
+{
+    KWQListNode *node = head;
+    int index = 0;
+    
+    while (node != NULL && item != node->data) {
+        node = node->next;
+        index++;
+    }
+    
+    cur = node;
+    
+    if (node == NULL) {
+        return -1;
+    }
+    
+    return index;
+}
+
 KWQListImpl &KWQListImpl::assign(const KWQListImpl &impl, bool deleteItems)
 {
     clear(deleteItems);

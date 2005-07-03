@@ -68,6 +68,7 @@ public:
     void prepend(const void *item);
 
     uint containsRef(const void *item) const;
+    int findRef(const void *item);
 
     KWQListImpl &assign(const KWQListImpl &impl, bool deleteItems);
 

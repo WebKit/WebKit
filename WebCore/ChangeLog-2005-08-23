@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        * kwq/KWQListImpl.h:
+        * kwq/KWQListImpl.mm:
+        (KWQListImpl::findRef): Added to support 
+        KDOM::NodeImpl::compareDocumentPosition(NodeImpl *other)
+  
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * ForwardingHeaders/qintdict.h: maps to KWQIntDict.h
         * kwq/KWQIntDict.h: copy of KWQPtrDict.h replacing T * with int.
 
