@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::boundingRect): added boundingRect(QChar)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3827
+  
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQListImpl.h:
         * kwq/KWQListImpl.mm:
         (KWQListImpl::findRef): Added to support 

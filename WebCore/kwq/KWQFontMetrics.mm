@@ -328,6 +328,11 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
 
+QRect QFontMetrics::boundingRect(QChar c) const
+{
+    return QRect(0, 0, width(c, 0, 0), height());
+}
+
 QRect QFontMetrics::boundingRect(const QString &qstring, int tabWidth, int xpos, int len) const
 {
     return QRect(0, 0, width(qstring, tabWidth, xpos, len), height());

@@ -62,6 +62,7 @@ public:
                                int letterSpacing, int wordSpacing, bool smallCaps) const;
     int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool includePartialGlyphs) const;
 
+    QRect boundingRect(QChar) const;
     QRect boundingRect(const QString &, int tabWidth, int xpos, int len=-1) const;
     QRect boundingRect(int, int, int, int, int, const QString &, int tabWidth, int xpos) const;
 
