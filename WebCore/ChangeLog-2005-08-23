@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        * kwq/KWQTimer.h:
+        * kwq/KWQTimer.mm:
+        (QTimer::QTimer): added parent pointer (and warning)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3825
+ 
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * khtml/xml/dom_docimpl.cpp: 
         (DocumentImpl::setDocumentChanged): fixed to use new API
         * kwq/KWQKStaticDeleter.h: 

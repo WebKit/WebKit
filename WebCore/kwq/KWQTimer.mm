@@ -26,6 +26,7 @@
 #import "KWQTimer.h"
 
 #import "KWQAssertions.h"
+#import "KWQLogging.h"
 #import "KWQFoundationExtras.h"
 
 // We know the Cocoa calls in this file are safe because they are all
@@ -92,9 +93,10 @@
 
 @end
 
-QTimer::QTimer()
+QTimer::QTimer(QObject *parent)
     : m_timer(nil), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout()))
 {
+    if (parent) LOG(NotYetImplemented, "Parent pointer ignored.  QTimer will be leaked and may fire after parent dealloc causing crash.");
 }
 
 bool QTimer::isActive() const

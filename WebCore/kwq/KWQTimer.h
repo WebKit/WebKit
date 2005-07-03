@@ -37,7 +37,7 @@ class NSTimer;
 
 class QTimer : public QObject {
 public:
-    QTimer();
+    QTimer(QObject *parent = 0);
     ~QTimer() { stop(); }
     
     bool isActive() const;
