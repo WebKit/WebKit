@@ -2,6 +2,16 @@
 
         Reviewed by mjs.
 
+        * khtml/xml/dom_docimpl.cpp: 
+        (DocumentImpl::setDocumentChanged): fixed to use new API
+        * kwq/KWQKStaticDeleter.h: 
+        (KStaticDeleter::setObject): fixed to take 3rd argument
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3823
+
+2005-07-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQValueList.h:
         (QValueList::find): KDOM support
         (QValueList::constBegin): KDE compatibility
