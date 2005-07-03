@@ -286,6 +286,19 @@ uint KWQValueListImpl::containsEqualNodes(KWQValueListNodeImpl *node, bool (*equ
     return contains;
 }
 
+KWQValueListIteratorImpl KWQValueListImpl::findEqualNode(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const
+{
+    KWQValueListIteratorImpl it = begin();
+    KWQValueListIteratorImpl endIt = end();
+    while (it != endIt) {
+        if (equalFunc(node, it.node())) {
+            break;
+        }
+        it++;
+    }
+    return it;
+}
+
 KWQValueListIteratorImpl KWQValueListImpl::insert(const KWQValueListIteratorImpl &iterator, KWQValueListNodeImpl *node)
 {
     copyOnWrite();

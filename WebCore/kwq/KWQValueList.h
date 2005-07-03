@@ -92,7 +92,9 @@ template<class T> bool operator==(const QValueList<T> &a, const QValueList<T> &b
 template <class T> class QValueList {
 public:
     typedef QValueListIterator<T> Iterator;
+    typedef QValueListIterator<T> iterator;
     typedef QValueListConstIterator<T> ConstIterator;
+    typedef QValueListConstIterator<T> const_iterator;
 
     QValueList() : impl(deleteNode, copyNode) { }
         
@@ -104,6 +106,7 @@ public:
     Iterator prepend(const T &val) { return impl.prependNode(new QValueListNode<T>(val)); } 
     void remove(const T &val) { QValueListNode<T> node(val); impl.removeEqualNodes(&node, nodesEqual); }
     uint contains(const T &val) const { QValueListNode<T> node(val); return impl.containsEqualNodes(&node, nodesEqual); }
+    Iterator find(const T &val) const { QValueListNode<T> node(val); return impl.findEqualNode(&node, nodesEqual); }
 
     Iterator insert(Iterator iter, const T& val) { return impl.insert(iter.impl, new QValueListNode<T>(val)); }
     Iterator remove(Iterator iter) { return impl.removeIterator(iter.impl); }
@@ -119,6 +122,8 @@ public:
 
     ConstIterator begin() const { return impl.begin(); }
     ConstIterator end() const { return impl.end(); }
+    ConstIterator constBegin() const { return impl.begin(); }
+    ConstIterator constEnd() const { return impl.end(); }
     ConstIterator fromLast() const { return impl.fromLast(); }
 
     T& operator[] (uint index) { return ((QValueListNode<T> *)impl.nodeAt(index))->value; }
