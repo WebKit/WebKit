@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 769x18
+          text run at (0,0) width 769: "This test verifies the behaviour of Object.prototype.hasOwnProperty, as documented in ECMA-262 rev3 section 15.2.4.5."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 524x18
+          text run at (0,0) width 524: "If the test passes, you should see two 'true' outputs followed by three 'false' outputs."
+      RenderBlock {HR} at (0,68) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,86) size 784x0
+      RenderBlock {OL} at (0,86) size 784x90
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 234x18
+            text run at (0,0) width 234: "anObject has own property 'foo': true"
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 240x18
+            text run at (0,0) width 240: "aString has own property 'length': true"
+        RenderListItem {LI} at (40,36) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 238x18
+            text run at (0,0) width 238: "anObject has own property 'bar': false"
+        RenderListItem {LI} at (40,54) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 268x18
+            text run at (0,0) width 268: "anObject has own property 'toString': false"
+        RenderListItem {LI} at (40,72) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 256x18
+            text run at (0,0) width 256: "aString has own property 'toString': false"
+      RenderBlock {P} at (0,192) size 784x0
