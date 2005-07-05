@@ -1,3 +1,17 @@
+2005-07-05  Beth Dakin  <bdakin@apple.com>
+
+	Adding colspan test for HTMLTableElement and bdo test for HTMLElement.
+
+        Reviewed by NOBODY Adele.
+
+        Test cases added: (NONE)
+
+        * ChangeLog:
+        * layout-tests/fast/dom/HTMLElement/bdo-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLElement/bdo.html: Added.
+        * layout-tests/fast/dom/HTMLTableElement/colSpan-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLTableElement/colSpan.html: Added.
+
 2005-07-05  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled out patch for 
