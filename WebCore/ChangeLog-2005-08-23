@@ -2,6 +2,18 @@
 
         Reviewed by mjs.
 
+        * ForwardingHeaders/kinstance.h: Added.
+        * ForwardingHeaders/kio/netaccess.h: Added.
+        * ForwardingHeaders/kjs/scope_chain.h: Added.
+        * ForwardingHeaders/qdir.h: Added.
+        * ForwardingHeaders/qglobal.h: Added.
+        For KDOM.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3822
+  
+2005-07-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQDef.h: 64bit types added
         (qRound): For kdom
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
