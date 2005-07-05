@@ -1,5 +1,13 @@
 2005-07-05  Geoffrey Garen  <ggaren@apple.com>
 
+        -rolled out patch for 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
+        because it fails to build w/gcc3.3 (previous fix didn't completely work)
+
+        * kwq/KWQDef.h:
+
+2005-07-05  Geoffrey Garen  <ggaren@apple.com>
+
         -fixed failed build introduced by fix to
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
 
