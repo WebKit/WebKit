@@ -2768,6 +2768,7 @@
 				550A0BCE085F604D007353D6,
 				65F378290870D958000B2F94,
 				65F3782B0870D958000B2F94,
+				A85D7C19087A6ED9006A9172,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5142,6 +5143,7 @@
 				550A0BC9085F6039007353D6,
 				550A0BCD085F604D007353D6,
 				65F3782A0870D958000B2F94,
+				A85D7C18087A6ED9006A9172,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6650,6 +6652,44 @@
 //932
 //933
 //934
+//A80
+//A81
+//A82
+//A83
+//A84
+		A85D7C16087A6ED8006A9172 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = KWQWMatrix.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		A85D7C17087A6ED8006A9172 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = KWQWMatrix.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		A85D7C18087A6ED9006A9172 = {
+			fileRef = A85D7C16087A6ED8006A9172;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		A85D7C19087A6ED9006A9172 = {
+			fileRef = A85D7C17087A6ED8006A9172;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//A80
+//A81
+//A82
+//A83
+//A84
 //BC0
 //BC1
 //BC2
@@ -11592,6 +11632,8 @@
 				F587853F02DE375901EA4122,
 				F58786C502DE3B8601EA4122,
 				F587854202DE375901EA4122,
+				A85D7C17087A6ED8006A9172,
+				A85D7C16087A6ED8006A9172,
 			);
 			isa = PBXGroup;
 			name = qt;
