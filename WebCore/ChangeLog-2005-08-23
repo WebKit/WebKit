@@ -2,6 +2,14 @@
 
         Reviewed by mjs.
 
+        * kwq/KWQDef.h: 64bit types added
+        (qRound): For kdom
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
+
+2005-07-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQDateTime.h: Necessary KDOM additions.
         (QTime::currentTime): Added.
         * kwq/KWQDateTime.mm:
