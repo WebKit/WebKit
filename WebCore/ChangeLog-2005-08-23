@@ -1,5 +1,72 @@
 2005-07-05  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by NOBODY (OOPS!).
+
+        Test cases added: (NONE)
+
+        * khtml/css/parser.y:
+        * kwq/DOM-CSS.mm:
+        (-[DOMRGBColor _color]):
+        * kwq/KWQAccObject.mm:
+        (AXAttributeStringSetStyle):
+        * kwq/KWQColor.h:
+        * kwq/KWQColor.mm:
+        (qRed):
+        (qGreen):
+        (qBlue):
+        (parseHexColor):
+        (QColor::QColor):
+        (nsColor):
+        (cgColor):
+        (QColor::getRgbaF):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::fontAttributesForSelectionStart):
+        (KWQKHTMLPart::bodyBackgroundColor):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setPalette):
+        * kwq/KWQPainter.mm:
+        (QPainter::_setColorFromBrush):
+        (QPainter::_setColorFromPen):
+        (QPainter::drawText):
+        (QPainter::drawHighlightForText):
+        (QPainter::drawLineForText):
+        (QPainter::_fillRect):
+        (QPainter::setShadow):
+        (QPainter::drawFocusRing):
+        * kwq/KWQPalette.h:
+        (QColorGroup::):
+        (QPalette::):
+        * kwq/KWQPalette.mm: Added.
+        (QPalette::setColor):
+        * kwq/KWQPoint.mm:
+        (QPoint::operator CGPoint):
+        (operator*):
+        (operator<<):
+        * kwq/KWQPointArray.h:
+        (QPoint::setX):
+        (QPoint::setY):
+        (QPoint::isNull):
+        (QPoint::operator -=):
+        * kwq/KWQPointArray.mm:
+        (QPointArray::QPointArray):
+        (QPointArray::copy):
+        (QPointArray::boundingRect):
+        (QPointArray::point):
+        * kwq/KWQPtrDict.h:
+        (QPtrDictIterator::operator()):
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRegExp.mm:
+        (QRegExp::match):
+        (QRegExp::cap):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setPalette):
+        * kwq/KWQValueVector.h: Added.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionColor]):
+
+2005-07-05  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         * ForwardingHeaders/kinstance.h: Added.
