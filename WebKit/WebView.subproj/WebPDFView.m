@@ -223,7 +223,27 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
             [itemCopy setTag:tag];
         } else {
             ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
-        }        
+        }
+        
+        // Intercept some of these menu items for better WebKit integration.
+        switch (tag) {
+            // Convert the scale-factor-related items to use WebKit's text sizing API instead, so they match other
+            // UI that uses the text sizing API (such as Make Text Larger/Smaller menu items in Safari).
+            case WebMenuItemPDFActualSize:
+                [itemCopy setTarget:[[dataSource webFrame] webView]];
+                [itemCopy setAction:@selector(makeTextStandardSize:)];
+                break;
+            case WebMenuItemPDFZoomIn:
+                [itemCopy setTarget:[[dataSource webFrame] webView]];
+                [itemCopy setAction:@selector(makeTextLarger:)];
+                break;
+            case WebMenuItemPDFZoomOut:
+                [itemCopy setTarget:[[dataSource webFrame] webView]];
+                [itemCopy setAction:@selector(makeTextSmaller:)];
+                break;
+            default:
+                break;
+        }
     }
     
     [actionsToTags release];
