@@ -1,3 +1,12 @@
+2005-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed failed build introduced by fix to
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
+
+        Reviewed by sullivan.
+
+        * kwq/KWQDef.h: changed 64 bit typedef to match def in sys/types.h
+
 2005-07-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by NOBODY (OOPS!).

@@ -34,7 +34,7 @@ typedef unsigned long ulong;
 #endif
 
 typedef int64_t Q_INT64;
-typedef uint64_t Q_UINT64;
+typedef u_int64_t Q_UINT64;
 
 typedef int Q_INT32;
 typedef unsigned int Q_UINT32;
