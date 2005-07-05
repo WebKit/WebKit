@@ -40,9 +40,13 @@ public:
     QTime(int hours, int minutes);
 
     int msec() const;
+    QTime addMSecs(int msecs) const;
+    
     void start() { timeInSeconds = CFAbsoluteTimeGetCurrent(); }
     int elapsed() const;
     int restart();
+    
+    static QTime currentTime() { return QTime(CFAbsoluteTimeGetCurrent()); }
     
 private:
     CFAbsoluteTime timeInSeconds; 

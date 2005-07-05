@@ -2,6 +2,16 @@
 
         Reviewed by mjs.
 
+        * kwq/KWQDateTime.h: Necessary KDOM additions.
+        (QTime::currentTime): Added.
+        * kwq/KWQDateTime.mm:
+        (QTime::addMSecs): Added.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3828
+
+2005-07-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * ForwardingHeaders/qwmatrix.h: Added.
         * WebCore.pbproj/project.pbxproj: Added KWQMatrix.*
         * khtml/rendering/render_image.cpp: Now includes qwmatrix.h
