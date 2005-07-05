@@ -1,3 +1,17 @@
+2005-07-05  Adele Peterson  <adele@apple.com>
+
+       Rolling out changes for <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)
+       since it caused a 2% performance regression.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isSpace):
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:geometry:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startPosition:numGlyphs:]):
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        (initializeCharacterWidthIterator):
+        (widthForNextCharacter):
+
 2005-07-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.

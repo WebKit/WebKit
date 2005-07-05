@@ -125,8 +125,6 @@ long RenderReplaced::caretMinOffset() const
 
 // Returns 1 since a replaced element can have the caret positioned 
 // at its beginning (0), or at its end (1).
-// NOTE: Yet, "select" elements can have any number of "option" elements
-// as children, so this "0 or 1" idea does not really hold up.
 long RenderReplaced::caretMaxOffset() const 
 { 
     return 1; 

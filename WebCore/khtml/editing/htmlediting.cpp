@@ -126,11 +126,8 @@ static int maxRangeOffset(NodeImpl *n)
     return 1;
 }
 
-bool isSpecialElement(const NodeImpl *n)
+bool isSpecialElement(NodeImpl *n)
 {
-    if (!n)
-        return false;
-        
     if (!n->isHTMLElement())
         return false;
 
@@ -141,18 +138,16 @@ bool isSpecialElement(const NodeImpl *n)
         return true;
 
     RenderObject *renderer = n->renderer();
-    if (!renderer)
-        return false;
-        
-    if (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE)
+
+    if (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE))
         return true;
 
-    if (renderer->style()->isFloating())
+    if (renderer && renderer->style()->isFloating())
         return true;
 
-    if (renderer->style()->position() != STATIC)
+    if (renderer && renderer->style()->position() != STATIC)
         return true;
-        
+
     return false;
 }
 
@@ -283,50 +278,6 @@ ElementImpl *createBreakElement(DocumentImpl *document)
     ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
     ASSERT(exceptionCode == 0);
     return breakNode;
-}
-
-bool isTabSpanNode(const NodeImpl *node)
-{
-    return (node && node->isElementNode() && static_cast<const ElementImpl *>(node)->getAttribute("class") == AppleTabSpanClass);
-}
-
-bool isTabSpanTextNode(const NodeImpl *node)
-{
-    return (node && node->parentNode() && isTabSpanNode(node->parentNode()));
-}
-
-Position positionBeforeTabSpan(const Position& pos)
-{
-    NodeImpl *node = pos.node();
-    if (isTabSpanTextNode(node))
-        node = node->parent();
-    else if (!isTabSpanNode(node))
-        return pos;
-    
-    return Position(node->parentNode(), node->nodeIndex());
-}
-
-ElementImpl *createTabSpanElement(DocumentImpl *document, NodeImpl *tabTextNode)
-{
-    // make the span to hold the tab
-    int exceptionCode = 0;
-    ElementImpl *spanElement = document->createHTMLElement("span", exceptionCode);
-    assert(exceptionCode == 0);
-    spanElement->setAttribute(ATTR_CLASS, AppleTabSpanClass);
-    spanElement->setAttribute(ATTR_STYLE, "white-space:pre");
-
-    // add tab text to that span
-    if (!tabTextNode)
-        tabTextNode = document->createEditingTextNode("\t");
-    spanElement->appendChild(tabTextNode, exceptionCode);
-    assert(exceptionCode == 0);
-
-    return spanElement;
-}
-
-ElementImpl *createTabSpanElement(DocumentImpl *document, QString *tabText)
-{
-    return createTabSpanElement(document, document->createTextNode(*tabText));
 }
 
 bool isNodeRendered(const NodeImpl *node)

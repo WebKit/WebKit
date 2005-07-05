@@ -1,3 +1,127 @@
+2005-07-05  Adele Peterson  <adele@apple.com>
+
+       Rolling out changes for <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)
+       since it caused a 2% performance regression.
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::createStyleSpanElement):
+        (khtml::ApplyStyleCommand::removeCSSStyle):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::styleAtPosition):
+        * khtml/editing/html_interchange.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::input):
+        * khtml/editing/insert_text_command.h:
+        * khtml/editing/markup.cpp:
+        (khtml::createFragmentFromText):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplacementFragment::removeStyleNodes):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::begin):
+        (khtml::HTMLTokenizer::processListing):
+        (khtml::HTMLTokenizer::parseEntity):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::addPending):
+        (khtml::HTMLTokenizer::write):
+        * khtml/html/htmltokenizer.h:
+        (khtml::HTMLTokenizer::):
+        * khtml/rendering/bidi.cpp:
+        (khtml::addRun):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::skipWhitespace):
+        (khtml::RenderBlock::findNextLineBreak):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/break_lines.cpp:
+        (khtml::isBreakable):
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText):
+        (Font::drawText):
+        (Font::floatWidth):
+        (Font::floatCharacterWidths):
+        (Font::checkSelectionPoint):
+        (Font::width):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::stripTrailingSpace):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::width):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setPixmap):
+        (RenderImage::paint):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::width):
+        (khtml::InlineBox::xPos):
+        (khtml::InlineBox::yPos):
+        (khtml::InlineBox::height):
+        (khtml::InlineBox::baseline):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        (RenderListMarker::calcMinMaxWidth):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::recalcMinMaxWidths):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::selectionRect):
+        (InlineTextBox::paint):
+        (InlineTextBox::paintSelection):
+        (InlineTextBox::paintMarkedTextBackground):
+        (InlineTextBox::offsetForPosition):
+        (InlineTextBox::positionForOffset):
+        (RenderText::cacheWidths):
+        (RenderText::widthFromCache):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::charWidth):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        (QFontMetrics::checkSelectionPoint):
+        (QFontMetrics::boundingRect):
+        (QFontMetrics::size):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        (QPainter::drawHighlightForText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.mm:
+        (WebCoreInitializeEmptyTextStyle):
+        * layout-tests/editing/deleting/delete-tab-001-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-001.html:
+        * layout-tests/editing/deleting/delete-tab-002-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-002.html:
+        * layout-tests/editing/deleting/delete-tab-003-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-003.html:
+        * layout-tests/editing/deleting/delete-tab-004-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-004.html:
+        * layout-tests/editing/inserting/insert-tab-001-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-002-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-003-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-004-expected.txt:
+        * layout-tests/fast/dom/quadraticCurveTo-expected.txt:
+        * layout-tests/fast/js/string-replace-2-expected.txt:
+        * layout-tests/fast/table/039-expected.txt:
+        * layout-tests/fast/table/border-collapsing/004-expected.txt:
+        * layout-tests/fast/tokenizer/script_extra_close-expected.txt:
+
 2005-07-05  Beth Dakin  <bdakin@apple.com>
 
 	Adding colspan test for HTMLTableElement and bdo test for HTMLElement.

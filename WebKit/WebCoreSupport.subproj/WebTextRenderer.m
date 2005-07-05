@@ -179,11 +179,11 @@ struct CharacterWidthIterator
 
 static inline BOOL isSpace(UniChar c)
 {
-    return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
+    return c == SPACE || c == '\n' || c == NO_BREAK_SPACE;
 }
 
 static const uint8_t isRoundingHackCharacterTable[0x100] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -287,7 +287,7 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRe
 
 // Iterator functions
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
-static float widthForNextCharacter (CharacterWidthIterator *iterator, float leadWidth, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
+static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
 
 
 // Misc.
@@ -1008,13 +1008,13 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     // The starting point needs to be adjusted to account for the width of
     // the glyphs at the start of the run.
     while (widthIterator.currentCharacter < (unsigned)run->from) {
-        startPosition += widthForNextCharacter(&widthIterator, style->xpos + startPosition, 0, 0);
+        startPosition += widthForNextCharacter(&widthIterator, 0, 0);
     }
     float startX = startPosition + geometry->point.x;
     
     float backgroundWidth = 0.0;
     while (widthIterator.currentCharacter < (unsigned)run->to) {
-        backgroundWidth += widthForNextCharacter(&widthIterator, style->xpos + startPosition + backgroundWidth, 0, 0);
+        backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
     }
 
     if (style->backgroundColor != nil){
@@ -1028,7 +1028,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         if (style->rtl){
             float completeRunWidth = startPosition + backgroundWidth;
             while (widthIterator.currentCharacter < run->length) {
-                completeRunWidth += widthForNextCharacter(&widthIterator, completeRunWidth, 0, 0);
+                completeRunWidth += widthForNextCharacter(&widthIterator, 0, 0);
             }
 
             [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, height)];
@@ -1203,7 +1203,7 @@ static const char *joiningNames[] = {
     initializeCharacterWidthIterator(&widthIterator, self, run, style);
     if (startPosition)
         *startPosition = widthIterator.widthToStart;
-    while ((_nextWidth = widthForNextCharacter(&widthIterator, _totalWidth+style->xpos, &glyphUsed, &fontUsed)) != INVALID_WIDTH){
+    while ((_nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &fontUsed)) != INVALID_WIDTH){
         if (fontBuffer)
             fontBuffer[numGlyphs] = fontUsed;
         if (glyphBuffer)
@@ -1339,9 +1339,8 @@ static const char *joiningNames[] = {
             buffer[i] = ZERO_WIDTH_SPACE;
         buffer[0x7F] = ZERO_WIDTH_SPACE;
 
-        // But \n, \t, and nonbreaking space must render as a space.
+        // But both \n and nonbreaking space must render as a space.
         buffer['\n'] = ' ';
-        buffer['\t'] = ' ';
         buffer[NO_BREAK_SPACE] = ' ';
     }
 
@@ -1757,8 +1756,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
 - (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     float delta = (float)x;
-    float width;   ///  FIX: CHECK THIS
-    float leadWidth = style->xpos;
+    float width;
     unsigned offset = run->from;
     CharacterWidthIterator widthIterator;
     
@@ -1768,8 +1766,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         width = [self floatWidthForRun:run style:style widths:nil];
         delta -= width;
         while (offset < run->length) {
-            float w = widthForNextCharacter(&widthIterator, leadWidth, 0, 0);
-            leadWidth += w;
+            float w = widthForNextCharacter(&widthIterator, 0, 0);
             if (w == INVALID_WIDTH) {
                 // Something very bad happened, like we only have half of a surrogate pair.
                 break;
@@ -1789,8 +1786,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         }
     } else {
         while (offset < run->length) {
-            float w = widthForNextCharacter(&widthIterator, leadWidth, 0, 0);
-            leadWidth += w;
+            float w = widthForNextCharacter(&widthIterator, 0, 0);
             if (w == INVALID_WIDTH) {
                 // Something very bad happened, like we only have half of a surrogate pair.
                 break;
@@ -1946,7 +1942,7 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
         initializeCharacterWidthIterator (&startPositionIterator, renderer, &startPositionRun, style);
         
         while (startPositionIterator.currentCharacter < (unsigned)startPositionRun.to){
-            widthForNextCharacter(&startPositionIterator, startPositionIterator.runWidthSoFar+style->xpos, 0, 0);
+            widthForNextCharacter(&startPositionIterator, 0, 0);
         }
         iterator->widthToStart = startPositionIterator.runWidthSoFar;
     }
@@ -1965,7 +1961,7 @@ static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
 #define HIRAGANA_KATAKANA_VOICING_MARKS 8
 
 // Return INVALID_WIDTH if an error is encountered or we're at the end of the range in the run.
-static float widthForNextCharacter(CharacterWidthIterator *iterator, float leadWidth, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
+static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
 {
     WebTextRenderer *renderer = iterator->renderer;
     const WebCoreTextRun *run = iterator->run;
@@ -2073,19 +2069,15 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, float leadW
     }
 
     // Now that we have glyph and font, get its width.
-    WebGlyphWidth width;
-    if (c == '\t' && style->tabWidth != 0) {
-        width = style->tabWidth - (CEIL_TO_INT(leadWidth) % style->tabWidth);
-    } else {
-        width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
-        // We special case spaces in two ways when applying word rounding.
-        // First, we round spaces to an adjusted width in all fonts.
-        // Second, in fixed-pitch fonts we ensure that all characters that
-        // match the width of the space character have the same width as the space character.
-        if ((renderer->treatAsFixedPitch ? width == renderer->spaceWidth : *glyphUsed == renderer->spaceGlyph) && iterator->style->applyWordRounding)
-            width = renderer->adjustedSpaceWidth;
-    }
+    WebGlyphWidth width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
     
+    // We special case spaces in two ways when applying word rounding.
+    // First, we round spaces to an adjusted width in all fonts.
+    // Second, in fixed-pitch fonts we ensure that all characters that
+    // match the width of the space character have the same width as the space character.
+    if ((renderer->treatAsFixedPitch ? width == renderer->spaceWidth : *glyphUsed == renderer->spaceGlyph) && iterator->style->applyWordRounding)
+        width = renderer->adjustedSpaceWidth;
+
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
     if (*glyphUsed == 0 && iterator->style->attemptFontSubstitution) {

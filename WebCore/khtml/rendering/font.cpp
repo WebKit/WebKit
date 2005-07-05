@@ -40,20 +40,20 @@
 using namespace khtml;
 
 #if APPLE_CHANGES
-void Font::drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
+void Font::drawHighlightForText( QPainter *p, int x, int y, int h, 
                      QChar *str, int slen, int pos, int len,
                      int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, QColor bg) const
 {
-    p->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
+    p->drawHighlightForText(x, y, h, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 #endif
                      
-void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len,
+void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
                      int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, QColor bg ) const
 {
 #if APPLE_CHANGES
-    p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
+    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 letterSpacing, wordSpacing, fontDef.smallCaps);
 #else
     QString qstr = QConstString(str, slen).string();
@@ -72,7 +72,7 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
     // ### fixme for RTL
     if ( !letterSpacing && !wordSpacing && !toAdd && from==-1 ) {
         // simply draw it
-        p->drawText( x, y, tabWidth, xpos, qstr, pos, len, d );
+        p->drawText( x, y, qstr, pos, len, d );
     } else {
         int numSpaces = 0;
         if ( toAdd ) {
@@ -104,7 +104,7 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
                 if ( bg.isValid() )
                     p->fillRect( x, y-fm.ascent(), chw, fm.height(), bg );
 
-                p->drawText( x, y, tabWidth, xpos, qstr, pos+i, 1, d );
+                p->drawText( x, y, qstr, pos+i, 1, d );
             }
             if ( d != QPainter::RTL )
                 x += chw;
@@ -115,31 +115,31 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
 
 #if APPLE_CHANGES
 
-float Font::floatWidth( QChar *chs, int slen, int pos, int len, int tabWidth, int xpos ) const
+float Font::floatWidth( QChar *chs, int slen, int pos, int len ) const
 {
-    return fm.floatWidth(chs, slen, pos, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps);
+    return fm.floatWidth(chs, slen, pos, len, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
 
-void Font::floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, float *buffer) const
+void Font::floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const
 {
-    fm.floatCharacterWidths(str, slen, pos, len, toAdd, tabWidth, xpos, buffer, letterSpacing, wordSpacing, fontDef.smallCaps);
+    fm.floatCharacterWidths(str, slen, pos, len, toAdd, buffer, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
-int Font::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const
+int Font::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed, bool includePartialGlyphs) const
 {
-    return fm.checkSelectionPoint (s, slen, pos, len, toAdd, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed, includePartialGlyphs);
+    return fm.checkSelectionPoint (s, slen, pos, len, toAdd, letterSpacing, wordSpacing, fontDef.smallCaps, x, reversed, includePartialGlyphs);
 }
 
 #endif
 
-int Font::width( QChar *chs, int slen, int pos, int len, int tabWidth, int xpos ) const
+int Font::width( QChar *chs, int slen, int pos, int len ) const
 {
 #if APPLE_CHANGES
 #ifndef ROUND_TO_INT
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
 #endif
-    return ROUND_TO_INT(fm.floatWidth(chs+pos, slen-pos, 0, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps));
+    return ROUND_TO_INT(fm.floatWidth(chs+pos, slen-pos, 0, len, letterSpacing, wordSpacing, fontDef.smallCaps));
 //    return fm.width(chs + pos, len);
 #else
     QString qstr = QConstString(chs+pos, len).string();
@@ -170,11 +170,11 @@ int Font::width( QChar *chs, int slen, int pos, int len, int tabWidth, int xpos 
 #endif
 }
 
-int Font::width( QChar *chs, int slen, int tabWidth, int xpos ) const
+int Font::width( QChar *chs, int slen, int pos ) const
 {
 #if APPLE_CHANGES
-//    return ROUND_TO_INT(fm.floatWidth(chs, slen, pos, 1, tabWidth, xpos, letterSpacing, wordSpacing));
-    return width(chs, slen, 0, 1, tabWidth, xpos);
+//    return ROUND_TO_INT(fm.floatWidth(chs, slen, pos, 1, letterSpacing, wordSpacing));
+    return width(chs, slen, pos, 1);
 #else
     int w;
     if ( !fontDef.hasNbsp && (chs+pos)->unicode() == 0xa0 )
@@ -186,7 +186,7 @@ int Font::width( QChar *chs, int slen, int tabWidth, int xpos ) const
 	w += letterSpacing;
 
     if ( wordSpacing && (chs+pos)->isSpace() )
-        w += wordSpacing;
+		w += wordSpacing;
     return w;
 #endif
 }

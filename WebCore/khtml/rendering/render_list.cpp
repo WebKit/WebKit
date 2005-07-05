@@ -479,25 +479,25 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
             if (isInside()) {
             	if( style()->direction() == LTR) {
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
-                    p->drawText(_tx + fm.width(m_item, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, 
-                            QString::fromLatin1(". "));
+                    p->drawText(_tx, _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
+                    p->drawText(_tx + fm.width(m_item), _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, 
+                                QString::fromLatin1(". "));
                 }
             	else {
                     const QString& punct(QString::fromLatin1(" ."));
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
-            	    p->drawText(_tx + fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
+                    p->drawText(_tx, _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
+            	    p->drawText(_tx + fm.width(punct), _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
                     const QString& punct(QString::fromLatin1(". "));
-                    p->drawText(_tx-offset/2, _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, punct);
-                    p->drawText(_tx-offset/2-fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, m_item);
+                    p->drawText(_tx-offset/2, _ty, 0, 0, Qt::AlignRight|Qt::DontClip, punct);
+                    p->drawText(_tx-offset/2-fm.width(punct), _ty, 0, 0, Qt::AlignRight|Qt::DontClip, m_item);
                 }
             	else {
                     const QString& punct(QString::fromLatin1(" ."));
-            	    p->drawText(_tx+offset/2, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
-                    p->drawText(_tx+offset/2+fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
+            	    p->drawText(_tx+offset/2, _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
+                    p->drawText(_tx+offset/2+fm.width(punct), _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
                 }
             }
         }
@@ -601,9 +601,8 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     }
 
-    if (isInside()) {
-        m_width = fm.width(m_item, 0, 0) + fm.width(QString::fromLatin1(". "), 0, 0);
-    }
+    if (isInside())
+        m_width = fm.width(m_item) + fm.width(QString::fromLatin1(". "));
 
 end:
 

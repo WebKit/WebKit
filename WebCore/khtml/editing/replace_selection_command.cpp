@@ -500,7 +500,7 @@ int ReplacementFragment::countRenderedBlocks(NodeImpl *holder)
 void ReplacementFragment::removeStyleNodes()
 {
     // Since style information has been computed and cached away in
-    // computeStylesUsingTestRendering(), these style nodes can be removed, since
+    // computeStylesForNodes(), these style nodes can be removed, since
     // the correct styles will be added back in fixupNodeStyles().
     NodeImpl *node = m_fragment->firstChild();
     while (node) {
@@ -522,9 +522,7 @@ void ReplacementFragment::removeStyleNodes()
             isStyleSpan(node)) {
             removeNodePreservingChildren(node);
         }
-        // need to skip tab span because fixupNodeStyles() is not called
-        // when replace is matching style
-        else if (node->isHTMLElement() && !isTabSpanNode(node)) {
+        else if (node->isHTMLElement()) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
             if (inlineStyleDecl) {

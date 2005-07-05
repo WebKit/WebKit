@@ -36,8 +36,6 @@ struct WebCoreTextStyle
     int letterSpacing;
     int wordSpacing;
     int padding;
-    int tabWidth;
-    int xpos;
     NSString **families;
     unsigned smallCaps : 1;
     unsigned rtl : 1;

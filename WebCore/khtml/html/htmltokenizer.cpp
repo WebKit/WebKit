@@ -311,6 +311,8 @@ void HTMLTokenizer::begin()
     tag = NoTag;
     pending = NonePending;
     discard = NoneDiscard;
+    pre = false;
+    prePos = 0;
     plaintext = false;
     xmp = false;
     processingInstruction = false;
@@ -347,11 +349,16 @@ void HTMLTokenizer::setForceSynchronous(bool force)
 
 void HTMLTokenizer::processListing(TokenizerString list)
 {
+    bool old_pre = pre;
     // This function adds the listing 'list' as
     // preformatted text-tokens to the token-collection
+    // thereby converting TABs.
+    if(!style) pre = true;
+    prePos = 0;
+
     while ( !list.isEmpty() )
     {
-        checkBuffer();
+        checkBuffer(3*TAB_SIZE);
 
         if (skipLF && ( *list != '\n' ))
         {
@@ -384,11 +391,14 @@ void HTMLTokenizer::processListing(TokenizerString list)
             }
             ++list;
         }
-        else if ( *list == ' ' )
+        else if (( *list == ' ' ) || ( *list == '\t'))
         {
             if (pending)
                 addPending();
-            pending = SpacePending;
+            if (*list == ' ')
+                pending = SpacePending;
+            else
+                pending = TabPending;
 
             ++list;
         }
@@ -398,6 +408,7 @@ void HTMLTokenizer::processListing(TokenizerString list)
             if (pending)
                 addPending();
 
+            prePos++;
             *dest++ = *list;
             ++list;
         }
@@ -406,6 +417,10 @@ void HTMLTokenizer::processListing(TokenizerString list)
 
     if (pending)
         addPending();
+
+    prePos = 0;
+
+    pre = old_pre;
 }
 
 void HTMLTokenizer::parseSpecial(TokenizerString &src)
@@ -926,6 +941,8 @@ void HTMLTokenizer::parseEntity(TokenizerString &src, QChar *&dest, bool start)
                 for(unsigned int i = 0; i < cBufferPos; i++)
                     dest[i] = cBuffer[i];
                 dest += cBufferPos;
+                if (pre)
+                    prePos += cBufferPos+1;
             }
 
             Entity = NoEntity;
@@ -1397,8 +1414,17 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
             processToken();
 
+            // we have to take care to close the pre block in
+            // case we encounter an unallowed element....
+            if(pre && beginTag && !DOM::checkChild(ID_PRE, tagID, !parser->doc()->inCompatMode())) {
+                kdDebug(6036) << " not allowed in <pre> " << (int)tagID << endl;
+                pre = false;
+            }
+
             switch( tagID ) {
             case ID_PRE:
+                prePos = 0;
+                pre = beginTag;
                 discard = LFDiscard; // Discard the first LF after we open a pre.
                 break;
             case ID_SCRIPT:
@@ -1469,24 +1495,40 @@ void HTMLTokenizer::addPending()
     else if ( textarea || script )
     {
         switch(pending) {
-        case LFPending:  *dest++ = '\n'; break;
-        case SpacePending: *dest++ = ' '; break;
+        case LFPending:  *dest++ = '\n'; prePos = 0; break;
+        case SpacePending: *dest++ = ' '; ++prePos; break;
+        case TabPending: *dest++ = '\t'; prePos += TAB_SIZE - (prePos % TAB_SIZE); break;
         case NonePending:
             assert(0);
         }
     }
     else
     {
+        int p;
+
         switch (pending)
         {
         case SpacePending:
             // Insert a breaking space
             *dest++ = QChar(' ');
+            prePos++;
             break;
 
         case LFPending:
             *dest = '\n';
             dest++;
+            prePos = 0;
+            break;
+
+        case TabPending:
+            p = TAB_SIZE - ( prePos % TAB_SIZE );
+#ifdef TOKEN_DEBUG
+            qDebug("tab pending, prePos: %d, toadd: %d", prePos, p);
+#endif
+
+            for ( int x = 0; x < p; x++ )
+                *dest++ = QChar(' ');
+            prePos += p;
             break;
 
         case NonePending:
@@ -1641,7 +1683,9 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             }; // end case
 
             if ( pending ) {
-                if ( script || (!parser->selectMode() && (!parser->noSpaces() || dest > buffer )))
+                // pre context always gets its spaces/linefeeds
+                if ( pre || script || (!parser->selectMode() &&
+                             (!parser->noSpaces() || dest > buffer )))
                     addPending();
                 // just forget it
                 else
@@ -1711,7 +1755,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             }
             ++src;
         }
-        else if (cc == ' ')
+        else if (( cc == ' ' ) || ( cc == '\t' ))
         {
 	    if (select && !script) {
                 if(discard == SpaceDiscard)
@@ -1728,7 +1772,10 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
             
                 if (pending)
                     addPending();
-                pending = SpacePending;
+                if (cc == ' ')
+                    pending = SpacePending;
+                else
+                    pending = TabPending;
             }
             
             ++src;
@@ -1739,6 +1786,10 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
                 addPending();
 
             discard = NoneDiscard;
+            if ( pre )
+            {
+                prePos++;
+            }
 #if QT_VERSION < 300
             unsigned char row = src->row();
             if ( row > 0x05 && row < 0x10 || row > 0xfd )
