@@ -1,3 +1,14 @@
+2005-07-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kwq/KWQPtrList.h: additions necessary for kdom.
+        (QPtrList::findRef): added.
+        (QPtrList::begin): added.
+        (QPtrList::end): added.
+        (QPtrListIterator::operator*): added.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3850
+
 2005-07-04  Maciej Stachowiak  <mjs@apple.com
 
         Expected results for layout tests from last patch.

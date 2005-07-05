@@ -72,8 +72,14 @@ public:
     void prepend(const T *item) { impl.prepend(item); }
 
     uint containsRef(const T *item) const { return impl.containsRef(item); }
+    int findRef(const T *item) { return impl.findRef(item); }
 
     virtual int compareItems(void *a, void *b) { return a != b; }
+    
+    typedef QPtrListIterator<T> Iterator;
+    typedef QPtrListIterator<T> ConstIterator;
+    ConstIterator begin() const { return ConstIterator(*this); }
+    ConstIterator end() const { ConstIterator itr(*this); itr.toLast(); ++itr; return itr; }
 
  private:
     static void deleteFunc(void *item) { delete (T *)item; }
@@ -95,6 +101,7 @@ public:
     T *current() const { return (T *)impl.current(); }
 
     operator T *() const { return (T *)impl.current(); }
+    T *operator*() const { return (T *)impl.current(); }
     T *operator--() { return (T *)--impl; }
     T *operator++()  { return (T *)++impl; }
 
