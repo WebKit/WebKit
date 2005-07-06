@@ -73,7 +73,8 @@ layer at (0,0) size 800x2678
         RenderText {TEXT} at (8,8) size 320x180
           text run at (8,8) width 320: "This paragraph should be floated to the right, sort"
           text run at (8,26) width 320: "of like a 'sidebar' in a magazine article. Its width is"
-          text run at (8,44) width 320: "20em so the box should not be reformatted when"
+          text run at (8,44) width 16: "20"
+          text run at (24,44) width 304: "em so the box should not be reformatted when"
           text run at (8,62) width 320: "the size of the viewport is changed (e.g. when the"
           text run at (8,80) width 320: "window is resized). The background color of the"
           text run at (8,98) width 269: "element is yellow, and there should be a 3"
@@ -259,7 +260,8 @@ layer at (0,0) size 800x2678
                 RenderText {TEXT} at (8,8) size 320x180
                   text run at (8,8) width 320: "This paragraph should be floated to the right, sort"
                   text run at (8,26) width 320: "of like a 'sidebar' in a magazine article. Its width is"
-                  text run at (8,44) width 320: "20em so the box should not be reformatted when"
+                  text run at (8,44) width 16: "20"
+                  text run at (24,44) width 304: "em so the box should not be reformatted when"
                   text run at (8,62) width 320: "the size of the viewport is changed (e.g. when the"
                   text run at (8,80) width 320: "window is resized). The background color of the"
                   text run at (8,98) width 269: "element is yellow, and there should be a 3"

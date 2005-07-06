@@ -1358,7 +1358,8 @@ layer at (0,0) size 800x3319
             RenderText {TEXT} at (0,0) size 263x18
               text run at (0,0) width 263: "NEGATED Dynamic handling of :empty"
           RenderText {TEXT} at (263,0) size 46x18
-            text run at (263,0) width 46: " (#d1b)"
+            text run at (263,0) width 33: " (#d1"
+            text run at (296,0) width 13: "b)"
         RenderListItem {LI} at (40,2664) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderInline {A} at (0,0) size 215x18 [color=#0000EE]
@@ -1386,35 +1387,40 @@ layer at (0,0) size 800x3319
             RenderText {TEXT} at (0,0) size 176x18
               text run at (0,0) width 176: ":indeterminate and :checked"
           RenderText {TEXT} at (176,0) size 45x18
-            text run at (176,0) width 45: " (#d5a)"
+            text run at (176,0) width 33: " (#d5"
+            text run at (209,0) width 12: "a)"
         RenderListItem {LI} at (40,2736) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderInline {A} at (0,0) size 258x18 [color=#0000EE]
             RenderText {TEXT} at (0,0) size 258x18
               text run at (0,0) width 258: "NEGATED :indeterminate and :checked"
           RenderText {TEXT} at (258,0) size 46x18
-            text run at (258,0) width 46: " (#d5b)"
+            text run at (258,0) width 33: " (#d5"
+            text run at (291,0) width 13: "b)"
         RenderListItem {LI} at (40,2754) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderInline {A} at (0,0) size 176x18 [color=#0000EE]
             RenderText {TEXT} at (0,0) size 176x18
               text run at (0,0) width 176: ":indeterminate and :checked"
           RenderText {TEXT} at (176,0) size 45x18
-            text run at (176,0) width 45: " (#d5c)"
+            text run at (176,0) width 33: " (#d5"
+            text run at (209,0) width 12: "c)"
         RenderListItem {LI} at (40,2772) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderInline {A} at (0,0) size 181x18 [color=#0000EE]
             RenderText {TEXT} at (0,0) size 181x18
               text run at (0,0) width 181: ":indeterminate with :checked"
           RenderText {TEXT} at (181,0) size 46x18
-            text run at (181,0) width 46: " (#d5d)"
+            text run at (181,0) width 33: " (#d5"
+            text run at (214,0) width 13: "d)"
         RenderListItem {LI} at (40,2790) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderInline {A} at (0,0) size 263x18 [color=#0000EE]
             RenderText {TEXT} at (0,0) size 263x18
               text run at (0,0) width 263: "NEGATED :indeterminate with :checked"
           RenderText {TEXT} at (263,0) size 45x18
-            text run at (263,0) width 45: " (#d5e)"
+            text run at (263,0) width 33: " (#d5"
+            text run at (296,0) width 12: "e)"
       RenderBlock {P} at (0,3264) size 784x18
         RenderText {TEXT} at (0,0) size 60x18
           text run at (0,0) width 60: "See also: "

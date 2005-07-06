@@ -28,7 +28,8 @@ layer at (0,0) size 800x683
               RenderListMarker at (0,0) size 0x14
               RenderInline {A} at (0,0) size 110x18 [color=#800080]
                 RenderText {TEXT} at (0,0) size 110x18
-                  text run at (0,0) width 110: "W3C Web server"
+                  text run at (0,0) width 23: "W3"
+                  text run at (23,0) width 87: "C Web server"
               RenderText {TEXT} at (0,0) size 0x0
             RenderListItem {LI} at (40,18) size 704x18
               RenderListMarker at (0,0) size 0x14
@@ -104,7 +105,8 @@ layer at (0,0) size 800x683
                       RenderListMarker at (0,0) size 0x14
                       RenderInline {A} at (0,0) size 110x18 [color=#800080]
                         RenderText {TEXT} at (0,0) size 110x18
-                          text run at (0,0) width 110: "W3C Web server"
+                          text run at (0,0) width 23: "W3"
+                          text run at (23,0) width 87: "C Web server"
                       RenderText {TEXT} at (0,0) size 0x0
                     RenderListItem {LI} at (40,18) size 682x18
                       RenderListMarker at (0,0) size 0x14

@@ -1,3 +1,47 @@
+2005-07-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled in patch by opendarwin.org@mitzpettel.com
+
+        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3733
+        Incorrect bidi layout of ETs, ANs, and ENs in some contexts
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::appendRun):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::RenderBlock::layoutInlineChildren):
+
+        Modified test results to account for run splitting.
+        This is a known bug that we need to fix separately:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3838
+        
+        * layout-tests/css1/basic/containment-expected.txt:
+        * layout-tests/css1/box_properties/float_on_text_elements-expected.txt:
+        * layout-tests/css1/font_properties/font-expected.txt:
+        * layout-tests/css1/formatting_model/inline_elements-expected.txt:
+        * layout-tests/css1/pseudo/anchor-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-001-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-002-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-003-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-004-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-001-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-002-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-003-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-004-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-001-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-004-expected.txt:
+        * layout-tests/fast/block/basic/018-expected.txt:
+        * layout-tests/fast/dom/quadraticCurveTo-expected.txt:
+        * layout-tests/fast/invalid/nestedh3s-expected.txt:
+        * layout-tests/fast/js/string-replace-2-expected.txt:
+        * layout-tests/fast/lists/003-expected.txt:
+        * layout-tests/fast/selectors/166-expected.txt:
+        * layout-tests/fast/table/039-expected.txt:
+        * layout-tests/fast/table/border-collapsing/004-expected.txt:
+        * layout-tests/fast/text/basic/004-expected.txt:
+        * layout-tests/fast/tokenizer/script_extra_close-expected.txt:
+
 2005-07-05  Adele Peterson  <adele@apple.com>
 
        Rolling out changes for <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)

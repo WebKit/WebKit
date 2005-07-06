@@ -5,10 +5,12 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x574
       RenderBlock (anonymous) at (0,0) size 784x54
         RenderText {TEXT} at (0,0) size 758x54
-          text run at (0,0) width 285: "In this sample, the H3s should not be nested. "
+          text run at (0,0) width 138: "In this sample, the H3"
+          text run at (138,0) width 147: "s should not be nested. "
           text run at (285,0) width 347: "While WinIE does allow the nesting, Firefox does not. "
           text run at (632,0) width 120: "We have chosen to"
-          text run at (0,18) width 758: "match Firefox, since we size H3s based off the current font size, and therefore nesting would lead to ever-increasing font"
+          text run at (0,18) width 203: "match Firefox, since we size H3"
+          text run at (203,18) width 555: "s based off the current font size, and therefore nesting would lead to ever-increasing font"
           text run at (0,36) width 34: "sizes."
       RenderBlock {H3} at (0,72) size 784x30 [border: (2px solid #FF0000)]
         RenderInline {I} at (0,0) size 33x22

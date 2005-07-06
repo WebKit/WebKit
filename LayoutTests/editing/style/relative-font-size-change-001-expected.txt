@@ -7,7 +7,8 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (14,14) size 715x56
           text run at (14,14) width 250: "Size check should say: 30"
           text run at (264,14) width 465: "px. All text in the red boxes should appear to be"
-          text run at (14,42) width 54: "30px."
+          text run at (14,42) width 24: "30"
+          text run at (38,42) width 30: "px."
       RenderBlock {DIV} at (0,108) size 784x28
         RenderText {TEXT} at (0,0) size 118x28
           text run at (0,0) width 118: "Size check: "

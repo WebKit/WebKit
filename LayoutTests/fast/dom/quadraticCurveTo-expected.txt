@@ -4,9 +4,8 @@ layer at (0,0) size 800x414
   RenderBlock {HTML} at (0,0) size 800x414
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 420x18
-          text run at (0,0) width 358: "\x{9}\x{9}\x{9}This test case should produce a sine-wave stroked with 1"
-          text run at (358,0) width 62: "px black. "
-          text run at (420,0) width 0: "\x{9}\x{9}"
+        RenderText {TEXT} at (0,0) size 416x18
+          text run at (0,0) width 358: "This test case should produce a sine-wave stroked with 1"
+          text run at (358,0) width 58: "px black."
     RenderBlock (anonymous) at (0,50) size 800x364
       RenderCanvasImage {CANVAS} at (0,0) size 480x360
