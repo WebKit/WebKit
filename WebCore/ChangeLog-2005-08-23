@@ -1,3 +1,11 @@
+2005-07-05  Maciej Stachowiak  <mjs@apple.com>
+
+	- remove stat dumping (accidentally left enabled in last patch)
+
+	Unreviewed since this was a mistake in the last checkin.
+
+        * khtml/misc/hashtable.h:
+
 2005-07-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by hyatt.
