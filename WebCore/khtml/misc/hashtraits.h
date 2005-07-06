@@ -30,7 +30,7 @@ namespace khtml {
 
 using std::pair;
 
-template <typename T>
+template<typename T>
 struct HashTraits {
     typedef T traitType;
     static const bool emptyValueIsZero = std::__is_integer<T>::_M_type;
@@ -41,6 +41,7 @@ struct HashTraits {
 };
 
 // may not be appropriate for all uses since it would disallow 0 and -1 as keys
+template<>
 struct HashTraits<int> {
     typedef int traitType;
     static const bool emptyValueIsZero = true;
@@ -53,7 +54,7 @@ struct HashTraits<int> {
     }
 };
 
-template <typename P>
+template<typename P>
 struct HashTraits<P *> {
     typedef P *traitType;
     static const bool emptyValueIsZero = true;
@@ -66,7 +67,7 @@ struct HashTraits<P *> {
     }
 };
 
-template <typename FirstTraits, typename SecondTraits>
+template<typename FirstTraits, typename SecondTraits>
 struct PairHashTraits {
 private:
     typedef typename FirstTraits::traitType FirstType;
@@ -84,7 +85,7 @@ public:
     }
 };
 
-template <typename First, typename Second>
+template<typename First, typename Second>
 struct HashTraits<pair<First, Second> > : public PairHashTraits<HashTraits<First>, HashTraits<Second> > {
 };
 

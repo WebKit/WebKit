@@ -1,5 +1,11 @@
 2005-07-06  Maciej Stachowiak  <mjs@apple.com>
 
+        More ggc-4-only build fixage.
+	
+        * khtml/misc/hashtraits.h:
+
+2005-07-06  Maciej Stachowiak  <mjs@apple.com>
+
         Fix additional gcc-4-only build breakage.
 
         * khtml/misc/pointerhash.h:
