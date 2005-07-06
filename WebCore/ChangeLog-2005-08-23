@@ -1,5 +1,11 @@
 2005-07-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Forgot to commit a file. Fix for build breakage.
+
+        * ForwardingHeaders/misc/pointerhash.h: Added.
+
+2005-07-05  Maciej Stachowiak  <mjs@apple.com>
+
 	- remove stat dumping (accidentally left enabled in last patch)
 
 	Unreviewed since this was a mistake in the last checkin.
