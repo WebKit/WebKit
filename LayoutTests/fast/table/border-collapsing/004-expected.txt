@@ -17,9 +17,9 @@ layer at (0,0) size 800x1438
           text run at (333,0) width 172: "The styles applied here are:"
       RenderBlock {PRE} at (0,92) size 784x180
         RenderText {TEXT} at (0,0) size 688x180
-          text run at (0,0) width 152: "TABLE\x{9}{ margin: 1"
+          text run at (0,0) width 152: "TABLE   { margin: 1"
           text run at (152,0) width 256: "em; border: medium solid blue; }"
-          text run at (0,15) width 368: "TD\x{9}{ border: thin solid green; padding: 5"
+          text run at (0,15) width 368: "TD      { border: thin solid green; padding: 5"
           text run at (368,15) width 40: "px; }"
           text run at (0,30) width 352: "TH { border: medium solid purple; padding: 5"
           text run at (352,30) width 40: "px; }"
@@ -34,7 +34,7 @@ layer at (0,0) size 800x1438
           text run at (0,120) width 328: "TABLE.five { border-collapse: separate; }"
           text run at (0,135) width 464: "TABLE.five, TABLE.five TD, TABLE.five TH { border: none; }"
           text run at (0,150) width 688: "TABLE.five TR, TABLE.five COL, TABLE.five COLGROUP, TABLE.five TBODY, TABLE.five THEAD"
-          text run at (0,165) width 296: "\x{9}{ border: medium solid red; }"
+          text run at (0,165) width 296: "        { border: medium solid red; }"
       RenderTable {TABLE} at (16,288) size 752x163
         RenderTableSection {TBODY} at (0,0) size 0x163
           RenderTableRow {TR} at (0,0) size 0x0
