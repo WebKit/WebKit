@@ -36,33 +36,13 @@
 
 #include "dom_atomicstring.h"
 #include "xml/dom_stringimpl.h"
-#include "hashset.h"
+#include "misc/hashset.h"
 
 using khtml::HashSet;
 
 namespace DOM {
    
-inline unsigned hash(DOMStringImpl* const& s) 
-{
-    return s->hash();
-}
-
-bool equal(DOMStringImpl* const& r, DOMStringImpl* const& b)
-{
-    if (r == b) return true;
-    if (!r || !b) return false;
-    uint length = r->l;
-    if (length != b->l)
-        return false;
-    const QChar *d = r->s;
-    const QChar *s = b->s;
-    for (uint i = 0; i != length; ++i)
-        if (d[i] != s[i])
-            return false;
-    return true;
-}
-
-static HashSet<DOMStringImpl *, hash, equal> stringTable;
+static HashSet<DOMStringImpl *> stringTable;
 
 inline unsigned hash(const char* const& c)
 {
@@ -104,7 +84,7 @@ DOMStringImpl *AtomicString::add(const char *c)
     if (length == 0)
         return DOMStringImpl::empty();
     
-    return *stringTable.insert<const char *, hash, DOM::equal, convert>(c);
+    return *stringTable.insert<const char *, hash, DOM::equal, convert>(c).first;
 }
 
 
@@ -150,7 +130,7 @@ DOMStringImpl *AtomicString::add(const QChar *s, int length)
         return DOMStringImpl::empty();
     
     QCharBuffer buf = {s, length}; 
-    return *stringTable.insert<QCharBuffer, hash, DOM::equal, convert>(buf);
+    return *stringTable.insert<QCharBuffer, hash, DOM::equal, convert>(buf).first;
 }
 
 DOMStringImpl *AtomicString::add(DOMStringImpl *r)
@@ -161,7 +141,7 @@ DOMStringImpl *AtomicString::add(DOMStringImpl *r)
     if (r->l == 0)
         return DOMStringImpl::empty();
     
-    DOMStringImpl *result = *stringTable.insert(r);
+    DOMStringImpl *result = *stringTable.insert(r).first;
     if (result == r)
         r->_inTable = true;
     return result;

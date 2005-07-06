@@ -45,7 +45,7 @@ HashTableStats::~HashTableStats()
         printf("  %d lookups with exactly %d collisions (%.2f%% , %.2f%% with this many or more)\n", collisionGraph[i], i, 100.0 * (collisionGraph[i] - collisionGraph[i+1]) / numAccesses, 100.0 * collisionGraph[i] / numAccesses);
     }
     printf("%d rehashes\n", numRehashes);
-    printf("%d removes, %d reinserts\n", numRemoves, numReinserts);
+    printf("%d reinserts\n", numReinserts);
 }
 
 void HashTableStats::recordCollisionAtCount(int count)

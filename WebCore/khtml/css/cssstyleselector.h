@@ -25,6 +25,7 @@
 
 #include <qptrvector.h>
 #include <qptrdict.h>
+#include "misc/pointerhash.h"
 
 #include "rendering/render_style.h"
 #include "dom/dom_string.h"
@@ -268,26 +269,31 @@ public:
     {
     public:
         CSSRuleSet();
-        ~CSSRuleSet() { delete m_universalRules; }
+        ~CSSRuleSet();
 
         MAIN_THREAD_ALLOCATED;
+
+        typedef HashMap<DOM::DOMStringImpl *, CSSRuleDataList *, PointerHash<DOM::DOMStringImpl *> > AtomRuleMap;
+        typedef HashMap<int, CSSRuleDataList *, PointerHash<int> > IntRuleMap;
 
         void addRulesFromSheet(DOM::CSSStyleSheetImpl* sheet, const DOM::DOMString &medium = "screen");
 
         void addRule(DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
-        void addToRuleSet(void* hash, QPtrDict<CSSRuleDataList>& dict,
+        void addToRuleSet(DOM::DOMStringImpl* key, AtomRuleMap& map,
+                          DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
+        void addToRuleSet(int key, IntRuleMap& map,
                           DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
 
-        CSSRuleDataList* getIDRules(void* hash) { return m_idRules.find(hash); }
-        CSSRuleDataList* getClassRules(void* hash) { return m_classRules.find(hash); }
-        CSSRuleDataList* getTagRules(void* hash) { return m_tagRules.find(hash); }
+        CSSRuleDataList* getIDRules(DOM::DOMStringImpl* key) { return m_idRules.get(key); }
+        CSSRuleDataList* getClassRules(DOM::DOMStringImpl* key) { return m_classRules.get(key); }
+        CSSRuleDataList* getTagRules(int key) { return m_tagRules.get(key); }
         CSSRuleDataList* getUniversalRules() { return m_universalRules; }
 
     public:
-        QPtrDict<CSSRuleDataList> m_idRules;
-        QPtrDict<CSSRuleDataList> m_classRules;
-        QPtrDict<CSSRuleDataList> m_tagRules;
-        CSSRuleDataList*          m_universalRules;
+        AtomRuleMap m_idRules;
+        AtomRuleMap m_classRules;
+        IntRuleMap m_tagRules;
+        CSSRuleDataList* m_universalRules;
         
         uint m_ruleCount;
     };

@@ -24,71 +24,160 @@
 #define HASHSET_H
 
 #include "hashtable.h"
+#include "hashtraits.h"
+#include "hashfunctions.h"
 
 namespace khtml {
 
-template<typename Key, unsigned Hash(const Key&), bool Equal(const Key&, const Key&)>
+template <typename T>
+inline T identityExtract(const T& t) 
+{ 
+    return t; 
+}
+
+template<typename Value, typename HashFunctions = DefaultHash<Value>, typename Traits = HashTraits<Value> >
 class HashSet {
  private:
-    typedef HashTable<Key, Hash, Equal> ImplType;
-    typedef typename ImplType::KeyType KeyType;
+    typedef HashTable<Value, Value, identityExtract<Value>, HashFunctions, Traits> ImplType;
  public:
+    typedef Value ValueType;
     typedef typename ImplType::iterator iterator;
     typedef typename ImplType::const_iterator const_iterator;
 
     HashSet() {}
 
-    int size() const { return m_impl.count(); }
-    int capacity() const { return m_impl.capacity(); }
-    bool isEmpty() const { return size() == 0; }
+    int size() const;
+    int capacity() const;
+    bool isEmpty() const;
 
-    iterator begin() { m_impl.begin(); }
-    iterator end() { return m_impl.end(); }
-    const_iterator begin() const { m_impl.begin(); }
-    const_iterator end() const { m_impl.end(); }
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
 
-    iterator insert(const KeyType &key)
-    {
-        return m_impl.insert(key);
-    }
+    iterator find(const ValueType& value);
+    const_iterator find(const ValueType& value) const;
+    bool contains(const ValueType& value) const;
+
+    std::pair<iterator, bool> insert(const ValueType &value);
 
     // a special version of insert() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
     // in the table
-    template<typename T, unsigned HashT(const T&), bool EqualT(const KeyType&, const T&), KeyType ConvertT(const T&, unsigned)> iterator insert(const T& key)
-    {
-        return m_impl.insert<T, HashT, EqualT, ConvertT>(key);
-    }
+    template<typename T, unsigned HashT(const T&), bool EqualT(const ValueType&, const T&), ValueType ConvertT(const T&, unsigned)> 
+    std::pair<iterator, bool> insert(const T& value);
 
-    iterator find(const KeyType& key)
-    {
-        return m_impl.find(key); 
-    }
-
-    bool contains(const KeyType& key)
-    {
-        return m_impl.contains(key);
-    }
-
-    void remove(const KeyType& key)
-    {
-        m_impl.remove(key);
-    }
-
-    void remove(iterator it) 
-    {
-        m_impl.remove(it);
-    }
-
-    void clear()
-    {
-        m_impl.clear();
-    }
+    void remove(const ValueType& value);
+    void remove(iterator it);
+    void clear();
 
  private:
+    template<typename T, ValueType ConvertT(const T&, unsigned)> 
+    static ValueType convertAdapter(const T& t, const T&, unsigned h);
+
     ImplType m_impl;
 };
+
+template<typename Value, typename HashFunctions, typename Traits>
+int HashSet<Value, HashFunctions, Traits>::size() const
+{
+    return m_impl.count(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+int HashSet<Value, HashFunctions, Traits>::capacity() const
+{
+    return m_impl.capacity(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+bool HashSet<Value, HashFunctions, Traits>::isEmpty() const
+{
+    return size() == 0; 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::begin()
+{
+    return m_impl.begin(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::end()
+{
+    return m_impl.end(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::begin() const
+{
+    return m_impl.begin(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::end() const
+{
+    return m_impl.end(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::find(const ValueType& value)
+{
+    return m_impl.find(value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::find(const ValueType& value) const
+{
+    return m_impl.find(value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+bool HashSet<Value, HashFunctions, Traits>::contains(const ValueType& value) const
+{
+    return m_impl.contains(value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::insert(const ValueType &value)
+{
+    return m_impl.insert(value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+template<typename T, unsigned HashT(const T&), bool EqualT(const Value&, const T&), Value ConvertT(const T&, unsigned)> 
+std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::insert(const T& value)
+{
+    return m_impl.insert<T, T, HashT, EqualT, HashSet::convertAdapter<T, ConvertT> >(value, value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+void HashSet<Value, HashFunctions, Traits>::remove(const ValueType& value)
+{
+    m_impl.remove(value); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+void HashSet<Value, HashFunctions, Traits>::remove(iterator it)
+{
+    m_impl.remove(it); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+void HashSet<Value, HashFunctions, Traits>::clear()
+{
+    m_impl.clear(); 
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+template<typename T, Value ConvertT(const T&, unsigned)> 
+inline Value HashSet<Value, HashFunctions, Traits>::convertAdapter(const T& t, const T&, unsigned h)
+{ 
+    return ConvertT(t, h); 
+}
 
 } // namespace khtml
 
 #endif /* HASHSET_H */
+
+

@@ -1,3 +1,127 @@
+2005-07-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+        Numerous hash code improvements:
+
+	- added HashMap and the required support for it in HashTable
+	- convert to using deleted sentinels and double hashing instead of linear 
+	probing and reinsert on delete
+	- add support for traits so that empty and deleted values can be customized 
+	per type
+	- make insert return a pair of an iterator and a bool even at the API level
+	- converted some code to use HashMap
+	- added standard hash and equal functions for some types, plus case insensitive ones
+	- lots of assorted code cleanup
+	- pass hash functions as classes with two static functions instead of as functions
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSRuleSet::CSSRuleSet): Use HashMap instead of QPtrDict.
+        (khtml::CSSRuleSet::~CSSRuleSet): ditto
+        (khtml::CSSRuleSet::addToRuleSet): ditto
+        (khtml::CSSRuleSet::addRule): ditto
+        * khtml/css/cssstyleselector.h:
+        (khtml::CSSRuleSet::getIDRules): ditto
+        (khtml::CSSRuleSet::getClassRules): ditto
+        (khtml::CSSRuleSet::getTagRules): ditto
+        * khtml/editing/jsediting.cpp:
+        (DOM::DocumentImpl::commandImp): ditto
+        * khtml/misc/hashfunctions.h: Added. Standard hash functions.
+        (khtml::defaultEqual):
+        (khtml::pointerHash<4>):
+        (khtml::pointerHash<8>):
+        (khtml::defaultHash<void *>):
+        (khtml::defaultHash<DOM::DOMStringImpl *>):
+        (khtml::caseInsensitiveHash):
+        (khtml::caseInsensitiveEqual):
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/misc/hashmap.h: Added.
+        (khtml::HashMap::HashMap):
+        (khtml::HashMap::size):
+        (khtml::HashMap::capacity):
+        (khtml::HashMap::isEmpty):
+        (khtml::HashMap::begin):
+        (khtml::HashMap::end):
+        (khtml::HashMap::find):
+        (khtml::HashMap::contains):
+        (khtml::HashMap::insert):
+        (khtml::HashMap::get):
+        (khtml::HashMap::remove):
+        (khtml::HashMap::clear):
+        (khtml::HashMap::extractKey):
+        * khtml/misc/hashset.h:
+        (khtml::identityExtract):
+        (khtml::::size):
+        (khtml::::capacity):
+        (khtml::::isEmpty):
+        (khtml::::begin):
+        (khtml::::end):
+        (khtml::::find):
+        (khtml::::contains):
+        (khtml::::insert):
+        (khtml::::remove):
+        (khtml::::clear):
+        (khtml::::convertAdapter):
+        * khtml/misc/hashtable.cpp:
+        (khtml::HashTableStats::~HashTableStats):
+        * khtml/misc/hashtable.h:
+        (khtml::HashTableIterator::HashTableIterator):
+        (khtml::HashTableIterator::skipEmptyBuckets):
+        (khtml::HashTableConstIterator::HashTableConstIterator):
+        (khtml::HashTableConstIterator::skipEmptyBuckets):
+        (khtml::HashTable::HashTable):
+        (khtml::HashTable::insert):
+        (khtml::HashTable::isEmptyBucket):
+        (khtml::HashTable::isDeletedBucket):
+        (khtml::HashTable::isEmptyOrDeletedBucket):
+        (khtml::HashTable::identityConvert):
+        (khtml::HashTable::extractKey):
+        (khtml::HashTable::lookup):
+        (khtml::HashTable::shouldExpand):
+        (khtml::HashTable::mustRehashInPlace):
+        (khtml::HashTable::clearBucket):
+        (khtml::HashTable::deleteBucket):
+        (khtml::HashTable::makeLookupResult):
+        (khtml::HashTable::makeIterator):
+        (khtml::HashTable::makeConstIterator):
+        (khtml::::lookup):
+        (khtml::::insert):
+        (khtml::::reinsert):
+        (khtml::::find):
+        (khtml::::contains):
+        (khtml::::remove):
+        (khtml::::allocateTable):
+        (khtml::::expand):
+        (khtml::::rehash):
+        (khtml::::clear):
+        (khtml::::HashTable):
+        (khtml::::swap):
+        (khtml::::operator):
+        (khtml::::checkConsistency):
+        (khtml::::checkConsistencyExceptSize):
+        * khtml/misc/hashtraits.h: Added.
+        (khtml::HashTraits::emptyValue):
+        (khtml::):
+        (khtml::PairHashTraits::emptyValue):
+        (khtml::PairHashTraits::deletedValue):
+        * ForwardingHeaders/misc/hashmap.h: Added.
+        * ForwardingHeaders/misc/hashset.h: Added.
+        * WebCore.pbproj/project.pbxproj: Added new files.
+        * khtml/misc/pointerhash.h: Added.
+        (khtml::PointerHashIteratorAdapter::PointerHashIteratorAdapter):
+        (khtml::PointerHashIteratorAdapter::operator*):
+        (khtml::PointerHashIteratorAdapter::operator->):
+        (khtml::PointerHashIteratorAdapter::operator++):
+        (khtml::PointerHashIteratorAdapter::operator==):
+        (khtml::PointerHashIteratorAdapter::operator!=):
+        (khtml::PointerHashConstIteratorAdapter::PointerHashConstIteratorAdapter):
+        (khtml::PointerHashConstIteratorAdapter::operator*):
+        (khtml::PointerHashConstIteratorAdapter::operator->):
+        (khtml::PointerHashConstIteratorAdapter::operator++):
+        (khtml::PointerHashConstIteratorAdapter::operator==):
+        (khtml::PointerHashConstIteratorAdapter::operator!=):
+        (khtml::):
+
 2005-07-05  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled in patch by opendarwin.org@mitzpettel.com

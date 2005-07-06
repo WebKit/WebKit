@@ -30,14 +30,16 @@
 
 #include "htmlediting.h"
 #include "khtml_part.h"
-#include <qstring.h>
 #include "selection.h"
+#include "misc/hashmap.h"
 
 #if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
 #endif
 
 using khtml::TypingCommand;
+using khtml::HashMap;
+using khtml::CaseInsensitiveHash;
 
 namespace DOM {
 
@@ -54,12 +56,14 @@ struct CommandImp {
     DOMString (*valueFn)(KHTMLPart *part);
 };
 
-QDict<CommandImp> createCommandDictionary();
+typedef HashMap<DOMStringImpl *, const CommandImp *, CaseInsensitiveHash> CommandMap;
+
+CommandMap *createCommandDictionary();
 
 const CommandImp *commandImp(const DOMString &command)
 {
-    static QDict<CommandImp> commandDictionary = createCommandDictionary();
-    return commandDictionary.find(command.string());
+    static CommandMap *commandDictionary = createCommandDictionary();
+    return commandDictionary->get(command.implementation());
 }
 
 } // anonymous namespace
@@ -491,7 +495,7 @@ DOMString valueForeColor(KHTMLPart *part)
 
 // =============================================================================================
 
-QDict<CommandImp> createCommandDictionary()
+CommandMap *createCommandDictionary()
 {
     struct EditorCommand { const char *name; CommandImp imp; };
 
@@ -589,15 +593,18 @@ QDict<CommandImp> createCommandDictionary()
         // Unlink (not supported)
     };
 
+    CommandMap *commandMap = new CommandMap;
+
     const int numCommands = sizeof(commands) / sizeof(commands[0]);
-    QDict<CommandImp> commandDictionary(numCommands, false); // case-insensitive dictionary
     for (int i = 0; i < numCommands; ++i) {
-        commandDictionary.insert(commands[i].name, &commands[i].imp);
+        DOMStringImpl *name = new DOMStringImpl(commands[i].name);
+        name->ref();
+        commandMap->insert(name, &commands[i].imp);
     }
 #ifndef NDEBUG
     supportsPasteCommand = true;
 #endif
-    return commandDictionary;
+    return commandMap;
 }
 
 } // anonymous namespace
