@@ -1,3 +1,10 @@
+2005-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix additional gcc-4-only build breakage.
+
+        * khtml/misc/pointerhash.h:
+        (khtml::PointerHashConstIteratorAdapter::operator*):
+
 2005-07-05  Maciej Stachowiak  <mjs@apple.com>
 
         Forgot to commit a file. Fix for build breakage.

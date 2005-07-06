@@ -99,7 +99,7 @@ class PointerHashConstIteratorAdapter {
 
     // default copy, assignment and destructor are ok
     
-    ReferenceType operator*() const { return *reinterpret_cast<PointerType>(m_position); }
+    ReferenceType operator*() const { return *reinterpret_cast<PointerType>(m_impl.operator->()); }
     PointerType operator->() const { return &(operator*()); }
     
     iterator& operator++()
