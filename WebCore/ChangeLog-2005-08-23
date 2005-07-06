@@ -1,5 +1,13 @@
 2005-07-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Even yet still more gcc4 build fixes.
+	
+        * khtml/misc/hashset.h:
+        (khtml::convertAdapter):
+        (khtml::::insert):
+
+2005-07-06  Maciej Stachowiak  <mjs@apple.com>
+
         More ggc-4-only build fixage.
 	
         * khtml/misc/hashtraits.h:
