@@ -1,3 +1,11 @@
+2005-07-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * ForwardingHeaders/kjs/ustring.h: Added.
+        Used by kdom/Helper.cc
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3859
+
 2005-07-06  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by adele.
