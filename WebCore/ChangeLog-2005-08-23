@@ -2,6 +2,14 @@
 
         Reviewed by mjs.
 
+        * khtml/css/parser.y: removed #define YYMAXDEPTH 0
+        Bison 2.x compatibility
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3882
+
+2005-07-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * khtml/rendering/render_canvasimage.cpp: <cmath.h>
         * khtml/rendering/render_image.cpp: <cmath.h> instead of <math.h>
         * kwq/KWQDef.h: 64bit support for KDOM

@@ -114,7 +114,6 @@ static inline int getValueID(const char *tagStr, int len)
 
 
 #define YYDEBUG 0
-#define YYMAXDEPTH 0
 #define YYPARSE_PARAM parser
 %}
 

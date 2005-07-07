@@ -1,3 +1,10 @@
+2005-07-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kjs/grammar.y: removed #define YYMAXDEPTH 0 for bison 2.0
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3882
+
 2005-07-03  Maciej Stachowiak  <mjs@apple.com>
 
 	Original patch from Mark Rowe <opendarwin.org@bdash.net.nz>, reviewed by me.
