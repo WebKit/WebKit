@@ -28,6 +28,7 @@
 #import "KWQNamespace.h"
 #import "KWQString.h"
 #import "KWQAssertions.h"
+#import "KWQPainter.h"
 
 // NSColor calls don't throw, so no need to block Cocoa exceptions in this file
 
@@ -59,12 +60,71 @@ int qAlpha(QRgb rgba)
     return (rgba >> 24) & 0xFF; 
 }
 
+int qRed(QRgb rgba)
+{
+    return (rgba >> 16) & 0xFF; 
+}
+
+int qGreen(QRgb rgba)
+{
+    return (rgba >> 8) & 0xFF; 
+}
+
+int qBlue(QRgb rgba)
+{
+    return rgba & 0xFF; 
+}
+
+// copied from khtml/css/cssparser.h
+static inline bool parseHexColor(const QString &name, QRgb &rgb)
+{
+    int len = name.length();
+    
+    if ( !len )
+        return false;
+    bool ok;
+    
+    if ( len == 3 || len == 6 ) {
+        int val = name.toInt(&ok, 16);
+        if ( ok ) {
+            if (len == 6) {
+                rgb =  (0xff << 24) | val;
+                return true;
+            }
+            else if ( len == 3 ) {
+                // #abc converts to #aabbcc according to the specs
+                rgb = (0xff << 24) |
+                (val&0xf00)<<12 | (val&0xf00)<<8 |
+                (val&0xf0)<<8 | (val&0xf0)<<4 |
+                (val&0xf)<<4 | (val&0xf);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+QColor::QColor(const QString &name) {
+    if(name.startsWith("#")) {
+        valid = parseHexColor(name.mid(1), color);
+    } else {
+        const Color *foundColor = findColor(name.ascii(), name.length());
+        color = foundColor ? foundColor->RGBValue : 0;
+        color |= 0xFF000000;
+        valid = foundColor;
+    }
+}
+
 QColor::QColor(const char *name)
 {
-    const Color *foundColor = findColor(name, strlen(name));
-    color = foundColor ? foundColor->RGBValue : 0;
-    color |= 0xFF000000;
-    valid = foundColor;
+    if(name[0] == '#') {
+        valid = parseHexColor(QString(name).mid(1), color);
+    } else {
+        const Color *foundColor = findColor(name, strlen(name));
+        color = foundColor ? foundColor->RGBValue : 0;
+        color |= 0xFF000000;
+        valid = foundColor;
+    }
 }
 
 QString QColor::name() const
@@ -217,9 +277,9 @@ QColor QColor::dark(int factor) const
     return result;
 }
 
-NSColor *QColor::getNSColor() const
+NSColor *nsColor(const QColor &color)
 {
-    unsigned c = color & 0xFFFFFFFF;
+    unsigned c = color.rgb();
     switch (c) {
         case 0: {
             // Need this to avoid returning nil because cachedRGBAValues will default to 0.
@@ -246,15 +306,15 @@ NSColor *QColor::getNSColor() const
             }
 
 #if COLORMATCH_EVERYTHING
-            NSColor *result = [NSColor colorWithCalibratedRed:red() / 255.0
-                                                        green:green() / 255.0
-                                                         blue:blue() / 255.0
-                                                        alpha:qAlpha(color)/255.0];
+            NSColor *result = [NSColor colorWithCalibratedRed:qRed(c) / 255.0
+                                                        green:qGreen(c) / 255.0
+                                                         blue:qBlue(c) / 255.0
+                                                        alpha:qAlpha(c) /255.0];
 #else
-            NSColor *result = [NSColor colorWithDeviceRed:red() / 255.0
-                                                    green:green() / 255.0
-                                                     blue:blue() / 255.0
-                                                    alpha:qAlpha(color)/255.0];
+            NSColor *result = [NSColor colorWithDeviceRed:qRed(c) / 255.0
+                                                    green:qGreen(c) / 255.0
+                                                     blue:qBlue(c) / 255.0
+                                                    alpha:qAlpha(c) /255.0];
 #endif
 
             static int cursor;
@@ -268,4 +328,37 @@ NSColor *QColor::getNSColor() const
             return result;
         }
     }
+}
+
+static CGColorRef CGColorFromNSColor(NSColor *color)
+{
+    // this needs to always use device colorspace so it can de-calibrate the color for
+    // CGColor to possibly recalibrate it
+    NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    float red = [deviceColor redComponent];
+    float green = [deviceColor greenComponent];
+    float blue = [deviceColor blueComponent];
+    float alpha = [deviceColor alphaComponent];
+    const float components[] = { red, green, blue, alpha };
+    
+    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
+    CGColorRef cgColor = CGColorCreate(colorSpace, components);
+    CGColorSpaceRelease(colorSpace);
+    return cgColor;
+}
+
+CGColorRef cgColor(const QColor &c)
+{
+    // We could directly create a CGColor here, but that would
+    // skip any rgb caching the nsColor method does.  A direct 
+    // creation should be investigated for a possible performance win.
+    return CGColorFromNSColor(nsColor(c));
+}
+
+void QColor::getRgbaF(float *r, float *g, float *b, float *a) const
+{
+    *r = (float)red() / 255.0;
+    *g = (float)green() / 255.0;
+    *b = (float)blue() / 255.0;
+    *a = (float)alpha() / 255.0;
 }

@@ -1126,7 +1126,7 @@ void removeWrapperForRGB(QRgb value)
 - (NSColor *)_color
 {
     QRgb rgb = reinterpret_cast<QRgb>(_internal);
-    return QColor(rgb).getNSColor();
+    return nsColor(QColor(rgb));
 }
 
 @end

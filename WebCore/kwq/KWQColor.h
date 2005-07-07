@@ -34,17 +34,23 @@
 class NSColor;
 #endif
 
+typedef struct CGColor *CGColorRef;
+
 typedef unsigned int QRgb;			// RGBA quadruplet
 
 QRgb qRgb(int r, int g, int b);
 QRgb qRgba(int r, int g, int b, int a);
 int qAlpha(QRgb rgba);
+int qRed(QRgb rgba);
+int qGreen(QRgb rgba);
+int qBlue(QRgb rgba);
 
 class QColor {
 public:
     QColor() : color(0), valid(false) { }
     QColor(QRgb col) : color(col), valid(true) { }
     QColor(int r, int g, int b) : color(qRgb(r, g, b)), valid(true) { }
+    explicit QColor(const QString &);
     explicit QColor(const char *);
     
     QString name() const;
@@ -59,6 +65,7 @@ public:
     QRgb rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
     void setRgb(int r, int g, int b) { color = qRgb(r, g, b); valid = true; }
     void setRgb(int rgb) { color = rgb; valid = true; /* Alpha may be set. Preserve it. */ }
+    void getRgbaF(float *, float *, float *, float *) const;
 
     void hsv(int *, int *, int *) const;
     void setHsv(int h, int s, int v);
@@ -68,8 +75,6 @@ public:
 
     friend bool operator==(const QColor &a, const QColor &b);
     friend bool operator!=(const QColor &a, const QColor &b);
-
-    NSColor *getNSColor() const;
 
 private:
     QRgb color;
@@ -85,5 +90,8 @@ inline bool operator!=(const QColor &a, const QColor &b)
 {
     return a.color != b.color || a.valid != b.valid;
 }
+
+NSColor *nsColor(const QColor &);
+CGColorRef cgColor(const QColor &);
 
 #endif

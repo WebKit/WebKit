@@ -70,24 +70,6 @@ struct QPainterPrivate {
     QColor focusRingColor;
 };
 
-
-static CGColorRef CGColorFromNSColor(NSColor *color)
-{
-    // this needs to always use device colorspace so it can de-calibrate the color for
-    // CGColor to possibly recalibrate it
-    NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    float red = [deviceColor redComponent];
-    float green = [deviceColor greenComponent];
-    float blue = [deviceColor blueComponent];
-    float alpha = [deviceColor alphaComponent];
-    const float components[] = { red, green, blue, alpha };
-    
-    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
-    CGColorRef cgColor = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
-    return cgColor;
-}
-
 QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _drawsFocusRing(true)
 {
 }
@@ -212,12 +194,12 @@ void QPainter::drawRect(int x, int y, int w, int h)
 
 void QPainter::_setColorFromBrush()
 {
-    [data->state.brush.color().getNSColor() set];
+    [nsColor(data->state.brush.color()) set];
 }
 
 void QPainter::_setColorFromPen()
 {
-    [data->state.pen.color().getNSColor() set];
+    [nsColor(data->state.pen.color()) set];
 }
 
 // This is only used to draw borders.
@@ -615,7 +597,7 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = data->state.pen.color().getNSColor();
+    style.textColor = nsColor(data->state.pen.color());
     style.families = families;
     
     if (alignmentFlags & Qt::AlignRight)
@@ -648,8 +630,8 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = data->state.pen.color().getNSColor();
-    style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
+    style.textColor = nsColor(data->state.pen.color());
+    style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL ? true : false;
     style.visuallyOrdered = visuallyOrdered;
     style.letterSpacing = letterSpacing;
@@ -686,8 +668,8 @@ void QPainter::drawHighlightForText(int x, int y, int h,
     WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = data->state.pen.color().getNSColor();
-    style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
+    style.textColor = nsColor(data->state.pen.color());
+    style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL ? true : false;
     style.visuallyOrdered = visuallyOrdered;
     style.letterSpacing = letterSpacing;
@@ -713,7 +695,7 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
         drawLineForCharacters: NSMakePoint(x, y)
                yOffset:(float)yOffset
                  width: width
-                 color:data->state.pen.color().getNSColor()
+                 color:nsColor(data->state.pen.color())
              thickness:data->state.pen.width()];
 }
 
@@ -762,7 +744,7 @@ QColor QPainter::selectedTextBackgroundColor() const
 // A fillRect designed to work around buggy behavior in NSRectFill.
 void QPainter::_fillRect(float x, float y, float w, float h, const QColor& col)
 {
-    [col.getNSColor() set];
+    [nsColor(col) set];
     NSRectFillUsingOperation(NSMakeRect(x,y,w,h), NSCompositeSourceOver);
 }
 
@@ -832,12 +814,12 @@ void QPainter::setShadow(int x, int y, int blur, const QColor& color)
     if (!color.isValid()) {
         CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
     } else {
-	CGColorRef cgColor = CGColorFromNSColor(color.getNSColor());
+	CGColorRef colorCG = cgColor(color);
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(x,-y), // y is flipped.
                                     blur, 
-                                    cgColor);
-        CGColorRelease(cgColor);
+                                    colorCG);
+        CGColorRelease(colorCG);
     }
 }
 
@@ -899,7 +881,7 @@ void QPainter::drawFocusRing()
     NSRect bounds = [data->focusRingPath bounds];
     if (!NSIsEmptyRect(bounds)) {
         int radius = (data->focusRingWidth-1)/2;
-        NSColor *color = data->hasFocusRingColor ? data->focusRingColor.getNSColor() : nil;
+        NSColor *color = data->hasFocusRingColor ? nsColor(data->focusRingColor) : nil;
         [NSGraphicsContext saveGraphicsState];
         [[WebCoreGraphicsBridge sharedBridge] setFocusRingStyle:NSFocusRingOnly radius:radius color:color];
         [data->focusRingPath fill];

@@ -396,12 +396,12 @@ void QTextEdit::setPalette(const QPalette &palette)
     // as described in <rdar://problem/3854383>.  We now call setDrawsBackground:NO when the background color is completely 
     // transparent.  This does not solve the problem for translucent background colors for textareas <rdar://problem/3865161>.
 
-    [textArea setTextColor:palette.foreground().getNSColor()];
+    [textArea setTextColor:nsColor(palette.foreground())];
 
     QColor background = palette.background();
     if (!background.isValid())
         background = Qt::white;
-    [textArea setBackgroundColor:background.getNSColor()];
+    [textArea setBackgroundColor:nsColor(background)];
     [textArea setDrawsBackground:background.alpha() != 0];
 
     KWQ_UNBLOCK_EXCEPTIONS;

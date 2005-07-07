@@ -3001,9 +3001,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
                     [attrs setObject:font forKey:NSFontAttributeName];
                     if (style && style->color().isValid() && qAlpha(style->color().rgb()) != 0)
-                        [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                        [attrs setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
                     if (style && style->backgroundColor().isValid() && qAlpha(style->backgroundColor().rgb()) != 0)
-                        [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+                        [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
                     if (text.length() > 0) {
                         hasParagraphBreak = false;
@@ -3085,9 +3085,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                                 attrs = [[NSMutableDictionary alloc] init];
                                 [attrs setObject:font forKey:NSFontAttributeName];
                                 if (style && style->color().isValid())
-                                    [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                                    [attrs setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
                                 if (style && style->backgroundColor().isValid())
-                                    [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+                                    [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
             
                                 NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
                                 [attrs release];
@@ -3557,20 +3557,20 @@ NSDictionary *KWQKHTMLPart::fontAttributesForSelectionStart() const
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
     if (style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
-        [result setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+        [result setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
     if (style->font().getNSFont())
         [result setObject:style->font().getNSFont() forKey:NSFontAttributeName];
 
     if (style->color().isValid() && style->color() != black)
-        [result setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+        [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
 
     ShadowData *shadow = style->textShadow();
     if (shadow) {
         NSShadow *s = [[NSShadow alloc] init];
         [s setShadowOffset:NSMakeSize(shadow->x, shadow->y)];
         [s setShadowBlurRadius:shadow->blur];
-        [s setShadowColor:shadow->color.getNSColor()];
+        [s setShadowColor:nsColor(shadow->color)];
         [result setObject:s forKey:NSShadowAttributeName];
     }
 
@@ -3782,7 +3782,7 @@ NSColor *KWQKHTMLPart::bodyBackgroundColor() const
     if (xmlDocImpl() && xmlDocImpl()->body() && xmlDocImpl()->body()->renderer()) {
         QColor bgColor = xmlDocImpl()->body()->renderer()->style()->backgroundColor();
         if (bgColor.isValid()) {
-            return bgColor.getNSColor();
+            return nsColor(bgColor);
         }
     }
     return nil;

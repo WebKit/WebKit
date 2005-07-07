@@ -121,12 +121,12 @@ void QLineEdit::setPalette(const QPalette &palette)
     // backgrounds on some text fields as described in <rdar://problem/3854383>.  Text fields will still not be able to display
     // transparent and translucent backgrounds, which will need to be fixed in the future.  See  <rdar://problem/3865114>.
         
-    [textField setTextColor:palette.foreground().getNSColor()];
+    [textField setTextColor:nsColor(palette.foreground())];
 
     QColor background = palette.background();
     if (!background.isValid() || background.alpha() == 0)
         background = Qt::white;
-    [textField setBackgroundColor:background.getNSColor()];
+    [textField setBackgroundColor:nsColor(background)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

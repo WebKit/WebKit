@@ -2,6 +2,51 @@
 
         Reviewed by mjs.
 
+        * kwq/DOM-CSS.mm:
+        (-[DOMRGBColor _color]): changed to nsColor()
+        * kwq/KWQAccObject.mm:
+        (AXAttributeStringSetStyle): changed to nsColor()
+        * kwq/KWQColor.h: Added defs for KDOM.
+        * kwq/KWQColor.mm: 
+        (qRed): like qAlpha, kcanvas required.
+        (qGreen): like qAlpha, kcanvas required.
+        (qBlue): like qAlpha, kcanvas required.
+        (parseHexColor): copied from khtml/css/cssparser.h
+        (QColor::QColor): QColor(QString), will lookup by hex code.
+        (nsColor): now plain function, instead of member function. (mjs)
+        (CGColorFromNSColor): stolen from QPalette.mm
+        (cgColor): added to support CGColor, like nsColor()
+        (QColor::getRgbaF): new, for KCanvas, from Qt 4.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString): changed to nsColor()
+        (KWQKHTMLPart::fontAttributesForSelectionStart): nsColor()
+        (KWQKHTMLPart::bodyBackgroundColor): changed to nsColor()
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setPalette): changed to nsColor()
+        * kwq/KWQPainter.mm:
+        (QPainter::_setColorFromBrush): changed to nsColor()
+        (QPainter::_setColorFromPen): changed to nsColor()
+        (QPainter::drawText): changed to nsColor()
+        (QPainter::drawHighlightForText): changed to nsColor()
+        (QPainter::drawLineForText): changed to nsColor()
+        (QPainter::_fillRect): changed to nsColor()
+        (QPainter::setShadow): changed to cgColor()
+        (QPainter::drawFocusRing): changed to nsColor()
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setPalette): changed to nsColor()
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionColor]): changed to nsColor()
+        This patch ended up larger than intended after discussing
+        with mjs about adding getCGColor() and getCIColor()
+        We decided that having separate nsColor(), cgColor() and 
+        ciColor() defined elsewhere, was cleanest.
+        The rest of the patch is QColor additions for kdom/ksvg/kcanvas.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3829
+
+2005-07-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQPtrDict.h: Additions for KDOM
         (QPtrDictIterator::operator()): essentially post-increment.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3849

@@ -1440,7 +1440,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (root) {
         RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
-            return pseudoStyle->backgroundColor().getNSColor();
+            return nsColor(pseudoStyle->backgroundColor());
         }
     }
     return _part->displaysWithFocusAttributes() ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];

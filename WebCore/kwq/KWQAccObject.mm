@@ -1242,8 +1242,8 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
     AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), range);
 
     // set basic colors
-    AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, style->color().getNSColor(), range);
-    AXAttributeStringSetColor(attrString, NSAccessibilityBackgroundColorTextAttribute, style->backgroundColor().getNSColor(), range);
+    AXAttributeStringSetColor(attrString, NSAccessibilityForegroundColorTextAttribute, nsColor(style->color()), range);
+    AXAttributeStringSetColor(attrString, NSAccessibilityBackgroundColorTextAttribute, nsColor(style->backgroundColor()), range);
 
     // set super/sub scripting
     EVerticalAlign alignment = style->verticalAlign();
@@ -1280,12 +1280,12 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
         
         if ((decor & khtml::UNDERLINE) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, [NSNumber numberWithBool:YES], range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, underline.getNSColor(), range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, nsColor(underline), range);
         }
 
         if ((decor & khtml::LINE_THROUGH) != 0) {
             AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
-            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, linethrough.getNSColor(), range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, nsColor(linethrough), range);
         }
     }
 }
