@@ -373,7 +373,7 @@ inline typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::const_
 template<typename Key, typename Value, Key ExtractKey(const Value &), typename HashFunctions, typename Traits>
 inline bool HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::contains(const KeyType& key) const 
 {
-    return lookup(key).second;
+    return const_cast<HashTable *>(this)->lookup(key).second;
 }
 
 template<typename Key, typename Value, Key ExtractKey(const Value &), typename HashFunctions, typename Traits>

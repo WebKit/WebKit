@@ -84,7 +84,7 @@ class HashSet {
 template<typename Value, typename HashFunctions, typename Traits>
 int HashSet<Value, HashFunctions, Traits>::size() const
 {
-    return m_impl.count(); 
+    return m_impl.size(); 
 }
 
 template<typename Value, typename HashFunctions, typename Traits>

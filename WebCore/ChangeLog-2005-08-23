@@ -1,3 +1,14 @@
+2005-07-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+        - fixed size() and contains() methods on HashSet (they would not compile before)
+
+        * khtml/misc/hashset.h:
+        (khtml::::size):
+        * khtml/misc/hashtable.h:
+        (khtml::::contains):
+
 2005-07-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
