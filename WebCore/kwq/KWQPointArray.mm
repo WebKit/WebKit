@@ -26,11 +26,58 @@
 #import "KWQPointArray.h"
 #import <stdarg.h>
 
+#import "KWQRect.h"
+
 QPointArray::QPointArray(int nPoints, const int *points)
 {
-    setPoints( nPoints, points );
+    setPoints(nPoints, points);
 }
 
+QPointArray::QPointArray(const QRect &rect)
+{
+    setPoints(4, rect.topLeft().x(), rect.topLeft().y(),
+              rect.topRight().x(), rect.topRight().y(),
+              rect.bottomRight().x(), rect.bottomRight().y(),
+              rect.bottomLeft().x(), rect.bottomLeft().y());
+}
+
+QPointArray QPointArray::copy() const
+{
+    QPointArray copy;
+    copy.duplicate(*this);
+    return copy;
+}
+
+QRect QPointArray::boundingRect() const
+{
+    int nPoints = count();
+    
+    if (nPoints < 1) return QRect(0,0,0,0);
+    
+    int minX = INT_MAX, maxX = 0;
+    int minY = INT_MAX, maxY = 0;
+    
+    while (nPoints > 0) {
+        QPoint p = at(nPoints);
+        int x = p.x(), y = p.y();
+        
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+        
+        nPoints--;
+    }
+    
+    return QRect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+}
+
+void QPointArray::point(uint index, int *x, int *y)
+{
+    QPoint p = at(index);
+    *x = p.x();
+    *y = p.y();
+}
 
 void QPointArray::setPoint( uint index, int x, int y )
 {

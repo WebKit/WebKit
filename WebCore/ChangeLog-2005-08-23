@@ -1,3 +1,24 @@
+2005-07-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kwq/KWQPoint.mm:
+        (QPoint::operator CGPoint): Added.
+        (operator*): Added.
+        (operator<<): Added.
+        * kwq/KWQPointArray.h: Added.
+        (QPoint::setX): Added.
+        (QPoint::setY): Added.
+        (QPoint::isNull): Added.
+        (QPoint::operator -=): Added.
+        * kwq/KWQPointArray.mm: Added.
+        (QPointArray::QPointArray): Added.
+        (QPointArray::copy): Added.
+        (QPointArray::boundingRect): Added.
+        (QPointArray::point): Added.
+        Necessary additions for KDOM/KSVG/KCanvas
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3674
+
 2005-07-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by hyatt.

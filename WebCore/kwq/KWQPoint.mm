@@ -42,6 +42,11 @@ QPoint::operator NSPoint() const
     return NSMakePoint(xCoord, yCoord);
 }
 
+QPoint::operator CGPoint() const
+{
+    return CGPointMake(xCoord, yCoord);
+}
+
 QPoint operator+(const QPoint &a, const QPoint &b)
 {
     return QPoint(a.xCoord + b.xCoord, a.yCoord + b.yCoord);
@@ -52,9 +57,14 @@ QPoint operator-(const QPoint &a, const QPoint &b)
     return QPoint(a.xCoord - b.xCoord, a.yCoord - b.yCoord);
 }
 
+const QPoint operator*(const QPoint &p, double s)
+{
+    return QPoint((int)(p.xCoord * s), (int)(p.yCoord * s));
+}
+
 #ifdef _KWQ_IOSTREAM_
 std::ostream &operator<<(std::ostream &o, const QPoint &p)
 {
-	return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
+    return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
 }
 #endif
