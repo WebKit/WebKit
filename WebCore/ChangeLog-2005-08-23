@@ -1,3 +1,15 @@
+2005-07-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * khtml/rendering/render_canvasimage.cpp: <cmath.h>
+        * khtml/rendering/render_image.cpp: <cmath.h> instead of <math.h>
+        * kwq/KWQDef.h: 64bit support for KDOM
+        (qRound): inline mapping to lround.
+        Newer patch, now gcc 3.3 compatible.
+        Thanks to ggaren for the 3.3 fix.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3826
+
 2005-07-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -33,6 +33,9 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 #endif
 
+typedef int64_t Q_INT64;
+typedef u_int64_t Q_UINT64;
+
 typedef int Q_INT32;
 typedef unsigned int Q_UINT32;
 
@@ -47,6 +50,8 @@ inline const T& kMax ( const T& a, const T& b ) { return b < a ? a : b; }
 
 #define QABS(a) (((a) >= 0) ? (a) : -(a))
 
+inline int qRound(double a) { return lround(a); }
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -59,7 +64,7 @@ void qDebug(const char *msg, ...);
 void qWarning(const char *msg, ...);
 
 /* Silly hack to avoid "unused parameter" warnings */
-#define Q_UNUSED(x) (x)=(x)
+#define Q_UNUSED(x) (void)(x)
 
 #define Q_ASSERT(arg) do {} while(0)
 

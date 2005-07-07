@@ -43,7 +43,12 @@
 #include "html/dtd.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_documentimpl.h"
-#include <math.h>
+
+// Must include <cmath> instead of <math.h> because of a bug in the
+// gcc 3.3 library version of <math.h> where if you include both
+// <cmath> and <math.h> the macros necessary for functions like
+// isnan are not defined.
+#include <cmath>
 
 
 
