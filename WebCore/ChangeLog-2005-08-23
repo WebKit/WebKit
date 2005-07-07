@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        * ForwardingHeaders/qvaluevector.h: Added.
+        * kwq/KWQValueVector.h: Added.
+        Added QValueVector stub for KDOM.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3860
+
+2005-07-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * kwq/KWQPoint.mm:
         (QPoint::operator CGPoint): Added.
         (operator*): Added.
