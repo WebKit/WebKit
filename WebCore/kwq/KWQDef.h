@@ -27,6 +27,8 @@
 #define KWQDEF_H_
 
 #include <sys/types.h>
+#include <cmath>
+
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED
 typedef unsigned char uchar;
