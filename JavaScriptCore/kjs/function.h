@@ -87,12 +87,8 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
   };
 
-
-
-
-  class ArgumentsImp : public ArrayInstanceImp {
+  class ArgumentsImp : public ObjectImp {
   public:
-    ArgumentsImp(ExecState *exec, FunctionImp *func);
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args);
 
     virtual const ClassInfo *classInfo() const { return &info; }

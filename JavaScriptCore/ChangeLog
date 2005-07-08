@@ -1,3 +1,16 @@
+2005-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=3878
+        arguments object should be an object not an array
+
+        Reviewed by mjs.
+
+        * kjs/function.cpp:
+        (KJS::ArgumentsImp::ArgumentsImp): now manually handles initialization
+        we used to get for free by inheriting from ArrayInstanceImp
+        * kjs/function.h: ArgumentsImp now inherits from ObjectImp
+        * tests/mozilla/expected.html: updated expected test results
+
 2005-07-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

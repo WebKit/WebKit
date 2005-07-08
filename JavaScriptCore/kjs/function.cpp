@@ -315,18 +315,17 @@ void DeclaredFunctionImp::processVarDecls(ExecState *exec)
 const ClassInfo ArgumentsImp::info = {"Arguments", 0, 0, 0};
 
 // ECMA 10.1.8
-ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func)
-  : ArrayInstanceImp(exec->lexicalInterpreter()->builtinObjectPrototype().imp(), 0)
-{
-  Value protect(this);
-  putDirect(calleePropertyName, func, DontEnum);
-}
-
 ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
-  : ArrayInstanceImp(exec->lexicalInterpreter()->builtinObjectPrototype().imp(), args)
+: ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype())
 {
   Value protect(this);
   putDirect(calleePropertyName, func, DontEnum);
+  putDirect(lengthPropertyName, args.size(), DontEnum);
+  
+  int i = 0;
+  ListIterator iterator = args.begin();
+  while (iterator != args.end())
+    ObjectImp::put(exec, i++, iterator++, DontEnum);
 }
 
 // ------------------------------ ActivationImp --------------------------------
