@@ -1,3 +1,17 @@
+2005-07-08  Vicki Murley  <vicki@apple.com>
+
+	Fix from Carsten Guenther, reviewed by Maciej
+
+	- update test cases for JavaScriptCore fix 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3644 
+
+        * layout-tests/fast/dom/outerText-no-element-expected.txt:
+        * layout-tests/fast/dynamic/outerHTML-no-element-expected.txt:
+        * layout-tests/fast/js/array-every-expected.txt:
+        * layout-tests/fast/js/array-foreach-expected.txt:
+        * layout-tests/fast/js/array-some-expected.txt:
+        * layout-tests/fast/js/toString-stack-overflow-expected.txt:
+
 2005-07-08  Vicki Murley <vicki@apple.com>
 
 	- fixed by Trey Matteson <trey@usa.net>, reviewed by Maciej.

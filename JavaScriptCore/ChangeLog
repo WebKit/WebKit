@@ -1,3 +1,15 @@
+2005-07-08  Vicki Murley  <vicki@apple.com>
+
+	Fix from Carsten Guenther, reviewed by Maciej
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3644 (Error string representation)
+
+	Switch from "-" to ":" in error strings.
+
+        * kjs/error_object.cpp:
+        (ErrorProtoFuncImp::call):
+        * tests/mozilla/expected.html:
+
 2005-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in patch for http://bugzilla.opendarwin.org/show_bug.cgi?id=3878
