@@ -294,19 +294,22 @@ void KWQKHTMLPart::provisionalLoadStarted()
     cancelRedirection(true);
 }
 
-bool KWQKHTMLPart::openURL(const KURL &url)
+bool KWQKHTMLPart::userGestureHint()
 {
-    KWQ_BLOCK_EXCEPTIONS;
-
-    bool userGesture = true;
-    
     if (jScript() && jScript()->interpreter()) {
         KHTMLPart *rootPart = this;
         while (rootPart->parentPart() != 0)
             rootPart = rootPart->parentPart();
         KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy(rootPart)->interpreter());
-        userGesture = interpreter->wasRunByUserGesture();
-    }
+        return interpreter->wasRunByUserGesture();
+    } else
+        // if no JS, assume the user initiated this nav
+        return true;
+}
+
+bool KWQKHTMLPart::openURL(const KURL &url)
+{
+    KWQ_BLOCK_EXCEPTIONS;
 
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
@@ -314,7 +317,7 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:NO
-         userGesture:userGesture
+         userGesture:userGestureHint()
               target:nil
      triggeringEvent:nil
                 form:nil
@@ -340,7 +343,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     [_bridge loadURL:url.getNSURL()
             referrer:referrer
               reload:args.reload
-         userGesture:true
+         userGesture:userGestureHint()
               target:args.frameName.getNSString()
      triggeringEvent:nil
                 form:nil

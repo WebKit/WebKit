@@ -1,3 +1,27 @@
+2005-07-08  Vicki Murley <vicki@apple.com>
+
+	- fixed by Trey Matteson <trey@usa.net>, reviewed by Maciej.
+
+	Test cases added: (NONE)
+
+	<rdar://problem/4109893> REGRESSSION: back/forward broken at wsj.com, worked in v185
+	Also written as http://bugzilla.opendarwin.org/show_bug.cgi?id=3901
+ 
+	Broken by security fix for 4005575: Arbitrary file disclosure vulnerability due to ability to load local html from remote content
+ 
+	The root of this bug is that URLs for subframes of a page are sometimes added to the back/forward list.  This happens a lot at
+	wsj.com, and I believe it would happen for many or all sites that use JS to cons up a URL for an iframe and then load it.
+ 
+	The security fix changed the code path to go through openURLRequest, but only openURL had the logic to guess if
+	the current navigation was done in response to a user gesture.  openURLRequest always assumed it was a user gesture,
+	and thus all uses of this code path would place an item in the b/f list.
+
+	* kwq/KWQKHTMLPart.h:
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPart::userGestureHint):  Factored code from openURL.
+	(KWQKHTMLPart::openURL):  Call newly factored code.
+	(KWQKHTMLPart::openURLRequest):  Newly call newly factored code.
+
 2005-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         - oops, accidentally committed stat dumping enabled
