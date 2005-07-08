@@ -1,3 +1,16 @@
+2005-07-07  Adele Peterson  <adele@apple.com>
+
+        change by Maciej, reviewed by me.
+
+        fix for <rdar://problem/4168001> Cambridge 8C45: Safari crashes in Webcore (DOM::NodeImpl::removeAllEventListeners() + 32)
+
+        No test cases added.  There are some edge cases in which removeAllDisconnectedNodeEventListeners can get 
+        called twice for the same document, and this can cause some nodes to unnecessarily remain in the 
+        m_disconnectedNodesWithEventListeners list.  This fix just clears the m_disconnectedNodesWithEventListeners 
+        list after removing all event listeners for the disconnected nodes.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::removeAllDisconnectedNodeEventListeners):
+
 2005-07-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by sullivan.
