@@ -1,3 +1,15 @@
+2005-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+        - sped up DOMStringImpl * equality comparisons.
+
+        * khtml/misc/hashfunctions.h:
+        (khtml::):
+        * khtml/misc/hashtable.h:
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::equal):
+
 2005-07-07  Adele Peterson  <adele@apple.com>
 
         change by Maciej, reviewed by me.

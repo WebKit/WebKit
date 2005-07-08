@@ -98,17 +98,30 @@ inline unsigned hash(const QCharBuffer& buf)
     return DOMStringImpl::computeHash(buf.s, buf.length);
 }
 
-inline bool equal(DOMStringImpl* const&r, const QCharBuffer &buf)
+inline bool equal(DOMStringImpl* const& str, const QCharBuffer &buf)
 {
-    if (!r && !buf.s) return true;
-    if (!r || !buf.s) return false;
+    const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
+    const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
+
+    if (!strChars && !bufChars) return true;
+    if (!strChars || !bufChars) return false;
     
-    if (r->l != buf.length)
+    uint strLength = str->l;
+    uint bufLength = buf.length;
+    if (strLength != bufLength)
         return false;
-    const QChar *d = r->s;
-    for (uint i = 0; i != buf.length; ++i)
-        if (d[i] != buf.s[i])
+
+    
+    uint halfLength = strLength >> 1;
+    for (uint i = 0; i != halfLength; ++i) {
+        if (*strChars++ != *bufChars++)
             return false;
+    }
+
+    if (strLength & 1 && 
+        *reinterpret_cast<const uint16_t *>(strChars) != *reinterpret_cast<const uint16_t *>(bufChars))
+        return false;
+
     return true;
 }
 

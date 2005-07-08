@@ -79,14 +79,24 @@ template<> struct DefaultHash<DOM::DOMStringImpl *> {
     {
         if (a == b) return true;
         if (!a || !b) return false;
-        uint length = a->l;
-        if (length != b->l)
+
+        uint aLength = a->l;
+        uint bLength = b->l;
+        if (aLength != bLength)
             return false;
-        const QChar *as = a->s;
-        const QChar *bs = b->s;
-        for (uint i = 0; i != length; ++i)
-            if (as[i] != bs[i])
+
+        const uint32_t *aChars = reinterpret_cast<const uint32_t *>(a->s);
+        const uint32_t *bChars = reinterpret_cast<const uint32_t *>(b->s);
+    
+        uint halfLength = aLength >> 1;
+        for (uint i = 0; i != halfLength; ++i) {
+            if (*aChars++ != *bChars++)
                 return false;
+        }
+
+        if (aLength & 1 && *reinterpret_cast<const uint16_t *>(aChars) != *reinterpret_cast<const uint16_t *>(bChars))
+            return false;
+
         return true;
     }
 };
