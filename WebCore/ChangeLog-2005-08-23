@@ -1,5 +1,11 @@
 2005-07-07  Maciej Stachowiak  <mjs@apple.com>
 
+        - oops, accidentally committed stat dumping enabled
+
+        * khtml/misc/hashtable.h:
+
+2005-07-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by hyatt.
 
         - sped up DOMStringImpl * equality comparisons.
