@@ -47,8 +47,6 @@
 
 #include "html_objectimpl.h"
 
-#include "misc/htmltags.h"
-
 #if APPLE_CHANGES
 #include <JavaScriptCore/runtime_object.h>
 #endif
@@ -67,6 +65,7 @@ using DOM::HTMLAppletElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLEmbedElementImpl;
+using DOM::HTMLNames;
 using DOM::HTMLObjectElementImpl;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -462,7 +461,7 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     node.setNodeValue(value.toString(exec).string(), exception);
     break;
   case Prefix:
-    node.setPrefix(value.toString(exec).string(), exception);
+    node.setPrefix(value.toString(exec).string().implementation(), exception);
     break;
   case OnAbort:
     setListener(exec,DOM::EventImpl::ABORT_EVENT,value);
@@ -1187,7 +1186,7 @@ Value DOMElement::tryGet(ExecState *exec, const Identifier &propertyName) const
   {
     switch( entry->value ) {
     case TagName:
-      return getStringOrNull(element.tagName());
+      return getStringOrNull(element.nodeName());
     case Style:
       return getDOMCSSStyleDeclaration(exec,element.style());
     default:
@@ -1710,26 +1709,21 @@ ValueImp *getRuntimeObject(ExecState *exec, NodeImpl *n)
     if (!n)
         return 0;
 
-    switch (n->id()) {
-        case ID_APPLET: {
-            HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
-            if (appletElement->getAppletInstance())
-                // The instance is owned by the applet element.
-                return new RuntimeObjectImp(appletElement->getAppletInstance(), false);
-            break;
-        }
-        case ID_EMBED: {
-            HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
-            if (embedElement->getEmbedInstance())
-                return new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
-            break;
-        }
-        case ID_OBJECT: {
-            HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
-            if (objectElement->getObjectInstance())
-                return new RuntimeObjectImp(objectElement->getObjectInstance(), false);
-            break;
-        }
+    if (n->hasTagName(HTMLNames::applet())) {
+        HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
+        if (appletElement->getAppletInstance())
+            // The instance is owned by the applet element.
+            return new RuntimeObjectImp(appletElement->getAppletInstance(), false);
+    }
+    else if (n->hasTagName(HTMLNames::embed())) {
+        HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
+        if (embedElement->getEmbedInstance())
+            return new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
+    }
+    else if (n->hasTagName(HTMLNames::object())) {
+        HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
+        if (objectElement->getObjectInstance())
+            return new RuntimeObjectImp(objectElement->getObjectInstance(), false);
     }
     
     // If we don't have a runtime object return 0.

@@ -40,7 +40,6 @@
 #include "render_line.h"
 
 #include "khtmlview.h"
-#include "htmltags.h"
 
 using namespace DOM;
 using namespace khtml;
@@ -654,7 +653,7 @@ void RenderFlow::addFocusRingRects(QPainter *p, int _tx, int _ty)
     // Only paint focus ring around outermost contenteditable element.
     // But skip the body element if it is outermost.
     if (element() && element()->isContentEditable()) {
-        if (element()->parentNode() && !element()->parentNode()->isContentEditable() && element()->id() != ID_BODY)
+        if (element()->parentNode() && !element()->parentNode()->isContentEditable() && !element()->hasTagName(HTMLNames::body()))
             p->addFocusRingRect(_tx, _ty, width(), height());
         return;
     }

@@ -59,10 +59,8 @@ class EventImpl;
 class EventListener;
 class NodeListImpl;
 class NamedAttrMapImpl;
+class QualifiedName;
 class RegisteredEventListener;
-
-// The namespace used for XHTML elements
-#define XHTML_NAMESPACE "http://www.w3.org/1999/xhtml"
 
 const Q_UINT16 noNamespace = 0;
 const Q_UINT16 anyNamespace = 1;
@@ -102,6 +100,7 @@ public:
     MAIN_THREAD_ALLOCATED;
 
     // DOM methods & attributes for Node
+    virtual bool hasTagName(const QualifiedName& tagName) const { return false; }
     virtual DOMString nodeName() const = 0;
     virtual DOMString nodeValue() const;
     virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
@@ -122,14 +121,14 @@ public:
     virtual void remove(int &exceptioncode);
     virtual bool hasChildNodes (  ) const;
     virtual NodeImpl *cloneNode ( bool deep ) = 0;
-    virtual DOMString localName() const;
-    virtual DOMString namespaceURI() const;
-    virtual DOMString prefix() const;
-    virtual void setPrefix(const DOMString &_prefix, int &exceptioncode );
+    virtual const AtomicString& localName() const;
+    virtual const AtomicString& namespaceURI() const;
+    virtual const AtomicString& prefix() const;
+    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode);
     void normalize ();
     static bool isSupported(const DOMString &feature, const DOMString &version);
 
-    NodeImpl *lastDescendent() const;
+    NodeImpl *lastDescendant() const;
 
     // Other methods (not part of DOM)
     virtual bool isElementNode() const { return false; }
@@ -137,8 +136,8 @@ public:
     virtual bool isStyledElement() const { return false; }
     virtual bool isAttributeNode() const { return false; }
     virtual bool isTextNode() const { return false; }
+    virtual bool isCommentNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
-    virtual bool isXMLElementNode() const { return false; }
     bool isBlockFlow() const;
     bool isBlockFlowOrTable() const;
     
@@ -188,35 +187,18 @@ public:
     bool inSameRootEditableElement(NodeImpl *);
     bool inSameContainingBlockFlowElement(NodeImpl *);
     
-    // used by the parser. Doesn't do as many error checkings as
-    // appendChild(), and returns the node into which will be parsed next.
+    // used by the parser. Checks against the DTD, unlike DOM operations like
+    // appendChild(), and returns the new container node for future insertions as you parse.
     virtual NodeImpl *addChild(NodeImpl *newChild);
     
     // called by the parser when this element's close tag is reached,
     // signalling that all child tags have been parsed and added.
     // This is only needed for <applet> and <object> elements, which can't lay themselves out
     // until they know all of their nested <param>s. [3603191, 4040848]
-    virtual void closeRenderer() { }
+    virtual void closeRenderer() {}
 
-    typedef Q_UINT32 Id;
-    // id() is used to easily and exactly identify a node. It
-    // is optimized for quick comparison and low memory consumption.
-    // its value depends on the owner document of the node and is
-    // categorized in the following way:
-    // 1..ID_LAST_TAG: the node inherits HTMLElementImpl and is
-    //                 part of the HTML namespace.
-    //                 The HTML namespace is either the global
-    //                 one (no namespace) or the XHTML namespace
-    //                 depending on the owner document's doctype
-    // ID_LAST_TAG+1..0xffff: non-HTML elements in the global namespace
-    // others       non-HTML elements in a namespace.
-    //                 the upper 16 bit identify the namespace
-    //                 the lower 16 bit identify the local part of the
-    //                 qualified element name.
-    virtual Id id() const { return 0; };
-#if APPLE_CHANGES
-    Id identifier() const;
-#endif
+    typedef Q_UINT32 Id; // FIXME: Yank this once attributes are also switched over.
+
     enum MouseEventType {
         MousePress,
         MouseRelease,
@@ -277,8 +259,6 @@ public:
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool isMouseFocusable() const;
-    
-    virtual bool isInline() const;
     
     virtual bool isContentEditable() const;
     virtual QRect getRect() const;
@@ -369,11 +349,15 @@ public:
     khtml::RenderObject *previousRenderer();
     void setRenderer(khtml::RenderObject* renderer) { m_render = renderer; }
     
-    void checkSetPrefix(const DOMString &_prefix, int &exceptioncode);
-    void checkAddChild(NodeImpl *newChild, int &exceptioncode);
+    void checkSetPrefix(const AtomicString &_prefix, int &exceptioncode);
     bool isAncestor(const NodeImpl *) const;
-    virtual bool childAllowed( NodeImpl *newChild );
 
+	// These two methods are mutually exclusive.  The former is used to do strict error-checking
+	// when adding children via the public DOM API (e.g., appendChild()).  The latter is called only when parsing, 
+	// to sanity-check against the DTD for error recovery.
+	void checkAddChild(NodeImpl *newChild, int &exceptioncode);    // Error-checking when adding via the DOM API
+	virtual bool childAllowed(NodeImpl *newChild);				   // Error-checking during parsing that checks the DTD
+	
     virtual long maxOffset() const;
     long maxDeepOffset() const;
     virtual long caretMinOffset() const;
@@ -481,7 +465,7 @@ public:
     void notifyNodeListsSubtreeModified();
     void notifyLocalNodeListsSubtreeModified();
 
-    SharedPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS(DOMString(), name); }
+    SharedPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS("*", name); }
     SharedPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
 
 private: // members
@@ -617,30 +601,6 @@ public:
 protected:
     virtual bool nodeMatches( NodeImpl *testNode ) const;
 };
-
-
-/**
- * NodeList which lists all Nodes in a document with a given tag name
- */
-class TagNodeListImpl : public NodeListImpl
-{
-public:
-    TagNodeListImpl( NodeImpl *n, NodeImpl::Id tagId, NodeImpl::Id tagIdMask );
-
-    // DOM methods overridden from  parent classes
-
-    virtual unsigned long length() const;
-    virtual NodeImpl *item ( unsigned long index ) const;
-
-    // Other methods (not part of DOM)
-
-protected:
-    virtual bool nodeMatches( NodeImpl *testNode ) const;
-
-    NodeImpl::Id m_id;
-    NodeImpl::Id m_idMask;
-};
-
 
 /**
  * NodeList which lists all Nodes in a Element with a given "name=" tag

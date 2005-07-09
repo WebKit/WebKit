@@ -42,7 +42,7 @@
 #include "html_imageimpl.h"
 #include "html_interchange.h"
 #include "htmlattrs.h"
-#include "htmltags.h"
+#include "htmlnames.h"
 #include "khtml_part.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
@@ -81,6 +81,7 @@ using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
+using DOM::HTMLNames;
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -131,10 +132,10 @@ bool isSpecialElement(NodeImpl *n)
     if (!n->isHTMLElement())
         return false;
 
-    if (n->id() == ID_A && n->isLink())
+    if (n->isLink())
         return true;
 
-    if (n->id() == ID_UL || n->id() == ID_OL || n->id() == ID_DL)
+    if (n->hasTagName(HTMLNames::ul()) || n->hasTagName(HTMLNames::ol()) || n->hasTagName(HTMLNames::dl()))
         return true;
 
     RenderObject *renderer = n->renderer();
@@ -267,7 +268,7 @@ ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
     // We would need this margin-zeroing code back if we ever return to using <p> elements for default paragraphs.
     // static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");    
     int exceptionCode = 0;
-    ElementImpl *element = document->createHTMLElement("div", exceptionCode);
+    ElementImpl *element = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "div", exceptionCode);
     ASSERT(exceptionCode == 0);
     return element;
 }
@@ -275,7 +276,7 @@ ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
 ElementImpl *createBreakElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
+    ElementImpl *breakNode = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
     ASSERT(exceptionCode == 0);
     return breakNode;
 }
@@ -303,7 +304,7 @@ NodeImpl *nearestMailBlockquote(const NodeImpl *node)
 
 bool isMailBlockquote(const NodeImpl *node)
 {
-    if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
+    if (!node || !node->renderer() || !node->isElementNode() && !node->hasTagName(HTMLNames::blockquote()))
         return false;
         
     return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";

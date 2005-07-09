@@ -33,7 +33,6 @@
 
 #include "khtml_part.h"
 
-#include "html/dtd.h"
 #include "html/htmlparser.h"
 
 #include "rendering/render_canvas.h"
@@ -90,18 +89,18 @@ unsigned short AttrImpl::nodeType() const
     return Node::ATTRIBUTE_NODE;
 }
 
-DOMString AttrImpl::prefix() const
+const AtomicString& AttrImpl::prefix() const
 {
     return m_attribute->prefix();
 }
 
-void AttrImpl::setPrefix(const DOMString &_prefix, int &exceptioncode )
+void AttrImpl::setPrefix(const AtomicString &_prefix, int &exceptioncode )
 {
     checkSetPrefix(_prefix, exceptioncode);
     if (exceptioncode)
         return;
 
-    m_attribute->setPrefix(_prefix.implementation());
+    m_attribute->setPrefix(_prefix);
 }
 
 DOMString AttrImpl::nodeValue() const
@@ -202,11 +201,10 @@ DOMString AttrImpl::value() const
 
 // -------------------------------------------------------------------------
 
-ElementImpl::ElementImpl(DocumentPtr *doc)
-    : ContainerNodeImpl(doc)
+ElementImpl::ElementImpl(const QualifiedName& qName, DocumentPtr *doc)
+    : ContainerNodeImpl(doc), m_tagName(qName)
 {
     namedAttrMap = 0;
-    m_prefix = 0;
 }
 
 ElementImpl::~ElementImpl()
@@ -215,9 +213,22 @@ ElementImpl::~ElementImpl()
         namedAttrMap->detachFromElement();
         namedAttrMap->deref();
     }
+}
 
-    if (m_prefix)
-        m_prefix->deref();
+NodeImpl *ElementImpl::cloneNode(bool deep)
+{
+    int exceptionCode = 0;
+    ElementImpl *clone = getDocument()->createElementNS(namespaceURI(), nodeName(), exceptionCode);
+    assert(!exceptionCode);
+    
+    // clone attributes
+    if (namedAttrMap)
+        *clone->attributes() = *namedAttrMap;
+
+    if (deep)
+        cloneChildNodes(clone);
+
+    return clone;
 }
 
 void ElementImpl::removeAttribute( NodeImpl::Id id, int &exceptioncode )
@@ -351,36 +362,24 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
 bool ElementImpl::hasAttributes() const
 {
     updateStyleAttributeIfNeeded();
-
     return namedAttrMap && namedAttrMap->length() > 0;
 }
 
 DOMString ElementImpl::nodeName() const
 {
-    return tagName();
-}
-
-DOMString ElementImpl::tagName() const
-{
-    DOMString tn = getDocument()->tagName(id());
-
-    if (m_prefix)
-        return DOMString(m_prefix) + ":" + tn;
-
+    DOMString tn = m_tagName.localName();
+    if (m_tagName.hasPrefix())
+        return DOMString(m_tagName.prefix()) + ":" + tn;
     return tn;
 }
 
-void ElementImpl::setPrefix( const DOMString &_prefix, int &exceptioncode )
+void ElementImpl::setPrefix(const AtomicString &_prefix, int &exceptioncode)
 {
     checkSetPrefix(_prefix, exceptioncode);
     if (exceptioncode)
         return;
 
-    if (m_prefix)
-        m_prefix->deref();
-    m_prefix = _prefix.implementation();
-    if (m_prefix)
-        m_prefix->ref();
+    m_tagName.setPrefix(_prefix);
 }
 
 void ElementImpl::createAttributeMap() const
@@ -521,18 +520,6 @@ void ElementImpl::recalcStyle( StyleChange change )
     setHasChangedChild( false );
 }
 
-// DOM Section 1.1.1
-bool ElementImpl::childAllowed( NodeImpl *newChild )
-{
-    if (!childTypeAllowed(newChild->nodeType()))
-        return false;
-
-    // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
-    if (getDocument()->isHTMLDocument())
-        return checkChild(id(), newChild->id(), !getDocument()->inCompatMode());
-    return true;
-}
-
 bool ElementImpl::childTypeAllowed( unsigned short type )
 {
     switch (type) {
@@ -569,7 +556,7 @@ void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
 
 DOMString ElementImpl::openTagStartToString() const
 {
-    DOMString result = DOMString("<") + tagName();
+    DOMString result = DOMString("<") + nodeName();
 
     NamedAttrMapImpl *attrMap = attributes(true);
 
@@ -610,7 +597,7 @@ DOMString ElementImpl::toString() const
 	}
 
 	result += "</";
-	result += tagName();
+	result += nodeName();
 	result += ">";
     } else {
 	result += " />";
@@ -759,12 +746,7 @@ CSSStyleDeclarationImpl *ElementImpl::style()
 
 // -------------------------------------------------------------------------
 
-XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_tagName)
-    : ElementImpl(doc)
-{
-    m_id = doc->document()->tagId(0 /* no namespace */, _tagName,  false /* allocate */);
-}
-
+/*
 XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_qualifiedName, DOMStringImpl *_namespaceURI)
     : ElementImpl(doc)
 {
@@ -780,49 +762,24 @@ XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_qualifiedName, 
         DOMStringImpl* localName = _qualifiedName->copy();
         localName->ref();
         localName->remove(0,colonpos+1);
-        m_id = doc->document()->tagId(_namespaceURI, localName, false /* allocate */);
+        m_id = doc->document()->tagId(_namespaceURI, localName, false);
         localName->deref();
-        m_prefix = _qualifiedName->copy();
-        m_prefix->ref();
-        m_prefix->truncate(colonpos);
+        
+        // FIXME: This is a temporary situation for stage one of the QualifiedName patch.  This is also a really stupid way to
+        // have to handle the prefix.  Way too much copying.  We should make sure the XML tokenizer has done the split
+        // already into prefix and localName.
+        DOMStringImpl* prefix = _qualifiedName->copy();
+        prefix->ref();
+        prefix->truncate(colonpos);
+        m_tagName = QualifiedName(prefix, nullAtom, nullAtom);
+        prefix->deref();
     }
-    else {
+    else
         // no prefix
-        m_id = doc->document()->tagId(_namespaceURI, _qualifiedName, false /* allocate */);
-        m_prefix = 0;
-    }
+        m_id = doc->document()->tagId(_namespaceURI, _qualifiedName, false);
 }
 
-XMLElementImpl::~XMLElementImpl()
-{
-}
-
-DOMString XMLElementImpl::localName() const
-{
-    return getDocument()->tagName(m_id);
-}
-
-DOMString XMLElementImpl::namespaceURI() const
-{
-    return getDocument()->namespaceURI(m_id);
-}
-
-NodeImpl *XMLElementImpl::cloneNode ( bool deep )
-{
-    // ### we lose namespace here FIXME
-    // should pass id around
-    XMLElementImpl *clone = new XMLElementImpl(docPtr(), getDocument()->tagName(m_id).implementation());
-    clone->m_id = m_id;
-
-    // clone attributes
-    if (namedAttrMap)
-        *clone->attributes(false) = *namedAttrMap;
-
-    if (deep)
-        cloneChildNodes(clone);
-
-    return clone;
-}
+*/
 
 // -------------------------------------------------------------------------
 
@@ -1270,8 +1227,8 @@ void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
     }
 }
 
-StyledElementImpl::StyledElementImpl(DocumentPtr *doc)
-    : ElementImpl(doc)
+StyledElementImpl::StyledElementImpl(const QualifiedName& name, DocumentPtr *doc)
+    : ElementImpl(name, doc)
 {
     m_inlineStyleDecl = 0;
     m_isStyleAttributeValid = true;

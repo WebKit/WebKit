@@ -39,7 +39,6 @@
 #include "html/htmltokenizer.h"
 #include "html/html_documentimpl.h"
 #include "html/htmlparser.h"
-#include "html/dtd.h"
 
 #include "misc/loader.h"
 #include "misc/htmlhashes.h"
@@ -63,7 +62,10 @@ using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::DocumentImpl;
 using DOM::emptyAtom;
-using DOM::endTagRequirement;
+using DOM::commentAtom;
+using DOM::nullAtom;
+using DOM::textAtom;
+using DOM::HTMLNames;
 
 // turn off inlining to void warning with newer gcc
 #undef __inline
@@ -239,7 +241,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool incl
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     charsets = KGlobal::charsets();
-    parser = new KHTMLParser(_view, _doc, includesComments);
+    parser = new HTMLParser(_view, _doc, includesComments);
     m_executingScript = 0;
     loadingExtScript = false;
     onHold = false;
@@ -259,7 +261,7 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, DOM::DocumentFragmentImpl *
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     charsets = KGlobal::charsets();
-    parser = new KHTMLParser(i, _doc, includesComments);
+    parser = new HTMLParser(i, _doc, includesComments);
     m_executingScript = 0;
     loadingExtScript = false;
     onHold = false;
@@ -451,10 +453,10 @@ void HTMLTokenizer::parseSpecial(TokenizerString &src)
             else {
                 processListing(TokenizerString(scriptCode, scriptCodeSize));
                 processToken();
-                if ( style )         { currToken.id = ID_STYLE + ID_CLOSE_TAG; }
-                else if ( textarea ) { currToken.id = ID_TEXTAREA + ID_CLOSE_TAG; }
-                else if ( title ) { currToken.id = ID_TITLE + ID_CLOSE_TAG; }
-                else if ( xmp )  { currToken.id = ID_XMP + ID_CLOSE_TAG; }
+                if ( style )         { currToken.tagName = HTMLNames::style().localName(); currToken.beginTag = false; }
+                else if ( textarea ) { currToken.tagName = HTMLNames::textarea().localName(); currToken.beginTag = false; }
+                else if ( title ) { currToken.tagName = HTMLNames::title().localName(); currToken.beginTag = false; }
+                else if ( xmp )  { currToken.tagName = HTMLNames::xmp().localName(); currToken.beginTag = false; }
                 processToken();
                 style = script = style = textarea = title = xmp = false;
                 tquote = NoQuote;
@@ -524,7 +526,8 @@ void HTMLTokenizer::scriptHandler()
     processListing(TokenizerString(scriptCode, scriptCodeSize));
     QString exScript( buffer, dest-buffer );
     processToken();
-    currToken.id = ID_SCRIPT + ID_CLOSE_TAG;
+    currToken.tagName = HTMLNames::script().localName();
+    currToken.beginTag = false;
     processToken();
 
     TokenizerString *savedPrependingSrc = currentPrependingSrc;
@@ -701,10 +704,12 @@ void HTMLTokenizer::parseComment(TokenizerString &src)
                         checkScriptBuffer();
                         scriptCode[ scriptCodeSize ] = 0;
                         scriptCode[ scriptCodeSize + 1 ] = 0;
-                        currToken.id = ID_COMMENT;
+                        currToken.tagName = commentAtom;
+                        currToken.beginTag = true;
                         processListing(TokenizerString(scriptCode, scriptCodeSize - endCharsCount));
                         processToken();
-                        currToken.id = ID_COMMENT + ID_CLOSE_TAG;
+                        currToken.tagName = commentAtom;
+                        currToken.beginTag = false;
                         processToken();
                     }
                     scriptCodeSize = 0;
@@ -1022,10 +1027,12 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     finish = true;
                     break;
                 }
-                // Use tolower() instead of | 0x20 to lowercase the char because there is no 
-                // performance gain in using | 0x20 since tolower() is optimized and 
-                // | 0x20 turns characters such as '_' into junk.
-                cBuffer[cBufferPos++] = tolower(curchar);
+                
+                // tolower() shows up on profiles. This is faster!
+                if (curchar >= 'A' && curchar <= 'Z')
+                    cBuffer[cBufferPos++] = curchar + ('a' - 'A');
+                else
+                    cBuffer[cBufferPos++] = curchar;
                 ++src;
             }
 
@@ -1047,27 +1054,13 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     // Start Tag
                     beginTag = true;
 
-                // Accept empty xml tags like <br/>.  We trim off the "/" so that when we call
-                // getTagID, we'll look up "br" as the tag name and not "br/".
+                // Ignore the / in fake xml tags like <br/>.  We trim off the "/" so that we'll get "br" as the tag name and not "br/".
                 if(len > 1 && ptr[len-1] == '/' )
                     ptr[--len] = '\0';
 
-                // Look up the tagID for the specified tag name (now that we've shaved off any
-                // invalid / that might have followed the name).
-                unsigned short tagID = getTagID(ptr, len);
-                if (!tagID) {
-                    DOMString tagName(ptr);
-                    DocumentImpl *doc = parser->docPtr()->document();
-                    if (doc->isValidName(tagName))
-                        tagID = parser->docPtr()->document()->tagId(0, tagName.implementation(), false);
-                }
-                if (tagID) {
-#ifdef TOKEN_DEBUG
-                    QCString tmp(ptr, len+1);
-                    kdDebug( 6036 ) << "found tag id=" << tagID << ": " << tmp.data() << endl;
-#endif
-                    currToken.id = beginTag ? tagID : tagID + ID_CLOSE_TAG;
-                }
+                // Now that we've shaved off any invalid / that might have followed the name), make the tag.
+                currToken.tagName = AtomicString(ptr);
+                currToken.beginTag = beginTag;
                 dest = buffer;
                 tag = SearchAttribute;
                 cBufferPos = 0;
@@ -1118,15 +1111,6 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                         else {
                             attrName = QString::fromLatin1(QCString(cBuffer, cBufferPos+1).data());
                             attrNamePresent = !attrName.isEmpty();
-
-                            // This is a deliberate quirk to match Mozilla and Opera.  We have to do this
-                            // since sites that use the "standards-compliant" path sometimes send
-                            // <script src="foo.js"/>.  Both Moz and Opera will honor this, despite it
-                            // being bogus HTML.  They do not honor the "/" for other tags.  This behavior
-                            // also deviates from WinIE, but in this case we'll just copy Moz and Opera.
-                            if (currToken.id == ID_SCRIPT && curchar == '>' &&
-                                attrName == "/")
-                                currToken.flat = true;
                         }
                         
                         dest = buffer;
@@ -1142,10 +1126,12 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                         break;
                     }
                 }
-                // Use tolower() instead of | 0x20 to lowercase the char because there is no 
-                // performance gain in using | 0x20 since tolower() is optimized and 
-                // | 0x20 turns characters such as '_' into junk.
-                cBuffer[cBufferPos++] = tolower(curchar);
+                
+                // tolower() shows up on profiles. This is faster!
+                if (curchar >= 'A' && curchar <= 'Z')
+                    cBuffer[cBufferPos++] = curchar + ('a' - 'A');
+                else
+                    cBuffer[cBufferPos++] = curchar;
                 ++src;
             }
             if ( cBufferPos == CBUFLEN ) {
@@ -1328,18 +1314,15 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
             if (*src != '<')
                 ++src;
 
-            if ( !currToken.id ) //stop if tag is unknown
+            if (currToken.tagName == nullAtom) //stop if tag is unknown
                 return;
 
-            uint tagID = currToken.id;
+            AtomicString tagName = currToken.tagName;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
-            bool beginTag = !currToken.flat && (tagID <= ID_CLOSE_TAG);
-
-            if (tagID > ID_CLOSE_TAG)
-                tagID -= ID_CLOSE_TAG;
-            else if (tagID == ID_SCRIPT) {
+            bool beginTag = !currToken.flat && currToken.beginTag;
+            if (beginTag && currToken.tagName == HTMLNames::script()) {
                 AttributeImpl* a = 0;
                 bool foundTypeAttribute = false;
                 scriptSrc = QString::null;
@@ -1414,71 +1397,49 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
             processToken();
 
-            // we have to take care to close the pre block in
-            // case we encounter an unallowed element....
-            if(pre && beginTag && !DOM::checkChild(ID_PRE, tagID, !parser->doc()->inCompatMode())) {
-                kdDebug(6036) << " not allowed in <pre> " << (int)tagID << endl;
-                pre = false;
-            }
-
-            switch( tagID ) {
-            case ID_PRE:
+            if (tagName == HTMLNames::pre()) {
                 prePos = 0;
                 pre = beginTag;
                 discard = LFDiscard; // Discard the first LF after we open a pre.
-                break;
-            case ID_SCRIPT:
+            } else if (tagName == HTMLNames::script()) {
                 if (beginTag) {
                     searchStopper = scriptEnd;
                     searchStopperLen = 8;
                     script = true;
                     parseSpecial(src);
                 }
-                else if (tagID <= ID_CLOSE_TAG) { // Handle <script src="foo"/>
-                    script = true;
-                    scriptHandler();
-                }
-                break;
-            case ID_STYLE:
+            } else if (tagName == HTMLNames::style()) {
                 if (beginTag) {
                     searchStopper = styleEnd;
                     searchStopperLen = 7;
                     style = true;
                     parseSpecial(src);
                 }
-                break;
-            case ID_TEXTAREA:
+            } else if (tagName == HTMLNames::textarea()) {
                 if(beginTag) {
                     searchStopper = textareaEnd;
                     searchStopperLen = 10;
                     textarea = true;
                     parseSpecial(src);
                 }
-                break;
-            case ID_TITLE:
-                if (beginTag) {
+            } else if (tagName == HTMLNames::title()) {
+                 if (beginTag) {
                     searchStopper = titleEnd;
                     searchStopperLen = 7;
                     title = true;
                     parseSpecial(src);
                 }
-                break;
-            case ID_XMP:
+            } else if (tagName == HTMLNames::xmp()) {
                 if (beginTag) {
                     searchStopper = xmpEnd;
                     searchStopperLen = 5;
                     xmp = true;
                     parseSpecial(src);
                 }
-                break;
-            case ID_SELECT:
+            } else if (tagName == HTMLNames::select())
                 select = beginTag;
-                break;
-            case ID_PLAINTEXT:
+            else if (tagName == HTMLNames::plaintext())
                 plaintext = beginTag;
-                break;
-            }
-
             return; // Finished parsing tag!
         }
         } // end switch
@@ -1989,10 +1950,10 @@ void HTMLTokenizer::processToken()
 #endif
         currToken.text = new DOMStringImpl( buffer, dest - buffer );
         currToken.text->ref();
-        if (currToken.id != ID_COMMENT)
-            currToken.id = ID_TEXT;
+        if (currToken.tagName != commentAtom)
+            currToken.tagName = textAtom;
     }
-    else if(!currToken.id) {
+    else if (currToken.tagName == nullAtom) {
         currToken.reset();
         if (jsProxy)
             jsProxy->setEventHandlerLineno(lineno+src.lineCount());

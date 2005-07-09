@@ -39,7 +39,8 @@ class HTMLBaseFontElementImpl : public HTMLElementImpl
 public:
     HTMLBaseFontElementImpl(DocumentPtr *doc);
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
 
     DOMString color() const;
     void setColor(const DOMString &);

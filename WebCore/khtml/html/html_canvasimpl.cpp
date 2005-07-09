@@ -55,17 +55,12 @@ using namespace khtml;
 // -------------------------------------------------------------------------
 
 HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentPtr *doc)
-    : HTMLImageElementImpl(doc)
+    : HTMLImageElementImpl(HTMLNames::canvas(), doc)
 {
 }
 
 HTMLCanvasElementImpl::~HTMLCanvasElementImpl()
 {
-}
-
-NodeImpl::Id HTMLCanvasElementImpl::id() const
-{
-    return ID_CANVAS;
 }
 
 bool HTMLCanvasElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const

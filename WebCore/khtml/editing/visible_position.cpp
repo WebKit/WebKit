@@ -26,7 +26,7 @@
 #include "visible_position.h"
 #include "visible_units.h"
 
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
 #include "rendering/render_text.h"
@@ -50,6 +50,7 @@ using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::TextImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -74,7 +75,7 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
     m_affinity = affinity;
 
     // For <br> 0, it's important not to move past the <br>.
-    if (pos.node() && pos.node()->id() == ID_BR && pos.offset() == 0)
+    if (pos.node() && pos.node()->hasTagName(HTMLNames::br()) && pos.offset() == 0)
         initUpstream(pos);
     else
         initDownstream(pos);
@@ -274,7 +275,7 @@ bool VisiblePosition::isCandidate(const Position &pos)
     }
     
     if (renderer->isBlockFlow() && (!renderer->firstChild() || !pos.node()->firstChild()) && 
-       (renderer->height() || pos.node()->id() == ID_BODY)) {
+       (renderer->height() || pos.node()->hasTagName(HTMLNames::body()))) {
         // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
         return pos.offset() == 0;
     }
@@ -359,7 +360,7 @@ long VisiblePosition::maxOffset(const NodeImpl *node)
 
 bool VisiblePosition::isAtomicNode(const NodeImpl *node)
 {
-    return node && (!node->hasChildNodes() || (node->id() == ID_OBJECT && node->renderer() && node->renderer()->isReplaced()));
+    return node && (!node->hasChildNodes() || (node->hasTagName(HTMLNames::object()) && node->renderer() && node->renderer()->isReplaced()));
 }
 
 QChar VisiblePosition::character() const

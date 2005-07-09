@@ -41,7 +41,7 @@ HTMLBodyElement::HTMLBodyElement(HTMLBodyElementImpl *impl) : HTMLElement(impl)
 
 HTMLBodyElement &HTMLBodyElement::operator = (const Node &other)
 {
-    assignOther( other, ID_BODY );
+    assignOther( other, HTMLNames::body() );
     return *this;
 }
 
@@ -135,7 +135,7 @@ HTMLFrameElement::HTMLFrameElement(HTMLFrameElementImpl *impl) : HTMLElement(imp
 
 HTMLFrameElement &HTMLFrameElement::operator = (const Node &other)
 {
-    assignOther( other, ID_FRAME );
+    assignOther( other, HTMLNames::frame() );
     return *this;
 }
 
@@ -265,7 +265,7 @@ HTMLIFrameElement::HTMLIFrameElement(HTMLIFrameElementImpl *impl) : HTMLElement(
 
 HTMLIFrameElement &HTMLIFrameElement::operator = (const Node &other)
 {
-    assignOther( other, ID_IFRAME );
+    assignOther( other, HTMLNames::iframe() );
     return *this;
 }
 
@@ -414,7 +414,7 @@ HTMLFrameSetElement::HTMLFrameSetElement(HTMLFrameSetElementImpl *impl) : HTMLEl
 
 HTMLFrameSetElement &HTMLFrameSetElement::operator = (const Node &other)
 {
-    assignOther( other, ID_FRAMESET );
+    assignOther( other, HTMLNames::frameset() );
     return *this;
 }
 
@@ -466,7 +466,7 @@ HTMLHeadElement::HTMLHeadElement(HTMLHeadElementImpl *impl) : HTMLElement(impl)
 
 HTMLHeadElement &HTMLHeadElement::operator = (const Node &other)
 {
-    assignOther( other, ID_HEAD );
+    assignOther( other, HTMLNames::head() );
     return *this;
 }
 
@@ -507,7 +507,7 @@ HTMLHtmlElement::HTMLHtmlElement(HTMLHtmlElementImpl *impl) : HTMLElement(impl)
 
 HTMLHtmlElement &HTMLHtmlElement::operator = (const Node &other)
 {
-    assignOther( other, ID_HTML );
+    assignOther( other, HTMLNames::html() );
     return *this;
 }
 

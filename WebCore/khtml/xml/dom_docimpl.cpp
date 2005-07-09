@@ -34,8 +34,6 @@
 #include "xml/dom2_viewsimpl.h"
 #include "xml/xml_tokenizer.h"
 
-#include "xml_namespace_table.h"
-
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
@@ -65,17 +63,11 @@
 #include "khtml_settings.h"
 #include "khtmlpart_p.h"
 
-#include "html/html_baseimpl.h"
-#include "html/html_blockimpl.h"
-#include "html/html_canvasimpl.h"
+// FIXME: We want to cut the remaining HTML dependencies so that we don't need to include these files.
 #include "html/html_documentimpl.h"
-#include "html/html_formimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
-#include "html/html_listimpl.h"
-#include "html/html_miscimpl.h"
-#include "html/html_tableimpl.h"
-#include "html/html_objectimpl.h"
+#include "htmlfactory.h"
 
 #include "cssvalues.h"
 
@@ -504,9 +496,9 @@ ElementImpl *DocumentImpl::documentElement() const
     return static_cast<ElementImpl*>(n);
 }
 
-ElementImpl *DocumentImpl::createElement( const DOMString &name, int &exceptioncode )
+ElementImpl *DocumentImpl::createElement(const DOMString &name, int &exceptionCode)
 {
-    return new XMLElementImpl( document, name.implementation() );
+    return createElementNS(emptyAtom, name, exceptionCode);
 }
 
 DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
@@ -573,10 +565,8 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
             return createComment(importedNode->nodeValue());
         case Node::ELEMENT_NODE: {
             ElementImpl *oldElement = static_cast<ElementImpl *>(importedNode);
-            DocumentImpl *oldDoc = oldElement->getDocument();
-            static DOMString HTMLNamespace(XHTML_NAMESPACE);
-            DOMString elementNamespace = oldElement->isHTMLElement() ? HTMLNamespace : oldElement->namespaceURI();
-            ElementImpl *newElement = createElementNS(elementNamespace.implementation(), oldElement->tagName(), exceptioncode);
+            // FIXME: Prefix is lost.  Is that right?
+            ElementImpl *newElement = createElementNS(oldElement->namespaceURI(), oldElement->localName(), exceptioncode);
             if (exceptioncode != 0)
                 return 0;
 
@@ -597,7 +587,8 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
                         // ### extract and set new prefix
                     }
 
-                    NodeImpl::Id nodeId = attrId(oldDoc->namespaceURI(attr->attrImpl()->id()), localName.implementation(), false /* allocate */);
+                    // FIXME: Lose the namespace here for now.  This code will change soon anyway.
+                    NodeImpl::Id nodeId = attrId(0, localName.implementation(), false /* allocate */);
                     newElement->setAttribute(nodeId, value.implementation(), exceptioncode);
                     if (exceptioncode != 0) {
                         newElement->deref();
@@ -636,28 +627,36 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
 
 ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
 {
-    ElementImpl *e = 0;
-    QString qName = _qualifiedName.string();
-    int colonPos = qName.find(':',0);
-
-    if (_namespaceURI == XHTML_NAMESPACE) {
-        // User requested an element in the XHTML namespace - this means we create a specific element
-        // (elements not in this namespace are treated as normal XML elements)
-        e = createHTMLElement(qName.mid(colonPos+1), exceptioncode);
-        if (exceptioncode)
+    // Split the name.
+    int exceptionCode = 0;
+    ElementImpl* e = 0;
+    DOMString prefix, localName;
+    int colonPos = _qualifiedName.find(':');
+    if (colonPos >= 0) {
+        prefix = _qualifiedName.substring(0, colonPos);
+        localName = _qualifiedName.substring(colonPos+1, _qualifiedName.length() - colonPos);
+    }
+    else
+        localName = _qualifiedName;
+    
+    // FIXME: Use registered namespaces and look up in a hash to find the right factory.
+    if (_namespaceURI == HTMLNames::xhtmlNamespaceURI()) {
+        // FIXME: Really should only be done from the public DOM API.  Internal callers know the name is valid.
+        if (!isValidName(localName)) {
+            exceptioncode = DOMException::INVALID_CHARACTER_ERR;
             return 0;
-        if (e && colonPos >= 0) {
-            e->setPrefix(qName.left(colonPos), exceptioncode);
-            if (exceptioncode) {
-                delete e;
+        }
+        e = HTMLElementFactory::createHTMLElement(AtomicString(localName), this, 0, false);
+        if (e && !prefix.isNull()) {
+            e->setPrefix(AtomicString(prefix), exceptionCode);
+            if (exceptionCode)
                 return 0;
-            }
         }
     }
-
+    
     if (!e)
-        e = new XMLElementImpl( document, _qualifiedName.implementation(), _namespaceURI.implementation() );
-
+        e = new ElementImpl(QualifiedName(AtomicString(prefix), AtomicString(localName), AtomicString(_namespaceURI)), document);
+    
     return e;
 }
 
@@ -809,220 +808,6 @@ DOMString DocumentImpl::nodeName() const
 unsigned short DocumentImpl::nodeType() const
 {
     return Node::DOCUMENT_NODE;
-}
-
-ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &exceptioncode )
-{
-    if (!isValidName(name)) {
-        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
-        return 0;
-    }
-    return createHTMLElement(tagId(0, name.implementation(), false));
-}
-
-ElementImpl *DocumentImpl::createHTMLElement(unsigned short tagID)
-{
-    switch (tagID)
-    {
-    case ID_HTML:
-        return new HTMLHtmlElementImpl(docPtr());
-    case ID_HEAD:
-        return new HTMLHeadElementImpl(docPtr());
-    case ID_BODY:
-        return new HTMLBodyElementImpl(docPtr());
-
-// head elements
-    case ID_BASE:
-        return new HTMLBaseElementImpl(docPtr());
-    case ID_LINK:
-        return new HTMLLinkElementImpl(docPtr());
-    case ID_META:
-        return new HTMLMetaElementImpl(docPtr());
-    case ID_STYLE:
-        return new HTMLStyleElementImpl(docPtr());
-    case ID_TITLE:
-        return new HTMLTitleElementImpl(docPtr());
-
-// frames
-    case ID_FRAME:
-        return new HTMLFrameElementImpl(docPtr());
-    case ID_FRAMESET:
-        return new HTMLFrameSetElementImpl(docPtr());
-    case ID_IFRAME:
-        return new HTMLIFrameElementImpl(docPtr());
-
-// form elements
-// ### FIXME: we need a way to set form dependency after we have made the form elements
-    case ID_FORM:
-        return new HTMLFormElementImpl(docPtr());
-    case ID_BUTTON:
-        return new HTMLButtonElementImpl(docPtr());
-    case ID_FIELDSET:
-        return new HTMLFieldSetElementImpl(docPtr());
-    case ID_INPUT:
-        return new HTMLInputElementImpl(docPtr());
-    case ID_ISINDEX:
-        return new HTMLIsIndexElementImpl(docPtr());
-    case ID_LABEL:
-        return new HTMLLabelElementImpl(docPtr());
-    case ID_LEGEND:
-        return new HTMLLegendElementImpl(docPtr());
-    case ID_OPTGROUP:
-        return new HTMLOptGroupElementImpl(docPtr());
-    case ID_OPTION:
-        return new HTMLOptionElementImpl(docPtr());
-    case ID_SELECT:
-        return new HTMLSelectElementImpl(docPtr());
-    case ID_TEXTAREA:
-        return new HTMLTextAreaElementImpl(docPtr());
-
-// lists
-    case ID_DL:
-        return new HTMLDListElementImpl(docPtr());
-    case ID_DD:
-        return new HTMLGenericElementImpl(docPtr(), tagID);
-    case ID_DT:
-        return new HTMLGenericElementImpl(docPtr(), tagID);
-    case ID_UL:
-        return new HTMLUListElementImpl(docPtr());
-    case ID_OL:
-        return new HTMLOListElementImpl(docPtr());
-    case ID_DIR:
-        return new HTMLDirectoryElementImpl(docPtr());
-    case ID_MENU:
-        return new HTMLMenuElementImpl(docPtr());
-    case ID_LI:
-        return new HTMLLIElementImpl(docPtr());
-
-// formatting elements (block)
-    case ID_BLOCKQUOTE:
-        return new HTMLBlockquoteElementImpl(docPtr());
-    case ID_DIV:
-        return new HTMLDivElementImpl(docPtr());
-    case ID_H1:
-    case ID_H2:
-    case ID_H3:
-    case ID_H4:
-    case ID_H5:
-    case ID_H6:
-        return new HTMLHeadingElementImpl(docPtr(), tagID);
-    case ID_HR:
-        return new HTMLHRElementImpl(docPtr());
-    case ID_P:
-        return new HTMLParagraphElementImpl(docPtr());
-    case ID_PRE:
-    case ID_XMP:
-    case ID_PLAINTEXT:
-        return new HTMLPreElementImpl(docPtr(), tagID);
-    case ID_LAYER:
-        return new HTMLLayerElementImpl(docPtr());
-
-// font stuff
-    case ID_BASEFONT:
-        return new HTMLBaseFontElementImpl(docPtr());
-    case ID_FONT:
-        return new HTMLFontElementImpl(docPtr());
-
-// ins/del
-    case ID_DEL:
-    case ID_INS:
-        return new HTMLModElementImpl(docPtr(), tagID);
-
-// anchor
-    case ID_A:
-        return new HTMLAnchorElementImpl(docPtr());
-
-// images
-    case ID_IMG:
-        return new HTMLImageElementImpl(docPtr());
-    case ID_MAP:
-        return new HTMLMapElementImpl(docPtr());
-    case ID_AREA:
-        return new HTMLAreaElementImpl(docPtr());
-    case ID_CANVAS:
-        return new HTMLCanvasElementImpl(docPtr());
-
-// objects, applets and scripts
-    case ID_APPLET:
-        return new HTMLAppletElementImpl(docPtr());
-    case ID_EMBED:
-        return new HTMLEmbedElementImpl(docPtr());
-    case ID_OBJECT:
-        return new HTMLObjectElementImpl(docPtr());
-    case ID_PARAM:
-        return new HTMLParamElementImpl(docPtr());
-    case ID_SCRIPT:
-        return new HTMLScriptElementImpl(docPtr());
-
-// tables
-    case ID_TABLE:
-        return new HTMLTableElementImpl(docPtr());
-    case ID_CAPTION:
-        return new HTMLTableCaptionElementImpl(docPtr());
-    case ID_COLGROUP:
-    case ID_COL:
-        return new HTMLTableColElementImpl(docPtr(), tagID);
-    case ID_TR:
-        return new HTMLTableRowElementImpl(docPtr());
-    case ID_TD:
-    case ID_TH:
-        return new HTMLTableCellElementImpl(docPtr(), tagID);
-    case ID_THEAD:
-    case ID_TBODY:
-    case ID_TFOOT:
-        return new HTMLTableSectionElementImpl(docPtr(), tagID, false);
-
-// inline elements
-    case ID_BR:
-        return new HTMLBRElementImpl(docPtr());
-    case ID_Q:
-        return new HTMLQuoteElementImpl(docPtr());
-
-    case ID_MARQUEE:
-        return new HTMLMarqueeElementImpl(docPtr());
-   
-// elements with no special representation in the DOM
-
-// block:
-    case ID_ADDRESS:
-    case ID_CENTER:
-
-// inline
-        // %fontstyle
-    case ID_TT:
-    case ID_U:
-    case ID_B:
-    case ID_I:
-    case ID_S:
-    case ID_STRIKE:
-    case ID_BIG:
-    case ID_SMALL:
-
-        // %phrase
-    case ID_EM:
-    case ID_STRONG:
-    case ID_DFN:
-    case ID_CODE:
-    case ID_SAMP:
-    case ID_KBD:
-    case ID_VAR:
-    case ID_CITE:
-    case ID_ABBR:
-    case ID_ACRONYM:
-
-        // %special
-    case ID_SUB:
-    case ID_SUP:
-    case ID_SPAN:
-    case ID_NOBR:
-    case ID_WBR:
-
-    case ID_BDO:
-    default:
-        return new HTMLGenericElementImpl(docPtr(), tagID);
-    }
-
-    return 0;
 }
 
 QString DocumentImpl::nextState()
@@ -1465,10 +1250,10 @@ HTMLElementImpl* DocumentImpl::body()
     // try to prefer a FRAMESET element over BODY
     NodeImpl* body = 0;
     for (NodeImpl* i = de->firstChild(); i; i = i->nextSibling()) {
-        if (i->id() == ID_FRAMESET)
+        if (i->hasTagName(HTMLNames::frameset()))
             return static_cast<HTMLElementImpl*>(i);
         
-        if (i->id() == ID_BODY)
+        if (i->hasTagName(HTMLNames::body()))
             body = i;
     }
     return static_cast<HTMLElementImpl *>(body);
@@ -1598,7 +1383,7 @@ bool DocumentImpl::shouldScheduleLayout()
     // (c) we have a <body>
     return (renderer() && renderer()->needsLayout() && haveStylesheetsLoaded() &&
             documentElement() && documentElement()->renderer() &&
-            (documentElement()->id() != ID_HTML || body()));
+            (!documentElement()->hasTagName(HTMLNames::html()) || body()));
 }
 
 int DocumentImpl::minimumLayoutDelay()
@@ -1720,42 +1505,6 @@ void DocumentImpl::determineParseMode( const QString &/*str*/ )
     pMode = Strict;
     hMode = XHtml;
     kdDebug(6020) << " using strict parseMode" << endl;
-}
-
-// Please see if there`s a possibility to merge that code
-// with the next function and getElementByID().
-NodeImpl *DocumentImpl::findElement( Id id )
-{
-    QPtrStack<NodeImpl> nodeStack;
-    NodeImpl *current = _first;
-
-    while(1)
-    {
-        if(!current)
-        {
-            if(nodeStack.isEmpty()) break;
-            current = nodeStack.pop();
-            current = current->nextSibling();
-        }
-        else
-        {
-            if(current->id() == id)
-                return current;
-
-            NodeImpl *child = current->firstChild();
-            if(child)
-            {
-                nodeStack.push(current);
-                current = child;
-            }
-            else
-            {
-                current = current->nextSibling();
-            }
-        }
-    }
-
-    return 0;
 }
 
 NodeImpl *DocumentImpl::nextFocusNode(NodeImpl *fromNode)
@@ -2138,7 +1887,7 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
 
     // First see if it's a HTML attribute name
     QConstString n(_name->s, _name->l);
-    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
+    if (!_namespaceURI) {
         // we're in HTML namespace if we know the tag.
         // xhtml is lower case - case sensitive, easy to implement
         if ( htmlMode() == XHtml && (id = getAttrID(n.string().ascii(), _name->l)) )
@@ -2152,12 +1901,13 @@ NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_
 
     // now lets find out the namespace
     Q_UINT16 ns = noNamespace;
+    /* FIXME: Just break namespaced attributes for now.  Will fix in next stage of QualifiedName conversion.
     if (_namespaceURI) {
         DOMString nsU(_namespaceURI);
         int nsID = XmlNamespaceTable::getNamespaceID(nsU, readonly);
         if (nsID != -1)
             ns = (Q_UINT16)nsID;
-    }
+    }*/
     
     // Look in the m_attrNames array for the name
     // ### yeah, this is lame. use a dictionary / map instead
@@ -2206,95 +1956,6 @@ DOMString DocumentImpl::attrName(NodeImpl::Id _id) const
         return result.lower();
 
     return result;
-}
-
-NodeImpl::Id DocumentImpl::tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly)
-{
-    if (!_name) return 0;
-    // Each document maintains a mapping of tag name -> id for every tag name encountered
-    // in the document.
-    NodeImpl::Id id = 0;
-
-    // First see if it's a HTML element name
-    QConstString n(_name->s, _name->l);
-    if (!_namespaceURI || !strcasecmp(_namespaceURI, XHTML_NAMESPACE)) {
-        // we're in HTML namespace if we know the tag.
-        // xhtml is lower case - case sensitive, easy to implement
-        if ( htmlMode() == XHtml && (id = getTagID(n.string().ascii(), _name->l)) )
-            return id;
-        // compatibility: upper case - case insensitive
-        if ( htmlMode() != XHtml && (id = getTagID(n.string().lower().ascii(), _name->l )) )
-            return id;
-
-        // ok, the fast path didn't work out, we need the full check
-    }
-
-    // now lets find out the namespace
-    Q_UINT16 ns = noNamespace;
-    if (_namespaceURI) {
-        DOMString nsU(_namespaceURI);
-        int nsID = XmlNamespaceTable::getNamespaceID(nsU, readonly);
-        if (nsID != -1)
-            ns = (Q_UINT16)nsID;
-    }
-
-    // Look in the m_elementNames array for the name
-    // ### yeah, this is lame. use a dictionary / map instead
-    DOMString nme(n.string());
-    // compatibility mode has to store upper case
-    if (htmlMode() != XHtml) nme = nme.upper();
-    for (id = 0; id < m_elementNameCount; id++)
-        if (DOMString(m_elementNames[id]) == nme)
-            return makeId(ns, ID_LAST_TAG + 1 + id);
-
-    // unknown
-    if (readonly) return 0;
-
-    // Name not found in m_elementNames, so let's add it
-    if (m_elementNameCount+1 > m_elementNameAlloc) {
-        m_elementNameAlloc += 100;
-        DOMStringImpl **newNames = new DOMStringImpl* [m_elementNameAlloc];
-        // ### yeah, this is lame. use a dictionary / map instead
-        if (m_elementNames) {
-            unsigned short i;
-            for (i = 0; i < m_elementNameCount; i++)
-                newNames[i] = m_elementNames[i];
-            delete [] m_elementNames;
-        }
-        m_elementNames = newNames;
-    }
-
-    id = m_elementNameCount++;
-    m_elementNames[id] = nme.implementation();
-    m_elementNames[id]->ref();
-
-    return makeId(ns, ID_LAST_TAG + 1 + id);
-}
-
-DOMString DocumentImpl::tagName(NodeImpl::Id _id) const
-{
-    if (localNamePart(_id) > ID_LAST_TAG)
-        return m_elementNames[localNamePart(_id) - (ID_LAST_TAG + 1)];
-    else {
-        // ### put them in a cache
-        if (htmlMode() == XHtml)
-            return getTagName(_id).lower();
-        else
-            return getTagName(_id);
-    }
-}
-
-
-DOMStringImpl* DocumentImpl::namespaceURI(NodeImpl::Id _id) const
-{
-    if (_id <= ID_LAST_TAG)
-        return htmlMode() == XHtml ? XmlNamespaceTable::getNamespaceURI(xhtmlNamespace).implementation() : 0;
-
-    unsigned short ns = _id >> 16;
-
-    if (!ns) return 0;
-
-    return XmlNamespaceTable::getNamespaceURI(ns).implementation();
 }
 
 StyleSheetListImpl* DocumentImpl::styleSheets()
@@ -2420,11 +2081,11 @@ void DocumentImpl::recalcStyleSelector()
             }
 
         }
-        else if (n->isHTMLElement() && (n->id() == ID_LINK || n->id() == ID_STYLE)) {
-            ElementImpl *e = static_cast<ElementImpl *>(n);
+        else if (n->isHTMLElement() && (n->hasTagName(HTMLNames::link()) || n->hasTagName(HTMLNames::style()))) {
+            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(n);
             QString title = e->getAttribute( ATTR_TITLE ).string();
             bool enabledViaScript = false;
-            if (n->id() == ID_LINK) {
+            if (e->hasLocalName(HTMLNames::link())) {
                 // <LINK> element
                 HTMLLinkElementImpl* l = static_cast<HTMLLinkElementImpl*>(n);
                 if (l->isLoading() || l->isDisabled())
@@ -2436,7 +2097,7 @@ void DocumentImpl::recalcStyleSelector()
 
             // Get the current preferred styleset.  This is the
             // set of sheets that will be enabled.
-            if ( n->id() == ID_LINK )
+            if (e->hasLocalName(HTMLNames::link()))
                 sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
             else
                 // <STYLE> element
@@ -2453,7 +2114,7 @@ void DocumentImpl::recalcStyleSelector()
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
                     QString rel = e->getAttribute( ATTR_REL ).string();
-                    if (n->id() == ID_STYLE || !rel.contains("alternate"))
+                    if (e->hasLocalName(HTMLNames::style()) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
                 }
                       
@@ -2472,7 +2133,7 @@ void DocumentImpl::recalcStyleSelector()
     
         // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
         // can stop searching here.
-        if (isHTMLDocument() && n->id() == ID_BODY)
+        if (isHTMLDocument() && n->hasTagName(HTMLNames::body()))
             break;
     }
 

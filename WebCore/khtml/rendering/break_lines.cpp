@@ -112,7 +112,8 @@ bool isBreakable(const QChar *s, int pos, int len, bool breakNBSP)
     if (lastCh == '-' || lastCh == '?')
         return true;
 
-    return c->direction() == QChar::DirWS;
+    // No other ascii chars are breakable.
+    return false;
 #endif    
 }
 

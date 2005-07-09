@@ -45,7 +45,13 @@ using namespace khtml;
 namespace DOM {
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::a(), doc)
+{
+    m_hasTarget = false;
+}
+
+HTMLAnchorElementImpl::HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : HTMLElementImpl(tagName, doc)
 {
     m_hasTarget = false;
 }
@@ -104,11 +110,6 @@ bool HTMLAnchorElementImpl::isKeyboardFocusable() const
     return getDocument()->part()->tabsToLinks();
 }
 
-NodeImpl::Id HTMLAnchorElementImpl::id() const
-{
-    return ID_A;
-}
-
 void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 {
     // React on clicks and on keypresses.
@@ -152,7 +153,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         if ( e && e->button() == 1 )
             utarget = "_blank";
 
-        if ( evt->target()->id() == ID_IMG ) {
+        if (evt->target()->hasTagName(HTMLNames::img())) {
             HTMLImageElementImpl* img = static_cast<HTMLImageElementImpl*>( evt->target() );
             if ( img && img->isServerMap() )
             {
@@ -382,17 +383,12 @@ void HTMLAnchorElementImpl::focus()
 
 // -------------------------------------------------------------------------
 
-HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
+HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::br(), doc)
 {
 }
 
 HTMLBRElementImpl::~HTMLBRElementImpl()
 {
-}
-
-NodeImpl::Id HTMLBRElementImpl::id() const
-{
-    return ID_BR;
 }
 
 bool HTMLBRElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -445,17 +441,12 @@ void HTMLBRElementImpl::setClear(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFontElementImpl::HTMLFontElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::font(), doc)
 {
 }
 
 HTMLFontElementImpl::~HTMLFontElementImpl()
 {
-}
-
-NodeImpl::Id HTMLFontElementImpl::id() const
-{
-    return ID_FONT;
 }
 
 // Allows leading spaces.
@@ -590,8 +581,8 @@ void HTMLFontElementImpl::setSize(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLModElementImpl::HTMLModElementImpl(DocumentPtr *doc, ushort elementId)
-    : HTMLGenericElementImpl(doc, elementId)
+HTMLModElementImpl::HTMLModElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : HTMLElementImpl(tagName, doc)
 {
 }
 
@@ -618,15 +609,10 @@ void HTMLModElementImpl::setDateTime(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::q(), doc)
 {
 }
 
-NodeImpl::Id HTMLQuoteElementImpl::id() const
-{
-    return ID_Q;
-}
-    
 DOMString HTMLQuoteElementImpl::cite() const
 {
     return getAttribute(ATTR_CITE);

@@ -74,7 +74,6 @@ using DOM::HTMLFormCollectionImpl;
 using DOM::HTMLFormElementImpl;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLFrameSetElementImpl;
-using DOM::HTMLGenericElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLHeadElementImpl;
 using DOM::HTMLHeadingElementImpl;
@@ -1905,9 +1904,9 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLQuoteElement
 
-- (HTMLGenericElementImpl *)_quoteElementImpl
+- (HTMLElementImpl *)_quoteElementImpl
 {
-    return static_cast<HTMLGenericElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)cite

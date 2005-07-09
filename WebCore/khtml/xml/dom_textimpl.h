@@ -95,13 +95,13 @@ public:
     virtual ~CommentImpl();
 
     // DOM methods overridden from  parent classes
+    const AtomicString& localName() const;
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
     virtual NodeImpl *cloneNode(bool deep);
 
     // Other methods (not part of DOM)
-
-    virtual Id id() const;
+    virtual bool isCommentNode() const { return true; }
     virtual bool childTypeAllowed( unsigned short type );
 
     virtual DOMString toString() const;
@@ -121,6 +121,7 @@ public:
     TextImpl *splitText ( const unsigned long offset, int &exceptioncode );
 
     // DOM methods overridden from  parent classes
+    const AtomicString& localName() const;
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
     virtual NodeImpl *cloneNode(bool deep);
@@ -128,7 +129,6 @@ public:
     // Other methods (not part of DOM)
 
     virtual bool isTextNode() const { return true; }
-    virtual Id id() const;
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);

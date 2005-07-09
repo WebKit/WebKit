@@ -46,8 +46,6 @@
 #include "kjs_events.h"
 #include "kjs_proxy.h"
 
-#include "misc/htmltags.h"
-
 #include "rendering/render_canvasimage.h"
 #include "rendering/render_object.h"
 #include "rendering/render_layer.h"
@@ -109,6 +107,7 @@ using DOM::HTMLMapElementImpl;
 using DOM::HTMLMenuElementImpl;
 using DOM::HTMLMetaElementImpl;
 using DOM::HTMLModElementImpl;
+using DOM::HTMLNames;
 using DOM::HTMLOListElementImpl;
 using DOM::HTMLObjectElementImpl;
 using DOM::HTMLOptGroupElementImpl;
@@ -353,7 +352,7 @@ Value HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName) cons
   if (val)
     return Value(val);
 
-  HTMLBodyElementImpl *bodyElement = (body && body->id() == ID_BODY) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
+  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLNames::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
 
   if (entry) {
     switch (entry->value) {
@@ -429,7 +428,7 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
   DOMExceptionTranslator exception(exec);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
   HTMLElementImpl *body = doc.body();
-  HTMLBodyElementImpl *bodyElement = (body && body->id() == ID_BODY) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
+  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLNames::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
 
   switch (token) {
   case Title:
@@ -583,133 +582,218 @@ const ClassInfo KJS::HTMLElement::marquee_info = { "HTMLMarqueeElement", &KJS::H
 
 const ClassInfo* KJS::HTMLElement::classInfo() const
 {
-  switch (impl()->id()) {
-  case ID_HTML:
-    return &html_info;
-  case ID_HEAD:
-    return &head_info;
-  case ID_LINK:
-    return &link_info;
-  case ID_TITLE:
-    return &title_info;
-  case ID_META:
-    return &meta_info;
-  case ID_BASE:
-    return &base_info;
-  case ID_ISINDEX:
-    return &isIndex_info;
-  case ID_STYLE:
-    return &style_info;
-  case ID_BODY:
-    return &body_info;
-  case ID_FORM:
-    return &form_info;
-  case ID_SELECT:
-    return &select_info;
-  case ID_OPTGROUP:
-    return &optGroup_info;
-  case ID_OPTION:
-    return &option_info;
-  case ID_INPUT:
-    return &input_info;
-  case ID_TEXTAREA:
-    return &textArea_info;
-  case ID_BUTTON:
-    return &button_info;
-  case ID_LABEL:
-    return &label_info;
-  case ID_FIELDSET:
-    return &fieldSet_info;
-  case ID_LEGEND:
-    return &legend_info;
-  case ID_UL:
-    return &ul_info;
-  case ID_OL:
-    return &ol_info;
-  case ID_DL:
-    return &dl_info;
-  case ID_DIR:
-    return &dir_info;
-  case ID_MENU:
-    return &menu_info;
-  case ID_LI:
-    return &li_info;
-  case ID_DIV:
-    return &div_info;
-  case ID_P:
-    return &p_info;
-  case ID_H1:
-  case ID_H2:
-  case ID_H3:
-  case ID_H4:
-  case ID_H5:
-  case ID_H6:
-    return &heading_info;
-  case ID_BLOCKQUOTE:
-    return &blockQuote_info;
-  case ID_Q:
-    return &q_info;
-  case ID_PRE:
-    return &pre_info;
-  case ID_BR:
-    return &br_info;
-  case ID_BASEFONT:
-    return &baseFont_info;
-  case ID_FONT:
-    return &font_info;
-  case ID_HR:
-    return &hr_info;
-  case ID_INS:
-  case ID_DEL:
-    return &mod_info;
-  case ID_A:
-    return &a_info;
-  case ID_CANVAS:
-    return &canvas_info;
-  case ID_IMG:
-    return &img_info;
-  case ID_OBJECT:
-    return &object_info;
-  case ID_PARAM:
-    return &param_info;
-  case ID_APPLET:
-    return &applet_info;
-  case ID_MAP:
-    return &map_info;
-  case ID_AREA:
-    return &area_info;
-  case ID_SCRIPT:
-    return &script_info;
-  case ID_TABLE:
-    return &table_info;
-  case ID_CAPTION:
-    return &caption_info;
-  case ID_COL:
-    return &col_info;
-  case ID_THEAD:
-    return &tablesection_info;
-  case ID_TBODY:
-    return &tablesection_info;
-  case ID_TFOOT:
-    return &tablesection_info;
-  case ID_TR:
-    return &tr_info;
-  case ID_TH:
-    return &tablecell_info;
-  case ID_TD:
-    return &tablecell_info;
-  case ID_FRAMESET:
-    return &frameSet_info;
-  case ID_FRAME:
-    return &frame_info;
-  case ID_IFRAME:
-    return &iFrame_info;
-  case ID_MARQUEE:
-    return &marquee_info;
-  default:
+    // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
+    static QPtrDict<const ClassInfo> classInfoDict;
+    if (classInfoDict.isEmpty()) {
+        classInfoDict.insert(HTMLNames::a().localName().implementation(), &a_info);
+        classInfoDict.insert(HTMLNames::applet().localName().implementation(), &applet_info);
+        classInfoDict.insert(HTMLNames::area().localName().implementation(), &area_info);
+        classInfoDict.insert(HTMLNames::base().localName().implementation(), &base_info);
+        classInfoDict.insert(HTMLNames::basefont().localName().implementation(), &baseFont_info);
+        classInfoDict.insert(HTMLNames::blockquote().localName().implementation(), &blockQuote_info);
+        classInfoDict.insert(HTMLNames::body().localName().implementation(), &body_info);
+        classInfoDict.insert(HTMLNames::br().localName().implementation(), &br_info);
+        classInfoDict.insert(HTMLNames::button().localName().implementation(), &button_info);
+        classInfoDict.insert(HTMLNames::canvas().localName().implementation(), &canvas_info);
+        classInfoDict.insert(HTMLNames::caption().localName().implementation(), &caption_info);
+        classInfoDict.insert(HTMLNames::col().localName().implementation(), &col_info);
+        classInfoDict.insert(HTMLNames::colgroup().localName().implementation(), &col_info);
+        classInfoDict.insert(HTMLNames::del().localName().implementation(), &mod_info);
+        classInfoDict.insert(HTMLNames::dir().localName().implementation(), &dir_info);
+        classInfoDict.insert(HTMLNames::div().localName().implementation(), &div_info);
+        classInfoDict.insert(HTMLNames::dl().localName().implementation(), &dl_info);
+        classInfoDict.insert(HTMLNames::fieldset().localName().implementation(), &fieldSet_info);
+        classInfoDict.insert(HTMLNames::font().localName().implementation(), &font_info);
+        classInfoDict.insert(HTMLNames::form().localName().implementation(), &form_info);
+        classInfoDict.insert(HTMLNames::frame().localName().implementation(), &frame_info);
+        classInfoDict.insert(HTMLNames::frameset().localName().implementation(), &frameSet_info);
+        classInfoDict.insert(HTMLNames::h1().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::h2().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::h3().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::h4().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::h5().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::h6().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLNames::head().localName().implementation(), &head_info);
+        classInfoDict.insert(HTMLNames::hr().localName().implementation(), &hr_info);
+        classInfoDict.insert(HTMLNames::html().localName().implementation(), &html_info);
+        classInfoDict.insert(HTMLNames::iframe().localName().implementation(), &iFrame_info);
+        classInfoDict.insert(HTMLNames::img().localName().implementation(), &img_info);
+        classInfoDict.insert(HTMLNames::input().localName().implementation(), &input_info);
+        classInfoDict.insert(HTMLNames::ins().localName().implementation(), &mod_info);
+        classInfoDict.insert(HTMLNames::isindex().localName().implementation(), &isIndex_info);
+        classInfoDict.insert(HTMLNames::label().localName().implementation(), &label_info);
+        classInfoDict.insert(HTMLNames::legend().localName().implementation(), &legend_info);
+        classInfoDict.insert(HTMLNames::li().localName().implementation(), &li_info);
+        classInfoDict.insert(HTMLNames::link().localName().implementation(), &link_info);
+        classInfoDict.insert(HTMLNames::map().localName().implementation(), &map_info);
+        classInfoDict.insert(HTMLNames::marquee().localName().implementation(), &marquee_info);
+        classInfoDict.insert(HTMLNames::menu().localName().implementation(), &menu_info);
+        classInfoDict.insert(HTMLNames::meta().localName().implementation(), &meta_info);
+        classInfoDict.insert(HTMLNames::object().localName().implementation(), &object_info);
+        classInfoDict.insert(HTMLNames::ol().localName().implementation(), &ol_info);
+        classInfoDict.insert(HTMLNames::option().localName().implementation(), &option_info);
+        classInfoDict.insert(HTMLNames::optgroup().localName().implementation(), &optGroup_info);
+        classInfoDict.insert(HTMLNames::p().localName().implementation(), &p_info);
+        classInfoDict.insert(HTMLNames::param().localName().implementation(), &param_info);
+        classInfoDict.insert(HTMLNames::pre().localName().implementation(), &pre_info);
+        classInfoDict.insert(HTMLNames::q().localName().implementation(), &q_info);
+        classInfoDict.insert(HTMLNames::script().localName().implementation(), &script_info);
+        classInfoDict.insert(HTMLNames::select().localName().implementation(), &select_info);
+        classInfoDict.insert(HTMLNames::style().localName().implementation(), &style_info);
+        classInfoDict.insert(HTMLNames::table().localName().implementation(), &table_info);
+        classInfoDict.insert(HTMLNames::tbody().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLNames::td().localName().implementation(), &tablecell_info);
+        classInfoDict.insert(HTMLNames::textarea().localName().implementation(), &textArea_info);
+        classInfoDict.insert(HTMLNames::th().localName().implementation(), &tablecell_info);
+        classInfoDict.insert(HTMLNames::thead().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLNames::tfoot().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLNames::title().localName().implementation(), &title_info);
+        classInfoDict.insert(HTMLNames::tr().localName().implementation(), &tr_info);
+        classInfoDict.insert(HTMLNames::ul().localName().implementation(), &ul_info);
+    }
+    
+    HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
+    const ClassInfo* result = classInfoDict.find(element->localName().implementation());
+    if (result)
+        return result;
     return &info;
-  }
 }
+
+const HTMLElement::Accessors HTMLElement::html_accessors = { &HTMLElement::htmlGetter, &HTMLElement::htmlSetter };
+const HTMLElement::Accessors HTMLElement::head_accessors = { &HTMLElement::headGetter, &HTMLElement::headSetter };
+const HTMLElement::Accessors HTMLElement::link_accessors = { &HTMLElement::linkGetter, &HTMLElement::linkSetter };
+const HTMLElement::Accessors HTMLElement::title_accessors = { &HTMLElement::titleGetter, &HTMLElement::titleSetter };
+const HTMLElement::Accessors HTMLElement::meta_accessors = { &HTMLElement::metaGetter, &HTMLElement::metaSetter };
+const HTMLElement::Accessors HTMLElement::base_accessors = { &HTMLElement::baseGetter, &HTMLElement::baseSetter };
+const HTMLElement::Accessors HTMLElement::isIndex_accessors = { &HTMLElement::isIndexGetter, &HTMLElement::isIndexSetter };
+const HTMLElement::Accessors HTMLElement::style_accessors = { &HTMLElement::styleGetter, &HTMLElement::styleSetter };
+const HTMLElement::Accessors HTMLElement::body_accessors = { &HTMLElement::bodyGetter, &HTMLElement::bodySetter };
+const HTMLElement::Accessors HTMLElement::form_accessors = { &HTMLElement::formGetter, &HTMLElement::formSetter };
+const HTMLElement::Accessors HTMLElement::select_accessors = { &HTMLElement::selectGetter, &HTMLElement::selectSetter };
+const HTMLElement::Accessors HTMLElement::optGroup_accessors = { &HTMLElement::optGroupGetter, &HTMLElement::optGroupSetter };
+const HTMLElement::Accessors HTMLElement::option_accessors = { &HTMLElement::optionGetter, &HTMLElement::optionSetter };
+const HTMLElement::Accessors HTMLElement::input_accessors = { &HTMLElement::inputGetter, &HTMLElement::inputSetter };
+const HTMLElement::Accessors HTMLElement::textArea_accessors = { &HTMLElement::textAreaGetter, &HTMLElement::textAreaSetter };
+const HTMLElement::Accessors HTMLElement::button_accessors = { &HTMLElement::buttonGetter, &HTMLElement::buttonSetter };
+const HTMLElement::Accessors HTMLElement::label_accessors = { &HTMLElement::labelGetter, &HTMLElement::labelSetter };
+const HTMLElement::Accessors HTMLElement::fieldSet_accessors = { &HTMLElement::fieldSetGetter, &HTMLElement::fieldSetSetter };
+const HTMLElement::Accessors HTMLElement::legend_accessors = { &HTMLElement::legendGetter, &HTMLElement::legendSetter };
+const HTMLElement::Accessors HTMLElement::ul_accessors = { &HTMLElement::uListGetter, &HTMLElement::uListSetter };
+const HTMLElement::Accessors HTMLElement::ol_accessors = { &HTMLElement::oListGetter, &HTMLElement::oListSetter };
+const HTMLElement::Accessors HTMLElement::dl_accessors = { &HTMLElement::dListGetter, &HTMLElement::dListSetter };
+const HTMLElement::Accessors HTMLElement::dir_accessors = { &HTMLElement::dirGetter, &HTMLElement::dirSetter };
+const HTMLElement::Accessors HTMLElement::menu_accessors = { &HTMLElement::menuGetter, &HTMLElement::menuSetter };
+const HTMLElement::Accessors HTMLElement::li_accessors = { &HTMLElement::liGetter, &HTMLElement::liSetter };
+const HTMLElement::Accessors HTMLElement::div_accessors = { &HTMLElement::divGetter, &HTMLElement::divSetter };
+const HTMLElement::Accessors HTMLElement::p_accessors = { &HTMLElement::paragraphGetter, &HTMLElement::paragraphSetter };
+const HTMLElement::Accessors HTMLElement::heading_accessors = { &HTMLElement::headingGetter, &HTMLElement::headingSetter };
+const HTMLElement::Accessors HTMLElement::blockQuote_accessors = { &HTMLElement::blockQuoteGetter, &HTMLElement::blockQuoteSetter };
+const HTMLElement::Accessors HTMLElement::q_accessors = { &HTMLElement::quoteGetter, &HTMLElement::quoteSetter };
+const HTMLElement::Accessors HTMLElement::pre_accessors = { &HTMLElement::preGetter, &HTMLElement::preSetter };
+const HTMLElement::Accessors HTMLElement::br_accessors = { &HTMLElement::brGetter, &HTMLElement::brSetter };
+const HTMLElement::Accessors HTMLElement::baseFont_accessors = { &HTMLElement::baseFontGetter, &HTMLElement::baseFontSetter };
+const HTMLElement::Accessors HTMLElement::font_accessors = { &HTMLElement::fontGetter, &HTMLElement::fontSetter };
+const HTMLElement::Accessors HTMLElement::hr_accessors = { &HTMLElement::hrGetter, &HTMLElement::hrSetter };
+const HTMLElement::Accessors HTMLElement::mod_accessors = { &HTMLElement::modGetter, &HTMLElement::modSetter };
+const HTMLElement::Accessors HTMLElement::a_accessors = { &HTMLElement::anchorGetter, &HTMLElement::anchorSetter };
+const HTMLElement::Accessors HTMLElement::canvas_accessors = { &HTMLElement::imageGetter, &HTMLElement::imageSetter };
+const HTMLElement::Accessors HTMLElement::img_accessors = { &HTMLElement::imageGetter, &HTMLElement::imageSetter };
+const HTMLElement::Accessors HTMLElement::object_accessors = { &HTMLElement::objectGetter, &HTMLElement::objectSetter };
+const HTMLElement::Accessors HTMLElement::param_accessors = { &HTMLElement::paramGetter, &HTMLElement::paramSetter };
+const HTMLElement::Accessors HTMLElement::applet_accessors = { &HTMLElement::appletGetter, &HTMLElement::appletSetter };
+const HTMLElement::Accessors HTMLElement::map_accessors = { &HTMLElement::mapGetter, &HTMLElement::mapSetter };
+const HTMLElement::Accessors HTMLElement::area_accessors = { &HTMLElement::areaGetter, &HTMLElement::areaSetter };
+const HTMLElement::Accessors HTMLElement::script_accessors = { &HTMLElement::scriptGetter, &HTMLElement::scriptSetter };
+const HTMLElement::Accessors HTMLElement::table_accessors = { &HTMLElement::tableGetter, &HTMLElement::tableSetter };
+const HTMLElement::Accessors HTMLElement::caption_accessors = { &HTMLElement::tableCaptionGetter, &HTMLElement::tableCaptionSetter };
+const HTMLElement::Accessors HTMLElement::col_accessors = { &HTMLElement::tableColGetter, &HTMLElement::tableColSetter };
+const HTMLElement::Accessors HTMLElement::tablesection_accessors = { &HTMLElement::tableSectionGetter, &HTMLElement::tableSectionSetter };
+const HTMLElement::Accessors HTMLElement::tr_accessors = { &HTMLElement::tableRowGetter, &HTMLElement::tableRowSetter };
+const HTMLElement::Accessors HTMLElement::tablecell_accessors = { &HTMLElement::tableCellGetter, &HTMLElement::tableCellSetter };
+const HTMLElement::Accessors HTMLElement::frameSet_accessors = { &HTMLElement::frameSetGetter, &HTMLElement::frameSetSetter };
+const HTMLElement::Accessors HTMLElement::frame_accessors = { &HTMLElement::frameGetter, &HTMLElement::frameSetter };
+const HTMLElement::Accessors HTMLElement::iFrame_accessors = { &HTMLElement::iFrameGetter, &HTMLElement::iFrameSetter };
+const HTMLElement::Accessors HTMLElement::marquee_accessors = { &HTMLElement::marqueeGetter, &HTMLElement::marqueeSetter };
+
+const HTMLElement::Accessors* HTMLElement::getSetInfo() const
+{
+    // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
+    static QPtrDict<const HTMLElement::Accessors> getSetInfoDict;
+    if (getSetInfoDict.isEmpty()) {
+        getSetInfoDict.insert(HTMLNames::a().localName().implementation(), &a_accessors);
+        getSetInfoDict.insert(HTMLNames::applet().localName().implementation(), &applet_accessors);
+        getSetInfoDict.insert(HTMLNames::area().localName().implementation(), &area_accessors);
+        getSetInfoDict.insert(HTMLNames::base().localName().implementation(), &base_accessors);
+        getSetInfoDict.insert(HTMLNames::basefont().localName().implementation(), &baseFont_accessors);
+        getSetInfoDict.insert(HTMLNames::blockquote().localName().implementation(), &blockQuote_accessors); 
+        getSetInfoDict.insert(HTMLNames::body().localName().implementation(), &body_accessors);
+        getSetInfoDict.insert(HTMLNames::br().localName().implementation(), &br_accessors);
+        getSetInfoDict.insert(HTMLNames::button().localName().implementation(), &button_accessors);
+        getSetInfoDict.insert(HTMLNames::canvas().localName().implementation(), &canvas_accessors);
+        getSetInfoDict.insert(HTMLNames::caption().localName().implementation(), &caption_accessors);
+        getSetInfoDict.insert(HTMLNames::col().localName().implementation(), &col_accessors);
+        getSetInfoDict.insert(HTMLNames::colgroup().localName().implementation(), &col_accessors);
+        getSetInfoDict.insert(HTMLNames::del().localName().implementation(), &mod_accessors);
+        getSetInfoDict.insert(HTMLNames::dir().localName().implementation(), &dir_accessors);
+        getSetInfoDict.insert(HTMLNames::div().localName().implementation(), &div_accessors);
+        getSetInfoDict.insert(HTMLNames::dl().localName().implementation(), &dl_accessors);
+        getSetInfoDict.insert(HTMLNames::fieldset().localName().implementation(), &fieldSet_accessors);
+        getSetInfoDict.insert(HTMLNames::font().localName().implementation(), &font_accessors);
+        getSetInfoDict.insert(HTMLNames::form().localName().implementation(), &form_accessors);
+        getSetInfoDict.insert(HTMLNames::frame().localName().implementation(), &frame_accessors);
+        getSetInfoDict.insert(HTMLNames::frameset().localName().implementation(), &frameSet_accessors);
+        getSetInfoDict.insert(HTMLNames::h1().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::h2().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::h3().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::h4().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::h5().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::h6().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLNames::head().localName().implementation(), &head_accessors);
+        getSetInfoDict.insert(HTMLNames::hr().localName().implementation(), &hr_accessors); 
+        getSetInfoDict.insert(HTMLNames::html().localName().implementation(), &html_accessors);
+        getSetInfoDict.insert(HTMLNames::iframe().localName().implementation(), &iFrame_accessors);
+        getSetInfoDict.insert(HTMLNames::img().localName().implementation(), &img_accessors);
+        getSetInfoDict.insert(HTMLNames::input().localName().implementation(), &input_accessors);
+        getSetInfoDict.insert(HTMLNames::ins().localName().implementation(), &mod_accessors);
+        getSetInfoDict.insert(HTMLNames::isindex().localName().implementation(), &isIndex_accessors);
+        getSetInfoDict.insert(HTMLNames::label().localName().implementation(), &label_accessors);
+        getSetInfoDict.insert(HTMLNames::legend().localName().implementation(), &legend_accessors);
+        getSetInfoDict.insert(HTMLNames::li().localName().implementation(), &li_accessors);
+        getSetInfoDict.insert(HTMLNames::link().localName().implementation(), &link_accessors);
+        getSetInfoDict.insert(HTMLNames::map().localName().implementation(), &map_accessors);
+        getSetInfoDict.insert(HTMLNames::marquee().localName().implementation(), &marquee_accessors);
+        getSetInfoDict.insert(HTMLNames::menu().localName().implementation(), &menu_accessors);
+        getSetInfoDict.insert(HTMLNames::meta().localName().implementation(), &meta_accessors);
+        getSetInfoDict.insert(HTMLNames::object().localName().implementation(), &object_accessors);
+        getSetInfoDict.insert(HTMLNames::ol().localName().implementation(), &ol_accessors);
+        getSetInfoDict.insert(HTMLNames::option().localName().implementation(), &option_accessors);
+        getSetInfoDict.insert(HTMLNames::optgroup().localName().implementation(), &optGroup_accessors);
+        getSetInfoDict.insert(HTMLNames::p().localName().implementation(), &p_accessors);
+        getSetInfoDict.insert(HTMLNames::param().localName().implementation(), &param_accessors);
+        getSetInfoDict.insert(HTMLNames::pre().localName().implementation(), &pre_accessors);
+        getSetInfoDict.insert(HTMLNames::q().localName().implementation(), &q_accessors);
+        getSetInfoDict.insert(HTMLNames::script().localName().implementation(), &script_accessors);
+        getSetInfoDict.insert(HTMLNames::select().localName().implementation(), &select_accessors);
+        getSetInfoDict.insert(HTMLNames::style().localName().implementation(), &style_accessors);
+        getSetInfoDict.insert(HTMLNames::table().localName().implementation(), &table_accessors);
+        getSetInfoDict.insert(HTMLNames::tbody().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLNames::td().localName().implementation(), &tablecell_accessors);
+        getSetInfoDict.insert(HTMLNames::textarea().localName().implementation(), &textArea_accessors);
+        getSetInfoDict.insert(HTMLNames::th().localName().implementation(), &tablecell_accessors);
+        getSetInfoDict.insert(HTMLNames::thead().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLNames::tfoot().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLNames::title().localName().implementation(), &title_accessors);
+        getSetInfoDict.insert(HTMLNames::tr().localName().implementation(), &tr_accessors);
+        getSetInfoDict.insert(HTMLNames::ul().localName().implementation(), &ul_accessors);
+    }
+    
+    HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
+    const HTMLElement::Accessors* result = getSetInfoDict.find(element->localName().implementation());
+    if (result)
+        return result;
+    return 0;
+}
+
 /*
 @begin HTMLElementTable 14
   id		KJS::HTMLElement::ElementId	DontDelete
@@ -1184,7 +1268,7 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
 @end
 
 @begin HTMLCanvasElementTable 1
-  getContext      KJS::HTMLElement::GetContext                  DontDelete|Function 0
+  getContext      KJS::HTMLElement::GetContext                  DontDelete|Function 1
 @end
 */
 
@@ -1195,35 +1279,32 @@ HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
 
 Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLElement::tryGet " << propertyName.qstring() << " thisTag=" << element.tagName().string() << endl;
+    kdDebug(6070) << "KJS::HTMLElement::tryGet " << propertyName.qstring() << " thisTag=" << element.tagName().string() << endl;
 #endif
-  // First look at dynamic properties
-  switch (element.id()) {
-    case ID_FORM: {
-      HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
-      // Check if we're retrieving an element (by index or by name)
-      bool ok;
-      uint u = propertyName.toULong(&ok);
-      if (ok)
-        return getDOMNode(exec, form.elements()->item(u));
-      ValueImp *namedItems = HTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
-      if (!namedItems->isUndefined())
-        return namedItems;
+    // First look at dynamic properties
+    if (element.hasLocalName(HTMLNames::form())) {
+        HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
+        // Check if we're retrieving an element (by index or by name)
+        bool ok;
+        uint u = propertyName.toULong(&ok);
+        if (ok)
+            return getDOMNode(exec, form.elements()->item(u));
+        ValueImp *namedItems = HTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
+        if (!namedItems->isUndefined())
+            return namedItems;
     }
-      break;
-    case ID_SELECT: {
-      HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-      bool ok;
-      uint u = propertyName.toULong(&ok);
-      if (ok)
-        return getDOMNode(exec, select.optionsHTMLCollection()->item(u)); // not specified by DOM(?) but supported in netscape/IE
+    else if (element.hasLocalName(HTMLNames::select())) {
+        HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
+        bool ok;
+        uint u = propertyName.toULong(&ok);
+        if (ok)
+            return getDOMNode(exec, select.optionsHTMLCollection()->item(u)); // not specified by DOM(?) but supported in netscape/IE
     }
-      break;
-    case ID_FRAMESET: {
+    else if (element.hasLocalName(HTMLNames::frameset())) {
         NodeImpl *frame = element.children()->namedItem(propertyName.string());
-        if (frame && frame->id() == ID_FRAME) {
+        if (frame && frame->hasTagName(HTMLNames::frame())) {
             DocumentImpl* doc = static_cast<HTMLFrameElementImpl *>(frame)->contentDocument();
             if (doc) {
                 KHTMLPart* part = doc->part();
@@ -1236,73 +1317,57 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
             }
         }
     }
-        break;
-    case ID_FRAME:
-    case ID_IFRAME: {
+    else if (element.hasLocalName(HTMLNames::frame()) || element.hasLocalName(HTMLNames::iframe())) {
         DocumentImpl* doc = static_cast<HTMLFrameElementImpl &>(element).contentDocument();
-        if ( doc ) {
+        if (doc) {
             KHTMLPart* part = doc->part();
-            if ( part ) {
+            if (part) {
               Window *window = Window::retrieveWindow(part);
 	      if (window && window->hasProperty(exec, propertyName))
                 return window->get(exec, propertyName);
             }
         }
     }
-      break;
 #if APPLE_CHANGES
-    case ID_EMBED:
-    case ID_OBJECT:
-    case ID_APPLET: {
-	if (propertyName == "__apple_runtime_object") {
+    else if (element.hasLocalName(HTMLNames::embed()) || element.hasLocalName(HTMLNames::object()) ||
+             element.hasLocalName(HTMLNames::applet())) {
+	if (propertyName == "__apple_runtime_object")
 	    return getRuntimeObject(exec,&element);
-	}
-
 	Value runtimeObject = getRuntimeObject(exec,&element);
 	if (!runtimeObject.isNull()) {
 	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-	    if (imp->hasProperty(exec, propertyName)) {
+	    if (imp->hasProperty(exec, propertyName))
 		return imp->get (exec, propertyName);
-	    }
 	}
     }
-      break;
 #endif
-    default:
-        break;
+
+    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+    const HashEntry* entry = Lookup::findEntry(table, propertyName);
+    if (entry) {
+        if (entry->attr & Function)
+            return lookupOrCreateFunction<KJS::HTMLElementFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+        return getValueProperty(exec, entry->value);
     }
 
-  const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-  const HashEntry* entry = Lookup::findEntry(table, propertyName);
-  if (entry) {
-    if (entry->attr & Function)
-      return lookupOrCreateFunction<KJS::HTMLElementFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-    return getValueProperty(exec, entry->value);
-  }
-
-  // Base HTMLElement stuff or parent class forward, as usual
-  return DOMObjectLookupGet<KJS::HTMLElementFunction, KJS::HTMLElement, DOMElement>(exec, propertyName, &HTMLElementTable, this);
+    // Base HTMLElement stuff or parent class forward, as usual
+    return DOMObjectLookupGet<KJS::HTMLElementFunction, KJS::HTMLElement, DOMElement>(exec, propertyName, &HTMLElementTable, this);
 }
 
 bool KJS::HTMLElement::implementsCall() const
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    switch (element->id()) {
-	case ID_EMBED:
-	case ID_OBJECT:
-	case ID_APPLET: {
-		DocumentImpl* doc = element->getDocument();
-		KJSProxy *proxy = KJSProxy::proxy(doc->part());
-		ExecState *exec = proxy->interpreter()->globalExec();
-		Value runtimeObject = getRuntimeObject(exec,element);
-		if (!runtimeObject.isNull()) {
-		    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-		    return imp->implementsCall ();
-		}
-	    }
-	    break;
-	default:
-	    break;
+    if (element->hasTagName(HTMLNames::embed()) ||
+        element->hasTagName(HTMLNames::object()) ||
+        element->hasTagName(HTMLNames::applet())) {
+        DocumentImpl* doc = element->getDocument();
+        KJSProxy *proxy = KJSProxy::proxy(doc->part());
+        ExecState *exec = proxy->interpreter()->globalExec();
+        Value runtimeObject = getRuntimeObject(exec,element);
+        if (!runtimeObject.isNull()) {
+            ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
+            return imp->implementsCall ();
+        }
     }
     return false;
 }
@@ -1310,819 +1375,908 @@ bool KJS::HTMLElement::implementsCall() const
 Value KJS::HTMLElement::call(ExecState *exec, Object &thisObj, const List&args)
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    switch (element->id()) {
-	case ID_EMBED:
-	case ID_OBJECT:
-	case ID_APPLET: {
-		Value runtimeObject = getRuntimeObject(exec,element);
-		if (!runtimeObject.isNull()) {
-		    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-		    return imp->call (exec, thisObj, args);
-		}
-	    }
-	    break;
-	default:
-	    break;
+    if (element->hasTagName(HTMLNames::embed()) ||
+        element->hasTagName(HTMLNames::object()) ||
+        element->hasTagName(HTMLNames::applet())) {
+        Value runtimeObject = getRuntimeObject(exec,element);
+        if (!runtimeObject.isNull()) {
+            ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
+            return imp->call (exec, thisObj, args);
+        }
+    }
+    return Undefined();
+}
+
+Value HTMLElement::htmlGetter(ExecState* exec, int token) const
+{
+    HTMLHtmlElementImpl& html = *static_cast<HTMLHtmlElementImpl*>(impl());
+    if (token == HtmlVersion)
+        return String(html.version());
+    return Undefined();
+}
+
+Value HTMLElement::headGetter(ExecState* exec, int token) const
+{
+    HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
+    if (token == HeadProfile)
+        return String(head.profile());
+    return Undefined();
+}
+
+Value HTMLElement::linkGetter(ExecState* exec, int token) const
+{
+    HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
+    switch (token) {
+        case LinkDisabled:
+            return Boolean(link.disabled());
+        case LinkCharset:
+            return String(link.charset());
+        case LinkHref:
+            return String(link.href());
+        case LinkHrefLang:
+            return String(link.hreflang());
+        case LinkMedia:           
+            return String(link.media());
+        case LinkRel:             
+            return String(link.rel());
+        case LinkRev:            
+            return String(link.rev());
+        case LinkTarget:          
+            return String(link.target());
+        case LinkType:            
+            return String(link.type());
+        case LinkSheet:           
+            return getDOMStyleSheet(exec, link.sheet());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::titleGetter(ExecState* exec, int token) const
+{
+    HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
+    if (token == TitleText)
+        return String(title.text());
+    return Undefined();
+}
+
+Value HTMLElement::metaGetter(ExecState* exec, int token) const
+{
+    HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
+    switch (token) {
+        case MetaContent:         return String(meta.content());
+        case MetaHttpEquiv:       return String(meta.httpEquiv());
+        case MetaName:            return String(meta.name());
+        case MetaScheme:          return String(meta.scheme());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::baseGetter(ExecState* exec, int token) const
+{
+    HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
+    switch (token) {
+        case BaseHref:            return String(base.href());
+        case BaseTarget:          return String(base.target());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::isIndexGetter(ExecState* exec, int token) const
+{
+    HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
+    switch (token) {
+        case IsIndexForm:            return getDOMNode(exec, isindex.form()); // type HTMLFormElement
+        case IsIndexPrompt:          return String(isindex.prompt());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::styleGetter(ExecState* exec, int token) const
+{
+    HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
+    switch (token) {
+        case StyleDisabled:        return Boolean(style.disabled());
+        case StyleMedia:           return String(style.media());
+        case StyleType:            return String(style.type());
+        case StyleSheet:           return getDOMStyleSheet(exec, style.sheet());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::bodyGetter(ExecState* exec, int token) const
+{
+    HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
+    switch (token) {
+        case BodyALink:           return String(body.aLink());
+        case BodyBackground:      return String(body.background());
+        case BodyBgColor:         return String(body.bgColor());
+        case BodyLink:            return String(body.link());
+        case BodyText:            return String(body.text());
+        case BodyVLink:           return String(body.vLink());
+        default: {
+            // Update the document's layout before we compute these attributes.
+            DocumentImpl *doc = body.getDocument();
+            if (doc)
+                doc->updateLayoutIgnorePendingStylesheets();
+            KHTMLView *view = doc ? doc->view() : 0;
+            switch (token) {
+                case BodyScrollLeft:
+                    return Number(view ? view->contentsX() : 0);
+                case BodyScrollTop:
+                    return Number(view ? view->contentsY() : 0);
+                case BodyScrollHeight:
+                    return Number(view ? view->contentsHeight() : 0);
+                case BodyScrollWidth:
+                    return Number(view ? view->contentsWidth() : 0);
+            }
+        }
+    }
+    return Undefined();
+}
+
+Value HTMLElement::formGetter(ExecState* exec, int token) const
+{
+    HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
+    switch (token) {
+        case FormElements:        return getHTMLCollection(exec, form.elements().get());
+        case FormLength:          return Number(form.length());
+        case FormName:            return String(form.name());
+        case FormAcceptCharset:   return String(form.acceptCharset());
+        case FormAction:          return String(form.action());
+        case FormEncType:         return String(form.enctype());
+        case FormMethod:          return String(form.method());
+        case FormTarget:          return String(form.target());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::selectGetter(ExecState* exec, int token) const
+{
+    HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
+    switch (token) {
+        case SelectType:            return String(select.type());
+        case SelectSelectedIndex:   return Number(select.selectedIndex());
+        case SelectValue:           return String(select.value());
+        case SelectLength:          return Number(select.length());
+        case SelectForm:            return getDOMNode(exec, select.form()); // type HTMLFormElement
+        case SelectOptions:         return getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select); // type HTMLCollection
+        case SelectDisabled:        return Boolean(select.disabled());
+        case SelectMultiple:        return Boolean(select.multiple());
+        case SelectName:            return String(select.name());
+        case SelectSize:            return Number(select.size());
+        case SelectTabIndex:        return Number(select.tabIndex());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::optGroupGetter(ExecState* exec, int token) const
+{
+    HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
+    switch (token) {
+        case OptGroupDisabled:        return Boolean(optgroup.disabled());
+        case OptGroupLabel:           return String(optgroup.label());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::optionGetter(ExecState* exec, int token) const
+{
+    HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
+    switch (token) {
+        case OptionForm:            return getDOMNode(exec,option.form()); // type HTMLFormElement
+        case OptionDefaultSelected: return Boolean(option.defaultSelected());
+        case OptionText:            return String(option.text());
+        case OptionIndex:           return Number(option.index());
+        case OptionDisabled:        return Boolean(option.disabled());
+        case OptionLabel:           return String(option.label());
+        case OptionSelected:        return Boolean(option.selected());
+        case OptionValue:           return String(option.value());
     }
     return Undefined();
 }
 
 static Value getInputSelectionStart(HTMLInputElementImpl &input)
 {
-  if (input.canHaveSelection()) {
-    return Number(input.selectionStart());
-  }
-  return Undefined();
+    if (input.canHaveSelection())
+        return Number(input.selectionStart());
+    return Undefined();
 }
 
 static Value getInputSelectionEnd(HTMLInputElementImpl &input)
 {
-  if (input.canHaveSelection()) {
-    return Number(input.selectionEnd());
-  }
-  return Undefined();
+    if (input.canHaveSelection())
+        return Number(input.selectionEnd());
+    return Undefined();
 }
 
-Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
+Value HTMLElement::inputGetter(ExecState* exec, int token) const
 {
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
-  switch (element.id()) {
-  case ID_HTML: {
-    HTMLHtmlElementImpl &html = static_cast<HTMLHtmlElementImpl &>(element);
-    if      (token == HtmlVersion)         return String(html.version());
-  }
-  break;
-  case ID_HEAD: {
-    HTMLHeadElementImpl &head = static_cast<HTMLHeadElementImpl &>(element);
-    if      (token == HeadProfile)         return String(head.profile());
-  }
-  break;
-  case ID_LINK: {
-    HTMLLinkElementImpl &link = static_cast<HTMLLinkElementImpl &>(element);
+    HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
-    case LinkDisabled:        return Boolean(link.disabled());
-    case LinkCharset:         return String(link.charset());
-    case LinkHref:            return String(link.href());
-    case LinkHrefLang:        return String(link.hreflang());
-    case LinkMedia:           return String(link.media());
-    case LinkRel:             return String(link.rel());
-    case LinkRev:             return String(link.rev());
-    case LinkTarget:          return String(link.target());
-    case LinkType:            return String(link.type());
-    case LinkSheet:           return getDOMStyleSheet(exec, link.sheet());
+        case InputDefaultValue:    return String(input.defaultValue());
+        case InputDefaultChecked:  return Boolean(input.defaultChecked());
+        case InputForm:            return getDOMNode(exec,input.form()); // type HTMLFormElement
+        case InputAccept:          return String(input.accept());
+        case InputAccessKey:       return String(input.accessKey());
+        case InputAlign:           return String(input.align());
+        case InputAlt:             return String(input.alt());
+        case InputChecked:         return Boolean(input.checked());
+        case InputDisabled:        return Boolean(input.disabled());
+        case InputMaxLength:       return Number(input.maxLength());
+        case InputName:            return String(input.name());
+        case InputReadOnly:        return Boolean(input.readOnly());
+        case InputSelectionStart:  return getInputSelectionStart(input);
+        case InputSelectionEnd:    return getInputSelectionEnd(input);
+        case InputSize:            return String(input.sizeDOM());
+        case InputSrc:             return String(input.src());
+        case InputTabIndex:        return Number(input.tabIndex());
+        case InputType:            return String(input.type());
+        case InputUseMap:          return String(input.useMap());
+        case InputValue:           return String(input.value());
     }
-  }
-  break;
-  case ID_TITLE: {
-    HTMLTitleElementImpl &title = static_cast<HTMLTitleElementImpl &>(element);
-    switch (token) {
-    case TitleText:                 return String(title.text());
-    }
-  }
-  break;
-  case ID_META: {
-    HTMLMetaElementImpl &meta = static_cast<HTMLMetaElementImpl &>(element);
-    switch (token) {
-    case MetaContent:         return String(meta.content());
-    case MetaHttpEquiv:       return String(meta.httpEquiv());
-    case MetaName:            return String(meta.name());
-    case MetaScheme:          return String(meta.scheme());
-    }
-  }
-  break;
-  case ID_BASE: {
-    HTMLBaseElementImpl &base = static_cast<HTMLBaseElementImpl &>(element);
-    switch (token) {
-    case BaseHref:            return String(base.href());
-    case BaseTarget:          return String(base.target());
-    }
-  }
-  break;
-  case ID_ISINDEX: {
-    HTMLIsIndexElementImpl &isindex = static_cast<HTMLIsIndexElementImpl &>(element);
-    switch (token) {
-    case IsIndexForm:            return getDOMNode(exec, isindex.form()); // type HTMLFormElement
-    case IsIndexPrompt:          return String(isindex.prompt());
-    }
-  }
-  break;
-  case ID_STYLE: {
-    HTMLStyleElementImpl &style = static_cast<HTMLStyleElementImpl &>(element);
-    switch (token) {
-    case StyleDisabled:        return Boolean(style.disabled());
-    case StyleMedia:           return String(style.media());
-    case StyleType:            return String(style.type());
-    case StyleSheet:           return getDOMStyleSheet(exec, style.sheet());
-    }
-  }
-  break;
-  case ID_BODY: {
-    HTMLBodyElementImpl &body = static_cast<HTMLBodyElementImpl &>(element);
-    switch (token) {
-    case BodyALink:           return String(body.aLink());
-    case BodyBackground:      return String(body.background());
-    case BodyBgColor:         return String(body.bgColor());
-    case BodyLink:            return String(body.link());
-    case BodyText:            return String(body.text());
-    case BodyVLink:           return String(body.vLink());
-    default:
-      // Update the document's layout before we compute these attributes.
-      DocumentImpl *doc = body.getDocument();
-      if (doc)
-        doc->updateLayoutIgnorePendingStylesheets();
-      KHTMLView *view = doc ? doc->view() : 0;
-      switch (token) {
-        case BodyScrollLeft:
-            return Number(view ? view->contentsX() : 0);
-        case BodyScrollTop:
-            return Number(view ? view->contentsY() : 0);
-        case BodyScrollHeight:   return Number(view ? view->contentsHeight() : 0);
-        case BodyScrollWidth:    return Number(view ? view->contentsWidth() : 0);
-      }
-    }
-  }
-  break;
+    return Undefined();
+}
 
-  case ID_FORM: {
-    HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
+Value HTMLElement::textAreaGetter(ExecState* exec, int token) const
+{
+    HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
-    case FormElements:        return getHTMLCollection(exec, form.elements().get());
-    case FormLength:          return Number(form.length());
-    case FormName:            return String(form.name());
-    case FormAcceptCharset:   return String(form.acceptCharset());
-    case FormAction:          return String(form.action());
-    case FormEncType:         return String(form.enctype());
-    case FormMethod:          return String(form.method());
-    case FormTarget:          return String(form.target());
+        case TextAreaDefaultValue:    return String(textarea.defaultValue());
+        case TextAreaForm:            return getDOMNode(exec,textarea.form()); // type HTMLFormElement
+        case TextAreaAccessKey:       return String(textarea.accessKey());
+        case TextAreaCols:            return Number(textarea.cols());
+        case TextAreaDisabled:        return Boolean(textarea.disabled());
+        case TextAreaName:            return String(textarea.name());
+        case TextAreaReadOnly:        return Boolean(textarea.readOnly());
+        case TextAreaRows:            return Number(textarea.rows());
+        case TextAreaSelectionStart:  return Number(textarea.selectionStart());
+        case TextAreaSelectionEnd:    return Number(textarea.selectionEnd());
+        case TextAreaTabIndex:        return Number(textarea.tabIndex());
+        case TextAreaType:            return String(textarea.type());
+        case TextAreaValue:           return String(textarea.value());
     }
-  }
-  break;
-  case ID_SELECT: {
-    HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-    switch (token) {
-    case SelectType:            return String(select.type());
-    case SelectSelectedIndex:   return Number(select.selectedIndex());
-    case SelectValue:           return String(select.value());
-    case SelectLength:          return Number(select.length());
-    case SelectForm:            return getDOMNode(exec, select.form()); // type HTMLFormElement
-    case SelectOptions:         return getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select); // type HTMLCollection
-    case SelectDisabled:        return Boolean(select.disabled());
-    case SelectMultiple:        return Boolean(select.multiple());
-    case SelectName:            return String(select.name());
-    case SelectSize:            return Number(select.size());
-    case SelectTabIndex:        return Number(select.tabIndex());
-    }
-  }
-  break;
-  case ID_OPTGROUP: {
-    HTMLOptGroupElementImpl &optgroup = static_cast<HTMLOptGroupElementImpl &>(element);
-    switch (token) {
-    case OptGroupDisabled:        return Boolean(optgroup.disabled());
-    case OptGroupLabel:           return String(optgroup.label());
-    }
-  }
-  break;
-  case ID_OPTION: {
-    HTMLOptionElementImpl &option = static_cast<HTMLOptionElementImpl &>(element);
-    switch (token) {
-    case OptionForm:            return getDOMNode(exec,option.form()); // type HTMLFormElement
-    case OptionDefaultSelected: return Boolean(option.defaultSelected());
-    case OptionText:            return String(option.text());
-    case OptionIndex:           return Number(option.index());
-    case OptionDisabled:        return Boolean(option.disabled());
-    case OptionLabel:           return String(option.label());
-    case OptionSelected:        return Boolean(option.selected());
-    case OptionValue:           return String(option.value());
-    }
-  }
-  break;
-  case ID_INPUT: {
-    HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
-    switch (token) {
-    case InputDefaultValue:    return String(input.defaultValue());
-    case InputDefaultChecked:  return Boolean(input.defaultChecked());
-    case InputForm:            return getDOMNode(exec,input.form()); // type HTMLFormElement
-    case InputAccept:          return String(input.accept());
-    case InputAccessKey:       return String(input.accessKey());
-    case InputAlign:           return String(input.align());
-    case InputAlt:             return String(input.alt());
-    case InputChecked:         return Boolean(input.checked());
-    case InputDisabled:        return Boolean(input.disabled());
-    case InputMaxLength:       return Number(input.maxLength());
-    case InputName:            return String(input.name());
-    case InputReadOnly:        return Boolean(input.readOnly());
-    case InputSelectionStart:  return getInputSelectionStart(input);
-    case InputSelectionEnd:    return getInputSelectionEnd(input);
-    case InputSize:            return String(input.sizeDOM());
-    case InputSrc:             return String(input.src());
-    case InputTabIndex:        return Number(input.tabIndex());
-    case InputType:            return String(input.type());
-    case InputUseMap:          return String(input.useMap());
-    case InputValue:           return String(input.value());
-    }
-  }
-  break;
-  case ID_TEXTAREA: {
-    HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
-    switch (token) {
-    case TextAreaDefaultValue:    return String(textarea.defaultValue());
-    case TextAreaForm:            return getDOMNode(exec,textarea.form()); // type HTMLFormElement
-    case TextAreaAccessKey:       return String(textarea.accessKey());
-    case TextAreaCols:            return Number(textarea.cols());
-    case TextAreaDisabled:        return Boolean(textarea.disabled());
-    case TextAreaName:            return String(textarea.name());
-    case TextAreaReadOnly:        return Boolean(textarea.readOnly());
-    case TextAreaRows:            return Number(textarea.rows());
-    case TextAreaSelectionStart:  return Number(textarea.selectionStart());
-    case TextAreaSelectionEnd:    return Number(textarea.selectionEnd());
-    case TextAreaTabIndex:        return Number(textarea.tabIndex());
-    case TextAreaType:            return String(textarea.type());
-    case TextAreaValue:           return String(textarea.value());
-    }
-  }
-  break;
-  case ID_BUTTON: {
-    HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
-    switch (token) {
-    case ButtonForm:            return getDOMNode(exec,button.form()); // type HTMLFormElement
-    case ButtonAccessKey:       return String(button.accessKey());
-    case ButtonDisabled:        return Boolean(button.disabled());
-    case ButtonName:            return String(button.name());
-    case ButtonTabIndex:        return Number(button.tabIndex());
-    case ButtonType:            return String(button.type());
-    case ButtonValue:           return String(button.value());
-    }
-  }
-  break;
-  case ID_LABEL: {
-    HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
-    switch (token) {
-    case LabelForm:            return getDOMNode(exec,label.form()); // type HTMLFormElement
-    case LabelAccessKey:       return String(label.accessKey());
-    case LabelHtmlFor:         return String(label.htmlFor());
-    }
-  }
-  break;
-  case ID_FIELDSET: {
-    HTMLFieldSetElementImpl &fieldSet = static_cast<HTMLFieldSetElementImpl &>(element);
-    switch (token) {
-    case FieldSetForm:            return getDOMNode(exec,fieldSet.form()); // type HTMLFormElement
-    }
-  }
-  break;
-  case ID_LEGEND: {
-    HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
-    switch (token) {
-    case LegendForm:            return getDOMNode(exec,legend.form()); // type HTMLFormElement
-    case LegendAccessKey:       return String(legend.accessKey());
-    case LegendAlign:           return String(legend.align());
-    }
-  }
-  break;
-  case ID_UL: {
-    HTMLUListElementImpl &uList = static_cast<HTMLUListElementImpl &>(element);
-    switch (token) {
-    case UListCompact:         return Boolean(uList.compact());
-    case UListType:            return String(uList.type());
-    }
-  }
-  break;
-  case ID_OL: {
-    HTMLOListElementImpl &oList = static_cast<HTMLOListElementImpl &>(element);
-    switch (token) {
-    case OListCompact:         return Boolean(oList.compact());
-    case OListStart:           return Number(oList.start());
-    case OListType:            return String(oList.type());
-    }
-  }
-  break;
-  case ID_DL: {
-    HTMLDListElementImpl &dList = static_cast<HTMLDListElementImpl &>(element);
-    switch (token) {
-    case DListCompact:         return Boolean(dList.compact());
-    }
-  }
-  break;
-  case ID_DIR: {
-    HTMLDirectoryElementImpl &directory = static_cast<HTMLDirectoryElementImpl &>(element);
-    switch (token) {
-    case DirectoryCompact:         return Boolean(directory.compact());
-    }
-  }
-  break;
-  case ID_MENU: {
-    HTMLMenuElementImpl &menu = static_cast<HTMLMenuElementImpl &>(element);
-    switch (token) {
-    case MenuCompact:         return Boolean(menu.compact());
-    }
-  }
-  break;
-  case ID_LI: {
-    HTMLLIElementImpl &li = static_cast<HTMLLIElementImpl &>(element);
-    switch (token) {
-    case LIType:            return String(li.type());
-    case LIValue:           return Number(li.value());
-    }
-  }
-  break;
-  case ID_DIV: {
-    HTMLDivElementImpl &div = static_cast<HTMLDivElementImpl &>(element);
-    switch (token) {
-    case DivAlign:           return String(div.align());
-    }
-  }
-  break;
-  case ID_P: {
-    HTMLParagraphElementImpl &paragraph = static_cast<HTMLParagraphElementImpl &>(element);
-    switch (token) {
-    case ParagraphAlign:           return String(paragraph.align());
-    }
-  }
-  break;
-  case ID_H1:
-  case ID_H2:
-  case ID_H3:
-  case ID_H4:
-  case ID_H5:
-  case ID_H6: {
-    HTMLHeadingElementImpl &heading = static_cast<HTMLHeadingElementImpl &>(element);
-    switch (token) {
-    case HeadingAlign:           return String(heading.align());
-    }
-  }
-  break;
-  case ID_BLOCKQUOTE: {
-    HTMLBlockquoteElementImpl &blockquote = static_cast<HTMLBlockquoteElementImpl &>(element);
-    switch (token) {
-    case BlockQuoteCite:            return String(blockquote.cite());
-    }
-  }
-  case ID_Q: {
-    HTMLQuoteElementImpl &quote = static_cast<HTMLQuoteElementImpl &>(element);
-    switch (token) {
-    case QuoteCite:            return String(quote.cite());
-    }
-  }
-  case ID_PRE: {
-    HTMLPreElementImpl &pre = static_cast<HTMLPreElementImpl &>(element);
-    switch (token) {
-    case PreWidth:           return Number(pre.width());
-    }
-  }
-  break;
-  case ID_BR: {
-    HTMLBRElementImpl &br = static_cast<HTMLBRElementImpl &>(element);
-    switch (token) {
-    case BRClear:           return String(br.clear());
-    }
-  }
-  break;
-  case ID_BASEFONT: {
-    HTMLBaseFontElementImpl &baseFont = static_cast<HTMLBaseFontElementImpl &>(element);
-    switch (token) {
-    case BaseFontColor:           return String(baseFont.color());
-    case BaseFontFace:            return String(baseFont.face());
-    case BaseFontSize:            return String(baseFont.size());
-    }
-  }
-  break;
-  case ID_FONT: {
-    HTMLFontElementImpl &font = static_cast<HTMLFontElementImpl &>(element);
-    switch (token) {
-    case FontColor:           return String(font.color());
-    case FontFace:            return String(font.face());
-    case FontSize:            return String(font.size());
-    }
-  }
-  break;
-  case ID_HR: {
-    HTMLHRElementImpl &hr = static_cast<HTMLHRElementImpl &>(element);
-    switch (token) {
-    case HRAlign:           return String(hr.align());
-    case HRNoShade:         return Boolean(hr.noShade());
-    case HRSize:            return String(hr.size());
-    case HRWidth:           return String(hr.width());
-    }
-  }
-  break;
-  case ID_INS:
-  case ID_DEL: {
-    HTMLModElementImpl &mod = static_cast<HTMLModElementImpl &>(element);
-    switch (token) {
-    case ModCite:            return String(mod.cite());
-    case ModDateTime:        return String(mod.dateTime());
-    }
-  }
-  break;
-  case ID_A: {
-    HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
-    switch (token) {
-    case AnchorAccessKey:       return String(anchor.accessKey());
-    case AnchorCharset:         return String(anchor.charset());
-    case AnchorCoords:          return String(anchor.coords());
-    case AnchorHref:            return String(anchor.href());
-    case AnchorHrefLang:        return String(anchor.hreflang());
-    case AnchorHash:            return String('#'+KURL(anchor.href().string()).ref());
-    case AnchorHost:            return String(KURL(anchor.href().string()).host());
-    case AnchorHostname: {
-      KURL url(anchor.href().string());
-      kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
-      if (url.port()==0)
-        return String(url.host());
-      else
-        return String(url.host() + ":" + QString::number(url.port()));
-    }
-    case AnchorPathName:        return String(KURL(anchor.href().string()).path());
-    case AnchorPort:            return String(QString::number(KURL(anchor.href().string()).port()));
-    case AnchorProtocol:        return String(KURL(anchor.href().string()).protocol()+":");
-    case AnchorSearch:          return String(KURL(anchor.href().string()).query());
-    case AnchorName:            return String(anchor.name());
-    case AnchorRel:             return String(anchor.rel());
-    case AnchorRev:             return String(anchor.rev());
-    case AnchorShape:           return String(anchor.shape());
-    case AnchorTabIndex:        return Number(anchor.tabIndex());
-    case AnchorTarget:          return String(anchor.target());
-    case AnchorType:            return String(anchor.type());
-    case AnchorText:
-      if (DocumentImpl* doc = anchor.getDocument())
-        doc->updateLayoutIgnorePendingStylesheets();
-      return String(anchor.innerText());
-    }
-  }
-  break;
-  case ID_IMG: {
-    HTMLImageElementImpl &image = static_cast<HTMLImageElementImpl &>(element);
-    switch (token) {
-    case ImageName:            return String(image.name());
-    case ImageAlign:           return String(image.align());
-    case ImageAlt:             return String(image.alt());
-    case ImageBorder:          return Number(image.border());
-    case ImageHeight:          return Number(image.height(true));
-    case ImageHspace:          return Number(image.hspace());
-    case ImageIsMap:           return Boolean(image.isMap());
-    case ImageLongDesc:        return String(image.longDesc());
-    case ImageSrc:             return String(image.src());
-    case ImageUseMap:          return String(image.useMap());
-    case ImageVspace:          return Number(image.vspace());
-    case ImageWidth:           return Number(image.width(true));
-    case ImageX:               return Number(image.x());
-    case ImageY:               return Number(image.y());
-    }
-  }
-  break;
-  case ID_OBJECT: {
-    HTMLObjectElementImpl &object = static_cast<HTMLObjectElementImpl &>(element);
-    switch (token) {
-    case ObjectForm:            return getDOMNode(exec,object.form()); // type HTMLFormElement
-    case ObjectCode:            return String(object.code());
-    case ObjectAlign:           return String(object.align());
-    case ObjectArchive:         return String(object.archive());
-    case ObjectBorder:          return String(object.border());
-    case ObjectCodeBase:        return String(object.codeBase());
-    case ObjectCodeType:        return String(object.codeType());
-    case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
-				       getDOMNode(exec, object.contentDocument()) : Undefined();
-    case ObjectData:            return String(object.data());
-    case ObjectDeclare:         return Boolean(object.declare());
-    case ObjectHeight:          return String(object.height());
-    case ObjectHspace:          return String(object.hspace());
-    case ObjectName:            return String(object.name());
-    case ObjectStandby:         return String(object.standby());
-    case ObjectTabIndex:        return Number(object.tabIndex());
-    case ObjectType:            return String(object.type());
-    case ObjectUseMap:          return String(object.useMap());
-    case ObjectVspace:          return String(object.vspace());
-    case ObjectWidth:           return String(object.width());
-    }
-  }
-  break;
-  case ID_PARAM: {
-    HTMLParamElementImpl &param = static_cast<HTMLParamElementImpl &>(element);
-    switch (token) {
-    case ParamName:            return String(param.name());
-    case ParamType:            return String(param.type());
-    case ParamValue:           return String(param.value());
-    case ParamValueType:       return String(param.valueType());
-    }
-  }
-  break;
-  case ID_APPLET: {
-    HTMLAppletElementImpl &applet = static_cast<HTMLAppletElementImpl &>(element);
-    switch (token) {
-    case AppletAlign:           return String(applet.align());
-    case AppletAlt:             return String(applet.alt());
-    case AppletArchive:         return String(applet.archive());
-    case AppletCode:            return String(applet.code());
-    case AppletCodeBase:        return String(applet.codeBase());
-    case AppletHeight:          return String(applet.height());
-    case AppletHspace:          return String(applet.hspace());
-    case AppletName:            return String(applet.name());
-    case AppletObject:          return String(applet.object());
-    case AppletVspace:          return String(applet.vspace());
-    case AppletWidth:           return String(applet.width());
-    }
-  }
-  break;
-  case ID_MAP: {
-    HTMLMapElementImpl &map = static_cast<HTMLMapElementImpl &>(element);
-    switch (token) {
-    case MapAreas:           return getHTMLCollection(exec, map.areas().get()); // type HTMLCollection
-    case MapName:            return String(map.name());
-    }
-  }
-  break;
-  case ID_AREA: {
-    HTMLAreaElementImpl &area = static_cast<HTMLAreaElementImpl &>(element);
-    switch (token) {
-    case AreaAccessKey:       return String(area.accessKey());
-    case AreaAlt:             return String(area.alt());
-    case AreaCoords:          return String(area.coords());
-    case AreaHref:            return String(area.href());
-    case AreaHash:            return String('#'+KURL(area.href().string()).ref());
-    case AreaHost:            return String(KURL(area.href().string()).host());
-    case AreaHostName: {
-      KURL url(area.href().string());
-      kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
-      if (url.port()==0)
-        return String(url.host());
-      else
-        return String(url.host() + ":" + QString::number(url.port()));
-    }
-    case AreaPathName:        return String(KURL(area.href().string()).path());
-    case AreaPort:            return String(QString::number(KURL(area.href().string()).port()));
-    case AreaProtocol:        return String(KURL(area.href().string()).protocol()+":");
-    case AreaSearch:          return String(KURL(area.href().string()).query());
-    case AreaNoHref:          return Boolean(area.noHref());
-    case AreaShape:           return String(area.shape());
-    case AreaTabIndex:        return Number(area.tabIndex());
-    case AreaTarget:          return String(area.target());
-    }
-  }
-  break;
-  case ID_SCRIPT: {
-    HTMLScriptElementImpl &script = static_cast<HTMLScriptElementImpl &>(element);
-    switch (token) {
-    case ScriptText:            return String(script.text());
-    case ScriptHtmlFor:         return String(script.htmlFor());
-    case ScriptEvent:           return String(script.event());
-    case ScriptCharset:         return String(script.charset());
-    case ScriptDefer:           return Boolean(script.defer());
-    case ScriptSrc:             return String(script.src());
-    case ScriptType:            return String(script.type());
-    }
-  }
-  break;
-  case ID_TABLE: {
-    HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
-    switch (token) {
-    case TableCaption:         return getDOMNode(exec,table.caption()); // type HTMLTableCaptionElement
-    case TableTHead:           return getDOMNode(exec,table.tHead()); // type HTMLTableSectionElement
-    case TableTFoot:           return getDOMNode(exec,table.tFoot()); // type HTMLTableSectionElement
-    case TableRows:            return getHTMLCollection(exec, table.rows().get()); // type HTMLCollection
-    case TableTBodies:         return getHTMLCollection(exec, table.tBodies().get()); // type HTMLCollection
-    case TableAlign:           return String(table.align());
-    case TableBgColor:         return String(table.bgColor());
-    case TableBorder:          return String(table.border());
-    case TableCellPadding:     return String(table.cellPadding());
-    case TableCellSpacing:     return String(table.cellSpacing());
-    case TableFrame:           return String(table.frame());
-    case TableRules:           return String(table.rules());
-    case TableSummary:         return String(table.summary());
-    case TableWidth:           return String(table.width());
-    }
-  }
-  break;
-  case ID_CAPTION: {
-    HTMLTableCaptionElementImpl &tableCaption = static_cast<HTMLTableCaptionElementImpl &>(element);
-    switch (token) {
-    case TableCaptionAlign:       return String(tableCaption.align());
-    }
-  }
-  break;
-  case ID_COL: {
-    HTMLTableColElementImpl &tableCol = static_cast<HTMLTableColElementImpl &>(element);
-    switch (token) {
-    case TableColAlign:           return String(tableCol.align());
-    case TableColCh:              return String(tableCol.ch());
-    case TableColChOff:           return String(tableCol.chOff());
-    case TableColSpan:            return Number(tableCol.span());
-    case TableColVAlign:          return String(tableCol.vAlign());
-    case TableColWidth:           return String(tableCol.width());
-    }
-  }
-  break;
-  case ID_THEAD:
-  case ID_TBODY:
-  case ID_TFOOT: {
-    HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
-    switch (token) {
-    case TableSectionAlign:           return String(tableSection.align());
-    case TableSectionCh:              return String(tableSection.ch());
-    case TableSectionChOff:           return String(tableSection.chOff());
-    case TableSectionVAlign:          return String(tableSection.vAlign());
-    case TableSectionRows:            return getHTMLCollection(exec, tableSection.rows().get()); // type HTMLCollection
-    }
-  }
-  break;
-  case ID_TR: {
-   HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
-   switch (token) {
-   case TableRowRowIndex:        return Number(tableRow.rowIndex());
-   case TableRowSectionRowIndex: return Number(tableRow.sectionRowIndex());
-   case TableRowCells:           return getHTMLCollection(exec, tableRow.cells().get()); // type HTMLCollection
-   case TableRowAlign:           return String(tableRow.align());
-   case TableRowBgColor:         return String(tableRow.bgColor());
-   case TableRowCh:              return String(tableRow.ch());
-   case TableRowChOff:           return String(tableRow.chOff());
-   case TableRowVAlign:          return String(tableRow.vAlign());
-   }
-  }
-  break;
-  case ID_TH:
-  case ID_TD: {
-    HTMLTableCellElementImpl &tableCell = static_cast<HTMLTableCellElementImpl &>(element);
-    switch (token) {
-    case TableCellCellIndex:       return Number(tableCell.cellIndex());
-    case TableCellAbbr:            return String(tableCell.abbr());
-    case TableCellAlign:           return String(tableCell.align());
-    case TableCellAxis:            return String(tableCell.axis());
-    case TableCellBgColor:         return String(tableCell.bgColor());
-    case TableCellCh:              return String(tableCell.ch());
-    case TableCellChOff:           return String(tableCell.chOff());
-    case TableCellColSpan:         return Number(tableCell.colSpan());
-    case TableCellHeaders:         return String(tableCell.headers());
-    case TableCellHeight:          return String(tableCell.height());
-    case TableCellNoWrap:          return Boolean(tableCell.noWrap());
-    case TableCellRowSpan:         return Number(tableCell.rowSpan());
-    case TableCellScope:           return String(tableCell.scope());
-    case TableCellVAlign:          return String(tableCell.vAlign());
-    case TableCellWidth:           return String(tableCell.width());
-    }
-  }
-  break;
-  case ID_FRAMESET: {
-    HTMLFrameSetElementImpl &frameSet = static_cast<HTMLFrameSetElementImpl &>(element);
-    switch (token) {
-    case FrameSetCols:            return String(frameSet.cols());
-    case FrameSetRows:            return String(frameSet.rows());
-    }
-  }
-  break;
-  case ID_FRAME: {
-    HTMLFrameElementImpl &frameElement = static_cast<HTMLFrameElementImpl &>(element);
-    switch (token) {
-    case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
-				      getDOMNode(exec, frameElement.contentDocument()) : Undefined();
-    case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
-                                    ? Window::retrieve(frameElement.contentPart())
-                                    : Undefined();
-    case FrameFrameBorder:     return String(frameElement.frameBorder());
-    case FrameLongDesc:        return String(frameElement.longDesc());
-    case FrameMarginHeight:    return String(frameElement.marginHeight());
-    case FrameMarginWidth:     return String(frameElement.marginWidth());
-    case FrameName:            return String(frameElement.name());
-    case FrameNoResize:        return Boolean(frameElement.noResize());
-    case FrameScrolling:       return String(frameElement.scrolling());
-    case FrameSrc:
-    case FrameLocation:        return String(frameElement.src());
-    }
-  }
-  break;
-  case ID_IFRAME: {
-    HTMLIFrameElementImpl &iFrame = static_cast<HTMLIFrameElementImpl &>(element);
-    switch (token) {
-    case IFrameAlign:                return String(iFrame.align());
-      // ### security check ?
-    case IFrameDocument: // non-standard, mapped to contentDocument
-    case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
-				  getDOMNode(exec, iFrame.contentDocument()) : Undefined();
-    case IFrameContentWindow:	return checkNodeSecurity(exec,iFrame.contentDocument()) 
-                                    ? Window::retrieve(iFrame.contentPart())
-                                    : Undefined();
-    case IFrameFrameBorder:     return String(iFrame.frameBorder());
-    case IFrameHeight:          return String(iFrame.height());
-    case IFrameLongDesc:        return String(iFrame.longDesc());
-    case IFrameMarginHeight:    return String(iFrame.marginHeight());
-    case IFrameMarginWidth:     return String(iFrame.marginWidth());
-    case IFrameName:            return String(iFrame.name());
-    case IFrameScrolling:       return String(iFrame.scrolling());
-    case IFrameSrc:             return String(iFrame.src());
-    case IFrameWidth:           return String(iFrame.width());
-    }
-    break;
-  }
-  } // xemacs (or arnt) could be a bit smarter when it comes to indenting switch()es ;)
-  // its not arnt to blame - its the original Stroustrup style we like :) (Dirk)
+    return Undefined();
+}
 
-  // generic properties
-  switch (token) {
-  case ElementId:
-      // iht.com relies on this value being "" when no id is present.  Other browsers do this as well.
-      // So we use String() instead of String() here.
-    return String(element.idDOM());
-  case ElementTitle:
-    return String(element.title());
-  case ElementLang:
-    return String(element.lang());
-  case ElementDir:
-    return String(element.dir());
-  case ElementClassName:
-    return String(element.className());
-  case ElementInnerHTML:
-    return String(element.innerHTML());
-  case ElementInnerText:
-    if (DocumentImpl* doc = impl()->getDocument())
-      doc->updateLayoutIgnorePendingStylesheets();
-    return String(element.innerText());
-  case ElementOuterHTML:
-    return String(element.outerHTML());
-  case ElementOuterText:
-    return String(element.outerText());
-  case ElementDocument:
-    return getDOMNode(exec,element.ownerDocument());
-  case ElementChildren:
-    return getHTMLCollection(exec, element.children().get());
-  case ElementContentEditable:
-    return String(element.contentEditable());
-  case ElementIsContentEditable:
-    return Boolean(element.isContentEditable());
-  // ### what about style? or is this used instead for DOM2 stylesheets?
-  }
-  kdWarning() << "HTMLElement::getValueProperty unhandled token " << token << endl;
-  return Undefined();
+Value HTMLElement::buttonGetter(ExecState* exec, int token) const
+{
+    HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
+    switch (token) {
+        case ButtonForm:            return getDOMNode(exec,button.form()); // type HTMLFormElement
+        case ButtonAccessKey:       return String(button.accessKey());
+        case ButtonDisabled:        return Boolean(button.disabled());
+        case ButtonName:            return String(button.name());
+        case ButtonTabIndex:        return Number(button.tabIndex());
+        case ButtonType:            return String(button.type());
+        case ButtonValue:           return String(button.value());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::labelGetter(ExecState* exec, int token) const
+{
+    HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
+    switch (token) {
+        case LabelForm:            return getDOMNode(exec,label.form()); // type HTMLFormElement
+        case LabelAccessKey:       return String(label.accessKey());
+        case LabelHtmlFor:         return String(label.htmlFor());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::fieldSetGetter(ExecState* exec, int token) const
+{
+    HTMLFieldSetElementImpl& fieldSet = *static_cast<HTMLFieldSetElementImpl*>(impl());
+    if (token == FieldSetForm)
+        return getDOMNode(exec,fieldSet.form()); // type HTMLFormElement
+    return Undefined();
+}
+
+Value HTMLElement::legendGetter(ExecState* exec, int token) const
+{
+    HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
+    switch (token) {
+        case LegendForm:            return getDOMNode(exec,legend.form()); // type HTMLFormElement
+        case LegendAccessKey:       return String(legend.accessKey());
+        case LegendAlign:           return String(legend.align());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::uListGetter(ExecState* exec, int token) const
+{
+    HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
+    switch (token) {
+        case UListCompact:         return Boolean(uList.compact());
+        case UListType:            return String(uList.type());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::oListGetter(ExecState* exec, int token) const
+{
+    HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
+    switch (token) {
+        case OListCompact:         return Boolean(oList.compact());
+        case OListStart:           return Number(oList.start());
+        case OListType:            return String(oList.type());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::dListGetter(ExecState* exec, int token) const
+{
+    HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
+    if (token == DListCompact)
+        return Boolean(dList.compact());
+    return Undefined();
+}
+
+Value HTMLElement::dirGetter(ExecState* exec, int token) const
+{
+    HTMLDirectoryElementImpl& dir = *static_cast<HTMLDirectoryElementImpl*>(impl());
+    if (token == DirectoryCompact)
+        return Boolean(dir.compact());
+    return Undefined();
+}
+
+Value HTMLElement::menuGetter(ExecState* exec, int token) const
+{
+    HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
+    if (token == MenuCompact)
+        return Boolean(menu.compact());
+    return Undefined();
+}
+
+Value HTMLElement::liGetter(ExecState* exec, int token) const
+{
+    HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
+    switch (token) {
+        case LIType:            return String(li.type());
+        case LIValue:           return Number(li.value());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::divGetter(ExecState* exec, int token) const
+{
+    HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
+    if (token == DivAlign)
+        return String(div.align());
+    return Undefined();
+}
+
+Value HTMLElement::paragraphGetter(ExecState* exec, int token) const
+{
+    HTMLParagraphElementImpl& p = *static_cast<HTMLParagraphElementImpl*>(impl());
+    if (token == ParagraphAlign)
+        return String(p.align());
+    return Undefined();
+}
+
+Value HTMLElement::headingGetter(ExecState* exec, int token) const
+{
+    HTMLHeadingElementImpl& h = *static_cast<HTMLHeadingElementImpl*>(impl());
+    if (token == HeadingAlign)
+        return String(h.align());
+    return Undefined();
+}
+
+Value HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
+{
+    HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
+    if (token == BlockQuoteCite)
+        return String(blockQuote.cite());
+    return Undefined();
+}
+
+Value HTMLElement::quoteGetter(ExecState* exec, int token) const
+{
+    HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
+    if (token == QuoteCite)
+        return String(quote.cite());
+    return Undefined();
+}
+
+Value HTMLElement::preGetter(ExecState* exec, int token) const
+{
+    // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
+    HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
+    if (token == PreWidth)
+        return Number(pre.width());
+    return Undefined();
+}
+
+Value HTMLElement::brGetter(ExecState* exec, int token) const
+{
+    HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
+    if (token == BRClear)
+        return String(br.clear());
+    return Undefined();
+}
+
+Value HTMLElement::baseFontGetter(ExecState* exec, int token) const
+{
+    HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
+    switch (token) {
+        case BaseFontColor:           return String(baseFont.color());
+        case BaseFontFace:            return String(baseFont.face());
+        case BaseFontSize:            return String(baseFont.size());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::fontGetter(ExecState* exec, int token) const
+{
+    HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
+    switch (token) {
+        case FontColor:           return String(font.color());
+        case FontFace:            return String(font.face());
+        case FontSize:            return String(font.size());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::hrGetter(ExecState* exec, int token) const
+{
+    HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
+    switch (token) {
+        case HRAlign:           return String(hr.align());
+        case HRNoShade:         return Boolean(hr.noShade());
+        case HRSize:            return String(hr.size());
+        case HRWidth:           return String(hr.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::modGetter(ExecState* exec, int token) const
+{
+    HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
+    switch (token) {
+        case ModCite:            return String(mod.cite());
+        case ModDateTime:        return String(mod.dateTime());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::anchorGetter(ExecState* exec, int token) const
+{
+    HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
+    switch (token) {
+        case AnchorAccessKey:       return String(anchor.accessKey());
+        case AnchorCharset:         return String(anchor.charset());
+        case AnchorCoords:          return String(anchor.coords());
+        case AnchorHref:            return String(anchor.href());
+        case AnchorHrefLang:        return String(anchor.hreflang());
+        case AnchorHash:            return String('#'+KURL(anchor.href().string()).ref());
+        case AnchorHost:            return String(KURL(anchor.href().string()).host());
+        case AnchorHostname: {
+            KURL url(anchor.href().string());
+            kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
+            if (url.port()==0)
+                return String(url.host());
+            else
+                return String(url.host() + ":" + QString::number(url.port()));
+        }
+        case AnchorPathName:        return String(KURL(anchor.href().string()).path());
+        case AnchorPort:            return String(QString::number(KURL(anchor.href().string()).port()));
+        case AnchorProtocol:        return String(KURL(anchor.href().string()).protocol()+":");
+        case AnchorSearch:          return String(KURL(anchor.href().string()).query());
+        case AnchorName:            return String(anchor.name());
+        case AnchorRel:             return String(anchor.rel());
+        case AnchorRev:             return String(anchor.rev());
+        case AnchorShape:           return String(anchor.shape());
+        case AnchorTabIndex:        return Number(anchor.tabIndex());
+        case AnchorTarget:          return String(anchor.target());
+        case AnchorType:            return String(anchor.type());
+        case AnchorText:
+            if (DocumentImpl* doc = anchor.getDocument())
+                doc->updateLayoutIgnorePendingStylesheets();
+            return String(anchor.innerText());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::imageGetter(ExecState* exec, int token) const
+{
+    HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
+    switch (token) {
+        case ImageName:            return String(image.name());
+        case ImageAlign:           return String(image.align());
+        case ImageAlt:             return String(image.alt());
+        case ImageBorder:          return Number(image.border());
+        case ImageHeight:          return Number(image.height(true));
+        case ImageHspace:          return Number(image.hspace());
+        case ImageIsMap:           return Boolean(image.isMap());
+        case ImageLongDesc:        return String(image.longDesc());
+        case ImageSrc:             return String(image.src());
+        case ImageUseMap:          return String(image.useMap());
+        case ImageVspace:          return Number(image.vspace());
+        case ImageWidth:           return Number(image.width(true));
+        case ImageX:               return Number(image.x());
+        case ImageY:               return Number(image.y());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::objectGetter(ExecState* exec, int token) const
+{
+    HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
+    switch (token) {
+        case ObjectForm:            return getDOMNode(exec,object.form()); // type HTMLFormElement
+        case ObjectCode:            return String(object.code());
+        case ObjectAlign:           return String(object.align());
+        case ObjectArchive:         return String(object.archive());
+        case ObjectBorder:          return String(object.border());
+        case ObjectCodeBase:        return String(object.codeBase());
+        case ObjectCodeType:        return String(object.codeType());
+        case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
+                                           getDOMNode(exec, object.contentDocument()) : Undefined();
+        case ObjectData:            return String(object.data());
+        case ObjectDeclare:         return Boolean(object.declare());
+        case ObjectHeight:          return String(object.height());
+        case ObjectHspace:          return String(object.hspace());
+        case ObjectName:            return String(object.name());
+        case ObjectStandby:         return String(object.standby());
+        case ObjectTabIndex:        return Number(object.tabIndex());
+        case ObjectType:            return String(object.type());
+        case ObjectUseMap:          return String(object.useMap());
+        case ObjectVspace:          return String(object.vspace());
+        case ObjectWidth:           return String(object.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::paramGetter(ExecState* exec, int token) const
+{
+    HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
+    switch (token) {
+        case ParamName:            return String(param.name());
+        case ParamType:            return String(param.type());
+        case ParamValue:           return String(param.value());
+        case ParamValueType:       return String(param.valueType());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::appletGetter(ExecState* exec, int token) const
+{
+    HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
+    switch (token) {
+        case AppletAlign:           return String(applet.align());
+        case AppletAlt:             return String(applet.alt());
+        case AppletArchive:         return String(applet.archive());
+        case AppletCode:            return String(applet.code());
+        case AppletCodeBase:        return String(applet.codeBase());
+        case AppletHeight:          return String(applet.height());
+        case AppletHspace:          return String(applet.hspace());
+        case AppletName:            return String(applet.name());
+        case AppletObject:          return String(applet.object());
+        case AppletVspace:          return String(applet.vspace());
+        case AppletWidth:           return String(applet.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::mapGetter(ExecState* exec, int token) const
+{
+    HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
+    switch (token) {
+        case MapAreas:           return getHTMLCollection(exec, map.areas().get()); // type HTMLCollection
+        case MapName:            return String(map.name());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::areaGetter(ExecState* exec, int token) const
+{
+    HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
+    switch (token) {
+        case AreaAccessKey:       return String(area.accessKey());
+        case AreaAlt:             return String(area.alt());
+        case AreaCoords:          return String(area.coords());
+        case AreaHref:            return String(area.href());
+        case AreaHash:            return String('#'+KURL(area.href().string()).ref());
+        case AreaHost:            return String(KURL(area.href().string()).host());
+        case AreaHostName: {
+            KURL url(area.href().string());
+            kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
+            if (url.port()==0)
+                return String(url.host());
+            else
+                return String(url.host() + ":" + QString::number(url.port()));
+        }
+        case AreaPathName:        return String(KURL(area.href().string()).path());
+        case AreaPort:            return String(QString::number(KURL(area.href().string()).port()));
+        case AreaProtocol:        return String(KURL(area.href().string()).protocol()+":");
+        case AreaSearch:          return String(KURL(area.href().string()).query());
+        case AreaNoHref:          return Boolean(area.noHref());
+        case AreaShape:           return String(area.shape());
+        case AreaTabIndex:        return Number(area.tabIndex());
+        case AreaTarget:          return String(area.target());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::scriptGetter(ExecState* exec, int token) const
+{
+    HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
+    switch (token) {
+        case ScriptText:            return String(script.text());
+        case ScriptHtmlFor:         return String(script.htmlFor());
+        case ScriptEvent:           return String(script.event());
+        case ScriptCharset:         return String(script.charset());
+        case ScriptDefer:           return Boolean(script.defer());
+        case ScriptSrc:             return String(script.src());
+        case ScriptType:            return String(script.type());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::tableGetter(ExecState* exec, int token) const
+{
+    HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
+    switch (token) {
+        case TableCaption:         return getDOMNode(exec,table.caption()); // type HTMLTableCaptionElement
+        case TableTHead:           return getDOMNode(exec,table.tHead()); // type HTMLTableSectionElement
+        case TableTFoot:           return getDOMNode(exec,table.tFoot()); // type HTMLTableSectionElement
+        case TableRows:            return getHTMLCollection(exec, table.rows().get()); // type HTMLCollection
+        case TableTBodies:         return getHTMLCollection(exec, table.tBodies().get()); // type HTMLCollection
+        case TableAlign:           return String(table.align());
+        case TableBgColor:         return String(table.bgColor());
+        case TableBorder:          return String(table.border());
+        case TableCellPadding:     return String(table.cellPadding());
+        case TableCellSpacing:     return String(table.cellSpacing());
+        case TableFrame:           return String(table.frame());
+        case TableRules:           return String(table.rules());
+        case TableSummary:         return String(table.summary());
+        case TableWidth:           return String(table.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
+{
+    HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
+    if (token == TableCaptionAlign)
+        return String(tableCaption.align());
+    return Undefined();
+}
+
+Value HTMLElement::tableColGetter(ExecState* exec, int token) const
+{
+    HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
+    switch (token) {
+        case TableColAlign:           return String(tableCol.align());
+        case TableColCh:              return String(tableCol.ch());
+        case TableColChOff:           return String(tableCol.chOff());
+        case TableColSpan:            return Number(tableCol.span());
+        case TableColVAlign:          return String(tableCol.vAlign());
+        case TableColWidth:           return String(tableCol.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::tableSectionGetter(ExecState* exec, int token) const
+{
+    HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
+    switch (token) {
+        case TableSectionAlign:           return String(tableSection.align());
+        case TableSectionCh:              return String(tableSection.ch());
+        case TableSectionChOff:           return String(tableSection.chOff());
+        case TableSectionVAlign:          return String(tableSection.vAlign());
+        case TableSectionRows:            return getHTMLCollection(exec, tableSection.rows().get()); // type HTMLCollection
+    }
+    return Undefined();
+}
+
+Value HTMLElement::tableRowGetter(ExecState* exec, int token) const
+{
+    HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
+    switch (token) {
+        case TableRowRowIndex:        return Number(tableRow.rowIndex());
+        case TableRowSectionRowIndex: return Number(tableRow.sectionRowIndex());
+        case TableRowCells:           return getHTMLCollection(exec, tableRow.cells().get()); // type HTMLCollection
+        case TableRowAlign:           return String(tableRow.align());
+        case TableRowBgColor:         return String(tableRow.bgColor());
+        case TableRowCh:              return String(tableRow.ch());
+        case TableRowChOff:           return String(tableRow.chOff());
+        case TableRowVAlign:          return String(tableRow.vAlign());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::tableCellGetter(ExecState* exec, int token) const
+{
+    HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
+    switch (token) {
+        case TableCellCellIndex:       return Number(tableCell.cellIndex());
+        case TableCellAbbr:            return String(tableCell.abbr());
+        case TableCellAlign:           return String(tableCell.align());
+        case TableCellAxis:            return String(tableCell.axis());
+        case TableCellBgColor:         return String(tableCell.bgColor());
+        case TableCellCh:              return String(tableCell.ch());
+        case TableCellChOff:           return String(tableCell.chOff());
+        case TableCellColSpan:         return Number(tableCell.colSpan());
+        case TableCellHeaders:         return String(tableCell.headers());
+        case TableCellHeight:          return String(tableCell.height());
+        case TableCellNoWrap:          return Boolean(tableCell.noWrap());
+        case TableCellRowSpan:         return Number(tableCell.rowSpan());
+        case TableCellScope:           return String(tableCell.scope());
+        case TableCellVAlign:          return String(tableCell.vAlign());
+        case TableCellWidth:           return String(tableCell.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::frameSetGetter(ExecState* exec, int token) const
+{
+    HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
+    switch (token) {
+        case FrameSetCols:            return String(frameSet.cols());
+        case FrameSetRows:            return String(frameSet.rows());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::frameGetter(ExecState* exec, int token) const
+{
+    HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
+    switch (token) {
+        case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
+                                          getDOMNode(exec, frameElement.contentDocument()) : Undefined();
+        case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
+                                        ? Window::retrieve(frameElement.contentPart())
+                                        : Undefined();
+        case FrameFrameBorder:     return String(frameElement.frameBorder());
+        case FrameLongDesc:        return String(frameElement.longDesc());
+        case FrameMarginHeight:    return String(frameElement.marginHeight());
+        case FrameMarginWidth:     return String(frameElement.marginWidth());
+        case FrameName:            return String(frameElement.name());
+        case FrameNoResize:        return Boolean(frameElement.noResize());
+        case FrameScrolling:       return String(frameElement.scrolling());
+        case FrameSrc:
+        case FrameLocation:        return String(frameElement.src());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::iFrameGetter(ExecState* exec, int token) const
+{
+    HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
+    switch (token) {
+        case IFrameAlign:                return String(iFrame.align());
+          // ### security check ?
+        case IFrameDocument: // non-standard, mapped to contentDocument
+        case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
+                                      getDOMNode(exec, iFrame.contentDocument()) : Undefined();
+        case IFrameContentWindow:	return checkNodeSecurity(exec,iFrame.contentDocument()) 
+                                        ? Window::retrieve(iFrame.contentPart())
+                                        : Undefined();
+        case IFrameFrameBorder:     return String(iFrame.frameBorder());
+        case IFrameHeight:          return String(iFrame.height());
+        case IFrameLongDesc:        return String(iFrame.longDesc());
+        case IFrameMarginHeight:    return String(iFrame.marginHeight());
+        case IFrameMarginWidth:     return String(iFrame.marginWidth());
+        case IFrameName:            return String(iFrame.name());
+        case IFrameScrolling:       return String(iFrame.scrolling());
+        case IFrameSrc:             return String(iFrame.src());
+        case IFrameWidth:           return String(iFrame.width());
+    }
+    return Undefined();
+}
+
+Value HTMLElement::marqueeGetter(ExecState* exec, int token) const
+{
+    // FIXME: Find out what WinIE exposes as properties and implement this.
+    return Undefined();
+}
+
+Value HTMLElement::getValueProperty(ExecState *exec, int token) const
+{
+    // Check our set of generic properties first.
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
+    switch (token) {
+        case ElementId:
+        // iht.com relies on this value being "" when no id is present.  Other browsers do this as well.
+        // So we use String() instead of String() here.
+        return String(element.id());
+        case ElementTitle:
+            return String(element.title());
+        case ElementLang:
+            return String(element.lang());
+        case ElementDir:
+            return String(element.dir());
+        case ElementClassName:
+            return String(element.className());
+        case ElementInnerHTML:
+            return String(element.innerHTML());
+        case ElementInnerText:
+            if (DocumentImpl* doc = impl()->getDocument())
+                doc->updateLayoutIgnorePendingStylesheets();
+            return String(element.innerText());
+        case ElementOuterHTML:
+            return String(element.outerHTML());
+        case ElementOuterText:
+            return String(element.outerText());
+        case ElementDocument:
+            return getDOMNode(exec,element.ownerDocument());
+        case ElementChildren:
+            return getHTMLCollection(exec, element.children().get());
+        case ElementContentEditable:
+            return String(element.contentEditable());
+        case ElementIsContentEditable:
+            return Boolean(element.isContentEditable());
+    }
+
+    // Now check the properties specific to our element type.
+    const Accessors* info = getSetInfo();
+    if (info && info->m_getter)
+        return (this->*(info->m_getter))(exec, token);
+    return Undefined();
 }
 
 bool KJS::HTMLElement::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
-  //kdDebug(6070) << "HTMLElement::hasProperty " << propertyName.qstring() << endl;
+    //kdDebug(6070) << "HTMLElement::hasProperty " << propertyName.qstring() << endl;
 #endif
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
-  // First look at dynamic properties - keep this in sync with tryGet
-  switch (element.id()) {
-    case ID_FORM: {
-      HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
-      // Check if we're retrieving an element (by index or by name)
-      bool ok;
-      uint u = propertyName.toULong(&ok);
-      if (ok && form.elements()->item(u))
-        return true;
-      if (form.elements()->namedItem(propertyName.string()))
-        return true;
-      break;
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
+    // First look at dynamic properties - keep this in sync with tryGet
+    if (element.hasLocalName(HTMLNames::form())) {
+        HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
+        // Check if we're retrieving an element (by index or by name)
+        bool ok;
+        uint u = propertyName.toULong(&ok);
+        if (ok && form.elements()->item(u))
+            return true;
+        if (form.elements()->namedItem(propertyName.string()))
+            return true;
     }
-    case ID_SELECT: {
-      HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-      bool ok;
-      uint u = propertyName.toULong(&ok);
-      if (ok && select.optionsHTMLCollection()->item(u))
-        return true;
-      break;
+    else if (element.hasLocalName(HTMLNames::select())) {
+        HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
+        bool ok;
+        uint u = propertyName.toULong(&ok);
+        if (ok && select.optionsHTMLCollection()->item(u))
+            return true;
     }
-    case ID_INPUT: {
-      HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
-      const HashTable* table = classInfo()->propHashTable;
-      const HashEntry* entry = Lookup::findEntry(table, propertyName);
-      if (entry) {
-        switch(entry->value) {
-          case InputSelectionStart:
-          case InputSelectionEnd:
-          case InputSetSelectionRange:
-            return input.canHaveSelection();
-          default:
-            break;
+    else if (element.hasLocalName(HTMLNames::input())) {
+        HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
+        const HashTable* table = classInfo()->propHashTable;
+        const HashEntry* entry = Lookup::findEntry(table, propertyName);
+        if (entry) {
+            switch(entry->value) {
+            case InputSelectionStart:
+            case InputSelectionEnd:
+            case InputSetSelectionRange:
+                return input.canHaveSelection();
+            default:
+                break;
+            }
         }
-      }
-      break;
     }
-    default:
-      break;
-  }
 
-  return DOMElement::hasOwnProperty(exec, propertyName);
+    return DOMElement::hasOwnProperty(exec, propertyName);
 }
 
 UString KJS::HTMLElement::toString(ExecState *exec) const
 {
-  if (impl()->id() == ID_A)
-    return UString(static_cast<const HTMLAnchorElementImpl *>(impl())->href());
-  else
-    return DOMElement::toString(exec);
+    if (impl()->hasTagName(HTMLNames::a()))
+        return UString(static_cast<const HTMLAnchorElementImpl *>(impl())->href());
+    else
+        return DOMElement::toString(exec);
 }
 
 static HTMLFormElementImpl *getForm(HTMLElementImpl *element)
 {
-  if (element->isGenericFormElement())
-    return static_cast<HTMLGenericFormElementImpl *>(element)->form();
+    if (element->isGenericFormElement())
+        return static_cast<HTMLGenericFormElementImpl *>(element)->form();
+    if (element->hasTagName(HTMLNames::label()))
+        return static_cast<HTMLLabelElementImpl *>(element)->form();
+    if (element->hasTagName(HTMLNames::object()))
+        return static_cast<HTMLObjectElementImpl *>(element)->form();
 
-  switch (element->id()) {
-    case ID_LABEL:
-      return static_cast<HTMLLabelElementImpl *>(element)->form();
-    case ID_OBJECT:
-      return static_cast<HTMLObjectElementImpl *>(element)->form();
-  }
-
-  return 0;
+    return 0;
 }
 
 void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
@@ -2142,7 +2296,7 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
     scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form)));
   else {
     NodeImpl *form = element->parentNode();
-    while (form && form->id() != ID_FORM)
+    while (form && !form->hasTagName(HTMLNames::form()))
       form = form->parentNode();
     
     if (form)
@@ -2162,188 +2316,173 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
 
 Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
 {
-  if (!thisObj.inherits(&KJS::HTMLElement::info)) {
-    Object err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
-  kdDebug() << "KJS::HTMLElementFunction::tryCall " << endl;
-  DOMExceptionTranslator exception(exec);
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj.imp())->impl());
+    if (!thisObj.inherits(&KJS::HTMLElement::info)) {
+        Object err = Error::create(exec,TypeError);
+        exec->setException(err);
+        return err;
+    }
+    kdDebug() << "KJS::HTMLElementFunction::tryCall " << endl;
+    DOMExceptionTranslator exception(exec);
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj.imp())->impl());
 
-  switch (element.id()) {
-    case ID_FORM: {
-      HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
-      if (id == KJS::HTMLElement::FormSubmit) {
-        form.submit();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::FormReset) {
-        form.reset();
-        return Undefined();
-      }
+    if (element.hasLocalName(HTMLNames::form())) {
+        HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
+        if (id == KJS::HTMLElement::FormSubmit) {
+            form.submit();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::FormReset) {
+            form.reset();
+            return Undefined();
+        }
     }
-    break;
-    case ID_SELECT: {
-      HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-      if (id == KJS::HTMLElement::SelectAdd) {
-        select.add(toHTMLElement(args[0]), toHTMLElement(args[1]));
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::SelectRemove) {
-        select.remove(int(args[0].toNumber(exec)));
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::SelectBlur) {
-        select.blur();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::SelectFocus) {
-        select.focus();
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::select())) {
+        HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
+        if (id == KJS::HTMLElement::SelectAdd) {
+            select.add(toHTMLElement(args[0]), toHTMLElement(args[1]));
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::SelectRemove) {
+            select.remove(int(args[0].toNumber(exec)));
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::SelectBlur) {
+            select.blur();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::SelectFocus) {
+            select.focus();
+            return Undefined();
+        }
     }
-    break;
-    case ID_INPUT: {
-      HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
-      if (id == KJS::HTMLElement::InputBlur) {
-        input.blur();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::InputFocus) {
-        input.focus();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::InputSelect) {
-        input.select();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::InputClick) {
-        input.click();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::InputSetSelectionRange) {
-        input.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::input())) {
+        HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
+        if (id == KJS::HTMLElement::InputBlur) {
+            input.blur();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::InputFocus) {
+            input.focus();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::InputSelect) {
+            input.select();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::InputClick) {
+            input.click();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::InputSetSelectionRange) {
+            input.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
+            return Undefined();
+        }
     }
-    break;
-    case ID_LABEL: {
-      HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
-      
-      if (id == KJS::HTMLElement::LabelFocus) {
-          label.focus();
-          return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::button())) {
+        HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
+        if (id == KJS::HTMLElement::ButtonBlur) {
+            button.blur();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::ButtonFocus) {
+            button.focus();
+            return Undefined();
+        }
     }
-    break;
-    case ID_LEGEND: {
-      HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
-        
-      if (id == KJS::HTMLElement::LegendFocus) {
-          legend.focus();
-          return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::label())) {
+        HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
+        if (id == KJS::HTMLElement::LabelFocus) {
+            label.focus();
+            return Undefined();
+        }
     }
-    break;
-    case ID_BUTTON: {
-      HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
-      
-      if (id == KJS::HTMLElement::ButtonBlur) {
-        button.blur();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::ButtonFocus) {
-        button.focus();
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::legend())) {
+        HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
+        if (id == KJS::HTMLElement::LegendFocus) {
+            legend.focus();
+            return Undefined();
+        }
     }
-    break;
-    case ID_TEXTAREA: {
-      HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
-      if (id == KJS::HTMLElement::TextAreaBlur) {
-        textarea.blur();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TextAreaFocus) {
-        textarea.focus();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TextAreaSelect) {
-        textarea.select();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TextAreaSetSelectionRange) {
-        textarea.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::textarea())) {
+        HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
+        if (id == KJS::HTMLElement::TextAreaBlur) {
+            textarea.blur();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TextAreaFocus) {
+            textarea.focus();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TextAreaSelect) {
+            textarea.select();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TextAreaSetSelectionRange) {
+            textarea.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
+            return Undefined();
+        }
     }
-    break;
-    case ID_A: {
-      HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
-      if (id == KJS::HTMLElement::AnchorBlur) {
-        anchor.blur();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::AnchorFocus) {
-        anchor.focus();
-        return Undefined();
-      } 
-      else if (id == KJS::HTMLElement::AnchorToString) {
-	return String(thisObj.toString(exec));
-      }
+    else if (element.hasLocalName(HTMLNames::a())) {
+        HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
+        if (id == KJS::HTMLElement::AnchorBlur) {
+            anchor.blur();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::AnchorFocus) {
+            anchor.focus();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::AnchorToString)
+            return String(thisObj.toString(exec));
     }
-    break;
-    case ID_TABLE: {
-      HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
-      if (id == KJS::HTMLElement::TableCreateTHead)
-        return getDOMNode(exec,table.createTHead());
-      else if (id == KJS::HTMLElement::TableDeleteTHead) {
-        table.deleteTHead();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TableCreateTFoot)
-        return getDOMNode(exec,table.createTFoot());
-      else if (id == KJS::HTMLElement::TableDeleteTFoot) {
-        table.deleteTFoot();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TableCreateCaption)
-        return getDOMNode(exec,table.createCaption());
-      else if (id == KJS::HTMLElement::TableDeleteCaption) {
-        table.deleteCaption();
-        return Undefined();
-      }
-      else if (id == KJS::HTMLElement::TableInsertRow)
-        return getDOMNode(exec,table.insertRow(args[0].toInt32(exec), exception));
-      else if (id == KJS::HTMLElement::TableDeleteRow) {
-        table.deleteRow(args[0].toInt32(exec), exception);
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::table())) {
+        HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
+        if (id == KJS::HTMLElement::TableCreateTHead)
+            return getDOMNode(exec,table.createTHead());
+        else if (id == KJS::HTMLElement::TableDeleteTHead) {
+            table.deleteTHead();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TableCreateTFoot)
+            return getDOMNode(exec,table.createTFoot());
+        else if (id == KJS::HTMLElement::TableDeleteTFoot) {
+            table.deleteTFoot();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TableCreateCaption)
+            return getDOMNode(exec,table.createCaption());
+        else if (id == KJS::HTMLElement::TableDeleteCaption) {
+            table.deleteCaption();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::TableInsertRow)
+            return getDOMNode(exec,table.insertRow(args[0].toInt32(exec), exception));
+        else if (id == KJS::HTMLElement::TableDeleteRow) {
+            table.deleteRow(args[0].toInt32(exec), exception);
+            return Undefined();
+        }
     }
-    break;
-    case ID_THEAD:
-    case ID_TBODY:
-    case ID_TFOOT: {
-      HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
-      if (id == KJS::HTMLElement::TableSectionInsertRow)
-        return getDOMNode(exec, tableSection.insertRow(args[0].toInt32(exec), exception));
-      else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
-        tableSection.deleteRow(args[0].toInt32(exec), exception);
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::thead()) ||
+             element.hasLocalName(HTMLNames::tbody()) ||
+             element.hasLocalName(HTMLNames::tfoot())) {
+        HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
+        if (id == KJS::HTMLElement::TableSectionInsertRow)
+            return getDOMNode(exec, tableSection.insertRow(args[0].toInt32(exec), exception));
+        else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
+            tableSection.deleteRow(args[0].toInt32(exec), exception);
+            return Undefined();
+        }
     }
-    break;
-    case ID_TR: {
-      HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
-      if (id == KJS::HTMLElement::TableRowInsertCell)
-        return getDOMNode(exec,tableRow.insertCell(args[0].toInt32(exec), exception));
-      else if (id == KJS::HTMLElement::TableRowDeleteCell) {
-        tableRow.deleteCell(args[0].toInt32(exec), exception);
-        return Undefined();
-      }
+    else if (element.hasLocalName(HTMLNames::tr())) {
+        HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
+        if (id == KJS::HTMLElement::TableRowInsertCell)
+            return getDOMNode(exec,tableRow.insertCell(args[0].toInt32(exec), exception));
+        else if (id == KJS::HTMLElement::TableRowDeleteCell) {
+            tableRow.deleteCell(args[0].toInt32(exec), exception);
+            return Undefined();
+        }
     }
-    case ID_MARQUEE: {
+    else if (element.hasLocalName(HTMLNames::marquee())) {
         if (id == KJS::HTMLElement::MarqueeStart && element.renderer() && 
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
@@ -2351,14 +2490,14 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
         if (id == KJS::HTMLElement::MarqueeStop && element.renderer() && 
-                 element.renderer()->layer() &&
-                 element.renderer()->layer()->marquee()) {
+            element.renderer()->layer() &&
+            element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->stop();
             return Undefined();
         }
-        break;
     }
-    case ID_CANVAS: {
+#if APPLE_CHANGES
+    else if (element.hasLocalName(HTMLNames::canvas())) {
         if (id == KJS::HTMLElement::GetContext) {
             if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d")) {
                 return Object(new Context2D(&element));
@@ -2366,742 +2505,764 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    
-    break;
-  }
+#endif
 
-  return Undefined();
+    return Undefined();
 }
 
 void KJS::HTMLElement::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
 #ifdef KJS_VERBOSE
-  DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+    DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
 #endif
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLElement::tryPut " << propertyName.qstring()
-                << " thisTag=" << element.tagName().string()
-                << " str=" << str.string() << endl;
+    kdDebug(6070) << "KJS::HTMLElement::tryPut " << propertyName.qstring()
+                  << " thisTag=" << element.tagName().string()
+                  << " str=" << str.string() << endl;
 #endif
-  // First look at dynamic properties
-  switch (element.id()) {
-    case ID_SELECT: {
-      HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-      bool ok;
-      /*uint u =*/ propertyName.toULong(&ok);
-      if (ok) {
-        Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select) );
-        if ( !coll.isNull() )
-          coll.put(exec,propertyName,value);
-        return;
-      }
+    // First look at dynamic properties
+    if (element.hasLocalName(HTMLNames::select())) {
+        HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
+        bool ok;
+        /*uint u =*/ propertyName.toULong(&ok);
+        if (ok) {
+            Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select) );
+            if (!coll.isNull())
+                coll.put(exec,propertyName,value);
+            return;
+        }
     }
 #if APPLE_CHANGES
-    case ID_EMBED:
-    case ID_OBJECT:
-    case ID_APPLET: {
+    else if (element.hasLocalName(HTMLNames::embed()) ||
+             element.hasLocalName(HTMLNames::object()) ||
+             element.hasLocalName(HTMLNames::applet())) {
 	Value runtimeObject = getRuntimeObject(exec,&element);
 	if (!runtimeObject.isNull()) {
 	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-	    if (imp->canPut(exec, propertyName)) {
+	    if (imp->canPut(exec, propertyName))
 		return imp->put (exec, propertyName, value);
-	    }
 	}
     }
-      break;
 #endif
-    break;
-  default:
-      break;
-  }
 
-  const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-  const HashEntry* entry = Lookup::findEntry(table, propertyName);
-  if (entry) {
-    if (entry->attr & Function) // function: put as override property
-    {
-      ObjectImp::put(exec, propertyName, value, attr);
-      return;
+    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+    const HashEntry* entry = Lookup::findEntry(table, propertyName);
+    if (entry) {
+        if (entry->attr & Function) { // function: put as override property
+            ObjectImp::put(exec, propertyName, value, attr);
+            return;
+        }
+        else if ((entry->attr & ReadOnly) == 0) { // let DOMObjectLookupPut print the warning if not
+            putValue(exec, entry->value, value, attr);
+            return;
+        }
     }
-    else if ((entry->attr & ReadOnly) == 0) // let DOMObjectLookupPut print the warning if not
-    {
-      putValue(exec, entry->value, value, attr);
-      return;
-    }
-  }
-  DOMObjectLookupPut<KJS::HTMLElement, DOMElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
+
+    DOMObjectLookupPut<KJS::HTMLElement, DOMElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void HTMLElement::putValue(ExecState *exec, int token, const Value& value, int)
+void HTMLElement::htmlSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
 {
-  DOMExceptionTranslator exception(exec);
-  DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
-  HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLElement::putValue "
-                << " thisTag=" << element.tagName().string()
-                << " token=" << token << endl;
-#endif
+    HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
+    if (token == HeadProfile) 
+        head.setProfile(str);
+}
 
-  switch (element.id()) {
-  case ID_HTML: {
-      HTMLHtmlElementImpl &html = static_cast<HTMLHtmlElementImpl &>(element);
-      switch (token) {
-      case HtmlVersion:         { html.setVersion(str); return; }
-      }
-  }
-  break;
-  case ID_HEAD: {
-    HTMLHeadElementImpl &head = static_cast<HTMLHeadElementImpl &>(element);
+void HTMLElement::headSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
+    if (token == HeadProfile) 
+        head.setProfile(str);
+}
+
+void HTMLElement::linkSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
-    case HeadProfile:         { head.setProfile(str); return; }
+        case LinkDisabled:        { link.setDisabled(value.toBoolean(exec)); return; }
+        case LinkCharset:         { link.setCharset(str); return; }
+        case LinkHref:            { link.setHref(str); return; }
+        case LinkHrefLang:        { link.setHreflang(str); return; }
+        case LinkMedia:           { link.setMedia(str); return; }
+        case LinkRel:             { link.setRel(str); return; }
+        case LinkRev:             { link.setRev(str); return; }
+        case LinkTarget:          { link.setTarget(str); return; }
+        case LinkType:            { link.setType(str); return; }
     }
-  }
-  break;
-  case ID_LINK: {
-    HTMLLinkElementImpl &link = static_cast<HTMLLinkElementImpl &>(element);
+}
+
+void HTMLElement::titleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+     HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
+     if (token == TitleText)
+        title.setText(str);
+}
+
+void HTMLElement::metaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
-      case LinkDisabled:        { link.setDisabled(value.toBoolean(exec)); return; }
-      case LinkCharset:         { link.setCharset(str); return; }
-      case LinkHref:            { link.setHref(str); return; }
-      case LinkHrefLang:        { link.setHreflang(str); return; }
-      case LinkMedia:           { link.setMedia(str); return; }
-      case LinkRel:             { link.setRel(str); return; }
-      case LinkRev:             { link.setRev(str); return; }
-      case LinkTarget:          { link.setTarget(str); return; }
-      case LinkType:            { link.setType(str); return; }
-      }
+        case MetaContent:         { meta.setContent(str); return; }
+        case MetaHttpEquiv:       { meta.setHttpEquiv(str); return; }
+        case MetaName:            { meta.setName(str); return; }
+        case MetaScheme:          { meta.setScheme(str); return; }
     }
-    break;
-    case ID_TITLE: {
-      HTMLTitleElementImpl &title = static_cast<HTMLTitleElementImpl &>(element);
-      switch (token) {
-      case TitleText:                 { title.setText(str); return; }
-      }
+}
+
+void HTMLElement::baseSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
+    switch (token) {
+        case BaseHref:            { base.setHref(str); return; }
+        case BaseTarget:          { base.setTarget(str); return; }
     }
-    break;
-    case ID_META: {
-      HTMLMetaElementImpl &meta = static_cast<HTMLMetaElementImpl &>(element);
-      switch (token) {
-      case MetaContent:         { meta.setContent(str); return; }
-      case MetaHttpEquiv:       { meta.setHttpEquiv(str); return; }
-      case MetaName:            { meta.setName(str); return; }
-      case MetaScheme:          { meta.setScheme(str); return; }
-      }
+}
+
+void HTMLElement::isIndexSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
+    if (token == IsIndexPrompt)
+        isindex.setPrompt(str);
+}
+
+void HTMLElement::styleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
+    switch (token) {
+        case StyleDisabled:        { style.setDisabled(value.toBoolean(exec)); return; }
+        case StyleMedia:           { style.setMedia(str); return; }
+        case StyleType:            { style.setType(str); return; }
     }
-    break;
-    case ID_BASE: {
-      HTMLBaseElementImpl &base = static_cast<HTMLBaseElementImpl &>(element);
-      switch (token) {
-      case BaseHref:            { base.setHref(str); return; }
-      case BaseTarget:          { base.setTarget(str); return; }
-      }
-    }
-    break;
-    case ID_ISINDEX: {
-      HTMLIsIndexElementImpl &isindex = static_cast<HTMLIsIndexElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case IsIndexPrompt:               { isindex.setPrompt(str); return; }
-      }
-    }
-    break;
-    case ID_STYLE: {
-      HTMLStyleElementImpl &style = static_cast<HTMLStyleElementImpl &>(element);
-      switch (token) {
-      case StyleDisabled:        { style.setDisabled(value.toBoolean(exec)); return; }
-      case StyleMedia:           { style.setMedia(str); return; }
-      case StyleType:            { style.setType(str); return; }
-      }
-    }
-    break;
-    case ID_BODY: {
-      HTMLBodyElementImpl &body = static_cast<HTMLBodyElementImpl &>(element);
-      switch (token) {
-      case BodyALink:           { body.setALink(str); return; }
-      case BodyBackground:      { body.setBackground(str); return; }
-      case BodyBgColor:         { body.setBgColor(str); return; }
-      case BodyLink:            { body.setLink(str); return; }
-      case BodyText:            { body.setText(str); return; }
-      case BodyVLink:           { body.setVLink(str); return; }
-      case BodyScrollLeft:
-      case BodyScrollTop: {
-          QScrollView* sview = body.ownerDocument()->view();
-          if (sview) {
-              // Update the document's layout before we compute these attributes.
-              if (DocumentImpl* doc = body.getDocument())
-                  doc->updateLayoutIgnorePendingStylesheets();
-              if (token == BodyScrollLeft)
-                  sview->setContentsPos(value.toInt32(exec), sview->contentsY());
-              else
-                  sview->setContentsPos(sview->contentsX(), value.toInt32(exec));
-          }
-          return;
+}
+
+void HTMLElement::bodySetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
+    switch (token) {
+        case BodyALink:           { body.setALink(str); return; }
+        case BodyBackground:      { body.setBackground(str); return; }
+        case BodyBgColor:         { body.setBgColor(str); return; }
+        case BodyLink:            { body.setLink(str); return; }
+        case BodyText:            { body.setText(str); return; }
+        case BodyVLink:           { body.setVLink(str); return; }
+        case BodyScrollLeft:
+        case BodyScrollTop: {
+            QScrollView* sview = body.ownerDocument()->view();
+            if (sview) {
+                // Update the document's layout before we compute these attributes.
+                if (DocumentImpl* doc = body.getDocument())
+                    doc->updateLayoutIgnorePendingStylesheets();
+                if (token == BodyScrollLeft)
+                    sview->setContentsPos(value.toInt32(exec), sview->contentsY());
+                else
+                    sview->setContentsPos(sview->contentsX(), value.toInt32(exec));
+            }
+            return;
         }
-      }
     }
-    break;
-    case ID_FORM: {
-      HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
-      switch (token) {
-      // read-only: elements
-      // read-only: length
-      case FormName:            { form.setName(str); return; }
-      case FormAcceptCharset:   { form.setAcceptCharset(str); return; }
-      case FormAction:          { form.setAction(str); return; }
-      case FormEncType:         { form.setEnctype(str); return; }
-      case FormMethod:          { form.setMethod(str); return; }
-      case FormTarget:          { form.setTarget(str); return; }
-      }
+}
+
+void HTMLElement::formSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
+    switch (token) {
+        // read-only: elements
+        // read-only: length
+        case FormName:            { form.setName(str); return; }
+        case FormAcceptCharset:   { form.setAcceptCharset(str); return; }
+        case FormAction:          { form.setAction(str); return; }
+        case FormEncType:         { form.setEnctype(str); return; }
+        case FormMethod:          { form.setMethod(str); return; }
+        case FormTarget:          { form.setTarget(str); return; }
     }
-    break;
-    case ID_SELECT: {
-      HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-      switch (token) {
-      // read-only: type
-      case SelectSelectedIndex:   { select.setSelectedIndex(value.toInt32(exec)); return; }
-      case SelectValue:           { select.setValue(str); return; }
-      case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
+}
+
+void HTMLElement::selectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
+    switch (token) {
+        // read-only: type
+        case SelectSelectedIndex:   { select.setSelectedIndex(value.toInt32(exec)); return; }
+        case SelectValue:           { select.setValue(str); return; }
+        case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
                                          Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select) );
                                          if ( !coll.isNull() )
                                            coll.put(exec,lengthPropertyName,value);
                                          return;
-                                       }
-      // read-only: form
-      // read-only: options
-      case SelectDisabled:        { select.setDisabled(value.toBoolean(exec)); return; }
-      case SelectMultiple:        { select.setMultiple(value.toBoolean(exec)); return; }
-      case SelectName:            { select.setName(str); return; }
-      case SelectSize:            { select.setSize(value.toInt32(exec)); return; }
-      case SelectTabIndex:        { select.setTabIndex(value.toInt32(exec)); return; }
-      }
+                                    }
+        // read-only: form
+        // read-only: options
+        case SelectDisabled:        { select.setDisabled(value.toBoolean(exec)); return; }
+        case SelectMultiple:        { select.setMultiple(value.toBoolean(exec)); return; }
+        case SelectName:            { select.setName(str); return; }
+        case SelectSize:            { select.setSize(value.toInt32(exec)); return; }
+        case SelectTabIndex:        { select.setTabIndex(value.toInt32(exec)); return; }
     }
-    break;
-    case ID_OPTGROUP: {
-      HTMLOptGroupElementImpl &optgroup = static_cast<HTMLOptGroupElementImpl &>(element);
-      switch (token) {
-      case OptGroupDisabled:        { optgroup.setDisabled(value.toBoolean(exec)); return; }
-      case OptGroupLabel:           { optgroup.setLabel(str); return; }
-      }
-    }
-    break;
-    case ID_OPTION: {
-      HTMLOptionElementImpl &option = static_cast<HTMLOptionElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case OptionDefaultSelected: { option.setDefaultSelected(value.toBoolean(exec)); return; }
-      case OptionText:            { option.setText(str, exception); return; }
-      // read-only: index
-      case OptionDisabled:        { option.setDisabled(value.toBoolean(exec)); return; }
-      case OptionLabel:           { option.setLabel(str); return; }
-      case OptionSelected:        { option.setSelected(value.toBoolean(exec)); return; }
-      case OptionValue:           { option.setValue(str); return; }
-      }
-    }
-    break;
-    case ID_INPUT: {
-      HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
-      switch (token) {
-      case InputDefaultValue:    { input.setDefaultValue(str); return; }
-      case InputDefaultChecked:  { input.setDefaultChecked(value.toBoolean(exec)); return; }
-      // read-only: form
-      case InputAccept:          { input.setAccept(str); return; }
-      case InputAccessKey:       { input.setAccessKey(str); return; }
-      case InputAlign:           { input.setAlign(str); return; }
-      case InputAlt:             { input.setAlt(str); return; }
-      case InputChecked:         { input.setChecked(value.toBoolean(exec)); return; }
-      case InputDisabled:        { input.setDisabled(value.toBoolean(exec)); return; }
-      case InputMaxLength:       { input.setMaxLength(value.toInt32(exec)); return; }
-      case InputName:            { input.setName(str); return; }
-      case InputReadOnly:        { input.setReadOnly(value.toBoolean(exec)); return; }
-      case InputSelectionStart:  { input.setSelectionStart(value.toInt32(exec)); return; }
-      case InputSelectionEnd:    { input.setSelectionEnd(value.toInt32(exec)); return; }
-      case InputSize:            { input.setSize(str); return; }
-      case InputSrc:             { input.setSrc(str); return; }
-      case InputTabIndex:        { input.setTabIndex(value.toInt32(exec)); return; }
-      case InputType:            { input.setType(str); return; }
-      case InputUseMap:          { input.setUseMap(str); return; }
-      case InputValue:           { input.setValue(str); return; }
-      }
-    }
-    break;
-    case ID_TEXTAREA: {
-      HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
-      switch (token) {
-      case TextAreaDefaultValue:    { textarea.setDefaultValue(str); return; }
-      // read-only: form
-      case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
-      case TextAreaCols:            { textarea.setCols(value.toInt32(exec)); return; }
-      case TextAreaDisabled:        { textarea.setDisabled(value.toBoolean(exec)); return; }
-      case TextAreaName:            { textarea.setName(str); return; }
-      case TextAreaReadOnly:        { textarea.setReadOnly(value.toBoolean(exec)); return; }
-      case TextAreaRows:            { textarea.setRows(value.toInt32(exec)); return; }
-      case TextAreaSelectionStart:  { textarea.setSelectionStart(value.toInt32(exec)); return; }
-      case TextAreaSelectionEnd:    { textarea.setSelectionEnd(value.toInt32(exec)); return; }
-      case TextAreaTabIndex:        { textarea.setTabIndex(value.toInt32(exec)); return; }
-      // read-only: type
-      case TextAreaValue:           { textarea.setValue(str); return; }
-      }
-    }
-    break;
-    case ID_BUTTON: {
-      HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case ButtonAccessKey:       { button.setAccessKey(str); return; }
-      case ButtonDisabled:        { button.setDisabled(value.toBoolean(exec)); return; }
-      case ButtonName:            { button.setName(str); return; }
-      case ButtonTabIndex:        { button.setTabIndex(value.toInt32(exec)); return; }
-      // read-only: type
-      case ButtonValue:           { button.setValue(str); return; }
-      }
-    }
-    break;
-    case ID_LABEL: {
-      HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case LabelAccessKey:       { label.setAccessKey(str); return; }
-      case LabelHtmlFor:         { label.setHtmlFor(str); return; }
-      }
-    }
-    break;
-    case ID_LEGEND: {
-      HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case LegendAccessKey:       { legend.setAccessKey(str); return; }
-      case LegendAlign:           { legend.setAlign(str); return; }
-      }
-    }
-    break;
-    case ID_UL: {
-      HTMLUListElementImpl &uList = static_cast<HTMLUListElementImpl &>(element);
-      switch (token) {
-      case UListCompact:         { uList.setCompact(value.toBoolean(exec)); return; }
-      case UListType:            { uList.setType(str); return; }
-      }
-    }
-    break;
-    case ID_OL: {
-      HTMLOListElementImpl &oList = static_cast<HTMLOListElementImpl &>(element);
-      switch (token) {
-      case OListCompact:         { oList.setCompact(value.toBoolean(exec)); return; }
-      case OListStart:           { oList.setStart(value.toInt32(exec)); return; }
-      case OListType:            { oList.setType(str); return; }
-      }
-    }
-    break;
-    case ID_DL: {
-      HTMLDListElementImpl &dList = static_cast<HTMLDListElementImpl &>(element);
-      switch (token) {
-      case DListCompact:         { dList.setCompact(value.toBoolean(exec)); return; }
-      }
-    }
-    break;
-    case ID_DIR: {
-      HTMLDirectoryElementImpl &directory = static_cast<HTMLDirectoryElementImpl &>(element);
-      switch (token) {
-      case DirectoryCompact:     { directory.setCompact(value.toBoolean(exec)); return; }
-      }
-    }
-    break;
-    case ID_MENU: {
-      HTMLMenuElementImpl &menu = static_cast<HTMLMenuElementImpl &>(element);
-      switch (token) {
-      case MenuCompact:         { menu.setCompact(value.toBoolean(exec)); return; }
-      }
-    }
-    break;
-    case ID_LI: {
-      HTMLLIElementImpl &li = static_cast<HTMLLIElementImpl &>(element);
-      switch (token) {
-      case LIType:            { li.setType(str); return; }
-      case LIValue:           { li.setValue(value.toInt32(exec)); return; }
-      }
-    }
-    break;
-    case ID_DIV: {
-      HTMLDivElementImpl &div = static_cast<HTMLDivElementImpl &>(element);
-      switch (token) {
-      case DivAlign:           { div.setAlign(str); return; }
-      }
-    }
-    break;
-    case ID_P: {
-      HTMLParagraphElementImpl &paragraph = static_cast<HTMLParagraphElementImpl &>(element);
-      switch (token) {
-      case ParagraphAlign:     { paragraph.setAlign(str); return; }
-      }
-    }
-    break;
-    case ID_H1:
-    case ID_H2:
-    case ID_H3:
-    case ID_H4:
-    case ID_H5:
-    case ID_H6: {
-      HTMLHeadingElementImpl &heading = static_cast<HTMLHeadingElementImpl &>(element);
-      switch (token) {
-      case HeadingAlign:         { heading.setAlign(str); return; }
-      }
-    }
-    break;
-    case ID_BLOCKQUOTE: {
-      HTMLBlockquoteElementImpl &blockquote = static_cast<HTMLBlockquoteElementImpl &>(element);
-      switch (token) {
-      case BlockQuoteCite:       { blockquote.setCite(str); return; }
-      }
-    }
-    break;
-    case ID_Q: {
-      HTMLQuoteElementImpl &quote = static_cast<HTMLQuoteElementImpl &>(element);
-      switch (token) {
-      case QuoteCite:            { quote.setCite(str); return; }
-      }
-    }
-    break;
-    case ID_PRE: {
-      HTMLPreElementImpl &pre = static_cast<HTMLPreElementImpl &>(element);
-      switch (token) {
-      case PreWidth:           { pre.setWidth(value.toInt32(exec)); return; }
-      }
-    }
-    break;
-    case ID_BR: {
-      HTMLBRElementImpl &br = static_cast<HTMLBRElementImpl &>(element);
-      switch (token) {
-      case BRClear:           { br.setClear(str); return; }
-      }
-    }
-    break;
-    case ID_BASEFONT: {
-      HTMLBaseFontElementImpl &baseFont = static_cast<HTMLBaseFontElementImpl &>(element);
-      switch (token) {
-      case BaseFontColor:           { baseFont.setColor(str); return; }
-      case BaseFontFace:            { baseFont.setFace(str); return; }
-      case BaseFontSize:            { baseFont.setSize(str); return; }
-      }
-    }
-    break;
-    case ID_FONT: {
-      HTMLFontElementImpl &font = static_cast<HTMLFontElementImpl &>(element);
-      switch (token) {
-      case FontColor:           { font.setColor(str); return; }
-      case FontFace:            { font.setFace(str); return; }
-      case FontSize:            { font.setSize(str); return; }
-      }
-    }
-    break;
-    case ID_HR: {
-      HTMLHRElementImpl &hr = static_cast<HTMLHRElementImpl &>(element);
-      switch (token) {
-      case HRAlign:           { hr.setAlign(str); return; }
-      case HRNoShade:         { hr.setNoShade(value.toBoolean(exec)); return; }
-      case HRSize:            { hr.setSize(str); return; }
-      case HRWidth:           { hr.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_INS:
-    case ID_DEL: {
-      HTMLModElementImpl &mod = static_cast<HTMLModElementImpl &>(element);
-      switch (token) {
-      case ModCite:            { mod.setCite(str); return; }
-      case ModDateTime:        { mod.setDateTime(str); return; }
-      }
-    }
-    break;
-    case ID_A: {
-      HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
-      switch (token) {
-      case AnchorAccessKey:       { anchor.setAccessKey(str); return; }
-      case AnchorCharset:         { anchor.setCharset(str); return; }
-      case AnchorCoords:          { anchor.setCoords(str); return; }
-      case AnchorHref:            { anchor.setHref(str); return; }
-      case AnchorHrefLang:        { anchor.setHreflang(str); return; }
-      case AnchorName:            { anchor.setName(str); return; }
-      case AnchorRel:             { anchor.setRel(str); return; }
-      case AnchorRev:             { anchor.setRev(str); return; }
-      case AnchorShape:           { anchor.setShape(str); return; }
-      case AnchorTabIndex:        { anchor.setTabIndex(value.toInt32(exec)); return; }
-      case AnchorTarget:          { anchor.setTarget(str); return; }
-      case AnchorType:            { anchor.setType(str); return; }
-      }
-    }
-    break;
-    case ID_IMG: {
-      HTMLImageElementImpl &image = static_cast<HTMLImageElementImpl &>(element);
-      switch (token) {
-      case ImageName:            { image.setName(str); return; }
-      case ImageAlign:           { image.setAlign(str); return; }
-      case ImageAlt:             { image.setAlt(str); return; }
-      case ImageBorder:          { image.setBorder(value.toInt32(exec)); return; }
-      case ImageHeight:          { image.setHeight(value.toInt32(exec)); return; }
-      case ImageHspace:          { image.setHspace(value.toInt32(exec)); return; }
-      case ImageIsMap:           { image.setIsMap(value.toBoolean(exec)); return; }
-      case ImageLongDesc:        { image.setLongDesc(str); return; }
-      case ImageSrc:             { image.setSrc(str); return; }
-      case ImageUseMap:          { image.setUseMap(str); return; }
-      case ImageVspace:          { image.setVspace(value.toInt32(exec)); return; }
-      case ImageWidth:           { image.setWidth(value.toInt32(exec)); return; }
-      }
-    }
-    break;
-    case ID_OBJECT: {
-      HTMLObjectElementImpl &object = static_cast<HTMLObjectElementImpl &>(element);
-      switch (token) {
-      // read-only: form
-      case ObjectCode:                 { object.setCode(str); return; }
-      case ObjectAlign:           { object.setAlign(str); return; }
-      case ObjectArchive:         { object.setArchive(str); return; }
-      case ObjectBorder:          { object.setBorder(str); return; }
-      case ObjectCodeBase:        { object.setCodeBase(str); return; }
-      case ObjectCodeType:        { object.setCodeType(str); return; }
-      // read-only: ObjectContentDocument
-      case ObjectData:            { object.setData(str); return; }
-      case ObjectDeclare:         { object.setDeclare(value.toBoolean(exec)); return; }
-      case ObjectHeight:          { object.setHeight(str); return; }
-      case ObjectHspace:          { object.setHspace(str); return; }
-      case ObjectName:            { object.setName(str); return; }
-      case ObjectStandby:         { object.setStandby(str); return; }
-      case ObjectTabIndex:        { object.setTabIndex(value.toInt32(exec)); return; }
-      case ObjectType:            { object.setType(str); return; }
-      case ObjectUseMap:          { object.setUseMap(str); return; }
-      case ObjectVspace:          { object.setVspace(str); return; }
-      case ObjectWidth:           { object.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_PARAM: {
-      HTMLParamElementImpl &param = static_cast<HTMLParamElementImpl &>(element);
-      switch (token) {
-      case ParamName:            { param.setName(str); return; }
-      case ParamType:            { param.setType(str); return; }
-      case ParamValue:           { param.setValue(str); return; }
-      case ParamValueType:       { param.setValueType(str); return; }
-      }
-    }
-    break;
-    case ID_APPLET: {
-      HTMLAppletElementImpl &applet = static_cast<HTMLAppletElementImpl &>(element);
-      switch (token) {
-      case AppletAlign:           { applet.setAlign(str); return; }
-      case AppletAlt:             { applet.setAlt(str); return; }
-      case AppletArchive:         { applet.setArchive(str); return; }
-      case AppletCode:            { applet.setCode(str); return; }
-      case AppletCodeBase:        { applet.setCodeBase(str); return; }
-      case AppletHeight:          { applet.setHeight(str); return; }
-      case AppletHspace:          { applet.setHspace(str); return; }
-      case AppletName:            { applet.setName(str); return; }
-      case AppletObject:          { applet.setObject(str); return; }
-      case AppletVspace:          { applet.setVspace(str); return; }
-      case AppletWidth:           { applet.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_MAP: {
-      HTMLMapElementImpl &map = static_cast<HTMLMapElementImpl &>(element);
-      switch (token) {
-      // read-only: areas
-      case MapName:                 { map.setName(str); return; }
-     }
-    }
-    break;
-    case ID_AREA: {
-      HTMLAreaElementImpl &area = static_cast<HTMLAreaElementImpl &>(element);
-      switch (token) {
-      case AreaAccessKey:       { area.setAccessKey(str); return; }
-      case AreaAlt:             { area.setAlt(str); return; }
-      case AreaCoords:          { area.setCoords(str); return; }
-      case AreaHref:            { area.setHref(str); return; }
-      case AreaNoHref:          { area.setNoHref(value.toBoolean(exec)); return; }
-      case AreaShape:           { area.setShape(str); return; }
-      case AreaTabIndex:        { area.setTabIndex(value.toInt32(exec)); return; }
-      case AreaTarget:          { area.setTarget(str); return; }
-      }
-    }
-    break;
-    case ID_SCRIPT: {
-      HTMLScriptElementImpl &script = static_cast<HTMLScriptElementImpl &>(element);
-      switch (token) {
-      case ScriptText:            { script.setText(str); return; }
-      case ScriptHtmlFor:         { script.setHtmlFor(str); return; }
-      case ScriptEvent:           { script.setEvent(str); return; }
-      case ScriptCharset:         { script.setCharset(str); return; }
-      case ScriptDefer:           { script.setDefer(value.toBoolean(exec)); return; }
-      case ScriptSrc:             { script.setSrc(str); return; }
-      case ScriptType:            { script.setType(str); return; }
-      }
-    }
-    break;
-    case ID_TABLE: {
-      HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
-      switch (token) {
-      case TableCaption:         { table.setCaption(toHTMLTableCaptionElement(value)); return; }
-      case TableTHead:           { table.setTHead(toHTMLTableSectionElement(value)); return; }
-      case TableTFoot:           { table.setTFoot(toHTMLTableSectionElement(value)); return; }
-      // read-only: rows
-      // read-only: tbodies
-      case TableAlign:           { table.setAlign(str); return; }
-      case TableBgColor:         { table.setBgColor(str); return; }
-      case TableBorder:          { table.setBorder(str); return; }
-      case TableCellPadding:     { table.setCellPadding(str); return; }
-      case TableCellSpacing:     { table.setCellSpacing(str); return; }
-      case TableFrame:           { table.setFrame(str); return; }
-      case TableRules:           { table.setRules(str); return; }
-      case TableSummary:         { table.setSummary(str); return; }
-      case TableWidth:           { table.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_CAPTION: {
-      HTMLTableCaptionElementImpl &tableCaption = static_cast<HTMLTableCaptionElementImpl &>(element);
-      switch (token) {
-      case TableAlign:           { tableCaption.setAlign(str); return; }
-      }
-    }
-    break;
-    case ID_COL: {
-      HTMLTableColElementImpl &tableCol = static_cast<HTMLTableColElementImpl &>(element);
-      switch (token) {
-      case TableColAlign:           { tableCol.setAlign(str); return; }
-      case TableColCh:              { tableCol.setCh(str); return; }
-      case TableColChOff:           { tableCol.setChOff(str); return; }
-      case TableColSpan:            { tableCol.setSpan(value.toInt32(exec)); return; }
-      case TableColVAlign:          { tableCol.setVAlign(str); return; }
-      case TableColWidth:           { tableCol.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_THEAD:
-    case ID_TBODY:
-    case ID_TFOOT: {
-      HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
-      switch (token) {
-      case TableSectionAlign:           { tableSection.setAlign(str); return; }
-      case TableSectionCh:              { tableSection.setCh(str); return; }
-      case TableSectionChOff:           { tableSection.setChOff(str); return; }
-      case TableSectionVAlign:          { tableSection.setVAlign(str); return; }
-      // read-only: rows
-      }
-    }
-    break;
-    case ID_TR: {
-      HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
-      switch (token) {
-      // read-only: rowIndex
-      // read-only: sectionRowIndex
-      // read-only: cells
-      case TableRowAlign:           { tableRow.setAlign(str); return; }
-      case TableRowBgColor:         { tableRow.setBgColor(str); return; }
-      case TableRowCh:              { tableRow.setCh(str); return; }
-      case TableRowChOff:           { tableRow.setChOff(str); return; }
-      case TableRowVAlign:          { tableRow.setVAlign(str); return; }
-      }
-    }
-    break;
-    case ID_TH:
-    case ID_TD: {
-      HTMLTableCellElementImpl &tableCell = static_cast<HTMLTableCellElementImpl &>(element);
-      switch (token) {
-      // read-only: cellIndex
-      case TableCellAbbr:            { tableCell.setAbbr(str); return; }
-      case TableCellAlign:           { tableCell.setAlign(str); return; }
-      case TableCellAxis:            { tableCell.setAxis(str); return; }
-      case TableCellBgColor:         { tableCell.setBgColor(str); return; }
-      case TableCellCh:              { tableCell.setCh(str); return; }
-      case TableCellChOff:           { tableCell.setChOff(str); return; }
-      case TableCellColSpan:         { tableCell.setColSpan(value.toInt32(exec)); return; }
-      case TableCellHeaders:         { tableCell.setHeaders(str); return; }
-      case TableCellHeight:          { tableCell.setHeight(str); return; }
-      case TableCellNoWrap:          { tableCell.setNoWrap(value.toBoolean(exec)); return; }
-      case TableCellRowSpan:         { tableCell.setRowSpan(value.toInt32(exec)); return; }
-      case TableCellScope:           { tableCell.setScope(str); return; }
-      case TableCellVAlign:          { tableCell.setVAlign(str); return; }
-      case TableCellWidth:           { tableCell.setWidth(str); return; }
-      }
-    }
-    break;
-    case ID_FRAMESET: {
-      HTMLFrameSetElementImpl &frameSet = static_cast<HTMLFrameSetElementImpl &>(element);
-      switch (token) {
-      case FrameSetCols:            { frameSet.setCols(str); return; }
-      case FrameSetRows:            { frameSet.setRows(str); return; }
-      }
-    }
-    break;
-    case ID_FRAME: {
-      HTMLFrameElementImpl &frameElement = static_cast<HTMLFrameElementImpl &>(element);
-      switch (token) {
-       // read-only: FrameContentDocument:
-      case FrameFrameBorder:     { frameElement.setFrameBorder(str); return; }
-      case FrameLongDesc:        { frameElement.setLongDesc(str); return; }
-      case FrameMarginHeight:    { frameElement.setMarginHeight(str); return; }
-      case FrameMarginWidth:     { frameElement.setMarginWidth(str); return; }
-      case FrameName:            { frameElement.setName(str); return; }
-      case FrameNoResize:        { frameElement.setNoResize(value.toBoolean(exec)); return; }
-      case FrameScrolling:       { frameElement.setScrolling(str); return; }
-      case FrameSrc:             { frameElement.setSrc(str); return; }
-      case FrameLocation:        { frameElement.setLocation(str); return; }
-      }
-    }
-    break;
-    case ID_IFRAME: {
-      HTMLIFrameElementImpl &iFrame = static_cast<HTMLIFrameElementImpl &>(element);
-      switch (token) {
-      case IFrameAlign:           { iFrame.setAlign(str); return; }
-      // read-only: IFrameContentDocument
-      case IFrameFrameBorder:     { iFrame.setFrameBorder(str); return; }
-      case IFrameHeight:          { iFrame.setHeight(str); return; }
-      case IFrameLongDesc:        { iFrame.setLongDesc(str); return; }
-      case IFrameMarginHeight:    { iFrame.setMarginHeight(str); return; }
-      case IFrameMarginWidth:     { iFrame.setMarginWidth(str); return; }
-      case IFrameName:            { iFrame.setName(str); return; }
-      case IFrameScrolling:       { iFrame.setScrolling(str); return; }
-      case IFrameSrc:             { iFrame.setSrc(str); return; }
-      case IFrameWidth:           { iFrame.setWidth(str); return; }
-      }
-      break;
-    }
-  }
+}
 
-  // generic properties
-  switch (token) {
-  case ElementId:
-    element.setId(str);
-    return;
-  case ElementTitle:
-    element.setTitle(str);
-    return;
-  case ElementLang:
-    element.setLang(str);
-    return;
-  case ElementDir:
-    element.setDir(str);
-    return;
-  case ElementClassName:
-    element.setClassName(str);
-    return;
-  case ElementInnerHTML:
-    element.setInnerHTML(str, exception);
-    return;
-  case ElementInnerText:
-    element.setInnerText(str, exception);
-    return;
-  case ElementOuterHTML:
-    element.setOuterHTML(str, exception);
-    return;
-  case ElementOuterText:
-    element.setOuterText(str, exception);
-    return;
-  case ElementContentEditable:
-    element.setContentEditable(str);
-    return;
-  default:
-    kdWarning() << "KJS::HTMLElement::putValue unhandled token " << token << " thisTag=" << element.tagName().string() << " str=" << str.string() << endl;
-  }
+void HTMLElement::optGroupSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
+    switch (token) {
+        case OptGroupDisabled:        { optgroup.setDisabled(value.toBoolean(exec)); return; }
+        case OptGroupLabel:           { optgroup.setLabel(str); return; }
+    }
+}
+
+void HTMLElement::optionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    DOMExceptionTranslator exception(exec);
+    HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
+    switch (token) {
+        // read-only: form
+        case OptionDefaultSelected: { option.setDefaultSelected(value.toBoolean(exec)); return; }
+        case OptionText:            { option.setText(str, exception); return; }
+        // read-only: index
+        case OptionDisabled:        { option.setDisabled(value.toBoolean(exec)); return; }
+        case OptionLabel:           { option.setLabel(str); return; }
+        case OptionSelected:        { option.setSelected(value.toBoolean(exec)); return; }
+        case OptionValue:           { option.setValue(str); return; }
+    }
+}
+
+void HTMLElement::inputSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
+    switch (token) {
+        case InputDefaultValue:    { input.setDefaultValue(str); return; }
+        case InputDefaultChecked:  { input.setDefaultChecked(value.toBoolean(exec)); return; }
+        // read-only: form
+        case InputAccept:          { input.setAccept(str); return; }
+        case InputAccessKey:       { input.setAccessKey(str); return; }
+        case InputAlign:           { input.setAlign(str); return; }
+        case InputAlt:             { input.setAlt(str); return; }
+        case InputChecked:         { input.setChecked(value.toBoolean(exec)); return; }
+        case InputDisabled:        { input.setDisabled(value.toBoolean(exec)); return; }
+        case InputMaxLength:       { input.setMaxLength(value.toInt32(exec)); return; }
+        case InputName:            { input.setName(str); return; }
+        case InputReadOnly:        { input.setReadOnly(value.toBoolean(exec)); return; }
+        case InputSize:            { input.setSize(str); return; }
+        case InputSelectionStart:  { input.setSelectionStart(value.toInt32(exec)); return; }
+        case InputSelectionEnd:    { input.setSelectionEnd(value.toInt32(exec)); return; }
+        case InputSrc:             { input.setSrc(str); return; }
+        case InputTabIndex:        { input.setTabIndex(value.toInt32(exec)); return; }
+        case InputType:            { input.setType(str); return; }
+        case InputUseMap:          { input.setUseMap(str); return; }
+        case InputValue:           { input.setValue(str); return; }
+    }
+}
+
+void HTMLElement::textAreaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
+    switch (token) {
+        case TextAreaDefaultValue:    { textarea.setDefaultValue(str); return; }
+        // read-only: form
+        case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
+        case TextAreaCols:            { textarea.setCols(value.toInt32(exec)); return; }
+        case TextAreaDisabled:        { textarea.setDisabled(value.toBoolean(exec)); return; }
+        case TextAreaName:            { textarea.setName(str); return; }
+        case TextAreaReadOnly:        { textarea.setReadOnly(value.toBoolean(exec)); return; }
+        case TextAreaRows:            { textarea.setRows(value.toInt32(exec)); return; }
+        case TextAreaSelectionStart:  { textarea.setSelectionStart(value.toInt32(exec)); return; }
+        case TextAreaSelectionEnd:    { textarea.setSelectionEnd(value.toInt32(exec)); return; }
+        case TextAreaTabIndex:        { textarea.setTabIndex(value.toInt32(exec)); return; }
+        // read-only: type
+        case TextAreaValue:           { textarea.setValue(str); return; }
+    }
+}
+
+void HTMLElement::buttonSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
+    switch (token) {
+        // read-only: form
+        case ButtonAccessKey:       { button.setAccessKey(str); return; }
+        case ButtonDisabled:        { button.setDisabled(value.toBoolean(exec)); return; }
+        case ButtonName:            { button.setName(str); return; }
+        case ButtonTabIndex:        { button.setTabIndex(value.toInt32(exec)); return; }
+        // read-only: type
+        case ButtonValue:           { button.setValue(str); return; }
+    }
+}
+
+void HTMLElement::labelSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
+    switch (token) {
+        // read-only: form
+        case LabelAccessKey:       { label.setAccessKey(str); return; }
+        case LabelHtmlFor:         { label.setHtmlFor(str); return; }
+    }
+}
+
+void HTMLElement::fieldSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+}
+
+void HTMLElement::legendSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
+    switch (token) {
+        // read-only: form
+        case LegendAccessKey:       { legend.setAccessKey(str); return; }
+        case LegendAlign:           { legend.setAlign(str); return; }
+    }
+}
+
+void HTMLElement::uListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
+    switch (token) {
+        case UListCompact:         { uList.setCompact(value.toBoolean(exec)); return; }
+        case UListType:            { uList.setType(str); return; }
+    }
+}
+
+void HTMLElement::oListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
+    switch (token) {
+        case OListCompact:         { oList.setCompact(value.toBoolean(exec)); return; }
+        case OListStart:           { oList.setStart(value.toInt32(exec)); return; }
+        case OListType:            { oList.setType(str); return; }
+    }
+}
+
+void HTMLElement::dListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
+    if (token == DListCompact)
+        dList.setCompact(value.toBoolean(exec));
+}
+
+void HTMLElement::dirSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLDirectoryElementImpl& directory = *static_cast<HTMLDirectoryElementImpl*>(impl());
+    if (token == DirectoryCompact)
+        directory.setCompact(value.toBoolean(exec));
+}
+
+void HTMLElement::menuSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
+    if (token == MenuCompact)
+        menu.setCompact(value.toBoolean(exec));
+}
+
+void HTMLElement::liSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
+    switch (token) {
+        case LIType:            { li.setType(str); return; }
+        case LIValue:           { li.setValue(value.toInt32(exec)); return; }
+    }
+}
+
+void HTMLElement::divSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
+    if (token == DivAlign)
+        div.setAlign(str);
+}
+
+void HTMLElement::paragraphSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLParagraphElementImpl& paragraph = *static_cast<HTMLParagraphElementImpl*>(impl());
+    if (token == ParagraphAlign)
+        paragraph.setAlign(str);
+}
+
+void HTMLElement::headingSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLHeadingElementImpl& heading = *static_cast<HTMLHeadingElementImpl*>(impl());
+    if (token == HeadingAlign)
+        heading.setAlign(str);
+}
+
+void HTMLElement::blockQuoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
+    if (token == BlockQuoteCite)
+        blockQuote.setCite(str);
+}
+
+void HTMLElement::quoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
+    if (token == QuoteCite)
+        quote.setCite(str);
+}
+
+void HTMLElement::preSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
+    HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
+    if (token == PreWidth)
+        pre.setWidth(value.toInt32(exec));
+}
+
+void HTMLElement::brSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
+    if (token == BRClear)
+        br.setClear(str);
+}
+
+void HTMLElement::baseFontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
+    switch (token) {
+        case BaseFontColor:           { baseFont.setColor(str); return; }
+        case BaseFontFace:            { baseFont.setFace(str); return; }
+        case BaseFontSize:            { baseFont.setSize(str); return; }
+    }
+}
+
+void HTMLElement::fontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
+    switch (token) {
+        case FontColor:           { font.setColor(str); return; }
+        case FontFace:            { font.setFace(str); return; }
+        case FontSize:            { font.setSize(str); return; }
+    }
+}
+
+void HTMLElement::hrSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
+    switch (token) {
+        case HRAlign:           { hr.setAlign(str); return; }
+        case HRNoShade:         { hr.setNoShade(value.toBoolean(exec)); return; }
+        case HRSize:            { hr.setSize(str); return; }
+        case HRWidth:           { hr.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::modSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
+    switch (token) {
+        case ModCite:            { mod.setCite(str); return; }
+        case ModDateTime:        { mod.setDateTime(str); return; }
+    }
+}
+
+void HTMLElement::anchorSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
+    switch (token) {
+        case AnchorAccessKey:       { anchor.setAccessKey(str); return; }
+        case AnchorCharset:         { anchor.setCharset(str); return; }
+        case AnchorCoords:          { anchor.setCoords(str); return; }
+        case AnchorHref:            { anchor.setHref(str); return; }
+        case AnchorHrefLang:        { anchor.setHreflang(str); return; }
+        case AnchorName:            { anchor.setName(str); return; }
+        case AnchorRel:             { anchor.setRel(str); return; }
+        case AnchorRev:             { anchor.setRev(str); return; }
+        case AnchorShape:           { anchor.setShape(str); return; }
+        case AnchorTabIndex:        { anchor.setTabIndex(value.toInt32(exec)); return; }
+        case AnchorTarget:          { anchor.setTarget(str); return; }
+        case AnchorType:            { anchor.setType(str); return; }
+    }
+}
+
+void HTMLElement::imageSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
+    switch (token) {
+        case ImageName:            { image.setName(str); return; }
+        case ImageAlign:           { image.setAlign(str); return; }
+        case ImageAlt:             { image.setAlt(str); return; }
+        case ImageBorder:          { image.setBorder(value.toInt32(exec)); return; }
+        case ImageHeight:          { image.setHeight(value.toInt32(exec)); return; }
+        case ImageHspace:          { image.setHspace(value.toInt32(exec)); return; }
+        case ImageIsMap:           { image.setIsMap(value.toBoolean(exec)); return; }
+        case ImageLongDesc:        { image.setLongDesc(str); return; }
+        case ImageSrc:             { image.setSrc(str); return; }
+        case ImageUseMap:          { image.setUseMap(str); return; }
+        case ImageVspace:          { image.setVspace(value.toInt32(exec)); return; }
+        case ImageWidth:           { image.setWidth(value.toInt32(exec)); return; }
+    }
+}
+
+void HTMLElement::objectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
+    switch (token) {
+        // read-only: form
+        case ObjectCode:            { object.setCode(str); return; }
+        case ObjectAlign:           { object.setAlign(str); return; }
+        case ObjectArchive:         { object.setArchive(str); return; }
+        case ObjectBorder:          { object.setBorder(str); return; }
+        case ObjectCodeBase:        { object.setCodeBase(str); return; }
+        case ObjectCodeType:        { object.setCodeType(str); return; }
+        // read-only: ObjectContentDocument
+        case ObjectData:            { object.setData(str); return; }
+        case ObjectDeclare:         { object.setDeclare(value.toBoolean(exec)); return; }
+        case ObjectHeight:          { object.setHeight(str); return; }
+        case ObjectHspace:          { object.setHspace(str); return; }
+        case ObjectName:            { object.setName(str); return; }
+        case ObjectStandby:         { object.setStandby(str); return; }
+        case ObjectTabIndex:        { object.setTabIndex(value.toInt32(exec)); return; }
+        case ObjectType:            { object.setType(str); return; }
+        case ObjectUseMap:          { object.setUseMap(str); return; }
+        case ObjectVspace:          { object.setVspace(str); return; }
+        case ObjectWidth:           { object.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::paramSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
+    switch (token) {
+        case ParamName:            { param.setName(str); return; }
+        case ParamType:            { param.setType(str); return; }
+        case ParamValue:           { param.setValue(str); return; }
+        case ParamValueType:       { param.setValueType(str); return; }
+    }
+}
+
+void HTMLElement::appletSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
+    switch (token) {
+        case AppletAlign:           { applet.setAlign(str); return; }
+        case AppletAlt:             { applet.setAlt(str); return; }
+        case AppletArchive:         { applet.setArchive(str); return; }
+        case AppletCode:            { applet.setCode(str); return; }
+        case AppletCodeBase:        { applet.setCodeBase(str); return; }
+        case AppletHeight:          { applet.setHeight(str); return; }
+        case AppletHspace:          { applet.setHspace(str); return; }
+        case AppletName:            { applet.setName(str); return; }
+        case AppletObject:          { applet.setObject(str); return; }
+        case AppletVspace:          { applet.setVspace(str); return; }
+        case AppletWidth:           { applet.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::mapSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
+    if (token == MapName)
+        // read-only: areas
+        map.setName(str);
+}
+
+void HTMLElement::areaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
+    switch (token) {
+        case AreaAccessKey:       { area.setAccessKey(str); return; }
+        case AreaAlt:             { area.setAlt(str); return; }
+        case AreaCoords:          { area.setCoords(str); return; }
+        case AreaHref:            { area.setHref(str); return; }
+        case AreaNoHref:          { area.setNoHref(value.toBoolean(exec)); return; }
+        case AreaShape:           { area.setShape(str); return; }
+        case AreaTabIndex:        { area.setTabIndex(value.toInt32(exec)); return; }
+        case AreaTarget:          { area.setTarget(str); return; }
+    }
+}
+
+void HTMLElement::scriptSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
+    switch (token) {
+        case ScriptText:            { script.setText(str); return; }
+        case ScriptHtmlFor:         { script.setHtmlFor(str); return; }
+        case ScriptEvent:           { script.setEvent(str); return; }
+        case ScriptCharset:         { script.setCharset(str); return; }
+        case ScriptDefer:           { script.setDefer(value.toBoolean(exec)); return; }
+        case ScriptSrc:             { script.setSrc(str); return; }
+        case ScriptType:            { script.setType(str); return; }
+    }
+}
+
+void HTMLElement::tableSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
+    switch (token) {
+        case TableCaption:         { table.setCaption(toHTMLTableCaptionElement(value)); return; }
+        case TableTHead:           { table.setTHead(toHTMLTableSectionElement(value)); return; }
+        case TableTFoot:           { table.setTFoot(toHTMLTableSectionElement(value)); return; }
+        // read-only: rows
+        // read-only: tbodies
+        case TableAlign:           { table.setAlign(str); return; }
+        case TableBgColor:         { table.setBgColor(str); return; }
+        case TableBorder:          { table.setBorder(str); return; }
+        case TableCellPadding:     { table.setCellPadding(str); return; }
+        case TableCellSpacing:     { table.setCellSpacing(str); return; }
+        case TableFrame:           { table.setFrame(str); return; }
+        case TableRules:           { table.setRules(str); return; }
+        case TableSummary:         { table.setSummary(str); return; }
+        case TableWidth:           { table.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::tableCaptionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
+    if (token == TableCaptionAlign)
+        tableCaption.setAlign(str);
+}
+
+void HTMLElement::tableColSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
+    switch (token) {
+        case TableColAlign:           { tableCol.setAlign(str); return; }
+        case TableColCh:              { tableCol.setCh(str); return; }
+        case TableColChOff:           { tableCol.setChOff(str); return; }
+        case TableColSpan:            { tableCol.setSpan(value.toInt32(exec)); return; }
+        case TableColVAlign:          { tableCol.setVAlign(str); return; }
+        case TableColWidth:           { tableCol.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::tableSectionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
+    switch (token) {
+        case TableSectionAlign:           { tableSection.setAlign(str); return; }
+        case TableSectionCh:              { tableSection.setCh(str); return; }
+        case TableSectionChOff:           { tableSection.setChOff(str); return; }
+        case TableSectionVAlign:          { tableSection.setVAlign(str); return; }
+        // read-only: rows
+    }
+}
+
+void HTMLElement::tableRowSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
+    switch (token) {
+        // read-only: rowIndex
+        // read-only: sectionRowIndex
+        // read-only: cells
+        case TableRowAlign:           { tableRow.setAlign(str); return; }
+        case TableRowBgColor:         { tableRow.setBgColor(str); return; }
+        case TableRowCh:              { tableRow.setCh(str); return; }
+        case TableRowChOff:           { tableRow.setChOff(str); return; }
+        case TableRowVAlign:          { tableRow.setVAlign(str); return; }
+    }
+}
+
+void HTMLElement::tableCellSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
+    switch (token) {
+        // read-only: cellIndex
+        case TableCellAbbr:            { tableCell.setAbbr(str); return; }
+        case TableCellAlign:           { tableCell.setAlign(str); return; }
+        case TableCellAxis:            { tableCell.setAxis(str); return; }
+        case TableCellBgColor:         { tableCell.setBgColor(str); return; }
+        case TableCellCh:              { tableCell.setCh(str); return; }
+        case TableCellChOff:           { tableCell.setChOff(str); return; }
+        case TableCellColSpan:         { tableCell.setColSpan(value.toInt32(exec)); return; }
+        case TableCellHeaders:         { tableCell.setHeaders(str); return; }
+        case TableCellHeight:          { tableCell.setHeight(str); return; }
+        case TableCellNoWrap:          { tableCell.setNoWrap(value.toBoolean(exec)); return; }
+        case TableCellRowSpan:         { tableCell.setRowSpan(value.toInt32(exec)); return; }
+        case TableCellScope:           { tableCell.setScope(str); return; }
+        case TableCellVAlign:          { tableCell.setVAlign(str); return; }
+        case TableCellWidth:           { tableCell.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::frameSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
+    switch (token) {
+        case FrameSetCols:            { frameSet.setCols(str); return; }
+        case FrameSetRows:            { frameSet.setRows(str); return; }
+    }
+}
+
+void HTMLElement::frameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
+    switch (token) {
+        // read-only: FrameContentDocument:
+        case FrameFrameBorder:     { frameElement.setFrameBorder(str); return; }
+        case FrameLongDesc:        { frameElement.setLongDesc(str); return; }
+        case FrameMarginHeight:    { frameElement.setMarginHeight(str); return; }
+        case FrameMarginWidth:     { frameElement.setMarginWidth(str); return; }
+        case FrameName:            { frameElement.setName(str); return; }
+        case FrameNoResize:        { frameElement.setNoResize(value.toBoolean(exec)); return; }
+        case FrameScrolling:       { frameElement.setScrolling(str); return; }
+        case FrameSrc:             { frameElement.setSrc(str); return; }
+        case FrameLocation:        { frameElement.setLocation(str); return; }
+    }
+}
+
+void HTMLElement::iFrameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
+    switch (token) {
+        case IFrameAlign:           { iFrame.setAlign(str); return; }
+        // read-only: IFrameContentDocument
+        case IFrameFrameBorder:     { iFrame.setFrameBorder(str); return; }
+        case IFrameHeight:          { iFrame.setHeight(str); return; }
+        case IFrameLongDesc:        { iFrame.setLongDesc(str); return; }
+        case IFrameMarginHeight:    { iFrame.setMarginHeight(str); return; }
+        case IFrameMarginWidth:     { iFrame.setMarginWidth(str); return; }
+        case IFrameName:            { iFrame.setName(str); return; }
+        case IFrameScrolling:       { iFrame.setScrolling(str); return; }
+        case IFrameSrc:             { iFrame.setSrc(str); return; }
+        case IFrameWidth:           { iFrame.setWidth(str); return; }
+    }
+}
+
+void HTMLElement::marqueeSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+{
+    // FIXME: Find out what WinIE supports and implement it.
+}
+
+void HTMLElement::putValue(ExecState *exec, int token, const Value& value, int)
+{
+    DOMExceptionTranslator exception(exec);
+    DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+ 
+    // Check our set of generic properties first.
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
+    switch (token) {
+        case ElementId:
+            element.setId(str);
+            return;
+        case ElementTitle:
+            element.setTitle(str);
+            return;
+        case ElementLang:
+            element.setLang(str);
+            return;
+        case ElementDir:
+            element.setDir(str);
+            return;
+        case ElementClassName:
+            element.setClassName(str);
+            return;
+        case ElementInnerHTML:
+            element.setInnerHTML(str, exception);
+            return;
+        case ElementInnerText:
+            element.setInnerText(str, exception);
+            return;
+        case ElementOuterHTML:
+            element.setOuterHTML(str, exception);
+            return;
+        case ElementOuterText:
+            element.setOuterText(str, exception);
+            return;
+        case ElementContentEditable:
+            element.setContentEditable(str);
+            return;
+    }
+
+    // Now check for properties that apply to a specific element type.
+    const Accessors* info = getSetInfo();
+    if (info && info->m_setter)
+        return (this->*(info->m_setter))(exec, token, value, str);  
 }
 
 HTMLElementImpl *toHTMLElement(ValueImp *val)
@@ -3113,23 +3274,17 @@ HTMLElementImpl *toHTMLElement(ValueImp *val)
 
 HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *val)
 {
-    if (HTMLElementImpl *e = toHTMLElement(val))
-        switch (e->id()) {
-            case ID_CAPTION:
-                return static_cast<HTMLTableCaptionElementImpl *>(e);
-        }
+    HTMLElementImpl *e = toHTMLElement(val);
+    if (e && e->hasTagName(HTMLNames::caption()))
+        return static_cast<HTMLTableCaptionElementImpl *>(e);
     return 0;
 }
 
 HTMLTableSectionElementImpl *toHTMLTableSectionElement(ValueImp *val)
 {
-    if (HTMLElementImpl *e = toHTMLElement(val))
-        switch (e->id()) {
-            case ID_THEAD:
-            case ID_TBODY:
-            case ID_TFOOT:
-                return static_cast<HTMLTableSectionElementImpl *>(e);
-        }
+    HTMLElementImpl *e = toHTMLElement(val);
+    if (e && (e->hasTagName(HTMLNames::thead()) || e->hasTagName(HTMLNames::tbody()) || e->hasTagName(HTMLNames::tfoot())))
+        return static_cast<HTMLTableSectionElementImpl *>(e);
     return 0;
 }
 
@@ -3178,10 +3333,10 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
   else if (propertyName == "selectedIndex") {
     // NON-STANDARD options.selectedIndex
     NodeImpl *option = collection.item(0);
-    if (option->id() == ID_OPTION) {
+    if (option->hasTagName(HTMLNames::option())) {
       NodeImpl *select = option;
       while ((select = select->parentNode()))
-        if (select->id() == ID_SELECT)
+        if (select->hasTagName(HTMLNames::select()))
 	  return Number(static_cast<HTMLSelectElementImpl *>(select)->selectedIndex());
     }
     return Undefined();
@@ -3369,7 +3524,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
 
   // is v an option element ?
   NodeImpl *option = toNode(value);
-  if (!option || option->id() != ID_OPTION)
+  if (!option || !option->hasTagName(HTMLNames::option()))
     return;
 
   int exception = 0;

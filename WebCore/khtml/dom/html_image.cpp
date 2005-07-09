@@ -46,7 +46,7 @@ HTMLAreaElement::HTMLAreaElement(HTMLAreaElementImpl *impl) : HTMLElement(impl)
 
 HTMLAreaElement &HTMLAreaElement::operator = (const Node &other)
 {
-    assignOther( other, ID_AREA );
+    assignOther( other, HTMLNames::area() );
     return *this;
 }
 
@@ -176,7 +176,7 @@ HTMLImageElement::HTMLImageElement(HTMLImageElementImpl *impl) : HTMLElement(imp
 
 HTMLImageElement &HTMLImageElement::operator = (const Node &other)
 {
-    assignOther( other, ID_IMG );
+    assignOther( other, HTMLNames::img() );
     return *this;
 }
 
@@ -372,7 +372,7 @@ HTMLMapElement::HTMLMapElement(HTMLMapElementImpl *impl) : HTMLElement(impl)
 
 HTMLMapElement &HTMLMapElement::operator = (const Node &other)
 {
-    assignOther( other, ID_MAP );
+    assignOther( other, HTMLNames::map() );
     return *this;
 }
 

@@ -25,22 +25,13 @@
 // turn off inlining to void warning with newer gcc
 #undef __inline
 #define __inline
-#include "htmltags.c"
 #include "htmlattrs.c"
 #undef __inline
 
-unsigned short khtml::getTagID(const char *tagStr, int len)
+unsigned short khtml::getAttrID(const char *attrStr, int len)
 {
-    const struct tags *tagPtr = findTag(tagStr, len);
-    if (!tagPtr)
+    const struct attrs *attrPtr = findAttr(attrStr, len);
+    if (!attrPtr)
         return 0;
-    return tagPtr->id;
-}
-
-unsigned short khtml::getAttrID(const char *tagStr, int len)
-{
-    const struct attrs *tagPtr = findAttr(tagStr, len);
-    if (!tagPtr)
-        return 0;
-    return tagPtr->id;
+    return attrPtr->id;
 }

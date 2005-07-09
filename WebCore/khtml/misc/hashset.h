@@ -82,7 +82,7 @@ class HashSet {
 };
 
 template<typename Value, typename HashFunctions, typename Traits>
-int HashSet<Value, HashFunctions, Traits>::size() const
+inline int HashSet<Value, HashFunctions, Traits>::size() const
 {
     return m_impl.size(); 
 }
@@ -94,31 +94,31 @@ int HashSet<Value, HashFunctions, Traits>::capacity() const
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-bool HashSet<Value, HashFunctions, Traits>::isEmpty() const
+inline bool HashSet<Value, HashFunctions, Traits>::isEmpty() const
 {
     return size() == 0; 
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::begin()
+inline typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::begin()
 {
     return m_impl.begin(); 
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::end()
+inline typename HashSet<Value, HashFunctions, Traits>::iterator HashSet<Value, HashFunctions, Traits>::end()
 {
     return m_impl.end(); 
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::begin() const
+inline typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::begin() const
 {
     return m_impl.begin(); 
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::end() const
+inline typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, HashFunctions, Traits>::end() const
 {
     return m_impl.end(); 
 }
@@ -136,7 +136,7 @@ typename HashSet<Value, HashFunctions, Traits>::const_iterator HashSet<Value, Ha
 }
 
 template<typename Value, typename HashFunctions, typename Traits>
-bool HashSet<Value, HashFunctions, Traits>::contains(const ValueType& value) const
+inline bool HashSet<Value, HashFunctions, Traits>::contains(const ValueType& value) const
 {
     return m_impl.contains(value); 
 }

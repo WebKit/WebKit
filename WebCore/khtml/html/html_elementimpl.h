@@ -25,27 +25,26 @@
 #define HTML_ELEMENTIMPL_H
 
 #include "xml/dom_elementimpl.h"
-#include <qptrdict.h>
+#include "htmlnames.h"
 
 namespace DOM {
 
 class DocumentFragmentImpl;
 class DOMString;
 class HTMLCollectionImpl;
-    
+
+enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
+                       
 class HTMLElementImpl : public StyledElementImpl
 {
 public:
-    HTMLElementImpl(DocumentPtr *doc);
-
+    HTMLElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
     virtual ~HTMLElementImpl();
 
     virtual bool isHTMLElement() const { return true; }
 
-    virtual bool isInline() const;
-     
-    virtual Id id() const = 0;
-    
+    virtual DOMString nodeName() const;
+
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl* attr);
 
@@ -53,7 +52,7 @@ public:
 
     SharedPtr<HTMLCollectionImpl> children();
     
-    DOMString idDOM() const; // rename to id after eliminating NodeImpl::id some day
+    DOMString id() const;
     void setId(const DOMString &value);
     DOMString title() const;
     void setTitle(const DOMString &value);
@@ -73,8 +72,6 @@ public:
     void setOuterHTML(const DOMString &html, int &exception);
     void setInnerText(const DOMString &text, int &exception);
     void setOuterText(const DOMString &text, int &exception);
-
-    virtual DOMString namespaceURI() const;
     
     virtual bool isFocusable() const;
     virtual bool isContentEditable() const;
@@ -89,20 +86,21 @@ public:
 
     virtual DOMString toString() const;
 
+    virtual HTMLTagStatus endTagRequirement() const;
+    virtual int tagPriority() const;
+    virtual bool childAllowed(NodeImpl* newChild); // Error-checking during parsing that checks the DTD
+
+    // Helper function to check the DTD for a given child node.
+    virtual bool checkDTD(const NodeImpl* newChild);
+    static bool inEitherTagList(const NodeImpl* newChild);
+    static bool inInlineTagList(const NodeImpl* newChild);
+    static bool inBlockTagList(const NodeImpl* newChild);
+    static bool isRecognizedTagName(const QualifiedName& tagName);
+
 protected:
 
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment(MappedAttributeImpl* htmlAttr);
-};
-
-class HTMLGenericElementImpl : public HTMLElementImpl
-{
-public:
-    HTMLGenericElementImpl(DocumentPtr *doc, ushort elementId);
-    virtual Id id() const;
-
-protected:
-    ushort m_elementId;
 };
 
 } //namespace

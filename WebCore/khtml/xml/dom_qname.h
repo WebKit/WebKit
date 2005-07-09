@@ -32,9 +32,6 @@ public:
     public:
         QualifiedNameImpl(const AtomicString& p, const AtomicString& l, const AtomicString& n) :m_prefix(p), m_localName(l), m_namespace(n) {}
 
-        friend class QualifiedName;
-
-    private:
         AtomicString m_prefix;
         AtomicString m_localName;
         AtomicString m_namespace;
@@ -47,12 +44,13 @@ public:
     QualifiedName(const QualifiedName& other);
     const QualifiedName& operator=(const QualifiedName& other);
 
-    DOMStringImpl* localNamePtr() const { return localName().implementation(); }
-    
     bool operator==(const QualifiedName& other) const { return m_impl == other.m_impl; }
     bool operator!=(const QualifiedName& other) const { return !(*this == other); }
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
+
+    bool hasPrefix() const { return m_impl->m_prefix != nullAtom; }
+    void setPrefix(const AtomicString& prefix);
 
     const AtomicString& prefix() const { return m_impl->m_prefix; }
     const AtomicString& localName() const { return m_impl->m_localName; }
@@ -66,11 +64,10 @@ private:
     QualifiedNameImpl* m_impl;
 };
 
-bool operator==(const AtomicString& a, const QualifiedName& q);
+inline bool operator==(const AtomicString& a, const QualifiedName& q) { return a == q.localName(); }
 inline bool operator!=(const AtomicString& a, const QualifiedName& q) { return a != q.localName(); }
-bool operator==(const QualifiedName& q, const AtomicString& a);
+inline bool operator==(const QualifiedName& q, const AtomicString& a) { return a == q.localName(); }
 inline bool operator!=(const QualifiedName& q, const AtomicString& a) { return a != q.localName(); }
-
 
 }
 #endif

@@ -44,7 +44,6 @@
 #import "dom_textimpl.h"
 #import "dom_xmlimpl.h"
 #import "html_elementimpl.h"
-#import "htmltags.h"
 
 #import "khtml_part.h"
 
@@ -72,6 +71,7 @@ using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::FilterNode;
 using DOM::HTMLElementImpl;
+using DOM::HTMLNames;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
 using DOM::NodeFilter;
@@ -338,7 +338,8 @@ using khtml::SharedPtr;
     ASSERT(prefix);
 
     int exceptionCode = 0;
-    [self _nodeImpl]->setPrefix(prefix, exceptionCode);
+    DOMString prefixStr(prefix);
+    [self _nodeImpl]->setPrefix(prefixStr.implementation(), exceptionCode);
     raiseOnDOMError(exceptionCode);
 }
 
@@ -399,154 +400,123 @@ using khtml::SharedPtr;
     switch (impl->nodeType()) {
         case Node::ELEMENT_NODE:
             if (impl->isHTMLElement()) {
-                // FIXME: There are no identifiers for HTMLHeadingElement, HTMLModElement, 
-                // HTMLTableCaptionElement, HTMLTableColElement, HTMLTableSectionElement.
-                // Find other ways to identify them.
-                switch (impl->identifier()) {
-                    case ID_HTML:
-                        wrapperClass = [DOMHTMLHtmlElement class];
-                        break;
-                    case ID_HEAD:
-                        wrapperClass = [DOMHTMLHeadElement class];
-                        break;
-                    case ID_LINK:
-                        wrapperClass = [DOMHTMLLinkElement class];
-                        break;
-                    case ID_TITLE:
-                        wrapperClass = [DOMHTMLTitleElement class];
-                        break;
-                    case ID_META:
-                        wrapperClass = [DOMHTMLMetaElement class];
-                        break;
-                    case ID_BASE:
-                        wrapperClass = [DOMHTMLBaseElement class];
-                        break;
-                    case ID_ISINDEX:
-                        wrapperClass = [DOMHTMLIsIndexElement class];
-                        break;
-                    case ID_STYLE:
-                        wrapperClass = [DOMHTMLStyleElement class];
-                        break;
-                    case ID_BODY:
-                        wrapperClass = [DOMHTMLBodyElement class];
-                        break;
-                    case ID_FORM:
-                        wrapperClass = [DOMHTMLFormElement class];
-                        break;
-                    case ID_SELECT:
-                        wrapperClass = [DOMHTMLSelectElement class];
-                        break;
-                    case ID_OPTGROUP:
-                        wrapperClass = [DOMHTMLOptGroupElement class];
-                        break;
-                    case ID_OPTION:
-                        wrapperClass = [DOMHTMLOptionElement class];
-                        break;
-                    case ID_INPUT:
-                        wrapperClass = [DOMHTMLInputElement class];
-                        break;
-                    case ID_TEXTAREA:
-                        wrapperClass = [DOMHTMLTextAreaElement class];
-                        break;
-                    case ID_BUTTON:
-                        wrapperClass = [DOMHTMLButtonElement class];
-                        break;
-                    case ID_LABEL:
-                        wrapperClass = [DOMHTMLLabelElement class];
-                        break;  
-                    case ID_FIELDSET:
-                        wrapperClass = [DOMHTMLFieldSetElement class];
-                        break;      
-                    case ID_LEGEND:
-                        wrapperClass = [DOMHTMLLegendElement class];
-                        break;
-                    case ID_UL:
-                        wrapperClass = [DOMHTMLUListElement class];
-                        break;
-                    case ID_OL:
-                        wrapperClass = [DOMHTMLOListElement class];
-                        break;
-                    case ID_DL:
-                        wrapperClass = [DOMHTMLDListElement class];
-                        break;
-                    case ID_DIR:
-                        wrapperClass = [DOMHTMLDirectoryElement class];
-                        break;
-                    case ID_MENU:
-                        wrapperClass = [DOMHTMLMenuElement class];
-                        break;
-                    case ID_LI:
-                        wrapperClass = [DOMHTMLLIElement class];
-                        break;
-                    case ID_DIV:
-                        wrapperClass = [DOMHTMLDivElement class];
-                        break;
-                    case ID_P:
-                        wrapperClass = [DOMHTMLParagraphElement class];
-                        break;
-                    case ID_Q:
-                        wrapperClass = [DOMHTMLQuoteElement class];
-                        break;
-                    case ID_PRE:
-                        wrapperClass = [DOMHTMLPreElement class];
-                        break;
-                    case ID_BR:
-                        wrapperClass = [DOMHTMLBRElement class];
-                        break;
-                    case ID_BASEFONT:
-                        wrapperClass = [DOMHTMLFontElement class];
-                        break;
-                    case ID_FONT:
-                        wrapperClass = [DOMHTMLFontElement class];
-                        break;
-                    case ID_HR:
-                        wrapperClass = [DOMHTMLHRElement class];
-                        break;
-                    case ID_A:
-                        wrapperClass = [DOMHTMLAnchorElement class];
-                        break;
-                    case ID_IMG:
-                        wrapperClass = [DOMHTMLImageElement class];
-                        break;
-                    case ID_OBJECT:
-                        wrapperClass = [DOMHTMLObjectElement class];
-                        break;
-                    case ID_PARAM:
-                        wrapperClass = [DOMHTMLParamElement class];
-                        break;
-                    case ID_APPLET:
-                        wrapperClass = [DOMHTMLAppletElement class];
-                        break;
-                    case ID_MAP:
-                        wrapperClass = [DOMHTMLMapElement class];
-                        break;
-                    case ID_AREA:
-                        wrapperClass = [DOMHTMLAreaElement class];
-                        break;
-                    case ID_SCRIPT:
-                        wrapperClass = [DOMHTMLScriptElement class];
-                        break;
-                    case ID_TABLE:
-                        wrapperClass = [DOMHTMLTableElement class];
-                        break;
-                    case ID_TD:
-                        wrapperClass = [DOMHTMLTableCellElement class];
-                        break;
-                    case ID_TR:
-                        wrapperClass = [DOMHTMLTableRowElement class];
-                        break;
-                    case ID_FRAMESET:
-                        wrapperClass = [DOMHTMLFrameSetElement class];
-                        break;
-                    case ID_FRAME:
-                        wrapperClass = [DOMHTMLFrameElement class];
-                        break;
-                    case ID_IFRAME:
-                        wrapperClass = [DOMHTMLIFrameElement class];
-                        break;
-                    default:
-                        wrapperClass = [DOMHTMLElement class];
-                }
+                // FIXME: Reflect marquee once the API has been determined.
+                // FIXME: We could make the HTML classes hand back their class names and then use that to make
+                // the appropriate Obj-C class from the string.
+                HTMLElementImpl* htmlElt = static_cast<HTMLElementImpl*>(impl);
+                if (htmlElt->hasLocalName(HTMLNames::html()))
+                    wrapperClass = [DOMHTMLHtmlElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::head()))
+                    wrapperClass = [DOMHTMLHeadElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::link()))
+                    wrapperClass = [DOMHTMLLinkElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::title()))
+                    wrapperClass = [DOMHTMLTitleElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::meta()))
+                    wrapperClass = [DOMHTMLMetaElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::base()))
+                    wrapperClass = [DOMHTMLBaseElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::isindex()))
+                    wrapperClass = [DOMHTMLIsIndexElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::style()))
+                    wrapperClass = [DOMHTMLStyleElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::body()))
+                    wrapperClass = [DOMHTMLBodyElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::form()))
+                    wrapperClass = [DOMHTMLFormElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::select()))
+                    wrapperClass = [DOMHTMLSelectElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::optgroup()))
+                    wrapperClass = [DOMHTMLOptGroupElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::option()))
+                    wrapperClass = [DOMHTMLOptionElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::input()))
+                    wrapperClass = [DOMHTMLInputElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::textarea()))
+                    wrapperClass = [DOMHTMLTextAreaElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::button()))
+                    wrapperClass = [DOMHTMLButtonElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::label()))
+                    wrapperClass = [DOMHTMLLabelElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::fieldset()))
+                    wrapperClass = [DOMHTMLFieldSetElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::legend()))
+                    wrapperClass = [DOMHTMLLegendElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::ul()))
+                    wrapperClass = [DOMHTMLUListElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::ol()))                       
+                    wrapperClass = [DOMHTMLOListElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::dl()))
+                    wrapperClass = [DOMHTMLDListElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::dir()))
+                    wrapperClass = [DOMHTMLDirectoryElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::menu()))
+                    wrapperClass = [DOMHTMLMenuElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::li()))
+                    wrapperClass = [DOMHTMLLIElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::div()))
+                    wrapperClass = [DOMHTMLDivElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::p()))
+                    wrapperClass = [DOMHTMLParagraphElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::h1()) ||
+                         htmlElt->hasLocalName(HTMLNames::h2()) ||
+                         htmlElt->hasLocalName(HTMLNames::h3()) ||
+                         htmlElt->hasLocalName(HTMLNames::h4()) ||
+                         htmlElt->hasLocalName(HTMLNames::h5()) ||
+                         htmlElt->hasLocalName(HTMLNames::h6()))
+                    wrapperClass = [DOMHTMLHeadingElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::q()))
+                    wrapperClass = [DOMHTMLQuoteElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::pre()))
+                    wrapperClass = [DOMHTMLPreElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::br()))
+                    wrapperClass = [DOMHTMLBRElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::basefont()))
+                    wrapperClass = [DOMHTMLBaseFontElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::font()))
+                    wrapperClass = [DOMHTMLFontElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::hr()))
+                    wrapperClass = [DOMHTMLHRElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::a()))
+                    wrapperClass = [DOMHTMLAnchorElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::img()) ||
+                         htmlElt->hasLocalName(HTMLNames::canvas()))
+                    wrapperClass = [DOMHTMLImageElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::object()))
+                    wrapperClass = [DOMHTMLObjectElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::param()))
+                    wrapperClass = [DOMHTMLParamElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::applet()))
+                    wrapperClass = [DOMHTMLAppletElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::map()))
+                    wrapperClass = [DOMHTMLMapElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::area()))
+                    wrapperClass = [DOMHTMLAreaElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::script()))
+                    wrapperClass = [DOMHTMLScriptElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::table()))
+                    wrapperClass = [DOMHTMLTableElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::thead()) ||
+                         htmlElt->hasLocalName(HTMLNames::tbody()) ||
+                         htmlElt->hasLocalName(HTMLNames::tfoot()))
+                    wrapperClass = [DOMHTMLTableSectionElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::td()))
+                    wrapperClass = [DOMHTMLTableCellElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::tr()))
+                    wrapperClass = [DOMHTMLTableRowElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::col()) ||
+                         htmlElt->hasLocalName(HTMLNames::colgroup()))
+                    wrapperClass = [DOMHTMLTableColElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::caption()))
+                    wrapperClass = [DOMHTMLTableCaptionElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::frameset()))
+                    wrapperClass = [DOMHTMLFrameSetElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::frame()))
+                    wrapperClass = [DOMHTMLFrameElement class];
+                else if (htmlElt->hasLocalName(HTMLNames::iframe()))
+                    wrapperClass = [DOMHTMLIFrameElement class];
+                else
+                    wrapperClass = [DOMHTMLElement class];
             } else {
                 wrapperClass = [DOMElement class];
             }
@@ -1268,7 +1238,7 @@ using khtml::SharedPtr;
 
 - (NSString *)tagName
 {
-    return [self _elementImpl]->tagName();
+    return [self _elementImpl]->nodeName();
 }
 
 - (DOMNamedNodeMap *)attributes

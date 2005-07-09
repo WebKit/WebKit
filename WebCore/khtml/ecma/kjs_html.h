@@ -85,6 +85,131 @@ namespace KJS {
       caption_info, col_info, tablesection_info, tr_info,
       tablecell_info, frameSet_info, frame_info, iFrame_info, marquee_info;
 
+    // FIXME: Might make sense to combine this with ClassInfo some day.
+    typedef Value (HTMLElement::*GetterFunction)(ExecState *exec, int token) const;
+    typedef void (HTMLElement::*SetterFunction)(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    struct Accessors { GetterFunction m_getter; SetterFunction m_setter; };
+    const Accessors* getSetInfo() const;
+    static const Accessors html_accessors, head_accessors, link_accessors, title_accessors,
+      meta_accessors, base_accessors, isIndex_accessors, style_accessors, body_accessors, form_accessors,
+      select_accessors, optGroup_accessors, option_accessors, input_accessors, textArea_accessors,
+      button_accessors, label_accessors, fieldSet_accessors, legend_accessors, ul_accessors, ol_accessors,
+      dl_accessors, dir_accessors, menu_accessors, li_accessors, div_accessors, p_accessors, heading_accessors,
+      blockQuote_accessors, q_accessors, pre_accessors, br_accessors, baseFont_accessors, font_accessors,
+      hr_accessors, mod_accessors, a_accessors, canvas_accessors, img_accessors, object_accessors, param_accessors,
+      applet_accessors, map_accessors, area_accessors, script_accessors, table_accessors,
+      caption_accessors, col_accessors, tablesection_accessors, tr_accessors,
+      tablecell_accessors, frameSet_accessors, frame_accessors, iFrame_accessors, marquee_accessors;
+
+    Value htmlGetter(ExecState* exec, int token) const;
+    void  htmlSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value headGetter(ExecState* exec, int token) const;
+    void  headSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value linkGetter(ExecState* exec, int token) const;
+    void  linkSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value titleGetter(ExecState* exec, int token) const;
+    void  titleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value metaGetter(ExecState* exec, int token) const;
+    void  metaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value baseGetter(ExecState* exec, int token) const;
+    void  baseSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value isIndexGetter(ExecState* exec, int token) const;
+    void  isIndexSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value styleGetter(ExecState* exec, int token) const;
+    void  styleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value bodyGetter(ExecState* exec, int token) const;
+    void  bodySetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value formGetter(ExecState* exec, int token) const;
+    void  formSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value selectGetter(ExecState* exec, int token) const;
+    void  selectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value optGroupGetter(ExecState* exec, int token) const;
+    void  optGroupSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value optionGetter(ExecState* exec, int token) const;
+    void  optionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value inputGetter(ExecState* exec, int token) const;
+    void  inputSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value textAreaGetter(ExecState* exec, int token) const;
+    void  textAreaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value buttonGetter(ExecState* exec, int token) const;
+    void  buttonSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value labelGetter(ExecState* exec, int token) const;
+    void  labelSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value fieldSetGetter(ExecState* exec, int token) const;
+    void  fieldSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value legendGetter(ExecState* exec, int token) const;
+    void  legendSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value uListGetter(ExecState* exec, int token) const;
+    void  uListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value oListGetter(ExecState* exec, int token) const;
+    void  oListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value dListGetter(ExecState* exec, int token) const;
+    void  dListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value dirGetter(ExecState* exec, int token) const;
+    void  dirSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value menuGetter(ExecState* exec, int token) const;
+    void  menuSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value liGetter(ExecState* exec, int token) const;
+    void  liSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value divGetter(ExecState* exec, int token) const;
+    void  divSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value paragraphGetter(ExecState* exec, int token) const;
+    void  paragraphSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value headingGetter(ExecState* exec, int token) const;
+    void  headingSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value blockQuoteGetter(ExecState* exec, int token) const;
+    void  blockQuoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value quoteGetter(ExecState* exec, int token) const;
+    void  quoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value preGetter(ExecState* exec, int token) const;
+    void  preSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value brGetter(ExecState* exec, int token) const;
+    void  brSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value baseFontGetter(ExecState* exec, int token) const;
+    void  baseFontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value fontGetter(ExecState* exec, int token) const;
+    void  fontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value hrGetter(ExecState* exec, int token) const;
+    void  hrSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value modGetter(ExecState* exec, int token) const;
+    void  modSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value anchorGetter(ExecState* exec, int token) const;
+    void  anchorSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value imageGetter(ExecState* exec, int token) const;
+    void  imageSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value objectGetter(ExecState* exec, int token) const;
+    void  objectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value paramGetter(ExecState* exec, int token) const;
+    void  paramSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value appletGetter(ExecState* exec, int token) const;
+    void  appletSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value mapGetter(ExecState* exec, int token) const;
+    void  mapSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value areaGetter(ExecState* exec, int token) const;
+    void  areaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value scriptGetter(ExecState* exec, int token) const;
+    void  scriptSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableGetter(ExecState* exec, int token) const;
+    void  tableSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableCaptionGetter(ExecState* exec, int token) const;
+    void  tableCaptionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableColGetter(ExecState* exec, int token) const;
+    void  tableColSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableSectionGetter(ExecState* exec, int token) const;
+    void  tableSectionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableRowGetter(ExecState* exec, int token) const;
+    void  tableRowSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value tableCellGetter(ExecState* exec, int token) const;
+    void  tableCellSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value frameSetGetter(ExecState* exec, int token) const;
+    void  frameSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value frameGetter(ExecState* exec, int token) const;
+    void  frameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value iFrameGetter(ExecState* exec, int token) const;
+    void  iFrameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+    Value marqueeGetter(ExecState* exec, int token) const;
+    void  marqueeSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str);
+
     enum { HtmlVersion, HeadProfile, LinkHref, LinkRel, LinkMedia,
            LinkCharset, LinkDisabled, LinkHrefLang, LinkRev, LinkTarget, LinkType,
            LinkSheet, TitleText, MetaName, MetaHttpEquiv, MetaContent, MetaScheme,

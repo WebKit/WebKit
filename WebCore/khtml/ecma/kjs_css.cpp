@@ -29,7 +29,7 @@
 #include "xml/dom_docimpl.h"
 #include "html/html_headimpl.h" // for HTMLStyleElement
 #include "kjs_dom.h"
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 
 #include <kdebug.h>
 
@@ -55,6 +55,7 @@ using DOM::CounterImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
+using DOM::HTMLNames;
 using DOM::HTMLStyleElementImpl;
 using DOM::MediaListImpl;
 using DOM::RectImpl;
@@ -404,7 +405,7 @@ Value DOMStyleSheetList::tryGet(ExecState *exec, const Identifier &p) const
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)
   ElementImpl *element = m_doc->getElementById(p.string());
-  if (element && element->id() == ID_STYLE)
+  if (element && element->hasTagName(HTMLNames::style()))
     return getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
 
   return DOMObject::tryGet(exec, p);

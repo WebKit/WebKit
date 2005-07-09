@@ -34,9 +34,7 @@
 #include <css/css_valueimpl.h>
 #include <misc/htmlhashes.h>
 #include "cssparser.h"
-
-#include "xml_namespace_table.h"
-    
+   
 #include <assert.h>
 #include <kdebug.h>
 // #define CSS_DEBUG
@@ -130,7 +128,6 @@ static inline int getValueID(const char *tagStr, int len)
     float val;
     int prop_id;
     int attribute;
-    int element;
     CSSSelector::Relation relation;
     bool b;
     int i;
@@ -175,6 +172,8 @@ static int cssyylex( YYSTYPE *yylval ) {
 %token ':'
 %token '.'
 %token '['
+
+%token <string> '*'
 
 %token IMPORT_SYM
 %token PAGE_SYM
@@ -265,7 +264,7 @@ static int cssyylex( YYSTYPE *yylval ) {
 %type <value> unary_term
 %type <value> function
 
-%type <element> element_name
+%type <string> element_name
 
 %type <attribute> attrib_id
 
@@ -405,7 +404,7 @@ NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
 #endif
     CSSParser *p = static_cast<CSSParser *>(parser);
     if (p->styleElement && p->styleElement->isCSSStyleSheet())
-        static_cast<CSSStyleSheetImpl*>(p->styleElement)->addNamespace(p, domString($3), domString($4));
+        static_cast<CSSStyleSheetImpl*>(p->styleElement)->addNamespace(p, atomicString($3), atomicString($4));
 }
 | NAMESPACE_SYM error invalid_block
 | NAMESPACE_SYM error ';'
@@ -624,65 +623,71 @@ namespace_selector:
 
 simple_selector:
     element_name maybe_space {
-	$$ = new CSSSelector();
-	$$->tag = $1;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+	$$ = new CSSSelector(QualifiedName(nullAtom, atomicString($1), p->defaultNamespace));
     }
     | element_name specifier_list maybe_space {
-	$$ = $2;
-	if ( $$ )
-            $$->tag = $1;
+        $$ = $2;
+	if ($$) {
+            CSSParser *p = static_cast<CSSParser *>(parser);
+            $$->tag = QualifiedName(nullAtom, atomicString($1), p->defaultNamespace);
+        }
     }
     | specifier_list maybe_space {
 	$$ = $1;
-        if ($$)
-            $$->tag = makeId(static_cast<CSSParser*>(parser)->defaultNamespace, anyLocalName);;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if ($$ && p->defaultNamespace != starAtom)
+            $$->tag = QualifiedName(nullAtom, starAtom, p->defaultNamespace);
     }
     | namespace_selector '|' element_name maybe_space {
-        $$ = new CSSSelector();
-        $$->tag = $3;
+        AtomicString namespacePrefix = atomicString($1);
         CSSParser *p = static_cast<CSSParser *>(parser);
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
+            $$ = new CSSSelector(QualifiedName(namespacePrefix,
+                                               atomicString($3),
+                                               static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix)));
+        else // FIXME: Shouldn't this case be an error?
+            $$ = new CSSSelector(QualifiedName(nullAtom, atomicString($3), p->defaultNamespace));
     }
     | namespace_selector '|' element_name specifier_list maybe_space {
         $$ = $4;
         if ($$) {
-            $$->tag = $3;
+            AtomicString namespacePrefix = atomicString($1);
             CSSParser *p = static_cast<CSSParser *>(parser);
             if (p->styleElement && p->styleElement->isCSSStyleSheet())
-                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
+                $$->tag = QualifiedName(namespacePrefix,
+                                        atomicString($3),
+                                        static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix));
+            else // FIXME: Shouldn't this case be an error?
+                $$->tag = QualifiedName(nullAtom, atomicString($3), p->defaultNamespace);
         }
     }
     | namespace_selector '|' specifier_list maybe_space {
         $$ = $3;
         if ($$) {
-            $$->tag = makeId(anyNamespace, anyLocalName);
+            AtomicString namespacePrefix = atomicString($1);
             CSSParser *p = static_cast<CSSParser *>(parser);
             if (p->styleElement && p->styleElement->isCSSStyleSheet())
-                static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->tag, domString($1));
+                $$->tag = QualifiedName(namespacePrefix,
+                                        starAtom,
+                                        static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix));
         }
     }
   ;
 
 element_name:
     IDENT {
-	CSSParser *p = static_cast<CSSParser *>(parser);
+        ParseString& str = $1;
+        CSSParser *p = static_cast<CSSParser *>(parser);
 	DOM::DocumentImpl *doc = p->document();
-	QString tag = qString($1);
-	if ( doc ) {
-	    if (doc->isHTMLDocument())
-		tag = tag.lower();
-	    const DOMString dtag(tag);
-            $$ = makeId(p->defaultNamespace, doc->tagId(0, dtag.implementation(), false));
-	} else {
-	    $$ = makeId(p->defaultNamespace, khtml::getTagID(tag.lower().ascii(), tag.length()));
-	    // this case should never happen - only when loading
-	    // the default stylesheet - which must not contain unknown tags
-// 	    assert($$ != 0);
-	}
+	if (doc && doc->isHTMLDocument())
+            str.lower();
+        $$ = str;
     }
     | '*' {
-	$$ = makeId(static_cast<CSSParser*>(parser)->defaultNamespace, anyLocalName);
+	static unsigned short star = '*';
+        $$.string = &star;
+        $$.length = 1;
     }
   ;
 
@@ -769,18 +774,22 @@ attrib:
         $$ = new CSSSelector();
         $$->attr = $5;
         $$->match = CSSSelector::Set;
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
+        // FIXME: For now we're breaking namespace support on attributes.  When we switch to atomicstring, then we can make
+        // it work again.
+        //CSSParser *p = static_cast<CSSParser *>(parser);
+        //if (p->styleElement && p->styleElement->isCSSStyleSheet())
+        //    static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
     }
     | '[' maybe_space namespace_selector '|' attrib_id match maybe_space ident_or_string maybe_space ']' {
         $$ = new CSSSelector();
         $$->attr = $5;
         $$->match = (CSSSelector::Match)$6;
         $$->value = atomicString($8);
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
+        // FIXME: For now we're breaking namespace support on attributes.  When we switch to atomicstring, then we can make
+        // it work again.
+        //CSSParser *p = static_cast<CSSParser *>(parser);
+        //if (p->styleElement && p->styleElement->isCSSStyleSheet())
+        //    static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
     }
   ;
 

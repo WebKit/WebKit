@@ -33,7 +33,6 @@
 #include "dom/dom_string.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
-#include "misc/htmltags.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
@@ -938,7 +937,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
 {
     if (r->node()->isElementNode()) {
         ElementImpl *element = static_cast<ElementImpl *>(r->node());
-        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->tagName().string().latin1());
+        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().string().latin1());
     }
     else if (r->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(r);

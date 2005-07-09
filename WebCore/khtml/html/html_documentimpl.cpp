@@ -60,6 +60,7 @@
 #include "html/html_miscimpl.h"
 #include "html/html_imageimpl.h"
 #include "html/html_formimpl.h"
+#include "htmlfactory.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -246,12 +247,14 @@ Tokenizer *HTMLDocumentImpl::createTokenizer()
 bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 {
     // ### support comments. etc as a child
-    return (newChild->id() == ID_HTML || newChild->id() == ID_COMMENT);
+    return (newChild->hasTagName(HTMLNames::html()) || newChild->isCommentNode());
 }
 
-ElementImpl *HTMLDocumentImpl::createElement( const DOMString &name, int &exceptioncode )
+ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)
 {
-    return createHTMLElement(name, exceptioncode);
+    // Do not check name validity.  Other browsers don't, and it takes time.
+    DOMString lowerName(name.lower());
+    return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
 }
 
 void HTMLDocumentImpl::slotHistoryChanged()

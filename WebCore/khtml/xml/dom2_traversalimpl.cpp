@@ -26,8 +26,6 @@
 #include "dom/dom_exception.h"
 #include "xml/dom_docimpl.h"
 
-#include "htmltags.h"
-
 namespace DOM {
 
 NodeFilterImpl::NodeFilterImpl(NodeFilterCondition *condition)

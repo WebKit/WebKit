@@ -28,12 +28,13 @@
 //#define EVENT_DEBUG
 //#define UNSUPPORTED_ATTR
 
-#include "html/dtd.h"
 #include "html/html_elementimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/htmltokenizer.h"
+#include "htmlfactory.h"
 
 #include "misc/htmlhashes.h"
+#include "misc/hashset.h"
 #include "editing/visible_text.h"
 
 #include "khtmlview.h"
@@ -58,8 +59,8 @@ using namespace khtml;
 
 // ------------------------------------------------------------------
 
-HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
-    : StyledElementImpl(doc)
+HTMLElementImpl::HTMLElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : StyledElementImpl(tagName, doc)
 {
 }
 
@@ -67,51 +68,40 @@ HTMLElementImpl::~HTMLElementImpl()
 {
 }
 
-bool HTMLElementImpl::isInline() const
+DOMString HTMLElementImpl::nodeName() const
 {
-    if (renderer())
-        return ElementImpl::isInline();
+    // FIXME: Would be nice to have an atomicstring lookup based off uppercase chars that does not have to copy
+    // the string on a hit in the hash.
+    if (getDocument()->isHTMLDocument())
+        return m_tagName.localName().implementation()->upper();
+    return ElementImpl::nodeName();
+}
     
-    switch(id()) {
-        case ID_A:
-        case ID_FONT:
-        case ID_TT:
-        case ID_U:
-        case ID_B:
-        case ID_I:
-        case ID_S:
-        case ID_STRIKE:
-        case ID_BIG:
-        case ID_SMALL:
-    
-            // %phrase
-        case ID_EM:
-        case ID_STRONG:
-        case ID_DFN:
-        case ID_CODE:
-        case ID_SAMP:
-        case ID_KBD:
-        case ID_VAR:
-        case ID_CITE:
-        case ID_ABBR:
-        case ID_ACRONYM:
-    
-            // %special
-        case ID_SUB:
-        case ID_SUP:
-        case ID_SPAN:
-        case ID_NOBR:
-        case ID_WBR:
-            return true;
-            
-        default:
-            return ElementImpl::isInline();
-    }
+HTMLTagStatus HTMLElementImpl::endTagRequirement() const
+{
+    if (hasLocalName(HTMLNames::dt()) || hasLocalName(HTMLNames::dd()))
+        return TagStatusOptional;
+
+    // Same values as <span>.  This way custom tag name elements will behave like inline spans.
+    return TagStatusRequired;
+}
+
+int HTMLElementImpl::tagPriority() const
+{
+    if (hasLocalName(HTMLNames::address()) || hasLocalName(HTMLNames::dd()) || hasLocalName(HTMLNames::dt()) || hasLocalName(HTMLNames::noscript()))
+        return 3;
+    if (hasLocalName(HTMLNames::center()) || hasLocalName(HTMLNames::nobr()))
+        return 5;
+    if (hasLocalName(HTMLNames::noembed()) || hasLocalName(HTMLNames::noframes()))
+        return 10;
+
+    // Same values as <span>.  This way custom tag name elements will behave like inline spans.
+    return 1;
 }
 
 NodeImpl *HTMLElementImpl::cloneNode(bool deep)
 {
-    HTMLElementImpl *clone = static_cast<HTMLElementImpl *>(getDocument()->createHTMLElement(localNamePart(id())));
+    HTMLElementImpl *clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
     if (!clone)
         return 0;
 
@@ -325,26 +315,17 @@ DOMString HTMLElementImpl::outerText() const
 DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString &html)
 {
     // the following is in accordance with the definition as used by IE
-    if( endTagRequirement(id()) == FORBIDDEN )
-        return NULL;
-    // IE disallows innerHTML on inline elements. I don't see why we should have this restriction, as our
-    // dhtml engine can cope with it. Lars
-    //if ( isInline() ) return false;
-    switch( id() ) {
-        case ID_COL:
-        case ID_COLGROUP:
-        case ID_FRAMESET:
-        case ID_HEAD:
-        case ID_STYLE:
-        case ID_TITLE:
-            return NULL;
-        default:
-            break;
-    }
-    if ( !getDocument()->isHTMLDocument() )
-        return NULL;
+    if (endTagRequirement() == TagStatusForbidden)
+        return 0;
 
-    DocumentFragmentImpl *fragment = new DocumentFragmentImpl( docPtr() );
+    if (hasLocalName(HTMLNames::col()) || hasLocalName(HTMLNames::colgroup()) || hasLocalName(HTMLNames::frameset()) ||
+        hasLocalName(HTMLNames::head()) || hasLocalName(HTMLNames::style()) || hasLocalName(HTMLNames::title()))
+        return 0;
+
+    if (!getDocument()->isHTMLDocument())
+        return 0;
+
+    DocumentFragmentImpl *fragment = new DocumentFragmentImpl(docPtr());
     fragment->ref();
     {
         HTMLTokenizer tok(docPtr(), fragment);
@@ -358,14 +339,14 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     int ignoredExceptionCode;
 
     // we need to pop <html> and <body> elements and remove <head> to
-    // accomadate folks passing complete HTML documents to make the
+    // accommodate folks passing complete HTML documents to make the
     // child of an element.
 
     NodeImpl *nextNode;
     for (NodeImpl *node = fragment->firstChild(); node != NULL; node = nextNode) {
         nextNode = node->nextSibling();
 	node->ref();
-        if (node->id() == ID_HTML || node->id() == ID_BODY) {
+        if (node->hasTagName(HTMLNames::html()) || node->hasTagName(HTMLNames::body())) {
 	    NodeImpl *firstChild = node->firstChild();
             if (firstChild != NULL) {
                 nextNode = firstChild;
@@ -379,9 +360,9 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
                 child->deref();
 	    }
             fragment->removeChild(node, ignoredExceptionCode);
-	} else if (node->id() == ID_HEAD) {
+	} else if (node->hasTagName(HTMLNames::head()))
 	    fragment->removeChild(node, ignoredExceptionCode);
-	}
+
         // Important to do this deref after removeChild, because if the only thing
         // keeping a node around is a parent that is non-0, removeChild will not
         // delete the node. This works fine in JavaScript because there's always
@@ -400,7 +381,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
 
 void HTMLElementImpl::setInnerHTML(const DOMString &html, int &exception)
 {
-    DocumentFragmentImpl *fragment = createContextualFragment( html );
+    DocumentFragmentImpl *fragment = createContextualFragment(html);
     if (fragment == NULL) {
 	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
@@ -418,7 +399,7 @@ void HTMLElementImpl::setOuterHTML(const DOMString &html, int &exception)
         return;
     }
     HTMLElementImpl *parent = static_cast<HTMLElementImpl *>(p);
-    DocumentFragmentImpl *fragment = parent->createContextualFragment( html );
+    DocumentFragmentImpl *fragment = parent->createContextualFragment(html);
 
     if (!fragment) {
 	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
@@ -434,29 +415,17 @@ void HTMLElementImpl::setOuterHTML(const DOMString &html, int &exception)
 void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
 {
     // following the IE specs.
-    if (endTagRequirement(id()) == FORBIDDEN) {
+    if (endTagRequirement() == TagStatusForbidden) {
 	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
-    // IE disallows innerText on inline elements. I don't see why we should have this restriction, as our
-    // dhtml engine can cope with it. Lars
-    //if ( isInline() ) return false;
-    switch( id() ) {
-        case ID_COL:
-        case ID_COLGROUP:
-        case ID_FRAMESET:
-        case ID_HEAD:
-        case ID_HTML:
-        case ID_TABLE:
-        case ID_TBODY:
-        case ID_TFOOT:
-        case ID_THEAD:
-        case ID_TR:
-            exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-            return;
-        default:
-            break;
+    if (hasLocalName(HTMLNames::col()) || hasLocalName(HTMLNames::colgroup()) || hasLocalName(HTMLNames::frameset()) ||
+        hasLocalName(HTMLNames::head()) || hasLocalName(HTMLNames::html()) || hasLocalName(HTMLNames::table()) || 
+        hasLocalName(HTMLNames::tbody()) || hasLocalName(HTMLNames::tfoot()) || hasLocalName(HTMLNames::thead()) ||
+        hasLocalName(HTMLNames::tr())) {
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
 
     removeChildren();
@@ -466,25 +435,17 @@ void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
 void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 {
     // following the IE specs.
-    if( endTagRequirement(id()) == FORBIDDEN ) {
+    if (endTagRequirement() == TagStatusForbidden) {
 	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-    switch( id() ) {
-        case ID_COL:
-        case ID_COLGROUP:
-        case ID_FRAMESET:
-        case ID_HEAD:
-        case ID_HTML:
-        case ID_TABLE:
-        case ID_TBODY:
-        case ID_TFOOT:
-        case ID_THEAD:
-        case ID_TR:
-            exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-            return;
-        default:
-            break;
+
+    if (hasLocalName(HTMLNames::col()) || hasLocalName(HTMLNames::colgroup()) || hasLocalName(HTMLNames::frameset()) ||
+        hasLocalName(HTMLNames::head()) || hasLocalName(HTMLNames::html()) || hasLocalName(HTMLNames::table()) || 
+        hasLocalName(HTMLNames::tbody()) || hasLocalName(HTMLNames::tfoot()) || hasLocalName(HTMLNames::thead()) ||
+        hasLocalName(HTMLNames::tr())) {
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        return;
     }
 
     NodeImpl *parent = parentNode();
@@ -523,17 +484,6 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
         if (exception)
             return;
     }
-}
-
-
-DOMString HTMLElementImpl::namespaceURI() const
-{
-    // For HTML documents, we treat HTML elements as having no namespace. But for XML documents
-    // the elements have the namespace defined in the XHTML spec
-    if (getDocument()->isHTMLDocument())
-        return DOMString();
-    else
-        return XHTML_NAMESPACE;
 }
 
 void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
@@ -682,9 +632,9 @@ DOMString HTMLElementImpl::toString() const
 	DOMString result = openTagStartToString();
 	result += ">";
 
-	if (endTagRequirement(id()) == REQUIRED) {
+	if (endTagRequirement() == TagStatusRequired) {
 	    result += "</";
-	    result += tagName();
+	    result += nodeName();
 	    result += ">";
 	}
 
@@ -694,7 +644,7 @@ DOMString HTMLElementImpl::toString() const
     return ElementImpl::toString();
 }
 
-DOMString HTMLElementImpl::idDOM() const
+DOMString HTMLElementImpl::id() const
 {
     return getAttribute(ATTR_ID);
 }
@@ -749,15 +699,285 @@ SharedPtr<HTMLCollectionImpl> HTMLElementImpl::children()
     return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::NODE_CHILDREN));
 }
 
-// -------------------------------------------------------------------------
-
-HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)
-    : HTMLElementImpl(doc)
+// DOM Section 1.1.1
+bool HTMLElementImpl::childAllowed(NodeImpl *newChild)
 {
-    m_elementId = i;
+    if (!ElementImpl::childAllowed(newChild))
+        return false;
+
+    // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
+    if (!getDocument()->isHTMLDocument())
+        return true;
+
+    // Future-proof for XML content inside HTML documents (we may allow this some day).
+    if (newChild->isElementNode() && !newChild->isHTMLElement())
+        return true;
+
+    // Elements with forbidden tag status can never have children
+    if (endTagRequirement() == TagStatusForbidden)
+        return false;
+
+    // Comment nodes are always allowed.
+    if (newChild->isCommentNode())
+        return true;
+
+    // Now call checkDTD.
+    return checkDTD(newChild);
 }
 
-NodeImpl::Id HTMLGenericElementImpl::id() const
+// DTD Stuff
+// This unfortunate function is only needed when checking against the DTD.  Other languages (like SVG) won't need this.
+bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 {
-    return m_elementId;
+    static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
+    if (tagList.isEmpty()) {
+        tagList.insert(HTMLNames::a().localName().implementation());
+        tagList.insert(HTMLNames::abbr().localName().implementation());
+        tagList.insert(HTMLNames::acronym().localName().implementation());
+        tagList.insert(HTMLNames::address().localName().implementation());
+        tagList.insert(HTMLNames::applet().localName().implementation());
+        tagList.insert(HTMLNames::area().localName().implementation());
+        tagList.insert(HTMLNames::b().localName().implementation());
+        tagList.insert(HTMLNames::base().localName().implementation());
+        tagList.insert(HTMLNames::basefont().localName().implementation());
+        tagList.insert(HTMLNames::bdo().localName().implementation());
+        tagList.insert(HTMLNames::big().localName().implementation());
+        tagList.insert(HTMLNames::blockquote().localName().implementation());
+        tagList.insert(HTMLNames::body().localName().implementation());
+        tagList.insert(HTMLNames::br().localName().implementation());
+        tagList.insert(HTMLNames::button().localName().implementation());
+        tagList.insert(HTMLNames::canvas().localName().implementation());
+        tagList.insert(HTMLNames::caption().localName().implementation());
+        tagList.insert(HTMLNames::center().localName().implementation());
+        tagList.insert(HTMLNames::cite().localName().implementation());
+        tagList.insert(HTMLNames::code().localName().implementation());
+        tagList.insert(HTMLNames::col().localName().implementation());
+        tagList.insert(HTMLNames::colgroup().localName().implementation());
+        tagList.insert(HTMLNames::dd().localName().implementation());
+        tagList.insert(HTMLNames::del().localName().implementation());
+        tagList.insert(HTMLNames::dfn().localName().implementation());
+        tagList.insert(HTMLNames::dir().localName().implementation());
+        tagList.insert(HTMLNames::div().localName().implementation());
+        tagList.insert(HTMLNames::dl().localName().implementation());
+        tagList.insert(HTMLNames::dt().localName().implementation());
+        tagList.insert(HTMLNames::em().localName().implementation());
+        tagList.insert(HTMLNames::embed().localName().implementation());
+        tagList.insert(HTMLNames::fieldset().localName().implementation());
+        tagList.insert(HTMLNames::font().localName().implementation());
+        tagList.insert(HTMLNames::form().localName().implementation());
+        tagList.insert(HTMLNames::frame().localName().implementation());
+        tagList.insert(HTMLNames::frameset().localName().implementation());
+        tagList.insert(HTMLNames::head().localName().implementation());
+        tagList.insert(HTMLNames::h1().localName().implementation());
+        tagList.insert(HTMLNames::h2().localName().implementation());
+        tagList.insert(HTMLNames::h3().localName().implementation());
+        tagList.insert(HTMLNames::h4().localName().implementation());
+        tagList.insert(HTMLNames::h5().localName().implementation());
+        tagList.insert(HTMLNames::h6().localName().implementation());
+        tagList.insert(HTMLNames::hr().localName().implementation());
+        tagList.insert(HTMLNames::html().localName().implementation());
+        tagList.insert(HTMLNames::i().localName().implementation());
+        tagList.insert(HTMLNames::iframe().localName().implementation());
+        tagList.insert(HTMLNames::img().localName().implementation());
+        tagList.insert(HTMLNames::input().localName().implementation());
+        tagList.insert(HTMLNames::ins().localName().implementation());
+        tagList.insert(HTMLNames::isindex().localName().implementation());
+        tagList.insert(HTMLNames::kbd().localName().implementation());
+        tagList.insert(HTMLNames::keygen().localName().implementation());
+        tagList.insert(HTMLNames::label().localName().implementation());
+        tagList.insert(HTMLNames::layer().localName().implementation());
+        tagList.insert(HTMLNames::legend().localName().implementation());
+        tagList.insert(HTMLNames::li().localName().implementation());
+        tagList.insert(HTMLNames::link().localName().implementation());
+        tagList.insert(HTMLNames::map().localName().implementation());
+        tagList.insert(HTMLNames::marquee().localName().implementation());
+        tagList.insert(HTMLNames::menu().localName().implementation());
+        tagList.insert(HTMLNames::meta().localName().implementation());
+        tagList.insert(HTMLNames::nobr().localName().implementation());
+        tagList.insert(HTMLNames::noembed().localName().implementation());
+        tagList.insert(HTMLNames::noframes().localName().implementation());
+        tagList.insert(HTMLNames::nolayer().localName().implementation());
+        tagList.insert(HTMLNames::noscript().localName().implementation());
+        tagList.insert(HTMLNames::object().localName().implementation());
+        tagList.insert(HTMLNames::ol().localName().implementation());
+        tagList.insert(HTMLNames::optgroup().localName().implementation());
+        tagList.insert(HTMLNames::option().localName().implementation());
+        tagList.insert(HTMLNames::p().localName().implementation());
+        tagList.insert(HTMLNames::param().localName().implementation());
+        tagList.insert(HTMLNames::plaintext().localName().implementation());
+        tagList.insert(HTMLNames::pre().localName().implementation());
+        tagList.insert(HTMLNames::q().localName().implementation());
+        tagList.insert(HTMLNames::s().localName().implementation());
+        tagList.insert(HTMLNames::samp().localName().implementation());
+        tagList.insert(HTMLNames::script().localName().implementation());
+        tagList.insert(HTMLNames::select().localName().implementation());
+        tagList.insert(HTMLNames::small().localName().implementation());
+        tagList.insert(HTMLNames::span().localName().implementation());
+        tagList.insert(HTMLNames::strike().localName().implementation());
+        tagList.insert(HTMLNames::strong().localName().implementation());
+        tagList.insert(HTMLNames::style().localName().implementation());
+        tagList.insert(HTMLNames::sub().localName().implementation());
+        tagList.insert(HTMLNames::sup().localName().implementation());
+        tagList.insert(HTMLNames::table().localName().implementation());
+        tagList.insert(HTMLNames::tbody().localName().implementation());
+        tagList.insert(HTMLNames::td().localName().implementation());
+        tagList.insert(HTMLNames::textarea().localName().implementation());
+        tagList.insert(HTMLNames::tfoot().localName().implementation());
+        tagList.insert(HTMLNames::th().localName().implementation());
+        tagList.insert(HTMLNames::thead().localName().implementation());
+        tagList.insert(HTMLNames::title().localName().implementation());
+        tagList.insert(HTMLNames::tr().localName().implementation());
+        tagList.insert(HTMLNames::tt().localName().implementation());
+        tagList.insert(HTMLNames::u().localName().implementation());
+        tagList.insert(HTMLNames::ul().localName().implementation());
+        tagList.insert(HTMLNames::var().localName().implementation());
+        tagList.insert(HTMLNames::wbr().localName().implementation());
+        tagList.insert(HTMLNames::xmp().localName().implementation());
+    }
+
+    return tagList.contains(tagName.localName().implementation());
+}
+
+// The terms inline and block are used here loosely.  Don't make the mistake of assuming all inlines or all blocks
+// need to be in these two lists.
+HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
+    static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
+    if (tagList.isEmpty()) {
+        tagList.insert(HTMLNames::tt().localName().implementation());
+        tagList.insert(HTMLNames::i().localName().implementation());
+        tagList.insert(HTMLNames::b().localName().implementation());
+        tagList.insert(HTMLNames::u().localName().implementation());
+        tagList.insert(HTMLNames::s().localName().implementation());
+        tagList.insert(HTMLNames::strike().localName().implementation());
+        tagList.insert(HTMLNames::big().localName().implementation());
+        tagList.insert(HTMLNames::small().localName().implementation());
+        tagList.insert(HTMLNames::em().localName().implementation());
+        tagList.insert(HTMLNames::strong().localName().implementation());
+        tagList.insert(HTMLNames::dfn().localName().implementation());
+        tagList.insert(HTMLNames::code().localName().implementation());
+        tagList.insert(HTMLNames::samp().localName().implementation());
+        tagList.insert(HTMLNames::kbd().localName().implementation());
+        tagList.insert(HTMLNames::var().localName().implementation());
+        tagList.insert(HTMLNames::cite().localName().implementation());
+        tagList.insert(HTMLNames::abbr().localName().implementation());
+        tagList.insert(HTMLNames::acronym().localName().implementation());
+        tagList.insert(HTMLNames::a().localName().implementation());
+        tagList.insert(HTMLNames::canvas().localName().implementation());
+        tagList.insert(HTMLNames::img().localName().implementation());
+        tagList.insert(HTMLNames::applet().localName().implementation());
+        tagList.insert(HTMLNames::object().localName().implementation());
+        tagList.insert(HTMLNames::embed().localName().implementation());
+        tagList.insert(HTMLNames::font().localName().implementation());
+        tagList.insert(HTMLNames::basefont().localName().implementation());
+        tagList.insert(HTMLNames::br().localName().implementation());
+        tagList.insert(HTMLNames::script().localName().implementation());
+        tagList.insert(HTMLNames::map().localName().implementation());
+        tagList.insert(HTMLNames::q().localName().implementation());
+        tagList.insert(HTMLNames::sub().localName().implementation());
+        tagList.insert(HTMLNames::sup().localName().implementation());
+        tagList.insert(HTMLNames::span().localName().implementation());
+        tagList.insert(HTMLNames::bdo().localName().implementation());
+        tagList.insert(HTMLNames::iframe().localName().implementation());
+        tagList.insert(HTMLNames::input().localName().implementation());
+        tagList.insert(HTMLNames::keygen().localName().implementation());
+        tagList.insert(HTMLNames::select().localName().implementation());
+        tagList.insert(HTMLNames::textarea().localName().implementation());
+        tagList.insert(HTMLNames::label().localName().implementation());
+        tagList.insert(HTMLNames::button().localName().implementation());
+        tagList.insert(HTMLNames::ins().localName().implementation());
+        tagList.insert(HTMLNames::del().localName().implementation());
+        tagList.insert(HTMLNames::nobr().localName().implementation());
+        tagList.insert(HTMLNames::wbr().localName().implementation());
+    }
+    return &tagList;
+}
+
+HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList() {
+    static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
+    if (tagList.isEmpty()) {
+        tagList.insert(HTMLNames::p().localName().implementation());
+        tagList.insert(HTMLNames::h1().localName().implementation());
+        tagList.insert(HTMLNames::h2().localName().implementation());
+        tagList.insert(HTMLNames::h3().localName().implementation());
+        tagList.insert(HTMLNames::h4().localName().implementation());
+        tagList.insert(HTMLNames::h5().localName().implementation());
+        tagList.insert(HTMLNames::h6().localName().implementation());
+        tagList.insert(HTMLNames::ul().localName().implementation());
+        tagList.insert(HTMLNames::ol().localName().implementation());
+        tagList.insert(HTMLNames::dir().localName().implementation());
+        tagList.insert(HTMLNames::menu().localName().implementation());
+        tagList.insert(HTMLNames::pre().localName().implementation());
+        tagList.insert(HTMLNames::plaintext().localName().implementation());
+        tagList.insert(HTMLNames::xmp().localName().implementation());
+        tagList.insert(HTMLNames::dl().localName().implementation());
+        tagList.insert(HTMLNames::div().localName().implementation());
+        tagList.insert(HTMLNames::layer().localName().implementation());
+        tagList.insert(HTMLNames::center().localName().implementation());
+        tagList.insert(HTMLNames::noscript().localName().implementation());
+        tagList.insert(HTMLNames::noframes().localName().implementation());
+        tagList.insert(HTMLNames::blockquote().localName().implementation());
+        tagList.insert(HTMLNames::form().localName().implementation());
+        tagList.insert(HTMLNames::isindex().localName().implementation());
+        tagList.insert(HTMLNames::hr().localName().implementation());
+        tagList.insert(HTMLNames::table().localName().implementation());
+        tagList.insert(HTMLNames::fieldset().localName().implementation());
+        tagList.insert(HTMLNames::address().localName().implementation());
+        tagList.insert(HTMLNames::li().localName().implementation());
+        tagList.insert(HTMLNames::dd().localName().implementation());
+        tagList.insert(HTMLNames::dt().localName().implementation());
+        tagList.insert(HTMLNames::marquee().localName().implementation());
+    }
+    return &tagList;
+}
+
+bool HTMLElementImpl::inEitherTagList(const NodeImpl* newChild)
+{
+    if (newChild->isTextNode())
+        return true;
+        
+    if (newChild->isHTMLElement()) {
+        const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
+        if (inlineTagList()->contains(child->tagName().localName().implementation()))
+            return true;
+        if (blockTagList()->contains(child->tagName().localName().implementation()))
+            return true;
+        return !isRecognizedTagName(child->tagName()); // Accept custom html tags
+    }
+
+    return false;
+}
+
+bool HTMLElementImpl::inInlineTagList(const NodeImpl* newChild)
+{
+    if (newChild->isTextNode())
+        return true;
+
+    if (newChild->isHTMLElement()) {
+        const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
+        if (inlineTagList()->contains(child->tagName().localName().implementation()))
+            return true;
+        return !isRecognizedTagName(child->tagName()); // Accept custom html tags
+    }
+
+    return false;
+}
+
+bool HTMLElementImpl::inBlockTagList(const NodeImpl* newChild)
+{
+    if (newChild->isTextNode())
+        return true;
+            
+    if (newChild->isHTMLElement()) {
+        const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
+        return (blockTagList()->contains(child->tagName().localName().implementation()));
+    }
+
+    return false;
+}
+
+bool HTMLElementImpl::checkDTD(const NodeImpl* newChild)
+{
+    if (hasTagName(HTMLNames::address()) && newChild->hasTagName(HTMLNames::p()))
+        return true;
+    return inEitherTagList(newChild);
 }

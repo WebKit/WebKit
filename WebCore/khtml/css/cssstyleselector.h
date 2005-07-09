@@ -24,7 +24,6 @@
 #define _CSS_cssstyleselector_h_
 
 #include <qptrvector.h>
-#include <qptrdict.h>
 #include "misc/pointerhash.h"
 
 #include "rendering/render_style.h"
@@ -274,25 +273,22 @@ public:
         MAIN_THREAD_ALLOCATED;
 
         typedef HashMap<DOM::DOMStringImpl *, CSSRuleDataList *, PointerHash<DOM::DOMStringImpl *> > AtomRuleMap;
-        typedef HashMap<int, CSSRuleDataList *, PointerHash<int> > IntRuleMap;
 
         void addRulesFromSheet(DOM::CSSStyleSheetImpl* sheet, const DOM::DOMString &medium = "screen");
 
         void addRule(DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
         void addToRuleSet(DOM::DOMStringImpl* key, AtomRuleMap& map,
                           DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
-        void addToRuleSet(int key, IntRuleMap& map,
-                          DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
 
         CSSRuleDataList* getIDRules(DOM::DOMStringImpl* key) { return m_idRules.get(key); }
         CSSRuleDataList* getClassRules(DOM::DOMStringImpl* key) { return m_classRules.get(key); }
-        CSSRuleDataList* getTagRules(int key) { return m_tagRules.get(key); }
+        CSSRuleDataList* getTagRules(DOM::DOMStringImpl* key) { return m_tagRules.get(key); }
         CSSRuleDataList* getUniversalRules() { return m_universalRules; }
 
     public:
         AtomRuleMap m_idRules;
         AtomRuleMap m_classRules;
-        IntRuleMap m_tagRules;
+        AtomRuleMap m_tagRules;
         CSSRuleDataList* m_universalRules;
         
         uint m_ruleCount;

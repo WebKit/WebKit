@@ -34,12 +34,15 @@ class HTMLAnchorElementImpl : public HTMLElementImpl
 {
 public:
     HTMLAnchorElementImpl(DocumentPtr *doc);
+    HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentPtr* doc);
     ~HTMLAnchorElementImpl();
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
 
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool isFocusable() const;
-    virtual Id id() const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual void accessKeyAction(bool fullAction);
@@ -97,9 +100,10 @@ class HTMLBRElementImpl : public HTMLElementImpl
 public:
     HTMLBRElementImpl(DocumentPtr *doc);
     ~HTMLBRElementImpl();
-
-    virtual Id id() const;
     
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
+
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     
@@ -116,9 +120,10 @@ class HTMLFontElementImpl : public HTMLElementImpl
 public:
     HTMLFontElementImpl(DocumentPtr *doc);
     ~HTMLFontElementImpl();
-
-    virtual Id id() const;
     
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
+
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
@@ -134,10 +139,13 @@ public:
 
 // -------------------------------------------------------------------------
 
-class HTMLModElementImpl : public HTMLGenericElementImpl
+class HTMLModElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLModElementImpl(DocumentPtr *doc, ushort elementId);
+    HTMLModElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
 
     DOMString cite() const;
     void setCite(const DOMString &);
@@ -152,9 +160,10 @@ class HTMLQuoteElementImpl : public HTMLElementImpl
 {
 public:
     HTMLQuoteElementImpl(DocumentPtr *doc);
-
-    virtual Id id() const;
     
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
+
     DOMString cite() const;
     void setCite(const DOMString &);
 };

@@ -62,7 +62,9 @@ public:
     HTMLTableElementImpl(DocumentPtr *doc);
     ~HTMLTableElementImpl();
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 9; }
+    virtual bool checkDTD(const NodeImpl* newChild);
 
     HTMLTableCaptionElementImpl *caption() const { return tCaption; }
     NodeImpl *setCaption( HTMLTableCaptionElementImpl * );
@@ -147,8 +149,8 @@ class HTMLTablePartElementImpl : public HTMLElementImpl
 
 {
 public:
-    HTMLTablePartElementImpl(DocumentPtr *doc)
-        : HTMLElementImpl(doc)
+    HTMLTablePartElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+        : HTMLElementImpl(tagName, doc)
         { }
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
@@ -160,9 +162,11 @@ public:
 class HTMLTableSectionElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableSectionElementImpl(DocumentPtr *doc, ushort tagid, bool implicit);
+    HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentPtr *doc, bool implicit);
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual int tagPriority() const { return 8; }
+    virtual bool checkDTD(const NodeImpl* newChild);
 
     virtual NodeImpl *addChild(NodeImpl *child);
     
@@ -184,9 +188,6 @@ public:
     void setVAlign( const DOMString & );
 
     khtml::SharedPtr<HTMLCollectionImpl> rows();
-
-protected:
-    ushort _id;
 };
 
 // -------------------------------------------------------------------------
@@ -195,10 +196,12 @@ class HTMLTableRowElementImpl : public HTMLTablePartElementImpl
 {
 public:
     HTMLTableRowElementImpl(DocumentPtr *doc)
-        : HTMLTablePartElementImpl(doc) {}
+        : HTMLTablePartElementImpl(HTMLNames::tr(), doc) {}
 
-    virtual Id id() const;
-
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual int tagPriority() const { return 7; }
+    virtual bool checkDTD(const NodeImpl* newChild);
+	
     virtual NodeImpl *addChild(NodeImpl *child);
     
     long rowIndex() const;
@@ -238,10 +241,12 @@ protected:
 class HTMLTableCellElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableCellElementImpl(DocumentPtr *doc, int tagId);
+    HTMLTableCellElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
     ~HTMLTableCellElementImpl();
 
-    // ### FIX these two...
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual int tagPriority() const { return 6; }
+
     long cellIndex() const;
 
     int col() const { return _col; }
@@ -251,13 +256,9 @@ public:
 
     int colSpan() const { return cSpan; }
     int rowSpan() const { return rSpan; }
-    
-    virtual Id id() const { return _id; }
-    
+
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
-
-    virtual void attach();
 
     // used by table cells to share style decls created by the enclosing table.
     virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
@@ -311,7 +312,6 @@ protected:
     int _col;
     int rSpan;
     int cSpan;
-    int _id;
     int rowHeight;
     bool m_solid        : 1;
 };
@@ -321,10 +321,11 @@ protected:
 class HTMLTableColElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableColElementImpl(DocumentPtr *doc, ushort i);
+    HTMLTableColElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
 
-    virtual Id id() const;
-
+    virtual HTMLTagStatus endTagRequirement() const { return hasLocalName(HTMLNames::col()) ? TagStatusForbidden : TagStatusOptional; }
+    virtual int tagPriority() const { return hasLocalName(HTMLNames::col()) ? 0 : 1; }
+    virtual bool checkDTD(const NodeImpl* newChild) { return hasLocalName(HTMLNames::colgroup()) && newChild->hasTagName(HTMLNames::col()); }
     void setTable(HTMLTableElementImpl *t) { table = t; }
 
     // overrides
@@ -351,10 +352,6 @@ public:
     void setWidth( const DOMString & );
 
 protected:
-    // could be ID_COL or ID_COLGROUP ... The DOM is not quite clear on
-    // this, but since both elements work quite similar, we use one
-    // DOMElement for them...
-    ushort _id;
     int _span;
     HTMLTableElementImpl *table;
 };
@@ -365,9 +362,10 @@ class HTMLTableCaptionElementImpl : public HTMLTablePartElementImpl
 {
 public:
     HTMLTableCaptionElementImpl(DocumentPtr *doc)
-        : HTMLTablePartElementImpl(doc) {}
+        : HTMLTablePartElementImpl(HTMLNames::caption(), doc) {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
     
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);

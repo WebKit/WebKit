@@ -31,7 +31,7 @@
 
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
@@ -50,6 +50,7 @@ using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -213,7 +214,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // then this <br> will collapse away when we add a block after it. Add an extra <br>.
     if (!document()->inStrictMode()) {
         Position upstreamPos = pos.upstream();
-        if (upstreamPos.node()->id() == ID_BR)
+        if (upstreamPos.node()->hasTagName(HTMLNames::br()))
             insertNodeAfter(createBreakElement(document()), upstreamPos.node());
     }
     

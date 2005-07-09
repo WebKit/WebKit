@@ -26,13 +26,7 @@
 // portable, and it would be good to figure out a 100% clean way that still avoids code that
 // runs at init time.
 
-#if APPLE_CHANGES
-#define AVOID_STATIC_CONSTRUCTORS 1
-#endif
-
-#if AVOID_STATIC_CONSTRUCTORS
 #define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
-#endif
 
 #include "dom_atomicstring.h"
 #include "xml/dom_stringimpl.h"
@@ -51,9 +45,6 @@ inline unsigned hash(const char* const& c)
 
 inline bool equal(DOMStringImpl* const& r, const char* const& s)
 {
-    if (!r && !s) return true;
-    if (!r || !s) return false;
-
     int length = r->l;
     const QChar *d = r->s;
     for (int i = 0; i != length; ++i)
@@ -100,17 +91,13 @@ inline unsigned hash(const QCharBuffer& buf)
 
 inline bool equal(DOMStringImpl* const& str, const QCharBuffer &buf)
 {
-    const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
-    const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
-
-    if (!strChars && !bufChars) return true;
-    if (!strChars || !bufChars) return false;
-    
     uint strLength = str->l;
     uint bufLength = buf.length;
     if (strLength != bufLength)
         return false;
 
+    const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
+    const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
     
     uint halfLength = strLength >> 1;
     for (uint i = 0; i != halfLength; ++i) {
@@ -165,42 +152,30 @@ void AtomicString::remove(DOMStringImpl *r)
     stringTable.remove(r);
 }
 
-// Global constants for property name strings.
+// Define an AtomicString-sized array of pointers to avoid static initialization.
+// Use an array of pointers instead of an array of char in case there is some alignment issue.
+#define DEFINE_GLOBAL(name) \
+    void* name ## Atom[(sizeof(AtomicString) + sizeof(void*) - 1) / sizeof(void*)];
 
-#if !AVOID_STATIC_CONSTRUCTORS
-    // Define an AtomicString in the normal way.
-    #define DEFINE_GLOBAL(name, string) extern const AtomicString name ## Atom(string);
-
-    extern const AtomicString nullAtom;
-    extern const AtomicString emptyAtom;
-#else
-    // Define an AtomicString-sized array of pointers to avoid static initialization.
-    // Use an array of pointers instead of an array of char in case there is some alignment issue.
-    #define DEFINE_GLOBAL(name, string) \
-        void * name ## Atom[(sizeof(AtomicString) + sizeof(void *) - 1) / sizeof(void *)];
-
-    DEFINE_GLOBAL(null, ignored)
-    DEFINE_GLOBAL(empty, ignored)
-#endif
-
-#define CALL_DEFINE_GLOBAL(name) DEFINE_GLOBAL(name, #name)
-KHTML_ATOMICSTRING_EACH_GLOBAL(CALL_DEFINE_GLOBAL)
+DEFINE_GLOBAL(null)
+DEFINE_GLOBAL(empty)
+DEFINE_GLOBAL(text)
+DEFINE_GLOBAL(comment)
+DEFINE_GLOBAL(star)
 
 void AtomicString::init()
 {
-#if AVOID_STATIC_CONSTRUCTORS
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
         new (&nullAtom) AtomicString;
         new (&emptyAtom) AtomicString("");
-        
-        #define PLACEMENT_NEW_GLOBAL(name, string) new (&name ## PropertyName) AtomicString(string);
-        #define CALL_PLACEMENT_NEW_GLOBAL(name) PLACEMENT_NEW_GLOBAL(name, #name)
-        KHTML_ATOMICSTRING_EACH_GLOBAL(CALL_PLACEMENT_NEW_GLOBAL)
+        new (&textAtom) AtomicString("#text");
+        new (&commentAtom) AtomicString("#comment");
+        new (&starAtom) AtomicString("*");
+
         initialized = true;
     }
-#endif
 }
 
 bool operator==(const AtomicString &a, const DOMString &b)

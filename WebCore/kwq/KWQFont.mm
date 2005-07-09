@@ -34,6 +34,7 @@ QFont::QFont()
     : _trait(0)
     , _size(12.0)
     , _isPrinterFont(false)
+    , _pitch(Unknown)
     , _NSFont(0)
 {
 }
@@ -48,6 +49,7 @@ QFont::QFont(const QFont &other)
     , _trait(other._trait)
     , _size(other._size)
     , _isPrinterFont(other._isPrinterFont)
+    , _pitch(other._pitch)
     , _NSFont(KWQRetain(other._NSFont))
 {
 }
@@ -58,6 +60,7 @@ QFont &QFont::operator=(const QFont &other)
     _trait = other._trait;
     _size = other._size;
     _isPrinterFont = other._isPrinterFont;
+    _pitch = other._pitch;
     KWQRetain(other._NSFont);
     KWQRelease(_NSFont);
     _NSFont = other._NSFont;
@@ -146,21 +149,23 @@ bool QFont::bold() const
     return _trait & NSBoldFontMask;
 }
 
-bool QFont::isFixedPitch() const
+void QFont::determinePitch() const
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()];
+    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()])
+        _pitch = Fixed;
+    else
+        _pitch = Variable;
     KWQ_UNBLOCK_EXCEPTIONS;
-    return false;
 }
-
 
 bool QFont::operator==(const QFont &compareFont) const
 {
     return _family == compareFont._family
         && _trait == compareFont._trait
         && _size == compareFont._size
-        && _isPrinterFont == compareFont._isPrinterFont;
+        && _isPrinterFont == compareFont._isPrinterFont
+        && _pitch == compareFont._pitch;
 }
 
 NSFont *QFont::getNSFont() const

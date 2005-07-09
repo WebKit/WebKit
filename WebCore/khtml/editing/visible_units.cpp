@@ -27,7 +27,7 @@
 
 #include <qstring.h>
 
-#include "htmltags.h"
+#include "htmlnames.h"
 #include "misc/helper.h"
 #include "rendering/render_text.h"
 #include "rendering/render_block.h"
@@ -41,6 +41,7 @@ using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -332,7 +333,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLin
         return VisiblePosition();
 
     long endOffset = 1;
-    if (endNode->id() == ID_BR) {
+    if (endNode->hasTagName(HTMLNames::br())) {
         endOffset = 0;
     } else if (endBox->isInlineTextBox()) {
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);

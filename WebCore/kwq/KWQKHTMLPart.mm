@@ -28,7 +28,6 @@
 #import "DOMInternal.h"
 
 #import "KWQClipboard.h"
-#import "KWQDOMNode.h"
 #import "KWQDummyView.h"
 #import "KWQEditCommand.h"
 #import "KWQExceptions.h"
@@ -100,6 +99,7 @@ using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLGenericFormElementImpl;
+using DOM::HTMLNames;
 using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -364,13 +364,12 @@ static HTMLFormElementImpl *scanForForm(NodeImpl *start)
 {
     NodeImpl *n;
     for (n = start; n; n = n->traverseNextNode()) {
-        NodeImpl::Id nodeID = idFromNode(n);
-        if (nodeID == ID_FORM) {
+        if (n->hasTagName(HTMLNames::form())) {
             return static_cast<HTMLFormElementImpl *>(n);
         } else if (n->isHTMLElement()
                    && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
             return static_cast<HTMLGenericFormElementImpl *>(n)->form();
-        } else if (nodeID == ID_FRAME || nodeID == ID_IFRAME) {
+        } else if (n->hasTagName(HTMLNames::frame()) || n->hasTagName(HTMLNames::iframe())) {
             NodeImpl *childDoc = static_cast<HTMLFrameElementImpl *>(n)->contentDocument();
             HTMLFormElementImpl *frameResult = scanForForm(childDoc);
             if (frameResult) {
@@ -393,7 +392,7 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
     // try walking up the node tree to find a form element
     NodeImpl *n;
     for (n = start; n; n = n->parentNode()) {
-        if (idFromNode(n) == ID_FORM) {
+        if (n->hasTagName(HTMLNames::form())) {
             return static_cast<HTMLFormElementImpl *>(n);
         } else if (n->isHTMLElement()
                    && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
@@ -492,8 +491,7 @@ NSString *KWQKHTMLPart::searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellE
         if (aboveCell) {
             // search within the above cell we found for a match
             for (NodeImpl *n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
-                if (idFromNode(n) == ID_TEXT
-                    && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
+                if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
                 {
                     // For each text chunk, run the regexp
                     QString nodeString = n->nodeValue().string();
@@ -528,23 +526,21 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
          n && lengthSearched < charsSearchedThreshold;
          n = n->traversePreviousNode())
     {
-        NodeImpl::Id nodeID = idFromNode(n);
-        if (nodeID == ID_FORM
+        if (n->hasTagName(HTMLNames::form())
             || (n->isHTMLElement()
                 && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;
-        } else if (nodeID == ID_TD && !startingTableCell) {
+        } else if (n->hasTagName(HTMLNames::td()) && !startingTableCell) {
             startingTableCell = static_cast<HTMLTableCellElementImpl *>(n);
-        } else if (nodeID == ID_TR && startingTableCell) {
+        } else if (n->hasTagName(HTMLNames::tr()) && startingTableCell) {
             NSString *result = searchForLabelsAboveCell(regExp, startingTableCell);
             if (result) {
                 return result;
             }
             searchedCellAbove = true;
-        } else if (nodeID == ID_TEXT
-                   && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
+        } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
         {
             // For each text chunk, run the regexp
             QString nodeString = n->nodeValue().string();
@@ -2851,14 +2847,10 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 
 static ElementImpl *listParent(ElementImpl *item)
 {
-    // Ick!  Avoid use of item->id() which confuses ObjC++.
-    unsigned short _id = item->identifier();
-    
-    while (_id != ID_UL && _id != ID_OL) {
+    while (!item->hasTagName(HTMLNames::ul()) && !item->hasTagName(HTMLNames::ol())) {
         item = static_cast<ElementImpl *>(item->parentNode());
         if (!item)
             break;
-        _id = item->identifier();
     }
     return item;
 }
@@ -2871,7 +2863,7 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
     while (par) {
         if (par->firstChild() != e)
             return 0;
-        if (par->identifier() == ID_LI)
+        if (par->hasTagName(HTMLNames::li()))
             return par;
         e = par;
         par = par->parentNode();
@@ -3025,109 +3017,93 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
             } else {
                 // This is our simple HTML -> ASCII transformation:
                 QString text;
-                NodeImpl::Id _id = n->identifier();
-                switch(_id) {
-                    case ID_A:
-                        // Note the start of the <a> element.  We will add the NSLinkAttributeName
-                        // attribute to the attributed string when navigating to the next sibling 
-                        // of this node.
-                        linkStartLocation = [result length];
-                        linkStartNode = static_cast<ElementImpl*>(n);
-                        break;
+                if (n->hasTagName(HTMLNames::a())) {
+                    // Note the start of the <a> element.  We will add the NSLinkAttributeName
+                    // attribute to the attributed string when navigating to the next sibling 
+                    // of this node.
+                    linkStartLocation = [result length];
+                    linkStartNode = static_cast<ElementImpl*>(n);
+                } else if (n->hasTagName(HTMLNames::br())) {
+                    text += "\n";
+                    hasNewLine = true;
+                } else if (n->hasTagName(HTMLNames::li())) {
+                    QString listText;
+                    ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n));
+                    
+                    if (!hasNewLine)
+                        listText += '\n';
+                    hasNewLine = true;
 
-                    case ID_BR:
-                        text += "\n";
-                        hasNewLine = true;
-                        break;
-    
-                    case ID_LI:
-                        {
-                            QString listText;
-                            ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n));
-                            
-                            if (!hasNewLine)
-                                listText += '\n';
-                            hasNewLine = true;
-    
-                            listItems.append(static_cast<ElementImpl*>(n));
-                            ListItemInfo info;
-                            info.start = [result length];
-                            info.end = 0;
-                            listItemLocations.append (info);
-                            
-                            listText += '\t';
-                            if (itemParent && renderer->isListItem()) {
-                                RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
+                    listItems.append(static_cast<ElementImpl*>(n));
+                    ListItemInfo info;
+                    info.start = [result length];
+                    info.end = 0;
+                    listItemLocations.append (info);
+                    
+                    listText += '\t';
+                    if (itemParent && renderer->isListItem()) {
+                        RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
 
-                                maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
-                                switch(style->listStyleType()) {
-                                    case khtml::DISC:
-                                        listText += ((QChar)BULLET_CHAR);
-                                        break;
-                                    case khtml::CIRCLE:
-                                        listText += ((QChar)CIRCLE_CHAR);
-                                        break;
-                                    case khtml::SQUARE:
-                                        listText += ((QChar)SQUARE_CHAR);
-                                        break;
-                                    case khtml::LNONE:
-                                        break;
-                                    default:
-                                        QString marker = listRenderer->markerStringValue();
-                                        listText += marker;
-                                        // Use AppKit metrics.  Will be rendered by AppKit.
-                                        float markerWidth = [font widthOfString: marker.getNSString()];
-                                        maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
-                                }
-
-                                listText += ' ';
-                                listText += '\t';
-    
-                                NSMutableDictionary *attrs;
-            
-                                attrs = [[NSMutableDictionary alloc] init];
-                                [attrs setObject:font forKey:NSFontAttributeName];
-                                if (style && style->color().isValid())
-                                    [attrs setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
-                                if (style && style->backgroundColor().isValid())
-                                    [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
-            
-                                NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
-                                [attrs release];
-                                [result appendAttributedString: partialString];                
-                                [partialString release];
-                            }
+                        maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
+                        switch(style->listStyleType()) {
+                            case khtml::DISC:
+                                listText += ((QChar)BULLET_CHAR);
+                                break;
+                            case khtml::CIRCLE:
+                                listText += ((QChar)CIRCLE_CHAR);
+                                break;
+                            case khtml::SQUARE:
+                                listText += ((QChar)SQUARE_CHAR);
+                                break;
+                            case khtml::LNONE:
+                                break;
+                            default:
+                                QString marker = listRenderer->markerStringValue();
+                                listText += marker;
+                                // Use AppKit metrics.  Will be rendered by AppKit.
+                                float markerWidth = [font widthOfString: marker.getNSString()];
+                                maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
                         }
-                        break;
 
-                    case ID_OL:
-                    case ID_UL:
+                        listText += ' ';
+                        listText += '\t';
+
+                        NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
+                        [attrs setObject:font forKey:NSFontAttributeName];
+                        if (style && style->color().isValid())
+                            [attrs setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
+                        if (style && style->backgroundColor().isValid())
+                            [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
+
+                        NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
+                        [attrs release];
+                        [result appendAttributedString: partialString];                
+                        [partialString release];
+                    }
+                    else if (n->hasTagName(HTMLNames::ol()) || n->hasTagName(HTMLNames::ul())) {
                         if (!hasNewLine)
                             text += "\n";
                         hasNewLine = true;
-                        break;
-
-                    case ID_TD:
-                    case ID_TH:
-                    case ID_HR:
-                    case ID_DD:
-                    case ID_DL:
-                    case ID_DT:
-                    case ID_PRE:
-                    case ID_BLOCKQUOTE:
-                    case ID_DIV:
+                    } else if (n->hasTagName(HTMLNames::td()) ||
+                               n->hasTagName(HTMLNames::th()) ||
+                               n->hasTagName(HTMLNames::hr()) ||
+                               n->hasTagName(HTMLNames::dd()) ||
+                               n->hasTagName(HTMLNames::dl()) ||
+                               n->hasTagName(HTMLNames::dt()) ||
+                               n->hasTagName(HTMLNames::pre()) ||
+                               n->hasTagName(HTMLNames::blockquote()) ||
+                               n->hasTagName(HTMLNames::div())) {
                         if (!hasNewLine)
                             text += '\n';
                         hasNewLine = true;
-                        break;
-                    case ID_P:
-                    case ID_TR:
-                    case ID_H1:
-                    case ID_H2:
-                    case ID_H3:
-                    case ID_H4:
-                    case ID_H5:
-                    case ID_H6: {
+                    } else if (n->hasTagName(HTMLNames::p()) ||
+                               n->hasTagName(HTMLNames::tr()) ||
+                               n->hasTagName(HTMLNames::h1()) ||
+                               n->hasTagName(HTMLNames::h2()) ||
+                               n->hasTagName(HTMLNames::h3()) ||
+                               n->hasTagName(HTMLNames::h4()) ||
+                               n->hasTagName(HTMLNames::h5()) ||
+                               n->hasTagName(HTMLNames::h6())) {
                         if (!hasNewLine)
                             text += '\n';
                         
@@ -3142,10 +3118,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         }
                         
                         hasNewLine = true;
-                        break;
                     }
-                        
-                    case ID_IMG:
+                    else if (n->hasTagName(HTMLNames::img())) {
                         if (pendingStyledSpace != nil) {
                             if (linkStartLocation == [result length]) {
                                 ++linkStartLocation;
@@ -3159,8 +3133,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         NSAttributedString *iString = [NSAttributedString attributedStringWithAttachment:attachment];
                         [result appendAttributedString: iString];
                         [attachment release];
-                        break;
+                    }
                 }
+
                 NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
                 [result appendAttributedString: partialString];
                 [partialString release];
@@ -3182,71 +3157,60 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 break;
             next = n->nextSibling();
 
-            NodeImpl::Id _id = n->identifier();
-            switch(_id) {
-                case ID_A:
-                    // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
-                    // for the range of the link.  Note that we create the attributed string from the DOM, which
-                    // will have corrected any illegally nested <a> elements.
-                    if (linkStartNode && n == linkStartNode){
-                        DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
-                        KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
-                        
-                        NSURL *URL = kURL.getNSURL();
-                        [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
-                        linkStartNode = 0;
-                    }
-                    break;
+            if (n->hasTagName(HTMLNames::a())) {
+                // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
+                // for the range of the link.  Note that we create the attributed string from the DOM, which
+                // will have corrected any illegally nested <a> elements.
+                if (linkStartNode && n == linkStartNode) {
+                    DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
+                    KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
+                    
+                    NSURL *URL = kURL.getNSURL();
+                    [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
+                    linkStartNode = 0;
+                }
+            }
+            else if (n->hasTagName(HTMLNames::ol()) || n->hasTagName(HTMLNames::ul())) {
+                if (!hasNewLine)
+                    text += '\n';
+                hasNewLine = true;
+            } else if (n->hasTagName(HTMLNames::li())) {
                 
-                case ID_OL:
-                case ID_UL:
-                    if (!hasNewLine)
-                        text += '\n';
-                    hasNewLine = true;
-                    break;
-
-                case ID_LI:
-                    {
-                        int i, count = listItems.count();
-                        for (i = 0; i < count; i++){
-                            if (listItems.at(i) == n){
-                                listItemLocations[i].end = [result length];
-                                break;
-                            }
-                        }
+                int i, count = listItems.count();
+                for (i = 0; i < count; i++){
+                    if (listItems.at(i) == n){
+                        listItemLocations[i].end = [result length];
+                        break;
                     }
-                    if (!hasNewLine)
-                        text += '\n';
-                    hasNewLine = true;
-                    break;
-
-                case ID_TD:
-                case ID_TH:
-                case ID_HR:
-                case ID_DD:
-                case ID_DL:
-                case ID_DT:
-                case ID_PRE:
-                case ID_BLOCKQUOTE:
-                case ID_DIV:
-                    if (!hasNewLine)
-                        text += '\n';
-                    hasNewLine = true;
-                    break;
-                case ID_P:
-                case ID_TR:
-                case ID_H1:
-                case ID_H2:
-                case ID_H3:
-                case ID_H4:
-                case ID_H5:
-                case ID_H6:
-                    if (!hasNewLine)
-                        text += '\n';
-                    // An extra newline is needed at the start, not the end, of these types of tags,
-                    // so don't add another here.
-                    hasNewLine = true;
-                    break;
+                }
+                if (!hasNewLine)
+                    text += '\n';
+                hasNewLine = true;
+            } else if (n->hasTagName(HTMLNames::td()) ||
+                       n->hasTagName(HTMLNames::th()) ||
+                       n->hasTagName(HTMLNames::hr()) ||
+                       n->hasTagName(HTMLNames::dd()) ||
+                       n->hasTagName(HTMLNames::dl()) ||
+                       n->hasTagName(HTMLNames::dt()) ||
+                       n->hasTagName(HTMLNames::pre()) ||
+                       n->hasTagName(HTMLNames::blockquote()) ||
+                       n->hasTagName(HTMLNames::div())) {
+                if (!hasNewLine)
+                    text += '\n';
+                hasNewLine = true;
+            } else if (n->hasTagName(HTMLNames::p()) ||
+                       n->hasTagName(HTMLNames::tr()) ||
+                       n->hasTagName(HTMLNames::h1()) ||
+                       n->hasTagName(HTMLNames::h2()) ||
+                       n->hasTagName(HTMLNames::h3()) ||
+                       n->hasTagName(HTMLNames::h4()) ||
+                       n->hasTagName(HTMLNames::h5()) ||
+                       n->hasTagName(HTMLNames::h6())) {
+                if (!hasNewLine)
+                    text += '\n';
+                // An extra newline is needed at the start, not the end, of these types of tags,
+                // so don't add another here.
+                hasNewLine = true;
             }
             
             NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:text.getNSString()];
@@ -3479,7 +3443,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
         return node->renderer()->style();
 
     int exceptionCode = 0;
-    ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
+    ElementImpl *styleElement = xmlDocImpl()->createElementNS(HTMLNames::xhtmlNamespaceURI(), "span", exceptionCode);
     ASSERT(exceptionCode == 0);
 
     styleElement->ref();
@@ -3706,7 +3670,7 @@ void KWQKHTMLPart::setSelectionFromNone()
         while (node) {
             // Look for a block flow, but skip over the HTML element, since we really
             // want to get at least as far as the the BODY element in a document.
-            if (node->isBlockFlow() && node->identifier() != ID_HTML)
+            if (node->isBlockFlow() && node->hasTagName(HTMLNames::html()))
                 break;
             node = node->traverseNextNode();
         }

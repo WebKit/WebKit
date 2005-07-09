@@ -23,7 +23,6 @@
 #ifndef RENDER_IMAGE_H
 #define RENDER_IMAGE_H
 
-#include "html/dtd.h"
 #include "html/html_elementimpl.h"
 #include "rendering/render_replaced.h"
 #include "dom/dom_string.h"

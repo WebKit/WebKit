@@ -37,6 +37,7 @@ class NSFont;
 class QFont {
 public:
     enum Weight { Normal = 50, Bold = 63 };
+    enum Pitch { Unknown, Fixed, Variable };
 
     QFont();
     ~QFont();
@@ -61,7 +62,8 @@ public:
     void setPixelSize(float s);
     int pixelSize() const { return (int)_size; }
 
-    bool isFixedPitch() const;
+    bool isFixedPitch() const { if (_pitch == Unknown) determinePitch(); return _pitch == Fixed; };
+    void determinePitch() const;
     
     void setPrinterFont(bool);
     bool isPrinterFont() const { return _isPrinterFont; }
@@ -79,7 +81,8 @@ private:
     KWQFontFamily _family;
     int _trait;
     float _size;
-    bool _isPrinterFont;
+    bool _isPrinterFont : 1;
+    mutable Pitch _pitch : 2;
     mutable NSFont *_NSFont;
 };
 

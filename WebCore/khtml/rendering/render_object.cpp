@@ -43,6 +43,7 @@
 #include "render_inline.h"
 #include "render_block.h"
 #include "render_flexbox.h"
+#include "htmlnames.h"
 
 #if APPLE_CHANGES
 // For accessibility
@@ -175,17 +176,17 @@ bool RenderObject::isRoot() const
 
 bool RenderObject::isBody() const
 {
-    return element() && element()->renderer() == this && element()->id() == ID_BODY;
+    return element() && element()->renderer() == this && element()->hasTagName(HTMLNames::body());
 }
 
 bool RenderObject::isHR() const
 {
-    return element() && element()->id() == ID_HR;
+    return element() && element()->hasTagName(HTMLNames::hr());
 }
 
 bool RenderObject::isHTMLMarquee() const
 {
-    return element() && element()->renderer() == this && element()->id() == ID_MARQUEE;
+    return element() && element()->renderer() == this && element()->hasTagName(HTMLNames::marquee());
 }
 
 bool RenderObject::canHaveChildren() const
@@ -737,7 +738,7 @@ bool RenderObject::sizesToMaxWidth() const
     // but they allow text to sit on the same line as the marquee.
     if (isFloating() || (isCompact() && isInline()) || 
         (isInlineBlockOrInlineTable() && !isHTMLMarquee()) ||
-        (element() && (element()->id() == ID_BUTTON || element()->id() == ID_LEGEND)))
+        (element() && (element()->hasTagName(HTMLNames::button()) || element()->hasTagName(HTMLNames::legend()))))
         return true;
     
     // Children of a horizontal marquee do not fill the container by default.
@@ -1326,7 +1327,7 @@ QString RenderObject::information() const
     if (element() && element()->active()) ts << "act ";
     if (element() && element()->isLink()) ts << "anchor ";
     if (element() && element()->focused()) ts << "focus ";
-    if (element()) ts << " <" <<  getTagName(element()->id()).string() << ">";
+    if (element()) ts << " <" <<  element()->localName().string() << ">";
     ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"
 	<< (isTableCell() ?
 	    ( QString::fromLatin1(" [r=") +
@@ -1556,7 +1557,7 @@ void RenderObject::setStyle(RenderStyle *style)
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
         if (d >= RenderStyle::Repaint && element() &&
-            (element()->id() == ID_HTML || element()->id() == ID_BODY))
+            (element()->hasTagName(HTMLNames::html()) || element()->hasTagName(HTMLNames::body())))
             canvas()->repaint();
         else if (m_parent && !isText()) {
             // Do a repaint with the old style first, e.g., for example if we go from
@@ -2188,7 +2189,7 @@ void RenderObject::getTextDecorationColors(int decorations, QColor& underline, Q
         if (curr && curr->isRenderBlock() && curr->continuation())
             curr = curr->continuation();
     } while (curr && decorations && (!quirksMode || !curr->element() ||
-                                     (curr->element()->id() != ID_A && curr->element()->id() != ID_FONT)));
+                                     (!curr->element()->hasTagName(HTMLNames::a()) && !curr->element()->hasTagName(HTMLNames::font()))));
 
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
@@ -2322,7 +2323,7 @@ void RenderObject::setPixmap(const QPixmap&, const QRect&, CachedImage *image)
     // would avoid putting this function and the CachedObjectClient base class into RenderObject.
 
     if (image && image->pixmap_size() == image->valid_rect().size() && parent()) {
-        if (canvas() && element() && (element()->id() == ID_HTML || element()->id() == ID_BODY))
+        if (canvas() && element() && (element()->hasTagName(HTMLNames::html()) || element()->hasTagName(HTMLNames::body())))
             canvas()->repaint();    // repaint the entire canvas since the background gets propagated up
         else
             repaint();              // repaint object, which is a box or a container with boxes inside it

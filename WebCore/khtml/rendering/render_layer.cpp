@@ -49,7 +49,6 @@
 #include "render_arena.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
-#include "misc/htmltags.h"
 #include "html/html_blockimpl.h"
 
 #include <qscrollbar.h>
@@ -1467,7 +1466,7 @@ int Marquee::marqueeSpeed() const
 {
     int result = m_layer->renderer()->style()->marqueeSpeed();
     DOM::NodeImpl* elt = m_layer->renderer()->element();
-    if (elt && elt->id() == ID_MARQUEE) {
+    if (elt && elt->hasTagName(HTMLNames::marquee())) {
         HTMLMarqueeElementImpl* marqueeElt = static_cast<HTMLMarqueeElementImpl*>(elt);
         result = kMax(result, marqueeElt->minimumDelay());
     }

@@ -607,6 +607,9 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
 
 RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 {
+    if (!pseudoStyle)
+        return 0;
+
     RenderStyle *ps = 0;
     if (noninherited_flags._styleType==NOPSEUDO) {
 	ps = pseudoStyle;

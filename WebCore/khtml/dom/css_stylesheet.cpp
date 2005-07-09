@@ -385,7 +385,7 @@ LinkStyle & LinkStyle::operator = (const Node &other)
 
     // ### check link is really linking a style sheet
     if( n && n->isElementNode() &&
-	(n->id() == ID_STYLE || n->id() == ID_LINK) ) {
+	(n->hasTagName(HTMLNames::style()) || n->hasTagName(HTMLNames::link()))) {
     node = n;
     if(node) node->ref();
     }
@@ -399,12 +399,14 @@ LinkStyle::~LinkStyle()
 
 StyleSheet LinkStyle::sheet()
 {
-    int id = node ? node->id() : 0;
+    if (!node)
+        return StyleSheet();
+
     // ### add PI
     return 
-	( id == ID_STYLE) ?
+	(node->hasTagName(HTMLNames::style())) ?
 	static_cast<HTMLStyleElementImpl *>(node)->sheet()
-	: ( (id == ID_LINK) ?
+	: ( node->hasTagName(HTMLNames::link()) ?
 	    static_cast<HTMLLinkElementImpl *>(node)->sheet()
 	    : StyleSheet() );
 }

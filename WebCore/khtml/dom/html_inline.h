@@ -425,7 +425,7 @@ public:
     HTMLQuoteElement(const Node &other) : HTMLElement()
          {(*this)=other;}
 protected:
-    HTMLQuoteElement(HTMLGenericElementImpl *impl);
+    HTMLQuoteElement(HTMLQuoteElementImpl *impl);
 public:
 
     HTMLQuoteElement & operator = (const HTMLQuoteElement &other);

@@ -67,7 +67,8 @@ public:
     HTMLFormElementImpl(DocumentPtr *doc);
     virtual ~HTMLFormElementImpl();
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 3; }
 
     virtual void attach();
     virtual void detach();
@@ -161,8 +162,11 @@ class HTMLGenericFormElementImpl : public HTMLElementImpl
     friend class khtml::RenderFormElement;
 
 public:
-    HTMLGenericFormElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLGenericFormElementImpl();
+
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 1; }
 
     HTMLFormElementImpl *form() { return m_form; }
 
@@ -235,7 +239,6 @@ class HTMLButtonElementImpl : public HTMLGenericFormElementImpl
 {
 public:
     HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
-
     virtual ~HTMLButtonElementImpl();
 
     enum typeEnum {
@@ -244,7 +247,6 @@ public:
         BUTTON
     };
 
-    virtual Id id() const;
     DOMString type() const;
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
@@ -280,11 +282,11 @@ class HTMLFieldSetElementImpl : public HTMLGenericFormElementImpl
 {
 public:
     HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
-
     virtual ~HTMLFieldSetElementImpl();
-
-    virtual Id id() const;
     
+    virtual int tagPriority() const { return 3; }
+    virtual bool checkDTD(const NodeImpl* newChild);
+
     virtual bool isFocusable() const;
     
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -326,9 +328,12 @@ public:
     };
 
     HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLInputElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLInputElementImpl();
+    void init();
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
 
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
 
@@ -459,9 +464,9 @@ public:
     HTMLLabelElementImpl(DocumentPtr *doc);
     virtual ~HTMLLabelElementImpl();
 
+    virtual int tagPriority() const { return 5; }
+
     virtual bool isFocusable() const;
-    
-    virtual Id id() const;
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
@@ -496,7 +501,6 @@ public:
 
     virtual bool isFocusable() const;
     
-    virtual Id id() const;
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
 
     virtual DOMString type() const;
@@ -525,9 +529,13 @@ class HTMLSelectElementImpl : public HTMLGenericFormElementImpl
 
 public:
     HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
+    HTMLSelectElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     ~HTMLSelectElementImpl();
+    void init();
 
-    virtual Id id() const;
+    virtual int tagPriority() const { return 6; }
+    virtual bool checkDTD(const NodeImpl* newChild);
+
     DOMString type() const;
 
     virtual void recalcStyle( StyleChange );
@@ -614,7 +622,7 @@ class HTMLKeygenElementImpl : public HTMLSelectElementImpl
 public:
     HTMLKeygenElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
-    virtual Id id() const;
+    virtual int tagPriority() const { return 0; }
 
     DOMString type() const;
 
@@ -636,7 +644,8 @@ public:
     HTMLOptGroupElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLOptGroupElementImpl();
 
-    virtual Id id() const;
+    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->hasTagName(HTMLNames::option()); }
+
     DOMString type() const;
 
     virtual bool isFocusable() const;
@@ -664,9 +673,12 @@ class HTMLOptionElementImpl : public HTMLGenericFormElementImpl
 public:
     HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual int tagPriority() const { return 2; }
+    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
+
     virtual bool isFocusable() const;
-    
-    virtual Id id() const;
+
     DOMString type() const;
 
     DOMString text() const;
@@ -714,10 +726,9 @@ public:
     HTMLTextAreaElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     ~HTMLTextAreaElementImpl();
 
-    virtual Id id() const;
+    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
 
     long cols() const { return m_cols; }
-
     long rows() const { return m_rows; }
 
     WrapMethod wrap() const { return m_wrap; }
@@ -785,7 +796,8 @@ class HTMLIsIndexElementImpl : public HTMLInputElementImpl
 public:
     HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 

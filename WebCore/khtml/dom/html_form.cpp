@@ -47,7 +47,7 @@ HTMLButtonElement::HTMLButtonElement(HTMLButtonElementImpl *impl) : HTMLElement(
 
 HTMLButtonElement &HTMLButtonElement::operator = (const Node &other)
 {
-    assignOther( other, ID_BUTTON );	
+    assignOther( other, HTMLNames::button() );	
     return *this;
 }
 
@@ -157,7 +157,7 @@ HTMLFieldSetElement::HTMLFieldSetElement(HTMLFieldSetElementImpl *impl) : HTMLEl
 
 HTMLFieldSetElement &HTMLFieldSetElement::operator = (const Node &other)
 {
-    assignOther( other, ID_FIELDSET );
+    assignOther( other, HTMLNames::fieldset() );
     return *this;
 }
 
@@ -193,7 +193,7 @@ HTMLFormElement::HTMLFormElement(HTMLFormElementImpl *impl) : HTMLElement(impl)
 
 HTMLFormElement &HTMLFormElement::operator = (const Node &other)
 {
-    assignOther( other, ID_FORM );
+    assignOther( other, HTMLNames::form() );
     return *this;
 }
 
@@ -311,7 +311,7 @@ HTMLInputElement::HTMLInputElement(HTMLInputElementImpl *impl) : HTMLElement(imp
 
 HTMLInputElement &HTMLInputElement::operator = (const Node &other)
 {
-    assignOther( other, ID_INPUT );
+    assignOther( other, HTMLNames::input() );
     return *this;
 }
 
@@ -574,7 +574,7 @@ HTMLLabelElement::HTMLLabelElement(HTMLLabelElementImpl *impl) : HTMLElement(imp
 
 HTMLLabelElement &HTMLLabelElement::operator = (const Node &other)
 {
-    assignOther( other, ID_LABEL );
+    assignOther( other, HTMLNames::label() );
     return *this;
 }
 
@@ -633,7 +633,7 @@ HTMLLegendElement::HTMLLegendElement(HTMLLegendElementImpl *impl) : HTMLElement(
 
 HTMLLegendElement &HTMLLegendElement::operator = (const Node &other)
 {
-    assignOther( other, ID_LEGEND );
+    assignOther( other, HTMLNames::legend() );
     return *this;
 }
 
@@ -691,7 +691,7 @@ HTMLOptGroupElement::HTMLOptGroupElement(HTMLOptGroupElementImpl *impl) : HTMLEl
 
 HTMLOptGroupElement &HTMLOptGroupElement::operator = (const Node &other)
 {
-    assignOther( other, ID_OPTGROUP );
+    assignOther( other, HTMLNames::optgroup() );
     return *this;
 }
 
@@ -744,7 +744,7 @@ HTMLSelectElement::HTMLSelectElement(HTMLSelectElementImpl *impl) : HTMLElement(
 
 HTMLSelectElement &HTMLSelectElement::operator = (const Node &other)
 {
-    assignOther( other, ID_SELECT );
+    assignOther( other, HTMLNames::select() );
     return *this;
 }
 
@@ -906,7 +906,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(HTMLTextAreaElementImpl *impl) : HTMLEl
 
 HTMLTextAreaElement &HTMLTextAreaElement::operator = (const Node &other)
 {
-    assignOther( other, ID_TEXTAREA );
+    assignOther( other, HTMLNames::textarea() );
     return *this;
 }
 
@@ -1074,7 +1074,7 @@ HTMLOptionElement::HTMLOptionElement(HTMLOptionElementImpl *impl) : HTMLElement(
 
 HTMLOptionElement &HTMLOptionElement::operator = (const Node &other)
 {
-    assignOther( other, ID_OPTION );
+    assignOther( other, HTMLNames::option() );
     return *this;
 }
 
@@ -1182,7 +1182,7 @@ HTMLIsIndexElement::HTMLIsIndexElement(HTMLIsIndexElementImpl *impl) : HTMLEleme
 
 HTMLIsIndexElement &HTMLIsIndexElement::operator = (const Node &other)
 {
-    assignOther( other, ID_ISINDEX );
+    assignOther( other, HTMLNames::isindex() );
     return *this;
 }
 

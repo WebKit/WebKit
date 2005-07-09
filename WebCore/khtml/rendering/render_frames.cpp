@@ -34,7 +34,6 @@
 #include "misc/htmlattrs.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
-#include "misc/htmltags.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
 #include "render_arena.h"
@@ -669,17 +668,17 @@ void RenderPartObject::updateWidget()
 
   setNeedsLayoutAndMinMaxRecalc();
 
-  if (element()->id() == ID_OBJECT) {
+  if (element()->hasTagName(HTMLNames::object())) {
 
       HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
 
       // Check for a child EMBED tag.
       HTMLEmbedElementImpl *embed = 0;
       for (NodeImpl *child = o->firstChild(); child; ) {
-          if (child->id() == ID_EMBED) {
+          if (child->hasTagName(HTMLNames::embed())) {
               embed = static_cast<HTMLEmbedElementImpl *>( child );
               break;
-          } else if (child->id() == ID_OBJECT) {
+          } else if (child->hasTagName(HTMLNames::object())) {
               child = child->nextSibling();         // Don't descend into nested OBJECT tags
           } else {
               child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
@@ -719,7 +718,7 @@ void RenderPartObject::updateWidget()
       // Get the attributes from the params if there is no EMBED tag.
       NodeImpl *child = o->firstChild();
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
-          if (child->id() == ID_PARAM) {
+          if (child->hasTagName(HTMLNames::param())) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
               QString name = p->name().string().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
@@ -810,14 +809,14 @@ void RenderPartObject::updateWidget()
       // Find out if we support fallback content.
       m_hasFallbackContent = false;
       for (NodeImpl *child = o->firstChild(); child && !m_hasFallbackContent; child = child->nextSibling()) {
-          if ((!child->isTextNode() && child->id() != ID_EMBED && child->id() != ID_PARAM) || // Discount <embed> and <param>
+          if ((!child->isTextNode() && !child->hasTagName(HTMLNames::embed()) && !child->hasTagName(HTMLNames::param())) || // Discount <embed> and <param>
               (child->isTextNode() && !child->containsOnlyWhitespace()))
               m_hasFallbackContent = true;
       }
       bool success = part->requestObject( this, url, serviceType, paramNames, paramValues );
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
-  } else if ( element()->id() == ID_EMBED ) {
+  } else if (element()->hasTagName(HTMLNames::embed())) {
 
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());
       url = o->url;
@@ -844,7 +843,7 @@ void RenderPartObject::updateWidget()
       }
       part->requestObject( this, url, serviceType, paramNames, paramValues );
   } else {
-      assert(element()->id() == ID_IFRAME);
+      assert(element()->hasTagName(HTMLNames::iframe()));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
       url = o->m_URL.string();
       if (url.isEmpty()) {
@@ -890,7 +889,7 @@ void RenderPartObject::slotViewCleared()
       QScrollView::ScrollBarMode scroll = QScrollView::Auto;
       int marginw = -1;
       int marginh = -1;
-      if ( element()->id() == ID_IFRAME) {
+      if (element()->hasTagName(HTMLNames::iframe())) {
 	  HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
 	  if(frame->m_frameBorder)
 	      frameStyle = QFrame::Box;
@@ -910,7 +909,7 @@ void RenderPartObject::slotViewCleared()
           kdDebug(6031) << "frame is a KHTMLview!" << endl;
 #endif
           KHTMLView *htmlView = static_cast<KHTMLView *>(view);
-          htmlView->setIgnoreWheelEvents( element()->id() == ID_IFRAME );
+          htmlView->setIgnoreWheelEvents(element()->hasTagName(HTMLNames::iframe()));
           if(marginw != -1) htmlView->setMarginWidth(marginw);
           if(marginh != -1) htmlView->setMarginHeight(marginh);
         }

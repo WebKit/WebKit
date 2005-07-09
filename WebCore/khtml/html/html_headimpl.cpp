@@ -46,17 +46,12 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::base(), doc)
 {
 }
 
 HTMLBaseElementImpl::~HTMLBaseElementImpl()
 {
-}
-
-NodeImpl::Id HTMLBaseElementImpl::id() const
-{
-    return ID_BASE;
 }
 
 void HTMLBaseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -119,7 +114,7 @@ void HTMLBaseElementImpl::setTarget(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::link(), doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -132,11 +127,6 @@ HTMLLinkElementImpl::~HTMLLinkElementImpl()
 {
     if(m_sheet) m_sheet->deref();
     if(m_cachedSheet) m_cachedSheet->deref(this);
-}
-
-NodeImpl::Id HTMLLinkElementImpl::id() const
-{
-    return ID_LINK;
 }
 
 void HTMLLinkElementImpl::setDisabledState(bool _disabled)
@@ -423,17 +413,12 @@ void HTMLLinkElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
+HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::meta(), doc)
 {
 }
 
 HTMLMetaElementImpl::~HTMLMetaElementImpl()
 {
-}
-
-NodeImpl::Id HTMLMetaElementImpl::id() const
-{
-    return ID_META;
 }
 
 void HTMLMetaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -512,7 +497,7 @@ void HTMLMetaElementImpl::setScheme(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
+    : HTMLElementImpl(HTMLNames::script(), doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
 {
 }
 
@@ -520,11 +505,6 @@ HTMLScriptElementImpl::~HTMLScriptElementImpl()
 {
     if (m_cachedScript)
         m_cachedScript->deref(this);
-}
-
-NodeImpl::Id HTMLScriptElementImpl::id() const
-{
-    return ID_SCRIPT;
 }
 
 bool HTMLScriptElementImpl::isURLAttribute(AttributeImpl *attr) const
@@ -697,7 +677,7 @@ void HTMLScriptElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
+HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::style(), doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -706,11 +686,6 @@ HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(d
 HTMLStyleElementImpl::~HTMLStyleElementImpl()
 {
     if(m_sheet) m_sheet->deref();
-}
-
-NodeImpl::Id HTMLStyleElementImpl::id() const
-{
-    return ID_STYLE;
 }
 
 // other stuff...
@@ -824,17 +799,12 @@ void HTMLStyleElementImpl::setType(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc), m_title("")
+    : HTMLElementImpl(HTMLNames::title(), doc), m_title("")
 {
 }
 
 HTMLTitleElementImpl::~HTMLTitleElementImpl()
 {
-}
-
-NodeImpl::Id HTMLTitleElementImpl::id() const
-{
-    return ID_TITLE;
 }
 
 void HTMLTitleElementImpl::insertedIntoDocument()

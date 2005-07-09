@@ -177,7 +177,7 @@ public:
 
     DOMImplementationImpl *implementation() const;
     virtual ElementImpl *documentElement() const;
-    virtual ElementImpl *createElement ( const DOMString &tagName, int &exceptioncode );
+    virtual ElementImpl *createElement(const DOMString &tagName, int &exceptioncode);
     DocumentFragmentImpl *createDocumentFragment ();
     TextImpl *createTextNode ( const DOMString &data );
     CommentImpl *createComment ( const DOMString &data );
@@ -188,7 +188,7 @@ public:
     AttrImpl *createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception);
     EntityReferenceImpl *createEntityReference ( const DOMString &name );
     NodeImpl *importNode( NodeImpl *importedNode, bool deep, int &exceptioncode );
-    virtual ElementImpl *createElementNS ( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode );
+    virtual ElementImpl *createElementNS(const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode);
     ElementImpl *getElementById ( const DOMString &elementId ) const;
     ElementImpl *elementFromPoint ( const int _x, const int _y ) const;
 
@@ -217,9 +217,6 @@ public:
     // Other methods (not part of DOM)
     virtual bool isDocumentNode() const { return true; }
     virtual bool isHTMLDocument() const { return false; }
-
-    ElementImpl *createHTMLElement(const DOMString &tagName, int &exceptioncode);
-    ElementImpl *createHTMLElement(unsigned short tagID);
 
     khtml::CSSStyleSelector *styleSelector() { return m_styleSelector; }
 
@@ -387,9 +384,6 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    // internal
-    NodeImpl *findElement( Id id );
-
     bool prepareMouseEvent( bool readonly, int x, int y, MouseEvent *ev );
 
     virtual bool childAllowed( NodeImpl *newChild );
@@ -399,15 +393,8 @@ public:
     // ### think about implementing ref'counting for the id's
     // in order to be able to reassign those that are no longer in use
     // (could make problems when it is still kept somewhere around, i.e. styleselector)
-    NodeImpl::Id tagId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly);
-    DOMString tagName(NodeImpl::Id _id) const;
-
     NodeImpl::Id attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly);
     DOMString attrName(NodeImpl::Id _id) const;
-
-    // the namespace uri is mapped to the same id for both
-    // tagnames as well as attributes.
-    DOMStringImpl* namespaceURI(NodeImpl::Id _id) const;
 
     StyleSheetListImpl* styleSheets();
 

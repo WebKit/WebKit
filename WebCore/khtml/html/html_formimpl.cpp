@@ -103,7 +103,7 @@ private:
 };
 
 HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::form(), doc)
 {
     collectionInfo = 0;
     m_post = false;
@@ -128,11 +128,6 @@ HTMLFormElementImpl::~HTMLFormElementImpl()
         dormantFormElements[i]->m_form = 0;
     for (unsigned i = 0; i < imgElements.count(); ++i)
         imgElements[i]->m_form = 0;
-}
-
-NodeImpl::Id HTMLFormElementImpl::id() const
-{
-    return ID_FORM;
 }
 
 #if APPLE_CHANGES
@@ -192,7 +187,7 @@ void HTMLFormElementImpl::submitClick()
 {
     bool submitFound = false;
     for (unsigned i = 0; i < formElements.count(); ++i) {
-        if (formElements[i]->id() == ID_INPUT) {
+        if (formElements[i]->hasLocalName(HTMLNames::input())) {
             HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
                 submitFound = true;
@@ -399,7 +394,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
 
                     // if the current type is FILE, then we also need to
                     // include the filename
-                    if (current->nodeType() == Node::ELEMENT_NODE && current->id() == ID_INPUT &&
+                    if (current->hasLocalName(HTMLNames::input()) &&
                         static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::FILE)
                     {
                         QString path = static_cast<HTMLInputElementImpl*>(current)->value().string();
@@ -547,7 +542,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
 #if APPLE_CHANGES
         // Our app needs to get form values for password fields for doing password autocomplete,
         // so we are more lenient in pushing values, and let the app decide what to save when.
-        if (current->id() == ID_INPUT) {
+        if (current->hasLocalName(HTMLNames::input())) {
             HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl*>(current);
             if (input->inputType() == HTMLInputElementImpl::TEXT
                 || input->inputType() ==  HTMLInputElementImpl::PASSWORD
@@ -709,7 +704,7 @@ void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
 {
     for (unsigned i = 0; i < formElements.count(); ++i) {
         HTMLGenericFormElementImpl *current = formElements[i];
-        if (current->id() == ID_INPUT &&
+        if (current->hasLocalName(HTMLNames::input()) &&
             static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::RADIO &&
             current != caller && current->form() == caller->form() && current->name() == caller->name()) {
             static_cast<HTMLInputElementImpl*>(current)->setChecked(false);
@@ -864,8 +859,8 @@ void HTMLFormElementImpl::setTarget(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLElementImpl(doc)
+HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f)
+    : HTMLElementImpl(tagName, doc)
 {
     m_disabled = m_readOnly = false;
     m_dormant = false;
@@ -967,9 +962,8 @@ void HTMLGenericFormElementImpl::removedFromDocument()
 HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
 {
     NodeImpl *p = parentNode();
-    while(p)
-    {
-        if( p->id() == ID_FORM )
+    while(p) {
+        if (p->hasTagName(HTMLNames::form()))
             return static_cast<HTMLFormElementImpl *>(p);
         p = p->parentNode();
     }
@@ -1189,7 +1183,7 @@ void HTMLGenericFormElementImpl::setTabIndex(long value)
 // -------------------------------------------------------------------------
 
 HTMLButtonElementImpl::HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+    : HTMLGenericFormElementImpl(HTMLNames::button(), doc, f)
 {
     m_type = SUBMIT;
     m_dirty = true;
@@ -1198,11 +1192,6 @@ HTMLButtonElementImpl::HTMLButtonElementImpl(DocumentPtr *doc, HTMLFormElementIm
 
 HTMLButtonElementImpl::~HTMLButtonElementImpl()
 {
-}
-
-NodeImpl::Id HTMLButtonElementImpl::id() const
-{
-    return ID_BUTTON;
 }
 
 DOMString HTMLButtonElementImpl::type() const
@@ -1326,7 +1315,7 @@ void HTMLButtonElementImpl::setValue(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-   : HTMLGenericFormElementImpl(doc, f)
+   : HTMLGenericFormElementImpl(HTMLNames::fieldset(), doc, f)
 {
 }
 
@@ -1334,14 +1323,14 @@ HTMLFieldSetElementImpl::~HTMLFieldSetElementImpl()
 {
 }
 
+bool HTMLFieldSetElementImpl::checkDTD(const NodeImpl* newChild)
+{
+	return newChild->hasTagName(HTMLNames::legend()) || HTMLElementImpl::checkDTD(newChild);
+}
+
 bool HTMLFieldSetElementImpl::isFocusable() const
 {
     return false;
-}
-
-NodeImpl::Id HTMLFieldSetElementImpl::id() const
-{
-    return ID_FIELDSET;
 }
 
 DOMString HTMLFieldSetElementImpl::type() const
@@ -1357,8 +1346,21 @@ RenderObject* HTMLFieldSetElementImpl::createRenderer(RenderArena* arena, Render
 // -------------------------------------------------------------------------
 
 HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f), m_imageLoader(0), m_valueMatchesRenderer(false)
+    : HTMLGenericFormElementImpl(HTMLNames::input(), doc, f)
 {
+    init();
+}
+
+HTMLInputElementImpl::HTMLInputElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f)
+    : HTMLGenericFormElementImpl(tagName, doc, f)
+{
+    init();
+}
+
+void HTMLInputElementImpl::init()
+{
+    m_imageLoader = 0;
+    m_valueMatchesRenderer = false;
     m_type = TEXT;
     m_maxLen = -1;
     m_size = 20;
@@ -1376,19 +1378,14 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
 
     m_maxResults = -1;
 
-    if ( m_form )
-        m_autocomplete = f->autoComplete();
+    if (m_form)
+        m_autocomplete = m_form->autoComplete();
 }
 
 HTMLInputElementImpl::~HTMLInputElementImpl()
 {
     if (getDocument()) getDocument()->deregisterMaintainsState(this);
     delete m_imageLoader;
-}
-
-NodeImpl::Id HTMLInputElementImpl::id() const
-{
-    return ID_INPUT;
 }
 
 void HTMLInputElementImpl::setType(const DOMString& t)
@@ -2468,7 +2465,7 @@ void HTMLInputElementImpl::setUseMap(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLLabelElementImpl::HTMLLabelElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::label(), doc)
 {
 }
 
@@ -2479,11 +2476,6 @@ HTMLLabelElementImpl::~HTMLLabelElementImpl()
 bool HTMLLabelElementImpl::isFocusable() const
 {
     return false;
-}
-
-NodeImpl::Id HTMLLabelElementImpl::id() const
-{
-    return ID_LABEL;
 }
 
 void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -2539,7 +2531,7 @@ void HTMLLabelElementImpl::accessKeyAction(bool sendToAnyElement)
 HTMLFormElementImpl *HTMLLabelElementImpl::form()
 {
     for (NodeImpl *p = parentNode(); p != 0; p = p->parentNode()) {
-        if (p->id() == ID_FORM)
+        if (p->hasTagName(HTMLNames::form()))
             return static_cast<HTMLFormElementImpl *>(p);
     }
     
@@ -2569,7 +2561,7 @@ void HTMLLabelElementImpl::setHtmlFor(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLLegendElementImpl::HTMLLegendElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-: HTMLGenericFormElementImpl(doc, f)
+: HTMLGenericFormElementImpl(HTMLNames::legend(), doc, f)
 {
 }
 
@@ -2580,11 +2572,6 @@ HTMLLegendElementImpl::~HTMLLegendElementImpl()
 bool HTMLLegendElementImpl::isFocusable() const
 {
     return false;
-}
-
-NodeImpl::Id HTMLLegendElementImpl::id() const
-{
-    return ID_LEGEND;
 }
 
 RenderObject* HTMLLegendElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
@@ -2621,7 +2608,7 @@ ElementImpl *HTMLLegendElementImpl::formElement()
 {
     // Check if there's a fieldset belonging to this legend.
     NodeImpl *fieldset = parentNode();
-    while (fieldset && fieldset->id() != ID_FIELDSET)
+    while (fieldset && !fieldset->hasTagName(HTMLNames::fieldset()))
         fieldset = fieldset->parentNode();
     if (!fieldset)
         return 0;
@@ -2632,7 +2619,7 @@ ElementImpl *HTMLLegendElementImpl::formElement()
     while ((node = node->traverseNextNode(fieldset))) {
         if (node->isHTMLElement()) {
             HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
-            if (element->id() != ID_LEGEND && element->isGenericFormElement())
+            if (!element->hasLocalName(HTMLNames::legend()) && element->isGenericFormElement())
                 return element;
         }
     }
@@ -2655,8 +2642,20 @@ void HTMLLegendElementImpl::accessKeyAction(bool sendToAnyElement)
 // -------------------------------------------------------------------------
 
 HTMLSelectElementImpl::HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f), m_options(0)
+    : HTMLGenericFormElementImpl(HTMLNames::select(), doc, f), m_options(0)
 {
+    init();
+}
+
+HTMLSelectElementImpl::HTMLSelectElementImpl(const QualifiedName& tagName, DocumentPtr *doc, HTMLFormElementImpl *f)
+    : HTMLGenericFormElementImpl(tagName, doc, f), m_options(0)
+{
+    init();
+}
+
+void HTMLSelectElementImpl::init()
+{
+    m_options = 0;
     m_multiple = false;
     m_recalcListItems = false;
     // 0 means invalid (i.e. not set)
@@ -2673,9 +2672,10 @@ HTMLSelectElementImpl::~HTMLSelectElementImpl()
     }
 }
 
-NodeImpl::Id HTMLSelectElementImpl::id() const
+bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return ID_SELECT;
+	return newChild->isTextNode() || newChild->hasTagName(HTMLNames::option()) || newChild->hasTagName(HTMLNames::optgroup()) ||
+		   newChild->hasTagName(HTMLNames::script());
 }
 
 void HTMLSelectElementImpl::recalcStyle( StyleChange ch )
@@ -2699,7 +2699,7 @@ long HTMLSelectElementImpl::selectedIndex() const
     uint o = 0;
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     for (unsigned int i = 0; i < items.size(); i++) {
-        if (items[i]->id() == ID_OPTION) {
+        if (items[i]->hasLocalName(HTMLNames::option())) {
             if (static_cast<HTMLOptionElementImpl*>(items[i])->selected())
                 return o;
             o++;
@@ -2715,7 +2715,7 @@ void HTMLSelectElementImpl::setSelectedIndex( long  index )
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     int listIndex;
     for (listIndex = 0; listIndex < int(items.size()); listIndex++) {
-        if (items[listIndex]->id() == ID_OPTION)
+        if (items[listIndex]->hasLocalName(HTMLNames::option()))
             static_cast<HTMLOptionElementImpl*>(items[listIndex])->setSelected(false);
     }
     listIndex = optionToListIndex(index);
@@ -2731,7 +2731,7 @@ long HTMLSelectElementImpl::length() const
     uint i;
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     for (i = 0; i < items.size(); i++) {
-        if (items[i]->id() == ID_OPTION)
+        if (items[i]->hasLocalName(HTMLNames::option()))
             len++;
     }
     return len;
@@ -2739,7 +2739,7 @@ long HTMLSelectElementImpl::length() const
 
 void HTMLSelectElementImpl::add( HTMLElementImpl *element, HTMLElementImpl *before )
 {
-    if (!element || element->id() != ID_OPTION)
+    if (!element || !element->hasLocalName(HTMLNames::option()))
         return;
 
     int exceptioncode = 0;
@@ -2773,13 +2773,12 @@ void HTMLSelectElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
-DOMString HTMLSelectElementImpl::value( )
+DOMString HTMLSelectElementImpl::value()
 {
     uint i;
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     for (i = 0; i < items.size(); i++) {
-        if ( items[i]->id() == ID_OPTION
-            && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
+        if (items[i]->hasLocalName(HTMLNames::option()) && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
             return static_cast<HTMLOptionElementImpl*>(items[i])->value();
     }
     return DOMString("");
@@ -2793,13 +2792,13 @@ void HTMLSelectElementImpl::setValue(const DOMString &value)
     // and make it the current selection.
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     for (unsigned i = 0; i < items.size(); i++)
-        if (items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->value() == value) {
+        if (items[i]->hasLocalName(HTMLNames::option()) && static_cast<HTMLOptionElementImpl*>(items[i])->value() == value) {
             static_cast<HTMLOptionElementImpl*>(items[i])->setSelected(true);
             return;
         }
 }
 
-QString HTMLSelectElementImpl::state( )
+QString HTMLSelectElementImpl::state()
 {
 #if !APPLE_CHANGES
     QString state;
@@ -2812,7 +2811,7 @@ QString HTMLSelectElementImpl::state( )
     QChar stateChars[l];
     
     for(int i = 0; i < l; i++)
-        if(items[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
+        if(items[i]->hasLocalName(HTMLNames::option()) && static_cast<HTMLOptionElementImpl*>(items[i])->selected())
             stateChars[i] = 'X';
         else
             stateChars[i] = '.';
@@ -2849,7 +2848,7 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
 
     int l = items.count();
     for(int i = 0; i < l; i++) {
-        if(items[i]->id() == ID_OPTION) {
+        if(items[i]->hasLocalName(HTMLNames::option())) {
             HTMLOptionElementImpl* oe = static_cast<HTMLOptionElementImpl*>(items[i]);
             oe->setSelected(state[i] == 'X');
         }
@@ -2941,7 +2940,7 @@ bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
 
     uint i;
     for (i = 0; i < items.size(); i++) {
-        if (items[i]->id() == ID_OPTION) {
+        if (items[i]->hasLocalName(HTMLNames::option())) {
             HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[i]);
             if (option->selected()) {
                 encoded_values.appendData(name(), option->value());
@@ -2954,7 +2953,7 @@ bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
     // in any case. otherwise we have no consistency with the DOM interface. FIXME!
     // we return the first one if it was a combobox select
     if (!successful && !m_multiple && m_size <= 1 && items.size() &&
-        (items[0]->id() == ID_OPTION) ) {
+        (items[0]->hasLocalName(HTMLNames::option()))) {
         HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[0]);
         if (option->value().isNull())
             encoded_values.appendData(name(), option->text().string().stripWhiteSpace());
@@ -2977,7 +2976,7 @@ int HTMLSelectElementImpl::optionToListIndex(int optionIndex) const
     for (;
          optionIndex2 < int(items.size()) && optionIndex2 <= optionIndex;
          listIndex++) { // not a typo!
-        if (items[listIndex]->id() == ID_OPTION)
+        if (items[listIndex]->hasLocalName(HTMLNames::option()))
             optionIndex2++;
     }
     listIndex--;
@@ -2988,13 +2987,13 @@ int HTMLSelectElementImpl::listToOptionIndex(int listIndex) const
 {
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     if (listIndex < 0 || listIndex >= int(items.size()) ||
-        items[listIndex]->id() != ID_OPTION)
+        !items[listIndex]->hasLocalName(HTMLNames::option()))
         return -1;
 
     int optionIndex = 0; // actual index of option not counting OPTGROUP entries that may be in list
     int i;
     for (i = 0; i < listIndex; i++)
-        if (items[i]->id() == ID_OPTION)
+        if (items[i]->hasLocalName(HTMLNames::option()))
             optionIndex++;
     return optionIndex;
 }
@@ -3020,13 +3019,13 @@ void HTMLSelectElementImpl::recalcListItems()
     m_listItems.resize(0);
     HTMLOptionElementImpl* foundSelected = 0;
     while(current) {
-        if (current->id() == ID_OPTGROUP && current->firstChild()) {
+        if (current->hasTagName(HTMLNames::optgroup()) && current->firstChild()) {
             // ### what if optgroup contains just comments? don't want one of no options in it...
             m_listItems.resize(m_listItems.size()+1);
             m_listItems[m_listItems.size()-1] = static_cast<HTMLGenericFormElementImpl*>(current);
             current = current->firstChild();
         }
-        if (current->id() == ID_OPTION) {
+        if (current->hasTagName(HTMLNames::option())) {
             m_listItems.resize(m_listItems.size()+1);
             m_listItems[m_listItems.size()-1] = static_cast<HTMLGenericFormElementImpl*>(current);
             if (!foundSelected && !m_multiple && m_size <= 1) {
@@ -3068,7 +3067,7 @@ void HTMLSelectElementImpl::reset()
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
     uint i;
     for (i = 0; i < items.size(); i++) {
-        if (items[i]->id() == ID_OPTION) {
+        if (items[i]->hasLocalName(HTMLNames::option())) {
             HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[i]);
             bool selected = (!option->getAttribute(ATTR_SELECTED).isNull());
             option->setSelected(selected);
@@ -3086,7 +3085,7 @@ void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selected
         QMemArray<HTMLGenericFormElementImpl*> items = listItems();
         uint i;
         for (i = 0; i < items.size(); i++) {
-            if (items[i]->id() == ID_OPTION)
+            if (items[i]->hasLocalName(HTMLNames::option()))
                 static_cast<HTMLOptionElementImpl*>(items[i])->m_selected = (items[i] == selectedOption);
         }
     }
@@ -3133,7 +3132,7 @@ void HTMLSelectElementImpl::setSize(long size)
 // -------------------------------------------------------------------------
 
 HTMLKeygenElementImpl::HTMLKeygenElementImpl(DocumentPtr* doc, HTMLFormElementImpl* f)
-    : HTMLSelectElementImpl(doc, f)
+    : HTMLSelectElementImpl(HTMLNames::keygen(), doc, f)
 {
     QStringList keys = KSSLKeyGen::supportedKeySizes();
     for (QStringList::Iterator i = keys.begin(); i != keys.end(); ++i) {
@@ -3141,11 +3140,6 @@ HTMLKeygenElementImpl::HTMLKeygenElementImpl(DocumentPtr* doc, HTMLFormElementIm
         addChild(o);
         o->addChild(new TextImpl(doc, DOMString(*i)));
     }
-}
-
-NodeImpl::Id HTMLKeygenElementImpl::id() const
-{
-    return ID_KEYGEN;
 }
 
 DOMString HTMLKeygenElementImpl::type() const
@@ -3202,7 +3196,7 @@ bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
 // -------------------------------------------------------------------------
 
 HTMLOptGroupElementImpl::HTMLOptGroupElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+    : HTMLGenericFormElementImpl(HTMLNames::optgroup(), doc, f)
 {
 }
 
@@ -3213,11 +3207,6 @@ HTMLOptGroupElementImpl::~HTMLOptGroupElementImpl()
 bool HTMLOptGroupElementImpl::isFocusable() const
 {
     return false;
-}
-
-NodeImpl::Id HTMLOptGroupElementImpl::id() const
-{
-    return ID_OPTGROUP;
 }
 
 DOMString HTMLOptGroupElementImpl::type() const
@@ -3273,7 +3262,7 @@ void HTMLOptGroupElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 void HTMLOptGroupElementImpl::recalcSelectOptions()
 {
     NodeImpl *select = parentNode();
-    while (select && select->id() != ID_SELECT)
+    while (select && !select->hasTagName(HTMLNames::select()))
         select = select->parentNode();
     if (select)
         static_cast<HTMLSelectElementImpl*>(select)->setRecalcListItems();
@@ -3292,7 +3281,7 @@ void HTMLOptGroupElementImpl::setLabel(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLOptionElementImpl::HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+    : HTMLGenericFormElementImpl(HTMLNames::option(), doc, f)
 {
     m_selected = false;
 }
@@ -3300,11 +3289,6 @@ HTMLOptionElementImpl::HTMLOptionElementImpl(DocumentPtr *doc, HTMLFormElementIm
 bool HTMLOptionElementImpl::isFocusable() const
 {
     return false;
-}
-
-NodeImpl::Id HTMLOptionElementImpl::id() const
-{
-    return ID_OPTION;
 }
 
 DOMString HTMLOptionElementImpl::type() const
@@ -3353,8 +3337,7 @@ long HTMLOptionElementImpl::index() const
     int l = items.count();
     int optionIndex = 0;
     for(int i = 0; i < l; i++) {
-        if(items[i]->id() == ID_OPTION)
-        {
+        if (items[i]->hasLocalName(HTMLNames::option())) {
             if (static_cast<HTMLOptionElementImpl*>(items[i]) == this)
                 return optionIndex;
             optionIndex++;
@@ -3419,7 +3402,7 @@ void HTMLOptionElementImpl::childrenChanged()
 HTMLSelectElementImpl *HTMLOptionElementImpl::getSelect() const
 {
     NodeImpl *select = parentNode();
-    while (select && select->id() != ID_SELECT)
+    while (select && !select->hasTagName(HTMLNames::select()))
         select = select->parentNode();
     return static_cast<HTMLSelectElementImpl*>(select);
 }
@@ -3447,7 +3430,7 @@ void HTMLOptionElementImpl::setLabel(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLTextAreaElementImpl::HTMLTextAreaElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f), m_valueIsValid(false), m_valueMatchesRenderer(false)
+    : HTMLGenericFormElementImpl(HTMLNames::textarea(), doc, f), m_valueIsValid(false), m_valueMatchesRenderer(false)
 {
     // DTD requires rows & cols be specified, but we will provide reasonable defaults
     m_rows = 2;
@@ -3458,11 +3441,6 @@ HTMLTextAreaElementImpl::HTMLTextAreaElementImpl(DocumentPtr *doc, HTMLFormEleme
 HTMLTextAreaElementImpl::~HTMLTextAreaElementImpl()
 {
     if (getDocument()) getDocument()->deregisterMaintainsState(this);
-}
-
-NodeImpl::Id HTMLTextAreaElementImpl::id() const
-{
-    return ID_TEXTAREA;
 }
 
 DOMString HTMLTextAreaElementImpl::type() const
@@ -3714,15 +3692,10 @@ void HTMLTextAreaElementImpl::setRows(long rows)
 // -------------------------------------------------------------------------
 
 HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLInputElementImpl(doc, f)
+    : HTMLInputElementImpl(HTMLNames::isindex(), doc, f)
 {
     m_type = TEXT;
     setOverrideName("isindex");
-}
-
-NodeImpl::Id HTMLIsIndexElementImpl::id() const
-{
-    return ID_ISINDEX;
 }
 
 void HTMLIsIndexElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)

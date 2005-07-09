@@ -43,7 +43,7 @@ HTMLBlockquoteElement::HTMLBlockquoteElement(HTMLBlockquoteElementImpl *impl) : 
 
 HTMLBlockquoteElement &HTMLBlockquoteElement::operator = (const Node &other)
 {
-    assignOther( other, ID_BLOCKQUOTE );
+    assignOther( other, HTMLNames::blockquote() );
     return *this;
 }
 
@@ -84,7 +84,7 @@ HTMLDivElement::HTMLDivElement(HTMLDivElementImpl *impl) : HTMLElement(impl)
 
 HTMLDivElement &HTMLDivElement::operator = (const Node &other)
 {
-    assignOther( other, ID_DIV );
+    assignOther( other, HTMLNames::div() );
     return *this;
 }
 
@@ -125,7 +125,7 @@ HTMLHRElement::HTMLHRElement(HTMLHRElementImpl *impl) : HTMLElement(impl)
 
 HTMLHRElement &HTMLHRElement::operator = (const Node &other)
 {
-    assignOther( other, ID_HR );
+    assignOther( other, HTMLNames::hr() );
     return *this;
 }
 
@@ -205,16 +205,17 @@ HTMLHeadingElement::HTMLHeadingElement(HTMLHeadingElementImpl *impl) : HTMLEleme
 
 HTMLHeadingElement &HTMLHeadingElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_H1 ||
-       other.elementId() != ID_H2 ||
-       other.elementId() != ID_H3 ||
-       other.elementId() != ID_H4 ||
-       other.elementId() != ID_H5 ||
-       other.elementId() != ID_H6 )
+    if (!other.handle()->hasTagName(HTMLNames::h1()) &&
+        !other.handle()->hasTagName(HTMLNames::h2()) &&
+        !other.handle()->hasTagName(HTMLNames::h3()) &&
+        !other.handle()->hasTagName(HTMLNames::h4()) &&
+        !other.handle()->hasTagName(HTMLNames::h5()) &&
+        !other.handle()->hasTagName(HTMLNames::h6()))
     {
 	if ( impl ) impl->deref();
 	impl = 0;
     } else {
+
     Node::operator = (other);
     }
     return *this;
@@ -257,7 +258,7 @@ HTMLParagraphElement::HTMLParagraphElement(HTMLParagraphElementImpl *impl) : HTM
 
 HTMLParagraphElement &HTMLParagraphElement::operator = (const Node &other)
 {
-    assignOther( other, ID_P );
+    assignOther( other, HTMLNames::p() );
     return *this;
 }
 
@@ -298,7 +299,7 @@ HTMLPreElement::HTMLPreElement(HTMLPreElementImpl *impl) : HTMLElement(impl)
 
 HTMLPreElement &HTMLPreElement::operator = (const Node &other)
 {
-    assignOther( other, ID_PRE );
+    assignOther( other, HTMLNames::pre() );
     return *this;
 }
 

@@ -93,9 +93,15 @@ StyleListImpl::~StyleListImpl()
 
 // --------------------------------------------------------------------------------
 
+const QualifiedName& CSSSelector::anyTagName()
+{
+    static QualifiedName anyName(nullAtom, starAtom, starAtom);
+    return anyName;
+}
+
 void CSSSelector::print(void)
 {
-    kdDebug( 6080 ) << "[Selector: tag = " <<       tag << ", attr = \"" << attr << "\", match = \"" << match
+    kdDebug( 6080 ) << "[Selector: tag = " <<       tag.localName().string() << ", attr = \"" << attr << "\", match = \"" << match
 		    << "\" value = \"" << value.string().latin1() << "\" relation = " << (int)relation
 		    << "]" << endl;
     if ( tagHistory )
@@ -107,7 +113,7 @@ unsigned int CSSSelector::specificity()
 {
     // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
     // isn't quite correct.
-    int s = ((localNamePart(tag) == anyLocalName) ? 0 : 1);
+    int s = (tag.localName() == starAtom ? 0 : 1);
     switch(match)
     {
     case Id:
@@ -240,60 +246,59 @@ bool CSSSelector::operator == ( const CSSSelector &other )
 
 DOMString CSSSelector::selectorText() const
 {
-    // FIXME: Support namespaces when dumping the selector text.  This requires preserving
-    // the original namespace prefix used. Ugh. -dwh
+    // FIXME: Support namespaces when dumping the selector text. -dwh
     DOMString str;
     const CSSSelector* cs = this;
-    Q_UINT16 tag = localNamePart(cs->tag);
-    if ( tag == anyLocalName && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
+    const AtomicString& localName = cs->tag.localName();
+    if (localName == starAtom && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact)
     {
         str = "#";
         str += cs->value.string();
     }
-    else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::Class )
+    else if (localName == starAtom && cs->attr == ATTR_CLASS && cs->match == CSSSelector::Class)
     {
         str = ".";
         str += cs->value.string();
     }
-    else if ( tag == anyLocalName && cs->match == CSSSelector::PseudoClass )
+    else if (localName == starAtom  && cs->match == CSSSelector::PseudoClass)
     {
         str = ":";
         str += cs->value.string();
     }
-    else if ( tag == anyLocalName && cs->match == CSSSelector::PseudoElement )
+    else if (localName == starAtom && cs->match == CSSSelector::PseudoElement)
     {
         str = "::";
         str += cs->value.string();
     }
     else
     {
-        if ( tag == anyLocalName )
+        if (localName == starAtom)
             str = "*";
         else
-            str = getTagName( cs->tag );
-        if ( cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
+            str = localName;
+        if (cs->attr == ATTR_ID && cs->match == CSSSelector::Exact)
         {
             str += "#";
             str += cs->value.string();
         }
-        else if ( cs->attr == ATTR_CLASS && cs->match == CSSSelector::Class )
+        else if (cs->attr == ATTR_CLASS && cs->match == CSSSelector::Class)
         {
             str += ".";
             str += cs->value.string();
         }
-        else if ( cs->match == CSSSelector::PseudoClass )
+        else if (cs->match == CSSSelector::PseudoClass)
         {
             str += ":";
             str += cs->value.string();
         }
-        else if ( cs->match == CSSSelector::PseudoElement )
+        else if (cs->match == CSSSelector::PseudoElement)
         {
             str += "::";
             str += cs->value.string();
         }
         // optional attribute
-        if ( cs->attr ) {
-            DOMString attrName = getAttrName( cs->attr );
+        if (cs->attr) {
+            DOMString attrName = getAttrName(cs->attr);
             str += "[";
             str += attrName;
             switch (cs->match) {

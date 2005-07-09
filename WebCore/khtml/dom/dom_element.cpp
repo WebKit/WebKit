@@ -141,7 +141,7 @@ Element::~Element()
 DOMString Element::tagName() const
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return static_cast<ElementImpl*>(impl)->tagName();
+    return static_cast<ElementImpl*>(impl)->nodeName();
 }
 
 DOMString Element::getAttribute( const DOMString &name )

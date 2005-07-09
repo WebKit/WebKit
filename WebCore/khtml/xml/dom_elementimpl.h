@@ -23,13 +23,14 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_ELEMENTImpl_h_
-#define _DOM_ELEMENTImpl_h_
+#ifndef _DOM_ELEMENTIMPL_h_
+#define _DOM_ELEMENTIMPL_h_
 
 #include "dom_nodeimpl.h"
 #include "xml/dom_stringimpl.h"
 #include "misc/shared.h"
 #include "css/css_valueimpl.h"
+#include "dom_qname.h"
 
 #if APPLE_CHANGES
 #ifdef __OBJC__
@@ -128,8 +129,8 @@ public:
     // DOM methods overridden from  parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual DOMString prefix() const;
-    virtual void setPrefix(const DOMString &_prefix, int &exceptioncode );
+    virtual const AtomicString& prefix() const;
+    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode );
 
     virtual DOMString nodeValue() const;
     virtual void setNodeValue( const DOMString &, int &exceptioncode );
@@ -156,7 +157,7 @@ class ElementImpl : public ContainerNodeImpl
     friend class NodeImpl;
     friend class khtml::CSSStyleSelector;
 public:
-    ElementImpl(DocumentPtr *doc);
+    ElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
     ~ElementImpl();
 
     // Used to quickly determine whether or not an element has a given CSS class.
@@ -186,15 +187,23 @@ public:
     SharedPtr<AttrImpl> setAttributeNodeNS(AttrImpl *newAttr, int &exception) { return setAttributeNode(newAttr, exception); }
     SharedPtr<AttrImpl> removeAttributeNode(AttrImpl *oldAttr, int &exception);
     
-    DOMString prefix() const { return m_prefix; }
-    void setPrefix(const DOMString &_prefix, int &exceptioncode );
-
     virtual CSSStyleDeclarationImpl *style();
 
+    virtual const QualifiedName& tagName() const { return m_tagName; }
+    virtual bool hasTagName(const QualifiedName& tagName) const { return m_tagName.matches(tagName); }
+    
+    // A fast function for checking the local name against another atomic string.
+    bool hasLocalName(const AtomicString& other) const { return m_tagName.localName() == other; }
+    bool hasLocalName(const QualifiedName& other) const { return m_tagName.localName() == other.localName(); }
+
+    virtual const AtomicString& localName() const { return m_tagName.localName(); }
+    virtual const AtomicString& prefix() const { return m_tagName.prefix(); }
+    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode);
+    virtual const AtomicString& namespaceURI() const { return m_tagName.namespaceURI(); }
+    
     // DOM methods overridden from  parent classes
-    virtual DOMString tagName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep ) = 0;
+    virtual NodeImpl *cloneNode(bool deep);
     virtual DOMString nodeName() const;
     virtual bool isElementNode() const { return true; }
     virtual void insertedIntoDocument();
@@ -221,7 +230,6 @@ public:
     virtual void recalcStyle( StyleChange = NoChange );
 
     virtual void mouseEventHandler( MouseEvent */*ev*/, bool /*inside*/ ) {};
-    virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
  
     virtual AttributeImpl* createAttribute(Id id, DOMStringImpl* value);
@@ -254,29 +262,7 @@ private:
 
 protected: // member variables
     mutable NamedAttrMapImpl *namedAttrMap;
-    DOMStringImpl *m_prefix;
-};
-
-
-class XMLElementImpl : public ElementImpl
-{
-
-public:
-    XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_tagName);
-    XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_qualifiedName, DOMStringImpl *_namespaceURI);
-    ~XMLElementImpl();
-
-    // DOM methods overridden from  parent classes
-    virtual DOMString namespaceURI() const;
-    virtual DOMString localName() const;
-    virtual NodeImpl *cloneNode ( bool deep );
-
-    // Other methods (not part of DOM)
-    virtual bool isXMLElementNode() const { return true; }
-    virtual Id id() const { return m_id; }
-
-protected:
-    Id m_id;
+    QualifiedName m_tagName;
 };
 
 // the map of attributes of an element
@@ -414,7 +400,7 @@ private:
 class StyledElementImpl : public ElementImpl
 {
 public:
-    StyledElementImpl(DocumentPtr *doc);
+    StyledElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
     virtual ~StyledElementImpl();
 
     virtual bool isStyledElement() const { return true; }

@@ -26,7 +26,8 @@
 #include "rendering/render_canvas.h"
 
 #include "xml/dom_docimpl.h"
-#include "misc/htmltags.h"
+
+#include "htmlnames.h"
 
 #include <qpainter.h>
 
@@ -37,6 +38,7 @@
 //#define BOX_DEBUG
 
 using DOM::DocumentImpl;
+using DOM::HTMLNames;
 using namespace khtml;
 
 const int cMarkerPadding = 7;
@@ -213,7 +215,7 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
             break;
         
         if (currChild->style()->htmlHacks() && currChild->element() &&
-            (currChild->element()->id() == ID_UL || currChild->element()->id() == ID_OL))
+            (currChild->element()->hasTagName(HTMLNames::ul())|| currChild->element()->hasTagName(HTMLNames::ol())))
             break;
             
         RenderObject* lineBox = getParentOfFirstLineBox(currChild, marker);

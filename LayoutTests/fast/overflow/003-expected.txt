@@ -4,14 +4,14 @@ layer at (10,10) size 780x302
   RenderBlock {fake} at (10,10) size 780x302 [bgcolor=#FFFF00]
 layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
   RenderBlock {channel} at (0,0) size 282x302 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
-    RenderBlock {TITLE} at (11,11) size 255x19
+    RenderBlock {title} at (11,11) size 255x19
       RenderText {TEXT} at (0,0) size 154x19
         text run at (0,0) width 154: "scottandrew.com"
     RenderBlock {description} at (11,40) size 255x12
       RenderText {TEXT} at (0,0) size 191x12
         text run at (0,0) width 191: "DHTML, DOM and JavaScript News"
     RenderBlock {item} at (1,62) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 233x15
+      RenderInline {title} at (0,0) size 233x15
         RenderText {TEXT} at (10,11) size 233x15
           text run at (10,11) width 233: "DHTML Animation Array Generator"
       RenderText {TEXT} at (0,0) size 0x0
@@ -24,7 +24,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,169) size 265x82 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 177x15
+      RenderInline {title} at (0,0) size 177x15
         RenderText {TEXT} at (10,11) size 177x15
           text run at (10,11) width 177: "DOM and Extended Entries"
       RenderText {TEXT} at (187,11) size 4x15
@@ -38,7 +38,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,261) size 265x82 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 164x15
+      RenderInline {title} at (0,0) size 164x15
         RenderText {TEXT} at (10,11) size 164x15
           text run at (10,11) width 164: "cellspacing and the DOM"
       RenderText {TEXT} at (174,11) size 4x15
@@ -52,7 +52,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,353) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 177x15
+      RenderInline {title} at (0,0) size 177x15
         RenderText {TEXT} at (10,11) size 177x15
           text run at (10,11) width 177: "contenteditable for Mozilla"
       RenderText {TEXT} at (187,11) size 4x15
@@ -67,7 +67,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,460) size 265x82 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 182x30
+      RenderInline {title} at (0,0) size 182x30
         RenderText {TEXT} at (10,11) size 182x30
           text run at (10,11) width 182: "DHTML Timeline/Keyframe"
           text run at (10,26) width 69: "Animation"
@@ -81,7 +81,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,552) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 157x30
+      RenderInline {title} at (0,0) size 157x30
         RenderText {TEXT} at (10,11) size 157x30
           text run at (10,11) width 157: "DynAPI 2.9 and Mozilla"
           text run at (10,26) width 124: "compatibility ports"
@@ -96,7 +96,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,659) size 265x67 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 154x15
+      RenderInline {title} at (0,0) size 154x15
         RenderText {TEXT} at (10,11) size 154x15
           text run at (10,11) width 154: "!lineDraw bookmarklet"
       RenderText {TEXT} at (164,11) size 4x15
@@ -109,7 +109,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,736) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 201x15
+      RenderInline {title} at (0,0) size 201x15
         RenderText {TEXT} at (10,11) size 201x15
           text run at (10,11) width 201: "Mozilla, DHTML and DOM links"
       RenderText {TEXT} at (211,11) size 4x15
@@ -124,7 +124,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,843) size 265x67 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 103x15
+      RenderInline {title} at (0,0) size 103x15
         RenderText {TEXT} at (10,11) size 103x15
           text run at (10,11) width 103: "Mozilla 1.0 RC2"
       RenderText {TEXT} at (113,11) size 4x15
@@ -137,7 +137,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,920) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 236x30
+      RenderInline {title} at (0,0) size 236x30
         RenderText {TEXT} at (10,11) size 236x30
           text run at (10,11) width 236: "javascript: is deprecated. Don't use"
           text run at (10,26) width 13: "it."
@@ -152,7 +152,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,1027) size 265x67 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 176x15
+      RenderInline {title} at (0,0) size 176x15
         RenderText {TEXT} at (10,11) size 176x15
           text run at (10,11) width 176: "Conditional Script Loading"
       RenderText {TEXT} at (0,0) size 0x0
@@ -163,7 +163,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,1104) size 265x82 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 115x15
+      RenderInline {title} at (0,0) size 115x15
         RenderText {TEXT} at (10,11) size 115x15
           text run at (10,11) width 115: "Stories and Tools"
       RenderText {TEXT} at (125,11) size 4x15
@@ -177,7 +177,7 @@ layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
       RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderBlock {item} at (1,1196) size 265x97 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) none (1px solid #CCCCCC) none]
-      RenderInline {TITLE} at (0,0) size 166x15
+      RenderInline {title} at (0,0) size 166x15
         RenderText {TEXT} at (10,11) size 166x15
           text run at (10,11) width 166: "Whole Lotto Gecko Links"
       RenderText {TEXT} at (176,11) size 4x15

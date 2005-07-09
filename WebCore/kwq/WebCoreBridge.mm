@@ -39,7 +39,6 @@
 #import "html_imageimpl.h"
 #import "htmlattrs.h"
 #import "htmlediting.h"
-#import "htmltags.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
 #import "kjs_proxy.h"
@@ -67,7 +66,6 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 #import "KWQClipboard.h"
-#import "KWQDOMNode.h"
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
 #import "KWQFoundationExtras.h"
@@ -100,6 +98,7 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
+using DOM::HTMLNames;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
@@ -913,7 +912,7 @@ static NSView *viewForElement(ElementImpl *elementImpl)
 static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
-    if (node && idFromNode(node) == ID_INPUT) {
+    if (node->hasTagName(HTMLNames::input())) {
         return static_cast<HTMLInputElementImpl *>(node);
     }
     return nil;
@@ -926,7 +925,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // maps.google.com crashes otherwise because it is an xslt file
     // that contains <form> elements that aren't in any namespace, so
     // they come out as generic CML elements
-    if (node && node->isHTMLElement() && idFromNode(node) == ID_FORM) {
+    if (node && node->hasTagName(HTMLNames::form())) {
         return static_cast<HTMLFormElementImpl *>(node);
     }
     return nil;
@@ -1096,7 +1095,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString attr;
-            if (idFromNode(i) == ID_OBJECT) {
+            if (i->hasTagName(HTMLNames::object())) {
                 attr = i->getAttribute(ATTR_DATA);
             } else {
                 attr = i->getAttribute(ATTR_SRC);
@@ -1108,9 +1107,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString alt;
-            if (idFromNode(i) == ID_INPUT)
+            if (i->hasTagName(HTMLNames::input()))
                 alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-            else if (idFromNode(i) == ID_IMG)
+            else if (i->hasTagName(HTMLNames::img()))
                 alt = static_cast<HTMLImageElementImpl *>(i)->altText();
             if (!alt.isNull()) {
                 QString altText = alt.string();

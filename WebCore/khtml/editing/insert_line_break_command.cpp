@@ -29,7 +29,7 @@
 #include "visible_position.h"
 #include "visible_units.h"
 
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom2_rangeimpl.h"
@@ -50,6 +50,7 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -111,13 +112,13 @@ void InsertLineBreakCommand::doApply()
         // This makes the "real" BR we want to insert appear in the rendering without any 
         // significant side effects (and no real worries either since you can't arrow past 
         // this extra one.
-        if (pos.node()->id() == ID_BR && pos.offset() == 0) {
+        if (pos.node()->hasTagName(HTMLNames::br()) && pos.offset() == 0) {
             // Already placed in a trailing BR. Insert "real" BR before it and leave the selection alone.
             insertNodeBefore(nodeToInsert, pos.node());
         }
         else {
             NodeImpl *next = pos.node()->traverseNextNode();
-            bool hasTrailingBR = next && next->id() == ID_BR && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
+            bool hasTrailingBR = next && next->hasTagName(HTMLNames::br()) && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
             insertNodeAfterPosition(nodeToInsert, pos);
             if (hasTrailingBR) {
                 setEndingSelection(Selection(Position(next, 0), DOWNSTREAM));

@@ -30,6 +30,8 @@
 #define HTML_ELEMENT_H
 
 #include <dom/dom_element.h>
+#include "dom_qname.h"
+
 class KHTMLView;
 
 namespace DOM {
@@ -225,7 +227,7 @@ protected:
     /*
      * @internal
      */
-    void assignOther( const Node &other, int elementId );
+    void assignOther( const Node &other, const QualifiedName& tagName );
 };
 
 }; //namespace

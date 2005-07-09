@@ -27,7 +27,6 @@
 
 #include "dom_docimpl.h"
 #include "dom_position.h"
-#include "htmltags.h"
 #include "jsediting.h"
 #include "khtmlview.h"
 #include "render_canvas.h"
@@ -116,9 +115,13 @@ static QString getTagName(NodeImpl *n)
 {
     if (n->isDocumentNode())
         return "";
-    if (n->id() <= ID_LAST_TAG)
-        return getTagName(n->id()).string();
-    return n->nodeName().string();
+    if (n->isTextNode())
+        return "TEXT"; // FIXME: Remove once the layout tests are ready to change.
+    if (n->isCommentNode())
+        return "COMMENT";
+    if (n->isHTMLElement())
+        return n->nodeName().upper().string(); // FIXME: We want to dump the real DOM name, not an uppercase name.
+    return n->nodeName().string(); 
 }
 
 static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)

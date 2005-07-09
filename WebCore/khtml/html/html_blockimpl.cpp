@@ -37,17 +37,12 @@ using namespace khtml;
 using namespace DOM;
 
 HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::blockquote(), doc)
 {
 }
 
 HTMLBlockquoteElementImpl::~HTMLBlockquoteElementImpl()
 {
-}
-
-NodeImpl::Id HTMLBlockquoteElementImpl::id() const
-{
-    return ID_BLOCKQUOTE;
 }
 
 DOMString HTMLBlockquoteElementImpl::cite() const
@@ -63,17 +58,12 @@ void HTMLBlockquoteElementImpl::setCite(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLDivElementImpl::HTMLDivElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::div(), doc)
 {
 }
 
 HTMLDivElementImpl::~HTMLDivElementImpl()
 {
-}
-
-NodeImpl::Id HTMLDivElementImpl::id() const
-{
-    return ID_DIV;
 }
 
 bool HTMLDivElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -120,17 +110,12 @@ void HTMLDivElementImpl::setAlign(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLHRElementImpl::HTMLHRElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::hr(), doc)
 {
 }
 
 HTMLHRElementImpl::~HTMLHRElementImpl()
 {
-}
-
-NodeImpl::Id HTMLHRElementImpl::id() const
-{
-    return ID_HR;
 }
 
 bool HTMLHRElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -252,9 +237,19 @@ void HTMLHRElementImpl::setWidth(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLHeadingElementImpl::HTMLHeadingElementImpl(DocumentPtr *doc, ushort _tagid)
-    : HTMLGenericElementImpl(doc, _tagid)
+HTMLHeadingElementImpl::HTMLHeadingElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : HTMLElementImpl(tagName, doc)
 {
+}
+
+bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
+{
+    if (newChild->hasTagName(HTMLNames::h1()) || newChild->hasTagName(HTMLNames::h2()) ||
+        newChild->hasTagName(HTMLNames::h3()) || newChild->hasTagName(HTMLNames::h4()) ||
+        newChild->hasTagName(HTMLNames::h5()) || newChild->hasTagName(HTMLNames::h6()))
+        return false;
+
+    return inEitherTagList(newChild);
 }
 
 DOMString HTMLHeadingElementImpl::align() const
@@ -270,13 +265,13 @@ void HTMLHeadingElementImpl::setAlign(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLParagraphElementImpl::HTMLParagraphElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::p(), doc)
 {
 }
 
-NodeImpl::Id HTMLParagraphElementImpl::id() const
+bool HTMLParagraphElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return ID_P;
+    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(HTMLNames::table()));
 }
 
 bool HTMLParagraphElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -322,8 +317,8 @@ void HTMLParagraphElementImpl::setAlign(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLPreElementImpl::HTMLPreElementImpl(DocumentPtr *doc, unsigned short _tagid)
-    : HTMLGenericElementImpl(doc, _tagid)
+HTMLPreElementImpl::HTMLPreElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : HTMLElementImpl(tagName, doc)
 {
 }
 
@@ -343,14 +338,9 @@ void HTMLPreElementImpl::setWidth(long width)
 const int defaultMinimumDelay = 60;
 
 HTMLMarqueeElementImpl::HTMLMarqueeElementImpl(DocumentPtr *doc)
-: HTMLElementImpl(doc),
+: HTMLElementImpl(HTMLNames::marquee(), doc),
   m_minimumDelay(defaultMinimumDelay)
 {
-}
-
-NodeImpl::Id HTMLMarqueeElementImpl::id() const
-{
-    return ID_MARQUEE;
 }
 
 bool HTMLMarqueeElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
@@ -436,20 +426,4 @@ void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         default:
             HTMLElementImpl::parseMappedAttribute(attr);
     }
-}
-
-// ------------------------------------------------------------------------
-
-HTMLLayerElementImpl::HTMLLayerElementImpl(DocumentPtr *doc)
-    : HTMLDivElementImpl( doc )
-{
-}
-
-HTMLLayerElementImpl::~HTMLLayerElementImpl()
-{
-}
-
-NodeImpl::Id HTMLLayerElementImpl::id() const
-{
-    return ID_LAYER;
 }

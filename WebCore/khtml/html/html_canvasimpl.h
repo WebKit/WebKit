@@ -43,10 +43,7 @@ class HTMLCanvasElementImpl
 {
 public:
     HTMLCanvasElementImpl(DocumentPtr *doc);
-
     ~HTMLCanvasElementImpl();
-
-    virtual Id id() const;
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *);

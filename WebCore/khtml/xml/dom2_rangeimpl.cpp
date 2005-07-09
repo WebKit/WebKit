@@ -29,7 +29,6 @@
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
-#include "misc/htmltags.h"
 #include "editing/markup.h"
 #include "editing/visible_position.h"
 #include "editing/visible_units.h"

@@ -34,7 +34,7 @@ class QString;
 
 namespace DOM {
 
-    class HTMLElementImpl;
+class HTMLElementImpl;
 
 class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectClient
 {

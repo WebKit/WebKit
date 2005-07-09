@@ -104,8 +104,8 @@ public:
     void deleteRule ( unsigned long index, int &exceptioncode );
     unsigned long addRule ( const DOMString &selector, const DOMString &style, long index, int &exceptioncode );
 
-    void addNamespace(CSSParser* p, const DOM::DOMString& prefix, const DOM::DOMString& uri);
-    void determineNamespace(Q_UINT32& id, const DOM::DOMString& prefix);
+    void addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri);
+    const AtomicString& determineNamespace(const AtomicString& prefix);
     
     virtual bool parseString( const DOMString &string, bool strict = true );
 

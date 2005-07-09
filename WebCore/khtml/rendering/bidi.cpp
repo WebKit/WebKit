@@ -360,10 +360,9 @@ inline QChar::Direction BidiIterator::direction() const
     if (!obj->isText())
         return QChar::DirON;
 
-    RenderText *renderTxt = static_cast<RenderText *>( obj );
-    if ( pos >= renderTxt->stringLength() )
+    RenderText *renderTxt = static_cast<RenderText *>(obj);
+    if (pos >= renderTxt->stringLength())
         return QChar::DirON;
-        
     return renderTxt->text()[pos].direction();
 }
 

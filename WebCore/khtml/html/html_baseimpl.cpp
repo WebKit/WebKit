@@ -48,7 +48,7 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc), m_linkDecl(0)
+    : HTMLElementImpl(HTMLNames::body(), doc), m_linkDecl(0)
 {
 }
 
@@ -59,11 +59,6 @@ HTMLBodyElementImpl::~HTMLBodyElementImpl()
         m_linkDecl->setParent(0);
         m_linkDecl->deref();
     }
-}
-
-NodeImpl::Id HTMLBodyElementImpl::id() const
-{
-    return ID_BODY;
 }
 
 void HTMLBodyElementImpl::createLinkDecl()
@@ -289,7 +284,18 @@ void HTMLBodyElementImpl::setVLink(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::frame(), doc)
+{
+    init();
+}
+
+HTMLFrameElementImpl::HTMLFrameElementImpl(const QualifiedName& tagName, DocumentPtr *doc)
+    : HTMLElementImpl(tagName, doc)
+{
+    init();
+}
+
+void HTMLFrameElementImpl::init()
 {
     m_frameBorder = true;
     m_frameBorderSet = false;
@@ -301,11 +307,6 @@ HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
 
 HTMLFrameElementImpl::~HTMLFrameElementImpl()
 {
-}
-
-NodeImpl::Id HTMLFrameElementImpl::id() const
-{
-    return ID_FRAME;
 }
 
 bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
@@ -482,7 +483,7 @@ void HTMLFrameElementImpl::attach()
 
     // inherit default settings from parent frameset
     for (NodeImpl *node = parentNode(); node; node = node->parentNode())
-        if (node->id() == ID_FRAMESET) {
+        if (node->hasTagName(HTMLNames::frameset())) {
             HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
             if (!m_frameBorderSet)
                 m_frameBorder = frameset->frameBorder();
@@ -661,7 +662,7 @@ void HTMLFrameElementImpl::setSrc(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::frameset(), doc)
 {
     // default value for rows and cols...
     m_totalRows = 1;
@@ -685,9 +686,11 @@ HTMLFrameSetElementImpl::~HTMLFrameSetElementImpl()
         delete [] m_cols;
 }
 
-NodeImpl::Id HTMLFrameSetElementImpl::id() const
+bool HTMLFrameSetElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return ID_FRAMESET;
+    // FIXME: Old code had adjacent double returns and seemed to want to do something with NOFRAMES (but didn't).
+    // What is the correct behavior?
+    return newChild->hasTagName(HTMLNames::frameset()) || newChild->hasTagName(HTMLNames::frame());
 }
 
 void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -752,8 +755,7 @@ void HTMLFrameSetElementImpl::attach()
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
     while(node)
     {
-        if(node->id() == ID_FRAMESET)
-        {
+        if (node->hasTagName(HTMLNames::frameset())) {
             HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
             if(!frameBorderSet)  frameborder = frameset->frameBorder();
             if(!noresize)  noresize = frameset->noResize();
@@ -817,17 +819,12 @@ void HTMLFrameSetElementImpl::setRows(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::head(), doc)
 {
 }
 
 HTMLHeadElementImpl::~HTMLHeadElementImpl()
 {
-}
-
-NodeImpl::Id HTMLHeadElementImpl::id() const
-{
-    return ID_HEAD;
 }
 
 DOMString HTMLHeadElementImpl::profile() const
@@ -840,20 +837,23 @@ void HTMLHeadElementImpl::setProfile(const DOMString &value)
     setAttribute(ATTR_PROFILE, value);
 }
 
+bool HTMLHeadElementImpl::checkDTD(const NodeImpl* newChild)
+{
+    return newChild->hasTagName(HTMLNames::title()) || newChild->hasTagName(HTMLNames::isindex()) ||
+           newChild->hasTagName(HTMLNames::base()) || newChild->hasTagName(HTMLNames::script()) ||
+           newChild->hasTagName(HTMLNames::style()) || newChild->hasTagName(HTMLNames::meta()) ||
+           newChild->hasTagName(HTMLNames::link()) || newChild->isTextNode();
+}
+
 // -------------------------------------------------------------------------
 
 HTMLHtmlElementImpl::HTMLHtmlElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::html(), doc)
 {
 }
 
 HTMLHtmlElementImpl::~HTMLHtmlElementImpl()
 {
-}
-
-NodeImpl::Id HTMLHtmlElementImpl::id() const
-{
-    return ID_HTML;
 }
 
 DOMString HTMLHtmlElementImpl::version() const
@@ -866,9 +866,17 @@ void HTMLHtmlElementImpl::setVersion(const DOMString &value)
     setAttribute(ATTR_VERSION, value);
 }
 
+bool HTMLHtmlElementImpl::checkDTD(const NodeImpl* newChild)
+{
+    // FIXME: Why is <script> allowed here?
+    return newChild->hasTagName(HTMLNames::head()) || newChild->hasTagName(HTMLNames::body()) ||
+           newChild->hasTagName(HTMLNames::frameset()) || newChild->hasTagName(HTMLNames::noframes()) ||
+           newChild->hasTagName(HTMLNames::script());
+}
+
 // -------------------------------------------------------------------------
 
-HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(doc)
+HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(HTMLNames::iframe(), doc)
 {
     m_frameBorder = false;
     m_marginWidth = -1;
@@ -878,11 +886,6 @@ HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElemen
 
 HTMLIFrameElementImpl::~HTMLIFrameElementImpl()
 {
-}
-
-NodeImpl::Id HTMLIFrameElementImpl::id() const
-{
-    return ID_IFRAME;
 }
 
 bool HTMLIFrameElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const

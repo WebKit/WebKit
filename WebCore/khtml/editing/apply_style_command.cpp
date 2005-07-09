@@ -33,7 +33,7 @@
 #include "css/cssproperties.h"
 #include "dom/dom_string.h"
 #include "html/html_elementimpl.h"
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "misc/htmlattrs.h"
 #include "rendering/render_object.h"
 #include "xml/dom_docimpl.h"
@@ -65,6 +65,7 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -249,12 +250,12 @@ bool isStyleSpan(const NodeImpl *node)
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
-    return elem->id() == ID_SPAN && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
+    return elem->hasLocalName(HTMLNames::span()) && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
 }
 
 static bool isEmptyStyleSpan(const NodeImpl *node)
 {
-    if (!node || !node->isHTMLElement() || node->id() != ID_SPAN)
+    if (!node || !node->isHTMLElement() || !node->hasTagName(HTMLNames::span()))
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
@@ -264,7 +265,7 @@ static bool isEmptyStyleSpan(const NodeImpl *node)
 
 static bool isEmptyFontTag(const NodeImpl *node)
 {
-    if (!node || node->id() != ID_FONT)
+    if (!node || !node->hasTagName(HTMLNames::font()))
         return false;
 
     const ElementImpl *elem = static_cast<const ElementImpl *>(node);
@@ -275,7 +276,7 @@ static bool isEmptyFontTag(const NodeImpl *node)
 static ElementImpl *createFontElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *fontNode = document->createHTMLElement("font", exceptionCode);
+    ElementImpl *fontNode = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "font", exceptionCode);
     ASSERT(exceptionCode == 0);
     fontNode->setAttribute(ATTR_CLASS, styleSpanClassString());
     return fontNode;
@@ -284,7 +285,7 @@ static ElementImpl *createFontElement(DocumentImpl *document)
 ElementImpl *createStyleSpanElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *styleElement = document->createHTMLElement("SPAN", exceptionCode);
+    ElementImpl *styleElement = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "span", exceptionCode);
     ASSERT(exceptionCode == 0);
     styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
     return styleElement;
@@ -586,7 +587,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
                     // the current group.
                     if (node == end.node() || 
                         runStart->parentNode() != next->parentNode() || 
-                        (next->isHTMLElement() && next->id() != ID_BR) || 
+                        (next->isElementNode() && !next->hasTagName(HTMLNames::br())) || 
                         (next->renderer() && !next->renderer()->isInline()))
                         break;
                     node = next;
@@ -611,11 +612,11 @@ bool ApplyStyleCommand::isHTMLStyleNode(CSSMutableStyleDeclarationImpl *style, H
     for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         switch ((*it).id()) {
             case CSS_PROP_FONT_WEIGHT:
-                if (elem->id() == ID_B)
+                if (elem->hasLocalName(HTMLNames::b()))
                     return true;
                 break;
             case CSS_PROP_FONT_STYLE:
-                if (elem->id() == ID_I)
+                if (elem->hasLocalName(HTMLNames::i()))
                     return true;
         }
     }
@@ -638,7 +639,7 @@ void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclarationImpl *styl
     ASSERT(style);
     ASSERT(elem);
 
-    if (elem->id() != ID_FONT)
+    if (!elem->hasLocalName(HTMLNames::font()))
         return;
 
     int exceptionCode = 0;
@@ -1047,7 +1048,7 @@ static bool areIdenticalElements(NodeImpl *first, NodeImpl *second)
     ElementImpl *firstElement = static_cast<ElementImpl *>(first);
     ElementImpl *secondElement = static_cast<ElementImpl *>(second);
     
-    if (firstElement->id() != secondElement->id())
+    if (!firstElement->tagName().matches(secondElement->tagName()))
         return false;
 
     NamedAttrMapImpl *firstMap = firstElement->attributes();
@@ -1129,7 +1130,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
         endOffset = parentLastOffset;
     }
 
-    if (!endNode->isElementNode() || endNode->id() == ID_BR)
+    if (!endNode->isElementNode() || endNode->hasTagName(HTMLNames::br()))
         return false;
 
     NodeImpl *nextSibling = endNode->nextSibling();
@@ -1274,14 +1275,14 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     }
 
     if (styleChange.applyBold()) {
-        ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
+        ElementImpl *boldElement = document()->createElementNS(HTMLNames::xhtmlNamespaceURI(), "b", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(boldElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, boldElement);
     }
 
     if (styleChange.applyItalic()) {
-        ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
+        ElementImpl *italicElement = document()->createElementNS(HTMLNames::xhtmlNamespaceURI(), "i", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(italicElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement);

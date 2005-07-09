@@ -26,7 +26,7 @@
 #include "xml/dom_xmlimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_tableimpl.h"
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "misc/htmlattrs.h"
 #include "misc/loader.h"
 
@@ -44,6 +44,7 @@ using DOM::DocumentImpl;
 using DOM::DocumentPtr;
 using DOM::DOMString;
 using DOM::ElementImpl;
+using DOM::HTMLNames;
 using DOM::HTMLScriptElementImpl;
 using DOM::HTMLTableSectionElementImpl;
 using DOM::Node;
@@ -322,18 +323,18 @@ void XMLTokenizer::startElement(const xmlChar *name, const xmlChar **libxmlAttri
     // FIXME: This hack ensures implicit table bodies get constructed in XHTML and XML files.
     // We want to consolidate this with the HTML parser and HTML DOM code at some point.
     // For now, it's too risky to rip that code up.
-    if (m_currentNode->id() == ID_TABLE &&
-        newElement->id() == ID_TR &&
+    if (m_currentNode->hasTagName(HTMLNames::table()) &&
+        newElement->hasTagName(HTMLNames::tr()) &&
         m_currentNode->isHTMLElement() && newElement->isHTMLElement()) {
         NodeImpl* implicitTBody =
-           new HTMLTableSectionElementImpl( m_doc, ID_TBODY, true /* implicit */ );
+           new HTMLTableSectionElementImpl(HTMLNames::tbody(), m_doc, true /* implicit */);
         m_currentNode->addChild(implicitTBody);
         if (m_view && !implicitTBody->attached())
             implicitTBody->attach();
         m_currentNode = implicitTBody;
     }
 
-    if (newElement->id() == ID_SCRIPT)
+    if (newElement->hasTagName(HTMLNames::script()))
         static_cast<HTMLScriptElementImpl *>(newElement)->setCreatedByParser(true);
 
     if (m_currentNode->addChild(newElement)) {
@@ -611,30 +612,30 @@ void XMLTokenizer::insertErrorMessageBlock()
     DocumentImpl *doc = m_doc->document();
     NodeImpl* root = doc->documentElement();
     if (!root) {
-        root = doc->createElementNS(XHTML_NAMESPACE, "html", exceptioncode);
-        NodeImpl* body = doc->createElementNS(XHTML_NAMESPACE, "body", exceptioncode);
+        root = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "html", exceptioncode);
+        NodeImpl* body = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "body", exceptioncode);
         root->appendChild(body, exceptioncode);
         doc->appendChild(root, exceptioncode);
         root = body;
     }
 
-    ElementImpl* reportElement = doc->createElementNS(XHTML_NAMESPACE, "parsererror", exceptioncode);
+    ElementImpl* reportElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "parsererror", exceptioncode);
     reportElement->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
-    ElementImpl* h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
+    ElementImpl* h3 = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "h3", exceptioncode);
     h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
     reportElement->appendChild(h3, exceptioncode);
-    ElementImpl* fixed = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
+    ElementImpl* fixed = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "div", exceptioncode);
     fixed->setAttribute(ATTR_STYLE, "font-family:monospace;font-size:12px");
     NodeImpl* textNode = doc->createTextNode(m_errorMessages);
     fixed->appendChild(textNode, exceptioncode);
     reportElement->appendChild(fixed, exceptioncode);
-    h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
+    h3 = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "h3", exceptioncode);
     reportElement->appendChild(h3, exceptioncode);
     
     h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
 #ifdef KHTML_XSLT
     if (doc->transformSourceDocument()) {
-        ElementImpl* par = doc->createElementNS(XHTML_NAMESPACE, "p", exceptioncode);
+        ElementImpl* par = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "p", exceptioncode);
         reportElement->appendChild(par, exceptioncode);
         par->setAttribute(ATTR_STYLE, "white-space: normal");
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);
@@ -650,7 +651,7 @@ void XMLTokenizer::addScripts(NodeImpl *n)
     // Recursively go through the entire document tree, looking for html <script> tags. For each of these
     // that is found, add it to the m_scripts list from which they will be executed
 
-    if (n->id() == ID_SCRIPT) {
+    if (n->hasTagName(HTMLNames::script())) {
         m_scripts.append(static_cast<HTMLScriptElementImpl*>(n));
     }
 

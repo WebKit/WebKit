@@ -164,7 +164,7 @@ namespace DOM {
 	int maxParsedProperties;
 	bool inParseShortHand;
 
-        Q_UINT16 defaultNamespace;
+        AtomicString defaultNamespace;
         
 	static CSSParser *currentParser;
 

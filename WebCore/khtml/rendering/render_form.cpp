@@ -797,7 +797,7 @@ RenderObject* RenderFieldset::findLegend()
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
       if (!legend->isFloatingOrPositioned() && legend->element() &&
-          legend->element()->id() == ID_LEGEND)
+          legend->element()->hasTagName(HTMLNames::legend()))
         return legend;
     }
     return 0;
@@ -1191,7 +1191,7 @@ void RenderSelect::updateFromElement()
             static_cast<KComboBox*>(m_widget)->clear();
 
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
-            if (listItems[listIndex]->id() == ID_OPTGROUP) {
+            if (listItems[listIndex]->hasTagName(HTMLNames::optgroup())) {
                 QString label = listItems[listIndex]->getAttribute(ATTR_LABEL).string();
                 label.replace(QChar('\\'), backslashAsCurrencySymbol());
 
@@ -1215,14 +1215,14 @@ void RenderSelect::updateFromElement()
                     static_cast<KComboBox*>(m_widget)->insertItem(label, listIndex);
 #endif
             }
-            else if (listItems[listIndex]->id() == ID_OPTION) {
+            else if (listItems[listIndex]->hasTagName(HTMLNames::option())) {
                 QString itemText = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text().string();
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.
                 itemText = itemText.stripWhiteSpace();
                 
-                if (listItems[listIndex]->parentNode()->id() == ID_OPTGROUP)
+                if (listItems[listIndex]->parentNode()->hasTagName(HTMLNames::optgroup()))
                     itemText.prepend("    ");
 
 #if APPLE_CHANGES
@@ -1348,7 +1348,7 @@ void RenderSelect::layout( )
 
     bool foundOption = false;
     for (uint i = 0; i < listItems.size() && !foundOption; i++)
-	foundOption = (listItems[i]->id() == ID_OPTION);
+	foundOption = (listItems[i]->hasTagName(HTMLNames::option()));
 
     m_widget->setEnabled(foundOption && ! element()->disabled());
 }
@@ -1362,12 +1362,12 @@ void RenderSelect::slotSelected(int index)
     QMemArray<HTMLGenericFormElementImpl*> listItems = element()->listItems();
     if(index >= 0 && index < int(listItems.size()))
     {
-        bool found = ( listItems[index]->id() == ID_OPTION );
+        bool found = (listItems[index]->hasTagName(HTMLNames::option()));
 
         if ( !found ) {
             // this one is not selectable,  we need to find an option element
             while ( ( unsigned ) index < listItems.size() ) {
-                if ( listItems[index]->id() == ID_OPTION ) {
+                if (listItems[index]->hasTagName(HTMLNames::option())) {
                     found = true;
                     break;
                 }
@@ -1376,7 +1376,7 @@ void RenderSelect::slotSelected(int index)
 
             if ( !found ) {
                 while ( index >= 0 ) {
-                    if ( listItems[index]->id() == ID_OPTION ) {
+                    if (listItems[index]->hasTagName(HTMLNames::option())) {
                         found = true;
                         break;
                     }
@@ -1390,7 +1390,7 @@ void RenderSelect::slotSelected(int index)
                 static_cast<ComboBoxWidget*>( m_widget )->setCurrentItem( index );
 
             for ( unsigned int i = 0; i < listItems.size(); ++i )
-                if ( listItems[i]->id() == ID_OPTION && i != (unsigned int) index )
+                if (listItems[i]->hasTagName(HTMLNames::option()) && i != (unsigned int) index)
                     static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = false;
 
             static_cast<HTMLOptionElementImpl*>(listItems[index])->m_selected = true;
@@ -1411,7 +1411,7 @@ void RenderSelect::slotSelectionChanged()
     for ( unsigned i = 0; i < listItems.count(); i++ )
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
-        if ( listItems[i]->id() == ID_OPTION )
+        if (listItems[i]->hasTagName(HTMLNames::option()))
             static_cast<HTMLOptionElementImpl*>( listItems[i] )
                 ->m_selected = static_cast<KListBox*>( m_widget )->isSelected( i );
 
@@ -1453,7 +1453,7 @@ void RenderSelect::updateSelection()
         // if multi-select, we select only the new selected index
         KListBox *listBox = static_cast<KListBox*>(m_widget);
         for (i = 0; i < int(listItems.size()); i++)
-            listBox->setSelected(i,listItems[i]->id() == ID_OPTION &&
+            listBox->setSelected(i, listItems[i]->hasTagName(HTMLNames::option()) &&
                                 static_cast<HTMLOptionElementImpl*>(listItems[i])->selected());
     }
     else {
@@ -1461,7 +1461,7 @@ void RenderSelect::updateSelection()
         unsigned firstOption = listItems.size();
         i = listItems.size();
         while (i--)
-            if (listItems[i]->id() == ID_OPTION) {
+            if (listItems[i]->hasTagName(HTMLNames::option())) {
                 if (found)
                     static_cast<HTMLOptionElementImpl*>(listItems[i])->m_selected = false;
                 else if (static_cast<HTMLOptionElementImpl*>(listItems[i])->selected()) {

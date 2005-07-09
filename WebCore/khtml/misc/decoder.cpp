@@ -41,6 +41,12 @@ using namespace khtml;
 #include <kdebug.h>
 #include <klocale.h>
 
+#include "htmlnames.h"
+
+using DOM::AtomicString;
+using DOM::HTMLNames;
+using DOM::nullAtom;
+
 class KanjiCode
 {
 public:
@@ -526,12 +532,8 @@ QString Decoder::decode(const char *data, int len)
                         len++;
                     }
 		    tmp[len] = 0;
-                    int id = khtml::getTagID(tmp, len);
-                    if(end) id += ID_CLOSE_TAG;
-
-                    switch( id ) {
-                    case ID_META:
-                    {
+                    AtomicString tag(tmp);
+                    if (!end && tag == HTMLNames::meta()) {
                         // found a meta tag...
                         //ptr += 5;
                         const char * end = ptr;
@@ -570,28 +572,11 @@ QString Decoder::decode(const char *data, int len)
 
 			    pos = endpos + 1;
 			}
-		    }
-                    case (ID_META+ID_CLOSE_TAG):
-                    case ID_SCRIPT:
-                    case (ID_SCRIPT+ID_CLOSE_TAG):
-                    case ID_NOSCRIPT:
-                    case (ID_NOSCRIPT+ID_CLOSE_TAG):
-                    case ID_STYLE:
-                    case (ID_STYLE+ID_CLOSE_TAG):
-                    case ID_LINK:
-                    case (ID_LINK+ID_CLOSE_TAG):
-                    case ID_OBJECT:
-                    case (ID_OBJECT+ID_CLOSE_TAG):
-                    case ID_TITLE:
-                    case (ID_TITLE+ID_CLOSE_TAG):
-                    case ID_BASE:
-                    case (ID_BASE+ID_CLOSE_TAG):
-                    case ID_HTML:
-                    case ID_HEAD:
-                    case 0:
-                    case (0 + ID_CLOSE_TAG ):
-                        break;
-                    default:
+		    } else if (tag != HTMLNames::script() && tag != HTMLNames::noscript() && tag != HTMLNames::style() &&
+                               tag != HTMLNames::link() && tag != HTMLNames::meta() && tag != HTMLNames::object() &&
+                               tag != HTMLNames::title() && tag != HTMLNames::base() && 
+                               (end || tag != HTMLNames::html()) &&
+                               (end || tag != HTMLNames::head()) && isalpha(tmp[0])) {
                         body = true;
 #ifdef DECODE_DEBUG
 			kdDebug( 6005 ) << "Decoder: no charset found. Id=" << id << endl;

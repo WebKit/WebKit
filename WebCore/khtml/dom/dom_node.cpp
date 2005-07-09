@@ -324,7 +324,7 @@ bool Node::isSupported( const DOMString &feature, const DOMString &version ) con
 DOMString Node::namespaceURI(  ) const
 {
     if (!impl) return DOMString();
-    return impl->getDocument()->namespaceURI(impl->id());
+    return impl->namespaceURI();
 }
 
 DOMString Node::prefix(  ) const
@@ -337,7 +337,7 @@ void Node::setPrefix(const DOMString &prefix )
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
     int exceptioncode = 0;
-    impl->setPrefix(prefix,exceptioncode);
+    impl->setPrefix(prefix.implementation(),exceptioncode);
     if (exceptioncode)
         throw DOMException(exceptioncode);
 }
@@ -374,13 +374,6 @@ bool Node::dispatchEvent(const Event &evt)
     if (exceptioncode)
 	throw DOMException(exceptioncode);
     return r;
-}
-
-
-unsigned int Node::elementId() const
-{
-    if (!impl) return 0;
-    return impl->id();
 }
 
 unsigned long Node::index() const

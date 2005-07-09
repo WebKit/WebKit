@@ -226,12 +226,12 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
 
     // For <q><p/></q>, if this object is the inline continuation of the <q>, we only want to generate
     // :after content and not :before content.
-    if (type == RenderStyle::BEFORE && isInlineContinuation())
+    if (newContentWanted && type == RenderStyle::BEFORE && isInlineContinuation())
         newContentWanted = false;
 
     // Similarly, if we're the beginning of a <q>, and there's an inline continuation for our object,
     // then we don't generate the :after content.
-    if (type == RenderStyle::AFTER && isRenderInline() && continuation())
+    if (newContentWanted && type == RenderStyle::AFTER && isRenderInline() && continuation())
         newContentWanted = false;
     
     // If we don't want generated content any longer, or if we have generated content, but it's no longer

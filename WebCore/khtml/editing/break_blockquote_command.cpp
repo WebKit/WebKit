@@ -28,7 +28,7 @@
 #include "htmlediting.h"
 #include "visible_position.h"
 
-#include "misc/htmltags.h"
+#include "htmlnames.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 
@@ -43,6 +43,7 @@ using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
+using DOM::HTMLNames;
 
 namespace khtml {
 
@@ -146,7 +147,7 @@ void BreakBlockquoteCommand::doApply()
         bool startIsBR = false;
         if (startNode != topBlockquote) {
             NodeImpl *n = startNode;
-            startIsBR = n->id() == ID_BR;
+            startIsBR = n->hasTagName(HTMLNames::br());
             if (startIsBR)
                 n = n->nextSibling();
             while (n) {

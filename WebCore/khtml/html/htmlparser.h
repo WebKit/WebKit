@@ -29,19 +29,9 @@
 #ifndef HTMLPARSER_H
 #define HTMLPARSER_H
 
-// 0 all
-// 1 domtree + rendertree + styleForElement, no layouting
-// 2 domtree only
-#define SPEED_DEBUG 0
-
-#ifdef SPEED_DEBUG
-#include <qdatetime.h>
-#endif
-
 #include "dom/dom_string.h"
 #include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
-#include "misc/htmltags.h"
 
 class KHTMLView;
 class HTMLStackElem;
@@ -61,18 +51,16 @@ namespace khtml {
     class Token;
 };
 
-class KHTMLParser;
-
 /**
  * The parser for html. It receives a stream of tokens from the HTMLTokenizer, and
  * builds up the Document structure form it.
  */
-class KHTMLParser
+class HTMLParser
 {
 public:
-    KHTMLParser(KHTMLView *w, DOM::DocumentPtr *i, bool includesComments=false);
-    KHTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentPtr *doc, bool includesComments=false);
-    virtual ~KHTMLParser();
+    HTMLParser(KHTMLView *w, DOM::DocumentPtr *i, bool includesComments=false);
+    HTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentPtr *doc, bool includesComments=false);
+    virtual ~HTMLParser();
 
     /**
      * parses one token delivered by the tokenizer
@@ -89,7 +77,7 @@ public:
      */
     void reset();
 
-    bool skipMode() const { return (discard_until != 0); }
+    bool skipMode() const { return !discard_until.isNull(); }
     bool noSpaces() const { return !inBody; }
     bool selectMode() const { return inSelect; }
 
@@ -97,48 +85,70 @@ public:
     DOM::DocumentPtr *docPtr() const { return document; }
 
 protected:
-    void setCurrent(DOM::NodeImpl *newCurrent);
+    void setCurrent(DOM::NodeImpl* newCurrent);
+    void setSkipMode(const DOM::QualifiedName& qName) { discard_until = qName.localName(); }
 
     KHTMLView *HTMLWidget;
     DOM::DocumentPtr *document;
 
     /*
-     * generate an element from the token
+     * generate a node from the token
      */
-    DOM::NodeImpl *getElement(khtml::Token *);
+    DOM::NodeImpl *getNode(khtml::Token *);
+    bool textCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool commentCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool headCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool bodyCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool framesetCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool iframeCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool formCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool isindexCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool selectCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool ddCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool dtCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool nestedCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool nestedStyleCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool tableCellCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool tableSectionCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool noembedCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool noscriptCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool noframesCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool nolayerCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
 
     void processCloseTag(khtml::Token *);
 
     bool insertNode(DOM::NodeImpl *n, bool flat = false);
+    bool handleError(DOM::NodeImpl* n, bool flat, const DOM::AtomicString& localName, int tagPriority);
+    
+    // The currently active element (the one new elements will be added to).  Can be a DocumentFragment, a Document or an Element.
+    DOM::NodeImpl* current;
 
-    /*
-     * The currently active element (the one new elements will be added to)
-     */
-    DOM::NodeImpl *current;
     bool currentIsReferenced;
 
     HTMLStackElem *blockStack;
 
-    void pushBlock( int _id, int _level);
-
-    void popBlock( int _id );
+    void pushBlock(const DOM::AtomicString& tagName, int _level);
+    void popBlock(const DOM::AtomicString& tagName);
+    void popBlock(const DOM::QualifiedName& qName) { return popBlock(qName.localName()); } // Convenience function for readability.
     void popOneBlock(bool delBlock = true);
     void popInlineBlocks();
 
-    void freeBlock( void);
+    void freeBlock();
 
     void createHead();
 
-    bool isResidualStyleTag(int _id);
-    bool isAffectedByResidualStyle(int _id);
+    bool isResidualStyleTag(const DOM::AtomicString& tagName);
+    bool isAffectedByResidualStyle(const DOM::AtomicString& tagName);
     void handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem);
     void reopenResidualStyleTags(HTMLStackElem* elem, DOM::NodeImpl* malformedTableParent);
 
-    bool allowNestedRedundantTag(int _id);
+    bool allowNestedRedundantTag(const DOM::AtomicString& tagName);
     
-    static bool isHeaderTag(int _id);
+    static bool isHeaderTag(const DOM::AtomicString& tagName);
     void popNestedHeaderTag();
 
+    bool isInline(DOM::NodeImpl* node) const;
+    
     /*
      * currently active form
      */
@@ -175,18 +185,12 @@ protected:
     /*
      * tells the parser to discard all tags, until it reaches the one specified
      */
-    int discard_until;
+    DOM::AtomicString discard_until;
 
     bool headLoaded;
     int inStrayTableContent;
 
     bool includesCommentsInDOM;
-    
-    ushort forbiddenTag[ID_LAST_TAG + 1];
-    
-#if SPEED_DEBUG > 0
-    QTime qt;
-#endif
 };
-
+    
 #endif // HTMLPARSER_H

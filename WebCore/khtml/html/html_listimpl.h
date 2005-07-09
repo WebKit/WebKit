@@ -35,10 +35,11 @@ namespace DOM
 class HTMLUListElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLUListElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
+    HTMLUListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::ul(), doc) {}
     virtual ~HTMLUListElementImpl() {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
 
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *);
@@ -57,9 +58,10 @@ public:
 class HTMLDirectoryElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
+    HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::dir(), doc) {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
 
     bool compact() const;
     void setCompact(bool);
@@ -70,9 +72,10 @@ public:
 class HTMLMenuElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
+    HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::menu(), doc) {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
 
     bool compact() const;
     void setCompact(bool);
@@ -80,14 +83,15 @@ public:
 
 // -------------------------------------------------------------------------
 
-class HTMLOListElementImpl : public HTMLUListElementImpl
+class HTMLOListElementImpl : public HTMLElementImpl
 {
 public:
     HTMLOListElementImpl(DocumentPtr *doc)
-        : HTMLUListElementImpl(doc) { _start = 1; }
-
-    virtual Id id() const;
+        : HTMLElementImpl(HTMLNames::ol(), doc) { _start = 1; }
     
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
+
     virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *);
 
@@ -110,10 +114,11 @@ class HTMLLIElementImpl : public HTMLElementImpl
 {
 public:
     HTMLLIElementImpl(DocumentPtr *doc)
-        : HTMLElementImpl(doc) { isValued = false; }
+        : HTMLElementImpl(HTMLNames::li(), doc) { isValued = false; }
     virtual ~HTMLLIElementImpl() {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual int tagPriority() const { return 3; }
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
@@ -136,10 +141,11 @@ private:
 class HTMLDListElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLDListElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc) {}
+    HTMLDListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::dl(), doc) {}
     virtual ~HTMLDListElementImpl() {}
 
-    virtual Id id() const;
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
+    virtual int tagPriority() const { return 5; }
 
     bool compact() const;
     void setCompact(bool);

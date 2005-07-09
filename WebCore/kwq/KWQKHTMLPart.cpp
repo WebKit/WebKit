@@ -32,13 +32,15 @@
 
 using DOM::DocumentImpl;
 using DOM::HTMLDocumentImpl;
+using DOM::HTMLNames;
 using DOM::NodeImpl;
 
+// FIXME: What on earth is this single tiny file with only this method doing here?
 bool KWQKHTMLPart::isFrameSet() const
 {
     DocumentImpl *document = d->m_doc;
     if (!document || !document->isHTMLDocument())
         return false;
     NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
-    return body && body->renderer() && body->id() == ID_FRAMESET;
+    return body && body->renderer() && body->hasTagName(HTMLNames::frameset());
 }

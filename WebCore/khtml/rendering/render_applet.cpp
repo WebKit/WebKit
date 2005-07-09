@@ -36,7 +36,6 @@
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
 
 #include "java/kjavaappletwidget.h"
-#include "misc/htmltags.h"
 #include "html/html_objectimpl.h"
 
 using namespace khtml;
@@ -103,7 +102,7 @@ void RenderApplet::createWidgetIfNecessary()
                          m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
             NodeImpl *child = element()->firstChild();
             while (child) {
-                if (child->id() == ID_PARAM) {
+                if (child->hasTagName(HTMLNames::param())) {
                     HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
                     m_args.insert(p->name().string(), p->value().string());
                 }

@@ -36,8 +36,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "rendering/render_text.h"
 #include "misc/htmlattrs.h"
-#include "misc/htmltags.h"
-#include "html/dtd.h"
+#include "htmlnames.h"
 
 using DOM::AttributeImpl;
 using DOM::CommentImpl;
@@ -47,9 +46,9 @@ using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
-using DOM::FORBIDDEN;
-using DOM::endTagRequirement;
+using DOM::TagStatusForbidden;
 using DOM::HTMLElementImpl;
+using DOM::HTMLNames;
 using DOM::NamedAttrMapImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -177,13 +176,11 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
     switch (type) {
         case Node::TEXT_NODE: {
             if (node->parentNode()) {
-                switch (node->parentNode()->id()) {
-                    case ID_PRE:
-                    case ID_SCRIPT:
-                    case ID_STYLE:
-                    case ID_TEXTAREA:
-                        return stringValueForRange(node, range);
-                }
+                if (node->parentNode()->hasTagName(HTMLNames::pre()) ||
+                    node->parentNode()->hasTagName(HTMLNames::script()) ||
+                    node->parentNode()->hasTagName(HTMLNames::style()) ||
+                    node->parentNode()->hasTagName(HTMLNames::textarea()))
+                    return stringValueForRange(node, range);
             }
             QString markup = annotate ? escapeHTML(renderedText(node, range)) : escapeHTML(stringValueForRange(node, range));            
             if (defaultStyle) {
@@ -248,9 +245,13 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
 
 static QString endMarkup(const NodeImpl *node)
 {
-    if ((!node->isHTMLElement() || endTagRequirement(node->id()) != FORBIDDEN) && node->nodeType() != Node::TEXT_NODE && node->nodeType() != Node::DOCUMENT_NODE) {
-        return "</" + node->nodeName().string() + ">";
+    bool hasEndTag = node->isElementNode();
+    if (node->isHTMLElement()) {
+        const HTMLElementImpl* htmlElt = static_cast<const HTMLElementImpl*>(node);
+        hasEndTag = (htmlElt->endTagRequirement() != TagStatusForbidden);
     }
+    if (hasEndTag)
+        return "</" + node->nodeName().string() + ">";
     return "";
 }
 
@@ -265,8 +266,14 @@ static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool 
                 nodes->append(current);
             }
             me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
-        }        
-        if (!current->isHTMLElement() || endTagRequirement(current->id()) != FORBIDDEN) {
+        }
+        
+        bool container = true;
+        if (current->isHTMLElement()) {
+            const HTMLElementImpl* h = static_cast<const HTMLElementImpl*>(current);
+            container = h->endTagRequirement() != TagStatusForbidden;
+        }
+        if (container) {
             // print children
             if (NodeImpl *n = current->firstChild()) {
                 me += markup(n, false, true, nodes);
@@ -414,9 +421,9 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
             }
             bool breakAtEnd = false;
             if (commonAncestorBlock == ancestor) {
-                NodeImpl::Id id = ancestor->id();
                 // Include ancestors that are required to retain the appearance of the copied markup.
-                if (id == ID_PRE || id == ID_TABLE || id == ID_OL || id == ID_UL) {
+                if (ancestor->hasTagName(HTMLNames::pre()) || ancestor->hasTagName(HTMLNames::table()) ||
+                    ancestor->hasTagName(HTMLNames::ol()) || ancestor->hasTagName(HTMLNames::ul())) {
                     breakAtEnd = true;
                 } else {
                     break;
@@ -539,7 +546,7 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
             ElementImpl *element;
             if (s.isEmpty() && list.isEmpty()) {
                 // For last line, use the "magic BR" rather than a P.
-                element = document->createHTMLElement("br", exceptionCode);
+                element = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
                 ASSERT(exceptionCode == 0);
                 element->ref();
                 element->setAttribute(ATTR_CLASS, AppleInterchangeNewline);            

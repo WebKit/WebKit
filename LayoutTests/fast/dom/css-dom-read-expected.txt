@@ -9,5 +9,5 @@ Serialized style, using CSS DOM:
 .two { display: inline; }
 .three { display: list-item; list-style-type: square; margin-left: 3em; }
 .four { display: none; color: red; }
-I { display: block; }
+i { display: block; }
 

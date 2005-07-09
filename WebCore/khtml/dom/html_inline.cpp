@@ -45,7 +45,7 @@ HTMLAnchorElement::HTMLAnchorElement(HTMLAnchorElementImpl *impl) : HTMLElement(
 
 HTMLAnchorElement &HTMLAnchorElement::operator = (const Node &other)
 {
-    assignOther( other, ID_A );
+    assignOther( other, HTMLNames::a() );
     return *this;
 }
 
@@ -217,7 +217,7 @@ HTMLBRElement::HTMLBRElement(HTMLBRElementImpl *impl) : HTMLElement(impl)
 
 HTMLBRElement &HTMLBRElement::operator = (const Node &other)
 {
-    assignOther( other, ID_BR );
+    assignOther( other, HTMLNames::br() );
     return *this;
 }
 
@@ -258,7 +258,7 @@ HTMLFontElement::HTMLFontElement(HTMLFontElementImpl *impl) : HTMLElement(impl)
 
 HTMLFontElement &HTMLFontElement::operator = (const Node &other)
 {
-    assignOther( other, ID_FONT );
+    assignOther( other, HTMLNames::font() );
     return *this;
 }
 
@@ -319,7 +319,7 @@ HTMLModElement::HTMLModElement(const HTMLModElement &other) : HTMLElement(other)
 HTMLModElement::HTMLModElement(HTMLElementImpl *_impl)
     : HTMLElement()
 {
-    if (_impl && (_impl->id() == ID_INS || _impl->id() == ID_DEL))
+    if (_impl && (_impl->hasTagName(HTMLNames::ins()) || _impl->hasTagName(HTMLNames::del())))
         impl = _impl;
     else
         impl = 0;
@@ -328,9 +328,8 @@ HTMLModElement::HTMLModElement(HTMLElementImpl *_impl)
 
 HTMLModElement &HTMLModElement::operator = (const Node &other)
 {
-    if( other.elementId() != ID_INS &&
-	other.elementId() != ID_DEL )
-    {
+    if (!other.handle()->hasTagName(HTMLNames::ins()) &&
+        !other.handle()->hasTagName(HTMLNames::del())) {
 	if ( impl ) impl->deref();
 	impl = 0;
     } else {
@@ -381,19 +380,16 @@ HTMLQuoteElement::HTMLQuoteElement(const HTMLQuoteElement &other) : HTMLElement(
 {
 }
 
-HTMLQuoteElement::HTMLQuoteElement(HTMLGenericElementImpl *_impl)
+HTMLQuoteElement::HTMLQuoteElement(HTMLQuoteElementImpl *_impl)
     : HTMLElement()
 {
-    if (_impl && _impl->id() == ID_Q)
-        impl = _impl;
-    else
-        impl = 0;
+    impl = _impl;
     if ( impl ) impl->ref();
 }
 
 HTMLQuoteElement &HTMLQuoteElement::operator = (const Node &other)
 {
-    assignOther( other, ID_Q );
+    assignOther( other, HTMLNames::q() );
     return *this;
 }
 

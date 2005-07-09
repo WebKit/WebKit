@@ -22,112 +22,242 @@
 #ifndef HTMLNAMES_H
 #define HTMLNAMES_H
 
-#include "xml/dom_elementimpl.h"
+#include "dom_qname.h"
 
 namespace DOM
 {
 
 class QualifiedName;
 
+// The globals.
+// Define external global variables for all HTML names above.
+#if !KHTML_HTMLNAMES_HIDE_GLOBALS
+    extern const AtomicString  xhtmlNamespaceURIAtom;
+    extern const QualifiedName aQName;
+    extern const QualifiedName abbrQName;
+    extern const QualifiedName acronymQName;
+    extern const QualifiedName addressQName;
+    extern const QualifiedName appletQName;
+    extern const QualifiedName areaQName;
+    extern const QualifiedName bQName;
+    extern const QualifiedName baseQName;
+    extern const QualifiedName basefontQName;
+    extern const QualifiedName bdoQName;
+    extern const QualifiedName bigQName;
+    extern const QualifiedName blockquoteQName;
+    extern const QualifiedName bodyQName;
+    extern const QualifiedName brQName;
+    extern const QualifiedName buttonQName;
+    extern const QualifiedName canvasQName;
+    extern const QualifiedName captionQName;
+    extern const QualifiedName centerQName;
+    extern const QualifiedName citeQName;
+    extern const QualifiedName codeQName;
+    extern const QualifiedName colQName;
+    extern const QualifiedName colgroupQName;
+    extern const QualifiedName ddQName;
+    extern const QualifiedName delQName;
+    extern const QualifiedName dfnQName;
+    extern const QualifiedName dirQName;
+    extern const QualifiedName divQName;
+    extern const QualifiedName dlQName;
+    extern const QualifiedName dtQName;
+    extern const QualifiedName emQName;
+    extern const QualifiedName embedQName;
+    extern const QualifiedName fieldsetQName;
+    extern const QualifiedName fontQName;
+    extern const QualifiedName formQName;
+    extern const QualifiedName frameQName;
+    extern const QualifiedName framesetQName;
+    extern const QualifiedName headQName;
+    extern const QualifiedName h1QName;
+    extern const QualifiedName h2QName;
+    extern const QualifiedName h3QName;
+    extern const QualifiedName h4QName;
+    extern const QualifiedName h5QName;
+    extern const QualifiedName h6QName;
+    extern const QualifiedName hrQName;
+    extern const QualifiedName htmlQName;
+    extern const QualifiedName iQName;
+    extern const QualifiedName iframeQName;
+    extern const QualifiedName imgQName;
+    extern const QualifiedName inputQName;
+    extern const QualifiedName insQName;
+    extern const QualifiedName isindexQName;
+    extern const QualifiedName kbdQName;
+    extern const QualifiedName keygenQName;
+    extern const QualifiedName labelQName;
+    extern const QualifiedName layerQName;
+    extern const QualifiedName legendQName;
+    extern const QualifiedName liQName;
+    extern const QualifiedName linkQName;
+    extern const QualifiedName mapQName;
+    extern const QualifiedName marqueeQName;
+    extern const QualifiedName menuQName;
+    extern const QualifiedName metaQName;
+    extern const QualifiedName nobrQName;
+    extern const QualifiedName noembedQName;
+    extern const QualifiedName noframesQName;
+    extern const QualifiedName nolayerQName;
+    extern const QualifiedName noscriptQName;
+    extern const QualifiedName objectQName;
+    extern const QualifiedName olQName;
+    extern const QualifiedName optgroupQName;
+    extern const QualifiedName optionQName;
+    extern const QualifiedName pQName;
+    extern const QualifiedName paramQName;
+    extern const QualifiedName plaintextQName;
+    extern const QualifiedName preQName;
+    extern const QualifiedName qQName;
+    extern const QualifiedName sQName;
+    extern const QualifiedName sampQName;
+    extern const QualifiedName scriptQName;
+    extern const QualifiedName selectQName;
+    extern const QualifiedName smallQName;
+    extern const QualifiedName spanQName;
+    extern const QualifiedName strikeQName;
+    extern const QualifiedName strongQName;
+    extern const QualifiedName styleQName;
+    extern const QualifiedName subQName;
+    extern const QualifiedName supQName;
+    extern const QualifiedName tableQName;
+    extern const QualifiedName tbodyQName;
+    extern const QualifiedName tdQName;
+    extern const QualifiedName textareaQName;
+    extern const QualifiedName tfootQName;
+    extern const QualifiedName thQName;
+    extern const QualifiedName theadQName;
+    extern const QualifiedName titleQName;
+    extern const QualifiedName trQName;
+    extern const QualifiedName ttQName;
+    extern const QualifiedName uQName;
+    extern const QualifiedName ulQName;
+    extern const QualifiedName varQName;
+    extern const QualifiedName wbrQName;
+    extern const QualifiedName xmpQName;
+
+#endif
+
+// FIXME: Make this a namespace instead of a class.
 class HTMLNames
 {
 public:
+#if !KHTML_HTMLNAMES_HIDE_GLOBALS
     // The namespace URI.
-    static const AtomicString& xhtmlNamespaceURI();
+    static const AtomicString& xhtmlNamespaceURI() { return xhtmlNamespaceURIAtom; }
     
-    // Full tag names.
-    static const QualifiedName& a();
-    static const QualifiedName& address();
-    static const QualifiedName& applet();
-    static const QualifiedName& area();
-    static const QualifiedName& b();
-    static const QualifiedName& base();
-    static const QualifiedName& basefont();
-    static const QualifiedName& big();
-    static const QualifiedName& blockquote();
-    static const QualifiedName& body();
-    static const QualifiedName& br();
-    static const QualifiedName& button();
-    static const QualifiedName& canvas();
-    static const QualifiedName& caption();
-    static const QualifiedName& center();
-    static const QualifiedName& code();
-    static const QualifiedName& col();
-    static const QualifiedName& colgroup();
-    static const QualifiedName& dd();
-    static const QualifiedName& del();
-    static const QualifiedName& dfn();
-    static const QualifiedName& dir();
-    static const QualifiedName& div();
-    static const QualifiedName& dl();
-    static const QualifiedName& dt();
-    static const QualifiedName& em();
-    static const QualifiedName& embed();
-    static const QualifiedName& fieldset();
-    static const QualifiedName& font();
-    static const QualifiedName& form();
-    static const QualifiedName& frame();
-    static const QualifiedName& frameset();
-    static const QualifiedName& head();
-    static const QualifiedName& h1();
-    static const QualifiedName& h2();
-    static const QualifiedName& h3();
-    static const QualifiedName& h4();
-    static const QualifiedName& h5();
-    static const QualifiedName& h6();
-    static const QualifiedName& hr();
-    static const QualifiedName& html();
-    static const QualifiedName& i();
-    static const QualifiedName& iframe();
-    static const QualifiedName& img();
-    static const QualifiedName& input();
-    static const QualifiedName& ins();
-    static const QualifiedName& isindex();
-    static const QualifiedName& kbd();
-    static const QualifiedName& keygen();
-    static const QualifiedName& label();
-    static const QualifiedName& legend();
-    static const QualifiedName& li();
-    static const QualifiedName& link();
-    static const QualifiedName& map();
-    static const QualifiedName& marquee();
-    static const QualifiedName& menu();
-    static const QualifiedName& meta();
-    static const QualifiedName& noembed();
-    static const QualifiedName& noframes();
-    static const QualifiedName& noscript();
-    static const QualifiedName& object();
-    static const QualifiedName& ol();
-    static const QualifiedName& optgroup();
-    static const QualifiedName& option();
-    static const QualifiedName& p();
-    static const QualifiedName& param();
-    static const QualifiedName& pre();
-    static const QualifiedName& q();
-    static const QualifiedName& s();
-    static const QualifiedName& samp();
-    static const QualifiedName& script();
-    static const QualifiedName& select();
-    static const QualifiedName& small();
-    static const QualifiedName& strike();
-    static const QualifiedName& strong();
-    static const QualifiedName& style();
-    static const QualifiedName& table();
-    static const QualifiedName& tbody();
-    static const QualifiedName& td();
-    static const QualifiedName& textarea();
-    static const QualifiedName& tfoot();
-    static const QualifiedName& th();
-    static const QualifiedName& thead();
-    static const QualifiedName& title();
-    static const QualifiedName& tr();
-    static const QualifiedName& tt();
-    static const QualifiedName& u();
-    static const QualifiedName& ul();
-    static const QualifiedName& var();
-    static const QualifiedName& xmp();
+// Full tag names.
+#define DEFINE_GETTER(name) \
+    static const QualifiedName& name() { return name ## QName; }
+
+    DEFINE_GETTER(a)
+    DEFINE_GETTER(abbr)
+    DEFINE_GETTER(acronym)
+    DEFINE_GETTER(address)
+    DEFINE_GETTER(applet)
+    DEFINE_GETTER(area)
+    DEFINE_GETTER(b)
+    DEFINE_GETTER(base)
+    DEFINE_GETTER(basefont)
+    DEFINE_GETTER(bdo)
+    DEFINE_GETTER(big)
+    DEFINE_GETTER(blockquote)
+    DEFINE_GETTER(body)
+    DEFINE_GETTER(br)
+    DEFINE_GETTER(button)
+    DEFINE_GETTER(canvas)
+    DEFINE_GETTER(caption)
+    DEFINE_GETTER(center)
+    DEFINE_GETTER(cite)
+    DEFINE_GETTER(code)
+    DEFINE_GETTER(col)
+    DEFINE_GETTER(colgroup)
+    DEFINE_GETTER(dd)
+    DEFINE_GETTER(del)
+    DEFINE_GETTER(dfn)
+    DEFINE_GETTER(dir)
+    DEFINE_GETTER(div)
+    DEFINE_GETTER(dl)
+    DEFINE_GETTER(dt)
+    DEFINE_GETTER(em)
+    DEFINE_GETTER(embed)
+    DEFINE_GETTER(fieldset)
+    DEFINE_GETTER(font)
+    DEFINE_GETTER(form)
+    DEFINE_GETTER(frame)
+    DEFINE_GETTER(frameset)
+    DEFINE_GETTER(head)
+    DEFINE_GETTER(h1)
+    DEFINE_GETTER(h2)
+    DEFINE_GETTER(h3)
+    DEFINE_GETTER(h4)
+    DEFINE_GETTER(h5)
+    DEFINE_GETTER(h6)
+    DEFINE_GETTER(hr)
+    DEFINE_GETTER(html)
+    DEFINE_GETTER(i)
+    DEFINE_GETTER(iframe)
+    DEFINE_GETTER(img)
+    DEFINE_GETTER(input)
+    DEFINE_GETTER(ins)
+    DEFINE_GETTER(isindex)
+    DEFINE_GETTER(kbd)
+    DEFINE_GETTER(keygen)
+    DEFINE_GETTER(label)
+    DEFINE_GETTER(layer)
+    DEFINE_GETTER(legend)
+    DEFINE_GETTER(li)
+    DEFINE_GETTER(link)
+    DEFINE_GETTER(map)
+    DEFINE_GETTER(marquee)
+    DEFINE_GETTER(menu)
+    DEFINE_GETTER(meta)
+    DEFINE_GETTER(nobr)
+    DEFINE_GETTER(noembed)
+    DEFINE_GETTER(noframes)
+    DEFINE_GETTER(nolayer)
+    DEFINE_GETTER(noscript)
+    DEFINE_GETTER(object)
+    DEFINE_GETTER(ol)
+    DEFINE_GETTER(optgroup)
+    DEFINE_GETTER(option)
+    DEFINE_GETTER(p)
+    DEFINE_GETTER(param)
+    DEFINE_GETTER(plaintext)
+    DEFINE_GETTER(pre)
+    DEFINE_GETTER(q)
+    DEFINE_GETTER(s)
+    DEFINE_GETTER(samp)
+    DEFINE_GETTER(script)
+    DEFINE_GETTER(select)
+    DEFINE_GETTER(small)
+    DEFINE_GETTER(span)
+    DEFINE_GETTER(strike)
+    DEFINE_GETTER(strong)
+    DEFINE_GETTER(style)
+    DEFINE_GETTER(sub)
+    DEFINE_GETTER(sup)
+    DEFINE_GETTER(table)
+    DEFINE_GETTER(tbody)
+    DEFINE_GETTER(td)
+    DEFINE_GETTER(textarea)
+    DEFINE_GETTER(tfoot)
+    DEFINE_GETTER(th)
+    DEFINE_GETTER(thead)
+    DEFINE_GETTER(title)
+    DEFINE_GETTER(tr)
+    DEFINE_GETTER(tt)
+    DEFINE_GETTER(u)
+    DEFINE_GETTER(ul)
+    DEFINE_GETTER(var)
+    DEFINE_GETTER(wbr)
+    DEFINE_GETTER(xmp)
 
     // Attribute names.
+#endif
+
+    // Init routine
+    static void init();
 };
 
 }

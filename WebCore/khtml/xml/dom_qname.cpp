@@ -19,48 +19,98 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <qptrdict.h>
 #include "dom_qname.h"
+#include "misc/hashset.h"
+
+using khtml::HashSet;
 
 namespace DOM {
 
-static QPtrDict<QPtrDict<QPtrDict<QualifiedName::QualifiedNameImpl> > >* gNameCache = 0;
+struct QualifiedNameComponents {
+    DOMStringImpl *m_prefix;
+    DOMStringImpl *m_localName;
+    DOMStringImpl *m_namespace;
+};
 
-QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+static const unsigned PHI = 0x9e3779b9U;
+    
+inline unsigned hashComponents(const QualifiedNameComponents& buf)
 {
-    // Obtain an appropriate inner from our dictionary.
-    QPtrDict<QPtrDict<QualifiedNameImpl> >* namespaceDict = 0;
-    QPtrDict<QualifiedNameImpl>* prefixDict = 0;
-    if (gNameCache) {
-        namespaceDict = gNameCache->find((void*)(n.implementation()));
-        if (namespaceDict) {
-            prefixDict = namespaceDict->find((void*)p.implementation());
-            if (prefixDict)
-                m_impl = prefixDict->find((void*)l.implementation());
-        }
-    }
-
-    if (!m_impl) {
-        m_impl = new QualifiedNameImpl(p, l, n);
-
-        // Put the object into the hash.
-        if (!gNameCache)
-            gNameCache = new QPtrDict<QPtrDict<QPtrDict<QualifiedNameImpl> > >;
+    unsigned l = sizeof(QualifiedNameComponents) / sizeof(uint16_t);
+    const uint16_t *s = reinterpret_cast<const uint16_t*>(&buf);
+    uint32_t hash = PHI;
+    uint32_t tmp;
         
-        if (!namespaceDict) {
-            namespaceDict = new QPtrDict<QPtrDict<QualifiedNameImpl> >;
-            namespaceDict->setAutoDelete(true);
-            gNameCache->insert((void*)n.implementation(), namespaceDict);
-        }
+    int rem = l & 1;
+    l >>= 1;
         
-        if (!prefixDict) {
-            prefixDict = new QPtrDict<QualifiedNameImpl>;
-            namespaceDict->insert((void*)p.implementation(), prefixDict);
-        }
-        
-        prefixDict->insert((void*)l.implementation(), m_impl);
+    // Main loop
+    for (; l > 0; l--) {
+        hash += s[0];
+        tmp = (s[1] << 11) ^ hash;
+        hash = (hash << 16) ^ tmp;
+        s += 2;
+        hash += hash >> 11;
     }
     
+    // Handle end case
+    if (rem) {
+        hash += s[0];
+        hash ^= hash << 11;
+        hash += hash >> 17;
+    }
+        
+    // Force "avalanching" of final 127 bits
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 2;
+    hash += hash >> 15;
+    hash ^= hash << 10;
+        
+    // this avoids ever returning a hash code of 0, since that is used to
+    // signal "hash not computed yet", using a value that is likely to be
+    // effectively the same as 0 when the low bits are masked
+    if (hash == 0)
+        hash = 0x80000000;
+        
+    return hash;
+}
+
+struct QNameHash {
+    static unsigned hash(const QualifiedName::QualifiedNameImpl *name) {    
+        QualifiedNameComponents components = { name->m_prefix.implementation(), 
+                                               name->m_localName.implementation(), 
+                                               name->m_namespace.implementation() };
+        return hashComponents(components);
+    }
+    static bool equal(const QualifiedName::QualifiedNameImpl *a, const QualifiedName::QualifiedNameImpl *b) { return a == b; }
+};
+
+typedef HashSet<QualifiedName::QualifiedNameImpl*, QNameHash> QNameSet;
+
+static QNameSet *gNameCache;
+
+inline bool equalComponents(QualifiedName::QualifiedNameImpl* const& name, const QualifiedNameComponents &components)
+{
+    return components.m_localName == name->m_localName.implementation() &&
+           components.m_namespace == name->m_namespace.implementation() &&
+           components.m_prefix == name->m_prefix.implementation();
+}
+
+inline QualifiedName::QualifiedNameImpl *convertComponents(const QualifiedNameComponents& components, unsigned hash)
+{
+    return new QualifiedName::QualifiedNameImpl(components.m_prefix, components.m_localName, components.m_namespace);
+}
+
+
+QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n)
+    : m_impl(0)
+{
+    if (!gNameCache)
+        gNameCache = new QNameSet;
+    QualifiedNameComponents components = { p.implementation(), l.implementation(), n.implementation() };
+    m_impl = *gNameCache->insert<QualifiedNameComponents, hashComponents, equalComponents, convertComponents>(components).first;    
     ref();
 }
 
@@ -88,31 +138,16 @@ const QualifiedName& QualifiedName::operator=(const QualifiedName& other)
 
 void QualifiedName::deref()
 {
-    if (m_impl->refCount() == 1) {
-        // Before decrementing the ref to 0, remove ourselves from the hash table.
-        QPtrDict<QPtrDict<QualifiedNameImpl> >* namespaceDict = 0;
-        QPtrDict<QualifiedNameImpl>* prefixDict = 0;
-        if (gNameCache) {
-            namespaceDict = gNameCache->find((void*)(namespaceURI().implementation()));
-            if (namespaceDict) {
-                prefixDict = namespaceDict->find((void*)prefix().implementation());
-                if (prefixDict)
-                    prefixDict->remove((void*)localName().implementation());
-            }
-        }
-    }
-    
+    if (m_impl->hasOneRef())
+        gNameCache->remove(m_impl);
+        
     m_impl->deref();
 }
 
-bool operator==(const AtomicString& a, const QualifiedName& q)
-{ 
-    return a == q.localName();
-}
-
-bool operator==(const QualifiedName& q, const AtomicString& a)
+void QualifiedName::setPrefix(const AtomicString& prefix)
 {
-    return a == q.localName();
+    QualifiedName other(prefix, localName(), namespaceURI());
+    *this = other;
 }
 
 }

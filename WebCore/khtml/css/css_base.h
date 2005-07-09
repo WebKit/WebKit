@@ -27,6 +27,7 @@
 #include "dom/dom_string.h"
 #include "dom/dom_misc.h"
 #include "xml/dom_nodeimpl.h"
+#include "dom_qname.h"
 #include "misc/shared.h"
 #include <qdatetime.h>
 #include <qptrlist.h>
@@ -46,20 +47,20 @@ namespace DOM {
     class DocumentImpl;
 
     struct CSSNamespace {
-        DOMString m_prefix;
-        DOMString m_uri;
+        AtomicString m_prefix;
+        AtomicString m_uri;
         CSSNamespace* m_parent;
 
         MAIN_THREAD_ALLOCATED;
 
-        CSSNamespace(const DOMString& p, const DOMString& u, CSSNamespace* parent) 
+        CSSNamespace(const AtomicString& p, const AtomicString& u, CSSNamespace* parent) 
             :m_prefix(p), m_uri(u), m_parent(parent) {}
         ~CSSNamespace() { delete m_parent; }
         
-        const DOMString& uri() { return m_uri; }
-        const DOMString& prefix() { return m_prefix; }
+        const AtomicString& uri() { return m_uri; }
+        const AtomicString& prefix() { return m_prefix; }
         
-        CSSNamespace* namespaceForPrefix(const DOMString& prefix) {
+        CSSNamespace* namespaceForPrefix(const AtomicString& prefix) {
             if (prefix == m_prefix)
                 return this;
             if (m_parent)
@@ -72,8 +73,14 @@ namespace DOM {
     class CSSSelector
     {
     public:
-	CSSSelector()
-	    : tagHistory(0), simpleSelector(0), nextSelector(0), attr(0), tag(anyQName),
+        CSSSelector()
+            : tagHistory(0), simpleSelector(0), nextSelector(0), attr(0), tag(anyTagName()),
+              relation( Descendant ), match( None ),
+              pseudoId( 0 ), _pseudoType(PseudoNotParsed)
+        {}
+        
+	CSSSelector(const QualifiedName& qName)
+	    : tagHistory(0), simpleSelector(0), nextSelector(0), attr(0), tag(qName),
               relation( Descendant ), match( None ),
               pseudoId( 0 ), _pseudoType(PseudoNotParsed)
         {}
@@ -167,12 +174,17 @@ namespace DOM {
             return _pseudoType;
         }
 
+        static const QualifiedName& anyTagName();
+
+        bool hasTag() const { return tag != anyTagName(); }
+
 	mutable DOM::AtomicString value;
 	CSSSelector* tagHistory;
         CSSSelector* simpleSelector; // Used for :not.
         CSSSelector* nextSelector; // used for ,-chained selectors
 	Q_UINT32     attr;
-	Q_UINT32     tag;
+	
+        QualifiedName tag;
 
         Relation relation              : 3;
 	mutable Match  match           : 4;

@@ -23,12 +23,10 @@
 #ifndef HTMLHASHES_H
 #define HTMLHASHES_H
 
-#include "htmltags.h"
 #include "htmlattrs.h"
 
 namespace khtml
 {
-  unsigned short getTagID(const char *tagStr, int len);
   unsigned short getAttrID(const char *tagStr, int len);
 }
 

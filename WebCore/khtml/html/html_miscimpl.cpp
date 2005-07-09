@@ -35,13 +35,8 @@
 namespace DOM {
 
 HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(HTMLNames::basefont(), doc)
 {
-}
-
-NodeImpl::Id HTMLBaseFontElementImpl::id() const
-{
-    return ID_BASEFONT;
 }
 
 DOMString HTMLBaseFontElementImpl::color() const
@@ -141,72 +136,72 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
             switch(type) {
             case DOC_IMAGES:
-                if(e->id() == ID_IMG)
+                if (e->hasLocalName(HTMLNames::img()))
                     found = true;
                 break;
             case DOC_FORMS:
-                if(e->id() == ID_FORM)
+                if(e->hasLocalName(HTMLNames::form()))
                     found = true;
                 break;
             case DOC_NAMEABLE_ITEMS:
-                if(e->id() == ID_IMG)
+                if (e->hasLocalName(HTMLNames::img()))
                     found = true;
-                if(e->id() == ID_FORM)
+                if (e->hasLocalName(HTMLNames::form()))
                     found = true;
-                if(e->id() == ID_APPLET)
+                if (e->hasLocalName(HTMLNames::applet()))
                     found = true;
-                if(e->id() == ID_EMBED)
+                if (e->hasLocalName(HTMLNames::embed()))
                     found = true;
-                if(e->id() == ID_OBJECT)
+                if (e->hasLocalName(HTMLNames::object()))
                     found = true;
                 break;
             case TABLE_TBODIES:
-                if(e->id() == ID_TBODY)
+                if (e->hasLocalName(HTMLNames::tbody()))
                     found = true;
-                else if(e->id() == ID_TABLE)
+                else if (e->hasLocalName(HTMLNames::table()))
                     deep = false;
                 break;
             case TR_CELLS:
-                if(e->id() == ID_TD || e->id() == ID_TH)
+                if (e->hasLocalName(HTMLNames::td()) || e->hasLocalName(HTMLNames::th()))
                     found = true;
-                else if(e->id() == ID_TABLE)
+                else if (e->hasLocalName(HTMLNames::table()))
                     deep = false;
                 break;
             case TABLE_ROWS:
             case TSECTION_ROWS:
-                if(e->id() == ID_TR)
+                if (e->hasLocalName(HTMLNames::tr()))
                     found = true;
-                else if(e->id() == ID_TABLE)
+                else if (e->hasLocalName(HTMLNames::table()))
                     deep = false;
                 break;
             case SELECT_OPTIONS:
-                if(e->id() == ID_OPTION)
+                if (e->hasLocalName(HTMLNames::option()))
                     found = true;
                 break;
             case MAP_AREAS:
-                if(e->id() == ID_AREA)
+                if (e->hasLocalName(HTMLNames::area()))
                     found = true;
                 break;
             case DOC_APPLETS:   // all OBJECT and APPLET elements
-                if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
+                if (e->hasLocalName(HTMLNames::object()) || e->hasLocalName(HTMLNames::applet()))
                     found = true;
                 break;
             case DOC_EMBEDS:   // all EMBED elements
-                if(e->id() == ID_EMBED)
+                if (e->hasLocalName(HTMLNames::embed()))
                     found = true;
                 break;
             case DOC_OBJECTS:   // all OBJECT elements
-                if(e->id() == ID_OBJECT)
+                if (e->hasLocalName(HTMLNames::object()))
                     found = true;
                 break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
-                if(e->id() == ID_A || e->id() == ID_AREA)
-                    if(!e->getAttribute(ATTR_HREF).isNull())
+                if (e->hasLocalName(HTMLNames::a()) || e->hasLocalName(HTMLNames::area()))
+                    if (!e->getAttribute(ATTR_HREF).isNull())
                         found = true;
                 break;
             case DOC_ANCHORS:      // all A elements with a value for name or an id attribute
-                if(e->id() == ID_A)
-                    if(!e->getAttribute(ATTR_NAME).isNull())
+                if (e->hasLocalName(HTMLNames::a()))
+                    if (!e->getAttribute(ATTR_NAME).isNull())
                         found = true;
                 break;
             case DOC_ALL:
@@ -219,9 +214,9 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
             default:
                 kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
             }
-            if (found) {
+
+            if (found)
                 return current;
-            }
             if (deep) {
                 current = current->traverseNextNode(m_base.get());
                 continue;
@@ -298,29 +293,31 @@ NodeImpl *HTMLCollectionImpl::nextItem() const
 
 bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const DOMString &name, bool caseSensitive) const
 {
-    ElementImpl *e = static_cast<ElementImpl *>(node);
+    if (!node->isHTMLElement())
+        return false;
+    
+    HTMLElementImpl *e = static_cast<HTMLElementImpl*>(node);
     if (caseSensitive) {
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
             if (type == DOC_ALL && 
-                !(e->id() == ID_IMG || e->id() == ID_FORM ||
-                  e->id() == ID_APPLET || e->id() == ID_OBJECT ||
-                  e->id() == ID_EMBED))
+                !(e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
+                  e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
+                  e->hasLocalName(HTMLNames::embed())))
                 return false;
 
             return e->getAttribute(ATTR_NAME) == name && e->getAttribute(ATTR_ID) != name;
-        } else {
+        } else
             return e->getAttribute(ATTR_ID) == name;
-        }
     } else {
         if (checkName) {
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
             if (type == DOC_ALL && 
-                !(e->id() == ID_IMG || e->id() == ID_FORM ||
-                  e->id() == ID_APPLET || e->id() == ID_OBJECT ||
-                  e->id() == ID_EMBED))
+                !(e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
+                  e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
+                  e->hasLocalName(HTMLNames::embed())))
                 return false;
 
             return e->getAttribute(ATTR_NAME).domString().lower() == name.lower() &&
@@ -379,7 +376,9 @@ void HTMLCollectionImpl::updateNameCache() const
         return;
     
     for (NodeImpl *n = traverseNextItem(m_base.get()); n; n = traverseNextItem(n)) {
-        ElementImpl *e = static_cast<ElementImpl *>(n);
+        if (!n->isHTMLElement())
+            continue;
+        HTMLElementImpl* e = static_cast<HTMLElementImpl*>(n);
         QString idAttr = e->getAttribute(ATTR_ID).string();
         QString nameAttr = e->getAttribute(ATTR_NAME).string();
         if (!idAttr.isEmpty()) {
@@ -393,9 +392,9 @@ void HTMLCollectionImpl::updateNameCache() const
         }
         if (!nameAttr.isEmpty() && idAttr != nameAttr
             && (type != DOC_ALL || 
-                (e->id() == ID_IMG || e->id() == ID_FORM ||
-                 e->id() == ID_APPLET || e->id() == ID_OBJECT ||
-                 e->id() == ID_EMBED))) {
+                (e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
+                 e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
+                 e->hasLocalName(HTMLNames::embed())))) {
             // add to name cache
             QPtrVector<NodeImpl> *nameVector = info->nameCache.find(nameAttr);
             if (!nameVector) {
@@ -532,12 +531,10 @@ NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, int attr_id, const DOM
 
 NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const
 {
-    if(m_base->nodeType() == Node::ELEMENT_NODE)
-    {
+    if (m_base->nodeType() == Node::ELEMENT_NODE) {
         HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
         bool foundInputElements = false;
-        if(baseElement->id() == ID_FORM)
-        {
+        if (baseElement->hasLocalName(HTMLNames::form())) {
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
             for (unsigned i = 0; i < f->formElements.count(); ++i) {
                 HTMLGenericFormElementImpl* e = f->formElements[i];
@@ -557,8 +554,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString&
             }
         }
 
-        if ( !foundInputElements )
-        {
+        if (!foundInputElements) {
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
 
             for(unsigned i = 0; i < f->imgElements.count(); ++i)
@@ -650,7 +646,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
 
     QDict<char> foundInputElements;
 
-    if (m_base->id() != ID_FORM) {
+    if (!m_base->hasTagName(HTMLNames::form())) {
         info->hasNameCache = true;
         return;
     }

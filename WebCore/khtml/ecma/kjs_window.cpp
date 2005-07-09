@@ -68,7 +68,6 @@
 #include "html/html_documentimpl.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
-#include "misc/htmltags.h"
 
 // Must include <cmath> instead of <math.h> because of a bug in the
 // gcc 3.3 library version of <math.h> where if you include both
