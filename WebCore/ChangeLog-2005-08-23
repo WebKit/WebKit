@@ -1,3 +1,13 @@
+2005-07-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * kwq/KWQRegExp.h: Added cap() support.
+        * kwq/KWQRegExp.mm: Added cap() support.
+        (QRegExp::match): Changes necessary for cap()
+        (QRegExp::cap): based off of JSC's pcre support.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3847
+
 2005-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled in layout test for fix to 

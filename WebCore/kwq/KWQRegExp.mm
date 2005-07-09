@@ -29,6 +29,9 @@
 #import <sys/types.h>
 #import <JavaScriptCore/pcre.h>
 
+#define MAX_SUBSTRINGS  10
+#define MAX_OFFSETS     (3 *MAX_SUBSTRINGS)
+
 class QRegExp::KWQRegExpPrivate
 {
 public:
@@ -43,6 +46,9 @@ public:
     
     uint refCount;
 
+    QString lastMatchString;
+    int lastMatchOffsets[MAX_OFFSETS];
+    int lastMatchCount;
     int lastMatchPos;
     int lastMatchLength;
 };
@@ -148,23 +154,22 @@ QString QRegExp::pattern() const
 
 int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
 {
+    d->lastMatchString = str;
     // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
-    int offsets[3];
-    int result = pcre_exec(d->regex, NULL, reinterpret_cast<const uint16_t *>(str.unicode()), str.length(), startFrom, 
-                           startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
-    if (result < 0) {
-        if (result != PCRE_ERROR_NOMATCH) {
-            ERROR("KWQRegExp: pcre_exec() failed with result %d", result);
-        }
+    d->lastMatchCount = pcre_exec(d->regex, NULL, reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchString.length(), startFrom, startFrom == 0 ? 0 : PCRE_NOTBOL, d->lastMatchOffsets, MAX_OFFSETS);
+    if (d->lastMatchCount < 0) {
+        if (d->lastMatchCount != PCRE_ERROR_NOMATCH)
+            ERROR("KWQRegExp: pcre_exec() failed with result %d", d->lastMatchCount);
         d->lastMatchPos = -1;
         d->lastMatchLength = -1;
+        d->lastMatchString = QString();
         return -1;
     }
     
     // 1 means 1 match; 0 means more than one match. First match is recorded in offsets.
-    ASSERT(result < 2);
-    d->lastMatchPos = offsets[0];
-    d->lastMatchLength = offsets[1] - offsets[0];
+    //ASSERT(d->lastMatchCount < 2);
+    d->lastMatchPos = d->lastMatchOffsets[0];
+    d->lastMatchLength = d->lastMatchOffsets[1] - d->lastMatchOffsets[0];
     if (matchLength != NULL) {
         *matchLength = d->lastMatchLength;
     }
@@ -213,3 +218,17 @@ int QRegExp::matchedLength() const
 {
     return d->lastMatchLength;
 }
+
+QString QRegExp::cap(int n) const
+{
+    Q_ASSERT(!d->lastSearchString.isNull());
+    const pcre_char *substring = NULL;
+    int substringLength =  pcre_get_substring(reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchOffsets, d->lastMatchCount, n, &substring);
+    if (substringLength > 0) {
+       QString capture(reinterpret_cast<const QChar *>(substring), substringLength);
+       pcre_free_substring(substring);
+       return capture;
+    }
+    return QString();
+}
+
