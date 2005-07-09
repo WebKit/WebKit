@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Marquee Test for half of Radar 4172312 and www.munsterrugby.ie</title>
+<body> 
+
+    <p>Tests: the height attribute for the marquee tag<br>
+    </p>
+    <p>Conditions:<br>
+    Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overriden when the given
+    height is smaller than the font height.
+    </p>
+    <p>If successful, the pink marquee should be large, and the others should all be the same size. None of the text should be cut off.
+    </p>
+    <hr>
+	    
+     <MARQUEE height="10" bgcolor="aqua"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>
+    <br>
+     <MARQUEE height="100" bgcolor="pink"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>
+    <br>
+    <MARQUEE height="0" bgcolor="yellow"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>
+    <br>
+    <MARQUEE height="-45" bgcolor="orange"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>        
+                
+</body>
+</html>

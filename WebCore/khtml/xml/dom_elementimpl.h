@@ -334,7 +334,7 @@ protected:
 };
 
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
-    eTable, eCell, eCaption, eLastEntry };
+    eTable, eCell, eCaption, eLastEntry, eMarquee };
 
 class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {

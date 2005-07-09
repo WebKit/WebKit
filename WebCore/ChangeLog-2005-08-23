@@ -1,3 +1,20 @@
+2005-07-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John.
+
+	This is a fix for half of <rdar://problem/4172312>
+	Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overriden when its value is given to be smaller than the font height.
+
+        Test cases added: fast/css/MarqueeLayoutTest.html
+
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLMarqueeElementImpl::mapToEntry): set result to eMarquee instead of eUniversal for height attribute
+        (HTMLMarqueeElementImpl::parseMappedAttribute): changed to minheight instead of just height
+        * khtml/xml/dom_elementimpl.h: added eMarquee hash key
+	(QScrollView::suppressScrollBars):
+        * layout-tests/fast/css/MarqueeLayoutTest-expected.txt: Added.
+        * layout-tests/fast/css/MarqueeLayoutTest.html: Added.
+       
 2005-07-08  Vicki Murley  <vicki@apple.com>
 
 	Fix from Carsten Guenther, reviewed by Maciej
