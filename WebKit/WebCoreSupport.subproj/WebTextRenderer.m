@@ -1485,6 +1485,9 @@ static const char *joiningNames[] = {
 
     ATSUTextLayout layout;
     UniCharCount runLength;
+    ATSUFontID ATSUSubstituteFont;
+    UniCharArrayOffset substituteOffset;
+    UniCharCount substituteLength;
     OSStatus status;
     
     [self _initializeATSUStyle];
@@ -1521,6 +1524,20 @@ static const char *joiningNames[] = {
     status = ATSUSetTransientFontMatching (layout, YES);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUSetTransientFontMatching failed(%d)", status);
+
+    substituteOffset = run->from;
+    while ((status = ATSUMatchFontsToText(layout, substituteOffset, kATSUToTextEnd, &ATSUSubstituteFont, &substituteOffset, &substituteLength)) == kATSUFontsMatched || status == kATSUFontsNotMatched) {
+        NSFont *substituteFont = [self _substituteFontForCharacters:run->characters+substituteOffset length:substituteLength families:style->families];
+        if (substituteFont) {
+            WebTextRenderer *substituteRenderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:substituteFont usingPrinterFont:usingPrinterFont];
+            [substituteRenderer _initializeATSUStyle];
+            if (substituteRenderer && substituteRenderer->_ATSUSstyle)
+                ATSUSetRunStyle(layout, substituteRenderer->_ATSUSstyle, substituteOffset, substituteLength);
+            // ignoring errors
+        }
+        substituteOffset += substituteLength;
+    };
+    // ignoring errors in font substitution
         
     return layout;
 }

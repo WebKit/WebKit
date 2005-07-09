@@ -1,3 +1,15 @@
+2005-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled in patch by opendarwin.org@mitzpettel.com
+
+        -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3818
+        Fallback font doesn't have requested weight in ATSUI-rendered text
+
+        Reviewed by mjs.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _createATSUTextLayoutForRun:style:]):
+
 2005-07-05  Adele Peterson  <adele@apple.com>
 
        Rolling out changes for <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)
