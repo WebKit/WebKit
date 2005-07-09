@@ -1,3 +1,12 @@
+2005-07-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs/hyatt (only in concept).
+
+        * JavaScriptCore.pbproj/project.pbxproj: Added JavaScriptCore+SVG
+        Turns on RTTI support for JavaScriptCore.framework when
+        building the JavaScriptCore+SVG target.  This is needed as
+        kdom (part of WebCore+SVG) requires RTTI for the time being.
+
 2005-07-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by hyatt.
