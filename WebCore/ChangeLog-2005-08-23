@@ -1,3 +1,13 @@
+2005-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - removed unused files
+
+        * kdom/impl/NodeKeeper.cc: Removed.
+        * kdom/impl/NodeKeeper.h: Removed.
+        * WebCore.pbproj/project.pbxproj: Remove from +SVG build.
+
 2005-07-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for bugzilla bug 3405, replace NodeImpl::Id with a new class,
