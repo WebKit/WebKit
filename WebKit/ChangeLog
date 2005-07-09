@@ -1,5 +1,12 @@
 2005-07-09  Maciej Stachowiak  <mjs@apple.com>
 
+        - fixed broken Development build
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _purgePageCache]):
+
+2005-07-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by hyatt.
 
 	- fix page cache purging logic; this gets rid of a bug where the

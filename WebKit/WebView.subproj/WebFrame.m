@@ -932,7 +932,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         if ([item hasPageCache]){
             // Snapback items are never directly purged here.
             if ([item alwaysAttemptToUsePageCache]) {
-                LOG(PageCache, "Purging back/forward cache, %@\n", [oldestItem URL]);
+                LOG(PageCache, "Purging back/forward cache, %@\n", [item URL]);
                 [item setHasPageCache: NO];
             }
         }
