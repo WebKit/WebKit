@@ -1,3 +1,13 @@
+2005-07-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+	- When there are many live objects, GC less often, to try to make
+	GC cost proportional to garbage, not proportional to total memory used.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+
 2005-07-08  Vicki Murley  <vicki@apple.com>
 
 	Fix from Carsten Guenther, reviewed by Maciej

@@ -93,7 +93,10 @@ void* Collector::allocate(size_t s)
 
   // collect if needed
   int numLiveObjects = heap.numLiveObjects;
-  if (numLiveObjects - heap.numLiveObjectsAtLastCollect >= ALLOCATIONS_PER_COLLECTION) {
+  int liveAtLastCollect = heap.numLiveObjectsAtLastCollect;
+  int delta = numLiveObjects - liveAtLastCollect;
+  if ((delta >= 1000 && delta >= liveAtLastCollect) ||
+      numLiveObjects == KJS_MEM_LIMIT - 1) {
     collect();
     numLiveObjects = heap.numLiveObjects;
   }
