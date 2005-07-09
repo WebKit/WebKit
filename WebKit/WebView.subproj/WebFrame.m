@@ -922,11 +922,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_purgePageCache
 {
     // This method implements the rule for purging the page cache.
-    unsigned sizeLimit = [[[self webView] backForwardList] pageCacheSize];
+    int sizeLimit = [[[self webView] backForwardList] pageCacheSize];
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
     NSArray *backList = [backForwardList backListWithLimit: 999999];
 
-    unsigned i;
+    int i;
     for (i = [backList count] - 1; i >= sizeLimit; i--){
         WebHistoryItem *item = [backList objectAtIndex: i];
         if ([item hasPageCache]){

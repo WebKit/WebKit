@@ -1,5 +1,15 @@
 2005-07-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by hyatt.
+
+	Replace int with unsigned, to avoid going into a huge loop when
+	back list count is 0.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _purgePageCache]):
+
+2005-07-09  Maciej Stachowiak  <mjs@apple.com>
+
         - fixed broken Development build
 
         * WebView.subproj/WebFrame.m:
