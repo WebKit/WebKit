@@ -5,6 +5,8 @@
         -fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=3818
         Fallback font doesn't have requested weight in ATSUI-rendered text
 
+        (See WebCore Changelog for layout test)
+
         Reviewed by mjs.
 
         * WebCoreSupport.subproj/WebTextRenderer.m:

@@ -1,3 +1,15 @@
+2005-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled in layout test for fix to 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3818
+        Fallback font doesn't have requested weight in ATSUI-rendered text
+
+        Reviewed by mjs.
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight.html: Added.
+
 2005-07-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John.

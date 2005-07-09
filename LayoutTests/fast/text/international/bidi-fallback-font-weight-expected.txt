@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x202
+  RenderBlock {HTML} at (0,0) size 800x202
+    RenderBody {BODY} at (8,16) size 784x170
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 784x36
+          text run at (0,0) width 311: "In each of the following lines, the Hebrew letters "
+          text run at (311,0) width 34: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (345,0) width 439: " in the end should be in boldface (compare with the same letters in the"
+          text run at (0,18) width 443: "middle of the line). Disregard the third line if you don\x{2019}t have Raanana."
+      RenderBlock {P} at (0,52) size 784x18
+        RenderText {TEXT} at (0,0) size 82x18
+          text run at (0,0) width 43: "abcd "
+          text run at (43,0) width 34: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (77,0) width 5: " "
+        RenderInline {B} at (0,0) size 81x18
+          RenderText {TEXT} at (82,0) size 81x18
+            text run at (82,0) width 45: "abcd "
+            text run at (127,0) width 36: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,86) size 784x18
+        RenderText {TEXT} at (0,0) size 94x18
+          text run at (0,0) width 50: "abcd "
+          text run at (50,0) width 34: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (84,0) width 10: " "
+        RenderInline {B} at (0,0) size 86x18
+          RenderText {TEXT} at (94,0) size 86x18
+            text run at (94,0) width 50: "abcd "
+            text run at (144,0) width 36: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,120) size 784x16
+        RenderText {TEXT} at (0,0) size 74x16
+          text run at (0,0) width 42: "abcd "
+          text run at (42,0) width 28: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (70,0) width 4: " "
+        RenderInline {B} at (0,0) size 73x16
+          RenderText {TEXT} at (74,0) size 73x16
+            text run at (74,0) width 44: "abcd "
+            text run at (118,0) width 29: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,152) size 784x18
+        RenderText {TEXT} at (0,0) size 77x18
+          text run at (0,0) width 39: "abcd "
+          text run at (39,0) width 34: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+          text run at (73,0) width 4: " "
+        RenderInline {B} at (0,0) size 78x18
+          RenderText {TEXT} at (77,0) size 78x18
+            text run at (77,0) width 42: "abcd "
+            text run at (119,0) width 36: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}"
+        RenderText {TEXT} at (0,0) size 0x0
