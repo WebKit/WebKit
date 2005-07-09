@@ -1,0 +1,172 @@
+KCanvas Design Document 0.1
+---------------------------
+Last update: 25.07.2004
+
+1. What is (the history of) KCanvas?
+------------------------------------
+
+KCanvas is the result of four-year ksvg development.
+We had to create our "own" canvas for ksvg, some years
+ago as any existing implementation hasn't been able
+to fulfil our needs, which is mostly: flexibility.
+
+QCanvas is (of course) tied to Qt, which is good.
+But it wipes away ie. the functionality to paint
+with/to something else than a QPainter.
+
+The immediate result of our brainstorming, what
+we needed, was: KSVGCanvas. KSVGCanvas was basically
+a "port" of QCanvas code to ksvg with heavy modifications.
+We exclusively used libart at the beginning of KSVGCanvas
+hacking. Later we made it possible to use different
+rendering devices (implemented in ksvg: libart & agg).
+
+That was the first step to more flexibility. But it
+hasn't been enough to make a generic kde canvas out of it.
+
+KCanvas currently uses a very sophisticated approach,
+which will be explained in detail now....
+
+2. The main idea of the canvas
+------------------------------
+
+First of all, we have to differentiate between "Rendering Devices" and "Rendering Targets".
+
+Definition:
+	A "device" is used to paint onto a "target".  "Devices" are
+	dynamically loadable, whereas "targets" have to be linked against.
+
+Targets:
+	Qt (QWidget), OpenGL, SDL... are good examples for common "Rendering Targets".
+	As stated above, you cannot dynamically switch the rendering targets.
+
+	<code-snippet>
+		KCanvasTargetQt *targetQt = new KCanvasTargetQt(prefWidth, prefHeight);
+	</code-snippet>
+
+	You have to create a new target object manually depending on the target you'd like
+	to paint on. Currently we only have a 'Qt' rendering target.
+
+Devices:
+	Libart, agg2, QPainter etc.. are good examples for common "Rendering Devices".
+
+	<code-snippet>
+		KRenderingDevice *device = KRenderingDeviceFactory::self()->request("agg", targetQt);
+		if(!device)
+			return false;
+	</code-snippet>
+
+	You can easily load available rendering devices by 'String'.
+	Additionally, you have to pass the rendering target pointer
+	as the 'request' function checks wheter your rendering device
+	needs a 'buffered' rendering target or a 'unbuffered' rendering
+	target. For example: targetQt -> buffered rendering target
+						 agg -> buffered rendering device
+
+    An OpenGL target is a good example of an 'unbuffered' target,
+	because there would be no hardware acceleration advantage if we'd
+	use a software renderer like agg2 to create a rendering buffer
+	and then blit it onto the screen. That's why such a seperation is needed.
+
+Ok, as you know the difference between targets & devices now,
+we can start experimenting with the main 'KCanvas' class.....
+
+3. How to use the 'KCanvas' class?
+----------------------------------
+
+<code-snippet>
+	KCanvas(KCanvasTarget *target, KRenderingDevice *device)
+</code-snippet>
+
+The (only available) KCanvas constructor, takes a KCanvasTarget
+pointer and a KRenderingDevice pointer, which can be retrieved
+using the techniques from the article above.
+
+<code-snippet>
+	// First attach to canvas...
+	KCanvas *myCanvas = new KCanvas(target, device);
+
+    // ... then initialize the target & device!
+	target->init(this);
+	device->init(target);
+</code-snippet>
+
+The second important step is to initialize the rendering target.
+When using the 'KCanvasTargetQt' it takes a 'QPaintDevice'
+pointer as argument, which identifies the window to paint on.
+(Look into test/canvastest.cc & test/CanvasWidget.cc...)
+
+That knowledge should be sufficient to get an "empty" canvas
+onto screen. Next thing to know: How to use canvas items?
+
+4. Adding items onto your canvas [TODO]
+--------------------------------
+- concept of paintservers
+
+Paint servers can be thought of as a way of filling up a arbitrary
+screen region using paint. The simplest and most commonly used is the
+solid paint server, which simply paints the area with a solid rgb color.
+More advanced paint servers are the gradient paint server, which can be used
+to create smooth color transitions or shadings. Currently KCanvas supports two
+gradient types (linear + radial), but other gradients are possible. Finally there
+is the pattern paint server, which takes a bitmap graphic and tiles it over the area,
+possible using a transformation matrix to rotate or skew the pattern tiles.
+
+Note that KCanvas has an abstract interface for paint servers, so new paint servers can
+be added in addition to the three current ones.
+
+Paint servers as used in KCanvas are heavily influenced by svg, see :
+http://www.w3.org/TR/SVG11/pservers.html
+
+- KCanvasResource
+
+Most paintservers are KCanvasResources. This class makes sure any change on
+the paint server invalidates every item using the paint server.
+For example, when a gradient resource changes a color stop, all items using
+said gradient will be invalidated and redrawn on the next update(). Since
+not every change on a parameter of a paintserver should trigger a redraw
+(for instance you don't want this while initializing the canvas) an
+explicit call named invalidate() has to be done on the KCanvasResource.
+
+- KRenderingStyle
+- KCanvasCreator
+
+Currently the following canvas items can be created using the
+KCanvasCreator singleton:
+
+- lines
+- rectangles (possibly rounded)
+- circles
+- ellipses
+- paths
+- containers
+
+Items are inserted into the canvas. Later additions are drawn above items
+added before, ie. the zIndex increases on every item insertion.
+Here is a code snippet of the creation of a canvas item, in this case a rounded rect:
+
+<code-snippet>
+	canvas->insertItem(KCanvasCreator::self()->createRoundedRectangle(canvas, rectStyle, 120, 100, 140, 160, 5, 10));
+</code-snippet>
+
+Note that for manipulating individual canvas items at a later time it is
+convenient to keep a pointer to the canvas item:
+
+<code-snippet>
+        KCanvasItem *item = KCanvasCreator::self()->createRoundedRectangle(canvas, rectStyle, 120, 100, 140, 160, 5, 10);
+</code-snippet>
+
+Do not worry about it being a pointer, the canvas keeps track of the item
+and will delete it when it is itself shutting down.
+Now that we have a pointer to the item, we can do things like lower()/raise(),
+get the bbox() of the item and hit detection using fillContains()/strokeContains().
+Have a look at KCanvasItem.h for what you can do with KCanvasItems.
+
+5. Writing rendering targets [TODO]
+----------------------------
+
+6. Writing rendering devices [TODO] 
+----------------------------
+
+Have fun with KCanvas!
+Your KCanvas Team :)

@@ -1,0 +1,418 @@
+# These are all values accepted for CSS2.
+#
+# WARNING:
+# --------
+#
+# The Values are sorted according to the properties they belong to,
+# and have to be in the same order as the enums in render_style.h.
+#
+# If not, the optimizations in the cssparser and style selector will fail,
+# and produce incorrect results.
+#
+inherit
+initial
+#
+# CSS_PROP_OUTLINE_STYLE
+# CSS_PROP_BORDER_TOP_STYLE
+# CSS_PROP_BORDER_BOTTOM_STYLE
+# CSS_PROP_BORDER_LEFT_STYLE
+-khtml-native
+none
+hidden
+inset
+groove
+ridge
+outset
+dotted
+dashed
+solid
+double
+#
+# CSS_PROP_FONT:
+#
+caption
+icon
+menu
+message-box
+small-caption
+status-bar
+#
+# CSS_PROP_FONT_STYLE:
+#
+#normal
+italic
+oblique
+#
+# CSS_PROP_FONT_VARIANT:
+#
+#normal
+small-caps
+#
+# CSS_PROP_FONT_WEIGHT:
+#
+normal
+bold
+bolder
+lighter
+100
+200
+300
+400
+500
+600
+700
+800
+900
+#
+# CSS_PROP_FONT_SIZE:
+#
+xx-small
+x-small
+small
+medium
+large
+x-large
+xx-large
+-khtml-xxx-large
+smaller
+larger
+#
+# CSS_PROP_FONT_STRETCH:
+#
+#normal
+wider
+narrower
+ultra-condensed
+extra-condensed
+condensed
+semi-condensed
+semi-expanded
+expanded
+extra-expanded
+ultra-expanded
+#
+# CSS_PROP_GENERIC_FONT_FAMILY:
+#
+serif
+sans-serif
+cursive
+fantasy
+monospace
+#
+#
+# CSS_PROP_BACKGROUND_COLOR:
+#
+transparent
+#
+#
+# CSS_PROP_*_COLOR
+#
+aqua
+black
+blue
+crimson
+fuchsia
+gray
+green
+indigo
+lime
+maroon
+navy
+olive
+orange
+purple
+red
+silver
+teal
+white
+yellow
+activeborder
+activecaption
+appworkspace
+background
+buttonface
+buttonhighlight
+buttonshadow
+buttontext
+captiontext
+graytext
+highlight
+highlighttext
+inactiveborder
+inactivecaption
+inactivecaptiontext
+infobackground
+infotext
+menutext
+scrollbar
+threeddarkshadow
+threedface
+threedhighlight
+threedlightshadow
+threedshadow
+window
+windowframe
+windowtext
+#
+# colors in non strict mode
+grey
+-khtml-text
+#
+# CSS_PROP_BACKGROUND_REPEAT:
+#
+repeat
+repeat-x
+repeat-y
+no-repeat
+#
+# CSS_PROP_VERTICAL_ALIGN:
+#
+baseline
+middle
+sub
+super
+text-top
+text-bottom
+top
+bottom
+# HTML alignment MIDDLE has no corresponding CSS alignment
+-khtml-baseline-middle
+#
+# CSS_PROP_TEXT_ALIGN:
+#
+-khtml-auto
+left
+right
+center
+justify
+-khtml-left
+-khtml-right
+-khtml-center
+#
+# CSS_PROP_LIST_STYLE_POSITION:
+#
+outside
+inside
+#
+# CSS_PROP_LIST_STYLE_TYPE:
+#
+disc
+circle
+square
+box
+-khtml-diamond
+decimal
+decimal-leading-zero
+-khtml-arabic-indic
+-khtml-lao
+-khtml-persian
+-khtml-urdu
+-khtml-thai
+-khtml-tibetan
+lower-roman
+upper-roman
+hebrew
+armenian
+georgian
+cjk-ideographic
+-khtml-japanese-formal
+-khtml-japanese-informal
+-khtml-simp-chinese-formal
+-khtml-simp-chinese-informal
+-khtml-trad-chinese-formal
+-khtml-trad-chinese-informal
+lower-greek
+-khtml-upper-greek
+lower-alpha
+lower-latin
+upper-alpha
+upper-latin
+hiragana
+katakana
+hiragana-iroha
+katakana-iroha
+-khtml-open-quote
+-khtml-close-quote
+#none
+#
+# CSS_PROP_DISPLAY:
+#
+inline
+block
+list-item
+run-in
+compact
+inline-block
+table
+inline-table
+table-row-group
+table-header-group
+table-footer-group
+table-row
+table-column-group
+table-column
+table-cell
+table-caption
+#none
+#
+# CSS_PROP_CURSOR:
+#
+auto
+crosshair
+default
+pointer
+progress
+move
+e-resize
+ne-resize
+nw-resize
+n-resize
+se-resize
+sw-resize
+s-resize
+w-resize
+text
+wait
+help
+#
+# CSS_PROP_DIRECTION:
+#
+ltr
+rtl
+#
+# CSS_PROP_TEXT_TRANSFORM:
+#
+capitalize
+uppercase
+lowercase
+#none
+#
+# CSS_PROP_VISIBILITY:
+#
+visible
+#hidden
+collapse
+#
+# CSS_PROP_CONTENT:
+#
+close-quote
+no-close-quote
+no-open-quote
+open-quote
+#
+# CSS_PROP_WHITE_SPACE:
+#
+#normal
+nowrap
+pre
+pre-wrap
+pre-line
+-khtml-nowrap
+#
+# Unordered rest
+#
+above
+absolute
+always
+avoid
+below
+bidi-override
+blink
+both
+crop
+cross
+embed
+fixed
+hand
+hide
+higher
+invert
+landscape
+level
+line-through
+loud
+lower
+marquee
+mix
+overline
+portrait
+relative
+scroll
+separate
+show
+static
+thick
+thin
+underline
+
+# CSS3 Values
+# CSS_PROP_BOX_SIZING
+border-box
+content-box
+
+# Not supported CSS 2 Aural values
+#
+# CSS_PROP_AZIMUTH:
+#
+#A left-side
+#A far-left
+#A #left
+#A center-left
+#A #center
+#A center-right
+#A right
+#A far-right
+#A right-side
+#A behind
+#A leftwards
+#A rightwards
+#
+# CSS_PROP_SPEECH_RATE:
+#
+#A x-slow
+#A slow
+#A #medium
+#A x-fast
+#A fast
+#A faster
+#A slower
+#
+# CSS_PROP_VOLUME:
+#
+#A silent
+#A x-soft
+#A soft
+#A #medium
+#A high
+#A x-high
+#A x-loud
+#
+# CSS_PROP_PITCH:
+#
+#A x-low
+#A low
+#A #medium
+#A #high
+#A #x-high
+#
+# CSS_PROP_SPEAK:
+#
+#A #normal
+#A #none
+#A spell-out
+#
+# CSS_PROP_SPEAK_HEADER:
+#
+#A #once
+#A always
+#
+# CSS_PROP_SPEAK_NUMERAL:
+#
+#A digits
+#A continuous
+#
+# CSS_PROP_SPEAK_PUNCTUATION:
+#
+#A code
+#A #none
+

@@ -1,0 +1,13 @@
+
+This directory contains XPath 1.0 functions, 
+	following these naming conventions:
+
+* The filename is the function name, plus extensions.
+
+* The class name is the function name plus "FunctionCallImplXP1". 
+	For example, "containsFunctionCallImplXP1".
+
+* When function names contains dashes, "-", the class name substitute it
+	with an underline, while the file name keeps it.
+
+Also see the TODO file, in this directory

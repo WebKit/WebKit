@@ -1,0 +1,121 @@
+/*
+ * Copyright (c) 1999 World Wide Web Consortium,
+ * (Massachusetts Institute of Technology, Institut National de
+ * Recherche en Informatique et en Automatique, Keio University). All
+ * Rights Reserved. This program is distributed under the W3C's Software
+ * Intellectual Property License. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE. See W3C License http://www.w3.org/Consortium/Legal/ for more
+ * details.
+ */
+
+// File: range.idl
+#ifndef _RANGE_IDL_
+#define _RANGE_IDL_
+
+#include "dom.idl"
+
+#pragma prefix "dom.w3c.org"
+module range
+{
+  typedef dom::Node Node;
+  typedef dom::DocumentFragment DocumentFragment;
+  typedef dom::DOMString DOMString;
+
+  // Introduced in DOM Level 2:
+  exception RangeException {
+    unsigned short   code;
+  };
+
+  // RangeExceptionCode
+  const unsigned short      BAD_BOUNDARYPOINTS_ERR         = 1;
+  const unsigned short      INVALID_NODE_TYPE_ERR          = 2;
+
+
+  // Introduced in DOM Level 2:
+  interface Range {
+    readonly attribute Node             startContainer;
+                                        // raises(dom::DOMException) on retrieval
+
+    readonly attribute long             startOffset;
+                                        // raises(dom::DOMException) on retrieval
+
+    readonly attribute Node             endContainer;
+                                        // raises(dom::DOMException) on retrieval
+
+    readonly attribute long             endOffset;
+                                        // raises(dom::DOMException) on retrieval
+
+    readonly attribute boolean          isCollapsed;
+                                        // raises(dom::DOMException) on retrieval
+
+    readonly attribute Node             commonAncestorContainer;
+                                        // raises(dom::DOMException) on retrieval
+
+    void               setStart(in Node refNode, 
+                                in long offset)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               setEnd(in Node refNode, 
+                              in long offset)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               setStartBefore(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               setStartAfter(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               setEndBefore(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               setEndAfter(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               collapse(in boolean toStart)
+                                        raises(dom::DOMException);
+    void               selectNode(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+    void               selectNodeContents(in Node refNode)
+                                        raises(RangeException, 
+                                               dom::DOMException);
+
+    typedef enum CompareHow_ {
+      StartToStart,
+      StartToEnd,
+      EndToEnd,
+      EndToStart
+    } CompareHow;
+    short              compareBoundaryPoints(in CompareHow how, 
+                                             in Range sourceRange)
+                                        raises(dom::DOMException);
+    void               deleteContents()
+                                        raises(dom::DOMException);
+    DocumentFragment   extractContents()
+                                        raises(dom::DOMException);
+    DocumentFragment   cloneContents()
+                                        raises(dom::DOMException);
+    void               insertNode(in Node newNode)
+                                        raises(dom::DOMException, 
+                                               RangeException);
+    void               surroundContents(in Node newParent)
+                                        raises(dom::DOMException, 
+                                               RangeException);
+    Range              cloneRange()
+                                        raises(dom::DOMException);
+    DOMString          toString()
+                                        raises(dom::DOMException);
+    void               detach()
+                                        raises(dom::DOMException);
+  };
+
+  // Introduced in DOM Level 2:
+  interface DocumentRange {
+    Range              createRange();
+  };
+};
+
+#endif // _RANGE_IDL_
+
