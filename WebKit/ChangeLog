@@ -1,3 +1,16 @@
+2005-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+	- fix page cache purging logic; this gets rid of a bug where the
+	page cache would grow without bound if the oldest page cache item
+	was the snapback item, and changed the rule a bit so page cache
+	items farther back than the max size get purged, even if fewer
+	than the max size are in current use.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _purgePageCache]):
+
 2005-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled in patch by opendarwin.org@mitzpettel.com
