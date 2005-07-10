@@ -1,3 +1,26 @@
+2005-07-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * ksvg2/core/KCanvasRenderingStyle.cc: Added.
+        * ksvg2/core/KCanvasRenderingStyle.h: Added.
+        * ksvg2/core/KSVGDocumentBuilder.cc: Added.
+        * ksvg2/core/KSVGDocumentBuilder.h: Added.
+        * ksvg2/core/KSVGTimeScheduler.cc: Added.
+        * ksvg2/core/KSVGTimeScheduler.h: Added.
+        * ksvg2/core/KSVGTimeScheduler.moc: Added.
+        Added directory previously ignored by global cvsignore rules.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3939
+
+2005-07-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * WebCore.pbproj/project.pbxproj:
+        added htmlfactory.* to WebCore+SVG
+        Also fixed /sw/bin/bison absolute path.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3938
+
 2005-07-09  Timothy Hatcher  <timothy@colloquy.info>
 
         Reviewed and landed by Maciej.
