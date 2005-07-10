@@ -1059,8 +1059,10 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     ptr[--len] = '\0';
 
                 // Now that we've shaved off any invalid / that might have followed the name), make the tag.
-                currToken.tagName = AtomicString(ptr);
-                currToken.beginTag = beginTag;
+                if (ptr[0] != '!' && strcmp(ptr, "!doctype") != 0) {
+                    currToken.tagName = AtomicString(ptr);
+                    currToken.beginTag = beginTag;
+                }
                 dest = buffer;
                 tag = SearchAttribute;
                 cBufferPos = 0;

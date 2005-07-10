@@ -55,7 +55,12 @@ inline bool equal(DOMStringImpl* const& r, const char* const& s)
 
 bool AtomicString::equal(const AtomicString &a, const char *b)
 { 
-    return DOM::equal(a.m_string.implementation(), b); 
+    DOMStringImpl *impl = a.m_string.implementation();
+    if ((!impl || !impl->s) && !b)
+        return true;
+    if ((!impl || !impl->s) || !b)
+        return false;
+    return DOM::equal(impl, b); 
 }
 
 inline DOMStringImpl *convert(const char* const& c, unsigned hash)

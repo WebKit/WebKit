@@ -1,3 +1,14 @@
+2005-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag): Don't allow !doctype as a tag name, this screws up
+	parsing and makes !doctype elements and extra text nodes get added to the DOM.
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::equal): Add some nil checks, now that the equal this calls
+	no longer checks for nil.
+
 2005-07-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
