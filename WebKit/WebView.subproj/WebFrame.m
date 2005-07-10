@@ -922,20 +922,26 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_purgePageCache
 {
     // This method implements the rule for purging the page cache.
-    int sizeLimit = [[[self webView] backForwardList] pageCacheSize];
+    unsigned sizeLimit = [[[self webView] backForwardList] pageCacheSize];
+    unsigned pagesCached = 0;
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
     NSArray *backList = [backForwardList backListWithLimit: 999999];
-
-    int i;
-    for (i = [backList count] - 1; i >= sizeLimit; i--){
+    WebHistoryItem *oldestItem = nil;
+    
+    unsigned i;
+    for (i = 0; i < [backList count]; i++){
         WebHistoryItem *item = [backList objectAtIndex: i];
         if ([item hasPageCache]){
-            // Snapback items are never directly purged here.
-            if ([item alwaysAttemptToUsePageCache]) {
-                LOG(PageCache, "Purging back/forward cache, %@\n", [item URL]);
-                [item setHasPageCache: NO];
-            }
+            if (oldestItem == nil)
+                oldestItem = item;
+            pagesCached++;
         }
+    }
+    
+    // Snapback items are never directly purged here.
+    if (pagesCached >= sizeLimit && ![oldestItem alwaysAttemptToUsePageCache]){
+        LOG(PageCache, "Purging back/forward cache, %@\n", [oldestItem URL]);
+        [oldestItem setHasPageCache: NO];
     }
 }
 
