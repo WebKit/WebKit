@@ -1,3 +1,10 @@
+2005-07-09  Maciej Stachowiak  <mjs@apple.com>
+
+        - backing out my earlier collector change, it causes a performance regression in TOT
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate):
+
 2005-07-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs/hyatt (only in concept).
