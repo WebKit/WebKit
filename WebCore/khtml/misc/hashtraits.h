@@ -33,7 +33,11 @@ using std::pair;
 template<typename T>
 struct HashTraits {
     typedef T traitType;
+#ifdef __GLIBCXX__ // gcc 3.4 and greater:
+    static const bool emptyValueIsZero = std::__is_integer<T>::__value;
+#else
     static const bool emptyValueIsZero = std::__is_integer<T>::_M_type;
+#endif
 
     static traitType emptyValue() {
         return traitType();

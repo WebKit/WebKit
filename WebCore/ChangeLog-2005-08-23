@@ -1,3 +1,12 @@
+2005-07-09  Timothy Hatcher  <timothy@colloquy.info>
+
+        Reviewed and landed by Maciej.
+
+	Fixed a build error with GCC4 and the use of _M_type.
+
+        * khtml/misc/hashtraits.h:
+        Test for GCC4 and use the new __value enum from _M_type.
+
 2005-07-09  David Hyatt  <hyatt@apple.com>
 
 	Make sure to keep eLastEntry at the end of the list, since it is used for the dynamic portion of the
