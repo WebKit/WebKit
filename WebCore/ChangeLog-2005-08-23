@@ -1,3 +1,10 @@
+2005-07-09  David Hyatt  <hyatt@apple.com>
+
+	Make sure to keep eLastEntry at the end of the list, since it is used for the dynamic portion of the
+	hash.
+	
+        Reviewed by mjs
+
 2005-07-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric Seidel.

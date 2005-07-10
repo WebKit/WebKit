@@ -319,8 +319,9 @@ protected:
     AtomicString m_id;
 };
 
+// When adding new entries, make sure to keep eLastEntry at the end of the list.
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
-    eTable, eCell, eCaption, eLastEntry, eMarquee };
+    eTable, eCell, eCaption, eMarquee, eLastEntry };
 
 class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {
