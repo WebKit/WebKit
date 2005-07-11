@@ -1807,7 +1807,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     unsigned i;
     for (i = 0; i < length - 4; i++) {
         
-        // most plugins (Flash) send 2 CRFL's between the header and body of their POST requests, while the adboe plugin sends two LF's
+        //  Support for Acrobat. It sends "\n\n".
         if (bytes[i] == '\n' && bytes[i+1] == '\n') {
             return i+2;
         }
