@@ -1798,7 +1798,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
 }
 
-// Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
+
 - (unsigned)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
@@ -1806,6 +1806,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     
     unsigned i;
     for (i = 0; i < length - 4; i++) {
+        
+        //most plugins (Flash) send 2 CRFL's between the header and body of their POST requests, while the adboe plugin sends two LF's.
+        if (bytes[i] == '\n' && bytes[i+1] == '\n') {
+            return i+2;
+        }
+        
+        // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
         if (bytes[i] == '\r' && bytes[i+1] == '\n') {
             i += 2;
             if (i == 2) {
