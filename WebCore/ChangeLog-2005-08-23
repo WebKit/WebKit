@@ -1,3 +1,11 @@
+2005-07-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        Test cases added: (NONE)
+
+        * ChangeLog: Fixed two typos I found while reading the ChangeLog.
+
 2005-07-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
@@ -2211,7 +2219,7 @@
         Reviewed by John.
 
 	This is a fix for half of <rdar://problem/4172312>
-	Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overriden when its value is given to be smaller than the font height.
+	Because marquee is a WinIE element, we are honoring their treatment of the height attribute by making sure it is overriden when its value is given to be smaller than the font height.
 
         Test cases added: fast/css/MarqueeLayoutTest.html
 
@@ -2243,7 +2251,7 @@
 
 	Test cases added: (NONE)
 
-	<rdar://problem/4109893> REGRESSSION: back/forward broken at wsj.com, worked in v185
+	<rdar://problem/4109893> REGRESSION: back/forward broken at wsj.com, worked in v185
 	Also written as http://bugzilla.opendarwin.org/show_bug.cgi?id=3901
  
 	Broken by security fix for 4005575: Arbitrary file disclosure vulnerability due to ability to load local html from remote content
