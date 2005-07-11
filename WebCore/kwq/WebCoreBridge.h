@@ -28,6 +28,7 @@
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardAccess.h>
+#import <WebCore/WebCoreTextConversionMethod.h>
 
 #ifdef __cplusplus
 
@@ -598,6 +599,7 @@ typedef enum
 - (void)setHasBorder:(BOOL)hasBorder;
 
 - (WebCoreKeyboardUIMode)keyboardUIMode;
++ (WebCoreTextConversionMethod)textConversionMethod;
 
 - (void)didSetName:(NSString *)name;
 

@@ -1,5 +1,27 @@
 2005-07-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Richard
+
+        Test cases added: (NONE)
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQLogging.h: Added constant for logging text conversions.
+        * kwq/KWQLogging.m: Ditto.
+        * kwq/KWQTextCodec.mm: Added support for using the ICU library for unicode text conversion.
+        (KWQTextDecoder::KWQTextDecoder): Check for conversion method to use.
+        (KWQTextDecoder::~KWQTextDecoder): Release ICU converter if needed.
+        (KWQTextDecoder::convertUTF16): Use constant rather in place of hard-coded buffer size.
+        (KWQTextDecoder::createTECConverter): Name change: qualify converter names with TEC suffix.
+        (KWQTextDecoder::createICUConverter): New function to create an ICU converter.
+        (KWQTextDecoder::convertOneChunkUsingTEC): Name change: qualify converter names with TEC suffix.
+        (KWQTextDecoder::convertUsingTEC): Ditto. Also, use constant rather in place of hard-coded buffer size.
+        (KWQTextDecoder::convertUsingICU): New function to convert text using ICU.
+        (KWQTextDecoder::convert): Now switches on converters, picking either TEC or ICU.
+        * kwq/WebCoreBridge.h: Add -textConversionMethod accessor so KWQTextDecoder can pick the right converter.
+        * kwq/WebCoreTextConversionMethod.h: Added.
+
+2005-07-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         Test cases added: (NONE)

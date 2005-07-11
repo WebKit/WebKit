@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+typedef enum {
+    TECTextConversionMethod = 0,
+    ICUTextConversionMethod = 1,
+} WebCoreTextConversionMethod;
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX KWQLog
-#endif
-
-extern KWQLogChannel KWQLogNotYetImplemented;
-
-extern KWQLogChannel KWQLogFrames;
-extern KWQLogChannel KWQLogLoading;
-extern KWQLogChannel KWQLogPopupBlocking;
-extern KWQLogChannel KWQLogEvents;
-extern KWQLogChannel KWQLogEditing;
-extern KWQLogChannel KWQLogTextConversion;
+@interface NSObject (WebCoreTextConversionMethod)
++ (WebCoreTextConversionMethod)textConversionMethod;
+@end

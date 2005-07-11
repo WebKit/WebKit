@@ -1,3 +1,11 @@
+2005-07-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (+[WebBridge setTextConversionMethod:]): New method to support switching text conversion method.
+        (+[WebBridge textConversionMethod]): Returns current text conversion method.
+
 2005-07-11  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by cblu and mjs.
