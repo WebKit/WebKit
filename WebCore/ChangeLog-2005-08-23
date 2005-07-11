@@ -4,7 +4,7 @@
 
         Test cases added: (NONE)
 
-        * WebCore.pbproj/project.pbxproj: Fix erroneously-committed project file.
+        * WebCore.pbproj/project.pbxproj: Fix project file.
 
 2005-07-11  Ken Kocienda  <kocienda@apple.com>
 
