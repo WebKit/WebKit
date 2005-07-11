@@ -4,6 +4,14 @@
 
         Test cases added: (NONE)
 
+        * WebCore.pbproj/project.pbxproj: Fix erroneously-committed project file.
+
+2005-07-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        Test cases added: (NONE)
+
         * ChangeLog: Fixed two typos I found while reading the ChangeLog.
 
 2005-07-10  Maciej Stachowiak  <mjs@apple.com>
