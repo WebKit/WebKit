@@ -16,6 +16,8 @@ function test() {
 	print("frames[0].id (should be undefined): " + frames[0].id);
 	print("");
 
+    delete frames[0].name; // force dynamic property creation
+    
 	frames[0].name = "frame0_newname"
 	frames[0].id = "frame0_newid";
 	print("frames[0].name (should be frame0_newname): " + frames[0].name);
