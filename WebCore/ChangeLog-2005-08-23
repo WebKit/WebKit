@@ -1,3 +1,16 @@
+2005-07-12  Kevin Decker  <kdecker@apple.com>
+
+         Reviewed by cblu.
+
+	Fixed: 
+	  http://bugzilla.opendarwin.org/show_bug.cgi?id=3968
+	 <rdar://problem/4172645> REGRESSION: top frame only loads at banking site - http://www.skandiabanken.no
+
+        Test cases added: None; This fixes a race condition that is not reproducible locally.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleLocationChange): If a redirect was scheduled during a load, then stop the current load. Otherwise when the current load transitions from a provisional to a committed state, pending redirects may be cancelled. 
+
 2005-07-12  Beth Dakin  <bdakin@apple.com>
 
 	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3942 and marquee problems in Radar bug 

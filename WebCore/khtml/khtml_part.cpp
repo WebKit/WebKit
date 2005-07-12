@@ -2069,6 +2069,14 @@ void KHTMLPart::scheduleLocationChange(const QString &url, const QString &referr
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
     d->m_scheduledRedirection = d->m_doc ? locationChangeScheduled : locationChangeScheduledDuringLoad;
+    
+    // If a redirect was scheduled during a load, then stop the current load.
+    // Otherwise when the current load transitions from a provisional to a 
+    // committed state, pending redirects may be cancelled. 
+    if (locationChangeScheduledDuringLoad) {
+        stopLoading(true);   
+    }
+    
     d->m_delayRedirect = 0;
     d->m_redirectURL = url;
     d->m_redirectReferrer = referrer;
