@@ -1,3 +1,12 @@
+2005-07-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * icu/unicode/ucnv.h: Added.
+        * icu/unicode/ucnv_err.h: Added.
+        Fixes build break for externals caused by KWQTextCodec.mm changes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3961
+
 2005-07-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Adele.
@@ -8,6 +17,7 @@
         (KDOM::operator<<):
         A tiny batch of changes I wished to commit before moving
         WebCore/kdom to SVGSupport/kdom.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3959
 
 2005-07-11  Geoffrey Garen  <ggaren@apple.com>
 
