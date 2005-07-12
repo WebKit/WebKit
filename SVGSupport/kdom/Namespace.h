@@ -158,6 +158,12 @@ namespace KDOM
 	 * Specification: http://www.w3.org/TR/xpath20/#id-identifying-errors
 	 */
 	const DOMString NS_XPERR = "http://www.w3.org/2004/07/xqt-errors";
+
+	/**
+	 * The XPath 2.0 Unicode codepoint collation URI identifier. Collations
+	 * specifies how strings are compared and ordered.
+	 */
+	const DOMString NS_UNICODE_COLLATION = "http://www.w3.org/2005/04/xpath-functions/collation/codepoint";
 };
 
 #endif // KDOM_Namespace_h

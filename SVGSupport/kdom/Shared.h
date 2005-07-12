@@ -68,10 +68,18 @@ bool T::operator!=(const T &other) const { \
 } \
 
 /**
+ * Add a null object singleton to the class, of the class' type.
+ * This makes for efficient storage and can be used in comparisons
+ * like this: someNode.firstChild() != Node::null; .
+ *
+ * TODO: is there demand for isNull() convenience method? If so, add
+ * here.
  */
 #define KDOM_INTERNAL(ClassName) static ClassName null; typedef ClassName##Impl Private;
 
 /**
+ * Base classes have a handle() convenience method that gives back
+ * the internal impl pointer, in addition to the null object singleton.
  */
 #define KDOM_INTERNAL_BASE(ClassName) KDOM_INTERNAL(ClassName) ClassName##Impl *handle() const { return d; }
 

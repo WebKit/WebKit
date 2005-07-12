@@ -1,3 +1,14 @@
+2005-07-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by Adele.
+
+        * kdom/Namespace.h: Merged in XPath 2.0 namespace def from KDE.
+        * kdom/Shared.h: Merged in comments from KDE.
+        * kdom/kdom.h: Changed local // to use #ifndef APPLE_CHANGES
+        (KDOM::operator<<):
+        A tiny batch of changes I wished to commit before moving
+        WebCore/kdom to SVGSupport/kdom.
+
 2005-07-11  Geoffrey Garen  <ggaren@apple.com>
 
 	-fixed rdar://problem/4170960 
