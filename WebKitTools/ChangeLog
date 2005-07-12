@@ -1,3 +1,10 @@
+2005-07-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * checkout-svg: Added.
+        Script to check out WebCore+SVG
+
 2005-06-30  Darin Adler  <darin@apple.com>
 
         Changes based on input from Michael Kahl.

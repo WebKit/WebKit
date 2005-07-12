@@ -1,0 +1,72 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# First time check-out script for Web Kit Open Source Project.
+
+use strict;
+
+# Check that we're in the right directory.
+if (! -d "WebKitTools") {
+    if (-d "../WebKitTools") {
+        chdir ".." or die;
+    }
+    if (! -d "WebKitTools") {
+        die "No WebKitTools directory found. Please run this script from the directory containing WebKitTools.\n";
+    }
+}
+
+# Read the CVS root out of the project that's already checked out.
+open ROOT, "WebKitTools/CVS/Root" or die;
+my $root = <ROOT>;
+chomp $root;
+close ROOT;
+
+# Check out all the sources.
+print "CVS root is $root\n";
+print "Checking out WebCore (again) and SVGSupport\n";
+open CVS, "cvs -d '$root' co -P WebCore SVGSupport |" or die;
+while (<CVS>) {
+    print;
+}
+close CVS;
+
+# Make the necessary symlinks
+print "\nCreating symlinks (kdom, kcanvas, ksvg2, WebCore+SVG) from WebCore into SVGSupport\n";
+symlink("SVGSupport/kdom", "WebCore/kdom");
+symlink("SVGSupport/kcanvas", "WebCore/kcanvas");
+symlink("SVGSupport/ksvg2", "WebCore/ksvg2");
+symlink("SVGSupport/WebCore+SVG", "WebCore/WebCore+SVG");
+
+# Ready to build.
+print "\n";
+print "===============================================================\n";
+print " WebCore+SVG sources are now checked out and ready to build.\n";
+print " You can build by projects in Xcode by selecting the \n";
+print " JavaScriptCore+SVG and WebCore+SVG targets.\n";
+print " See http://webkit.opendarwin.org/projects/svg for more info.\n";
+print "===============================================================\n";
