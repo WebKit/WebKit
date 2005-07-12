@@ -1,5 +1,13 @@
 2005-07-12  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by mjs.
+
+        * kjs/function.cpp:
+        (KJS::IndexToNameMap::operator[]): fixed infinite recursion
+        bug in last checkin
+
+2005-07-12  Geoffrey Garen  <ggaren@apple.com>
+
         -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3881
         arguments object should share values with function parameters
 

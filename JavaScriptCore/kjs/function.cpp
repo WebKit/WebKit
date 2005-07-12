@@ -407,7 +407,7 @@ Identifier& IndexToNameMap::operator[](const Identifier &index)
 
   assert(indexIsNumber && indexAsNumber < size);
   
-  return (*this)[index];
+  return (*this)[indexAsNumber];
 }
 
 // ------------------------------ ArgumentsImp ---------------------------------
