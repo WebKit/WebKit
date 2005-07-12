@@ -1176,6 +1176,7 @@ public:
     short colSpan() const { return visual->colspan; }
 
     const QFont & font() const { return inherited->font.f; }
+    int fontSize() const { return inherited->font.f.pixelSize(); }
     // use with care. call font->update() after modifications
     const Font &htmlFont() { return inherited->font; }
     const QFontMetrics & fontMetrics() const { return inherited->font.fm; }

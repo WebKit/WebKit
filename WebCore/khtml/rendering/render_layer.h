@@ -148,6 +148,7 @@ private:
     int m_end;
     int m_speed;
     int m_unfurlPos;
+    Length m_height;
     bool m_reset: 1;
     bool m_suspended : 1;
     bool m_stopped : 1;

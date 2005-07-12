@@ -1,3 +1,27 @@
+2005-07-12  Beth Dakin  <bdakin@apple.com>
+
+	Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3942 and marquee problems in Radar bug 
+	4172312. Vertical marquees default to 200px, and horizontal marquees do not allow text to be 
+	truncated by a too-small height attribute. 
+
+        Reviewed by Hyatt.
+
+        Test cases added: (NONE)
+
+        * khtml/html/html_blockimpl.cpp: deleted former changes to make marquee height work correctly.
+        (HTMLMarqueeElementImpl::mapToEntry):
+        (HTMLMarqueeElementImpl::parseMappedAttribute):
+        * khtml/rendering/render_layer.cpp: this is where the height issues are now addressed
+        (Marquee::updateMarqueeStyle):
+        * khtml/rendering/render_layer.h: 
+        (khtml::):
+        * khtml/rendering/render_style.h: added function fontSize() 
+        (khtml::RenderStyle::fontSize):
+        * khtml/xml/dom_elementimpl.h: deleted addition of EMarquee hash key
+        (DOM::):
+        * layout-tests/fast/css/MarqueeLayoutTest-expected.txt: 
+        * layout-tests/fast/css/MarqueeLayoutTest.html: added vertical marquees to test.
+
 2005-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         Test cases modified:

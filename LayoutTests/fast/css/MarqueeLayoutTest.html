@@ -6,10 +6,11 @@
     <p>Tests: the height attribute for the marquee tag<br>
     </p>
     <p>Conditions:<br>
-    Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overriden when the given
-    height is smaller than the font height.
+    Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overridden when the given
+    height is smaller than the font height. We also make sure that the default height of a vertical marquee is 200px.
     </p>
-    <p>If successful, the pink marquee should be large, and the others should all be the same size. None of the text should be cut off.
+    <p>If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None of the text 
+    should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px. 
     </p>
     <hr>
 	    
@@ -17,12 +18,7 @@
            <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
             Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
     </MARQUEE>
-    <br>
-     <MARQUEE height="100" bgcolor="pink"> 
-           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
-            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
-    </MARQUEE>
-    <br>
+    <br> 
     <MARQUEE height="0" bgcolor="yellow"> 
            <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
             Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
@@ -31,7 +27,34 @@
     <MARQUEE height="-45" bgcolor="orange"> 
            <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
             Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
-    </MARQUEE>        
+    </MARQUEE>   
+     <br>
+     <MARQUEE bgcolor="brown"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>   
+     <MARQUEE height="100" bgcolor="pink"> 
+           <b>Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench.  Paul O' Connell, 
+            Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench.</b>
+    </MARQUEE>
+    
+    <br>
+    <br>
+    <br>
+    
+    <div style="display:inline-block; height:200px; background:green;">This is 200px tall.</div>
+    <marquee direction="up" style="width:200px; background:aqua;" >
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+    </marquee>
+
+    <marquee direction="up" style="width:200px; background:yellow;" height="100">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+    </marquee>
+
+    <marquee direction="up" style="width:200px; background:red; height:100px;">
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+    </marquee>
+    <div style="display:inline-block; height:100px; background:green;">This is 100px tall.</div>
                 
 </body>
 </html>

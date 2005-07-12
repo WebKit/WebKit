@@ -347,9 +347,6 @@ bool HTMLMarqueeElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry&
 {
     switch (attr) {
         case ATTR_HEIGHT:   
-            // Needed to create eMarquee hash key to treat height attribute like WinIE. Fix for half of 4172312.
-            result = eMarquee;
-            return false;
         case ATTR_WIDTH:
         case ATTR_BGCOLOR:
         case ATTR_VSPACE:
@@ -364,9 +361,9 @@ bool HTMLMarqueeElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry&
         default:
             break;
     }
+    
     return HTMLElementImpl::mapToEntry(attr, result);
 }
-            
             
 void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
@@ -378,7 +375,7 @@ void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             break;
         case ATTR_HEIGHT:
             if (!attr->value().isEmpty())
-                addCSSLength(attr, CSS_PROP_MIN_HEIGHT, attr->value());
+                addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
             break;
         case ATTR_BGCOLOR:
             if (!attr->value().isEmpty())

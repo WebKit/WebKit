@@ -1652,6 +1652,15 @@ void Marquee::updateMarqueeStyle()
         }
     }
     
+    //Marquee height hack!! Make sure that, if it is a horizontal marquee, the height attribute is overridden 
+    //if it is smaller than the font size. If it is a vertical marquee and height is not specified, we default
+    //to a marquee of 200px.
+    if (isHorizontal()) {
+        if (s->height().isFixed() && (s->height().value < s->fontSize())) 
+            s->setHeight(Length(s->fontSize(),Fixed));
+    } else if (s->height().isVariable())  //vertical marquee with no specified height
+        s->setHeight(Length(200,Fixed)); 
+   
     if (speed() != marqueeSpeed()) {
         m_speed = marqueeSpeed();
         if (m_timerId) {
