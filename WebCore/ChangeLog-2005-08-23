@@ -1,3 +1,15 @@
+2005-07-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Added layout test for 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3435
+        Parentheses are backwards in Hebrew text (no bidi mirroring?)
+
+        Test is manual because results only reflect visually -
+        the layout is the same either way.
+        
+        Test cases added:
+        * manual-tests/bidi-parens.html: Added.
+
 2005-07-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
