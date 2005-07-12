@@ -251,6 +251,38 @@ bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName
     return InternalFunctionImp::deleteProperty(exec, propertyName);
 }
 
+/* Returns the parameter name corresponding to the given index. eg:
+ * function f1(x, y, z): getParameterName(0) --> x
+ *
+ * If a name appears more than once, only the last index at which
+ * it appears associates with it. eg:
+ * function f2(x, x): getParameterName(0) --> null
+ */
+Identifier FunctionImp::getParameterName(int index)
+{
+  int i = 0;
+  Parameter *p = param;
+  
+  if(!p)
+    return Identifier::null();
+  
+  // skip to the parameter we want
+  while (i++ < index && (p = p->next))
+    ;
+  
+  if (!p)
+    return Identifier::null();
+  
+  Identifier name = p->name;
+
+  // Are there any subsequent parameters with the same name?
+  while ((p = p->next))
+    if (p->name == name)
+      return Identifier::null();
+  
+  return name;
+}
+
 // ------------------------------ DeclaredFunctionImp --------------------------
 
 // ### is "Function" correct here?
@@ -310,22 +342,138 @@ void DeclaredFunctionImp::processVarDecls(ExecState *exec)
   body->processVarDecls(exec);
 }
 
+// ------------------------------ IndexToNameMap ---------------------------------
+
+// We map indexes in the arguments array to their corresponding argument names. 
+// Example: function f(x, y, z): arguments[0] = x, so we map 0 to Identifier("x"). 
+
+// Once we have an argument name, we can get and set the argument's value in the 
+// activation object.
+
+// We use Identifier::null to indicate that a given argument's value
+// isn't stored in the activation object.
+
+IndexToNameMap::IndexToNameMap(FunctionImp *func, const List &args)
+{
+  _map = new Identifier[args.size()];
+  this->size = args.size();
+  
+  int i = 0;
+  ListIterator iterator = args.begin(); 
+  for (; iterator != args.end(); i++, iterator++)
+    _map[i] = func->getParameterName(i); // null if there is no corresponding parameter
+}
+
+IndexToNameMap::~IndexToNameMap() {
+  delete [] _map;
+}
+
+bool IndexToNameMap::isMapped(const Identifier &index) const
+{
+  bool indexIsNumber;
+  int indexAsNumber = index.toUInt32(&indexIsNumber);
+  
+  if (!indexIsNumber)
+    return false;
+  
+  if (indexAsNumber >= size)
+    return false;
+
+  if (_map[indexAsNumber].isNull())
+    return false;
+  
+  return true;
+}
+
+void IndexToNameMap::unMap(const Identifier &index)
+{
+  bool indexIsNumber;
+  int indexAsNumber = index.toUInt32(&indexIsNumber);
+
+  assert(indexIsNumber && indexAsNumber < size);
+  
+  _map[indexAsNumber] = Identifier::null();
+}
+
+Identifier& IndexToNameMap::operator[](int index)
+{
+  return _map[index];
+}
+
+Identifier& IndexToNameMap::operator[](const Identifier &index)
+{
+  bool indexIsNumber;
+  int indexAsNumber = index.toUInt32(&indexIsNumber);
+
+  assert(indexIsNumber && indexAsNumber < size);
+  
+  return (*this)[index];
+}
+
 // ------------------------------ ArgumentsImp ---------------------------------
 
 const ClassInfo ArgumentsImp::info = {"Arguments", 0, 0, 0};
 
 // ECMA 10.1.8
-ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
-: ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype())
+ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act)
+: ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), 
+_activationObject(act),
+indexToNameMap(func, args)
 {
   Value protect(this);
   putDirect(calleePropertyName, func, DontEnum);
   putDirect(lengthPropertyName, args.size(), DontEnum);
   
   int i = 0;
-  ListIterator iterator = args.begin();
-  while (iterator != args.end())
-    ObjectImp::put(exec, i++, iterator++, DontEnum);
+  ListIterator iterator = args.begin(); 
+  for (; iterator != args.end(); i++, iterator++) {
+    if (!indexToNameMap.isMapped(Identifier::from(i))) {
+      ObjectImp::put(exec, Identifier::from(i), *iterator, DontEnum);
+    }
+  }
+}
+
+void ArgumentsImp::mark() 
+{
+  ObjectImp::mark();
+  if (_activationObject && !_activationObject->marked())
+    _activationObject->mark();
+}
+
+Value ArgumentsImp::get(ExecState *exec, const Identifier &propertyName) const
+{
+  if (indexToNameMap.isMapped(propertyName)) {
+    return _activationObject->get(exec, indexToNameMap[propertyName]);
+  } else {
+    return ObjectImp::get(exec, propertyName);
+  }
+}
+
+void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
+{
+  if (indexToNameMap.isMapped(propertyName)) {
+    _activationObject->put(exec, indexToNameMap[propertyName], value, attr);
+  } else {
+    ObjectImp::put(exec, propertyName, value, attr);
+  }
+}
+
+bool ArgumentsImp::deleteProperty(ExecState *exec, const Identifier &propertyName) 
+{
+  if (indexToNameMap.isMapped(propertyName)) {
+    indexToNameMap.unMap(propertyName);
+    return true;
+  } else {
+    return ObjectImp::deleteProperty(exec, propertyName);
+  }
+}
+
+bool ArgumentsImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
+{
+  if (indexToNameMap.isMapped(propertyName))
+    return true;
+  
+  return ObjectImp::hasOwnProperty(exec, propertyName);
 }
 
 // ------------------------------ ActivationImp --------------------------------
@@ -382,7 +530,7 @@ void ActivationImp::mark()
 
 void ActivationImp::createArgumentsObject(ExecState *exec) const
 {
-  _argumentsObject = new ArgumentsImp(exec, _function, _arguments);
+  _argumentsObject = new ArgumentsImp(exec, _function, _arguments, const_cast<ActivationImp *>(this));
 }
 
 // ------------------------------ GlobalFunc -----------------------------------

@@ -1,3 +1,30 @@
+2005-07-12  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3881
+        arguments object should share values with function parameters
+
+        Reviewed by mjs.
+
+        ArgumentsImp now uses a simple hash lookup to share values
+        with the activation object.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::getParameterName):
+        (KJS::IndexToNameMap::IndexToNameMap):
+        (KJS::IndexToNameMap::~IndexToNameMap):
+        (KJS::IndexToNameMap::isMapped):
+        (KJS::IndexToNameMap::unMap):
+        (KJS::IndexToNameMap::operator[]):
+        (KJS::ArgumentsImp::ArgumentsImp):
+        (KJS::ArgumentsImp::mark):
+        (KJS::ArgumentsImp::get):
+        (KJS::ArgumentsImp::put):
+        (KJS::ArgumentsImp::deleteProperty):
+        (KJS::ArgumentsImp::hasOwnProperty):
+        (KJS::ActivationImp::createArgumentsObject):
+        * kjs/function.h:
+        * tests/mozilla/expected.html: updated results
+
 2005-07-09  Maciej Stachowiak  <mjs@apple.com>
 
         - backing out my earlier collector change, it causes a performance regression in TOT

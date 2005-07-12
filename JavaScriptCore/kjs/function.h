@@ -50,6 +50,7 @@ namespace KJS {
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
     void addParameter(const Identifier &n);
+    Identifier getParameterName(int index);
     // parameters in string representation, e.g. (a, b, c)
     UString parameterString() const;
     virtual CodeType codeType() const = 0;
@@ -87,12 +88,36 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
   };
 
+  class IndexToNameMap {
+  public:
+    IndexToNameMap(FunctionImp *func, const List &args);
+    ~IndexToNameMap();
+    
+    Identifier& operator[](int index);
+    Identifier& operator[](const Identifier &indexIdentifier);
+    bool isMapped(const Identifier &index) const;
+    void IndexToNameMap::unMap(const Identifier &index);
+    
+  private:
+    IndexToNameMap(); // prevent construction w/o parameters
+    int size;
+    Identifier * _map;
+  };
+  
   class ArgumentsImp : public ObjectImp {
   public:
-    ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args);
-
+    ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act);
+    virtual void mark();
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName,
+                     const Value &value, int attr = None);
+    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
+  private:
+    ActivationImp *_activationObject; 
+    mutable IndexToNameMap indexToNameMap;
   };
 
   class ActivationImp : public ObjectImp {
