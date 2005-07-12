@@ -475,8 +475,6 @@ RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderSty
 
 void HTMLFrameElementImpl::attach()
 {
-    // we should first look up via id, then via name.
-    // this shortterm hack fixes the ugly case. ### rewrite needed for next release
     m_name = getAttribute(ATTR_NAME);
     if (m_name.isNull())
         m_name = getAttribute(ATTR_ID);
@@ -936,12 +934,16 @@ RenderObject *HTMLIFrameElementImpl::createRenderer(RenderArena *arena, RenderSt
 
 void HTMLIFrameElementImpl::attach()
 {
+    m_name = getAttribute(ATTR_NAME);
+    if (m_name.isNull())
+        m_name = getAttribute(ATTR_ID);
+    
     HTMLElementImpl::attach();
 
     KHTMLPart *part = getDocument()->part();
     if (m_render && part) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
-	part->incrementFrameCount();
+        part->incrementFrameCount();
         if (m_name.isEmpty() || part->frameExists(m_name.string()))
             m_name = AtomicString(part->requestFrameName());
 

@@ -1,3 +1,31 @@
+2005-07-11  Geoffrey Garen  <ggaren@apple.com>
+
+	-fixed rdar://problem/4170960 
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=3952 
+	iFrame name and id information incorrectly returned
+        
+	Reviewed by mjs.
+
+        Test cases added: (NONE)
+        * layout-tests/fast/frames/iframe-name-and-id-expected.txt: Added.
+        * layout-tests/fast/frames/iframe-name-and-id.html: Added.
+
+        * ChangeLog:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::attach): removed misleading comment
+        (HTMLIFrameElementImpl::attach): copied FrameElementImpl behavior
+	for initializing m_name
+
+2005-07-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Test cases added: (NONE)
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::attach):
+        (HTMLIFrameElementImpl::attach):
+
 2005-07-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
