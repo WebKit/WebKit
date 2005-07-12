@@ -1,3 +1,14 @@
+2005-07-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris Blumenberg
+
+        * WebCoreSupport.subproj/WebBridge.m: Removed some glue that allowed one
+        of two unicode (TEC or ICU ) to be chosen at runtime. I just added this
+        dual support yesterday, and while Maciej and I agreed that it was good
+        to land in the tree in case we run into problems in the near future, we
+        also agreed that cutting over to using ICU full time right now is
+        probably the best way to find bugs.
+
 2005-07-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

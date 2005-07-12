@@ -52,12 +52,6 @@ private:
     QString convertLatin1(const unsigned char *chs, int len);
     QString convertUTF16(const unsigned char *chs, int len);
     
-    // TEC decoding.
-    QString convertUsingTEC(const unsigned char *chs, int len, bool flush);
-    OSStatus createTECConverter();
-    OSStatus convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
-        void *outputBuffer, int outputBufferLength, int &outputLength);
-
     // ICU decoding.
     QString convertUsingICU(const unsigned char *chs, int len, bool flush);
     UErrorCode createICUConverter();
@@ -75,19 +69,12 @@ private:
     unsigned _numBufferedBytes;
     unsigned char _bufferedBytes[16]; // bigger than any single multi-byte character
 
-    // TEC decoding.
-    TECObjectRef _converterTEC;
-    static TECObjectRef _cachedConverterTEC;
     // ICU decoding.
     UConverter *_converterICU;
     static UConverter *_cachedConverterICU;
-    // Switch for choosing method.
-    WebCoreTextConversionMethod _textConversionMethod;
-
     static CFStringEncoding _cachedConverterEncoding;
 };
 
-TECObjectRef KWQTextDecoder::_cachedConverterTEC;
 UConverter *KWQTextDecoder::_cachedConverterICU;
 CFStringEncoding KWQTextDecoder::_cachedConverterEncoding = kCFStringEncodingInvalidId;
 
@@ -161,7 +148,7 @@ inline CFStringEncoding effectiveEncoding(CFStringEncoding e)
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
     // FIXME: We should really use the same API in both directions.
-    // Currently we use TEC to decode and CFString to encode; it would be better to encode with TEC too.
+    // Currently we use ICU to decode and CFString to encode; it would be better to encode with ICU too.
     
     CFStringEncoding encoding = effectiveEncoding(_encoding);
 
@@ -258,23 +245,12 @@ QTextDecoder::~QTextDecoder()
 
 KWQTextDecoder::KWQTextDecoder(CFStringEncoding e, KWQEncodingFlags f)
     : _encoding(e), _littleEndian(f & ::LittleEndian), _atStart(true), _error(false)
-    , _numBufferedBytes(0), _converterTEC(0), _converterICU(0), _textConversionMethod(TECTextConversionMethod)
+    , _numBufferedBytes(0), _converterICU(0)
 {
-    Class theClass = NSClassFromString(@"WebBridge");
-    if (theClass) {
-        _textConversionMethod = [theClass textConversionMethod];
-    }
 }
 
 KWQTextDecoder::~KWQTextDecoder()
 {
-    if (_converterTEC) {
-        if (_cachedConverterTEC != 0) {
-            TECDisposeConverter(_cachedConverterTEC);
-        }
-        _cachedConverterTEC = _converterTEC;
-        _cachedConverterEncoding = _encoding;
-    }
     if (_converterICU) {
         if (_cachedConverterICU != 0) {
             ucnv_close(_cachedConverterICU);
@@ -380,31 +356,6 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
     return result;
 }
 
-OSStatus KWQTextDecoder::createTECConverter()
-{
-    const CFStringEncoding encoding = effectiveEncoding(_encoding);
-
-    bool cachedEncodingEqual = _cachedConverterEncoding == encoding;
-    _cachedConverterEncoding = kCFStringEncodingInvalidId;
-
-    if (cachedEncodingEqual && _cachedConverterTEC) {
-        _converterTEC = _cachedConverterTEC;
-        _cachedConverterTEC = 0;
-        TECClearConverterContextInfo(_converterTEC);
-    } else {
-        OSStatus status = TECCreateConverter(&_converterTEC, encoding,
-            CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
-        if (status) {
-            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
-            return status;
-        }
-
-        TECSetBasicOptions(_converterTEC, kUnicodeForceASCIIRangeMask);
-    }
-    
-    return noErr;
-}
-
 UErrorCode KWQTextDecoder::createICUConverter()
 {
     const CFStringEncoding encoding = effectiveEncoding(_encoding);
@@ -435,7 +386,7 @@ UErrorCode KWQTextDecoder::createICUConverter()
 }
 
 // We strip NUL characters because other browsers (at least WinIE) do.
-// We strip replacement characters because the TEC converter for UTF-8 converts
+// We strip replacement characters because the ICU converter for UTF-8 converts
 // invalid sequences into replacement characters, but other browsers discard them.
 // We strip BOM characters because they can show up both at the start of content
 // and inside content, and we never want them to end up in the decoded text.
@@ -467,151 +418,6 @@ void KWQTextDecoder::appendOmittingUnwanted(QString &s, const UniChar *character
     if (start != characterCount) {
         s.append(reinterpret_cast<const QChar *>(&characters[start]), characterCount - start);
     }
-}
-
-OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
-    void *outputBuffer, int outputBufferLength, int &outputLength)
-{
-    OSStatus status;
-    unsigned long bytesRead = 0;
-    unsigned long bytesWritten = 0;
-
-    if (_numBufferedBytes != 0) {
-        // Finish converting a partial character that's in our buffer.
-        
-        // First, fill the partial character buffer with as many bytes as are available.
-        ASSERT(_numBufferedBytes < sizeof(_bufferedBytes));
-        const int spaceInBuffer = sizeof(_bufferedBytes) - _numBufferedBytes;
-        const int bytesToPutInBuffer = MIN(spaceInBuffer, inputBufferLength);
-        ASSERT(bytesToPutInBuffer != 0);
-        memcpy(_bufferedBytes + _numBufferedBytes, inputBuffer, bytesToPutInBuffer);
-
-        // Now, do a conversion on the buffer.
-        status = TECConvertText(_converterTEC, _bufferedBytes, _numBufferedBytes + bytesToPutInBuffer, &bytesRead,
-            reinterpret_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
-        ASSERT(bytesRead <= _numBufferedBytes + bytesToPutInBuffer);
-
-        if (status == kTECPartialCharErr && bytesRead == 0) {
-            // Handle the case where the partial character was not converted.
-            if (bytesToPutInBuffer >= spaceInBuffer) {
-                ERROR("TECConvertText gave a kTECPartialCharErr but read none of the %u bytes in the buffer", sizeof(_bufferedBytes));
-                _numBufferedBytes = 0;
-                status = kTECUnmappableElementErr; // should never happen, but use this error code
-            } else {
-                // Tell the caller we read all the source bytes and keep them in the buffer.
-                _numBufferedBytes += bytesToPutInBuffer;
-                bytesRead = bytesToPutInBuffer;
-                status = noErr;
-            }
-        } else {
-            // We are done with the partial character buffer.
-            // Also, we have read some of the bytes from the main buffer.
-            if (bytesRead > _numBufferedBytes) {
-                bytesRead -= _numBufferedBytes;
-            } else {
-                ERROR("TECConvertText accepted some bytes it previously rejected with kTECPartialCharErr");
-                bytesRead = 0;
-            }
-            _numBufferedBytes = 0;
-            if (status == kTECPartialCharErr) {
-                // While there may be a partial character problem in the small buffer,
-                // we have to try again and not get confused and think there is a partial
-                // character problem in the large buffer.
-                status = noErr;
-            }
-        }
-    } else {
-        status = TECConvertText(_converterTEC, inputBuffer, inputBufferLength, &bytesRead,
-            static_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
-        ASSERT(static_cast<int>(bytesRead) <= inputBufferLength);
-    }
-
-    // Work around bug 3351093, where sometimes we get kTECBufferBelowMinimumSizeErr instead of kTECOutputBufferFullStatus.
-    if (status == kTECBufferBelowMinimumSizeErr && bytesWritten != 0) {
-        status = kTECOutputBufferFullStatus;
-    }
-
-    inputLength = bytesRead;
-    outputLength = bytesWritten;
-    return status;
-}
-
-QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool flush)
-{
-    // Get a converter for the passed-in encoding.
-    if (!_converterTEC && createTECConverter() != noErr) {
-        return QString();
-    }
-    
-    QString result("");
-
-    result.reserve(len);
-
-    const unsigned char *sourcePointer = chs;
-    int sourceLength = len;
-    bool bufferWasFull = false;
-    UniChar buffer[ConversionBufferSize];
-
-    while (sourceLength || bufferWasFull) {
-        int bytesRead = 0;
-        int bytesWritten = 0;
-        OSStatus status = convertOneChunkUsingTEC(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
-        ASSERT(bytesRead <= sourceLength);
-        sourcePointer += bytesRead;
-        sourceLength -= bytesRead;
-        
-        switch (status) {
-            case noErr:
-            case kTECOutputBufferFullStatus:
-                break;
-            case kTextMalformedInputErr:
-            case kTextUndefinedElementErr:
-                // FIXME: Put FFFD character into the output string in this case?
-                TECClearConverterContextInfo(_converterTEC);
-                if (sourceLength) {
-                    sourcePointer += 1;
-                    sourceLength -= 1;
-                }
-                break;
-            case kTECPartialCharErr: {
-                // Put the partial character into the buffer.
-                ASSERT(_numBufferedBytes == 0);
-                const int bufferSize = sizeof(_numBufferedBytes);
-                if (sourceLength < bufferSize) {
-                    memcpy(_bufferedBytes, sourcePointer, sourceLength);
-                    _numBufferedBytes = sourceLength;
-                } else {
-                    ERROR("TECConvertText gave a kTECPartialCharErr, but left %u bytes in the buffer", sourceLength);
-                }
-                sourceLength = 0;
-                break;
-            }
-            default:
-                ERROR("text decoding failed with error %d", status);
-                _error = true;
-                return QString();
-        }
-
-        appendOmittingUnwanted(result, buffer, bytesWritten);
-
-        bufferWasFull = status == kTECOutputBufferFullStatus;
-    }
-    
-    if (flush) {
-        unsigned long bytesWritten = 0;
-        TECFlushText(_converterTEC, reinterpret_cast<unsigned char *>(buffer), sizeof(buffer), &bytesWritten);
-        appendOmittingUnwanted(result, buffer, bytesWritten);
-    }
-
-    // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
-    // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
-    // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
-    // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
-    if (_encoding == kCFStringEncodingGB_18030_2000) {
-        result.replace(0xE5E5, 0x3000);
-    }
-    
-    return result;
 }
 
 QString KWQTextDecoder::convertUsingICU(const unsigned char *chs, int len, bool flush)
@@ -676,16 +482,11 @@ QString KWQTextDecoder::convert(const unsigned char *chs, int len, bool flush)
             if (chunkSize > PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE) {
                 chunkSize = PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE;
             }
-            result += convertUsingTEC(chs + i, chunkSize, flush && (i + chunkSize == len));
+            result += convertUsingICU(chs + i, chunkSize, flush && (i + chunkSize == len));
         }
         return result;
 #else
-        switch (_textConversionMethod) {
-            case TECTextConversionMethod:
-                return convertUsingTEC(chs, len, flush);
-            case ICUTextConversionMethod:
-                return convertUsingICU(chs, len, flush);
-        }
+        return convertUsingICU(chs, len, flush);
 #endif
     }
     ASSERT_NOT_REACHED();

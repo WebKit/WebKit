@@ -1,3 +1,25 @@
+2005-07-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris Blumenberg
+
+        Test cases added: (NONE)
+
+        Switched over from TEC to ICU for unicode text conversion. TEC support has now been
+        removed from KWQTextCodec. I just added this dual support yesterday, and while Maciej 
+        and I agreed that it was good to land in the tree in case we run into problems in the
+        near future, we also agreed that cutting over to using ICU full time right now is 
+        probably the best way to find bugs.
+        
+        * kwq/KWQTextCodec.mm: Removed TEC support.
+        (QTextCodec::fromUnicode): Ditto.
+        (KWQTextDecoder::KWQTextDecoder): Ditto.
+        (KWQTextDecoder::~KWQTextDecoder): Ditto.
+        (KWQTextDecoder::convert): Ditto.
+        * kwq/WebCoreBridge.h: Removed some glue that allowed the converters to
+        be changed at runtime.
+        * kwq/WebCoreTextConversionMethod.h: Removed. This also was glue for the runtime switch.
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreTextConversionMethod.h file.
+
 2005-07-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

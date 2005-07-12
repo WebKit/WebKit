@@ -112,8 +112,6 @@ NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
 NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
-static WebCoreTextConversionMethod _textConversionMethod = TECTextConversionMethod;
-
 @implementation WebBridge
 
 - (id)initWithWebFrame:(WebFrame *)webFrame
@@ -1342,16 +1340,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
                    name:WebPreferencesChangedNotification object:nil];
     }
     return _keyboardUIMode;
-}
-
-+ (void)setTextConversionMethod:(WebCoreTextConversionMethod)method
-{
-    _textConversionMethod = method;
-}
-
-+ (WebCoreTextConversionMethod)textConversionMethod
-{
-    return _textConversionMethod;
 }
 
 - (void)didSetName:(NSString *)name
