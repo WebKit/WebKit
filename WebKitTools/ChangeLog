@@ -2,6 +2,12 @@
 
         Reviewed by mjs.
 
+        * checkout-svg: Fixed error with symlink creation.
+
+2005-07-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         * checkout-svg: Added.
         Script to check out WebCore+SVG
 
