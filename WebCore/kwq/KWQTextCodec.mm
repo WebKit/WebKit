@@ -28,7 +28,6 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 #import "KWQLogging.h"
-#import "WebCoreTextConversionMethod.h"
 
 #import <unicode/ucnv.h>
 #import <unicode/utypes.h>

@@ -1,5 +1,13 @@
 2005-07-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Test cases added: (NONE)
+
+        * kwq/KWQTextCodec.mm: Fix build breakage. /me is a real genius.
+
+2005-07-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Chris Blumenberg
 
         Test cases added: (NONE)
