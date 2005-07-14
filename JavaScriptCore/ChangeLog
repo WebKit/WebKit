@@ -1,4 +1,23 @@
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4006
+        testkjs doesn't implement gc()
+        
+        - test failure:
+        ecma_3/Function/regress-104584.js
+        
+        Reviewed by mjs.
+
+        * kjs/interpreter.cpp:
+        (Interpreter::finalCheck): removed misleading while && comment
+
+        * kjs/testkjs.cpp: added "gc" function to global object
+        (TestFunctionImp::):
+        (TestFunctionImp::call):
+        (main):
+
+        * tests/mozilla/expected.html:
+
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in patches for http://bugzilla.opendarwin.org/show_bug.cgi?id=3945
         [PATCH] Safe merges of comments and other trivialities from KDE's kjs

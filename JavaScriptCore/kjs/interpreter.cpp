@@ -310,11 +310,7 @@ Interpreter::CompatMode Interpreter::compatMode() const
 void Interpreter::finalCheck()
 {
   fprintf(stderr,"Interpreter::finalCheck()\n");
-  // Garbage collect - as many times as necessary
-  // (we could delete an object which was holding another object, so
-  // the deref() will happen too late for deleting the impl of the 2nd object).
-  while( Collector::collect() )
-    ;
+  Collector::collect();
 
   Node::finalCheck();
   Collector::finalCheck();
