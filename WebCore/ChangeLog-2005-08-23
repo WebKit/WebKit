@@ -1,3 +1,16 @@
+2005-07-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Kocienda.
+
+        - WebCore part of fix for  <rdar://problem/4172380> [GENENTECH] window.opener 
+        not available when child opened via target="_new"
+
+        Add a setOpener function to the WebCore bridge, and call this function when opening
+        new windows through Web Kit.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+
 2005-07-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
