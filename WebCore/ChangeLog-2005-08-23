@@ -1,3 +1,35 @@
+2005-07-12  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        - Fixes <rdar://problem/4124326> [RTL] Lines in messages with Hebrew text and 
+        numbers are truncated by Tiger Mail Mail sends plaintext when a message doesn't 
+        have any formatting, plaintext depends on innertext, which depends on TextIterators.  
+        A TextIterator iterates over text boxes in render order, but assumes logical order, 
+        which was causing the problems.
+
+        Test cases added:
+        * layout-tests/fast/text/international/bidi-innertext-expected.txt: Added.
+        * layout-tests/fast/text/international/bidi-innertext.html: Added.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode):
+            If the text node contains reversed text, sort the text boxes (m_sortedTextBoxes).  
+            Not all reversed text will be out of logical order, but this simple check is less expensive 
+            than doing an exhaustive one.  Most text is LTR and an exhaustive check might hurt performance.
+        (khtml::TextIterator::handleTextBox):
+            Iterates over sorted text boxes when necessary
+        * khtml/editing/visible_text.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::RenderText):
+        (RenderText::position):
+            If asked to position a text box with reversed text, modify m_containsReversedText
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox::operator ==): Added to facilitate sorting
+        (khtml::InlineTextBox::operator <): Ditto
+        (khtml::RenderText::containsReversedText):
+        
+
 2005-07-14  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson and justin
