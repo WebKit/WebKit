@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 
@@ -100,10 +100,10 @@ namespace KJS {
      *
      * @param exec The current execution state
      * @param sourceId The ID of the source code (corresponds to the
-     * sourceId supplied in other functions such as @ref atStatement()
+     * sourceId supplied in other functions such as atStatement()
      * @param source The source code that was parsed
      * @param errorLine The line number at which parsing encountered an
-     * error, or -1 if the source code was valid and parsed succesfully
+     * error, or -1 if the source code was valid and parsed successfully
      * @return true if execution should be continue, false if it should
      * be aborted
      */

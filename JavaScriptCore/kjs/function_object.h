@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
 
@@ -32,7 +32,7 @@ namespace KJS {
    * @internal
    *
    * The initial value of Function.prototype (and thus all objects created
-   * with the Function constructor
+   * with the Function constructor)
    */
   class FunctionPrototypeImp : public InternalFunctionImp {
   public:
@@ -79,6 +79,6 @@ namespace KJS {
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
   };
 
-}; // namespace
+} // namespace
 
 #endif // _FUNCTION_OBJECT_H_

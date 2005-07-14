@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -50,7 +50,7 @@ namespace KJS {
   bool equal(ExecState *exec, const Value& v1, const Value& v2);
   bool strictEqual(ExecState *exec, const Value &v1, const Value &v2);
   /**
-   * This operator performs an abstract relational comparision of the two
+   * This operator performs an abstract relational comparison of the two
    * arguments that can be of arbitrary type. If possible, conversions to the
    * string or number type will take place before the comparison.
    *

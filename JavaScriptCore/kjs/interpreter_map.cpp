@@ -172,4 +172,4 @@ unsigned InterpreterMap::computeHash(ObjectImp *pointer)
 }
 
 
-}; // namespace
+} // namespace

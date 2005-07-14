@@ -52,7 +52,7 @@ namespace KJS {
 	static int InterpreterMap::_keyCount;
     };
 
-}; // namespace
+} // namespace
 
 
 #endif // _KJS_INTERPRETER_MAP_H_

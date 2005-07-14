@@ -17,8 +17,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -48,10 +48,10 @@ namespace KJS {
    * An execution context contains information about the current state of the
    * script - the scope for variable lookup, the value of "this", etc. A new
    * execution context is entered whenever global code is executed (e.g. with
-   * @ref Interpreter::evaluate()), a function is called (see @ref
+   * Interpreter::evaluate()), a function is called (see
    * Object::call()), or the builtin "eval" function is executed.
    *
-   * Most inheritable functions in the KJS api take a @ref ExecState pointer as
+   * Most inheritable functions in the KJS api take a ExecState pointer as
    * their first parameter. This can be used to obtain a handle to the current
    * execution context.
    *
@@ -101,8 +101,8 @@ namespace KJS {
 
     /**
      * Returns the context from which the current context was invoked. For
-     * global code this will be a null context (i.e. one for which @ref
-     * isNull() returns true). You should check @ref isNull() on the returned
+     * global code this will be a null context (i.e. one for which
+     * isNull() returns true). You should check isNull() on the returned
      * value before calling any of it's methods.
      *
      * @return The calling execution context
@@ -339,7 +339,7 @@ namespace KJS {
     /**
      * Call this to enable a compatibility mode with another browser.
      * (by default konqueror is in "native mode").
-     * Currently, in KJS, this only changes the behaviour of Date::getYear()
+     * Currently, in KJS, this only changes the behavior of Date::getYear()
      * which returns the full year under IE.
      */
     void setCompatMode(CompatMode mode);
@@ -476,6 +476,6 @@ namespace KJS {
     ProtectedValue _exception;
   };
 
-}; // namespace
+} // namespace
 
 #endif // _KJS_INTERPRETER_H_

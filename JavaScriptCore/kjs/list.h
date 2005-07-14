@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -88,25 +88,25 @@ namespace KJS {
          */
         int size() const { return _impBase->size; }
         /**
-         * @return A @ref KJS::ListIterator pointing to the first element.
+         * @return A KJS::ListIterator pointing to the first element.
          */
         ListIterator begin() const;
         /**
-         * @return A @ref KJS::ListIterator pointing to the last element.
+         * @return A KJS::ListIterator pointing to the last element.
          */
         ListIterator end() const;
         
         /**
          * Retrieve an element at an indexed position. If you want to iterate
-         * trough the whole list using @ref KJS::ListIterator will be faster.
+         * trough the whole list using KJS::ListIterator will be faster.
          *
          * @param i List index.
-         * @return Return the element at position i. @ref KJS::Undefined if the
+         * @return Return the element at position i. KJS::Undefined if the
          * index is out of range.
          */
         Value at(int i) const { return Value(impAt(i)); }
         /**
-         * Equivalent to @ref at.
+         * Equivalent to at.
          */
         Value operator[](int i) const { return Value(impAt(i)); }
         
@@ -114,7 +114,7 @@ namespace KJS {
     
         /**
          * Returns a pointer to a static instance of an empty list. Useful if a
-         * function has a @ref KJS::List parameter.
+         * function has a KJS::List parameter.
          */
         static const List &empty();
         
@@ -132,7 +132,7 @@ namespace KJS {
     };
   
     /**
-     * @short Iterator for @ref KJS::List objects.
+     * @short Iterator for KJS::List objects.
      */
     class ListIterator {
     public:

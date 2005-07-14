@@ -16,8 +16,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  *
  */
 
@@ -112,16 +112,16 @@ namespace KJS {
   /**
    * @short Dynamic reference to a string character.
    *
-   * UCharReference is the dynamic counterpart of @ref UChar. It's used when
-   * characters retrieved via index from a @ref UString are used in an
+   * UCharReference is the dynamic counterpart of UChar. It's used when
+   * characters retrieved via index from a UString are used in an
    * assignment expression (and therefore can't be treated as being const):
-   * <pre>
+   * \code
    * UString s("hello world");
    * s[0] = 'H';
-   * </pre>
+   * \endcode
    *
    * If that sounds confusing your best bet is to simply forget about the
-   * existance of this class and treat is as being identical to @ref UChar.
+   * existence of this class and treat is as being identical to UChar.
    */
   class UCharReference {
     friend class UString;
@@ -277,11 +277,11 @@ namespace KJS {
      * implementation for a construction from QString.
      *
      * Note: feel free to contact me if you want to see a dummy header for
-     * your favourite FooString class here !
+     * your favorite FooString class here !
      */
     UString(const QString &);
     /**
-     * Convenience declaration only ! See @ref UString(const QString&).
+     * Convenience declaration only ! See UString(const QString&).
      */
     UString(const DOM::DOMString &);
     /**
@@ -333,7 +333,7 @@ namespace KJS {
     UString &append(UChar c) { return append(c.uc); }
 
     /**
-     * @return The string converted to the 8-bit string type @ref CString().
+     * @return The string converted to the 8-bit string type CString().
      */
     CString cstring() const;
     /**
@@ -393,7 +393,7 @@ namespace KJS {
     /**
      * Use this if you want to make sure that this string is a plain ASCII
      * string. For example, if you don't want to lose any information when
-     * using @ref cstring() or @ref ascii().
+     * using cstring() or ascii().
      *
      * @return True if the string doesn't contain any non-ASCII characters.
      */
@@ -517,6 +517,6 @@ namespace KJS {
   // Returns -1 if the sequence is not valid (including presence of extra bytes).
   int decodeUTF8Sequence(const char *);
 
-}; // namespace
+} // namespace
 
 #endif
