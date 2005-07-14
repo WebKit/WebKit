@@ -1,11 +1,33 @@
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
-	
-	-landed fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
-	Object.prototype is missing toLocaleString
 
-	- patch by Mark Rowe (bdash) <opendarwin.org@bdash.net.nz>
-	
-	-layout test info in webcore changelog
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3970
+        throw statements fail inside eval statements
+        
+        Reviewed by mjs.
+
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::call):
+        Big change since I fixed the tabbing. The important part is:
+        if (c.complType() == Throw)
+          exec->setException(c.value());
+
+        * kjs/nodes.cpp:
+        (ThrowNode::execute): removed duplicate KJS_CHECKEXCEPTION
+        (TryNode::execute): 
+        try now clears the exception state before the finally block executes,
+        and checks the state after the block executes, so that exceptions in
+        finally code get caught.
+
+        * tests/mozilla/expected.html:
+
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+        
+        -landed fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
+        Object.prototype is missing toLocaleString
+
+        - patch by Mark Rowe (bdash) <opendarwin.org@bdash.net.nz>
+        
+        -layout test info in webcore changelog
 
         Reviewed by mjs.
 

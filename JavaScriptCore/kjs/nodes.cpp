@@ -2590,9 +2590,6 @@ Completion ThrowNode::execute(ExecState *exec)
   Value v = expr->evaluate(exec);
   KJS_CHECKEXCEPTION
 
-  // bail out on error
-  KJS_CHECKEXCEPTION
-
   return Completion(Throw, v);
 }
 
@@ -2707,7 +2704,14 @@ Completion TryNode::execute(ExecState *exec)
   }
 
   if (!_catch) {
+    Value lastException = exec->exception();
+    exec->clearException();
+    
     c2 = _final->execute(exec);
+    
+    if (!exec->hadException())
+      exec->setException(lastException);
+    
     return (c2.complType() == Normal) ? c : c2;
   }
 

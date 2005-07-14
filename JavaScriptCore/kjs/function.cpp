@@ -772,63 +772,58 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     "#$&+,/:;=?@";
 
   switch (id) {
-  case Eval: { // eval()
-    Value x = args[0];
-    if (x.type() != StringType)
-      return x;
-    else {
-      UString s = x.toString(exec);
+    case Eval: { // eval()
+      Value x = args[0];
+      if (x.type() != StringType)
+        return x;
+      else {
+        UString s = x.toString(exec);
+        
+        int sid;
+        int errLine;
+        UString errMsg;
+        ProgramNode *progNode = Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg);
+        
+        // no program node means a syntax occurred
+        if (!progNode) {
+          Object err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);
+          err.put(exec,"sid",Number(sid));
+          exec->setException(err);
+          return err;
+        }
+        
+        progNode->ref();
+        
+        // enter a new execution context
+        Object thisVal(Object::dynamicCast(exec->context().thisValue()));
+        ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
+                       exec->dynamicInterpreter()->imp(),
+                       thisVal,
+                       EvalCode,
+                       exec->context().imp());
+        
+        ExecState newExec(exec->dynamicInterpreter(), &ctx);
+        newExec.setException(exec->exception()); // could be null
+        
+        // execute the code
+        progNode->processVarDecls(&newExec);
+        Completion c = progNode->execute(&newExec);
 
-      int sid;
-      int errLine;
-      UString errMsg;
-      ProgramNode *progNode = Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg);
+        // if an exception occured, propogate it back to the previous execution object
+        if (newExec.hadException())
+          exec->setException(newExec.exception());
 
-      // no program node means a syntax occurred
-      if (!progNode) {
-	Object err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);
-        err.put(exec,"sid",Number(sid));
-        exec->setException(err);
-        return err;
-      }
+        res = Undefined();
+        if (c.complType() == Throw)
+          exec->setException(c.value());
+        else if (c.isValueCompletion())
+            res = c.value();
 
-      progNode->ref();
-
-      // enter a new execution context
-      Object thisVal(Object::dynamicCast(exec->context().thisValue()));
-      ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
-                     exec->dynamicInterpreter()->imp(),
-                     thisVal,
-                     EvalCode,
-                     exec->context().imp());
-
-      ExecState newExec(exec->dynamicInterpreter(), &ctx);
-      newExec.setException(exec->exception()); // could be null
-
-      // execute the code
-      progNode->processVarDecls(&newExec);
-      Completion c = progNode->execute(&newExec);
-
-      // if an exception occured, propogate it back to the previous execution object
-      if (newExec.hadException())
-        exec->setException(newExec.exception());
-
-      if ( progNode->deref() )
+        if ( progNode->deref() )
           delete progNode;
-      if (c.complType() == ReturnValue)
-	  return c.value();
-      // ### setException() on throw?
-      else if (c.complType() == Normal) {
-	  if (c.isValueCompletion())
-	      return c.value();
-	  else
-	      return Undefined();
-      } else {
-	  return Undefined();
       }
+      break;
     }
-    break;
-  }
   case ParseInt:
     res = Number(parseInt(args[0].toString(exec), args[1].toInt32(exec)));
     break;
