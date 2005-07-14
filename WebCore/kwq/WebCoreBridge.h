@@ -533,6 +533,8 @@ typedef enum
 - (void)focusWindow;
 - (void)unfocusWindow;
 
+- (void)formControlIsResigningFirstResponder:(NSView *)formControl;
+
 - (NSView *)nextKeyViewOutsideWebFrameViews;
 - (NSView *)nextValidKeyViewOutsideWebFrameViews;
 - (NSView *)previousKeyViewOutsideWebFrameViews;

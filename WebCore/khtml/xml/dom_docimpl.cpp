@@ -2268,11 +2268,6 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 
     // Remove focus from the existing focus node (if any)
     if (oldFocusNode) {
-        // This goes hand in hand with the Qt focus setting below.
-        if (!newFocusNode && view()) {
-            view()->setFocus();
-        }
-
         if (oldFocusNode->active())
             oldFocusNode->setActive(false);
 

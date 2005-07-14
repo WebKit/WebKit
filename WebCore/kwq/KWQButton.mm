@@ -139,6 +139,7 @@
     if (resign && button) {
         QFocusEvent event(QEvent::FocusOut);
         const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
+        [KWQKHTMLPart::bridgeForWidget(button) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }

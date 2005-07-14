@@ -491,6 +491,7 @@ void QListBox::clearCachedTextRenderers()
     if (resign && _box) {
         QFocusEvent event(QEvent::FocusOut);
         const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
+        [KWQKHTMLPart::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }

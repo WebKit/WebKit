@@ -937,7 +937,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         if (widget) {
             QFocusEvent event(QEvent::FocusOut);
             const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-        }
+            [KWQKHTMLPart::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+        }        
     }
 
     return resign;

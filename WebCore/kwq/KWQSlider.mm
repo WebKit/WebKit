@@ -116,6 +116,7 @@
     if (resign && slider) {
         QFocusEvent event(QEvent::FocusOut);
         const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+        [KWQKHTMLPart::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }

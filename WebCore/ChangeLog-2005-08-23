@@ -1,3 +1,67 @@
+2005-07-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken Kocienda (setFocusNode) and Dave Hyatt (everything).
+
+        - WebCore part of fix for: 
+        <rdar://problem/4181227> webpages incorrectly use standard instead of secondary highlighting in certain cases
+
+        Test cases added: none, doesn't affect layout
+        
+        There were two different problems leading to the same symptom, both of which needed to be fixed.
+        The first problem was that ancient and unneeded code in setFocusNode(0) was setting the focus 
+        to the enclosing WebHTMLView. The second problem was that the WebHTMLView didn't learn about
+        form controls resigning first-responder-hood, and so didn't update the displayed focus state.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode):
+        Removed a line of code that was setting the focus on the WebHTMLView whenever a form control
+        lost focus. This doesn't make sense in a world where the focus might be moving to something
+        outside of the web page entirely. This line of code was added ages ago to fix Radar 3037974,
+        which is not reproducible anymore with this line of code removed.
+        
+        * kwq/WebCoreBridge.h:
+        New bridge method -formControlIsResigningFirstResponder:, used to inform WebKit that a form
+        control is losing first-responder-hood.
+
+        * kwq/KWQButton.mm:
+        (-[KWQButton resignFirstResponder]):
+        call formControlIsResigningFirstResponder:
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton resignFirstResponder]):
+        ditto
+        
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView resignFirstResponder]):
+        ditto
+        
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider resignFirstResponder]):
+        ditto
+        
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView resignFirstResponder]):
+        ditto
+        
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setHasFocus:]):
+        ditto
+
+2005-07-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken Kocienda.
+        
+        - fixed <rdar://problem/4181227> webpages incorrectly use standard instead of secondary highlighting in certain cases
+
+        Test cases added: none, doesn't affect layout
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setFocusNode):
+        Removed a line of code that was setting the focus on the WebHTMLView whenever a form control
+        lost focus. This doesn't make sense in a world where the focus might be moving to something
+        outside of the web page entirely. This line of code was added ages ago to fix Radar 3037974,
+        which is not reproducible anymore with this line of code removed.
+
 2005-07-12  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
