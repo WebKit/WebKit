@@ -1,3 +1,12 @@
+2005-07-14  Vicki Murley  <vicki@apple.com>
+
+	- added manual tests for <rdar://problem/4172380> [GENENTECH] window.opener not available 
+	when child opened via target="_new"
+        
+	Test cases added: 
+        * manual-tests/target_new-1.html: Added.
+        * manual-tests/target_new.html: Added.
+
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         - landed fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3677>
