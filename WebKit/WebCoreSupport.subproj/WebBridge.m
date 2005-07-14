@@ -1126,7 +1126,7 @@ static BOOL loggedObjectCacheSize = NO;
     ASSERT(path);
     NSString *extension = [path pathExtension];
     NSString *type = WKGetMIMETypeForExtension(extension);
-    return [type length] == 0 ? @"application/octet-stream" : type;
+    return [type length] == 0 ? (NSString *)@"application/octet-stream" : type;
 }
 
 - (void)allowDHTMLDrag:(BOOL *)flagDHTML UADrag:(BOOL *)flagUA

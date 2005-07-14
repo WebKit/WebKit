@@ -625,8 +625,8 @@ typedef struct {
     }
     
     NSURL *result = changed
-        ? WebCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
-        : self;
+        ? (NSURL *)WebCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES))
+        : (NSURL *)self;
 
     if (buffer != static_buffer) {
         free(buffer);
@@ -1008,7 +1008,7 @@ static BOOL allCharactersInIDNScriptWhiteList(const UChar *buffer, int32_t lengt
     if (!encode && !allCharactersInIDNScriptWhiteList(destinationBuffer, numCharactersConverted)) {
         return nil;
     }
-    return makeString ? [NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : self;
+    return makeString ? (NSString *)[NSString stringWithCharacters:destinationBuffer length:numCharactersConverted] : (NSString *)self;
 }
 
 - (BOOL)_web_hostNameNeedsDecodingWithRange:(NSRange)range

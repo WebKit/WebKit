@@ -239,7 +239,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
             // This image data is either the only subresource of an archive (HTML image case)
             // or the main resource (standalone image case).
             NSArray *subresources = [archive subresources];
-            WebResource *resource = [subresources count] > 0 ? [subresources objectAtIndex:0] : [archive mainResource];
+            WebResource *resource = [subresources count] > 0 ? (WebResource *)[subresources objectAtIndex:0] : [archive mainResource];
             ASSERT(resource != nil);
             
             ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);

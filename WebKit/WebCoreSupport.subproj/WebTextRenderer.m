@@ -368,7 +368,7 @@ static BOOL alwaysUseATSU = NO;
         NSFont *af = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
         font = [(p ? [af printerFont] : [af screenFont]) retain];
         NSString *filePath = pathFromFont(initialFont);
-        filePath = filePath ? filePath : @"not known";
+        filePath = filePath ? filePath : (NSString *)@"not known";
         if (![self _setupFont]){
 	    if ([fallbackFontFamily isEqual:@"Times New Roman"]) {
 		// OK, couldn't setup Times New Roman as an alternate to Times, fallback

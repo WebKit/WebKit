@@ -3767,7 +3767,7 @@ static WebHTMLView *lastHitView = nil;
     }
 
     color = [dictionary objectForKey:NSForegroundColorAttributeName];
-    [style setColor:color ? [self _colorAsString:color] : @"black"];
+    [style setColor:color ? [self _colorAsString:color] : (NSString *)@"black"];
 
     NSShadow *shadow = [dictionary objectForKey:NSShadowAttributeName];
     [style setTextShadow:[self _shadowAsString:shadow]];

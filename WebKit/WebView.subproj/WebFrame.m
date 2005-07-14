@@ -304,7 +304,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [request _webDataRequestSetEncoding:encodingName];
     [request _webDataRequestSetBaseURL:URL];
     [request _webDataRequestSetUnreachableURL:unreachableURL];
-    [request _webDataRequestSetMIMEType:MIMEType?MIMEType:@"text/html"];
+    [request _webDataRequestSetMIMEType: MIMEType ? MIMEType : (NSString *)@"text/html"];
     return request;
 }
 

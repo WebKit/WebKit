@@ -110,7 +110,7 @@
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
 {
     NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
-    WebImageRenderer *imageRenderer = [self imageRendererWithData:data MIMEType:MIMEType];
+    WebImageRenderer *imageRenderer = (WebImageRenderer *)[self imageRendererWithData:data MIMEType:MIMEType];
     [data autorelease];
     return imageRenderer;
 }

@@ -143,7 +143,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    WebHistoryItem *copy = NSCopyObject(self, 0, zone);
+    WebHistoryItem *copy = (WebHistoryItem *)NSCopyObject(self, 0, zone);
     copy->_private = [[WebHistoryItemPrivate alloc] init];
     copy->_private->URLString = [_private->URLString copy];
     [copy _retainIconInDatabase:YES];

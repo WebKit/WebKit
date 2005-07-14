@@ -1249,7 +1249,7 @@ static bool debugWidget = true;
 {
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     [pasteboard _web_writeImage:[element objectForKey:WebElementImageKey] 
-                            URL:linkURL ? linkURL : [element objectForKey:WebElementImageURLKey]
+                            URL:linkURL ? linkURL : (NSURL *)[element objectForKey:WebElementImageURLKey]
                           title:[element objectForKey:WebElementImageAltStringKey] 
                         archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
                           types:types];
@@ -2465,7 +2465,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (NSString *)mainFrameTitle
 {
     NSString *mainFrameTitle = [[[self mainFrame] dataSource] pageTitle];
-    return (mainFrameTitle != nil) ? mainFrameTitle : @"";
+    return (mainFrameTitle != nil) ? mainFrameTitle : (NSString *)@"";
 }
 
 - (NSImage *)mainFrameIcon

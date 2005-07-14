@@ -1,3 +1,30 @@
+2005-07-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John
+        
+        Rolling in changes necessary to build with newer versions of gcc 4.0
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem copyWithZone:]):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:URL:title:archive:types:]):
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_URLWithLowercasedScheme]):
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge MIMETypeForPath:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithBytes:length:MIMEType:]):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _webDataRequestForData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _styleFromFontAttributes:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _writeImageElement:withPasteboardTypes:toPasteboard:]):
+        (-[WebView mainFrameTitle]):
+
 2005-07-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej Stachowiak.
