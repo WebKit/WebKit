@@ -2334,20 +2334,9 @@ static WebHTMLView *lastHitView = nil;
     return [[self _webView] _menuForElement:element defaultItems:nil];
 }
 
-// Search from the end of the currently selected location, or from the beginning of the
-// document if nothing is selected.
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
-    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag findInSelection:NO];
-}
-
-// Private method that adds a findInSelection parameter; might be public someday
-// FIXME: this is currently discovered using respondsToSelector; no SPI or API yet
-// FIXME: this needs to be done for other WebDocumentSearching implementors also, such as
-// WebPDFView and WebSearchableTextView
-- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag findInSelection:(BOOL)inSelectionFlag
-{
-    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag findInSelection:inSelectionFlag];
+    return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 
 - (DOMRange *)_documentRange
