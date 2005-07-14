@@ -1,3 +1,20 @@
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+	
+	-landed fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
+	Object.prototype is missing toLocaleString
+
+	- patch by Mark Rowe (bdash) <opendarwin.org@bdash.net.nz>
+	
+	-layout test info in webcore changelog
+
+        Reviewed by mjs.
+
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::call):
+        * kjs/object_object.h:
+        (KJS::ObjectProtoFuncImp::):
+
 2005-07-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

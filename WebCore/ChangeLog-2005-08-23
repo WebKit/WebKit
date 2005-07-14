@@ -1,3 +1,14 @@
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+	-landed layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
+	Object.prototype is missing toLocaleString
+
+        Reviewed by mjs.
+
+        Test cases added:
+        * layout-tests/fast/js/object-prototype-toLocaleString-expected.txt: Added.
+        * layout-tests/fast/js/object-prototype-toLocaleString.html: Added.
+
 2005-07-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Kocienda.

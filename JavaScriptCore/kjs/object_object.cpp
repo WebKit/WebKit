@@ -38,9 +38,10 @@ ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
   : ObjectImp() // [[Prototype]] is Null()
 {
     Value protect(this);
-    putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToString,  0), DontEnum);
-    putDirect(valueOfPropertyName,  new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ValueOf,   0), DontEnum);
-    putDirect("hasOwnProperty", new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::HasOwnProperty,1), DontEnum);
+    putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToString,            0), DontEnum);
+    putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToLocaleString,0), DontEnum);
+    putDirect(valueOfPropertyName,  new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ValueOf,             0), DontEnum);
+    putDirect("hasOwnProperty", new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::HasOwnProperty,          1), DontEnum);
 }
 
 
@@ -74,6 +75,8 @@ Value ObjectProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
             bool exists = thisObj.hasOwnProperty(exec, propertyName);
             return Value(exists ? BooleanImp::staticTrue : BooleanImp::staticFalse);
         }
+        case ToLocaleString:
+          return thisObj.imp()->toString(exec);
         case ToString:
         default:
             return String("[object " + thisObj.className() + "]");

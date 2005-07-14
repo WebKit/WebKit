@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+function print(message) {
+	var paragraph = document.createElement("p");
+	paragraph.appendChild(document.createTextNode(message));
+	document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+	if (window.layoutTestController) {
+		layoutTestController.dumpAsText();
+	}
+
+    try {
+        var o = new Object();
+        print("Object.toLocaleString() (should be \"" + o.toString() + "\"): " + o.toLocaleString());
+        
+        o.toLocaleString = function () { return "Dynamic toLocaleString()"; }
+        print("Object.toLocaleString() (should be \"Dynamic toLocaleString()\"): " + o.toLocaleString());
+    }
+    catch (e) {
+        print("Test failed. Threw exception: " + e);
+    }
+}
+</script>
+</head>
+<body onload="test();">
+<p>Tests: Object.prototype.toLocaleString()</p>
+<p>Related bug: <a href = "http://bugzilla.opendarwin.org/show_bug.cgi?id=3989">3989 JSC doesn't implement Object.prototype.toLocaleString()</a></p>
+<hr>
+<div id='console'/>
+</body>
+</html>

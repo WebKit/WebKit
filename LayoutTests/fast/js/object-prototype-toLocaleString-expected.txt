@@ -1,0 +1,7 @@
+Tests: Object.prototype.toLocaleString()
+
+Related bug: 3989 JSC doesn't implement Object.prototype.toLocaleString()
+
+Object.toLocaleString() (should be "[object Object]"): [object Object]
+
+Object.toLocaleString() (should be "Dynamic toLocaleString()"): Dynamic toLocaleString()
