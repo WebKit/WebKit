@@ -34,11 +34,6 @@ QCursor::QCursor()
 {
 }
 
-QCursor::QCursor(NSCursor *cur)
-    : cursor(KWQRetain(cur))
-{
-}
-
 QCursor::QCursor(const QPixmap &pixmap)
     : cursor(nil)
 {
@@ -54,6 +49,13 @@ QCursor::QCursor(const QCursor &other)
 QCursor::~QCursor()
 {
     KWQRelease(cursor);
+}
+
+QCursor QCursor::makeWithNSCursor(NSCursor * c)
+{
+    QCursor q;
+    q.cursor = KWQRetain(c);
+    return q;
 }
       
 QCursor &QCursor::operator=(const QCursor &other)

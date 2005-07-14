@@ -378,7 +378,7 @@ QCursor QWidget::cursor()
     id view = data->view;
     while (view) {
         if ([view respondsToSelector:@selector(documentCursor)]) { 
-            cursor = QCursor([view documentCursor]);
+            cursor = QCursor::makeWithNSCursor([view documentCursor]);
             break;
         }
         view = [view superview];

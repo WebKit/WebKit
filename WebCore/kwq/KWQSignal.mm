@@ -173,26 +173,26 @@ void KWQSignal::call(Job *j, const KURL &u) const
     }
 }
 
-void KWQSignal::call(Job *j, NSData *d) const
+void KWQSignal::callWithData(Job *j, NSData *d) const
 {
     if (!_object->_signalsBlocked) {
         KWQObjectSenderScope senderScope(_object);
         QValueList<KWQSlot> copiedSlots(_slots);
         QValueListConstIterator<KWQSlot> end = copiedSlots.end();
         for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(j, d);
+            (*it).callWithData(j, d);
         }
     }
 }
 
-void KWQSignal::call(Job *j, NSURLResponse *r) const
+void KWQSignal::callWithResponse(Job *j, NSURLResponse *r) const
 {
     if (!_object->_signalsBlocked) {
         KWQObjectSenderScope senderScope(_object);
         QValueList<KWQSlot> copiedSlots(_slots);
         QValueListConstIterator<KWQSlot> end = copiedSlots.end();
         for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(j, r);
+            (*it).callWithResponse(j, r);
         }
     }
 }

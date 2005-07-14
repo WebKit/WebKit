@@ -45,8 +45,8 @@ public:
     void call(khtml::DocLoader *, khtml::CachedObject *) const;
     void call(KIO::Job *, const char *data, int size) const;
     void call(KIO::Job *, const KURL &) const;
-    void call(KIO::Job *, NSData *) const;
-    void call(KIO::Job *, NSURLResponse *) const;
+    void callWithData(KIO::Job *, NSData *) const;
+    void callWithResponse(KIO::Job *, NSURLResponse *) const;
     
 private:
     // forbid copying and assignment

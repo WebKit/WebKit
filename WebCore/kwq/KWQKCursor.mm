@@ -73,22 +73,22 @@
 void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
 QCursor KCursor::arrowCursor() { return QCursor(); }
-QCursor KCursor::crossCursor() { return QCursor([NSCursor crosshairCursor]); }
-QCursor KCursor::handCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"linkCursor" hotSpot:NSMakePoint(6.0, 1.0)]); }
-QCursor KCursor::sizeAllCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"moveCursor" hotSpot:NSMakePoint(7.0, 7.0)]); }
+QCursor KCursor::crossCursor() { return QCursor::makeWithNSCursor([NSCursor crosshairCursor]); }
+QCursor KCursor::handCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"linkCursor" hotSpot:NSMakePoint(6.0, 1.0)]); }
+QCursor KCursor::sizeAllCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"moveCursor" hotSpot:NSMakePoint(7.0, 7.0)]); }
 QCursor KCursor::sizeHorCursor() { return QCursor(); }
 QCursor KCursor::sizeVerCursor() { return QCursor(); }
 QCursor KCursor::sizeBDiagCursor() { return QCursor(); }
 QCursor KCursor::sizeFDiagCursor() { return QCursor(); }
-QCursor KCursor::ibeamCursor() { return QCursor([NSCursor IBeamCursor]); }
-QCursor KCursor::waitCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"waitCursor" hotSpot:NSMakePoint(7.0, 7.0)]); }
-QCursor KCursor::whatsThisCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"helpCursor" hotSpot:NSMakePoint(8.0, 8.0)]); }
+QCursor KCursor::ibeamCursor() { return QCursor::makeWithNSCursor([NSCursor IBeamCursor]); }
+QCursor KCursor::waitCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"waitCursor" hotSpot:NSMakePoint(7.0, 7.0)]); }
+QCursor KCursor::whatsThisCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"helpCursor" hotSpot:NSMakePoint(8.0, 8.0)]); }
 
-QCursor KCursor::eastResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"eastResizeCursor" hotSpot:NSMakePoint(14.0, 7.0)]); }
-QCursor KCursor::northResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"northResizeCursor" hotSpot:NSMakePoint(7.0, 1.0)]); }
-QCursor KCursor::northEastResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"northEastResizeCursor" hotSpot:NSMakePoint(14.0, 1.0)]); }
-QCursor KCursor::northWestResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"northWestResizeCursor" hotSpot:NSMakePoint(0.0, 0.0)]); }
-QCursor KCursor::southResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"southResizeCursor" hotSpot:NSMakePoint(7.0, 14.0)]); }
-QCursor KCursor::southEastResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"southEastResizeCursor" hotSpot:NSMakePoint(14.0, 14.0)]); }
-QCursor KCursor::southWestResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"southWestResizeCursor" hotSpot:NSMakePoint(1.0, 14.0)]); }
-QCursor KCursor::westResizeCursor() { return QCursor([NSCursor _WebCore_cursorWithName:@"westResizeCursor" hotSpot:NSMakePoint(1.0, 7.0)]); }
+QCursor KCursor::eastResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"eastResizeCursor" hotSpot:NSMakePoint(14.0, 7.0)]); }
+QCursor KCursor::northResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"northResizeCursor" hotSpot:NSMakePoint(7.0, 1.0)]); }
+QCursor KCursor::northEastResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"northEastResizeCursor" hotSpot:NSMakePoint(14.0, 1.0)]); }
+QCursor KCursor::northWestResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"northWestResizeCursor" hotSpot:NSMakePoint(0.0, 0.0)]); }
+QCursor KCursor::southResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"southResizeCursor" hotSpot:NSMakePoint(7.0, 14.0)]); }
+QCursor KCursor::southEastResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"southEastResizeCursor" hotSpot:NSMakePoint(14.0, 14.0)]); }
+QCursor KCursor::southWestResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"southWestResizeCursor" hotSpot:NSMakePoint(1.0, 14.0)]); }
+QCursor KCursor::westResizeCursor() { return QCursor::makeWithNSCursor([NSCursor _WebCore_cursorWithName:@"westResizeCursor" hotSpot:NSMakePoint(1.0, 7.0)]); }

@@ -2,6 +2,46 @@
 
         Reviewed by mjs
 
+        Rolled in workarounds necessary to build with a gcc 4.0 regression introduced in build 5208:
+        <rdar://problem/4175534> Regression in gcc-5208 "comparison of distinct Objective-C types lacks a cast" warning
+        Problems overloading methods that take Objective-C typed arguments
+            
+        * kwq/KWQCursor.h:
+        * kwq/KWQCursor.mm:
+        (QCursor::makeWithNSCursor):
+        * kwq/KWQKCursor.mm:
+        (KCursor::crossCursor):
+        (KCursor::handCursor):
+        (KCursor::sizeAllCursor):
+        (KCursor::ibeamCursor):
+        (KCursor::waitCursor):
+        (KCursor::whatsThisCursor):
+        (KCursor::eastResizeCursor):
+        (KCursor::northResizeCursor):
+        (KCursor::northEastResizeCursor):
+        (KCursor::northWestResizeCursor):
+        (KCursor::southResizeCursor):
+        (KCursor::southEastResizeCursor):
+        (KCursor::southWestResizeCursor):
+        (KCursor::westResizeCursor):
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::emitResult):
+        (KIO::TransferJob::emitReceivedResponse):
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.mm:
+        (KWQSignal::callWithData):
+        (KWQSignal::callWithResponse):
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.mm:
+        (KWQSlot::callWithData):
+        (KWQSlot::callWithResponse):
+        * kwq/KWQWidget.mm:
+        (QWidget::cursor):
+
+2005-07-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
         Rolling in changes necessary to build with newer versions of gcc 4.0
 
         * kwq/DOM-CSS.mm:

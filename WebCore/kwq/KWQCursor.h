@@ -39,9 +39,10 @@ class QCursor {
 public:
     QCursor();
     QCursor(const QPixmap &);
-    QCursor(NSCursor *);
     QCursor(const QCursor &);
     ~QCursor();
+    
+    static QCursor makeWithNSCursor(NSCursor *);
 
     QCursor &operator=(const QCursor &);
     
