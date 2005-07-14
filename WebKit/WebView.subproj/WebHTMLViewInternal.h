@@ -90,6 +90,7 @@
 
 @interface WebHTMLView (WebInternal)
 - (void)_selectionChanged;
+- (void)_formControlIsResigningFirstResponder:(NSView *)formControl;
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;
 - (BOOL)_canSmartCopyOrDelete;

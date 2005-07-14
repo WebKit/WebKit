@@ -1,5 +1,25 @@
 2005-07-14  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - WebKit part of fix for: 
+        <rdar://problem/4181227> webpages incorrectly use standard instead of secondary highlighting in certain cases
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge formControlIsResigningFirstResponder:]):
+        Implementation of new method defined in WebCore, passes call along to WebHTMLView
+        
+        * WebView.subproj/WebHTMLViewInternal.h:
+        declare _formControlIsResigningFirstResponder: so bridge can call it
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateFocusState]):
+        just moved in file so it could be called from a different category
+        (-[WebHTMLView _formControlIsResigningFirstResponder:]):
+        new method, updates focus state
+
+2005-07-14  John Sullivan  <sullivan@apple.com>
+
 	added missing #import to fix build
 	* WebView.subproj/WebPDFView.m
 

@@ -189,6 +189,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
+- (void)updateFocusState;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 @end
 
@@ -644,6 +645,30 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
         [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
+}
+
+- (void)updateFocusState
+{
+    // This method does the job of updating the view based on the view's firstResponder-ness and
+    // the window key-ness of the window containing this view. This involves three kinds of 
+    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
+    // 
+    // The three display attributes are as follows:
+    // 
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    // 2. Caret blinking (blinks | does not blink)
+    // 3. The drawing of a focus ring around links in web pages.
+    //
+    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
+    // so we can send focus and blur events.
+    
+    WebBridge *bridge = [self _bridge];
+    BOOL windowIsKey = [[self window] isKeyWindow];
+    
+    BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
+    [bridge setDisplaysWithFocusAttributes:flag];
+    
+    [bridge setWindowHasFocus:windowIsKey];
 }
 
 @end
@@ -2076,30 +2101,6 @@ static WebHTMLView *lastHitView = nil;
     [[self _webView] _mouseDidMoveOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver:self
         name:WKMouseMovedNotification() object:nil];
-}
-
-- (void)updateFocusState
-{
-    // This method does the job of updating the view based on the view's firstResponder-ness and
-    // the window key-ness of the window containing this view. This involves three kinds of 
-    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
-    // 
-    // The three display attributes are as follows:
-    // 
-    // 1. The background color used to draw behind selected content (active | inactive color)
-    // 2. Caret blinking (blinks | does not blink)
-    // 3. The drawing of a focus ring around links in web pages.
-    //
-    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
-    // so we can send focus and blur events.
-
-    WebBridge *bridge = [self _bridge];
-    BOOL windowIsKey = [[self window] isKeyWindow];
-
-    BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
-    [bridge setDisplaysWithFocusAttributes:flag];
-
-    [bridge setWindowHasFocus:windowIsKey];
 }
 
 - (void)addSuperviewObservers
@@ -4839,6 +4840,17 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
+}
+
+- (void)_formControlIsResigningFirstResponder:(NSView *)formControl
+{
+    // set resigningFirstResponder so updateFocusState behaves the same way it does when
+    // the WebHTMLView itself is resigningFirstResponder; don't use the primary selection feedback.
+    // If the first responder is in the process of being set on the WebHTMLView itself, it will
+    // get another chance at updateFocusState in its own becomeFirstResponder method.
+    _private->resigningFirstResponder = YES;
+    [self updateFocusState];
+    _private->resigningFirstResponder = NO;
 }
 
 - (void)_updateFontPanel

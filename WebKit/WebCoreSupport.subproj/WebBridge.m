@@ -59,6 +59,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSURLRequestExtras.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
@@ -612,6 +613,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
 	[NSApp _cycleWindowsReversed:FALSE];
     }
+}
+
+- (void)formControlIsResigningFirstResponder:(NSView *)formControl
+{
+    // When a form element resigns first responder, its enclosing WebHTMLView might need to
+    // change its focus-displaying state, but isn't otherwise notified.
+    [(WebHTMLView *)[formControl _web_superviewOfClass:[WebHTMLView class]] _formControlIsResigningFirstResponder:formControl];
 }
 
 - (void)setIconURL:(NSURL *)URL
