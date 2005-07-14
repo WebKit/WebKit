@@ -25,6 +25,8 @@
 
 #import "KWQNSViewExtras.h"
 
+#define MIN_INTERSECT_FOR_REVEAL 32
+
 @implementation NSView (KWQNSViewExtras)
 
 - (void)_KWQ_scrollFrameToVisible
@@ -64,8 +66,13 @@
     NSRect visibleRect = [self bounds];
     
     if (forceCentering || !NSContainsRect(visibleRect, exposeRect)) {
-        // Make an expose rectangle that will end up centering the passed-in rectangle horizontally.
-        if (exposeRect.size.width >= visibleRect.size.width) {
+    
+        // First check whether enough of the desired rect is already visible horizontally. If so, and we're not forcing centering,
+        // we don't want to scroll horizontally because doing so is surprising.
+        if (!forceCentering && NSIntersectionRect(visibleRect, exposeRect).size.width >= MIN_INTERSECT_FOR_REVEAL) {
+            exposeRect.origin.x = visibleRect.origin.x;
+            exposeRect.size.width = visibleRect.size.width;
+        } else if (exposeRect.size.width >= visibleRect.size.width) {
             if (forceCentering) {
                 float expLeft = exposeRect.origin.x;
                 float expRight = exposeRect.origin.x + exposeRect.size.width;
@@ -88,12 +95,11 @@
                 }
             }
             exposeRect.size.width = visibleRect.size.width;
-        } 
-        else {
+        } else {
             exposeRect.origin.x -= (visibleRect.size.width - exposeRect.size.width) / 2.0;
             exposeRect.size.width += (visibleRect.size.width - exposeRect.size.width);
         }
-        
+               
         // Make an expose rectangle that will end up centering the passed-in rectangle vertically.
         if (exposeRect.size.height >= visibleRect.size.height) {
             if (forceCentering) {

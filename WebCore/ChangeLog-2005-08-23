@@ -1,3 +1,17 @@
+2005-07-13  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        Fixed <rdar://problem/4170963> Focusing a field unnecessarily horizontally scrolls
+
+        Horizontal scrolling while tabbing through forms can be surprising, and distracting.  This 
+        change will minimize that scrolling if we're not explicitly trying to center a rectangle in
+        _KWQ_scrollRectToVisible.
+
+        Test cases added: None.  This test case involves tabbing to form controls and scrolling.
+
+        * kwq/KWQNSViewExtras.m: (-[NSClipView _KWQ_scrollRectToVisible:inView:forceCentering:]):
+
 2005-07-12  Kevin Decker  <kdecker@apple.com>
 
          Reviewed by cblu.
