@@ -39,6 +39,7 @@
 
 - (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
 - (void)_sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;
+- (void)_safeLoadURL:(NSURL *)URL;
 - (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
                                                       identifier:(id)identifier 
                                                         response:(NSURLResponse *)response 

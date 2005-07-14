@@ -2647,6 +2647,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+- (void)_safeLoadURL:(NSURL *)URL
+{
+   // Call the bridge because this is where our security checks are made.
+    [[self _bridge] loadURL:URL 
+                    referrer:[[[[self dataSource] request] URL] _web_originalDataAsString]
+                      reload:NO
+                 userGesture:YES       
+                      target:nil
+             triggeringEvent:[NSApp currentEvent]
+                        form:nil 
+                  formValues:nil];
+}
+
 - (void)_saveResourceAndSendRemainingDelegateMessagesWithRequest:(NSURLRequest *)request
                                                       identifier:(id)identifier 
                                                         response:(NSURLResponse *)response 

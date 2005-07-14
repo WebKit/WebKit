@@ -33,6 +33,8 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
+
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -366,16 +368,8 @@
         URL = [[self class] _URLForString:(NSString *)link];
     }
     if (URL != nil) {    
-        // Call the bridge because this is where our security checks are made.
         WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
-        [[frame _bridge] loadURL:URL 
-                        referrer:[[[[frame dataSource] request] URL] _web_originalDataAsString]
-                          reload:NO
-                     userGesture:YES       
-                          target:nil
-                 triggeringEvent:[[self window] currentEvent]
-                            form:nil 
-                      formValues:nil];
+        [frame _safeLoadURL:URL];
     }
 }
 
