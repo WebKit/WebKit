@@ -2,11 +2,11 @@
 
         Reviewed by mjs
 
-        - Fixes <rdar://problem/4124326> [RTL] Lines in messages with Hebrew text and 
-        numbers are truncated by Tiger Mail Mail sends plaintext when a message doesn't 
-        have any formatting, plaintext depends on innertext, which depends on TextIterators.  
-        A TextIterator iterates over text boxes in render order, but assumes logical order, 
-        which was causing the problems.
+        - Fixes <rdar://problem/4124326> [RTL] Lines in messages with Hebrew text and numbers are truncated by Tiger Mail 
+        
+        Mail sends plaintext when a message doesn't have any formatting, plaintext depends on 
+        innertext, which depends on TextIterators.  A TextIterator iterates over text boxes 
+        in render order, but assumes logical order, which was causing the problems.
 
         Test cases added:
         * layout-tests/fast/text/international/bidi-innertext-expected.txt: Added.
