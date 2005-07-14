@@ -37,7 +37,7 @@ enum DOMEventExceptionCode {
 - (void)handleEvent:(DOMEvent *)event;
 @end
 
-@protocol DOMEventTarget <NSObject>
+@protocol DOMEventTarget <NSObject, NSCopying>
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture;
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture;
 - (BOOL)dispatchEvent:(DOMEvent *)event;

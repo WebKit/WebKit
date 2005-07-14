@@ -624,7 +624,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [[NSCursor arrowCursor] set];
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    DOMHTMLTextAreaElement *element = [bridge elementForView:self];
+    DOMHTMLTextAreaElement *element = (DOMHTMLTextAreaElement *)[bridge elementForView:self];
     ASSERT([element isKindOfClass:[DOMHTMLTextAreaElement class]]);
     
     KWQTextArea *textArea = self;
@@ -982,14 +982,14 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (KWQTextArea *)_enclosingTextArea
 {
-    KWQTextArea *textArea = [[self superview] superview];
+    KWQTextArea *textArea = (KWQTextArea *)[[self superview] superview];
     ASSERT([textArea isKindOfClass:[KWQTextArea class]]);
     return textArea;
 }
 
 - (NSRect)_resizeCornerRect
 {
-    NSClipView *clipView = [self superview];
+    NSClipView *clipView = (NSClipView *)[self superview];
     NSRect visibleRect = [clipView documentVisibleRect];
     NSImage *cornerImage = [KWQTextArea _resizeCornerImage];
     NSSize imageSize = [cornerImage size];

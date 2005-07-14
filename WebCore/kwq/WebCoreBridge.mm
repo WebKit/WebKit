@@ -1079,7 +1079,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
-            NSImage *image = r->pixmap().image();
+            NSImage * image = (NSImage *)(r->pixmap().image());
             // Only return image information if there is an image.
             if (image && !r->isDisplayingError()) {
                 [element setObject:r->pixmap().image() forKey:WebCoreElementImageKey];

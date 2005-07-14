@@ -1,3 +1,53 @@
+2005-07-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+
+        Rolling in changes necessary to build with newer versions of gcc 4.0
+
+        * kwq/DOM-CSS.mm:
+        (+[DOMCSSPrimitiveValue _valueWithImpl:]):
+        * kwq/DOMEvents.h:
+        * kwq/DOMInternal.h:
+        (addDOMWrapper):
+        * kwq/KWQButton.mm:
+        (QButton::setWritingDirection):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::dragNSImage):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::setWritingDirection):
+        (QComboBox::populateMenu):
+        * kwq/KWQKHTMLPart.mm:
+        (regExpForLabels):
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        (KWQKHTMLPart::fileWrapperForElement):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit):
+        * kwq/KWQListBox.mm:
+        (QListBox::~QListBox):
+        (QListBox::setSelectionMode):
+        (QListBox::doneAppendingItems):
+        (QListBox::setSelected):
+        (QListBox::isSelected):
+        (QListBox::setEnabled):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::setWritingDirection):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::contentsX):
+        (QScrollView::contentsY):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _trackResizeFromMouseDown:]):
+        (-[KWQTextAreaTextView _enclosingTextArea]):
+        (-[KWQTextAreaTextView _resizeCornerRect]):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setAlignment):
+        (QTextEdit::setWritingDirection):
+        (QTextEdit::sizeWithColumnsAndRows):
+        (QTextEdit::setPalette):
+        * kwq/KWQWidget.mm:
+        (QWidget::hasFocus):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2005-07-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -211,7 +211,7 @@ bool QWidget::hasFocus() const
 
     NSView *view = [getView() _webcore_effectiveFirstResponder];
 
-    NSView *firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
+    id firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
 
     if (!firstResponder) {
         return false;

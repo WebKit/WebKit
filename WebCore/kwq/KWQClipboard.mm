@@ -29,6 +29,7 @@
 #import "KWQKHTMLPart.h"
 #import "KWQStringList.h"
 #import "WebCoreGraphicsBridge.h"
+#import "WebCoreImageRenderer.h"
 
 #import <AppKit/AppKit.h>
 
@@ -343,7 +344,7 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
             }
         }
     } else {
-        result = m_dragImage.image();
+        result = (NSImage *)(m_dragImage.image());
         if (loc) {
             *loc = NSPoint(m_dragLoc);
             loc->y = [result size].height - loc->y;

@@ -364,7 +364,7 @@ void QButton::setWritingDirection(QPainter::TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    KWQButton *button = getView();
+    KWQButton *button = static_cast<KWQButton *>(getView());
     KWQButtonCell *cell = [button cell];
     NSWritingDirection d = direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
     if ([cell baseWritingDirection] != d) {

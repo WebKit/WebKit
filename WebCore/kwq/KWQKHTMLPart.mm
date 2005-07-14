@@ -44,6 +44,7 @@
 
 #import "WebCoreBridge.h"
 #import "WebCoreGraphicsBridge.h"
+#import "WebCoreImageRenderer.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 
@@ -431,7 +432,7 @@ QRegExp *regExpForLabels(NSArray *labels)
         unsigned int numLabels = [labels count];
         unsigned int i;
         for (i = 0; i < numLabels; i++) {
-            QString label = QString::fromNSString([labels objectAtIndex:i]);
+            QString label = QString::fromNSString((NSString *)[labels objectAtIndex:i]);
 
             bool startsWithWordChar = false;
             bool endsWithWordChar = false;
@@ -2087,7 +2088,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
                 superview = [superview superview];
                 ASSERT(superview);
                 if ([superview isKindOfClass:[NSControl class]]) {
-                    NSControl *control = superview;
+                    NSControl *control = static_cast<NSControl *>(superview);
                     if ([control currentEditor] == view) {
                         view = superview;
                     }
@@ -2842,7 +2843,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
     }    
     if (!wrapper) {
         RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
-        NSImage *image = renderer->pixmap().image();
+        NSImage * image = (NSImage *)(renderer->pixmap().image());
         NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
         wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
         [wrapper setPreferredFilename:@"image.tiff"];

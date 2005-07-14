@@ -63,7 +63,7 @@ QLineEdit::QLineEdit(Type type)
     ASSERT(view);
     [view initWithQLineEdit:this];
     m_controller = [view controller];
-    setView(view);
+    setView((NSView *)view);
     [view release];
     [view setSelectable:YES]; // must do this explicitly so setEditable:NO does not make it NO
     KWQ_UNBLOCK_EXCEPTIONS;

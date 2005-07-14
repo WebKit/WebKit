@@ -131,8 +131,7 @@ int QScrollView::contentsX() const
 
     KWQ_BLOCK_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
-        NSScrollView *sview = view;
-        return (int)[sview documentVisibleRect].origin.x;
+        return (int)[(NSScrollView *)view documentVisibleRect].origin.x;
     } else {
         return (int)[view visibleRect].origin.x;
     }
@@ -147,8 +146,7 @@ int QScrollView::contentsY() const
 
     KWQ_BLOCK_EXCEPTIONS;
     if ([view _KWQ_isScrollView]) {
-        NSScrollView *sview = view;
-        return (int)[sview documentVisibleRect].origin.y;
+        return (int)[(NSScrollView *)view documentVisibleRect].origin.y;
     } else {
         return (int)[view visibleRect].origin.y;
     }

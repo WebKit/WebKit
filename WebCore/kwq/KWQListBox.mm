@@ -156,7 +156,7 @@ QListBox::QListBox(QWidget *parent)
 
 QListBox::~QListBox()
 {
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     
     KWQ_BLOCK_EXCEPTIONS;
     KWQTableView *tableView = [scrollView documentView];
@@ -172,7 +172,7 @@ void QListBox::clear()
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
 
     KWQ_BLOCK_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
@@ -190,7 +190,7 @@ void QListBox::doneAppendingItems()
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
     [tableView reloadData];
 
@@ -203,7 +203,7 @@ void QListBox::setSelected(int index, bool selectIt)
 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
     _changingSelection = true;
     if (selectIt) {
@@ -224,7 +224,7 @@ bool QListBox::isSelected(int index) const
 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
     return [tableView isRowSelected:index]; 
 
@@ -244,7 +244,7 @@ void QListBox::setEnabled(bool enabled)
 
         _enabled = enabled;
 
-        NSScrollView *scrollView = getView();
+        NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
         NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
@@ -261,7 +261,7 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
     
     if (!_widthGood) {
@@ -323,7 +323,7 @@ void QListBox::setWritingDirection(QPainter::TextDirection d)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSScrollView *scrollView = getView();
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
     NSWritingDirection direction = d == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
     if ([tableView baseWritingDirection] != direction) {
