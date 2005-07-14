@@ -1,3 +1,30 @@
+2005-07-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Anders Carlsson and justin
+
+        Reviewed by mjs
+        
+        Fixes the following related bugs: 
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3298> insertRow generates DOM Exception if TABLE does not possess a TBODY
+        <rdar://problem/4045213> insertRow fails on a <table> that has no <tbody> but does have other children in the DOM
+        <rdar://problem/3609576> insertRow() on table object containing any characters but no TR & TD elements fails (3476)
+        
+        Does a better job of maintaining the firstBody variable so that it's not invalidated on .innerHTML = ""
+        Better check for when to add an implicit tbody to hold the inserted row.
+
+        Test cases added: (NONE)
+        * layout-tests/fast/dom/HTMLTableElement/insert-row-expected.txt: Added.
+        * layout-tests/fast/dom/HTMLTableElement/insert-row.html: Added.
+
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::~HTMLTableElementImpl):
+        (DOM::HTMLTableElementImpl::setTBody):
+        (DOM::HTMLTableElementImpl::insertRow):
+        (DOM::HTMLTableElementImpl::addChild):
+        (DOM::HTMLTableElementImpl::childrenChanged):
+        * khtml/html/html_tableimpl.h:
+
+
 2005-07-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by hyatt, patch from Carsten Guenther.
