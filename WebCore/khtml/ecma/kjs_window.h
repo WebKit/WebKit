@@ -25,6 +25,7 @@
 #include <qobject.h>
 #include <qguardedptr.h>
 #include <qmap.h>
+#include <qptrdict.h>
 
 #include "kjs_binding.h"
 

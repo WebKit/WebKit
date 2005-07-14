@@ -394,7 +394,7 @@ inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::remove(Val
 #if DUMP_HASHTABLE_STATS
     ++HashTableStats::numRemoves;
 #endif
-    
+
     deleteBucket(*pos);
     ++m_deletedCount;
     --m_keyCount;
@@ -411,12 +411,15 @@ inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::remove(con
     if (!m_table)
         return;
 
-    remove(lookup(key).first); 
+    remove(find(key)); 
 }
 
 template<typename Key, typename Value, Key ExtractKey(const Value &), typename HashFunctions, typename Traits>
 inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::remove(iterator it)
 { 
+    if (it == end())
+        return;
+
     remove(it.m_position); 
 }
 

@@ -24,6 +24,7 @@
 #include <qguardedptr.h>
 #include <qobject.h>
 #include <kurl.h>
+#include <qptrdict.h>
 
 #include "kjs_dom.h"
 

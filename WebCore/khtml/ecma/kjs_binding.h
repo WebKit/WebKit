@@ -24,7 +24,6 @@
 
 #include <kjs/interpreter.h>
 #include <qvariant.h>
-#include <qptrdict.h>
 #include <kjs/lookup.h>
 #include <kjs/protect.h>
 
@@ -95,29 +94,19 @@ namespace KJS {
   class ScriptInterpreter : public Interpreter
   {
   public:
-    ScriptInterpreter( const Object &global, KHTMLPart* part );
+    ScriptInterpreter(const Object &global, KHTMLPart* part);
     virtual ~ScriptInterpreter();
 
-    static DOMObject* getDOMObject( void* objectHandle ) {
-      return domObjects()[objectHandle];
-    }
-    static void putDOMObject( void* objectHandle, DOMObject* obj ) {
-      domObjects().insert( objectHandle, obj );
-    }
-    static bool deleteDOMObject( void* objectHandle ) {
-      return domObjects().remove( objectHandle );
-    }
-
-    static void forgetDOMObject( void* objectHandle );
-
+    static DOMObject* getDOMObject(void* objectHandle);
+    static void putDOMObject(void* objectHandle, DOMObject* obj);
+    static void deleteDOMObject(void* objectHandle);
+    static void forgetDOMObject(void* objectHandle);
 
     static DOMNode *getDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node);
     static void putDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *nodeHandle, DOMNode *nodeWrapper);
     static void forgetDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node);
     static void forgetAllDOMNodesForDocument(DOM::DocumentImpl *document);
     static void updateDOMNodeDocument(DOM::NodeImpl *nodeHandle, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc);
-
-
 
     KHTMLPart* part() const { return m_part; }
 
@@ -148,9 +137,6 @@ namespace KJS {
 
   private:
     KHTMLPart* m_part;
-
-    static QPtrDict<DOMObject> &domObjects();
-    static QPtrDict<QPtrDict<DOMNode> > &domNodesPerDocument();
 
     DOM::EventImpl *m_evt;
     bool m_inlineCode;

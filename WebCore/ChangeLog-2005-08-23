@@ -1,3 +1,32 @@
+2005-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+        - convert some more things to use the new hashtable
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::domObjects):
+        (KJS::domNodesPerDocument):
+        (KJS::ScriptInterpreter::getDOMObject):
+        (KJS::ScriptInterpreter::putDOMObject):
+        (KJS::ScriptInterpreter::deleteDOMObject):
+        (KJS::ScriptInterpreter::forgetDOMObject):
+        (KJS::ScriptInterpreter::getDOMNodeForDocument):
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument):
+        (KJS::ScriptInterpreter::putDOMNodeForDocument):
+        (KJS::ScriptInterpreter::forgetAllDOMNodesForDocument):
+        (KJS::ScriptInterpreter::mark):
+        (KJS::ScriptInterpreter::updateDOMNodeDocument):
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_window.h: Include QPtrDict header
+        * khtml/ecma/xmlhttprequest.h: ditto
+
+	- fix a bug with remove of a nonexistent key - it used to trash
+	the table
+	
+        * khtml/misc/hashtable.h:
+        (khtml::::remove):
+
 2005-07-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
