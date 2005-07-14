@@ -33,6 +33,7 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameInternal.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>

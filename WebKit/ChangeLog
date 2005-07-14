@@ -1,3 +1,8 @@
+2005-07-14  John Sullivan  <sullivan@apple.com>
+
+	added missing #import to fix build
+	* WebView.subproj/WebPDFView.m
+
 2005-07-14  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by cblu
