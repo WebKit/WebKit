@@ -1,5 +1,17 @@
 2005-07-14  Vicki Murley  <vicki@apple.com>
 
+        Reviewed by hyatt, patch from Carsten Guenther.
+
+	- fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3855
+
+        Test cases added:
+        * manual-tests/bugzilla-3855.html: Added.
+
+        * kwq/KWQKHTMLPart.mm: 
+        (KWQKHTMLPart::searchForLabelsAboveCell): check for the existence of the cell renderer
+
+2005-07-14  Vicki Murley  <vicki@apple.com>
+
 	- added manual tests for <rdar://problem/4172380> [GENENTECH] window.opener not available 
 	when child opened via target="_new"
         
