@@ -755,7 +755,8 @@ private:
     
     khtml::Decoder *m_decoder;
 
-    QDict<ElementImpl> m_elementsById;
+    mutable QDict<ElementImpl> m_elementsById;
+    mutable QDict<char> m_idCount;
     
     QDict<ElementImpl> m_elementsByAccessKey;
     bool m_accessKeyDictValid;

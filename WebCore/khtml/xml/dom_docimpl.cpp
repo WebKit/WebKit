@@ -662,11 +662,37 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
 
 ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
 {
+    ElementImpl *element;
+    QString qId = elementId.string();
+
     if (elementId.length() == 0) {
-	return 0;
+        return 0;
     }
 
-    return m_elementsById.find(elementId.string());
+    element = m_elementsById.find(qId);
+    
+    if (element)
+        return element;
+        
+    if (int idCount = (int)m_idCount.find(qId)) {
+        for (NodeImpl *n = traverseNextNode(); n != 0; n = n->traverseNextNode()) {
+            if (!n->isElementNode())
+                continue;
+            
+            element = static_cast<ElementImpl *>(n);
+            
+            if (element->hasID() && element->getAttribute(ATTR_ID) == elementId) {
+                if (idCount == 1) 
+                    m_idCount.remove(qId);
+                else
+                    m_idCount.insert(qId, (char *)idCount - 1);
+                
+                m_elementsById.insert(qId, element);
+                return element;
+            }
+        }
+    }
+    return 0;
 }
 
 ElementImpl *DocumentImpl::elementFromPoint( const int _x, const int _y ) const
@@ -687,10 +713,13 @@ ElementImpl *DocumentImpl::elementFromPoint( const int _x, const int _y ) const
 void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *element)
 {
     QString qId = elementId.string();
-
+    
     if (m_elementsById.find(qId) == NULL) {
-	m_elementsById.insert(qId, element);
+        m_elementsById.insert(qId, element);
         m_accessKeyDictValid = false;
+    } else {
+        int idCount = (int)m_idCount.find(qId);
+        m_idCount.insert(qId, (char *)(idCount + 1));
     }
 }
 
@@ -699,8 +728,15 @@ void DocumentImpl::removeElementById(const DOMString &elementId, ElementImpl *el
     QString qId = elementId.string();
 
     if (m_elementsById.find(qId) == element) {
-	m_elementsById.remove(qId);
+        m_elementsById.remove(qId);
         m_accessKeyDictValid = false;
+    } else {
+        int idCount = (int)m_idCount.find(qId);        
+        assert(idCount > 0);
+        if (idCount == 1) 
+            m_idCount.remove(qId);
+        else
+            m_idCount.insert(qId, (char *)(idCount - 1));
     }
 }
 

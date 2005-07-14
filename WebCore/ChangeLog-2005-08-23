@@ -1,7 +1,33 @@
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
-	-landed layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
-	Object.prototype is missing toLocaleString
+        - landed fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3677>
+        Safari fail to access a second time an element whose content was dynamically modified.
+        
+        - patch by Anders Carlsson <andersca@mac.com>.
+
+        Reviewed by mjs + darin.
+
+        Test cases added:
+        * layout-tests/fast/dom/ids/duplicate-ids-expected.txt: Added.
+        * layout-tests/fast/dom/ids/duplicate-ids.html: Added.
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::getElementById):
+        If no element in the id dict can be found and we know that there's
+        at least one other element with the same id around, then traverse the document
+        and insert the new element in the id table.
+        
+        (DocumentImpl::addElementById):
+        (DocumentImpl::removeElementById):
+        Increment and decrement the id count accordingly.
+        
+        * khtml/xml/dom_docimpl.h:
+        Add QDict for id counts. Make element QDict mutable.
+
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        -landed layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3412
+        Object.prototype is missing toLocaleString
 
         Reviewed by mjs.
 
