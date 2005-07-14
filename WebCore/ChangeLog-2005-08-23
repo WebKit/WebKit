@@ -1,3 +1,21 @@
+2005-07-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        - cleaned up Find-related experimental code that I checked in a while back
+
+        * kwq/KWQKHTMLPart.h:
+        remove findInSelection flag from findString()
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        remove findInSelection flag. Always search the selection first, but if the found range is
+        the same as the selection range, then search again from beyond the selection.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge searchFor:direction:caseSensitive:wrap:]):
+        remove findInSelection flag
+
 2005-07-13  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

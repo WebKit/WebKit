@@ -598,29 +598,40 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
     return nil;
 }
 
-// Searches from the beginning of the document if nothing is selected. Will search in selection if
-// findInSelection is true, otherwise starts just after (forward) or before (backward) the selection.
-bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag, bool findInSelection)
+// Searches from the beginning of the document if nothing is selected.
+bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, bool wrapFlag)
 {
     QString target = QString::fromNSString(string);
     if (target.isEmpty()) {
         return false;
     }
-
-    // Start on the correct edge of the selection, search to edge of document.
+    
+    // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
     SharedPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
     if (selectionStart()) {
         if (forward) {
-            setStart(searchRange.get(), VisiblePosition(findInSelection ? selection().start() : selection().end(), selection().endAffinity()));
+            setStart(searchRange.get(), VisiblePosition(selection().start(), selection().endAffinity()));
         } else {
-            setEnd(searchRange.get(), VisiblePosition(findInSelection ? selection().end() : selection().start(), selection().startAffinity()));
+            setEnd(searchRange.get(), VisiblePosition(selection().end(), selection().startAffinity()));
         }
     }
-
-    // Do the search once, then do it a second time to handle wrapped search.
-    // Searches some or all of document twice in the failure case, but that's probably OK.
     SharedPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, forward, caseFlag));
+    
+    // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
+    if (selectionStart() && *resultRange == *selection().toRange()) {
+        searchRange = rangeOfContents(xmlDocImpl());
+        if (forward) {
+            setStart(searchRange.get(), VisiblePosition(selection().end(), selection().endAffinity()));
+        } else {
+            setEnd(searchRange.get(), VisiblePosition(selection().start(), selection().startAffinity()));
+        }
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+    }
+    
     int exception = 0;
+    
+    // if we didn't find anything and we're wrapping, search again in the entire document (this will
+    // redundantly re-search the area already searched in some cases).
     if (resultRange->collapsed(exception) && wrapFlag) {
         searchRange = rangeOfContents(xmlDocImpl());
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
