@@ -87,10 +87,24 @@
     unsigned length = [self length];
     NSRange searchRange, range;
 
+    // Our search algorithm, used in WebCore also, is to search in the selection first. If the found text is the
+    // entire selection, then we search again from just past the selection.
+    
     if (forwards) {
-        searchRange.location = selectedRange.length > 0 ? NSMaxRange(selectedRange) : 0;
+        // FIXME: If selectedRange has length of 0, we ignore it, which is appropriate for non-editable text (since
+        // a zero-length selection in non-editable is invisible). We might want to change this someday to only ignore the
+        // selection if its location is NSNotFound when the text is editable (and similarly for the backwards case).
+        searchRange.location = selectedRange.length > 0 ? selectedRange.location : 0;
         searchRange.length = length - searchRange.location;
         range = [self rangeOfString:string options:options range:searchRange];
+        
+        // If found range matches (non-empty) selection, search again from just past selection
+        if (range.location != NSNotFound && NSEqualRanges(range, selectedRange)) {
+            searchRange.location = NSMaxRange(selectedRange);
+            searchRange.length = length - searchRange.location;
+            range = [self rangeOfString:string options:options range:searchRange];
+        }
+        
         if ((range.length == 0) && wrap) {	/* If not found look at the first part of the string */
             searchRange.location = 0;
             searchRange.length = selectedRange.location;
@@ -98,8 +112,16 @@
         }
     } else {
         searchRange.location = 0;
-        searchRange.length = selectedRange.length > 0 ? selectedRange.location : length;
+        searchRange.length = selectedRange.length > 0 ? NSMaxRange(selectedRange) : length;
         range = [self rangeOfString:string options:options range:searchRange];
+        
+        // If found range matches (non-empty) selection, search again from just before selection
+        if (range.location != NSNotFound && NSEqualRanges(range, selectedRange)) {
+            searchRange.location = 0;
+            searchRange.length = selectedRange.location;
+            range = [self rangeOfString:string options:options range:searchRange];
+        }
+        
         if ((range.length == 0) && wrap) {
             searchRange.location = NSMaxRange(selectedRange);
             searchRange.length = length - searchRange.location;

@@ -1,3 +1,16 @@
+2005-07-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        - fixed these bugs:
+        <rdar://problem/4181875> Searching for text that overlaps selection works differently in WebTextView than in HTMLView
+        <rdar://problem/3393678> Find not finding text in plain (non-HTML) if all text is selected
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[NSString findString:selectedRange:options:wrap:]):
+        Make search algorithm match that in WebCore: initially search inside selection, then check for the case
+        where the found text exactly matches the previous selection, and search from past the selection if so.
+
 2005-07-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
