@@ -116,7 +116,8 @@ var summary = "Testing that Array.sort() doesn't crash on very large arrays";
 printBugNumber(bug);
 printStatus(summary);
 
-expectExitCode(3);
+// KJS doesn't run out of memory, so we don't expect an abnormal exit code 
+//expectExitCode(3);
 var IN_RHINO = inRhino();
 
 if (!IN_RHINO)

@@ -1,4 +1,16 @@
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed: JS test suite expects an out of memory error
+        that our memory efficiency avoids
+        
+        Reviewed by mjs.
+
+        * tests/mozilla/js1_5/Array/regress-157652.js:
+        test now expects normal execution
+        
+        * tests/mozilla/expected.html:
+
+2005-07-14  Geoffrey Garen  <ggaren@apple.com>
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4006
         testkjs doesn't implement gc()
         
