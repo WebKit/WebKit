@@ -391,8 +391,35 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     [self _updateScalingToReflectTextSize];
 }
 
-- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag;
+// FIXME 4182876: We can eliminate this function in favor if -isEqual: if [PDFSelection isEqual:] is overridden
+// to compare contents.
+static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selectionB)
 {
+    NSArray *aPages = [selectionA pages];
+    NSArray *bPages = [selectionB pages];
+    
+    if (![aPages isEqual:bPages]) {
+        return NO;
+    }
+    
+    int count = [aPages count];
+    int i;
+    for (i = 0; i < count; ++i) {
+        NSRect aBounds = [selectionA boundsForPage:[aPages objectAtIndex:i]];
+        NSRect bBounds = [selectionB boundsForPage:[bPages objectAtIndex:i]];
+        if (!NSEqualRects(aBounds, bBounds)) {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+{
+    // Our search algorithm, used in WebCore also, is to search in the selection first. If the found text is the
+    // entire selection, then we search again from just past the selection.
+
     int options = 0;
     if (!forward) {
         options |= NSBackwardsSearch;
@@ -401,12 +428,36 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         options |= NSCaseInsensitiveSearch;
     }
     PDFDocument *document = [PDFSubview document];
-    PDFSelection *selection = [document findString:string fromSelection:[PDFSubview currentSelection] withOptions:options];
-    if (selection == nil && wrapFlag) {
-        selection = [document findString:string fromSelection:nil withOptions:options];
+    PDFSelection *oldSelection = [PDFSubview currentSelection];
+    
+    // Initially we want to include the selected text in the search. PDFDocument's API always searches from just
+    // past the passed-in selection, so we need to pass a selection that's modified appropriately. 
+    // FIXME 4182863: Ideally we'd use a zero-length selection at the edge of the current selection, but zero-length
+    // selections don't work in PDFDocument. So instead we make a one-length selection just before or after the
+    // current selection, which works for our purposes even when the current selection is at an edge of the
+    // document.
+    PDFSelection *selectionForInitialSearch = [oldSelection copy];
+    int oldSelectionLength = [[oldSelection string] length];
+    if (forward) {
+        [selectionForInitialSearch extendSelectionAtStart:1];
+        [selectionForInitialSearch extendSelectionAtEnd:-oldSelectionLength];
+    } else {
+        [selectionForInitialSearch extendSelectionAtEnd:1];
+        [selectionForInitialSearch extendSelectionAtStart:-oldSelectionLength];
     }
-    if (selection != nil) {
-        [PDFSubview setCurrentSelection:selection];
+    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
+    [selectionForInitialSearch release];
+    
+    // If we found the selection, search again from just past the selection
+    if (PDFSelectionsAreEqual(foundSelection, oldSelection)) {
+        foundSelection = [document findString:string fromSelection:oldSelection withOptions:options];
+    }
+    
+    if (foundSelection == nil && wrapFlag) {
+        foundSelection = [document findString:string fromSelection:nil withOptions:options];
+    }
+    if (foundSelection != nil) {
+        [PDFSubview setCurrentSelection:foundSelection];
         [PDFSubview scrollSelectionToVisible:nil];
         return YES;
     }

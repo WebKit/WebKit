@@ -1,5 +1,22 @@
 2005-07-15  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Kevin Decker.
+        
+        - fixed <rdar://problem/4181884> Searching for text that overlaps selection works 
+        differently in PDFView than in HTMLView
+
+        * WebView.subproj/WebPDFView.m:
+        (PDFSelectionsAreEqual):
+        new function, stand-in for nonexistent -[PDFSelection isEqual:] since calling isEqual:
+        on two identical PDFSelections returns NO
+        (-[WebPDFView searchFor:direction:caseSensitive:wrap:]):
+        Make search algorithm match that in WebCore: initially search inside selection, then check for the case
+        where the found text exactly matches the previous selection, and search from past the selection if so.
+        The implementation is slightly more complicated than it should be due to PDFKit API limitations (about
+        which I added FIXMEs and filed bugs)
+
+2005-07-15  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Maciej Stachowiak.
         
         - fixed these bugs:
