@@ -1,5 +1,26 @@
 2005-07-15  John Sullivan  <sullivan@apple.com>
 
+        Written by Trey Matteson
+        Reviewed by me.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4013
+                text find doesn't wrap in PDF files
+
+        This just works once WebPDFView implements the WebDocumentText protocol, which is
+        mostly just a matter of forwarding the methods to PDFKit appropriately.
+
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView supportsTextEncoding]):
+        (-[WebPDFView string]):
+        (-[WebPDFView attributedString]):
+        (-[WebPDFView selectedString]):
+        (-[WebPDFView selectedAttributedString]):
+        (-[WebPDFView selectAll]):
+        (-[WebPDFView deselectAll]):
+
+2005-07-15  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Kevin Decker.
         
         - fixed <rdar://problem/4181884> Searching for text that overlaps selection works 

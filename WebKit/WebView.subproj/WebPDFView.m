@@ -503,6 +503,57 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     }
 }
 
+/*** WebDocumentText protocol implementation ***/
+
+- (BOOL)supportsTextEncoding
+{
+    return NO;
+}
+
+- (NSString *)string
+{
+    return [[PDFSubview document] string];
+}
+
+- (NSAttributedString *)attributedString
+{
+    // changing the selection is a hack, but the only way to get an attr string is via PDFSelection
+    
+    // must copy this selection object because we change the selection which seems to release it
+    PDFSelection *savedSelection = [[PDFSubview currentSelection] copy];
+    [PDFSubview selectAll:nil];
+    NSAttributedString *result = [[PDFSubview currentSelection] attributedString];
+    if (savedSelection) {
+        [PDFSubview setCurrentSelection:savedSelection];
+        [savedSelection release];
+    } else {
+        // FIXME: behavior of setCurrentSelection:nil is not documented - check 4182934 for progress
+        // Otherwise, we could collapse this code with the case above.
+        [PDFSubview clearSelection];
+    }
+    return result;
+}
+
+- (NSString *)selectedString
+{
+    return [[PDFSubview currentSelection] string];
+}
+
+- (NSAttributedString *)selectedAttributedString
+{
+    return [[PDFSubview currentSelection] attributedString];
+}
+
+- (void)selectAll
+{
+    [PDFSubview selectAll:nil];
+}
+
+- (void)deselectAll
+{
+    [PDFSubview clearSelection];
+}
+
 @end
 
 #endif // OMIT_TIGER_FEATURES
