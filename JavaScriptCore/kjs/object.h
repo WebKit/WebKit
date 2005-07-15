@@ -436,8 +436,8 @@ namespace KJS {
      * And in your source file:
      *
      * \code
-     *   const ClassInfo BarImp::info = {0, 0, 0}; // no parent class
-     *   const ClassInfo FooImp::info = {&BarImp::info, 0, 0};
+     *   const ClassInfo BarImp::info = {"Bar", 0, 0, 0}; // no parent class
+     *   const ClassInfo FooImp::info = {"Foo", &BarImp::info, 0, 0};
      * \endcode
      *
      * @see inherits()

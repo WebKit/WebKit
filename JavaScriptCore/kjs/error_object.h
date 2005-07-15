@@ -27,6 +27,14 @@
 
 namespace KJS {
 
+  class ErrorInstanceImp : public ObjectImp {
+  public:
+    ErrorInstanceImp(ObjectImp *proto);
+    
+    virtual const ClassInfo *classInfo() const { return &info; }
+    static const ClassInfo info;
+  };
+  
   class ErrorPrototypeImp : public ObjectImp {
   public:
     ErrorPrototypeImp(ExecState *exec,
@@ -52,10 +60,6 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
   };
-
-
-
-
 
   class NativeErrorPrototypeImp : public ObjectImp {
   public:

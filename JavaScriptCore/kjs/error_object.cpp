@@ -30,6 +30,15 @@
 
 using namespace KJS;
 
+// ------------------------------ ErrorInstanceImp ----------------------------
+
+const ClassInfo ErrorInstanceImp::info = {"Error", 0, 0, 0};
+
+ErrorInstanceImp::ErrorInstanceImp(ObjectImp *proto)
+: ObjectImp(proto)
+{
+}
+
 // ------------------------------ ErrorPrototypeImp ----------------------------
 
 // ECMA 15.9.4
@@ -64,16 +73,16 @@ bool ErrorProtoFuncImp::implementsCall() const
 Value ErrorProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*args*/)
 {
   // toString()
-  UString s;
+  UString s = "Error";
 
   Value v = thisObj.get(exec, namePropertyName);
   if (v.type() != UndefinedType) {
-    s += v.toString(exec);
+    s = v.toString(exec);
   }
 
   v = thisObj.get(exec, messagePropertyName);
   if (v.type() != UndefinedType) {
-    s += " : " + v.toString(exec); // Mozilla compatible format
+    s += ": " + v.toString(exec); // Mozilla compatible format
   }
 
   return String(s);
@@ -100,7 +109,7 @@ bool ErrorObjectImp::implementsConstruct() const
 Object ErrorObjectImp::construct(ExecState *exec, const List &args)
 {
   Object proto = Object::dynamicCast(exec->lexicalInterpreter()->builtinErrorPrototype());
-  ObjectImp *imp = new ObjectImp(proto);
+  ObjectImp *imp = new ErrorInstanceImp(proto.imp());
   Object obj(imp);
 
   if (!args.isEmpty() && args[0].type() != UndefinedType) {
@@ -136,7 +145,7 @@ NativeErrorPrototypeImp::NativeErrorPrototypeImp(ExecState *exec, ErrorPrototype
 
 // ------------------------------ NativeErrorImp -------------------------------
 
-const ClassInfo NativeErrorImp::info = {"Error", &InternalFunctionImp::info, 0, 0};
+const ClassInfo NativeErrorImp::info = {"Function", &InternalFunctionImp::info, 0, 0};
 
 NativeErrorImp::NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
                                const Object &prot)
@@ -156,7 +165,7 @@ bool NativeErrorImp::implementsConstruct() const
 
 Object NativeErrorImp::construct(ExecState *exec, const List &args)
 {
-  ObjectImp *imp = new ObjectImp(proto);
+  ObjectImp *imp = new ErrorInstanceImp(proto);
   Object obj(imp);
   if (args[0].type() != UndefinedType)
     imp->putDirect(messagePropertyName, new StringImp(args[0].toString(exec)));

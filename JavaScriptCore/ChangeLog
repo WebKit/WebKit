@@ -1,3 +1,25 @@
+2005-07-15  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in KDE fixes for http://bugzilla.opendarwin.org/show_bug.cgi?id=3601
+        Error instance type info
+        
+        Reviewed by mjs.
+
+        * kjs/error_object.cpp:
+        - Created ErrorInstanceImp class for Error() objects. 
+        - Changed parent object for Native Errors to "Function" (matches
+        ECMA spec).
+        (ErrorInstanceImp::ErrorInstanceImp):
+        (ErrorProtoFuncImp::call):
+        (ErrorObjectImp::construct):
+        (NativeErrorImp::construct):
+
+        * kjs/error_object.h:
+        (KJS::ErrorInstanceImp::classInfo):
+        * kjs/object.h: made comment more informative about ClassInfo
+
+        * tests/mozilla/expected.html:
+
 2005-07-14  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed: JS test suite expects an out of memory error
