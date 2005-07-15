@@ -2073,7 +2073,7 @@ void KHTMLPart::scheduleLocationChange(const QString &url, const QString &referr
     // If a redirect was scheduled during a load, then stop the current load.
     // Otherwise when the current load transitions from a provisional to a 
     // committed state, pending redirects may be cancelled. 
-    if (locationChangeScheduledDuringLoad) {
+    if (d->m_scheduledRedirection == locationChangeScheduledDuringLoad) {
         stopLoading(true);   
     }
     

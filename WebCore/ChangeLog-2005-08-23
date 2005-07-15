@@ -1,3 +1,13 @@
+2005-07-15  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Adele
+
+	Fixed: http://bugzilla.opendarwin.org/show_bug.cgi?id=4009
+        Test cases added: none, doesn't affect layout
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleLocationChange): Corrected an earlier mistake of testing an always non-zero constant. 
+
 2005-07-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken Kocienda (setFocusNode) and Dave Hyatt (everything).
