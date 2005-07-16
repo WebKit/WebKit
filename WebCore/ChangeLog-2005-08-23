@@ -1,3 +1,15 @@
+2005-07-15  Adele Peterson  <adele@apple.com>
+
+        Updated layout tests for formatting changes from change for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3601
+
+        * layout-tests/fast/dom/outerText-no-element-expected.txt:
+        * layout-tests/fast/dynamic/outerHTML-no-element-expected.txt:
+        * layout-tests/fast/js/array-every-expected.txt:
+        * layout-tests/fast/js/array-foreach-expected.txt:
+        * layout-tests/fast/js/array-some-expected.txt:
+        * layout-tests/fast/js/toString-stack-overflow-expected.txt:
+
 2005-07-15  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Adele

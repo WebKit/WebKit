@@ -37,12 +37,12 @@ This test uses a function that throws an exception, and thus halts the execution
 
 5.0 Wrong Type for Callback Test This test sends in incorrect types for the callback parameter of every. An exception should be thrown in each case. There should be 6 type errors (and no crashes!):
 
-TypeError : Type error
-TypeError : Type error
-TypeError : Type error
-TypeError : Type error
-TypeError : Type error
-TypeError : Type error
+TypeError: Type error
+TypeError: Type error
+TypeError: Type error
+TypeError: Type error
+TypeError: Type error
+TypeError: Type error
 
 6.0 Early Abortion ("Short Circuiting") This test is nearly identical to 1.0, except that it prints upon every call to the designated callback function. Since every aborts as soon as it finds one element that does not qualify, the first array should print only twice, and the second all 5 times.
 

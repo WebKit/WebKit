@@ -14,5 +14,5 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (0,0) size 182x18
           text run at (0,0) width 182: "this is a big test or something"
       RenderBlock {DIV} at (0,104) size 784x18
-        RenderText {TEXT} at (0,0) size 266x18
-          text run at (0,0) width 266: "Expected error - Error : DOM exception 7"
+        RenderText {TEXT} at (0,0) size 262x18
+          text run at (0,0) width 262: "Expected error - Error: DOM exception 7"

@@ -6,5 +6,5 @@ The test confirms that the correct exception is thrown in the event of a stack o
 
 It is possible that this may need to be updated if WebKit gets an improvement to its JavaScript stack support. Either through increasing the depth of the recursion, or through some other mechanism.
 
-RangeError : Maximum call stack size exceeded.
+RangeError: Maximum call stack size exceeded.
 

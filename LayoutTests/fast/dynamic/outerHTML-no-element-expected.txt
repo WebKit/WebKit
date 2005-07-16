@@ -17,5 +17,5 @@ layer at (0,0) size 800x600
           text run at (468,0) width 315: "If the test passes, you should see a message with a"
           text run at (0,18) width 238: "description of the expected exception."
       RenderBlock {DIV} at (0,86) size 784x18
-        RenderText {TEXT} at (0,0) size 375x18
-          text run at (0,0) width 375: "This test passed - expected error - Error : DOM exception 7"
+        RenderText {TEXT} at (0,0) size 371x18
+          text run at (0,0) width 371: "This test passed - expected error - Error: DOM exception 7"
