@@ -593,6 +593,14 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
     return !defaultPrevented; // ### what if defaultPrevented was called before dispatchEvent?
 }
 
+DocumentPtr *DocumentPtr::nullDocumentPtr()
+{
+    static DocumentPtr doc;
+    
+    doc.ref();
+    return &doc;
+}
+
 bool NodeImpl::dispatchHTMLEvent(int _id, bool canBubbleArg, bool cancelableArg)
 {
     int exceptioncode = 0;

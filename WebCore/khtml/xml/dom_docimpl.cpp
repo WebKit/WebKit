@@ -157,7 +157,7 @@ DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qu
     }
 #endif
 
-    return new DocumentTypeImpl(this,0,qualifiedName,publicId,systemId);
+    return new DocumentTypeImpl(this,DocumentPtr::nullDocumentPtr(),qualifiedName,publicId,systemId);
 }
 
 DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*feature*/) const

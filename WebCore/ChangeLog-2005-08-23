@@ -1,7 +1,26 @@
 2005-07-15  Adele Peterson  <adele@apple.com>
 
         Written by Anders Carlsson  <andersca@mac.com>
-        Reviewed by Maciej.
+        Reviewed by Dave Hyatt.
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3653>
+	
+        Test cases added:
+	layout-tests/fast/dom/createDocumentType.html: Added
+	layout-tests/fast/dom/createDocumentType-expected.txt: Added
+
+        * khtml/xml/dom_nodeimpl.cpp: (DocumentPtr::nullDocumentPtr):
+        * khtml/xml/dom_nodeimpl.h:
+	Add nullDocumentPtr() function which returns a shared DocumentPtr
+	object whose document always is 0.
+	
+        * khtml/xml/dom_docimpl.cpp: (DOMImplementationImpl::createDocumentType):
+	Pass nullDocumentPtr as the document type's document.
+
+2005-07-15  Adele Peterson  <adele@apple.com>
+
+        Written by Anders Carlsson  <andersca@mac.com>
+        Reviewed by Maciej Stachowiak.
 
 	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3808>
 

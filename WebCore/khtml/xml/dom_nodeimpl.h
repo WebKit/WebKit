@@ -81,6 +81,8 @@ class DocumentPtr : public khtml::Shared<DocumentPtr>
 {
 public:
     DocumentImpl *document() const { return doc; }
+    static DocumentPtr *nullDocumentPtr();
+    
 private:
     DocumentPtr() { doc = 0; }
     friend class DocumentImpl;
