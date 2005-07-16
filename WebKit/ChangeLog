@@ -1,3 +1,16 @@
+2005-07-15  Adele Peterson  <adele@apple.com>
+
+        Written by Trey Matteson  <trey@usa.net>
+        Reviewed by John Sullivan.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3910 - REGRESSION: Replying "Cancel" to the form repost nag leaves wrong b/f cursor
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _resetBackForwardList]):  new helper method
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+          If the delegate bailed on the navigation, tell the main frame
+          to reset the b/f cursor back to where it was before we started.
+
 2005-07-15  John Sullivan  <sullivan@apple.com>
 
         Written by Trey Matteson

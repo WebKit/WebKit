@@ -2233,6 +2233,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return path;
 }
 
+- (void)_resetBackForwardList
+{
+    // Note this doesn't verify the current load type as a b/f operation because it is called from
+    // a subframe in the case of a delegate bailing out of the nav before it even gets to provisional state.
+    ASSERT(self == [[self webView] mainFrame]);
+    WebHistoryItem *resetItem = [_private currentItem];
+    if (resetItem)
+        [[[self webView] backForwardList] goToItem:resetItem];
+}
+
 // If we bailed out of a b/f navigation, we might need to set the b/f cursor back to the current
 // item, because we optimistically move it right away at the start of the operation. But when
 // alternate content is loaded for an unreachableURL, we don't want to reset the b/f cursor.
@@ -2320,8 +2330,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // through this method already, nested; otherwise, _private->policyDataSource should still be set.
     ASSERT(_private->policyDataSource || [[self provisionalDataSource] unreachableURL] != nil);
 
+    WebHistoryItem *item = [_private provisionalItem];
     if (!request) {
         [self _setPolicyDataSource:nil];
+        // If the delegate punts on the navigation, we have the problem that we have optimistically moved
+        // the b/f cursor already, so move it back.  For sanity we only do this if the navigation of the
+        // target frame or top-level frame is canceled.  A primary case of this is the user responding 
+        // Cancel to the form repost nag sheet.
+        if (([item isTargetItem] || [[self webView] mainFrame] == self)
+            && (_private->policyLoadType == WebFrameLoadTypeForward
+                || _private->policyLoadType == WebFrameLoadTypeBack
+                || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward))
+            [[[self webView] mainFrame] _resetBackForwardList];
         return;
     }
     
@@ -2343,7 +2363,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (self == [[self webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
-    WebHistoryItem *item = [_private provisionalItem];
     if ((loadType == WebFrameLoadTypeForward ||
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
