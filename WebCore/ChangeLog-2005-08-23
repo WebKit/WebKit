@@ -1,5 +1,22 @@
 2005-07-15  Adele Peterson  <adele@apple.com>
 
+        Written by Anders Carlsson  <andersca@mac.com>
+        Reviewed by Maciej.
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3808>
+
+        Test cases added:
+	* layout-tests/fast/js/location-assign.html: Added.
+	* layout-tests/fast/js/location-assign-expected.txt: Added.
+	* layout-tests/fast/js/resources/new-location.html: Added.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Location::get):
+        (KJS::LocationFunc::tryCall):
+        * khtml/ecma/kjs_window.h: (KJS::Location::): Implement location.assign.
+
+2005-07-15  Adele Peterson  <adele@apple.com>
+
         Updated layout tests for formatting changes from change for
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3601
 
