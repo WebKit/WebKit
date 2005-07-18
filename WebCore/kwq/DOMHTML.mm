@@ -53,7 +53,7 @@ using DOM::DocumentFragmentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLAttributes;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::HTMLAnchorElementImpl;
 using DOM::HTMLAppletElementImpl;
 using DOM::HTMLAreaElementImpl;

@@ -111,7 +111,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
 #endif
     RenderObject *o = child;
 
-    if (child->element() && child->element()->hasTagName(HTMLNames::form())) {
+    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -261,7 +261,7 @@ void RenderTable::layout()
 
     RenderObject *child = firstChild();
     while( child ) {
-	if ( child->needsLayout() && !(child->element() && child->element()->hasTagName(HTMLNames::form())))
+	if ( child->needsLayout() && !(child->element() && child->element()->hasTagName(HTMLTags::form())))
 	    child->layout();
 	if ( child->isTableSection() ) {
 	    static_cast<RenderTableSection *>(child)->calcRowHeight();
@@ -848,7 +848,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 #endif
     RenderObject *row = child;
 
-    if (child->element() && child->element()->hasTagName(HTMLNames::form())) {
+    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -1494,7 +1494,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
     kdDebug( 6040 ) << renderName() << "(TableRow)::addChild( " << child->renderName() << " )"  << ", " <<
                        (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
-    if (child->element() && child->element()->hasTagName(HTMLNames::form())) {
+    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -1605,7 +1605,7 @@ void RenderTableCell::updateFromElement()
     int oldRSpan = rSpan;
     int oldCSpan = cSpan;
     DOM::NodeImpl* node = element();
-    if (node && (node->hasTagName(HTMLNames::td()) || node->hasTagName(HTMLNames::th()))) {
+    if (node && (node->hasTagName(HTMLTags::td()) || node->hasTagName(HTMLTags::th()))) {
         DOM::HTMLTableCellElementImpl *tc = static_cast<DOM::HTMLTableCellElementImpl *>(node);
         cSpan = tc->colSpan();
         rSpan = tc->rowSpan();
@@ -2289,7 +2289,7 @@ void RenderTableCol::updateFromElement()
 {
     int oldSpan = _span;
     DOM::NodeImpl *node = element();
-    if (node && (node->hasTagName(HTMLNames::col()) || node->hasTagName(HTMLNames::colgroup()))) {
+    if (node && (node->hasTagName(HTMLTags::col()) || node->hasTagName(HTMLTags::colgroup()))) {
         DOM::HTMLTableColElementImpl *tc = static_cast<DOM::HTMLTableColElementImpl *>(node);
         _span = tc->span();
     } 

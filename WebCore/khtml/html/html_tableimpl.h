@@ -197,7 +197,7 @@ class HTMLTableRowElementImpl : public HTMLTablePartElementImpl
 {
 public:
     HTMLTableRowElementImpl(DocumentPtr *doc)
-        : HTMLTablePartElementImpl(HTMLNames::tr(), doc) {}
+        : HTMLTablePartElementImpl(HTMLTags::tr(), doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 7; }
@@ -324,9 +324,9 @@ class HTMLTableColElementImpl : public HTMLTablePartElementImpl
 public:
     HTMLTableColElementImpl(const QualifiedName& tagName, DocumentPtr *doc);
 
-    virtual HTMLTagStatus endTagRequirement() const { return hasLocalName(HTMLNames::col()) ? TagStatusForbidden : TagStatusOptional; }
-    virtual int tagPriority() const { return hasLocalName(HTMLNames::col()) ? 0 : 1; }
-    virtual bool checkDTD(const NodeImpl* newChild) { return hasLocalName(HTMLNames::colgroup()) && newChild->hasTagName(HTMLNames::col()); }
+    virtual HTMLTagStatus endTagRequirement() const { return hasLocalName(HTMLTags::col()) ? TagStatusForbidden : TagStatusOptional; }
+    virtual int tagPriority() const { return hasLocalName(HTMLTags::col()) ? 0 : 1; }
+    virtual bool checkDTD(const NodeImpl* newChild) { return hasLocalName(HTMLTags::colgroup()) && newChild->hasTagName(HTMLTags::col()); }
     void setTable(HTMLTableElementImpl *t) { table = t; }
 
     // overrides
@@ -363,7 +363,7 @@ class HTMLTableCaptionElementImpl : public HTMLTablePartElementImpl
 {
 public:
     HTMLTableCaptionElementImpl(DocumentPtr *doc)
-        : HTMLTablePartElementImpl(HTMLNames::caption(), doc) {}
+        : HTMLTablePartElementImpl(HTMLTags::caption(), doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }

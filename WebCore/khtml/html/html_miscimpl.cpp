@@ -34,7 +34,7 @@
 namespace DOM {
 
 HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::basefont(), doc)
+    : HTMLElementImpl(HTMLTags::basefont(), doc)
 {
 }
 
@@ -135,71 +135,71 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
             switch(type) {
             case DOC_IMAGES:
-                if (e->hasLocalName(HTMLNames::img()))
+                if (e->hasLocalName(HTMLTags::img()))
                     found = true;
                 break;
             case DOC_FORMS:
-                if(e->hasLocalName(HTMLNames::form()))
+                if(e->hasLocalName(HTMLTags::form()))
                     found = true;
                 break;
             case DOC_NAMEABLE_ITEMS:
-                if (e->hasLocalName(HTMLNames::img()))
+                if (e->hasLocalName(HTMLTags::img()))
                     found = true;
-                if (e->hasLocalName(HTMLNames::form()))
+                if (e->hasLocalName(HTMLTags::form()))
                     found = true;
-                if (e->hasLocalName(HTMLNames::applet()))
+                if (e->hasLocalName(HTMLTags::applet()))
                     found = true;
-                if (e->hasLocalName(HTMLNames::embed()))
+                if (e->hasLocalName(HTMLTags::embed()))
                     found = true;
-                if (e->hasLocalName(HTMLNames::object()))
+                if (e->hasLocalName(HTMLTags::object()))
                     found = true;
                 break;
             case TABLE_TBODIES:
-                if (e->hasLocalName(HTMLNames::tbody()))
+                if (e->hasLocalName(HTMLTags::tbody()))
                     found = true;
-                else if (e->hasLocalName(HTMLNames::table()))
+                else if (e->hasLocalName(HTMLTags::table()))
                     deep = false;
                 break;
             case TR_CELLS:
-                if (e->hasLocalName(HTMLNames::td()) || e->hasLocalName(HTMLNames::th()))
+                if (e->hasLocalName(HTMLTags::td()) || e->hasLocalName(HTMLTags::th()))
                     found = true;
-                else if (e->hasLocalName(HTMLNames::table()))
+                else if (e->hasLocalName(HTMLTags::table()))
                     deep = false;
                 break;
             case TABLE_ROWS:
             case TSECTION_ROWS:
-                if (e->hasLocalName(HTMLNames::tr()))
+                if (e->hasLocalName(HTMLTags::tr()))
                     found = true;
-                else if (e->hasLocalName(HTMLNames::table()))
+                else if (e->hasLocalName(HTMLTags::table()))
                     deep = false;
                 break;
             case SELECT_OPTIONS:
-                if (e->hasLocalName(HTMLNames::option()))
+                if (e->hasLocalName(HTMLTags::option()))
                     found = true;
                 break;
             case MAP_AREAS:
-                if (e->hasLocalName(HTMLNames::area()))
+                if (e->hasLocalName(HTMLTags::area()))
                     found = true;
                 break;
             case DOC_APPLETS:   // all OBJECT and APPLET elements
-                if (e->hasLocalName(HTMLNames::object()) || e->hasLocalName(HTMLNames::applet()))
+                if (e->hasLocalName(HTMLTags::object()) || e->hasLocalName(HTMLTags::applet()))
                     found = true;
                 break;
             case DOC_EMBEDS:   // all EMBED elements
-                if (e->hasLocalName(HTMLNames::embed()))
+                if (e->hasLocalName(HTMLTags::embed()))
                     found = true;
                 break;
             case DOC_OBJECTS:   // all OBJECT elements
-                if (e->hasLocalName(HTMLNames::object()))
+                if (e->hasLocalName(HTMLTags::object()))
                     found = true;
                 break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
-                if (e->hasLocalName(HTMLNames::a()) || e->hasLocalName(HTMLNames::area()))
+                if (e->hasLocalName(HTMLTags::a()) || e->hasLocalName(HTMLTags::area()))
                     if (!e->getAttribute(HTMLAttributes::href()).isNull())
                         found = true;
                 break;
             case DOC_ANCHORS:      // all A elements with a value for name or an id attribute
-                if (e->hasLocalName(HTMLNames::a()))
+                if (e->hasLocalName(HTMLTags::a()))
                     if (!e->getAttribute(HTMLAttributes::name()).isNull())
                         found = true;
                 break;
@@ -301,9 +301,9 @@ bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
             if (type == DOC_ALL && 
-                !(e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
-                  e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
-                  e->hasLocalName(HTMLNames::embed())))
+                !(e->hasLocalName(HTMLTags::img()) || e->hasLocalName(HTMLTags::form()) ||
+                  e->hasLocalName(HTMLTags::applet()) || e->hasLocalName(HTMLTags::object()) ||
+                  e->hasLocalName(HTMLTags::embed())))
                 return false;
 
             return e->getAttribute(HTMLAttributes::name()) == name && e->getAttribute(HTMLAttributes::idAttr()) != name;
@@ -314,9 +314,9 @@ bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const
             // document.all returns only images, forms, applets, objects and embeds
             // by name (though everything by id)
             if (type == DOC_ALL && 
-                !(e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
-                  e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
-                  e->hasLocalName(HTMLNames::embed())))
+                !(e->hasLocalName(HTMLTags::img()) || e->hasLocalName(HTMLTags::form()) ||
+                  e->hasLocalName(HTMLTags::applet()) || e->hasLocalName(HTMLTags::object()) ||
+                  e->hasLocalName(HTMLTags::embed())))
                 return false;
 
             return e->getAttribute(HTMLAttributes::name()).domString().lower() == name.lower() &&
@@ -391,9 +391,9 @@ void HTMLCollectionImpl::updateNameCache() const
         }
         if (!nameAttr.isEmpty() && idAttr != nameAttr
             && (type != DOC_ALL || 
-                (e->hasLocalName(HTMLNames::img()) || e->hasLocalName(HTMLNames::form()) ||
-                 e->hasLocalName(HTMLNames::applet()) || e->hasLocalName(HTMLNames::object()) ||
-                 e->hasLocalName(HTMLNames::embed())))) {
+                (e->hasLocalName(HTMLTags::img()) || e->hasLocalName(HTMLTags::form()) ||
+                 e->hasLocalName(HTMLTags::applet()) || e->hasLocalName(HTMLTags::object()) ||
+                 e->hasLocalName(HTMLTags::embed())))) {
             // add to name cache
             QPtrVector<NodeImpl> *nameVector = info->nameCache.find(nameAttr);
             if (!nameVector) {
@@ -533,7 +533,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(const QualifiedName& attrName
     if (m_base->nodeType() == Node::ELEMENT_NODE) {
         HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
         bool foundInputElements = false;
-        if (baseElement->hasLocalName(HTMLNames::form())) {
+        if (baseElement->hasLocalName(HTMLTags::form())) {
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
             for (unsigned i = 0; i < f->formElements.count(); ++i) {
                 HTMLGenericFormElementImpl* e = f->formElements[i];
@@ -645,7 +645,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
 
     QDict<char> foundInputElements;
 
-    if (!m_base->hasTagName(HTMLNames::form())) {
+    if (!m_base->hasTagName(HTMLTags::form())) {
         info->hasNameCache = true;
         return;
     }

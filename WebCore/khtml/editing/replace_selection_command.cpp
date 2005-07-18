@@ -58,7 +58,7 @@ using DOM::HTMLAttributes;
 using DOM::HTMLElementImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::Position;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 
 namespace khtml {
 
@@ -169,13 +169,13 @@ static bool isProbablyBlock(const NodeImpl *node)
         return false;
     
     // FIXME: This function seems really broken to me.  It isn't even including all the block-level elements.
-    return (node->hasTagName(HTMLNames::blockquote()) || node->hasTagName(HTMLNames::dd()) || node->hasTagName(HTMLNames::div()) ||
-            node->hasTagName(HTMLNames::dl()) || node->hasTagName(HTMLNames::dt()) || node->hasTagName(HTMLNames::h1()) ||
-            node->hasTagName(HTMLNames::h2()) || node->hasTagName(HTMLNames::h3()) || node->hasTagName(HTMLNames::h4()) ||
-            node->hasTagName(HTMLNames::h5()) || node->hasTagName(HTMLNames::h6()) || node->hasTagName(HTMLNames::hr()) ||
-            node->hasTagName(HTMLNames::li()) || node->hasTagName(HTMLNames::ol()) || node->hasTagName(HTMLNames::p()) ||
-            node->hasTagName(HTMLNames::pre()) || node->hasTagName(HTMLNames::td()) || node->hasTagName(HTMLNames::th()) ||
-            node->hasTagName(HTMLNames::ul()));
+    return (node->hasTagName(HTMLTags::blockquote()) || node->hasTagName(HTMLTags::dd()) || node->hasTagName(HTMLTags::div()) ||
+            node->hasTagName(HTMLTags::dl()) || node->hasTagName(HTMLTags::dt()) || node->hasTagName(HTMLTags::h1()) ||
+            node->hasTagName(HTMLTags::h2()) || node->hasTagName(HTMLTags::h3()) || node->hasTagName(HTMLTags::h4()) ||
+            node->hasTagName(HTMLTags::h5()) || node->hasTagName(HTMLTags::h6()) || node->hasTagName(HTMLTags::hr()) ||
+            node->hasTagName(HTMLTags::li()) || node->hasTagName(HTMLTags::ol()) || node->hasTagName(HTMLTags::p()) ||
+            node->hasTagName(HTMLTags::pre()) || node->hasTagName(HTMLTags::td()) || node->hasTagName(HTMLTags::th()) ||
+            node->hasTagName(HTMLTags::ul()));
 }
 
 static bool isMailPasteAsQuotationNode(const NodeImpl *node)
@@ -199,8 +199,8 @@ static bool isProbablyTableStructureNode(const NodeImpl *node)
     if (!node)
         return false;
     
-    return (node->hasTagName(HTMLNames::table()) || node->hasTagName(HTMLNames::tbody()) || node->hasTagName(HTMLNames::td()) ||
-            node->hasTagName(HTMLNames::tfoot()) || node->hasTagName(HTMLNames::thead()) || node->hasTagName(HTMLNames::tr()));
+    return (node->hasTagName(HTMLTags::table()) || node->hasTagName(HTMLTags::tbody()) || node->hasTagName(HTMLTags::td()) ||
+            node->hasTagName(HTMLTags::tfoot()) || node->hasTagName(HTMLTags::thead()) || node->hasTagName(HTMLTags::tr()));
 }
 
 void ReplacementFragment::pruneEmptyNodes()
@@ -227,7 +227,7 @@ void ReplacementFragment::pruneEmptyNodes()
 bool ReplacementFragment::isInterchangeNewlineNode(const NodeImpl *node)
 {
     static DOMString interchangeNewlineClassString(AppleInterchangeNewline);
-    return node && node->hasTagName(HTMLNames::br()) && 
+    return node && node->hasTagName(HTMLTags::br()) && 
            static_cast<const ElementImpl *>(node)->getAttribute(HTMLAttributes::classAttr()) == interchangeNewlineClassString;
 }
 
@@ -487,18 +487,18 @@ void ReplacementFragment::removeStyleNodes()
         // This list of tags change the appearance of content
         // in ways we can add back on later with CSS, if necessary.
         //  FIXME: This list is incomplete
-        if (node->hasTagName(HTMLNames::b()) || 
-            node->hasTagName(HTMLNames::big()) || 
-            node->hasTagName(HTMLNames::center()) || 
-            node->hasTagName(HTMLNames::font()) || 
-            node->hasTagName(HTMLNames::i()) || 
-            node->hasTagName(HTMLNames::s()) || 
-            node->hasTagName(HTMLNames::small()) || 
-            node->hasTagName(HTMLNames::strike()) || 
-            node->hasTagName(HTMLNames::sub()) || 
-            node->hasTagName(HTMLNames::sup()) || 
-            node->hasTagName(HTMLNames::tt()) || 
-            node->hasTagName(HTMLNames::u()) || 
+        if (node->hasTagName(HTMLTags::b()) || 
+            node->hasTagName(HTMLTags::big()) || 
+            node->hasTagName(HTMLTags::center()) || 
+            node->hasTagName(HTMLTags::font()) || 
+            node->hasTagName(HTMLTags::i()) || 
+            node->hasTagName(HTMLTags::s()) || 
+            node->hasTagName(HTMLTags::small()) || 
+            node->hasTagName(HTMLTags::strike()) || 
+            node->hasTagName(HTMLTags::sub()) || 
+            node->hasTagName(HTMLTags::sup()) || 
+            node->hasTagName(HTMLTags::tt()) || 
+            node->hasTagName(HTMLTags::u()) || 
             isStyleSpan(node)) {
             removeNodePreservingChildren(node);
         }
@@ -724,7 +724,7 @@ void ReplaceSelectionCommand::doApply()
     if (!linePlaceholder) {
         Position downstream = startPos.downstream();
         downstream = positionOutsideContainingSpecialElement(downstream);
-        if (downstream.node()->hasTagName(HTMLNames::br()) && downstream.offset() == 0 && 
+        if (downstream.node()->hasTagName(HTMLTags::br()) && downstream.offset() == 0 && 
             m_fragment.hasInterchangeNewlineAtEnd() &&
             isStartOfLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
@@ -886,12 +886,12 @@ void ReplaceSelectionCommand::doApply()
         }
     } 
     else {
-        if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(HTMLNames::br()) && !document()->inStrictMode()) {
+        if (m_lastNodeInserted && m_lastNodeInserted->hasTagName(HTMLTags::br()) && !document()->inStrictMode()) {
             document()->updateLayout();
             VisiblePosition pos(Position(m_lastNodeInserted, 1), DOWNSTREAM);
             if (isEndOfBlock(pos)) {
                 NodeImpl *next = m_lastNodeInserted->traverseNextNode();
-                bool hasTrailingBR = next && next->hasTagName(HTMLNames::br()) && m_lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
+                bool hasTrailingBR = next && next->hasTagName(HTMLTags::br()) && m_lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
                 if (!hasTrailingBR) {
                     // Insert an "extra" BR at the end of the block. 
                     insertNodeBefore(createBreakElement(document()), m_lastNodeInserted);
@@ -918,7 +918,7 @@ void ReplaceSelectionCommand::doApply()
                 insertNodeAfter(node, refNode);
                 refNode = node;
                 // We want to move the first BR we see, so check for that here.
-                if (node->hasTagName(HTMLNames::br()))
+                if (node->hasTagName(HTMLTags::br()))
                     break;
                 node = next;
             }

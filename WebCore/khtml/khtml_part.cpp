@@ -208,7 +208,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
   AtomicString::init();
   QualifiedName::init();
-  HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
+  HTMLTags::init(); // FIXME: We should make this happen only when HTML is used.
   HTMLAttributes::init(); // FIXME: Ditto.
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
@@ -5734,7 +5734,7 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
     int exceptionCode = 0;
 
     if (d->m_typingStyle) {
-        styleElement = xmlDocImpl()->createElementNS(HTMLNames::xhtmlNamespaceURI(), "span", exceptionCode);
+        styleElement = xmlDocImpl()->createElementNS(HTMLTags::xhtmlNamespaceURI(), "span", exceptionCode);
         assert(exceptionCode == 0);
 
         styleElement->ref();

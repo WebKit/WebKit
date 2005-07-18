@@ -80,7 +80,7 @@ using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -134,7 +134,7 @@ bool isSpecialElement(NodeImpl *n)
     if (n->isLink())
         return true;
 
-    if (n->hasTagName(HTMLNames::ul()) || n->hasTagName(HTMLNames::ol()) || n->hasTagName(HTMLNames::dl()))
+    if (n->hasTagName(HTMLTags::ul()) || n->hasTagName(HTMLTags::ol()) || n->hasTagName(HTMLTags::dl()))
         return true;
 
     RenderObject *renderer = n->renderer();
@@ -267,7 +267,7 @@ ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
     // We would need this margin-zeroing code back if we ever return to using <p> elements for default paragraphs.
     // static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");    
     int exceptionCode = 0;
-    ElementImpl *element = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "div", exceptionCode);
+    ElementImpl *element = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "div", exceptionCode);
     ASSERT(exceptionCode == 0);
     return element;
 }
@@ -275,7 +275,7 @@ ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
 ElementImpl *createBreakElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *breakNode = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
+    ElementImpl *breakNode = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "br", exceptionCode);
     ASSERT(exceptionCode == 0);
     return breakNode;
 }
@@ -303,7 +303,7 @@ NodeImpl *nearestMailBlockquote(const NodeImpl *node)
 
 bool isMailBlockquote(const NodeImpl *node)
 {
-    if (!node || !node->renderer() || !node->isElementNode() && !node->hasTagName(HTMLNames::blockquote()))
+    if (!node || !node->renderer() || !node->isElementNode() && !node->hasTagName(HTMLTags::blockquote()))
         return false;
         
     return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";

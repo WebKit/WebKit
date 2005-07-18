@@ -1424,7 +1424,7 @@ long NodeImpl::maxDeepOffset() const
     if (offsetInCharacters(nodeType()))
         return static_cast<const TextImpl*>(this)->length();
         
-    if (hasTagName(HTMLNames::br()) || (renderer() && renderer()->isReplaced()))
+    if (hasTagName(HTMLTags::br()) || (renderer() && renderer()->isReplaced()))
         return 1;
 
     return childNodeCount();
@@ -1480,7 +1480,7 @@ ElementImpl *NodeImpl::enclosingBlockFlowOrTableElement() const
         n = n->parentNode();
         if (!n)
             break;
-        if (n->isBlockFlowOrTable() || n->hasTagName(HTMLNames::body()))
+        if (n->isBlockFlowOrTable() || n->hasTagName(HTMLTags::body()))
             return static_cast<ElementImpl *>(n);
     }
     return 0;
@@ -1496,7 +1496,7 @@ ElementImpl *NodeImpl::enclosingBlockFlowElement() const
         n = n->parentNode();
         if (!n)
             break;
-        if (n->isBlockFlow() || n->hasTagName(HTMLNames::body()))
+        if (n->isBlockFlow() || n->hasTagName(HTMLTags::body()))
             return static_cast<ElementImpl *>(n);
     }
     return 0;
@@ -1509,7 +1509,7 @@ ElementImpl *NodeImpl::enclosingInlineElement() const
 
     while (1) {
         p = n->parentNode();
-        if (!p || p->isBlockFlow() || p->hasTagName(HTMLNames::body()))
+        if (!p || p->isBlockFlow() || p->hasTagName(HTMLTags::body()))
             return static_cast<ElementImpl *>(n);
         // Also stop if any previous sibling is a block
         for (NodeImpl *sibling = n->previousSibling(); sibling; sibling = sibling->previousSibling()) {
@@ -1528,7 +1528,7 @@ ElementImpl *NodeImpl::rootEditableElement() const
         return 0;
 
     NodeImpl *n = const_cast<NodeImpl *>(this);
-    if (n->hasTagName(HTMLNames::body()))
+    if (n->hasTagName(HTMLTags::body()))
         return static_cast<ElementImpl *>(n);
 
     NodeImpl *result = n->isEditableBlock() ? n : 0;
@@ -1536,7 +1536,7 @@ ElementImpl *NodeImpl::rootEditableElement() const
         n = n->parentNode();
         if (!n || !n->isContentEditable())
             break;
-        if (n->hasTagName(HTMLNames::body())) {
+        if (n->hasTagName(HTMLTags::body())) {
             result = n;
             break;
         }
@@ -1639,7 +1639,7 @@ void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1
 {
     NodeImpl *rootNode;
     NodeImpl *node = (NodeImpl *)this;
-    while (node->parentNode() && !node->hasTagName(HTMLNames::body()))
+    while (node->parentNode() && !node->hasTagName(HTMLTags::body()))
         node = node->parentNode();
     rootNode = node;
 	

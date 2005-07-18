@@ -1,5 +1,434 @@
 2005-07-18  David Hyatt  <hyatt@apple.com>
 
+	Rename HTMLNames -> HTMLTags.  Purely mechanical (done in XCode)
+	so no review needed.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/dom/css_stylesheet.cpp:
+        (LinkStyle::operator = ):
+        (LinkStyle::sheet):
+        * khtml/dom/html_base.cpp:
+        (HTMLBodyElement::operator = ):
+        (HTMLFrameElement::operator = ):
+        (HTMLIFrameElement::operator = ):
+        (HTMLFrameSetElement::operator = ):
+        (HTMLHeadElement::operator = ):
+        (HTMLHtmlElement::operator = ):
+        * khtml/dom/html_block.cpp:
+        (HTMLBlockquoteElement::operator = ):
+        (HTMLDivElement::operator = ):
+        (HTMLHRElement::operator = ):
+        (HTMLHeadingElement::operator = ):
+        (HTMLParagraphElement::operator = ):
+        (HTMLPreElement::operator = ):
+        * khtml/dom/html_form.cpp:
+        (HTMLButtonElement::operator = ):
+        (HTMLFieldSetElement::operator = ):
+        (HTMLFormElement::operator = ):
+        (HTMLInputElement::operator = ):
+        (HTMLLabelElement::operator = ):
+        (HTMLLegendElement::operator = ):
+        (HTMLOptGroupElement::operator = ):
+        (HTMLSelectElement::operator = ):
+        (HTMLTextAreaElement::operator = ):
+        (HTMLOptionElement::operator = ):
+        (HTMLIsIndexElement::operator = ):
+        * khtml/dom/html_head.cpp:
+        (HTMLBaseElement::operator = ):
+        (HTMLLinkElement::operator = ):
+        (HTMLMetaElement::operator = ):
+        (HTMLScriptElement::operator = ):
+        (HTMLStyleElement::operator = ):
+        (HTMLTitleElement::operator = ):
+        * khtml/dom/html_image.cpp:
+        (HTMLAreaElement::operator = ):
+        (HTMLImageElement::operator = ):
+        (HTMLMapElement::operator = ):
+        * khtml/dom/html_inline.cpp:
+        (HTMLAnchorElement::operator = ):
+        (HTMLBRElement::operator = ):
+        (HTMLFontElement::operator = ):
+        (HTMLModElement::HTMLModElement):
+        (HTMLModElement::operator = ):
+        (HTMLQuoteElement::operator = ):
+        * khtml/dom/html_list.cpp:
+        (HTMLDListElement::operator = ):
+        (HTMLDirectoryElement::operator = ):
+        (HTMLLIElement::operator = ):
+        (HTMLMenuElement::operator = ):
+        (HTMLOListElement::operator = ):
+        (HTMLUListElement::operator = ):
+        * khtml/dom/html_misc.cpp:
+        (HTMLBaseFontElement::operator = ):
+        * khtml/dom/html_object.cpp:
+        (DOM::HTMLAppletElement::operator = ):
+        (DOM::HTMLObjectElement::operator = ):
+        (DOM::HTMLParamElement::operator = ):
+        * khtml/dom/html_table.cpp:
+        (HTMLTableCaptionElement::operator = ):
+        (HTMLTableCellElement::operator = ):
+        (HTMLTableColElement::operator = ):
+        (HTMLTableElement::operator = ):
+        (HTMLTableRowElement::operator = ):
+        (HTMLTableSectionElement::operator = ):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMStyleSheetList::tryGet):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getRuntimeObject):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::KJS::HTMLDocument::putValue):
+        (KJS::KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::getSetInfo):
+        (KJS::KJS::HTMLElement::tryGet):
+        (KJS::KJS::HTMLElement::implementsCall):
+        (KJS::KJS::HTMLElement::call):
+        (KJS::KJS::HTMLElement::hasOwnProperty):
+        (KJS::KJS::HTMLElement::toString):
+        (KJS::getForm):
+        (KJS::KJS::HTMLElement::pushEventHandlerScope):
+        (KJS::KJS::HTMLElementFunction::tryCall):
+        (KJS::KJS::HTMLElement::tryPut):
+        (KJS::toHTMLTableCaptionElement):
+        (KJS::toHTMLTableSectionElement):
+        (KJS::KJS::HTMLCollection::tryGet):
+        (KJS::KJS::HTMLSelectCollection::tryPut):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::isEmptyStyleSpan):
+        (khtml::isEmptyFontTag):
+        (khtml::createFontElement):
+        (khtml::createStyleSpanElement):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::ApplyStyleCommand::isHTMLStyleNode):
+        (khtml::ApplyStyleCommand::removeHTMLFontStyle):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * khtml/editing/break_blockquote_command.cpp:
+        (khtml::BreakBlockquoteCommand::doApply):
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::insertNodeBefore):
+        (khtml::CompositeEditCommand::insertNodeAfter):
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (khtml::createBlockPlaceholderElement):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::isListStructureNode):
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        (khtml::createDefaultParagraphElement):
+        (khtml::createBreakElement):
+        (khtml::isMailBlockquote):
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        (khtml::createMarkup):
+        (khtml::createFragmentFromText):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::isProbablyBlock):
+        (khtml::isProbablyTableStructureNode):
+        (khtml::ReplacementFragment::isInterchangeNewlineNode):
+        (khtml::ReplacementFragment::removeStyleNodes):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::isCandidate):
+        (khtml::VisiblePosition::isAtomicNode):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleNonTextNode):
+        (khtml::TextIterator::exitNode):
+        (khtml::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfLine):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (HTMLFrameElementImpl::HTMLFrameElementImpl):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameSetElementImpl::HTMLFrameSetElementImpl):
+        (HTMLFrameSetElementImpl::checkDTD):
+        (HTMLFrameSetElementImpl::attach):
+        (HTMLHeadElementImpl::HTMLHeadElementImpl):
+        (HTMLHeadElementImpl::checkDTD):
+        (HTMLHtmlElementImpl::HTMLHtmlElementImpl):
+        (HTMLHtmlElementImpl::checkDTD):
+        (HTMLIFrameElementImpl::HTMLIFrameElementImpl):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl):
+        (HTMLDivElementImpl::HTMLDivElementImpl):
+        (HTMLHRElementImpl::HTMLHRElementImpl):
+        (HTMLHeadingElementImpl::checkDTD):
+        (HTMLParagraphElementImpl::HTMLParagraphElementImpl):
+        (HTMLParagraphElementImpl::checkDTD):
+        (HTMLMarqueeElementImpl::HTMLMarqueeElementImpl):
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::HTMLCanvasElementImpl):
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::childAllowed):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::endTagRequirement):
+        (HTMLElementImpl::tagPriority):
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::setInnerText):
+        (HTMLElementImpl::setOuterText):
+        (HTMLElementImpl::isRecognizedTagName):
+        (inlineTagList):
+        (blockTagList):
+        (HTMLElementImpl::checkDTD):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::submitClick):
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::radioClicked):
+        (DOM::HTMLGenericFormElementImpl::getForm):
+        (DOM::HTMLButtonElementImpl::HTMLButtonElementImpl):
+        (DOM::HTMLFieldSetElementImpl::HTMLFieldSetElementImpl):
+        (DOM::HTMLFieldSetElementImpl::checkDTD):
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl):
+        (DOM::HTMLLabelElementImpl::HTMLLabelElementImpl):
+        (DOM::HTMLLabelElementImpl::form):
+        (DOM::HTMLLegendElementImpl::HTMLLegendElementImpl):
+        (DOM::HTMLLegendElementImpl::formElement):
+        (DOM::HTMLSelectElementImpl::HTMLSelectElementImpl):
+        (DOM::HTMLSelectElementImpl::checkDTD):
+        (DOM::HTMLSelectElementImpl::selectedIndex):
+        (DOM::HTMLSelectElementImpl::setSelectedIndex):
+        (DOM::HTMLSelectElementImpl::length):
+        (DOM::HTMLSelectElementImpl::add):
+        (DOM::HTMLSelectElementImpl::value):
+        (DOM::HTMLSelectElementImpl::setValue):
+        (DOM::HTMLSelectElementImpl::state):
+        (DOM::HTMLSelectElementImpl::restoreState):
+        (DOM::HTMLSelectElementImpl::appendFormData):
+        (DOM::HTMLSelectElementImpl::optionToListIndex):
+        (DOM::HTMLSelectElementImpl::listToOptionIndex):
+        (DOM::HTMLSelectElementImpl::recalcListItems):
+        (DOM::HTMLSelectElementImpl::reset):
+        (DOM::HTMLSelectElementImpl::notifyOptionSelected):
+        (DOM::HTMLKeygenElementImpl::HTMLKeygenElementImpl):
+        (DOM::HTMLOptGroupElementImpl::HTMLOptGroupElementImpl):
+        (DOM::HTMLOptGroupElementImpl::recalcSelectOptions):
+        (DOM::HTMLOptionElementImpl::HTMLOptionElementImpl):
+        (DOM::HTMLOptionElementImpl::index):
+        (DOM::HTMLOptionElementImpl::getSelect):
+        (DOM::HTMLTextAreaElementImpl::HTMLTextAreaElementImpl):
+        (DOM::HTMLIsIndexElementImpl::HTMLIsIndexElementImpl):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLOptGroupElementImpl::checkDTD):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::HTMLBaseElementImpl):
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLMetaElementImpl::HTMLMetaElementImpl):
+        (HTMLScriptElementImpl::HTMLScriptElementImpl):
+        (HTMLStyleElementImpl::HTMLStyleElementImpl):
+        (HTMLTitleElementImpl::HTMLTitleElementImpl):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::updateFromElement):
+        (HTMLImageElementImpl::HTMLImageElementImpl):
+        (HTMLMapElementImpl::HTMLMapElementImpl):
+        (HTMLMapElementImpl::checkDTD):
+        (HTMLMapElementImpl::mapMouseEvent):
+        (HTMLAreaElementImpl::HTMLAreaElementImpl):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::HTMLAnchorElementImpl):
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        (DOM::HTMLBRElementImpl::HTMLBRElementImpl):
+        (DOM::HTMLFontElementImpl::HTMLFontElementImpl):
+        (DOM::HTMLQuoteElementImpl::HTMLQuoteElementImpl):
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLLIElementImpl::attach):
+        * khtml/html/html_listimpl.h:
+        (DOM::HTMLUListElementImpl::HTMLUListElementImpl):
+        (DOM::HTMLDirectoryElementImpl::HTMLDirectoryElementImpl):
+        (DOM::HTMLMenuElementImpl::HTMLMenuElementImpl):
+        (DOM::HTMLOListElementImpl::HTMLOListElementImpl):
+        (DOM::HTMLLIElementImpl::HTMLLIElementImpl):
+        (DOM::HTMLDListElementImpl::HTMLDListElementImpl):
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLBaseFontElementImpl::HTMLBaseFontElementImpl):
+        (DOM::HTMLCollectionImpl::traverseNextItem):
+        (DOM::HTMLCollectionImpl::checkForNameMatch):
+        (DOM::HTMLCollectionImpl::updateNameCache):
+        (DOM::HTMLFormCollectionImpl::getNamedFormItem):
+        (DOM::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::HTMLAppletElementImpl):
+        (DOM::HTMLAppletElementImpl::checkDTD):
+        (DOM::HTMLEmbedElementImpl::HTMLEmbedElementImpl):
+        (DOM::HTMLEmbedElementImpl::checkDTD):
+        (DOM::HTMLEmbedElementImpl::rendererIsNeeded):
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLObjectElementImpl::checkDTD):
+        (DOM::HTMLObjectElementImpl::form):
+        (DOM::HTMLParamElementImpl::HTMLParamElementImpl):
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::HTMLTableElementImpl):
+        (DOM::HTMLTableElementImpl::checkDTD):
+        (DOM::HTMLTableElementImpl::createTHead):
+        (DOM::HTMLTableElementImpl::createTFoot):
+        (DOM::HTMLTableElementImpl::insertRow):
+        (DOM::HTMLTableElementImpl::deleteRow):
+        (DOM::HTMLTableElementImpl::addChild):
+        (DOM::HTMLTableSectionElementImpl::checkDTD):
+        (DOM::HTMLTableSectionElementImpl::addChild):
+        (DOM::HTMLTableSectionElementImpl::numRows):
+        (DOM::HTMLTableRowElementImpl::checkDTD):
+        (DOM::HTMLTableRowElementImpl::addChild):
+        (DOM::HTMLTableRowElementImpl::rowIndex):
+        (DOM::HTMLTableRowElementImpl::sectionRowIndex):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableCellElementImpl::cellIndex):
+        (DOM::HTMLTableCellElementImpl::additionalAttributeStyleDecl):
+        (DOM::HTMLTableColElementImpl::HTMLTableColElementImpl):
+        * khtml/html/html_tableimpl.h:
+        (DOM::HTMLTableRowElementImpl::HTMLTableRowElementImpl):
+        (DOM::HTMLTableColElementImpl::endTagRequirement):
+        (DOM::HTMLTableColElementImpl::tagPriority):
+        (DOM::HTMLTableColElementImpl::checkDTD):
+        (DOM::HTMLTableCaptionElementImpl::HTMLTableCaptionElementImpl):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::headingConstructor):
+        (DOM::preConstructor):
+        (DOM::modConstructor):
+        (DOM::tableColConstructor):
+        (DOM::tableCellConstructor):
+        (DOM::tableSectionConstructor):
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlnames.cpp:
+        (DOM::HTMLTags::init):
+        * khtml/html/htmlnames.h:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken):
+        (isTableSection):
+        (isTablePart):
+        (isTableRelated):
+        (HTMLParser::handleError):
+        (HTMLParser::headCreateErrorCheck):
+        (HTMLParser::bodyCreateErrorCheck):
+        (HTMLParser::framesetCreateErrorCheck):
+        (HTMLParser::iframeCreateErrorCheck):
+        (HTMLParser::ddCreateErrorCheck):
+        (HTMLParser::dtCreateErrorCheck):
+        (HTMLParser::tableCellCreateErrorCheck):
+        (HTMLParser::tableSectionCreateErrorCheck):
+        (HTMLParser::noembedCreateErrorCheck):
+        (HTMLParser::noframesCreateErrorCheck):
+        (HTMLParser::noscriptCreateErrorCheck):
+        (HTMLParser::getNode):
+        (HTMLParser::processCloseTag):
+        (HTMLParser::isHeaderTag):
+        (HTMLParser::isInline):
+        (HTMLParser::isResidualStyleTag):
+        (HTMLParser::isAffectedByResidualStyle):
+        (HTMLParser::popBlock):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::parseTag):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::selectionComputedStyle):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        (isSubmitImage):
+        * khtml/misc/decoder.cpp:
+        (Decoder::decode):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBackgroundExtended):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addFocusRingRects):
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::findLegend):
+        (RenderSelect::updateFromElement):
+        (RenderSelect::layout):
+        (RenderSelect::slotSelected):
+        (RenderSelect::slotSelectionChanged):
+        (RenderSelect::updateSelection):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        (RenderPartObject::slotViewCleared):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        (RenderImage::imageMap):
+        (RenderImage::updateAltText):
+        * khtml/rendering/render_layer.cpp:
+        (Marquee::marqueeSpeed):
+        * khtml/rendering/render_list.cpp:
+        (getParentOfFirstLineBox):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isBody):
+        (RenderObject::isHR):
+        (RenderObject::isHTMLMarquee):
+        (RenderObject::sizesToMaxWidth):
+        (RenderObject::setStyle):
+        (RenderObject::getTextDecorationColors):
+        (RenderObject::setPixmap):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTable::layout):
+        (RenderTableSection::addChild):
+        (RenderTableRow::addChild):
+        (RenderTableCell::updateFromElement):
+        (RenderTableCol::updateFromElement):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::body):
+        (DocumentImpl::shouldScheduleLayout):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::maxDeepOffset):
+        (DOM::NodeImpl::enclosingBlockFlowOrTableElement):
+        (DOM::NodeImpl::enclosingBlockFlowElement):
+        (DOM::NodeImpl::enclosingInlineElement):
+        (DOM::NodeImpl::rootEditableElement):
+        (DOM::NodeImpl::showTreeAndMark):
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::downstream):
+        (DOM::Position::rendersInDifferentPosition):
+        (DOM::Position::leadingWhitespacePosition):
+        (DOM::Position::trailingWhitespacePosition):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::startElement):
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+        (khtml::XMLTokenizer::addScripts):
+        * kwq/DOM.mm:
+        (+[DOMNode _nodeWithImpl:]):
+        * kwq/DOMHTML.mm:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject role]):
+        (-[KWQAccObject title]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        * kwq/KWQKHTMLPart.cpp:
+        (KWQKHTMLPart::isFrameSet):
+        * kwq/KWQKHTMLPart.mm:
+        (scanForForm):
+        (KWQKHTMLPart::currentForm):
+        (KWQKHTMLPart::searchForLabelsBeforeElement):
+        (listParent):
+        (isTextFirstInListItem):
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::styleForSelectionStart):
+        (KWQKHTMLPart::setSelectionFromNone):
+        * kwq/WebCoreBridge.mm:
+        (inputElementFromDOMElement):
+        (formElementFromDOMElement):
+        (-[WebCoreBridge elementAtPoint:]):
+
+2005-07-18  David Hyatt  <hyatt@apple.com>
+
 	Fix for bugzilla bug 3927.  Convert attributes to use QualifiedName.
 	
         Reviewed by mjs

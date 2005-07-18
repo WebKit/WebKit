@@ -45,7 +45,7 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::base(), doc)
+    : HTMLElementImpl(HTMLTags::base(), doc)
 {
 }
 
@@ -108,7 +108,7 @@ void HTMLBaseElementImpl::setTarget(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::link(), doc)
+    : HTMLElementImpl(HTMLTags::link(), doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -399,7 +399,7 @@ void HTMLLinkElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::meta(), doc)
+HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::meta(), doc)
 {
 }
 
@@ -478,7 +478,7 @@ void HTMLMetaElementImpl::setScheme(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::script(), doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
+    : HTMLElementImpl(HTMLTags::script(), doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
 {
 }
 
@@ -658,7 +658,7 @@ void HTMLScriptElementImpl::setType(const DOMString &value)
 
 // -------------------------------------------------------------------------
 
-HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::style(), doc)
+HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::style(), doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -775,7 +775,7 @@ void HTMLStyleElementImpl::setType(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::title(), doc), m_title("")
+    : HTMLElementImpl(HTMLTags::title(), doc), m_title("")
 {
 }
 

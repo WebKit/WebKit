@@ -107,7 +107,7 @@ using DOM::HTMLMapElementImpl;
 using DOM::HTMLMenuElementImpl;
 using DOM::HTMLMetaElementImpl;
 using DOM::HTMLModElementImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::HTMLOListElementImpl;
 using DOM::HTMLObjectElementImpl;
 using DOM::HTMLOptGroupElementImpl;
@@ -352,7 +352,7 @@ Value HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName) cons
   if (val)
     return Value(val);
 
-  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLNames::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
+  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLTags::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
 
   if (entry) {
     switch (entry->value) {
@@ -428,7 +428,7 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
   DOMExceptionTranslator exception(exec);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
   HTMLElementImpl *body = doc.body();
-  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLNames::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
+  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLTags::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
 
   switch (token) {
   case Title:
@@ -585,71 +585,71 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
     // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
     static QPtrDict<const ClassInfo> classInfoDict;
     if (classInfoDict.isEmpty()) {
-        classInfoDict.insert(HTMLNames::a().localName().implementation(), &a_info);
-        classInfoDict.insert(HTMLNames::applet().localName().implementation(), &applet_info);
-        classInfoDict.insert(HTMLNames::area().localName().implementation(), &area_info);
-        classInfoDict.insert(HTMLNames::base().localName().implementation(), &base_info);
-        classInfoDict.insert(HTMLNames::basefont().localName().implementation(), &baseFont_info);
-        classInfoDict.insert(HTMLNames::blockquote().localName().implementation(), &blockQuote_info);
-        classInfoDict.insert(HTMLNames::body().localName().implementation(), &body_info);
-        classInfoDict.insert(HTMLNames::br().localName().implementation(), &br_info);
-        classInfoDict.insert(HTMLNames::button().localName().implementation(), &button_info);
-        classInfoDict.insert(HTMLNames::canvas().localName().implementation(), &canvas_info);
-        classInfoDict.insert(HTMLNames::caption().localName().implementation(), &caption_info);
-        classInfoDict.insert(HTMLNames::col().localName().implementation(), &col_info);
-        classInfoDict.insert(HTMLNames::colgroup().localName().implementation(), &col_info);
-        classInfoDict.insert(HTMLNames::del().localName().implementation(), &mod_info);
-        classInfoDict.insert(HTMLNames::dir().localName().implementation(), &dir_info);
-        classInfoDict.insert(HTMLNames::div().localName().implementation(), &div_info);
-        classInfoDict.insert(HTMLNames::dl().localName().implementation(), &dl_info);
-        classInfoDict.insert(HTMLNames::fieldset().localName().implementation(), &fieldSet_info);
-        classInfoDict.insert(HTMLNames::font().localName().implementation(), &font_info);
-        classInfoDict.insert(HTMLNames::form().localName().implementation(), &form_info);
-        classInfoDict.insert(HTMLNames::frame().localName().implementation(), &frame_info);
-        classInfoDict.insert(HTMLNames::frameset().localName().implementation(), &frameSet_info);
-        classInfoDict.insert(HTMLNames::h1().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::h2().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::h3().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::h4().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::h5().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::h6().localName().implementation(), &heading_info);
-        classInfoDict.insert(HTMLNames::head().localName().implementation(), &head_info);
-        classInfoDict.insert(HTMLNames::hr().localName().implementation(), &hr_info);
-        classInfoDict.insert(HTMLNames::html().localName().implementation(), &html_info);
-        classInfoDict.insert(HTMLNames::iframe().localName().implementation(), &iFrame_info);
-        classInfoDict.insert(HTMLNames::img().localName().implementation(), &img_info);
-        classInfoDict.insert(HTMLNames::input().localName().implementation(), &input_info);
-        classInfoDict.insert(HTMLNames::ins().localName().implementation(), &mod_info);
-        classInfoDict.insert(HTMLNames::isindex().localName().implementation(), &isIndex_info);
-        classInfoDict.insert(HTMLNames::label().localName().implementation(), &label_info);
-        classInfoDict.insert(HTMLNames::legend().localName().implementation(), &legend_info);
-        classInfoDict.insert(HTMLNames::li().localName().implementation(), &li_info);
-        classInfoDict.insert(HTMLNames::link().localName().implementation(), &link_info);
-        classInfoDict.insert(HTMLNames::map().localName().implementation(), &map_info);
-        classInfoDict.insert(HTMLNames::marquee().localName().implementation(), &marquee_info);
-        classInfoDict.insert(HTMLNames::menu().localName().implementation(), &menu_info);
-        classInfoDict.insert(HTMLNames::meta().localName().implementation(), &meta_info);
-        classInfoDict.insert(HTMLNames::object().localName().implementation(), &object_info);
-        classInfoDict.insert(HTMLNames::ol().localName().implementation(), &ol_info);
-        classInfoDict.insert(HTMLNames::option().localName().implementation(), &option_info);
-        classInfoDict.insert(HTMLNames::optgroup().localName().implementation(), &optGroup_info);
-        classInfoDict.insert(HTMLNames::p().localName().implementation(), &p_info);
-        classInfoDict.insert(HTMLNames::param().localName().implementation(), &param_info);
-        classInfoDict.insert(HTMLNames::pre().localName().implementation(), &pre_info);
-        classInfoDict.insert(HTMLNames::q().localName().implementation(), &q_info);
-        classInfoDict.insert(HTMLNames::script().localName().implementation(), &script_info);
-        classInfoDict.insert(HTMLNames::select().localName().implementation(), &select_info);
-        classInfoDict.insert(HTMLNames::style().localName().implementation(), &style_info);
-        classInfoDict.insert(HTMLNames::table().localName().implementation(), &table_info);
-        classInfoDict.insert(HTMLNames::tbody().localName().implementation(), &tablesection_info);
-        classInfoDict.insert(HTMLNames::td().localName().implementation(), &tablecell_info);
-        classInfoDict.insert(HTMLNames::textarea().localName().implementation(), &textArea_info);
-        classInfoDict.insert(HTMLNames::th().localName().implementation(), &tablecell_info);
-        classInfoDict.insert(HTMLNames::thead().localName().implementation(), &tablesection_info);
-        classInfoDict.insert(HTMLNames::tfoot().localName().implementation(), &tablesection_info);
-        classInfoDict.insert(HTMLNames::title().localName().implementation(), &title_info);
-        classInfoDict.insert(HTMLNames::tr().localName().implementation(), &tr_info);
-        classInfoDict.insert(HTMLNames::ul().localName().implementation(), &ul_info);
+        classInfoDict.insert(HTMLTags::a().localName().implementation(), &a_info);
+        classInfoDict.insert(HTMLTags::applet().localName().implementation(), &applet_info);
+        classInfoDict.insert(HTMLTags::area().localName().implementation(), &area_info);
+        classInfoDict.insert(HTMLTags::base().localName().implementation(), &base_info);
+        classInfoDict.insert(HTMLTags::basefont().localName().implementation(), &baseFont_info);
+        classInfoDict.insert(HTMLTags::blockquote().localName().implementation(), &blockQuote_info);
+        classInfoDict.insert(HTMLTags::body().localName().implementation(), &body_info);
+        classInfoDict.insert(HTMLTags::br().localName().implementation(), &br_info);
+        classInfoDict.insert(HTMLTags::button().localName().implementation(), &button_info);
+        classInfoDict.insert(HTMLTags::canvas().localName().implementation(), &canvas_info);
+        classInfoDict.insert(HTMLTags::caption().localName().implementation(), &caption_info);
+        classInfoDict.insert(HTMLTags::col().localName().implementation(), &col_info);
+        classInfoDict.insert(HTMLTags::colgroup().localName().implementation(), &col_info);
+        classInfoDict.insert(HTMLTags::del().localName().implementation(), &mod_info);
+        classInfoDict.insert(HTMLTags::dir().localName().implementation(), &dir_info);
+        classInfoDict.insert(HTMLTags::div().localName().implementation(), &div_info);
+        classInfoDict.insert(HTMLTags::dl().localName().implementation(), &dl_info);
+        classInfoDict.insert(HTMLTags::fieldset().localName().implementation(), &fieldSet_info);
+        classInfoDict.insert(HTMLTags::font().localName().implementation(), &font_info);
+        classInfoDict.insert(HTMLTags::form().localName().implementation(), &form_info);
+        classInfoDict.insert(HTMLTags::frame().localName().implementation(), &frame_info);
+        classInfoDict.insert(HTMLTags::frameset().localName().implementation(), &frameSet_info);
+        classInfoDict.insert(HTMLTags::h1().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::h2().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::h3().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::h4().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::h5().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::h6().localName().implementation(), &heading_info);
+        classInfoDict.insert(HTMLTags::head().localName().implementation(), &head_info);
+        classInfoDict.insert(HTMLTags::hr().localName().implementation(), &hr_info);
+        classInfoDict.insert(HTMLTags::html().localName().implementation(), &html_info);
+        classInfoDict.insert(HTMLTags::iframe().localName().implementation(), &iFrame_info);
+        classInfoDict.insert(HTMLTags::img().localName().implementation(), &img_info);
+        classInfoDict.insert(HTMLTags::input().localName().implementation(), &input_info);
+        classInfoDict.insert(HTMLTags::ins().localName().implementation(), &mod_info);
+        classInfoDict.insert(HTMLTags::isindex().localName().implementation(), &isIndex_info);
+        classInfoDict.insert(HTMLTags::label().localName().implementation(), &label_info);
+        classInfoDict.insert(HTMLTags::legend().localName().implementation(), &legend_info);
+        classInfoDict.insert(HTMLTags::li().localName().implementation(), &li_info);
+        classInfoDict.insert(HTMLTags::link().localName().implementation(), &link_info);
+        classInfoDict.insert(HTMLTags::map().localName().implementation(), &map_info);
+        classInfoDict.insert(HTMLTags::marquee().localName().implementation(), &marquee_info);
+        classInfoDict.insert(HTMLTags::menu().localName().implementation(), &menu_info);
+        classInfoDict.insert(HTMLTags::meta().localName().implementation(), &meta_info);
+        classInfoDict.insert(HTMLTags::object().localName().implementation(), &object_info);
+        classInfoDict.insert(HTMLTags::ol().localName().implementation(), &ol_info);
+        classInfoDict.insert(HTMLTags::option().localName().implementation(), &option_info);
+        classInfoDict.insert(HTMLTags::optgroup().localName().implementation(), &optGroup_info);
+        classInfoDict.insert(HTMLTags::p().localName().implementation(), &p_info);
+        classInfoDict.insert(HTMLTags::param().localName().implementation(), &param_info);
+        classInfoDict.insert(HTMLTags::pre().localName().implementation(), &pre_info);
+        classInfoDict.insert(HTMLTags::q().localName().implementation(), &q_info);
+        classInfoDict.insert(HTMLTags::script().localName().implementation(), &script_info);
+        classInfoDict.insert(HTMLTags::select().localName().implementation(), &select_info);
+        classInfoDict.insert(HTMLTags::style().localName().implementation(), &style_info);
+        classInfoDict.insert(HTMLTags::table().localName().implementation(), &table_info);
+        classInfoDict.insert(HTMLTags::tbody().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLTags::td().localName().implementation(), &tablecell_info);
+        classInfoDict.insert(HTMLTags::textarea().localName().implementation(), &textArea_info);
+        classInfoDict.insert(HTMLTags::th().localName().implementation(), &tablecell_info);
+        classInfoDict.insert(HTMLTags::thead().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLTags::tfoot().localName().implementation(), &tablesection_info);
+        classInfoDict.insert(HTMLTags::title().localName().implementation(), &title_info);
+        classInfoDict.insert(HTMLTags::tr().localName().implementation(), &tr_info);
+        classInfoDict.insert(HTMLTags::ul().localName().implementation(), &ul_info);
     }
     
     HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
@@ -720,71 +720,71 @@ const HTMLElement::Accessors* HTMLElement::getSetInfo() const
     // FIXME: We want to use HashMap here, but there are compiler issues to deal with.
     static QPtrDict<const HTMLElement::Accessors> getSetInfoDict;
     if (getSetInfoDict.isEmpty()) {
-        getSetInfoDict.insert(HTMLNames::a().localName().implementation(), &a_accessors);
-        getSetInfoDict.insert(HTMLNames::applet().localName().implementation(), &applet_accessors);
-        getSetInfoDict.insert(HTMLNames::area().localName().implementation(), &area_accessors);
-        getSetInfoDict.insert(HTMLNames::base().localName().implementation(), &base_accessors);
-        getSetInfoDict.insert(HTMLNames::basefont().localName().implementation(), &baseFont_accessors);
-        getSetInfoDict.insert(HTMLNames::blockquote().localName().implementation(), &blockQuote_accessors); 
-        getSetInfoDict.insert(HTMLNames::body().localName().implementation(), &body_accessors);
-        getSetInfoDict.insert(HTMLNames::br().localName().implementation(), &br_accessors);
-        getSetInfoDict.insert(HTMLNames::button().localName().implementation(), &button_accessors);
-        getSetInfoDict.insert(HTMLNames::canvas().localName().implementation(), &canvas_accessors);
-        getSetInfoDict.insert(HTMLNames::caption().localName().implementation(), &caption_accessors);
-        getSetInfoDict.insert(HTMLNames::col().localName().implementation(), &col_accessors);
-        getSetInfoDict.insert(HTMLNames::colgroup().localName().implementation(), &col_accessors);
-        getSetInfoDict.insert(HTMLNames::del().localName().implementation(), &mod_accessors);
-        getSetInfoDict.insert(HTMLNames::dir().localName().implementation(), &dir_accessors);
-        getSetInfoDict.insert(HTMLNames::div().localName().implementation(), &div_accessors);
-        getSetInfoDict.insert(HTMLNames::dl().localName().implementation(), &dl_accessors);
-        getSetInfoDict.insert(HTMLNames::fieldset().localName().implementation(), &fieldSet_accessors);
-        getSetInfoDict.insert(HTMLNames::font().localName().implementation(), &font_accessors);
-        getSetInfoDict.insert(HTMLNames::form().localName().implementation(), &form_accessors);
-        getSetInfoDict.insert(HTMLNames::frame().localName().implementation(), &frame_accessors);
-        getSetInfoDict.insert(HTMLNames::frameset().localName().implementation(), &frameSet_accessors);
-        getSetInfoDict.insert(HTMLNames::h1().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::h2().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::h3().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::h4().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::h5().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::h6().localName().implementation(), &heading_accessors);
-        getSetInfoDict.insert(HTMLNames::head().localName().implementation(), &head_accessors);
-        getSetInfoDict.insert(HTMLNames::hr().localName().implementation(), &hr_accessors); 
-        getSetInfoDict.insert(HTMLNames::html().localName().implementation(), &html_accessors);
-        getSetInfoDict.insert(HTMLNames::iframe().localName().implementation(), &iFrame_accessors);
-        getSetInfoDict.insert(HTMLNames::img().localName().implementation(), &img_accessors);
-        getSetInfoDict.insert(HTMLNames::input().localName().implementation(), &input_accessors);
-        getSetInfoDict.insert(HTMLNames::ins().localName().implementation(), &mod_accessors);
-        getSetInfoDict.insert(HTMLNames::isindex().localName().implementation(), &isIndex_accessors);
-        getSetInfoDict.insert(HTMLNames::label().localName().implementation(), &label_accessors);
-        getSetInfoDict.insert(HTMLNames::legend().localName().implementation(), &legend_accessors);
-        getSetInfoDict.insert(HTMLNames::li().localName().implementation(), &li_accessors);
-        getSetInfoDict.insert(HTMLNames::link().localName().implementation(), &link_accessors);
-        getSetInfoDict.insert(HTMLNames::map().localName().implementation(), &map_accessors);
-        getSetInfoDict.insert(HTMLNames::marquee().localName().implementation(), &marquee_accessors);
-        getSetInfoDict.insert(HTMLNames::menu().localName().implementation(), &menu_accessors);
-        getSetInfoDict.insert(HTMLNames::meta().localName().implementation(), &meta_accessors);
-        getSetInfoDict.insert(HTMLNames::object().localName().implementation(), &object_accessors);
-        getSetInfoDict.insert(HTMLNames::ol().localName().implementation(), &ol_accessors);
-        getSetInfoDict.insert(HTMLNames::option().localName().implementation(), &option_accessors);
-        getSetInfoDict.insert(HTMLNames::optgroup().localName().implementation(), &optGroup_accessors);
-        getSetInfoDict.insert(HTMLNames::p().localName().implementation(), &p_accessors);
-        getSetInfoDict.insert(HTMLNames::param().localName().implementation(), &param_accessors);
-        getSetInfoDict.insert(HTMLNames::pre().localName().implementation(), &pre_accessors);
-        getSetInfoDict.insert(HTMLNames::q().localName().implementation(), &q_accessors);
-        getSetInfoDict.insert(HTMLNames::script().localName().implementation(), &script_accessors);
-        getSetInfoDict.insert(HTMLNames::select().localName().implementation(), &select_accessors);
-        getSetInfoDict.insert(HTMLNames::style().localName().implementation(), &style_accessors);
-        getSetInfoDict.insert(HTMLNames::table().localName().implementation(), &table_accessors);
-        getSetInfoDict.insert(HTMLNames::tbody().localName().implementation(), &tablesection_accessors);
-        getSetInfoDict.insert(HTMLNames::td().localName().implementation(), &tablecell_accessors);
-        getSetInfoDict.insert(HTMLNames::textarea().localName().implementation(), &textArea_accessors);
-        getSetInfoDict.insert(HTMLNames::th().localName().implementation(), &tablecell_accessors);
-        getSetInfoDict.insert(HTMLNames::thead().localName().implementation(), &tablesection_accessors);
-        getSetInfoDict.insert(HTMLNames::tfoot().localName().implementation(), &tablesection_accessors);
-        getSetInfoDict.insert(HTMLNames::title().localName().implementation(), &title_accessors);
-        getSetInfoDict.insert(HTMLNames::tr().localName().implementation(), &tr_accessors);
-        getSetInfoDict.insert(HTMLNames::ul().localName().implementation(), &ul_accessors);
+        getSetInfoDict.insert(HTMLTags::a().localName().implementation(), &a_accessors);
+        getSetInfoDict.insert(HTMLTags::applet().localName().implementation(), &applet_accessors);
+        getSetInfoDict.insert(HTMLTags::area().localName().implementation(), &area_accessors);
+        getSetInfoDict.insert(HTMLTags::base().localName().implementation(), &base_accessors);
+        getSetInfoDict.insert(HTMLTags::basefont().localName().implementation(), &baseFont_accessors);
+        getSetInfoDict.insert(HTMLTags::blockquote().localName().implementation(), &blockQuote_accessors); 
+        getSetInfoDict.insert(HTMLTags::body().localName().implementation(), &body_accessors);
+        getSetInfoDict.insert(HTMLTags::br().localName().implementation(), &br_accessors);
+        getSetInfoDict.insert(HTMLTags::button().localName().implementation(), &button_accessors);
+        getSetInfoDict.insert(HTMLTags::canvas().localName().implementation(), &canvas_accessors);
+        getSetInfoDict.insert(HTMLTags::caption().localName().implementation(), &caption_accessors);
+        getSetInfoDict.insert(HTMLTags::col().localName().implementation(), &col_accessors);
+        getSetInfoDict.insert(HTMLTags::colgroup().localName().implementation(), &col_accessors);
+        getSetInfoDict.insert(HTMLTags::del().localName().implementation(), &mod_accessors);
+        getSetInfoDict.insert(HTMLTags::dir().localName().implementation(), &dir_accessors);
+        getSetInfoDict.insert(HTMLTags::div().localName().implementation(), &div_accessors);
+        getSetInfoDict.insert(HTMLTags::dl().localName().implementation(), &dl_accessors);
+        getSetInfoDict.insert(HTMLTags::fieldset().localName().implementation(), &fieldSet_accessors);
+        getSetInfoDict.insert(HTMLTags::font().localName().implementation(), &font_accessors);
+        getSetInfoDict.insert(HTMLTags::form().localName().implementation(), &form_accessors);
+        getSetInfoDict.insert(HTMLTags::frame().localName().implementation(), &frame_accessors);
+        getSetInfoDict.insert(HTMLTags::frameset().localName().implementation(), &frameSet_accessors);
+        getSetInfoDict.insert(HTMLTags::h1().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::h2().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::h3().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::h4().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::h5().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::h6().localName().implementation(), &heading_accessors);
+        getSetInfoDict.insert(HTMLTags::head().localName().implementation(), &head_accessors);
+        getSetInfoDict.insert(HTMLTags::hr().localName().implementation(), &hr_accessors); 
+        getSetInfoDict.insert(HTMLTags::html().localName().implementation(), &html_accessors);
+        getSetInfoDict.insert(HTMLTags::iframe().localName().implementation(), &iFrame_accessors);
+        getSetInfoDict.insert(HTMLTags::img().localName().implementation(), &img_accessors);
+        getSetInfoDict.insert(HTMLTags::input().localName().implementation(), &input_accessors);
+        getSetInfoDict.insert(HTMLTags::ins().localName().implementation(), &mod_accessors);
+        getSetInfoDict.insert(HTMLTags::isindex().localName().implementation(), &isIndex_accessors);
+        getSetInfoDict.insert(HTMLTags::label().localName().implementation(), &label_accessors);
+        getSetInfoDict.insert(HTMLTags::legend().localName().implementation(), &legend_accessors);
+        getSetInfoDict.insert(HTMLTags::li().localName().implementation(), &li_accessors);
+        getSetInfoDict.insert(HTMLTags::link().localName().implementation(), &link_accessors);
+        getSetInfoDict.insert(HTMLTags::map().localName().implementation(), &map_accessors);
+        getSetInfoDict.insert(HTMLTags::marquee().localName().implementation(), &marquee_accessors);
+        getSetInfoDict.insert(HTMLTags::menu().localName().implementation(), &menu_accessors);
+        getSetInfoDict.insert(HTMLTags::meta().localName().implementation(), &meta_accessors);
+        getSetInfoDict.insert(HTMLTags::object().localName().implementation(), &object_accessors);
+        getSetInfoDict.insert(HTMLTags::ol().localName().implementation(), &ol_accessors);
+        getSetInfoDict.insert(HTMLTags::option().localName().implementation(), &option_accessors);
+        getSetInfoDict.insert(HTMLTags::optgroup().localName().implementation(), &optGroup_accessors);
+        getSetInfoDict.insert(HTMLTags::p().localName().implementation(), &p_accessors);
+        getSetInfoDict.insert(HTMLTags::param().localName().implementation(), &param_accessors);
+        getSetInfoDict.insert(HTMLTags::pre().localName().implementation(), &pre_accessors);
+        getSetInfoDict.insert(HTMLTags::q().localName().implementation(), &q_accessors);
+        getSetInfoDict.insert(HTMLTags::script().localName().implementation(), &script_accessors);
+        getSetInfoDict.insert(HTMLTags::select().localName().implementation(), &select_accessors);
+        getSetInfoDict.insert(HTMLTags::style().localName().implementation(), &style_accessors);
+        getSetInfoDict.insert(HTMLTags::table().localName().implementation(), &table_accessors);
+        getSetInfoDict.insert(HTMLTags::tbody().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLTags::td().localName().implementation(), &tablecell_accessors);
+        getSetInfoDict.insert(HTMLTags::textarea().localName().implementation(), &textArea_accessors);
+        getSetInfoDict.insert(HTMLTags::th().localName().implementation(), &tablecell_accessors);
+        getSetInfoDict.insert(HTMLTags::thead().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLTags::tfoot().localName().implementation(), &tablesection_accessors);
+        getSetInfoDict.insert(HTMLTags::title().localName().implementation(), &title_accessors);
+        getSetInfoDict.insert(HTMLTags::tr().localName().implementation(), &tr_accessors);
+        getSetInfoDict.insert(HTMLTags::ul().localName().implementation(), &ul_accessors);
     }
     
     HTMLElementImpl* element = static_cast<HTMLElementImpl*>(impl());
@@ -1284,7 +1284,7 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
     kdDebug(6070) << "KJS::HTMLElement::tryGet " << propertyName.qstring() << " thisTag=" << element.tagName().string() << endl;
 #endif
     // First look at dynamic properties
-    if (element.hasLocalName(HTMLNames::form())) {
+    if (element.hasLocalName(HTMLTags::form())) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
         // Check if we're retrieving an element (by index or by name)
         bool ok;
@@ -1295,16 +1295,16 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
         if (!namedItems->isUndefined())
             return namedItems;
     }
-    else if (element.hasLocalName(HTMLNames::select())) {
+    else if (element.hasLocalName(HTMLTags::select())) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         bool ok;
         uint u = propertyName.toULong(&ok);
         if (ok)
             return getDOMNode(exec, select.optionsHTMLCollection()->item(u)); // not specified by DOM(?) but supported in netscape/IE
     }
-    else if (element.hasLocalName(HTMLNames::frameset())) {
+    else if (element.hasLocalName(HTMLTags::frameset())) {
         NodeImpl *frame = element.children()->namedItem(propertyName.string());
-        if (frame && frame->hasTagName(HTMLNames::frame())) {
+        if (frame && frame->hasTagName(HTMLTags::frame())) {
             DocumentImpl* doc = static_cast<HTMLFrameElementImpl *>(frame)->contentDocument();
             if (doc) {
                 KHTMLPart* part = doc->part();
@@ -1317,7 +1317,7 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
             }
         }
     }
-    else if (element.hasLocalName(HTMLNames::frame()) || element.hasLocalName(HTMLNames::iframe())) {
+    else if (element.hasLocalName(HTMLTags::frame()) || element.hasLocalName(HTMLTags::iframe())) {
         DocumentImpl* doc = static_cast<HTMLFrameElementImpl &>(element).contentDocument();
         if (doc) {
             KHTMLPart* part = doc->part();
@@ -1329,8 +1329,8 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
         }
     }
 #if APPLE_CHANGES
-    else if (element.hasLocalName(HTMLNames::embed()) || element.hasLocalName(HTMLNames::object()) ||
-             element.hasLocalName(HTMLNames::applet())) {
+    else if (element.hasLocalName(HTMLTags::embed()) || element.hasLocalName(HTMLTags::object()) ||
+             element.hasLocalName(HTMLTags::applet())) {
 	if (propertyName == "__apple_runtime_object")
 	    return getRuntimeObject(exec,&element);
 	Value runtimeObject = getRuntimeObject(exec,&element);
@@ -1357,9 +1357,9 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
 bool KJS::HTMLElement::implementsCall() const
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    if (element->hasTagName(HTMLNames::embed()) ||
-        element->hasTagName(HTMLNames::object()) ||
-        element->hasTagName(HTMLNames::applet())) {
+    if (element->hasTagName(HTMLTags::embed()) ||
+        element->hasTagName(HTMLTags::object()) ||
+        element->hasTagName(HTMLTags::applet())) {
         DocumentImpl* doc = element->getDocument();
         KJSProxy *proxy = KJSProxy::proxy(doc->part());
         ExecState *exec = proxy->interpreter()->globalExec();
@@ -1375,9 +1375,9 @@ bool KJS::HTMLElement::implementsCall() const
 Value KJS::HTMLElement::call(ExecState *exec, Object &thisObj, const List&args)
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    if (element->hasTagName(HTMLNames::embed()) ||
-        element->hasTagName(HTMLNames::object()) ||
-        element->hasTagName(HTMLNames::applet())) {
+    if (element->hasTagName(HTMLTags::embed()) ||
+        element->hasTagName(HTMLTags::object()) ||
+        element->hasTagName(HTMLTags::applet())) {
         Value runtimeObject = getRuntimeObject(exec,element);
         if (!runtimeObject.isNull()) {
             ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
@@ -2223,7 +2223,7 @@ bool KJS::HTMLElement::hasOwnProperty(ExecState *exec, const Identifier &propert
 #endif
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
     // First look at dynamic properties - keep this in sync with tryGet
-    if (element.hasLocalName(HTMLNames::form())) {
+    if (element.hasLocalName(HTMLTags::form())) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
         // Check if we're retrieving an element (by index or by name)
         bool ok;
@@ -2233,14 +2233,14 @@ bool KJS::HTMLElement::hasOwnProperty(ExecState *exec, const Identifier &propert
         if (form.elements()->namedItem(propertyName.string()))
             return true;
     }
-    else if (element.hasLocalName(HTMLNames::select())) {
+    else if (element.hasLocalName(HTMLTags::select())) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         bool ok;
         uint u = propertyName.toULong(&ok);
         if (ok && select.optionsHTMLCollection()->item(u))
             return true;
     }
-    else if (element.hasLocalName(HTMLNames::input())) {
+    else if (element.hasLocalName(HTMLTags::input())) {
         HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
         const HashTable* table = classInfo()->propHashTable;
         const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -2261,7 +2261,7 @@ bool KJS::HTMLElement::hasOwnProperty(ExecState *exec, const Identifier &propert
 
 UString KJS::HTMLElement::toString(ExecState *exec) const
 {
-    if (impl()->hasTagName(HTMLNames::a()))
+    if (impl()->hasTagName(HTMLTags::a()))
         return UString(static_cast<const HTMLAnchorElementImpl *>(impl())->href());
     else
         return DOMElement::toString(exec);
@@ -2271,9 +2271,9 @@ static HTMLFormElementImpl *getForm(HTMLElementImpl *element)
 {
     if (element->isGenericFormElement())
         return static_cast<HTMLGenericFormElementImpl *>(element)->form();
-    if (element->hasTagName(HTMLNames::label()))
+    if (element->hasTagName(HTMLTags::label()))
         return static_cast<HTMLLabelElementImpl *>(element)->form();
-    if (element->hasTagName(HTMLNames::object()))
+    if (element->hasTagName(HTMLTags::object()))
         return static_cast<HTMLObjectElementImpl *>(element)->form();
 
     return 0;
@@ -2296,7 +2296,7 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
     scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form)));
   else {
     NodeImpl *form = element->parentNode();
-    while (form && !form->hasTagName(HTMLNames::form()))
+    while (form && !form->hasTagName(HTMLTags::form()))
       form = form->parentNode();
     
     if (form)
@@ -2325,7 +2325,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
     DOMExceptionTranslator exception(exec);
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj.imp())->impl());
 
-    if (element.hasLocalName(HTMLNames::form())) {
+    if (element.hasLocalName(HTMLTags::form())) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
         if (id == KJS::HTMLElement::FormSubmit) {
             form.submit();
@@ -2336,7 +2336,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::select())) {
+    else if (element.hasLocalName(HTMLTags::select())) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         if (id == KJS::HTMLElement::SelectAdd) {
             select.add(toHTMLElement(args[0]), toHTMLElement(args[1]));
@@ -2355,7 +2355,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::input())) {
+    else if (element.hasLocalName(HTMLTags::input())) {
         HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
         if (id == KJS::HTMLElement::InputBlur) {
             input.blur();
@@ -2378,7 +2378,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::button())) {
+    else if (element.hasLocalName(HTMLTags::button())) {
         HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
         if (id == KJS::HTMLElement::ButtonBlur) {
             button.blur();
@@ -2389,21 +2389,21 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::label())) {
+    else if (element.hasLocalName(HTMLTags::label())) {
         HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
         if (id == KJS::HTMLElement::LabelFocus) {
             label.focus();
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::legend())) {
+    else if (element.hasLocalName(HTMLTags::legend())) {
         HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
         if (id == KJS::HTMLElement::LegendFocus) {
             legend.focus();
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::textarea())) {
+    else if (element.hasLocalName(HTMLTags::textarea())) {
         HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
         if (id == KJS::HTMLElement::TextAreaBlur) {
             textarea.blur();
@@ -2422,7 +2422,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::a())) {
+    else if (element.hasLocalName(HTMLTags::a())) {
         HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
         if (id == KJS::HTMLElement::AnchorBlur) {
             anchor.blur();
@@ -2435,7 +2435,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         else if (id == KJS::HTMLElement::AnchorToString)
             return String(thisObj.toString(exec));
     }
-    else if (element.hasLocalName(HTMLNames::table())) {
+    else if (element.hasLocalName(HTMLTags::table())) {
         HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
         if (id == KJS::HTMLElement::TableCreateTHead)
             return getDOMNode(exec,table.createTHead());
@@ -2462,9 +2462,9 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::thead()) ||
-             element.hasLocalName(HTMLNames::tbody()) ||
-             element.hasLocalName(HTMLNames::tfoot())) {
+    else if (element.hasLocalName(HTMLTags::thead()) ||
+             element.hasLocalName(HTMLTags::tbody()) ||
+             element.hasLocalName(HTMLTags::tfoot())) {
         HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
         if (id == KJS::HTMLElement::TableSectionInsertRow)
             return getDOMNode(exec, tableSection.insertRow(args[0].toInt32(exec), exception));
@@ -2473,7 +2473,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::tr())) {
+    else if (element.hasLocalName(HTMLTags::tr())) {
         HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
         if (id == KJS::HTMLElement::TableRowInsertCell)
             return getDOMNode(exec,tableRow.insertCell(args[0].toInt32(exec), exception));
@@ -2482,7 +2482,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
             return Undefined();
         }
     }
-    else if (element.hasLocalName(HTMLNames::marquee())) {
+    else if (element.hasLocalName(HTMLTags::marquee())) {
         if (id == KJS::HTMLElement::MarqueeStart && element.renderer() && 
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
@@ -2497,7 +2497,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         }
     }
 #if APPLE_CHANGES
-    else if (element.hasLocalName(HTMLNames::canvas())) {
+    else if (element.hasLocalName(HTMLTags::canvas())) {
         if (id == KJS::HTMLElement::GetContext) {
             if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d")) {
                 return Object(new Context2D(&element));
@@ -2522,7 +2522,7 @@ void KJS::HTMLElement::tryPut(ExecState *exec, const Identifier &propertyName, c
                   << " str=" << str.string() << endl;
 #endif
     // First look at dynamic properties
-    if (element.hasLocalName(HTMLNames::select())) {
+    if (element.hasLocalName(HTMLTags::select())) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         bool ok;
         /*uint u =*/ propertyName.toULong(&ok);
@@ -2534,9 +2534,9 @@ void KJS::HTMLElement::tryPut(ExecState *exec, const Identifier &propertyName, c
         }
     }
 #if APPLE_CHANGES
-    else if (element.hasLocalName(HTMLNames::embed()) ||
-             element.hasLocalName(HTMLNames::object()) ||
-             element.hasLocalName(HTMLNames::applet())) {
+    else if (element.hasLocalName(HTMLTags::embed()) ||
+             element.hasLocalName(HTMLTags::object()) ||
+             element.hasLocalName(HTMLTags::applet())) {
 	Value runtimeObject = getRuntimeObject(exec,&element);
 	if (!runtimeObject.isNull()) {
 	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
@@ -3275,7 +3275,7 @@ HTMLElementImpl *toHTMLElement(ValueImp *val)
 HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *val)
 {
     HTMLElementImpl *e = toHTMLElement(val);
-    if (e && e->hasTagName(HTMLNames::caption()))
+    if (e && e->hasTagName(HTMLTags::caption()))
         return static_cast<HTMLTableCaptionElementImpl *>(e);
     return 0;
 }
@@ -3283,7 +3283,7 @@ HTMLTableCaptionElementImpl *toHTMLTableCaptionElement(ValueImp *val)
 HTMLTableSectionElementImpl *toHTMLTableSectionElement(ValueImp *val)
 {
     HTMLElementImpl *e = toHTMLElement(val);
-    if (e && (e->hasTagName(HTMLNames::thead()) || e->hasTagName(HTMLNames::tbody()) || e->hasTagName(HTMLNames::tfoot())))
+    if (e && (e->hasTagName(HTMLTags::thead()) || e->hasTagName(HTMLTags::tbody()) || e->hasTagName(HTMLTags::tfoot())))
         return static_cast<HTMLTableSectionElementImpl *>(e);
     return 0;
 }
@@ -3333,10 +3333,10 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
   else if (propertyName == "selectedIndex") {
     // NON-STANDARD options.selectedIndex
     NodeImpl *option = collection.item(0);
-    if (option->hasTagName(HTMLNames::option())) {
+    if (option->hasTagName(HTMLTags::option())) {
       NodeImpl *select = option;
       while ((select = select->parentNode()))
-        if (select->hasTagName(HTMLNames::select()))
+        if (select->hasTagName(HTMLTags::select()))
 	  return Number(static_cast<HTMLSelectElementImpl *>(select)->selectedIndex());
     }
     return Undefined();
@@ -3524,7 +3524,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
 
   // is v an option element ?
   NodeImpl *option = toNode(value);
-  if (!option || !option->hasTagName(HTMLNames::option()))
+  if (!option || !option->hasTagName(HTMLTags::option()))
     return;
 
   int exception = 0;

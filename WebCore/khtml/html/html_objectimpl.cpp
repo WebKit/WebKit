@@ -57,7 +57,7 @@ namespace DOM {
 // -------------------------------------------------------------------------
 
 HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentPtr *doc)
-  : HTMLElementImpl(HTMLNames::applet(), doc)
+  : HTMLElementImpl(HTMLTags::applet(), doc)
 {
     appletInstance = 0;
     m_allParamsAvailable = false;
@@ -70,7 +70,7 @@ HTMLAppletElementImpl::~HTMLAppletElementImpl()
 
 bool HTMLAppletElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLNames::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
 }
 
 bool HTMLAppletElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -344,7 +344,7 @@ void HTMLAppletElementImpl::setWidth(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::embed(), doc), embedInstance(0)
+    : HTMLElementImpl(HTMLTags::embed(), doc), embedInstance(0)
 {}
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
@@ -353,7 +353,7 @@ HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
 
 bool HTMLEmbedElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLNames::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
 }
 
 #if APPLE_CHANGES
@@ -455,7 +455,7 @@ bool HTMLEmbedElementImpl::rendererIsNeeded(RenderStyle *style)
     KHTMLPart *part = getDocument()->part();
     if (!part)
 	return false;
-    return part->pluginsEnabled() && !parentNode()->hasTagName(HTMLNames::object());
+    return part->pluginsEnabled() && !parentNode()->hasTagName(HTMLTags::object());
 }
 
 RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -480,9 +480,9 @@ bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) 
 #if APPLE_CHANGES
-: HTMLElementImpl(HTMLNames::object(), doc), m_imageLoader(0), objectInstance(0)
+: HTMLElementImpl(HTMLTags::object(), doc), m_imageLoader(0), objectInstance(0)
 #else
-: HTMLElementImpl(HTMLNames::object(), doc), m_imageLoader(0)
+: HTMLElementImpl(HTMLTags::object(), doc), m_imageLoader(0)
 #endif
 {
     needWidgetUpdate = false;
@@ -496,7 +496,7 @@ HTMLObjectElementImpl::~HTMLObjectElementImpl()
 
 bool HTMLObjectElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLNames::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
 }
 
 #if APPLE_CHANGES
@@ -531,7 +531,7 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
 HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 {
     for (NodeImpl *p = parentNode(); p != 0; p = p->parentNode()) {
-        if (p->hasTagName(HTMLNames::form()))
+        if (p->hasTagName(HTMLTags::form()))
             return static_cast<HTMLFormElementImpl *>(p);
     }
     
@@ -912,7 +912,7 @@ void HTMLObjectElementImpl::setWidth(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::param(), doc)
+    : HTMLElementImpl(HTMLTags::param(), doc)
 {
 }
 

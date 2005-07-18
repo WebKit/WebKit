@@ -65,7 +65,7 @@ using DOM::HTMLAppletElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLEmbedElementImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::HTMLObjectElementImpl;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -1709,18 +1709,18 @@ ValueImp *getRuntimeObject(ExecState *exec, NodeImpl *n)
     if (!n)
         return 0;
 
-    if (n->hasTagName(HTMLNames::applet())) {
+    if (n->hasTagName(HTMLTags::applet())) {
         HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
         if (appletElement->getAppletInstance())
             // The instance is owned by the applet element.
             return new RuntimeObjectImp(appletElement->getAppletInstance(), false);
     }
-    else if (n->hasTagName(HTMLNames::embed())) {
+    else if (n->hasTagName(HTMLTags::embed())) {
         HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
         if (embedElement->getEmbedInstance())
             return new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
     }
-    else if (n->hasTagName(HTMLNames::object())) {
+    else if (n->hasTagName(HTMLTags::object())) {
         HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
         if (objectElement->getObjectInstance())
             return new RuntimeObjectImp(objectElement->getObjectInstance(), false);

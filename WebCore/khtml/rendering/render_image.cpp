@@ -421,7 +421,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 
 
 //             p->drawPixmap( offs.x(), y, pix, rect.x(), rect.y(), rect.width(), rect.height() );
-             HTMLImageElementImpl* i = (element() && element()->hasTagName(HTMLNames::img())) ? static_cast<HTMLImageElementImpl*>(element()) : 0;
+             HTMLImageElementImpl* i = (element() && element()->hasTagName(HTMLTags::img())) ? static_cast<HTMLImageElementImpl*>(element()) : 0;
              if (i && !i->compositeOperator().isNull()){
                 p->drawPixmap (offs, pix, rect, i->compositeOperator());
              }
@@ -488,7 +488,7 @@ void RenderImage::layout()
 
 HTMLMapElementImpl* RenderImage::imageMap()
 {
-    HTMLImageElementImpl* i = element()->hasTagName(HTMLNames::img()) ? static_cast<HTMLImageElementImpl*>(element()) : 0;
+    HTMLImageElementImpl* i = element()->hasTagName(HTMLTags::img()) ? static_cast<HTMLImageElementImpl*>(element()) : 0;
     return i ? i->getDocument()->getImageMap(i->imageMap()) : 0;
 }
 
@@ -514,9 +514,9 @@ bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 
 void RenderImage::updateAltText()
 {
-    if (element()->hasTagName(HTMLNames::input()))
+    if (element()->hasTagName(HTMLTags::input()))
         alt = static_cast<HTMLInputElementImpl*>(element())->altText();
-    else if (element()->hasTagName(HTMLNames::img()))
+    else if (element()->hasTagName(HTMLTags::img()))
         alt = static_cast<HTMLImageElementImpl*>(element())->altText();
 }
 

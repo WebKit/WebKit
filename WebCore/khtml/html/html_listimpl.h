@@ -35,7 +35,7 @@ namespace DOM
 class HTMLUListElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLUListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::ul(), doc) {}
+    HTMLUListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::ul(), doc) {}
     virtual ~HTMLUListElementImpl() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -58,7 +58,7 @@ public:
 class HTMLDirectoryElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::dir(), doc) {}
+    HTMLDirectoryElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::dir(), doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
@@ -72,7 +72,7 @@ public:
 class HTMLMenuElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::menu(), doc) {}
+    HTMLMenuElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::menu(), doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
@@ -87,7 +87,7 @@ class HTMLOListElementImpl : public HTMLElementImpl
 {
 public:
     HTMLOListElementImpl(DocumentPtr *doc)
-        : HTMLElementImpl(HTMLNames::ol(), doc) { _start = 1; }
+        : HTMLElementImpl(HTMLTags::ol(), doc) { _start = 1; }
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
@@ -114,7 +114,7 @@ class HTMLLIElementImpl : public HTMLElementImpl
 {
 public:
     HTMLLIElementImpl(DocumentPtr *doc)
-        : HTMLElementImpl(HTMLNames::li(), doc) { isValued = false; }
+        : HTMLElementImpl(HTMLTags::li(), doc) { isValued = false; }
     virtual ~HTMLLIElementImpl() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
@@ -141,7 +141,7 @@ private:
 class HTMLDListElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLDListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLNames::dl(), doc) {}
+    HTMLDListElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::dl(), doc) {}
     virtual ~HTMLDListElementImpl() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }

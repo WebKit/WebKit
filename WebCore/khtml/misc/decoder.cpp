@@ -42,7 +42,7 @@ using namespace khtml;
 #include "htmlnames.h"
 
 using DOM::AtomicString;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::nullAtom;
 
 class KanjiCode
@@ -531,7 +531,7 @@ QString Decoder::decode(const char *data, int len)
                     }
 		    tmp[len] = 0;
                     AtomicString tag(tmp);
-                    if (!end && tag == HTMLNames::meta()) {
+                    if (!end && tag == HTMLTags::meta()) {
                         // found a meta tag...
                         //ptr += 5;
                         const char * end = ptr;
@@ -570,11 +570,11 @@ QString Decoder::decode(const char *data, int len)
 
 			    pos = endpos + 1;
 			}
-		    } else if (tag != HTMLNames::script() && tag != HTMLNames::noscript() && tag != HTMLNames::style() &&
-                               tag != HTMLNames::link() && tag != HTMLNames::meta() && tag != HTMLNames::object() &&
-                               tag != HTMLNames::title() && tag != HTMLNames::base() && 
-                               (end || tag != HTMLNames::html()) &&
-                               (end || tag != HTMLNames::head()) && isalpha(tmp[0])) {
+		    } else if (tag != HTMLTags::script() && tag != HTMLTags::noscript() && tag != HTMLTags::style() &&
+                               tag != HTMLTags::link() && tag != HTMLTags::meta() && tag != HTMLTags::object() &&
+                               tag != HTMLTags::title() && tag != HTMLTags::base() && 
+                               (end || tag != HTMLTags::html()) &&
+                               (end || tag != HTMLTags::head()) && isalpha(tmp[0])) {
                         body = true;
 #ifdef DECODE_DEBUG
 			kdDebug( 6005 ) << "Decoder: no charset found. Id=" << id << endl;

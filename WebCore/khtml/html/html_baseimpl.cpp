@@ -47,7 +47,7 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::body(), doc), m_linkDecl(0)
+    : HTMLElementImpl(HTMLTags::body(), doc), m_linkDecl(0)
 {
 }
 
@@ -259,7 +259,7 @@ void HTMLBodyElementImpl::setVLink(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::frame(), doc)
+    : HTMLElementImpl(HTMLTags::frame(), doc)
 {
     init();
 }
@@ -444,7 +444,7 @@ void HTMLFrameElementImpl::attach()
 
     // inherit default settings from parent frameset
     for (NodeImpl *node = parentNode(); node; node = node->parentNode())
-        if (node->hasTagName(HTMLNames::frameset())) {
+        if (node->hasTagName(HTMLTags::frameset())) {
             HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
             if (!m_frameBorderSet)
                 m_frameBorder = frameset->frameBorder();
@@ -623,7 +623,7 @@ void HTMLFrameElementImpl::setSrc(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::frameset(), doc)
+    : HTMLElementImpl(HTMLTags::frameset(), doc)
 {
     // default value for rows and cols...
     m_totalRows = 1;
@@ -651,7 +651,7 @@ bool HTMLFrameSetElementImpl::checkDTD(const NodeImpl* newChild)
 {
     // FIXME: Old code had adjacent double returns and seemed to want to do something with NOFRAMES (but didn't).
     // What is the correct behavior?
-    return newChild->hasTagName(HTMLNames::frameset()) || newChild->hasTagName(HTMLNames::frame());
+    return newChild->hasTagName(HTMLTags::frameset()) || newChild->hasTagName(HTMLTags::frame());
 }
 
 void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -708,7 +708,7 @@ void HTMLFrameSetElementImpl::attach()
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
     while(node)
     {
-        if (node->hasTagName(HTMLNames::frameset())) {
+        if (node->hasTagName(HTMLTags::frameset())) {
             HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
             if(!frameBorderSet)  frameborder = frameset->frameBorder();
             if(!noresize)  noresize = frameset->noResize();
@@ -772,7 +772,7 @@ void HTMLFrameSetElementImpl::setRows(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::head(), doc)
+    : HTMLElementImpl(HTMLTags::head(), doc)
 {
 }
 
@@ -792,16 +792,16 @@ void HTMLHeadElementImpl::setProfile(const DOMString &value)
 
 bool HTMLHeadElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLNames::title()) || newChild->hasTagName(HTMLNames::isindex()) ||
-           newChild->hasTagName(HTMLNames::base()) || newChild->hasTagName(HTMLNames::script()) ||
-           newChild->hasTagName(HTMLNames::style()) || newChild->hasTagName(HTMLNames::meta()) ||
-           newChild->hasTagName(HTMLNames::link()) || newChild->isTextNode();
+    return newChild->hasTagName(HTMLTags::title()) || newChild->hasTagName(HTMLTags::isindex()) ||
+           newChild->hasTagName(HTMLTags::base()) || newChild->hasTagName(HTMLTags::script()) ||
+           newChild->hasTagName(HTMLTags::style()) || newChild->hasTagName(HTMLTags::meta()) ||
+           newChild->hasTagName(HTMLTags::link()) || newChild->isTextNode();
 }
 
 // -------------------------------------------------------------------------
 
 HTMLHtmlElementImpl::HTMLHtmlElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::html(), doc)
+    : HTMLElementImpl(HTMLTags::html(), doc)
 {
 }
 
@@ -822,14 +822,14 @@ void HTMLHtmlElementImpl::setVersion(const DOMString &value)
 bool HTMLHtmlElementImpl::checkDTD(const NodeImpl* newChild)
 {
     // FIXME: Why is <script> allowed here?
-    return newChild->hasTagName(HTMLNames::head()) || newChild->hasTagName(HTMLNames::body()) ||
-           newChild->hasTagName(HTMLNames::frameset()) || newChild->hasTagName(HTMLNames::noframes()) ||
-           newChild->hasTagName(HTMLNames::script());
+    return newChild->hasTagName(HTMLTags::head()) || newChild->hasTagName(HTMLTags::body()) ||
+           newChild->hasTagName(HTMLTags::frameset()) || newChild->hasTagName(HTMLTags::noframes()) ||
+           newChild->hasTagName(HTMLTags::script());
 }
 
 // -------------------------------------------------------------------------
 
-HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(HTMLNames::iframe(), doc)
+HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentPtr *doc) : HTMLFrameElementImpl(HTMLTags::iframe(), doc)
 {
     m_frameBorder = false;
     m_marginWidth = -1;

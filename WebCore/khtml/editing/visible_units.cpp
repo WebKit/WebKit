@@ -41,7 +41,7 @@ using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 
 namespace khtml {
 
@@ -333,7 +333,7 @@ VisiblePosition endOfLine(const VisiblePosition &c, EIncludeLineBreak includeLin
         return VisiblePosition();
 
     long endOffset = 1;
-    if (endNode->hasTagName(HTMLNames::br())) {
+    if (endNode->hasTagName(HTMLTags::br())) {
         endOffset = 0;
     } else if (endBox->isInlineTextBox()) {
         InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);

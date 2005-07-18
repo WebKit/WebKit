@@ -620,7 +620,7 @@ ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const
         localName = _qualifiedName;
     
     // FIXME: Use registered namespaces and look up in a hash to find the right factory.
-    if (_namespaceURI == HTMLNames::xhtmlNamespaceURI()) {
+    if (_namespaceURI == HTMLTags::xhtmlNamespaceURI()) {
         // FIXME: Really should only be done from the public DOM API.  Internal callers know the name is valid.
         if (!isValidName(localName)) {
             exceptioncode = DOMException::INVALID_CHARACTER_ERR;
@@ -1266,10 +1266,10 @@ HTMLElementImpl* DocumentImpl::body()
     // try to prefer a FRAMESET element over BODY
     NodeImpl* body = 0;
     for (NodeImpl* i = de->firstChild(); i; i = i->nextSibling()) {
-        if (i->hasTagName(HTMLNames::frameset()))
+        if (i->hasTagName(HTMLTags::frameset()))
             return static_cast<HTMLElementImpl*>(i);
         
-        if (i->hasTagName(HTMLNames::body()))
+        if (i->hasTagName(HTMLTags::body()))
             body = i;
     }
     return static_cast<HTMLElementImpl *>(body);
@@ -1399,7 +1399,7 @@ bool DocumentImpl::shouldScheduleLayout()
     // (c) we have a <body>
     return (renderer() && renderer()->needsLayout() && haveStylesheetsLoaded() &&
             documentElement() && documentElement()->renderer() &&
-            (!documentElement()->hasTagName(HTMLNames::html()) || body()));
+            (!documentElement()->hasTagName(HTMLTags::html()) || body()));
 }
 
 int DocumentImpl::minimumLayoutDelay()
@@ -2016,11 +2016,11 @@ void DocumentImpl::recalcStyleSelector()
             }
 
         }
-        else if (n->isHTMLElement() && (n->hasTagName(HTMLNames::link()) || n->hasTagName(HTMLNames::style()))) {
+        else if (n->isHTMLElement() && (n->hasTagName(HTMLTags::link()) || n->hasTagName(HTMLTags::style()))) {
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(n);
             QString title = e->getAttribute(HTMLAttributes::title()).string();
             bool enabledViaScript = false;
-            if (e->hasLocalName(HTMLNames::link())) {
+            if (e->hasLocalName(HTMLTags::link())) {
                 // <LINK> element
                 HTMLLinkElementImpl* l = static_cast<HTMLLinkElementImpl*>(n);
                 if (l->isLoading() || l->isDisabled())
@@ -2032,7 +2032,7 @@ void DocumentImpl::recalcStyleSelector()
 
             // Get the current preferred styleset.  This is the
             // set of sheets that will be enabled.
-            if (e->hasLocalName(HTMLNames::link()))
+            if (e->hasLocalName(HTMLTags::link()))
                 sheet = static_cast<HTMLLinkElementImpl*>(n)->sheet();
             else
                 // <STYLE> element
@@ -2049,7 +2049,7 @@ void DocumentImpl::recalcStyleSelector()
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
                     QString rel = e->getAttribute(HTMLAttributes::rel()).string();
-                    if (e->hasLocalName(HTMLNames::style()) || !rel.contains("alternate"))
+                    if (e->hasLocalName(HTMLTags::style()) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
                 }
                       
@@ -2068,7 +2068,7 @@ void DocumentImpl::recalcStyleSelector()
     
         // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
         // can stop searching here.
-        if (isHTMLDocument() && n->hasTagName(HTMLNames::body()))
+        if (isHTMLDocument() && n->hasTagName(HTMLTags::body()))
             break;
     }
 

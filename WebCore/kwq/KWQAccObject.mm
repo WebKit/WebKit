@@ -76,7 +76,7 @@ using DOM::HTMLCollectionImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::HTMLMapElementImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
@@ -366,7 +366,7 @@ using khtml::VisiblePosition;
     }
     if (m_renderer->isListMarker())
         return @"AXListMarker";
-    if (m_renderer->element() && m_renderer->element()->hasTagName(HTMLNames::button()))
+    if (m_renderer->element() && m_renderer->element()->hasTagName(HTMLTags::button()))
         return NSAccessibilityButtonRole;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
@@ -532,7 +532,7 @@ using khtml::VisiblePosition;
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return nil;
     
-    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->hasTagName(HTMLNames::button()))
+    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->hasTagName(HTMLTags::button()))
         return [self textUnderElement];
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
@@ -622,7 +622,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-              m_renderer->element()->hasTagName(HTMLNames::button())));
+              m_renderer->element()->hasTagName(HTMLTags::button())));
 }
 
 - (NSArray *)accessibilityAttributeNames

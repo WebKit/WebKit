@@ -65,7 +65,7 @@ using DOM::commentAtom;
 using DOM::nullAtom;
 using DOM::textAtom;
 using DOM::HTMLAttributes;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::QualifiedName;
 using DOM::MappedAttributeImpl;
 using DOM::NamedMappedAttrMapImpl;
@@ -470,10 +470,10 @@ void HTMLTokenizer::parseSpecial(TokenizerString &src)
             else {
                 processListing(TokenizerString(scriptCode, scriptCodeSize));
                 processToken();
-                if ( style )         { currToken.tagName = HTMLNames::style().localName(); currToken.beginTag = false; }
-                else if ( textarea ) { currToken.tagName = HTMLNames::textarea().localName(); currToken.beginTag = false; }
-                else if ( title ) { currToken.tagName = HTMLNames::title().localName(); currToken.beginTag = false; }
-                else if ( xmp )  { currToken.tagName = HTMLNames::xmp().localName(); currToken.beginTag = false; }
+                if ( style )         { currToken.tagName = HTMLTags::style().localName(); currToken.beginTag = false; }
+                else if ( textarea ) { currToken.tagName = HTMLTags::textarea().localName(); currToken.beginTag = false; }
+                else if ( title ) { currToken.tagName = HTMLTags::title().localName(); currToken.beginTag = false; }
+                else if ( xmp )  { currToken.tagName = HTMLTags::xmp().localName(); currToken.beginTag = false; }
                 processToken();
                 style = script = style = textarea = title = xmp = false;
                 tquote = NoQuote;
@@ -543,7 +543,7 @@ void HTMLTokenizer::scriptHandler()
     processListing(TokenizerString(scriptCode, scriptCodeSize));
     QString exScript( buffer, dest-buffer );
     processToken();
-    currToken.tagName = HTMLNames::script().localName();
+    currToken.tagName = HTMLTags::script().localName();
     currToken.beginTag = false;
     processToken();
 
@@ -1325,7 +1325,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
             bool beginTag = !currToken.flat && currToken.beginTag;
-            if (beginTag && currToken.tagName == HTMLNames::script()) {
+            if (beginTag && currToken.tagName == HTMLTags::script()) {
                 AttributeImpl* a = 0;
                 bool foundTypeAttribute = false;
                 scriptSrc = QString::null;
@@ -1400,48 +1400,48 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 
             processToken();
 
-            if (tagName == HTMLNames::pre()) {
+            if (tagName == HTMLTags::pre()) {
                 prePos = 0;
                 pre = beginTag;
                 discard = LFDiscard; // Discard the first LF after we open a pre.
-            } else if (tagName == HTMLNames::script()) {
+            } else if (tagName == HTMLTags::script()) {
                 if (beginTag) {
                     searchStopper = scriptEnd;
                     searchStopperLen = 8;
                     script = true;
                     parseSpecial(src);
                 }
-            } else if (tagName == HTMLNames::style()) {
+            } else if (tagName == HTMLTags::style()) {
                 if (beginTag) {
                     searchStopper = styleEnd;
                     searchStopperLen = 7;
                     style = true;
                     parseSpecial(src);
                 }
-            } else if (tagName == HTMLNames::textarea()) {
+            } else if (tagName == HTMLTags::textarea()) {
                 if(beginTag) {
                     searchStopper = textareaEnd;
                     searchStopperLen = 10;
                     textarea = true;
                     parseSpecial(src);
                 }
-            } else if (tagName == HTMLNames::title()) {
+            } else if (tagName == HTMLTags::title()) {
                  if (beginTag) {
                     searchStopper = titleEnd;
                     searchStopperLen = 7;
                     title = true;
                     parseSpecial(src);
                 }
-            } else if (tagName == HTMLNames::xmp()) {
+            } else if (tagName == HTMLTags::xmp()) {
                 if (beginTag) {
                     searchStopper = xmpEnd;
                     searchStopperLen = 5;
                     xmp = true;
                     parseSpecial(src);
                 }
-            } else if (tagName == HTMLNames::select())
+            } else if (tagName == HTMLTags::select())
                 select = beginTag;
-            else if (tagName == HTMLNames::plaintext())
+            else if (tagName == HTMLTags::plaintext())
                 plaintext = beginTag;
             return; // Finished parsing tag!
         }

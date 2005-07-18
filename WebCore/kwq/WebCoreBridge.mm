@@ -97,7 +97,7 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::HTMLAttributes;
 using DOM::NodeImpl;
 using DOM::Position;
@@ -912,7 +912,7 @@ static NSView *viewForElement(ElementImpl *elementImpl)
 static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
-    if (node->hasTagName(HTMLNames::input())) {
+    if (node->hasTagName(HTMLTags::input())) {
         return static_cast<HTMLInputElementImpl *>(node);
     }
     return nil;
@@ -925,7 +925,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // maps.google.com crashes otherwise because it is an xslt file
     // that contains <form> elements that aren't in any namespace, so
     // they come out as generic CML elements
-    if (node && node->hasTagName(HTMLNames::form())) {
+    if (node && node->hasTagName(HTMLTags::form())) {
         return static_cast<HTMLFormElementImpl *>(node);
     }
     return nil;
@@ -1095,7 +1095,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString attr;
-            if (i->hasTagName(HTMLNames::object())) {
+            if (i->hasTagName(HTMLTags::object())) {
                 attr = i->getAttribute(HTMLAttributes::data());
             } else {
                 attr = i->getAttribute(HTMLAttributes::src());
@@ -1107,9 +1107,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString alt;
-            if (i->hasTagName(HTMLNames::input()))
+            if (i->hasTagName(HTMLTags::input()))
                 alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-            else if (i->hasTagName(HTMLNames::img()))
+            else if (i->hasTagName(HTMLTags::img()))
                 alt = static_cast<HTMLImageElementImpl *>(i)->altText();
             if (!alt.isNull()) {
                 QString altText = alt.string();

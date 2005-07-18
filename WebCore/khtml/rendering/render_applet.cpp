@@ -102,7 +102,7 @@ void RenderApplet::createWidgetIfNecessary()
                          m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
             NodeImpl *child = element()->firstChild();
             while (child) {
-                if (child->hasTagName(HTMLNames::param())) {
+                if (child->hasTagName(HTMLTags::param())) {
                     HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
                     m_args.insert(p->name().string(), p->value().string());
                 }

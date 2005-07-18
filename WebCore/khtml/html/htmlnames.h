@@ -319,7 +319,7 @@ class QualifiedName;
 // FIXME: Make this a namespace instead of a class.
 // FIXME: Rename this to HTMLTags
 // FIXME: Just make the xhtmlNamespaceURI() a global outside of any class
-class HTMLNames
+class HTMLTags
 {
 public:
 #if !KHTML_HTMLNAMES_HIDE_GLOBALS

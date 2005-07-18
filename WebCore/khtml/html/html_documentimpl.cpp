@@ -245,7 +245,7 @@ Tokenizer *HTMLDocumentImpl::createTokenizer()
 bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 {
     // ### support comments. etc as a child
-    return (newChild->hasTagName(HTMLNames::html()) || newChild->isCommentNode());
+    return (newChild->hasTagName(HTMLTags::html()) || newChild->isCommentNode());
 }
 
 ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)

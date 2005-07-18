@@ -48,7 +48,7 @@ using DOM::ElementImpl;
 using DOM::TagStatusForbidden;
 using DOM::HTMLAttributes;
 using DOM::HTMLElementImpl;
-using DOM::HTMLNames;
+using DOM::HTMLTags;
 using DOM::NamedAttrMapImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -176,10 +176,10 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
     switch (type) {
         case Node::TEXT_NODE: {
             if (node->parentNode()) {
-                if (node->parentNode()->hasTagName(HTMLNames::pre()) ||
-                    node->parentNode()->hasTagName(HTMLNames::script()) ||
-                    node->parentNode()->hasTagName(HTMLNames::style()) ||
-                    node->parentNode()->hasTagName(HTMLNames::textarea()))
+                if (node->parentNode()->hasTagName(HTMLTags::pre()) ||
+                    node->parentNode()->hasTagName(HTMLTags::script()) ||
+                    node->parentNode()->hasTagName(HTMLTags::style()) ||
+                    node->parentNode()->hasTagName(HTMLTags::textarea()))
                     return stringValueForRange(node, range);
             }
             QString markup = annotate ? escapeHTML(renderedText(node, range)) : escapeHTML(stringValueForRange(node, range));            
@@ -422,8 +422,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
             bool breakAtEnd = false;
             if (commonAncestorBlock == ancestor) {
                 // Include ancestors that are required to retain the appearance of the copied markup.
-                if (ancestor->hasTagName(HTMLNames::pre()) || ancestor->hasTagName(HTMLNames::table()) ||
-                    ancestor->hasTagName(HTMLNames::ol()) || ancestor->hasTagName(HTMLNames::ul())) {
+                if (ancestor->hasTagName(HTMLTags::pre()) || ancestor->hasTagName(HTMLTags::table()) ||
+                    ancestor->hasTagName(HTMLTags::ol()) || ancestor->hasTagName(HTMLTags::ul())) {
                     breakAtEnd = true;
                 } else {
                     break;
@@ -546,7 +546,7 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
             ElementImpl *element;
             if (s.isEmpty() && list.isEmpty()) {
                 // For last line, use the "magic BR" rather than a P.
-                element = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
+                element = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "br", exceptionCode);
                 ASSERT(exceptionCode == 0);
                 element->ref();
                 element->setAttribute(HTMLAttributes::classAttr(), AppleInterchangeNewline);            

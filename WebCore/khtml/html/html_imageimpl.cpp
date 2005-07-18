@@ -74,7 +74,7 @@ void HTMLImageLoader::updateFromElement()
         return;
 
     AtomicString attr;
-    if (element()->hasLocalName(HTMLNames::object()))
+    if (element()->hasLocalName(HTMLTags::object()))
         attr = element()->getAttribute(HTMLAttributes::data());
     else
         attr = element()->getAttribute(HTMLAttributes::src());
@@ -136,7 +136,7 @@ void HTMLImageLoader::notifyFinished(CachedObject* image)
 // -------------------------------------------------------------------------
 
 HTMLImageElementImpl::HTMLImageElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLElementImpl(HTMLNames::img(), doc), m_imageLoader(this), ismap(false), m_form(f)
+    : HTMLElementImpl(HTMLTags::img(), doc), m_imageLoader(this), ismap(false), m_form(f)
 {
     if (m_form)
         m_form->registerImgElement(this);
@@ -497,7 +497,7 @@ long HTMLImageElementImpl::y() const
 // -------------------------------------------------------------------------
 
 HTMLMapElementImpl::HTMLMapElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::map(), doc)
+    : HTMLElementImpl(HTMLTags::map(), doc)
 {
 }
 
@@ -510,7 +510,7 @@ HTMLMapElementImpl::~HTMLMapElementImpl()
 bool HTMLMapElementImpl::checkDTD(const NodeImpl* newChild)
 {
     // FIXME: This seems really odd, allowing only blocks inside map.
-    return newChild->hasTagName(HTMLNames::area()) || newChild->hasTagName(HTMLNames::script()) ||
+    return newChild->hasTagName(HTMLTags::area()) || newChild->hasTagName(HTMLTags::script()) ||
            inBlockTagList(newChild);
 }
 
@@ -531,7 +531,7 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
             continue;
         }
         
-        if (current->hasTagName(HTMLNames::area())) {
+        if (current->hasTagName(HTMLTags::area())) {
             //cout << "area found " << endl;
             HTMLAreaElementImpl* area = static_cast<HTMLAreaElementImpl*>(current);
             if (area->mapMouseEvent(x_,y_,width_,height_, info))
@@ -586,7 +586,7 @@ void HTMLMapElementImpl::setName(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
-    : HTMLAnchorElementImpl(HTMLNames::area(), doc)
+    : HTMLAnchorElementImpl(HTMLTags::area(), doc)
 {
     m_coords=0;
     m_coordsLen = 0;

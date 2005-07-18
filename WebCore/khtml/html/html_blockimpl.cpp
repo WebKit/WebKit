@@ -36,7 +36,7 @@ using namespace khtml;
 using namespace DOM;
 
 HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::blockquote(), doc)
+    : HTMLElementImpl(HTMLTags::blockquote(), doc)
 {
 }
 
@@ -57,7 +57,7 @@ void HTMLBlockquoteElementImpl::setCite(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLDivElementImpl::HTMLDivElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::div(), doc)
+    : HTMLElementImpl(HTMLTags::div(), doc)
 {
 }
 
@@ -103,7 +103,7 @@ void HTMLDivElementImpl::setAlign(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLHRElementImpl::HTMLHRElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::hr(), doc)
+    : HTMLElementImpl(HTMLTags::hr(), doc)
 {
 }
 
@@ -220,9 +220,9 @@ HTMLHeadingElementImpl::HTMLHeadingElementImpl(const QualifiedName& tagName, Doc
 
 bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    if (newChild->hasTagName(HTMLNames::h1()) || newChild->hasTagName(HTMLNames::h2()) ||
-        newChild->hasTagName(HTMLNames::h3()) || newChild->hasTagName(HTMLNames::h4()) ||
-        newChild->hasTagName(HTMLNames::h5()) || newChild->hasTagName(HTMLNames::h6()))
+    if (newChild->hasTagName(HTMLTags::h1()) || newChild->hasTagName(HTMLTags::h2()) ||
+        newChild->hasTagName(HTMLTags::h3()) || newChild->hasTagName(HTMLTags::h4()) ||
+        newChild->hasTagName(HTMLTags::h5()) || newChild->hasTagName(HTMLTags::h6()))
         return false;
 
     return inEitherTagList(newChild);
@@ -241,13 +241,13 @@ void HTMLHeadingElementImpl::setAlign(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLParagraphElementImpl::HTMLParagraphElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLNames::p(), doc)
+    : HTMLElementImpl(HTMLTags::p(), doc)
 {
 }
 
 bool HTMLParagraphElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(HTMLNames::table()));
+    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(HTMLTags::table()));
 }
 
 bool HTMLParagraphElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -308,7 +308,7 @@ void HTMLPreElementImpl::setWidth(long width)
 const int defaultMinimumDelay = 60;
 
 HTMLMarqueeElementImpl::HTMLMarqueeElementImpl(DocumentPtr *doc)
-: HTMLElementImpl(HTMLNames::marquee(), doc),
+: HTMLElementImpl(HTMLTags::marquee(), doc),
   m_minimumDelay(defaultMinimumDelay)
 {
 }
