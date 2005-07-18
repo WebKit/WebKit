@@ -1,5 +1,49 @@
 2005-07-18  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fixed these bugs:
+        <rdar://problem/4158121> context menu in PDF view should contain the selection-based items like Copy
+        <rdar://problem/4184691> WebPDFView should conform to the WebDocumentElement protocol
+        <rdar://problem/4184663> "Search in Spotlight" is present but dimmed in context menu for plain-text documents
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        added ASSERT and comments
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _searchWithGoogleFromMenu:]):
+        removed this method (now handled by WebView)
+        (-[WebHTMLView _searchWithSpotlightFromMenu:]):
+        ditto
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        removed validation for removed items. The validation wasn't necessary anyway, since we only put these items
+        in the menu in the case where they should be enabled.
+
+        * WebView.subproj/WebPDFView.h:
+        now conforms to WebDocumentElement protocol (which lets [WebView elementAtPoint:] work better)
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView copy:]):
+        added, hands off to PDFView, needed to enable Copy in context menu
+        (-[WebPDFView _pointIsInSelection:]):
+        new method, checks whether given point is in the selected bounds
+        (-[WebPDFView elementAtPoint:]):
+        add WebElementIsSelectedKey to returned element
+        (-[WebPDFView menuForEvent:]):
+        use actual point instead of dummy placeholder, now that we have code that pays attention to the point
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _searchWithGoogleFromMenu:]):
+        moved here from WebHTMLView so it will work for any documentView that conforms to WebDocumentText.
+        Rewrote slightly to be non-WebHTMLView-specific. (This menu item was always enabled in Safari because
+        Safari replaces its action, but it would not have been always enabled in other WebKit clients, though
+        it should have been.)
+        (-[WebView _searchWithSpotlightFromMenu:]):
+        moved here from WebHTMLView so it will work for any documentView that conforms to WebDocumentText.
+        Rewrote slightly to be non-WebHTMLView-specific.
+
+2005-07-18  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Richard Williamson.
         
         - fixed <rdar://problem/4184366> WebPDFView should conform to the WebDocumentSelection protocol

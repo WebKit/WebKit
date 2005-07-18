@@ -234,10 +234,20 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 #ifndef OMIT_TIGER_FEATURES
             // Add Tiger-only items that act on selected text. Google search needn't be Tiger-only technically,
             // but it's a new Tiger-only feature to have it in the context menu by default.
+            
+            // The Spotlight and Google items are implemented in WebView, and require that the
+            // current document view conforms to WebDocumentText
+            ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
             [menuItems addObject:[NSMenuItem separatorItem]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary]];
+
+            // FIXME 4184640: The Look Up in Dictionary item is only implemented in WebHTMLView, and so is present but
+            // dimmed for other cases where WebElementIsSelectedKey is present. It would probably 
+            // be better not to include it in the menu if the documentView isn't a WebHTMLView, but that could break 
+            // existing clients that have code that relies on it being present (unlikely for clients outside of Apple, 
+            // but Safari has such code).
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary]];            
             [menuItems addObject:[NSMenuItem separatorItem]];
 #endif
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];

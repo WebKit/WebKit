@@ -3004,4 +3004,45 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return responder;
 }
 
+- (void)_searchWithGoogleFromMenu:(id)sender
+{
+    id documentView = [[[self mainFrame] frameView] documentView];
+    if (![documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        return;
+    }
+    
+    NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
+    if ([selectedString length] == 0) {
+        return;
+    }
+    
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    NSMutableString *s = [selectedString mutableCopy];
+    const unichar nonBreakingSpaceCharacter = 0xA0;
+    NSString *nonBreakingSpaceString = [NSString stringWithCharacters:&nonBreakingSpaceCharacter length:1];
+    [s replaceOccurrencesOfString:nonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
+    [pasteboard setString:s forType:NSStringPboardType];
+    [s release];
+    
+    // FIXME: seems fragile to use the service by name, but this is what AppKit does
+    NSPerformService(@"Search With Google", pasteboard);
+}
+
+- (void)_searchWithSpotlightFromMenu:(id)sender
+{
+    id documentView = [[[self mainFrame] frameView] documentView];
+    if (![documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        return;
+    }
+    
+    NSString *selectedString = [(id <WebDocumentText>)documentView selectedString];
+    if ([selectedString length] == 0) {
+        return;
+    }
+
+    (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
+}
+
+
 @end

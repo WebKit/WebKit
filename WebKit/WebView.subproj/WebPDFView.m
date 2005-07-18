@@ -113,6 +113,11 @@ NSString *_NSPathForSystemFramework(NSString *framework);
     return PDFSubview;
 }
 
+- (void)copy:(id)sender
+{
+    [PDFSubview copy:sender];
+}
+
 #define TEMP_PREFIX "/tmp/XXXXXX-"
 #define OBJC_TEMP_PREFIX @"/tmp/XXXXXX-"
 
@@ -177,16 +182,27 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return [super hitTest:point];
 }
 
+- (BOOL)_pointIsInSelection:(NSPoint)point
+{
+    PDFPage *page = [PDFSubview pageForPoint:point nearest:NO];
+    if (page == nil) {
+        return NO;
+    }
+    
+    NSRect selectionRect = [PDFSubview convertRect:[[PDFSubview currentSelection] boundsForPage:page] fromPage:page];
+    
+    return NSPointInRect(point, selectionRect);
+}
+
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     WebFrame *frame = [dataSource webFrame];
     ASSERT(frame);
 
-    // FIXME 4158121: should determine whether the point is over a selection, and if so set WebElementIsSelectedKey
-    // as in WebTextView.m. Would need to convert coordinates, and make sure that the code that checks
-    // WebElementIsSelectedKey would work with PDF documents.
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        frame, WebElementFrameKey, nil];
+        frame, WebElementFrameKey, 
+        [NSNumber numberWithBool:[self _pointIsInSelection:point]], WebElementIsSelectedKey,
+        nil];
 }
 
 - (NSMutableArray *)_menuItemsFromPDFKitForEvent:(NSEvent *)theEvent
@@ -305,9 +321,7 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     // pass the items off to the WebKit context menu mechanism
     WebView *webView = [[dataSource webFrame] webView];
     ASSERT(webView);
-    // Currently clicks anywhere in the PDF view are treated the same, so we just pass NSZeroPoint;
-    // we implement elementAtPoint: here just to be slightly forward-looking.
-    NSMenu *menu = [webView _menuForElement:[self elementAtPoint:NSZeroPoint] defaultItems:items];
+    NSMenu *menu = [webView _menuForElement:[self elementAtPoint:[self convertPoint:[theEvent locationInWindow] fromView:nil]] defaultItems:items];
     
     // The delegate has now had the opportunity to add items to the standard PDF-related items, or to
     // remove or modify some of the PDF-related items. In 10.4, the PDF context menu did not go through 

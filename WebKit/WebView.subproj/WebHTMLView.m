@@ -1540,29 +1540,7 @@ static WebHTMLView *lastHitView = nil;
 }
 
 #ifndef OMIT_TIGER_FEATURES
-- (void)_searchWithGoogleFromMenu:(id)sender
-{
-    // This should only be called when there's a selection, but play it safe.
-    if (![self _hasSelection]) {
-        return;
-    }
-    
-    NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
-    if ([self writeSelectionToPasteboard:pboard types:[NSArray arrayWithObject:NSStringPboardType]]) {
-        // FIXME: seems fragile to use the service by name, but this is what AppKit does
-        NSPerformService(@"Search With Google", pboard);
-    }
-}
 
-- (void)_searchWithSpotlightFromMenu:(id)sender
-{
-    // This should only be called when there's a selection, but play it safe.
-    if (![self _hasSelection]) {
-        return;
-    }
-
-    (void)HISearchWindowShow((CFStringRef)[self selectedString], kNilOptions);
-}
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
     // This should only be called when there's a selection, but play it safe.
@@ -1986,9 +1964,7 @@ static WebHTMLView *lastHitView = nil;
         }
         return [self _canEdit];
 #ifndef OMIT_TIGER_FEATURES
-    } else if (action == @selector(_searchWithSpotlightFromMenu:)
-               || action == @selector(_searchWithGoogleFromMenu:)
-               || action == @selector(_lookUpInDictionaryFromMenu:)) {
+    } else if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
 #endif
     }
