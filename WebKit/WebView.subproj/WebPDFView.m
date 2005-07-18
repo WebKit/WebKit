@@ -31,10 +31,12 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebNSAttributedStringExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPDFView.h>
@@ -552,6 +554,51 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 - (void)deselectAll
 {
     [PDFSubview clearSelection];
+}
+
+- (NSRect)selectionRect
+{
+    NSRect result = NSZeroRect;
+    PDFSelection *selection = [PDFSubview currentSelection];
+    NSEnumerator *pages = [[selection pages] objectEnumerator];
+    PDFPage *page;
+    while ((page = [pages nextObject]) != nil) {
+        NSRect selectionOnPageInViewCoordinates = [PDFSubview convertRect:[selection boundsForPage:page] fromPage:page];
+        if (NSIsEmptyRect(result)) {
+            result = selectionOnPageInViewCoordinates;
+        } else {
+            result = NSUnionRect(result, selectionOnPageInViewCoordinates);
+        }
+    }
+    
+    return result;
+}
+
+- (NSArray *)pasteboardTypesForSelection
+{
+    return [NSArray arrayWithObjects:NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+}
+
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    NSAttributedString *attributedString = [self selectedAttributedString];
+    
+    if ([types containsObject:NSRTFDPboardType]) {
+        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+    }        
+    
+    if ([types containsObject:NSRTFPboardType]) {
+        if ([attributedString containsAttachments]) {
+            attributedString = [attributedString _web_attributedStringByStrippingAttachmentCharacters];
+        }
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFData forType:NSRTFPboardType];
+    }
+    
+    if ([types containsObject:NSStringPboardType]) {
+        [pasteboard setString:[self selectedString] forType:NSStringPboardType];
+    }
 }
 
 @end

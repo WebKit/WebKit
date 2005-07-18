@@ -20,31 +20,45 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OMIT_TIGER_FEATURES
+#import "WebNSAttributedStringExtras.h"
 
-@class PDFView;
-@class WebDataSource;
 
-@protocol _web_WebDocumentTextSizing;
-@protocol WebDocumentSelection;
+@implementation NSAttributedString (WebKitExtras)
 
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText, _web_WebDocumentTextSizing, WebDocumentSelection>
+- (NSAttributedString *)_web_attributedStringByStrippingAttachmentCharacters
 {
-    PDFView *PDFSubview;
-    WebDataSource *dataSource;
-    NSString *path;
-    BOOL written;
+    // This code was originally copied from NSTextView
+    NSRange attachmentRange;
+    NSString *originalString = [self string];
+    static NSString *attachmentCharString = nil;
+    
+    if (!attachmentCharString) {
+        unichar chars[2];
+        if (!attachmentCharString) {
+            chars[0] = NSAttachmentCharacter;
+            chars[1] = 0;
+            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
+        }
+    }
+    
+    attachmentRange = [originalString rangeOfString:attachmentCharString];
+    if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+        NSMutableAttributedString *newAttributedString = [[self mutableCopyWithZone:NULL] autorelease];
+        
+        while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+            [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
+            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
+        }
+        return newAttributedString;
+    }
+    
+    return self;
 }
 
-+ (NSBundle *)PDFKitBundle;
-- (PDFView *)PDFSubview;
-
 @end
-
-#endif  // OMIT_TIGER_FEATURES

@@ -48,6 +48,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNSAttributedStringExtras.h>
 #import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSFileManagerExtras.h>
 #import <WebKit/WebNSImageExtras.h>
@@ -573,36 +574,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return hitView;
 }
 
-// This method is copied from NSTextView
-- (NSAttributedString *)_stripAttachmentCharactersFromAttributedString:(NSAttributedString *)originalAttributedString
-{
-    NSRange attachmentRange;
-    NSString *originalString = [originalAttributedString string];
-    static NSString *attachmentCharString = nil;
-    
-    if (!attachmentCharString) {
-        unichar chars[2];
-        if (!attachmentCharString) {
-            chars[0] = NSAttachmentCharacter;
-            chars[1] = 0;
-            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
-        }
-    }
-    
-    attachmentRange = [originalString rangeOfString:attachmentCharString];
-    if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-        NSMutableAttributedString *newAttributedString = [[originalAttributedString mutableCopyWithZone:NULL] autorelease];
-        
-        while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
-            [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
-            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
-        }
-        return newAttributedString;
-    } else {
-        return originalAttributedString;
-    }
-}
-
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString
 {
     // Put HTML on the pasteboard.
@@ -624,7 +595,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
             attributedString = [self selectedAttributedString];
         }
         if ([attributedString containsAttachments]) {
-            attributedString = [self _stripAttachmentCharactersFromAttributedString:attributedString];
+            attributedString = [attributedString _web_attributedStringByStrippingAttachmentCharacters];
         }
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [pasteboard setData:RTFData forType:NSRTFPboardType];

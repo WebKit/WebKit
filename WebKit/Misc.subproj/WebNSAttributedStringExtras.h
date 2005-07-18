@@ -20,31 +20,14 @@
  * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+    * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OMIT_TIGER_FEATURES
+@interface NSAttributedString (WebKitExtras)
 
-@class PDFView;
-@class WebDataSource;
-
-@protocol _web_WebDocumentTextSizing;
-@protocol WebDocumentSelection;
-
-@interface WebPDFView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText, _web_WebDocumentTextSizing, WebDocumentSelection>
-{
-    PDFView *PDFSubview;
-    WebDataSource *dataSource;
-    NSString *path;
-    BOOL written;
-}
-
-+ (NSBundle *)PDFKitBundle;
-- (PDFView *)PDFSubview;
+- (NSAttributedString *)_web_attributedStringByStrippingAttachmentCharacters;
 
 @end
-
-#endif  // OMIT_TIGER_FEATURES

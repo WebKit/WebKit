@@ -1,5 +1,33 @@
 2005-07-18  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Richard Williamson.
+        
+        - fixed <rdar://problem/4184366> WebPDFView should conform to the WebDocumentSelection protocol
+
+        * Misc.subproj/WebNSAttributedStringExtras.h: Added.
+        * Misc.subproj/WebNSAttributedStringExtras.m: Added.
+        (-[NSAttributedString _web_attributedStringByStrippingAttachmentCharacters]):
+        New category on NSAttributedString, initially contains this one method that had been in WebHTMLView.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        now uses _web_attributedStringByStrippingAttachmentCharacters
+        
+        * WebView.subproj/WebPDFView.h:
+        now conforms to WebDocumentSelection protocol
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView selectionRect]):
+        new, implementation of WebDocumentSelection protocol method
+        (-[WebPDFView pasteboardTypesForSelection]):
+        ditto
+        (-[WebPDFView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        ditto
+
+        * WebKit.pbproj/project.pbxproj:
+        updated for new files
+
+2005-07-18  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Chris Blumenberg.
         
         - some refactoring cleanup in the selection/searching code
