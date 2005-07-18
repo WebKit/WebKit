@@ -1,3 +1,17 @@
+2005-07-18  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4008
+        Error objects report incorrect length
+        
+        Reviewed by darin.
+
+        * kjs/error_object.cpp: Error objects now include a length property
+        (ErrorObjectImp::ErrorObjectImp):
+
+        * tests/mozilla/expected.html: updated expected results to reflect fix
+        * tests/mozilla/js1_5/Exceptions/regress-123002.js: test now expects 
+        ecma compliant results
+
 2005-07-15  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in KDE fixes for http://bugzilla.opendarwin.org/show_bug.cgi?id=3601

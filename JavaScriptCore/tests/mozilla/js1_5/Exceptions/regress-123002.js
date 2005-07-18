@@ -71,7 +71,9 @@ var expectedvalues = [];
 /*
  * Are we in Rhino or SpiderMonkey?
  */
-var LENGTH_EXPECTED = inRhino()? LENGTH_RHINO : LENGTH_SPIDERMONKEY; 
+// var LENGTH_EXPECTED = inRhino()? LENGTH_RHINO : LENGTH_SPIDERMONKEY; 
+// ECMA spec says length should be 1
+var LENGTH_EXPECTED = 1; 
 
 /*
  * The various NativeError objects; see ECMA-262 Edition 3, Section 15.11.6
