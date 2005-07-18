@@ -628,8 +628,6 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (!m_typingStyle)
-        return;
     CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
     endingStyle.diff(m_typingStyle);
     if (!m_typingStyle->length()) {
@@ -714,6 +712,16 @@ void DeleteSelectionCommand::doApply()
         clearTransientState();
         return;
     }
+
+    // if all we are deleting is complete paragraph(s), we need to make
+    // sure a blank paragraph remains when we are done
+    bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart, VP_DEFAULT_AFFINITY)) &&
+                               isEndOfParagraph(VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY));
+
+    // Delete any text that may hinder our ability to fixup whitespace after the detele
+    deleteInsignificantTextDownstream(m_trailingWhitespace);    
+
+    saveTypingStyleState();
     
     // deleting just a BR is handled specially, at least because we do not
     // want to replace it with a placeholder BR!
@@ -725,16 +733,6 @@ void DeleteSelectionCommand::doApply()
         rebalanceWhitespace();
         return;
     }
-
-    // if all we are deleting is complete paragraph(s), we need to make
-    // sure a blank paragraph remains when we are done
-    bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart, VP_DEFAULT_AFFINITY)) &&
-                               isEndOfParagraph(VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY));
-
-    // Delete any text that may hinder our ability to fixup whitespace after the detele
-    deleteInsignificantTextDownstream(m_trailingWhitespace);    
-
-    saveTypingStyleState();
     
     insertPlaceholderForAncestorBlockContent();
     handleGeneralDelete();

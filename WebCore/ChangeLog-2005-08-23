@@ -1,3 +1,18 @@
+2005-07-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        Test cases added: None.  Existing tests were failing.
+
+        Fix crash caused by my changes in revision 1.6 of khtml/editing/delete_selection_command.cpp.
+        
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        Remove workaround that was added for missing typing style.
+        
+        (khtml::DeleteSelectionCommand::doApply):
+        Make sure to call saveTypingStyleState() before handleSpecialCaseBRDelete().
+
 2005-07-18  David Hyatt  <hyatt@apple.com>
 
 	Rename HTMLNames -> HTMLTags.  Purely mechanical (done in XCode)
