@@ -23,7 +23,6 @@
 
 #include "dom/html_misc.h"
 #include "html/html_miscimpl.h"
-#include "misc/htmlhashes.h"
 
 using namespace DOM;
 

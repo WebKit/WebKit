@@ -41,7 +41,6 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "css/cssstyleselector.h"
-#include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
 #include "khtml_printsettings.h"

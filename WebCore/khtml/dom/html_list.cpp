@@ -23,7 +23,6 @@
 
 #include "dom/html_list.h"
 #include "html/html_listimpl.h"
-#include "misc/htmlhashes.h"
 
 using namespace DOM;
 

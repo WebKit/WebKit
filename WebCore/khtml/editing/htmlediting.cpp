@@ -41,7 +41,6 @@
 #include "html_elementimpl.h"
 #include "html_imageimpl.h"
 #include "html_interchange.h"
-#include "htmlattrs.h"
 #include "htmlnames.h"
 #include "khtml_part.h"
 #include "khtml_part.h"

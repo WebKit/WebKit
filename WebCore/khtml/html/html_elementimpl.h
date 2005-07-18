@@ -45,7 +45,7 @@ public:
 
     virtual DOMString nodeName() const;
 
-    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl* attr);
 
     virtual NodeImpl* cloneNode(bool deep);

@@ -30,7 +30,6 @@
 #include "dom/dom_exception.h"
 #include "dom/dom_node.h"
 
-#include "misc/htmlhashes.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
 
@@ -371,50 +370,50 @@ void HTMLTableElementImpl::childrenChanged()
     }
 } 
 
-bool HTMLTableElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLTableElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch(attr) {
-        case ATTR_BACKGROUND:
-            result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
-            return false;
-        case ATTR_WIDTH:
-        case ATTR_HEIGHT:
-        case ATTR_BGCOLOR:
-        case ATTR_CELLSPACING:
-        case ATTR_VSPACE:
-        case ATTR_HSPACE:
-        case ATTR_VALIGN:
-            result = eUniversal;
-            return false;
-        case ATTR_BORDERCOLOR:
-            result = eUniversal;
-            return true;
-        case ATTR_BORDER:
-            result = eTable;
-            return true;
-        case ATTR_ALIGN:
-            result = eTable;
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::background()) {
+        result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+        return false;
     }
-    return HTMLElementImpl::mapToEntry(attr, result);
+    
+    if (attrName == HTMLAttributes::width() ||
+        attrName == HTMLAttributes::height() ||
+        attrName == HTMLAttributes::bgcolor() ||
+        attrName == HTMLAttributes::cellspacing() ||
+        attrName == HTMLAttributes::vspace() ||
+        attrName == HTMLAttributes::hspace() ||
+        attrName == HTMLAttributes::valign()) {
+        result = eUniversal;
+        return false;
+    }
+    
+    if (attrName == HTMLAttributes::bordercolor()) {
+        result = eUniversal;
+        return true;
+    }
+    
+    if (attrName == HTMLAttributes::border()) {
+        result = eTable;
+        return true;
+    }
+    
+    if (attrName == HTMLAttributes::align()) {
+        result = eTable;
+        return false;
+    } 
+    
+    return HTMLElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_WIDTH:
+    if (attr->name() == HTMLAttributes::width()) {
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-        break;
-    case ATTR_HEIGHT:
+    } else if (attr->name() == HTMLAttributes::height()) {
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-        break;
-    case ATTR_BORDER:
-    {
+    } else if (attr->name() == HTMLAttributes::border())  {
         m_noBorder = true;
-        if (attr->isNull()) break;
         if (attr->decl()) {
             CSSValueImpl* val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
             if (val) {
@@ -426,7 +425,7 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 val->deref();
             }
         }
-        else {
+        else if (!attr->isNull()) {
             // ### this needs more work, as the border value is not only
             //     the border of the box, but also between the cells
             int border = 0;
@@ -448,12 +447,9 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         else
             frame = Box, rules = All;
 #endif
-        break;
-    }
-    case ATTR_BGCOLOR:
+    } else if (attr->name() == HTMLAttributes::bgcolor()) {
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
-        break;
-    case ATTR_BORDERCOLOR:
+    } else if (attr->name() == HTMLAttributes::bordercolor()) {
         m_solid = attr->decl();
         if (!attr->decl() && !attr->isEmpty()) {
             addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
@@ -463,15 +459,11 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
             m_solid = true;
         }
-        break;
-    case ATTR_BACKGROUND:
-    {
+    } else if (attr->name() == HTMLAttributes::background()) {
         QString url = khtml::parseURL( attr->value() ).string();
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
-        break;
-    }
-    case ATTR_FRAME:
+    } else if (attr->name() == HTMLAttributes::frame()) {
 #if 0
         if ( strcasecmp( attr->value(), "void" ) == 0 )
             frame = Void;
@@ -492,8 +484,7 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         else if ( strcasecmp( attr->value(), "rhs" ) == 0 )
             frame = Rhs;
 #endif
-        break;
-    case ATTR_RULES:
+    } else if (attr->name() == HTMLAttributes::rules()) {
 #if 0
         if ( strcasecmp( attr->value(), "none" ) == 0 )
             rules = None;
@@ -506,12 +497,10 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         else if ( strcasecmp( attr->value(), "all" ) == 0 )
             rules = All;
 #endif
-        break;
-   case ATTR_CELLSPACING:
+    } else if (attr->name() == HTMLAttributes::cellspacing()) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_BORDER_SPACING, attr->value());
-        break;
-    case ATTR_CELLPADDING:
+    } else if (attr->name() == HTMLAttributes::cellpadding()) {
         if (!attr->value().isEmpty())
             padding = kMax( 0, attr->value().toInt() );
         else
@@ -521,45 +510,34 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 	    if (!m_render->needsLayout())
 	        m_render->setNeedsLayout(true);
         }
-        break;
-    case ATTR_COLS:
-    {
+    } else if (attr->name() == HTMLAttributes::cols()) {
         // ###
 #if 0
         int c;
         c = attr->val()->toInt();
         addColumns(c-totalCols);
-        break;
 #endif
-    }
-    case ATTR_VSPACE:
+    } else if (attr->name() == HTMLAttributes::vspace()) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-        break;
-    case ATTR_HSPACE:
+    } else if (attr->name() == HTMLAttributes::hspace()) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-        break;
-    case ATTR_ALIGN:
+    } else if (attr->name() == HTMLAttributes::align()) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_FLOAT, attr->value());
-        break;
-    case ATTR_VALIGN:
+    } else if (attr->name() == HTMLAttributes::valign()) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
-        break;
-    case ATTR_NOSAVE:
-	break;
-    default:
+    } else
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
 {
     if (m_noBorder)
         return 0;
-    MappedAttributeImpl attr(ATTR_TABLEBORDER, m_solid ? "solid" : "outset");
+    MappedAttributeImpl attr(HTMLAttributes::tableborder(), m_solid ? "solid" : "outset");
     CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclarationImpl(0);
@@ -578,14 +556,14 @@ CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDe
         setMappedAttributeDecl(ePersistent, &attr, decl);
         decl->setParent(0);
         decl->setNode(0);
-        decl->setMappedState(ePersistent, attr.id(), attr.value());
+        decl->setMappedState(ePersistent, attr.name(), attr.value());
     }
     return decl;
 }
 
 CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
 {
-    MappedAttributeImpl attr(ATTR_CELLBORDER, m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
+    MappedAttributeImpl attr(HTMLAttributes::cellborder(), m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
     CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
         decl = new CSSMappedAttributeDeclarationImpl(0);
@@ -610,7 +588,7 @@ CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
         setMappedAttributeDecl(ePersistent, &attr, decl);
         decl->setParent(0);
         decl->setNode(0);
-        decl->setMappedState(ePersistent, attr.id(), attr.value());
+        decl->setMappedState(ePersistent, attr.name(), attr.value());
     }
     return decl;
 }
@@ -625,7 +603,7 @@ void HTMLTableElementImpl::attach()
 
 bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->id() == ATTR_BACKGROUND;
+    return attr->name() == HTMLAttributes::background();
 }
 
 SharedPtr<HTMLCollectionImpl> HTMLTableElementImpl::rows()
@@ -640,133 +618,128 @@ SharedPtr<HTMLCollectionImpl> HTMLTableElementImpl::tBodies()
 
 DOMString HTMLTableElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLTableElementImpl::bgColor() const
 {
-    return getAttribute(ATTR_BGCOLOR);
+    return getAttribute(HTMLAttributes::bgcolor());
 }
 
 void HTMLTableElementImpl::setBgColor(const DOMString &value)
 {
-    setAttribute(ATTR_BGCOLOR, value);
+    setAttribute(HTMLAttributes::bgcolor(), value);
 }
 
 DOMString HTMLTableElementImpl::border() const
 {
-    return getAttribute(ATTR_BORDER);
+    return getAttribute(HTMLAttributes::border());
 }
 
 void HTMLTableElementImpl::setBorder(const DOMString &value)
 {
-    setAttribute(ATTR_BORDER, value);
+    setAttribute(HTMLAttributes::border(), value);
 }
 
 DOMString HTMLTableElementImpl::cellPadding() const
 {
-    return getAttribute(ATTR_CELLPADDING);
+    return getAttribute(HTMLAttributes::cellpadding());
 }
 
 void HTMLTableElementImpl::setCellPadding(const DOMString &value)
 {
-    setAttribute(ATTR_CELLPADDING, value);
+    setAttribute(HTMLAttributes::cellpadding(), value);
 }
 
 DOMString HTMLTableElementImpl::cellSpacing() const
 {
-    return getAttribute(ATTR_CELLSPACING);
+    return getAttribute(HTMLAttributes::cellspacing());
 }
 
 void HTMLTableElementImpl::setCellSpacing(const DOMString &value)
 {
-    setAttribute(ATTR_CELLSPACING, value);
+    setAttribute(HTMLAttributes::cellspacing(), value);
 }
 
 DOMString HTMLTableElementImpl::frame() const
 {
-    return getAttribute(ATTR_FRAME);
+    return getAttribute(HTMLAttributes::frame());
 }
 
 void HTMLTableElementImpl::setFrame(const DOMString &value)
 {
-    setAttribute(ATTR_FRAME, value);
+    setAttribute(HTMLAttributes::frame(), value);
 }
 
 DOMString HTMLTableElementImpl::rules() const
 {
-    return getAttribute(ATTR_RULES);
+    return getAttribute(HTMLAttributes::rules());
 }
 
 void HTMLTableElementImpl::setRules(const DOMString &value)
 {
-    setAttribute(ATTR_RULES, value);
+    setAttribute(HTMLAttributes::rules(), value);
 }
 
 DOMString HTMLTableElementImpl::summary() const
 {
-    return getAttribute(ATTR_SUMMARY);
+    return getAttribute(HTMLAttributes::summary());
 }
 
 void HTMLTableElementImpl::setSummary(const DOMString &value)
 {
-    setAttribute(ATTR_SUMMARY, value);
+    setAttribute(HTMLAttributes::summary(), value);
 }
 
 DOMString HTMLTableElementImpl::width() const
 {
-    return getAttribute(ATTR_WIDTH);
+    return getAttribute(HTMLAttributes::width());
 }
 
 void HTMLTableElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(ATTR_WIDTH, value);
+    setAttribute(HTMLAttributes::width(), value);
 }
 
 // --------------------------------------------------------------------------
 
-bool HTMLTablePartElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLTablePartElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch(attr) {
-        case ATTR_BACKGROUND:
-            result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
-            return false;
-        case ATTR_BGCOLOR:
-        case ATTR_BORDERCOLOR:
-        case ATTR_VALIGN:
-        case ATTR_HEIGHT:
-            result = eUniversal;
-            return false;
-        case ATTR_ALIGN:
-            result = eCell; // All table parts will just share in the TD space.
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::background()) {
+        result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
+        return false;
     }
-    return HTMLElementImpl::mapToEntry(attr, result);
+    
+    if (attrName == HTMLAttributes::bgcolor() ||
+        attrName == HTMLAttributes::bordercolor() ||
+        attrName == HTMLAttributes::valign() ||
+        attrName == HTMLAttributes::height()) {
+        result = eUniversal;
+        return false;
+    }
+    
+    if (attrName == HTMLAttributes::align()) {
+        result = eCell; // All table parts will just share in the TD space.
+        return false;
+    }
+
+    return HTMLElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_BGCOLOR:
-        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value() );
-        break;
-    case ATTR_BACKGROUND:
-    {
+    if (attr->name() == HTMLAttributes::bgcolor()) {
+        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
+    } else if (attr->name() == HTMLAttributes::background()) {
         QString url = khtml::parseURL( attr->value() ).string();
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
-        break;
-    }
-    case ATTR_BORDERCOLOR:
-    {
+    } else if (attr->name() == HTMLAttributes::bordercolor()) {
         if (!attr->value().isEmpty()) {
             addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
             addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
@@ -774,16 +747,10 @@ void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
             addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
         }
-        break;
-    }
-    case ATTR_VALIGN:
-    {
+    } else if (attr->name() == HTMLAttributes::valign()) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
-        break;
-    }
-    case ATTR_ALIGN:
-    {
+    } else if (attr->name() == HTMLAttributes::align()) {
         DOMString v = attr->value();
         if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
@@ -795,17 +762,11 @@ void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_RIGHT);
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
-        break;
-    }
-    case ATTR_HEIGHT:
+    } else if (attr->name() == HTMLAttributes::height()) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-        break;
-    case ATTR_NOSAVE:
-	break;
-    default:
+    } else
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 // -------------------------------------------------------------------------
@@ -894,42 +855,42 @@ int HTMLTableSectionElementImpl::numRows() const
 
 DOMString HTMLTableSectionElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableSectionElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLTableSectionElementImpl::ch() const
 {
-    return getAttribute(ATTR_CHAR);
+    return getAttribute(HTMLAttributes::charAttr());
 }
 
 void HTMLTableSectionElementImpl::setCh(const DOMString &value)
 {
-    setAttribute(ATTR_CHAR, value);
+    setAttribute(HTMLAttributes::charAttr(), value);
 }
 
 DOMString HTMLTableSectionElementImpl::chOff() const
 {
-    return getAttribute(ATTR_CHAROFF);
+    return getAttribute(HTMLAttributes::charoff());
 }
 
 void HTMLTableSectionElementImpl::setChOff(const DOMString &value)
 {
-    setAttribute(ATTR_CHAROFF, value);
+    setAttribute(HTMLAttributes::charoff(), value);
 }
 
 DOMString HTMLTableSectionElementImpl::vAlign() const
 {
-    return getAttribute(ATTR_VALIGN);
+    return getAttribute(HTMLAttributes::valign());
 }
 
 void HTMLTableSectionElementImpl::setVAlign(const DOMString &value)
 {
-    setAttribute(ATTR_VALIGN, value);
+    setAttribute(HTMLAttributes::valign(), value);
 }
 
 SharedPtr<HTMLCollectionImpl> HTMLTableSectionElementImpl::rows()
@@ -1061,52 +1022,52 @@ void HTMLTableRowElementImpl::setCells(HTMLCollectionImpl *, int &exception)
 
 DOMString HTMLTableRowElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableRowElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLTableRowElementImpl::bgColor() const
 {
-    return getAttribute(ATTR_BGCOLOR);
+    return getAttribute(HTMLAttributes::bgcolor());
 }
 
 void HTMLTableRowElementImpl::setBgColor(const DOMString &value)
 {
-    setAttribute(ATTR_BGCOLOR, value);
+    setAttribute(HTMLAttributes::bgcolor(), value);
 }
 
 DOMString HTMLTableRowElementImpl::ch() const
 {
-    return getAttribute(ATTR_CHAR);
+    return getAttribute(HTMLAttributes::charAttr());
 }
 
 void HTMLTableRowElementImpl::setCh(const DOMString &value)
 {
-    setAttribute(ATTR_CHAR, value);
+    setAttribute(HTMLAttributes::charAttr(), value);
 }
 
 DOMString HTMLTableRowElementImpl::chOff() const
 {
-    return getAttribute(ATTR_CHAROFF);
+    return getAttribute(HTMLAttributes::charoff());
 }
 
 void HTMLTableRowElementImpl::setChOff(const DOMString &value)
 {
-    setAttribute(ATTR_CHAROFF, value);
+    setAttribute(HTMLAttributes::charoff(), value);
 }
 
 DOMString HTMLTableRowElementImpl::vAlign() const
 {
-    return getAttribute(ATTR_VALIGN);
+    return getAttribute(HTMLAttributes::valign());
 }
 
 void HTMLTableRowElementImpl::setVAlign(const DOMString &value)
 {
-    setAttribute(ATTR_VALIGN, value);
+    setAttribute(HTMLAttributes::valign(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -1136,61 +1097,51 @@ long HTMLTableCellElementImpl::cellIndex() const
     return index;
 }
 
-bool HTMLTableCellElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLTableCellElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch(attr) {
-        case ATTR_NOWRAP:
-            result = eUniversal;
-            return false;
-        case ATTR_WIDTH:
-        case ATTR_HEIGHT:
-            result = eCell; // Because of the quirky behavior of ignoring 0 values, cells are special.
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::nowrap()) {
+        result = eUniversal;
+        return false;
     }
-    return HTMLTablePartElementImpl::mapToEntry(attr, result);
+    
+    if (attrName == HTMLAttributes::width() ||
+        attrName == HTMLAttributes::height()) {
+        result = eCell; // Because of the quirky behavior of ignoring 0 values, cells are special.
+        return false;
+    }
+
+    return HTMLTablePartElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLTableCellElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_ROWSPAN:
+    if (attr->name() == HTMLAttributes::rowspan()) {
         rSpan = !attr->isNull() ? attr->value().toInt() : 1;
         if (rSpan < 1) rSpan = 1;
         if (renderer() && renderer()->isTableCell())
             static_cast<RenderTableCell*>(renderer())->updateFromElement();
-        break;
-    case ATTR_COLSPAN:
+    } else if (attr->name() == HTMLAttributes::colspan()) {
         cSpan = !attr->isNull() ? attr->value().toInt() : 1;
         if (cSpan < 1) cSpan = 1;
         if (renderer() && renderer()->isTableCell())
             static_cast<RenderTableCell*>(renderer())->updateFromElement();
-        break;
-    case ATTR_NOWRAP:
+    } else if (attr->name() == HTMLAttributes::nowrap()) {
         if (!attr->isNull())
             addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL__KHTML_NOWRAP);
-        break;
-    case ATTR_WIDTH:
+    } else if (attr->name() == HTMLAttributes::width()) {
         if (!attr->value().isEmpty()) {
             int widthInt = attr->value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addCSSLength( attr, CSS_PROP_WIDTH, attr->value() );
+                addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
         }
-        break;
-    case ATTR_HEIGHT:
+    } else if (attr->name() == HTMLAttributes::height()) {
         if (!attr->value().isEmpty()) {
             int heightInt = attr->value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addCSSLength( attr, CSS_PROP_HEIGHT, attr->value() );
+                addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
         }
-        break;
-    case ATTR_NOSAVE:
-	break;
-    default:
+    } else
         HTMLTablePartElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 // used by table cells to share style decls created by the enclosing table.
@@ -1210,137 +1161,137 @@ CSSMutableStyleDeclarationImpl* HTMLTableCellElementImpl::additionalAttributeSty
 
 bool HTMLTableCellElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->id() == ATTR_BACKGROUND;
+    return attr->name() == HTMLAttributes::background();
 }
 
 DOMString HTMLTableCellElementImpl::abbr() const
 {
-    return getAttribute(ATTR_ABBR);
+    return getAttribute(HTMLAttributes::abbr());
 }
 
 void HTMLTableCellElementImpl::setAbbr(const DOMString &value)
 {
-    setAttribute(ATTR_ABBR, value);
+    setAttribute(HTMLAttributes::abbr(), value);
 }
 
 DOMString HTMLTableCellElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableCellElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLTableCellElementImpl::axis() const
 {
-    return getAttribute(ATTR_AXIS);
+    return getAttribute(HTMLAttributes::axis());
 }
 
 void HTMLTableCellElementImpl::setAxis(const DOMString &value)
 {
-    setAttribute(ATTR_AXIS, value);
+    setAttribute(HTMLAttributes::axis(), value);
 }
 
 DOMString HTMLTableCellElementImpl::bgColor() const
 {
-    return getAttribute(ATTR_BGCOLOR);
+    return getAttribute(HTMLAttributes::bgcolor());
 }
 
 void HTMLTableCellElementImpl::setBgColor(const DOMString &value)
 {
-    setAttribute(ATTR_BGCOLOR, value);
+    setAttribute(HTMLAttributes::bgcolor(), value);
 }
 
 DOMString HTMLTableCellElementImpl::ch() const
 {
-    return getAttribute(ATTR_CHAR);
+    return getAttribute(HTMLAttributes::charAttr());
 }
 
 void HTMLTableCellElementImpl::setCh(const DOMString &value)
 {
-    setAttribute(ATTR_CHAR, value);
+    setAttribute(HTMLAttributes::charAttr(), value);
 }
 
 DOMString HTMLTableCellElementImpl::chOff() const
 {
-    return getAttribute(ATTR_CHAROFF);
+    return getAttribute(HTMLAttributes::charoff());
 }
 
 void HTMLTableCellElementImpl::setChOff(const DOMString &value)
 {
-    setAttribute(ATTR_CHAROFF, value);
+    setAttribute(HTMLAttributes::charoff(), value);
 }
 
 void HTMLTableCellElementImpl::setColSpan(long n)
 {
-    setAttribute(ATTR_COLSPAN, QString::number(n));
+    setAttribute(HTMLAttributes::colspan(), QString::number(n));
 }
 
 DOMString HTMLTableCellElementImpl::headers() const
 {
-    return getAttribute(ATTR_HEADERS);
+    return getAttribute(HTMLAttributes::headers());
 }
 
 void HTMLTableCellElementImpl::setHeaders(const DOMString &value)
 {
-    setAttribute(ATTR_HEADERS, value);
+    setAttribute(HTMLAttributes::headers(), value);
 }
 
 DOMString HTMLTableCellElementImpl::height() const
 {
-    return getAttribute(ATTR_HEIGHT);
+    return getAttribute(HTMLAttributes::height());
 }
 
 void HTMLTableCellElementImpl::setHeight(const DOMString &value)
 {
-    setAttribute(ATTR_HEIGHT, value);
+    setAttribute(HTMLAttributes::height(), value);
 }
 
 bool HTMLTableCellElementImpl::noWrap() const
 {
-    return !getAttribute(ATTR_NOWRAP).isNull();
+    return !getAttribute(HTMLAttributes::nowrap()).isNull();
 }
 
 void HTMLTableCellElementImpl::setNoWrap(bool b)
 {
-    setAttribute(ATTR_NOWRAP, b ? "" : 0);
+    setAttribute(HTMLAttributes::nowrap(), b ? "" : 0);
 }
 
 void HTMLTableCellElementImpl::setRowSpan(long n)
 {
-    setAttribute(ATTR_ROWSPAN, QString::number(n));
+    setAttribute(HTMLAttributes::rowspan(), QString::number(n));
 }
 
 DOMString HTMLTableCellElementImpl::scope() const
 {
-    return getAttribute(ATTR_SCOPE);
+    return getAttribute(HTMLAttributes::scope());
 }
 
 void HTMLTableCellElementImpl::setScope(const DOMString &value)
 {
-    setAttribute(ATTR_SCOPE, value);
+    setAttribute(HTMLAttributes::scope(), value);
 }
 
 DOMString HTMLTableCellElementImpl::vAlign() const
 {
-    return getAttribute(ATTR_VALIGN);
+    return getAttribute(HTMLAttributes::valign());
 }
 
 void HTMLTableCellElementImpl::setVAlign(const DOMString &value)
 {
-    setAttribute(ATTR_VALIGN, value);
+    setAttribute(HTMLAttributes::valign(), value);
 }
 
 DOMString HTMLTableCellElementImpl::width() const
 {
-    return getAttribute(ATTR_WIDTH);
+    return getAttribute(HTMLAttributes::width());
 }
 
 void HTMLTableCellElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(ATTR_WIDTH, value);
+    setAttribute(HTMLAttributes::width(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -1351,124 +1302,113 @@ HTMLTableColElementImpl::HTMLTableColElementImpl(const QualifiedName& tagName, D
     _span = (tagName.matches(HTMLNames::colgroup()) ? 0 : 1);
 }
 
-bool HTMLTableColElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLTableColElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch(attr) {
-        case ATTR_WIDTH:
-            result = eUniversal;
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::width()) {
+        result = eUniversal;
+        return false;
     }
-    return HTMLTablePartElementImpl::mapToEntry(attr, result);
+
+    return HTMLTablePartElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLTableColElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_SPAN:
+    if (attr->name() == HTMLAttributes::span()) {
         _span = !attr->isNull() ? attr->value().toInt() : 1;
         if (renderer() && renderer()->isTableCol())
             static_cast<RenderTableCol*>(renderer())->updateFromElement();
-        break;
-    case ATTR_WIDTH:
+    } else if (attr->name() == HTMLAttributes::width()) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-        break;
-    default:
+    } else
         HTMLTablePartElementImpl::parseMappedAttribute(attr);
-    }
-
 }
 
 DOMString HTMLTableColElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableColElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLTableColElementImpl::ch() const
 {
-    return getAttribute(ATTR_CHAR);
+    return getAttribute(HTMLAttributes::charAttr());
 }
 
 void HTMLTableColElementImpl::setCh(const DOMString &value)
 {
-    setAttribute(ATTR_CHAR, value);
+    setAttribute(HTMLAttributes::charAttr(), value);
 }
 
 DOMString HTMLTableColElementImpl::chOff() const
 {
-    return getAttribute(ATTR_CHAROFF);
+    return getAttribute(HTMLAttributes::charoff());
 }
 
 void HTMLTableColElementImpl::setChOff(const DOMString &value)
 {
-    setAttribute(ATTR_CHAROFF, value);
+    setAttribute(HTMLAttributes::charoff(), value);
 }
 
 void HTMLTableColElementImpl::setSpan(long n)
 {
-    setAttribute(ATTR_SPAN, QString::number(n));
+    setAttribute(HTMLAttributes::span(), QString::number(n));
 }
 
 DOMString HTMLTableColElementImpl::vAlign() const
 {
-    return getAttribute(ATTR_VALIGN);
+    return getAttribute(HTMLAttributes::valign());
 }
 
 void HTMLTableColElementImpl::setVAlign(const DOMString &value)
 {
-    setAttribute(ATTR_VALIGN, value);
+    setAttribute(HTMLAttributes::valign(), value);
 }
 
 DOMString HTMLTableColElementImpl::width() const
 {
-    return getAttribute(ATTR_WIDTH);
+    return getAttribute(HTMLAttributes::width());
 }
 
 void HTMLTableColElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(ATTR_WIDTH, value);
+    setAttribute(HTMLAttributes::width(), value);
 }
 
 // -------------------------------------------------------------------------
 
-bool HTMLTableCaptionElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLTableCaptionElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attr == ATTR_ALIGN) {
+    if (attrName == HTMLAttributes::align()) {
         result = eCaption;
         return false;
     }
-    return HTMLElementImpl::mapToEntry(attr, result);
+
+    return HTMLElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLTableCaptionElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_ALIGN:
+    if (attr->name() == HTMLAttributes::align()) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_CAPTION_SIDE, attr->value());
-        break;
-    default:
+    } else
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 DOMString HTMLTableCaptionElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLTableCaptionElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 }

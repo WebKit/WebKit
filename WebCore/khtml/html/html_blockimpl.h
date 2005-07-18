@@ -59,8 +59,8 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
     
-    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *token);
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString align() const;
     void setAlign(const DOMString &);
@@ -77,8 +77,8 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
     
-    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttributeImpl* attr);
 
     DOMString align() const;
     void setAlign(const DOMString &);
@@ -119,7 +119,7 @@ public:
     virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const NodeImpl* newChild);
 
-    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString align() const;
@@ -150,8 +150,8 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 3; }
 
-    virtual bool mapToEntry(Id attr, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *token);
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
+    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     int minimumDelay() const { return m_minimumDelay; }
     

@@ -33,7 +33,6 @@
 #include "html/html_documentimpl.h"
 #include "html_imageimpl.h"
 #include "khtml_settings.h"
-#include "misc/htmlhashes.h"
 #include "misc/formdata.h"
 
 #include "dom/dom_exception.h"
@@ -623,11 +622,9 @@ void HTMLFormElementImpl::reset(  )
 
 void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_ACTION:
+    if (attr->name() == HTMLAttributes::action()) 
 #if APPLE_CHANGES
-        {
+    {
         bool oldURLWasSecure = formWouldHaveSecureSubmission(m_url);
 #endif
         m_url = khtml::parseURL(attr->value());
@@ -639,65 +636,50 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 getDocument()->secureFormAdded();
             else
                 getDocument()->secureFormRemoved();
-        }
+    }
 #endif
-        break;
-    case ATTR_TARGET:
+    else if (attr->name() == HTMLAttributes::target()) {
         m_target = attr->value();
-        break;
-    case ATTR_METHOD:
+    } else if (attr->name() == HTMLAttributes::method()) {
         if ( strcasecmp( attr->value(), "post" ) == 0 )
             m_post = true;
         else if ( strcasecmp( attr->value(), "get" ) == 0 )
             m_post = false;
-        break;
-    case ATTR_ENCTYPE:
+    } else if (attr->name() == HTMLAttributes::enctype()) {
         parseEnctype(attr->value());
-        break;
-    case ATTR_ACCEPT_CHARSET:
+    } else if (attr->name() == HTMLAttributes::accept_charset()) {
         // space separated list of charsets the server
         // accepts - see rfc2045
         m_acceptcharset = attr->value();
-        break;
-    case ATTR_ACCEPT:
+    } else if (attr->name() == HTMLAttributes::accept()) {
         // ignore this one for the moment...
-        break;
-    case ATTR_AUTOCOMPLETE:
+    } else if (attr->name() == HTMLAttributes::autocomplete()) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
-        break;
-    case ATTR_ONSUBMIT:
+    } else if (attr->name() == HTMLAttributes::onsubmit()) {
         setHTMLEventListener(EventImpl::SUBMIT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONRESET:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onreset()) {
         setHTMLEventListener(EventImpl::RESET_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_NAME:
-	{
-	    QString newNameAttr = attr->value().string();
-	    if (attached() && getDocument()->isHTMLDocument()) {
-		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-		document->removeNamedImageOrForm(oldNameAttr);
-		document->addNamedImageOrForm(newNameAttr);
-	    }
-	    oldNameAttr = newNameAttr;
-	}
-	break;
-    case ATTR_ID:
-	{
-	    QString newIdAttr = attr->value().string();
-	    if (attached() && getDocument()->isHTMLDocument()) {
-		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-		document->removeNamedImageOrForm(oldIdAttr);
-		document->addNamedImageOrForm(newIdAttr);
-	    }
-	    oldIdAttr = newIdAttr;
-	}
-	// fall through
-    default:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::name()) {
+        QString newNameAttr = attr->value().string();
+        if (attached() && getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->removeNamedImageOrForm(oldNameAttr);
+            document->addNamedImageOrForm(newNameAttr);
+        }
+        oldNameAttr = newNameAttr;
+    } else if (attr->name() == HTMLAttributes::idAttr()) {
+        QString newIdAttr = attr->value().string();
+        if (attached() && getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->removeNamedImageOrForm(oldIdAttr);
+            document->addNamedImageOrForm(newIdAttr);
+        }
+        oldIdAttr = newIdAttr;
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
+    } else
+        HTMLElementImpl::parseMappedAttribute(attr);
 }
 
 void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
@@ -784,7 +766,7 @@ void HTMLFormElementImpl::makeFormElementDormant(HTMLGenericFormElementImpl *e)
 
 bool HTMLFormElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->id() == ATTR_ACTION;
+    return attr->name() == HTMLAttributes::action();
 }
 
 void HTMLFormElementImpl::registerImgElement(HTMLImageElementImpl *e)
@@ -804,57 +786,57 @@ SharedPtr<HTMLCollectionImpl> HTMLFormElementImpl::elements()
 
 DOMString HTMLFormElementImpl::name() const
 {
-    return getAttribute(ATTR_NAME);
+    return getAttribute(HTMLAttributes::name());
 }
 
 void HTMLFormElementImpl::setName(const DOMString &value)
 {
-    setAttribute(ATTR_NAME, value);
+    setAttribute(HTMLAttributes::name(), value);
 }
 
 DOMString HTMLFormElementImpl::acceptCharset() const
 {
-    return getAttribute(ATTR_ACCEPT_CHARSET);
+    return getAttribute(HTMLAttributes::accept_charset());
 }
 
 void HTMLFormElementImpl::setAcceptCharset(const DOMString &value)
 {
-    setAttribute(ATTR_ACCEPT_CHARSET, value);
+    setAttribute(HTMLAttributes::accept_charset(), value);
 }
 
 DOMString HTMLFormElementImpl::action() const
 {
-    return getAttribute(ATTR_ACTION);
+    return getAttribute(HTMLAttributes::action());
 }
 
 void HTMLFormElementImpl::setAction(const DOMString &value)
 {
-    setAttribute(ATTR_ACTION, value);
+    setAttribute(HTMLAttributes::action(), value);
 }
 
 void HTMLFormElementImpl::setEnctype(const DOMString &value)
 {
-    setAttribute(ATTR_ENCTYPE, value);
+    setAttribute(HTMLAttributes::enctype(), value);
 }
 
 DOMString HTMLFormElementImpl::method() const
 {
-    return getAttribute(ATTR_METHOD);
+    return getAttribute(HTMLAttributes::method());
 }
 
 void HTMLFormElementImpl::setMethod(const DOMString &value)
 {
-    setAttribute(ATTR_METHOD, value);
+    setAttribute(HTMLAttributes::method(), value);
 }
 
 DOMString HTMLFormElementImpl::target() const
 {
-    return getAttribute(ATTR_TARGET);
+    return getAttribute(HTMLAttributes::target());
 }
 
 void HTMLFormElementImpl::setTarget(const DOMString &value)
 {
-    setAttribute(ATTR_TARGET, value);
+    setAttribute(HTMLAttributes::target(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -881,26 +863,19 @@ HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl()
 
 void HTMLGenericFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_NAME:
-        break;
-    case ATTR_DISABLED: {
+    if (attr->name() == HTMLAttributes::name()) {
+        // Do nothing.
+    } else if (attr->name() == HTMLAttributes::disabled()) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled)
             setChanged();
-        break;
-    }
-    case ATTR_READONLY: {
+    } else if (attr->name() == HTMLAttributes::readonly()) {
         bool oldReadOnly = m_readOnly;
         m_readOnly = !attr->isNull();
         if (oldReadOnly != m_readOnly) setChanged();
-        break;
-    }
-    default:
+    } else
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 void HTMLGenericFormElementImpl::attach()
@@ -978,13 +953,13 @@ DOMString HTMLGenericFormElementImpl::name() const
     if (!m_overrideName.isNull())
         return m_overrideName;
 
-    DOMString n = getAttribute(ATTR_NAME);
+    DOMString n = getAttribute(HTMLAttributes::name());
     return n.isNull() ? "" : n;
 }
 
 void HTMLGenericFormElementImpl::setName(const DOMString &value)
 {
-    setAttribute(ATTR_NAME, value);
+    setAttribute(HTMLAttributes::name(), value);
 }
 
 void HTMLGenericFormElementImpl::setOverrideName(const DOMString& value)
@@ -1011,12 +986,12 @@ bool HTMLGenericFormElementImpl::disabled() const
 
 void HTMLGenericFormElementImpl::setDisabled(bool b)
 {
-    setAttribute(ATTR_DISABLED, b ? "" : 0);
+    setAttribute(HTMLAttributes::disabled(), b ? "" : 0);
 }
 
 void HTMLGenericFormElementImpl::setReadOnly(bool b)
 {
-    setAttribute(ATTR_READONLY, b ? "" : 0);
+    setAttribute(HTMLAttributes::readonly(), b ? "" : 0);
 }
 
 void HTMLGenericFormElementImpl::recalcStyle( StyleChange ch )
@@ -1172,12 +1147,12 @@ QString HTMLGenericFormElementImpl::findMatchingState(QStringList &states)
 
 long HTMLGenericFormElementImpl::tabIndex() const
 {
-    return getAttribute(ATTR_TABINDEX).toInt();
+    return getAttribute(HTMLAttributes::tabindex()).toInt();
 }
 
 void HTMLGenericFormElementImpl::setTabIndex(long value)
 {
-    setAttribute(ATTR_TABINDEX, QString::number(value));
+    setAttribute(HTMLAttributes::tabindex(), QString::number(value));
 }
 
 // -------------------------------------------------------------------------
@@ -1196,7 +1171,7 @@ HTMLButtonElementImpl::~HTMLButtonElementImpl()
 
 DOMString HTMLButtonElementImpl::type() const
 {
-    return getAttribute(ATTR_TYPE);
+    return getAttribute(HTMLAttributes::type());
 }
 
 void HTMLButtonElementImpl::blur()
@@ -1212,33 +1187,26 @@ void HTMLButtonElementImpl::focus()
 
 void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_TYPE:
+    if (attr->name() ==  HTMLAttributes::type()) {
         if ( strcasecmp( attr->value(), "submit" ) == 0 )
             m_type = SUBMIT;
         else if ( strcasecmp( attr->value(), "reset" ) == 0 )
             m_type = RESET;
         else if ( strcasecmp( attr->value(), "button" ) == 0 )
             m_type = BUTTON;
-        break;
-    case ATTR_VALUE:
+    } else if (attr->name() == HTMLAttributes::value()) {
         m_value = attr->value();
         m_currValue = m_value;
-        break;
-    case ATTR_ACCESSKEY:
-        break;
-    case ATTR_ONFOCUS:
+    } else if (attr->name() == HTMLAttributes::accesskey()) {
+        // Do nothing.
+    } else if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBLUR:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onblur()) {
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    default:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 void HTMLButtonElementImpl::defaultEventHandler(EventImpl *evt)
@@ -1294,22 +1262,22 @@ void HTMLButtonElementImpl::accessKeyAction(bool sendToAnyElement)
 
 DOMString HTMLButtonElementImpl::accessKey() const
 {
-    return getAttribute(ATTR_ACCESSKEY);
+    return getAttribute(HTMLAttributes::accesskey());
 }
 
 void HTMLButtonElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(ATTR_ACCESSKEY, value);
+    setAttribute(HTMLAttributes::accesskey(), value);
 }
 
 DOMString HTMLButtonElementImpl::value() const
 {
-    return getAttribute(ATTR_VALUE);
+    return getAttribute(HTMLAttributes::value());
 }
 
 void HTMLButtonElementImpl::setValue(const DOMString &value)
 {
-    setAttribute(ATTR_VALUE, value);
+    setAttribute(HTMLAttributes::value(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -1428,7 +1396,7 @@ void HTMLInputElementImpl::setType(const DOMString& t)
         if (newType == FILE && m_haveType) {
             // Set the attribute back to the old value.
             // Useful in case we were called from inside parseMappedAttribute.
-            setAttribute(ATTR_TYPE, type());
+            setAttribute(HTMLAttributes::type(), type());
         } else {
             bool wasAttached = m_attached;
             if (wasAttached)
@@ -1437,11 +1405,11 @@ void HTMLInputElementImpl::setType(const DOMString& t)
             m_type = newType;
             bool willStoreValue = storesValueSeparateFromAttribute();
             if (didStoreValue && !willStoreValue && !m_value.isNull()) {
-                setAttribute(ATTR_VALUE, m_value);
+                setAttribute(HTMLAttributes::value(), m_value);
                 m_value = DOMString();
             }
             if (!didStoreValue && willStoreValue) {
-                m_value = getAttribute(ATTR_VALUE);
+                m_value = getAttribute(HTMLAttributes::value());
             }
             if (wasAttached)
                 attach();
@@ -1714,131 +1682,107 @@ void HTMLInputElementImpl::accessKeyAction(bool sendToAnyElement)
     }
 }
 
-bool HTMLInputElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLInputElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch (attr) {
-        case ATTR_WIDTH:
-        case ATTR_HEIGHT:
-        case ATTR_VSPACE:
-        case ATTR_HSPACE:
-            result = eUniversal;
-            return false;
-        case ATTR_ALIGN:
-            result = eReplaced; // Share with <img> since the alignment behavior is the same.
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::width() ||
+        attrName == HTMLAttributes::height() ||
+        attrName == HTMLAttributes::vspace() ||
+        attrName == HTMLAttributes::hspace()) {
+        result = eUniversal;
+        return false;
+    } 
+    
+    if (attrName == HTMLAttributes::align()) {
+        result = eReplaced; // Share with <img> since the alignment behavior is the same.
+        return false;
     }
     
-    return HTMLElementImpl::mapToEntry(attr, result);
+    return HTMLElementImpl::mapToEntry(attrName, result);
 }
 
 void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_AUTOCOMPLETE:
+    if (attr->name() == HTMLAttributes::autocomplete()) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
-        break;
-    case ATTR_TYPE:
+    } else if (attr->name() ==  HTMLAttributes::type()) {
         setType(attr->value());
         if (m_type != IMAGE && m_imageLoader) {
             delete m_imageLoader;
             m_imageLoader = 0;
         }
-        break;
-    case ATTR_VALUE:
+    } else if (attr->name() == HTMLAttributes::value()) {
         // We only need to setChanged if the form is looking at the default value right now.
         if (m_value.isNull())
             setChanged();
         m_valueMatchesRenderer = false;
-        break;
-    case ATTR_CHECKED:
+    } else if (attr->name() == HTMLAttributes::checked()) {
         m_defaultChecked = !attr->isNull();
         if (m_useDefaultChecked) {
             setChecked(m_defaultChecked);
             m_useDefaultChecked = true;
         }
-        break;
-    case ATTR_MAXLENGTH:
+    } else if (attr->name() == HTMLAttributes::maxlength()) {
         m_maxLen = !attr->isNull() ? attr->value().toInt() : -1;
         setChanged();
-        break;
-    case ATTR_SIZE:
+    } else if (attr->name() == HTMLAttributes::size()) {
         m_size = !attr->isNull() ? attr->value().toInt() : 20;
-        break;
-    case ATTR_ALT:
+    } else if (attr->name() == HTMLAttributes::alt()) {
         if (m_render && m_type == IMAGE)
             static_cast<RenderImage*>(m_render)->updateAltText();
-        break;
-    case ATTR_SRC:
+    } else if (attr->name() == HTMLAttributes::src()) {
         if (m_render && m_type == IMAGE) {
             if (!m_imageLoader)
                 m_imageLoader = new HTMLImageLoader(this);
             m_imageLoader->updateFromElement();
         }
-        break;
-    case ATTR_USEMAP:
-    case ATTR_ACCESSKEY:
-        // ### ignore for the moment
-        break;
-    case ATTR_VSPACE:
+    } else if (attr->name() == HTMLAttributes::usemap() ||
+               attr->name() == HTMLAttributes::accesskey()) {
+        // FIXME: ignore for the moment
+    } else if (attr->name() == HTMLAttributes::vspace()) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-        break;
-    case ATTR_HSPACE:
+    } else if (attr->name() == HTMLAttributes::hspace()) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-        break;        
-    case ATTR_ALIGN:
+    } else if (attr->name() == HTMLAttributes::align()) {
         addHTMLAlignment(attr);
-        break;
-    case ATTR_WIDTH:
-        addCSSLength(attr, CSS_PROP_WIDTH, attr->value() );
-        break;
-    case ATTR_HEIGHT:
-        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value() );
-        break;
-    case ATTR_ONFOCUS:
+    } else if (attr->name() == HTMLAttributes::width()) {
+        addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
+    } else if (attr->name() == HTMLAttributes::height()) {
+        addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
+    } else if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBLUR:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onblur()) {
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONSELECT:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onselect()) {
         setHTMLEventListener(EventImpl::SELECT_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCHANGE:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onchange()) {
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONINPUT:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::oninput()) {
         setHTMLEventListener(EventImpl::INPUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
+    }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
-    case ATTR_ONSEARCH:
+    else if (attr->name() == HTMLAttributes::onsearch()) {
         setHTMLEventListener(EventImpl::SEARCH_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_RESULTS:
+    } else if (attr->name() == HTMLAttributes::results()) {
         m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
-        /* Fall through */
-    case ATTR_AUTOSAVE:
-    case ATTR_INCREMENTAL:
-    case ATTR_PLACEHOLDER:
-    case ATTR_MIN:
-    case ATTR_MAX:
-    case ATTR_PRECISION:
         setChanged();
-        break;
-    default:
+    } else if (attr->name() == HTMLAttributes::autosave() ||
+               attr->name() == HTMLAttributes::incremental() ||
+               attr->name() == HTMLAttributes::placeholder() ||
+               attr->name() == HTMLAttributes::min() ||
+               attr->name() == HTMLAttributes::max() ||
+               attr->name() == HTMLAttributes::precision()) {
+        setChanged();
+    } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 bool HTMLInputElementImpl::rendererIsNeeded(RenderStyle *style)
@@ -1895,11 +1839,11 @@ void HTMLInputElementImpl::attach()
 {
     if (!m_inited) {
         if (!m_haveType)
-            setType(getAttribute(ATTR_TYPE));
+            setType(getAttribute(HTMLAttributes::type()));
 
         // FIXME: This needs to be dynamic, doesn't it, since someone could set this
         // after attachment?
-        DOMString val = getAttribute(ATTR_VALUE);
+        DOMString val = getAttribute(HTMLAttributes::value());
         if ((uint) m_type <= ISINDEX && !val.isEmpty()) {
             // remove newline stuff..
             QString nvalue;
@@ -1908,10 +1852,10 @@ void HTMLInputElementImpl::attach()
                     nvalue += val[i];
 
             if (val.length() != nvalue.length())
-                setAttribute(ATTR_VALUE, nvalue);
+                setAttribute(HTMLAttributes::value(), nvalue);
         }
 
-        m_defaultChecked = (!getAttribute(ATTR_CHECKED).isNull());
+        m_defaultChecked = (!getAttribute(HTMLAttributes::checked()).isNull());
         
         m_inited = true;
     }
@@ -1919,9 +1863,9 @@ void HTMLInputElementImpl::attach()
     // Disallow the width attribute on inputs other than HIDDEN and IMAGE.
     // Dumb Web sites will try to set the width as an attribute on form controls that aren't
     // images or hidden.
-    if (hasMappedAttributes() && m_type != HIDDEN && m_type != IMAGE && !getAttribute(ATTR_WIDTH).isEmpty()) {
+    if (hasMappedAttributes() && m_type != HIDDEN && m_type != IMAGE && !getAttribute(HTMLAttributes::width()).isEmpty()) {
         int excCode;
-        removeAttribute(ATTR_WIDTH, excCode);
+        removeAttribute(HTMLAttributes::width(), excCode);
     }
 
     HTMLGenericFormElementImpl::attach();
@@ -1955,13 +1899,13 @@ DOMString HTMLInputElementImpl::altText() const
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
     // note this is intentionally different to HTMLImageElementImpl::altText()
-    DOMString alt = getAttribute( ATTR_ALT );
+    DOMString alt = getAttribute(HTMLAttributes::alt());
     // fall back to title attribute
-    if ( alt.isNull() )
-        alt = getAttribute( ATTR_TITLE );
-    if ( alt.isNull() )
-        alt = getAttribute( ATTR_VALUE );
-    if ( alt.isEmpty() )
+    if (alt.isNull())
+        alt = getAttribute(HTMLAttributes::title());
+    if (alt.isNull())
+        alt = getAttribute(HTMLAttributes::value());
+    if (alt.isEmpty())
 #if APPLE_CHANGES
         alt = inputElementAltText();
 #else
@@ -2138,7 +2082,7 @@ DOMString HTMLInputElementImpl::value() const
     // because that would allow a malicious web page to upload files by setting the
     // value attribute in markup.
     if (value.isNull() && m_type != FILE)
-        value = getAttribute(ATTR_VALUE);
+        value = getAttribute(HTMLAttributes::value());
 
     // If no attribute exists, then just use "on" or "" based off the checked() state of the control.
     if (value.isNull() && (m_type == CHECKBOX || m_type == RADIO))
@@ -2198,7 +2142,7 @@ void HTMLInputElementImpl::setValue(const DOMString &value)
             m_render->updateFromElement();
         setChanged();
     } else {
-        setAttribute(ATTR_VALUE, value);
+        setAttribute(HTMLAttributes::value(), value);
     }
 }
 
@@ -2364,102 +2308,97 @@ bool HTMLInputElementImpl::isEditable()
 
 bool HTMLInputElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return (attr->id() == ATTR_SRC);
+    return (attr->name() == HTMLAttributes::src());
 }
 
 DOMString HTMLInputElementImpl::defaultValue() const
 {
-    return getAttribute(ATTR_VALUE);
+    return getAttribute(HTMLAttributes::value());
 }
 
 void HTMLInputElementImpl::setDefaultValue(const DOMString &value)
 {
-    setAttribute(ATTR_VALUE, value);
+    setAttribute(HTMLAttributes::value(), value);
 }
 
 bool HTMLInputElementImpl::defaultChecked() const
 {
-    return !getAttribute(ATTR_CHECKED).isNull();
+    return !getAttribute(HTMLAttributes::checked()).isNull();
 }
 
 void HTMLInputElementImpl::setDefaultChecked(bool defaultChecked)
 {
-    setAttribute(ATTR_CHECKED, defaultChecked ? "" : 0);
+    setAttribute(HTMLAttributes::checked(), defaultChecked ? "" : 0);
 }
 
 DOMString HTMLInputElementImpl::accept() const
 {
-    return getAttribute(ATTR_ACCEPT);
+    return getAttribute(HTMLAttributes::accept());
 }
 
 void HTMLInputElementImpl::setAccept(const DOMString &value)
 {
-    setAttribute(ATTR_ACCEPT, value);
+    setAttribute(HTMLAttributes::accept(), value);
 }
 
 DOMString HTMLInputElementImpl::accessKey() const
 {
-    return getAttribute(ATTR_ACCESSKEY);
+    return getAttribute(HTMLAttributes::accesskey());
 }
 
 void HTMLInputElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(ATTR_ACCESSKEY, value);
+    setAttribute(HTMLAttributes::accesskey(), value);
 }
 
 DOMString HTMLInputElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLInputElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 DOMString HTMLInputElementImpl::alt() const
 {
-    return getAttribute(ATTR_ALT);
+    return getAttribute(HTMLAttributes::alt());
 }
 
 void HTMLInputElementImpl::setAlt(const DOMString &value)
 {
-    setAttribute(ATTR_ALT, value);
+    setAttribute(HTMLAttributes::alt(), value);
 }
 
 void HTMLInputElementImpl::setMaxLength(long _maxLength)
 {
-    setAttribute(ATTR_MAXLENGTH, QString::number(_maxLength));
+    setAttribute(HTMLAttributes::maxlength(), QString::number(_maxLength));
 }
 
-DOMString HTMLInputElementImpl::sizeDOM() const
+void HTMLInputElementImpl::setSize(unsigned long _size)
 {
-    return getAttribute(ATTR_SIZE);
-}
-
-void HTMLInputElementImpl::setSize(const DOMString &value)
-{
-    setAttribute(ATTR_SIZE, value);
+    setAttribute(HTMLAttributes::size(), QString::number(_size));
 }
 
 DOMString HTMLInputElementImpl::src() const
 {
-    return getDocument()->completeURL(getAttribute(ATTR_SRC));
+    return getDocument()->completeURL(getAttribute(HTMLAttributes::src()));
 }
 
 void HTMLInputElementImpl::setSrc(const DOMString &value)
 {
-    setAttribute(ATTR_SRC, value);
+    setAttribute(HTMLAttributes::src(), value);
 }
 
 DOMString HTMLInputElementImpl::useMap() const
 {
-    return getAttribute(ATTR_USEMAP);
+    return getAttribute(HTMLAttributes::usemap());
 }
 
 void HTMLInputElementImpl::setUseMap(const DOMString &value)
 {
-    setAttribute(ATTR_USEMAP, value);
+    setAttribute(HTMLAttributes::usemap(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -2480,24 +2419,19 @@ bool HTMLLabelElementImpl::isFocusable() const
 
 void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_ONFOCUS:
+    if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBLUR:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onblur()) {
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    default:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else
         HTMLElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 ElementImpl *HTMLLabelElementImpl::formElement()
 {
-    DOMString formElementId = getAttribute(ATTR_FOR);
+    DOMString formElementId = getAttribute(HTMLAttributes::forAttr());
     if (formElementId.isNull()) {
         // Search children of the label element for a form element.
         NodeImpl *node = this;
@@ -2540,22 +2474,22 @@ HTMLFormElementImpl *HTMLLabelElementImpl::form()
 
 DOMString HTMLLabelElementImpl::accessKey() const
 {
-    return getAttribute(ATTR_ACCESSKEY);
+    return getAttribute(HTMLAttributes::accesskey());
 }
 
 void HTMLLabelElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(ATTR_ACCESSKEY, value);
+    setAttribute(HTMLAttributes::accesskey(), value);
 }
 
 DOMString HTMLLabelElementImpl::htmlFor() const
 {
-    return getAttribute(ATTR_FOR);
+    return getAttribute(HTMLAttributes::forAttr());
 }
 
 void HTMLLabelElementImpl::setHtmlFor(const DOMString &value)
 {
-    setAttribute(ATTR_FOR, value);
+    setAttribute(HTMLAttributes::forAttr(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -2586,22 +2520,22 @@ DOMString HTMLLegendElementImpl::type() const
 
 DOMString HTMLLegendElementImpl::accessKey() const
 {
-    return getAttribute(ATTR_ACCESSKEY);
+    return getAttribute(HTMLAttributes::accesskey());
 }
 
 void HTMLLegendElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(ATTR_ACCESSKEY, value);
+    setAttribute(HTMLAttributes::accesskey(), value);
 }
 
 DOMString HTMLLegendElementImpl::align() const
 {
-    return getAttribute(ATTR_ALIGN);
+    return getAttribute(HTMLAttributes::align());
 }
 
 void HTMLLegendElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(ATTR_ALIGN, value);
+    setAttribute(HTMLAttributes::align(), value);
 }
 
 ElementImpl *HTMLLegendElementImpl::formElement()
@@ -2897,35 +2831,25 @@ NodeImpl* HTMLSelectElementImpl::addChild(NodeImpl* newChild)
 
 void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_SIZE:
-        m_size = kMax( attr->value().toInt(), 1 );
-        break;
-    case ATTR_WIDTH:
+    if (attr->name() == HTMLAttributes::size()) {
+        m_size = kMax(attr->value().toInt(), 1);
+    } else if (attr->name() == HTMLAttributes::width()) {
         m_minwidth = kMax( attr->value().toInt(), 0 );
-        break;
-    case ATTR_MULTIPLE:
+    } else if (attr->name() == HTMLAttributes::multiple()) {
         m_multiple = (!attr->isNull());
-        break;
-    case ATTR_ACCESSKEY:
-        // ### ignore for the moment
-        break;
-    case ATTR_ONFOCUS:
+    } else if (attr->name() == HTMLAttributes::accesskey()) {
+        // FIXME: ignore for the moment
+    } else if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBLUR:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onblur()) {
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCHANGE:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onchange()) {
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    default:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -3069,7 +2993,7 @@ void HTMLSelectElementImpl::reset()
     for (i = 0; i < items.size(); i++) {
         if (items[i]->hasLocalName(HTMLNames::option())) {
             HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[i]);
-            bool selected = (!option->getAttribute(ATTR_SELECTED).isNull());
+            bool selected = (!option->getAttribute(HTMLAttributes::selected()).isNull());
             option->setSelected(selected);
         }
     }
@@ -3121,12 +3045,12 @@ void HTMLSelectElementImpl::accessKeyAction(bool sendToAnyElement)
 
 void HTMLSelectElementImpl::setMultiple(bool multiple)
 {
-    setAttribute(ATTR_MULTIPLE, multiple ? "" : 0);
+    setAttribute(HTMLAttributes::multiple(), multiple ? "" : 0);
 }
 
 void HTMLSelectElementImpl::setSize(long size)
 {
-    setAttribute(ATTR_SIZE, QString::number(size));
+    setAttribute(HTMLAttributes::size(), QString::number(size));
 }
 
 // -------------------------------------------------------------------------
@@ -3149,18 +3073,13 @@ DOMString HTMLKeygenElementImpl::type() const
 
 void HTMLKeygenElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_CHALLENGE:
+    if (attr->name() == HTMLAttributes::challenge())
         m_challenge = attr->value();
-        break;
-    case ATTR_KEYTYPE:
+    else if (attr->name() == HTMLAttributes::keytype())
         m_keyType = attr->value();
-        break;
-    default:
+    else
         // skip HTMLSelectElementImpl parsing!
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 bool HTMLKeygenElementImpl::appendFormData(FormDataList& encoded_values, bool)
@@ -3270,12 +3189,12 @@ void HTMLOptGroupElementImpl::recalcSelectOptions()
 
 DOMString HTMLOptGroupElementImpl::label() const
 {
-    return getAttribute(ATTR_LABEL);
+    return getAttribute(HTMLAttributes::label());
 }
 
 void HTMLOptGroupElementImpl::setLabel(const DOMString &value)
 {
-    setAttribute(ATTR_LABEL, value);
+    setAttribute(HTMLAttributes::label(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -3302,7 +3221,7 @@ DOMString HTMLOptionElementImpl::text() const
 
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
     if (getDocument() && !getDocument()->inCompatMode()) {
-        DOMString text = getAttribute(ATTR_LABEL);
+        DOMString text = getAttribute(HTMLAttributes::label());
         if (!text.isEmpty())
             return text;
     }
@@ -3356,17 +3275,12 @@ void HTMLOptionElementImpl::setIndex(long, int &exception)
 
 void HTMLOptionElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_SELECTED:
+    if (attr->name() == HTMLAttributes::selected())
         m_selected = (!attr->isNull());
-        break;
-    case ATTR_VALUE:
+    else if (attr->name() == HTMLAttributes::value())
         m_value = attr->value();
-        break;
-    default:
+    else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 DOMString HTMLOptionElementImpl::value() const
@@ -3379,7 +3293,7 @@ DOMString HTMLOptionElementImpl::value() const
 
 void HTMLOptionElementImpl::setValue(const DOMString &value)
 {
-    setAttribute(ATTR_VALUE, value);
+    setAttribute(HTMLAttributes::value(), value);
 }
 
 void HTMLOptionElementImpl::setSelected(bool _selected)
@@ -3409,22 +3323,22 @@ HTMLSelectElementImpl *HTMLOptionElementImpl::getSelect() const
 
 bool HTMLOptionElementImpl::defaultSelected() const
 {
-    return !getAttribute(ATTR_SELECTED).isNull();
+    return !getAttribute(HTMLAttributes::selected()).isNull();
 }
 
 void HTMLOptionElementImpl::setDefaultSelected(bool b)
 {
-    setAttribute(ATTR_SELECTED, b ? "" : 0);
+    setAttribute(HTMLAttributes::selected(), b ? "" : 0);
 }
 
 DOMString HTMLOptionElementImpl::label() const
 {
-    return getAttribute(ATTR_LABEL);
+    return getAttribute(HTMLAttributes::label());
 }
 
 void HTMLOptionElementImpl::setLabel(const DOMString &value)
 {
-    setAttribute(ATTR_LABEL, value);
+    setAttribute(HTMLAttributes::label(), value);
 }
 
 // -------------------------------------------------------------------------
@@ -3507,19 +3421,15 @@ void HTMLTextAreaElementImpl::childrenChanged()
     
 void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_ROWS:
+    if (attr->name() == HTMLAttributes::rows()) {
         m_rows = !attr->isNull() ? attr->value().toInt() : 3;
         if (renderer())
             renderer()->setNeedsLayoutAndMinMaxRecalc();
-        break;
-    case ATTR_COLS:
+    } else if (attr->name() == HTMLAttributes::cols()) {
         m_cols = !attr->isNull() ? attr->value().toInt() : 60;
         if (renderer())
             renderer()->setNeedsLayoutAndMinMaxRecalc();
-        break;
-    case ATTR_WRAP:
+    } else if (attr->name() == HTMLAttributes::wrap()) {
         // virtual / physical is Netscape extension of HTML 3.0, now deprecated
         // soft/ hard / off is recommendation for HTML 4 extension by IE and NS 4
         if ( strcasecmp( attr->value(), "virtual" ) == 0  || strcasecmp( attr->value(), "soft") == 0)
@@ -3532,29 +3442,22 @@ void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_wrap = ta_NoWrap;
         if (renderer())
             renderer()->setNeedsLayoutAndMinMaxRecalc();
-        break;
-    case ATTR_ACCESSKEY:
+    } else if (attr->name() == HTMLAttributes::accesskey()) {
         // ignore for the moment
-        break;
-    case ATTR_ONFOCUS:
+    } else if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::FOCUS_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBLUR:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onblur()) {
         setHTMLEventListener(EventImpl::BLUR_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONSELECT:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onselect()) {
         setHTMLEventListener(EventImpl::SELECT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCHANGE:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onchange()) {
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    default:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -3671,22 +3574,22 @@ void HTMLTextAreaElementImpl::detach()
 
 DOMString HTMLTextAreaElementImpl::accessKey() const
 {
-    return getAttribute(ATTR_ACCESSKEY);
+    return getAttribute(HTMLAttributes::accesskey());
 }
 
 void HTMLTextAreaElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(ATTR_ACCESSKEY, value);
+    setAttribute(HTMLAttributes::accesskey(), value);
 }
 
 void HTMLTextAreaElementImpl::setCols(long cols)
 {
-    setAttribute(ATTR_COLS, QString::number(cols));
+    setAttribute(HTMLAttributes::cols(), QString::number(cols));
 }
 
 void HTMLTextAreaElementImpl::setRows(long rows)
 {
-    setAttribute(ATTR_ROWS, QString::number(rows));
+    setAttribute(HTMLAttributes::rows(), QString::number(rows));
 }
 
 // -------------------------------------------------------------------------
@@ -3700,25 +3603,22 @@ HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElement
 
 void HTMLIsIndexElementImpl::parseMappedAttribute(MappedAttributeImpl* attr)
 {
-    switch(attr->id())
-    {
-    case ATTR_PROMPT:
+    if (attr->name() == HTMLAttributes::prompt())
 	setValue(attr->value());
-    default:
+    else
         // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
-    }
 }
 
 DOMString HTMLIsIndexElementImpl::prompt() const
 {
-    return getAttribute(ATTR_PROMPT);
+    return getAttribute(HTMLAttributes::prompt());
 }
 
 void HTMLIsIndexElementImpl::setPrompt(const DOMString &value)
 {
-    setAttribute(ATTR_PROMPT, value);
+    setAttribute(HTMLAttributes::prompt(), value);
 }
 
 // -------------------------------------------------------------------------

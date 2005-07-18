@@ -46,7 +46,6 @@
 #include "visible_units.h"
 #include "wrap_contents_in_dummy_span_command.h"
 
-#include "misc/htmlattrs.h"
 #include "htmlnames.h"
 #include "rendering/render_text.h"
 #include "xml/dom2_rangeimpl.h"
@@ -67,7 +66,9 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
+using DOM::HTMLAttributes;
 using DOM::HTMLNames;
+using DOM::QualifiedName;
 
 namespace khtml {
 
@@ -300,7 +301,7 @@ void CompositeEditCommand::removeCSSProperty(CSSStyleDeclarationImpl *decl, int 
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::removeNodeAttribute(ElementImpl *element, int attribute)
+void CompositeEditCommand::removeNodeAttribute(ElementImpl *element, const QualifiedName& attribute)
 {
     DOMString value = element->getAttribute(attribute);
     if (value.isEmpty())
@@ -309,7 +310,7 @@ void CompositeEditCommand::removeNodeAttribute(ElementImpl *element, int attribu
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::setNodeAttribute(ElementImpl *element, int attribute, const DOMString &value)
+void CompositeEditCommand::setNodeAttribute(ElementImpl *element, const QualifiedName& attribute, const DOMString &value)
 {
     EditCommandPtr cmd(new SetNodeAttributeCommand(document(), element, attribute, value));
     applyCommandToComposite(cmd);
@@ -495,7 +496,7 @@ NodeImpl *CompositeEditCommand::findBlockPlaceholder(NodeImpl *node)
         if (checkMe->isElementNode()) {
             ElementImpl *element = static_cast<ElementImpl *>(checkMe);
             if (element->enclosingBlockFlowElement() == node && 
-                element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
+                element->getAttribute(HTMLAttributes::classAttr()) == blockPlaceholderClassString()) {
                 return element;
             }
         }
@@ -581,7 +582,7 @@ ElementImpl *createBlockPlaceholderElement(DocumentImpl *document)
     int exceptionCode = 0;
     ElementImpl *breakNode = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
     ASSERT(exceptionCode == 0);
-    breakNode->setAttribute(ATTR_CLASS, blockPlaceholderClassString());
+    breakNode->setAttribute(HTMLAttributes::classAttr(), blockPlaceholderClassString());
     return breakNode;
 }
 

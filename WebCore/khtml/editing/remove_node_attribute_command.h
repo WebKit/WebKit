@@ -29,24 +29,25 @@
 #include "edit_command.h"
 
 #include "xml/dom_nodeimpl.h"
-   
+#include "dom_qname.h"
+
 namespace khtml {
 
 class RemoveNodeAttributeCommand : public EditCommand
 {
 public:
-    RemoveNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute);
+    RemoveNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute);
     virtual ~RemoveNodeAttributeCommand();
 
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::ElementImpl *element() const { return m_element; }
-    DOM::NodeImpl::Id attribute() const { return m_attribute; }
+    const DOM::QualifiedName& attribute() const { return m_attribute; }
     
 private:
     DOM::ElementImpl *m_element;
-    DOM::NodeImpl::Id m_attribute;
+    DOM::QualifiedName m_attribute;
     DOM::DOMString m_oldValue;
 };
 

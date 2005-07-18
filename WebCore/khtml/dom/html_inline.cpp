@@ -27,7 +27,6 @@
 #include "html/html_inlineimpl.h"
 #include "html/html_baseimpl.h"
 #include "xml/dom_docimpl.h"
-#include "misc/htmlhashes.h"
 
 using namespace DOM;
 

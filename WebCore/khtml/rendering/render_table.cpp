@@ -31,7 +31,6 @@
 #include "rendering/render_table.h"
 #include "rendering/table_layout.h"
 #include "html/html_tableimpl.h"
-#include "misc/htmlattrs.h"
 #include "htmlnames.h"
 #include "xml/dom_docimpl.h"
 
@@ -1620,7 +1619,7 @@ void RenderTableCell::calcMinMaxWidth()
     RenderBlock::calcMinMaxWidth();
     if (element() && style()->whiteSpace() == NORMAL) {
         // See if nowrap was set.
-        DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(ATTR_NOWRAP);
+        DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(HTMLAttributes::nowrap());
         if (!nowrap.isNull() && style()->width().isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait

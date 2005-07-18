@@ -151,10 +151,10 @@ public:
 protected:
     virtual void updateNameCache() const;
     virtual unsigned long calcLength() const;
-    virtual NodeImpl *getNamedItem(NodeImpl* current, int attr_id, const DOMString& name, bool caseSensitive) const;
+    virtual NodeImpl *getNamedItem(NodeImpl* current, const QualifiedName& attrName, const DOMString& name, bool caseSensitive) const;
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
 private:
-    NodeImpl* getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
+    NodeImpl* getNamedFormItem(const QualifiedName& attrName, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
     mutable int currentPos;
 };
 

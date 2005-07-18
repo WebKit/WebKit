@@ -47,7 +47,6 @@
 #include "htmlfactory.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_nodeimpl.h"
-#include "misc/htmlhashes.h"
 #include "misc/main_thread_malloc.h"
 #include "misc/hashset.h"
 #include "html/htmltokenizer.h"
@@ -350,7 +349,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                     bool changed = false;
                     for (unsigned long l = 0; map && l < map->length(); ++l) {
                         AttributeImpl* it = map->attributeItem(l);
-                        changed = !bmap->getAttributeItem(it->id());
+                        changed = !bmap->getAttributeItem(it->name());
                         bmap->insertAttribute(it->clone(false));
                     }
                     if (changed)
@@ -387,7 +386,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 bool changed = false;
                 for (unsigned long l = 0; map && l < map->length(); ++l) {
                     AttributeImpl* it = map->attributeItem(l);
-                    changed = !bmap->getAttributeItem(it->id());
+                    changed = !bmap->getAttributeItem(it->name());
                     bmap->insertAttribute(it->clone(false));
                 }
                 if (changed)
@@ -397,7 +396,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             else if (!current->isDocumentNode())
                 return false;
         } else if (h->hasLocalName(HTMLNames::input())) {
-            DOMString type = h->getAttribute(ATTR_TYPE);
+            DOMString type = h->getAttribute(HTMLAttributes::type());
             if (strcasecmp(type, "hidden") == 0 && form) {
                 form->addChild(n);
                 if (!n->attached() && HTMLWidget)
@@ -655,7 +654,7 @@ bool HTMLParser::framesetCreateErrorCheck(Token* t, NodeImpl*& result)
         // regressions and the headaches are not worth the work as long as there is
         // no site actually relying on that detail (Dirk)
         if (doc()->body())
-            doc()->body()->setAttribute(ATTR_STYLE, "display:none");
+            doc()->body()->setAttribute(HTMLAttributes::style(), "display:none");
         inBody = false;
     }
     if ((haveContent || haveFrameSet) && current->localName() == HTMLNames::html())
@@ -1327,7 +1326,7 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
         n = new HTMLDivElementImpl( document );
     NodeImpl *child = new HTMLHRElementImpl( document );
     n->addChild( child );
-    AttributeImpl* a = t->attrs ? t->attrs->getAttributeItem(ATTR_PROMPT) : 0;
+    AttributeImpl* a = t->attrs ? t->attrs->getAttributeItem(HTMLAttributes::prompt()) : 0;
 #if APPLE_CHANGES
     DOMString text = searchableIndexIntroduction();
 #else
@@ -1338,7 +1337,7 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
     child = new TextImpl(document, text);
     n->addChild( child );
     child = new HTMLIsIndexElementImpl(document, myform);
-    static_cast<ElementImpl *>(child)->setAttribute(ATTR_TYPE, "khtml_isindex");
+    static_cast<ElementImpl *>(child)->setAttribute(HTMLAttributes::type(), "khtml_isindex");
     n->addChild( child );
     child = new HTMLHRElementImpl( document );
     n->addChild( child );

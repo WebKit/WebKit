@@ -80,23 +80,7 @@ public:
         if (text) text->deref();
     }
 
-    void addAttribute(DOM::DocumentImpl* doc, QChar* buffer, const QString& attrName, const DOM::AtomicString& v)
-    {
-        DOM::AttributeImpl* a = 0;
-        if (buffer->unicode())
-            a = new DOM::MappedAttributeImpl(buffer->unicode(), v);
-        else if (!attrName.isEmpty() && attrName != "/")
-            a = new DOM::MappedAttributeImpl(doc->attrId(0, DOM::DOMString(attrName).implementation(), false),
-                                             v);
-
-        if (a) {
-            if(!attrs) {
-                attrs = new DOM::NamedMappedAttrMapImpl(0);
-                attrs->ref();
-            }
-            attrs->insertAttribute(a);
-        }
-    }
+    void addAttribute(DOM::DocumentImpl* doc, const DOM::AtomicString& attrName, const DOM::AtomicString& v);
 
     bool isOpenTag(const DOM::QualifiedName& fullName) const { return beginTag && fullName.localName() == tagName; }
     bool isCloseTag(const DOM::QualifiedName& fullName) const { return !beginTag && fullName.localName() == tagName; }
@@ -303,11 +287,8 @@ protected:
 
     bool brokenServer;
 
-    // name of an unknown attribute
-    QString attrName;
-    // whether or not the attrname is present (either we found a known HTML attr or we found an unknown
-    // nonempty attrName).
-    bool attrNamePresent;
+    // Name of an attribute that we just scanned.
+    DOM::AtomicString attrName;
     
     // Used to store the code of a srcipting sequence
     QChar *scriptCode;

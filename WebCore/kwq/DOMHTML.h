@@ -254,8 +254,8 @@
 - (void)setName:(NSString *)name;
 - (BOOL)readOnly;
 - (void)setReadOnly:(BOOL)readOnly;
-- (NSString *)size;
-- (void)setSize:(NSString *)size;
+- (unsigned long)size;
+- (void)setSize:(unsigned long)size;
 - (NSString *)src;
 - (void)setSrc:(NSString *)src;
 - (long)tabIndex;

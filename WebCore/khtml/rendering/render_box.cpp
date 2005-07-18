@@ -34,7 +34,6 @@
 #include "render_flexbox.h"
 #include "render_arena.h"
 
-#include "misc/htmlhashes.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_elementimpl.h"

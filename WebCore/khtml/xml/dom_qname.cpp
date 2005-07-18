@@ -19,6 +19,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#define KHTML_QNAME_HIDE_GLOBALS 1
+
 #include "dom_qname.h"
 #include "misc/hashset.h"
 
@@ -148,6 +150,27 @@ void QualifiedName::setPrefix(const AtomicString& prefix)
 {
     QualifiedName other(prefix, localName(), namespaceURI());
     *this = other;
+}
+
+DOMString QualifiedName::toString() const
+{
+    DOMString local = localName();
+    if (hasPrefix())
+        return DOMString(prefix()) + ":" + local;
+    return local;
+}
+
+// Global init routines
+void* anyName[(sizeof(QualifiedName) + sizeof(void*) - 1) / sizeof(void*)];
+
+void QualifiedName::init()
+{
+    static bool initialized;
+    if (!initialized) {
+        // Use placement new to initialize the globals.
+        new (&anyName) QualifiedName(nullAtom, starAtom, starAtom);
+        initialized = true;
+    }
 }
 
 }

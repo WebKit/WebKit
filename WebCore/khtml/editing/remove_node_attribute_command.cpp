@@ -36,10 +36,11 @@
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
+using DOM::QualifiedName;
 
 namespace khtml {
 
-RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute)
+RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, const QualifiedName& attribute)
     : EditCommand(document), m_element(element), m_attribute(attribute)
 {
     ASSERT(m_element);

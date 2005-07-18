@@ -28,7 +28,6 @@
 
 #include "html/html_imageimpl.h"
 #include "html/html_miscimpl.h"
-#include "misc/htmlhashes.h"
 
 using namespace DOM;
 

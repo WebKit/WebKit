@@ -27,7 +27,6 @@
 #include "html/html_headimpl.h"
 #include "html/html_tableimpl.h"
 #include "htmlnames.h"
-#include "misc/htmlattrs.h"
 #include "misc/loader.h"
 
 #include "khtmlview.h"
@@ -44,12 +43,15 @@ using DOM::DocumentImpl;
 using DOM::DocumentPtr;
 using DOM::DOMString;
 using DOM::ElementImpl;
+using DOM::HTMLAttributes;
 using DOM::HTMLNames;
 using DOM::HTMLScriptElementImpl;
 using DOM::HTMLTableSectionElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::nullAtom;
 using DOM::ProcessingInstructionImpl;
+using DOM::QualifiedName;
 using DOM::TextImpl;
 
 namespace khtml {
@@ -308,14 +310,11 @@ void XMLTokenizer::startElement(const xmlChar *name, const xmlChar **libxmlAttri
 
     int i;
     for (i = 0; i < atts.length(); i++) {
-        // FIXME: qualified name not supported for attributes! The prefix has been lost.
         DOMString uri(atts.uri(i));
-        DOMString ln(atts.localName(i));
+        DOMString qn(atts.qName(i));
         DOMString val(atts.value(i));
-        NodeImpl::Id id = m_doc->document()->attrId(uri.implementation(),
-                                                    ln.implementation(),
-                                                    false /* allocate */);
-        newElement->setAttribute(id, val.implementation(), exceptioncode);
+        
+        newElement->setAttributeNS(uri.implementation(), qn.implementation(), val.implementation(), exceptioncode);
         if (exceptioncode) // exception setting attributes
             return;
     }
@@ -347,10 +346,6 @@ void XMLTokenizer::startElement(const xmlChar *name, const xmlChar **libxmlAttri
         delete newElement;
         return;
     }
-
-    // ### DOM spec states: "if there is no markup inside an element's content, the text is contained in a
-    // single object implementing the Text interface that is the only child of the element."... do we
-    // need to ensure that empty elements always have an empty text child?
 }
 
 void XMLTokenizer::endElement()
@@ -620,12 +615,12 @@ void XMLTokenizer::insertErrorMessageBlock()
     }
 
     ElementImpl* reportElement = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "parsererror", exceptioncode);
-    reportElement->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    reportElement->setAttribute(HTMLAttributes::style(), "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
     ElementImpl* h3 = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "h3", exceptioncode);
     h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
     reportElement->appendChild(h3, exceptioncode);
     ElementImpl* fixed = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "div", exceptioncode);
-    fixed->setAttribute(ATTR_STYLE, "font-family:monospace;font-size:12px");
+    fixed->setAttribute(HTMLAttributes::style(), "font-family:monospace;font-size:12px");
     NodeImpl* textNode = doc->createTextNode(m_errorMessages);
     fixed->appendChild(textNode, exceptioncode);
     reportElement->appendChild(fixed, exceptioncode);
@@ -637,7 +632,7 @@ void XMLTokenizer::insertErrorMessageBlock()
     if (doc->transformSourceDocument()) {
         ElementImpl* par = doc->createElementNS(HTMLNames::xhtmlNamespaceURI(), "p", exceptioncode);
         reportElement->appendChild(par, exceptioncode);
-        par->setAttribute(ATTR_STYLE, "white-space: normal");
+        par->setAttribute(HTMLAttributes::style(), "white-space: normal");
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);
     }
 #endif
@@ -667,8 +662,8 @@ void XMLTokenizer::executeScripts()
     // and continue where it left off). For scripts that don't have a src attribute, execute the code
     // inside the tag
     while (m_scriptsIt->current()) {
-        DOMString scriptSrc = m_scriptsIt->current()->getAttribute(ATTR_SRC);
-        QString charset = m_scriptsIt->current()->getAttribute(ATTR_CHARSET).string();
+        DOMString scriptSrc = m_scriptsIt->current()->getAttribute(HTMLAttributes::src());
+        QString charset = m_scriptsIt->current()->getAttribute(HTMLAttributes::charset()).string();
 
 	// don't load external scripts for standalone documents (for now)
         if (scriptSrc != "" && m_doc->document()->part()) {

@@ -34,7 +34,6 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
 #include "css/cssstyleselector.h"
-#include "misc/htmlhashes.h"
 #include <kdebug.h>
 #include <qpainter.h>
 #include "khtmlview.h"

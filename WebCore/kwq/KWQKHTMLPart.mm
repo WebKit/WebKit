@@ -57,8 +57,6 @@
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_tableimpl.h"
-#import "htmlattrs.h"
-#import "htmltokenizer.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_binding.h"
@@ -95,6 +93,7 @@ using DOM::DocumentMarker;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
+using DOM::HTMLAttributes;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;
@@ -572,7 +571,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
 
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
 {
-    QString name = element->getAttribute(ATTR_NAME).string();
+    QString name = element->getAttribute(HTMLAttributes::name()).string();
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     name.replace(QRegExp("[[:digit:]]"), " ");
     name.replace('_', ' ');
@@ -2839,7 +2838,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
     
     NSFileWrapper *wrapper = nil;
 
-    AtomicString attr = e->getAttribute(ATTR_SRC);
+    AtomicString attr = e->getAttribute(HTMLAttributes::src());
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.string()).getNSURL();
         wrapper = [_bridge fileWrapperForURL:URL];
@@ -3177,7 +3176,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 // for the range of the link.  Note that we create the attributed string from the DOM, which
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && n == linkStartNode) {
-                    DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
+                    DOMString href = parseURL(linkStartNode->getAttribute(HTMLAttributes::href()));
                     KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
                     
                     NSURL *URL = kURL.getNSURL();
@@ -3463,7 +3462,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
 
     styleElement->ref();
 
-    styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+    styleElement->setAttribute(HTMLAttributes::style(), d->m_typingStyle->cssText().implementation(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
     TextImpl *text = xmlDocImpl()->createEditingTextNode("");

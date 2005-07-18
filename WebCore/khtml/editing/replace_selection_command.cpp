@@ -26,7 +26,6 @@
 #include "replace_selection_command.h"
 
 #include "visible_position.h"
-#include "misc/htmlattrs.h"
 #include "htmlnames.h"
 #include "xml/dom_docimpl.h"
 #include "html_interchange.h"
@@ -55,6 +54,7 @@ using DOM::DocumentFragmentImpl;
 using DOM::ElementImpl;
 using DOM::TextImpl;
 using DOM::DOMString;
+using DOM::HTMLAttributes;
 using DOM::HTMLElementImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::Position;
@@ -227,13 +227,15 @@ void ReplacementFragment::pruneEmptyNodes()
 bool ReplacementFragment::isInterchangeNewlineNode(const NodeImpl *node)
 {
     static DOMString interchangeNewlineClassString(AppleInterchangeNewline);
-    return node && node->hasTagName(HTMLNames::br()) && static_cast<const ElementImpl *>(node)->getAttribute(ATTR_CLASS) == interchangeNewlineClassString;
+    return node && node->hasTagName(HTMLNames::br()) && 
+           static_cast<const ElementImpl *>(node)->getAttribute(HTMLAttributes::classAttr()) == interchangeNewlineClassString;
 }
 
 bool ReplacementFragment::isInterchangeConvertedSpaceSpan(const NodeImpl *node)
 {
     static DOMString convertedSpaceSpanClassString(AppleConvertedSpace);
-    return node->isHTMLElement() && static_cast<const HTMLElementImpl *>(node)->getAttribute(ATTR_CLASS) == convertedSpaceSpanClassString;
+    return node->isHTMLElement() && 
+           static_cast<const HTMLElementImpl *>(node)->getAttribute(HTMLAttributes::classAttr()) == convertedSpaceSpanClassString;
 }
 
 NodeImpl *ReplacementFragment::enclosingBlock(NodeImpl *node) const

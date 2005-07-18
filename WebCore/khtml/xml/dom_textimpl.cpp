@@ -27,7 +27,6 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom_docimpl.h"
 
-#include "misc/htmlhashes.h"
 #include "rendering/render_text.h"
 
 #include <kdebug.h>

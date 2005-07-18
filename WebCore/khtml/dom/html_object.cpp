@@ -23,7 +23,6 @@
 #include "dom/dom_doc.h"
 #include "dom/html_object.h"
 #include "html/html_objectimpl.h"
-#include "misc/htmlhashes.h"
 
 namespace DOM {
 

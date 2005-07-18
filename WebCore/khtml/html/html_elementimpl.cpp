@@ -33,7 +33,6 @@
 #include "html/htmltokenizer.h"
 #include "htmlfactory.h"
 
-#include "misc/htmlhashes.h"
 #include "misc/hashset.h"
 #include "editing/visible_text.h"
 
@@ -117,172 +116,127 @@ NodeImpl *HTMLElementImpl::cloneNode(bool deep)
     return clone;
 }
 
-bool HTMLElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
+bool HTMLElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    switch (attr)
-    {
-        case ATTR_ALIGN:
-        case ATTR_CONTENTEDITABLE:
-        case ATTR_DIR:
-            result = eUniversal;
-            return false;
-        default:
-            break;
+    if (attrName == HTMLAttributes::align() ||
+        attrName == HTMLAttributes::contenteditable() ||
+        attrName == HTMLAttributes::dir()) {
+        result = eUniversal;
+        return false;
     }
 
-    return StyledElementImpl::mapToEntry(attr, result);
+    return StyledElementImpl::mapToEntry(attrName, result);
 }
     
 void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->id() == ATTR_ID || attr->id() == ATTR_CLASS || attr->id() == ATTR_STYLE)
+    if (attr->name() == HTMLAttributes::idAttr() || attr->name() == HTMLAttributes::classAttr() || attr->name() == HTMLAttributes::style())
         return StyledElementImpl::parseMappedAttribute(attr);
 
     DOMString indexstring;
-    switch (attr->id())
-    {
-    case ATTR_ALIGN:
+    if (attr->name() == HTMLAttributes::align()) {
         if (strcasecmp(attr->value(), "middle" ) == 0)
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, "center");
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
-        break;
-    case ATTR_CONTENTEDITABLE:
+    } else if (attr->name() == HTMLAttributes::contenteditable()) {
         setContentEditable(attr);
-        break;
-    case ATTR_TABINDEX:
-        indexstring=getAttribute(ATTR_TABINDEX);
+    } else if (attr->name() == HTMLAttributes::tabindex()) {
+        indexstring = getAttribute(HTMLAttributes::tabindex());
         if (indexstring.length())
             setTabIndex(indexstring.toInt());
-        break;
-// i18n attributes
-    case ATTR_LANG:
-        break;
-    case ATTR_DIR:
+    } else if (attr->name() == HTMLAttributes::lang()) {
+        // FIXME: Implement
+    } else if (attr->name() == HTMLAttributes::direction()) {
         addCSSProperty(attr, CSS_PROP_DIRECTION, attr->value());
         addCSSProperty(attr, CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
-        break;
+    }
 // standard events
-    case ATTR_ONCLICK:
-	setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCONTEXTMENU:
-	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDBLCLICK:
+    else if (attr->name() == HTMLAttributes::onclick()) {
+        setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::oncontextmenu()) {
+    	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::ondblclick()) {
 	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEDOWN:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmousedown()) {
         setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEMOVE:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmousemove()) {
         setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEOUT:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmouseout()) {
         setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEOVER:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmouseover()) {
         setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEUP:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmouseup()) {
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONMOUSEWHEEL:
+	                     getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onmousewheel()) {
         setHTMLEventListener(EventImpl::MOUSEWHEEL_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONFOCUS:
+                            getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onfocus()) {
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONKEYDOWN:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onkeydown()) {
         setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-	break;
-    case ATTR_ONKEYPRESS:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onkeypress()) {
         setHTMLEventListener(EventImpl::KEYPRESS_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-	break;
-    case ATTR_ONKEYUP:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onkeyup()) {
         setHTMLEventListener(EventImpl::KEYUP_EVENT,
-	    getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONSCROLL:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onscroll()) {
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
-            getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBEFORECUT:
+                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::onbeforecut()) {
         setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCUT:
+    } else if (attr->name() == HTMLAttributes::oncut()) {
         setHTMLEventListener(EventImpl::CUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBEFORECOPY:
+    } else if (attr->name() == HTMLAttributes::onbeforecopy()) {
         setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONCOPY:
+    } else if (attr->name() == HTMLAttributes::oncopy()) {
         setHTMLEventListener(EventImpl::COPY_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONBEFOREPASTE:
+    } else if (attr->name() == HTMLAttributes::onbeforepaste()) {
         setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONPASTE:
+    } else if (attr->name() == HTMLAttributes::onpaste()) {
         setHTMLEventListener(EventImpl::PASTE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;        
-    case ATTR_ONDRAGENTER:
+    } else if (attr->name() == HTMLAttributes::ondragenter()) {
         setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDRAGOVER:
+    } else if (attr->name() == HTMLAttributes::ondragover()) {
         setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDRAGLEAVE:
+    } else if (attr->name() == HTMLAttributes::ondragleave()) {
         setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDROP:
+    } else if (attr->name() == HTMLAttributes::ondrop()) {
         setHTMLEventListener(EventImpl::DROP_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDRAGSTART:
+    } else if (attr->name() == HTMLAttributes::ondragstart()) {
         setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDRAG:
+    } else if (attr->name() == HTMLAttributes::ondrag()) {
         setHTMLEventListener(EventImpl::DRAG_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONDRAGEND:
+    } else if (attr->name() == HTMLAttributes::ondragend()) {
         setHTMLEventListener(EventImpl::DRAGEND_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-    case ATTR_ONSELECTSTART:
+    } else if (attr->name() == HTMLAttributes::onselectstart()) {
         setHTMLEventListener(EventImpl::SELECTSTART_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-        break;
-        // other misc attributes
-    default:
-#ifdef UNSUPPORTED_ATTR
-	kdDebug(6030) << "UATTR: <" << this->nodeName().string() << "> ["
-		      << attr->name().string() << "]=[" << attr->value().string() << "]" << endl;
-#endif
-        break;
-    }
+    } 
 }
 
 DOMString HTMLElementImpl::innerHTML() const
@@ -586,10 +540,10 @@ void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr)
 void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
     if (enabled == "inherit") {
         int exceptionCode;
-        removeAttribute(ATTR_CONTENTEDITABLE, exceptionCode);
+        removeAttribute(HTMLAttributes::contenteditable(), exceptionCode);
     }
     else
-        setAttribute(ATTR_CONTENTEDITABLE, enabled.isEmpty() ? "true" : enabled);
+        setAttribute(HTMLAttributes::contenteditable(), enabled.isEmpty() ? "true" : enabled);
 }
 
 void HTMLElementImpl::click(bool sendMouseEvents)
@@ -646,52 +600,52 @@ DOMString HTMLElementImpl::toString() const
 
 DOMString HTMLElementImpl::id() const
 {
-    return getAttribute(ATTR_ID);
+    return getAttribute(HTMLAttributes::idAttr());
 }
 
 void HTMLElementImpl::setId(const DOMString &value)
 {
-    setAttribute(ATTR_ID, value);
+    setAttribute(HTMLAttributes::idAttr(), value);
 }
 
 DOMString HTMLElementImpl::title() const
 {
-    return getAttribute(ATTR_TITLE);
+    return getAttribute(HTMLAttributes::title());
 }
 
 void HTMLElementImpl::setTitle(const DOMString &value)
 {
-    setAttribute(ATTR_TITLE, value);
+    setAttribute(HTMLAttributes::title(), value);
 }
 
 DOMString HTMLElementImpl::lang() const
 {
-    return getAttribute(ATTR_LANG);
+    return getAttribute(HTMLAttributes::lang());
 }
 
 void HTMLElementImpl::setLang(const DOMString &value)
 {
-    setAttribute(ATTR_LANG, value);
+    setAttribute(HTMLAttributes::lang(), value);
 }
 
 DOMString HTMLElementImpl::dir() const
 {
-    return getAttribute(ATTR_DIR);
+    return getAttribute(HTMLAttributes::dir());
 }
 
 void HTMLElementImpl::setDir(const DOMString &value)
 {
-    setAttribute(ATTR_DIR, value);
+    setAttribute(HTMLAttributes::dir(), value);
 }
 
 DOMString HTMLElementImpl::className() const
 {
-    return getAttribute(ATTR_CLASS);
+    return getAttribute(HTMLAttributes::classAttr());
 }
 
 void HTMLElementImpl::setClassName(const DOMString &value)
 {
-    setAttribute(ATTR_CLASS, value);
+    setAttribute(HTMLAttributes::classAttr(), value);
 }
 
 SharedPtr<HTMLCollectionImpl> HTMLElementImpl::children()

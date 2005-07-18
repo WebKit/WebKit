@@ -2,7 +2,6 @@
 
 #include "dom/dom_node.h"
 #include "xml/dom_elementimpl.h"
-#include "misc/htmlattrs.h"
 
 #include "xbl_tokenizer.h"
 #include "xbl_docimpl.h"

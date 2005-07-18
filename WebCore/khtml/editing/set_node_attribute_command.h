@@ -29,25 +29,26 @@
 #include "edit_command.h"
 
 #include "xml/dom_nodeimpl.h"
+#include "dom_qname.h"
 
 namespace khtml {
 
 class SetNodeAttributeCommand : public EditCommand
 {
 public:
-    SetNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute, const DOM::DOMString &value);
+    SetNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute, const DOM::DOMString &value);
     virtual ~SetNodeAttributeCommand();
 
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::ElementImpl *element() const { return m_element; }
-    DOM::NodeImpl::Id attribute() const { return m_attribute; }
+    const DOM::QualifiedName& attribute() const { return m_attribute; }
     DOM::DOMString value() const { return m_value; }
     
 private:
     DOM::ElementImpl *m_element;
-    DOM::NodeImpl::Id m_attribute;
+    DOM::QualifiedName m_attribute;
     DOM::DOMString m_value;
     DOM::DOMString m_oldValue;
 };

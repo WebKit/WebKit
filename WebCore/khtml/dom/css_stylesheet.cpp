@@ -29,7 +29,6 @@
 #include "html/html_headimpl.h"
 
 #include "css/css_stylesheetimpl.h"
-#include "misc/htmlhashes.h"
 
 #include <stdio.h>
 

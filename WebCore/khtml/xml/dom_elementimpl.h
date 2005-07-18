@@ -65,37 +65,37 @@ class AttributeImpl : public khtml::Shared<AttributeImpl>
 
 public:
     // null value is forbidden !
-    AttributeImpl(NodeImpl::Id id, const AtomicString& value)
-        : m_id(id), _value(value), _impl(0)
+    AttributeImpl(const QualifiedName& name, const AtomicString& value)
+        : m_name(name), m_value(value), m_impl(0)
         { };
     virtual ~AttributeImpl() {};
     
     MAIN_THREAD_ALLOCATED;
 
-    const AtomicString& value() const { return _value; }
-    const AtomicString& prefix() const { return _prefix; }
-    NodeImpl::Id id() const { return m_id; }
-    AttrImpl* attrImpl() const { return _impl; }
+    const AtomicString& value() const { return m_value; }
+    const AtomicString& prefix() const { return m_name.prefix(); }
+    const AtomicString& localName() const { return m_name.localName(); }
+    const AtomicString& namespaceURI() const { return m_name.namespaceURI(); }
+    
+    const QualifiedName& name() const { return m_name; }
+    
+    AttrImpl* attrImpl() const { return m_impl; }
 
-    bool isNull() const { return _value.isNull(); }
-    bool isEmpty() const { return _value.isEmpty(); }
+    bool isNull() const { return m_value.isNull(); }
+    bool isEmpty() const { return m_value.isEmpty(); }
     
     virtual AttributeImpl* clone(bool preserveDecl=true) const;
 
 private:
-    void setValue(const AtomicString& value) {
-        _value = value;
-    }
-    void setPrefix(const AtomicString& prefix) {
-        _prefix = prefix;
-    }
+    void setValue(const AtomicString& value) { m_value = value; }
+    void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
+
     void allocateImpl(ElementImpl* e);
 
 protected:
-    NodeImpl::Id m_id;
-    AtomicString _prefix;
-    AtomicString _value;
-    AttrImpl* _impl;
+    QualifiedName m_name;
+    AtomicString m_value;
+    AttrImpl* m_impl;
 };
 
 // Attr can have Text and EntityReference children
@@ -130,7 +130,7 @@ public:
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
     virtual const AtomicString& prefix() const;
-    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode );
+    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode);
 
     virtual DOMString nodeValue() const;
     virtual void setNodeValue( const DOMString &, int &exceptioncode );
@@ -163,9 +163,9 @@ public:
     // Used to quickly determine whether or not an element has a given CSS class.
     virtual const AtomicStringList* getClassList() const;
     const AtomicString& getIDAttribute() const;
-    const AtomicString& getAttribute(Id id ) const;
-    void setAttribute( Id id, DOMStringImpl* value, int &exceptioncode );
-    void removeAttribute( Id id, int &exceptioncode );
+    const AtomicString& getAttribute(const QualifiedName& name) const;
+    void setAttribute(const QualifiedName& name, DOMStringImpl* value, int &exceptioncode);
+    void removeAttribute(const QualifiedName& name, int &exceptioncode);
 
     bool hasAttributes() const;
 
@@ -210,7 +210,7 @@ public:
     virtual void removedFromDocument();
 
     // convenience methods which ignore exceptions
-    void setAttribute(Id id, const DOMString &value);
+    void setAttribute(const QualifiedName& name, const DOMString &value);
 
     virtual NamedAttrMapImpl *attributes() const;
     NamedAttrMapImpl* attributes(bool readonly) const;
@@ -232,7 +232,7 @@ public:
     virtual void mouseEventHandler( MouseEvent */*ev*/, bool /*inside*/ ) {};
     virtual bool childTypeAllowed( unsigned short type );
  
-    virtual AttributeImpl* createAttribute(Id id, DOMStringImpl* value);
+    virtual AttributeImpl* createAttribute(const QualifiedName& name, DOMStringImpl* value);
     
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
@@ -276,24 +276,23 @@ public:
     NamedAttrMapImpl &operator =(const NamedAttrMapImpl &other);
 
     // DOM methods & attributes for NamedNodeMap
-    virtual AttrImpl *getNamedItem ( NodeImpl::Id id ) const;
+    virtual AttrImpl* getNamedItem(const QualifiedName& name) const;
 
-    virtual SharedPtr<NodeImpl> removeNamedItem ( NodeImpl::Id id, int &exceptioncode );
-    virtual SharedPtr<NodeImpl> setNamedItem ( NodeImpl* arg, int &exceptioncode );
+    virtual SharedPtr<NodeImpl> removeNamedItem(const QualifiedName& name, int &exceptioncode);
+    virtual SharedPtr<NodeImpl> setNamedItem(NodeImpl* arg, int &exceptioncode);
 
     virtual AttrImpl *item ( unsigned long index ) const;
     unsigned long length() const { return len; }
 
     // Other methods (not part of DOM)
-    virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly);
     AttributeImpl* attributeItem(unsigned long index) const { return attrs ? attrs[index] : 0; }
-    AttributeImpl* getAttributeItem(NodeImpl::Id id) const;
+    AttributeImpl* getAttributeItem(const QualifiedName& name) const;
     virtual bool isReadOnly() { return element ? element->isReadOnly() : false; }
 
     // used during parsing: only inserts if not already there
     // no error checking!
     void insertAttribute(AttributeImpl* newAttribute) {
-        if (!getAttributeItem(newAttribute->id()))
+        if (!getAttributeItem(newAttribute->name()))
             addAttribute(newAttribute);
         else
             newAttribute->deref();
@@ -308,7 +307,7 @@ protected:
     // this method is internal, does no error checking at all
     void addAttribute(AttributeImpl* newAttribute);
     // this method is internal, does no error checking at all
-    void removeAttribute(NodeImpl::Id id);
+    void removeAttribute(const QualifiedName& name);
     virtual void clearAttributes();
     void detachFromElement();
 
@@ -327,29 +326,29 @@ class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
 {
 public:
     CSSMappedAttributeDeclarationImpl(CSSRuleImpl *parentRule)
-    : CSSMutableStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(0)
+    : CSSMutableStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(anyQName())
     {}
     
     virtual ~CSSMappedAttributeDeclarationImpl();
 
-    void setMappedState(MappedAttributeEntry type, NodeImpl::Id attr, const AtomicString& val)
+    void setMappedState(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& val)
     {
         m_entryType = type;
-        m_attrName = attr;
+        m_attrName = name;
         m_attrValue = val;
     }
 
 private:
     MappedAttributeEntry m_entryType;
-    NodeImpl::Id m_attrName;
+    QualifiedName m_attrName;
     AtomicString m_attrValue;
 };
 
 class MappedAttributeImpl : public AttributeImpl
 {
 public:
-    MappedAttributeImpl(NodeImpl::Id _id, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
-    : AttributeImpl(_id, value), m_styleDecl(decl)
+    MappedAttributeImpl(const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
+    : AttributeImpl(name, value), m_styleDecl(decl)
     {
         if (decl)
             decl->ref();
@@ -408,7 +407,7 @@ public:
 
     bool hasMappedAttributes() const { return namedAttrMap ? static_cast<NamedMappedAttrMapImpl*>(namedAttrMap)->hasMappedAttributes() : false; }
     const NamedMappedAttrMapImpl* mappedAttributes() const { return static_cast<NamedMappedAttrMapImpl*>(namedAttrMap); }
-    bool isMappedAttribute(NodeImpl::Id attr) const { MappedAttributeEntry res = eNone; mapToEntry(attr, res); return res != eNone; }
+    bool isMappedAttribute(const QualifiedName& name) const { MappedAttributeEntry res = eNone; mapToEntry(name, res); return res != eNone; }
 
     void addCSSLength(MappedAttributeImpl* attr, int id, const DOMString &value);
     void addCSSProperty(MappedAttributeImpl* attr, int id, const DOMString &value);
@@ -420,7 +419,7 @@ public:
     
     static CSSMappedAttributeDeclarationImpl* getMappedAttributeDecl(MappedAttributeEntry type, AttributeImpl* attr);
     static void setMappedAttributeDecl(MappedAttributeEntry type, AttributeImpl* attr, CSSMappedAttributeDeclarationImpl* decl);
-    static void removeMappedAttributeDecl(MappedAttributeEntry type, NodeImpl::Id attrName, const AtomicString& attrValue);
+    static void removeMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& attrName, const AtomicString& attrValue);
     static QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* m_mappedAttributeDecls;
     
     CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
@@ -435,9 +434,9 @@ public:
     virtual const AtomicStringList* getClassList() const;
     virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls = false);
     virtual void parseMappedAttribute(MappedAttributeImpl* attr);
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void createAttributeMap() const;
-    virtual AttributeImpl* createAttribute(NodeImpl::Id id, DOMStringImpl* value);
+    virtual AttributeImpl* createAttribute(const QualifiedName& name, DOMStringImpl* value);
 
 protected:
     CSSMutableStyleDeclarationImpl* m_inlineStyleDecl;

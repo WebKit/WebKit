@@ -29,7 +29,6 @@
 #include "html/html_miscimpl.h"
 
 #include "xml/dom_docimpl.h"
-#include "misc/htmlhashes.h"
 
 using namespace DOM;
 

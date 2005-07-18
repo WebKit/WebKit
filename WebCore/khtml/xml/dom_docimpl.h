@@ -183,7 +183,6 @@ public:
     CommentImpl *createComment ( const DOMString &data );
     CDATASectionImpl *createCDATASection ( const DOMString &data );
     ProcessingInstructionImpl *createProcessingInstruction ( const DOMString &target, const DOMString &data );
-    AttrImpl *createAttribute(Id id);
     AttrImpl *createAttribute(const DOMString &name, int &exception) { return createAttributeNS(DOMString(), name, exception); }
     AttrImpl *createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception);
     EntityReferenceImpl *createEntityReference ( const DOMString &name );
@@ -389,12 +388,6 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short nodeType );
     virtual NodeImpl *cloneNode ( bool deep );
-
-    // ### think about implementing ref'counting for the id's
-    // in order to be able to reassign those that are no longer in use
-    // (could make problems when it is still kept somewhere around, i.e. styleselector)
-    NodeImpl::Id attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly);
-    DOMString attrName(NodeImpl::Id _id) const;
 
     StyleSheetListImpl* styleSheets();
 

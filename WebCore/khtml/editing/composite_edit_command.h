@@ -33,6 +33,7 @@ namespace DOM {
     class CSSStyleDeclarationImpl;
     class DOMString;
     class TextImpl;
+    class QualifiedName;
 }
 
 namespace khtml {
@@ -66,12 +67,12 @@ protected:
     void rebalanceWhitespace();
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
     void removeFullySelectedNode(DOM::NodeImpl *node);
-    void removeNodeAttribute(DOM::ElementImpl *, int attribute);
+    void removeNodeAttribute(DOM::ElementImpl *, const DOM::QualifiedName& attribute);
     void removeChildrenInRange(DOM::NodeImpl *node, int from, int to);
     void removeNode(DOM::NodeImpl *removeChild);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
     void replaceTextInNode(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
-    void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
+    void setNodeAttribute(DOM::ElementImpl *, const DOM::QualifiedName& attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
     void splitElement(DOM::ElementImpl *element, DOM::NodeImpl *atChild);
     void mergeIdenticalElements(DOM::ElementImpl *first, DOM::ElementImpl *second);

@@ -35,7 +35,6 @@
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
 #include "rendering/render_text.h"
-#include "misc/htmlattrs.h"
 #include "htmlnames.h"
 
 using DOM::AttributeImpl;
@@ -47,6 +46,7 @@ using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::TagStatusForbidden;
+using DOM::HTMLAttributes;
 using DOM::HTMLElementImpl;
 using DOM::HTMLNames;
 using DOM::NamedAttrMapImpl;
@@ -224,16 +224,17 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                 unsigned long length = attrs->length();
                 if (length == 0 && additionalStyle.length() > 0) {
                     // FIXME: Handle case where additionalStyle has illegal characters in it, like "
-                    markup += " " + node->getDocument()->attrName(ATTR_STYLE).string() + "=\"" + additionalStyle.string() + "\"";
+                    markup += " " +  HTMLAttributes::style().localName().string() + "=\"" + additionalStyle.string() + "\"";
                 }
                 else {
                     for (unsigned int i=0; i<length; i++) {
                         AttributeImpl *attr = attrs->attributeItem(i);
                         DOMString value = attr->value();
-                        if (attr->id() == ATTR_STYLE && additionalStyle.length() > 0)
+                        if (attr->name() == HTMLAttributes::style() && additionalStyle.length() > 0)
                             value += "; " + additionalStyle;
                         // FIXME: Handle case where value has illegal characters in it, like "
-                        markup += " " + node->getDocument()->attrName(attr->id()).string() + "=\"" + value.string() + "\"";
+                        // FIXME: Namespaces! XML! Ack!
+                        markup += " " + attr->name().localName().string() + "=\"" + value.string() + "\"";
                     }
                 }
             }
@@ -297,9 +298,8 @@ static void completeURLs(NodeImpl *node, const QString &baseURL)
             unsigned long length = attrs->length();
             for (unsigned long i = 0; i < length; i++) {
                 AttributeImpl *attr = attrs->attributeItem(i);
-                if (e->isURLAttribute(attr)) {
-                    e->setAttribute(attr->id(), KURL(baseURL, attr->value().string()).url());
-                }
+                if (e->isURLAttribute(attr))
+                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().string()).url());
             }
         }
     }
@@ -549,7 +549,7 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
                 element = document->createElementNS(HTMLNames::xhtmlNamespaceURI(), "br", exceptionCode);
                 ASSERT(exceptionCode == 0);
                 element->ref();
-                element->setAttribute(ATTR_CLASS, AppleInterchangeNewline);            
+                element->setAttribute(HTMLAttributes::classAttr(), AppleInterchangeNewline);            
             } else {
                 element = createDefaultParagraphElement(document);
                 NodeImpl *paragraphContents;

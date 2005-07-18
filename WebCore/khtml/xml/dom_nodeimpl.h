@@ -62,21 +62,6 @@ class NamedAttrMapImpl;
 class QualifiedName;
 class RegisteredEventListener;
 
-const Q_UINT16 noNamespace = 0;
-const Q_UINT16 anyNamespace = 1;
-const Q_UINT16 xhtmlNamespace = 2;
-const Q_UINT16 anyLocalName = 0;
-
-const Q_UINT32 namespaceMask = 0xFFFF0000U;
-const Q_UINT32 localNameMask = 0x0000FFFFU;
-
-inline Q_UINT16 namespacePart(Q_UINT32 i) { return i >> 16; }
-inline Q_UINT16 localNamePart(Q_UINT32 i) { return i; }
-inline Q_UINT32 makeId(Q_UINT16 n, Q_UINT16 l) { return (n << 16) | l; }
-
-// Can't use makeId here because it results in an "initroutine".
-const Q_UINT32 anyQName = anyNamespace << 16 | anyLocalName;
-
 class DocumentPtr : public khtml::Shared<DocumentPtr>
 {
 public:
@@ -198,8 +183,6 @@ public:
     // This is only needed for <applet> and <object> elements, which can't lay themselves out
     // until they know all of their nested <param>s. [3603191, 4040848]
     virtual void closeRenderer() {}
-
-    typedef Q_UINT32 Id; // FIXME: Yank this once attributes are also switched over.
 
     enum MouseEventType {
         MousePress,
@@ -645,15 +628,14 @@ public:
     SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
 
     // DOM methods & attributes for NamedNodeMap
-    virtual NodeImpl *getNamedItem ( NodeImpl::Id id ) const = 0;
-    virtual SharedPtr<NodeImpl> removeNamedItem ( NodeImpl::Id id, int &exceptioncode ) = 0;
-    virtual SharedPtr<NodeImpl> setNamedItem ( NodeImpl* arg, int &exceptioncode ) = 0;
+    virtual NodeImpl *getNamedItem(const QualifiedName& attrName) const = 0;
+    virtual SharedPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
+    virtual SharedPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
 
     virtual NodeImpl *item ( unsigned long index ) const = 0;
     virtual unsigned long length(  ) const = 0;
 
     // Other methods (not part of DOM)
-    virtual NodeImpl::Id mapId(const DOMString& namespaceURI,  const DOMString& localName,  bool readonly) = 0;
     virtual bool isReadOnly() { return false; }
 };
 

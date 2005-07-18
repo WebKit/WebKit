@@ -120,7 +120,7 @@ public:
     virtual NodeImpl *addChild(NodeImpl *child);
     virtual void childrenChanged();
     
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     // Used to obtain either a solid or outset border decl.
@@ -154,7 +154,7 @@ public:
         : HTMLElementImpl(tagName, doc)
         { }
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 };
 
@@ -258,7 +258,7 @@ public:
     int colSpan() const { return cSpan; }
     int rowSpan() const { return rSpan; }
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     // used by table cells to share style decls created by the enclosing table.
@@ -330,7 +330,7 @@ public:
     void setTable(HTMLTableElementImpl *t) { table = t; }
 
     // overrides
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     long span() const { return _span; }
@@ -368,7 +368,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
     
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString align() const;

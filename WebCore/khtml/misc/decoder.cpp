@@ -29,8 +29,6 @@
 #include "decoder.h"
 using namespace khtml;
 
-#include "htmlhashes.h"
-
 #include <qregexp.h>
 #include <qtextcodec.h>
 

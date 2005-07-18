@@ -45,7 +45,7 @@ public:
     HTMLCanvasElementImpl(DocumentPtr *doc);
     ~HTMLCanvasElementImpl();
 
-    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *);
 
     virtual void attach();

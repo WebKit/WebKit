@@ -37,7 +37,6 @@
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_imageimpl.h"
-#import "htmlattrs.h"
 #import "htmlediting.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
@@ -99,6 +98,7 @@ using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::HTMLNames;
+using DOM::HTMLAttributes;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
@@ -1030,7 +1030,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
         if (titleNode->isElementNode()) {
-            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(ATTR_TITLE);
+            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(HTMLAttributes::title());
             if (!title.isNull()) {
                 // We found a node with a title.
                 QString titleText = title.string();
@@ -1047,14 +1047,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         DocumentImpl *doc = e->getDocument();
         ASSERT(doc);
         
-        const AtomicString& title = e->getAttribute(ATTR_TITLE);
+        const AtomicString& title = e->getAttribute(HTMLAttributes::title());
         if (!title.isEmpty()) {
             QString titleText = title.string();
             titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
             [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
-        const AtomicString& link = e->getAttribute(ATTR_HREF);
+        const AtomicString& link = e->getAttribute(HTMLAttributes::href());
         if (!link.isNull()) {
             QString t = plainText(rangeOfContents(e).get());
             if (!t.isEmpty()) {
@@ -1064,7 +1064,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
-        DOMString target = e->getAttribute(ATTR_TARGET);
+        DOMString target = e->getAttribute(HTMLAttributes::target());
         if (target.isEmpty() && doc) { // FIXME: Take out this doc check when we're not just before a release.
             target = doc->baseTarget();
         }
@@ -1096,9 +1096,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString attr;
             if (i->hasTagName(HTMLNames::object())) {
-                attr = i->getAttribute(ATTR_DATA);
+                attr = i->getAttribute(HTMLAttributes::data());
             } else {
-                attr = i->getAttribute(ATTR_SRC);
+                attr = i->getAttribute(HTMLAttributes::src());
             }
             if (!attr.isEmpty()) {
                 QString URLString = parseURL(attr).string();

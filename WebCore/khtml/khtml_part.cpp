@@ -55,7 +55,6 @@
 #include "rendering/render_block.h"
 #include "rendering/render_text.h"
 #include "rendering/render_frames.h"
-#include "misc/htmlhashes.h"
 #include "misc/loader.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_rangeimpl.h"
@@ -208,7 +207,9 @@ KHTMLPart::KHTMLPart( KHTMLView *view, QObject *parent, const char *name, GUIPro
 void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
   AtomicString::init();
+  QualifiedName::init();
   HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
+  HTMLAttributes::init(); // FIXME: Ditto.
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
   else if ( prof == BrowserViewGUI )
@@ -2981,7 +2982,7 @@ KURL KHTMLPart::backgroundURL() const
   if (!d->m_doc || !d->m_doc->isHTMLDocument())
     return KURL();
 
-  QString relURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( ATTR_BACKGROUND ).string();
+  QString relURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( HTMLAttributes::background() ).string();
 
   return KURL( m_url, relURL );
 }
@@ -3146,7 +3147,7 @@ void KHTMLPart::updateActions()
 
   // ### frames
   if ( d->m_doc && d->m_doc->isHTMLDocument() && static_cast<HTMLDocumentImpl*>(d->m_doc)->body() && !d->m_bClearing )
-    bgURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( ATTR_BACKGROUND ).string();
+    bgURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( HTMLAttributes::background() ).string();
 
   d->m_paSaveBackground->setEnabled( !bgURL.isEmpty() );
 }
@@ -4773,7 +4774,7 @@ bool KHTMLPart::handleMouseMoveEventDrag(khtml::MouseMoveEvent *event)
 			if (i) {
 				KMultipleDrag *mdrag = new KMultipleDrag( d->m_view->viewport());
 				mdrag->addDragObject(new QImageDrag(i->currentImage(), 0L));
-				KURL u( completeURL( khtml::parseURL(i->getAttribute(ATTR_SRC)).string()));
+				KURL u( completeURL( khtml::parseURL(i->getAttribute(HTMLAttributes::src())).string()));
 				KURLDrag* urlDrag = KURLDrag::newDrag(u, 0L);
 				if (!d->m_referrer.isEmpty())
 					urlDrag->metaData()["referrer"] = d->m_referrer;
@@ -5738,7 +5739,7 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
 
         styleElement->ref();
         
-        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+        styleElement->setAttribute(HTMLAttributes::style(), d->m_typingStyle->cssText().implementation(), exceptionCode);
         assert(exceptionCode == 0);
         
         TextImpl *text = xmlDocImpl()->createEditingTextNode("");
@@ -5815,7 +5816,7 @@ void KHTMLPart::applyEditingStyleToElement(ElementImpl *element) const
     CSSMutableStyleDeclarationImpl *mergeStyle = editingStyle();
     if (mergeStyle) {
         currentStyle->merge(mergeStyle);
-        element->setAttribute(ATTR_STYLE, currentStyle->cssText());
+        element->setAttribute(HTMLAttributes::style(), currentStyle->cssText());
     }
 }
 
@@ -5836,7 +5837,7 @@ void KHTMLPart::removeEditingStyleFromElement(ElementImpl *element) const
     if (changed)
         currentStyle->setChanged();
 
-    element->setAttribute(ATTR_STYLE, currentStyle->cssText());
+    element->setAttribute(HTMLAttributes::style(), currentStyle->cssText());
 }
 
 #if !APPLE_CHANGES

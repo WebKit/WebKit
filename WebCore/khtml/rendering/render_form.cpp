@@ -34,7 +34,6 @@
 #include "misc/helper.h"
 #include "xml/dom2_eventsimpl.h"
 #include "html/html_formimpl.h"
-#include "misc/htmlhashes.h"
 
 #include "rendering/render_form.h"
 #include <assert.h>
@@ -694,10 +693,10 @@ void RenderLineEdit::updateFromElement()
     
 #if APPLE_CHANGES
     // Handle updating the search attributes.
-    w->setPlaceholderString(e->getAttribute(ATTR_PLACEHOLDER).string());
+    w->setPlaceholderString(e->getAttribute(HTMLAttributes::placeholder()).string());
     if (w->type() == QLineEdit::Search) {
-        w->setLiveSearch(!e->getAttribute(ATTR_INCREMENTAL).isNull());
-        w->setAutoSaveName(e->getAttribute(ATTR_AUTOSAVE).string());
+        w->setLiveSearch(!e->getAttribute(HTMLAttributes::incremental()).isNull());
+        w->setAutoSaveName(e->getAttribute(HTMLAttributes::autosave()).string());
         w->setMaxResults(e->maxResults());
     }
 #endif
@@ -1192,7 +1191,7 @@ void RenderSelect::updateFromElement()
 
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->hasTagName(HTMLNames::optgroup())) {
-                QString label = listItems[listIndex]->getAttribute(ATTR_LABEL).string();
+                QString label = listItems[listIndex]->getAttribute(HTMLAttributes::label()).string();
                 label.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, an optgroup can't start or end with whitespace (other than the indent
@@ -1795,9 +1794,9 @@ void RenderSlider::calcMinMaxWidth()
 void RenderSlider::updateFromElement()
 {
     const DOMString& value = element()->value();
-    const DOMString& min = element()->getAttribute(ATTR_MIN);
-    const DOMString& max = element()->getAttribute(ATTR_MAX);
-    const DOMString& precision = element()->getAttribute(ATTR_PRECISION);
+    const DOMString& min = element()->getAttribute(HTMLAttributes::min());
+    const DOMString& max = element()->getAttribute(HTMLAttributes::max());
+    const DOMString& precision = element()->getAttribute(HTMLAttributes::precision());
     
     double minVal = min.isNull() ? 0.0 : min.string().toDouble();
     double maxVal = max.isNull() ? 100.0 : max.string().toDouble();
@@ -1826,7 +1825,7 @@ void RenderSlider::slotSliderValueChanged()
     QSlider* slider = (QSlider*)widget();
 
     double val = slider->value();
-    const DOMString& precision = element()->getAttribute(ATTR_PRECISION);
+    const DOMString& precision = element()->getAttribute(HTMLAttributes::precision());
 
     // Force integer value if not float (strcasecmp returns confusingly backward boolean).
     if (strcasecmp(precision, "float"))

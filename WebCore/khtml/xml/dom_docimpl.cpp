@@ -38,7 +38,6 @@
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_valueimpl.h"
-#include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "ecma/kjs_proxy.h"
 #include "ecma/kjs_binding.h"
@@ -498,7 +497,7 @@ ElementImpl *DocumentImpl::documentElement() const
 
 ElementImpl *DocumentImpl::createElement(const DOMString &name, int &exceptionCode)
 {
-    return createElementNS(emptyAtom, name, exceptionCode);
+    return createElementNS(nullAtom, name, exceptionCode);
 }
 
 DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
@@ -524,13 +523,6 @@ CDATASectionImpl *DocumentImpl::createCDATASection ( const DOMString &data )
 ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOMString &target, const DOMString &data )
 {
     return new ProcessingInstructionImpl( docPtr(),target,data);
-}
-
-AttrImpl *DocumentImpl::createAttribute( NodeImpl::Id id )
-{
-    // Assume this is an HTML attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
-    // documents if we're wrong.
-    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(id, DOMString("").implementation()));
 }
 
 EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
@@ -576,20 +568,8 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
             if (attrs) {
                 unsigned length = attrs->length();
                 for (unsigned i = 0; i < length; i++) {
-                    AttrImpl *attr = attrs->item(i);
-                    DOMString qualifiedName = attr->nodeName();
-                    DOMString value = attr->nodeValue();
-
-                    int colonpos = qualifiedName.find(':');
-                    DOMString localName = qualifiedName;
-                    if (colonpos >= 0) {
-                        localName.remove(0, colonpos + 1);
-                        // ### extract and set new prefix
-                    }
-
-                    // FIXME: Lose the namespace here for now.  This code will change soon anyway.
-                    NodeImpl::Id nodeId = attrId(0, localName.implementation(), false /* allocate */);
-                    newElement->setAttribute(nodeId, value.implementation(), exceptioncode);
+                    AttributeImpl* attr = attrs->attributeItem(i);
+                    newElement->setAttribute(attr->name(), attr->value().implementation(), exceptioncode);
                     if (exceptioncode != 0) {
                         newElement->deref();
                         return 0;
@@ -625,7 +605,7 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
     return 0;
 }
 
-ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
+ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
 {
     // Split the name.
     int exceptionCode = 0;
@@ -681,7 +661,7 @@ ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
             
             element = static_cast<ElementImpl *>(n);
             
-            if (element->hasID() && element->getAttribute(ATTR_ID) == elementId) {
+            if (element->hasID() && element->getAttribute(HTMLAttributes::idAttr()) == elementId) {
                 if (idCount == 1) 
                     m_idCount.remove(qId);
                 else
@@ -754,7 +734,7 @@ ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
             if (!n->isElementNode())
                 continue;
             const ElementImpl *elementImpl = static_cast<const ElementImpl *>(n);
-            DOMString accessKey(elementImpl->getAttribute(ATTR_ACCESSKEY));
+            DOMString accessKey(elementImpl->getAttribute(HTMLAttributes::accesskey()));;
             if (!accessKey.isEmpty()) {
                 QString ak = accessKey.string().lower();
                 if (m_elementsByAccessKey.find(ak) == NULL)
@@ -1847,8 +1827,8 @@ bool DocumentImpl::prepareMouseEvent( bool readonly, int _x, int _y, MouseEvent 
         if (renderInfo.URLElement()) {
             assert(renderInfo.URLElement()->isElementNode());
             ElementImpl* e =  static_cast<ElementImpl*>(renderInfo.URLElement());
-            DOMString href = khtml::parseURL(e->getAttribute(ATTR_HREF));
-            DOMString target = e->getAttribute(ATTR_TARGET);
+            DOMString href = khtml::parseURL(e->getAttribute(HTMLAttributes::href()));
+            DOMString target = e->getAttribute(HTMLAttributes::target());
 
             if (!target.isNull() && !href.isNull()) {
                 ev->target = target;
@@ -1911,87 +1891,6 @@ NodeImpl *DocumentImpl::cloneNode ( bool /*deep*/ )
     // Spec says cloning Document nodes is "implementation dependent"
     // so we do not support it...
     return 0;
-}
-
-NodeImpl::Id DocumentImpl::attrId(DOMStringImpl* _namespaceURI, DOMStringImpl *_name, bool readonly)
-{
-    // Each document maintains a mapping of attrname -> id for every attr name
-    // encountered in the document.
-    // For attrnames without a prefix (no qualified element name) and without matching
-    // namespace, the value defined in misc/htmlattrs.h is used.
-    NodeImpl::Id id = 0;
-
-    // First see if it's a HTML attribute name
-    QConstString n(_name->s, _name->l);
-    if (!_namespaceURI) {
-        // we're in HTML namespace if we know the tag.
-        // xhtml is lower case - case sensitive, easy to implement
-        if ( htmlMode() == XHtml && (id = getAttrID(n.string().ascii(), _name->l)) )
-            return id;
-        // compatibility: upper case - case insensitive
-        if ( htmlMode() != XHtml && (id = getAttrID(n.string().lower().ascii(), _name->l )) )
-            return id;
-
-        // ok, the fast path didn't work out, we need the full check
-    }
-
-    // now lets find out the namespace
-    Q_UINT16 ns = noNamespace;
-    /* FIXME: Just break namespaced attributes for now.  Will fix in next stage of QualifiedName conversion.
-    if (_namespaceURI) {
-        DOMString nsU(_namespaceURI);
-        int nsID = XmlNamespaceTable::getNamespaceID(nsU, readonly);
-        if (nsID != -1)
-            ns = (Q_UINT16)nsID;
-    }*/
-    
-    // Look in the m_attrNames array for the name
-    // ### yeah, this is lame. use a dictionary / map instead
-    DOMString nme(n.string());
-    // compatibility mode has to store upper case
-    if (htmlMode() != XHtml) nme = nme.upper();
-    for (id = 0; id < m_attrNameCount; id++)
-        if (DOMString(m_attrNames[id]) == nme)
-            return makeId(ns, ATTR_LAST_ATTR+id);
-
-    // unknown
-    if (readonly) return 0;
-
-    // Name not found in m_attrNames, so let's add it
-    // ### yeah, this is lame. use a dictionary / map instead
-    if (m_attrNameCount+1 > m_attrNameAlloc) {
-        m_attrNameAlloc += 100;
-        DOMStringImpl **newNames = new DOMStringImpl* [m_attrNameAlloc];
-        if (m_attrNames) {
-            unsigned short i;
-            for (i = 0; i < m_attrNameCount; i++)
-                newNames[i] = m_attrNames[i];
-            delete [] m_attrNames;
-        }
-        m_attrNames = newNames;
-    }
-
-    id = m_attrNameCount++;
-    m_attrNames[id] = nme.implementation();
-    m_attrNames[id]->ref();
-
-    return makeId(ns, ATTR_LAST_ATTR+id);
-}
-
-DOMString DocumentImpl::attrName(NodeImpl::Id _id) const
-{
-    DOMString result;
-    if (localNamePart(_id) >= ATTR_LAST_ATTR)
-        result = m_attrNames[localNamePart(_id)-ATTR_LAST_ATTR];
-    else
-        result = getAttrName(_id);
-
-    // Attribute names are always lowercase in the DOM for both
-    // HTML and XHTML.
-    if (isHTMLDocument() || htmlMode() == XHtml)
-        return result.lower();
-
-    return result;
 }
 
 StyleSheetListImpl* DocumentImpl::styleSheets()
@@ -2119,7 +2018,7 @@ void DocumentImpl::recalcStyleSelector()
         }
         else if (n->isHTMLElement() && (n->hasTagName(HTMLNames::link()) || n->hasTagName(HTMLNames::style()))) {
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(n);
-            QString title = e->getAttribute( ATTR_TITLE ).string();
+            QString title = e->getAttribute(HTMLAttributes::title()).string();
             bool enabledViaScript = false;
             if (e->hasLocalName(HTMLNames::link())) {
                 // <LINK> element
@@ -2149,7 +2048,7 @@ void DocumentImpl::recalcStyleSelector()
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
-                    QString rel = e->getAttribute( ATTR_REL ).string();
+                    QString rel = e->getAttribute(HTMLAttributes::rel()).string();
                     if (e->hasLocalName(HTMLNames::style()) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
                 }
@@ -3089,11 +2988,12 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
         return 0;
     }
 
-    DOMString localName(qualifiedName.copy());
+    DOMString localName = qualifiedName;
     DOMString prefix;
     int colonpos;
     if ((colonpos = qualifiedName.find(':')) >= 0) {
         prefix = qualifiedName.copy();
+        localName = qualifiedName.copy();
         prefix.truncate(colonpos);
         localName.remove(0, colonpos+1);
     }
@@ -3102,13 +3002,12 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
         exception = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
-    // ### check correctness of namespace, prefix?
-
-    Id id = attrId(namespaceURI.implementation(), localName.implementation(), false /* allocate */);
-    AttrImpl *attr = createAttribute(id);
-    if (!prefix.isNull())
-        attr->setPrefix(prefix.implementation(), exception);
-    return attr;
+    
+    // FIXME: Assume this is a mapped attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
+    // documents if we're wrong.
+    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(QualifiedName(prefix.implementation(), 
+                                                                           localName.implementation(),
+                                                                           namespaceURI.implementation()), DOMString("").implementation()));
 }
 
 SharedPtr<HTMLCollectionImpl> DocumentImpl::images()

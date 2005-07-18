@@ -28,7 +28,6 @@
 #include "xml/dom_textimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/html_miscimpl.h"
-#include "misc/htmlhashes.h"
 #include "dom/html_image.h"
 #include "dom/html_form.h"
 #include "html/html_imageimpl.h"

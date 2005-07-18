@@ -24,8 +24,6 @@
 #include "css/css_base.h"
 #include "html/html_miscimpl.h" // HTMLCollectionImpl
 
-#include "misc/htmlhashes.h"
-
 using namespace DOM;
 
 HTMLElement::HTMLElement() : Element()

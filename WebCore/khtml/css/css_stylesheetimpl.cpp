@@ -224,7 +224,7 @@ void CSSStyleSheetImpl::addNamespace(CSSParser* p, const AtomicString& prefix, c
 const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& prefix)
 {
     if (prefix.isEmpty())
-        return emptyAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
+        return nullAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
     else if (prefix == starAtom)
         return starAtom; // We'll match any namespace.
     else if (m_namespaces) {
@@ -232,7 +232,7 @@ const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& pr
         if (ns)
             return ns->uri();
     }
-    return emptyAtom; // Assume we wont match any namespaces.
+    return nullAtom; // Assume we wont match any namespaces.
 }
 
 bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)

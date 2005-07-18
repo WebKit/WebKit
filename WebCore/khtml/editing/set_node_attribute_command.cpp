@@ -37,10 +37,12 @@ using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::DOMString;
+using DOM::QualifiedName;
 
 namespace khtml {
 
-SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute, const DOMString &value)
+SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, 
+                                                 const QualifiedName& attribute, const DOMString &value)
     : EditCommand(document), m_element(element), m_attribute(attribute), m_value(value)
 {
     ASSERT(m_element);

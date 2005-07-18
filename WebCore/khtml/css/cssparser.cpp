@@ -1497,7 +1497,10 @@ bool CSSParser::parseContent( int propId, bool important )
             if ( args->numValues != 1)
                 return false;
             Value *a = args->current();
-            parsedValue = new CSSPrimitiveValueImpl(domString(a->string), CSSPrimitiveValue::CSS_ATTR);
+            DOMString attrName = domString(a->string);
+            if (document()->isHTMLDocument())
+                attrName = attrName.lower();
+            parsedValue = new CSSPrimitiveValueImpl(attrName, CSSPrimitiveValue::CSS_ATTR);
         } else if ( val->unit == CSSPrimitiveValue::CSS_IDENT ) {
             // open-quote
             // close-quote

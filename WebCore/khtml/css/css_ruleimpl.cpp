@@ -31,7 +31,6 @@
 #include "css/css_ruleimpl.h"
 
 #include "misc/loader.h"
-#include "misc/htmlattrs.h"
 #include "xml/dom_docimpl.h"
 
 using namespace DOM;

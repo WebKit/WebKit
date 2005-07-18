@@ -1607,7 +1607,7 @@ Value HTMLElement::inputGetter(ExecState* exec, int token) const
         case InputReadOnly:        return Boolean(input.readOnly());
         case InputSelectionStart:  return getInputSelectionStart(input);
         case InputSelectionEnd:    return getInputSelectionEnd(input);
-        case InputSize:            return String(input.sizeDOM());
+        case InputSize:            return Number(input.size());
         case InputSrc:             return String(input.src());
         case InputTabIndex:        return Number(input.tabIndex());
         case InputType:            return String(input.type());
@@ -2742,7 +2742,7 @@ void HTMLElement::inputSetter(ExecState *exec, int token, const Value& value, co
         case InputMaxLength:       { input.setMaxLength(value.toInt32(exec)); return; }
         case InputName:            { input.setName(str); return; }
         case InputReadOnly:        { input.setReadOnly(value.toBoolean(exec)); return; }
-        case InputSize:            { input.setSize(str); return; }
+        case InputSize:            { input.setSize(value.toInt32(exec)); return; }
         case InputSelectionStart:  { input.setSelectionStart(value.toInt32(exec)); return; }
         case InputSelectionEnd:    { input.setSelectionEnd(value.toInt32(exec)); return; }
         case InputSrc:             { input.setSrc(str); return; }

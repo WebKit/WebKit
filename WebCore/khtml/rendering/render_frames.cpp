@@ -31,7 +31,6 @@
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
 #include "html/htmltokenizer.h"
-#include "misc/htmlattrs.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "khtmlview.h"
@@ -689,13 +688,13 @@ void RenderPartObject::updateWidget()
       HTMLElementImpl *embedOrObject;
       if (embed) {
           embedOrObject = (HTMLElementImpl *)embed;
-          DOMString attribute = embedOrObject->getAttribute(ATTR_WIDTH);
+          DOMString attribute = embedOrObject->getAttribute(HTMLAttributes::width());
           if (!attribute.isEmpty()) {
-              o->setAttribute(ATTR_WIDTH, attribute);
+              o->setAttribute(HTMLAttributes::width(), attribute);
           }
-          attribute = embedOrObject->getAttribute(ATTR_HEIGHT);
+          attribute = embedOrObject->getAttribute(HTMLAttributes::height());
           if (!attribute.isEmpty()) {
-              o->setAttribute(ATTR_HEIGHT, attribute);
+              o->setAttribute(HTMLAttributes::height(), attribute);
           }
           url = embed->url;
           serviceType = embed->serviceType;
@@ -756,7 +755,7 @@ void RenderPartObject::updateWidget()
       if (attributes) {
           for (unsigned long i = 0; i < attributes->length(); ++i) {
               AttributeImpl* it = attributes->attributeItem(i);
-              QString name = o->getDocument()->attrName(it->id()).string();
+              QString name = it->name().localName().string();
               if (embed || uniqueParamNames.find(name) == 0) {
                   paramNames.append(name);
                   paramValues.append(it->value().string());
@@ -803,7 +802,7 @@ void RenderPartObject::updateWidget()
             
 #if !APPLE_CHANGES      
       params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
-      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(ATTR_CODEBASE).string() ) );
+      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(HTMLAttributes::codebase()).string() ) );
 #endif
 
       // Find out if we support fallback content.
@@ -837,7 +836,7 @@ void RenderPartObject::updateWidget()
       if (a) {
           for (unsigned long i = 0; i < a->length(); ++i) {
               AttributeImpl* it = a->attributeItem(i);
-              paramNames.append(o->getDocument()->attrName(it->id()).string());
+              paramNames.append(it->name().localName().string());
               paramValues.append(it->value().string());
           }
       }

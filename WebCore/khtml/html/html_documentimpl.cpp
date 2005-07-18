@@ -66,8 +66,6 @@
 #include "khtml_part.h"
 #include "khtmlpart_p.h"
 #include "khtml_settings.h"
-#include "misc/htmlattrs.h"
-#include "misc/htmlhashes.h"
 
 #include "xml/xml_tokenizer.h"
 #include "xml/dom2_eventsimpl.h"

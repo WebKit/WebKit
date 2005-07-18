@@ -41,7 +41,6 @@
 #include "html/htmlparser.h"
 
 #include "misc/loader.h"
-#include "misc/htmlhashes.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -65,7 +64,11 @@ using DOM::emptyAtom;
 using DOM::commentAtom;
 using DOM::nullAtom;
 using DOM::textAtom;
+using DOM::HTMLAttributes;
 using DOM::HTMLNames;
+using DOM::QualifiedName;
+using DOM::MappedAttributeImpl;
+using DOM::NamedMappedAttrMapImpl;
 
 // turn off inlining to void warning with newer gcc
 #undef __inline
@@ -231,6 +234,21 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
     return true;
 }
 
+void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const AtomicString& v)
+{
+    AttributeImpl* a = 0;
+    if (!attrName.isEmpty() && attrName.string() != "/")
+        a = new MappedAttributeImpl(QualifiedName(nullAtom, attrName, nullAtom), v);
+
+    if (a) {
+        if(!attrs) {
+            attrs = new NamedMappedAttrMapImpl(0);
+            attrs->ref();
+        }
+        attrs->insertAttribute(a);
+    }
+}
+
 // ----------------------------------------------------------------------------
 
 HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool includesComments)
@@ -245,7 +263,6 @@ HTMLTokenizer::HTMLTokenizer(DOM::DocumentPtr *_doc, KHTMLView *_view, bool incl
     m_executingScript = 0;
     loadingExtScript = false;
     onHold = false;
-    attrNamePresent = false;
     timerId = 0;
     includesCommentsInDOM = includesComments;
     loadStopped = false;
@@ -1055,7 +1072,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     beginTag = true;
 
                 // Ignore the / in fake xml tags like <br/>.  We trim off the "/" so that we'll get "br" as the tag name and not "br/".
-                if(len > 1 && ptr[len-1] == '/' )
+                if (len > 1 && ptr[len-1] == '/')
                     ptr[--len] = '\0';
 
                 // Now that we've shaved off any invalid / that might have followed the name), make the tag.
@@ -1105,25 +1122,10 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                 curchar = *src;
                 if(curchar <= '>') {
                     if(curchar <= ' ' || curchar == '=' || curchar == '>') {
-                        unsigned int a;
                         cBuffer[cBufferPos] = '\0';
-                        a = getAttrID(cBuffer, cBufferPos);
-                        if (a)
-                            attrNamePresent = true;
-                        else {
-                            attrName = QString::fromLatin1(QCString(cBuffer, cBufferPos+1).data());
-                            attrNamePresent = !attrName.isEmpty();
-                        }
-                        
+                        attrName = AtomicString(cBuffer);
                         dest = buffer;
-                        *dest++ = a;
-#ifdef TOKEN_DEBUG
-                        if (!a || (cBufferPos && *cBuffer == '!'))
-                            kdDebug( 6036 ) << "Unknown attribute: *" << QCString(cBuffer, cBufferPos+1).data() << "*" << endl;
-                        else
-                            kdDebug( 6036 ) << "Known attribute: " << QCString(cBuffer, cBufferPos+1).data() << endl;
-#endif
-
+                        *dest++ = 0;
                         tag = SearchEqual;
                         break;
                     }
@@ -1138,8 +1140,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
             }
             if ( cBufferPos == CBUFLEN ) {
                 cBuffer[cBufferPos] = '\0';
-                attrName = QString::fromLatin1(QCString(cBuffer, cBufferPos+1).data());
-                attrNamePresent = !attrName.isEmpty();
+                attrName = AtomicString(cBuffer);
                 dest = buffer;
                 *dest++ = 0;
                 tag = SearchEqual;
@@ -1165,7 +1166,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                         ++src;
                     }
                     else {
-                        currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, emptyAtom);
+                        currToken.addAttribute(parser->docPtr()->document(), attrName, emptyAtom);
                         dest = buffer;
                         tag = SearchAttribute;
                     }
@@ -1205,7 +1206,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                 checkBuffer();
 
                 curchar = src->unicode();
-                if (curchar == '>' && !attrNamePresent) {
+                if (curchar == '>' && attrName.isEmpty()) {
                     // Handle a case like <img '>.  Just go ahead and be willing
                     // to close the whole tag.  Don't consume the character and
                     // just go back into SearchEnd while ignoring the whole
@@ -1216,8 +1217,8 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
                         dest--; // remove trailing newlines
                     AtomicString v(buffer+1, dest-buffer-1);
-                    attrName.setUnicode(buffer+1,dest-buffer-1); 
-                    currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
+                    attrName = v; // Just make the name/value match. (FIXME: Is this some WinIE quirk?)
+                    currToken.addAttribute(parser->docPtr()->document(), attrName, v);
                     tag = SearchAttribute;
                     dest = buffer;
                     tquote = NoQuote;
@@ -1239,9 +1240,9 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                         while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
                             dest--; // remove trailing newlines
                         AtomicString v(buffer+1, dest-buffer-1);
-                        if (!attrNamePresent)
-                            attrName.setUnicode(buffer+1,dest-buffer-1); 
-                        currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
+                        if (attrName.isEmpty())
+                            attrName = v; // Make the name match the value. (FIXME: Is this a WinIE quirk?)
+                        currToken.addAttribute(parser->docPtr()->document(), attrName, v);
 
                         dest = buffer;
                         tag = SearchAttribute;
@@ -1279,7 +1280,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     if ( curchar <= ' ' || curchar == '>' )
                     {
                         AtomicString v(buffer+1, dest-buffer-1);
-                        currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
+                        currToken.addAttribute(parser->docPtr()->document(), attrName, v);
                         dest = buffer;
                         tag = SearchAttribute;
                         break;
@@ -1334,17 +1335,17 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                      parser->doc()->part()->jScriptEnabled() && /* jscript allowed at all? */
                      view /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
-                    if ( ( a = currToken.attrs->getAttributeItem( ATTR_SRC ) ) )
+                    if ((a = currToken.attrs->getAttributeItem(HTMLAttributes::src())))
                         scriptSrc = parser->doc()->completeURL(parseURL( a->value() ).string() );
-                    if ( ( a = currToken.attrs->getAttributeItem( ATTR_CHARSET ) ) )
+                    if ((a = currToken.attrs->getAttributeItem(HTMLAttributes::charset())))
                         scriptSrcCharset = a->value().string().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
                         scriptSrcCharset = parser->doc()->part()->encoding();
                     /* Check type before language, since language is deprecated */
-                    if ((a = currToken.attrs->getAttributeItem(ATTR_TYPE)) != 0 && !a->value().string().isEmpty())
+                    if ((a = currToken.attrs->getAttributeItem(HTMLAttributes::type())) != 0 && !a->value().string().isEmpty())
                         foundTypeAttribute = true;
                     else
-                        a = currToken.attrs->getAttributeItem(ATTR_LANGUAGE);
+                        a = currToken.attrs->getAttributeItem(HTMLAttributes::language());
                 }
                 javascript = true;
 
@@ -1980,7 +1981,7 @@ void HTMLTokenizer::processToken()
         kdDebug( 6036 ) << "Attributes: " << l << endl;
         for (unsigned long i = 0; i < l; ++i) {
             AttributeImpl* c = currToken.attrs->attributeItem(i);
-            kdDebug( 6036 ) << "    " << c->id() << " " << parser->doc()->getDocument()->attrName(c->id()).string()
+            kdDebug( 6036 ) << "    " << c->name().string()
                             << "=\"" << c->value().string() << "\"" << endl;
         }
     }
