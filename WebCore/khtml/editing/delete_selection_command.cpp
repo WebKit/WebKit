@@ -286,8 +286,9 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     bool downstreamStartIsBR = m_downstreamStart.node()->hasTagName(HTMLNames::br());
     bool isBROnLineByItself = upstreamStartIsBR && downstreamStartIsBR && m_downstreamStart.node() == m_upstreamEnd.node();
     if (isBROnLineByItself) {
+        m_endingPosition = Position(m_downstreamStart.node()->parentNode(), m_downstreamStart.node()->nodeIndex());
         removeNode(m_downstreamStart.node());
-        m_endingPosition = m_upstreamStart;
+        m_endingPosition = m_endingPosition.equivalentDeepPosition();
         m_mergeBlocksAfterDelete = false;
         return true;
     }
@@ -702,7 +703,6 @@ void DeleteSelectionCommand::doApply()
     
     // set up our state
     initializePositionData();
-
     if (!m_startBlock || !m_endBlock) {
         // Can't figure out what blocks we're in. This can happen if
         // the document structure is not what we are expecting, like if
@@ -713,6 +713,17 @@ void DeleteSelectionCommand::doApply()
         return;
     }
     
+    // deleting just a BR is handled specially, at least because we do not
+    // want to replace it with a placeholder BR!
+    if (handleSpecialCaseBRDelete()) {
+        calculateTypingStyleAfterDelete(false);
+        debugPosition("endingPosition   ", m_endingPosition);
+        setEndingSelection(Selection(m_endingPosition, affinity));
+        clearTransientState();
+        rebalanceWhitespace();
+        return;
+    }
+
     // if all we are deleting is complete paragraph(s), we need to make
     // sure a blank paragraph remains when we are done
     bool forceBlankParagraph = isStartOfParagraph(VisiblePosition(m_upstreamStart, VP_DEFAULT_AFFINITY)) &&
@@ -722,10 +733,9 @@ void DeleteSelectionCommand::doApply()
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
 
     saveTypingStyleState();
-    insertPlaceholderForAncestorBlockContent();
     
-    if (!handleSpecialCaseBRDelete())
-        handleGeneralDelete();
+    insertPlaceholderForAncestorBlockContent();
+    handleGeneralDelete();
     
     // Do block merge if start and end of selection are in different blocks.
     moveNodesAfterNode();
@@ -745,6 +755,7 @@ void DeleteSelectionCommand::doApply()
         addBlockPlaceholderIfNeeded(m_endingPosition.node());
 
     calculateTypingStyleAfterDelete(addedPlaceholder);
+
     debugPosition("endingPosition   ", m_endingPosition);
     setEndingSelection(Selection(m_endingPosition, affinity));
     clearTransientState();

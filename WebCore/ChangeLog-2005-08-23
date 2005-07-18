@@ -1,3 +1,22 @@
+2005-07-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4065343> Mail: Deleting a line sometimes makes the insertion point jump to the top of the message
+        
+        Test cases added: delete-br-011.html
+
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        Make sure m_endingSelection is usable.
+        
+        (khtml::DeleteSelectionCommand::doApply):
+        Skip general delete related code when just doing handleSpecialCaseBRDelete().
+        
+        * layout-tests/editing/deleting/delete-br-011-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-011.html: Added.
+        Mimics composing a Mail.app reply, clicking past the end of the content, and hitting delete key.
+
 2005-07-15  Adele Peterson  <adele@apple.com>
 
         Written by Anders Carlsson  <andersca@mac.com>
