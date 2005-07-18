@@ -1,3 +1,40 @@
+2005-07-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
+        - some refactoring cleanup in the selection/searching code
+
+        * Misc.subproj/WebSearchableTextView.h:
+        moved WebDocumentSelection protocol conformation to this class, was in subclass WebTextView
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[WebSearchableTextView selectionRect]):
+        new method (moved here from Safari) to return a single rect encompassing all selected text
+        (-[WebSearchableTextView pasteboardTypesForSelection]):
+        moved here from WebTextView
+        (-[WebSearchableTextView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        ditto
+        
+        * WebView.subproj/WebDocumentInternal.h:
+        moved WebDocumentSelection protocol out of here
+        
+        * WebView.subproj/WebDocumentPrivate.h:
+        moved WebDocumentSelection protocol into here, added selectionRect method
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView selectionRect]):
+        new method, calls existing bridge method formerly called by _selectionRect
+        (-[WebHTMLView _selectionRect]):
+        now calls [self selectionRect]. We can't just delete _selectionRect because it's used by Mail.
+        
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        removed _selectionRect since it's in WebDocumentSelection now
+        
+        * WebView.subproj/WebTextView.h:
+        removed WebDocumentSelection from protocol list since it's in superclass now
+        
+        * WebView.subproj/WebTextView.m:
+        removed old WebDocumentSelection methods because they are in superclass now
+
 2005-07-15  Adele Peterson  <adele@apple.com>
 
         Written by Trey Matteson  <trey@usa.net>

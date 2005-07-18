@@ -29,6 +29,7 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol WebDocumentSearching;
+@protocol WebDocumentSelection;
 
-@interface WebSearchableTextView : NSTextView <WebDocumentSearching>
+@interface WebSearchableTextView : NSTextView <WebDocumentSearching, WebDocumentSelection>
 @end

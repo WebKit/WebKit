@@ -31,7 +31,7 @@
 
 @class WebDataSource;
 
-@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentElement, WebDocumentSelection>
+@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentElement>
 {
     float _textSizeMultiplier;
 }

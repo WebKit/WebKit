@@ -1439,11 +1439,6 @@ static WebHTMLView *lastHitView = nil;
     [super _web_layoutIfNeededRecursive:displayRect testDirtyRect:NO];
 }
 
-- (NSRect)_selectionRect
-{
-    return [[self _bridge] selectionRect];
-}
-
 - (void)_startAutoscrollTimer: (NSEvent *)triggerEvent
 {
     if (_private->autoscrollTimer == nil) {
@@ -1451,6 +1446,13 @@ static WebHTMLView *lastHitView = nil;
             target:self selector:@selector(_autoscroll) userInfo:nil repeats:YES] retain];
         _private->autoscrollTriggerEvent = [triggerEvent retain];
     }
+}
+
+// FIXME: _selectionRect is deprecated in favor of selectionRect, which is in protocol WebDocumentSelection.
+// We can't remove this yet because it's still in use by Mail.
+- (NSRect)_selectionRect
+{
+    return [self selectionRect];
 }
 
 - (void)_stopAutoscrollTimer
@@ -1865,6 +1867,11 @@ static WebHTMLView *lastHitView = nil;
 - (void)jumpToSelection:(id)sender
 {
     [[self _bridge] jumpToSelection];
+}
+
+- (NSRect)selectionRect
+{
+    return [[self _bridge] selectionRect];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 

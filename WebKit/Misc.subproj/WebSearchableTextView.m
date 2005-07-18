@@ -27,7 +27,7 @@
  */
 
 #import "WebSearchableTextView.h"
-#import "WebDocument.h"
+#import "WebDocumentPrivate.h"
 
 @interface NSString (_Web_StringTextFinding)
 - (NSRange)findString:(NSString *)string selectedRange:(NSRange)selectedRange options:(unsigned)mask wrap:(BOOL)wrapFlag;
@@ -75,6 +75,47 @@
         [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
         [pasteboard setString:string forType:NSStringPboardType];
     }
+}
+
+- (NSRect)selectionRect
+{
+    // Note that this method would work for any NSTextView; some day we might want to use it
+    // for an NSTextView that isn't a WebTextView.
+    NSRect result = NSZeroRect;
+    
+    // iterate over multiple selected ranges
+    NSEnumerator *rangeEnumerator = [[self selectedRanges] objectEnumerator];
+    NSValue *rangeAsValue;
+    while ((rangeAsValue = [rangeEnumerator nextObject]) != nil) {
+        NSRange range = [rangeAsValue rangeValue];
+        unsigned rectCount;
+        NSRectArray rectArray = [[self layoutManager] rectArrayForCharacterRange:range 
+                                                    withinSelectedCharacterRange:range 
+                                                                 inTextContainer:[self textContainer] 
+                                                                       rectCount:&rectCount];
+        unsigned i;
+        // iterate over multiple rects in each selected range
+        for (i = 0; i < rectCount; ++i) {
+            NSRect rect = rectArray[i];
+            if (NSEqualRects(result, NSZeroRect)) {
+                result = rect;
+            } else {
+                result = NSUnionRect(result, rect);
+            }
+        }
+    }
+    
+    return result;
+}
+
+- (NSArray *)pasteboardTypesForSelection
+{
+    return [self writablePasteboardTypes];
+}
+
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    [self writeSelectionToPasteboard:pasteboard types:types];
 }
 
 @end

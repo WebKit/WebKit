@@ -339,16 +339,6 @@
     return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]] defaultItems:nil];
 }
 
-- (NSArray *)pasteboardTypesForSelection
-{
-    return [self writablePasteboardTypes];
-}
-
-- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
-{
-    [self writeSelectionToPasteboard:pasteboard types:types];
-}
-
 // This approach could be relaxed when dealing with 3228554
 - (BOOL)resignFirstResponder
 {

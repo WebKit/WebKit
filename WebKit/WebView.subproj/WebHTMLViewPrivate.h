@@ -65,6 +65,8 @@
 
 - (WebPluginController *)_pluginController;
 
+// FIXME: _selectionRect is deprecated in favor of selectionRect, which is in protocol WebDocumentSelection.
+// We can't remove this yet because it's still in use by Mail.
 - (NSRect)_selectionRect;
 
 - (void)_startAutoscrollTimer:(NSEvent *)event;
