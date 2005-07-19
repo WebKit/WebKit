@@ -1,5 +1,185 @@
 2005-07-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Test cases added: None. Structural change only.
+
+        - eliminated try wrappers for get/put/call since we don't use C++ exceptions any more
+
+        * khtml/ecma/kjs_binding.cpp: Removed DOMObject::get, DOMObject::set, DOMFunction::get,
+        and DOMFunction::call.
+        * khtml/ecma/kjs_binding.h: Removed get, set, tryGet, trySet, call, tryCall from DOMObject
+        and DOMFunction. Removed DOMObjectLookupGet, DOMObjectLookupGetValue, and DOMObjectLookupPut.
+        We can just do things the normal way now.
+
+        The rest of the changes are just renames and removal of a couple stray tryCall wrappers.
+
+            tryGet -> get
+            tryPut -> put
+            tryCall -> call
+            putValue -> putValueProperty
+            DOMObjectLookupGet -> lookupGet
+            DOMObjectLookupGetValue -> lookupGetValue
+            DOMObjectLookupPut -> lookupPut
+
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserProtoFunc::call):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::get):
+        (KJS::DOMCSSStyleDeclaration::put):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::call):
+        (KJS::DOMStyleSheet::get):
+        (KJS::DOMStyleSheet::put):
+        (KJS::DOMStyleSheetList::get):
+        (KJS::DOMStyleSheetListFunc::call):
+        (KJS::DOMMediaList::get):
+        (KJS::DOMMediaList::put):
+        (KJS::KJS::DOMMediaListProtoFunc::call):
+        (KJS::DOMCSSStyleSheet::get):
+        (KJS::DOMCSSStyleSheetProtoFunc::call):
+        (KJS::DOMCSSRuleList::get):
+        (KJS::DOMCSSRuleListFunc::call):
+        (KJS::DOMCSSRule::get):
+        (KJS::DOMCSSRule::put):
+        (KJS::DOMCSSRule::putValueProperty):
+        (KJS::DOMCSSRuleFunc::call):
+        (KJS::CSSRuleConstructor::get):
+        (KJS::DOMCSSValue::get):
+        (KJS::DOMCSSValue::put):
+        (KJS::CSSValueConstructor::get):
+        (KJS::DOMCSSPrimitiveValue::get):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::call):
+        (KJS::CSSPrimitiveValueConstructor::get):
+        (KJS::DOMCSSValueList::get):
+        (KJS::DOMCSSValueListFunc::call):
+        (KJS::DOMRGBColor::get):
+        (KJS::DOMRect::get):
+        (KJS::DOMCounter::get):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::get):
+        (KJS::DOMNode::put):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNodeProtoFunc::call):
+        (KJS::DOMNodeList::get):
+        (KJS::DOMNodeList::call):
+        (KJS::DOMNodeListFunc::call):
+        (KJS::DOMAttr::get):
+        (KJS::DOMAttr::put):
+        (KJS::DOMAttr::putValueProperty):
+        (KJS::DOMDocument::get):
+        (KJS::DOMDocument::put):
+        (KJS::DOMDocument::putValueProperty):
+        (KJS::DOMDocumentProtoFunc::call):
+        (KJS::DOMElement::get):
+        (KJS::DOMElementProtoFunc::call):
+        (KJS::DOMDOMImplementationProtoFunc::call):
+        (KJS::DOMDocumentType::get):
+        (KJS::DOMNamedNodeMap::get):
+        (KJS::DOMNamedNodeMapProtoFunc::call):
+        (KJS::DOMProcessingInstruction::get):
+        (KJS::DOMProcessingInstruction::put):
+        (KJS::DOMNotation::get):
+        (KJS::DOMEntity::get):
+        (KJS::NodeConstructor::get):
+        (KJS::DOMExceptionConstructor::get):
+        (KJS::DOMNamedNodesCollection::get):
+        (KJS::DOMCharacterData::get):
+        (KJS::DOMCharacterData::put):
+        (KJS::DOMCharacterDataProtoFunc::call):
+        (KJS::DOMText::get):
+        (KJS::DOMTextProtoFunc::call):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::EventConstructor::get):
+        (KJS::DOMEvent::get):
+        (KJS::DOMEvent::put):
+        (KJS::DOMEvent::putValueProperty):
+        (KJS::DOMEventProtoFunc::call):
+        (KJS::EventExceptionConstructor::get):
+        (KJS::DOMUIEvent::get):
+        (KJS::DOMUIEventProtoFunc::call):
+        (KJS::DOMMouseEvent::get):
+        (KJS::DOMMouseEventProtoFunc::call):
+        (KJS::DOMKeyboardEvent::get):
+        (KJS::DOMKeyboardEventProtoFunc::call):
+        (KJS::MutationEventConstructor::get):
+        (KJS::DOMMutationEvent::get):
+        (KJS::DOMMutationEventProtoFunc::call):
+        (KJS::DOMWheelEvent::get):
+        (KJS::DOMWheelEventProtoFunc::call):
+        (KJS::Clipboard::get):
+        (KJS::Clipboard::put):
+        (KJS::Clipboard::putValueProperty):
+        (KJS::ClipboardProtoFunc::call):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::call):
+        (KJS::HTMLDocument::get):
+        (KJS::KJS::HTMLDocument::put):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::KJS::HTMLElement::get):
+        (KJS::KJS::HTMLElementFunction::call):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::HTMLElement::putValueProperty):
+        (KJS::KJS::HTMLCollection::get):
+        (KJS::KJS::HTMLCollection::call):
+        (KJS::KJS::HTMLCollectionProtoFunc::call):
+        (KJS::KJS::HTMLSelectCollection::get):
+        (KJS::KJS::HTMLSelectCollection::put):
+        (KJS::Image::get):
+        (KJS::Image::put):
+        (KJS::Image::putValueProperty):
+        (KJS::KJS::Context2DFunction::call):
+        (KJS::Context2D::get):
+        (KJS::Context2D::put):
+        (KJS::Context2D::putValueProperty):
+        (KJS::GradientFunction::call):
+        (KJS::Gradient::get):
+        (KJS::Gradient::put):
+        (KJS::Gradient::putValueProperty):
+        (KJS::ImagePattern::get):
+        (KJS::ImagePattern::put):
+        (KJS::ImagePattern::putValueProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::PluginsFunc::call):
+        (KJS::NavigatorFunc::call):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::get):
+        (KJS::DOMRangeProtoFunc::call):
+        (KJS::RangeConstructor::get):
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::get):
+        (KJS::DOMNodeIteratorProtoFunc::call):
+        (KJS::NodeFilterConstructor::get):
+        (KJS::DOMNodeFilterProtoFunc::call):
+        (KJS::DOMTreeWalker::get):
+        (KJS::DOMTreeWalker::put):
+        (KJS::DOMTreeWalkerProtoFunc::call):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::get):
+        (KJS::DOMAbstractViewFunc::call):
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::WindowFunc::call):
+        (KJS::LocationFunc::call):
+        (KJS::SelectionFunc::call):
+        (KJS::HistoryFunc::call):
+        (KJS::KonquerorFunc::call):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::get):
+        (KJS::XMLHttpRequest::put):
+        (KJS::XMLHttpRequest::putValueProperty):
+        (KJS::XMLHttpRequestProtoFunc::call):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::call):
+
+2005-07-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - fixed broken bi-di layout tests: the "dir" attribute was broken

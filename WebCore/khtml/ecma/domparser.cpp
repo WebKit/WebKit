@@ -67,7 +67,7 @@ DOMParser::DOMParser(ExecState *exec, DOM::DocumentImpl *d)
 }
 
 
-Value DOMParserProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMParserProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&DOMParser::info)) {
     Object err = Error::create(exec,TypeError);

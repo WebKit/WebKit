@@ -65,10 +65,10 @@ namespace KJS {
   public:
     XMLHttpRequest(ExecState *, DOM::DocumentImpl *d);
     ~XMLHttpRequest();
-    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
-    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
-    void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
+    virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual void mark();
 

@@ -42,43 +42,23 @@ namespace DOM {
 namespace KJS {
 
   /**
-   * Base class for all objects in this binding - get() and put() run
-   * tryGet() and tryPut() respectively, and catch exceptions if they
-   * occur.
+   * Base class for all objects in this binding.
    */
   class DOMObject : public ObjectImp {
-  public:
+  protected:
     DOMObject() : ObjectImp() {}
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
-    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const
-      { return ObjectImp::get(exec, propertyName); }
-
-    virtual void put(ExecState *exec, const Identifier &propertyName,
-                     const Value &value, int attr = None);
-    virtual void tryPut(ExecState *exec, const Identifier &propertyName,
-                        const Value& value, int attr = None)
-      { ObjectImp::put(exec,propertyName,value,attr); }
-
+  public:
     virtual UString toString(ExecState *exec) const;
   };
 
   /**
-   * Base class for all functions in this binding - get() and call() run
-   * tryGet() and tryCall() respectively, and catch exceptions if they
-   * occur.
+   * Base class for all functions in this binding.
    */
   class DOMFunction : public ObjectImp {
+  protected:
+    DOMFunction() : ObjectImp() {}
   public:
-    DOMFunction() : ObjectImp( /* proto? */ ) {}
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
-    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const
-      { return ObjectImp::get(exec, propertyName); }
-
     virtual bool implementsCall() const { return true; }
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
-
-    virtual Value tryCall(ExecState *exec, Object &thisObj, const List&args)
-      { return ObjectImp::call(exec, thisObj, args); }
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual Value toPrimitive(ExecState *exec, Type) const { return String(toString(exec)); }
     virtual UString toString(ExecState *) const { return UString("[function]"); }
@@ -180,70 +160,8 @@ namespace KJS {
 
   /**
    * Convert a KJS value into a QVariant
-   * Deprecated: Use variant instead.
    */
   QVariant ValueToVariant(ExecState* exec, const Value& val);
-
-  /**
-   * We need a modified version of lookupGet because
-   * we call tryGet instead of get, in DOMObjects.
-   */
-  template <class FuncImp, class ThisImp, class ParentImp>
-  inline Value DOMObjectLookupGet(ExecState *exec, const Identifier &propertyName,
-                                  const HashTable* table, const ThisImp* thisObj)
-  {
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-
-    if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::tryGet(exec, propertyName);
-
-    if (entry->attr & Function)
-      return lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
-    return thisObj->getValueProperty(exec, entry->value);
-  }
-
-  /**
-   * Simplified version of DOMObjectLookupGet in case there are no
-   * functions, only "values".
-   */
-  template <class ThisImp, class ParentImp>
-  inline Value DOMObjectLookupGetValue(ExecState *exec, const Identifier &propertyName,
-                                       const HashTable* table, const ThisImp* thisObj)
-  {
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-
-    if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::tryGet(exec, propertyName);
-
-    if (entry->attr & Function)
-      fprintf(stderr, "Function bit set! Shouldn't happen in lookupValue!\n" );
-    return thisObj->getValueProperty(exec, entry->value);
-  }
-
-  /**
-   * We need a modified version of lookupPut because
-   * we call tryPut instead of put, in DOMObjects.
-   */
-  template <class ThisImp, class ParentImp>
-  inline void DOMObjectLookupPut(ExecState *exec, const Identifier &propertyName,
-                                 const Value& value, int attr,
-                                 const HashTable* table, ThisImp* thisObj)
-  {
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-
-    if (!entry) // not found: forward to parent
-      thisObj->ParentImp::tryPut(exec, propertyName, value, attr);
-    else if (entry->attr & Function) // function: put as override property
-      thisObj->ObjectImp::put(exec, propertyName, value, attr);
-    else if (entry->attr & ReadOnly) // readonly! Can't put!
-#ifdef KJS_VERBOSE
-      fprintf(stderr,"Attempt to change value of readonly property '%s'\n",propertyName.ascii());
-#else
-    ; // do nothing
-#endif
-    else
-      thisObj->putValue(exec, entry->value, value, attr);
-  }
 
 } // namespace
 

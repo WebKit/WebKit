@@ -351,9 +351,9 @@ const ClassInfo EventConstructor::info = { "EventConstructor", 0, &EventConstruc
 @end
 */
 
-Value EventConstructor::tryGet(ExecState *exec, const Identifier &p) const
+Value EventConstructor::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<EventConstructor, DOMObject>(exec,p,&EventConstructorTable,this);
+  return lookupGetValue<EventConstructor, DOMObject>(exec,p,&EventConstructorTable,this);
 }
 
 Value EventConstructor::getValueProperty(ExecState *, int token) const
@@ -414,12 +414,12 @@ void DOMMouseEvent::mark()
         clipboard->mark();
 }
 
-Value DOMEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMEvent::get(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
-  kdDebug() << "KJS::DOMEvent::tryGet " << p.qstring() << endl;
+  kdDebug() << "KJS::DOMEvent::get " << p.qstring() << endl;
 #endif
-  return DOMObjectLookupGetValue<DOMEvent,DOMObject>(exec, p, &DOMEventTable, this );
+  return lookupGetValue<DOMEvent,DOMObject>(exec, p, &DOMEventTable, this );
 }
 
 Value DOMEvent::getValueProperty(ExecState *exec, int token) const
@@ -475,14 +475,14 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-void DOMEvent::tryPut(ExecState *exec, const Identifier &propertyName,
+void DOMEvent::put(ExecState *exec, const Identifier &propertyName,
                       const Value& value, int attr)
 {
-  DOMObjectLookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr,
+  lookupPut<DOMEvent, DOMObject>(exec, propertyName, value, attr,
                                           &DOMEventTable, this);
 }
 
-void DOMEvent::putValue(ExecState *exec, int token, const Value& value, int)
+void DOMEvent::putValueProperty(ExecState *exec, int token, const Value& value, int)
 {
   EventImpl &event = *m_impl;
   switch (token) {
@@ -497,7 +497,7 @@ void DOMEvent::putValue(ExecState *exec, int token, const Value& value, int)
   }
 }
 
-Value DOMEventProtoFunc::tryCall(ExecState *exec, Object & thisObj, const List &args)
+Value DOMEventProtoFunc::call(ExecState *exec, Object & thisObj, const List &args)
 {
   if (!thisObj.inherits(&KJS::DOMEvent::info)) {
     Object err = Error::create(exec,TypeError);
@@ -565,9 +565,9 @@ const ClassInfo EventExceptionConstructor::info = { "EventExceptionConstructor",
   UNSPECIFIED_EVENT_TYPE_ERR    DOM::EventException::UNSPECIFIED_EVENT_TYPE_ERR DontDelete|ReadOnly
 @end
 */
-Value EventExceptionConstructor::tryGet(ExecState *exec, const Identifier &p) const
+Value EventExceptionConstructor::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<EventExceptionConstructor, DOMObject>(exec,p,&EventExceptionConstructorTable,this);
+  return lookupGetValue<EventExceptionConstructor, DOMObject>(exec,p,&EventExceptionConstructorTable,this);
 }
 
 Value EventExceptionConstructor::getValueProperty(ExecState *, int token) const
@@ -614,9 +614,9 @@ DOMUIEvent::~DOMUIEvent()
 {
 }
 
-Value DOMUIEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMUIEvent::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<DOMUIEvent,DOMEvent>(exec,p,&DOMUIEventTable,this);
+  return lookupGetValue<DOMUIEvent,DOMEvent>(exec,p,&DOMUIEventTable,this);
 }
 
 Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
@@ -647,7 +647,7 @@ Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-Value DOMUIEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMUIEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&KJS::DOMUIEvent::info)) {
     Object err = Error::create(exec,TypeError);
@@ -708,12 +708,12 @@ DOMMouseEvent::~DOMMouseEvent()
 {
 }
 
-Value DOMMouseEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMMouseEvent::get(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "DOMMouseEvent::tryGet " << p.qstring() << endl;
+  kdDebug(6070) << "DOMMouseEvent::get " << p.qstring() << endl;
 #endif
-  return DOMObjectLookupGetValue<DOMMouseEvent,DOMUIEvent>(exec,p,&DOMMouseEventTable,this);
+  return lookupGetValue<DOMMouseEvent,DOMUIEvent>(exec,p,&DOMMouseEventTable,this);
 }
 
 static QPoint offsetFromTarget(const MouseRelatedEventImpl *e)
@@ -792,7 +792,7 @@ Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-Value DOMMouseEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMMouseEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&KJS::DOMMouseEvent::info)) {
     Object err = Error::create(exec,TypeError);
@@ -859,12 +859,12 @@ const ClassInfo* DOMKeyboardEvent::classInfo() const
     return &info;
 }
 
-Value DOMKeyboardEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMKeyboardEvent::get(ExecState *exec, const Identifier &p) const
 {
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "DOMKeyboardEvent::tryGet " << p.qstring() << endl;
+  kdDebug(6070) << "DOMKeyboardEvent::get " << p.qstring() << endl;
 #endif
-  return DOMObjectLookupGetValue<DOMKeyboardEvent, DOMUIEvent>(exec, p, &DOMKeyboardEventTable, this);
+  return lookupGetValue<DOMKeyboardEvent, DOMUIEvent>(exec, p, &DOMKeyboardEventTable, this);
 }
 
 Value DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
@@ -891,7 +891,7 @@ Value DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-Value DOMKeyboardEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMKeyboardEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&DOMKeyboardEvent::info)) {
     Object err = Error::create(exec,TypeError);
@@ -927,9 +927,9 @@ const ClassInfo MutationEventConstructor::info = { "MutationEventConstructor", 0
   REMOVAL	DOM::MutationEvent::REMOVAL		DontDelete|ReadOnly
 @end
 */
-Value MutationEventConstructor::tryGet(ExecState *exec, const Identifier &p) const
+Value MutationEventConstructor::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<MutationEventConstructor,DOMObject>(exec,p,&MutationEventConstructorTable,this);
+  return lookupGetValue<MutationEventConstructor,DOMObject>(exec,p,&MutationEventConstructorTable,this);
 }
 
 Value MutationEventConstructor::getValueProperty(ExecState *, int token) const
@@ -972,9 +972,9 @@ DOMMutationEvent::~DOMMutationEvent()
 {
 }
 
-Value DOMMutationEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMMutationEvent::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<DOMMutationEvent,DOMEvent>(exec,p,&DOMMutationEventTable,this);
+  return lookupGetValue<DOMMutationEvent,DOMEvent>(exec,p,&DOMMutationEventTable,this);
 }
 
 Value DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
@@ -997,7 +997,7 @@ Value DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-Value DOMMutationEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMMutationEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&KJS::DOMMutationEvent::info)) {
     Object err = Error::create(exec,TypeError);
@@ -1051,9 +1051,9 @@ DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
 {
 }
 
-Value DOMWheelEvent::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMWheelEvent::get(ExecState *exec, const Identifier &p) const
 {
-    return DOMObjectLookupGetValue<DOMWheelEvent,DOMEvent>(exec, p, &DOMWheelEventTable, this);
+    return lookupGetValue<DOMWheelEvent,DOMEvent>(exec, p, &DOMWheelEventTable, this);
 }
 
 Value DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
@@ -1088,7 +1088,7 @@ Value DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
     return Undefined();
 }
 
-Value DOMWheelEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMWheelEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
     if (!thisObj.inherits(&DOMWheelEvent::info)) {
         Object error = Error::create(exec,TypeError);
@@ -1144,9 +1144,9 @@ static Value stringOrUndefined(const DOM::DOMString &str)
     }
 }
 
-Value Clipboard::tryGet(ExecState *exec, const Identifier &propertyName) const
+Value Clipboard::get(ExecState *exec, const Identifier &propertyName) const
 {
-    return DOMObjectLookupGetValue<Clipboard,DOMObject>(exec, propertyName, &ClipboardTable, this);
+    return lookupGetValue<Clipboard,DOMObject>(exec, propertyName, &ClipboardTable, this);
 }
 
 Value Clipboard::getValueProperty(ExecState *exec, int token) const
@@ -1177,12 +1177,12 @@ Value Clipboard::getValueProperty(ExecState *exec, int token) const
     }
 }
 
-void Clipboard::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void Clipboard::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
-    DOMObjectLookupPut<Clipboard,DOMObject>(exec, propertyName, value, attr, &ClipboardTable, this );
+    lookupPut<Clipboard,DOMObject>(exec, propertyName, value, attr, &ClipboardTable, this );
 }
 
-void Clipboard::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+void Clipboard::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
 {
     switch (token) {
         case DropEffect:
@@ -1196,11 +1196,11 @@ void Clipboard::putValue(ExecState *exec, int token, const Value& value, int /*a
                 clipboard->setEffectAllowed(value.toString(exec).string());
             break;
         default:
-            kdWarning() << "Clipboard::putValue unhandled token " << token << endl;
+            kdWarning() << "Clipboard::putValueProperty unhandled token " << token << endl;
     }
 }
 
-Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value ClipboardProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
     if (!thisObj.inherits(&KJS::Clipboard::info)) {
         Object err = Error::create(exec,TypeError);

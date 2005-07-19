@@ -328,13 +328,12 @@ namespace KJS {
 #define IMPLEMENT_PROTOFUNC(ClassFunc) \
   class ClassFunc : public DOMFunction { \
   public: \
-    ClassFunc(ExecState *exec, int i, int len) \
-       : DOMFunction( /*proto? */ ), id(i) { \
-       Value protect(this); \
-       put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum); \
+    ClassFunc(ExecState *exec, int i, int len) : id(i) \
+    { \
+       put(exec, lengthPropertyName, Number(len), DontDelete|ReadOnly|DontEnum); \
     } \
-    /** You need to implement that one */ \
-    virtual Value tryCall(ExecState *exec, Object &thisObj, const List &args); \
+    /* Macro user needs to implement the call function. */ \
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args); \
   private: \
     int id; \
   };

@@ -46,38 +46,9 @@ using khtml::PointerHash;
 
 namespace KJS {
 
-/* TODO:
- * The catch all (...) clauses below shouldn't be necessary.
- * But they helped to view for example www.faz.net in an stable manner.
- * Those unknown exceptions should be treated as severe bugs and be fixed.
- *
- * these may be CSS exceptions - need to check - pmk
- */
-
-Value DOMObject::get(ExecState *exec, const Identifier &p) const
-{
-  return tryGet(exec,p);
-}
-
-void DOMObject::put(ExecState *exec, const Identifier &propertyName,
-                    const Value &value, int attr)
-{
-  tryPut(exec, propertyName, value, attr);
-}
-
 UString DOMObject::toString(ExecState *) const
 {
   return "[object " + className() + "]";
-}
-
-Value DOMFunction::get(ExecState *exec, const Identifier &propertyName) const
-{
-  return tryGet(exec, propertyName);
-}
-
-Value DOMFunction::call(ExecState *exec, Object &thisObj, const List &args)
-{
-  return tryCall(exec, thisObj, args);
 }
 
 typedef HashMap<void *, DOMObject *> DOMObjectMap;

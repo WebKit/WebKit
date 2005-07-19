@@ -456,14 +456,14 @@ Value MimeType::get(ExecState *exec, const Identifier &propertyName) const
 }
 
 
-Value PluginsFunc::tryCall(ExecState *exec, Object &, const List &args)
+Value PluginsFunc::call(ExecState *exec, Object &, const List &args)
 {
     PluginBase(exec).refresh(args[0].toBoolean(exec));
     return Undefined();
 }
 
 
-Value NavigatorFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
+Value NavigatorFunc::call(ExecState *exec, Object &thisObj, const List &)
 {
   if (!thisObj.inherits(&KJS::Navigator::info)) {
     Object err = Error::create(exec,TypeError);

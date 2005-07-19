@@ -1,3 +1,15 @@
+2005-07-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - eliminated try wrappers for get/put/call since we don't use C++ exceptions any more
+
+        * kjs/lookup.h: Changed tryCall in IMPLEMENT_PROTOFUNC here to call. It doesn't make
+        sense for this macro to use the name tryCall anyway, since that's specific to how
+        WebCore used this, so this is good anyway. On the other hand, it might be a problem
+        for KDOM or KSVG, in which case we'll need another macro for them, since JavaScriptCore
+        should presumably not have the C++ exception support.
+
 2005-07-18  Geoffrey Garen  <ggaren@apple.com>
 
         -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4008

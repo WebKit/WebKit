@@ -54,16 +54,16 @@ DOMAbstractView::~DOMAbstractView()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMAbstractView::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMAbstractView::get(ExecState *exec, const Identifier &p) const
 {
   if (p == "document")
     return getDOMNode(exec, m_impl->document());
   else if (p == "getComputedStyle")
     return lookupOrCreateFunction<DOMAbstractViewFunc>(exec,p,this,DOMAbstractView::GetComputedStyle,2,DontDelete|Function);
-  return DOMObject::tryGet(exec, p);
+  return DOMObject::get(exec, p);
 }
 
-Value DOMAbstractViewFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMAbstractViewFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&DOMAbstractView::info)) {
     Object err = Error::create(exec,TypeError);

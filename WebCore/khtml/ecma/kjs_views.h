@@ -33,7 +33,7 @@ namespace KJS {
   public:
     DOMAbstractView(ExecState *, DOM::AbstractViewImpl *av) : m_impl(av) { }
     ~DOMAbstractView();
-    virtual Value tryGet(ExecState *exec,const Identifier &p) const;
+    virtual Value get(ExecState *exec,const Identifier &p) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

@@ -126,7 +126,7 @@ namespace KJS {
   public:
     KonquerorFunc(const Konqueror* k, const char* name)
       : DOMFunction(), konqueror(k), m_name(name) { }
-    virtual Value tryCall(ExecState *exec, Object &thisObj, const List &args);
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
   private:
     const Konqueror* konqueror;
@@ -1572,7 +1572,7 @@ void Window::setCurrentEvent(EventImpl *evt)
   //kdDebug(6070) << "Window " << this << " (part=" << m_part << ")::setCurrentEvent m_evt=" << evt << endl;
 }
 
-Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value WindowFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&Window::info)) {
     Object err = Error::create(exec,TypeError);
@@ -2518,7 +2518,7 @@ UString Location::toString(ExecState *) const
     return m_part->url().prettyURL();
 }
 
-Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value LocationFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&Location::info)) {
     Object err = Error::create(exec,TypeError);
@@ -2706,7 +2706,7 @@ UString Selection::toString(ExecState *) const
     return UString(m_part->selection().toRange()->toString(exception));
 }
 
-Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value SelectionFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
     if (!thisObj.inherits(&Selection::info)) {
         Object err = Error::create(exec,TypeError);
@@ -2892,7 +2892,7 @@ UString History::toString(ExecState *exec) const
   return "[object History]";
 }
 
-Value HistoryFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value HistoryFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&History::info)) {
     Object err = Error::create(exec,TypeError);
@@ -2960,7 +2960,7 @@ Value Konqueror::get(ExecState *exec, const Identifier &p) const
   return /*Function*/( new KonquerorFunc(this, p.qstring().latin1() ) );
 }
 
-Value KonquerorFunc::tryCall(ExecState *exec, Object &, const List &args)
+Value KonquerorFunc::call(ExecState *exec, Object &, const List &args)
 {
   KParts::BrowserExtension *ext = konqueror->part->browserExtension();
 

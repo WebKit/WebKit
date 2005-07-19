@@ -70,7 +70,7 @@ XMLSerializer::XMLSerializer(ExecState *exec)
   setPrototype(XMLSerializerProto::self(exec));
 }
 
-Value XMLSerializerProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value XMLSerializerProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&XMLSerializer::info)) {
     Object err = Error::create(exec,TypeError);

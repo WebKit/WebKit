@@ -68,9 +68,9 @@ DOMNodeIterator::~DOMNodeIterator()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMNodeIterator::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMNodeIterator::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<DOMNodeIterator,DOMObject>(exec,p,&DOMNodeIteratorTable,this);
+  return lookupGetValue<DOMNodeIterator,DOMObject>(exec,p,&DOMNodeIteratorTable,this);
 }
 
 Value DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
@@ -95,7 +95,7 @@ Value DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-Value DOMNodeIteratorProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
+Value DOMNodeIteratorProtoFunc::call(ExecState *exec, Object &thisObj, const List &)
 {
   if (!thisObj.inherits(&KJS::DOMNodeIterator::info)) {
     Object err = Error::create(exec,TypeError);
@@ -145,9 +145,9 @@ const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &Nod
   SHOW_NOTATION		DOM::NodeFilter::SHOW_NOTATION	DontDelete|ReadOnly
 @end
 */
-Value NodeFilterConstructor::tryGet(ExecState *exec, const Identifier &p) const
+Value NodeFilterConstructor::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<NodeFilterConstructor,DOMObject>(exec,p,&NodeFilterConstructorTable,this);
+  return lookupGetValue<NodeFilterConstructor,DOMObject>(exec,p,&NodeFilterConstructorTable,this);
 }
 
 Value NodeFilterConstructor::getValueProperty(ExecState *, int token) const
@@ -184,7 +184,7 @@ DOMNodeFilter::~DOMNodeFilter()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMNodeFilterProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value DOMNodeFilterProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&KJS::DOMNodeFilter::info)) {
     Object err = Error::create(exec,TypeError);
@@ -247,9 +247,9 @@ DOMTreeWalker::~DOMTreeWalker()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMTreeWalker::tryGet(ExecState *exec, const Identifier &p) const
+Value DOMTreeWalker::get(ExecState *exec, const Identifier &p) const
 {
-  return DOMObjectLookupGetValue<DOMTreeWalker,DOMObject>(exec,p,&DOMTreeWalkerTable,this);
+  return lookupGetValue<DOMTreeWalker,DOMObject>(exec,p,&DOMTreeWalkerTable,this);
 }
 
 Value DOMTreeWalker::getValueProperty(ExecState *exec, int token) const
@@ -272,7 +272,7 @@ Value DOMTreeWalker::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-void DOMTreeWalker::tryPut(ExecState *exec, const Identifier &propertyName,
+void DOMTreeWalker::put(ExecState *exec, const Identifier &propertyName,
                            const Value& value, int attr)
 {
   if (propertyName == "currentNode") {
@@ -283,7 +283,7 @@ void DOMTreeWalker::tryPut(ExecState *exec, const Identifier &propertyName,
     ObjectImp::put(exec, propertyName, value, attr);
 }
 
-Value DOMTreeWalkerProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &)
+Value DOMTreeWalkerProtoFunc::call(ExecState *exec, Object &thisObj, const List &)
 {
   if (!thisObj.inherits(&KJS::DOMTreeWalker::info)) {
     Object err = Error::create(exec,TypeError);

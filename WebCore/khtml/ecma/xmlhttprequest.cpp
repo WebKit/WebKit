@@ -127,9 +127,9 @@ const ClassInfo XMLHttpRequest::info = { "XMLHttpRequest", 0, &XMLHttpRequestTab
 @end
 */
 
-Value XMLHttpRequest::tryGet(ExecState *exec, const Identifier &propertyName) const
+Value XMLHttpRequest::get(ExecState *exec, const Identifier &propertyName) const
 {
-  return DOMObjectLookupGetValue<XMLHttpRequest,DOMObject>(exec, propertyName, &XMLHttpRequestTable, this);
+  return lookupGetValue<XMLHttpRequest,DOMObject>(exec, propertyName, &XMLHttpRequestTable, this);
 }
 
 Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
@@ -201,12 +201,12 @@ Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
   }
 }
 
-void XMLHttpRequest::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void XMLHttpRequest::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
-  DOMObjectLookupPut<XMLHttpRequest,DOMObject>(exec, propertyName, value, attr, &XMLHttpRequestTable, this );
+  lookupPut<XMLHttpRequest,DOMObject>(exec, propertyName, value, attr, &XMLHttpRequestTable, this );
 }
 
-void XMLHttpRequest::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+void XMLHttpRequest::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
 {
   switch(token) {
   case Onreadystatechange:
@@ -218,7 +218,7 @@ void XMLHttpRequest::putValue(ExecState *exec, int token, const Value& value, in
     if (onLoadListener) onLoadListener->ref();
     break;
   default:
-    kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
+    kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
   }
 }
 
@@ -652,7 +652,7 @@ void XMLHttpRequest::cancelRequests(DOM::DocumentImpl *d)
     QPtrDictIterator<XMLHttpRequest>(*requests).current()->abort();
 }
 
-Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+Value XMLHttpRequestProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&XMLHttpRequest::info)) {
     Object err = Error::create(exec,TypeError);
