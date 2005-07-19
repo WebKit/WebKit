@@ -42,8 +42,8 @@ layer at (0,0) size 800x600
               text run at (0,0) width 179: "document object serialized"
           RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {PRE} at (27,32) size 756x60
-          RenderText {TEXT} at (0,0) size 488x60
+          RenderText {TEXT} at (0,0) size 536x60
             text run at (0,0) width 40: "<doc>"
-            text run at (0,15) width 488: "  <foo xmlns=\"foobar\">One</foo> <x:bar x=\"barfoo\">Two</x:bar>"
+            text run at (0,15) width 536: "  <foo xmlns=\"foobar\">One</foo> <x:bar xmlns:x=\"barfoo\">Two</x:bar>"
             text run at (0,30) width 184: "  <d id=\"id3\">Three</d>"
             text run at (0,45) width 48: "</doc>"

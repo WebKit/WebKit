@@ -1,3 +1,10 @@
+2005-07-19  Darin Adler  <darin@apple.com>
+
+        - updated results of two tests that reflect properly-preserved namespace prefixes for attributes
+
+        * layout-tests/fast/dom/dom-parse-serialize-display-expected.txt:
+        * layout-tests/fast/dom/dom-parse-serialize-expected.txt:
+
 2005-07-18  David Hyatt  <hyatt@apple.com>
 
 	Add support for -khtml-appearance in preparation for
