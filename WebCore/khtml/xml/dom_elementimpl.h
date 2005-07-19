@@ -178,6 +178,8 @@ public:
     void setAttribute(const DOMString &name, const DOMString &value, int &exception) { setAttributeNS(DOMString(), name, value, exception); }
     void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception);
 
+    void scrollIntoView (bool alignToTop);
+    
     void removeAttribute(const DOMString &name, int &exception) { removeAttributeNS(DOMString(), name, exception); }
     void removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
 

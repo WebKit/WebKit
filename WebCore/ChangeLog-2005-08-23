@@ -1,3 +1,20 @@
+2005-07-19  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+ 
+        Test cases added: 
+        * manual-tests/scrollIntoView-horizontal.html: Added.
+        * manual-tests/scrollIntoView-vertical.html: Added.
+
+        * khtml/xml/dom_elementimpl.h:        
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::scrollIntoView): Added.
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        (KJS::DOMElement::):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMElementProtoFunc::tryCall): glue for new scrollIntoView function
+
 2005-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         - rolled in patch by opendarwin.org@mitzpettel.com for
