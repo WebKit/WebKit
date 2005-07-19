@@ -237,11 +237,9 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
 void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const AtomicString& v)
 {
     AttributeImpl* a = 0;
-    if (!attrName.isEmpty() && attrName.string() != "/")
-        a = new MappedAttributeImpl(QualifiedName(nullAtom, attrName, nullAtom), v);
-
-    if (a) {
-        if(!attrs) {
+    if (!attrName.isEmpty() && attrName != "/") {
+        a = new MappedAttributeImpl(attrName, v);
+        if (!attrs) {
             attrs = new NamedMappedAttrMapImpl(0);
             attrs->ref();
         }
@@ -1556,7 +1554,8 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     startTime.start();
     KWQUIEventTime eventTime;
 
-    while (!src.isEmpty() && (!parser->doc()->part() || !parser->doc()->part()->isScheduledLocationChangePending())) {
+    KHTMLPart* part = parser->doc()->part();
+    while (!src.isEmpty() && (!part || !part->isScheduledLocationChangePending())) {
         if (!continueProcessing(processedCount, startTime, eventTime))
             break;
 

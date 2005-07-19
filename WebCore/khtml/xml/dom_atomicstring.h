@@ -63,6 +63,7 @@ public:
     friend bool operator!=(const AtomicString &, const AtomicString &);
     
     friend bool operator==(const AtomicString &, const char *);
+    friend bool operator!=(const AtomicString &, const char *);
     
     static void remove(DOMStringImpl *);
     
@@ -106,6 +107,9 @@ inline bool operator!=(const AtomicString &a, const AtomicString &b)
 
 inline bool operator==(const AtomicString &a, const char *b)
 { return AtomicString::equal(a, b); }
+
+inline bool operator!=(const AtomicString &a, const char *b)
+{ return !AtomicString::equal(a, b); }
 
 // List of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.

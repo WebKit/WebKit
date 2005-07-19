@@ -1,3 +1,32 @@
+2005-07-19  David Hyatt  <hyatt@apple.com>
+
+	Fix performance regressions from attribute QName landing.
+	
+        Reviewed by mjs
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::Token::addAttribute):
+        (khtml::HTMLTokenizer::write):
+
+	Make sure attributes have a faster constructor that can avoid the copy of QualifiedNames.
+
+	Make sure to grab the part from the document outside the loop, so that it is not fetched
+	over and over again for every character in the source.
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+
+	Only call paintCaret if the block is actually editable.
+	
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::operator!=):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::AttributeImpl::AttributeImpl):
+        (DOM::AttributeImpl::~AttributeImpl):
+        (DOM::MappedAttributeImpl::MappedAttributeImpl):
+
+	Add != comparison operator with a char* to speed up the / check for attribute invalidity.
+	
 2005-07-19  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.

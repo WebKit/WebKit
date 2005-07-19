@@ -67,8 +67,13 @@ public:
     // null value is forbidden !
     AttributeImpl(const QualifiedName& name, const AtomicString& value)
         : m_name(name), m_value(value), m_impl(0)
-        { };
-    virtual ~AttributeImpl() {};
+    {}
+    
+    AttributeImpl(const AtomicString& name, const AtomicString& value)
+        : m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
+    {}
+
+    virtual ~AttributeImpl() {}
     
     MAIN_THREAD_ALLOCATED;
 
@@ -350,6 +355,13 @@ class MappedAttributeImpl : public AttributeImpl
 {
 public:
     MappedAttributeImpl(const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
+    : AttributeImpl(name, value), m_styleDecl(decl)
+    {
+        if (decl)
+            decl->ref();
+    }
+
+    MappedAttributeImpl(const AtomicString& name, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
     : AttributeImpl(name, value), m_styleDecl(decl)
     {
         if (decl)
