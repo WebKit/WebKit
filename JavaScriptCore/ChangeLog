@@ -1,5 +1,16 @@
 2005-07-19  Darin Adler  <darin@apple.com>
 
+        - fixed the build
+
+        * kjs/lookup.h: (KJS::lookupPut): Remove bogus const; was preventing WebCore from
+        compiling (not sure why this didn't affect my other build machine).
+
+        - one other tiny tweak (so sue me)
+
+        * bindings/runtime_root.cpp: Remove unneeded declaration.
+
+2005-07-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen.
 
         - eliminated try wrappers for get/put/call since we don't use C++ exceptions any more

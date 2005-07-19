@@ -191,7 +191,6 @@ void KJS::Bindings::removeNativeReference (ObjectImp *imp)
 // May only be set by dispatchToJavaScriptThread().
 static CFRunLoopSourceRef completionSource;
 
-static void completedJavaScriptAccess (void *i);
 static void completedJavaScriptAccess (void *i)
 {
     assert (CFRunLoopGetCurrent() != RootObject::runLoop());
