@@ -229,7 +229,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // 4) we're inside of viewWillMoveToWindow: with a nil window. In this case, superviews may already have nil 
     // superviews and nil windows and results from convertRect:toView: are incorrect.
     NSWindow *realWindow = [self window];
-    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || realWindow == nil || [realWindow isMiniaturized] || [NSApp isHidden] || ![self superviewsHaveSuperviews]) {
+    if (window.width <= 0 || window.height <= 0 || window.x < -100000
+            || realWindow == nil || [realWindow isMiniaturized]
+            || [NSApp isHidden]
+            || ![self superviewsHaveSuperviews]
+            || [self isHiddenOrHasHiddenAncestor]) {
         // The following code tries to give plug-ins the same size they will eventually have.
         // The specifiedWidth and specifiedHeight variables are used to predict the size that
         // WebCore will eventually resize us to.

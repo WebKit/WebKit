@@ -1,3 +1,12 @@
+2005-07-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - improve handling of plug-ins when the WebView or a superview is hidden with -[NSView setHidden]
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+        Add "hidden" to the list of reasons to clip out all plug-in drawing.
+
 2005-07-18  John Sullivan  <sullivan@apple.com>
         
         Written by Trey Matteson  <trey@usa.net>
