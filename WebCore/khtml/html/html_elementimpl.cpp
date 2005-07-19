@@ -147,7 +147,7 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             setTabIndex(indexstring.toInt());
     } else if (attr->name() == HTMLAttributes::lang()) {
         // FIXME: Implement
-    } else if (attr->name() == HTMLAttributes::direction()) {
+    } else if (attr->name() == HTMLAttributes::dir()) {
         addCSSProperty(attr, CSS_PROP_DIRECTION, attr->value());
         addCSSProperty(attr, CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
     }

@@ -1,5 +1,14 @@
 2005-07-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        - fixed broken bi-di layout tests: the "dir" attribute was broken
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseMappedAttribute):
+        Fix one case that said "direction" where it should say "dir".
+
+2005-07-19  Darin Adler  <darin@apple.com>
+
         - updated results of two tests that reflect properly-preserved namespace prefixes for attributes
 
         * layout-tests/fast/dom/dom-parse-serialize-display-expected.txt:
