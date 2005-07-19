@@ -430,3 +430,35 @@ space
 #
 after-white-space
 
+#
+# CSS_PROP__KHTML_APPEARANCE
+#
+checkbox
+radio
+button
+button-bevel
+listbox
+listitem
+menulist
+menulist-button
+menulist-text
+menulist-textfield
+scrollbarbutton-up
+scrollbarbutton-down
+scrollbarbutton-left
+scrollbarbutton-right
+scrollbartrack-horizontal
+scrollbartrack-vertical
+scrollbarthumb-horizontal
+scrollbarthumb-vertical
+scrollbargripper-horizontal
+scrollbargripper-vertical
+slider-horizontal
+slider-vertical
+sliderthumb-horizontal
+sliderthumb-vertical
+caret
+searchfield
+searchfield-results
+searchfield-close
+textfield

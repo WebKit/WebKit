@@ -1,3 +1,30 @@
+2005-07-18  David Hyatt  <hyatt@apple.com>
+
+	Add support for -khtml-appearance in preparation for
+	the addition of RenderTheme to the tree for form controls.
+
+	Make clean is required after this check-in, since there is
+	some sort of bizarre bug with XCode dependencies on the
+	property generation script.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/render_style.cpp:
+        (m_appearance):
+        (StyleCSS3NonInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::appearance):
+        (khtml::RenderStyle::setAppearance):
+        (khtml::RenderStyle::initialAppearance):
+
 2005-07-18  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

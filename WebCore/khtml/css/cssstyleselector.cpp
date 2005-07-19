@@ -3373,6 +3373,17 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         break;
 
     // CSS3 Properties
+    case CSS_PROP__KHTML_APPEARANCE: {
+        HANDLE_INHERIT_AND_INITIAL(appearance, Appearance)
+        if (!primitiveValue) break;
+        int id = primitiveValue->getIdent();
+        EAppearance appearance;
+        if (id == CSS_VAL_NONE)
+            appearance = NoAppearance;
+        else
+            appearance = EAppearance(id - CSS_VAL_CHECKBOX);
+        style->setAppearance(appearance);
+    }
     case CSS_PROP__KHTML_BINDING: {
 #ifndef KHTML_NO_XBL
         if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)) {

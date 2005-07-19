@@ -943,6 +943,11 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     /* CSS3 properties */
+    case CSS_PROP__KHTML_APPEARANCE:
+	if ((id >= CSS_VAL_CHECKBOX && id <= CSS_VAL_TEXTFIELD) || id == CSS_VAL_NONE)
+	    valid_primitive = true;
+	break;
+
     case CSS_PROP__KHTML_BINDING:
 #ifndef KHTML_NO_XBL
         if (id == CSS_VAL_NONE)
