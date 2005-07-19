@@ -8,31 +8,19 @@ layer at (0,0) size 800x4407
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x270
         RenderText {TEXT} at (0,0) size 512x255
-          text run at (0,0) width 128: "P {font-size: 12"
-          text run at (128,0) width 32: "pt;}"
+          text run at (0,0) width 160: "P {font-size: 12pt;}"
           text run at (0,15) width 216: ".one {vertical-align: sub;}"
           text run at (0,30) width 232: ".two {vertical-align: super;}"
-          text run at (0,45) width 336: ".three {vertical-align: top; font-size: 12"
-          text run at (336,45) width 32: "pt;}"
-          text run at (0,60) width 368: ".four {vertical-align: text-top; font-size: 12"
-          text run at (368,60) width 32: "pt;}"
-          text run at (0,75) width 352: ".five {vertical-align: middle; font-size: 12"
-          text run at (352,75) width 32: "pt;}"
-          text run at (0,90) width 344: ".six {vertical-align: bottom; font-size: 12"
-          text run at (344,90) width 32: "pt;}"
-          text run at (0,105) width 400: ".seven {vertical-align: text-bottom; font-size: 12"
-          text run at (400,105) width 32: "pt;}"
-          text run at (0,120) width 376: ".eight {vertical-align: baseline; font-size: 12"
-          text run at (376,120) width 32: "pt;}"
-          text run at (0,135) width 328: ".nine {vertical-align: 50%; font-size: 12"
-          text run at (328,135) width 152: "px; line-height: 16"
-          text run at (480,135) width 32: "px;}"
-          text run at (0,165) width 192: "P.example {font-size: 14"
-          text run at (192,165) width 32: "pt;}"
-          text run at (0,180) width 144: "BIG {font-size: 16"
-          text run at (144,180) width 32: "pt;}"
-          text run at (0,195) width 160: "SMALL {font-size: 12"
-          text run at (160,195) width 32: "pt;}"
+          text run at (0,45) width 368: ".three {vertical-align: top; font-size: 12pt;}"
+          text run at (0,60) width 400: ".four {vertical-align: text-top; font-size: 12pt;}"
+          text run at (0,75) width 384: ".five {vertical-align: middle; font-size: 12pt;}"
+          text run at (0,90) width 376: ".six {vertical-align: bottom; font-size: 12pt;}"
+          text run at (0,105) width 432: ".seven {vertical-align: text-bottom; font-size: 12pt;}"
+          text run at (0,120) width 408: ".eight {vertical-align: baseline; font-size: 12pt;}"
+          text run at (0,135) width 512: ".nine {vertical-align: 50%; font-size: 12px; line-height: 16px;}"
+          text run at (0,165) width 224: "P.example {font-size: 14pt;}"
+          text run at (0,180) width 176: "BIG {font-size: 16pt;}"
+          text run at (0,195) width 192: "SMALL {font-size: 12pt;}"
           text run at (0,210) width 304: ".ttopalign {vertical-align: text-top;}"
           text run at (0,225) width 256: ".topalign {vertical-align: top;}"
           text run at (0,240) width 280: ".midalign {vertical-align: middle;}"
@@ -92,8 +80,7 @@ layer at (0,0) size 800x4407
             RenderText {TEXT} at (19,32) size 126x18
               text run at (19,32) width 126: "The first four words"
           RenderText {TEXT} at (145,0) size 733x124
-            text run at (145,0) width 375: " in this sentence should be 12"
-            text run at (520,0) width 169: "pt in size and"
+            text run at (145,0) width 544: " in this sentence should be 12pt in size and"
             text run at (0,50) width 733: "bottom-aligned, which should align their bottom with the"
             text run at (0,87) width 517: "bottom of the lowest element in the line."
         RenderText {TEXT} at (0,0) size 0x0
@@ -107,8 +94,7 @@ layer at (0,0) size 800x4407
             RenderText {TEXT} at (19,19) size 293x18
               text run at (19,19) width 293: "The first eight words (\"eight\" has a descender)"
           RenderText {TEXT} at (312,0) size 745x161
-            text run at (312,0) width 375: " in this sentence should be 12"
-            text run at (687,0) width 58: "pt in"
+            text run at (312,0) width 433: " in this sentence should be 12pt in"
             text run at (0,50) width 692: "size and text-bottom-aligned, which should align their"
             text run at (0,87) width 671: "bottom with the bottom of the lowest text (including"
             text run at (0,124) width 294: "descenders) in the line."
@@ -123,8 +109,7 @@ layer at (0,0) size 800x4407
             RenderText {TEXT} at (19,36) size 126x18
               text run at (19,36) width 126: "The first four words"
           RenderText {TEXT} at (145,21) size 759x111
-            text run at (145,21) width 375: " in this sentence should be 12"
-            text run at (520,21) width 169: "pt in size and"
+            text run at (145,21) width 544: " in this sentence should be 12pt in size and"
             text run at (0,58) width 759: "baseline-aligned, which should align their baseline with the"
             text run at (0,95) width 522: "baseline of the rest of the text in the line."
         RenderText {TEXT} at (0,0) size 0x0
@@ -134,11 +119,8 @@ layer at (0,0) size 800x4407
           RenderText {TEXT} at (15,31) size 96x16
             text run at (15,31) width 96: "The first four words"
         RenderText {TEXT} at (111,36) size 750x36
-          text run at (111,36) width 286: " in this sentence should have a font-size of 12"
-          text run at (397,36) width 162: "px and a line-height of 16"
-          text run at (559,36) width 191: "px; they are also 50%-aligned,"
-          text run at (0,54) width 165: "which should raise them 8"
-          text run at (165,54) width 211: "px relative to the natural baseline."
+          text run at (111,36) width 639: " in this sentence should have a font-size of 12px and a line-height of 16px; they are also 50%-aligned,"
+          text run at (0,54) width 376: "which should raise them 8px relative to the natural baseline."
       RenderBlock {P} at (0,1388) size 784x36
         RenderText {TEXT} at (0,0) size 742x36
           text run at (0,0) width 742: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the first"
@@ -441,8 +423,7 @@ layer at (0,0) size 800x4407
                     RenderText {TEXT} at (19,32) size 126x18
                       text run at (19,32) width 126: "The first four words"
                   RenderText {TEXT} at (145,0) size 733x124
-                    text run at (145,0) width 375: " in this sentence should be 12"
-                    text run at (520,0) width 169: "pt in size and"
+                    text run at (145,0) width 544: " in this sentence should be 12pt in size and"
                     text run at (0,50) width 733: "bottom-aligned, which should align their bottom with the"
                     text run at (0,87) width 517: "bottom of the lowest element in the line."
                 RenderText {TEXT} at (0,0) size 0x0
@@ -456,8 +437,7 @@ layer at (0,0) size 800x4407
                     RenderText {TEXT} at (19,19) size 293x18
                       text run at (19,19) width 293: "The first eight words (\"eight\" has a descender)"
                   RenderText {TEXT} at (312,0) size 745x161
-                    text run at (312,0) width 375: " in this sentence should be 12"
-                    text run at (687,0) width 58: "pt in"
+                    text run at (312,0) width 433: " in this sentence should be 12pt in"
                     text run at (0,50) width 692: "size and text-bottom-aligned, which should align their"
                     text run at (0,87) width 671: "bottom with the bottom of the lowest text (including"
                     text run at (0,124) width 294: "descenders) in the line."
@@ -472,8 +452,7 @@ layer at (0,0) size 800x4407
                     RenderText {TEXT} at (19,36) size 126x18
                       text run at (19,36) width 126: "The first four words"
                   RenderText {TEXT} at (145,21) size 759x111
-                    text run at (145,21) width 375: " in this sentence should be 12"
-                    text run at (520,21) width 169: "pt in size and"
+                    text run at (145,21) width 544: " in this sentence should be 12pt in size and"
                     text run at (0,58) width 759: "baseline-aligned, which should align their baseline with the"
                     text run at (0,95) width 522: "baseline of the rest of the text in the line."
                 RenderText {TEXT} at (0,0) size 0x0
@@ -483,11 +462,8 @@ layer at (0,0) size 800x4407
                   RenderText {TEXT} at (15,31) size 96x16
                     text run at (15,31) width 96: "The first four words"
                 RenderText {TEXT} at (111,36) size 750x36
-                  text run at (111,36) width 286: " in this sentence should have a font-size of 12"
-                  text run at (397,36) width 162: "px and a line-height of 16"
-                  text run at (559,36) width 191: "px; they are also 50%-aligned,"
-                  text run at (0,54) width 165: "which should raise them 8"
-                  text run at (165,54) width 211: "px relative to the natural baseline."
+                  text run at (111,36) width 639: " in this sentence should have a font-size of 12px and a line-height of 16px; they are also 50%-aligned,"
+                  text run at (0,54) width 376: "which should raise them 8px relative to the natural baseline."
               RenderBlock {P} at (4,1057) size 762x36
                 RenderText {TEXT} at (0,0) size 742x36
                   text run at (0,0) width 742: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the first"

@@ -5,8 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
         RenderText {TEXT} at (0,0) size 765x36
-          text run at (0,0) width 137: "You should see a 100"
-          text run at (137,0) width 167: "x100 green square below. "
+          text run at (0,0) width 304: "You should see a 100x100 green square below. "
           text run at (304,0) width 268: "If you see any red, then the test has failed. "
           text run at (572,0) width 193: "This test is ensuring that boxes"
           text run at (0,18) width 330: "can act as containing blocks for positioned elements."

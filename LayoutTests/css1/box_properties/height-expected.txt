@@ -8,10 +8,8 @@ layer at (0,0) size 800x974
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 168x30
-          text run at (0,0) width 128: ".one {height: 50"
-          text run at (128,0) width 32: "px;}"
-          text run at (0,15) width 136: ".two {height: 100"
-          text run at (136,15) width 32: "px;}"
+          text run at (0,0) width 160: ".one {height: 50px;}"
+          text run at (0,15) width 168: ".two {height: 100px;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,102) size 784x50
         RenderImage {IMG} at (0,0) size 50x50
@@ -30,8 +28,7 @@ layer at (0,0) size 800x974
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,468) size 784x36
         RenderText {TEXT} at (0,0) size 784x36
-          text run at (0,0) width 619: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50"
-          text run at (619,0) width 165: "x15, and the size has been"
+          text run at (0,0) width 784: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and the size has been"
           text run at (0,18) width 116: "doubled using the "
         RenderInline {CODE} at (0,0) size 48x15
           RenderText {TEXT} at (116,20) size 48x15
@@ -67,8 +64,7 @@ layer at (0,0) size 800x974
                 RenderText {TEXT} at (0,0) size 0x0
               RenderBlock {P} at (4,370) size 762x36
                 RenderText {TEXT} at (0,0) size 750x36
-                  text run at (0,0) width 619: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50"
-                  text run at (619,0) width 131: "x15, and the size has"
+                  text run at (0,0) width 750: "The rectangular image above should be 100 pixels tall and 30 pixels wide (the original image is 50x15, and the size has"
                   text run at (0,18) width 150: "been doubled using the "
                 RenderInline {CODE} at (0,0) size 48x15
                   RenderText {TEXT} at (150,20) size 48x15

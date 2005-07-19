@@ -20,18 +20,15 @@ layer at (0,0) size 800x2369
       RenderBlock {P} at (0,185) size 784x19
         RenderImage {IMG} at (0,0) size 15x15
         RenderText {TEXT} at (15,1) size 434x18
-          text run at (15,1) width 369: "The image at the beginning of this sentence should be a 15"
-          text run at (384,1) width 65: "px square."
+          text run at (15,1) width 434: "The image at the beginning of this sentence should be a 15px square."
       RenderImage {IMG} at (0,220) size 15x15
       RenderBlock {P} at (0,251) size 784x18
         RenderText {TEXT} at (0,0) size 489x18
-          text run at (0,0) width 205: "The above image should be a 15"
-          text run at (205,0) width 284: "px square with the same left edge as this text."
+          text run at (0,0) width 489: "The above image should be a 15px square with the same left edge as this text."
       RenderImage {IMG} at (384,285) size 15x15
       RenderBlock {P} at (0,316) size 784x18
         RenderText {TEXT} at (0,0) size 400x18
-          text run at (0,0) width 205: "The above image should be a 15"
-          text run at (205,0) width 195: "px square aligned at the center."
+          text run at (0,0) width 400: "The above image should be a 15px square aligned at the center."
       RenderImage {IMG} at (196,350) size 392x392
       RenderBlock {P} at (0,758) size 784x36
         RenderText {TEXT} at (0,0) size 766x36
@@ -59,18 +56,15 @@ layer at (0,0) size 800x2369
               RenderBlock {P} at (4,4) size 762x19
                 RenderImage {IMG} at (0,0) size 15x15
                 RenderText {TEXT} at (15,1) size 434x18
-                  text run at (15,1) width 369: "The image at the beginning of this sentence should be a 15"
-                  text run at (384,1) width 65: "px square."
+                  text run at (15,1) width 434: "The image at the beginning of this sentence should be a 15px square."
               RenderImage {IMG} at (4,39) size 15x15
               RenderBlock {P} at (4,70) size 762x18
                 RenderText {TEXT} at (0,0) size 489x18
-                  text run at (0,0) width 205: "The above image should be a 15"
-                  text run at (205,0) width 284: "px square with the same left edge as this text."
+                  text run at (0,0) width 489: "The above image should be a 15px square with the same left edge as this text."
               RenderImage {IMG} at (377,104) size 15x15
               RenderBlock {P} at (4,135) size 762x18
                 RenderText {TEXT} at (0,0) size 400x18
-                  text run at (0,0) width 205: "The above image should be a 15"
-                  text run at (205,0) width 195: "px square aligned at the center."
+                  text run at (0,0) width 400: "The above image should be a 15px square aligned at the center."
               RenderImage {IMG} at (194,169) size 381x381
               RenderBlock {P} at (4,566) size 762x36
                 RenderText {TEXT} at (0,0) size 722x36

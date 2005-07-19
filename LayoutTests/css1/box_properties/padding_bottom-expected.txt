@@ -9,15 +9,11 @@ layer at (0,0) size 800x1539
       RenderBlock {PRE} at (0,34) size 784x90
         RenderText {TEXT} at (0,0) size 432x90
           text run at (0,0) width 416: ".zero {background-color: silver; padding-bottom: 0;}"
-          text run at (0,15) width 200: ".one {padding-bottom: 0.5"
-          text run at (200,15) width 224: "in; background-color: aqua;}"
-          text run at (0,30) width 192: ".two {padding-bottom: 25"
-          text run at (192,30) width 224: "px; background-color: aqua;}"
-          text run at (0,45) width 200: ".three {padding-bottom: 5"
-          text run at (200,45) width 224: "em; background-color: aqua;}"
+          text run at (0,15) width 424: ".one {padding-bottom: 0.5in; background-color: aqua;}"
+          text run at (0,30) width 416: ".two {padding-bottom: 25px; background-color: aqua;}"
+          text run at (0,45) width 424: ".three {padding-bottom: 5em; background-color: aqua;}"
           text run at (0,60) width 416: ".four {padding-bottom: 25%; background-color: aqua;}"
-          text run at (0,75) width 208: ".five {padding-bottom: -20"
-          text run at (208,75) width 224: "px; background-color: aqua;}"
+          text run at (0,75) width 432: ".five {padding-bottom: -20px; background-color: aqua;}"
       RenderBlock {HR} at (0,137) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18

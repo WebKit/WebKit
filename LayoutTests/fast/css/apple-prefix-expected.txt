@@ -16,8 +16,7 @@ layer at (8,86) size 784x54 scrollHeight 576
       RenderBlock {P} at (0,0) size 784x36
         RenderText {TEXT} at (0,0) size 781x36
           text run at (0,0) width 771: "It was just last night, I think, that I was IM'ing with a friend and I said, \"Next week Simon starts going to school for 3 days"
-          text run at (0,18) width 106: "extended (until 3"
-          text run at (106,18) width 675: "pm) and Sophia starts swim camp! I won't know what to do with my free time! But I'm willing to find out.\""
+          text run at (0,18) width 781: "extended (until 3pm) and Sophia starts swim camp! I won't know what to do with my free time! But I'm willing to find out.\""
       RenderBlock {P} at (0,52) size 784x18
         RenderText {TEXT} at (0,0) size 333x18
           text run at (0,0) width 333: "You know the old saying: \"Man plans, God laughs.\""

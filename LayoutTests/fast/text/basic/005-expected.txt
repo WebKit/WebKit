@@ -5,5 +5,4 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (0,0) size 260x22 [border: (2px solid #008000)]
         RenderText {TEXT} at (2,2) size 256x18
-          text run at (2,2) width 236: "Words should have a negative spacing of 5"
-          text run at (238,2) width 20: "px."
+          text run at (2,2) width 256: "Words should have a negative spacing of 5px."

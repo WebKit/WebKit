@@ -8,10 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x30
         RenderText {TEXT} at (0,0) size 416x30
-          text run at (0,0) width 184: ".one {margin-bottom: 25"
-          text run at (184,0) width 224: "px; background-color: aqua;}"
-          text run at (0,15) width 192: ".two {margin-bottom: -10"
-          text run at (192,15) width 224: "px; background-color: aqua;}"
+          text run at (0,0) width 408: ".one {margin-bottom: 25px; background-color: aqua;}"
+          text run at (0,15) width 416: ".two {margin-bottom: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 784x54 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 481x18
@@ -25,8 +23,7 @@ layer at (0,0) size 800x600
               text run at (624,2) width 24: "one"
           RenderText {TEXT} at (648,0) size 761x36
             text run at (648,0) width 113: ", giving it an aqua"
-            text run at (0,18) width 133: "background and a 25"
-            text run at (133,18) width 112: "px bottom margin"
+            text run at (0,18) width 245: "background and a 25px bottom margin"
         RenderText {TEXT} at (245,18) size 784x36
           text run at (245,18) width 8: ". "
           text run at (253,18) width 531: "Margins on inline elements does not affect line-height calculations, so all lines in this"
@@ -43,8 +40,7 @@ layer at (0,0) size 800x600
               text run at (624,2) width 24: "two"
           RenderText {TEXT} at (648,0) size 761x36
             text run at (648,0) width 113: ", giving it an aqua"
-            text run at (0,18) width 138: "background and a -10"
-            text run at (138,18) width 112: "px bottom margin"
+            text run at (0,18) width 250: "background and a -10px bottom margin"
         RenderText {TEXT} at (250,18) size 763x36
           text run at (250,18) width 8: ". "
           text run at (258,18) width 505: "Margins on inline elements does not affect line-height calculations, so all lines in"
@@ -73,8 +69,7 @@ layer at (0,0) size 800x600
                       text run at (624,2) width 24: "one"
                   RenderText {TEXT} at (648,0) size 761x36
                     text run at (648,0) width 113: ", giving it an aqua"
-                    text run at (0,18) width 133: "background and a 25"
-                    text run at (133,18) width 112: "px bottom margin"
+                    text run at (0,18) width 245: "background and a 25px bottom margin"
                 RenderText {TEXT} at (245,18) size 758x36
                   text run at (245,18) width 8: ". "
                   text run at (253,18) width 505: "Margins on inline elements does not affect line-height calculations, so all lines in"
@@ -91,8 +86,7 @@ layer at (0,0) size 800x600
                       text run at (624,2) width 24: "two"
                   RenderText {TEXT} at (648,0) size 761x36
                     text run at (648,0) width 113: ", giving it an aqua"
-                    text run at (0,18) width 138: "background and a -10"
-                    text run at (138,18) width 112: "px bottom margin"
+                    text run at (0,18) width 250: "background and a -10px bottom margin"
                 RenderText {TEXT} at (250,18) size 747x36
                   text run at (250,18) width 8: ". "
                   text run at (258,18) width 489: "Margins on inline elements does not affect line-height calculations, so all lines"

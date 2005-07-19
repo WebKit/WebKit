@@ -8,8 +8,7 @@ layer at (0,0) size 800x1353
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 152x45
-          text run at (0,0) width 120: ".one {width: 50"
-          text run at (120,0) width 32: "px;}"
+          text run at (0,0) width 152: ".one {width: 50px;}"
           text run at (0,15) width 144: ".two {width: 50%;}"
           text run at (0,30) width 152: "TABLE {width: 50%;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]

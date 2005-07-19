@@ -919,9 +919,8 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
                 case QChar::DirAL:
                 case QChar::DirEN:
                 case QChar::DirAN:
-                    // to avoid many unncessary splits, the following appendRun can
-                    // be done only if (bidi.status.last != QChar::DirEN || bidi.status.lastStrong != QChar::DirL )
-                    appendRun( bidi );
+                    if (bidi.status.last != QChar::DirEN || bidi.status.lastStrong != QChar::DirL)
+                        appendRun( bidi );
                     dir = QChar::DirL;
                     // fall through
                 case QChar::DirL:

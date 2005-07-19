@@ -7,8 +7,7 @@ layer at (0,0) size 1518x3166
         RenderText {TEXT} at (0,0) size 783x36
           text run at (0,0) width 750: "In all of the examples, you should be able to see blue and green rectangles that spill way out of their containing blocks. "
           text run at (750,0) width 33: "They"
-          text run at (0,18) width 89: "should be 100"
-          text run at (89,18) width 476: "px tall and not overlap one another at all. They should be stacked vertically."
+          text run at (0,18) width 565: "should be 100px tall and not overlap one another at all. They should be stacked vertically."
       RenderBlock {DIV} at (0,52) size 720x240 [border: (10px solid #000000)]
         RenderText {TEXT} at (10,10) size 309x18
           text run at (10,10) width 309: "You should see blue and green rectangles below."

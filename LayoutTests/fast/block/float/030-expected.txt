@@ -5,8 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 750x18
-          text run at (0,0) width 137: "You should see a 500"
-          text run at (137,0) width 326: "x300 rectangle with orange, yellow and olive rects. "
+          text run at (0,0) width 463: "You should see a 500x300 rectangle with orange, yellow and olive rects. "
           text run at (463,0) width 287: "No red should be visible or the test has failed."
       RenderBlock (floating) {DIV} at (0,34) size 500x300 [bgcolor=#FF0000]
         RenderBlock (floating) {DIV} at (0,0) size 250x300 [bgcolor=#FFA500]

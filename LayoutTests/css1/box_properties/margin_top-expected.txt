@@ -9,17 +9,12 @@ layer at (0,0) size 800x1646
       RenderBlock {PRE} at (0,31) size 784x120
         RenderText {TEXT} at (0,0) size 392x120
           text run at (0,0) width 384: ".zero {background-color: silver; margin-top: 0;}"
-          text run at (0,15) width 168: ".one {margin-top: 0.5"
-          text run at (168,15) width 224: "in; background-color: aqua;}"
-          text run at (0,30) width 160: ".two {margin-top: 25"
-          text run at (160,30) width 224: "px; background-color: aqua;}"
-          text run at (0,45) width 168: ".three {margin-top: 5"
-          text run at (168,45) width 224: "em; background-color: aqua;}"
+          text run at (0,15) width 392: ".one {margin-top: 0.5in; background-color: aqua;}"
+          text run at (0,30) width 384: ".two {margin-top: 25px; background-color: aqua;}"
+          text run at (0,45) width 392: ".three {margin-top: 5em; background-color: aqua;}"
           text run at (0,60) width 384: ".four {margin-top: 25%; background-color: aqua;}"
-          text run at (0,75) width 168: ".five {margin-top: 25"
-          text run at (168,75) width 32: "px;}"
-          text run at (0,90) width 168: ".six {margin-top: -10"
-          text run at (168,90) width 224: "px; background-color: aqua;}"
+          text run at (0,75) width 200: ".five {margin-top: 25px;}"
+          text run at (0,90) width 392: ".six {margin-top: -10px; background-color: aqua;}"
           text run at (0,105) width 200: "P, UL {margin-bottom: 0;}"
       RenderBlock {HR} at (0,164) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,174) size 784x18 [bgcolor=#C0C0C0]
@@ -49,8 +44,7 @@ layer at (0,0) size 800x1646
         RenderListItem {LI} at (40,0) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 400x18
-            text run at (0,0) width 196: "This list has a margin-top of 25"
-            text run at (196,0) width 204: "px, and a light blue background."
+            text run at (0,0) width 400: "This list has a margin-top of 25px, and a light blue background."
         RenderListItem {LI} at (40,18) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 264x18
@@ -58,8 +52,7 @@ layer at (0,0) size 800x1646
         RenderListItem {LI} at (40,61) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 567x18
-            text run at (0,0) width 226: "This list item has a top margin of 25"
-            text run at (226,0) width 341: "px, which should cause it to be offset in some fashion."
+            text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
         RenderListItem {LI} at (40,79) size 744x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 294x18
@@ -69,8 +62,7 @@ layer at (0,0) size 800x1646
           text run at (0,0) width 203: "This element has a class of zero."
       RenderBlock {P} at (0,833) size 784x54 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 766x54
-          text run at (0,0) width 231: "This element has a top margin of -10"
-          text run at (231,0) width 535: "px, which should cause it to be shifted \"upward\" on the page, and no bottom margin."
+          text run at (0,0) width 766: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom margin."
           text run at (0,18) width 488: "No other styles have been applied to it besides a light blue background color. "
           text run at (488,18) width 267: "In all other respects, the element should be"
           text run at (0,36) width 48: "normal."
@@ -113,8 +105,7 @@ layer at (0,0) size 800x1646
                 RenderListItem {LI} at (40,0) size 722x18
                   RenderListMarker at (0,0) size 0x14
                   RenderText {TEXT} at (0,0) size 400x18
-                    text run at (0,0) width 196: "This list has a margin-top of 25"
-                    text run at (196,0) width 204: "px, and a light blue background."
+                    text run at (0,0) width 400: "This list has a margin-top of 25px, and a light blue background."
                 RenderListItem {LI} at (40,18) size 722x18
                   RenderListMarker at (0,0) size 0x14
                   RenderText {TEXT} at (0,0) size 264x18
@@ -122,8 +113,7 @@ layer at (0,0) size 800x1646
                 RenderListItem {LI} at (40,61) size 722x18
                   RenderListMarker at (0,0) size 0x14
                   RenderText {TEXT} at (0,0) size 567x18
-                    text run at (0,0) width 226: "This list item has a top margin of 25"
-                    text run at (226,0) width 341: "px, which should cause it to be offset in some fashion."
+                    text run at (0,0) width 567: "This list item has a top margin of 25px, which should cause it to be offset in some fashion."
                 RenderListItem {LI} at (40,79) size 722x18
                   RenderListMarker at (0,0) size 0x14
                   RenderText {TEXT} at (0,0) size 294x18
@@ -133,8 +123,7 @@ layer at (0,0) size 800x1646
                   text run at (0,0) width 203: "This element has a class of zero."
               RenderBlock {P} at (4,657) size 762x54 [bgcolor=#00FFFF]
                 RenderText {TEXT} at (0,0) size 742x54
-                  text run at (0,0) width 231: "This element has a top margin of -10"
-                  text run at (231,0) width 483: "px, which should cause it to be shifted \"upward\" on the page, and no bottom"
+                  text run at (0,0) width 714: "This element has a top margin of -10px, which should cause it to be shifted \"upward\" on the page, and no bottom"
                   text run at (0,18) width 52: "margin. "
                   text run at (52,18) width 488: "No other styles have been applied to it besides a light blue background color. "
                   text run at (540,18) width 202: "In all other respects, the element"

@@ -8,10 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 568x30
-          text run at (0,0) width 184: ".one {padding-right: 25"
-          text run at (184,0) width 376: "px; text-align: right; background-color: aqua;}"
-          text run at (0,15) width 192: ".two {padding-right: -10"
-          text run at (192,15) width 376: "px; text-align: right; background-color: aqua;}"
+          text run at (0,0) width 560: ".one {padding-right: 25px; text-align: right; background-color: aqua;}"
+          text run at (0,15) width 568: ".two {padding-right: -10px; text-align: right; background-color: aqua;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,110) size 784x36 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 543x18

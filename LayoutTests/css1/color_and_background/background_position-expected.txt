@@ -22,9 +22,7 @@ layer at (0,0) size 800x1440
           text run at (0,165) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
           text run at (0,180) width 632: ".six {background-image: url(../resources/bg.gif); background-position: 75% 25%;"
           text run at (0,195) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
-          text run at (0,210) width 600: ".seven {background-image: url(../resources/bg.gif); background-position: 20"
-          text run at (600,210) width 40: "px 20"
-          text run at (640,210) width 24: "px;"
+          text run at (0,210) width 664: ".seven {background-image: url(../resources/bg.gif); background-position: 20px 20px;"
           text run at (0,225) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
       RenderBlock {HR} at (0,302) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,320) size 784x18

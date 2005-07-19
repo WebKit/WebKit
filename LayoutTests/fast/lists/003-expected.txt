@@ -190,8 +190,7 @@ layer at (0,0) size 800x334
             RenderListMarker at (646,0) size 0x14
             RenderInline {A} at (0,0) size 98x18 [color=#0000EE]
               RenderText {TEXT} at (646,0) size 98x18
-                text run at (646,0) width 78: "Dive Into J2"
-                text run at (724,0) width 20: "EE"
+                text run at (646,0) width 98: "Dive Into J2EE"
           RenderListItem {LI} at (40,72) size 744x18
             RenderListMarker at (635,0) size 0x14
             RenderInline {A} at (0,0) size 109x18 [color=#0000EE]

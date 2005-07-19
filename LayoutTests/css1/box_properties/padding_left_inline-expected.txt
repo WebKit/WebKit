@@ -8,10 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 408x30
-          text run at (0,0) width 176: ".one {padding-left: 25"
-          text run at (176,0) width 224: "px; background-color: aqua;}"
-          text run at (0,15) width 184: ".two {padding-left: -10"
-          text run at (184,15) width 224: "px; background-color: aqua;}"
+          text run at (0,0) width 400: ".one {padding-left: 25px; background-color: aqua;}"
+          text run at (0,15) width 408: ".two {padding-left: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,110) size 784x54 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 543x18
@@ -44,8 +42,7 @@ layer at (0,0) size 800x600
               text run at (686,2) width 24: "two"
         RenderText {TEXT} at (710,0) size 753x36
           text run at (710,0) width 43: " which"
-          text run at (0,18) width 121: "should result in -10"
-          text run at (121,18) width 391: "px left padding (which should also be a light blue) only in the "
+          text run at (0,18) width 512: "should result in -10px left padding (which should also be a light blue) only in the "
         RenderInline {STRONG} at (0,0) size 27x18
           RenderText {TEXT} at (512,18) size 27x18
             text run at (512,18) width 27: "first"
@@ -93,8 +90,7 @@ layer at (0,0) size 800x600
                       text run at (686,2) width 24: "two"
                 RenderText {TEXT} at (710,0) size 753x36
                   text run at (710,0) width 43: " which"
-                  text run at (0,18) width 121: "should result in -10"
-                  text run at (121,18) width 391: "px left padding (which should also be a light blue) only in the "
+                  text run at (0,18) width 512: "should result in -10px left padding (which should also be a light blue) only in the "
                 RenderInline {STRONG} at (0,0) size 27x18
                   RenderText {TEXT} at (512,18) size 27x18
                     text run at (512,18) width 27: "first"

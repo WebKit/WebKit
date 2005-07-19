@@ -4,8 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {TEXT} at (0,0) size 546x18
-        text run at (0,0) width 158: "There should be two 100"
-        text run at (158,0) width 173: "x100 green squares below. "
+        text run at (0,0) width 331: "There should be two 100x100 green squares below. "
         text run at (331,0) width 215: "They should be vertically stacked."
       RenderText {TEXT} at (0,0) size 0x0
 layer at (10,40) size 100x100

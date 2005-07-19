@@ -8,10 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x30
         RenderText {TEXT} at (0,0) size 400x30
-          text run at (0,0) width 168: ".one {margin-left: 25"
-          text run at (168,0) width 224: "px; background-color: aqua;}"
-          text run at (0,15) width 176: ".two {margin-left: -10"
-          text run at (176,15) width 224: "px; background-color: aqua;}"
+          text run at (0,0) width 392: ".one {margin-left: 25px; background-color: aqua;}"
+          text run at (0,15) width 400: ".two {margin-left: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,77) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,95) size 784x36 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 543x18
@@ -43,8 +41,7 @@ layer at (0,0) size 800x600
               text run at (676,2) width 24: "two"
         RenderText {TEXT} at (700,0) size 747x36
           text run at (700,0) width 47: ", which"
-          text run at (0,18) width 121: "should result in -10"
-          text run at (121,18) width 163: "px left margin only in the "
+          text run at (0,18) width 284: "should result in -10px left margin only in the "
         RenderInline {STRONG} at (0,0) size 27x18
           RenderText {TEXT} at (284,18) size 27x18
             text run at (284,18) width 27: "first"
@@ -92,8 +89,7 @@ layer at (0,0) size 800x600
                       text run at (676,2) width 24: "two"
                 RenderText {TEXT} at (700,0) size 747x36
                   text run at (700,0) width 47: ", which"
-                  text run at (0,18) width 121: "should result in -10"
-                  text run at (121,18) width 163: "px left margin only in the "
+                  text run at (0,18) width 284: "should result in -10px left margin only in the "
                 RenderInline {STRONG} at (0,0) size 27x18
                   RenderText {TEXT} at (284,18) size 27x18
                     text run at (284,18) width 27: "first"

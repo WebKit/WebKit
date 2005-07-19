@@ -8,10 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 424x30
-          text run at (0,0) width 192: ".one {padding-bottom: 25"
-          text run at (192,0) width 224: "px; background-color: aqua;}"
-          text run at (0,15) width 200: ".two {padding-bottom: -10"
-          text run at (200,15) width 224: "px; background-color: aqua;}"
+          text run at (0,0) width 416: ".one {padding-bottom: 25px; background-color: aqua;}"
+          text run at (0,15) width 424: ".two {padding-bottom: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,110) size 784x72 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 477x18
@@ -25,8 +23,7 @@ layer at (0,0) size 800x600
               text run at (620,2) width 24: "one"
           RenderText {TEXT} at (644,0) size 757x36
             text run at (644,0) width 113: ", giving it an aqua"
-            text run at (0,18) width 133: "background and a 25"
-            text run at (133,18) width 119: "px bottom padding"
+            text run at (0,18) width 252: "background and a 25px bottom padding"
         RenderText {TEXT} at (252,18) size 781x54
           text run at (252,18) width 8: ". "
           text run at (260,18) width 505: "Padding on inline elements does not affect line-height calculations, so all lines in"
@@ -74,8 +71,7 @@ layer at (0,0) size 800x600
                       text run at (620,2) width 24: "one"
                   RenderText {TEXT} at (644,0) size 757x36
                     text run at (644,0) width 113: ", giving it an aqua"
-                    text run at (0,18) width 133: "background and a 25"
-                    text run at (133,18) width 119: "px bottom padding"
+                    text run at (0,18) width 252: "background and a 25px bottom padding"
                 RenderText {TEXT} at (252,18) size 749x54
                   text run at (252,18) width 8: ". "
                   text run at (260,18) width 489: "Padding on inline elements does not affect line-height calculations, so all lines"

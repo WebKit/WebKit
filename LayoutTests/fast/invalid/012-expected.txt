@@ -6,8 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {CENTER} at (0,0) size 784x18
         RenderInline {FONT} at (0,0) size 298x18
           RenderText {TEXT} at (243,0) size 298x18
-            text run at (243,0) width 137: "You should see a 100"
-            text run at (380,0) width 161: "x100 green Image below."
+            text run at (243,0) width 298: "You should see a 100x100 green Image below."
       RenderBlock (anonymous) at (0,18) size 784x100
         RenderInline {FONT} at (0,0) size 100x14
           RenderText {TEXT} at (0,0) size 0x0

@@ -5,8 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 572x18
-          text run at (0,0) width 178: "You should see a single 100"
-          text run at (178,0) width 161: "x100 green block below. "
+          text run at (0,0) width 339: "You should see a single 100x100 green block below. "
           text run at (339,0) width 233: "If you see any red, the test has failed."
       RenderBlock {UL} at (0,34) size 784x0
         RenderBlock (floating) {LI} at (100,0) size 100x100 [bgcolor=#FF0000]

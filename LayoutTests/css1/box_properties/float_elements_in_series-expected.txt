@@ -10,22 +10,15 @@ layer at (0,0) size 800x699
         RenderText {TEXT} at (0,0) size 512x180
           text run at (0,0) width 392: "P { margin: 0; padding: 0; text-align:  justify;}"
           text run at (0,30) width 336: "DIV.yellow, DIV.blue, DIV.red, DIV.green {"
-          text run at (0,45) width 80: " width: 60"
-          text run at (80,45) width 120: "px; padding: 20"
-          text run at (200,45) width 112: "px; margin: 10"
-          text run at (312,45) width 24: "px;"
-          text run at (0,60) width 88: " border: 20"
-          text run at (88,60) width 384: "px solid black; float: left; text-align: center;"
+          text run at (0,45) width 336: " width: 60px; padding: 20px; margin: 10px;"
+          text run at (0,60) width 472: " border: 20px solid black; float: left; text-align: center;"
           text run at (0,75) width 360: " font-family: \"Times New Roman\",Times,serif;}"
-          text run at (0,90) width 208: "DIV.yellow {margin-left: 0"
-          text run at (208,90) width 304: "px; background: yellow; color: black;}"
+          text run at (0,90) width 512: "DIV.yellow {margin-left: 0px; background: yellow; color: black;}"
           text run at (0,105) width 336: "DIV.blue {background: blue; color: white;}"
           text run at (0,120) width 320: "DIV.red {background: red; color: black;}"
           text run at (0,135) width 352: "DIV.green {background: green; color: white;}"
           text run at (0,150) width 192: "DIV.below {clear: both;}"
-          text run at (0,165) width 136: "TABLE {margin: 20"
-          text run at (136,165) width 32: "px 0"
-          text run at (168,165) width 32: "px;}"
+          text run at (0,165) width 200: "TABLE {margin: 20px 0px;}"
       RenderBlock {HR} at (0,239) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,249) size 784x36
         RenderText {TEXT} at (0,0) size 784x36

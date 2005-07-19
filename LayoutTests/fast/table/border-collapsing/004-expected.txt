@@ -17,20 +17,14 @@ layer at (0,0) size 800x1438
           text run at (333,0) width 172: "The styles applied here are:"
       RenderBlock {PRE} at (0,92) size 784x180
         RenderText {TEXT} at (0,0) size 688x180
-          text run at (0,0) width 152: "TABLE   { margin: 1"
-          text run at (152,0) width 256: "em; border: medium solid blue; }"
-          text run at (0,15) width 368: "TD      { border: thin solid green; padding: 5"
-          text run at (368,15) width 40: "px; }"
-          text run at (0,30) width 352: "TH { border: medium solid purple; padding: 5"
-          text run at (352,30) width 40: "px; }"
-          text run at (0,45) width 320: "TABLE.one, TABLE.two { border-spacing: 1"
-          text run at (320,45) width 40: "em; }"
+          text run at (0,0) width 408: "TABLE   { margin: 1em; border: medium solid blue; }"
+          text run at (0,15) width 408: "TD      { border: thin solid green; padding: 5px; }"
+          text run at (0,30) width 392: "TH { border: medium solid purple; padding: 5px; }"
+          text run at (0,45) width 360: "TABLE.one, TABLE.two { border-spacing: 1em; }"
           text run at (0,60) width 320: "TABLE.one { border-collapse: collapse; }"
           text run at (0,75) width 320: "TABLE.two { border-collapse: separate; }"
-          text run at (0,90) width 496: "TABLE.three { border-collapse: separate; border-spacing: 0 0.5"
-          text run at (496,90) width 40: "em; }"
-          text run at (0,105) width 472: "TABLE.four { border-collapse: separate; border-spacing: 0.5"
-          text run at (472,105) width 56: "em 0; }"
+          text run at (0,90) width 536: "TABLE.three { border-collapse: separate; border-spacing: 0 0.5em; }"
+          text run at (0,105) width 528: "TABLE.four { border-collapse: separate; border-spacing: 0.5em 0; }"
           text run at (0,120) width 328: "TABLE.five { border-collapse: separate; }"
           text run at (0,135) width 464: "TABLE.five, TABLE.five TD, TABLE.five TH { border: none; }"
           text run at (0,150) width 688: "TABLE.five TR, TABLE.five COL, TABLE.five COLGROUP, TABLE.five TBODY, TABLE.five THEAD"
@@ -76,8 +70,7 @@ layer at (0,0) size 800x1438
                 text run at (6,42) width 204: "ones) should be thin solid green."
             RenderTableCell {TD} at (489,97) size 263x66 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 232x54
-                text run at (6,6) width 165: "This table should have a 1"
-                text run at (171,6) width 67: "em margin"
+                text run at (6,6) width 232: "This table should have a 1em margin"
                 text run at (6,24) width 111: "around all edges. "
                 text run at (117,24) width 80: "This margin "
                 text run at (197,24) width 10: "is"
@@ -109,8 +102,7 @@ layer at (0,0) size 800x1438
               RenderText {TEXT} at (6,6) size 173x54
                 text run at (6,6) width 158: "This means that elements"
                 text run at (6,24) width 173: "within the cell have border-"
-                text run at (6,42) width 77: "spacing of 1"
-                text run at (83,42) width 23: "em."
+                text run at (6,42) width 100: "spacing of 1em."
             RenderTableCell {TD} at (410,75) size 320x48 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 279x36
                 text run at (6,6) width 205: "The borders on the header cells, "
@@ -128,8 +120,7 @@ layer at (0,0) size 800x1438
                 text run at (6,24) width 166: "should be thin solid green."
             RenderTableCell {TD} at (410,148) size 320x66 [border: (1px solid #008000)] [r=2 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 299x36
-                text run at (6,6) width 165: "This table should have a 1"
-                text run at (171,6) width 134: "em margin around all"
+                text run at (6,6) width 299: "This table should have a 1em margin around all"
                 text run at (6,24) width 44: "edges. "
                 text run at (50,24) width 80: "This margin "
                 text run at (130,24) width 135: "is measured from the "
@@ -163,8 +154,7 @@ layer at (0,0) size 800x1438
                 text run at (193,24) width 46: "vertical"
                 text run at (6,42) width 144: "lines) of 0 and vertical "
                 text run at (150,42) width 94: "border-spacing"
-                text run at (6,60) width 234: "(i.e., height of horizontal lines) of 0.5"
-                text run at (240,60) width 23: "em."
+                text run at (6,60) width 257: "(i.e., height of horizontal lines) of 0.5em."
             RenderTableCell {TD} at (465,68) size 281x48 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 240x36
                 text run at (6,6) width 205: "The borders on the header cells, "
@@ -181,8 +171,7 @@ layer at (0,0) size 800x1438
                 text run at (6,78) width 39: "green."
             RenderTableCell {TD} at (193,151) size 272x84 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 232x54
-                text run at (6,6) width 165: "This table should have a 1"
-                text run at (171,6) width 67: "em margin"
+                text run at (6,6) width 232: "This table should have a 1em margin"
                 text run at (6,24) width 111: "around all edges. "
                 text run at (117,24) width 80: "This margin "
                 text run at (197,24) width 10: "is"
@@ -224,8 +213,7 @@ layer at (0,0) size 800x1438
               RenderText {TEXT} at (6,6) size 185x72
                 text run at (6,6) width 185: "Elements within the cell have"
                 text run at (6,24) width 178: "horizontal border-spacing of"
-                text run at (6,42) width 20: "0.5"
-                text run at (26,42) width 100: "em and vertical "
+                text run at (6,42) width 120: "0.5em and vertical "
                 text run at (126,42) width 46: "border-"
                 text run at (6,60) width 81: "spacing of 0."
             RenderTableCell {TD} at (438,52) size 300x48 [border: (1px solid #008000)] [r=1 c=2 rs=1 cs=1]
@@ -242,8 +230,7 @@ layer at (0,0) size 800x1438
                 text run at (6,60) width 166: "should be thin solid green."
             RenderTableCell {TD} at (221,118) size 209x84 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
               RenderText {TEXT} at (6,6) size 187x54
-                text run at (6,6) width 165: "This table should have a 1"
-                text run at (171,6) width 19: "em"
+                text run at (6,6) width 184: "This table should have a 1em"
                 text run at (6,24) width 159: "margin around all edges. "
                 text run at (165,24) width 28: "This"
                 text run at (6,42) width 48: "margin "
@@ -313,8 +300,7 @@ layer at (0,0) size 800x1438
                 text run at (5,41) width 212: "other than what this test is testing."
             RenderTableCell {TD} at (455,68) size 295x64 [r=1 c=2 rs=1 cs=1]
               RenderText {TEXT} at (5,5) size 280x36
-                text run at (5,5) width 165: "This table should have a 1"
-                text run at (170,5) width 115: "em margin around"
+                text run at (5,5) width 280: "This table should have a 1em margin around"
                 text run at (5,23) width 63: "all edges. "
                 text run at (68,23) width 80: "This margin "
                 text run at (148,23) width 131: "is measured from the"

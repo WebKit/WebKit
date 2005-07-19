@@ -192,8 +192,7 @@ layer at (0,0) size 800x1095
                             text run at (2,2) width 94: "HAO,SCOTT"
                         RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {TEXT} at (2,2) size 29x18
-                            text run at (2,2) width 18: "08"
-                            text run at (20,2) width 11: "A"
+                            text run at (2,2) width 29: "08A"
                         RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {TEXT} at (2,2) size 74x18
                             text run at (2,2) width 74: "confirmed "
@@ -289,8 +288,7 @@ layer at (0,0) size 800x1095
                             text run at (2,2) width 94: "HAO,SCOTT"
                         RenderTableCell {TD} at (98,22) size 37x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
                           RenderText {TEXT} at (2,2) size 28x18
-                            text run at (2,2) width 18: "13"
-                            text run at (20,2) width 10: "F"
+                            text run at (2,2) width 28: "13F"
                         RenderTableCell {TD} at (135,22) size 78x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
                           RenderText {TEXT} at (2,2) size 74x18
                             text run at (2,2) width 74: "confirmed "

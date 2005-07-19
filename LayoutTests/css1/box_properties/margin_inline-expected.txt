@@ -9,10 +9,8 @@ layer at (0,0) size 800x696
       RenderBlock {PRE} at (0,34) size 784x45
         RenderText {TEXT} at (0,0) size 360x45
           text run at (0,0) width 352: ".zero {background-color: silver; margin: 0;}"
-          text run at (0,15) width 128: ".one {margin: 25"
-          text run at (128,15) width 224: "px; background-color: aqua;}"
-          text run at (0,30) width 136: ".two {margin: -10"
-          text run at (136,30) width 224: "px; background-color: aqua;}"
+          text run at (0,15) width 352: ".one {margin: 25px; background-color: aqua;}"
+          text run at (0,30) width 360: ".two {margin: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,102) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
@@ -29,16 +27,13 @@ layer at (0,0) size 800x696
               text run at (649,2) width 24: "one"
           RenderText {TEXT} at (673,0) size 752x36
             text run at (673,0) width 79: ", giving it an"
-            text run at (0,18) width 167: "aqua background and a 25"
-            text run at (167,18) width 64: "px margin"
+            text run at (0,18) width 231: "aqua background and a 25px margin"
         RenderText {TEXT} at (256,18) size 769x54
           text run at (256,18) width 8: ". "
           text run at (264,18) width 505: "Margins on inline elements does not affect line-height calculations, so all lines in"
           text run at (0,36) width 293: "this element should have the same line-height. "
-          text run at (293,36) width 194: "However, there should be a 25"
-          text run at (487,36) width 279: "px margin to the left side of the inline box in"
-          text run at (0,54) width 200: "the first line it appears, and a 25"
-          text run at (200,54) width 527: "px margin to the right side of the inline element box in the last line where it appears."
+          text run at (293,36) width 473: "However, there should be a 25px margin to the left side of the inline box in"
+          text run at (0,54) width 727: "the first line it appears, and a 25px margin to the right side of the inline element box in the last line where it appears."
       RenderBlock {P} at (0,224) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
@@ -54,16 +49,13 @@ layer at (0,0) size 800x696
               text run at (614,2) width 24: "two"
           RenderText {TEXT} at (638,0) size 751x36
             text run at (638,0) width 113: ", giving it an aqua"
-            text run at (0,18) width 138: "background and a -10"
-            text run at (138,18) width 64: "px margin"
+            text run at (0,18) width 202: "background and a -10px margin"
         RenderText {TEXT} at (192,18) size 784x54
           text run at (192,18) width 8: ". "
           text run at (200,18) width 584: "Margins on inline elements does not affect line-height calculations, so all lines in this element"
           text run at (0,36) width 214: "should have the same line-height. "
-          text run at (214,36) width 199: "However, there should be a -10"
-          text run at (413,36) width 369: "px margin to the left side of the inline box in the first line it"
-          text run at (0,54) width 115: "appears, and a -10"
-          text run at (115,54) width 527: "px margin to the right side of the inline element box in the last line where it appears."
+          text run at (214,36) width 568: "However, there should be a -10px margin to the left side of the inline box in the first line it"
+          text run at (0,54) width 642: "appears, and a -10px margin to the right side of the inline element box in the last line where it appears."
       RenderBlock {P} at (0,346) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
@@ -94,16 +86,13 @@ layer at (0,0) size 800x696
                       text run at (649,2) width 24: "one"
                   RenderText {TEXT} at (673,0) size 752x36
                     text run at (673,0) width 79: ", giving it an"
-                    text run at (0,18) width 167: "aqua background and a 25"
-                    text run at (167,18) width 64: "px margin"
+                    text run at (0,18) width 231: "aqua background and a 25px margin"
                 RenderText {TEXT} at (256,18) size 753x72
                   text run at (256,18) width 8: ". "
                   text run at (264,18) width 489: "Margins on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 309: "in this element should have the same line-height. "
-                  text run at (309,36) width 194: "However, there should be a 25"
-                  text run at (503,36) width 235: "px margin to the left side of the inline"
-                  text run at (0,54) width 244: "box in the first line it appears, and a 25"
-                  text run at (244,54) width 471: "px margin to the right side of the inline element box in the last line where it"
+                  text run at (309,36) width 429: "However, there should be a 25px margin to the left side of the inline"
+                  text run at (0,54) width 715: "box in the first line it appears, and a 25px margin to the right side of the inline element box in the last line where it"
                   text run at (0,72) width 52: "appears."
               RenderBlock {P} at (4,144) size 762x18 [bgcolor=#C0C0C0]
                 RenderText {TEXT} at (0,0) size 203x18
@@ -120,16 +109,13 @@ layer at (0,0) size 800x696
                       text run at (614,2) width 24: "two"
                   RenderText {TEXT} at (638,0) size 751x36
                     text run at (638,0) width 113: ", giving it an aqua"
-                    text run at (0,18) width 138: "background and a -10"
-                    text run at (138,18) width 64: "px margin"
+                    text run at (0,18) width 202: "background and a -10px margin"
                 RenderText {TEXT} at (192,18) size 745x54
                   text run at (192,18) width 8: ". "
                   text run at (200,18) width 531: "Margins on inline elements does not affect line-height calculations, so all lines in this"
                   text run at (0,36) width 267: "element should have the same line-height. "
-                  text run at (267,36) width 199: "However, there should be a -10"
-                  text run at (466,36) width 279: "px margin to the left side of the inline box in"
-                  text run at (0,54) width 205: "the first line it appears, and a -10"
-                  text run at (205,54) width 527: "px margin to the right side of the inline element box in the last line where it appears."
+                  text run at (267,36) width 478: "However, there should be a -10px margin to the left side of the inline box in"
+                  text run at (0,54) width 732: "the first line it appears, and a -10px margin to the right side of the inline element box in the last line where it appears."
               RenderBlock {P} at (4,266) size 762x18 [bgcolor=#C0C0C0]
                 RenderText {TEXT} at (0,0) size 203x18
                   text run at (0,0) width 203: "This element has a class of zero."

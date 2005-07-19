@@ -9,15 +9,11 @@ layer at (0,0) size 800x987
       RenderBlock {PRE} at (0,34) size 784x90
         RenderText {TEXT} at (0,0) size 408x90
           text run at (0,0) width 392: ".zero {background-color: silver; margin-left: 0;}"
-          text run at (0,15) width 176: ".one {margin-left: 0.5"
-          text run at (176,15) width 224: "in; background-color: aqua;}"
-          text run at (0,30) width 168: ".two {margin-left: 25"
-          text run at (168,30) width 224: "px; background-color: aqua;}"
-          text run at (0,45) width 176: ".three {margin-left: 5"
-          text run at (176,45) width 224: "em; background-color: aqua;}"
+          text run at (0,15) width 400: ".one {margin-left: 0.5in; background-color: aqua;}"
+          text run at (0,30) width 392: ".two {margin-left: 25px; background-color: aqua;}"
+          text run at (0,45) width 400: ".three {margin-left: 5em; background-color: aqua;}"
           text run at (0,60) width 392: ".four {margin-left: 25%; background-color: aqua;}"
-          text run at (0,75) width 184: ".five {margin-left: -10"
-          text run at (184,75) width 224: "px; background-color: aqua;}"
+          text run at (0,75) width 408: ".five {margin-left: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,137) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
@@ -56,8 +52,7 @@ layer at (0,0) size 800x987
           text run at (0,0) width 203: "This element has a class of zero."
       RenderBlock {P} at (-10,483) size 794x54 [bgcolor=#00FFFF]
         RenderText {TEXT} at (0,0) size 789x54
-          text run at (0,0) width 245: "This paragraph has a left margin of -10"
-          text run at (245,0) width 544: "px, which should cause it to be wider than it might otherwise be, and it has a light blue"
+          text run at (0,0) width 789: "This paragraph has a left margin of -10px, which should cause it to be wider than it might otherwise be, and it has a light blue"
           text run at (0,18) width 83: "background. "
           text run at (83,18) width 386: "In all other respects, however, the element should be normal. "
           text run at (469,18) width 278: "No styles have been applied to it besides the"
@@ -111,8 +106,7 @@ layer at (0,0) size 800x987
                   text run at (0,0) width 203: "This element has a class of zero."
               RenderBlock {P} at (-6,332) size 772x54 [bgcolor=#00FFFF]
                 RenderText {TEXT} at (0,0) size 758x54
-                  text run at (0,0) width 245: "This paragraph has a left margin of -10"
-                  text run at (245,0) width 513: "px, which should cause it to be wider than it might otherwise be, and it has a light"
+                  text run at (0,0) width 758: "This paragraph has a left margin of -10px, which should cause it to be wider than it might otherwise be, and it has a light"
                   text run at (0,18) width 114: "blue background. "
                   text run at (114,18) width 386: "In all other respects, however, the element should be normal. "
                   text run at (500,18) width 255: "No styles have been applied to it besides"

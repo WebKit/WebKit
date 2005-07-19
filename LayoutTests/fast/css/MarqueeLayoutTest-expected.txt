@@ -15,15 +15,12 @@ layer at (0,0) size 800x708
           text run at (0,18) width 773: "Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overridden"
           text run at (0,36) width 101: "when the given "
           text run at (101,36) width 645: "height is smaller than the font height. We also make sure that the default height of a vertical marquee is"
-          text run at (0,54) width 24: "200"
-          text run at (24,54) width 20: "px."
+          text run at (0,54) width 44: "200px."
       RenderBlock {P} at (0,122) size 784x36
         RenderText {TEXT} at (0,0) size 773x36
           text run at (0,0) width 773: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None of"
           text run at (0,18) width 50: "the text "
-          text run at (50,18) width 453: "should be cut off. In the vertical group, the aqua marquee should be 200"
-          text run at (503,18) width 205: "px, and the others should be 100"
-          text run at (708,18) width 20: "px."
+          text run at (50,18) width 678: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
       RenderBlock {HR} at (0,174) size 784x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,184) size 784x508
         RenderText {TEXT} at (0,0) size 0x0
@@ -39,8 +36,7 @@ layer at (0,0) size 800x708
         RenderBR {BR} at (0,186) size 0x18
         RenderBlock {DIV} at (0,204) size 113x200 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 113x18
-            text run at (0,0) width 70: "This is 200"
-            text run at (70,0) width 43: "px tall."
+            text run at (0,0) width 113: "This is 200px tall."
         RenderText {TEXT} at (113,390) size 4x18
           text run at (113,390) width 4: " "
         RenderText {TEXT} at (317,390) size 4x18
@@ -50,8 +46,7 @@ layer at (0,0) size 800x708
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {DIV} at (0,408) size 113x100 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 113x18
-            text run at (0,0) width 70: "This is 100"
-            text run at (70,0) width 43: "px tall."
+            text run at (0,0) width 113: "This is 100px tall."
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
 layer at (8,192) size 784x16 scrollX -769 scrollWidth 1692 scrollHeight 18

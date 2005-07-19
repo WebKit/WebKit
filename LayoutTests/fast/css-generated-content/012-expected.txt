@@ -13,8 +13,7 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (55,45) size 780x123
           text run at (55,45) width 726: "ere is the first paragraph. Here the CSS :first-line rule sets the text to"
           text run at (1,84) width 232: "a green, sans-serif font. "
-          text run at (233,84) width 505: "Then, the CSS :first-letter rule sets the font size to 3"
-          text run at (738,84) width 36: "em,"
+          text run at (233,84) width 541: "Then, the CSS :first-letter rule sets the font size to 3em,"
           text run at (1,112) width 743: "and makes the text bold. And here's some more text to pad out the paragraph"
           text run at (1,140) width 723: "and make things look nice (or, at least, to illustrate the problem correctly)."
       RenderBlock {P} at (0,280) size 784x142 [bgcolor=#EEEEEE] [border: (1px solid #000000)]

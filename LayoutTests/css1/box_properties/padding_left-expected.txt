@@ -9,15 +9,11 @@ layer at (0,0) size 800x991
       RenderBlock {PRE} at (0,34) size 784x90
         RenderText {TEXT} at (0,0) size 416x90
           text run at (0,0) width 400: ".zero {background-color: silver; padding-left: 0;}"
-          text run at (0,15) width 184: ".one {padding-left: 0.5"
-          text run at (184,15) width 224: "in; background-color: aqua;}"
-          text run at (0,30) width 176: ".two {padding-left: 25"
-          text run at (176,30) width 224: "px; background-color: aqua;}"
-          text run at (0,45) width 184: ".three {padding-left: 5"
-          text run at (184,45) width 224: "em; background-color: aqua;}"
+          text run at (0,15) width 408: ".one {padding-left: 0.5in; background-color: aqua;}"
+          text run at (0,30) width 400: ".two {padding-left: 25px; background-color: aqua;}"
+          text run at (0,45) width 408: ".three {padding-left: 5em; background-color: aqua;}"
           text run at (0,60) width 400: ".four {padding-left: 25%; background-color: aqua;}"
-          text run at (0,75) width 192: ".five {padding-left: -20"
-          text run at (192,75) width 224: "px; background-color: aqua;}"
+          text run at (0,75) width 416: ".five {padding-left: -20px; background-color: aqua;}"
       RenderBlock {HR} at (0,137) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
@@ -34,8 +30,7 @@ layer at (0,0) size 800x991
           text run at (25,18) width 356: "background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,293) size 784x36 [bgcolor=#00FFFF]
         RenderText {TEXT} at (80,0) size 690x36
-          text run at (80,0) width 280: "This element should have a left padding of 5"
-          text run at (360,0) width 306: "em, which will require extra text in order to test. "
+          text run at (80,0) width 586: "This element should have a left padding of 5em, which will require extra text in order to test. "
           text run at (666,0) width 104: "Both the content"
           text run at (80,18) width 356: "background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,345) size 784x54 [bgcolor=#00FFFF]
@@ -87,8 +82,7 @@ layer at (0,0) size 800x991
                   text run at (25,18) width 356: "background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,142) size 762x36 [bgcolor=#00FFFF]
                 RenderText {TEXT} at (80,0) size 640x36
-                  text run at (80,0) width 280: "This element should have a left padding of 5"
-                  text run at (360,0) width 306: "em, which will require extra text in order to test. "
+                  text run at (80,0) width 586: "This element should have a left padding of 5em, which will require extra text in order to test. "
                   text run at (666,0) width 54: "Both the"
                   text run at (80,18) width 406: "content background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,194) size 762x54 [bgcolor=#00FFFF]

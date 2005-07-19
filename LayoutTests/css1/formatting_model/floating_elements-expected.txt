@@ -9,18 +9,11 @@ layer at (0,0) size 800x6267
       RenderBlock {PRE} at (0,34) size 784x135
         RenderText {TEXT} at (0,0) size 480x120
           text run at (0,0) width 272: "HR.minor {clear: both; width: 5%;}"
-          text run at (0,15) width 368: "HR.major {clear: both; width: 75%; margin: 1.5"
-          text run at (368,15) width 32: "em;}"
-          text run at (0,30) width 112: "DIV {border: 5"
-          text run at (112,30) width 336: "px solid purple; padding: 0; margin: 0.125"
-          text run at (448,30) width 32: "em;}"
-          text run at (0,45) width 208: "P.left, P.right {width: 10"
-          text run at (208,45) width 112: "em; padding: 1"
-          text run at (320,45) width 112: "em; margin: 0;"
-          text run at (0,60) width 96: "   border: 1"
-          text run at (96,60) width 328: "px solid lime; background-color: silver;}"
-          text run at (0,75) width 328: "IMG.left, IMG.right {margin: 0; border: 3"
-          text run at (328,75) width 128: "px solid black;}"
+          text run at (0,15) width 400: "HR.major {clear: both; width: 75%; margin: 1.5em;}"
+          text run at (0,30) width 480: "DIV {border: 5px solid purple; padding: 0; margin: 0.125em;}"
+          text run at (0,45) width 432: "P.left, P.right {width: 10em; padding: 1em; margin: 0;"
+          text run at (0,60) width 424: "   border: 1px solid lime; background-color: silver;}"
+          text run at (0,75) width 456: "IMG.left, IMG.right {margin: 0; border: 3px solid black;}"
           text run at (0,90) width 160: ".left {float: left;}"
           text run at (0,105) width 176: ".right {float: right;}"
       RenderBlock {HR} at (0,182) size 784x2 [border: (1px inset #000000)]

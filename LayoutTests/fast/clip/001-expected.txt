@@ -4,8 +4,7 @@ layer at (0,0) size 800x34
   RenderBlock {HTML} at (0,0) size 800x34
     RenderBody {BODY} at (8,8) size 784x18
       RenderText {TEXT} at (0,0) size 541x18
-        text run at (0,0) width 137: "You should see a 100"
-        text run at (137,0) width 167: "x100 green square below. "
+        text run at (0,0) width 304: "You should see a 100x100 green square below. "
         text run at (304,0) width 237: "If you see any red, the test has failed. "
 layer at (8,26) size 200x200 backgroundClip at (108,126) size 100x100 clip at (108,126) size 100x100
   RenderBlock (positioned) {DIV} at (8,26) size 200x200 [bgcolor=#008000]

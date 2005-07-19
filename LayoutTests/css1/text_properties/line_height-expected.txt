@@ -8,39 +8,18 @@ layer at (0,0) size 800x2621
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,34) size 784x210
         RenderText {TEXT} at (0,0) size 400x210
-          text run at (0,0) width 176: ".one {line-height: 0.5"
-          text run at (176,0) width 136: "in; font-size: 12"
-          text run at (312,0) width 32: "px;}"
-          text run at (0,15) width 160: ".two {line-height: 2"
-          text run at (160,15) width 136: "cm; font-size: 12"
-          text run at (296,15) width 32: "px;}"
-          text run at (0,30) width 184: ".three {line-height: 20"
-          text run at (184,30) width 136: "mm; font-size: 12"
-          text run at (320,30) width 32: "px;}"
-          text run at (0,45) width 176: ".four {line-height: 24"
-          text run at (176,45) width 136: "pt; font-size: 12"
-          text run at (312,45) width 32: "px;}"
-          text run at (0,60) width 168: ".five {line-height: 2"
-          text run at (168,60) width 136: "pc; font-size: 12"
-          text run at (304,60) width 32: "px;}"
-          text run at (0,75) width 160: ".six {line-height: 2"
-          text run at (160,75) width 136: "em; font-size: 12"
-          text run at (296,75) width 32: "px;}"
-          text run at (0,90) width 176: ".seven {line-height: 3"
-          text run at (176,90) width 136: "ex; font-size: 12"
-          text run at (312,90) width 32: "px;}"
-          text run at (0,105) width 320: ".eight {line-height: 200%; font-size: 12"
-          text run at (320,105) width 32: "px;}"
-          text run at (0,120) width 288: ".nine {line-height: 2; font-size: 12"
-          text run at (288,120) width 32: "px;}"
-          text run at (0,135) width 168: ".ten {line-height: 50"
-          text run at (168,135) width 136: "px; font-size: 12"
-          text run at (304,135) width 32: "px;}"
-          text run at (0,150) width 192: ".eleven {line-height: -1"
-          text run at (192,150) width 136: "em; font-size: 12"
-          text run at (328,150) width 32: "px;}"
-          text run at (0,165) width 368: "TABLE .ten {line-height: normal; font-size: 12"
-          text run at (368,165) width 32: "px;}"
+          text run at (0,0) width 344: ".one {line-height: 0.5in; font-size: 12px;}"
+          text run at (0,15) width 328: ".two {line-height: 2cm; font-size: 12px;}"
+          text run at (0,30) width 352: ".three {line-height: 20mm; font-size: 12px;}"
+          text run at (0,45) width 344: ".four {line-height: 24pt; font-size: 12px;}"
+          text run at (0,60) width 336: ".five {line-height: 2pc; font-size: 12px;}"
+          text run at (0,75) width 328: ".six {line-height: 2em; font-size: 12px;}"
+          text run at (0,90) width 344: ".seven {line-height: 3ex; font-size: 12px;}"
+          text run at (0,105) width 352: ".eight {line-height: 200%; font-size: 12px;}"
+          text run at (0,120) width 320: ".nine {line-height: 2; font-size: 12px;}"
+          text run at (0,135) width 336: ".ten {line-height: 50px; font-size: 12px;}"
+          text run at (0,150) width 360: ".eleven {line-height: -1em; font-size: 12px;}"
+          text run at (0,165) width 400: "TABLE .ten {line-height: normal; font-size: 12px;}"
           text run at (0,180) width 248: "DIV {background-color: silver;}"
           text run at (0,195) width 304: "SPAN.color {background-color: silver;}"
       RenderBlock {HR} at (0,257) size 784x2 [border: (1px inset #000000)]
@@ -74,8 +53,7 @@ layer at (0,0) size 800x2621
             text run at (0,5) width 592: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
         RenderBlock {P} at (0,48) size 784x72
           RenderText {TEXT} at (0,-2) size 763x72
-            text run at (0,-2) width 717: "This sentence should have a line-height of twice the DIV's font size, or 28"
-            text run at (717,-2) width 31: "px;"
+            text run at (0,-2) width 748: "This sentence should have a line-height of twice the DIV's font size, or 28px;"
             text run at (0,22) width 763: "this should not cause extra spacing between the lines, since the line-height and"
             text run at (0,46) width 364: "font-size should have the same value."
         RenderBlock (anonymous) at (0,144) size 784x24
@@ -92,9 +70,7 @@ layer at (0,0) size 800x2621
           RenderText {TEXT} at (0,10) size 749x144
             text run at (0,10) width 749: "This sentence should have a line-height of twice the font size, which is 200%"
             text run at (0,58) width 742: "normal thanks to an inline style; this should cause extra spacing between the"
-            text run at (0,106) width 308: "lines, as the font-size will be 28"
-            text run at (308,106) width 316: "px and the line-height will be 56"
-            text run at (624,106) width 30: "px."
+            text run at (0,106) width 654: "lines, as the font-size will be 28px and the line-height will be 56px."
         RenderBlock (anonymous) at (0,216) size 784x24
           RenderText {TEXT} at (0,5) size 606x24
             text run at (0,5) width 606: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
@@ -154,8 +130,7 @@ layer at (0,0) size 800x2621
                     text run at (0,5) width 592: "This first part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."
                 RenderBlock {P} at (0,48) size 762x72
                   RenderText {TEXT} at (0,-2) size 748x72
-                    text run at (0,-2) width 717: "This sentence should have a line-height of twice the DIV's font size, or 28"
-                    text run at (717,-2) width 31: "px;"
+                    text run at (0,-2) width 748: "This sentence should have a line-height of twice the DIV's font size, or 28px;"
                     text run at (0,22) width 722: "this should not cause extra spacing between the lines, since the line-height"
                     text run at (0,46) width 405: "and font-size should have the same value."
                 RenderBlock (anonymous) at (0,144) size 762x24
@@ -172,9 +147,7 @@ layer at (0,0) size 800x2621
                   RenderText {TEXT} at (0,10) size 749x144
                     text run at (0,10) width 749: "This sentence should have a line-height of twice the font size, which is 200%"
                     text run at (0,58) width 742: "normal thanks to an inline style; this should cause extra spacing between the"
-                    text run at (0,106) width 308: "lines, as the font-size will be 28"
-                    text run at (308,106) width 316: "px and the line-height will be 56"
-                    text run at (624,106) width 30: "px."
+                    text run at (0,106) width 654: "lines, as the font-size will be 28px and the line-height will be 56px."
                 RenderBlock (anonymous) at (0,216) size 762x24
                   RenderText {TEXT} at (0,5) size 606x24
                     text run at (0,5) width 606: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the lines."

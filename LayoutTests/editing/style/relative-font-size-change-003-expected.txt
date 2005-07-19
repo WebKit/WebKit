@@ -5,20 +5,16 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #0000FF)]
         RenderText {TEXT} at (14,14) size 738x84
-          text run at (14,14) width 250: "Size check should say: 24"
-          text run at (264,14) width 473: "px. The first two words of the second line should"
-          text run at (14,42) width 149: "appear to be 24"
-          text run at (163,42) width 183: "px. The rest of the "
+          text run at (14,14) width 723: "Size check should say: 24px. The first two words of the second line should"
+          text run at (14,42) width 332: "appear to be 24px. The rest of the "
           text run at (346,42) width 406: "words on the second line should appear to"
-          text run at (14,70) width 53: "be 30"
-          text run at (67,70) width 30: "px."
+          text run at (14,70) width 83: "be 30px."
       RenderBlock {DIV} at (0,136) size 784x28
         RenderText {TEXT} at (0,0) size 118x28
           text run at (0,0) width 118: "Size check: "
         RenderInline {SPAN} at (0,0) size 48x28
           RenderText {TEXT} at (118,0) size 48x28
-            text run at (118,0) width 24: "24"
-            text run at (142,0) width 24: "px"
+            text run at (118,0) width 48: "24px"
       RenderBlock {DIV} at (0,180) size 784x148
         RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x28

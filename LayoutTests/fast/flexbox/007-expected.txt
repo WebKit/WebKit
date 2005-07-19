@@ -5,8 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
         RenderText {TEXT} at (0,0) size 752x36
-          text run at (0,0) width 137: "You should see a 100"
-          text run at (137,0) width 345: "x100 green square below enclosed by an olive border. "
+          text run at (0,0) width 482: "You should see a 100x100 green square below enclosed by an olive border. "
           text run at (482,0) width 270: "If you see any red, the test has failed. If the"
           text run at (0,18) width 440: "border does not fully enclose the green square, then the test has failed."
       RenderBlock {P} at (0,52) size 784x36

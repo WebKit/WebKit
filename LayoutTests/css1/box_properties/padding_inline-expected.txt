@@ -9,10 +9,8 @@ layer at (0,0) size 800x753
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {TEXT} at (0,0) size 368x45
           text run at (0,0) width 360: ".zero {background-color: silver; padding: 0;}"
-          text run at (0,15) width 136: ".one {padding: 25"
-          text run at (136,15) width 224: "px; background-color: aqua;}"
-          text run at (0,30) width 144: ".two {padding: -10"
-          text run at (144,30) width 224: "px; background-color: aqua;}"
+          text run at (0,15) width 360: ".one {padding: 25px; background-color: aqua;}"
+          text run at (0,30) width 368: ".two {padding: -10px; background-color: aqua;}"
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
@@ -29,18 +27,15 @@ layer at (0,0) size 800x753
               text run at (645,2) width 24: "one"
           RenderText {TEXT} at (669,0) size 782x36
             text run at (669,0) width 113: ", giving it an aqua"
-            text run at (0,18) width 133: "background and a 25"
-            text run at (133,18) width 71: "px padding"
+            text run at (0,18) width 204: "background and a 25px padding"
         RenderText {TEXT} at (229,18) size 780x90
           text run at (229,18) width 8: ". "
           text run at (237,18) width 531: "Padding on inline elements does not affect line-height calculations, so all lines in this"
           text run at (0,36) width 267: "element should have the same line-height. "
           text run at (267,36) width 488: "There may be implementation-specific limits on how much of the padding the"
           text run at (0,54) width 353: "user agent is able to display above and below each line. "
-          text run at (353,54) width 230: "However, there should be at least 25"
-          text run at (583,54) width 197: "px of padding to the left side of"
-          text run at (0,72) width 295: "the inline box in the first line it appears, and 25"
-          text run at (295,72) width 483: "px of padding to the right side of the inline element box in the last line where"
+          text run at (353,54) width 427: "However, there should be at least 25px of padding to the left side of"
+          text run at (0,72) width 778: "the inline box in the first line it appears, and 25px of padding to the right side of the inline element box in the last line where"
           text run at (0,90) width 64: "it appears."
       RenderBlock {P} at (0,283) size 784x18 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 203x18
@@ -92,18 +87,15 @@ layer at (0,0) size 800x753
                       text run at (645,2) width 24: "one"
                   RenderText {TEXT} at (669,0) size 748x36
                     text run at (669,0) width 79: ", giving it an"
-                    text run at (0,18) width 167: "aqua background and a 25"
-                    text run at (167,18) width 71: "px padding"
+                    text run at (0,18) width 238: "aqua background and a 25px padding"
                 RenderText {TEXT} at (263,18) size 760x90
                   text run at (263,18) width 8: ". "
                   text run at (271,18) width 489: "Padding on inline elements does not affect line-height calculations, so all lines"
                   text run at (0,36) width 309: "in this element should have the same line-height. "
                   text run at (309,36) width 410: "There may be implementation-specific limits on how much of the"
                   text run at (0,54) width 431: "padding the user agent is able to display above and below each line. "
-                  text run at (431,54) width 230: "However, there should be at least 25"
-                  text run at (661,54) width 88: "px of padding"
-                  text run at (0,72) width 404: "to the left side of the inline box in the first line it appears, and 25"
-                  text run at (404,72) width 349: "px of padding to the right side of the inline element box"
+                  text run at (431,54) width 318: "However, there should be at least 25px of padding"
+                  text run at (0,72) width 753: "to the left side of the inline box in the first line it appears, and 25px of padding to the right side of the inline element box"
                   text run at (0,90) width 198: "in the last line where it appears."
               RenderBlock {P} at (4,162) size 762x18 [bgcolor=#C0C0C0]
                 RenderText {TEXT} at (0,0) size 203x18

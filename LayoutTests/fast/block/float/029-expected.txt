@@ -11,12 +11,10 @@ layer at (0,0) size 800x54
           text run at (1,19) width 65: "float:right;"
         RenderBR {BR} at (66,19) size 0x18
         RenderText {TEXT} at (1,37) size 88x18
-          text run at (1,37) width 68: "width: 250"
-          text run at (69,37) width 20: "px;"
+          text run at (1,37) width 88: "width: 250px;"
         RenderBR {BR} at (89,37) size 0x18
         RenderText {TEXT} at (1,55) size 87x18
-          text run at (1,55) width 67: "height:100"
-          text run at (68,55) width 20: "px;"
+          text run at (1,55) width 87: "height:100px;"
       RenderBlock {DIV} at (0,0) size 394x38 [border: (1px solid #FF0000)]
         RenderText {TEXT} at (1,1) size 31x18
           text run at (1,1) width 31: "TOP"

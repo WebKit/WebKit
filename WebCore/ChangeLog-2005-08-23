@@ -1,3 +1,157 @@
+2005-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        - rolled in patch by opendarwin.org@mitzpettel.com for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3838
+        Text runs unnecessarily split at EN L boundaries
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::bidiReorderLine):
+
+        Lots of new test case results because previous results had inappropriately
+        split text runs.
+
+        * layout-tests/css1/basic/containment-expected.txt:
+        * layout-tests/css1/box_properties/border-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_width-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_left-expected.txt:
+        * layout-tests/css1/box_properties/border_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_left_width-expected.txt:
+        * layout-tests/css1/box_properties/border_left_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_right-expected.txt:
+        * layout-tests/css1/box_properties/border_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_right_width-expected.txt:
+        * layout-tests/css1/box_properties/border_right_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_top-expected.txt:
+        * layout-tests/css1/box_properties/border_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_top_width-expected.txt:
+        * layout-tests/css1/box_properties/border_top_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_width-expected.txt:
+        * layout-tests/css1/box_properties/border_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/clear_float-expected.txt:
+        * layout-tests/css1/box_properties/float_elements_in_series-expected.txt:
+        * layout-tests/css1/box_properties/float_margin-expected.txt:
+        * layout-tests/css1/box_properties/float_on_text_elements-expected.txt:
+        * layout-tests/css1/box_properties/height-expected.txt:
+        * layout-tests/css1/box_properties/margin-expected.txt:
+        * layout-tests/css1/box_properties/margin_bottom-expected.txt:
+        * layout-tests/css1/box_properties/margin_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_left-expected.txt:
+        * layout-tests/css1/box_properties/margin_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_right-expected.txt:
+        * layout-tests/css1/box_properties/margin_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_top-expected.txt:
+        * layout-tests/css1/box_properties/margin_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding-expected.txt:
+        * layout-tests/css1/box_properties/padding_bottom-expected.txt:
+        * layout-tests/css1/box_properties/padding_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_left-expected.txt:
+        * layout-tests/css1/box_properties/padding_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_right-expected.txt:
+        * layout-tests/css1/box_properties/padding_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_top-expected.txt:
+        * layout-tests/css1/box_properties/padding_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/width-expected.txt:
+        * layout-tests/css1/classification/display-expected.txt:
+        * layout-tests/css1/color_and_background/background_position-expected.txt:
+        * layout-tests/css1/conformance/forward_compatible_parsing-expected.txt:
+        * layout-tests/css1/font_properties/font-expected.txt:
+        * layout-tests/css1/font_properties/font_size-expected.txt:
+        * layout-tests/css1/formatting_model/canvas-expected.txt:
+        * layout-tests/css1/formatting_model/floating_elements-expected.txt:
+        * layout-tests/css1/formatting_model/height_of_lines-expected.txt:
+        * layout-tests/css1/formatting_model/inline_elements-expected.txt:
+        * layout-tests/css1/formatting_model/replaced_elements-expected.txt:
+        * layout-tests/css1/formatting_model/vertical_formatting-expected.txt:
+        * layout-tests/css1/pseudo/anchor-expected.txt:
+        * layout-tests/css1/text_properties/letter_spacing-expected.txt:
+        * layout-tests/css1/text_properties/line_height-expected.txt:
+        * layout-tests/css1/text_properties/text_indent-expected.txt:
+        * layout-tests/css1/text_properties/vertical_align-expected.txt:
+        * layout-tests/css1/text_properties/word_spacing-expected.txt:
+        * layout-tests/css1/units/length_units-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-001-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-002-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-003-expected.txt:
+        * layout-tests/editing/style/relative-font-size-change-004-expected.txt:
+        * layout-tests/editing/style/smoosh-styles-003-expected.txt:
+        * layout-tests/fast/block/basic/018-expected.txt:
+        * layout-tests/fast/block/float/002-expected.txt:
+        * layout-tests/fast/block/float/021-expected.txt:
+        * layout-tests/fast/block/float/023-expected.txt:
+        * layout-tests/fast/block/float/024-expected.txt:
+        * layout-tests/fast/block/float/029-expected.txt:
+        * layout-tests/fast/block/float/030-expected.txt:
+        * layout-tests/fast/block/margin-collapse/043-expected.txt:
+        * layout-tests/fast/block/margin-collapse/101-expected.txt:
+        * layout-tests/fast/block/positioning/060-expected.txt:
+        * layout-tests/fast/block/positioning/auto/001-expected.txt:
+        * layout-tests/fast/block/positioning/auto/002-expected.txt:
+        * layout-tests/fast/block/positioning/auto/003-expected.txt:
+        * layout-tests/fast/block/positioning/auto/004-expected.txt:
+        * layout-tests/fast/block/positioning/auto/005-expected.txt:
+        * layout-tests/fast/block/positioning/auto/006-expected.txt:
+        * layout-tests/fast/clip/001-expected.txt:
+        * layout-tests/fast/clip/002-expected.txt:
+        * layout-tests/fast/clip/003-expected.txt:
+        * layout-tests/fast/clip/004-expected.txt:
+        * layout-tests/fast/clip/005-expected.txt:
+        * layout-tests/fast/clip/006-expected.txt:
+        * layout-tests/fast/clip/007-expected.txt:
+        * layout-tests/fast/clip/008-expected.txt:
+        * layout-tests/fast/clip/009-expected.txt:
+        * layout-tests/fast/clip/010-expected.txt:
+        * layout-tests/fast/clip/011-expected.txt:
+        * layout-tests/fast/clip/012-expected.txt:
+        * layout-tests/fast/clip/013-expected.txt:
+        * layout-tests/fast/clip/014-expected.txt:
+        * layout-tests/fast/clip/015-expected.txt:
+        * layout-tests/fast/clip/016-expected.txt:
+        * layout-tests/fast/css-generated-content/012-expected.txt:
+        * layout-tests/fast/css/008-expected.txt:
+        * layout-tests/fast/css/MarqueeLayoutTest-expected.txt:
+        * layout-tests/fast/css/apple-prefix-expected.txt:
+        * layout-tests/fast/dom/quadraticCurveTo-expected.txt:
+        * layout-tests/fast/dynamic/noninlinebadness-expected.txt:
+        * layout-tests/fast/encoding/utf-16-big-endian-expected.txt:
+        * layout-tests/fast/encoding/utf-16-little-endian-expected.txt:
+        * layout-tests/fast/flexbox/001-expected.txt:
+        * layout-tests/fast/flexbox/004-expected.txt:
+        * layout-tests/fast/flexbox/007-expected.txt:
+        * layout-tests/fast/flexbox/008-expected.txt:
+        * layout-tests/fast/flexbox/009-expected.txt:
+        * layout-tests/fast/flexbox/010-expected.txt:
+        * layout-tests/fast/flexbox/012-expected.txt:
+        * layout-tests/fast/flexbox/013-expected.txt:
+        * layout-tests/fast/flexbox/014-expected.txt:
+        * layout-tests/fast/flexbox/015-expected.txt:
+        * layout-tests/fast/flexbox/018-expected.txt:
+        * layout-tests/fast/flexbox/019-expected.txt:
+        * layout-tests/fast/flexbox/020-expected.txt:
+        * layout-tests/fast/flexbox/021-expected.txt:
+        * layout-tests/fast/flexbox/022-expected.txt:
+        * layout-tests/fast/flexbox/023-expected.txt:
+        * layout-tests/fast/flexbox/024-expected.txt:
+        * layout-tests/fast/invalid/012-expected.txt:
+        * layout-tests/fast/invalid/016-expected.txt:
+        * layout-tests/fast/invalid/nestedh3s-expected.txt:
+        * layout-tests/fast/lists/003-expected.txt:
+        * layout-tests/fast/replaced/004-expected.txt:
+        * layout-tests/fast/selectors/166-expected.txt:
+        * layout-tests/fast/table/032-expected.txt:
+        * layout-tests/fast/table/border-collapsing/004-expected.txt:
+        * layout-tests/fast/text/basic/003-expected.txt:
+        * layout-tests/fast/text/basic/004-expected.txt:
+        * layout-tests/fast/text/basic/005-expected.txt:
+        * layout-tests/fast/text/basic/009-expected.txt:
+
 2005-07-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

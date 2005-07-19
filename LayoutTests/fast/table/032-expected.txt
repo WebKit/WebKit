@@ -4,8 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderText {TEXT} at (0,0) size 771x36
-        text run at (0,0) width 330: "Because we're in quirks mode, you should see a 100"
-        text run at (330,0) width 167: "x100 green square below. "
+        text run at (0,0) width 497: "Because we're in quirks mode, you should see a 100x100 green square below. "
         text run at (497,0) width 274: "If the square is only a couple of pixels wide"
         text run at (0,18) width 187: "or tall, then the test has failed."
 layer at (8,50) size 100x50
