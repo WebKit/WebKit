@@ -1,4 +1,31 @@
 2005-07-18  John Sullivan  <sullivan@apple.com>
+        
+        Written by Trey Matteson  <trey@usa.net>
+        Reviewed by John Sullivan.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4049
+          scroll position not restored when going back/forward at ebay
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4061
+          When going back/forward to some pages, they redraw at top before restoring scroll position
+
+        The short story is that attempting to restore the scroll position
+        at the time when the first layout finishes addresses both of these
+        issues.  An explanation of the underlying race condition is in
+        a large comment near -_restoreScrollPosition.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge didFirstLayout]):  Pass through to WebFrame.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):  Get rid of attempt to
+          restoreScrollPosition that never did anything because the
+          docView was always 0x0 size at that point.
+        (-[WebFrame _opened]):  Get rid of redundant call to restoreScrollPosition.
+          The imminent call to layoutCompleted makes the same call.
+        (-[WebFrame _didFirstLayout]):  Restore the scroll position on
+          first layout, if we're doing a b/f nav.
+        * WebView.subproj/WebFrameInternal.h:
+
+2005-07-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
 
@@ -1356,7 +1383,6 @@
 
         * WebView.subproj/WebUIDelegate.h: Fixed incorrect comment.
 
->>>>>>> 1.3131
 2005-05-01  Darin Adler  <darin@apple.com>
 
         - move to Xcode native targets and stop checking in generated files

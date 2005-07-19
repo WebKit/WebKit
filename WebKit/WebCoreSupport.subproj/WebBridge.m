@@ -1509,6 +1509,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)didFirstLayout
 {
+    [_frame _didFirstLayout];
     WebView *wv = [_frame webView];
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
 }

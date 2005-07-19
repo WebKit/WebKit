@@ -178,7 +178,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
 - (void)_restoreScrollPosition;
-- (void)_scrollToTop;
 
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
@@ -794,10 +793,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     }
                     else
                         [self _makeDocumentView];
-                        
-                    // FIXME - I'm not sure this call does anything.  Should be dealt with as
-                    // part of 3024377
-                    [self _restoreScrollPosition];
                 }
                 break;
 
@@ -1069,8 +1064,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
         [view setNeedsLayout: YES];
         [view layout];
-        [self _restoreScrollPosition];
-        
+
         NSArray *responses = [[self dataSource] _responses];
         NSURLResponse *response;
         int i, count = [responses count];
@@ -2093,6 +2087,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+/*
+    There is a race condition between the layout and load completion that affects restoring the scroll position.
+    We try to restore the scroll position at both the first layout and upon load completion.
+
+    1) If first layout happens before the load completes, we want to restore the scroll position then so that the
+       first time we draw the page is already scrolled to the right place, instead of starting at the top and later
+       jumping down.  It is possible that the old scroll position is past the part of the doc laid out so far, in
+       which case the restore silent fails and we will fix it in when we try to restore on doc completion.
+    2) If the layout happens after the load completes, the attempt to restore at load completion time silently
+       fails.  We then successfully restore it when the layout happens.
+ */
+
 - (void)_restoreScrollPosition
 {
     ASSERT([_private currentItem]);
@@ -2700,6 +2706,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [[self _bridge] unmarkAllMisspellings];
     [_private->children makeObjectsPerformSelector:@selector(_unmarkAllMisspellings)];
+}
+
+- (void)_didFirstLayout
+{
+    if ([[self webView] backForwardList]) {
+        WebFrameLoadType loadType = [self _loadType];
+        if (loadType == WebFrameLoadTypeForward ||
+            loadType == WebFrameLoadTypeBack ||
+            loadType == WebFrameLoadTypeIndexedBackForward)
+        {
+            [self _restoreScrollPosition];
+        }
+    }
 }
 
 @end
