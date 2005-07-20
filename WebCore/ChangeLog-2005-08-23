@@ -1,3 +1,15 @@
+2005-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- fixed some mistakes in my previous checkin
+
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute): Take name attribute out
+	of the "do nothing" case (duh).
+        * layout-tests/fast/dom/Window/window-special-properties-expected.txt: Update
+	for change to the text at the top.
+
 2005-07-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

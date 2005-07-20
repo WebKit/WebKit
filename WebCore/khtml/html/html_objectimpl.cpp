@@ -99,7 +99,6 @@ void HTMLAppletElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         attr->name() == HTMLAttributes::code() ||
         attr->name() == HTMLAttributes::codebase() ||
         attr->name() == HTMLAttributes::mayscript() ||
-        attr->name() == HTMLAttributes::name() ||
         attr->name() == HTMLAttributes::object()) {
         // Do nothing.
     } else if (attr->name() == HTMLAttributes::width()) {
