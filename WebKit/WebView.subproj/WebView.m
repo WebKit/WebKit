@@ -191,6 +191,10 @@ macro(yankAndSelect) \
 @end
 
 @interface WebView (WebFileInternal)
+#ifndef NDEBUG
+- (void)_debugCheckForMultipleSelectedFrames;
+#endif
+- (WebFrame *)_findSelectedFrame;
 - (WebFrame *)_selectedOrMainFrame;
 - (WebBridge *)_bridgeForSelectedOrMainFrame;
 - (BOOL)_isLoading;
@@ -2537,6 +2541,37 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [self isEditable];
 }
 
+- (WebFrame *)selectedFrame
+{
+    // If the first responder is a view in our tree, we get the frame containing the first responder.
+    // This is faster than searching the frame hierarchy, and will give us a result even in the case
+    // where the focused frame doesn't actually contain a selection.
+    NSResponder *resp = [[self window] firstResponder];
+    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:self]) {
+        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        ASSERT(frameView != nil);
+#ifndef NDEBUG
+        WebFrame *frameWithSelection = [self _findSelectedFrame];
+        ASSERT(frameWithSelection == nil || frameWithSelection == [frameView webFrame]);
+        [self _debugCheckForMultipleSelectedFrames];
+#endif
+        return [frameView webFrame];
+    }
+    
+    // If the first responder is outside of our view tree, we search for a frame containing a selection.
+    // There should be at most only one of these.
+    WebFrame *frameWithSelection = [self _findSelectedFrame];
+    if (frameWithSelection != nil) {
+#ifndef NDEBUG
+        [self _debugCheckForMultipleSelectedFrames];
+#endif
+        return frameWithSelection;
+    }
+    
+    return nil;
+}
+
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -3012,33 +3047,11 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 - (WebFrame *)_selectedOrMainFrame
 {
-    // If the first responder is a view in our tree, we get the frame containing the first responder.
-    // This is faster than searching the frame hierarchy, and will give us a result even in the case
-    // where the focused frame doesn't actually contain a selection.
-    NSResponder *resp = [[self window] firstResponder];
-    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:self]) {
-        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
-        ASSERT(frameView != nil);
-#ifndef NDEBUG
-        WebFrame *frameWithSelection = [self _findSelectedFrame];
-        ASSERT(frameWithSelection == nil || frameWithSelection == [frameView webFrame]);
-        [self _debugCheckForMultipleSelectedFrames];
-#endif
-        return [frameView webFrame];
+    WebFrame *result = [self selectedFrame];
+    if (result == nil) {
+        result = [self mainFrame];
     }
-    
-    // If the first responder is outside of our view tree, we search for a frame containing a selection.
-    // There should be at most only one of these.
-    WebFrame *frameWithSelection = [self _findSelectedFrame];
-    if (frameWithSelection != nil) {
-#ifndef NDEBUG
-        [self _debugCheckForMultipleSelectedFrames];
-#endif
-        return frameWithSelection;
-    }
-    
-    // The first responder is outside of our view tree, and no frame in our view tree has a selection.
-    return [self mainFrame];
+    return result;
 }
 
 - (WebBridge *)_bridgeForSelectedOrMainFrame

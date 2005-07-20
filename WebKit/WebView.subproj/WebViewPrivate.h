@@ -85,6 +85,11 @@ typedef enum {
 // override to enforce additional criteria.
 - (BOOL)maintainsInactiveSelection;
 
+// Returns the frame that contains the first responder, if any. Otherwise returns the
+// frame that contains a non-zero-length selection, if any. Returns nil if no frame
+// meets these criteria.
+- (WebFrame *)selectedFrame;
+
 @end
 
 @interface WebView (WebPrivate)

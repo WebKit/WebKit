@@ -1,3 +1,18 @@
+2005-07-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Amchan.
+        
+        - added -[WebView selectedFrame] to SPI (pending public API), needed for 4180958
+
+        * WebView.subproj/WebView.m:
+        (-[WebView selectedFrame]):
+        new method, extracted from _selectedOrMainFrame
+        (-[WebView _selectedOrMainFrame]):
+        now calls extracted method
+        
+        * WebView.subproj/WebViewPrivate.h:
+        add -selectedFrame to PendingPublic category
+
 2005-07-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
