@@ -344,7 +344,7 @@
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        [self setSelectedRange:NSMakeRange(0,0)];
+        [self deselectAll];
     }
     return resign;
 }

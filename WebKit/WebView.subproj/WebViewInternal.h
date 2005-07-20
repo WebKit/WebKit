@@ -118,15 +118,6 @@
 }
 @end
 
-@interface WebView (WebInternal)
-- (WebFrame *)_frameForCurrentSelection;
-- (WebBridge *)_bridgeForCurrentSelection;
-- (BOOL)_isLoading;
-
-- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
-- (WebBridge *)_bridgeAtPoint:(NSPoint)point;
-@end;
-
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
 - (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range;

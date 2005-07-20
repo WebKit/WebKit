@@ -1,3 +1,63 @@
+2005-07-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - cleaned up code related to dealing with the "selected frame"; fixes radar bugs 4118830 and 4118820
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView resignFirstResponder]):
+        call deselectAll here instead of replicating its guts, just for clarity
+        
+        * WebView.subproj/WebViewInternal.h:
+        eliminated category WebInternal; all of these methods were used only inside WebView.m, so I moved
+        them into the existing category WebFileInternal that was declared and implemented in WebView.m
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        updated for name changes. Also, uses new _deselectFrame: to clear the selection if the found
+        text is in a different frame.
+        (-[WebView pasteboardTypesForSelection]):
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebView setSelectedDOMRange:affinity:]):
+        (-[WebView selectedDOMRange]):
+        (-[WebView selectionAffinity]):
+        (-[WebView setTypingStyle:]):
+        (-[WebView typingStyle]):
+        (-[WebView styleDeclarationWithText:]):        
+        (-[WebView replaceSelectionWithNode:]):
+        (-[WebView replaceSelectionWithText:]):
+        (-[WebView replaceSelectionWithMarkupString:]):
+        (-[WebView replaceSelectionWithArchive:]):
+        (-[WebView deleteSelection]):
+        (-[WebView applyStyle:]):
+        updated for name changes only
+        
+        (-[WebView _frameIsSelected:]):
+        new method, returns YES if given frame has a non-zero-length selection
+        (-[WebView _deselectFrame:]):
+        new method, clears selection from given frame
+        (-[WebView _findSelectedFrameStartingFromFrame:]):
+        new method, recursive helper used by _findSelectedFrame
+        (-[WebView _findSelectedFrame]):
+        new method, finds first frame that returns YES for _frameIsSelected, or nil
+        (-[WebView _debugCollectSelectedFramesIntoArray:startingFromFrame:]):
+        new method, recursive helper used by _debugCheckForMultipleSelectedFrames
+        (-[WebView _debugCheckForMultipleSelectedFrames]):
+        new method for debugging, fires an assertion if there's more than one selected frame.
+        (-[WebView _selectedOrMainFrame]):
+        renamed from _frameForCurrentSelection, which was a misleading name since the returned
+        frame does not necessarily have a selection (or even focus). Now checks for a selected
+        but non-focused frame if the first responder is not in any frame. Also, moved in file
+        from WebInternal category to WebFileInternal category.
+        (-[WebView _bridgeForSelectedOrMainFrame]):
+        renamed from _bridgeForCurrentSelection, which was a misleading name for the same
+        reasons as _frameForCurrentSelection. Also, moved in file from WebInternal category to
+        WebFileInternal category.
+        (-[WebView _isLoading]):
+        (-[WebView _frameViewAtWindowPoint:]):
+        (-[WebView _bridgeAtPoint:]):
+        just moved in file from WebInternal category to WebFileInternal category
+
 2005-07-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff Garen.

@@ -191,6 +191,13 @@ macro(yankAndSelect) \
 @end
 
 @interface WebView (WebFileInternal)
+- (WebFrame *)_selectedOrMainFrame;
+- (WebBridge *)_bridgeForSelectedOrMainFrame;
+- (BOOL)_isLoading;
+- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
+- (WebBridge *)_bridgeAtPoint:(NSPoint)point;
+- (void)_deselectFrame:(WebFrame *)frame;
+- (BOOL)_frameIsSelected:(WebFrame *)frame;
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
@@ -2167,7 +2174,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
     // Get the frame holding the selection, or start with the main frame
-    WebFrame *startFrame = [self _frameForCurrentSelection];
+    WebFrame *startFrame = [self _selectedOrMainFrame];
 
     // Search the first frame, then all the other frames, in order
     NSView <WebDocumentSearching> *startSearchView = nil;
@@ -2193,6 +2200,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
             // Note at this point we are assuming the search will be done top-to-bottom,
             // not starting at any selection that exists.  See 3228554.
             if ([searchView searchFor:string direction:forward caseSensitive:caseFlag wrap:NO]) {
+                WebFrame *newSelectedFrame = [(WebFrameView *)[searchView _web_superviewOfClass:[WebFrameView class]] webFrame];
+                if (newSelectedFrame != startFrame) {
+                    [self _deselectFrame:startFrame];
+                }
                 [[self window] makeFirstResponder:searchView];
                 return YES;
             }
@@ -2238,7 +2249,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    NSView <WebDocumentView> *documentView = [[[self _frameForCurrentSelection] frameView] documentView];
+    NSView <WebDocumentView> *documentView = [[[self _selectedOrMainFrame] frameView] documentView];
     if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
         return [(NSView <WebDocumentSelection> *)documentView pasteboardTypesForSelection];
     }
@@ -2247,7 +2258,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    WebBridge *bridge = [self _bridgeForSelectedOrMainFrame];
     if ([bridge selectionState] != WebSelectionStateRange) {
         NSView <WebDocumentView> *documentView = [[[bridge webFrame] frameView] documentView];
         if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
@@ -2655,46 +2666,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
-@implementation WebView (WebInternal)
-
-// Return the frame holding first responder
-- (WebFrame *)_frameForCurrentSelection
-{
-    // Find the frame holding the first responder, or holding the first form in the doc
-    NSResponder *resp = [[self window] firstResponder];
-    if (!resp || ![resp isKindOfClass:[NSView class]] || ![(NSView *)resp isDescendantOf:self]) {
-        return [self mainFrame];	// first responder outside our view tree
-    } else {
-        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
-        return [frameView webFrame];
-    }
-}
-
-- (WebBridge *)_bridgeForCurrentSelection
-{
-    return [[self _frameForCurrentSelection] _bridge];
-}
-
-- (BOOL)_isLoading
-{
-    WebFrame *mainFrame = [self mainFrame];
-    return [[mainFrame dataSource] isLoading]
-        || [[mainFrame provisionalDataSource] isLoading];
-}
-
-- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
-{
-    NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
-    return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
-}
-
-- (WebBridge *)_bridgeAtPoint:(NSPoint)point
-{
-    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
-}
-
-@end
-
 @implementation WebView (WebViewEditing)
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
@@ -2722,10 +2693,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     if (range == nil) {
-        [[self _bridgeForCurrentSelection] deselectText];
+        [[self _bridgeForSelectedOrMainFrame] deselectText];
     } else {
         // Derive the bridge to use from the range passed in.
-        // Using _bridgeForCurrentSelection could give us a different document than
+        // Using _bridgeForSelectedOrMainFrame could give us a different document than
         // the one the range uses.
         [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity closeTyping:YES];
     }
@@ -2733,12 +2704,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMRange *)selectedDOMRange
 {
-    return [[self _bridgeForCurrentSelection] selectedDOMRange];
+    return [[self _bridgeForSelectedOrMainFrame] selectedDOMRange];
 }
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    return [[self _bridgeForCurrentSelection] selectionAffinity];
+    return [[self _bridgeForSelectedOrMainFrame] selectionAffinity];
 }
 
 - (void)setEditable:(BOOL)flag
@@ -2767,12 +2738,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
-    [[self _bridgeForCurrentSelection] setTypingStyle:style withUndoAction:WebUndoActionUnspecified];
+    [[self _bridgeForSelectedOrMainFrame] setTypingStyle:style withUndoAction:WebUndoActionUnspecified];
 }
 
 - (DOMCSSStyleDeclaration *)typingStyle
 {
-    return [[self _bridgeForCurrentSelection] typingStyle];
+    return [[self _bridgeForSelectedOrMainFrame] typingStyle];
 }
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
@@ -2859,7 +2830,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (DOMCSSStyleDeclaration *)styleDeclarationWithText:(NSString *)text
 {
     // FIXME: Should this really be attached to the document with the current selection?
-    DOMCSSStyleDeclaration *decl = [[[self _bridgeForCurrentSelection] DOMDocument] createCSSStyleDeclaration];
+    DOMCSSStyleDeclaration *decl = [[[self _bridgeForSelectedOrMainFrame] DOMDocument] createCSSStyleDeclaration];
     [decl setCssText:text];
     return decl;
 }
@@ -2870,27 +2841,27 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO];
+    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO];
 }    
 
 - (void)replaceSelectionWithText:(NSString *)text
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
+    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES smartReplace:NO];
+    [[self _bridgeForSelectedOrMainFrame] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithArchive:(WebArchive *)archive
 {
-    [[[[self _bridgeForCurrentSelection] webFrame] dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
+    [[[[self _bridgeForSelectedOrMainFrame] webFrame] dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
 }
 
 - (void)deleteSelection
 {
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    WebBridge *bridge = [self _bridgeForSelectedOrMainFrame];
     [bridge deleteSelectionWithSmartDelete:[(WebHTMLView *)[[[bridge webFrame] frameView] documentView] _canSmartCopyOrDelete]];
 }
     
@@ -2898,7 +2869,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     // We don't know enough at thls level to pass in a relevant WebUndoAction; we'd have to
     // change the API to allow this.
-    [[self _bridgeForCurrentSelection] applyStyle:style withUndoAction:WebUndoActionUnspecified];
+    [[self _bridgeForSelectedOrMainFrame] applyStyle:style withUndoAction:WebUndoActionUnspecified];
 }
 
 @end
@@ -2947,7 +2918,7 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 
 - (void)_insertNewlineInQuotedContent;
 {
-    [[self _bridgeForCurrentSelection] insertParagraphSeparatorInQuotedContent];
+    [[self _bridgeForSelectedOrMainFrame] insertParagraphSeparatorInQuotedContent];
 }
 
 - (BOOL)_selectWordBeforeMenuEvent
@@ -2963,6 +2934,135 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 @end
 
 @implementation WebView (WebFileInternal)
+
+- (BOOL)_frameIsSelected:(WebFrame *)frame
+{
+    id documentView = [[frame frameView] documentView];    
+    
+    // optimization for common case to avoid creating potentially large selection string
+    if ([documentView isKindOfClass:[WebHTMLView class]]) {
+        DOMRange *selectedDOMRange = [[frame _bridge] selectedDOMRange];
+        return selectedDOMRange && ![selectedDOMRange collapsed];
+    }
+    
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        return [[documentView selectedString] length] > 0;
+    }
+    
+    return NO;
+}
+
+- (void)_deselectFrame:(WebFrame *)frame
+{
+    id documentView = [[frame frameView] documentView];    
+    if ([documentView conformsToProtocol:@protocol(WebDocumentText)]) {
+        [documentView deselectAll];
+    }
+}
+
+- (WebFrame *)_findSelectedFrameStartingFromFrame:(WebFrame *)frame
+{
+    if ([self _frameIsSelected:frame]) {
+        return frame;
+    }
+    
+    NSArray *frames = [frame _internalChildFrames];
+    int i;
+    int count = [frames count];
+    for (i = 0; i < count; i++) {
+        WebFrame *selectedChildFrame = [self _findSelectedFrameStartingFromFrame:[frames objectAtIndex:i]];
+        if (selectedChildFrame != nil) {
+            return selectedChildFrame;
+        }
+    }
+    
+    return nil;
+}
+
+- (WebFrame *)_findSelectedFrame
+{
+    return [self _findSelectedFrameStartingFromFrame:[self mainFrame]];
+}
+
+#ifndef DEBUG
+- (void)_debugCollectSelectedFramesIntoArray:(NSMutableArray *)selectedFrames startingFromFrame:(WebFrame *)frame
+{
+    if ([self _frameIsSelected:frame]) {
+        [selectedFrames addObject:frame];
+    }
+    
+    NSArray *frames = [frame _internalChildFrames];
+    int i;
+    int count = [frames count];
+    for (i = 0; i < count; i++) {
+        [self _debugCollectSelectedFramesIntoArray:selectedFrames startingFromFrame:[frames objectAtIndex:i]];
+    }
+}
+
+- (void)_debugCheckForMultipleSelectedFrames
+{
+    NSMutableArray *selectedFrames = [NSMutableArray array];
+    [self _debugCollectSelectedFramesIntoArray:selectedFrames startingFromFrame:[self mainFrame]];
+    // FIXME: 4186050 is one known case that makes this assertion fire
+    if ([selectedFrames count] > 1) {
+        ERROR("%d frames have a selection at the same time", [selectedFrames count]);
+    }
+}
+#endif
+
+- (WebFrame *)_selectedOrMainFrame
+{
+    // If the first responder is a view in our tree, we get the frame containing the first responder.
+    // This is faster than searching the frame hierarchy, and will give us a result even in the case
+    // where the focused frame doesn't actually contain a selection.
+    NSResponder *resp = [[self window] firstResponder];
+    if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:self]) {
+        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        ASSERT(frameView != nil);
+#ifndef NDEBUG
+        WebFrame *frameWithSelection = [self _findSelectedFrame];
+        ASSERT(frameWithSelection == nil || frameWithSelection == [frameView webFrame]);
+        [self _debugCheckForMultipleSelectedFrames];
+#endif
+        return [frameView webFrame];
+    }
+    
+    // If the first responder is outside of our view tree, we search for a frame containing a selection.
+    // There should be at most only one of these.
+    WebFrame *frameWithSelection = [self _findSelectedFrame];
+    if (frameWithSelection != nil) {
+#ifndef NDEBUG
+        [self _debugCheckForMultipleSelectedFrames];
+#endif
+        return frameWithSelection;
+    }
+    
+    // The first responder is outside of our view tree, and no frame in our view tree has a selection.
+    return [self mainFrame];
+}
+
+- (WebBridge *)_bridgeForSelectedOrMainFrame
+{
+    return [[self _selectedOrMainFrame] _bridge];
+}
+
+- (BOOL)_isLoading
+{
+    WebFrame *mainFrame = [self mainFrame];
+    return [[mainFrame dataSource] isLoading]
+        || [[mainFrame provisionalDataSource] isLoading];
+}
+
+- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
+{
+    NSView *view = [self hitTest:[[self superview] convertPoint:point fromView:nil]];
+    return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
+}
+
+- (WebBridge *)_bridgeAtPoint:(NSPoint)point
+{
+    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
+}
 
 - (void)_preflightSpellCheckerNow:(id)sender
 {
