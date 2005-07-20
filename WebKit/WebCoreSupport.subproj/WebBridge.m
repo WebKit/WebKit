@@ -1265,24 +1265,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:_frame];
 }
 
-- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
-{
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control didFailToFormatString:string errorDescription:error inFrame:_frame];
-}
-
-- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
-{
-    FormDelegateLog(control);
-    [formDelegate(self) control:control didFailToValidatePartialString:string errorDescription:error inFrame:_frame];
-}
-
-- (BOOL)control:(NSControl *)control isValidObject:(id)obj
-{
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control isValidObject:obj inFrame:_frame];
-}
-
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     FormDelegateLog(control);

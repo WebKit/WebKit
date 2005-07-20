@@ -63,20 +63,6 @@ static WebFormDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error inFrame:(WebFrame *)frame
-{
-    return YES;
-}
-
-- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error inFrame:(WebFrame *)frame
-{
-}
-
-- (BOOL)control:(NSControl *)control isValidObject:(id)obj inFrame:(WebFrame *)frame
-{
-    return YES;
-}
-
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame
 {
     return NO;

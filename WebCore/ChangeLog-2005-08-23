@@ -1,3 +1,19 @@
+2005-07-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki Murley.
+        
+        - removed some form-related methods that weren't being used anywhere, in preparation
+        for weaning WebKit's WebFormDelegate protocol from NSView.
+
+        Test cases added: none, no behavior change
+
+        * kwq/KWQTextField.mm:
+        * kwq/WebCoreBridge.h:
+        removed these methods:
+        -control:didFailToFormatString:errorDescription:
+        -control:didFailToValidatePartialString:errorDescription:
+        -control:isValidObject:
+
 2005-07-20  Adele Peterson  <adele@apple.com>
 
         Rolling fix for <rdar://problem/4046602> back in.

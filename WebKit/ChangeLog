@@ -1,3 +1,18 @@
+2005-07-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki Murley.
+
+        - removed some form-related methods that weren't being used anywhere, in preparation
+        for weaning WebKit's WebFormDelegate protocol from NSView.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        removed these methods:
+        -control:didFailToFormatString:errorDescription:
+        -control:didFailToValidatePartialString:errorDescription:
+        -control:isValidObject:
+
 2005-07-20  Adele Peterson  <adele@apple.com>
 
           Merged fix for:

@@ -222,33 +222,6 @@
     return [bridge control:control textShouldEndEditing:fieldEditor];
 }
 
-- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
-{
-    if (!widget)
-	return NO;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control didFailToFormatString:string errorDescription:error];
-}
-
-- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
-{
-    if (!widget)
-	return;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge control:control didFailToValidatePartialString:string errorDescription:error];
-}
-
-- (BOOL)control:(NSControl *)control isValidObject:(id)obj
-{
-    if (!widget)
-	return NO;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control isValidObject:obj];
-}
-
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     if (!widget)
