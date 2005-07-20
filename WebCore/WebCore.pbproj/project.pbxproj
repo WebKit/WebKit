@@ -2735,6 +2735,8 @@
 				65DE852A08765FC30011428A,
 				BCEF3435087B563E00BBF833,
 				A8FD8B87087CB45700DC3707,
+				BC179894088D975F006068A5,
+				BC1798DA088DA4F8006068A5,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5083,6 +5085,8 @@
 				65F3782A0870D958000B2F94,
 				BCEF3434087B563E00BBF833,
 				A8FD8B86087CB44C00DC3707,
+				BC179892088D975F006068A5,
+				BC179893088D975F006068A5,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11821,6 +11825,62 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		BC17988F088D975F006068A5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = render_theme_mac.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC179890088D975F006068A5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = render_theme.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC179891088D975F006068A5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = render_theme.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC179892088D975F006068A5 = {
+			fileRef = BC17988F088D975F006068A5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC179893088D975F006068A5 = {
+			fileRef = BC179890088D975F006068A5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC179894088D975F006068A5 = {
+			fileRef = BC179891088D975F006068A5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC1798D9088DA4F8006068A5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = render_theme_mac.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC1798DA088DA4F8006068A5 = {
+			fileRef = BC1798D9088DA4F8006068A5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC32C2EC048BF95C00A8000B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -14286,6 +14346,10 @@
 				BCF0192403D3802200B2D04D,
 				BC32C2ED048BF95C00A8000B,
 				BC32C2EC048BF95C00A8000B,
+				BC17988F088D975F006068A5,
+				BC1798D9088DA4F8006068A5,
+				BC179890088D975F006068A5,
+				BC179891088D975F006068A5,
 			);
 			isa = PBXGroup;
 			path = rendering;

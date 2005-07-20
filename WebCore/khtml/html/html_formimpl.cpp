@@ -1819,7 +1819,11 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case SEARCH:
 #endif
     case ISINDEX:  return new (arena) RenderLineEdit(this);
-    case CHECKBOX: return new (arena) RenderCheckBox(this);
+    case CHECKBOX: {
+        if (style->appearance() == CheckboxAppearance)
+            return RenderObject::createObject(this, style);
+        return new (arena) RenderCheckBox(this);
+    }
     case RADIO:    return new (arena) RenderRadioButton(this);
     case SUBMIT:   return new (arena) RenderSubmitButton(this);
     case IMAGE:    return new (arena) RenderImageButton(this);

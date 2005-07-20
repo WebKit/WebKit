@@ -1,5 +1,31 @@
 2005-07-19  David Hyatt  <hyatt@apple.com>
 
+	Adding support for the "checkbox" appearance value.  This is not yet implemented, but the
+	methods are now stubbed out and will get called.
+
+	Reviewed by mjs
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/html4.css:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::createRenderer):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBoxDecorations):
+        * khtml/rendering/render_theme.cpp: Added.
+        (khtml::RenderTheme::adjustStyle):
+        (khtml::RenderTheme::paint):
+        * khtml/rendering/render_theme.h: Added.
+        * khtml/rendering/render_theme_mac.h: Added.
+        * khtml/rendering/render_theme_mac.mm: Added.
+        (khtml::theme):
+        (khtml::RenderThemeMac::adjustCheckboxStyle):
+        (khtml::RenderThemeMac::paintCheckbox):
+
+2005-07-19  David Hyatt  <hyatt@apple.com>
+
 	Fix performance regressions from attribute QName landing.
 	
         Reviewed by mjs

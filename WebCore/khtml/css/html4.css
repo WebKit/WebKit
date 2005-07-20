@@ -278,7 +278,6 @@ fieldset {
 }
 
 button {
-    display: inline-block;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
     color: ButtonText;
@@ -298,7 +297,9 @@ input, textarea {
 input, textarea, select, button {
     margin: 0__qem;
     font: 11px 'Lucida Grande';
-    color: initial
+    color: initial;
+    display: inline-block;
+    -khtml-box-sizing: border-box
 }
 
 input[type="hidden"] {
@@ -312,6 +313,14 @@ input[type="radio"], input[type="checkbox"] {
 option, optgroup, area, param {
     display: none
 }
+
+/* Comment this section in to enable the new controls
+
+input[type="checkbox"] {
+    -khtml-appearance: checkbox
+}
+
+*/
 
 /* inline elements */      
       
