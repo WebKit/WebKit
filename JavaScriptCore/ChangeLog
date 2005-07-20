@@ -1,4 +1,15 @@
+2005-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Trey Matteson <trey@usa.net>, reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3956
+	some of WebKit builds with symbols, some doesn't
+	
+        * JavaScriptCore.pbproj/project.pbxproj: Generate symbols even for
+	Deployment.
+
 2005-07-19  Geoffrey Garen  <ggaren@apple.com>
+
         -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3991
         JSC doesn't implement Array.prototype.toLocaleString()
 

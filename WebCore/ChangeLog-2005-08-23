@@ -1,3 +1,13 @@
+2005-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Trey Matteson <trey@usa.net>, reviewed by me.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3956
+	some of WebKit builds with symbols, some doesn't
+	
+        * WebCore.pbproj/project.pbxproj: Generate symbols even for
+	Deployment.
+
 2005-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
