@@ -293,8 +293,13 @@
     if( image && CGImageGetWidth(image)==1 && CGImageGetHeight(image)==1 ) {
         float pixel[4]; // RGBA
         CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+#if __i386__	
+        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
+                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
+#else
         CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
                                                   kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
+#endif
         if( bmap ) {
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             [[NSGraphicsContext graphicsContextWithGraphicsPort:bmap flipped:NO] setCompositingOperation:NSCompositeCopy];

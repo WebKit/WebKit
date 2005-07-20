@@ -1,5 +1,13 @@
 2005-07-20  Adele Peterson  <adele@apple.com>
 
+          Merged fix for:
+          <rdar://problem/4125127> [WebKit] horizontal rulers don't render on Safari on web.apple.com
+
+          * WebCoreSupport.subproj/WebImageData.m:
+          (-[WebImageData _checkSolidColor:]):
+
+2005-07-20  Adele Peterson  <adele@apple.com>
+
         Merged fix for :
         <rdar://problem/4118278> mail divide by zero navigating messages
   
