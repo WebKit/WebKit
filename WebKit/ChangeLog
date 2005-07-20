@@ -1,3 +1,11 @@
+2005-07-20  Adele Peterson  <adele@apple.com>
+
+        Merged fix for :
+        <rdar://problem/4118278> mail divide by zero navigating messages
+  
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _extendGlyphToWidthMapToInclude:font:]):
+
 2005-07-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson.

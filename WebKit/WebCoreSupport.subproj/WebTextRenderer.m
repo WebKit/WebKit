@@ -1413,7 +1413,11 @@ static const char *joiningNames[] = {
     }
     else
         blockSize = INCREMENTAL_BLOCK_SIZE;
-    start = (glyphID / blockSize) * blockSize;
+    if (blockSize == 0) {
+        start = 0;
+    } else {
+        start = (glyphID / blockSize) * blockSize;
+    }
     end = ((unsigned)start) + blockSize; 
     if (end > 0xffff)
         end = 0xffff;
