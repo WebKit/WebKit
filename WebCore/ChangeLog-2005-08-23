@@ -1,3 +1,14 @@
+2005-07-20  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed <rdar://problem/4181058> 8C45: Safari repro crash with document.write (DOM::NodeImpl::dispatchEvent)
+
+        Test cases added:
+        * manual-tests/textfield-onblur.html: Added.
+        
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController setHasFocus:]): added nil check for widget, since it can get deleted during an event.
+
 2005-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Trey Matteson <trey@usa.net>, reviewed by me.
