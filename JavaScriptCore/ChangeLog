@@ -1,3 +1,17 @@
+2005-07-19  Geoffrey Garen  <ggaren@apple.com>
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3991
+        JSC doesn't implement Array.prototype.toLocaleString()
+
+        -test failure: ecma_3/Array/15.4.4.3-1.js
+
+        Reviewed by mjs.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call): now searches for toString and
+        toLocaleString overrides in the array's elements
+
+        * tests/mozilla/expected.html: failures are under 100! woohoo!
+
 2005-07-19  Darin Adler  <darin@apple.com>
 
         - fixed the build

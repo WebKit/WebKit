@@ -449,8 +449,6 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
   
   switch (id) {
   case ToLocaleString:
-    // TODO  - see 15.4.4.3
-    // fall through
   case ToString:
 
     if (!thisObj.inherits(&ArrayInstanceImp::info)) {
@@ -460,7 +458,6 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     }
 
     // fall through
-
   case Join: {
     UString separator = ",";
     UString str = "";
@@ -470,11 +467,22 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     for (unsigned int k = 0; k < length; k++) {
       if (k >= 1)
         str += separator;
-      Value element = thisObj.get(exec,k);
-      if (element.type() != UndefinedType && element.type() != NullType)
-        str += element.toString(exec);
+      
+      Value element = thisObj.get(exec, k);
+      if (element.type() == UndefinedType || element.type() == NullType)
+        continue;
+
+      Object o = element.toObject(exec);
+      Object conversionFunction;
+      if (id == ToLocaleString) {
+        conversionFunction = Object::dynamicCast(o.get(exec, toLocaleStringPropertyName));
+      } else {
+        conversionFunction = Object::dynamicCast(o.get(exec, toStringPropertyName));
+      }
+      str += conversionFunction.call(exec, o, List()).toString(exec);
+      
       if ( exec->hadException() )
-	break;
+        break;
     }
     result = String(str);
     break;
