@@ -1,3 +1,10 @@
+2005-07-19  Justin Garcia  <justin.garcia@apple.com>
+        
+        Added a virtual deconstructor to fix gcc4 build warning
+
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::~RenderTheme):
+
 2005-07-19  David Hyatt  <hyatt@apple.com>
 
 	Adding support for the "checkbox" appearance value.  This is not yet implemented, but the
