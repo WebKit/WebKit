@@ -1,6 +1,6 @@
 2005-07-20  John Sullivan  <sullivan@apple.com>
 
-        Reviewed by Adele Amchan.
+        Reviewed by Adele Peterson.
         
         - added -[WebView selectedFrame] to SPI (pending public API), needed for 4180958
 
