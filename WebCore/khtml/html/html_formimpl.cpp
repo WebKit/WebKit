@@ -145,12 +145,6 @@ void HTMLFormElementImpl::attach()
 {
     HTMLElementImpl::attach();
 
-    if (getDocument()->isHTMLDocument()) {
-	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-	document->addNamedImageOrForm(oldNameAttr);
-	document->addNamedImageOrForm(oldIdAttr);
-    }
-
 #if APPLE_CHANGES
     // note we don't deal with calling secureFormRemoved() on detach, because the timing
     // was such that it cleared our state too early
@@ -159,15 +153,24 @@ void HTMLFormElementImpl::attach()
 #endif
 }
 
-void HTMLFormElementImpl::detach()
+void HTMLFormElementImpl::insertedIntoDocument()
 {
     if (getDocument()->isHTMLDocument()) {
 	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-	document->removeNamedImageOrForm(oldNameAttr);
-	document->removeNamedImageOrForm(oldIdAttr);
+	document->addNamedItem(oldNameAttr);
     }
 
-    HTMLElementImpl::detach();
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLFormElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+	document->removeNamedItem(oldNameAttr);
+    }
+   
+    HTMLElementImpl::removedFromDocument();
 }
 
 long HTMLFormElementImpl::length() const
@@ -662,22 +665,13 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         setHTMLEventListener(EventImpl::RESET_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
     } else if (attr->name() == HTMLAttributes::name()) {
-        QString newNameAttr = attr->value().string();
-        if (attached() && getDocument()->isHTMLDocument()) {
+        DOMString newNameAttr = attr->value();
+        if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-            document->removeNamedImageOrForm(oldNameAttr);
-            document->addNamedImageOrForm(newNameAttr);
+            document->removeNamedItem(oldNameAttr);
+            document->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
-    } else if (attr->name() == HTMLAttributes::idAttr()) {
-        QString newIdAttr = attr->value().string();
-        if (attached() && getDocument()->isHTMLDocument()) {
-            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-            document->removeNamedImageOrForm(oldIdAttr);
-            document->addNamedImageOrForm(newIdAttr);
-        }
-        oldIdAttr = newIdAttr;
-        HTMLElementImpl::parseMappedAttribute(attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }

@@ -264,36 +264,39 @@ void HTMLDocumentImpl::slotHistoryChanged()
     m_render->repaint();
 }
 
-void HTMLDocumentImpl::addNamedImageOrForm(const QString &name)
+void HTMLDocumentImpl::addNamedItem(const DOMString &name)
 {
-    if (name.length() == 0) {
+    if (name.length() == 0)
 	return;
-    }
  
-    int oldCount = (int)namedImageAndFormCounts.find(name);
-    namedImageAndFormCounts.insert(name, (char *)(oldCount + 1));
+    NameCountMap::iterator it = namedItemCounts.find(name.implementation()); 
+    if (it == namedItemCounts.end())
+        namedItemCounts.insert(name.implementation(), 1);
+    else
+        ++(it->second);
 }
 
-void HTMLDocumentImpl::removeNamedImageOrForm(const QString &name)
+void HTMLDocumentImpl::removeNamedItem(const DOMString &name)
 { 
-    if (name.length() == 0) {
+    if (name.length() == 0)
 	return;
-    }
  
-    int oldVal = (int)(namedImageAndFormCounts.find(name));
-    if (oldVal != 0) {
-	int newVal = oldVal - 1;
-	if (newVal == 0) {
-	    namedImageAndFormCounts.remove(name);
-	} else {
-	    namedImageAndFormCounts.insert(name, (char *)newVal);
-	}
-    }
+    NameCountMap::iterator it = namedItemCounts.find(name.implementation()); 
+    if (it == namedItemCounts.end())
+        return;
+
+    int oldVal = it->second;
+    assert(oldVal != 0);
+    int newVal = oldVal - 1;
+    if (newVal == 0)
+        namedItemCounts.remove(it);
+    else
+        it->second = newVal;
 }
 
-bool HTMLDocumentImpl::haveNamedImageOrForm(const QString &name)
+bool HTMLDocumentImpl::hasNamedItem(const DOMString &name)
 {
-    return namedImageAndFormCounts.find(name) != NULL;
+    return namedItemCounts.get(name.implementation()) != 0;
 }
 
 const int PARSEMODE_HAVE_DOCTYPE	=	(1<<0);

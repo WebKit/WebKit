@@ -68,6 +68,7 @@
 #include "html/html_documentimpl.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
+#include "misc/shared.h"
 
 // Must include <cmath> instead of <math.h> because of a bug in the
 // gcc 3.3 library version of <math.h> where if you include both
@@ -80,10 +81,12 @@ using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
 using DOM::HTMLCollectionImpl;
+using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 
+using khtml::SharedPtr;
 using khtml::TypingCommand;
 
 using KParts::ReadOnlyPart;
@@ -710,7 +713,10 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   }
 
   // Check for child frames by name before built-in properties to
-  // match behavior of other browsers.
+  // match Mozilla. This does not match IE, but some sites end up
+  // naming frames things that conflict with window properties that
+  // are in Moz but not IE. Since we have some of these, we have to do
+  // it the Moz way.
   KHTMLPart *childFrame = m_part->childFrameNamed(p.ustring().qstring());
   if (childFrame) 
     return retrieve(childFrame);
@@ -1094,10 +1100,16 @@ Value Window::get(ExecState *exec, const Identifier &p) const
 
   // allow shortcuts like 'Image1' instead of document.images.Image1
   DocumentImpl *doc = m_part->xmlDocImpl();
-  if (isSafeScript(exec) && doc && doc->isHTMLDocument()) { // might be XML
-    NodeImpl *element = doc->all()->namedItem(p.string());
-    if (element)
-      return getDOMNode(exec, element);
+  if (isSafeScript(exec) && doc && doc->isHTMLDocument()) {
+    DOMString name = p.string();
+    if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) ||
+        doc->getElementById(name)) {
+      SharedPtr<DOM::HTMLCollectionImpl> collection = doc->windowNamedItems(name);
+      if (collection->length() == 1)
+        return getDOMNode(exec, collection->firstItem());
+      else 
+        return getHTMLCollection(exec, &*collection);
+    }
   }
 
   // This isn't necessarily a bug. Some code uses if(!window.blah) window.blah=1
@@ -1130,7 +1142,10 @@ bool Window::hasOwnProperty(ExecState *exec, const Identifier &p) const
 
   if (isSafeScript(exec)) {
     DocumentImpl *doc = m_part->xmlDocImpl();
-    if (doc && doc->isHTMLDocument() && doc->all()->namedItem(p.string()))
+    DOMString name = p.string();
+    if (doc && doc->isHTMLDocument() &&
+        (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) ||
+         doc->getElementById(name)))
       return true;
   }
 

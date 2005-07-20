@@ -97,10 +97,14 @@ public:
     KJS::Bindings::Instance *getAppletInstance() const;
 #endif
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
 protected:
     khtml::VAlign valign;
 
 private:
+    DOMString oldNameAttr;
 #if APPLE_CHANGES
     mutable KJS::Bindings::Instance *appletInstance;
     bool m_allParamsAvailable;
@@ -125,6 +129,8 @@ public:
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
@@ -136,8 +142,9 @@ public:
     QString pluginPage;
     QString serviceType;
 
-#if APPLE_CHANGES
 private:
+    DOMString oldNameAttr;
+#if APPLE_CHANGES
     mutable KJS::Bindings::Instance *embedInstance;
 #endif
 };
@@ -163,6 +170,8 @@ public:
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
     
     virtual void recalcStyle(StyleChange ch);
     virtual void childrenChanged();
@@ -237,8 +246,9 @@ public:
     bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;
 
-#if APPLE_CHANGES
 private:
+    DOMString oldNameAttr;
+#if APPLE_CHANGES
     mutable KJS::Bindings::Instance *objectInstance;
 #endif
 };

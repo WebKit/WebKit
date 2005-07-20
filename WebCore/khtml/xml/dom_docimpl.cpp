@@ -3055,6 +3055,11 @@ SharedPtr<HTMLCollectionImpl> DocumentImpl::nameableItems()
     return SharedPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::DOC_NAMEABLE_ITEMS));
 }
 
+SharedPtr<HTMLCollectionImpl> DocumentImpl::windowNamedItems(DOMString &name)
+{
+    return SharedPtr<HTMLCollectionImpl>(new HTMLNameCollectionImpl(this, HTMLCollectionImpl::WINDOW_NAMED_ITEMS, name));
+}
+
 SharedPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
 {
     return SharedPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));

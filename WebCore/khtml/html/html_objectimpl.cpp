@@ -36,6 +36,7 @@
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
 #include "html/html_formimpl.h"
+#include "html/html_documentimpl.h"
 #include "rendering/render_applet.h"
 #include "rendering/render_frames.h"
 #include "rendering/render_image.h"
@@ -113,8 +114,36 @@ void HTMLAppletElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
     } else if (attr->name() == HTMLAttributes::align()) {
         addHTMLAlignment(attr);
+    } else if (attr->name() == HTMLAttributes::name()) {
+        DOMString newNameAttr = attr->value();
+        if (inDocument() && getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->removeNamedItem(oldNameAttr);
+            document->addNamedItem(newNameAttr);
+        }
+        oldNameAttr = newNameAttr;
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
+}
+
+void HTMLAppletElementImpl::insertedIntoDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLAppletElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::removedFromDocument();
 }
 
 bool HTMLAppletElementImpl::rendererIsNeeded(RenderStyle *style)
@@ -446,6 +475,14 @@ void HTMLEmbedElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSLength( attr, CSS_PROP_WIDTH, "0" );
             addCSSLength( attr, CSS_PROP_HEIGHT, "0" );
         }
+    } else if (attr->name() == HTMLAttributes::name()) {
+        DOMString newNameAttr = attr->value();
+        if (inDocument() && getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->removeNamedItem(oldNameAttr);
+            document->addNamedItem(newNameAttr);
+        }
+        oldNameAttr = newNameAttr;
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -466,9 +503,30 @@ RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderSty
 void HTMLEmbedElementImpl::attach()
 {
     HTMLElementImpl::attach();
+
     if (m_render) {
         static_cast<RenderPartObject*>(m_render)->updateWidget();
     }
+}
+
+void HTMLEmbedElementImpl::insertedIntoDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLEmbedElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::removedFromDocument();
 }
 
 bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
@@ -602,6 +660,15 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == HTMLAttributes::onunload()) {
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
+    } else if (attr->name() == HTMLAttributes::name()) {
+	    DOMString newNameAttr = attr->value();
+	    if (inDocument() && getDocument()->isHTMLDocument()) {
+		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+		document->removeNamedItem(oldNameAttr);
+		document->addNamedItem(newNameAttr);
+	    }
+	    oldNameAttr = newNameAttr;
+
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -678,7 +745,27 @@ void HTMLObjectElementImpl::detach()
         // ### do this when we are actualy removed from document instead
         dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
 
-  HTMLElementImpl::detach();
+    HTMLElementImpl::detach();
+}
+
+void HTMLObjectElementImpl::insertedIntoDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLObjectElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::removedFromDocument();
 }
 
 void HTMLObjectElementImpl::recalcStyle(StyleChange ch)

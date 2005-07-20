@@ -71,8 +71,9 @@ public:
     virtual int tagPriority() const { return 3; }
 
     virtual void attach();
-    virtual void detach();
-
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+ 
     SharedPtr<HTMLCollectionImpl> elements();
     long length() const;
 
@@ -150,8 +151,7 @@ public:
 
     unsigned formElementIndex(HTMLGenericFormElementImpl *);
 
-    QString oldIdAttr;
-    QString oldNameAttr;
+    DOMString oldNameAttr;
 };
 
 // -------------------------------------------------------------------------

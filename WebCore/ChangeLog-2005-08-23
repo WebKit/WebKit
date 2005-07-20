@@ -1,3 +1,64 @@
+2005-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fix handling of special properties of the Window object. now we
+	almost completely match Win IE.
+	
+        Test cases added: 
+        * layout-tests/fast/dom/Window/window-special-properties-expected.txt: Added.
+        * layout-tests/fast/dom/Window/window-special-properties.html: Added.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasOwnProperty):
+        (KJS::HTMLDocument::tryGet):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::get):
+        (KJS::Window::hasOwnProperty):
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::addNamedItem):
+        (DOM::HTMLDocumentImpl::removeNamedItem):
+        (DOM::HTMLDocumentImpl::hasNamedItem):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::attach):
+        (DOM::HTMLFormElementImpl::insertedIntoDocument):
+        (DOM::HTMLFormElementImpl::removedFromDocument):
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseMappedAttribute):
+        (HTMLImageElementImpl::attach):
+        (HTMLImageElementImpl::insertedIntoDocument):
+        (HTMLImageElementImpl::removedFromDocument):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::HTMLCollectionImpl):
+        (DOM::HTMLCollectionImpl::traverseNextItem):
+        (DOM::HTMLCollectionImpl::namedItem):
+        (DOM::HTMLNameCollectionImpl::HTMLNameCollectionImpl):
+        (DOM::HTMLNameCollectionImpl::traverseNextItem):
+        (DOM::HTMLFormCollectionImpl::getNamedFormItem):
+        (DOM::HTMLFormCollectionImpl::nextNamedItem):
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute):
+        (DOM::HTMLAppletElementImpl::insertedIntoDocument):
+        (DOM::HTMLAppletElementImpl::removedFromDocument):
+        (DOM::HTMLEmbedElementImpl::parseMappedAttribute):
+        (DOM::HTMLEmbedElementImpl::attach):
+        (DOM::HTMLEmbedElementImpl::insertedIntoDocument):
+        (DOM::HTMLEmbedElementImpl::removedFromDocument):
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::detach):
+        (DOM::HTMLObjectElementImpl::insertedIntoDocument):
+        (DOM::HTMLObjectElementImpl::removedFromDocument):
+        * khtml/html/html_objectimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::windowNamedItems):
+        * khtml/xml/dom_docimpl.h:
+
 2005-07-19  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in patch by Anders Carlsson <andersca@mac.com> for

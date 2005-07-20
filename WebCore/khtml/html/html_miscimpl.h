@@ -80,21 +80,25 @@ public:
         NODE_CHILDREN,   // first-level children (IE)
         DOC_NAMEABLE_ITEMS, // all IMG, FORM, APPLET, EMBED and OBJECT elements, used to look
                             // up element name as document property
-        LAST_TYPE
+        WINDOW_NAMED_ITEMS
     };
 
-    HTMLCollectionImpl(NodeImpl *_base, int _tagId);
+    enum {
+        NUM_CACHEABLE_TYPES = DOC_NAMEABLE_ITEMS + 1
+    };
+
+    HTMLCollectionImpl(NodeImpl *_base, int _type);
     virtual ~HTMLCollectionImpl();
     
     unsigned long length() const;
     
-    virtual NodeImpl *item ( unsigned long index ) const;
+    virtual NodeImpl *item(unsigned long index) const;
     virtual NodeImpl *firstItem() const;
     virtual NodeImpl *nextItem() const;
 
-    virtual NodeImpl *namedItem ( const DOMString &name, bool caseSensitive = true ) const;
+    virtual NodeImpl *namedItem(const DOMString &name, bool caseSensitive = true) const;
     // In case of multiple items named the same way
-    virtual NodeImpl *nextNamedItem( const DOMString &name ) const;
+    virtual NodeImpl *nextNamedItem(const DOMString &name) const;
 
     QValueList< SharedPtr<NodeImpl> > namedItems(const DOMString &name) const;
 
@@ -129,6 +133,16 @@ protected:
 
     // For nextNamedItem()
     mutable bool idsDone;
+};
+
+class HTMLNameCollectionImpl : public HTMLCollectionImpl
+{
+public:
+    HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name);
+    
+    virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
+ private:
+    DOMString m_name;
 };
 
 // this whole class is just a big hack to find form elements even in

@@ -86,7 +86,8 @@ public:
 
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
-    virtual void detach();
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
     long width(bool ignorePendingStylesheets = false) const;
     long height(bool ignorePendingStylesheets = false) const;
@@ -146,8 +147,7 @@ protected:
     DOMString usemap;
     bool ismap;
     HTMLFormElementImpl *m_form;
-    QString oldIdAttr;
-    QString oldNameAttr;
+    DOMString oldNameAttr;
     QString _compositeOperator;
 };
 

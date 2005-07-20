@@ -71,11 +71,13 @@ void HTMLBaseFontElementImpl::setSize(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLCollectionImpl::HTMLCollectionImpl(NodeImpl *_base, int _type)
-    : m_base(_base)
+    : m_base(_base),
+      type(_type),
+      info(0),
+      idsDone(false)
 {
-    type = _type;
-    idsDone = false;
-    info = _base->isDocumentNode() && _base->getDocument()->isHTMLDocument() ? static_cast<HTMLDocumentImpl*>(_base->getDocument())->collectionInfo(type) : 0;
+    if (_base->isDocumentNode() && _base->getDocument()->isHTMLDocument())
+        info = static_cast<HTMLDocumentImpl*>(_base->getDocument())->collectionInfo(type);
 }
 
 HTMLCollectionImpl::~HTMLCollectionImpl()
@@ -124,12 +126,12 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
     assert(current);
 
     if (type == NODE_CHILDREN && m_base.get() != current)
-        current = current -> nextSibling();
+        current = current->nextSibling();
     else
         current = current->traverseNextNode(m_base.get());
 
     while (current) {
-        if(current->nodeType() == Node::ELEMENT_NODE) {
+        if (current->isElementNode()) {
             bool found = false;
             bool deep = true;
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
@@ -328,7 +330,7 @@ bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const
 }
 
 
-NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
+NodeImpl *HTMLCollectionImpl::namedItem(const DOMString &name, bool caseSensitive) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -358,6 +360,46 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensiti
 
     info->current = n;
     return info->current;
+}
+
+HTMLNameCollectionImpl::HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name)
+    : HTMLCollectionImpl(_base, _type),
+      m_name(name)
+{
+}
+    
+NodeImpl *HTMLNameCollectionImpl::traverseNextItem(NodeImpl *current) const
+{
+    assert(current);
+
+    current = current->traverseNextNode(m_base.get());
+
+    while (current) {
+        if (current->isElementNode()) {
+            bool found = false;
+            ElementImpl *e = static_cast<ElementImpl *>(current);
+            switch(type) {
+            case WINDOW_NAMED_ITEMS:
+                // find only images, forms, applets, embeds and objects by name, 
+                // but anything by id
+                if (e->hasTagName(HTMLTags::img()) ||
+                    e->hasTagName(HTMLTags::form()) ||
+                    e->hasTagName(HTMLTags::applet()) ||
+                    e->hasTagName(HTMLTags::embed()) ||
+                    e->hasTagName(HTMLTags::object()))
+                    found = e->getAttribute(HTMLAttributes::name()) == m_name;
+                found |= e->getAttribute(HTMLAttributes::idAttr()) == m_name;
+                break;
+            default:
+                assert(0);
+            }
+
+            if (found)
+                return current;
+        }
+        current = current->traverseNextNode(m_base.get());
+    }
+    return 0;
 }
 
 template<class T> static void appendToVector(QPtrVector<T> *vec, T *item)
@@ -530,7 +572,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, const QualifiedName& a
 
 NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(const QualifiedName& attrName, const DOMString& name, int duplicateNumber, bool caseSensitive) const
 {
-    if (m_base->nodeType() == Node::ELEMENT_NODE) {
+    if (m_base->isElementNode()) {
         HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
         bool foundInputElements = false;
         if (baseElement->hasLocalName(HTMLTags::form())) {
@@ -626,7 +668,7 @@ NodeImpl *HTMLFormCollectionImpl::nextNamedItem( const DOMString &name ) const
     bool ok = false;
     while (impl && !ok)
     {
-        if(impl->nodeType() == Node::ELEMENT_NODE)
+        if(impl->isElementNode())
         {
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(impl);
             ok = (e->getAttribute(HTMLAttributes::idAttr()) != name);

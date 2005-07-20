@@ -275,7 +275,7 @@ bool HTMLDocument::hasOwnProperty(ExecState *exec, const Identifier &p) const
   //kdDebug(6070) << "HTMLDocument::hasProperty " << p.qstring() << endl;
 #endif
   HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(impl());
-  return DOMDocument::hasOwnProperty(exec, p) || doc->haveNamedImageOrForm(p.qstring());
+  return DOMDocument::hasOwnProperty(exec, p) || doc->hasNamedItem(p.qstring());
 }
 
 Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
@@ -409,7 +409,7 @@ Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
   if (NodeImpl *object = doc.objects()->namedItem(propertyName.string()))
     return getDOMNode(exec, object);
 
-  if (!doc.haveNamedImageOrForm(propertyName.qstring()))
+  if (!doc.hasNamedItem(propertyName.qstring()))
     return Undefined();
 
   return HTMLCollection(exec, doc.nameableItems().get()).getNamedItems(exec, propertyName); // Get all the items with the same name
@@ -3313,7 +3313,7 @@ HTMLCollection::~HTMLCollection()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-// We have to implement hasProperty since we don't use a hashtable for 'selectedIndex' and 'length'
+// We have to implement hasOwnProperty since we don't use a hashtable for 'selectedIndex' and 'length'
 // ## this breaks "for (..in..)" though.
 bool KJS::HTMLCollection::hasOwnProperty(ExecState *exec, const Identifier &p) const
 {

@@ -229,23 +229,13 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         _compositeOperator = attr->value().string();
 #endif
     else if (attr->name() == HTMLAttributes::name()) {
-        QString newNameAttr = attr->value().string();
-        if (attached() && getDocument()->isHTMLDocument()) {
+        DOMString newNameAttr = attr->value();
+        if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-            document->removeNamedImageOrForm(oldNameAttr);
-            document->addNamedImageOrForm(newNameAttr);
+            document->removeNamedItem(oldNameAttr);
+            document->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
-    }
-    else if (attr->name() == HTMLAttributes::idAttr()) {
-        QString newIdAttr = attr->value().string();
-        if (attached() && getDocument()->isHTMLDocument()) {
-            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-            document->removeNamedImageOrForm(oldIdAttr);
-            document->addNamedImageOrForm(newIdAttr);
-        }
-        oldIdAttr = newIdAttr;
-        HTMLElementImpl::parseMappedAttribute(attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -275,23 +265,26 @@ void HTMLImageElementImpl::attach()
         RenderImage* imageObj = static_cast<RenderImage*>(renderer());
         imageObj->setImage(m_imageLoader.image());
     }
-
-    if (getDocument()->isHTMLDocument()) {
-        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-        document->addNamedImageOrForm(oldIdAttr);
-        document->addNamedImageOrForm(oldNameAttr);
-    }
 }
 
-void HTMLImageElementImpl::detach()
+void HTMLImageElementImpl::insertedIntoDocument()
 {
     if (getDocument()->isHTMLDocument()) {
         HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
-        document->removeNamedImageOrForm(oldIdAttr);
-        document->removeNamedImageOrForm(oldNameAttr);
+        document->addNamedItem(oldNameAttr);
     }
 
-    HTMLElementImpl::detach();
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLImageElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::removedFromDocument();
 }
 
 long HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
