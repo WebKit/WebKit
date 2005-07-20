@@ -983,7 +983,11 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
         return QString();       // nothing to search in
     }
     
+    // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (checker == nil)
+        return QString();
+        
     WordAwareIterator it(searchRange.get());
     bool wrapped = false;
     
@@ -3995,7 +3999,11 @@ void KWQKHTMLPart::markMisspellings(const Selection &selection)
     if (!editableNodeImpl->isContentEditable())
         return;
     
+    // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (checker == nil)
+        return;
+    
     WordAwareIterator it(searchRange.get());
     
     while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd

@@ -1,5 +1,20 @@
 2005-07-20  Adele Peterson  <adele@apple.com>
 
+        Rolling fix for <rdar://problem/4046602> back in.
+
+    2005-03-11  David Harrison  <harrison@apple.com>
+        
+        Reviewed by Darin.
+        
+        <rdar://problem/4046602> WebCore invokes undefined behavior when the spell checker isn't running
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::markMisspellings):
+        Nil check checker.
+
+2005-07-20  Adele Peterson  <adele@apple.com>
+
         Reviewed by Darin.
 
         - fixed <rdar://problem/4181058> 8C45: Safari repro crash with document.write (DOM::NodeImpl::dispatchEvent)
