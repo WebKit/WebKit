@@ -1,3 +1,20 @@
+2005-07-19  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in patch by Anders Carlsson <andersca@mac.com> for
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3751
+        REGRESSION: affects Blogger, GMail & Wikipedia: empty textarea's which should have content
+        
+        Reviewed by mjs.
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLTextAreaElementImpl::defaultValue):
+        (DOM::HTMLTextAreaElementImpl::attach):
+        * khtml/html/html_formimpl.h:
+
+        Test cases added:
+        * manual-tests/textarea-after-stylesheet-link.html: Added.
+        Test is manual because the result doesn't show up in DumpRenderTree
+
 2005-07-19  Justin Garcia  <justin.garcia@apple.com>
         
         Added a virtual deconstructor to fix gcc4 build warning
