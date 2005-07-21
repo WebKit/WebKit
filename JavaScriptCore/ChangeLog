@@ -2,6 +2,12 @@
 
         Reviewed by NOBODY (OOPS!).
 
+        * JavaScriptCore.xcodeproj/.cvsignore: Added.
+
+2005-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
         * JavaScriptCore.pbproj/project.pbxproj: Removed.
         * JavaScriptCore.xcodeproj/ggaren.pbxuser: Added.
         * JavaScriptCore.xcodeproj/ggaren.perspective: Added.
