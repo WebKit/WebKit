@@ -274,8 +274,12 @@ bool HTMLDocument::hasOwnProperty(ExecState *exec, const Identifier &p) const
 #ifdef KJS_VERBOSE
   //kdDebug(6070) << "HTMLDocument::hasProperty " << p.qstring() << endl;
 #endif
+  if (DOMDocument::hasOwnProperty(exec, p))
+    return true;
+
   HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(impl());
-  return DOMDocument::hasOwnProperty(exec, p) || doc->hasNamedItem(p.qstring());
+  DOMString name = p.string();
+  return doc->hasNamedItem(name) || doc->hasDocExtraNamedItem(name);
 }
 
 Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
@@ -289,6 +293,21 @@ Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
   KHTMLView *view = doc.view();
   KHTMLPart *part = doc.part();
 
+  DOMString name = propertyName.string();
+  if (doc.hasNamedItem(name) || doc.hasDocExtraNamedItem(name)) {
+    SharedPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
+    if (collection->length() == 1) {
+      NodeImpl *node = collection->firstItem();
+      if (node->hasTagName(HTMLTags::iframe())) {
+        KHTMLPart *part = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentPart();
+        if (part)
+          return Window::retrieve(part);
+      }
+      return getDOMNode(exec, node);
+    } else 
+      return getHTMLCollection(exec, collection.get());
+  }
+    
   const HashEntry* entry = Lookup::findEntry(&HTMLDocumentTable, propertyName);
   if (entry) {
     switch (entry->value) {
@@ -390,29 +409,7 @@ Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
     }
   }
 
-  ValueImp *proto = prototype().imp();
-  if (DOMDocument::hasOwnProperty(exec, propertyName) || (proto->dispatchType() == ObjectType && static_cast<ObjectImp *>(proto)->hasProperty(exec, propertyName)))
-    return DOMDocument::get(exec, propertyName);
-
-  //kdDebug(6070) << "KJS::HTMLDocument::get " << propertyName.qstring() << " not found, returning element" << endl;
-  // image and form elements with the name p will be looked up last
-
-  // Look for named applets.
-  // FIXME: Factor code that creates RuntimeObjectImp for applet. It's also located in applets[0].
-
-  if (NodeImpl *applet = doc.applets()->namedItem(propertyName.string()))
-    return getDOMNode(exec, applet);
-
-  if (NodeImpl *embed = doc.embeds()->namedItem(propertyName.string()))
-    return getDOMNode(exec, embed);
-
-  if (NodeImpl *object = doc.objects()->namedItem(propertyName.string()))
-    return getDOMNode(exec, object);
-
-  if (!doc.hasNamedItem(propertyName.qstring()))
-    return Undefined();
-
-  return HTMLCollection(exec, doc.nameableItems().get()).getNamedItems(exec, propertyName); // Get all the items with the same name
+  return DOMDocument::get(exec, propertyName);
 }
 
 void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)

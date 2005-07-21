@@ -62,9 +62,13 @@ public:
 
     virtual void determineParseMode( const QString &str );
 
-    void addNamedItem(const DOMString &name);
-    void removeNamedItem(const DOMString &name);
-    bool hasNamedItem(const DOMString &name);
+    void addNamedItem(const DOMString& name);
+    void removeNamedItem(const DOMString& name);
+    bool hasNamedItem(const DOMString& name);
+
+    void addDocExtraNamedItem(const DOMString& name);
+    void removeDocExtraNamedItem(const DOMString& name);
+    bool hasDocExtraNamedItem(const DOMString& name);
 
     HTMLCollectionImpl::CollectionInfo *collectionInfo(int type)
     { 
@@ -74,6 +78,8 @@ public:
     }
 
     virtual DocumentTypeImpl *doctype() const;
+
+    typedef khtml::HashMap<DOMStringImpl *, int> NameCountMap;
 
 protected:
     HTMLElementImpl *bodyElement;
@@ -86,10 +92,9 @@ protected slots:
     void slotHistoryChanged();
 private:
     HTMLCollectionImpl::CollectionInfo m_collection_info[HTMLCollectionImpl::NUM_CACHEABLE_TYPES];
-    // we actually store ints inside the pointer value itself; would use void *
-    // but that makes the template unhappy.
-    typedef khtml::HashMap<DOMStringImpl *, int> NameCountMap;
+
     NameCountMap namedItemCounts;
+    NameCountMap docExtraNamedItemCounts;
 };
 
 }; //namespace

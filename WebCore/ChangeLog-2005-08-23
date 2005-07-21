@@ -1,3 +1,60 @@
+2005-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	- fix handling of special properties of the HTML document object. Now we
+	completely match IE.
+
+        Test cases added:
+	* layout-tests/fast/dom/HTMLDocument/document-special-properties.html:
+	Added; new exhaustive test case.
+        * layout-tests/fast/dom/HTMLDocument/document-special-properties-expected.txt: Added.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::hasOwnProperty): Check for named and doc extra named
+	items.
+        (KJS::HTMLDocument::get): Return the appropriate element, window or collection
+	by name; give such named items precedence over built-in and custom properties.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::get): Replace quirky &* idiom with call to get().
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLIFrameElementImpl::parseMappedAttribute): Track by name as a doc
+	extra named item.
+        (HTMLIFrameElementImpl::insertedIntoDocument): ditto
+        (HTMLIFrameElementImpl::removedFromDocument): ditto
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::addItemToMap): Factored out from addNamedItem
+        (DOM::removeItemFromMap): Factored out from removeNamedItem
+        (DOM::HTMLDocumentImpl::addNamedItem): refactored
+        (DOM::HTMLDocumentImpl::removeNamedItem): refactored
+        (DOM::HTMLDocumentImpl::addDocExtraNamedItem): new method - maintains
+	a hashtable of the "extra" named items for a document, which are
+	iframes by name and applets and embeds by id.
+        (DOM::HTMLDocumentImpl::removeDocExtraNamedItem): ditto
+        (DOM::HTMLDocumentImpl::hasDocExtraNamedItem): ditto
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::traverseNextItem): Remove support for
+	DOC_NAMEABLE_ITEMS collection - no longer needed.
+        (DOM::HTMLNameCollectionImpl::traverseNextItem): Add support for
+	DOCUMENT_NAMED_ITEMS, implementing the correct document rule.
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute): Track by id
+	as doc extra named item
+        (DOM::HTMLAppletElementImpl::insertedIntoDocument): ditto
+        (DOM::HTMLAppletElementImpl::removedFromDocument): ditto
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute): ditto
+        (DOM::HTMLObjectElementImpl::insertedIntoDocument): ditto
+        (DOM::HTMLObjectElementImpl::removedFromDocument): ditto
+        * khtml/html/html_objectimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::nameableItems): removed - no longer used
+        (DocumentImpl::documentNamedItems): added
+        * khtml/xml/dom_docimpl.h:
+
 2005-07-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Vicki Murley.

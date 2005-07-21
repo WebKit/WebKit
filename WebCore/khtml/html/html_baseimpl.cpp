@@ -864,8 +864,36 @@ void HTMLIFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     else if (attr->name() == HTMLAttributes::align())
         addHTMLAlignment(attr);
-    else
-      HTMLFrameElementImpl::parseMappedAttribute(attr);
+    else if (attr->name() == HTMLAttributes::name()) {
+        DOMString newNameAttr = attr->value();
+        if (inDocument() && getDocument()->isHTMLDocument()) {
+            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            document->removeDocExtraNamedItem(oldNameAttr);
+            document->addDocExtraNamedItem(newNameAttr);
+        }
+        oldNameAttr = newNameAttr;
+    } else
+        HTMLFrameElementImpl::parseMappedAttribute(attr);
+}
+
+void HTMLIFrameElementImpl::insertedIntoDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->addDocExtraNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::insertedIntoDocument();
+}
+
+void HTMLIFrameElementImpl::removedFromDocument()
+{
+    if (getDocument()->isHTMLDocument()) {
+        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        document->removeDocExtraNamedItem(oldNameAttr);
+    }
+
+    HTMLElementImpl::removedFromDocument();
 }
 
 bool HTMLIFrameElementImpl::rendererIsNeeded(RenderStyle *style)

@@ -105,6 +105,7 @@ protected:
 
 private:
     DOMString oldNameAttr;
+    DOMString oldIdAttr;
 #if APPLE_CHANGES
     mutable KJS::Bindings::Instance *appletInstance;
     bool m_allParamsAvailable;
@@ -247,6 +248,7 @@ public:
     HTMLImageLoader* m_imageLoader;
 
 private:
+    DOMString oldIdAttr;
     DOMString oldNameAttr;
 #if APPLE_CHANGES
     mutable KJS::Bindings::Instance *objectInstance;

@@ -261,6 +261,9 @@ public:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
     virtual void attach();
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
@@ -283,6 +286,9 @@ protected:
     virtual void openURL();
 
     bool needWidgetUpdate;
+
+ private:
+    DOMString oldNameAttr;
 };
 
 } //namespace

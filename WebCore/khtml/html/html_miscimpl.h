@@ -78,13 +78,12 @@ public:
         MAP_AREAS,
         DOC_ALL,        // "all" elements (IE)
         NODE_CHILDREN,   // first-level children (IE)
-        DOC_NAMEABLE_ITEMS, // all IMG, FORM, APPLET, EMBED and OBJECT elements, used to look
-                            // up element name as document property
-        WINDOW_NAMED_ITEMS
+        WINDOW_NAMED_ITEMS,
+        DOCUMENT_NAMED_ITEMS
     };
 
     enum {
-        NUM_CACHEABLE_TYPES = DOC_NAMEABLE_ITEMS + 1
+        NUM_CACHEABLE_TYPES = NODE_CHILDREN + 1
     };
 
     HTMLCollectionImpl(NodeImpl *_base, int _type);

@@ -264,39 +264,64 @@ void HTMLDocumentImpl::slotHistoryChanged()
     m_render->repaint();
 }
 
-void HTMLDocumentImpl::addNamedItem(const DOMString &name)
+static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& name)
 {
     if (name.length() == 0)
 	return;
  
-    NameCountMap::iterator it = namedItemCounts.find(name.implementation()); 
-    if (it == namedItemCounts.end())
-        namedItemCounts.insert(name.implementation(), 1);
+    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.implementation()); 
+    if (it == map.end())
+        map.insert(name.implementation(), 1);
     else
         ++(it->second);
 }
 
-void HTMLDocumentImpl::removeNamedItem(const DOMString &name)
-{ 
+static void removeItemFromMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& name)
+{
     if (name.length() == 0)
 	return;
  
-    NameCountMap::iterator it = namedItemCounts.find(name.implementation()); 
-    if (it == namedItemCounts.end())
+    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.implementation()); 
+    if (it == map.end())
         return;
 
     int oldVal = it->second;
     assert(oldVal != 0);
     int newVal = oldVal - 1;
     if (newVal == 0)
-        namedItemCounts.remove(it);
+        map.remove(it);
     else
         it->second = newVal;
 }
 
-bool HTMLDocumentImpl::hasNamedItem(const DOMString &name)
+void HTMLDocumentImpl::addNamedItem(const DOMString& name)
+{
+    addItemToMap(namedItemCounts, name);
+}
+
+void HTMLDocumentImpl::removeNamedItem(const DOMString &name)
+{ 
+    removeItemFromMap(namedItemCounts, name);
+}
+
+bool HTMLDocumentImpl::hasNamedItem(const DOMString& name)
 {
     return namedItemCounts.get(name.implementation()) != 0;
+}
+
+void HTMLDocumentImpl::addDocExtraNamedItem(const DOMString& name)
+{
+    addItemToMap(docExtraNamedItemCounts, name);
+}
+
+void HTMLDocumentImpl::removeDocExtraNamedItem(const DOMString& name)
+{ 
+    removeItemFromMap(docExtraNamedItemCounts, name);
+}
+
+bool HTMLDocumentImpl::hasDocExtraNamedItem(const DOMString& name)
+{
+    return docExtraNamedItemCounts.get(name.implementation()) != 0;
 }
 
 const int PARSEMODE_HAVE_DOCTYPE	=	(1<<0);

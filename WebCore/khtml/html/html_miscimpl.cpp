@@ -144,18 +144,6 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
                 if(e->hasLocalName(HTMLTags::form()))
                     found = true;
                 break;
-            case DOC_NAMEABLE_ITEMS:
-                if (e->hasLocalName(HTMLTags::img()))
-                    found = true;
-                if (e->hasLocalName(HTMLTags::form()))
-                    found = true;
-                if (e->hasLocalName(HTMLTags::applet()))
-                    found = true;
-                if (e->hasLocalName(HTMLTags::embed()))
-                    found = true;
-                if (e->hasLocalName(HTMLTags::object()))
-                    found = true;
-                break;
             case TABLE_TBODIES:
                 if (e->hasLocalName(HTMLTags::tbody()))
                     found = true;
@@ -389,6 +377,19 @@ NodeImpl *HTMLNameCollectionImpl::traverseNextItem(NodeImpl *current) const
                     e->hasTagName(HTMLTags::object()))
                     found = e->getAttribute(HTMLAttributes::name()) == m_name;
                 found |= e->getAttribute(HTMLAttributes::idAttr()) == m_name;
+                break;
+            case DOCUMENT_NAMED_ITEMS:
+                // find images, forms, applets, embeds, objects and iframes by name, 
+                // but only applets and object by id (this strange rule matches IE)
+                if (e->hasTagName(HTMLTags::img()) ||
+                    e->hasTagName(HTMLTags::form()) ||
+                    e->hasTagName(HTMLTags::embed()) ||
+                    e->hasTagName(HTMLTags::iframe()))
+                    found = e->getAttribute(HTMLAttributes::name()) == m_name;
+                else if (e->hasTagName(HTMLTags::applet()) ||
+                         e->hasTagName(HTMLTags::object()))
+                    found = e->getAttribute(HTMLAttributes::name()) == m_name ||
+                        e->getAttribute(HTMLAttributes::idAttr()) == m_name;
                 break;
             default:
                 assert(0);
