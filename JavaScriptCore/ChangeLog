@@ -1,3 +1,13 @@
+2005-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * JavaScriptCore.pbproj/project.pbxproj: Removed.
+        * JavaScriptCore.xcodeproj/ggaren.pbxuser: Added.
+        * JavaScriptCore.xcodeproj/ggaren.perspective: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added.
+        * Makefile.am:
+
 2005-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Trey Matteson <trey@usa.net>, reviewed by me.

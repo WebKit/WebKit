@@ -68,9 +68,9 @@ for my $dir (@projects) {
     chdir $dir or die;
     my $result;
     if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", "-project", "JavaScriptCore.pbproj", @options, "-target", "All";
+        $result = system "xcodebuild", "-project", "JavaScriptCore.xcodeproj", @options, "-target", "All";
     } else {
-        $result = system "xcodebuild", "-project", "$dir.pbproj", @options;
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options;
     }
     exit $result if $result;
     chdir ".." or die;
