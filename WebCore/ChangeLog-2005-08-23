@@ -4,6 +4,14 @@
 
         Test cases added: (NONE)
 
+        * WebCore.pbproj/project.pbxproj: Removed.
+
+2005-07-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Test cases added: (NONE)
+
         * WebCore.xcodeproj/.cvsignore: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
