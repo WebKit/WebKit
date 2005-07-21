@@ -1,3 +1,21 @@
+2005-07-21  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+	
+	-fix for <rdar://problem/4169069> Also fixes the behavior of generated content
+	when it is specified within a list element.
+
+        Test cases added: (NONE)
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle): Added loop to skip over list elements hen updating 
+					generatedcontent.
+        (khtml::RenderBlock::updateFirstLetter): Added clause so that the function updates the 
+						first letter instead of just creating it.
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::setStyle): Added loop to skip over list elements when updating generated
+				content.
+
 2005-07-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

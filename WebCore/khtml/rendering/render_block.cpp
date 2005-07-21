@@ -118,7 +118,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     // non inherited properties
     RenderObject *child = firstChild();
     while (child != 0)
-    {
+    {   
         if (child->isAnonymousBlock())
         {
             RenderStyle* newStyle = new (renderArena()) RenderStyle();
@@ -132,7 +132,9 @@ void RenderBlock::setStyle(RenderStyle* _style)
     m_lineHeight = -1;
 
     // Update pseudos for :before and :after now.
-    updatePseudoChild(RenderStyle::BEFORE, firstChild());
+    RenderObject* first = firstChild();
+    while (first && first->isListMarker()) first = first->nextSibling();
+    updatePseudoChild(RenderStyle::BEFORE, first);
     updatePseudoChild(RenderStyle::AFTER, lastChild());
 }
 
@@ -3231,7 +3233,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
 }
 
 void RenderBlock::updateFirstLetter()
-{
+{    
     // FIXME: We need to destroy the first-letter object if it is no longer the first child.  Need to find
     // an efficient way to check for that situation though before implementing anything.
     RenderObject* firstLetterBlock = this;
@@ -3247,63 +3249,82 @@ void RenderBlock::updateFirstLetter()
         firstLetterBlock = parentBlock;
     } 
 
-    if (!hasPseudoStyle)
+    if (!hasPseudoStyle) 
         return;
     
     // Drill into inlines looking for our first text child.
     RenderObject* currChild = firstLetterBlock->firstChild();
-    while (currChild && currChild->needsLayout() && !currChild->isReplaced() && !currChild->isText())
+    while (currChild && currChild->needsLayout() && !currChild->isReplaced() && !currChild->isText()) 
         currChild = currChild->firstChild();
+
+    // Get list markers out of the way.
+    while (currChild && currChild->isListMarker()) currChild = currChild->nextSibling();
     
-    if (currChild && currChild->isText() && !currChild->isBR() && 
-        currChild->parent()->style()->styleType() != RenderStyle::FIRST_LETTER) {
+    if (currChild) {
         RenderObject* firstLetterContainer = currChild->parent();
-        if (!firstLetterContainer)
-            firstLetterContainer = this;
-        
-        RenderText* textObj = static_cast<RenderText*>(currChild);
-        
-        // Create our pseudo style now that we have our firstLetterContainer determined.
-        RenderStyle* pseudoStyle = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
-                                                                    firstLetterContainer->style(true));
-        
-        // Force inline display (except for floating first-letters)
-        pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
-        pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
-        
-        RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
-        firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());
-        
-        // The original string is going to be either a generated content string or a DOM node's
-        // string.  We want the original string before it got transformed in case first-letter has
-        // no text-transform or a different text-transform applied to it.
-        DOMStringImpl* oldText = textObj->originalString();
-        KHTMLAssert(oldText);
-        
-        if (oldText && oldText->l >= 1) {
-            unsigned int length = 0;
-            while ( length < oldText->l &&
-                    ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
+            if (!firstLetterContainer)
+                firstLetterContainer = this;
+    
+        // If the child already has style, then it has already been created, so we just want
+        // to update it.
+        if (currChild->style()->styleType() == RenderStyle::FIRST_LETTER) {
+            RenderStyle* pseudo = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
+                                                                        firstLetterContainer->style(true));
+            currChild->setStyle(pseudo);
+            for (RenderObject* genChild = currChild->firstChild(); genChild; genChild = genChild->nextSibling())
+                if (genChild->isText()) 
+                    genChild->setStyle(pseudo);
+            return;
+        }
+    
+        // If the child does not already have style, we create it here.
+        if (currChild->isText() && !currChild->isBR() && 
+            currChild->parent()->style()->styleType() != RenderStyle::FIRST_LETTER) {
+            
+            RenderText* textObj = static_cast<RenderText*>(currChild);
+            
+            // Create our pseudo style now that we have our firstLetterContainer determined.
+            RenderStyle* pseudoStyle = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
+                                                                        firstLetterContainer->style(true));
+            
+            // Force inline display (except for floating first-letters)
+            pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
+            pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
+            
+            RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
+            firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());
+            
+            // The original string is going to be either a generated content string or a DOM node's
+            // string.  We want the original string before it got transformed in case first-letter has
+            // no text-transform or a different text-transform applied to it.
+            DOMStringImpl* oldText = textObj->originalString();
+            KHTMLAssert(oldText);
+            
+            if (oldText && oldText->l >= 1) {
+                unsigned int length = 0;
+                while ( length < oldText->l &&
+                        ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
+                    length++;
                 length++;
-            length++;
-            //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
-            
-            RenderTextFragment* remainingText = 
-                new (renderArena()) RenderTextFragment(textObj->node(), oldText, length, oldText->l-length);
-            remainingText->setStyle(textObj->style());
-            if (remainingText->element())
-                remainingText->element()->setRenderer(remainingText);
-            
-            RenderObject* nextObj = textObj->nextSibling();
-            firstLetterContainer->removeChild(textObj);
-            firstLetterContainer->addChild(remainingText, nextObj);
-            
-            RenderTextFragment* letter = 
-                new (renderArena()) RenderTextFragment(remainingText->node(), oldText, 0, length);
-            RenderStyle* newStyle = new (renderArena()) RenderStyle();
-            newStyle->inheritFrom(pseudoStyle);
-            letter->setStyle(newStyle);
-            firstLetter->addChild(letter);
+                //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
+                
+                RenderTextFragment* remainingText = 
+                    new (renderArena()) RenderTextFragment(textObj->node(), oldText, length, oldText->l-length);
+                remainingText->setStyle(textObj->style());
+                if (remainingText->element())
+                    remainingText->element()->setRenderer(remainingText);
+                
+                RenderObject* nextObj = textObj->nextSibling();
+                firstLetterContainer->removeChild(textObj);
+                firstLetterContainer->addChild(remainingText, nextObj);
+                
+                RenderTextFragment* letter = 
+                    new (renderArena()) RenderTextFragment(remainingText->node(), oldText, 0, length);
+                RenderStyle* newStyle = new (renderArena()) RenderStyle();
+                newStyle->inheritFrom(pseudoStyle);
+                letter->setStyle(newStyle);
+                firstLetter->addChild(letter);
+            }
         }
     }
 }
