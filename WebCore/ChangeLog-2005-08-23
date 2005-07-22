@@ -1,3 +1,13 @@
+2005-07-22  David Hyatt  <hyatt@apple.com>
+
+	Put back in the <script src="foo"/> self-closing tag quirk in HTML.  Unfortunately
+	Dashboard widgets are dependent on this quirk.
+
+        Reviewed by mjs
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseTag):
+
 2005-07-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.

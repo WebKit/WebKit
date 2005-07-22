@@ -1125,6 +1125,13 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                         dest = buffer;
                         *dest++ = 0;
                         tag = SearchEqual;
+                        // This is a deliberate quirk to match Mozilla and Opera.  We have to do this
+                        // since sites that use the "standards-compliant" path sometimes send
+                        // <script src="foo.js"/>.  Both Moz and Opera will honor this, despite it
+                        // being bogus HTML.  They do not honor the "/" for other tags.  This behavior
+                        // also deviates from WinIE, but in this case we'll just copy Moz and Opera.
+                        if (currToken.tagName == HTMLTags::script() && curchar == '>' && attrName == "/")
+                            currToken.flat = true;
                         break;
                     }
                 }
@@ -1322,8 +1329,12 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
             kdDebug( 6036 ) << "appending Tag: " << tagID << endl;
 #endif
+
+            // Handle <script src="foo"/> like Mozilla/Opera. We have to do this now for Dashboard
+            // compatibility.
+            bool isSelfClosingScript = currToken.flat && currToken.beginTag && currToken.tagName == HTMLTags::script();
             bool beginTag = !currToken.flat && currToken.beginTag;
-            if (beginTag && currToken.tagName == HTMLTags::script()) {
+            if (currToken.beginTag && currToken.tagName == HTMLTags::script()) {
                 AttributeImpl* a = 0;
                 bool foundTypeAttribute = false;
                 scriptSrc = QString::null;
@@ -1408,6 +1419,9 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     searchStopperLen = 8;
                     script = true;
                     parseSpecial(src);
+                } else if (isSelfClosingScript) { // Handle <script src="foo"/>
+                    script = true;
+                    scriptHandler();
                 }
             } else if (tagName == HTMLTags::style()) {
                 if (beginTag) {
