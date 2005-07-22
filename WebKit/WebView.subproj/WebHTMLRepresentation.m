@@ -213,6 +213,11 @@
     return [_private->bridge elementForView:view];
 }
 
+- (NSView *)viewForElement:(DOMElement *)element
+{
+    return [_private->bridge viewForElement:element];
+}
+
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
     return [_private->bridge elementDoesAutoComplete:element];

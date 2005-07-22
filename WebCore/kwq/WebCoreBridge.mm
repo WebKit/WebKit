@@ -909,6 +909,11 @@ static NSView *viewForElement(ElementImpl *elementImpl)
     return nil;
 }
 
+- (NSView *)viewForElement:(DOMElement *)element
+{
+    return viewForElement([element _elementImpl]);
+}
+
 static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
@@ -989,13 +994,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
         for (unsigned int i = 0; i < elements.count(); i++) {
             if (elements.at(i)->isEnumeratable()) {		// Skip option elements, other duds
-                NSView *view = viewForElement(elements.at(i));
-                if (view) {
-                    if (!results) {
-                        results = [NSMutableArray arrayWithObject:view];
-                    } else {
-                        [results addObject:view];
-                    }
+                DOMElement *de = [DOMElement _elementWithImpl:elements.at(i)];
+                if (!results) {
+                    results = [NSMutableArray arrayWithObject:de];
+                } else {
+                    [results addObject:de];
                 }
             }
         }

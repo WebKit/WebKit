@@ -283,6 +283,7 @@ typedef enum
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
 - (DOMElement *)elementForView:(NSView *)view;
+- (NSView *)viewForElement:(DOMElement *)view; // introduced temporarily to ease transition to view-free form SPI
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element;
 - (BOOL)elementIsPassword:(DOMElement *)element;
 - (DOMElement *)formForElement:(DOMElement *)element;

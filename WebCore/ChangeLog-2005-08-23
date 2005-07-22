@@ -1,32 +1,44 @@
+2005-07-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
+        Test cases added: none, this only affects Safari autocomplete; it doesn't affect any
+        web pages.
+
+        - some changes in the direction of weaning all the form-related SPI from NSView
+
+        * kwq/DOMExtensions.h:
+        added -[DOMHTMLInputElement isTextField]
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLInputElement isTextField]):
+        new method that returns YES if this element is one of the types that's represented
+        by a text field (as opposed to a button, slider, etc.). I could have put this method
+        in Safari, but it seems useful for other WebKit clients.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge viewForElement:]):
+        added viewForElement: as a stopgap measure. This allowed me to convert controlsInForm:
+        to return DOMElements rather than NSViews, while keeping autocomplete working in
+        Safari tip of tree. When I finish the SPI conversion I'll delete this method. Note that
+        from this point on, autocomplete will not work in Tiger Safari with tip of tree WebKit
+        (it will always fail to find anything to autocomplete)
+        (-[WebCoreBridge controlsInForm:]):
+        now returns an array of DOMElement* rather than an array of NSView*
+
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        Test cases added: (NONE)
 
         * WebCore.pbproj/project.pbxproj: Removed.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
-        Test cases added: (NONE)
-
         * WebCore.xcodeproj/.cvsignore: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
-        Test cases added: (NONE)
-
         * WebCore.xcodeproj/project.pbxproj: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        Test cases added: (NONE)
 
         * Makefile.am:
 

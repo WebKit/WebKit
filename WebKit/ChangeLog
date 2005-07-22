@@ -1,3 +1,22 @@
+2005-07-22  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        - some changes in the direction of weaning all the form-related SPI from NSView
+
+        * PublicHeaderChangesFromTiger.txt:
+        noted that the WebCore change to add -[DOMHTMLInputElement isTextField] to
+        DOMExtensions.h is a public header change.
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation viewForElement:]):
+        added viewForElement: as a stopgap measure. This allowed me to convert controlsInForm:
+        to return DOMElements rather than NSViews, while keeping autocomplete working in
+        Safari tip of tree. When I finish the SPI conversion I'll delete this method. Note that
+        from this point on, autocomplete will not work in Tiger Safari with tip of tree WebKit
+        (it will always fail to find anything to autocomplete)
+
 2005-07-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
@@ -24,25 +43,17 @@
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * WebKit.pbproj/project.pbxproj: Removed.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * WebKit.xcodeproj/.cvsignore: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * WebKit.xcodeproj/project.pbxproj: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * Makefile.am:
 
