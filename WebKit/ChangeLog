@@ -1,5 +1,14 @@
 2005-07-21  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        Changing temporary #ifndef to #if
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _checkSolidColor:]):
+
+2005-07-21  Adele Peterson  <adele@apple.com>
+
         Reviewed by Chris Blumenberg.
 
         - fixed <rdar://problem/4132797> don't register thin PPC WebKit plug-ins

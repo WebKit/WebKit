@@ -293,13 +293,13 @@
     if( image && CGImageGetWidth(image)==1 && CGImageGetHeight(image)==1 ) {
         float pixel[4]; // RGBA
         CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-// This #ifdef won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS
-#ifndef __ppc__	
-        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
-                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
-#else
+// This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS
+#if __ppc__	
         CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
                                                   kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
+#else
+        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
+                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
 #endif
         if( bmap ) {
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
