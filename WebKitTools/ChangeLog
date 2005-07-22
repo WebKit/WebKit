@@ -1,5 +1,11 @@
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin.
+
+        * Scripts/build-dumprendertree: changed XCode 2.0 project file reference to 2.1
+
+2005-07-21  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by NOBODY (OOPS!).
 
         * DumpRenderTree/DumpRenderTree.xcode/.cvsignore: Removed.
