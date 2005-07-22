@@ -1,3 +1,18 @@
+2005-07-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        - fixed <rdar://problem/4132797> don't register thin PPC WebKit plug-ins
+        Merged fix for:
+        <rdar://problem/4127100> [WebKit] 8B1016: After installing Acrobat Reader, can no longer see pdf's in Safari
+
+        * Plugins.subproj/WebBasePluginPackage.h: Added isNativeLibraryData method.
+        * Plugins.subproj/WebBasePluginPackage.m: (-[WebBasePluginPackage isNativeLibraryData:]): Added isNativeLibraryData method.
+        * Plugins.subproj/WebNetscapePluginPackage.m: (-[WebNetscapePluginPackage initWithPath:]):
+          calls isNativeLibraryData to determine whether or not to register the plug-in.
+        * Plugins.subproj/WebPluginPackage.m: (-[WebPluginPackage initWithPath:]): ditto.
+        * WebCoreSupport.subproj/WebImageData.m: (-[WebImageData _checkSolidColor:]): added comment for #ifdef.
+
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by NOBODY (OOPS!).

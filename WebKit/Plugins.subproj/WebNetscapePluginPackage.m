@@ -204,14 +204,17 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         isBundle = YES;
         CFBundleGetPackageInfo(cfBundle, &type, NULL);
     }
-#ifdef __ppc__
     // Single-file plug-in with resource fork
     else {
+#ifdef __ppc__
         type = [[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES] fileHFSTypeCode];
         isBundle = NO;
         isCFM = YES;
-    }
+#else
+        [self release];
+        return nil;
 #endif
+    }
     
     if (type != FOUR_CHAR_CODE('BRPL')) {
         [self release];
@@ -221,7 +224,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     // Check if the executable is Mach-O or CFM.
     if (bundle) {
         NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[bundle executablePath]];
-        NSData *data = [executableFile readDataOfLength:8];
+        NSData *data = [executableFile readDataOfLength:512];
         [executableFile closeFile];
         // Check the length of the data before calling memcmp. We think this fixes 3782543.
         if (data == nil || [data length] < 8) {
@@ -236,6 +239,10 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             return nil;
         }
 #endif
+        if (![self isNativeLibraryData:data]) {
+            [self release];
+            return nil;
+        }
     }
 
     if (![self getPluginInfoFromPLists] && ![self getPluginInfoFromResources]) {

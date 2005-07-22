@@ -293,7 +293,8 @@
     if( image && CGImageGetWidth(image)==1 && CGImageGetHeight(image)==1 ) {
         float pixel[4]; // RGBA
         CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-#if __i386__	
+// This #ifdef won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS
+#ifndef __ppc__	
         CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
                                                   kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
 #else
