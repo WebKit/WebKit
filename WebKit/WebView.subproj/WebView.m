@@ -2548,7 +2548,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // where the focused frame doesn't actually contain a selection.
     NSResponder *resp = [[self window] firstResponder];
     if (resp && [resp isKindOfClass:[NSView class]] && [(NSView *)resp isDescendantOf:self]) {
-        WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
+        WebFrameView *frameView = [resp isKindOfClass:[WebFrameView class]] 
+            ? (WebFrameView *)resp 
+            : (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
         ASSERT(frameView != nil);
 #ifndef NDEBUG
         WebFrame *frameWithSelection = [self _findSelectedFrame];

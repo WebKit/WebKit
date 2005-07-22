@@ -1,5 +1,17 @@
 2005-07-22  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Justin Garcia.
+        
+        Mail (running on tip of tree WebKit) was running into an assertion I recently added.
+        The assertion is actually correct, catching an old bug in this code.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView selectedFrame]):
+        if the first responder is a WebFrameView, then we've found the WebFrameView we're 
+        looking for, and we shouldn't look at its superviews.
+
+2005-07-22  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Chris Blumenberg.
 
         - some changes in the direction of weaning all the form-related SPI from NSView
