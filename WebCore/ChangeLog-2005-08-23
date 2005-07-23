@@ -1,3 +1,11 @@
+2005-07-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Adding a manual test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3862>, since
+        our layout test font doesn't include glyphs for bidi control characters
+
+        Test cases added:
+        * manual-tests/bidi-visible-control-characters.html: Added.
+
 2005-07-22  David Hyatt  <hyatt@apple.com>
 
 	Put back in the <script src="foo"/> self-closing tag quirk in HTML.  Unfortunately
