@@ -404,7 +404,7 @@ DateInstanceImp::DateInstanceImp(ObjectImp *proto)
 
 // ------------------------------ DatePrototypeImp -----------------------------
 
-const ClassInfo DatePrototypeImp::info = {"Date", 0, &dateTable, 0};
+const ClassInfo DatePrototypeImp::info = {"Date", &DateInstanceImp::info, &dateTable, 0};
 
 /* Source for date_object.lut.h
    We use a negative ID to denote the "UTC" variant.
