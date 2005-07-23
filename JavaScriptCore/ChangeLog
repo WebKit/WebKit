@@ -1,3 +1,11 @@
+2005-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        
+        Reviewed by darin.
+
+        * tests/mozilla/jsDriver.pl: now takes the path to testkjs as a command-line argument
+        * tests/mozilla/run-mozilla-tests: Removed.
+
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by NOBODY (OOPS!).

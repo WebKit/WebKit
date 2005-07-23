@@ -1,0 +1,43 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+chdirWebKit();
+chdir "JavaScriptCore/tests/mozilla/" or die;
+
+open EXPECTED, "expected.html";
+while (<EXPECTED>) {
+    last if /failures reported\.$/;
+}
+my %expected;
+while (<EXPECTED>) {
+    chomp;
+    $expected{$_} = 1;
+}
+close EXPECTED;
+
+open ACTUAL, "actual.html";
+my $actual;
+while (<ACTUAL>) {
+    $actual .= $_;
+    last if /failures reported\.$/;
+}
+my $failed = 0;
+while (<ACTUAL>) {
+    $actual .= $_;
+    chomp;
+    if (!$expected{$_}) {
+        $failed = 1;
+        print "failure not expected: $_\n";
+    }
+}
+close ACTUAL;
+
+die "won't update, failures introduced" if $failed;
+
+open EXPECTED, ">expected.html";
+print EXPECTED $actual;
+close EXPECTED;

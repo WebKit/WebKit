@@ -553,7 +553,7 @@ sub get_engine_command {
     }  elsif ($opt_engine_type =~ /^ep(opt|debug)$/) {
         &dd ("getting epimetheus engine command.");
         $retval = &get_ep_engine_command;
-    } elsif ($opt_engine_type ="kjs") {
+    } elsif ($opt_engine_type eq "kjs") {
         &dd ("getting kjs engine command.");
         $retval = &get_kjs_engine_command;
         
@@ -636,7 +636,15 @@ sub get_xpc_engine_command {
 # get the shell command used to run kjs
 #
 sub get_kjs_engine_command {
-    return $ENV{"SYMROOTS"} . "/testkjs";
+    my $retval;
+    
+    if ($opt_shell_path) {
+        $retval = $opt_shell_path;
+    } else {
+        die "Please specify a full path to the kjs testing engine";
+    }
+    
+    return $retval;
 }
 
 #

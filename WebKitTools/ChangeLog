@@ -1,3 +1,15 @@
+2005-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Moved Tools/Scripts/run-mozilla-tests to WebKitTools/Scripts/run-javascriptcore-tests.
+        run-javascriptcore-tests now passes its command-line arguments to jsDriver.pl
+        
+        Moved Tools/Scripts/update-mozilla-js-test-results to 
+        WebKitTools/Scripts/update-javascriptcore-test-results.
+        
+        Reviewed by darin.
+
+        * Scripts/run-javascriptcore-tests: Added.
+
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
