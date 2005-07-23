@@ -1604,11 +1604,11 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     
     UniChar *swappedCharacters = (UniChar *)malloc(sizeof(UniChar)*(run->length+2));
     memcpy(swappedCharacters+1, run->characters, sizeof(UniChar)*run->length);
-    swappedRun.from = run->from;
-    swappedRun.to = (run->to == -1 ? -1 : run->to+2);
+    swappedRun.from = (run->from == -1 ? 0 : run->from) + 1;
+    swappedRun.to = (run->to == -1 ? (int)run->length - 1 : run->to + 1);
     swappedRun.length = run->length+2;
-    swappedCharacters[(swappedRun.from == -1 ? 0 : swappedRun.from)] = LEFT_TO_RIGHT_OVERRIDE;
-    swappedCharacters[(swappedRun.to == -1 ? swappedRun.length : (unsigned)swappedRun.to) - 1] = POP_DIRECTIONAL_FORMATTING;
+    swappedCharacters[swappedRun.from - 1] = LEFT_TO_RIGHT_OVERRIDE;
+    swappedCharacters[swappedRun.to] = POP_DIRECTIONAL_FORMATTING;
     swappedRun.characters = swappedCharacters;
 
     return swappedRun;
