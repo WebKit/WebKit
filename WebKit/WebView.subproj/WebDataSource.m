@@ -88,7 +88,6 @@
     [mainDocumentError release];
     [iconLoader release];
     [iconURL release];
-    [ourBackForwardItems release];
     [triggeringAction release];
     [lastCheckedRequest release];
     [responses release];
@@ -542,8 +541,9 @@
             WebHistoryItem *entry = [[WebHistory optionalSharedHistory] itemForURL:URLForHistory];
             [entry setTitle: _private->pageTitle];
             
-            // Must update the entries in the back-forward list too.
-            [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
+            // Must update the entries in the back-forward list too.  This must go through the WebFrame because
+            // it has the right notion of the current b/f item.
+            [[self webFrame] _setTitle:_private->pageTitle];
             
             [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                                      didReceiveTitle:_private->pageTitle
@@ -635,36 +635,6 @@
 - (BOOL)_isClientRedirect
 {
     return _private->isClientRedirect;
-}
-
-- (void)_addBackForwardItem:(WebHistoryItem *)item
-{
-    if (!item) {
-        return;
-    }
-    if (!_private->ourBackForwardItems) {
-        _private->ourBackForwardItems = [[NSMutableArray alloc] initWithCapacity:1];
-    }
-    if ([_private->ourBackForwardItems indexOfObjectIdenticalTo:item] == NSNotFound) {
-        [_private->ourBackForwardItems addObject:item];
-    }
-}
-
-- (void)_addBackForwardItems:(NSArray *)items
-{
-    if (!items || [items count] == 0) {
-        return;
-    }
-    if (!_private->ourBackForwardItems) {
-        _private->ourBackForwardItems = [items mutableCopy];
-    } else {
-        [_private->ourBackForwardItems addObjectsFromArray:items];
-    }
-}
-
-- (NSArray *)_backForwardItems
-{
-    return _private->ourBackForwardItems;
 }
 
 - (void)_setMainDocumentError: (NSError *)error

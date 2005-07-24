@@ -108,9 +108,6 @@
     NSURL *iconURL;
     WebIconLoader *iconLoader;
 
-    // BF items that reference what we loaded - we must keep their titles up to date
-    NSMutableArray *ourBackForwardItems;
-
     // The action that triggered loading of this data source -
     // we keep this around for the benefit of the various policy
     // handlers.
@@ -188,9 +185,6 @@
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (NSString *)_overrideEncoding;
-- (void)_addBackForwardItem:(WebHistoryItem *)item;
-- (void)_addBackForwardItems:(NSArray *)items;
-- (NSArray *)_backForwardItems;
 - (void)_setIsClientRedirect:(BOOL)flag;
 - (BOOL)_isClientRedirect;
 

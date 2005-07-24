@@ -421,7 +421,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     }
     
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
-    [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[originalURL _web_originalDataAsString]];
 
     // save form state if this is a POST
@@ -774,7 +773,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
         
             // Handle adding the URL to the back/forward list.
             WebDataSource *ds = [self dataSource];
-            WebHistoryItem *entry = nil;
             NSString *ptitle = [ds pageTitle];
 
             switch (loadType) {
@@ -829,7 +827,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     if (URL && ![URL _web_isEmpty]){
                         ASSERT([self webView]);
                         if (![[[self webView] preferences] privateBrowsingEnabled]) {
-                            entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
+                            WebHistoryItem *entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
                             if (ptitle)
                                 [entry setTitle: ptitle];                            
                         }
@@ -891,7 +889,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             
             // If we have a title let the WebView know about it.
             if (ptitle) {
-                [entry setTitle:ptitle];
                 [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                                            didReceiveTitle:ptitle
                                                                   forFrame:self];
@@ -1937,11 +1934,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if (_private->quickRedirectComing) {
             LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
             _private->quickRedirectComing = NO;
-            
-            // need to transfer BF items from the dataSource that we're replacing
-            WebDataSource *newDataSource = [self provisionalDataSource];
-            [newDataSource _setIsClientRedirect:YES];
-            [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
+            [[self provisionalDataSource] _setIsClientRedirect:YES];
         } else if (sameURL) {
             // Example of this case are sites that reload the same URL with a different cookie
             // driving the generated content, or a master frame with links that drive a target
@@ -2073,6 +2066,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!cancelWithLoadInProgress)
         _private->quickRedirectComing = NO;
     LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
+}
+
+- (void)_setTitle:(NSString *)title
+{
+    [[_private currentItem] setTitle:title];
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item

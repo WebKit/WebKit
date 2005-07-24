@@ -1,5 +1,33 @@
 2005-07-24  Justin Garcia  <justin.garcia@apple.com>
 
+        Patch by Trey Matteson <trey@apple.com>
+
+        Reviewed by john
+        
+        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3953> back-forward items have wrong titles after sub-frame navigations
+
+        This was caused by a mistaken data structure, where WebDataSource tried to keep a list of
+        b/f items it was responsible for.  The problem arose in the case of frames, where a subframe
+        was loaded with new content.  When this happens a fresh tree of b/f items is created,
+        but the reference in the DataSource still pointed to the old item.
+
+        Since the WebFrame does a lot of work to track the current b/f item, the easiest thing is to
+        get rid of the DataSource's reference, and have it ask the WebFrame to set the title on the
+        right b/f item.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setTitle:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _setTitle:]):
+        * WebView.subproj/WebFramePrivate.h:
+
+2005-07-24  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by kevin
         
         Fixed make clean problem
