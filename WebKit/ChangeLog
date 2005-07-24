@@ -9,7 +9,7 @@
         hebrew with LRO and PDF control characters, but adjusted the run's to and from to include those characters,
         so that they would be rendered if the font includes a glyph for bidi control characters.
         
-        Also adding a manual test (our default layout test font does not include bidi control characters)
+        Also adding a manual test
 
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (reverseCharactersInRun):
