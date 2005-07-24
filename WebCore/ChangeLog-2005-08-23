@@ -1,5 +1,24 @@
 2005-07-24  Justin Garcia  <justin.garcia@apple.com>
 
+        Patch by Anders Carlsson <andersca@mac.com>
+
+        Reviewed by hyatt
+        
+        - <http://bugzilla.opendarwin.org/show_bug.cgi?id=3615> canvas transform matrix does not apply to patterns
+        Fill and stroke patterns are created in the respective fill and stroke functions using the current CTM.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::call):
+        (KJS::Context2D::updateFillImagePattern):
+        (KJS::Context2D::updateStrokeImagePattern):
+        (KJS::Context2D::putValueProperty):
+        (KJS::Context2D::Context2D):
+        (KJS::_rh):
+        (KJS::ImagePattern::createPattern):
+        * khtml/ecma/kjs_html.h:
+
+2005-07-24  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by kevin.
 
         Fixes make clean problem introduced in xcode2.1 transition

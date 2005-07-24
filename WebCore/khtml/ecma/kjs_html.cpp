@@ -4001,9 +4001,12 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 CGContextDrawShading(drawingContext, shading);
                 
                 CGContextRestoreGState(drawingContext);
+            } else if (isImagePattern(contextObject->_fillStyle)) {
+                contextObject->updateFillImagePattern();
+                CGContextFillPath(drawingContext);
             }
             else
-                CGContextFillPath (drawingContext);
+                CGContextFillPath(drawingContext);
                 
             renderer->setNeedsImageUpdate();
             break;
@@ -4031,6 +4034,9 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 CGContextDrawShading(drawingContext, shading);
                 
                 CGContextRestoreGState(drawingContext);
+            } else if (isImagePattern(contextObject->_strokeStyle)) {
+                contextObject->updateStrokeImagePattern();
+                CGContextFillPath(drawingContext);
             }
             else
                 CGContextStrokePath (drawingContext);
@@ -4201,6 +4207,8 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             float y = (float)args[1].toNumber(exec);
             float w = (float)args[2].toNumber(exec);
             float h = (float)args[3].toNumber(exec);
+            if (isImagePattern(contextObject->_fillStyle))
+                contextObject->updateFillImagePattern();
             CGContextFillRect (drawingContext, CGRectMake(x,y,w,h));
             renderer->setNeedsImageUpdate();
             break;
@@ -4216,7 +4224,8 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             float y = (float)args[1].toNumber(exec);
             float w = (float)args[2].toNumber(exec);
             float h = (float)args[3].toNumber(exec);
-            
+            if (isImagePattern(contextObject->_strokeStyle))
+                contextObject->updateStrokeImagePattern();
             if (size > 4)
                 CGContextStrokeRectWithWidth (drawingContext, CGRectMake(x,y,w,h), (float)args[4].toNumber(exec));
             else
@@ -4768,6 +4777,44 @@ void Context2D::setShadow(ExecState *exec)
     CFRelease (colorRef);
 }
 
+void Context2D::updateFillImagePattern()
+{
+    CGContextRef context = drawingContext();
+    CGAffineTransform transform = CGContextGetCTM(context);
+    
+    if (!_validFillImagePattern || !CGAffineTransformEqualToTransform(transform, _lastFillImagePatternCTM)) {
+        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle.imp());
+        CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
+        float patternAlpha = 1;
+        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
+        CGContextSetFillColorSpace(context, patternSpace);
+        CGContextSetFillPattern(context, pattern, &patternAlpha);
+        CGColorSpaceRelease(patternSpace);
+        CGPatternRelease(pattern);
+        _validFillImagePattern = true;
+        _lastFillImagePatternCTM = transform;
+    }
+}
+
+void Context2D::updateStrokeImagePattern()
+{
+    CGContextRef context = drawingContext();
+    CGAffineTransform transform = CGContextGetCTM(context);
+    
+    if (!_validStrokeImagePattern || !CGAffineTransformEqualToTransform(transform, _lastStrokeImagePatternCTM)) {
+        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle.imp());
+        CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
+        float patternAlpha = 1;
+        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
+        CGContextSetStrokeColorSpace(context, patternSpace);
+        CGContextSetStrokePattern(context, pattern, &patternAlpha);
+        CGColorSpaceRelease(patternSpace);
+        CGPatternRelease(pattern);
+        _validStrokeImagePattern = true;
+        _lastStrokeImagePatternCTM = transform;
+    }
+}
+
 void Context2D::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
 {
     CGContextRef context = drawingContext();
@@ -4792,15 +4839,6 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
                     exec->setException(err);
                     return;
                 }
-
-                if (isImagePattern(value)) {
-                    float patternAlpha = 1;
-                    ImagePattern *imagePattern = static_cast<ImagePattern*>(o);
-                    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-                    CGContextSetStrokeColorSpace(context, patternSpace);
-                    CGContextSetStrokePattern(context, imagePattern->getPattern(), &patternAlpha);
-                    CGColorSpaceRelease(patternSpace);
-                }
             }
             break;
         }
@@ -4823,16 +4861,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
                     return;
                 }
 
-                if (isImagePattern(value)) {
-                    float patternAlpha = 1;
-                    ImagePattern *imagePattern = static_cast<ImagePattern*>(o);
-                    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-                    CGContextSetFillColorSpace(context, patternSpace);
-                    CGContextSetFillPattern(context, imagePattern->getPattern(), &patternAlpha);
-                    CGColorSpaceRelease(patternSpace);
-                }
-
-                // Gradients are constructed when needed during fill and stroke operations.
+                // Gradients and image patterns are constructed when needed during fill and stroke operations.
             }
             break;
         }
@@ -4968,7 +4997,8 @@ void Context2D::restore()
 }
 
 Context2D::Context2D(HTMLElementImpl *e)
-  : _element(e), _needsFlushRasterCache(false)
+  : _validFillImagePattern(false), _validStrokeImagePattern(false),
+    _element(e), _needsFlushRasterCache(false)
 {
     _lineWidth = Number (1.);
     _strokeStyle = String ("black");
@@ -5350,35 +5380,40 @@ static void drawPattern (void * info, CGContextRef context)
 
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 ImagePattern::ImagePattern(Image *i, int repetitionType)
+    :_rw(0), _rh(0)
 {
-    _repetitionType = repetitionType;
     khtml::CachedImage *ci = i->image();
     if (ci) {
         _pixmap = ci->pixmap();
-        float w = _pixmap.width(), rw = 0;
-        float h = _pixmap.height(), rh = 0;
-        CGRect bounds = CGRectMake (0, 0, w, h);
- 
+        float w = _pixmap.width();
+        float h = _pixmap.height();
+        _bounds = CGRectMake (0, 0, w, h);
+
         if (repetitionType == Repeat) {
-            rw = w; rh = h;
+            _rw = w; _rh = h;
         }
         else if (repetitionType == RepeatX) {
-            rw = w; rh = 0;
+            _rw = w; _rh = 0;
         }
         else if (repetitionType == RepeatY) {
-            rw = 0; rh = h;
+            _rw = 0; _rh = h;
         }
         else if (repetitionType == NoRepeat) {
-            rw = 0; rh = 0;
+            _rw = 0; _rh = 0;
         }
-            
-        CGAffineTransform transform = CGAffineTransformIdentity;
-        transform = CGAffineTransformScale (transform, 1, -1);
-        transform = CGAffineTransformTranslate (transform, 0, -h);
-        
-        _patternRef = CGPatternCreate(this, bounds, transform, rw, rh, 
-            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     }
+}
+
+CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
+{
+    if (_pixmap.isNull())
+        return 0;
+          
+    CGAffineTransform patternTransform = transform;
+    patternTransform = CGAffineTransformScale(patternTransform, -1, -1);
+    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -_pixmap.height());
+
+    return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
 }
 
 Value ImagePattern::get(ExecState *exec, const Identifier &propertyName) const
@@ -5406,14 +5441,6 @@ void ImagePattern::put(ExecState *exec, const Identifier &propertyName, const Va
 
 void ImagePattern::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
 {
-}
-
-ImagePattern::~ImagePattern()
-{
-    if (_patternRef) {
-        CGPatternRelease (_patternRef);
-        _patternRef = 0;
-    }
 }
 
 ////////////////////////////////////////////////////////////////
