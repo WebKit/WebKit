@@ -1,3 +1,11 @@
+2005-07-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin
+        
+        Fixed make clean problem
+
+        * Makefile.am:
+
 2005-07-23  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by <opendarwin.org@mitzpettel.com>

@@ -3,6 +3,6 @@ all-am:
 	xcodebuild -configuration $(BUILDSTYLE)
 clean-am:
 	defaults write com.apple.Xcode PBXProductDirectory "$(SYMROOTS)"
-	xcodebuild clean
+	xcodebuild clean -configuration ${BUILDSTYLE}
 doc: all
 	../Tools/Scripts/make-docs $(SYMROOTS)/Documentation/WebKit $(SYMROOTS)/WebKit.framework/Headers
