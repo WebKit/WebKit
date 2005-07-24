@@ -1,3 +1,11 @@
+2005-07-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by kevin.
+
+        Fixes make clean problem introduced in xcode2.1 transition
+
+        * Makefile.am:
+
 2005-07-23  Justin Garcia  <justin.garcia@apple.com>
 
         Adding a manual test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=3862>

@@ -3,4 +3,4 @@ all-am:
 	xcodebuild -configuration $(BUILDSTYLE)
 clean-am:
 	defaults write com.apple.Xcode PBXProductDirectory "$(SYMROOTS)"
-	xcodebuild clean
+	xcodebuild clean -configuration ${BUILDSTYLE}
