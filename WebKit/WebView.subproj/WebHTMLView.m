@@ -4327,9 +4327,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)deleteToEndOfLine:(id)sender
 {
-    // FIXME: To match NSTextView, this command should delete the newline at the end of
+    // To match NSTextView, this command should delete the newline at the end of
     // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
-    [self _deleteWithDirection:WebSelectForward granularity:WebSelectToLineBoundary killRing:YES isTypingAction:NO];
+    if(![self _deleteWithDirection:WebSelectForward granularity:WebSelectToLineBoundary killRing:YES isTypingAction:NO])
+        [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:YES isTypingAction:NO];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
