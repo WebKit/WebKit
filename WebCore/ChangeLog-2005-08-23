@@ -1,4 +1,13 @@
 2005-07-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by hyatt
+        
+        Backing out a change that made the caret invisible in Mail in certain situations.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+
+2005-07-25  Justin Garcia  <justin.garcia@apple.com>
         
         Added a manual test for a recent change to WebKit
 
