@@ -1,3 +1,10 @@
+2005-07-25  Justin Garcia  <justin.garcia@apple.com>
+        
+        Added a manual test for a recent change to WebKit
+
+        Test cases added:
+        * manual-tests/deleteToEndOfLine.html: Added.
+
 2005-07-24  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson <andersca@mac.com>
