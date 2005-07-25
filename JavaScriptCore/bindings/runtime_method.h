@@ -38,7 +38,7 @@ public:
     
     virtual ~RuntimeMethodImp();
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
 
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);

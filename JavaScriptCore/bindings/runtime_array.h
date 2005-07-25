@@ -37,8 +37,8 @@ public:
     RuntimeArrayImp(ExecState *exec, Bindings::Array *i);
     ~RuntimeArrayImp();
     
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
-    virtual Value get(ExecState *exec, unsigned index) const ;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnProperty(ExecState *exec, unsigned index, Value& result) const ;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
     

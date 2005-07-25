@@ -68,9 +68,9 @@ DOMNodeIterator::~DOMNodeIterator()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMNodeIterator::get(ExecState *exec, const Identifier &p) const
+bool DOMNodeIterator::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<DOMNodeIterator,DOMObject>(exec,p,&DOMNodeIteratorTable,this);
+  return lookupGetOwnValue<DOMNodeIterator, DOMObject>(exec, p, &DOMNodeIteratorTable, this, result);
 }
 
 Value DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
@@ -145,9 +145,9 @@ const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &Nod
   SHOW_NOTATION		DOM::NodeFilter::SHOW_NOTATION	DontDelete|ReadOnly
 @end
 */
-Value NodeFilterConstructor::get(ExecState *exec, const Identifier &p) const
+bool NodeFilterConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<NodeFilterConstructor,DOMObject>(exec,p,&NodeFilterConstructorTable,this);
+  return lookupGetOwnValue<NodeFilterConstructor, DOMObject>(exec, p, &NodeFilterConstructorTable, this, result);
 }
 
 Value NodeFilterConstructor::getValueProperty(ExecState *, int token) const
@@ -247,9 +247,9 @@ DOMTreeWalker::~DOMTreeWalker()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMTreeWalker::get(ExecState *exec, const Identifier &p) const
+bool DOMTreeWalker::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<DOMTreeWalker,DOMObject>(exec,p,&DOMTreeWalkerTable,this);
+  return lookupGetOwnValue<DOMTreeWalker, DOMObject>(exec, p, &DOMTreeWalkerTable, this, result);
 }
 
 Value DOMTreeWalker::getValueProperty(ExecState *exec, int token) const

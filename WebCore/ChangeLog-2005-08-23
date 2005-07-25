@@ -1,3 +1,113 @@
+2005-07-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4124
+	(change JavaScript property access to avoid double lookup)
+
+	- 10% speedup on JavaScript iBench
+	- 5% speedup on 24fun BenchJS benchmark
+
+	Changed all get methods to getOwnProperty - they are no longer responsible for
+	prototype lookup, and determine if the property was found as a side efect.
+
+	Also miscellaneous code cleanup.
+	
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::getOwnProperty):
+        (KJS::DOMStyleSheet::getOwnProperty):
+        (KJS::DOMStyleSheetList::getOwnProperty):
+        (KJS::DOMMediaList::getOwnProperty):
+        (KJS::DOMCSSStyleSheet::getOwnProperty):
+        (KJS::DOMCSSRuleList::getOwnProperty):
+        (KJS::DOMCSSRule::getOwnProperty):
+        (KJS::DOMCSSRule::getValueProperty):
+        (KJS::CSSRuleConstructor::getOwnProperty):
+        (KJS::DOMCSSValue::getOwnProperty):
+        (KJS::CSSValueConstructor::getOwnProperty):
+        (KJS::DOMCSSPrimitiveValue::getOwnProperty):
+        (KJS::CSSPrimitiveValueConstructor::getOwnProperty):
+        (KJS::DOMCSSValueList::getOwnProperty):
+        (KJS::DOMRGBColor::getOwnProperty):
+        (KJS::DOMRect::getOwnProperty):
+        (KJS::DOMCounter::getOwnProperty):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getOwnProperty):
+        (KJS::DOMNodeList::getOwnProperty):
+        (KJS::DOMAttr::getOwnProperty):
+        (KJS::DOMDocument::getOwnProperty):
+        (KJS::DOMElement::getOwnProperty):
+        (KJS::DOMDocumentType::getOwnProperty):
+        (KJS::DOMNamedNodeMap::getOwnProperty):
+        (KJS::DOMProcessingInstruction::getOwnProperty):
+        (KJS::DOMNotation::getOwnProperty):
+        (KJS::DOMEntity::getOwnProperty):
+        (KJS::NodeConstructor::getOwnProperty):
+        (KJS::DOMExceptionConstructor::getOwnProperty):
+        (KJS::DOMNamedNodesCollection::getOwnProperty):
+        (KJS::DOMCharacterData::getOwnProperty):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::EventConstructor::getOwnProperty):
+        (KJS::DOMEvent::getOwnProperty):
+        (KJS::EventExceptionConstructor::getOwnProperty):
+        (KJS::DOMUIEvent::getOwnProperty):
+        (KJS::DOMMouseEvent::getOwnProperty):
+        (KJS::DOMKeyboardEvent::getOwnProperty):
+        (KJS::MutationEventConstructor::getOwnProperty):
+        (KJS::DOMMutationEvent::getOwnProperty):
+        (KJS::DOMWheelEvent::getOwnProperty):
+        (KJS::Clipboard::getOwnProperty):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::getOwnProperty):
+        (KJS::KJS::HTMLElement::getOwnProperty):
+        (KJS::KJS::HTMLCollection::getOwnProperty):
+        (KJS::KJS::HTMLSelectCollection::getOwnProperty):
+        (KJS::Image::getOwnProperty):
+        (KJS::Context2D::getOwnProperty):
+        (KJS::Gradient::getOwnProperty):
+        (KJS::ImagePattern::getOwnProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugin::Plugin):
+        (KJS::Navigator::getOwnProperty):
+        (KJS::Plugins::getOwnProperty):
+        (KJS::MimeTypes::getOwnProperty):
+        (KJS::Plugin::getOwnProperty):
+        (KJS::MimeType::getOwnProperty):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::getOwnProperty):
+        (KJS::RangeConstructor::getOwnProperty):
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::getOwnProperty):
+        (KJS::NodeFilterConstructor::getOwnProperty):
+        (KJS::DOMTreeWalker::getOwnProperty):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::getOwnProperty):
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getOwnProperty):
+        (KJS::Window::~Window):
+        (KJS::Window::getOwnProperty):
+        (KJS::Window::put):
+        (KJS::FrameArray::getOwnProperty):
+        (KJS::Location::Location):
+        (KJS::Location::getOwnProperty):
+        (KJS::Location::put):
+        (KJS::Selection::Selection):
+        (KJS::Selection::getOwnProperty):
+        (KJS::BarInfo::getOwnProperty):
+        (KJS::History::getOwnProperty):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getOwnProperty):
+        * khtml/ecma/xmlhttprequest.h:
+
 2005-07-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by hyatt

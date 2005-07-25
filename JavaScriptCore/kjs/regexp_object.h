@@ -74,7 +74,7 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
-    Value get(ExecState *exec, const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     int ** registerRegexp( const RegExp* re, const UString& s );
     void setSubPatterns(int num) { lastNrSubPatterns = num; }
     Object arrayOfMatches(ExecState *exec, const UString &result) const;

@@ -202,18 +202,20 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
 }
 
-Value FunctionImp::get(ExecState *exec, const Identifier &propertyName) const
+bool FunctionImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
     // Find the arguments from the closest context.
     if (propertyName == argumentsPropertyName) {
         ContextImp *context = exec->_context;
         while (context) {
-            if (context->function() == this)
-                return static_cast<ActivationImp *>
-                    (context->activationObject())->get(exec, propertyName);
-            context = context->callingContext();
+          if (context->function() == this) {
+            result = static_cast<ActivationImp *>(context->activationObject())->get(exec, propertyName);
+            return true;
+          }
+          context = context->callingContext();
         }
-        return Null();
+        result = Null();
+        return true;
     }
     
     // Compute length of parameters.
@@ -224,10 +226,11 @@ Value FunctionImp::get(ExecState *exec, const Identifier &propertyName) const
             ++count;
             p = p->next;
         }
-        return Number(count);
+        result = Number(count);
+        return true;
     }
     
-    return InternalFunctionImp::get(exec, propertyName);
+    return InternalFunctionImp::getOwnProperty(exec, propertyName, result);
 }
 
 void FunctionImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -440,13 +443,14 @@ void ArgumentsImp::mark()
     _activationObject->mark();
 }
 
-Value ArgumentsImp::get(ExecState *exec, const Identifier &propertyName) const
+bool ArgumentsImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
   if (indexToNameMap.isMapped(propertyName)) {
-    return _activationObject->get(exec, indexToNameMap[propertyName]);
-  } else {
-    return ObjectImp::get(exec, propertyName);
+    result = _activationObject->get(exec, indexToNameMap[propertyName]);
+    return true;
   }
+
+  return ObjectImp::getOwnProperty(exec, propertyName, result);
 }
 
 void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -488,20 +492,22 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
-Value ActivationImp::get(ExecState *exec, const Identifier &propertyName) const
+bool ActivationImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    if (propertyName == argumentsPropertyName) {
-        // check for locally declared arguments property
-        ValueImp *v = getDirect(propertyName);
-        if (v)
-            return Value(v);
+    // do this first so property map arguments property wins over the below
+    if (ObjectImp::getOwnProperty(exec, propertyName, result))
+        return true;
 
+    if (propertyName == argumentsPropertyName) {
         // default: return builtin arguments array
         if (!_argumentsObject)
-                createArgumentsObject(exec);
-        return Value(_argumentsObject);
+            createArgumentsObject(exec);
+
+        result = Value(_argumentsObject);
+        return true;
     }
-    return ObjectImp::get(exec, propertyName);
+
+    return false;
 }
 
 bool ActivationImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const

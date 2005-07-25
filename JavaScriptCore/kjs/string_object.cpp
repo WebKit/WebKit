@@ -50,10 +50,12 @@ StringInstanceImp::StringInstanceImp(ObjectImp *proto, const UString &string)
   setInternalValue(String(string));
 }
 
-Value StringInstanceImp::get(ExecState *exec, const Identifier &propertyName) const
+bool StringInstanceImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-  if (propertyName == lengthPropertyName)
-    return Number(internalValue().toString(exec).size());
+  if (propertyName == lengthPropertyName) {
+    result = Value(internalValue().toString(exec).size());
+    return true;
+  }
 
   bool ok;
   const unsigned index = propertyName.toArrayIndex(&ok);
@@ -63,10 +65,11 @@ Value StringInstanceImp::get(ExecState *exec, const Identifier &propertyName) co
     if (index >= length)
       return Undefined();
     const UChar c = s[index];
-    return String(UString(&c, 1));
+    result = Value(UString(&c, 1));
+    return true;
   }
 
-  return ObjectImp::get(exec, propertyName);
+  return ObjectImp::getOwnProperty(exec, propertyName, result);
 }
 
 void StringInstanceImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -151,9 +154,9 @@ StringPrototypeImp::StringPrototypeImp(ExecState *exec,
 
 }
 
-Value StringPrototypeImp::get(ExecState *exec, const Identifier &propertyName) const
+bool StringPrototypeImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-  return lookupGetFunction<StringProtoFuncImp, StringInstanceImp>( exec, propertyName, &stringTable, this );
+  return lookupGetOwnFunction<StringProtoFuncImp, StringInstanceImp>(exec, propertyName, &stringTable, this, result);
 }
 
 // ------------------------------ StringProtoFuncImp ---------------------------

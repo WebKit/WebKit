@@ -99,7 +99,7 @@ namespace KJS {
   class EventConstructor : public DOMObject {
   public:
     EventConstructor(ExecState *) { }
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -112,7 +112,7 @@ namespace KJS {
   public:
     DOMEvent(ExecState *exec, DOM::EventImpl *e);
     ~DOMEvent();
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName,
 			const Value& value, int attr = None);
@@ -137,7 +137,7 @@ namespace KJS {
   class EventExceptionConstructor : public DOMObject {
   public:
     EventExceptionConstructor(ExecState *) { }
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -150,7 +150,7 @@ namespace KJS {
   public:
     DOMUIEvent(ExecState *exec, DOM::UIEventImpl *ue);
     ~DOMUIEvent();
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -162,7 +162,7 @@ namespace KJS {
   public:
     DOMMouseEvent(ExecState *exec, DOM::MouseEventImpl *me);
     ~DOMMouseEvent();
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     virtual void mark();
     // no put - all read-only
@@ -178,7 +178,7 @@ namespace KJS {
   public:
     DOMKeyboardEvent(ExecState *exec, DOM::KeyboardEventImpl *ke);
     ~DOMKeyboardEvent();
-    virtual Value get(ExecState *exec, const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const;
@@ -190,7 +190,7 @@ namespace KJS {
   class MutationEventConstructor : public DOMObject {
   public:
     MutationEventConstructor(ExecState *) { }
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -203,7 +203,7 @@ namespace KJS {
   public:
     DOMMutationEvent(ExecState *exec, DOM::MutationEventImpl *me);
     ~DOMMutationEvent();
-    virtual Value get(ExecState *exec,const Identifier &p) const;
+    virtual bool getOwnProperty(ExecState *exec,const Identifier& p, Value& result) const;
     Value getValueProperty(ExecState *, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -215,7 +215,7 @@ namespace KJS {
     class DOMWheelEvent : public DOMUIEvent {
     public:
         DOMWheelEvent(ExecState *, DOM::WheelEventImpl *);
-        virtual Value get(ExecState *, const Identifier &p) const;
+        virtual bool getOwnProperty(ExecState *, const Identifier &p, Value& result) const;
         Value getValueProperty(ExecState *, int token) const;
         // no put - all read-only
         virtual const ClassInfo* classInfo() const { return &info; }
@@ -229,7 +229,7 @@ namespace KJS {
   public:
     Clipboard(ExecState *exec, DOM::ClipboardImpl *ds);
     ~Clipboard();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);

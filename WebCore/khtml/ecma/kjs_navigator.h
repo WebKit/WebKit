@@ -30,7 +30,7 @@ namespace KJS {
   class Navigator : public ObjectImp {
   public:
     Navigator(ExecState *exec, KHTMLPart *p);
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

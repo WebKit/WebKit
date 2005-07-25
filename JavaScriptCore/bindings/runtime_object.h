@@ -41,7 +41,7 @@ public:
 
     const ClassInfo *classInfo() const { return &info; }
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
 
     virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);

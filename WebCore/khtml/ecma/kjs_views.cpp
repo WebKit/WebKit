@@ -54,13 +54,17 @@ DOMAbstractView::~DOMAbstractView()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMAbstractView::get(ExecState *exec, const Identifier &p) const
+bool DOMAbstractView::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  if (p == "document")
-    return getDOMNode(exec, m_impl->document());
-  else if (p == "getComputedStyle")
-    return lookupOrCreateFunction<DOMAbstractViewFunc>(exec,p,this,DOMAbstractView::GetComputedStyle,2,DontDelete|Function);
-  return DOMObject::get(exec, p);
+    if (p == "document") {
+        result = getDOMNode(exec, m_impl->document());
+        return true;
+    } else if (p == "getComputedStyle") {
+        result = lookupOrCreateFunction<DOMAbstractViewFunc>(exec, p, this, DOMAbstractView::GetComputedStyle, 2, DontDelete|Function);
+        return true;
+    }
+
+    return DOMObject::getOwnProperty(exec, p, result);
 }
 
 Value DOMAbstractViewFunc::call(ExecState *exec, Object &thisObj, const List &args)

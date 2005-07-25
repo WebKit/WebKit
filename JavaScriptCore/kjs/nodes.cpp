@@ -284,7 +284,22 @@ Value ThisNode::evaluate(ExecState *exec)
 // ECMA 11.1.2 & 10.1.4
 Value ResolveNode::evaluate(ExecState *exec)
 {
-  return evaluateReference(exec).getValue(exec);
+  ScopeChain chain = exec->context().imp()->scopeChain();
+
+  Value result;
+  while (!chain.isEmpty()) {
+    ObjectImp *o = chain.top();
+
+    if (o->getProperty(exec, ident, result))
+      return result;
+    
+    chain.pop();
+  }
+
+  UString m = I18N_NOOP("Can't find variable: ") + ident.ustring();
+  Object err = Error::create(exec, ReferenceError, m.ascii());
+  exec->setException(err);
+  return err;
 }
 
 Reference ResolveNode::evaluateReference(ExecState *exec)

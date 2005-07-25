@@ -21,7 +21,6 @@
 
 #include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <assert.h>
 
 #include "value.h"
@@ -81,9 +80,10 @@ MathObjectImp::MathObjectImp(ExecState * /*exec*/,
 }
 
 // ECMA 15.8
-Value MathObjectImp::get(ExecState *exec, const Identifier &propertyName) const
+
+bool MathObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-  return lookupGet<MathFuncImp, MathObjectImp, ObjectImp>( exec, propertyName, &mathTable, this );
+  return lookupGetOwnProperty<MathFuncImp, MathObjectImp, ObjectImp>(exec, propertyName, &mathTable, this, result);
 }
 
 Value MathObjectImp::getValueProperty(ExecState *, int token) const
@@ -115,8 +115,7 @@ Value MathObjectImp::getValueProperty(ExecState *, int token) const
     d = sqrt(2.0);
     break;
   default:
-    fprintf( stderr, "Internal error in MathObjectImp: unhandled token %d\n", token );
-    break;
+    assert(0);
   }
 
   return Number(d);

@@ -104,7 +104,7 @@ namespace KJS {
   public:
     History(ExecState *exec, KHTMLPart *p)
       : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), part(p) { }
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -118,7 +118,7 @@ namespace KJS {
   public:
     FrameArray(ExecState *exec, KHTMLPart *p)
       : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), part(p) { }
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual UString toString(ExecState *exec) const;
   private:
     QGuardedPtr<KHTMLPart> part;
@@ -165,12 +165,9 @@ const ClassInfo Screen::info = { "Screen", 0, &ScreenTable, 0 };
 Screen::Screen(ExecState *exec)
   : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()) {}
 
-Value Screen::get(ExecState *exec, const Identifier &p) const
+bool Screen::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Screen::get " << p.qstring() << endl;
-#endif
-  return lookupGetValue<Screen,ObjectImp>(exec,p,&ScreenTable,this);
+  return lookupGetOwnValue<Screen, ObjectImp>(exec, p, &ScreenTable, this, result);
 }
 
 Value Screen::getValueProperty(ExecState *exec, int token) const
@@ -347,7 +344,6 @@ Window::Window(KHTMLPart *p)
 
 Window::~Window()
 {
-  kdDebug(6070) << "Window::~Window this=" << this << " part=" << m_part << endl;
   delete winq;
 }
 
@@ -692,24 +688,27 @@ static ValueImp *showModalDialog(ExecState *exec, Window *openerWindow, const Li
     return returnValue;
 }
 
-Value Window::get(ExecState *exec, const Identifier &p) const
+bool Window::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Window("<<this<<")::get " << p.qstring() << endl;
-#endif
-  if ( p == "closed" )
-    return Boolean(m_part.isNull());
+  if (p == "closed") {
+      result = Boolean(m_part.isNull());
+      return false;
+  }
 
   // we don't want any properties other than "closed" on a closed window
-  if (m_part.isNull())
-    return Undefined();
+  if (m_part.isNull()) {
+      result = Undefined();
+      return true;
+  }
 
   // Look for overrides first
   ValueImp * val = ObjectImp::getDirect(p);
   if (val) {
-    //kdDebug(6070) << "Window::get found dynamic property '" << p.ascii() << "'" << endl;
     if (isSafeScript(exec))
-      return Value(val);
+      result = Value(val);
+    else
+      result = Undefined();
+    return true;
   }
 
   // Check for child frames by name before built-in properties to
@@ -718,198 +717,244 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   // are in Moz but not IE. Since we have some of these, we have to do
   // it the Moz way.
   KHTMLPart *childFrame = m_part->childFrameNamed(p.ustring().qstring());
-  if (childFrame) 
-    return retrieve(childFrame);
+  if (childFrame) {
+    result = retrieve(childFrame);
+    return true;
+  }
 
   const HashEntry* entry = Lookup::findEntry(&WindowTable, p);
-  if (entry)
-  {
-    //kdDebug(6070) << "token: " << entry->value << endl;
-    switch( entry->value ) {
+  if (entry) {
+    switch(entry->value) {
     case Crypto:
-      return Undefined(); // ###
+      result = Undefined(); // ###
+      return true;
     case DefaultStatus:
-      return String(UString(m_part->jsDefaultStatusBarText()));
+      result = String(UString(m_part->jsDefaultStatusBarText()));
+      return true;
     case Status:
-      return String(UString(m_part->jsStatusBarText()));
+      result = String(UString(m_part->jsStatusBarText()));
+      return true;
     case Document:
-      if (isSafeScript(exec))
-      {
+      if (isSafeScript(exec)) {
         if (!m_part->xmlDocImpl()) {
 #if APPLE_CHANGES
           KWQ(m_part)->createEmptyDocument();
 #endif
-          kdDebug(6070) << "Document.write: adding <HTML><BODY> to create document" << endl;
           m_part->begin();
           m_part->write("<HTML><BODY>");
           m_part->end();
         }
-        return getDOMNode(exec, m_part->xmlDocImpl());
-      }
-      else
-        return Undefined();
+        result = getDOMNode(exec, m_part->xmlDocImpl());
+      } else
+        result = Undefined();
+      return true;
     case Node:
-      return getNodeConstructor(exec);
+      result = getNodeConstructor(exec);
+      return true;
     case Range:
-      return getRangeConstructor(exec);
+      result = getRangeConstructor(exec);
+      return true;
     case NodeFilter:
-      return getNodeFilterConstructor(exec);
+      result = getNodeFilterConstructor(exec);
+      return true;
     case DOMException:
-      return getDOMExceptionConstructor(exec);
+      result = getDOMExceptionConstructor(exec);
+      return true;
     case CSSRule:
-      return getCSSRuleConstructor(exec);
+      result = getCSSRuleConstructor(exec);
+      return true;
     case EventCtor:
-      return getEventConstructor(exec);
+      result = getEventConstructor(exec);
+      return true;
     case Frames:
-      return Value(frames ? frames :
-                   (const_cast<Window*>(this)->frames = new FrameArray(exec,m_part)));
+      result = Value(frames ? frames :
+                     (const_cast<Window*>(this)->frames = new FrameArray(exec,m_part)));
+      return true;
     case _History:
-      return Value(history ? history :
-                   (const_cast<Window*>(this)->history = new History(exec,m_part)));
-
+      result = Value(history ? history :
+                     (const_cast<Window*>(this)->history = new History(exec,m_part)));
+      return true;
     case Event:
       if (m_evt)
-        return getDOMEvent(exec, m_evt);
-      else {
-#ifdef KJS_VERBOSE
-        kdWarning(6070) << "window(" << this << "," << m_part->name() << ").event, no event!" << endl;
-#endif
-        return Undefined();
-      }
+        result = getDOMEvent(exec, m_evt);
+      else
+        result = Undefined();
+      return true;
     case InnerHeight:
-      if (!m_part->view())
-        return Undefined();
-      return Number(m_part->view()->visibleHeight());
+      if (m_part->view())
+        result = Number(m_part->view()->visibleHeight());
+      else
+        result = Undefined();
+      return true;
     case InnerWidth:
-      if (!m_part->view())
-        return Undefined();
-      return Number(m_part->view()->visibleWidth());
+      if (m_part->view())
+        result = Number(m_part->view()->visibleWidth());
+      else
+        result = Undefined();
+      return true;
     case Length:
-      return Number(m_part->frames().count());
+      result = Number(m_part->frames().count());
+      return true;
     case _Location:
-      return Value(location());
+      result = Value(location());
+      return true;
     case Name:
-      return String(m_part->name());
+      result = String(m_part->name());
+      return true;
     case _Navigator:
     case ClientInformation: {
       // Store the navigator in the object so we get the same one each time.
       Navigator *n = new Navigator(exec, m_part);
       const_cast<Window *>(this)->putDirect("navigator", n, DontDelete|ReadOnly);
       const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
-      return Value(n);
+      result = Value(n);
+      return true;
     }
 #ifdef Q_WS_QWS
     case _Konqueror:
-      return Value(new Konqueror(m_part));
+      result = Value(new Konqueror(m_part));
+      return true;
 #endif
     case Locationbar:
-      return Value(locationbar(exec));
+      result = Value(locationbar(exec));
+      return true;
     case Menubar:
-      return Value(menubar(exec));
+      result = Value(menubar(exec));
+      return true;
     case OffscreenBuffering:
-      return Boolean(true);
+      result = Boolean(true);
+      return true;
     case Opener:
-      if (!m_part->opener())
-        return Null();    // ### a null Window might be better, but == null
-      else                // doesn't work yet
-        return retrieve(m_part->opener());
+      if (m_part->opener())
+        result = retrieve(m_part->opener());
+      else
+        result = Null();
+      return true;
     case OuterHeight:
     case OuterWidth:
     {
-      if (!m_part->view())
-        return Number(0);
-      KWin::Info inf = KWin::info(m_part->view()->topLevelWidget()->winId());
-      return Number(entry->value == OuterHeight ?
-                    inf.geometry.height() : inf.geometry.width());
+      if (m_part->view()) {
+        KWin::Info inf = KWin::info(m_part->view()->topLevelWidget()->winId());
+        result = Number(entry->value == OuterHeight ?
+                        inf.geometry.height() : inf.geometry.width());
+      } else
+        result = Number(0);
+      return true;
     }
     case PageXOffset:
-      if (!m_part->view())
-        return Undefined();
-      updateLayout();
-      return Number(m_part->view()->contentsX());
+      if (m_part->view()) {
+        updateLayout();
+        result = Number(m_part->view()->contentsX());
+      } else
+        result = Undefined();
+      return true;
     case PageYOffset:
-      if (!m_part->view())
-        return Undefined();
-      updateLayout();
-      return Number(m_part->view()->contentsY());
+      if (m_part->view()) {
+        updateLayout();
+        result = Number(m_part->view()->contentsY());
+      } else
+        result = Undefined();
+      return true;
     case Parent:
-      return Value(retrieve(m_part->parentPart() ? m_part->parentPart() : (KHTMLPart*)m_part));
+      result = Value(retrieve(m_part->parentPart() ? m_part->parentPart() : (KHTMLPart*)m_part));
+      return true;
     case Personalbar:
-      return Value(personalbar(exec));
+      result = Value(personalbar(exec));
+      return true;
     case ScreenLeft:
     case ScreenX: {
-      if (!m_part->view())
-        return Undefined();
+      if (m_part->view()) {
 #if APPLE_CHANGES
-      // We want to use frameGeometry here instead of mapToGlobal because it goes through
-      // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
-      // to do anything relative to the screen the window is on, so the code below is no
-      // good of us anyway.
-      return Number(m_part->view()->topLevelWidget()->frameGeometry().x());
+        // We want to use frameGeometry here instead of mapToGlobal because it goes through
+        // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
+        // to do anything relative to the screen the window is on, so the code below is no
+        // good of us anyway.
+        result = Number(m_part->view()->topLevelWidget()->frameGeometry().x());
 #else
-      QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
-      return Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
+        QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
+        result = Number(m_part->view()->mapToGlobal(QPoint(0,0)).x() + sg.x());
 #endif
+      } else
+        result = Undefined();
+      return true;
     }
     case ScreenTop:
     case ScreenY: {
-      if (!m_part->view())
-        return Undefined();
+      if (m_part->view()) {
 #if APPLE_CHANGES
-      // See comment above in ScreenX.
-      return Number(m_part->view()->topLevelWidget()->frameGeometry().y());
+        // See comment above in ScreenX.
+        result = Number(m_part->view()->topLevelWidget()->frameGeometry().y());
 #else
-      QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
-      return Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
+        QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(m_part->view()));
+        result = Number(m_part->view()->mapToGlobal(QPoint(0,0)).y() + sg.y());
 #endif
+      } else 
+        result = Undefined();
+      return true;
     }
-    case ScrollX: {
-      if (!m_part->view())
-        return Undefined();
-      updateLayout();
-      return Number(m_part->view()->contentsX());
-    }
-    case ScrollY: {
-      if (!m_part->view())
-        return Undefined();
-      updateLayout();
-      return Number(m_part->view()->contentsY());
-    }
+    case ScrollX:
+      if (m_part->view()) {
+        updateLayout();
+        result = Number(m_part->view()->contentsX());
+      } else
+        result = Undefined();
+      return true;
+    case ScrollY:
+      if (m_part->view()) {
+        updateLayout();
+        result = Number(m_part->view()->contentsY());
+      } else
+        result = Undefined();
+      return true;
     case Scrollbars:
-      return Value(scrollbars(exec));
+      result = Value(scrollbars(exec));
+      return true;
     case Statusbar:
-      return Value(statusbar(exec));
+      result = Value(statusbar(exec));
+      return true;
     case Toolbar:
-      return Value(toolbar(exec));
+      result = Value(toolbar(exec));
+      return true;
     case Self:
     case _Window:
-      return Value(retrieve(m_part));
+      result = Value(retrieve(m_part));
+      return true;
     case Top: {
       KHTMLPart *p = m_part;
       while (p->parentPart())
         p = p->parentPart();
-      return Value(retrieve(p));
+      result = Value(retrieve(p));
+      return true;
     }
     case _Screen:
-      return Value(screen ? screen :
-                   (const_cast<Window*>(this)->screen = new Screen(exec)));
+      result = Value(screen ? screen :
+                     (const_cast<Window*>(this)->screen = new Screen(exec)));
+      return true;
     case Image:
-      return new ImageConstructorImp(exec, m_part->xmlDocImpl());
+      // FIXME: this property (and the few below) probably shouldn't create a new object every
+      // time
+      result = new ImageConstructorImp(exec, m_part->xmlDocImpl());
+      return true;
     case Option:
-      return new OptionConstructorImp(exec, m_part->xmlDocImpl());
+      result = new OptionConstructorImp(exec, m_part->xmlDocImpl());
+      return true;
     case XMLHttpRequest:
-      return new XMLHttpRequestConstructorImp(exec, m_part->xmlDocImpl());
+      result = new XMLHttpRequestConstructorImp(exec, m_part->xmlDocImpl());
+      return true;
     case XMLSerializer:
-      return new XMLSerializerConstructorImp(exec);
+      result = new XMLSerializerConstructorImp(exec);
+      return true;
     case DOMParser:
-      return new DOMParserConstructorImp(exec, m_part->xmlDocImpl());
+      result = new DOMParserConstructorImp(exec, m_part->xmlDocImpl());
+      return true;
     case Focus:
     case Blur:
     case Close:
-	return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+      result = lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+      return true;
     case ShowModalDialog:
         if (!canShowModalDialog(this))
-            return Undefined();
+          return false;
         // fall through
     case Alert:
     case Confirm:
@@ -935,153 +980,185 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ClearInterval:
     case GetSelection:
       if (isSafeScript(exec))
-        return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+        result = lookupOrCreateFunction<WindowFunc>(exec, p, this, entry->value, entry->params, entry->attr);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onabort:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::ABORT_EVENT);
+        result = getListener(exec,DOM::EventImpl::ABORT_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onblur:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::BLUR_EVENT);
+        result = getListener(exec,DOM::EventImpl::BLUR_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onchange:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::CHANGE_EVENT);
+        result = getListener(exec,DOM::EventImpl::CHANGE_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onclick:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_CLICK_EVENT);
+        result = getListener(exec,DOM::EventImpl::KHTML_CLICK_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Ondblclick:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_DBLCLICK_EVENT);
+        result = getListener(exec,DOM::EventImpl::KHTML_DBLCLICK_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Ondragdrop:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_DRAGDROP_EVENT);
+        result = getListener(exec,DOM::EventImpl::KHTML_DRAGDROP_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onerror:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_ERROR_EVENT);
+        result = getListener(exec,DOM::EventImpl::KHTML_ERROR_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onfocus:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::FOCUS_EVENT);
+        result = getListener(exec,DOM::EventImpl::FOCUS_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onkeydown:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KEYDOWN_EVENT);
+        result = getListener(exec,DOM::EventImpl::KEYDOWN_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onkeypress:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KEYPRESS_EVENT);
+        result = getListener(exec,DOM::EventImpl::KEYPRESS_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onkeyup:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KEYUP_EVENT);
+        result = getListener(exec,DOM::EventImpl::KEYUP_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onload:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::LOAD_EVENT);
+        result = getListener(exec,DOM::EventImpl::LOAD_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmousedown:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::MOUSEDOWN_EVENT);
+        result = getListener(exec,DOM::EventImpl::MOUSEDOWN_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmousemove:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::MOUSEMOVE_EVENT);
+        result = getListener(exec,DOM::EventImpl::MOUSEMOVE_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmouseout:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::MOUSEOUT_EVENT);
+        result = getListener(exec,DOM::EventImpl::MOUSEOUT_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmouseover:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::MOUSEOVER_EVENT);
+        result = getListener(exec,DOM::EventImpl::MOUSEOVER_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmouseup:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::MOUSEUP_EVENT);
+        result = getListener(exec,DOM::EventImpl::MOUSEUP_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case OnWindowMouseWheel:
       if (isSafeScript(exec))
-        return getListener(exec, DOM::EventImpl::MOUSEWHEEL_EVENT);
+        result = getListener(exec, DOM::EventImpl::MOUSEWHEEL_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onmove:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT);
+        result = getListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onreset:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::RESET_EVENT);
+        result = getListener(exec,DOM::EventImpl::RESET_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onresize:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::RESIZE_EVENT);
+        result = getListener(exec,DOM::EventImpl::RESIZE_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onscroll:
-        if (isSafeScript(exec))
-            return getListener(exec,DOM::EventImpl::SCROLL_EVENT);
-        else
-            return Undefined();
+      if (isSafeScript(exec))
+        result = getListener(exec,DOM::EventImpl::SCROLL_EVENT);
+      else
+        result = Undefined();
+      return true;
 #if APPLE_CHANGES
     case Onsearch:
-        if (isSafeScript(exec))
-            return getListener(exec,DOM::EventImpl::SEARCH_EVENT);
-        else
-            return Undefined();
+      if (isSafeScript(exec))
+        result = getListener(exec,DOM::EventImpl::SEARCH_EVENT);
+      else
+        result = Undefined();
+      return true;
 #endif
     case Onselect:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::SELECT_EVENT);
+        result = getListener(exec,DOM::EventImpl::SELECT_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onsubmit:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::SUBMIT_EVENT);
+        result = getListener(exec,DOM::EventImpl::SUBMIT_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case Onunload:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::UNLOAD_EVENT);
+        result = getListener(exec,DOM::EventImpl::UNLOAD_EVENT);
       else
-        return Undefined();
+        result = Undefined();
+      return true;
     case FrameElement:
       if (DocumentImpl *doc = m_part->xmlDocImpl())
         if (ElementImpl *fe = doc->ownerElement())
-          if (checkNodeSecurity(exec, fe))
-            return getDOMNode(exec, fe);
-      return Undefined();
+          if (checkNodeSecurity(exec, fe)) {
+            result = getDOMNode(exec, fe);
+            return true;
+          }
+      result = Undefined();
+      return true;
     }
   }
 
-  KHTMLPart *kp = m_part->findFrame( p.qstring() );
-  if (kp)
-    return Value(retrieve(kp));
+  KHTMLPart *kp = m_part->findFrame(p.qstring());
+  if (kp) {
+    result = Value(retrieve(kp));
+    return true;
+  }
 
   // allow window[1] or parent[1] etc. (#56983)
   bool ok;
@@ -1093,7 +1170,8 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       KParts::ReadOnlyPart* frame = frames.at(i);
       if (frame && frame->inherits("KHTMLPart")) {
 	KHTMLPart *khtml = static_cast<KHTMLPart*>(frame);
-	return Window::retrieve(khtml);
+	result = Window::retrieve(khtml);
+        return true;
       }
     }
   }
@@ -1102,26 +1180,22 @@ Value Window::get(ExecState *exec, const Identifier &p) const
   DocumentImpl *doc = m_part->xmlDocImpl();
   if (isSafeScript(exec) && doc && doc->isHTMLDocument()) {
     DOMString name = p.string();
-    if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) ||
-        doc->getElementById(name)) {
+    if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) || doc->getElementById(name)) {
       SharedPtr<DOM::HTMLCollectionImpl> collection = doc->windowNamedItems(name);
       if (collection->length() == 1)
-        return getDOMNode(exec, collection->firstItem());
+        result = getDOMNode(exec, collection->firstItem());
       else 
-        return getHTMLCollection(exec, collection.get());
+        result = getHTMLCollection(exec, collection.get());
+      return true;
     }
   }
 
-  // This isn't necessarily a bug. Some code uses if(!window.blah) window.blah=1
-  // But it can also mean something isn't loaded or implemented, hence the WARNING to help grepping.
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "WARNING: Window::get property not found: " << p.qstring() << endl;
-#endif
+  if (!isSafeScript(exec)) {
+    result = Undefined();
+    return true;
+  }
 
-  if (isSafeScript(exec))
-    return ObjectImp::get(exec, p);
-
-  return Undefined();
+  return ObjectImp::getOwnProperty(exec, p, result);
 }
 
 bool Window::hasOwnProperty(ExecState *exec, const Identifier &p) const
@@ -1167,9 +1241,6 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
   const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
   if (entry)
   {
-#ifdef KJS_VERBOSE
-    kdDebug(6070) << "Window("<<this<<")::put " << propertyName.qstring() << endl;
-#endif
     switch( entry->value ) {
     case Status: {
       String s = value.toString(exec);
@@ -1317,7 +1388,6 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
     }
   }
   if (isSafeScript(exec)) {
-    //kdDebug(6070) << "Window("<<this<<")::put storing " << propertyName.qstring() << endl;
     ObjectImp::put(exec, propertyName, value, attr);
   }
 }
@@ -2178,11 +2248,6 @@ void ScheduledAction::execute(Window *window)
   interpreter->setProcessingTimerCallback(false);
 }
 
-ScheduledAction::~ScheduledAction()
-{
-  //kdDebug(6070) << "ScheduledAction::~ScheduledAction " << this << endl;
-}
-
 ////////////////////// WindowQObject ////////////////////////
 
 WindowQObject::WindowQObject(Window *w)
@@ -2314,24 +2379,23 @@ bool WindowQObject::hasTimeouts()
 }
 #endif
 
-Value FrameArray::get(ExecState *exec, const Identifier &p) const
+bool FrameArray::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "FrameArray::get " << p.qstring() << " part=" << (void*)part << endl;
-#endif
   if (part.isNull())
     return Undefined();
 
   QPtrList<KParts::ReadOnlyPart> frames = part->frames();
   unsigned int len = frames.count();
-  if (p == lengthPropertyName)
-    return Number(len);
-  else if (p== "location") // non-standard property, but works in NS and IE
-  {
-    Object obj = Object::dynamicCast( Window::retrieve( part ) );
-    if ( !obj.isNull() )
-      return obj.get( exec, "location" );
-    return Undefined();
+  if (p == lengthPropertyName) {
+    result = Number(len);
+    return true;
+  } else if (p== "location") {
+    // non-standard property, but works in NS and IE
+    Object obj = Object::dynamicCast(Window::retrieve(part));
+    if (!obj.isNull()) {
+      result = obj.get(exec, "location");
+      return true;
+    }
   }
 
   // check for the name or number
@@ -2343,15 +2407,13 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
       frame = frames.at(i);
   }
 
-  // we are potentially fetching a reference to a another Window object here.
-  // i.e. we may be accessing objects from another interpreter instance.
-  // Therefore we have to be a bit careful with memory managment.
   if (frame && frame->inherits("KHTMLPart")) {
     KHTMLPart *khtml = static_cast<KHTMLPart*>(frame);
-    return Window::retrieve(khtml);
+    result = Window::retrieve(khtml);
+    return true;
   }
 
-  return ObjectImp::get(exec, p);
+  return ObjectImp::getOwnProperty(exec, p, result);
 }
 
 UString FrameArray::toString(ExecState *) const
@@ -2382,84 +2444,74 @@ const ClassInfo Location::info = { "Location", 0, 0, 0 };
 IMPLEMENT_PROTOFUNC(LocationFunc)
 Location::Location(KHTMLPart *p) : m_part(p)
 {
-  //kdDebug(6070) << "Location::Location " << this << " m_part=" << (void*)m_part << endl;
 }
 
-Location::~Location()
+bool Location::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  //kdDebug(6070) << "Location::~Location " << this << " m_part=" << (void*)m_part << endl;
-}
-
-Value Location::get(ExecState *exec, const Identifier &p) const
-{
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Location::get " << p.qstring() << " m_part=" << (void*)m_part << endl;
-#endif
-
   if (m_part.isNull())
-    return Undefined();
+    return false;
   
   const Window* window = Window::retrieveWindow(m_part);
-  if (!window || !window->isSafeScript(exec))
-      return Undefined();
+  if (!window || !window->isSafeScript(exec)) {
+      result = Undefined();
+      return true;
+  }
 
   KURL url = m_part->url();
   const HashEntry *entry = Lookup::findEntry(&LocationTable, p);
-  if (entry)
+  if (entry) {
     switch (entry->value) {
     case Hash:
-      return String( url.ref().isNull() ? QString("") : "#" + url.ref() );
+      result = String(url.ref().isNull() ? QString("") : "#" + url.ref());
+      return true;
     case Host: {
-      UString str = url.host();
-      if (url.port())
-        str += ":" + QString::number((int)url.port());
-      return String(str);
       // Note: this is the IE spec. The NS spec swaps the two, it says
       // "The hostname property is the concatenation of the host and port properties, separated by a colon."
       // Bleh.
+      UString str = url.host();
+      if (url.port())
+        str += ":" + QString::number((int)url.port());
+      result = String(str);
+      return true;
     }
     case Hostname:
-      return String( url.host() );
+      result = String(url.host());
+      return true;
     case Href:
       if (!url.hasPath())
-        return String( url.prettyURL()+"/" );
+        result = String(url.prettyURL() + "/");
       else
-        return String( url.prettyURL() );
+        result = String(url.prettyURL());
+      return true;
     case Pathname:
-      return String( url.path().isEmpty() ? QString("/") : url.path() );
+      result = String(url.path().isEmpty() ? QString("/") : url.path());
+      return true;
     case Port:
-      return String( url.port() ? QString::number((int)url.port()) : QString::fromLatin1("") );
+      result = String(url.port() ? QString::number((int)url.port()) : QString::fromLatin1(""));
+      return true;
     case Protocol:
-      return String( url.protocol()+":" );
+      result = String(url.protocol()+":");
+      return true;
     case Search:
-      return String( url.query() );
-    case EqualEqual: // [[==]]
-      return String(toString(exec));
+      result = String(url.query());
+      return true;
     case ToString:
-      return lookupOrCreateFunction<LocationFunc>(exec,p,this,entry->value,entry->params,entry->attr);
-    }
-  // Look for overrides
-  ValueImp * val = ObjectImp::getDirect(p);
-  if (val)
-    return Value(val);
-  if (entry)
-    switch (entry->value) {
+      result = String(toString(exec));
+      return true;
     case Replace:
-      return lookupOrCreateFunction<LocationFunc>(exec,p,this,entry->value,entry->params,entry->attr);
     case Reload:
-      return lookupOrCreateFunction<LocationFunc>(exec,p,this,entry->value,entry->params,entry->attr);
     case Assign:
-      return lookupOrCreateFunction<LocationFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+    case EqualEqual: // [[==]]
+      result = lookupOrCreateFunction<LocationFunc>(exec, p, this, entry->value, entry->params, entry->attr);
+      return true;
     }
+  }
 
-  return Undefined();
+  return ObjectImp::getOwnProperty(exec, p, result);
 }
 
 void Location::put(ExecState *exec, const Identifier &p, const Value &v, int attr)
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Location::put " << p.qstring() << " m_part=" << (void*)m_part << endl;
-#endif
   if (m_part.isNull())
     return;
 
@@ -2627,85 +2679,81 @@ const ClassInfo Selection::info = { "Selection", 0, 0, 0 };
 IMPLEMENT_PROTOFUNC(SelectionFunc)
 Selection::Selection(KHTMLPart *p) : m_part(p)
 {
-  //kdDebug(6070) << "Selection::Selection " << this << " m_part=" << (void*)m_part << endl;
 }
 
-Selection::~Selection()
+bool Selection::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  //kdDebug(6070) << "Selection::~Selection " << this << " m_part=" << (void*)m_part << endl;
-}
-
-Value Selection::get(ExecState *exec, const Identifier &p) const
-{
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Selection::get " << p.qstring() << " m_part=" << (void*)m_part << endl;
-#endif
-
   if (m_part.isNull())
-    return Undefined();
+    return false;
   
   const Window* window = Window::retrieveWindow(m_part);
-  if (!window || !window->isSafeScript(exec))
-      return Undefined();
+  if (!window || !window->isSafeScript(exec)) {
+      result = Undefined();
+      return true;
+  }
 
   DocumentImpl *docimpl = m_part->xmlDocImpl();
   if (docimpl)
     docimpl->updateLayoutIgnorePendingStylesheets();
 
+  // FIXME: should use lookupGetOwnProperty here...
   KURL url = m_part->url();
   const HashEntry *entry = Lookup::findEntry(&SelectionTable, p);
   if (entry)
     switch (entry->value) {
         case AnchorNode:
         case BaseNode:
-            return getDOMNode(exec, m_part->selection().base().node());
+            result = getDOMNode(exec, m_part->selection().base().node());
+            return true;
         case AnchorOffset:
         case BaseOffset:
-            return Number(m_part->selection().base().offset());
+             result = Number(m_part->selection().base().offset());
+             return true;
         case FocusNode:
         case ExtentNode:
-            return getDOMNode(exec, m_part->selection().extent().node());
+             result = getDOMNode(exec, m_part->selection().extent().node());
+             return true;
         case FocusOffset:
         case ExtentOffset:
-            return Number(m_part->selection().extent().offset());
+             result = Number(m_part->selection().extent().offset());
+             return true;
         case IsCollapsed:
-            return Boolean(!m_part->selection().isRange());
+             result = Boolean(!m_part->selection().isRange());
+             return true;
         case _Type: {
             switch (m_part->selection().state()) {
-                case khtml::Selection::NONE:
-                    return String("None");
-                case khtml::Selection::CARET:
-                    return String("Caret");
-                case khtml::Selection::RANGE:
-                    return String("Range");
+            case khtml::Selection::NONE:
+                result = String("None");
+                break;
+            case khtml::Selection::CARET:
+                result = String("Caret");
+                break;
+            case khtml::Selection::RANGE:
+                result = String("Range");
+                break;
+            default:
+                assert(0);
             }
+            return true;
         }
         case EqualEqual:
-            return String(toString(exec));
+            result = lookupOrCreateFunction<SelectionFunc>(exec, p, this, entry->value, entry->params, entry->attr);
+            return true;
         case ToString:
-          return lookupOrCreateFunction<SelectionFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+            result = String(toString(exec));
+            return true;
+        case Collapse:
+        case CollapseToEnd:
+        case CollapseToStart:
+        case Empty:
+        case SetBaseAndExtent:
+        case SetPosition:
+        case Modify:
+            result = lookupOrCreateFunction<SelectionFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+            return true;
     }
-    // Look for overrides
-    ValueImp * val = ObjectImp::getDirect(p);
-    if (val)
-        return Value(val);
-    if (entry)
-        switch (entry->value) {
-            case Collapse:
-            case CollapseToEnd:
-            case CollapseToStart:
-            case Empty:
-            case SetBaseAndExtent:
-            case SetPosition:
-            case Modify:
-                return lookupOrCreateFunction<SelectionFunc>(exec,p,this,entry->value,entry->params,entry->attr);
-        }
 
-    return Undefined();
-}
-
-void Selection::put(ExecState *exec, const Identifier &p, const Value &v, int attr)
-{
+    return ObjectImp::getOwnProperty(exec, p, result);
 }
 
 Value Selection::toPrimitive(ExecState *exec, Type) const
@@ -2810,52 +2858,42 @@ BarInfo::BarInfo(ExecState *exec, KHTMLPart *p, Type barType)
 {
 }
 
-BarInfo::~BarInfo()
-{
-}
-
-Value BarInfo::get(ExecState *exec, const Identifier &p) const
+bool BarInfo::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   if (m_part.isNull())
-    return Undefined();
+    return false;
   
   const HashEntry *entry = Lookup::findEntry(&BarInfoTable, p);
   if (entry && entry->value == Visible) {
     switch (m_type) {
+#if APPLE_CHANGES
     case Locationbar:
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->locationbarVisible());
-#endif
+      result = Boolean(KWQ(m_part)->locationbarVisible());
+      break;
     case Menubar: 
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->locationbarVisible());
-#endif
+      result = Boolean(KWQ(m_part)->locationbarVisible());
+      break;
     case Personalbar:
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->personalbarVisible());
-#endif
+      result = Boolean(KWQ(m_part)->personalbarVisible());
+      break;
     case Scrollbars: 
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->scrollbarsVisible());
-#endif
+      result = Boolean(KWQ(m_part)->scrollbarsVisible());
+      break;
     case Statusbar:
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->statusbarVisible());
-#endif
+      result =  Boolean(KWQ(m_part)->statusbarVisible());
+      break;
     case Toolbar:
-#if APPLE_CHANGES
-      return Boolean(KWQ(m_part)->toolbarVisible());
+      result = Boolean(KWQ(m_part)->toolbarVisible());
+      break;
 #endif
     default:
-      return Boolean(false);
+      result = Boolean(false);
     }
+    
+    return true;
   }
   
-  return Undefined();
-}
-
-void BarInfo::put(ExecState *exec, const Identifier &p, const Value &v, int attr)
-{
+  return ObjectImp::getOwnProperty(exec, p, result);
 }
 
 ////////////////////// History Object ////////////////////////
@@ -2871,9 +2909,9 @@ const ClassInfo History::info = { "History", 0, 0, 0 };
 */
 IMPLEMENT_PROTOFUNC(HistoryFunc)
 
-Value History::get(ExecState *exec, const Identifier &p) const
+bool History::getOwnProperty(ExecState *exec, const Identifier &p, Value& result) const
 {
-  return lookupGet<HistoryFunc,History,ObjectImp>(exec,p,&HistoryTable,this);
+  return lookupGetOwnProperty<HistoryFunc, History, ObjectImp>(exec, p, &HistoryTable, this, result);
 }
 
 Value History::getValueProperty(ExecState *, int token) const

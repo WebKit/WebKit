@@ -57,7 +57,7 @@ namespace KJS {
       Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight,
       AvailWidth
     };
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
   private:
     KHTMLView *view;
@@ -92,7 +92,7 @@ namespace KJS {
     static Window *retrieveActive(ExecState *exec);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
@@ -182,7 +182,6 @@ namespace KJS {
   public:
     ScheduledAction(Object _func, List _args, bool _singleShot);
     ScheduledAction(const QString &_code, bool _singleShot);
-    ~ScheduledAction();
     void execute(Window *window);
 
     ProtectedObject func;
@@ -220,8 +219,7 @@ namespace KJS {
 
   class Location : public ObjectImp {
   public:
-    ~Location();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual Value toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
@@ -238,9 +236,7 @@ namespace KJS {
 
   class Selection : public ObjectImp {
   public:
-    ~Selection();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual Value toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
@@ -257,9 +253,7 @@ namespace KJS {
 
   class BarInfo : public ObjectImp {
   public:
-    ~BarInfo();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     enum { Visible };
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
     KHTMLPart *part() const { return m_part; }
@@ -277,7 +271,7 @@ namespace KJS {
     friend class KonquerorFunc;
   public:
     Konqueror(KHTMLPart *p) : part(p) { }
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &p) const;
     virtual UString toString(ExecState *exec) const;
     virtual const ClassInfo* classInfo() const { return &info; }

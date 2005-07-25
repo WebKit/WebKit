@@ -208,24 +208,65 @@ UString ObjectImp::className() const
 
 Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
-  ValueImp *imp = getDirect(propertyName);
-  if (imp)
-    return Value(imp);
+  Value result;
 
-  // non-standard netscape extension
-  if (propertyName == specialPrototypePropertyName)
-    return Value(_proto);
+  const ObjectImp *imp = this;
 
-  if (_proto->dispatchType() != ObjectType) {
-    return Undefined();
+  while (true) {
+    if (imp->getOwnProperty(exec, propertyName, result))
+      return result;
+
+    const ValueImp *proto = imp->_proto;
+    if (proto->dispatchType() != ObjectType)
+      break;
+
+    imp = static_cast<const ObjectImp *>(proto);
   }
 
-  return static_cast<ObjectImp *>(_proto)->get(exec, propertyName);
+  return Undefined();
+}
+
+bool ObjectImp::getOwnProperty(ExecState *exec, unsigned propertyName, Value& result) const
+{
+  return getOwnProperty(exec, Identifier::from(propertyName), result);
 }
 
 Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
 {
-  return get(exec, Identifier::from(propertyName));
+  Value result;
+
+  const ObjectImp *imp = this;
+
+  while (imp) {
+    if (imp->getOwnProperty(exec, propertyName, result))
+      return result;
+
+    const ValueImp *proto = imp->_proto;
+    if (proto->dispatchType() != ObjectType)
+      break;
+
+    imp = static_cast<const ObjectImp *>(proto);
+  }
+
+  return Undefined();
+}
+
+bool ObjectImp::getProperty(ExecState *exec, unsigned propertyName, Value& result) const
+{
+  const ObjectImp *imp = this;
+  
+  while (true) {
+    if (imp->getOwnProperty(exec, propertyName, result))
+      return true;
+    
+    const ValueImp *proto = imp->_proto;
+      if (proto->dispatchType() != ObjectType)
+        break;
+      
+      imp = static_cast<const ObjectImp *>(proto);
+  }
+  
+  return false;
 }
 
 // ECMA 8.6.2.2

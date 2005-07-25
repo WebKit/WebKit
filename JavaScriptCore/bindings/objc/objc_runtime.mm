@@ -261,15 +261,18 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjectImp *proto)
     _instance = 0;
 }
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName) : ObjectImp ((ObjectImp *)0)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName)
+    : ObjectImp ((ObjectImp *)0)
 {
     _instance = i;
     _item = propertyName;
 }
 
-Value ObjcFallbackObjectImp::get(ExecState *exec, const Identifier &propertyName) const
+bool ObjcFallbackObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    return Undefined();
+    // keep the prototype from getting called instead of just returning false
+    result = Undefined();
+    return true;
 }
 
 void ObjcFallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,

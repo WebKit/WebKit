@@ -41,7 +41,7 @@ namespace KJS {
     FunctionImp(ExecState *exec, const Identifier &n = Identifier::null());
     virtual ~FunctionImp();
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
@@ -108,7 +108,7 @@ namespace KJS {
   public:
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act);
     virtual void mark();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
@@ -124,7 +124,7 @@ namespace KJS {
   public:
     ActivationImp(FunctionImp *function, const List &arguments);
 
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 

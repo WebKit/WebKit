@@ -1,3 +1,84 @@
+2005-07-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4124
+	(change JavaScript property access to avoid double lookup)
+
+	- 10% speedup on JavaScript iBench
+	- 5% speedup on 24fun BenchJS benchmark
+
+	Changed all get methods to getOwnProperty - they are no longer
+	responsible for prototype lookup, and determine if the property
+	was found as a side efect. 
+
+	get() is now a nonvirtual ObjectImp method which calls the virtual
+	getOwnProperty and walks the prototype chain. A few selected
+	methods were inlined.
+
+	Changed ResolveNode::evaluate plus some other places to use
+	getProperty which does get() and hasProperty() in one lookup.
+
+	Also miscellaneous code cleanup.
+        
+	* bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (ObjcFallbackObjectImp::getOwnProperty):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::RuntimeArrayImp):
+        (RuntimeArrayImp::getOwnProperty):
+        * bindings/runtime_array.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::getOwnProperty):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::getOwnProperty):
+        * bindings/runtime_object.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::getOwnProperty):
+        (ArrayPrototypeImp::getOwnProperty):
+        (ArrayProtoFuncImp::call):
+        * kjs/array_object.h:
+        * kjs/date_object.cpp:
+        (DatePrototypeImp::getOwnProperty):
+        * kjs/date_object.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::getOwnProperty):
+        (KJS::ArgumentsImp::getOwnProperty):
+        (KJS::ActivationImp::getOwnProperty):
+        * kjs/function.h:
+        * kjs/lookup.h:
+        (KJS::lookupGetOwnProperty):
+        (KJS::lookupGetOwnFunction):
+        (KJS::lookupGetOwnValue):
+        * kjs/math_object.cpp:
+        (MathObjectImp::getOwnProperty):
+        (MathObjectImp::getValueProperty):
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        (ResolveNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberObjectImp::getOwnProperty):
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::get):
+        (KJS::ObjectImp::getOwnProperty):
+        (KJS::ObjectImp::getProperty):
+        * kjs/object.h:
+        (KJS::ObjectImp::getProperty):
+        (KJS::ObjectImp::getOwnProperty):
+        * kjs/object_object.cpp:
+        (ObjectProtoFuncImp::call):
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::getOwnProperty):
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (StringInstanceImp::getOwnProperty):
+        (StringPrototypeImp::getOwnProperty):
+        * kjs/string_object.h:
+
 2005-07-25  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3971

@@ -40,30 +40,19 @@ RuntimeMethodImp::~RuntimeMethodImp()
 {
 }
 
-Value RuntimeMethodImp::get(ExecState *exec, const Identifier &propertyName) const
+bool RuntimeMethodImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    // Find the arguments from the closest context.
-    if (propertyName == argumentsPropertyName) {
-        ContextImp *context = exec->_context;
-        while (context) {
-            if (context->function() == this)
-                return static_cast<ActivationImp *>
-                    (context->activationObject())->get(exec, propertyName);
-            context = context->callingContext();
-        }
-        return Undefined();
-    }
-    
     // Compute length of parameters.
     if (propertyName == lengthPropertyName) {
         // Ick!  There may be more than one method with this name.  Arbitrarily
         // just pick the first method.  The fundamental problem here is that 
         // JavaScript doesn't have the notion of method overloading and
         // Java does.
-        return Number(_methodList.methodAt(0)->numParameters());
+        result = Number(_methodList.methodAt(0)->numParameters());
+        return result;
     }
     
-    return FunctionImp::get(exec, propertyName);
+    return FunctionImp::getOwnProperty(exec, propertyName, result);
 }
 
 bool RuntimeMethodImp::implementsCall() const

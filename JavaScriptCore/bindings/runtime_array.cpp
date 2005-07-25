@@ -31,7 +31,8 @@ using namespace KJS;
 
 const ClassInfo RuntimeArrayImp::info = {"RuntimeArray", &ArrayInstanceImp::info, 0, 0};
 
-RuntimeArrayImp::RuntimeArrayImp(ExecState *exec, Bindings::Array *a) : ArrayInstanceImp (exec->lexicalInterpreter()->builtinArrayPrototype().imp(), a->getLength())
+RuntimeArrayImp::RuntimeArrayImp(ExecState *exec, Bindings::Array *a)
+    : ArrayInstanceImp (exec->lexicalInterpreter()->builtinArrayPrototype().imp(), a->getLength())
 {
     // Always takes ownership of concrete array.
     _array = a;
@@ -42,28 +43,34 @@ RuntimeArrayImp::~RuntimeArrayImp()
     delete _array;
 }
 
-
-Value RuntimeArrayImp::get(ExecState *exec, const Identifier &propertyName) const
+bool RuntimeArrayImp::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const
 {
-    if (propertyName == lengthPropertyName)
-        return Number(getLength());
+    if (propertyName == lengthPropertyName) {
+        result = Number(getLength());
+        return true;
+    }
     
     bool ok;
     unsigned index = propertyName.toArrayIndex(&ok);
     if (ok) {
         if (index >= getLength())
-            return Undefined();
-        return getConcreteArray()->valueAt(exec, index);
+            result =  Undefined();
+        else
+            result = getConcreteArray()->valueAt(exec, index);
+        return true;
     }
     
-    return ObjectImp::get(exec, propertyName);
+    return ArrayInstanceImp::getOwnProperty(exec, propertyName, result);
 }
 
-Value RuntimeArrayImp::get(ExecState *exec, unsigned index) const
+bool RuntimeArrayImp::getOwnProperty(ExecState *exec, unsigned index, Value& result) const
 {
     if (index >= getLength())
-        return Undefined();
-    return getConcreteArray()->valueAt(exec, index);
+        result = Undefined();
+    else
+        result = getConcreteArray()->valueAt(exec, index);
+    
+    return true;
 }
 
 void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)

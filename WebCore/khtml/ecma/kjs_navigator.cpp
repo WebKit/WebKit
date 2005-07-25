@@ -75,7 +75,7 @@ namespace KJS {
     class Plugins : public PluginBase {
     public:
         Plugins(ExecState *exec) : PluginBase(exec) {};
-        virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+        virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
@@ -86,7 +86,7 @@ namespace KJS {
     class MimeTypes : public PluginBase {
     public:
         MimeTypes(ExecState *exec) : PluginBase(exec) { };
-        virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+        virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
@@ -96,8 +96,8 @@ namespace KJS {
 
     class Plugin : public PluginBase {
     public:
-        Plugin( ExecState *exec, PluginInfo *info ) : PluginBase(exec), m_info(info) { }
-        virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+        Plugin(ExecState *exec, PluginInfo *info) : PluginBase(exec), m_info(info) { }
+        virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
@@ -109,7 +109,7 @@ namespace KJS {
     class MimeType : public PluginBase {
     public:
         MimeType( ExecState *exec, MimeClassInfo *info ) : PluginBase(exec), m_info(info) { }
-        virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+        virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
@@ -144,12 +144,9 @@ IMPLEMENT_PROTOFUNC(NavigatorFunc)
 Navigator::Navigator(ExecState *exec, KHTMLPart *p)
   : ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype()), m_part(p) { }
 
-Value Navigator::get(ExecState *exec, const Identifier &propertyName) const
+bool Navigator::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Navigator::get " << propertyName.ascii() << endl;
-#endif
-  return lookupGet<NavigatorFunc,Navigator,ObjectImp>(exec,propertyName,&NavigatorTable,this);
+  return lookupGetOwnProperty<NavigatorFunc, Navigator, ObjectImp>(exec, propertyName, &NavigatorTable, this, result);
 }
 
 Value Navigator::getValueProperty(ExecState *exec, int token) const
@@ -339,120 +336,126 @@ void PluginBase::refresh(bool reload)
 /*******************************************************************/
 IMPLEMENT_PROTOFUNC(PluginsFunc)
 
-Value Plugins::get(ExecState *exec, const Identifier &propertyName) const
+bool Plugins::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Plugins::get " << propertyName.qstring() << endl;
-#endif
-    if (propertyName == "refresh")
-      return lookupOrCreateFunction<PluginsFunc>(exec,propertyName,this,0,0,DontDelete|Function);
-    else if ( propertyName ==lengthPropertyName )
-      return Number(plugins->count());
-    else {
-
+    if (propertyName == "refresh") {
+        result = lookupOrCreateFunction<PluginsFunc>(exec, propertyName, this, 0, 0, DontDelete|Function);
+        return true;
+    } else if (propertyName == lengthPropertyName) {
+        result = Number(plugins->count());
+        return true;
+    } else {
         // plugins[#]
         bool ok;
         unsigned int i = propertyName.toULong(&ok);
-        if( ok && i<plugins->count() )
-            return Value( new Plugin( exec, plugins->at(i) ) );
+        if (ok && i < plugins->count()) {
+            result = Value(new Plugin(exec, plugins->at(i)));
+            return true;
+        }
 
         // plugin[name]
-        for ( PluginInfo *pl = plugins->first(); pl!=0; pl = plugins->next() ) {
-            if ( pl->name==propertyName.qstring() )
-                return Value( new Plugin( exec, pl ) );
+        for (PluginInfo *pl = plugins->first(); pl; pl = plugins->next()) {
+            if (pl->name==propertyName.qstring()) {
+                result = Value(new Plugin(exec, pl));
+                return true;
+            }
         }
     }
 
-    return PluginBase::get(exec, propertyName);
+    return PluginBase::getOwnProperty(exec, propertyName, result);
 }
 
 /*******************************************************************/
 
-Value MimeTypes::get(ExecState *exec, const Identifier &propertyName) const
+bool MimeTypes::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "MimeTypes::get " << propertyName.qstring() << endl;
-#endif
-    if( propertyName==lengthPropertyName )
-        return Number( mimes->count() );
-    else {
-
+    if (propertyName == lengthPropertyName) {
+        result = Number(mimes->count());
+        return true;
+    } else {
         // mimeTypes[#]
         bool ok;
         unsigned int i = propertyName.toULong(&ok);
-        if( ok && i<mimes->count() )
-            return Value( new MimeType( exec, mimes->at(i) ) );
+        if (ok && i < mimes->count()) {
+            result = Value(new MimeType(exec, mimes->at(i)));
+            return true;
+        }
 
         // mimeTypes[name]
-        //kdDebug(6070) << "MimeTypes[" << propertyName.ascii() << "]" << endl;
-        for ( MimeClassInfo *m=mimes->first(); m!=0; m=mimes->next() ) {
-            //kdDebug(6070) << "m->type=" << m->type.ascii() << endl;
-            if ( m->type == propertyName.qstring() )
-                return Value( new MimeType( exec, m ) );
+        for (MimeClassInfo *m = mimes->first(); m; m = mimes->next()) {
+            if (m->type == propertyName.qstring()) {
+                result = Value(new MimeType(exec, m));
+                return true;
+            }
         }
     }
 
-    return PluginBase::get(exec, propertyName);
+    return PluginBase::getOwnProperty(exec, propertyName, result);
 }
 
 
 /************************************************************************/
 
-Value Plugin::get(ExecState *exec, const Identifier &propertyName) const
+bool Plugin::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "Plugin::get " << propertyName.qstring() << endl;
-#endif
-    if ( propertyName=="name" )
-        return String( m_info->name );
-    else if ( propertyName == "filename" )
-        return String( m_info->file );
-    else if ( propertyName == "description" )
-        return String( m_info->desc );
-    else if ( propertyName == lengthPropertyName )
-        return Number( m_info->mimes.count() );
-    else {
+    // FIXME: should use the hashtable mechanism for properties
 
+    if (propertyName == "name") {
+        result = String(m_info->name);
+        return true;
+    } else if (propertyName == "filename") {
+        result = String(m_info->file);
+        return true;
+    } else if (propertyName == "description") {
+        result = String(m_info->desc);
+        return true;
+    } else if (propertyName == lengthPropertyName) {
+        result = Number(m_info->mimes.count());
+        return true;
+    } else {
         // plugin[#]
         bool ok;
         unsigned int i = propertyName.toULong(&ok);
-        //kdDebug(6070) << "Plugin::get plugin[" << i << "]" << endl;
-        if( ok && i<m_info->mimes.count() )
-        {
-            //kdDebug(6070) << "returning mimetype " << m_info->mimes.at(i)->type << endl;
-            return Value(new MimeType(exec, m_info->mimes.at(i)));
+        if (ok && i < m_info->mimes.count()) {
+            result = Value(new MimeType(exec, m_info->mimes.at(i)));
+            return result;
         }
 
         // plugin["name"]
-        for ( MimeClassInfo *m=m_info->mimes.first();
-              m!=0; m=m_info->mimes.next() ) {
-            if ( m->type==propertyName.qstring() )
-                return Value(new MimeType(exec, m));
+        for (MimeClassInfo *m=m_info->mimes.first(); m; m = m_info->mimes.next()) {
+            if (m->type==propertyName.qstring()) {
+                result = Value(new MimeType(exec, m));
+                return result;
+            }
         }
 
     }
 
-    return ObjectImp::get(exec,propertyName);
+    return ObjectImp::getOwnProperty(exec, propertyName, result);
 }
 
 
 /*****************************************************************************/
 
-Value MimeType::get(ExecState *exec, const Identifier &propertyName) const
+bool MimeType::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "MimeType::get " << propertyName.qstring() << endl;
-#endif
-    if ( propertyName == "type" )
-        return String( m_info->type );
-    else if ( propertyName == "suffixes" )
-        return String( m_info->suffixes );
-    else if ( propertyName == "description" )
-        return String( m_info->desc );
-    else if ( propertyName == "enabledPlugin" )
-        return Value(new Plugin(exec, m_info->plugin));
+    // FIXME: should use hashtable mechanism
 
-    return ObjectImp::get(exec,propertyName);
+    if (propertyName == "type") {
+        result = String(m_info->type);
+        return true;
+    } else if (propertyName == "suffixes") {
+        result = String(m_info->suffixes);
+        return true;
+    } else if (propertyName == "description") {
+        result = String(m_info->desc);
+        return true;
+    } else if (propertyName == "enabledPlugin") {
+        result = Value(new Plugin(exec, m_info->plugin));
+        return true;
+    }
+
+    return ObjectImp::getOwnProperty(exec, propertyName, result);
 }
 
 

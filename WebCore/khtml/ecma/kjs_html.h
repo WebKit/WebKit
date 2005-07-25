@@ -47,7 +47,7 @@ namespace KJS {
   class HTMLDocument : public DOMDocument {
   public:
     HTMLDocument(ExecState *exec, DOM::HTMLDocumentImpl *d);
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
     virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
@@ -62,7 +62,7 @@ namespace KJS {
   class HTMLElement : public DOMElement {
   public:
     HTMLElement(ExecState *exec, DOM::HTMLElementImpl *e);
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int);
@@ -295,7 +295,7 @@ namespace KJS {
   public:
     HTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
     ~HTMLCollection();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
@@ -312,7 +312,7 @@ namespace KJS {
   class HTMLSelectCollection : public HTMLCollection {
   public:
     HTMLSelectCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
   private:
     khtml::SharedPtr<DOM::HTMLSelectElementImpl> m_element;
@@ -344,7 +344,7 @@ namespace KJS {
   public:
     Image(DOM::DocumentImpl *d, bool ws, int w, bool hs, int h);
     ~Image();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -374,7 +374,7 @@ namespace KJS {
   public:
     Context2D(DOM::HTMLElementImpl *e);
     ~Context2D();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -466,7 +466,7 @@ private:
     Gradient(float x0, float y0, float x1, float y1);
     Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
     ~Gradient();
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -512,7 +512,7 @@ private:
   class ImagePattern : public DOMObject {
   public:
     ImagePattern(Image *i, int type);
-    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);

@@ -164,18 +164,20 @@ namespace KJS {
    * @param thisObj "this"
    */
   template <class FuncImp, class ThisImp, class ParentImp>
-  inline Value lookupGet(ExecState *exec, const Identifier &propertyName,
-                         const HashTable* table, const ThisImp* thisObj)
+  inline bool lookupGetOwnProperty(ExecState *exec, const Identifier &propertyName,
+                                   const HashTable* table, const ThisImp* thisObj, Value& result)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::get(exec, propertyName);
+      return thisObj->ParentImp::getOwnProperty(exec, propertyName, result);
 
-    //fprintf(stderr, "lookupGet: found value=%d attr=%d\n", entry->value, entry->attr);
     if (entry->attr & Function)
-      return lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
-    return thisObj->getValueProperty(exec, entry->value);
+      result = lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
+    else 
+      result = thisObj->getValueProperty(exec, entry->value);
+
+    return true;
   }
 
   /**
@@ -183,19 +185,18 @@ namespace KJS {
    * Using this instead of lookupGet prevents 'this' from implementing a dummy getValueProperty.
    */
   template <class FuncImp, class ParentImp>
-  inline Value lookupGetFunction(ExecState *exec, const Identifier &propertyName,
-                         const HashTable* table, const ObjectImp* thisObj)
+  inline bool lookupGetOwnFunction(ExecState *exec, const Identifier &propertyName,
+                                   const HashTable* table, const ObjectImp* thisObj, Value& result)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return static_cast<const ParentImp *>(thisObj)->ParentImp::get(exec, propertyName);
+      return static_cast<const ParentImp *>(thisObj)->ParentImp::getOwnProperty(exec, propertyName, result);
 
-    if (entry->attr & Function)
-      return lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
+    assert(entry->attr & Function);
 
-    fprintf(stderr, "Function bit not set! Shouldn't happen in lookupGetFunction!\n" );
-    return Undefined();
+    result = lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
+    return true;
   }
 
   /**
@@ -203,17 +204,18 @@ namespace KJS {
    * Using this instead of lookupGet removes the need for a FuncImp class.
    */
   template <class ThisImp, class ParentImp>
-  inline Value lookupGetValue(ExecState *exec, const Identifier &propertyName,
-                           const HashTable* table, const ThisImp* thisObj)
+  inline bool lookupGetOwnValue(ExecState *exec, const Identifier &propertyName,
+                                const HashTable* table, const ThisImp* thisObj, Value& result)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::get(exec, propertyName);
+      return thisObj->ParentImp::getOwnProperty(exec, propertyName, result);
 
-    if (entry->attr & Function)
-      fprintf(stderr, "Function bit set! Shouldn't happen in lookupGetValue! propertyName was %s\n", propertyName.ascii() );
-    return thisObj->getValueProperty(exec, entry->value);
+    assert(!entry->attr & Function);
+
+    result = thisObj->getValueProperty(exec, entry->value);
+    return true;
   }
 
   /**
@@ -293,16 +295,15 @@ namespace KJS {
   public: \
     virtual const ClassInfo *classInfo() const { return &info; } \
     static const ClassInfo info; \
-    Value get(ExecState *exec, const Identifier &propertyName) const; \
+    bool getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const; \
     bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const; \
   }; \
   const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 };
 
 #define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
-    Value ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
+    bool ClassProto::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const \
     { \
-      /*fprintf( stderr, "%sProto::get(%s) [in macro, no parent]\n", info.className, propertyName.ascii());*/ \
-      return lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
+      return lookupGetOwnFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this, result); \
     } \
     bool ClassProto::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const \
     { /*stupid but we need this to have a common macro for the declaration*/ \
@@ -310,13 +311,11 @@ namespace KJS {
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
-    Value ClassProto::get(ExecState *exec, const Identifier &propertyName) const \
+    bool ClassProto::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const \
     { \
-      /*fprintf( stderr, "%sProto::get(%s) [in macro]\n", info.className, propertyName.ascii());*/ \
-      Value val = lookupGetFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this ); \
-      if ( val.type() != UndefinedType ) return val; \
-      /* Not found -> forward request to "parent" prototype */ \
-      return ParentProto::self(exec)->get( exec, propertyName ); \
+      if (lookupGetOwnFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this, result)) \
+          return true; \
+      return ParentProto::self(exec)->getOwnProperty(exec, propertyName, result); \
     } \
     bool ClassProto::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const \
     { \

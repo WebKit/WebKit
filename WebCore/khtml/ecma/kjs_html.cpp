@@ -282,11 +282,8 @@ bool HTMLDocument::hasOwnProperty(ExecState *exec, const Identifier &p) const
   return doc->hasNamedItem(name) || doc->hasDocExtraNamedItem(name);
 }
 
-Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
+bool HTMLDocument::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLDocument::get " << propertyName.qstring() << endl;
-#endif
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
   HTMLElementImpl *body = doc.body();
 
@@ -298,63 +295,83 @@ Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
     SharedPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
     if (collection->length() == 1) {
       NodeImpl *node = collection->firstItem();
-      if (node->hasTagName(HTMLTags::iframe())) {
-        KHTMLPart *part = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentPart();
-        if (part)
-          return Window::retrieve(part);
-      }
-      return getDOMNode(exec, node);
+      KHTMLPart *part;
+      if (node->hasTagName(HTMLTags::iframe()) && 
+          (part = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentPart()))
+        result = Window::retrieve(part);
+      else
+        result = getDOMNode(exec, node);
     } else 
-      return getHTMLCollection(exec, collection.get());
+      result = getHTMLCollection(exec, collection.get());
+    return true;
   }
+
+  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLTags::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
     
   const HashEntry* entry = Lookup::findEntry(&HTMLDocumentTable, propertyName);
   if (entry) {
     switch (entry->value) {
     case Title:
-      return String(doc.title());
+      result = String(doc.title());
+      return true;
     case Referrer:
-      return String(doc.referrer());
+      result = String(doc.referrer());
+      return true;
     case Domain:
-      return String(doc.domain());
+      result = String(doc.domain());
+      return true;
     case URL:
-      return String(doc.URL());
+      result = String(doc.URL());
+      return true;
     case Body:
-      return getDOMNode(exec, body);
+      result = getDOMNode(exec, body);
+      return true;
     case Location:
       if (part) {
         Window* win = Window::retrieveWindow(part);
-        if (win)
-          return Value(win->location());
+        if (win) {
+          result = Value(win->location());
+          return true;
+        }
       }
-      return Undefined();
+      result = Undefined();
+      return true;
     case Cookie:
-      return String(doc.cookie());
+      result = String(doc.cookie());
+      return true;
     case Images:
-      return getHTMLCollection(exec, doc.images().get());
+      result = getHTMLCollection(exec, doc.images().get());
+      return true;
     case Embeds:
-      return getHTMLCollection(exec, doc.embeds().get());
+      result = getHTMLCollection(exec, doc.embeds().get());
+      return true;
     case Applets:
-      return getHTMLCollection(exec, doc.applets().get());
+      result = getHTMLCollection(exec, doc.applets().get());
+      return true;
     case Links:
-      return getHTMLCollection(exec, doc.links().get());
+      result = getHTMLCollection(exec, doc.links().get());
+      return true;
     case Forms:
-      return getHTMLCollection(exec, doc.forms().get());
+      result = getHTMLCollection(exec, doc.forms().get());
+      return true;
     case Anchors:
-      return getHTMLCollection(exec, doc.anchors().get());
+      result = getHTMLCollection(exec, doc.anchors().get());
+      return true;
     case Scripts: // TODO (IE-specific)
     {
       // To be implemented. Meanwhile, return an object with a length property set to 0
       kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
-      Object obj( new ObjectImp() );
-      obj.put( exec, lengthPropertyName, Number(0) );
-      return obj;
+      Object obj(new ObjectImp());
+      obj.put(exec, lengthPropertyName, Number(0));
+      result = obj;
+      return true;
     }
     case All:
       // Disable document.all when we try to be Netscape-compatible
-      if ( exec->dynamicInterpreter()->compatMode() == Interpreter::NetscapeCompat )
-        return Undefined();
-      return getHTMLCollection(exec, doc.all().get());
+      if (exec->dynamicInterpreter()->compatMode() == Interpreter::NetscapeCompat)
+        result = Undefined();
+      result = getHTMLCollection(exec, doc.all().get());
+      return true;
     case Clear:
     case Open:
     case Close:
@@ -363,53 +380,62 @@ Value HTMLDocument::get(ExecState *exec, const Identifier &propertyName) const
     case GetElementsByName:
     case CaptureEvents:
     case ReleaseEvents:
-      return lookupOrCreateFunction<HTMLDocFunction>( exec, propertyName, this, entry->value, entry->params, entry->attr );
-    }
-  }
-  // Look for overrides
-  ValueImp *val = ObjectImp::getDirect(propertyName);
-  if (val)
-    return Value(val);
-
-  HTMLBodyElementImpl *bodyElement = (body && body->hasTagName(HTMLTags::body())) ? static_cast<HTMLBodyElementImpl *>(body) : 0;
-
-  if (entry) {
-    switch (entry->value) {
+      result = lookupOrCreateFunction<HTMLDocFunction>( exec, propertyName, this, entry->value, entry->params, entry->attr );
+      return true;
     case BgColor:
-      if (!bodyElement)
-        return Undefined();
-      return String(bodyElement->bgColor());
+      if (bodyElement)
+        result = String(bodyElement->bgColor());
+      else
+        result = Undefined();
+      return true;
     case FgColor:
-      if (!bodyElement)
-        return Undefined();
-      return String(bodyElement->text());
+      if (bodyElement)
+        result = String(bodyElement->text());
+      else
+        result = Undefined();
+      return true;
     case AlinkColor:
-      if (!bodyElement)
-        return Undefined();
-      return String(bodyElement->aLink());
+      if (bodyElement)
+        result = String(bodyElement->aLink());
+      else
+        result = Undefined();
+      return true;
     case LinkColor:
-      if (!bodyElement)
-        return Undefined();
-      return String(bodyElement->link());
+      if (bodyElement)
+        result = String(bodyElement->link());
+      else
+        result = Undefined();
+      return true;
     case VlinkColor:
-      if (!bodyElement)
-        return Undefined();
-      return String(bodyElement->vLink());
+      if (bodyElement)
+        result = String(bodyElement->vLink());
+      else
+        result = Undefined();
+      return true;
     case LastModified:
-      return String(doc.lastModified());
+      result = String(doc.lastModified());
+      return true;
     case Height:
-      return Number(view ? view->contentsHeight() : 0);
+      result = Number(view ? view->contentsHeight() : 0);
+      return true;
     case Width:
-      return Number(view ? view->contentsWidth() : 0);
+      result = Number(view ? view->contentsWidth() : 0);
+      return true;
     case Dir:
-        return Undefined();
-      return String(bodyElement->dir());
+      if (bodyElement)
+        result = String(bodyElement->dir());
+      else 
+        result = Undefined();
+      return true;
     case DesignMode:
-      return String(doc.inDesignMode() ? "on" : "off");
+      result = String(doc.inDesignMode() ? "on" : "off");
+      return true;
+    default:
+      assert(0);
     }
   }
 
-  return DOMDocument::get(exec, propertyName);
+  return DOMDocument::getOwnProperty(exec, propertyName, result);
 }
 
 void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
@@ -1274,30 +1300,36 @@ HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
 {
 }
 
-Value KJS::HTMLElement::get(ExecState *exec, const Identifier &propertyName) const
+bool KJS::HTMLElement::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
-#ifdef KJS_VERBOSE
-    kdDebug(6070) << "KJS::HTMLElement::tryGet " << propertyName.qstring() << " thisTag=" << element.tagName().string() << endl;
-#endif
+
     // First look at dynamic properties
     if (element.hasLocalName(HTMLTags::form())) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
         // Check if we're retrieving an element (by index or by name)
         bool ok;
         uint u = propertyName.toULong(&ok);
-        if (ok)
-            return getDOMNode(exec, form.elements()->item(u));
+        if (ok) {
+            result = getDOMNode(exec, form.elements()->item(u));
+            return true;
+        }
+
         ValueImp *namedItems = HTMLCollection(exec, form.elements().get()).getNamedItems(exec, propertyName);
-        if (!namedItems->isUndefined())
-            return namedItems;
+        if (!namedItems->isUndefined()) {
+            result = namedItems;
+            return true;
+        }
     }
     else if (element.hasLocalName(HTMLTags::select())) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
         bool ok;
         uint u = propertyName.toULong(&ok);
-        if (ok)
-            return getDOMNode(exec, select.optionsHTMLCollection()->item(u)); // not specified by DOM(?) but supported in netscape/IE
+        if (ok) {
+            // not specified by DOM(?) but supported in netscape/IE
+            result = getDOMNode(exec, select.optionsHTMLCollection()->item(u));
+            return true;
+        }
     }
     else if (element.hasLocalName(HTMLTags::frameset())) {
         NodeImpl *frame = element.children()->namedItem(propertyName.string());
@@ -1308,7 +1340,8 @@ Value KJS::HTMLElement::get(ExecState *exec, const Identifier &propertyName) con
                 if (part) {
                     Window *window = Window::retrieveWindow(part);
                     if (window) {
-                        return Value(window);
+                        result = Value(window);
+                        return true;
                     }
                 }
             }
@@ -1319,22 +1352,28 @@ Value KJS::HTMLElement::get(ExecState *exec, const Identifier &propertyName) con
         if (doc) {
             KHTMLPart* part = doc->part();
             if (part) {
-              Window *window = Window::retrieveWindow(part);
-	      if (window && window->hasProperty(exec, propertyName))
-                return window->get(exec, propertyName);
+                Window *window = Window::retrieveWindow(part);
+                if (window && window->hasProperty(exec, propertyName)) {
+                    result = window->get(exec, propertyName);
+                    return result;
+                }
             }
         }
     }
 #if APPLE_CHANGES
     else if (element.hasLocalName(HTMLTags::embed()) || element.hasLocalName(HTMLTags::object()) ||
              element.hasLocalName(HTMLTags::applet())) {
-	if (propertyName == "__apple_runtime_object")
-	    return getRuntimeObject(exec,&element);
+        if (propertyName == "__apple_runtime_object") {
+	    result = getRuntimeObject(exec,&element);
+            return true;
+        }
 	Value runtimeObject = getRuntimeObject(exec,&element);
 	if (!runtimeObject.isNull()) {
 	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-	    if (imp->hasProperty(exec, propertyName))
-		return imp->get (exec, propertyName);
+	    if (imp->hasProperty(exec, propertyName)) {
+		result = imp->get(exec, propertyName);
+                return true;
+            }
 	}
     }
 #endif
@@ -1343,12 +1382,14 @@ Value KJS::HTMLElement::get(ExecState *exec, const Identifier &propertyName) con
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
     if (entry) {
         if (entry->attr & Function)
-            return lookupOrCreateFunction<KJS::HTMLElementFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-        return getValueProperty(exec, entry->value);
+            result = lookupOrCreateFunction<KJS::HTMLElementFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+        else
+            result = getValueProperty(exec, entry->value);
+        return true;
     }
 
     // Base HTMLElement stuff or parent class forward, as usual
-    return lookupGet<KJS::HTMLElementFunction, KJS::HTMLElement, DOMElement>(exec, propertyName, &HTMLElementTable, this);
+    return lookupGetOwnProperty<KJS::HTMLElementFunction, KJS::HTMLElement, DOMElement>(exec, propertyName, &HTMLElementTable, this, result);
 }
 
 bool KJS::HTMLElement::implementsCall() const
@@ -3319,37 +3360,47 @@ bool KJS::HTMLCollection::hasOwnProperty(ExecState *exec, const Identifier &p) c
   return DOMObject::hasOwnProperty(exec, p);
 }
 
-Value KJS::HTMLCollection::get(ExecState *exec, const Identifier &propertyName) const
+bool KJS::HTMLCollection::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug() << "KJS::HTMLCollection::get " << propertyName.ascii() << endl;
-#endif
   HTMLCollectionImpl &collection = *m_impl;
-  if (propertyName == lengthPropertyName)
-    return Number(collection.length());
-  else if (propertyName == "selectedIndex") {
+  if (propertyName == lengthPropertyName) {
+    result = Number(collection.length());
+    return true;
+  } else if (propertyName == "selectedIndex") {
+    // FIXME: should we really handle selectedIndex here, as well as in HTMLSelectCollection?
+
     // NON-STANDARD options.selectedIndex
     NodeImpl *option = collection.item(0);
     if (option->hasTagName(HTMLTags::option())) {
       NodeImpl *select = option;
       while ((select = select->parentNode()))
-        if (select->hasTagName(HTMLTags::select()))
-	  return Number(static_cast<HTMLSelectElementImpl *>(select)->selectedIndex());
+        if (select->hasTagName(HTMLTags::select())) {
+	  result =  Number(static_cast<HTMLSelectElementImpl *>(select)->selectedIndex());
+          return true;
+        }
     }
-    return Undefined();
   } else {
     // Look in the prototype (for functions) before assuming it's an item's name
     Object proto = Object::dynamicCast(prototype());
     if (!proto.isNull() && proto.hasProperty(exec,propertyName))
-      return proto.get(exec,propertyName);
+      return false;
 
     // name or index ?
     bool ok;
     unsigned int u = propertyName.toULong(&ok);
-    if (ok)
-      return getDOMNode(exec, collection.item(u));
-    return getNamedItems(exec, propertyName);
+    if (ok) {
+      result = getDOMNode(exec, collection.item(u));
+      return true;
+    }
+
+    Value items = getNamedItems(exec, propertyName);
+    if (!items.imp()->isUndefined()) {
+      result = items;
+      return true;
+    }
   }
+
+  return DOMObject::getOwnProperty(exec, propertyName, result);
 }
 
 // HTMLCollections are strange objects, they support both get and call,
@@ -3447,12 +3498,14 @@ HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *
 {
 }
 
-Value KJS::HTMLSelectCollection::get(ExecState *exec, const Identifier &p) const
+bool KJS::HTMLSelectCollection::getOwnProperty(ExecState *exec, const Identifier &p, Value& result) const
 {
-  if (p == "selectedIndex")
-    return Number(m_element->selectedIndex());
+  if (p == "selectedIndex") {
+    result = Number(m_element->selectedIndex());
+    return true;
+  }
 
-  return  HTMLCollection::get(exec, p);
+  return HTMLCollection::getOwnProperty(exec, p, result);
 }
 
 void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, const Value& value, int)
@@ -3621,9 +3674,9 @@ const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
 @end
 */
 
-Value Image::get(ExecState *exec, const Identifier &propertyName) const
+bool Image::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value &result) const
 {
-  return lookupGetValue<Image,DOMObject>(exec, propertyName, &ImageTable, this);
+  return lookupGetOwnValue<Image,DOMObject>(exec, propertyName, &ImageTable, this, result);
 }
 
 Value Image::getValueProperty(ExecState *, int token) const
@@ -4643,17 +4696,10 @@ const ClassInfo Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 @end
 */
 
-Value Context2D::get(ExecState *exec, const Identifier &propertyName) const
+bool Context2D::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-    if (entry) {
-        if (entry->attr & Function)
-            return lookupOrCreateFunction<KJS::Context2DFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-        return getValueProperty(exec, entry->value);
-    }
-
-    return lookupGetValue<Context2D,DOMObject>(exec, propertyName, &Context2DTable, this);
+    // FIXME: functions should be on the prototype, not in the object itself
+    return lookupGetOwnProperty<Context2DFunction, Context2D, DOMObject>(exec, propertyName, &Context2DTable, this, result);
 }
 
 Value Context2D::getValueProperty(ExecState *, int token) const
@@ -5212,17 +5258,9 @@ Gradient::Gradient(float x0, float y0, float r0, float x1, float y1, float r1)
     commonInit();
 }
 
-Value Gradient::get(ExecState *exec, const Identifier &propertyName) const
+bool Gradient::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-    if (entry) {
-        if (entry->attr & Function)
-            return lookupOrCreateFunction<KJS::GradientFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-        return getValueProperty(exec, entry->value);
-    }
-
-    return lookupGetValue<Gradient,DOMObject>(exec, propertyName, &GradientTable, this);
+    return lookupGetOwnProperty<GradientFunction, Gradient, DOMObject>(exec, propertyName, &GradientTable, this, result);
 }
 
 Value Gradient::getValueProperty(ExecState *, int token) const
@@ -5416,17 +5454,9 @@ CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
     return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
 }
 
-Value ImagePattern::get(ExecState *exec, const Identifier &propertyName) const
+bool ImagePattern::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
-    const HashEntry* entry = Lookup::findEntry(table, propertyName);
-    if (entry) {
-        if (entry->attr & Function)
-            return lookupOrCreateFunction<GradientFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-        return getValueProperty(exec, entry->value);
-    }
-
-    return lookupGetValue<ImagePattern,DOMObject>(exec, propertyName, &ImagePatternTable, this);
+    return lookupGetOwnValue<ImagePattern, DOMObject>(exec, propertyName, &ImagePatternTable, this, result);
 }
 
 Value ImagePattern::getValueProperty(ExecState *, int token) const

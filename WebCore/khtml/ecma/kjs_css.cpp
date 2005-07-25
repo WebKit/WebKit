@@ -143,34 +143,42 @@ bool DOMCSSStyleDeclaration::hasOwnProperty(ExecState *exec, const Identifier &p
   return ObjectImp::hasOwnProperty(exec, p);
 }
 
-Value DOMCSSStyleDeclaration::get(ExecState *exec, const Identifier &propertyName) const
+bool DOMCSSStyleDeclaration::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMCSSStyleDeclaration::get " << propertyName.qstring() << endl;
 #endif
   const HashEntry* entry = Lookup::findEntry(&DOMCSSStyleDeclarationTable, propertyName);
   CSSStyleDeclarationImpl &styleDecl = *m_impl;
-  if (entry)
+  if (entry) {
     switch (entry->value) {
     case CssText:
-      return getStringOrNull(styleDecl.cssText());
+      result = getStringOrNull(styleDecl.cssText());
+      return true;
     case Length:
-      return Number(styleDecl.length());
+      result = Value(styleDecl.length());
+      return true;
     case ParentRule:
-      return getDOMCSSRule(exec,styleDecl.parentRule());
+      result = getDOMCSSRule(exec,styleDecl.parentRule());
+      return true;
     default:
-      break;
+      assert(0);
     }
+  }
 
   // Look in the prototype (for functions) before assuming it's a name
+  // FIXME: is this really needed? do any property names conflict with names
+  // of functions from the prototype?
   Object proto = Object::dynamicCast(prototype());
   if (!proto.isNull() && proto.hasProperty(exec,propertyName))
-    return proto.get(exec,propertyName);
+    return false;
 
   bool ok;
   long unsigned int u = propertyName.toULong(&ok);
-  if (ok)
-    return getStringOrNull(styleDecl.item(u));
+  if (ok) {
+    result = getStringOrNull(styleDecl.item(u));
+    return true;
+  }
 
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMCSSStyleDeclaration: converting to css property name: " << cssPropertyName(propertyName) << endl;
@@ -187,13 +195,15 @@ Value DOMCSSStyleDeclaration::get(ExecState *exec, const Identifier &propertyNam
     CSSValueImpl *v = styleDecl.getPropertyCSSValue(prop);
     if (v) {
       if (pixelOrPos && v->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-        return Number(static_cast<CSSPrimitiveValueImpl *>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
-      return getStringOrNull(v->cssText());
-    }
-    return String("");
+        result = Number(static_cast<CSSPrimitiveValueImpl *>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
+      else
+        result =  getStringOrNull(v->cssText());
+    } else
+      result = String("");
+    return true;
   }
 
-  return DOMObject::get(exec, propertyName);
+  return DOMObject::getOwnProperty(exec, propertyName, result);
 }
 
 
@@ -290,9 +300,9 @@ DOMStyleSheet::~DOMStyleSheet()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMStyleSheet::get(ExecState *exec, const Identifier &propertyName) const
+bool DOMStyleSheet::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-  return lookupGetValue<DOMStyleSheet,DOMObject>(exec,propertyName,&DOMStyleSheetTable,this);
+  return lookupGetOwnValue<DOMStyleSheet, DOMObject>(exec, propertyName, &DOMStyleSheetTable, this, result);
 }
 
 Value DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
@@ -361,22 +371,27 @@ DOMStyleSheetList::~DOMStyleSheetList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMStyleSheetList::get(ExecState *exec, const Identifier &p) const
+bool DOMStyleSheetList::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMStyleSheetList::get " << p.qstring() << endl;
 #endif
   StyleSheetListImpl &styleSheetList = *m_impl;
-  if (p == lengthPropertyName)
-    return Number(styleSheetList.length());
-  else if (p == "item")
-    return lookupOrCreateFunction<DOMStyleSheetListFunc>(exec,p,this,DOMStyleSheetList::Item,1,DontDelete|Function);
+  if (p == lengthPropertyName) {
+    result = Number(styleSheetList.length());
+    return true;
+  } else if (p == "item") {
+    result = lookupOrCreateFunction<DOMStyleSheetListFunc>(exec, p, this, DOMStyleSheetList::Item, 1, DontDelete|Function);
+    return true;
+  }
 
   // Retrieve stylesheet by index
   bool ok;
   long unsigned int u = p.toULong(&ok);
-  if (ok)
-    return getDOMStyleSheet(exec, styleSheetList.item(u));
+  if (ok) {
+    result = getDOMStyleSheet(exec, styleSheetList.item(u));
+    return true;
+  }
 
   // IE also supports retrieving a stylesheet by name, using the name/id of the <style> tag
   // (this is consistent with all the other collections)
@@ -405,10 +420,12 @@ Value DOMStyleSheetList::get(ExecState *exec, const Identifier &p) const
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)
   ElementImpl *element = m_doc->getElementById(p.string());
-  if (element && element->hasTagName(HTMLTags::style()))
-    return getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
+  if (element && element->hasTagName(HTMLTags::style())) {
+    result = getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
+    return true;
+  }
 
-  return DOMObject::get(exec, p);
+  return DOMObject::getOwnProperty(exec, p, result);
 }
 
 ValueImp *getDOMStyleSheetList(ExecState *exec, StyleSheetListImpl *ssl, DocumentImpl *doc)
@@ -470,20 +487,25 @@ DOMMediaList::~DOMMediaList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMMediaList::get(ExecState *exec, const Identifier &p) const
+bool DOMMediaList::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   MediaListImpl &mediaList = *m_impl;
-  if (p == "mediaText")
-    return getStringOrNull(mediaList.mediaText());
-  else if (p == lengthPropertyName)
-    return Number(mediaList.length());
+  if (p == "mediaText") {
+    result = getStringOrNull(mediaList.mediaText());
+    return true;
+  } else if (p == lengthPropertyName) {
+    result = Number(mediaList.length());
+    return true;
+  }
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
-  if (ok)
-    return getStringOrNull(mediaList.item(u));
+  if (ok) {
+    result = getStringOrNull(mediaList.item(u));
+    return true;
+  }
 
-  return DOMObject::get(exec, p);
+  return DOMObject::getOwnProperty(exec, p, result);
 }
 
 void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
@@ -554,14 +576,17 @@ DOMCSSStyleSheet::~DOMCSSStyleSheet()
 {
 }
 
-Value DOMCSSStyleSheet::get(ExecState *exec, const Identifier &p) const
+bool DOMCSSStyleSheet::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   CSSStyleSheetImpl &cssStyleSheet = *static_cast<CSSStyleSheetImpl *>(impl());
-  if (p == "ownerRule")
-    return getDOMCSSRule(exec,cssStyleSheet.ownerRule());
-  else if (p == "cssRules" || p == "rules" /* MSIE extension */)
-    return getDOMCSSRuleList(exec,cssStyleSheet.cssRules());
-  return DOMStyleSheet::get(exec,p);
+  if (p == "ownerRule") {
+    result = getDOMCSSRule(exec,cssStyleSheet.ownerRule());
+    return true;
+  } else if (p == "cssRules" || p == "rules" /* MSIE extension */) {
+    result =  getDOMCSSRuleList(exec,cssStyleSheet.cssRules());
+    return true;
+  }
+  return DOMStyleSheet::getOwnProperty(exec, p, result);
 }
 
 Value DOMCSSStyleSheetProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
@@ -607,20 +632,25 @@ DOMCSSRuleList::~DOMCSSRuleList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMCSSRuleList::get(ExecState *exec, const Identifier &p) const
+bool DOMCSSRuleList::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   CSSRuleListImpl &cssRuleList = *m_impl;
-  if (p == lengthPropertyName)
-    return Number(cssRuleList.length());
-  else if (p == "item")
-    return lookupOrCreateFunction<DOMCSSRuleListFunc>(exec, p, this, DOMCSSRuleList::Item, 1, DontDelete|Function);
+  if (p == lengthPropertyName) {
+    result = Number(cssRuleList.length());
+    return true;
+  } else if (p == "item") {
+    result = lookupOrCreateFunction<DOMCSSRuleListFunc>(exec, p, this, DOMCSSRuleList::Item, 1, DontDelete|Function);
+    return true;
+  }
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
-  if (ok)
-    return getDOMCSSRule(exec, cssRuleList.item(u));
+  if (ok) {
+    result = getDOMCSSRule(exec, cssRuleList.item(u));
+    return true;
+  }
 
-  return DOMObject::get(exec, p);
+  return DOMObject::getOwnProperty(exec, p, result);
 }
 
 Value DOMCSSRuleListFunc::call(ExecState *exec, Object &thisObj, const List &args)
@@ -715,20 +745,17 @@ const ClassInfo* DOMCSSRule::classInfo() const
   encoding		DOMCSSRule::Charset_Encoding	DontDelete
 @end
 */
-Value DOMCSSRule::get(ExecState *exec, const Identifier &propertyName) const
+bool DOMCSSRule::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "DOMCSSRule::get " << propertyName.qstring() << endl;
-#endif
-  const HashEntry *entry = Lookup::findEntry(classInfo()->propHashTable, propertyName);
+  // first try the properties specific to this rule type
+  const HashEntry* entry = Lookup::findEntry(classInfo()->propHashTable, propertyName);
   if (entry) {
-    if (entry->attr & Function)
-      return lookupOrCreateFunction<DOMCSSRuleFunc>(exec, propertyName, this, entry->value, entry->params, entry->attr);
-    return getValueProperty(exec, entry->value);
+    result = getValueProperty(exec, entry->value);
+    return true;
   }
-
-  // Base CSSRule stuff or parent class forward, as usual
-  return lookupGet<DOMCSSRuleFunc, DOMCSSRule, DOMObject>(exec, propertyName, &DOMCSSRuleTable, this);
+  
+  // now the stuff that applies to all rules
+  return lookupGetOwnProperty<DOMCSSRuleFunc, DOMCSSRule, DOMObject>(exec, propertyName, &DOMCSSRuleTable, this, result);
 }
 
 Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
@@ -779,7 +806,7 @@ Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
     return getStringOrNull(static_cast<CSSCharsetRuleImpl *>(m_impl.get())->encoding());
 
   default:
-    kdWarning() << "DOMCSSRule::getValueProperty unhandled token " << token << endl;
+    assert(0);
   }
   return Undefined();
 }
@@ -866,9 +893,9 @@ const ClassInfo CSSRuleConstructor::info = { "CSSRuleConstructor", 0, &CSSRuleCo
 @end
 */
 
-Value CSSRuleConstructor::get(ExecState *exec, const Identifier &p) const
+bool CSSRuleConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<CSSRuleConstructor,DOMObject>(exec,p,&CSSRuleConstructorTable,this);
+  return lookupGetOwnValue<CSSRuleConstructor, DOMObject>(exec, p, &CSSRuleConstructorTable, this, result);
 }
 
 Value CSSRuleConstructor::getValueProperty(ExecState *, int token) const
@@ -912,14 +939,18 @@ DOMCSSValue::~DOMCSSValue()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value DOMCSSValue::get(ExecState *exec, const Identifier &p) const
+bool DOMCSSValue::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   CSSValueImpl &cssValue = *m_impl;
-  if (p == "cssText")
-    return getStringOrNull(cssValue.cssText());
-  else if (p == "cssValueType");
-    return Number(cssValue.cssValueType());
-  return DOMObject::get(exec,p);
+  if (p == "cssText") {
+    result = getStringOrNull(cssValue.cssText());
+    return true;
+  } else if (p == "cssValueType"); {
+    result = Number(cssValue.cssValueType());
+    return true;
+  }
+
+  return DOMObject::getOwnProperty(exec, p, result);
 }
 
 void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
@@ -962,9 +993,9 @@ const ClassInfo CSSValueConstructor::info = { "CSSValueConstructor", 0, &CSSValu
   CSS_CUSTOM		CSSValueConstructor::CSS_CUSTOM			DontDelete|ReadOnly
 @end
 */
-Value CSSValueConstructor::get(ExecState *exec, const Identifier &p) const
+bool CSSValueConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<CSSValueConstructor,DOMObject>(exec,p,&CSSValueConstructorTable,this);
+  return lookupGetOwnValue<CSSValueConstructor, DOMObject>(exec, p, &CSSValueConstructorTable, this, result);
 }
 
 Value CSSValueConstructor::getValueProperty(ExecState *, int token) const
@@ -1014,11 +1045,14 @@ DOMCSSPrimitiveValue::DOMCSSPrimitiveValue(ExecState *exec, CSSPrimitiveValueImp
   setPrototype(DOMCSSPrimitiveValueProto::self(exec));
 }
 
-Value DOMCSSPrimitiveValue::get(ExecState *exec, const Identifier &p) const
+bool DOMCSSPrimitiveValue::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  if (p == "primitiveType")
-    return Number(static_cast<CSSPrimitiveValueImpl *>(impl())->primitiveType());
-  return DOMObject::get(exec,p);
+  if (p == "primitiveType") {
+    result = Number(static_cast<CSSPrimitiveValueImpl *>(impl())->primitiveType());
+    return result;
+  }
+
+  return DOMObject::getOwnProperty(exec, p, result);
 }
 
 Value DOMCSSPrimitiveValueProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
@@ -1087,9 +1121,9 @@ const ClassInfo CSSPrimitiveValueConstructor::info = { "CSSPrimitiveValueConstru
 @end
 */
 
-Value CSSPrimitiveValueConstructor::get(ExecState *exec, const Identifier &p) const
+bool CSSPrimitiveValueConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<CSSPrimitiveValueConstructor,CSSValueConstructor>(exec,p,&CSSPrimitiveValueConstructorTable,this);
+  return lookupGetOwnValue<CSSPrimitiveValueConstructor, CSSValueConstructor>(exec, p, &CSSPrimitiveValueConstructorTable, this, result);
 }
 
 Value CSSPrimitiveValueConstructor::getValueProperty(ExecState *, int token) const
@@ -1120,21 +1154,26 @@ DOMCSSValueList::DOMCSSValueList(ExecState *exec, CSSValueListImpl *v)
 { 
 }
 
-Value DOMCSSValueList::get(ExecState *exec, const Identifier &p) const
+bool DOMCSSValueList::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
   CSSValueListImpl &valueList = *static_cast<CSSValueListImpl *>(impl());
 
-  if (p == lengthPropertyName)
-    return Number(valueList.length());
-  else if (p == "item")
-    return lookupOrCreateFunction<DOMCSSValueListFunc>(exec,p,this,DOMCSSValueList::Item,1,DontDelete|Function);
+  if (p == lengthPropertyName) {
+    result = Number(valueList.length());
+    return true;
+  } else if (p == "item") {
+    result = lookupOrCreateFunction<DOMCSSValueListFunc>(exec,p,this,DOMCSSValueList::Item,1,DontDelete|Function);
+    return true;
+  }
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
-  if (ok)
-    return getDOMCSSValue(exec,valueList.item(u));
+  if (ok) {
+    result = getDOMCSSValue(exec,valueList.item(u));
+    return true;
+  }
 
-  return DOMCSSValue::get(exec,p);
+  return DOMCSSValue::getOwnProperty(exec, p, result);
 }
 
 Value DOMCSSValueListFunc::call(ExecState *exec, Object &thisObj, const List &args)
@@ -1169,11 +1208,9 @@ DOMRGBColor::~DOMRGBColor()
   //rgbColors.remove(rgbColor.handle());
 }
 
-Value DOMRGBColor::get(ExecState *exec, const Identifier &p) const
+bool DOMRGBColor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<DOMRGBColor,DOMObject>(exec, p,
-						       &DOMRGBColorTable,
-						       this);
+  return lookupGetOwnValue<DOMRGBColor, DOMObject>(exec, p, &DOMRGBColorTable, this, result);
 }
 
 Value DOMRGBColor::getValueProperty(ExecState *exec, int token) const
@@ -1215,10 +1252,9 @@ DOMRect::~DOMRect()
   ScriptInterpreter::forgetDOMObject(m_rect.get());
 }
 
-Value DOMRect::get(ExecState *exec, const Identifier &p) const
+bool DOMRect::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<DOMRect,DOMObject>(exec, p,
-						    &DOMRectTable, this);
+  return lookupGetOwnValue<DOMRect, DOMObject>(exec, p, &DOMRectTable, this, result);
 }
 
 Value DOMRect::getValueProperty(ExecState *exec, int token) const
@@ -1259,10 +1295,9 @@ DOMCounter::~DOMCounter()
   ScriptInterpreter::forgetDOMObject(m_counter.get());
 }
 
-Value DOMCounter::get(ExecState *exec, const Identifier &p) const
+bool DOMCounter::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
 {
-  return lookupGetValue<DOMCounter,DOMObject>(exec, p,
-						       &DOMCounterTable, this);
+  return lookupGetOwnValue<DOMCounter, DOMObject>(exec, p, &DOMCounterTable, this, result);
 }
 
 Value DOMCounter::getValueProperty(ExecState *, int token) const
