@@ -1,3 +1,10 @@
+2005-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix mistake in last change that leads to assertion failure in the Development build
+
+        * kjs/lookup.h:
+        (KJS::lookupGetOwnValue):
+
 2005-07-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

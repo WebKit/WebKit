@@ -212,7 +212,7 @@ namespace KJS {
     if (!entry) // not found, forward to parent
       return thisObj->ParentImp::getOwnProperty(exec, propertyName, result);
 
-    assert(!entry->attr & Function);
+    assert(!(entry->attr & Function));
 
     result = thisObj->getValueProperty(exec, entry->value);
     return true;
