@@ -1,3 +1,21 @@
+2005-07-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - Fixed run-safari and gdb-safari to use the Safari application in the build results
+          directory, if any, falling back to the one in the Applications directory otherwise.
+          Does no harm for open source contributors who don't build Safari, and helps out the
+          Safari team, since we do build Safari.
+
+        * Scripts/webkitdirs.pm: Added safariPath function that uses WEBKIT_SAFARI environment
+        variable, and if that's not present, looks in either the build results directory or
+        /Applications; factors code that was in both scripts before into a shared function.
+        Also removed some Xcode 2.0 support which is no longer relevant since our projects are
+        now in Xcode 2.1 format and incompatible with older versions of Xcode.
+
+        * Scripts/gdb-safari: Use safariPath.
+        * Scripts/run-safari: Use safariPath.
+
 2005-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         Moved Tools/Scripts/run-mozilla-tests to WebKitTools/Scripts/run-javascriptcore-tests.
@@ -18,31 +36,21 @@
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * DumpRenderTree/DumpRenderTree.xcode/.cvsignore: Removed.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * DumpRenderTree/DumpRenderTree.xcode/project.pbxproj: Removed.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * DumpRenderTree/DumpRenderTree.xcodeproj/.cvsignore: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * Scripts/build-webkit:
 

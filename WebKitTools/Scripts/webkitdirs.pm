@@ -35,7 +35,7 @@ BEGIN {
    our ($VERSION, @ISA, @EXPORT, @EXPORT_OK, %EXPORT_TAGS);
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
-   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &passedConfiguration &setConfiguration &checkFrameworks);
+   @EXPORT      = qw(&chdirWebKit &baseProductDir &productDir &XcodeOptions &passedConfiguration &setConfiguration &safariPath &checkFrameworks);
    %EXPORT_TAGS = ( );
    @EXPORT_OK   = ();
 }
@@ -46,7 +46,6 @@ my $baseProductDir;
 my @baseProductDirOption;
 my $configuration;
 my $configurationProductDir;
-my $XcodeVersion;
 my $sourceDir;
 
 sub determineSourceDir
@@ -56,16 +55,6 @@ sub determineSourceDir
     if ($sourceDir !~ s|/[^/]+/[^/]+$||) {
         die "Could not find two levels above source directory using FindBin.\n";
     }
-}
-
-sub determineXcodeVersion
-{
-    return if defined $XcodeVersion;
-    # Could use "xcodebuild -version" instead.
-    open VERSION, "defaults read /Developer/Applications/Xcode.app/Contents/Info CFBundleShortVersionString 2> /dev/null |" or die;
-    $XcodeVersion = <VERSION>;
-    close VERSION;
-    chomp $XcodeVersion;
 }
 
 sub determineBaseProductDir
@@ -104,22 +93,11 @@ sub determineConfiguration
     }
 }
 
-sub oldXcode
-{
-    determineXcodeVersion();
-    return $XcodeVersion =~ /^1\./ || $XcodeVersion eq "2.0";
-}
-
 sub determineConfigurationProductDir
 {
     determineBaseProductDir();
     determineConfiguration();
-    determineXcodeVersion();
-    if (oldXcode()) {
-        $configurationProductDir = $baseProductDir;
-    } else {
-        $configurationProductDir = "$baseProductDir/$configuration";
-    }
+    $configurationProductDir = "$baseProductDir/$configuration";
 }
 
 sub chdirWebKit
@@ -144,8 +122,6 @@ sub XcodeOptions
 {
     determineBaseProductDir();
     determineConfiguration();
-    determineXcodeVersion();
-    return (@baseProductDirOption, "-buildstyle", $configuration) if oldXcode();
     return (@baseProductDirOption, "-configuration", $configuration);
 }
 
@@ -162,6 +138,26 @@ sub setConfiguration
 {
     my $passed = passedConfiguration();
     $configuration = $passed if $passed;
+}
+
+# Locate Safari.
+sub safariPath
+{
+    # Use WEBKIT_SAFARI environment variable if present.
+    my $safariBundle = $ENV{WEBKIT_SAFARI};
+    if (!$safariBundle) {
+        determineConfigurationProductDir();
+        # Use Safari.app in product directory if present (good for Safari development team).
+        if (-d "$configurationProductDir/Safari.app") {
+            $safariBundle = "$configurationProductDir/Safari.app";
+        } else {
+            # Otherwise use Safari.app in Applications directory.
+            $safariBundle = "/Applications/Safari.app";
+        }
+    }
+    my $safariPath = "$safariBundle/Contents/MacOS/Safari";
+    die "Can't find executable at $safariPath.\n" unless -x $safariPath;
+    return $safariPath;
 }
 
 # Check to see that all the frameworks are built.

@@ -36,11 +36,7 @@ use webkitdirs;
 
 setConfiguration();
 my $productDir = productDir();
-
-# Check to see that Safari is in the specified place.
-my $safariBundle = $ENV{WEBKIT_SAFARI} || "/Applications/Safari.app";
-my $safariPath = "$safariBundle/Contents/MacOS/Safari";
-die "Can't find executable at $safariPath.\n" unless -x $safariPath;
+my $safariPath = safariPath();
 
 # Check to see that gdb is in the usual place.
 my $gdbPath = "/usr/bin/gdb";
