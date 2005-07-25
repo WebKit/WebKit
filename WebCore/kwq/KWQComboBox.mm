@@ -499,6 +499,12 @@ void QComboBox::populate()
     return resign;
 }
 
+- (BOOL)needsPanelToBecomeKey
+{
+    // override this NSView method so that <select> elements gain focus when clicked - 4011544
+    return YES;
+}
+
 - (BOOL)canBecomeKeyView
 {
     // Simplified method from NSView; overridden to replace NSView's way of checking

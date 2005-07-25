@@ -1,3 +1,16 @@
+2005-07-25  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Beth Dakin.
+
+	- fixed <rdar://problem/4011544> selecting an item from a <select> menu with 
+	the mouse doesn't place the focus on the menu
+        
+	Test cases added: 
+        * manual-tests/focus-select-when-clicked.html: Added.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton needsPanelToBecomeKey]): override this NSView method to return YES
+
 2005-07-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
