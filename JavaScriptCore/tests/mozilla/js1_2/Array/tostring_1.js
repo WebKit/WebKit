@@ -43,12 +43,26 @@
 
     var VERSION = 0;
 
+    /* This test assumes that if version() exists, it can set the JavaScript 
+     * interpreter to an arbitrary version. To prevent unhandled exceptions in
+     * other tests, testkjs implements version() as a stub function, but 
+     * JavaScriptCore doesn't support setting the JavaScript engine's version.
+     
+     * Commenting out the following lines forces the test to expect JavaScript
+     * 1.5 results.
+     
+     * If JavaScriptCore changes to support versioning, this test should split
+     * into a 1.2 test in js1_2/ and a 1.5 test in js1_5/.
+     */
+    
+    /*
     if ( typeof version == "function" ) {
         version(120);
         VERSION = "120";
     } else {
         function version() { return 0; };
     }
+    */
 
     testcases[tc++] = new TestCase ( SECTION,
                         "var a = new Array(); a.toString()",

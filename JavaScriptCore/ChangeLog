@@ -1,3 +1,14 @@
+2005-07-25  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3971
+        JS test suite depends on JS 1.2 behavior
+        
+        Reviewed by darin.
+
+        * tests/mozilla/js1_2/Array/tostring_1.js: now tests only for JS 1.5 behavior
+        * tests/mozilla/js1_2/Array/tostring_2.js: ditto
+        * tests/mozilla/expected.html:
+
 2005-07-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kevin.
