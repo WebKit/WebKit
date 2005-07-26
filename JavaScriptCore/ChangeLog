@@ -1,3 +1,9 @@
+2005-07-25  Geoffrey Garen  <ggaren@apple.com>
+        - fixed mistake in my last checkin -- the expected results included
+        results from a patch that hasn't landed yet.
+        
+        * tests/mozilla/expected.html:
+
 2005-07-25  Maciej Stachowiak  <mjs@apple.com>
 
         - fix mistake in last change that leads to assertion failure in the Development build
