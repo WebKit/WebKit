@@ -1,3 +1,25 @@
+2005-07-26  David Hyatt  <hyatt@apple.com>
+
+	Make WebHTMLView inherit from NSControl instead of NSView.
+	This change is necessary because the theme renderer for
+	WebCore that draws controls with the Aqua appearance does so
+	using NSCells.  NSCells must be hosted within a control view
+	in order to paint properly.
+
+	The method updateCell must be overridden because it wants to
+	repaint the whole control when the windows resigns/becomes
+	key, and this would result in behavior that we don't want
+	(the repainting of the whole view).  We already have hooks
+	in WebHTMLView for the window resigning/becoming key so
+	we will do our proper control updating there instead (in a
+	future patch).
+
+        Reviewed by john
+
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateCell:]):
+        
 2005-07-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.

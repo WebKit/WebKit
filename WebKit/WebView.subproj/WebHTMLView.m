@@ -3006,6 +3006,13 @@ static WebHTMLView *lastHitView = nil;
 {
 }
 
+// This is an override of an NSControl method that wants to repaint the entire view when the window resigns/becomes
+// key.  WebHTMLView is an NSControl only because it hosts NSCells that are painted by WebCore's Aqua theme
+// renderer (and those cells must be hosted by an enclosing NSControl in order to paint properly).
+- (void)updateCell:(NSCell*)cell
+{
+}
+
 // Does setNeedsDisplay:NO as a side effect when printing is ending.
 // pageWidth != 0 implies we will relayout to a new width
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize
