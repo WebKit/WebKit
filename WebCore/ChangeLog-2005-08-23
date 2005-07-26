@@ -1,3 +1,35 @@
+2005-07-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test cases added: none, only affects Safari autofill
+        
+        - big hunk of weaning form-related SPI from NSView; autofill continues to
+        work (but only on tip of tree Safari)        
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea textDidChange:]):
+        call renamed bridge method, passing DOMElement* instead of NSView*
+        
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController controlTextDidBeginEditing:]):
+        call renamed bridge method, passing DOMElement* instead of NSView*
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        ditto
+        (-[KWQTextFieldController controlTextDidChange:]):
+        ditto
+        (-[KWQTextFieldController control:textShouldBeginEditing:]):
+        don't call through to bridge form-delegate-related method; I deleted it because it was
+        not being used
+        (-[KWQTextFieldController control:textShouldEndEditing:]):
+        ditto
+        (-[KWQTextFieldController textView:shouldHandleEvent:]):
+        call renamed bridge method, passing DOMElement* instead of NSView*
+        
+        * kwq/WebCoreBridge.h:
+        Remove textShouldBeginEditing and textShouldEndEditing methods since they weren't being used.
+        Rename other methods and made them take DOMElement* instead of NSView*
+
 2005-07-26  Maciej Stachowiak  <mjs@apple.com>
 
         - imported much of the w3c DOM test suite:
@@ -8,8 +40,6 @@
 	DOM Level 2 HTML (html version)
 
 	For now I left out the XHTML versions.
-
-        Test cases added: (NONE)
 
         * layout-tests/dom/html/level1/core/*
 	* layout-tests/dom/html/level2/core/*

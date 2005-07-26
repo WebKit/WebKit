@@ -214,7 +214,7 @@ const float LargeNumberForText = 1.0e7;
         widget->textChanged();
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge textDidChange:notification];
+    [bridge textDidChangeInTextArea:(DOMHTMLTextAreaElement *)[bridge elementForView:self]];
 }
 
 - (void)setWordWrap:(BOOL)f

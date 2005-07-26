@@ -56,8 +56,10 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class DOMDocumentFragment;
 @class DOMElement;
 @class DOMHTMLElement;
+@class DOMHTMLInputElement;
 @class DOMNode;
 @class DOMRange;
+@class DOMHTMLTextAreaElement;
 @class WebCoreSettings;
 @class WebScriptObject;
 
@@ -584,15 +586,13 @@ typedef enum
 - (void)goBackOrForward:(int)distance;
 - (BOOL)canGoBackOrForward:(int)distance;
 
-- (void)controlTextDidBeginEditing:(NSNotification *)obj;
-- (void)controlTextDidEndEditing:(NSNotification *)obj;
-- (void)controlTextDidChange:(NSNotification *)obj;
-- (void)textDidChange:(NSNotification *)obj;
+- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element;
+- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element;
+- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element;
+- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element;
 
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event;
+- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event;
 
 - (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate;
 

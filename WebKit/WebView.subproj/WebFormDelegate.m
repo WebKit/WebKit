@@ -45,30 +45,20 @@ static WebFormDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
     
-- (void)controlTextDidBeginEditing:(NSNotification *)obj inFrame:(WebFrame *)frame { }
+- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
 
-- (void)controlTextDidEndEditing:(NSNotification *)obj inFrame:(WebFrame *)frame { }
+- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
 
-- (void)controlTextDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame { }
+- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame { }
 
-- (void)textDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame { }
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame
-{
-    return YES;
-}
-
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame
-{
-    return YES;
-}
+- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element inFrame:(WebFrame *)frame { }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame
 {
     return NO;
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
+- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
 {
     return NO;
 }

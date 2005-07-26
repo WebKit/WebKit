@@ -1229,40 +1229,28 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 #define FormDelegateLog(ctrl)  LOG(FormDelegate, "control=%@", ctrl)
 
-- (void)controlTextDidBeginEditing:(NSNotification *)obj
+- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element
 {
-    FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidBeginEditing:obj inFrame:_frame];
+    FormDelegateLog(element);
+    [formDelegate(self) textFieldDidBeginEditing:element inFrame:_frame];
 }
 
-- (void)controlTextDidEndEditing:(NSNotification *)obj
+- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element
 {
-    FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidEndEditing:obj inFrame:_frame];
+    FormDelegateLog(element);
+    [formDelegate(self) textFieldDidEndEditing:element inFrame:_frame];
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element
 {
-    FormDelegateLog([obj object]);
-    [formDelegate(self) controlTextDidChange:obj inFrame:_frame];
+    FormDelegateLog(element);
+    [formDelegate(self) textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:_frame];
 }
 
-- (void)textDidChange:(NSNotification *)obj
+- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element
 {
-    FormDelegateLog([obj object]);
-    [formDelegate(self) textDidChange:obj inFrame:_frame];
-}
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
-{
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control textShouldBeginEditing:fieldEditor inFrame:_frame];
-}
-
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
-{
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:_frame];
+    FormDelegateLog(element);
+    [formDelegate(self) textDidChangeInTextArea:element inFrame:_frame];
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
@@ -1271,10 +1259,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:_frame];
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event
+- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event
 {
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control textView:textView shouldHandleEvent:event inFrame:_frame];
+    FormDelegateLog(element);
+    return [formDelegate(self) textField:element shouldHandleEvent:event inFrame:_frame];
 }
 
 - (void)frameDetached

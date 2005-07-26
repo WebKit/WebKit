@@ -34,6 +34,8 @@
 #import <AppKit/AppKit.h>
 
 @class DOMElement;
+@class DOMHTMLInputElement;
+@class DOMHTMLTextAreaElement;
 @class WebFrame;
 
 /*!
@@ -54,16 +56,13 @@
 // analogous to similar methods in AppKit/NSControl.h.
 // These methods are forwarded from widgets used in forms to the WebFormDelegate.
 
-- (void)controlTextDidBeginEditing:(NSNotification *)obj inFrame:(WebFrame *)frame;
-- (void)controlTextDidEndEditing:(NSNotification *)obj inFrame:(WebFrame *)frame;
-- (void)controlTextDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame;
-- (void)textDidChange:(NSNotification *)obj inFrame:(WebFrame *)frame;
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame;
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor inFrame:(WebFrame *)frame;
+- (void)textFieldDidBeginEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
+- (void)textFieldDidEndEditing:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
+- (void)textDidChangeInTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame;
+- (void)textDidChangeInTextArea:(DOMHTMLTextAreaElement *)element inFrame:(WebFrame *)frame;
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame;
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame;
+- (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame;
 
 // Sent when a form is just about to be submitted (before the load is started)
 // listener must be sent continue when the delegate is done.

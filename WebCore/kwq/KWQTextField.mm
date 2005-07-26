@@ -159,7 +159,7 @@
 	return;
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge controlTextDidBeginEditing:notification];
+    [bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)notification
@@ -168,7 +168,7 @@
 	return;
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge controlTextDidEndEditing:notification];
+    [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
     
     if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
         widget->returnPressed();
@@ -183,7 +183,7 @@
         return;
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge controlTextDidChange:notification];
+    [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
     
     edited = YES;
     if (widget) {
@@ -194,9 +194,7 @@
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     if (!widget)
-        return NO;
-    
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        return NO;    
     
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
@@ -210,7 +208,7 @@
     [fieldEditor releaseGState];
     [[fieldEditor superview] releaseGState];
     
-    return [bridge control:control textShouldBeginEditing:fieldEditor];
+    return YES;
 }
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
@@ -218,8 +216,7 @@
     if (!widget)
 	return NO;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control textShouldEndEditing:fieldEditor];
+    return YES;
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
@@ -278,7 +275,7 @@
 
         QWidget::setDeferFirstResponderChanges(true);
 
-        BOOL intercepted = [bridge control:field textView:view shouldHandleEvent:event];
+        BOOL intercepted = [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] shouldHandleEvent:event];
         if (!intercepted) {
             intercepted = [bridge interceptKeyEvent:event toView:view];
         }

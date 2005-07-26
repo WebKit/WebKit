@@ -1,3 +1,39 @@
+2005-07-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - big hunk of weaning form-related SPI from NSView; autofill continues to
+        work (but only on tip of tree Safari)
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge textFieldDidBeginEditing:]):
+        changed name from controlTextXXX:, now takes a DOMHTMLInputElement*
+        (-[WebBridge textFieldDidEndEditing:]):
+        ditto
+        (-[WebBridge textDidChangeInTextField:]):
+        ditto
+        (-[WebBridge textDidChangeInTextArea:]):
+        changed name from textDidChange:, now takes a DOMHTMLTextAreaElement*
+        (-[WebBridge control:textShouldBeginEditing:]):
+        removed this method as it wasn't being used by autofill, and did nothing in WebKit
+        (-[WebBridge control:textShouldEndEditing:]):
+        ditto
+        (-[WebBridge textField:shouldHandleEvent:]):
+        changed name from control:textView:shouldHandleEvent:, now takes a DOMHTMLInputElement*.
+        The textView parameter wasn't being used, so I eliminated it.
+        
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate textFieldDidBeginEditing:inFrame:]):
+        (-[WebFormDelegate textFieldDidEndEditing:inFrame:]):
+        (-[WebFormDelegate control:textShouldBeginEditing:inFrame:]):
+        (-[WebFormDelegate control:textShouldEndEditing:inFrame:]):
+        (-[WebFormDelegate textDidChangeInTextField:inFrame:]):
+        (-[WebFormDelegate textDidChangeInTextArea:inFrame:]):
+        (-[WebFormDelegate textField:shouldHandleEvent:inFrame:]):
+        These all changed in the same way as the WebBridge methods
+        
+
 2005-07-25  Vicki Murley <vicki@apple.com>
 
         Reviewed by Darin.
