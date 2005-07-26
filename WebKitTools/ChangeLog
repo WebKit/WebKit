@@ -1,5 +1,9 @@
 2005-07-25  Darin Adler  <darin@apple.com>
 
+        * Scripts/webkitdirs.pm: Check in missing line of code.
+
+2005-07-25  Darin Adler  <darin@apple.com>
+
         - fixed problem that was causing JavaScriptCore test to fail
           (except for people who had set DYLD_FRAMEWORK_PATH)
 

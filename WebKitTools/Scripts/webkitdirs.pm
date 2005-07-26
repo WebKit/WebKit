@@ -132,6 +132,7 @@ sub determinePassedConfiguration
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
     for my $i (0 .. $#ARGV) {
+        my $opt = $ARGV[$i];
         if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Development";
