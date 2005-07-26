@@ -1,3 +1,21 @@
+2005-07-26  Maciej Stachowiak  <mjs@apple.com>
+
+        - imported much of the w3c DOM test suite:
+
+	DOM Level 1 Core (html version)
+	DOM Level 2 Core (html version)
+	DOM Level 2 Events (html version)
+	DOM Level 2 HTML (html version)
+
+	For now I left out the XHTML versions.
+
+        Test cases added: (NONE)
+
+        * layout-tests/dom/html/level1/core/*
+	* layout-tests/dom/html/level2/core/*
+        * layout-tests/dom/html/level2/events/*
+        * layout-tests/dom/html/level2/html/*
+	
 2005-07-25  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Beth Dakin.

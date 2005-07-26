@@ -1,0 +1,3 @@
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLAppletElement04	
+Status:	failure
+Detail:	codeLink: assertEquals failed, actual , expected org/w3c/domts/DOMTSApplet.class.

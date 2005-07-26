@@ -1,0 +1,3 @@
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/core/hc_nodedocumentfragmentnormalize2	
+Status:	failure
+Detail:	noChild: assertNull failed, actual [object Text]

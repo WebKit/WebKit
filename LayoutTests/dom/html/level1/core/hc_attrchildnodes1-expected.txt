@@ -1,0 +1,3 @@
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrchildnodes1	
+Status:	failure
+Detail:	childNodesSize: assertEquals failed, actual 0, expected 1.
