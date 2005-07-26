@@ -1,3 +1,12 @@
+2005-07-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- new script to review the DOM layout test results and see where we stand
+	on actual success and failure
+
+        * Scripts/check-dom-results: Added.
+
 2005-07-25  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitdirs.pm: Check in missing line of code.
