@@ -48,8 +48,10 @@ use webkitdirs;
 #   the number of tests that failed to run
 #   the number of tests that were run but had no expected results to compare against
 
-chdirWebKit();
+setConfiguration();
 my $productDir = productDir();
+
+chdirWebKit();
 
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
@@ -65,7 +67,7 @@ my $testDirectory = "$WebCoreDirectory/layout-tests";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 
-$ENV{"DYLD_FRAMEWORK_PATH"} = $productDir;
+$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 
 my @tests;
 

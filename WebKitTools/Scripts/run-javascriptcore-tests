@@ -28,16 +28,19 @@
 
 # Script to run the Web Kit Open Source Project JavaScriptCore tests (adapted from Mozilla).
 
-
 use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+setConfiguration();
+my $productDir = productDir();
+
 chdirWebKit();
-chdir "JavaScriptCore/tests/mozilla/" or die;
-my $testkjs_path = productDir() . "/testkjs"; 
-my $result = system "perl", "jsDriver.pl", "-L", "ecma/Date", "-e", "kjs", "-s", $testkjs_path, "-f", "actual.html", @ARGV;
+chdir "JavaScriptCore/tests/mozilla" or die;
+
+$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+my $result = system "perl", "jsDriver.pl", "-L", "ecma/Date", "-e", "kjs", "-s", "$productDir/testkjs", "-f", "actual.html", @ARGV;
 
 exit $result if $result;
 

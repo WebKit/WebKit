@@ -125,19 +125,37 @@ sub XcodeOptions
     return (@baseProductDirOption, "-configuration", $configuration);
 }
 
+my $passedConfiguration;
+my $searchedForPassedConfiguration;
+sub determinePassedConfiguration
+{
+    return if $searchedForPassedConfiguration;
+    $searchedForPassedConfiguration = 1;
+    for my $i (0 .. $#ARGV) {
+        if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
+            splice(@ARGV, $i, 1);
+            $passedConfiguration = "Development";
+            return;
+        }
+        if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
+            splice(@ARGV, $i, 1);
+            $passedConfiguration = "Deployment";
+            return;
+        }
+    }
+    $passedConfiguration = undef;
+}
+
 sub passedConfiguration
 {
-    for my $opt (@ARGV) {
-        return "Development" if $opt =~ /^--devel/i;
-        return "Deployment" if $opt =~ /^--deploy/i;
-    }
-    return undef;
+    determinePassedConfiguration();
+    return $passedConfiguration;
 }
 
 sub setConfiguration
 {
-    my $passed = passedConfiguration();
-    $configuration = $passed if $passed;
+    determinePassedConfiguration();
+    $configuration = $passedConfiguration if $passedConfiguration;
 }
 
 # Locate Safari.

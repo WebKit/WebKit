@@ -1,5 +1,20 @@
 2005-07-25  Darin Adler  <darin@apple.com>
 
+        - fixed problem that was causing JavaScriptCore test to fail
+          (except for people who had set DYLD_FRAMEWORK_PATH)
+
+        * Scripts/run-javascriptcore-tests: Add code to set DYLD_FRAMEWORK_PATH.
+        Add code to parse configuration parameter so you can pass --deployment if you like.
+        * Scripts/run-webkit-tests: Add code to parse configuration parameter.
+
+        * Scripts/update-javascriptcore-test-results: Add license header.
+
+        * Scripts/webkitdirs.pm: Change code that reads configuration option to remove it
+        from @ARGV. This lets us use this option in commands that take other options and
+        pass them along to a subsequent tool.
+
+2005-07-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff Garen.
 
         - Fixed run-safari and gdb-safari to use the Safari application in the build results
