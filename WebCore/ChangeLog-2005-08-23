@@ -1,3 +1,53 @@
+2005-07-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * WebCore.xcodeproj/project.pbxproj: Removed unused C++ DOM
+        * khtml/dom/css_rule.cpp: Removed.
+        * khtml/dom/css_stylesheet.cpp: Removed.
+        * khtml/dom/css_value.cpp: Removed.
+        * khtml/dom/dom2_range.cpp: Removed.
+        * khtml/dom/dom2_views.cpp: Removed.
+        * khtml/dom/dom2_views.h: Removed.
+        * khtml/dom/dom_core.h: Removed.
+        * khtml/dom/dom_doc.cpp: Removed.
+        * khtml/dom/dom_doc.h: Removed.
+        * khtml/dom/dom_element.cpp: Removed.
+        * khtml/dom/dom_element.h: Removed.
+        * khtml/dom/dom_html.h: Removed.
+        * khtml/dom/dom_node.cpp: Removed.
+        * khtml/dom/dom_text.cpp: Removed.
+        * khtml/dom/dom_text.h: Removed.
+        * khtml/dom/dom_xml.cpp: Removed.
+        * khtml/dom/dom_xml.h: Removed.
+        * khtml/dom/html_base.cpp: Removed.
+        * khtml/dom/html_base.h: Removed.
+        * khtml/dom/html_block.cpp: Removed.
+        * khtml/dom/html_block.h: Removed.
+        * khtml/dom/html_document.cpp: Removed.
+        * khtml/dom/html_document.h: Removed.
+        * khtml/dom/html_element.cpp: Removed.
+        * khtml/dom/html_element.h: Removed.
+        * khtml/dom/html_form.cpp: Removed.
+        * khtml/dom/html_form.h: Removed.
+        * khtml/dom/html_head.cpp: Removed.
+        * khtml/dom/html_head.h: Removed.
+        * khtml/dom/html_image.cpp: Removed.
+        * khtml/dom/html_image.h: Removed.
+        * khtml/dom/html_inline.cpp: Removed.
+        * khtml/dom/html_inline.h: Removed.
+        * khtml/dom/html_list.cpp: Removed.
+        * khtml/dom/html_list.h: Removed.
+        * khtml/dom/html_misc.cpp: Removed.
+        * khtml/dom/html_misc.h: Removed.
+        * khtml/dom/html_object.cpp: Removed.
+        * khtml/dom/html_object.h: Removed.
+        * khtml/dom/html_table.cpp: Removed.
+        * khtml/dom/html_table.h: Removed.
+        This removes unused C++ DOM files from both the project and
+        the repository.  There are a few left (css_, dom_) which will
+        need to be cleaned over time.
+
 2005-07-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris Blumenberg.
