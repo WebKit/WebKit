@@ -1,5 +1,22 @@
 2005-07-26  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Chris Blumenberg.
+
+        Test cases added: none, only affects Safari autofill
+        
+        - more work to wean form-related SPI from NSView. All that's left (but this is a big "all")
+        is viewForElement: and elementForView:
+
+        * kwq/WebCoreBridge.h:
+        Rename control:textView:doCommandBySelector: to textField:doCommandBySelector:, and changed
+        to take DOMHTMLInputElement* rather than NSControl* and NSTextView*
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController control:textView:doCommandBySelector:]):
+        call renamed bridge method, passing DOMElement* instead of NSView*
+
+2005-07-26  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Darin Adler.
 
         Test cases added: none, only affects Safari autofill

@@ -1,3 +1,19 @@
+2005-07-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+        
+        - more work to wean form-related SPI from NSView. All that's left (but this is a big "all")
+        is viewForElement: and elementForView:        
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge textField:doCommandBySelector:]):
+        changed signature to pass along DOMElement* rather than NSView*
+        
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate textField:doCommandBySelector:inFrame:]):
+        ditto
+
 2005-07-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

@@ -1253,10 +1253,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [formDelegate(self) textDidChangeInTextArea:element inFrame:_frame];
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector
 {
-    FormDelegateLog(control);
-    return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:_frame];
+    FormDelegateLog(element);
+    return [formDelegate(self) textField:element doCommandBySelector:commandSelector inFrame:_frame];
 }
 
 - (BOOL)textField:(DOMHTMLInputElement *)element shouldHandleEvent:(NSEvent *)event

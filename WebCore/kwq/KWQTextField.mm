@@ -225,7 +225,7 @@
 	return NO;
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control textView:textView doCommandBySelector:commandSelector];
+    return [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] doCommandBySelector:commandSelector];
 }
 
 - (void)textChanged
