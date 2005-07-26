@@ -87,6 +87,14 @@
 
 #import <Foundation/NSURLConnection.h>
 
+#if __ppc__
+#define PROCESSOR "PPC"
+#elif __i386__
+#define PROCESSOR "Intel"
+#else
+#error Unknown architecture
+#endif
+
 #define FOR_EACH_RESPONDER_SELECTOR(macro) \
 macro(alignCenter) \
 macro(alignJustified) \
@@ -1925,7 +1933,7 @@ NS_ENDHANDLER
     return [[[self mainFrame] _bridge] windowScriptObject];
 }
 
-
+	
 // Get the appropriate user-agent string for a particular URL.
 // Since we no longer automatically spoof, this no longer requires looking at the URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
@@ -1935,18 +1943,16 @@ NS_ENDHANDLER
         return [[userAgent retain] autorelease];
     }
     
-    // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
-
     NSString *language = [NSUserDefaults _webkit_preferredLanguageCode];
     id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
     if ([applicationName length]) {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko) %@",
             language, sourceVersion, applicationName];
     } else {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; " PROCESSOR " Mac OS X; %@) AppleWebKit/%@ (KHTML, like Gecko)",
             language, sourceVersion];
     }
 

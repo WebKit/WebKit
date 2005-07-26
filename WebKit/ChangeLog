@@ -1,3 +1,13 @@
+2005-07-25  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Darin.
+ 
+	- fixed <rdar://problem/3470523> Safari's user agent should be changed to say Intel rather 
+	than PPC on Intel machines
+
+        * WebView.subproj/WebView.m: add conditional #defines for "PPC" and "Intel"
+        (-[WebView userAgentForURL:]): use this variable when constructing the user agent string
+
 2005-07-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
