@@ -508,7 +508,7 @@ ExprOpt:
 ContinueStatement:
     CONTINUE ';'                   { $$ = new ContinueNode(); DBG($$,@1,@2); }
   | CONTINUE error                 { if (automatic()) {
-                                       $$ = new ContinueNode(); DBG($$,@1,@2);
+                                       $$ = new ContinueNode(); DBG($$,@1,@1);
                                      } else
 				       YYABORT; }
   | CONTINUE IDENT ';'             { $$ = new ContinueNode(*$2); DBG($$,@1,@3); }
@@ -538,10 +538,10 @@ ReturnStatement:
                                        $$ = new ReturnNode(0); DBG($$,@1,@1);
                                      } else
 				       YYABORT; }
-  | RETURN Expr ';'                { $$ = new ReturnNode($2); }
-  | RETURN Expr error              { if (automatic())
-                                       $$ = new ReturnNode($2);
-                                     else
+  | RETURN Expr ';'                { $$ = new ReturnNode($2); DBG($$,@1,@3); }
+  | RETURN Expr error              { if (automatic()) {
+                                       $$ = new ReturnNode($2); DBG($$,@1,@2);
+                                     } else
 				       YYABORT; }
 ;
 
@@ -587,14 +587,14 @@ LabelledStatement:
 ;
 
 ThrowStatement:
-    THROW Expr ';'                 { $$ = new ThrowNode($2); }
-  | THROW Expr error               { if (automatic()) $$ = new ThrowNode($2); else YYABORT; }
+    THROW Expr ';'                 { $$ = new ThrowNode($2); DBG($$,@1,@3); }
+  | THROW Expr error               { if (automatic()) { $$ = new ThrowNode($2); DBG($$,@1,@2); } else YYABORT; }
 ;
 
 TryStatement:
-    TRY Block Catch                { $$ = new TryNode($2, $3); }
-  | TRY Block Finally              { $$ = new TryNode($2, $3); }
-  | TRY Block Catch Finally        { $$ = new TryNode($2, $3, $4); }
+    TRY Block Catch                { $$ = new TryNode($2, $3); DBG($$,@1,@2); }
+  | TRY Block Finally              { $$ = new TryNode($2, $3); DBG($$,@1,@2); }
+  | TRY Block Catch Finally        { $$ = new TryNode($2, $3, $4); DBG($$,@1,@2); }
 ;
 
 Catch:

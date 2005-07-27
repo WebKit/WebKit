@@ -77,23 +77,6 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
   Object &globalObj = exec->dynamicInterpreter()->globalObject();
 
-  Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
-  int sid = -1;
-  int lineno = -1;
-  if (dbg) {
-    if (inherits(&DeclaredFunctionImp::info)) {
-      sid = static_cast<DeclaredFunctionImp*>(this)->body->sourceId();
-      lineno = static_cast<DeclaredFunctionImp*>(this)->body->firstLine();
-    }
-
-    Object func(this);
-    bool cont = dbg->callEvent(exec,sid,lineno,func,args);
-    if (!cont) {
-      dbg->imp()->abort();
-      return Undefined();
-    }
-  }
-
   // enter a new execution context
   ContextImp ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, codeType(),
                  exec->context().imp(), this, &args);
@@ -105,11 +88,28 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   // add variable declarations (initialized to undefined)
   processVarDecls(&newExec);
 
+  Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
+  int sid = -1;
+  int lineno = -1;
+  if (dbg) {
+    if (inherits(&DeclaredFunctionImp::info)) {
+      sid = static_cast<DeclaredFunctionImp*>(this)->body->sourceId();
+      lineno = static_cast<DeclaredFunctionImp*>(this)->body->firstLine();
+    }
+
+    Object func(this);
+    bool cont = dbg->callEvent(&newExec,sid,lineno,func,args);
+    if (!cont) {
+      dbg->imp()->abort();
+      return Undefined();
+    }
+  }
+
   Completion comp = execute(&newExec);
 
   // if an exception occured, propogate it back to the previous execution object
   if (newExec.hadException())
-    exec->setException(newExec.exception());
+    comp = Completion(Throw, newExec.exception());
 
 #ifdef KJS_VERBOSE
   if (comp.complType() == Throw)
@@ -121,8 +121,14 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
 #endif
 
   if (dbg) {
+    if (inherits(&DeclaredFunctionImp::info))
+      lineno = static_cast<DeclaredFunctionImp*>(this)->body->lastLine();
+
+    if (comp.complType() == Throw)
+        newExec.setException(comp.value());
+
     Object func(this);
-    int cont = dbg->returnEvent(exec,sid,lineno,func);
+    int cont = dbg->returnEvent(&newExec,sid,lineno,func);
     if (!cont) {
       dbg->imp()->abort();
       return Undefined();
@@ -789,7 +795,14 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
         int errLine;
         UString errMsg;
         ProgramNode *progNode = Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg);
-        
+
+        Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
+        if (dbg) {
+          bool cont = dbg->sourceParsed(exec, sid, UString(), s, errLine);
+          if (!cont)
+            return Undefined();
+        }
+
         // no program node means a syntax occurred
         if (!progNode) {
           Object err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);

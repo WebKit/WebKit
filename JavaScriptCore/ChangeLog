@@ -1,3 +1,34 @@
+2005-07-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Changes by Michael Kahl, reviewed by me.
+
+	- fixed <rdar://problem/4194278> Need better debugging support in JavaScriptCore
+	
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/debugger.cpp:
+        (KJS::AttachedInterpreter::AttachedInterpreter):
+        (KJS::AttachedInterpreter::~AttachedInterpreter):
+        (Debugger::~Debugger):
+        (Debugger::attach):
+        (Debugger::detach):
+        (Debugger::sourceParsed):
+        * kjs/debugger.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::call):
+        (KJS::GlobalFuncImp::call):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        (Parser::parse):
+        (InterpreterImp::evaluate):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::setDebugger):
+        * kjs/interpreter.cpp:
+        * kjs/interpreter.h:
+        (KJS::Interpreter::imp):
+        * kjs/nodes.cpp:
+
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3381

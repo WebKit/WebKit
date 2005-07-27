@@ -36,12 +36,15 @@ namespace KJS {
   struct AttachedInterpreter
   {
   public:
-    AttachedInterpreter(Interpreter *i) : interp(i) {}
+    AttachedInterpreter(Interpreter *i, AttachedInterpreter *ai) : interp(i), next(ai) { ++Debugger::debuggersPresent; }
+    ~AttachedInterpreter() { --Debugger::debuggersPresent; }
     Interpreter *interp;
     AttachedInterpreter *next;
   };
 
 }
+
+int Debugger::debuggersPresent = 0;
 
 Debugger::Debugger()
 {
@@ -50,53 +53,42 @@ Debugger::Debugger()
 
 Debugger::~Debugger()
 {
-  // detach from all interpreters
-  while (rep->interps)
-    detach(rep->interps->interp);
-
+  detach(0);
   delete rep;
 }
 
 void Debugger::attach(Interpreter *interp)
 {
-  if (interp->imp()->debugger() != this)
-    interp->imp()->setDebugger(this);
-
-  // add to the list of attached interpreters
-  if (!rep->interps)
-    rep->interps = new AttachedInterpreter(interp);
-  else {
-    AttachedInterpreter *ai = rep->interps;
-    while (ai->next)
-      ai = ai->next;
-    ai->next = new AttachedInterpreter(interp);;
-  }
+  Debugger *other = interp->imp()->debugger();
+  if (other == this)
+    return;
+  if (other)
+    other->detach(interp);
+  interp->imp()->setDebugger(this);
+  rep->interps = new AttachedInterpreter(interp, rep->interps);
 }
 
 void Debugger::detach(Interpreter *interp)
 {
-  if (interp->imp()->debugger() == this)
-    interp->imp()->setDebugger(this);
+  if (interp && interp->imp()->debugger() == this)
+    interp->imp()->setDebugger(0);
 
-  // remove from the list of attached interpreters
-  if (rep->interps->interp == interp) {
-    AttachedInterpreter *old = rep->interps;
-    rep->interps = rep->interps->next;
-    delete old;
-  }
-
-  AttachedInterpreter *ai = rep->interps;
-  while (ai->next && ai->next->interp != interp)
-    ai = ai->next;
-  if (ai->next) {
-    AttachedInterpreter *old = ai->next;
-    ai->next = ai->next->next;
-    delete old;
+  // iterate the addresses where AttachedInterpreter pointers are stored
+  // so we can unlink items from the list
+  AttachedInterpreter **p = &rep->interps;
+  AttachedInterpreter *q;
+  while ((q = *p)) {
+    if (!interp || q->interp == interp) {
+      *p = q->next;
+      delete q;
+    } else {
+      p = &q->next;
+    }
   }
 }
 
-bool Debugger::sourceParsed(ExecState */*exec*/, int /*sourceId*/,
-                            const UString &/*source*/, int /*errorLine*/)
+bool Debugger::sourceParsed(ExecState */*exec*/, int /*sourceId*/, const UString &/*sourceURL*/, 
+                           const UString &/*source*/, int /*errorLine*/)
 {
   return true;
 }

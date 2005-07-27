@@ -47,24 +47,15 @@
 
 using namespace KJS;
 
-// Disabled for now because it shows up on benchmark (0.5%).
-#if DEBUGGER_SUPPORT
-
 #define KJS_BREAKPOINT \
-  if (!hitStatement(exec)) \
+  if (Debugger::debuggersPresent > 0 && !hitStatement(exec)) \
     return Completion(Normal);
 
 #define KJS_ABORTPOINT \
-  if (exec->dynamicInterpreter()->imp()->debugger() && \
+  if (Debugger::debuggersPresent > 0 && \
+      exec->dynamicInterpreter()->imp()->debugger() && \
       exec->dynamicInterpreter()->imp()->debugger()->imp()->aborted()) \
     return Completion(Normal);
-
-#else
-
-#define KJS_BREAKPOINT
-#define KJS_ABORTPOINT
-
-#endif
 
 #define KJS_CHECKEXCEPTION \
   if (exec->hadException()) { \
