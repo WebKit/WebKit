@@ -1,3 +1,13 @@
+2005-07-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        Added forward declarations to fix new gcc4 errors
+
+        * khtml/ecma/kjs_window.h:
+        * khtml/xml/dom_elementimpl.h:
+        * kwq/KWQMapImpl.h:
+
 2005-07-26  David Hyatt  <hyatt@apple.com>
 
 	Land current checkbox work.  The checkbox can now check/uncheck,

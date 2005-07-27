@@ -51,6 +51,7 @@ class DocumentImpl;
 class CSSStyleDeclarationImpl;
 class ElementImpl;
 class NamedAttrMapImpl;
+class AttrImpl;
 
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.

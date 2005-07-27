@@ -30,6 +30,8 @@
 
 #include "KWQRefPtr.h"
 
+class KWQMapImpl;
+
 class KWQMapNodeImpl
 {
 protected:
