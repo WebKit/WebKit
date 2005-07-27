@@ -122,7 +122,7 @@ namespace KJS {
   double parseDate(const UString &u);
   double KRFCDate_parseDate(const UString &_date);
   double timeClip(double t);
-  double makeTime(struct tm *t, int milli, bool utc);
+  double makeTime(struct tm *t, double milli, bool utc);
 
 } // namespace
 

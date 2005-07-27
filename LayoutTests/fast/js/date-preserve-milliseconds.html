@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>JavaScript Date tests -- Millisecond Preservation</title>
+<script type='text/javascript' charset='utf-8'>
+function print(message) {
+	var paragraph = document.createElement("p");
+	paragraph.appendChild(document.createTextNode(message));
+	document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+	if (window.layoutTestController) {
+		layoutTestController.dumpAsText();
+	}
+
+    var d = new Date(0);
+    var result = "";
+
+    // make sure we have a date with ms > 0
+    d.setMilliseconds(1);
+
+    var oldValue = d.getMilliseconds();
+
+    d.setHours(8);
+    var newValue = d.getMilliseconds();
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+
+    d.setHours(8, 30);
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+
+    d.setHours(8, 30, 40);
+    newValue = d.getMilliseconds();
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+
+    d.setMinutes(45);
+    newValue = d.getMilliseconds();
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+
+    d.setMinutes(45, 40);
+    newValue = d.getMilliseconds();
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+
+    d.setSeconds(50);
+    newValue = d.getMilliseconds();
+    result = (oldValue == newValue) ? "SUCCESS: " : "FAILURE ";
+    result += "Expected milliseconds: " + oldValue + "     ";
+    result += "Actual milliseconds: " + newValue;
+    print(result);
+}
+</script>
+</head>
+<body onload="test();">
+<p>
+The following test checks if an existing milliseconds value gets preserved if a call
+to setHours(), setMinutes() or setSeconds() does not specify the milliseconds.
+See http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
+</p>
+<p>If the test passes, you will see "SUCCESS" messages below.</p>
+<hr>
+<div id='console'/>
+</body>
+</html>

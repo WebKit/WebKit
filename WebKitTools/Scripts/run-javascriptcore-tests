@@ -40,7 +40,7 @@ chdirWebKit();
 chdir "JavaScriptCore/tests/mozilla" or die;
 
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-my $result = system "perl", "jsDriver.pl", "-L", "ecma/Date", "-e", "kjs", "-s", "$productDir/testkjs", "-f", "actual.html", @ARGV;
+my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", "$productDir/testkjs", "-f", "actual.html", @ARGV;
 
 exit $result if $result;
 

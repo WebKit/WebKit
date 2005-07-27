@@ -1,3 +1,14 @@
+2005-07-27  Geoffrey Garen  <ggaren@apple.com>
+        -added testcase for http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
+        Date object enhancements
+        
+        Reviewed by darin.
+
+        Test cases added:
+
+        * layout-tests/fast/js/date-preserve-milliseconds-expected.txt: Added.
+        * layout-tests/fast/js/date-preserve-milliseconds.html: Added.
+
 2005-07-26  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Trey Matteson <trey@usa.net>

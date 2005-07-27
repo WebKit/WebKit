@@ -59,7 +59,7 @@
 #include "date_object.lut.h"
 
 // some constants
-const time_t invalidDate = -1;
+const time_t invalidDate = LONG_MIN;
 const double hoursPerDay = 24;
 const double minutesPerHour = 60;
 const double secondsPerMinute = 60;
@@ -83,7 +83,6 @@ using KJS::UString;
 #define gmtime(x) gmtimeUsingCF(x)
 #define localtime(x) localtimeUsingCF(x)
 #define mktime(x) mktimeUsingCF(x)
-#define timegm(x) timegmUsingCF(x)
 #define time(x) timeUsingCF(x)
 
 #define ctime(x) NotAllowedToCallThis()
@@ -198,11 +197,6 @@ static time_t mktimeUsingCF(struct tm *tm)
     time_t result = timetUsingCF(tm, timeZone);
     CFRelease(timeZone);
     return result;
-}
-
-static time_t timegmUsingCF(struct tm *tm)
-{
-    return timetUsingCF(tm, UTCTimeZone());
 }
 
 static time_t timeUsingCF(time_t *clock)
@@ -393,6 +387,36 @@ static double timeZoneOffset(const struct tm *t)
 #endif
 }
 
+static double timeFromArgs(ExecState *exec, const List &args, int maxArgs, double ms, struct tm *t)
+{
+    double result = 0;
+    int idx = 0;
+    int numArgs = args.size();
+    
+    // process up to max_args arguments
+    if (numArgs > maxArgs)
+        numArgs = maxArgs;
+    // hours
+    if (maxArgs >= 4 && idx < numArgs) {
+        t->tm_hour = 0;
+        result = args[idx++].toInt32(exec) * msPerHour;
+    }
+    // minutes
+    if (maxArgs >= 3 && idx < numArgs) {
+        t->tm_min = 0;
+        result += args[idx++].toInt32(exec) * msPerMinute;
+    }
+    // seconds
+    if (maxArgs >= 2 && idx < numArgs) {
+        t->tm_sec = 0;
+        result += args[idx++].toInt32(exec) * msPerSecond;
+    }
+    // read ms from args if present or add the old value
+    result += idx < numArgs ? roundValue(exec, args[idx]) : ms;
+            
+    return result;
+}
+
 // ------------------------------ DateInstanceImp ------------------------------
 
 const ClassInfo DateInstanceImp::info = {"Date", 0, 0, 0};
@@ -557,7 +581,7 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
   }
 
   time_t tv = (time_t) floor(milli / 1000.0);
-  int ms = int(milli - tv * 1000.0);
+  double ms = milli - tv * 1000.0;
 
   struct tm *t = utc ? gmtime(&tv) : localtime(&tv);
   // we had an out of range year. use that one (plus/minus offset
@@ -681,33 +705,21 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
 #endif
     break;
   case SetTime:
-    milli = roundValue(exec,args[0]);
+    milli = roundValue(exec, args[0]);
     result = Number(milli);
     thisObj.setInternalValue(result);
     break;
   case SetMilliSeconds:
-    ms = args[0].toInt32(exec);
+    ms = roundValue(exec, args[0]);
     break;
   case SetSeconds:
-    t->tm_sec = args[0].toInt32(exec);
-    if (args.size() >= 2)
-      ms = args[1].toInt32(exec);
+    ms = timeFromArgs(exec, args, 2, ms, t);
     break;
   case SetMinutes:
-    t->tm_min = args[0].toInt32(exec);
-    if (args.size() >= 2)
-      t->tm_sec = args[1].toInt32(exec);
-    if (args.size() >= 3)
-      ms = args[2].toInt32(exec);
+    ms = timeFromArgs(exec, args, 3, ms, t);
     break;
   case SetHours:
-    t->tm_hour = args[0].toInt32(exec);
-    if (args.size() >= 2)
-      t->tm_min = args[1].toInt32(exec);
-    if (args.size() >= 3)
-      t->tm_sec = args[2].toInt32(exec);
-    if (args.size() >= 4)
-      ms = args[3].toInt32(exec);
+    ms = timeFromArgs(exec, args, 4, ms, t);
     break;
   case SetDate:
     t->tm_mday = args[0].toInt32(exec);
@@ -794,12 +806,10 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
 #endif
     value = utc;
   } else if (numArgs == 1) {
-    UString s = args[0].toString(exec);
-    double d = s.toDouble();
-    if (isNaN(d))
-      value = parseDate(s);
-    else
-      value = d;
+      if (args[0].type() == StringType)
+          value = parseDate(args[0].toString(exec));
+      else
+          value = args[0].toPrimitive(exec).toNumber(exec);
   } else {
     struct tm t;
     memset(&t, 0, sizeof(t));
@@ -820,7 +830,7 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
       t.tm_min = (numArgs >= 5) ? args[4].toInt32(exec) : 0;
       t.tm_sec = (numArgs >= 6) ? args[5].toInt32(exec) : 0;
       t.tm_isdst = -1;
-      int ms = (numArgs >= 7) ? args[6].toInt32(exec) : 0;
+      double ms = (numArgs >= 7) ? roundValue(exec, args[6]) : 0;
       value = makeTime(&t, ms, false);
     }
   }
@@ -895,11 +905,8 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
     t.tm_hour = (n >= 4) ? args[3].toInt32(exec) : 0;
     t.tm_min = (n >= 5) ? args[4].toInt32(exec) : 0;
     t.tm_sec = (n >= 6) ? args[5].toInt32(exec) : 0;
-    int ms = (n >= 7) ? args[6].toInt32(exec) : 0;
-    time_t mktimeResult = timegm(&t);
-    if (mktimeResult == invalidDate)
-      return Number(NaN);
-    return Number(mktimeResult * 1000.0 + ms);
+    double ms = (n >= 7) ? roundValue(exec, args[6]) : 0;
+    return Number(makeTime(&t, ms, true));
   }
 }
 
@@ -956,15 +963,16 @@ static const struct KnownZone {
     { "PDT", -420 }
 };
 
-double KJS::makeTime(struct tm *t, int ms, bool utc)
+double KJS::makeTime(struct tm *t, double ms, bool utc)
 {
     int utcOffset;
     if (utc) {
 	time_t zero = 0;
 #if defined BSD || defined(__linux__) || defined(__APPLE__)
-	struct tm *t3 = localtime(&zero);
-        utcOffset = t3->tm_gmtoff;
-        t->tm_isdst = t3->tm_isdst;
+        struct tm t3;
+        localtime_r(&zero, &t3);
+        utcOffset = t3.tm_gmtoff;
+        t->tm_isdst = t3.tm_isdst;
 #else
         (void)localtime(&zero);
 #  if defined(__BORLANDC__) || defined(__CYGWIN__)

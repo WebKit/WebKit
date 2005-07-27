@@ -1,0 +1,15 @@
+The following test checks if an existing milliseconds value gets preserved if a call to setHours(), setMinutes() or setSeconds() does not specify the milliseconds. See http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
+
+If the test passes, you will see "SUCCESS" messages below.
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1
+
+SUCCESS: Expected milliseconds: 1 Actual milliseconds: 1

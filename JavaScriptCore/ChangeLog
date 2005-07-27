@@ -1,3 +1,25 @@
+2005-07-27  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in patch by Carsten Guenther <cguenther@gmail.com>
+        for http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
+        Date object enhancements
+        
+        Test cases added:
+
+        * layout-tests/fast/js/date-preserve-milliseconds-expected.txt: Added.
+        * layout-tests/fast/js/date-preserve-milliseconds.html: Added.
+
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (timeFromArgs):
+        (DateProtoFuncImp::call):
+        (DateObjectImp::construct):
+        (DateObjectFuncImp::call):
+        (KJS::makeTime):
+        * kjs/date_object.h:
+        * tests/mozilla/expected.html:
+
 2005-07-26  Justin Garcia  <justin.garcia@apple.com>
 
         Added a forward declaration to fix gcc4 build error
