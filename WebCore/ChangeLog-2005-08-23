@@ -1,3 +1,10 @@
+2005-07-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Test cases added:
+
+        * layout-tests/fast/js/date-big-setdate-expected.txt: Added.
+        * layout-tests/fast/js/date-big-setdate.html: Added.
+
 2005-07-27  David Hyatt  <hyatt@apple.com>
 
 	Remove the "enforce a square size" rule for checkboxes. WinIE

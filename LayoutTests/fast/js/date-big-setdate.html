@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>JavaScript Date tests -- Millisecond Preservation</title>
+<script type='text/javascript' charset='utf-8'>
+function print(message) {
+	var paragraph = document.createElement("p");
+	paragraph.appendChild(document.createTextNode(message));
+	document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+	if (window.layoutTestController) {
+		layoutTestController.dumpAsText();
+	}
+
+    for (var i = 120; i < 130; i++) {
+        var d = new Date(0);
+        d.setDate(i);
+        print("setDate(" + i + ")" + ": " + d);
+    }
+}
+</script>
+</head>
+<body onload="test();">
+<p>
+This test checks for regression against: <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3381">
+3381 Date.prototype.setDate() incorrect for values >=128.</a>
+</p>
+<p>If the test passes, all the dates below will be sequential.</p>
+<hr>
+<div id='console'/ style="font-family: courier; font-size: 12">
+</body>
+</html>

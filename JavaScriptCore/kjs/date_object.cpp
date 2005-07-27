@@ -722,8 +722,9 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     ms = timeFromArgs(exec, args, 4, ms, t);
     break;
   case SetDate:
-    t->tm_mday = args[0].toInt32(exec);
-    break;
+      t->tm_mday = 0;
+      ms += args[0].toInt32(exec) * msPerDay;
+      break;
   case SetMonth:
     t->tm_mon = args[0].toInt32(exec);
     if (args.size() >= 2)

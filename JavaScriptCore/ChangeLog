@@ -1,5 +1,20 @@
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3381
+        Date.prototype.setDate() incorrect for values >=128
+        
+        - Test cases added:
+
+        * layout-tests/fast/js/date-big-setdate-expected.txt: Added.
+        * layout-tests/fast/js/date-big-setdate.html: Added.
+
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (DateProtoFuncImp::call):
+
+2005-07-27  Geoffrey Garen  <ggaren@apple.com>
+
         -rolled in patch by Carsten Guenther <cguenther@gmail.com>
         for http://bugzilla.opendarwin.org/show_bug.cgi?id=3759
         Date object enhancements
