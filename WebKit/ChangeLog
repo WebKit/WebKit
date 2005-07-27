@@ -3,6 +3,31 @@
 	Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4169
+          scaling PDF view up leaves later HTML view scaled too
+
+        An additional step of separating scaling of HTML and PDF.  If we do a zoom and there
+        are no docViews that track the common scaling factor, then don't change it.  Thus in
+        the common PDF case where it is the only doc view, scaling the PDF does not affect
+        HTML pages loaded in the same window.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView canMakeTextSmaller]):  Pass 0 for new scaling factor, since we just querying.
+        (-[WebView canMakeTextLarger]):  Ditto.
+        (-[WebView makeTextSmaller:]):  Pass new scaling factor.
+        (-[WebView makeTextLarger:]):  Ditto.
+        (-[WebView canMakeTextStandardSize]):  Pass 0 for new scaling factor.
+        (-[WebView makeTextStandardSize:]):  Pass new scaling factor.
+        (-[WebView _performTextSizingSelector:withObject:onTrackingDocs:selForNonTrackingDocs:newScaleFactor:]):
+          The meat of the change is that this Swiss Army Knife also takes a new scaling
+          factor, which it will set as the common scaling factor if it finds any doc views that
+          are able to be scaled which track the common scaling factor.
+
+2005-07-27  John Sullivan  <sullivan@apple.com>
+
+	Patch by Trey Matteson <trey@usa.net>
+        Reviewed by me.
+
         Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4015
           PDF views should remember viewing mode, scroll position across back/forward
           Note this doesn't work within frames because of a PDFKit bug - see 4164

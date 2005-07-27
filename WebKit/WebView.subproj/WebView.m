@@ -214,7 +214,7 @@ macro(yankAndSelect) \
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
-- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel;
+- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor;
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -2366,31 +2366,27 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)canMakeTextSmaller
 {
     BOOL canShrinkMore = _private->textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller)];
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller) newScaleFactor:0];
 }
 
 - (BOOL)canMakeTextLarger
 {
     BOOL canGrowMore = _private->textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger)];
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger) newScaleFactor:0];
 }
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-    BOOL canShrinkMore = _private->textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
-    if (canShrinkMore) {
-        [self setTextSizeMultiplier:_private->textSizeMultiplier/TextSizeMultiplierRatio];
-    }
-    [self _performTextSizingSelector:@selector(_makeTextSmaller:) withObject:sender onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller)];
+    float newScale = _private->textSizeMultiplier/TextSizeMultiplierRatio;
+    BOOL canShrinkMore = newScale > MinimumTextSizeMultiplier;
+    [self _performTextSizingSelector:@selector(_makeTextSmaller:) withObject:sender onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller) newScaleFactor:newScale];
 }
 
 - (IBAction)makeTextLarger:(id)sender
 {
-    BOOL canGrowMore = _private->textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
-    if (canGrowMore) {
-        [self setTextSizeMultiplier:_private->textSizeMultiplier*TextSizeMultiplierRatio];
-    }
-    [self _performTextSizingSelector:@selector(_makeTextLarger:) withObject:sender onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger)];
+    float newScale = _private->textSizeMultiplier*TextSizeMultiplierRatio;
+    BOOL canGrowMore = newScale < MaximumTextSizeMultiplier;
+    [self _performTextSizingSelector:@selector(_makeTextLarger:) withObject:sender onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger) newScaleFactor:newScale];
 }
 
 - (BOOL)_responderValidateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -2546,16 +2542,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)canMakeTextStandardSize
 {
     BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize)];
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:0];
 }
 
 - (IBAction)makeTextStandardSize:(id)sender
 {
     BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
-    if (notAlreadyStandard) {
-        [self setTextSizeMultiplier:1.0];
-    }
-    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize)];
+    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
 }
 
 @end
@@ -3147,8 +3140,10 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
 // text sizing.  It returns whether it found any "suitable" doc views.  It sends sel to any suitable
 // doc views, or if sel==0 we do nothing to them.  For doc views that track our size factor, they are
 // suitable if doTrackingViews==YES (which in practice means that our size factor isn't at its max or
-// min).  For doc views that don't track it, we send them testSel to determine suitablility.
-- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel
+// min).  For doc views that don't track it, we send them testSel to determine suitablility.  If we
+// do find any suitable tracking doc views and newScaleFactor!=0, we will set the common scale factor
+// to that new factor before we send sel to any of them. 
+- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor
 {
     if ([[self mainFrame] dataSource] == nil) {
         return NO;
@@ -3164,6 +3159,9 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
             BOOL isSuitable;
             if ([sizingDocView _tracksCommonSizeFactor]) {
                 isSuitable = doTrackingViews;
+                if (isSuitable && newScaleFactor != 0) {
+                    [self setTextSizeMultiplier:newScaleFactor];
+                }
             } else {
                 // Incarnation to perform a selector returning a BOOL from objc/objc-runtime.h
                 isSuitable = (*(BOOL(*)(id, SEL, ...))objc_msgSend)(sizingDocView, testSel);
