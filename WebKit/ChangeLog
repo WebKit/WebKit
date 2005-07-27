@@ -1,3 +1,17 @@
+2005-07-26  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Trey Matteson <trey@usa.net>
+
+        Reviewed by John Sullivan.
+        
+        Fixed <http://bugzilla.opendarwin.org/show_bug.cgi?id=4072>
+        Pressing back in browser misses out a page
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):  When reloading the same page or refreshing the
+        page, update the URL in the b/f item with the URL that we wind up at.  Due to cookies,
+        it might be different than the result we just got when we loaded the same page.
+
 2005-07-26  David Hyatt  <hyatt@apple.com>
 
 	Make WebHTMLView inherit from NSControl instead of NSView.

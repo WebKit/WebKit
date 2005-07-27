@@ -804,6 +804,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionToItem:currItem];
                 }
+                NSURLRequest *request = [ds request];
+                if ([request _webDataRequestUnreachableURL] == nil) {
+                    // Sometimes loading a page again leads to a different result because of cookies.  Bugzilla 4072
+                    [currItem setURL:[request URL]];
+                }
                 // Update the last visited time.  Mostly interesting for URL autocompletion
                 // statistics.
                 NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
