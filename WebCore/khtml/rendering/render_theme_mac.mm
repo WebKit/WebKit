@@ -139,8 +139,10 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
 void RenderThemeMac::setSizeFromFont(RenderStyle* style, const int* sizes) const
 {
     int size = sizes[controlSizeForFont(style)];
-    style->setWidth(Length(size, Fixed));
-    style->setHeight(Length(size, Fixed));
+    if (style->width().isVariable())
+        style->setWidth(Length(size, Fixed));
+    if (style->height().isVariable())
+        style->setHeight(Length(size, Fixed));
 }
 
 void RenderThemeMac::setControlSize(NSCell* cell, const int* sizes, int minSize)
@@ -212,15 +214,9 @@ void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
     if (!style->width().isVariable() && !style->height().isVariable())
         return;
 
-    // The control is a square, so make the two values match.
-    if (!style->width().isVariable())
-        style->setHeight(style->width());
-    else if (!style->height().isVariable())
-        style->setWidth(style->width());
-    else
-        // Use the font size to determine the intrinsic width of the control.
-        // Checkboxes are either 14, 12, or 10 pixels tall.
-        setSizeFromFont(style, checkboxSizes());
+    // Use the font size to determine the intrinsic width of the control.
+    // Checkboxes are either 14, 12, or 10 pixels tall.
+    setSizeFromFont(style, checkboxSizes());
 }
 
 void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
