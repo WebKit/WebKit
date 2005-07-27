@@ -30,10 +30,48 @@ namespace khtml {
 class RenderStyle;
 
 class RenderThemeMac : public RenderTheme {
+public:
+    RenderThemeMac();
+    virtual ~RenderThemeMac() { /* Have to just leak the cells, since statics are destroyed with no autorelease pool available */ }
+
+    // An API to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
+    // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
+    // controls that need to do this.
+    virtual short baselinePosition(const RenderObject* o) const;
+
+    // An API for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
+    // the baseline position API above).
+    virtual bool isControlContainer(EAppearance appearance) const;
+
+    virtual void adjustRepaintRect(const RenderObject* o, QRect& r);
+
 protected:
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(RenderStyle* style);
+    virtual void adjustCheckboxStyle(RenderStyle* style) const;
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    
+private:
+    QRect inflateRect(const QRect& r, int size, const int* margins) const;
+
+    // Get the control size based off the font.  Used by some of the controls (like buttons).
+    NSControlSize controlSizeForFont(RenderStyle* style) const;
+    void setSizeFromFont(RenderStyle* style, const int* sizes) const;
+    void setControlSize(NSCell* cell, const int* sizes, int minSize);
+
+    void updateCheckedState(NSCell* cell, const RenderObject* o);
+    void updateEnabledState(NSCell* cell, const RenderObject* o);
+    void updateFocusedState(NSCell* cell, const RenderObject* o);
+    void updatePressedState(NSCell* cell, const RenderObject* o);
+
+    // Helpers for adjusting appearance and for painting
+    const int* checkboxSizes() const;
+    const int* checkboxMargins() const;
+    void setCheckboxSize(RenderStyle* style) const;
+    void setCheckboxCellState(const RenderObject* o, const QRect& r);
+    
+    
+private:
+    NSButtonCell* checkbox;
 };
 
 }

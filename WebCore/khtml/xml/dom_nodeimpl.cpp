@@ -2286,6 +2286,7 @@ void ContainerNodeImpl::setFocus(bool received)
 
     NodeImpl::setFocus(received);
 
+    // FIXME: Move to ElementImpl
     if (received && isEditableBlock() && !hasChildNodes()) {
         getDocument()->part()->setSelection(Selection(Position(this, 0), DOWNSTREAM));
     }
@@ -2301,8 +2302,14 @@ void ContainerNodeImpl::setActive(bool down)
     NodeImpl::setActive(down);
 
     // note that we need to recalc the style
-    if (m_render && m_render->style()->affectedByActiveRules())
-        setChanged();
+    // FIXME: Move to ElementImpl
+    if (m_render) {
+        if (m_render->style()->affectedByActiveRules())
+            setChanged();
+        // FIXME: Let the theme decide if the repaint is necessary.
+        if (m_render->style()->hasAppearance())
+            m_render->repaint();
+    }
 }
 
 unsigned long ContainerNodeImpl::childNodeCount() const

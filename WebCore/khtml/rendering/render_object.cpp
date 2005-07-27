@@ -1152,10 +1152,15 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     
 #ifdef APPLE_CHANGES
     if (style->outlineStyleIsAuto()) {
-        p->initFocusRing(ow, offset, oc);
-        addFocusRingRects(p, _tx, _ty);
-        p->drawFocusRing();
-        p->clearFocusRing();
+        if (!style->hasAppearance()) {
+            // Only paint the focus ring by hand if there is no custom appearance
+            // specified.  Otherwise we let the theme paint the focus ring, since the ring
+            // might not be rectangular (or match the dimensions of the control exactly).
+            p->initFocusRing(ow, offset, oc);
+            addFocusRingRects(p, _tx, _ty);
+            p->drawFocusRing();
+            p->clearFocusRing();
+        }
         return;
     }
 #endif
@@ -1618,7 +1623,7 @@ void RenderObject::setStyle(RenderStyle *style)
     if (oldStyle)
         oldStyle->deref(renderArena());
 
-    setShouldPaintBackgroundOrBorder(m_style->hasBorder() || m_style->hasBackground());
+    setShouldPaintBackgroundOrBorder(m_style->hasBorder() || m_style->hasBackground() || m_style->hasAppearance());
 
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();

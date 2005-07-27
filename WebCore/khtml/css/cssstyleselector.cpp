@@ -959,7 +959,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
     style->adjustBackgroundLayers();
 
     // Let the theme get a crack at changing the style if an appearance has been set.
-    if (style->appearance() != NoAppearance)
+    if (style->hasAppearance())
         theme()->adjustStyle(style);
 
     // Only use slow repaints if we actually have a background image.

@@ -318,7 +318,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         mh = kMin(i.r.height(), h);
 
     // If we have a native theme appearance, use that instead of painting our border/background.
-    if (style()->appearance() != NoAppearance)
+    if (style()->hasAppearance())
         return theme()->paint(this, i, QRect(_tx, _ty, w, h));
         
     // The <body> only paints its background if the root element has defined a background
@@ -687,8 +687,13 @@ void RenderBox::setInlineBoxWrapper(InlineBox* b)
 
 QRect RenderBox::getAbsoluteRepaintRect()
 {
-    int ow = style() ? style()->outlineSize() : 0;
-    QRect r(-ow, -ow, overflowWidth(false)+ow*2, overflowHeight(false)+ow*2);
+    QRect r(0, 0, overflowWidth(false), overflowHeight(false));
+    if (style()) {
+        if (style()->hasAppearance())
+            // The theme may wish to inflate the rect used when repainting.
+            theme()->adjustRepaintRect(this, r);
+        r.inflate(style()->outlineSize()); // FIXME: Technically the outline inflation could fit within the theme inflation.
+    }
     computeAbsoluteRepaintRect(r);
     return r;
 }

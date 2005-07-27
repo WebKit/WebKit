@@ -37,6 +37,7 @@
 #include "html/html_formimpl.h"
 #include "render_block.h"
 #include "editing/selection.h"
+#include "render_theme.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"
@@ -3182,8 +3183,11 @@ short RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplaced() && !isRootLineBox)
+    if (isReplaced() && !isRootLineBox) {
+        if (style()->hasAppearance() && !theme()->isControlContainer(style()->appearance()))
+            return theme()->baselinePosition(this);
         return height() + marginTop() + marginBottom();
+    }
     return RenderFlow::baselinePosition(b, isRootLineBox);
 }
 

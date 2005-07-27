@@ -21,6 +21,11 @@
 
 #include "render_theme.h"
 #include "render_style.h"
+#include "htmlnames.h"
+#include "html_formimpl.h"
+
+using DOM::HTMLTags;
+using DOM::HTMLInputElementImpl;
 
 // The methods in this file are shared by all themes on every platform.
 
@@ -52,6 +57,39 @@ void RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
         default:
             break;
     }
+}
+
+short RenderTheme::baselinePosition(const RenderObject* o) const
+{
+    return o->height() + o->marginTop() + o->marginBottom();
+}
+
+bool RenderTheme::isChecked(const RenderObject* o)
+{
+    if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
+        return false;
+    return static_cast<HTMLInputElementImpl*>(o->element())->checked();
+}
+
+bool RenderTheme::isEnabled(const RenderObject* o)
+{
+    if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
+        return true;
+    return !static_cast<HTMLInputElementImpl*>(o->element())->disabled();
+}
+
+bool RenderTheme::isFocused(const RenderObject* o)
+{
+    if (!o->element())
+        return false;
+    return o->element() == o->element()->getDocument()->focusNode();
+}
+
+bool RenderTheme::isPressed(const RenderObject* o)
+{
+    if (!o->element())
+        return false;
+    return o->element()->active();
 }
 
 }

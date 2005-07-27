@@ -31,6 +31,9 @@ class RenderStyle;
 
 class RenderTheme {
 public:
+    RenderTheme() {}
+    virtual ~RenderTheme() {}
+
     // This method is called whenever style has been computed for an element and the appearance
     // property has been set to a value other than "none".  The theme should map in all of the appropriate
     // metrics and defaults given the contents of the style.  This includes sophisticated operations like
@@ -44,15 +47,33 @@ public:
 
     // The remaining methods should be implemented by the platform-specific portion of the theme, e.g.,
     // render_theme_mac.cpp for Mac OS X.
+    
+    // An API to obtain the baseline position for a "leaf" control.  This will only be used if a baseline
+    // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
+    // controls that need to do this.
+    virtual short baselinePosition(const RenderObject* o) const;
+
+    // An API for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
+    // the baseline position API above).
+    virtual bool isControlContainer(EAppearance appearance) const { return true; }
+
+    // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
+    // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
+    virtual void adjustRepaintRect(const RenderObject* o, QRect& r) { }
+    
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
     void themeChanged();
-    
-    virtual ~RenderTheme() {};
-    
+
 protected:
+    // Methods for state querying
+    bool isChecked(const RenderObject* o);
+    bool isEnabled(const RenderObject* o);
+    bool isFocused(const RenderObject* o);
+    bool isPressed(const RenderObject* o);
+
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(RenderStyle* style) = 0;
+    virtual void adjustCheckboxStyle(RenderStyle* style) const = 0;
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
 };
 

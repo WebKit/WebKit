@@ -1,3 +1,65 @@
+2005-07-26  David Hyatt  <hyatt@apple.com>
+
+	Land current checkbox work.  The checkbox can now check/uncheck,
+	supports looking pressed, and can dynamically enable/disable.
+
+	Entire patch reviewed by darin, portions reviewed by
+	sullivan as well.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLGenericFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::click):
+        (DOM::HTMLInputElementImpl::setChecked):
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::baselinePosition):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBoxDecorations):
+        (RenderBox::getAbsoluteRepaintRect):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintOutline):
+        (RenderObject::setStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::hasAppearance):
+        (khtml::RenderStyle::resetBorder):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::baselinePosition):
+        (khtml::RenderTheme::isChecked):
+        (khtml::RenderTheme::isEnabled):
+        (khtml::RenderTheme::isFocused):
+        (khtml::RenderTheme::isPressed):
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::RenderTheme):
+        (khtml::RenderTheme::~RenderTheme):
+        (khtml::RenderTheme::isControlContainer):
+        (khtml::RenderTheme::adjustRepaintRect):
+        * khtml/rendering/render_theme_mac.h:
+        (khtml::RenderThemeMac::~RenderThemeMac):
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::RenderThemeMac):
+        (khtml::RenderThemeMac::adjustRepaintRect):
+        (khtml::RenderThemeMac::inflateRect):
+        (khtml::RenderThemeMac::updateCheckedState):
+        (khtml::RenderThemeMac::updateEnabledState):
+        (khtml::RenderThemeMac::updateFocusedState):
+        (khtml::RenderThemeMac::updatePressedState):
+        (khtml::RenderThemeMac::baselinePosition):
+        (khtml::RenderThemeMac::isControlContainer):
+        (khtml::RenderThemeMac::controlSizeForFont):
+        (khtml::RenderThemeMac::setSizeFromFont):
+        (khtml::RenderThemeMac::setControlSize):
+        (khtml::RenderThemeMac::adjustCheckboxStyle):
+        (khtml::RenderThemeMac::paintCheckbox):
+        (khtml::RenderThemeMac::checkboxSizes):
+        (khtml::RenderThemeMac::checkboxMargins):
+        (khtml::RenderThemeMac::setCheckboxSize):
+        (khtml::RenderThemeMac::setCheckboxCellState):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::setFocus):
+        (DOM::ContainerNodeImpl::setActive):
+
 2005-07-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
