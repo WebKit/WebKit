@@ -246,7 +246,8 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         return;
         
 #if APPLE_CHANGES
-    bool drawSelectionTint = selectionState() != SelectionNone;
+    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
     if (i.phase == PaintActionSelection) {
         if (selectionState() == SelectionNone) {
             return;

@@ -1,9 +1,29 @@
 2005-07-26  Justin Garcia  <justin.garcia@apple.com>
 
+        Patch by Trey Matteson <trey@usa.net>
+        
+        Reviewed by hyatt.
+    
+        Fixed <rdar://problem/4083496> some elements draw selection when printing
+        Also listed as <http://bugzilla.opendarwin.org/show_bug.cgi?id=3992>
+        
+        Simply added tests to prevent selection drawing when printing.
+        
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::paint):
+
+2005-07-26  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by darin
         
         Added forward declarations to fix new gcc4 errors
-
+        
         * khtml/ecma/kjs_window.h:
         * khtml/xml/dom_elementimpl.h:
         * kwq/KWQMapImpl.h:

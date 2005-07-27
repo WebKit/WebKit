@@ -1310,7 +1310,8 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         paintChildren(i, scrolledX, scrolledY);
     
     // 3. paint selection
-    if (!inlineFlow)
+    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    if (!inlineFlow && !isPrinting)
         paintSelection(i, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
