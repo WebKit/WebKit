@@ -30,6 +30,7 @@
 namespace KJS {
 
   class Parameter;
+  class ActivationImp;
 
   /**
    * @short Implementation class for internal Functions.
