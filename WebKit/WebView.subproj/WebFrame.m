@@ -176,8 +176,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (void)_loadHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
-- (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
-- (void)_restoreScrollPosition;
+- (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item;
+- (void)_restoreScrollPositionAndViewState;
 
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
@@ -443,7 +443,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     WebHistoryItem *bfItem = [self _createItem: [self parentFrame]?YES:NO];
 
-    [self _saveScrollPositionToItem:[_private previousItem]];
+    [self _saveScrollPositionAndViewStateToItem:[_private previousItem]];
     if (!(doClip && self == targetFrame)) {
         // save frame state for items that aren't loading (khtml doesn't save those)
         [_private->bridge saveDocumentState];
@@ -609,7 +609,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     _private->bridge = nil;
 
     [self stopLoading];
-    [self _saveScrollPositionToItem:[_private currentItem]];
+    [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
 
     [bridge closeURL];
 
@@ -781,7 +781,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             case WebFrameLoadTypeIndexedBackForward:
                 if ([[self webView] backForwardList]) {
                     // Must grab the current scroll position before disturbing it
-                    [self _saveScrollPositionToItem:[_private previousItem]];
+                    [self _saveScrollPositionAndViewStateToItem:[_private previousItem]];
                     
                     // Create a document view for this document, or used the cached view.
                     if (pageCache){
@@ -802,7 +802,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 // FIXME: rjw sez this cache clearing is no longer needed
                 [currItem setHasPageCache:NO];
                 if (loadType == WebFrameLoadTypeReload) {
-                    [self _saveScrollPositionToItem:currItem];
+                    [self _saveScrollPositionAndViewStateToItem:currItem];
                 }
                 NSURLRequest *request = [ds request];
                 if ([request _webDataRequestUnreachableURL] == nil) {
@@ -1181,7 +1181,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeIndexedBackForward:
                     case WebFrameLoadTypeReload:
-                        [self _restoreScrollPosition];
+                        [self _restoreScrollPositionAndViewState];
                         break;
 
                     case WebFrameLoadTypeStandard:
@@ -1345,7 +1345,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _loadURL:itemURL referrer:[[[self dataSource] request] HTTPReferrer] loadType:loadType target:nil triggeringEvent:nil form:nil formValues:nil];
 #endif
         // must do this maintenance here, since we don't go through a real page reload
-        [self _saveScrollPositionToItem:[_private currentItem]];
+        [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
         // FIXME: form state might want to be saved here too
 
         // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
@@ -1355,7 +1355,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];
-        [self _restoreScrollPosition];
+        [self _restoreScrollPositionAndViewState];
 
         // Fake the URL change by updating the datasource's request.  This will no longer
         // be necessary if we do the better fix described above.
@@ -1480,14 +1480,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // Save form state (works from currentItem, since prevItem is nil)
         ASSERT(![_private previousItem]);
         [_private->bridge saveDocumentState];
-        [self _saveScrollPositionToItem:[_private currentItem]];
+        [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
         
         [_private setCurrentItem:item];
 
         // Restore form state (works from currentItem)
         [_private->bridge restoreDocumentState];
         // Restore the scroll position (taken in favor of going back to the anchor)
-        [self _restoreScrollPosition];
+        [self _restoreScrollPositionAndViewState];
         
         NSArray *childItems = [item children];
         int numChildItems = childItems ? [childItems count] : 0;
@@ -2078,14 +2078,26 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[_private currentItem] setTitle:title];
 }
 
-- (void)_saveScrollPositionToItem:(WebHistoryItem *)item
+- (void)_saveScrollPositionAndViewStateToItem:(WebHistoryItem *)item
 {
     if (item) {
-        NSView *clipView = [[[self frameView] documentView] superview];
+        NSView <WebDocumentView> *docView = [[self frameView] documentView];
+        NSView *parent = [docView superview];
         // we might already be detached when this is called from detachFromParent, in which
         // case we don't want to override real data earlier gathered with (0,0)
-        if (clipView) {
-            [item setScrollPoint:[clipView bounds].origin];
+        if (parent) {
+            NSPoint point;
+            if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {
+                // The view has it's own idea of where it is scrolled to, perhaps because it contains its own
+                // ScrollView instead of using the one provided by the WebFrame
+                point = [(id <_WebDocumentViewState>)docView scrollPoint];
+                [item setViewState:[(id <_WebDocumentViewState>)docView viewState]];
+            } else {
+                // Parent is the clipview of the DynamicScrollView the WebFrame installs
+                ASSERT([parent isKindOfClass:[NSClipView class]]);
+                point = [parent bounds].origin;
+            }
+            [item setScrollPoint:point];
         }
     }
 }
@@ -2102,27 +2114,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
        fails.  We then successfully restore it when the layout happens.
  */
 
-- (void)_restoreScrollPosition
+- (void)_restoreScrollPositionAndViewState
 {
     ASSERT([_private currentItem]);
-    [[[self frameView] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
-}
-
-- (void)_scrollToTop
-{
-    [[[self frameView] documentView] scrollPoint: NSZeroPoint];
-}
-
-- (void)_textSizeMultiplierChanged
-{
-    NSView <WebDocumentView> *view = [[self frameView] documentView];
-    if ([view conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
-        [(NSView <_web_WebDocumentTextSizing> *)view _web_textSizeMultiplierChanged];
+    NSView <WebDocumentView> *docView = [[self frameView] documentView];
+    NSPoint point = [[_private currentItem] scrollPoint];
+    if ([docView conformsToProtocol:@protocol(_WebDocumentViewState)]) {        
+        id state = [[_private currentItem] viewState];
+        if (state) {
+            [(id <_WebDocumentViewState>)docView setViewState:state];
+        }
+        
+        [(id <_WebDocumentViewState>)docView setScrollPoint:point];
+    } else {
+        [docView scrollPoint:point];
     }
-
-    // It's OK to use the internal version because this method is
-    // guaranteed not to change the set of frames.
-    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
 - (void)_defersCallbacksChanged
@@ -2309,16 +2315,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_saveDocumentAndScrollState
 {
     [_private->bridge saveDocumentState];
-    [self _saveScrollPositionToItem:[_private currentItem]];
+    [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
 
     // It's OK to use the internal version because this method is
     // guaranteed not to change the set of frames.
-    NSArray *frames = [self _internalChildFrames];
-    int count = [frames count];
-    int i;
-    for (i = 0; i < count; i++) {
-        [[frames objectAtIndex:i] _saveDocumentAndScrollState];
-    }
+    [[self _internalChildFrames] makeObjectsPerformSelector:@selector(_saveDocumentAndScrollState)];
 }
 
 // Called after the FormsDelegate is done processing willSubmitForm:
@@ -2585,6 +2586,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFrame (WebInternal)
 
+- (void)_accumulateDocumentViews:(NSMutableArray *)result
+{
+    id docView = [[self frameView] documentView];
+    if (docView) {
+        [result addObject:docView];
+    }
+    [_private->children makeObjectsPerformSelector:@selector(_accumulateDocumentViews:) withObject:result];
+}
+
+- (NSArray *)_documentViews
+{
+    NSMutableArray *result = [NSMutableArray array];
+    [self _accumulateDocumentViews:result];
+    return result;
+}
+
 - (void)_updateDrawsBackground
 {
     BOOL drawsBackground = [[self webView] drawsBackground];
@@ -2719,7 +2736,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             loadType == WebFrameLoadTypeBack ||
             loadType == WebFrameLoadTypeIndexedBackForward)
         {
-            [self _restoreScrollPosition];
+            [self _restoreScrollPositionAndViewState];
         }
     }
 }

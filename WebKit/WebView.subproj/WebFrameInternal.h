@@ -37,6 +37,8 @@
 - (id)_internalLoadDelegate;
 - (void)_unmarkAllMisspellings;
 - (void)_didFirstLayout;
+// Note that callers should not perform any ops on these views that could change the set of frames
+- (NSArray *)_documentViews;
 
 - (NSURLRequest *)_requestFromDelegateForRequest:(NSURLRequest *)request identifier:(id *)identifier error:(NSError **)error;
 - (void)_sendRemainingDelegateMessagesWithIdentifier:(id)identifier response:(NSURLResponse *)response length:(unsigned)length error:(NSError *)error;

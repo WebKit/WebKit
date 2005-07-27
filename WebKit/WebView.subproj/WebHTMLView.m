@@ -169,7 +169,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
                                         const struct mach_header **ioCachedFrameworkImageHeaderPtr);
 
 
-@interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
+@interface WebHTMLView (WebTextSizing) <_WebDocumentTextSizing>
 @end
 
 @interface WebHTMLView (WebHTMLViewFileInternal)
@@ -1686,10 +1686,6 @@ static WebHTMLView *lastHitView = nil;
     // Do nothing, preventing the tool tip panel from trying to accept mouse-moved events.
 }
 
-@end
-
-
-@interface WebHTMLView (TextSizing) <_web_WebDocumentTextSizing>
 @end
 
 @interface NSArray (WebHTMLView)
@@ -4773,10 +4769,30 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 @implementation WebHTMLView (WebTextSizing)
 
-- (void)_web_textSizeMultiplierChanged
+- (IBAction)_makeTextSmaller:(id)sender
 {
     [self _updateTextSizeMultiplier];
 }
+
+- (IBAction)_makeTextLarger:(id)sender
+{
+    [self _updateTextSizeMultiplier];
+}
+
+- (IBAction)_makeTextStandardSize:(id)sender
+{
+    [self _updateTextSizeMultiplier];
+}
+
+- (BOOL)_tracksCommonSizeFactor
+{
+    return YES;
+}
+
+// never sent because we track the common size factor
+- (BOOL)_canMakeTextSmaller          {   ASSERT_NOT_REACHED(); return NO;    }
+- (BOOL)_canMakeTextLarger           {   ASSERT_NOT_REACHED(); return NO;    }
+- (BOOL)_canMakeTextStandardSize     {   ASSERT_NOT_REACHED(); return NO;    }
 
 @end
 

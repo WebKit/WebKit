@@ -1,3 +1,82 @@
+2005-07-27  John Sullivan  <sullivan@apple.com>
+
+	Patch by Trey Matteson <trey@usa.net>
+        Reviewed by me.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4015
+          PDF views should remember viewing mode, scroll position across back/forward
+          Note this doesn't work within frames because of a PDFKit bug - see 4164
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4091
+          PDF views should keep a separate scaling factor from shared text scaling factor
+
+        Basic idea #1 is that we now have a general mechanism for a WebDocView to save/restore some UI
+        state to the WebHistoryItem.
+        Basic idea #2 is that _WebDocumentTextSizing is expanded to allow for the case of a WebDocView
+        keeping its own notion of a scaling factor.  WebPDFView's -_tracksCommonSizeFactor has justification.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setViewState:]):  New methods to hold PList of arbitrary WebView state
+        (-[WebHistoryItem viewState]):
+        * History.subproj/WebHistoryItemPrivate.h:
+        * WebKit.xcodeproj/project.pbxproj:  Add Quartz to framework path so we can import PDFKit files
+        * WebView.subproj/WebDocumentInternal.h:  New methods added to _WebDocumentTextSizing.
+          Also the _ prefix is sufficient instead of _web_WebDocumentTextSizing.
+          Added _WebDocumentViewState protocol.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):  Rename of save/restore methods.
+        (-[WebFrame _detachFromParent]):  Ditto
+        (-[WebFrame _transitionToCommitted:]):  Ditto
+        (-[WebFrame _checkLoadCompleteForThisFrame]):  Ditto
+        (-[WebFrame _loadItem:withLoadType:]):  Ditto
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):  Ditto
+        (-[WebFrame _saveViewStateToItem:]):  Call doc view to retrieve view state.
+        (-[WebFrame _restoreViewState]):  Call doc view to set view state.
+        (-[WebFrame _scrollToTop]):  Nuked dead code.
+        (-[WebFrame _textSizeMultiplierChanged]):  This work now appears in WebView.
+        (-[WebFrame _saveDocumentAndScrollState]):  Same rename, one code cleanup.
+        (-[WebFrame _accumulateDocumentViews:]): Add our docview to the array, call kids.
+        (-[WebFrame _documentViews]):  New helper to return all docviews.
+        (-[WebFrame _didFirstLayout]):  Same name change.
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLView.m:  Removed redundant category decl.
+        (-[WebHTMLView _makeTextSmaller:]):  Implement new protocol.
+        (-[WebHTMLView _makeTextLarger:]):
+        (-[WebHTMLView _makeTextStandardSize:]):
+        (-[WebHTMLView _tracksCommonSizeFactor]):
+        * WebView.subproj/WebPDFRepresentation.m:  Tweak #imports.
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):  No longer intercept context menu text sizing items.
+        (-[WebPDFView setDataSource:]):  No longer track the WebView's scaling factor.
+        (-[WebPDFView scrollPoint]):  Dig through PDFKit view tree to get real scroll position
+        (-[WebPDFView setScrollPoint:]):  Ditto
+        (-[WebPDFView viewState]):  Return bundle of viewing params
+        (-[WebPDFView setViewState:]):  Restore bundle of viewing params
+        (-[WebPDFView _makeTextSmaller:]):  Implement new text sizing protocol
+        (-[WebPDFView _makeTextLarger:]):
+        (-[WebPDFView _makeTextStandardSize:]):
+        (-[WebPDFView _tracksCommonSizeFactor]):
+        (-[WebPDFView _canMakeTextSmaller]):
+        (-[WebPDFView _canMakeTextLarger]):
+        (-[WebPDFView _canMakeTextStandardSize]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView _makeTextSmaller:]):  Implement new text sizing protocol
+        (-[WebTextView _makeTextLarger:]):
+        (-[WebTextView _makeTextStandardSize:]):
+        (-[WebTextView _tracksCommonSizeFactor]):
+        * WebView.subproj/WebView.m:
+        (-[WebView setTextSizeMultiplier:]):  Calling docViews is now more complicates than just posting
+           a notification to the frame.
+        (-[WebView _performTextSizingSelector:withObject:onTrackingDocs:selForNonTrackingDocs:]):  Workhorse
+           that sends the text sizing method to the right doc views.
+        (-[WebView canMakeTextSmaller]):  Call workhorse.
+        (-[WebView canMakeTextLarger]):  Ditto
+        (-[WebView makeTextSmaller:]):  Ditto
+        (-[WebView makeTextLarger:]):  Ditto
+        (-[WebView canMakeTextStandardSize]):  Ditto
+        (-[WebView makeTextStandardSize:]):  Ditto
+
 2005-07-26  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Trey Matteson <trey@usa.net>

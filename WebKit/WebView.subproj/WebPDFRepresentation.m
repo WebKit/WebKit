@@ -35,7 +35,8 @@
 #import <WebKit/WebPDFRepresentation.h>
 #import <WebKit/WebPDFView.h>
 
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFDocument.h>
+#import <PDFKit/PDFView.h>
 
 @implementation WebPDFRepresentation
 

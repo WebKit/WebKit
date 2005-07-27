@@ -1847,6 +1847,7 @@
 					/System/Library/Frameworks/WebKit.framework/Frameworks,
 					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
+					/System/Library/Frameworks/Quartz.framework/Frameworks,
 					/System/Library/PrivateFrameworks,
 				);
 				GCC_ENABLE_OBJC_GC = YES;
@@ -1909,6 +1910,7 @@
 					/System/Library/Frameworks/WebKit.framework/Frameworks,
 					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
+					/System/Library/Frameworks/Quartz.framework/Frameworks,
 					/System/Library/PrivateFrameworks,
 				);
 				GCC_ENABLE_OBJC_GC = YES;
@@ -1970,6 +1972,7 @@
 					/System/Library/Frameworks/WebKit.framework/Frameworks,
 					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
+					/System/Library/Frameworks/Quartz.framework/Frameworks,
 					/System/Library/PrivateFrameworks,
 				);
 				GCC_ENABLE_OBJC_GC = YES;
@@ -2032,6 +2035,7 @@
 					/System/Library/Frameworks/WebKit.framework/Frameworks,
 					/System/Library/Frameworks/ApplicationServices.framework/Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
+					/System/Library/Frameworks/Quartz.framework/Frameworks,
 					/System/Library/PrivateFrameworks,
 				);
 				GCC_ENABLE_OBJC_GC = YES;

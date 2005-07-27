@@ -86,6 +86,7 @@
 #import <WebCore/WebCoreView.h>
 
 #import <Foundation/NSURLConnection.h>
+#import <objc/objc-runtime.h>
 
 #if __ppc__
 #define PROCESSOR "PPC"
@@ -213,6 +214,7 @@ macro(yankAndSelect) \
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
+- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel;
 @end
 
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
@@ -1840,7 +1842,6 @@ NS_ENDHANDLER
         return;
     }
     _private->textSizeMultiplier = m;
-    [[self mainFrame] _textSizeMultiplierChanged];
 }
 
 - (float)textSizeMultiplier
@@ -2364,48 +2365,32 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (BOOL)canMakeTextSmaller
 {
-    if ([[self mainFrame] dataSource] == nil) {
-        return NO;
-    }
-    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
-    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
-        return NO;
-    }
-    if ([self textSizeMultiplier]/TextSizeMultiplierRatio < MinimumTextSizeMultiplier) {
-        return NO;
-    }
-    return YES;
+    BOOL canShrinkMore = _private->textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller)];
 }
 
 - (BOOL)canMakeTextLarger
 {
-    if ([[self mainFrame] dataSource] == nil) {
-        return NO;
-    }
-    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
-    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
-        return NO;
-    }
-    if ([self textSizeMultiplier]*TextSizeMultiplierRatio > MaximumTextSizeMultiplier) {
-        return NO;
-    }
-    return YES;
+    BOOL canGrowMore = _private->textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger)];
 }
 
 - (IBAction)makeTextSmaller:(id)sender
 {
-    if (![self canMakeTextSmaller]) {
-        return;
+    BOOL canShrinkMore = _private->textSizeMultiplier/TextSizeMultiplierRatio > MinimumTextSizeMultiplier;
+    if (canShrinkMore) {
+        [self setTextSizeMultiplier:_private->textSizeMultiplier/TextSizeMultiplierRatio];
     }
-    [self setTextSizeMultiplier:[self textSizeMultiplier]/TextSizeMultiplierRatio];
+    [self _performTextSizingSelector:@selector(_makeTextSmaller:) withObject:sender onTrackingDocs:canShrinkMore selForNonTrackingDocs:@selector(_canMakeTextSmaller)];
 }
 
 - (IBAction)makeTextLarger:(id)sender
 {
-    if (![self canMakeTextLarger]) {
-        return;
+    BOOL canGrowMore = _private->textSizeMultiplier*TextSizeMultiplierRatio < MaximumTextSizeMultiplier;
+    if (canGrowMore) {
+        [self setTextSizeMultiplier:_private->textSizeMultiplier*TextSizeMultiplierRatio];
     }
-    [self setTextSizeMultiplier:[self textSizeMultiplier]*TextSizeMultiplierRatio];
+    [self _performTextSizingSelector:@selector(_makeTextLarger:) withObject:sender onTrackingDocs:canGrowMore selForNonTrackingDocs:@selector(_canMakeTextLarger)];
 }
 
 - (BOOL)_responderValidateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -2521,27 +2506,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
-- (BOOL)canMakeTextStandardSize
-{
-    if ([[self mainFrame] dataSource] == nil) {
-        return NO;
-    }
-    // FIXME: This will prevent text sizing in subframes if the main frame doesn't support it
-    if (![[[[self mainFrame] frameView] documentView] conformsToProtocol:@protocol(_web_WebDocumentTextSizing)]) {
-        return NO;
-    }
-    
-    return [self textSizeMultiplier] != 1;
-}
-
-- (IBAction)makeTextStandardSize:(id)sender
-{
-    if (![self canMakeTextStandardSize]) {
-        return;
-    }
-    [self setTextSizeMultiplier:1];
-}
-
 - (BOOL)maintainsInactiveSelection
 {
     return [self isEditable];
@@ -2579,6 +2543,20 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return nil;
 }
 
+- (BOOL)canMakeTextStandardSize
+{
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
+    return [self _performTextSizingSelector:(SEL)0 withObject:nil onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize)];
+}
+
+- (IBAction)makeTextStandardSize:(id)sender
+{
+    BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
+    if (notAlreadyStandard) {
+        [self setTextSizeMultiplier:1.0];
+    }
+    [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize)];
+}
 
 @end
 
@@ -3165,5 +3143,45 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     (void)HISearchWindowShow((CFStringRef)selectedString, kNilOptions);
 }
 
+// Slightly funky method that lets us have one copy of the logic for finding docViews that can do
+// text sizing.  It returns whether it found any "suitable" doc views.  It sends sel to any suitable
+// doc views, or if sel==0 we do nothing to them.  For doc views that track our size factor, they are
+// suitable if doTrackingViews==YES (which in practice means that our size factor isn't at its max or
+// min).  For doc views that don't track it, we send them testSel to determine suitablility.
+- (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel
+{
+    if ([[self mainFrame] dataSource] == nil) {
+        return NO;
+    }
+    
+    BOOL foundSome = NO;
+    NSArray *docViews = [[self mainFrame] _documentViews];
+    int i;
+    for (i = [docViews count]-1; i >= 0; i--) {
+        id docView = [docViews objectAtIndex:i];
+        if ([docView conformsToProtocol:@protocol(_WebDocumentTextSizing)]) {
+            id <_WebDocumentTextSizing> sizingDocView = (id <_WebDocumentTextSizing>)docView;
+            BOOL isSuitable;
+            if ([sizingDocView _tracksCommonSizeFactor]) {
+                isSuitable = doTrackingViews;
+            } else {
+                // Incarnation to perform a selector returning a BOOL from objc/objc-runtime.h
+                isSuitable = (*(BOOL(*)(id, SEL, ...))objc_msgSend)(sizingDocView, testSel);
+            }
+            
+            if (isSuitable) {
+                if (sel != 0) {
+                    foundSome = YES;
+                    [sizingDocView performSelector:sel withObject:arg];
+                } else {
+                    // if we're just called for the benefit of the return value, we can return at first match
+                    return YES;
+                }
+            }
+        }
+    }
+    
+    return foundSome;
+}
 
 @end

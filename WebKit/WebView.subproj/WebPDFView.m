@@ -45,7 +45,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebKitSystemInterface.h>
-#import <Quartz/Quartz.h>
+#import <PDFKit/PDFKit.h>
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
@@ -246,26 +246,6 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         } else {
             ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
         }
-        
-        // Intercept some of these menu items for better WebKit integration.
-        switch (tag) {
-            // Convert the scale-factor-related items to use WebKit's text sizing API instead, so they match other
-            // UI that uses the text sizing API (such as Make Text Larger/Smaller menu items in Safari).
-            case WebMenuItemPDFActualSize:
-                [itemCopy setTarget:[[dataSource webFrame] webView]];
-                [itemCopy setAction:@selector(makeTextStandardSize:)];
-                break;
-            case WebMenuItemPDFZoomIn:
-                [itemCopy setTarget:[[dataSource webFrame] webView]];
-                [itemCopy setAction:@selector(makeTextLarger:)];
-                break;
-            case WebMenuItemPDFZoomOut:
-                [itemCopy setTarget:[[dataSource webFrame] webView]];
-                [itemCopy setAction:@selector(makeTextSmaller:)];
-                break;
-            default:
-                break;
-        }
     }
     
     [actionsToTags release];
@@ -347,22 +327,10 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     return menu;
 }
 
-- (void)_updateScalingToReflectTextSize
-{
-    WebView *view = [[dataSource webFrame] webView];
-    
-    // The scale factor and text size multiplier conveniently use the same units, so we can just
-    // treat the values as interchangeable.
-    if (view != nil) {
-        [PDFSubview setScaleFactor:[view textSizeMultiplier]];		
-    }	
-}
-
 - (void)setDataSource:(WebDataSource *)ds
 {
     dataSource = ds;
     [self setFrame:[[self superview] frame]];
-    [self _updateScalingToReflectTextSize];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
@@ -400,11 +368,6 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
             // here?  We ignore the error elsewhere.
         }
     }
-}
-
-- (void)_web_textSizeMultiplierChanged
-{
-    [self _updateScalingToReflectTextSize];
 }
 
 // FIXME 4182876: We can eliminate this function in favor if -isEqual: if [PDFSelection isEqual:] is overridden
@@ -569,6 +532,107 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 {
     [PDFSubview clearSelection];
 }
+
+/*** WebDocumentViewState protocol implementation ***/
+
+// Even though to WebKit we are the "docView", in reality a PDFView contains its own scrollview and docView.
+// And it even turns out there is another PDFKit view between the docView and its enclosing ScrollView, so
+// we have to be sure to do our calculations based on that view, immediately inside the ClipView.  We try
+// to make as few assumptions about the PDFKit view hierarchy as possible.
+
+- (NSPoint)scrollPoint
+{
+    NSView *realDocView = [PDFSubview documentView];
+    NSClipView *clipView = [[realDocView enclosingScrollView] contentView];
+    return [clipView bounds].origin;
+}
+
+- (void)setScrollPoint:(NSPoint)p
+{
+    WebFrame *frame = [dataSource webFrame];
+    //FIXME:  We only restore scroll state in the non-frames case because otherwise we get a crash due to
+    // PDFKit calling display from within its drawRect:. See bugzilla 4164.
+    if (![frame parentFrame]) {
+        NSView *realDocView = [PDFSubview documentView];
+        [[[realDocView enclosingScrollView] documentView] scrollPoint:p];
+    }
+}
+
+- (id)viewState
+{
+    NSMutableArray *state = [NSMutableArray arrayWithCapacity:4];
+    PDFDisplayMode mode = [PDFSubview displayMode];
+    [state addObject:[NSNumber numberWithInt:mode]];
+    if (mode == kPDFDisplaySinglePage || mode == kPDFDisplayTwoUp) {
+        unsigned int pageIndex = [[PDFSubview document] indexForPage:[PDFSubview currentPage]];
+        [state addObject:[NSNumber numberWithUnsignedInt:pageIndex]];
+    }  // else in continuous modes, scroll position gets us to the right page
+    BOOL autoScaleFlag = [PDFSubview autoScales];
+    [state addObject:[NSNumber numberWithBool:autoScaleFlag]];
+    if (!autoScaleFlag) {
+        [state addObject:[NSNumber numberWithFloat:[PDFSubview scaleFactor]]];
+    }
+    return state;
+}
+
+- (void)setViewState:(id)statePList
+{
+    ASSERT([statePList isKindOfClass:[NSArray class]]);
+    NSArray *state = statePList;
+    int i = 0;
+    PDFDisplayMode mode = [[state objectAtIndex:i++] intValue];
+    [PDFSubview setDisplayMode:mode];
+    if (mode == kPDFDisplaySinglePage || mode == kPDFDisplayTwoUp) {
+        unsigned int pageIndex = [[state objectAtIndex:i++] unsignedIntValue];
+        [PDFSubview goToPage:[[PDFSubview document] pageAtIndex:pageIndex]];
+    }  // else in continuous modes, scroll position gets us to the right page
+    BOOL autoScaleFlag = [[state objectAtIndex:i++] boolValue];
+    [PDFSubview setAutoScales:autoScaleFlag];
+    if (!autoScaleFlag) {
+        [PDFSubview setScaleFactor:[[state objectAtIndex:i++] floatValue]];
+    }
+}
+
+/*** _WebDocumentTextSizing protocol implementation ***/
+
+- (IBAction)_makeTextSmaller:(id)sender
+{
+    [PDFSubview zoomOut:sender];
+}
+
+- (IBAction)_makeTextLarger:(id)sender
+{
+    [PDFSubview zoomIn:sender];
+}
+
+- (IBAction)_makeTextStandardSize:(id)sender
+{
+    [PDFSubview setScaleFactor:1.0];
+}
+
+- (BOOL)_tracksCommonSizeFactor
+{
+    // We keep our own scale factor instead of tracking the common one in the WebView for a couple reasons.
+    // First, PDFs tend to have visually smaller text because they are laid out for a printed page instead of
+    // the screen.  Second, the PDFView feature of AutoScaling means our scaling factor can be quiet variable.
+    return NO;
+}
+
+- (BOOL)_canMakeTextSmaller
+{
+    return [PDFSubview canZoomOut];
+}
+
+- (BOOL)_canMakeTextLarger
+{
+    return [PDFSubview canZoomIn];
+}
+
+- (BOOL)_canMakeTextStandardSize
+{
+    return [PDFSubview scaleFactor] != 1.0;
+}
+
 
 - (NSRect)selectionRect
 {

@@ -79,6 +79,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     NSString *formReferrer;
     // info used to support RSS feeds
     NSString *RSSFeedReferrer;
+    id viewState;
 }
 @end
 
@@ -428,6 +429,18 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 - (void)setScrollPoint:(NSPoint)scrollPoint
 {
     _private->scrollPoint = scrollPoint;
+}
+
+- (void)setViewState:(id)statePList;
+{
+    id copy = [statePList copy];
+    [_private->viewState release];
+    _private->viewState = copy;
+}
+
+- (id)viewState
+{
+    return _private->viewState;
 }
 
 - (BOOL)isTargetItem

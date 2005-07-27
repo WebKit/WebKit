@@ -57,6 +57,7 @@
 - (NSString *)formReferrer;
 - (NSString *)RSSFeedReferrer;
 - (int)visitCount;
+- (id)viewState;
 
 - (void)_mergeAutoCompleteHints:(WebHistoryItem *)otherItem;
 
@@ -72,6 +73,7 @@
 - (void)_setFormInfoFromRequest:(NSURLRequest *)request;
 - (void)setRSSFeedReferrer:(NSString *)referrer;
 - (void)setVisitCount:(int)count;
+- (void)setViewState:(id)statePList;
 
 - (NSArray *)children;
 - (void)addChildItem:(WebHistoryItem *)item;

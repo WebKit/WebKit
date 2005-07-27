@@ -180,8 +180,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
 - (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
 
-- (void)_textSizeMultiplierChanged;
-
 - (void)_defersCallbacksChanged;
 
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow;

@@ -53,7 +53,7 @@
 - (void)_updateTextSizeMultiplier;
 @end
 
-@interface WebTextView (TextSizing) <_web_WebDocumentTextSizing>
+@interface WebTextView (TextSizing) <_WebDocumentTextSizing>
 @end
 
 @implementation WebTextView
@@ -386,9 +386,29 @@
 
 @implementation WebTextView (TextSizing)
 
-- (void)_web_textSizeMultiplierChanged
+- (IBAction)_makeTextSmaller:(id)sender
 {
     [self _updateTextSizeMultiplier];
 }
+
+- (IBAction)_makeTextLarger:(id)sender
+{
+    [self _updateTextSizeMultiplier];
+}
+
+- (IBAction)_makeTextStandardSize:(id)sender
+{
+    [self _updateTextSizeMultiplier];
+}
+
+- (BOOL)_tracksCommonSizeFactor
+{
+    return YES;
+}
+
+// never sent because we track the common size factor
+- (BOOL)_canMakeTextSmaller          {   ASSERT_NOT_REACHED(); return NO;    }
+- (BOOL)_canMakeTextLarger           {   ASSERT_NOT_REACHED(); return NO;    }
+- (BOOL)_canMakeTextStandardSize     {   ASSERT_NOT_REACHED(); return NO;    }
 
 @end
