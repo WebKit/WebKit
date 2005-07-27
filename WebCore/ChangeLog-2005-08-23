@@ -1,3 +1,26 @@
+2005-07-27  Beth Dakin  <bdakin@apple.com>
+	Fix submitted by: Andrew Wellington <proton@wiretapped.net>
+        Reviewed by Beth Dakin.
+
+	This is a fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3406 and 
+	<rdar://problem/3204011>. It does not solve all of the problems with
+	text-transform: capitalize, but it does fix some of the more notable 
+	problems regarding apostrophes (like on amazon.com), and does not cause 
+	any regressions (i.e., some things about text-transform are still wrong and some
+	of those things are wrong in different ways than they were wrong before, but 
+	the patch does not seem to cause anything that was right to be newly
+	wrong.
+
+        Test cases added: another text-transform test, see below
+
+        * khtml/xml/dom_stringimpl.cpp: Here is the fix.
+        (DOM::DOMStringImpl::capitalize):
+        * layout-tests/css1/text_properties/text-transCapitalize-expected.txt: Added. New test case.
+        * layout-tests/css1/text_properties/text-transCapitalize.html: Added. New test case.
+        * layout-tests/css1/text_properties/text_transform-expected.txt: New expected results...
+				here are some instances where things were wrong before but are
+				wrong in new ways now.
+
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         Test cases added:
