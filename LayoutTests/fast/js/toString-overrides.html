@@ -1,0 +1,101 @@
+<html>
+<head>
+<script>
+function debug(message) {
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+    if (window.layoutTestController) {
+        window.layoutTestController.dumpAsText();
+    }
+
+    // Utility functions for JS test suite
+    // (c) 2001 Harri Porten <porten@kde.org>
+
+    function testPassed(msg)
+    {
+        debug("PASS. " + msg);
+    }
+
+    function testFailed(msg)
+    {
+        debug("FAIL. " + msg);
+    }
+
+    function shouldBe(_a, _b)
+    {
+        if (typeof _a != "string" || typeof _b != "string")
+            debug("WARN: shouldBe() expects string arguments");
+        var _av = eval(_a);
+        var _bv = eval(_b);
+
+        if (_av === _bv)
+            testPassed(_a + " is " + _b);
+        else
+            testFailed(_a + " should be " + _bv + ". Was " + _av);
+    }
+
+    function shouldBeTrue(_a) { shouldBe(_a, "true"); }
+
+    function shouldBeFalse(_a) { shouldBe(_a, "false"); }
+
+    function shouldBeUndefined(_a)
+    {
+        var _av = eval(_a);
+        if (typeof _av == "undefined")
+            testPassed(_a + " is undefined.");
+        else
+            testFailed(_a + " should be undefined. Was " + _av);
+    }
+
+    // 15.4 Array Objects
+    // (c) 2001 Harri Porten <porten@kde.org>
+
+    // backup
+    var backupNumberToString = Number.prototype.toString;
+    var backupNumberToLocaleString = Number.prototype.toLocaleString;
+    var backupRegExpToString = RegExp.prototype.toString;
+    var backupRegExpToLocaleString = RegExp.prototype.toLocaleString;
+
+    // change functions
+    Number.prototype.toString = function() { return "toString"; }
+    Number.prototype.toLocaleString = function() { return "toLocaleString"; }
+    RegExp.prototype.toString = function() { return "toString2"; }
+    RegExp.prototype.toLocaleString = function() { return "toLocaleString2"; }
+
+    // the tests
+    shouldBe("[1].toString()", "'1'");
+    shouldBe("[1].toLocaleString()", "'toLocaleString'");
+    Number.prototype.toLocaleString = "invalid";
+    shouldBe("[1].toLocaleString()", "'1'");
+    shouldBe("[/r/].toString()", "'toString2'");
+    shouldBe("[/r/].toLocaleString()", "'toLocaleString2'");
+    RegExp.prototype.toLocaleString = "invalid";
+    shouldBe("[/r/].toLocaleString()", "'toString2'");
+
+    var caught = false;
+    try {
+        [{ toString : 0 }].toString();
+    } catch (e) {
+        caught = true;
+    }
+    shouldBeTrue("caught");
+
+    // restore
+    Number.prototype.toString = backupNumberToString;
+    Number.prototype.toLocaleString = backupNumberToLocaleString;
+    RegExp.prototype.toString = backupRegExpToString;
+    RegExp.prototype.toLocaleString = backupRegExpToLocaleString;
+}
+</script>
+</head>
+<body onload="test()">
+<p>This test checks for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=4147">4147: Array.toString() and toLocaleString() improvements from KDE KJS.</a></p>
+<p>On success, you will see a series of "PASS" messages.</p>
+<hr>
+<div id="console"></div>
+</body>
+</html>

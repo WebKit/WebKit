@@ -482,15 +482,41 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
       if (element.type() == UndefinedType || element.type() == NullType)
         continue;
 
-      Object o = element.toObject(exec);
-      Object conversionFunction;
+      bool fallback = false;
       if (id == ToLocaleString) {
-        conversionFunction = Object::dynamicCast(o.get(exec, toLocaleStringPropertyName));
-      } else {
-        conversionFunction = Object::dynamicCast(o.get(exec, toStringPropertyName));
+        Object o = element.toObject(exec);
+        Object conversionFunction =
+          Object::dynamicCast(o.get(exec, toLocaleStringPropertyName));
+        if (conversionFunction.isValid() &&
+            conversionFunction.implementsCall()) {
+          str += conversionFunction.call(exec, o, List()).toString(exec);
+        } else {
+          // try toString() fallback
+          fallback = true;
+        }
       }
-      str += conversionFunction.call(exec, o, List()).toString(exec);
-      
+
+      if (id == ToString || id == Join || fallback) {
+        if (element.type() == ObjectType) {
+          Object o = Object::dynamicCast(element);
+          Object conversionFunction =
+            Object::dynamicCast(o.get(exec, toStringPropertyName));
+          if (conversionFunction.isValid() &&
+              conversionFunction.implementsCall()) {
+            str += conversionFunction.call(exec, o, List()).toString(exec);
+          } else {
+            UString msg = "Can't convert " + o.className() +
+              " object to string";
+            Object error = Error::create(exec, RangeError,
+                msg.cstring().c_str());
+            exec->setException(error);
+            return error;
+          }
+        } else {
+          str += element.toString(exec);
+        }
+      }
+
       if ( exec->hadException() )
         break;
     }

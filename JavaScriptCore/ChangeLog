@@ -1,3 +1,17 @@
+2005-07-27  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4147
+        Array.toString() and toLocaleString() improvements from KDE KJS
+        (rolled in KDE changes)
+
+        Test cases added:
+
+        * layout-tests/fast/js/toString-overrides-expected.txt: Added.
+        * layout-tests/fast/js/toString-overrides.html: Added.
+        
+        * kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call):
+
 2005-07-27  Maciej Stachowiak  <mjs@apple.com>
 
         Changes by Michael Kahl, reviewed by me.
