@@ -51,7 +51,6 @@
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;
-- (DOMElement *)elementForView:(NSView *)view;
 - (NSView *)viewForElement:(DOMElement *)element; // introduced temporarily to ease transition to view-free form SPI
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element;
 - (BOOL)elementIsPassword:(DOMElement *)element;

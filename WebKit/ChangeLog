@@ -1,3 +1,17 @@
+2005-07-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        - removed method -[WebHTMLRepresentation elementForView:], which was SPI used only for
+        Safari autofill. Tip of tree Safari no longer includes any calls to this method. Also, 
+        Tiger Safari never gets around to actually calling it due to the other recent form-SPI-related
+        changes, so removing this method doesn't break Tiger Safari running on tip of tree WebKit
+        (though autofill continues to not work in that configuration).
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation elementForView:]): removed
+        
 2005-07-27  John Sullivan  <sullivan@apple.com>
 
 	Patch by Trey Matteson <trey@usa.net>

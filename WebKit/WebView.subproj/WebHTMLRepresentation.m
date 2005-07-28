@@ -208,11 +208,6 @@
     return [_private->bridge elementWithName:name inForm:form];
 }
 
-- (DOMElement *)elementForView:(NSView *)view
-{
-    return [_private->bridge elementForView:view];
-}
-
 - (NSView *)viewForElement:(DOMElement *)element
 {
     return [_private->bridge viewForElement:element];
