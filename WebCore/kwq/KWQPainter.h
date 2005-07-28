@@ -118,7 +118,10 @@ public:
     
     bool paintingDisabled() const;
     void setPaintingDisabled(bool);
-        
+    
+    bool updatingControlTints() const { return _updatingControlTints; }
+    void setUpdatingControlTints(bool b) { setPaintingDisabled(b); _updatingControlTints = b; }
+
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
 
@@ -130,7 +133,6 @@ public:
     void addFocusRingRect(int x, int y, int width, int height);
     void drawFocusRing();
     void clearFocusRing();
-    void setDrawsFocusRing(bool flag) { _drawsFocusRing = flag; }
     
     CGContextRef currentContext();
     
@@ -160,7 +162,7 @@ private:
     QPainterPrivate *data;
     bool _isForPrinting;
     bool _usesInactiveTextBackgroundColor;
-    bool _drawsFocusRing;
+    bool _updatingControlTints;
 };
 
 #endif

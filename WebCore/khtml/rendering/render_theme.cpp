@@ -50,6 +50,17 @@ void RenderTheme::adjustStyle(RenderStyle* style)
 
 void RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
 {
+    // If painting is disabled, but we aren't updating control tints, then just bail.
+    // If we are updating control tints, just schedule a repaint if the theme supports tinting
+    // for that control.
+    if (i.p->updatingControlTints()) {
+        if (controlSupportsTints(o))
+            o->repaint();
+        return;
+    }
+    if (i.p->paintingDisabled())
+        return;
+        
     // Call the appropriate paint method based off the appearance value.
     switch (o->style()->appearance()) {
         case CheckboxAppearance:
@@ -64,28 +75,28 @@ short RenderTheme::baselinePosition(const RenderObject* o) const
     return o->height() + o->marginTop() + o->marginBottom();
 }
 
-bool RenderTheme::isChecked(const RenderObject* o)
+bool RenderTheme::isChecked(const RenderObject* o) const
 {
     if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
         return false;
     return static_cast<HTMLInputElementImpl*>(o->element())->checked();
 }
 
-bool RenderTheme::isEnabled(const RenderObject* o)
+bool RenderTheme::isEnabled(const RenderObject* o) const
 {
     if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
         return true;
     return !static_cast<HTMLInputElementImpl*>(o->element())->disabled();
 }
 
-bool RenderTheme::isFocused(const RenderObject* o)
+bool RenderTheme::isFocused(const RenderObject* o) const
 {
     if (!o->element())
         return false;
     return o->element() == o->element()->getDocument()->focusNode();
 }
 
-bool RenderTheme::isPressed(const RenderObject* o)
+bool RenderTheme::isPressed(const RenderObject* o) const
 {
     if (!o->element())
         return false;

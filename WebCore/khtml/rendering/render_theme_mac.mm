@@ -125,7 +125,20 @@ bool RenderThemeMac::isControlContainer(EAppearance appearance) const
     // more controls.
     return appearance != CheckboxAppearance && appearance != RadioAppearance;
 }
+
+bool RenderThemeMac::controlSupportsTints(const RenderObject* o) const
+{
+    if (!isEnabled(o))
+        return false;
     
+    // Checkboxes only have tint when checked.
+    if (o->style()->appearance() == CheckboxAppearance)
+        return isChecked(o);
+    
+    // For now assume other controls have tint if enabled.
+    return true;
+}
+
 NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
 {
     int fontSize = style->fontSize();

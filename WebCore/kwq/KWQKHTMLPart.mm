@@ -3704,7 +3704,7 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
     d->m_isFocused = flag;
 
     // This method does the job of updating the view based on whether the view is "active".
-    // This involves three kinds of drawing updates:
+    // This involves four kinds of drawing updates:
 
     // 1. The background color used to draw behind selected content (active | inactive color)
     if (d->m_view)
@@ -3719,8 +3719,23 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
     DocumentImpl *doc = xmlDocImpl();
     if (doc) {
         NodeImpl *node = doc->focusNode();
-        if (node && node->renderer())
-            node->renderer()->repaint();
+        if (node) {
+            node->setChanged();
+            // FIXME: Let the theme decide whether it needs to repaint or not in response to focus
+            // activation.
+            if (node->renderer() && node->renderer()->style()->hasAppearance())
+                node->renderer()->repaint();
+        }
+    }
+    
+    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa.  We
+    // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.
+    NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
+    if (documentView && renderer()) {
+        QRect visibleRect([documentView visibleRect]);
+        QPainter p;
+        p.setUpdatingControlTints(true);
+        paint(&p, visibleRect);
     }
 }
 

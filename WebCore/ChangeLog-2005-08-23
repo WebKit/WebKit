@@ -1,3 +1,43 @@
+2005-07-28  David Hyatt  <hyatt@apple.com>
+
+	Make sure :focus is not matched when the window is not key.
+	This involved adding a check to the style selector and also
+	removing the hack from the painter that turned off outline:auto
+	drawing when the window wasn't key.
+
+	Added support for control tinting when the window resigns/becomes
+	key.
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/khtml_part.h:
+        (KHTMLPart::displaysWithFocusAttributes):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::paint):
+        (khtml::RenderTheme::isChecked):
+        (khtml::RenderTheme::isEnabled):
+        (khtml::RenderTheme::isFocused):
+        (khtml::RenderTheme::isPressed):
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::controlSupportsTints):
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::controlSupportsTints):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes):
+        * kwq/KWQPainter.h:
+        (QPainter::updatingControlTints):
+        (QPainter::setUpdatingControlTints):
+        * kwq/KWQPainter.mm:
+        (QPainter::QPainter):
+        (QPainter::initFocusRing):
+        (QPainter::addFocusRingRect):
+        (QPainter::drawFocusRing):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:]):
+
 2005-07-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by ken

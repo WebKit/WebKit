@@ -43,6 +43,9 @@ public:
     // the baseline position API above).
     virtual bool isControlContainer(EAppearance appearance) const;
 
+    // An API asking if the control changes its tint when the window has focus or not.
+    virtual bool controlSupportsTints(const RenderObject* o) const;
+
     virtual void adjustRepaintRect(const RenderObject* o, QRect& r);
 
 protected:

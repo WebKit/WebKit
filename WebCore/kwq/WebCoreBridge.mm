@@ -717,7 +717,6 @@ static BOOL nowPrinting(WebCoreBridge *self)
     QPainter painter(nowPrinting(self));
     bool displaysWithFocusAttributes = _part->displaysWithFocusAttributes();
     painter.setUsesInactiveTextBackgroundColor(!displaysWithFocusAttributes);
-    painter.setDrawsFocusRing(displaysWithFocusAttributes);
     [self drawRect:rect withPainter:&painter];
 }
 
