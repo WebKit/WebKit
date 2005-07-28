@@ -84,16 +84,16 @@ bool RenderTheme::isControlContainer(EAppearance appearance) const
 
 bool RenderTheme::isChecked(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
+    if (!o->element())
         return false;
-    return static_cast<HTMLInputElementImpl*>(o->element())->checked();
+    return o->element()->isChecked();
 }
 
 bool RenderTheme::isEnabled(const RenderObject* o) const
 {
-    if (!o->element() || !o->element()->hasTagName(HTMLTags::input()))
+    if (!o->element())
         return true;
-    return !static_cast<HTMLInputElementImpl*>(o->element())->disabled();
+    return o->element()->isEnabled();
 }
 
 bool RenderTheme::isFocused(const RenderObject* o) const

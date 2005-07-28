@@ -1334,6 +1334,24 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                         return true;
                 }
                 break;
+            case CSSSelector::PseudoEnabled:
+                if (e && e->isControl())
+                    // The UI spec states that you can't match :enabled unless you are an object that can
+                    // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
+                    // that are controls.
+                    return e->isEnabled();                    
+                break;
+            case CSSSelector::PseudoDisabled:
+                if (e && e->isControl())
+                    // The UI spec states that you can't match :enabled unless you are an object that can
+                    // "receive focus and be activated."  We will limit matching of this pseudo-class to elements
+                    // that are controls.
+                    return !e->isEnabled();                    
+                break;
+            case CSSSelector::PseudoChecked:
+                if (e && e->isChecked())
+                    return true;
+                break;
             case CSSSelector::PseudoRoot:
                 if (e == e->getDocument()->documentElement())
                     return true;

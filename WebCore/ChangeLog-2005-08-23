@@ -1,3 +1,27 @@
+2005-07-28  David Hyatt  <hyatt@apple.com>
+
+	Implement support for the :checked, :enabled and :disabled pseudo-classes.
+	
+        Reviewed by john
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLGenericFormElementImpl::isControl):
+        (DOM::HTMLGenericFormElementImpl::isEnabled):
+        (DOM::HTMLInputElementImpl::isChecked):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::isChecked):
+        (khtml::RenderTheme::isEnabled):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::isControl):
+        (DOM::NodeImpl::isEnabled):
+        (DOM::NodeImpl::isChecked):
+
 2005-07-28  Beth Dakin  <bdakin@apple.com>
 
 	This is a fix for <rdar://problem/4190684>. Hyatt and I

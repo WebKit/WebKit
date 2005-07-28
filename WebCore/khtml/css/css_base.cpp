@@ -141,8 +141,11 @@ void CSSSelector::extractPseudoType() const
     static AtomicString after("after");
     static AtomicString anyLink("-khtml-any-link");
     static AtomicString before("before");
+    static AtomicString checked("checked");
+    static AtomicString disabled("disabled");
     static AtomicString drag("-khtml-drag");
     static AtomicString empty("empty");
+    static AtomicString enabled("enabled");
     static AtomicString firstChild("first-child");
     static AtomicString firstLetter("first-letter");
     static AtomicString firstLine("first-line");
@@ -171,8 +174,14 @@ void CSSSelector::extractPseudoType() const
     else if (value == before) {
         _pseudoType = PseudoBefore;
         element = compat = true;
-    } else if (value == drag)
+    } else if (value == checked)
+        _pseudoType = PseudoChecked;
+    else if (value == disabled)
+        _pseudoType = PseudoDisabled;
+    else if (value == drag)
         _pseudoType = PseudoDrag;
+    else if (value == enabled)
+        _pseudoType = PseudoEnabled;
     else if (value == empty)
         _pseudoType = PseudoEmpty;
     else if (value == firstChild)

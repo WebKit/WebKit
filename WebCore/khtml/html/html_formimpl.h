@@ -172,6 +172,9 @@ public:
 
     virtual DOMString type() const = 0;
 
+    virtual bool isControl() const { return true; }
+    virtual bool isEnabled() const { return !disabled(); }
+
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void attach();
     virtual void insertedIntoDocument();
@@ -339,6 +342,8 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
+    virtual bool isChecked() const { return checked(); }
+    
     bool checked() const { return m_checked; }
     void setChecked(bool);
     long maxLength() const { return m_maxLen; }
