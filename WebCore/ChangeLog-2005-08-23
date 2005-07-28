@@ -1,3 +1,20 @@
+2005-07-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by ken
+        
+        Fix for <rdar://problems/4038408&4154187&4125381&4125087> 
+            Mail: Editing at the bottom of a quoted block makes the text blue in certain cases
+
+        Test cases added:
+        * layout-tests/editing/deleting/delete-4038408-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-4038408-fix.html: Added.
+
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::clearTransientState):
+        * khtml/editing/delete_selection_command.h:
+
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         - added test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=4147

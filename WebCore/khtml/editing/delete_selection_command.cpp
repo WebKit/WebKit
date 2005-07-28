@@ -47,6 +47,7 @@
 #endif
 
 using DOM::CSSComputedStyleDeclarationImpl;
+using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::DOMString;
 using DOM::DocumentImpl;
 using DOM::NodeImpl;
@@ -277,6 +278,18 @@ void DeleteSelectionCommand::saveTypingStyleState()
     m_typingStyle = computedStyle->copyInheritableProperties();
     m_typingStyle->ref();
     computedStyle->deref();
+    
+    m_deleteIntoBlockquoteStyle = 0;
+    // If we're deleting into a Mail blockquote, save the style at end() instead of start()
+    // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
+    if (nearestMailBlockquote(m_selectionToDelete.start().node())) {
+        CSSComputedStyleDeclarationImpl *computedStyle = m_selectionToDelete.end().computedStyle();
+        computedStyle->ref();
+        m_deleteIntoBlockquoteStyle = computedStyle->copyInheritableProperties();
+        m_deleteIntoBlockquoteStyle->ref();
+        computedStyle->deref();        
+    } else
+        m_deleteIntoBlockquoteStyle = 0;
 }
 
 bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
@@ -628,6 +641,19 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedP
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    
+    if (m_deleteIntoBlockquoteStyle) {
+        // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
+        if (!nearestMailBlockquote(m_endingPosition.node())) {
+            CSSMutableStyleDeclarationImpl *oldStyle = m_typingStyle;
+            m_typingStyle = m_deleteIntoBlockquoteStyle;
+            oldStyle->deref();
+        } else {
+            m_deleteIntoBlockquoteStyle->deref();
+            m_deleteIntoBlockquoteStyle = 0;
+        }
+    }
+    
     CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
     endingStyle.diff(m_typingStyle);
     if (!m_typingStyle->length()) {
@@ -684,6 +710,10 @@ void DeleteSelectionCommand::clearTransientState()
     }
     if (m_typingStyle) {
         m_typingStyle->deref();
+        m_typingStyle = 0;
+    }
+    if (m_deleteIntoBlockquoteStyle) {
+        m_deleteIntoBlockquoteStyle->deref();
         m_typingStyle = 0;
     }
 }
