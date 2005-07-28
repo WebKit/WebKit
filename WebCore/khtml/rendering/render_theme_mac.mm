@@ -119,13 +119,6 @@ short RenderThemeMac::baselinePosition(const RenderObject* o) const
     return RenderTheme::baselinePosition(o);
 }
 
-bool RenderThemeMac::isControlContainer(EAppearance appearance) const
-{
-    // There are more leaves than this, but we'll patch this function as we add support for
-    // more controls.
-    return appearance != CheckboxAppearance && appearance != RadioAppearance;
-}
-
 bool RenderThemeMac::controlSupportsTints(const RenderObject* o) const
 {
     if (!isEnabled(o))
@@ -149,13 +142,9 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-void RenderThemeMac::setSizeFromFont(RenderStyle* style, const int* sizes) const
+int RenderThemeMac::sizeForFont(RenderStyle* style) const
 {
-    int size = sizes[controlSizeForFont(style)];
-    if (style->width().isVariable())
-        style->setWidth(Length(size, Fixed));
-    if (style->height().isVariable())
-        style->setHeight(Length(size, Fixed));
+    return checkboxSizes()[controlSizeForFont(style)];
 }
 
 void RenderThemeMac::setControlSize(NSCell* cell, const int* sizes, int minSize)
@@ -169,27 +158,6 @@ void RenderThemeMac::setControlSize(NSCell* cell, const int* sizes, int minSize)
         size = NSMiniControlSize;
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
         [cell setControlSize:size];
-}
-
-// ========================================================================================
-// Checkboxes - <input type="checkbox">
-//      Mouse States - Pressed
-//      Control States - Checked, Enabled, Focused
-// ========================================================================================
-
-void RenderThemeMac::adjustCheckboxStyle(RenderStyle* style) const
-{
-    // A summary of the rules for checkbox designed to match WinIE:
-    // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
-    // font-size - not honored (control has no text), but we use it to decide which control size to use.
-    setCheckboxSize(style);
-    
-    // padding - not honored by WinIE, needs to be removed.
-    style->resetPadding();
-    
-    // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
-    // for now, we will not honor it.
-    style->resetBorder();
 }
 
 void RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
@@ -219,17 +187,6 @@ const int* RenderThemeMac::checkboxMargins() const
         { 4, 3, 3, 3 },
     };
     return margins[[checkbox controlSize]];
-}
-
-void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
-{
-    // If the width and height are both specified, then we have nothing to do.
-    if (!style->width().isVariable() && !style->height().isVariable())
-        return;
-
-    // Use the font size to determine the intrinsic width of the control.
-    // Checkboxes are either 14, 12, or 10 pixels tall.
-    setSizeFromFont(style, checkboxSizes());
 }
 
 void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)

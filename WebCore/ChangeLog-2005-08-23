@@ -1,3 +1,21 @@
+2005-07-28  Chris Blumenberg  <cblu@apple.com>
+
+	Moved non-AppKit related code from RenderThemeMac to RenderTheme so potentially other RenderTheme subclasses can inherit more behavior.
+
+        Reviewed by hyatt.
+
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::baselinePosition):
+        (khtml::RenderTheme::isControlContainer):
+        (khtml::RenderTheme::sizeForFont):
+        (khtml::RenderTheme::setSizeFromFont):
+        (khtml::RenderTheme::setCheckboxSize):
+        (khtml::RenderTheme::adjustCheckboxStyle):
+        * khtml/rendering/render_theme.h:
+        * khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::sizeForFont):
+
 2005-07-28  David Hyatt  <hyatt@apple.com>
 
 	Make sure :focus is not matched when the window is not key.

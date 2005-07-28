@@ -39,10 +39,6 @@ public:
     // controls that need to do this.
     virtual short baselinePosition(const RenderObject* o) const;
 
-    // An API for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
-    // the baseline position API above).
-    virtual bool isControlContainer(EAppearance appearance) const;
-
     // An API asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject* o) const;
 
@@ -50,15 +46,14 @@ public:
 
 protected:
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(RenderStyle* style) const;
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual int sizeForFont(RenderStyle* style) const;
     
 private:
     QRect inflateRect(const QRect& r, int size, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle* style) const;
-    void setSizeFromFont(RenderStyle* style, const int* sizes) const;
     void setControlSize(NSCell* cell, const int* sizes, int minSize);
 
     void updateCheckedState(NSCell* cell, const RenderObject* o);
@@ -69,9 +64,7 @@ private:
     // Helpers for adjusting appearance and for painting
     const int* checkboxSizes() const;
     const int* checkboxMargins() const;
-    void setCheckboxSize(RenderStyle* style) const;
     void setCheckboxCellState(const RenderObject* o, const QRect& r);
-    
     
 private:
     NSButtonCell* checkbox;

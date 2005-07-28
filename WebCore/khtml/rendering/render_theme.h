@@ -55,7 +55,7 @@ public:
 
     // An API for asking if a control is a container or not.  Leaf controls have to have some special behavior (like
     // the baseline position API above).
-    virtual bool isControlContainer(EAppearance appearance) const { return true; }
+    virtual bool isControlContainer(EAppearance appearance) const;
 
     // An API asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject* o) const { return false; }
@@ -76,8 +76,13 @@ protected:
     bool isPressed(const RenderObject* o) const;
 
     // Methods for each appearance value.
-    virtual void adjustCheckboxStyle(RenderStyle* style) const = 0;
+    virtual void adjustCheckboxStyle(RenderStyle* style) const;
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r) = 0;
+    virtual int sizeForFont(RenderStyle* style) const;
+
+    void setSizeFromFont(RenderStyle* style) const;
+    void setCheckboxSize(RenderStyle* style) const;
+        
 };
 
 // Function to obtain the theme.  This is implemented in your platform-specific theme implementation to hand

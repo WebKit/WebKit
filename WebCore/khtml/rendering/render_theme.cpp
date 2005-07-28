@@ -72,7 +72,14 @@ void RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
 
 short RenderTheme::baselinePosition(const RenderObject* o) const
 {
-    return o->height() + o->marginTop() + o->marginBottom();
+    return o->height() + o->marginTop();
+}
+
+bool RenderTheme::isControlContainer(EAppearance appearance) const
+{
+    // There are more leaves than this, but we'll patch this function as we add support for
+    // more controls.
+    return appearance != CheckboxAppearance && appearance != RadioAppearance;
 }
 
 bool RenderTheme::isChecked(const RenderObject* o) const
@@ -101,6 +108,45 @@ bool RenderTheme::isPressed(const RenderObject* o) const
     if (!o->element())
         return false;
     return o->element()->active();
+}
+
+int RenderTheme::sizeForFont(RenderStyle* style) const
+{
+    return style->fontSize();
+}
+
+void RenderTheme::setSizeFromFont(RenderStyle* style) const
+{
+    int size = sizeForFont(style);
+    if (style->width().isVariable())
+        style->setWidth(Length(size, Fixed));
+    if (style->height().isVariable())
+        style->setHeight(Length(size, Fixed));
+}
+
+void RenderTheme::setCheckboxSize(RenderStyle* style) const
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isVariable() && !style->height().isVariable())
+        return;
+    
+    // Use the font size to determine the intrinsic width of the control.
+    setSizeFromFont(style);
+}
+
+void RenderTheme::adjustCheckboxStyle(RenderStyle* style) const
+{
+    // A summary of the rules for checkbox designed to match WinIE:
+    // width/height - honored (WinIE actually scales its control for small widths, but lets it overflow for small heights.)
+    // font-size - not honored (control has no text), but we use it to decide which control size to use.
+    setCheckboxSize(style);
+    
+    // padding - not honored by WinIE, needs to be removed.
+    style->resetPadding();
+    
+    // border - honored by WinIE, but looks terrible (just paints in the control box and turns off the Windows XP theme)
+    // for now, we will not honor it.
+    style->resetBorder();
 }
 
 }
