@@ -1,3 +1,17 @@
+2005-07-28  Beth Dakin  <bdakin@apple.com>
+
+	This is a fix for <rdar://problem/4190684>. Hyatt and I
+	(okay, mostly Hyatt) wrote this for Cayenne so that they
+	can change the value of a style of a rule and have everything
+	update dynamically without causing a crash.         
+
+	Reviewed by Hyatt
+
+        Test cases added: (NONE)
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::setChanged):
+
 2005-07-28  Chris Blumenberg  <cblu@apple.com>
 
 	Moved non-AppKit related code from RenderThemeMac to RenderTheme so potentially other RenderTheme subclasses can inherit more behavior.

@@ -408,11 +408,12 @@ void CSSMutableStyleDeclarationImpl::setChanged()
     }
 
     // ### quick&dirty hack for KDE 3.0... make this MUCH better! (Dirk)
-    for (StyleBaseImpl* stylesheet = this; stylesheet; stylesheet = stylesheet->parent())
-        if (stylesheet->isCSSStyleSheet()) {
-            static_cast<CSSStyleSheetImpl*>(stylesheet)->doc()->updateStyleSelector();
-            break;
-        }
+    StyleBaseImpl *root = this;
+    StyleBaseImpl *parent;
+    while ( ( parent = root->parent()) )
+        root = parent;
+    if (root->isCSSStyleSheet())
+        static_cast<CSSStyleSheetImpl*>(root)->doc()->updateStyleSelector();
 }
 
 bool CSSMutableStyleDeclarationImpl::getPropertyPriority(int propertyID) const
