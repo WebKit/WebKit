@@ -1,0 +1,44 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {showImageRepTestWindow = id; showInspectorPanel = id; showTestsPanel = id; }; 
+            CLASS = AppDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {svgImageRepTestWindow = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                dumpSVGToConsole = id; 
+                openSelectionInViewer = id; 
+                openSourceForSelection = id; 
+                runWindowResizeTest = id; 
+                showCompositeWindow = id; 
+                showImageRepTestWindow = id; 
+                showInspectorPanel = id; 
+                showTestsPanel = id; 
+                toggleDebugDrawer = id; 
+                toggleFilterSupport = id; 
+                toggleShowDebugAxes = id; 
+                toggleShowDebugString = id; 
+                toggleViewersScaleRule = id; 
+                zoomIn = id; 
+                zoomOriginal = id; 
+                zoomOut = id; 
+                zoomToContent = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = KCanvasTestView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {dumpSVGToConsole = id; }; 
+            CLASS = MyDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {canvasView = KCanvasTestView; }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}

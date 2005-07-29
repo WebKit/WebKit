@@ -1,3 +1,45 @@
+2005-07-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by sullivan.
+
+        * DrawTest/AppDelegate.h: Added.
+        * DrawTest/AppDelegate.m: Added.
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj: Added.
+        * DrawTest/DrawTestDocument.h: Added.
+        * DrawTest/DrawTestDocument.m: Added.
+        * DrawTest/DrawTestInspectorController.h: Added.
+        * DrawTest/DrawTestInspectorController.m: Added.
+        * DrawTest/DrawTestToolbarController.h: Added.
+        * DrawTest/DrawTestToolbarController.m: Added.
+        * DrawTest/DrawTestView.h: Added.
+        * DrawTest/DrawTestView.m: Added.
+        * DrawTest/DrawTest_Prefix.pch: Added.
+        * DrawTest/English.lproj/DrawTestDocument.nib/classes.nib: Added.
+        * DrawTest/English.lproj/DrawTestDocument.nib/info.nib: Added.
+        * DrawTest/English.lproj/DrawTestDocument.nib/keyedobjects.nib: Added.
+        * DrawTest/English.lproj/InfoPlist.strings: Added.
+        * DrawTest/English.lproj/Inspector.nib/classes.nib: Added.
+        * DrawTest/English.lproj/Inspector.nib/info.nib: Added.
+        * DrawTest/English.lproj/Inspector.nib/keyedobjects.nib: Added.
+        * DrawTest/English.lproj/MainMenu.nib/classes.nib: Added.
+        * DrawTest/English.lproj/MainMenu.nib/info.nib: Added.
+        * DrawTest/English.lproj/MainMenu.nib/keyedobjects.nib: Added.
+        * DrawTest/English.lproj/TestViewer.nib/classes.nib: Added.
+        * DrawTest/English.lproj/TestViewer.nib/info.nib: Added.
+        * DrawTest/English.lproj/TestViewer.nib/keyedobjects.nib: Added.
+        * DrawTest/Info.plist: Added.
+        * DrawTest/SVGTest.h: Added.
+        * DrawTest/SVGTest.m: Added.
+        * DrawTest/ScalingImageView.h: Added.
+        * DrawTest/ScalingImageView.m: Added.
+        * DrawTest/TestController.h: Added.
+        * DrawTest/TestController.m: Added.
+        * DrawTest/TestViewerSplitView.h: Added.
+        * DrawTest/TestViewerSplitView.m: Added.
+        * DrawTest/main.m: Added.
+        Adding simple cocoa app for testing SVG rendering, interaction.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4157
+
 2005-07-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

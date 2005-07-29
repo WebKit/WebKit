@@ -1,0 +1,36 @@
+{
+    IBClasses = (
+        {CLASS = DrawView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = KCanvasTestView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {CLASS = MyImageView; LANGUAGE = ObjC; SUPERCLASS = NSImageView; }, 
+        {
+            ACTIONS = {
+                browse = id; 
+                jumpToParentDirectory = id; 
+                openSelectionInViewer = id; 
+                openSourceForSelection = id; 
+                openTestViewerForSelection = id; 
+                showCompositeWindow = id; 
+                showTestWindow = id; 
+                showTestsPanel = id; 
+                toggleViewersScaleRule = id; 
+            }; 
+            CLASS = TestController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_compositeImageView" = NSImageView; 
+                "_compositeWindow" = NSWindow; 
+                "_parentDirectoryPopup" = NSPopUpButton; 
+                "_splitView" = TestViewerSplitView; 
+                "_testPanel" = NSPanel; 
+                "_testWindow" = NSWindow; 
+                "_testsArrayController" = NSArrayController; 
+                "_testsTableView" = NSTableView; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = TestViewerSplitView; LANGUAGE = ObjC; SUPERCLASS = NSView; }
+    ); 
+    IBVersion = 1; 
+}

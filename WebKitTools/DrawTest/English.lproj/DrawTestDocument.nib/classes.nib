@@ -1,0 +1,34 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {toggleShowDebugAxes = id; toggleShowDebugString = id; }; 
+            CLASS = DrawTestView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = DrawView; 
+        }, 
+        {
+            ACTIONS = {
+                deleteSelection = id; 
+                moveSelectionBackward = id; 
+                moveSelectionForward = id; 
+                zoomIn = id; 
+                zoomOriginal = id; 
+                zoomOut = id; 
+                zoomToFit = id; 
+            }; 
+            CLASS = DrawView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {dumpSVGToConsole = id; }; 
+            CLASS = MyDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {drawView = KCanvasTestView; }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {CLASS = NSSegmentedControl; LANGUAGE = ObjC; SUPERCLASS = NSControl; }
+    ); 
+    IBVersion = 1; 
+}
