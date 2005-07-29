@@ -55,10 +55,6 @@
 #define POP_DIRECTIONAL_FORMATTING 0x202C
 #define LEFT_TO_RIGHT_OVERRIDE 0x202D
 
-// Lose precision beyond 1000ths place. This is to work around an apparent
-// bug in CoreGraphics where there seem to be small errors to some metrics.
-#define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
-
 // MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
 // use to represent a single Unicode code point.
 #define MAX_GLYPH_EXPANSION 4
@@ -75,7 +71,7 @@
 
 #define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)WKGetNSFontATSUFontId(font)))
 
-#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7
+#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7F
 #define INVALID_WIDTH -(__FLT_MAX__)
 
 #if !defined(ScaleEmToUnits)
@@ -132,8 +128,8 @@ struct CharacterWidthIterator
     unsigned currentCharacter;
     float runWidthSoFar;
     float widthToStart;
-    int padding;
-    int padPerSpace;
+    float padding;
+    float padPerSpace;
 };
 
 // Internal API
@@ -179,11 +175,11 @@ struct CharacterWidthIterator
 
 static inline BOOL isSpace(UniChar c)
 {
-    return c == SPACE || c == '\n' || c == NO_BREAK_SPACE;
+    return c == SPACE || c == '\t' || c == '\n' || c == NO_BREAK_SPACE;
 }
 
 static const uint8_t isRoundingHackCharacterTable[0x100] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\t*/, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -195,7 +191,7 @@ static const uint8_t isRoundingHackCharacterTable[0x100] = {
 
 static inline BOOL isRoundingHackCharacter(UniChar c)
 {
-    return (c & ~0xFF) == 0 && isRoundingHackCharacterTable[c];
+    return (((c & ~0xFF) == 0 && isRoundingHackCharacterTable[c]));
 }
 
 // Map utility functions
@@ -220,7 +216,7 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
     if (!CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize])) {
         ERROR ("Unable to cache glyph widths for %@ %f",  [font displayName], [font pointSize]);
-	return 0.;
+	return 0.0F;
     }
 
     return width;
@@ -577,36 +573,27 @@ static BOOL alwaysUseATSU = NO;
     cgContext = (CGContextRef)[graphicsContext graphicsPort];
 
     // hack to make thickness 2 underlines for internation text input look right
-    if (thickness > 1.5 && thickness < 2.5) {
-        yOffset += .5;
+    if (thickness > 1.5F && thickness < 2.5F) {
+        yOffset += .5F;
     }
 
-    if (thickness == 0.0) {
-        CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0, 1.0), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
+    if (thickness == 0.0F) {
+        CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0F, 1.0F), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
         CGContextSetLineWidth(cgContext, size.width);
     } else {
         CGContextSetLineWidth(cgContext, thickness);
     }
 
 
-    // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
-    // So, it has been requested that we turn off use of the new API until 3952084 is fixed.
-#if 1         
-//#if BUILDING_ON_PANTHER         
-    CGContextMoveToPoint(cgContext, point.x, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
-    // Subtract 1 to ensure that the line is always within bounds of element.
-    CGContextAddLineToPoint(cgContext, point.x + width - 1.0, point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset);
-    CGContextStrokePath(cgContext);
-#else
     // Use CGContextStrokeLineSegments on Tiger.  J. Burkey says this will be a big performance win.
-
+    // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
+    // Tiger shipped with Q2DX disabled, tho, so we can use CGContextStrokeLineSegments.
     CGPoint linePoints[2];
     linePoints[0].x = point.x;
-    linePoints[0].y = point.y + [self lineSpacing] + 1.5 - [self descent] + yOffset;
-    linePoints[1].x = point.x + width - 1.0;
+    linePoints[0].y = point.y + [self lineSpacing] + 1.5F - [self descent] + yOffset;
+    linePoints[1].x = point.x + width - 1.0F;
     linePoints[1].y = linePoints[0].y;
     CGContextStrokeLineSegments (cgContext, linePoints, 2);
-#endif
 
     [graphicsContext setShouldAntialias: flag];
 }
@@ -858,7 +845,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     spaceWidth = width;
 
     treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:font];
-    adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : (int)ROUND_TO_INT(width);
+    adjustedSpaceWidth = treatAsFixedPitch ? ceilf(width) : (int)ROUND_TO_INT(width);
     
     return YES;
 }
@@ -979,7 +966,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         float flip = [v isFlipped] ? -1 : 1;
         CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
 		WKSetCGFontRenderingMode(cgContext, drawFont);
-        CGContextSetFontSize(cgContext, 1.0);
+        CGContextSetFontSize(cgContext, 1.0F);
 #endif
 
         [color set];
@@ -1012,7 +999,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
     float startX = startPosition + geometry->point.x;
     
-    float backgroundWidth = 0.0;
+    float backgroundWidth = 0.0F;
     while (widthIterator.currentCharacter < (unsigned)run->to) {
         backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
     }
@@ -1194,7 +1181,7 @@ static const char *joiningNames[] = {
 
 - (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer startPosition:(float *)startPosition numGlyphs: (int *)_numGlyphs
 {
-    float _totalWidth = 0, _nextWidth;
+    float _nextWidth;
     CharacterWidthIterator widthIterator;
     NSFont *fontUsed = 0;
     ATSGlyphRef glyphUsed;
@@ -1203,7 +1190,10 @@ static const char *joiningNames[] = {
     initializeCharacterWidthIterator(&widthIterator, self, run, style);
     if (startPosition)
         *startPosition = widthIterator.widthToStart;
-    while ((_nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &fontUsed)) != INVALID_WIDTH){
+    while (widthIterator.currentCharacter < (unsigned)widthIterator.run->to) {
+        _nextWidth = widthForNextCharacter(&widthIterator, &glyphUsed, &fontUsed);
+        if (_nextWidth == INVALID_WIDTH)
+            break;
         if (fontBuffer)
             fontBuffer[numGlyphs] = fontUsed;
         if (glyphBuffer)
@@ -1211,13 +1201,12 @@ static const char *joiningNames[] = {
         if (widthBuffer)
             widthBuffer[numGlyphs] = _nextWidth;
         numGlyphs++;
-        _totalWidth += _nextWidth;
     }
         
     if (_numGlyphs)
         *_numGlyphs = numGlyphs;
 
-    return _totalWidth;
+    return widthIterator.runWidthSoFar;
 }
 
 - (ATSGlyphRef)_extendUnicodeCharacterToGlyphMapToInclude:(UnicodeChar)c
@@ -1339,8 +1328,9 @@ static const char *joiningNames[] = {
             buffer[i] = ZERO_WIDTH_SPACE;
         buffer[0x7F] = ZERO_WIDTH_SPACE;
 
-        // But both \n and nonbreaking space must render as a space.
+        // But \n, \t, and nonbreaking space must render as a space.
         buffer['\n'] = ' ';
+        buffer['\t'] = ' ';
         buffer[NO_BREAK_SPACE] = ' ';
     }
 
@@ -1813,7 +1803,7 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
 - (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {
     float delta = (float)x;
-    float width;
+    float width;   ///  FIX: CHECK THIS
     unsigned offset = run->from;
     CharacterWidthIterator widthIterator;
     
@@ -1907,13 +1897,17 @@ static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **
 {
     if (map == 0)
         return nonGlyphID;
-        
+    
+    // this loop is hot, so it is written to avoid LSU stalls
     while (map) {
-        if (c >= map->startRange && c <= map->endRange){
-            *font = map->glyphs[c-map->startRange].font;
-            return map->glyphs[c-map->startRange].glyph;
+        UniChar start = map->startRange;
+        GlyphMap *nextMap = map->next;
+        if (c >= start && c <= map->endRange){
+            GlyphEntry *ge = &map->glyphs[c-start];
+            *font = ge->font;
+            return ge->glyph;
         }
-        map = map->next;
+        map = nextMap;
     }
     return nonGlyphID;
 }
@@ -1982,7 +1976,7 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
                 numSpaces++;
             }
         }
-        iterator->padPerSpace = CEIL_TO_INT ((((float)style->padding) / ((float)numSpaces)));
+        iterator->padPerSpace = ceilf((((float)style->padding) / ((float)numSpaces)));
     }
     else {
         iterator->padPerSpace = 0;
@@ -2009,7 +2003,8 @@ static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, 
 
 static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
 {
-    float delta = CEIL_TO_INT(iterator->widthToStart + iterator->runWidthSoFar) - (iterator->widthToStart + iterator->runWidthSoFar);
+    float totalWidth = iterator->widthToStart + iterator->runWidthSoFar;
+    float delta = ceilf(totalWidth) - totalWidth;
     iterator->runWidthSoFar += delta;
     return delta;
 }
@@ -2026,15 +2021,10 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     unsigned currentCharacter = iterator->currentCharacter;
 
     NSFont *_fontUsed = nil;
-    ATSGlyphRef _glyphUsed;
-
-    if (!fontUsed)
-        fontUsed = &_fontUsed;
-    if (!glyphUsed)
-        glyphUsed = &_glyphUsed;
-        
+    ATSGlyphRef _glyphUsed = nil;
+    
+    // Check for end of run.
     if (currentCharacter >= (unsigned)run->to)
-        // Error! Offset specified beyond end of run.
         return INVALID_WIDTH;
 
     const UniChar *cp = &run->characters[currentCharacter];
@@ -2101,14 +2091,14 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     }
     
     if (c <= 0xFFFF) {
-        *glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, fontUsed);
-        if (*glyphUsed == nonGlyphID) {
-            *glyphUsed = [renderer _extendCharacterToGlyphMapToInclude:c];
+        _glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, &_fontUsed);
+        if (_glyphUsed == nonGlyphID) {
+            _glyphUsed = [renderer _extendCharacterToGlyphMapToInclude:c];
         }
     } else {
-        *glyphUsed = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, c, fontUsed);
-        if (*glyphUsed == nonGlyphID) {
-            *glyphUsed = [renderer _extendUnicodeCharacterToGlyphMapToInclude:c];
+        _glyphUsed = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, c, &_fontUsed);
+        if (_glyphUsed == nonGlyphID) {
+            _glyphUsed = [renderer _extendUnicodeCharacterToGlyphMapToInclude:c];
         }
     }
 
@@ -2116,28 +2106,32 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     // ASSUMPTION:  We assume the same font in a smaller size has
     // the same glyphs as the large font.
     if (useSmallCapsFont) {
-        if (*fontUsed == nil)
-            *fontUsed = [renderer _smallCapsFont];
+        if (_fontUsed == nil)
+            _fontUsed = [renderer _smallCapsFont];
         else {
             // Potential for optimization.  This path should only be taken if we're
             // using a cached substituted font.
-            *fontUsed = [[NSFontManager sharedFontManager] convertFont:*fontUsed toSize:[*fontUsed pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER];
+            _fontUsed = [[NSFontManager sharedFontManager] convertFont:_fontUsed toSize:[_fontUsed pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER];
         }
     }
 
     // Now that we have glyph and font, get its width.
-    WebGlyphWidth width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
+    WebGlyphWidth width;
+    if (style->tabWidth != 0.0F && c == '\t') {
+        width = style->tabWidth - fmodf(style->xpos+iterator->widthToStart+iterator->runWidthSoFar, style->tabWidth);
+    } else {
+        width = widthForGlyph(renderer, _glyphUsed, _fontUsed);
+        // We special case spaces in two ways when applying word rounding.
+        // First, we round spaces to an adjusted width in all fonts.
+        // Second, in fixed-pitch fonts we ensure that all characters that
+        // match the width of the space character have the same width as the space character.
+        if (style->applyWordRounding && (renderer->treatAsFixedPitch ? width == renderer->spaceWidth : _glyphUsed == renderer->spaceGlyph))
+            width = renderer->adjustedSpaceWidth;
+    }
     
-    // We special case spaces in two ways when applying word rounding.
-    // First, we round spaces to an adjusted width in all fonts.
-    // Second, in fixed-pitch fonts we ensure that all characters that
-    // match the width of the space character have the same width as the space character.
-    if ((renderer->treatAsFixedPitch ? width == renderer->spaceWidth : *glyphUsed == renderer->spaceGlyph) && iterator->style->applyWordRounding)
-        width = renderer->adjustedSpaceWidth;
-
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
-    if (*glyphUsed == 0 && iterator->style->attemptFontSubstitution) {
+    if (_glyphUsed == 0 && style->attemptFontSubstitution) {
         UniChar characterArray[2];
         unsigned characterArrayLength;
         
@@ -2151,7 +2145,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
         
         NSFont *substituteFont = [renderer _substituteFontForCharacters:characterArray length:characterArrayLength
-            families:iterator->style->families];
+            families:style->families];
         if (substituteFont) {
             int cNumGlyphs = 0;
             ATSGlyphRef localGlyphBuffer[MAX_GLYPH_EXPANSION];
@@ -2174,8 +2168,8 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
                             startPosition:nil
                             numGlyphs:&cNumGlyphs];
             
-            *fontUsed = substituteFont;
-            *glyphUsed = localGlyphBuffer[0];
+            _fontUsed = substituteFont;
+            _glyphUsed = localGlyphBuffer[0];
             
             if (c <= 0xFFFF && cNumGlyphs == 1 && localGlyphBuffer[0] != 0){
                 [renderer _updateGlyphEntryForCharacter:c glyphID:localGlyphBuffer[0] font:substituteFont];
@@ -2183,18 +2177,18 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    if (!*fontUsed)
-        *fontUsed = renderer->font;
+    if (!_fontUsed)
+        _fontUsed = renderer->font;
 
     // Force characters that are used to determine word boundaries for the rounding hack
     // to be integer width, so following words will start on an integer boundary.
-    if (isRoundingHackCharacter(c) && iterator->style->applyWordRounding) {
-        width = CEIL_TO_INT(width);
+    if (style->applyWordRounding && isRoundingHackCharacter(c)) {
+        width = ceilf(width);
     }
     
     // Account for letter-spacing
-    if (iterator->style->letterSpacing && width > 0)
-        width += iterator->style->letterSpacing;
+    if (style->letterSpacing && width > 0)
+        width += style->letterSpacing;
 
     // Account for padding.  khtml uses space padding to justify text.  We
     // distribute the specified padding over the available spaces in the run.
@@ -2215,7 +2209,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         // Account for word-spacing.  We apply additional space between "words" by
         // adding width to the space character.
         if (currentCharacter > 0 && !isSpace(cp[-1]))
-            width += iterator->style->wordSpacing;
+            width += style->wordSpacing;
     }
 
     iterator->runWidthSoFar += width;
@@ -2224,21 +2218,30 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     currentCharacter += clusterLength;
     iterator->currentCharacter = currentCharacter;
 
-    int len = run->to - run->from;
-
     // Account for float/integer impedance mismatch between CG and khtml.  "Words" (characters 
     // followed by a character defined by isSpace()) are always an integer width.  We adjust the 
     // width of the last character of a "word" to ensure an integer width.  When we move khtml to
     // floats we can remove this (and related) hacks.
     //
     // Check to see if the next character is a "RoundingHackCharacter", if so, adjust.
-    if (currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength]) && iterator->style->applyWordRounding) {
-        width += ceilCurrentWidth(iterator);
+    if (style->applyWordRounding && currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength])) {
+        float delta = ceilCurrentWidth(iterator);
+        if (delta)
+            width += delta;
+    } else {
+        if (style->applyRunRounding && currentCharacter >= (unsigned)run->to && (run->length == 1 || run->to - run->from > 1)) {
+            float delta = ceilCurrentWidth(iterator);
+            if (delta)
+                width += delta;
+        }
     }
-    else if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRunRounding) {
-        width += ceilCurrentWidth(iterator);
-    }
+
+    if (fontUsed)
+        *fontUsed = _fontUsed;
     
+    if (glyphUsed)
+        *glyphUsed = _glyphUsed;
+
     return width;
 }
 

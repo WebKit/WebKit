@@ -1,3 +1,31 @@
+2005-07-29  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt (rendering) and Maciej (editing and performance improvements).
+
+        Test cases added: Existing tab-related basic editing tests were updated.  More complex tests are coming soon.
+
+        <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)
+        
+        Basic strategy is to put tabs into spans with white-space:pre style, and
+        render them with tabs stops every 8th space, where the space width and
+        the left margin are those of the enclosing block.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isSpace):
+        (isRoundingHackCharacter):
+        (getUncachedWidth):
+        (-[WebTextRenderer drawLineForCharacters:yOffset:width:color:thickness:]):
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (_drawGlyphs):
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:geometry:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startPosition:numGlyphs:]):
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        (glyphForCharacter):
+        (initializeCharacterWidthIterator):
+        (ceilCurrentWidth):
+        (widthForNextCharacter):
+
 2005-07-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
