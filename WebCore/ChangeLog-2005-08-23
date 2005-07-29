@@ -1,3 +1,12 @@
+2005-07-29  Eric Seidel  <eseidel@apple.com>
+
+        No review necessary
+
+        * kdom/xpath/impl/parser/xpath.ypp:
+        Turned off "verbose errors" which was generating a warning
+        during compile (Bison 1.28 bug).  This is unused code in kdom
+        xpath support, thus I didn't ask for review.
+
 2005-07-29  Geoffrey Garen  <ggaren@apple.com>
         
         - fixed:

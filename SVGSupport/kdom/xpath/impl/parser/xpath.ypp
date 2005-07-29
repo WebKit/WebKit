@@ -25,7 +25,7 @@ int xpathyyerror(const char *msg)
 
 #define YYDEBUG 1
 #define YYSTACK_USE_ALLOCA 0
-#define YYERROR_VERBOSE 1
+//#define YYERROR_VERBOSE 1 // bison 1.28 causes warnings, thus errors with this enabled.
 
 extern int xpathyylex();
 
