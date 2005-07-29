@@ -1,3 +1,10 @@
+2005-07-29  Geoffrey Garen  <ggaren@apple.com>
+
+        - Oops. Last checkin omitted the actual test for:
+        <rdar://problem/3461547> can't use document.writeln() on windows opened via window.open("about:blank") in same function
+
+        * manual-tests/write-after-open.html: Added.
+
 2005-07-29  Eric Seidel  <eseidel@apple.com>
 
         No review necessary
