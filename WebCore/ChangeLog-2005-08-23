@@ -1,3 +1,20 @@
+2005-07-29  Geoffrey Garen  <ggaren@apple.com>
+        
+        - fixed:
+        <rdar://problem/3461547> can't use document.writeln() on windows opened via window.open("about:blank") in same function
+        <rdar://problem/3725977> A_WINDOW.document.write() content overwritten when first parameter to window.open is provided
+        <rdar://problem/4101498> SAP: window.write in same call chain as window.open fails to write if URL parameter is provided
+        <rdar://problem/4179028> document.write in same function as window.open fails to write new content (4056)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4056 document.write in same function as window.open fails to write new content
+
+        Reviewed by darin.
+
+        Test cases added:
+        * manual-tests/resources/write-after-open-popup.html: Added.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::didExplicitOpen): now cancels any pending redirection
+
 2005-07-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
