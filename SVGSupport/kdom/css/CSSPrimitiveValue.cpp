@@ -29,7 +29,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSPrimitiveValue.lut.h"
 
 namespace KDOM

@@ -27,7 +27,7 @@
 #include "MediaListImpl.h"
 #include "DOMExceptionImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "MediaList.lut.h"
 using namespace KDOM;
 using namespace KJS;

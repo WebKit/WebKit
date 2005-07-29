@@ -29,7 +29,7 @@
 #include "CSSStyleSheet.h"
 #include "DOMExceptionImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSRule.lut.h"
 using namespace KDOM;
 using namespace KJS;

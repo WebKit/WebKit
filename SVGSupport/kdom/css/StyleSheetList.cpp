@@ -26,7 +26,7 @@
 #include "StyleSheetList.h"
 #include "StyleSheetListImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "StyleSheetList.lut.h"
 using namespace KDOM;
 using namespace KJS;

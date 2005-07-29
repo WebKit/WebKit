@@ -26,7 +26,7 @@
 #include "DOMExceptionImpl.h"
 #include "CSSCharsetRuleImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSCharsetRule.lut.h"
 using namespace KDOM;
 using namespace KJS;

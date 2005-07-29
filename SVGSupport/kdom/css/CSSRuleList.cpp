@@ -26,7 +26,7 @@
 #include "CSSRuleList.h"
 #include "CSSRuleListImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSRuleList.lut.h"
 using namespace KDOM;
 using namespace KJS;

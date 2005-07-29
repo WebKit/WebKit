@@ -26,7 +26,7 @@
 #include "CSSImportRule.h"
 #include "CSSImportRuleImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSImportRule.lut.h"
 using namespace KDOM;
 using namespace KJS;

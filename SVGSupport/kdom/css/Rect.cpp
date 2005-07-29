@@ -26,7 +26,7 @@
 #include "RectImpl.h"
 #include "CSSPrimitiveValue.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "Rect.lut.h"
 namespace KDOM
 {

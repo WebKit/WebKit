@@ -24,7 +24,7 @@
 #include "CSSValueList.h"
 #include "CSSValueListImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSValueList.lut.h"
 using namespace KDOM;
 using namespace KJS;

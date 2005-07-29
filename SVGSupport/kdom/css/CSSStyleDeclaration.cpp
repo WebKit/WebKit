@@ -29,7 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleDeclarationImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSStyleDeclaration.lut.h"
 using namespace KDOM;
 using namespace KJS;

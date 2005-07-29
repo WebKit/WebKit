@@ -27,7 +27,7 @@
 #include "DOMExceptionImpl.h"
 #include "CSSMediaRuleImpl.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSMediaRule.lut.h"
 using namespace KDOM;
 using namespace KJS;

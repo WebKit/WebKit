@@ -269,7 +269,11 @@ namespace KDOM
 #define ECMA_IMPLEMENT_PROTOTYPE(Space,ClassName,ClassProto,ClassFunc) \
     KJS::Value Space::ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const \
     { \
-      return KJS::lookupGetFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this ); \
+        KJS::Value result; \
+        if (KJS::lookupGetOwnFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this, result)) \
+            return result; \
+        return KJS::Undefined(); \
+      /* return KJS::lookupGetFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this ); */ \
     } \
     bool Space::ClassProto::hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const \
     { /*stupid but we need this to have a common macro for the declaration*/ \

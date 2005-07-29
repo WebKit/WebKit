@@ -1,3 +1,32 @@
+2005-07-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Test cases added: (NONE)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kdom/css/CSSCharsetRule.cpp:
+        * kdom/css/CSSFontFaceRule.cpp:
+        * kdom/css/CSSImportRule.cpp:
+        * kdom/css/CSSMediaRule.cpp:
+        * kdom/css/CSSPageRule.cpp:
+        * kdom/css/CSSPrimitiveValue.cpp:
+        * kdom/css/CSSRule.cpp:
+        * kdom/css/CSSRuleList.cpp:
+        * kdom/css/CSSStyleDeclaration.cpp:
+        * kdom/css/CSSStyleRule.cpp:
+        * kdom/css/CSSStyleSheet.cpp:
+        * kdom/css/CSSValue.cpp:
+        * kdom/css/CSSValueList.cpp:
+        * kdom/css/Counter.cpp:
+        * kdom/css/DocumentStyle.cpp:
+        * kdom/css/MediaList.cpp:
+        * kdom/css/RGBColor.cpp:
+        * kdom/css/Rect.cpp:
+        * kdom/css/StyleSheet.cpp:
+        * kdom/css/StyleSheetList.cpp:
+        * kdom/ecma/DOMLookup.h:
+
 2005-07-28  David Hyatt  <hyatt@apple.com>
 
 	Give the theme a shot at deciding when to repaint when various control states change.

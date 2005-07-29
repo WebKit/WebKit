@@ -27,7 +27,7 @@
 #include "DOMExceptionImpl.h"
 #include "CSSStyleDeclaration.h"
 
-#include "CSSConstants.h"
+#include "kdom/data/CSSConstants.h"
 #include "CSSPageRule.lut.h"
 using namespace KDOM;
 using namespace KJS;
