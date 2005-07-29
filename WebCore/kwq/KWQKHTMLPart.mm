@@ -68,6 +68,7 @@
 #import "render_style.h"
 #import "render_table.h"
 #import "render_text.h"
+#import "render_theme.h"
 #import "selection.h"
 #import "visible_position.h"
 #import "visible_text.h"
@@ -116,6 +117,7 @@ using khtml::DashboardRegionValue;
 using khtml::EditCommandPtr;
 using khtml::endOfWord;
 using khtml::findPlainText;
+using khtml::FocusState;
 using khtml::InlineTextBox;
 using khtml::LeftWordIfOnBoundary;
 using khtml::MouseDoubleClickEvent;
@@ -132,6 +134,7 @@ using khtml::RenderObject;
 using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
+using khtml::theme;
 using khtml::RenderWidget;
 using khtml::RightWordIfOnBoundary;
 using khtml::Selection;
@@ -3701,6 +3704,7 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
 {
     if (d->m_isFocused == flag)
         return;
+        
     d->m_isFocused = flag;
 
     // This method does the job of updating the view based on whether the view is "active".
@@ -3721,10 +3725,8 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
         NodeImpl *node = doc->focusNode();
         if (node) {
             node->setChanged();
-            // FIXME: Let the theme decide whether it needs to repaint or not in response to focus
-            // activation.
             if (node->renderer() && node->renderer()->style()->hasAppearance())
-                node->renderer()->repaint();
+                theme()->stateChanged(node->renderer(), FocusState);
         }
     }
     

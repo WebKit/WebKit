@@ -148,11 +148,6 @@
 {
     NSView *view = nil;
     if (button && inNextValidKeyView) {
-        // resign so we send a blur before setting focus on
-        // the next widget, otherwise the blur for this
-        // widget will remove focus from the widget after
-        // we tab to it
-        [self resignFirstResponder];
         if (button) {
             view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext);
         } else {
@@ -168,11 +163,6 @@
 {
     NSView *view = nil;
     if (button && inNextValidKeyView) {
-        // resign so we send a blur before setting focus on
-        // the next widget, otherwise the blur for this
-        // widget will remove focus from the widget after
-        // we tab to it
-        [self resignFirstResponder];
         if (button) {
             view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious);
         } else {
