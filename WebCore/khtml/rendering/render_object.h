@@ -294,7 +294,6 @@ public:
     bool isInline() const { return m_inline; }  // inline object
     bool isCompact() const { return style()->display() == COMPACT; } // compact object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
-    bool mouseInside() const;
     bool isDragging() const;
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
@@ -358,7 +357,6 @@ public:
     void setRelPositioned(bool b=true) { m_relPositioned = b; }
     void setFloating(bool b=true) { m_floating = b; }
     void setInline(bool b=true) { m_inline = b; }
-    void setMouseInside(bool b=true) { m_mouseInside = b; }
     void setShouldPaintBackgroundOrBorder(bool b=true) { m_paintBackground = b; }
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b=true) { m_replaced = b; }
@@ -486,8 +484,8 @@ public:
         friend class RenderFrameSet;
         friend class DOM::HTMLAreaElementImpl;
     public:
-        NodeInfo(bool readonly, bool active)
-            : m_innerNode(0), m_innerNonSharedNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active)
+        NodeInfo(bool readonly, bool active, bool mouseMove = false)
+            : m_innerNode(0), m_innerNonSharedNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active), m_mouseMove(mouseMove)
             { }
 
         DOM::NodeImpl* innerNode() const { return m_innerNode; }
@@ -495,6 +493,7 @@ public:
         DOM::NodeImpl* URLElement() const { return m_innerURLElement; }
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
+        bool mouseMove() const { return m_mouseMove; }
 
     private:
         void setInnerNode(DOM::NodeImpl* n) { m_innerNode = n; }
@@ -506,6 +505,7 @@ public:
         DOM::NodeImpl* m_innerURLElement;
         bool m_readonly;
         bool m_active;
+        bool m_mouseMove;
     };
 
     // Used to signal a specific subrect within an object that must be repainted after
@@ -897,7 +897,6 @@ private:
     bool m_isText                    : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
-    bool m_mouseInside               : 1;
     bool m_isDragging                : 1;
     
     bool m_hasOverflowClip           : 1;

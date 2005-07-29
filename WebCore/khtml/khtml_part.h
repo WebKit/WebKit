@@ -1327,6 +1327,8 @@ public:
   // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
   void selectFrameElementInParentIfFullySelected();
   
+  virtual bool mouseDownMayStartSelect() const { return true; }
+
   void handleFallbackContent();
 
 private:

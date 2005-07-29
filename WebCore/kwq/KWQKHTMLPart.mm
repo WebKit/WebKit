@@ -138,6 +138,7 @@ using khtml::theme;
 using khtml::RenderWidget;
 using khtml::RightWordIfOnBoundary;
 using khtml::Selection;
+using khtml::SELECT_ELEMENT;
 using khtml::setEnd;
 using khtml::setStart;
 using khtml::ShadowData;
@@ -2002,13 +2003,32 @@ bool KWQKHTMLPart::closeURL()
     return KHTMLPart::closeURL();
 }
 
+bool KWQKHTMLPart::canMouseDownStartSelect(NodeImpl* node)
+{
+    if (!node || !node->renderer())
+        return true;
+
+    // Check to see if khtml-user-select has been set to none
+    if (!node->renderer()->canSelect())
+        return false;
+
+    // Some controls and images can't start a select on a mouse down.
+    for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
+        if (curr->style()->userSelect() == SELECT_ELEMENT)
+            return false;
+    }
+
+    return true;
+}
+
 void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
     bool singleClick = [_currentEvent clickCount] <= 1;
 
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
-    _mouseDownMayStartSelect = true;
+    _mouseDownMayStartSelect = canMouseDownStartSelect(event->innerNode());
+    
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 

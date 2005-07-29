@@ -348,6 +348,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_attrNameCount = 0;
     m_focusNode = 0;
     m_hoverNode = 0;
+    m_activeNode = 0;
     m_defaultView = new AbstractViewImpl(this);
     m_defaultView->ref();
     m_listenerTypes = 0;
@@ -425,6 +426,8 @@ DocumentImpl::~DocumentImpl()
         m_focusNode->deref();
     if (m_hoverNode)
         m_hoverNode->deref();
+    if (m_activeNode)
+        m_activeNode->deref();
 
     if (m_titleElement)
         m_titleElement->deref();
@@ -1816,11 +1819,16 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     }
 }
 
-bool DocumentImpl::prepareMouseEvent( bool readonly, int _x, int _y, MouseEvent *ev )
+bool DocumentImpl::prepareMouseEvent(bool readonly, int x, int y, MouseEvent* ev)
+{
+    return prepareMouseEvent(readonly, ev->type == MousePress, x, y, ev);
+}
+
+bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y, MouseEvent *ev)
 {
     if ( m_render ) {
         assert(m_render->isCanvas());
-        RenderObject::NodeInfo renderInfo(readonly, ev->type == MousePress);
+        RenderObject::NodeInfo renderInfo(readonly, active, ev->type == MouseMove);
         bool isInside = m_render->layer()->hitTest(renderInfo, _x, _y);
         ev->innerNode.reset(renderInfo.innerNode());
 
@@ -2095,6 +2103,17 @@ void DocumentImpl::setHoverNode(NodeImpl* newHoverNode)
         m_hoverNode = newHoverNode;
         if (m_hoverNode)
             m_hoverNode->ref();
+    }    
+}
+
+void DocumentImpl::setActiveNode(NodeImpl* newActiveNode)
+{
+    if (m_activeNode != newActiveNode) {
+        if (m_activeNode)
+            m_activeNode->deref();
+        m_activeNode = newActiveNode;
+        if (m_activeNode)
+            m_activeNode->ref();
     }    
 }
 

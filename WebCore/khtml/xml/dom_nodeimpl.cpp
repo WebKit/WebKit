@@ -2312,6 +2312,22 @@ void ContainerNodeImpl::setActive(bool down)
     }
 }
 
+void ContainerNodeImpl::setHovered(bool over)
+{
+    if (over == hovered()) return;
+
+    NodeImpl::setHovered(over);
+
+    // note that we need to recalc the style
+    // FIXME: Move to ElementImpl
+    if (m_render) {
+        if (m_render->style()->affectedByHoverRules())
+            setChanged();
+        if (renderer() && renderer()->style()->hasAppearance())
+            theme()->stateChanged(renderer(), HoverState);
+    }
+}
+
 unsigned long ContainerNodeImpl::childNodeCount() const
 {
     unsigned long count = 0;

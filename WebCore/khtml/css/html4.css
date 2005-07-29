@@ -307,7 +307,12 @@ input[type="hidden"] {
 }
 
 input[type="radio"], input[type="checkbox"] {
-    margin: 3px 0.5ex
+    margin: 3px 0.5ex;
+    -khtml-user-select: element
+}
+
+select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {
+    -khtml-user-select: element
 }
 
 option, optgroup, area, param {
@@ -390,7 +395,8 @@ html:focus, body:focus {
 
 a:-khtml-any-link {
     color: -khtml-link;
-    text-decoration: underline
+    text-decoration: underline;
+    -khtml-user-select: element
 }
 
 a:-khtml-any-link:active {

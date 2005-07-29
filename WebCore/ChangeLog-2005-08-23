@@ -1,3 +1,70 @@
+2005-07-29  David Hyatt  <hyatt@apple.com>
+
+	(1) Fixes khtml-user-select: none to have the following additional behavior (that matches Firefox's implementation of the property as well)
+	(a) If you mouse down (or click, double click, triple click) inside a "none" region, the selection should not be cleared or changed
+        (b) If you drag from within a "none" region out to a selectable region, so what, no selection should be changed or started.
+
+	(2) Adds a new value to khtml-user-select called "element" that is used for any object that should have the behavior of (a) and (b) above (but that is selectable aside from that).  This includes images, links, buttons, and so on.  html4.css is patched to add support for these objects.
+	    This feature fixes the big contenteditable issue and selection is no longer cleared now when you click on these controls (or on links).  This behavior matches other browsers.
+
+	(3) :active and :hover have been substantially reworked.
+	    (a) If you mouse down on a selectable region, then the behavior is unchanged.  :hover/:active is completely frozen, and they aren't updated at all.
+	    (b) If you mouse down on a non-selectable region and start moving, then the behavior has changed.  Instead of not updating at all, we mark the chain at the time the mouse goes down, and we restrict :hover/:active updates to only apply to elements that are in that chain.  This yields perfect hover/active control behavior, even when :active has been applied hierarchically.
+	    (c) :hover has moved onto the node and is no longer on the renderobject (allowing them to be consistent).
+	
+        Reviewed by john
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/html4.css:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection):
+        (KHTMLPart::selectClosestWordFromMouseEvent):
+        (KHTMLPart::handleMousePressEventTripleClick):
+        (KHTMLPart::handleMousePressEventSingleClick):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        * khtml/khtml_part.h:
+        (KHTMLPart::mouseDownMayStartSelect):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::hitTest):
+        (RenderLayer::updateHoverActiveState):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::information):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::isRunIn):
+        (khtml::RenderObject::setInline):
+        (khtml::RenderObject::NodeInfo::NodeInfo):
+        (khtml::RenderObject::NodeInfo::mouseMove):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::prepareMouseEvent):
+        (DocumentImpl::setActiveNode):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::activeNode):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::setHovered):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::inActiveChain):
+        (DOM::NodeImpl::hovered):
+        (DOM::NodeImpl::setInActiveChain):
+        (DOM::NodeImpl::setHovered):
+        * kwq/KWQKHTMLPart.h:
+        (KWQKHTMLPart::mouseDownMayStartSelect):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canMouseDownStartSelect):
+        (KWQKHTMLPart::khtmlMousePressEvent):
+
 2005-07-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by geoff
