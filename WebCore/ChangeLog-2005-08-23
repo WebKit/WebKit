@@ -69,7 +69,9 @@
 
         Reviewed by geoff
         
-        Fixed problem with patch that I just backed out
+        Fixed problem with patch that I just backed out:
+        Fix for <rdar://problems/4038408&4154187&4125381&4125087> 
+            Mail: Editing at the bottom of a quoted block makes the text blue in certain cases
 
         Test cases added:
         * layout-tests/editing/deleting/delete-4038408-fix-expected.txt: Added.
