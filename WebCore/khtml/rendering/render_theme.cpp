@@ -82,6 +82,20 @@ bool RenderTheme::isControlContainer(EAppearance appearance) const
     return appearance != CheckboxAppearance && appearance != RadioAppearance;
 }
 
+void RenderTheme::stateChanged(RenderObject* o, ControlState state) const
+{
+    // Default implementation assumes the controls dont respond to changes in :hover state
+    if (state == HoverState)
+        return;
+        
+    // Assume pressed state is only responded to if the control is enabled.
+    if (state == PressedState && !isEnabled(o))
+        return;
+    
+    // Repaint the control.
+    o->repaint();
+}
+
 bool RenderTheme::isChecked(const RenderObject* o) const
 {
     if (!o->element())

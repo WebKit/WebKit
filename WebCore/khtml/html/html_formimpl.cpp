@@ -44,6 +44,7 @@
 #include "khtml_ext.h"
 
 #include "rendering/render_form.h"
+#include "render_theme.h"
 
 #include <kcharsets.h>
 #include <kglobal.h>
@@ -865,9 +866,7 @@ void HTMLGenericFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (oldDisabled != m_disabled) {
             setChanged();
             if (renderer() && renderer()->style()->hasAppearance())
-                // FIXME: Let the theme decide whether a repaint is necessary.
-                // Repaint the renderer when its disabled state changes so the theme will redraw properly.
-                renderer()->repaint();
+                theme()->stateChanged(renderer(), EnabledState);
         }
     } else if (attr->name() == HTMLAttributes::readonly()) {
         bool oldReadOnly = m_readOnly;
@@ -2083,10 +2082,7 @@ void HTMLInputElementImpl::setChecked(bool _checked)
     m_checked = _checked;
     setChanged();
     if (renderer() && renderer()->style()->hasAppearance())
-        // FIXME: Let the theme decide whether a repaint is necessary.
-        // Repaint the renderer when its checked state changes so the theme will redraw
-        // properly.
-        renderer()->repaint();
+        theme()->stateChanged(renderer(), CheckedState);
 }
 
 

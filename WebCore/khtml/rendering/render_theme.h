@@ -29,6 +29,8 @@ namespace khtml {
 
 class RenderStyle;
 
+enum ControlState { HoverState, PressedState, FocusState, EnabledState, CheckedState };
+
 class RenderTheme {
 public:
     RenderTheme() {}
@@ -64,6 +66,10 @@ public:
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
     virtual void adjustRepaintRect(const RenderObject* o, QRect& r) { }
     
+    // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
+    // or a control becomes disabled.
+    virtual void stateChanged(RenderObject* o, ControlState state) const;
+
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
     void themeChanged();

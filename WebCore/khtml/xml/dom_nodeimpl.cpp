@@ -42,6 +42,7 @@
 
 #include "rendering/render_object.h"
 #include "rendering/render_text.h"
+#include "render_theme.h"
 
 #include "ecma/kjs_binding.h"
 #include "ecma/kjs_proxy.h"
@@ -2306,9 +2307,8 @@ void ContainerNodeImpl::setActive(bool down)
     if (m_render) {
         if (m_render->style()->affectedByActiveRules())
             setChanged();
-        // FIXME: Let the theme decide if the repaint is necessary.
-        if (m_render->style()->hasAppearance())
-            m_render->repaint();
+        if (renderer() && renderer()->style()->hasAppearance())
+            theme()->stateChanged(renderer(), PressedState);
     }
 }
 
