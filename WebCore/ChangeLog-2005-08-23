@@ -1,3 +1,17 @@
+2005-07-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Backing out my recent change as it causes a layout test failure in Deployment mode
+
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::clearTransientState):
+        * khtml/editing/delete_selection_command.h:
+        * layout-tests/editing/deleting/delete-4038408-fix-expected.txt: Removed.
+        * layout-tests/editing/deleting/delete-4038408-fix.html: Removed.
+
 2005-07-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin, eseidel
