@@ -1,5 +1,19 @@
 2005-07-29  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Dave Hyatt.
+        
+        - WebKit part of <rdar://problem/4187404> Redo form SPI so that it doesn't rely on NSViews
+        
+        Much of 4187404 was addressed in earlier checkins. This checkin completes the task.
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        removed viewForElement:, which was the only remaining NSView-related SPI that Safari autofill was
+        still using. I added viewForElement a week ago as a transitional measure, so removing it won't
+        affect any other clients.
+
+2005-07-29  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Chris Blumenberg.
 
         * WebView.subproj/WebFrameView.m:

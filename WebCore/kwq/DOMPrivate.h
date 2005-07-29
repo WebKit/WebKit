@@ -49,3 +49,26 @@
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text;
 @end
+
+// All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
+// They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
+// replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
+// and these will be deleted.
+@interface DOMHTMLInputElement(FormsAutoFillTransition)
+- (NSString *)_displayedValue; // the string currently displayed in the field, even when the field is being edited
+- (void)_setDisplayedValue:(NSString *)newValue; // set the value displayed, even when the field is being edited
+- (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
+- (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index;
+- (NSRange)_selectedRange;
+- (void)_setBackgroundColor:(NSColor *)color;
+@end
+
+// All the methods in this category are used by Safari forms autofill and should not be used for any other purpose.
+// They are stopgap measures until we finish transitioning form controls to not use NSView. Each one should become
+// replaceable by public DOM API, and when that happens Safari will switch to implementations using that public API,
+// and these will be deleted.
+@interface DOMHTMLSelectElement(FormsAutoFillTransition)
+- (void)_activateItemAtIndex:(int)index;
+- (NSArray *)_optionLabels;
+@end
+

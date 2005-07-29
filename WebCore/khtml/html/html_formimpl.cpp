@@ -2937,6 +2937,8 @@ int HTMLSelectElementImpl::listToOptionIndex(int listIndex) const
     return optionIndex;
 }
 
+// FIXME 4197997: this method is used by the public API -[DOMHTMLSelectElement options], but always returns
+// an empty list.
 HTMLOptionsCollectionImpl *HTMLSelectElementImpl::options()
 {
     if (!m_options) {

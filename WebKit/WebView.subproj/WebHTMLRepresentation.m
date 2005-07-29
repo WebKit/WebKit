@@ -208,11 +208,6 @@
     return [_private->bridge elementWithName:name inForm:form];
 }
 
-- (NSView *)viewForElement:(DOMElement *)element
-{
-    return [_private->bridge viewForElement:element];
-}
-
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
     return [_private->bridge elementDoesAutoComplete:element];

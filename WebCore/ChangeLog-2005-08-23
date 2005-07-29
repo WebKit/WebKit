@@ -1,3 +1,42 @@
+2005-07-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test cases added: none, this only affects Safari forms autofill
+
+        - WebCore part of <rdar://problem/4187404> Redo form SPI so that it doesn't rely on NSViews
+
+        * khtml/html/html_formimpl.cpp:
+        added a FIXME about a bug I ran into while doing this autofill stuff
+        
+        * kwq/DOMHTML.mm:
+        (viewForElement):
+        Moved this function here (was in WebCoreBridge), and simplified it a little. This will go
+        away when we have non-NSView ways of implementing all the methods below.
+        (-[DOMHTMLInputElement _displayedValue]):
+        moved here from Safari
+        (-[DOMHTMLInputElement _setDisplayedValue:]):
+        ditto
+        (-[DOMHTMLInputElement _rectOnScreen]):
+        ditto
+        (-[DOMHTMLInputElement _replaceCharactersInRange:withString:selectingFromIndex:]):
+        ditto
+        (-[DOMHTMLInputElement _selectedRange]):
+        ditto
+        (-[DOMHTMLInputElement _setBackgroundColor:]):
+        ditto
+        (-[DOMHTMLSelectElement _activateItemAtIndex:]):
+        ditto
+        (-[DOMHTMLSelectElement _optionLabels]):
+        ditto
+
+        * kwq/DOMPrivate.h:
+        moved DOMHTMLInputElement and DOMHTMLSelectElement categories here from Safari
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        removed viewForElement:, which had been added as a temporary measure while I did this conversion.
+
 2005-07-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by sullivan.

@@ -895,24 +895,6 @@ static BOOL nowPrinting(WebCoreBridge *self)
     return nil;
 }
 
-static NSView *viewForElement(ElementImpl *elementImpl)
-{
-    RenderObject *renderer = elementImpl->renderer();
-    if (renderer && renderer->isWidget()) {
-        QWidget *widget = static_cast<const RenderWidget *>(renderer)->widget();
-        if (widget) {
-            widget->populate();
-            return widget->getView();
-        }
-    }
-    return nil;
-}
-
-- (NSView *)viewForElement:(DOMElement *)element
-{
-    return viewForElement([element _elementImpl]);
-}
-
 static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
