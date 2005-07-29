@@ -82,9 +82,9 @@
 		A8C006CC0898634600BA5114 /* TestViewerSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewerSplitView.m; sourceTree = "<group>"; };
 		A8C006CD0898634600BA5114 /* TestViewerSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewerSplitView.h; sourceTree = "<group>"; };
 		A8C006CE0898634600BA5114 /* TestController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestController.m; sourceTree = "<group>"; };
-		A8C006EE089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = ../DrawTest_old/English.lproj/DrawTestDocument.nib; sourceTree = "<group>"; };
-		A8C006F0089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = ../DrawTest_old/English.lproj/Inspector.nib; sourceTree = "<group>"; };
-		A8C006F2089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = ../DrawTest_old/English.lproj/TestViewer.nib; sourceTree = "<group>"; };
+		A8C006EE089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/DrawTestDocument.nib; sourceTree = "<group>"; };
+		A8C006F0089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Inspector.nib; sourceTree = "<group>"; };
+		A8C006F2089865E900BA5114 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/TestViewer.nib; sourceTree = "<group>"; };
 		A8C006F90898665200BA5114 /* WebCore+SVG.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 

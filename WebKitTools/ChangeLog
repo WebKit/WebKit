@@ -1,5 +1,12 @@
 2005-07-29  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by vicki.
+
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj:
+        Build fix.  Removed bad path.
+
+2005-07-29  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by sullivan.
 
         * DrawTest/AppDelegate.h: Added.
