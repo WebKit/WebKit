@@ -1,5 +1,30 @@
 2005-07-28  David Hyatt  <hyatt@apple.com>
 
+	Give the theme a shot at deciding when to repaint when various control states change.
+	Remove buggy code that was resigning first responder in next/previous key view (tested
+	extensively and found this code to not be needed).
+
+        Reviewed by darin and chris
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLGenericFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::setChecked):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateHoverActiveState):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::stateChanged):
+        * khtml/rendering/render_theme.h:
+        (khtml::):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::setActive):
+        * kwq/KWQButton.mm:
+        (-[KWQButton nextKeyView]):
+        (-[KWQButton previousKeyView]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes):
+
+2005-07-28  David Hyatt  <hyatt@apple.com>
+
 	Implement support for the :checked, :enabled and :disabled pseudo-classes.
 	
         Reviewed by john
