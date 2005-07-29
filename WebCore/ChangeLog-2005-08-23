@@ -1,3 +1,20 @@
+2005-07-29  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        Fixed problem with patch that I just backed out
+
+        Test cases added:
+        * layout-tests/editing/deleting/delete-4038408-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-4038408-fix.html: Added.
+        
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand):
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::clearTransientState):
+        * khtml/editing/delete_selection_command.h:        
+
 2005-07-29  Geoffrey Garen  <ggaren@apple.com>
 
         - Oops. Last checkin omitted the actual test for:
