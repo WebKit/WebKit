@@ -1,3 +1,21 @@
+2005-07-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by sullivan.
+
+        * WebCore+SVG/DrawCanvasItem.h: Added.
+        * WebCore+SVG/DrawCanvasItem.mm: Added.
+        * WebCore+SVG/DrawCanvasItemPrivate.h: Added.
+        * WebCore+SVG/DrawDocument.h: Added.
+        * WebCore+SVG/DrawDocument.mm: Added.
+        * WebCore+SVG/DrawDocumentPrivate.h: Added.
+        * WebCore+SVG/DrawView.h: Added.
+        * WebCore+SVG/DrawView.mm: Added.
+        * WebCore+SVG/DrawViewPrivate.h: Added.
+        * WebCore+SVG/NSSVGImageRep.h: Added.
+        * WebCore+SVG/NSSVGImageRep.m: Added.
+        Temporary SPI to make it possible to write Obj-C test applications.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4155
+
 2005-07-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
