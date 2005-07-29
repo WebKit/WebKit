@@ -626,9 +626,15 @@ static NSMutableDictionary *viewTypes;
     [self _scrollLineVertically:NO];
 }
 
-- (BOOL)_firstResponderIsControl
+- (BOOL)_firstResponderIsFormControl
 {
-    return [[[self window] firstResponder] isKindOfClass:[NSControl class]];
+    NSResponder *firstResponder = [[self window] firstResponder];
+    
+    // WebHTMLView is an NSControl subclass these days, but it's not a form control
+    if ([firstResponder isKindOfClass:[WebHTMLView class]]) {
+        return NO;
+    }
+    return [firstResponder isKindOfClass:[NSControl class]];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -659,7 +665,7 @@ static NSMutableDictionary *viewTypes;
                 // Checking for a control will allow events to percolate 
                 // correctly when the focus is on a form control and we
                 // are in full keyboard access mode.
-                if (![self allowsScrolling] || [self _firstResponderIsControl]) {
+                if (![self allowsScrolling] || [self _firstResponderIsFormControl]) {
                     callSuper = YES;
                     break;
                 }

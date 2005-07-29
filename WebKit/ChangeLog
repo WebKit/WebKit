@@ -1,3 +1,14 @@
+2005-07-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris Blumenberg.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _firstResponderIsFormControl]):
+        renamed from _firstResponderIsControl for clarity. Explicitly rejects WebHTMLView, since
+        it's now a control.
+        (-[WebFrameView keyDown:]):
+        updated for renamed method.
+
 2005-07-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin.
