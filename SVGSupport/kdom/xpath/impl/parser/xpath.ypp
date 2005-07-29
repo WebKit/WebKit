@@ -91,6 +91,10 @@ extern int xpathyylex();
 %type <expr> FilterExpr LocationPath Step PathExpr AxisSpecifier
 %type <expr> FunctionCall Expr NodeTest AbbreviatedStep Args
 %type <expr> AbbreviatedAxisSpecifier FunctionName
+%type <expr> PredicateExpr RelativeLocationPath AbbreviatedRelativeLocationPath
+%type <expr> OptRelativeLocationPath
+
+%type <sval> OptLiteral
 
 %type <ival> NameTest
 
@@ -301,7 +305,7 @@ NameTest: COLON STAR                 { $$ = 1; }
 | /* nothing */                      { $$ = 0; }
 ;
 
-OptLiteral: /* nothing */
+OptLiteral: /* nothing */            {}
 | LITERAL
 ;
 

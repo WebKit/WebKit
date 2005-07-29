@@ -112,14 +112,18 @@ static int kdomparsercssyylex( YYSTYPE *yylval ) {
 
 %}
 
-%destructor { delete $$; $$ = 0; } expr;
-%destructor { delete $$; $$ = 0; } maybe_media_list media_list;
-%destructor { delete $$; $$ = 0; } selector_list;
-%destructor { delete $$; $$ = 0; } ruleset_list;
-%destructor { delete $$; $$ = 0; } specifier specifier_list simple_selector selector class attrib pseudo;
+/* APPLE_COMPILE_HACK
+ *%destructor { delete $$; $$ = 0; } expr;
+ *%destructor { delete $$; $$ = 0; } maybe_media_list media_list;
+ *%destructor { delete $$; $$ = 0; } selector_list;
+ *%destructor { delete $$; $$ = 0; } ruleset_list;
+ *%destructor { delete $$; $$ = 0; } specifier specifier_list simple_selector selector class attrib pseudo;
+ */
 
 %no-lines
-%verbose
+/* APPLE_COMPILE_HACK
+ *%verbose
+ */
 
 %left UNIMPORTANT_TOK
 
