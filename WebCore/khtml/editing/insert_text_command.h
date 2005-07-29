@@ -45,8 +45,9 @@ public:
 private:
     virtual bool isInsertTextCommand() const;
 
-    DOM::Position prepareForTextInsertion(bool adjustDownstream);
+    DOM::Position prepareForTextInsertion(const DOM::Position& pos);
     void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
+    DOM::Position insertTab(DOM::Position pos);
 
     unsigned long m_charactersAdded;
 };

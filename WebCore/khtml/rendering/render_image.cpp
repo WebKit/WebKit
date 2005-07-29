@@ -116,7 +116,7 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
         // we have an alt and the user meant it (its not a text we invented)
         if (!alt.isEmpty()) {
             const QFontMetrics &fm = style()->fontMetrics();
-            QRect br = fm.boundingRect (  0, 0, 1024, 256, Qt::AlignAuto|Qt::WordBreak, alt.string() );
+            QRect br = fm.boundingRect (  0, 0, 1024, 256, Qt::AlignAuto|Qt::WordBreak, alt.string(), 0, 0);  // FIX: correct tabwidth?
             if ( br.width() > iw )
                 iw = br.width();
             if ( br.height() > ih )
@@ -312,13 +312,12 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
-                int textWidth = fm.width (text, text.length());
+                int textWidth = fm.width (text, 0, 0, text.length());
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && fm.height() <= imageY)
-                        p->drawText(ax, ay+ascent, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
-                }
-                else if (usableWidth >= textWidth && cHeight >= fm.height())
-                    p->drawText(ax, ay+ascent, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
+                        p->drawText(ax, ay+ascent, tabWidth(), 0, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
+                } else if (usableWidth >= textWidth && cHeight >= fm.height())
+                    p->drawText(ax, ay+ascent, tabWidth(), 0, 0 /* ignored */, 0 /* ignored */, Qt::WordBreak  /* not supported */, text );
             }
 #else /* not APPLE_CHANGES */
             if ( !berrorPic ) {
@@ -341,7 +340,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 int ay = _ty + topBorder + topPad + 2;
                 const QFontMetrics &fm = style()->fontMetrics();
                 if (cWidth>5 && cHeight>=fm.height())
-                    p->drawText(ax, ay+1, cWidth - 4, cHeight - 4, Qt::WordBreak, text );
+                    p->drawText(ax, ay+1, tabWidth(), 0, cWidth - 4, cHeight - 4, Qt::WordBreak, text );
             }
 #endif /* APPLE_CHANGES not defined */
         }

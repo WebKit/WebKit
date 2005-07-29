@@ -1,3 +1,150 @@
+2005-07-29  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt (rendering) and Maciej (editing and performance improvements).
+
+        Test cases added: Existing tab-related basic editing tests were updated.  More complex tests are coming soon.
+
+        <rdar://problem/3792529> REGRESSION (Mail): Tabs do not work the way they did in Panther (especially useful in plain text mail)
+        
+        Basic strategy is to put tabs into spans with white-space:pre style, and
+        render them with tabs stops every 8th space, where the space width and
+        the left margin are those of the enclosing block.
+
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::ApplyStyleCommand::removeCSSStyle):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::DeleteSelectionCommand::saveTypingStyleState):
+        * khtml/editing/edit_command.cpp:
+        (khtml::EditCommand::styleAtPosition):
+        * khtml/editing/html_interchange.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        (khtml::isTabSpanNode):
+        (khtml::isTabSpanTextNode):
+        (khtml::positionBeforeTabSpan):
+        (khtml::createTabSpanElement):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::input):
+        (khtml::InsertTextCommand::insertTab):
+        * khtml/editing/insert_text_command.h:
+        * khtml/editing/markup.cpp:
+        (khtml::createParagraphContentsFromString):
+        (khtml::createFragmentFromText):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplacementFragment::removeStyleNodes):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::begin):
+        (khtml::HTMLTokenizer::processListing):
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::parseText):
+        (khtml::HTMLTokenizer::parseEntity):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::addPending):
+        (khtml::HTMLTokenizer::write):
+        * khtml/html/htmltokenizer.h:
+        (khtml::HTMLTokenizer::):
+        * khtml/rendering/bidi.cpp:
+        (khtml::addRun):
+        (khtml::RenderBlock::tabWidth):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::skipWhitespace):
+        (khtml::RenderBlock::findNextLineBreak):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/break_lines.cpp:
+        (khtml::isBreakable):
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText):
+        (Font::drawText):
+        (Font::floatWidth):
+        (Font::floatCharacterWidths):
+        (Font::checkSelectionPoint):
+        (Font::width):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::setStyle):
+        (khtml::stripTrailingSpace):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_br.h:
+        (khtml::RenderBR::width):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setPixmap):
+        (RenderImage::paint):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::width):
+        (khtml::InlineBox::xPos):
+        (khtml::InlineBox::yPos):
+        (khtml::InlineBox::height):
+        (khtml::InlineBox::baseline):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        (RenderListMarker::calcMinMaxWidth):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::tabWidth):
+        (RenderObject::recalcMinMaxWidths):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::selectionRect):
+        (InlineTextBox::paint):
+        (InlineTextBox::paintSelection):
+        (InlineTextBox::paintMarkedTextBackground):
+        (InlineTextBox::textPos):
+        (InlineTextBox::offsetForPosition):
+        (InlineTextBox::positionForOffset):
+        (RenderText::cacheWidths):
+        (RenderText::widthFromCache):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::charWidth):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        (QFontMetrics::checkSelectionPoint):
+        (QFontMetrics::boundingRect):
+        (QFontMetrics::size):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawRect):
+        (QPainter::drawLine):
+        (QPainter::drawText):
+        (QPainter::drawHighlightForText):
+        (_fillRectXX):
+        (QPainter::fillRect):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.mm:
+        (WebCoreInitializeEmptyTextStyle):
+        * layout-tests/editing/deleting/delete-tab-001-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-001.html:
+        * layout-tests/editing/deleting/delete-tab-002-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-002.html:
+        * layout-tests/editing/deleting/delete-tab-003-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-003.html:
+        * layout-tests/editing/deleting/delete-tab-004-expected.txt:
+        * layout-tests/editing/deleting/delete-tab-004.html:
+        * layout-tests/editing/inserting/insert-tab-001-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-002-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-003-expected.txt:
+        * layout-tests/editing/inserting/insert-tab-004-expected.txt:
+        * layout-tests/fast/js/string-replace-2-expected.txt:
+        * layout-tests/fast/table/039-expected.txt:
+        * layout-tests/fast/table/border-collapsing/004-expected.txt:
+        * layout-tests/fast/tokenizer/script_extra_close-expected.txt:
+
 2005-07-29  David Hyatt  <hyatt@apple.com>
 
 	(1) Fixes khtml-user-select: none to have the following additional behavior (that matches Firefox's implementation of the property as well)

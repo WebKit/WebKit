@@ -1041,6 +1041,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     const DOMString& str = m_str.string();
     font->drawText(p, m_x + _tx, 
                       m_y + _ty + m_baseline,
+                      0, 0,
                       (str.implementation())->s,
                       str.length(), 0, str.length(),
                       0, 

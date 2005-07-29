@@ -33,9 +33,11 @@ struct WebCoreTextStyle
 {
     NSColor *textColor;
     NSColor *backgroundColor;
-    int letterSpacing;
-    int wordSpacing;
-    int padding;
+    float letterSpacing;
+    float wordSpacing;
+    float padding;
+    float tabWidth;
+    float xpos;
     NSString **families;
     unsigned smallCaps : 1;
     unsigned rtl : 1;

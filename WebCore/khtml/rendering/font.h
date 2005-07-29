@@ -120,22 +120,22 @@ public:
 
                    
 #if !APPLE_CHANGES
-    void drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len, int width,
+    void drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
                    QPainter::TextDirection d, int from=-1, int to=-1, QColor bg=QColor() ) const;
 
 #else
-    void drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len, int width,
+    void drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
                    QPainter::TextDirection d, bool visuallyOrdered = false, int from=-1, int to=-1, QColor bg=QColor() ) const;
-    float floatWidth( QChar *str, int slen, int pos, int len ) const;
-    void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const;
+    float floatWidth( QChar *str, int slen, int pos, int len, int tabWidth, int xpos ) const;
+    void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, float *buffer) const;
     bool isFixedPitch() const;
-    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int x, bool reversed, bool includePartialGlyphs) const;
-    void drawHighlightForText( QPainter *p, int x, int y, int h, 
+    int checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, bool reversed, bool includePartialGlyphs) const;
+    void drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
                    QChar *str, int slen, int pos, int len, int width,
                    QPainter::TextDirection d, bool visuallyOrdered = false, int from=-1, int to=-1, QColor bg=QColor()) const;
 #endif
-    int width( QChar *str, int slen, int pos, int len ) const;
-    int width( QChar *str, int slen, int pos ) const;
+    int width( QChar *str, int slen, int pos, int len, int tabWidth, int xpos ) const;
+    int width( QChar *str, int slen, int tabWidth, int xpos ) const;
 
     bool isSmallCaps() const { return fontDef.smallCaps; }
     

@@ -17,7 +17,7 @@ Your result: "-t's th- -nd -f th- w-rld -s w- kn-w -t, -nd - f--l f-n-."
 Support for String.replace(/…/,myFunction)
 
 function Capitalize(s){
-        return s.toUpperCase();
+	return s.toUpperCase();
 }
 result = foo.replace(vowels,Capitalize);
 Expected result: "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
@@ -26,7 +26,7 @@ Your result: "It's thE End Of thE wOrld As wE knOw It, And I fEEl fInE."
 Support for String.replace(/…/,myFunction), using RegExp
 
 function Capitalize(){
-        return RegExp.$1.toUpperCase()+RegExp.$2;
+	return RegExp.$1.toUpperCase()+RegExp.$2;
 }
 result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
 Expected result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
@@ -35,7 +35,7 @@ Your result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."
 Support for String.replace(/…/,myFunction), using parameters
 
 function Capitalize(orig,re1,re2){
-        return re1.toUpperCase()+re2;
+	return re1.toUpperCase()+re2;
 }
 result = foo.replace(/([aeiou])([a-z])/g,Capitalize);
 Expected result: "It's the End Of the wOrld As we knOw It, And I fEel fIne."

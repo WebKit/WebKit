@@ -97,6 +97,7 @@ RenderBlock::RenderBlock(DOM::NodeImpl* node)
     m_topMarginQuirk = m_bottomMarginQuirk = false;
     m_overflowHeight = m_overflowWidth = 0;
     m_overflowLeft = m_overflowTop = 0;
+    m_tabWidth = 0;
 }
 
 RenderBlock::~RenderBlock()
@@ -131,6 +132,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     }
 
     m_lineHeight = -1;
+    m_tabWidth = 0;
 
     // Update pseudos for :before and :after now.
     RenderObject* first = firstChild();
@@ -2799,7 +2801,7 @@ static void stripTrailingSpace(bool pre,
         RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
         const Font *f = t->htmlFont( false );
         QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1, 0);
+        int spaceWidth = f->width(space, 1, 0, 0);
         inlineMax -= spaceWidth;
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -2962,8 +2964,8 @@ void RenderBlock::calcInlineMinMaxWidth()
                 int beginMin, endMin;
                 bool beginWS, endWS;
                 int beginMax, endMax;
-                t->trimmedMinMaxWidth(beginMin, beginWS, endMin, endWS, hasBreakableChar,
-                                      hasBreak, beginMax, endMax,
+                t->trimmedMinMaxWidth(inlineMax, beginMin, beginWS, endMin, endWS,
+                                      hasBreakableChar, hasBreak, beginMax, endMax,
                                       childMin, childMax, stripFrontSpaces);
 
                 // This text object is insignificant and will not be rendered.  Just

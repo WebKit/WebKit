@@ -118,19 +118,19 @@ public:
     RootInlineBox* root();
     
     void setWidth(int w) { m_width = w; }
-    int width() { return m_width; }
+    int width() const { return m_width; }
 
     void setXPos(int x) { m_x = x; }
-    int xPos() { return m_x; }
+    int xPos() const { return m_x; }
 
     void setYPos(int y) { m_y = y; }
-    int yPos() { return m_y; }
+    int yPos() const { return m_y; }
 
     void setHeight(int h) { m_height = h; }
-    int height() { return m_height; }
+    int height() const { return m_height; }
     
     void setBaseline(int b) { m_baseline = b; }
-    int baseline() { return m_baseline; }
+    int baseline() const { return m_baseline; }
 
     virtual bool hasTextChildren() { return true; }
 

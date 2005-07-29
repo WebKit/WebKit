@@ -27,6 +27,7 @@
 
 #include "khtml_part.h"
 #include "htmlediting.h"
+#include "html_interchange.h"
 #include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"
@@ -60,23 +61,10 @@ void InsertTextCommand::doApply()
 {
 }
 
-Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
+Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
 {
-    // Prepare for text input by looking at the current position.
+    // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
-    Selection selection = endingSelection();
-    ASSERT(selection.isCaret());
-    
-    Position pos = selection.start();
-    if (adjustDownstream)
-        pos = pos.downstream();
-    else
-        pos = pos.upstream();
-    
-    Selection typingStyleRange;
-
-    pos = positionOutsideContainingSpecialElement(pos);
-
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *nodeToInsert = textNode;
@@ -97,13 +85,34 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
         else
             ASSERT_NOT_REACHED();
         
-        pos = Position(textNode, 0);
+        return Position(textNode, 0);
+    }
+
+    if (isTabSpanTextNode(pos.node())) {
+        Position tempPos = pos;
+//#ifndef COALESCE_TAB_SPANS
+#if 0
+        NodeImpl *node = pos.node()->parentNode();
+        if (pos.offset() > pos.node()->caretMinOffset())
+            tempPos = Position(node->parentNode(), node->nodeIndex() + 1);
+        else
+            tempPos = Position(node->parentNode(), node->nodeIndex());
+#endif        
+        NodeImpl *textNode = document()->createEditingTextNode("");
+        NodeImpl *originalTabSpan = tempPos.node()->parent();
+        if (tempPos.offset() <= tempPos.node()->caretMinOffset()) {
+            insertNodeBefore(textNode, originalTabSpan);
+        } else if (tempPos.offset() >= tempPos.node()->caretMaxOffset()) {
+            insertNodeAfter(textNode, originalTabSpan);
+        } else {
+            splitTextNodeContainingElement(static_cast<TextImpl *>(tempPos.node()), tempPos.offset());
+            insertNodeBefore(textNode, originalTabSpan);
+        }
+        return Position(textNode, 0);
     }
 
     return pos;
 }
-
-static const int spacesPerTab = 4;
 
 static inline bool isNBSP(const QChar &c)
 {
@@ -125,59 +134,51 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     // out correctly after the insertion.
     selection = endingSelection();
     deleteInsignificantTextDownstream(selection.end().trailingWhitespacePosition(selection.endAffinity()));
-    
-    // Make sure the document is set up to receive text
-    Position startPosition = prepareForTextInsertion(adjustDownstream);
-    
+
+    // Figure out the startPosition
+    Position startPosition = selection.start();
     Position endPosition;
-
-    TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
-    long offset = startPosition.offset();
-
-    // Now that we are about to add content, check to see if a placeholder element
-    // can be removed.
-    removeBlockPlaceholder(textNode->enclosingBlockFlowElement());
+    if (adjustDownstream)
+        startPosition = startPosition.downstream();
+    else
+        startPosition = startPosition.upstream();
+    startPosition = positionOutsideContainingSpecialElement(startPosition);
     
-    // These are temporary implementations for inserting adjoining spaces
-    // into a document. We are working on a CSS-related whitespace solution
-    // that will replace this some day. We hope.
     if (text == "\t") {
-        // Treat a tab like a number of spaces. This seems to be the HTML editing convention,
-        // although the number of spaces varies (we choose four spaces). 
-        // Note that there is no attempt to make this work like a real tab stop, it is merely 
-        // a set number of spaces. This also seems to be the HTML editing convention.
-        for (int i = 0; i < spacesPerTab; i++) {
+        endPosition = insertTab(startPosition);
+        startPosition = endPosition.previous();
+        removeBlockPlaceholder(startPosition.node()->enclosingBlockFlowElement());
+        m_charactersAdded += 1;
+    } else {
+        // Make sure the document is set up to receive text
+        startPosition = prepareForTextInsertion(startPosition);
+        removeBlockPlaceholder(startPosition.node()->enclosingBlockFlowElement());
+        TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
+        long offset = startPosition.offset();
+
+        if (text == " ") {
             insertSpace(textNode, offset);
+            endPosition = Position(textNode, offset + 1);
+
+            m_charactersAdded++;
             rebalanceWhitespace();
-            document()->updateLayout();
         }
-        
-        endPosition = Position(textNode, offset + spacesPerTab);
+        else {
+            const DOMString &existingText = textNode->data();
+            if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isCollapsibleWhitespace(existingText[offset - 2])) {
+                // DOM looks like this:
+                // character nbsp caret
+                // As we are about to insert a non-whitespace character at the caret
+                // convert the nbsp to a regular space.
+                // EDIT FIXME: This needs to be improved some day to convert back only
+                // those nbsp's added by the editor to make rendering come out right.
+                replaceTextInNode(textNode, offset - 1, 1, " ");
+            }
+            insertTextIntoNode(textNode, offset, text);
+            endPosition = Position(textNode, offset + text.length());
 
-        m_charactersAdded += spacesPerTab;
-    }
-    else if (text == " ") {
-        insertSpace(textNode, offset);
-        endPosition = Position(textNode, offset + 1);
-
-        m_charactersAdded++;
-        rebalanceWhitespace();
-    }
-    else {
-        const DOMString &existingText = textNode->data();
-        if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isCollapsibleWhitespace(existingText[offset - 2])) {
-            // DOM looks like this:
-            // character nbsp caret
-            // As we are about to insert a non-whitespace character at the caret
-            // convert the nbsp to a regular space.
-            // EDIT FIXME: This needs to be improved some day to convert back only
-            // those nbsp's added by the editor to make rendering come out right.
-            replaceTextInNode(textNode, offset - 1, 1, " ");
+            m_charactersAdded += text.length();
         }
-        insertTextIntoNode(textNode, offset, text);
-        endPosition = Position(textNode, offset + text.length());
-
-        m_charactersAdded += text.length();
     }
 
     setEndingSelection(Selection(startPosition, DOWNSTREAM, endPosition, SEL_DEFAULT_AFFINITY));
@@ -191,6 +192,56 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 
     if (!selectInsertedText)
         setEndingSelection(endingSelection().end(), endingSelection().endAffinity());
+}
+
+DOM::Position InsertTextCommand::insertTab(Position pos)
+{
+    Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
+    NodeImpl *node = insertPos.node();
+    unsigned int offset = insertPos.offset();
+
+//#ifdef COALESCE_TAB_SPANS
+#if 1
+    // keep tabs coalesced in tab span
+    if (isTabSpanTextNode(node)) {
+        insertTextIntoNode(static_cast<TextImpl *>(node), offset, "\t");
+        return Position(node, offset + 1);
+    }
+#else
+    if (isTabSpanTextNode(node)) {
+        node = node->parentNode();
+        if (offset > (unsigned int) node->caretMinOffset())
+            insertPos = Position(node->parentNode(), node->nodeIndex() + 1);
+        else
+            insertPos = Position(node->parentNode(), node->nodeIndex());
+        node = insertPos.node();
+        offset = insertPos.offset();
+    }
+#endif
+    
+    // create new tab span
+    DOM::ElementImpl * spanNode = createTabSpanElement(document());
+    
+    // place it
+    if (!node->isTextNode()) {
+        insertNodeAt(spanNode, node, offset);
+    } else {
+        TextImpl *textNode = static_cast<TextImpl *>(node);
+        if (offset >= textNode->length()) {
+            insertNodeAfter(spanNode, textNode);
+        } else {
+            // split node to make room for the span
+            // NOTE: splitTextNode uses textNode for the
+            // second node in the split, so we need to
+            // insert the span before it.
+            if (offset > 0)
+                splitTextNode(textNode, offset);
+            insertNodeBefore(spanNode, textNode);
+        }
+    }
+    
+    // return the position following the new tab
+    return Position(spanNode->lastChild(), spanNode->lastChild()->caretMaxOffset());
 }
 
 void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)

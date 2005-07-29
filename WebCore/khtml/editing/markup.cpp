@@ -492,6 +492,53 @@ QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
     return markup(node, includeChildren, false, nodes);
 }
 
+static void createParagraphContentsFromString(DOM::DocumentImpl *document, ElementImpl *paragraph, const QString &string)
+{
+    int exceptionCode = 0;
+    if (string.isEmpty()) {
+        NodeImpl *placeHolder = createBlockPlaceholderElement(document);
+        paragraph->appendChild(placeHolder, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        return;
+    }
+
+    assert(string.find('\n') == -1);
+
+    QStringList tabList = QStringList::split('\t', string, true);
+    QString tabText = "";
+    while (!tabList.isEmpty()) {
+        QString s = tabList.first();
+        tabList.pop_front();
+
+        // append the non-tab textual part
+        if (!s.isEmpty()) {
+            if (tabText != "") {
+                paragraph->appendChild(createTabSpanElement(document, &tabText), exceptionCode);
+                ASSERT(exceptionCode == 0);
+                tabText = "";
+            }
+            NodeImpl *textNode = document->createTextNode(s);
+            paragraph->appendChild(textNode, exceptionCode);
+            ASSERT(exceptionCode == 0);
+        }
+
+        // there is a tab after every entry, except the last entry
+        // (if the last character is a tab, the list gets an extra empty entry)
+        if (!tabList.isEmpty()) {
+//#ifdef COALESCE_TAB_SPANS
+#if 1
+            tabText += '\t';
+#else
+            paragraph->appendChild(createTabSpanElement(document), exceptionCode);
+            ASSERT(exceptionCode == 0);
+#endif
+        } else if (tabText != "") {
+            paragraph->appendChild(createTabSpanElement(document, &tabText), exceptionCode);
+            ASSERT(exceptionCode == 0);
+        }
+    }
+}
+
 DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, const QString &text)
 {
     if (!document)
@@ -502,10 +549,6 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
     
     if (!text.isEmpty()) {
         QString string = text;
-
-        // Replace tabs with four plain spaces.
-        // These spaces will get converted along with the other existing spaces below.
-        string.replace('\t', "    ");
 
         // FIXME: Wrap the NBSP's in a span that says "converted space".
         int offset = 0;
@@ -552,16 +595,8 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
                 element->setAttribute(HTMLAttributes::classAttr(), AppleInterchangeNewline);            
             } else {
                 element = createDefaultParagraphElement(document);
-                NodeImpl *paragraphContents;
-                if (s.isEmpty()) {
-                    paragraphContents = createBlockPlaceholderElement(document);
-                } else {
-                    paragraphContents = document->createTextNode(s);
-                    ASSERT(exceptionCode == 0);
-                }
+                createParagraphContentsFromString(document, element, s);
                 element->ref();
-                element->appendChild(paragraphContents, exceptionCode);
-                ASSERT(exceptionCode == 0);
             }
             fragment->appendChild(element, exceptionCode);
             ASSERT(exceptionCode == 0);
