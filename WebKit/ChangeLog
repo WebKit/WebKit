@@ -1,3 +1,53 @@
+2005-07-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Changes by Michael Kahl, reviewed by me.
+
+	- fixed <rdar://problem/4164112> MASTER: JavaScript debugging support
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge windowObjectCleared]):
+        * WebCoreSupport.subproj/WebSubresourceLoader.m:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView.subproj/WebDefaultScriptDebugDelegate.h: Added.
+        * WebView.subproj/WebDefaultScriptDebugDelegate.m: Added.
+        (+[WebDefaultScriptDebugDelegate sharedScriptDebugDelegate]):
+        (-[WebDefaultScriptDebugDelegate webView:didParseSource:fromURL:sourceId:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:didEnterCallFrame:sourceId:line:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:willExecuteStatement:sourceId:line:forWebFrame:]):
+        (-[WebDefaultScriptDebugDelegate webView:willLeaveCallFrame:sourceId:line:forWebFrame:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]):
+        (-[WebFrame _attachScriptDebugger]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebScriptDebugDelegate.h: Added.
+        * WebView.subproj/WebScriptDebugDelegate.m: Added.
+        (-[WebScriptDebugger initWithWebFrame:]):
+        (-[WebScriptDebugger dealloc]):
+        (-[WebScriptDebugger globalObject]):
+        (-[WebScriptDebugger newWrapperForFrame:]):
+        (-[WebScriptDebugger parsedSource:fromURL:sourceId:]):
+        (-[WebScriptDebugger enteredFrame:sourceId:line:]):
+        (-[WebScriptDebugger hitStatement:sourceId:line:]):
+        (-[WebScriptDebugger leavingFrame:sourceId:line:]):
+        (-[WebScriptCallFrame _initWithFrame:]):
+        (-[WebScriptCallFrame dealloc]):
+        (-[WebScriptCallFrame setUserInfo:]):
+        (-[WebScriptCallFrame userInfo]):
+        (-[WebScriptCallFrame caller]):
+        (-[WebScriptCallFrame scopeChain]):
+        (-[WebScriptCallFrame functionName]):
+        (-[WebScriptCallFrame exception]):
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView.subproj/WebScriptDebugDelegatePrivate.h: Added.
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _scriptDebugDelegateForwarder]):
+        (-[WebView setScriptDebugDelegate:]):
+        (-[WebView scriptDebugDelegate]):
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-07-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.
@@ -36,7 +86,6 @@
         (ceilCurrentWidth):
         (widthForNextCharacter):
 
->>>>>>> 1.3267
 2005-07-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.

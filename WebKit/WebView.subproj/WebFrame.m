@@ -212,6 +212,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [provisionalItem release];
     [previousItem release];
     
+    [scriptDebugger release];
+    
     ASSERT(listener == nil);
     ASSERT(policyRequest == nil);
     ASSERT(policyFrameName == nil);
@@ -2580,6 +2582,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSArray *)_internalChildFrames
 {
     return _private->children;
+}
+
+- (void)_attachScriptDebugger
+{
+    if (!_private->scriptDebugger) {
+        _private->scriptDebugger = [[WebScriptDebugger alloc] initWithWebFrame:self];
+    }
 }
 
 @end

@@ -18,6 +18,11 @@
 		65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */; };
 		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; };
 		65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */; };
+		7E6FEF0108985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */; };
+		7E6FEF0208985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */; };
+		7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */; };
+		7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */; };
 		9398100E0824BF01008DF038 /* WebDOMDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D194B034E734901A80180 /* WebDOMDocument.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398100F0824BF01008DF038 /* WebDOMElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D194D034E734901A80180 /* WebDOMElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810100824BF01008DF038 /* WebDOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D1951034E734901A80180 /* WebDOMNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -417,6 +422,11 @@
 		70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDefaultFrameLoadDelegate.h; sourceTree = "<group>"; };
 		70ECD6CC043B727400A80181 /* WebDataProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDataProtocol.h; sourceTree = "<group>"; };
 		70ECD6CD043B727400A80181 /* WebDataProtocol.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebDataProtocol.m; sourceTree = "<group>"; };
+		7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultScriptDebugDelegate.h; sourceTree = "<group>"; };
+		7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultScriptDebugDelegate.m; sourceTree = "<group>"; };
+		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; };
+		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebScriptDebugDelegate.m; sourceTree = "<group>"; };
+		7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegatePrivate.h; sourceTree = "<group>"; };
 		830E81830585375700AD0891 /* WebKeyGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyGeneration.h; sourceTree = "<group>"; };
 		830E81840585375700AD0891 /* WebKeyGeneration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKeyGeneration.cpp; sourceTree = "<group>"; };
 		830E81E005853AC000AD0891 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -855,6 +865,8 @@
 				5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */,
 				700BC50B04144DA100A80182 /* WebDefaultResourceLoadDelegate.h */,
 				700BC50C04144DA100A80182 /* WebDefaultResourceLoadDelegate.m */,
+				7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */,
+				7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */,
 				515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */,
 				515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */,
 				35081DAE02B6D4F50ACA2ACA /* WebDocument.h */,
@@ -890,6 +902,9 @@
 				84311A1305EAAAF00088EDA4 /* WebResource.m */,
 				84311AF105EAB12B0088EDA4 /* WebResourcePrivate.h */,
 				513D422E034CF55A00CA2ACD /* WebResourceLoadDelegate.h */,
+				7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */,
+				7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */,
+				7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
@@ -1246,6 +1261,9 @@
 				65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */,
 				65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */,
 				ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */,
+				7E6FEF0108985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h in Headers */,
+				7E6FEF0808985A7200C44C3F /* WebScriptDebugDelegate.h in Headers */,
+				7E6FEF0A08985A7200C44C3F /* WebScriptDebugDelegatePrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1786,6 +1804,8 @@
 				65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */,
 				65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */,
 				ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */,
+				7E6FEF0208985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m in Sources */,
+				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

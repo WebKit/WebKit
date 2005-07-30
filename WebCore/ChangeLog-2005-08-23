@@ -1,5 +1,35 @@
 2005-07-29  Maciej Stachowiak  <mjs@apple.com>
 
+        Changes by Michael Kahl, reviewed by me.
+
+        Test cases added: No tests, this code only affects debugging.
+
+	- fixed <rdar://problem/4164112> MASTER: JavaScript debugging support
+	
+        * kwq/WebCoreScriptDebugger.h: Added.
+        * kwq/WebCoreScriptDebugger.mm: Added.
+        (toNSString):
+        (WebCoreScriptDebuggerImp::WebCoreScriptDebuggerImp):
+        (WebCoreScriptDebuggerImp::sourceParsed):
+        (WebCoreScriptDebuggerImp::callEvent):
+        (WebCoreScriptDebuggerImp::atStatement):
+        (WebCoreScriptDebuggerImp::returnEvent):
+        (-[WebCoreScriptDebugger initWithDelegate:]):
+        (-[WebCoreScriptDebugger dealloc]):
+        (-[WebCoreScriptDebugger delegate]):
+        (-[WebCoreScriptCallFrame _initWithGlobalObject:caller:state:]):
+        (-[WebCoreScriptCallFrame _setWrapper:]):
+        (-[WebCoreScriptCallFrame _convertValueToObjcValue:]):
+        (-[WebCoreScriptCallFrame dealloc]):
+        (-[WebCoreScriptCallFrame wrapper]):
+        (-[WebCoreScriptCallFrame caller]):
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame functionName]):
+        (-[WebCoreScriptCallFrame exception]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
+2005-07-29  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by hyatt (concept and a few manual parts), large part
 	done by script and not really reviewed in detail.
 

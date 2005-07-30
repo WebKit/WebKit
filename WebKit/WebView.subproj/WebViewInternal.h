@@ -52,6 +52,8 @@
     id <WebFormDelegate> formDelegate;
     id editingDelegate;
     id editingDelegateForwarder;
+    id scriptDebugDelegate;
+    id scriptDebugDelegateForwarder;
     
     WebBackForwardList *backForwardList;
     BOOL useBackForwardList;

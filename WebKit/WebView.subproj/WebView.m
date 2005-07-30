@@ -42,6 +42,7 @@
 #import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebDefaultScriptDebugDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebDocument.h>
@@ -74,6 +75,7 @@
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebScriptDebugDelegatePrivate.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebTextRenderer.h>
@@ -303,6 +305,7 @@ static BOOL shouldUseFontSmoothing = YES;
     [UIDelegateForwarder release];
     [frameLoadDelegateForwarder release];
     [editingDelegateForwarder release];
+    [scriptDebugDelegateForwarder release];
     
     [progressItems release];
         
@@ -843,6 +846,13 @@ static bool debugWidget = true;
     if (!_private->editingDelegateForwarder)
         _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self editingDelegate] defaultTarget: [WebDefaultEditingDelegate sharedEditingDelegate] templateClass: [WebDefaultEditingDelegate class]];
     return _private->editingDelegateForwarder;
+}
+
+- _scriptDebugDelegateForwarder
+{
+    if (!_private->scriptDebugDelegateForwarder)
+        _private->scriptDebugDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self scriptDebugDelegate] defaultTarget: [WebDefaultScriptDebugDelegate sharedScriptDebugDelegate] templateClass: [WebDefaultScriptDebugDelegate class]];
+    return _private->scriptDebugDelegateForwarder;
 }
 
 - (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame
@@ -1786,6 +1796,18 @@ NS_ENDHANDLER
 {
     return _private->frameLoadDelegate;
 }
+- (void)setScriptDebugDelegate:delegate
+{
+    _private->scriptDebugDelegate = delegate;
+    [_private->scriptDebugDelegateForwarder release];
+    _private->scriptDebugDelegateForwarder = nil;
+}
+
+- scriptDebugDelegate
+{
+    return _private->scriptDebugDelegate;
+}
+
 
 - (WebFrame *)mainFrame
 {
