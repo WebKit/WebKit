@@ -72,6 +72,10 @@
 		65F378290870D958000B2F94 /* hashset.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F378260870D958000B2F94 /* hashset.h */; };
 		65F3782A0870D958000B2F94 /* hashtable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65F378270870D958000B2F94 /* hashtable.cpp */; };
 		65F3782B0870D958000B2F94 /* hashtable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65F378280870D958000B2F94 /* hashtable.h */; };
+		7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
+		7E6FEEDA0898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7E6FEEDB0898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		937C34ED0868E4B4006F4B22 /* parser.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* parser.y */; };
 		93F198A708245E59001E9ABC /* css_base.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F618B040594BA00A80004 /* css_base.h */; };
 		93F198A808245E59001E9ABC /* css_ruleimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D16502DE42E6018635CA /* css_ruleimpl.h */; };
@@ -2513,6 +2517,8 @@
 		65F80697054D9F86008BF776 /* KWQExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQExceptions.mm; sourceTree = "<group>"; };
 		65FD9D2B081D727F00636F54 /* main_thread_malloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = main_thread_malloc.cpp; sourceTree = "<group>"; };
 		65FD9D2C081D727F00636F54 /* main_thread_malloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = main_thread_malloc.h; sourceTree = "<group>"; };
+		7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScriptDebugger.h; sourceTree = "<group>"; };
+		7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreScriptDebugger.mm; sourceTree = "<group>"; };
 		832556E4061DF155007B8054 /* DOMExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMExtensions.h; sourceTree = "<group>"; };
 		832556E6061DF161007B8054 /* DOMHTML.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMHTML.mm; sourceTree = "<group>"; };
 		832557C3061E3172007B8054 /* render_arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = render_arena.h; sourceTree = "<group>"; };
@@ -6307,6 +6313,8 @@
 				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
 				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
 				F587855002DE375901EA4122 /* WebCoreResourceLoader.h */,
+				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
+				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
 				9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */,
 				9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */,
 				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
@@ -6917,6 +6925,7 @@
 				A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */,
 				BC179894088D975F006068A5 /* render_theme.h in Headers */,
 				BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */,
+				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7834,6 +7843,7 @@
 				A8C005EC08974EB500BA5114 /* KDOMCachedScript.h in Headers */,
 				A8C005F708974EFC00BA5114 /* KDOMCachedStyleSheet.h in Headers */,
 				A8C005F808974F0100BA5114 /* KDOMCachedObjectClient.h in Headers */,
+				7E6FEEDA0898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9218,6 +9228,7 @@
 				A8FD8B86087CB44C00DC3707 /* KWQWMatrix.mm in Sources */,
 				BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */,
 				BC179893088D975F006068A5 /* render_theme.cpp in Sources */,
+				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10021,6 +10032,7 @@
 				A8C005EB08974EB100BA5114 /* KDOMCachedObject.cpp in Sources */,
 				A8C005ED08974EB500BA5114 /* KDOMCachedScript.cpp in Sources */,
 				A8C005F608974EF700BA5114 /* KDOMCachedStyleSheet.cpp in Sources */,
+				7E6FEEDB0898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

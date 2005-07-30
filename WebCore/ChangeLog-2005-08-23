@@ -1,3 +1,10 @@
+2005-07-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Missing bits of last checkin...
+
+        * WebCore.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2005-07-29  Maciej Stachowiak  <mjs@apple.com>
 
         Changes by Michael Kahl, reviewed by me.
