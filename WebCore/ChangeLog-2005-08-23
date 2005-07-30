@@ -1,5 +1,11 @@
 2005-07-30  Darin Adler  <darin@apple.com>
 
+        - rolled back a test that has been failing since we rolled back the <script/> quirk
+
+        * layout-tests/fast/tokenizer/script_extra_close-expected.txt: Updated.
+
+2005-07-30  Darin Adler  <darin@apple.com>
+
         Reviewed by me, change by Dave Hyatt.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4221
