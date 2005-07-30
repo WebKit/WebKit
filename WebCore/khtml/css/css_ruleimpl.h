@@ -59,7 +59,7 @@ public:
     CSSStyleSheetImpl *parentStyleSheet() const;
     CSSRuleImpl *parentRule() const;
 
-    DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
     void setCssText(DOM::DOMString str);
     virtual void init() {}
 
@@ -77,6 +77,7 @@ public:
     MAIN_THREAD_ALLOCATED;
 
     virtual bool isCharsetRule() { return true; }
+    virtual DOMString cssText() const;
 
     DOMString encoding() const { return m_encoding; }
     void setEncoding(DOMString _encoding) { m_encoding = _encoding; }
@@ -119,7 +120,8 @@ public:
     CSSStyleSheetImpl *styleSheet() const { return m_styleSheet; }
 
     virtual bool isImportRule() { return true; }
-
+    virtual DOMString cssText() const;
+  
     // from CachedObjectClient
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
 
@@ -174,6 +176,7 @@ public:
     void deleteRule ( unsigned long index ) { m_lstCSSRules->deleteRule( index ); }
 
     virtual bool isMediaRule() { return true; }
+    virtual DOMString cssText() const;
 
     /* Not part of the DOM */
     unsigned long append( CSSRuleImpl *rule );
@@ -215,6 +218,7 @@ public:
     CSSMutableStyleDeclarationImpl *style() const { return m_style; }
 
     virtual bool isStyleRule() { return true; }
+    virtual DOMString cssText() const;
 
     DOM::DOMString selectorText() const;
     void setSelectorText(DOM::DOMString str);

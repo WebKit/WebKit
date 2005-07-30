@@ -1,3 +1,31 @@
+2005-07-30  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin Adler.
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3893>
+	
+        Test cases added: 
+	* layout-tests/fast/dom/css-dom-read-2.html: Added.
+	* layout-tests/fast/dom/css-dom-read-2-expected.txt: Added.
+	
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::cssText):
+	Implement.
+	
+        (DOM::CSSComputedStyleDeclarationImpl::item):
+	Return the item name, not its value.
+	
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSImportRuleImpl::cssText):
+        (CSSMediaRuleImpl::cssText):
+        (CSSStyleRuleImpl::cssText):
+        * khtml/css/css_ruleimpl.h:
+	Implement.
+	
+        * khtml/css/css_stylesheetimpl.cpp:
+        (MediaListImpl::mediaText):
+	Don't put a trailing comma after lists.
+
 2005-07-30  Darin Adler  <darin@apple.com>
 
         - rolled back a test that has been failing since we rolled back the <script/> quirk

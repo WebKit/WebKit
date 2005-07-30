@@ -380,10 +380,11 @@ void MediaListImpl::deleteMedium( const DOMString &oldMedium )
 
 DOM::DOMString MediaListImpl::mediaText() const
 {
-    DOMString text;
-    for ( QValueList<DOMString>::ConstIterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
+    DOMString text = "";
+    for (QValueList<DOMString>::ConstIterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it) {
+        if (text.length() > 0)
+            text += ", ";
         text += *it;
-        text += ", ";
     }
     return text;
 }

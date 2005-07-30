@@ -197,6 +197,21 @@ void CSSImportRuleImpl::init()
     }
 }
 
+DOMString CSSImportRuleImpl::cssText() const
+{
+    DOMString result = "@import url(\"";
+    result += m_strHref;
+    result += "\")";
+
+    if (m_lstMedia) {
+        result += " ";
+        result += m_lstMedia->mediaText();
+    }
+    result += ";";
+
+    return result;
+}
+
 // --------------------------------------------------------------------------
 CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList )
     :   CSSRuleImpl( parent )
@@ -263,6 +278,28 @@ unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
 
     newRule->setParent(this);
     return m_lstCSSRules->insertRule( newRule, index );
+}
+
+DOMString CSSMediaRuleImpl::cssText() const
+{
+    DOMString result = "@media ";
+    if (m_lstMedia) {
+        result += m_lstMedia->mediaText();
+        result += " ";
+    }
+    result += "{ \n";
+    
+    if (m_lstCSSRules) {
+        unsigned long len = m_lstCSSRules->length();
+        for (unsigned long i = 0; i < len; i++) {
+            result += "  ";
+            result += m_lstCSSRules->item(i)->cssText();
+            result += "\n";
+        }
+    }
+    
+    result += "}";
+    return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -341,6 +378,17 @@ DOM::DOMString CSSStyleRuleImpl::selectorText() const
 void CSSStyleRuleImpl::setSelectorText(DOM::DOMString /*str*/)
 {
     // ###
+}
+
+DOMString CSSStyleRuleImpl::cssText() const
+{
+    DOMString result = selectorText();
+    
+    result += " { ";
+    result += m_style->cssText();
+    result += "}";
+    
+    return result;
 }
 
 bool CSSStyleRuleImpl::parseString( const DOMString &/*string*/, bool )

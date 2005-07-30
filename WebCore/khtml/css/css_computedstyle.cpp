@@ -50,6 +50,8 @@ using khtml::RenderStyle;
 using khtml::ShadowData;
 using khtml::StyleDashboardRegion;
 
+extern DOM::DOMString getPropertyName(unsigned short id);
+
 namespace DOM {
 
 // List of all properties we know how to compute, omitting shorthands.
@@ -286,8 +288,18 @@ CSSComputedStyleDeclarationImpl::~CSSComputedStyleDeclarationImpl()
 
 DOMString CSSComputedStyleDeclarationImpl::cssText() const
 {
-    ERROR("unimplemented");
-    return DOMString();
+    DOMString result;
+    
+    for (unsigned i = 0; i < numComputedProperties; i++) {
+        if (i != 0)
+            result += " ";
+        result += getPropertyName(computedProperties[i]);
+        result += ": ";
+        result += getPropertyValue(computedProperties[i]);
+        result += ";";
+    }
+    
+    return result;
 }
 
 void CSSComputedStyleDeclarationImpl::setCssText(const DOMString &, int &exceptionCode)
@@ -1256,7 +1268,8 @@ DOMString CSSComputedStyleDeclarationImpl::item(unsigned long i) const
 {
     if (i >= numComputedProperties)
         return DOMString();
-    return getPropertyValue(computedProperties[i]);
+    
+    return getPropertyName(computedProperties[i]);
 }
 
 CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
