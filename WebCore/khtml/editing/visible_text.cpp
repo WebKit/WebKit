@@ -37,7 +37,7 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::offsetInCharacters;
 using DOM::RangeImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 
 // FIXME: These classes should probably use the render tree and not the DOM tree, since elements could
 // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
@@ -351,22 +351,22 @@ bool TextIterator::handleReplacedElement()
 
 bool TextIterator::handleNonTextNode()
 {
-    if (m_node->hasTagName(HTMLTags::br())) {
+    if (m_node->hasTagName(brTag)) {
         emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
-    } else if (m_node->hasTagName(HTMLTags::td()) || m_node->hasTagName(HTMLTags::th())) {
+    } else if (m_node->hasTagName(tdTag) || m_node->hasTagName(thTag)) {
         if (m_lastCharacter != '\n' && m_lastTextNode) {
             emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
         }
-    } else if (m_node->hasTagName(HTMLTags::blockquote()) || m_node->hasTagName(HTMLTags::dd()) ||
-               m_node->hasTagName(HTMLTags::div()) ||
-               m_node->hasTagName(HTMLTags::dl()) || m_node->hasTagName(HTMLTags::dt()) || 
-               m_node->hasTagName(HTMLTags::h1()) || m_node->hasTagName(HTMLTags::h2()) ||
-               m_node->hasTagName(HTMLTags::h3()) || m_node->hasTagName(HTMLTags::h4()) ||
-               m_node->hasTagName(HTMLTags::h5()) || m_node->hasTagName(HTMLTags::h6()) ||
-               m_node->hasTagName(HTMLTags::hr()) || m_node->hasTagName(HTMLTags::li()) ||
-               m_node->hasTagName(HTMLTags::ol()) || m_node->hasTagName(HTMLTags::p()) ||
-               m_node->hasTagName(HTMLTags::pre()) || m_node->hasTagName(HTMLTags::tr()) ||
-               m_node->hasTagName(HTMLTags::ul())) {
+    } else if (m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
+               m_node->hasTagName(divTag) ||
+               m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
+               m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
+               m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
+               m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
+               m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
+               m_node->hasTagName(olTag) || m_node->hasTagName(pTag) ||
+               m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
+               m_node->hasTagName(ulTag)) {
         if (m_lastCharacter != '\n' && m_lastTextNode) {
             emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
         }
@@ -380,18 +380,18 @@ void TextIterator::exitNode()
     bool endLine = false;
     bool addNewline = false;
 
-    if (m_node->hasTagName(HTMLTags::blockquote()) || m_node->hasTagName(HTMLTags::dd()) ||
-               m_node->hasTagName(HTMLTags::div()) ||
-               m_node->hasTagName(HTMLTags::dl()) || m_node->hasTagName(HTMLTags::dt()) || 
-               m_node->hasTagName(HTMLTags::hr()) || m_node->hasTagName(HTMLTags::li()) ||
-               m_node->hasTagName(HTMLTags::ol()) ||
-               m_node->hasTagName(HTMLTags::pre()) || m_node->hasTagName(HTMLTags::tr()) ||
-               m_node->hasTagName(HTMLTags::ul()))
+    if (m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
+               m_node->hasTagName(divTag) ||
+               m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
+               m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
+               m_node->hasTagName(olTag) ||
+               m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
+               m_node->hasTagName(ulTag))
         endLine = true;
-    else if (m_node->hasTagName(HTMLTags::h1()) || m_node->hasTagName(HTMLTags::h2()) ||
-             m_node->hasTagName(HTMLTags::h3()) || m_node->hasTagName(HTMLTags::h4()) ||
-             m_node->hasTagName(HTMLTags::h5()) || m_node->hasTagName(HTMLTags::h6()) ||
-             m_node->hasTagName(HTMLTags::p())) {
+    else if (m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
+             m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
+             m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
+             m_node->hasTagName(pTag)) {
         endLine = true;
 
         // In certain cases, emit a new newline character for this node
@@ -647,19 +647,19 @@ bool SimplifiedBackwardsTextIterator::handleReplacedElement()
 
 bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {
-    if (m_node->hasTagName(HTMLTags::br()))
+    if (m_node->hasTagName(brTag))
         emitNewlineForBROrText();
-    else if (m_node->hasTagName(HTMLTags::td ()) || m_node->hasTagName(HTMLTags::th()) ||
-             m_node->hasTagName(HTMLTags::blockquote()) || m_node->hasTagName(HTMLTags::dd()) ||
-             m_node->hasTagName(HTMLTags::div()) ||
-             m_node->hasTagName(HTMLTags::dl()) || m_node->hasTagName(HTMLTags::dt()) || 
-             m_node->hasTagName(HTMLTags::h1()) || m_node->hasTagName(HTMLTags::h2()) ||
-             m_node->hasTagName(HTMLTags::h3()) || m_node->hasTagName(HTMLTags::h4()) ||
-             m_node->hasTagName(HTMLTags::h5()) || m_node->hasTagName(HTMLTags::h6()) ||
-             m_node->hasTagName(HTMLTags::hr()) || m_node->hasTagName(HTMLTags::li()) ||
-             m_node->hasTagName(HTMLTags::ol()) || m_node->hasTagName(HTMLTags::p()) ||
-             m_node->hasTagName(HTMLTags::pre()) || m_node->hasTagName(HTMLTags::tr()) ||
-             m_node->hasTagName(HTMLTags::ul())) {
+    else if (m_node->hasTagName(tdTag) || m_node->hasTagName(thTag) ||
+             m_node->hasTagName(blockquoteTag) || m_node->hasTagName(ddTag) ||
+             m_node->hasTagName(divTag) ||
+             m_node->hasTagName(dlTag) || m_node->hasTagName(dtTag) || 
+             m_node->hasTagName(h1Tag) || m_node->hasTagName(h2Tag) ||
+             m_node->hasTagName(h3Tag) || m_node->hasTagName(h4Tag) ||
+             m_node->hasTagName(h5Tag) || m_node->hasTagName(h6Tag) ||
+             m_node->hasTagName(hrTag) || m_node->hasTagName(liTag) ||
+             m_node->hasTagName(olTag) || m_node->hasTagName(pTag) ||
+             m_node->hasTagName(preTag) || m_node->hasTagName(trTag) ||
+             m_node->hasTagName(ulTag)) {
         // Emit a space to "break up" content. Any word break
         // character will do.
         emitCharacter(' ', m_node, 0, 0);

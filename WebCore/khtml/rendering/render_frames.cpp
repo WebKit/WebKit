@@ -48,6 +48,7 @@
 #include <qpainter.h>
 #include "qdict.h"
 
+using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
 
@@ -667,17 +668,17 @@ void RenderPartObject::updateWidget()
 
   setNeedsLayoutAndMinMaxRecalc();
 
-  if (element()->hasTagName(HTMLTags::object())) {
+  if (element()->hasTagName(objectTag)) {
 
       HTMLObjectElementImpl *o = static_cast<HTMLObjectElementImpl *>(element());
 
       // Check for a child EMBED tag.
       HTMLEmbedElementImpl *embed = 0;
       for (NodeImpl *child = o->firstChild(); child; ) {
-          if (child->hasTagName(HTMLTags::embed())) {
+          if (child->hasTagName(embedTag)) {
               embed = static_cast<HTMLEmbedElementImpl *>( child );
               break;
-          } else if (child->hasTagName(HTMLTags::object())) {
+          } else if (child->hasTagName(objectTag)) {
               child = child->nextSibling();         // Don't descend into nested OBJECT tags
           } else {
               child = child->traverseNextNode(o);   // Otherwise descend (EMBEDs may be inside COMMENT tags)
@@ -688,13 +689,13 @@ void RenderPartObject::updateWidget()
       HTMLElementImpl *embedOrObject;
       if (embed) {
           embedOrObject = (HTMLElementImpl *)embed;
-          DOMString attribute = embedOrObject->getAttribute(HTMLAttributes::width());
+          DOMString attribute = embedOrObject->getAttribute(widthAttr);
           if (!attribute.isEmpty()) {
-              o->setAttribute(HTMLAttributes::width(), attribute);
+              o->setAttribute(widthAttr, attribute);
           }
-          attribute = embedOrObject->getAttribute(HTMLAttributes::height());
+          attribute = embedOrObject->getAttribute(heightAttr);
           if (!attribute.isEmpty()) {
-              o->setAttribute(HTMLAttributes::height(), attribute);
+              o->setAttribute(heightAttr, attribute);
           }
           url = embed->url;
           serviceType = embed->serviceType;
@@ -717,7 +718,7 @@ void RenderPartObject::updateWidget()
       // Get the attributes from the params if there is no EMBED tag.
       NodeImpl *child = o->firstChild();
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
-          if (child->hasTagName(HTMLTags::param())) {
+          if (child->hasTagName(paramTag)) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
               QString name = p->name().string().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
@@ -802,20 +803,20 @@ void RenderPartObject::updateWidget()
             
 #if !APPLE_CHANGES      
       params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
-      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(HTMLAttributes::codebase()).string() ) );
+      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(codebaseAttr).string() ) );
 #endif
 
       // Find out if we support fallback content.
       m_hasFallbackContent = false;
       for (NodeImpl *child = o->firstChild(); child && !m_hasFallbackContent; child = child->nextSibling()) {
-          if ((!child->isTextNode() && !child->hasTagName(HTMLTags::embed()) && !child->hasTagName(HTMLTags::param())) || // Discount <embed> and <param>
+          if ((!child->isTextNode() && !child->hasTagName(embedTag) && !child->hasTagName(paramTag)) || // Discount <embed> and <param>
               (child->isTextNode() && !child->containsOnlyWhitespace()))
               m_hasFallbackContent = true;
       }
       bool success = part->requestObject( this, url, serviceType, paramNames, paramValues );
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
-  } else if (element()->hasTagName(HTMLTags::embed())) {
+  } else if (element()->hasTagName(embedTag)) {
 
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());
       url = o->url;
@@ -842,7 +843,7 @@ void RenderPartObject::updateWidget()
       }
       part->requestObject( this, url, serviceType, paramNames, paramValues );
   } else {
-      assert(element()->hasTagName(HTMLTags::iframe()));
+      assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
       url = o->m_URL.string();
       if (url.isEmpty()) {
@@ -888,7 +889,7 @@ void RenderPartObject::slotViewCleared()
       QScrollView::ScrollBarMode scroll = QScrollView::Auto;
       int marginw = -1;
       int marginh = -1;
-      if (element()->hasTagName(HTMLTags::iframe())) {
+      if (element()->hasTagName(iframeTag)) {
 	  HTMLIFrameElementImpl *frame = static_cast<HTMLIFrameElementImpl *>(element());
 	  if(frame->m_frameBorder)
 	      frameStyle = QFrame::Box;
@@ -908,7 +909,7 @@ void RenderPartObject::slotViewCleared()
           kdDebug(6031) << "frame is a KHTMLview!" << endl;
 #endif
           KHTMLView *htmlView = static_cast<KHTMLView *>(view);
-          htmlView->setIgnoreWheelEvents(element()->hasTagName(HTMLTags::iframe()));
+          htmlView->setIgnoreWheelEvents(element()->hasTagName(iframeTag));
           if(marginw != -1) htmlView->setMarginWidth(marginw);
           if(marginh != -1) htmlView->setMarginHeight(marginh);
         }

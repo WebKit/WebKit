@@ -94,13 +94,12 @@ using DOM::DocumentMarker;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
-using DOM::HTMLAttributes;
+using namespace HTMLNames;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLGenericFormElementImpl;
-using DOM::HTMLTags;
 using DOM::HTMLTableCellElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -368,12 +367,12 @@ static HTMLFormElementImpl *scanForForm(NodeImpl *start)
 {
     NodeImpl *n;
     for (n = start; n; n = n->traverseNextNode()) {
-        if (n->hasTagName(HTMLTags::form())) {
+        if (n->hasTagName(formTag)) {
             return static_cast<HTMLFormElementImpl *>(n);
         } else if (n->isHTMLElement()
                    && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
             return static_cast<HTMLGenericFormElementImpl *>(n)->form();
-        } else if (n->hasTagName(HTMLTags::frame()) || n->hasTagName(HTMLTags::iframe())) {
+        } else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
             NodeImpl *childDoc = static_cast<HTMLFrameElementImpl *>(n)->contentDocument();
             HTMLFormElementImpl *frameResult = scanForForm(childDoc);
             if (frameResult) {
@@ -396,7 +395,7 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
     // try walking up the node tree to find a form element
     NodeImpl *n;
     for (n = start; n; n = n->parentNode()) {
-        if (n->hasTagName(HTMLTags::form())) {
+        if (n->hasTagName(formTag)) {
             return static_cast<HTMLFormElementImpl *>(n);
         } else if (n->isHTMLElement()
                    && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
@@ -533,15 +532,15 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
          n && lengthSearched < charsSearchedThreshold;
          n = n->traversePreviousNode())
     {
-        if (n->hasTagName(HTMLTags::form())
+        if (n->hasTagName(formTag)
             || (n->isHTMLElement()
                 && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;
-        } else if (n->hasTagName(HTMLTags::td()) && !startingTableCell) {
+        } else if (n->hasTagName(tdTag) && !startingTableCell) {
             startingTableCell = static_cast<HTMLTableCellElementImpl *>(n);
-        } else if (n->hasTagName(HTMLTags::tr()) && startingTableCell) {
+        } else if (n->hasTagName(trTag) && startingTableCell) {
             NSString *result = searchForLabelsAboveCell(regExp, startingTableCell);
             if (result) {
                 return result;
@@ -575,7 +574,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
 
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
 {
-    QString name = element->getAttribute(HTMLAttributes::name()).string();
+    QString name = element->getAttribute(nameAttr).string();
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     name.replace(QRegExp("[[:digit:]]"), " ");
     name.replace('_', ' ');
@@ -2865,7 +2864,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
     
     NSFileWrapper *wrapper = nil;
 
-    AtomicString attr = e->getAttribute(HTMLAttributes::src());
+    AtomicString attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.string()).getNSURL();
         wrapper = [_bridge fileWrapperForURL:URL];
@@ -2888,7 +2887,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 
 static ElementImpl *listParent(ElementImpl *item)
 {
-    while (!item->hasTagName(HTMLTags::ul()) && !item->hasTagName(HTMLTags::ol())) {
+    while (!item->hasTagName(ulTag) && !item->hasTagName(olTag)) {
         item = static_cast<ElementImpl *>(item->parentNode());
         if (!item)
             break;
@@ -2904,7 +2903,7 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
     while (par) {
         if (par->firstChild() != e)
             return 0;
-        if (par->hasTagName(HTMLTags::li()))
+        if (par->hasTagName(liTag))
             return par;
         e = par;
         par = par->parentNode();
@@ -3058,16 +3057,16 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
             } else {
                 // This is our simple HTML -> ASCII transformation:
                 QString text;
-                if (n->hasTagName(HTMLTags::a())) {
+                if (n->hasTagName(aTag)) {
                     // Note the start of the <a> element.  We will add the NSLinkAttributeName
                     // attribute to the attributed string when navigating to the next sibling 
                     // of this node.
                     linkStartLocation = [result length];
                     linkStartNode = static_cast<ElementImpl*>(n);
-                } else if (n->hasTagName(HTMLTags::br())) {
+                } else if (n->hasTagName(brTag)) {
                     text += "\n";
                     hasNewLine = true;
-                } else if (n->hasTagName(HTMLTags::li())) {
+                } else if (n->hasTagName(liTag)) {
                     QString listText;
                     ElementImpl *itemParent = listParent(static_cast<ElementImpl *>(n));
                     
@@ -3121,30 +3120,30 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         [result appendAttributedString: partialString];                
                         [partialString release];
                     }
-                    else if (n->hasTagName(HTMLTags::ol()) || n->hasTagName(HTMLTags::ul())) {
+                    else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
                         if (!hasNewLine)
                             text += "\n";
                         hasNewLine = true;
-                    } else if (n->hasTagName(HTMLTags::td()) ||
-                               n->hasTagName(HTMLTags::th()) ||
-                               n->hasTagName(HTMLTags::hr()) ||
-                               n->hasTagName(HTMLTags::dd()) ||
-                               n->hasTagName(HTMLTags::dl()) ||
-                               n->hasTagName(HTMLTags::dt()) ||
-                               n->hasTagName(HTMLTags::pre()) ||
-                               n->hasTagName(HTMLTags::blockquote()) ||
-                               n->hasTagName(HTMLTags::div())) {
+                    } else if (n->hasTagName(tdTag) ||
+                               n->hasTagName(thTag) ||
+                               n->hasTagName(hrTag) ||
+                               n->hasTagName(ddTag) ||
+                               n->hasTagName(dlTag) ||
+                               n->hasTagName(dtTag) ||
+                               n->hasTagName(preTag) ||
+                               n->hasTagName(blockquoteTag) ||
+                               n->hasTagName(divTag)) {
                         if (!hasNewLine)
                             text += '\n';
                         hasNewLine = true;
-                    } else if (n->hasTagName(HTMLTags::p()) ||
-                               n->hasTagName(HTMLTags::tr()) ||
-                               n->hasTagName(HTMLTags::h1()) ||
-                               n->hasTagName(HTMLTags::h2()) ||
-                               n->hasTagName(HTMLTags::h3()) ||
-                               n->hasTagName(HTMLTags::h4()) ||
-                               n->hasTagName(HTMLTags::h5()) ||
-                               n->hasTagName(HTMLTags::h6())) {
+                    } else if (n->hasTagName(pTag) ||
+                               n->hasTagName(trTag) ||
+                               n->hasTagName(h1Tag) ||
+                               n->hasTagName(h2Tag) ||
+                               n->hasTagName(h3Tag) ||
+                               n->hasTagName(h4Tag) ||
+                               n->hasTagName(h5Tag) ||
+                               n->hasTagName(h6Tag)) {
                         if (!hasNewLine)
                             text += '\n';
                         
@@ -3160,7 +3159,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         
                         hasNewLine = true;
                     }
-                    else if (n->hasTagName(HTMLTags::img())) {
+                    else if (n->hasTagName(imgTag)) {
                         if (pendingStyledSpace != nil) {
                             if (linkStartLocation == [result length]) {
                                 ++linkStartLocation;
@@ -3198,12 +3197,12 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 break;
             next = n->nextSibling();
 
-            if (n->hasTagName(HTMLTags::a())) {
+            if (n->hasTagName(aTag)) {
                 // End of a <a> element.  Create an attributed string NSLinkAttributeName attribute
                 // for the range of the link.  Note that we create the attributed string from the DOM, which
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && n == linkStartNode) {
-                    DOMString href = parseURL(linkStartNode->getAttribute(HTMLAttributes::href()));
+                    DOMString href = parseURL(linkStartNode->getAttribute(hrefAttr));
                     KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
                     
                     NSURL *URL = kURL.getNSURL();
@@ -3211,11 +3210,11 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     linkStartNode = 0;
                 }
             }
-            else if (n->hasTagName(HTMLTags::ol()) || n->hasTagName(HTMLTags::ul())) {
+            else if (n->hasTagName(olTag) || n->hasTagName(ulTag)) {
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(HTMLTags::li())) {
+            } else if (n->hasTagName(liTag)) {
                 
                 int i, count = listItems.count();
                 for (i = 0; i < count; i++){
@@ -3227,26 +3226,26 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(HTMLTags::td()) ||
-                       n->hasTagName(HTMLTags::th()) ||
-                       n->hasTagName(HTMLTags::hr()) ||
-                       n->hasTagName(HTMLTags::dd()) ||
-                       n->hasTagName(HTMLTags::dl()) ||
-                       n->hasTagName(HTMLTags::dt()) ||
-                       n->hasTagName(HTMLTags::pre()) ||
-                       n->hasTagName(HTMLTags::blockquote()) ||
-                       n->hasTagName(HTMLTags::div())) {
+            } else if (n->hasTagName(tdTag) ||
+                       n->hasTagName(thTag) ||
+                       n->hasTagName(hrTag) ||
+                       n->hasTagName(ddTag) ||
+                       n->hasTagName(dlTag) ||
+                       n->hasTagName(dtTag) ||
+                       n->hasTagName(preTag) ||
+                       n->hasTagName(blockquoteTag) ||
+                       n->hasTagName(divTag)) {
                 if (!hasNewLine)
                     text += '\n';
                 hasNewLine = true;
-            } else if (n->hasTagName(HTMLTags::p()) ||
-                       n->hasTagName(HTMLTags::tr()) ||
-                       n->hasTagName(HTMLTags::h1()) ||
-                       n->hasTagName(HTMLTags::h2()) ||
-                       n->hasTagName(HTMLTags::h3()) ||
-                       n->hasTagName(HTMLTags::h4()) ||
-                       n->hasTagName(HTMLTags::h5()) ||
-                       n->hasTagName(HTMLTags::h6())) {
+            } else if (n->hasTagName(pTag) ||
+                       n->hasTagName(trTag) ||
+                       n->hasTagName(h1Tag) ||
+                       n->hasTagName(h2Tag) ||
+                       n->hasTagName(h3Tag) ||
+                       n->hasTagName(h4Tag) ||
+                       n->hasTagName(h5Tag) ||
+                       n->hasTagName(h6Tag)) {
                 if (!hasNewLine)
                     text += '\n';
                 // An extra newline is needed at the start, not the end, of these types of tags,
@@ -3484,12 +3483,12 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
         return node->renderer()->style();
 
     int exceptionCode = 0;
-    ElementImpl *styleElement = xmlDocImpl()->createElementNS(HTMLTags::xhtmlNamespaceURI(), "span", exceptionCode);
+    ElementImpl *styleElement = xmlDocImpl()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
     ASSERT(exceptionCode == 0);
 
     styleElement->ref();
 
-    styleElement->setAttribute(HTMLAttributes::style(), d->m_typingStyle->cssText().implementation(), exceptionCode);
+    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().implementation(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
     TextImpl *text = xmlDocImpl()->createEditingTextNode("");
@@ -3711,7 +3710,7 @@ void KWQKHTMLPart::setSelectionFromNone()
         while (node) {
             // Look for a block flow, but skip over the HTML element, since we really
             // want to get at least as far as the the BODY element in a document.
-            if (node->isBlockFlow() && node->hasTagName(HTMLTags::html()))
+            if (node->isBlockFlow() && node->hasTagName(htmlTag))
                 break;
             node = node->traverseNextNode();
         }

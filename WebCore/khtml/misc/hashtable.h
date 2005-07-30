@@ -292,8 +292,8 @@ inline typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits>::FullLo
         else if (EqualT(extractKey(*entry), key))
             return makeLookupResult(entry, true, h);
 #if DUMP_HASHTABLE_STATS
-        HashTableStats::recordCollisionAtCount(probeCount);
         ++probeCount;
+        HashTableStats::recordCollisionAtCount(probeCount);
 #endif
         if (k == 0)
             k = 1 | (h % sizeMask);

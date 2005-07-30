@@ -48,6 +48,7 @@
 #include <kdebug.h>
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 AttributeImpl* AttributeImpl::clone(bool) const
@@ -278,7 +279,7 @@ const AtomicString& ElementImpl::getIDAttribute() const
 
 const AtomicString& ElementImpl::getAttribute(const QualifiedName& name) const
 {
-    if (name == HTMLAttributes::style())
+    if (name == styleAttr)
         updateStyleAttributeIfNeeded();
 
     if (namedAttrMap) {
@@ -328,7 +329,7 @@ void ElementImpl::setAttribute(const QualifiedName& name, DOMStringImpl* value, 
         return;
     }
 
-    if (name == HTMLAttributes::idAttr())
+    if (name == idAttr)
 	updateId(old ? old->value() : nullAtom, value);
     
     if (old && !value)
@@ -354,8 +355,8 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
     // If setting the whole map changes the id attribute, we need to
     // call updateId.
 
-    AttributeImpl *oldId = namedAttrMap ? namedAttrMap->getAttributeItem(HTMLAttributes::idAttr()) : 0;
-    AttributeImpl *newId = list ? list->getAttributeItem(HTMLAttributes::idAttr()) : 0;
+    AttributeImpl *oldId = namedAttrMap ? namedAttrMap->getAttributeItem(idAttr) : 0;
+    AttributeImpl *newId = list ? list->getAttributeItem(idAttr) : 0;
 
     if (oldId || newId) {
 	updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
@@ -432,9 +433,9 @@ void ElementImpl::insertedIntoDocument()
     if (hasID()) {
         NamedAttrMapImpl *attrs = attributes(true);
         if (attrs) {
-            AttributeImpl *idAttr = attrs->getAttributeItem(HTMLAttributes::idAttr());
-            if (idAttr && !idAttr->isNull()) {
-                updateId(nullAtom, idAttr->value());
+            AttributeImpl *idAttrImpl = attrs->getAttributeItem(idAttr);
+            if (idAttrImpl && !idAttrImpl->isNull()) {
+                updateId(nullAtom, idAttrImpl->value());
             }
         }
     }
@@ -445,9 +446,9 @@ void ElementImpl::removedFromDocument()
     if (hasID()) {
         NamedAttrMapImpl *attrs = attributes(true);
         if (attrs) {
-            AttributeImpl *idAttr = attrs->getAttributeItem(HTMLAttributes::idAttr());
-            if (idAttr && !idAttr->isNull()) {
-                updateId(idAttr->value(), nullAtom);
+            AttributeImpl *idAttrImpl = attrs->getAttributeItem(idAttr);
+            if (idAttrImpl && !idAttrImpl->isNull()) {
+                updateId(idAttrImpl->value(), nullAtom);
             }
         }
     }
@@ -655,7 +656,7 @@ void ElementImpl::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    s = getAttribute(HTMLAttributes::idAttr());
+    s = getAttribute(idAttr);
     if (s.length() > 0) {
         if (result.length() > 0)
             result += "; ";
@@ -663,7 +664,7 @@ void ElementImpl::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    s = getAttribute(HTMLAttributes::classAttr());
+    s = getAttribute(classAttr);
     if (s.length() > 0) {
         if (result.length() > 0)
             result += "; ";
@@ -863,7 +864,7 @@ SharedPtr<NodeImpl> NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &excepti
         return SharedPtr<NodeImpl>();
     }
 
-    if (a->name() == HTMLAttributes::idAttr())
+    if (a->name() == idAttr)
 	element->updateId(old ? old->value() : nullAtom, a->value());
 
     // ### slightly inefficient - resizes attribute array twice.
@@ -900,7 +901,7 @@ SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem(const QualifiedName& name,
     if (!a->attrImpl())  a->allocateImpl(element);
     SharedPtr<NodeImpl> r(a->attrImpl());
 
-    if (name == HTMLAttributes::idAttr())
+    if (name == idAttr)
 	element->updateId(a->value(), nullAtom);
 
     removeAttribute(name);
@@ -958,8 +959,8 @@ NamedAttrMapImpl& NamedAttrMapImpl::operator=(const NamedAttrMapImpl& other)
     // If assigning the map changes the id attribute, we need to call
     // updateId.
 
-    AttributeImpl *oldId = getAttributeItem(HTMLAttributes::idAttr());
-    AttributeImpl *newId = other.getAttributeItem(HTMLAttributes::idAttr());
+    AttributeImpl *oldId = getAttributeItem(idAttr);
+    AttributeImpl *newId = other.getAttributeItem(idAttr);
 
     if (oldId || newId) {
 	element->updateId(oldId ? oldId->value() : nullAtom, newId ? newId->value() : nullAtom);
@@ -1132,7 +1133,7 @@ void StyledElementImpl::updateStyleAttributeIfNeeded() const
         m_isStyleAttributeValid = true;
         m_synchronizingStyleAttribute = true;
         if (m_inlineStyleDecl)
-            const_cast<StyledElementImpl*>(this)->setAttribute(HTMLAttributes::style(), m_inlineStyleDecl->cssText());
+            const_cast<StyledElementImpl*>(this)->setAttribute(styleAttr, m_inlineStyleDecl->cssText());
         m_synchronizingStyleAttribute = false;
     }
 }
@@ -1314,14 +1315,14 @@ void StyledElementImpl::attributeChanged(AttributeImpl* attr, bool preserveDecls
 bool StyledElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     result = eNone;
-    if (attrName == HTMLAttributes::style())
+    if (attrName == styleAttr)
         return !m_synchronizingStyleAttribute;
     return true;
 }
 
 void StyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::idAttr()) {
+    if (attr->name() == idAttr) {
         // unique id
         setHasID(!attr->isNull());
         if (namedAttrMap) {
@@ -1333,12 +1334,12 @@ void StyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 namedAttrMap->setID(attr->value());
         }
         setChanged();
-    } else if (attr->name() == HTMLAttributes::classAttr()) {
+    } else if (attr->name() == classAttr) {
         // class
         setHasClass(!attr->isNull());
         if (namedAttrMap) static_cast<NamedMappedAttrMapImpl*>(namedAttrMap)->parseClassAttribute(attr->value());
         setChanged();
-    } else if (attr->name() == HTMLAttributes::style()) {
+    } else if (attr->name() == styleAttr) {
         setHasStyle(!attr->isNull());
         if (attr->isNull())
             destroyInlineStyleDecl();

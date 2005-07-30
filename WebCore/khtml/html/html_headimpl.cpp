@@ -42,10 +42,11 @@
 #include <kdebug.h>
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::base(), doc)
+    : HTMLElementImpl(baseTag, doc)
 {
 }
 
@@ -55,10 +56,10 @@ HTMLBaseElementImpl::~HTMLBaseElementImpl()
 
 void HTMLBaseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::href()) {
+    if (attr->name() == hrefAttr) {
 	m_href = khtml::parseURL(attr->value());
 	process();
-    } else if (attr->name() == HTMLAttributes::target()) {
+    } else if (attr->name() == targetAttr) {
     	m_target = attr->value();
 	process();
     } else
@@ -97,18 +98,18 @@ void HTMLBaseElementImpl::process()
 
 void HTMLBaseElementImpl::setHref(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::href(), value);
+    setAttribute(hrefAttr, value);
 }
 
 void HTMLBaseElementImpl::setTarget(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::target(), value);
+    setAttribute(targetAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::link(), doc)
+    : HTMLElementImpl(linkTag, doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -163,19 +164,19 @@ void HTMLLinkElementImpl::setDisabledState(bool _disabled)
 
 void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::rel()) {
+    if (attr->name() == relAttr) {
         tokenizeRelAttribute(attr->value());
         process();
-    } else if (attr->name() == HTMLAttributes::href()) {
+    } else if (attr->name() == hrefAttr) {
         m_url = getDocument()->completeURL( khtml::parseURL(attr->value()).string() );
 	process();
-    } else if (attr->name() == HTMLAttributes::type()) {
+    } else if (attr->name() == typeAttr) {
         m_type = attr->value();
 	process();
-    } else if (attr->name() == HTMLAttributes::media()) {
+    } else if (attr->name() == mediaAttr) {
         m_media = attr->value().string().lower();
         process();
-    } else if (attr->name() == HTMLAttributes::disabled()) {
+    } else if (attr->name() == disabledAttr) {
         setDisabledState(!attr->isNull());
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -237,7 +238,7 @@ void HTMLLinkElementImpl::process()
             if (!isAlternate())
                 getDocument()->addPendingSheet();
             
-            QString chset = getAttribute(HTMLAttributes::charset()).string();
+            QString chset = getAttribute(charsetAttr).string();
             if (m_cachedSheet)
                 m_cachedSheet->deref(this);
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
@@ -304,102 +305,102 @@ void HTMLLinkElementImpl::sheetLoaded()
 
 bool HTMLLinkElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->name() == HTMLAttributes::href();
+    return attr->name() == hrefAttr;
 }
 
 bool HTMLLinkElementImpl::disabled() const
 {
-    return !getAttribute(HTMLAttributes::disabled()).isNull();
+    return !getAttribute(disabledAttr).isNull();
 }
 
 void HTMLLinkElementImpl::setDisabled(bool disabled)
 {
-    setAttribute(HTMLAttributes::disabled(), disabled ? "" : 0);
+    setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
 DOMString HTMLLinkElementImpl::charset() const
 {
-    return getAttribute(HTMLAttributes::charset());
+    return getAttribute(charsetAttr);
 }
 
 void HTMLLinkElementImpl::setCharset(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::charset(), value);
+    setAttribute(charsetAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::href() const
 {
-    return getDocument()->completeURL(getAttribute(HTMLAttributes::href()));
+    return getDocument()->completeURL(getAttribute(hrefAttr));
 }
 
 void HTMLLinkElementImpl::setHref(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::href(), value);
+    setAttribute(hrefAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::hreflang() const
 {
-    return getAttribute(HTMLAttributes::hreflang());
+    return getAttribute(hreflangAttr);
 }
 
 void HTMLLinkElementImpl::setHreflang(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::hreflang(), value);
+    setAttribute(hreflangAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::media() const
 {
-    return getAttribute(HTMLAttributes::media());
+    return getAttribute(mediaAttr);
 }
 
 void HTMLLinkElementImpl::setMedia(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::media(), value);
+    setAttribute(mediaAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::rel() const
 {
-    return getAttribute(HTMLAttributes::rel());
+    return getAttribute(relAttr);
 }
 
 void HTMLLinkElementImpl::setRel(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::rel(), value);
+    setAttribute(relAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::rev() const
 {
-    return getAttribute(HTMLAttributes::rev());
+    return getAttribute(revAttr);
 }
 
 void HTMLLinkElementImpl::setRev(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::rev(), value);
+    setAttribute(revAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::target() const
 {
-    return getAttribute(HTMLAttributes::target());
+    return getAttribute(targetAttr);
 }
 
 void HTMLLinkElementImpl::setTarget(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::target(), value);
+    setAttribute(targetAttr, value);
 }
 
 DOMString HTMLLinkElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLLinkElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::meta(), doc)
+HTMLMetaElementImpl::HTMLMetaElementImpl(DocumentPtr *doc) : HTMLElementImpl(metaTag, doc)
 {
 }
 
@@ -409,13 +410,13 @@ HTMLMetaElementImpl::~HTMLMetaElementImpl()
 
 void HTMLMetaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::http_equiv()) {
+    if (attr->name() == http_equivAttr) {
 	m_equiv = attr->value();
 	process();
-    } else if (attr->name() == HTMLAttributes::content()) {
+    } else if (attr->name() == contentAttr) {
 	m_content = attr->value();
 	process();
-    } else if (attr->name() == HTMLAttributes::name()) {
+    } else if (attr->name() == nameAttr) {
         // Do nothing.
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -437,48 +438,48 @@ void HTMLMetaElementImpl::process()
 
 DOMString HTMLMetaElementImpl::content() const
 {
-    return getAttribute(HTMLAttributes::content());
+    return getAttribute(contentAttr);
 }
 
 void HTMLMetaElementImpl::setContent(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::content(), value);
+    setAttribute(contentAttr, value);
 }
 
 DOMString HTMLMetaElementImpl::httpEquiv() const
 {
-    return getAttribute(HTMLAttributes::http_equiv());
+    return getAttribute(http_equivAttr);
 }
 
 void HTMLMetaElementImpl::setHttpEquiv(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::http_equiv(), value);
+    setAttribute(http_equivAttr, value);
 }
 
 DOMString HTMLMetaElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLMetaElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLMetaElementImpl::scheme() const
 {
-    return getAttribute(HTMLAttributes::scheme());
+    return getAttribute(schemeAttr);
 }
 
 void HTMLMetaElementImpl::setScheme(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::scheme(), value);
+    setAttribute(schemeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLScriptElementImpl::HTMLScriptElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::script(), doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
+    : HTMLElementImpl(scriptTag, doc), m_cachedScript(0), m_createdByParser(false), m_evaluated(false)
 {
 }
 
@@ -490,7 +491,7 @@ HTMLScriptElementImpl::~HTMLScriptElementImpl()
 
 bool HTMLScriptElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->name() == HTMLAttributes::src();
+    return attr->name() == srcAttr;
 }
 
 void HTMLScriptElementImpl::childrenChanged()
@@ -511,9 +512,9 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     if (m_createdByParser)
         return;
     
-    QString url = getAttribute(HTMLAttributes::src()).string();
+    QString url = getAttribute(srcAttr).string();
     if (!url.isEmpty()) {
-        QString charset = getAttribute(HTMLAttributes::charset()).string();
+        QString charset = getAttribute(charsetAttr).string();
         m_cachedScript = getDocument()->docLoader()->requestScript(DOMString(url), charset);
         m_cachedScript->ref(this);
         return;
@@ -618,47 +619,47 @@ void HTMLScriptElementImpl::setEvent(const DOMString &/*value*/)
 
 DOMString HTMLScriptElementImpl::charset() const
 {
-    return getAttribute(HTMLAttributes::charset());
+    return getAttribute(charsetAttr);
 }
 
 void HTMLScriptElementImpl::setCharset(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::charset(), value);
+    setAttribute(charsetAttr, value);
 }
 
 bool HTMLScriptElementImpl::defer() const
 {
-    return !getAttribute(HTMLAttributes::defer()).isNull();
+    return !getAttribute(deferAttr).isNull();
 }
 
 void HTMLScriptElementImpl::setDefer(bool defer)
 {
-    setAttribute(HTMLAttributes::defer(), defer ? "" : 0);
+    setAttribute(deferAttr, defer ? "" : 0);
 }
 
 DOMString HTMLScriptElementImpl::src() const
 {
-    return getDocument()->completeURL(getAttribute(HTMLAttributes::src()));
+    return getDocument()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLScriptElementImpl::setSrc(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::src(), value);
+    setAttribute(srcAttr, value);
 }
 
 DOMString HTMLScriptElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLScriptElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::style(), doc)
+HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentPtr *doc) : HTMLElementImpl(styleTag, doc)
 {
     m_sheet = 0;
     m_loading = false;
@@ -672,9 +673,9 @@ HTMLStyleElementImpl::~HTMLStyleElementImpl()
 // other stuff...
 void HTMLStyleElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::type())
+    if (attr->name() == typeAttr)
         m_type = attr->value().domString().lower();
-    else if (attr->name() == HTMLAttributes::media())
+    else if (attr->name() == mediaAttr)
         m_media = attr->value().string().lower();
     else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -744,38 +745,38 @@ void HTMLStyleElementImpl::sheetLoaded()
 
 bool HTMLStyleElementImpl::disabled() const
 {
-    return !getAttribute(HTMLAttributes::disabled()).isNull();
+    return !getAttribute(disabledAttr).isNull();
 }
 
 void HTMLStyleElementImpl::setDisabled(bool disabled)
 {
-    setAttribute(HTMLAttributes::disabled(), disabled ? "" : 0);
+    setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
 DOMString HTMLStyleElementImpl::media() const
 {
-    return getAttribute(HTMLAttributes::media());
+    return getAttribute(mediaAttr);
 }
 
 void HTMLStyleElementImpl::setMedia(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::media(), value);
+    setAttribute(mediaAttr, value);
 }
 
 DOMString HTMLStyleElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLStyleElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLTitleElementImpl::HTMLTitleElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::title(), doc), m_title("")
+    : HTMLElementImpl(titleTag, doc), m_title("")
 {
 }
 

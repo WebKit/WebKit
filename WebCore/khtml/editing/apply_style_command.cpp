@@ -65,8 +65,7 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
-using DOM::HTMLTags;
-using DOM::HTMLAttributes;
+using namespace HTMLNames;
 
 namespace khtml {
 
@@ -251,44 +250,44 @@ bool isStyleSpan(const NodeImpl *node)
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
-    return elem->hasLocalName(HTMLAttributes::span()) && elem->getAttribute(HTMLAttributes::classAttr()) == styleSpanClassString();
+    return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
 static bool isEmptyStyleSpan(const NodeImpl *node)
 {
-    if (!node || !node->isHTMLElement() || !node->hasTagName(HTMLTags::span()))
+    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
     CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
-    return (!inlineStyleDecl || inlineStyleDecl->length() == 0) && elem->getAttribute(HTMLAttributes::classAttr()) == styleSpanClassString();
+    return (!inlineStyleDecl || inlineStyleDecl->length() == 0) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
 static bool isEmptyFontTag(const NodeImpl *node)
 {
-    if (!node || !node->hasTagName(HTMLTags::font()))
+    if (!node || !node->hasTagName(fontTag))
         return false;
 
     const ElementImpl *elem = static_cast<const ElementImpl *>(node);
     NamedAttrMapImpl *map = elem->attributes(true); // true for read-only
-    return (!map || map->length() == 1) && elem->getAttribute(HTMLAttributes::classAttr()) == styleSpanClassString();
+    return (!map || map->length() == 1) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
 static ElementImpl *createFontElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *fontNode = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "font", exceptionCode);
+    ElementImpl *fontNode = document->createElementNS(xhtmlNamespaceURI, "font", exceptionCode);
     ASSERT(exceptionCode == 0);
-    fontNode->setAttribute(HTMLAttributes::classAttr(), styleSpanClassString());
+    fontNode->setAttribute(classAttr, styleSpanClassString());
     return fontNode;
 }
 
 ElementImpl *createStyleSpanElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *styleElement = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "span", exceptionCode);
+    ElementImpl *styleElement = document->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
     ASSERT(exceptionCode == 0);
-    styleElement->setAttribute(HTMLAttributes::classAttr(), styleSpanClassString());
+    styleElement->setAttribute(classAttr, styleSpanClassString());
     return styleElement;
 }
 
@@ -498,10 +497,10 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
             QString desiredFontSizeString = QString::number(desiredFontSize);
             desiredFontSizeString += "px";
             inlineStyleDecl->setProperty(CSS_PROP_FONT_SIZE, desiredFontSizeString, false, false);
-            setNodeAttribute(elem, HTMLAttributes::style(), inlineStyleDecl->cssText());
+            setNodeAttribute(elem, styleAttr, inlineStyleDecl->cssText());
         }
         if (inlineStyleDecl->length() == 0) {
-            removeNodeAttribute(elem, HTMLAttributes::style());
+            removeNodeAttribute(elem, styleAttr);
             if (isEmptyStyleSpan(elem))
                 emptySpans.append(elem);
         }
@@ -588,7 +587,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
                     // the current group.
                     if (node == end.node() || 
                         runStart->parentNode() != next->parentNode() || 
-                        (next->isElementNode() && !next->hasTagName(HTMLTags::br())) || 
+                        (next->isElementNode() && !next->hasTagName(brTag)) || 
                         (next->renderer() && !next->renderer()->isInline()))
                         break;
                     node = next;
@@ -613,11 +612,11 @@ bool ApplyStyleCommand::isHTMLStyleNode(CSSMutableStyleDeclarationImpl *style, H
     for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         switch ((*it).id()) {
             case CSS_PROP_FONT_WEIGHT:
-                if (elem->hasLocalName(HTMLTags::b()))
+                if (elem->hasLocalName(bTag))
                     return true;
                 break;
             case CSS_PROP_FONT_STYLE:
-                if (elem->hasLocalName(HTMLTags::i()))
+                if (elem->hasLocalName(iTag))
                     return true;
         }
     }
@@ -640,7 +639,7 @@ void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclarationImpl *styl
     ASSERT(style);
     ASSERT(elem);
 
-    if (!elem->hasLocalName(HTMLTags::font()))
+    if (!elem->hasLocalName(fontTag))
         return;
 
     int exceptionCode = 0;
@@ -648,15 +647,15 @@ void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclarationImpl *styl
     for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         switch ((*it).id()) {
             case CSS_PROP_COLOR:
-                elem->removeAttribute(HTMLAttributes::color(), exceptionCode);
+                elem->removeAttribute(colorAttr, exceptionCode);
                 ASSERT(exceptionCode == 0);
                 break;
             case CSS_PROP_FONT_FAMILY:
-                elem->removeAttribute(HTMLAttributes::face(), exceptionCode);
+                elem->removeAttribute(faceAttr, exceptionCode);
                 ASSERT(exceptionCode == 0);
                 break;
             case CSS_PROP_FONT_SIZE:
-                elem->removeAttribute(HTMLAttributes::size(), exceptionCode);
+                elem->removeAttribute(sizeAttr, exceptionCode);
                 ASSERT(exceptionCode == 0);
                 break;
         }
@@ -825,7 +824,7 @@ void ApplyStyleCommand::applyTextDecorationStyle(NodeImpl *node, CSSMutableStyle
         CSSMutableStyleDeclarationImpl *decl = element->inlineStyleDecl();
         if (decl)
             cssText += decl->cssText();
-        setNodeAttribute(element, HTMLAttributes::style(), cssText);
+        setNodeAttribute(element, styleAttr, cssText);
     }
 }
 
@@ -1133,7 +1132,7 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
         endOffset = parentLastOffset;
     }
 
-    if (!endNode->isElementNode() || endNode->hasTagName(HTMLTags::br()))
+    if (!endNode->isElementNode() || endNode->hasTagName(brTag))
         return false;
 
     NodeImpl *nextSibling = endNode->nextSibling();
@@ -1243,7 +1242,7 @@ void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *st
         CSSMutableStyleDeclarationImpl *decl = block->inlineStyleDecl();
         if (decl)
             cssText += decl->cssText();
-        setNodeAttribute(block, HTMLAttributes::style(), cssText);
+        setNodeAttribute(block, styleAttr, cssText);
     }
 }
 
@@ -1264,32 +1263,32 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
         ASSERT(exceptionCode == 0);
         insertNodeBefore(fontElement, startNode);
         if (styleChange.applyFontColor())
-            fontElement->setAttribute(HTMLAttributes::color(), styleChange.fontColor());
+            fontElement->setAttribute(colorAttr, styleChange.fontColor());
         if (styleChange.applyFontFace())
-            fontElement->setAttribute(HTMLAttributes::face(), styleChange.fontFace());
+            fontElement->setAttribute(faceAttr, styleChange.fontFace());
         if (styleChange.applyFontSize())
-            fontElement->setAttribute(HTMLAttributes::size(), styleChange.fontSize());
+            fontElement->setAttribute(sizeAttr, styleChange.fontSize());
         surroundNodeRangeWithElement(startNode, endNode, fontElement);
     }
 
     if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = createStyleSpanElement(document());
         styleElement->ref();
-        styleElement->setAttribute(HTMLAttributes::style(), styleChange.cssStyle());
+        styleElement->setAttribute(styleAttr, styleChange.cssStyle());
         insertNodeBefore(styleElement, startNode);
         styleElement->deref();
         surroundNodeRangeWithElement(startNode, endNode, styleElement);
     }
 
     if (styleChange.applyBold()) {
-        ElementImpl *boldElement = document()->createElementNS(HTMLTags::xhtmlNamespaceURI(), "b", exceptionCode);
+        ElementImpl *boldElement = document()->createElementNS(xhtmlNamespaceURI, "b", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(boldElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, boldElement);
     }
 
     if (styleChange.applyItalic()) {
-        ElementImpl *italicElement = document()->createElementNS(HTMLTags::xhtmlNamespaceURI(), "i", exceptionCode);
+        ElementImpl *italicElement = document()->createElementNS(xhtmlNamespaceURI, "i", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(italicElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement);

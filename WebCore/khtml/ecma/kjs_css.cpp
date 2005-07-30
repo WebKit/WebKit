@@ -55,7 +55,7 @@ using DOM::CounterImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 using DOM::HTMLStyleElementImpl;
 using DOM::MediaListImpl;
 using DOM::RectImpl;
@@ -420,7 +420,7 @@ bool DOMStyleSheetList::getOwnProperty(ExecState *exec, const Identifier& p, Val
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)
   ElementImpl *element = m_doc->getElementById(p.string());
-  if (element && element->hasTagName(HTMLTags::style())) {
+  if (element && element->hasTagName(styleTag)) {
     result = getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
     return true;
   }

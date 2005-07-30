@@ -48,6 +48,7 @@
 #include <qpointarray.h>
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
@@ -74,10 +75,10 @@ void HTMLImageLoader::updateFromElement()
         return;
 
     AtomicString attr;
-    if (element()->hasLocalName(HTMLTags::object()))
-        attr = element()->getAttribute(HTMLAttributes::data());
+    if (element()->hasLocalName(objectTag))
+        attr = element()->getAttribute(dataAttr);
     else
-        attr = element()->getAttribute(HTMLAttributes::src());
+        attr = element()->getAttribute(srcAttr);
     
     // Treat a lack of src or empty string for src as no image at all.
     CachedImage* newImage = 0;
@@ -136,7 +137,7 @@ void HTMLImageLoader::notifyFinished(CachedObject* image)
 // -------------------------------------------------------------------------
 
 HTMLImageElementImpl::HTMLImageElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLElementImpl(HTMLTags::img(), doc), m_imageLoader(this), ismap(false), m_form(f)
+    : HTMLElementImpl(imgTag, doc), m_imageLoader(this), ismap(false), m_form(f)
 {
     if (m_form)
         m_form->registerImgElement(this);
@@ -155,17 +156,17 @@ HTMLImageElementImpl::~HTMLImageElementImpl()
 
 bool HTMLImageElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::height() ||
-        attrName == HTMLAttributes::vspace() ||
-        attrName == HTMLAttributes::hspace() ||
-        attrName == HTMLAttributes::valign()) {
+    if (attrName == widthAttr ||
+        attrName == heightAttr ||
+        attrName == vspaceAttr ||
+        attrName == hspaceAttr ||
+        attrName == valignAttr) {
         result = eUniversal;
         return false;
     }
     
-    if (attrName == HTMLAttributes::border() ||
-        attrName == HTMLAttributes::align()) {
+    if (attrName == borderAttr ||
+        attrName == alignAttr) {
         result = eReplaced; // Shared with embeds and iframes
         return false;
     }
@@ -175,15 +176,15 @@ bool HTMLImageElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 
 void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::alt()) {
+    if (attr->name() == altAttr) {
         if (m_render) static_cast<RenderImage*>(m_render)->updateAltText();
-    } else if (attr->name() == HTMLAttributes::src()) {
+    } else if (attr->name() == srcAttr) {
         m_imageLoader.updateFromElement();
-    } else if (attr->name() == HTMLAttributes::width()) {
+    } else if (attr->name() == widthAttr) {
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == HTMLAttributes::height()) {
+    } else if (attr->name() == heightAttr) {
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::border()) {
+    } else if (attr->name() == borderAttr) {
         // border="noborder" -> border="0"
         if(attr->value().toInt()) {
             addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
@@ -192,17 +193,17 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
             addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
         }
-    } else if (attr->name() == HTMLAttributes::vspace()) {
+    } else if (attr->name() == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == HTMLAttributes::hspace()) {
+    } else if (attr->name() == hspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::align()) {
+    } else if (attr->name() == alignAttr) {
         addHTMLAlignment(attr);
-    } else if (attr->name() == HTMLAttributes::valign()) {
+    } else if (attr->name() == valignAttr) {
         addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
-    } else if (attr->name() == HTMLAttributes::usemap()) {
+    } else if (attr->name() == usemapAttr) {
         if (attr->value().domString()[0] == '#')
             usemap = attr->value();
         else {
@@ -212,23 +213,23 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             usemap = url;
         }
         m_isLink = !attr->isNull();
-    } else if (attr->name() == HTMLAttributes::ismap()) {
+    } else if (attr->name() == ismapAttr) {
         ismap = true;
-    } else if (attr->name() == HTMLAttributes::onabort()) {
+    } else if (attr->name() == onabortAttr) {
         setHTMLEventListener(EventImpl::ABORT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onerror()) {
+    } else if (attr->name() == onerrorAttr) {
         setHTMLEventListener(EventImpl::ERROR_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onload()) {
+    } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(EventImpl::LOAD_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
     }
 #if APPLE_CHANGES
-    else if (attr->name() == HTMLAttributes::composite())
+    else if (attr->name() == compositeAttr)
         _compositeOperator = attr->value().string();
 #endif
-    else if (attr->name() == HTMLAttributes::name()) {
+    else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -245,10 +246,10 @@ DOMString HTMLImageElementImpl::altText() const
     // lets figure out the alt text.. magic stuff
     // http://www.w3.org/TR/1998/REC-html40-19980424/appendix/notes.html#altgen
     // also heavily discussed by Hixie on bugzilla
-    DOMString alt(getAttribute(HTMLAttributes::alt()));
+    DOMString alt(getAttribute(altAttr));
     // fall back to title attribute
     if (alt.isNull())
-        alt = getAttribute(HTMLAttributes::title());
+        alt = getAttribute(titleAttr);
     return alt;
 }
 
@@ -291,7 +292,7 @@ long HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
-	DOM::DOMString attrWidth = getAttribute(HTMLAttributes::width());
+	DOM::DOMString attrWidth = getAttribute(widthAttr);
 	bool ok;
 	long width = attrWidth.string().toLong(&ok);
 	if (ok) {
@@ -318,7 +319,7 @@ long HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
-	DOM::DOMString attrHeight = getAttribute(HTMLAttributes::height());
+	DOM::DOMString attrHeight = getAttribute(heightAttr);
 	bool ok;
 	long height = attrHeight.string().toLong(&ok);
 	if (ok) {
@@ -351,120 +352,120 @@ QImage HTMLImageElementImpl::currentImage() const
 
 bool HTMLImageElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return (attr->name() == HTMLAttributes::src() || (attr->name() == HTMLAttributes::usemap() && attr->value().domString()[0] != '#'));
+    return (attr->name() == srcAttr || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
 }
 
 DOMString HTMLImageElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLImageElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLImageElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLImageElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 DOMString HTMLImageElementImpl::alt() const
 {
-    return getAttribute(HTMLAttributes::alt());
+    return getAttribute(altAttr);
 }
 
 void HTMLImageElementImpl::setAlt(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::alt(), value);
+    setAttribute(altAttr, value);
 }
 
 long HTMLImageElementImpl::border() const
 {
     // ### return value in pixels
-    return getAttribute(HTMLAttributes::border()).toInt();
+    return getAttribute(borderAttr).toInt();
 }
 
 void HTMLImageElementImpl::setBorder(long value)
 {
-    setAttribute(HTMLAttributes::border(), QString::number(value));
+    setAttribute(borderAttr, QString::number(value));
 }
 
 void HTMLImageElementImpl::setHeight(long value)
 {
-    setAttribute(HTMLAttributes::height(), QString::number(value));
+    setAttribute(heightAttr, QString::number(value));
 }
 
 long HTMLImageElementImpl::hspace() const
 {
     // ### return actual value
-    return getAttribute(HTMLAttributes::hspace()).toInt();
+    return getAttribute(hspaceAttr).toInt();
 }
 
 void HTMLImageElementImpl::setHspace(long value)
 {
-    setAttribute(HTMLAttributes::hspace(), QString::number(value));
+    setAttribute(hspaceAttr, QString::number(value));
 }
 
 bool HTMLImageElementImpl::isMap() const
 {
-    return !getAttribute(HTMLAttributes::ismap()).isNull();
+    return !getAttribute(ismapAttr).isNull();
 }
 
 void HTMLImageElementImpl::setIsMap(bool isMap)
 {
-    setAttribute(HTMLAttributes::ismap(), isMap ? "" : 0);
+    setAttribute(ismapAttr, isMap ? "" : 0);
 }
 
 DOMString HTMLImageElementImpl::longDesc() const
 {
-    return getAttribute(HTMLAttributes::longdesc());
+    return getAttribute(longdescAttr);
 }
 
 void HTMLImageElementImpl::setLongDesc(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::longdesc(), value);
+    setAttribute(longdescAttr, value);
 }
 
 DOMString HTMLImageElementImpl::src() const
 {
-    return getDocument()->completeURL(getAttribute(HTMLAttributes::src()));
+    return getDocument()->completeURL(getAttribute(srcAttr));
 }
 
 void HTMLImageElementImpl::setSrc(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::src(), value);
+    setAttribute(srcAttr, value);
 }
 
 DOMString HTMLImageElementImpl::useMap() const
 {
-    return getAttribute(HTMLAttributes::usemap());
+    return getAttribute(usemapAttr);
 }
 
 void HTMLImageElementImpl::setUseMap(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::usemap(), value);
+    setAttribute(usemapAttr, value);
 }
 
 long HTMLImageElementImpl::vspace() const
 {
     // ### return actual vspace
-    return getAttribute(HTMLAttributes::vspace()).toInt();
+    return getAttribute(vspaceAttr).toInt();
 }
 
 void HTMLImageElementImpl::setVspace(long value)
 {
-    setAttribute(HTMLAttributes::vspace(), QString::number(value));
+    setAttribute(vspaceAttr, QString::number(value));
 }
 
 void HTMLImageElementImpl::setWidth(long value)
 {
-    setAttribute(HTMLAttributes::width(), QString::number(value));
+    setAttribute(widthAttr, QString::number(value));
 }
 
 long HTMLImageElementImpl::x() const
@@ -490,7 +491,7 @@ long HTMLImageElementImpl::y() const
 // -------------------------------------------------------------------------
 
 HTMLMapElementImpl::HTMLMapElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::map(), doc)
+    : HTMLElementImpl(mapTag, doc)
 {
 }
 
@@ -503,7 +504,7 @@ HTMLMapElementImpl::~HTMLMapElementImpl()
 bool HTMLMapElementImpl::checkDTD(const NodeImpl* newChild)
 {
     // FIXME: This seems really odd, allowing only blocks inside map.
-    return newChild->hasTagName(HTMLTags::area()) || newChild->hasTagName(HTMLTags::script()) ||
+    return newChild->hasTagName(areaTag) || newChild->hasTagName(scriptTag) ||
            inBlockTagList(newChild);
 }
 
@@ -524,7 +525,7 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
             continue;
         }
         
-        if (current->hasTagName(HTMLTags::area())) {
+        if (current->hasTagName(areaTag)) {
             //cout << "area found " << endl;
             HTMLAreaElementImpl* area = static_cast<HTMLAreaElementImpl*>(current);
             if (area->mapMouseEvent(x_,y_,width_,height_, info))
@@ -545,8 +546,8 @@ HTMLMapElementImpl::mapMouseEvent(int x_, int y_, int width_, int height_,
 
 void HTMLMapElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::idAttr() || attr->name() == HTMLAttributes::name()) {
-        if (attr->name() == HTMLAttributes::idAttr()) {
+    if (attr->name() == idAttr || attr->name() == nameAttr) {
+        if (attr->name() == idAttr) {
             // Must call base class so that hasID bit gets set.
             HTMLElementImpl::parseMappedAttribute(attr);
             if (getDocument()->htmlMode() != DocumentImpl::XHtml)
@@ -568,18 +569,18 @@ SharedPtr<HTMLCollectionImpl> HTMLMapElementImpl::areas()
 
 DOMString HTMLMapElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLMapElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
-    : HTMLAnchorElementImpl(HTMLTags::area(), doc)
+    : HTMLAnchorElementImpl(areaTag, doc)
 {
     m_coords=0;
     m_coordsLen = 0;
@@ -594,7 +595,7 @@ HTMLAreaElementImpl::~HTMLAreaElementImpl()
 
 void HTMLAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::shape()) {
+    if (attr->name() == shapeAttr) {
         if ( strcasecmp( attr->value(), "default" ) == 0 )
             m_shape = Default;
         else if ( strcasecmp( attr->value(), "circle" ) == 0 )
@@ -603,13 +604,13 @@ void HTMLAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_shape = Poly;
         else if ( strcasecmp( attr->value(), "rect" ) == 0 )
             m_shape = Rect;
-    } else if (attr->name() == HTMLAttributes::coords()) {
+    } else if (attr->name() == coordsAttr) {
         if (m_coords) delete [] m_coords;
         m_coords = attr->value().toCoordsArray(m_coordsLen);
-    } else if (attr->name() == HTMLAttributes::target()) {
+    } else if (attr->name() == targetAttr) {
         m_hasTarget = !attr->isNull();
-    } else if (attr->name() == HTMLAttributes::alt() ||
-               attr->name() == HTMLAttributes::accesskey()) {
+    } else if (attr->name() == altAttr ||
+               attr->name() == accesskeyAttr) {
         // Do nothing
     } else
         HTMLAnchorElementImpl::parseMappedAttribute(attr);
@@ -685,80 +686,80 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
 
 DOMString HTMLAreaElementImpl::accessKey() const
 {
-    return getAttribute(HTMLAttributes::accesskey());
+    return getAttribute(accesskeyAttr);
 }
 
 void HTMLAreaElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::accesskey(), value);
+    setAttribute(accesskeyAttr, value);
 }
 
 DOMString HTMLAreaElementImpl::alt() const
 {
-    return getAttribute(HTMLAttributes::alt());
+    return getAttribute(altAttr);
 }
 
 void HTMLAreaElementImpl::setAlt(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::alt(), value);
+    setAttribute(altAttr, value);
 }
 
 DOMString HTMLAreaElementImpl::coords() const
 {
-    return getAttribute(HTMLAttributes::coords());
+    return getAttribute(coordsAttr);
 }
 
 void HTMLAreaElementImpl::setCoords(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::coords(), value);
+    setAttribute(coordsAttr, value);
 }
 
 DOMString HTMLAreaElementImpl::href() const
 {
-    return getDocument()->completeURL(getAttribute(HTMLAttributes::href()));
+    return getDocument()->completeURL(getAttribute(hrefAttr));
 }
 
 void HTMLAreaElementImpl::setHref(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::href(), value);
+    setAttribute(hrefAttr, value);
 }
 
 bool HTMLAreaElementImpl::noHref() const
 {
-    return !getAttribute(HTMLAttributes::nohref()).isNull();
+    return !getAttribute(nohrefAttr).isNull();
 }
 
 void HTMLAreaElementImpl::setNoHref(bool noHref)
 {
-    setAttribute(HTMLAttributes::nohref(), noHref ? "" : 0);
+    setAttribute(nohrefAttr, noHref ? "" : 0);
 }
 
 DOMString HTMLAreaElementImpl::shape() const
 {
-    return getAttribute(HTMLAttributes::shape());
+    return getAttribute(shapeAttr);
 }
 
 void HTMLAreaElementImpl::setShape(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::shape(), value);
+    setAttribute(shapeAttr, value);
 }
 
 long HTMLAreaElementImpl::tabIndex() const
 {
-    return getAttribute(HTMLAttributes::tabindex()).toInt();
+    return getAttribute(tabindexAttr).toInt();
 }
 
 void HTMLAreaElementImpl::setTabIndex(long tabIndex)
 {
-    setAttribute(HTMLAttributes::tabindex(), QString::number(tabIndex));
+    setAttribute(tabindexAttr, QString::number(tabIndex));
 }
 
 DOMString HTMLAreaElementImpl::target() const
 {
-    return getAttribute(HTMLAttributes::target());
+    return getAttribute(targetAttr);
 }
 
 void HTMLAreaElementImpl::setTarget(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::target(), value);
+    setAttribute(targetAttr, value);
 }

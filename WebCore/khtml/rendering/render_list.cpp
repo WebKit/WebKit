@@ -38,7 +38,7 @@
 //#define BOX_DEBUG
 
 using DOM::DocumentImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 using namespace khtml;
 
 const int cMarkerPadding = 7;
@@ -215,7 +215,7 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
             break;
         
         if (currChild->style()->htmlHacks() && currChild->element() &&
-            (currChild->element()->hasTagName(HTMLTags::ul())|| currChild->element()->hasTagName(HTMLTags::ol())))
+            (currChild->element()->hasTagName(ulTag)|| currChild->element()->hasTagName(olTag)))
             break;
             
         RenderObject* lineBox = getParentOfFirstLineBox(currChild, marker);

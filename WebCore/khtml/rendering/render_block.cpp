@@ -43,6 +43,7 @@
 #include "khtml_part.h"
 
 using namespace DOM;
+using namespace HTMLNames;
 
 namespace khtml {
 
@@ -479,7 +480,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_topMarginQuirk = style()->marginTop().quirk;
         m_bottomMarginQuirk = style()->marginBottom().quirk;
 
-        if (element() && element()->hasTagName(HTMLTags::form()) && element()->isMalformed())
+        if (element() && element()->hasTagName(formTag) && element()->isMalformed())
             // See if this form is malformed (i.e., unclosed). If so, don't give the form
             // a bottom margin.
             m_maxBottomPosMargin = m_maxBottomNegMargin = 0;

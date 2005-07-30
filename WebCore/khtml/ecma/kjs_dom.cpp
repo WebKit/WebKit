@@ -65,7 +65,7 @@ using DOM::HTMLAppletElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLEmbedElementImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 using DOM::HTMLObjectElementImpl;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
@@ -1691,18 +1691,18 @@ ValueImp *getRuntimeObject(ExecState *exec, NodeImpl *n)
     if (!n)
         return 0;
 
-    if (n->hasTagName(HTMLTags::applet())) {
+    if (n->hasTagName(appletTag)) {
         HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
         if (appletElement->getAppletInstance())
             // The instance is owned by the applet element.
             return new RuntimeObjectImp(appletElement->getAppletInstance(), false);
     }
-    else if (n->hasTagName(HTMLTags::embed())) {
+    else if (n->hasTagName(embedTag)) {
         HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
         if (embedElement->getEmbedInstance())
             return new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
     }
-    else if (n->hasTagName(HTMLTags::object())) {
+    else if (n->hasTagName(objectTag)) {
         HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
         if (objectElement->getObjectInstance())
             return new RuntimeObjectImp(objectElement->getObjectInstance(), false);
@@ -1895,17 +1895,8 @@ bool DOMNamedNodesCollection::getOwnProperty(ExecState *exec, const Identifier& 
     QValueListConstIterator< SharedPtr<NodeImpl> > end = m_nodes.end();
     for (QValueListConstIterator< SharedPtr<NodeImpl> > it = m_nodes.begin(); it != end; it++) {
       NodeImpl *node = (*it).get();
-      NamedNodeMapImpl *attributes = node->attributes();
-      if (!attributes) {
-	continue;
-      }
-
-      NodeImpl *idAttr = attributes->getNamedItem("id");
-      if (!idAttr) {
-	continue;
-      }
-
-      if (idAttr->nodeValue() == propertyName.string()) {
+      if (node->hasAttributes() &&
+          node->attributes()->id() == propertyName.string()) {
 	result = getDOMNode(exec,node);
         return true;
       }

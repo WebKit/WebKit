@@ -33,7 +33,7 @@ namespace DOM {
 
 bool HTMLUListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::type()) {
+    if (attrName == typeAttr) {
         result = eUnorderedList;
         return false;
     }
@@ -43,7 +43,7 @@ bool HTMLUListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 
 void HTMLUListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::type())
+    if (attr->name() == typeAttr)
         addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, attr->value());
     else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -51,53 +51,53 @@ void HTMLUListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 bool HTMLUListElementImpl::compact() const
 {
-    return !getAttribute(HTMLAttributes::compact()).isNull();
+    return !getAttribute(compactAttr).isNull();
 }
 
 void HTMLUListElementImpl::setCompact(bool b)
 {
-    setAttribute(HTMLAttributes::compact(), b ? "" : 0);
+    setAttribute(compactAttr, b ? "" : 0);
 }
 
 DOMString HTMLUListElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLUListElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 bool HTMLDirectoryElementImpl::compact() const
 {
-    return !getAttribute(HTMLAttributes::compact()).isNull();
+    return !getAttribute(compactAttr).isNull();
 }
 
 void HTMLDirectoryElementImpl::setCompact(bool b)
 {
-    setAttribute(HTMLAttributes::compact(), b ? "" : 0);
+    setAttribute(compactAttr, b ? "" : 0);
 }
 
 // -------------------------------------------------------------------------
 
 bool HTMLMenuElementImpl::compact() const
 {
-    return !getAttribute(HTMLAttributes::compact()).isNull();
+    return !getAttribute(compactAttr).isNull();
 }
 
 void HTMLMenuElementImpl::setCompact(bool b)
 {
-    setAttribute(HTMLAttributes::compact(), b ? "" : 0);
+    setAttribute(compactAttr, b ? "" : 0);
 }
 
 // -------------------------------------------------------------------------
 
 bool HTMLOListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::type()) {
+    if (attrName == typeAttr) {
         result = eListItem; // Share with <li>
         return false;
     }
@@ -107,7 +107,7 @@ bool HTMLOListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 
 void HTMLOListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::type()) {
+    if (attr->name() == typeAttr) {
         if ( strcmp( attr->value(), "a" ) == 0 )
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
         else if ( strcmp( attr->value(), "A" ) == 0 )
@@ -118,7 +118,7 @@ void HTMLOListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_UPPER_ROMAN);
         else if ( strcmp( attr->value(), "1" ) == 0 )
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_DECIMAL);
-    } else if (attr->name() == HTMLAttributes::start()) {
+    } else if (attr->name() == startAttr) {
         _start = !attr->isNull() ? attr->value().toInt() : 1;
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -126,34 +126,34 @@ void HTMLOListElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 bool HTMLOListElementImpl::compact() const
 {
-    return !getAttribute(HTMLAttributes::compact()).isNull();
+    return !getAttribute(compactAttr).isNull();
 }
 
 void HTMLOListElementImpl::setCompact(bool b)
 {
-    setAttribute(HTMLAttributes::compact(), b ? "" : 0);
+    setAttribute(compactAttr, b ? "" : 0);
 }
 
 void HTMLOListElementImpl::setStart(long start)
 {
-    setAttribute(HTMLAttributes::start(), QString::number(start));
+    setAttribute(startAttr, QString::number(start));
 }
 
 DOMString HTMLOListElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLOListElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 bool HTMLLIElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::type()) {
+    if (attrName == typeAttr) {
         result = eListItem; // Share with <ol> since all the values are the same
         return false;
     }
@@ -163,7 +163,7 @@ bool HTMLLIElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
 
 void HTMLLIElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::value()) {
+    if (attr->name() == valueAttr) {
         isValued = true;
         requestedValue = !attr->isNull() ? attr->value().toInt() : 0;
 
@@ -174,7 +174,7 @@ void HTMLLIElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
             list->setValue(requestedValue);
         }
-    } else if (attr->name() == HTMLAttributes::type()) {
+    } else if (attr->name() == typeAttr) {
         if ( strcmp( attr->value(), "a" ) == 0 )
             addCSSProperty(attr, CSS_PROP_LIST_STYLE_TYPE, CSS_VAL_LOWER_ALPHA);
         else if ( strcmp( attr->value(), "A" ) == 0 )
@@ -204,7 +204,7 @@ void HTMLLIElementImpl::attach()
         NodeImpl *listNode = 0;
         NodeImpl *n = this;
         while (!listNode && (n = n->parentNode())) {
-            if (n->hasTagName(HTMLTags::ul()) || n->hasTagName(HTMLTags::ol()))
+            if (n->hasTagName(ulTag) || n->hasTagName(olTag))
                 listNode = n;
         }
         
@@ -214,7 +214,7 @@ void HTMLLIElementImpl::attach()
             render->setNotInList(true);
 
 	// If we are first, and the OL has a start attr, set the value.
-	if (listNode && listNode->hasTagName(HTMLTags::ol()) && !m_render->previousSibling()) {
+	if (listNode && listNode->hasTagName(olTag) && !m_render->previousSibling()) {
 	    HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(listNode);
             render->setValue(ol->start());
 	}
@@ -227,34 +227,34 @@ void HTMLLIElementImpl::attach()
 
 DOMString HTMLLIElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLLIElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 long HTMLLIElementImpl::value() const
 {
-    return getAttribute(HTMLAttributes::value()).toInt();
+    return getAttribute(valueAttr).toInt();
 }
 
 void HTMLLIElementImpl::setValue(long value)
 {
-    setAttribute(HTMLAttributes::value(), QString::number(value));
+    setAttribute(valueAttr, QString::number(value));
 }
 
 // -------------------------------------------------------------------------
 
 bool HTMLDListElementImpl::compact() const
 {
-    return !getAttribute(HTMLAttributes::compact()).isNull();
+    return !getAttribute(compactAttr).isNull();
 }
 
 void HTMLDListElementImpl::setCompact(bool b)
 {
-    setAttribute(HTMLAttributes::compact(), b ? "" : 0);
+    setAttribute(compactAttr, b ? "" : 0);
 }
 
 }

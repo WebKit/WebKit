@@ -24,7 +24,7 @@
 #include "htmlnames.h"
 #include "html_formimpl.h"
 
-using DOM::HTMLTags;
+using namespace HTMLNames;
 using DOM::HTMLInputElementImpl;
 
 // The methods in this file are shared by all themes on every platform.

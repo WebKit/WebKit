@@ -54,6 +54,7 @@
 #include <kdebug.h>
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 // ------------------------------------------------------------------
@@ -78,7 +79,7 @@ DOMString HTMLElementImpl::nodeName() const
     
 HTMLTagStatus HTMLElementImpl::endTagRequirement() const
 {
-    if (hasLocalName(HTMLTags::dt()) || hasLocalName(HTMLTags::dd()))
+    if (hasLocalName(dtTag) || hasLocalName(ddTag))
         return TagStatusOptional;
 
     // Same values as <span>.  This way custom tag name elements will behave like inline spans.
@@ -87,11 +88,11 @@ HTMLTagStatus HTMLElementImpl::endTagRequirement() const
 
 int HTMLElementImpl::tagPriority() const
 {
-    if (hasLocalName(HTMLTags::address()) || hasLocalName(HTMLTags::dd()) || hasLocalName(HTMLTags::dt()) || hasLocalName(HTMLTags::noscript()))
+    if (hasLocalName(addressTag) || hasLocalName(ddTag) || hasLocalName(dtTag) || hasLocalName(noscriptTag))
         return 3;
-    if (hasLocalName(HTMLTags::center()) || hasLocalName(HTMLTags::nobr()))
+    if (hasLocalName(centerTag) || hasLocalName(nobrTag))
         return 5;
-    if (hasLocalName(HTMLTags::noembed()) || hasLocalName(HTMLTags::noframes()))
+    if (hasLocalName(noembedTag) || hasLocalName(noframesTag))
         return 10;
 
     // Same values as <span>.  This way custom tag name elements will behave like inline spans.
@@ -118,9 +119,9 @@ NodeImpl *HTMLElementImpl::cloneNode(bool deep)
 
 bool HTMLElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::align() ||
-        attrName == HTMLAttributes::contenteditable() ||
-        attrName == HTMLAttributes::dir()) {
+    if (attrName == alignAttr ||
+        attrName == contenteditableAttr ||
+        attrName == dirAttr) {
         result = eUniversal;
         return false;
     }
@@ -130,110 +131,110 @@ bool HTMLElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeE
     
 void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::idAttr() || attr->name() == HTMLAttributes::classAttr() || attr->name() == HTMLAttributes::style())
+    if (attr->name() == idAttr || attr->name() == classAttr || attr->name() == styleAttr)
         return StyledElementImpl::parseMappedAttribute(attr);
 
     DOMString indexstring;
-    if (attr->name() == HTMLAttributes::align()) {
+    if (attr->name() == alignAttr) {
         if (strcasecmp(attr->value(), "middle" ) == 0)
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, "center");
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, attr->value());
-    } else if (attr->name() == HTMLAttributes::contenteditable()) {
+    } else if (attr->name() == contenteditableAttr) {
         setContentEditable(attr);
-    } else if (attr->name() == HTMLAttributes::tabindex()) {
-        indexstring = getAttribute(HTMLAttributes::tabindex());
+    } else if (attr->name() == tabindexAttr) {
+        indexstring = getAttribute(tabindexAttr);
         if (indexstring.length())
             setTabIndex(indexstring.toInt());
-    } else if (attr->name() == HTMLAttributes::lang()) {
+    } else if (attr->name() == langAttr) {
         // FIXME: Implement
-    } else if (attr->name() == HTMLAttributes::dir()) {
+    } else if (attr->name() == dirAttr) {
         addCSSProperty(attr, CSS_PROP_DIRECTION, attr->value());
         addCSSProperty(attr, CSS_PROP_UNICODE_BIDI, CSS_VAL_EMBED);
     }
 // standard events
-    else if (attr->name() == HTMLAttributes::onclick()) {
+    else if (attr->name() == onclickAttr) {
         setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::oncontextmenu()) {
+    } else if (attr->name() == oncontextmenuAttr) {
     	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondblclick()) {
+    } else if (attr->name() == ondblclickAttr) {
 	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmousedown()) {
+    } else if (attr->name() == onmousedownAttr) {
         setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmousemove()) {
+    } else if (attr->name() == onmousemoveAttr) {
         setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmouseout()) {
+    } else if (attr->name() == onmouseoutAttr) {
         setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmouseover()) {
+    } else if (attr->name() == onmouseoverAttr) {
         setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmouseup()) {
+    } else if (attr->name() == onmouseupAttr) {
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
 	                     getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onmousewheel()) {
+    } else if (attr->name() == onmousewheelAttr) {
         setHTMLEventListener(EventImpl::MOUSEWHEEL_EVENT,
                             getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onfocus()) {
+    } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onkeydown()) {
+    } else if (attr->name() == onkeydownAttr) {
         setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onkeypress()) {
+    } else if (attr->name() == onkeypressAttr) {
         setHTMLEventListener(EventImpl::KEYPRESS_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onkeyup()) {
+    } else if (attr->name() == onkeyupAttr) {
         setHTMLEventListener(EventImpl::KEYUP_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onscroll()) {
+    } else if (attr->name() == onscrollAttr) {
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onbeforecut()) {
+    } else if (attr->name() == onbeforecutAttr) {
         setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::oncut()) {
+    } else if (attr->name() == oncutAttr) {
         setHTMLEventListener(EventImpl::CUT_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onbeforecopy()) {
+    } else if (attr->name() == onbeforecopyAttr) {
         setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::oncopy()) {
+    } else if (attr->name() == oncopyAttr) {
         setHTMLEventListener(EventImpl::COPY_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onbeforepaste()) {
+    } else if (attr->name() == onbeforepasteAttr) {
         setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onpaste()) {
+    } else if (attr->name() == onpasteAttr) {
         setHTMLEventListener(EventImpl::PASTE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondragenter()) {
+    } else if (attr->name() == ondragenterAttr) {
         setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondragover()) {
+    } else if (attr->name() == ondragoverAttr) {
         setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondragleave()) {
+    } else if (attr->name() == ondragleaveAttr) {
         setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondrop()) {
+    } else if (attr->name() == ondropAttr) {
         setHTMLEventListener(EventImpl::DROP_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondragstart()) {
+    } else if (attr->name() == ondragstartAttr) {
         setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondrag()) {
+    } else if (attr->name() == ondragAttr) {
         setHTMLEventListener(EventImpl::DRAG_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::ondragend()) {
+    } else if (attr->name() == ondragendAttr) {
         setHTMLEventListener(EventImpl::DRAGEND_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onselectstart()) {
+    } else if (attr->name() == onselectstartAttr) {
         setHTMLEventListener(EventImpl::SELECTSTART_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
     } 
@@ -272,8 +273,8 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     if (endTagRequirement() == TagStatusForbidden)
         return 0;
 
-    if (hasLocalName(HTMLTags::col()) || hasLocalName(HTMLTags::colgroup()) || hasLocalName(HTMLTags::frameset()) ||
-        hasLocalName(HTMLTags::head()) || hasLocalName(HTMLTags::style()) || hasLocalName(HTMLTags::title()))
+    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
+        hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
     if (!getDocument()->isHTMLDocument())
@@ -300,7 +301,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     for (NodeImpl *node = fragment->firstChild(); node != NULL; node = nextNode) {
         nextNode = node->nextSibling();
 	node->ref();
-        if (node->hasTagName(HTMLTags::html()) || node->hasTagName(HTMLTags::body())) {
+        if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
 	    NodeImpl *firstChild = node->firstChild();
             if (firstChild != NULL) {
                 nextNode = firstChild;
@@ -314,7 +315,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
                 child->deref();
 	    }
             fragment->removeChild(node, ignoredExceptionCode);
-	} else if (node->hasTagName(HTMLTags::head()))
+	} else if (node->hasTagName(headTag))
 	    fragment->removeChild(node, ignoredExceptionCode);
 
         // Important to do this deref after removeChild, because if the only thing
@@ -374,10 +375,10 @@ void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
         return;
     }
 
-    if (hasLocalName(HTMLTags::col()) || hasLocalName(HTMLTags::colgroup()) || hasLocalName(HTMLTags::frameset()) ||
-        hasLocalName(HTMLTags::head()) || hasLocalName(HTMLTags::html()) || hasLocalName(HTMLTags::table()) || 
-        hasLocalName(HTMLTags::tbody()) || hasLocalName(HTMLTags::tfoot()) || hasLocalName(HTMLTags::thead()) ||
-        hasLocalName(HTMLTags::tr())) {
+    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
+        hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
+        hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
+        hasLocalName(trTag)) {
         exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -394,10 +395,10 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
         return;
     }
 
-    if (hasLocalName(HTMLTags::col()) || hasLocalName(HTMLTags::colgroup()) || hasLocalName(HTMLTags::frameset()) ||
-        hasLocalName(HTMLTags::head()) || hasLocalName(HTMLTags::html()) || hasLocalName(HTMLTags::table()) || 
-        hasLocalName(HTMLTags::tbody()) || hasLocalName(HTMLTags::tfoot()) || hasLocalName(HTMLTags::thead()) ||
-        hasLocalName(HTMLTags::tr())) {
+    if (hasLocalName(colTag) || hasLocalName(colgroupTag) || hasLocalName(framesetTag) ||
+        hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
+        hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
+        hasLocalName(trTag)) {
         exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
@@ -540,10 +541,10 @@ void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr)
 void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
     if (enabled == "inherit") {
         int exceptionCode;
-        removeAttribute(HTMLAttributes::contenteditable(), exceptionCode);
+        removeAttribute(contenteditableAttr, exceptionCode);
     }
     else
-        setAttribute(HTMLAttributes::contenteditable(), enabled.isEmpty() ? "true" : enabled);
+        setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);
 }
 
 void HTMLElementImpl::click(bool sendMouseEvents)
@@ -600,52 +601,52 @@ DOMString HTMLElementImpl::toString() const
 
 DOMString HTMLElementImpl::id() const
 {
-    return getAttribute(HTMLAttributes::idAttr());
+    return getAttribute(idAttr);
 }
 
 void HTMLElementImpl::setId(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::idAttr(), value);
+    setAttribute(idAttr, value);
 }
 
 DOMString HTMLElementImpl::title() const
 {
-    return getAttribute(HTMLAttributes::title());
+    return getAttribute(titleAttr);
 }
 
 void HTMLElementImpl::setTitle(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::title(), value);
+    setAttribute(titleAttr, value);
 }
 
 DOMString HTMLElementImpl::lang() const
 {
-    return getAttribute(HTMLAttributes::lang());
+    return getAttribute(langAttr);
 }
 
 void HTMLElementImpl::setLang(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::lang(), value);
+    setAttribute(langAttr, value);
 }
 
 DOMString HTMLElementImpl::dir() const
 {
-    return getAttribute(HTMLAttributes::dir());
+    return getAttribute(dirAttr);
 }
 
 void HTMLElementImpl::setDir(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::dir(), value);
+    setAttribute(dirAttr, value);
 }
 
 DOMString HTMLElementImpl::className() const
 {
-    return getAttribute(HTMLAttributes::classAttr());
+    return getAttribute(classAttr);
 }
 
 void HTMLElementImpl::setClassName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::classAttr(), value);
+    setAttribute(classAttr, value);
 }
 
 SharedPtr<HTMLCollectionImpl> HTMLElementImpl::children()
@@ -685,108 +686,108 @@ bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        tagList.insert(HTMLTags::a().localName().implementation());
-        tagList.insert(HTMLTags::abbr().localName().implementation());
-        tagList.insert(HTMLTags::acronym().localName().implementation());
-        tagList.insert(HTMLTags::address().localName().implementation());
-        tagList.insert(HTMLTags::applet().localName().implementation());
-        tagList.insert(HTMLTags::area().localName().implementation());
-        tagList.insert(HTMLTags::b().localName().implementation());
-        tagList.insert(HTMLTags::base().localName().implementation());
-        tagList.insert(HTMLTags::basefont().localName().implementation());
-        tagList.insert(HTMLTags::bdo().localName().implementation());
-        tagList.insert(HTMLTags::big().localName().implementation());
-        tagList.insert(HTMLTags::blockquote().localName().implementation());
-        tagList.insert(HTMLTags::body().localName().implementation());
-        tagList.insert(HTMLTags::br().localName().implementation());
-        tagList.insert(HTMLTags::button().localName().implementation());
-        tagList.insert(HTMLTags::canvas().localName().implementation());
-        tagList.insert(HTMLTags::caption().localName().implementation());
-        tagList.insert(HTMLTags::center().localName().implementation());
-        tagList.insert(HTMLTags::cite().localName().implementation());
-        tagList.insert(HTMLTags::code().localName().implementation());
-        tagList.insert(HTMLTags::col().localName().implementation());
-        tagList.insert(HTMLTags::colgroup().localName().implementation());
-        tagList.insert(HTMLTags::dd().localName().implementation());
-        tagList.insert(HTMLTags::del().localName().implementation());
-        tagList.insert(HTMLTags::dfn().localName().implementation());
-        tagList.insert(HTMLTags::dir().localName().implementation());
-        tagList.insert(HTMLTags::div().localName().implementation());
-        tagList.insert(HTMLTags::dl().localName().implementation());
-        tagList.insert(HTMLTags::dt().localName().implementation());
-        tagList.insert(HTMLTags::em().localName().implementation());
-        tagList.insert(HTMLTags::embed().localName().implementation());
-        tagList.insert(HTMLTags::fieldset().localName().implementation());
-        tagList.insert(HTMLTags::font().localName().implementation());
-        tagList.insert(HTMLTags::form().localName().implementation());
-        tagList.insert(HTMLTags::frame().localName().implementation());
-        tagList.insert(HTMLTags::frameset().localName().implementation());
-        tagList.insert(HTMLTags::head().localName().implementation());
-        tagList.insert(HTMLTags::h1().localName().implementation());
-        tagList.insert(HTMLTags::h2().localName().implementation());
-        tagList.insert(HTMLTags::h3().localName().implementation());
-        tagList.insert(HTMLTags::h4().localName().implementation());
-        tagList.insert(HTMLTags::h5().localName().implementation());
-        tagList.insert(HTMLTags::h6().localName().implementation());
-        tagList.insert(HTMLTags::hr().localName().implementation());
-        tagList.insert(HTMLTags::html().localName().implementation());
-        tagList.insert(HTMLTags::i().localName().implementation());
-        tagList.insert(HTMLTags::iframe().localName().implementation());
-        tagList.insert(HTMLTags::img().localName().implementation());
-        tagList.insert(HTMLTags::input().localName().implementation());
-        tagList.insert(HTMLTags::ins().localName().implementation());
-        tagList.insert(HTMLTags::isindex().localName().implementation());
-        tagList.insert(HTMLTags::kbd().localName().implementation());
-        tagList.insert(HTMLTags::keygen().localName().implementation());
-        tagList.insert(HTMLTags::label().localName().implementation());
-        tagList.insert(HTMLTags::layer().localName().implementation());
-        tagList.insert(HTMLTags::legend().localName().implementation());
-        tagList.insert(HTMLTags::li().localName().implementation());
-        tagList.insert(HTMLTags::link().localName().implementation());
-        tagList.insert(HTMLTags::map().localName().implementation());
-        tagList.insert(HTMLTags::marquee().localName().implementation());
-        tagList.insert(HTMLTags::menu().localName().implementation());
-        tagList.insert(HTMLTags::meta().localName().implementation());
-        tagList.insert(HTMLTags::nobr().localName().implementation());
-        tagList.insert(HTMLTags::noembed().localName().implementation());
-        tagList.insert(HTMLTags::noframes().localName().implementation());
-        tagList.insert(HTMLTags::nolayer().localName().implementation());
-        tagList.insert(HTMLTags::noscript().localName().implementation());
-        tagList.insert(HTMLTags::object().localName().implementation());
-        tagList.insert(HTMLTags::ol().localName().implementation());
-        tagList.insert(HTMLTags::optgroup().localName().implementation());
-        tagList.insert(HTMLTags::option().localName().implementation());
-        tagList.insert(HTMLTags::p().localName().implementation());
-        tagList.insert(HTMLTags::param().localName().implementation());
-        tagList.insert(HTMLTags::plaintext().localName().implementation());
-        tagList.insert(HTMLTags::pre().localName().implementation());
-        tagList.insert(HTMLTags::q().localName().implementation());
-        tagList.insert(HTMLTags::s().localName().implementation());
-        tagList.insert(HTMLTags::samp().localName().implementation());
-        tagList.insert(HTMLTags::script().localName().implementation());
-        tagList.insert(HTMLTags::select().localName().implementation());
-        tagList.insert(HTMLTags::small().localName().implementation());
-        tagList.insert(HTMLTags::span().localName().implementation());
-        tagList.insert(HTMLTags::strike().localName().implementation());
-        tagList.insert(HTMLTags::strong().localName().implementation());
-        tagList.insert(HTMLTags::style().localName().implementation());
-        tagList.insert(HTMLTags::sub().localName().implementation());
-        tagList.insert(HTMLTags::sup().localName().implementation());
-        tagList.insert(HTMLTags::table().localName().implementation());
-        tagList.insert(HTMLTags::tbody().localName().implementation());
-        tagList.insert(HTMLTags::td().localName().implementation());
-        tagList.insert(HTMLTags::textarea().localName().implementation());
-        tagList.insert(HTMLTags::tfoot().localName().implementation());
-        tagList.insert(HTMLTags::th().localName().implementation());
-        tagList.insert(HTMLTags::thead().localName().implementation());
-        tagList.insert(HTMLTags::title().localName().implementation());
-        tagList.insert(HTMLTags::tr().localName().implementation());
-        tagList.insert(HTMLTags::tt().localName().implementation());
-        tagList.insert(HTMLTags::u().localName().implementation());
-        tagList.insert(HTMLTags::ul().localName().implementation());
-        tagList.insert(HTMLTags::var().localName().implementation());
-        tagList.insert(HTMLTags::wbr().localName().implementation());
-        tagList.insert(HTMLTags::xmp().localName().implementation());
+        tagList.insert(aTag.localName().implementation());
+        tagList.insert(abbrTag.localName().implementation());
+        tagList.insert(acronymTag.localName().implementation());
+        tagList.insert(addressTag.localName().implementation());
+        tagList.insert(appletTag.localName().implementation());
+        tagList.insert(areaTag.localName().implementation());
+        tagList.insert(bTag.localName().implementation());
+        tagList.insert(baseTag.localName().implementation());
+        tagList.insert(basefontTag.localName().implementation());
+        tagList.insert(bdoTag.localName().implementation());
+        tagList.insert(bigTag.localName().implementation());
+        tagList.insert(blockquoteTag.localName().implementation());
+        tagList.insert(bodyTag.localName().implementation());
+        tagList.insert(brTag.localName().implementation());
+        tagList.insert(buttonTag.localName().implementation());
+        tagList.insert(canvasTag.localName().implementation());
+        tagList.insert(captionTag.localName().implementation());
+        tagList.insert(centerTag.localName().implementation());
+        tagList.insert(citeTag.localName().implementation());
+        tagList.insert(codeTag.localName().implementation());
+        tagList.insert(colTag.localName().implementation());
+        tagList.insert(colgroupTag.localName().implementation());
+        tagList.insert(ddTag.localName().implementation());
+        tagList.insert(delTag.localName().implementation());
+        tagList.insert(dfnTag.localName().implementation());
+        tagList.insert(dirTag.localName().implementation());
+        tagList.insert(divTag.localName().implementation());
+        tagList.insert(dlTag.localName().implementation());
+        tagList.insert(dtTag.localName().implementation());
+        tagList.insert(emTag.localName().implementation());
+        tagList.insert(embedTag.localName().implementation());
+        tagList.insert(fieldsetTag.localName().implementation());
+        tagList.insert(fontTag.localName().implementation());
+        tagList.insert(formTag.localName().implementation());
+        tagList.insert(frameTag.localName().implementation());
+        tagList.insert(framesetTag.localName().implementation());
+        tagList.insert(headTag.localName().implementation());
+        tagList.insert(h1Tag.localName().implementation());
+        tagList.insert(h2Tag.localName().implementation());
+        tagList.insert(h3Tag.localName().implementation());
+        tagList.insert(h4Tag.localName().implementation());
+        tagList.insert(h5Tag.localName().implementation());
+        tagList.insert(h6Tag.localName().implementation());
+        tagList.insert(hrTag.localName().implementation());
+        tagList.insert(htmlTag.localName().implementation());
+        tagList.insert(iTag.localName().implementation());
+        tagList.insert(iframeTag.localName().implementation());
+        tagList.insert(imgTag.localName().implementation());
+        tagList.insert(inputTag.localName().implementation());
+        tagList.insert(insTag.localName().implementation());
+        tagList.insert(isindexTag.localName().implementation());
+        tagList.insert(kbdTag.localName().implementation());
+        tagList.insert(keygenTag.localName().implementation());
+        tagList.insert(labelTag.localName().implementation());
+        tagList.insert(layerTag.localName().implementation());
+        tagList.insert(legendTag.localName().implementation());
+        tagList.insert(liTag.localName().implementation());
+        tagList.insert(linkTag.localName().implementation());
+        tagList.insert(mapTag.localName().implementation());
+        tagList.insert(marqueeTag.localName().implementation());
+        tagList.insert(menuTag.localName().implementation());
+        tagList.insert(metaTag.localName().implementation());
+        tagList.insert(nobrTag.localName().implementation());
+        tagList.insert(noembedTag.localName().implementation());
+        tagList.insert(noframesTag.localName().implementation());
+        tagList.insert(nolayerTag.localName().implementation());
+        tagList.insert(noscriptTag.localName().implementation());
+        tagList.insert(objectTag.localName().implementation());
+        tagList.insert(olTag.localName().implementation());
+        tagList.insert(optgroupTag.localName().implementation());
+        tagList.insert(optionTag.localName().implementation());
+        tagList.insert(pTag.localName().implementation());
+        tagList.insert(paramTag.localName().implementation());
+        tagList.insert(plaintextTag.localName().implementation());
+        tagList.insert(preTag.localName().implementation());
+        tagList.insert(qTag.localName().implementation());
+        tagList.insert(sTag.localName().implementation());
+        tagList.insert(sampTag.localName().implementation());
+        tagList.insert(scriptTag.localName().implementation());
+        tagList.insert(selectTag.localName().implementation());
+        tagList.insert(smallTag.localName().implementation());
+        tagList.insert(spanTag.localName().implementation());
+        tagList.insert(strikeTag.localName().implementation());
+        tagList.insert(strongTag.localName().implementation());
+        tagList.insert(styleTag.localName().implementation());
+        tagList.insert(subTag.localName().implementation());
+        tagList.insert(supTag.localName().implementation());
+        tagList.insert(tableTag.localName().implementation());
+        tagList.insert(tbodyTag.localName().implementation());
+        tagList.insert(tdTag.localName().implementation());
+        tagList.insert(textareaTag.localName().implementation());
+        tagList.insert(tfootTag.localName().implementation());
+        tagList.insert(thTag.localName().implementation());
+        tagList.insert(theadTag.localName().implementation());
+        tagList.insert(titleTag.localName().implementation());
+        tagList.insert(trTag.localName().implementation());
+        tagList.insert(ttTag.localName().implementation());
+        tagList.insert(uTag.localName().implementation());
+        tagList.insert(ulTag.localName().implementation());
+        tagList.insert(varTag.localName().implementation());
+        tagList.insert(wbrTag.localName().implementation());
+        tagList.insert(xmpTag.localName().implementation());
     }
 
     return tagList.contains(tagName.localName().implementation());
@@ -797,51 +798,51 @@ bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        tagList.insert(HTMLTags::tt().localName().implementation());
-        tagList.insert(HTMLTags::i().localName().implementation());
-        tagList.insert(HTMLTags::b().localName().implementation());
-        tagList.insert(HTMLTags::u().localName().implementation());
-        tagList.insert(HTMLTags::s().localName().implementation());
-        tagList.insert(HTMLTags::strike().localName().implementation());
-        tagList.insert(HTMLTags::big().localName().implementation());
-        tagList.insert(HTMLTags::small().localName().implementation());
-        tagList.insert(HTMLTags::em().localName().implementation());
-        tagList.insert(HTMLTags::strong().localName().implementation());
-        tagList.insert(HTMLTags::dfn().localName().implementation());
-        tagList.insert(HTMLTags::code().localName().implementation());
-        tagList.insert(HTMLTags::samp().localName().implementation());
-        tagList.insert(HTMLTags::kbd().localName().implementation());
-        tagList.insert(HTMLTags::var().localName().implementation());
-        tagList.insert(HTMLTags::cite().localName().implementation());
-        tagList.insert(HTMLTags::abbr().localName().implementation());
-        tagList.insert(HTMLTags::acronym().localName().implementation());
-        tagList.insert(HTMLTags::a().localName().implementation());
-        tagList.insert(HTMLTags::canvas().localName().implementation());
-        tagList.insert(HTMLTags::img().localName().implementation());
-        tagList.insert(HTMLTags::applet().localName().implementation());
-        tagList.insert(HTMLTags::object().localName().implementation());
-        tagList.insert(HTMLTags::embed().localName().implementation());
-        tagList.insert(HTMLTags::font().localName().implementation());
-        tagList.insert(HTMLTags::basefont().localName().implementation());
-        tagList.insert(HTMLTags::br().localName().implementation());
-        tagList.insert(HTMLTags::script().localName().implementation());
-        tagList.insert(HTMLTags::map().localName().implementation());
-        tagList.insert(HTMLTags::q().localName().implementation());
-        tagList.insert(HTMLTags::sub().localName().implementation());
-        tagList.insert(HTMLTags::sup().localName().implementation());
-        tagList.insert(HTMLTags::span().localName().implementation());
-        tagList.insert(HTMLTags::bdo().localName().implementation());
-        tagList.insert(HTMLTags::iframe().localName().implementation());
-        tagList.insert(HTMLTags::input().localName().implementation());
-        tagList.insert(HTMLTags::keygen().localName().implementation());
-        tagList.insert(HTMLTags::select().localName().implementation());
-        tagList.insert(HTMLTags::textarea().localName().implementation());
-        tagList.insert(HTMLTags::label().localName().implementation());
-        tagList.insert(HTMLTags::button().localName().implementation());
-        tagList.insert(HTMLTags::ins().localName().implementation());
-        tagList.insert(HTMLTags::del().localName().implementation());
-        tagList.insert(HTMLTags::nobr().localName().implementation());
-        tagList.insert(HTMLTags::wbr().localName().implementation());
+        tagList.insert(ttTag.localName().implementation());
+        tagList.insert(iTag.localName().implementation());
+        tagList.insert(bTag.localName().implementation());
+        tagList.insert(uTag.localName().implementation());
+        tagList.insert(sTag.localName().implementation());
+        tagList.insert(strikeTag.localName().implementation());
+        tagList.insert(bigTag.localName().implementation());
+        tagList.insert(smallTag.localName().implementation());
+        tagList.insert(emTag.localName().implementation());
+        tagList.insert(strongTag.localName().implementation());
+        tagList.insert(dfnTag.localName().implementation());
+        tagList.insert(codeTag.localName().implementation());
+        tagList.insert(sampTag.localName().implementation());
+        tagList.insert(kbdTag.localName().implementation());
+        tagList.insert(varTag.localName().implementation());
+        tagList.insert(citeTag.localName().implementation());
+        tagList.insert(abbrTag.localName().implementation());
+        tagList.insert(acronymTag.localName().implementation());
+        tagList.insert(aTag.localName().implementation());
+        tagList.insert(canvasTag.localName().implementation());
+        tagList.insert(imgTag.localName().implementation());
+        tagList.insert(appletTag.localName().implementation());
+        tagList.insert(objectTag.localName().implementation());
+        tagList.insert(embedTag.localName().implementation());
+        tagList.insert(fontTag.localName().implementation());
+        tagList.insert(basefontTag.localName().implementation());
+        tagList.insert(brTag.localName().implementation());
+        tagList.insert(scriptTag.localName().implementation());
+        tagList.insert(mapTag.localName().implementation());
+        tagList.insert(qTag.localName().implementation());
+        tagList.insert(subTag.localName().implementation());
+        tagList.insert(supTag.localName().implementation());
+        tagList.insert(spanTag.localName().implementation());
+        tagList.insert(bdoTag.localName().implementation());
+        tagList.insert(iframeTag.localName().implementation());
+        tagList.insert(inputTag.localName().implementation());
+        tagList.insert(keygenTag.localName().implementation());
+        tagList.insert(selectTag.localName().implementation());
+        tagList.insert(textareaTag.localName().implementation());
+        tagList.insert(labelTag.localName().implementation());
+        tagList.insert(buttonTag.localName().implementation());
+        tagList.insert(insTag.localName().implementation());
+        tagList.insert(delTag.localName().implementation());
+        tagList.insert(nobrTag.localName().implementation());
+        tagList.insert(wbrTag.localName().implementation());
     }
     return &tagList;
 }
@@ -849,37 +850,37 @@ HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
 HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList() {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        tagList.insert(HTMLTags::p().localName().implementation());
-        tagList.insert(HTMLTags::h1().localName().implementation());
-        tagList.insert(HTMLTags::h2().localName().implementation());
-        tagList.insert(HTMLTags::h3().localName().implementation());
-        tagList.insert(HTMLTags::h4().localName().implementation());
-        tagList.insert(HTMLTags::h5().localName().implementation());
-        tagList.insert(HTMLTags::h6().localName().implementation());
-        tagList.insert(HTMLTags::ul().localName().implementation());
-        tagList.insert(HTMLTags::ol().localName().implementation());
-        tagList.insert(HTMLTags::dir().localName().implementation());
-        tagList.insert(HTMLTags::menu().localName().implementation());
-        tagList.insert(HTMLTags::pre().localName().implementation());
-        tagList.insert(HTMLTags::plaintext().localName().implementation());
-        tagList.insert(HTMLTags::xmp().localName().implementation());
-        tagList.insert(HTMLTags::dl().localName().implementation());
-        tagList.insert(HTMLTags::div().localName().implementation());
-        tagList.insert(HTMLTags::layer().localName().implementation());
-        tagList.insert(HTMLTags::center().localName().implementation());
-        tagList.insert(HTMLTags::noscript().localName().implementation());
-        tagList.insert(HTMLTags::noframes().localName().implementation());
-        tagList.insert(HTMLTags::blockquote().localName().implementation());
-        tagList.insert(HTMLTags::form().localName().implementation());
-        tagList.insert(HTMLTags::isindex().localName().implementation());
-        tagList.insert(HTMLTags::hr().localName().implementation());
-        tagList.insert(HTMLTags::table().localName().implementation());
-        tagList.insert(HTMLTags::fieldset().localName().implementation());
-        tagList.insert(HTMLTags::address().localName().implementation());
-        tagList.insert(HTMLTags::li().localName().implementation());
-        tagList.insert(HTMLTags::dd().localName().implementation());
-        tagList.insert(HTMLTags::dt().localName().implementation());
-        tagList.insert(HTMLTags::marquee().localName().implementation());
+        tagList.insert(pTag.localName().implementation());
+        tagList.insert(h1Tag.localName().implementation());
+        tagList.insert(h2Tag.localName().implementation());
+        tagList.insert(h3Tag.localName().implementation());
+        tagList.insert(h4Tag.localName().implementation());
+        tagList.insert(h5Tag.localName().implementation());
+        tagList.insert(h6Tag.localName().implementation());
+        tagList.insert(ulTag.localName().implementation());
+        tagList.insert(olTag.localName().implementation());
+        tagList.insert(dirTag.localName().implementation());
+        tagList.insert(menuTag.localName().implementation());
+        tagList.insert(preTag.localName().implementation());
+        tagList.insert(plaintextTag.localName().implementation());
+        tagList.insert(xmpTag.localName().implementation());
+        tagList.insert(dlTag.localName().implementation());
+        tagList.insert(divTag.localName().implementation());
+        tagList.insert(layerTag.localName().implementation());
+        tagList.insert(centerTag.localName().implementation());
+        tagList.insert(noscriptTag.localName().implementation());
+        tagList.insert(noframesTag.localName().implementation());
+        tagList.insert(blockquoteTag.localName().implementation());
+        tagList.insert(formTag.localName().implementation());
+        tagList.insert(isindexTag.localName().implementation());
+        tagList.insert(hrTag.localName().implementation());
+        tagList.insert(tableTag.localName().implementation());
+        tagList.insert(fieldsetTag.localName().implementation());
+        tagList.insert(addressTag.localName().implementation());
+        tagList.insert(liTag.localName().implementation());
+        tagList.insert(ddTag.localName().implementation());
+        tagList.insert(dtTag.localName().implementation());
+        tagList.insert(marqueeTag.localName().implementation());
     }
     return &tagList;
 }
@@ -931,7 +932,7 @@ bool HTMLElementImpl::inBlockTagList(const NodeImpl* newChild)
 
 bool HTMLElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    if (hasTagName(HTMLTags::address()) && newChild->hasTagName(HTMLTags::p()))
+    if (hasTagName(addressTag) && newChild->hasTagName(pTag))
         return true;
     return inEitherTagList(newChild);
 }

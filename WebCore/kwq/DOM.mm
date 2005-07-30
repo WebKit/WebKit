@@ -71,7 +71,7 @@ using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::FilterNode;
 using DOM::HTMLElementImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
 using DOM::NodeFilter;
@@ -404,116 +404,116 @@ using khtml::SharedPtr;
                 // FIXME: We could make the HTML classes hand back their class names and then use that to make
                 // the appropriate Obj-C class from the string.
                 HTMLElementImpl* htmlElt = static_cast<HTMLElementImpl*>(impl);
-                if (htmlElt->hasLocalName(HTMLTags::html()))
+                if (htmlElt->hasLocalName(htmlTag))
                     wrapperClass = [DOMHTMLHtmlElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::head()))
+                else if (htmlElt->hasLocalName(headTag))
                     wrapperClass = [DOMHTMLHeadElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::link()))
+                else if (htmlElt->hasLocalName(linkTag))
                     wrapperClass = [DOMHTMLLinkElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::title()))
+                else if (htmlElt->hasLocalName(titleTag))
                     wrapperClass = [DOMHTMLTitleElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::meta()))
+                else if (htmlElt->hasLocalName(metaTag))
                     wrapperClass = [DOMHTMLMetaElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::base()))
+                else if (htmlElt->hasLocalName(baseTag))
                     wrapperClass = [DOMHTMLBaseElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::isindex()))
+                else if (htmlElt->hasLocalName(isindexTag))
                     wrapperClass = [DOMHTMLIsIndexElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::style()))
+                else if (htmlElt->hasLocalName(styleTag))
                     wrapperClass = [DOMHTMLStyleElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::body()))
+                else if (htmlElt->hasLocalName(bodyTag))
                     wrapperClass = [DOMHTMLBodyElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::form()))
+                else if (htmlElt->hasLocalName(formTag))
                     wrapperClass = [DOMHTMLFormElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::select()))
+                else if (htmlElt->hasLocalName(selectTag))
                     wrapperClass = [DOMHTMLSelectElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::optgroup()))
+                else if (htmlElt->hasLocalName(optgroupTag))
                     wrapperClass = [DOMHTMLOptGroupElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::option()))
+                else if (htmlElt->hasLocalName(optionTag))
                     wrapperClass = [DOMHTMLOptionElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::input()))
+                else if (htmlElt->hasLocalName(inputTag))
                     wrapperClass = [DOMHTMLInputElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::textarea()))
+                else if (htmlElt->hasLocalName(textareaTag))
                     wrapperClass = [DOMHTMLTextAreaElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::button()))
+                else if (htmlElt->hasLocalName(buttonTag))
                     wrapperClass = [DOMHTMLButtonElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::label()))
+                else if (htmlElt->hasLocalName(labelTag))
                     wrapperClass = [DOMHTMLLabelElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::fieldset()))
+                else if (htmlElt->hasLocalName(fieldsetTag))
                     wrapperClass = [DOMHTMLFieldSetElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::legend()))
+                else if (htmlElt->hasLocalName(legendTag))
                     wrapperClass = [DOMHTMLLegendElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::ul()))
+                else if (htmlElt->hasLocalName(ulTag))
                     wrapperClass = [DOMHTMLUListElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::ol()))                       
+                else if (htmlElt->hasLocalName(olTag))                       
                     wrapperClass = [DOMHTMLOListElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::dl()))
+                else if (htmlElt->hasLocalName(dlTag))
                     wrapperClass = [DOMHTMLDListElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::dir()))
+                else if (htmlElt->hasLocalName(dirTag))
                     wrapperClass = [DOMHTMLDirectoryElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::menu()))
+                else if (htmlElt->hasLocalName(menuTag))
                     wrapperClass = [DOMHTMLMenuElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::li()))
+                else if (htmlElt->hasLocalName(liTag))
                     wrapperClass = [DOMHTMLLIElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::div()))
+                else if (htmlElt->hasLocalName(divTag))
                     wrapperClass = [DOMHTMLDivElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::p()))
+                else if (htmlElt->hasLocalName(pTag))
                     wrapperClass = [DOMHTMLParagraphElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::h1()) ||
-                         htmlElt->hasLocalName(HTMLTags::h2()) ||
-                         htmlElt->hasLocalName(HTMLTags::h3()) ||
-                         htmlElt->hasLocalName(HTMLTags::h4()) ||
-                         htmlElt->hasLocalName(HTMLTags::h5()) ||
-                         htmlElt->hasLocalName(HTMLTags::h6()))
+                else if (htmlElt->hasLocalName(h1Tag) ||
+                         htmlElt->hasLocalName(h2Tag) ||
+                         htmlElt->hasLocalName(h3Tag) ||
+                         htmlElt->hasLocalName(h4Tag) ||
+                         htmlElt->hasLocalName(h5Tag) ||
+                         htmlElt->hasLocalName(h6Tag))
                     wrapperClass = [DOMHTMLHeadingElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::q()))
+                else if (htmlElt->hasLocalName(qTag))
                     wrapperClass = [DOMHTMLQuoteElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::pre()))
+                else if (htmlElt->hasLocalName(preTag))
                     wrapperClass = [DOMHTMLPreElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::br()))
+                else if (htmlElt->hasLocalName(brTag))
                     wrapperClass = [DOMHTMLBRElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::basefont()))
+                else if (htmlElt->hasLocalName(basefontTag))
                     wrapperClass = [DOMHTMLBaseFontElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::font()))
+                else if (htmlElt->hasLocalName(fontTag))
                     wrapperClass = [DOMHTMLFontElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::hr()))
+                else if (htmlElt->hasLocalName(hrTag))
                     wrapperClass = [DOMHTMLHRElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::a()))
+                else if (htmlElt->hasLocalName(aTag))
                     wrapperClass = [DOMHTMLAnchorElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::img()) ||
-                         htmlElt->hasLocalName(HTMLTags::canvas()))
+                else if (htmlElt->hasLocalName(imgTag) ||
+                         htmlElt->hasLocalName(canvasTag))
                     wrapperClass = [DOMHTMLImageElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::object()))
+                else if (htmlElt->hasLocalName(objectTag))
                     wrapperClass = [DOMHTMLObjectElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::param()))
+                else if (htmlElt->hasLocalName(paramTag))
                     wrapperClass = [DOMHTMLParamElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::applet()))
+                else if (htmlElt->hasLocalName(appletTag))
                     wrapperClass = [DOMHTMLAppletElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::map()))
+                else if (htmlElt->hasLocalName(mapTag))
                     wrapperClass = [DOMHTMLMapElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::area()))
+                else if (htmlElt->hasLocalName(areaTag))
                     wrapperClass = [DOMHTMLAreaElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::script()))
+                else if (htmlElt->hasLocalName(scriptTag))
                     wrapperClass = [DOMHTMLScriptElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::table()))
+                else if (htmlElt->hasLocalName(tableTag))
                     wrapperClass = [DOMHTMLTableElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::thead()) ||
-                         htmlElt->hasLocalName(HTMLTags::tbody()) ||
-                         htmlElt->hasLocalName(HTMLTags::tfoot()))
+                else if (htmlElt->hasLocalName(theadTag) ||
+                         htmlElt->hasLocalName(tbodyTag) ||
+                         htmlElt->hasLocalName(tfootTag))
                     wrapperClass = [DOMHTMLTableSectionElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::td()))
+                else if (htmlElt->hasLocalName(tdTag))
                     wrapperClass = [DOMHTMLTableCellElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::tr()))
+                else if (htmlElt->hasLocalName(trTag))
                     wrapperClass = [DOMHTMLTableRowElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::col()) ||
-                         htmlElt->hasLocalName(HTMLTags::colgroup()))
+                else if (htmlElt->hasLocalName(colTag) ||
+                         htmlElt->hasLocalName(colgroupTag))
                     wrapperClass = [DOMHTMLTableColElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::caption()))
+                else if (htmlElt->hasLocalName(captionTag))
                     wrapperClass = [DOMHTMLTableCaptionElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::frameset()))
+                else if (htmlElt->hasLocalName(framesetTag))
                     wrapperClass = [DOMHTMLFrameSetElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::frame()))
+                else if (htmlElt->hasLocalName(frameTag))
                     wrapperClass = [DOMHTMLFrameElement class];
-                else if (htmlElt->hasLocalName(HTMLTags::iframe()))
+                else if (htmlElt->hasLocalName(iframeTag))
                     wrapperClass = [DOMHTMLIFrameElement class];
                 else
                     wrapperClass = [DOMHTMLElement class];

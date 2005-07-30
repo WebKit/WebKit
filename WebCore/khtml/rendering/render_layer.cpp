@@ -64,6 +64,7 @@
 #define PAGE_KEEP   40
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 #ifdef APPLE_CHANGES
@@ -1485,7 +1486,7 @@ int Marquee::marqueeSpeed() const
 {
     int result = m_layer->renderer()->style()->marqueeSpeed();
     DOM::NodeImpl* elt = m_layer->renderer()->element();
-    if (elt && elt->hasTagName(HTMLTags::marquee())) {
+    if (elt && elt->hasTagName(marqueeTag)) {
         HTMLMarqueeElementImpl* marqueeElt = static_cast<HTMLMarqueeElementImpl*>(elt);
         result = kMax(result, marqueeElt->minimumDelay());
     }

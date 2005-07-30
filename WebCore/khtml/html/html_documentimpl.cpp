@@ -101,6 +101,7 @@
 
 template class QPtrStack<DOM::NodeImpl>;
 
+using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
@@ -245,7 +246,7 @@ Tokenizer *HTMLDocumentImpl::createTokenizer()
 bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 {
     // ### support comments. etc as a child
-    return (newChild->hasTagName(HTMLTags::html()) || newChild->isCommentNode());
+    return (newChild->hasTagName(htmlTag) || newChild->isCommentNode());
 }
 
 ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)

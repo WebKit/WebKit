@@ -51,6 +51,7 @@
 #include "KWQKHTMLPart.h"
 #endif
 
+using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
@@ -58,7 +59,7 @@ namespace DOM {
 // -------------------------------------------------------------------------
 
 HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentPtr *doc)
-  : HTMLElementImpl(HTMLTags::applet(), doc)
+  : HTMLElementImpl(appletTag, doc)
 {
     appletInstance = 0;
     m_allParamsAvailable = false;
@@ -71,20 +72,20 @@ HTMLAppletElementImpl::~HTMLAppletElementImpl()
 
 bool HTMLAppletElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(paramTag) || HTMLElementImpl::checkDTD(newChild);
 }
 
 bool HTMLAppletElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::height() ||
-        attrName == HTMLAttributes::vspace() ||
-        attrName == HTMLAttributes::hspace()) {
+    if (attrName == widthAttr ||
+        attrName == heightAttr ||
+        attrName == vspaceAttr ||
+        attrName == hspaceAttr) {
             result = eUniversal;
             return false;
     }
     
-    if (attrName == HTMLAttributes::align()) {
+    if (attrName == alignAttr) {
         result = eReplaced; // Share with <img> since the alignment behavior is the same.
         return false;
     }
@@ -94,26 +95,26 @@ bool HTMLAppletElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttr
 
 void HTMLAppletElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::alt() ||
-        attr->name() == HTMLAttributes::archive() ||
-        attr->name() == HTMLAttributes::code() ||
-        attr->name() == HTMLAttributes::codebase() ||
-        attr->name() == HTMLAttributes::mayscript() ||
-        attr->name() == HTMLAttributes::object()) {
+    if (attr->name() == altAttr ||
+        attr->name() == archiveAttr ||
+        attr->name() == codeAttr ||
+        attr->name() == codebaseAttr ||
+        attr->name() == mayscriptAttr ||
+        attr->name() == objectAttr) {
         // Do nothing.
-    } else if (attr->name() == HTMLAttributes::width()) {
+    } else if (attr->name() == widthAttr) {
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == HTMLAttributes::height()) {
+    } else if (attr->name() == heightAttr) {
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::vspace()) {
+    } else if (attr->name() == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == HTMLAttributes::hspace()) {
+    } else if (attr->name() == hspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::align()) {
+    } else if (attr->name() == alignAttr) {
         addHTMLAlignment(attr);
-    } else if (attr->name() == HTMLAttributes::name()) {
+    } else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -121,7 +122,7 @@ void HTMLAppletElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             document->addNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
-    } else if (attr->name() == HTMLAttributes::idAttr()) {
+    } else if (attr->name() == idAttr) {
         DOMString newIdAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -159,7 +160,7 @@ void HTMLAppletElementImpl::removedFromDocument()
 
 bool HTMLAppletElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    return !getAttribute(HTMLAttributes::code()).isNull();
+    return !getAttribute(codeAttr).isNull();
 }
 
 RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -171,21 +172,21 @@ RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderSt
     {
 	QMap<QString, QString> args;
 
-	args.insert( "code", getAttribute(HTMLAttributes::code()).string());
-	DOMString codeBase = getAttribute(HTMLAttributes::codebase());
+	args.insert( "code", getAttribute(codeAttr).string());
+	DOMString codeBase = getAttribute(codebaseAttr);
 	if(!codeBase.isNull())
 	    args.insert( "codeBase", codeBase.string() );
 	DOMString name = getDocument()->htmlMode() != DocumentImpl::XHtml ?
-			 getAttribute(HTMLAttributes::name()) : getAttribute(HTMLAttributes::idAttr());
+			 getAttribute(nameAttr) : getAttribute(idAttr);
 	if(!name.isNull())
 	    args.insert( "name", name.string() );
-	DOMString archive = getAttribute(HTMLAttributes::archive());
+	DOMString archive = getAttribute(archiveAttr);
 	if(!archive.isNull())
 	    args.insert( "archive", archive.string() );
 
 	args.insert( "baseURL", getDocument()->baseURL() );
 
-        DOMString mayScript = getAttribute(HTMLAttributes::mayscript());
+        DOMString mayScript = getAttribute(mayscriptAttr);
         if (!mayScript.isNull())
             args.insert("mayScript", mayScript.string());
 
@@ -273,118 +274,118 @@ bool HTMLAppletElementImpl::allParamsAvailable()
 
 DOMString HTMLAppletElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLAppletElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::alt() const
 {
-    return getAttribute(HTMLAttributes::alt());
+    return getAttribute(altAttr);
 }
 
 void HTMLAppletElementImpl::setAlt(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::alt(), value);
+    setAttribute(altAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::archive() const
 {
-    return getAttribute(HTMLAttributes::archive());
+    return getAttribute(archiveAttr);
 }
 
 void HTMLAppletElementImpl::setArchive(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::archive(), value);
+    setAttribute(archiveAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::code() const
 {
-    return getAttribute(HTMLAttributes::code());
+    return getAttribute(codeAttr);
 }
 
 void HTMLAppletElementImpl::setCode(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::code(), value);
+    setAttribute(codeAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::codeBase() const
 {
-    return getAttribute(HTMLAttributes::codebase());
+    return getAttribute(codebaseAttr);
 }
 
 void HTMLAppletElementImpl::setCodeBase(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::codebase(), value);
+    setAttribute(codebaseAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::height() const
 {
-    return getAttribute(HTMLAttributes::height());
+    return getAttribute(heightAttr);
 }
 
 void HTMLAppletElementImpl::setHeight(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::height(), value);
+    setAttribute(heightAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::hspace() const
 {
-    return getAttribute(HTMLAttributes::hspace());
+    return getAttribute(hspaceAttr);
 }
 
 void HTMLAppletElementImpl::setHspace(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::hspace(), value);
+    setAttribute(hspaceAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLAppletElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::object() const
 {
-    return getAttribute(HTMLAttributes::object());
+    return getAttribute(objectAttr);
 }
 
 void HTMLAppletElementImpl::setObject(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::object(), value);
+    setAttribute(objectAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::vspace() const
 {
-    return getAttribute(HTMLAttributes::vspace());
+    return getAttribute(vspaceAttr);
 }
 
 void HTMLAppletElementImpl::setVspace(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::vspace(), value);
+    setAttribute(vspaceAttr, value);
 }
 
 DOMString HTMLAppletElementImpl::width() const
 {
-    return getAttribute(HTMLAttributes::width());
+    return getAttribute(widthAttr);
 }
 
 void HTMLAppletElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::width(), value);
+    setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::embed(), doc), embedInstance(0)
+    : HTMLElementImpl(embedTag, doc), embedInstance(0)
 {}
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
@@ -393,7 +394,7 @@ HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
 
 bool HTMLEmbedElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(paramTag) || HTMLElementImpl::checkDTD(newChild);
 }
 
 #if APPLE_CHANGES
@@ -424,18 +425,18 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
 
 bool HTMLEmbedElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::height() ||
-        attrName == HTMLAttributes::border() ||
-        attrName == HTMLAttributes::vspace() ||
-        attrName == HTMLAttributes::hspace() ||
-        attrName == HTMLAttributes::valign() ||
-        attrName == HTMLAttributes::hidden()) {
+    if (attrName == widthAttr ||
+        attrName == heightAttr ||
+        attrName == borderAttr ||
+        attrName == vspaceAttr ||
+        attrName == hspaceAttr ||
+        attrName == valignAttr ||
+        attrName == hiddenAttr) {
         result = eUniversal;
         return false;
     }
         
-    if (attrName == HTMLAttributes::align()) {
+    if (attrName == alignAttr) {
         result = eReplaced; // Share with <img> since the alignment behavior is the same.
         return false;
     }
@@ -448,45 +449,45 @@ void HTMLEmbedElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     QString val = attr->value().string();
   
     int pos;
-    if (attr->name() == HTMLAttributes::type()) {
+    if (attr->name() == typeAttr) {
         serviceType = val.lower();
         pos = serviceType.find( ";" );
         if ( pos!=-1 )
             serviceType = serviceType.left( pos );
-    } else if (attr->name() == HTMLAttributes::code() ||
-               attr->name() == HTMLAttributes::src()) {
+    } else if (attr->name() == codeAttr ||
+               attr->name() == srcAttr) {
          url = khtml::parseURL(attr->value()).string();
-    } else if (attr->name() == HTMLAttributes::width()) {
+    } else if (attr->name() == widthAttr) {
         addCSSLength( attr, CSS_PROP_WIDTH, attr->value() );
-    } else if (attr->name() == HTMLAttributes::height()) {
+    } else if (attr->name() == heightAttr) {
         addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::border()) {
+    } else if (attr->name() == borderAttr) {
         addCSSLength(attr, CSS_PROP_BORDER_WIDTH, attr->value());
         addCSSProperty( attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID );
         addCSSProperty( attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID );
         addCSSProperty( attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID );
         addCSSProperty( attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID );
-    } else if (attr->name() == HTMLAttributes::vspace()) {
+    } else if (attr->name() == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == HTMLAttributes::hspace()) {
+    } else if (attr->name() == hspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::align()) {
+    } else if (attr->name() == alignAttr) {
 	addHTMLAlignment(attr);
-    } else if (attr->name() == HTMLAttributes::valign()) {
+    } else if (attr->name() == valignAttr) {
         addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
-    } else if (attr->name() == HTMLAttributes::pluginpage() ||
-               attr->name() == HTMLAttributes::pluginspage()) {
+    } else if (attr->name() == pluginpageAttr ||
+               attr->name() == pluginspageAttr) {
         pluginPage = val;
-    } else if (attr->name() == HTMLAttributes::hidden()) {
+    } else if (attr->name() == hiddenAttr) {
         if (val.lower()=="yes" || val.lower()=="true") {
             // FIXME: Not dynamic, but it's not really important that such a rarely-used
             // feature work dynamically.
             addCSSLength( attr, CSS_PROP_WIDTH, "0" );
             addCSSLength( attr, CSS_PROP_HEIGHT, "0" );
         }
-    } else if (attr->name() == HTMLAttributes::name()) {
+    } else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -503,7 +504,7 @@ bool HTMLEmbedElementImpl::rendererIsNeeded(RenderStyle *style)
     KHTMLPart *part = getDocument()->part();
     if (!part)
 	return false;
-    return part->pluginsEnabled() && !parentNode()->hasTagName(HTMLTags::object());
+    return part->pluginsEnabled() && !parentNode()->hasTagName(objectTag);
 }
 
 RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -542,16 +543,16 @@ void HTMLEmbedElementImpl::removedFromDocument()
 
 bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->name() == HTMLAttributes::src();
+    return attr->name() == srcAttr;
 }
 
 // -------------------------------------------------------------------------
 
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) 
 #if APPLE_CHANGES
-: HTMLElementImpl(HTMLTags::object(), doc), m_imageLoader(0), objectInstance(0)
+: HTMLElementImpl(objectTag, doc), m_imageLoader(0), objectInstance(0)
 #else
-: HTMLElementImpl(HTMLTags::object(), doc), m_imageLoader(0)
+: HTMLElementImpl(objectTag, doc), m_imageLoader(0)
 #endif
 {
     needWidgetUpdate = false;
@@ -565,7 +566,7 @@ HTMLObjectElementImpl::~HTMLObjectElementImpl()
 
 bool HTMLObjectElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return newChild->hasTagName(HTMLTags::param()) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(paramTag) || HTMLElementImpl::checkDTD(newChild);
 }
 
 #if APPLE_CHANGES
@@ -600,7 +601,7 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
 HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 {
     for (NodeImpl *p = parentNode(); p != 0; p = p->parentNode()) {
-        if (p->hasTagName(HTMLTags::form()))
+        if (p->hasTagName(formTag))
             return static_cast<HTMLFormElementImpl *>(p);
     }
     
@@ -609,15 +610,15 @@ HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 
 bool HTMLObjectElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::height() ||
-        attrName == HTMLAttributes::vspace() ||
-        attrName == HTMLAttributes::hspace()) {
+    if (attrName == widthAttr ||
+        attrName == heightAttr ||
+        attrName == vspaceAttr ||
+        attrName == hspaceAttr) {
         result = eUniversal;
         return false;
     }
     
-    if (attrName == HTMLAttributes::align()) {
+    if (attrName == alignAttr) {
         result = eReplaced; // Share with <img> since the alignment behavior is the same.
         return false;
     }
@@ -629,7 +630,7 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     QString val = attr->value().string();
     int pos;
-    if (attr->name() == HTMLAttributes::type()) {
+    if (attr->name() == typeAttr) {
         serviceType = val.lower();
         pos = serviceType.find( ";" );
         if ( pos!=-1 )
@@ -640,7 +641,7 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
           delete m_imageLoader;
           m_imageLoader = 0;
         }
-    } else if (attr->name() == HTMLAttributes::data()) {
+    } else if (attr->name() == dataAttr) {
         url = khtml::parseURL(  val ).string();
         if (m_render)
           needWidgetUpdate = true;
@@ -649,29 +650,29 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
               m_imageLoader = new HTMLImageLoader(this);
           m_imageLoader->updateFromElement();
         }
-    } else if (attr->name() == HTMLAttributes::width()) {
+    } else if (attr->name() == widthAttr) {
         addCSSLength( attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == HTMLAttributes::height()) {
+    } else if (attr->name() == heightAttr) {
         addCSSLength( attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::vspace()) {
+    } else if (attr->name() == vspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
-    } else if (attr->name() == HTMLAttributes::hspace()) {
+    } else if (attr->name() == hspaceAttr) {
         addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
         addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::align()) {
+    } else if (attr->name() == alignAttr) {
         addHTMLAlignment(attr);
-    } else if (attr->name() == HTMLAttributes::classid()) {
+    } else if (attr->name() == classidAttr) {
         classId = val;
         if (m_render)
           needWidgetUpdate = true;
-    } else if (attr->name() == HTMLAttributes::onload()) {
+    } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(EventImpl::LOAD_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::onunload()) {
+    } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string(), this));
-    } else if (attr->name() == HTMLAttributes::name()) {
+    } else if (attr->name() == nameAttr) {
 	    DOMString newNameAttr = attr->value();
 	    if (inDocument() && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -679,7 +680,7 @@ void HTMLObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 		document->addNamedItem(newNameAttr);
 	    }
 	    oldNameAttr = newNameAttr;
-    } else if (attr->name() == HTMLAttributes::idAttr()) {
+    } else if (attr->name() == idAttr) {
         DOMString newIdAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
             HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
@@ -812,7 +813,7 @@ void HTMLObjectElementImpl::childrenChanged()
 
 bool HTMLObjectElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return (attr->name() == HTMLAttributes::data() || (attr->name() == HTMLAttributes::usemap() && attr->value().domString()[0] != '#'));
+    return (attr->name() == dataAttr || (attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
 }
 
 bool HTMLObjectElementImpl::isImageType()
@@ -850,178 +851,178 @@ void HTMLObjectElementImpl::renderFallbackContent()
 
 DOMString HTMLObjectElementImpl::code() const
 {
-    return getAttribute(HTMLAttributes::code());
+    return getAttribute(codeAttr);
 }
 
 void HTMLObjectElementImpl::setCode(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::code(), value);
+    setAttribute(codeAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLObjectElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::archive() const
 {
-    return getAttribute(HTMLAttributes::archive());
+    return getAttribute(archiveAttr);
 }
 
 void HTMLObjectElementImpl::setArchive(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::archive(), value);
+    setAttribute(archiveAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::border() const
 {
-    return getAttribute(HTMLAttributes::border());
+    return getAttribute(borderAttr);
 }
 
 void HTMLObjectElementImpl::setBorder(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::border(), value);
+    setAttribute(borderAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::codeBase() const
 {
-    return getAttribute(HTMLAttributes::codebase());
+    return getAttribute(codebaseAttr);
 }
 
 void HTMLObjectElementImpl::setCodeBase(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::codebase(), value);
+    setAttribute(codebaseAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::codeType() const
 {
-    return getAttribute(HTMLAttributes::codetype());
+    return getAttribute(codetypeAttr);
 }
 
 void HTMLObjectElementImpl::setCodeType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::codetype(), value);
+    setAttribute(codetypeAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::data() const
 {
-    return getAttribute(HTMLAttributes::data());
+    return getAttribute(dataAttr);
 }
 
 void HTMLObjectElementImpl::setData(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::data(), value);
+    setAttribute(dataAttr, value);
 }
 
 bool HTMLObjectElementImpl::declare() const
 {
-    return !getAttribute(HTMLAttributes::declare()).isNull();
+    return !getAttribute(declareAttr).isNull();
 }
 
 void HTMLObjectElementImpl::setDeclare(bool declare)
 {
-    setAttribute(HTMLAttributes::declare(), declare ? "" : 0);
+    setAttribute(declareAttr, declare ? "" : 0);
 }
 
 DOMString HTMLObjectElementImpl::height() const
 {
-    return getAttribute(HTMLAttributes::height());
+    return getAttribute(heightAttr);
 }
 
 void HTMLObjectElementImpl::setHeight(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::height(), value);
+    setAttribute(heightAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::hspace() const
 {
-    return getAttribute(HTMLAttributes::hspace());
+    return getAttribute(hspaceAttr);
 }
 
 void HTMLObjectElementImpl::setHspace(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::hspace(), value);
+    setAttribute(hspaceAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLObjectElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::standby() const
 {
-    return getAttribute(HTMLAttributes::standby());
+    return getAttribute(standbyAttr);
 }
 
 void HTMLObjectElementImpl::setStandby(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::standby(), value);
+    setAttribute(standbyAttr, value);
 }
 
 long HTMLObjectElementImpl::tabIndex() const
 {
-    return getAttribute(HTMLAttributes::tabindex()).toInt();
+    return getAttribute(tabindexAttr).toInt();
 }
 
 void HTMLObjectElementImpl::setTabIndex(long tabIndex)
 {
-    setAttribute(HTMLAttributes::tabindex(), QString::number(tabIndex));
+    setAttribute(tabindexAttr, QString::number(tabIndex));
 }
 
 DOMString HTMLObjectElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLObjectElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::useMap() const
 {
-    return getAttribute(HTMLAttributes::usemap());
+    return getAttribute(usemapAttr);
 }
 
 void HTMLObjectElementImpl::setUseMap(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::usemap(), value);
+    setAttribute(usemapAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::vspace() const
 {
-    return getAttribute(HTMLAttributes::vspace());
+    return getAttribute(vspaceAttr);
 }
 
 void HTMLObjectElementImpl::setVspace(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::vspace(), value);
+    setAttribute(vspaceAttr, value);
 }
 
 DOMString HTMLObjectElementImpl::width() const
 {
-    return getAttribute(HTMLAttributes::width());
+    return getAttribute(widthAttr);
 }
 
 void HTMLObjectElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::width(), value);
+    setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::param(), doc)
+    : HTMLElementImpl(paramTag, doc)
 {
 }
 
@@ -1031,15 +1032,15 @@ HTMLParamElementImpl::~HTMLParamElementImpl()
 
 void HTMLParamElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::idAttr()) {
+    if (attr->name() == idAttr) {
         // Must call base class so that hasID bit gets set.
         HTMLElementImpl::parseMappedAttribute(attr);
         if (getDocument()->htmlMode() != DocumentImpl::XHtml)
             return;
         m_name = attr->value();
-    } else if (attr->name() == HTMLAttributes::name()) {
+    } else if (attr->name() == nameAttr) {
         m_name = attr->value();
-    } else if (attr->name() == HTMLAttributes::value()) {
+    } else if (attr->name() == valueAttr) {
         m_value = attr->value();
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -1047,8 +1048,8 @@ void HTMLParamElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 bool HTMLParamElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    if (attr->name() == HTMLAttributes::value()) {
-        AttributeImpl *attr = attributes()->getAttributeItem(HTMLAttributes::name());
+    if (attr->name() == valueAttr) {
+        AttributeImpl *attr = attributes()->getAttributeItem(nameAttr);
         if (attr) {
             DOMString value = attr->value().string().lower();
             if (value == "src" || value == "movie" || value == "data") {
@@ -1061,32 +1062,32 @@ bool HTMLParamElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 void HTMLParamElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLParamElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLParamElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 void HTMLParamElementImpl::setValue(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::value(), value);
+    setAttribute(valueAttr, value);
 }
 
 DOMString HTMLParamElementImpl::valueType() const
 {
-    return getAttribute(HTMLAttributes::valuetype());
+    return getAttribute(valuetypeAttr);
 }
 
 void HTMLParamElementImpl::setValueType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::valuetype(), value);
+    setAttribute(valuetypeAttr, value);
 }
 
 }

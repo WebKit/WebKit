@@ -43,7 +43,7 @@ using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
-using DOM::HTMLTags;
+using namespace HTMLNames;
 
 namespace khtml {
 
@@ -147,7 +147,7 @@ void BreakBlockquoteCommand::doApply()
         bool startIsBR = false;
         if (startNode != topBlockquote) {
             NodeImpl *n = startNode;
-            startIsBR = n->hasTagName(HTMLTags::br());
+            startIsBR = n->hasTagName(brTag);
             if (startIsBR)
                 n = n->nextSibling();
             while (n) {

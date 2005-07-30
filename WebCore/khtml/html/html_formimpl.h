@@ -648,7 +648,7 @@ public:
     HTMLOptGroupElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
     virtual ~HTMLOptGroupElementImpl();
 
-    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->hasTagName(HTMLTags::option()); }
+    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->hasTagName(HTMLNames::optionTag); }
 
     DOMString type() const;
 

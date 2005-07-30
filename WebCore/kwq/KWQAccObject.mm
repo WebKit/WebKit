@@ -70,13 +70,12 @@ using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
 using DOM::HTMLAreaElementImpl;
-using DOM::HTMLAttributes;
+using namespace HTMLNames;
 using DOM::HTMLCollection;
 using DOM::HTMLCollectionImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::HTMLMapElementImpl;
-using DOM::HTMLTags;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
@@ -366,7 +365,7 @@ using khtml::VisiblePosition;
     }
     if (m_renderer->isListMarker())
         return @"AXListMarker";
-    if (m_renderer->element() && m_renderer->element()->hasTagName(HTMLTags::button()))
+    if (m_renderer->element() && m_renderer->element()->hasTagName(buttonTag))
         return NSAccessibilityButtonRole;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
@@ -447,20 +446,20 @@ using khtml::VisiblePosition;
         return nil;
 
     if (m_areaElement) {
-        QString summary = static_cast<ElementImpl*>(m_areaElement)->getAttribute(HTMLAttributes::summary()).string();
+        QString summary = static_cast<ElementImpl*>(m_areaElement)->getAttribute(summaryAttr).string();
         if (!summary.isEmpty())
             return summary.getNSString();
-        QString title = static_cast<ElementImpl*>(m_areaElement)->getAttribute(HTMLAttributes::title()).string();
+        QString title = static_cast<ElementImpl*>(m_areaElement)->getAttribute(titleAttr).string();
         if (!title.isEmpty())
             return title.getNSString();
     }
 
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->element() && curr->element()->isHTMLElement()) {
-            QString summary = static_cast<ElementImpl*>(curr->element())->getAttribute(HTMLAttributes::summary()).string();
+            QString summary = static_cast<ElementImpl*>(curr->element())->getAttribute(summaryAttr).string();
             if (!summary.isEmpty())
                 return summary.getNSString();
-            QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(HTMLAttributes::title()).string();
+            QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(titleAttr).string();
             if (!title.isEmpty())
                 return title.getNSString();
         }
@@ -532,7 +531,7 @@ using khtml::VisiblePosition;
     if (!m_renderer || m_areaElement || !m_renderer->element())
         return nil;
     
-    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->hasTagName(HTMLTags::button()))
+    if (m_renderer->element()->isHTMLElement() && m_renderer->element()->hasTagName(buttonTag))
         return [self textUnderElement];
     if (m_renderer->element()->isLink())
         return [self textUnderElement];
@@ -549,7 +548,7 @@ using khtml::VisiblePosition;
     
     if (m_renderer->isImage()) {
         if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
-            QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(HTMLAttributes::alt()).string();
+            QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(altAttr).string();
             return !alt.isEmpty() ? alt.getNSString() : nil;
         }
     } else if ([self isAttachment])
@@ -622,7 +621,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-              m_renderer->element()->hasTagName(HTMLTags::button())));
+              m_renderer->element()->hasTagName(buttonTag)));
 }
 
 - (NSArray *)accessibilityAttributeNames
@@ -872,7 +871,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))) {
         HTMLAnchorElementImpl* anchor = [self anchorElement];
         if (anchor) {
-            QString s = anchor->getAttribute(HTMLAttributes::href()).string();
+            QString s = anchor->getAttribute(hrefAttr).string();
             if (!s.isNull()) {
                 s = anchor->getDocument()->completeURL(s);
                 return s.getNSString();

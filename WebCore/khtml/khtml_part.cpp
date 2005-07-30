@@ -61,6 +61,7 @@
 #include "xml/xml_tokenizer.h"
 
 using namespace DOM;
+using namespace HTMLNames;
 
 #include "khtmlview.h"
 #include <kparts/partmanager.h>
@@ -208,8 +209,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
   AtomicString::init();
   QualifiedName::init();
-  HTMLTags::init(); // FIXME: We should make this happen only when HTML is used.
-  HTMLAttributes::init(); // FIXME: Ditto.
+  HTMLNames::initHTMLNames(); // FIXME: We should make this happen only when HTML is used.
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
   else if ( prof == BrowserViewGUI )
@@ -2988,7 +2988,7 @@ KURL KHTMLPart::backgroundURL() const
   if (!d->m_doc || !d->m_doc->isHTMLDocument())
     return KURL();
 
-  QString relURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( HTMLAttributes::background() ).string();
+  QString relURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( backgroundAttr ).string();
 
   return KURL( m_url, relURL );
 }
@@ -3153,7 +3153,7 @@ void KHTMLPart::updateActions()
 
   // ### frames
   if ( d->m_doc && d->m_doc->isHTMLDocument() && static_cast<HTMLDocumentImpl*>(d->m_doc)->body() && !d->m_bClearing )
-    bgURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( HTMLAttributes::background() ).string();
+    bgURL = static_cast<HTMLDocumentImpl*>(d->m_doc)->body()->getAttribute( backgroundAttr ).string();
 
   d->m_paSaveBackground->setEnabled( !bgURL.isEmpty() );
 }
@@ -4778,7 +4778,7 @@ bool KHTMLPart::handleMouseMoveEventDrag(khtml::MouseMoveEvent *event)
 			if (i) {
 				KMultipleDrag *mdrag = new KMultipleDrag( d->m_view->viewport());
 				mdrag->addDragObject(new QImageDrag(i->currentImage(), 0L));
-				KURL u( completeURL( khtml::parseURL(i->getAttribute(HTMLAttributes::src())).string()));
+				KURL u( completeURL( khtml::parseURL(i->getAttribute(srcAttr)).string()));
 				KURLDrag* urlDrag = KURLDrag::newDrag(u, 0L);
 				if (!d->m_referrer.isEmpty())
 					urlDrag->metaData()["referrer"] = d->m_referrer;
@@ -5738,12 +5738,12 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
     int exceptionCode = 0;
 
     if (d->m_typingStyle) {
-        styleElement = xmlDocImpl()->createElementNS(HTMLTags::xhtmlNamespaceURI(), "span", exceptionCode);
+        styleElement = xmlDocImpl()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
         assert(exceptionCode == 0);
 
         styleElement->ref();
         
-        styleElement->setAttribute(HTMLAttributes::style(), d->m_typingStyle->cssText().implementation(), exceptionCode);
+        styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().implementation(), exceptionCode);
         assert(exceptionCode == 0);
         
         TextImpl *text = xmlDocImpl()->createEditingTextNode("");
@@ -5820,7 +5820,7 @@ void KHTMLPart::applyEditingStyleToElement(ElementImpl *element) const
     CSSMutableStyleDeclarationImpl *mergeStyle = editingStyle();
     if (mergeStyle) {
         currentStyle->merge(mergeStyle);
-        element->setAttribute(HTMLAttributes::style(), currentStyle->cssText());
+        element->setAttribute(styleAttr, currentStyle->cssText());
     }
 }
 
@@ -5841,7 +5841,7 @@ void KHTMLPart::removeEditingStyleFromElement(ElementImpl *element) const
     if (changed)
         currentStyle->setChanged();
 
-    element->setAttribute(HTMLAttributes::style(), currentStyle->cssText());
+    element->setAttribute(styleAttr, currentStyle->cssText());
 }
 
 #if !APPLE_CHANGES

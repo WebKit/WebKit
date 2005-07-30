@@ -39,12 +39,13 @@
 
 #include <kdebug.h>
 
+using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::a(), doc)
+    : HTMLElementImpl(aTag, doc)
 {
     m_hasTarget = false;
 }
@@ -145,14 +146,14 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             }
         }
 
-        url = khtml::parseURL(getAttribute(HTMLAttributes::href())).string();
+        url = khtml::parseURL(getAttribute(hrefAttr)).string();
 
-        utarget = getAttribute(HTMLAttributes::target()).string();
+        utarget = getAttribute(targetAttr).string();
 
         if ( e && e->button() == 1 )
             utarget = "_blank";
 
-        if (evt->target()->hasTagName(HTMLTags::img())) {
+        if (evt->target()->hasTagName(imgTag)) {
             HTMLImageElementImpl* img = static_cast<HTMLImageElementImpl*>( evt->target() );
             if ( img && img->isServerMap() )
             {
@@ -216,13 +217,13 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
 
 void HTMLAnchorElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::href()) {
+    if (attr->name() == hrefAttr) {
         m_isLink = !attr->isNull();
-    } else if (attr->name() == HTMLAttributes::target()) {
+    } else if (attr->name() == targetAttr) {
         m_hasTarget = !attr->isNull();
-    } else if (attr->name() == HTMLAttributes::name() ||
-             attr->name() == HTMLAttributes::title() ||
-             attr->name() == HTMLAttributes::rel()) {
+    } else if (attr->name() == nameAttr ||
+             attr->name() == titleAttr ||
+             attr->name() == relAttr) {
         // Do nothing.
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -237,42 +238,42 @@ void HTMLAnchorElementImpl::accessKeyAction(bool sendToAnyElement)
 
 bool HTMLAnchorElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return attr->name() == HTMLAttributes::href();
+    return attr->name() == hrefAttr;
 }
 
 DOMString HTMLAnchorElementImpl::accessKey() const
 {
-    return getAttribute(HTMLAttributes::accesskey());
+    return getAttribute(accesskeyAttr);
 }
 
 void HTMLAnchorElementImpl::setAccessKey(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::accesskey(), value);
+    setAttribute(accesskeyAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::charset() const
 {
-    return getAttribute(HTMLAttributes::charset());
+    return getAttribute(charsetAttr);
 }
 
 void HTMLAnchorElementImpl::setCharset(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::charset(), value);
+    setAttribute(charsetAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::coords() const
 {
-    return getAttribute(HTMLAttributes::coords());
+    return getAttribute(coordsAttr);
 }
 
 void HTMLAnchorElementImpl::setCoords(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::coords(), value);
+    setAttribute(coordsAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::href() const
 {
-    DOMString href = getAttribute(HTMLAttributes::href());
+    DOMString href = getAttribute(hrefAttr);
     if (href.isNull())
         return href;
     return getDocument()->completeURL(href);
@@ -280,87 +281,87 @@ DOMString HTMLAnchorElementImpl::href() const
 
 void HTMLAnchorElementImpl::setHref(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::href(), value);
+    setAttribute(hrefAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::hreflang() const
 {
-    return getAttribute(HTMLAttributes::hreflang());
+    return getAttribute(hreflangAttr);
 }
 
 void HTMLAnchorElementImpl::setHreflang(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::hreflang(), value);
+    setAttribute(hreflangAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::name() const
 {
-    return getAttribute(HTMLAttributes::name());
+    return getAttribute(nameAttr);
 }
 
 void HTMLAnchorElementImpl::setName(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::name(), value);
+    setAttribute(nameAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::rel() const
 {
-    return getAttribute(HTMLAttributes::rel());
+    return getAttribute(relAttr);
 }
 
 void HTMLAnchorElementImpl::setRel(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::rel(), value);
+    setAttribute(relAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::rev() const
 {
-    return getAttribute(HTMLAttributes::rev());
+    return getAttribute(revAttr);
 }
 
 void HTMLAnchorElementImpl::setRev(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::rev(), value);
+    setAttribute(revAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::shape() const
 {
-    return getAttribute(HTMLAttributes::shape());
+    return getAttribute(shapeAttr);
 }
 
 void HTMLAnchorElementImpl::setShape(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::shape(), value);
+    setAttribute(shapeAttr, value);
 }
 
 long HTMLAnchorElementImpl::tabIndex() const
 {
-    return getAttribute(HTMLAttributes::tabindex()).toInt();
+    return getAttribute(tabindexAttr).toInt();
 }
 
 void HTMLAnchorElementImpl::setTabIndex(long tabIndex)
 {
-    setAttribute(HTMLAttributes::tabindex(), QString::number(tabIndex));
+    setAttribute(tabindexAttr, QString::number(tabIndex));
 }
 
 DOMString HTMLAnchorElementImpl::target() const
 {
-    return getAttribute(HTMLAttributes::target());
+    return getAttribute(targetAttr);
 }
 
 void HTMLAnchorElementImpl::setTarget(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::target(), value);
+    setAttribute(targetAttr, value);
 }
 
 DOMString HTMLAnchorElementImpl::type() const
 {
-    return getAttribute(HTMLAttributes::type());
+    return getAttribute(typeAttr);
 }
 
 void HTMLAnchorElementImpl::setType(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::type(), value);
+    setAttribute(typeAttr, value);
 }
 
 void HTMLAnchorElementImpl::blur()
@@ -377,7 +378,7 @@ void HTMLAnchorElementImpl::focus()
 
 // -------------------------------------------------------------------------
 
-HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(HTMLTags::br(), doc)
+HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(brTag, doc)
 {
 }
 
@@ -387,7 +388,7 @@ HTMLBRElementImpl::~HTMLBRElementImpl()
 
 bool HTMLBRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::clear()) {
+    if (attrName == clearAttr) {
         result = eUniversal;
         return false;
     }
@@ -397,7 +398,7 @@ bool HTMLBRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
 
 void HTMLBRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::clear()) {
+    if (attr->name() == clearAttr) {
         DOMString str = attr->value();
         // If the string is empty, then don't add the clear property. 
         // <br clear> and <br clear=""> are just treated like <br> by Gecko,
@@ -418,18 +419,18 @@ RenderObject *HTMLBRElementImpl::createRenderer(RenderArena *arena, RenderStyle 
 
 DOMString HTMLBRElementImpl::clear() const
 {
-    return getAttribute(HTMLAttributes::clear());
+    return getAttribute(clearAttr);
 }
 
 void HTMLBRElementImpl::setClear(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::clear(), value);
+    setAttribute(clearAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLFontElementImpl::HTMLFontElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::font(), doc)
+    : HTMLElementImpl(fontTag, doc)
 {
 }
 
@@ -485,9 +486,9 @@ static bool parseFontSizeNumber(const DOMString &s, int &size)
 
 bool HTMLFontElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::size() ||
-        attrName == HTMLAttributes::color() ||
-        attrName == HTMLAttributes::face()) {
+    if (attrName == sizeAttr ||
+        attrName == colorAttr ||
+        attrName == faceAttr) {
         result = eUniversal;
         return false;
     }
@@ -497,7 +498,7 @@ bool HTMLFontElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttrib
 
 void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::size()) {
+    if (attr->name() == sizeAttr) {
         int num;
         if (parseFontSizeNumber(attr->value(), num)) {
             int size;
@@ -517,9 +518,9 @@ void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             }
             addCSSProperty(attr, CSS_PROP_FONT_SIZE, size);
         }
-    } else if (attr->name() == HTMLAttributes::color()) {
+    } else if (attr->name() == colorAttr) {
         addCSSColor(attr, CSS_PROP_COLOR, attr->value());
-    } else if (attr->name() == HTMLAttributes::face()) {
+    } else if (attr->name() == faceAttr) {
         addCSSProperty(attr, CSS_PROP_FONT_FAMILY, attr->value());
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -527,32 +528,32 @@ void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 DOMString HTMLFontElementImpl::color() const
 {
-    return getAttribute(HTMLAttributes::color());
+    return getAttribute(colorAttr);
 }
 
 void HTMLFontElementImpl::setColor(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::color(), value);
+    setAttribute(colorAttr, value);
 }
 
 DOMString HTMLFontElementImpl::face() const
 {
-    return getAttribute(HTMLAttributes::face());
+    return getAttribute(faceAttr);
 }
 
 void HTMLFontElementImpl::setFace(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::face(), value);
+    setAttribute(faceAttr, value);
 }
 
 DOMString HTMLFontElementImpl::size() const
 {
-    return getAttribute(HTMLAttributes::size());
+    return getAttribute(sizeAttr);
 }
 
 void HTMLFontElementImpl::setSize(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::size(), value);
+    setAttribute(sizeAttr, value);
 }
 
 // -------------------------------------------------------------------------
@@ -564,39 +565,39 @@ HTMLModElementImpl::HTMLModElementImpl(const QualifiedName& tagName, DocumentPtr
 
 DOMString HTMLModElementImpl::cite() const
 {
-    return getAttribute(HTMLAttributes::cite());
+    return getAttribute(citeAttr);
 }
 
 void HTMLModElementImpl::setCite(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::cite(), value);
+    setAttribute(citeAttr, value);
 }
 
 DOMString HTMLModElementImpl::dateTime() const
 {
-    return getAttribute(HTMLAttributes::datetime());
+    return getAttribute(datetimeAttr);
 }
 
 void HTMLModElementImpl::setDateTime(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::datetime(), value);
+    setAttribute(datetimeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::q(), doc)
+    : HTMLElementImpl(qTag, doc)
 {
 }
 
 DOMString HTMLQuoteElementImpl::cite() const
 {
-    return getAttribute(HTMLAttributes::cite());
+    return getAttribute(citeAttr);
 }
 
 void HTMLQuoteElementImpl::setCite(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::cite(), value);
+    setAttribute(citeAttr, value);
 }
 
 }

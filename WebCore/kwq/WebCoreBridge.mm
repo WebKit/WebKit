@@ -97,8 +97,7 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
-using DOM::HTMLTags;
-using DOM::HTMLAttributes;
+using namespace HTMLNames;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
@@ -898,7 +897,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
 {
     NodeImpl *node = [element _nodeImpl];
-    if (node->hasTagName(HTMLTags::input())) {
+    if (node->hasTagName(inputTag)) {
         return static_cast<HTMLInputElementImpl *>(node);
     }
     return nil;
@@ -911,7 +910,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // maps.google.com crashes otherwise because it is an xslt file
     // that contains <form> elements that aren't in any namespace, so
     // they come out as generic CML elements
-    if (node && node->hasTagName(HTMLTags::form())) {
+    if (node && node->hasTagName(formTag)) {
         return static_cast<HTMLFormElementImpl *>(node);
     }
     return nil;
@@ -1014,7 +1013,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
         if (titleNode->isElementNode()) {
-            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(HTMLAttributes::title());
+            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(titleAttr);
             if (!title.isNull()) {
                 // We found a node with a title.
                 QString titleText = title.string();
@@ -1031,14 +1030,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         DocumentImpl *doc = e->getDocument();
         ASSERT(doc);
         
-        const AtomicString& title = e->getAttribute(HTMLAttributes::title());
+        const AtomicString& title = e->getAttribute(titleAttr);
         if (!title.isEmpty()) {
             QString titleText = title.string();
             titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
             [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
-        const AtomicString& link = e->getAttribute(HTMLAttributes::href());
+        const AtomicString& link = e->getAttribute(hrefAttr);
         if (!link.isNull()) {
             QString t = plainText(rangeOfContents(e).get());
             if (!t.isEmpty()) {
@@ -1048,7 +1047,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
-        DOMString target = e->getAttribute(HTMLAttributes::target());
+        DOMString target = e->getAttribute(targetAttr);
         if (target.isEmpty() && doc) { // FIXME: Take out this doc check when we're not just before a release.
             target = doc->baseTarget();
         }
@@ -1079,10 +1078,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString attr;
-            if (i->hasTagName(HTMLTags::object())) {
-                attr = i->getAttribute(HTMLAttributes::data());
+            if (i->hasTagName(objectTag)) {
+                attr = i->getAttribute(dataAttr);
             } else {
-                attr = i->getAttribute(HTMLAttributes::src());
+                attr = i->getAttribute(srcAttr);
             }
             if (!attr.isEmpty()) {
                 QString URLString = parseURL(attr).string();
@@ -1091,9 +1090,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             
             // FIXME: Code copied from RenderImage::updateFromElement; should share.
             DOMString alt;
-            if (i->hasTagName(HTMLTags::input()))
+            if (i->hasTagName(inputTag))
                 alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-            else if (i->hasTagName(HTMLTags::img()))
+            else if (i->hasTagName(imgTag))
                 alt = static_cast<HTMLImageElementImpl *>(i)->altText();
             if (!alt.isNull()) {
                 QString altText = alt.string();

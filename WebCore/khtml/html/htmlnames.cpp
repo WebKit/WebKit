@@ -1,7 +1,7 @@
 /*
  * This file is part of the HTML DOM implementation for KDE.
  *
- * Copyright (C) QualifiedName(nullAtom, " 2005 Apple Computer, Inc.
+ * Copyright (C) 2005 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,13 +22,15 @@
 
 #define KHTML_HTMLNAMES_HIDE_GLOBALS 1
 
-#include <qptrdict.h>
 #include "htmlnames.h"
-#include "dom_qname.h"
 
-namespace DOM {
+using DOM::AtomicString;
+using DOM::QualifiedName;
+using DOM::nullAtom;
 
-void* xhtmlNamespaceURIAtom[(sizeof(AtomicString) + sizeof(void*) - 1) / sizeof(void*)];
+namespace HTMLNames {
+
+void* xhtmlNamespaceURI[(sizeof(AtomicString) + sizeof(void*) - 1) / sizeof(void*)];
 
 // Define a QualifiedName-sized array of pointers to avoid static initialization.
 // Use an array of pointers instead of an array of char in case there is some alignment issue.
@@ -162,14 +164,14 @@ DEFINE_ATTR_GLOBAL(border)
 DEFINE_ATTR_GLOBAL(bordercolor)
 DEFINE_ATTR_GLOBAL(cellpadding)
 DEFINE_ATTR_GLOBAL(cellspacing)
-DEFINE_ATTR_GLOBAL(charAttr)
+DEFINE_ATTR_GLOBAL(char)
 DEFINE_ATTR_GLOBAL(challenge)
 DEFINE_ATTR_GLOBAL(charoff)
 DEFINE_ATTR_GLOBAL(charset)
 DEFINE_ATTR_GLOBAL(checked)
 DEFINE_ATTR_GLOBAL(cellborder)
 DEFINE_ATTR_GLOBAL(cite)
-DEFINE_ATTR_GLOBAL(classAttr)
+DEFINE_ATTR_GLOBAL(class)
 DEFINE_ATTR_GLOBAL(classid)
 DEFINE_ATTR_GLOBAL(clear)
 DEFINE_ATTR_GLOBAL(code)
@@ -192,7 +194,7 @@ DEFINE_ATTR_GLOBAL(direction)
 DEFINE_ATTR_GLOBAL(disabled)
 DEFINE_ATTR_GLOBAL(enctype)
 DEFINE_ATTR_GLOBAL(face)
-DEFINE_ATTR_GLOBAL(forAttr)
+DEFINE_ATTR_GLOBAL(for)
 DEFINE_ATTR_GLOBAL(frame)
 DEFINE_ATTR_GLOBAL(frameborder)
 DEFINE_ATTR_GLOBAL(headers)
@@ -202,7 +204,7 @@ DEFINE_ATTR_GLOBAL(href)
 DEFINE_ATTR_GLOBAL(hreflang)
 DEFINE_ATTR_GLOBAL(hspace)
 DEFINE_ATTR_GLOBAL(http_equiv)
-DEFINE_ATTR_GLOBAL(idAttr)
+DEFINE_ATTR_GLOBAL(id)
 DEFINE_ATTR_GLOBAL(incremental)
 DEFINE_ATTR_GLOBAL(ismap)
 DEFINE_ATTR_GLOBAL(keytype)
@@ -319,13 +321,15 @@ DEFINE_ATTR_GLOBAL(vspace)
 DEFINE_ATTR_GLOBAL(width)
 DEFINE_ATTR_GLOBAL(wrap)
 
-void HTMLTags::init()
+void initHTMLNames()
 {
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
-        static AtomicString xhtmlNS("http://www.w3.org/1999/xhtml");
-        new (&xhtmlNamespaceURIAtom) AtomicString(xhtmlNS);
+
+        AtomicString xhtmlNS("http://www.w3.org/1999/xhtml");
+        new (&xhtmlNamespaceURI) AtomicString(xhtmlNS);
+
         new (&aTag) QualifiedName(nullAtom, "a", xhtmlNS);
         new (&abbrTag) QualifiedName(nullAtom, "abbr", xhtmlNS);
         new (&acronymTag) QualifiedName(nullAtom, "acronym", xhtmlNS);
@@ -428,14 +432,7 @@ void HTMLTags::init()
         new (&varTag) QualifiedName(nullAtom, "var", xhtmlNS);
         new (&wbrTag) QualifiedName(nullAtom, "wbr", xhtmlNS);
         new (&xmpTag) QualifiedName(nullAtom, "xmp", xhtmlNS);
-        initialized = true;
-    }
-}
 
-void HTMLAttributes::init()
-{
-    static bool initialized;
-    if (!initialized) {
         // Attribute names.
         new (&abbrAttr) QualifiedName(nullAtom, "abbr", nullAtom);
         new (&accept_charsetAttr) QualifiedName(nullAtom, "accept-charset", nullAtom);
@@ -457,14 +454,14 @@ void HTMLAttributes::init()
         new (&bordercolorAttr) QualifiedName(nullAtom, "bordercolor", nullAtom);
         new (&cellpaddingAttr) QualifiedName(nullAtom, "cellpadding", nullAtom);
         new (&cellspacingAttr) QualifiedName(nullAtom, "cellspacing", nullAtom);
-        new (&charAttrAttr) QualifiedName(nullAtom, "char", nullAtom);
+        new (&charAttr) QualifiedName(nullAtom, "char", nullAtom);
         new (&challengeAttr) QualifiedName(nullAtom, "challenge", nullAtom);
         new (&charoffAttr) QualifiedName(nullAtom, "charoff", nullAtom);
         new (&charsetAttr) QualifiedName(nullAtom, "charset", nullAtom);
         new (&checkedAttr) QualifiedName(nullAtom, "checked", nullAtom);
         new (&cellborderAttr) QualifiedName(nullAtom, "cellborder", nullAtom);
         new (&citeAttr) QualifiedName(nullAtom, "cite", nullAtom);
-        new (&classAttrAttr) QualifiedName(nullAtom, "class", nullAtom);
+        new (&classAttr) QualifiedName(nullAtom, "class", nullAtom);
         new (&classidAttr) QualifiedName(nullAtom, "classid", nullAtom);
         new (&clearAttr) QualifiedName(nullAtom, "clear", nullAtom);
         new (&codeAttr) QualifiedName(nullAtom, "code", nullAtom);
@@ -487,7 +484,7 @@ void HTMLAttributes::init()
         new (&disabledAttr) QualifiedName(nullAtom, "disabled", nullAtom);
         new (&enctypeAttr) QualifiedName(nullAtom, "enctype", nullAtom);
         new (&faceAttr) QualifiedName(nullAtom, "face", nullAtom);
-        new (&forAttrAttr) QualifiedName(nullAtom, "for", nullAtom);
+        new (&forAttr) QualifiedName(nullAtom, "for", nullAtom);
         new (&frameAttr) QualifiedName(nullAtom, "frame", nullAtom);
         new (&frameborderAttr) QualifiedName(nullAtom, "frameborder", nullAtom);
         new (&headersAttr) QualifiedName(nullAtom, "headers", nullAtom);
@@ -497,7 +494,7 @@ void HTMLAttributes::init()
         new (&hreflangAttr) QualifiedName(nullAtom, "hreflang", nullAtom);
         new (&hspaceAttr) QualifiedName(nullAtom, "hspace", nullAtom);
         new (&http_equivAttr) QualifiedName(nullAtom, "http-equiv", nullAtom);
-        new (&idAttrAttr) QualifiedName(nullAtom, "id", nullAtom);
+        new (&idAttr) QualifiedName(nullAtom, "id", nullAtom);
         new (&incrementalAttr) QualifiedName(nullAtom, "incremental", nullAtom);
         new (&ismapAttr) QualifiedName(nullAtom, "ismap", nullAtom);
         new (&keytypeAttr) QualifiedName(nullAtom, "keytype", nullAtom);

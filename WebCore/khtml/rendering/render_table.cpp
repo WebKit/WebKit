@@ -44,6 +44,7 @@
 
 #include "khtmlview.h"
 
+using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
 
@@ -111,7 +112,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
 #endif
     RenderObject *o = child;
 
-    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
+    if (child->element() && child->element()->hasTagName(formTag)) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -261,7 +262,7 @@ void RenderTable::layout()
 
     RenderObject *child = firstChild();
     while( child ) {
-	if ( child->needsLayout() && !(child->element() && child->element()->hasTagName(HTMLTags::form())))
+	if ( child->needsLayout() && !(child->element() && child->element()->hasTagName(formTag)))
 	    child->layout();
 	if ( child->isTableSection() ) {
 	    static_cast<RenderTableSection *>(child)->calcRowHeight();
@@ -848,7 +849,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 #endif
     RenderObject *row = child;
 
-    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
+    if (child->element() && child->element()->hasTagName(formTag)) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -1494,7 +1495,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
     kdDebug( 6040 ) << renderName() << "(TableRow)::addChild( " << child->renderName() << " )"  << ", " <<
                        (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
 #endif
-    if (child->element() && child->element()->hasTagName(HTMLTags::form())) {
+    if (child->element() && child->element()->hasTagName(formTag)) {
         RenderContainer::addChild(child,beforeChild);
         return;
     }
@@ -1605,7 +1606,7 @@ void RenderTableCell::updateFromElement()
     int oldRSpan = rSpan;
     int oldCSpan = cSpan;
     DOM::NodeImpl* node = element();
-    if (node && (node->hasTagName(HTMLTags::td()) || node->hasTagName(HTMLTags::th()))) {
+    if (node && (node->hasTagName(tdTag) || node->hasTagName(thTag))) {
         DOM::HTMLTableCellElementImpl *tc = static_cast<DOM::HTMLTableCellElementImpl *>(node);
         cSpan = tc->colSpan();
         rSpan = tc->rowSpan();
@@ -1619,7 +1620,7 @@ void RenderTableCell::calcMinMaxWidth()
     RenderBlock::calcMinMaxWidth();
     if (element() && style()->whiteSpace() == NORMAL) {
         // See if nowrap was set.
-        DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(HTMLAttributes::nowrap());
+        DOMString nowrap = static_cast<ElementImpl*>(element())->getAttribute(nowrapAttr);
         if (!nowrap.isNull() && style()->width().isFixed())
             // Nowrap is set, but we didn't actually use it because of the
             // fixed width set on the cell.  Even so, it is a WinIE/Moz trait
@@ -2289,7 +2290,7 @@ void RenderTableCol::updateFromElement()
 {
     int oldSpan = _span;
     DOM::NodeImpl *node = element();
-    if (node && (node->hasTagName(HTMLTags::col()) || node->hasTagName(HTMLTags::colgroup()))) {
+    if (node && (node->hasTagName(colTag) || node->hasTagName(colgroupTag))) {
         DOM::HTMLTableColElementImpl *tc = static_cast<DOM::HTMLTableColElementImpl *>(node);
         _span = tc->span();
     } 

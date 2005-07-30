@@ -40,6 +40,7 @@
 // #define CSS_DEBUG
 
 using namespace DOM;
+ using namespace HTMLNames;
 
 //
 // The following file defines the function
@@ -717,7 +718,7 @@ specifier:
 	CSSParser *p = static_cast<CSSParser *>(parser);
         if (!p->strict)
             $1.lower();
-        $$->attr = HTMLAttributes::idAttr();
+        $$->attr = idAttr;
 	$$->value = atomicString($1);
     }
   | class
@@ -732,7 +733,7 @@ class:
 	CSSParser *p = static_cast<CSSParser *>(parser);
         if (!p->strict)
             $2.lower();
-        $$->attr = HTMLAttributes::classAttr();
+        $$->attr = classAttr;
 	$$->value = atomicString($2);
     }
   ;

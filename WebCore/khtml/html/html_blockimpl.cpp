@@ -34,9 +34,10 @@
 
 using namespace khtml;
 using namespace DOM;
+using namespace HTMLNames;
 
 HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::blockquote(), doc)
+    : HTMLElementImpl(blockquoteTag, doc)
 {
 }
 
@@ -46,18 +47,18 @@ HTMLBlockquoteElementImpl::~HTMLBlockquoteElementImpl()
 
 DOMString HTMLBlockquoteElementImpl::cite() const
 {
-    return getAttribute(HTMLAttributes::cite());
+    return getAttribute(citeAttr);
 }
 
 void HTMLBlockquoteElementImpl::setCite(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::cite(), value);
+    setAttribute(citeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLDivElementImpl::HTMLDivElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::div(), doc)
+    : HTMLElementImpl(divTag, doc)
 {
 }
 
@@ -67,7 +68,7 @@ HTMLDivElementImpl::~HTMLDivElementImpl()
 
 bool HTMLDivElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::align()) {
+    if (attrName == alignAttr) {
         result = eBlock;
         return false;
     }
@@ -76,7 +77,7 @@ bool HTMLDivElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribu
         
 void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::align()) {
+    if (attr->name() == alignAttr) {
         DOMString v = attr->value();
 	if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
@@ -92,18 +93,18 @@ void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 DOMString HTMLDivElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLDivElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLHRElementImpl::HTMLHRElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::hr(), doc)
+    : HTMLElementImpl(hrTag, doc)
 {
 }
 
@@ -113,11 +114,11 @@ HTMLHRElementImpl::~HTMLHRElementImpl()
 
 bool HTMLHRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::align() ||
-        attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::color() ||
-        attrName == HTMLAttributes::size() ||
-        attrName == HTMLAttributes::noshade()) {
+    if (attrName == alignAttr ||
+        attrName == widthAttr ||
+        attrName == colorAttr ||
+        attrName == sizeAttr ||
+        attrName == noshadeAttr) {
         result = eHR;
         return false;
     }
@@ -126,7 +127,7 @@ bool HTMLHRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
 
 void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::align()) {
+    if (attr->name() == alignAttr) {
         if (strcasecmp(attr->value(), "left") == 0) {
             addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, "0");
 	    addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
@@ -139,28 +140,28 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
       	    addCSSProperty(attr, CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
             addCSSProperty(attr, CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
 	}
-    } else if (attr->name() == HTMLAttributes::width()) {
+    } else if (attr->name() == widthAttr) {
         bool ok;
         int v = attr->value().implementation()->toInt(&ok);
         if(ok && !v)
             addCSSLength(attr, CSS_PROP_WIDTH, "1");
         else
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == HTMLAttributes::color()) {
+    } else if (attr->name() == colorAttr) {
         addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
         addCSSColor(attr, CSS_PROP_BORDER_COLOR, attr->value());
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
-    } else if (attr->name() == HTMLAttributes::noshade()) {
+    } else if (attr->name() == noshadeAttr) {
         addCSSProperty(attr, CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
         addCSSColor(attr, CSS_PROP_BORDER_COLOR, DOMString("grey"));
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, DOMString("grey"));
-    } else if (attr->name() == HTMLAttributes::size()) {
+    } else if (attr->name() == sizeAttr) {
         DOMStringImpl* si = attr->value().implementation();
         int size = si->toInt();
         if (size <= 1)
@@ -173,42 +174,42 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 DOMString HTMLHRElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLHRElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 bool HTMLHRElementImpl::noShade() const
 {
-    return !getAttribute(HTMLAttributes::noshade()).isNull();
+    return !getAttribute(noshadeAttr).isNull();
 }
 
 void HTMLHRElementImpl::setNoShade(bool noShade)
 {
-    setAttribute(HTMLAttributes::noshade(), noShade ? "" : 0);
+    setAttribute(noshadeAttr, noShade ? "" : 0);
 }
 
 DOMString HTMLHRElementImpl::size() const
 {
-    return getAttribute(HTMLAttributes::size());
+    return getAttribute(sizeAttr);
 }
 
 void HTMLHRElementImpl::setSize(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::size(), value);
+    setAttribute(sizeAttr, value);
 }
 
 DOMString HTMLHRElementImpl::width() const
 {
-    return getAttribute(HTMLAttributes::width());
+    return getAttribute(widthAttr);
 }
 
 void HTMLHRElementImpl::setWidth(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::width(), value);
+    setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
@@ -220,9 +221,9 @@ HTMLHeadingElementImpl::HTMLHeadingElementImpl(const QualifiedName& tagName, Doc
 
 bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    if (newChild->hasTagName(HTMLTags::h1()) || newChild->hasTagName(HTMLTags::h2()) ||
-        newChild->hasTagName(HTMLTags::h3()) || newChild->hasTagName(HTMLTags::h4()) ||
-        newChild->hasTagName(HTMLTags::h5()) || newChild->hasTagName(HTMLTags::h6()))
+    if (newChild->hasTagName(h1Tag) || newChild->hasTagName(h2Tag) ||
+        newChild->hasTagName(h3Tag) || newChild->hasTagName(h4Tag) ||
+        newChild->hasTagName(h5Tag) || newChild->hasTagName(h6Tag))
         return false;
 
     return inEitherTagList(newChild);
@@ -230,29 +231,29 @@ bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
 
 DOMString HTMLHeadingElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLHeadingElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
 HTMLParagraphElementImpl::HTMLParagraphElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(HTMLTags::p(), doc)
+    : HTMLElementImpl(pTag, doc)
 {
 }
 
 bool HTMLParagraphElementImpl::checkDTD(const NodeImpl* newChild)
 {
-    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(HTMLTags::table()));
+    return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(tableTag));
 }
 
 bool HTMLParagraphElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::align()) {
+    if (attrName == alignAttr) {
         result = eBlock; // We can share with DIV here.
         return false;
     }
@@ -261,7 +262,7 @@ bool HTMLParagraphElementImpl::mapToEntry(const QualifiedName& attrName, MappedA
 
 void HTMLParagraphElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::align()) {
+    if (attr->name() == alignAttr) {
         DOMString v = attr->value();
         if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
@@ -277,12 +278,12 @@ void HTMLParagraphElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 DOMString HTMLParagraphElementImpl::align() const
 {
-    return getAttribute(HTMLAttributes::align());
+    return getAttribute(alignAttr);
 }
 
 void HTMLParagraphElementImpl::setAlign(const DOMString &value)
 {
-    setAttribute(HTMLAttributes::align(), value);
+    setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
@@ -294,12 +295,12 @@ HTMLPreElementImpl::HTMLPreElementImpl(const QualifiedName& tagName, DocumentPtr
 
 long HTMLPreElementImpl::width() const
 {
-    return getAttribute(HTMLAttributes::width()).toInt();
+    return getAttribute(widthAttr).toInt();
 }
 
 void HTMLPreElementImpl::setWidth(long width)
 {
-    setAttribute(HTMLAttributes::width(), QString::number(width));
+    setAttribute(widthAttr, QString::number(width));
 }
 
 // -------------------------------------------------------------------------
@@ -308,23 +309,23 @@ void HTMLPreElementImpl::setWidth(long width)
 const int defaultMinimumDelay = 60;
 
 HTMLMarqueeElementImpl::HTMLMarqueeElementImpl(DocumentPtr *doc)
-: HTMLElementImpl(HTMLTags::marquee(), doc),
+: HTMLElementImpl(marqueeTag, doc),
   m_minimumDelay(defaultMinimumDelay)
 {
 }
 
 bool HTMLMarqueeElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
-    if (attrName == HTMLAttributes::width() ||
-        attrName == HTMLAttributes::height() ||
-        attrName == HTMLAttributes::bgcolor() ||
-        attrName == HTMLAttributes::vspace() ||
-        attrName == HTMLAttributes::hspace() ||
-        attrName == HTMLAttributes::scrollamount() ||
-        attrName == HTMLAttributes::scrolldelay() ||
-        attrName == HTMLAttributes::loop() ||
-        attrName == HTMLAttributes::behavior() ||
-        attrName == HTMLAttributes::direction()) {
+    if (attrName == widthAttr ||
+        attrName == heightAttr ||
+        attrName == bgcolorAttr ||
+        attrName == vspaceAttr ||
+        attrName == hspaceAttr ||
+        attrName == scrollamountAttr ||
+        attrName == scrolldelayAttr ||
+        attrName == loopAttr ||
+        attrName == behaviorAttr ||
+        attrName == directionAttr) {
         result = eUniversal;
         return false;
     }
@@ -334,45 +335,45 @@ bool HTMLMarqueeElementImpl::mapToEntry(const QualifiedName& attrName, MappedAtt
 
 void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    if (attr->name() == HTMLAttributes::width()) {
+    if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
-    } else if (attr->name() == HTMLAttributes::height()) {
+    } else if (attr->name() == heightAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
-    } else if (attr->name() == HTMLAttributes::bgcolor()) {
+    } else if (attr->name() == bgcolorAttr) {
         if (!attr->value().isEmpty())
             addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
-    } else if (attr->name() == HTMLAttributes::vspace()) {
+    } else if (attr->name() == vspaceAttr) {
         if (!attr->value().isEmpty()) {
             addCSSLength(attr, CSS_PROP_MARGIN_TOP, attr->value());
             addCSSLength(attr, CSS_PROP_MARGIN_BOTTOM, attr->value());
         }
-    } else if (attr->name() == HTMLAttributes::hspace()) {
+    } else if (attr->name() == hspaceAttr) {
         if (!attr->value().isEmpty()) {
             addCSSLength(attr, CSS_PROP_MARGIN_LEFT, attr->value());
             addCSSLength(attr, CSS_PROP_MARGIN_RIGHT, attr->value());
         }
-    } else if (attr->name() == HTMLAttributes::scrollamount()) {
+    } else if (attr->name() == scrollamountAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_INCREMENT, attr->value());
-    } else if (attr->name() == HTMLAttributes::scrolldelay()) {
+    } else if (attr->name() == scrolldelayAttr) {
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_SPEED, attr->value());
-    } else if (attr->name() == HTMLAttributes::loop()) {
+    } else if (attr->name() == loopAttr) {
         if (!attr->value().isEmpty()) {
             if (attr->value() == "-1" || strcasecmp(attr->value(), "infinite") == 0)
                 addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, CSS_VAL_INFINITE);
             else
                 addCSSLength(attr, CSS_PROP__KHTML_MARQUEE_REPETITION, attr->value());
         }
-    } else if (attr->name() == HTMLAttributes::behavior()) {
+    } else if (attr->name() == behaviorAttr) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_STYLE, attr->value());
-    } else if (attr->name() == HTMLAttributes::direction()) {
+    } else if (attr->name() == directionAttr) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP__KHTML_MARQUEE_DIRECTION, attr->value());
-    } else if (attr->name() == HTMLAttributes::truespeed()) {
+    } else if (attr->name() == truespeedAttr) {
         m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
     } else
         HTMLElementImpl::parseMappedAttribute(attr);

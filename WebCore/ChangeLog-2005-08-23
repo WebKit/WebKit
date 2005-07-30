@@ -1,3 +1,1321 @@
+2005-07-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt (concept and a few manual parts), large part
+	done by script and not really reviewed in detail.
+
+        - changed how HTML tags and attributes are referred to in the code for better readability.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/parser.y:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMStyleSheetList::getOwnProperty):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getRuntimeObject):
+        (KJS::DOMNamedNodesCollection::getOwnProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::getOwnProperty):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::getSetInfo):
+        (KJS::KJS::HTMLElement::getOwnProperty):
+        (KJS::KJS::HTMLElement::implementsCall):
+        (KJS::KJS::HTMLElement::call):
+        (KJS::KJS::HTMLElement::hasOwnProperty):
+        (KJS::KJS::HTMLElement::toString):
+        (KJS::getForm):
+        (KJS::KJS::HTMLElement::pushEventHandlerScope):
+        (KJS::KJS::HTMLElementFunction::call):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::toHTMLTableCaptionElement):
+        (KJS::toHTMLTableSectionElement):
+        (KJS::KJS::HTMLCollection::getOwnProperty):
+        (KJS::KJS::HTMLSelectCollection::put):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::isStyleSpan):
+        (khtml::isEmptyStyleSpan):
+        (khtml::isEmptyFontTag):
+        (khtml::createFontElement):
+        (khtml::createStyleSpanElement):
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::ApplyStyleCommand::isHTMLStyleNode):
+        (khtml::ApplyStyleCommand::removeHTMLFontStyle):
+        (khtml::ApplyStyleCommand::applyTextDecorationStyle):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (khtml::ApplyStyleCommand::addBlockStyleIfNeeded):
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * khtml/editing/break_blockquote_command.cpp:
+        (khtml::BreakBlockquoteCommand::doApply):
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::insertNodeBefore):
+        (khtml::CompositeEditCommand::insertNodeAfter):
+        (khtml::CompositeEditCommand::findBlockPlaceholder):
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (khtml::createBlockPlaceholderElement):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::isListStructureNode):
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        (khtml::createDefaultParagraphElement):
+        (khtml::createBreakElement):
+        (khtml::isMailBlockquote):
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        (khtml::createMarkup):
+        (khtml::createFragmentFromText):
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::isProbablyBlock):
+        (khtml::isProbablyTableStructureNode):
+        (khtml::ReplacementFragment::isInterchangeNewlineNode):
+        (khtml::ReplacementFragment::isInterchangeConvertedSpaceSpan):
+        (khtml::ReplacementFragment::removeStyleNodes):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::isCandidate):
+        (khtml::VisiblePosition::isAtomicNode):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleNonTextNode):
+        (khtml::TextIterator::exitNode):
+        (khtml::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfLine):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (HTMLBodyElementImpl::mapToEntry):
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLBodyElementImpl::insertedIntoDocument):
+        (HTMLBodyElementImpl::isURLAttribute):
+        (HTMLBodyElementImpl::aLink):
+        (HTMLBodyElementImpl::setALink):
+        (HTMLBodyElementImpl::background):
+        (HTMLBodyElementImpl::setBackground):
+        (HTMLBodyElementImpl::bgColor):
+        (HTMLBodyElementImpl::setBgColor):
+        (HTMLBodyElementImpl::link):
+        (HTMLBodyElementImpl::setLink):
+        (HTMLBodyElementImpl::text):
+        (HTMLBodyElementImpl::setText):
+        (HTMLBodyElementImpl::vLink):
+        (HTMLBodyElementImpl::setVLink):
+        (HTMLFrameElementImpl::HTMLFrameElementImpl):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::isURLAttribute):
+        (HTMLFrameElementImpl::frameBorder):
+        (HTMLFrameElementImpl::setFrameBorder):
+        (HTMLFrameElementImpl::longDesc):
+        (HTMLFrameElementImpl::setLongDesc):
+        (HTMLFrameElementImpl::marginHeight):
+        (HTMLFrameElementImpl::setMarginHeight):
+        (HTMLFrameElementImpl::marginWidth):
+        (HTMLFrameElementImpl::setMarginWidth):
+        (HTMLFrameElementImpl::name):
+        (HTMLFrameElementImpl::setName):
+        (HTMLFrameElementImpl::setNoResize):
+        (HTMLFrameElementImpl::scrolling):
+        (HTMLFrameElementImpl::setScrolling):
+        (HTMLFrameElementImpl::src):
+        (HTMLFrameElementImpl::setSrc):
+        (HTMLFrameSetElementImpl::HTMLFrameSetElementImpl):
+        (HTMLFrameSetElementImpl::checkDTD):
+        (HTMLFrameSetElementImpl::parseMappedAttribute):
+        (HTMLFrameSetElementImpl::attach):
+        (HTMLFrameSetElementImpl::cols):
+        (HTMLFrameSetElementImpl::setCols):
+        (HTMLFrameSetElementImpl::rows):
+        (HTMLFrameSetElementImpl::setRows):
+        (HTMLHeadElementImpl::HTMLHeadElementImpl):
+        (HTMLHeadElementImpl::profile):
+        (HTMLHeadElementImpl::setProfile):
+        (HTMLHeadElementImpl::checkDTD):
+        (HTMLHtmlElementImpl::HTMLHtmlElementImpl):
+        (HTMLHtmlElementImpl::version):
+        (HTMLHtmlElementImpl::setVersion):
+        (HTMLHtmlElementImpl::checkDTD):
+        (HTMLIFrameElementImpl::HTMLIFrameElementImpl):
+        (HTMLIFrameElementImpl::mapToEntry):
+        (HTMLIFrameElementImpl::parseMappedAttribute):
+        (HTMLIFrameElementImpl::attach):
+        (HTMLIFrameElementImpl::isURLAttribute):
+        (HTMLIFrameElementImpl::align):
+        (HTMLIFrameElementImpl::setAlign):
+        (HTMLIFrameElementImpl::height):
+        (HTMLIFrameElementImpl::setHeight):
+        (HTMLIFrameElementImpl::src):
+        (HTMLIFrameElementImpl::width):
+        (HTMLIFrameElementImpl::setWidth):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl):
+        (HTMLBlockquoteElementImpl::cite):
+        (HTMLBlockquoteElementImpl::setCite):
+        (HTMLDivElementImpl::HTMLDivElementImpl):
+        (HTMLDivElementImpl::mapToEntry):
+        (HTMLDivElementImpl::parseMappedAttribute):
+        (HTMLDivElementImpl::align):
+        (HTMLDivElementImpl::setAlign):
+        (HTMLHRElementImpl::HTMLHRElementImpl):
+        (HTMLHRElementImpl::mapToEntry):
+        (HTMLHRElementImpl::parseMappedAttribute):
+        (HTMLHRElementImpl::align):
+        (HTMLHRElementImpl::setAlign):
+        (HTMLHRElementImpl::noShade):
+        (HTMLHRElementImpl::setNoShade):
+        (HTMLHRElementImpl::size):
+        (HTMLHRElementImpl::setSize):
+        (HTMLHRElementImpl::width):
+        (HTMLHRElementImpl::setWidth):
+        (HTMLHeadingElementImpl::checkDTD):
+        (HTMLHeadingElementImpl::align):
+        (HTMLHeadingElementImpl::setAlign):
+        (HTMLParagraphElementImpl::HTMLParagraphElementImpl):
+        (HTMLParagraphElementImpl::checkDTD):
+        (HTMLParagraphElementImpl::mapToEntry):
+        (HTMLParagraphElementImpl::parseMappedAttribute):
+        (HTMLParagraphElementImpl::align):
+        (HTMLParagraphElementImpl::setAlign):
+        (HTMLPreElementImpl::width):
+        (HTMLPreElementImpl::setWidth):
+        (HTMLMarqueeElementImpl::HTMLMarqueeElementImpl):
+        (HTMLMarqueeElementImpl::mapToEntry):
+        (HTMLMarqueeElementImpl::parseMappedAttribute):
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::HTMLCanvasElementImpl):
+        (HTMLCanvasElementImpl::mapToEntry):
+        (HTMLCanvasElementImpl::parseMappedAttribute):
+        (HTMLCanvasElementImpl::isURLAttribute):
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::childAllowed):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::endTagRequirement):
+        (HTMLElementImpl::tagPriority):
+        (HTMLElementImpl::mapToEntry):
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::setInnerText):
+        (HTMLElementImpl::setOuterText):
+        (HTMLElementImpl::setContentEditable):
+        (HTMLElementImpl::id):
+        (HTMLElementImpl::setId):
+        (HTMLElementImpl::title):
+        (HTMLElementImpl::setTitle):
+        (HTMLElementImpl::lang):
+        (HTMLElementImpl::setLang):
+        (HTMLElementImpl::dir):
+        (HTMLElementImpl::setDir):
+        (HTMLElementImpl::className):
+        (HTMLElementImpl::setClassName):
+        (HTMLElementImpl::isRecognizedTagName):
+        (inlineTagList):
+        (blockTagList):
+        (HTMLElementImpl::checkDTD):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::submitClick):
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLFormElementImpl::radioClicked):
+        (DOM::HTMLFormElementImpl::isURLAttribute):
+        (DOM::HTMLFormElementImpl::name):
+        (DOM::HTMLFormElementImpl::setName):
+        (DOM::HTMLFormElementImpl::acceptCharset):
+        (DOM::HTMLFormElementImpl::setAcceptCharset):
+        (DOM::HTMLFormElementImpl::action):
+        (DOM::HTMLFormElementImpl::setAction):
+        (DOM::HTMLFormElementImpl::setEnctype):
+        (DOM::HTMLFormElementImpl::method):
+        (DOM::HTMLFormElementImpl::setMethod):
+        (DOM::HTMLFormElementImpl::target):
+        (DOM::HTMLFormElementImpl::setTarget):
+        (DOM::HTMLGenericFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLGenericFormElementImpl::getForm):
+        (DOM::HTMLGenericFormElementImpl::name):
+        (DOM::HTMLGenericFormElementImpl::setName):
+        (DOM::HTMLGenericFormElementImpl::setDisabled):
+        (DOM::HTMLGenericFormElementImpl::setReadOnly):
+        (DOM::HTMLGenericFormElementImpl::tabIndex):
+        (DOM::HTMLGenericFormElementImpl::setTabIndex):
+        (DOM::HTMLButtonElementImpl::HTMLButtonElementImpl):
+        (DOM::HTMLButtonElementImpl::type):
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute):
+        (DOM::HTMLButtonElementImpl::accessKey):
+        (DOM::HTMLButtonElementImpl::setAccessKey):
+        (DOM::HTMLButtonElementImpl::value):
+        (DOM::HTMLButtonElementImpl::setValue):
+        (DOM::HTMLFieldSetElementImpl::HTMLFieldSetElementImpl):
+        (DOM::HTMLFieldSetElementImpl::checkDTD):
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl):
+        (DOM::HTMLInputElementImpl::setType):
+        (DOM::HTMLInputElementImpl::mapToEntry):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::attach):
+        (DOM::HTMLInputElementImpl::altText):
+        (DOM::HTMLInputElementImpl::value):
+        (DOM::HTMLInputElementImpl::setValue):
+        (DOM::HTMLInputElementImpl::isURLAttribute):
+        (DOM::HTMLInputElementImpl::defaultValue):
+        (DOM::HTMLInputElementImpl::setDefaultValue):
+        (DOM::HTMLInputElementImpl::defaultChecked):
+        (DOM::HTMLInputElementImpl::setDefaultChecked):
+        (DOM::HTMLInputElementImpl::accept):
+        (DOM::HTMLInputElementImpl::setAccept):
+        (DOM::HTMLInputElementImpl::accessKey):
+        (DOM::HTMLInputElementImpl::setAccessKey):
+        (DOM::HTMLInputElementImpl::align):
+        (DOM::HTMLInputElementImpl::setAlign):
+        (DOM::HTMLInputElementImpl::alt):
+        (DOM::HTMLInputElementImpl::setAlt):
+        (DOM::HTMLInputElementImpl::setMaxLength):
+        (DOM::HTMLInputElementImpl::setSize):
+        (DOM::HTMLInputElementImpl::src):
+        (DOM::HTMLInputElementImpl::setSrc):
+        (DOM::HTMLInputElementImpl::useMap):
+        (DOM::HTMLInputElementImpl::setUseMap):
+        (DOM::HTMLLabelElementImpl::HTMLLabelElementImpl):
+        (DOM::HTMLLabelElementImpl::parseMappedAttribute):
+        (DOM::HTMLLabelElementImpl::formElement):
+        (DOM::HTMLLabelElementImpl::form):
+        (DOM::HTMLLabelElementImpl::accessKey):
+        (DOM::HTMLLabelElementImpl::setAccessKey):
+        (DOM::HTMLLabelElementImpl::htmlFor):
+        (DOM::HTMLLabelElementImpl::setHtmlFor):
+        (DOM::HTMLLegendElementImpl::HTMLLegendElementImpl):
+        (DOM::HTMLLegendElementImpl::accessKey):
+        (DOM::HTMLLegendElementImpl::setAccessKey):
+        (DOM::HTMLLegendElementImpl::align):
+        (DOM::HTMLLegendElementImpl::setAlign):
+        (DOM::HTMLLegendElementImpl::formElement):
+        (DOM::HTMLSelectElementImpl::HTMLSelectElementImpl):
+        (DOM::HTMLSelectElementImpl::checkDTD):
+        (DOM::HTMLSelectElementImpl::selectedIndex):
+        (DOM::HTMLSelectElementImpl::setSelectedIndex):
+        (DOM::HTMLSelectElementImpl::length):
+        (DOM::HTMLSelectElementImpl::add):
+        (DOM::HTMLSelectElementImpl::value):
+        (DOM::HTMLSelectElementImpl::setValue):
+        (DOM::HTMLSelectElementImpl::state):
+        (DOM::HTMLSelectElementImpl::restoreState):
+        (DOM::HTMLSelectElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::appendFormData):
+        (DOM::HTMLSelectElementImpl::optionToListIndex):
+        (DOM::HTMLSelectElementImpl::listToOptionIndex):
+        (DOM::HTMLSelectElementImpl::recalcListItems):
+        (DOM::HTMLSelectElementImpl::reset):
+        (DOM::HTMLSelectElementImpl::notifyOptionSelected):
+        (DOM::HTMLSelectElementImpl::setMultiple):
+        (DOM::HTMLSelectElementImpl::setSize):
+        (DOM::HTMLKeygenElementImpl::HTMLKeygenElementImpl):
+        (DOM::HTMLKeygenElementImpl::parseMappedAttribute):
+        (DOM::HTMLOptGroupElementImpl::HTMLOptGroupElementImpl):
+        (DOM::HTMLOptGroupElementImpl::recalcSelectOptions):
+        (DOM::HTMLOptGroupElementImpl::label):
+        (DOM::HTMLOptGroupElementImpl::setLabel):
+        (DOM::HTMLOptionElementImpl::HTMLOptionElementImpl):
+        (DOM::HTMLOptionElementImpl::text):
+        (DOM::HTMLOptionElementImpl::index):
+        (DOM::HTMLOptionElementImpl::parseMappedAttribute):
+        (DOM::HTMLOptionElementImpl::setValue):
+        (DOM::HTMLOptionElementImpl::getSelect):
+        (DOM::HTMLOptionElementImpl::defaultSelected):
+        (DOM::HTMLOptionElementImpl::setDefaultSelected):
+        (DOM::HTMLOptionElementImpl::label):
+        (DOM::HTMLOptionElementImpl::setLabel):
+        (DOM::HTMLTextAreaElementImpl::HTMLTextAreaElementImpl):
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute):
+        (DOM::HTMLTextAreaElementImpl::accessKey):
+        (DOM::HTMLTextAreaElementImpl::setAccessKey):
+        (DOM::HTMLTextAreaElementImpl::setCols):
+        (DOM::HTMLTextAreaElementImpl::setRows):
+        (DOM::HTMLIsIndexElementImpl::HTMLIsIndexElementImpl):
+        (DOM::HTMLIsIndexElementImpl::parseMappedAttribute):
+        (DOM::HTMLIsIndexElementImpl::prompt):
+        (DOM::HTMLIsIndexElementImpl::setPrompt):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLOptGroupElementImpl::checkDTD):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::HTMLBaseElementImpl):
+        (HTMLBaseElementImpl::parseMappedAttribute):
+        (HTMLBaseElementImpl::setHref):
+        (HTMLBaseElementImpl::setTarget):
+        (HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (HTMLLinkElementImpl::parseMappedAttribute):
+        (HTMLLinkElementImpl::process):
+        (HTMLLinkElementImpl::isURLAttribute):
+        (HTMLLinkElementImpl::disabled):
+        (HTMLLinkElementImpl::setDisabled):
+        (HTMLLinkElementImpl::charset):
+        (HTMLLinkElementImpl::setCharset):
+        (HTMLLinkElementImpl::href):
+        (HTMLLinkElementImpl::setHref):
+        (HTMLLinkElementImpl::hreflang):
+        (HTMLLinkElementImpl::setHreflang):
+        (HTMLLinkElementImpl::media):
+        (HTMLLinkElementImpl::setMedia):
+        (HTMLLinkElementImpl::rel):
+        (HTMLLinkElementImpl::setRel):
+        (HTMLLinkElementImpl::rev):
+        (HTMLLinkElementImpl::setRev):
+        (HTMLLinkElementImpl::target):
+        (HTMLLinkElementImpl::setTarget):
+        (HTMLLinkElementImpl::type):
+        (HTMLLinkElementImpl::setType):
+        (HTMLMetaElementImpl::HTMLMetaElementImpl):
+        (HTMLMetaElementImpl::parseMappedAttribute):
+        (HTMLMetaElementImpl::content):
+        (HTMLMetaElementImpl::setContent):
+        (HTMLMetaElementImpl::httpEquiv):
+        (HTMLMetaElementImpl::setHttpEquiv):
+        (HTMLMetaElementImpl::name):
+        (HTMLMetaElementImpl::setName):
+        (HTMLMetaElementImpl::scheme):
+        (HTMLMetaElementImpl::setScheme):
+        (HTMLScriptElementImpl::HTMLScriptElementImpl):
+        (HTMLScriptElementImpl::isURLAttribute):
+        (HTMLScriptElementImpl::insertedIntoDocument):
+        (HTMLScriptElementImpl::charset):
+        (HTMLScriptElementImpl::setCharset):
+        (HTMLScriptElementImpl::defer):
+        (HTMLScriptElementImpl::setDefer):
+        (HTMLScriptElementImpl::src):
+        (HTMLScriptElementImpl::setSrc):
+        (HTMLScriptElementImpl::type):
+        (HTMLScriptElementImpl::setType):
+        (HTMLStyleElementImpl::HTMLStyleElementImpl):
+        (HTMLStyleElementImpl::parseMappedAttribute):
+        (HTMLStyleElementImpl::disabled):
+        (HTMLStyleElementImpl::setDisabled):
+        (HTMLStyleElementImpl::media):
+        (HTMLStyleElementImpl::setMedia):
+        (HTMLStyleElementImpl::type):
+        (HTMLStyleElementImpl::setType):
+        (HTMLTitleElementImpl::HTMLTitleElementImpl):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::updateFromElement):
+        (HTMLImageElementImpl::HTMLImageElementImpl):
+        (HTMLImageElementImpl::mapToEntry):
+        (HTMLImageElementImpl::parseMappedAttribute):
+        (HTMLImageElementImpl::altText):
+        (HTMLImageElementImpl::width):
+        (HTMLImageElementImpl::height):
+        (HTMLImageElementImpl::isURLAttribute):
+        (HTMLImageElementImpl::name):
+        (HTMLImageElementImpl::setName):
+        (HTMLImageElementImpl::align):
+        (HTMLImageElementImpl::setAlign):
+        (HTMLImageElementImpl::alt):
+        (HTMLImageElementImpl::setAlt):
+        (HTMLImageElementImpl::border):
+        (HTMLImageElementImpl::setBorder):
+        (HTMLImageElementImpl::setHeight):
+        (HTMLImageElementImpl::hspace):
+        (HTMLImageElementImpl::setHspace):
+        (HTMLImageElementImpl::isMap):
+        (HTMLImageElementImpl::setIsMap):
+        (HTMLImageElementImpl::longDesc):
+        (HTMLImageElementImpl::setLongDesc):
+        (HTMLImageElementImpl::src):
+        (HTMLImageElementImpl::setSrc):
+        (HTMLImageElementImpl::useMap):
+        (HTMLImageElementImpl::setUseMap):
+        (HTMLImageElementImpl::vspace):
+        (HTMLImageElementImpl::setVspace):
+        (HTMLImageElementImpl::setWidth):
+        (HTMLMapElementImpl::HTMLMapElementImpl):
+        (HTMLMapElementImpl::checkDTD):
+        (HTMLMapElementImpl::mapMouseEvent):
+        (HTMLMapElementImpl::parseMappedAttribute):
+        (HTMLMapElementImpl::name):
+        (HTMLMapElementImpl::setName):
+        (HTMLAreaElementImpl::HTMLAreaElementImpl):
+        (HTMLAreaElementImpl::parseMappedAttribute):
+        (HTMLAreaElementImpl::accessKey):
+        (HTMLAreaElementImpl::setAccessKey):
+        (HTMLAreaElementImpl::alt):
+        (HTMLAreaElementImpl::setAlt):
+        (HTMLAreaElementImpl::coords):
+        (HTMLAreaElementImpl::setCoords):
+        (HTMLAreaElementImpl::href):
+        (HTMLAreaElementImpl::setHref):
+        (HTMLAreaElementImpl::noHref):
+        (HTMLAreaElementImpl::setNoHref):
+        (HTMLAreaElementImpl::shape):
+        (HTMLAreaElementImpl::setShape):
+        (HTMLAreaElementImpl::tabIndex):
+        (HTMLAreaElementImpl::setTabIndex):
+        (HTMLAreaElementImpl::target):
+        (HTMLAreaElementImpl::setTarget):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::HTMLAnchorElementImpl):
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        (DOM::HTMLAnchorElementImpl::parseMappedAttribute):
+        (DOM::HTMLAnchorElementImpl::isURLAttribute):
+        (DOM::HTMLAnchorElementImpl::accessKey):
+        (DOM::HTMLAnchorElementImpl::setAccessKey):
+        (DOM::HTMLAnchorElementImpl::charset):
+        (DOM::HTMLAnchorElementImpl::setCharset):
+        (DOM::HTMLAnchorElementImpl::coords):
+        (DOM::HTMLAnchorElementImpl::setCoords):
+        (DOM::HTMLAnchorElementImpl::href):
+        (DOM::HTMLAnchorElementImpl::setHref):
+        (DOM::HTMLAnchorElementImpl::hreflang):
+        (DOM::HTMLAnchorElementImpl::setHreflang):
+        (DOM::HTMLAnchorElementImpl::name):
+        (DOM::HTMLAnchorElementImpl::setName):
+        (DOM::HTMLAnchorElementImpl::rel):
+        (DOM::HTMLAnchorElementImpl::setRel):
+        (DOM::HTMLAnchorElementImpl::rev):
+        (DOM::HTMLAnchorElementImpl::setRev):
+        (DOM::HTMLAnchorElementImpl::shape):
+        (DOM::HTMLAnchorElementImpl::setShape):
+        (DOM::HTMLAnchorElementImpl::tabIndex):
+        (DOM::HTMLAnchorElementImpl::setTabIndex):
+        (DOM::HTMLAnchorElementImpl::target):
+        (DOM::HTMLAnchorElementImpl::setTarget):
+        (DOM::HTMLAnchorElementImpl::type):
+        (DOM::HTMLAnchorElementImpl::setType):
+        (DOM::HTMLBRElementImpl::HTMLBRElementImpl):
+        (DOM::HTMLBRElementImpl::mapToEntry):
+        (DOM::HTMLBRElementImpl::parseMappedAttribute):
+        (DOM::HTMLBRElementImpl::clear):
+        (DOM::HTMLBRElementImpl::setClear):
+        (DOM::HTMLFontElementImpl::HTMLFontElementImpl):
+        (DOM::HTMLFontElementImpl::mapToEntry):
+        (DOM::HTMLFontElementImpl::parseMappedAttribute):
+        (DOM::HTMLFontElementImpl::color):
+        (DOM::HTMLFontElementImpl::setColor):
+        (DOM::HTMLFontElementImpl::face):
+        (DOM::HTMLFontElementImpl::setFace):
+        (DOM::HTMLFontElementImpl::size):
+        (DOM::HTMLFontElementImpl::setSize):
+        (DOM::HTMLModElementImpl::cite):
+        (DOM::HTMLModElementImpl::setCite):
+        (DOM::HTMLModElementImpl::dateTime):
+        (DOM::HTMLModElementImpl::setDateTime):
+        (DOM::HTMLQuoteElementImpl::HTMLQuoteElementImpl):
+        (DOM::HTMLQuoteElementImpl::cite):
+        (DOM::HTMLQuoteElementImpl::setCite):
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLUListElementImpl::mapToEntry):
+        (DOM::HTMLUListElementImpl::parseMappedAttribute):
+        (DOM::HTMLUListElementImpl::compact):
+        (DOM::HTMLUListElementImpl::setCompact):
+        (DOM::HTMLUListElementImpl::type):
+        (DOM::HTMLUListElementImpl::setType):
+        (DOM::HTMLDirectoryElementImpl::compact):
+        (DOM::HTMLDirectoryElementImpl::setCompact):
+        (DOM::HTMLMenuElementImpl::compact):
+        (DOM::HTMLMenuElementImpl::setCompact):
+        (DOM::HTMLOListElementImpl::mapToEntry):
+        (DOM::HTMLOListElementImpl::parseMappedAttribute):
+        (DOM::HTMLOListElementImpl::compact):
+        (DOM::HTMLOListElementImpl::setCompact):
+        (DOM::HTMLOListElementImpl::setStart):
+        (DOM::HTMLOListElementImpl::type):
+        (DOM::HTMLOListElementImpl::setType):
+        (DOM::HTMLLIElementImpl::mapToEntry):
+        (DOM::HTMLLIElementImpl::parseMappedAttribute):
+        (DOM::HTMLLIElementImpl::attach):
+        (DOM::HTMLLIElementImpl::type):
+        (DOM::HTMLLIElementImpl::setType):
+        (DOM::HTMLLIElementImpl::value):
+        (DOM::HTMLLIElementImpl::setValue):
+        (DOM::HTMLDListElementImpl::compact):
+        (DOM::HTMLDListElementImpl::setCompact):
+        * khtml/html/html_listimpl.h:
+        (DOM::HTMLUListElementImpl::HTMLUListElementImpl):
+        (DOM::HTMLDirectoryElementImpl::HTMLDirectoryElementImpl):
+        (DOM::HTMLMenuElementImpl::HTMLMenuElementImpl):
+        (DOM::HTMLOListElementImpl::HTMLOListElementImpl):
+        (DOM::HTMLLIElementImpl::HTMLLIElementImpl):
+        (DOM::HTMLDListElementImpl::HTMLDListElementImpl):
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLBaseFontElementImpl::HTMLBaseFontElementImpl):
+        (DOM::HTMLBaseFontElementImpl::color):
+        (DOM::HTMLBaseFontElementImpl::setColor):
+        (DOM::HTMLBaseFontElementImpl::face):
+        (DOM::HTMLBaseFontElementImpl::setFace):
+        (DOM::HTMLBaseFontElementImpl::size):
+        (DOM::HTMLBaseFontElementImpl::setSize):
+        (DOM::HTMLCollectionImpl::traverseNextItem):
+        (DOM::HTMLCollectionImpl::checkForNameMatch):
+        (DOM::HTMLNameCollectionImpl::traverseNextItem):
+        (DOM::HTMLCollectionImpl::updateNameCache):
+        (DOM::HTMLFormCollectionImpl::getNamedFormItem):
+        (DOM::HTMLFormCollectionImpl::nextNamedItemInternal):
+        (DOM::HTMLFormCollectionImpl::namedItem):
+        (DOM::HTMLFormCollectionImpl::nextNamedItem):
+        (DOM::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::HTMLAppletElementImpl):
+        (DOM::HTMLAppletElementImpl::checkDTD):
+        (DOM::HTMLAppletElementImpl::mapToEntry):
+        (DOM::HTMLAppletElementImpl::parseMappedAttribute):
+        (DOM::HTMLAppletElementImpl::rendererIsNeeded):
+        (DOM::HTMLAppletElementImpl::createRenderer):
+        (DOM::HTMLAppletElementImpl::align):
+        (DOM::HTMLAppletElementImpl::setAlign):
+        (DOM::HTMLAppletElementImpl::alt):
+        (DOM::HTMLAppletElementImpl::setAlt):
+        (DOM::HTMLAppletElementImpl::archive):
+        (DOM::HTMLAppletElementImpl::setArchive):
+        (DOM::HTMLAppletElementImpl::code):
+        (DOM::HTMLAppletElementImpl::setCode):
+        (DOM::HTMLAppletElementImpl::codeBase):
+        (DOM::HTMLAppletElementImpl::setCodeBase):
+        (DOM::HTMLAppletElementImpl::height):
+        (DOM::HTMLAppletElementImpl::setHeight):
+        (DOM::HTMLAppletElementImpl::hspace):
+        (DOM::HTMLAppletElementImpl::setHspace):
+        (DOM::HTMLAppletElementImpl::name):
+        (DOM::HTMLAppletElementImpl::setName):
+        (DOM::HTMLAppletElementImpl::object):
+        (DOM::HTMLAppletElementImpl::setObject):
+        (DOM::HTMLAppletElementImpl::vspace):
+        (DOM::HTMLAppletElementImpl::setVspace):
+        (DOM::HTMLAppletElementImpl::width):
+        (DOM::HTMLAppletElementImpl::setWidth):
+        (DOM::HTMLEmbedElementImpl::HTMLEmbedElementImpl):
+        (DOM::HTMLEmbedElementImpl::checkDTD):
+        (DOM::HTMLEmbedElementImpl::mapToEntry):
+        (DOM::HTMLEmbedElementImpl::parseMappedAttribute):
+        (DOM::HTMLEmbedElementImpl::rendererIsNeeded):
+        (DOM::HTMLEmbedElementImpl::isURLAttribute):
+        (DOM::HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (DOM::HTMLObjectElementImpl::checkDTD):
+        (DOM::HTMLObjectElementImpl::form):
+        (DOM::HTMLObjectElementImpl::mapToEntry):
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::isURLAttribute):
+        (DOM::HTMLObjectElementImpl::code):
+        (DOM::HTMLObjectElementImpl::setCode):
+        (DOM::HTMLObjectElementImpl::align):
+        (DOM::HTMLObjectElementImpl::setAlign):
+        (DOM::HTMLObjectElementImpl::archive):
+        (DOM::HTMLObjectElementImpl::setArchive):
+        (DOM::HTMLObjectElementImpl::border):
+        (DOM::HTMLObjectElementImpl::setBorder):
+        (DOM::HTMLObjectElementImpl::codeBase):
+        (DOM::HTMLObjectElementImpl::setCodeBase):
+        (DOM::HTMLObjectElementImpl::codeType):
+        (DOM::HTMLObjectElementImpl::setCodeType):
+        (DOM::HTMLObjectElementImpl::data):
+        (DOM::HTMLObjectElementImpl::setData):
+        (DOM::HTMLObjectElementImpl::declare):
+        (DOM::HTMLObjectElementImpl::setDeclare):
+        (DOM::HTMLObjectElementImpl::height):
+        (DOM::HTMLObjectElementImpl::setHeight):
+        (DOM::HTMLObjectElementImpl::hspace):
+        (DOM::HTMLObjectElementImpl::setHspace):
+        (DOM::HTMLObjectElementImpl::name):
+        (DOM::HTMLObjectElementImpl::setName):
+        (DOM::HTMLObjectElementImpl::standby):
+        (DOM::HTMLObjectElementImpl::setStandby):
+        (DOM::HTMLObjectElementImpl::tabIndex):
+        (DOM::HTMLObjectElementImpl::setTabIndex):
+        (DOM::HTMLObjectElementImpl::type):
+        (DOM::HTMLObjectElementImpl::setType):
+        (DOM::HTMLObjectElementImpl::useMap):
+        (DOM::HTMLObjectElementImpl::setUseMap):
+        (DOM::HTMLObjectElementImpl::vspace):
+        (DOM::HTMLObjectElementImpl::setVspace):
+        (DOM::HTMLObjectElementImpl::width):
+        (DOM::HTMLObjectElementImpl::setWidth):
+        (DOM::HTMLParamElementImpl::HTMLParamElementImpl):
+        (DOM::HTMLParamElementImpl::parseMappedAttribute):
+        (DOM::HTMLParamElementImpl::isURLAttribute):
+        (DOM::HTMLParamElementImpl::setName):
+        (DOM::HTMLParamElementImpl::type):
+        (DOM::HTMLParamElementImpl::setType):
+        (DOM::HTMLParamElementImpl::setValue):
+        (DOM::HTMLParamElementImpl::valueType):
+        (DOM::HTMLParamElementImpl::setValueType):
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::HTMLTableElementImpl):
+        (DOM::HTMLTableElementImpl::checkDTD):
+        (DOM::HTMLTableElementImpl::createTHead):
+        (DOM::HTMLTableElementImpl::createTFoot):
+        (DOM::HTMLTableElementImpl::insertRow):
+        (DOM::HTMLTableElementImpl::deleteRow):
+        (DOM::HTMLTableElementImpl::addChild):
+        (DOM::HTMLTableElementImpl::mapToEntry):
+        (DOM::HTMLTableElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableElementImpl::additionalAttributeStyleDecl):
+        (DOM::HTMLTableElementImpl::getSharedCellDecl):
+        (DOM::HTMLTableElementImpl::isURLAttribute):
+        (DOM::HTMLTableElementImpl::align):
+        (DOM::HTMLTableElementImpl::setAlign):
+        (DOM::HTMLTableElementImpl::bgColor):
+        (DOM::HTMLTableElementImpl::setBgColor):
+        (DOM::HTMLTableElementImpl::border):
+        (DOM::HTMLTableElementImpl::setBorder):
+        (DOM::HTMLTableElementImpl::cellPadding):
+        (DOM::HTMLTableElementImpl::setCellPadding):
+        (DOM::HTMLTableElementImpl::cellSpacing):
+        (DOM::HTMLTableElementImpl::setCellSpacing):
+        (DOM::HTMLTableElementImpl::frame):
+        (DOM::HTMLTableElementImpl::setFrame):
+        (DOM::HTMLTableElementImpl::rules):
+        (DOM::HTMLTableElementImpl::setRules):
+        (DOM::HTMLTableElementImpl::summary):
+        (DOM::HTMLTableElementImpl::setSummary):
+        (DOM::HTMLTableElementImpl::width):
+        (DOM::HTMLTableElementImpl::setWidth):
+        (DOM::HTMLTablePartElementImpl::mapToEntry):
+        (DOM::HTMLTablePartElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableSectionElementImpl::checkDTD):
+        (DOM::HTMLTableSectionElementImpl::addChild):
+        (DOM::HTMLTableSectionElementImpl::numRows):
+        (DOM::HTMLTableSectionElementImpl::align):
+        (DOM::HTMLTableSectionElementImpl::setAlign):
+        (DOM::HTMLTableSectionElementImpl::ch):
+        (DOM::HTMLTableSectionElementImpl::setCh):
+        (DOM::HTMLTableSectionElementImpl::chOff):
+        (DOM::HTMLTableSectionElementImpl::setChOff):
+        (DOM::HTMLTableSectionElementImpl::vAlign):
+        (DOM::HTMLTableSectionElementImpl::setVAlign):
+        (DOM::HTMLTableRowElementImpl::checkDTD):
+        (DOM::HTMLTableRowElementImpl::addChild):
+        (DOM::HTMLTableRowElementImpl::rowIndex):
+        (DOM::HTMLTableRowElementImpl::sectionRowIndex):
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        (DOM::HTMLTableRowElementImpl::align):
+        (DOM::HTMLTableRowElementImpl::setAlign):
+        (DOM::HTMLTableRowElementImpl::bgColor):
+        (DOM::HTMLTableRowElementImpl::setBgColor):
+        (DOM::HTMLTableRowElementImpl::ch):
+        (DOM::HTMLTableRowElementImpl::setCh):
+        (DOM::HTMLTableRowElementImpl::chOff):
+        (DOM::HTMLTableRowElementImpl::setChOff):
+        (DOM::HTMLTableRowElementImpl::vAlign):
+        (DOM::HTMLTableRowElementImpl::setVAlign):
+        (DOM::HTMLTableCellElementImpl::cellIndex):
+        (DOM::HTMLTableCellElementImpl::mapToEntry):
+        (DOM::HTMLTableCellElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableCellElementImpl::additionalAttributeStyleDecl):
+        (DOM::HTMLTableCellElementImpl::isURLAttribute):
+        (DOM::HTMLTableCellElementImpl::abbr):
+        (DOM::HTMLTableCellElementImpl::setAbbr):
+        (DOM::HTMLTableCellElementImpl::align):
+        (DOM::HTMLTableCellElementImpl::setAlign):
+        (DOM::HTMLTableCellElementImpl::axis):
+        (DOM::HTMLTableCellElementImpl::setAxis):
+        (DOM::HTMLTableCellElementImpl::bgColor):
+        (DOM::HTMLTableCellElementImpl::setBgColor):
+        (DOM::HTMLTableCellElementImpl::ch):
+        (DOM::HTMLTableCellElementImpl::setCh):
+        (DOM::HTMLTableCellElementImpl::chOff):
+        (DOM::HTMLTableCellElementImpl::setChOff):
+        (DOM::HTMLTableCellElementImpl::setColSpan):
+        (DOM::HTMLTableCellElementImpl::headers):
+        (DOM::HTMLTableCellElementImpl::setHeaders):
+        (DOM::HTMLTableCellElementImpl::height):
+        (DOM::HTMLTableCellElementImpl::setHeight):
+        (DOM::HTMLTableCellElementImpl::noWrap):
+        (DOM::HTMLTableCellElementImpl::setNoWrap):
+        (DOM::HTMLTableCellElementImpl::setRowSpan):
+        (DOM::HTMLTableCellElementImpl::scope):
+        (DOM::HTMLTableCellElementImpl::setScope):
+        (DOM::HTMLTableCellElementImpl::vAlign):
+        (DOM::HTMLTableCellElementImpl::setVAlign):
+        (DOM::HTMLTableCellElementImpl::width):
+        (DOM::HTMLTableCellElementImpl::setWidth):
+        (DOM::HTMLTableColElementImpl::HTMLTableColElementImpl):
+        (DOM::HTMLTableColElementImpl::mapToEntry):
+        (DOM::HTMLTableColElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableColElementImpl::align):
+        (DOM::HTMLTableColElementImpl::setAlign):
+        (DOM::HTMLTableColElementImpl::ch):
+        (DOM::HTMLTableColElementImpl::setCh):
+        (DOM::HTMLTableColElementImpl::chOff):
+        (DOM::HTMLTableColElementImpl::setChOff):
+        (DOM::HTMLTableColElementImpl::setSpan):
+        (DOM::HTMLTableColElementImpl::vAlign):
+        (DOM::HTMLTableColElementImpl::setVAlign):
+        (DOM::HTMLTableColElementImpl::width):
+        (DOM::HTMLTableColElementImpl::setWidth):
+        (DOM::HTMLTableCaptionElementImpl::mapToEntry):
+        (DOM::HTMLTableCaptionElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableCaptionElementImpl::align):
+        (DOM::HTMLTableCaptionElementImpl::setAlign):
+        * khtml/html/html_tableimpl.h:
+        (DOM::HTMLTableRowElementImpl::HTMLTableRowElementImpl):
+        (DOM::HTMLTableColElementImpl::endTagRequirement):
+        (DOM::HTMLTableColElementImpl::tagPriority):
+        (DOM::HTMLTableColElementImpl::checkDTD):
+        (DOM::HTMLTableCaptionElementImpl::HTMLTableCaptionElementImpl):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::headingConstructor):
+        (DOM::preConstructor):
+        (DOM::modConstructor):
+        (DOM::tableColConstructor):
+        (DOM::tableCellConstructor):
+        (DOM::tableSectionConstructor):
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlnames.cpp:
+        (HTMLNames::initHTMLNames):
+        * khtml/html/htmlnames.h:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken):
+        (isTableSection):
+        (isTablePart):
+        (isTableRelated):
+        (HTMLParser::handleError):
+        (HTMLParser::headCreateErrorCheck):
+        (HTMLParser::bodyCreateErrorCheck):
+        (HTMLParser::framesetCreateErrorCheck):
+        (HTMLParser::iframeCreateErrorCheck):
+        (HTMLParser::ddCreateErrorCheck):
+        (HTMLParser::dtCreateErrorCheck):
+        (HTMLParser::tableCellCreateErrorCheck):
+        (HTMLParser::tableSectionCreateErrorCheck):
+        (HTMLParser::noembedCreateErrorCheck):
+        (HTMLParser::noframesCreateErrorCheck):
+        (HTMLParser::noscriptCreateErrorCheck):
+        (HTMLParser::getNode):
+        (HTMLParser::processCloseTag):
+        (HTMLParser::isHeaderTag):
+        (HTMLParser::isInline):
+        (HTMLParser::isResidualStyleTag):
+        (HTMLParser::isAffectedByResidualStyle):
+        (HTMLParser::popBlock):
+        (HTMLParser::handleIsindex):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::parseTag):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::backgroundURL):
+        (KHTMLPart::updateActions):
+        (KHTMLPart::handleMouseMoveEventDrag):
+        (KHTMLPart::selectionComputedStyle):
+        (KHTMLPart::applyEditingStyleToElement):
+        (KHTMLPart::removeEditingStyleFromElement):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        (isSubmitImage):
+        * khtml/misc/decoder.cpp:
+        (Decoder::decode):
+        * khtml/misc/hashtable.h:
+        (khtml::::lookup):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBackgroundExtended):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::paint):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addFocusRingRects):
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement):
+        (RenderFieldset::findLegend):
+        (RenderSelect::updateFromElement):
+        (RenderSelect::layout):
+        (RenderSelect::slotSelected):
+        (RenderSelect::slotSelectionChanged):
+        (RenderSelect::updateSelection):
+        (RenderSlider::updateFromElement):
+        (RenderSlider::slotSliderValueChanged):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        (RenderPartObject::slotViewCleared):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        (RenderImage::imageMap):
+        (RenderImage::updateAltText):
+        * khtml/rendering/render_layer.cpp:
+        (Marquee::marqueeSpeed):
+        * khtml/rendering/render_list.cpp:
+        (getParentOfFirstLineBox):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isBody):
+        (RenderObject::isHR):
+        (RenderObject::isHTMLMarquee):
+        (RenderObject::sizesToMaxWidth):
+        (RenderObject::setStyle):
+        (RenderObject::getTextDecorationColors):
+        (RenderObject::setPixmap):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTable::layout):
+        (RenderTableSection::addChild):
+        (RenderTableRow::addChild):
+        (RenderTableCell::updateFromElement):
+        (RenderTableCell::calcMinMaxWidth):
+        (RenderTableCol::updateFromElement):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::isControlContainer):
+        (khtml::RenderTheme::isChecked):
+        (khtml::RenderTheme::isEnabled):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::getElementById):
+        (DocumentImpl::getElementByAccessKey):
+        (DocumentImpl::body):
+        (DocumentImpl::shouldScheduleLayout):
+        (DocumentImpl::prepareMouseEvent):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::getAttribute):
+        (ElementImpl::setAttribute):
+        (ElementImpl::setAttributeMap):
+        (ElementImpl::insertedIntoDocument):
+        (ElementImpl::removedFromDocument):
+        (ElementImpl::formatForDebugger):
+        (NamedAttrMapImpl::setNamedItem):
+        (NamedAttrMapImpl::removeNamedItem):
+        (NamedAttrMapImpl::operator=):
+        (StyledElementImpl::updateStyleAttributeIfNeeded):
+        (StyledElementImpl::mapToEntry):
+        (StyledElementImpl::parseMappedAttribute):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::maxDeepOffset):
+        (DOM::NodeImpl::enclosingBlockFlowOrTableElement):
+        (DOM::NodeImpl::enclosingBlockFlowElement):
+        (DOM::NodeImpl::enclosingInlineElement):
+        (DOM::NodeImpl::rootEditableElement):
+        (DOM::NodeImpl::showNode):
+        (DOM::NodeImpl::showTreeAndMark):
+        (DOM::NameNodeListImpl::nodeMatches):
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::downstream):
+        (DOM::Position::rendersInDifferentPosition):
+        (DOM::Position::leadingWhitespacePosition):
+        (DOM::Position::trailingWhitespacePosition):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::startElement):
+        (khtml::XMLTokenizer::insertErrorMessageBlock):
+        (khtml::XMLTokenizer::addScripts):
+        (khtml::XMLTokenizer::executeScripts):
+        * kwq/DOM.mm:
+        (+[DOMNode _nodeWithImpl:]):
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLElement idName]):
+        (-[DOMHTMLElement setIdName:]):
+        (-[DOMHTMLLinkElement media]):
+        (-[DOMHTMLLinkElement setMedia:]):
+        (-[DOMHTMLLinkElement rel]):
+        (-[DOMHTMLLinkElement setRel:]):
+        (-[DOMHTMLLinkElement rev]):
+        (-[DOMHTMLLinkElement setRev:]):
+        (-[DOMHTMLLinkElement target]):
+        (-[DOMHTMLLinkElement setTarget:]):
+        (-[DOMHTMLLinkElement type]):
+        (-[DOMHTMLLinkElement setType:]):
+        (-[DOMHTMLTitleElement text]):
+        (-[DOMHTMLTitleElement setText:]):
+        (-[DOMHTMLMetaElement content]):
+        (-[DOMHTMLMetaElement setContent:]):
+        (-[DOMHTMLMetaElement httpEquiv]):
+        (-[DOMHTMLMetaElement setHttpEquiv:]):
+        (-[DOMHTMLMetaElement name]):
+        (-[DOMHTMLMetaElement setName:]):
+        (-[DOMHTMLMetaElement scheme]):
+        (-[DOMHTMLMetaElement setScheme:]):
+        (-[DOMHTMLBaseElement setHref:]):
+        (-[DOMHTMLBaseElement target]):
+        (-[DOMHTMLBaseElement setTarget:]):
+        (-[DOMHTMLStyleElement disabled]):
+        (-[DOMHTMLStyleElement setDisabled:]):
+        (-[DOMHTMLStyleElement media]):
+        (-[DOMHTMLStyleElement setMedia:]):
+        (-[DOMHTMLStyleElement type]):
+        (-[DOMHTMLStyleElement setType:]):
+        (-[DOMHTMLBodyElement aLink]):
+        (-[DOMHTMLBodyElement setALink:]):
+        (-[DOMHTMLBodyElement background]):
+        (-[DOMHTMLBodyElement setBackground:]):
+        (-[DOMHTMLBodyElement bgColor]):
+        (-[DOMHTMLBodyElement setBgColor:]):
+        (-[DOMHTMLBodyElement link]):
+        (-[DOMHTMLBodyElement setLink:]):
+        (-[DOMHTMLBodyElement text]):
+        (-[DOMHTMLBodyElement setText:]):
+        (-[DOMHTMLBodyElement vLink]):
+        (-[DOMHTMLBodyElement setVLink:]):
+        (-[DOMHTMLFormElement name]):
+        (-[DOMHTMLFormElement setName:]):
+        (-[DOMHTMLFormElement acceptCharset]):
+        (-[DOMHTMLFormElement setAcceptCharset:]):
+        (-[DOMHTMLFormElement action]):
+        (-[DOMHTMLFormElement setAction:]):
+        (-[DOMHTMLFormElement enctype]):
+        (-[DOMHTMLFormElement setEnctype:]):
+        (-[DOMHTMLFormElement method]):
+        (-[DOMHTMLFormElement setMethod:]):
+        (-[DOMHTMLFormElement target]):
+        (-[DOMHTMLFormElement setTarget:]):
+        (-[DOMHTMLTextAreaElement accessKey]):
+        (-[DOMHTMLTextAreaElement setAccessKey:]):
+        (-[DOMHTMLTextAreaElement cols]):
+        (-[DOMHTMLTextAreaElement setCols:]):
+        (-[DOMHTMLTextAreaElement disabled]):
+        (-[DOMHTMLTextAreaElement setDisabled:]):
+        (-[DOMHTMLTextAreaElement readOnly]):
+        (-[DOMHTMLTextAreaElement setReadOnly:]):
+        (-[DOMHTMLTextAreaElement rows]):
+        (-[DOMHTMLTextAreaElement setRows:]):
+        (-[DOMHTMLButtonElement accessKey]):
+        (-[DOMHTMLButtonElement setAccessKey:]):
+        (-[DOMHTMLButtonElement disabled]):
+        (-[DOMHTMLButtonElement setDisabled:]):
+        (-[DOMHTMLButtonElement value]):
+        (-[DOMHTMLButtonElement setValue:]):
+        (-[DOMHTMLLabelElement accessKey]):
+        (-[DOMHTMLLabelElement setAccessKey:]):
+        (-[DOMHTMLLabelElement htmlFor]):
+        (-[DOMHTMLLabelElement setHtmlFor:]):
+        (-[DOMHTMLLegendElement accessKey]):
+        (-[DOMHTMLLegendElement setAccessKey:]):
+        (-[DOMHTMLLegendElement align]):
+        (-[DOMHTMLLegendElement setAlign:]):
+        (-[DOMHTMLUListElement compact]):
+        (-[DOMHTMLUListElement setCompact:]):
+        (-[DOMHTMLUListElement type]):
+        (-[DOMHTMLUListElement setType:]):
+        (-[DOMHTMLOListElement start]):
+        (-[DOMHTMLOListElement setStart:]):
+        (-[DOMHTMLOListElement type]):
+        (-[DOMHTMLOListElement setType:]):
+        (-[DOMHTMLDListElement compact]):
+        (-[DOMHTMLDListElement setCompact:]):
+        (-[DOMHTMLDirectoryElement compact]):
+        (-[DOMHTMLDirectoryElement setCompact:]):
+        (-[DOMHTMLMenuElement compact]):
+        (-[DOMHTMLMenuElement setCompact:]):
+        (-[DOMHTMLQuoteElement cite]):
+        (-[DOMHTMLQuoteElement setCite:]):
+        (-[DOMHTMLDivElement align]):
+        (-[DOMHTMLDivElement setAlign:]):
+        (-[DOMHTMLParagraphElement align]):
+        (-[DOMHTMLParagraphElement setAlign:]):
+        (-[DOMHTMLHeadingElement align]):
+        (-[DOMHTMLHeadingElement setAlign:]):
+        (-[DOMHTMLPreElement width]):
+        (-[DOMHTMLPreElement setWidth:]):
+        (-[DOMHTMLBRElement clear]):
+        (-[DOMHTMLBRElement setClear:]):
+        (-[DOMHTMLBaseFontElement color]):
+        (-[DOMHTMLBaseFontElement setColor:]):
+        (-[DOMHTMLBaseFontElement face]):
+        (-[DOMHTMLBaseFontElement setFace:]):
+        (-[DOMHTMLBaseFontElement size]):
+        (-[DOMHTMLBaseFontElement setSize:]):
+        (-[DOMHTMLFontElement color]):
+        (-[DOMHTMLFontElement setColor:]):
+        (-[DOMHTMLFontElement face]):
+        (-[DOMHTMLFontElement setFace:]):
+        (-[DOMHTMLFontElement size]):
+        (-[DOMHTMLFontElement setSize:]):
+        (-[DOMHTMLHRElement align]):
+        (-[DOMHTMLHRElement setAlign:]):
+        (-[DOMHTMLHRElement noShade]):
+        (-[DOMHTMLHRElement setNoShade:]):
+        (-[DOMHTMLHRElement size]):
+        (-[DOMHTMLHRElement setSize:]):
+        (-[DOMHTMLHRElement width]):
+        (-[DOMHTMLHRElement setWidth:]):
+        (-[DOMHTMLModElement cite]):
+        (-[DOMHTMLModElement setCite:]):
+        (-[DOMHTMLModElement dateTime]):
+        (-[DOMHTMLModElement setDateTime:]):
+        (-[DOMHTMLAnchorElement accessKey]):
+        (-[DOMHTMLAnchorElement setAccessKey:]):
+        (-[DOMHTMLAnchorElement charset]):
+        (-[DOMHTMLAnchorElement setCharset:]):
+        (-[DOMHTMLAnchorElement coords]):
+        (-[DOMHTMLAnchorElement setCoords:]):
+        (-[DOMHTMLAnchorElement setHref:]):
+        (-[DOMHTMLAnchorElement target]):
+        (-[DOMHTMLAnchorElement setTarget:]):
+        (-[DOMHTMLAnchorElement type]):
+        (-[DOMHTMLAnchorElement setType:]):
+        (-[DOMHTMLImageElement name]):
+        (-[DOMHTMLImageElement setName:]):
+        (-[DOMHTMLImageElement align]):
+        (-[DOMHTMLImageElement setAlign:]):
+        (-[DOMHTMLImageElement alt]):
+        (-[DOMHTMLImageElement setAlt:]):
+        (-[DOMHTMLImageElement border]):
+        (-[DOMHTMLImageElement setBorder:]):
+        (-[DOMHTMLImageElement height]):
+        (-[DOMHTMLImageElement setHeight:]):
+        (-[DOMHTMLImageElement hspace]):
+        (-[DOMHTMLImageElement setHspace:]):
+        (-[DOMHTMLImageElement isMap]):
+        (-[DOMHTMLImageElement setIsMap:]):
+        (-[DOMHTMLImageElement longDesc]):
+        (-[DOMHTMLImageElement setLongDesc:]):
+        (-[DOMHTMLImageElement setSrc:]):
+        (-[DOMHTMLImageElement useMap]):
+        (-[DOMHTMLImageElement setUseMap:]):
+        (-[DOMHTMLImageElement vspace]):
+        (-[DOMHTMLImageElement setVspace:]):
+        (-[DOMHTMLImageElement width]):
+        (-[DOMHTMLImageElement setWidth:]):
+        (-[DOMHTMLObjectElement code]):
+        (-[DOMHTMLObjectElement setCode:]):
+        (-[DOMHTMLObjectElement align]):
+        (-[DOMHTMLObjectElement setAlign:]):
+        (-[DOMHTMLObjectElement archive]):
+        (-[DOMHTMLObjectElement setArchive:]):
+        (-[DOMHTMLObjectElement border]):
+        (-[DOMHTMLObjectElement setBorder:]):
+        (-[DOMHTMLObjectElement codeBase]):
+        (-[DOMHTMLObjectElement setCodeBase:]):
+        (-[DOMHTMLObjectElement codeType]):
+        (-[DOMHTMLObjectElement setCodeType:]):
+        (-[DOMHTMLObjectElement data]):
+        (-[DOMHTMLObjectElement setData:]):
+        (-[DOMHTMLObjectElement declare]):
+        (-[DOMHTMLObjectElement setDeclare:]):
+        (-[DOMHTMLObjectElement height]):
+        (-[DOMHTMLObjectElement setHeight:]):
+        (-[DOMHTMLObjectElement hspace]):
+        (-[DOMHTMLObjectElement setHspace:]):
+        (-[DOMHTMLObjectElement name]):
+        (-[DOMHTMLObjectElement setName:]):
+        (-[DOMHTMLObjectElement standby]):
+        (-[DOMHTMLObjectElement setStandby:]):
+        (-[DOMHTMLObjectElement tabIndex]):
+        (-[DOMHTMLObjectElement setTabIndex:]):
+        (-[DOMHTMLObjectElement type]):
+        (-[DOMHTMLObjectElement setType:]):
+        (-[DOMHTMLObjectElement useMap]):
+        (-[DOMHTMLObjectElement setUseMap:]):
+        (-[DOMHTMLObjectElement vspace]):
+        (-[DOMHTMLObjectElement setVspace:]):
+        (-[DOMHTMLObjectElement width]):
+        (-[DOMHTMLObjectElement setWidth:]):
+        (-[DOMHTMLParamElement name]):
+        (-[DOMHTMLParamElement setName:]):
+        (-[DOMHTMLParamElement type]):
+        (-[DOMHTMLParamElement setType:]):
+        (-[DOMHTMLParamElement value]):
+        (-[DOMHTMLParamElement setValue:]):
+        (-[DOMHTMLParamElement valueType]):
+        (-[DOMHTMLParamElement setValueType:]):
+        (-[DOMHTMLAppletElement align]):
+        (-[DOMHTMLAppletElement setAlign:]):
+        (-[DOMHTMLAppletElement alt]):
+        (-[DOMHTMLAppletElement setAlt:]):
+        (-[DOMHTMLAppletElement archive]):
+        (-[DOMHTMLAppletElement setArchive:]):
+        (-[DOMHTMLAppletElement code]):
+        (-[DOMHTMLAppletElement setCode:]):
+        (-[DOMHTMLAppletElement codeBase]):
+        (-[DOMHTMLAppletElement setCodeBase:]):
+        (-[DOMHTMLAppletElement height]):
+        (-[DOMHTMLAppletElement setHeight:]):
+        (-[DOMHTMLAppletElement hspace]):
+        (-[DOMHTMLAppletElement setHspace:]):
+        (-[DOMHTMLAppletElement name]):
+        (-[DOMHTMLAppletElement setName:]):
+        (-[DOMHTMLAppletElement object]):
+        (-[DOMHTMLAppletElement setObject:]):
+        (-[DOMHTMLAppletElement vspace]):
+        (-[DOMHTMLAppletElement setVspace:]):
+        (-[DOMHTMLAppletElement width]):
+        (-[DOMHTMLAppletElement setWidth:]):
+        (-[DOMHTMLMapElement name]):
+        (-[DOMHTMLMapElement setName:]):
+        (-[DOMHTMLAreaElement accessKey]):
+        (-[DOMHTMLAreaElement setAccessKey:]):
+        (-[DOMHTMLAreaElement alt]):
+        (-[DOMHTMLAreaElement setAlt:]):
+        (-[DOMHTMLAreaElement coords]):
+        (-[DOMHTMLAreaElement setCoords:]):
+        (-[DOMHTMLAreaElement setHref:]):
+        (-[DOMHTMLAreaElement noHref]):
+        (-[DOMHTMLAreaElement setNoHref:]):
+        (-[DOMHTMLAreaElement shape]):
+        (-[DOMHTMLAreaElement setShape:]):
+        (-[DOMHTMLAreaElement tabIndex]):
+        (-[DOMHTMLAreaElement setTabIndex:]):
+        (-[DOMHTMLAreaElement target]):
+        (-[DOMHTMLAreaElement setTarget:]):
+        (-[DOMHTMLScriptElement text]):
+        (-[DOMHTMLScriptElement setText:]):
+        (-[DOMHTMLScriptElement charset]):
+        (-[DOMHTMLScriptElement setCharset:]):
+        (-[DOMHTMLScriptElement defer]):
+        (-[DOMHTMLScriptElement setDefer:]):
+        (-[DOMHTMLScriptElement src]):
+        (-[DOMHTMLScriptElement setSrc:]):
+        (-[DOMHTMLScriptElement type]):
+        (-[DOMHTMLScriptElement setType:]):
+        (-[DOMHTMLTableCaptionElement align]):
+        (-[DOMHTMLTableCaptionElement setAlign:]):
+        (-[DOMHTMLTableSectionElement align]):
+        (-[DOMHTMLTableSectionElement setAlign:]):
+        (-[DOMHTMLTableSectionElement ch]):
+        (-[DOMHTMLTableSectionElement setCh:]):
+        (-[DOMHTMLTableSectionElement chOff]):
+        (-[DOMHTMLTableSectionElement setChOff:]):
+        (-[DOMHTMLTableSectionElement vAlign]):
+        (-[DOMHTMLTableSectionElement setVAlign:]):
+        (-[DOMHTMLTableElement align]):
+        (-[DOMHTMLTableElement setAlign:]):
+        (-[DOMHTMLTableElement bgColor]):
+        (-[DOMHTMLTableElement setBgColor:]):
+        (-[DOMHTMLTableElement border]):
+        (-[DOMHTMLTableElement setBorder:]):
+        (-[DOMHTMLTableElement cellPadding]):
+        (-[DOMHTMLTableElement setCellPadding:]):
+        (-[DOMHTMLTableElement cellSpacing]):
+        (-[DOMHTMLTableElement setCellSpacing:]):
+        (-[DOMHTMLTableElement frameBorders]):
+        (-[DOMHTMLTableElement setFrameBorders:]):
+        (-[DOMHTMLTableElement rules]):
+        (-[DOMHTMLTableElement setRules:]):
+        (-[DOMHTMLTableElement summary]):
+        (-[DOMHTMLTableElement setSummary:]):
+        (-[DOMHTMLTableElement width]):
+        (-[DOMHTMLTableElement setWidth:]):
+        (-[DOMHTMLTableColElement align]):
+        (-[DOMHTMLTableColElement setAlign:]):
+        (-[DOMHTMLTableColElement ch]):
+        (-[DOMHTMLTableColElement setCh:]):
+        (-[DOMHTMLTableColElement chOff]):
+        (-[DOMHTMLTableColElement setChOff:]):
+        (-[DOMHTMLTableColElement span]):
+        (-[DOMHTMLTableColElement setSpan:]):
+        (-[DOMHTMLTableColElement vAlign]):
+        (-[DOMHTMLTableColElement setVAlign:]):
+        (-[DOMHTMLTableColElement width]):
+        (-[DOMHTMLTableColElement setWidth:]):
+        (-[DOMHTMLTableRowElement align]):
+        (-[DOMHTMLTableRowElement setAlign:]):
+        (-[DOMHTMLTableRowElement bgColor]):
+        (-[DOMHTMLTableRowElement setBgColor:]):
+        (-[DOMHTMLTableRowElement ch]):
+        (-[DOMHTMLTableRowElement setCh:]):
+        (-[DOMHTMLTableRowElement chOff]):
+        (-[DOMHTMLTableRowElement setChOff:]):
+        (-[DOMHTMLTableRowElement vAlign]):
+        (-[DOMHTMLTableRowElement setVAlign:]):
+        (-[DOMHTMLTableCellElement abbr]):
+        (-[DOMHTMLTableCellElement setAbbr:]):
+        (-[DOMHTMLTableCellElement align]):
+        (-[DOMHTMLTableCellElement setAlign:]):
+        (-[DOMHTMLTableCellElement axis]):
+        (-[DOMHTMLTableCellElement setAxis:]):
+        (-[DOMHTMLTableCellElement bgColor]):
+        (-[DOMHTMLTableCellElement setBgColor:]):
+        (-[DOMHTMLTableCellElement ch]):
+        (-[DOMHTMLTableCellElement setCh:]):
+        (-[DOMHTMLTableCellElement chOff]):
+        (-[DOMHTMLTableCellElement setChOff:]):
+        (-[DOMHTMLTableCellElement colSpan]):
+        (-[DOMHTMLTableCellElement setColSpan:]):
+        (-[DOMHTMLTableCellElement headers]):
+        (-[DOMHTMLTableCellElement setHeaders:]):
+        (-[DOMHTMLTableCellElement height]):
+        (-[DOMHTMLTableCellElement setHeight:]):
+        (-[DOMHTMLTableCellElement noWrap]):
+        (-[DOMHTMLTableCellElement setNoWrap:]):
+        (-[DOMHTMLTableCellElement rowSpan]):
+        (-[DOMHTMLTableCellElement setRowSpan:]):
+        (-[DOMHTMLTableCellElement scope]):
+        (-[DOMHTMLTableCellElement setScope:]):
+        (-[DOMHTMLTableCellElement vAlign]):
+        (-[DOMHTMLTableCellElement setVAlign:]):
+        (-[DOMHTMLTableCellElement width]):
+        (-[DOMHTMLTableCellElement setWidth:]):
+        (-[DOMHTMLFrameSetElement rows]):
+        (-[DOMHTMLFrameSetElement setRows:]):
+        (-[DOMHTMLFrameSetElement cols]):
+        (-[DOMHTMLFrameSetElement setCols:]):
+        (-[DOMHTMLFrameElement frameBorder]):
+        (-[DOMHTMLFrameElement setFrameBorder:]):
+        (-[DOMHTMLFrameElement longDesc]):
+        (-[DOMHTMLFrameElement setLongDesc:]):
+        (-[DOMHTMLFrameElement marginHeight]):
+        (-[DOMHTMLFrameElement setMarginHeight:]):
+        (-[DOMHTMLFrameElement marginWidth]):
+        (-[DOMHTMLFrameElement setMarginWidth:]):
+        (-[DOMHTMLFrameElement name]):
+        (-[DOMHTMLFrameElement setName:]):
+        (-[DOMHTMLFrameElement noResize]):
+        (-[DOMHTMLFrameElement setNoResize:]):
+        (-[DOMHTMLFrameElement scrolling]):
+        (-[DOMHTMLFrameElement setScrolling:]):
+        (-[DOMHTMLFrameElement src]):
+        (-[DOMHTMLFrameElement setSrc:]):
+        (-[DOMHTMLIFrameElement align]):
+        (-[DOMHTMLIFrameElement setAlign:]):
+        (-[DOMHTMLIFrameElement frameBorder]):
+        (-[DOMHTMLIFrameElement setFrameBorder:]):
+        (-[DOMHTMLIFrameElement height]):
+        (-[DOMHTMLIFrameElement setHeight:]):
+        (-[DOMHTMLIFrameElement longDesc]):
+        (-[DOMHTMLIFrameElement setLongDesc:]):
+        (-[DOMHTMLIFrameElement marginHeight]):
+        (-[DOMHTMLIFrameElement setMarginHeight:]):
+        (-[DOMHTMLIFrameElement marginWidth]):
+        (-[DOMHTMLIFrameElement setMarginWidth:]):
+        (-[DOMHTMLIFrameElement name]):
+        (-[DOMHTMLIFrameElement setName:]):
+        (-[DOMHTMLIFrameElement noResize]):
+        (-[DOMHTMLIFrameElement setNoResize:]):
+        (-[DOMHTMLIFrameElement scrolling]):
+        (-[DOMHTMLIFrameElement setScrolling:]):
+        (-[DOMHTMLIFrameElement src]):
+        (-[DOMHTMLIFrameElement setSrc:]):
+        (-[DOMHTMLIFrameElement width]):
+        (-[DOMHTMLIFrameElement setWidth:]):
+        (-[DOMHTMLEmbedElement align]):
+        (-[DOMHTMLEmbedElement setAlign:]):
+        (-[DOMHTMLEmbedElement height]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement name]):
+        (-[DOMHTMLEmbedElement setName:]):
+        (-[DOMHTMLEmbedElement src]):
+        (-[DOMHTMLEmbedElement setSrc:]):
+        (-[DOMHTMLEmbedElement type]):
+        (-[DOMHTMLEmbedElement setType:]):
+        (-[DOMHTMLEmbedElement width]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject role]):
+        (-[KWQAccObject helpText]):
+        (-[KWQAccObject title]):
+        (-[KWQAccObject accessibilityDescription]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        * kwq/KWQKHTMLPart.cpp:
+        (KWQKHTMLPart::isFrameSet):
+        * kwq/KWQKHTMLPart.mm:
+        (scanForForm):
+        (KWQKHTMLPart::currentForm):
+        (KWQKHTMLPart::searchForLabelsBeforeElement):
+        (KWQKHTMLPart::matchLabelsAgainstElement):
+        (KWQKHTMLPart::fileWrapperForElement):
+        (listParent):
+        (isTextFirstInListItem):
+        (KWQKHTMLPart::attributedString):
+        (KWQKHTMLPart::styleForSelectionStart):
+        (KWQKHTMLPart::setSelectionFromNone):
+        * kwq/WebCoreBridge.mm:
+        (inputElementFromDOMElement):
+        (formElementFromDOMElement):
+        (-[WebCoreBridge elementAtPoint:]):
+
 2005-07-29  David Harrison  <harrison@apple.com>
 
         Test cases added: n/a

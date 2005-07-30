@@ -49,6 +49,7 @@
 #include "KWQSlider.h"
 #endif
 
+using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
 
@@ -693,10 +694,10 @@ void RenderLineEdit::updateFromElement()
     
 #if APPLE_CHANGES
     // Handle updating the search attributes.
-    w->setPlaceholderString(e->getAttribute(HTMLAttributes::placeholder()).string());
+    w->setPlaceholderString(e->getAttribute(placeholderAttr).string());
     if (w->type() == QLineEdit::Search) {
-        w->setLiveSearch(!e->getAttribute(HTMLAttributes::incremental()).isNull());
-        w->setAutoSaveName(e->getAttribute(HTMLAttributes::autosave()).string());
+        w->setLiveSearch(!e->getAttribute(incrementalAttr).isNull());
+        w->setAutoSaveName(e->getAttribute(autosaveAttr).string());
         w->setMaxResults(e->maxResults());
     }
 #endif
@@ -796,7 +797,7 @@ RenderObject* RenderFieldset::findLegend()
 {
     for (RenderObject* legend = firstChild(); legend; legend = legend->nextSibling()) {
       if (!legend->isFloatingOrPositioned() && legend->element() &&
-          legend->element()->hasTagName(HTMLTags::legend()))
+          legend->element()->hasTagName(legendTag))
         return legend;
     }
     return 0;
@@ -1190,8 +1191,8 @@ void RenderSelect::updateFromElement()
             static_cast<KComboBox*>(m_widget)->clear();
 
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
-            if (listItems[listIndex]->hasTagName(HTMLTags::optgroup())) {
-                QString label = listItems[listIndex]->getAttribute(HTMLAttributes::label()).string();
+            if (listItems[listIndex]->hasTagName(optgroupTag)) {
+                QString label = listItems[listIndex]->getAttribute(labelAttr).string();
                 label.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, an optgroup can't start or end with whitespace (other than the indent
@@ -1214,14 +1215,14 @@ void RenderSelect::updateFromElement()
                     static_cast<KComboBox*>(m_widget)->insertItem(label, listIndex);
 #endif
             }
-            else if (listItems[listIndex]->hasTagName(HTMLTags::option())) {
+            else if (listItems[listIndex]->hasTagName(optionTag)) {
                 QString itemText = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text().string();
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.
                 itemText = itemText.stripWhiteSpace();
                 
-                if (listItems[listIndex]->parentNode()->hasTagName(HTMLTags::optgroup()))
+                if (listItems[listIndex]->parentNode()->hasTagName(optgroupTag))
                     itemText.prepend("    ");
 
 #if APPLE_CHANGES
@@ -1347,7 +1348,7 @@ void RenderSelect::layout( )
 
     bool foundOption = false;
     for (uint i = 0; i < listItems.size() && !foundOption; i++)
-	foundOption = (listItems[i]->hasTagName(HTMLTags::option()));
+	foundOption = (listItems[i]->hasTagName(optionTag));
 
     m_widget->setEnabled(foundOption && ! element()->disabled());
 }
@@ -1361,12 +1362,12 @@ void RenderSelect::slotSelected(int index)
     QMemArray<HTMLGenericFormElementImpl*> listItems = element()->listItems();
     if(index >= 0 && index < int(listItems.size()))
     {
-        bool found = (listItems[index]->hasTagName(HTMLTags::option()));
+        bool found = (listItems[index]->hasTagName(optionTag));
 
         if ( !found ) {
             // this one is not selectable,  we need to find an option element
             while ( ( unsigned ) index < listItems.size() ) {
-                if (listItems[index]->hasTagName(HTMLTags::option())) {
+                if (listItems[index]->hasTagName(optionTag)) {
                     found = true;
                     break;
                 }
@@ -1375,7 +1376,7 @@ void RenderSelect::slotSelected(int index)
 
             if ( !found ) {
                 while ( index >= 0 ) {
-                    if (listItems[index]->hasTagName(HTMLTags::option())) {
+                    if (listItems[index]->hasTagName(optionTag)) {
                         found = true;
                         break;
                     }
@@ -1389,7 +1390,7 @@ void RenderSelect::slotSelected(int index)
                 static_cast<ComboBoxWidget*>( m_widget )->setCurrentItem( index );
 
             for ( unsigned int i = 0; i < listItems.size(); ++i )
-                if (listItems[i]->hasTagName(HTMLTags::option()) && i != (unsigned int) index)
+                if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
                     static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = false;
 
             static_cast<HTMLOptionElementImpl*>(listItems[index])->m_selected = true;
@@ -1410,7 +1411,7 @@ void RenderSelect::slotSelectionChanged()
     for ( unsigned i = 0; i < listItems.count(); i++ )
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
-        if (listItems[i]->hasTagName(HTMLTags::option()))
+        if (listItems[i]->hasTagName(optionTag))
             static_cast<HTMLOptionElementImpl*>( listItems[i] )
                 ->m_selected = static_cast<KListBox*>( m_widget )->isSelected( i );
 
@@ -1452,7 +1453,7 @@ void RenderSelect::updateSelection()
         // if multi-select, we select only the new selected index
         KListBox *listBox = static_cast<KListBox*>(m_widget);
         for (i = 0; i < int(listItems.size()); i++)
-            listBox->setSelected(i, listItems[i]->hasTagName(HTMLTags::option()) &&
+            listBox->setSelected(i, listItems[i]->hasTagName(optionTag) &&
                                 static_cast<HTMLOptionElementImpl*>(listItems[i])->selected());
     }
     else {
@@ -1460,7 +1461,7 @@ void RenderSelect::updateSelection()
         unsigned firstOption = listItems.size();
         i = listItems.size();
         while (i--)
-            if (listItems[i]->hasTagName(HTMLTags::option())) {
+            if (listItems[i]->hasTagName(optionTag)) {
                 if (found)
                     static_cast<HTMLOptionElementImpl*>(listItems[i])->m_selected = false;
                 else if (static_cast<HTMLOptionElementImpl*>(listItems[i])->selected()) {
@@ -1794,9 +1795,9 @@ void RenderSlider::calcMinMaxWidth()
 void RenderSlider::updateFromElement()
 {
     const DOMString& value = element()->value();
-    const DOMString& min = element()->getAttribute(HTMLAttributes::min());
-    const DOMString& max = element()->getAttribute(HTMLAttributes::max());
-    const DOMString& precision = element()->getAttribute(HTMLAttributes::precision());
+    const DOMString& min = element()->getAttribute(minAttr);
+    const DOMString& max = element()->getAttribute(maxAttr);
+    const DOMString& precision = element()->getAttribute(precisionAttr);
     
     double minVal = min.isNull() ? 0.0 : min.string().toDouble();
     double maxVal = max.isNull() ? 100.0 : max.string().toDouble();
@@ -1825,7 +1826,7 @@ void RenderSlider::slotSliderValueChanged()
     QSlider* slider = (QSlider*)widget();
 
     double val = slider->value();
-    const DOMString& precision = element()->getAttribute(HTMLAttributes::precision());
+    const DOMString& precision = element()->getAttribute(precisionAttr);
 
     // Force integer value if not float (strcasecmp returns confusingly backward boolean).
     if (strcasecmp(precision, "float"))
