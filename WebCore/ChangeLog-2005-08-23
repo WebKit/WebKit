@@ -1,3 +1,12 @@
+2005-07-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, change by Dave Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4221
+          REGRESSION: Elements act as if in :hover meta-class during page load although they aren't
+
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::NodeImpl): Initialize m_hovered to false.
+
 2005-07-30  Maciej Stachowiak  <mjs@apple.com>
 
         Missing bits of last checkin...
