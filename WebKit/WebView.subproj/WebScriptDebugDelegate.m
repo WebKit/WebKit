@@ -26,10 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WebScriptDebugDelegatePrivate.h"
+
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebCore/WebCoreScriptDebugger.h>
-
-#import "WebScriptDebugDelegatePrivate.h"
 
 
 

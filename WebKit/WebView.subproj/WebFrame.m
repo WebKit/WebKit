@@ -62,6 +62,7 @@
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebScriptDebugDelegatePrivate.h>
 
 #import <objc/objc-runtime.h>
 

@@ -1,3 +1,10 @@
+2005-07-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Build fixes for previous change (missing includes)
+
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebScriptDebugDelegate.m:
+
 2005-07-29  Maciej Stachowiak  <mjs@apple.com>
 
         Changes by Michael Kahl, reviewed by me.
