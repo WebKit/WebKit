@@ -71,7 +71,6 @@ using DOM::DOMStringImpl;
 using DOM::DoNotUpdateLayout;
 using DOM::EditingTextImpl;
 using DOM::ElementImpl;
-using DOM::HTMLAttributes;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::NamedAttrMapImpl;
@@ -311,10 +310,10 @@ ElementImpl *createTabSpanElement(DocumentImpl *document, NodeImpl *tabTextNode)
 {
     // make the span to hold the tab
     int exceptionCode = 0;
-    ElementImpl *spanElement = document->createElementNS(HTMLTags::xhtmlNamespaceURI(), "span", exceptionCode);
+    ElementImpl *spanElement = document->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
     assert(exceptionCode == 0);
-    spanElement->setAttribute(HTMLAttributes::classAttr(), AppleTabSpanClass);
-    spanElement->setAttribute(HTMLAttributes::style(), "white-space:pre");
+    spanElement->setAttribute(classAttr, AppleTabSpanClass);
+    spanElement->setAttribute(styleAttr, "white-space:pre");
 
     // add tab text to that span
     if (!tabTextNode)
