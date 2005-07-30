@@ -923,22 +923,22 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     unsigned pagesCached = 0;
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
     NSArray *backList = [backForwardList backListWithLimit: 999999];
-    WebHistoryItem *oldestItem = nil;
+    WebHistoryItem *oldestNonSnapbackItem = nil;
     
     unsigned i;
     for (i = 0; i < [backList count]; i++){
         WebHistoryItem *item = [backList objectAtIndex: i];
         if ([item hasPageCache]){
-            if (oldestItem == nil)
-                oldestItem = item;
+            if (oldestNonSnapbackItem == nil && ![item alwaysAttemptToUsePageCache])
+                oldestNonSnapbackItem = item;
             pagesCached++;
         }
     }
-    
+
     // Snapback items are never directly purged here.
-    if (pagesCached >= sizeLimit && ![oldestItem alwaysAttemptToUsePageCache]){
-        LOG(PageCache, "Purging back/forward cache, %@\n", [oldestItem URL]);
-        [oldestItem setHasPageCache: NO];
+    if (pagesCached >= sizeLimit) {
+        LOG(PageCache, "Purging back/forward cache, %@\n", [oldestNonSnapbackItem URL]);
+        [oldestNonSnapbackItem setHasPageCache:NO];
     }
 }
 
