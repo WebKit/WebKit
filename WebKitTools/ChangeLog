@@ -1,3 +1,15 @@
+2005-07-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * Scripts/build-drawtest: Added.
+        * Scripts/build-svg2png: Added.
+        * Scripts/build-webcore-svg: Added.
+        * Scripts/run-drawtest: Added.
+        * Scripts/webkitdirs.pm: added checkSVGFrameworks
+        Made it much easier to build WebCore+SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4208
+
 2005-07-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by vicki.

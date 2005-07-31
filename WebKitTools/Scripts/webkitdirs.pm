@@ -189,4 +189,13 @@ sub checkFrameworks
     }
 }
 
+sub checkSVGFrameworks
+{
+    determineConfigurationProductDir();
+    for my $framework ("JavaScriptCore", "WebCore+SVG") {
+        my $path = "$configurationProductDir/$framework.framework/Versions/A/$framework";
+        die "Can't find built framework at \"$path\".\n" unless -x $path;
+    }
+}
+
 1;
