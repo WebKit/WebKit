@@ -68,7 +68,7 @@ public:
     
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
-    virtual void stateChanged(RenderObject* o, ControlState state) const;
+    virtual bool stateChanged(RenderObject* o, ControlState state) const;
 
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.

@@ -1,3 +1,22 @@
+2005-07-29  David Hyatt  <hyatt@apple.com>
+
+	This patch makes simulated clicks actually go into active state briefly.  Spacebar
+	on the new checkboxes results in a pressed look.
+	
+        Reviewed by darin
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::click):
+        * khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::stateChanged):
+        * khtml/rendering/render_theme.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::setActive):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::setActive):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::updateContents):
+
 2005-07-30  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin Adler.

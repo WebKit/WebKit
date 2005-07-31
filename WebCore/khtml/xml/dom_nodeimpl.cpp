@@ -2298,7 +2298,7 @@ void ContainerNodeImpl::setFocus(bool received)
     setChanged();
 }
 
-void ContainerNodeImpl::setActive(bool down)
+void ContainerNodeImpl::setActive(bool down, bool pause)
 {
     if (down == active()) return;
 
@@ -2307,10 +2307,30 @@ void ContainerNodeImpl::setActive(bool down)
     // note that we need to recalc the style
     // FIXME: Move to ElementImpl
     if (m_render) {
-        if (m_render->style()->affectedByActiveRules())
+        bool reactsToPress = m_render->style()->affectedByActiveRules();
+        if (reactsToPress)
             setChanged();
-        if (renderer() && renderer()->style()->hasAppearance())
-            theme()->stateChanged(renderer(), PressedState);
+        if (renderer() && renderer()->style()->hasAppearance()) {
+            if (theme()->stateChanged(renderer(), PressedState))
+                reactsToPress = true;
+        }
+        if (reactsToPress && pause) {
+            // The delay here is subtle.  It relies on an assumption, namely that the amount of time it takes
+            // to repaint the "down" state of the control is about the same time as it would take to repaint the
+            // "up" state.  Once you assume this, you can just delay for 100ms - that time (assuming that after you
+            // leave this method, it will be about that long before the flush of the up state happens again).
+            QTime startTime;
+            startTime.restart();
+
+            // Do an immediate repaint.
+            m_render->repaint(true);
+            
+            int remainingTime = 100 - startTime.elapsed();
+            
+            // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
+            if (remainingTime > 0)
+                usleep(remainingTime * 1000);
+        }
     }
 }
 

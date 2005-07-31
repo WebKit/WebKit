@@ -234,7 +234,7 @@ public:
     void setHasChangedChild( bool b = true ) { m_hasChangedChild = b; }
     void setInDocument(bool b=true) { m_inDocument = b; }
     virtual void setFocus(bool b=true) { m_focused = b; }
-    virtual void setActive(bool b=true) { m_active = b; }
+    virtual void setActive(bool b=true, bool pause=false) { m_active = b; }
     void setInActiveChain(bool b=true) { m_inActiveChain = b; }
     virtual void setHovered(bool b=true) { m_hovered = b; }
     void setChanged(bool b=true);
@@ -522,7 +522,7 @@ public:
     bool getLowerRightCorner(int &xPos, int &yPos) const;
 
     virtual void setFocus(bool=true);
-    virtual void setActive(bool=true);
+    virtual void setActive(bool active = true, bool pause = false);
     virtual void setHovered(bool=true);
     virtual unsigned long childNodeCount() const;
     virtual NodeImpl *childNode(unsigned long index);

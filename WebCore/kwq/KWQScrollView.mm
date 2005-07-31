@@ -360,10 +360,11 @@ void QScrollView::updateContents(const QRect &rect, bool now)
     // up building a large complicated NSRegion if we don't perform the check.
     NSRect dirtyRect = NSIntersectionRect(rect, [view visibleRect]);
     if (!NSIsEmptyRect(dirtyRect)) {
-        if (now)
-            [view displayRect:dirtyRect];
-        else
-            [view setNeedsDisplayInRect:dirtyRect];
+        [view setNeedsDisplayInRect:dirtyRect];
+        if (now) {
+            [[view window] displayIfNeeded];
+            [[view window] flushWindowIfNeeded];
+        }
     }
 
     KWQ_UNBLOCK_EXCEPTIONS;

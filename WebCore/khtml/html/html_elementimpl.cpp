@@ -559,10 +559,17 @@ void HTMLElementImpl::click(bool sendMouseEvents)
     if (sendMouseEvents) {
         QMouseEvent pressEvt(QEvent::MouseButtonPress, QPoint(x,y), Qt::LeftButton, 0);
         dispatchMouseEvent(&pressEvt, EventImpl::MOUSEDOWN_EVENT);
+        if (r)
+            setActive(true, true);
         QMouseEvent upEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
         dispatchMouseEvent(&upEvent, EventImpl::MOUSEUP_EVENT);
+        if (r)
+            setActive(false);
+    } else if (r) {
+        setActive(true, true);
+        setActive(false);
     }
-    
+
     // always send click
     QMouseEvent clickEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
     dispatchMouseEvent(&clickEvent, EventImpl::KHTML_CLICK_EVENT);
