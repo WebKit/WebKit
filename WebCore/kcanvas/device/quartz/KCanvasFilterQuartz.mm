@@ -481,8 +481,9 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
 
 CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
 {
-	CIFilter *filter = [CIFilter filterWithName:@"CIConstantColorGenerator"];
+	CIFilter *filter = nil;
 	KWQ_BLOCK_EXCEPTIONS
+	filter = [CIFilter filterWithName:@"CIConstantColorGenerator"];
 	[filter setDefaults];
 	CGColorRef color = cgColor(floodColor());
 	CGColorRef withAlpha = CGColorCreateCopyWithAlpha(color,CGColorGetAlpha(color) * floodOpacity());

@@ -1,3 +1,23 @@
+2005-07-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * WebCore-svg.exp: Added.
+        * WebCore.xcodeproj/project.pbxproj: Uses WebCore+SVG.exp
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm: 
+        (KCanvasFEFloodQuartz::getCIFilter): Fixed longjmp warning.
+        * kdom/css/impl/CSSStyleSelector.cpp:
+        (CSSStyleSelector::applyRule): Fixed "un-initialized" warning.
+        * kdom/ecma/DOMLookup.h: Removed <iostream>
+        * ksvg2/impl/svgpathparser.cpp: Removed <iostream>
+        Several fixes required to make Deployment style builds
+        compile correctly.  Also WebCore-svg.exp symbols were added
+        both when generating WebCore-combined.exp as well as for
+        generating a new WebCore+SVG.exp export file for the Deployment
+        style builds, allowing DrawTest to link properly.
+        A few other small warnings were caught and fixed.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4234
+
 2005-07-29  David Hyatt  <hyatt@apple.com>
 
 	This patch makes simulated clicks actually go into active state briefly.  Spacebar

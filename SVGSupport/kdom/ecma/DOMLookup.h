@@ -23,7 +23,9 @@
 #ifndef KDOM_DOMLookup_H
 #define KDOM_DOMLookup_H
 
+#ifndef APPLE_CHANGES
 #include <iostream>
+#endif
 #include <kjs/value.h>
 #include <kjs/object.h>
 #include <kjs/lookup.h>

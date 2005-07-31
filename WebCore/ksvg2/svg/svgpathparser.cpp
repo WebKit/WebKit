@@ -21,7 +21,9 @@
 #include <qstring.h>
 #include <math.h>
 
+#ifndef APPLE_CHANGES
 #include <iostream>
+#endif
 
 using namespace KSVG;
 

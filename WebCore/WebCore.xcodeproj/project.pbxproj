@@ -2383,7 +2383,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\nrm \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
 		};
 /* End PBXBuildRule section */
 
@@ -7976,6 +7976,7 @@
 				A8212A8008794A2300677359 /* libxml2-WebCore */,
 				A8212A8108794A2300677359 /* tokenizer.cpp */,
 				A8212A8208794A2300677359 /* WebCore-combined.exp */,
+				A8AA619B089CDABF00666825 /* WebCore+SVG.exp */,
 				A8212A8308794A2300677359 /* xmlhttprequest.lut.h */,
 				A8212A8408794A2300677359 /* xmlserializer.lut.h */,
 				A8212A8508794A2300677359 /* domparser.lut.h */,
@@ -8787,6 +8788,7 @@
 			);
 			inputPaths = (
 				WebCore.exp,
+				"WebCore-svg.exp",
 				"WebCore-tests.exp",
 			);
 			name = "WebCore-combined.exp";
@@ -8795,7 +8797,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-tests.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\nelse\n    cat WebCore.exp WebCore-tests.exp > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\nfi";
+			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-tests.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\n    cat WebCore.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nelse\n    cat WebCore.exp WebCore-tests.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\n    cat WebCore.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nfi";
 		};
 		A8212A8308794A2300677359 /* xmlhttprequest.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8953,6 +8955,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cat ksvg2/css/impl/cssvalues.in > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
+		};
+		A8AA619B089CDABF00666825 /* WebCore+SVG.exp */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				WebCore.exp,
+				"WebCore-svg.exp",
+			);
+			name = "WebCore+SVG.exp";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/WebCore+SVG.exp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nelse\n    cat WebCore.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -10341,7 +10360,7 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
+				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore+SVG.exp";
 				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
