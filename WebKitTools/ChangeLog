@@ -1,3 +1,37 @@
+2005-07-31  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and landed by Darin Adler.
+
+        Add logging of editing delegate calls for regression checking.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+          setup editing delegate
+
+        (-[DOMNode dumpPath]):
+        (-[DOMRange dump]):
+          utility for editing delegate logging
+
+        (-[EditingDelegate webView:shouldBeginEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldEndEditingInDOMRange:]):
+        (-[EditingDelegate webView:shouldInsertNode:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldInsertText:replacingDOMRange:givenAction:]):
+        (-[EditingDelegate webView:shouldDeleteDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[EditingDelegate webView:shouldApplyStyle:toElementsInDOMRange:]):
+        (-[EditingDelegate webView:shouldChangeTypingStyle:toStyle:]):
+        (-[EditingDelegate webViewDidBeginEditing:]):
+        (-[EditingDelegate webViewDidChange:]):
+        (-[EditingDelegate webViewDidEndEditing:]):
+        (-[EditingDelegate webViewDidChangeTypingStyle:]):
+          log corresponding editing delegate methods
+
+        (-[EditingDelegate webViewDidChangeSelection:]):
+          log selection except when clearing selection after end of test (uses existing "done" flag)
+
+        (dumpRenderTree):
+          added clearing of selection after test
+
 2005-07-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

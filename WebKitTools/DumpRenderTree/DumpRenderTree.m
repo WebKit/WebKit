@@ -30,15 +30,20 @@
 #import <Foundation/NSError.h>
 
 #import <WebKit/DOMExtensions.h>
+#import <WebKit/DOMRange.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 
 @interface WaitUntilDoneDelegate : NSObject
+@end
+
+@interface EditingDelegate : NSObject
 @end
 
 @interface LayoutTestController : NSObject
@@ -81,7 +86,9 @@ int main(int argc, const char *argv[])
 
     WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
+    EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setFrameLoadDelegate:delegate];
+    [webView setEditingDelegate:editingDelegate];
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
@@ -184,6 +191,134 @@ static void dump(void)
 
 @end
 
+@interface DOMNode (dumpPath)
+- (NSString *)dumpPath;
+@end
+
+@implementation DOMNode (dumpPath)
+- (NSString *)dumpPath
+{
+    DOMNode *parent = [self parentNode];
+    NSString *str = [NSString stringWithFormat:@"%@", [self nodeName]];
+    if (parent != nil) {
+        str = [str stringByAppendingString:@" > "];
+        str = [str stringByAppendingString:[parent dumpPath]];
+    }
+    return str;
+}
+@end
+
+@interface DOMRange (dump)
+- (NSString *)dump;
+@end
+
+@implementation DOMRange (dump)
+- (NSString *)dump
+{
+    return [NSString stringWithFormat:@"range from %ld of %@ to %ld of %@", [self startOffset], [[self startContainer] dumpPath], [self endOffset], [[self endContainer] dumpPath]];
+}
+@end
+
+
+@implementation EditingDelegate
+
+- (BOOL)webView:(WebView *)webView shouldBeginEditingInDOMRange:(DOMRange *)range
+{
+    printf("EDITING DELEGATE: shouldBeginEditingInDOMRange:%s\n", [[range dump] UTF8String]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldEndEditingInDOMRange:(DOMRange *)range
+{
+    printf("EDITING DELEGATE: shouldEndEditingInDOMRange:%s\n", [[range dump] UTF8String]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldInsertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
+{
+    static const char *insertactionstring[] = {
+        "WebViewInsertActionTyped",
+        "WebViewInsertActionPasted",
+        "WebViewInsertActionDropped",
+    };
+
+    printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", [[node dumpPath] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldInsertText:(NSString *)text replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
+{
+    static const char *insertactionstring[] = {
+        "WebViewInsertActionTyped",
+        "WebViewInsertActionPasted",
+        "WebViewInsertActionDropped",
+    };
+
+    printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n", [[text description] UTF8String], [[range dump] UTF8String], insertactionstring[action]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldDeleteDOMRange:(DOMRange *)range
+{
+    printf("EDITING DELEGATE: shouldDeleteDOMRange:%s\n", [[range dump] UTF8String]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
+{
+    static const char *affinitystring[] = {
+        "NSSelectionAffinityUpstream",
+        "NSSelectionAffinityDownstream"
+    };
+    static const char *boolstring[] = {
+        "FALSE",
+        "TRUE"
+    };
+
+    printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n", [[currentRange dump] UTF8String], [[proposedRange dump] UTF8String], affinitystring[selectionAffinity], boolstring[flag]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldApplyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
+{
+    printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n", [[style description] UTF8String], [[range dump] UTF8String]);
+    return YES;
+}
+
+- (BOOL)webView:(WebView *)webView shouldChangeTypingStyle:(DOMCSSStyleDeclaration *)currentStyle toStyle:(DOMCSSStyleDeclaration *)proposedStyle
+{
+    printf("EDITING DELEGATE: shouldChangeTypingStyle:%s toStyle:%s\n", [[currentStyle description] UTF8String], [[proposedStyle description] UTF8String]);
+    return YES;
+}
+
+- (void)webViewDidBeginEditing:(NSNotification *)notification
+{
+    printf("EDITING DELEGATE: webViewDidBeginEditing:%s\n", [[notification name] UTF8String]);
+}
+
+- (void)webViewDidChange:(NSNotification *)notification
+{
+    printf("EDITING DELEGATE: webViewDidChange:%s\n", [[notification name] UTF8String]);
+}
+
+- (void)webViewDidEndEditing:(NSNotification *)notification
+{
+    printf("EDITING DELEGATE: webViewDidEndEditing:%s\n", [[notification name] UTF8String]);
+}
+
+- (void)webViewDidChangeTypingStyle:(NSNotification *)notification
+{
+    printf("EDITING DELEGATE: webViewDidChangeTypingStyle:%s\n", [[notification name] UTF8String]);
+}
+
+- (void)webViewDidChangeSelection:(NSNotification *)notification
+{
+    if (!done)
+        printf("EDITING DELEGATE: webViewDidChangeSelection:%s\n", [[notification name] UTF8String]);
+}
+
+@end
+
 @implementation LayoutTestController
 
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
@@ -247,4 +382,5 @@ static void dumpRenderTree(const char *filename)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
         [pool release];
     }
+    [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
 }
