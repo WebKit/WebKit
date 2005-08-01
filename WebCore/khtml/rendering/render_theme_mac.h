@@ -42,6 +42,9 @@ public:
     // An API asking if the control changes its tint when the window has focus or not.
     virtual bool controlSupportsTints(const RenderObject* o) const;
 
+    // A general API asking if any control tinting is supported at all.
+    virtual bool supportsControlTints() const { return true; }
+
     virtual void adjustRepaintRect(const RenderObject* o, QRect& r);
 
 protected:
