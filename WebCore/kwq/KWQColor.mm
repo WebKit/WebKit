@@ -341,7 +341,7 @@ static CGColorRef CGColorFromNSColor(NSColor *color)
     float alpha = [deviceColor alphaComponent];
     const float components[] = { red, green, blue, alpha };
     
-    CGColorSpaceRef colorSpace = QPainter::rgbColorSpace();
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGColorRef cgColor = CGColorCreate(colorSpace, components);
     CGColorSpaceRelease(colorSpace);
     return cgColor;

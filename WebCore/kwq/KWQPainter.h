@@ -141,10 +141,6 @@ public:
     static void setCompositeOperation (CGContextRef context, QString operation);
     static void setCompositeOperation (CGContextRef context, int operation);
 
-    static CGColorSpaceRef rgbColorSpace();
-    static CGColorSpaceRef grayColorSpace();
-    static CGColorSpaceRef cmykColorSpace();
-
 private:
     // no copying or assignment
     QPainter(const QPainter &);

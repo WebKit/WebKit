@@ -139,7 +139,7 @@ CGContextRef getSharedContext() {
 		CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
 		sharedContext = CGPDFContextCreate(consumer, NULL, NULL);
 		
-	//	CGColorSpaceRef colorspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+	//	CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
 	//	CGContextRef context = CGGLContextCreate(NULL, CGSizeMake(canvas->canvasWidth(), canvas->canvasHeight()), colorspace);
 	//	CGColorSpaceRelease(colorspace);
 		float black[4] = {0,0,0,1};

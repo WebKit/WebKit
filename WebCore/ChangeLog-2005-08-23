@@ -1,3 +1,29 @@
+2005-08-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (getSharedContext): moved from QPainter -> CG
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (CGShadingRefForLinearGradient): removed comment
+        (CGShadingRefForRadialGradient): removed comment
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::call): moved from QPainter -> CG
+        (KJS::colorRefFromValue): moved from QPainter -> CG
+        (KJS::Gradient::getShading): moved from QPainter -> CG
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::createDrawingContext):moved from QPainter -> CG
+        * kwq/KWQColor.mm:
+        (CGColorFromNSColor): moved from QPainter -> CG
+        * kwq/KWQPainter.h: removed colorspace calls
+        * kwq/KWQPainter.mm: removed colorspace calls
+        (QPainter::clearFocusRing): moved from QPainter -> CG
+        Removed use of WebKitGraphicsBridge Colorspace SPIs, as well
+        as corresponding QPainter colorspace "choke-point" methods.
+        This fixes colors for WebCore+SVG (since it wasn't linking in
+        webkit).  WebKit code removal in separate commit.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4211
+
 2005-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

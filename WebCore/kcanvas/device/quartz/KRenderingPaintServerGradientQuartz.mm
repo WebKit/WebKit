@@ -170,7 +170,6 @@ static CGShadingRef CGShadingRefForLinearGradient(const KRenderingPaintServerLin
     const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
-    //CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGShadingRef shading = CGShadingCreateAxial(colorSpace, start, end, shadingFunction, true, true);
     CGColorSpaceRelease(colorSpace);
@@ -202,7 +201,6 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
     const KRenderingPaintServerGradientQuartz *castServer = static_cast<const KRenderingPaintServerGradientQuartz *>(server);
     CGFunctionRef shadingFunction = CGFunctionCreate((void *)castServer, 1, domainLimits, 4, rangeLimits, &callbacks);
     
-    //CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGShadingRef shading = CGShadingCreateRadial(colorSpace, focus, 0, center, radius, shadingFunction, true, true);
     CGColorSpaceRelease(colorSpace);

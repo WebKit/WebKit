@@ -890,20 +890,3 @@ void QPainter::clearFocusRing()
         data->focusRingPath = nil;
     }
 }
-
-CGColorSpaceRef QPainter::rgbColorSpace()
-{
-    return [[WebCoreGraphicsBridge sharedBridge] createRGBColorSpace];
-}
-
-CGColorSpaceRef QPainter::grayColorSpace()
-{
-    return [[WebCoreGraphicsBridge sharedBridge] createGrayColorSpace];
-}
-
-CGColorSpaceRef QPainter::cmykColorSpace()
-{
-    return [[WebCoreGraphicsBridge sharedBridge] createCMYKColorSpace];
-}
-
-
