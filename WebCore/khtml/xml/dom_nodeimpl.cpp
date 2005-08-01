@@ -837,7 +837,7 @@ void NodeImpl::unregisterNodeList(NodeListImpl *list)
     m_nodeLists->remove(list);
 }
 
-void NodeImpl::notifyLocalNodeListsSubtreeModified()
+void NodeImpl::notifyLocalNodeListsAttributeChanged()
 {
     if (!m_nodeLists)
         return;
@@ -845,23 +845,47 @@ void NodeImpl::notifyLocalNodeListsSubtreeModified()
     QPtrDictIterator<NodeListImpl> i(*m_nodeLists);
 
     while (NodeListImpl *list = i.current()) {
-        list->rootNodeSubtreeModified();
+        list->rootNodeAttributeChanged();
         ++i;
     }
 }
 
-void NodeImpl::notifyNodeListsSubtreeModified()
+void NodeImpl::notifyNodeListsAttributeChanged()
 {
     for (NodeImpl *n = this; n; n = n->parentNode()) {
-        n->notifyLocalNodeListsSubtreeModified();
+        n->notifyLocalNodeListsAttributeChanged();
+    }
+}
+
+void NodeImpl::notifyLocalNodeListsChildrenChanged()
+{
+    if (!m_nodeLists)
+        return;
+
+    QPtrDictIterator<NodeListImpl> i(*m_nodeLists);
+
+    while (NodeListImpl *list = i.current()) {
+        list->rootNodeChildrenChanged();
+        ++i;
+    }
+}
+
+void NodeImpl::notifyNodeListsChildrenChanged()
+{
+    for (NodeImpl *n = this; n; n = n->parentNode()) {
+        n->notifyLocalNodeListsChildrenChanged();
     }
 }
 
 bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 {
-    notifyNodeListsSubtreeModified();
-    if (sendChildrenChanged)
+    // FIXME: Pull this whole if clause out of this function.
+    if (sendChildrenChanged) {
+        notifyNodeListsChildrenChanged();
         childrenChanged();
+    } else
+        notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
+
     if (!getDocument()->hasListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER))
 	return false;
     int exceptioncode = 0;
@@ -2538,12 +2562,11 @@ NodeImpl *NodeListImpl::itemById (const DOMString& elementId) const
 }
 
 
-void NodeListImpl::rootNodeSubtreeModified()
+void NodeListImpl::rootNodeChildrenChanged()
 {
-    isLengthCacheValid = false;     
+    isLengthCacheValid = false;
     isItemCacheValid = false;     
 }
-
 
 ChildNodeListImpl::ChildNodeListImpl( NodeImpl *n )
     : NodeListImpl(n)

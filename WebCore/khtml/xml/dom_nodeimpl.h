@@ -454,9 +454,11 @@ public:
 
     void registerNodeList(NodeListImpl *list);
     void unregisterNodeList(NodeListImpl *list);
-    void notifyNodeListsSubtreeModified();
-    void notifyLocalNodeListsSubtreeModified();
-
+    void notifyNodeListsChildrenChanged();
+    void notifyLocalNodeListsChildrenChanged();
+    void notifyNodeListsAttributeChanged();
+    void notifyLocalNodeListsAttributeChanged();
+    
     SharedPtr<NodeListImpl> getElementsByTagName(const DOMString &name) { return getElementsByTagNameNS("*", name); }
     SharedPtr<NodeListImpl> getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
 
@@ -567,7 +569,8 @@ public:
 
     // Other methods (not part of DOM)
 
-    void rootNodeSubtreeModified();
+    virtual void rootNodeChildrenChanged();
+    virtual void rootNodeAttributeChanged() {}
 
 protected:
     // helper functions for searching all ElementImpls in a tree
@@ -611,6 +614,8 @@ public:
     virtual NodeImpl *item ( unsigned long index ) const;
 
     // Other methods (not part of DOM)
+    virtual void rootNodeChildrenChanged() {};
+    virtual void rootNodeAttributeChanged() { NodeListImpl::rootNodeChildrenChanged(); }
 
 protected:
     virtual bool nodeMatches( NodeImpl *testNode ) const;

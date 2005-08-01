@@ -1,3 +1,24 @@
+2005-07-31  David Hyatt  <hyatt@apple.com>
+
+	Make node lists more refined in their invalidation when children are added/removed
+	in the DOM or attributes are changed.  This is sort of a band-aid fix.  The
+	architecture of node list notifications (as well as how they are stored) should
+	be revisited.
+	
+        Reviewed by darin
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::notifyLocalNodeListsAttributeChanged):
+        (DOM::NodeImpl::notifyNodeListsAttributeChanged):
+        (DOM::NodeImpl::notifyLocalNodeListsChildrenChanged):
+        (DOM::NodeImpl::notifyNodeListsChildrenChanged):
+        (DOM::NodeImpl::dispatchSubtreeModifiedEvent):
+        (DOM::NodeListImpl::rootNodeChildrenChanged):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeListImpl::rootNodeAttributeChanged):
+        (DOM::NameNodeListImpl::rootNodeChildrenChanged):
+        (DOM::NameNodeListImpl::rootNodeAttributeChanged):
+
 2005-07-31  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
