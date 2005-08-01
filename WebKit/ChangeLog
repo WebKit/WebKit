@@ -1,5 +1,10 @@
 2005-08-01  John Sullivan  <sullivan@apple.com>
 
+        * PublicHeaderChangesFromTiger.txt:
+        added a comment about isTextField -> _isTextField
+
+2005-08-01  John Sullivan  <sullivan@apple.com>
+
         Patch by Trey Matteson <trey@usa.net>
         Reviewed by me.
 
