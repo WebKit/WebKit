@@ -1,3 +1,20 @@
+2005-07-31  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3359> Crash on hover with certain styles on the text applied
+        
+        If a zero length render object (such as a text node that has been set to "") occured at the 
+        end of a line, it was previously given a non-zero sized run.  Iteration over such a node would cause
+        a crash.
+
+        Test cases added:
+        * layout-tests/traversal/size-zero-run-expected.txt: Added.
+        * layout-tests/traversal/size-zero-run.html: Added.
+        
+        * khtml/rendering/bidi.cpp:
+        (khtml::appendRun):
+
 2005-07-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

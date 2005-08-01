@@ -556,8 +556,11 @@ static void appendRun( BidiState &bidi )
         start = 0;
         obj = Bidinext( bidi.sor.par, obj, bidi );
     }
-    if (obj)
-        appendRunsForObject(start, bidi.eor.pos+1, obj, bidi);
+    if (obj) {
+        // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
+        int end = obj->length() ? bidi.eor.pos+1 : 0;
+        appendRunsForObject(start, end, obj, bidi);
+    }
     
     bidi.eor.increment( bidi );
     bidi.sor = bidi.eor;
