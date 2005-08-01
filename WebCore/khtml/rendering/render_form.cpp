@@ -738,15 +738,15 @@ long RenderLineEdit::selectionEnd()
 
 void RenderLineEdit::setSelectionStart(long start)
 {
-    int realStart = MAX(start, 0);
-    int length = MAX(selectionEnd() - realStart, 0);
+    int realStart = kMax(start, 0L);
+    int length = kMax(selectionEnd() - realStart, 0L);
     static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 
 void RenderLineEdit::setSelectionEnd(long end)
 {
     int start = selectionStart();
-    int realEnd = MAX(end, 0);
+    int realEnd = kMax(end, 0L);
     int length = realEnd - start;
     if (length < 0) {
         start = realEnd;
@@ -762,8 +762,8 @@ void RenderLineEdit::select()
 
 void RenderLineEdit::setSelectionRange(long start, long end)
 {
-    int realStart = MAX(start, 0);
-    int length = MAX(end - realStart, 0);
+    int realStart = kMax(start, 0L);
+    int length = kMax(end - realStart, 0L);
     static_cast<KLineEdit *>(m_widget)->setSelection(realStart, length);
 }
 

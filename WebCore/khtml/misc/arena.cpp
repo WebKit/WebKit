@@ -42,11 +42,14 @@
  * David R. Hanson, Software -- Practice and Experience, Vol. 20(1).
  */
 
+#include "arena.h"
+
+#include <algorithm>
 #include <stdlib.h>
 #include <string.h>
-#include "arena.h"
 #include "main_thread_malloc.h"
 
+using std::max;
 using khtml::main_thread_malloc;
 using khtml::main_thread_free;
 
@@ -167,7 +170,7 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
 
     /* attempt to allocate from the heap */ 
     {  
-        unsigned int sz = MAX(pool->arenasize, nb);
+        unsigned int sz = max(pool->arenasize, nb);
         sz += sizeof *a + pool->mask;  /* header and alignment slop */
 #ifdef DEBUG_ARENA_MALLOC
         i++;

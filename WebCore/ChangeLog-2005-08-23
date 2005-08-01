@@ -1,3 +1,16 @@
+2005-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - remove uses of Mac-OS-X-specific MAX macro in non-Mac-OS-X-specific code
+
+        * khtml/misc/arena.cpp: (ArenaAllocate): Use std::max instead of MAX.
+        * khtml/misc/loader.cpp: (Cache::setSize): Use kMax instead of MAX.
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::setSelectionStart): Ditto.
+        (RenderLineEdit::setSelectionEnd): Ditto.
+        (RenderLineEdit::setSelectionRange): Ditto.
+
 2005-07-31  David Hyatt  <hyatt@apple.com>
 
 	Make node lists more refined in their invalidation when children are added/removed
