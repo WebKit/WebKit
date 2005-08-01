@@ -55,6 +55,7 @@
 #import "render_object.h"
 #import "render_style.h"
 #import "render_text.h"
+#import "render_theme.h"
 #import "selection.h"
 #import "kjs_html.h"
 #import "text_granularity.h"
@@ -80,6 +81,7 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 
+using khtml::theme;
 using khtml::EAffinity;
 using khtml::EVerticalAlign;
 using khtml::plainText;
@@ -202,6 +204,12 @@ using khtml::VisiblePosition;
 
 -(ElementImpl *)actionElement
 {
+    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
+        if (!input->disabled() && input->inputType() == HTMLInputElementImpl::CHECKBOX)
+            return input;
+    }
+
     if ([self isImageButton])
         return static_cast<ElementImpl*>(m_renderer->element());
 
@@ -376,6 +384,13 @@ using khtml::VisiblePosition;
     }
     if (m_renderer->isCanvas())
         return @"AXWebArea";
+    
+    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
+        if (input->inputType() == HTMLInputElementImpl::CHECKBOX)
+            return NSAccessibilityCheckBoxRole;
+    }
+    
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
     if ([self isAttachment])
@@ -424,6 +439,9 @@ using khtml::VisiblePosition;
     if ([role isEqualToString:NSAccessibilityGroupRole])
         return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, nil);
     
+    if ([role isEqualToString:NSAccessibilityCheckBoxRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, nil);
+
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
     
@@ -488,7 +506,7 @@ using khtml::VisiblePosition;
     return nil;
 }
 
--(NSString*)value
+-(id)value
 {
     if (!m_renderer || m_areaElement)
         return nil;
@@ -518,7 +536,14 @@ using khtml::VisiblePosition;
     
     if ([self isAttachment])
         return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
-        
+
+    if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
+        HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
+        if (input->inputType() == HTMLInputElementImpl::CHECKBOX)
+            // Checkboxes return their state as an integer. 0 for off, 1 for on.
+            return [NSNumber numberWithInt:input->checked()];
+    }
+    
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
@@ -570,6 +595,8 @@ static QRect boundingBoxRect(RenderObject* obj)
         for (QValueList<QRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
             QRect r = *it;
             if (r.isValid()) {
+                if (obj->style()->hasAppearance())
+                    theme()->adjustRepaintRect(obj, r);
                 if (rect.isEmpty())
                     rect = r;
                 else
@@ -613,6 +640,10 @@ static QRect boundingBoxRect(RenderObject* obj)
         return [[self attachmentView] accessibilityIsIgnored];
         
     if (m_areaElement || (m_renderer->element() && m_renderer->element()->isLink()))
+        return NO;
+
+    // All controls must be examined.
+    if (m_renderer->element() && m_renderer->element()->isControl())
         return NO;
 
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
@@ -895,7 +926,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return [NSNumber numberWithBool: (m_renderer->element() && m_renderer->document()->focusNode() == m_renderer->element())];
 
     if ([attributeName isEqualToString: NSAccessibilityEnabledAttribute])
-        return [NSNumber numberWithBool: YES];
+        return [NSNumber numberWithBool: m_renderer->element() ? m_renderer->element()->isEnabled() : YES];
     
     if ([attributeName isEqualToString: NSAccessibilitySizeAttribute])
         return [self size];
@@ -1883,7 +1914,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
         return YES;
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
-        if ([[self role] isEqualToString:@"AXLink"])
+        if ([[self role] isEqualToString:@"AXLink"] ||
+            ([[self role] isEqualToString:NSAccessibilityCheckBoxRole] &&
+              m_renderer->element()->isEnabled()))
             return YES;
     }
 #endif
@@ -1930,7 +1963,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         ASSERT(number);
-        if ([[self role] isEqualToString:@"AXLink"]) {
+        if ([[self role] isEqualToString:@"AXLink"] ||
+            ([[self role] isEqualToString:NSAccessibilityCheckBoxRole] &&
+             m_renderer->element()->isEnabled())) {
             if ([number intValue] != 0)
                 m_renderer->document()->setFocusNode(m_renderer->element());
             else

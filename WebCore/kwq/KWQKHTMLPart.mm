@@ -3751,12 +3751,15 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
     
     // 4. Changing the tint of controls from clear to aqua/graphite and vice versa.  We
     // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.
-    NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
-    if (documentView && renderer()) {
-        QRect visibleRect([documentView visibleRect]);
-        QPainter p;
-        p.setUpdatingControlTints(true);
-        paint(&p, visibleRect);
+    if (theme()->supportsControlTints()) {
+        NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
+        if (documentView && renderer()) {
+            doc->updateLayout(); // Ensure layout is up to date.
+            QRect visibleRect([documentView visibleRect]);
+            QPainter p;
+            p.setUpdatingControlTints(true);
+            paint(&p, visibleRect);
+        }
     }
 }
 

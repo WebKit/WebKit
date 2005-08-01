@@ -1,3 +1,27 @@
+2005-08-01  David Hyatt  <hyatt@apple.com>
+
+	Fix bugzilla bug 4219, crash because we tried to do the fake paint
+	when layout was not updated yet.
+
+	Also landing accessibility for checkboxes.
+	
+        Reviewed by darin/mjs (accessibility), kocienda(crash)
+
+        * ChangeLog:
+        * khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::supportsControlTints):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject value]):
+        (boundingBoxRect):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes):
+
 2005-08-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin.
@@ -56,6 +80,22 @@
         (RenderLineEdit::setSelectionStart): Ditto.
         (RenderLineEdit::setSelectionEnd): Ditto.
         (RenderLineEdit::setSelectionRange): Ditto.
+
+2005-07-31  David Hyatt  <hyatt@apple.com>
+
+	Implement support for checkbox accessibility for VoiceOver.
+	
+        Reviewed by mjs
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject value]):
+        (boundingBoxRect):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
 
 2005-07-31  David Hyatt  <hyatt@apple.com>
 
