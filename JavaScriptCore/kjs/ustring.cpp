@@ -42,11 +42,11 @@
 #include <math.h>
 #include "dtoa.h"
 
-#if APPLE_CHANGES
+#include <algorithm>
+
+using std::max;
 
 #include <unicode/uchar.h>
-
-#endif
 
 namespace KJS {
 
@@ -149,27 +149,12 @@ static int statBufferSize = 0;
 
 UChar UChar::toLower() const
 {
-#if APPLE_CHANGES
   return static_cast<unsigned short>(u_tolower(uc));
-#else
-  // ### properly support unicode tolower
-  if (uc >= 256 || islower(uc))
-    return *this;
-
-  return (unsigned char)tolower(uc);
-#endif
 }
 
 UChar UChar::toUpper() const
 {
-#if APPLE_CHANGES
   return static_cast<unsigned short>(u_toupper(uc));
-#else
-  if (uc >= 256 || isupper(uc))
-    return *this;
-
-  return (unsigned char)toupper(uc);
-#endif
 }
 
 UCharReference& UCharReference::operator=(UChar c)
@@ -640,7 +625,7 @@ UString UString::spliceSubstringsWithSeparators(const Range *substringRanges, in
 
   UChar *buffer = static_cast<UChar *>(kjs_fast_malloc(totalLength * sizeof(UChar)));
 
-  int maxCount = MAX(rangeCount, separatorCount);
+  int maxCount = max(rangeCount, separatorCount);
   int bufferPos = 0;
   for (int i = 0; i < maxCount; i++) {
     if (i < rangeCount) {

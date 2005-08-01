@@ -1,3 +1,17 @@
+2005-07-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - remove uses of Mac-OS-X-specific MAX macro
+        - remove one of the many excess "APPLE_CHANGES" ifdefs
+
+        * kjs/collector.cpp: (KJS::Collector::allocate): Use std::max instead of MAX.
+        * kjs/property_map.cpp: (KJS::PropertyMap::rehash): Ditto.
+        * kjs/ustring.cpp:
+        (KJS::UChar::toLower): Take out non-ICU code path.
+        (KJS::UChar::toUpper): Ditto.
+        (KJS::UString::spliceSubstringsWithSeparators): Use std::max instead of MAX.
+
 2005-07-27  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4147

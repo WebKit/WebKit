@@ -26,6 +26,10 @@
 #include "protect.h"
 #include "reference_list.h"
 
+#include <algorithm>
+
+using std::max;
+
 #define DEBUG_PROPERTIES 0
 #define DO_CONSISTENCY_CHECK 0
 #define DUMP_STATISTICS 0
@@ -412,7 +416,7 @@ void PropertyMap::rehash(int newTableSize)
                 key->deref();
             else {
                 int index = entry.index;
-                lastIndexUsed = MAX(index, lastIndexUsed);
+                lastIndexUsed = max(index, lastIndexUsed);
                 insert(key, entry.value, entry.attributes, index);
             }
         }

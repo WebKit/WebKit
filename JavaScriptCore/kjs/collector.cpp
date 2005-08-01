@@ -26,6 +26,8 @@
 #include "list.h"
 #include "value.h"
 
+#include <algorithm>
+
 #if APPLE_CHANGES
 #include <CoreFoundation/CoreFoundation.h>
 #include <pthread.h>
@@ -33,6 +35,8 @@
 #include <mach/task.h>
 #include <mach/thread_act.h>
 #endif
+
+using std::max;
 
 namespace KJS {
 
@@ -101,7 +105,7 @@ void* Collector::allocate(size_t s)
   if (s > static_cast<size_t>(CELL_SIZE)) {
     // oversize allocator
     if (heap.usedOversizeCells == heap.numOversizeCells) {
-      heap.numOversizeCells = MAX(MIN_ARRAY_SIZE, heap.numOversizeCells * GROWTH_FACTOR);
+      heap.numOversizeCells = max(MIN_ARRAY_SIZE, heap.numOversizeCells * GROWTH_FACTOR);
       heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
     }
     
@@ -131,7 +135,7 @@ void* Collector::allocate(size_t s)
     // didn't find one, need to allocate a new block
     
     if (heap.usedBlocks == heap.numBlocks) {
-      heap.numBlocks = MAX(MIN_ARRAY_SIZE, heap.numBlocks * GROWTH_FACTOR);
+      heap.numBlocks = max(MIN_ARRAY_SIZE, heap.numBlocks * GROWTH_FACTOR);
       heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
     }
     
