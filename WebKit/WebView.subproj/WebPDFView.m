@@ -43,12 +43,21 @@
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebPreferencesPrivate.h>
 
 #import <WebKitSystemInterface.h>
 #import <PDFKit/PDFKit.h>
 
 // QuartzPrivate.h doesn't include the PDFKit private headers, so we can't get at PDFViewPriv.h. (3957971)
 // Even if that was fixed, we'd have to tweak compile options to include QuartzPrivate.h. (3957839)
+
+// This is a class that forwards everything it gets to a target and updates the PDF viewing prefs after
+// each of those messages.  We use it as a way to hook all the places that the PDF viewing attrs change.
+@interface PDFPrefUpdatingProxy : NSProxy {
+    WebPDFView *view;
+}
+- (id)initWithView:(WebPDFView *)view;
+@end
 
 @interface PDFDocument (PDFKitSecretsIKnow)
 - (NSPrintOperation *)getPrintOperationForPrintInfo:(NSPrintInfo *)printInfo autoRotate:(BOOL)doRotate;
@@ -97,6 +106,10 @@ NSString *_NSPathForSystemFramework(NSString *framework);
         [self addSubview:PDFSubview];
         [PDFSubview setDelegate:self];
         written = NO;
+        firstLayoutDone = NO;
+        // Messaging this proxy is the same as messaging PDFSubview, with the side effect that the
+        // PDF viewing defaults are updated afterwards
+        PDFSubviewProxy = (PDFView *)[[PDFPrefUpdatingProxy alloc] initWithView:self];
     }
     return self;
 }
@@ -105,6 +118,7 @@ NSString *_NSPathForSystemFramework(NSString *framework);
 {
     [PDFSubview release];
     [path release];
+    [PDFSubviewProxy release];
     [super dealloc];
 }
 
@@ -243,6 +257,11 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
         }
         if ([itemCopy tag] == 0) {
             [itemCopy setTag:tag];
+            if ([itemCopy target] == PDFSubview) {
+                // Note that updating the defaults is cheap because it catches redundant settings, so installing
+                // the proxy for actions that don't impact the defaults is OK
+                [itemCopy setTarget:PDFSubviewProxy];
+            }
         } else {
             ERROR("PDF context menu item %@ came with tag %d, so no WebKit tag was applied. This could mean that the item doesn't appear in clients such as Safari.", [itemCopy title], [itemCopy tag]);
         }
@@ -333,6 +352,20 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     [self setFrame:[[self superview] frame]];
 }
 
+- (void)_readPDFDefaults
+{
+    // Set up default viewing params
+    WebPreferences *prefs = [[self _webView] preferences];
+    float scaleFactor = [prefs PDFScaleFactor];
+    if (scaleFactor == 0) {
+        [PDFSubview setAutoScales:YES];
+    } else {
+        [PDFSubview setAutoScales:NO];
+        [PDFSubview setScaleFactor:scaleFactor];
+    }
+    [PDFSubview setDisplayMode:[prefs PDFDisplayMode]];    
+}
+
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
 }
@@ -343,6 +376,14 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
 
 - (void)layout
 {
+    if (!firstLayoutDone) {
+        firstLayoutDone = YES;
+        // Be wary of moving the point where we do this restore.  PDFKit apparently has some ordering issues
+        // as to when this is done.  For example, if you do it in this class' init method, it sometimes has no
+        // effect.  When I tried it in setDataSource:, the window got in a weird state where no more drawing
+        // ever occurred, but the app was not hung.
+        [self _readPDFDefaults];
+    }
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -597,17 +638,17 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (IBAction)_makeTextSmaller:(id)sender
 {
-    [PDFSubview zoomOut:sender];
+    [PDFSubviewProxy zoomOut:sender];
 }
 
 - (IBAction)_makeTextLarger:(id)sender
 {
-    [PDFSubview zoomIn:sender];
+    [PDFSubviewProxy zoomIn:sender];
 }
 
 - (IBAction)_makeTextStandardSize:(id)sender
 {
-    [PDFSubview setScaleFactor:1.0];
+    [PDFSubviewProxy setScaleFactor:1.0];
 }
 
 - (BOOL)_tracksCommonSizeFactor
@@ -677,6 +718,33 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
     if ([types containsObject:NSStringPboardType]) {
         [pasteboard setString:[self selectedString] forType:NSStringPboardType];
     }
+}
+
+@end
+
+@implementation PDFPrefUpdatingProxy
+
+- (id)initWithView:(WebPDFView *)aView
+{
+    // No [super init], since we inherit from NSProxy
+    view = aView;
+    return self;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+    PDFView *PDFSubview = [view PDFSubview];
+    [invocation invokeWithTarget:PDFSubview];
+
+    WebPreferences *prefs = [[view _webView] preferences];
+    float scaleFactor = [PDFSubview autoScales] ? 0.0 : [PDFSubview scaleFactor];
+    [prefs setPDFScaleFactor:scaleFactor];
+    [prefs setPDFDisplayMode:[PDFSubview displayMode]];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
+{
+    return [[view PDFSubview] methodSignatureForSelector:sel];
 }
 
 @end

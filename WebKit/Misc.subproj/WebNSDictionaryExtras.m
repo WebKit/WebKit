@@ -82,6 +82,13 @@
     [object release];
 }
 
+-(void)_webkit_setFloat:(float)value forKey:(id)key
+{
+    NSNumber *object = [[NSNumber alloc] initWithFloat:value];
+    [self setObject:object forKey:key];
+    [object release];
+}
+
 -(void)_webkit_setBool:(BOOL)value forKey:(id)key
 {
     NSNumber *object = [[NSNumber alloc] initWithBool:value];

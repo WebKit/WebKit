@@ -1,3 +1,45 @@
+2005-07-31  John Sullivan  <sullivan@apple.com>
+
+        Patch by Trey Matteson <trey@usa.net>
+        Reviewed by me.
+
+        Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4014
+          PDF files by default load with a poor choice of sizing
+
+        For now the various PDF viewing settings are sticky, stored in 2 new defaults.  Since
+        there are a number of ways these settings are changed, I made a proxy for the PDFView
+        through which all view changing messages are sent.  The proxy adds the behavior of
+        updating the defaults upon any change.
+
+        * Misc.subproj/WebNSDictionaryExtras.h:
+        * Misc.subproj/WebNSDictionaryExtras.m:
+        (-[NSMutableDictionary _webkit_setFloat:forKey:]):  New support method.
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView initWithFrame:]):  Create proxy for PDFView.
+        (-[WebPDFView dealloc]):  Free proxy.
+        (-[WebPDFView _menuItemsFromPDFKitForEvent:]):  For relevant context menu items, set the
+            target to the proxy instead of the PDFView.
+        (-[WebPDFView _readPDFDefaults]):  Init PDFView with settings from defaults.
+        (-[WebPDFView layout]):  Call _readPDFDefaults, once.  This turned out to be the best hook.
+        (-[WebPDFView _makeTextSmaller:]):  Change PDFView via proxy
+        (-[WebPDFView _makeTextLarger:]):  Ditto
+        (-[WebPDFView _makeTextStandardSize:]):  Ditto
+        (-[PDFPrefUpdatingProxy initWithView:]):  trivial
+        (-[PDFPrefUpdatingProxy forwardInvocation:]):  Forward the msg, then update defaults
+        (-[PDFPrefUpdatingProxy methodSignatureForSelector:]):  Simple forwarding support.
+        * WebView.subproj/WebPreferenceKeysPrivate.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):  Set initial values for new PDF viewing defaults.
+        (-[WebPreferences _integerValueForKey:]):  Nuke stray comment.
+        (-[WebPreferences _floatValueForKey:]):  New simple support method.
+        (-[WebPreferences _setFloatValue:forKey:]):  Ditto.
+        (-[WebPreferences PDFScaleFactor]):  4 accessors for new defaults 
+        (-[WebPreferences setPDFScaleFactor:]):
+        (-[WebPreferences PDFDisplayMode]):
+        (-[WebPreferences setPDFDisplayMode:]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2005-08-01  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Trey Matteson <trey@usa.net>

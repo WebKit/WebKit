@@ -73,6 +73,10 @@ enum { WebPreferencesVersion = 1 };
 // without being in the public header file.
 - (BOOL)_boolValueForKey:(NSString *)key;
 - (void)_setBoolValue:(BOOL)value forKey:(NSString *)key;
+- (int)_integerValueForKey:(NSString *)key;
+- (void)_setIntegerValue:(int)value forKey:(NSString *)key;
+- (float)_floatValueForKey:(NSString *)key;
+- (void)_setFloatValue:(float)value forKey:(NSString *)key;
 @end
 
 @implementation WebPreferences
@@ -226,8 +230,12 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
+        @"1",                           WebKitPDFDisplayModePreferenceKey,
+        @"1.0",                         WebKitPDFScaleFactorPreferenceKey,
         nil];
 
+    // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
+    ASSERT(kPDFDisplaySinglePageContinuous == 1);
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 }
 
@@ -274,7 +282,6 @@ NS_ENDHANDLER
 - (int)_integerValueForKey:(NSString *)key
 {
     id o = [self _valueForKey:key];
-    // 
     return [o respondsToSelector:@selector(intValue)] ? [o intValue] : 0;
 }
 
@@ -286,6 +293,23 @@ NS_ENDHANDLER
     [_private->values _webkit_setInt:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (float)_floatValueForKey:(NSString *)key
+{
+    id o = [self _valueForKey:key];
+    return [o respondsToSelector:@selector(floatValue)] ? [o floatValue] : 0.0;
+}
+
+- (void)_setFloatValue:(float)value forKey:(NSString *)key
+{
+    if ([self _floatValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setFloat:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setFloat:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -607,6 +631,31 @@ NS_ENDHANDLER
 - (NSTimeInterval)_backForwardCacheExpirationInterval
 {
     return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
+}
+
+- (float)PDFScaleFactor
+{
+    return [self _floatValueForKey:WebKitPDFScaleFactorPreferenceKey];
+}
+
+- (void)setPDFScaleFactor:(float)factor
+{
+    [self _setFloatValue:factor forKey:WebKitPDFScaleFactorPreferenceKey];
+}
+
+- (PDFDisplayMode)PDFDisplayMode;
+{
+    PDFDisplayMode value = [self _integerValueForKey:WebKitPDFDisplayModePreferenceKey];
+    if (value != kPDFDisplaySinglePage && value != kPDFDisplaySinglePageContinuous && value != kPDFDisplayTwoUp && value != kPDFDisplayTwoUpContinuous) {
+        // protect against new modes from future versions of OS X stored in defaults
+        value = kPDFDisplaySinglePageContinuous;
+    }
+    return value;
+}
+
+- (void)setPDFDisplayMode:(PDFDisplayMode)mode
+{
+    [self _setIntegerValue:mode forKey:WebKitPDFDisplayModePreferenceKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;

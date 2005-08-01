@@ -28,6 +28,12 @@
 
 #import <WebKit/WebPreferences.h>
 
+#import <PDFKit/PDFView.h>
+// NOTE: #importing Quartz/Quartz.h causes an ambiguous signature conflict anywhere the method "count" is used.
+// To avoid this, we #import just this specific header. For this to work, the project's Framework Search Paths
+// has been modified to include /System/Library/Frameworks/Quartz.framework/Frameworks. Clients that include 
+// this file may have to do this same trick.
+
 @interface WebPreferences (WebPrivate)
 
 // Preferences that might be public in a future release
@@ -40,6 +46,13 @@
 - (BOOL)textAreasAreResizable;
 - (void)setTextAreasAreResizable:(BOOL)flag;
 
+- (PDFDisplayMode)PDFDisplayMode;
+- (void)setPDFDisplayMode:(PDFDisplayMode)mode;
+
+// zero means do AutoScale
+- (float)PDFScaleFactor;
+- (void)setPDFScaleFactor:(float)scale;
+
 // Other private methods
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;
@@ -51,4 +64,5 @@
 + (CFStringEncoding)_systemCFStringEncoding;
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
+
 @end
