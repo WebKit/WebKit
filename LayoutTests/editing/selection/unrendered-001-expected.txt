@@ -1,3 +1,4 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 820x585
   RenderCanvas at (0,0) size 800x585
 layer at (0,0) size 820x585
