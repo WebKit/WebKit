@@ -1461,40 +1461,6 @@ using DOM::NodeImpl;
 
 @end
 
-@implementation DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-
-- (BOOL)isTextField
-{
-    static NSArray *textInputTypes = nil;
-#ifndef NDEBUG
-    static NSArray *nonTextInputTypes = nil;
-#endif
-    
-    NSString *type = [self type];
-    
-    // No type at all is treated as text type
-    if ([type length] == 0)
-        return YES;
-    
-    if (textInputTypes == nil)
-        textInputTypes = [[NSSet alloc] initWithObjects:@"text", @"password", @"search", nil];
-    
-    BOOL isText = [textInputTypes containsObject:[type lowercaseString]];
-    
-#ifndef NDEBUG
-    if (nonTextInputTypes == nil)
-        nonTextInputTypes = [[NSSet alloc] initWithObjects:@"isindex", @"checkbox", @"radio", @"submit", @"reset", @"file", @"hidden", @"image", @"button", @"range", nil];
-    
-    // Catch cases where a new input type has been added that's not in these lists.
-    ASSERT(isText || [nonTextInputTypes containsObject:[type lowercaseString]]);
-#endif    
-    
-    return isText;
-}
-
-@end
-
-
 @implementation DOMHTMLTextAreaElement
 
 - (HTMLTextAreaElementImpl *)_textAreaElementImpl
@@ -4022,6 +3988,37 @@ static NSView *viewForElement(DOMElement *element)
     // Maybe when we switch over to not using NSTextField here then [_element value] will be good enough and
     // we can get rid of this method.
     return [(NSTextField *)viewForElement(self) stringValue];
+}
+
+- (BOOL)_isTextField
+{
+    // We could make this public API as-is, or we could change it into a method that returns whether
+    // the element is a text field or a button or ... ?
+    static NSArray *textInputTypes = nil;
+#ifndef NDEBUG
+    static NSArray *nonTextInputTypes = nil;
+#endif
+    
+    NSString *type = [self type];
+    
+    // No type at all is treated as text type
+    if ([type length] == 0)
+        return YES;
+    
+    if (textInputTypes == nil)
+        textInputTypes = [[NSSet alloc] initWithObjects:@"text", @"password", @"search", nil];
+    
+    BOOL isText = [textInputTypes containsObject:[type lowercaseString]];
+    
+#ifndef NDEBUG
+    if (nonTextInputTypes == nil)
+        nonTextInputTypes = [[NSSet alloc] initWithObjects:@"isindex", @"checkbox", @"radio", @"submit", @"reset", @"file", @"hidden", @"image", @"button", @"range", nil];
+    
+    // Catch cases where a new input type has been added that's not in these lists.
+    ASSERT(isText || [nonTextInputTypes containsObject:[type lowercaseString]]);
+#endif    
+    
+    return isText;
 }
 
 - (void)_setDisplayedValue:(NSString *)newValue

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <WebCore/DOMCSS.h>
+#import <WebCore/DOMHTML.h>
 #import <WebCore/DOMRange.h>
 
 @interface DOMRange (WebPrivate)
@@ -56,6 +58,7 @@
 // and these will be deleted.
 @interface DOMHTMLInputElement(FormsAutoFillTransition)
 - (NSString *)_displayedValue; // the string currently displayed in the field, even when the field is being edited
+- (BOOL)_isTextField;
 - (void)_setDisplayedValue:(NSString *)newValue; // set the value displayed, even when the field is being edited
 - (NSRect)_rectOnScreen; // bounding box of the text field, in screen coordinates
 - (void)_replaceCharactersInRange:(NSRange)targetRange withString:(NSString *)replacementString selectingFromIndex:(int)index;

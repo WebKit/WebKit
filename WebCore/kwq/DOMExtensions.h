@@ -62,10 +62,6 @@
 - (void)setWidth:(long)width;
 @end
 
-@interface DOMHTMLInputElement (DOMHTMLInputElementExtensions)
-- (BOOL)isTextField;
-@end
-
 @interface DOMRGBColor (DOMRGBColorExtensions)
 - (DOMCSSPrimitiveValue *)alpha;
 @end

@@ -1,3 +1,23 @@
+2005-08-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Test cases added: none, this only affects Safari forms autofill
+        
+        Moved the recently-added isTextField method out of the public DOMExtensions.h
+        and into the private DOMPrivate.h for now, and renamed it with a leading
+        underscore. We want to make some sort of public API that covers this, but not
+        necessarily this exact method, so we'll leave it out of the public API until we've
+        thought about this more.
+
+        * kwq/DOMExtensions.h:
+        remove isTextField
+        * kwq/DOMPrivate.h:
+        add _isTextField. Also added some #imports that make this file more standalone.
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLInputElement _isTextField]):
+        moved this method and added leading underscore.
+
 2005-08-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
