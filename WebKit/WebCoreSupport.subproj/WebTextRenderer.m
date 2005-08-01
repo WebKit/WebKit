@@ -561,7 +561,7 @@ static BOOL alwaysUseATSU = NO;
     
     BOOL flag = [graphicsContext shouldAntialias];
 
-    // We don't want antialiased lines on screen, but we do when printing (else they are too thick)
+    // We don't want antialiased lines on screen, but we do when printing (else they are too thick).
     if ([graphicsContext isDrawingToScreen]) {
         [graphicsContext setShouldAntialias:NO];
     }
@@ -576,12 +576,17 @@ static BOOL alwaysUseATSU = NO;
     }
 
     if (thickness == 0.0F) {
-        CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0F, 1.0F), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
-        CGContextSetLineWidth(cgContext, size.width);
+        if ([graphicsContext isDrawingToScreen]) {
+            CGSize size = CGSizeApplyAffineTransform(CGSizeMake(1.0F, 1.0F), CGAffineTransformInvert(CGContextGetCTM(cgContext)));
+            CGContextSetLineWidth(cgContext, size.width);
+        } else {
+            // See bugzilla bug 4255 for details of why we do this when printing
+            CGContextSetLineWidth(cgContext, 0.5F);
+        }
     } else {
         CGContextSetLineWidth(cgContext, thickness);
     }
-
+    
 
     // Use CGContextStrokeLineSegments on Tiger.  J. Burkey says this will be a big performance win.
     // With Q2DX turned on CGContextStrokeLineSegments sometimes fails to draw lines.  See 3952084.
