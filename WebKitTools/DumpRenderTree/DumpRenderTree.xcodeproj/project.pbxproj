@@ -159,67 +159,47 @@
 		149C29C008902C6D008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				PRODUCT_NAME = DumpRenderTree;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wno-unused-parameter",
-				);
 			};
 			name = Development;
 		};
 		149C29C108902C6D008A9EFC /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				PRODUCT_NAME = DumpRenderTree;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wno-unused-parameter",
-				);
 			};
 			name = Deployment;
-		};
-		149C29C208902C6D008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				PRODUCT_NAME = DumpRenderTree;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wno-unused-parameter",
-				);
-			};
-			name = Default;
 		};
 		149C29C408902C6D008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PREBINDING = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wno-unused-parameter",
+				);
 			};
 			name = Development;
 		};
 		149C29C508902C6D008A9EFC /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PREBINDING = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wno-unused-parameter",
+				);
 			};
 			name = Deployment;
-		};
-		149C29C608902C6D008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Default;
 		};
 /* End XCBuildConfiguration section */
 
@@ -229,20 +209,18 @@
 			buildConfigurations = (
 				149C29C008902C6D008A9EFC /* Development */,
 				149C29C108902C6D008A9EFC /* Deployment */,
-				149C29C208902C6D008A9EFC /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 		149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				149C29C408902C6D008A9EFC /* Development */,
 				149C29C508902C6D008A9EFC /* Deployment */,
-				149C29C608902C6D008A9EFC /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Deployment;
 		};
 /* End XCConfigurationList section */
 	};

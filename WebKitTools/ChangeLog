@@ -1,3 +1,12 @@
+2005-07-31  Darin Adler  <darin@apple.com>
+
+        - a little tools cleanup
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Moved options from target to
+        project as a whole. Removed unused Default configuration.
+
+        * Scripts/check-dom-results: Added license header, comment to explain purpose of tool.
+
 2005-07-31  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and landed by Darin Adler.
