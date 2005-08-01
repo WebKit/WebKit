@@ -76,20 +76,4 @@
     return _phase;
 }
 
-
-- (CGColorSpaceRef)createRGBColorSpace
-{
-    return WebCGColorSpaceCreateRGB();
-}
-
-- (CGColorSpaceRef)createGrayColorSpace
-{
-    return WebCGColorSpaceCreateGray();
-}
-
-- (CGColorSpaceRef)createCMYKColorSpace
-{
-    return WebCGColorSpaceCreateCMYK();
-}
-
 @end

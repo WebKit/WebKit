@@ -1,3 +1,11 @@
+2005-08-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        removed create*ColorSpace methods, now using CG API directly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4211
+
 2005-07-31  John Sullivan  <sullivan@apple.com>
 
         Patch by Trey Matteson <trey@usa.net>
