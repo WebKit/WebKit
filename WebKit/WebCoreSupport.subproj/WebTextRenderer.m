@@ -561,8 +561,6 @@ static BOOL alwaysUseATSU = NO;
     
     BOOL flag = [graphicsContext shouldAntialias];
 
-    [graphicsContext setShouldAntialias: NO];
-
     // We don't want antialiased lines on screen, but we do when printing (else they are too thick)
     if ([graphicsContext isDrawingToScreen]) {
         [graphicsContext setShouldAntialias:NO];
