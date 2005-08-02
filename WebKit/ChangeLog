@@ -1,3 +1,29 @@
+2005-08-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Preemptively moved some WebMenuItemTag values from SPI to API, in anticipation of
+        approval from macosx-api-reviewers. Retitled one of them in response to API reviewers feedback:
+        WebMenuItemSearchInGoogle -> WebMenuItemSearchWeb
+        
+        Note that as a side effect of this change, the actual numbers used for these WebMenuItemTags has
+        changed from what it was in Tiger. This causes "Search in Spotlight", "Search in Google", and
+        "Look Up in Dictionary" to not appear in Tiger Safari if running on tip of tree WebKit.
+
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        removed WebMenuItemTagSearchInSpotlight, WebMenuItemTagSearchInGoogle, and WebMenuItemTagLookUpInDictionary
+
+        * WebView.subproj/WebUIDelegate.h:
+        added WebMenuItemTagSearchInSpotlight, WebMenuItemTagSearchWeb, and WebMenuItemTagLookUpInDictionary
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+        updated for rename
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        ditto
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        ditto
+        
 2005-08-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by NOBODY (OOPS!).

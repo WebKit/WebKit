@@ -159,7 +159,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             title = localizedMenuTitleFromAppKit(@"Search in Spotlight", @"Search in Spotlight menu title.");
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
-        case WebMenuItemTagSearchInGoogle:
+        case WebMenuItemTagSearchWeb:
             // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
             title = localizedMenuTitleFromAppKit(@"Search in Google", @"Search in Google menu title.");
             action = @selector(_searchWithGoogleFromMenu:);
@@ -239,7 +239,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // current document view conforms to WebDocumentText
             ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb]];
             [menuItems addObject:[NSMenuItem separatorItem]];
 
             // FIXME 4184640: The Look Up in Dictionary item is only implemented in WebHTMLView, and so is present but
@@ -312,7 +312,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     // Add Tiger-only items that aren't in our nib.
     // FIXME: When we're not building for Panther anymore we should update the nib to include these.
     [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
-    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb]];
     [menuItems addObject:[NSMenuItem separatorItem]];
     // FIXME: The NSTextView behavior for looking text up in the dictionary is different if
     // there was a selection before you clicked than if the selection was created as part of

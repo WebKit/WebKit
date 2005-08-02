@@ -28,13 +28,6 @@
 
 #import <WebKit/WebUIDelegate.h>
 
-// FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze
-enum {
-    WebMenuItemTagSearchInSpotlight=1000,
-    WebMenuItemTagSearchInGoogle,
-    WebMenuItemTagLookUpInDictionary,
-};
-
 @interface NSObject (WebUIDelegatePrivate)
 
 // webViewPrint: is obsolete; delegates should respond to webView:printFrameView: instead
