@@ -319,13 +319,9 @@ option, optgroup, area, param {
     display: none
 }
 
-/* Comment this section in to enable the new controls
-
 input[type="checkbox"] {
     -khtml-appearance: checkbox
 }
-
-*/
 
 /* inline elements */      
       

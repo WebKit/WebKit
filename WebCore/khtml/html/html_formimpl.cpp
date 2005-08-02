@@ -1359,6 +1359,16 @@ HTMLInputElementImpl::~HTMLInputElementImpl()
 
 void HTMLInputElementImpl::setType(const DOMString& t)
 {
+    if (t.isEmpty()) {
+        int exccode;
+        removeAttribute(typeAttr, exccode);
+    }
+    else
+        setAttribute(typeAttr, t);
+}
+
+void HTMLInputElementImpl::setInputType(const DOMString& t)
+{
     typeEnum newType;
     
     if ( strcasecmp( t, "password" ) == 0 )
@@ -1417,6 +1427,11 @@ void HTMLInputElementImpl::setType(const DOMString& t)
         }
     }
     m_haveType = true;
+    
+    if (m_type != IMAGE && m_imageLoader) {
+        delete m_imageLoader;
+        m_imageLoader = 0;
+    }
 }
 
 DOMString HTMLInputElementImpl::type() const
@@ -1610,13 +1625,6 @@ void HTMLInputElementImpl::click(bool sendMouseEvents)
         case HIDDEN:
             // a no-op for this type
             break;
-        case CHECKBOX:
-            if (renderer() && renderer()->style()->hasAppearance()) {
-                // Do the click.
-                HTMLGenericFormElementImpl::click(sendMouseEvents);
-                break;
-            }
-            // Fall through for now 
         case RADIO:
         case SUBMIT:
         case RESET:
@@ -1642,6 +1650,7 @@ void HTMLInputElementImpl::click(bool sendMouseEvents)
 #endif
             HTMLGenericFormElementImpl::click(sendMouseEvents);
             break;
+        case CHECKBOX:
         case IMAGE:
         case ISINDEX:
         case PASSWORD:
@@ -1712,11 +1721,7 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     if (attr->name() == autocompleteAttr) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
     } else if (attr->name() ==  typeAttr) {
-        setType(attr->value());
-        if (m_type != IMAGE && m_imageLoader) {
-            delete m_imageLoader;
-            m_imageLoader = 0;
-        }
+        setInputType(attr->value());
     } else if (attr->name() == valueAttr) {
         // We only need to setChanged if the form is looking at the default value right now.
         if (m_value.isNull())
@@ -1826,11 +1831,7 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case SEARCH:
 #endif
     case ISINDEX:  return new (arena) RenderLineEdit(this);
-    case CHECKBOX: {
-        if (style->appearance() == CheckboxAppearance)
-            return RenderObject::createObject(this, style);
-        return new (arena) RenderCheckBox(this);
-    }
+    case CHECKBOX: return RenderObject::createObject(this, style);
     case RADIO:    return new (arena) RenderRadioButton(this);
     case SUBMIT:   return new (arena) RenderSubmitButton(this);
     case IMAGE:    return new (arena) RenderImageButton(this);
@@ -1850,7 +1851,7 @@ void HTMLInputElementImpl::attach()
 {
     if (!m_inited) {
         if (!m_haveType)
-            setType(getAttribute(typeAttr));
+            setInputType(getAttribute(typeAttr));
 
         // FIXME: This needs to be dynamic, doesn't it, since someone could set this
         // after attachment?
@@ -2240,7 +2241,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 m_activeSubmit = false;
             }
         } else if (m_type == CHECKBOX || m_type == RADIO) {
-            if (renderer() && renderer()->style()->hasAppearance())
+            if (m_type == CHECKBOX || (renderer() && renderer()->style()->hasAppearance()))
                 // FIXME: We key off appearance for now, but this is temporary.  When we cut over
                 // for real this will just always be used.
                 setChecked(!checked());

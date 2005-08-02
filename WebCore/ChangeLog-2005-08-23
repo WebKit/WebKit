@@ -13,6 +13,74 @@
 
 2005-08-01  David Hyatt  <hyatt@apple.com>
 
+	Reviewed by cblu, kocienda, darin
+
+	This patch removes the old KWQCheckbox from the tree and enables the new
+	checkbox handled by the engine.
+	
+        * ForwardingHeaders/qcheckbox.h: Removed.
+        Removed the old header for the Qt checkbox class.
+	
+	* WebCore.xcodeproj/project.pbxproj:
+        Removed the references to KWQCheckBox from the project.
+	
+	* khtml/css/html4.css:
+        Turn on the -khtml-appearance property for checkboxes so that they have
+	the native OS X look by default.
+	
+	* khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::setType):
+        (DOM::HTMLInputElementImpl::setInputType):
+        Change the setting of the type property in the DOM to simply update the
+	corresponding attribute.  setType is the "public" API now and
+	setInputType is the one called internally, e.g., when the attribute is
+	changed.
+	
+	(DOM::HTMLInputElementImpl::click):
+        Remove the hack for checkboxes now that the new ones are turned on.
+	
+	(DOM::HTMLInputElementImpl::parseMappedAttribute):
+	Make the attribute parsing code call the internal setInputType now.
+	
+        (DOM::HTMLInputElementImpl::createRenderer):
+        (DOM::HTMLInputElementImpl::attach):
+        Remove the hack for making the old renderer and let only the new one
+	get made now.
+	
+	(DOM::HTMLInputElementImpl::defaultEventHandler):
+        Remove the hack for still doing the old event handling now that the
+	new checkbox is on.
+	
+	* khtml/html/html_formimpl.h:
+        Added the setInputType method (see above).
+
+	* khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_form.h:
+	Removed RenderCheckBox from these files.
+	
+        * kwq/KWQButton.mm:
+        Removed an include of qcheckbox.h.
+	
+	* kwq/KWQCheckBox.h: Removed.
+        * kwq/KWQCheckBox.mm: Removed.
+        Removed from the tree.
+	
+	* kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+        Deleted the stateChanged signal/slot stuff, since it's no longer
+	used by checkboxes.
+	
+	* layout-tests/fast/forms/001-expected.txt:
+        * layout-tests/fast/forms/check-box-enter-key-expected.txt:
+        * layout-tests/fast/forms/form-element-geometry-expected.txt:
+        * layout-tests/fast/forms/input-value-expected.txt:
+	Updated the layout tests to reflect the new checkboxes.  In the case
+	of the last test, it has also had bugs corrected from making the type
+	property actually set the attribute instead.
+
+2005-08-01  David Hyatt  <hyatt@apple.com>
+
 	Fix bugzilla bug 4219, crash because we tried to do the fake paint
 	when layout was not updated yet.
 

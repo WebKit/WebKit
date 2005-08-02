@@ -171,7 +171,6 @@
 		93F1992808245E59001E9ABC /* KWQButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867D02DE3B8601EA4122 /* KWQButton.h */; };
 		93F1992908245E59001E9ABC /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784CC02DE375901EA4122 /* KWQCharsets.h */; };
-		93F1992B08245E59001E9ABC /* KWQCheckBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867E02DE3B8601EA4122 /* KWQCheckBox.h */; };
 		93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
 		93F1992D08245E59001E9ABC /* KWQColor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868102DE3B8601EA4122 /* KWQColor.h */; };
 		93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* KWQComboBox.h */; };
@@ -394,7 +393,6 @@
 		93F19A1008245E59001E9ABC /* KWQBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.mm */; };
 		93F19A1108245E59001E9ABC /* KWQButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C902DE375901EA4122 /* KWQButton.mm */; };
 		93F19A1308245E59001E9ABC /* KWQCharsets.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CD02DE375901EA4122 /* KWQCharsets.mm */; };
-		93F19A1408245E59001E9ABC /* KWQCheckBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CE02DE375901EA4122 /* KWQCheckBox.mm */; };
 		93F19A1508245E59001E9ABC /* KWQCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CF02DE375901EA4122 /* KWQCollection.mm */; };
 		93F19A1608245E59001E9ABC /* KWQColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D002DE375901EA4122 /* KWQColor.mm */; };
 		93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D202DE375901EA4122 /* KWQComboBox.mm */; };
@@ -722,7 +720,6 @@
 		A8212AF308794A2300677359 /* KWQButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867D02DE3B8601EA4122 /* KWQButton.h */; };
 		A8212AF408794A2300677359 /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		A8212AF508794A2300677359 /* KWQCharsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784CC02DE375901EA4122 /* KWQCharsets.h */; };
-		A8212AF608794A2300677359 /* KWQCheckBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867E02DE3B8601EA4122 /* KWQCheckBox.h */; };
 		A8212AF708794A2300677359 /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
 		A8212AF808794A2300677359 /* KWQColor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868102DE3B8601EA4122 /* KWQColor.h */; };
 		A8212AF908794A2300677359 /* KWQComboBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* KWQComboBox.h */; };
@@ -979,7 +976,6 @@
 		A8212BF808794A2300677359 /* KWQBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.mm */; };
 		A8212BF908794A2300677359 /* KWQButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784C902DE375901EA4122 /* KWQButton.mm */; };
 		A8212BFA08794A2300677359 /* KWQCharsets.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CD02DE375901EA4122 /* KWQCharsets.mm */; };
-		A8212BFB08794A2300677359 /* KWQCheckBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CE02DE375901EA4122 /* KWQCheckBox.mm */; };
 		A8212BFC08794A2300677359 /* KWQCollection.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784CF02DE375901EA4122 /* KWQCollection.mm */; };
 		A8212BFD08794A2300677359 /* KWQColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D002DE375901EA4122 /* KWQColor.mm */; };
 		A8212BFE08794A2300677359 /* KWQComboBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D202DE375901EA4122 /* KWQComboBox.mm */; };
@@ -3974,7 +3970,6 @@
 		F58784C902DE375901EA4122 /* KWQButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQButton.mm; sourceTree = "<group>"; };
 		F58784CC02DE375901EA4122 /* KWQCharsets.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQCharsets.h; sourceTree = "<group>"; };
 		F58784CD02DE375901EA4122 /* KWQCharsets.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCharsets.mm; sourceTree = "<group>"; };
-		F58784CE02DE375901EA4122 /* KWQCheckBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCheckBox.mm; sourceTree = "<group>"; };
 		F58784CF02DE375901EA4122 /* KWQCollection.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCollection.mm; sourceTree = "<group>"; };
 		F58784D002DE375901EA4122 /* KWQColor.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQColor.mm; sourceTree = "<group>"; };
 		F58784D202DE375901EA4122 /* KWQComboBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQComboBox.mm; sourceTree = "<group>"; };
@@ -4123,7 +4118,6 @@
 		F587867B02DE3B8601EA4122 /* KWQBrush.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQBrush.h; sourceTree = "<group>"; };
 		F587867C02DE3B8601EA4122 /* KWQBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQBuffer.h; sourceTree = "<group>"; };
 		F587867D02DE3B8601EA4122 /* KWQButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQButton.h; sourceTree = "<group>"; };
-		F587867E02DE3B8601EA4122 /* KWQCheckBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQCheckBox.h; sourceTree = "<group>"; };
 		F587868002DE3B8601EA4122 /* KWQCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQCollection.h; sourceTree = "<group>"; };
 		F587868102DE3B8601EA4122 /* KWQColor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQColor.h; sourceTree = "<group>"; };
 		F587868202DE3B8601EA4122 /* KWQComboBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQComboBox.h; sourceTree = "<group>"; };
@@ -6454,8 +6448,6 @@
 				F58784C802DE375901EA4122 /* KWQBuffer.mm */,
 				F587867D02DE3B8601EA4122 /* KWQButton.h */,
 				F58784C902DE375901EA4122 /* KWQButton.mm */,
-				F587867E02DE3B8601EA4122 /* KWQCheckBox.h */,
-				F58784CE02DE375901EA4122 /* KWQCheckBox.mm */,
 				F587868002DE3B8601EA4122 /* KWQCollection.h */,
 				F58784CF02DE375901EA4122 /* KWQCollection.mm */,
 				F587868102DE3B8601EA4122 /* KWQColor.h */,
@@ -6681,7 +6673,6 @@
 				93F1992808245E59001E9ABC /* KWQButton.h in Headers */,
 				93F1992908245E59001E9ABC /* KWQCString.h in Headers */,
 				93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */,
-				93F1992B08245E59001E9ABC /* KWQCheckBox.h in Headers */,
 				93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */,
 				93F1992D08245E59001E9ABC /* KWQColor.h in Headers */,
 				93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */,
@@ -7030,7 +7021,6 @@
 				A8212AF308794A2300677359 /* KWQButton.h in Headers */,
 				A8212AF408794A2300677359 /* KWQCString.h in Headers */,
 				A8212AF508794A2300677359 /* KWQCharsets.h in Headers */,
-				A8212AF608794A2300677359 /* KWQCheckBox.h in Headers */,
 				A8212AF708794A2300677359 /* KWQCollection.h in Headers */,
 				A8212AF808794A2300677359 /* KWQColor.h in Headers */,
 				A8212AF908794A2300677359 /* KWQComboBox.h in Headers */,
@@ -8987,7 +8977,6 @@
 				93F19A1008245E59001E9ABC /* KWQBuffer.mm in Sources */,
 				93F19A1108245E59001E9ABC /* KWQButton.mm in Sources */,
 				93F19A1308245E59001E9ABC /* KWQCharsets.mm in Sources */,
-				93F19A1408245E59001E9ABC /* KWQCheckBox.mm in Sources */,
 				93F19A1508245E59001E9ABC /* KWQCollection.mm in Sources */,
 				93F19A1608245E59001E9ABC /* KWQColor.mm in Sources */,
 				93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */,
@@ -9262,7 +9251,6 @@
 				A8212BF808794A2300677359 /* KWQBuffer.mm in Sources */,
 				A8212BF908794A2300677359 /* KWQButton.mm in Sources */,
 				A8212BFA08794A2300677359 /* KWQCharsets.mm in Sources */,
-				A8212BFB08794A2300677359 /* KWQCheckBox.mm in Sources */,
 				A8212BFC08794A2300677359 /* KWQCollection.mm in Sources */,
 				A8212BFD08794A2300677359 /* KWQColor.mm in Sources */,
 				A8212BFE08794A2300677359 /* KWQComboBox.mm in Sources */,

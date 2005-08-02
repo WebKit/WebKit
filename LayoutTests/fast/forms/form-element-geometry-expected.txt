@@ -34,7 +34,7 @@ layer at (0,0) size 800x625
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
-                  RenderCheckBox {INPUT} at (2,2) size 12x12
+                  RenderBlock {INPUT} at (2,2) size 12x12
               RenderBlock (anonymous) at (1,17) size 16x0
                 RenderInline {FONT} at (0,0) size 0x0
       RenderTable {TABLE} at (0,170) size 172x28
@@ -51,7 +51,7 @@ layer at (0,0) size 800x625
                 RenderRadioButton {INPUT} at (2,2) size 12x13
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
-                RenderCheckBox {INPUT} at (2,2) size 12x12
+                RenderBlock {INPUT} at (2,2) size 12x12
       RenderTable {TABLE} at (0,198) size 172x28
         RenderTableSection {TBODY} at (0,0) size 0x28
           RenderTableRow {TR} at (0,0) size 0x0
@@ -70,7 +70,7 @@ layer at (0,0) size 800x625
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
-                  RenderCheckBox {INPUT} at (2,2) size 12x12
+                  RenderBlock {INPUT} at (2,2) size 12x12
       RenderTable {TABLE} at (0,226) size 551x68
         RenderTableSection {TBODY} at (0,0) size 0x68
           RenderTableRow {TR} at (0,0) size 0x0
@@ -102,8 +102,7 @@ layer at (0,0) size 800x625
           RenderRadioButton {INPUT} at (180,11) size 12x13
           RenderText {TEXT} at (195,0) size 6x28
             text run at (195,0) width 6: " "
-          RenderCheckBox {INPUT} at (204,12) size 12x12
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderBlock {INPUT} at (204,12) size 12x12
       RenderBlock {DIV} at (0,389) size 784x22
         RenderText {TEXT} at (0,1) size 27x18
           text run at (0,1) width 27: "text "
@@ -116,7 +115,7 @@ layer at (0,0) size 800x625
         RenderRadioButton {INPUT} at (160,4) size 12x13
         RenderText {TEXT} at (175,1) size 4x18
           text run at (175,1) width 4: " "
-        RenderCheckBox {INPUT} at (182,5) size 12x12
+        RenderBlock {INPUT} at (182,5) size 12x12
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,411) size 784x22
         RenderInline {FONT} at (0,0) size 185x13
@@ -131,8 +130,7 @@ layer at (0,0) size 800x625
           RenderRadioButton {INPUT} at (149,4) size 12x13
           RenderText {TEXT} at (164,5) size 3x13
             text run at (164,5) width 3: " "
-          RenderCheckBox {INPUT} at (170,5) size 12x12
-          RenderText {TEXT} at (0,0) size 0x0
+          RenderBlock {INPUT} at (170,5) size 12x12
       RenderBlock {DIV} at (0,433) size 784x37
         RenderText {TEXT} at (0,16) size 27x18
           text run at (0,16) width 27: "text "

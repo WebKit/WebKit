@@ -281,52 +281,6 @@ short RenderButton::baselinePosition( bool f, bool isRootLineBox ) const
 
 // -------------------------------------------------------------------------------
 
-RenderCheckBox::RenderCheckBox(HTMLInputElementImpl *element)
-    : RenderButton(element)
-{
-    QCheckBox* b = new QCheckBox(view()->viewport());
-    b->setAutoMask(true);
-    b->setMouseTracking(true);
-    setQWidget(b);
-    connect(b,SIGNAL(stateChanged(int)),this,SLOT(slotStateChanged(int)));
-    connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
-}
-
-void RenderCheckBox::calcMinMaxWidth()
-{
-    KHTMLAssert( !minMaxKnown() );
-
-#if APPLE_CHANGES
-    // Let the widget tell us how big it wants to be.
-    QSize s(widget()->sizeHint());
-#else
-    QCheckBox *cb = static_cast<QCheckBox *>( m_widget );
-    QSize s( cb->style().pixelMetric( QStyle::PM_IndicatorWidth ),
-             cb->style().pixelMetric( QStyle::PM_IndicatorHeight ) );
-#endif
-    setIntrinsicWidth( s.width() );
-    setIntrinsicHeight( s.height() );
-
-    RenderButton::calcMinMaxWidth();
-}
-
-void RenderCheckBox::updateFromElement()
-{
-    widget()->setChecked(element()->checked());
-
-    RenderButton::updateFromElement();
-}
-
-// From the Qt documentation:
-// state is 2 if the button is on, 1 if it is in the "no change" state or 0 if the button is off. 
-void RenderCheckBox::slotStateChanged(int state)
-{
-    element()->setChecked(state == 2);
-    element()->onChange();
-}
-
-// -------------------------------------------------------------------------------
-
 RenderRadioButton::RenderRadioButton(HTMLInputElementImpl *element)
     : RenderButton(element)
 {

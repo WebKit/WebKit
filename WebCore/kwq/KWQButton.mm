@@ -26,7 +26,6 @@
 #import "KWQButton.h"
 
 #import "KWQAssertions.h"
-#import "KWQCheckBox.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"

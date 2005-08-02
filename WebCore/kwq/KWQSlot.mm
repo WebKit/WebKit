@@ -38,7 +38,6 @@ using DOM::DocumentImpl;
 using khtml::CachedObject;
 using khtml::DocLoader;
 using khtml::Loader;
-using khtml::RenderCheckBox;
 using khtml::RenderFileButton;
 using khtml::RenderFormElement;
 using khtml::RenderLineEdit;
@@ -106,7 +105,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotSelected, (int), RenderSelect)
     CASE(slotSelectionChanged, (), RenderFormElement)
     CASE(slotSliderValueChanged, (), RenderSlider)
-    CASE(slotStateChanged, (int), RenderCheckBox)
     CASE(slotTextChanged, (), RenderTextArea)
     CASE(slotValueChanged, (int), RenderScrollMediator)
     CASE(slotWidgetDestructed, (), RenderWidget)
@@ -212,9 +210,6 @@ void KWQSlot::call(int i) const
     }
     
     switch (m_function) {
-        case slotStateChanged:
-            static_cast<RenderCheckBox *>(m_object.pointer())->slotStateChanged(i);
-            return;
         case slotSelected:
             static_cast<RenderSelect *>(m_object.pointer())->slotSelected(i);
             return;
