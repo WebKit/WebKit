@@ -1,3 +1,10 @@
+2005-08-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge closeWindowSoon]):
+
 2005-08-01  John Sullivan  <sullivan@apple.com>
 
         * PublicHeaderChangesFromTiger.txt:

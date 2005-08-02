@@ -1,3 +1,12 @@
+2005-08-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Test cases added: (NONE)
+
+        * manual-tests/open-after-close.html: Added.
+        * manual-tests/resources/open-after-close-popup.html: Added.
+
 2005-08-01  David Hyatt  <hyatt@apple.com>
 
 	Fix bugzilla bug 4219, crash because we tried to do the fake paint
