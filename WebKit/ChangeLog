@@ -26,10 +26,9 @@
         
 2005-08-01  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * WebCoreSupport.subproj/WebBridge.m:
-        (-[WebBridge closeWindowSoon]):
+        (-[WebBridge closeWindowSoon]): removes parent WebView from WebViewSets
+        so it can't be found while it's a zombie.
 
 2005-08-01  John Sullivan  <sullivan@apple.com>
 
