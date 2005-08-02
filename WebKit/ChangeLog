@@ -26,9 +26,19 @@
         
 2005-08-01  Geoffrey Garen  <ggaren@apple.com>
 
+        -fixed <rdar://problem/3572585> window.open fails if name param = 
+        the name of a window just closed in same function
+
+        Reviewed by darin.
+
+        Test cases added:
+
+        * manual-tests/open-after-close.html: Added.
+        * manual-tests/resources/open-after-close-popup.html: Added.
+
         * WebCoreSupport.subproj/WebBridge.m:
-        (-[WebBridge closeWindowSoon]): removes parent WebView from WebViewSets
-        so it can't be found while it's a zombie.
+        (-[WebBridge closeWindowSoon]): We now remove a WebView from 
+        WebViewSets when the WebView is *scheduled* to close.
 
 2005-08-01  John Sullivan  <sullivan@apple.com>
 
