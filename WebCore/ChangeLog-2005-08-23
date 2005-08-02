@@ -1,8 +1,12 @@
 2005-08-01  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        - landed layout tests for fix to <rdar://problem/3572585> 
+        window.open fails if name param = the name of a window just 
+        closed in same function
 
-        Test cases added: (NONE)
+        Fix reviewed by darin.
+
+        Test cases added:
 
         * manual-tests/open-after-close.html: Added.
         * manual-tests/resources/open-after-close-popup.html: Added.
