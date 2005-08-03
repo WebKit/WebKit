@@ -1,3 +1,15 @@
+2005-08-03  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Beth and Hyatt.
+ 
+	<rdar://problem/4196646> target returns text node when it should return the parent node
+
+        Test cases added: manual-tests/mouseevents-on-textnodes.html
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent): if the targetNode is a text node, set the 
+	targetNode to the parent node
+
 2005-08-02  Bruce DiBello  <bdibello@apple.com>
 
         Reviewed by Geoffrey Garen.
