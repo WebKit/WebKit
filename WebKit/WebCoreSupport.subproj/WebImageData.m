@@ -203,9 +203,9 @@
 
         if (colorModel) {
             if (CFStringCompare (colorModel, CFSTR("RGB"), 0) == kCFCompareEqualTo)
-                uncorrectedColorSpace = WKCreateUncorrectedRGBColorSpace();
+                uncorrectedColorSpace = CGColorSpaceCreateDeviceRGB();
             else if (CFStringCompare (colorModel, CFSTR("Gray"), 0) == kCFCompareEqualTo)
-                uncorrectedColorSpace = WKCreateUncorrectedGrayColorSpace();
+                uncorrectedColorSpace = CGColorSpaceCreateDeviceGray();
         }
 
         if (uncorrectedColorSpace) {

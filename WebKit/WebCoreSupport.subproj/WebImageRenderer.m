@@ -1536,7 +1536,7 @@ CGColorSpaceRef WebCGColorSpaceCreateRGB(void)
 #if BUILDING_ONPANTHER
     return CGColorSpaceCreateDeviceRGB();
 #else // !BUILDING_ON_PANTHER
-    return WKCreateUncorrectedRGBColorSpace();
+    return CGColorSpaceCreateDeviceRGB();
 #endif // BUILDING_ON_PANTHER
 #endif    
 }
@@ -1553,7 +1553,7 @@ CGColorSpaceRef WebCGColorSpaceCreateGray(void)
 #if BUILDING_ONPANTHER
     return CGColorSpaceCreateDeviceGray();
 #else // !BUILDING_ON_PANTHER
-    return WKCreateUncorrectedGrayColorSpace();
+    return CGColorSpaceCreateDeviceGray();
 #endif // BUILDING_ON_PANTHER
 #endif    
 }

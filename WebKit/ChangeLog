@@ -1,3 +1,16 @@
+2005-08-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by cblu
+
+	Removing calls to WKCreateUncorrectedRGBColorSpace and
+        WKCreateUncorrectedGrayColorSpace in WebKit to patch up
+	TOT...Eric removed them from WebCore last night.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (WebCGColorSpaceCreateRGB):
+        (WebCGColorSpaceCreateGray):
+
 2005-08-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
