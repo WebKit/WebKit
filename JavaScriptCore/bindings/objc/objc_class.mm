@@ -48,8 +48,8 @@ void ObjcClass::_commonCopy(const ObjcClass &other) {
 void ObjcClass::_commonInit (ClassStructPtr aClass)
 {
     _isa = aClass;
-    _methods = CFDictionaryCreateMutable(NULL, 16, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _fields = CFDictionaryCreateMutable(NULL, 16, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
 }
 
 
