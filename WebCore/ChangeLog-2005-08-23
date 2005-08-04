@@ -2979,6 +2979,8 @@
 2005-07-19  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.
+
+	- fixed <rdar://problem/3471901> support scrollIntoView method for DOM elements (3474)
  
         Test cases added: 
         * manual-tests/scrollIntoView-horizontal.html: Added.
