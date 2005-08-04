@@ -15,6 +15,23 @@
                 username = id; 
             }; 
             SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = NonBlockingPanel; LANGUAGE = ObjC; SUPERCLASS = NSPanel; }, 
+        {
+            ACTIONS = {cancel = id; logIn = id; }; 
+            CLASS = WebAuthenticationPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                callback = id; 
+                imageView = id; 
+                mainLabel = id; 
+                panel = id; 
+                password = id; 
+                remember = id; 
+                smallLabel = id; 
+                username = id; 
+            }; 
+            SUPERCLASS = NSObject; 
         }
     ); 
     IBVersion = 1; 

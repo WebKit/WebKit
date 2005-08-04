@@ -1,3 +1,23 @@
+2005-08-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        - fixed <rdar://problem/3918675> Remove code to replace authentication dialog 
+        with a subclass when out of localization freeze
+
+        * Panels.subproj/WebAuthenticationPanel.h:
+        moved declaration of NonBlockingPanel here so it can be accessed by the nib
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel replacePanelWithSubclassHack]):
+        removed this method
+        (-[WebAuthenticationPanel loadNib]):
+        stop calling the removed method
+
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib/classes.nib:
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib/info.nib:
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib/objects.nib:
+        the panel in the nib now has custom class NonBlockingPanel
+
 2005-08-03  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by cblu
