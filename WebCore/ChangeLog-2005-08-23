@@ -1,3 +1,13 @@
+2005-08-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed Objective-C binding for getOverrideStyle
+
+        * kwq/DOM.mm: ([DOMDocument getOverrideStyle::]): Change to call the DOM
+        getOverrideStyle. It was not correct to call getComputedStyle just because
+        getOverrideStyle is not yet implemented in our DOM.
+
 2005-08-04  Adele Peterson  <adele@apple.com>
 
         Reviewed by John.

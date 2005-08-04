@@ -1059,11 +1059,11 @@ using khtml::SharedPtr;
     return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.implementation())];
 }
 
-- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt;
+- (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    // FIXME: This is unimplemented by khtml, 
-    // so for now, we just return the computed style
-    return [self getComputedStyle:elt :pseudoElt];
+    ElementImpl *elementImpl = [elt _elementImpl];
+    DOMString pseudoEltString(pseudoElt);
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->getOverrideStyle(elementImpl, pseudoEltString.implementation())];
 }
 
 @end
@@ -1079,7 +1079,7 @@ using khtml::SharedPtr;
 
 @implementation DOMDocument (DOMDocumentExtensions)
 
-- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration;
+- (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
 {
     return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->createCSSStyleDeclaration()];
 }
@@ -1163,7 +1163,7 @@ using khtml::SharedPtr;
     raiseOnDOMError(exceptionCode);
 }
 
-- (void)deleteData:(unsigned long)offset :(unsigned long) count;
+- (void)deleteData:(unsigned long)offset :(unsigned long) count
 {
     int exceptionCode = 0;
     [self _characterDataImpl]->deleteData(offset, count, exceptionCode);
