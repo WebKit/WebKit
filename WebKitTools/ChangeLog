@@ -1,3 +1,8 @@
+2005-08-04  Darin Adler  <darin@apple.com>
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Bring this file back from
+        the dead. It was removed by accident when someone was trying to work on the branch.
+
 2005-07-31  Darin Adler  <darin@apple.com>
 
         - a little tools cleanup
