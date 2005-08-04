@@ -1,3 +1,96 @@
+2005-08-03  David Hyatt  <hyatt@apple.com>
+
+	This patch significantly improves the performance of radio button groups and enables consistent tabbing
+	behavior in radio groups with both OS X and Internet Explorer for Windows.  It also adds support for
+	arrow key navigation between the radio buttons in a group.
+
+	In addition elements can now be shifted between forms using DOM operations and they will properly be
+	adopted by the form into which they are inserted.  This movement works even when the forms themselves
+	are not currently in the document by introducing a new set of notifications when an object is connected
+	and removed from a tree of nodes (where that tree may or may not be the main document's tree).
+	
+        Test cases added: formmove.html, formmove2.html in fast/forms
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl):
+	Updated to init/delete a new selectedRadioButtons member variable that is a hash tracking the current
+	checked button in each radio group owned by the form.
+	
+        (DOM::HTMLFormElementImpl::radioButtonChecked):
+        A notification that is called when a radio button becomes checked.
+	
+	(DOM::HTMLFormElementImpl::checkedRadioButtonForGroup):
+        Returns the current checked radio button for a given named group.
+	
+	(DOM::HTMLFormElementImpl::removeRadioButtonForGroup):
+        Clears out the checked radio button for a given named group.
+	
+	(DOM::HTMLFormElementImpl::registerFormElement):
+        (DOM::HTMLFormElementImpl::removeFormElement):
+        The registration and removal functions have been patched to deal with radio buttons and to remove
+	the "dormant form control" concept, which is no longer needed now that controls can actually move
+	between forms.
+	
+	(DOM::HTMLGenericFormElementImpl::HTMLGenericFormElementImpl):
+        Remove the dormant bit from form controls.
+	
+	(DOM::HTMLGenericFormElementImpl::attach):
+	Remove the code that attempted to register a form element in attached.  We use new notifications now
+	for dynamically inserted controls via JS.
+	
+        (DOM::HTMLGenericFormElementImpl::insertedIntoTree):
+        (DOM::HTMLGenericFormElementImpl::removedFromTree):
+        These are the new notifications that are called whenever a form control is connected to or removed from
+	a tree.  This tree may or may not be the document tree.  The form control can then "seek out" a form
+	to latch on to, thus keeping its current status regarding what form it belongs to current across DOM
+	operations.
+
+	(DOM::HTMLInputElementImpl::isKeyboardFocusable):
+        Overridden to deal with radio buttons.  Unnamed radio buttons can't be focused.  Radio buttons can't be
+	focused if another member of their group is already currently focused.  Unchecked radio buttons can
+	only be focused if no button within the group is checked.
+	
+	(DOM::HTMLInputElementImpl::setInputType):
+	Make sure to remove a checked radio button from the form's radio button hash if the type is changed
+	to something else, e.g., checkbox.
+	
+        (DOM::HTMLInputElementImpl::setChecked):
+        Revised to update the form's hash when a radio button gets checked and to also prevent unnamed radio
+	buttons from changing state (matches WinIE).
+	
+	(DOM::HTMLInputElementImpl::defaultEventHandler):
+        Add support for arrow key navigation through radio button groups.  Fix space behavior so that an unselected
+	radio can become checked but not unchecked on space.  Fix enter behavior so that the form is not submitted
+	on enter.  (Matches WinIE.)
+	
+	* khtml/html/html_formimpl.h:
+        Adds the new member variable to track the current radio buttons in the various groups and the notifications
+	for updating form controls when they switch forms.
+	
+	* khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::insertedIntoDocument):
+        (DOM::NodeImpl::removedFromDocument):
+        Patch insertedIntoDocument and removedFromDocument to also send the insertedIntoTree and removedFromTree
+	notifications.
+	
+	(DOM::ContainerNodeImpl::removeChild):
+        Call removedFromTree in the case where the removal of a child happens on a tree that is not in the 
+	document.
+	
+	(DOM::ContainerNodeImpl::insertedIntoTree):
+        (DOM::ContainerNodeImpl::removedFromTree):
+        The new notifications.  The container node can optionally crawl into children invoking their notifications.
+	
+	(DOM::ContainerNodeImpl::dispatchChildInsertedEvents):
+        Patched to call insertedIntoTree in the case where the insertion happened on a tree that is not in the
+	document.
+	
+	* khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::insertedIntoTree):
+        (DOM::NodeImpl::removedFromTree):
+	Added the new notifications to NodeImpl for use by the form controls.
+
 2005-08-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

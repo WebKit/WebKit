@@ -117,6 +117,7 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
     m_boundary = "----------0xKhTmLbOuNdArY";
     m_acceptcharset = "UNKNOWN";
     m_malformed = false;
+    m_selectedRadioButtons = 0;
 }
 
 HTMLFormElementImpl::~HTMLFormElementImpl()
@@ -125,10 +126,10 @@ HTMLFormElementImpl::~HTMLFormElementImpl()
     
     for (unsigned i = 0; i < formElements.count(); ++i)
         formElements[i]->m_form = 0;
-    for (unsigned i = 0; i < dormantFormElements.count(); ++i)
-        dormantFormElements[i]->m_form = 0;
     for (unsigned i = 0; i < imgElements.count(); ++i)
         imgElements[i]->m_form = 0;
+        
+    delete m_selectedRadioButtons;
 }
 
 #if APPLE_CHANGES
@@ -678,16 +679,33 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         HTMLElementImpl::parseMappedAttribute(attr);
 }
 
-void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
+void HTMLFormElementImpl::radioButtonChecked(HTMLInputElementImpl *caller)
 {
-    for (unsigned i = 0; i < formElements.count(); ++i) {
-        HTMLGenericFormElementImpl *current = formElements[i];
-        if (current->hasLocalName(inputTag) &&
-            static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::RADIO &&
-            current != caller && current->form() == caller->form() && current->name() == caller->name()) {
-            static_cast<HTMLInputElementImpl*>(current)->setChecked(false);
-        }
-    }
+    // Uncheck the currently selected item
+    if (!m_selectedRadioButtons)
+        m_selectedRadioButtons = new HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> >;
+
+    HTMLInputElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(caller->name().implementation());
+    if (currentCheckedRadio && currentCheckedRadio != caller)
+        currentCheckedRadio->setChecked(false);
+        
+    // Now insert ourselves into the hash. There should really be a replace method
+    // in HashMap...
+    m_selectedRadioButtons->remove(caller->name().implementation());
+    m_selectedRadioButtons->insert(caller->name().implementation(), caller);
+}
+
+HTMLInputElementImpl* HTMLFormElementImpl::checkedRadioButtonForGroup(DOMStringImpl* name)
+{
+    if (!m_selectedRadioButtons)
+        return 0;
+    return m_selectedRadioButtons->get(name);
+}
+
+void HTMLFormElementImpl::removeRadioButtonGroup(DOMStringImpl* name)
+{
+    if (m_selectedRadioButtons)
+        m_selectedRadioButtons->remove(name);
 }
 
 template<class T> static void insertIntoVector(QPtrVector<T> &vec, unsigned pos, T* item)
@@ -745,18 +763,16 @@ unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
     insertIntoVector(formElements, formElementIndex(e), e);
-    removeFromVector(dormantFormElements, e);
 }
 
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
 {
-    removeFromVector(formElements, e);
-    removeFromVector(dormantFormElements, e);
-}
-
-void HTMLFormElementImpl::makeFormElementDormant(HTMLGenericFormElementImpl *e)
-{
-    appendToVector(dormantFormElements, e);
+    if (m_selectedRadioButtons && !e->name().isEmpty()) {
+        HTMLGenericFormElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(e->name().implementation());
+        if (currentCheckedRadio == e)
+            m_selectedRadioButtons->remove(e->name().implementation());
+    }
+            
     removeFromVector(formElements, e);
 }
 
@@ -841,7 +857,6 @@ HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(const QualifiedName& tagN
     : HTMLElementImpl(tagName, doc)
 {
     m_disabled = m_readOnly = false;
-    m_dormant = false;
 
     if (f)
 	m_form = f;
@@ -881,19 +896,6 @@ void HTMLGenericFormElementImpl::attach()
 {
     assert(!attached());
 
-    // FIXME: This handles the case of a new form element being created by
-    // JavaScript and inserted inside a form. What it does not handle is
-    // a form element being moved from inside a form to outside, or from one
-    // inside one form to another. The reason this other case is hard to fix
-    // is that during parsing, we may have been passed a form that we are not
-    // inside, DOM-tree-wise. If so, it's hard for us to know when we should
-    // be removed from that form's element list.
-    if (!m_form) {
-	m_form = getForm();
-	if (m_form)
-	    m_form->registerFormElement(this);
-    }
-
     HTMLElementImpl::attach();
 
     // The call to updateFromElement() needs to go after the call through
@@ -913,24 +915,55 @@ void HTMLGenericFormElementImpl::attach()
     }
 }
 
-void HTMLGenericFormElementImpl::insertedIntoDocument()
+void HTMLGenericFormElementImpl::insertedIntoTree(bool deep)
 {
-    if (m_form && m_dormant)
-        m_form->registerFormElement(this);
+    if (!m_form) {
+        // This handles the case of a new form element being created by
+        // JavaScript and inserted inside a form.  In the case of the parser
+        // setting a form, we will already have a non-null value for m_form, 
+        // and so we don't need to do anything.
+        m_form = getForm();
+	if (m_form)
+	    m_form->registerFormElement(this);
+    }
 
-    m_dormant = false;
-
-    HTMLElementImpl::insertedIntoDocument();
+    HTMLElementImpl::insertedIntoTree(deep);
 }
 
-void HTMLGenericFormElementImpl::removedFromDocument()
+void HTMLGenericFormElementImpl::removedFromTree(bool deep)
 {
-    if (m_form)
-        m_form->makeFormElementDormant(this);
-
-    m_dormant = true;
+    // When being removed we have to possibly null out our form and remove ourselves from
+    // the form's list of elements.
+    if (m_form) {
+        // Attempt to re-acquire the form.  If we can't re-acquire, then
+        // remove ourselves from the form.
+        NodeImpl* form = parentNode();
+        NodeImpl* root = this;
+        while (form) {
+            if (form->hasTagName(formTag))
+                break;
+            root = form;
+            form = form->parentNode();
+        }
+        
+        // If the form has been demoted to a leaf, then we won't find it as an ancestor.
+        // Check to see if the root node of our current form and our root node
+        // match.  If so, preserve the connection to the form.
+        if (!form) {
+            NodeImpl* formRoot = m_form;
+            while (formRoot->parent()) formRoot = formRoot->parent();
+            if (formRoot == root)
+                form = m_form;
+        } 
+        
+        if (!form) {
+            m_form->removeFormElement(this);
+            m_form = 0;
+        } else
+            assert(form == m_form); // The re-acquired form should be the same. If not, something really strange happened.
+    }
    
-    HTMLElementImpl::removedFromDocument();
+    HTMLElementImpl::removedFromTree(deep);
 }
 
 HTMLFormElementImpl *HTMLGenericFormElementImpl::getForm() const
@@ -1294,7 +1327,7 @@ HTMLFieldSetElementImpl::~HTMLFieldSetElementImpl()
 
 bool HTMLFieldSetElementImpl::checkDTD(const NodeImpl* newChild)
 {
-	return newChild->hasTagName(legendTag) || HTMLElementImpl::checkDTD(newChild);
+    return newChild->hasTagName(legendTag) || HTMLElementImpl::checkDTD(newChild);
 }
 
 bool HTMLFieldSetElementImpl::isFocusable() const
@@ -1357,6 +1390,34 @@ HTMLInputElementImpl::~HTMLInputElementImpl()
     delete m_imageLoader;
 }
 
+bool HTMLInputElementImpl::isKeyboardFocusable() const
+{
+    // If the base class says we can't be focused, then we can stop now.
+    if (!HTMLGenericFormElementImpl::isKeyboardFocusable())
+        return false;
+
+    if (m_type == RADIO) {
+        // Unnamed radio buttons are never focusable (matches WinIE).
+        if (name().isEmpty())
+            return false;
+
+        // Never allow keyboard tabbing to leave you in the same radio group.  Always
+        // skip any other elements in the group.
+        NodeImpl* currentFocusNode = getDocument()->focusNode();
+        if (currentFocusNode && currentFocusNode->hasTagName(inputTag)) {
+            HTMLInputElementImpl* focusedInput = static_cast<HTMLInputElementImpl*>(currentFocusNode);
+            if (focusedInput->inputType() == RADIO && focusedInput->form() == m_form &&
+                focusedInput->name() == name())
+                return false;
+        }
+        
+        // Allow keyboard focus if we're checked or if nothing in the group is checked.
+        return checked() || !m_form->checkedRadioButtonForGroup(name().implementation());
+    }
+    
+    return true;
+}
+
 void HTMLInputElementImpl::setType(const DOMString& t)
 {
     if (t.isEmpty()) {
@@ -1409,6 +1470,10 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
         } else {
+            if (m_form && m_type == RADIO && !name().isEmpty()) {
+                if (m_form->checkedRadioButtonForGroup(name().implementation()) == this)
+                    m_form->removeRadioButtonGroup(name().implementation());
+            }
             bool wasAttached = m_attached;
             if (wasAttached)
                 detach();
@@ -1619,7 +1684,7 @@ void HTMLInputElementImpl::setSelectionRange(long start, long end)
     }
 }
 
-void HTMLInputElementImpl::click(bool sendMouseEvents)
+void HTMLInputElementImpl::click(bool sendMouseEvents, bool showPressedLook)
 {
     switch (inputType()) {
         case HIDDEN:
@@ -1632,14 +1697,14 @@ void HTMLInputElementImpl::click(bool sendMouseEvents)
 #if APPLE_CHANGES
         {
             QWidget *widget;
-            if (renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
+            if (showPressedLook && renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
                 // using this method gives us nice Cocoa user interface feedback
                 static_cast<QButton *>(widget)->click(sendMouseEvents);
                 break;
             }
         }
 #endif
-            HTMLGenericFormElementImpl::click(sendMouseEvents);
+            HTMLGenericFormElementImpl::click(sendMouseEvents, showPressedLook);
             break;
         case FILE:
 #if APPLE_CHANGES
@@ -1648,7 +1713,7 @@ void HTMLInputElementImpl::click(bool sendMouseEvents)
                 break;
             }
 #endif
-            HTMLGenericFormElementImpl::click(sendMouseEvents);
+            HTMLGenericFormElementImpl::click(sendMouseEvents, showPressedLook);
             break;
         case CHECKBOX:
         case IMAGE:
@@ -1659,7 +1724,7 @@ void HTMLInputElementImpl::click(bool sendMouseEvents)
         case RANGE:
 #endif
         case TEXT:
-            HTMLGenericFormElementImpl::click(sendMouseEvents);
+            HTMLGenericFormElementImpl::click(sendMouseEvents, showPressedLook);
             break;
     }
 }
@@ -2075,10 +2140,12 @@ void HTMLInputElementImpl::reset()
 
 void HTMLInputElementImpl::setChecked(bool _checked)
 {
-    if (checked() == _checked) return;
+    // WinIE does not allow unnamed radio buttons to even be checked.
+    if (checked() == _checked || name().isEmpty())
+        return;
 
-    if (m_form && m_type == RADIO && _checked && !name().isEmpty())
-        m_form->radioClicked(this);
+    if (m_form && m_type == RADIO && _checked)
+        m_form->radioButtonChecked(this);
 
     m_useDefaultChecked = false;
     m_checked = _checked;
@@ -2263,12 +2330,17 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 case CHECKBOX:
                 case FILE:
                 case IMAGE:
-                case RADIO:
                 case RESET:
                 case SUBMIT:
                     // Simulate mouse click for spacebar for these types of elements.
                     // The AppKit already does this for some, but not all, of them.
                     clickElement = true;
+                    break;
+                case RADIO:
+                    // If an unselected radio is tabbed into (because the entire group has nothing
+                    // checked, or because of some explicit .focus() call), then allow space to check it.
+                    if (!checked())
+                        clickElement = true;
                     break;
                 case HIDDEN:
                 case ISINDEX:
@@ -2295,12 +2367,48 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                     break;
                 case FILE:
                 case IMAGE:
-                case RADIO:
                 case RESET:
                 case SUBMIT:
                     // Simulate mouse click for enter for these types of elements.
                     clickElement = true;
                     break;
+                case RADIO:
+                    break; // Don't do anything for enter on a radio button.
+            }
+        }
+
+        if (m_type == RADIO && (key == "Up" || key == "Down" || key == "Left" || key == "Right")) {
+            // Left and up mean "previous radio button".
+            // Right and down mean "next radio button".
+            // Tested in WinIE, and even for RTL, left still means previous radio button (and so moves
+            // to the right).  Seems strange, but we'll match it.
+            bool forward = (key == "Down" || key == "Right");
+            
+            // We can only stay within the form's children if the form hasn't been demoted to a leaf because
+            // of malformed HTML.
+            NodeImpl* n = this;
+            while ((n = (forward ? n->traverseNextNode() : n->traversePreviousNode()))) {
+                // Once we encounter a form element, we know we're through.
+                if (n->hasTagName(formTag))
+                    break;
+                    
+                // Look for more radio buttons.
+                if (n->hasTagName(inputTag)) {
+                    HTMLInputElementImpl* elt = static_cast<HTMLInputElementImpl*>(n);
+                    if (elt->form() != m_form)
+                        break;
+                    if (n->hasTagName(inputTag)) {
+                        HTMLInputElementImpl* inputElt = static_cast<HTMLInputElementImpl*>(n);
+                        if (inputElt->inputType() == RADIO && inputElt->name() == name() &&
+                            inputElt->isFocusable()) {
+                            inputElt->setChecked(true);
+                            getDocument()->setFocusNode(inputElt);
+                            inputElt->click(false, false);
+                            evt->setDefaultHandled();
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -2625,8 +2733,8 @@ HTMLSelectElementImpl::~HTMLSelectElementImpl()
 
 bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
 {
-	return newChild->isTextNode() || newChild->hasTagName(optionTag) || newChild->hasTagName(optgroupTag) ||
-		   newChild->hasTagName(scriptTag);
+    return newChild->isTextNode() || newChild->hasTagName(optionTag) || newChild->hasTagName(optgroupTag) ||
+           newChild->hasTagName(scriptTag);
 }
 
 void HTMLSelectElementImpl::recalcStyle( StyleChange ch )

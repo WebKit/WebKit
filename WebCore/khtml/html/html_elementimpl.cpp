@@ -547,7 +547,7 @@ void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
         setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);
 }
 
-void HTMLElementImpl::click(bool sendMouseEvents)
+void HTMLElementImpl::click(bool sendMouseEvents, bool showPressedLook)
 {
     int x = 0;
     int y = 0;
@@ -560,13 +560,13 @@ void HTMLElementImpl::click(bool sendMouseEvents)
         QMouseEvent pressEvt(QEvent::MouseButtonPress, QPoint(x,y), Qt::LeftButton, 0);
         dispatchMouseEvent(&pressEvt, EventImpl::MOUSEDOWN_EVENT);
         if (r)
-            setActive(true, true);
+            setActive(true, showPressedLook);
         QMouseEvent upEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
         dispatchMouseEvent(&upEvent, EventImpl::MOUSEUP_EVENT);
         if (r)
             setActive(false);
     } else if (r) {
-        setActive(true, true);
+        setActive(true, showPressedLook);
         setActive(false);
     }
 

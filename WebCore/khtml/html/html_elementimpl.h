@@ -79,7 +79,7 @@ public:
     virtual void setContentEditable(MappedAttributeImpl* attr);
     virtual void setContentEditable(const DOMString &enabled);
 
-    virtual void click(bool sendMouseEvents);
+    virtual void click(bool sendMouseEvents = false, bool showPressedLook = true);
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool isGenericFormElement() const { return false; }

@@ -1246,6 +1246,8 @@ void NodeImpl::insertedIntoDocument()
         getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
 
     setInDocument(true);
+    
+    insertedIntoTree(false);
 }
 
 void NodeImpl::removedFromDocument()
@@ -1254,6 +1256,8 @@ void NodeImpl::removedFromDocument()
         getDocument()->registerDisconnectedNodeWithEventListeners(this);
 
     setInDocument(false);
+    
+    removedFromTree(false);
 }
 
 void NodeImpl::childrenChanged()
@@ -1969,6 +1973,8 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
 
     if (oldChild->inDocument())
         oldChild->removedFromDocument();
+    else
+        oldChild->removedFromTree(true);
 
     return oldChild;
 }
@@ -2185,6 +2191,24 @@ void ContainerNodeImpl::removedFromDocument()
         child->removedFromDocument();
 }
 
+void ContainerNodeImpl::insertedIntoTree(bool deep)
+{
+    NodeImpl::insertedIntoTree(deep);
+    if (deep) {
+        for (NodeImpl *child = _first; child; child = child->nextSibling())
+            child->insertedIntoTree(deep);
+    }
+}
+
+void ContainerNodeImpl::removedFromTree(bool deep)
+{
+    NodeImpl::removedFromTree(deep);
+    if (deep) {
+        for (NodeImpl *child = _first; child; child = child->nextSibling())
+            child->removedFromTree(deep);
+    }
+}
+
 void ContainerNodeImpl::cloneChildNodes(NodeImpl *clone)
 {
     int exceptioncode = 0;
@@ -2394,15 +2418,10 @@ NodeImpl *ContainerNodeImpl::childNode(unsigned long index)
 
 void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode )
 {
-    NodeImpl *p = this;
-    while (p->parentNode())
-        p = p->parentNode();
-
-    if (p->nodeType() == Node::DOCUMENT_NODE) {
-        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
-            c->insertedIntoDocument();
-        }
-    }
+    if (inDocument())
+        child->insertedIntoDocument();
+    else
+        child->insertedIntoTree(true);
 
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER)) {
         child->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTED_EVENT,
@@ -2414,7 +2433,7 @@ void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &excep
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     bool hasInsertedListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER);
 
-    if (hasInsertedListeners && p->nodeType() == Node::DOCUMENT_NODE) {
+    if (hasInsertedListeners && inDocument()) {
         for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
             c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTEDINTODOCUMENT_EVENT,
                                                    false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);

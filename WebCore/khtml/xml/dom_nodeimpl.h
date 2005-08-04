@@ -251,7 +251,7 @@ public:
     virtual bool isControl() const { return false; } // Eventually the notion of what is a control will be extensible.
     virtual bool isEnabled() const { return true; }
     virtual bool isChecked() const { return false; }
-    
+
     virtual bool isContentEditable() const;
     virtual QRect getRect() const;
 
@@ -435,6 +435,12 @@ public:
      */
     virtual void removedFromDocument();
 
+    // These functions are called whenever you are connected or disconnected from a tree.  That tree may be the main
+    // document tree, or it could be another disconnected tree.  Override these functions to do any work that depends
+    // on connectedness to some ancestor (e.g., an ancestor <form> for example).
+    virtual void insertedIntoTree(bool deep) {};
+    virtual void removedFromTree(bool deep) {};
+
     /**
      * Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
      * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
@@ -531,7 +537,9 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
+
 //protected:
     NodeImpl *_first;
     NodeImpl *_last;

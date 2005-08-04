@@ -30,6 +30,8 @@
 
 #include <qptrvector.h>
 #include <qmemarray.h>
+#include "hashtable.h"
+#include "pointerhash.h"
 
 class KHTMLView;
 class QTextCodec;
@@ -54,6 +56,7 @@ class DOMString;
 class FormDataList;
 class HTMLFormElement;
 class HTMLGenericFormElementImpl;
+class HTMLInputElementImpl;
 class HTMLImageElementImpl;
 class HTMLImageLoader;
 class HTMLOptionElementImpl;
@@ -87,11 +90,12 @@ public:
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-    void radioClicked( HTMLGenericFormElementImpl *caller );
+    void radioButtonChecked(HTMLInputElementImpl *caller);
+    HTMLInputElementImpl* checkedRadioButtonForGroup(DOMStringImpl* name);
+    void removeRadioButtonGroup(DOMStringImpl* name);
 
     void registerFormElement(HTMLGenericFormElementImpl *);
     void removeFormElement(HTMLGenericFormElementImpl *);
-    void makeFormElementDormant(HTMLGenericFormElementImpl *);
     void registerImgElement(HTMLImageElementImpl *);
     void removeImgElement(HTMLImageElementImpl *);
 
@@ -130,7 +134,6 @@ public:
     HTMLCollectionImpl::CollectionInfo *collectionInfo;
 
     QPtrVector<HTMLGenericFormElementImpl> formElements;
-    QPtrVector<HTMLGenericFormElementImpl> dormantFormElements;
     QPtrVector<HTMLImageElementImpl> imgElements;
     DOMString m_url;
     DOMString m_target;
@@ -145,7 +148,9 @@ public:
     bool m_inreset : 1;
     bool m_malformed : 1;
 
- private:
+    khtml::HashMap<DOMStringImpl*, HTMLInputElementImpl*, khtml::PointerHash<DOMStringImpl*> >* m_selectedRadioButtons;
+    
+private:
     void parseEnctype(const DOMString &);
     bool formData(khtml::FormData &) const;
 
@@ -177,8 +182,8 @@ public:
 
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual void attach();
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
+    virtual void insertedIntoTree(bool deep);
+    virtual void removedFromTree(bool deep);
 
     virtual void reset() {}
 
@@ -230,10 +235,9 @@ protected:
 
     DOMString m_overrideName;
     HTMLFormElementImpl *m_form;
-    bool m_disabled, m_readOnly;
-
+    bool m_disabled : 1;
+    bool m_readOnly: 1;
     bool m_inited : 1;
-    bool m_dormant : 1;
 };
 
 // -------------------------------------------------------------------------
@@ -338,6 +342,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
+    virtual bool isKeyboardFocusable() const;
     virtual bool isEnumeratable() const { return inputType() != IMAGE; }
 
     bool autoComplete() const { return m_autocomplete; }
@@ -377,7 +382,7 @@ public:
     void select();
     void setSelectionRange(long, long);
     
-    virtual void click(bool sendMouseEvents = false);
+    virtual void click(bool sendMouseEvents = false, bool showPressedLook = true);
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
