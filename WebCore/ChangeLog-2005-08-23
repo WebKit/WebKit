@@ -1,3 +1,13 @@
+2005-08-04  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed <rdar://problem/4199495> REGRESSION: Safari Crashes on Window Closing Event
+
+        Reviewed by darin.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::updateDOMNodeDocument): inserting a node wrapper into a new
+        document set now removes the node wrapper from its old document set.
+
 2005-08-03  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Beth and Hyatt.
