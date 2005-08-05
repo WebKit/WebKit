@@ -1,0 +1,5 @@
+This test checks for a regression against rdar://problem/4161606 JavaScript regular expressions with certain ranges of Unicode characters cause a crash.
+
+If the test passes, you will see the word "PASSED" below. Otherwise, it will crash.
+
+PASSED

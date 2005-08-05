@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+function print(message) {
+	var paragraph = document.createElement("p");
+	paragraph.appendChild(document.createTextNode(message));
+	document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+	if (window.layoutTestController) {
+		layoutTestController.dumpAsText();
+	}
+	
+	var pattern;
+
+    // test ranges reported in bug	
+	pattern = new RegExp("[\u00c0-\u1f4d]");
+	pattern = new RegExp("[\u3041-\u3094]");
+	pattern = new RegExp("[\u4d00-\u4db5]");
+	pattern = new RegExp("[\u4e00-\u9fa5]");
+
+    // test first char < 255, last char > 255
+    pattern = new RegExp("[\u0001-\u1f4d]");
+    
+    print("PASSED");
+}
+</script>
+</head>
+<body onload="test();">
+<p>This test checks for a regression against <i>rdar://problem/4161606 JavaScript regular expressions with certain ranges of Unicode characters cause a crash</i>.</p>
+<p>If the test passes, you will see the word "PASSED" below. Otherwise, it will crash.</p>
+<hr>
+<div id='console'/>
+</body>
+</html>

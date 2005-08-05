@@ -1184,7 +1184,14 @@ for (;; ptr++)
         *errorptr = ERR6;
         goto FAILED;
         }
-
+#if PCRE_UTF16
+      if (c > 255)
+        {
+        *errorptr = ERR33;
+        goto FAILED;
+        }
+#endif
+          
       /* Handle POSIX class names. Perl allows a negation extension of the
       form [:^name]. A square bracket that doesn't match the syntax is
       treated as a literal. We also recognize the POSIX constructions
@@ -1320,7 +1327,14 @@ for (;; ptr++)
           *errorptr = ERR6;
           goto FAILED;
           }
-
+#if PCRE_UTF16
+        if (d > 255)
+          {
+          *errorptr = ERR33;
+          goto FAILED;
+          }
+#endif
+        
         /* The second part of a range can be a single-character escape, but
         not any of the other escapes. Perl 5.6 treats a hyphen as a literal
         in such circumstances. */

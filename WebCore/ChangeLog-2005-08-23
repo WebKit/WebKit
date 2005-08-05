@@ -1,3 +1,13 @@
+2005-08-05  Geoffrey Garen  <ggaren@apple.com>
+
+        -added layout test for fix to: <rdar://problem/4161606> JavaScript regular
+        expressions with certain ranges of Unicode characters cause a crash
+
+        Test cases added:
+
+        * layout-tests/fast/js/regexp-big-unicode-ranges-expected.txt: Added.
+        * layout-tests/fast/js/regexp-big-unicode-ranges.html: Added.
+
 2005-08-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for bugzilla bug 4289, a regression from the QualifiedName landing.  Make sure getNamedItemNS and
