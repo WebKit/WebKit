@@ -1,3 +1,18 @@
+2005-08-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/build-drawtest:
+        * Scripts/build-dumprendertree:
+        * Scripts/build-svg2png:
+        * Scripts/build-webcore-svg:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm: added checkRequiredSystemConfig()
+        Added checkRequiredSystemConfig and made all the build-* scripts
+        use it to print a pretty warning when trying to compile on an
+        unsupported system (less than 10.4, Xcode 2.1).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4280
+
 2005-08-04  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Bring this file back from

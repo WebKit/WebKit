@@ -35,6 +35,7 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+checkRequiredSystemConfig();
 setConfiguration();
 chdirWebKit();
 my @options = XcodeOptions();
