@@ -52,6 +52,8 @@
 
 #import <Carbon/Carbon.h>
 
+#import <objc/objc-runtime.h>
+
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive 	0.02
 #define NullEventIntervalNotActive	0.25
@@ -183,13 +185,38 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return NO;
 }
 
+// The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
+// the entire window frame (or structure region to use the Carbon term) rather then just the window content.
+// We can remove this when <rdar://problem/4201099> is fixed.
+- (void)fixWindowPort
+{
+    NSWindow *currentWindow = [self currentWindow];
+    if ([currentWindow isKindOfClass:objc_getClass("NSCarbonWindow")])
+        return;
+    
+    float windowHeight = [currentWindow frame].size.height;
+    NSView *contentView = [currentWindow contentView];
+    NSRect contentRect = [contentView convertRect:[contentView frame] toView:nil]; // convert to window-relative coordinates
+    
+    CGrafPtr oldPort;
+    GetPort(&oldPort);    
+    SetPort(GetWindowPort([currentWindow windowRef]));
+    
+    MovePortTo(contentRect.origin.x, /* Flip Y */ windowHeight - NSMaxY(contentRect));
+    PortSize(contentRect.size.width, contentRect.size.height);
+    
+    SetPort(oldPort);
+}
+
 - (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
 {
     ASSERT([self currentWindow] != nil);
-    
+ 
+    [self fixWindowPort];
+   
     WindowRef windowRef = [[self currentWindow] windowRef];
     CGrafPtr port = GetWindowPort(windowRef);
-
+        
     Rect portBounds;
     GetPortBounds(port, &portBounds);
 

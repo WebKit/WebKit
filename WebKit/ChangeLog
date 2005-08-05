@@ -1,3 +1,22 @@
+2005-08-04  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        Fix for:
+        <rdar://problem/3167884> Shockwave: 3D sprites rendered in OpenGL draw over the browser (3447)
+        also as <http://bugzilla.opendarwin.org/show_bug.cgi?id=3447>
+        
+        The WindowRef created by -[NSWindow windowRef] has a QuickDraw GrafPort that covers 
+        the entire window frame (or structure region in Carbon parlance) rather then just the window content.
+        
+        We filed this as an NSWindow bug <rdar://problem/4201099>
+
+        To work around, we modify the CGrafPort to only cover the content area before we let the plug-in draw.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView fixWindowPort]):
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+
 2005-08-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen.
