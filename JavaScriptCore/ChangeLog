@@ -1,3 +1,10 @@
+2005-08-04  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated expected test results now that we no longer exlude the
+	date tests (apparently this was overlooked)
+
+        * tests/mozilla/expected.html:
+
 2005-07-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
