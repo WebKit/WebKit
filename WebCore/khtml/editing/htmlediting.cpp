@@ -105,7 +105,7 @@ bool isTableStructureNode(const NodeImpl *node)
 
 DOMString &nonBreakingSpaceString()
 {
-    static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
+    static DOMString nonBreakingSpaceString = QString(QChar(NON_BREAKING_SPACE));
     return nonBreakingSpaceString;
 }
 

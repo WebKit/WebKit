@@ -174,10 +174,23 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
                 // those nbsp's added by the editor to make rendering come out right.
                 replaceTextInNode(textNode, offset - 1, 1, " ");
             }
+            unsigned int len = text.length();
+            
+#if APPLE_CHANGES
+            // When the user hits space to finish marked sequence, the string that
+            // we receive ends with a normal space, not a non breaking space.  This code
+            // ensures that the right kind of space is produced.
+            if (KWQ(document()->part())->markedTextRange() && text[len-1] == ' ') {
+                DOMString textWithoutTrailingSpace(text.unicode(), len-1);
+                insertTextIntoNode(textNode, offset, textWithoutTrailingSpace);
+                insertSpace(textNode, offset + len-1);
+            } else
+                insertTextIntoNode(textNode, offset, text);
+#else
             insertTextIntoNode(textNode, offset, text);
-            endPosition = Position(textNode, offset + text.length());
-
-            m_charactersAdded += text.length();
+#endif
+            m_charactersAdded += len;
+            endPosition = Position(textNode, offset + len);
         }
     }
 

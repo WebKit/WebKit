@@ -42,6 +42,8 @@
 #include "selection.h"
 #include "shared.h"
 
+#define NON_BREAKING_SPACE 0xa0
+
 namespace DOM {
     class CSSMutableStyleDeclarationImpl;
     class CSSProperty;
