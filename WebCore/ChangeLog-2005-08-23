@@ -1,3 +1,19 @@
+2005-08-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for bugzilla bug 4289, a regression from the QualifiedName landing.  Make sure getNamedItemNS and
+	removeNamedItemNS are case-insensitive in HTML documents.
+	
+        Reviewed by darin
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::getNamedItemNS):
+        (NamedAttrMapImpl::removeNamedItemNS):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NamedNodeMapImpl::NamedNodeMapImpl):
+        (DOM::NamedNodeMapImpl::~NamedNodeMapImpl):
+
 2005-08-04  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by kocienda

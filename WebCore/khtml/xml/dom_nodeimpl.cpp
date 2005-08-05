@@ -2669,20 +2669,4 @@ bool NameNodeListImpl::nodeMatches(NodeImpl *testNode) const
     return static_cast<ElementImpl *>(testNode)->getAttribute(nameAttr) == nodeName;
 }
 
-// ---------------------------------------------------------------------------
-
-NamedNodeMapImpl::~NamedNodeMapImpl()
-{
-}
-
-NodeImpl *NamedNodeMapImpl::getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const
-{
-    return getNamedItem(QualifiedName(nullAtom, localName.implementation(), namespaceURI.implementation()));
-}
-
-SharedPtr<NodeImpl> NamedNodeMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
-{
-    return removeNamedItem(QualifiedName(nullAtom, localName.implementation(), namespaceURI.implementation()), exception);
-}
-
 }

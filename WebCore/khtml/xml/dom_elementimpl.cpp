@@ -815,6 +815,22 @@ bool NamedAttrMapImpl::isMappedAttributeMap() const
     return false;
 }
 
+NodeImpl *NamedAttrMapImpl::getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const
+{
+    DOMString ln(localName);
+    if (element->getDocument()->isHTMLDocument())
+        ln = localName.lower();
+    return getNamedItem(QualifiedName(nullAtom, ln.implementation(), namespaceURI.implementation()));
+}
+
+SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
+{
+    DOMString ln(localName);
+    if (element->getDocument()->isHTMLDocument())
+        ln = localName.lower();
+    return removeNamedItem(QualifiedName(nullAtom, ln.implementation(), namespaceURI.implementation()), exception);
+}
+
 AttrImpl *NamedAttrMapImpl::getNamedItem(const QualifiedName& name) const
 {
     AttributeImpl* a = getAttributeItem(name);

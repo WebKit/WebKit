@@ -638,17 +638,17 @@ protected:
 class NamedNodeMapImpl : public khtml::Shared<NamedNodeMapImpl>
 {
 public:
-    NamedNodeMapImpl() { }
-    virtual ~NamedNodeMapImpl();
+    NamedNodeMapImpl() {}
+    virtual ~NamedNodeMapImpl() {}
 
     MAIN_THREAD_ALLOCATED;
 
     NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
     SharedPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
 
-    NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const;
+    virtual NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
     SharedPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
-    SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception);
+    virtual SharedPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
 
     // DOM methods & attributes for NamedNodeMap
     virtual NodeImpl *getNamedItem(const QualifiedName& attrName) const = 0;
@@ -661,42 +661,6 @@ public:
     // Other methods (not part of DOM)
     virtual bool isReadOnly() { return false; }
 };
-
-
-// ### fixme
-#if 0
-// Generic read-only NamedNodeMap implementation
-// You can add items using the internal function addItem()
-class GenericRONamedNodeMapImpl : public NamedNodeMapImpl
-{
-public:
-    GenericRONamedNodeMapImpl(DocumentPtr* doc);
-    virtual ~GenericRONamedNodeMapImpl();
-
-    // DOM methods & attributes for NamedNodeMap
-
-    virtual NodeImpl *getNamedItem ( const DOMString &name, int &exceptioncode ) const;
-    virtual Node setNamedItem ( const Node &arg, int &exceptioncode );
-    virtual Node removeNamedItem ( const DOMString &name, int &exceptioncode );
-    virtual NodeImpl *item ( unsigned long index ) const;
-    virtual unsigned long length(  ) const;
-    virtual NodeImpl *getNamedItemNS( const DOMString &namespaceURI, const DOMString &localName,
-                                      int &exceptioncode ) const;
-    virtual NodeImpl *setNamedItemNS( NodeImpl *arg, int &exceptioncode );
-    virtual NodeImpl *removeNamedItemNS( const DOMString &namespaceURI, const DOMString &localName,
-                                         int &exceptioncode );
-
-    // Other methods (not part of DOM)
-
-    virtual bool isReadOnly() { return true; }
-
-    void addNode(NodeImpl *n);
-
-protected:
-    DocumentImpl* m_doc;
-    QPtrList<NodeImpl> *m_contents;
-};
-#endif
 
 }; //namespace
 #endif
