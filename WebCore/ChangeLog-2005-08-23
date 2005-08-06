@@ -2,6 +2,16 @@
 
         Reviewed by Dave Hyatt.
 
+        - added a "set" operation to HashMap for cases where you want to either insert or
+          modify an existing map entry; the "set" name is based on symmetry with get, and also on
+          the naming used for similar operations in CFDictionary.
+
+        * khtml/misc/hashmap.h: Small tweak to insert and added set.
+
+2005-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - made a small improvement to how Windows Latin-1 characters are handled in the tokenizer
 
         * khtml/html/htmltokenizer.cpp:
