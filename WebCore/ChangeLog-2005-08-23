@@ -1,3 +1,20 @@
+2005-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - made a small improvement to how Windows Latin-1 characters are handled in the tokenizer
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::fixUpChar): Changed to use an array and a quick check to determine if a character
+        is one of the ones that needs to be mapped. This retains most of the speedup gained from
+        not doing anything when the character doesn't need to be fixed up.
+        (khtml::HTMLTokenizer::parseSpecial): Get rid of the local check since the check in fixUpChar
+        is sufficient not.
+        (khtml::HTMLTokenizer::parseText): Ditto.
+        (khtml::HTMLTokenizer::parseEntity): Ditto.
+        (khtml::HTMLTokenizer::parseTag): Ditto.
+        (khtml::HTMLTokenizer::write): Ditto.
+
 2005-08-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

@@ -110,116 +110,31 @@ static const char titleEnd [] = "</title";
 //
 // There may be better equivalents
 
-#if APPLE_CHANGES
-
-// Note that we have more Unicode characters than Qt, so we use the
-// official mapping table from the Unicode 2.0 standard here instead of
-// one with hacks to avoid certain Unicode characters. Also, we don't
-// need the unrelated hacks to avoid Unicode characters that are in the
-// original version.
-
 // We need this for entities at least. For non-entity text, we could
 // handle this in the text codec.
 
 // To cover non-entity text, I think this function would need to be called
-// in more places. There seem to be many places that don't call fixUpChar.
+// in more places. There seem to be some places that don't call fixUpChar.
 
-inline void fixUpChar(QChar& c) {
-    switch (c.unicode()) {
-        case 0x0080: c = 0x20AC; break;
-        case 0x0081: break;
-        case 0x0082: c = 0x201A; break;
-        case 0x0083: c = 0x0192; break;
-        case 0x0084: c = 0x201E; break;
-        case 0x0085: c = 0x2026; break;
-        case 0x0086: c = 0x2020; break;
-        case 0x0087: c = 0x2021; break;
-        case 0x0088: c = 0x02C6; break;
-        case 0x0089: c = 0x2030; break;
-        case 0x008A: c = 0x0160; break;
-        case 0x008B: c = 0x2039; break;
-        case 0x008C: c = 0x0152; break;
-        case 0x008D: break;
-        case 0x008E: c = 0x017D; break;
-        case 0x008F: break;
-        case 0x0090: break;
-        case 0x0091: c = 0x2018; break;
-        case 0x0092: c = 0x2019; break;
-        case 0x0093: c = 0x201C; break;
-        case 0x0094: c = 0x201D; break;
-        case 0x0095: c = 0x2022; break;
-        case 0x0096: c = 0x2013; break;
-        case 0x0097: c = 0x2014; break;
-        case 0x0098: c = 0x02DC; break;
-        case 0x0099: c = 0x2122; break;
-        case 0x009A: c = 0x0161; break;
-        case 0x009B: c = 0x203A; break;
-        case 0x009C: c = 0x0153; break;
-        case 0x009D: break;
-        case 0x009E: c = 0x017E; break;
-        case 0x009F: c = 0x0178; break;
-    }
+static const ushort windowsLatin1ExtensionArray[32] = {
+    0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
+    0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
+    0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
+    0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178  // 98-9F
+};
+
+static ushort mapChar(ushort c)
+{
+    assert(c >= 0x80 && c <= 0x9F);
+    return windowsLatin1ExtensionArray[c - 0x80];
 }
 
-#else // APPLE_CHANGES
-
-#define fixUpChar(x) \
-            if (!(x).row() ) { \
-                switch ((x).cell()) \
-                { \
-                /* ALL of these should be changed to Unicode SOON */ \
-                case 0x80: (x) = 0x20ac; break; \
-                case 0x82: (x) = ',';    break; \
-                case 0x83: (x) = 0x0192; break; \
-                case 0x84: (x) = '"';    break; \
-                case 0x85: (x) = 0x2026; break; \
-                case 0x86: (x) = 0x2020; break; \
-                case 0x87: (x) = 0x2021; break; \
-                case 0x88: (x) = 0x02C6; break; \
-                case 0x89: (x) = 0x2030; break; \
-                case 0x8A: (x) = 0x0160; break; \
-                case 0x8b: (x) = '<';    break; \
-                case 0x8C: (x) = 0x0152; break; \
-\
-                case 0x8E: (x) = 0x017D; break; \
-\
-\
-                case 0x91: (x) = '\'';   break; \
-                case 0x92: (x) = '\'';   break; \
-                case 0x93: (x) = '"';    break; \
-                case 0x94: (x) = '"';    break; \
-                case 0x95: (x) = '*';    break; \
-                case 0x96: (x) = '-';    break; \
-                case 0x97: (x) = '-';    break; \
-                case 0x98: (x) = '~';    break; \
-                case 0x99: (x) = 0x2122; break; \
-                case 0x9A: (x) = 0x0161; break; \
-                case 0x9b: (x) = '>';    break; \
-                case 0x9C: (x) = 0x0153; break; \
-\
-                case 0x9E: (x) = 0x017E; break; \
-                case 0x9F: (x) = 0x0178; break; \
-                /* This one should die */ \
-                case 0xb7: (x) = '*';    break; \
-                default: break; \
-                } \
-            } \
-            else { \
-                /* These should all die sooner rather than later */ \
-                switch( (x).unicode() ) { \
-                case 0x2013: (x) = '-'; break; \
-                case 0x2014: (x) = '-'; break; \
-                case 0x2018: (x) = '\''; break; \
-                case 0x2019: (x) = '\''; break; \
-                case 0x201c: (x) = '"'; break; \
-                case 0x201d: (x) = '"'; break; \
-                case 0x2022: (x) = '*'; break; \
-                case 0x2122: (x) = 0x2122; break; \
-                default: break; \
-                } \
-            }
-
-#endif // APPLE_CHANGES
+static inline void fixUpChar(QChar &c)
+{
+    ushort code = c.unicode();
+    if ((code & ~0x1F) == 0x0080)
+        c = mapChar(code);
+}
 
 inline bool tagMatch(const char *s1, const QChar *s2, uint length)
 {
@@ -487,9 +402,7 @@ void HTMLTokenizer::parseSpecial(TokenizerString &src)
             scriptCodeSize = scriptCodeDest-scriptCode;
         }
         else {
-            scriptCode[scriptCodeSize] = *src;
-            if (src->unicode() >= 0x0080)
-                fixUpChar(scriptCode[scriptCodeSize]);
+            fixUpChar(scriptCode[scriptCodeSize] = *src);
             ++scriptCodeSize;
             ++src;
         }
@@ -796,8 +709,7 @@ void HTMLTokenizer::parseText(TokenizerString &src)
         }
         else {
             *dest = *src;
-            if (src->unicode() >= 0x0080)
-                fixUpChar(*dest);
+            fixUpChar(*dest);
             ++dest;
             ++src;
         }
@@ -925,8 +837,7 @@ void HTMLTokenizer::parseEntity(TokenizerString &src, QChar *&dest, bool start)
 
                 if (EntityUnicodeValue <= 0xFFFF) {
                     QChar c(EntityUnicodeValue);
-                    if (c.unicode() >= 0x0080)
-                        fixUpChar(c);
+                    fixUpChar(c);
                     checkBuffer();
                     src.push(c);
                 } else {
@@ -1240,8 +1151,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                     }
                 }
                 *dest = *src;
-                if (dest->unicode() >= 0x0080)
-                    fixUpChar(*dest);
+                fixUpChar(*dest);
                 ++dest;
                 ++src;
             }
@@ -1277,8 +1187,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                 }
 
                 *dest = *src;
-                if (dest->unicode() >= 0x0080)
-                    fixUpChar(*dest);
+                fixUpChar(*dest);
                 ++dest;
                 ++src;
             }
@@ -1731,8 +1640,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
                     currToken.complexText = true;
 #endif
             *dest = *src;
-            if (dest->unicode() >= 0x0080)
-                fixUpChar( *dest );
+            fixUpChar(*dest);
             ++dest;
             ++src;
         }
