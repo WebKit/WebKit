@@ -35,6 +35,7 @@
 #import <kcanvas/KCanvas.h>
 #import <kcanvas/KCanvasItem.h>
 #import <kcanvas/KCanvasContainer.h>
+#import <kcanvas/KCanvasTreeDebug.h>
 #import <kcanvas/device/quartz/KCanvasViewQuartz.h>
 #import <kcanvas/device/quartz/KRenderingDeviceQuartz.h>
 
@@ -456,6 +457,13 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
     return NSSize(canvas->canvasSize());
 }
 
+- (NSString *)renderTreeAsExternalRepresentation
+{
+    KCanvas *canvas = [self canvas];
+    if (canvas)
+        return externalRepresentation(canvas->rootContainer()).getNSString();
+    return nil;
+}
 
 - (void)sizeCanvasToFitContent
 {

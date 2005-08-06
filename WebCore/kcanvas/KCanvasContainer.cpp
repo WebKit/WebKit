@@ -267,6 +267,16 @@ bool KCanvasContainer::lowerItem(KCanvasItem *item)
 	return true;
 }
 
+KCanvasItem *KCanvasContainer::first() const
+{
+    return d->first;
+}
+
+KCanvasItem *KCanvasContainer::last() const
+{
+    return d->last;
+}
+
 void KCanvasContainer::collisions(const QPoint &p, KCanvasItemList &hits) const
 {
 	if(p.x() < 0 || p.y() < 0)

@@ -95,6 +95,20 @@ QTextStream &QTextStream::operator<<(unsigned long i)
     return *this << buffer;
 }
 
+QTextStream &QTextStream::operator<<(float f)
+{
+    char buffer[integerOrPointerAsStringBufferSize];
+    sprintf(buffer, "%f", f);
+    return *this << buffer;
+}
+
+QTextStream &QTextStream::operator<<(double d)
+{
+    char buffer[integerOrPointerAsStringBufferSize];
+    sprintf(buffer, "%f", d);
+    return *this << buffer;
+}
+
 QTextStream &QTextStream::operator<<(const char *s)
 {
     if (_hasByteArray) {

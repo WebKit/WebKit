@@ -623,6 +623,8 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
+		A810E39508A4160F00333D98 /* KCanvasTreeDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */; };
+		A810E39608A4160F00333D98 /* KCanvasTreeDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */; };
 		A8212A8708794A2300677359 /* css_base.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F618B040594BA00A80004 /* css_base.h */; };
 		A8212A8808794A2300677359 /* css_ruleimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D16502DE42E6018635CA /* css_ruleimpl.h */; };
 		A8212A8908794A2300677359 /* css_stylesheetimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D16702DE42E6018635CA /* css_stylesheetimpl.h */; };
@@ -2379,7 +2381,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\nrm \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nrm \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.*\"\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
 		};
 /* End PBXBuildRule section */
 
@@ -2588,6 +2590,8 @@
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; };
+		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; };
 		A8212D0708794A2300677359 /* WebCore+SVG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		A85D7A8C0879EC64006A9172 /* KWQWMatrix.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQWMatrix.mm; sourceTree = "<group>"; };
@@ -5729,6 +5733,8 @@
 				A8C0FB8C089701F800BA5114 /* KCanvasTypes.h */,
 				A8C0FB8D089701F800BA5114 /* KCanvasView.cpp */,
 				A8C0FB8E089701F800BA5114 /* KCanvasView.h */,
+				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
+				A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */,
 			);
 			name = kcanvas;
 			path = ../SVGSupport/kcanvas;
@@ -7834,6 +7840,7 @@
 				A8C005F708974EFC00BA5114 /* KDOMCachedStyleSheet.h in Headers */,
 				A8C005F808974F0100BA5114 /* KDOMCachedObjectClient.h in Headers */,
 				7E6FEEDA0898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
+				A810E39508A4160F00333D98 /* KCanvasTreeDebug.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10040,6 +10047,7 @@
 				A8C005ED08974EB500BA5114 /* KDOMCachedScript.cpp in Sources */,
 				A8C005F608974EF700BA5114 /* KDOMCachedStyleSheet.cpp in Sources */,
 				7E6FEEDB0898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
+				A810E39608A4160F00333D98 /* KCanvasTreeDebug.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,28 @@
+2005-08-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * WebCore+SVG/DrawDocument.mm: DumpKCanvasTree support
+        (-[DrawDocument renderTreeAsExternalRepresentation]):
+        * WebCore+SVG/DrawDocumentPrivate.h:
+        * WebCore.xcodeproj/project.pbxproj: fixed bison + zsh issue
+        * kcanvas/KCanvas.cpp:
+        (KCanvas::Private::~Private): device is now a singleton
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::first): needed for DumpKCanvasTree
+        (KCanvasContainer::last): needed for DumpKCanvasTree
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/KCanvasTreeDebug.cpp: Added.
+        * kcanvas/KCanvasTreeDebug.h: Added.
+        * kwq/KWQTextStream.mm:
+        (QTextStream::operator<<): added missing float and double versions
+        This adds all the changes necessary to support DumpKCanvasTree.
+        Most noteable: operator<<(float) and double were missing from
+        KWQTextStream, also added KCanvasTreeDebug, modeled after
+        KWQRenderTreeDebug.  Most of KCanvasTreeDebug will be removed
+        if the render trees finally merge.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3917
+
 2005-08-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave Hyatt.

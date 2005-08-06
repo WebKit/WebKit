@@ -67,6 +67,7 @@
 
 - (NSSize)canvasSize;
 - (void)sizeCanvasToFitContent;
+- (NSString *)renderTreeAsExternalRepresentation;
 
 /*
  This currently (hackishly) manipulates the render tree.
