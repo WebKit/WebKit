@@ -409,8 +409,7 @@ void CSSMutableStyleDeclarationImpl::setChanged()
 
     // ### quick&dirty hack for KDE 3.0... make this MUCH better! (Dirk)
     StyleBaseImpl *root = this;
-    StyleBaseImpl *parent;
-    while ( ( parent = root->parent()) )
+    while (StyleBaseImpl *parent = root->parent())
         root = parent;
     if (root->isCSSStyleSheet())
         static_cast<CSSStyleSheetImpl*>(root)->doc()->updateStyleSelector();

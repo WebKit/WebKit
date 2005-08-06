@@ -2,6 +2,12 @@
 
         Reviewed by Dave Hyatt.
 
+        * khtml/css/css_valueimpl.cpp: (DOM::CSSMutableStyleDeclarationImpl::setChanged): Small tweak.
+
+2005-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - fixed crash in one of the W3C DOM tests
 
         * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::dispatchEvent): Check for NULL which means
