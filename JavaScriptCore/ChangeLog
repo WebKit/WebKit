@@ -1,3 +1,9 @@
+2005-08-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Unchecked 'statics are thread safe' option.
+
 2005-08-05  Geoffrey Garen  <ggaren@apple.com>
 
         -fixed <rdar://problem/4207220> REGRESSION (DENVER): Crash occurs 

@@ -10527,24 +10527,28 @@
 		149C284408902B11008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Development;
 		};
 		149C284508902B11008A9EFC /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Deployment;
 		};
 		149C284608902B11008A9EFC /* OptimizedWithSymbols */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = OptimizedWithSymbols;
 		};
 		149C284708902B11008A9EFC /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Default;
 		};
