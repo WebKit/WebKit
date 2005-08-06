@@ -92,16 +92,6 @@ typedef enum {
 
 @implementation DrawViewPrivate
 
-+ (void)setFilterSupportEnabled:(BOOL)enabled
-{
-    KRenderingDeviceQuartz::setFiltersEnabled(enabled);
-}
-
-+ (BOOL)isFilterSupportEnabled
-{
-    return KRenderingDeviceQuartz::filtersEnabled();
-}
-
 - (id)initWithDrawView:(DrawView *)view
 {
     if ((self = [super init])) {
@@ -190,6 +180,16 @@ NSArray *DrawViewDragTypes;
 {
     //DrawViewDragTypes = [[NSArray arrayWithObject:NSFilenamesPboardType] retain];
     [self setKeys:[NSArray arrayWithObject:@"toolMode"] triggerChangeNotificationsForDependentKey:@"selectedCanvasItems"];
+}
+
++ (void)setFilterSupportEnabled:(BOOL)enabled
+{
+    KRenderingDeviceQuartz::setFiltersEnabled(enabled);
+}
+
++ (BOOL)isFilterSupportEnabled
+{
+    return KRenderingDeviceQuartz::filtersEnabled();
 }
 
 - (id)initWithFrame:(NSRect)frameRect
