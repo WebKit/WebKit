@@ -274,13 +274,9 @@
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * JavaScriptCore.xcodeproj/.cvsignore: Added.
 
 2005-07-21  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * JavaScriptCore.pbproj/project.pbxproj: Removed.
         * JavaScriptCore.xcodeproj/ggaren.pbxuser: Added.
@@ -834,8 +830,6 @@
 
 	Rolling out date patch from 6-28-05 because it breaks 
 	fast/js/date-parse-test
-
-        Reviewed by NOBODY.
 
         * kjs/date_object.cpp:
         (formatLocaleDate):

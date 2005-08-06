@@ -5858,16 +5858,6 @@
         (HTMLIFrameElementImpl::attach): copied FrameElementImpl behavior
 	for initializing m_name
 
-2005-07-11  Geoffrey Garen  <ggaren@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        Test cases added: (NONE)
-
-        * khtml/html/html_baseimpl.cpp:
-        (HTMLFrameElementImpl::attach):
-        (HTMLIFrameElementImpl::attach):
-
 2005-07-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
@@ -8684,7 +8674,7 @@
 
 	Adding colspan test for HTMLTableElement and bdo test for HTMLElement.
 
-        Reviewed by NOBODY Adele.
+        Reviewed by Adele.
 
         Test cases added: (NONE)
 
@@ -38215,8 +38205,6 @@
 
 2004-05-27  John Louch  <set EMAIL_ADDRESS environment variable>
 
-        Reviewed by NOBODY (OOPS!).
-
         * khtml/ecma/kjs_html.cpp:
         (KJS::Context2DFunction::tryCall):
         * khtml/ecma/kjs_html.h:
@@ -39127,8 +39115,6 @@ ClearRect
         * kwq/WebCoreBridge.h:
 
 2004-05-20  Richard Williamson   <rjw@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * kwq/DOM.mm:
         (-[DOMObject _init]):
@@ -44294,8 +44280,6 @@ ClearRect
 
 2004-03-09  John Sullivan  <sullivan@apple.com>
 
-        Reviewed by nobody.
-
         * kwq/KWQKURL.mm:
         (KURL::KURL):
         Fixed broken build by removing wayward "break" statement.
@@ -44523,8 +44507,6 @@ ClearRect
         * kwq/WebCoreBridge.mm
 
 2004-03-01  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
 	- fixed <rdar://problem/3567047>: REGRESSION: repro crash inside KJS (dispatchToBoolean) at www.thedonnas.com
 	- fixed <rdar://problem/3550461>: REGRESSION: repro crash in JavaScript at www.alaska.com
@@ -47438,8 +47420,6 @@ ClearRect
 
 2004-01-22  David Hyatt  <hyatt@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * khtml/rendering/render_block.cpp:
         (khtml::RenderBlock::layoutBlockChildren):
         * layout-tests/fast/block/margin-collapse/062-expected.txt: Added.
@@ -47738,8 +47718,6 @@ ClearRect
         (QXmlSimpleReader::columnNumber):
 
 2004-01-21  David Hyatt  <hyatt@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * ForwardingHeaders/xbl/xbl_binding_manager.h: Added.
         * ForwardingHeaders/xbl/xbl_docimpl.h: Added.
@@ -48432,8 +48410,6 @@ ClearRect
         (WebCoreInitializeEmptyTextStyle):
 
 2003-12-17  Richard Williamson   <rjw@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * khtml/html/html_objectimpl.cpp:
         (HTMLAppletElementImpl::getAppletInstance):
@@ -53283,8 +53259,6 @@ Added support for getting at Java object fields.
         (khtml::RenderStyle::setPageBreakAfter):
 
 2003-10-29  David Hyatt  <hyatt@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * khtml/css/cssstyleselector.cpp:
         (khtml::CSSStyleSelector::applyRule):

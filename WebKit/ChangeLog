@@ -7720,8 +7720,6 @@
 	<rdar://problem/3788328> assertion failure when moving an image
 	<rdar://problem/3783628> REGRESSION (Mail): when I try to reorder an image, the image is duplicated
 
-        Reviewed by NOBODY (OOPS!).
-
         * DOM.subproj/WebDOMOperations.m:
         (-[DOMDocument _createRangeWithNode:]): new, convenience
         (-[DOMDocument _documentRange]): use _ createRangeWithNode:
@@ -8978,8 +8976,6 @@
         mean the variable has been set.  The variable has not been set 
         and will consequently be uninitialized.
 
-        Reviewed by NOBODY (OOPS!).
-
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView pluginScriptableObject]):
 
@@ -9527,15 +9523,6 @@
         (-[WebFrame _reloadForPluginChanges]): check for plugInViewWithArguments: not webPlugInInitialize
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView addSubview:]): ditto
-
-2004-06-15  Chris Blumenberg  <cblu@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        * WebView.subproj/WebFrame.m:
-        (-[WebFrame _reloadForPluginChanges]):
-        * WebView.subproj/WebHTMLView.m:
-        (-[WebHTMLView addSubview:]):
 
 2004-06-15  Trey Matteson  <trey@apple.com>
 
@@ -10395,10 +10382,7 @@
         was done since the iterator must be rooted at the document root, but start iterating 
         at the start of the selection. TreeWalker's setCurrentNode allows this to be done.
 
-
 2004-05-27  Kevin Decker  <kdecker@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * Plugins.subproj/WebScriptObject.h:
 
@@ -13853,8 +13837,6 @@
 
 2004-02-08  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         - fixed things seen in the profile, for a total speedup of 3.7% on cvs-base
 
         * Misc.subproj/WebNSURLExtras.m: (-[NSURL _web_userVisibleString]): Check for "xn--" as we
@@ -14555,19 +14537,13 @@
 
 2003-12-12  Vicki Murley  <vicki@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * WebKit.pbproj/project.pbxproj:
 
 2003-12-12  Vicki Murley  <vicki@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
-
         * WebKit.pbproj/project.pbxproj:
 
 2003-12-12  Vicki Murley  <vicki@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         * WebKit.pbproj/project.pbxproj:
 
@@ -16692,8 +16668,6 @@ o MIME type is specified.
         it for plain text and RTF. I also slightly shuffled the existing code to
         handle this for HTML so that it goes through the new protocol in that case
         also.
-
-        Reviewed by NOBODY (OOPS!).
 
         * WebView.subproj/WebDocumentInternal.h: Added.
                New header file, holds definition of 
