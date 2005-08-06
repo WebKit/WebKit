@@ -1,3 +1,12 @@
+2005-08-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * DrawTest/DrawTestView.m:
+        (-[DrawTestView toggleFilterSupport:]): missing negation.
+        One half of fix for toggling filter support.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4252
+
 2005-08-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

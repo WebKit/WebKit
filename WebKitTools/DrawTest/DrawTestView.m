@@ -89,7 +89,7 @@
 
 - (IBAction)toggleFilterSupport:(id)sender
 {
-    [DrawView setFilterSupportEnabled:[DrawView isFilterSupportEnabled]];
+    [DrawView setFilterSupportEnabled:![DrawView isFilterSupportEnabled]];
     [self setNeedsDisplay:YES];
 }
 
