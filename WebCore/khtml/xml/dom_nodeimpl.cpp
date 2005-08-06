@@ -475,6 +475,11 @@ EventListener *NodeImpl::getHTMLEventListener(int id)
 
 bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 {
+    if (!evt) {
+        exceptioncode = 0;
+        return false;
+    }
+
     evt->ref();
 
     evt->setTarget(this);

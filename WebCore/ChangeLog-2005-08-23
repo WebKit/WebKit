@@ -2,6 +2,20 @@
 
         Reviewed by Dave Hyatt.
 
+        - fixed crash in one of the W3C DOM tests
+
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::dispatchEvent): Check for NULL which means
+        the passed object is not an event. Return without raising an exception because that's
+        what Gecko does despite the fact that the DOM test expects a (platform-specific) exception.
+
+        * layout-tests/dom/html/level2/events/dispatchEvent01-expected.txt: Added.
+        * layout-tests/dom/html/level2/events/dispatchEvent01.html: Added.
+        * layout-tests/dom/html/level2/events/dispatchEvent01.html-disabled: Removed.
+
+2005-08-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - added a "set" operation to HashMap for cases where you want to either insert or
           modify an existing map entry; the "set" name is based on symmetry with get, and also on
           the naming used for similar operations in CFDictionary.
