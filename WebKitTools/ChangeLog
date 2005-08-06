@@ -2,6 +2,20 @@
 
         Reviewed by darin.
 
+        * DumpKCanvasTree/DumpKCanvasTree.m: Added.
+        * DumpKCanvasTree/DumpKCanvasTree.xcodeproj/project.pbxproj: Added.
+        * Scripts/build-dumpkcanvastree: Added.
+        * Scripts/run-webkit-tests-svg: Added.
+        Adds a DumpRenderTree-like tool for SVG which allows us to do
+        text-based layout regression testing.  This (like most of the
+        SVG specific stuff) is temporary and will be replaced by
+        DumpRenderTree once the DOMs and RenderTrees merge.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3917
+
+2005-08-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         * DrawTest/DrawTestView.m:
         (-[DrawTestView toggleFilterSupport:]): missing negation.
         One half of fix for toggling filter support.
