@@ -33,8 +33,6 @@ BOOL WKGetNSURLResponseMustRevalidate(NSURLResponse *response);
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);
 
 float WKSecondsSinceLastInputEvent();
-CGColorSpaceRef WKCreateUncorrectedRGBColorSpace();
-CGColorSpaceRef WKCreateUncorrectedGrayColorSpace();
 CFStringRef WKPreferRGB32Key();
 
 void WKSetNSURLConnectionDefersCallbacks(NSURLConnection *connection, BOOL defers);
