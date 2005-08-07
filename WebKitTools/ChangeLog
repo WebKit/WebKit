@@ -1,3 +1,12 @@
+2005-08-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/run-webkit-tests-svg: now uses WebCore/svg-tests
+        * checkout-svg: links WebCore/svg-tests to SVGSupport/layout-tests
+        Adding the first SVG layout tests:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4303
+
 2005-08-07  Darin Adler  <darin@apple.com>
 
         * Scripts/cvs-create-patch: Do all the directories at once, for speed.

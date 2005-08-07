@@ -62,8 +62,8 @@ die "can't find executable DumpKCanvasTree tool (looked in $productDir)\n" if !-
 checkSVGFrameworks();
 
 my $workingDir = getcwd();
-my $SVGSupportDirectory = "$workingDir/SVGSupport";
-my $testDirectory = "$SVGSupportDirectory/layout-tests";
+my $WebCoreDirectory = "$workingDir/WebCore";
+my $testDirectory = "$WebCoreDirectory/svg-tests";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 
