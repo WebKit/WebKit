@@ -99,6 +99,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     virtual bool toBoolean(ExecState *) const { return true; }
     static const ClassInfo info;
+    enum { Length, Item };
     DOM::NodeListImpl *impl() const { return m_impl.get(); }
 
     virtual Value toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;

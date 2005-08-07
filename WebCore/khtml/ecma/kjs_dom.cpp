@@ -706,8 +706,8 @@ NodeImpl *toNode(ValueImp *val)
 
 /*
 @begin DOMNodeListTable 2
-  length	DOMStyleSheetList::Length	DontDelete|ReadOnly
-  item		DOMStyleSheetList::Item		DontDelete|Function 1
+  length	DOMNodeList::Length	DontDelete|ReadOnly
+  item		DOMNodeList::Item		DontDelete|Function 1
 @end
 */
 

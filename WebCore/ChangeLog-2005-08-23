@@ -1,3 +1,17 @@
+2005-08-07  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by darin.
+
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNodeList::):
+	Add Length and Item to DOMNodeList.
+	
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugins::getValueProperty):
+        (KJS::MimeTypes::getValueProperty):
+	Fix capitalization.
+	
 2005-08-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

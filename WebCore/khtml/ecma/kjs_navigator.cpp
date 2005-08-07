@@ -363,7 +363,7 @@ IMPLEMENT_PROTOFUNC(PluginsFunc)
 
 Value Plugins::getValueProperty(ExecState *exec, int token) const
 {
-  assert(token == length);
+  assert(token == Length);
   return Number(plugins->count());
 }
 
@@ -422,7 +422,7 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 
 Value MimeTypes::getValueProperty(ExecState *exec, int token) const
 {
-  assert(token == length);
+  assert(token == Length);
   return Number(plugins->count());
 }
 
