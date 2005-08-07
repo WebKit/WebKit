@@ -1,0 +1,8 @@
+KCanvasContainer at (0,0) size 479x359
+  KCanvasContainer at (24,49) size 401x241 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasContainer at (24,49) size 401x241 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+      KCanvasItem {rect} at (199,134) size 51x51 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M200.00,135.00L250.00,135.00L250.00,185.00L200.00,185.00"]
+      KCanvasItem {rect} at (141,106) size 167x112 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M141.67,106.67L308.33,106.67L308.33,218.33L141.67,218.33"]
+      KCanvasItem {rect} at (24,49) size 401x241 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M25.00,50.00L425.00,50.00L425.00,290.00L25.00,290.00"]
+    KCanvasItem {rect} at (199,134) size 51x51 [opacity=127] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M200.00,135.00L250.00,135.00L250.00,185.00L200.00,185.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

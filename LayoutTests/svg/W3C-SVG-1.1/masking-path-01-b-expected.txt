@@ -1,0 +1,7 @@
+KCanvasContainer at (0,0) size 479x359
+  KCanvasContainer at (17,17) size 445x265 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasItem {rect} at (17,17) size 445x65 [stroke={server=UNIMPLEMENTED, stroke width=5.000000}] [fill={server=UNIMPLEMENTED}] [clip paths=#clip1] [data="M20.00,20.00L460.00,20.00L460.00,80.00L20.00,80.00"]
+    KCanvasContainer at (112,187) size 230x95 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [clip paths=#clip2]
+      KCanvasItem {rect} at (112,187) size 230x45 [stroke={server=UNIMPLEMENTED, stroke width=5.000000}] [fill={server=UNIMPLEMENTED}] [data="M115.00,190.00L340.00,190.00L340.00,230.00L115.00,230.00"]
+      KCanvasItem {rect} at (112,237) size 230x45 [stroke={server=UNIMPLEMENTED, stroke width=5.000000}] [fill={server=UNIMPLEMENTED}] [data="M115.00,240.00L340.00,240.00L340.00,280.00L115.00,280.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

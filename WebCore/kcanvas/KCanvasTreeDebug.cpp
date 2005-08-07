@@ -30,6 +30,12 @@
 #include <kcanvas/KCanvasItem.h>
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/device/KRenderingStyle.h>
+#include <kcanvas/device/KRenderingStrokePainter.h>
+#include <kcanvas/device/KRenderingFillPainter.h>
+#include <kcanvas/KCanvasResources.h>
+#include <kcanvas/KCanvasFilters.h>
+#include <kcanvas/device/quartz/KRenderingDeviceQuartz.h>
+#include <kcanvas/device/quartz/QuartzSupport.h>
 
 #include <ksvg2/impl/SVGStyledElementImpl.h>
 
@@ -54,6 +60,103 @@ static QTextStream &operator<<(QTextStream &ts, const KCanvasMatrix &m)
     return ts;
 }
 
+static QTextStream &operator<<(QTextStream &ts, const KCanvasResource *f)
+{
+    ts << "UNIMPLEMENTED";
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, const KRenderingPaintServer *f)
+{
+    ts << "UNIMPLEMENTED";
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, const KCDashArray &a)
+{
+    ts << "{";
+    for (KCDashArray::ConstIterator it = a.begin(); it != a.end(); ++it) {
+        if (it != a.begin())
+            ts << ", ";
+        ts << *it;
+    }
+    ts << "}";
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, KCCapStyle style)
+{
+    switch (style) {
+    case CAP_BUTT:
+        ts << "BUTT"; break;
+    case CAP_ROUND:
+        ts << "ROUND"; break;
+    case CAP_SQUARE:
+        ts << "SQUARE"; break;
+    }
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, KCJoinStyle style)
+{
+    switch (style) {
+    case JOIN_MITER:
+        ts << "MITER"; break;
+    case JOIN_ROUND:
+        ts << "ROUND"; break;
+    case JOIN_BEVEL:
+        ts << "BEVEL"; break;
+    }
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, const KRenderingStrokePainter *p)
+{
+    ts << "{";
+    ts << "server=" << p->paintServer();
+    if (p->opacity() != 1.0f)
+        ts << ", " << "opacity=" << p->opacity();
+    if (p->strokeWidth() != 1.0f)
+        ts << ", " << "stroke width=" << p->strokeWidth();
+    if (p->strokeMiterLimit() != 4)
+        ts << ", " << "miter limit=" << p->strokeMiterLimit();
+    if (p->strokeCapStyle() != 1)
+        ts << ", " << "line cap=" << p->strokeCapStyle();
+    if (p->strokeJoinStyle() != 1)
+        ts << ", " << "line join=" << p->strokeJoinStyle();
+    if (p->dashOffset() != 0.0f)
+        ts << ", " << "dash offset=" << p->dashOffset();
+    if (!p->dashArray().isEmpty())
+        ts << ", " << "dash array=" << p->dashArray();
+    ts << "}";
+    return ts;
+}
+
+
+
+static QTextStream &operator<<(QTextStream &ts, KCWindRule rule)
+{
+    switch (rule) {
+    case RULE_NONZERO:
+        ts << "NON-ZERO"; break;
+    case RULE_EVENODD:
+        ts << "EVEN-ODD"; break;
+    }
+    return ts;
+}
+
+static QTextStream &operator<<(QTextStream &ts, const KRenderingFillPainter *p)
+{
+    ts << "{";
+    ts << "server=" << p->paintServer();
+    if (p->opacity() != 1.0f)
+        ts << ", " << "opacity=" << p->opacity();
+    if (p->fillRule() != RULE_NONZERO)
+        ts << ", " << "fill rule=" << p->fillRule();
+    ts << "}";
+    return ts;
+}
+
 #define DIFFERS_FROM_PARENT(path) (o.parent() && (o.parent()->path != o.path))
 
 static QTextStream &operator<<(QTextStream &ts, const KCanvasItem &o)
@@ -70,9 +173,9 @@ static QTextStream &operator<<(QTextStream &ts, const KCanvasItem &o)
         ts << " [image rendering=" << o.style()->imageRendering() << "]";
     if (DIFFERS_FROM_PARENT(style()->opacity()))
         ts << " [opacity=" << o.style()->opacity() << "]";
-    if (o.style()->isStroked() && DIFFERS_FROM_PARENT(style()->strokePainter()))
+    if (o.style()->isStroked() && DIFFERS_FROM_PARENT(style()->strokePainter()) && o.style()->strokePainter())
         ts << " [stroke=" << o.style()->strokePainter() << "]";
-    if (o.style()->isFilled() && DIFFERS_FROM_PARENT(style()->fillPainter()))
+    if (o.style()->isFilled() && DIFFERS_FROM_PARENT(style()->fillPainter()) && o.style()->fillPainter())
         ts << " [fill=" << o.style()->fillPainter() << "]";
     if (!o.style()->clipPaths().isEmpty())
         ts << " [clip paths=" << o.style()->clipPaths().join(", ") << "]";
@@ -84,8 +187,16 @@ static QTextStream &operator<<(QTextStream &ts, const KCanvasItem &o)
         if (o.style()->endMarker())
             ts << " [end marker=" << o.style()->endMarker() << "]";
     }
-    if (DIFFERS_FROM_PARENT(style()->filter()))
+    if (DIFFERS_FROM_PARENT(style()->filter()) && o.style()->filter())
         ts << " [filter=" << o.style()->filter() << "]";
+    
+    // Print the actual path data
+    if (o.path()) {
+        CGMutablePathRef cgPath = static_cast<KCanvasQuartzPathData *>(o.path())->path;
+        CFStringRef pathString = CFStringFromCGPath(cgPath);
+        ts << " [data=\"" << QString::fromCFString(pathString) << "\"]";
+        CFRelease(pathString);
+    }
     
     return ts;
 }

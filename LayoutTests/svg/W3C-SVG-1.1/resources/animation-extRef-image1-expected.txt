@@ -1,0 +1,6 @@
+KCanvasContainer at (1,10) size 2x100
+  KCanvasContainer at (1,10) size 2x100 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}]
+    KCanvasItem {rect} at (1,10) size 2x20 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M2.00,10.00L2.00,10.00L2.00,30.00L2.00,30.00"]
+    KCanvasItem {rect} at (1,50) size 2x20 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M2.00,50.00L2.00,50.00L2.00,70.00L2.00,70.00"]
+    KCanvasItem {rect} at (1,90) size 2x20 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M2.00,90.00L2.00,90.00L2.00,110.00L2.00,110.00"]
+  KCanvasContainer at (0,0) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]

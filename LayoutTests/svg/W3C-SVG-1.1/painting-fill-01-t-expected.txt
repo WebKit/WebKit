@@ -1,0 +1,5 @@
+KCanvasContainer at (0,0) size 479x359
+  KCanvasContainer at (74,69) size 301x161 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasItem {rect} at (74,69) size 101x161 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M75.00,70.00L175.00,70.00L175.00,230.00L75.00,230.00"]
+    KCanvasItem {rect} at (274,69) size 101x161 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M275.00,70.00L375.00,70.00L375.00,230.00L275.00,230.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

@@ -1,0 +1,9 @@
+KCanvasContainer at (0,0) size 479x359
+  KCanvasContainer at (6,40) size 420x243 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasItem {polygon} at (10,44) size 98x96 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M59.00,45.00L95.00,63.00L108.00,105.00L82.00,139.00L39.00,140.00L11.00,107.00L19.00,65.00"]
+    KCanvasItem {polygon} at (130,44) size 98x96 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M179.00,45.00L218.00,63.00L228.00,105.00L202.00,139.00L159.00,140.00L131.00,107.00L139.00,65.00L179.00,45.00"]
+    KCanvasItem {polygon} at (284,40) size 132x109 [stroke={server=UNIMPLEMENTED, stroke width=6.000000}] [fill={server=UNIMPLEMENTED}] [data="M350.00,45.00L375.00,80.00L410.00,95.00L375.00,110.00L350.00,145.00L325.00,120.00L290.00,95.00L325.00,70.00L350.00,45.00"]
+    KCanvasItem {polygon} at (6,180) size 105x103 [stroke={server=UNIMPLEMENTED, stroke width=8.000000}] [fill={server=UNIMPLEMENTED}] [data="M59.00,185.00L98.00,203.00L108.00,245.00L82.00,279.00L39.00,280.00L11.00,247.00L19.00,205.00L59.00,185.00"]
+    KCanvasItem {polygon} at (126,180) size 105x103 [stroke={server=UNIMPLEMENTED, stroke width=8.000000}] [fill={server=UNIMPLEMENTED}] [data="M179.00,185.00L218.00,203.00L228.00,245.00L202.00,279.00L159.00,280.00L131.00,247.00L139.00,205.00"]
+    KCanvasItem {polygon} at (265,179) size 161x104 [stroke={server=UNIMPLEMENTED, stroke width=8.000000}] [fill={server=UNIMPLEMENTED}] [data="M270.00,225.00L300.00,245.00L320.00,225.00L340.00,245.00L280.00,280.00L390.00,280.00L420.00,240.00L280.00,185.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

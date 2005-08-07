@@ -1,0 +1,12 @@
+KCanvasContainer at (-16,-32) size 495x391
+  KCanvasContainer at (-16,-32) size 458x259 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasContainer at (-16,-32) size 458x259 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+      KCanvasItem {path} at (24,167) size 151x57 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M25.00,225.00C25.00,175.00,125.00,150.00,175.00,200.00,0.00,0.00,0.00,-2.00,-2.00,-2.00"]
+      KCanvasItem {rect} at (8,193) size 34x34 [stroke={server=UNIMPLEMENTED, stroke width=4.000000}] [fill={server=UNIMPLEMENTED}] [data="M10.00,195.00L40.00,195.00L40.00,225.00L10.00,225.00"]
+      KCanvasItem {rect} at (158,168) size 34x34 [stroke={server=UNIMPLEMENTED, stroke width=4.000000}] [fill={server=UNIMPLEMENTED}] [data="M160.00,170.00L190.00,170.00L190.00,200.00L160.00,200.00"]
+      KCanvasItem {path} at (-16,-32) size 33x33 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M-15.00,0.00L0.00,-30.00L15.00,0.00"]
+      KCanvasItem {path} at (274,167) size 151x57 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M275.00,225.00C275.00,175.00,375.00,150.00,425.00,200.00,0.00,0.00,0.00,-2.00,-2.00,-2.00"]
+      KCanvasItem {rect} at (258,193) size 34x34 [stroke={server=UNIMPLEMENTED, stroke width=4.000000}] [fill={server=UNIMPLEMENTED}] [data="M260.00,195.00L290.00,195.00L290.00,225.00L260.00,225.00"]
+      KCanvasItem {rect} at (408,168) size 34x34 [stroke={server=UNIMPLEMENTED, stroke width=4.000000}] [fill={server=UNIMPLEMENTED}] [data="M410.00,170.00L440.00,170.00L440.00,200.00L410.00,200.00"]
+      KCanvasItem {path} at (-16,-32) size 33x33 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}] [data="M-15.00,0.00L0.00,-30.00L15.00,0.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
