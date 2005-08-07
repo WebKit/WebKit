@@ -420,7 +420,7 @@ namespace KDOM
 		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
 		void putValueProperty(KJS::ExecState *exec, int token, const KJS::Value &value, int attr);		
 	};
-};
+}
 
 KDOM_DEFINE_PROTOTYPE(DocumentProto)
 KDOM_IMPLEMENT_PROTOFUNC(DocumentProtoFunc, Document)

@@ -262,16 +262,15 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjectImp *proto)
 }
 
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName)
-    : ObjectImp ((ObjectImp *)0)
 {
     _instance = i;
     _item = propertyName;
 }
 
-bool ObjcFallbackObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false
-    result = Undefined();
+    slot.setUndefined(this);
     return true;
 }
 
@@ -333,12 +332,6 @@ Value ObjcFallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &
     }
 
     return result;
-}
-
-bool ObjcFallbackObjectImp::hasOwnProperty(ExecState *exec,
-                         const Identifier &propertyName) const
-{
-    return false;
 }
 
 bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,

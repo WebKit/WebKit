@@ -81,9 +81,9 @@ MathObjectImp::MathObjectImp(ExecState * /*exec*/,
 
 // ECMA 15.8
 
-bool MathObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool MathObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return lookupGetOwnProperty<MathFuncImp, MathObjectImp, ObjectImp>(exec, propertyName, &mathTable, this, result);
+  return getStaticPropertySlot<MathFuncImp, MathObjectImp, ObjectImp>(exec, &mathTable, this, propertyName, slot);
 }
 
 Value MathObjectImp::getValueProperty(ExecState *, int token) const

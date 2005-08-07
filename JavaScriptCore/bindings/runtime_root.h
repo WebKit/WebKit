@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/interpreter.h>
 #include <JavaScriptCore/object.h>
+#include <JavaScriptCore/protect.h>
 #include <JavaScriptCore/jni_jsobject.h>
 
 namespace KJS {

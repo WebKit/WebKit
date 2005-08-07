@@ -50,10 +50,21 @@ StringInstanceImp::StringInstanceImp(ObjectImp *proto, const UString &string)
   setInternalValue(String(string));
 }
 
-bool StringInstanceImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value StringInstanceImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot &slot)
+{
+    return Value(static_cast<StringInstanceImp *>(slot.slotBase())->internalValue().toString(exec).size());
+}
+
+Value StringInstanceImp::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot &slot)
+{
+    const UChar c = static_cast<StringInstanceImp *>(slot.slotBase())->internalValue().toString(exec)[slot.index()];
+    return Value(UString(&c, 1));
+}
+
+bool StringInstanceImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
   if (propertyName == lengthPropertyName) {
-    result = Value(internalValue().toString(exec).size());
+    slot.setCustom(this, lengthGetter);
     return true;
   }
 
@@ -63,13 +74,12 @@ bool StringInstanceImp::getOwnProperty(ExecState *exec, const Identifier& proper
     const UString s = internalValue().toString(exec);
     const unsigned length = s.size();
     if (index >= length)
-      return Undefined();
-    const UChar c = s[index];
-    result = Value(UString(&c, 1));
+      return false;
+    slot.setCustomIndex(this, index, indexGetter);
     return true;
   }
 
-  return ObjectImp::getOwnProperty(exec, propertyName, result);
+  return ObjectImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void StringInstanceImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -77,22 +87,6 @@ void StringInstanceImp::put(ExecState *exec, const Identifier &propertyName, con
   if (propertyName == lengthPropertyName)
     return;
   ObjectImp::put(exec, propertyName, value, attr);
-}
-
-bool StringInstanceImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-  if (propertyName == lengthPropertyName)
-    return true;
-
-  bool ok;
-  const unsigned index = propertyName.toArrayIndex(&ok);
-  if (ok) {
-    const unsigned length = internalValue().toString(exec).size();
-    if (index < length)
-      return true;
-  }
-
-  return ObjectImp::hasOwnProperty(exec, propertyName);
 }
 
 bool StringInstanceImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
@@ -154,9 +148,9 @@ StringPrototypeImp::StringPrototypeImp(ExecState *exec,
 
 }
 
-bool StringPrototypeImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool StringPrototypeImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return lookupGetOwnFunction<StringProtoFuncImp, StringInstanceImp>(exec, propertyName, &stringTable, this, result);
+  return getStaticFunctionSlot<StringProtoFuncImp, StringInstanceImp>(exec, &stringTable, this, propertyName, slot);
 }
 
 // ------------------------------ StringProtoFuncImp ---------------------------

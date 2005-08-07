@@ -70,10 +70,15 @@ ArrayInstanceImp::~ArrayInstanceImp()
   free(storage);
 }
 
-bool ArrayInstanceImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value ArrayInstanceImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  return Number(static_cast<ArrayInstanceImp *>(slot.slotBase())->length);
+}
+
+bool ArrayInstanceImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == lengthPropertyName) {
-    result = Number(length);
+    slot.setCustom(this, lengthGetter);
     return true;
   }
 
@@ -86,16 +91,16 @@ bool ArrayInstanceImp::getOwnProperty(ExecState *exec, const Identifier& propert
       ValueImp *v = storage[index];
       if (!v || v == UndefinedImp::staticUndefined)
         return false;
-
-      result = Value(v);
+      
+      slot.setValueSlot(this, &storage[index]);
       return true;
     }
   }
 
-  return ObjectImp::getOwnProperty(exec, propertyName, result);
+  return ObjectImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-bool ArrayInstanceImp::getOwnProperty(ExecState *exec, unsigned index, Value& result) const
+bool ArrayInstanceImp::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
 {
   if (index >= length)
     return false;
@@ -103,12 +108,12 @@ bool ArrayInstanceImp::getOwnProperty(ExecState *exec, unsigned index, Value& re
     ValueImp *v = storage[index];
     if (!v || v == UndefinedImp::staticUndefined)
       return false;
-
-    result = Value(v);
+    
+    slot.setValueSlot(this, &storage[index]);
     return true;
   }
-  
-  return ObjectImp::getOwnProperty(exec, Identifier::from(index), result);
+
+  return ObjectImp::getOwnPropertySlot(exec, index, slot);
 }
 
 // Special implementation of [[Put]] - see ECMA 15.4.5.1
@@ -146,37 +151,6 @@ void ArrayInstanceImp::put(ExecState *exec, unsigned index, const Value &value, 
   
   assert(index >= sparseArrayCutoff);
   ObjectImp::put(exec, Identifier::from(index), value, attr);
-}
-
-bool ArrayInstanceImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-  if (propertyName == lengthPropertyName)
-    return true;
-  
-  bool ok;
-  unsigned index = propertyName.toArrayIndex(&ok);
-  if (ok) {
-    if (index >= length)
-      return false;
-    if (index < storageLength) {
-      ValueImp *v = storage[index];
-      return v && v != UndefinedImp::staticUndefined;
-    }
-  }
-  
-  return ObjectImp::hasOwnProperty(exec, propertyName);
-}
-
-bool ArrayInstanceImp::hasOwnProperty(ExecState *exec, unsigned index) const
-{
-  if (index >= length)
-    return false;
-  if (index < storageLength) {
-    ValueImp *v = storage[index];
-    return v && v != UndefinedImp::staticUndefined;
-  }
-  
-  return ObjectImp::hasOwnProperty(exec, Identifier::from(index));
 }
 
 bool ArrayInstanceImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
@@ -428,9 +402,9 @@ ArrayPrototypeImp::ArrayPrototypeImp(ExecState *exec,
   setInternalValue(Null());
 }
 
-bool ArrayPrototypeImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool ArrayPrototypeImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnFunction<ArrayProtoFuncImp, ArrayInstanceImp>(exec, propertyName, &arrayTable, this, result);
+  return getStaticFunctionSlot<ArrayProtoFuncImp, ArrayInstanceImp>(exec, &arrayTable, this, propertyName, slot);
 }
 
 // ------------------------------ ArrayProtoFuncImp ----------------------------

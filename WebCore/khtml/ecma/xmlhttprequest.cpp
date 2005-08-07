@@ -127,9 +127,9 @@ const ClassInfo XMLHttpRequest::info = { "XMLHttpRequest", 0, &XMLHttpRequestTab
 @end
 */
 
-bool XMLHttpRequest::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const
+bool XMLHttpRequest::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<XMLHttpRequest,DOMObject>(exec, propertyName, &XMLHttpRequestTable, this, result);
+  return getStaticValueSlot<XMLHttpRequest, DOMObject>(exec, &XMLHttpRequestTable, this, propertyName, slot);
 }
 
 Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const

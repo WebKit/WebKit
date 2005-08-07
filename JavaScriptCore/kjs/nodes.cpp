@@ -277,42 +277,35 @@ Value ResolveNode::evaluate(ExecState *exec)
 {
   ScopeChain chain = exec->context().imp()->scopeChain();
 
-  Value result;
-  while (!chain.isEmpty()) {
-    ObjectImp *o = chain.top();
+  assert(!chain.isEmpty());
 
-    if (o->getProperty(exec, ident, result))
-      return result;
+  PropertySlot slot;
+  do { 
+    ObjectImp *o = chain.top();
+    if (o->getPropertySlot(exec, ident, slot))
+      return slot.getValue(exec, ident);
     
     chain.pop();
-  }
+  } while (!chain.isEmpty());
 
-  UString m = I18N_NOOP("Can't find variable: ") + ident.ustring();
-  Object err = Error::create(exec, ReferenceError, m.ascii());
-  exec->setException(err);
-  return err;
+  return Reference(Null(), ident).getValue(exec);
 }
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
 {
   ScopeChain chain = exec->context().imp()->scopeChain();
 
-  while (!chain.isEmpty()) {
-    ObjectImp *o = chain.top();
+  assert(!chain.isEmpty());
 
-    //cout << "Resolve: looking at '" << ident.ascii() << "'"
-    //     << " in " << (void*)o << " " << o->classInfo()->className << endl;
-    if (o->hasProperty(exec,ident)) {
-      //cout << "Resolve: FOUND '" << ident.ascii() << "'"
-      //     << " in " << (void*)o << " " << o->classInfo()->className << endl;
+  PropertySlot slot;
+  do { 
+    ObjectImp *o = chain.top();
+    if (o->getPropertySlot(exec, ident, slot))
       return Reference(o, ident);
-    }
     
     chain.pop();
-  }
+  } while (!chain.isEmpty());
 
-  // identifier not found
-  //cout << "Resolve: didn't find '" << ident.ascii() << "'" << endl;
   return Reference(Null(), ident);
 }
 
@@ -529,7 +522,17 @@ bool AccessorNode1::deref()
 // ECMA 11.2.1a
 Value AccessorNode1::evaluate(ExecState *exec)
 {
-  return evaluateReference(exec).getValue(exec);
+  Value v1 = expr1->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  Value v2 = expr2->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  Object o = v1.toObject(exec);
+  unsigned i;
+  if (v2.toUInt32(i))
+    return o.get(exec, i);
+
+  String s = v2.toString(exec);
+  return o.get(exec, Identifier(s.value()));
 }
 
 Reference AccessorNode1::evaluateReference(ExecState *exec)
@@ -566,7 +569,11 @@ bool AccessorNode2::deref()
 // ECMA 11.2.1b
 Value AccessorNode2::evaluate(ExecState *exec)
 {
-  return evaluateReference(exec).getValue(exec);
+  Value v = expr->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  Object o = v.toObject(exec);
+  return o.get(exec, ident);
+
 }
 
 Reference AccessorNode2::evaluateReference(ExecState *exec)

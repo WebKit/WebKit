@@ -40,19 +40,27 @@ RuntimeMethodImp::~RuntimeMethodImp()
 {
 }
 
-bool RuntimeMethodImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value RuntimeMethodImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-    // Compute length of parameters.
+    RuntimeMethodImp *thisObj = static_cast<RuntimeMethodImp *>(slot.slotBase());
+
+    // Ick!  There may be more than one method with this name.  Arbitrarily
+    // just pick the first method.  The fundamental problem here is that 
+    // JavaScript doesn't have the notion of method overloading and
+    // Java does.
+    // FIXME: a better solution might be to give the maximum number of parameters
+    // of any method
+    return Number(thisObj->_methodList.methodAt(0)->numParameters());
+}
+
+bool RuntimeMethodImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
+{
     if (propertyName == lengthPropertyName) {
-        // Ick!  There may be more than one method with this name.  Arbitrarily
-        // just pick the first method.  The fundamental problem here is that 
-        // JavaScript doesn't have the notion of method overloading and
-        // Java does.
-        result = Number(_methodList.methodAt(0)->numParameters());
-        return result;
+        slot.setCustom(this, lengthGetter);
+        return true;
     }
     
-    return FunctionImp::getOwnProperty(exec, propertyName, result);
+    return FunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 bool RuntimeMethodImp::implementsCall() const

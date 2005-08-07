@@ -65,7 +65,7 @@ namespace KJS {
   public:
     XMLHttpRequest(ExecState *, DOM::DocumentImpl *d);
     ~XMLHttpRequest();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);

@@ -47,26 +47,27 @@ namespace KJS {
   class HTMLDocument : public DOMDocument {
   public:
     HTMLDocument(ExecState *exec, DOM::HTMLDocumentImpl *d);
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Title, Referrer, Domain, URL, Body, Location, Cookie,
            Images, Applets, Embeds, Links, Forms, Anchors, Scripts, All, Clear, Open, Close,
            Write, WriteLn, GetElementsByName, CaptureEvents, ReleaseEvents,
            BgColor, FgColor, AlinkColor, LinkColor, VlinkColor, LastModified, Height, Width, Dir, DesignMode };
+  private:
+    static Value namedItemGetter(ExecState *, const Identifier&, const PropertySlot&);
   };
 
   class HTMLElement : public DOMElement {
   public:
     HTMLElement(ExecState *exec, DOM::HTMLElementImpl *e);
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual UString toString(ExecState *exec) const;
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
@@ -285,6 +286,14 @@ namespace KJS {
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
            ElementIsContentEditable, ElementOuterHTML, ElementOuterText};
+  private:
+    static Value formIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value formNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value selectIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value framesetNameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value frameWindowPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value runtimeObjectGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value runtimeObjectPropertyGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
   };
 
   DOM::HTMLElementImpl *toHTMLElement(ValueImp *); // returns 0 if passed-in value is not a HTMLElement object
@@ -295,11 +304,10 @@ namespace KJS {
   public:
     HTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);
     ~HTMLCollection();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &p) const;
     enum { Item, NamedItem, Tags };
     Value getNamedItems(ExecState *exec, const Identifier &propertyName) const;
     virtual const ClassInfo* classInfo() const { return &info; }
@@ -307,14 +315,20 @@ namespace KJS {
     DOM::HTMLCollectionImpl *impl() const { return m_impl.get(); }
   protected:
     khtml::SharedPtr<DOM::HTMLCollectionImpl> m_impl;
+  private:
+    static Value lengthGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value nameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
   };
 
   class HTMLSelectCollection : public HTMLCollection {
   public:
     HTMLSelectCollection(ExecState *exec, DOM::HTMLCollectionImpl *c, DOM::HTMLSelectElementImpl *e);
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
   private:
+    static Value selectedIndexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+
     khtml::SharedPtr<DOM::HTMLSelectElementImpl> m_element;
   };
 
@@ -344,7 +358,7 @@ namespace KJS {
   public:
     Image(DOM::DocumentImpl *d, bool ws, int w, bool hs, int h);
     ~Image();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -374,7 +388,7 @@ namespace KJS {
   public:
     Context2D(DOM::HTMLElementImpl *e);
     ~Context2D();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -466,7 +480,7 @@ private:
     Gradient(float x0, float y0, float x1, float y1);
     Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
     ~Gradient();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -512,7 +526,7 @@ private:
   class ImagePattern : public DOMObject {
   public:
     ImagePattern(Image *i, int type);
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);

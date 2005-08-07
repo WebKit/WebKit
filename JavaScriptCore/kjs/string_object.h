@@ -32,13 +32,15 @@ namespace KJS {
     StringInstanceImp(ObjectImp *proto);
     StringInstanceImp(ObjectImp *proto, const UString &string);
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
+  private:
+    static Value lengthGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
+    static Value indexGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
   };
 
   /**
@@ -51,7 +53,7 @@ namespace KJS {
   public:
     StringPrototypeImp(ExecState *exec,
                        ObjectPrototypeImp *objProto);
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };

@@ -54,37 +54,87 @@ RuntimeObjectImp::~RuntimeObjectImp()
     }
 }
 
-RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi) : ObjectImp ((ObjectImp *)0)
+RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi)
 {
     ownsInstance = oi;
     instance = i;
 }
 
-bool RuntimeObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
+    Bindings::Instance *instance = thisObj->instance;
+
+    instance->begin();
+
+    Class *aClass = instance->getClass();
+    Value result = aClass->fallbackObject(exec, instance, propertyName);
+
+    instance->end();
+            
+    return result;
+}
+
+Value RuntimeObjectImp::fieldGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
+    Bindings::Instance *instance = thisObj->instance;
+
+    instance->begin();
+
+    Class *aClass = instance->getClass();
+    Field *aField = aClass->fieldNamed(propertyName.ascii(), instance);
+    Value result = instance->getValueOfField(exec, aField); 
+    
+    instance->end();
+            
+    return result;
+}
+
+Value RuntimeObjectImp::methodGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
+    Bindings::Instance *instance = thisObj->instance;
+
+    instance->begin();
+
+    Class *aClass = instance->getClass();
+    MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance);
+    Value result = Object(new RuntimeMethodImp(exec, propertyName, methodList));
+
+    instance->end();
+            
+    return result;
+}
+
+bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     instance->begin();
     
     Class *aClass = instance->getClass();
     
     if (aClass) {
-        // See if the instance have a field with the specified name.
+        // See if the instance has a field with the specified name.
         Field *aField = aClass->fieldNamed(propertyName.ascii(), instance);
         if (aField) {
-            result = instance->getValueOfField(exec, aField); 
+            slot.setCustom(this, fieldGetter);
+            instance->end();
             return true;
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
             MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance);
             if (methodList.length() > 0) {
-                result = Object(new RuntimeMethodImp(exec, propertyName, methodList));
+                slot.setCustom(this, methodGetter);
+                instance->end();
                 return true;
             }
         }
 	
-        if (result.type() == UndefinedType) {
-            // Try a fallback object.
-            result = aClass->fallbackObject(exec, instance, propertyName);
+        // Try a fallback object.
+        if (!aClass->fallbackObject(exec, instance, propertyName).type() != UndefinedType) {
+            slot.setCustom(this, fallbackObjectGetter);
+            instance->end();
             return true;
         }
     }
@@ -127,29 +177,6 @@ bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) c
     if (aField)
 	return true;
     
-    return result;
-}
-
-bool RuntimeObjectImp::hasOwnProperty(ExecState *exec,
-                            const Identifier &propertyName) const
-{
-    bool result = false;
-    
-    instance->begin();
-
-    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii(), instance);
-    if (aField) {
-        instance->end();
-        return true;
-    }
-        
-    MethodList methodList = instance->getClass()->methodsNamed(propertyName.ascii(), instance);
-
-    instance->end();
-
-    if (methodList.length() > 0)
-        return true;
-
     return result;
 }
 

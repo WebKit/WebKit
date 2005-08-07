@@ -22,7 +22,7 @@
 
 #include "reference_list.h"
 
-#include "protect.h"
+#include "protected_object.h"
 
 namespace KJS {
   class ReferenceListNode {

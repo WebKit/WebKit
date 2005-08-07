@@ -124,23 +124,33 @@ namespace KJS {
   class UString;
   /**
    * @internal
-   * Helper for lookupFunction and lookupValueOrFunction
+   * Helper for getStaticFunctionSlot and getStaticPropertySlot
    */
   template <class FuncImp>
-  inline Value lookupOrCreateFunction(ExecState *exec, const Identifier &propertyName,
-                                      const ObjectImp *thisObj, int token, int params, int attr)
+  inline Value staticFunctionGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
   {
       // Look for cached value in dynamic map of properties (in ObjectImp)
-      ValueImp * cachedVal = thisObj->ObjectImp::getDirect(propertyName);
-      /*if (cachedVal)
-        fprintf(stderr, "lookupOrCreateFunction: Function -> looked up in ObjectImp, found type=%d\n", cachedVal->type());*/
+      ObjectImp *thisObj = slot.slotBase();
+      ValueImp *cachedVal = thisObj->getDirect(propertyName);
       if (cachedVal)
-        return Value(cachedVal);
+          return Value(cachedVal);
 
-      Value val = Value(new FuncImp(exec,token, params));
-      ObjectImp *thatObj = const_cast<ObjectImp *>(thisObj);
-      thatObj->ObjectImp::put(exec, propertyName, val, attr);
+      const HashEntry *entry = slot.staticEntry();
+      Value val = Value(new FuncImp(exec, entry->value, entry->params));
+      thisObj->putDirect(propertyName, val.imp(), entry->attr);
       return val;
+  }
+
+  /**
+   * @internal
+   * Helper for getStaticValueSlot and getStaticPropertySlot
+   */
+  template <class ThisImp>
+  inline Value staticValueGetter(ExecState *exec, const Identifier&, const PropertySlot& slot)
+  {
+      ThisImp *thisObj = static_cast<ThisImp *>(slot.slotBase());
+      const HashEntry *entry = slot.staticEntry();
+      return thisObj->getValueProperty(exec, entry->value);
   }
 
   /**
@@ -164,57 +174,58 @@ namespace KJS {
    * @param thisObj "this"
    */
   template <class FuncImp, class ThisImp, class ParentImp>
-  inline bool lookupGetOwnProperty(ExecState *exec, const Identifier &propertyName,
-                                   const HashTable* table, const ThisImp* thisObj, Value& result)
+  inline bool getStaticPropertySlot(ExecState *exec, const HashTable* table, 
+                                    ThisImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::getOwnProperty(exec, propertyName, result);
+      return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
     if (entry->attr & Function)
-      result = lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
+      slot.setStaticEntry(thisObj, entry, staticFunctionGetter<FuncImp>);
     else 
-      result = thisObj->getValueProperty(exec, entry->value);
+      slot.setStaticEntry(thisObj, entry, staticValueGetter<ThisImp>);
 
     return true;
   }
 
   /**
-   * Simplified version of lookupGet in case there are only functions.
-   * Using this instead of lookupGet prevents 'this' from implementing a dummy getValueProperty.
+   * Simplified version of getStaticPropertySlot in case there are only functions.
+   * Using this instead of getStaticPropertySlot allows 'this' to avoid implementing 
+   * a dummy getValueProperty.
    */
   template <class FuncImp, class ParentImp>
-  inline bool lookupGetOwnFunction(ExecState *exec, const Identifier &propertyName,
-                                   const HashTable* table, const ObjectImp* thisObj, Value& result)
+  inline bool getStaticFunctionSlot(ExecState *exec, const HashTable *table, 
+                                    ObjectImp* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return static_cast<const ParentImp *>(thisObj)->ParentImp::getOwnProperty(exec, propertyName, result);
+      return static_cast<ParentImp *>(thisObj)->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
     assert(entry->attr & Function);
 
-    result = lookupOrCreateFunction<FuncImp>(exec, propertyName, thisObj, entry->value, entry->params, entry->attr);
+    slot.setStaticEntry(thisObj, entry, staticFunctionGetter<FuncImp>);
     return true;
   }
 
   /**
-   * Simplified version of lookupGet in case there are no functions, only "values".
-   * Using this instead of lookupGet removes the need for a FuncImp class.
+   * Simplified version of getStaticPropertySlot in case there are no functions, only "values".
+   * Using this instead of getStaticPropertySlot removes the need for a FuncImp class.
    */
   template <class ThisImp, class ParentImp>
-  inline bool lookupGetOwnValue(ExecState *exec, const Identifier &propertyName,
-                                const HashTable* table, const ThisImp* thisObj, Value& result)
+  inline bool getStaticValueSlot(ExecState *exec, const HashTable* table, 
+                                 ThisImp* thisObj, const Identifier &propertyName, PropertySlot& slot)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
 
     if (!entry) // not found, forward to parent
-      return thisObj->ParentImp::getOwnProperty(exec, propertyName, result);
+      return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
     assert(!(entry->attr & Function));
 
-    result = thisObj->getValueProperty(exec, entry->value);
+    slot.setStaticEntry(thisObj, entry, staticValueGetter<ThisImp>);
     return true;
   }
 
@@ -295,33 +306,22 @@ namespace KJS {
   public: \
     virtual const ClassInfo *classInfo() const { return &info; } \
     static const ClassInfo info; \
-    bool getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const; \
-    bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const; \
+    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&); \
   }; \
   const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 };
 
 #define IMPLEMENT_PROTOTYPE(ClassProto,ClassFunc) \
-    bool ClassProto::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const \
+    bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
-      return lookupGetOwnFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this, result); \
-    } \
-    bool ClassProto::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const \
-    { /*stupid but we need this to have a common macro for the declaration*/ \
-      return ObjectImp::hasOwnProperty(exec, propertyName); \
+      return getStaticFunctionSlot<ClassFunc,ObjectImp>(exec, &ClassProto##Table, this, propertyName, slot); \
     }
 
 #define IMPLEMENT_PROTOTYPE_WITH_PARENT(ClassProto,ClassFunc,ParentProto)  \
-    bool ClassProto::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const \
+    bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
-      if (lookupGetOwnFunction<ClassFunc,ObjectImp>(exec, propertyName, &ClassProto##Table, this, result)) \
+      if (getStaticFunctionSlot<ClassFunc,ObjectImp>(exec, &ClassProto##Table, this, propertyName, slot)) \
           return true; \
-      return ParentProto::self(exec)->getOwnProperty(exec, propertyName, result); \
-    } \
-    bool ClassProto::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const \
-    { \
-      if (ObjectImp::hasOwnProperty(exec, propertyName)) \
-        return true; \
-      return ParentProto::self(exec)->hasOwnProperty(exec, propertyName); \
+      return ParentProto::self(exec)->getOwnPropertySlot(exec, propertyName, slot); \
     }
 
 #define IMPLEMENT_PROTOFUNC(ClassFunc) \

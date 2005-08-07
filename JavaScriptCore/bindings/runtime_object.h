@@ -41,16 +41,12 @@ public:
 
     const ClassInfo *classInfo() const { return &info; }
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);
 
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
-
-    virtual bool hasOwnProperty(ExecState *exec,
-			     const Identifier &propertyName) const;
-
 
     virtual bool deleteProperty(ExecState *exec,
                                 const Identifier &propertyName);
@@ -66,6 +62,10 @@ public:
     static const ClassInfo info;
 
 private:
+    static Value fallbackObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static Value fieldGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static Value methodGetter(ExecState *, const Identifier&, const PropertySlot&);
+
     Bindings::Instance *instance;
     bool ownsInstance;
 };

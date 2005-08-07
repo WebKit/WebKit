@@ -43,34 +43,45 @@ RuntimeArrayImp::~RuntimeArrayImp()
     delete _array;
 }
 
-bool RuntimeArrayImp::getOwnProperty(ExecState *exec, const Identifier &propertyName, Value& result) const
+Value RuntimeArrayImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    RuntimeArrayImp *thisObj = static_cast<RuntimeArrayImp *>(slot.slotBase());
+    return Number(thisObj->getLength());
+}
+
+Value RuntimeArrayImp::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+    RuntimeArrayImp *thisObj = static_cast<RuntimeArrayImp *>(slot.slotBase());
+    return thisObj->getConcreteArray()->valueAt(exec, slot.index());
+}
+
+bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == lengthPropertyName) {
-        result = Number(getLength());
+        slot.setCustom(this, lengthGetter);
         return true;
     }
     
     bool ok;
     unsigned index = propertyName.toArrayIndex(&ok);
     if (ok) {
-        if (index >= getLength())
-            result =  Undefined();
-        else
-            result = getConcreteArray()->valueAt(exec, index);
+        if (index < getLength()) {
+            slot.setCustomIndex(this, index, indexGetter);
+            return true;
+        }
+    }
+    
+    return ArrayInstanceImp::getOwnPropertySlot(exec, propertyName, slot);
+}
+
+bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, unsigned index, PropertySlot& slot)
+{
+    if (index < getLength()) {
+        slot.setCustomIndex(this, index, indexGetter);
         return true;
     }
     
-    return ArrayInstanceImp::getOwnProperty(exec, propertyName, result);
-}
-
-bool RuntimeArrayImp::getOwnProperty(ExecState *exec, unsigned index, Value& result) const
-{
-    if (index >= getLength())
-        result = Undefined();
-    else
-        result = getConcreteArray()->valueAt(exec, index);
-    
-    return true;
+    return ArrayInstanceImp::getOwnPropertySlot(exec, index, slot);
 }
 
 void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -100,30 +111,6 @@ void RuntimeArrayImp::put(ExecState *exec, unsigned index, const Value &value, i
     }
     
     getConcreteArray()->setValueAt(exec, index, value);
-}
-
-
-bool RuntimeArrayImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-    if (propertyName == lengthPropertyName)
-        return true;
-    
-    bool ok;
-    unsigned index = propertyName.toArrayIndex(&ok);
-    if (ok) {
-        if (index >= getLength())
-            return false;
-        return true;
-    }
-    
-    return ObjectImp::hasOwnProperty(exec, propertyName);
-}
-
-bool RuntimeArrayImp::hasOwnProperty(ExecState *exec, unsigned index) const
-{
-    if (index >= getLength())
-        return false;
-    return true;
 }
 
 bool RuntimeArrayImp::deleteProperty(ExecState *exec, const Identifier &propertyName)

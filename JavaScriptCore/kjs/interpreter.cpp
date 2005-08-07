@@ -26,6 +26,9 @@
 #include "object.h"
 #include "types.h"
 #include "interpreter.h"
+#if APPLE_CHANGES
+#include "runtime.h"
+#endif
 
 #include <assert.h>
 #include <math.h>
@@ -64,12 +67,18 @@ const Context Context::callingContext() const
 
 // ------------------------------ Interpreter ----------------------------------
 
-Interpreter::Interpreter(const Object &global) : rep(0)
+Interpreter::Interpreter(const Object &global) 
+  : rep(0)
+  , m_argumentsPropertyName(&argumentsPropertyName)
+  , m_specialPrototypePropertyName(&specialPrototypePropertyName)
 {
   rep = new InterpreterImp(this,global);
 }
 
 Interpreter::Interpreter()
+  : rep(0)
+  , m_argumentsPropertyName(&argumentsPropertyName)
+  , m_specialPrototypePropertyName(&specialPrototypePropertyName)
 {
   Object global(new ObjectImp());
   rep = new InterpreterImp(this,global);
@@ -328,9 +337,9 @@ void Interpreter::setShouldPrintExceptions(bool print)
 }
 
 
-void *Interpreter::createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *Interpreter::createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
-    return Bindings::Instance::createLanguageInstanceForValue (exec, language, value, origin, current);
+    return Bindings::Instance::createLanguageInstanceForValue (exec, (Bindings::Instance::BindingLanguage)language, value, origin, current);
 }
 
 #endif

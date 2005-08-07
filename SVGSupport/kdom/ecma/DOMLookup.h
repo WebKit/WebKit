@@ -143,6 +143,7 @@ namespace KDOM
 								const ThisImp *thisObj, // the 'impl' object
 								const KJS::ObjectImp *bridge)
 	{
+#if 0
 		const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
 
 		if(!entry) // not found, forward to parents
@@ -154,6 +155,8 @@ namespace KDOM
 														entry->value, entry->params, entry->attr);
 
 		return thisObj->getValueProperty(exec, entry->value);
+#endif
+                return KJS::Undefined();
 	}
 
 	/**
@@ -167,6 +170,7 @@ namespace KDOM
 									 const ThisImp *thisObj, // the 'impl' object
                                      const KJS::ObjectImp *bridge)
 	{
+#if 0
 		const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
 
 		if(!entry) // not found, forward to parents
@@ -176,6 +180,8 @@ namespace KDOM
 			kdError(26004) << "Function bit set! Shouldn't happen in lookupGetValue! propertyName was " << propertyName.qstring() << endl;
 
 		return thisObj->getValueProperty(exec, entry->value);
+#endif
+                return KJS::Undefined();
 	}
 
 	/**
@@ -246,7 +252,7 @@ namespace KDOM
     static const struct KJS::HashTable s_hashTable; \
   }; \
   KJS::Value get##ClassName(KJS::ExecState *exec); \
-  };
+  }
 
 // Same as kjs' DEFINE_PROTOTYPE, but with a pointer to the hashtable too, and no ClassName here
 // The ClassProto ctor(exec) must be public, so we can use KJS::cacheGlobalObject... (Niko)
@@ -264,16 +270,16 @@ namespace KDOM
     \
     static const struct KJS::HashTable s_hashTable; \
   }; \
-  };
+  }
 
 // same as IMPLEMENT_PROTOTYPE but in the KDOM namespace, and with ClassName here
 // so that KDOM_DEFINE_PROTOTYPE can be put in a header file ('info' defined here)
 #define ECMA_IMPLEMENT_PROTOTYPE(Space,ClassName,ClassProto,ClassFunc) \
     KJS::Value Space::ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const \
     { \
-        KJS::Value result; \
+        /* KJS::Value result; \
         if (KJS::lookupGetOwnFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this, result)) \
-            return result; \
+        return result;  */ \
         return KJS::Undefined(); \
       /* return KJS::lookupGetFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this ); */ \
     } \
@@ -309,7 +315,7 @@ namespace KDOM
   }; \
   /* Is eventually generated, if KDOM_CAST is given */ \
      Class to##Class(KJS::ExecState *exec, const KJS::ObjectImp *bridge); \
-  };
+  }
 
 // To be used when casting the type of an argument
 #define KDOM_CHECK(ClassName, theObj) \

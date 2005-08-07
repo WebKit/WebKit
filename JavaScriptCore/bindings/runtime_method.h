@@ -38,7 +38,7 @@ public:
     
     virtual ~RuntimeMethodImp();
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
@@ -48,6 +48,8 @@ public:
     virtual Completion execute(ExecState *exec);
 
 private:
+    static Value lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+
     Bindings::MethodList _methodList;
 };
 

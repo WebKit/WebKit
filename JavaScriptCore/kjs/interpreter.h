@@ -25,21 +25,19 @@
 #ifndef _KJS_INTERPRETER_H_
 #define _KJS_INTERPRETER_H_
 
+#include "object_wrapper.h"
 #include "value.h"
-#include "object.h"
 #include "types.h"
-#include "protect.h"
-
-#if APPLE_CHANGES
-
-#include "runtime.h"
-
-#endif
 
 namespace KJS {
 
   class ContextImp;
   class InterpreterImp;
+  class RuntimeMethodImp;
+
+  namespace Bindings {
+    class RootObject;
+  }
 
   /**
    * Represents an execution context, as specified by section 10 of the ECMA
@@ -401,11 +399,19 @@ namespace KJS {
      */
     virtual bool isSafeScript (const Interpreter *target) { return true; }
     
-    virtual void *createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
+    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 #endif
+
+    // This is a workaround to avoid accessing the global variables for these identifiers in
+    // important property lookup functions, to avoid taking PIC branches in Mach-O binaries
+    const Identifier& argumentsIdentifier() { return *m_argumentsPropertyName; }
+    const Identifier& specialPrototypeIdentifier() { return *m_specialPrototypePropertyName; }
     
   private:
     InterpreterImp *rep;
+
+    const Identifier *m_argumentsPropertyName;
+    const Identifier *m_specialPrototypePropertyName;
 
     /**
      * This constructor is not implemented, in order to prevent
@@ -420,6 +426,7 @@ namespace KJS {
      * interpreter instance instead.
      */
     Interpreter operator=(const Interpreter&);
+
   protected:
     virtual void virtual_hook( int id, void* data );
   };
@@ -473,7 +480,7 @@ namespace KJS {
         : _interpreter(interp), _context(con) { }
     Interpreter *_interpreter;
     ContextImp *_context;
-    ProtectedValue _exception;
+    Value _exception;
   };
 
 } // namespace

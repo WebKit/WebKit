@@ -402,9 +402,9 @@ NumberObjectImp::NumberObjectImp(ExecState *exec,
   putDirect(lengthPropertyName, NumberImp::one(), ReadOnly|DontDelete|DontEnum);
 }
 
-bool NumberObjectImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool NumberObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<NumberObjectImp, InternalFunctionImp>(exec, propertyName, &numberTable, this, result);
+  return getStaticValueSlot<NumberObjectImp, InternalFunctionImp>(exec, &numberTable, this, propertyName, slot);
 }
 
 Value NumberObjectImp::getValueProperty(ExecState *, int token) const

@@ -46,7 +46,7 @@ namespace KJS {
   class DatePrototypeImp : public DateInstanceImp {
   public:
     DatePrototypeImp(ExecState *exec, ObjectPrototypeImp *objectProto);
-    bool getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const;
+    bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };

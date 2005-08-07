@@ -33,12 +33,10 @@ namespace KJS {
     ArrayInstanceImp(ObjectImp *proto, const List &initialValues);
     ~ArrayInstanceImp();
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
-    virtual bool getOwnProperty(ExecState *exec, unsigned index, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
-    virtual bool hasOwnProperty(ExecState *exec, unsigned propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
     virtual ReferenceList propList(ExecState *exec, bool recursive);
@@ -54,6 +52,8 @@ namespace KJS {
     void sort(ExecState *exec, Object &compareFunction);
     
   private:
+    static Value lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+
     void setLength(unsigned newLength, ExecState *exec);
     
     unsigned pushUndefinedObjectsToEnd(ExecState *exec);

@@ -216,27 +216,35 @@ Object RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result) c
   return arr;
 }
 
-bool RegExpObjectImp::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+Value RegExpObjectImp::backrefGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
-  UString s = p.ustring();
+  RegExpObjectImp *thisObj = static_cast<RegExpObjectImp *>(slot.slotBase());
+  unsigned long i = slot.index();
+
+  if (i < thisObj->lastNrSubPatterns + 1) {
+    int *lastOvector = thisObj->lastOvector;
+    UString substring = thisObj->lastString.substr(lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i] );
+    return String(substring);
+  } 
+
+  return String("");
+}
+
+bool RegExpObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+  UString s = propertyName.ustring();
   if (s[0] == '$' && lastOvector)
   {
     bool ok;
     unsigned long i = s.substr(1).toULong(&ok);
     if (ok)
     {
-      if (i < lastNrSubPatterns + 1)
-      {
-        UString substring = lastString.substr( lastOvector[2*i], lastOvector[2*i+1] - lastOvector[2*i] );
-        result = String(substring);
-      } else
-        result = String("");
-      
+      slot.setCustomIndex(this, i, backrefGetter);
       return true;
     }
   }
 
-  return InternalFunctionImp::getOwnProperty(exec, p, result);
+  return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 bool RegExpObjectImp::implementsConstruct() const

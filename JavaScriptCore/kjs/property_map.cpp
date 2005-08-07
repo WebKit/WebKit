@@ -232,6 +232,43 @@ ValueImp *PropertyMap::get(const Identifier &name) const
     return 0;
 }
 
+ValueImp **PropertyMap::getLocation(const Identifier &name)
+{
+    assert(!name.isNull());
+    
+    UString::Rep *rep = name._ustring.rep;
+
+    if (!_table) {
+#if USE_SINGLE_ENTRY
+        UString::Rep *key = _singleEntry.key;
+        if (rep == key)
+            return &_singleEntry.value;
+#endif
+        return 0;
+    }
+    
+    unsigned h = rep->hash();
+    int sizeMask = _table->sizeMask;
+    Entry *entries = _table->entries;
+    int i = h & sizeMask;
+    int k = 0;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += entries[i].key && entries[i].key != rep;
+#endif
+    while (UString::Rep *key = entries[i].key) {
+        if (rep == key)
+            return &entries[i].value;
+        if (k == 0)
+            k = 1 | (h % sizeMask);
+        i = (i + k) & sizeMask;
+#if DUMP_STATISTICS
+        ++numRehashes;
+#endif
+    }
+    return 0;
+}
+
 #if DEBUG_PROPERTIES
 static void printAttributes(int attributes)
 {

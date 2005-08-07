@@ -208,54 +208,58 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
 }
 
-bool FunctionImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
+  ContextImp *context = exec->_context;
+  while (context) {
+    if (context->function() == thisObj) {
+      return static_cast<ActivationImp *>(context->activationObject())->get(exec, propertyName);
+    }
+    context = context->callingContext();
+  }
+  return Null();
+}
+
+Value FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
+  const Parameter *p = thisObj->param;
+  int count = 0;
+  while (p) {
+    ++count;
+    p = p->next;
+  }
+  return Number(count);
+}
+
+bool FunctionImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // Find the arguments from the closest context.
-    if (propertyName == argumentsPropertyName) {
-        ContextImp *context = exec->_context;
-        while (context) {
-          if (context->function() == this) {
-            result = static_cast<ActivationImp *>(context->activationObject())->get(exec, propertyName);
-            return true;
-          }
-          context = context->callingContext();
-        }
-        result = Null();
+    if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier()) {
+        slot.setCustom(this, argumentsGetter);
         return true;
     }
     
     // Compute length of parameters.
     if (propertyName == lengthPropertyName) {
-        const Parameter * p = param;
-        int count = 0;
-        while (p) {
-            ++count;
-            p = p->next;
-        }
-        result = Number(count);
+        slot.setCustom(this, lengthGetter);
         return true;
     }
     
-    return InternalFunctionImp::getOwnProperty(exec, propertyName, result);
+    return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void FunctionImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
 {
-    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
+    if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier() || propertyName == lengthPropertyName)
         return;
     InternalFunctionImp::put(exec, propertyName, value, attr);
 }
 
-bool FunctionImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
-        return true;
-    return InternalFunctionImp::hasOwnProperty(exec, propertyName);
-}
-
 bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
 {
-    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
+    if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier() || propertyName == lengthPropertyName)
         return false;
     return InternalFunctionImp::deleteProperty(exec, propertyName);
 }
@@ -449,14 +453,20 @@ void ArgumentsImp::mark()
     _activationObject->mark();
 }
 
-bool ArgumentsImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value ArgumentsImp::mappedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  ArgumentsImp *thisObj = static_cast<ArgumentsImp *>(slot.slotBase());
+  return thisObj->_activationObject->get(exec, thisObj->indexToNameMap[propertyName]);
+}
+
+bool ArgumentsImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (indexToNameMap.isMapped(propertyName)) {
-    result = _activationObject->get(exec, indexToNameMap[propertyName]);
+    slot.setCustom(this, mappedIndexGetter);
     return true;
   }
 
-  return ObjectImp::getOwnProperty(exec, propertyName, result);
+  return ObjectImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
@@ -478,14 +488,6 @@ bool ArgumentsImp::deleteProperty(ExecState *exec, const Identifier &propertyNam
   }
 }
 
-bool ArgumentsImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-  if (indexToNameMap.isMapped(propertyName))
-    return true;
-  
-  return ObjectImp::hasOwnProperty(exec, propertyName);
-}
-
 // ------------------------------ ActivationImp --------------------------------
 
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
@@ -498,34 +500,39 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
-bool ActivationImp::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+Value ActivationImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+{
+  ActivationImp *thisObj = static_cast<ActivationImp *>(slot.slotBase());
+
+  // default: return builtin arguments array
+  if (!thisObj->_argumentsObject)
+    thisObj->createArgumentsObject(exec);
+  
+  return Value(thisObj->_argumentsObject);
+}
+
+PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
+{
+  return ActivationImp::argumentsGetter;
+}
+
+bool ActivationImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // do this first so property map arguments property wins over the below
-    if (ObjectImp::getOwnProperty(exec, propertyName, result))
+    if (ObjectImp::getOwnPropertySlot(exec, propertyName, slot))
         return true;
 
-    if (propertyName == argumentsPropertyName) {
-        // default: return builtin arguments array
-        if (!_argumentsObject)
-            createArgumentsObject(exec);
-
-        result = Value(_argumentsObject);
+    if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier()) {
+        slot.setCustom(this, getArgumentsGetter());
         return true;
     }
 
     return false;
 }
 
-bool ActivationImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-    if (propertyName == argumentsPropertyName)
-        return true;
-    return ObjectImp::hasOwnProperty(exec, propertyName);
-}
-
 bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
 {
-    if (propertyName == argumentsPropertyName)
+    if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier())
         return false;
     return ObjectImp::deleteProperty(exec, propertyName);
 }

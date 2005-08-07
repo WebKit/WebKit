@@ -65,7 +65,7 @@ namespace KDOM
 
 		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
 	};
-};
+}
 
 KDOM_DEFINE_PROTOTYPE(EventTargetProto)
 KDOM_IMPLEMENT_PROTOFUNC(EventTargetProtoFunc, EventTarget)

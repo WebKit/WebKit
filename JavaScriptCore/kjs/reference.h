@@ -28,6 +28,9 @@
 
 namespace KJS {
 
+  class Object;
+  class ObjectImp;
+
   class Reference {
     friend class ReferenceList;
     friend class ReferenceListIterator;

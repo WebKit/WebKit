@@ -351,9 +351,9 @@ const ClassInfo EventConstructor::info = { "EventConstructor", 0, &EventConstruc
 @end
 */
 
-bool EventConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool EventConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<EventConstructor, DOMObject>(exec, p, &EventConstructorTable, this, result);
+  return getStaticValueSlot<EventConstructor, DOMObject>(exec, &EventConstructorTable, this, propertyName, slot);
 }
 
 Value EventConstructor::getValueProperty(ExecState *, int token) const
@@ -414,9 +414,9 @@ void DOMMouseEvent::mark()
         clipboard->mark();
 }
 
-bool DOMEvent::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool DOMEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<DOMEvent, DOMObject>(exec, p, &DOMEventTable, this, result);
+  return getStaticValueSlot<DOMEvent, DOMObject>(exec, &DOMEventTable, this, propertyName, slot);
 }
 
 Value DOMEvent::getValueProperty(ExecState *exec, int token) const
@@ -562,9 +562,9 @@ const ClassInfo EventExceptionConstructor::info = { "EventExceptionConstructor",
   UNSPECIFIED_EVENT_TYPE_ERR    DOM::EventException::UNSPECIFIED_EVENT_TYPE_ERR DontDelete|ReadOnly
 @end
 */
-bool EventExceptionConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool EventExceptionConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<EventExceptionConstructor, DOMObject>(exec, p, &EventExceptionConstructorTable, this, result);
+  return getStaticValueSlot<EventExceptionConstructor, DOMObject>(exec, &EventExceptionConstructorTable, this, propertyName, slot);
 }
 
 Value EventExceptionConstructor::getValueProperty(ExecState *, int token) const
@@ -611,9 +611,9 @@ DOMUIEvent::~DOMUIEvent()
 {
 }
 
-bool DOMUIEvent::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool DOMUIEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<DOMUIEvent,DOMEvent>(exec, p, &DOMUIEventTable, this, result);
+  return getStaticValueSlot<DOMUIEvent, DOMEvent>(exec, &DOMUIEventTable, this, propertyName, slot);
 }
 
 Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
@@ -705,9 +705,9 @@ DOMMouseEvent::~DOMMouseEvent()
 {
 }
 
-bool DOMMouseEvent::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool DOMMouseEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<DOMMouseEvent, DOMUIEvent>(exec, p, &DOMMouseEventTable, this, result);
+  return getStaticValueSlot<DOMMouseEvent, DOMUIEvent>(exec, &DOMMouseEventTable, this, propertyName, slot);
 }
 
 static QPoint offsetFromTarget(const MouseRelatedEventImpl *e)
@@ -853,9 +853,9 @@ const ClassInfo* DOMKeyboardEvent::classInfo() const
     return &info;
 }
 
-bool DOMKeyboardEvent::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool DOMKeyboardEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<DOMKeyboardEvent, DOMUIEvent>(exec, p, &DOMKeyboardEventTable, this, result);
+  return getStaticValueSlot<DOMKeyboardEvent, DOMUIEvent>(exec, &DOMKeyboardEventTable, this, propertyName, slot);
 }
 
 Value DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
@@ -918,9 +918,9 @@ const ClassInfo MutationEventConstructor::info = { "MutationEventConstructor", 0
   REMOVAL	DOM::MutationEvent::REMOVAL		DontDelete|ReadOnly
 @end
 */
-bool MutationEventConstructor::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool MutationEventConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<MutationEventConstructor,DOMObject>(exec, p, &MutationEventConstructorTable, this, result);
+  return getStaticValueSlot<MutationEventConstructor, DOMObject>(exec, &MutationEventConstructorTable, this, propertyName, slot);
 }
 
 Value MutationEventConstructor::getValueProperty(ExecState *, int token) const
@@ -963,9 +963,9 @@ DOMMutationEvent::~DOMMutationEvent()
 {
 }
 
-bool DOMMutationEvent::getOwnProperty(ExecState *exec, const Identifier& p, Value& result) const
+bool DOMMutationEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return lookupGetOwnValue<DOMMutationEvent, DOMEvent>(exec, p, &DOMMutationEventTable, this, result);
+  return getStaticValueSlot<DOMMutationEvent, DOMEvent>(exec, &DOMMutationEventTable, this, propertyName, slot);
 }
 
 Value DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
@@ -1042,9 +1042,9 @@ DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
 {
 }
 
-bool DOMWheelEvent::getOwnProperty(ExecState *exec, const Identifier &p, Value& result) const
+bool DOMWheelEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return lookupGetOwnValue<DOMWheelEvent,DOMEvent>(exec, p, &DOMWheelEventTable, this, result);
+    return getStaticValueSlot<DOMWheelEvent, DOMEvent>(exec, &DOMWheelEventTable, this, propertyName, slot);
 }
 
 Value DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
@@ -1135,9 +1135,9 @@ static Value stringOrUndefined(const DOM::DOMString &str)
     }
 }
 
-bool Clipboard::getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool Clipboard::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return lookupGetOwnValue<Clipboard, DOMObject>(exec, propertyName, &ClipboardTable, this, result);
+    return getStaticValueSlot<Clipboard, DOMObject>(exec, &ClipboardTable, this, propertyName, slot);
 }
 
 Value Clipboard::getValueProperty(ExecState *exec, int token) const

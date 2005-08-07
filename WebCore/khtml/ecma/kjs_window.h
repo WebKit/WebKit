@@ -28,6 +28,7 @@
 #include <qptrdict.h>
 
 #include "kjs_binding.h"
+#include <kjs/protected_object.h>
 
 class QTimer;
 class KHTMLView;
@@ -58,7 +59,7 @@ namespace KJS {
       Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight,
       AvailWidth
     };
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
   private:
     KHTMLView *view;
@@ -93,8 +94,8 @@ namespace KJS {
     static Window *retrieveActive(ExecState *exec);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
     int installTimeout(const UString &handler, int t, bool singleShot);
@@ -155,12 +156,17 @@ namespace KJS {
     Value getListener(ExecState *exec, int eventId) const;
     void setListener(ExecState *exec, int eventId, Value func);
   private:
+    static Value childFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value namedFrameGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value indexGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+    static Value namedItemGetter(ExecState *exec, const Identifier&, const PropertySlot& slot);
+
     void updateLayout() const;
 
     QGuardedPtr<KHTMLPart> m_part;
-    Screen *screen;
-    History *history;
-    FrameArray *frames;
+    mutable Screen *screen;
+    mutable History *history;
+    mutable FrameArray *frames;
     Location *loc;
     Selection *m_selection;
     BarInfo *m_locationbar;
@@ -220,7 +226,8 @@ namespace KJS {
 
   class Location : public ObjectImp {
   public:
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    Value getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual Value toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
@@ -237,7 +244,8 @@ namespace KJS {
 
   class Selection : public ObjectImp {
   public:
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    Value getValueProperty(ExecState *exec, int token) const;
     virtual Value toPrimitive(ExecState *exec, Type preferred) const;
     virtual UString toString(ExecState *exec) const;
     enum { AnchorNode, AnchorOffset, FocusNode, FocusOffset, BaseNode, BaseOffset, ExtentNode, ExtentOffset, 
@@ -254,7 +262,8 @@ namespace KJS {
 
   class BarInfo : public ObjectImp {
   public:
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    Value getValueProperty(ExecState *exec, int token) const;
     enum { Visible };
     enum Type { Locationbar, Menubar, Personalbar, Scrollbars, Statusbar, Toolbar };
     KHTMLPart *part() const { return m_part; }
@@ -272,8 +281,7 @@ namespace KJS {
     friend class KonquerorFunc;
   public:
     Konqueror(KHTMLPart *p) : part(p) { }
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &p) const;
+    virtual bool getOwnPropertySlot(ExecState *exec, const Identifier&, PropertySlot& slot) const;
     virtual UString toString(ExecState *exec) const;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

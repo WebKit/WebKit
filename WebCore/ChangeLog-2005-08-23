@@ -1,3 +1,182 @@
+2005-08-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Change over to the new PropertySlot mechanism for property
+	lookup. This allows the elimination of hasOwnProperty methods. I
+	also did a bunch of code cleanup and regularization of the various
+	property lookup methods.
+	
+        Test cases added: Added a test case for a bug I found along the way.
+        * layout-tests/fast/js/string-index-overflow.html:
+	* layout-tests/fast/js/string-index-overflow-expected.txt:
+	
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::createLanguageInstanceForValue):
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::indexGetter):
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+        (KJS::DOMCSSStyleDeclaration::getOwnPropertySlot):
+        (KJS::DOMCSSStyleDeclaration::getValueProperty):
+        (KJS::DOMStyleSheet::getOwnPropertySlot):
+        (KJS::DOMStyleSheetList::getValueProperty):
+        (KJS::DOMStyleSheetList::indexGetter):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMStyleSheetList::getOwnPropertySlot):
+        (KJS::DOMMediaList::getValueProperty):
+        (KJS::DOMMediaList::indexGetter):
+        (KJS::DOMMediaList::getOwnPropertySlot):
+        (KJS::DOMCSSStyleSheet::getValueProperty):
+        (KJS::DOMCSSStyleSheet::getOwnPropertySlot):
+        (KJS::DOMCSSRuleList::getValueProperty):
+        (KJS::DOMCSSRuleList::indexGetter):
+        (KJS::DOMCSSRuleList::getOwnPropertySlot):
+        (KJS::DOMCSSRule::getOwnPropertySlot):
+        (KJS::CSSRuleConstructor::getOwnPropertySlot):
+        (KJS::DOMCSSValue::getValueProperty):
+        (KJS::DOMCSSValue::getOwnPropertySlot):
+        (KJS::CSSValueConstructor::getOwnPropertySlot):
+        (KJS::DOMCSSPrimitiveValue::getValueProperty):
+        (KJS::DOMCSSPrimitiveValue::getOwnPropertySlot):
+        (KJS::CSSPrimitiveValueConstructor::getOwnPropertySlot):
+        (KJS::DOMCSSValueList::getValueProperty):
+        (KJS::DOMCSSValueList::indexGetter):
+        (KJS::DOMCSSValueList::getOwnPropertySlot):
+        (KJS::DOMRGBColor::getOwnPropertySlot):
+        (KJS::DOMRect::getOwnPropertySlot):
+        (KJS::DOMCounter::getOwnPropertySlot):
+        * khtml/ecma/kjs_css.h:
+        (KJS::DOMCSSStyleDeclaration::):
+        (KJS::DOMCSSStyleSheet::):
+        (KJS::DOMCSSRule::):
+        (KJS::DOMCSSValueList::):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getOwnPropertySlot):
+        (KJS::):
+        (KJS::DOMNodeList::getValueProperty):
+        (KJS::DOMNodeList::indexGetter):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        (KJS::DOMNodeList::call):
+        (KJS::DOMAttr::getOwnPropertySlot):
+        (KJS::DOMDocument::getOwnPropertySlot):
+        (KJS::DOMElement::getValueProperty):
+        (KJS::DOMElement::attributeGetter):
+        (KJS::DOMElement::getOwnPropertySlot):
+        (KJS::DOMDocumentType::getOwnPropertySlot):
+        (KJS::DOMNamedNodeMap::lengthGetter):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMap::getOwnPropertySlot):
+        (KJS::DOMProcessingInstruction::getOwnPropertySlot):
+        (KJS::DOMNotation::getOwnPropertySlot):
+        (KJS::DOMEntity::getOwnPropertySlot):
+        (KJS::NodeConstructor::getOwnPropertySlot):
+        (KJS::DOMExceptionConstructor::getOwnPropertySlot):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        (KJS::DOMCharacterData::getOwnPropertySlot):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::EventConstructor::getOwnPropertySlot):
+        (KJS::DOMEvent::getOwnPropertySlot):
+        (KJS::EventExceptionConstructor::getOwnPropertySlot):
+        (KJS::DOMUIEvent::getOwnPropertySlot):
+        (KJS::DOMMouseEvent::getOwnPropertySlot):
+        (KJS::DOMKeyboardEvent::getOwnPropertySlot):
+        (KJS::MutationEventConstructor::getOwnPropertySlot):
+        (KJS::DOMMutationEvent::getOwnPropertySlot):
+        (KJS::DOMWheelEvent::getOwnPropertySlot):
+        (KJS::Clipboard::getOwnPropertySlot):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLDocument::getValueProperty):
+        (KJS::HTMLDocument::getOwnPropertySlot):
+        (KJS::HTMLElement::formIndexGetter):
+        (KJS::HTMLElement::formNameGetter):
+        (KJS::HTMLElement::selectIndexGetter):
+        (KJS::HTMLElement::framesetNameGetter):
+        (KJS::HTMLElement::frameWindowPropertyGetter):
+        (KJS::HTMLElement::runtimeObjectGetter):
+        (KJS::HTMLElement::runtimeObjectPropertyGetter):
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::HTMLCollection::lengthGetter):
+        (KJS::HTMLCollection::indexGetter):
+        (KJS::HTMLCollection::nameGetter):
+        (KJS::HTMLCollection::getOwnPropertySlot):
+        (KJS::HTMLSelectCollection::selectedIndexGetter):
+        (KJS::HTMLSelectCollection::getOwnPropertySlot):
+        (KJS::Image::getOwnPropertySlot):
+        (KJS::Context2D::getOwnPropertySlot):
+        (KJS::Gradient::getOwnPropertySlot):
+        (KJS::ImagePattern::getOwnPropertySlot):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLCollection::toBoolean):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Plugins::):
+        (KJS::MimeTypes::):
+        (KJS::Plugin::):
+        (KJS::MimeType::):
+        (KJS::):
+        (KJS::Navigator::getOwnPropertySlot):
+        (KJS::Plugins::getValueProperty):
+        (KJS::Plugins::indexGetter):
+        (KJS::Plugins::nameGetter):
+        (KJS::Plugins::getOwnPropertySlot):
+        (KJS::MimeTypes::getValueProperty):
+        (KJS::MimeTypes::indexGetter):
+        (KJS::MimeTypes::nameGetter):
+        (KJS::MimeTypes::getOwnPropertySlot):
+        (KJS::Plugin::getValueProperty):
+        (KJS::Plugin::indexGetter):
+        (KJS::Plugin::nameGetter):
+        (KJS::Plugin::getOwnPropertySlot):
+        (KJS::MimeType::getValueProperty):
+        (KJS::MimeType::getOwnPropertySlot):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::getOwnPropertySlot):
+        (KJS::RangeConstructor::getOwnPropertySlot):
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::getOwnPropertySlot):
+        (KJS::NodeFilterConstructor::getOwnPropertySlot):
+        (KJS::DOMTreeWalker::getOwnPropertySlot):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::~DOMAbstractView):
+        (KJS::DOMAbstractView::getValueProperty):
+        (KJS::DOMAbstractView::getOwnPropertySlot):
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::FrameArray::):
+        (KJS::FrameArray::classInfo):
+        (KJS::Screen::getOwnPropertySlot):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::namedFrameGetter):
+        (KJS::Window::indexGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::):
+        (KJS::FrameArray::getValueProperty):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        (KJS::FrameArray::getOwnPropertySlot):
+        (KJS::Location::getValueProperty):
+        (KJS::Location::getOwnPropertySlot):
+        (KJS::Selection::getValueProperty):
+        (KJS::Selection::getOwnPropertySlot):
+        (KJS::BarInfo::getValueProperty):
+        (KJS::BarInfo::getOwnPropertySlot):
+        (KJS::History::getOwnPropertySlot):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getOwnPropertySlot):
+        * khtml/ecma/xmlhttprequest.h:
+
 2005-08-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

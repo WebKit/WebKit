@@ -25,6 +25,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		65305EAF08A58DDE00F31E73 /* protected_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 65305EAE08A58DDE00F31E73 /* protected_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65305EB008A58E0900F31E73 /* protected_object.h in Headers */ = {isa = PBXBuildFile; fileRef = 65305EAE08A58DDE00F31E73 /* protected_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		6539AACB08A3225A00223EE2 /* object_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6539AACA08A3225A00223EE2 /* object_wrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65621E6D089E859700760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
+		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
+		65621E70089E85D300760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65BBAEE008A329B300357728 /* object_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 6539AACA08A3225A00223EE2 /* object_wrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B400822A1C700736975 /* array_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* array_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B420822A1C700736975 /* collector.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8530255597D01FF60F7 /* collector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B430822A1C700736975 /* date_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8560255597D01FF60F7 /* date_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -449,6 +457,8 @@
 		651BDC78080F10CC00F10856 /* fast_malloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = fast_malloc.h; sourceTree = "<group>"; };
 		651F6412039D5B5F0078395C /* dtoa.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = dtoa.cpp; sourceTree = "<group>"; };
 		651F6413039D5B5F0078395C /* dtoa.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = dtoa.h; sourceTree = "<group>"; };
+		65305EAE08A58DDE00F31E73 /* protected_object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protected_object.h; sourceTree = "<group>"; };
+		6539AACA08A3225A00223EE2 /* object_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = object_wrapper.h; sourceTree = "<group>"; };
 		65417205039E02E70058BFEB /* get.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = get.c; path = pcre/get.c; sourceTree = "<group>"; };
 		65417206039E02E70058BFEB /* maketables.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = maketables.c; path = pcre/maketables.c; sourceTree = "<group>"; };
 		65417207039E02E70058BFEB /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = pcre/pcre.c; sourceTree = "<group>"; };
@@ -458,6 +468,8 @@
 		65417217039E0B280058BFEB /* pcre-config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pcre-config.h"; path = "pcre/pcre-config.h"; sourceTree = "<group>"; };
 		6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		6560A63D04B3B69F008AE952 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
+		65621E6B089E859700760F35 /* property_slot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = property_slot.cpp; sourceTree = "<group>"; };
+		65621E6C089E859700760F35 /* property_slot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = property_slot.h; sourceTree = "<group>"; };
 		65AB004806261CBA0076DE63 /* interpreter_map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = interpreter_map.cpp; sourceTree = "<group>"; };
 		65AB004906261CBA0076DE63 /* interpreter_map.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = interpreter_map.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
@@ -632,6 +644,10 @@
 		08FB77AEFE84172EC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				65305EAE08A58DDE00F31E73 /* protected_object.h */,
+				6539AACA08A3225A00223EE2 /* object_wrapper.h */,
+				65621E6B089E859700760F35 /* property_slot.cpp */,
+				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
 				650B68D80639033F009D42DE /* protected_values.cpp */,
 				650B68D90639033F009D42DE /* protected_values.h */,
@@ -828,6 +844,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65305EAF08A58DDE00F31E73 /* protected_object.h in Headers */,
 				932F5B400822A1C700736975 /* array_object.h in Headers */,
 				932F5B420822A1C700736975 /* collector.h in Headers */,
 				932F5B430822A1C700736975 /* date_object.h in Headers */,
@@ -900,6 +917,8 @@
 				932F5B8E0822A1C700736975 /* npruntime_impl.h in Headers */,
 				932F5B8F0822A1C700736975 /* fast_malloc.h in Headers */,
 				932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */,
+				65621E6E089E859700760F35 /* property_slot.h in Headers */,
+				6539AACB08A3225A00223EE2 /* object_wrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -907,6 +926,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65305EB008A58E0900F31E73 /* protected_object.h in Headers */,
 				A85D81F8087B2822006A9172 /* array_object.h in Headers */,
 				A85D81F9087B2822006A9172 /* collector.h in Headers */,
 				A85D81FA087B2822006A9172 /* date_object.h in Headers */,
@@ -922,6 +942,7 @@
 				A85D8204087B2822006A9172 /* nodes.h in Headers */,
 				A85D8205087B2822006A9172 /* number_object.h in Headers */,
 				A85D8206087B2822006A9172 /* object_object.h in Headers */,
+				65BBAEE008A329B300357728 /* object_wrapper.h in Headers */,
 				A85D8207087B2822006A9172 /* object.h in Headers */,
 				A85D8208087B2822006A9172 /* operations.h in Headers */,
 				A85D8209087B2822006A9172 /* property_map.h in Headers */,
@@ -978,6 +999,7 @@
 				A85D823C087B2822006A9172 /* npruntime_priv.h in Headers */,
 				A85D823D087B2822006A9172 /* npruntime_impl.h in Headers */,
 				A85D823E087B2822006A9172 /* fast_malloc.h in Headers */,
+				65621E70089E85D300760F35 /* property_slot.h in Headers */,
 				A85D823F087B2822006A9172 /* create_hash_table in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1529,6 +1551,7 @@
 				932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */,
 				932F5BD00822A1C700736975 /* softlinking.c in Sources */,
 				932F5BD10822A1C700736975 /* fast_malloc.cpp in Sources */,
+				65621E6D089E859700760F35 /* property_slot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1616,6 +1639,7 @@
 				A85D827E087B2822006A9172 /* jni_objc.mm in Sources */,
 				A85D827F087B2822006A9172 /* softlinking.c in Sources */,
 				A85D8280087B2822006A9172 /* fast_malloc.cpp in Sources */,
+				65621E6F089E85D300760F35 /* property_slot.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

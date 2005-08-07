@@ -504,7 +504,7 @@ T &T::operator=(const KDOM::Node &other) \
 	return *this; \
 }
 
-};
+}
 
 KDOM_DEFINE_PROTOTYPE(NodeProto)
 KDOM_IMPLEMENT_PROTOFUNC(NodeProtoFunc, Node)

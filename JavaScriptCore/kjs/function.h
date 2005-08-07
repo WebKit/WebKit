@@ -42,9 +42,8 @@ namespace KJS {
     FunctionImp(ExecState *exec, const Identifier &n = Identifier::null());
     virtual ~FunctionImp();
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual bool implementsCall() const;
@@ -66,6 +65,9 @@ namespace KJS {
     Identifier ident;
 
   private:
+    static Value argumentsGetter(ExecState *, const Identifier &, const PropertySlot&);
+    static Value lengthGetter(ExecState *, const Identifier &, const PropertySlot&);
+
     void processParameters(ExecState *exec, const List &);
     virtual void processVarDecls(ExecState *exec);
   };
@@ -109,14 +111,15 @@ namespace KJS {
   public:
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act);
     virtual void mark();
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
     virtual void put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr = None);
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:
+    static Value mappedIndexGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
+
     ActivationImp *_activationObject; 
     mutable IndexToNameMap indexToNameMap;
   };
@@ -125,8 +128,7 @@ namespace KJS {
   public:
     ActivationImp(FunctionImp *function, const List &arguments);
 
-    virtual bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool getOwnPropertySlot(ExecState *exec, const Identifier &, PropertySlot&);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }
@@ -135,6 +137,8 @@ namespace KJS {
     virtual void mark();
 
   private:
+    static PropertySlot::GetValueFunc getArgumentsGetter();
+    static Value argumentsGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
     void createArgumentsObject(ExecState *exec) const;
     
     FunctionImp *_function;

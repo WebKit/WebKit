@@ -228,7 +228,7 @@ Interpreter *ScriptInterpreter::interpreterForGlobalObject (const ValueImp *imp)
     return win->interpreter();
 }
 
-void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     void *result = 0;
     

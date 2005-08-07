@@ -1,0 +1,6 @@
+This test checks that accessing a string by an out of bounds index doesn't crash, furthermore the string should not appear to have out-of-bounds numeric properties. Below you should see "undefined" followed by "false".
+
+undefined
+false
+
+

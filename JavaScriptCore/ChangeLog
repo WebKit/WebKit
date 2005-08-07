@@ -1,3 +1,147 @@
+2005-08-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Change over to the new PropertySlot mechanism for property
+	lookup. This allows the elimination of hasOwnProperty
+	methods. Also did some of the performance tuning enabled by this
+	(but not yet all the possible improvements for function calls,
+	assignment, ++, and so forth). And also much code cleanup.
+
+	Net result is about a 2% speedup on the JS iBench.
+	
+	Also redid Geoff's fix for the chrashing applet by avoiding a NULL
+	prototype in the bindings code and using the default of Null()
+	instead.
+        
+	* JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (ObjcFallbackObjectImp::getOwnPropertySlot):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::lengthGetter):
+        (RuntimeArrayImp::indexGetter):
+        (RuntimeArrayImp::getOwnPropertySlot):
+        * bindings/runtime_array.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::lengthGetter):
+        (RuntimeMethodImp::getOwnPropertySlot):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::getOwnPropertySlot):
+        * bindings/runtime_object.h:
+        * bindings/runtime_root.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::lengthGetter):
+        (ArrayInstanceImp::getOwnPropertySlot):
+        (ArrayPrototypeImp::getOwnPropertySlot):
+        * kjs/array_object.h:
+        * kjs/date_object.cpp:
+        (DatePrototypeImp::getOwnPropertySlot):
+        * kjs/date_object.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::getOwnPropertySlot):
+        (KJS::FunctionImp::put):
+        (KJS::FunctionImp::deleteProperty):
+        (KJS::ArgumentsImp::mappedIndexGetter):
+        (KJS::ArgumentsImp::getOwnPropertySlot):
+        (KJS::ActivationImp::argumentsGetter):
+        (KJS::ActivationImp::getArgumentsGetter):
+        (KJS::ActivationImp::getOwnPropertySlot):
+        (KJS::ActivationImp::deleteProperty):
+        * kjs/function.h:
+        * kjs/internal.cpp:
+        (InterpreterImp::InterpreterImp):
+        (InterpreterImp::initGlobalObject):
+        (InterpreterImp::~InterpreterImp):
+        (InterpreterImp::evaluate):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::globalExec):
+        * kjs/interpreter.cpp:
+        (Interpreter::Interpreter):
+        (Interpreter::createLanguageInstanceForValue):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::argumentsIdentifier):
+        (KJS::Interpreter::specialPrototypeIdentifier):
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        (KJS::getStaticPropertySlot):
+        (KJS::getStaticFunctionSlot):
+        (KJS::getStaticValueSlot):
+        * kjs/math_object.cpp:
+        (MathObjectImp::getOwnPropertySlot):
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        (ResolveNode::evaluate):
+        (ResolveNode::evaluateReference):
+        (AccessorNode1::evaluate):
+        (AccessorNode2::evaluate):
+        * kjs/number_object.cpp:
+        (NumberObjectImp::getOwnPropertySlot):
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::get):
+        (KJS::ObjectImp::getProperty):
+        (KJS::ObjectImp::getPropertySlot):
+        (KJS::ObjectImp::getOwnPropertySlot):
+        (KJS::ObjectImp::put):
+        (KJS::ObjectImp::hasProperty):
+        (KJS::ObjectImp::hasOwnProperty):
+        * kjs/object.h:
+        (KJS::ObjectImp::getDirectLocation):
+        (KJS::ObjectImp::getPropertySlot):
+        (KJS::ObjectImp::getOwnPropertySlot):
+        * kjs/object_wrapper.h: Added.
+        (KJS::):
+        (KJS::Object::Object):
+        (KJS::Object::operator ObjectImp *):
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::getLocation):
+        * kjs/property_map.h:
+        * kjs/property_slot.cpp: Added.
+        (KJS::PropertySlot::undefinedGetter):
+        * kjs/property_slot.h: Added.
+        (KJS::PropertySlot::isSet):
+        (KJS::PropertySlot::getValue):
+        (KJS::PropertySlot::setValueSlot):
+        (KJS::PropertySlot::setStaticEntry):
+        (KJS::PropertySlot::setCustom):
+        (KJS::PropertySlot::setCustomIndex):
+        (KJS::PropertySlot::setUndefined):
+        (KJS::PropertySlot::slotBase):
+        (KJS::PropertySlot::staticEntry):
+        (KJS::PropertySlot::index):
+        (KJS::PropertySlot::):
+        * kjs/protect.h:
+        * kjs/protected_object.h: Added.
+        (KJS::ProtectedObject::ProtectedObject):
+        (KJS::ProtectedObject::~ProtectedObject):
+        (KJS::ProtectedObject::operator=):
+        (KJS::ProtectedReference::ProtectedReference):
+        (KJS::ProtectedReference::~ProtectedReference):
+        (KJS::ProtectedReference::operator=):
+        * kjs/reference.h:
+        * kjs/reference_list.cpp:
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::backrefGetter):
+        (RegExpObjectImp::getOwnPropertySlot):
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (StringInstanceImp::lengthGetter):
+        (StringInstanceImp::indexGetter):
+        (StringInstanceImp::getOwnPropertySlot):
+        (StringPrototypeImp::getOwnPropertySlot):
+        * kjs/string_object.h:
+
 2005-08-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

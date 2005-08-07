@@ -25,7 +25,6 @@
 #include <kjs/interpreter.h>
 #include <qvariant.h>
 #include <kjs/lookup.h>
-#include <kjs/protect.h>
 
 #if APPLE_CHANGES
 #include <JavaScriptCore/runtime.h>
@@ -111,7 +110,7 @@ namespace KJS {
     virtual bool isGlobalObject(const Value &v);
     virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp);
     virtual bool isSafeScript (const Interpreter *target);
-    virtual void *createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
+    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
     void *createObjcInstanceForValue (ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 #endif
 

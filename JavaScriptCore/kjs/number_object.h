@@ -84,7 +84,7 @@ namespace KJS {
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
-    bool getOwnProperty(ExecState *exec, const Identifier& propertyName, Value& result) const;
+    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     Value getValueProperty(ExecState *exec, int token) const;
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

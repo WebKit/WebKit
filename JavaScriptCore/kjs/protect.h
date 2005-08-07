@@ -24,7 +24,6 @@
 #ifndef _KJS_PROTECT_H_
 #define _KJS_PROTECT_H_
 
-#include "object.h"
 #include "reference.h"
 #include "value.h"
 #include "protected_values.h"
@@ -77,56 +76,6 @@ namespace KJS {
       explicit ProtectedValue(ValueImp *v);
     };
 
-
-    class ProtectedObject : public Object {
-    public:
-      ProtectedObject() : Object() {}
-      ProtectedObject(const Object &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
-      ProtectedObject(const ProtectedObject &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
-      ~ProtectedObject() { gcUnprotectNullTolerant(imp());}
-      ProtectedObject& operator=(const Object &o)
-	{ 
-	  ValueImp *old = imp();
-	  Object::operator=(o); 
-	  gcProtectNullTolerant(o.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-      ProtectedObject& operator=(const ProtectedObject &o)
-	{ 
-	  ValueImp *old = imp();
-	  Object::operator=(o); 
-	  gcProtectNullTolerant(o.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-    private:
-      explicit ProtectedObject(ObjectImp *o);
-    };
-
-
-    class ProtectedReference : public Reference {
-    public:
-      ProtectedReference(const Reference&r)  : Reference(r) { gcProtectNullTolerant(r.base.imp()); };
-      ~ProtectedReference() { gcUnprotectNullTolerant(base.imp());}
-      ProtectedReference& operator=(const Reference &r)
-	{ 
-	  ValueImp *old = base.imp();
-	  Reference::operator=(r); 
-	  gcProtectNullTolerant(r.base.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-    private:
-      ProtectedReference();
-      ProtectedReference(const Object& b, const Identifier& p);
-      ProtectedReference(const Object& b, unsigned p);
-      ProtectedReference(ObjectImp *b, const Identifier& p);
-      ProtectedReference(ObjectImp *b, unsigned p);
-      ProtectedReference(const Null& b, const Identifier& p);
-      ProtectedReference(const Null& b, unsigned p);
-    };
-
-}
+} // namespace
 
 #endif

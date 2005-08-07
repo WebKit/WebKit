@@ -78,6 +78,7 @@ namespace KJS {
         void remove(const Identifier &name);
         ValueImp *get(const Identifier &name) const;
         ValueImp *get(const Identifier &name, int &attributes) const;
+        ValueImp **getLocation(const Identifier &name);
 
         void mark() const;
         void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;
