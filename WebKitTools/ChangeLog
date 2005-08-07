@@ -1,4 +1,22 @@
 2005-08-07  Eric Seidel  <eseidel@apple.com>
+        Changes by Ben La Monica <ben.lamonica@gmail.com>
+
+        Reviewed by darin.
+
+        * svg2png/ImageDiff.h: Added.
+        * svg2png/ImageDiff.m: Added.
+        (getDifferenceBitmap):
+        (computePercentageDifferent):
+        (saveAnimatedGIFToFile):
+        * svg2png/svg2png.m:
+        (usage): added several new options
+        (getBitmapForSVG): added NSBitmapImageRep generation
+        (main): various argument changes.
+        * svg2png/svg2png.xcodeproj/project.pbxproj:
+        Several additions to provide image differencing functionality.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4193
+
+2005-08-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
 

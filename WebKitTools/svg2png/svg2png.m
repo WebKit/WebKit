@@ -25,24 +25,40 @@
 
 #import <WebCore+SVG/DrawDocumentPrivate.h>
 #import <WebCore+SVG/DrawView.h>
+#import "ImageDiff.h"
 
 extern const double svg2pngVersionNumber;
 extern const unsigned char svg2pngVersionString[];
+
+/* global variables */
+BOOL isMaxHeightSpecified = NO;
+BOOL isMaxWidthSpecified = NO;
+int maxWidth = 0;
+int maxHeight = 0;
 
 void usage(const char *name)
 {
     printf("Usage: %s [options] file[s]\n", name);
     printf("Options:\n");
-    printf("  --version\t\t\tPrints full version (%.1f) information and exits.\n", svg2pngVersionNumber);
-    printf("  --output <outputfile> dump a png copy of a single svg input file to the named path\n");
-    printf("  --suffix <suffix> append <suffix> to each output file e.g. <inputname><suffix>.png\n");
+    printf("  --baseline-dir <directory>\tthe directory where the baselines are stored\n");
+    printf("  --baseline-suffix <suffix>\tthe suffix on the reference version of a picture\n");
+    printf("  --max-width <int>\t\tsets the width of the output png\n");
+    printf("  --max-height <int>\t\tsets the height of the output png\n");
+    printf("  --output <outputfile>\t\tdump a png copy of a single svg input file\n\t\t\t\tto the named path\n");
+    printf("  --output-dir <directory>\tthe directory where all files are output to\n");
+    printf("  --suffix <suffix>\t\tappend <suffix> to each output file\n\t\t\t\te.g. <inputname><suffix>.png\n\n");
+    printf("  --version\t\t\tPrints full version (%.1f) information and exits\n", svg2pngVersionNumber);
     printf("When --output is not specified, output files are created in the same directory\n");
-    printf("as the original source files e.g. <source directory>/<filename><suffix>.png");
+    printf("as the original source files e.g. <source directory>/<filename><suffix>.png\n");
+    printf("\nWhen --baseline-suffix is specified, svg2png will look for a PNG file that\n");
+    printf("contains an example of what the SVG should look like when rendered. It will\n");
+    printf("create a <filename><suffix>-diff.png file to show these differences.\n\n"); 
     exit(1);
 };
 
-void outputPNG(NSString *svgPath, NSString *pngPath)
+NSBitmapImageRep *getBitmapForSVG(NSString *svgPath)
 {
+    
     // load the given document
     DrawDocument *document = [[DrawDocument alloc] initWithContentsOfFile:svgPath];
     
@@ -51,24 +67,34 @@ void outputPNG(NSString *svgPath, NSString *pngPath)
     [view setDocument:document];
     [view sizeToFitViewBox];
     
-    // My maximum 500x500 size hack:
+    // Limit the maximum size, and default the size to 500x500 if not specified
     NSSize boundsSize = [view bounds].size;
-    if (boundsSize.width > 500)
+    if (isMaxWidthSpecified && boundsSize.width > maxWidth) {
+        // resize the height so that the aspect ratio remains the same
+        boundsSize.height = (boundsSize.height / boundsSize.width) * maxWidth;
+        boundsSize.width = maxWidth;
+    }
+    else if (boundsSize.width <= 0)
         boundsSize.width = 500;
-    if (boundsSize.height > 500)
+        
+    if (isMaxHeightSpecified && boundsSize.height > maxHeight) {
+        // resize the width so that the aspect ratio reamins the same
+        boundsSize.width = (boundsSize.width / boundsSize.height) * maxHeight;
+        boundsSize.height = maxHeight;
+    }
+    else if (boundsSize.height <= 0)
         boundsSize.height = 500;
+    
     [view setFrameSize:boundsSize];
     
     // tell that view to render
     NSBitmapImageRep *imageRep = [view bitmapImageRepForCachingDisplayInRect:[view bounds]];
     [view cacheDisplayInRect:[view bounds] toBitmapImageRep:imageRep];
     
-    // output the resulting image
-    NSData *pngData = [imageRep representationUsingType:NSPNGFileType properties:nil];
-    [pngData writeToFile:svgPath atomically:YES];
-    
     [view release]; // should be singleton.
     [document release];
+    
+    return imageRep;
 }
 
 int main (int argc, const char *argv[])
@@ -77,8 +103,11 @@ int main (int argc, const char *argv[])
     // deal with args
     NSMutableArray *svgs = [NSMutableArray array];
     const char *name = [[[NSString stringWithUTF8String:argv[0]] lastPathComponent] UTF8String];
-    NSString *explicitOutputPath = nil;
+    NSString *explicitOutputFile = nil;
+    NSString *explicitOutputDirectory = nil;
     NSString *outputSuffix = nil;
+    NSString *baselineSuffix = nil;
+    NSString *explicitBaselineDirectory = nil;
     
     for(int x = 1; x < argc; x++) {
         const char *arg = argv[x];
@@ -92,12 +121,22 @@ int main (int argc, const char *argv[])
                 exit(0);
             } else if ([argString isEqualToString:@"--output"]) {
                 if (x + 1 < argc) {
-                    explicitOutputPath = [NSString stringWithUTF8String:argv[x+1]];
-                    if ([explicitOutputPath hasPrefix:@"--"])
-                        NSLog(@"WARNING: did you really mean to output to: %@  Or did you just forget the --output <filename> argument?", explicitOutputPath);
+                    explicitOutputFile = [NSString stringWithUTF8String:argv[x+1]];
+                    if ([explicitOutputFile hasPrefix:@"--"])
+                        printf("WARNING: did you really mean to output to: %s  Or did you just forget the --output <filename> argument?\n", [explicitOutputFile UTF8String]);
                     x++; // to skip the next arg
                 } else {
-                    NSLog(@"--output requires an argument.");
+                    printf("--output requires an argument.\n");
+                    usage(name);
+                }
+            } else if ([argString isEqualToString:@"--output-dir"]) {
+                if (x + 1 < argc) {
+                    explicitOutputDirectory = [NSString stringWithUTF8String:argv[x+1]];
+                    if ([explicitOutputDirectory hasPrefix:@"--"])
+                        printf("WARNING: did you really mean to output to: %s  Or did you just forget the --output <filename> argument?\n", [explicitOutputDirectory UTF8String]);
+                    x++; // to skip the next arg
+                } else {
+                    printf("--output-dir requires an argument.\n");
                     usage(name);
                 }
             }  else if ([argString isEqualToString:@"--suffix"]) {
@@ -105,16 +144,58 @@ int main (int argc, const char *argv[])
                     outputSuffix = [NSString stringWithUTF8String:argv[x+1]];
                     x++; // to skip the next arg
                 } else {
-                    NSLog(@"--suffix requires an argument.");
+                    printf("--suffix requires an argument.\n");
+                    usage(name);
+                }
+            } else if ([argString isEqualToString:@"--max-width"]) {
+                if (x + 1 < argc) {
+                    maxWidth = [[NSString stringWithUTF8String:argv[x+1]] intValue];
+                    if (maxWidth <= 0) {
+                        printf("--max-width must be an integer > 0\n");
+                        usage(name);
+                    }
+                    isMaxWidthSpecified = YES;
+                    x++; // skip to the next arg
+                } else {
+                    printf("--max-width requires an integer argument.\n");
+                    usage(name);
+                }
+            } else if ([argString isEqualToString:@"--max-height"]) {
+                if (x + 1 < argc) {
+                    maxHeight = [[NSString stringWithUTF8String:argv[x+1]] intValue];
+                    if (maxHeight <= 0) {
+                        printf("--max-height must be an integer > 0\n");
+                        usage(name);
+                    }
+                    isMaxHeightSpecified = YES;
+                    x++; // skip to the next arg
+                } else {
+                    printf("--max-height requires an integer > 0\n");
+                    usage(name);
+                }
+            } else if ([argString isEqualToString:@"--baseline-suffix"]) {
+                if(x + 1 < argc) {
+                    baselineSuffix = [NSString stringWithUTF8String:argv[x+1]];
+                    x++; // skip to the next arg
+                } else {
+                    printf("--baseline-suffix requires the suffix for the reference PNGs.\n");
+                    usage(name);
+                }
+            } else if ([argString isEqualToString:@"--baseline-dir"]) {
+                if(x + 1 < argc) {
+                    explicitBaselineDirectory = [NSString stringWithUTF8String:argv[x+1]];
+                    x++; // skip to the next arg
+                } else {
+                    printf("--baseline-dir requires the suffix for the reference PNGs.\n");
                     usage(name);
                 }
             } else {
-                printf("Unrecognized option %@\n", argString);
+                printf("Unrecognized option %s\n", [argString UTF8String]);
                 usage(name);
             }
         } else {
             if (![[NSFileManager defaultManager] fileExistsAtPath:[argString stringByStandardizingPath]]) {
-                printf("SVG does not exist at path: %@\n", argString);
+                printf("SVG does not exist at path: %s\n", [argString UTF8String]);
                 exit(1);
             }
             [svgs addObject:argString];
@@ -126,28 +207,80 @@ int main (int argc, const char *argv[])
         usage(name);
     }
     
-    if ( ([svgs count] > 1) && explicitOutputPath) {
+    if ( ([svgs count] > 1) && explicitOutputFile) {
         printf("--output name specifed, yet more than one input file was given!\n\n");
         usage(name);
     }
     
+    
     NSString *svgPath = nil;
     foreacharray(svgPath, svgs) {
-        NSString *pngPath = nil;
-        if (explicitOutputPath)
-            pngPath = explicitOutputPath;
+        NSBitmapImageRep *svgBitmap = nil;
+        NSString *svgPNGPath = nil;
+        
+        if (explicitOutputFile)
+            svgPNGPath = explicitOutputFile;
         else {
-            pngPath = [svgPath stringByDeletingPathExtension];
+            if (explicitOutputDirectory)
+                svgPNGPath = [[explicitOutputDirectory stringByAppendingPathComponent:[svgPath lastPathComponent]] stringByDeletingPathExtension];
+            else     
+                svgPNGPath = [svgPath stringByDeletingPathExtension];
+            
             if (outputSuffix)
-                pngPath = [pngPath stringByAppendingString:outputSuffix];
-            pngPath = [pngPath stringByAppendingPathExtension:@"png"];
+                svgPNGPath = [svgPNGPath stringByAppendingString:outputSuffix];
+            
+            svgPNGPath = [svgPNGPath stringByAppendingPathExtension:@"png"];
         }
-        outputPNG(svgPath, pngPath);
+        
+        // generate the SVG, save the bitmap data for the diff
+        svgBitmap = getBitmapForSVG(svgPath);
+        
+        // output the resulting SVG to a PNG file
+        NSData *svgPNGData = [svgBitmap representationUsingType:NSPNGFileType properties:nil];
+        [svgPNGData writeToFile:svgPNGPath atomically:YES];
+        
+        if (baselineSuffix || explicitBaselineDirectory) {
+            NSString *diffImagePath = [[[svgPNGPath stringByDeletingPathExtension]
+                stringByAppendingString:@"-diff"]
+                stringByAppendingPathExtension:@"png"];
+            
+            NSString *animatedGIFPath = [[diffImagePath stringByDeletingPathExtension]
+                stringByAppendingPathExtension:@"gif"];
+
+            NSString *baselineImagePath = nil;
+            
+            // if set, look for baselines in a seperate directory
+            if (explicitBaselineDirectory)
+                baselineImagePath = [[explicitBaselineDirectory 
+                    stringByAppendingPathComponent:[svgPath lastPathComponent]] stringByDeletingPathExtension];
+            else
+                baselineImagePath = [svgPath stringByDeletingPathExtension];
+            
+            // if baselines have a special suffix, append that to the path
+            if (baselineSuffix)
+                baselineImagePath = [baselineImagePath stringByAppendingString:baselineSuffix];
+            
+            baselineImagePath = [baselineImagePath stringByAppendingPathExtension:@"png"];
+
+            // compare
+            NSBitmapImageRep *referenceBitmap = [NSBitmapImageRep imageRepWithContentsOfURL:[NSURL fileURLWithPath:baselineImagePath]];
+            NSBitmapImageRep *diffBitmap = getDifferenceBitmap(svgBitmap, referenceBitmap);
+
+            // output the resulting SVG to a PNG file
+            NSData *diffPNGData = [diffBitmap representationUsingType:NSPNGFileType properties:nil];
+            [diffPNGData writeToFile:diffImagePath atomically:YES];
+
+            // save the reference and the svg images in an animated GIF
+            saveAnimatedGIFToFile(svgBitmap, referenceBitmap, animatedGIFPath);
+            
+            float percentage = computePercentageDifferent(diffBitmap);
+            printf("%s\t%3.3f%%\t%s\n", [svgPath UTF8String], percentage, (percentage > 1 ? "Failed." : "Passed."));
+            
+            [diffBitmap release];
+        }
     }
     
     [pool drain];
     
     return 0;
 }
-
-
