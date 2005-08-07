@@ -112,7 +112,7 @@ sub diff
     my ($dir, $base) = getDirAndBase($path);
     my $errors = "";
     chdir $dir or die;
-    open DIFF, "cvs -f diff -lNpu '$base' |" or die;
+    open DIFF, "cvs -f diff -Npu '$base' |" or die;
     my $indexPath;
     while (<DIFF>) {
         if (/^Index: (.*)/) {
@@ -141,16 +141,5 @@ sub diff
 
 # Generate the diff for each passed file or directory.
 for my $path (sort keys %paths) {
-    my $prefix = $path eq "." ? "" : "$path/";
-    if (-d $path) {
-        for my $CVS (`find '$path' -name CVS`) {
-            chomp $CVS;
-            die "can't handle files named CVS like \"$CVS\"\n" if !-d $CVS;
-            my $dir = $CVS;
-            $dir =~ s|/CVS$||;
-            diff($dir);
-        }
-    } else {
-        diff($path);
-    }
+    diff($path);
 }

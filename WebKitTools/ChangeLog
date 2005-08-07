@@ -1,3 +1,7 @@
+2005-08-07  Darin Adler  <darin@apple.com>
+
+        * Scripts/cvs-create-patch: Do all the directories at once, for speed.
+
 2005-08-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
