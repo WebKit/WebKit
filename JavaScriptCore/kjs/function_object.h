@@ -40,7 +40,7 @@ namespace KJS {
     virtual ~FunctionPrototypeImp();
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
   };
 
   /**
@@ -55,7 +55,7 @@ namespace KJS {
                         FunctionPrototypeImp *funcProto, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     enum { ToString, Apply, Call };
   private:
@@ -73,10 +73,10 @@ namespace KJS {
     virtual ~FunctionObjectImp();
 
     virtual bool implementsConstruct() const;
-    virtual Object construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
-    virtual Object construct(ExecState *exec, const List &args);
+    virtual ObjectImp *construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
+    virtual ObjectImp *construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
   };
 
 } // namespace

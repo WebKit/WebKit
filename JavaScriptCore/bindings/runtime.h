@@ -59,7 +59,7 @@ public:
     virtual Parameter *parameterAt(long i) const = 0;
     virtual long numParameters() const = 0;
 
-    virtual ~Constructor() {};
+    virtual ~Constructor() {}
 };
 
 class Field
@@ -68,25 +68,25 @@ public:
     virtual const char *name() const = 0;
     virtual RuntimeType type() const = 0;
 
-    virtual KJS::Value valueFromInstance(ExecState *exec, const Instance *instance) const = 0;
-    virtual void setValueToInstance(ExecState *exec, const Instance *instance, const Value &aValue) const = 0;
+    virtual ValueImp *valueFromInstance(ExecState *, const Instance *) const = 0;
+    virtual void setValueToInstance(ExecState *, const Instance *, ValueImp *) const = 0;
 
-    virtual ~Field() {};
+    virtual ~Field() {}
 };
 
 
 class MethodList
 {
 public:
-    MethodList() : _methods(0), _length(0) {};
+    MethodList() : _methods(0), _length(0) {}
     
-    void addMethod (Method *aMethod);
+    void addMethod(Method *aMethod);
     unsigned int length() const;
-    Method *methodAt (unsigned int index) const;
+    Method *methodAt(unsigned int index) const;
     
     ~MethodList();
     
-    MethodList (const MethodList &other);
+    MethodList(const MethodList &other);
     MethodList &operator=(const MethodList &other);
 
 private:
@@ -117,9 +117,9 @@ public:
     
     virtual Field *fieldNamed(const char *name, Instance *instance) const = 0;
 
-    virtual Value fallbackObject(ExecState *exec, Bindings::Instance *instance, const Identifier &propertyName) { return Undefined(); }
+    virtual ValueImp *fallbackObject(ExecState *, Instance *, const Identifier &) { return Undefined(); }
     
-    virtual ~Class() {};
+    virtual ~Class() {}
 };
 
 typedef void (*KJSDidExecuteFunctionPtr)(ExecState *exec, ObjectImp *rootObject);
@@ -133,16 +133,16 @@ public:
         CLanguage
     } BindingLanguage;
 
-    static void setDidExecuteFunction (KJSDidExecuteFunctionPtr func);
-    static KJSDidExecuteFunctionPtr didExecuteFunction ();
+    static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
+    static KJSDidExecuteFunctionPtr didExecuteFunction();
     
-    static Instance *createBindingForLanguageInstance (BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
-    static void *createLanguageInstanceForValue (ExecState *exec, BindingLanguage language, const Object &value, const RootObject *origin, const RootObject *current);
-    static Object createRuntimeObject (BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
+    static Instance *createBindingForLanguageInstance(BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
+    static void *createLanguageInstanceForValue(ExecState *exec, BindingLanguage language, ObjectImp *value, const RootObject *origin, const RootObject *current);
+    static ObjectImp *createRuntimeObject(BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
 
-    Instance () : _executionContext(0) {};
+    Instance() : _executionContext(0) {};
     
-    Instance (const Instance &other);
+    Instance(const Instance &other);
 
     Instance &operator=(const Instance &other);
 
@@ -154,23 +154,23 @@ public:
     
     virtual Class *getClass() const = 0;
     
-    virtual Value getValueOfField (ExecState *exec, const Field *aField) const;
-    virtual Value getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); };
-    virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
-    virtual bool supportsSetValueOfUndefinedField () { return false; };
-    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue) {};
+    virtual ValueImp *getValueOfField(ExecState *exec, const Field *aField) const;
+    virtual ValueImp *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); };
+    virtual void setValueOfField(ExecState *exec, const Field *aField, ValueImp *aValue) const;
+    virtual bool supportsSetValueOfUndefinedField() { return false; };
+    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, ValueImp *aValue) {};
     
-    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args) = 0;
-    virtual Value invokeDefaultMethod (ExecState *exec, const List &args) = 0;
+    virtual ValueImp *invokeMethod(ExecState *exec, const MethodList &method, const List &args) = 0;
+    virtual ValueImp *invokeDefaultMethod(ExecState *exec, const List &args) = 0;
     
-    virtual Value defaultValue (Type hint) const = 0;
+    virtual ValueImp *defaultValue(Type hint) const = 0;
     
-    virtual Value valueOf() const { return String(getClass()->name()); };
+    virtual ValueImp *valueOf() const { return String(getClass()->name()); };
     
-    void setExecutionContext (const RootObject *r) { _executionContext = r; }
+    void setExecutionContext(const RootObject *r) { _executionContext = r; }
     const RootObject *executionContext() const { return _executionContext; }
     
-    virtual ~Instance() {};
+    virtual ~Instance() {}
 
 protected:
     const RootObject *_executionContext;
@@ -179,13 +179,13 @@ protected:
 class Array
 {
 public:
-    virtual void setValueAt(ExecState *exec, unsigned int index, const Value &aValue) const = 0;
-    virtual Value valueAt(ExecState *exec, unsigned int index) const = 0;
+    virtual void setValueAt(ExecState *, unsigned index, ValueImp *) const = 0;
+    virtual ValueImp *valueAt(ExecState *, unsigned index) const = 0;
     virtual unsigned int getLength() const = 0;
-    virtual ~Array() {};
+    virtual ~Array() {}
 };
 
-const char *signatureForParameters(const KJS::List &aList);
+const char *signatureForParameters(const List &aList);
 
 } // namespace Bindings
 

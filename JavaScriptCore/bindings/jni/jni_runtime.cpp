@@ -67,15 +67,15 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     _field = new JavaInstance(aField, 0);
 }
 
-KJS::Value JavaArray::convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type, const RootObject *r)
+ValueImp *JavaArray::convertJObjectToArray (ExecState *exec, jobject anObject, const char *type, const RootObject *r)
 {
     if (type[0] != '[')
         return Undefined();
 
-    return KJS::Object(new RuntimeArrayImp(exec, new JavaArray ((jobject)anObject, type, r)));
+    return new RuntimeArrayImp(exec, new JavaArray((jobject)anObject, type, r));
 }
 
-jvalue JavaField::dispatchValueFromInstance(KJS::ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const
+jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const
 {
     jobject jinstance = instance->javaInstance();
     jobject fieldJInstance = _field->javaInstance();
@@ -90,13 +90,13 @@ jvalue JavaField::dispatchValueFromInstance(KJS::ExecState *exec, const JavaInst
 	{
 	    const RootObject *execContext = instance->executionContext();
 	    if (execContext && execContext->nativeHandle()) {
-		Value exceptionDescription;
+		ValueImp *exceptionDescription;
 		jvalue args[1];
 		
 		args[0].l = jinstance;
 		dispatchJNICall (execContext->nativeHandle(), fieldJInstance, false, returnType, mid, args, result, 0, exceptionDescription);
-		if (!exceptionDescription.isNull()) {
-		    Object error = Error::create(exec, GeneralError, exceptionDescription.toString(exec).UTF8String().c_str());
+		if (exceptionDescription) {
+		    ObjectImp *error = Error::create(exec, GeneralError, exceptionDescription->toString(exec).UTF8String().c_str());
 		    exec->setException(error);
 		}
 	    }
@@ -105,11 +105,11 @@ jvalue JavaField::dispatchValueFromInstance(KJS::ExecState *exec, const JavaInst
     return result;
 }
 
-KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i) const 
+ValueImp *JavaField::valueFromInstance(ExecState *exec, const Instance *i) const 
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
 
-    Value jsresult = Undefined();
+    ValueImp *jsresult = Undefined();
     
     switch (_JNIType) {
         case object_type: {
@@ -129,7 +129,7 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
         case boolean_type: {
 	    jvalue result = dispatchValueFromInstance (exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", boolean_type);
 	    jboolean value = result.z;
-            jsresult = KJS::Boolean((bool)value);
+            jsresult = Boolean((bool)value);
         }
         break;
             
@@ -158,12 +158,12 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
         break;
     }
 
-    JS_LOG ("getting %s = %s\n", name(), jsresult.toString(exec).ascii());
+    JS_LOG ("getting %s = %s\n", name(), jsresult->toString(exec).ascii());
     
     return jsresult;
 }
 
-void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const
+void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const
 {
     jobject jinstance = instance->javaInstance();
     jobject fieldJInstance = _field->javaInstance();
@@ -176,15 +176,15 @@ void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInsta
 	{
 	    const RootObject *execContext = instance->executionContext();
 	    if (execContext && execContext->nativeHandle()) {
-		Value exceptionDescription;
+		ValueImp *exceptionDescription;
 		jvalue args[2];
 		jvalue result;
 		
 		args[0].l = jinstance;
 		args[1] = javaValue;
 		dispatchJNICall (execContext->nativeHandle(), fieldJInstance, false, void_type, mid, args, result, 0, exceptionDescription);
-		if (!exceptionDescription.isNull()) {
-		    Object error = Error::create(exec, GeneralError, exceptionDescription.toString(exec).UTF8String().c_str());
+		if (exceptionDescription) {
+		    ObjectImp *error = Error::create(exec, GeneralError, exceptionDescription->toString(exec).UTF8String().c_str());
 		    exec->setException(error);
 		}
 	    }
@@ -192,12 +192,12 @@ void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInsta
     }
 }
 
-void JavaField::setValueToInstance(KJS::ExecState *exec, const Instance *i, const KJS::Value &aValue) const
+void JavaField::setValueToInstance(ExecState *exec, const Instance *i, ValueImp *aValue) const
 {
     const JavaInstance *instance = static_cast<const JavaInstance *>(i);
     jvalue javaValue = convertValueToJValue (exec, aValue, _JNIType, type());
 
-    JS_LOG ("setting value %s to %s\n", name(), aValue.toString(exec).ascii());
+    JS_LOG ("setting value %s to %s\n", name(), aValue->toString(exec).ascii());
 
     switch (_JNIType) {
         case object_type: {
@@ -394,7 +394,7 @@ JavaArray::JavaArray (const JavaArray &other) : Array()
     _type = strdup(other._type);
 };
 
-void JavaArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const
+void JavaArray::setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const
 {
     JNIEnv *env = getJNIEnv();
     char *javaClassName = 0;
@@ -462,7 +462,7 @@ void JavaArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::
 }
 
 
-KJS::Value JavaArray::valueAt(KJS::ExecState *exec, unsigned int index) const
+ValueImp *JavaArray::valueAt(ExecState *exec, unsigned int index) const
 {
     JNIEnv *env = getJNIEnv();
     JNIType arrayType = JNITypeFromPrimitiveType(_type[1]);
@@ -489,7 +489,7 @@ KJS::Value JavaArray::valueAt(KJS::ExecState *exec, unsigned int index) const
             jbooleanArray booleanArray = (jbooleanArray)javaArray();
             jboolean aBoolean;
             env->GetBooleanArrayRegion(booleanArray, index, 1, &aBoolean);
-            return KJS::Boolean (aBoolean);
+            return Boolean (aBoolean);
         }
             
         case byte_type: {

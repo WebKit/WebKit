@@ -251,7 +251,7 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
       }
       
       if (good && ((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
-	ValueImp *imp = (ValueImp *)x;
+	AllocatedValueImp *imp = (AllocatedValueImp *)x;
 	if (!imp->marked())
 	  imp->mark();
       }
@@ -370,14 +370,14 @@ bool Collector::collect()
       }
 
       CollectorCell *cell = curBlock->cells + i;
-      ValueImp *imp = reinterpret_cast<ValueImp *>(cell);
+      AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
 
       if (cell->u.freeCell.zeroIfFree != 0) {
-	if (!imp->_marked)
+	if (!imp->m_marked)
 	{
-	  //fprintf(stderr, "Collector::deleting ValueImp %p (%s)\n", imp, className(imp));
+	  //fprintf(stderr, "Collector::deleting AllocatedValueImp %p (%s)\n", imp, className(imp));
 	  // emulate destructing part of 'operator delete()'
-	  imp->~ValueImp();
+	  imp->~AllocatedValueImp();
 	  curBlock->usedCells--;
 	  numLiveObjects--;
 	  deleted = true;
@@ -388,7 +388,7 @@ bool Collector::collect()
 	  curBlock->freeList = cell;
 
 	} else {
-	  imp->_marked = false;
+	  imp->m_marked = false;
 	}
       } else {
 	minimumCellsToProcess++;
@@ -422,10 +422,10 @@ bool Collector::collect()
   
   int cell = 0;
   while (cell < heap.usedOversizeCells) {
-    ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
+    AllocatedValueImp *imp = (AllocatedValueImp *)heap.oversizeCells[cell];
     
-    if (!imp->_marked) {
-      imp->~ValueImp();
+    if (!imp->m_marked) {
+      imp->~AllocatedValueImp();
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
 #else
@@ -445,7 +445,7 @@ bool Collector::collect()
       }
 
     } else {
-      imp->_marked = false;
+      imp->m_marked = false;
       cell++;
     }
   }
@@ -508,7 +508,7 @@ int Collector::numReferencedObjects()
 static const char *className(ValueImp *val)
 {
   const char *name = "???";
-  switch (val->dispatchType()) {
+  switch (val->type()) {
     case UnspecifiedType:
       break;
     case UndefinedType:

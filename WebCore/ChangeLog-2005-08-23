@@ -1,3 +1,431 @@
+2005-08-07  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4313
+          eliminate KJS::Value and KJS::Object smart pointer wrappers (for simplicity and speed)
+
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserConstructorImp::construct):
+        (KJS::DOMParserProtoFunc::callAsFunction):
+        * khtml/ecma/domparser.h:
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::ScriptInterpreter):
+        (KJS::ScriptInterpreter::isGlobalObject):
+        (KJS::ScriptInterpreter::createLanguageInstanceForValue):
+        (KJS::getStringOrNull):
+        (KJS::ValueToVariant):
+        (KJS::setDOMException):
+        * khtml/ecma/kjs_binding.h:
+        (KJS::DOMFunction::toPrimitive):
+        (KJS::cacheDOMObject):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::indexGetter):
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+        (KJS::DOMCSSStyleDeclaration::getValueProperty):
+        (KJS::DOMCSSStyleDeclaration::put):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        (KJS::DOMStyleSheet::getValueProperty):
+        (KJS::DOMStyleSheet::put):
+        (KJS::DOMStyleSheetList::getValueProperty):
+        (KJS::DOMStyleSheetList::indexGetter):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMStyleSheetListFunc::callAsFunction):
+        (KJS::DOMMediaList::getValueProperty):
+        (KJS::DOMMediaList::indexGetter):
+        (KJS::DOMMediaList::put):
+        (KJS::KJS::DOMMediaListProtoFunc::callAsFunction):
+        (KJS::DOMCSSStyleSheet::getValueProperty):
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        (KJS::DOMCSSRuleList::getValueProperty):
+        (KJS::DOMCSSRuleList::indexGetter):
+        (KJS::DOMCSSRuleListFunc::callAsFunction):
+        (KJS::DOMCSSRule::getValueProperty):
+        (KJS::DOMCSSRule::put):
+        (KJS::DOMCSSRule::putValueProperty):
+        (KJS::DOMCSSRuleFunc::callAsFunction):
+        (KJS::CSSRuleConstructor::getValueProperty):
+        (KJS::getCSSRuleConstructor):
+        (KJS::DOMCSSValue::getValueProperty):
+        (KJS::DOMCSSValue::put):
+        (KJS::getDOMCSSValue):
+        (KJS::CSSValueConstructor::getValueProperty):
+        (KJS::getCSSValueConstructor):
+        (KJS::DOMCSSPrimitiveValue::getValueProperty):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::callAsFunction):
+        (KJS::CSSPrimitiveValueConstructor::getValueProperty):
+        (KJS::getCSSPrimitiveValueConstructor):
+        (KJS::DOMCSSValueList::getValueProperty):
+        (KJS::DOMCSSValueList::indexGetter):
+        (KJS::DOMCSSValueListFunc::callAsFunction):
+        (KJS::DOMRGBColor::getValueProperty):
+        (KJS::DOMRect::getValueProperty):
+        (KJS::DOMCounter::getValueProperty):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::put):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNode::getListener):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeList::toPrimitive):
+        (KJS::DOMNodeList::getValueProperty):
+        (KJS::DOMNodeList::indexGetter):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::callAsFunction):
+        (KJS::DOMNodeListFunc::DOMNodeListFunc):
+        (KJS::DOMNodeListFunc::callAsFunction):
+        (KJS::DOMAttr::getValueProperty):
+        (KJS::DOMAttr::put):
+        (KJS::DOMAttr::putValueProperty):
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::DOMDocument::put):
+        (KJS::DOMDocument::putValueProperty):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElement::getValueProperty):
+        (KJS::DOMElement::attributeGetter):
+        (KJS::DOMElement::getOwnPropertySlot):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::DOMDOMImplementationProtoFunc::callAsFunction):
+        (KJS::DOMDocumentType::getValueProperty):
+        (KJS::DOMNamedNodeMap::lengthGetter):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::DOMProcessingInstruction::getValueProperty):
+        (KJS::DOMProcessingInstruction::put):
+        (KJS::DOMNotation::getValueProperty):
+        (KJS::DOMEntity::getValueProperty):
+        (KJS::NodeConstructor::getValueProperty):
+        (KJS::DOMExceptionConstructor::getValueProperty):
+        (KJS::DOMNamedNodesCollection::lengthGetter):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        (KJS::DOMCharacterData::getValueProperty):
+        (KJS::DOMCharacterData::put):
+        (KJS::DOMCharacterDataProtoFunc::callAsFunction):
+        (KJS::DOMTextProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (KJS::JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (KJS::JSUnprotectedEventListener::listenerObj):
+        (KJS::JSUnprotectedEventListener::windowObj):
+        (KJS::JSUnprotectedEventListener::mark):
+        (KJS::JSEventListener::JSEventListener):
+        (KJS::JSEventListener::~JSEventListener):
+        (KJS::JSEventListener::listenerObj):
+        (KJS::JSEventListener::windowObj):
+        (KJS::JSLazyEventListener::JSLazyEventListener):
+        (KJS::JSLazyEventListener::handleEvent):
+        (KJS::JSLazyEventListener::listenerObj):
+        (KJS::JSLazyEventListener::parseCode):
+        (KJS::getNodeEventListener):
+        (KJS::EventConstructor::getValueProperty):
+        (KJS::getEventConstructor):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMEvent::put):
+        (KJS::DOMEvent::putValueProperty):
+        (KJS::DOMEventProtoFunc::callAsFunction):
+        (KJS::getDOMEvent):
+        (KJS::EventExceptionConstructor::getValueProperty):
+        (KJS::getEventExceptionConstructor):
+        (KJS::DOMUIEvent::getValueProperty):
+        (KJS::DOMUIEventProtoFunc::callAsFunction):
+        (KJS::DOMMouseEvent::getValueProperty):
+        (KJS::DOMMouseEventProtoFunc::callAsFunction):
+        (KJS::DOMKeyboardEvent::getValueProperty):
+        (KJS::DOMKeyboardEventProtoFunc::callAsFunction):
+        (KJS::MutationEventConstructor::getValueProperty):
+        (KJS::getMutationEventConstructor):
+        (KJS::DOMMutationEvent::getValueProperty):
+        (KJS::DOMMutationEventProtoFunc::callAsFunction):
+        (KJS::DOMWheelEvent::getValueProperty):
+        (KJS::DOMWheelEventProtoFunc::callAsFunction):
+        (KJS::stringOrUndefined):
+        (KJS::Clipboard::getValueProperty):
+        (KJS::Clipboard::put):
+        (KJS::Clipboard::putValueProperty):
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_events.h:
+        (KJS::JSAbstractEventListener::listenerObjImp):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::callAsFunction):
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLDocument::getValueProperty):
+        (KJS::KJS::HTMLDocument::put):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::HTMLElement::formIndexGetter):
+        (KJS::HTMLElement::formNameGetter):
+        (KJS::HTMLElement::selectIndexGetter):
+        (KJS::HTMLElement::framesetNameGetter):
+        (KJS::HTMLElement::frameWindowPropertyGetter):
+        (KJS::HTMLElement::runtimeObjectGetter):
+        (KJS::HTMLElement::runtimeObjectPropertyGetter):
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::KJS::HTMLElement::implementsCall):
+        (KJS::KJS::HTMLElement::callAsFunction):
+        (KJS::HTMLElement::htmlGetter):
+        (KJS::HTMLElement::headGetter):
+        (KJS::HTMLElement::linkGetter):
+        (KJS::HTMLElement::titleGetter):
+        (KJS::HTMLElement::metaGetter):
+        (KJS::HTMLElement::baseGetter):
+        (KJS::HTMLElement::isIndexGetter):
+        (KJS::HTMLElement::styleGetter):
+        (KJS::HTMLElement::bodyGetter):
+        (KJS::HTMLElement::formGetter):
+        (KJS::HTMLElement::selectGetter):
+        (KJS::HTMLElement::optGroupGetter):
+        (KJS::HTMLElement::optionGetter):
+        (KJS::getInputSelectionStart):
+        (KJS::getInputSelectionEnd):
+        (KJS::HTMLElement::inputGetter):
+        (KJS::HTMLElement::textAreaGetter):
+        (KJS::HTMLElement::buttonGetter):
+        (KJS::HTMLElement::labelGetter):
+        (KJS::HTMLElement::fieldSetGetter):
+        (KJS::HTMLElement::legendGetter):
+        (KJS::HTMLElement::uListGetter):
+        (KJS::HTMLElement::oListGetter):
+        (KJS::HTMLElement::dListGetter):
+        (KJS::HTMLElement::dirGetter):
+        (KJS::HTMLElement::menuGetter):
+        (KJS::HTMLElement::liGetter):
+        (KJS::HTMLElement::divGetter):
+        (KJS::HTMLElement::paragraphGetter):
+        (KJS::HTMLElement::headingGetter):
+        (KJS::HTMLElement::blockQuoteGetter):
+        (KJS::HTMLElement::quoteGetter):
+        (KJS::HTMLElement::preGetter):
+        (KJS::HTMLElement::brGetter):
+        (KJS::HTMLElement::baseFontGetter):
+        (KJS::HTMLElement::fontGetter):
+        (KJS::HTMLElement::hrGetter):
+        (KJS::HTMLElement::modGetter):
+        (KJS::HTMLElement::anchorGetter):
+        (KJS::HTMLElement::imageGetter):
+        (KJS::HTMLElement::objectGetter):
+        (KJS::HTMLElement::paramGetter):
+        (KJS::HTMLElement::appletGetter):
+        (KJS::HTMLElement::mapGetter):
+        (KJS::HTMLElement::areaGetter):
+        (KJS::HTMLElement::scriptGetter):
+        (KJS::HTMLElement::tableGetter):
+        (KJS::HTMLElement::tableCaptionGetter):
+        (KJS::HTMLElement::tableColGetter):
+        (KJS::HTMLElement::tableSectionGetter):
+        (KJS::HTMLElement::tableRowGetter):
+        (KJS::HTMLElement::tableCellGetter):
+        (KJS::HTMLElement::frameSetGetter):
+        (KJS::HTMLElement::frameGetter):
+        (KJS::HTMLElement::iFrameGetter):
+        (KJS::HTMLElement::marqueeGetter):
+        (KJS::HTMLElement::getValueProperty):
+        (KJS::HTMLElementFunction::HTMLElementFunction):
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::HTMLElement::htmlSetter):
+        (KJS::HTMLElement::headSetter):
+        (KJS::HTMLElement::linkSetter):
+        (KJS::HTMLElement::titleSetter):
+        (KJS::HTMLElement::metaSetter):
+        (KJS::HTMLElement::baseSetter):
+        (KJS::HTMLElement::isIndexSetter):
+        (KJS::HTMLElement::styleSetter):
+        (KJS::HTMLElement::bodySetter):
+        (KJS::HTMLElement::formSetter):
+        (KJS::HTMLElement::selectSetter):
+        (KJS::HTMLElement::optGroupSetter):
+        (KJS::HTMLElement::optionSetter):
+        (KJS::HTMLElement::inputSetter):
+        (KJS::HTMLElement::textAreaSetter):
+        (KJS::HTMLElement::buttonSetter):
+        (KJS::HTMLElement::labelSetter):
+        (KJS::HTMLElement::fieldSetSetter):
+        (KJS::HTMLElement::legendSetter):
+        (KJS::HTMLElement::uListSetter):
+        (KJS::HTMLElement::oListSetter):
+        (KJS::HTMLElement::dListSetter):
+        (KJS::HTMLElement::dirSetter):
+        (KJS::HTMLElement::menuSetter):
+        (KJS::HTMLElement::liSetter):
+        (KJS::HTMLElement::divSetter):
+        (KJS::HTMLElement::paragraphSetter):
+        (KJS::HTMLElement::headingSetter):
+        (KJS::HTMLElement::blockQuoteSetter):
+        (KJS::HTMLElement::quoteSetter):
+        (KJS::HTMLElement::preSetter):
+        (KJS::HTMLElement::brSetter):
+        (KJS::HTMLElement::baseFontSetter):
+        (KJS::HTMLElement::fontSetter):
+        (KJS::HTMLElement::hrSetter):
+        (KJS::HTMLElement::modSetter):
+        (KJS::HTMLElement::anchorSetter):
+        (KJS::HTMLElement::imageSetter):
+        (KJS::HTMLElement::objectSetter):
+        (KJS::HTMLElement::paramSetter):
+        (KJS::HTMLElement::appletSetter):
+        (KJS::HTMLElement::mapSetter):
+        (KJS::HTMLElement::areaSetter):
+        (KJS::HTMLElement::scriptSetter):
+        (KJS::HTMLElement::tableSetter):
+        (KJS::HTMLElement::tableCaptionSetter):
+        (KJS::HTMLElement::tableColSetter):
+        (KJS::HTMLElement::tableSectionSetter):
+        (KJS::HTMLElement::tableRowSetter):
+        (KJS::HTMLElement::tableCellSetter):
+        (KJS::HTMLElement::frameSetSetter):
+        (KJS::HTMLElement::frameSetter):
+        (KJS::HTMLElement::iFrameSetter):
+        (KJS::HTMLElement::marqueeSetter):
+        (KJS::HTMLElement::putValueProperty):
+        (KJS::HTMLCollection::lengthGetter):
+        (KJS::HTMLCollection::indexGetter):
+        (KJS::HTMLCollection::nameGetter):
+        (KJS::HTMLCollection::getOwnPropertySlot):
+        (KJS::KJS::HTMLCollection::callAsFunction):
+        (KJS::KJS::HTMLCollection::getNamedItems):
+        (KJS::KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::HTMLSelectCollection::selectedIndexGetter):
+        (KJS::KJS::HTMLSelectCollection::put):
+        (KJS::OptionConstructorImp::construct):
+        (KJS::ImageConstructorImp::construct):
+        (KJS::Image::getValueProperty):
+        (KJS::Image::put):
+        (KJS::Image::putValueProperty):
+        (KJS::isGradient):
+        (KJS::isImagePattern):
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::Context2D::getValueProperty):
+        (KJS::Context2D::put):
+        (KJS::colorRefFromValue):
+        (KJS::colorFromValue):
+        (KJS::Context2D::setShadow):
+        (KJS::Context2D::updateFillImagePattern):
+        (KJS::Context2D::updateStrokeImagePattern):
+        (KJS::Context2D::putValueProperty):
+        (KJS::Context2D::Context2D):
+        (KJS::Context2D::mark):
+        (KJS::GradientFunction::callAsFunction):
+        (KJS::Gradient::getValueProperty):
+        (KJS::Gradient::put):
+        (KJS::Gradient::putValueProperty):
+        (KJS::ImagePattern::getValueProperty):
+        (KJS::ImagePattern::put):
+        (KJS::ImagePattern::putValueProperty):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        (KJS::Plugins::getValueProperty):
+        (KJS::Plugins::indexGetter):
+        (KJS::Plugins::nameGetter):
+        (KJS::MimeTypes::getValueProperty):
+        (KJS::MimeTypes::indexGetter):
+        (KJS::MimeTypes::nameGetter):
+        (KJS::Plugin::getValueProperty):
+        (KJS::Plugin::indexGetter):
+        (KJS::Plugin::nameGetter):
+        (KJS::MimeType::getValueProperty):
+        (KJS::PluginsFunc::callAsFunction):
+        (KJS::NavigatorFunc::callAsFunction):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        (TestFunctionImp::callAsFunction):
+        (KJSProxyImpl::initScript):
+        (KJSProxy::proxy):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::getValueProperty):
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        (KJS::RangeConstructor::getValueProperty):
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::getValueProperty):
+        (KJS::DOMNodeIteratorProtoFunc::callAsFunction):
+        (KJS::NodeFilterConstructor::getValueProperty):
+        (KJS::getNodeFilterConstructor):
+        (KJS::DOMNodeFilterProtoFunc::callAsFunction):
+        (KJS::DOMTreeWalker::getValueProperty):
+        (KJS::DOMTreeWalker::put):
+        (KJS::DOMTreeWalkerProtoFunc::callAsFunction):
+        (KJS::JSNodeFilterCondition::JSNodeFilterCondition):
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::getValueProperty):
+        (KJS::DOMAbstractViewFunc::callAsFunction):
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getValueProperty):
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieveActive):
+        (KJS::Window::retrieve):
+        (KJS::parseFeatures):
+        (KJS::showModalDialog):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::childFrameGetter):
+        (KJS::Window::namedFrameGetter):
+        (KJS::Window::indexGetter):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::put):
+        (KJS::Window::installTimeout):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::Window::getJSEventListener):
+        (KJS::Window::getJSUnprotectedEventListener):
+        (KJS::Window::getJSLazyEventListener):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::ScheduledAction):
+        (KJS::ScheduledAction::execute):
+        (KJS::WindowQObject::installTimeout):
+        (KJS::FrameArray::getValueProperty):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        (KJS::Location::getValueProperty):
+        (KJS::Location::put):
+        (KJS::Location::toPrimitive):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::Selection::getValueProperty):
+        (KJS::Selection::toPrimitive):
+        (KJS::SelectionFunc::callAsFunction):
+        (KJS::BarInfo::getValueProperty):
+        (KJS::History::getValueProperty):
+        (KJS::HistoryFunc::callAsFunction):
+        (KJS::Konqueror::get):
+        (KJS::KonquerorFunc::callAsFunction):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestConstructorImp::construct):
+        (KJS::XMLHttpRequest::getValueProperty):
+        (KJS::XMLHttpRequest::put):
+        (KJS::XMLHttpRequest::putValueProperty):
+        (KJS::XMLHttpRequest::getAllResponseHeaders):
+        (KJS::XMLHttpRequest::getResponseHeader):
+        (KJS::XMLHttpRequest::getStatus):
+        (KJS::XMLHttpRequest::getStatusText):
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerConstructorImp::construct):
+        (KJS::XMLSerializerProtoFunc::callAsFunction):
+        * khtml/ecma/xmlserializer.h:
+        * kwq/DOMUtility.mm:
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bindingRootObject):
+        (KWQKHTMLPart::windowScriptObject):
+        (KWQKHTMLPart::windowScriptNPObject):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge executionContextForView:]):
+        * kwq/WebCoreScriptDebugger.mm:
+        (WebCoreScriptDebuggerImp::callEvent):
+        (WebCoreScriptDebuggerImp::returnEvent):
+        (-[WebCoreScriptDebugger finalize]):
+        (-[WebCoreScriptCallFrame _convertValueToObjcValue:]):
+        (-[WebCoreScriptCallFrame scopeChain]):
+        (-[WebCoreScriptCallFrame evaluateWebScript:]):
+
 2005-08-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

@@ -41,11 +41,11 @@ using namespace KJS::Bindings;
 
 // ---------------------- CField ----------------------
 
-Value CField::valueFromInstance(KJS::ExecState *exec, const Instance *inst) const
+ValueImp *CField::valueFromInstance(ExecState *exec, const Instance *inst) const
 {
     const CInstance *instance = static_cast<const CInstance*>(inst);
     NPObject *obj = instance->getObject();
-    Value aValue;
+    ValueImp *aValue;
     NPVariant property;
     VOID_TO_NPVARIANT(property);
     if (obj->_class->getProperty) {
@@ -58,7 +58,7 @@ Value CField::valueFromInstance(KJS::ExecState *exec, const Instance *inst) cons
     return aValue;
 }
 
-void CField::setValueToInstance(KJS::ExecState *exec, const Instance *inst, const KJS::Value &aValue) const
+void CField::setValueToInstance(ExecState *exec, const Instance *inst, ValueImp *aValue) const
 {
     const CInstance *instance = static_cast<const CInstance*>(inst);
     NPObject *obj = instance->getObject();

@@ -33,14 +33,14 @@ namespace KJS {
     StringInstanceImp(ObjectImp *proto, const UString &string);
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static Value lengthGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
-    static Value indexGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
+    static ValueImp *lengthGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
+    static ValueImp *indexGetter(ExecState *exec, const Identifier&, const PropertySlot &slot);
   };
 
   /**
@@ -69,7 +69,7 @@ namespace KJS {
     StringProtoFuncImp(ExecState *exec, int i, int len);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     enum { ToString, ValueOf, CharAt, CharCodeAt, Concat, IndexOf, LastIndexOf,
 	   Match, Replace, Search, Slice, Split,
@@ -96,9 +96,9 @@ namespace KJS {
                     StringPrototypeImp *stringProto);
 
     virtual bool implementsConstruct() const;
-    virtual Object construct(ExecState *exec, const List &args);
+    virtual ObjectImp *construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
   };
 
   /**
@@ -111,7 +111,7 @@ namespace KJS {
   public:
     StringObjectFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto);
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
   };
 
 } // namespace

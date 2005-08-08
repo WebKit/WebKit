@@ -60,7 +60,7 @@ RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi)
     instance = i;
 }
 
-Value RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance;
@@ -68,14 +68,14 @@ Value RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, const Identifier& 
     instance->begin();
 
     Class *aClass = instance->getClass();
-    Value result = aClass->fallbackObject(exec, instance, propertyName);
+    ValueImp *result = aClass->fallbackObject(exec, instance, propertyName);
 
     instance->end();
             
     return result;
 }
 
-Value RuntimeObjectImp::fieldGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *RuntimeObjectImp::fieldGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance;
@@ -84,14 +84,14 @@ Value RuntimeObjectImp::fieldGetter(ExecState *exec, const Identifier& propertyN
 
     Class *aClass = instance->getClass();
     Field *aField = aClass->fieldNamed(propertyName.ascii(), instance);
-    Value result = instance->getValueOfField(exec, aField); 
+    ValueImp *result = instance->getValueOfField(exec, aField); 
     
     instance->end();
             
     return result;
 }
 
-Value RuntimeObjectImp::methodGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *RuntimeObjectImp::methodGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance;
@@ -100,7 +100,7 @@ Value RuntimeObjectImp::methodGetter(ExecState *exec, const Identifier& property
 
     Class *aClass = instance->getClass();
     MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance);
-    Value result = Object(new RuntimeMethodImp(exec, propertyName, methodList));
+    ValueImp *result = new RuntimeMethodImp(exec, propertyName, methodList);
 
     instance->end();
             
@@ -132,7 +132,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         }
 	
         // Try a fallback object.
-        if (!aClass->fallbackObject(exec, instance, propertyName).type() != UndefinedType) {
+        if (!aClass->fallbackObject(exec, instance, propertyName)->isUndefined()) {
             slot.setCustom(this, fallbackObjectGetter);
             instance->end();
             return true;
@@ -146,7 +146,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
 }
 
 void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                    const Value &value, int attr)
+                    ValueImp *value, int attr)
 {
     instance->begin();
 
@@ -187,9 +187,9 @@ bool RuntimeObjectImp::deleteProperty(ExecState *exec,
     return false;
 }
 
-Value RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
+ValueImp *RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
-    Value result;
+    ValueImp *result;
     
     instance->begin();
 
@@ -206,11 +206,11 @@ bool RuntimeObjectImp::implementsCall() const
     return true;
 }
 
-Value RuntimeObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *RuntimeObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
     instance->begin();
 
-    Value aValue = getInternalInstance()->invokeDefaultMethod(exec, args);
+    ValueImp *aValue = getInternalInstance()->invokeDefaultMethod(exec, args);
     
     instance->end();
     

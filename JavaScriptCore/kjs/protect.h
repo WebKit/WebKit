@@ -48,33 +48,26 @@ namespace KJS {
       {
 	if (val) gcUnprotect(val);
       }
-
     
-    class ProtectedValue : public Value {
-    public:
-      ProtectedValue() : Value() {}
-      ProtectedValue(const Value&v)  : Value(v) { gcProtectNullTolerant(v.imp()); };
-      ProtectedValue(const ProtectedValue&v)  : Value(v) { gcProtectNullTolerant(v.imp()); };
-      ~ProtectedValue() { gcUnprotectNullTolerant(imp());}
-      ProtectedValue& operator=(const Value &v)
-	{ 
-	  ValueImp *old = imp();
-	  Value::operator=(v); 
-	  gcProtectNullTolerant(v.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-      ProtectedValue& operator=(const ProtectedValue &v)
-	{ 
-	  ValueImp *old = imp();
-	  Value::operator=(v); 
-	  gcProtectNullTolerant(v.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-    private:
-      explicit ProtectedValue(ValueImp *v);
-    };
+class ProtectedValue {
+public:
+    ProtectedValue() : m_value(0) { }
+    ProtectedValue(ValueImp *v) : m_value(v) { gcProtectNullTolerant(v); }
+    ProtectedValue(const ProtectedValue& v) : m_value(v.m_value) { gcProtectNullTolerant(m_value); }
+    ~ProtectedValue() { gcUnprotectNullTolerant(m_value); }
+    ProtectedValue& operator=(ValueImp *v)
+    {
+        gcProtectNullTolerant(v);
+        gcUnprotectNullTolerant(m_value);
+        m_value = v;
+        return *this;
+    }
+    ProtectedValue& operator=(const ProtectedValue& v) { return *this = v.m_value; }
+    operator ValueImp *() const { return m_value; }
+    ValueImp *operator->() const { return m_value; }
+protected:
+    ValueImp *m_value;
+};
 
 } // namespace
 

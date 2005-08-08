@@ -35,8 +35,8 @@ namespace KJS {
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
     virtual ReferenceList propList(ExecState *exec, bool recursive);
@@ -49,10 +49,10 @@ namespace KJS {
     unsigned getLength() const { return length; }
     
     void sort(ExecState *exec);
-    void sort(ExecState *exec, Object &compareFunction);
+    void sort(ExecState *exec, ObjectImp *compareFunction);
     
   private:
-    static Value lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     void setLength(unsigned newLength, ExecState *exec);
     

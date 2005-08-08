@@ -59,7 +59,7 @@ namespace KJS {
   public:
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual Value toPrimitive(ExecState *exec, Type) const { return String(toString(exec)); }
+    virtual ValueImp *toPrimitive(ExecState *exec, Type) const { return String(toString(exec)); }
     virtual UString toString(ExecState *) const { return UString("[function]"); }
   };
 
@@ -73,7 +73,7 @@ namespace KJS {
   class ScriptInterpreter : public Interpreter
   {
   public:
-    ScriptInterpreter(const Object &global, KHTMLPart* part);
+    ScriptInterpreter(ObjectImp *global, KHTMLPart* part);
     virtual ~ScriptInterpreter();
 
     static DOMObject* getDOMObject(void* objectHandle);
@@ -107,11 +107,11 @@ namespace KJS {
     DOM::EventImpl *getCurrentEvent() const { return m_evt; }
 
 #if APPLE_CHANGES
-    virtual bool isGlobalObject(const Value &v);
+    virtual bool isGlobalObject(ValueImp *v);
     virtual Interpreter *interpreterForGlobalObject (const ValueImp *imp);
     virtual bool isSafeScript (const Interpreter *target);
-    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
-    void *createObjcInstanceForValue (ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
+    virtual void *createLanguageInstanceForValue (ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
+    void *createObjcInstanceForValue (ExecState *exec, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 #endif
 
   private:
@@ -129,7 +129,7 @@ namespace KJS {
   inline ValueImp *cacheDOMObject(ExecState *exec, DOMObj *domObj)
   {
     if (!domObj)
-      return null();
+      return jsNull();
     ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
     if (DOMObject *ret = interp->getDOMObject(domObj))
       return ret;
@@ -155,12 +155,12 @@ namespace KJS {
   /**
    *  Get a String object, or Null() if s is null
    */
-  Value getStringOrNull(DOM::DOMString s);
+  ValueImp *getStringOrNull(DOM::DOMString s);
 
   /**
    * Convert a KJS value into a QVariant
    */
-  QVariant ValueToVariant(ExecState* exec, const Value& val);
+  QVariant ValueToVariant(ExecState* exec, ValueImp *val);
 
 } // namespace
 

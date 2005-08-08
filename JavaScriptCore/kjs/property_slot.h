@@ -36,17 +36,17 @@ class ObjectImp;
 class PropertySlot
 {
 public:
-    typedef Value (*GetValueFunc)(ExecState *, const Identifier&, const PropertySlot&);
+    typedef ValueImp *(*GetValueFunc)(ExecState *, const Identifier&, const PropertySlot&);
 
     bool isSet() { return m_getValue != 0; }
-    Value getValue(ExecState *exec, const Identifier& propertyName) const
+    ValueImp *getValue(ExecState *exec, const Identifier& propertyName) const
     { 
         if (m_getValue == VALUE_SLOT_MARKER)
             return *m_data.valueSlot;
         return m_getValue(exec, propertyName, *this); 
     }
 
-    Value getValue(ExecState *exec, unsigned propertyName) const
+    ValueImp *getValue(ExecState *exec, unsigned propertyName) const
     { 
         if (m_getValue == VALUE_SLOT_MARKER)
             return *m_data.valueSlot;
@@ -92,7 +92,7 @@ public:
     unsigned long index() const { return m_data.index; }
 
 private:
-    static Value undefinedGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *undefinedGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     GetValueFunc m_getValue;
 

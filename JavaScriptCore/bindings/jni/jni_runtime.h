@@ -35,7 +35,6 @@
 
 namespace KJS
 {
-class Value;
 
 namespace Bindings
 {
@@ -68,7 +67,7 @@ public:
     }
     const jchar *uchars() const { return (const jchar *)_ustring.data(); }
     int length() const { return _ustring.size(); }
-    KJS::UString ustring() const { return _ustring; }
+    UString ustring() const { return _ustring; }
     
 private:
     UString _ustring;
@@ -182,8 +181,8 @@ public:
         return *this;
     }
     
-    virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const;
-    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
+    virtual ValueImp *valueFromInstance(ExecState *exec, const Instance *instance) const;
+    virtual void setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const;
     
     virtual const char *name() const { return _name.UTF8String(); }
     virtual RuntimeType type() const { return _type.UTF8String(); }
@@ -191,8 +190,8 @@ public:
     JNIType getJNIType() const { return _JNIType; }
     
 private:
-    void JavaField::dispatchSetValueToInstance(KJS::ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const;
-    jvalue JavaField::dispatchValueFromInstance(KJS::ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const;
+    void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *instance, jvalue javaValue, const char *name, const char *sig) const;
+    jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance *instance, const char *name, const char *sig, JNIType returnType) const;
 
     JavaString _name;
     JavaString _type;
@@ -261,7 +260,7 @@ private:
     JavaParameter *_parameters;
     long _numParameters;
     JavaString _name;
-    mutable KJS::UString *_signature;
+    mutable UString *_signature;
     JavaString _returnType;
     JNIType _JNIReturnType;
     mutable jmethodID _methodID;
@@ -291,15 +290,15 @@ public:
         return *this;
     };
 
-    virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const;
-    virtual KJS::Value valueAt(KJS::ExecState *exec, unsigned int index) const;
+    virtual void setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const;
+    virtual ValueImp *valueAt(ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
     virtual ~JavaArray();
 
     jobject javaArray() const { return _array->_instance; }
 
-    static KJS::Value convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type, const RootObject *r);
+    static ValueImp *convertJObjectToArray (ExecState *exec, jobject anObject, const char *type, const RootObject *r);
 
     const RootObject *executionContext() const { return _root; }
     

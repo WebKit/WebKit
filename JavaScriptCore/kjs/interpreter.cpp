@@ -50,12 +50,12 @@ const ScopeChain &Context::scopeChain() const
   return rep->scopeChain();
 }
 
-Object Context::variableObject() const
+ObjectImp *Context::variableObject() const
 {
   return rep->variableObject();
 }
 
-Object Context::thisValue() const
+ObjectImp *Context::thisValue() const
 {
   return rep->thisValue();
 }
@@ -67,12 +67,12 @@ const Context Context::callingContext() const
 
 // ------------------------------ Interpreter ----------------------------------
 
-Interpreter::Interpreter(const Object &global) 
+Interpreter::Interpreter(ObjectImp *global) 
   : rep(0)
   , m_argumentsPropertyName(&argumentsPropertyName)
   , m_specialPrototypePropertyName(&specialPrototypePropertyName)
 {
-  rep = new InterpreterImp(this,global);
+  rep = new InterpreterImp(this, global);
 }
 
 Interpreter::Interpreter()
@@ -80,8 +80,7 @@ Interpreter::Interpreter()
   , m_argumentsPropertyName(&argumentsPropertyName)
   , m_specialPrototypePropertyName(&specialPrototypePropertyName)
 {
-  Object global(new ObjectImp());
-  rep = new InterpreterImp(this,global);
+  rep = new InterpreterImp(this, new ObjectImp);
 }
 
 Interpreter::~Interpreter()
@@ -89,7 +88,7 @@ Interpreter::~Interpreter()
   delete rep;
 }
 
-Object &Interpreter::globalObject() const
+ObjectImp *Interpreter::globalObject() const
 {
   return rep->globalObject();
 }
@@ -124,12 +123,12 @@ bool Interpreter::checkSyntax(const UString &code)
   return rep->checkSyntax(code);
 }
 
-Completion Interpreter::evaluate(const UString &code, const Value &thisV, const UString &)
+Completion Interpreter::evaluate(const UString &code, ValueImp *thisV, const UString &)
 {
   return evaluate(UString(), 0, code, thisV);
 }
 
-Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, const Value &thisV)
+Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumber, const UString &code, ValueImp *thisV)
 {
   Completion comp = rep->evaluate(code,thisV, sourceURL, startingLineNumber);
 
@@ -138,7 +137,7 @@ Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumbe
     lock();
     ExecState *exec = rep->globalExec();
     char *f = strdup(sourceURL.ascii());
-    const char *message = comp.value().toObject(exec).toString(exec).ascii();
+    const char *message = comp.value()->toObject(exec)->toString(exec).ascii();
     printf("[%d] %s:%s\n", getpid(), f, message);
 
     free(f);
@@ -149,152 +148,152 @@ Completion Interpreter::evaluate(const UString &sourceURL, int startingLineNumbe
   return comp;
 }
 
-Object Interpreter::builtinObject() const
+ObjectImp *Interpreter::builtinObject() const
 {
   return rep->builtinObject();
 }
 
-Object Interpreter::builtinFunction() const
+ObjectImp *Interpreter::builtinFunction() const
 {
   return rep->builtinFunction();
 }
 
-Object Interpreter::builtinArray() const
+ObjectImp *Interpreter::builtinArray() const
 {
   return rep->builtinArray();
 }
 
-Object Interpreter::builtinBoolean() const
+ObjectImp *Interpreter::builtinBoolean() const
 {
   return rep->builtinBoolean();
 }
 
-Object Interpreter::builtinString() const
+ObjectImp *Interpreter::builtinString() const
 {
   return rep->builtinString();
 }
 
-Object Interpreter::builtinNumber() const
+ObjectImp *Interpreter::builtinNumber() const
 {
   return rep->builtinNumber();
 }
 
-Object Interpreter::builtinDate() const
+ObjectImp *Interpreter::builtinDate() const
 {
   return rep->builtinDate();
 }
 
-Object Interpreter::builtinRegExp() const
+ObjectImp *Interpreter::builtinRegExp() const
 {
   return rep->builtinRegExp();
 }
 
-Object Interpreter::builtinError() const
+ObjectImp *Interpreter::builtinError() const
 {
   return rep->builtinError();
 }
 
-Object Interpreter::builtinObjectPrototype() const
+ObjectImp *Interpreter::builtinObjectPrototype() const
 {
   return rep->builtinObjectPrototype();
 }
 
-Object Interpreter::builtinFunctionPrototype() const
+ObjectImp *Interpreter::builtinFunctionPrototype() const
 {
   return rep->builtinFunctionPrototype();
 }
 
-Object Interpreter::builtinArrayPrototype() const
+ObjectImp *Interpreter::builtinArrayPrototype() const
 {
   return rep->builtinArrayPrototype();
 }
 
-Object Interpreter::builtinBooleanPrototype() const
+ObjectImp *Interpreter::builtinBooleanPrototype() const
 {
   return rep->builtinBooleanPrototype();
 }
 
-Object Interpreter::builtinStringPrototype() const
+ObjectImp *Interpreter::builtinStringPrototype() const
 {
   return rep->builtinStringPrototype();
 }
 
-Object Interpreter::builtinNumberPrototype() const
+ObjectImp *Interpreter::builtinNumberPrototype() const
 {
   return rep->builtinNumberPrototype();
 }
 
-Object Interpreter::builtinDatePrototype() const
+ObjectImp *Interpreter::builtinDatePrototype() const
 {
   return rep->builtinDatePrototype();
 }
 
-Object Interpreter::builtinRegExpPrototype() const
+ObjectImp *Interpreter::builtinRegExpPrototype() const
 {
   return rep->builtinRegExpPrototype();
 }
 
-Object Interpreter::builtinErrorPrototype() const
+ObjectImp *Interpreter::builtinErrorPrototype() const
 {
   return rep->builtinErrorPrototype();
 }
 
-Object Interpreter::builtinEvalError() const
+ObjectImp *Interpreter::builtinEvalError() const
 {
   return rep->builtinEvalError();
 }
 
-Object Interpreter::builtinRangeError() const
+ObjectImp *Interpreter::builtinRangeError() const
 {
   return rep->builtinRangeError();
 }
 
-Object Interpreter::builtinReferenceError() const
+ObjectImp *Interpreter::builtinReferenceError() const
 {
   return rep->builtinReferenceError();
 }
 
-Object Interpreter::builtinSyntaxError() const
+ObjectImp *Interpreter::builtinSyntaxError() const
 {
   return rep->builtinSyntaxError();
 }
 
-Object Interpreter::builtinTypeError() const
+ObjectImp *Interpreter::builtinTypeError() const
 {
   return rep->builtinTypeError();
 }
 
-Object Interpreter::builtinURIError() const
+ObjectImp *Interpreter::builtinURIError() const
 {
   return rep->builtinURIError();
 }
 
-Object Interpreter::builtinEvalErrorPrototype() const
+ObjectImp *Interpreter::builtinEvalErrorPrototype() const
 {
   return rep->builtinEvalErrorPrototype();
 }
 
-Object Interpreter::builtinRangeErrorPrototype() const
+ObjectImp *Interpreter::builtinRangeErrorPrototype() const
 {
   return rep->builtinRangeErrorPrototype();
 }
 
-Object Interpreter::builtinReferenceErrorPrototype() const
+ObjectImp *Interpreter::builtinReferenceErrorPrototype() const
 {
   return rep->builtinReferenceErrorPrototype();
 }
 
-Object Interpreter::builtinSyntaxErrorPrototype() const
+ObjectImp *Interpreter::builtinSyntaxErrorPrototype() const
 {
   return rep->builtinSyntaxErrorPrototype();
 }
 
-Object Interpreter::builtinTypeErrorPrototype() const
+ObjectImp *Interpreter::builtinTypeErrorPrototype() const
 {
   return rep->builtinTypeErrorPrototype();
 }
 
-Object Interpreter::builtinURIErrorPrototype() const
+ObjectImp *Interpreter::builtinURIErrorPrototype() const
 {
   return rep->builtinURIErrorPrototype();
 }
@@ -337,7 +336,7 @@ void Interpreter::setShouldPrintExceptions(bool print)
 }
 
 
-void *Interpreter::createLanguageInstanceForValue (ExecState *exec, int language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *Interpreter::createLanguageInstanceForValue(ExecState *exec, int language, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     return Bindings::Instance::createLanguageInstanceForValue (exec, (Bindings::Instance::BindingLanguage)language, value, origin, current);
 }

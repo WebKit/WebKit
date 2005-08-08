@@ -53,24 +53,24 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual Value valueOf() const;
-    virtual Value defaultValue (Type hint) const;
+    virtual ValueImp *valueOf() const;
+    virtual ValueImp *defaultValue (Type hint) const;
 
-    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual ValueImp *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual ValueImp *invokeDefaultMethod (ExecState *exec, const List &args);
 
-    virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
+    virtual void setValueOfField (ExecState *exec, const Field *aField, ValueImp *aValue) const;
     virtual bool supportsSetValueOfUndefinedField ();
-    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue);
+    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, ValueImp *aValue);
     
-    virtual Value ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
-    virtual Value getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
+    virtual ValueImp *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
+    virtual ValueImp *getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
     
-    Value stringValue() const;
-    Value numberValue() const;
-    Value booleanValue() const;
+    ValueImp *stringValue() const;
+    ValueImp *numberValue() const;
+    ValueImp *booleanValue() const;
     
 private:
     ObjectStructPtr _instance;

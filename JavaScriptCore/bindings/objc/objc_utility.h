@@ -68,14 +68,14 @@ typedef enum {
 
 class RootObject;
 
-ObjcValue convertValueToObjcValue (KJS::ExecState *exec, const KJS::Value &value, ObjcValueType type);
-Value convertNSStringToString(NSString *nsstring);
-Value convertObjcValueToValue (KJS::ExecState *exec, void *buffer, ObjcValueType type);
-ObjcValueType objcValueTypeForType (const char *type);
+ObjcValue convertValueToObjcValue(ExecState *exec, ValueImp *value, ObjcValueType type);
+ValueImp *convertNSStringToString(NSString *nsstring);
+ValueImp *convertObjcValueToValue(ExecState *exec, void *buffer, ObjcValueType type);
+ObjcValueType objcValueTypeForType(const char *type);
 
 void JSMethodNameToObjCMethodName(const char *name, char *name, unsigned int length);
 
-void *createObjcInstanceForValue (const Object &value, const RootObject *origin, const RootObject *current);
+void *createObjcInstanceForValue(ObjectImp *value, const RootObject *origin, const RootObject *current);
 
 } // namespace Bindings
 

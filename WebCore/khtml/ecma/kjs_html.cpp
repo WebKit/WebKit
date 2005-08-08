@@ -142,21 +142,21 @@ namespace KJS {
 class HTMLElementFunction : public DOMFunction {
 public:
   HTMLElementFunction(ExecState *exec, int i, int len);
-  virtual Value call(ExecState *exec, Object &thisObj, const List&args);
+  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args);
 private:
   int id;
 };
 
 IMPLEMENT_PROTOFUNC(HTMLDocFunction)
 
-Value KJS::HTMLDocFunction::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj.inherits(&HTMLDocument::info)) {
-    Object err = Error::create(exec,TypeError);
+  if (!thisObj->inherits(&HTMLDocument::info)) {
+    ObjectImp *err = Error::create(exec,TypeError);
     exec->setException(err);
     return err;
   }
-  HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(static_cast<HTMLDocument *>(thisObj.imp())->impl());
+  HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(static_cast<HTMLDocument *>(thisObj)->impl());
 
   switch (id) {
   case HTMLDocument::Clear: // even IE doesn't support that one...
@@ -169,14 +169,13 @@ Value KJS::HTMLDocFunction::call(ExecState *exec, Object &thisObj, const List &a
       if (part) {
 	Window *window = Window::retrieveWindow(part);
 	if (window) {
-	  Object functionObject = Object::dynamicCast(window->get(exec, "open"));
-	  if (functionObject.isNull() || !functionObject.implementsCall()) {
-	    Object exception = Error::create(exec, TypeError);
+	  ObjectImp *functionObject = window->get(exec, "open")->getObject();
+	  if (!functionObject || !functionObject->implementsCall()) {
+	    ObjectImp *exception = Error::create(exec, TypeError);
 	    exec->setException(exception);
 	    return exception;
 	  }
-	  Object windowObject(window);
-	  return functionObject.call(exec, windowObject, args);
+	  return functionObject->call(exec, window, args);
 	}
       }
       return Undefined();
@@ -194,7 +193,7 @@ Value KJS::HTMLDocFunction::call(ExecState *exec, Object &thisObj, const List &a
     // or no arguments
     UString str = "";
     for (int i = 0; i < args.size(); i++)
-      str += args[i].toString(exec);
+      str += args[i]->toString(exec);
     if (id == HTMLDocument::WriteLn)
       str += "\n";
     //kdDebug() << "document.write: " << str.ascii() << endl;
@@ -202,7 +201,7 @@ Value KJS::HTMLDocFunction::call(ExecState *exec, Object &thisObj, const List &a
     return Undefined();
   }
   case HTMLDocument::GetElementsByName:
-    return getDOMNodeList(exec, doc.getElementsByName(args[0].toString(exec).string()).get());
+    return getDOMNodeList(exec, doc.getElementsByName(args[0]->toString(exec).string()).get());
   case HTMLDocument::CaptureEvents:
   case HTMLDocument::ReleaseEvents:
     // Do nothing for now. These are NS-specific legacy calls.
@@ -269,7 +268,7 @@ HTMLDocument::HTMLDocument(ExecState *exec, HTMLDocumentImpl *d)
 {
 }
 
-Value HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   HTMLDocument *thisObj = static_cast<HTMLDocument *>(slot.slotBase());
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(thisObj->impl());
@@ -290,7 +289,7 @@ Value HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& propertyN
   return getHTMLCollection(exec, collection.get());
 }
 
-Value HTMLDocument::getValueProperty(ExecState *exec, int token) const
+ValueImp *HTMLDocument::getValueProperty(ExecState *exec, int token) const
 {
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
 
@@ -312,12 +311,8 @@ Value HTMLDocument::getValueProperty(ExecState *exec, int token) const
   case Body:
     return getDOMNode(exec, body);
   case Location:
-    if (part) {
-      Window* win = Window::retrieveWindow(part);
-      if (win)
-        return Value(win->location());
-    }
-
+    if (Window* win = Window::retrieveWindow(part))
+      return win->location();
     return Undefined();
   case Cookie:
     return String(doc.cookie());
@@ -337,8 +332,8 @@ Value HTMLDocument::getValueProperty(ExecState *exec, int token) const
     {
       // To be implemented. Meanwhile, return an object with a length property set to 0
       kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
-      Object obj(new ObjectImp());
-      obj.put(exec, lengthPropertyName, Number(0));
+      ObjectImp *obj = new ObjectImp;
+      obj->put(exec, lengthPropertyName, Number(0));
       return obj;
     }
   case All:
@@ -406,7 +401,7 @@ bool HTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propert
   return DOMDocument::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLDocument::put " << propertyName.qstring() << endl;
@@ -414,7 +409,7 @@ void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, con
   lookupPut<HTMLDocument, DOMDocument>( exec, propertyName, value, attr, &HTMLDocumentTable, this );
 }
 
-void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
+void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
@@ -423,22 +418,22 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, const Value
 
   switch (token) {
   case Title:
-    doc.setTitle(value.toString(exec).string());
+    doc.setTitle(value->toString(exec).string());
     break;
   case Body:
     doc.setBody(toHTMLElement(value), exception);
     break;
   case Domain: // not part of the DOM
-    doc.setDomain(value.toString(exec).string());
+    doc.setDomain(value->toString(exec).string());
     break;
   case Cookie:
-    doc.setCookie(value.toString(exec).string());
+    doc.setCookie(value->toString(exec).string());
     break;
   case Location: {
     KHTMLPart *part = doc.part();
     if (part)
     {
-      QString str = value.toString(exec).qstring();
+      QString str = value->toString(exec).qstring();
 
       // When assigning location, IE and Mozilla both resolve the URL
       // relative to the frame where the JavaScript is executing not
@@ -455,18 +450,18 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, const Value
   }
   case BgColor:
     if (bodyElement)
-      bodyElement->setBgColor(value.toString(exec).string());
+      bodyElement->setBgColor(value->toString(exec).string());
     break;
   case FgColor:
     if (bodyElement)
-      bodyElement->setText(value.toString(exec).string());
+      bodyElement->setText(value->toString(exec).string());
     break;
   case AlinkColor:
     if (bodyElement) {
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value.toString(exec).string();
+      DOMString newColor = value->toString(exec).string();
       if (bodyElement->aLink() != newColor)
         bodyElement->setALink(newColor);
     }
@@ -476,7 +471,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, const Value
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value.toString(exec).string();
+      DOMString newColor = value->toString(exec).string();
       if (bodyElement->link() != newColor)
 	bodyElement->setLink(newColor);
     }
@@ -486,17 +481,17 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, const Value
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value.toString(exec).string();
+      DOMString newColor = value->toString(exec).string();
       if (bodyElement->vLink() != newColor)
 	bodyElement->setVLink(newColor);
     }
     break;
   case Dir:
-    body->setDir(value.toString(exec).string());
+    body->setDir(value->toString(exec).string());
     break;
   case DesignMode:
     {
-      DOMString modeString = value.toString(exec).string();
+      DOMString modeString = value->toString(exec).string();
       DocumentImpl::InheritedBool mode;
       if (!strcasecmp(modeString, "on"))
         mode = DocumentImpl::on;
@@ -1268,7 +1263,7 @@ HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
 {
 }
 
-Value HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1276,7 +1271,7 @@ Value HTMLElement::formIndexGetter(ExecState *exec, const Identifier& propertyNa
     return getDOMNode(exec, form->elements()->item(slot.index()));
 }
 
-Value HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
@@ -1284,7 +1279,7 @@ Value HTMLElement::formNameGetter(ExecState *exec, const Identifier& propertyNam
     return HTMLCollection(exec, form->elements().get()).getNamedItems(exec, propertyName);
 }
 
-Value HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLSelectElementImpl *select = static_cast<HTMLSelectElementImpl *>(thisObj->impl());
@@ -1292,44 +1287,31 @@ Value HTMLElement::selectIndexGetter(ExecState *exec, const Identifier& property
     return getDOMNode(exec, select->optionsHTMLCollection()->item(slot.index()));
 }
 
-Value HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
 
     NodeImpl *frame = element->children()->namedItem(propertyName.string());
-    DocumentImpl* doc = static_cast<HTMLFrameElementImpl *>(frame)->contentDocument();
-    if (doc) {
-        KHTMLPart* part = doc->part();
-        if (part) {
-            Window *window = Window::retrieveWindow(part);
-            if (window) {
-                return Value(window);
-            }
-        }
-    }
+    if (DocumentImpl* doc = static_cast<HTMLFrameElementImpl *>(frame)->contentDocument())
+        if (Window *window = Window::retrieveWindow(doc->part()))
+            return window;
 
     return Undefined();
 }
 
-Value HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::frameWindowPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
-    DocumentImpl *doc = static_cast<HTMLFrameElementImpl *>(thisObj->impl())->contentDocument();
 
-    if (doc) {
-        KHTMLPart* part = doc->part();
-        if (part) {
-            Window *window = Window::retrieveWindow(part);
-            if (window)
-                return window->get(exec, propertyName);
-        }
-    }
+    if (DocumentImpl *doc = static_cast<HTMLFrameElementImpl *>(thisObj->impl())->contentDocument())
+        if (Window *window = Window::retrieveWindow(doc->part()))
+            return window->get(exec, propertyName);
 
     return Undefined();
 }
 
-Value HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
@@ -1337,14 +1319,13 @@ Value HTMLElement::runtimeObjectGetter(ExecState *exec, const Identifier& proper
     return getRuntimeObject(exec, element);
 }
 
-Value HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLElement::runtimeObjectPropertyGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
 
-    Value runtimeObject = getRuntimeObject(exec, element);
-    if (!runtimeObject.isNull())
-        return static_cast<ObjectImp *>(runtimeObject.imp())->get(exec, propertyName);
+    if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
+        return static_cast<ObjectImp *>(runtimeObject)->get(exec, propertyName);
     return Undefined();
 }
 
@@ -1383,15 +1364,11 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             slot.setCustom(this, framesetNameGetter);
         }
     } else if (element.hasLocalName(frameTag) || element.hasLocalName(iframeTag)) {
-        DocumentImpl* doc = static_cast<HTMLFrameElementImpl &>(element).contentDocument();
-        if (doc) {
-          KHTMLPart* part = doc->part();
-            if (part) {
-                Window *window = Window::retrieveWindow(part);
-                if (window && window->hasProperty(exec, propertyName)) {
-                    slot.setCustom(this, frameWindowPropertyGetter);
-                    return true;
-                }
+        if (DocumentImpl* doc = static_cast<HTMLFrameElementImpl &>(element).contentDocument()) {
+            Window *window = Window::retrieveWindow(doc->part());
+            if (window && window->hasProperty(exec, propertyName)) {
+                slot.setCustom(this, frameWindowPropertyGetter);
+                return true;
             }
         }
     }
@@ -1402,9 +1379,9 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             slot.setCustom(this, runtimeObjectGetter);
             return true;
         }
-	Value runtimeObject = getRuntimeObject(exec,&element);
-	if (!runtimeObject.isNull()) {
-	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
+	ValueImp *runtimeObject = getRuntimeObject(exec,&element);
+	if (runtimeObject) {
+	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject);
 	    if (imp->hasProperty(exec, propertyName)) {
                 slot.setCustom(this, runtimeObjectPropertyGetter);
                 return true;
@@ -1447,37 +1424,27 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
 bool KJS::HTMLElement::implementsCall() const
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    if (element->hasTagName(embedTag) ||
-        element->hasTagName(objectTag) ||
-        element->hasTagName(appletTag)) {
+    if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
         DocumentImpl* doc = element->getDocument();
         KJSProxy *proxy = KJSProxy::proxy(doc->part());
         ExecState *exec = proxy->interpreter()->globalExec();
-        Value runtimeObject = getRuntimeObject(exec,element);
-        if (!runtimeObject.isNull()) {
-            ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-            return imp->implementsCall ();
-        }
+        if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
+            return static_cast<ObjectImp *>(runtimeObject)->implementsCall();
     }
     return false;
 }
 
-Value KJS::HTMLElement::call(ExecState *exec, Object &thisObj, const List&args)
+ValueImp *KJS::HTMLElement::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List&args)
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
-    if (element->hasTagName(embedTag) ||
-        element->hasTagName(objectTag) ||
-        element->hasTagName(appletTag)) {
-        Value runtimeObject = getRuntimeObject(exec,element);
-        if (!runtimeObject.isNull()) {
-            ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
-            return imp->call (exec, thisObj, args);
-        }
+    if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
+        if (ValueImp *runtimeObject = getRuntimeObject(exec, element))
+            return static_cast<ObjectImp *>(runtimeObject)->call(exec, thisObj, args);
     }
     return Undefined();
 }
 
-Value HTMLElement::htmlGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::htmlGetter(ExecState* exec, int token) const
 {
     HTMLHtmlElementImpl& html = *static_cast<HTMLHtmlElementImpl*>(impl());
     if (token == HtmlVersion)
@@ -1485,7 +1452,7 @@ Value HTMLElement::htmlGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::headGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::headGetter(ExecState* exec, int token) const
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile)
@@ -1493,7 +1460,7 @@ Value HTMLElement::headGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::linkGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::linkGetter(ExecState* exec, int token) const
 {
     HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
@@ -1521,7 +1488,7 @@ Value HTMLElement::linkGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::titleGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::titleGetter(ExecState* exec, int token) const
 {
     HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
     if (token == TitleText)
@@ -1529,7 +1496,7 @@ Value HTMLElement::titleGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::metaGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::metaGetter(ExecState* exec, int token) const
 {
     HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
@@ -1541,7 +1508,7 @@ Value HTMLElement::metaGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::baseGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::baseGetter(ExecState* exec, int token) const
 {
     HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
     switch (token) {
@@ -1551,7 +1518,7 @@ Value HTMLElement::baseGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::isIndexGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::isIndexGetter(ExecState* exec, int token) const
 {
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     switch (token) {
@@ -1561,7 +1528,7 @@ Value HTMLElement::isIndexGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::styleGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::styleGetter(ExecState* exec, int token) const
 {
     HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
     switch (token) {
@@ -1573,7 +1540,7 @@ Value HTMLElement::styleGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::bodyGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::bodyGetter(ExecState* exec, int token) const
 {
     HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
     switch (token) {
@@ -1604,7 +1571,7 @@ Value HTMLElement::bodyGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::formGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::formGetter(ExecState* exec, int token) const
 {
     HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
     switch (token) {
@@ -1620,7 +1587,7 @@ Value HTMLElement::formGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::selectGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::selectGetter(ExecState* exec, int token) const
 {
     HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
     switch (token) {
@@ -1639,7 +1606,7 @@ Value HTMLElement::selectGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::optGroupGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::optGroupGetter(ExecState* exec, int token) const
 {
     HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
     switch (token) {
@@ -1649,7 +1616,7 @@ Value HTMLElement::optGroupGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::optionGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::optionGetter(ExecState* exec, int token) const
 {
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
     switch (token) {
@@ -1665,21 +1632,21 @@ Value HTMLElement::optionGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-static Value getInputSelectionStart(HTMLInputElementImpl &input)
+static ValueImp *getInputSelectionStart(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
         return Number(input.selectionStart());
     return Undefined();
 }
 
-static Value getInputSelectionEnd(HTMLInputElementImpl &input)
+static ValueImp *getInputSelectionEnd(HTMLInputElementImpl &input)
 {
     if (input.canHaveSelection())
         return Number(input.selectionEnd());
     return Undefined();
 }
 
-Value HTMLElement::inputGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::inputGetter(ExecState* exec, int token) const
 {
     HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
@@ -1707,7 +1674,7 @@ Value HTMLElement::inputGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::textAreaGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::textAreaGetter(ExecState* exec, int token) const
 {
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
@@ -1728,7 +1695,7 @@ Value HTMLElement::textAreaGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::buttonGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::buttonGetter(ExecState* exec, int token) const
 {
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
@@ -1743,7 +1710,7 @@ Value HTMLElement::buttonGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::labelGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::labelGetter(ExecState* exec, int token) const
 {
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
@@ -1754,7 +1721,7 @@ Value HTMLElement::labelGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::fieldSetGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
 {
     HTMLFieldSetElementImpl& fieldSet = *static_cast<HTMLFieldSetElementImpl*>(impl());
     if (token == FieldSetForm)
@@ -1762,7 +1729,7 @@ Value HTMLElement::fieldSetGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::legendGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::legendGetter(ExecState* exec, int token) const
 {
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
@@ -1773,7 +1740,7 @@ Value HTMLElement::legendGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::uListGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::uListGetter(ExecState* exec, int token) const
 {
     HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
     switch (token) {
@@ -1783,7 +1750,7 @@ Value HTMLElement::uListGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::oListGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::oListGetter(ExecState* exec, int token) const
 {
     HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
     switch (token) {
@@ -1794,7 +1761,7 @@ Value HTMLElement::oListGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::dListGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::dListGetter(ExecState* exec, int token) const
 {
     HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
     if (token == DListCompact)
@@ -1802,7 +1769,7 @@ Value HTMLElement::dListGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::dirGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::dirGetter(ExecState* exec, int token) const
 {
     HTMLDirectoryElementImpl& dir = *static_cast<HTMLDirectoryElementImpl*>(impl());
     if (token == DirectoryCompact)
@@ -1810,7 +1777,7 @@ Value HTMLElement::dirGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::menuGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::menuGetter(ExecState* exec, int token) const
 {
     HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
     if (token == MenuCompact)
@@ -1818,7 +1785,7 @@ Value HTMLElement::menuGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::liGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::liGetter(ExecState* exec, int token) const
 {
     HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
     switch (token) {
@@ -1828,7 +1795,7 @@ Value HTMLElement::liGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::divGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::divGetter(ExecState* exec, int token) const
 {
     HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
     if (token == DivAlign)
@@ -1836,7 +1803,7 @@ Value HTMLElement::divGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::paragraphGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::paragraphGetter(ExecState* exec, int token) const
 {
     HTMLParagraphElementImpl& p = *static_cast<HTMLParagraphElementImpl*>(impl());
     if (token == ParagraphAlign)
@@ -1844,7 +1811,7 @@ Value HTMLElement::paragraphGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::headingGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::headingGetter(ExecState* exec, int token) const
 {
     HTMLHeadingElementImpl& h = *static_cast<HTMLHeadingElementImpl*>(impl());
     if (token == HeadingAlign)
@@ -1852,7 +1819,7 @@ Value HTMLElement::headingGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
 {
     HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
     if (token == BlockQuoteCite)
@@ -1860,7 +1827,7 @@ Value HTMLElement::blockQuoteGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::quoteGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::quoteGetter(ExecState* exec, int token) const
 {
     HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
     if (token == QuoteCite)
@@ -1868,7 +1835,7 @@ Value HTMLElement::quoteGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::preGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::preGetter(ExecState* exec, int token) const
 {
     // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
@@ -1877,7 +1844,7 @@ Value HTMLElement::preGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::brGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::brGetter(ExecState* exec, int token) const
 {
     HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
     if (token == BRClear)
@@ -1885,7 +1852,7 @@ Value HTMLElement::brGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::baseFontGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::baseFontGetter(ExecState* exec, int token) const
 {
     HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
     switch (token) {
@@ -1896,7 +1863,7 @@ Value HTMLElement::baseFontGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::fontGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::fontGetter(ExecState* exec, int token) const
 {
     HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
     switch (token) {
@@ -1907,7 +1874,7 @@ Value HTMLElement::fontGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::hrGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::hrGetter(ExecState* exec, int token) const
 {
     HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
     switch (token) {
@@ -1919,7 +1886,7 @@ Value HTMLElement::hrGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::modGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::modGetter(ExecState* exec, int token) const
 {
     HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
     switch (token) {
@@ -1929,7 +1896,7 @@ Value HTMLElement::modGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::anchorGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::anchorGetter(ExecState* exec, int token) const
 {
     HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
     switch (token) {
@@ -1967,7 +1934,7 @@ Value HTMLElement::anchorGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::imageGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::imageGetter(ExecState* exec, int token) const
 {
     HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
     switch (token) {
@@ -1989,7 +1956,7 @@ Value HTMLElement::imageGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::objectGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::objectGetter(ExecState* exec, int token) const
 {
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
@@ -2017,7 +1984,7 @@ Value HTMLElement::objectGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::paramGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::paramGetter(ExecState* exec, int token) const
 {
     HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
     switch (token) {
@@ -2029,7 +1996,7 @@ Value HTMLElement::paramGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::appletGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::appletGetter(ExecState* exec, int token) const
 {
     HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
     switch (token) {
@@ -2048,7 +2015,7 @@ Value HTMLElement::appletGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::mapGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::mapGetter(ExecState* exec, int token) const
 {
     HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
     switch (token) {
@@ -2058,7 +2025,7 @@ Value HTMLElement::mapGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::areaGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::areaGetter(ExecState* exec, int token) const
 {
     HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
     switch (token) {
@@ -2088,7 +2055,7 @@ Value HTMLElement::areaGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::scriptGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::scriptGetter(ExecState* exec, int token) const
 {
     HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
     switch (token) {
@@ -2103,7 +2070,7 @@ Value HTMLElement::scriptGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableGetter(ExecState* exec, int token) const
 {
     HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
     switch (token) {
@@ -2125,7 +2092,7 @@ Value HTMLElement::tableGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
 {
     HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
     if (token == TableCaptionAlign)
@@ -2133,7 +2100,7 @@ Value HTMLElement::tableCaptionGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableColGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableColGetter(ExecState* exec, int token) const
 {
     HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
     switch (token) {
@@ -2147,7 +2114,7 @@ Value HTMLElement::tableColGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableSectionGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableSectionGetter(ExecState* exec, int token) const
 {
     HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
     switch (token) {
@@ -2160,7 +2127,7 @@ Value HTMLElement::tableSectionGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableRowGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableRowGetter(ExecState* exec, int token) const
 {
     HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
     switch (token) {
@@ -2176,7 +2143,7 @@ Value HTMLElement::tableRowGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::tableCellGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::tableCellGetter(ExecState* exec, int token) const
 {
     HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
     switch (token) {
@@ -2199,7 +2166,7 @@ Value HTMLElement::tableCellGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::frameSetGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::frameSetGetter(ExecState* exec, int token) const
 {
     HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
     switch (token) {
@@ -2209,7 +2176,7 @@ Value HTMLElement::frameSetGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::frameGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::frameGetter(ExecState* exec, int token) const
 {
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
@@ -2231,7 +2198,7 @@ Value HTMLElement::frameGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::iFrameGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::iFrameGetter(ExecState* exec, int token) const
 {
     HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
     switch (token) {
@@ -2256,13 +2223,13 @@ Value HTMLElement::iFrameGetter(ExecState* exec, int token) const
     return Undefined();
 }
 
-Value HTMLElement::marqueeGetter(ExecState* exec, int token) const
+ValueImp *HTMLElement::marqueeGetter(ExecState* exec, int token) const
 {
     // FIXME: Find out what WinIE exposes as properties and implement this.
     return Undefined();
 }
 
-Value HTMLElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *HTMLElement::getValueProperty(ExecState *exec, int token) const
 {
     // Check our set of generic properties first.
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
@@ -2357,20 +2324,19 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
 HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
   : DOMFunction(), id(i)
 {
-  Value protect(this);
   put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
-Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj.inherits(&KJS::HTMLElement::info)) {
-        Object err = Error::create(exec,TypeError);
+    if (!thisObj->inherits(&KJS::HTMLElement::info)) {
+        ObjectImp *err = Error::create(exec,TypeError);
         exec->setException(err);
         return err;
     }
     kdDebug() << "KJS::HTMLElementFunction::tryCall " << endl;
     DOMExceptionTranslator exception(exec);
-    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj.imp())->impl());
+    HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj)->impl());
 
     if (element.hasLocalName(formTag)) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
@@ -2390,7 +2356,7 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
             return Undefined();
         }
         else if (id == KJS::HTMLElement::SelectRemove) {
-            select.remove(int(args[0].toNumber(exec)));
+            select.remove(int(args[0]->toNumber(exec)));
             return Undefined();
         }
         else if (id == KJS::HTMLElement::SelectBlur) {
@@ -2421,7 +2387,7 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
             return Undefined();
         }
         else if (id == KJS::HTMLElement::InputSetSelectionRange) {
-            input.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
+            input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
             return Undefined();
         }
     }
@@ -2465,7 +2431,7 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
             return Undefined();
         }
         else if (id == KJS::HTMLElement::TextAreaSetSelectionRange) {
-            textarea.setSelectionRange(args[0].toInt32(exec), args[1].toInt32(exec));
+            textarea.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
             return Undefined();
         }
     }
@@ -2480,7 +2446,7 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
             return Undefined();
         }
         else if (id == KJS::HTMLElement::AnchorToString)
-            return String(thisObj.toString(exec));
+            return String(thisObj->toString(exec));
     }
     else if (element.hasLocalName(tableTag)) {
         HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
@@ -2503,9 +2469,9 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
             return Undefined();
         }
         else if (id == KJS::HTMLElement::TableInsertRow)
-            return getDOMNode(exec,table.insertRow(args[0].toInt32(exec), exception));
+            return getDOMNode(exec,table.insertRow(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableDeleteRow) {
-            table.deleteRow(args[0].toInt32(exec), exception);
+            table.deleteRow(args[0]->toInt32(exec), exception);
             return Undefined();
         }
     }
@@ -2514,18 +2480,18 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
              element.hasLocalName(tfootTag)) {
         HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
         if (id == KJS::HTMLElement::TableSectionInsertRow)
-            return getDOMNode(exec, tableSection.insertRow(args[0].toInt32(exec), exception));
+            return getDOMNode(exec, tableSection.insertRow(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
-            tableSection.deleteRow(args[0].toInt32(exec), exception);
+            tableSection.deleteRow(args[0]->toInt32(exec), exception);
             return Undefined();
         }
     }
     else if (element.hasLocalName(trTag)) {
         HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
         if (id == KJS::HTMLElement::TableRowInsertCell)
-            return getDOMNode(exec,tableRow.insertCell(args[0].toInt32(exec), exception));
+            return getDOMNode(exec,tableRow.insertCell(args[0]->toInt32(exec), exception));
         else if (id == KJS::HTMLElement::TableRowDeleteCell) {
-            tableRow.deleteCell(args[0].toInt32(exec), exception);
+            tableRow.deleteCell(args[0]->toInt32(exec), exception);
             return Undefined();
         }
     }
@@ -2546,8 +2512,8 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
 #if APPLE_CHANGES
     else if (element.hasLocalName(canvasTag)) {
         if (id == KJS::HTMLElement::GetContext) {
-            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d")) {
-                return Object(new Context2D(&element));
+            if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).qstring().lower() == "2d")) {
+                return new Context2D(&element);
             }
             return Undefined();
         }
@@ -2557,10 +2523,10 @@ Value KJS::HTMLElementFunction::call(ExecState *exec, Object &thisObj, const Lis
     return Undefined();
 }
 
-void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
 #ifdef KJS_VERBOSE
-    DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+    DOM::DOMString str = value.isNull() ? DOM::DOMString() : value->toString(exec).string();
 #endif
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
 #ifdef KJS_VERBOSE
@@ -2574,21 +2540,17 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, cons
         bool ok;
         /*uint u =*/ propertyName.toULong(&ok);
         if (ok) {
-            Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select) );
-            if (!coll.isNull())
-                coll.put(exec,propertyName,value);
+            ObjectImp *coll = static_cast<ObjectImp *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+            coll->put(exec,propertyName,value);
             return;
         }
     }
 #if APPLE_CHANGES
-    else if (element.hasLocalName(embedTag) ||
-             element.hasLocalName(objectTag) ||
-             element.hasLocalName(appletTag)) {
-	Value runtimeObject = getRuntimeObject(exec,&element);
-	if (!runtimeObject.isNull()) {
-	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject.imp());
+    else if (element.hasLocalName(embedTag) || element.hasLocalName(objectTag) || element.hasLocalName(appletTag)) {
+	if (ValueImp *runtimeObject = getRuntimeObject(exec, &element)) {
+	    ObjectImp *imp = static_cast<ObjectImp *>(runtimeObject);
 	    if (imp->canPut(exec, propertyName))
-		return imp->put (exec, propertyName, value);
+		return imp->put(exec, propertyName, value);
 	}
     }
 #endif
@@ -2609,25 +2571,25 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, cons
     lookupPut<KJS::HTMLElement, DOMElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
-void HTMLElement::htmlSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::htmlSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile) 
         head.setProfile(str);
 }
 
-void HTMLElement::headSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::headSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLHeadElementImpl &head = *static_cast<HTMLHeadElementImpl*>(impl());
     if (token == HeadProfile) 
         head.setProfile(str);
 }
 
-void HTMLElement::linkSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::linkSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLLinkElementImpl &link = *static_cast<HTMLLinkElementImpl*>(impl());
     switch (token) {
-        case LinkDisabled:        { link.setDisabled(value.toBoolean(exec)); return; }
+        case LinkDisabled:        { link.setDisabled(value->toBoolean(exec)); return; }
         case LinkCharset:         { link.setCharset(str); return; }
         case LinkHref:            { link.setHref(str); return; }
         case LinkHrefLang:        { link.setHreflang(str); return; }
@@ -2639,14 +2601,14 @@ void HTMLElement::linkSetter(ExecState *exec, int token, const Value& value, con
     }
 }
 
-void HTMLElement::titleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::titleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
      HTMLTitleElementImpl& title = *static_cast<HTMLTitleElementImpl*>(impl());
      if (token == TitleText)
         title.setText(str);
 }
 
-void HTMLElement::metaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::metaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLMetaElementImpl& meta = *static_cast<HTMLMetaElementImpl*>(impl());
     switch (token) {
@@ -2657,7 +2619,7 @@ void HTMLElement::metaSetter(ExecState *exec, int token, const Value& value, con
     }
 }
 
-void HTMLElement::baseSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::baseSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLBaseElementImpl& base = *static_cast<HTMLBaseElementImpl*>(impl());
     switch (token) {
@@ -2666,24 +2628,24 @@ void HTMLElement::baseSetter(ExecState *exec, int token, const Value& value, con
     }
 }
 
-void HTMLElement::isIndexSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::isIndexSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     if (token == IsIndexPrompt)
         isindex.setPrompt(str);
 }
 
-void HTMLElement::styleSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::styleSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLStyleElementImpl& style = *static_cast<HTMLStyleElementImpl*>(impl());
     switch (token) {
-        case StyleDisabled:        { style.setDisabled(value.toBoolean(exec)); return; }
+        case StyleDisabled:        { style.setDisabled(value->toBoolean(exec)); return; }
         case StyleMedia:           { style.setMedia(str); return; }
         case StyleType:            { style.setType(str); return; }
     }
 }
 
-void HTMLElement::bodySetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::bodySetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLBodyElementImpl& body = *static_cast<HTMLBodyElementImpl*>(impl());
     switch (token) {
@@ -2701,16 +2663,16 @@ void HTMLElement::bodySetter(ExecState *exec, int token, const Value& value, con
                 if (DocumentImpl* doc = body.getDocument())
                     doc->updateLayoutIgnorePendingStylesheets();
                 if (token == BodyScrollLeft)
-                    sview->setContentsPos(value.toInt32(exec), sview->contentsY());
+                    sview->setContentsPos(value->toInt32(exec), sview->contentsY());
                 else
-                    sview->setContentsPos(sview->contentsX(), value.toInt32(exec));
+                    sview->setContentsPos(sview->contentsX(), value->toInt32(exec));
             }
             return;
         }
     }
 }
 
-void HTMLElement::formSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::formSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLFormElementImpl& form = *static_cast<HTMLFormElementImpl*>(impl());
     switch (token) {
@@ -2725,116 +2687,115 @@ void HTMLElement::formSetter(ExecState *exec, int token, const Value& value, con
     }
 }
 
-void HTMLElement::selectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::selectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLSelectElementImpl& select = *static_cast<HTMLSelectElementImpl*>(impl());
     switch (token) {
         // read-only: type
-        case SelectSelectedIndex:   { select.setSelectedIndex(value.toInt32(exec)); return; }
+        case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
         case SelectValue:           { select.setValue(str); return; }
         case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                         Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select) );
-                                         if ( !coll.isNull() )
-                                           coll.put(exec,lengthPropertyName,value);
-                                         return;
+                                        ObjectImp *coll = static_cast<ObjectImp *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+                                        coll->put(exec,lengthPropertyName,value);
+                                        return;
                                     }
         // read-only: form
         // read-only: options
-        case SelectDisabled:        { select.setDisabled(value.toBoolean(exec)); return; }
-        case SelectMultiple:        { select.setMultiple(value.toBoolean(exec)); return; }
+        case SelectDisabled:        { select.setDisabled(value->toBoolean(exec)); return; }
+        case SelectMultiple:        { select.setMultiple(value->toBoolean(exec)); return; }
         case SelectName:            { select.setName(str); return; }
-        case SelectSize:            { select.setSize(value.toInt32(exec)); return; }
-        case SelectTabIndex:        { select.setTabIndex(value.toInt32(exec)); return; }
+        case SelectSize:            { select.setSize(value->toInt32(exec)); return; }
+        case SelectTabIndex:        { select.setTabIndex(value->toInt32(exec)); return; }
     }
 }
 
-void HTMLElement::optGroupSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::optGroupSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLOptGroupElementImpl& optgroup = *static_cast<HTMLOptGroupElementImpl*>(impl());
     switch (token) {
-        case OptGroupDisabled:        { optgroup.setDisabled(value.toBoolean(exec)); return; }
+        case OptGroupDisabled:        { optgroup.setDisabled(value->toBoolean(exec)); return; }
         case OptGroupLabel:           { optgroup.setLabel(str); return; }
     }
 }
 
-void HTMLElement::optionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::optionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     DOMExceptionTranslator exception(exec);
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
     switch (token) {
         // read-only: form
-        case OptionDefaultSelected: { option.setDefaultSelected(value.toBoolean(exec)); return; }
+        case OptionDefaultSelected: { option.setDefaultSelected(value->toBoolean(exec)); return; }
         case OptionText:            { option.setText(str, exception); return; }
         // read-only: index
-        case OptionDisabled:        { option.setDisabled(value.toBoolean(exec)); return; }
+        case OptionDisabled:        { option.setDisabled(value->toBoolean(exec)); return; }
         case OptionLabel:           { option.setLabel(str); return; }
-        case OptionSelected:        { option.setSelected(value.toBoolean(exec)); return; }
+        case OptionSelected:        { option.setSelected(value->toBoolean(exec)); return; }
         case OptionValue:           { option.setValue(str); return; }
     }
 }
 
-void HTMLElement::inputSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::inputSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLInputElementImpl& input = *static_cast<HTMLInputElementImpl*>(impl());
     switch (token) {
         case InputDefaultValue:    { input.setDefaultValue(str); return; }
-        case InputDefaultChecked:  { input.setDefaultChecked(value.toBoolean(exec)); return; }
+        case InputDefaultChecked:  { input.setDefaultChecked(value->toBoolean(exec)); return; }
         // read-only: form
         case InputAccept:          { input.setAccept(str); return; }
         case InputAccessKey:       { input.setAccessKey(str); return; }
         case InputAlign:           { input.setAlign(str); return; }
         case InputAlt:             { input.setAlt(str); return; }
-        case InputChecked:         { input.setChecked(value.toBoolean(exec)); return; }
-        case InputDisabled:        { input.setDisabled(value.toBoolean(exec)); return; }
-        case InputMaxLength:       { input.setMaxLength(value.toInt32(exec)); return; }
+        case InputChecked:         { input.setChecked(value->toBoolean(exec)); return; }
+        case InputDisabled:        { input.setDisabled(value->toBoolean(exec)); return; }
+        case InputMaxLength:       { input.setMaxLength(value->toInt32(exec)); return; }
         case InputName:            { input.setName(str); return; }
-        case InputReadOnly:        { input.setReadOnly(value.toBoolean(exec)); return; }
-        case InputSize:            { input.setSize(value.toInt32(exec)); return; }
-        case InputSelectionStart:  { input.setSelectionStart(value.toInt32(exec)); return; }
-        case InputSelectionEnd:    { input.setSelectionEnd(value.toInt32(exec)); return; }
+        case InputReadOnly:        { input.setReadOnly(value->toBoolean(exec)); return; }
+        case InputSize:            { input.setSize(value->toInt32(exec)); return; }
+        case InputSelectionStart:  { input.setSelectionStart(value->toInt32(exec)); return; }
+        case InputSelectionEnd:    { input.setSelectionEnd(value->toInt32(exec)); return; }
         case InputSrc:             { input.setSrc(str); return; }
-        case InputTabIndex:        { input.setTabIndex(value.toInt32(exec)); return; }
+        case InputTabIndex:        { input.setTabIndex(value->toInt32(exec)); return; }
         case InputType:            { input.setType(str); return; }
         case InputUseMap:          { input.setUseMap(str); return; }
         case InputValue:           { input.setValue(str); return; }
     }
 }
 
-void HTMLElement::textAreaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::textAreaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
         case TextAreaDefaultValue:    { textarea.setDefaultValue(str); return; }
         // read-only: form
         case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
-        case TextAreaCols:            { textarea.setCols(value.toInt32(exec)); return; }
-        case TextAreaDisabled:        { textarea.setDisabled(value.toBoolean(exec)); return; }
+        case TextAreaCols:            { textarea.setCols(value->toInt32(exec)); return; }
+        case TextAreaDisabled:        { textarea.setDisabled(value->toBoolean(exec)); return; }
         case TextAreaName:            { textarea.setName(str); return; }
-        case TextAreaReadOnly:        { textarea.setReadOnly(value.toBoolean(exec)); return; }
-        case TextAreaRows:            { textarea.setRows(value.toInt32(exec)); return; }
-        case TextAreaSelectionStart:  { textarea.setSelectionStart(value.toInt32(exec)); return; }
-        case TextAreaSelectionEnd:    { textarea.setSelectionEnd(value.toInt32(exec)); return; }
-        case TextAreaTabIndex:        { textarea.setTabIndex(value.toInt32(exec)); return; }
+        case TextAreaReadOnly:        { textarea.setReadOnly(value->toBoolean(exec)); return; }
+        case TextAreaRows:            { textarea.setRows(value->toInt32(exec)); return; }
+        case TextAreaSelectionStart:  { textarea.setSelectionStart(value->toInt32(exec)); return; }
+        case TextAreaSelectionEnd:    { textarea.setSelectionEnd(value->toInt32(exec)); return; }
+        case TextAreaTabIndex:        { textarea.setTabIndex(value->toInt32(exec)); return; }
         // read-only: type
         case TextAreaValue:           { textarea.setValue(str); return; }
     }
 }
 
-void HTMLElement::buttonSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::buttonSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
         // read-only: form
         case ButtonAccessKey:       { button.setAccessKey(str); return; }
-        case ButtonDisabled:        { button.setDisabled(value.toBoolean(exec)); return; }
+        case ButtonDisabled:        { button.setDisabled(value->toBoolean(exec)); return; }
         case ButtonName:            { button.setName(str); return; }
-        case ButtonTabIndex:        { button.setTabIndex(value.toInt32(exec)); return; }
+        case ButtonTabIndex:        { button.setTabIndex(value->toInt32(exec)); return; }
         // read-only: type
         case ButtonValue:           { button.setValue(str); return; }
     }
 }
 
-void HTMLElement::labelSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::labelSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
@@ -2844,11 +2805,11 @@ void HTMLElement::labelSetter(ExecState *exec, int token, const Value& value, co
     }
 }
 
-void HTMLElement::fieldSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::fieldSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
 }
 
-void HTMLElement::legendSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::legendSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
@@ -2858,106 +2819,106 @@ void HTMLElement::legendSetter(ExecState *exec, int token, const Value& value, c
     }
 }
 
-void HTMLElement::uListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::uListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLUListElementImpl& uList = *static_cast<HTMLUListElementImpl*>(impl());
     switch (token) {
-        case UListCompact:         { uList.setCompact(value.toBoolean(exec)); return; }
+        case UListCompact:         { uList.setCompact(value->toBoolean(exec)); return; }
         case UListType:            { uList.setType(str); return; }
     }
 }
 
-void HTMLElement::oListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::oListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLOListElementImpl& oList = *static_cast<HTMLOListElementImpl*>(impl());
     switch (token) {
-        case OListCompact:         { oList.setCompact(value.toBoolean(exec)); return; }
-        case OListStart:           { oList.setStart(value.toInt32(exec)); return; }
+        case OListCompact:         { oList.setCompact(value->toBoolean(exec)); return; }
+        case OListStart:           { oList.setStart(value->toInt32(exec)); return; }
         case OListType:            { oList.setType(str); return; }
     }
 }
 
-void HTMLElement::dListSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::dListSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLDListElementImpl& dList = *static_cast<HTMLDListElementImpl*>(impl());
     if (token == DListCompact)
-        dList.setCompact(value.toBoolean(exec));
+        dList.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::dirSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::dirSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLDirectoryElementImpl& directory = *static_cast<HTMLDirectoryElementImpl*>(impl());
     if (token == DirectoryCompact)
-        directory.setCompact(value.toBoolean(exec));
+        directory.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::menuSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::menuSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLMenuElementImpl& menu = *static_cast<HTMLMenuElementImpl*>(impl());
     if (token == MenuCompact)
-        menu.setCompact(value.toBoolean(exec));
+        menu.setCompact(value->toBoolean(exec));
 }
 
-void HTMLElement::liSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::liSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLLIElementImpl& li = *static_cast<HTMLLIElementImpl*>(impl());
     switch (token) {
         case LIType:            { li.setType(str); return; }
-        case LIValue:           { li.setValue(value.toInt32(exec)); return; }
+        case LIValue:           { li.setValue(value->toInt32(exec)); return; }
     }
 }
 
-void HTMLElement::divSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::divSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLDivElementImpl& div = *static_cast<HTMLDivElementImpl*>(impl());
     if (token == DivAlign)
         div.setAlign(str);
 }
 
-void HTMLElement::paragraphSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::paragraphSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLParagraphElementImpl& paragraph = *static_cast<HTMLParagraphElementImpl*>(impl());
     if (token == ParagraphAlign)
         paragraph.setAlign(str);
 }
 
-void HTMLElement::headingSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::headingSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLHeadingElementImpl& heading = *static_cast<HTMLHeadingElementImpl*>(impl());
     if (token == HeadingAlign)
         heading.setAlign(str);
 }
 
-void HTMLElement::blockQuoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::blockQuoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLBlockquoteElementImpl& blockQuote = *static_cast<HTMLBlockquoteElementImpl*>(impl());
     if (token == BlockQuoteCite)
         blockQuote.setCite(str);
 }
 
-void HTMLElement::quoteSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::quoteSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLQuoteElementImpl& quote = *static_cast<HTMLQuoteElementImpl*>(impl());
     if (token == QuoteCite)
         quote.setCite(str);
 }
 
-void HTMLElement::preSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::preSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     // FIXME: Add support for 'wrap' when white-space: pre-wrap is implemented.
     HTMLPreElementImpl& pre = *static_cast<HTMLPreElementImpl*>(impl());
     if (token == PreWidth)
-        pre.setWidth(value.toInt32(exec));
+        pre.setWidth(value->toInt32(exec));
 }
 
-void HTMLElement::brSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::brSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLBRElementImpl& br = *static_cast<HTMLBRElementImpl*>(impl());
     if (token == BRClear)
         br.setClear(str);
 }
 
-void HTMLElement::baseFontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::baseFontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLBaseFontElementImpl& baseFont = *static_cast<HTMLBaseFontElementImpl*>(impl());
     switch (token) {
@@ -2967,7 +2928,7 @@ void HTMLElement::baseFontSetter(ExecState *exec, int token, const Value& value,
     }
 }
 
-void HTMLElement::fontSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::fontSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLFontElementImpl& font = *static_cast<HTMLFontElementImpl*>(impl());
     switch (token) {
@@ -2977,18 +2938,18 @@ void HTMLElement::fontSetter(ExecState *exec, int token, const Value& value, con
     }
 }
 
-void HTMLElement::hrSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::hrSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLHRElementImpl& hr = *static_cast<HTMLHRElementImpl*>(impl());
     switch (token) {
         case HRAlign:           { hr.setAlign(str); return; }
-        case HRNoShade:         { hr.setNoShade(value.toBoolean(exec)); return; }
+        case HRNoShade:         { hr.setNoShade(value->toBoolean(exec)); return; }
         case HRSize:            { hr.setSize(str); return; }
         case HRWidth:           { hr.setWidth(str); return; }
     }
 }
 
-void HTMLElement::modSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::modSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLModElementImpl& mod = *static_cast<HTMLModElementImpl*>(impl());
     switch (token) {
@@ -2997,7 +2958,7 @@ void HTMLElement::modSetter(ExecState *exec, int token, const Value& value, cons
     }
 }
 
-void HTMLElement::anchorSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::anchorSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLAnchorElementImpl& anchor = *static_cast<HTMLAnchorElementImpl*>(impl());
     switch (token) {
@@ -3010,32 +2971,32 @@ void HTMLElement::anchorSetter(ExecState *exec, int token, const Value& value, c
         case AnchorRel:             { anchor.setRel(str); return; }
         case AnchorRev:             { anchor.setRev(str); return; }
         case AnchorShape:           { anchor.setShape(str); return; }
-        case AnchorTabIndex:        { anchor.setTabIndex(value.toInt32(exec)); return; }
+        case AnchorTabIndex:        { anchor.setTabIndex(value->toInt32(exec)); return; }
         case AnchorTarget:          { anchor.setTarget(str); return; }
         case AnchorType:            { anchor.setType(str); return; }
     }
 }
 
-void HTMLElement::imageSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::imageSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLImageElementImpl& image = *static_cast<HTMLImageElementImpl*>(impl());
     switch (token) {
         case ImageName:            { image.setName(str); return; }
         case ImageAlign:           { image.setAlign(str); return; }
         case ImageAlt:             { image.setAlt(str); return; }
-        case ImageBorder:          { image.setBorder(value.toInt32(exec)); return; }
-        case ImageHeight:          { image.setHeight(value.toInt32(exec)); return; }
-        case ImageHspace:          { image.setHspace(value.toInt32(exec)); return; }
-        case ImageIsMap:           { image.setIsMap(value.toBoolean(exec)); return; }
+        case ImageBorder:          { image.setBorder(value->toInt32(exec)); return; }
+        case ImageHeight:          { image.setHeight(value->toInt32(exec)); return; }
+        case ImageHspace:          { image.setHspace(value->toInt32(exec)); return; }
+        case ImageIsMap:           { image.setIsMap(value->toBoolean(exec)); return; }
         case ImageLongDesc:        { image.setLongDesc(str); return; }
         case ImageSrc:             { image.setSrc(str); return; }
         case ImageUseMap:          { image.setUseMap(str); return; }
-        case ImageVspace:          { image.setVspace(value.toInt32(exec)); return; }
-        case ImageWidth:           { image.setWidth(value.toInt32(exec)); return; }
+        case ImageVspace:          { image.setVspace(value->toInt32(exec)); return; }
+        case ImageWidth:           { image.setWidth(value->toInt32(exec)); return; }
     }
 }
 
-void HTMLElement::objectSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::objectSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
@@ -3048,12 +3009,12 @@ void HTMLElement::objectSetter(ExecState *exec, int token, const Value& value, c
         case ObjectCodeType:        { object.setCodeType(str); return; }
         // read-only: ObjectContentDocument
         case ObjectData:            { object.setData(str); return; }
-        case ObjectDeclare:         { object.setDeclare(value.toBoolean(exec)); return; }
+        case ObjectDeclare:         { object.setDeclare(value->toBoolean(exec)); return; }
         case ObjectHeight:          { object.setHeight(str); return; }
         case ObjectHspace:          { object.setHspace(str); return; }
         case ObjectName:            { object.setName(str); return; }
         case ObjectStandby:         { object.setStandby(str); return; }
-        case ObjectTabIndex:        { object.setTabIndex(value.toInt32(exec)); return; }
+        case ObjectTabIndex:        { object.setTabIndex(value->toInt32(exec)); return; }
         case ObjectType:            { object.setType(str); return; }
         case ObjectUseMap:          { object.setUseMap(str); return; }
         case ObjectVspace:          { object.setVspace(str); return; }
@@ -3061,7 +3022,7 @@ void HTMLElement::objectSetter(ExecState *exec, int token, const Value& value, c
     }
 }
 
-void HTMLElement::paramSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::paramSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLParamElementImpl& param = *static_cast<HTMLParamElementImpl*>(impl());
     switch (token) {
@@ -3072,7 +3033,7 @@ void HTMLElement::paramSetter(ExecState *exec, int token, const Value& value, co
     }
 }
 
-void HTMLElement::appletSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::appletSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLAppletElementImpl& applet = *static_cast<HTMLAppletElementImpl*>(impl());
     switch (token) {
@@ -3090,7 +3051,7 @@ void HTMLElement::appletSetter(ExecState *exec, int token, const Value& value, c
     }
 }
 
-void HTMLElement::mapSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::mapSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLMapElementImpl& map = *static_cast<HTMLMapElementImpl*>(impl());
     if (token == MapName)
@@ -3098,7 +3059,7 @@ void HTMLElement::mapSetter(ExecState *exec, int token, const Value& value, cons
         map.setName(str);
 }
 
-void HTMLElement::areaSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::areaSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLAreaElementImpl& area = *static_cast<HTMLAreaElementImpl*>(impl());
     switch (token) {
@@ -3106,14 +3067,14 @@ void HTMLElement::areaSetter(ExecState *exec, int token, const Value& value, con
         case AreaAlt:             { area.setAlt(str); return; }
         case AreaCoords:          { area.setCoords(str); return; }
         case AreaHref:            { area.setHref(str); return; }
-        case AreaNoHref:          { area.setNoHref(value.toBoolean(exec)); return; }
+        case AreaNoHref:          { area.setNoHref(value->toBoolean(exec)); return; }
         case AreaShape:           { area.setShape(str); return; }
-        case AreaTabIndex:        { area.setTabIndex(value.toInt32(exec)); return; }
+        case AreaTabIndex:        { area.setTabIndex(value->toInt32(exec)); return; }
         case AreaTarget:          { area.setTarget(str); return; }
     }
 }
 
-void HTMLElement::scriptSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::scriptSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLScriptElementImpl& script = *static_cast<HTMLScriptElementImpl*>(impl());
     switch (token) {
@@ -3121,13 +3082,13 @@ void HTMLElement::scriptSetter(ExecState *exec, int token, const Value& value, c
         case ScriptHtmlFor:         { script.setHtmlFor(str); return; }
         case ScriptEvent:           { script.setEvent(str); return; }
         case ScriptCharset:         { script.setCharset(str); return; }
-        case ScriptDefer:           { script.setDefer(value.toBoolean(exec)); return; }
+        case ScriptDefer:           { script.setDefer(value->toBoolean(exec)); return; }
         case ScriptSrc:             { script.setSrc(str); return; }
         case ScriptType:            { script.setType(str); return; }
     }
 }
 
-void HTMLElement::tableSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
     switch (token) {
@@ -3148,27 +3109,27 @@ void HTMLElement::tableSetter(ExecState *exec, int token, const Value& value, co
     }
 }
 
-void HTMLElement::tableCaptionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableCaptionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableCaptionElementImpl& tableCaption = *static_cast<HTMLTableCaptionElementImpl*>(impl());
     if (token == TableCaptionAlign)
         tableCaption.setAlign(str);
 }
 
-void HTMLElement::tableColSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableColSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableColElementImpl& tableCol = *static_cast<HTMLTableColElementImpl*>(impl());
     switch (token) {
         case TableColAlign:           { tableCol.setAlign(str); return; }
         case TableColCh:              { tableCol.setCh(str); return; }
         case TableColChOff:           { tableCol.setChOff(str); return; }
-        case TableColSpan:            { tableCol.setSpan(value.toInt32(exec)); return; }
+        case TableColSpan:            { tableCol.setSpan(value->toInt32(exec)); return; }
         case TableColVAlign:          { tableCol.setVAlign(str); return; }
         case TableColWidth:           { tableCol.setWidth(str); return; }
     }
 }
 
-void HTMLElement::tableSectionSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableSectionSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableSectionElementImpl& tableSection = *static_cast<HTMLTableSectionElementImpl*>(impl());
     switch (token) {
@@ -3180,7 +3141,7 @@ void HTMLElement::tableSectionSetter(ExecState *exec, int token, const Value& va
     }
 }
 
-void HTMLElement::tableRowSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableRowSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableRowElementImpl& tableRow = *static_cast<HTMLTableRowElementImpl*>(impl());
     switch (token) {
@@ -3195,7 +3156,7 @@ void HTMLElement::tableRowSetter(ExecState *exec, int token, const Value& value,
     }
 }
 
-void HTMLElement::tableCellSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::tableCellSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLTableCellElementImpl& tableCell = *static_cast<HTMLTableCellElementImpl*>(impl());
     switch (token) {
@@ -3206,18 +3167,18 @@ void HTMLElement::tableCellSetter(ExecState *exec, int token, const Value& value
         case TableCellBgColor:         { tableCell.setBgColor(str); return; }
         case TableCellCh:              { tableCell.setCh(str); return; }
         case TableCellChOff:           { tableCell.setChOff(str); return; }
-        case TableCellColSpan:         { tableCell.setColSpan(value.toInt32(exec)); return; }
+        case TableCellColSpan:         { tableCell.setColSpan(value->toInt32(exec)); return; }
         case TableCellHeaders:         { tableCell.setHeaders(str); return; }
         case TableCellHeight:          { tableCell.setHeight(str); return; }
-        case TableCellNoWrap:          { tableCell.setNoWrap(value.toBoolean(exec)); return; }
-        case TableCellRowSpan:         { tableCell.setRowSpan(value.toInt32(exec)); return; }
+        case TableCellNoWrap:          { tableCell.setNoWrap(value->toBoolean(exec)); return; }
+        case TableCellRowSpan:         { tableCell.setRowSpan(value->toInt32(exec)); return; }
         case TableCellScope:           { tableCell.setScope(str); return; }
         case TableCellVAlign:          { tableCell.setVAlign(str); return; }
         case TableCellWidth:           { tableCell.setWidth(str); return; }
     }
 }
 
-void HTMLElement::frameSetSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::frameSetSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLFrameSetElementImpl& frameSet = *static_cast<HTMLFrameSetElementImpl*>(impl());
     switch (token) {
@@ -3226,7 +3187,7 @@ void HTMLElement::frameSetSetter(ExecState *exec, int token, const Value& value,
     }
 }
 
-void HTMLElement::frameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::frameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
@@ -3236,14 +3197,14 @@ void HTMLElement::frameSetter(ExecState *exec, int token, const Value& value, co
         case FrameMarginHeight:    { frameElement.setMarginHeight(str); return; }
         case FrameMarginWidth:     { frameElement.setMarginWidth(str); return; }
         case FrameName:            { frameElement.setName(str); return; }
-        case FrameNoResize:        { frameElement.setNoResize(value.toBoolean(exec)); return; }
+        case FrameNoResize:        { frameElement.setNoResize(value->toBoolean(exec)); return; }
         case FrameScrolling:       { frameElement.setScrolling(str); return; }
         case FrameSrc:             { frameElement.setSrc(str); return; }
         case FrameLocation:        { frameElement.setLocation(str); return; }
     }
 }
 
-void HTMLElement::iFrameSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::iFrameSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     HTMLIFrameElementImpl& iFrame = *static_cast<HTMLIFrameElementImpl*>(impl());
     switch (token) {
@@ -3261,15 +3222,15 @@ void HTMLElement::iFrameSetter(ExecState *exec, int token, const Value& value, c
     }
 }
 
-void HTMLElement::marqueeSetter(ExecState *exec, int token, const Value& value, const DOM::DOMString& str)
+void HTMLElement::marqueeSetter(ExecState *exec, int token, ValueImp *value, const DOM::DOMString& str)
 {
     // FIXME: Find out what WinIE supports and implement it.
 }
 
-void HTMLElement::putValueProperty(ExecState *exec, int token, const Value& value, int)
+void HTMLElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
     DOMExceptionTranslator exception(exec);
-    DOM::DOMString str = value.isA(NullType) ? DOM::DOMString() : value.toString(exec).string();
+    DOM::DOMString str = value->toString(exec).string();
  
     // Check our set of generic properties first.
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
@@ -3360,19 +3321,19 @@ HTMLCollection::~HTMLCollection()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-Value HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLCollection::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return Number(thisObj->m_impl->length());
 }
 
-Value HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLCollection::indexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
 }
 
-Value HTMLCollection::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLCollection::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
     return thisObj->getNamedItems(exec, propertyName);
@@ -3385,8 +3346,8 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
       return true;
   } else {
     // Look in the prototype (for functions) before assuming it's an item's name
-    Object proto = Object::dynamicCast(prototype());
-    if (!proto.isNull() && proto.hasProperty(exec, propertyName))
+    ValueImp *proto = prototype();
+    if (proto->isObject() && static_cast<ObjectImp *>(proto)->hasProperty(exec, propertyName))
       return false;
 
     // name or index ?
@@ -3397,7 +3358,7 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
       return true;
     }
 
-    if (!getNamedItems(exec, propertyName).imp()->isUndefined()) {
+    if (!getNamedItems(exec, propertyName)->isUndefined()) {
       slot.setCustom(this, nameGetter);
       return true;
     }
@@ -3408,15 +3369,9 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-Value KJS::HTMLCollection::call(ExecState *exec, Object &, const List &args)
+ValueImp *KJS::HTMLCollection::callAsFunction(ExecState *exec, ObjectImp *, const List &args)
 {
   // Do not use thisObj here. It can be the HTMLDocument, in the document.forms(i) case.
-  /*if( thisObj.imp() != this )
-  {
-    kdWarning() << "thisObj.imp() != this in HTMLCollection::call" << endl;
-    KJS::printInfo(exec,"KJS::HTMLCollection::call thisObj",thisObj,-1);
-    KJS::printInfo(exec,"KJS::HTMLCollection::call this",Value(this),-1);
-  }*/
   HTMLCollectionImpl &collection = *m_impl;
 
   // Also, do we need the TypeError test here ?
@@ -3424,7 +3379,7 @@ Value KJS::HTMLCollection::call(ExecState *exec, Object &, const List &args)
   if (args.size() == 1) {
     // support for document.all(<index>) etc.
     bool ok;
-    UString s = args[0].toString(exec);
+    UString s = args[0]->toString(exec);
     unsigned int u = s.toULong(&ok);
     if (ok)
       return getDOMNode(exec, collection.item(u));
@@ -3434,8 +3389,8 @@ Value KJS::HTMLCollection::call(ExecState *exec, Object &, const List &args)
   else if (args.size() >= 1) // the second arg, if set, is the index of the item we want
   {
     bool ok;
-    UString s = args[0].toString(exec);
-    unsigned int u = args[1].toString(exec).toULong(&ok);
+    UString s = args[0]->toString(exec);
+    unsigned int u = args[1]->toString(exec).toULong(&ok);
     if (ok)
     {
       DOM::DOMString pstr = s.string();
@@ -3451,7 +3406,7 @@ Value KJS::HTMLCollection::call(ExecState *exec, Object &, const List &args)
   return Undefined();
 }
 
-Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
+ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
@@ -3470,25 +3425,25 @@ Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &prop
   if (namedItems.count() == 1)
     return getDOMNode(exec, namedItems[0].get());
   
-  return Value(new DOMNamedNodesCollection(exec,namedItems));
+  return new DOMNamedNodesCollection(exec, namedItems);
 }
 
-Value KJS::HTMLCollectionProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj.inherits(&KJS::HTMLCollection::info)) {
-    Object err = Error::create(exec,TypeError);
+  if (!thisObj->inherits(&KJS::HTMLCollection::info)) {
+    ObjectImp *err = Error::create(exec,TypeError);
     exec->setException(err);
     return err;
   }
-  HTMLCollectionImpl &coll = *static_cast<HTMLCollection *>(thisObj.imp())->impl();
+  HTMLCollectionImpl &coll = *static_cast<HTMLCollection *>(thisObj)->impl();
 
   switch (id) {
   case KJS::HTMLCollection::Item:
-    return getDOMNode(exec,coll.item(args[0].toUInt32(exec)));
+    return getDOMNode(exec,coll.item(args[0]->toUInt32(exec)));
   case KJS::HTMLCollection::Tags:
-    return getDOMNodeList(exec, coll.base()->getElementsByTagName(args[0].toString(exec).string()).get());
+    return getDOMNodeList(exec, coll.base()->getElementsByTagName(args[0]->toString(exec).string()).get());
   case KJS::HTMLCollection::NamedItem:
-    return static_cast<HTMLCollection *>(thisObj.imp())->getNamedItems(exec, Identifier(args[0].toString(exec)));
+    return static_cast<HTMLCollection *>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:
     return Undefined();
   }
@@ -3501,7 +3456,7 @@ HTMLSelectCollection::HTMLSelectCollection(ExecState *exec, HTMLCollectionImpl *
 {
 }
 
-Value HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *HTMLSelectCollection::selectedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLSelectCollection *thisObj = static_cast<HTMLSelectCollection *>(slot.slotBase());
     return Number(thisObj->m_element->selectedIndex());
@@ -3518,13 +3473,13 @@ bool HTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifier&
   return HTMLCollection::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, const Value& value, int)
+void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLSelectCollection::put " << propertyName.qstring() << endl;
 #endif
   if ( propertyName == "selectedIndex" ) {
-    m_element->setSelectedIndex( value.toInt32( exec ) );
+    m_element->setSelectedIndex( value->toInt32( exec ) );
     return;
   }
   // resize ?
@@ -3532,7 +3487,7 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
     int exception = 0;
 
     unsigned newLen;
-    bool converted = value.toUInt32(newLen);
+    bool converted = value->getUInt32(newLen);
 
     if (!converted) {
       return;
@@ -3561,7 +3516,7 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
   if (!ok)
     return;
 
-  if (value.isA(NullType) || value.isA(UndefinedType)) {
+  if (value->isUndefinedOrNull()) {
     // null and undefined delete. others, too ?
     m_element->remove(u);
     return;
@@ -3613,7 +3568,7 @@ bool OptionConstructorImp::implementsConstruct() const
   return true;
 }
 
-Object OptionConstructorImp::construct(ExecState *exec, const List &args)
+ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
 {
   int exception = 0;
   SharedPtr<ElementImpl> el(m_doc->createElement("option", exception));
@@ -3625,18 +3580,18 @@ Object OptionConstructorImp::construct(ExecState *exec, const List &args)
     t->ref();
     opt->appendChild(t, exception);
     if (exception == 0 && sz > 0)
-      t->setData(args[0].toString(exec).string(), exception); // set the text
+      t->setData(args[0]->toString(exec).string(), exception); // set the text
     if (exception == 0 && sz > 1)
-      opt->setValue(args[1].toString(exec).string());
+      opt->setValue(args[1]->toString(exec).string());
     if (exception == 0 && sz > 2)
-      opt->setDefaultSelected(args[2].toBoolean(exec));
+      opt->setDefaultSelected(args[2]->toBoolean(exec));
     if (exception == 0 && sz > 3)
-      opt->setSelected(args[3].toBoolean(exec));
+      opt->setSelected(args[3]->toBoolean(exec));
     t->deref();
   }
 
   setDOMException(exec, exception);
-  return Object::dynamicCast(getDOMNode(exec,opt));
+  return static_cast<ObjectImp *>(getDOMNode(exec,opt));
 }
 
 ////////////////////// Image Object ////////////////////////
@@ -3651,22 +3606,22 @@ bool ImageConstructorImp::implementsConstruct() const
   return true;
 }
 
-Object ImageConstructorImp::construct(ExecState * exec, const List & list)
+ObjectImp *ImageConstructorImp::construct(ExecState * exec, const List & list)
 {
     bool widthSet = false, heightSet = false;
     int width = 0, height = 0;
     if (list.size() > 0) {
         widthSet = true;
-        Value w = list.at(0);
-        width = w.toInt32(exec);
+        ValueImp *w = list.at(0);
+        width = w->toInt32(exec);
     }
     if (list.size() > 1) {
         heightSet = true;
-        Value h = list.at(1);
-        height = h.toInt32(exec);
+        ValueImp *h = list.at(1);
+        height = h->toInt32(exec);
     }
         
-    Object result(new Image(m_doc.get(), widthSet, width, heightSet, height));
+    ObjectImp *result(new Image(m_doc.get(), widthSet, width, heightSet, height));
   
     /* TODO: do we need a prototype ? */
     return result;
@@ -3689,7 +3644,7 @@ bool Image::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, 
   return getStaticValueSlot<Image,DOMObject>(exec, &ImageTable, this, propertyName, slot);
 }
 
-Value Image::getValueProperty(ExecState *, int token) const
+ValueImp *Image::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case Src:
@@ -3726,22 +3681,21 @@ Value Image::getValueProperty(ExecState *, int token) const
   }
   default:
     kdWarning() << "Image::getValueProperty unhandled token " << token << endl;
-    return Value();
+    return NULL;
   }
 }
 
-void Image::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void Image::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
   lookupPut<Image,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
 }
 
-void Image::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
+void Image::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
 {
   switch(token) {
   case Src:
   {
-    String str = value.toString(exec);
-    src = str.value();
+    src = value->toString(exec);
     if ( img ) img->deref(this);
     img = doc ? doc->docLoader()->requestImage( src.string() ) : 0;
     if ( img ) img->ref(this);
@@ -3753,11 +3707,11 @@ void Image::putValueProperty(ExecState *exec, int token, const Value& value, int
     break;
   case Width:
     widthSet = true;
-    width = value.toInt32(exec);
+    width = value->toInt32(exec);
     break;
   case Height:
     heightSet = true;
-    height = value.toInt32(exec);
+    height = value->toInt32(exec);
     break;
   default:
     kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
@@ -3796,34 +3750,28 @@ Image::~Image()
 
 IMPLEMENT_PROTOFUNC(Context2DFunction)
 
-static bool isGradient(const Value &value)
+static bool isGradient(ValueImp *value)
 {
-    ObjectImp *o = static_cast<ObjectImp*>(value.imp());
-    if (o->type() == ObjectType && o->inherits(&Gradient::info))
-        return true;
-    return false;
+    return value->isObject(&Gradient::info);
 }
 
-static bool isImagePattern(const Value &value)
+static bool isImagePattern(ValueImp *value)
 {
-    ObjectImp *o = static_cast<ObjectImp*>(value.imp());
-    if (o->type() == ObjectType && o->inherits(&ImagePattern::info))
-        return true;
-    return false;
+    return value->isObject(&ImagePattern::info);
 }
 
 #define BITS_PER_COMPONENT 8
 #define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
 
-Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj.inherits(&Context2D::info)) {
-        Object err = Error::create(exec,TypeError);
+    if (!thisObj->inherits(&Context2D::info)) {
+        ObjectImp *err = Error::create(exec,TypeError);
         exec->setException(err);
         return err;
     }
 
-    Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj.imp());
+    Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj);
     khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
     if (!renderer)
         return Undefined();
@@ -3835,7 +3783,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
     switch (id) {
         case Context2D::Save: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -3847,7 +3795,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::Restore: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -3859,7 +3807,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::BeginPath: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -3868,7 +3816,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::ClosePath: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -3885,50 +3833,50 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             int numArgs = args.size();
             switch (numArgs) {
                 case 1: {
-                    if (args[0].type() == StringType) {                    
-                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                    if (args[0]->isString()) {                    
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
                         QColor qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
 
                     }
                     else {
-                        float g = (float)args[0].toNumber(exec);
+                        float g = (float)args[0]->toNumber(exec);
                         CGContextSetGrayStrokeColor(drawingContext, g, 1.);
                     }
                 }
                 break;
                 case 2: {
-                    float a = args[1].toNumber(exec);
-                    if (args[0].type() == StringType) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                    float a = args[1]->toNumber(exec);
+                    if (args[0]->isString()) {
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
                         QColor qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
-                        float g = (float)args[0].toNumber(exec);
+                        float g = (float)args[0]->toNumber(exec);
                         CGContextSetGrayStrokeColor(drawingContext, g, a);
                     }
                 }
                 break;
                 case 4: {
-                    float r = (float)args[0].toNumber(exec);
-                    float g = (float)args[1].toNumber(exec);
-                    float b = (float)args[2].toNumber(exec);
-                    float a = (float)args[3].toNumber(exec);
+                    float r = (float)args[0]->toNumber(exec);
+                    float g = (float)args[1]->toNumber(exec);
+                    float b = (float)args[2]->toNumber(exec);
+                    float a = (float)args[3]->toNumber(exec);
                     CGContextSetRGBStrokeColor(drawingContext, r, g, b, a);
                 }
                 break;
                 case 5: {
-                    float c = (float)args[0].toNumber(exec);
-                    float m = (float)args[1].toNumber(exec);
-                    float y = (float)args[2].toNumber(exec);
-                    float k = (float)args[3].toNumber(exec);
-                    float a = (float)args[4].toNumber(exec);
+                    float c = (float)args[0]->toNumber(exec);
+                    float m = (float)args[1]->toNumber(exec);
+                    float y = (float)args[2]->toNumber(exec);
+                    float k = (float)args[3]->toNumber(exec);
+                    float a = (float)args[4]->toNumber(exec);
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
                 break;
                 default: {
-                    Object err = Error::create(exec,SyntaxError);
+                    ObjectImp *err = Error::create(exec,SyntaxError);
                     exec->setException(err);
                     return err;
                 }
@@ -3945,49 +3893,49 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             int numArgs = args.size();
             switch (numArgs) {
                 case 1: {
-                    if (args[0].type() == StringType) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                    if (args[0]->isString()) {
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
                         QColor qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
                     }
                     else {
-                        float g = (float)args[0].toNumber(exec);
+                        float g = (float)args[0]->toNumber(exec);
                         CGContextSetGrayFillColor(drawingContext, g, 1.);
                     }
                 }
                 break;
                 case 2: {
-                    float a = args[1].toNumber(exec);
-                    if (args[0].type() == StringType) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0].toString(exec).string());
+                    float a = args[1]->toNumber(exec);
+                    if (args[0]->isString()) {
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
                         QColor qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
-                        float g = (float)args[0].toNumber(exec);
+                        float g = (float)args[0]->toNumber(exec);
                         CGContextSetGrayFillColor(drawingContext, g, a);
                     }
                 }
                 break;
                 case 4: {
-                    float r = (float)args[0].toNumber(exec);
-                    float g = (float)args[1].toNumber(exec);
-                    float b = (float)args[2].toNumber(exec);
-                    float a = (float)args[3].toNumber(exec);
+                    float r = (float)args[0]->toNumber(exec);
+                    float g = (float)args[1]->toNumber(exec);
+                    float b = (float)args[2]->toNumber(exec);
+                    float a = (float)args[3]->toNumber(exec);
                     CGContextSetRGBFillColor(drawingContext, r, g, b, a);
                 }
                 break;
                 case 5: {
-                    float c = (float)args[0].toNumber(exec);
-                    float m = (float)args[1].toNumber(exec);
-                    float y = (float)args[2].toNumber(exec);
-                    float k = (float)args[3].toNumber(exec);
-                    float a = (float)args[4].toNumber(exec);
+                    float c = (float)args[0]->toNumber(exec);
+                    float m = (float)args[1]->toNumber(exec);
+                    float y = (float)args[2]->toNumber(exec);
+                    float k = (float)args[3]->toNumber(exec);
+                    float a = (float)args[4]->toNumber(exec);
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
                 break;
                 default: {
-                    Object err = Error::create(exec,SyntaxError);
+                    ObjectImp *err = Error::create(exec,SyntaxError);
                     exec->setException(err);
                     return err;
                 }
@@ -3996,22 +3944,22 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::SetLineWidth: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float w = (float)args[0].toNumber(exec);
+            float w = (float)args[0]->toNumber(exec);
             CGContextSetLineWidth (drawingContext, w);
             break;
         }
         case Context2D::SetLineCap: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
             CGLineCap cap = kCGLineCapButt;
-            QString capString = args[0].toString(exec).qstring().lower();
+            QString capString = args[0]->toString(exec).qstring().lower();
             if (capString == "round")
                 cap = kCGLineCapRound;
             else if (capString == "square")
@@ -4021,12 +3969,12 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::SetLineJoin: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
             CGLineJoin join = kCGLineJoinMiter;
-            QString joinString = args[0].toString(exec).qstring().lower();
+            QString joinString = args[0]->toString(exec).qstring().lower();
             if (joinString == "round")
                 join = kCGLineJoinRound;
             else if (joinString == "bevel")
@@ -4036,17 +3984,17 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::SetMiterLimit: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float l = (float)args[0].toNumber(exec);
+            float l = (float)args[0]->toNumber(exec);
             CGContextSetMiterLimit (drawingContext, l);
             break;
         }
         case Context2D::Fill: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -4058,7 +4006,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 // operates on clippin regions!  Odd, but true.
                 CGContextClip(drawingContext);
 
-                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_fillStyle.imp());
+                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_fillStyle);
                 Gradient *gradient = static_cast<Gradient*>(o);
                 CGShadingRef shading = gradient->getShading();
                 CGContextDrawShading(drawingContext, shading);
@@ -4076,7 +4024,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::Stroke: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -4090,7 +4038,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 CGContextReplacePathWithStrokedPath(drawingContext);
                 CGContextClip(drawingContext);
 
-                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_strokeStyle.imp());
+                ObjectImp *o = static_cast<ObjectImp*>(contextObject->_strokeStyle);
                 Gradient *gradient = static_cast<Gradient*>(o);
                 
                 CGShadingRef shading = gradient->getShading();
@@ -4108,137 +4056,137 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::Scale: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float sx = (float)args[0].toNumber(exec);
-            float sy = (float)args[1].toNumber(exec);
+            float sx = (float)args[0]->toNumber(exec);
+            float sy = (float)args[1]->toNumber(exec);
             CGContextScaleCTM (drawingContext, sx, sy);
             contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Rotate: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float angle = (float)args[0].toNumber(exec);
+            float angle = (float)args[0]->toNumber(exec);
             CGContextRotateCTM (drawingContext, angle);
             contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Translate: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float tx = (float)args[0].toNumber(exec);
-            float ty = (float)args[1].toNumber(exec);
+            float tx = (float)args[0]->toNumber(exec);
+            float ty = (float)args[1]->toNumber(exec);
             CGContextTranslateCTM (drawingContext, tx, ty);
             break;
         }
         case Context2D::MoveTo: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
             CGContextMoveToPoint (drawingContext, x, y);
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::LineTo: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
             CGContextAddLineToPoint (drawingContext, x, y);
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::QuadraticCurveTo: {
             if (args.size() != 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float cpx = (float)args[0].toNumber(exec);
-            float cpy = (float)args[1].toNumber(exec);
-            float x = (float)args[2].toNumber(exec);
-            float y = (float)args[3].toNumber(exec);
+            float cpx = (float)args[0]->toNumber(exec);
+            float cpy = (float)args[1]->toNumber(exec);
+            float x = (float)args[2]->toNumber(exec);
+            float y = (float)args[3]->toNumber(exec);
             CGContextAddQuadCurveToPoint (drawingContext, cpx, cpy, x, y);
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::BezierCurveTo: {
             if (args.size() != 6) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float cp1x = (float)args[0].toNumber(exec);
-            float cp1y = (float)args[1].toNumber(exec);
-            float cp2x = (float)args[2].toNumber(exec);
-            float cp2y = (float)args[3].toNumber(exec);
-            float x = (float)args[4].toNumber(exec);
-            float y = (float)args[5].toNumber(exec);
+            float cp1x = (float)args[0]->toNumber(exec);
+            float cp1y = (float)args[1]->toNumber(exec);
+            float cp2x = (float)args[2]->toNumber(exec);
+            float cp2y = (float)args[3]->toNumber(exec);
+            float x = (float)args[4]->toNumber(exec);
+            float y = (float)args[5]->toNumber(exec);
             CGContextAddCurveToPoint (drawingContext, cp1x, cp1y, cp2x, cp2y, x, y);
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::ArcTo: {
             if (args.size() != 5) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x1 = (float)args[0].toNumber(exec);
-            float y1 = (float)args[1].toNumber(exec);
-            float x2 = (float)args[2].toNumber(exec);
-            float y2 = (float)args[3].toNumber(exec);
-            float r = (float)args[4].toNumber(exec);
+            float x1 = (float)args[0]->toNumber(exec);
+            float y1 = (float)args[1]->toNumber(exec);
+            float x2 = (float)args[2]->toNumber(exec);
+            float y2 = (float)args[3]->toNumber(exec);
+            float r = (float)args[4]->toNumber(exec);
             CGContextAddArcToPoint (drawingContext, x1, y1, x2, y2, r);
             break;
         }
         case Context2D::Arc: {
             if (args.size() != 6) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
-            float r = (float)args[2].toNumber(exec);
-            float sa = (float)args[3].toNumber(exec);
-            float ea = (float)args[4].toNumber(exec);
-            bool clockwise = args[5].toBoolean(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
+            float r = (float)args[2]->toNumber(exec);
+            float sa = (float)args[3]->toNumber(exec);
+            float ea = (float)args[4]->toNumber(exec);
+            bool clockwise = args[5]->toBoolean(exec);
             CGContextAddArc (drawingContext, x, y, r, sa, ea, clockwise);
             break;
         }
         case Context2D::Rect: {
             if (args.size() != 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
-            float w = (float)args[2].toNumber(exec);
-            float h = (float)args[3].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
+            float w = (float)args[2]->toNumber(exec);
+            float h = (float)args[3]->toNumber(exec);
             CGContextAddRect (drawingContext, CGRectMake(x,y,w,h));
             break;
         }
         case Context2D::Clip: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -4248,28 +4196,28 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
 
         case Context2D::ClearRect: {
             if (args.size() != 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
-            float w = (float)args[2].toNumber(exec);
-            float h = (float)args[3].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
+            float w = (float)args[2]->toNumber(exec);
+            float h = (float)args[3]->toNumber(exec);
             CGContextClearRect (drawingContext, CGRectMake(x,y,w,h));
             renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::FillRect: {
             if (args.size() != 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
-            float w = (float)args[2].toNumber(exec);
-            float h = (float)args[3].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
+            float w = (float)args[2]->toNumber(exec);
+            float h = (float)args[3]->toNumber(exec);
             if (isImagePattern(contextObject->_fillStyle))
                 contextObject->updateFillImagePattern();
             CGContextFillRect (drawingContext, CGRectMake(x,y,w,h));
@@ -4279,18 +4227,19 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         case Context2D::StrokeRect: {
             int size = args.size();
             if (size < 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x = (float)args[0].toNumber(exec);
-            float y = (float)args[1].toNumber(exec);
-            float w = (float)args[2].toNumber(exec);
-            float h = (float)args[3].toNumber(exec);
+            float x = (float)args[0]->toNumber(exec);
+            float y = (float)args[1]->toNumber(exec);
+            float w = (float)args[2]->toNumber(exec);
+            float h = (float)args[3]->toNumber(exec);
+            
             if (isImagePattern(contextObject->_strokeStyle))
                 contextObject->updateStrokeImagePattern();
             if (size > 4)
-                CGContextStrokeRectWithWidth (drawingContext, CGRectMake(x,y,w,h), (float)args[4].toNumber(exec));
+                CGContextStrokeRectWithWidth (drawingContext, CGRectMake(x,y,w,h), (float)args[4]->toNumber(exec));
             else
                 CGContextStrokeRect (drawingContext, CGRectMake(x,y,w,h));
             renderer->setNeedsImageUpdate();
@@ -4300,17 +4249,17 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             int numArgs = args.size();
             
             if (numArgs < 3) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
             CGSize offset;
             
-            offset.width = (float)args[0].toNumber(exec);
-            offset.height = (float)args[1].toNumber(exec);
-            float blur = (float)args[2].toNumber(exec);
+            offset.width = (float)args[0]->toNumber(exec);
+            offset.height = (float)args[1]->toNumber(exec);
+            float blur = (float)args[2]->toNumber(exec);
             
-            QColor color = QColor(args[3].toString(exec).ascii());
+            QColor color = QColor(args[3]->toString(exec).ascii());
 
              if (numArgs == 3) {
                 CGContextSetShadow (drawingContext, offset, blur);
@@ -4320,8 +4269,8 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 
                 switch (numArgs - 3) {
                     case 1: {
-                        if (args[3].type() == StringType) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3].toString(exec).string());
+                        if (args[3]->isString()) {
+                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).string());
                             QColor qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
@@ -4330,16 +4279,16 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                             colorSpace = CGColorSpaceCreateDeviceRGB();
                         }
                         else {
-                            components[0] = (float)args[3].toNumber(exec);
+                            components[0] = (float)args[3]->toNumber(exec);
                             components[1] = 1.0f;
                             colorSpace = CGColorSpaceCreateDeviceGray();
                         }
                     }
                     break;
                     case 2: {
-                        float a = args[4].toNumber(exec);
-                        if (args[3].type() == StringType) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3].toString(exec).string());
+                        float a = args[4]->toNumber(exec);
+                        if (args[3]->isString()) {
+                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).string());
                             QColor qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
@@ -4348,32 +4297,32 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                             colorSpace = CGColorSpaceCreateDeviceRGB();
                         }
                         else {
-                            components[0] = (float)args[3].toNumber(exec);
+                            components[0] = (float)args[3]->toNumber(exec);
                             components[1] = a;
                             colorSpace = CGColorSpaceCreateDeviceGray();
                         }
                     }
                     break;
                     case 4: {
-                        components[0] = (float)args[3].toNumber(exec); // r
-                        components[1] = (float)args[4].toNumber(exec); // g
-                        components[2] = (float)args[5].toNumber(exec); // b
-                        components[3] = (float)args[6].toNumber(exec); // a
+                        components[0] = (float)args[3]->toNumber(exec); // r
+                        components[1] = (float)args[4]->toNumber(exec); // g
+                        components[2] = (float)args[5]->toNumber(exec); // b
+                        components[3] = (float)args[6]->toNumber(exec); // a
                         colorSpace = CGColorSpaceCreateDeviceRGB();
                     }
                     break;
                     case 5: {
-                        components[0] = (float)args[3].toNumber(exec); // c
-                        components[1] = (float)args[4].toNumber(exec); // m
-                        components[2] = (float)args[5].toNumber(exec); // y
-                        components[3] = (float)args[6].toNumber(exec); // k
-                        components[4] = (float)args[7].toNumber(exec); // a
+                        components[0] = (float)args[3]->toNumber(exec); // c
+                        components[1] = (float)args[4]->toNumber(exec); // m
+                        components[2] = (float)args[5]->toNumber(exec); // y
+                        components[3] = (float)args[6]->toNumber(exec); // k
+                        components[4] = (float)args[7]->toNumber(exec); // a
 
                         colorSpace = CGColorSpaceCreateDeviceCMYK();
                     }
                     break;
                     default: {
-                        Object err = Error::create(exec,SyntaxError);
+                        ObjectImp *err = Error::create(exec,SyntaxError);
                         exec->setException(err);
                         return err;
                     }
@@ -4388,7 +4337,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::ClearShadow: {
             if (args.size() != 0) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -4404,15 +4353,15 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         // img parameter can be a JavaScript Image, <img>, or a <canvas>
         case Context2D::DrawImage: {
             if (args.size() < 3) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
             
             // Make sure first argument is an object.
-            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (o->type() != ObjectType) {
-                Object err = Error::create(exec,TypeError);
+            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            if (!o->isObject()) {
+                ObjectImp *err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
@@ -4437,14 +4386,14 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 h = pixmap.height();
             }
             else if (o->inherits(&KJS::HTMLElement::img_info)){
-                NodeImpl *n = static_cast<HTMLElement *>(args[0].imp())->impl();
+                NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
                 HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
                 pixmap = e->pixmap();
                 w = pixmap.width();
                 h = pixmap.height();
             }
             else if (o->inherits(&KJS::HTMLElement::canvas_info)){
-                NodeImpl *n = static_cast<HTMLElement *>(args[0].imp())->impl();
+                NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
                 HTMLCanvasElementImpl *e = static_cast<HTMLCanvasElementImpl*>(n);
                 khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(e->renderer());
                 if (!renderer) {
@@ -4457,7 +4406,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
                 h = (float)CGBitmapContextGetHeight(sourceContext);
             }
             else {
-                Object err = Error::create(exec,TypeError);
+                ObjectImp *err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
@@ -4466,27 +4415,27 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             float sx = 0.f, sy = 0.f, sw = w, sh = h;
             
             if (args.size() == 3) {
-                dx = args[1].toNumber(exec);
-                dy = args[2].toNumber(exec);
+                dx = args[1]->toNumber(exec);
+                dy = args[2]->toNumber(exec);
             }
             else if (args.size() == 5) {
-                dx = args[1].toNumber(exec);
-                dy = args[2].toNumber(exec);
-                dw = args[3].toNumber(exec);
-                dh = args[4].toNumber(exec);
+                dx = args[1]->toNumber(exec);
+                dy = args[2]->toNumber(exec);
+                dw = args[3]->toNumber(exec);
+                dh = args[4]->toNumber(exec);
             }
             else if (args.size() == 9) {
-                sx = args[1].toNumber(exec);
-                sy = args[2].toNumber(exec);
-                sw = args[3].toNumber(exec);
-                sh = args[4].toNumber(exec);
-                dx = args[5].toNumber(exec);
-                dy = args[6].toNumber(exec);
-                dw = args[7].toNumber(exec);
-                dh = args[8].toNumber(exec);
+                sx = args[1]->toNumber(exec);
+                sy = args[2]->toNumber(exec);
+                sw = args[3]->toNumber(exec);
+                sh = args[4]->toNumber(exec);
+                dx = args[5]->toNumber(exec);
+                dy = args[6]->toNumber(exec);
+                dw = args[7]->toNumber(exec);
+                dh = args[8]->toNumber(exec);
             }
             else {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
@@ -4494,7 +4443,7 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
             if (!sourceContext) {
                 QPainter p;
                 p.drawFloatPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, 
-                    QPainter::compositeOperatorFromString(contextObject->_globalComposite.toString(exec).qstring().lower()), drawingContext);
+                    QPainter::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower()), drawingContext);
             }
             else {
                 // Cheap, because the image is backed by copy-on-write memory, and we're
@@ -4540,26 +4489,26 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::DrawImageFromRect: {
             if (args.size() != 10) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
-                Object err = Error::create(exec,TypeError);
+            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            if (!o->isObject() || !o->inherits(&Image::info)) {
+                ObjectImp *err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
             Image *i = static_cast<Image*>(o);
-            float sx = args[1].toNumber(exec);
-            float sy = args[2].toNumber(exec);
-            float sw = args[3].toNumber(exec);
-            float sh = args[4].toNumber(exec);
-            float dx = args[5].toNumber(exec);
-            float dy = args[6].toNumber(exec);
-            float dw = args[7].toNumber(exec);
-            float dh = args[8].toNumber(exec);
-            QString compositeOperator = args[9].toString(exec).qstring().lower();
+            float sx = args[1]->toNumber(exec);
+            float sy = args[2]->toNumber(exec);
+            float sw = args[3]->toNumber(exec);
+            float sh = args[4]->toNumber(exec);
+            float dx = args[5]->toNumber(exec);
+            float dy = args[6]->toNumber(exec);
+            float dw = args[7]->toNumber(exec);
+            float dh = args[8]->toNumber(exec);
+            QString compositeOperator = args[9]->toString(exec).qstring().lower();
             khtml::CachedImage *ci = i->image();
             if (ci) {
                 QPixmap pixmap = ci->pixmap();
@@ -4576,76 +4525,76 @@ Value KJS::Context2DFunction::call(ExecState *exec, Object &thisObj, const List 
         }
         case Context2D::SetAlpha: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float a =  (float)args[0].toNumber(exec);
+            float a =  (float)args[0]->toNumber(exec);
             CGContextSetAlpha (drawingContext, a);
             break;
         }
         case Context2D::SetCompositeOperation: {
             if (args.size() != 1) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            QString compositeOperator = args[0].toString(exec).qstring().lower();
+            QString compositeOperator = args[0]->toString(exec).qstring().lower();
             QPainter::setCompositeOperation (drawingContext,compositeOperator);
             break;
         }
         
         case Context2D::CreateLinearGradient: {
             if (args.size() != 4) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x0 = args[0].toNumber(exec);
-            float y0 = args[1].toNumber(exec);
-            float x1 = args[2].toNumber(exec);
-            float y1 = args[3].toNumber(exec);
+            float x0 = args[0]->toNumber(exec);
+            float y0 = args[1]->toNumber(exec);
+            float x1 = args[2]->toNumber(exec);
+            float y1 = args[3]->toNumber(exec);
 
-            return Object(new Gradient(x0, y0, x1, y1));
+            return new Gradient(x0, y0, x1, y1);
         }
         
         case Context2D::CreateRadialGradient: {
             if (args.size() != 6) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            float x0 = args[0].toNumber(exec);
-            float y0 = args[1].toNumber(exec);
-            float r0 = args[2].toNumber(exec);
-            float x1 = args[3].toNumber(exec);
-            float y1 = args[4].toNumber(exec);
-            float r1 = args[5].toNumber(exec);
+            float x0 = args[0]->toNumber(exec);
+            float y0 = args[1]->toNumber(exec);
+            float r0 = args[2]->toNumber(exec);
+            float x1 = args[3]->toNumber(exec);
+            float y1 = args[4]->toNumber(exec);
+            float r1 = args[5]->toNumber(exec);
 
-            return Object(new Gradient(x0, y0, r0, x1, y1, r1));
+            return new Gradient(x0, y0, r0, x1, y1, r1);
         }
         
         case Context2D::CreatePattern: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
-                Object err = Error::create(exec,TypeError);
+            ObjectImp *o = static_cast<ObjectImp*>(args[0]);
+            if (!o->isObject() || !o->inherits(&Image::info)) {
+                ObjectImp *err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
             }
             int repetitionType = ImagePattern::Repeat;
-            QString repetitionString = args[1].toString(exec).qstring().lower();
+            QString repetitionString = args[1]->toString(exec).qstring().lower();
             if (repetitionString == "repeat-x")
                 repetitionType = ImagePattern::RepeatX;
             else if (repetitionString == "repeat-y")
                 repetitionType = ImagePattern::RepeatY;
             else if (repetitionString == "no-repeat")
                 repetitionType = ImagePattern::NoRepeat;
-            return Object(new ImagePattern(static_cast<Image*>(o), repetitionType));
+            return new ImagePattern(static_cast<Image*>(o), repetitionType);
         }
     }
 
@@ -4712,7 +4661,7 @@ bool Context2D::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
     return getStaticPropertySlot<Context2DFunction, Context2D, DOMObject>(exec, &Context2DTable, this, propertyName, slot);
 }
 
-Value Context2D::getValueProperty(ExecState *, int token) const
+ValueImp *Context2D::getValueProperty(ExecState *, int token) const
 {
     switch(token) {
         case StrokeStyle: {
@@ -4770,7 +4719,7 @@ Value Context2D::getValueProperty(ExecState *, int token) const
     return Undefined();
 }
 
-void Context2D::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void Context2D::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
     lookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &Context2DTable, this );
 }
@@ -4789,13 +4738,13 @@ CGContextRef Context2D::drawingContext()
 }
 
 
-CGColorRef colorRefFromValue(ExecState *exec, const Value &value)
+CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value)
 {
     CGColorSpaceRef colorSpace;
     float components[4];
     
-    if (value.type() == StringType) {
-        QRgb color = DOM::CSSParser::parseColor(value.toString(exec).string());
+    if (value->isString()) {
+        QRgb color = DOM::CSSParser::parseColor(value->toString(exec).string());
         QColor qc(color);
         components[0] = qc.red()/255.;
         components[1] = qc.green()/255.;
@@ -4812,9 +4761,9 @@ CGColorRef colorRefFromValue(ExecState *exec, const Value &value)
     return colorRef;
 }
 
-QColor colorFromValue(ExecState *exec, const Value &value)
+QColor colorFromValue(ExecState *exec, ValueImp *value)
 {
-    QRgb color = DOM::CSSParser::parseColor(value.toString(exec).string());
+    QRgb color = DOM::CSSParser::parseColor(value->toString(exec).string());
     return QColor(color);
 }
 
@@ -4825,9 +4774,9 @@ void Context2D::setShadow(ExecState *exec)
         return;
     
     CGSize offset;
-    offset.width = (float)_shadowOffsetX.toNumber(exec);
-    offset.height = (float)_shadowOffsetY.toNumber(exec);
-    float blur = (float)_shadowBlur.toNumber(exec);
+    offset.width = (float)_shadowOffsetX->toNumber(exec);
+    offset.height = (float)_shadowOffsetY->toNumber(exec);
+    float blur = (float)_shadowBlur->toNumber(exec);
     CGColorRef colorRef = colorRefFromValue(exec, _shadowColor);
     CGContextSetShadowWithColor (context, offset, blur, colorRef);
     CFRelease (colorRef);
@@ -4839,7 +4788,7 @@ void Context2D::updateFillImagePattern()
     CGAffineTransform transform = CGContextGetCTM(context);
     
     if (!_validFillImagePattern || !CGAffineTransformEqualToTransform(transform, _lastFillImagePatternCTM)) {
-        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle.imp());
+        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle);
         CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
         float patternAlpha = 1;
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
@@ -4858,7 +4807,7 @@ void Context2D::updateStrokeImagePattern()
     CGAffineTransform transform = CGContextGetCTM(context);
     
     if (!_validStrokeImagePattern || !CGAffineTransformEqualToTransform(transform, _lastStrokeImagePatternCTM)) {
-        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle.imp());
+        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle);
         CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
         float patternAlpha = 1;
         CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
@@ -4871,7 +4820,7 @@ void Context2D::updateStrokeImagePattern()
     }
 }
 
-void Context2D::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
+void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
 {
     CGContextRef context = drawingContext();
     if (!context)
@@ -4880,18 +4829,17 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
     switch(token) {
         case StrokeStyle: {
             _strokeStyle = value;
-            if (value.type() == StringType) {
+            if (value->isString()) {
                 QColor qc = colorFromValue(exec, value);
                 CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
                 // _strokeStyle is used when stroke() is called on the context.
                 // CG doesn't have the notion of a setting a stroke gradient.
-                ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+                ObjectImp *o = static_cast<ObjectImp*>(value);
                 
-                if (o->type() != ObjectType || 
-                    (!(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))) {
-                    Object err = Error::create(exec,TypeError);
+                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info))) {
+                    ObjectImp *err = Error::create(exec,TypeError);
                     exec->setException(err);
                     return;
                 }
@@ -4901,18 +4849,17 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
         
         case FillStyle: {
             _fillStyle = value;
-            if (value.type() == StringType) {
+            if (value->isString()) {
                 QColor qc = colorFromValue(exec, value);
                 CGContextSetRGBFillColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
                 // _fillStyle is checked when fill() is called on the context.
                 // CG doesn't have the notion of setting a fill gradient.
-                ObjectImp *o = static_cast<ObjectImp*>(value.imp());
+                ObjectImp *o = static_cast<ObjectImp*>(value);
                 
-                if (o->type() != ObjectType || 
-                    (!(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))) {
-                    Object err = Error::create(exec,TypeError);
+                if (o->type() != ObjectType || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info))) {
+                    ObjectImp *err = Error::create(exec,TypeError);
                     exec->setException(err);
                     return;
                 }
@@ -4924,7 +4871,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
         
         case LineWidth: {
             _lineWidth = value;
-            float w = (float)value.toNumber(exec);
+            float w = (float)value->toNumber(exec);
             CGContextSetLineWidth (context, w);
             break;
         }
@@ -4933,7 +4880,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
             _lineCap = value;
         
             CGLineCap cap = kCGLineCapButt;
-            QString capString = value.toString(exec).qstring().lower();
+            QString capString = value->toString(exec).qstring().lower();
             if (capString == "round")
                 cap = kCGLineCapRound;
             else if (capString == "square")
@@ -4946,7 +4893,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
             _lineJoin = value;
             
             CGLineJoin join = kCGLineJoinMiter;
-            QString joinString = value.toString(exec).qstring().lower();
+            QString joinString = value->toString(exec).qstring().lower();
             if (joinString == "round")
                 join = kCGLineJoinRound;
             else if (joinString == "bevel")
@@ -4958,7 +4905,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
         case MiterLimit: {
             _miterLimit = value;
             
-            float l = (float)value.toNumber(exec);
+            float l = (float)value->toNumber(exec);
             CGContextSetMiterLimit (context, l);
             break;
         }
@@ -4989,14 +4936,14 @@ void Context2D::putValueProperty(ExecState *exec, int token, const Value& value,
         
         case GlobalAlpha: {
             _globalAlpha = value;
-            float a =  (float)value.toNumber(exec);
+            float a =  (float)value->toNumber(exec);
             CGContextSetAlpha (context, a);
             break;
         }
         
         case GlobalCompositeOperation: {
             _globalComposite = value;
-            QString compositeOperator = value.toString(exec).qstring().lower();
+            QString compositeOperator = value->toString(exec).qstring().lower();
             QPainter::setCompositeOperation (context, compositeOperator);
             break;
         }
@@ -5054,7 +5001,19 @@ void Context2D::restore()
 
 Context2D::Context2D(HTMLElementImpl *e)
   : _validFillImagePattern(false), _validStrokeImagePattern(false),
-    _element(e), _needsFlushRasterCache(false)
+    _element(e), _needsFlushRasterCache(false),
+    _strokeStyle(jsUndefined()),
+    _fillStyle(jsUndefined()),
+    _lineWidth(jsUndefined()),
+    _lineCap(jsUndefined()),
+    _lineJoin(jsUndefined()),
+    _miterLimit(jsUndefined()),
+    _shadowOffsetX(jsUndefined()),
+    _shadowOffsetY(jsUndefined()),
+    _shadowBlur(jsUndefined()),
+    _shadowColor(jsUndefined()),
+    _globalAlpha(jsUndefined()),
+    _globalComposite(jsUndefined())
 {
     _lineWidth = Number (1.);
     _strokeStyle = String ("black");
@@ -5084,51 +5043,51 @@ void Context2D::mark()
     ValueImp *v;
 
     v = _strokeStyle;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _fillStyle;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _lineWidth;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _lineCap;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _lineJoin;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _miterLimit;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _shadowOffsetX;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _shadowOffsetY;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _shadowBlur;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _shadowColor;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _globalAlpha;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     v = _globalComposite;
-    if (v && !v->marked())
+    if (!v->marked())
         v->mark();
 
     QPtrListIterator<List> it(stateStack);
@@ -5151,26 +5110,26 @@ const ClassInfo KJS::Gradient::info = { "Gradient", 0, &GradientTable, 0 };
 
 IMPLEMENT_PROTOFUNC(GradientFunction)
 
-Value GradientFunction::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *GradientFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj.inherits(&Gradient::info)) {
-        Object err = Error::create(exec,TypeError);
+    if (!thisObj->inherits(&Gradient::info)) {
+        ObjectImp *err = Error::create(exec,TypeError);
         exec->setException(err);
         return err;
     }
 
-    Gradient *gradient = static_cast<KJS::Gradient *>(thisObj.imp());
+    Gradient *gradient = static_cast<KJS::Gradient *>(thisObj);
 
     switch (id) {
         case Gradient::AddColorStop: {
             if (args.size() != 2) {
-                Object err = Error::create(exec,SyntaxError);
+                ObjectImp *err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
 
             QColor color = colorFromValue(exec, args[1]);
-            gradient->addColorStop ((float)args[0].toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);
+            gradient->addColorStop ((float)args[0]->toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);
         }
     }
 
@@ -5273,17 +5232,17 @@ bool Gradient::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
     return getStaticPropertySlot<GradientFunction, Gradient, DOMObject>(exec, &GradientTable, this, propertyName, slot);
 }
 
-Value Gradient::getValueProperty(ExecState *, int token) const
+ValueImp *Gradient::getValueProperty(ExecState *, int token) const
 {
     return Undefined();
 }
 
-void Gradient::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void Gradient::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
     lookupPut<Gradient,DOMObject>(exec, propertyName, value, attr, &GradientTable, this );
 }
 
-void Gradient::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
+void Gradient::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
 {
 }
 
@@ -5469,17 +5428,17 @@ bool ImagePattern::getOwnPropertySlot(ExecState *exec, const Identifier& propert
     return getStaticValueSlot<ImagePattern, DOMObject>(exec, &ImagePatternTable, this, propertyName, slot);
 }
 
-Value ImagePattern::getValueProperty(ExecState *, int token) const
+ValueImp *ImagePattern::getValueProperty(ExecState *, int token) const
 {
     return Undefined();
 }
 
-void ImagePattern::put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+void ImagePattern::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
     lookupPut<ImagePattern,DOMObject>(exec, propertyName, value, attr, &ImagePatternTable, this );
 }
 
-void ImagePattern::putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/)
+void ImagePattern::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/)
 {
 }
 

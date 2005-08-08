@@ -24,11 +24,10 @@
 #define _KJS_REFERENCE_H_
 
 #include "identifier.h"
-#include "value.h"
+#include "object.h"
 
 namespace KJS {
 
-  class Object;
   class ObjectImp;
 
   class Reference {
@@ -36,13 +35,11 @@ namespace KJS {
     friend class ReferenceListIterator;
     friend class ProtectedReference;
   public:
-    Reference(const Object& b, const Identifier& p);
-    Reference(const Object& b, unsigned p);
     Reference(ObjectImp *b, const Identifier& p);
     Reference(ObjectImp *b, unsigned p);
-    Reference(const Null& b, const Identifier& p);
-    Reference(const Null& b, unsigned p);
-    static Reference makeValueReference(const Value& v);
+    Reference(const Identifier& p);
+    Reference(unsigned p);
+    static Reference makeValueReference(ValueImp *);
     
     /**
      * Performs the GetBase type conversion operation on this value (ECMA 8.7)
@@ -50,7 +47,7 @@ namespace KJS {
      * Since references are supposed to have an Object or null as their base,
      * this method is guaranteed to return either Null() or an Object value.
      */
-    Value getBase(ExecState *exec) const;
+    ValueImp *getBase(ExecState *exec) const;
 
     /**
      * Performs the GetPropertyName type conversion operation on this value
@@ -62,26 +59,27 @@ namespace KJS {
      * Performs the GetValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    Value getValue(ExecState *exec) const;
+    ValueImp *getValue(ExecState *exec) const;
 
     /**
      * Performs the PutValue type conversion operation on this value
      * (ECMA 8.7.1)
      */
-    void putValue(ExecState *exec, const Value &w);
+    void putValue(ExecState *exec, ValueImp *);
     bool deleteValue(ExecState *exec);
 
-    ValueImp *baseIfMutable() const { return baseIsValue ? 0 : base.imp(); }
+    ValueImp *baseIfMutable() const { return baseIsValue ? 0 : base; }
 
   private:
     Reference() { }
 
-    Value base;
+    ValueImp *base;
     unsigned propertyNameAsNumber;
     bool baseIsValue;
     bool propertyNameIsNumber;
     mutable Identifier prop;
   };
+
 }
 
 #endif

@@ -37,7 +37,6 @@ ObjectPrototypeImp::ObjectPrototypeImp(ExecState *exec,
                                        FunctionPrototypeImp *funcProto)
   : ObjectImp() // [[Prototype]] is Null()
 {
-    Value protect(this);
     putDirect(toStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToString,            0), DontEnum);
     putDirect(toLocaleStringPropertyName, new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ToLocaleString,0), DontEnum);
     putDirect(valueOfPropertyName,  new ObjectProtoFuncImp(exec,funcProto,ObjectProtoFuncImp::ValueOf,             0), DontEnum);
@@ -52,7 +51,6 @@ ObjectProtoFuncImp::ObjectProtoFuncImp(ExecState *exec,
                                        int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
-  Value protect(this);
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
@@ -64,22 +62,19 @@ bool ObjectProtoFuncImp::implementsCall() const
 
 // ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5
 
-Value ObjectProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
     switch (id) {
         case ValueOf:
             return thisObj;
-        case HasOwnProperty: {
+        case HasOwnProperty:
             // Same as the in operator but without checking the prototype
-            Identifier propertyName(args[0].toString(exec));
-            bool exists = thisObj.hasOwnProperty(exec, propertyName);
-            return Value(exists ? BooleanImp::staticTrue : BooleanImp::staticFalse);
-        }
+            return jsBoolean(thisObj->hasOwnProperty(exec, Identifier(args[0]->toString(exec))));
         case ToLocaleString:
-          return thisObj.imp()->toString(exec);
+            return jsString(thisObj->toString(exec));
         case ToString:
         default:
-            return String("[object " + thisObj.className() + "]");
+            return String("[object " + thisObj->className() + "]");
     }
 }
 
@@ -90,12 +85,11 @@ ObjectObjectImp::ObjectObjectImp(ExecState *exec,
                                  FunctionPrototypeImp *funcProto)
   : InternalFunctionImp(funcProto)
 {
-  Value protect(this);
   // ECMA 15.2.3.1
   putDirect(prototypePropertyName, objProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(lengthPropertyName, NumberImp::one(), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, jsOne(), ReadOnly|DontDelete|DontEnum);
 }
 
 
@@ -105,32 +99,29 @@ bool ObjectObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.2.2
-Object ObjectObjectImp::construct(ExecState *exec, const List &args)
+ObjectImp *ObjectObjectImp::construct(ExecState *exec, const List &args)
 {
   // if no arguments have been passed ...
   if (args.isEmpty()) {
-    Object proto = exec->lexicalInterpreter()->builtinObjectPrototype();
-    Object result(new ObjectImp(proto));
+    ObjectImp *proto = exec->lexicalInterpreter()->builtinObjectPrototype();
+    ObjectImp *result(new ObjectImp(proto));
     return result;
   }
 
-  Value arg = *(args.begin());
-  Object obj = Object::dynamicCast(arg);
-  if (!obj.isNull()) {
+  ValueImp *arg = *(args.begin());
+  if (ObjectImp *obj = arg->getObject())
     return obj;
-  }
 
-  switch (arg.type()) {
+  switch (arg->type()) {
   case StringType:
   case BooleanType:
   case NumberType:
-    return arg.toObject(exec);
+    return arg->toObject(exec);
   default:
     assert(!"unhandled switch case in ObjectConstructor");
   case NullType:
   case UndefinedType:
-    Object proto = exec->lexicalInterpreter()->builtinObjectPrototype();
-    return Object(new ObjectImp(proto));
+    return new ObjectImp(exec->lexicalInterpreter()->builtinObjectPrototype());
   }
 }
 
@@ -139,21 +130,21 @@ bool ObjectObjectImp::implementsCall() const
   return true;
 }
 
-Value ObjectObjectImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+ValueImp *ObjectObjectImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
-  Value result;
+  ValueImp *result;
 
   List argList;
   // Construct a new Object
   if (args.isEmpty()) {
     result = construct(exec,argList);
   } else {
-    Value arg = args[0];
-    if (arg.type() == NullType || arg.type() == UndefinedType) {
+    ValueImp *arg = args[0];
+    if (arg->isUndefinedOrNull()) {
       argList.append(arg);
       result = construct(exec,argList);
     } else
-      result = arg.toObject(exec);
+      result = arg->toObject(exec);
   }
   return result;
 }

@@ -44,27 +44,27 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual void put(ExecState *exec, const Identifier &propertyName,
-                     const Value &value, int attr = None);
+                     ValueImp *value, int attr = None);
 
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
 
     virtual bool deleteProperty(ExecState *exec,
                                 const Identifier &propertyName);
 
-    virtual Value defaultValue(ExecState *exec, Type hint) const;
+    virtual ValueImp *defaultValue(ExecState *exec, Type hint) const;
 
     void setInternalInstance (Bindings::Instance *i) { instance = i; }
     Bindings::Instance *getInternalInstance() const { return instance; }
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
     
     static const ClassInfo info;
 
 private:
-    static Value fallbackObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static Value fieldGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static Value methodGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *fallbackObjectGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *fieldGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *methodGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::Instance *instance;
     bool ownsInstance;

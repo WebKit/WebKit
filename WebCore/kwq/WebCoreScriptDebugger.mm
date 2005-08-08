@@ -48,7 +48,7 @@ using namespace KJS;
 
 - (WebCoreScriptCallFrame *)_initWithGlobalObject:(WebScriptObject *)globalObj caller:(WebCoreScriptCallFrame *)caller state:(ExecState *)state;
 - (void)_setWrapper:(id)wrapper;
-- (id)_convertValueToObjcValue:(Value)value;
+- (id)_convertValueToObjcValue:(ValueImp *)value;
 
 @end
 
@@ -91,7 +91,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
         return true;
     }
-    virtual bool callEvent(ExecState *state, int sid, int lineno, Object &func, const List &args) {
+    virtual bool callEvent(ExecState *state, int sid, int lineno, ObjectImp *func, const List &args) {
         if (!_nested) {
             _nested = true;
             _current = [_objc _enterFrame:state];
@@ -108,7 +108,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
         return true;
     }
-    virtual bool returnEvent(ExecState *state, int sid, int lineno, Object &func) {
+    virtual bool returnEvent(ExecState *state, int sid, int lineno, ObjectImp *func) {
         if (!_nested) {
             _nested = true;
             [[_objc delegate] leavingFrame:_current sourceId:sid line:lineno];
@@ -146,6 +146,12 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     [_current release];
     delete _debugger;
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete _debugger;
+    [super finalize];
 }
 
 - (id<WebScriptDebugger>)delegate
@@ -203,13 +209,13 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     _wrapper = wrapper;     // (already retained)
 }
 
-- (id)_convertValueToObjcValue:(Value)value
+- (id)_convertValueToObjcValue:(ValueImp *)value
 {
-    if (value.isNull()) {
+    if (!value) {
         return nil;
     }
 
-    if (value.type() == ObjectType && value.imp() == [_globalObj _imp]) {
+    if (value == [_globalObj _imp]) {
         return _globalObj;
     }
 
@@ -259,8 +265,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     NSMutableArray *scopes = [[NSMutableArray alloc] init];
 
     while (!chain.isEmpty()) {
-        Object scope(chain.top());
-        [scopes addObject:[self _convertValueToObjcValue:scope]];
+        [scopes addObject:[self _convertValueToObjcValue:chain.top()]];
         chain.pop();
     }
 
@@ -309,14 +314,14 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
     ExecState   *state   = _state;
     Interpreter *interp  = state->interpreter();
-    Object       globObj = interp->globalObject();
+    ObjectImp   *globObj = interp->globalObject();
 
     // find "eval"
-    Object eval;
+    ObjectImp *eval = NULL;
     if (state->context().imp()) {  // "eval" won't work without context (i.e. at global scope)
-        Object o = Object::dynamicCast(globObj.get(state, "eval"));
-        if (!o.isNull() && o.implementsCall()) {
-            eval = o;
+        ValueImp *v = globObj->get(state, "eval");
+        if (v->isObject() && static_cast<ObjectImp *>(v)->implementsCall()) {
+            eval = static_cast<ObjectImp *>(v);
         }
         else {
             // no "eval" - fallback operates on global exec state
@@ -324,17 +329,16 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
         }
     }
 
-    Value savedException = state->exception();
+    ValueImp *savedException = state->exception();
     state->clearException();
 
     // evaluate
-    Value result;
-    if (!eval.isNull()) {
+    ValueImp *result;
+    if (eval) {
         Interpreter::lock();
-        Object dummy;
         List args;
         args.append(String(code));
-        result = eval.call(state, dummy, args);
+        result = eval->call(state, NULL, args);
         Interpreter::unlock();
     }
     else {

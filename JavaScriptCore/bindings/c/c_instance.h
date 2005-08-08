@@ -51,15 +51,15 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual Value valueOf() const;
-    virtual Value defaultValue (KJS::Type hint) const;
+    virtual ValueImp *valueOf() const;
+    virtual ValueImp *defaultValue (KJS::Type hint) const;
 
-    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual ValueImp *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual ValueImp *invokeDefaultMethod (ExecState *exec, const List &args);
 
-    Value stringValue() const;
-    Value numberValue() const;
-    Value booleanValue() const;
+    ValueImp *stringValue() const;
+    ValueImp *numberValue() const;
+    ValueImp *booleanValue() const;
     
     NPObject *getObject() const { return _object; }
 

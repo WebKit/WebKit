@@ -60,7 +60,7 @@ namespace KJS {
                        int i, int len);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     enum { ToString, ToLocaleString, ValueOf, ToFixed, ToExponential, ToPrecision };
   private:
@@ -79,19 +79,20 @@ namespace KJS {
                     NumberPrototypeImp *numberProto);
 
     virtual bool implementsConstruct() const;
-    virtual Object construct(ExecState *exec, const List &args);
+    virtual ObjectImp *construct(ExecState *exec, const List &args);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    Value getValueProperty(ExecState *exec, int token) const;
+    ValueImp *getValueProperty(ExecState *exec, int token) const;
+
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
     Completion execute(const List &);
-    Object construct(const List &);
+    ObjectImp *construct(const List &);
   };
 
 } // namespace

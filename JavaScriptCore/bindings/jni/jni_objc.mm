@@ -43,7 +43,7 @@ using namespace KJS::Bindings;
 - (NSURL *)_webViewURL;
 @end
 
-bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, Value &exceptionDescription)
+bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, ValueImp *&exceptionDescription)
 {
     id view = (id)targetAppletView;
     

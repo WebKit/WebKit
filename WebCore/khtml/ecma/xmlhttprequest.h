@@ -56,7 +56,7 @@ namespace KJS {
     XMLHttpRequestConstructorImp(ExecState *exec, DOM::DocumentImpl *d);
     ~XMLHttpRequestConstructorImp();
     virtual bool implementsConstruct() const;
-    virtual Object construct(ExecState *exec, const List &args);
+    virtual ObjectImp *construct(ExecState *exec, const List &args);
   private:
     khtml::SharedPtr<DOM::DocumentImpl> doc;
   };
@@ -66,9 +66,9 @@ namespace KJS {
     XMLHttpRequest(ExecState *, DOM::DocumentImpl *d);
     ~XMLHttpRequest();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    Value getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, const Value& value, int /*attr*/);
+    ValueImp *getValueProperty(ExecState *exec, int token) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    void putValueProperty(ExecState *exec, int token, ValueImp *value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual void mark();
 
@@ -84,8 +84,8 @@ namespace KJS {
     friend class XMLHttpRequestProtoFunc;
     friend class XMLHttpRequestQObject;
 
-    Value getStatusText() const;
-    Value getStatus() const;
+    ValueImp *getStatusText() const;
+    ValueImp *getStatus() const;
     bool urlMatchesDocumentDomain(const KURL&) const;
 
     XMLHttpRequestQObject *qObject;
@@ -106,8 +106,8 @@ namespace KJS {
     void send(const QString& _body);
     void abort();
     void setRequestHeader(const QString& name, const QString &value);
-    Value getAllResponseHeaders() const;
-    Value getResponseHeader(const QString& name) const;
+    ValueImp *getAllResponseHeaders() const;
+    ValueImp *getResponseHeader(const QString& name) const;
 
     void changeState(XMLHttpRequestState newState);
 

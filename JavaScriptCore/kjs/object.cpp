@@ -40,10 +40,10 @@
 #include "nodes.h"
 
 #ifndef NDEBUG
-#define JAVASCRIPT_CALL_TRACING Yes
+//#define JAVASCRIPT_CALL_TRACING 1
 #endif
 
-#ifdef JAVASCRIPT_CALL_TRACING
+#if JAVASCRIPT_CALL_TRACING
 static bool _traceJavaScript = false;
 
 extern "C" {
@@ -63,21 +63,14 @@ namespace KJS {
 
 // ------------------------------ Object ---------------------------------------
 
-Object Object::dynamicCast(const Value &v)
+ValueImp *ObjectImp::call(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (v.isNull() || v.type() != ObjectType)
-    return Object(0);
+  assert(implementsCall());
 
-  return Object(static_cast<ObjectImp*>(v.imp()));
-}
-
-
-Value Object::call(ExecState *exec, Object &thisObj, const List &args)
-{ 
 #if KJS_MAX_STACK > 0
   static int depth = 0; // sum of all concurrent interpreters
 
-#ifdef JAVASCRIPT_CALL_TRACING
+#if JAVASCRIPT_CALL_TRACING
     static bool tracing = false;
     if (traceJavaScript() && !tracing) {
         tracing = true;
@@ -87,7 +80,7 @@ Value Object::call(ExecState *exec, Object &thisObj, const List &args)
         for (int j = 0; j < args.size(); j++) {
             for (int i = 0; i < depth; i++)
                 putchar (' ');
-            printf ("*** arg[%d] = %s\n", j, args[j].toString(exec).ascii());
+            printf ("*** arg[%d] = %s\n", j, args[j]->toString(exec).ascii());
         }
         tracing = false;
     }
@@ -95,25 +88,25 @@ Value Object::call(ExecState *exec, Object &thisObj, const List &args)
 
   if (++depth > KJS_MAX_STACK) {
     --depth;
-    Object err = Error::create(exec, RangeError,
+    ObjectImp *err = Error::create(exec, RangeError,
                                "Maximum call stack size exceeded.");
     exec->setException(err);
     return err;
   }
 #endif
 
-  Value ret = imp()->call(exec,thisObj,args); 
+  ValueImp *ret = callAsFunction(exec,thisObj,args); 
 
 #if KJS_MAX_STACK > 0
   --depth;
 #endif
 
-#ifdef JAVASCRIPT_CALL_TRACING
+#if JAVASCRIPT_CALL_TRACING
     if (traceJavaScript() && !tracing) {
         tracing = true;
         for (int i = 0; i < depth; i++)
             putchar (' ');
-        printf ("*** returning:  %s\n", ret.toString(exec).ascii());
+        printf ("*** returning:  %s\n", ret->toString(exec).ascii());
         tracing = false;
     }
 #endif
@@ -123,37 +116,13 @@ Value Object::call(ExecState *exec, Object &thisObj, const List &args)
 
 // ------------------------------ ObjectImp ------------------------------------
 
-ObjectImp::ObjectImp(const Object &proto)
-  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L)
-{
-  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-}
-
-ObjectImp::ObjectImp(ObjectImp *proto)
-  : _proto(proto), _internalValue(0L)
-{
-  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-}
-
-ObjectImp::ObjectImp()
-{
-  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-  _proto = NullImp::staticNull;
-  _internalValue = 0L;
-}
-
-ObjectImp::~ObjectImp()
-{
-  //fprintf(stderr,"ObjectImp::~ObjectImp %p\n",(void*)this);
-}
-
 void ObjectImp::mark()
 {
-  //fprintf(stderr,"ObjectImp::mark() %p\n",(void*)this);
-  ValueImp::mark();
+  AllocatedValueImp::mark();
 
-  if (_proto && !_proto->marked())
-    _proto->mark();
+  ValueImp *proto = _proto;
+  if (!proto->marked())
+    proto->mark();
 
   _prop.mark();
 
@@ -163,39 +132,14 @@ void ObjectImp::mark()
   _scope.mark();
 }
 
-const ClassInfo *ObjectImp::classInfo() const
-{
-  return 0;
-}
-
-bool ObjectImp::inherits(const ClassInfo *info) const
-{
-  if (!info)
-    return false;
-
-  const ClassInfo *ci = classInfo();
-  if (!ci)
-    return false;
-
-  while (ci && ci != info)
-    ci = ci->parentClass;
-
-  return (ci == info);
-}
-
 Type ObjectImp::type() const
 {
   return ObjectType;
 }
 
-Value ObjectImp::prototype() const
+const ClassInfo *ObjectImp::classInfo() const
 {
-  return Value(_proto);
-}
-
-void ObjectImp::setPrototype(const Value &proto)
-{
-  _proto = proto.imp();
+  return 0;
 }
 
 UString ObjectImp::className() const
@@ -206,7 +150,7 @@ UString ObjectImp::className() const
   return "Object";
 }
 
-Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
+ValueImp *ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   PropertySlot slot;
 
@@ -216,7 +160,7 @@ Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
   return Undefined();
 }
 
-Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
+ValueImp *ObjectImp::get(ExecState *exec, unsigned propertyName) const
 {
   PropertySlot slot;
   if (const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot))
@@ -225,7 +169,7 @@ Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
   return Undefined();
 }
 
-bool ObjectImp::getProperty(ExecState *exec, const Identifier& propertyName, Value& result) const
+bool ObjectImp::getProperty(ExecState *exec, const Identifier& propertyName, ValueImp*& result) const
 {
   PropertySlot slot;
   if (const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot)) {
@@ -236,7 +180,7 @@ bool ObjectImp::getProperty(ExecState *exec, const Identifier& propertyName, Val
   return false;
 }
 
-bool ObjectImp::getProperty(ExecState *exec, unsigned propertyName, Value& result) const
+bool ObjectImp::getProperty(ExecState *exec, unsigned propertyName, ValueImp*& result) const
 {
   PropertySlot slot;
   if (const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot)) {
@@ -256,7 +200,7 @@ bool ObjectImp::getPropertySlot(ExecState *exec, unsigned propertyName, Property
       return true;
     
     ValueImp *proto = imp->_proto;
-    if (proto->dispatchType() != ObjectType)
+    if (!proto->isObject())
       break;
     
     imp = static_cast<ObjectImp *>(proto);
@@ -271,10 +215,9 @@ bool ObjectImp::getOwnPropertySlot(ExecState *exec, unsigned propertyName, Prope
 }
 
 // ECMA 8.6.2.2
-void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                     const Value &value, int attr)
+void ObjectImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
-  assert(!value.isNull());
+  assert(value);
 
   // non-standard netscape extension
   if (propertyName == exec->dynamicInterpreter()->specialPrototypeIdentifier()) {
@@ -294,11 +237,11 @@ void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
     return;
   }
 
-  _prop.put(propertyName,value.imp(),attr);
+  _prop.put(propertyName,value,attr);
 }
 
 void ObjectImp::put(ExecState *exec, unsigned propertyName,
-                     const Value &value, int attr)
+                     ValueImp *value, int attr)
 {
   put(exec, Identifier::from(propertyName), value, attr);
 }
@@ -340,6 +283,12 @@ bool ObjectImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) 
   return const_cast<ObjectImp *>(this)->getOwnPropertySlot(exec, propertyName, slot);
 }
 
+bool ObjectImp::hasOwnProperty(ExecState *exec, unsigned propertyName) const
+{
+  PropertySlot slot;
+  return const_cast<ObjectImp *>(this)->getOwnPropertySlot(exec, propertyName, slot);
+}
+
 // ECMA 8.6.2.5
 bool ObjectImp::deleteProperty(ExecState */*exec*/, const Identifier &propertyName)
 {
@@ -370,28 +319,28 @@ void ObjectImp::deleteAllProperties( ExecState * )
 }
 
 // ECMA 8.6.2.6
-Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
+ValueImp *ObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
   if (hint != StringType && hint != NumberType) {
     /* Prefer String for Date objects */
-    if (_proto == exec->lexicalInterpreter()->builtinDatePrototype().imp())
+    if (_proto == exec->lexicalInterpreter()->builtinDatePrototype())
       hint = StringType;
     else
       hint = NumberType;
   }
 
-  Value v;
+  ValueImp *v;
   if (hint == StringType)
     v = get(exec,toStringPropertyName);
   else
     v = get(exec,valueOfPropertyName);
 
-  if (v.type() == ObjectType) {
-    Object o = Object(static_cast<ObjectImp*>(v.imp()));
-    if (o.implementsCall()) { // spec says "not primitive type" but ...
-      Object thisObj = Object(const_cast<ObjectImp*>(this));
-      Value def = o.call(exec,thisObj,List::empty());
-      Type defType = def.type();
+  if (v->isObject()) {
+    ObjectImp *o = static_cast<ObjectImp*>(v);
+    if (o->implementsCall()) { // spec says "not primitive type" but ...
+      ObjectImp *thisObj = const_cast<ObjectImp*>(this);
+      ValueImp *def = o->call(exec,thisObj,List::empty());
+      Type defType = def->type();
       if (defType == UnspecifiedType || defType == UndefinedType ||
           defType == NullType || defType == BooleanType ||
           defType == StringType || defType == NumberType) {
@@ -405,12 +354,12 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
   else
     v = get(exec,toStringPropertyName);
 
-  if (v.type() == ObjectType) {
-    Object o = Object(static_cast<ObjectImp*>(v.imp()));
-    if (o.implementsCall()) { // spec says "not primitive type" but ...
-      Object thisObj = Object(const_cast<ObjectImp*>(this));
-      Value def = o.call(exec,thisObj,List::empty());
-      Type defType = def.type();
+  if (v->isObject()) {
+    ObjectImp *o = static_cast<ObjectImp*>(v);
+    if (o->implementsCall()) { // spec says "not primitive type" but ...
+      ObjectImp *thisObj = const_cast<ObjectImp*>(this);
+      ValueImp *def = o->call(exec,thisObj,List::empty());
+      Type defType = def->type();
       if (defType == UnspecifiedType || defType == UndefinedType ||
           defType == NullType || defType == BooleanType ||
           defType == StringType || defType == NumberType) {
@@ -422,23 +371,20 @@ Value ObjectImp::defaultValue(ExecState *exec, Type hint) const
   if (exec->hadException())
     return exec->exception();
 
-  Object err = Error::create(exec, TypeError, I18N_NOOP("No default value"));
+  ObjectImp *err = Error::create(exec, TypeError, I18N_NOOP("No default value"));
   exec->setException(err);
   return err;
 }
 
-const HashEntry* ObjectImp::findPropertyHashEntry( const Identifier& propertyName ) const
+const HashEntry* ObjectImp::findPropertyHashEntry(const Identifier& propertyName) const
 {
-  const ClassInfo *info = classInfo();
-  while (info) {
-    if (info->propHashTable) {
-      const HashEntry *e = Lookup::findEntry(info->propHashTable, propertyName);
-      if (e)
+  for (const ClassInfo *info = classInfo(); info; info = info->parentClass) {
+    if (const HashTable *propHashTable = info->propHashTable) {
+      if (const HashEntry *e = Lookup::findEntry(propHashTable, propertyName))
         return e;
     }
-    info = info->parentClass;
   }
-  return 0L;
+  return 0;
 }
 
 bool ObjectImp::implementsConstruct() const
@@ -446,13 +392,13 @@ bool ObjectImp::implementsConstruct() const
   return false;
 }
 
-Object ObjectImp::construct(ExecState */*exec*/, const List &/*args*/)
+ObjectImp *ObjectImp::construct(ExecState */*exec*/, const List &/*args*/)
 {
   assert(false);
-  return Object(0);
+  return NULL;
 }
 
-Object ObjectImp::construct(ExecState *exec, const List &args, const UString &/*sourceURL*/, int /*lineNumber*/)
+ObjectImp *ObjectImp::construct(ExecState *exec, const List &args, const UString &/*sourceURL*/, int /*lineNumber*/)
 {
   return construct(exec, args);
 }
@@ -462,10 +408,10 @@ bool ObjectImp::implementsCall() const
   return false;
 }
 
-Value ObjectImp::call(ExecState */*exec*/, Object &/*thisObj*/, const List &/*args*/)
+ValueImp *ObjectImp::callAsFunction(ExecState */*exec*/, ObjectImp */*thisObj*/, const List &/*args*/)
 {
   assert(false);
-  return Object(0);
+  return NULL;
 }
 
 bool ObjectImp::implementsHasInstance() const
@@ -473,19 +419,19 @@ bool ObjectImp::implementsHasInstance() const
   return false;
 }
 
-Boolean ObjectImp::hasInstance(ExecState */*exec*/, const Value &/*value*/)
+bool ObjectImp::hasInstance(ExecState */*exec*/, ValueImp */*value*/)
 {
   assert(false);
-  return Boolean(false);
+  return false;
 }
 
 ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
 {
   ReferenceList list;
-  if (_proto && _proto->dispatchType() == ObjectType && recursive)
+  if (_proto->isObject() && recursive)
     list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
 
-  _prop.addEnumerablesToReferenceList(list, Object(this));
+  _prop.addEnumerablesToReferenceList(list, this);
 
   // Add properties from the static hashtable of properties
   const ClassInfo *info = classInfo();
@@ -504,22 +450,7 @@ ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
   return list;
 }
 
-Value ObjectImp::internalValue() const
-{
-  return Value(_internalValue);
-}
-
-void ObjectImp::setInternalValue(const Value &v)
-{
-  _internalValue = v.imp();
-}
-
-void ObjectImp::setInternalValue(ValueImp *v)
-{
-  _internalValue = v;
-}
-
-Value ObjectImp::toPrimitive(ExecState *exec, Type preferredType) const
+ValueImp *ObjectImp::toPrimitive(ExecState *exec, Type preferredType) const
 {
   return defaultValue(exec,preferredType);
 }
@@ -531,23 +462,23 @@ bool ObjectImp::toBoolean(ExecState */*exec*/) const
 
 double ObjectImp::toNumber(ExecState *exec) const
 {
-  Value prim = toPrimitive(exec,NumberType);
+  ValueImp *prim = toPrimitive(exec,NumberType);
   if (exec->hadException()) // should be picked up soon in nodes.cpp
     return 0.0;
-  return prim.toNumber(exec);
+  return prim->toNumber(exec);
 }
 
 UString ObjectImp::toString(ExecState *exec) const
 {
-  Value prim = toPrimitive(exec,StringType);
+  ValueImp *prim = toPrimitive(exec,StringType);
   if (exec->hadException()) // should be picked up soon in nodes.cpp
     return "";
-  return prim.toString(exec);
+  return prim->toString(exec);
 }
 
-Object ObjectImp::toObject(ExecState */*exec*/) const
+ObjectImp *ObjectImp::toObject(ExecState */*exec*/) const
 {
-  return Object(const_cast<ObjectImp*>(this));
+  return const_cast<ObjectImp*>(this);
 }
 
 void ObjectImp::putDirect(const Identifier &propertyName, ValueImp *value, int attr)
@@ -557,7 +488,7 @@ void ObjectImp::putDirect(const Identifier &propertyName, ValueImp *value, int a
 
 void ObjectImp::putDirect(const Identifier &propertyName, int value, int attr)
 {
-    _prop.put(propertyName, NumberImp::create(value), attr);
+    _prop.put(propertyName, jsNumber(value), attr);
 }
 
 // ------------------------------ Error ----------------------------------------
@@ -574,10 +505,10 @@ const char * const errorNamesArr[] = {
 
 const char * const * const Error::errorNames = errorNamesArr;
 
-Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
+ObjectImp *Error::create(ExecState *exec, ErrorType errtype, const char *message,
                      int lineno, int sourceId, const UString *sourceURL)
 {
-  Object cons;
+  ObjectImp *cons;
   switch (errtype) {
   case EvalError:
     cons = exec->lexicalInterpreter()->builtinEvalError();
@@ -606,21 +537,21 @@ Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
     message = errorNames[errtype];
   List args;
   args.append(String(message));
-  Object err = Object::dynamicCast(cons.construct(exec,args));
+  ObjectImp *err = static_cast<ObjectImp *>(cons->construct(exec,args));
 
   if (lineno != -1)
-    err.put(exec, "line", Number(lineno));
+    err->put(exec, "line", Number(lineno));
   if (sourceId != -1)
-    err.put(exec, "sourceId", Number(sourceId));
+    err->put(exec, "sourceId", Number(sourceId));
 
   if(sourceURL)
-   err.put(exec,"sourceURL", String(*sourceURL));
+   err->put(exec,"sourceURL", String(*sourceURL));
  
   return err;
 
 /*
 #ifndef NDEBUG
-  const char *msg = err.get("message").toString().value().ascii();
+  const char *msg = err->get("message")->toString().value().ascii();
   if (l >= 0)
       fprintf(stderr, "KJS: %s at line %d. %s\n", estr, l, msg);
   else
@@ -633,7 +564,7 @@ Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
 
 ObjectImp *error(ExecState *exec, ErrorType type, const char *message, int line, int sourceId, const UString *sourceURL)
 {
-    return Error::create(exec, type, message, line, sourceId, sourceURL).imp();
+    return Error::create(exec, type, message, line, sourceId, sourceURL);
 }
 
 } // namespace KJS

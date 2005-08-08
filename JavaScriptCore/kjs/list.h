@@ -62,7 +62,6 @@ namespace KJS {
          *
          * @param val Pointer to object.
          */
-        void append(const Value& val) { append(val.imp()); }
         void append(ValueImp *val);
         /**
          * Remove all elements from the list.
@@ -104,13 +103,11 @@ namespace KJS {
          * @return Return the element at position i. KJS::Undefined if the
          * index is out of range.
          */
-        Value at(int i) const { return Value(impAt(i)); }
+        ValueImp *at(int i) const;
         /**
          * Equivalent to at.
          */
-        Value operator[](int i) const { return Value(impAt(i)); }
-        
-        ValueImp *impAt(int i) const;
+        ValueImp *operator[](int i) const { return at(i); }
     
         /**
          * Returns a pointer to a static instance of an empty list. Useful if a
@@ -146,25 +143,25 @@ namespace KJS {
          * Dereference the iterator.
          * @return A pointer to the element the iterator operates on.
          */
-        ValueImp *operator->() const { return _list->impAt(_i); }
-        Value operator*() const { return Value(_list->impAt(_i)); }
+        ValueImp *operator->() const { return _list->at(_i); }
+        ValueImp *operator*() const { return _list->at(_i); }
         /**
          * Prefix increment operator.
          * @return The element after the increment.
          */
-        Value operator++() { return Value(_list->impAt(++_i)); }
+        ValueImp *operator++() { return _list->at(++_i); }
         /**
          * Postfix increment operator.
          */
-        Value operator++(int) { return Value(_list->impAt(_i++)); }
+        ValueImp *operator++(int) { return _list->at(_i++); }
         /**
          * Prefix decrement operator.
          */
-        Value operator--() { return Value(_list->impAt(--_i)); }
+        ValueImp *operator--() { return _list->at(--_i); }
         /**
          * Postfix decrement operator.
          */
-        Value operator--(int) { return Value(_list->impAt(_i--)); }
+        ValueImp *operator--(int) { return _list->at(_i--); }
         /**
          * Compare the iterator with another one.
          * @return True if the two iterators operate on the same list element.

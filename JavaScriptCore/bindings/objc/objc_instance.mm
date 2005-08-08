@@ -122,9 +122,9 @@ Bindings::Class *ObjcInstance::getClass() const
     return static_cast<Bindings::Class*>(_class);
 }
 
-Value ObjcInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodList, const List &args)
+ValueImp *ObjcInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
 {
-    Value resultValue;
+    ValueImp *resultValue;
 
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
     // name match for a particular method.
@@ -221,7 +221,7 @@ NS_DURING
     // type.
     assert (objcValueType != ObjcInvalidType);
     
-    // Get the return value and convert it to a KJS::Value.  Length
+    // Get the return value and convert it to a JavaScript value. Length
     // of return value will never exceed the size of largest scalar
     // or a pointer.
     char buffer[1024];
@@ -244,9 +244,9 @@ NS_ENDHANDLER
     return resultValue;
 }
 
-Value ObjcInstance::invokeDefaultMethod (KJS::ExecState *exec, const List &args)
+ValueImp *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 {
-    Value resultValue;
+    ValueImp *resultValue;
     
 NS_DURING
 
@@ -281,9 +281,9 @@ NS_DURING
     const char *type = [signature methodReturnType];
     ObjcValueType objcValueType = objcValueTypeForType (type);
     
-    // Get the return value and convert it to a KJS::Value.  Length
+    // Get the return value and convert it to a JavaScript value. Length
     // of return value will never exceed the size of a pointer, so we're
-    // OK we 32 here.
+    // OK with 32 here.
     char buffer[32];
     [invocation getReturnValue:buffer];
     resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
@@ -297,7 +297,7 @@ NS_ENDHANDLER
     return resultValue;
 }
 
-void ObjcInstance::setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const
+void ObjcInstance::setValueOfField (ExecState *exec, const Field *aField, ValueImp *aValue) const
 {
     aField->setValueToInstance (exec, this, aValue);
 }
@@ -312,7 +312,7 @@ bool ObjcInstance::supportsSetValueOfUndefinedField ()
     return false;
 }
 
-void ObjcInstance::setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue)
+void ObjcInstance::setValueOfUndefinedField (ExecState *exec, const Identifier &property, ValueImp *aValue)
 {
     id targetObject = getObject();
     
@@ -335,13 +335,13 @@ void ObjcInstance::setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Id
     }
 }
 
-Value ObjcInstance::getValueOfField (KJS::ExecState *exec, const Field *aField) const {  
+ValueImp *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const {  
     return aField->valueFromInstance (exec, this);
 }
 
-KJS::Value ObjcInstance::getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const
+ValueImp *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const
 {
-    Value result = Undefined();
+    ValueImp *volatile result = Undefined();
     
     id targetObject = getObject();
     
@@ -367,18 +367,18 @@ KJS::Value ObjcInstance::getValueOfUndefinedField (KJS::ExecState *exec, const K
     return result;
 }
 
-KJS::Value ObjcInstance::defaultValue (KJS::Type hint) const
+ValueImp *ObjcInstance::defaultValue (Type hint) const
 {
-    if (hint == KJS::StringType) {
+    if (hint == StringType) {
         return stringValue();
     }
-    else if (hint == KJS::NumberType) {
+    else if (hint == NumberType) {
         return numberValue();
     }
-    else if (hint == KJS::BooleanType) {
+    else if (hint == BooleanType) {
         return booleanValue();
     }
-    else if (hint == KJS::UnspecifiedType) {
+    else if (hint == UnspecifiedType) {
         if ([_instance isKindOfClass:[NSString class]]) {
             return stringValue();
         }
@@ -393,26 +393,24 @@ KJS::Value ObjcInstance::defaultValue (KJS::Type hint) const
     return valueOf();
 }
 
-KJS::Value ObjcInstance::stringValue() const
+ValueImp *ObjcInstance::stringValue() const
 {
     return convertNSStringToString ([getObject() description]);
 }
 
-KJS::Value ObjcInstance::numberValue() const
+ValueImp *ObjcInstance::numberValue() const
 {
     // FIXME:  Implement something sensible
-    KJS::Number v(0);
-    return v;
+    return jsNumber(0);
 }
 
-KJS::Value ObjcInstance::booleanValue() const
+ValueImp *ObjcInstance::booleanValue() const
 {
     // FIXME:  Implement something sensible
-    KJS::Boolean v((bool)0);
-    return v;
+    return jsBoolean(false);
 }
 
-KJS::Value ObjcInstance::valueOf() const 
+ValueImp *ObjcInstance::valueOf() const 
 {
     return stringValue();
 }

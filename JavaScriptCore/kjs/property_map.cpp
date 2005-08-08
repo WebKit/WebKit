@@ -545,7 +545,7 @@ void PropertyMap::mark() const
 
     int size = _table->size;
     Entry *entries = _table->entries;
-    for (int i = 0; i != size; ++i) {
+    for (int i = 0; i < size; i++) {
         ValueImp *v = entries[i].value;
         if (v && !v->marked())
             v->mark();
@@ -563,7 +563,7 @@ static int comparePropertyMapEntryIndices(const void *a, const void *b)
     return 0;
 }
 
-void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Object &base) const
+void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, ObjectImp *base) const
 {
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -605,7 +605,7 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
         delete [] sortedEnumerables;
 }
 
-void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, const Object &base) const
+void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, ObjectImp *base) const
 {
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -625,8 +625,7 @@ void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, c
     Entry *entries = _table->entries;
     for (int i = 0; i != size; ++i) {
         UString::Rep *key = entries[i].key;
-        if (key && key != &UString::Rep::null)
-        {
+        if (key && key != &UString::Rep::null) {
             UString k(key);
             bool fitsInUInt32;
             k.toUInt32(&fitsInUInt32);
@@ -670,7 +669,7 @@ void PropertyMap::save(SavedProperties &p) const
 #if USE_SINGLE_ENTRY
         if (_singleEntry.key && !(_singleEntry.attributes & (ReadOnly | Function))) {
             prop->key = Identifier(_singleEntry.key);
-            prop->value = Value(_singleEntry.value);
+            prop->value = _singleEntry.value;
             prop->attributes = _singleEntry.attributes;
             ++prop;
         }
@@ -706,7 +705,7 @@ void PropertyMap::save(SavedProperties &p) const
         while (q != p) {
             Entry *e = *q++;
             prop->key = Identifier(e->key);
-            prop->value = Value(e->value);
+            prop->value = e->value;
             prop->attributes = e->attributes;
             ++prop;
         }
@@ -720,7 +719,7 @@ void PropertyMap::save(SavedProperties &p) const
 void PropertyMap::restore(const SavedProperties &p)
 {
     for (int i = 0; i != p._count; ++i)
-        put(p._properties[i].key, p._properties[i].value.imp(), p._properties[i].attributes);
+        put(p._properties[i].key, p._properties[i].value, p._properties[i].attributes);
 }
 
 #if DO_CONSISTENCY_CHECK

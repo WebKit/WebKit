@@ -40,7 +40,7 @@ RuntimeMethodImp::~RuntimeMethodImp()
 {
 }
 
-Value RuntimeMethodImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *RuntimeMethodImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeMethodImp *thisObj = static_cast<RuntimeMethodImp *>(slot.slotBase());
 
@@ -68,26 +68,26 @@ bool RuntimeMethodImp::implementsCall() const
     return true;
 }
 
-Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *RuntimeMethodImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
     if (_methodList.length() > 0) {
 	RuntimeObjectImp *imp;
 	
 	// If thisObj is the DOM object for a plugin, get the corresponding
 	// runtime object from the DOM object.
-	if (thisObj.classInfo() != &KJS::RuntimeObjectImp::info) {
-	    Value runtimeObject = thisObj.get(exec, "__apple_runtime_object");
-	    imp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
+	if (thisObj->classInfo() != &KJS::RuntimeObjectImp::info) {
+	    ValueImp *runtimeObject = thisObj->get(exec, "__apple_runtime_object");
+	    imp = static_cast<RuntimeObjectImp*>(runtimeObject);
 	}
 	else {
-	    imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
+	    imp = static_cast<RuntimeObjectImp*>(thisObj);
 	}
         if (imp) {
             Instance *instance = imp->getInternalInstance();
             
             instance->begin();
             
-            Value aValue = instance->invokeMethod(exec, _methodList, args);
+            ValueImp *aValue = instance->invokeMethod(exec, _methodList, args);
             
             instance->end();
             

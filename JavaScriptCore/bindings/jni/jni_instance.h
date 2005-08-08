@@ -90,17 +90,17 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual Value valueOf() const;
-    virtual Value defaultValue (Type hint) const;
+    virtual ValueImp *valueOf() const;
+    virtual ValueImp *defaultValue (Type hint) const;
 
-    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args);
-    virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
+    virtual ValueImp *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual ValueImp *invokeDefaultMethod (ExecState *exec, const List &args);
 
     jobject javaInstance() const { return _instance->_instance; }
     
-    Value stringValue() const;
-    Value numberValue() const;
-    Value booleanValue() const;
+    ValueImp *stringValue() const;
+    ValueImp *numberValue() const;
+    ValueImp *booleanValue() const;
         
 private:
     JObjectWrapper *_instance;

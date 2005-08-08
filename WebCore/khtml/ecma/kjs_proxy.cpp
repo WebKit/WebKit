@@ -112,7 +112,7 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
 #endif
 
   m_script->setInlineCode(inlineCode);
-  KJS::Value thisNode = n ? Window::retrieve( m_part ) : Value(getDOMNode(m_script->globalExec(), n));
+  KJS::ValueImp *thisNode = n ? Window::retrieve(m_part) : getDOMNode(m_script->globalExec(), n);
 
   KJS::Interpreter::lock();
   UString code( str );
@@ -125,14 +125,14 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
 #endif
 
   // let's try to convert the return value
-  if (success && !comp.value().isNull())
-    return ValueToVariant( m_script->globalExec(), comp.value());
+  if (success && comp.value())
+    return ValueToVariant(m_script->globalExec(), comp.value());
 
   if ( comp.complType() == Throw ) {
     KJS::Interpreter::lock();
-    UString errorMessage = comp.value().toString(m_script->globalExec());
-    int lineNumber =  comp.value().toObject(m_script->globalExec()).get(m_script->globalExec(), "line").toInt32(m_script->globalExec());
-    UString sourceURL = comp.value().toObject(m_script->globalExec()).get(m_script->globalExec(), "sourceURL").toString(m_script->globalExec());
+    UString errorMessage = comp.value()->toString(m_script->globalExec());
+    int lineNumber =  comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "line")->toInt32(m_script->globalExec());
+    UString sourceURL = comp.value()->toObject(m_script->globalExec())->get(m_script->globalExec(), "sourceURL")->toString(m_script->globalExec());
     KJS::Interpreter::unlock();
 
 #if APPLE_CHANGES
@@ -250,12 +250,12 @@ class TestFunctionImp : public ObjectImp {
 public:
   TestFunctionImp() : ObjectImp() {}
   virtual bool implementsCall() const { return true; }
-  virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 };
 
-Value TestFunctionImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
-  fprintf(stderr,"--> %s\n",args[0].toString(exec).ascii());
+  fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
   return Undefined();
 }
 
@@ -266,7 +266,7 @@ void KJSProxyImpl::initScript()
 
   // Build the global object - which is a Window instance
   KJS::Interpreter::lock();
-  Object globalObject( new Window(m_part) );
+  ObjectImp *globalObject( new Window(m_part) );
   KJS::Interpreter::unlock();
 
   // Create a KJS interpreter for this part
@@ -277,8 +277,7 @@ void KJSProxyImpl::initScript()
 #endif
   //m_script->enableDebug();
   KJS::Interpreter::lock();
-  globalObject.put(m_script->globalExec(),
-		   "debug", Value(new TestFunctionImp()), Internal);
+  globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
   KJS::Interpreter::unlock();
 
 #if APPLE_CHANGES
@@ -300,7 +299,7 @@ void KJSProxyImpl::initScript()
 // as friend to KHTMLPart
 KJSProxy * KJSProxy::proxy( KHTMLPart *part )
 {
-    return part->jScript();
+    return part ? part->jScript() : NULL;
 }
 
 // initialize HTML module

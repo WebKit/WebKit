@@ -37,7 +37,7 @@ class TestFunctionImp : public ObjectImp {
 public:
   TestFunctionImp(int i, int length);
   virtual bool implementsCall() const { return true; }
-  virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
   enum { Print, Debug, Quit, GC };
 
@@ -50,12 +50,12 @@ TestFunctionImp::TestFunctionImp(int i, int length) : ObjectImp(), id(i)
   putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
 }
 
-Value TestFunctionImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+ValueImp *TestFunctionImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
   switch (id) {
   case Print:
   case Debug:
-    fprintf(stderr,"--> %s\n",args[0].toString(exec).ascii());
+    fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
     return Undefined();
   case Quit:
     exit(0);
@@ -76,10 +76,10 @@ class VersionFunctionImp : public ObjectImp {
 public:
   VersionFunctionImp() : ObjectImp() {}
   virtual bool implementsCall() const { return true; }
-  virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+  virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 };
 
-Value VersionFunctionImp::call(ExecState */*exec*/, Object &/*thisObj*/, const List &/*args*/)
+ValueImp *VersionFunctionImp::callAsFunction(ExecState */*exec*/, ObjectImp */*thisObj*/, const List &/*args*/)
 {
   // We need this function for compatibility with the Mozilla JS tests but for now
   // we don't actually do any version-specific handling
@@ -103,20 +103,20 @@ int main(int argc, char **argv)
   {
     Interpreter::lock();
 
-    Object global(new GlobalImp());
+    ObjectImp *global(new GlobalImp());
 
     // create interpreter
     Interpreter interp(global);
     // add debug() function
-    global.put(interp.globalExec(), "debug", Object(new TestFunctionImp(TestFunctionImp::Debug,1)));
+    global->put(interp.globalExec(), "debug", new TestFunctionImp(TestFunctionImp::Debug, 1));
     // add "print" for compatibility with the mozilla js shell
-    global.put(interp.globalExec(), "print", Object(new TestFunctionImp(TestFunctionImp::Print,1)));
+    global->put(interp.globalExec(), "print", new TestFunctionImp(TestFunctionImp::Print, 1));
     // add "quit" for compatibility with the mozilla js shell
-    global.put(interp.globalExec(), "quit", Object(new TestFunctionImp(TestFunctionImp::Quit,0)));
+    global->put(interp.globalExec(), "quit", new TestFunctionImp(TestFunctionImp::Quit, 0));
     // add "gc" for compatibility with the mozilla js shell
-    global.put(interp.globalExec(), "gc", Object(new TestFunctionImp(TestFunctionImp::GC,0)));
+    global->put(interp.globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
     // add "version" for compatibility with the mozilla js shell 
-    global.put(interp.globalExec(), "version", Object(new VersionFunctionImp()));
+    global->put(interp.globalExec(), "version", new VersionFunctionImp());
 
     for (int i = 1; i < argc; i++) {
       int code_len = 0;
@@ -150,13 +150,13 @@ int main(int argc, char **argv)
 
       if (comp.complType() == Throw) {
         ExecState *exec = interp.globalExec();
-        Value exVal = comp.value();
-        char *msg = exVal.toString(exec).ascii();
+        ValueImp *exVal = comp.value();
+        char *msg = exVal->toString(exec).ascii();
         int lineno = -1;
-        if (exVal.type() == ObjectType) {
-          Value lineVal = Object::dynamicCast(exVal).get(exec,"line");
-          if (lineVal.type() == NumberType)
-            lineno = int(lineVal.toNumber(exec));
+        if (exVal->isObject()) {
+          ValueImp *lineVal = static_cast<ObjectImp *>(exVal)->get(exec,"line");
+          if (lineVal->isNumber())
+            lineno = int(lineVal->toNumber(exec));
         }
         if (lineno != -1)
           fprintf(stderr,"Exception, line %d: %s\n",lineno,msg);
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
         ret = false;
       }
       else if (comp.complType() == ReturnValue) {
-        char *msg = comp.value().toString(interp.globalExec()).ascii();
+        char *msg = comp.value()->toString(interp.globalExec()).ascii();
         fprintf(stderr,"Return value: %s\n",msg);
       }
 

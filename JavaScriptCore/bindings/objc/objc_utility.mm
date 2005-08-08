@@ -50,7 +50,7 @@ using namespace KJS::Bindings;
         moveTo$_                moveTo$$$_
     @result Returns the name to be used to represent the specificed selector in the
 */
-void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
+void Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
 {
     const char *np = name;
     char *bp;
@@ -87,22 +87,22 @@ void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer,
     [], other       exception
 
 */
-ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJS::Value &value, ObjcValueType type)
+ObjcValue Bindings::convertValueToObjcValue (ExecState *exec, ValueImp *value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
-   
-    if (value.type() == NumberType || value.type() == StringType || value.type() == BooleanType)
-	d = value.toNumber(exec);
+
+    if (value->isNumber() || value->isString() || value->isBoolean())
+	d = value->toNumber(exec);
 	
     switch (type){
         case ObjcObjectType: {
-	    KJS::Interpreter *originInterpreter = exec->interpreter();
+	    Interpreter *originInterpreter = exec->interpreter();
             const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
-	    KJS::Interpreter *interpreter = 0;
+	    Interpreter *interpreter = 0;
 	    if (originInterpreter->isGlobalObject(value)) {
-		interpreter = originInterpreter->interpreterForGlobalObject (value.imp());
+		interpreter = originInterpreter->interpreterForGlobalObject (value);
 	    }
 
 	    if (!interpreter)
@@ -110,7 +110,7 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
 		
             const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
             if (!executionContext) {
-                Bindings::RootObject *newExecutionContext = new KJS::Bindings::RootObject(0);
+                Bindings::RootObject *newExecutionContext = new Bindings::RootObject(0);
                 newExecutionContext->setInterpreter (interpreter);
                 executionContext = newExecutionContext;
             }
@@ -164,14 +164,14 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
     return result;
 }
 
-Value KJS::Bindings::convertNSStringToString(NSString *nsstring)
+ValueImp *Bindings::convertNSStringToString(NSString *nsstring)
 {
     unichar *chars;
     unsigned int length = [nsstring length];
     chars = (unichar *)malloc(sizeof(unichar)*length);
     [nsstring getCharacters:chars];
-    UString u((const KJS::UChar*)chars, length);
-    Value aValue = String (u);
+    UString u((const UChar*)chars, length);
+    ValueImp *aValue = String (u);
     free((void *)chars);
     return aValue;
 }
@@ -192,9 +192,9 @@ Value KJS::Bindings::convertNSStringToString(NSString *nsstring)
     other           should not happen
 
 */
-Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer, ObjcValueType type)
+ValueImp *Bindings::convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
 {
-    Value aValue;
+    ValueImp *aValue = NULL;
 
     switch (type) {
         case ObjcObjectType:
@@ -224,11 +224,11 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     aValue = Number([*obj doubleValue]);
                 }
                 else if ([*obj isKindOfClass:[NSArray class]]) {
-                    aValue = Object(new RuntimeArrayImp(exec, new ObjcArray (*obj)));
+                    aValue = new RuntimeArrayImp(exec, new ObjcArray (*obj));
                 }
                 else if ([*obj isKindOfClass:[WebScriptObject class]]) {
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
-                    aValue = Object([jsobject _imp]);
+                    aValue = [jsobject _imp];
                 }
                 else if (*obj == 0) {
                     return Undefined();
@@ -286,7 +286,7 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
 }
 
 
-ObjcValueType KJS::Bindings::objcValueTypeForType (const char *type)
+ObjcValueType Bindings::objcValueTypeForType (const char *type)
 {
     int typeLength = strlen(type);
     ObjcValueType objcValueType = ObjcInvalidType;
@@ -332,12 +332,12 @@ ObjcValueType KJS::Bindings::objcValueTypeForType (const char *type)
 }
 
 
-void *KJS::Bindings::createObjcInstanceForValue (const Object &value, const RootObject *origin, const RootObject *current)
+void *Bindings::createObjcInstanceForValue (ObjectImp *value, const RootObject *origin, const RootObject *current)
 {
-    if (value.type() != ObjectType)
+    if (!value->isObject())
 	return 0;
 
-    ObjectImp *imp = static_cast<ObjectImp*>(value.imp());
+    ObjectImp *imp = static_cast<ObjectImp*>(value);
     
     return [[[WebScriptObject alloc] _initWithObjectImp:imp originExecutionContext:origin executionContext:current] autorelease];
 }

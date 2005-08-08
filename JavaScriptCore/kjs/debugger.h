@@ -28,7 +28,7 @@ namespace KJS {
   class DebuggerImp;
   class Interpreter;
   class ExecState;
-  class Object;
+  class ObjectImp;
   class UString;
   class List;
 
@@ -141,7 +141,7 @@ namespace KJS {
      * be aborted
      */
     virtual bool exception(ExecState *exec, int sourceId, int lineno,
-                           Object &exceptionObj);
+                           ObjectImp *exceptionObj);
 
     /**
      * Called when a line of the script is reached (before it is executed)
@@ -181,7 +181,7 @@ namespace KJS {
      * be aborted
      */
     virtual bool callEvent(ExecState *exec, int sourceId, int lineno,
-			   Object &function, const List &args);
+			   ObjectImp *function, const List &args);
 
     /**
      * Called on each function exit. The function being returned from is that
@@ -202,7 +202,7 @@ namespace KJS {
      * be aborted
      */
     virtual bool returnEvent(ExecState *exec, int sourceId, int lineno,
-                             Object &function);
+                             ObjectImp *function);
 
   private:
     DebuggerImp *rep;

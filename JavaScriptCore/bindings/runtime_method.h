@@ -41,14 +41,14 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     virtual CodeType codeType() const;
     
     virtual Completion execute(ExecState *exec);
 
 private:
-    static Value lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::MethodList _methodList;
 };

@@ -2268,7 +2268,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     KWQKHTMLPart *part = [self part];
     RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
-    root->setRootObjectImp(static_cast<ObjectImp *>(Window::retrieveWindow(part)));
+    root->setRootObjectImp(Window::retrieveWindow(part));
     root->setInterpreter(KJSProxy::proxy(part)->interpreter());
     part->addPluginRootObject(root);
     return root;

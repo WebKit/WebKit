@@ -30,7 +30,8 @@
 #include <objc_utility.h>
 #include <WebScriptObject.h>
 
-using namespace KJS::Bindings;
+namespace KJS {
+namespace Bindings {
 
 void ObjcClass::_commonDelete() {
     CFRelease (_fields);
@@ -232,7 +233,10 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
     return aField;
 }
 
-KJS::Value ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
+ValueImp *ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
 {
-    return Object (new ObjcFallbackObjectImp(static_cast<ObjcInstance*>(instance), propertyName));
+    return new ObjcFallbackObjectImp(static_cast<ObjcInstance*>(instance), propertyName);
+}
+
+}
 }

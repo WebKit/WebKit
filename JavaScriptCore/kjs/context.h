@@ -35,21 +35,21 @@ namespace KJS  {
    */
   class ContextImp {
   public:
-    ContextImp(Object &glob, InterpreterImp *, Object &thisV, CodeType type = GlobalCode,
+    ContextImp(ObjectImp *glob, InterpreterImp *, ObjectImp *thisV, CodeType type = GlobalCode,
                ContextImp *callingContext = 0, FunctionImp *functiion = 0, const List *args = 0);
     ~ContextImp();
 
     const ScopeChain &scopeChain() const { return scope; }
     CodeType codeType() { return m_codeType; }
-    Object variableObject() const { return variable; }
-    void setVariableObject(const Object &v) { variable = v; }
-    Object thisValue() const { return thisVal; }
+    ObjectImp *variableObject() const { return variable; }
+    void setVariableObject(ObjectImp *v) { variable = v; }
+    ObjectImp *thisValue() const { return thisVal; }
     ContextImp *callingContext() { return _callingContext; }
-    ObjectImp *activationObject() { return activation.imp(); }
+    ObjectImp *activationObject() { return activation; }
     FunctionImp *function() const { return _function; }
     const List *arguments() const { return _arguments; }
 
-    void pushScope(const Object &s) { scope.push(s.imp()); }
+    void pushScope(ObjectImp *s) { scope.push(s); }
     void popScope() { scope.pop(); }
     LabelStack *seenLabels() { return &ls; }
     
@@ -63,11 +63,11 @@ namespace KJS  {
     // because ContextImp is always allocated on the stack,
     // there is no need to protect various pointers from conservative
     // GC since they will be caught by the conservative sweep anyway!
-    Object activation;
+    ObjectImp *activation;
     
     ScopeChain scope;
-    Object variable;
-    Object thisVal;
+    ObjectImp *variable;
+    ObjectImp *thisVal;
 
     LabelStack ls;
     CodeType m_codeType;

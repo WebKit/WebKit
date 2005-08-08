@@ -102,9 +102,9 @@ RuntimeType ObjcField::type() const
     return "";
 }
 
-Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instance) const
+ValueImp *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance) const
 {
-    Value aValue;
+    ValueImp *aValue;
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id objcValue = nil;
 
@@ -115,7 +115,7 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
         
     NS_HANDLER
         
-        Value exceptionValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
+        ValueImp *exceptionValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
         exec->setException(exceptionValue);
         
     NS_ENDHANDLER
@@ -128,11 +128,11 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
     return aValue;
 }
 
-static id convertValueToObjcObject (KJS::ExecState *exec, const KJS::Value &value)
+static id convertValueToObjcObject (ExecState *exec, ValueImp *value)
 {
     const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
     if (!root) {
-        Bindings::RootObject *newRoot = new KJS::Bindings::RootObject(0);
+        Bindings::RootObject *newRoot = new Bindings::RootObject(0);
         newRoot->setInterpreter (exec->interpreter());
         root = newRoot;
     }
@@ -140,7 +140,7 @@ static id convertValueToObjcObject (KJS::ExecState *exec, const KJS::Value &valu
 }
 
 
-void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const
+void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const
 {
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
@@ -152,7 +152,7 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
 
     NS_HANDLER
         
-        Value aValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
+        ValueImp *aValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
         exec->setException(aValue);
         
     NS_ENDHANDLER
@@ -186,16 +186,16 @@ ObjcArray &ObjcArray::operator=(const ObjcArray &other)
     return *this;
 }
 
-void ObjcArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const
+void ObjcArray::setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const
 {
     if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
-        Object error = Error::create(exec, TypeError, "Array is not mutable.");
+        ObjectImp *error = Error::create(exec, TypeError, "Array is not mutable.");
         exec->setException(error);
         return;
     }
 
     if (index > [_array count]) {
-        Object error = Error::create(exec, RangeError, "Index exceeds array size.");
+        ObjectImp *error = Error::create(exec, RangeError, "Index exceeds array size.");
         exec->setException(error);
         return;
     }
@@ -210,32 +210,32 @@ NS_DURING
 
 NS_HANDLER
     
-    Object error = Error::create(exec, GeneralError, "ObjectiveC exception.");
+    ObjectImp *error = Error::create(exec, GeneralError, "ObjectiveC exception.");
     exec->setException(error);
     
 NS_ENDHANDLER
 }
 
 
-KJS::Value ObjcArray::valueAt(KJS::ExecState *exec, unsigned int index) const
+ValueImp *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
 {
-    ObjectStructPtr obj = 0;
-    Object error;
-    volatile bool haveError = false;
-    
     if (index > [_array count]) {
-        Object error = Error::create(exec, RangeError, "Index exceeds array size.");
+        ObjectImp *error = Error::create(exec, RangeError, "Index exceeds array size.");
         exec->setException(error);
         return error;
     }
     
+    ObjectStructPtr obj = 0;
+    ObjectImp * volatile error;
+    volatile bool haveError = false;
+
 NS_DURING
 
     obj = [_array objectAtIndex:index];
     
 NS_HANDLER
     
-    Object error = Error::create(exec, GeneralError, "ObjectiveC exception.");
+    error = Error::create(exec, GeneralError, "ObjectiveC exception.");
     exec->setException(error);
     haveError = true;
     
@@ -275,7 +275,7 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier
 }
 
 void ObjcFallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                 const Value &value, int attr)
+                 ValueImp *value, int attr)
 {
 }
 
@@ -305,11 +305,11 @@ bool ObjcFallbackObjectImp::implementsCall() const
     return false;
 }
 
-Value ObjcFallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    Value result = Undefined();
+    ValueImp *result = Undefined();
     
-    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
+    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj);
     if (imp) {
         Instance *instance = imp->getInternalInstance();
         
@@ -340,7 +340,7 @@ bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,
     return false;
 }
 
-Value ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
+ValueImp *ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }

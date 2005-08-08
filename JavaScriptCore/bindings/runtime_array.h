@@ -39,8 +39,8 @@ public:
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState *, unsigned, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName, const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
     
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
@@ -54,8 +54,8 @@ public:
     static const ClassInfo info;
 
 private:
-    static Value lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
-    static Value indexGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *lengthGetter(ExecState *, const Identifier&, const PropertySlot&);
+    static ValueImp *indexGetter(ExecState *, const Identifier&, const PropertySlot&);
 
     Bindings::Array *_array;
 };

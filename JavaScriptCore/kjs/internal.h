@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _INTERNAL_H_
-#define _INTERNAL_H_
+#ifndef INTERNAL_H
+#define INTERNAL_H
 
 #include "ustring.h"
 #include "value.h"
@@ -37,9 +37,6 @@
 
 namespace KJS {
 
-  static const double D16 = 65536.0;
-  static const double D32 = 4294967296.0;
-
   class ProgramNode;
   class FunctionBodyNode;
   class FunctionPrototypeImp;
@@ -50,114 +47,89 @@ namespace KJS {
   //                            Primitive impls
   // ---------------------------------------------------------------------------
 
-  class UndefinedImp : public ValueImp {
+  class UndefinedImp : public AllocatedValueImp {
   public:
     Type type() const { return UndefinedType; }
 
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
-
-    static UndefinedImp *staticUndefined;
+    ObjectImp *toObject(ExecState *exec) const;
   };
 
-  inline Undefined::Undefined(UndefinedImp *imp) : Value(imp) { }
-
-  class NullImp : public ValueImp {
+  class NullImp : public AllocatedValueImp {
   public:
     Type type() const { return NullType; }
 
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
-
-    static NullImp *staticNull;
+    ObjectImp *toObject(ExecState *exec) const;
   };
 
-  inline Null::Null(NullImp *imp) : Value(imp) { }
-
-  class BooleanImp : public ValueImp {
+  class BooleanImp : public AllocatedValueImp {
   public:
     BooleanImp(bool v = false) : val(v) { }
     bool value() const { return val; }
 
     Type type() const { return BooleanType; }
 
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
+    ObjectImp *toObject(ExecState *exec) const;
 
-    static BooleanImp *staticTrue;
-    static BooleanImp *staticFalse;
   private:
     bool val;
   };
   
-  inline Boolean::Boolean(BooleanImp *imp) : Value(imp) { }
-
-  class StringImp : public ValueImp {
+  class StringImp : public AllocatedValueImp {
   public:
     StringImp(const UString& v) : val(v) { }
     UString value() const { return val; }
 
     Type type() const { return StringType; }
 
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
+    ObjectImp *toObject(ExecState *exec) const;
 
   private:
     UString val;
   };
 
-  inline String::String(StringImp *imp) : Value(imp) { }
-
-  class NumberImp : public ValueImp {
-    friend class Value;
-    friend class Number;
+  class NumberImp : public AllocatedValueImp {
+    friend class ConstantValues;
     friend class InterpreterImp;
-    friend ValueImp *number(int);
-    friend ValueImp *number(unsigned);
-    friend ValueImp *number(long);
-    friend ValueImp *number(unsigned long);
-    friend ValueImp *number(double);
-    friend ValueImp *number(double, bool);
+    friend ValueImp *jsNumber(int);
+    friend ValueImp *jsNumber(unsigned);
+    friend ValueImp *jsNumber(long);
+    friend ValueImp *jsNumber(unsigned long);
+    friend ValueImp *jsNumber(double);
+    friend ValueImp *jsNumber(double, bool);
   public:
-    static ValueImp *create(int);
-    static ValueImp *create(double);
-    static ValueImp *zero() { return SimpleNumber::make(0); }
-    static ValueImp *one() { return SimpleNumber::make(1); }
-    static ValueImp *two() { return SimpleNumber::make(2); }
-    
     double value() const { return val; }
 
     Type type() const { return NumberType; }
 
-    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    ValueImp *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
-    Object toObject(ExecState *exec) const;
-
-    static NumberImp *staticNaN;
+    ObjectImp *toObject(ExecState *exec) const;
 
   private:
     NumberImp(double v) : val(v) { }
 
-    virtual bool toUInt32(unsigned&) const;
+    virtual bool getUInt32(uint32_t&) const;
 
     double val;
   };
-
-  inline Number::Number(NumberImp *imp) : Value(imp) { }
 
   /**
    * @short The "label set" in Ecma-262 spec
@@ -206,7 +178,7 @@ namespace KJS {
 
 
   // ---------------------------------------------------------------------------
-  //                            Parsing & evaluateion
+  //                            Parsing & evaluation
   // ---------------------------------------------------------------------------
 
   enum CodeType { GlobalCode,
@@ -275,7 +247,7 @@ namespace KJS {
     static void globalInit();
     static void globalClear();
 
-    InterpreterImp(Interpreter *interp, const Object &glob);
+    InterpreterImp(Interpreter *interp, ObjectImp *glob);
     ~InterpreterImp();
 
     ProtectedObject &globalObject() const { return const_cast<ProtectedObject &>(global); }
@@ -290,43 +262,43 @@ namespace KJS {
 
     ExecState *globalExec() { return &globExec; }
     bool checkSyntax(const UString &code);
-    Completion evaluate(const UString &code, const Value &thisV, const UString &sourceURL, int startingLineNumber);
+    Completion evaluate(const UString &code, ValueImp *thisV, const UString &sourceURL, int startingLineNumber);
     Debugger *debugger() const { return dbg; }
     void setDebugger(Debugger *d) { dbg = d; }
 
-    Object builtinObject() const { return b_Object; }
-    Object builtinFunction() const { return b_Function; }
-    Object builtinArray() const { return b_Array; }
-    Object builtinBoolean() const { return b_Boolean; }
-    Object builtinString() const { return b_String; }
-    Object builtinNumber() const { return b_Number; }
-    Object builtinDate() const { return b_Date; }
-    Object builtinRegExp() const { return b_RegExp; }
-    Object builtinError() const { return b_Error; }
+    ObjectImp *builtinObject() const { return b_Object; }
+    ObjectImp *builtinFunction() const { return b_Function; }
+    ObjectImp *builtinArray() const { return b_Array; }
+    ObjectImp *builtinBoolean() const { return b_Boolean; }
+    ObjectImp *builtinString() const { return b_String; }
+    ObjectImp *builtinNumber() const { return b_Number; }
+    ObjectImp *builtinDate() const { return b_Date; }
+    ObjectImp *builtinRegExp() const { return b_RegExp; }
+    ObjectImp *builtinError() const { return b_Error; }
 
-    Object builtinObjectPrototype() const { return b_ObjectPrototype; }
-    Object builtinFunctionPrototype() const { return b_FunctionPrototype; }
-    Object builtinArrayPrototype() const { return b_ArrayPrototype; }
-    Object builtinBooleanPrototype() const { return b_BooleanPrototype; }
-    Object builtinStringPrototype() const { return b_StringPrototype; }
-    Object builtinNumberPrototype() const { return b_NumberPrototype; }
-    Object builtinDatePrototype() const { return b_DatePrototype; }
-    Object builtinRegExpPrototype() const { return b_RegExpPrototype; }
-    Object builtinErrorPrototype() const { return b_ErrorPrototype; }
+    ObjectImp *builtinObjectPrototype() const { return b_ObjectPrototype; }
+    ObjectImp *builtinFunctionPrototype() const { return b_FunctionPrototype; }
+    ObjectImp *builtinArrayPrototype() const { return b_ArrayPrototype; }
+    ObjectImp *builtinBooleanPrototype() const { return b_BooleanPrototype; }
+    ObjectImp *builtinStringPrototype() const { return b_StringPrototype; }
+    ObjectImp *builtinNumberPrototype() const { return b_NumberPrototype; }
+    ObjectImp *builtinDatePrototype() const { return b_DatePrototype; }
+    ObjectImp *builtinRegExpPrototype() const { return b_RegExpPrototype; }
+    ObjectImp *builtinErrorPrototype() const { return b_ErrorPrototype; }
 
-    Object builtinEvalError() const { return b_evalError; }
-    Object builtinRangeError() const { return b_rangeError; }
-    Object builtinReferenceError() const { return b_referenceError; }
-    Object builtinSyntaxError() const { return b_syntaxError; }
-    Object builtinTypeError() const { return b_typeError; }
-    Object builtinURIError() const { return b_uriError; }
+    ObjectImp *builtinEvalError() const { return b_evalError; }
+    ObjectImp *builtinRangeError() const { return b_rangeError; }
+    ObjectImp *builtinReferenceError() const { return b_referenceError; }
+    ObjectImp *builtinSyntaxError() const { return b_syntaxError; }
+    ObjectImp *builtinTypeError() const { return b_typeError; }
+    ObjectImp *builtinURIError() const { return b_uriError; }
 
-    Object builtinEvalErrorPrototype() const { return b_evalErrorPrototype; }
-    Object builtinRangeErrorPrototype() const { return b_rangeErrorPrototype; }
-    Object builtinReferenceErrorPrototype() const { return b_referenceErrorPrototype; }
-    Object builtinSyntaxErrorPrototype() const { return b_syntaxErrorPrototype; }
-    Object builtinTypeErrorPrototype() const { return b_typeErrorPrototype; }
-    Object builtinURIErrorPrototype() const { return b_uriErrorPrototype; }
+    ObjectImp *builtinEvalErrorPrototype() const { return b_evalErrorPrototype; }
+    ObjectImp *builtinRangeErrorPrototype() const { return b_rangeErrorPrototype; }
+    ObjectImp *builtinReferenceErrorPrototype() const { return b_referenceErrorPrototype; }
+    ObjectImp *builtinSyntaxErrorPrototype() const { return b_syntaxErrorPrototype; }
+    ObjectImp *builtinTypeErrorPrototype() const { return b_typeErrorPrototype; }
+    ObjectImp *builtinURIErrorPrototype() const { return b_uriErrorPrototype; }
 
     void setCompatMode(Interpreter::CompatMode mode) { m_compatMode = mode; }
     Interpreter::CompatMode compatMode() const { return m_compatMode; }
@@ -422,20 +394,19 @@ namespace KJS {
   public:
     InternalFunctionImp(FunctionPrototypeImp *funcProto);
     bool implementsHasInstance() const;
-    Boolean hasInstance(ExecState *exec, const Value &value);
+    bool hasInstance(ExecState *exec, ValueImp *value);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   };
 
   // helper function for toInteger, toInt32, toUInt32 and toUInt16
-  double roundValue(ExecState *exec, const Value &v);
+  double roundValue(ExecState *, ValueImp *);
 
 #ifndef NDEBUG
-  void printInfo(ExecState *exec, const char *s, const Value &o, int lineno = -1);
+  void printInfo(ExecState *exec, const char *s, ValueImp *, int lineno = -1);
 #endif
 
 } // namespace
 
-
-#endif //  _INTERNAL_H_
+#endif //  INTERNAL_H

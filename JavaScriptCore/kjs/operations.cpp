@@ -111,10 +111,10 @@ bool KJS::isNegInf(double d)
 #endif
 
 // ECMA 11.9.3
-bool KJS::equal(ExecState *exec, const Value& v1, const Value& v2)
+bool KJS::equal(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
-    Type t1 = v1.type();
-    Type t2 = v2.type();
+    Type t1 = v1->type();
+    Type t2 = v2->type();
 
     if (t1 != t2) {
         if (t1 == UndefinedType)
@@ -134,9 +134,9 @@ bool KJS::equal(ExecState *exec, const Value& v1, const Value& v2)
             // use toNumber
         } else {
             if ((t1 == StringType || t1 == NumberType) && t2 >= ObjectType)
-                return equal(exec, v1, v2.toPrimitive(exec));
+                return equal(exec, v1, v2->toPrimitive(exec));
             if (t1 >= ObjectType && (t2 == StringType || t2 == NumberType))
-                return equal(exec, v1.toPrimitive(exec), v2);
+                return equal(exec, v1->toPrimitive(exec), v2);
             if (t1 != t2)
                 return false;
         }
@@ -146,8 +146,8 @@ bool KJS::equal(ExecState *exec, const Value& v1, const Value& v2)
         return true;
 
     if (t1 == NumberType) {
-        double d1 = v1.toNumber(exec);
-        double d2 = v2.toNumber(exec);
+        double d1 = v1->toNumber(exec);
+        double d2 = v2->toNumber(exec);
         // FIXME: Isn't this already how NaN behaves?
         // Why the extra line of code?
         if (isNaN(d1) || isNaN(d2))
@@ -156,27 +156,27 @@ bool KJS::equal(ExecState *exec, const Value& v1, const Value& v2)
     }
 
     if (t1 == StringType)
-        return v1.toString(exec) == v2.toString(exec);
+        return v1->toString(exec) == v2->toString(exec);
 
     if (t1 == BooleanType)
-        return v1.toBoolean(exec) == v2.toBoolean(exec);
+        return v1->toBoolean(exec) == v2->toBoolean(exec);
 
     // types are Object
-    return v1.imp() == v2.imp();
+    return v1 == v2;
 }
 
-bool KJS::strictEqual(ExecState *exec, const Value &v1, const Value &v2)
+bool KJS::strictEqual(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
-  Type t1 = v1.type();
-  Type t2 = v2.type();
+  Type t1 = v1->type();
+  Type t2 = v2->type();
 
   if (t1 != t2)
     return false;
   if (t1 == UndefinedType || t1 == NullType)
     return true;
   if (t1 == NumberType) {
-    double n1 = v1.toNumber(exec);
-    double n2 = v2.toNumber(exec);
+    double n1 = v1->toNumber(exec);
+    double n2 = v2->toNumber(exec);
     // FIXME: Isn't this already how NaN behaves?
     // Why the extra line of code?
     if (isNaN(n1) || isNaN(n2))
@@ -186,27 +186,27 @@ bool KJS::strictEqual(ExecState *exec, const Value &v1, const Value &v2)
     /* TODO: +0 and -0 */
     return false;
   } else if (t1 == StringType) {
-    return v1.toString(exec) == v2.toString(exec);
+    return v1->toString(exec) == v2->toString(exec);
   } else if (t2 == BooleanType) {
-    return v1.toBoolean(exec) == v2.toBoolean(exec);
+    return v1->toBoolean(exec) == v2->toBoolean(exec);
   }
-  if (v1.imp() == v2.imp())
+  if (v1 == v2)
     return true;
   /* TODO: joined objects */
 
   return false;
 }
 
-int KJS::relation(ExecState *exec, const Value& v1, const Value& v2)
+int KJS::relation(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
-  Value p1 = v1.toPrimitive(exec,NumberType);
-  Value p2 = v2.toPrimitive(exec,NumberType);
+  ValueImp *p1 = v1->toPrimitive(exec,NumberType);
+  ValueImp *p2 = v2->toPrimitive(exec,NumberType);
 
-  if (p1.type() == StringType && p2.type() == StringType)
-    return p1.toString(exec) < p2.toString(exec) ? 1 : 0;
+  if (p1->isString() && p2->isString())
+    return p1->toString(exec) < p2->toString(exec) ? 1 : 0;
 
-  double n1 = p1.toNumber(exec);
-  double n2 = p2.toNumber(exec);
+  double n1 = p1->toNumber(exec);
+  double n2 = p2->toNumber(exec);
   if (n1 < n2)
     return 1;
   if (n1 >= n2)
@@ -225,37 +225,37 @@ int KJS::minInt(int d1, int d2)
 }
 
 // ECMA 11.6
-Value KJS::add(ExecState *exec, const Value &v1, const Value &v2, char oper)
+ValueImp *KJS::add(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 {
   // exception for the Date exception in defaultValue()
   Type preferred = oper == '+' ? UnspecifiedType : NumberType;
-  Value p1 = v1.toPrimitive(exec, preferred);
-  Value p2 = v2.toPrimitive(exec, preferred);
+  ValueImp *p1 = v1->toPrimitive(exec, preferred);
+  ValueImp *p2 = v2->toPrimitive(exec, preferred);
 
-  if ((p1.type() == StringType || p2.type() == StringType) && oper == '+') {
-    return p1.toString(exec) + p2.toString(exec);
+  if ((p1->isString() || p2->isString()) && oper == '+') {
+    return jsString(p1->toString(exec) + p2->toString(exec));
   }
 
   bool n1KnownToBeInteger;
-  double n1 = p1.toNumber(exec, n1KnownToBeInteger);
+  double n1 = p1->toNumber(exec, n1KnownToBeInteger);
   bool n2KnownToBeInteger;
-  double n2 = p2.toNumber(exec, n2KnownToBeInteger);
+  double n2 = p2->toNumber(exec, n2KnownToBeInteger);
 
   bool resultKnownToBeInteger = n1KnownToBeInteger && n2KnownToBeInteger;
 
   if (oper == '+')
-    return Value(n1 + n2, resultKnownToBeInteger);
+    return jsNumber(n1 + n2, resultKnownToBeInteger);
   else
-    return Value(n1 - n2, resultKnownToBeInteger);
+    return jsNumber(n1 - n2, resultKnownToBeInteger);
 }
 
 // ECMA 11.5
-Value KJS::mult(ExecState *exec, const Value &v1, const Value &v2, char oper)
+ValueImp *KJS::mult(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 {
   bool n1KnownToBeInteger;
-  double n1 = v1.toNumber(exec, n1KnownToBeInteger);
+  double n1 = v1->toNumber(exec, n1KnownToBeInteger);
   bool n2KnownToBeInteger;
-  double n2 = v2.toNumber(exec, n2KnownToBeInteger);
+  double n2 = v2->toNumber(exec, n2KnownToBeInteger);
 
   double result;
   bool resultKnownToBeInteger;
@@ -271,5 +271,5 @@ Value KJS::mult(ExecState *exec, const Value &v1, const Value &v2, char oper)
     resultKnownToBeInteger = n1KnownToBeInteger && n2KnownToBeInteger && n2 != 0;
   }
 
-  return Value(result, resultKnownToBeInteger);
+  return jsNumber(result, resultKnownToBeInteger);
 }

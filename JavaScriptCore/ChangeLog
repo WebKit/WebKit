@@ -1,3 +1,696 @@
+2005-08-07  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4313
+          eliminate KJS::Value and KJS::Object smart pointer wrappers (for simplicity and speed)
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed object_wrapper.h.
+
+        Global replaces and other wonderful stuff.
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::CInstance):
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        (KJS::Bindings::CInstance::defaultValue):
+        (KJS::Bindings::CInstance::stringValue):
+        (KJS::Bindings::CInstance::numberValue):
+        (KJS::Bindings::CInstance::booleanValue):
+        (KJS::Bindings::CInstance::valueOf):
+        * bindings/c/c_instance.h:
+        * bindings/c/c_runtime.cpp:
+        (CField::valueFromInstance):
+        (CField::setValueToInstance):
+        * bindings/c/c_runtime.h:
+        * bindings/c/c_utility.cpp:
+        (convertNPStringToUTF16):
+        (convertUTF8ToUTF16):
+        (coerceValueToNPVariantStringType):
+        (convertValueToNPVariant):
+        (convertNPVariantToValue):
+        * bindings/c/c_utility.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::booleanValue):
+        (JavaInstance::invokeMethod):
+        (JavaInstance::invokeDefaultMethod):
+        (JavaInstance::defaultValue):
+        (JavaInstance::valueOf):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::invoke):
+        (JSObject::call):
+        (JSObject::eval):
+        (JSObject::getMember):
+        (JSObject::getSlot):
+        (JSObject::toString):
+        (JSObject::convertValueToJObject):
+        (JSObject::convertJObjectToValue):
+        (JSObject::listFromJArray):
+        * bindings/jni/jni_jsobject.h:
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::valueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        (JavaField::setValueToInstance):
+        (JavaArray::setValueAt):
+        (JavaArray::valueAt):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaString::ustring):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJavaVM):
+        (KJS::Bindings::getJNIEnv):
+        (KJS::Bindings::getMethodID):
+        (KJS::Bindings::callJNIVoidMethod):
+        (KJS::Bindings::callJNIObjectMethod):
+        (KJS::Bindings::callJNIBooleanMethod):
+        (KJS::Bindings::callJNIStaticBooleanMethod):
+        (KJS::Bindings::callJNIByteMethod):
+        (KJS::Bindings::callJNICharMethod):
+        (KJS::Bindings::callJNIShortMethod):
+        (KJS::Bindings::callJNIIntMethod):
+        (KJS::Bindings::callJNILongMethod):
+        (KJS::Bindings::callJNIFloatMethod):
+        (KJS::Bindings::callJNIDoubleMethod):
+        (KJS::Bindings::callJNIVoidMethodA):
+        (KJS::Bindings::callJNIObjectMethodA):
+        (KJS::Bindings::callJNIByteMethodA):
+        (KJS::Bindings::callJNICharMethodA):
+        (KJS::Bindings::callJNIShortMethodA):
+        (KJS::Bindings::callJNIIntMethodA):
+        (KJS::Bindings::callJNILongMethodA):
+        (KJS::Bindings::callJNIFloatMethodA):
+        (KJS::Bindings::callJNIDoubleMethodA):
+        (KJS::Bindings::callJNIBooleanMethodA):
+        (KJS::Bindings::callJNIVoidMethodIDA):
+        (KJS::Bindings::callJNIObjectMethodIDA):
+        (KJS::Bindings::callJNIByteMethodIDA):
+        (KJS::Bindings::callJNICharMethodIDA):
+        (KJS::Bindings::callJNIShortMethodIDA):
+        (KJS::Bindings::callJNIIntMethodIDA):
+        (KJS::Bindings::callJNILongMethodIDA):
+        (KJS::Bindings::callJNIFloatMethodIDA):
+        (KJS::Bindings::callJNIDoubleMethodIDA):
+        (KJS::Bindings::callJNIBooleanMethodIDA):
+        (KJS::Bindings::getCharactersFromJString):
+        (KJS::Bindings::releaseCharactersForJString):
+        (KJS::Bindings::getCharactersFromJStringInEnv):
+        (KJS::Bindings::releaseCharactersForJStringInEnv):
+        (KJS::Bindings::getUCharactersFromJStringInEnv):
+        (KJS::Bindings::releaseUCharactersForJStringInEnv):
+        (KJS::Bindings::JNITypeFromClassName):
+        (KJS::Bindings::signatureFromPrimitiveType):
+        (KJS::Bindings::JNITypeFromPrimitiveType):
+        (KJS::Bindings::getJNIField):
+        (KJS::Bindings::convertValueToJValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        (-[WebScriptObject _initializeWithObjectImp:originExecutionContext:Bindings::executionContext:Bindings::]):
+        (-[WebScriptObject _initWithObjectImp:originExecutionContext:Bindings::executionContext:Bindings::]):
+        (-[WebScriptObject _imp]):
+        (-[WebScriptObject _executionContext]):
+        (-[WebScriptObject _setExecutionContext:]):
+        (-[WebScriptObject _originExecutionContext]):
+        (-[WebScriptObject _setOriginExecutionContext:]):
+        (+[WebScriptObject throwException:]):
+        (listFromNSArray):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setException:]):
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:Bindings::]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::fallbackObject):
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfField):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfField):
+        (ObjcInstance::getValueOfUndefinedField):
+        (ObjcInstance::defaultValue):
+        (ObjcInstance::stringValue):
+        (ObjcInstance::numberValue):
+        (ObjcInstance::booleanValue):
+        (ObjcInstance::valueOf):
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (convertValueToObjcObject):
+        (ObjcField::setValueToInstance):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+        (ObjcFallbackObjectImp::put):
+        (ObjcFallbackObjectImp::callAsFunction):
+        (ObjcFallbackObjectImp::defaultValue):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (Bindings::JSMethodNameToObjCMethodName):
+        (Bindings::convertValueToObjcValue):
+        (Bindings::convertNSStringToString):
+        (Bindings::convertObjcValueToValue):
+        (Bindings::objcValueTypeForType):
+        (Bindings::createObjcInstanceForValue):
+        * bindings/runtime.cpp:
+        (Instance::getValueOfField):
+        (Instance::setValueOfField):
+        (Instance::createRuntimeObject):
+        (Instance::createLanguageInstanceForValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Constructor::~Constructor):
+        (KJS::Bindings::Field::~Field):
+        (KJS::Bindings::MethodList::MethodList):
+        (KJS::Bindings::Class::fallbackObject):
+        (KJS::Bindings::Class::~Class):
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::supportsSetValueOfUndefinedField):
+        (KJS::Bindings::Instance::setValueOfUndefinedField):
+        (KJS::Bindings::Instance::valueOf):
+        (KJS::Bindings::Instance::setExecutionContext):
+        (KJS::Bindings::Instance::~Instance):
+        (KJS::Bindings::Array::~Array):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::RuntimeArrayImp):
+        (RuntimeArrayImp::lengthGetter):
+        (RuntimeArrayImp::indexGetter):
+        (RuntimeArrayImp::put):
+        * bindings/runtime_array.h:
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::lengthGetter):
+        (RuntimeMethodImp::callAsFunction):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::getOwnPropertySlot):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::defaultValue):
+        (RuntimeObjectImp::callAsFunction):
+        * bindings/runtime_object.h:
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp):
+        (ArrayInstanceImp::lengthGetter):
+        (ArrayInstanceImp::getOwnPropertySlot):
+        (ArrayInstanceImp::put):
+        (ArrayInstanceImp::propList):
+        (ArrayInstanceImp::setLength):
+        (compareByStringForQSort):
+        (compareWithCompareFunctionForQSort):
+        (ArrayInstanceImp::sort):
+        (ArrayInstanceImp::pushUndefinedObjectsToEnd):
+        (ArrayPrototypeImp::ArrayPrototypeImp):
+        (ArrayProtoFuncImp::ArrayProtoFuncImp):
+        (ArrayProtoFuncImp::callAsFunction):
+        (ArrayObjectImp::ArrayObjectImp):
+        (ArrayObjectImp::construct):
+        (ArrayObjectImp::callAsFunction):
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        (BooleanPrototypeImp::BooleanPrototypeImp):
+        (BooleanProtoFuncImp::BooleanProtoFuncImp):
+        (BooleanProtoFuncImp::callAsFunction):
+        (BooleanObjectImp::BooleanObjectImp):
+        (BooleanObjectImp::construct):
+        (BooleanObjectImp::callAsFunction):
+        * kjs/bool_object.h:
+        * kjs/collector.cpp:
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::collect):
+        (KJS::className):
+        * kjs/completion.h:
+        (KJS::Completion::Completion):
+        (KJS::Completion::value):
+        (KJS::Completion::isValueCompletion):
+        * kjs/context.h:
+        (KJS::ContextImp::variableObject):
+        (KJS::ContextImp::setVariableObject):
+        (KJS::ContextImp::thisValue):
+        (KJS::ContextImp::activationObject):
+        (KJS::ContextImp::pushScope):
+        * kjs/date_object.cpp:
+        (formatLocaleDate):
+        (KJS::timeFromArgs):
+        (KJS::DatePrototypeImp::DatePrototypeImp):
+        (KJS::DateProtoFuncImp::DateProtoFuncImp):
+        (KJS::DateProtoFuncImp::callAsFunction):
+        (KJS::DateObjectImp::DateObjectImp):
+        (KJS::DateObjectImp::construct):
+        (KJS::DateObjectImp::callAsFunction):
+        (KJS::DateObjectFuncImp::DateObjectFuncImp):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        (KJS::parseDate):
+        (KJS::KRFCDate_parseDate):
+        (KJS::timeClip):
+        * kjs/date_object.h:
+        * kjs/debugger.cpp:
+        (Debugger::exception):
+        (Debugger::callEvent):
+        (Debugger::returnEvent):
+        * kjs/debugger.h:
+        * kjs/error_object.cpp:
+        (ErrorPrototypeImp::ErrorPrototypeImp):
+        (ErrorProtoFuncImp::ErrorProtoFuncImp):
+        (ErrorProtoFuncImp::callAsFunction):
+        (ErrorObjectImp::ErrorObjectImp):
+        (ErrorObjectImp::construct):
+        (ErrorObjectImp::callAsFunction):
+        (NativeErrorPrototypeImp::NativeErrorPrototypeImp):
+        (NativeErrorImp::NativeErrorImp):
+        (NativeErrorImp::construct):
+        (NativeErrorImp::callAsFunction):
+        * kjs/error_object.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::FunctionImp):
+        (KJS::FunctionImp::callAsFunction):
+        (KJS::FunctionImp::processParameters):
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::FunctionImp::put):
+        (KJS::DeclaredFunctionImp::DeclaredFunctionImp):
+        (KJS::DeclaredFunctionImp::construct):
+        (KJS::ArgumentsImp::ArgumentsImp):
+        (KJS::ArgumentsImp::mappedIndexGetter):
+        (KJS::ArgumentsImp::put):
+        (KJS::ActivationImp::argumentsGetter):
+        (KJS::GlobalFuncImp::GlobalFuncImp):
+        (KJS::encode):
+        (KJS::decode):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (FunctionPrototypeImp::FunctionPrototypeImp):
+        (FunctionPrototypeImp::callAsFunction):
+        (FunctionProtoFuncImp::FunctionProtoFuncImp):
+        (FunctionProtoFuncImp::callAsFunction):
+        (FunctionObjectImp::FunctionObjectImp):
+        (FunctionObjectImp::construct):
+        (FunctionObjectImp::callAsFunction):
+        * kjs/function_object.h:
+        * kjs/internal.cpp:
+        (KJS::UndefinedImp::toPrimitive):
+        (KJS::UndefinedImp::toObject):
+        (KJS::NullImp::toPrimitive):
+        (KJS::NullImp::toObject):
+        (KJS::BooleanImp::toPrimitive):
+        (KJS::BooleanImp::toObject):
+        (KJS::StringImp::toPrimitive):
+        (KJS::StringImp::toObject):
+        (KJS::NumberImp::toPrimitive):
+        (KJS::NumberImp::toObject):
+        (KJS::NumberImp::getUInt32):
+        (KJS::LabelStack::push):
+        (KJS::ContextImp::ContextImp):
+        (KJS::InterpreterImp::globalInit):
+        (KJS::InterpreterImp::globalClear):
+        (KJS::InterpreterImp::InterpreterImp):
+        (KJS::InterpreterImp::initGlobalObject):
+        (KJS::InterpreterImp::clear):
+        (KJS::InterpreterImp::mark):
+        (KJS::InterpreterImp::evaluate):
+        (KJS::InternalFunctionImp::hasInstance):
+        (KJS::roundValue):
+        (KJS::printInfo):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::builtinObject):
+        (KJS::InterpreterImp::builtinFunction):
+        (KJS::InterpreterImp::builtinArray):
+        (KJS::InterpreterImp::builtinBoolean):
+        (KJS::InterpreterImp::builtinString):
+        (KJS::InterpreterImp::builtinNumber):
+        (KJS::InterpreterImp::builtinDate):
+        (KJS::InterpreterImp::builtinRegExp):
+        (KJS::InterpreterImp::builtinError):
+        (KJS::InterpreterImp::builtinObjectPrototype):
+        (KJS::InterpreterImp::builtinFunctionPrototype):
+        (KJS::InterpreterImp::builtinArrayPrototype):
+        (KJS::InterpreterImp::builtinBooleanPrototype):
+        (KJS::InterpreterImp::builtinStringPrototype):
+        (KJS::InterpreterImp::builtinNumberPrototype):
+        (KJS::InterpreterImp::builtinDatePrototype):
+        (KJS::InterpreterImp::builtinRegExpPrototype):
+        (KJS::InterpreterImp::builtinErrorPrototype):
+        (KJS::InterpreterImp::builtinEvalError):
+        (KJS::InterpreterImp::builtinRangeError):
+        (KJS::InterpreterImp::builtinReferenceError):
+        (KJS::InterpreterImp::builtinSyntaxError):
+        (KJS::InterpreterImp::builtinTypeError):
+        (KJS::InterpreterImp::builtinURIError):
+        (KJS::InterpreterImp::builtinEvalErrorPrototype):
+        (KJS::InterpreterImp::builtinRangeErrorPrototype):
+        (KJS::InterpreterImp::builtinReferenceErrorPrototype):
+        (KJS::InterpreterImp::builtinSyntaxErrorPrototype):
+        (KJS::InterpreterImp::builtinTypeErrorPrototype):
+        (KJS::InterpreterImp::builtinURIErrorPrototype):
+        * kjs/interpreter.cpp:
+        (Context::variableObject):
+        (Context::thisValue):
+        (Interpreter::Interpreter):
+        (Interpreter::globalObject):
+        (Interpreter::evaluate):
+        (Interpreter::builtinObject):
+        (Interpreter::builtinFunction):
+        (Interpreter::builtinArray):
+        (Interpreter::builtinBoolean):
+        (Interpreter::builtinString):
+        (Interpreter::builtinNumber):
+        (Interpreter::builtinDate):
+        (Interpreter::builtinRegExp):
+        (Interpreter::builtinError):
+        (Interpreter::builtinObjectPrototype):
+        (Interpreter::builtinFunctionPrototype):
+        (Interpreter::builtinArrayPrototype):
+        (Interpreter::builtinBooleanPrototype):
+        (Interpreter::builtinStringPrototype):
+        (Interpreter::builtinNumberPrototype):
+        (Interpreter::builtinDatePrototype):
+        (Interpreter::builtinRegExpPrototype):
+        (Interpreter::builtinErrorPrototype):
+        (Interpreter::builtinEvalError):
+        (Interpreter::builtinRangeError):
+        (Interpreter::builtinReferenceError):
+        (Interpreter::builtinSyntaxError):
+        (Interpreter::builtinTypeError):
+        (Interpreter::builtinURIError):
+        (Interpreter::builtinEvalErrorPrototype):
+        (Interpreter::builtinRangeErrorPrototype):
+        (Interpreter::builtinReferenceErrorPrototype):
+        (Interpreter::builtinSyntaxErrorPrototype):
+        (Interpreter::builtinTypeErrorPrototype):
+        (Interpreter::builtinURIErrorPrototype):
+        (Interpreter::createLanguageInstanceForValue):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::isGlobalObject):
+        (KJS::ExecState::setException):
+        (KJS::ExecState::clearException):
+        (KJS::ExecState::exception):
+        (KJS::ExecState::hadException):
+        (KJS::ExecState::ExecState):
+        * kjs/list.cpp:
+        (KJS::List::at):
+        * kjs/list.h:
+        (KJS::List::operator[]):
+        (KJS::ListIterator::operator->):
+        (KJS::ListIterator::operator*):
+        (KJS::ListIterator::operator++):
+        (KJS::ListIterator::operator--):
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        (KJS::lookupPut):
+        (KJS::cacheGlobalObject):
+        * kjs/math_object.cpp:
+        (MathObjectImp::getValueProperty):
+        (MathFuncImp::MathFuncImp):
+        (MathFuncImp::callAsFunction):
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        (Node::evaluateReference):
+        (Node::throwError):
+        (Node::setExceptionDetailsIfNeeded):
+        (NullNode::evaluate):
+        (BooleanNode::evaluate):
+        (NumberNode::evaluate):
+        (StringNode::evaluate):
+        (RegExpNode::evaluate):
+        (ThisNode::evaluate):
+        (ResolveNode::evaluate):
+        (ResolveNode::evaluateReference):
+        (GroupNode::evaluate):
+        (ElementNode::evaluate):
+        (ArrayNode::evaluate):
+        (ObjectLiteralNode::evaluate):
+        (PropertyValueNode::evaluate):
+        (PropertyNode::evaluate):
+        (AccessorNode1::evaluate):
+        (AccessorNode1::evaluateReference):
+        (AccessorNode2::evaluate):
+        (AccessorNode2::evaluateReference):
+        (ArgumentListNode::evaluate):
+        (ArgumentListNode::evaluateList):
+        (ArgumentsNode::evaluate):
+        (NewExprNode::evaluate):
+        (FunctionCallNode::evaluate):
+        (PostfixNode::evaluate):
+        (DeleteNode::evaluate):
+        (VoidNode::evaluate):
+        (TypeOfNode::evaluate):
+        (PrefixNode::evaluate):
+        (UnaryPlusNode::evaluate):
+        (NegateNode::evaluate):
+        (BitwiseNotNode::evaluate):
+        (LogicalNotNode::evaluate):
+        (MultNode::evaluate):
+        (AddNode::evaluate):
+        (ShiftNode::evaluate):
+        (RelationalNode::evaluate):
+        (EqualNode::evaluate):
+        (BitOperNode::evaluate):
+        (BinaryLogicalNode::evaluate):
+        (ConditionalNode::evaluate):
+        (AssignNode::evaluate):
+        (CommaNode::evaluate):
+        (StatListNode::execute):
+        (AssignExprNode::evaluate):
+        (VarDeclNode::evaluate):
+        (VarDeclNode::processVarDecls):
+        (VarDeclListNode::evaluate):
+        (ExprStatementNode::execute):
+        (IfNode::execute):
+        (DoWhileNode::execute):
+        (WhileNode::execute):
+        (ForNode::execute):
+        (ForInNode::execute):
+        (ContinueNode::execute):
+        (BreakNode::execute):
+        (ReturnNode::execute):
+        (WithNode::execute):
+        (CaseClauseNode::evaluate):
+        (ClauseListNode::evaluate):
+        (CaseBlockNode::evaluate):
+        (CaseBlockNode::evalBlock):
+        (SwitchNode::execute):
+        (ThrowNode::execute):
+        (CatchNode::execute):
+        (TryNode::execute):
+        (ParameterNode::evaluate):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::evaluate):
+        (SourceElementsNode::execute):
+        * kjs/nodes.h:
+        (KJS::StatementNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberPrototypeImp::NumberPrototypeImp):
+        (NumberProtoFuncImp::NumberProtoFuncImp):
+        (NumberProtoFuncImp::callAsFunction):
+        (NumberObjectImp::NumberObjectImp):
+        (NumberObjectImp::getValueProperty):
+        (NumberObjectImp::construct):
+        (NumberObjectImp::callAsFunction):
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::call):
+        (KJS::ObjectImp::mark):
+        (KJS::ObjectImp::classInfo):
+        (KJS::ObjectImp::get):
+        (KJS::ObjectImp::getProperty):
+        (KJS::ObjectImp::getPropertySlot):
+        (KJS::ObjectImp::put):
+        (KJS::ObjectImp::hasOwnProperty):
+        (KJS::ObjectImp::defaultValue):
+        (KJS::ObjectImp::findPropertyHashEntry):
+        (KJS::ObjectImp::construct):
+        (KJS::ObjectImp::callAsFunction):
+        (KJS::ObjectImp::hasInstance):
+        (KJS::ObjectImp::propList):
+        (KJS::ObjectImp::toPrimitive):
+        (KJS::ObjectImp::toNumber):
+        (KJS::ObjectImp::toString):
+        (KJS::ObjectImp::toObject):
+        (KJS::ObjectImp::putDirect):
+        (KJS::Error::create):
+        (KJS::error):
+        * kjs/object.h:
+        (KJS::):
+        (KJS::ObjectImp::getPropertySlot):
+        (KJS::AllocatedValueImp::isObject):
+        (KJS::ObjectImp::ObjectImp):
+        (KJS::ObjectImp::internalValue):
+        (KJS::ObjectImp::setInternalValue):
+        (KJS::ObjectImp::prototype):
+        (KJS::ObjectImp::setPrototype):
+        (KJS::ObjectImp::inherits):
+        * kjs/object_object.cpp:
+        (ObjectPrototypeImp::ObjectPrototypeImp):
+        (ObjectProtoFuncImp::ObjectProtoFuncImp):
+        (ObjectProtoFuncImp::callAsFunction):
+        (ObjectObjectImp::ObjectObjectImp):
+        (ObjectObjectImp::construct):
+        (ObjectObjectImp::callAsFunction):
+        * kjs/object_object.h:
+        * kjs/operations.cpp:
+        (KJS::equal):
+        (KJS::strictEqual):
+        (KJS::relation):
+        (KJS::add):
+        (KJS::mult):
+        * kjs/operations.h:
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::mark):
+        (KJS::PropertyMap::addEnumerablesToReferenceList):
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList):
+        (KJS::PropertyMap::save):
+        (KJS::PropertyMap::restore):
+        * kjs/property_map.h:
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::undefinedGetter):
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::getValue):
+        * kjs/protect.h:
+        (KJS::gcUnprotectNullTolerant):
+        (KJS::ProtectedValue::ProtectedValue):
+        (KJS::ProtectedValue::~ProtectedValue):
+        (KJS::ProtectedValue::operator=):
+        (KJS::ProtectedValue::operator ValueImp *):
+        (KJS::ProtectedValue::operator->):
+        * kjs/protected_object.h:
+        (KJS::ProtectedObject::ProtectedObject):
+        (KJS::ProtectedObject::operator=):
+        (KJS::ProtectedObject::operator ValueImp *):
+        (KJS::ProtectedObject::operator ObjectImp *):
+        (KJS::ProtectedObject::operator->):
+        (KJS::ProtectedReference::ProtectedReference):
+        (KJS::ProtectedReference::~ProtectedReference):
+        (KJS::ProtectedReference::operator=):
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::getProtectCount):
+        (KJS::ProtectedValues::increaseProtectCount):
+        (KJS::ProtectedValues::insert):
+        (KJS::ProtectedValues::decreaseProtectCount):
+        * kjs/protected_values.h:
+        * kjs/reference.cpp:
+        (KJS::Reference::Reference):
+        (KJS::Reference::makeValueReference):
+        (KJS::Reference::getBase):
+        (KJS::Reference::getValue):
+        (KJS::Reference::putValue):
+        (KJS::Reference::deleteValue):
+        * kjs/reference.h:
+        (KJS::Reference::baseIfMutable):
+        * kjs/regexp_object.cpp:
+        (RegExpPrototypeImp::RegExpPrototypeImp):
+        (RegExpProtoFuncImp::RegExpProtoFuncImp):
+        (RegExpProtoFuncImp::callAsFunction):
+        (RegExpObjectImp::RegExpObjectImp):
+        (RegExpObjectImp::arrayOfMatches):
+        (RegExpObjectImp::backrefGetter):
+        (RegExpObjectImp::construct):
+        (RegExpObjectImp::callAsFunction):
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (StringInstanceImp::lengthGetter):
+        (StringInstanceImp::indexGetter):
+        (StringInstanceImp::getOwnPropertySlot):
+        (StringInstanceImp::put):
+        (StringPrototypeImp::StringPrototypeImp):
+        (StringProtoFuncImp::StringProtoFuncImp):
+        (regExpIsGlobal):
+        (replace):
+        (StringProtoFuncImp::callAsFunction):
+        (StringObjectImp::StringObjectImp):
+        (StringObjectImp::construct):
+        (StringObjectImp::callAsFunction):
+        (StringObjectFuncImp::StringObjectFuncImp):
+        (StringObjectFuncImp::callAsFunction):
+        * kjs/string_object.h:
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+        (VersionFunctionImp::callAsFunction):
+        (main):
+        * kjs/value.cpp:
+        (KJS::AllocatedValueImp::operator new):
+        (KJS::AllocatedValueImp::getUInt32):
+        (KJS::ValueImp::toInteger):
+        (KJS::ValueImp::toInt32):
+        (KJS::ValueImp::toUInt32):
+        (KJS::ValueImp::toUInt16):
+        (KJS::ValueImp::toObject):
+        (KJS::AllocatedValueImp::getBoolean):
+        (KJS::AllocatedValueImp::getNumber):
+        (KJS::AllocatedValueImp::getString):
+        (KJS::AllocatedValueImp::getObject):
+        (KJS::jsString):
+        (KJS::jsNumber):
+        (KJS::ConstantValues::init):
+        (KJS::ConstantValues::clear):
+        (KJS::ConstantValues::mark):
+        * kjs/value.h:
+        (KJS::):
+        (KJS::jsUndefined):
+        (KJS::jsNull):
+        (KJS::jsBoolean):
+        (KJS::jsNaN):
+        (KJS::ValueImp::ValueImp):
+        (KJS::ValueImp::~ValueImp):
+        (KJS::AllocatedValueImp::AllocatedValueImp):
+        (KJS::AllocatedValueImp::~AllocatedValueImp):
+        (KJS::AllocatedValueImp::isBoolean):
+        (KJS::AllocatedValueImp::isNumber):
+        (KJS::AllocatedValueImp::isString):
+        (KJS::AllocatedValueImp::isObject):
+        (KJS::AllocatedValueImp::marked):
+        (KJS::AllocatedValueImp::mark):
+        (KJS::ValueImp::downcast):
+        (KJS::ValueImp::isUndefined):
+        (KJS::ValueImp::isNull):
+        (KJS::ValueImp::isUndefinedOrNull):
+        (KJS::ValueImp::isBoolean):
+        (KJS::ValueImp::isNumber):
+        (KJS::ValueImp::isString):
+        (KJS::ValueImp::isObject):
+        (KJS::ValueImp::getBoolean):
+        (KJS::ValueImp::getNumber):
+        (KJS::ValueImp::getString):
+        (KJS::ValueImp::getObject):
+        (KJS::ValueImp::getUInt32):
+        (KJS::ValueImp::mark):
+        (KJS::ValueImp::marked):
+        (KJS::ValueImp::type):
+        (KJS::ValueImp::toPrimitive):
+        (KJS::ValueImp::toBoolean):
+        (KJS::ValueImp::toNumber):
+        (KJS::ValueImp::toString):
+        (KJS::jsZero):
+        (KJS::jsOne):
+        (KJS::jsTwo):
+        (KJS::Undefined):
+        (KJS::Null):
+        (KJS::Boolean):
+        (KJS::Number):
+        (KJS::String):
+
 2005-08-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

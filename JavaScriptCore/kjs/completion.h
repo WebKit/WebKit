@@ -47,17 +47,16 @@ namespace KJS {
    */
   class Completion {
   public:
-    Completion(ComplType c = Normal, const Value& v = Value(),
-               const Identifier &t = Identifier::null())
+    Completion(ComplType c = Normal, ValueImp *v = NULL, const Identifier &t = Identifier::null())
         : comp(c), val(v), tar(t) { }
 
     ComplType complType() const { return comp; }
-    Value value() const { return val; }
+    ValueImp *value() const { return val; }
     Identifier target() const { return tar; }
-    bool isValueCompletion() const { return !val.isNull(); }
+    bool isValueCompletion() const { return val; }
   private:
     ComplType comp;
-    Value val;
+    ValueImp *val;
     Identifier tar;
   };
 

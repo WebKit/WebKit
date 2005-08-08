@@ -25,6 +25,7 @@
 #include "pointer_hash.h"
 #include "simple_number.h"
 #include <stdint.h>
+#include "value.h"
 
 namespace KJS {
 
@@ -43,14 +44,14 @@ int ProtectedValues::getProtectCount(ValueImp *k)
     if (SimpleNumber::is(k))
       return 0;
 
-    unsigned hash = computeHash(k);
+    unsigned hash = pointerHash(k);
     
     int i = hash & _tableSizeMask;
 #if DUMP_STATISTICS
     ++numProbes;
     numCollisions += _table[i].key && _table[i].key != k;
 #endif
-    while (ValueImp *key = _table[i].key) {
+    while (AllocatedValueImp *key = _table[i].key) {
         if (key == k) {
 	    return _table[i].value;
 	}
@@ -71,14 +72,14 @@ void ProtectedValues::increaseProtectCount(ValueImp *k)
     if (!_table)
         expand();
     
-    unsigned hash = computeHash(k);
+    unsigned hash = pointerHash(k);
     
     int i = hash & _tableSizeMask;
 #if DUMP_STATISTICS
     ++numProbes;
     numCollisions += _table[i].key && _table[i].key != k;
 #endif
-    while (ValueImp *key = _table[i].key) {
+    while (AllocatedValueImp *key = _table[i].key) {
         if (key == k) {
 	    _table[i].value++;
 	    return;
@@ -86,7 +87,7 @@ void ProtectedValues::increaseProtectCount(ValueImp *k)
         i = (i + 1) & _tableSizeMask;
     }
     
-    _table[i].key = k;
+    _table[i].key = k->downcast();
     _table[i].value = 1;
     ++_keyCount;
     
@@ -94,9 +95,9 @@ void ProtectedValues::increaseProtectCount(ValueImp *k)
         expand();
 }
 
-inline void ProtectedValues::insert(ValueImp *k, int v)
+inline void ProtectedValues::insert(AllocatedValueImp *k, int v)
 {
-    unsigned hash = computeHash(k);
+    unsigned hash = pointerHash(k);
     
     int i = hash & _tableSizeMask;
 #if DUMP_STATISTICS
@@ -117,9 +118,9 @@ void ProtectedValues::decreaseProtectCount(ValueImp *k)
     if (SimpleNumber::is(k))
       return;
 
-    unsigned hash = computeHash(k);
+    unsigned hash = pointerHash(k);
     
-    ValueImp *key;
+    AllocatedValueImp *key;
     
     int i = hash & _tableSizeMask;
 #if DUMP_STATISTICS
@@ -184,11 +185,6 @@ void ProtectedValues::rehash(int newTableSize)
             insert(oldTable[i].key, oldTable[i].value);
 
     free(oldTable);
-}
-
-unsigned ProtectedValues::computeHash(ValueImp *pointer)
-{
-  return pointerHash(pointer);
 }
 
 } // namespace

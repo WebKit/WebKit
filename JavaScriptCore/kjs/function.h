@@ -43,11 +43,11 @@ namespace KJS {
     virtual ~FunctionImp();
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
     void addParameter(const Identifier &n);
     Identifier getParameterName(int index);
@@ -65,8 +65,8 @@ namespace KJS {
     Identifier ident;
 
   private:
-    static Value argumentsGetter(ExecState *, const Identifier &, const PropertySlot&);
-    static Value lengthGetter(ExecState *, const Identifier &, const PropertySlot&);
+    static ValueImp *argumentsGetter(ExecState *, const Identifier &, const PropertySlot&);
+    static ValueImp *lengthGetter(ExecState *, const Identifier &, const PropertySlot&);
 
     void processParameters(ExecState *exec, const List &);
     virtual void processVarDecls(ExecState *exec);
@@ -79,7 +79,7 @@ namespace KJS {
     ~DeclaredFunctionImp();
 
     bool implementsConstruct() const;
-    Object construct(ExecState *exec, const List &args);
+    ObjectImp *construct(ExecState *exec, const List &args);
 
     virtual Completion execute(ExecState *exec);
     CodeType codeType() const { return FunctionCode; }
@@ -112,13 +112,12 @@ namespace KJS {
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args, ActivationImp *act);
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName,
-                     const Value &value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   private:
-    static Value mappedIndexGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
+    static ValueImp *mappedIndexGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
 
     ActivationImp *_activationObject; 
     mutable IndexToNameMap indexToNameMap;
@@ -138,7 +137,7 @@ namespace KJS {
 
   private:
     static PropertySlot::GetValueFunc getArgumentsGetter();
-    static Value argumentsGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
+    static ValueImp *argumentsGetter(ExecState *exec, const Identifier &, const PropertySlot& slot);
     void createArgumentsObject(ExecState *exec) const;
     
     FunctionImp *_function;
@@ -150,7 +149,7 @@ namespace KJS {
   public:
     GlobalFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len);
     virtual bool implementsCall() const;
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
     virtual CodeType codeType() const;
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,
            DecodeURI, DecodeURIComponent, EncodeURI, EncodeURIComponent

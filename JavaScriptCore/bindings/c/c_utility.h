@@ -45,12 +45,11 @@ typedef enum
     NP_InvalidValueType
 } NP_ValueType;
 
-
-extern void convertNPStringToUTF16 (const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
-extern void convertUTF8ToUTF16 (const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
-extern void coerceValueToNPVariantStringType (KJS::ExecState *exec, const KJS::Value &value, NPVariant *result);
-extern void convertValueToNPVariant (KJS::ExecState *exec, const KJS::Value &value, NPVariant *result);
-extern KJS::Value convertNPVariantToValue (KJS::ExecState *exec, const NPVariant *variant);
+void convertNPStringToUTF16(const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
+void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length);
+void coerceValueToNPVariantStringType(KJS::ExecState *exec, KJS::ValueImp *value, NPVariant *result);
+void convertValueToNPVariant(KJS::ExecState *exec, KJS::ValueImp *value, NPVariant *result);
+KJS::ValueImp *convertNPVariantToValue(KJS::ExecState *exec, const NPVariant *variant);
 
 typedef struct 
 {

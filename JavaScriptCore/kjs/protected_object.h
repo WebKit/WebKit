@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2004 Apple Computer, Inc.
@@ -20,9 +19,8 @@
  *
  */
 
-
-#ifndef _KJS_PROTECTED_OBJECT_H_
-#define _KJS_PROTECTED_OBJECT_H_
+#ifndef KJS_PROTECTED_OBJECT_H
+#define KJS_PROTECTED_OBJECT_H
 
 #include "protect.h"
 #include "object.h"
@@ -30,53 +28,36 @@
 
 namespace KJS {
 
-    class ProtectedObject : public Object {
-    public:
-      ProtectedObject() : Object() {}
-      ProtectedObject(const Object &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
-      ProtectedObject(const ProtectedObject &o)  : Object(o) { gcProtectNullTolerant(o.imp()); };
-      ~ProtectedObject() { gcUnprotectNullTolerant(imp());}
-      ProtectedObject& operator=(const Object &o)
-	{ 
-	  ValueImp *old = imp();
-	  Object::operator=(o); 
-	  gcProtectNullTolerant(o.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-      ProtectedObject& operator=(const ProtectedObject &o)
-	{ 
-	  ValueImp *old = imp();
-	  Object::operator=(o); 
-	  gcProtectNullTolerant(o.imp());
-	  gcUnprotectNullTolerant(old); 
-	  return *this;
-	}
-    private:
-      explicit ProtectedObject(ObjectImp *o);
-    };
-
+class ProtectedObject : private ProtectedValue {
+public:
+    ProtectedObject() { }
+    ProtectedObject(ObjectImp *v) : ProtectedValue(v) { }
+    ProtectedObject(const ProtectedObject& v) : ProtectedValue(v) { }
+    ProtectedObject& operator=(ObjectImp *v) { ProtectedValue::operator=(v); return *this; }
+    ProtectedObject& operator=(const ProtectedObject& v) { ProtectedValue::operator=(v); return *this; }
+    operator ValueImp *() const { return m_value; }
+    operator ObjectImp *() const { return static_cast<ObjectImp *>(m_value); }
+    ObjectImp *operator->() const { return static_cast<ObjectImp *>(m_value); }
+};
 
     class ProtectedReference : public Reference {
     public:
-      ProtectedReference(const Reference&r)  : Reference(r) { gcProtectNullTolerant(r.base.imp()); };
-      ~ProtectedReference() { gcUnprotectNullTolerant(base.imp());}
+      ProtectedReference(const Reference& r) : Reference(r) { gcProtectNullTolerant(r.base); };
+      ~ProtectedReference() { gcUnprotectNullTolerant(base);}
       ProtectedReference& operator=(const Reference &r)
 	{ 
-	  ValueImp *old = base.imp();
+	  ValueImp *old = base;
 	  Reference::operator=(r); 
-	  gcProtectNullTolerant(r.base.imp());
+	  gcProtectNullTolerant(r.base);
 	  gcUnprotectNullTolerant(old); 
 	  return *this;
 	}
     private:
       ProtectedReference();
-      ProtectedReference(const Object& b, const Identifier& p);
-      ProtectedReference(const Object& b, unsigned p);
       ProtectedReference(ObjectImp *b, const Identifier& p);
       ProtectedReference(ObjectImp *b, unsigned p);
-      ProtectedReference(const Null& b, const Identifier& p);
-      ProtectedReference(const Null& b, unsigned p);
+      ProtectedReference(const Identifier& p);
+      ProtectedReference(unsigned p);
     };
 
 } // namespace

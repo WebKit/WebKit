@@ -77,7 +77,7 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
             result.j = JSObject::createNative(nativeHandle);
         }
         else {
-            KJS::ObjectImp *imp = jlong_to_impptr(nativeHandle);
+            ObjectImp *imp = jlong_to_impptr(nativeHandle);
             if (!rootForImp(imp)) {
                 fprintf (stderr, "%s:%d:  Attempt to access JavaScript from destroyed applet, type %d.\n", __FILE__, __LINE__, context->type);
                 return result;
@@ -173,19 +173,19 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
     Interpreter::lock();
     
     Identifier identifier(JavaString(methodName).ustring());
-    Value func = _imp->get (exec, identifier);
+    ValueImp *func = _imp->get (exec, identifier);
     Interpreter::unlock();
-    if (func.isNull() || func.type() == UndefinedType) {
+    if (func->isUndefinedOrNull()) {
         // Maybe throw an exception here?
         return 0;
     }
 
     // Call the function object.
-    ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
-    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    ObjectImp *funcImp = static_cast<ObjectImp*>(func);
+    ObjectImp *thisObj = const_cast<ObjectImp*>(_imp);
     List argList = listFromJArray(args);
     Interpreter::lock();
-    Value result = funcImp->call (exec, thisObj, argList);
+    ValueImp *result = funcImp->call (exec, thisObj, argList);
     Interpreter::unlock();
 
     // Convert and return the result of the function call.
@@ -196,8 +196,8 @@ jobject JSObject::eval(jstring script) const
 {
     JS_LOG ("script = %s\n", JavaString(script).UTF8String());
 
-    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
-    Value result;
+    ObjectImp *thisObj = const_cast<ObjectImp*>(_imp);
+    ValueImp *result;
     
     Interpreter::lock();
 
@@ -206,7 +206,7 @@ jobject JSObject::eval(jstring script) const
     
     if (type == Normal) {
         result = completion.value();
-        if (result.isNull()) {
+        if (!result) {
             result = Undefined();
         }
     }
@@ -225,7 +225,7 @@ jobject JSObject::getMember(jstring memberName) const
     ExecState *exec = _root->interpreter()->globalExec();
 
     Interpreter::lock();
-    Value result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
+    ValueImp *result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
     Interpreter::unlock();
 
     return convertValueToJObject (result);
@@ -258,7 +258,7 @@ jobject JSObject::getSlot(jint index) const
 
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();
-    Value result = _imp->get (exec, (unsigned)index);
+    ValueImp *result = _imp->get (exec, (unsigned)index);
     Interpreter::unlock();
 
     return convertValueToJObject (result);
@@ -281,7 +281,7 @@ jstring JSObject::toString() const
     JS_LOG ("\n");
 
     Interpreter::lock();
-    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    ObjectImp *thisObj = const_cast<ObjectImp*>(_imp);
     ExecState *exec = _root->interpreter()->globalExec();
     
     jstring result = (jstring)convertValueToJValue (exec, thisObj, object_type, "java.lang.String").l;
@@ -328,7 +328,7 @@ jlong JSObject::createNative(jlong nativeHandle)
     return ptr_to_jlong(0);
 }
 
-jobject JSObject::convertValueToJObject (KJS::Value value) const
+jobject JSObject::convertValueToJObject (ValueImp *value) const
 {
     ExecState *exec = _root->interpreter()->globalExec();
     JNIEnv *env = getJNIEnv();
@@ -342,39 +342,39 @@ jobject JSObject::convertValueToJObject (KJS::Value value) const
     // Java instance -> Java instance
     // Everything else -> JSObject
     
-    KJS::Type type = value.type();
-    if (type == KJS::NumberType) {
+    Type type = value->type();
+    if (type == NumberType) {
         jclass JSObjectClass = env->FindClass ("java/lang/Double");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(D)V");
         if (constructorID != NULL) {
-            result = env->NewObject (JSObjectClass, constructorID, (jdouble)value.toNumber(exec));
+            result = env->NewObject (JSObjectClass, constructorID, (jdouble)value->toNumber(exec));
         }
     }
-    else if (type == KJS::StringType) {
-        KJS::UString stringValue = value.toString(exec);
+    else if (type == StringType) {
+        UString stringValue = value->toString(exec);
         JNIEnv *env = getJNIEnv();
         result = env->NewString ((const jchar *)stringValue.data(), stringValue.size());
     }
-    else if (type == KJS::BooleanType) {
+    else if (type == BooleanType) {
         jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");
         if (constructorID != NULL) {
-            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value.toBoolean(exec));
+            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value->toBoolean(exec));
         }
     }
     else {
         // Create a JSObject.
         jlong nativeHandle;
         
-        if (type == KJS::ObjectType){
-            KJS::ObjectImp *imp = static_cast<KJS::ObjectImp*>(value.imp());
+        if (type == ObjectType){
+            ObjectImp *imp = static_cast<ObjectImp*>(value);
             
             // We either have a wrapper around a Java instance or a JavaScript
             // object.  If we have a wrapper around a Java instance, return that
             // instance, otherwise create a new Java JSObject with the ObjectImp*
             // as it's nativeHandle.
             if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
-                KJS::RuntimeObjectImp *runtimeImp = static_cast<KJS::RuntimeObjectImp*>(value.imp());
+                RuntimeObjectImp *runtimeImp = static_cast<RuntimeObjectImp*>(value);
                 Bindings::JavaInstance *runtimeInstance = static_cast<Bindings::JavaInstance *>(runtimeImp->getInternalInstance());
                 return runtimeInstance->javaInstance();
             }
@@ -411,7 +411,7 @@ jobject JSObject::convertValueToJObject (KJS::Value value) const
     return result;
 }
 
-KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
+ValueImp *JSObject::convertJObjectToValue (jobject theObject) const
 {
     // Instances of netscape.javascript.JSObject get converted back to
     // JavaScript objects.  All other objects are wrapped.  It's not
@@ -427,28 +427,28 @@ KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
         JNIEnv *env = getJNIEnv();
         jfieldID fieldID = env->GetFieldID((jclass)classOfInstance, "nativeJSObject", "long");
         if (fieldID == NULL) {
-            return KJS::Undefined();
+            return Undefined();
         }
         jlong nativeHandle = env->GetLongField(theObject, fieldID);
         if (nativeHandle == UndefinedHandle) {
-            return KJS::Undefined();
+            return Undefined();
         }
-        KJS::ObjectImp *imp = static_cast<KJS::ObjectImp*>(jlong_to_impptr(nativeHandle));
-        return KJS::Object(const_cast<KJS::ObjectImp*>(imp));
+        ObjectImp *imp = static_cast<ObjectImp*>(jlong_to_impptr(nativeHandle));
+        return imp;
     }
 
     Interpreter::lock();
-    KJS::RuntimeObjectImp *newImp = new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject, _root));
+    RuntimeObjectImp *newImp = new RuntimeObjectImp(new Bindings::JavaInstance (theObject, _root));
     Interpreter::unlock();
 
-    return KJS::Object(newImp);
+    return newImp;
 }
 
-KJS::List JSObject::listFromJArray(jobjectArray jArray) const
+List JSObject::listFromJArray(jobjectArray jArray) const
 {
     JNIEnv *env = getJNIEnv();
     long i, numObjects = jArray ? env->GetArrayLength (jArray) : 0;
-    KJS::List aList;
+    List aList;
     
     for (i = 0; i < numObjects; i++) {
         jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);

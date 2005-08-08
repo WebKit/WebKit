@@ -1418,7 +1418,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 {
     if (!_bindingRoot) {
         _bindingRoot = new KJS::Bindings::RootObject(0);    // The root gets deleted by JavaScriptCore.
-        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _bindingRoot->setRootObjectImp (win);
         _bindingRoot->setInterpreter (KJSProxy::proxy(this)->interpreter());
         addPluginRootObject (_bindingRoot);
@@ -1429,7 +1429,7 @@ KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
-        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win originExecutionContext:bindingRootObject() executionContext:bindingRootObject()]);
     }
 
@@ -1439,7 +1439,7 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
 NPObject *KWQKHTMLPart::windowScriptNPObject()
 {
     if (!_windowScriptNPObject) {
-        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        KJS::ObjectImp *win = KJS::Window::retrieveWindow(this);
         _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject(), bindingRootObject());
     }
 

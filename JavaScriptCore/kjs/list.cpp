@@ -233,11 +233,11 @@ void List::release()
     deallocateListImp(imp);
 }
 
-ValueImp *List::impAt(int i) const
+ValueImp *List::at(int i) const
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
     if ((unsigned)i >= (unsigned)imp->size)
-        return UndefinedImp::staticUndefined;
+        return jsUndefined();
     if (i < inlineValuesSize)
         return imp->values[i];
     return imp->overflow[i - inlineValuesSize];

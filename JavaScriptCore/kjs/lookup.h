@@ -127,17 +127,17 @@ namespace KJS {
    * Helper for getStaticFunctionSlot and getStaticPropertySlot
    */
   template <class FuncImp>
-  inline Value staticFunctionGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+  inline ValueImp *staticFunctionGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
   {
       // Look for cached value in dynamic map of properties (in ObjectImp)
       ObjectImp *thisObj = slot.slotBase();
       ValueImp *cachedVal = thisObj->getDirect(propertyName);
       if (cachedVal)
-          return Value(cachedVal);
+        return cachedVal;
 
       const HashEntry *entry = slot.staticEntry();
-      Value val = Value(new FuncImp(exec, entry->value, entry->params));
-      thisObj->putDirect(propertyName, val.imp(), entry->attr);
+      ValueImp *val = new FuncImp(exec, entry->value, entry->params);
+      thisObj->putDirect(propertyName, val, entry->attr);
       return val;
   }
 
@@ -146,7 +146,7 @@ namespace KJS {
    * Helper for getStaticValueSlot and getStaticPropertySlot
    */
   template <class ThisImp>
-  inline Value staticValueGetter(ExecState *exec, const Identifier&, const PropertySlot& slot)
+  inline ValueImp *staticValueGetter(ExecState *exec, const Identifier&, const PropertySlot& slot)
   {
       ThisImp *thisObj = static_cast<ThisImp *>(slot.slotBase());
       const HashEntry *entry = slot.staticEntry();
@@ -235,7 +235,7 @@ namespace KJS {
    */
   template <class ThisImp, class ParentImp>
   inline void lookupPut(ExecState *exec, const Identifier &propertyName,
-                        const Value& value, int attr,
+                        ValueImp *value, int attr,
                         const HashTable* table, ThisImp* thisObj)
   {
     const HashEntry* entry = Lookup::findEntry(table, propertyName);
@@ -264,14 +264,14 @@ namespace KJS {
   template <class ClassCtor>
   inline ObjectImp *cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
   {
-    ObjectImp *globalObject = static_cast<ObjectImp *>(exec->lexicalInterpreter()->globalObject().imp());
+    ObjectImp *globalObject = static_cast<ObjectImp *>(exec->lexicalInterpreter()->globalObject());
     ValueImp *obj = globalObject->getDirect(propertyName);
     if (obj) {
       assert(obj->isObject());
       return static_cast<ObjectImp *>(obj);
     }
     ObjectImp *newObject = new ClassCtor(exec);
-    globalObject->put(exec, propertyName, Value(newObject), Internal);
+    globalObject->put(exec, propertyName, newObject, Internal);
     return newObject;
   }
 
@@ -297,7 +297,7 @@ namespace KJS {
   public: \
     static ObjectImp *self(ExecState *exec) \
     { \
-      return cacheGlobalObject<ClassProto>( exec, "[[" ClassName ".prototype]]" ); \
+      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
     } \
   protected: \
     ClassProto( ExecState *exec ) \
@@ -331,8 +331,8 @@ namespace KJS {
     { \
        put(exec, lengthPropertyName, Number(len), DontDelete|ReadOnly|DontEnum); \
     } \
-    /* Macro user needs to implement the call function. */ \
-    virtual Value call(ExecState *exec, Object &thisObj, const List &args); \
+    /* Macro user needs to implement the callAsFunction function. */ \
+    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args); \
   private: \
     int id; \
   };

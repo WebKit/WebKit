@@ -41,10 +41,10 @@ static inline id createObjCDOMNode(DOM::NodeImpl *node)
 
 namespace KJS {
 
-void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+void *ScriptInterpreter::createObjcInstanceForValue(ExecState *exec, ObjectImp *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
-    if (value.inherits(&DOMNode::info)) {
-	DOMNode *imp = static_cast<DOMNode *>(value.imp());
+    if (value->inherits(&DOMNode::info)) {
+	DOMNode *imp = static_cast<DOMNode *>(value);
 	id newObjcNode = createObjCDOMNode(imp->impl());
 	[newObjcNode _initializeWithObjectImp:imp originExecutionContext:origin executionContext:current];	
 	return newObjcNode;

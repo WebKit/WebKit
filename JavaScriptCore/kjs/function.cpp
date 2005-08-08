@@ -58,7 +58,7 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
 
 FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
   : InternalFunctionImp(
-      static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype().imp())
+      static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
       ), param(0L), ident(n)
 {
 }
@@ -73,9 +73,9 @@ bool FunctionImp::implementsCall() const
   return true;
 }
 
-Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *FunctionImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  Object &globalObj = exec->dynamicInterpreter()->globalObject();
+  ObjectImp *globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
   ContextImp ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, codeType(),
@@ -97,8 +97,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
       lineno = static_cast<DeclaredFunctionImp*>(this)->body->firstLine();
     }
 
-    Object func(this);
-    bool cont = dbg->callEvent(&newExec,sid,lineno,func,args);
+    bool cont = dbg->callEvent(&newExec,sid,lineno,this,args);
     if (!cont) {
       dbg->imp()->abort();
       return Undefined();
@@ -127,8 +126,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
     if (comp.complType() == Throw)
         newExec.setException(comp.value());
 
-    Object func(this);
-    int cont = dbg->returnEvent(&newExec,sid,lineno,func);
+    int cont = dbg->returnEvent(&newExec,sid,lineno,this);
     if (!cont) {
       dbg->imp()->abort();
       return Undefined();
@@ -172,7 +170,7 @@ UString FunctionImp::parameterString() const
 // ECMA 10.1.3q
 void FunctionImp::processParameters(ExecState *exec, const List &args)
 {
-  Object variable = exec->context().imp()->variableObject();
+  ObjectImp *variable = exec->context().imp()->variableObject();
 
 #ifdef KJS_VERBOSE
   fprintf(stderr, "---------------------------------------------------\n"
@@ -189,10 +187,10 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 	fprintf(stderr, "setting parameter %s ", p->name.ascii());
 	printInfo(exec,"to", *it);
 #endif
-	variable.put(exec, p->name, *it);
+	variable->put(exec, p->name, *it);
 	it++;
       } else
-	variable.put(exec, p->name, Undefined());
+	variable->put(exec, p->name, Undefined());
       p = p->next;
     }
   }
@@ -208,7 +206,7 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
 }
 
-Value FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   ContextImp *context = exec->_context;
@@ -221,7 +219,7 @@ Value FunctionImp::argumentsGetter(ExecState *exec, const Identifier& propertyNa
   return Null();
 }
 
-Value FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *FunctionImp::lengthGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   const Parameter *p = thisObj->param;
@@ -250,7 +248,7 @@ bool FunctionImp::getOwnPropertySlot(ExecState *exec, const Identifier& property
     return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void FunctionImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
+void FunctionImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
     if (propertyName == exec->dynamicInterpreter()->argumentsIdentifier() || propertyName == lengthPropertyName)
         return;
@@ -305,7 +303,6 @@ DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
 					 FunctionBodyNode *b, const ScopeChain &sc)
   : FunctionImp(exec,n), body(b)
 {
-  Value protect(this);
   body->ref();
   setScope(sc);
 }
@@ -322,21 +319,21 @@ bool DeclaredFunctionImp::implementsConstruct() const
 }
 
 // ECMA 13.2.2 [[Construct]]
-Object DeclaredFunctionImp::construct(ExecState *exec, const List &args)
+ObjectImp *DeclaredFunctionImp::construct(ExecState *exec, const List &args)
 {
-  Object proto;
-  Value p = get(exec,prototypePropertyName);
-  if (p.type() == ObjectType)
-    proto = Object(static_cast<ObjectImp*>(p.imp()));
+  ObjectImp *proto;
+  ValueImp *p = get(exec,prototypePropertyName);
+  if (p->isObject())
+    proto = static_cast<ObjectImp*>(p);
   else
     proto = exec->lexicalInterpreter()->builtinObjectPrototype();
 
-  Object obj(new ObjectImp(proto));
+  ObjectImp *obj(new ObjectImp(proto));
 
-  Value res = call(exec,obj,args);
+  ValueImp *res = call(exec,obj,args);
 
-  if (res.type() == ObjectType)
-    return Object::dynamicCast(res);
+  if (res->isObject())
+    return static_cast<ObjectImp *>(res);
   else
     return obj;
 }
@@ -433,7 +430,6 @@ ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args,
 _activationObject(act),
 indexToNameMap(func, args)
 {
-  Value protect(this);
   putDirect(calleePropertyName, func, DontEnum);
   putDirect(lengthPropertyName, args.size(), DontEnum);
   
@@ -453,7 +449,7 @@ void ArgumentsImp::mark()
     _activationObject->mark();
 }
 
-Value ArgumentsImp::mappedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *ArgumentsImp::mappedIndexGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   ArgumentsImp *thisObj = static_cast<ArgumentsImp *>(slot.slotBase());
   return thisObj->_activationObject->get(exec, thisObj->indexToNameMap[propertyName]);
@@ -469,7 +465,7 @@ bool ArgumentsImp::getOwnPropertySlot(ExecState *exec, const Identifier& propert
   return ObjectImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
+void ArgumentsImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
   if (indexToNameMap.isMapped(propertyName)) {
     _activationObject->put(exec, indexToNameMap[propertyName], value, attr);
@@ -500,7 +496,7 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
-Value ActivationImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
+ValueImp *ActivationImp::argumentsGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   ActivationImp *thisObj = static_cast<ActivationImp *>(slot.slotBase());
 
@@ -508,7 +504,7 @@ Value ActivationImp::argumentsGetter(ExecState *exec, const Identifier& property
   if (!thisObj->_argumentsObject)
     thisObj->createArgumentsObject(exec);
   
-  return Value(thisObj->_argumentsObject);
+  return thisObj->_argumentsObject;
 }
 
 PropertySlot::GetValueFunc ActivationImp::getArgumentsGetter()
@@ -558,7 +554,6 @@ void ActivationImp::createArgumentsObject(ExecState *exec) const
 GlobalFuncImp::GlobalFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, int i, int len)
   : InternalFunctionImp(funcProto), id(i)
 {
-  Value protect(this);
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
@@ -572,9 +567,9 @@ bool GlobalFuncImp::implementsCall() const
   return true;
 }
 
-static Value encode(ExecState *exec, const List &args, const char *do_not_escape)
+static ValueImp *encode(ExecState *exec, const List &args, const char *do_not_escape)
 {
-  UString r = "", s, str = args[0].toString(exec);
+  UString r = "", s, str = args[0]->toString(exec);
   CString cstr = str.UTF8String();
   const char *p = cstr.c_str();
   for (int k = 0; k < cstr.size(); k++, p++) {
@@ -590,9 +585,9 @@ static Value encode(ExecState *exec, const List &args, const char *do_not_escape
   return String(r);
 }
 
-static Value decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
+static ValueImp *decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
 {
-  UString s = "", str = args[0].toString(exec);
+  UString s = "", str = args[0]->toString(exec);
   int k = 0, len = str.size();
   const UChar *d = str.data();
   UChar u;
@@ -634,7 +629,7 @@ static Value decode(ExecState *exec, const List &args, const char *do_not_unesca
       }
       if (charLen == 0) {
         if (strict) {
-	  Object error = Error::create(exec, URIError);
+	  ObjectImp *error = Error::create(exec, URIError);
           exec->setException(error);
           return error;
         }
@@ -767,9 +762,9 @@ static double parseFloat(const UString &s)
     return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
 }
 
-Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
-  Value res;
+  ValueImp *res = jsUndefined();
 
   static const char do_not_escape[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -792,11 +787,11 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 
   switch (id) {
     case Eval: { // eval()
-      Value x = args[0];
-      if (x.type() != StringType)
+      ValueImp *x = args[0];
+      if (!x->isString())
         return x;
       else {
-        UString s = x.toString(exec);
+        UString s = x->toString(exec);
         
         int sid;
         int errLine;
@@ -812,8 +807,8 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 
         // no program node means a syntax occurred
         if (!progNode) {
-          Object err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);
-          err.put(exec,"sid",Number(sid));
+          ObjectImp *err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);
+          err->put(exec,"sid",Number(sid));
           exec->setException(err);
           return err;
         }
@@ -821,7 +816,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
         progNode->ref();
         
         // enter a new execution context
-        Object thisVal(Object::dynamicCast(exec->context().thisValue()));
+        ObjectImp *thisVal = static_cast<ObjectImp *>(exec->context().thisValue());
         ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
                        exec->dynamicInterpreter()->imp(),
                        thisVal,
@@ -851,16 +846,16 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       break;
     }
   case ParseInt:
-    res = Number(parseInt(args[0].toString(exec), args[1].toInt32(exec)));
+    res = Number(parseInt(args[0]->toString(exec), args[1]->toInt32(exec)));
     break;
   case ParseFloat:
-    res = Number(parseFloat(args[0].toString(exec)));
+    res = Number(parseFloat(args[0]->toString(exec)));
     break;
   case IsNaN:
-    res = Boolean(isNaN(args[0].toNumber(exec)));
+    res = Boolean(isNaN(args[0]->toNumber(exec)));
     break;
   case IsFinite: {
-    double n = args[0].toNumber(exec);
+    double n = args[0]->toNumber(exec);
     res = Boolean(!isNaN(n) && !isInf(n));
     break;
   }
@@ -878,7 +873,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     break;
   case Escape:
     {
-      UString r = "", s, str = args[0].toString(exec);
+      UString r = "", s, str = args[0]->toString(exec);
       const UChar *c = str.data();
       for (int k = 0; k < str.size(); k++, c++) {
         int u = c->uc;
@@ -900,7 +895,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     }
   case UnEscape:
     {
-      UString s = "", str = args[0].toString(exec);
+      UString s = "", str = args[0]->toString(exec);
       int k = 0, len = str.size();
       while (k < len) {
         const UChar *c = str.data() + k;
@@ -927,7 +922,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     }
 #ifndef NDEBUG
   case KJSPrint:
-    puts(args[0].toString(exec).ascii());
+    puts(args[0]->toString(exec).ascii());
     break;
 #endif
   }

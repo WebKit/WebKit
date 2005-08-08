@@ -20,19 +20,14 @@
  *
  */
 
-
-#ifndef _KJS_PROTECTED_VALUES_H_
-#define _KJS_PROTECTED_VALUES_H_
+#ifndef KJS_PROTECTED_VALUES_H
+#define KJS_PROTECTED_VALUES_H
 
 namespace KJS {
     class ValueImp;
+    class AllocatedValueImp;
 
     class ProtectedValues {
-	struct KeyValue {
-	    ValueImp *key;
-	    int value;
-	};
-
     public:
 	static void increaseProtectCount(ValueImp *key);
 	static void decreaseProtectCount(ValueImp *key);
@@ -40,14 +35,18 @@ namespace KJS {
 	static int getProtectCount(ValueImp *key);
 
     private:
-	static void insert(ValueImp *key, int value);
+	static void insert(AllocatedValueImp *key, int value);
 	static void expand();
 	static void shrink();
 	static void rehash(int newTableSize);
-	static unsigned computeHash(ValueImp *pointer);
 
 	// let the collector scan the table directly for protected values
 	friend class Collector;
+
+	struct KeyValue {
+	    AllocatedValueImp *key;
+	    int value;
+	};
 
 	static KeyValue *_table;
 	static int _tableSize;

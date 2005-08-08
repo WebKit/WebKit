@@ -86,7 +86,7 @@ bool MathObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
   return getStaticPropertySlot<MathFuncImp, MathObjectImp, ObjectImp>(exec, &mathTable, this, propertyName, slot);
 }
 
-Value MathObjectImp::getValueProperty(ExecState *, int token) const
+ValueImp *MathObjectImp::getValueProperty(ExecState *, int token) const
 {
   double d = -42; // ;)
   switch (token) {
@@ -125,10 +125,9 @@ Value MathObjectImp::getValueProperty(ExecState *, int token) const
 
 MathFuncImp::MathFuncImp(ExecState *exec, int i, int l)
   : InternalFunctionImp(
-    static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype().imp())
+    static_cast<FunctionPrototypeImp*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
     ), id(i)
 {
-  Value protect(this);
   putDirect(lengthPropertyName, l, DontDelete|ReadOnly|DontEnum);
 }
 
@@ -137,10 +136,10 @@ bool MathFuncImp::implementsCall() const
   return true;
 }
 
-Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+ValueImp *MathFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/, const List &args)
 {
-  double arg = args[0].toNumber(exec);
-  double arg2 = args[1].toNumber(exec);
+  double arg = args[0]->toNumber(exec);
+  double arg2 = args[1]->toNumber(exec);
   double result;
 
   switch (id) {
@@ -178,7 +177,7 @@ Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
     unsigned int argsCount = args.size();
     result = -Inf;
     for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
-      double val = args[k].toNumber(exec);
+      double val = args[k]->toNumber(exec);
       if ( isNaN( val ) )
       {
         result = NaN;
@@ -193,7 +192,7 @@ Value MathFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
     unsigned int argsCount = args.size();
     result = +Inf;
     for ( unsigned int k = 0 ; k < argsCount ; ++k ) {
-      double val = args[k].toNumber(exec);
+      double val = args[k]->toNumber(exec);
       if ( isNaN( val ) )
       {
         result = NaN;
