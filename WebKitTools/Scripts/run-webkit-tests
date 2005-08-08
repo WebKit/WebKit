@@ -36,7 +36,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 # Run all the tests passed in on the command line.
-# If no tests are passed, find all the .html, .xml, and .xhtml files in the test directory.
+# If no tests are passed, find all the .html, .xml, .xhtml (and svg) files in the test directory.
 
 # Run each text.
 # Compare against the existing file xxx-expected.txt.
@@ -53,17 +53,43 @@ my $productDir = productDir();
 
 chdirWebKit();
 
-my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
+# Argument handling
+my $testSVGs = 0;
+if (($#ARGV > -1) && ($ARGV[0] eq "--svg")) {
+    $testSVGs = 1;
+    shift @ARGV;
+}
+
+my $toolbuildscript = "build-dumprendertree";
+if ($testSVGs) {
+    $toolbuildscript = "build-dumpkcanvastree";
+}
+
+my $result = system "WebKitTools/Scripts/$toolbuildscript", @ARGV;
 exit $result if $result;
 
-my $tool = "$productDir/DumpRenderTree";
-die "can't find executable DumpRenderTree tool (looked in $productDir)\n" if !-x $tool;
+my $toolname = "DumpRenderTree";
+if ($testSVGs) {
+    $toolname = "DumpKCanvasTree";
+}
 
-checkFrameworks();
+my $tool = "$productDir/$toolname";
+die "can't find executable $toolname tool (looked in $productDir)\n" if !-x $tool;
+
+if ($testSVGs) {
+    checkSVGFrameworks();
+} else {
+    checkFrameworks();
+}
+
+my $layoutTestsName = "layout-tests";
+if ($testSVGs) {
+    $layoutTestsName = "svg-tests";
+}
 
 my $workingDir = getcwd();
 my $WebCoreDirectory = "$workingDir/WebCore";
-my $testDirectory = "$WebCoreDirectory/layout-tests";
+my $testDirectory = "$WebCoreDirectory/$layoutTestsName";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 
@@ -72,6 +98,9 @@ $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 my @tests;
 
 my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
+if ($testSVGs) {
+    $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.svg'";
+}
 my $foundTestName = 0;
 for my $test (@ARGV) {
     next if $test =~ /^-/;
@@ -80,8 +109,8 @@ for my $test (@ARGV) {
     if ($test =~ /^\//) {
         print "can't run test outside $testDirectory\n";
     } elsif (-f "$testDirectory/$test") {
-        if ($test !~ /\.(html|xml|xhtml)$/) {
-            print "test $test does not have an .html extension\n";
+        if ($test !~ /\.(html|xml|xhtml|svg)$/) {
+            print "test $test does not have a supported extension\n";
         } else {
             push @tests, $test;
         }
@@ -109,7 +138,7 @@ for my $test (@tests) {
     next if $test eq 'results.html';
     
     my $base = $test;
-    $base =~ s/\.(html|xml|xhtml)$//;
+    $base =~ s/\.(html|xml|xhtml|svg)$//;
     
     print "running $base test";
     
@@ -153,7 +182,7 @@ for my $test (@tests) {
         open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
         print ACTUAL $actual;
         close ACTUAL;
-        system "diff -u $testDirectory/$base-expected.txt $testResultsDirectory/$base-actual.txt > $testResultsDirectory/$base-diffs.txt";
+        system "diff -u \"$testDirectory/$base-expected.txt\" \"$testResultsDirectory/$base-actual.txt\" > \"$testResultsDirectory/$base-diffs.txt\"";
     }
     
     $count += 1;
@@ -207,7 +236,7 @@ if ($counts{match} && $counts{match} == $count) {
         print HTML "<table>\n";
         for my $test (@{$tests{mismatch}}) {
             my $base = $test;
-            $base =~ s/\.(html|xml|xhtml)$//;
+            $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
@@ -223,7 +252,7 @@ if ($counts{match} && $counts{match} == $count) {
         print HTML "<table>\n";
         for my $test (@{$tests{fail}}) {
             my $base = $test;
-            $base =~ s/\.(html|xml|xhtml)$//;
+            $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             print HTML "</tr>\n";
@@ -236,7 +265,7 @@ if ($counts{match} && $counts{match} == $count) {
         print HTML "<table>\n";
         for my $test (@{$tests{new}}) {
             my $base = $test;
-            $base =~ s/\.(html|xml|xhtml)$//;
+            $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";

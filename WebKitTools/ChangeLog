@@ -1,4 +1,12 @@
 2005-08-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/run-webkit-tests: added --svg option
+        * Scripts/run-webkit-tests-svg: Removed.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4300
+
+2005-08-07  Eric Seidel  <eseidel@apple.com>
         Changes by Ben La Monica <ben.lamonica@gmail.com>
 
         Reviewed by darin.
