@@ -229,6 +229,7 @@ var             PST_DIFF = TZ_DIFF - TZ_PST;  // offset of tester's timezone fro
 var	TIME_1970	 = 0;
 var	TIME_2000	 = 946684800000;
 var	TIME_1900	 = -2208988800000;
+var     TIME_YEAR_0      = -62167219200000;
 
 
 /*

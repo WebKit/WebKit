@@ -46,10 +46,6 @@
     // get the current time
     var now = (new Date()).valueOf();
 
-    // calculate time for year 0
-    for ( var time = 0, year = 1969; year >= 0; year-- ) {
-        time -= TimeInYear(year);
-    }
     // get time for 29 feb 2000
 
     var UTC_FEB_29_2000 = TIME_2000 + 31*msPerDay + 28*msPerHour;
@@ -65,7 +61,7 @@
 
     var DST_END_1998 = UTC( GetLastSundayInOctober(TimeFromYear(1998)) + 2*msPerHour );
 
-    addTestCase( time );
+    addTestCase( TIME_YEAR_0 );
 /*
     addTestCase( TIME_1970 );
     addTestCase( TIME_1900 );
