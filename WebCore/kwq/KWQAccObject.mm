@@ -206,7 +206,8 @@ using khtml::VisiblePosition;
 {
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
-        if (!input->disabled() && input->inputType() == HTMLInputElementImpl::CHECKBOX)
+        if (!input->disabled() && (input->inputType() == HTMLInputElementImpl::CHECKBOX ||
+                                   input->inputType() == HTMLInputElementImpl::RADIO))
             return input;
     }
 
@@ -389,6 +390,8 @@ using khtml::VisiblePosition;
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
         if (input->inputType() == HTMLInputElementImpl::CHECKBOX)
             return NSAccessibilityCheckBoxRole;
+        if (input->inputType() == HTMLInputElementImpl::RADIO)
+            return NSAccessibilityRadioButtonRole;
     }
     
     if (m_renderer->isBlockFlow())
@@ -441,6 +444,9 @@ using khtml::VisiblePosition;
     
     if ([role isEqualToString:NSAccessibilityCheckBoxRole])
         return NSAccessibilityRoleDescription(NSAccessibilityCheckBoxRole, nil);
+        
+    if ([role isEqualToString:NSAccessibilityRadioButtonRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityRadioButtonRole, nil);
 
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
@@ -539,7 +545,8 @@ using khtml::VisiblePosition;
 
     if (m_renderer->element() && m_renderer->element()->hasTagName(inputTag)) {
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(m_renderer->element());
-        if (input->inputType() == HTMLInputElementImpl::CHECKBOX)
+        if (input->inputType() == HTMLInputElementImpl::CHECKBOX ||
+            input->inputType() == HTMLInputElementImpl::RADIO)
             // Checkboxes return their state as an integer. 0 for off, 1 for on.
             return [NSNumber numberWithInt:input->checked()];
     }
@@ -1915,7 +1922,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return YES;
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         if ([[self role] isEqualToString:@"AXLink"] ||
-            ([[self role] isEqualToString:NSAccessibilityCheckBoxRole] &&
+            (([[self role] isEqualToString:NSAccessibilityCheckBoxRole] ||
+             ([[self role] isEqualToString:NSAccessibilityRadioButtonRole])) &&
               m_renderer->element()->isEnabled()))
             return YES;
     }
@@ -1964,7 +1972,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
         ASSERT(number);
         if ([[self role] isEqualToString:@"AXLink"] ||
-            ([[self role] isEqualToString:NSAccessibilityCheckBoxRole] &&
+            (([[self role] isEqualToString:NSAccessibilityCheckBoxRole] ||
+             ([[self role] isEqualToString:NSAccessibilityRadioButtonRole])) &&
              m_renderer->element()->isEnabled())) {
             if ([number intValue] != 0)
                 m_renderer->document()->setFocusNode(m_renderer->element());

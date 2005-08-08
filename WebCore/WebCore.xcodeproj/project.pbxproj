@@ -261,7 +261,6 @@
 		93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
 		93F1998608245E59001E9ABC /* KWQPushButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B002DE3B8601EA4122 /* KWQPushButton.h */; };
-		93F1998708245E59001E9ABC /* KWQRadioButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B102DE3B8601EA4122 /* KWQRadioButton.h */; };
 		93F1998808245E59001E9ABC /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
 		93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
@@ -444,7 +443,6 @@
 		93F19A4508245E59001E9ABC /* KWQPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852302DE375901EA4122 /* KWQPoint.mm */; };
 		93F19A4608245E59001E9ABC /* KWQPointArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852402DE375901EA4122 /* KWQPointArray.mm */; };
 		93F19A4708245E59001E9ABC /* KWQPtrDictImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852602DE375901EA4122 /* KWQPtrDictImpl.mm */; };
-		93F19A4808245E59001E9ABC /* KWQRadioButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852802DE375901EA4122 /* KWQRadioButton.mm */; };
 		93F19A4908245E59001E9ABC /* KWQRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852902DE375901EA4122 /* KWQRect.mm */; };
 		93F19A4A08245E59001E9ABC /* KWQRegExp.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.mm */; };
 		93F19A4B08245E59001E9ABC /* KWQRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.mm */; };
@@ -812,7 +810,6 @@
 		A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B802DE3B8601EA4122 /* KWQPtrStack.h */; };
 		A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C402DE3B8601EA4122 /* KWQPtrVector.h */; };
 		A8212B5108794A2300677359 /* KWQPushButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B002DE3B8601EA4122 /* KWQPushButton.h */; };
-		A8212B5208794A2300677359 /* KWQRadioButton.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B102DE3B8601EA4122 /* KWQRadioButton.h */; };
 		A8212B5308794A2300677359 /* KWQRect.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B202DE3B8601EA4122 /* KWQRect.h */; };
 		A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587852A02DE375901EA4122 /* KWQRefPtr.h */; };
 		A8212B5508794A2300677359 /* KWQRegExp.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786B302DE3B8601EA4122 /* KWQRegExp.h */; };
@@ -1029,7 +1026,6 @@
 		A8212C2C08794A2300677359 /* KWQPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852302DE375901EA4122 /* KWQPoint.mm */; };
 		A8212C2D08794A2300677359 /* KWQPointArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852402DE375901EA4122 /* KWQPointArray.mm */; };
 		A8212C2E08794A2300677359 /* KWQPtrDictImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852602DE375901EA4122 /* KWQPtrDictImpl.mm */; };
-		A8212C2F08794A2300677359 /* KWQRadioButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852802DE375901EA4122 /* KWQRadioButton.mm */; };
 		A8212C3008794A2300677359 /* KWQRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852902DE375901EA4122 /* KWQRect.mm */; };
 		A8212C3108794A2300677359 /* KWQRegExp.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.mm */; };
 		A8212C3208794A2300677359 /* KWQRegion.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.mm */; };
@@ -4036,7 +4032,6 @@
 		F587852402DE375901EA4122 /* KWQPointArray.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPointArray.mm; sourceTree = "<group>"; };
 		F587852502DE375901EA4122 /* KWQPtrDictImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrDictImpl.h; sourceTree = "<group>"; };
 		F587852602DE375901EA4122 /* KWQPtrDictImpl.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPtrDictImpl.mm; sourceTree = "<group>"; };
-		F587852802DE375901EA4122 /* KWQRadioButton.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRadioButton.mm; sourceTree = "<group>"; };
 		F587852902DE375901EA4122 /* KWQRect.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRect.mm; sourceTree = "<group>"; };
 		F587852A02DE375901EA4122 /* KWQRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRefPtr.h; sourceTree = "<group>"; };
 		F587852B02DE375901EA4122 /* KWQRegExp.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQRegExp.mm; sourceTree = "<group>"; };
@@ -4160,7 +4155,6 @@
 		F58786AE02DE3B8601EA4122 /* KWQPtrStack.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrStack.h; sourceTree = "<group>"; };
 		F58786AF02DE3B8601EA4122 /* KWQPtrVector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrVector.h; sourceTree = "<group>"; };
 		F58786B002DE3B8601EA4122 /* KWQPushButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPushButton.h; sourceTree = "<group>"; };
-		F58786B102DE3B8601EA4122 /* KWQRadioButton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRadioButton.h; sourceTree = "<group>"; };
 		F58786B202DE3B8601EA4122 /* KWQRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRect.h; sourceTree = "<group>"; };
 		F58786B302DE3B8601EA4122 /* KWQRegExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRegExp.h; sourceTree = "<group>"; };
 		F58786B402DE3B8601EA4122 /* KWQRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQRegion.h; sourceTree = "<group>"; };
@@ -6531,8 +6525,6 @@
 				F58786AF02DE3B8601EA4122 /* KWQPtrVector.h */,
 				F58786B002DE3B8601EA4122 /* KWQPushButton.h */,
 				F550D70A02E13281018635CA /* KWQPushButton.mm */,
-				F58786B102DE3B8601EA4122 /* KWQRadioButton.h */,
-				F587852802DE375901EA4122 /* KWQRadioButton.mm */,
 				F58786B202DE3B8601EA4122 /* KWQRect.h */,
 				F587852902DE375901EA4122 /* KWQRect.mm */,
 				F58786B302DE3B8601EA4122 /* KWQRegExp.h */,
@@ -6769,7 +6761,6 @@
 				93F1998408245E59001E9ABC /* KWQPtrStack.h in Headers */,
 				93F1998508245E59001E9ABC /* KWQPtrVector.h in Headers */,
 				93F1998608245E59001E9ABC /* KWQPushButton.h in Headers */,
-				93F1998708245E59001E9ABC /* KWQRadioButton.h in Headers */,
 				93F1998808245E59001E9ABC /* KWQRect.h in Headers */,
 				93F1998908245E59001E9ABC /* KWQRefPtr.h in Headers */,
 				93F1998A08245E59001E9ABC /* KWQRegExp.h in Headers */,
@@ -7117,7 +7108,6 @@
 				A8212B4F08794A2300677359 /* KWQPtrStack.h in Headers */,
 				A8212B5008794A2300677359 /* KWQPtrVector.h in Headers */,
 				A8212B5108794A2300677359 /* KWQPushButton.h in Headers */,
-				A8212B5208794A2300677359 /* KWQRadioButton.h in Headers */,
 				A8212B5308794A2300677359 /* KWQRect.h in Headers */,
 				A8212B5408794A2300677359 /* KWQRefPtr.h in Headers */,
 				A8212B5508794A2300677359 /* KWQRegExp.h in Headers */,
@@ -9035,7 +9025,6 @@
 				93F19A4508245E59001E9ABC /* KWQPoint.mm in Sources */,
 				93F19A4608245E59001E9ABC /* KWQPointArray.mm in Sources */,
 				93F19A4708245E59001E9ABC /* KWQPtrDictImpl.mm in Sources */,
-				93F19A4808245E59001E9ABC /* KWQRadioButton.mm in Sources */,
 				93F19A4908245E59001E9ABC /* KWQRect.mm in Sources */,
 				93F19A4A08245E59001E9ABC /* KWQRegExp.mm in Sources */,
 				93F19A4B08245E59001E9ABC /* KWQRegion.mm in Sources */,
@@ -9309,7 +9298,6 @@
 				A8212C2C08794A2300677359 /* KWQPoint.mm in Sources */,
 				A8212C2D08794A2300677359 /* KWQPointArray.mm in Sources */,
 				A8212C2E08794A2300677359 /* KWQPtrDictImpl.mm in Sources */,
-				A8212C2F08794A2300677359 /* KWQRadioButton.mm in Sources */,
 				A8212C3008794A2300677359 /* KWQRect.mm in Sources */,
 				A8212C3108794A2300677359 /* KWQRegExp.mm in Sources */,
 				A8212C3208794A2300677359 /* KWQRegion.mm in Sources */,

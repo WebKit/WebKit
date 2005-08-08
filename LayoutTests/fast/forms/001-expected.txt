@@ -19,21 +19,21 @@ layer at (0,0) size 800x600
               RenderTableCell {TD} at (0,0) size 20x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderBlock {INPUT} at (4,4) size 12x12
               RenderTableCell {TD} at (20,9) size 760x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,138) size 784x25
-        RenderTable {TABLE} at (0,0) size 784x25 [border: (2px outset #808080)]
-          RenderTableSection {TBODY} at (2,2) size 0x21
+      RenderBlock {P} at (0,138) size 784x24
+        RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
+          RenderTableSection {TBODY} at (2,2) size 0x20
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 20x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderRadioButton {INPUT} at (4,4) size 12x13
+              RenderTableCell {TD} at (0,0) size 20x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBlock {INPUT} at (4,4) size 12x12
               RenderTableCell {TD} at (20,9) size 760x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,179) size 784x28
+      RenderBlock {P} at (0,178) size 784x28
         RenderTable {TABLE} at (0,0) size 784x28 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 0x24
             RenderTableRow {TR} at (0,0) size 0x0
               RenderTableCell {TD} at (0,0) size 42x24 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderSubmitButton {INPUT} at (3,3) size 36x18
               RenderTableCell {TD} at (42,11) size 738x2 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,223) size 784x66
+      RenderBlock {P} at (0,222) size 784x66
         RenderTable {TABLE} at (0,0) size 784x24 [border: (2px outset #808080)]
           RenderTableSection {TBODY} at (2,2) size 0x20
             RenderTableRow {TR} at (0,0) size 0x0

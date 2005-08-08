@@ -288,6 +288,9 @@ public:
 
     void handleLocalEvents(EventImpl *evt, bool useCapture);
 
+    // A handler to do actions before an event is dispatched.
+    virtual void preDispatchEventHandler(EventImpl *evt) {};
+
     /**
      * Perform the default action for an event e.g. submitting a form
      */

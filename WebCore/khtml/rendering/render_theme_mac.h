@@ -50,14 +50,19 @@ public:
 protected:
     // Methods for each appearance value.
     virtual void paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
-    virtual int sizeForFont(RenderStyle* style) const;
+    virtual void setCheckboxSize(RenderStyle* style) const;
+    
+    virtual void paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r);
+    virtual void setRadioSize(RenderStyle* style) const;
     
 private:
-    QRect inflateRect(const QRect& r, int size, const int* margins) const;
+    QRect inflateRect(const QRect& r, const QSize& size, const int* margins) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle* style) const;
-    void setControlSize(NSCell* cell, const int* sizes, int minSize);
+    void setControlSize(NSCell* cell, const QSize* sizes, const QSize& minSize);
+    void setSizeFromFont(RenderStyle* style, const QSize* sizes) const;
+    QSize sizeForFont(RenderStyle* style, const QSize* sizes) const;
 
     void updateCheckedState(NSCell* cell, const RenderObject* o);
     void updateEnabledState(NSCell* cell, const RenderObject* o);
@@ -65,12 +70,17 @@ private:
     void updatePressedState(NSCell* cell, const RenderObject* o);
 
     // Helpers for adjusting appearance and for painting
-    const int* checkboxSizes() const;
+    const QSize* checkboxSizes() const;
     const int* checkboxMargins() const;
     void setCheckboxCellState(const RenderObject* o, const QRect& r);
-    
+
+    const QSize* radioSizes() const;
+    const int* radioMargins() const;
+    void setRadioCellState(const RenderObject* o, const QRect& r);
+
 private:
     NSButtonCell* checkbox;
+    NSButtonCell* radio;
 };
 
 }

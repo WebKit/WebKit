@@ -104,7 +104,7 @@ layer at (0,0) size 800x600
                 RenderText {TEXT} at (1,1) size 216x18
                   text run at (1,1) width 216: "radio with value property changed"
               RenderTableCell {TD} at (389,148) size 236x21 [r=6 c=1 rs=1 cs=1]
-                RenderRadioButton {INPUT} at (4,4) size 12x13
+                RenderBlock {INPUT} at (4,4) size 12x13
               RenderTableCell {TD} at (627,148) size 62x20 [r=6 c=2 rs=1 cs=1]
                 RenderText {TEXT} at (1,1) size 28x18
                   text run at (1,1) width 28: "after"

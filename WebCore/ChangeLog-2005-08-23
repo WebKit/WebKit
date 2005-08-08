@@ -1,3 +1,104 @@
+2005-08-08  David Hyatt  <hyatt@apple.com>
+
+	This patch implements support for <input type=radio> in the engine and removes the NSView-based
+	control.
+	
+	Reviewed by: John Sullivan
+	
+        * ForwardingHeaders/qradiobutton.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        Removing the old QRadioButton from the project.
+	
+	* khtml/css/html4.css:
+        Add the CSS rule to give radio buttons the correct appearance.
+	
+	* khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::click):
+        Now that radio button has no corresponding QWidget, move its click handling case down to match
+	the other widget-less controls.
+	
+	(DOM::HTMLInputElementImpl::createRenderer):
+	The special renderer doesn't have to be made any more.  Radio now behaves like checkbox and just
+	makes a renderer based off the specified display type in CSS.
+	
+        (DOM::HTMLInputElementImpl::setChecked):
+        Fix a regression that prevented unnamed checkboxes from functioning properly.  Make sure to
+	only disallow the selecting of unnamed radio buttons.
+	
+	(DOM::HTMLInputElementImpl::valueWithDefault):
+	Fix some mis-indented ifdefs.
+	
+        (DOM::HTMLInputElementImpl::preDispatchEventHandler):
+        Added a new event handler method that is called prior to the dispatch of the event into the DOM.
+	This function is necessary because checkboxes and radio buttons need to check/uncheck *prior* to
+	the onclick actually being sent into the DOM.
+	
+	(DOM::HTMLInputElementImpl::defaultEventHandler):
+        Remove the code that attempted to check/uncheck checkboxes from this function, since it was called
+	*after* onclick was handled in the DOM, and this was too late.  The code has moved into 
+	preDispatchEventHandler instead.
+	
+	* khtml/html/html_formimpl.h:
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_form.h:
+        Removed RenderRadioButton, the custom renderer that used to wrap QRadioButton.
+	
+	* khtml/rendering/render_theme.cpp:
+        (khtml::RenderTheme::adjustStyle):
+        (khtml::RenderTheme::paint):
+	Add the radio button case to these methods.
+	
+        (khtml::RenderTheme::adjustCheckboxStyle):
+        (khtml::RenderTheme::adjustRadioStyle):
+        Rework these methods to move all of the control size selection based off font into the
+	derived class.  These methods stay in the base class and call a virtual setCheckbox/RadioSize
+	method to get the size set up properly.
+	
+	* khtml/rendering/render_theme.h:
+        (khtml::RenderTheme::setCheckboxSize):
+        (khtml::RenderTheme::setRadioSize):
+        The two new virtual methods that a derived class can override to set initial sizes.
+	
+	* khtml/rendering/render_theme_mac.h:
+        * khtml/rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::inflateRect):
+        (khtml::RenderThemeMac::setControlSize):
+        (khtml::RenderThemeMac::sizeForFont):
+        (khtml::RenderThemeMac::setSizeFromFont):
+        (khtml::RenderThemeMac::checkboxSizes):
+        (khtml::RenderThemeMac::setCheckboxCellState):
+        (khtml::RenderThemeMac::setCheckboxSize):
+        Patched all of these methods to deal with QSizes instead of ints, since radio buttons are not
+	square.
+	
+	(khtml::RenderThemeMac::paintRadio):
+        (khtml::RenderThemeMac::radioSizes):
+        (khtml::RenderThemeMac::radioMargins):
+        (khtml::RenderThemeMac::setRadioCellState):
+        (khtml::RenderThemeMac::setRadioSize):
+        The implementation of radio buttons.  Virtually identical to checkbox.
+	
+	* khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchGenericEvent):
+        Add the invocation of preDispatchEventHandler prior to the dispatch of the event.
+	
+	* khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::preDispatchEventHandler):
+        The stubbed out empty virtual function in the base class.  Overridden in HTMLInputElementImpl
+	to check/uncheck radio buttons and checkboxes prior to the click event being sent into the DOM.
+	
+	* kwq/KWQAccObject.mm:
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+        The implementation of radio button accessibility.  Identical to checkbox (just a different role).
+	
+	* kwq/KWQRadioButton.h: Removed.
+        * kwq/KWQRadioButton.mm: Removed.
+	Removed the old radio button files for QRadioButton.
+	
 2005-08-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

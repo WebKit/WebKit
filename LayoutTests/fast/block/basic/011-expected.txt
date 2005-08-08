@@ -23,12 +23,12 @@ layer at (0,0) size 800x420
                 RenderBlock {P} at (0,0) size 139x19
                   RenderText {TEXT} at (0,4) size 28x18
                     text run at (0,4) width 28: "bang "
-                  RenderRadioButton {INPUT} at (31,3) size 12x13 [color=#000000]
+                  RenderBlock {INPUT} at (31,3) size 12x13 [color=#000000]
                   RenderText {TEXT} at (0,0) size 0x0
                 RenderBlock {P} at (0,19) size 139x19
                   RenderText {TEXT} at (0,4) size 47x18
                     text run at (0,4) width 47: "whimper "
-                  RenderRadioButton {INPUT} at (50,3) size 12x13 [color=#000000]
+                  RenderBlock {INPUT} at (50,3) size 12x13 [color=#000000]
                   RenderText {TEXT} at (0,0) size 0x0
               RenderBlock (anonymous) at (10,58) size 139x0
                 RenderInline {FORM} at (0,0) size 0x0

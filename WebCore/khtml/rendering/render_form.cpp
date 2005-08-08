@@ -281,51 +281,6 @@ short RenderButton::baselinePosition( bool f, bool isRootLineBox ) const
 
 // -------------------------------------------------------------------------------
 
-RenderRadioButton::RenderRadioButton(HTMLInputElementImpl *element)
-    : RenderButton(element)
-{
-    QRadioButton* b = new QRadioButton(view()->viewport());
-    b->setAutoMask(true);
-    b->setMouseTracking(true);
-    setQWidget(b);
-    connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
-}
-
-void RenderRadioButton::updateFromElement()
-{
-    widget()->setChecked(element()->checked());
-
-    RenderButton::updateFromElement();
-}
-
-void RenderRadioButton::slotClicked()
-{
-    element()->setChecked(true);
-
-    // emit mouseClick event etc
-    RenderButton::slotClicked();
-}
-
-void RenderRadioButton::calcMinMaxWidth()
-{
-    KHTMLAssert( !minMaxKnown() );
-
-#if APPLE_CHANGES
-    // Let the widget tell us how big it wants to be.
-    QSize s(widget()->sizeHint());
-#else
-    QRadioButton *rb = static_cast<QRadioButton *>( m_widget );
-    QSize s( rb->style().pixelMetric( QStyle::PM_ExclusiveIndicatorWidth ),
-             rb->style().pixelMetric( QStyle::PM_ExclusiveIndicatorHeight ) );
-#endif
-    setIntrinsicWidth( s.width() );
-    setIntrinsicHeight( s.height() );
-
-    RenderButton::calcMinMaxWidth();
-}
-
-// -------------------------------------------------------------------------------
-
 RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
     : RenderButton(element)
 {

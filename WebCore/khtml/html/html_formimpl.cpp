@@ -1690,7 +1690,6 @@ void HTMLInputElementImpl::click(bool sendMouseEvents, bool showPressedLook)
         case HIDDEN:
             // a no-op for this type
             break;
-        case RADIO:
         case SUBMIT:
         case RESET:
         case BUTTON: 
@@ -1716,6 +1715,7 @@ void HTMLInputElementImpl::click(bool sendMouseEvents, bool showPressedLook)
             HTMLGenericFormElementImpl::click(sendMouseEvents, showPressedLook);
             break;
         case CHECKBOX:
+        case RADIO:
         case IMAGE:
         case ISINDEX:
         case PASSWORD:
@@ -1896,8 +1896,9 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case SEARCH:
 #endif
     case ISINDEX:  return new (arena) RenderLineEdit(this);
-    case CHECKBOX: return RenderObject::createObject(this, style);
-    case RADIO:    return new (arena) RenderRadioButton(this);
+    case CHECKBOX:
+    case RADIO:
+        return RenderObject::createObject(this, style);
     case SUBMIT:   return new (arena) RenderSubmitButton(this);
     case IMAGE:    return new (arena) RenderImageButton(this);
     case RESET:    return new (arena) RenderResetButton(this);
@@ -2141,7 +2142,7 @@ void HTMLInputElementImpl::reset()
 void HTMLInputElementImpl::setChecked(bool _checked)
 {
     // WinIE does not allow unnamed radio buttons to even be checked.
-    if (checked() == _checked || name().isEmpty())
+    if (checked() == _checked || (m_type == RADIO && name().isEmpty()))
         return;
 
     if (m_form && m_type == RADIO && _checked)
@@ -2201,10 +2202,10 @@ DOMString HTMLInputElementImpl::valueWithDefault() const
             case ISINDEX:
             case PASSWORD:
             case RADIO:
-        #if APPLE_CHANGES
+#if APPLE_CHANGES
             case RANGE:
             case SEARCH:
-        #endif
+#endif
             case TEXT:
                 break;
         }
@@ -2273,6 +2274,14 @@ void HTMLInputElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
+void HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
+{
+    if (evt->isMouseEvent() && evt->id() == EventImpl::CLICK_EVENT && static_cast<MouseEventImpl*>(evt)->button() == 0) {
+        if (m_type == CHECKBOX || m_type == RADIO)
+            setChecked(!checked());
+    }
+}
+
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->isMouseEvent() &&
@@ -2307,12 +2316,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 }
                 m_activeSubmit = false;
             }
-        } else if (m_type == CHECKBOX || m_type == RADIO) {
-            if (m_type == CHECKBOX || (renderer() && renderer()->style()->hasAppearance()))
-                // FIXME: We key off appearance for now, but this is temporary.  When we cut over
-                // for real this will just always be used.
-                setChecked(!checked());
-        }
+        } 
     }
 
 #if APPLE_CHANGES

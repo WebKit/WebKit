@@ -36,7 +36,6 @@ class QListboxItem;
 
 #include <qtextedit.h>
 #include <klineedit.h>
-#include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qhbox.h>
 #include <klistbox.h>
@@ -140,25 +139,6 @@ public:
 
 protected:
     virtual bool isRenderButton() const { return true; }
-};
-
-// -------------------------------------------------------------------------
-
-class RenderRadioButton : public RenderButton
-{
-    Q_OBJECT
-public:
-    RenderRadioButton(DOM::HTMLInputElementImpl* node);
-
-    virtual const char *renderName() const { return "RenderRadioButton"; }
-
-    virtual void calcMinMaxWidth();
-    virtual void updateFromElement();
-
-    QRadioButton *widget() const { return static_cast<QRadioButton*>(m_widget); }
-
-public slots:
-    void slotClicked();
 };
 
 // -------------------------------------------------------------------------

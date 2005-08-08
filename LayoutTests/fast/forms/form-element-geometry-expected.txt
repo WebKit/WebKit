@@ -28,7 +28,7 @@ layer at (0,0) size 800x625
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x13
-                  RenderRadioButton {INPUT} at (2,2) size 12x13
+                  RenderBlock {INPUT} at (2,2) size 12x13
               RenderBlock (anonymous) at (1,18) size 16x0
                 RenderInline {FONT} at (0,0) size 0x0
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
@@ -48,7 +48,7 @@ layer at (0,0) size 800x625
                 RenderSelect {SELECT} at (2,2) size 62x18
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
-                RenderRadioButton {INPUT} at (2,2) size 12x13
+                RenderBlock {INPUT} at (2,2) size 12x13
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderBlock {INPUT} at (2,2) size 12x12
@@ -66,7 +66,7 @@ layer at (0,0) size 800x625
             RenderTableCell {TD} at (132,4) size 18x19 [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x17 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
-                  RenderRadioButton {INPUT} at (2,2) size 12x13
+                  RenderBlock {INPUT} at (2,2) size 12x13
             RenderTableCell {TD} at (152,5) size 18x18 [r=0 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (1,1) size 16x16 [border: (2px solid #0000FF)]
                 RenderInline {FONT} at (0,0) size 12x12
@@ -90,7 +90,7 @@ layer at (0,0) size 800x625
         RenderText {TEXT} at (0,0) size 200x28
           text run at (0,0) width 200: "Baseline Alignment"
       RenderBlock {DIV} at (0,360) size 784x29
-        RenderInline {FONT} at (0,0) size 219x28
+        RenderInline {FONT} at (0,0) size 213x28
           RenderText {TEXT} at (0,0) size 43x28
             text run at (0,0) width 43: "text "
           RenderSubmitButton {INPUT} at (45,9) size 52x18
@@ -99,10 +99,8 @@ layer at (0,0) size 800x625
           RenderSelect {SELECT} at (107,9) size 62x18
           RenderText {TEXT} at (171,0) size 6x28
             text run at (171,0) width 6: " "
-          RenderRadioButton {INPUT} at (180,11) size 12x13
-          RenderText {TEXT} at (195,0) size 6x28
-            text run at (195,0) width 6: " "
-          RenderBlock {INPUT} at (204,12) size 12x12
+          RenderBlock {INPUT} at (180,11) size 12x13
+          RenderBlock {INPUT} at (198,12) size 12x12
       RenderBlock {DIV} at (0,389) size 784x22
         RenderText {TEXT} at (0,1) size 27x18
           text run at (0,1) width 27: "text "
@@ -112,13 +110,13 @@ layer at (0,0) size 800x625
         RenderSelect {SELECT} at (89,2) size 62x18
         RenderText {TEXT} at (153,1) size 4x18
           text run at (153,1) width 4: " "
-        RenderRadioButton {INPUT} at (160,4) size 12x13
+        RenderBlock {INPUT} at (160,4) size 12x13
         RenderText {TEXT} at (175,1) size 4x18
           text run at (175,1) width 4: " "
         RenderBlock {INPUT} at (182,5) size 12x12
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,411) size 784x22
-        RenderInline {FONT} at (0,0) size 185x13
+        RenderInline {FONT} at (0,0) size 182x13
           RenderText {TEXT} at (0,5) size 18x13
             text run at (0,5) width 18: "text "
           RenderSubmitButton {INPUT} at (20,2) size 52x18
@@ -127,10 +125,8 @@ layer at (0,0) size 800x625
           RenderSelect {SELECT} at (79,2) size 62x18
           RenderText {TEXT} at (143,5) size 3x13
             text run at (143,5) width 3: " "
-          RenderRadioButton {INPUT} at (149,4) size 12x13
-          RenderText {TEXT} at (164,5) size 3x13
-            text run at (164,5) width 3: " "
-          RenderBlock {INPUT} at (170,5) size 12x12
+          RenderBlock {INPUT} at (149,4) size 12x13
+          RenderBlock {INPUT} at (167,5) size 12x12
       RenderBlock {DIV} at (0,433) size 784x37
         RenderText {TEXT} at (0,16) size 27x18
           text run at (0,16) width 27: "text "

@@ -43,7 +43,6 @@ namespace khtml
     class RenderTextArea;
     class RenderSelect;
     class RenderLineEdit;
-    class RenderRadioButton;
     class RenderFileButton;
 #if APPLE_CHANGES
     class RenderSlider;
@@ -306,7 +305,6 @@ public:
 class HTMLInputElementImpl : public HTMLGenericFormElementImpl
 {
     friend class khtml::RenderLineEdit;
-    friend class khtml::RenderRadioButton;
     friend class khtml::RenderFileButton;
 
 #if APPLE_CHANGES
@@ -407,6 +405,7 @@ public:
     int clickX() const { return xPos; }
     int clickY() const { return yPos; }
 
+    virtual void preDispatchEventHandler(EventImpl *evt);
     virtual void defaultEventHandler(EventImpl *evt);
     virtual bool isEditable();
 

@@ -60,12 +60,12 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, QRect& r)
     }
 }
 
-QRect RenderThemeMac::inflateRect(const QRect& r, int size, const int* margins) const
+QRect RenderThemeMac::inflateRect(const QRect& r, const QSize& size, const int* margins) const
 {
     // Only do the inflation if the available width/height are too small.  Otherwise try to
     // fit the glow/check space into the available box's width/height.
-    int widthDelta = r.width() - (size + margins[leftMargin] + margins[rightMargin]);
-    int heightDelta = r.height() - (size + margins[topMargin] + margins[bottomMargin]);
+    int widthDelta = r.width() - (size.width() + margins[leftMargin] + margins[rightMargin]);
+    int heightDelta = r.height() - (size.height() + margins[topMargin] + margins[bottomMargin]);
     QRect result(r);
     if (widthDelta < 0) {
         result.setX(result.x() - margins[leftMargin]);
@@ -114,8 +114,8 @@ void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject* o)
 
 short RenderThemeMac::baselinePosition(const RenderObject* o) const
 {
-    if (o->style()->appearance() == CheckboxAppearance)
-        return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox in AppKit.
+    if (o->style()->appearance() == CheckboxAppearance || o->style()->appearance() == RadioAppearance)
+        return o->marginTop() + o->height() - 2; // The baseline is 2px up from the bottom of the checkbox/radio in AppKit.
     return RenderTheme::baselinePosition(o);
 }
 
@@ -142,22 +142,33 @@ NSControlSize RenderThemeMac::controlSizeForFont(RenderStyle* style) const
     return NSMiniControlSize;
 }
 
-int RenderThemeMac::sizeForFont(RenderStyle* style) const
-{
-    return checkboxSizes()[controlSizeForFont(style)];
-}
-
-void RenderThemeMac::setControlSize(NSCell* cell, const int* sizes, int minSize)
+void RenderThemeMac::setControlSize(NSCell* cell, const QSize* sizes, const QSize& minSize)
 {
     NSControlSize size;
-    if (minSize >= sizes[NSRegularControlSize])
+    if (minSize.width() >= sizes[NSRegularControlSize].width() &&
+        minSize.height() >= sizes[NSRegularControlSize].height())
         size = NSRegularControlSize;
-    else if (minSize >= sizes[NSSmallControlSize])
+    else if (minSize.width() >= sizes[NSSmallControlSize].width() &&
+             minSize.height() >= sizes[NSSmallControlSize].height())
         size = NSSmallControlSize;
     else
         size = NSMiniControlSize;
     if (size != [cell controlSize]) // Only update if we have to, since AppKit does work even if the size is the same.
         [cell setControlSize:size];
+}
+
+QSize RenderThemeMac::sizeForFont(RenderStyle* style, const QSize* sizes) const
+{
+    return sizes[controlSizeForFont(style)];
+}
+
+void RenderThemeMac::setSizeFromFont(RenderStyle* style, const QSize* sizes) const
+{
+    QSize size = sizeForFont(style, sizes);
+    if (style->width().isVariable())
+        style->setWidth(Length(size.width(), Fixed));
+    if (style->height().isVariable())
+        style->setHeight(Length(size.height(), Fixed));
 }
 
 void RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
@@ -172,9 +183,9 @@ void RenderThemeMac::paintCheckbox(RenderObject* o, const RenderObject::PaintInf
     [checkbox setControlView: nil];
 }
 
-const int* RenderThemeMac::checkboxSizes() const
+const QSize* RenderThemeMac::checkboxSizes() const
 {
-    static const int sizes[3] = { 14, 12, 10 };
+    static const QSize sizes[3] = { QSize(14, 14), QSize(12, 12), QSize(10, 10) };
     return sizes;
 }
 
@@ -198,13 +209,82 @@ void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const QRect& r)
     }
     
     // Set the control size based off the rectangle we're painting into.
-    setControlSize(checkbox, checkboxSizes(), kMin(r.width(), r.height()));
+    setControlSize(checkbox, checkboxSizes(), QSize(r.width(), r.height()));
     
     // Update the various states we respond to.
     updateCheckedState(checkbox, o);
     updateEnabledState(checkbox, o);
     updatePressedState(checkbox, o);
     updateFocusedState(checkbox, o);
+}
+
+
+void RenderThemeMac::setCheckboxSize(RenderStyle* style) const
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isVariable() && !style->height().isVariable())
+        return;
+    
+    // Use the font size to determine the intrinsic width of the control.
+    setSizeFromFont(style, checkboxSizes());
+}
+
+void RenderThemeMac::paintRadio(RenderObject* o, const RenderObject::PaintInfo& i, const QRect& r)
+{
+    // Determine the width and height needed for the control and prepare the cell for painting.
+    setRadioCellState(o, r);
+    
+    // We inflate the rect as needed to account for padding included in the cell to accommodate the checkbox
+    // shadow" and the check.  We don't consider this part of the bounds of the control in WebKit.
+    QRect inflatedRect = inflateRect(r, radioSizes()[[radio controlSize]], radioMargins());
+    [radio drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [radio setControlView: nil];
+}
+
+const QSize* RenderThemeMac::radioSizes() const
+{
+    static const QSize sizes[3] = { QSize(14, 15), QSize(12, 13), QSize(10, 10) };
+    return sizes;
+}
+
+const int* RenderThemeMac::radioMargins() const
+{
+    static const int margins[3][4] = 
+    {
+        { 2, 2, 4, 2 },
+        { 3, 2, 3, 2 },
+        { 1, 0, 2, 0 },
+    };
+    return margins[[radio controlSize]];
+}
+
+void RenderThemeMac::setRadioCellState(const RenderObject* o, const QRect& r)
+{
+    if (!radio) {
+        radio = [[NSButtonCell alloc] init];
+        [radio setButtonType:NSRadioButton];
+        [radio setTitle:nil];
+    }
+    
+    // Set the control size based off the rectangle we're painting into.
+    setControlSize(radio, radioSizes(), QSize(r.width(), r.height()));
+    
+    // Update the various states we respond to.
+    updateCheckedState(radio, o);
+    updateEnabledState(radio, o);
+    updatePressedState(radio, o);
+    updateFocusedState(radio, o);
+}
+
+
+void RenderThemeMac::setRadioSize(RenderStyle* style) const
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (!style->width().isVariable() && !style->height().isVariable())
+        return;
+    
+    // Use the font size to determine the intrinsic width of the control.
+    setSizeFromFont(style, radioSizes());
 }
 
 }

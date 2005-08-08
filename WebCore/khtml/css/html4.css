@@ -323,6 +323,10 @@ input[type="checkbox"] {
     -khtml-appearance: checkbox
 }
 
+input[type="radio"] {
+    -khtml-appearance: radio
+}
+
 /* inline elements */      
       
 u, ins {

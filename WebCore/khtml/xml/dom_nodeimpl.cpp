@@ -530,9 +530,17 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
         nodeChain.prepend(n);
     }
 
+    
+    QPtrListIterator<NodeImpl> it(nodeChain);
+    
+    // Before we begin dispatching events, give each node a chance to do some work prior
+    // to the DOM event handlers getting a crack.
+    for (; it.current() && !evt->propagationStopped(); ++it)
+        it.current()->preDispatchEventHandler(evt);
+
     // trigger any capturing event handlers on our way down
     evt->setEventPhase(Event::CAPTURING_PHASE);
-    QPtrListIterator<NodeImpl> it(nodeChain);
+    it.toFirst();
     for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
         evt->setCurrentTarget(it.current());
         it.current()->handleLocalEvents(evt,true);
