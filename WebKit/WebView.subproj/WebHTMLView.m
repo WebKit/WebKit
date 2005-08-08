@@ -747,6 +747,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     }
 
     [self _web_layoutIfNeededRecursive: rect testDirtyRect:YES];
+    [_subviews makeObjectsPerformSelector:@selector(_propagateDirtyRectsToOpaqueAncestors)];
 
     [self _setAsideSubviews];
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect

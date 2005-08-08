@@ -1,3 +1,14 @@
+2005-08-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed <rdar://problem/3996324> REGRESSION (1.2-2.0): scroll bars sometimes not updated properly (with >40 duplicate reports!)
+          also http://bugzilla.opendarwin.org/show_bug.cgi?id=3416
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        Propagate dirty rects after doing a layout, since a layout can create new dirty rects.
+
 2005-08-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
