@@ -1,3 +1,9 @@
+2005-08-08  Darin Adler  <darin@apple.com>
+
+        - forgot to delete an obsolete file
+
+        * kjs/object_wrapper.h: Deleted.
+
 2005-08-07  Darin Adler  <darin@apple.com>
 
         - fixed two problems compiling with gcc 4.0
