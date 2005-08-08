@@ -35,6 +35,8 @@
 
 using namespace DOM;
 
+using khtml::RenderObject;
+
 EventImpl::EventImpl()
 {
     m_type = 0;
@@ -412,14 +414,18 @@ void MouseRelatedEventImpl::computeLayerPos()
     m_layerX = m_clientX;
     m_layerY = m_clientY;
 
-    DocumentImpl *doc = view()->document();
-
-    if (!doc || !doc->renderer()) {
+    AbstractViewImpl *av = view();
+    if (!av)
+        return;
+    DocumentImpl *doc = av->document();
+    if (!doc)
 	return;
-    }
+    RenderObject *docRenderer = doc->renderer();
+    if (!docRenderer)
+        return;
 
     khtml::RenderObject::NodeInfo renderInfo(true, false);
-    doc->renderer()->layer()->hitTest(renderInfo, m_clientX, m_clientY);
+    docRenderer->layer()->hitTest(renderInfo, m_clientX, m_clientY);
 
     NodeImpl *node = renderInfo.innerNonSharedNode();
     while (node && !node->renderer()) {

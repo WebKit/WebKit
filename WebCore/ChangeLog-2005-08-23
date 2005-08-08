@@ -1,3 +1,16 @@
+2005-08-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4298
+          JS crash with DOM2 mouse event with incorrect view
+
+        Test cases added:
+        * layout-tests/fast/events/init-event-null-view-expected.txt: Added.
+        * layout-tests/fast/events/init-event-null-view.html: Added.
+
+        * khtml/xml/dom2_eventsimpl.cpp: (MouseRelatedEventImpl::computeLayerPos): Added nil check.
+
 2005-08-08  David Hyatt  <hyatt@apple.com>
 
 	This patch implements support for <input type=radio> in the engine and removes the NSView-based
