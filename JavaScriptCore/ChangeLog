@@ -1,3 +1,17 @@
+2005-08-08  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed crash caused by fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4313
+        
+        - exceptionDescription now gets explicitly initialized to NULL in all
+        the places listed below -- our wrapper classes used to take care of this 
+        automagically
+        
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+
 2005-08-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
