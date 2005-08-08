@@ -426,7 +426,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
 {
   unsigned length = thisObj->get(exec,lengthPropertyName)->toUInt32(exec);
 
-  ValueImp *result;
+  ValueImp *result = 0; // work around gcc 4.0 bug in uninitialized variable warning
   
   switch (id) {
   case ToLocaleString:

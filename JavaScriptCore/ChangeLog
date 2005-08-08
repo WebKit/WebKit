@@ -1,5 +1,13 @@
 2005-08-07  Darin Adler  <darin@apple.com>
 
+        - fixed two problems compiling with gcc 4.0
+
+        * kjs/array_object.cpp: (ArrayProtoFuncImp::callAsFunction): Initialized a
+        variable to quiet an erroneous warning.
+        * kjs/date_object.cpp: (KJS::makeTime): Removed extraneous KJS:: prefix.
+
+2005-08-07  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4313

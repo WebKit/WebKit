@@ -955,7 +955,7 @@ static const struct KnownZone {
     { "PDT", -420 }
 };
 
-double KJS::makeTime(struct tm *t, double ms, bool utc)
+double makeTime(struct tm *t, double ms, bool utc)
 {
     int utcOffset;
     if (utc) {
