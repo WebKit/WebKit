@@ -34,7 +34,7 @@ using namespace KJS;
 @end
 */
 
-Value LSException::getValueProperty(ExecState *, int token) const
+ValueImp *LSException::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

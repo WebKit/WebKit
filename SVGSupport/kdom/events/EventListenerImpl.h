@@ -38,10 +38,10 @@ namespace KDOM
 		virtual void handleEvent(EventImpl *evt);
 		
 		DOMString internalType() const;
-		KJS::Value ecmaListener() const;
+		KJS::ValueImp *ecmaListener() const;
 
 		// Internal
-		void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::Object listener, KJS::Value compareListener, const DOMString &internalType);
+		void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::ObjectImp *listener, KJS::ValueImp *compareListener, const DOMString &internalType);
 
 	private:
 		DocumentImpl *m_doc;
@@ -49,8 +49,8 @@ namespace KDOM
 		bool m_ecmaEventListener;
 		DOMString m_internalType;
 
-		KJS::Object m_listener;
-		KJS::Value m_compareListener;
+		KJS::ObjectImp *m_listener;
+		KJS::ValueImp *m_compareListener;
 	};
 };
 

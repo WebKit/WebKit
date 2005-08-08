@@ -44,7 +44,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("NodeList", NodeListProto, NodeListProtoFunc)
 
-Value NodeList::getValueProperty(ExecState *exec, int token) const
+ValueImp *NodeList::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -60,7 +60,7 @@ Value NodeList::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value NodeListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *NodeListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(NodeList)
 	KDOM_ENTER_SAFE
@@ -69,7 +69,7 @@ Value NodeListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args
 	{
 		case NodeListConstants::Item:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return getDOMNode(exec, obj.item(index));
 		}
 		default:

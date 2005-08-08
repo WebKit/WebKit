@@ -46,7 +46,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("XPathNSResolver", XPathNSResolverProto, XPathNSResolverProtoFunc)
 
-KJS::Value XPathNSResolver::getValueProperty(KJS::ExecState *, int token) const
+KJS::ValueImp *XPathNSResolver::getValueProperty(KJS::ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -57,7 +57,7 @@ KJS::Value XPathNSResolver::getValueProperty(KJS::ExecState *, int token) const
 	return Undefined();
 }
 
-Value XPathNSResolverProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *XPathNSResolverProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(XPathNSResolver)
 	KDOM_ENTER_SAFE

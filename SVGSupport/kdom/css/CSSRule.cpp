@@ -43,7 +43,7 @@ using namespace KJS;
 @end
 */
 
-Value CSSRule::getValueProperty(ExecState *exec, int token) const
+ValueImp *CSSRule::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{
@@ -62,7 +62,7 @@ Value CSSRule::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void CSSRule::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void CSSRule::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

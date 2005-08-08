@@ -38,7 +38,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPathSegCurvetoCubicAbs::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegCurvetoCubicAbs::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -61,38 +61,38 @@ Value SVGPathSegCurvetoCubicAbs::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-void SVGPathSegCurvetoCubicAbs::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegCurvetoCubicAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegCurvetoCubicConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::X1:
 		{
-			setX1(value.toNumber(exec));
+			setX1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y1:
 		{
-			setY1(value.toNumber(exec));
+			setY1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::X2:
 		{
-			setX2(value.toNumber(exec));
+			setX2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y2:
 		{
-			setY2(value.toNumber(exec));
+			setY2(value->toNumber(exec));
 			return;
 		}
 		default:
@@ -232,7 +232,7 @@ float SVGPathSegCurvetoCubicAbs::y2() const
 @end
 */
 
-Value SVGPathSegCurvetoCubicRel::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegCurvetoCubicRel::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -255,38 +255,38 @@ Value SVGPathSegCurvetoCubicRel::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-void SVGPathSegCurvetoCubicRel::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegCurvetoCubicRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegCurvetoCubicConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::X1:
 		{
-			setX1(value.toNumber(exec));
+			setX1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y1:
 		{
-			setY1(value.toNumber(exec));
+			setY1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::X2:
 		{
-			setX2(value.toNumber(exec));
+			setX2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicConstants::Y2:
 		{
-			setY2(value.toNumber(exec));
+			setY2(value->toNumber(exec));
 			return;
 		}
 		default:

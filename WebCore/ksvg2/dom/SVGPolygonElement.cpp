@@ -37,7 +37,7 @@ using namespace KJS;
 @end
 */
 
-KJS::Value SVGPolygonElement::getValueProperty(KJS::ExecState *exec, int token) const
+KJS::ValueImp *SVGPolygonElement::getValueProperty(KJS::ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

@@ -44,7 +44,7 @@ using namespace KJS;
 @end
 */
 
-Value DOMError::getValueProperty(ExecState *exec, int token) const
+ValueImp *DOMError::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

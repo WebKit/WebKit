@@ -67,7 +67,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("Element", ElementProto, ElementProtoFunc)
 
-Value Element::getValueProperty(ExecState *exec, int token) const
+ValueImp *Element::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -85,7 +85,7 @@ Value Element::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value ElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *ElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(Element)
 	KDOM_ENTER_SAFE
@@ -182,7 +182,7 @@ Value ElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 		case ElementConstants::SetIdAttribute:
 		{
 			DOMString name = toDOMString(exec, args[0]);
-			bool isId = args[1].toBoolean(exec);
+			bool isId = args[1]->toBoolean(exec);
 			obj.setIdAttribute(name, isId);
 			return Undefined();
 		}
@@ -190,14 +190,14 @@ Value ElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 		{
 			DOMString namespaceURI = toDOMString(exec, args[0]);
 			DOMString localName = toDOMString(exec, args[1]);
-			bool isId = args[2].toBoolean(exec);
+			bool isId = args[2]->toBoolean(exec);
 			obj.setIdAttributeNS(namespaceURI, localName, isId);
 			return Undefined();
 		}
 		case ElementConstants::SetIdAttributeNode:
 		{
 			Attr idAttr = ecma_cast<Attr>(exec, args[0], &toAttr);
-			bool isId = args[1].toBoolean(exec);
+			bool isId = args[1]->toBoolean(exec);
 			obj.setIdAttributeNode(idAttr, isId);
 			return Undefined();
 		}

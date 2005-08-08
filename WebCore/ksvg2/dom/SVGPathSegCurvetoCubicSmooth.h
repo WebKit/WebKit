@@ -60,8 +60,8 @@ namespace KSVG
 		KDOM_GET
 		KDOM_PUT
 
-		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, const KJS::Value &value, int attr);
+		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
 	};
 
 	class SVGPathSegCurvetoCubicSmoothRelImpl;
@@ -97,8 +97,8 @@ namespace KSVG
 		KDOM_GET
 		KDOM_PUT
 
-		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, const KJS::Value &value, int attr);
+		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
 	};
 };
 

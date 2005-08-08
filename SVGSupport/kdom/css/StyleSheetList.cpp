@@ -42,7 +42,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("StyleSheetList", StyleSheetListProto, StyleSheetListProtoFunc)
 
-Value StyleSheetList::getValueProperty(ExecState *, int token) const
+ValueImp *StyleSheetList::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -55,7 +55,7 @@ Value StyleSheetList::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-Value StyleSheetListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *StyleSheetListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(StyleSheetList)
 
@@ -63,7 +63,7 @@ Value StyleSheetListProtoFunc::call(ExecState *exec, Object &thisObj, const List
 	{
 		case StyleSheetListConstants::Item:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return safe_cache<StyleSheet>(exec, obj.item(index));
 		}
 		default:

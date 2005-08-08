@@ -42,7 +42,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("CSSRuleList", CSSRuleListProto, CSSRuleListProtoFunc)
 
-Value CSSRuleList::getValueProperty(ExecState *, int token) const
+ValueImp *CSSRuleList::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -55,7 +55,7 @@ Value CSSRuleList::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-Value CSSRuleListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *CSSRuleListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(CSSRuleList)
 
@@ -63,7 +63,7 @@ Value CSSRuleListProtoFunc::call(ExecState *exec, Object &thisObj, const List &a
 	{
 		case CSSRuleListConstants::Item:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return getDOMCSSRule(exec, obj.item(index));
 		}
 		default:

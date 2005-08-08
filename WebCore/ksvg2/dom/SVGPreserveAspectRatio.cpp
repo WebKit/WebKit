@@ -40,7 +40,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -58,17 +58,17 @@ Value SVGPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGPreserveAspectRatio::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPreserveAspectRatio::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 
 	switch(token)
 	{
 		case SVGPreserveAspectRatioConstants::Align:
-			setAlign(value.toUInt32(exec));
+			setAlign(value->toUInt32(exec));
 			break;
 		case SVGPreserveAspectRatioConstants::MeetOrSlice:
-			setMeetOrSlice(value.toUInt32(exec));
+			setMeetOrSlice(value->toUInt32(exec));
 			break;
 		default:
 			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;

@@ -62,20 +62,20 @@ namespace KDOM
 
 		void setup(CDFInterface *interface);
 
-		KJS::Completion evaluate(const KJS::UString &code, const KJS::Value &thisV);
+		KJS::Completion evaluate(const KJS::UString &code, KJS::ValueImp *thisV);
 
-		KJS::Object globalObject() const;
+		KJS::ObjectImp *globalObject() const;
 		KJS::ExecState *globalExec() const;
 		
 		EcmaInterface *interface() const;
 		ScriptInterpreter *interpreter() const;
 
 		// Internal, used to handle event listeners
-		KJS::Object ecmaListenerToObject(KJS::ExecState *exec, const KJS::Value &listener);
+		KJS::ObjectImp *ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *listener);
 
 		EventListenerImpl *createEventListener(const DOMString &type, const DOMString &jsCode);
-		EventListenerImpl *createEventListener(KJS::ExecState *exec, const KJS::Value &listener);
-		EventListenerImpl *findEventListener(KJS::ExecState *exec, const KJS::Value &listener);
+		EventListenerImpl *createEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
+		EventListenerImpl *findEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
 
 		void addEventListener(EventListenerImpl *listener, KJS::ObjectImp *imp);
 		void removeEventListener(KJS::ObjectImp *imp);
@@ -102,33 +102,32 @@ namespace KDOM
 	};
 
 	// Helpers
-	KJS::Value getDOMNode(KJS::ExecState *exec, Node n);
-	KJS::Value getDOMEvent(KJS::ExecState *exec, Event e);
-	KJS::Value getDOMCSSRule(KJS::ExecState *exec, CSSRule c);
-	KJS::Value getDOMCSSValue(KJS::ExecState *exec, CSSValue c);
+	KJS::ValueImp *getDOMNode(KJS::ExecState *exec, Node n);
+	KJS::ValueImp *getDOMEvent(KJS::ExecState *exec, Event e);
+	KJS::ValueImp *getDOMCSSRule(KJS::ExecState *exec, CSSRule c);
+	KJS::ValueImp *getDOMCSSValue(KJS::ExecState *exec, CSSValue c);
 
-	KJS::Value getDOMString(const DOMString &str);
+	KJS::ValueImp *getDOMString(const DOMString &str);
 
-	DOMString toDOMString(KJS::ExecState *exec, const KJS::Value &val);
-	QVariant toVariant(KJS::ExecState *exec, const KJS::Value &val);
+	DOMString toDOMString(KJS::ExecState *exec, KJS::ValueImp *val);
+	QVariant toVariant(KJS::ExecState *exec, KJS::ValueImp *val);
 
 	// Convert between ecma values and real kdom objects
 	// Example: Node myNode = ecma_cast<Node>(exec, args[0], &toNode);
 	//          Attr myAttr = ecma_cast<Attr>(exec, args[1], &toAttr);
 	template<class T>
-	T ecma_cast(KJS::ExecState *exec, const KJS::Value &val, T (convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
+	T ecma_cast(KJS::ExecState *exec, KJS::ValueImp *val, T (convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
 	{
-		KJS::Object obj = KJS::Object::dynamicCast(val);
-		if(obj.isNull())
+		if(!val->isObject())
 			return T::null;
 
-		return convFuncPtr(exec, static_cast<KJS::ObjectImp *>(obj.imp()));
+		return convFuncPtr(exec, static_cast<KJS::ObjectImp *>(val));
 	}
 
 	// Convert between real kdom objects and ecma values
 	// Example: return safe_cache<Attr>(exec, myAttr);
 	template<class T>
-	KJS::Value safe_cache(KJS::ExecState *exec, T obj)
+	KJS::ValueImp *safe_cache(KJS::ExecState *exec, T obj)
 	{
 		if(obj != T::null)
 			return obj.cache(exec);

@@ -42,7 +42,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGAnimatedString::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGAnimatedString::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -60,7 +60,7 @@ Value SVGAnimatedString::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGAnimatedString::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGAnimatedString::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

@@ -44,7 +44,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGClipPathElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGClipPathElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

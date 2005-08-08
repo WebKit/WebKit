@@ -50,7 +50,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("NodeIterator", NodeIteratorProto, NodeIteratorProtoFunc)
 
-Value NodeIterator::getValueProperty(ExecState *exec, int token) const
+ValueImp *NodeIterator::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -72,7 +72,7 @@ Value NodeIterator::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 };
 
-Value NodeIteratorProtoFunc::call(ExecState *exec, Object &thisObj, const List &)
+ValueImp *NodeIteratorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
 {
 	KDOM_CHECK_THIS(NodeIterator)
 	KDOM_ENTER_SAFE
@@ -85,7 +85,7 @@ Value NodeIteratorProtoFunc::call(ExecState *exec, Object &thisObj, const List &
 			return getDOMNode(exec, obj.previousNode());
 		case NodeIteratorConstants::Detach:
 			obj.detach();
-			return Value();
+			return NULL;
 		default:
 			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
 	}

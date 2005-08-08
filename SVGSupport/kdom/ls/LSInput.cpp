@@ -48,7 +48,7 @@ using namespace KJS;
 @end
 */
 
-Value LSInput::getValueProperty(ExecState *exec, int token) const
+ValueImp *LSInput::getValueProperty(ExecState *exec, int token) const
 {
 #ifndef APPLE_COMPILE_HACK
 	KDOM_ENTER_SAFE
@@ -80,7 +80,7 @@ Value LSInput::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void LSInput::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void LSInput::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

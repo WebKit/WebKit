@@ -115,7 +115,7 @@ namespace KSVG
 	{
 		typedef enum
 		{
-			Value 
+			Value
 		} SVGNumberConstantsEnum;
 	};
 

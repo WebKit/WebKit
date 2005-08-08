@@ -39,7 +39,7 @@ using namespace KJS;
 @end
 */
 
-Value Counter::getValueProperty(ExecState *, int token) const
+ValueImp *Counter::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

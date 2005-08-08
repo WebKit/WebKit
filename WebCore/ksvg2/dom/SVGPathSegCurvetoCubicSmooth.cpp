@@ -36,7 +36,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPathSegCurvetoCubicSmoothAbs::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegCurvetoCubicSmoothAbs::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -55,28 +55,28 @@ Value SVGPathSegCurvetoCubicSmoothAbs::getValueProperty(ExecState *, int token) 
 	return Undefined();
 }
 
-void SVGPathSegCurvetoCubicSmoothAbs::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegCurvetoCubicSmoothAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegCurvetoCubicSmoothConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::X2:
 		{
-			setX2(value.toNumber(exec));
+			setX2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::Y2:
 		{
-			setY2(value.toNumber(exec));
+			setY2(value->toNumber(exec));
 			return;
 		}
 		default:
@@ -186,7 +186,7 @@ float SVGPathSegCurvetoCubicSmoothAbs::y2() const
 @end
 */
 
-Value SVGPathSegCurvetoCubicSmoothRel::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegCurvetoCubicSmoothRel::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -205,28 +205,28 @@ Value SVGPathSegCurvetoCubicSmoothRel::getValueProperty(ExecState *, int token) 
 	return Undefined();
 }
 
-void SVGPathSegCurvetoCubicSmoothRel::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegCurvetoCubicSmoothRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegCurvetoCubicSmoothConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::X2:
 		{
-			setX2(value.toNumber(exec));
+			setX2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegCurvetoCubicSmoothConstants::Y2:
 		{
-			setY2(value.toNumber(exec));
+			setY2(value->toNumber(exec));
 			return;
 		}
 		default:

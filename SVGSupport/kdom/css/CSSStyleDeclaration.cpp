@@ -52,7 +52,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("CSSStyleDeclaration", CSSStyleDeclarationProto, CSSStyleDeclarationProtoFunc)
 
-Value CSSStyleDeclaration::getValueProperty(ExecState *exec, int token) const
+ValueImp *CSSStyleDeclaration::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{
@@ -69,7 +69,7 @@ Value CSSStyleDeclaration::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void CSSStyleDeclaration::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void CSSStyleDeclaration::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 
@@ -85,7 +85,7 @@ void CSSStyleDeclaration::putValueProperty(ExecState *exec, int token, const Val
 	KDOM_LEAVE_SAFE(DOMException)
 }
 
-Value CSSStyleDeclarationProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *CSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(CSSStyleDeclaration)
 	KDOM_ENTER_SAFE
@@ -122,7 +122,7 @@ Value CSSStyleDeclarationProtoFunc::call(ExecState *exec, Object &thisObj, const
 		}
 		case CSSStyleDeclarationConstants::Item:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return getDOMString(obj.item(index));
 		}
 		default:

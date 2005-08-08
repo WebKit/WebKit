@@ -34,7 +34,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGException::getValueProperty(ExecState *, int token) const
+ValueImp *SVGException::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

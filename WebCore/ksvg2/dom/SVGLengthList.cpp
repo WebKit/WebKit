@@ -56,7 +56,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGLengthList", SVGLengthListProto, SVGLengthListProtoFunc)
 
-Value SVGLengthList::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGLengthList::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -72,7 +72,7 @@ Value SVGLengthList::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGLengthListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGLengthListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGLengthList)
 	KDOM_ENTER_SAFE
@@ -91,24 +91,24 @@ Value SVGLengthListProtoFunc::call(ExecState *exec, Object &thisObj, const List 
 		}
 		case SVGLengthListConstants::GetItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGLength>(exec, obj.getItem(index));
 		}
 		case SVGLengthListConstants::InsertItemBefore:
 		{
 			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGLength>(exec, obj.insertItemBefore(newItem, index));
 		}
 		case SVGLengthListConstants::ReplaceItem:
 		{
 			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGLength>(exec, obj.replaceItem(newItem, index));
 		}
 		case SVGLengthListConstants::RemoveItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGLength>(exec, obj.removeItem(index));
 		}
 		case SVGLengthListConstants::AppendItem:

@@ -42,7 +42,7 @@ namespace KDOM
 @end
 */
 
-Value RGBColor::getValueProperty(ExecState *exec, int token) const
+ValueImp *RGBColor::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{

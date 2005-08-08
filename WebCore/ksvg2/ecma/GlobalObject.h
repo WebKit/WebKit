@@ -38,7 +38,7 @@ namespace KSVG
 		virtual ~GlobalObject();
 
 		virtual void afterTimeout() const;
-		virtual KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
+		virtual KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const;
 
 		// EcmaScript specific stuff - only needed for GlobalObject
 		// You won't find it in "general" kdom ecma code...

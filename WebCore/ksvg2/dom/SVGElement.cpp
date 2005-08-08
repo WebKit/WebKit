@@ -49,7 +49,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -71,7 +71,7 @@ Value SVGElement::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGElement::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

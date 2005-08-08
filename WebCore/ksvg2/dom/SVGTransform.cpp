@@ -52,7 +52,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGTransform", SVGTransformProto, SVGTransformProtoFunc)
 
-Value SVGTransform::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGTransform::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -72,7 +72,7 @@ Value SVGTransform::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGTransformProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGTransformProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGTransform)
 	KDOM_ENTER_SAFE
@@ -87,35 +87,35 @@ Value SVGTransformProtoFunc::call(ExecState *exec, Object &thisObj, const List &
 		}
 		case SVGTransformConstants::SetTranslate:
 		{
-			double x = args[0].toNumber(exec);
-			double y = args[1].toNumber(exec);
+			double x = args[0]->toNumber(exec);
+			double y = args[1]->toNumber(exec);
 			obj.setTranslate(x, y);
 			return Undefined();
 		}
 		case SVGTransformConstants::SetScale:
 		{
-			double sx = args[0].toNumber(exec);
-			double sy = args[1].toNumber(exec);
+			double sx = args[0]->toNumber(exec);
+			double sy = args[1]->toNumber(exec);
 			obj.setScale(sx, sy);
 			return Undefined();
 		}
 		case SVGTransformConstants::SetRotate:
 		{
-			double angle = args[0].toNumber(exec);
-			double cx = args[1].toNumber(exec);
-			double cy = args[2].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
+			double cx = args[1]->toNumber(exec);
+			double cy = args[2]->toNumber(exec);
 			obj.setRotate(angle, cx, cy);
 			return Undefined();
 		}
 		case SVGTransformConstants::SetSkewX:
 		{
-			double angle = args[0].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
 			obj.setSkewX(angle);
 			return Undefined();
 		}
 		case SVGTransformConstants::SetSkewY:
 		{
-			double angle = args[0].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
 			obj.setSkewY(angle);
 			return Undefined();
 		}

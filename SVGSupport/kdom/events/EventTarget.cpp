@@ -56,7 +56,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("EventTarget", EventTargetProto, EventTargetProtoFunc)
 
-Value EventTarget::getValueProperty(ExecState *exec, int token) const
+ValueImp *EventTarget::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -70,7 +70,7 @@ Value EventTarget::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value EventTargetProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *EventTargetProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(EventTarget)
 	KDOM_ENTER_SAFE
@@ -111,7 +111,7 @@ Value EventTargetProtoFunc::call(ExecState *exec, Object &thisObj, const List &a
 				}
 			}
 
-			bool useCapture = args[2].toBoolean(exec);
+			bool useCapture = args[2]->toBoolean(exec);
 
 			// createEventListener automatically reuses existing listeners, if possible...
 			if(id == EventTargetConstants::AddEventListener)

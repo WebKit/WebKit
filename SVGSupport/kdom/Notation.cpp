@@ -37,7 +37,7 @@ using namespace KJS;
 @end
 */
 
-Value Notation::getValueProperty(ExecState *exec, int token) const
+ValueImp *Notation::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

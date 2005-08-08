@@ -26,6 +26,7 @@
 
 #include <kjs/interpreter.h>
 #include <kjs/scope_chain.h>
+#include <kjs/protect.h>
 
 #include "Attr.h"
 #include "Text.h"
@@ -129,7 +130,7 @@ void Ecma::setup(CDFInterface *interface)
 	d->ecmaInterface = interface->ecmaInterface();
 
 	// Create code interpreter
-	KJS::Object kjsGlobalObject(d->globalObject);
+	KJS::ObjectImp *kjsGlobalObject(d->globalObject);
 	d->interpreter = new ScriptInterpreter(kjsGlobalObject, d->document);
 
 	// Set object prototype for global object
@@ -153,7 +154,7 @@ void Ecma::setupDocument(DocumentImpl *document)
 	document->deref(); // 'docObj' is held in memory until the ecma engine is destructed...
 }
 
-KJS::Completion Ecma::evaluate(const KJS::UString &code, const KJS::Value &thisV)
+KJS::Completion Ecma::evaluate(const KJS::UString &code, KJS::ValueImp *thisV)
 {
 #ifdef KJS_VERBOSE
 	kdDebug(6070) << "Ecma::evaluate " << code.qstring() << endl;
@@ -162,7 +163,7 @@ KJS::Completion Ecma::evaluate(const KJS::UString &code, const KJS::Value &thisV
 	return d->interpreter->evaluate(code, thisV);
 }
 
-KJS::Object Ecma::globalObject() const
+KJS::ObjectImp *Ecma::globalObject() const
 {
 	return d->interpreter->globalObject();
 }
@@ -182,57 +183,56 @@ ScriptInterpreter *Ecma::interpreter() const
 	return d->interpreter;
 }
 
-KJS::Object Ecma::ecmaListenerToObject(KJS::ExecState *exec, const KJS::Value &listener)
+KJS::ObjectImp *Ecma::ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *listener)
 {
-	KJS::Object listenerObject = KJS::Object::dynamicCast(listener);
-	if(!listenerObject.isValid())
-		return KJS::Object();
+	if(!listener->isObject())
+		return NULL;
+        KJS::ObjectImp *listenerObject = static_cast<KJS::ObjectImp *>(listener);
 	
 	// 'listener' may be a simple ecma function...
-	if(listenerObject.implementsCall())
+	if(listenerObject->implementsCall())
 		return listenerObject;
 
 	// 'listener' probably is an EventListener,
 	// object containing a 'handleEvent' function...
-	KJS::Value handleEventValue = listenerObject.get(exec, KJS::Identifier("handleEvent"));
-	KJS::Object handleEventObject = KJS::Object::dynamicCast(handleEventValue);
+	KJS::ValueImp *handleEventValue = listenerObject->get(exec, KJS::Identifier("handleEvent"));
+	if(!handleEventValue->isObject())
+		return NULL;
+        KJS::ObjectImp *handleEventObject = static_cast<KJS::ObjectImp*>(handleEventValue);
 
-	if(!handleEventObject.isValid())
-		return KJS::Object();
-
-	if(handleEventObject.implementsCall())
+	if(handleEventObject->implementsCall())
 		return handleEventObject;
 
 	kdError() << k_funcinfo << " Specified listener is neither a function nor an object!" << endl;
-	return KJS::Object();
+	return NULL;
 }
 
-EventListenerImpl *Ecma::findEventListener(KJS::ExecState *exec, const KJS::Value &listener)
+EventListenerImpl *Ecma::findEventListener(KJS::ExecState *exec, KJS::ValueImp *listener)
 {
 	if(!d)
 		return 0;
 	
-	KJS::Object listenerObject = ecmaListenerToObject(exec, listener);
-	if(!listenerObject.isValid())
+	KJS::ObjectImp *listenerObject = ecmaListenerToObject(exec, listener);
+	if(!listenerObject)
 		return 0;
 	
-	return d->eventListeners[static_cast<KJS::ObjectImp *>(listenerObject.imp())];
+	return d->eventListeners[static_cast<KJS::ObjectImp *>(listenerObject)];
 }
 
-EventListenerImpl *Ecma::createEventListener(KJS::ExecState *exec, const KJS::Value &listener)
+EventListenerImpl *Ecma::createEventListener(KJS::ExecState *exec, KJS::ValueImp *listener)
 {
 	EventListenerImpl *existing = findEventListener(exec, listener);
 	if(existing)
 		return existing;
 	
-	KJS::Object listenerObject = ecmaListenerToObject(exec, listener);
-	if(!listenerObject.isValid())
+	KJS::ObjectImp *listenerObject = ecmaListenerToObject(exec, listener);
+	if(!listenerObject)
 		return 0;
 
 	EventListenerImpl *i = new EventListenerImpl();
 	i->initListener(d->document, true, listenerObject, listener, DOMString());
 
-	addEventListener(i, static_cast<KJS::ObjectImp *>(listenerObject.imp()));
+	addEventListener(i, static_cast<KJS::ObjectImp *>(listenerObject));
 	return i;
 }
 
@@ -250,31 +250,31 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
 			return current;
 	}
 	
-	static KJS::String eventString("event");
+	static KJS::ProtectedValue eventString = KJS::String("event");
 
-	KJS::Object constr = d->interpreter->builtinFunction();
+	KJS::ObjectImp *constr = d->interpreter->builtinFunction();
 	KJS::ExecState *exec = d->interpreter->globalExec();
 	
 	KJS::List args;
 	args.append(eventString);
 	args.append(KJS::String(jsCode.string()));
 
-	KJS::Object obj = constr.construct(exec, args);
+	KJS::ObjectImp *obj = constr->construct(exec, args);
 	if(exec->hadException())
 	{
 		exec->clearException();
 
 		// failed to parse, so let's just make this listener a no-op
-		obj = KJS::Object();
+		obj = NULL;
 	}
 
 	// Safety first..
 	EventListenerImpl *i = 0;
-	if(!obj.isNull() && obj.imp())
+	if(obj)
 	{
 		i = new EventListenerImpl();
 		i->initListener(d->document, true, obj, obj, internalType);
-		addEventListener(i, static_cast<KJS::ObjectImp *>(obj.imp()));
+		addEventListener(i, obj);
 	}
 	else
 		kdError() << "Unable to create event listener object for event type \"" << type << "\"" << endl;
@@ -326,7 +326,7 @@ KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *, CSSValue)
 }
 
 // Helpers in namespace 'KDOM'
-KJS::Value KDOM::getDOMNode(KJS::ExecState *exec, Node n)
+KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, Node n)
 {
 	KJS::ObjectImp *ret = 0;
 	if(n == Node::null)
@@ -354,12 +354,12 @@ KJS::Value KDOM::getDOMNode(KJS::ExecState *exec, Node n)
 	if(request)
 	{
 		if(topRequest && topRequest != request)
-			return KJS::Value(topRequest);
+			return topRequest;
 		
-		return KJS::Value(request);
+		return request;
 	}
 	else if(topRequest)
-		return KJS::Value(topRequest);
+		return topRequest;
 	
 	switch(n.nodeType())
 	{
@@ -404,10 +404,10 @@ KJS::Value KDOM::getDOMNode(KJS::ExecState *exec, Node n)
 	}
 
 	interpreter->putDOMObject(n.handle(), ret);
-	return KJS::Value(ret);
+	return ret;
 }
 
-KJS::Value KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
+KJS::ValueImp *KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
 {
 	KJS::ObjectImp *ret = 0;
 	if(e == Event::null)
@@ -418,7 +418,7 @@ KJS::Value KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
 	// Reuse existing bridge, if possible
 	KJS::ObjectImp *request = interpreter->getDOMObject(e.handle());
 	if(request)
-		return KJS::Value(request);
+		return request;
 
 	// Try hard to ask any DOM/SVG/HTML/whatever implementation
 	// which may reside on top of KDOM, how to convert the current
@@ -433,7 +433,7 @@ KJS::Value KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
 		if(ret)
 		{
 			interpreter->putDOMObject(e.handle(), ret);
-			return KJS::Value(ret);
+			return ret;
 		}
 	}
 
@@ -453,10 +453,10 @@ KJS::Value KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
 	KJS::Interpreter::unlock();
 
 	interpreter->putDOMObject(e.handle(), ret);
-	return KJS::Value(ret);
+	return ret;
 }
 
-KJS::Value KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
+KJS::ValueImp *KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
 {
 	KJS::ObjectImp *ret = 0;
 	if(c == CSSRule::null)
@@ -467,7 +467,7 @@ KJS::Value KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
 	// Reuse existing bridge, if possible
 	KJS::ObjectImp *request = interpreter->getDOMObject(c.handle());
 	if(request)
-		return KJS::Value(request);
+		return request;
 
 	// Try hard to ask any DOM/SVG/HTML/whatever implementation
 	// which may reside on top of KDOM, how to convert the current
@@ -480,7 +480,7 @@ KJS::Value KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
 		if(ret)
 		{
 			interpreter->putDOMObject(c.handle(), ret);
-			return KJS::Value(ret);
+			return ret;
 		}
 	}
 
@@ -504,10 +504,10 @@ KJS::Value KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
 		ret = c.bridge(exec);
 	
 	interpreter->putDOMObject(c.handle(), ret);
-	return KJS::Value(ret);
+	return ret;
 }
 
-KJS::Value KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
+KJS::ValueImp *KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 {
 	KJS::ObjectImp *ret = 0;
 	if(c == CSSValue::null)
@@ -518,7 +518,7 @@ KJS::Value KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 	// Reuse existing bridge, if possible
 	KJS::ObjectImp *request = interpreter->getDOMObject(c.handle());
 	if(request)
-		return KJS::Value(request);
+		return request;
 
 	// Try hard to ask any DOM/SVG/HTML/whatever implementation
 	// which may reside on top of KDOM, how to convert the current
@@ -531,7 +531,7 @@ KJS::Value KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 		if(ret)
 		{
 			interpreter->putDOMObject(c.handle(), ret);
-			return KJS::Value(ret);
+			return ret;
 		}
 	}
 
@@ -545,14 +545,14 @@ KJS::Value KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 		ret = c.bridge(exec);
 	
 	interpreter->putDOMObject(c.handle(), ret);
-	return KJS::Value(ret);
+	return ret;
 }
 
-DOMString KDOM::toDOMString(KJS::ExecState *exec, const KJS::Value &val)
+DOMString KDOM::toDOMString(KJS::ExecState *exec, KJS::ValueImp *val)
 {
 	// We have to distinguish between null and empty strings!
 	// Very important to get the dom test suite running correctly :)
-	QString string = val.toString(exec).qstring();
+	QString string = val->toString(exec).qstring();
 	if(string == "null")
 		return DOMString();
 	else if(string.isEmpty())
@@ -561,7 +561,7 @@ DOMString KDOM::toDOMString(KJS::ExecState *exec, const KJS::Value &val)
 	return DOMString(string);
 }
 
-KJS::Value KDOM::getDOMString(const DOMString &str)
+KJS::ValueImp *KDOM::getDOMString(const DOMString &str)
 {
 	if(str.isNull() && str.isEmpty())
 		return KJS::Null();
@@ -569,20 +569,20 @@ KJS::Value KDOM::getDOMString(const DOMString &str)
 	return KJS::String(str.string());
 }
 
-QVariant KDOM::toVariant(KJS::ExecState *exec, const KJS::Value &val)
+QVariant KDOM::toVariant(KJS::ExecState *exec, KJS::ValueImp *val)
 {
 	QVariant res;
 
-	switch(val.type())
+	switch(val->type())
 	{
 		case KJS::BooleanType:
-			res = QVariant(val.toBoolean(exec), 0);
+			res = QVariant(val->toBoolean(exec), 0);
 			break;
 		case KJS::NumberType:
-			res = QVariant(val.toNumber(exec));
+			res = QVariant(val->toNumber(exec));
 			break;
 		case KJS::StringType:
-			res = QVariant(val.toString(exec).qstring());
+			res = QVariant(val->toString(exec).qstring());
 			break;
 		default:
 			// everything else will be 'invalid'

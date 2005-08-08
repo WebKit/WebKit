@@ -35,7 +35,7 @@ using namespace KDOM;
 @end
 */
 
-KJS::Value RangeException::getValueProperty(KJS::ExecState *, int token) const
+KJS::ValueImp *RangeException::getValueProperty(KJS::ExecState *, int token) const
 {
 	switch(token)
 	{

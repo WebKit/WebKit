@@ -39,7 +39,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPathSegArcAbs::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegArcAbs::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -62,38 +62,38 @@ Value SVGPathSegArcAbs::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-void SVGPathSegArcAbs::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegArcAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegArcConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::R1:
 		{
-			setR1(value.toNumber(exec));
+			setR1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::R2:
 		{
-			setR2(value.toNumber(exec));
+			setR2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::LargeArcFlag:
 		{
-			setLargeArcFlag(value.toBoolean(exec));
+			setLargeArcFlag(value->toBoolean(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::SweepFlag:
 		{
-			setSweepFlag(value.toBoolean(exec));
+			setSweepFlag(value->toBoolean(exec));
 			return;
 		}
 		default:
@@ -248,7 +248,7 @@ bool SVGPathSegArcAbs::sweepFlag() const
 @end
 */
 
-Value SVGPathSegArcRel::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegArcRel::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -271,38 +271,38 @@ Value SVGPathSegArcRel::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-void SVGPathSegArcRel::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegArcRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegArcConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::R1:
 		{
-			setR1(value.toNumber(exec));
+			setR1(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::R2:
 		{
-			setR2(value.toNumber(exec));
+			setR2(value->toNumber(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::LargeArcFlag:
 		{
-			setLargeArcFlag(value.toBoolean(exec));
+			setLargeArcFlag(value->toBoolean(exec));
 			return;
 		}
 		case SVGPathSegArcConstants::SweepFlag:
 		{
-			setSweepFlag(value.toBoolean(exec));
+			setSweepFlag(value->toBoolean(exec));
 			return;
 		}
 		default:

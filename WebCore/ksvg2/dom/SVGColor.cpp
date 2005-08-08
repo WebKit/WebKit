@@ -49,7 +49,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGColor", SVGColorProto, SVGColorProtoFunc)
 
-Value SVGColor::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGColor::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -68,7 +68,7 @@ Value SVGColor::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGColorProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGColorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGColor)
 	KDOM_ENTER_SAFE
@@ -90,7 +90,7 @@ Value SVGColorProtoFunc::call(ExecState *exec, Object &thisObj, const List &args
 		}
 		case SVGColorConstants::SetColor:
 		{
-			unsigned short colorType = args[0].toUInt16(exec);
+			unsigned short colorType = args[0]->toUInt16(exec);
 			KDOM::DOMString rgbColor = KDOM::toDOMString(exec, args[1]);
 			KDOM::DOMString iccColor = KDOM::toDOMString(exec, args[2]);
 			obj.setColor(colorType, rgbColor, iccColor);

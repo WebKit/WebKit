@@ -58,7 +58,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGTransformList", SVGTransformListProto, SVGTransformListProtoFunc)
 
-Value SVGTransformList::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGTransformList::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -74,7 +74,7 @@ Value SVGTransformList::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGTransformListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGTransformListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGTransformList)
 	KDOM_ENTER_SAFE
@@ -93,24 +93,24 @@ Value SVGTransformListProtoFunc::call(ExecState *exec, Object &thisObj, const Li
 		}
 		case SVGTransformListConstants::GetItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGTransform>(exec, obj.getItem(index));
 		}
 		case SVGTransformListConstants::InsertItemBefore:
 		{
 			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGTransform>(exec, obj.insertItemBefore(newItem, index));
 		}
 		case SVGTransformListConstants::ReplaceItem:
 		{
 			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGTransform>(exec, obj.replaceItem(newItem, index));
 		}
 		case SVGTransformListConstants::RemoveItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGTransform>(exec, obj.removeItem(index));
 		}
 		case SVGTransformListConstants::AppendItem:

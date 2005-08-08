@@ -38,7 +38,7 @@ using namespace KJS;
 @end
 */
 
-KJS::Value XPathNamespace::getValueProperty(KJS::ExecState *exec, int token) const
+KJS::ValueImp *XPathNamespace::getValueProperty(KJS::ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

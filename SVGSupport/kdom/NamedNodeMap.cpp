@@ -51,7 +51,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("NamedNodeMap", NamedNodeMapProto, NamedNodeMapProtoFunc)
 
-Value NamedNodeMap::getValueProperty(ExecState *exec, int token) const
+ValueImp *NamedNodeMap::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -67,7 +67,7 @@ Value NamedNodeMap::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value NamedNodeMapProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *NamedNodeMapProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(NamedNodeMap)
 	KDOM_ENTER_SAFE
@@ -91,7 +91,7 @@ Value NamedNodeMapProtoFunc::call(ExecState *exec, Object &thisObj, const List &
 		}
 		case NamedNodeMapConstants::Item:
 		{
-			int index = args[0].toInt32(exec);
+			int index = args[0]->toInt32(exec);
 			return getDOMNode(exec, obj.item(index));
 		}
 		case NamedNodeMapConstants::GetNamedItemNS:

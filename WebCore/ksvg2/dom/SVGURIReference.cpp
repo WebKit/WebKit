@@ -36,7 +36,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGURIReference::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGURIReference::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

@@ -54,7 +54,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGPointList", SVGPointListProto, SVGPointListProtoFunc)
 
-Value SVGPointList::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGPointList::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -70,7 +70,7 @@ Value SVGPointList::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGPointListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGPointListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGPointList)
 	KDOM_ENTER_SAFE
@@ -89,24 +89,24 @@ Value SVGPointListProtoFunc::call(ExecState *exec, Object &thisObj, const List &
 		}
 		case SVGPointListConstants::GetItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGPoint>(exec, obj.getItem(index));
 		}
 		case SVGPointListConstants::InsertItemBefore:
 		{
 			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGPoint>(exec, obj.insertItemBefore(newItem, index));
 		}
 		case SVGPointListConstants::ReplaceItem:
 		{
 			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGPoint>(exec, obj.replaceItem(newItem, index));
 		}
 		case SVGPointListConstants::RemoveItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGPoint>(exec, obj.removeItem(index));
 		}
 		case SVGPointListConstants::AppendItem:

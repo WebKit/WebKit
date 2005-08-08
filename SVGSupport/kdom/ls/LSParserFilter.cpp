@@ -48,7 +48,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("LSParserFilter", LSParserFilterProto, LSParserFilterProtoFunc)
 
-Value LSParserFilter::getValueProperty(ExecState *exec, int token) const
+ValueImp *LSParserFilter::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -64,7 +64,7 @@ Value LSParserFilter::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value LSParserFilterProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *LSParserFilterProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(LSParserFilter)
 	KDOM_ENTER_SAFE

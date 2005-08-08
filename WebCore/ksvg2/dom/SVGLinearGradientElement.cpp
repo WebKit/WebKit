@@ -43,7 +43,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGLinearGradientElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGLinearGradientElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 	

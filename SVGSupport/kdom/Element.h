@@ -102,7 +102,7 @@ namespace KDOM
 		 * setAttributeNS method.
 		 *
 		 * @param name The name of the attribute to create or alter.
-		 * @param value Value to set in string form.
+		 * @param value ValueImp *to set in string form.
 		 */
 		void setAttribute(const DOMString &name, const DOMString &value);
 
@@ -348,7 +348,7 @@ namespace KDOM
 		KDOM_GET
 		KDOM_FORWARDPUT
 
-		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
+		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
 	};
 };
 

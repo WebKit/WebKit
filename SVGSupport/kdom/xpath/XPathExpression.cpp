@@ -48,7 +48,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("XPathExpression", XPathExpressionProto, XPathExpressionProtoFunc)
 
-Value XPathExpression::getValueProperty(ExecState *exec, int token) const
+ValueImp *XPathExpression::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -62,7 +62,7 @@ Value XPathExpression::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value XPathExpressionProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *XPathExpressionProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(XPathExpression)
 	KDOM_ENTER_SAFE
@@ -73,7 +73,7 @@ Value XPathExpressionProtoFunc::call(ExecState *exec, Object &thisObj, const Lis
 		case XPathExpressionConstants::Evaluate:
 		{
 			Node contextNode =  ecma_cast<Node>(exec, args[0], &toNode);
-			unsigned int type = args[3].toUInt16(exec);
+			unsigned int type = args[3]->toUInt16(exec);
 			/* DOMObject is a possible pooling mechanism which we currently don't use and
 			 * hence don't know what type of class it should be. */
 			//const DOMObject result = ecma_cast<DOMObject>(exec, args[4], &toDOMObject);

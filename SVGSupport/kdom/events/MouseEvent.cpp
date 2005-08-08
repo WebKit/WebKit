@@ -53,7 +53,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("MouseEvent", MouseEventProto, MouseEventProtoFunc)
 
-Value MouseEvent::getValueProperty(ExecState *exec, int token) const
+ValueImp *MouseEvent::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -93,7 +93,7 @@ Value MouseEvent::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value MouseEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *MouseEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(MouseEvent)
 	KDOM_ENTER_SAFE
@@ -103,19 +103,19 @@ Value MouseEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &ar
 		case MouseEventConstants::InitMouseEvent:
 		{
 			DOMString typeArg = toDOMString(exec, args[0]);
-			bool canBubbleArg = args[1].toBoolean(exec);
-			bool cancelableArg = args[2].toBoolean(exec);
+			bool canBubbleArg = args[1]->toBoolean(exec);
+			bool cancelableArg = args[2]->toBoolean(exec);
 			AbstractView viewArg = ecma_cast<AbstractView>(exec, args[3], &toAbstractView);
-			long detailArg = args[4].toInt32(exec);
-			long screenXArg = args[5].toInt32(exec);
-			long screenYArg = args[6].toInt32(exec);
-			long clientXArg = args[7].toInt32(exec);
-			long clientYArg = args[8].toInt32(exec);
-			bool ctrlKeyArg = args[9].toBoolean(exec);
-			bool altKeyArg = args[10].toBoolean(exec);
-			bool shiftKeyArg = args[11].toBoolean(exec);
-			bool metaKeyArg = args[12].toBoolean(exec);
-			unsigned short buttonArg = args[13].toUInt16(exec);
+			long detailArg = args[4]->toInt32(exec);
+			long screenXArg = args[5]->toInt32(exec);
+			long screenYArg = args[6]->toInt32(exec);
+			long clientXArg = args[7]->toInt32(exec);
+			long clientYArg = args[8]->toInt32(exec);
+			bool ctrlKeyArg = args[9]->toBoolean(exec);
+			bool altKeyArg = args[10]->toBoolean(exec);
+			bool shiftKeyArg = args[11]->toBoolean(exec);
+			bool metaKeyArg = args[12]->toBoolean(exec);
+			unsigned short buttonArg = args[13]->toUInt16(exec);
 			Node relatedTargetArg = ecma_cast<Node>(exec, args[14], &toNode);
 
 			obj.initMouseEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg);

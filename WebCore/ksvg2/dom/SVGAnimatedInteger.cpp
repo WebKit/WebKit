@@ -41,7 +41,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGAnimatedInteger::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGAnimatedInteger::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -59,7 +59,7 @@ Value SVGAnimatedInteger::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGAnimatedInteger::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGAnimatedInteger::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 
@@ -68,7 +68,7 @@ void SVGAnimatedInteger::putValueProperty(ExecState *exec, int token, const Valu
 		case SVGAnimatedIntegerConstants::BaseVal:
 		{
 			if(impl)
-				impl->setBaseVal(static_cast<long>(value.toNumber(exec)));
+				impl->setBaseVal(static_cast<long>(value->toNumber(exec)));
 
 			break;
 		}

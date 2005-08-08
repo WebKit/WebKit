@@ -42,7 +42,7 @@ using namespace KDOM;
 
 KDOM_IMPLEMENT_PROTOTYPE("DocumentRange", DocumentRangeProto, DocumentRangeProtoFunc)
 
-KJS::Value DocumentRange::getValueProperty(KJS::ExecState *exec, int token) const
+KJS::ValueImp *DocumentRange::getValueProperty(KJS::ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -56,9 +56,9 @@ KJS::Value DocumentRange::getValueProperty(KJS::ExecState *exec, int token) cons
 	return KJS::Undefined();
 }
 
-KJS::Value DocumentRangeProtoFunc::call(KJS::ExecState *exec, KJS::Object &thisObj, const KJS::List &)
+KJS::ValueImp *DocumentRangeProtoFunc::callAsFunction(KJS::ExecState *exec, KJS::ObjectImp *thisObj, const KJS::List &)
 {
-	DocumentRange obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	DocumentRange obj(cast(exec, thisObj));
 	Q_ASSERT(obj.d != 0);
 
 	KDOM_ENTER_SAFE

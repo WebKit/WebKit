@@ -46,7 +46,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("DOMErrorHandler", DOMErrorHandlerProto, DOMErrorHandlerProtoFunc)
 
-Value DOMErrorHandler::getValueProperty(ExecState *exec, int token) const
+ValueImp *DOMErrorHandler::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -60,7 +60,7 @@ Value DOMErrorHandler::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value DOMErrorHandlerProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *DOMErrorHandlerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(DOMErrorHandler)
 	KDOM_ENTER_SAFE

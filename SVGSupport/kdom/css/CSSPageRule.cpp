@@ -39,7 +39,7 @@ using namespace KJS;
 @end
 */
 
-Value CSSPageRule::getValueProperty(ExecState *exec, int token) const
+ValueImp *CSSPageRule::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{
@@ -54,7 +54,7 @@ Value CSSPageRule::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void CSSPageRule::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void CSSPageRule::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

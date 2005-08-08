@@ -40,7 +40,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("CSSValueList", CSSValueListProto, CSSValueListProtoFunc)
 
-Value CSSValueList::getValueProperty(ExecState *, int token) const
+ValueImp *CSSValueList::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -53,7 +53,7 @@ Value CSSValueList::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-Value CSSValueListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *CSSValueListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(CSSValueList)
 
@@ -61,7 +61,7 @@ Value CSSValueListProtoFunc::call(ExecState *exec, Object &thisObj, const List &
 	{
 		case CSSValueListConstants::Item:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return getDOMCSSValue(exec, obj.item(index));
 		}
 		default:

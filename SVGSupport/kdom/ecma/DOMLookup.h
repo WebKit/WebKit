@@ -44,12 +44,12 @@ public: \
     bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
     \
     /* get() method, called by DOMBridge::get */ \
-    KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp* bridge) const; \
+    KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp* bridge) const; \
     \
     /* Called by lookupGet(). Auto-generated. Forwards to the parent which has the given property. */ \
-    KJS::Value getInParents(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp* bridge) const; \
+    KJS::ValueImp *getInParents(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp* bridge) const; \
     \
-    KJS::Object prototype(KJS::ExecState *exec) const;\
+    KJS::ObjectImp *prototype(KJS::ExecState *exec) const;\
 	\
 	KJS::ObjectImp *bridge(KJS::ExecState *) const; \
     \
@@ -62,7 +62,7 @@ public: \
  */
 #define KDOM_GET \
     KDOM_GET_COMMON \
-    KJS::Value cache(KJS::ExecState *exec) const; 
+    KJS::ValueImp *cache(KJS::ExecState *exec) const; 
 
 /**
  * Same as KDOM_GET, but for base classes(kalyptus helps finding them). The 
@@ -70,7 +70,7 @@ public: \
  */
 #define KDOM_BASECLASS_GET \
     KDOM_GET_COMMON \
-    virtual KJS::Value cache(KJS::ExecState *exec) const; 
+    virtual KJS::ValueImp *cache(KJS::ExecState *exec) const; 
 
 /**
  * For read-write classes only, i.e. those which support put().
@@ -79,11 +79,11 @@ public: \
     \
     /* put() method, called by DOMBridge::put */ \
     bool put(KJS::ExecState *exec, const KJS::Identifier &propertyName, \
-			 const KJS::Value &value, int attr); \
+			 KJS::ValueImp *value, int attr); \
 	\
     /* Called by lookupPut. Auto-generated. Looks in hashtable, forwards to parents. */ \
     bool putInParents(KJS::ExecState *exec, const KJS::Identifier &propertyName, \
-					  const KJS::Value &value, int attr);
+					  KJS::ValueImp *value, int attr);
 
 /**
  * For classes which inherit a read-write class, 
@@ -92,7 +92,7 @@ public: \
 #define KDOM_FORWARDPUT \
     \
     /* put() method, called by DOMBridge::put */ \
-    bool put(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::Value &value, int attr);
+    bool put(KJS::ExecState *exec, const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr);
 
 /**
  * Used in generatedata.cpp
@@ -113,7 +113,7 @@ public: \
  * @param p4 attr
  * @internal
  */
-#define PUT_METHOD_ARGS KJS::ExecState *p1, const KJS::Identifier &p2, const KJS::Value &p3, int p4
+#define PUT_METHOD_ARGS KJS::ExecState *p1, const KJS::Identifier &p2, KJS::ValueImp *p3, int p4
 
 namespace KDOM
 {
@@ -137,7 +137,7 @@ namespace KDOM
 	 * @param thisObj "this"
 	 */
 	template<class FuncImp, class ThisImp>
-	inline KJS::Value lookupGet(KJS::ExecState *exec,
+	inline KJS::ValueImp *lookupGet(KJS::ExecState *exec,
 								const KJS::Identifier &propertyName,
 								const KJS::HashTable *table,
 								const ThisImp *thisObj, // the 'impl' object
@@ -164,7 +164,7 @@ namespace KDOM
 	 * Using this instead of lookupGet removes the need for a FuncImp class.
 	 */
 	template <class ThisImp>
-	inline KJS::Value lookupGetValue(KJS::ExecState *exec,
+	inline KJS::ValueImp *lookupGetValue(KJS::ExecState *exec,
 									 const KJS::Identifier &propertyName,
 									 const KJS::HashTable *table,
 									 const ThisImp *thisObj, // the 'impl' object
@@ -193,7 +193,7 @@ namespace KDOM
 	template <class ThisImp>
 	inline bool lookupPut(KJS::ExecState *exec,
 						  const KJS::Identifier &propertyName,
-						  const KJS::Value &value,
+						  KJS::ValueImp *value,
 						  int attr,
 						  const KJS::HashTable *table,
 						  ThisImp *thisObj)
@@ -221,7 +221,7 @@ namespace KDOM
 
 // Useful macros for dealing with ecma constructors (enum types, for example)
 #define ECMA_IMPLEMENT_CONSTRUCTOR(Space, ClassName, Class) \
- KJS::Value ClassName::get(KJS::ExecState *, const KJS::Identifier &propertyName, const KJS::ObjectImp *) const { \
+ KJS::ValueImp *ClassName::get(KJS::ExecState *, const KJS::Identifier &propertyName, const KJS::ObjectImp *) const { \
  const KJS::HashEntry *entry = KJS::Lookup::findEntry(&s_hashTable, propertyName); \
  if(entry) \
    return KJS::Number(entry->value); \
@@ -230,12 +230,11 @@ namespace KDOM
  bool ClassName::hasProperty(KJS::ExecState *, const KJS::Identifier &propertyName) const { \
   return KJS::Lookup::findEntry(&s_hashTable, propertyName); \
  } \
- KJS::Object ClassName::prototype(KJS::ExecState *exec) const { \
-  if(exec) return exec->interpreter()->builtinObjectPrototype(); \
-  return KJS::Object::dynamicCast(KJS::Null()); \
+ KJS::ObjectImp *ClassName::prototype(KJS::ExecState *exec) const { \
+  return exec->interpreter()->builtinObjectPrototype(); \
  } \
  const KJS::ClassInfo ClassName::s_classInfo = { Class "Constructor", 0, &s_hashTable, 0 }; \
- KJS::Value Space::get##ClassName(KJS::ExecState *exec) { \
+ KJS::ValueImp *Space::get##ClassName(KJS::ExecState *exec) { \
   return KDOM::cacheGlobalBridge<ClassName>(exec, "[[" Class ".constructor]]"); \
  }
  
@@ -245,13 +244,13 @@ namespace KDOM
   class ClassName : public KJS::ObjectImp { \
   public: \
     ClassName(KJS::ExecState *exec) : KJS::ObjectImp() {} \
-    KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp *obj) const; \
+    KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp *obj) const; \
     bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
-    KJS::Object prototype(KJS::ExecState *exec) const; \
+    KJS::ObjectImp *prototype(KJS::ExecState *exec) const; \
     static const KJS::ClassInfo s_classInfo; \
     static const struct KJS::HashTable s_hashTable; \
   }; \
-  KJS::Value get##ClassName(KJS::ExecState *exec); \
+  KJS::ValueImp *get##ClassName(KJS::ExecState *exec); \
   }
 
 // Same as kjs' DEFINE_PROTOTYPE, but with a pointer to the hashtable too, and no ClassName here
@@ -260,12 +259,12 @@ namespace KDOM
   namespace Space { \
   class ClassProto : public KJS::ObjectImp { \
   public: \
-    static KJS::Object self(KJS::ExecState *exec); \
+    static KJS::ObjectImp *self(KJS::ExecState *exec); \
     ClassProto( KJS::ExecState *exec ) \
       : KJS::ObjectImp( exec->interpreter()->builtinObjectPrototype() ) {} \
     virtual const KJS::ClassInfo *classInfo() const { return &info; } \
     static const KJS::ClassInfo info; \
-    KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
+    KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
     bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
     \
     static const struct KJS::HashTable s_hashTable; \
@@ -275,9 +274,9 @@ namespace KDOM
 // same as IMPLEMENT_PROTOTYPE but in the KDOM namespace, and with ClassName here
 // so that KDOM_DEFINE_PROTOTYPE can be put in a header file ('info' defined here)
 #define ECMA_IMPLEMENT_PROTOTYPE(Space,ClassName,ClassProto,ClassFunc) \
-    KJS::Value Space::ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const \
+    KJS::ValueImp *Space::ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const \
     { \
-        /* KJS::Value result; \
+        /* KJS::ValueImp *result; \
         if (KJS::lookupGetOwnFunction<ClassFunc,KJS::ObjectImp>(exec, propertyName, &s_hashTable, this, result)) \
         return result;  */ \
         return KJS::Undefined(); \
@@ -287,7 +286,7 @@ namespace KDOM
     { /*stupid but we need this to have a common macro for the declaration*/ \
       return KJS::ObjectImp::hasProperty(exec, propertyName); \
     } \
-    KJS::Object Space::ClassProto::self(KJS::ExecState *exec) \
+    KJS::ObjectImp *Space::ClassProto::self(KJS::ExecState *exec) \
     { \
       return KJS::cacheGlobalObject<ClassProto>( exec, "[[" ClassName ".prototype]]" ); \
     } \
@@ -299,16 +298,15 @@ namespace KDOM
   public: \
     ClassFunc(KJS::ExecState *exec, int i, int len) \
        : KJS::ObjectImp( /*proto? */ ), id(i) { \
-       KJS::Value protect(this); \
        put(exec, "length", KJS::Number(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); \
     } \
-    /** Used by call() to check the type of thisObj. Generated code */ \
+    /** Used by callAsFunction() to check the type of thisObj. Generated code */ \
     Class cast(KJS::ExecState *exec, const KJS::ObjectImp *bridge) const; \
     \
     virtual bool implementsCall() const { return true; } \
 	\
     /** You need to implement that one */ \
-    virtual KJS::Value call(KJS::ExecState *exec, KJS::Object &thisObj, const KJS::List &args); \
+    virtual KJS::ValueImp *callAsFunction(KJS::ExecState *exec, KJS::ObjectImp *thisObj, const KJS::List &args); \
 	\
   private: \
     int id; \
@@ -319,15 +317,15 @@ namespace KDOM
 
 // To be used when casting the type of an argument
 #define KDOM_CHECK(ClassName, theObj) \
-    ClassName obj = cast(exec, static_cast<KJS::ObjectImp *>(theObj.imp())); \
+    ClassName obj = cast(exec, theObj); \
     if(obj == ClassName::null) { \
-	    kdDebug(26004) << k_funcinfo << " Wrong object type: expected " << ClassName::s_classInfo.className << " got " << thisObj.classInfo()->className << endl; \
-        Object err = Error::create(exec,TypeError); \
+	    kdDebug(26004) << k_funcinfo << " Wrong object type: expected " << ClassName::s_classInfo.className << " got " << thisObj->classInfo()->className << endl; \
+        ObjectImp *err = Error::create(exec,TypeError); \
       	exec->setException(err); \
 	    return err; \
     }
 
-// To be used in all call() implementations!
+// To be used in all callAsFunction() implementations!
 // Can't use if (!thisObj.inherits(&ClassName::s_classInfo) since we don't
 // use the (single-parent) inheritance of ClassInfo...
 #define KDOM_CHECK_THIS(ClassName) KDOM_CHECK(ClassName, thisObj)
@@ -335,8 +333,8 @@ namespace KDOM
 // Helpers to hide exception stuff...
 // used within get/putValueProprety
 #define KDOM_ENTER_SAFE try {
-#define KDOM_LEAVE_SAFE(Exception) } catch(Exception::Private *e) { KJS::Object err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err.put(exec, "code", KJS::Number(e->code())); exec->setException(err); }
-#define KDOM_LEAVE_CALL_SAFE(Exception) } catch(Exception::Private *e) { KJS::Object err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err.put(exec, "code", KJS::Number(e->code())); exec->setException(err); return err; }
+#define KDOM_LEAVE_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); exec->setException(err); }
+#define KDOM_LEAVE_CALL_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); exec->setException(err); return err; }
 
 // Just a marker for kalyptus
 #define KDOM_CAST ;

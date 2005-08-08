@@ -37,7 +37,7 @@ using namespace KJS;
 @end
 */
 
-Value CSSCharsetRule::getValueProperty(ExecState *, int token) const
+ValueImp *CSSCharsetRule::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -50,7 +50,7 @@ Value CSSCharsetRule::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-void CSSCharsetRule::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void CSSCharsetRule::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

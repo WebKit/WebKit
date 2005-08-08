@@ -39,7 +39,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGScriptElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGScriptElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 	
@@ -58,7 +58,7 @@ Value SVGScriptElement::getValueProperty(ExecState *exec, int token) const
 // The qdom way...
 #define impl (static_cast<SVGScriptElementImpl *>(EventTarget::d))
 
-void SVGScriptElement::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGScriptElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

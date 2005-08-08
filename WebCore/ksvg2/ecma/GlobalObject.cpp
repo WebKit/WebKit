@@ -62,12 +62,12 @@ void GlobalObject::afterTimeout() const
 		doc()->updateRendering();
 }
 
-KJS::Value GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) const
+KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) const
 {
 	kdDebug(26004) << "KSVG::GlobalObject (" << this << ")::get " << p.qstring() << endl;
 
-	KJS::Value ret = KDOM::GlobalObject::get(exec, p);
-	if(ret.type() != KJS::UndefinedType)
+	KJS::ValueImp *ret = KDOM::GlobalObject::get(exec, p);
+	if(ret->type() != KJS::UndefinedType)
 		return ret;
 
 	const KJS::HashEntry *entry = KJS::Lookup::findEntry(&GlobalObject::s_hashTable, p);

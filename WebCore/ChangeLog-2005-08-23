@@ -1,3 +1,1546 @@
+2005-08-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        The rest of the changes necessary for darin's Object/Value removal.
+        These fixes are for kdom/ksvg2 and allow WebCore+SVG to compile.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4332
+        * kdom/Attr.cpp:
+        (Attr::getValueProperty):
+        (Attr::putValueProperty):
+        * kdom/Attr.h:
+        * kdom/CharacterData.cpp:
+        (CharacterData::getValueProperty):
+        (CharacterData::putValueProperty):
+        (CharacterDataProtoFunc::callAsFunction):
+        * kdom/CharacterData.h:
+        * kdom/DOMConfiguration.cpp:
+        (DOMConfiguration::getValueProperty):
+        (DOMConfigurationProtoFunc::callAsFunction):
+        * kdom/DOMConfiguration.h:
+        * kdom/DOMError.cpp:
+        (DOMError::getValueProperty):
+        * kdom/DOMError.h:
+        * kdom/DOMErrorHandler.cpp:
+        (DOMErrorHandler::getValueProperty):
+        (DOMErrorHandlerProtoFunc::callAsFunction):
+        * kdom/DOMErrorHandler.h:
+        * kdom/DOMException.cpp:
+        (DOMException::getValueProperty):
+        * kdom/DOMException.h:
+        * kdom/DOMImplementation.cpp:
+        (DOMImplementation::getValueProperty):
+        (DOMImplementationProtoFunc::callAsFunction):
+        * kdom/DOMImplementation.h:
+        * kdom/DOMLocator.cpp:
+        (DOMLocator::getValueProperty):
+        * kdom/DOMLocator.h:
+        * kdom/DOMStringList.cpp:
+        (DOMStringList::getValueProperty):
+        (DOMStringListProtoFunc::callAsFunction):
+        * kdom/DOMStringList.h:
+        * kdom/DOMUserData.cpp:
+        (DOMUserData::getValueProperty):
+        * kdom/DOMUserData.h:
+        * kdom/Document.cpp:
+        (KDOM::Document::getValueProperty):
+        (KDOM::Document::putValueProperty):
+        (KDOM::DocumentProtoFunc::callAsFunction):
+        * kdom/Document.h:
+        * kdom/DocumentType.cpp:
+        (DocumentType::getValueProperty):
+        * kdom/DocumentType.h:
+        * kdom/Element.cpp:
+        (Element::getValueProperty):
+        (ElementProtoFunc::callAsFunction):
+        * kdom/Element.h:
+        * kdom/Entity.cpp:
+        (Entity::getValueProperty):
+        * kdom/Entity.h:
+        * kdom/NamedNodeMap.cpp:
+        (NamedNodeMap::getValueProperty):
+        (NamedNodeMapProtoFunc::callAsFunction):
+        * kdom/NamedNodeMap.h:
+        * kdom/Node.cpp:
+        (Node::getValueProperty):
+        (Node::putValueProperty):
+        (NodeProtoFunc::callAsFunction):
+        * kdom/Node.h:
+        * kdom/NodeList.cpp:
+        (NodeList::getValueProperty):
+        (NodeListProtoFunc::callAsFunction):
+        * kdom/NodeList.h:
+        * kdom/Notation.cpp:
+        (Notation::getValueProperty):
+        * kdom/Notation.h:
+        * kdom/ProcessingInstruction.cpp:
+        (ProcessingInstruction::getValueProperty):
+        (ProcessingInstruction::putValueProperty):
+        * kdom/ProcessingInstruction.h:
+        * kdom/Text.cpp:
+        (Text::getValueProperty):
+        (TextProtoFunc::callAsFunction):
+        * kdom/Text.h:
+        * kdom/TypeInfo.cpp:
+        (TypeInfo::getValueProperty):
+        (TypeInfoProtoFunc::callAsFunction):
+        * kdom/TypeInfo.h:
+        * kdom/css/CSSCharsetRule.cpp:
+        (CSSCharsetRule::getValueProperty):
+        (CSSCharsetRule::putValueProperty):
+        * kdom/css/CSSCharsetRule.h:
+        * kdom/css/CSSFontFaceRule.cpp:
+        (CSSFontFaceRule::getValueProperty):
+        * kdom/css/CSSFontFaceRule.h:
+        * kdom/css/CSSImportRule.cpp:
+        (CSSImportRule::getValueProperty):
+        * kdom/css/CSSImportRule.h:
+        * kdom/css/CSSMediaRule.cpp:
+        (CSSMediaRule::getValueProperty):
+        (CSSMediaRuleProtoFunc::callAsFunction):
+        * kdom/css/CSSMediaRule.h:
+        * kdom/css/CSSPageRule.cpp:
+        (CSSPageRule::getValueProperty):
+        (CSSPageRule::putValueProperty):
+        * kdom/css/CSSPageRule.h:
+        * kdom/css/CSSPrimitiveValue.cpp:
+        (KDOM::CSSPrimitiveValue::getValueProperty):
+        (KDOM::CSSPrimitiveValueProtoFunc::callAsFunction):
+        * kdom/css/CSSPrimitiveValue.h:
+        * kdom/css/CSSRule.cpp:
+        (CSSRule::getValueProperty):
+        (CSSRule::putValueProperty):
+        * kdom/css/CSSRule.h:
+        * kdom/css/CSSRuleList.cpp:
+        (CSSRuleList::getValueProperty):
+        (CSSRuleListProtoFunc::callAsFunction):
+        * kdom/css/CSSRuleList.h:
+        * kdom/css/CSSStyleDeclaration.cpp:
+        (CSSStyleDeclaration::getValueProperty):
+        (CSSStyleDeclaration::putValueProperty):
+        (CSSStyleDeclarationProtoFunc::callAsFunction):
+        * kdom/css/CSSStyleDeclaration.h:
+        * kdom/css/CSSStyleRule.cpp:
+        (CSSStyleRule::getValueProperty):
+        (CSSStyleRule::putValueProperty):
+        * kdom/css/CSSStyleRule.h:
+        * kdom/css/CSSStyleSheet.cpp:
+        (CSSStyleSheet::getValueProperty):
+        (CSSStyleSheetProtoFunc::callAsFunction):
+        * kdom/css/CSSStyleSheet.h:
+        * kdom/css/CSSValue.cpp:
+        (CSSValue::getValueProperty):
+        (CSSValue::putValueProperty):
+        * kdom/css/CSSValue.h:
+        * kdom/css/CSSValueList.cpp:
+        (CSSValueList::getValueProperty):
+        (CSSValueListProtoFunc::callAsFunction):
+        * kdom/css/CSSValueList.h:
+        * kdom/css/Counter.cpp:
+        (Counter::getValueProperty):
+        * kdom/css/Counter.h:
+        * kdom/css/DocumentStyle.cpp:
+        (DocumentStyle::getValueProperty):
+        * kdom/css/DocumentStyle.h:
+        * kdom/css/MediaList.cpp:
+        (MediaList::getValueProperty):
+        (MediaList::putValueProperty):
+        (MediaListProtoFunc::callAsFunction):
+        * kdom/css/MediaList.h:
+        * kdom/css/RGBColor.cpp:
+        (KDOM::RGBColor::getValueProperty):
+        * kdom/css/RGBColor.h:
+        * kdom/css/Rect.cpp:
+        (KDOM::Rect::getValueProperty):
+        * kdom/css/Rect.h:
+        * kdom/css/StyleSheet.cpp:
+        (StyleSheet::getValueProperty):
+        (StyleSheet::putValueProperty):
+        * kdom/css/StyleSheet.h:
+        * kdom/css/StyleSheetList.cpp:
+        (StyleSheetList::getValueProperty):
+        (StyleSheetListProtoFunc::callAsFunction):
+        * kdom/css/StyleSheetList.h:
+        * kdom/data/generateddata.cpp:
+        (AbstractView::get):
+        (AbstractView::getInParents):
+        (AbstractView::prototype):
+        (AbstractView::cache):
+        (Attr::get):
+        (Attr::getInParents):
+        (Attr::prototype):
+        (Attr::cache):
+        (CSSCharsetRule::get):
+        (CSSCharsetRule::getInParents):
+        (CSSCharsetRule::prototype):
+        (CSSCharsetRule::cache):
+        (CSSFontFaceRule::get):
+        (CSSFontFaceRule::getInParents):
+        (CSSFontFaceRule::prototype):
+        (CSSFontFaceRule::cache):
+        (CSSImportRule::get):
+        (CSSImportRule::getInParents):
+        (CSSImportRule::prototype):
+        (CSSImportRule::cache):
+        (CSSMediaRule::hasProperty):
+        (CSSMediaRule::get):
+        (CSSMediaRule::getInParents):
+        (CSSMediaRule::prototype):
+        (CSSMediaRule::cache):
+        (CSSPageRule::get):
+        (CSSPageRule::getInParents):
+        (CSSPageRule::prototype):
+        (CSSPageRule::cache):
+        (CSSPrimitiveValue::hasProperty):
+        (CSSPrimitiveValue::get):
+        (CSSPrimitiveValue::getInParents):
+        (CSSPrimitiveValue::prototype):
+        (CSSPrimitiveValue::cache):
+        (CSSRule::get):
+        (CSSRule::getInParents):
+        (CSSRule::prototype):
+        (CSSRule::cache):
+        (CSSRuleList::hasProperty):
+        (CSSRuleList::get):
+        (CSSRuleList::getInParents):
+        (CSSRuleList::prototype):
+        (CSSRuleList::cache):
+        (CSSStyleDeclaration::hasProperty):
+        (CSSStyleDeclaration::get):
+        (CSSStyleDeclaration::getInParents):
+        (CSSStyleDeclaration::prototype):
+        (CSSStyleDeclaration::cache):
+        (CSSStyleRule::get):
+        (CSSStyleRule::getInParents):
+        (CSSStyleRule::prototype):
+        (CSSStyleRule::cache):
+        (CSSStyleSheet::hasProperty):
+        (CSSStyleSheet::get):
+        (CSSStyleSheet::getInParents):
+        (CSSStyleSheet::prototype):
+        (CSSStyleSheet::cache):
+        (CSSValue::get):
+        (CSSValue::getInParents):
+        (CSSValue::prototype):
+        (CSSValue::cache):
+        (CSSValueList::hasProperty):
+        (CSSValueList::get):
+        (CSSValueList::getInParents):
+        (CSSValueList::prototype):
+        (CSSValueList::cache):
+        (CharacterData::hasProperty):
+        (CharacterData::get):
+        (CharacterData::getInParents):
+        (CharacterData::prototype):
+        (CharacterData::cache):
+        (Counter::get):
+        (Counter::getInParents):
+        (Counter::prototype):
+        (Counter::cache):
+        (DOMConfiguration::hasProperty):
+        (DOMConfiguration::get):
+        (DOMConfiguration::getInParents):
+        (DOMConfiguration::prototype):
+        (DOMConfiguration::cache):
+        (DOMError::get):
+        (DOMError::getInParents):
+        (DOMError::prototype):
+        (DOMError::cache):
+        (DOMErrorHandler::hasProperty):
+        (DOMErrorHandler::get):
+        (DOMErrorHandler::getInParents):
+        (DOMErrorHandler::prototype):
+        (DOMErrorHandler::cache):
+        (DOMException::get):
+        (DOMException::getInParents):
+        (DOMException::prototype):
+        (DOMException::cache):
+        (DOMImplementation::hasProperty):
+        (DOMImplementation::get):
+        (DOMImplementation::getInParents):
+        (DOMImplementation::prototype):
+        (DOMImplementation::cache):
+        (DOMLocator::get):
+        (DOMLocator::getInParents):
+        (DOMLocator::prototype):
+        (DOMLocator::cache):
+        (DOMStringList::hasProperty):
+        (DOMStringList::get):
+        (DOMStringList::getInParents):
+        (DOMStringList::prototype):
+        (DOMStringList::cache):
+        (DOMUserData::get):
+        (DOMUserData::getInParents):
+        (DOMUserData::prototype):
+        (DOMUserData::cache):
+        (Document::hasProperty):
+        (Document::get):
+        (Document::getInParents):
+        (Document::prototype):
+        (Document::cache):
+        (DocumentEvent::hasProperty):
+        (DocumentEvent::get):
+        (DocumentEvent::getInParents):
+        (DocumentEvent::prototype):
+        (DocumentEvent::cache):
+        (DocumentRange::hasProperty):
+        (DocumentRange::get):
+        (DocumentRange::getInParents):
+        (DocumentRange::prototype):
+        (DocumentRange::cache):
+        (DocumentStyle::get):
+        (DocumentStyle::getInParents):
+        (DocumentStyle::prototype):
+        (DocumentStyle::cache):
+        (DocumentTraversal::hasProperty):
+        (DocumentTraversal::get):
+        (DocumentTraversal::getInParents):
+        (DocumentTraversal::prototype):
+        (DocumentTraversal::cache):
+        (DocumentType::get):
+        (DocumentType::getInParents):
+        (DocumentType::prototype):
+        (DocumentType::cache):
+        (DocumentView::get):
+        (DocumentView::getInParents):
+        (DocumentView::prototype):
+        (DocumentView::cache):
+        (Element::hasProperty):
+        (Element::get):
+        (Element::getInParents):
+        (Element::prototype):
+        (Element::cache):
+        (Entity::get):
+        (Entity::getInParents):
+        (Entity::prototype):
+        (Entity::cache):
+        (Event::hasProperty):
+        (Event::get):
+        (Event::getInParents):
+        (Event::prototype):
+        (Event::cache):
+        (EventException::get):
+        (EventException::getInParents):
+        (EventException::prototype):
+        (EventException::cache):
+        (EventTarget::hasProperty):
+        (EventTarget::get):
+        (EventTarget::getInParents):
+        (EventTarget::prototype):
+        (EventTarget::cache):
+        (KeyboardEvent::hasProperty):
+        (KeyboardEvent::get):
+        (KeyboardEvent::getInParents):
+        (KeyboardEvent::prototype):
+        (KeyboardEvent::cache):
+        (LSException::get):
+        (LSException::getInParents):
+        (LSException::prototype):
+        (LSException::cache):
+        (LSInput::get):
+        (LSInput::getInParents):
+        (LSInput::prototype):
+        (LSInput::cache):
+        (LSOutput::get):
+        (LSOutput::getInParents):
+        (LSOutput::prototype):
+        (LSOutput::cache):
+        (LSParser::hasProperty):
+        (LSParser::get):
+        (LSParser::getInParents):
+        (LSParser::prototype):
+        (LSParser::cache):
+        (LSParserFilter::hasProperty):
+        (LSParserFilter::get):
+        (LSParserFilter::getInParents):
+        (LSParserFilter::prototype):
+        (LSParserFilter::cache):
+        (LSResourceResolver::hasProperty):
+        (LSResourceResolver::get):
+        (LSResourceResolver::getInParents):
+        (LSResourceResolver::prototype):
+        (LSResourceResolver::cache):
+        (LSSerializer::hasProperty):
+        (LSSerializer::get):
+        (LSSerializer::getInParents):
+        (LSSerializer::prototype):
+        (LSSerializer::cache):
+        (LSSerializerFilter::get):
+        (LSSerializerFilter::getInParents):
+        (LSSerializerFilter::prototype):
+        (LSSerializerFilter::cache):
+        (MediaList::hasProperty):
+        (MediaList::get):
+        (MediaList::getInParents):
+        (MediaList::prototype):
+        (MediaList::cache):
+        (MouseEvent::hasProperty):
+        (MouseEvent::get):
+        (MouseEvent::getInParents):
+        (MouseEvent::prototype):
+        (MouseEvent::cache):
+        (MutationEvent::hasProperty):
+        (MutationEvent::get):
+        (MutationEvent::getInParents):
+        (MutationEvent::prototype):
+        (MutationEvent::cache):
+        (NamedNodeMap::hasProperty):
+        (NamedNodeMap::get):
+        (NamedNodeMap::getInParents):
+        (NamedNodeMap::prototype):
+        (NamedNodeMap::cache):
+        (Node::hasProperty):
+        (Node::get):
+        (Node::getInParents):
+        (Node::prototype):
+        (Node::cache):
+        (NodeIterator::hasProperty):
+        (NodeIterator::get):
+        (NodeIterator::getInParents):
+        (NodeIterator::prototype):
+        (NodeIterator::cache):
+        (NodeList::hasProperty):
+        (NodeList::get):
+        (NodeList::getInParents):
+        (NodeList::prototype):
+        (NodeList::cache):
+        (Notation::get):
+        (Notation::getInParents):
+        (Notation::prototype):
+        (Notation::cache):
+        (ProcessingInstruction::get):
+        (ProcessingInstruction::getInParents):
+        (ProcessingInstruction::prototype):
+        (ProcessingInstruction::cache):
+        (KDOM::RGBColor::get):
+        (KDOM::RGBColor::getInParents):
+        (KDOM::RGBColor::prototype):
+        (KDOM::RGBColor::cache):
+        (Range::hasProperty):
+        (Range::get):
+        (Range::getInParents):
+        (Range::prototype):
+        (Range::cache):
+        (RangeException::get):
+        (RangeException::getInParents):
+        (RangeException::prototype):
+        (RangeException::cache):
+        (KDOM::Rect::get):
+        (KDOM::Rect::getInParents):
+        (KDOM::Rect::prototype):
+        (KDOM::Rect::cache):
+        (StyleSheet::get):
+        (StyleSheet::getInParents):
+        (StyleSheet::prototype):
+        (StyleSheet::cache):
+        (StyleSheetList::hasProperty):
+        (StyleSheetList::get):
+        (StyleSheetList::getInParents):
+        (StyleSheetList::prototype):
+        (StyleSheetList::cache):
+        (Text::hasProperty):
+        (Text::get):
+        (Text::getInParents):
+        (Text::prototype):
+        (Text::cache):
+        (TreeWalker::hasProperty):
+        (TreeWalker::get):
+        (TreeWalker::getInParents):
+        (TreeWalker::prototype):
+        (TreeWalker::cache):
+        (TypeInfo::hasProperty):
+        (TypeInfo::get):
+        (TypeInfo::getInParents):
+        (TypeInfo::prototype):
+        (TypeInfo::cache):
+        (UIEvent::hasProperty):
+        (UIEvent::get):
+        (UIEvent::getInParents):
+        (UIEvent::prototype):
+        (UIEvent::cache):
+        (XPathEvaluator::hasProperty):
+        (XPathEvaluator::get):
+        (XPathEvaluator::getInParents):
+        (XPathEvaluator::prototype):
+        (XPathEvaluator::cache):
+        (XPathException::get):
+        (XPathException::getInParents):
+        (XPathException::prototype):
+        (XPathException::cache):
+        (XPathExpression::hasProperty):
+        (XPathExpression::get):
+        (XPathExpression::getInParents):
+        (XPathExpression::prototype):
+        (XPathExpression::cache):
+        (XPathNSResolver::hasProperty):
+        (XPathNSResolver::get):
+        (XPathNSResolver::getInParents):
+        (XPathNSResolver::prototype):
+        (XPathNSResolver::cache):
+        (XPathNamespace::get):
+        (XPathNamespace::getInParents):
+        (XPathNamespace::prototype):
+        (XPathNamespace::cache):
+        (XPathResult::hasProperty):
+        (XPathResult::get):
+        (XPathResult::getInParents):
+        (XPathResult::prototype):
+        (XPathResult::cache):
+        * kdom/ecma/DOMBridge.h:
+        (KDOM::DOMBridge::get):
+        (KDOM::DOMRWBridge::put):
+        (KDOM::DOMBridgeCtor::get):
+        * kdom/ecma/DOMLookup.h:
+        (KDOM::lookupGet):
+        (KDOM::lookupGetValue):
+        (KDOM::lookupPut):
+        * kdom/ecma/Ecma.cpp:
+        (Ecma::setup):
+        (Ecma::evaluate):
+        (Ecma::globalObject):
+        (Ecma::ecmaListenerToObject):
+        (Ecma::findEventListener):
+        (Ecma::createEventListener):
+        (KDOM::getDOMNode):
+        (KDOM::getDOMEvent):
+        (KDOM::getDOMCSSRule):
+        (KDOM::getDOMCSSValue):
+        (KDOM::toDOMString):
+        (KDOM::getDOMString):
+        (KDOM::toVariant):
+        * kdom/ecma/Ecma.h:
+        (KDOM::ecma_cast):
+        (KDOM::safe_cache):
+        * kdom/ecma/GlobalObject.cpp:
+        (GlobalObject::retrieveActive):
+        (GlobalObject::get):
+        (GlobalObject::put):
+        (GlobalObjectFunc::callAsFunction):
+        (ScheduledAction::ScheduledAction):
+        (ScheduledAction::execute):
+        (GlobalQObject::installTimeout):
+        * kdom/ecma/GlobalObject.h:
+        * kdom/ecma/ScriptInterpreter.cpp:
+        (ScriptInterpreter::ScriptInterpreter):
+        * kdom/ecma/ScriptInterpreter.h:
+        (KDOM::cacheDOMObject):
+        (KDOM::cacheGlobalBridge):
+        * kdom/events/DocumentEvent.cpp:
+        (DocumentEvent::getValueProperty):
+        (DocumentEventProtoFunc::callAsFunction):
+        * kdom/events/DocumentEvent.h:
+        * kdom/events/Event.cpp:
+        (Event::getValueProperty):
+        (EventProtoFunc::callAsFunction):
+        * kdom/events/Event.h:
+        * kdom/events/EventException.cpp:
+        (EventException::getValueProperty):
+        * kdom/events/EventException.h:
+        * kdom/events/EventTarget.cpp:
+        (EventTarget::getValueProperty):
+        (EventTargetProtoFunc::callAsFunction):
+        * kdom/events/EventTarget.h:
+        * kdom/events/KeyboardEvent.cpp:
+        (KeyboardEvent::getValueProperty):
+        (KeyboardEventProtoFunc::callAsFunction):
+        * kdom/events/KeyboardEvent.h:
+        * kdom/events/MouseEvent.cpp:
+        (MouseEvent::getValueProperty):
+        (MouseEventProtoFunc::callAsFunction):
+        * kdom/events/MouseEvent.h:
+        * kdom/events/MutationEvent.cpp:
+        (MutationEvent::getValueProperty):
+        (MutationEventProtoFunc::callAsFunction):
+        * kdom/events/MutationEvent.h:
+        * kdom/events/UIEvent.cpp:
+        (UIEvent::getValueProperty):
+        (UIEventProtoFunc::callAsFunction):
+        * kdom/events/UIEvent.h:
+        * kdom/events/impl/EventListenerImpl.cpp:
+        (EventListenerImpl::EventListenerImpl):
+        (EventListenerImpl::~EventListenerImpl):
+        (EventListenerImpl::handleEvent):
+        (EventListenerImpl::ecmaListener):
+        (EventListenerImpl::initListener):
+        * kdom/events/impl/EventListenerImpl.h:
+        * kdom/impl/DOMUserDataImpl.h:
+        (KDOM::):
+        * kdom/ls/LSException.cpp:
+        (LSException::getValueProperty):
+        * kdom/ls/LSException.h:
+        * kdom/ls/LSInput.cpp:
+        (LSInput::getValueProperty):
+        (LSInput::putValueProperty):
+        * kdom/ls/LSInput.h:
+        * kdom/ls/LSOutput.cpp:
+        (LSOutput::getValueProperty):
+        (LSOutput::putValueProperty):
+        * kdom/ls/LSOutput.h:
+        * kdom/ls/LSParser.cpp:
+        (LSParser::getValueProperty):
+        (LSParser::putValueProperty):
+        (LSParserProtoFunc::callAsFunction):
+        * kdom/ls/LSParser.h:
+        * kdom/ls/LSParserFilter.cpp:
+        (LSParserFilter::getValueProperty):
+        (LSParserFilterProtoFunc::callAsFunction):
+        * kdom/ls/LSParserFilter.h:
+        * kdom/ls/LSResourceResolver.cpp:
+        (LSResourceResolver::getValueProperty):
+        (LSResourceResolverProtoFunc::callAsFunction):
+        * kdom/ls/LSResourceResolver.h:
+        * kdom/ls/LSSerializer.cpp:
+        (LSSerializer::getValueProperty):
+        (LSSerializer::putValueProperty):
+        (LSSerializerProtoFunc::callAsFunction):
+        * kdom/ls/LSSerializer.h:
+        * kdom/ls/LSSerializerFilter.cpp:
+        (LSSerializerFilter::getValueProperty):
+        * kdom/ls/LSSerializerFilter.h:
+        * kdom/range/DocumentRange.cpp:
+        (DocumentRange::getValueProperty):
+        (DocumentRangeProtoFunc::callAsFunction):
+        * kdom/range/DocumentRange.h:
+        * kdom/range/Range.cpp:
+        (Range::getValueProperty):
+        (RangeProtoFunc::callAsFunction):
+        * kdom/range/Range.h:
+        * kdom/range/RangeException.cpp:
+        (RangeException::getValueProperty):
+        * kdom/range/RangeException.h:
+        * kdom/traversal/DocumentTraversal.cpp:
+        (DocumentTraversal::getValueProperty):
+        (DocumentTraversalProtoFunc::callAsFunction):
+        * kdom/traversal/DocumentTraversal.h:
+        * kdom/traversal/NodeIterator.cpp:
+        (NodeIterator::getValueProperty):
+        (NodeIteratorProtoFunc::callAsFunction):
+        * kdom/traversal/NodeIterator.h:
+        * kdom/traversal/TreeWalker.cpp:
+        (TreeWalker::getValueProperty):
+        (TreeWalker::putValueProperty):
+        (TreeWalkerProtoFunc::callAsFunction):
+        * kdom/traversal/TreeWalker.h:
+        * kdom/views/AbstractView.cpp:
+        (AbstractView::getValueProperty):
+        * kdom/views/AbstractView.h:
+        * kdom/views/DocumentView.cpp:
+        (DocumentView::getValueProperty):
+        * kdom/views/DocumentView.h:
+        * kdom/xpath/XPathEvaluator.cpp:
+        (XPathEvaluator::getValueProperty):
+        (XPathEvaluatorProtoFunc::callAsFunction):
+        * kdom/xpath/XPathEvaluator.h:
+        * kdom/xpath/XPathException.cpp:
+        (XPathException::getValueProperty):
+        * kdom/xpath/XPathException.h:
+        * kdom/xpath/XPathExpression.cpp:
+        (XPathExpression::getValueProperty):
+        (XPathExpressionProtoFunc::callAsFunction):
+        * kdom/xpath/XPathExpression.h:
+        * kdom/xpath/XPathNSResolver.cpp:
+        (XPathNSResolver::getValueProperty):
+        (XPathNSResolverProtoFunc::callAsFunction):
+        * kdom/xpath/XPathNSResolver.h:
+        * kdom/xpath/XPathNamespace.cpp:
+        (XPathNamespace::getValueProperty):
+        * kdom/xpath/XPathNamespace.h:
+        * kdom/xpath/XPathResult.cpp:
+        (XPathResult::getValueProperty):
+        (XPathResultProtoFunc::callAsFunction):
+        * kdom/xpath/XPathResult.h:
+        * ksvg2/KSVGFactory.cpp:
+        (KSVGFactory::createPartObject):
+        * ksvg2/data/SVGConstants.h:
+        (KSVG::SVGNumberConstants::):
+        * ksvg2/data/generateddata.cpp:
+        (SVGAElement::get):
+        (SVGAElement::getInParents):
+        (SVGAElement::prototype):
+        (SVGAElement::cache):
+        (SVGAngle::hasProperty):
+        (SVGAngle::get):
+        (SVGAngle::getInParents):
+        (SVGAngle::prototype):
+        (SVGAngle::cache):
+        (SVGAnimateColorElement::get):
+        (SVGAnimateColorElement::getInParents):
+        (SVGAnimateColorElement::prototype):
+        (SVGAnimateColorElement::cache):
+        (SVGAnimateElement::get):
+        (SVGAnimateElement::getInParents):
+        (SVGAnimateElement::prototype):
+        (SVGAnimateElement::cache):
+        (SVGAnimateTransformElement::get):
+        (SVGAnimateTransformElement::getInParents):
+        (SVGAnimateTransformElement::prototype):
+        (SVGAnimateTransformElement::cache):
+        (SVGAnimatedAngle::get):
+        (SVGAnimatedAngle::getInParents):
+        (SVGAnimatedAngle::prototype):
+        (SVGAnimatedAngle::cache):
+        (SVGAnimatedBoolean::get):
+        (SVGAnimatedBoolean::getInParents):
+        (SVGAnimatedBoolean::prototype):
+        (SVGAnimatedBoolean::cache):
+        (SVGAnimatedEnumeration::get):
+        (SVGAnimatedEnumeration::getInParents):
+        (SVGAnimatedEnumeration::prototype):
+        (SVGAnimatedEnumeration::cache):
+        (SVGAnimatedInteger::get):
+        (SVGAnimatedInteger::getInParents):
+        (SVGAnimatedInteger::prototype):
+        (SVGAnimatedInteger::cache):
+        (SVGAnimatedLength::get):
+        (SVGAnimatedLength::getInParents):
+        (SVGAnimatedLength::prototype):
+        (SVGAnimatedLength::cache):
+        (SVGAnimatedLengthList::get):
+        (SVGAnimatedLengthList::getInParents):
+        (SVGAnimatedLengthList::prototype):
+        (SVGAnimatedLengthList::cache):
+        (SVGAnimatedNumber::get):
+        (SVGAnimatedNumber::getInParents):
+        (SVGAnimatedNumber::prototype):
+        (SVGAnimatedNumber::cache):
+        (SVGAnimatedNumberList::get):
+        (SVGAnimatedNumberList::getInParents):
+        (SVGAnimatedNumberList::prototype):
+        (SVGAnimatedNumberList::cache):
+        (SVGAnimatedPathData::get):
+        (SVGAnimatedPathData::getInParents):
+        (SVGAnimatedPathData::prototype):
+        (SVGAnimatedPathData::cache):
+        (SVGAnimatedPoints::get):
+        (SVGAnimatedPoints::getInParents):
+        (SVGAnimatedPoints::prototype):
+        (SVGAnimatedPoints::cache):
+        (SVGAnimatedPreserveAspectRatio::get):
+        (SVGAnimatedPreserveAspectRatio::getInParents):
+        (SVGAnimatedPreserveAspectRatio::prototype):
+        (SVGAnimatedPreserveAspectRatio::cache):
+        (SVGAnimatedRect::get):
+        (SVGAnimatedRect::getInParents):
+        (SVGAnimatedRect::prototype):
+        (SVGAnimatedRect::cache):
+        (SVGAnimatedString::get):
+        (SVGAnimatedString::getInParents):
+        (SVGAnimatedString::prototype):
+        (SVGAnimatedString::cache):
+        (SVGAnimatedTransformList::get):
+        (SVGAnimatedTransformList::getInParents):
+        (SVGAnimatedTransformList::prototype):
+        (SVGAnimatedTransformList::cache):
+        (SVGAnimationElement::hasProperty):
+        (SVGAnimationElement::get):
+        (SVGAnimationElement::getInParents):
+        (SVGAnimationElement::prototype):
+        (SVGAnimationElement::cache):
+        (SVGCircleElement::get):
+        (SVGCircleElement::getInParents):
+        (SVGCircleElement::prototype):
+        (SVGCircleElement::cache):
+        (SVGClipPathElement::get):
+        (SVGClipPathElement::getInParents):
+        (SVGClipPathElement::prototype):
+        (SVGClipPathElement::cache):
+        (SVGColor::hasProperty):
+        (SVGColor::get):
+        (SVGColor::getInParents):
+        (SVGColor::prototype):
+        (SVGColor::cache):
+        (SVGComponentTransferFunctionElement::get):
+        (SVGComponentTransferFunctionElement::getInParents):
+        (SVGComponentTransferFunctionElement::prototype):
+        (SVGComponentTransferFunctionElement::cache):
+        (SVGDefsElement::get):
+        (SVGDefsElement::getInParents):
+        (SVGDefsElement::prototype):
+        (SVGDefsElement::cache):
+        (SVGDescElement::get):
+        (SVGDescElement::getInParents):
+        (SVGDescElement::prototype):
+        (SVGDescElement::cache):
+        (SVGDocument::get):
+        (SVGDocument::getInParents):
+        (SVGDocument::prototype):
+        (SVGDocument::cache):
+        (SVGElement::get):
+        (SVGElement::getInParents):
+        (SVGElement::prototype):
+        (SVGElement::cache):
+        (SVGElementInstance::get):
+        (SVGElementInstance::getInParents):
+        (SVGElementInstance::prototype):
+        (SVGElementInstance::cache):
+        (SVGElementInstanceList::hasProperty):
+        (SVGElementInstanceList::get):
+        (SVGElementInstanceList::getInParents):
+        (SVGElementInstanceList::prototype):
+        (SVGElementInstanceList::cache):
+        (SVGEllipseElement::get):
+        (SVGEllipseElement::getInParents):
+        (SVGEllipseElement::prototype):
+        (SVGEllipseElement::cache):
+        (SVGEvent::get):
+        (SVGEvent::getInParents):
+        (SVGEvent::prototype):
+        (SVGEvent::cache):
+        (SVGException::get):
+        (SVGException::getInParents):
+        (SVGException::prototype):
+        (SVGException::cache):
+        (SVGExternalResourcesRequired::get):
+        (SVGExternalResourcesRequired::getInParents):
+        (SVGExternalResourcesRequired::prototype):
+        (SVGExternalResourcesRequired::cache):
+        (SVGFEBlendElement::get):
+        (SVGFEBlendElement::getInParents):
+        (SVGFEBlendElement::prototype):
+        (SVGFEBlendElement::cache):
+        (SVGFEColorMatrixElement::get):
+        (SVGFEColorMatrixElement::getInParents):
+        (SVGFEColorMatrixElement::prototype):
+        (SVGFEColorMatrixElement::cache):
+        (SVGFEComponentTransferElement::get):
+        (SVGFEComponentTransferElement::getInParents):
+        (SVGFEComponentTransferElement::prototype):
+        (SVGFEComponentTransferElement::cache):
+        (SVGFECompositeElement::get):
+        (SVGFECompositeElement::getInParents):
+        (SVGFECompositeElement::prototype):
+        (SVGFECompositeElement::cache):
+        (SVGFEFloodElement::get):
+        (SVGFEFloodElement::getInParents):
+        (SVGFEFloodElement::prototype):
+        (SVGFEFloodElement::cache):
+        (SVGFEGaussianBlurElement::hasProperty):
+        (SVGFEGaussianBlurElement::get):
+        (SVGFEGaussianBlurElement::getInParents):
+        (SVGFEGaussianBlurElement::prototype):
+        (SVGFEGaussianBlurElement::cache):
+        (SVGFEImageElement::get):
+        (SVGFEImageElement::getInParents):
+        (SVGFEImageElement::prototype):
+        (SVGFEImageElement::cache):
+        (SVGFEMergeElement::get):
+        (SVGFEMergeElement::getInParents):
+        (SVGFEMergeElement::prototype):
+        (SVGFEMergeElement::cache):
+        (SVGFEMergeNodeElement::get):
+        (SVGFEMergeNodeElement::getInParents):
+        (SVGFEMergeNodeElement::prototype):
+        (SVGFEMergeNodeElement::cache):
+        (SVGFEOffsetElement::get):
+        (SVGFEOffsetElement::getInParents):
+        (SVGFEOffsetElement::prototype):
+        (SVGFEOffsetElement::cache):
+        (SVGFETileElement::get):
+        (SVGFETileElement::getInParents):
+        (SVGFETileElement::prototype):
+        (SVGFETileElement::cache):
+        (SVGFETurbulenceElement::get):
+        (SVGFETurbulenceElement::getInParents):
+        (SVGFETurbulenceElement::prototype):
+        (SVGFETurbulenceElement::cache):
+        (SVGFilterElement::hasProperty):
+        (SVGFilterElement::get):
+        (SVGFilterElement::getInParents):
+        (SVGFilterElement::prototype):
+        (SVGFilterElement::cache):
+        (SVGFilterPrimitiveStandardAttributes::get):
+        (SVGFilterPrimitiveStandardAttributes::getInParents):
+        (SVGFilterPrimitiveStandardAttributes::prototype):
+        (SVGFilterPrimitiveStandardAttributes::cache):
+        (SVGFitToViewBox::get):
+        (SVGFitToViewBox::getInParents):
+        (SVGFitToViewBox::prototype):
+        (SVGFitToViewBox::cache):
+        (SVGGElement::get):
+        (SVGGElement::getInParents):
+        (SVGGElement::prototype):
+        (SVGGElement::cache):
+        (SVGGradientElement::get):
+        (SVGGradientElement::getInParents):
+        (SVGGradientElement::prototype):
+        (SVGGradientElement::cache):
+        (SVGImageElement::get):
+        (SVGImageElement::getInParents):
+        (SVGImageElement::prototype):
+        (SVGImageElement::cache):
+        (SVGLangSpace::get):
+        (SVGLangSpace::getInParents):
+        (SVGLangSpace::prototype):
+        (SVGLangSpace::cache):
+        (SVGLength::hasProperty):
+        (SVGLength::get):
+        (SVGLength::getInParents):
+        (SVGLength::prototype):
+        (SVGLength::cache):
+        (SVGLengthList::hasProperty):
+        (SVGLengthList::get):
+        (SVGLengthList::getInParents):
+        (SVGLengthList::prototype):
+        (SVGLengthList::cache):
+        (SVGLineElement::get):
+        (SVGLineElement::getInParents):
+        (SVGLineElement::prototype):
+        (SVGLineElement::cache):
+        (SVGLinearGradientElement::get):
+        (SVGLinearGradientElement::getInParents):
+        (SVGLinearGradientElement::prototype):
+        (SVGLinearGradientElement::cache):
+        (SVGLocatable::hasProperty):
+        (SVGLocatable::get):
+        (SVGLocatable::getInParents):
+        (SVGLocatable::prototype):
+        (SVGLocatable::cache):
+        (SVGMarkerElement::hasProperty):
+        (SVGMarkerElement::get):
+        (SVGMarkerElement::getInParents):
+        (SVGMarkerElement::prototype):
+        (SVGMarkerElement::cache):
+        (SVGMatrix::hasProperty):
+        (SVGMatrix::get):
+        (SVGMatrix::getInParents):
+        (SVGMatrix::prototype):
+        (SVGMatrix::cache):
+        (SVGNumber::get):
+        (SVGNumber::getInParents):
+        (SVGNumber::prototype):
+        (SVGNumber::cache):
+        (SVGNumberList::hasProperty):
+        (SVGNumberList::get):
+        (SVGNumberList::getInParents):
+        (SVGNumberList::prototype):
+        (SVGNumberList::cache):
+        (SVGPaint::hasProperty):
+        (SVGPaint::get):
+        (SVGPaint::getInParents):
+        (SVGPaint::prototype):
+        (SVGPaint::cache):
+        (SVGPathElement::hasProperty):
+        (SVGPathElement::get):
+        (SVGPathElement::getInParents):
+        (SVGPathElement::prototype):
+        (SVGPathElement::cache):
+        (SVGPathSeg::get):
+        (SVGPathSeg::getInParents):
+        (SVGPathSeg::prototype):
+        (SVGPathSeg::cache):
+        (SVGPathSegArcAbs::get):
+        (SVGPathSegArcAbs::getInParents):
+        (SVGPathSegArcAbs::prototype):
+        (SVGPathSegArcAbs::cache):
+        (SVGPathSegArcRel::get):
+        (SVGPathSegArcRel::getInParents):
+        (SVGPathSegArcRel::prototype):
+        (SVGPathSegArcRel::cache):
+        (SVGPathSegCurvetoCubicAbs::get):
+        (SVGPathSegCurvetoCubicAbs::getInParents):
+        (SVGPathSegCurvetoCubicAbs::prototype):
+        (SVGPathSegCurvetoCubicAbs::cache):
+        (SVGPathSegCurvetoCubicRel::get):
+        (SVGPathSegCurvetoCubicRel::getInParents):
+        (SVGPathSegCurvetoCubicRel::prototype):
+        (SVGPathSegCurvetoCubicRel::cache):
+        (SVGPathSegCurvetoCubicSmoothAbs::get):
+        (SVGPathSegCurvetoCubicSmoothAbs::getInParents):
+        (SVGPathSegCurvetoCubicSmoothAbs::prototype):
+        (SVGPathSegCurvetoCubicSmoothAbs::cache):
+        (SVGPathSegCurvetoCubicSmoothRel::get):
+        (SVGPathSegCurvetoCubicSmoothRel::getInParents):
+        (SVGPathSegCurvetoCubicSmoothRel::prototype):
+        (SVGPathSegCurvetoCubicSmoothRel::cache):
+        (SVGPathSegCurvetoQuadraticAbs::get):
+        (SVGPathSegCurvetoQuadraticAbs::getInParents):
+        (SVGPathSegCurvetoQuadraticAbs::prototype):
+        (SVGPathSegCurvetoQuadraticAbs::cache):
+        (SVGPathSegCurvetoQuadraticRel::get):
+        (SVGPathSegCurvetoQuadraticRel::getInParents):
+        (SVGPathSegCurvetoQuadraticRel::prototype):
+        (SVGPathSegCurvetoQuadraticRel::cache):
+        (SVGPathSegCurvetoQuadraticSmoothAbs::get):
+        (SVGPathSegCurvetoQuadraticSmoothAbs::getInParents):
+        (SVGPathSegCurvetoQuadraticSmoothAbs::prototype):
+        (SVGPathSegCurvetoQuadraticSmoothAbs::cache):
+        (SVGPathSegCurvetoQuadraticSmoothRel::get):
+        (SVGPathSegCurvetoQuadraticSmoothRel::getInParents):
+        (SVGPathSegCurvetoQuadraticSmoothRel::prototype):
+        (SVGPathSegCurvetoQuadraticSmoothRel::cache):
+        (SVGPathSegLinetoAbs::get):
+        (SVGPathSegLinetoAbs::getInParents):
+        (SVGPathSegLinetoAbs::prototype):
+        (SVGPathSegLinetoAbs::cache):
+        (SVGPathSegLinetoHorizontalAbs::get):
+        (SVGPathSegLinetoHorizontalAbs::getInParents):
+        (SVGPathSegLinetoHorizontalAbs::prototype):
+        (SVGPathSegLinetoHorizontalAbs::cache):
+        (SVGPathSegLinetoHorizontalRel::get):
+        (SVGPathSegLinetoHorizontalRel::getInParents):
+        (SVGPathSegLinetoHorizontalRel::prototype):
+        (SVGPathSegLinetoHorizontalRel::cache):
+        (SVGPathSegLinetoRel::get):
+        (SVGPathSegLinetoRel::getInParents):
+        (SVGPathSegLinetoRel::prototype):
+        (SVGPathSegLinetoRel::cache):
+        (SVGPathSegLinetoVerticalAbs::get):
+        (SVGPathSegLinetoVerticalAbs::getInParents):
+        (SVGPathSegLinetoVerticalAbs::prototype):
+        (SVGPathSegLinetoVerticalAbs::cache):
+        (SVGPathSegLinetoVerticalRel::get):
+        (SVGPathSegLinetoVerticalRel::getInParents):
+        (SVGPathSegLinetoVerticalRel::prototype):
+        (SVGPathSegLinetoVerticalRel::cache):
+        (SVGPathSegList::hasProperty):
+        (SVGPathSegList::get):
+        (SVGPathSegList::getInParents):
+        (SVGPathSegList::prototype):
+        (SVGPathSegList::cache):
+        (SVGPathSegMovetoAbs::get):
+        (SVGPathSegMovetoAbs::getInParents):
+        (SVGPathSegMovetoAbs::prototype):
+        (SVGPathSegMovetoAbs::cache):
+        (SVGPathSegMovetoRel::get):
+        (SVGPathSegMovetoRel::getInParents):
+        (SVGPathSegMovetoRel::prototype):
+        (SVGPathSegMovetoRel::cache):
+        (SVGPatternElement::get):
+        (SVGPatternElement::getInParents):
+        (SVGPatternElement::prototype):
+        (SVGPatternElement::cache):
+        (SVGPoint::hasProperty):
+        (SVGPoint::get):
+        (SVGPoint::getInParents):
+        (SVGPoint::prototype):
+        (SVGPoint::cache):
+        (SVGPointList::hasProperty):
+        (SVGPointList::get):
+        (SVGPointList::getInParents):
+        (SVGPointList::prototype):
+        (SVGPointList::cache):
+        (SVGPolygonElement::get):
+        (SVGPolygonElement::getInParents):
+        (SVGPolygonElement::prototype):
+        (SVGPolygonElement::cache):
+        (SVGPolylineElement::get):
+        (SVGPolylineElement::getInParents):
+        (SVGPolylineElement::prototype):
+        (SVGPolylineElement::cache):
+        (SVGPreserveAspectRatio::get):
+        (SVGPreserveAspectRatio::getInParents):
+        (SVGPreserveAspectRatio::prototype):
+        (SVGPreserveAspectRatio::cache):
+        (SVGRadialGradientElement::get):
+        (SVGRadialGradientElement::getInParents):
+        (SVGRadialGradientElement::prototype):
+        (SVGRadialGradientElement::cache):
+        (SVGRect::get):
+        (SVGRect::getInParents):
+        (SVGRect::prototype):
+        (SVGRect::cache):
+        (SVGRectElement::get):
+        (SVGRectElement::getInParents):
+        (SVGRectElement::prototype):
+        (SVGRectElement::cache):
+        (SVGSVGElement::hasProperty):
+        (SVGSVGElement::get):
+        (SVGSVGElement::getInParents):
+        (SVGSVGElement::prototype):
+        (SVGSVGElement::cache):
+        (SVGScriptElement::get):
+        (SVGScriptElement::getInParents):
+        (SVGScriptElement::prototype):
+        (SVGScriptElement::cache):
+        (SVGSetElement::get):
+        (SVGSetElement::getInParents):
+        (SVGSetElement::prototype):
+        (SVGSetElement::cache):
+        (SVGStopElement::get):
+        (SVGStopElement::getInParents):
+        (SVGStopElement::prototype):
+        (SVGStopElement::cache):
+        (SVGStringList::hasProperty):
+        (SVGStringList::get):
+        (SVGStringList::getInParents):
+        (SVGStringList::prototype):
+        (SVGStringList::cache):
+        (SVGStylable::hasProperty):
+        (SVGStylable::get):
+        (SVGStylable::getInParents):
+        (SVGStylable::prototype):
+        (SVGStylable::cache):
+        (SVGStyleElement::get):
+        (SVGStyleElement::getInParents):
+        (SVGStyleElement::prototype):
+        (SVGStyleElement::cache):
+        (SVGSwitchElement::get):
+        (SVGSwitchElement::getInParents):
+        (SVGSwitchElement::prototype):
+        (SVGSwitchElement::cache):
+        (SVGSymbolElement::get):
+        (SVGSymbolElement::getInParents):
+        (SVGSymbolElement::prototype):
+        (SVGSymbolElement::cache):
+        (SVGTSpanElement::get):
+        (SVGTSpanElement::getInParents):
+        (SVGTSpanElement::prototype):
+        (SVGTSpanElement::cache):
+        (SVGTests::hasProperty):
+        (SVGTests::get):
+        (SVGTests::getInParents):
+        (SVGTests::prototype):
+        (SVGTests::cache):
+        (SVGTextContentElement::hasProperty):
+        (SVGTextContentElement::get):
+        (SVGTextContentElement::getInParents):
+        (SVGTextContentElement::prototype):
+        (SVGTextContentElement::cache):
+        (SVGTextElement::get):
+        (SVGTextElement::getInParents):
+        (SVGTextElement::prototype):
+        (SVGTextElement::cache):
+        (SVGTextPositioningElement::get):
+        (SVGTextPositioningElement::getInParents):
+        (SVGTextPositioningElement::prototype):
+        (SVGTextPositioningElement::cache):
+        (SVGTitleElement::get):
+        (SVGTitleElement::getInParents):
+        (SVGTitleElement::prototype):
+        (SVGTitleElement::cache):
+        (SVGTransform::hasProperty):
+        (SVGTransform::get):
+        (SVGTransform::getInParents):
+        (SVGTransform::prototype):
+        (SVGTransform::cache):
+        (SVGTransformList::hasProperty):
+        (SVGTransformList::get):
+        (SVGTransformList::getInParents):
+        (SVGTransformList::prototype):
+        (SVGTransformList::cache):
+        (SVGTransformable::get):
+        (SVGTransformable::getInParents):
+        (SVGTransformable::prototype):
+        (SVGTransformable::cache):
+        (SVGURIReference::get):
+        (SVGURIReference::getInParents):
+        (SVGURIReference::prototype):
+        (SVGURIReference::cache):
+        (SVGUseElement::get):
+        (SVGUseElement::getInParents):
+        (SVGUseElement::prototype):
+        (SVGUseElement::cache):
+        (SVGViewElement::get):
+        (SVGViewElement::getInParents):
+        (SVGViewElement::prototype):
+        (SVGViewElement::cache):
+        (SVGZoomAndPan::get):
+        (SVGZoomAndPan::getInParents):
+        (SVGZoomAndPan::prototype):
+        (SVGZoomAndPan::cache):
+        (SVGZoomEvent::get):
+        (SVGZoomEvent::getInParents):
+        (SVGZoomEvent::prototype):
+        (SVGZoomEvent::cache):
+        * ksvg2/dom/SVGAElement.cpp:
+        (SVGAElement::getValueProperty):
+        * ksvg2/dom/SVGAElement.h:
+        * ksvg2/dom/SVGAngle.cpp:
+        (SVGAngle::getValueProperty):
+        (SVGAngle::putValueProperty):
+        (SVGAngleProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGAngle.h:
+        * ksvg2/dom/SVGAnimateColorElement.cpp:
+        (SVGAnimateColorElement::getValueProperty):
+        * ksvg2/dom/SVGAnimateColorElement.h:
+        * ksvg2/dom/SVGAnimateElement.cpp:
+        (SVGAnimateElement::getValueProperty):
+        * ksvg2/dom/SVGAnimateElement.h:
+        * ksvg2/dom/SVGAnimateTransformElement.cpp:
+        (SVGAnimateTransformElement::getValueProperty):
+        * ksvg2/dom/SVGAnimateTransformElement.h:
+        * ksvg2/dom/SVGAnimatedAngle.cpp:
+        (SVGAnimatedAngle::getValueProperty):
+        * ksvg2/dom/SVGAnimatedAngle.h:
+        * ksvg2/dom/SVGAnimatedBoolean.cpp:
+        (SVGAnimatedBoolean::getValueProperty):
+        (SVGAnimatedBoolean::putValueProperty):
+        * ksvg2/dom/SVGAnimatedBoolean.h:
+        * ksvg2/dom/SVGAnimatedEnumeration.cpp:
+        (SVGAnimatedEnumeration::getValueProperty):
+        (SVGAnimatedEnumeration::putValueProperty):
+        * ksvg2/dom/SVGAnimatedEnumeration.h:
+        * ksvg2/dom/SVGAnimatedInteger.cpp:
+        (SVGAnimatedInteger::getValueProperty):
+        (SVGAnimatedInteger::putValueProperty):
+        * ksvg2/dom/SVGAnimatedInteger.h:
+        * ksvg2/dom/SVGAnimatedLength.cpp:
+        (SVGAnimatedLength::getValueProperty):
+        * ksvg2/dom/SVGAnimatedLength.h:
+        * ksvg2/dom/SVGAnimatedLengthList.cpp:
+        (SVGAnimatedLengthList::getValueProperty):
+        * ksvg2/dom/SVGAnimatedLengthList.h:
+        * ksvg2/dom/SVGAnimatedNumber.cpp:
+        (SVGAnimatedNumber::getValueProperty):
+        (SVGAnimatedNumber::putValueProperty):
+        * ksvg2/dom/SVGAnimatedNumber.h:
+        * ksvg2/dom/SVGAnimatedNumberList.cpp:
+        (SVGAnimatedNumberList::getValueProperty):
+        * ksvg2/dom/SVGAnimatedNumberList.h:
+        * ksvg2/dom/SVGAnimatedPathData.cpp:
+        (SVGAnimatedPathData::getValueProperty):
+        * ksvg2/dom/SVGAnimatedPathData.h:
+        * ksvg2/dom/SVGAnimatedPoints.cpp:
+        (SVGAnimatedPoints::getValueProperty):
+        * ksvg2/dom/SVGAnimatedPoints.h:
+        * ksvg2/dom/SVGAnimatedPreserveAspectRatio.cpp:
+        (SVGAnimatedPreserveAspectRatio::getValueProperty):
+        * ksvg2/dom/SVGAnimatedPreserveAspectRatio.h:
+        * ksvg2/dom/SVGAnimatedRect.cpp:
+        (SVGAnimatedRect::getValueProperty):
+        * ksvg2/dom/SVGAnimatedRect.h:
+        * ksvg2/dom/SVGAnimatedString.cpp:
+        (SVGAnimatedString::getValueProperty):
+        (SVGAnimatedString::putValueProperty):
+        * ksvg2/dom/SVGAnimatedString.h:
+        * ksvg2/dom/SVGAnimatedTransformList.cpp:
+        (SVGAnimatedTransformList::getValueProperty):
+        * ksvg2/dom/SVGAnimatedTransformList.h:
+        * ksvg2/dom/SVGAnimationElement.cpp:
+        (SVGAnimationElement::getValueProperty):
+        (SVGAnimationElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGAnimationElement.h:
+        * ksvg2/dom/SVGCircleElement.cpp:
+        (SVGCircleElement::getValueProperty):
+        * ksvg2/dom/SVGCircleElement.h:
+        * ksvg2/dom/SVGClipPathElement.cpp:
+        (SVGClipPathElement::getValueProperty):
+        * ksvg2/dom/SVGClipPathElement.h:
+        * ksvg2/dom/SVGColor.cpp:
+        (SVGColor::getValueProperty):
+        (SVGColorProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGColor.h:
+        * ksvg2/dom/SVGComponentTransferFunctionElement.cpp:
+        (SVGComponentTransferFunctionElement::getValueProperty):
+        * ksvg2/dom/SVGComponentTransferFunctionElement.h:
+        * ksvg2/dom/SVGDefsElement.cpp:
+        (SVGDefsElement::getValueProperty):
+        * ksvg2/dom/SVGDefsElement.h:
+        * ksvg2/dom/SVGDescElement.cpp:
+        (SVGDescElement::getValueProperty):
+        * ksvg2/dom/SVGDescElement.h:
+        * ksvg2/dom/SVGDocument.cpp:
+        (SVGDocument::getValueProperty):
+        * ksvg2/dom/SVGDocument.h:
+        * ksvg2/dom/SVGElement.cpp:
+        (SVGElement::getValueProperty):
+        (SVGElement::putValueProperty):
+        * ksvg2/dom/SVGElement.h:
+        * ksvg2/dom/SVGElementInstance.cpp:
+        (SVGElementInstance::getValueProperty):
+        * ksvg2/dom/SVGElementInstance.h:
+        * ksvg2/dom/SVGElementInstanceList.cpp:
+        (SVGElementInstanceList::getValueProperty):
+        (SVGElementInstanceListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGElementInstanceList.h:
+        * ksvg2/dom/SVGEllipseElement.cpp:
+        (SVGEllipseElement::getValueProperty):
+        * ksvg2/dom/SVGEllipseElement.h:
+        * ksvg2/dom/SVGException.cpp:
+        (SVGException::getValueProperty):
+        * ksvg2/dom/SVGException.h:
+        * ksvg2/dom/SVGExternalResourcesRequired.cpp:
+        (SVGExternalResourcesRequired::getValueProperty):
+        * ksvg2/dom/SVGExternalResourcesRequired.h:
+        * ksvg2/dom/SVGFEBlendElement.cpp:
+        (SVGFEBlendElement::getValueProperty):
+        * ksvg2/dom/SVGFEBlendElement.h:
+        * ksvg2/dom/SVGFEColorMatrixElement.cpp:
+        (SVGFEColorMatrixElement::getValueProperty):
+        * ksvg2/dom/SVGFEColorMatrixElement.h:
+        * ksvg2/dom/SVGFEComponentTransferElement.cpp:
+        (SVGFEComponentTransferElement::getValueProperty):
+        * ksvg2/dom/SVGFEComponentTransferElement.h:
+        * ksvg2/dom/SVGFECompositeElement.cpp:
+        (SVGFECompositeElement::getValueProperty):
+        * ksvg2/dom/SVGFECompositeElement.h:
+        * ksvg2/dom/SVGFEFloodElement.cpp:
+        (SVGFEFloodElement::getValueProperty):
+        * ksvg2/dom/SVGFEFloodElement.h:
+        * ksvg2/dom/SVGFEGaussianBlurElement.cpp:
+        (SVGFEGaussianBlurElement::getValueProperty):
+        (SVGFEGaussianBlurElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGFEGaussianBlurElement.h:
+        * ksvg2/dom/SVGFEImageElement.cpp:
+        (SVGFEImageElement::getValueProperty):
+        * ksvg2/dom/SVGFEImageElement.h:
+        * ksvg2/dom/SVGFEMergeElement.cpp:
+        (SVGFEMergeElement::getValueProperty):
+        * ksvg2/dom/SVGFEMergeElement.h:
+        * ksvg2/dom/SVGFEMergeNodeElement.cpp:
+        (SVGFEMergeNodeElement::getValueProperty):
+        * ksvg2/dom/SVGFEMergeNodeElement.h:
+        * ksvg2/dom/SVGFEOffsetElement.cpp:
+        (SVGFEOffsetElement::getValueProperty):
+        * ksvg2/dom/SVGFEOffsetElement.h:
+        * ksvg2/dom/SVGFETileElement.cpp:
+        (SVGFETileElement::getValueProperty):
+        * ksvg2/dom/SVGFETileElement.h:
+        * ksvg2/dom/SVGFETurbulenceElement.cpp:
+        (SVGFETurbulenceElement::getValueProperty):
+        * ksvg2/dom/SVGFETurbulenceElement.h:
+        * ksvg2/dom/SVGFilterElement.cpp:
+        (SVGFilterElement::getValueProperty):
+        (SVGFilterElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGFilterElement.h:
+        * ksvg2/dom/SVGFilterPrimitiveStandardAttributes.cpp:
+        (SVGFilterPrimitiveStandardAttributes::getValueProperty):
+        * ksvg2/dom/SVGFilterPrimitiveStandardAttributes.h:
+        * ksvg2/dom/SVGFitToViewBox.cpp:
+        (SVGFitToViewBox::getValueProperty):
+        * ksvg2/dom/SVGFitToViewBox.h:
+        * ksvg2/dom/SVGGElement.cpp:
+        (SVGGElement::getValueProperty):
+        * ksvg2/dom/SVGGElement.h:
+        * ksvg2/dom/SVGGradientElement.cpp:
+        (SVGGradientElement::getValueProperty):
+        * ksvg2/dom/SVGGradientElement.h:
+        * ksvg2/dom/SVGImageElement.cpp:
+        (SVGImageElement::getValueProperty):
+        * ksvg2/dom/SVGImageElement.h:
+        * ksvg2/dom/SVGLangSpace.cpp:
+        (SVGLangSpace::getValueProperty):
+        (SVGLangSpace::putValueProperty):
+        * ksvg2/dom/SVGLangSpace.h:
+        * ksvg2/dom/SVGLength.cpp:
+        (SVGLength::getValueProperty):
+        (SVGLength::putValueProperty):
+        (SVGLengthProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGLength.h:
+        * ksvg2/dom/SVGLengthList.cpp:
+        (SVGLengthList::getValueProperty):
+        (SVGLengthListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGLengthList.h:
+        * ksvg2/dom/SVGLineElement.cpp:
+        (SVGLineElement::getValueProperty):
+        * ksvg2/dom/SVGLineElement.h:
+        * ksvg2/dom/SVGLinearGradientElement.cpp:
+        (SVGLinearGradientElement::getValueProperty):
+        * ksvg2/dom/SVGLinearGradientElement.h:
+        * ksvg2/dom/SVGLocatable.cpp:
+        (SVGLocatable::getValueProperty):
+        (SVGLocatableProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGLocatable.h:
+        * ksvg2/dom/SVGMarkerElement.cpp:
+        (SVGMarkerElement::getValueProperty):
+        (SVGMarkerElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGMarkerElement.h:
+        * ksvg2/dom/SVGMatrix.cpp:
+        (SVGMatrix::getValueProperty):
+        (SVGMatrix::putValueProperty):
+        (SVGMatrixProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGMatrix.h:
+        * ksvg2/dom/SVGNumber.cpp:
+        (SVGNumber::getValueProperty):
+        (SVGNumber::putValueProperty):
+        * ksvg2/dom/SVGNumber.h:
+        * ksvg2/dom/SVGNumberList.cpp:
+        (SVGNumberList::getValueProperty):
+        (SVGNumberListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGNumberList.h:
+        * ksvg2/dom/SVGPaint.cpp:
+        (SVGPaint::getValueProperty):
+        (SVGPaintProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGPaint.h:
+        * ksvg2/dom/SVGPathElement.cpp:
+        (SVGPathElement::getValueProperty):
+        (SVGPathElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGPathElement.h:
+        * ksvg2/dom/SVGPathSeg.cpp:
+        (SVGPathSeg::getValueProperty):
+        * ksvg2/dom/SVGPathSeg.h:
+        * ksvg2/dom/SVGPathSegArc.cpp:
+        (SVGPathSegArcAbs::getValueProperty):
+        (SVGPathSegArcAbs::putValueProperty):
+        (SVGPathSegArcRel::getValueProperty):
+        (SVGPathSegArcRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegArc.h:
+        * ksvg2/dom/SVGPathSegCurvetoCubic.cpp:
+        (SVGPathSegCurvetoCubicAbs::getValueProperty):
+        (SVGPathSegCurvetoCubicAbs::putValueProperty):
+        (SVGPathSegCurvetoCubicRel::getValueProperty):
+        (SVGPathSegCurvetoCubicRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegCurvetoCubic.h:
+        * ksvg2/dom/SVGPathSegCurvetoCubicSmooth.cpp:
+        (SVGPathSegCurvetoCubicSmoothAbs::getValueProperty):
+        (SVGPathSegCurvetoCubicSmoothAbs::putValueProperty):
+        (SVGPathSegCurvetoCubicSmoothRel::getValueProperty):
+        (SVGPathSegCurvetoCubicSmoothRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegCurvetoCubicSmooth.h:
+        * ksvg2/dom/SVGPathSegCurvetoQuadratic.cpp:
+        (SVGPathSegCurvetoQuadraticAbs::getValueProperty):
+        (SVGPathSegCurvetoQuadraticAbs::putValueProperty):
+        (SVGPathSegCurvetoQuadraticRel::getValueProperty):
+        (SVGPathSegCurvetoQuadraticRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegCurvetoQuadratic.h:
+        * ksvg2/dom/SVGPathSegCurvetoQuadraticSmooth.cpp:
+        (SVGPathSegCurvetoQuadraticSmoothAbs::getValueProperty):
+        (SVGPathSegCurvetoQuadraticSmoothAbs::putValueProperty):
+        (SVGPathSegCurvetoQuadraticSmoothRel::getValueProperty):
+        (SVGPathSegCurvetoQuadraticSmoothRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegCurvetoQuadraticSmooth.h:
+        * ksvg2/dom/SVGPathSegLineto.cpp:
+        (SVGPathSegLinetoAbs::getValueProperty):
+        (SVGPathSegLinetoAbs::putValueProperty):
+        (SVGPathSegLinetoRel::getValueProperty):
+        (SVGPathSegLinetoRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegLineto.h:
+        * ksvg2/dom/SVGPathSegLinetoHorizontal.cpp:
+        (SVGPathSegLinetoHorizontalAbs::getValueProperty):
+        (SVGPathSegLinetoHorizontalAbs::putValueProperty):
+        (SVGPathSegLinetoHorizontalRel::getValueProperty):
+        (SVGPathSegLinetoHorizontalRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegLinetoHorizontal.h:
+        * ksvg2/dom/SVGPathSegLinetoVertical.cpp:
+        (SVGPathSegLinetoVerticalAbs::getValueProperty):
+        (SVGPathSegLinetoVerticalAbs::putValueProperty):
+        (SVGPathSegLinetoVerticalRel::getValueProperty):
+        (SVGPathSegLinetoVerticalRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegLinetoVertical.h:
+        * ksvg2/dom/SVGPathSegList.cpp:
+        (SVGPathSegList::getValueProperty):
+        (SVGPathSegListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGPathSegList.h:
+        * ksvg2/dom/SVGPathSegMoveto.cpp:
+        (SVGPathSegMovetoAbs::getValueProperty):
+        (SVGPathSegMovetoAbs::putValueProperty):
+        (SVGPathSegMovetoRel::getValueProperty):
+        (SVGPathSegMovetoRel::putValueProperty):
+        * ksvg2/dom/SVGPathSegMoveto.h:
+        * ksvg2/dom/SVGPatternElement.cpp:
+        (SVGPatternElement::getValueProperty):
+        * ksvg2/dom/SVGPatternElement.h:
+        * ksvg2/dom/SVGPoint.cpp:
+        (SVGPoint::getValueProperty):
+        (SVGPoint::putValueProperty):
+        (SVGPointProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGPoint.h:
+        * ksvg2/dom/SVGPointList.cpp:
+        (SVGPointList::getValueProperty):
+        (SVGPointListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGPointList.h:
+        * ksvg2/dom/SVGPolygonElement.cpp:
+        (SVGPolygonElement::getValueProperty):
+        * ksvg2/dom/SVGPolygonElement.h:
+        * ksvg2/dom/SVGPolylineElement.cpp:
+        (SVGPolylineElement::getValueProperty):
+        * ksvg2/dom/SVGPolylineElement.h:
+        * ksvg2/dom/SVGPreserveAspectRatio.cpp:
+        (SVGPreserveAspectRatio::getValueProperty):
+        (SVGPreserveAspectRatio::putValueProperty):
+        * ksvg2/dom/SVGPreserveAspectRatio.h:
+        * ksvg2/dom/SVGRadialGradientElement.cpp:
+        (SVGRadialGradientElement::getValueProperty):
+        * ksvg2/dom/SVGRadialGradientElement.h:
+        * ksvg2/dom/SVGRect.cpp:
+        (SVGRect::getValueProperty):
+        (SVGRect::putValueProperty):
+        * ksvg2/dom/SVGRect.h:
+        * ksvg2/dom/SVGRectElement.cpp:
+        (SVGRectElement::getValueProperty):
+        * ksvg2/dom/SVGRectElement.h:
+        * ksvg2/dom/SVGSVGElement.cpp:
+        (SVGSVGElement::getValueProperty):
+        (SVGSVGElement::putValueProperty):
+        (SVGSVGElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGSVGElement.h:
+        * ksvg2/dom/SVGScriptElement.cpp:
+        (SVGScriptElement::getValueProperty):
+        (SVGScriptElement::putValueProperty):
+        * ksvg2/dom/SVGScriptElement.h:
+        * ksvg2/dom/SVGSetElement.cpp:
+        (SVGSetElement::getValueProperty):
+        * ksvg2/dom/SVGSetElement.h:
+        * ksvg2/dom/SVGStopElement.cpp:
+        (SVGStopElement::getValueProperty):
+        * ksvg2/dom/SVGStopElement.h:
+        * ksvg2/dom/SVGStringList.cpp:
+        (SVGStringList::getValueProperty):
+        (SVGStringListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGStringList.h:
+        * ksvg2/dom/SVGStylable.cpp:
+        (SVGStylable::getValueProperty):
+        (SVGStylableProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGStylable.h:
+        * ksvg2/dom/SVGStyleElement.cpp:
+        (SVGStyleElement::getValueProperty):
+        (SVGStyleElement::putValueProperty):
+        * ksvg2/dom/SVGStyleElement.h:
+        * ksvg2/dom/SVGSwitchElement.cpp:
+        (SVGSwitchElement::getValueProperty):
+        * ksvg2/dom/SVGSwitchElement.h:
+        * ksvg2/dom/SVGSymbolElement.cpp:
+        (SVGSymbolElement::getValueProperty):
+        * ksvg2/dom/SVGSymbolElement.h:
+        * ksvg2/dom/SVGTSpanElement.cpp:
+        (SVGTSpanElement::getValueProperty):
+        * ksvg2/dom/SVGTSpanElement.h:
+        * ksvg2/dom/SVGTests.cpp:
+        (SVGTests::getValueProperty):
+        (SVGTestsProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGTests.h:
+        * ksvg2/dom/SVGTextContentElement.cpp:
+        (SVGTextContentElement::getValueProperty):
+        (SVGTextContentElementProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGTextContentElement.h:
+        * ksvg2/dom/SVGTextElement.cpp:
+        (SVGTextElement::getValueProperty):
+        * ksvg2/dom/SVGTextElement.h:
+        * ksvg2/dom/SVGTextPositioningElement.cpp:
+        (SVGTextPositioningElement::getValueProperty):
+        * ksvg2/dom/SVGTextPositioningElement.h:
+        * ksvg2/dom/SVGTitleElement.cpp:
+        (SVGTitleElement::getValueProperty):
+        * ksvg2/dom/SVGTitleElement.h:
+        * ksvg2/dom/SVGTransform.cpp:
+        (SVGTransform::getValueProperty):
+        (SVGTransformProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGTransform.h:
+        * ksvg2/dom/SVGTransformList.cpp:
+        (SVGTransformList::getValueProperty):
+        (SVGTransformListProtoFunc::callAsFunction):
+        * ksvg2/dom/SVGTransformList.h:
+        * ksvg2/dom/SVGTransformable.cpp:
+        (SVGTransformable::getValueProperty):
+        * ksvg2/dom/SVGTransformable.h:
+        * ksvg2/dom/SVGURIReference.cpp:
+        (SVGURIReference::getValueProperty):
+        * ksvg2/dom/SVGURIReference.h:
+        * ksvg2/dom/SVGUseElement.cpp:
+        (SVGUseElement::getValueProperty):
+        * ksvg2/dom/SVGUseElement.h:
+        * ksvg2/dom/SVGViewElement.cpp:
+        (SVGViewElement::getValueProperty):
+        * ksvg2/dom/SVGViewElement.h:
+        * ksvg2/dom/SVGZoomAndPan.cpp:
+        (SVGZoomAndPan::getValueProperty):
+        (SVGZoomAndPan::putValueProperty):
+        * ksvg2/dom/SVGZoomAndPan.h:
+        * ksvg2/ecma/Ecma.cpp:
+        (KSVG::getSVGPathSeg):
+        * ksvg2/ecma/Ecma.h:
+        * ksvg2/ecma/GlobalObject.cpp:
+        (GlobalObject::get):
+        * ksvg2/ecma/GlobalObject.h:
+        * ksvg2/events/SVGEvent.cpp:
+        (SVGEvent::getValueProperty):
+        * ksvg2/events/SVGEvent.h:
+        * ksvg2/events/SVGZoomEvent.cpp:
+        (SVGZoomEvent::getValueProperty):
+        * ksvg2/events/SVGZoomEvent.h:
+        * ksvg2/impl/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::executeScript):
+
 2005-08-07  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.

@@ -403,7 +403,7 @@ KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSVal
 	return 0;
 }
 
-KJS::Value KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
+KJS::ValueImp *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 {
 	if(s == SVGPathSeg::null)
 		return KJS::Null();
@@ -415,7 +415,7 @@ KJS::Value KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 	// Reuse existing bridge, if possible
 	KJS::ObjectImp *request = interpreter->getDOMObject(s.handle());
 	if(request)
-		return KJS::Value(request);
+		return request;
 	
 	KJS::ObjectImp *ret = 0;
 	unsigned short type = s.pathSegType();
@@ -522,7 +522,7 @@ KJS::Value KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 	}
 
 	interpreter->putDOMObject(s.handle(), ret);
-	return KJS::Value(ret);
+	return ret;
 }
 
 

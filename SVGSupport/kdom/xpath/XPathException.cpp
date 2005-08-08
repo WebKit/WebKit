@@ -34,7 +34,7 @@ using namespace KJS;
 @end
 */
 
-Value XPathException::getValueProperty(ExecState *, int token) const
+ValueImp *XPathException::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

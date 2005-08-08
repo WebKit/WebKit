@@ -40,7 +40,7 @@ using namespace KJS;
 @end
 */
 
-Value LSOutput::getValueProperty(ExecState *exec, int token) const
+ValueImp *LSOutput::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -58,7 +58,7 @@ Value LSOutput::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void LSOutput::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void LSOutput::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

@@ -39,7 +39,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGAnimatedPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGAnimatedPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

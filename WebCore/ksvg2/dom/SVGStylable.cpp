@@ -51,7 +51,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGStylable", SVGStylableProto, SVGStylableProtoFunc)
 
-Value SVGStylable::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGStylable::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -69,9 +69,9 @@ Value SVGStylable::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGStylableProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGStylableProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGStylable obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGStylable obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)

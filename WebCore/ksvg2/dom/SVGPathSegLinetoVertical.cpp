@@ -33,7 +33,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPathSegLinetoVerticalAbs::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegLinetoVerticalAbs::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -46,13 +46,13 @@ Value SVGPathSegLinetoVerticalAbs::getValueProperty(ExecState *, int token) cons
 	return Undefined();
 }
 
-void SVGPathSegLinetoVerticalAbs::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegLinetoVerticalAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegLinetoVerticalConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		default:
@@ -117,7 +117,7 @@ float SVGPathSegLinetoVerticalAbs::y() const
 @end
 */
 
-Value SVGPathSegLinetoVerticalRel::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSegLinetoVerticalRel::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -130,13 +130,13 @@ Value SVGPathSegLinetoVerticalRel::getValueProperty(ExecState *, int token) cons
 	return Undefined();
 }
 
-void SVGPathSegLinetoVerticalRel::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGPathSegLinetoVerticalRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case SVGPathSegLinetoVerticalConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			return;
 		}
 		default:

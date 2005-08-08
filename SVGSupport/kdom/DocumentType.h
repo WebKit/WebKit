@@ -117,7 +117,7 @@ namespace KDOM
 		KDOM_FORWARDPUT
 		KDOM_CAST
 
-		KJS::Value getValueProperty(KJS::ExecState *exec, int token) const;
+		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
 	};
 
 	KDOM_DEFINE_CAST(DocumentType)

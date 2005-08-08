@@ -36,7 +36,7 @@ using namespace KJS;
 @end
 */
 
-Value AbstractView::getValueProperty(ExecState *exec, int token) const
+ValueImp *AbstractView::getValueProperty(ExecState *exec, int token) const
 {
 	// No exceptions thrown here, no need for KDOM_ENTER/LEAVE_SAFE
 

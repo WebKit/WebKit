@@ -51,7 +51,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGFETurbulenceElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGFETurbulenceElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

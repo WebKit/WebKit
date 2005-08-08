@@ -41,7 +41,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGAnimatedPoints::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGAnimatedPoints::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

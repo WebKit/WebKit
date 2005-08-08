@@ -51,7 +51,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGMarkerElement", SVGMarkerElementProto, SVGMarkerElementProtoFunc)
 
-Value SVGMarkerElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGMarkerElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 	
@@ -73,9 +73,9 @@ Value SVGMarkerElement::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGMarkerElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGMarkerElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGMarkerElement obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGMarkerElement obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)

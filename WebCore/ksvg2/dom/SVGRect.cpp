@@ -44,7 +44,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGRect::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGRect::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -66,7 +66,7 @@ Value SVGRect::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGRect::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGRect::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 	
@@ -74,22 +74,22 @@ void SVGRect::putValueProperty(ExecState *exec, int token, const Value &value, i
 	{
 		case SVGRectConstants::X:
 		{
-			setX(value.toNumber(exec));
+			setX(value->toNumber(exec));
 			break;
 		}
 		case SVGRectConstants::Y:
 		{
-			setY(value.toNumber(exec));
+			setY(value->toNumber(exec));
 			break;
 		}
 		case SVGRectConstants::Width:
 		{
-			setWidth(value.toNumber(exec));
+			setWidth(value->toNumber(exec));
 			break;
 		}
 		case SVGRectConstants::Height:
 		{
-			setHeight(value.toNumber(exec));
+			setHeight(value->toNumber(exec));
 			break;
 		}
 		default:

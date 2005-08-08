@@ -53,7 +53,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("XPathEvaluator", XPathEvaluatorProto, XPathEvaluatorProtoFunc)
 
-Value XPathEvaluator::getValueProperty(ExecState *exec, int token) const
+ValueImp *XPathEvaluator::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -67,9 +67,9 @@ Value XPathEvaluator::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value XPathEvaluatorProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *XPathEvaluatorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	XPathEvaluator obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	XPathEvaluator obj(cast(exec, thisObj));
 	Q_ASSERT(obj.d != 0);
 
 	KDOM_ENTER_SAFE
@@ -93,7 +93,7 @@ Value XPathEvaluatorProtoFunc::call(ExecState *exec, Object &thisObj, const List
 			DOMString expression = toDOMString(exec, args[0]);
 			Node contextNode = ecma_cast<Node>(exec, args[1], &toNode);
 			XPathNSResolver reser = ecma_cast<XPathNSResolver>(exec, args[2], &toXPathNSResolver);
-			unsigned int type = args[3].toUInt16(exec);
+			unsigned int type = args[3]->toUInt16(exec);
 			
 			/* DOMObject is a possible pooling mechanism which we currently don't use and
 			 * hence don't know what type of class it should be. */

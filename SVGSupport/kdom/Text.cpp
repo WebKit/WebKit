@@ -43,7 +43,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("Text", TextProto, TextProtoFunc)
 
-Value Text::getValueProperty(ExecState *exec, int token) const
+ValueImp *Text::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -61,7 +61,7 @@ Value Text::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value TextProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *TextProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(Text)
 	KDOM_ENTER_SAFE
@@ -70,7 +70,7 @@ Value TextProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 	{
 		case TextConstants::SplitText:
 		{
-			unsigned long offset = args[0].toUInt32(exec);
+			unsigned long offset = args[0]->toUInt32(exec);
 			return getDOMNode(exec, obj.splitText(offset));
 		}
 		case TextConstants::ReplaceWholeText:

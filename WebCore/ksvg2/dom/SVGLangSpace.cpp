@@ -42,7 +42,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGLangSpace::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGLangSpace::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -60,7 +60,7 @@ Value SVGLangSpace::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGLangSpace::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGLangSpace::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

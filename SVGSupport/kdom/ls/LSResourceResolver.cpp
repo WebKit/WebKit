@@ -45,7 +45,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("LSResourceResolver", LSResourceResolverProto, LSResourceResolverProtoFunc)
 
-Value LSResourceResolver::getValueProperty(ExecState *exec, int token) const
+ValueImp *LSResourceResolver::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -59,7 +59,7 @@ Value LSResourceResolver::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value LSResourceResolverProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *LSResourceResolverProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(LSResourceResolver)
 	KDOM_ENTER_SAFE

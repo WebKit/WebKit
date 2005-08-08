@@ -47,7 +47,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("DocumentTraversal", DocumentTraversalProto, DocumentTraversalProtoFunc)
 
-Value DocumentTraversal::getValueProperty(ExecState *exec, int token) const
+ValueImp *DocumentTraversal::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -61,9 +61,9 @@ Value DocumentTraversal::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value DocumentTraversalProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *DocumentTraversalProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	DocumentTraversal obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	DocumentTraversal obj(cast(exec, thisObj));
 	Q_ASSERT(obj.d != 0);
 	KDOM_ENTER_SAFE
 
@@ -72,15 +72,15 @@ Value DocumentTraversalProtoFunc::call(ExecState *exec, Object &thisObj, const L
 		case DocumentTraversalConstants::CreateNodeIterator:
 		{
 			Node root = ecma_cast<Node>(exec, args[0], &toNode);
-			unsigned short whatToShow = args[1].toUInt16(exec);
-			bool entityReferenceExpansion = args[3].toBoolean(exec);
+			unsigned short whatToShow = args[1]->toUInt16(exec);
+			bool entityReferenceExpansion = args[3]->toBoolean(exec);
 			return obj.createNodeIterator(root, whatToShow, NodeFilter::null, entityReferenceExpansion).cache(exec);
 		}
 		case DocumentTraversalConstants::CreateTreeWalker:
 		{
 			Node root = ecma_cast<Node>(exec, args[0], &toNode);
-			unsigned short whatToShow = args[1].toUInt16(exec);
-			bool entityReferenceExpansion = args[3].toBoolean(exec);
+			unsigned short whatToShow = args[1]->toUInt16(exec);
+			bool entityReferenceExpansion = args[3]->toBoolean(exec);
 			return obj.createTreeWalker(root, whatToShow, NodeFilter::null, entityReferenceExpansion).cache(exec);
 		}
 		default:

@@ -48,7 +48,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("DocumentEvent", DocumentEventProto, DocumentEventProtoFunc)
 
-Value DocumentEvent::getValueProperty(ExecState *exec, int token) const
+ValueImp *DocumentEvent::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -62,9 +62,9 @@ Value DocumentEvent::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 };
 
-Value DocumentEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *DocumentEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	DocumentEvent obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	DocumentEvent obj(cast(exec, thisObj));
 	Q_ASSERT(obj.d != 0);
 
 	KDOM_ENTER_SAFE

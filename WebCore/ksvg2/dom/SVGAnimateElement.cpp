@@ -37,7 +37,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGAnimateElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGAnimateElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

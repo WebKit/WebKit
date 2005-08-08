@@ -61,7 +61,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGFilterElement", SVGFilterElementProto, SVGFilterElementProtoFunc)
 
-Value SVGFilterElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGFilterElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -91,17 +91,17 @@ Value SVGFilterElement::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGFilterElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGFilterElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGFilterElement obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGFilterElement obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)
 	{
 		case SVGFilterElementConstants::SetFilterRes:
 		{
-			unsigned long filterResX = args[0].toUInt32(exec);;
-			unsigned long filterResY = args[1].toUInt32(exec);;
+			unsigned long filterResX = args[0]->toUInt32(exec);;
+			unsigned long filterResY = args[1]->toUInt32(exec);;
 			obj.setFilterRes(filterResX, filterResY);
 			return Undefined();
 		}

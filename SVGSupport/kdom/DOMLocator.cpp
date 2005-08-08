@@ -42,7 +42,7 @@ using namespace KJS;
 @end
 */
 
-Value DOMLocator::getValueProperty(ExecState *exec, int token) const
+ValueImp *DOMLocator::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

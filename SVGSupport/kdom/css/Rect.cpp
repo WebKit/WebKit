@@ -41,7 +41,7 @@ namespace KDOM
 @end
 */
 
-KJS::Value Rect::getValueProperty(ExecState *exec, int token) const
+KJS::ValueImp *Rect::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{

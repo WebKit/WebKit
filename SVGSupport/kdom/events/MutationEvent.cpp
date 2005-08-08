@@ -49,7 +49,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("MutationEvent", MutationEventProto, MutationEventProtoFunc)
 
-Value MutationEvent::getValueProperty(ExecState *exec, int token) const
+ValueImp *MutationEvent::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -73,7 +73,7 @@ Value MutationEvent::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value MutationEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *MutationEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(MutationEvent)
 	KDOM_ENTER_SAFE
@@ -83,13 +83,13 @@ Value MutationEventProtoFunc::call(ExecState *exec, Object &thisObj, const List 
 		case MutationEventConstants::InitMutationEvent:
 		{
 			DOMString typeArg = toDOMString(exec, args[0]);
-			bool canBubbleArg = args[1].toBoolean(exec);
-			bool cancelableArg = args[2].toBoolean(exec);
+			bool canBubbleArg = args[1]->toBoolean(exec);
+			bool cancelableArg = args[2]->toBoolean(exec);
 			Node relatedNodeArg = ecma_cast<Node>(exec, args[3], &toNode);
 			DOMString prevValueArg = toDOMString(exec, args[4]);
 			DOMString newValueArg = toDOMString(exec, args[5]);
 			DOMString attrNameArg = toDOMString(exec, args[6]);
-			unsigned short attrChangeArg = args[7].toUInt16(exec);
+			unsigned short attrChangeArg = args[7]->toUInt16(exec);
 
 			obj.initMutationEvent(typeArg, canBubbleArg, cancelableArg, relatedNodeArg, prevValueArg, newValueArg, attrNameArg, attrChangeArg);
 			return Undefined();

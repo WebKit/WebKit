@@ -45,7 +45,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("UIEvent", UIEventProto, UIEventProtoFunc)
 
-Value UIEvent::getValueProperty(ExecState *exec, int token) const
+ValueImp *UIEvent::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -65,7 +65,7 @@ Value UIEvent::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value UIEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *UIEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(UIEvent)
 	KDOM_ENTER_SAFE
@@ -75,10 +75,10 @@ Value UIEventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 		case UIEventConstants::InitUIEvent:
 		{
 			DOMString typeArg = toDOMString(exec, args[0]);
-			bool canBubbleArg = args[1].toBoolean(exec);
-			bool cancelableArg = args[2].toBoolean(exec);
+			bool canBubbleArg = args[1]->toBoolean(exec);
+			bool cancelableArg = args[2]->toBoolean(exec);
 			AbstractView viewArg = ecma_cast<AbstractView>(exec, args[3], &toAbstractView);
-			long detailArg = args[4].toInt32(exec);
+			long detailArg = args[4]->toInt32(exec);
 			obj.initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg);
 			return Undefined();
 		}

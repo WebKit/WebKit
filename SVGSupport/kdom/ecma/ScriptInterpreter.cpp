@@ -46,7 +46,7 @@ public:
 	QPtrDict<KJS::ObjectImp> domObjects;
 };
 
-ScriptInterpreter::ScriptInterpreter(const KJS::Object &global, DocumentImpl *doc) : KJS::Interpreter(global), d(new Private(doc))
+ScriptInterpreter::ScriptInterpreter(KJS::ObjectImp *global, DocumentImpl *doc) : KJS::Interpreter(global), d(new Private(doc))
 {
 	if(!s_interpreterList)
 		s_interpreterList = new InterpreterList();

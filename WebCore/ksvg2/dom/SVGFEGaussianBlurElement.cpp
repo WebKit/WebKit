@@ -51,7 +51,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGFEGaussianBlurElement", SVGFEGaussianBlurElementProto, SVGFEGaussianBlurElementProtoFunc)
 
-Value SVGFEGaussianBlurElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGFEGaussianBlurElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -71,17 +71,17 @@ Value SVGFEGaussianBlurElement::getValueProperty(ExecState *exec, int token) con
 	return Undefined();
 }
 
-Value SVGFEGaussianBlurElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGFEGaussianBlurElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGFEGaussianBlurElement obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGFEGaussianBlurElement obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)
 	{
 		case SVGFEGaussianBlurElementConstants::SetStdDeviation:
 		{
-			float stdDeviationX = args[0].toNumber(exec);
-			float stdDeviationY = args[1].toNumber(exec);
+			float stdDeviationX = args[0]->toNumber(exec);
+			float stdDeviationY = args[1]->toNumber(exec);
 			obj.setStdDeviation(stdDeviationX, stdDeviationY);
 
 			return Undefined();

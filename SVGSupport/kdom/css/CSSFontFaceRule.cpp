@@ -37,7 +37,7 @@ using namespace KJS;
 @end
 */
 
-Value CSSFontFaceRule::getValueProperty(ExecState *exec, int token) const
+ValueImp *CSSFontFaceRule::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{

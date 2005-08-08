@@ -43,7 +43,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGZoomEvent::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGZoomEvent::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

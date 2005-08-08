@@ -38,7 +38,7 @@ using namespace KJS;
 @end
 */
 
-Value ProcessingInstruction::getValueProperty(ExecState *exec, int token) const
+ValueImp *ProcessingInstruction::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -56,7 +56,7 @@ Value ProcessingInstruction::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void ProcessingInstruction::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void ProcessingInstruction::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 

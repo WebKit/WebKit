@@ -41,7 +41,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGCircleElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGCircleElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

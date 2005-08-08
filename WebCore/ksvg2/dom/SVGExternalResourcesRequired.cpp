@@ -39,7 +39,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGExternalResourcesRequired::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGExternalResourcesRequired::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

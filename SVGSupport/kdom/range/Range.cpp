@@ -73,7 +73,7 @@ using namespace KDOM;
 
 KDOM_IMPLEMENT_PROTOTYPE("Range", RangeProto, RangeProtoFunc)
 
-Value Range::getValueProperty(ExecState *exec, int token) const
+ValueImp *Range::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -99,7 +99,7 @@ Value Range::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value RangeProtoFunc::call(KJS::ExecState *exec, KJS::Object &thisObj, const List &args)
+ValueImp *RangeProtoFunc::callAsFunction(KJS::ExecState *exec, KJS::ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(Range)
 	
@@ -112,14 +112,14 @@ Value RangeProtoFunc::call(KJS::ExecState *exec, KJS::Object &thisObj, const Lis
 		case RangeConstants::SetEnd:
 		{
 			Node parent = ecma_cast<Node>(exec, args[0], &toNode);
-			int offset = args[1].toInt32(exec);
+			int offset = args[1]->toInt32(exec);
 			obj.setEnd(parent, offset);
 			return Undefined();
 		}
 		case RangeConstants::SetStart:
 		{
 			Node parent = ecma_cast<Node>(exec, args[0], &toNode);
-			int offset = args[1].toInt32(exec);
+			int offset = args[1]->toInt32(exec);
 			obj.setStart(parent, offset);
 			return Undefined();
 		}	
@@ -149,7 +149,7 @@ Value RangeProtoFunc::call(KJS::ExecState *exec, KJS::Object &thisObj, const Lis
 		}
 		case RangeConstants::Collapse:
 		{
-			obj.collapse( args[0].toBoolean(exec) );
+			obj.collapse( args[0]->toBoolean(exec) );
 			return Undefined();
 		}
  		case RangeConstants::SelectNode:
@@ -166,7 +166,7 @@ Value RangeProtoFunc::call(KJS::ExecState *exec, KJS::Object &thisObj, const Lis
 		}
  		case RangeConstants::CompareBoundaryPoints:
 		{
-			int how = args[0].toInt32(exec);
+			int how = args[0]->toInt32(exec);
 			Range sourceRange = ecma_cast<Range>(exec, args[1], &toRange);
 			return Number(obj.compareBoundaryPoints(static_cast<CompareHow>(how) ,sourceRange));
 		}

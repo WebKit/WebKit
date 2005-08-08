@@ -54,7 +54,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGNumberList", SVGNumberListProto, SVGNumberListProtoFunc)
 
-Value SVGNumberList::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGNumberList::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -70,7 +70,7 @@ Value SVGNumberList::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGNumberListProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGNumberListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGNumberList)
 	KDOM_ENTER_SAFE
@@ -89,24 +89,24 @@ Value SVGNumberListProtoFunc::call(ExecState *exec, Object &thisObj, const List 
 		}
 		case SVGNumberListConstants::GetItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGNumber>(exec, obj.getItem(index));
 		}
 		case SVGNumberListConstants::InsertItemBefore:
 		{
 			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGNumber>(exec, obj.insertItemBefore(newItem, index));
 		}
 		case SVGNumberListConstants::ReplaceItem:
 		{
 			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			unsigned long index = args[1].toUInt32(exec);
+			unsigned long index = args[1]->toUInt32(exec);
 			return KDOM::safe_cache<SVGNumber>(exec, obj.replaceItem(newItem, index));
 		}
 		case SVGNumberListConstants::RemoveItem:
 		{
-			unsigned long index = args[0].toUInt32(exec);
+			unsigned long index = args[0]->toUInt32(exec);
 			return KDOM::safe_cache<SVGNumber>(exec, obj.removeItem(index));
 		}
 		case SVGNumberListConstants::AppendItem:

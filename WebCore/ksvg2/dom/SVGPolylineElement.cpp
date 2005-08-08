@@ -36,7 +36,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPolylineElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGPolylineElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 

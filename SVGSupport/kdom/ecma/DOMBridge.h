@@ -30,7 +30,7 @@
 
 namespace KJS
 {
-	class Value;
+	class ValueImp;
 	class UString;
 	class ExecState;
 };
@@ -61,20 +61,20 @@ namespace KDOM
 
 		typename T::Private *impl() const { return m_impl; }
 
-		virtual KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
+		virtual KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
 		{
 			kdDebug(26004) << "DOMBridge::get(), " << propertyName.qstring() << " Name: " << classInfo()->className << " Object: " << this->m_impl << endl;
 
 			// Look for standard properties (e.g. those in the hashtables)
 			T obj(m_impl);
-			KJS::Value val = obj.get(exec, propertyName, this);
+			KJS::ValueImp *val = obj.get(exec, propertyName, this);
 
-			if(val.type() != KJS::UndefinedType)
+			if(val->type() != KJS::UndefinedType)
 				return val;
 
 			// Not found -> forward to ObjectImp.
 			val = KJS::ObjectImp::get(exec, propertyName);
-			if(val.type() == KJS::UndefinedType)
+			if(val->type() == KJS::UndefinedType)
 				kdDebug(26004) << "WARNING: " << propertyName.qstring() << " not found in... Name: " << classInfo()->className << " Object: " << m_impl << " on line : " << exec->context().curStmtFirstLine() << endl;
 
 			return val;
@@ -105,7 +105,7 @@ namespace KDOM
 	public:
 		DOMRWBridge(KJS::ExecState *exec, typename T::Private *impl) : DOMBridge<T>(exec, impl) { }
 
-		virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::Value &value, int attr)
+		virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)
 		{
 //			if(!(attr & KJS::Internal))
 			kdDebug(26004) << "DOMRWBridge::put(), " << propertyName.qstring() << " Name: " << this->classInfo()->className << " Object: " << this->m_impl << endl;
@@ -129,19 +129,19 @@ namespace KDOM
 
 		T *impl() const { return m_impl; }
 
-		virtual KJS::Value get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
+		virtual KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
 		{
 			kdDebug(26004) << "DOMBridgeCtor::get(), " << propertyName.qstring() << " Name: " << classInfo()->className << " Object: " << this->m_impl << endl;
 
 			// Look for standard properties (e.g. those in the hashtables)
-			KJS::Value val = m_impl->get(exec, propertyName, this);
+			KJS::ValueImp *val = m_impl->get(exec, propertyName, this);
 
-			if(val.type() != KJS::UndefinedType)
+			if(val->type() != KJS::UndefinedType)
 				return val;
 
 			// Not found -> forward to ObjectImp.
 			val = KJS::ObjectImp::get(exec, propertyName);
-			if(val.type() == KJS::UndefinedType)
+			if(val->type() == KJS::UndefinedType)
 				kdDebug(26004) << "WARNING: " << propertyName.qstring() << " not found in... Name: " << classInfo()->className << " Object: " << m_impl << " on line : " << exec->context().curStmtFirstLine() << endl;
 
 			return val;

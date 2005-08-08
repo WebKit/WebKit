@@ -50,7 +50,7 @@ namespace KSVG
 
 	// Helpers
 	class SVGPathSeg;
-	KJS::Value getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
+	KJS::ValueImp *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
 };
 
 #endif

@@ -75,7 +75,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGPathElement", SVGPathElementProto, SVGPathElementProtoFunc)
 
-Value SVGPathElement::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGPathElement::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 	
@@ -91,9 +91,9 @@ Value SVGPathElement::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGPathElementProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGPathElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGPathElement obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGPathElement obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)
@@ -101,47 +101,47 @@ Value SVGPathElementProtoFunc::call(ExecState *exec, Object &thisObj, const List
 		case SVGPathElementConstants::GetTotalLength:
 			return Number(obj.getTotalLength());
 		case SVGPathElementConstants::GetPointAtLength:
-			return KDOM::safe_cache<SVGPoint>(exec, obj.getPointAtLength(args[0].toNumber(exec)));
+			return KDOM::safe_cache<SVGPoint>(exec, obj.getPointAtLength(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::GetPathSegAtLength:
-			return Number(obj.getPathSegAtLength(args[0].toNumber(exec)));
+			return Number(obj.getPathSegAtLength(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegClosePath:
 			return KDOM::safe_cache<SVGPathSeg>(exec, obj.createSVGPathSegClosePath());
 		case SVGPathElementConstants::CreateSVGPathSegMovetoAbs:
-			return KDOM::safe_cache<SVGPathSegMovetoAbs>(exec, obj.createSVGPathSegMovetoAbs(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegMovetoAbs>(exec, obj.createSVGPathSegMovetoAbs(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegMovetoRel:
-			return KDOM::safe_cache<SVGPathSegMovetoRel>(exec, obj.createSVGPathSegMovetoRel(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegMovetoRel>(exec, obj.createSVGPathSegMovetoRel(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoAbs:
-			return KDOM::safe_cache<SVGPathSegLinetoAbs>(exec, obj.createSVGPathSegLinetoAbs(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoAbs>(exec, obj.createSVGPathSegLinetoAbs(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoRel:
-			return KDOM::safe_cache<SVGPathSegLinetoRel>(exec, obj.createSVGPathSegLinetoRel(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoRel>(exec, obj.createSVGPathSegLinetoRel(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoCubicAbs:
-			return KDOM::safe_cache<SVGPathSegCurvetoCubicAbs>(exec, obj.createSVGPathSegCurvetoCubicAbs(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec), args[4].toNumber(exec), args[5].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoCubicAbs>(exec, obj.createSVGPathSegCurvetoCubicAbs(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec), args[5]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoCubicRel:
-			return KDOM::safe_cache<SVGPathSegCurvetoCubicRel>(exec, obj.createSVGPathSegCurvetoCubicRel(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec), args[4].toNumber(exec), args[5].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoCubicRel>(exec, obj.createSVGPathSegCurvetoCubicRel(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec), args[5]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoQuadraticAbs:
-			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticAbs>(exec, obj.createSVGPathSegCurvetoQuadraticAbs(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticAbs>(exec, obj.createSVGPathSegCurvetoQuadraticAbs(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoQuadraticRel:
-			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticRel>(exec, obj.createSVGPathSegCurvetoQuadraticRel(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticRel>(exec, obj.createSVGPathSegCurvetoQuadraticRel(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegArcAbs:
-			return KDOM::safe_cache<SVGPathSegArcAbs>(exec, obj.createSVGPathSegArcAbs(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec), args[4].toNumber(exec), args[5].toBoolean(exec), args[6].toBoolean(exec)));
+			return KDOM::safe_cache<SVGPathSegArcAbs>(exec, obj.createSVGPathSegArcAbs(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec), args[5]->toBoolean(exec), args[6]->toBoolean(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegArcRel:
-			return KDOM::safe_cache<SVGPathSegArcRel>(exec, obj.createSVGPathSegArcRel(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec), args[4].toNumber(exec), args[5].toBoolean(exec), args[6].toBoolean(exec)));
+			return KDOM::safe_cache<SVGPathSegArcRel>(exec, obj.createSVGPathSegArcRel(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec), args[4]->toNumber(exec), args[5]->toBoolean(exec), args[6]->toBoolean(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoHorizontalAbs:
-			return KDOM::safe_cache<SVGPathSegLinetoHorizontalAbs>(exec, obj.createSVGPathSegLinetoHorizontalAbs(args[0].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoHorizontalAbs>(exec, obj.createSVGPathSegLinetoHorizontalAbs(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoHorizontalRel:
-			return KDOM::safe_cache<SVGPathSegLinetoHorizontalRel>(exec, obj.createSVGPathSegLinetoHorizontalRel(args[0].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoHorizontalRel>(exec, obj.createSVGPathSegLinetoHorizontalRel(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoVerticalAbs:
-			return KDOM::safe_cache<SVGPathSegLinetoVerticalAbs>(exec, obj.createSVGPathSegLinetoVerticalAbs(args[0].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoVerticalAbs>(exec, obj.createSVGPathSegLinetoVerticalAbs(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegLinetoVerticalRel:
-			return KDOM::safe_cache<SVGPathSegLinetoVerticalRel>(exec, obj.createSVGPathSegLinetoVerticalRel(args[0].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegLinetoVerticalRel>(exec, obj.createSVGPathSegLinetoVerticalRel(args[0]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoCubicSmoothAbs:
-			return KDOM::safe_cache<SVGPathSegCurvetoCubicSmoothAbs>(exec, obj.createSVGPathSegCurvetoCubicSmoothAbs(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoCubicSmoothAbs>(exec, obj.createSVGPathSegCurvetoCubicSmoothAbs(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoCubicSmoothRel:
-			return KDOM::safe_cache<SVGPathSegCurvetoCubicSmoothRel>(exec, obj.createSVGPathSegCurvetoCubicSmoothRel(args[0].toNumber(exec), args[1].toNumber(exec), args[2].toNumber(exec), args[3].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoCubicSmoothRel>(exec, obj.createSVGPathSegCurvetoCubicSmoothRel(args[0]->toNumber(exec), args[1]->toNumber(exec), args[2]->toNumber(exec), args[3]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoQuadraticSmoothAbs:
-			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticSmoothAbs>(exec, obj.createSVGPathSegCurvetoQuadraticSmoothAbs(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticSmoothAbs>(exec, obj.createSVGPathSegCurvetoQuadraticSmoothAbs(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		case SVGPathElementConstants::CreateSVGPathSegCurvetoQuadraticSmoothRel:
-			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticSmoothRel>(exec, obj.createSVGPathSegCurvetoQuadraticSmoothRel(args[0].toNumber(exec), args[1].toNumber(exec)));
+			return KDOM::safe_cache<SVGPathSegCurvetoQuadraticSmoothRel>(exec, obj.createSVGPathSegCurvetoQuadraticSmoothRel(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 		default:
 			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
 	}

@@ -39,7 +39,7 @@ using namespace KJS;
 @end
 */
 
-Value CSSImportRule::getValueProperty(ExecState *exec, int token) const
+ValueImp *CSSImportRule::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{

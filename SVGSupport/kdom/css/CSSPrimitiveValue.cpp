@@ -53,7 +53,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("CSSPrimitiveValue", CSSPrimitiveValueProto, CSSPrimitiveValueProtoFunc)
 
-Value CSSPrimitiveValue::getValueProperty(ExecState *, int token) const
+ValueImp *CSSPrimitiveValue::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{
@@ -66,7 +66,7 @@ Value CSSPrimitiveValue::getValueProperty(ExecState *, int token) const
 	return Undefined();
 }
 
-Value CSSPrimitiveValueProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *CSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(CSSPrimitiveValue)
 	KDOM_ENTER_SAFE
@@ -75,19 +75,19 @@ Value CSSPrimitiveValueProtoFunc::call(ExecState *exec, Object &thisObj, const L
 	{
 		case CSSPrimitiveValueConstants::SetFloatValue:
 		{
-			unsigned short unitType = args[0].toUInt16(exec);
-			float floatValue = args[1].toNumber(exec);
+			unsigned short unitType = args[0]->toUInt16(exec);
+			float floatValue = args[1]->toNumber(exec);
 			obj.setFloatValue(unitType, floatValue);
 			return Undefined();
 		}
 		case CSSPrimitiveValueConstants::GetFloatValue:
 		{
-			unsigned short unitType = args[0].toUInt16(exec);
+			unsigned short unitType = args[0]->toUInt16(exec);
 			return Number(obj.getFloatValue(unitType));
 		}
 		case CSSPrimitiveValueConstants::SetStringValue:
 		{
-			unsigned short stringType = args[0].toUInt16(exec);
+			unsigned short stringType = args[0]->toUInt16(exec);
 			DOMString stringValue = toDOMString(exec, args[1]);
 			obj.setStringValue(stringType, stringValue);
 			return Undefined();

@@ -46,7 +46,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGTests", SVGTestsProto, SVGTestsProtoFunc)
 
-Value SVGTests::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGTests::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -66,9 +66,9 @@ Value SVGTests::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value SVGTestsProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGTestsProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGTests obj(cast(exec, static_cast<KJS::ObjectImp *>(thisObj.imp())));
+	SVGTests obj(cast(exec, thisObj));
 	KDOM_ENTER_SAFE
 
 	switch(id)

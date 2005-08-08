@@ -43,7 +43,7 @@ using namespace KJS;
 @end
 */
 
-Value StyleSheet::getValueProperty(ExecState *exec, int token) const
+ValueImp *StyleSheet::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{
@@ -68,12 +68,12 @@ Value StyleSheet::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 };
 
-void StyleSheet::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void StyleSheet::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	switch(token)
 	{
 		case StyleSheetConstants::Disabled:
-			setDisabled(value.toBoolean(exec));
+			setDisabled(value->toBoolean(exec));
 			break;
 		default:
 			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;

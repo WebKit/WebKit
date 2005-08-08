@@ -35,7 +35,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGPathSeg::getValueProperty(ExecState *, int token) const
+ValueImp *SVGPathSeg::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

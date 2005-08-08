@@ -50,7 +50,7 @@ using namespace KSVG;
 @end
 */
 
-Value SVGDocument::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGDocument::getValueProperty(ExecState *exec, int token) const
 {
 	switch(token)
 	{

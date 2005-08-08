@@ -58,7 +58,7 @@ using namespace KSVG;
 
 KSVG_IMPLEMENT_PROTOTYPE("SVGMatrix", SVGMatrixProto, SVGMatrixProtoFunc)
 
-Value SVGMatrix::getValueProperty(ExecState *exec, int token) const
+ValueImp *SVGMatrix::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -84,7 +84,7 @@ Value SVGMatrix::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-void SVGMatrix::putValueProperty(ExecState *exec, int token, const Value &value, int)
+void SVGMatrix::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
 	KDOM_ENTER_SAFE
 
@@ -92,32 +92,32 @@ void SVGMatrix::putValueProperty(ExecState *exec, int token, const Value &value,
 	{
 		case SVGMatrixConstants::A:
 		{
-			setA(value.toNumber(exec));
+			setA(value->toNumber(exec));
 			break;
 		}
 		case SVGMatrixConstants::B:
 		{
-			setB(value.toNumber(exec));
+			setB(value->toNumber(exec));
 			break;
 		}
 		case SVGMatrixConstants::C:
 		{
-			setC(value.toNumber(exec));
+			setC(value->toNumber(exec));
 			break;
 		}
 		case SVGMatrixConstants::D:
 		{
-			setD(value.toNumber(exec));
+			setD(value->toNumber(exec));
 			break;
 		}
 		case SVGMatrixConstants::E:
 		{
-			setE(value.toNumber(exec));
+			setE(value->toNumber(exec));
 			break;
 		}
 		case SVGMatrixConstants::F:
 		{
-			setF(value.toNumber(exec));
+			setF(value->toNumber(exec));
 			break;
 		}
 		default:
@@ -127,7 +127,7 @@ void SVGMatrix::putValueProperty(ExecState *exec, int token, const Value &value,
 	KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
-Value SVGMatrixProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *SVGMatrixProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(SVGMatrix)
 	KDOM_ENTER_SAFE
@@ -138,8 +138,8 @@ Value SVGMatrixProtoFunc::call(ExecState *exec, Object &thisObj, const List &arg
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.inverse());
 		case SVGMatrixConstants::Translate:
 		{
-			double x = args[0].toNumber(exec);
-			double y = args[1].toNumber(exec);
+			double x = args[0]->toNumber(exec);
+			double y = args[1]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.translate(x, y));
 		}
 		case SVGMatrixConstants::Multiply:
@@ -149,24 +149,24 @@ Value SVGMatrixProtoFunc::call(ExecState *exec, Object &thisObj, const List &arg
 		}
 		case SVGMatrixConstants::Scale:
 		{
-			double scaleFactor = args[0].toNumber(exec);
+			double scaleFactor = args[0]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.scale(scaleFactor));
 		}
 		case SVGMatrixConstants::Rotate:
 		{
-			double angle = args[0].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.rotate(angle));
 		}
 		case SVGMatrixConstants::RotateFromVector:
 		{
-			double x = args[0].toNumber(exec);
-			double y = args[1].toNumber(exec);
+			double x = args[0]->toNumber(exec);
+			double y = args[1]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.rotateFromVector(x, y));
 		}
 		case SVGMatrixConstants::ScaleNonUniform:
 		{
-			double scaleFactorX = args[0].toNumber(exec);
-			double scaleFactorY = args[1].toNumber(exec);
+			double scaleFactorX = args[0]->toNumber(exec);
+			double scaleFactorY = args[1]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.scaleNonUniform(scaleFactorX, scaleFactorY));
 		}
 		case SVGMatrixConstants::FlipX:
@@ -175,12 +175,12 @@ Value SVGMatrixProtoFunc::call(ExecState *exec, Object &thisObj, const List &arg
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.flipY());
 		case SVGMatrixConstants::SkewX:
 		{
-			double angle = args[0].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.skewX(angle));
 		}
 		case SVGMatrixConstants::SkewY:
 		{
-			double angle = args[0].toNumber(exec);
+			double angle = args[0]->toNumber(exec);
 			return KDOM::safe_cache<SVGMatrix>(exec, obj.skewY(angle));
 		}
 		default:

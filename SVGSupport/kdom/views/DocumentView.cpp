@@ -38,7 +38,7 @@ using namespace KJS;
 @end
 */
 
-Value DocumentView::getValueProperty(ExecState *exec, int token) const
+ValueImp *DocumentView::getValueProperty(ExecState *exec, int token) const
 {
 	// No exceptions thrown here, no need for KDOM_ENTER/LEAVE_SAFE
 

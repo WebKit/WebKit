@@ -34,7 +34,7 @@ using namespace KJS;
 @end
 */
 
-Value DOMException::getValueProperty(ExecState *, int token) const
+ValueImp *DOMException::getValueProperty(ExecState *, int token) const
 {
 	switch(token)
 	{

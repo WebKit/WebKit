@@ -56,7 +56,7 @@ using namespace KJS;
 
 KDOM_IMPLEMENT_PROTOTYPE("Event", EventProto, EventProtoFunc)
 
-Value Event::getValueProperty(ExecState *exec, int token) const
+ValueImp *Event::getValueProperty(ExecState *exec, int token) const
 {
 	KDOM_ENTER_SAFE
 
@@ -85,7 +85,7 @@ Value Event::getValueProperty(ExecState *exec, int token) const
 					return obj.cache(exec);
 			}
 			
-			return Value();
+			return NULL;
 		}
 		case EventConstants::EventPhase:
 			return Number(eventPhase());
@@ -103,7 +103,7 @@ Value Event::getValueProperty(ExecState *exec, int token) const
 	return Undefined();
 }
 
-Value EventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
+ValueImp *EventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
 	KDOM_CHECK_THIS(Event)
 	KDOM_ENTER_SAFE
@@ -123,8 +123,8 @@ Value EventProtoFunc::call(ExecState *exec, Object &thisObj, const List &args)
 		case EventConstants::InitEvent:
 		{
 			DOMString eventTypeArg = toDOMString(exec, args[0]);
-			bool canBubbleArg = args[1].toBoolean(exec);
-			bool cancelableArg = args[2].toBoolean(exec);
+			bool canBubbleArg = args[1]->toBoolean(exec);
+			bool cancelableArg = args[2]->toBoolean(exec);
 			obj.initEvent(eventTypeArg, canBubbleArg, cancelableArg);
 			return Undefined();
 		}
