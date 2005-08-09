@@ -39,6 +39,7 @@
 using DOM::CSSException;
 using DOM::DOMString;
 using DOM::DocumentImpl;
+using DOM::EventException;
 using DOM::NodeImpl;
 using DOM::RangeException;
 using khtml::HashMap;
@@ -341,8 +342,10 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
     type = "CSS";
     code -= CSSException::_EXCEPTION_OFFSET;
+  } else if (code >= EventException::_EXCEPTION_OFFSET && code <= EventException::_EXCEPTION_MAX) {
+    type = "DOM Events";
+    code -= EventException::_EXCEPTION_OFFSET;
   }
-
   char buffer[100]; // needs to fit 20 characters, plus an integer in ASCII, plus a null character
   sprintf(buffer, "%s exception %d", type, code);
 

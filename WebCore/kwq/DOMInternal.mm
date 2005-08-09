@@ -27,6 +27,7 @@
 
 #import "css_stylesheet.h"
 #import "dom2_range.h"
+#import "dom2_events.h"
 #import "dom_exception.h"
 #import "dom_string.h"
 #import "dom_docimpl.h"
@@ -44,6 +45,7 @@
 using DOM::CSSException;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
+using DOM::EventException;
 using DOM::NodeImpl;
 using DOM::RangeException;
 
@@ -88,6 +90,7 @@ void removeDOMWrapper(DOMObjectInternal *impl)
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMCSSException = @"DOMCSSException";
+NSString * const DOMEventException = @"DOMEventException";
 
 void raiseDOMException(int code)
 {
@@ -101,6 +104,9 @@ void raiseDOMException(int code)
     } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
         name = DOMCSSException;
         code -= CSSException::_EXCEPTION_OFFSET;
+    } else if (code >= EventException::_EXCEPTION_OFFSET && code<= EventException::_EXCEPTION_MAX) {
+        name = DOMEventException;
+        code -= EventException::_EXCEPTION_OFFSET;
     }
 
     NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];

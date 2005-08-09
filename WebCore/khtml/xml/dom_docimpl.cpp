@@ -2319,7 +2319,7 @@ EventImpl *DocumentImpl::createEvent(const DOMString &eventType, int &exceptionc
         return new MutationEventImpl();
     else if (eventType == "KeyboardEvents" || eventType == "KeyboardEvent")
         return new KeyboardEventImpl();
-    else if (eventType == "HTMLEvents" || eventType == "Event")
+    else if (eventType == "HTMLEvents" || eventType == "Event" || eventType == "Events")
         return new EventImpl();
     else {
         exceptioncode = DOMException::NOT_SUPPORTED_ERR;

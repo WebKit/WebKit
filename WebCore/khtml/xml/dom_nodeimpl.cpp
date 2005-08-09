@@ -475,8 +475,8 @@ EventListener *NodeImpl::getHTMLEventListener(int id)
 
 bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 {
-    if (!evt) {
-        exceptioncode = 0;
+    if (!evt || evt->type().isEmpty()) { 
+        exceptioncode = EventException::_EXCEPTION_OFFSET + EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
 
