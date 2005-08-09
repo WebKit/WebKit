@@ -1,23 +1,5 @@
 This test checks for regression against: 3381 Date.prototype.setDate() incorrect for values >=128.
 
-If the test passes, all the dates below will be sequential.
+If the test passes, "Success" will be printed below.
 
-setDate(120): Mon Mar 30 1970 16:00:00 GMT-0800
-
-setDate(121): Tue Mar 31 1970 16:00:00 GMT-0800
-
-setDate(122): Wed Apr 01 1970 16:00:00 GMT-0800
-
-setDate(123): Thu Apr 02 1970 16:00:00 GMT-0800
-
-setDate(124): Fri Apr 03 1970 16:00:00 GMT-0800
-
-setDate(125): Sat Apr 04 1970 16:00:00 GMT-0800
-
-setDate(126): Sun Apr 05 1970 16:00:00 GMT-0800
-
-setDate(127): Mon Apr 06 1970 16:00:00 GMT-0800
-
-setDate(128): Tue Apr 07 1970 16:00:00 GMT-0800
-
-setDate(129): Wed Apr 08 1970 16:00:00 GMT-0800
+Success!
