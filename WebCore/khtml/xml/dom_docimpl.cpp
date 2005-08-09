@@ -115,7 +115,7 @@ DOMImplementationImpl::~DOMImplementationImpl()
 bool DOMImplementationImpl::hasFeature ( const DOMString &feature, const DOMString &version )
 {
     QString lower = feature.string().lower();
-    if (lower == "core" || lower == "html" || lower == "xml")
+    if (lower == "core" || lower == "html" || lower == "xml" || lower == "xhtml")
         return version.isEmpty() || version == "1.0" || version == "2.0";
     if (lower == "css"
             || lower == "css2"

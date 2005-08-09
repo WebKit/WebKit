@@ -1,6 +1,28 @@
 2005-08-09  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson <andersca@mac.com>
+        
+        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4330>
+            hasFeature('xhtml', ...) should return true
+
+        Reviewed by darin
+
+        Test cases updated:
+        * layout-tests/dom/html/level2/html/HTMLBodyElement09-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLBodyElement10-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLDocument24-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLDocument25-expected.txt:
+        * layout-tests/dom/html/level2/html/hasFeature03-expected.txt:
+        * layout-tests/dom/html/level2/html/hasFeature04-expected.txt:
+        These are successful now.
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::hasFeature):
+        Support "xhtml".
+
+2005-08-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Patch by Anders Carlsson <andersca@mac.com>
 
         Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4322> 
 	       date-big-setdate.html testcase fails if the timezone isn't UTC-8
