@@ -1,3 +1,15 @@
+2005-08-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for radar bug #4202641, make sure line breaks happen inside
+	white-space:pre if word-wrap:break-word is set.
+	
+        Reviewed by darin
+
+        Test cases added: fast/text/whitespace/pre-break-word.html
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+
 2005-08-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
