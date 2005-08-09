@@ -197,6 +197,7 @@ public:
     void calcBlockMinMaxWidth();
 
     virtual int getBaselineOfFirstLineBox() const;
+    virtual int getBaselineOfLastLineBox() const;
 
     RootInlineBox* firstRootBox() const { return static_cast<RootInlineBox*>(m_firstLineBox); }
     RootInlineBox* lastRootBox() const { return static_cast<RootInlineBox*>(m_lastLineBox); }

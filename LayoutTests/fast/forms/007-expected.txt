@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,0) size 0x0
           RenderText {TEXT} at (0,18) size 80x18
             text run at (0,18) width 80: "Hello world."
-      RenderText {TEXT} at (115,66) size 4x18
-        text run at (115,66) width 4: " "
+      RenderText {TEXT} at (115,48) size 4x18
+        text run at (115,48) width 4: " "
       RenderFieldSet {FIELDSET} at (121,18) size 114x62 [border: (2px groove #C0C0C0)]
         RenderLegend {LEGEND} at (12,0) size 90x18
           RenderText {TEXT} at (2,0) size 86x18

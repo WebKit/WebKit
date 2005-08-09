@@ -3188,8 +3188,18 @@ short RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
     if (isReplaced() && !isRootLineBox) {
+        // For "leaf" theme objects, let the theme decide what the baseline position is.
+        // FIXME: Might be better to have a custom CSS property instead, so that if the theme
+        // is turned off, checkboxes/radios will still have decent baselines.
         if (style()->hasAppearance() && !theme()->isControlContainer(style()->appearance()))
             return theme()->baselinePosition(this);
+            
+        // CSS2.1 states that the baseline of an inline block is the baseline of the last line box in
+        // the normal flow.  We make an exception for marquees, since their baselines are meaningless
+        // (the content inside them moves).  This matches WinIE as well, which just bottom-aligns them.
+        int baselinePos = (m_layer && m_layer->marquee()) ? -1 : getBaselineOfLastLineBox();
+        if (baselinePos != -1)
+            return marginTop() + baselinePos;
         return height() + marginTop() + marginBottom();
     }
     return RenderFlow::baselinePosition(b, isRootLineBox);
@@ -3210,6 +3220,30 @@ int RenderBlock::getBaselineOfFirstLineBox() const
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isFloatingOrPositioned()) {
                 int result = curr->getBaselineOfFirstLineBox();
+                if (result != -1)
+                    return curr->yPos() + result; // Translate to our coordinate space.
+            }
+        }
+    }
+
+    return -1;
+}
+
+int RenderBlock::getBaselineOfLastLineBox() const
+{
+    if (!isBlockFlow())
+        return RenderFlow::getBaselineOfLastLineBox();
+
+    if (childrenInline()) {
+        if (m_lastLineBox)
+            return m_lastLineBox->yPos() + m_lastLineBox->baseline();
+        else
+            return -1;
+    }
+    else {
+        for (RenderObject* curr = lastChild(); curr; curr = curr->previousSibling()) {
+            if (!curr->isFloatingOrPositioned()) {
+                int result = curr->getBaselineOfLastLineBox();
                 if (result != -1)
                     return curr->yPos() + result; // Translate to our coordinate space.
             }

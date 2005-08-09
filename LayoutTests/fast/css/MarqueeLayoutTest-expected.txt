@@ -1,8 +1,8 @@
-layer at (0,0) size 800x708
+layer at (0,0) size 800x890
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x708
-  RenderBlock {HTML} at (0,0) size 800x708
-    RenderBody {BODY} at (8,8) size 784x692
+layer at (0,0) size 800x890
+  RenderBlock {HTML} at (0,0) size 800x890
+    RenderBody {BODY} at (8,8) size 784x874
       RenderBlock {P} at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 284x18
           text run at (0,0) width 284: "Tests: the height attribute for the marquee tag"
@@ -22,7 +22,7 @@ layer at (0,0) size 800x708
           text run at (0,18) width 50: "the text "
           text run at (50,18) width 678: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
       RenderBlock {HR} at (0,174) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,184) size 784x508
+      RenderBlock (anonymous) at (0,184) size 784x690
         RenderText {TEXT} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
@@ -34,7 +34,7 @@ layer at (0,0) size 800x708
         RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,168) size 0x18
         RenderBR {BR} at (0,186) size 0x18
-        RenderBlock {DIV} at (0,204) size 113x200 [bgcolor=#008000]
+        RenderBlock {DIV} at (0,390) size 113x200 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 113x18
             text run at (0,0) width 113: "This is 200px tall."
         RenderText {TEXT} at (113,390) size 4x18
@@ -44,7 +44,7 @@ layer at (0,0) size 800x708
         RenderText {TEXT} at (521,390) size 4x18
           text run at (521,390) width 4: " "
         RenderText {TEXT} at (0,0) size 0x0
-        RenderBlock {DIV} at (0,408) size 113x100 [bgcolor=#008000]
+        RenderBlock {DIV} at (0,590) size 113x100 [bgcolor=#008000]
           RenderText {TEXT} at (0,0) size 113x18
             text run at (0,0) width 113: "This is 100px tall."
         RenderText {TEXT} at (0,0) size 0x0

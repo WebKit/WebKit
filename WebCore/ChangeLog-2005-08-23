@@ -1,3 +1,29 @@
+2005-08-09  David Hyatt  <hyatt@apple.com>
+
+	Implement baseline alignment support for inline blocks.  Inline blocks are supposed to use
+	the baseline of the last line in the block as their baseline.  For marquees we still
+	bottom align, since marquees really have no discernible baseline in many cases (and this
+	retains compatibility with WinIE).
+	
+        Reviewed by cblu
+
+        Test cases added: 006.html in fast/inline-block
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::baselinePosition):
+        (khtml::RenderBlock::getBaselineOfLastLineBox):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::getBaselineOfLastLineBox):
+        * layout-tests/css1/box_properties/acid_test-expected.txt:
+        * layout-tests/fast/css/MarqueeLayoutTest-expected.txt:
+        * layout-tests/fast/forms/007-expected.txt:
+        * layout-tests/fast/inline-block/001-expected.txt:
+        * layout-tests/fast/inline-block/001.html:
+        * layout-tests/fast/inline-block/006-expected.txt: Added.
+        * layout-tests/fast/inline-block/006.html: Added.
+        * layout-tests/fast/selectors/064-expected.txt:
+
 2005-08-09  Vicki Murley  <vicki@apple.com>
 
         Fixed by Anders Carlsson, Reviewed by Maciej.
