@@ -222,7 +222,7 @@ static int writeFunc(void* context, const char* buffer, int len)
     return 0;
 }
 
-static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *userData, const char* uri = NULL)
+static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *userData)
 {
     static bool didInit = false;
     if (!didInit) {
@@ -232,7 +232,7 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
         didInit = true;
     }
 
-    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, userData, NULL, 0, uri);
+    xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, userData, NULL, 0, NULL);
     const QChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
     xmlSwitchEncoding(parser, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
@@ -577,7 +577,7 @@ void XMLTokenizer::finish()
     m_parserStopped = false;
     m_sawError = false;
     m_sawXSLTransform = false;
-    m_context = createQStringParser(&sax, this, m_doc->document()->URL().ascii());
+    m_context = createQStringParser(&sax, this);
     parseQString(m_context, m_xmlCode);
     xmlFreeParserCtxt(m_context);
     m_context = NULL;

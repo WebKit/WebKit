@@ -1,3 +1,13 @@
+2005-08-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/4056369> XML parsing hits disk to turn URL incorrectly passed as relative path name into absolute (prevents idle sleep)
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::createQStringParser): removed last parameter, since we are no longer passing the url to xmlCreatePushParserCtxt
+        (khtml::XMLTokenizer::finish): removed last parameter from createQStringParser
+
 2005-08-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for radar bug #4202641, make sure line breaks happen inside
