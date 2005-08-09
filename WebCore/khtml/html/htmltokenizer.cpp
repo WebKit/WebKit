@@ -443,10 +443,12 @@ void HTMLTokenizer::scriptHandler()
     currToken.beginTag = false;
     processToken();
 
+    // Scripts following a frameset element should not be executed or even loaded in the case of extern scripts.
+    bool followingFrameset = (parser->doc()->body() && parser->doc()->body()->hasTagName(HTMLNames::framesetTag));
     TokenizerString *savedPrependingSrc = currentPrependingSrc;
     TokenizerString prependingSrc;
     currentPrependingSrc = &prependingSrc;
-    if ( !parser->skipMode() ) {
+    if (!parser->skipMode() && !followingFrameset) {
         if (cs) {
              //kdDebug( 6036 ) << "cachedscript extern!" << endl;
              //kdDebug( 6036 ) << "src: *" << QString( src.current(), src.length() ).latin1() << "*" << endl;

@@ -1,5 +1,21 @@
 2005-08-09  Justin Garcia  <justin.garcia@apple.com>
 
+        Patch by Anders Carlsson  <andersca@mac.com>
+
+        Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3837>
+            Page nearly loads but then returned to default page by javascript issue
+
+        Reviewed by darin
+
+        Test cases added:
+        * layout-tests/fast/tokenizer/script-after-frameset-expected.txt: Added.
+        * layout-tests/fast/tokenizer/script-after-frameset.html: Added.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptHandler):
+
+2005-08-09  Justin Garcia  <justin.garcia@apple.com>
+
         Patch by Anders Carlsson <andersca@mac.com>
         
         Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4330>
