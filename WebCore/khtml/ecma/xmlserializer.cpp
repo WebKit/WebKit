@@ -28,7 +28,7 @@
 
 #include <kdebug.h>
 
-using DOM::DocumentImpl;
+using DOM::NodeImpl;
 
 namespace KJS {
 
@@ -85,12 +85,12 @@ ValueImp *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
 	return Undefined();
       }
 
-      if (!args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
+      if (!args[0]->toObject(exec)->inherits(&DOMNode::info)) {
 	return Undefined();
       }
 
-      DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
-      return getStringOrNull(doc->toString().string());
+      NodeImpl *node = static_cast<NodeImpl *>(static_cast<DOMNode *>(args[0]->toObject(exec))->impl());
+      return getStringOrNull(node->toString().string());
     }
   }
 

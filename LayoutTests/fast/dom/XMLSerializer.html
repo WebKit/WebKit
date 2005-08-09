@@ -1,0 +1,48 @@
+<html>
+<head>
+<script>
+function debug(str) {
+	li = document.createElement('li');
+	li.appendChild(document.createTextNode(str));
+	document.getElementById('console').appendChild(li);
+}
+
+function parseDocument() {
+	str = '<test><child1>First child</child1>';
+	str += '<child2 attr="an attribute">Second child</child2>';
+	str += '<!-- A comment --></test>';
+	
+	parser = new DOMParser();
+	doc = parser.parseFromString(str, 'text/xml');
+	
+	
+	return doc;
+}
+
+function runTests() {
+	if (window.layoutTestController) {
+    	layoutTestController.dumpAsText();
+	}
+
+	doc = parseDocument();
+	
+	child1 = doc.documentElement.firstChild;
+	child2 = child1.nextSibling
+	comment = child2.nextSibling;
+	
+	serializer = new XMLSerializer();
+	
+	debug(serializer.serializeToString(child1));
+	debug(serializer.serializeToString(child2));
+	debug(serializer.serializeToString(comment));	
+	debug(serializer.serializeToString(doc));
+}
+
+</script>
+</head>
+<body onload="runTests()">
+This tests XMLSerializer on different node types. If the test is successful, there should be four lines of output. The first line should be the child1 tag. The second should be the child2 tag. The third one should be a comment and the fourth one should be the complete document.
+<ul id="console">
+</ul>
+</body>
+</html>

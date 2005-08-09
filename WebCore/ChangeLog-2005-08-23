@@ -1,3 +1,16 @@
+2005-08-09  Vicki Murley  <vicki@apple.com>
+
+        Fixed by Anders Carlsson, Reviewed by Maciej.
+
+	- fixed <rdar://problem/4071417> add XMLSerializer object to WebCore's JavaScript support (4046)
+ 
+        Test cases added: 
+        * layout-tests/fast/dom/XMLSerializer-expected.txt: Added.
+        * layout-tests/fast/dom/XMLSerializer.html: Added.
+
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::callAsFunction): allow any node to be serialized, not just documents
+
 2005-08-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

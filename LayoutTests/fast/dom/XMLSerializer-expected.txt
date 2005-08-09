@@ -1,0 +1,6 @@
+This tests XMLSerializer on different node types. If the test is successful, there should be four lines of output. The first line should be the child1 tag. The second should be the child2 tag. The third one should be a comment and the fourth one should be the complete document.
+<child1>First child</child1>
+<child2 attr="an attribute">Second child</child2>
+<!-- A comment -->
+<test><child1>First child</child1><child2 attr="an attribute">Second child</child2><!-- A comment --></test>
+
