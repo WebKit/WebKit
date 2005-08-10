@@ -1,3 +1,16 @@
+2005-08-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/4210906> Word selection wrong with tabs
+
+        Test cases added: selection/extend-by-word-001-html
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode):
+        * layout-tests/editing/selection/extend-by-word-001-html: Added.
+        * layout-tests/editing/selection/extend-by-word-001-expected.txt: Added.
+
 2005-08-09  Justin Garcia  <justin.garcia@apple.com>
 
         Patch by Anders Carlsson  <andersca@mac.com>

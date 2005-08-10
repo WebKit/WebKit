@@ -229,6 +229,9 @@ bool TextIterator::handleTextNode()
         long end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
         long runEnd = kMin(strLength, end);
 
+        if (runStart >= runEnd)
+            return true;
+
         m_positionNode = m_node;
         m_positionOffsetBaseNode = 0;
         m_positionStartOffset = runStart;
