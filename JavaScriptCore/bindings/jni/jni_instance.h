@@ -70,23 +70,6 @@ public:
     
     virtual Class *getClass() const;
     
-    JavaInstance (const JavaInstance &other);
-
-    JavaInstance &operator=(const JavaInstance &other){
-        if (this == &other)
-            return *this;
-        
-        JObjectWrapper *_oldInstance = _instance;
-        _instance = other._instance;
-        _instance->ref();
-        _oldInstance->deref();
-		
-        // Classes are kept around forever.
-        _class = other._class;
-        
-        return *this;
-    };
-
     virtual void begin();
     virtual void end();
     
@@ -103,6 +86,10 @@ public:
     ValueImp *booleanValue() const;
         
 private:
+    JavaInstance ();                         // prevent default construction
+    JavaInstance (JavaInstance &);           // prevent copying
+    JavaInstance &operator=(JavaInstance &); // prevent copying
+    
     JObjectWrapper *_instance;
     mutable JavaClass *_class;
 };

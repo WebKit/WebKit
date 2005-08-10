@@ -51,16 +51,8 @@ JavaInstance::JavaInstance (jobject instance, const RootObject *r)
 JavaInstance::~JavaInstance () 
 {
     _instance->deref();
+    delete _class; 
 }
-
-
-JavaInstance::JavaInstance (const JavaInstance &other) : Instance() 
-{
-    _instance = other._instance;
-    _instance->ref();
-    // Classes are kept around forever.
-    _class = other._class;
-};
 
 #define NUM_LOCAL_REFS 64
 
@@ -77,7 +69,7 @@ void JavaInstance::end()
 Class *JavaInstance::getClass() const 
 {
     if (_class == 0)
-        _class = JavaClass::classForInstance (_instance->_instance);
+        _class = new JavaClass (_instance->_instance);
     return _class;
 }
 

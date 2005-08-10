@@ -1,3 +1,34 @@
+2005-08-10  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed <rdar://problem/4151132> REGRESSION: Some applet liveconnect calls 
+        throws privilege exception.
+        
+        Reviewed by richard and mjs.
+
+        -I removed the global static JavaClass cache, since it violated Java
+        security to cache classes between websites and applets.
+        
+        * bindings/jni/jni_class.cpp: 
+            -removed global static cache dictionary
+            -instance constructor and destructor now do the work that used to 
+            be done by static factory methods
+            -removed obsolete functions
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bindings/jni/jni_class.h:
+            -removed obsolete function declarations
+            -made copying private since it's unused and it's also not clear
+            excatly how copying would work with Java security
+            -made default construction private since it's meaningless
+        * bindings/jni/jni_instance.cpp:
+            -removed obsolete functions
+        (JavaInstance::~JavaInstance):
+        (JavaInstance::getClass):
+        * bindings/jni/jni_instance.h:
+           -made copying private since it's unused and it's also not clear
+            excatly how copying would work with Java security
+            -made default construction private since it's meaningless
+
 2005-08-08  Geoffrey Garen  <ggaren@apple.com>
 
         -fixed crash caused by fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4313

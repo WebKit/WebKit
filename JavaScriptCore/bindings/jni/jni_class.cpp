@@ -29,10 +29,21 @@
 
 using namespace KJS::Bindings;
 
-void JavaClass::_commonInit (jobject aClass)
+JavaClass::JavaClass (jobject anInstance)
 {
-    long i;
+    jobject aClass = callJNIObjectMethod(anInstance, "getClass", "()Ljava/lang/Class;");
+    
+    if (!aClass) {
+        fprintf (stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, anInstance);
+        return;
+    }
+    
+    jstring className = (jstring)callJNIObjectMethod(aClass, "getName", "()Ljava/lang/String;");
+    const char *classNameC = getCharactersFromJString (className);
+    _name = strdup (classNameC);
+    releaseCharactersForJString(className, classNameC);
 
+    long i;
     JNIEnv *env = getJNIEnv();
     
     // Get the fields
@@ -65,7 +76,7 @@ void JavaClass::_commonInit (jobject aClass)
         CFRelease (methodName);
         env->DeleteLocalRef (aJMethod);
     }
-
+    
     // Get the constructors
     jarray constructors = (jarray)callJNIObjectMethod (aClass, "getConstructors", "()[Ljava/lang/reflect/Constructor;");
     _numConstructors = env->GetArrayLength (constructors);    
@@ -77,86 +88,11 @@ void JavaClass::_commonInit (jobject aClass)
     }
 }
 
-JavaClass::JavaClass (const char *className)
-{
-    JNIEnv *env = getJNIEnv();
-    
-    _name = strdup (className);
-    
-    // Get the class
-    jclass aClass = env->FindClass(_name);
-    if (!aClass){   
-        fprintf (stderr, "%s:  unable to find class %s\n", __PRETTY_FUNCTION__, _name);
-        return;
-    }
-
-    _commonInit (aClass);
-
-    env->DeleteLocalRef (aClass);
-}
-
-JavaClass::JavaClass (jobject aClass)
-{
-    _name = 0;
-    _commonInit (aClass);
-}
-
-static CFMutableDictionaryRef classesByName = 0;
-
-static void _createClassesByNameIfNecessary()
-{
-    if (classesByName == 0)
-        classesByName = CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-}
-
-JavaClass *JavaClass::classForName (const char *name)
-{
-    _createClassesByNameIfNecessary();
-    
-    CFStringRef stringName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    JavaClass *aClass = (JavaClass *)CFDictionaryGetValue(classesByName, stringName);
-    if (aClass == NULL) {
-        aClass = new JavaClass (name);
-        CFDictionaryAddValue (classesByName, stringName, aClass);
-    }
-    CFRelease (stringName);
-
-    return aClass;
-}
-
-void JavaClass::setClassName (const char *n)
-{
-    free ((void *)_name);
-    _name = strdup(n);
-}
-
-JavaClass *JavaClass::classForInstance (jobject instance)
-{
-    _createClassesByNameIfNecessary();
-    
-    jobject classOfInstance = callJNIObjectMethod(instance, "getClass", "()Ljava/lang/Class;");
-	
-    if (!classOfInstance) {
-        fprintf (stderr, "%s:  unable to call getClass on instance %p\n", __PRETTY_FUNCTION__, instance);
-        return 0;
-    }
-	
-    jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
-
-    const char *classNameC = getCharactersFromJString (className);
-    
-    CFStringRef stringName = CFStringCreateWithCString(NULL, classNameC, kCFStringEncodingASCII);
-    JavaClass *aClass = (JavaClass *)CFDictionaryGetValue(classesByName, stringName);
-    if (aClass == NULL) {
-        aClass = new JavaClass (classOfInstance);
-        aClass->setClassName(classNameC);
-        CFDictionaryAddValue (classesByName, stringName, aClass);
-    }
-    CFRelease (stringName);
-    
-    releaseCharactersForJString(className, classNameC);
-
-    return aClass;
+JavaClass::~JavaClass () {
+    free((void *)_name);
+    CFRelease (_fields);
+    CFRelease (_methods);
+    delete [] _constructors;
 }
 
 MethodList JavaClass::methodsNamed(const char *name, Instance *instance) const
@@ -168,7 +104,6 @@ MethodList JavaClass::methodsNamed(const char *name, Instance *instance) const
         return *methodList;
     return MethodList();
 }
-
 
 Field *JavaClass::fieldNamed(const char *name, Instance *instance) const
 {
