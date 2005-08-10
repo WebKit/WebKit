@@ -1,3 +1,15 @@
+2005-08-10  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John.
+ 
+	- attempted fix for <rdar://problem/4070895> 8A428: Unrepro Safari crash on 
+	friendster.com (XMLHttpRequest::changeState) 
+
+        Test cases added: None - there are no known reproducible cases of this crash
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::changeState): add checks for NULL document
+
 2005-08-10  Adele Peterson  <adele@apple.com>
 
         Bumping version to 420+

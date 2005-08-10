@@ -262,7 +262,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   if (state != newState) {
     state = newState;
     
-    if (onReadyStateChangeListener != 0 && doc->part()) {
+    if (doc && doc->part() && onReadyStateChangeListener != 0) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
@@ -271,7 +271,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       ev->deref();
     }
     
-    if (state == Completed && onLoadListener != 0 && doc->part()) {
+    if (doc && doc->part() && state == Completed && onLoadListener != 0) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
