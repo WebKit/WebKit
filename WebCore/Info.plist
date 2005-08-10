@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WebCore</string>
 	<key>CFBundleGetInfoString</key>
-	<string>413.1, Copyright 2005 Apple Computer, Inc.; Copyright 1997 Martin Jones &lt;mjones@kde.org&gt;; Copyright 1998, 1999 Torben Weis &lt;weis@kde.org&gt;; Copyright 1998, 1999, 2002 Waldo Bastian &lt;bastian@kde.org&gt;; Copyright 1998-2000 Lars Knoll &lt;knoll@kde.org&gt;; Copyright 1999, 2001 Antti Koivisto &lt;koivisto@kde.org&gt;; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2000 Simon Hausmann &lt;hausmann@kde.org&gt;; Copyright 2000, 2001 Dirk Mueller &lt;mueller@kde.org&gt;; Copyright 2000, 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 2000 Daniel Molkentin &lt;molkentin@kde.org&gt;; Copyright 2000 Stefan Schimanski &lt;schimmi@kde.org&gt;; Copyright 1998-2000 Netscape Communications Corporation; Copyright 1998, 1999, 2000 Thai Open Source Software Center Ltd and Clark Cooper; Copyright 2001, 2002 Expat maintainers.</string>
+	<string>420+, Copyright 2005 Apple Computer, Inc.; Copyright 1997 Martin Jones &lt;mjones@kde.org&gt;; Copyright 1998, 1999 Torben Weis &lt;weis@kde.org&gt;; Copyright 1998, 1999, 2002 Waldo Bastian &lt;bastian@kde.org&gt;; Copyright 1998-2000 Lars Knoll &lt;knoll@kde.org&gt;; Copyright 1999, 2001 Antti Koivisto &lt;koivisto@kde.org&gt;; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2000 Simon Hausmann &lt;hausmann@kde.org&gt;; Copyright 2000, 2001 Dirk Mueller &lt;mueller@kde.org&gt;; Copyright 2000, 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 2000 Daniel Molkentin &lt;molkentin@kde.org&gt;; Copyright 2000 Stefan Schimanski &lt;schimmi@kde.org&gt;; Copyright 1998-2000 Netscape Communications Corporation; Copyright 1998, 1999, 2000 Thai Open Source Software Center Ltd and Clark Cooper; Copyright 2001, 2002 Expat maintainers.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebCore</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -17,8 +17,8 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>413.1</string>
+	<string>420+</string>
 	<key>CFBundleVersion</key>
-	<string>413.1</string>
+	<string>420+</string>
 </dict>
 </plist>

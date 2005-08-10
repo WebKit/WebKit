@@ -1,3 +1,9 @@
+2005-08-10  Adele Peterson  <adele@apple.com>
+
+        Bumping version to 420+
+
+        * Info.plist:
+
 2005-08-10  Geoffrey Garen  <ggaren@apple.com>
 
         -fixed <rdar://problem/4151132> REGRESSION: Some applet liveconnect calls 
