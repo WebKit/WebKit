@@ -1,3 +1,9 @@
+2005-08-11  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated for one of the tests that Darin incidentally fixed.
+
+        * tests/mozilla/expected.html:
+
 2005-08-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
