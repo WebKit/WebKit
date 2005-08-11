@@ -140,15 +140,14 @@ static CFMutableDictionaryRef	sViewMap;
 }
 
 - (void)setNeedsDisplayInRect:(NSRect)invalidRect {
+        invalidRect = NSUnionRect(invalidRect, [self _dirtyRect]);
 	[super setNeedsDisplayInRect:invalidRect];
 	
-    if (_vFlags.needsDisplay || _vFlags.needsDisplayForBounds) 
+    if (!NSIsEmptyRect(invalidRect)) 
     {
     	HIViewRef	hiView = NULL;
     	NSRect		targetBounds = _bounds;
     	NSView*		view = self;
-    	
-		invalidRect = [self _dirtyRect];
 		
     	while ( view ) {
 			targetBounds = [view bounds];
