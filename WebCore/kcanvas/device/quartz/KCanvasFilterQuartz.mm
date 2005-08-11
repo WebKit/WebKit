@@ -160,8 +160,8 @@ void KCanvasFilterQuartz::applyFilter(CGContextRef *context, const QRect &bbox, 
 		destOrigin.x += bboxOrigin.x;
 		destOrigin.y += bboxOrigin.y;
 		
-		CGRect extent = [outputImage extent];
-		NSLog(@"Drawing from rect: \n%@ \n at point: \n%@ \nextent: \n%@ \nmatrix: \n%@", NSStringFromRect(*(NSRect *)&sourceRect), NSStringFromPoint(*(NSPoint *)&destOrigin), NSStringFromRect(*(NSRect *)&extent), CFStringFromCGAffineTransform(objectTransform));
+		//CGRect extent = [outputImage extent];
+		//NSLog(@"Drawing from rect: \n%@ \n at point: \n%@ \nextent: \n%@ \nmatrix: \n%@", NSStringFromRect(*(NSRect *)&sourceRect), NSStringFromPoint(*(NSPoint *)&destOrigin), NSStringFromRect(*(NSRect *)&extent), CFStringFromCGAffineTransform(objectTransform));
 		//outputImage = [outputImage imageByApplyingTransform:objectTransform];
 		[m_filterCIContext drawImage:outputImage atPoint:destOrigin fromRect:sourceRect];
 	} else

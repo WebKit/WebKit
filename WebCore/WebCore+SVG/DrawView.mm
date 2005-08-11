@@ -131,9 +131,7 @@ typedef enum {
 // c++ enabled drawing code.
 - (void)drawRect:(NSRect)dirtyViewRect
 {
-    if (![document canvas])
-        return;
-    if (!canvasView)
+    if (![document canvas] || ![document canvas]->rootContainer() || !canvasView)
         return;
     
     // push the drawing context

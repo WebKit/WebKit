@@ -141,7 +141,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 	//CGContextSetPatternPhase(context, phase);
 	CGContextSetPatternPhase(context, CGSizeZero); // FIXME: this might be right... might not.
 	
-	NSLog(@"pattern phase: %f, %f transform: %@", phase.width, phase.height, CFStringFromCGAffineTransform(transform));
+	//NSLog(@"pattern phase: %f, %f transform: %@", phase.width, phase.height, CFStringFromCGAffineTransform(transform));
 	
 	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
 		CGContextSetFillColorSpace(context, patternSpace);

@@ -1,3 +1,16 @@
+2005-08-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * WebCore+SVG/DrawView.mm:
+        (-[DrawViewPrivate drawRect:]): added additional NULL check.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::applyFilter): removed NSLog.
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::draw): removed NSLog.
+        Removed debugging logs, and fixed crasher for empty SVGs.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4384
+
 2005-08-11  Geoffrey Garen  <ggaren@apple.com>
 
         * layout-tests/fast/js/date-big-setdate.html: fixed title
