@@ -9,8 +9,16 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 */
 
+
+//
+//   Webkit modification:  28-July-2005
+//
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
+//
+//   End modification
+//
+
 
   function assertSize(descr, expected, actual) {
     var actualSize;
@@ -377,11 +385,107 @@ HTMLBuilder.prototype.preload = function(frame, varname, url) {
   return 1;
 }
 
+HTMLBuilder.prototype.cloneNode = function(srcNode, doc) {
+   var clone = null;
+   switch(srcNode.nodeType) {
+      //
+      //  element
+      case 1:
+      clone = doc.createElement(srcNode.nodeName.toLowerCase());
+      var attrs = srcNode.attributes;
+      for(var i = 0; i < attrs.length; i++) {
+          var srcAttr = attrs.item(i);
+          clone.setAttribute(srcAttr.nodeName, srcAttr.nodeValue);
+      }
+      var srcChild = srcNode.firstChild;
+      while(srcChild != null) {
+         var cloneChild = this.cloneNode(srcChild, doc);
+         if (cloneChild != null) {
+             clone.appendChild(cloneChild);
+         }
+         srcChild = srcChild.nextSibling;
+      }
+      break;
+      
+      case 3:
+      clone = doc.createTextNode(srcNode.nodeValue);
+      break;
+      
+      case 4:
+      clone = doc.createCDATASection(srcNode.nodeValue);
+      break;
+            
+      case 7:
+      clone = doc.createProcessingInstruction(srcNode.nodeValue);
+      break;
+      
+      case 8:
+      clone = doc.createComment(srcNode.nodeValue);
+      break;
+   }
+   return clone;
+      
+}
+
+
 HTMLBuilder.prototype.load = function(frame, varname, url) {
   if (this.documentVarnames[0] == varname) {
   	return document;
   }
-  return document.cloneNode(true);
+  //
+  //
+  //  not a perfect way to do this
+  //    Document.cloneNode is implementation dependent but exists in L1
+  //       and implemented in IE.  The alternative brute force copy
+  //       only works in L2 or higher implementations and can't copy
+  //       entity and notation definitions, etc.
+  var clone = null;
+  try {
+      clone = document.cloneNode(true);
+  } catch(ex) {
+  }
+  if (clone == null) {
+      clone = document.implementation.createDocument(
+          document.documentElement.namespaceURI,
+          document.documentElement.nodeName,
+          null);
+      //
+      //   Work-around since
+      //   Safari does not create document element 
+      //      create document.      
+      if (clone.documentElement == null) {
+           clone.appendChild(clone.createElement(document.documentElement.nodeName));
+      }
+      var attrs = document.documentElement.attributes;
+      for(var i = 0; i < attrs.length; i++) {
+          var srcAttr = attrs.item(i);
+          clone.documentElement.setAttribute(srcAttr.nodeName, srcAttr.nodeValue);
+      }
+
+      var srcNode = document.firstChild;
+      while(srcNode != null && srcNode.nodeType != 1) {
+          if (srcNode.nodeType != 10) {
+          	 var cloneNode = this.cloneNode(srcNode, clone);
+             clone.insertBefore(cloneNode, clone.documentElement);
+           }
+           srcNode = srcNode.nextSibling; 
+      }
+      srcNode = document.documentElement.nextSibling;
+      while(srcNode != null) {
+          var cloneNode = this.cloneNode(srcNode, clone);
+          clone.appendChild(cloneNode);
+          srcNode = srcNode.nextSibling;
+      }
+      srcNode = document.documentElement.firstChild;
+      while(srcNode != null) {
+          var cloneNode = this.cloneNode(srcNode, clone);
+          if (cloneNode != null) {
+             clone.documentElement.appendChild(cloneNode);
+          }
+          srcNode = srcNode.nextSibling;
+      }
+  }
+  return clone;
 }
 
 HTMLBuilder.prototype.getImplementationAttribute = function(attr) {

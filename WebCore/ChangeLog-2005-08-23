@@ -1,3 +1,23 @@
+2005-08-10  Vicki Murley  <vicki@apple.com>
+
+	Changes from Curt Arnold, reviewed by Vicki.
+
+	Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4174 (DOM layout tests involving two 
+	documents fail due to test framework problem), and update expected results for tests
+	affected by this change.
+	
+        * layout-tests/dom/html/level1/core/hc_attrappendchild5-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore6-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_elementwrongdocumenterr-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_namednodemapwrongdocumenterr-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_nodeappendchildnewchilddiffdocument-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_nodeinsertbeforenewchilddiffdocument-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_nodereplacechildnewchilddiffdocument-expected.txt:
+        * layout-tests/dom/html/level1/core/selfhtml.js:
+        * layout-tests/dom/html/level2/core/selfhtml.js:
+        * layout-tests/dom/html/level2/events/selfhtml.js:
+        * layout-tests/dom/html/level2/html/selfhtml.js:
+
 2005-08-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

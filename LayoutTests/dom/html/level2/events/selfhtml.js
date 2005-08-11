@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2001-2004 World Wide Web Consortium, 
+Copyright (c) 2001-2005 World Wide Web Consortium, 
 (Massachusetts Institute of Technology, European Research Consortium 
 for Informatics and Mathematics, Keio University). All 
 Rights Reserved. This work is distributed under the W3C(r) Software License [1] in the 
@@ -9,8 +9,16 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 */
 
+
+//
+//   Webkit modification:  28-July-2005
+//
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
+//
+//   End modification
+//
+
 
   function assertSize(descr, expected, actual) {
     var actualSize;
@@ -242,10 +250,6 @@ function same(expected, actual)
   return expected === actual;
 }
 
-function getSuffix(contentType) {
-        return ".html";
-}
-
 function equalsAutoCase(context, expected, actual) {
 	if (builder.contentType == "text/html") {
 		if (context == "attribute") {
@@ -381,11 +385,107 @@ HTMLBuilder.prototype.preload = function(frame, varname, url) {
   return 1;
 }
 
+HTMLBuilder.prototype.cloneNode = function(srcNode, doc) {
+   var clone = null;
+   switch(srcNode.nodeType) {
+      //
+      //  element
+      case 1:
+      clone = doc.createElement(srcNode.nodeName.toLowerCase());
+      var attrs = srcNode.attributes;
+      for(var i = 0; i < attrs.length; i++) {
+          var srcAttr = attrs.item(i);
+          clone.setAttribute(srcAttr.nodeName, srcAttr.nodeValue);
+      }
+      var srcChild = srcNode.firstChild;
+      while(srcChild != null) {
+         var cloneChild = this.cloneNode(srcChild, doc);
+         if (cloneChild != null) {
+             clone.appendChild(cloneChild);
+         }
+         srcChild = srcChild.nextSibling;
+      }
+      break;
+      
+      case 3:
+      clone = doc.createTextNode(srcNode.nodeValue);
+      break;
+      
+      case 4:
+      clone = doc.createCDATASection(srcNode.nodeValue);
+      break;
+            
+      case 7:
+      clone = doc.createProcessingInstruction(srcNode.nodeValue);
+      break;
+      
+      case 8:
+      clone = doc.createComment(srcNode.nodeValue);
+      break;
+   }
+   return clone;
+      
+}
+
+
 HTMLBuilder.prototype.load = function(frame, varname, url) {
   if (this.documentVarnames[0] == varname) {
   	return document;
   }
-  return document.cloneNode(true);
+  //
+  //
+  //  not a perfect way to do this
+  //    Document.cloneNode is implementation dependent but exists in L1
+  //       and implemented in IE.  The alternative brute force copy
+  //       only works in L2 or higher implementations and can't copy
+  //       entity and notation definitions, etc.
+  var clone = null;
+  try {
+      clone = document.cloneNode(true);
+  } catch(ex) {
+  }
+  if (clone == null) {
+      clone = document.implementation.createDocument(
+          document.documentElement.namespaceURI,
+          document.documentElement.nodeName,
+          null);
+      //
+      //   Work-around since
+      //   Safari does not create document element 
+      //      create document.      
+      if (clone.documentElement == null) {
+           clone.appendChild(clone.createElement(document.documentElement.nodeName));
+      }
+      var attrs = document.documentElement.attributes;
+      for(var i = 0; i < attrs.length; i++) {
+          var srcAttr = attrs.item(i);
+          clone.documentElement.setAttribute(srcAttr.nodeName, srcAttr.nodeValue);
+      }
+
+      var srcNode = document.firstChild;
+      while(srcNode != null && srcNode.nodeType != 1) {
+          if (srcNode.nodeType != 10) {
+          	 var cloneNode = this.cloneNode(srcNode, clone);
+             clone.insertBefore(cloneNode, clone.documentElement);
+           }
+           srcNode = srcNode.nextSibling; 
+      }
+      srcNode = document.documentElement.nextSibling;
+      while(srcNode != null) {
+          var cloneNode = this.cloneNode(srcNode, clone);
+          clone.appendChild(cloneNode);
+          srcNode = srcNode.nextSibling;
+      }
+      srcNode = document.documentElement.firstChild;
+      while(srcNode != null) {
+          var cloneNode = this.cloneNode(srcNode, clone);
+          if (cloneNode != null) {
+             clone.documentElement.appendChild(cloneNode);
+          }
+          srcNode = srcNode.nextSibling;
+      }
+  }
+  return clone;
 }
 
 HTMLBuilder.prototype.getImplementationAttribute = function(attr) {
@@ -547,6 +647,37 @@ function assertNotNull(id, actual) {
 function fail(id) {
     throw "failure:" + id +  ": fail";
 }
+
+
+
+function getSuffix(contentType) {
+    switch(contentType) {
+        case "text/xml":
+        return ".xml";
+
+        case "application/xhtml+xml":
+        return ".xhtml";
+
+        case "image/svg+xml":
+        return ".svg";
+
+        case "text/mathml":
+        return ".mml";
+    }
+    return ".html";
+}
+
+
+function getResourceURI(name, scheme, contentType) {
+    var base = document.documentURI;
+    if (base == null) {
+       base = "";
+    } else {
+	   base = base.substring(0, base.lastIndexOf('/') + 1) + "files/";
+    }
+    return base + name + getSuffix(contentType);
+}
+
 
 
 function startTest() {
