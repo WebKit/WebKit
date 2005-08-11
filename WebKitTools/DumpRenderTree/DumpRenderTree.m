@@ -214,6 +214,12 @@ static void dump(void)
     }
 }
 
+- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)f
+{
+    if (frame == f)
+        readyToDump = NO;
+}
+
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
     [self webView:sender locationChangeDone:error forDataSource:[frame provisionalDataSource]];

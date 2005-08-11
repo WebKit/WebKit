@@ -1,12 +1,15 @@
 <html>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
 
 function runTests() {
    window.location.assign('resources/new-location.html');
 }
 </script>
 <body onload="runTests();">
+FAIL
 </body>
 </html>

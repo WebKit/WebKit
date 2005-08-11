@@ -1,3 +1,13 @@
+2005-08-11  Maciej Stachowiak  <mjs@apple.com>
+
+        At Least Rougly Glanced At by Anders.
+
+	- fix change with totally breaks the layout tests.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]): Make tests unready if you start another
+	load, to avoid dumping twice accidentally.
+
 2005-08-10  Eric Seidel  <eseidel@apple.com>
         Fixed made by Mitz Pettel <opendarwin.org@mitzpettel.com>
 

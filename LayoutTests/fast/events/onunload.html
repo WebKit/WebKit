@@ -1,8 +1,10 @@
 <html>
 <body onunload="unload()" onload="load()">
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
+}
 
 function load()
 {

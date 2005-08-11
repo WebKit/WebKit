@@ -1,3 +1,21 @@
+2005-08-11  Maciej Stachowiak  <mjs@apple.com>
+
+        At Least Rougly Glanced At by Anders.
+
+	- fix change with totally breaks the layout tests.
+
+	Changed all the tests below to avoid dumping more than once -
+	since this now prints more than one separator, it totally throws
+	off the layout test driver so it needs to be avoided.
+	
+        * layout-tests/dom/html/level2/html/HTMLFormElement10-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.html:
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.js:
+        * layout-tests/fast/events/onunload-expected.txt:
+        * layout-tests/fast/events/onunload.html:
+        * layout-tests/fast/js/location-assign-expected.txt:
+        * layout-tests/fast/js/location-assign.html:
+
 2005-08-10  Geoffrey Garen  <ggaren@apple.com>
 
         -added layout test for fix to <rdar://problem/4151132> REGRESSION: Some applet 

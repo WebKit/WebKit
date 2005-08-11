@@ -1,12 +1,1 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderText {TEXT} at (0,0) size 608x18
-        text run at (0,0) width 608: "If this text is shown, that means that the document was successfully loaded using location.assign."
-      RenderText {TEXT} at (0,0) size 0x0
+If this text is shown, that means that the document was successfully loaded using location.assign.
