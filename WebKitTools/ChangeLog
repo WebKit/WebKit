@@ -1,3 +1,13 @@
+2005-08-11  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * DrawTest/TestController.m:
+        (-[TestController imagePathForSVGPath:]):
+        Fixed support for using TextViewer with the layout-tests.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4385
+
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
         At Least Rougly Glanced At by Anders.

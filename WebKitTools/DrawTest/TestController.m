@@ -172,33 +172,41 @@ static TestController *__sharedInstance = nil;
 {
     [[NSWorkspace sharedWorkspace] openFile:[_selectedTest svgPath]];
 }
-     
+
 - (NSString *)imagePathForSVGPath:(NSString *)svgPath
 {
     // eventually this code will build an array instead...
     
-    NSString *svgName = [svgPath lastPathComponent];
-    NSString *testName = [svgName stringByDeletingPathExtension];
-    NSString *imageName = [testName stringByAppendingPathExtension:@"png"];
     NSString *currentDirectory = [self currentPath];
     NSString *parentDirectory = [currentDirectory stringByDeletingLastPathComponent];
     
-    // first look for ../png/name.png -- SVG 1.1 baselines
-    NSString *imageDirectory = [parentDirectory stringByAppendingPathComponent:@"png"];
-    NSString *fullImageName = [@"full-" stringByAppendingString:imageName];
-    // The SVG 1.1 spec has various differnet pngs, we should allow the
+    NSString *testName = [[svgPath lastPathComponent] stringByDeletingPathExtension];
+    NSString *imageName, *imageDirectory, *imagePath;
+    
+    // first look in ../png/test.png -- SVG 1.1 baselines
+    // The SVG 1.1 spec has various different pngs, we should allow the
     // tester to choose...
-    NSString *imagePath = [imageDirectory stringByAppendingPathComponent:fullImageName];
+    imageName = [[@"full-" stringByAppendingString:testName] stringByAppendingPathExtension:@"png"];
+    imageDirectory = [parentDirectory stringByAppendingPathComponent:@"png"];
+    imagePath = [imageDirectory stringByAppendingPathComponent:imageName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath]) return imagePath;
     
     // then look for ../name.png -- openclipart.org
-    imagePath = [currentDirectory stringByAppendingPathComponent:imageName];
+    imageName = [testName stringByAppendingPathExtension:@"png"];
+    imageDirectory = parentDirectory;
+    imagePath = [imageDirectory stringByAppendingPathComponent:imageName];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath]) return imagePath;
+    
+    // then look for ./name-w3c.png -- WebCore tests
+    imageName = [[testName stringByAppendingString:@"-w3c"] stringByAppendingPathExtension:@"png"];
+    imageDirectory = currentDirectory;
+    imagePath = [imageDirectory stringByAppendingPathComponent:imageName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath]) return imagePath;
     
     // finally try name-baseline.png -- ksvg regression baselines
-    testName = [testName stringByAppendingString:@"-baseline"];
-    imageName = [testName stringByAppendingPathExtension:@"png"];
-    imagePath = [currentDirectory stringByAppendingPathComponent:imageName];
+    imageName = [[testName stringByAppendingString:@"-baseline"] stringByAppendingPathExtension:@"png"];
+    imageDirectory = currentDirectory;
+    imagePath = [imageDirectory stringByAppendingPathComponent:imageName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath]) return imagePath;
     
     return nil;
