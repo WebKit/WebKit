@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2004 Nikolas Zimmermann <wildfox@kde.org>
-				  2004 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+				  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml css code by:
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)

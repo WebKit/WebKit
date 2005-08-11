@@ -1,3 +1,9 @@
+2005-08-11  Eric Seidel  <eseidel@apple.com>
+
+        No review needed, copyright update in comments.
+        All kdom, ksvg2, and kcanvas files affected.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4382
+
 2005-08-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

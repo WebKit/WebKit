@@ -1,6 +1,6 @@
 /*
-    Copyright (C) 2004 Nikolas Zimmermann <wildfox@kde.org>
-				  2004 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+				  2004, 2005 Rob Buis <buis@kde.org>
                   2005 Frans Englich <frans.englich@telia.com>
 
     This file is part of the KDE project
