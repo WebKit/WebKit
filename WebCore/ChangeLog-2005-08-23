@@ -1,3 +1,18 @@
+2005-08-10  Geoffrey Garen  <ggaren@apple.com>
+
+        -added layout test for fix to <rdar://problem/4151132> REGRESSION: Some applet 
+        liveconnect calls throws privilege exception.
+        
+        (See JavaScriptCore Changelog for fix details.)
+
+        * manual-tests/liveconnect-security-exception.html: Added.
+        * manual-tests/resources/TestApplet.class: Added.
+        * manual-tests/resources/TestApplet.java: Added.
+        (TestApplet):
+        (TestApplet.init):
+        (TestApplet.method):
+        * manual-tests/resources/liveconnect-security-exception-popup.html: Added.
+
 2005-08-10  Vicki Murley  <vicki@apple.com>
 
 	Changes from Curt Arnold, reviewed by Vicki.
