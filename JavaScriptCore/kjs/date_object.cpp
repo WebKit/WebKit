@@ -183,6 +183,14 @@ static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
     }
 
     CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
+
+    if (tm->tm_isdst >= 0) {
+      if (CFTimeZoneIsDaylightSavingTime(timeZone, absoluteTime) && !tm->tm_isdst)
+        absoluteTime += 3600;
+      else if (!CFTimeZoneIsDaylightSavingTime(timeZone, absoluteTime) && tm->tm_isdst)
+        absoluteTime -= 3600;
+    }
+
     CFTimeInterval interval = absoluteTime + kCFAbsoluteTimeIntervalSince1970;
     if (interval > LONG_MAX) {
         interval = LONG_MAX;
