@@ -1,5 +1,13 @@
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
+        - added missing file from earlier checkin
+
+        * kjs/grammar_types.h: Added.
+        (KJS::makeNodePair):
+        (KJS::makeNodeWithIdent):
+
+2005-08-11  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Geoff.
 
         * kjs/date_object.cpp:
