@@ -3197,8 +3197,11 @@ short RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
         // CSS2.1 states that the baseline of an inline block is the baseline of the last line box in
         // the normal flow.  We make an exception for marquees, since their baselines are meaningless
         // (the content inside them moves).  This matches WinIE as well, which just bottom-aligns them.
-        int baselinePos = (m_layer && m_layer->marquee()) ? -1 : getBaselineOfLastLineBox();
-        if (baselinePos != -1)
+        // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
+        // vertically (e.g., an overflow:hidden block that has had scrollTop moved) or if the baseline is outside
+        // of our content box.
+        int baselinePos = (m_layer && (m_layer->marquee() || m_layer->verticalScrollbar() || m_layer->scrollYOffset() != 0)) ? -1 : getBaselineOfLastLineBox();
+        if (baselinePos != -1 && baselinePos <= borderTop() + paddingTop() + contentHeight())
             return marginTop() + baselinePos;
         return height() + marginTop() + marginBottom();
     }

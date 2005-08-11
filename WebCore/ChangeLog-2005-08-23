@@ -1,3 +1,17 @@
+2005-08-11  David Hyatt  <hyatt@apple.com>
+
+	Refine the baseline alignment rule for inline blocks to cover for a hole in the spec.  The spec doesnt say what to do
+	for overflow cases, e.g., when the last line is clipped, when the overflow box is scrolled, or even when overflow is
+	visible but the last line is outside your content box.  We just revert to the old behavior in those cases.  Hopefully
+	the spec will be clarified to explain what the right behavior is.
+	
+        Reviewed by beth
+
+        Test cases added: fast/inline-block/tricky-baseline.html
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::baselinePosition):
+
 2005-08-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
