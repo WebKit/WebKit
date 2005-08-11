@@ -1,3 +1,12 @@
+2005-08-10  Eric Seidel  <eseidel@apple.com>
+        Fixed made by Mitz Pettel <opendarwin.org@mitzpettel.com>
+
+        Reviewed by darin.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        Added support for rendering to a PNG file.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3840
+
 2005-08-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

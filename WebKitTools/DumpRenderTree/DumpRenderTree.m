@@ -40,6 +40,8 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 
+#import <getopt.h>
+
 @interface WaitUntilDoneDelegate : NSObject
 @end
 
@@ -57,6 +59,9 @@ static BOOL readyToDump;
 static BOOL waitToDump;
 static BOOL dumpAsText;
 static BOOL dumpTitleChanges;
+static int dumpPixels = NO;
+static int dumpTree = YES;
+static BOOL printSeparators;
 
 int main(int argc, const char *argv[])
 {
@@ -73,7 +78,20 @@ int main(int argc, const char *argv[])
     int defaultFontSize = [preferences defaultFontSize];
     int defaultFixedFontSize = [preferences defaultFixedFontSize];
     int minimumFontSize = [preferences minimumFontSize];
+    int width = 800;
+    int height = 600;
     
+    struct option options[] = {
+        {"width", required_argument, NULL, 'w'},
+        {"height", required_argument, NULL, 'h'},
+        {"bitmap", no_argument, &dumpPixels, YES},
+        {"nobitmap", no_argument, &dumpPixels, NO},
+        {"tree", no_argument, &dumpTree, YES},
+        {"notree", no_argument, &dumpTree, NO},
+        {NULL, 0, NULL, 0}
+    };
+    int option;
+
     [preferences setStandardFontFamily:@"Times"];
     [preferences setFixedFontFamily:@"Courier"];
     [preferences setSerifFontFamily:@"Times"];
@@ -84,7 +102,29 @@ int main(int argc, const char *argv[])
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:9];
 
-    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
+        switch (option) {
+            case 'w':
+                width = strtol(optarg, NULL, 0);
+                if (width <= 0) {
+                    fprintf(stderr, "%s: invalid width\n", argv[0]);
+                    exit(1);
+                }
+                break;
+            case 'h':
+                height = strtol(optarg, NULL, 0);
+                if (height <= 0) {
+                    fprintf(stderr, "%s: invalid height\n", argv[0]);
+                    exit(1);
+                }
+                break;
+            case '?':   // unknown or ambiguous option
+            case ':':   // missing argument
+                exit(1);
+                break;
+        }
+    
+    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, width, height)];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setFrameLoadDelegate:delegate];
@@ -92,20 +132,21 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
-    if (argc == 2 && strcmp(argv[1], "-") == 0) {
+    if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
+        printSeparators = YES;
         while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
             char *newLineCharacter = strchr(filenameBuffer, '\n');
             if (newLineCharacter) {
                 *newLineCharacter = '\0';
             }
             dumpRenderTree(filenameBuffer);
-            puts("#EOF");
             fflush(stdout);
         }
     } else {
         int i;
-        for (i = 1; i != argc; ++i) {
+        printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
+        for (i = optind; i != argc; ++i) {
             dumpRenderTree(argv[i]);
         }
     }
@@ -127,19 +168,37 @@ int main(int argc, const char *argv[])
 static void dump(void)
 {
     NSString *result = nil;
-    if (dumpAsText) {
-        DOMDocument *document = [frame DOMDocument];
-        if ([document isKindOfClass:[DOMHTMLDocument class]]) {
-            result = [[[(DOMHTMLDocument *)document body] innerText] stringByAppendingString:@"\n"];
+    if (dumpTree) {
+        if (dumpAsText) {
+            DOMDocument *document = [frame DOMDocument];
+            if ([document isKindOfClass:[DOMHTMLDocument class]]) {
+                result = [[[(DOMHTMLDocument *)document body] innerText] stringByAppendingString:@"\n"];
+            }
+        } else {
+            result = [frame renderTreeAsExternalRepresentation];
         }
-    } else {
-        result = [frame renderTreeAsExternalRepresentation];
+        if (!result) {
+            puts("error");
+        } else {
+            fputs([result UTF8String], stdout);
+        }
+        if (printSeparators)
+            puts("#EOF");
     }
-    if (!result) {
-        puts("error");
-    } else {
-        fputs([result UTF8String], stdout);
+    
+    if (dumpPixels) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        WebView *view = [frame webView];
+        NSBitmapImageRep *imageRep = [view bitmapImageRepForCachingDisplayInRect:[view frame]];
+        NSData *imageData;
+        [view cacheDisplayInRect:[view frame] toBitmapImageRep:imageRep];
+        imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
+        if (printSeparators)
+            printf("%d\n", [imageData length]);
+        fwrite([imageData bytes], 1, [imageData length], stdout);
+        [pool release];
     }
+
     done = YES;
 }
 
