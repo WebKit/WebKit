@@ -1,3 +1,7 @@
+2005-08-11  Geoffrey Garen  <ggaren@apple.com>
+
+        * layout-tests/fast/js/date-big-setdate.html: fixed title
+
 2005-08-11  Eric Seidel  <eseidel@apple.com>
 
         No review needed, copyright update in comments.
