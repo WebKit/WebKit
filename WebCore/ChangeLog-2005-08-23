@@ -1,3 +1,15 @@
+2005-08-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        Test cases added:
+
+        * layout-tests/fast/js/assign.html: Added. Test case for assignment to make sure
+	I didn't break anything.
+        * layout-tests/fast/js/code-serialize-paren.html: Added, test case for a minor bug
+	I fixed where parens were not getting serialized at all when turning a function
+	into a string.
+
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
         At Least Rougly Glanced At by Anders.

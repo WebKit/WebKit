@@ -32,6 +32,7 @@
 #include "nodes.h"
 #include "lexer.h"
 #include "internal.h"
+#include "grammar_types.h"
 
 // Not sure why, but yacc doesn't add this define along with the others.
 #define yylloc kjsyylloc
@@ -78,6 +79,8 @@ using namespace KJS;
   PropertyNode        *pnode;
   CatchNode           *cnode;
   FinallyNode         *fnode;
+  NodePair            np;
+  NodeWithIdent       ni;
 }
 
 %start Program
@@ -162,6 +165,10 @@ using namespace KJS;
 %type <plist> PropertyNameAndValueList
 %type <pnode> PropertyName
 
+%type <ident> ParenthesizedIdent;
+%type <np>    MemberBracketExpr CallBracketExpr ParenthesizedBracketExpr
+%type <ni>    MemberDotExpr CallDotExpr ParenthesizedDotExpr
+
 %%
 
 Literal:
@@ -179,11 +186,18 @@ Literal:
                                      $$ = new RegExpNode(UString('=')+l->pattern,l->flags);}
 ;
 
+ParenthesizedIdent:
+    IDENT
+  | '(' ParenthesizedIdent ')' { $$ = $2 }
+;
+
 PrimaryExpr:
     THIS                           { $$ = new ThisNode(); }
-  | IDENT                          { $$ = new ResolveNode(*$1); }
   | Literal
   | ArrayLiteral
+  | ParenthesizedIdent             { $$ = new ResolveNode(*$1); }
+  | ParenthesizedBracketExpr       { $$ = new GroupNode(new BracketAccessorNode($1.first, $1.second)); }
+  | ParenthesizedDotExpr           { $$ = new GroupNode(new DotAccessorNode($1.node, *$1.ident)); }
   | '(' Expr ')'                   { $$ = new GroupNode($2); }
   | '{' '}'                        { $$ = new ObjectLiteralNode(); }
   | '{' PropertyNameAndValueList '}'   { $$ = new ObjectLiteralNode($2); }
@@ -223,11 +237,39 @@ PropertyName:
   | NUMBER                         { $$ = new PropertyNode($1); }
 ;
 
+CallBracketExpr:
+  CallExpr '[' Expr ']' { $$ = makeNodePair($1, $3); }
+;
+
+MemberBracketExpr:
+  MemberExpr '[' Expr ']' { $$ = makeNodePair($1, $3); }
+;
+
+ParenthesizedBracketExpr:
+    '(' MemberBracketExpr ')' { $$ = $2; }
+  | '(' CallBracketExpr ')' { $$ = $2; }
+  | '(' ParenthesizedBracketExpr ')' { $$ = $2; }
+;
+
+CallDotExpr:
+  CallExpr '.' IDENT { $$ = makeNodeWithIdent($1, $3); }
+;
+
+MemberDotExpr:
+  MemberExpr '.' IDENT { $$ = makeNodeWithIdent($1, $3); }
+;
+
+ParenthesizedDotExpr:
+    '(' MemberDotExpr ')' { $$ = $2; }
+  | '(' CallDotExpr ')' { $$ = $2; }
+  | '(' ParenthesizedDotExpr ')' { $$ = $2; }
+;
+
 MemberExpr:
     PrimaryExpr
   | FunctionExpr
-  | MemberExpr '[' Expr ']'        { $$ = new AccessorNode1($1, $3); }
-  | MemberExpr '.' IDENT           { $$ = new AccessorNode2($1, *$3); }
+  | MemberBracketExpr              { $$ = new BracketAccessorNode($1.first, $1.second); }
+  | MemberDotExpr                  { $$ = new DotAccessorNode($1.node, *$1.ident); }
   | NEW MemberExpr Arguments       { $$ = new NewExprNode($2, $3); }
 ;
 
@@ -239,8 +281,8 @@ NewExpr:
 CallExpr:
     MemberExpr Arguments           { $$ = new FunctionCallNode($1, $2); }
   | CallExpr Arguments             { $$ = new FunctionCallNode($1, $2); }
-  | CallExpr '[' Expr ']'          { $$ = new AccessorNode1($1, $3); }
-  | CallExpr '.' IDENT             { $$ = new AccessorNode2($1, *$3); }
+  | CallBracketExpr                { $$ = new BracketAccessorNode($1.first, $1.second); }
+  | CallDotExpr                    { $$ = new DotAccessorNode($1.node, *$1.ident); }
 ;
 
 Arguments:
@@ -358,8 +400,20 @@ ConditionalExpr:
 
 AssignmentExpr:
     ConditionalExpr
-  | LeftHandSideExpr AssignmentOperator AssignmentExpr
-                           { $$ = new AssignNode($1, $2, $3);}
+  | ParenthesizedIdent AssignmentOperator AssignmentExpr
+                           { $$ = new AssignResolveNode(*$1, $2, $3); }
+  | MemberBracketExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
+  | CallBracketExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
+  | ParenthesizedBracketExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignBracketNode($1.first, $1.second, $2, $3); }
+  | MemberDotExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
+  | CallDotExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
+  | ParenthesizedDotExpr AssignmentOperator AssignmentExpr
+                           { $$ = new AssignDotNode($1.node, *$1.ident, $2, $3); }
 ;
 
 AssignmentOperator:

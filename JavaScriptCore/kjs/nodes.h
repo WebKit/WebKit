@@ -210,7 +210,7 @@ namespace KJS {
     virtual bool deref();
     virtual ValueImp *evaluate(ExecState *exec);
     virtual Reference evaluateReference(ExecState *exec);
-    virtual void streamTo(SourceStream &s) const { group->streamTo(s); }
+    virtual void streamTo(SourceStream &s) const;
   private:
     Node *group;
   };
@@ -290,9 +290,9 @@ namespace KJS {
     Identifier str;
   };
 
-  class AccessorNode1 : public Node {
+  class BracketAccessorNode : public Node {
   public:
-    AccessorNode1(Node *e1, Node *e2) : expr1(e1), expr2(e2) {}
+    BracketAccessorNode(Node *e1, Node *e2) : expr1(e1), expr2(e2) {}
     virtual void ref();
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
@@ -303,9 +303,9 @@ namespace KJS {
     Node *expr2;
   };
 
-  class AccessorNode2 : public Node {
+  class DotAccessorNode : public Node {
   public:
-    AccessorNode2(Node *e, const Identifier &s) : expr(e), ident(s) { }
+    DotAccessorNode(Node *e, const Identifier &s) : expr(e), ident(s) { }
     virtual void ref();
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
@@ -580,17 +580,48 @@ namespace KJS {
     Node *logical, *expr1, *expr2;
   };
 
-  class AssignNode : public Node {
+  class AssignResolveNode : public Node {
   public:
-    AssignNode(Node *l, Operator o, Node *e) : left(l), oper(o), expr(e) {}
+    AssignResolveNode(const Identifier &ident, Operator oper, Node *right) 
+      : m_ident(ident), m_oper(oper), m_right(right) {}
     virtual void ref();
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
-  private:
-    Node *left;
-    Operator oper;
-    Node *expr;
+  protected:
+    Identifier m_ident;
+    Operator m_oper;
+    Node *m_right;
+  };
+
+  class AssignBracketNode : public Node {
+  public:
+    AssignBracketNode(Node *base, Node *subscript, Operator oper, Node *right) 
+      : m_base(base), m_subscript(subscript), m_oper(oper), m_right(right) {}
+    virtual void ref();
+    virtual bool deref();
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  protected:
+    Node *m_base;
+    Node *m_subscript;
+    Operator m_oper;
+    Node *m_right;
+  };
+
+  class AssignDotNode : public Node {
+  public:
+    AssignDotNode(Node *base, const Identifier& ident, Operator oper, Node *right)
+      : m_base(base), m_ident(ident), m_oper(oper), m_right(right) {}
+    virtual void ref();
+    virtual bool deref();
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  protected:
+    Node *m_base;
+    Identifier m_ident;
+    Operator m_oper;
+    Node *m_right;
   };
 
   class CommaNode : public Node {

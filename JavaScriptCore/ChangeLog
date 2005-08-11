@@ -1,3 +1,39 @@
+2005-08-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+	Refactor assignment grammar to avoid Reference type, and to later
+	be able to take advantage of writeable PropertySlots, when those
+	are added. I also fixed a minor bug, turning a function to a
+	string lost parentheses, I made sure they are printed at least
+	where semantically significant.
+	
+	Test cases: see WebCore
+	
+        * kjs/grammar.y: Change grammar so that assignment expressions are parsed
+	directly to nodes that know how to set the kind of location being assigned, instead
+	of having a generic assign node that counts on evaluateReference.
+        * kjs/lexer.cpp: Include grammar_types.h.
+        * kjs/nodes.cpp:
+        (BracketAccessorNode): Renamed from AccessorNode1 for clarity.
+        (DotAccessorNode): Renamed from AccessorNode2 for clarity.
+        (combineForAssignment): Inline function for doing the proper kind of
+	operation for various update assignments like += or *=.
+        (AssignResolveNode): Node that handles assignment to a bare identifier.
+        (AssignDotNode): Node that handles assignments of the form EXPR . IDENT = EXPR
+        (AssignBracketNode): EXPR [ IDENT ] = EXPR
+        * kjs/nodes.h: Updated for declarations/renames of new classes.
+        * kjs/nodes2string.cpp:
+        (GroupNode::streamTo): Fixed to print parens around the expression.
+        (BracketAccessorNode::streamTo): Renamed.
+        (DotAccessorNode::streamTo): Renamed.
+        (AssignResolveNode::streamTo): Added.
+        (AssignBracketNode::streamTo): Added.
+        (AssignDotNode::streamTo): Added.
+        (streamAssignmentOperatorTo): helper function for the above
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::isSet): Made this const.
+
 2005-08-10  Adele Peterson  <adele@apple.com>
 
         Bumping version to 420+

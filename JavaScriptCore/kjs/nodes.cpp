@@ -270,6 +270,14 @@ ValueImp *ThisNode::evaluate(ExecState *exec)
 
 // ------------------------------ ResolveNode ----------------------------------
 
+static ValueImp *undefinedVariableError(ExecState *exec, const Identifier &ident)
+{
+  UString m = I18N_NOOP("Can't find variable: ") + ident.ustring();
+  ObjectImp *err = Error::create(exec, ReferenceError, m.ascii());
+  exec->setException(err);
+  return err;
+}
+
 // ECMA 11.1.2 & 10.1.4
 ValueImp *ResolveNode::evaluate(ExecState *exec)
 {
@@ -287,7 +295,7 @@ ValueImp *ResolveNode::evaluate(ExecState *exec)
     chain.pop();
   } while (!chain.isEmpty());
 
-  return Reference(ident).getValue(exec);
+  return undefinedVariableError(exec, ident);
 }
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
@@ -497,9 +505,9 @@ ValueImp *PropertyNode::evaluate(ExecState */*exec*/)
   return s;
 }
 
-// ------------------------------ AccessorNode1 --------------------------------
+// ------------------------------ BracketAccessorNode --------------------------------
 
-void AccessorNode1::ref()
+void BracketAccessorNode::ref()
 {
   Node::ref();
   if ( expr1 )
@@ -508,7 +516,7 @@ void AccessorNode1::ref()
     expr2->ref();
 }
 
-bool AccessorNode1::deref()
+bool BracketAccessorNode::deref()
 {
   if ( expr1 && expr1->deref() )
     delete expr1;
@@ -518,7 +526,7 @@ bool AccessorNode1::deref()
 }
 
 // ECMA 11.2.1a
-ValueImp *AccessorNode1::evaluate(ExecState *exec)
+ValueImp *BracketAccessorNode::evaluate(ExecState *exec)
 {
   ValueImp *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
@@ -531,7 +539,7 @@ ValueImp *AccessorNode1::evaluate(ExecState *exec)
   return o->get(exec, Identifier(v2->toString(exec)));
 }
 
-Reference AccessorNode1::evaluateReference(ExecState *exec)
+Reference BracketAccessorNode::evaluateReference(ExecState *exec)
 {
   ValueImp *v1 = expr1->evaluate(exec);
   KJS_CHECKEXCEPTIONREFERENCE
@@ -544,16 +552,16 @@ Reference AccessorNode1::evaluateReference(ExecState *exec)
   return Reference(o, Identifier(v2->toString(exec)));
 }
 
-// ------------------------------ AccessorNode2 --------------------------------
+// ------------------------------ DotAccessorNode --------------------------------
 
-void AccessorNode2::ref()
+void DotAccessorNode::ref()
 {
   Node::ref();
   if ( expr )
     expr->ref();
 }
 
-bool AccessorNode2::deref()
+bool DotAccessorNode::deref()
 {
   if ( expr && expr->deref() )
     delete expr;
@@ -561,7 +569,7 @@ bool AccessorNode2::deref()
 }
 
 // ECMA 11.2.1b
-ValueImp *AccessorNode2::evaluate(ExecState *exec)
+ValueImp *DotAccessorNode::evaluate(ExecState *exec)
 {
   ValueImp *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
@@ -569,7 +577,7 @@ ValueImp *AccessorNode2::evaluate(ExecState *exec)
 
 }
 
-Reference AccessorNode2::evaluateReference(ExecState *exec)
+Reference DotAccessorNode::evaluateReference(ExecState *exec)
 {
   ValueImp *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONREFERENCE
@@ -1359,101 +1367,246 @@ ValueImp *ConditionalNode::evaluate(ExecState *exec)
   return v;
 }
 
-// ------------------------------ AssignNode -----------------------------------
+// ECMA 11.13
 
-void AssignNode::ref()
+// gcc refuses to inline this without the always_inline, but inlining it does help
+static inline ValueImp *valueForReadModifyAssignment(ExecState * exec, ValueImp *v1, ValueImp *v2, Operator oper) __attribute__((always_inline));
+
+static inline ValueImp *valueForReadModifyAssignment(ExecState * exec, ValueImp *v1, ValueImp *v2, Operator oper)
 {
-  Node::ref();
-  if ( left )
-    left->ref();
-  if ( expr )
-    expr->ref();
+  ValueImp *v;
+  int i1;
+  int i2;
+  unsigned int ui;
+  switch (oper) {
+  case OpMultEq:
+    v = mult(exec, v1, v2, '*');
+    break;
+  case OpDivEq:
+    v = mult(exec, v1, v2, '/');
+    break;
+  case OpPlusEq:
+    v = add(exec, v1, v2, '+');
+    break;
+  case OpMinusEq:
+    v = add(exec, v1, v2, '-');
+    break;
+  case OpLShift:
+    i1 = v1->toInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(i1 << i2);
+    break;
+  case OpRShift:
+    i1 = v1->toInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(i1 >> i2);
+    break;
+  case OpURShift:
+    ui = v1->toUInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(ui >> i2);
+    break;
+  case OpAndEq:
+    i1 = v1->toInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(i1 & i2);
+    break;
+  case OpXOrEq:
+    i1 = v1->toInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(i1 ^ i2);
+    break;
+  case OpOrEq:
+    i1 = v1->toInt32(exec);
+    i2 = v2->toInt32(exec);
+    v = jsNumber(i1 | i2);
+    break;
+  case OpModEq: {
+    bool d1KnownToBeInteger;
+    double d1 = v1->toNumber(exec, d1KnownToBeInteger);
+    bool d2KnownToBeInteger;
+    double d2 = v2->toNumber(exec, d2KnownToBeInteger);
+    v = jsNumber(fmod(d1, d2), d1KnownToBeInteger && d2KnownToBeInteger && d2 != 0);
+  }
+    break;
+  default:
+    assert(0);
+    v = Undefined();
+  }
+  
+  return v;
 }
 
-bool AssignNode::deref()
+// ------------------------------ AssignResolveNode -----------------------------------
+
+void AssignResolveNode::ref()
 {
-  if ( left && left->deref() )
-    delete left;
-  if ( expr && expr->deref() )
-    delete expr;
+  Node::ref();
+  if (m_right)
+    m_right->ref();
+}
+
+bool AssignResolveNode::deref()
+{
+  if (m_right && m_right->deref())
+    delete m_right;
+
   return Node::deref();
 }
 
-// ECMA 11.13
-ValueImp *AssignNode::evaluate(ExecState *exec)
+ValueImp *AssignResolveNode::evaluate(ExecState *exec)
 {
-  Reference l = left->evaluateReference(exec);
-  KJS_CHECKEXCEPTIONVALUE
+  ScopeChain chain = exec->context().imp()->scopeChain();
+
+  assert(!chain.isEmpty());
+
+  PropertySlot slot;
+  ObjectImp *base;
+  do { 
+    base = chain.top();
+    if (base->getPropertySlot(exec, m_ident, slot))
+      goto found;
+
+    chain.pop();
+  } while (!chain.isEmpty());
+
+  if (m_oper != OpEqual)
+    return undefinedVariableError(exec, m_ident);
+
+ found:
   ValueImp *v;
-  if (oper == OpEqual) {
-    v = expr->evaluate(exec);
-    KJS_CHECKEXCEPTIONVALUE
+
+  if (m_oper == OpEqual) {
+    v = m_right->evaluate(exec);
   } else {
-    ValueImp *v1 = l.getValue(exec);
-    ValueImp *v2 = expr->evaluate(exec);
+    assert(slot.isSet());
+    ValueImp *v1 = slot.getValue(exec, m_ident);
     KJS_CHECKEXCEPTIONVALUE
-    int i1;
-    int i2;
-    unsigned int ui;
-    switch (oper) {
-    case OpMultEq:
-      v = mult(exec, v1, v2, '*');
-      break;
-    case OpDivEq:
-      v = mult(exec, v1, v2, '/');
-      break;
-    case OpPlusEq:
-      v = add(exec, v1, v2, '+');
-      break;
-    case OpMinusEq:
-      v = add(exec, v1, v2, '-');
-      break;
-    case OpLShift:
-      i1 = v1->toInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(i1 << i2);
-      break;
-    case OpRShift:
-      i1 = v1->toInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(i1 >> i2);
-      break;
-    case OpURShift:
-      ui = v1->toUInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(ui >> i2);
-      break;
-    case OpAndEq:
-      i1 = v1->toInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(i1 & i2);
-      break;
-    case OpXOrEq:
-      i1 = v1->toInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(i1 ^ i2);
-      break;
-    case OpOrEq:
-      i1 = v1->toInt32(exec);
-      i2 = v2->toInt32(exec);
-      v = jsNumber(i1 | i2);
-      break;
-    case OpModEq: {
-      bool d1KnownToBeInteger;
-      double d1 = v1->toNumber(exec, d1KnownToBeInteger);
-      bool d2KnownToBeInteger;
-      double d2 = v2->toNumber(exec, d2KnownToBeInteger);
-      v = jsNumber(fmod(d1, d2), d1KnownToBeInteger && d2KnownToBeInteger && d2 != 0);
-    }
-      break;
-    default:
-      v = Undefined();
-    }
-  };
-  l.putValue(exec,v);
+    ValueImp *v2 = m_right->evaluate(exec);
+    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  }
 
   KJS_CHECKEXCEPTIONVALUE
 
+  base->put(exec, m_ident, v);
+  return v;
+}
+
+// ------------------------------ AssignDotNode -----------------------------------
+
+void AssignDotNode::ref()
+{
+  Node::ref();
+  if (m_base)
+    m_base->ref();
+  if (m_right)
+    m_right->ref();
+}
+
+bool AssignDotNode::deref()
+{
+  if (m_base && m_base->deref())
+    delete m_base;
+  if (m_right && m_right->deref())
+    delete m_right;
+  return Node::deref();
+}
+
+ValueImp *AssignDotNode::evaluate(ExecState *exec)
+{
+  ValueImp *baseValue = m_base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  ObjectImp *base = baseValue->toObject(exec);
+
+  ValueImp *v;
+
+  if (m_oper == OpEqual) {
+    v = m_right->evaluate(exec);
+  } else {
+    PropertySlot slot;
+    ValueImp *v1 = base->getPropertySlot(exec, m_ident, slot) ? slot.getValue(exec, m_ident) : Undefined();
+    KJS_CHECKEXCEPTIONVALUE
+    ValueImp *v2 = m_right->evaluate(exec);
+    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  }
+
+  KJS_CHECKEXCEPTIONVALUE
+
+  base->put(exec, m_ident, v);
+  return v;
+}
+
+// ------------------------------ AssignBracketNode -----------------------------------
+
+void AssignBracketNode::ref()
+{
+  Node::ref();
+  if (m_base)
+    m_base->ref();
+  if (m_subscript)
+    m_subscript->ref();
+  if (m_right)
+    m_right->ref();
+}
+
+bool AssignBracketNode::deref()
+{
+  if (m_base && m_base->deref())
+    delete m_base;
+  if (m_subscript && m_subscript->deref())
+    delete m_subscript;
+  if (m_right && m_right->deref())
+    delete m_right;
+
+  return Node::deref();
+}
+
+ValueImp *AssignBracketNode::evaluate(ExecState *exec)
+{
+  ValueImp *baseValue = m_base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+  ValueImp *subscript = m_subscript->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  ObjectImp *base = baseValue->toObject(exec);
+
+  uint32_t propertyIndex;
+  if (subscript->getUInt32(propertyIndex)) {
+    ValueImp *v;
+    if (m_oper == OpEqual) {
+      v = m_right->evaluate(exec);
+    } else {
+      PropertySlot slot;
+      base->getPropertySlot(exec, propertyIndex, slot);    
+      ValueImp *v1 = slot.isSet() ? slot.getValue(exec, propertyIndex) : Undefined();
+      KJS_CHECKEXCEPTIONVALUE
+      ValueImp *v2 = m_right->evaluate(exec);
+      v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+    }
+
+    KJS_CHECKEXCEPTIONVALUE
+
+    base->put(exec, propertyIndex, v);
+    return v;
+  }
+
+  Identifier propertyName(subscript->toString(exec));
+  ValueImp *v;
+
+  if (m_oper == OpEqual) {
+    v = m_right->evaluate(exec);
+  } else {
+    PropertySlot slot;
+    base->getPropertySlot(exec, propertyName, slot);    
+    ValueImp *v1 = slot.isSet() ? slot.getValue(exec, propertyName) : Undefined();
+    KJS_CHECKEXCEPTIONVALUE
+    ValueImp *v2 = m_right->evaluate(exec);
+    v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
+  }
+
+  KJS_CHECKEXCEPTIONVALUE
+
+  base->put(exec, propertyName, v);
   return v;
 }
 

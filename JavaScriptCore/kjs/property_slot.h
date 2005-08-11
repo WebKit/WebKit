@@ -38,7 +38,8 @@ class PropertySlot
 public:
     typedef ValueImp *(*GetValueFunc)(ExecState *, const Identifier&, const PropertySlot&);
 
-    bool isSet() { return m_getValue != 0; }
+    bool isSet() const { return m_getValue != 0; }
+
     ValueImp *getValue(ExecState *exec, const Identifier& propertyName) const
     { 
         if (m_getValue == VALUE_SLOT_MARKER)
