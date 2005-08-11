@@ -1,3 +1,35 @@
+2005-08-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Test cases:
+        * svg-tests/W3C-SVG-1.1/script-handle-03-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/script-handle-03-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/script-handle-03-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/script-handle-04-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/script-handle-04-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/script-handle-04-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-01-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-01-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-01-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-02-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-02-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-02-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-03-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-03-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-03-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-04-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-04-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-04-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-05-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-05-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-05-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/struct-dom-06-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-06-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/struct-dom-06-b.svg-disabled: Removed.
+        Re-enabled previously crashing SVG test cases:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4338
+
 2005-08-10  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John.

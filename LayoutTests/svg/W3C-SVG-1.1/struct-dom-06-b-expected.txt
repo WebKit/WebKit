@@ -1,0 +1,4 @@
+KCanvasContainer at (0,0) size 479x451
+  KCanvasContainer at (0,0) size 451x451 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+    KCanvasItem {rect} at (0,0) size 451x451 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L450.00,0.00L450.00,450.00L0.00,450.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
