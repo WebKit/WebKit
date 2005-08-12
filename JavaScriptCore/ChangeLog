@@ -1,5 +1,11 @@
 2005-08-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Patch from Anders Carlsson, reviewed by me.
+
+        * kjs/nodes.h: Fix build breakage.
+
+2005-08-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by hyatt.
 
 	- refactor function calls, 3% speedup on JS iBench.

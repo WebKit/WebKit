@@ -395,13 +395,13 @@ namespace KJS {
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
-  private:
+  protected:
     Node *base;
     Node *subscript;
     ArgumentsNode *args;
   };
 
-  class FunctionCallParenBracketNode : public Node {
+  class FunctionCallParenBracketNode : public FunctionCallBracketNode {
   public:
     FunctionCallParenBracketNode(Node *b, Node *s, ArgumentsNode *a) : FunctionCallBracketNode(b, s, a) {}
     virtual void streamTo(SourceStream &s) const;
@@ -414,15 +414,15 @@ namespace KJS {
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
-  private:
+  protected:
     Node *base;
     Identifier ident;
     ArgumentsNode *args;
   };
 
-  class FunctionCallParenDotNode : public Node {
+  class FunctionCallParenDotNode : public FunctionCallDotNode {
   public:
-    FunctionCallDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : FunctionCallDotNode(b, i, a) {}
+    FunctionCallParenDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : FunctionCallDotNode(b, i, a) {}
     virtual void streamTo(SourceStream &s) const;
   };
 
