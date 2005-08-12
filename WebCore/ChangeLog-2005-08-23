@@ -1,3 +1,22 @@
+2005-08-11  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test cases added: (NONE)
+
+        -fixed <rdar://problem/4166839> CSS font-family and font-size ignored on <select> element with size > 1
+
+        Changed KWQListBox to get the font from the widget.
+
+        * kwq/KWQListBox.h: added setFont method
+        * kwq/KWQListBox.mm:
+        (QListBox::setFont): Added.
+        (QListBox::sizeForNumberOfLines): if the new font is the same as the system font, use the old system for cacheing the text renderer.
+        Otherwise, create a text renderer based on the new font, and a bold version of the new font.
+        (-[KWQTableView drawRow:clipRect:]): ditto.
+        (-[KWQTableView initWithListBox:]): moved setRowHeight call to fontChanged, so the height will reflect the new font.
+        (-[KWQTableView fontChanged]): Added.
+
 2005-08-11  David Hyatt  <hyatt@apple.com>
 
 	Refine the baseline alignment rule for inline blocks to cover for a hole in the spec.  The spec doesnt say what to do

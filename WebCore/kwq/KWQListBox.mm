@@ -52,11 +52,13 @@ const float rightMargin = 2;
 
 @interface KWQTableView : NSTableView <KWQWidgetHolder>
 {
+@public
     QListBox *_box;
     BOOL processingMouseEvent;
     BOOL clickedDuringMouseEvent;
     BOOL inNextValidKeyView;
     NSWritingDirection _direction;
+    BOOL isSystemFont;
 }
 - (id)initWithListBox:(QListBox *)b;
 - (void)detach;
@@ -64,6 +66,7 @@ const float rightMargin = 2;
 - (QWidget *)widget;
 - (void)setBaseWritingDirection:(NSWritingDirection)direction;
 - (NSWritingDirection)baseWritingDirection;
+- (void)fontChanged;
 @end
 
 static id <WebCoreTextRenderer> itemScreenRenderer;
@@ -150,7 +153,7 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setDocumentView:tableView];
     [tableView release];
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
-    
+        
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -236,7 +239,7 @@ bool QListBox::isSelected(int index) const
 void QListBox::setEnabled(bool enabled)
 {
     if (enabled != _enabled) {
-        // You would think this would work, but not until AppKit bug 2177792 if fixed.
+        // You would think this would work, but not until AppKit bug 2177792 is fixed.
         //KWQ_BLOCK_EXCEPTIONS;
         //NSTableView *tableView = [(NSScrollView *)getView() documentView];
         //[tableView setEnabled:enabled];
@@ -274,17 +277,40 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
             style.rtl = [tableView baseWritingDirection] == NSWritingDirectionRightToLeft;
             style.applyRunRounding = NO;
             style.applyWordRounding = NO;
+            
+            id <WebCoreTextRenderer> renderer;
+            id <WebCoreTextRenderer> groupLabelRenderer;
+            
+            if (tableView->isSystemFont) {        
+                renderer = itemTextRenderer();
+                groupLabelRenderer = groupLabelTextRenderer();
+            }
+            else {
+                NSFont *f = font().getNSFont();
+                QFont b = font();
+                b.setWeight(QFont::Bold);
+                NSFont *boldFont = b.getNSFont();
+            
+            
+                renderer = [[WebCoreTextRendererFactory sharedFactory]
+                    rendererWithFont:f usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+
+                groupLabelRenderer = [[WebCoreTextRendererFactory sharedFactory]
+                    rendererWithFont:boldFont usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+            }
+            
             do {
                 const QString &s = (*i).string;
-                id <WebCoreTextRenderer> renderer = (*i).isGroupLabel ? groupLabelTextRenderer() : itemTextRenderer();
-                ++i;
 
                 WebCoreTextRun run;
                 int length = s.length();
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
-                float textWidth = [renderer floatWidthForRun:&run style:&style widths:0];
+                float textWidth = [((*i).isGroupLabel ? groupLabelRenderer : renderer) floatWidthForRun:&run style:&style widths:0];
                 width = kMax(width, textWidth);
+                
+                ++i;
+            
             } while (i != e);
         }
         _width = ceilf(width);
@@ -349,6 +375,15 @@ void QListBox::clearCachedTextRenderers()
     groupLabelPrinterRenderer = nil;
 }
 
+void QListBox::setFont(const QFont &font)
+{
+    QWidget::setFont(font);
+
+    NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
+    KWQTableView *tableView = [scrollView documentView];
+    [tableView fontChanged];
+}
+
 @implementation KWQListBoxScrollView
 
 - (id)initWithListBox:(QListBox *)b
@@ -403,7 +438,6 @@ void QListBox::clearCachedTextRenderers()
     [self setAllowsMultipleSelection:NO];
     [self setHeaderView:nil];
     [self setIntercellSpacing:NSMakeSize(0, 0)];
-    [self setRowHeight:ceilf([itemFont() ascender] - [itemFont() descender] + bottomMargin)];
     
     [self setDataSource:self];
     [self setDelegate:self];
@@ -593,8 +627,21 @@ void QListBox::clearCachedTextRenderers()
 
     bool RTL = _direction == NSWritingDirectionRightToLeft;
 
-    id <WebCoreTextRenderer> renderer = item.isGroupLabel ? groupLabelTextRenderer() : itemTextRenderer();
-
+    NSFont *font = _box->font().getNSFont();
+    
+    id <WebCoreTextRenderer> renderer;
+    if (isSystemFont) {
+        renderer = item.isGroupLabel ? groupLabelTextRenderer() : itemTextRenderer();
+    } else {
+        if (item.isGroupLabel) {
+            QFont boldFont = _box->font();
+            boldFont.setWeight(QFont::Bold);
+            font = boldFont.getNSFont();
+        }
+        renderer = [[WebCoreTextRendererFactory sharedFactory]
+            rendererWithFont:font usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+    }
+   
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.rtl = RTL;
@@ -613,7 +660,7 @@ void QListBox::clearCachedTextRenderers()
     } else {
         point.x = NSMaxX(cellRect) - rightMargin - [renderer floatWidthForRun:&run style:&style widths:0];
     }
-    point.y = NSMaxY(cellRect) + [itemFont() descender] - bottomMargin;
+    point.y = NSMaxY(cellRect) + [font descender] - bottomMargin;
 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
@@ -649,6 +696,15 @@ void QListBox::clearCachedTextRenderers()
         [cell setStringValue:_box->itemAtIndex(row).string.getNSString()];
     }
     return cell;
+}
+
+- (void)fontChanged
+{
+    NSFont *font = _box->font().getNSFont();
+    isSystemFont = [[font fontName] isEqualToString:[itemFont() fontName]] && ([font pointSize] == [itemFont() pointSize]);
+    
+    [self setRowHeight:ceilf([font ascender] - [font descender] + bottomMargin)];
+    [self setNeedsDisplay:YES];
 }
 
 @end
