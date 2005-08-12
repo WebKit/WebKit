@@ -1,5 +1,30 @@
 2005-08-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- two simple speed improvements for a 3% speed gain
+	
+        * JavaScriptCore.xcodeproj/project.pbxproj: turn on -fstrict-aliasing
+
+        * kjs/scope_chain.h:
+        (KJS::ScopeChainIterator::ScopeChainIterator): Add a scope chain iterator
+	so you can walk a scope chain without having to make a copy that you then mutate.
+        (KJS::ScopeChainIterator::operator*): standard iterator operation
+        (KJS::ScopeChainIterator::operator->): ditto
+        (KJS::ScopeChainIterator::operator++): ditto
+        (KJS::ScopeChainIterator::operator==): ditto
+        (KJS::ScopeChainIterator::operator!=): ditto
+        (KJS::ScopeChain::begin): Iterator for the top of the scope chain
+        (KJS::ScopeChain::end): Iterator for one past the bottom (i.e. null)
+        * kjs/nodes.cpp:
+        (ResolveNode::evaluate): Use scope chain iterator instead of copying
+	a scope chain and then modifying the copy
+        (ResolveNode::evaluateReference): ditto
+        (FunctionCallResolveNode::evaluate): ditto
+        (AssignResolveNode::evaluate): ditto
+
+2005-08-12  Maciej Stachowiak  <mjs@apple.com>
+
         Patch from Anders Carlsson, reviewed by me.
 
         * kjs/nodes.h: Fix build breakage.

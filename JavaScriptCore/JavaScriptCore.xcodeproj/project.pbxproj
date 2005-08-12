@@ -1726,6 +1726,7 @@
 					APPLE_CHANGES,
 					HAVE_CONFIG_H,
 				);
+				GCC_STRICT_ALIASING = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -1733,6 +1734,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -1777,6 +1779,7 @@
 					APPLE_CHANGES,
 					HAVE_CONFIG_H,
 				);
+				GCC_STRICT_ALIASING = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -1784,6 +1787,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -1828,6 +1832,7 @@
 					APPLE_CHANGES,
 					HAVE_CONFIG_H,
 				);
+				GCC_STRICT_ALIASING = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
@@ -1835,6 +1840,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -1879,12 +1885,14 @@
 					APPLE_CHANGES,
 					HAVE_CONFIG_H,
 				);
+				GCC_STRICT_ALIASING = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = icu;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -2276,6 +2284,9 @@
 		149C277208902AFE008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Development;
@@ -2283,6 +2294,10 @@
 		149C277308902AFE008A9EFC /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Deployment;
@@ -2290,6 +2305,9 @@
 		149C277408902AFE008A9EFC /* OptimizedWithSymbols */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = OptimizedWithSymbols;
@@ -2297,6 +2315,9 @@
 		149C277508902AFE008A9EFC /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
 			};
 			name = Default;

@@ -333,37 +333,43 @@ static ValueImp *undefinedVariableError(ExecState *exec, const Identifier &ident
 // ECMA 11.1.2 & 10.1.4
 ValueImp *ResolveNode::evaluate(ExecState *exec)
 {
-  ScopeChain chain = exec->context().imp()->scopeChain();
-
-  assert(!chain.isEmpty());
+  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  ScopeChainIterator iter = chain.begin();
+  ScopeChainIterator end = chain.end();
+  
+  // we must always have something in the scope chain
+  assert(iter != end);
 
   PropertySlot slot;
   do { 
-    ObjectImp *o = chain.top();
+    ObjectImp *o = *iter;
 
     if (o->getPropertySlot(exec, ident, slot))
       return slot.getValue(exec, ident);
     
-    chain.pop();
-  } while (!chain.isEmpty());
+    ++iter;
+  } while (iter != end);
 
   return undefinedVariableError(exec, ident);
 }
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
 {
-  ScopeChain chain = exec->context().imp()->scopeChain();
-
-  assert(!chain.isEmpty());
+  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  ScopeChainIterator iter = chain.begin();
+  ScopeChainIterator end = chain.end();
+  
+  // we must always have something in the scope chain
+  assert(iter != end);
 
   PropertySlot slot;
   do { 
-    ObjectImp *o = chain.top();
+    ObjectImp *o = *iter;
     if (o->getPropertySlot(exec, ident, slot))
       return Reference(o, ident);
     
-    chain.pop();
-  } while (!chain.isEmpty());
+    ++iter;
+  } while (iter != end);
 
   return Reference(ident);
 }
@@ -817,14 +823,17 @@ bool FunctionCallResolveNode::deref()
 // ECMA 11.2.3
 ValueImp *FunctionCallResolveNode::evaluate(ExecState *exec)
 {
-  ScopeChain chain = exec->context().imp()->scopeChain();
-
-  assert(!chain.isEmpty());
+  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  ScopeChainIterator iter = chain.begin();
+  ScopeChainIterator end = chain.end();
+  
+  // we must always have something in the scope chain
+  assert(iter != end);
 
   PropertySlot slot;
   ObjectImp *base;
   do { 
-    base = chain.top();
+    base = *iter;
     if (base->getPropertySlot(exec, ident, slot)) {
       ValueImp *v = slot.getValue(exec, ident);
       KJS_CHECKEXCEPTIONVALUE
@@ -854,8 +863,8 @@ ValueImp *FunctionCallResolveNode::evaluate(ExecState *exec)
 
       return func->call(exec, thisObj, argList);
     }
-    chain.pop();
-  } while (!chain.isEmpty());
+    ++iter;
+  } while (iter != end);
   
   return undefinedVariableError(exec, ident);
 }
@@ -1679,19 +1688,22 @@ bool AssignResolveNode::deref()
 
 ValueImp *AssignResolveNode::evaluate(ExecState *exec)
 {
-  ScopeChain chain = exec->context().imp()->scopeChain();
-
-  assert(!chain.isEmpty());
+  const ScopeChain& chain = exec->context().imp()->scopeChain();
+  ScopeChainIterator iter = chain.begin();
+  ScopeChainIterator end = chain.end();
+  
+  // we must always have something in the scope chain
+  assert(iter != end);
 
   PropertySlot slot;
   ObjectImp *base;
   do { 
-    base = chain.top();
+    base = *iter;
     if (base->getPropertySlot(exec, m_ident, slot))
       goto found;
 
-    chain.pop();
-  } while (!chain.isEmpty());
+    ++iter;
+  } while (iter != end);
 
   if (m_oper != OpEqual)
     return undefinedVariableError(exec, m_ident);

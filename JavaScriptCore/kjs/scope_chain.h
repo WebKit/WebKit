@@ -40,6 +40,24 @@ namespace KJS {
         int refCount;
     };
 
+    class ScopeChainIterator {
+    public:
+        ScopeChainIterator(ScopeChainNode *node) : m_node(node) {}
+
+        ObjectImp * const & operator*() const { return m_node->object; }
+        ObjectImp * const * operator->() const { return &(operator*()); }
+    
+        ScopeChainIterator& operator++() { m_node = m_node->next; return *this; }
+
+        // postfix ++ intentionally omitted
+
+        bool operator==(const ScopeChainIterator& other) const { return m_node == other.m_node; }
+        bool operator!=(const ScopeChainIterator& other) const { return m_node != other.m_node; }
+
+    private:
+        ScopeChainNode *m_node;
+    };
+
     class ScopeChain {
     public:
         ScopeChain() : _node(0) { }
@@ -53,6 +71,9 @@ namespace KJS {
         ObjectImp *top() const { return _node->object; }
 
 	ObjectImp *bottom() const;
+
+        ScopeChainIterator begin() const { return ScopeChainIterator(_node); }
+        ScopeChainIterator end() const { return ScopeChainIterator(0); }
 
         void clear() { deref(); _node = 0; }
         void push(ObjectImp *);
