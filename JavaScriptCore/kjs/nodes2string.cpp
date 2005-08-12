@@ -195,9 +195,34 @@ void NewExprNode::streamTo(SourceStream &s) const
   s << "new " << expr << args;
 }
 
-void FunctionCallNode::streamTo(SourceStream &s) const
+void FunctionCallValueNode::streamTo(SourceStream &s) const
 {
   s << expr << args;
+}
+
+void FunctionCallResolveNode::streamTo(SourceStream &s) const
+{
+  s << ident << args;
+}
+
+void FunctionCallBracketNode::streamTo(SourceStream &s) const
+{
+  s << base << "[" << subscript << "]" << args;
+}
+
+void FunctionCallParenBracketNode::streamTo(SourceStream &s) const
+{
+  s << "(" << base << "[" << subscript << "])" << args;
+}
+
+void FunctionCallDotNode::streamTo(SourceStream &s) const
+{
+  s << base << "." << ident << args;
+}
+
+void FunctionCallParenDotNode::streamTo(SourceStream &s) const
+{
+  s << "(" << base << "." << ident << ")" << args;
 }
 
 void PostfixNode::streamTo(SourceStream &s) const

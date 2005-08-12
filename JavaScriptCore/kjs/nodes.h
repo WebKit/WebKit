@@ -106,6 +106,10 @@ namespace KJS {
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg);
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr);
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, Identifier label);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Identifier ident);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *e1, Node *e2);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr, Identifier ident);
+
     void setExceptionDetailsIfNeeded(ExecState *exec);
     int line;
     UString sourceURL;
@@ -360,9 +364,9 @@ namespace KJS {
     ArgumentsNode *args;
   };
 
-  class FunctionCallNode : public Node {
+  class FunctionCallValueNode : public Node {
   public:
-    FunctionCallNode(Node *e, ArgumentsNode *a) : expr(e), args(a) {}
+    FunctionCallValueNode(Node *e, ArgumentsNode *a) : expr(e), args(a) {}
     virtual void ref();
     virtual bool deref();
     ValueImp *evaluate(ExecState *exec);
@@ -370,6 +374,56 @@ namespace KJS {
   private:
     Node *expr;
     ArgumentsNode *args;
+  };
+
+  class FunctionCallResolveNode : public Node {
+  public:
+    FunctionCallResolveNode(const Identifier& i, ArgumentsNode *a) : ident(i), args(a) {}
+    virtual void ref();
+    virtual bool deref();
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  private:
+    Identifier ident;
+    ArgumentsNode *args;
+  };
+
+  class FunctionCallBracketNode : public Node {
+  public:
+    FunctionCallBracketNode(Node *b, Node *s, ArgumentsNode *a) : base(b), subscript(s), args(a) {}
+    virtual void ref();
+    virtual bool deref();
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  private:
+    Node *base;
+    Node *subscript;
+    ArgumentsNode *args;
+  };
+
+  class FunctionCallParenBracketNode : public Node {
+  public:
+    FunctionCallParenBracketNode(Node *b, Node *s, ArgumentsNode *a) : FunctionCallBracketNode(b, s, a) {}
+    virtual void streamTo(SourceStream &s) const;
+  };
+
+  class FunctionCallDotNode : public Node {
+  public:
+    FunctionCallDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : base(b), ident(i), args(a) {}
+    virtual void ref();
+    virtual bool deref();
+    ValueImp *evaluate(ExecState *exec);
+    virtual void streamTo(SourceStream &s) const;
+  private:
+    Node *base;
+    Identifier ident;
+    ArgumentsNode *args;
+  };
+
+  class FunctionCallParenDotNode : public Node {
+  public:
+    FunctionCallDotNode(Node *b, const Identifier &i, ArgumentsNode *a) : FunctionCallDotNode(b, i, a) {}
+    virtual void streamTo(SourceStream &s) const;
   };
 
   class PostfixNode : public Node {

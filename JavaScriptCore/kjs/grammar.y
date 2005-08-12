@@ -279,8 +279,15 @@ NewExpr:
 ;
 
 CallExpr:
-    MemberExpr Arguments           { $$ = new FunctionCallNode($1, $2); }
-  | CallExpr Arguments             { $$ = new FunctionCallNode($1, $2); }
+    ParenthesizedIdent Arguments       { $$ = new FunctionCallResolveNode(*$1, $2); }
+  | MemberBracketExpr Arguments        { $$ = new FunctionCallBracketNode($1.first, $1.second, $2); }
+  | CallBracketExpr Arguments          { $$ = new FunctionCallBracketNode($1.first, $1.second, $2); }
+  | ParenthesizedBracketExpr Arguments { $$ = new FunctionCallParenBracketNode($1.first, $1.second, $2); }
+  | MemberDotExpr Arguments        { $$ = new FunctionCallDotNode($1.node, *$1.ident, $2); }
+  | CallDotExpr Arguments          { $$ = new FunctionCallDotNode($1.node, *$1.ident, $2); }
+  | ParenthesizedDotExpr Arguments { $$ = new FunctionCallParenDotNode($1.node, *$1.ident, $2); }
+  | MemberExpr Arguments           { $$ = new FunctionCallValueNode($1, $2); }
+  | CallExpr Arguments             { $$ = new FunctionCallValueNode($1, $2); }
   | CallBracketExpr                { $$ = new BracketAccessorNode($1.first, $1.second); }
   | CallDotExpr                    { $$ = new DotAccessorNode($1.node, *$1.ident); }
 ;

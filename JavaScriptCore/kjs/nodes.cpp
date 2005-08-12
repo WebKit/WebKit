@@ -171,6 +171,58 @@ ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, Identi
   return result;
 }
 
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *e1, Node *e2)
+{
+  char *vStr = strdup(v->toString(exec).ascii());
+  char *e1Str = strdup(e1->toString().ascii());
+  char *e2Str = strdup(e2->toString().ascii());
+  
+  int length =  strlen(msg) - 6 /* three %s */ + strlen(vStr) + strlen(e1Str) + strlen(e2Str) + 1 /* null terminator */;
+  char *str = new char[length];
+  sprintf(str, msg, vStr, e1Str, e2Str);
+  free(vStr);
+  free(e1Str);
+  free(e2Str);
+
+  ValueImp *result = throwError(exec, e, str);
+  delete [] str;
+  
+  return result;
+}
+
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr, Identifier label)
+{
+  char *vStr = strdup(v->toString(exec).ascii());
+  char *exprStr = strdup(expr->toString().ascii());
+  const char *l = label.ascii();
+  int length = strlen(msg) - 6 /* three %s */ + strlen(vStr) + strlen(exprStr) + strlen(l) + 1 /* null terminator */;
+  char *message = new char[length];
+  sprintf(message, msg, vStr, exprStr, l);
+  free(vStr);
+  free(exprStr);
+
+  ValueImp *result = throwError(exec, e, message);
+  delete [] message;
+
+  return result;
+}
+
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Identifier label)
+{
+  char *vStr = strdup(v->toString(exec).ascii());
+  const char *l = label.ascii();
+  int length = strlen(msg) - 4 /* two %s */ + strlen(vStr) + strlen(l) + 1 /* null terminator */;
+  char *message = new char[length];
+  sprintf(message, msg, vStr, l);
+  free(vStr);
+
+  ValueImp *result = throwError(exec, e, message);
+  delete [] message;
+
+  return result;
+}
+
+
 void Node::setExceptionDetailsIfNeeded(ExecState *exec)
 {
     if (exec->hadException()) {
@@ -705,38 +757,30 @@ ValueImp *NewExprNode::evaluate(ExecState *exec)
   return constr->construct(exec, argList);
 }
 
-// ------------------------------ FunctionCallNode -----------------------------
-
-void FunctionCallNode::ref()
+void FunctionCallValueNode::ref()
 {
   Node::ref();
-  if ( expr )
+  if (expr)
     expr->ref();
-  if ( args )
+  if (args)
     args->ref();
 }
 
-bool FunctionCallNode::deref()
+bool FunctionCallValueNode::deref()
 {
-  if ( expr && expr->deref() )
+  if (expr && expr->deref())
     delete expr;
-  if ( args && args->deref() )
+  if (args && args->deref())
     delete args;
   return Node::deref();
 }
 
 // ECMA 11.2.3
-ValueImp *FunctionCallNode::evaluate(ExecState *exec)
+ValueImp *FunctionCallValueNode::evaluate(ExecState *exec)
 {
-  Reference ref = expr->evaluateReference(exec);
+  ValueImp *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTIONVALUE
 
-  List argList = args->evaluateList(exec);
-  KJS_CHECKEXCEPTIONVALUE
-
-  ValueImp *v = ref.getValue(exec);
-  KJS_CHECKEXCEPTIONVALUE
-  
   if (!v->isObject()) {
     return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, expr);
   }
@@ -747,22 +791,201 @@ ValueImp *FunctionCallNode::evaluate(ExecState *exec)
     return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, expr);
   }
 
-  ObjectImp *thisObjImp = 0;
-  ValueImp *thisValImp = ref.baseIfMutable();
-  if (thisValImp && thisValImp->isObject() && !static_cast<ObjectImp *>(thisValImp)->inherits(&ActivationImp::info))
-    thisObjImp = static_cast<ObjectImp *>(thisValImp);
+  List argList = args->evaluateList(exec);
+  KJS_CHECKEXCEPTIONVALUE
 
-  if (!thisObjImp) {
-    // ECMA 11.2.3 says that in this situation the this value should be null.
-    // However, section 10.2.3 says that in the case where the value provided
-    // by the caller is null, the global object should be used. It also says
-    // that the section does not apply to interal functions, but for simplicity
-    // of implementation we use the global object anyway here. This guarantees
-    // that in host objects you always get a valid object for this.
-    thisObjImp = exec->dynamicInterpreter()->globalObject();
+  ObjectImp *thisObj =  exec->dynamicInterpreter()->globalObject();
+
+  return func->call(exec, thisObj, argList);
+}
+
+
+void FunctionCallResolveNode::ref()
+{
+  Node::ref();
+  if (args)
+    args->ref();
+}
+
+bool FunctionCallResolveNode::deref()
+{
+  if (args && args->deref())
+    delete args;
+  return Node::deref();
+}
+
+// ECMA 11.2.3
+ValueImp *FunctionCallResolveNode::evaluate(ExecState *exec)
+{
+  ScopeChain chain = exec->context().imp()->scopeChain();
+
+  assert(!chain.isEmpty());
+
+  PropertySlot slot;
+  ObjectImp *base;
+  do { 
+    base = chain.top();
+    if (base->getPropertySlot(exec, ident, slot)) {
+      ValueImp *v = slot.getValue(exec, ident);
+      KJS_CHECKEXCEPTIONVALUE
+        
+      if (!v->isObject()) {
+        return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, ident);
+      }
+      
+      ObjectImp *func = static_cast<ObjectImp*>(v);
+      
+      if (!func->implementsCall()) {
+        return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, ident);
+      }
+      
+      List argList = args->evaluateList(exec);
+      KJS_CHECKEXCEPTIONVALUE
+        
+      ObjectImp *thisObj = base;
+      // ECMA 11.2.3 says that in this situation the this value should be null.
+      // However, section 10.2.3 says that in the case where the value provided
+      // by the caller is null, the global object should be used. It also says
+      // that the section does not apply to interal functions, but for simplicity
+      // of implementation we use the global object anyway here. This guarantees
+      // that in host objects you always get a valid object for this.
+      if (thisObj->isActivation())
+        thisObj = exec->dynamicInterpreter()->globalObject();
+
+      return func->call(exec, thisObj, argList);
+    }
+    chain.pop();
+  } while (!chain.isEmpty());
+  
+  return undefinedVariableError(exec, ident);
+}
+
+void FunctionCallBracketNode::ref()
+{
+  Node::ref();
+  if (base)
+    base->ref();
+  if (subscript)
+    base->ref();
+  if (args)
+    args->ref();
+}
+
+bool FunctionCallBracketNode::deref()
+{
+  if (base && base->deref())
+    delete base;
+  if (subscript && subscript->deref())
+    delete subscript;
+  if (args && args->deref())
+    delete args;
+  return Node::deref();
+}
+
+// ECMA 11.2.3
+ValueImp *FunctionCallBracketNode::evaluate(ExecState *exec)
+{
+  ValueImp *baseVal = base->evaluate(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  ValueImp *subscriptVal = subscript->evaluate(exec);
+
+  ObjectImp *baseObj = baseVal->toObject(exec);
+  uint32_t i;
+  PropertySlot slot;
+
+  ValueImp *funcVal;
+  if (subscriptVal->getUInt32(i)) {
+    if (baseObj->getPropertySlot(exec, i, slot))
+      funcVal = slot.getValue(exec, i);
+    else
+      funcVal = Undefined();
+  } else {
+    Identifier ident(subscriptVal->toString(exec));
+    if (baseObj->getPropertySlot(exec, ident, slot))
+      funcVal = baseObj->get(exec, ident);
+    else
+      funcVal = Undefined();
   }
 
-  ObjectImp *thisObj(thisObjImp);
+  KJS_CHECKEXCEPTIONVALUE
+  
+  if (!funcVal->isObject()) {
+    return throwError(exec, TypeError, "Value %s (result of expression %s[%s]) is not object.", funcVal, base, subscript);
+  }
+  
+  ObjectImp *func = static_cast<ObjectImp*>(funcVal);
+
+  if (!func->implementsCall()) {
+    return throwError(exec, TypeError, "Object %s (result of expression %s[%s]) does not allow calls.", funcVal, base, subscript);
+  }
+
+  List argList = args->evaluateList(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  ObjectImp *thisObj = baseObj;
+  assert(thisObj);
+  assert(thisObj->isObject());
+  assert(!thisObj->isActivation());
+
+  return func->call(exec, thisObj, argList);
+}
+
+
+void FunctionCallDotNode::ref()
+{
+  Node::ref();
+  if (base)
+    base->ref();
+  if (args)
+    args->ref();
+}
+
+bool FunctionCallDotNode::deref()
+{
+  if (base && base->deref())
+    delete base;
+  if (args && args->deref())
+    delete args;
+  return Node::deref();
+}
+
+static const char *dotExprNotAnObjectString()
+{
+  return "Value %s (result of expression %s.%s) is not object.";
+}
+
+static const char *dotExprDoesNotAllowCallsString() 
+{
+  return "Object %s (result of expression %s.%s) does not allow calls.";
+}
+
+// ECMA 11.2.3
+ValueImp *FunctionCallDotNode::evaluate(ExecState *exec)
+{
+  ValueImp *baseVal = base->evaluate(exec);
+
+  ObjectImp *baseObj = baseVal->toObject(exec);
+  PropertySlot slot;
+  ValueImp *funcVal = baseObj->getPropertySlot(exec, ident, slot) ? slot.getValue(exec, ident) : Undefined();
+  KJS_CHECKEXCEPTIONVALUE
+
+  if (!funcVal->isObject())
+    return throwError(exec, TypeError, dotExprNotAnObjectString(), funcVal, base, ident);
+  
+  ObjectImp *func = static_cast<ObjectImp*>(funcVal);
+
+  if (!func->implementsCall())
+    return throwError(exec, TypeError, dotExprDoesNotAllowCallsString(), funcVal, base, ident);
+
+  List argList = args->evaluateList(exec);
+  KJS_CHECKEXCEPTIONVALUE
+
+  ObjectImp *thisObj = baseObj;
+  assert(thisObj);
+  assert(thisObj->isObject());
+  assert(!thisObj->isActivation());
+
   return func->call(exec, thisObj, argList);
 }
 

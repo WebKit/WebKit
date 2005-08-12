@@ -527,6 +527,7 @@ namespace KJS {
     void saveProperties(SavedProperties &p) const { _prop.save(p); }
     void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
+    virtual bool isActivation() { return false; }
   protected:
     PropertyMap _prop;
   private:

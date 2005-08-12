@@ -1,3 +1,47 @@
+2005-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by hyatt.
+
+	- refactor function calls, 3% speedup on JS iBench.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (Node::throwError): Added new useful variants.
+        (FunctionCallValueNode::evaluate): New node to handle calls on expressions
+	that are strictly values, not references.
+        (FunctionCallValueNode::ref):  ditto
+        (FunctionCallValueNode::deref): ditto
+        (FunctionCallResolveNode::evaluate): New node to handle calls on identifier
+	expressions, so that they are looked up in the scope chain.
+        (FunctionCallResolveNode::ref): ditto
+        (FunctionCallResolveNode::deref): ditto
+        (FunctionCallBracketNode::evaluate): New node to handle calls on bracket
+	dereferences, so that the expression before brackets is used as the this
+	object.
+        (FunctionCallBracketNode::ref): ditto
+        (FunctionCallBracketNode::deref): ditto
+        (FunctionCallDotNode::evaluate): New node to handle calls on dot
+	dereferences, so that the expression before the dot is used as the this
+	object.
+        (FunctionCallDotNode::ref): ditto
+        (FunctionCallDotNode::deref): ditto
+        (dotExprNotAnObjectString): helper function to avoid global variable access.
+        (dotExprDoesNotAllowCallsString): ditto
+        * kjs/nodes.h: Declared new classes.
+        * kjs/nodes2string.cpp:
+        (FunctionCallValueNode::streamTo): Added - serializes the appropriate function call
+        (FunctionCallResolveNode::streamTo): ditto
+        (FunctionCallBracketNode::streamTo): ditto
+        (FunctionCallParenBracketNode::streamTo): ditto
+        (FunctionCallDotNode::streamTo): ditto
+        (FunctionCallParenDotNode::streamTo): ditto
+        * kjs/object.h:
+        (KJS::ObjectImp::isActivation): Change how activation objects are
+	detected in the scope chain, a virtual function is cheaper than the
+	old inheritance test.
+        * kjs/function.h:
+        (KJS::ActivationImp::isActivation): Ditto.
+
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
         - added missing file from earlier checkin
