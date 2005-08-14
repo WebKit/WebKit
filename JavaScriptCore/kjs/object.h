@@ -616,8 +616,10 @@ namespace KJS {
     static const char * const * const errorNames;
   };
 
-    inline bool AllocatedValueImp::isObject(const ClassInfo *info) const
-        { return isObject() && static_cast<const ObjectImp *>(this)->inherits(info); }
+inline bool AllocatedValueImp::isObject(const ClassInfo *info) const
+{
+    return isObject() && static_cast<const ObjectImp *>(this)->inherits(info);
+}
 
 inline ObjectImp::ObjectImp(ObjectImp *proto)
     : _proto(proto), _internalValue(0)

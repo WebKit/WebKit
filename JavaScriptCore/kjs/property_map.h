@@ -105,6 +105,10 @@ namespace KJS {
         Entry _singleEntry;
     };
 
+inline PropertyMap::PropertyMap() : _table(NULL)
+{
+}
+
 } // namespace
 
 #endif // _KJS_PROPERTY_MAP_H_

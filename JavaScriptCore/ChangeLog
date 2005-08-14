@@ -2,10 +2,28 @@
 
         Reviewed by Maciej.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4417
+          speed up JavaScript with some small changes to the property map code
+
+        my measurements show an improvement of 2% on iBench JavaScript
+
+        * kjs/property_map.h: (KJS::PropertyMap::PropertyMap): Made the default constructor inline.
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::~PropertyMap): Changed loop to exit early once we know we've processed
+        all the hash table entries, based on the count.
+        (KJS::PropertyMap::mark): Ditto.
+
+        * kjs/object.h: Made an arbitrary change here to force recompiling so we pick up changes to
+        property_map.h. Works around what seems to be an Xcode header dependency bug.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4416
           speed up JavaScript with some improvements to the garbage collector
 
-        seems to give about 2% on iBench JavaScript
+        my measurements show an improvement of 2% on iBench JavaScript
 
         * kjs/collector.cpp:
         (KJS::Collector::allocate): Use local variables to shadow globals instead of repeatedly
