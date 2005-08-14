@@ -145,10 +145,8 @@ const ClassInfo NativeErrorImp::info = {"Function", &InternalFunctionImp::info, 
 
 NativeErrorImp::NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
                                ObjectImp *prot)
-  : InternalFunctionImp(funcProto), proto(0)
+  : InternalFunctionImp(funcProto), proto(prot)
 {
-  proto = static_cast<ObjectImp*>(prot);
-
   putDirect(lengthPropertyName, jsOne(), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
   putDirect(prototypePropertyName, proto, DontDelete|ReadOnly|DontEnum);
 }

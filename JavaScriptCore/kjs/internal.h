@@ -392,6 +392,7 @@ namespace KJS {
 
   class InternalFunctionImp : public ObjectImp {
   public:
+    InternalFunctionImp();
     InternalFunctionImp(FunctionPrototypeImp *funcProto);
     bool implementsHasInstance() const;
     bool hasInstance(ExecState *exec, ValueImp *value);

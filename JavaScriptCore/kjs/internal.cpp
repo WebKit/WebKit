@@ -857,6 +857,10 @@ InterpreterImp *InterpreterImp::interpreterWithGlobalObject(ObjectImp *global)
 
 const ClassInfo InternalFunctionImp::info = {"Function", 0, 0, 0};
 
+InternalFunctionImp::InternalFunctionImp()
+{
+}
+
 InternalFunctionImp::InternalFunctionImp(FunctionPrototypeImp *funcProto)
   : ObjectImp(funcProto)
 {

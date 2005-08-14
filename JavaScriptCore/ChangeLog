@@ -1,3 +1,25 @@
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4344
+          REGRESSION: JavaScript crash when going back from viewing a thread (NULL protoype)
+
+        * kjs/error_object.cpp: (NativeErrorImp::NativeErrorImp): Set proto in a more
+        straightforward way. The old code set the proto to 0 and then to the correct value.
+        This showed up as a "false positive" when searching for places that set prototype
+        to NULL/0 so I fixed it.
+
+        * kjs/function_object.cpp: (FunctionPrototypeImp::FunctionPrototypeImp): Change to
+        not pass an explicit "0" to the base class (InternalFunctionImp) constructor.
+
+        * kjs/internal.h: Added a default constructor for InternalFunctionImp.
+        * kjs/internal.cpp: (KJS::InternalFunctionImp::InternalFunctionImp): Added the
+        default constructor (empty body, just calls base class's default constructor).
+
+        * kjs/object.h:
+        (KJS::ObjectImp::ObjectImp): Add an assertion to catch NULL prototypes earlier
+        in Development builds.
+        (KJS::ObjectImp::setPrototype): Ditto.
+
 2005-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

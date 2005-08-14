@@ -622,6 +622,7 @@ namespace KJS {
 inline ObjectImp::ObjectImp(ObjectImp *proto)
     : _proto(proto), _internalValue(0)
 {
+    assert(proto);
 }
 
 inline ObjectImp::ObjectImp()
@@ -646,6 +647,7 @@ inline ValueImp *ObjectImp::prototype() const
 
 inline void ObjectImp::setPrototype(ValueImp *proto)
 {
+    assert(proto);
     _proto = proto;
 }
 
