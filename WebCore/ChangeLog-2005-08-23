@@ -1,3 +1,17 @@
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Fixed by Alexey Proskuryakov <ap@nypop.com>.
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3590
+          should allow <meta> tags for encoding even after </head>
+
+        Test cases added:
+        * layout-tests/fast/encoding/mispositioned-meta-expected.txt: Added.
+        * layout-tests/fast/encoding/mispositioned-meta.html: Added.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Don't stop scanning when seeing </head>.
+
 2005-08-14  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin.

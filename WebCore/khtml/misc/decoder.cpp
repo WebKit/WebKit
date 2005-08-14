@@ -23,7 +23,6 @@
 //
 // KDE HTML Widget -- decoder for input stream
 
-#undef DECODE_DEBUG
 //#define DECODE_DEBUG
 
 #include "decoder.h"
@@ -479,6 +478,11 @@ QString Decoder::decode(const char *data, int len)
             // we still don't have an encoding, and are in the head
             // the following tags are allowed in <head>:
             // SCRIPT|STYLE|META|LINK|OBJECT|TITLE|BASE
+            
+            // We stop scanning when a tag that is not permitted in <head>
+            // is seen, rather when </head> is seen, because that more closely
+            // matches behavior in other browsers; more details in
+            // <http://bugzilla.opendarwin.org/show_bug.cgi?id=3590>.
 
 #if APPLE_CHANGES
             const char *ptr = buffer.latin1();
@@ -574,10 +578,10 @@ QString Decoder::decode(const char *data, int len)
                                tag != linkTag && tag != metaTag && tag != objectTag &&
                                tag != titleTag && tag != baseTag && 
                                (end || tag != htmlTag) &&
-                               (end || tag != headTag) && isalpha(tmp[0])) {
+                               (tag != headTag) && isalpha(tmp[0])) {
                         body = true;
 #ifdef DECODE_DEBUG
-			kdDebug( 6005 ) << "Decoder: no charset found. Id=" << id << endl;
+                        kdDebug( 6005 ) << "Decoder: no charset found (bailing because of \"" << tag.ascii() << "\")." << endl;
 #endif
                         goto found;
                     }
@@ -692,4 +696,3 @@ QString Decoder::flush() const
 }
 
 // -----------------------------------------------------------------------------
-#undef DECODE_DEBUG

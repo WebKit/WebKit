@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 611x18
+          text run at (0,0) width 611: "This test checks if WebKit can find a charset defined in an HTTP-EQUIV meta after the HEAD."
+      RenderBlock {P} at (0,34) size 784x18
+        RenderText {TEXT} at (0,0) size 305x18
+          text run at (0,0) width 305: "The first letter should look like a Latin \"C\" here:"
+      RenderBlock {P} at (0,68) size 784x18
+        RenderText {TEXT} at (0,0) size 633x18
+          text run at (0,0) width 633: "\x{421}\x{430}\x{439}\x{442} \x{413}\x{43E}\x{431}\x{43B}\x{438}\x{43D}\x{430} - \x{422}\x{443}\x{43F}\x{438}\x{447}\x{43E}\x{43A} \x{441}\x{442}.\x{43E}/\x{443} \x{413}\x{43E}\x{431}\x{43B}\x{438}\x{43D}\x{430} (Goblin). \x{424}\x{438}\x{43B}\x{44C}\x{43C}\x{44B} \x{413}\x{43E}\x{431}\x{43B}\x{438}\x{43D}\x{430}. \x{43F}\x{43E}\x{43B}\x{43D}\x{44B}\x{439} \x{41F}\x{44D}. \x{411}\x{43E}\x{436}\x{44C}\x{44F} \x{418}\x{441}\x{43A}\x{440}\x{430}."
