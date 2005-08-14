@@ -104,14 +104,19 @@ void* Collector::allocate(size_t s)
   
   if (s > static_cast<size_t>(CELL_SIZE)) {
     // oversize allocator
-    if (heap.usedOversizeCells == heap.numOversizeCells) {
-      heap.numOversizeCells = max(MIN_ARRAY_SIZE, heap.numOversizeCells * GROWTH_FACTOR);
-      heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
+
+    int usedOversizeCells = heap.usedOversizeCells;
+    int numOversizeCells = heap.numOversizeCells;
+
+    if (usedOversizeCells == numOversizeCells) {
+      numOversizeCells = max(MIN_ARRAY_SIZE, numOversizeCells * GROWTH_FACTOR);
+      heap.numOversizeCells = numOversizeCells;
+      heap.oversizeCells = static_cast<CollectorCell **>(kjs_fast_realloc(heap.oversizeCells, numOversizeCells * sizeof(CollectorCell *)));
     }
     
     void *newCell = kjs_fast_malloc(s);
-    heap.oversizeCells[heap.usedOversizeCells] = (CollectorCell *)newCell;
-    heap.usedOversizeCells++;
+    heap.oversizeCells[usedOversizeCells] = static_cast<CollectorCell *>(newCell);
+    heap.usedOversizeCells = usedOversizeCells + 1;
     heap.numLiveObjects = numLiveObjects + 1;
 
     return newCell;
@@ -119,30 +124,40 @@ void* Collector::allocate(size_t s)
   
   // slab allocator
   
-  CollectorBlock *targetBlock = NULL;
-  
-  int i;
-  for (i = heap.firstBlockWithPossibleSpace; i < heap.usedBlocks; i++) {
-    if (heap.blocks[i]->usedCells < CELLS_PER_BLOCK) {
-      targetBlock = heap.blocks[i];
-      break;
-    }
-  }
+  int usedBlocks = heap.usedBlocks;
 
-  heap.firstBlockWithPossibleSpace = i;
-  
-  if (targetBlock == NULL) {
-    // didn't find one, need to allocate a new block
-    
-    if (heap.usedBlocks == heap.numBlocks) {
-      heap.numBlocks = max(MIN_ARRAY_SIZE, heap.numBlocks * GROWTH_FACTOR);
-      heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+  int i = heap.firstBlockWithPossibleSpace;
+  CollectorBlock *targetBlock;
+  int targetBlockUsedCells;
+  if (i != usedBlocks) {
+    targetBlock = heap.blocks[i];
+    targetBlockUsedCells = targetBlock->usedCells;
+    assert(targetBlockUsedCells <= CELLS_PER_BLOCK);
+    while (targetBlockUsedCells == CELLS_PER_BLOCK) {
+      if (++i == usedBlocks)
+        goto allocateNewBlock;
+      targetBlock = heap.blocks[i];
+      targetBlockUsedCells = targetBlock->usedCells;
+      assert(targetBlockUsedCells <= CELLS_PER_BLOCK);
     }
-    
-    targetBlock = (CollectorBlock *)kjs_fast_calloc(1, sizeof(CollectorBlock));
+    heap.firstBlockWithPossibleSpace = i;
+  } else {
+allocateNewBlock:
+    // didn't find one, need to allocate a new block
+
+    int numBlocks = heap.numBlocks;
+    if (usedBlocks == heap.numBlocks) {
+      numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
+      heap.numBlocks = numBlocks;
+      heap.blocks = static_cast<CollectorBlock **>(kjs_fast_realloc(heap.blocks, numBlocks * sizeof(CollectorBlock *)));
+    }
+
+    targetBlock = static_cast<CollectorBlock *>(kjs_fast_calloc(1, sizeof(CollectorBlock)));
     targetBlock->freeList = targetBlock->cells;
-    heap.blocks[heap.usedBlocks] = targetBlock;
-    heap.usedBlocks++;
+    targetBlockUsedCells = 0;
+    heap.blocks[usedBlocks] = targetBlock;
+    heap.usedBlocks = usedBlocks + 1;
+    heap.firstBlockWithPossibleSpace = usedBlocks;
   }
   
   // find a free spot in the block and detach it from the free list
@@ -152,7 +167,7 @@ void* Collector::allocate(size_t s)
   // could avoid the casts by using a cell offset, but this avoids a relatively-slow multiply
   targetBlock->freeList = reinterpret_cast<CollectorCell *>(reinterpret_cast<char *>(newCell + 1) + newCell->u.freeCell.next);
 
-  targetBlock->usedCells++;
+  targetBlock->usedCells = targetBlockUsedCells + 1;
   heap.numLiveObjects = numLiveObjects + 1;
 
   return newCell;
@@ -227,33 +242,31 @@ void Collector::markStackObjectsConservatively(void *start, void *end)
   char **p = (char **)start;
   char **e = (char **)end;
   
+  int usedBlocks = heap.usedBlocks;
+  CollectorBlock **blocks = heap.blocks;
+  int usedOversizeCells = heap.usedOversizeCells;
+  CollectorCell **oversizeCells = heap.oversizeCells;
+
+  const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
+
   while (p != e) {
     char *x = *p++;
     if (IS_CELL_ALIGNED(x) && x) {
-      bool good = false;
-      for (int block = 0; block < heap.usedBlocks; block++) {
-	size_t offset = x - (char *)heap.blocks[block];
-	const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
-	if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0) {
-	  good = true;
-	  break;
-	}
+      for (int block = 0; block < usedBlocks; block++) {
+        size_t offset = x - reinterpret_cast<char *>(blocks[block]);
+        if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0)
+          goto gotGoodPointer;
       }
-      
-      if (!good) {
-	int n = heap.usedOversizeCells;
-	for (int i = 0; i != n; i++) {
-	  if (x == (char *)heap.oversizeCells[i]) {
-	    good = true;
-	    break;
-	  }
-	}
-      }
-      
-      if (good && ((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
-	AllocatedValueImp *imp = (AllocatedValueImp *)x;
-	if (!imp->marked())
-	  imp->mark();
+      for (int i = 0; i != usedOversizeCells; i++)
+        if (x == reinterpret_cast<char *>(oversizeCells[i]))
+          goto gotGoodPointer;
+      continue;
+
+gotGoodPointer:
+      if (((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
+        AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(x);
+        if (!imp->marked())
+          imp->mark();
       }
     }
   }
@@ -323,10 +336,11 @@ void Collector::markStackObjectsConservatively()
 
 void Collector::markProtectedObjects()
 {
-  int size = ProtectedValues::_tableSize;
-  ProtectedValues::KeyValue *table = ProtectedValues::_table;
-  for (int i = 0; i < size; i++) {
-    ValueImp *val = table[i].key;
+  typedef ProtectedValues::KeyValue Entry;
+  Entry *table = ProtectedValues::_table;
+  Entry *end = table + ProtectedValues::_tableSize;
+  for (Entry *entry = table; entry != end; ++entry) {
+    AllocatedValueImp *val = entry->key;
     if (val && !val->marked()) {
       val->mark();
     }
@@ -336,8 +350,6 @@ void Collector::markProtectedObjects()
 bool Collector::collect()
 {
   assert(Interpreter::lockCount() > 0);
-
-  bool deleted = false;
 
   if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;
@@ -362,63 +374,75 @@ bool Collector::collect()
   for (int block = 0; block < heap.usedBlocks; block++) {
     CollectorBlock *curBlock = heap.blocks[block];
 
-    int minimumCellsToProcess = curBlock->usedCells;
+    int usedCells = curBlock->usedCells;
+    CollectorCell *freeList = curBlock->freeList;
 
-    for (int i = 0; i < CELLS_PER_BLOCK; i++) {
-      if (minimumCellsToProcess < i) {
-	goto skip_block_sweep;
+    if (usedCells == CELLS_PER_BLOCK) {
+      // special case with a block where all cells are used -- testing indicates this happens often
+      for (int i = 0; i < CELLS_PER_BLOCK; i++) {
+        CollectorCell *cell = curBlock->cells + i;
+        AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
+        if (imp->m_marked) {
+          imp->m_marked = false;
+        } else {
+          imp->~AllocatedValueImp();
+          --usedCells;
+          --numLiveObjects;
+
+          // put cell on the free list
+          cell->u.freeCell.zeroIfFree = 0;
+          cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+          freeList = cell;
+        }
       }
+    } else {
+      int minimumCellsToProcess = usedCells;
+      for (int i = 0; i < minimumCellsToProcess; i++) {
+        CollectorCell *cell = curBlock->cells + i;
+        if (cell->u.freeCell.zeroIfFree == 0) {
+          ++minimumCellsToProcess;
+        } else {
+          AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
+          if (imp->m_marked) {
+            imp->m_marked = false;
+          } else {
+            imp->~AllocatedValueImp();
+            --usedCells;
+            --numLiveObjects;
 
-      CollectorCell *cell = curBlock->cells + i;
-      AllocatedValueImp *imp = reinterpret_cast<AllocatedValueImp *>(cell);
-
-      if (cell->u.freeCell.zeroIfFree != 0) {
-	if (!imp->m_marked)
-	{
-	  //fprintf(stderr, "Collector::deleting AllocatedValueImp %p (%s)\n", imp, className(imp));
-	  // emulate destructing part of 'operator delete()'
-	  imp->~AllocatedValueImp();
-	  curBlock->usedCells--;
-	  numLiveObjects--;
-	  deleted = true;
-
-	  // put it on the free list
-	  cell->u.freeCell.zeroIfFree = 0;
-	  cell->u.freeCell.next = reinterpret_cast<char *>(curBlock->freeList) - reinterpret_cast<char *>(cell + 1);
-	  curBlock->freeList = cell;
-
-	} else {
-	  imp->m_marked = false;
-	}
-      } else {
-	minimumCellsToProcess++;
+            // put cell on the free list
+            cell->u.freeCell.zeroIfFree = 0;
+            cell->u.freeCell.next = reinterpret_cast<char *>(freeList) - reinterpret_cast<char *>(cell + 1);
+            freeList = cell;
+          }
+        }
       }
     }
+    
+    curBlock->usedCells = usedCells;
+    curBlock->freeList = freeList;
 
-  skip_block_sweep:
-
-    if (heap.blocks[block]->usedCells == 0) {
+    if (usedCells == 0) {
       emptyBlocks++;
       if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
 #if !DEBUG_COLLECTOR
-	kjs_fast_free(heap.blocks[block]);
+        kjs_fast_free(curBlock);
 #endif
-	// swap with the last block so we compact as we go
-	heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
-	heap.usedBlocks--;
-	block--; // Don't move forward a step in this case
+        // swap with the last block so we compact as we go
+        heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
+        heap.usedBlocks--;
+        block--; // Don't move forward a step in this case
 
-	if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
-	  heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
-	  heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
-	}
-      } 
+        if (heap.numBlocks > MIN_ARRAY_SIZE && heap.usedBlocks < heap.numBlocks / LOW_WATER_FACTOR) {
+          heap.numBlocks = heap.numBlocks / GROWTH_FACTOR; 
+          heap.blocks = (CollectorBlock **)kjs_fast_realloc(heap.blocks, heap.numBlocks * sizeof(CollectorBlock *));
+        }
+      }
     }
   }
 
-  if (deleted) {
+  if (heap.numLiveObjects != numLiveObjects)
     heap.firstBlockWithPossibleSpace = 0;
-  }
   
   int cell = 0;
   while (cell < heap.usedOversizeCells) {
@@ -429,27 +453,27 @@ bool Collector::collect()
 #if DEBUG_COLLECTOR
       heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
 #else
-      kjs_fast_free((void *)imp);
+      kjs_fast_free(imp);
 #endif
 
       // swap with the last oversize cell so we compact as we go
       heap.oversizeCells[cell] = heap.oversizeCells[heap.usedOversizeCells - 1];
 
       heap.usedOversizeCells--;
-      deleted = true;
       numLiveObjects--;
 
       if (heap.numOversizeCells > MIN_ARRAY_SIZE && heap.usedOversizeCells < heap.numOversizeCells / LOW_WATER_FACTOR) {
-	heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
-	heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
+        heap.numOversizeCells = heap.numOversizeCells / GROWTH_FACTOR; 
+        heap.oversizeCells = (CollectorCell **)kjs_fast_realloc(heap.oversizeCells, heap.numOversizeCells * sizeof(CollectorCell *));
       }
-
     } else {
       imp->m_marked = false;
       cell++;
     }
   }
   
+  bool deleted = heap.numLiveObjects != numLiveObjects;
+
   heap.numLiveObjects = numLiveObjects;
   heap.numLiveObjectsAtLastCollect = numLiveObjects;
   
@@ -494,7 +518,7 @@ int Collector::numReferencedObjects()
   int size = ProtectedValues::_tableSize;
   ProtectedValues::KeyValue *table = ProtectedValues::_table;
   for (int i = 0; i < size; i++) {
-    ValueImp *val = table[i].key;
+    AllocatedValueImp *val = table[i].key;
     if (val) {
       ++count;
     }
@@ -505,7 +529,7 @@ int Collector::numReferencedObjects()
 
 #if APPLE_CHANGES
 
-static const char *className(ValueImp *val)
+static const char *className(AllocatedValueImp *val)
 {
   const char *name = "???";
   switch (val->type()) {
@@ -542,7 +566,7 @@ const void *Collector::rootObjectClasses()
   int size = ProtectedValues::_tableSize;
   ProtectedValues::KeyValue *table = ProtectedValues::_table;
   for (int i = 0; i < size; i++) {
-    ValueImp *val = table[i].key;
+    AllocatedValueImp *val = table[i].key;
     if (val) {
       CFStringRef name = CFStringCreateWithCString(NULL, className(val), kCFStringEncodingASCII);
       CFSetAddValue(classes, name);

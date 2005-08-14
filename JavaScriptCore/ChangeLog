@@ -1,5 +1,31 @@
 2005-08-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4416
+          speed up JavaScript with some improvements to the garbage collector
+
+        seems to give about 2% on iBench JavaScript
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate): Use local variables to shadow globals instead of repeatedly
+        going at global variables. Tighten up loop implementations to make the common case fast.
+        (KJS::Collector::markStackObjectsConservatively): Use local variables to shadow globals.
+        Used a goto to eliminate a boolean since it was showing up in the profile.
+        (KJS::Collector::markProtectedObjects): Iterate through the table using pointer rather
+        than an index since the profile showed that generating better code.
+        (KJS::Collector::collect): Added a special case for blocks where all cells are used,
+        Use local variables to shadow globals. Eliminated a boolean by computing it another
+        way (checking to see if the number of live objects changed). Also used local variables
+        to shadow fields in the current cell when sweeping.
+        (KJS::Collector::numReferencedObjects): Use AllocatedValueImp instead of ValueImp
+        in one place -- means we get faster versions of various functions that don't worry
+        about SimpleNumber.
+        (KJS::className): Ditto.
+        (KJS::Collector::rootObjectClasses): Ditto.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4344
           REGRESSION: JavaScript crash when going back from viewing a thread (NULL protoype)
 
