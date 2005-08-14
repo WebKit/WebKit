@@ -2,6 +2,25 @@
 
         Reviewed by Maciej.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4421
+          speed up JavaScript by inlining some label stack functions
+
+        * kjs/internal.h: Removed the copy constructor and assignment operator for LabelStack.
+        They were unused, and the implementations had bugs; I removed them rather than fixing them.
+        Also removed the clear function, since that was only needed to help the assignment operator
+        share code with the destructor, and was not efficient enough for the destructor.
+        (KJS::LabelStack::~LabelStack): Made this inline. Also used an efficient implementation
+        that's nice and fast when the stack is empty, better than the old clear() function which
+        used to keep updating and refetching "tos" each time through the loop.
+        (KJS::LabelStack::pop): Made this inline.
+
+        * kjs/internal.cpp: Deleted the now-inline functions and the obsolete functions. Also
+        deleted a commented-out line of code.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4419
           speed up JavaScript by improving KJS::List
 

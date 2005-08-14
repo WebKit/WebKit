@@ -139,9 +139,6 @@ namespace KJS {
     LabelStack(): tos(0L), iterationDepth(0), switchDepth(0) {}
     ~LabelStack();
 
-    LabelStack(const LabelStack &other);
-    LabelStack &operator=(const LabelStack &other);
-
     /**
      * If id is not empty and is not in the stack already, puts it on top of
      * the stack and returns true, otherwise returns false
@@ -165,13 +162,15 @@ namespace KJS {
     bool inSwitch() const { return (switchDepth > 0); }
     
   private:
+    LabelStack(const LabelStack &other);
+    LabelStack &operator=(const LabelStack &other);
+
     struct StackElem {
       Identifier id;
       StackElem *prev;
     };
 
     StackElem *tos;
-    void clear();
     int iterationDepth;
     int switchDepth;
   };
@@ -407,6 +406,23 @@ namespace KJS {
 #ifndef NDEBUG
   void printInfo(ExecState *exec, const char *s, ValueImp *, int lineno = -1);
 #endif
+
+inline LabelStack::~LabelStack()
+{
+    StackElem *prev;
+    for (StackElem *e = tos; e; e = prev) {
+        prev = e->prev;
+        delete e;
+    }
+}
+
+inline void LabelStack::pop()
+{
+    if (StackElem *e = tos) {
+        tos = e->prev;
+        delete e;
+    }
+}
 
 } // namespace
 
