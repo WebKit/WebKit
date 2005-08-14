@@ -2,6 +2,18 @@
 
         Reviewed and landed by Darin.
 
+        Test cases added: 
+        * layout-tests/dom/html/level2/core/hc_nodedocumentfragmentnormalize2-expected.txt:
+	This passes now.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::normalize):
+	If there's a single empty text child, remove it.
+	
+2005-08-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin.
+
         Test cases added:
         * layout-tests/dom/html/level2/html/HTMLSelectElement20-expected.txt:
 	This passes now.

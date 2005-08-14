@@ -260,6 +260,14 @@ void NodeImpl::normalize ()
             child = nextChild;
         }
     }
+    
+    // Check if we have a single empty text node left and remove it if so
+    child = firstChild();
+    if (child && !child->nextSibling() && child->isTextNode()) {
+        TextImpl *text = static_cast<TextImpl*>(child);
+        if (text->data().isEmpty())
+            removeChild(child, exceptioncode);
+    }
 }
 
 const AtomicString& NodeImpl::prefix() const
