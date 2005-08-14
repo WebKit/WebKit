@@ -4114,6 +4114,14 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
     [_bridge respondToChangedSelection];
 }
 
+bool KWQKHTMLPart::shouldChangeSelection(const Selection &oldSelection, const Selection &newSelection, khtml::EAffinity affinity, bool stillSelecting) const
+{
+    return [_bridge shouldChangeSelectedDOMRange:[DOMRange _rangeWithImpl:oldSelection.toRange().get()]
+                                      toDOMRange:[DOMRange _rangeWithImpl:newSelection.toRange().get()]
+                                        affinity:static_cast<NSSelectionAffinity>(affinity)
+                                  stillSelecting:stillSelecting];
+}
+
 void KWQKHTMLPart::respondToChangedContents()
 {
 #if APPLE_CHANGES

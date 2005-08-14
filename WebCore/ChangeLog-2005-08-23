@@ -1,3 +1,39 @@
+2005-08-14  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and landed by Darin.
+
+        WebCore part of fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4011>:
+        "Editing delegate selection methods not called when using mouse"
+
+        Clicking on editable content would move the cursor or alter the selection without
+        calling the appropriate editing delegate method
+        (webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:). The
+        core of the patch is in the KHTMLPart::hadnleMousePressEvent* methods, the rest
+        is glue needed to drill through all the layers.
+
+        * khtml/khtml_part.cpp:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::shouldChangeSelection): Glue to call editing delegate.
+        (KHTMLPart::findTextNext): Call editing delegate before changing selection.
+        (KHTMLPart::selectClosestWordFromMouseEvent): Ditto.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Ditto.
+        (KHTMLPart::handleMouseMoveEventSelection): Ditto.
+        (KHTMLPart::khtmlMouseReleaseEvent): Ditto.
+        (KHTMLPart::selectAll): Ditto.
+        (KHTMLPart::appliedEditing): Ditto.
+        (KHTMLPart::unappliedEditing): Ditto.
+        (KHTMLPart::reappliedEditing): Ditto.
+        (KHTMLPart::selectFrameElementInParentIfFullySelected): Ditto.
+
+        * khtml/khtml_part.h: Added shouldChangeSelection glue method.
+        * kwq/KWQKHTMLPart.h: Ditto.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::shouldChangeSelection): Glue to call editing delegate.
+
+        * kwq/WebCoreBridge.h: Added shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting: glue method.
+
 2005-08-14  Darin Adler  <darin@apple.com>
 
         Fixed by Alexey Proskuryakov <ap@nypop.com>.

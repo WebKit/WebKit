@@ -28,6 +28,8 @@
 
 #import "khtml_part.h"
 
+#import "text_affinity.h"
+
 #import "dom_nodeimpl.h"
 
 #import "WebCoreKeyboardAccess.h"
@@ -343,6 +345,7 @@ public:
     void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
     void respondToChangedContents();
     virtual bool isContentEditable() const;
+    virtual bool shouldChangeSelection(const khtml::Selection &oldSelection, const khtml::Selection &newSelection, khtml::EAffinity affinity, bool stillSelecting) const;
     virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;
     virtual bool shouldEndEditing(const DOM::RangeImpl *) const;
 

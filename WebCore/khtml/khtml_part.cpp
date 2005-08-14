@@ -2395,7 +2395,10 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
                 d->m_view->setContentsPos(x-50, y-50);
                 Position p1(d->m_findNode, d->m_findPos);
                 Position p2(d->m_findNode, d->m_findPos + matchLen);
-                setSelection(Selection(p1, khtml::DOWNSTREAM, p2, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+                Selection sel = Selection(p1, khtml::DOWNSTREAM, p2, khtml::SEL_PREFER_UPSTREAM_AFFINITY);
+                if (shouldChangeSelection(sel)) {
+                    setSelection(sel);
+                }
                 return true;
             }
         }
@@ -4601,8 +4604,10 @@ void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *in
         d->m_beganSelectingText = true;
     }
     
-    setSelection(selection);
-    startAutoScroll();
+    if (shouldChangeSelection(selection)) {
+        setSelection(selection);
+        startAutoScroll();
+    }
 }
 
 void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
@@ -4639,8 +4644,10 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
             d->m_beganSelectingText = true;
         }
         
-        setSelection(selection);
-        startAutoScroll();
+        if (shouldChangeSelection(selection)) {
+            setSelection(selection);
+            startAutoScroll();
+        }
     }
 }
 
@@ -4691,8 +4698,10 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
                 d->m_selectionGranularity = CHARACTER;
             }
             
-            setSelection(sel);
-            startAutoScroll();
+            if (shouldChangeSelection(sel)) {
+                setSelection(sel);
+                startAutoScroll();
+            }
         }
     }
 }
@@ -4902,7 +4911,10 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     if (d->m_selectionGranularity != CHARACTER) {
         sel.expandUsingGranularity(d->m_selectionGranularity);
     }
-    setSelection(sel);
+
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel);
+    }
 
 #endif // KHTML_NO_SELECTION
 }
@@ -4973,7 +4985,9 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             VisiblePosition pos = node->renderer()->positionForCoordinates(event->x(), event->y());
             selection.moveTo(pos);
         }
-        setSelection(selection);
+        if (shouldChangeSelection(selection)) {
+            setSelection(selection);
+        }
     }
 
 #ifndef QT_NO_CLIPBOARD
@@ -5139,8 +5153,20 @@ void KHTMLPart::selectAll()
         return;
     NodeImpl *de = d->m_doc->documentElement();
     int n = de ? de->childNodeCount() : 0;
-    setSelection(Selection(VisiblePosition(de, 0, khtml::DOWNSTREAM), VisiblePosition(de, n, khtml::DOWNSTREAM)));
+    Selection sel = Selection(VisiblePosition(de, 0, khtml::DOWNSTREAM), VisiblePosition(de, n, khtml::DOWNSTREAM));
+    if (shouldChangeSelection(sel)) {
+        setSelection(sel);
+    }
     selectFrameElementInParentIfFullySelected();
+}
+
+bool KHTMLPart::shouldChangeSelection(const Selection &newselection) const
+{
+#if APPLE_CHANGES
+    return KWQ(this)->shouldChangeSelection(d->m_selection, newselection, newselection.startAffinity(), false);
+#else
+    return true;
+#endif
 }
 
 bool KHTMLPart::shouldBeginEditing(const RangeImpl *range) const
@@ -5167,7 +5193,9 @@ EditCommandPtr KHTMLPart::lastEditCommand()
 
 void KHTMLPart::appliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.endingSelection(), false);
+    if (shouldChangeSelection(cmd.endingSelection())) {
+        setSelection(cmd.endingSelection(), false);
+    }
 
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
@@ -5199,7 +5227,9 @@ void KHTMLPart::appliedEditing(EditCommandPtr &cmd)
 
 void KHTMLPart::unappliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.startingSelection(), true);
+    if (shouldChangeSelection(cmd.startingSelection())) {
+        setSelection(cmd.startingSelection(), true);
+    }
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
     KWQ(this)->respondToChangedContents();
@@ -5209,7 +5239,9 @@ void KHTMLPart::unappliedEditing(EditCommandPtr &cmd)
 
 void KHTMLPart::reappliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.endingSelection(), true);
+    if (shouldChangeSelection(cmd.endingSelection())) {
+        setSelection(cmd.endingSelection(), true);
+    }
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
     KWQ(this)->respondToChangedContents();
@@ -5953,8 +5985,10 @@ void KHTMLPart::selectFrameElementInParentIfFullySelected()
     VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
 
     // Focus on the parent frame, and then select from before this element to after.
-    parentView->setFocus();
-    parent->setSelection(Selection(beforeOwnerElement, afterOwnerElement));
+    if (parent->shouldChangeSelection(Selection(beforeOwnerElement, afterOwnerElement))) {
+        parentView->setFocus();
+        parent->setSelection(Selection(beforeOwnerElement, afterOwnerElement));
+    }
 }
 
 void KHTMLPart::handleFallbackContent()

@@ -1464,6 +1464,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] isEditable];
 }
 
+- (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
+{
+    return [[_frame webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
+}
+
 - (BOOL)shouldBeginEditing:(DOMRange *)range
 {
     return [[_frame webView] _shouldBeginEditingInDOMRange:range];

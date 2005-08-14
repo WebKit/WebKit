@@ -1,3 +1,28 @@
+2005-08-14  Duncan Wilcox  <duncan@mclink.it>
+
+        Reviewed and landed by Darin.
+
+        WebKit part of fix for <http://bugzilla.opendarwin.org/show_bug.cgi?id=4011>:
+        "Editing delegate selection methods not called when using mouse"
+
+        Clicking on editable content would move the cursor or alter the selection without
+        calling the appropriate editing delegate method
+        (webView:shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:). The
+        core of the patch is in the KHTMLPart::handleMousePressEvent* methods, the rest
+        is glue needed to drill through all the layers.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        Bridge glue.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView(WebViewEditingExtras) _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        Final step in glue, calling editing delegate.
+
+        * WebView.subproj/WebViewInternal.h:
+        Added _shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting: private method to WebViewEditingExtras
+        category.
+
 2005-08-11  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Vicki

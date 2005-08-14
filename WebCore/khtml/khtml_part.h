@@ -622,6 +622,11 @@ public:
   void setSelection(const khtml::Selection &, bool closeTyping = true, bool keepTypingStyle = false);
 
   /**
+   * Returns whether selection can be changed.
+   */
+  bool shouldChangeSelection(const khtml::Selection &) const;
+
+  /**
    * Returns a mark, to be used as emacs uses it.
    */
   const khtml::Selection &mark() const;
