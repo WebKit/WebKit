@@ -2,6 +2,26 @@
 
         Reviewed by Maciej.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4419
+          speed up JavaScript by improving KJS::List
+
+        my measurements show an improvement of 1% on iBench JavaScript
+
+        * kjs/list.cpp: Rearrange list to make the values and free list share the same storage,
+        which saves 4 bytes per list. Also remove the pointers used only on the heap from the
+        lists that are in the pool, which saves 8 bytes per list. Moving the free list pointer
+        closer to the start of the list object also speeds up access to the free list. New
+        "HeapListImp" struct is used only for the lists on the heap.
+        (KJS::List::markProtectedLists): Shadowed global variable in local and updated for the
+        new terminology ("heap" instead of "outside pool").
+        (KJS::allocateListImp): Updated for new terminology.
+        (KJS::List::release): Moved the code from deallocateListImp in here -- it wasn't being
+        inlined and didn't need to be in a separate function.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4417
           speed up JavaScript with some small changes to the property map code
 

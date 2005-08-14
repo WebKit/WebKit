@@ -31,19 +31,18 @@ namespace KJS {
 const int poolSize = 512;
 const int inlineValuesSize = 4;
 
-
 enum ListImpState { unusedInPool = 0, usedInPool, usedOnHeap, immortal };
 
 struct ListImp : ListImpBase
 {
     ListImpState state;
-    ValueImp *values[inlineValuesSize];
     int capacity;
     ValueImp **overflow;
 
-    ListImp *nextInFreeList;
-    ListImp *nextInOutsideList;
-    ListImp *prevInOutsideList;
+    union {
+        ValueImp *values[inlineValuesSize];
+        ListImp *nextInFreeList;
+    };
 
 #if DUMP_STATISTICS
     int sizeHighWaterMark;
@@ -52,9 +51,15 @@ struct ListImp : ListImpBase
     void markValues();
 };
 
+struct HeapListImp : ListImp
+{
+    HeapListImp *nextInHeapList;
+    HeapListImp *prevInHeapList;
+};
+
 static ListImp pool[poolSize];
 static ListImp *poolFreeList;
-static ListImp *outsidePoolList;
+static HeapListImp *heapList;
 static int poolUsed;
 
 #if DUMP_STATISTICS
@@ -112,10 +117,9 @@ inline void ListImp::markValues()
 void List::markProtectedLists()
 {
     int seen = 0;
-    for (int i = 0; i < poolSize; i++) {
-        if (seen >= poolUsed)
-            break;
+    int used = poolUsed;
 
+    for (int i = 0; i < poolSize && seen < used; i++) {
         if (pool[i].state == usedInPool) {
             seen++;
             if (pool[i].valueRefCount > 0) {
@@ -124,7 +128,7 @@ void List::markProtectedLists()
         }
     }
 
-    for (ListImp *l = outsidePoolList; l; l = l->nextInOutsideList) {
+    for (HeapListImp *l = heapList; l; l = l->nextInHeapList) {
         if (l->valueRefCount > 0) {
             l->markValues();
         }
@@ -143,42 +147,17 @@ static inline ListImp *allocateListImp()
 	return imp;
     }
     
-    ListImp *imp = new ListImp;
+    HeapListImp *imp = new HeapListImp;
     imp->state = usedOnHeap;
-    // link into outside pool list
-    if (outsidePoolList) {
-        outsidePoolList->prevInOutsideList = imp;
+    // link into heap list
+    if (heapList) {
+        heapList->prevInHeapList = imp;
     }
-    imp->nextInOutsideList = outsidePoolList;
-    imp->prevInOutsideList = NULL;
-    outsidePoolList = imp;
+    imp->nextInHeapList = heapList;
+    imp->prevInHeapList = NULL;
+    heapList = imp;
 
     return imp;
-}
-
-static inline void deallocateListImp(ListImp *imp)
-{
-    if (imp->state == usedInPool) {
-        imp->state = unusedInPool;
-	imp->nextInFreeList = poolFreeList;
-	poolFreeList = imp;
-	poolUsed--;
-    } else {
-        // unlink from outside pool list
-        if (!imp->prevInOutsideList) {
-            outsidePoolList = imp->nextInOutsideList;
-            if (outsidePoolList) {
-                outsidePoolList->prevInOutsideList = NULL;
-            }
-        } else {
-            imp->prevInOutsideList->nextInOutsideList = imp->nextInOutsideList;
-            if (imp->nextInOutsideList) {
-                imp->nextInOutsideList->prevInOutsideList = imp->prevInOutsideList;
-            }
-        }
-
-        delete imp;
-    }
 }
 
 List::List() : _impBase(allocateListImp()), _needsMarking(false)
@@ -230,7 +209,31 @@ void List::release()
 #endif
 
     delete [] imp->overflow;
-    deallocateListImp(imp);
+
+    if (imp->state == usedInPool) {
+        imp->state = unusedInPool;
+	imp->nextInFreeList = poolFreeList;
+	poolFreeList = imp;
+	poolUsed--;
+    } else {
+        assert(imp->state == usedOnHeap);
+        HeapListImp *list = static_cast<HeapListImp *>(imp);
+
+        // unlink from heap list
+        if (!list->prevInHeapList) {
+            heapList = list->nextInHeapList;
+            if (heapList) {
+                heapList->prevInHeapList = NULL;
+            }
+        } else {
+            list->prevInHeapList->nextInHeapList = list->nextInHeapList;
+            if (list->nextInHeapList) {
+                list->nextInHeapList->prevInHeapList = list->prevInHeapList;
+            }
+        }
+
+        delete list;
+    }
 }
 
 ValueImp *List::at(int i) const
