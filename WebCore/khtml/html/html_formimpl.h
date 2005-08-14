@@ -563,7 +563,7 @@ public:
 
     bool multiple() const { return m_multiple; }
 
-    void add ( HTMLElementImpl *element, HTMLElementImpl *before );
+    void add ( HTMLElementImpl *element, HTMLElementImpl *before, int &exceptioncode );
     void remove ( long index );
     void blur();
     void focus();

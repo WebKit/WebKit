@@ -1133,7 +1133,9 @@ using DOM::NodeImpl;
 
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
 {
-    [self _selectElementImpl]->add([element _HTMLElementImpl], [before _HTMLElementImpl]);
+    int exceptionCode = 0;
+    [self _selectElementImpl]->add([element _HTMLElementImpl], [before _HTMLElementImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (void)remove:(long)index

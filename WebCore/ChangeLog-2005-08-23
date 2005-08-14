@@ -1,3 +1,26 @@
+2005-08-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin.
+
+        Test cases added:
+        * layout-tests/dom/html/level2/html/HTMLSelectElement20-expected.txt:
+	This passes now.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        (KJS::KJS::HTMLSelectCollection::put):
+	Handle exceptions.
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLSelectElementImpl::add):
+        * khtml/html/html_formimpl.h:
+	Make ::add raise an exception if before isn't a descendant
+	of the select element.
+
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLSelectElement add::]):
+	Handle the exception.
+
 2005-08-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by adele.
