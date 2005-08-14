@@ -81,11 +81,23 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
   if (part)
       proxy = KJSProxy::proxy( part );
 
-  if (proxy && listener->implementsCall()) {
+  ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
+  ExecState *exec = interpreter->globalExec();
+  
+  bool hasHandleEvent = false;
+  ValueImp *handleEventFuncValue = 0;
+  ObjectImp *handleEventFunc = 0;
+  
+  handleEventFuncValue = listener->get(exec, "handleEvent");
+  if (handleEventFuncValue->isObject()) {      
+      handleEventFunc = static_cast<ObjectImp *>(handleEventFuncValue);
+            
+      if (handleEventFunc->implementsCall())
+          hasHandleEvent = true;
+  }
+  
+  if (proxy && (listener->implementsCall() || hasHandleEvent)) {
     ref();
-
-    ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(proxy->interpreter());
-    ExecState *exec = interpreter->globalExec();
 
     List args;
     args.append(getDOMEvent(exec,evt));
@@ -106,7 +118,11 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
     }
 
     Interpreter::lock();
-    ValueImp *retval = listener->call(exec, thisObj, args);
+    ValueImp *retval;
+    if (hasHandleEvent)
+        retval = handleEventFunc->call(exec, listener, args);
+    else
+        retval = listener->call(exec, thisObj, args);
     Interpreter::unlock();
 
     window->setCurrentEvent( 0 );

@@ -2,6 +2,30 @@
 
         Reviewed and landed by Darin.
 
+        Test cases added: 	
+        * layout-tests/dom/html/level2/events/dispatchEvent08-expected.txt:
+        * layout-tests/dom/html/level2/events/dispatchEvent10-expected.txt:
+        * layout-tests/dom/html/level2/events/dispatchEvent12-expected.txt:
+	These pass now.
+	
+        * layout-tests/dom/html/level2/events/dispatchEvent11-expected.txt:
+        * layout-tests/dom/html/level2/events/dispatchEvent13-expected.txt:
+	These fail someplace else now.
+	
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+	Check if the listener has a "handleEvent" function property and
+	call that.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchGenericEvent):
+	A capturing event listener should not be triggered if an event is
+	dispatched directly to the node to which the listener has been added.
+
+2005-08-14  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin.
+
         Test cases added: 
         * layout-tests/dom/html/level2/core/hc_nodedocumentfragmentnormalize2-expected.txt:
 	This passes now.
