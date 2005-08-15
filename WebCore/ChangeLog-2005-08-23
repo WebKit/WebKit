@@ -1,5 +1,12 @@
 2005-08-14  Darin Adler  <darin@apple.com>
 
+        - fixed build of some unit tests
+
+        * khtml/misc/main_thread_malloc.h: We use functions from <stdlib.h> here in
+        debug mode, so #include <stdlib.h>.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4422

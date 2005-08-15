@@ -29,6 +29,10 @@
 // while holding the collector lock (this is true whenenever the interpreter is
 // executing or GC is taking place).
 
+#ifndef NDEBUG
+#include <stdlib.h>
+#endif
+
 namespace khtml {
 
 #ifndef NDEBUG
@@ -53,6 +57,6 @@ void operator delete(void* p) { khtml::main_thread_free(p); }
 
 #endif
 
-};
+}
 
 #endif /* KHTMLMAINTTHREADMALLOC_H */
