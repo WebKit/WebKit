@@ -541,7 +541,7 @@ void PropertyMap::mark() const
         return;
     }
 
-    int minimumKeysToProcess = _table->keyCount + _table->sentinelCount;
+    int minimumKeysToProcess = _table->keyCount;
     Entry *entries = _table->entries;
     for (int i = 0; i < minimumKeysToProcess; i++) {
         ValueImp *v = entries[i].value;

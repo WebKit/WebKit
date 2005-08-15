@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - fixed crash observed on one of the Apple-only layout tests
+
+        * kjs/property_map.cpp: (KJS::PropertyMap::mark): Change code to understand that deleted
+        entries have a value of NULL, so the deleted sentinel count doesn't need to be included
+        in the count of things to mark since we're ignoring the keys.
+
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4421
           speed up JavaScript by inlining some label stack functions
 
