@@ -1,3 +1,18 @@
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4422
+          QFont has mistake where it caches computed pitch value incorrectly
+
+        * kwq/KWQFont.mm:
+        (QFont::setFamily): Set _pitch to Unknown when setting _NSFont to nil.
+        (QFont::setFirstFamily): Ditto.
+        (QFont::setPixelSize): Ditto. Might be unneeded; it would be bad to have the same font
+        with different pitch settings at different sizes. But better to be safe.
+        (QFont::setWeight): Ditto. Same caveat.
+        (QFont::setItalic): Ditto. Ditto.
+
 2005-08-14  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
         Reviewed and landed by Darin.

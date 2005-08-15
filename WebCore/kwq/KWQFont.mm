@@ -77,6 +77,7 @@ void QFont::setFamily(const QString &qfamilyName)
     _family.setFamily(qfamilyName);
     KWQRelease(_NSFont);
     _NSFont = 0;
+    _pitch = Unknown;
 }
 
 void QFont::setFirstFamily(const KWQFontFamily& family) 
@@ -84,6 +85,7 @@ void QFont::setFirstFamily(const KWQFontFamily& family)
     _family = family;
     KWQRelease(_NSFont);
     _NSFont = 0;
+    _pitch = Unknown;
 }
 
 void QFont::setPixelSize(float s)
@@ -91,6 +93,7 @@ void QFont::setPixelSize(float s)
     if (_size != s) {
         KWQRelease(_NSFont); 
         _NSFont = 0;
+        _pitch = Unknown;
     }
     _size = s;
 }
@@ -101,12 +104,14 @@ void QFont::setWeight(int weight)
         if (!(_trait & NSBoldFontMask)){
             KWQRelease(_NSFont);
             _NSFont = 0;
+            _pitch = Unknown;
         }
         _trait |= NSBoldFontMask;
     } else if (weight == Normal) {
         if ((_trait & NSBoldFontMask)){
             KWQRelease(_NSFont);
             _NSFont = 0;
+            _pitch = Unknown;
         }
         _trait &= ~NSBoldFontMask;
     }
@@ -128,12 +133,14 @@ void QFont::setItalic(bool flag)
         if (!(_trait & NSItalicFontMask)){
             KWQRelease(_NSFont);
             _NSFont = 0;
+            _pitch = Unknown;
         }
         _trait |= NSItalicFontMask;
     } else {
         if ((_trait & NSItalicFontMask)){
             KWQRelease(_NSFont);
             _NSFont = 0;
+            _pitch = Unknown;
         }
         _trait &= ~NSItalicFontMask;
     }
@@ -152,7 +159,7 @@ bool QFont::bold() const
 void QFont::determinePitch() const
 {
     KWQ_BLOCK_EXCEPTIONS;
-    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()])
+    if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getNSFont()])
         _pitch = Fixed;
     else
         _pitch = Variable;
