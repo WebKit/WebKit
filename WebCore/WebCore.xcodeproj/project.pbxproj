@@ -10049,7 +10049,6 @@
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -10080,6 +10079,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
+					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -10097,6 +10097,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
+				WEBCORE_EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 			};
 			name = Development;
 		};
@@ -10107,7 +10108,6 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -10138,6 +10138,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
+					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -10155,6 +10156,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
+				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = Deployment;
 		};
@@ -10165,7 +10167,6 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -10196,6 +10197,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
+					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -10213,6 +10215,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
+				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = OptimizedWithSymbols;
 		};
@@ -10223,7 +10226,6 @@
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebCore.exp;
 				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_ENABLE_CPP_RTTI = NO;
@@ -10253,6 +10255,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
+					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = (
@@ -10274,6 +10277,7 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
+				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = Default;
 		};

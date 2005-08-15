@@ -1,3 +1,14 @@
+2005-08-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Justin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4324
+          WebCore build does a slow "nmedit -s" step that's unnecessary
+
+        * WebCore.xcodeproj/project.pbxproj: Stop using EXPORTED_SYMBOLS_FILE, since it does an
+        unneccessary nmedit step that is particularly slow for WebCore. Instead, define
+        WEBCORE_EXPORTED_SYMBOLS_FILE and put a flag into OTHER_LDFLAGS.
+
 2005-08-14  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed and landed by Darin.
