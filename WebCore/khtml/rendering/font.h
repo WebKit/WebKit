@@ -138,7 +138,7 @@ public:
     int width( QChar *str, int slen, int tabWidth, int xpos ) const;
 
     bool isSmallCaps() const { return fontDef.smallCaps; }
-    
+    short getWordSpacing() const { return wordSpacing; }
 private:
     FontDef fontDef;
     mutable QFont f;

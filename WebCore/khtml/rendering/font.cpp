@@ -88,7 +88,7 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
             int chw = fm.charWidth( qstr, pos+i );
             if ( letterSpacing )
                 chw += letterSpacing;
-            if ( (wordSpacing || toAdd) && str[i+pos].isSpace() ) {
+            if (i > 0 && (wordSpacing || toAdd) && str[i+pos].isSpace() && !str[i+pos-1].isSpace()) {
                 chw += wordSpacing;
                 if ( numSpaces ) {
                     int a = toAdd/numSpaces;

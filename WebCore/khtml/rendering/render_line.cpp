@@ -461,7 +461,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     }
 }
 
-int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition)
+int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition, bool & needsWordSpacing)
 {
     // Set our x position.
     setXPos(x);
@@ -472,7 +472,13 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
     
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->object()->isText()) {
-            InlineTextBox* text = static_cast<InlineTextBox*>(curr);
+            InlineTextBox *text = static_cast<InlineTextBox*>(curr);
+            RenderText *rt = static_cast<RenderText*>(text->object());
+            if (rt->length()) {
+                if (needsWordSpacing && rt->text()[text->start()].isSpace())
+                    x += rt->htmlFont(m_firstLine)->getWordSpacing();
+                needsWordSpacing = !rt->text()[text->end()].isSpace();
+            }
             text->setXPos(x);
             leftPosition = kMin(x, leftPosition);
             rightPosition = kMax(x + text->width(), rightPosition);
@@ -493,11 +499,11 @@ int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPo
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
                 if (curr->object()->isCompact()) {
                     int ignoredX = x;
-                    flow->placeBoxesHorizontally(ignoredX, leftPosition, rightPosition);
+                    flow->placeBoxesHorizontally(ignoredX, leftPosition, rightPosition, needsWordSpacing);
                 }
                 else {
                     x += flow->marginLeft();
-                    x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition);
+                    x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition, needsWordSpacing);
                     x += flow->marginRight();
                 }
             }

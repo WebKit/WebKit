@@ -1,3 +1,33 @@
+2005-08-14  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3692
+          Word-spacing doesn't work as expected
+
+        Test cases added:
+        * layout-tests/fast/css/word-space-extra-expected.txt: Added.
+        * layout-tests/fast/css/word-space-extra.html: Added.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::constructLine):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        * khtml/rendering/font.h:
+        (khtml::Font::getWordSpacing):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::placeBoxesHorizontally):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::widthFromCache):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox::setStart):
+        (khtml::InlineTextBox::setLen):
+
 2005-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         - updated test cases for new editing delegate output
