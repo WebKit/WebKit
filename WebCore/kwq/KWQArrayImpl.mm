@@ -31,18 +31,21 @@
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 
 using std::nothrow;
+using khtml::main_thread_malloc;
+using khtml::main_thread_free;
+using khtml::main_thread_realloc;
 
 KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
-    data(pNumItems > 0 ? new char[itemSize * numItems] : NULL), 
+    data(pNumItems > 0 ? static_cast<char *>(main_thread_malloc(itemSize * numItems)) : NULL), 
     refCount(0)
 {
 }
 
 KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate()
 {
-    delete[] data;
+    main_thread_free(data);
 }
 
 
@@ -71,18 +74,13 @@ void *KWQArrayImpl::data() const
     return d->data;
 }
 
-uint KWQArrayImpl::size() const
-{
-    return d->numItems;
-}
-
 bool KWQArrayImpl::resize(size_t newSize)
 {
     if (newSize != d->numItems) {
         char *newData;
         
 	if (newSize != 0) {
-	    newData = new (nothrow) char[newSize * d->itemSize];
+	    newData = static_cast<char *>(main_thread_realloc(d->data, newSize * d->itemSize));
 	    if (newData == NULL) {
 	        return false;
 	    }
@@ -90,9 +88,6 @@ bool KWQArrayImpl::resize(size_t newSize)
 	    newData = NULL;
 	}
 
-	memcpy(newData, d->data, MIN(newSize, d->numItems) * d->itemSize);
-
-        delete[] d->data;
 	d->data = newData;
 	d->numItems = newSize;
     }

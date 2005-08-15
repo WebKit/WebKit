@@ -27,70 +27,6 @@
 
 #import <stdlib.h>
 
-KWQValueListNodeImpl::KWQValueListNodeImpl() : 
-    prev(NULL), 
-    next(NULL)
-{
-}
-
-KWQValueListIteratorImpl::KWQValueListIteratorImpl() : 
-    nodeImpl(NULL)
-{
-}
-
-bool KWQValueListIteratorImpl::operator==(const KWQValueListIteratorImpl &other)
-{
-    return nodeImpl == other.nodeImpl;
-}
-
-bool KWQValueListIteratorImpl::operator!=(const KWQValueListIteratorImpl &other)
-{
-    return nodeImpl != other.nodeImpl;
-}
-
-KWQValueListNodeImpl *KWQValueListIteratorImpl::node()
-{
-    return nodeImpl;
-}
-
-const KWQValueListNodeImpl *KWQValueListIteratorImpl::node() const
-{
-    return nodeImpl;
-}
-
-KWQValueListIteratorImpl& KWQValueListIteratorImpl::operator++()
-{
-    if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->next;
-    }
-    return *this;
-}
-
-KWQValueListIteratorImpl KWQValueListIteratorImpl::operator++(int)
-{
-    KWQValueListIteratorImpl tmp(*this);
-
-    if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->next;
-    }
-
-    return tmp;
-}
-
-KWQValueListIteratorImpl& KWQValueListIteratorImpl::operator--()
-{
-    if (nodeImpl != NULL) {
-	nodeImpl = nodeImpl->prev;
-    }
-    return *this;
-}
-
-KWQValueListIteratorImpl::KWQValueListIteratorImpl(const KWQValueListNodeImpl *n) :
-    nodeImpl((KWQValueListNodeImpl *)n)
-{
-}
-
-
 class KWQValueListImpl::KWQValueListPrivate
 {
 public:
@@ -98,6 +34,8 @@ public:
     KWQValueListPrivate(const KWQValueListPrivate &other);
 
     ~KWQValueListPrivate();
+
+    MAIN_THREAD_ALLOCATED;
 
     void copyList(KWQValueListNodeImpl *l, KWQValueListNodeImpl *&head, KWQValueListNodeImpl *&tail) const;
     void deleteList(KWQValueListNodeImpl *l);
@@ -112,7 +50,7 @@ public:
     uint refCount;
 };
 
-KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), 
+inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), 
 							   KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *)) : 
     head(NULL),
     tail(NULL),
@@ -123,7 +61,7 @@ KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KW
 {
 }
 
-KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
+inline KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPrivate &other) :
     deleteNode(other.deleteNode),
     copyNode(other.copyNode),
     count(other.count),
@@ -132,7 +70,7 @@ KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(const KWQValueListPri
     other.copyList(other.head, head, tail);
 }
 
-KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate()
+inline KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate()
 {
     deleteList(head);
 }

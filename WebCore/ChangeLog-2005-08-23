@@ -1,3 +1,32 @@
+2005-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - apply a tasty candy shell of inlining and main_thread_malloc for a 1% speedup on HTML iBench
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4425
+	
+        * kwq/KWQArrayImpl.h:
+        (KWQArrayImpl::size):
+        * kwq/KWQArrayImpl.mm:
+        * kwq/KWQMapImpl.h:
+        * kwq/KWQMapImpl.mm:
+        * kwq/KWQRefPtr.h:
+        (::KWQRefPtr):
+        (::operator):
+        (::ref):
+        (::unref):
+        * kwq/KWQValueListImpl.h:
+        (KWQValueListIteratorImpl::KWQValueListIteratorImpl):
+        (KWQValueListIteratorImpl::operator==):
+        (KWQValueListIteratorImpl::operator!=):
+        (KWQValueListIteratorImpl::node):
+        (KWQValueListIteratorImpl::operator++):
+        (KWQValueListIteratorImpl::operator--):
+        (KWQValueListNodeImpl::KWQValueListNodeImpl):
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate):
+        (KWQValueListImpl::KWQValueListPrivate::~KWQValueListPrivate):
+
 2005-08-14  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and landed by Darin.

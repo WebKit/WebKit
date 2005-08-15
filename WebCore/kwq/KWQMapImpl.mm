@@ -124,6 +124,8 @@ public:
 
     ~KWQMapPrivate();
 
+    MAIN_THREAD_ALLOCATED;
+
     KWQMapNodeImpl *guard;
     uint numNodes;
     int refCount;
