@@ -632,23 +632,15 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             return;
         }
 
-        // Compute the appropriate phase relative to the top level view in the window.
-        // Conveniently, the oneTileRect we computed above has the appropriate origin.
-        NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
-
-        // WebCore may translate the focus, and thus need an extra phase correction
-        NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
-        originInWindow.x += extraPhase.x;
-        originInWindow.y += extraPhase.y;
-        CGSize phase = CGSizeMake(fmodf(originInWindow.x, tileSize.width), fmodf(originInWindow.y, tileSize.height));
-
-        // Possible optimization:  We may want to cache the CGPatternRef    
-        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, tileSize.width, tileSize.height), CGAffineTransformIdentity, tileSize.width, tileSize.height, 
-            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
+        CGPatternRef pattern = CGPatternCreate(self, CGRectMake(0, 0, tileSize.width, tileSize.height),
+        CGAffineTransformIdentity, tileSize.width, tileSize.height, 
+        kCGPatternTilingConstantSpacing, TRUE, &patternCallbacks);
+        
         if (pattern) {
             CGContextSaveGState (aContext);
 
-            CGContextSetPatternPhase(aContext, phase);
+            CGPoint transformedOrigin = CGPointApplyAffineTransform(rect.origin, CGContextGetCTM(aContext));
+            CGContextSetPatternPhase(aContext, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
 
             CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
             CGContextSetFillColorSpace(aContext, patternSpace);

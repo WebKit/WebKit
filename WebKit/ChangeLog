@@ -1,3 +1,21 @@
+2005-08-15  Darin  <darin@apple.com>
+	
+        Reviewed by Beth.
+
+	This is a fix for <rdar://problem/4211631> tiled images tiled incorrectly when printing or 
+	drawing offscreen.
+
+	Cayenne found there was a problem when they were trying to take screen shots of widgets, and
+	it was ultimately a problem with the way we tile images. Darin was able to fix the problem
+	by replacing some confusing hacked code with CG calls.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData tileInRect:fromPoint:context:]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebInternalImage tileInRect:fromPoint:context:]):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForMisspelling:withWidth:]):
+
 2005-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

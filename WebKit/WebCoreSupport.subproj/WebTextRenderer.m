@@ -663,21 +663,19 @@ static BOOL alwaysUseATSU = NO;
             width -= widthMod;
     }
     
-    // Compute the appropriate phase relative to the top level view in the window.
-    NSPoint originInWindow = [[NSView focusView] convertPoint:point toView:nil];
-    // WebCore may translate the focus, and thus need an extra phase correction
-    NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
-    originInWindow.x += extraPhase.x;
-    originInWindow.y += extraPhase.y;
-    CGSize phase = CGSizeMake(fmodf(originInWindow.x, patternWidth), fmodf(originInWindow.y, patternHeight));
-
     // Draw underline
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
-    [currentContext saveGraphicsState];
+    CGContextRef context = (CGContextRef)[currentContext graphicsPort];
+    CGContextSaveGState(context);
+
     [spellingPatternColor set];
-    CGContextSetPatternPhase((CGContextRef)[currentContext graphicsPort], phase);
+
+    CGPoint transformedOrigin = CGPointApplyAffineTransform(CGPointMake(point.x, point.y), CGContextGetCTM(context));
+    CGContextSetPatternPhase(context, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
+
     NSRectFillUsingOperation(NSMakeRect(point.x, point.y, width, patternHeight), NSCompositeSourceOver);
-    [currentContext restoreGraphicsState];
+    
+    CGContextRestoreGState(context);
 }
 
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs

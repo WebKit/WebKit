@@ -1103,15 +1103,6 @@ static NSMutableSet *activeImageRenderers;
 //    oneTileRect.origin.y = rect.origin.y - fmodf(point.y, size.height);
     oneTileRect.size = size;
 
-    // Compute the appropriate phase relative to the top level view in the window.
-    // Conveniently, the oneTileRect we computed above has the appropriate origin.
-    NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
-    // WebCore may translate the focus, and thus need an extra phase correction
-    NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
-    originInWindow.x += extraPhase.x;
-    originInWindow.y += extraPhase.y;
-    CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
-    
     // If the single image draw covers the whole area, then just draw once.
     if (NSContainsRect(oneTileRect, rect)) {
         NSRect fromRect;
@@ -1146,7 +1137,9 @@ static NSMutableSet *activeImageRenderers;
     
     [NSGraphicsContext saveGraphicsState];
     
-    CGContextSetPatternPhase((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], phase);    
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGPoint transformedOrigin = CGPointApplyAffineTransform(rect.origin, CGContextGetCTM(aContext));
+    CGContextSetPatternPhase(context, CGSizeMake(transformedOrigin.x, transformedOrigin.y));    
     [patternColor set];
     [NSBezierPath fillRect:rect];
     
