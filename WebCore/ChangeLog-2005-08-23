@@ -1,3 +1,15 @@
+2005-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4420
+          make border drawing faster by removing code to alloc/dealloc NSBezierPath
+
+        * kwq/KWQPainter.h: Remove unused drawLineSegments, drawPolyline, and drawPolygon.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawConvexPolygon): Move the body of _drawPoints into here, and remove the
+        various unused code paths. Use CoreGraphics calls instead of NSBezierPath.
+
 2005-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

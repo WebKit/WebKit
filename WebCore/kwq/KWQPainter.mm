@@ -391,67 +391,39 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     }
 }
 
-void QPainter::drawLineSegments(const QPointArray &points, int index, int nlines)
-{
-    if (data->state.paintingDisabled)
-        return;
-    
-    _drawPoints (points, 0, index, nlines, false);
-}
-
-void QPainter::drawPolyline(const QPointArray &points, int index, int npoints)
-{
-    _drawPoints (points, 0, index, npoints, false);
-}
-
-void QPainter::drawPolygon(const QPointArray &points, bool winding, int index, 
-    int npoints)
-{
-    _drawPoints (points, winding, index, npoints, true);
-}
-
 void QPainter::drawConvexPolygon(const QPointArray &points)
 {
-    _drawPoints (points, false, 0, -1, true);
-}
-
-void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index, int _npoints, bool fill)
-{
     if (data->state.paintingDisabled)
         return;
-        
-    int npoints = _npoints != -1 ? _npoints : _points.size()-index;
-    NSPoint points[npoints];
-    for (int i = 0; i < npoints; i++) {
-        points[i].x = _points[index+i].x();
-        points[i].y = _points[index+i].y();
-    }
-            
-    NSBezierPath *path = [[NSBezierPath alloc] init];
-    [path appendBezierPathWithPoints:&points[0] count:npoints];
-    [path closePath]; // Qt always closes the path.  Determined empirically.
-    
-    if (fill && data->state.brush.style() != NoBrush) {
-        [path setWindingRule:winding ? NSNonZeroWindingRule : NSEvenOddWindingRule];
+
+    int npoints = points.size();
+    if (npoints <= 1)
+        return;
+
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+    CGContextBeginPath(context);
+    CGContextMoveToPoint(context, points[0].x(), points[0].y());
+    for (int i = 1; i < npoints; i++)
+        CGContextAddLineToPoint(context, points[i].x(), points[i].y());
+    CGContextClosePath(context);
+
+    if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-        [path fill];
+        CGContextEOFillPath(context);
     }
 
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
-        [path setLineWidth:data->state.pen.width()];
-        [path stroke];
+        CGContextSetLineWidth(context, data->state.pen.width());
+        CGContextStrokePath(context);
     }
-    
-    [path release];
 }
-
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix)
 {        
     drawPixmap(p.x(), p.y(), pix);
 }
-
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 {
@@ -464,7 +436,8 @@ struct CompositeOperator
     NSCompositingOperation value;
 };
 
-#define NUM_COMPOSITE_OPERATORS 14
+const int NUM_COMPOSITE_OPERATORS = 14;
+
 struct CompositeOperator compositeOperators[NUM_COMPOSITE_OPERATORS] = {
     { "clear", NSCompositeClear },
     { "copy", NSCompositeCopy },
@@ -503,9 +476,7 @@ int QPainter::compositeOperatorFromString (QString aString)
     
     if (aString.length()) {
         const char *operatorString = aString.ascii();
-        int i;
-        
-        for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
+        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
             if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
                 return compositeOperators[i].value;
             }
@@ -747,7 +718,7 @@ QColor QPainter::selectedTextBackgroundColor() const
     return col;
 }
 
-// A fillRect designed to work around buggy behavior in NSRectFill.
+// A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
 static inline void _fillRectXX(float x, float y, float w, float h, const QColor& col)
 {
     [nsColor(col) set];
