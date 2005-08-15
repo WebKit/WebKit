@@ -1,3 +1,13 @@
+2005-08-14   Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4251
+          Ideally would be able to pass arguments to apps using run-safari and run-webkit-app scripts
+
+        * Scripts/run-safari: Pass arguments through to Safari on command line.
+        * Scripts/run-webkit-app: Pass arguments through to "open" tool on command line.
+
 2005-08-11  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
@@ -10,7 +20,7 @@
 
 2005-08-11  Maciej Stachowiak  <mjs@apple.com>
 
-        At Least Rougly Glanced At by Anders.
+        At Least Roughly Glanced At by Anders.
 
 	- fix change with totally breaks the layout tests.
 
