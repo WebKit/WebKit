@@ -378,13 +378,19 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(URL);
     ASSERT([self _isEnabled]);
     ASSERT([self _hasIconForIconURL:iconURL]);
- 
-    if ([[_private->pageURLToIconURL objectForKey:URL] isEqualToString:iconURL] &&
-        [_private->iconsOnDiskWithURLs containsObject:iconURL]) {
+
+    if ([[_private->pageURLToIconURL objectForKey:URL] isEqualToString:iconURL]) {
         // Don't do any work if the icon URL is already bound to the site URL
         return;
     }
-    
+
+    if ([_private->iconURLsWithNoIcons containsObject:iconURL]) {
+        // Don't do any work if the icon URL is in the negative cache, it's not
+        // worth doing work just to record that this site is associated with
+        // a nonexistent icon
+        return;
+    }
+
     [_private->pageURLToIconURL setObject:iconURL forKey:URL];
     [_private->iconURLToPageURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
         

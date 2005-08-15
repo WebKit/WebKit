@@ -1,3 +1,15 @@
+2005-08-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- 1% speedup on HTML load speed iBench by avoiding icon database thrash
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4423
+	
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _setIconURL:forURL:]): Be more aggressive about returning early, because
+	updating the database does some expensive data structure copies.
+	
+
 2005-08-14  Duncan Wilcox  <duncan@mclink.it>
 
         Reviewed and landed by Darin.
