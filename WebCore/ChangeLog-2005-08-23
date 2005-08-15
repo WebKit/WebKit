@@ -1,3 +1,18 @@
+2005-08-14  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3429
+          Text transformed with text-transform does not copy with transform applied
+
+        Test cases added:
+        * layout-tests/editing/pasteboard/paste-text-019-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-019.html: Added.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode): Use the DOMString from the RenderText, not the DOM text node.
+        (khtml::TextIterator::handleTextBox): Ditto.
+
 2005-08-14  Darin Adler  <darin@apple.com>
 
         - fixed build of some unit tests

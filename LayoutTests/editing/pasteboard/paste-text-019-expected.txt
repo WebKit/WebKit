@@ -1,0 +1,59 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:Bar replacingDOMRange:range from 4 of #text > SPAN > DIV > BODY > HTML > #document to 4 of #text > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > SPAN > DIV > BODY > HTML > #document to 3 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x288 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x84
+          RenderText {TEXT} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,28) size 162x28
+            text run at (0,28) width 162: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 557x28 [color=#0000EE]
+            RenderText {TEXT} at (162,28) size 557x28
+              text run at (162,28) width 557: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+          RenderText {TEXT} at (0,56) size 729x28
+            text run at (0,56) width 729: "Text transformed with text-transform does not copy with transform applied"
+        RenderBlock {DIV} at (14,114) size 756x160
+          RenderBlock (anonymous) at (0,0) size 756x56
+            RenderText {TEXT} at (0,0) size 189x28
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (0,0) size 0x0
+            RenderText {TEXT} at (0,28) size 202x28
+              text run at (0,28) width 202: "Should see the string"
+          RenderBlock {PRE} at (0,80) size 756x28
+            RenderText {TEXT} at (0,0) size 210x28
+              text run at (0,0) width 210: "Foo Bar baz Bar"
+          RenderBlock (anonymous) at (0,132) size 756x28
+            RenderText {TEXT} at (0,0) size 155x28
+              text run at (0,0) width 155: "(case sensitive)."
+      RenderBlock {DIV} at (0,312) size 784x32 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 153x28
+          RenderInline {SPAN} at (0,0) size 78x28
+            RenderText {TEXT} at (2,2) size 78x28
+              text run at (2,2) width 78: "Foo Bar"
+          RenderText {TEXT} at (80,2) size 40x28
+            text run at (80,2) width 40: " baz"
+          RenderText {TEXT} at (120,2) size 35x28
+            text run at (120,2) width 35: "Bar"
+        RenderText {TEXT} at (0,0) size 0x0
+caret: position 3 of child 2 {TEXT} of child 1 {SPAN} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
