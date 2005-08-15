@@ -1,3 +1,18 @@
+2005-08-15  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4202641> Line breaks do not happen inside whitespace:pre; word-wrap: break-word
+        
+        Test cases added: fast/text/whitespace/tab-character-basics.html
+
+        Refined Dave's earlier patch for this bug to handle whitespace:pre that is not at the beginning of a line.
+        
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+        * layout-tests/fast/text/whitespace/tab-character-basics-expected.txt: Added.
+        * layout-tests/fast/text/whitespace/tab-character-basics.html: Added.
+
 2005-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Justin.
