@@ -146,7 +146,7 @@ allocateNewBlock:
     // didn't find one, need to allocate a new block
 
     int numBlocks = heap.numBlocks;
-    if (usedBlocks == heap.numBlocks) {
+    if (usedBlocks == numBlocks) {
       numBlocks = max(MIN_ARRAY_SIZE, numBlocks * GROWTH_FACTOR);
       heap.numBlocks = numBlocks;
       heap.blocks = static_cast<CollectorBlock **>(kjs_fast_realloc(heap.blocks, numBlocks * sizeof(CollectorBlock *)));

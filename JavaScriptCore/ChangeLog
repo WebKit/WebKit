@@ -1,3 +1,10 @@
+2005-08-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * kjs/collector.cpp: (KJS::Collector::allocate): Use a local instead of a global in one
+        more place; slight speedup.
+
 2005-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
