@@ -27,7 +27,7 @@
     implementation dependent, but are intended to represent the "date"
     portion of the Date in the current time zone in a convenient,
     human-readable form.   We can't test the content of the string,  
-    but can verify that the string is parsable by Date.parse
+    but can verify that the object returned is a string.
 
     The toLocaleString function is not generic; it generates a runtime error
     if its 'this' value is not a Date object. Therefore it cannot be transferred
@@ -67,42 +67,6 @@
    expect =  0;   
    addTestCase();
 
-   // Date.parse is accurate to the second;  valueOf() to the millisecond  -
-   status = "Math.abs(Date.parse(now.toLocaleString()) - now.valueOf()) < 1000";   
-   actual =   Math.abs(Date.parse(now.toLocaleString()) -  now.valueOf()) < 1000;
-   expect = true;
-   addTestCase();
-
-
-
-   // 1970
-   addDateTestCase(0);
-   addDateTestCase(TZ_ADJUST);   
-
-   
-   // 1900
-   addDateTestCase(TIME_1900); 
-   addDateTestCase(TIME_1900 -TZ_ADJUST);
-
-   
-   // 2000
-   addDateTestCase(TIME_2000);
-   addDateTestCase(TIME_2000 -TZ_ADJUST);
-
-    
-   // 29 Feb 2000
-   addDateTestCase(UTC_29_FEB_2000);
-   addDateTestCase(UTC_29_FEB_2000 - 1000);    
-   addDateTestCase(UTC_29_FEB_2000 - TZ_ADJUST);
- 
-
-   // 2005
-   addDateTestCase(UTC_1_JAN_2005);
-   addDateTestCase(UTC_1_JAN_2005 - 1000);
-   addDateTestCase(UTC_1_JAN_2005-TZ_ADJUST);
-   
-
-
 //-----------------------------------------------------------------------------------------------------
    test();
 //-----------------------------------------------------------------------------------------------------
@@ -111,17 +75,6 @@
 function addTestCase()
 {
   testcases[tc++] = new TestCase( SECTION, status, expect, actual); 
-}
-
-
-function addDateTestCase(date_given_in_milliseconds)
-{
-  var givenDate = new Date(date_given_in_milliseconds);
-
-  status = 'Date.parse('   +   givenDate   +   ').toLocaleString())';   
-  actual =  Date.parse(givenDate.toLocaleString());
-  expect = date_given_in_milliseconds;
-  addTestCase();
 }
 
 

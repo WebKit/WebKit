@@ -1,3 +1,11 @@
+2005-08-15  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        * tests/mozilla/ecma_3/Date/15.9.5.5.js:
+	Remove the code which tests that Date.toLocaleString should be parsable
+	by Date.parse. That is not true according to the spec.
+	
 2005-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
