@@ -1,3 +1,16 @@
+2005-08-15  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+ 
+	- fixed <rdar://problem/4094363> Can't re-open a window at capripalace.com website because 
+	"close" fails on already-closed window
+
+        Test cases added: (NONE)
+        * manual-tests/close-on-closedWindow.html: Added.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getOwnPropertySlot): allow close calls on windows that have already been closed
+
 2005-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

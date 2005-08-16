@@ -993,6 +993,11 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
       slot.setStaticEntry(this, Lookup::findEntry(&WindowTable, "closed"), staticValueGetter<Window>);
       return true;
     }
+    if (propertyName == "close") {
+      const HashEntry* entry = Lookup::findEntry(&WindowTable, propertyName);
+      slot.setStaticEntry(this, entry, staticFunctionGetter<WindowFunc>);
+      return true;
+    }
 
     slot.setUndefined(this);
     return true;
