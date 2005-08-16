@@ -320,8 +320,7 @@ namespace KDOM
     ClassName obj = cast(exec, theObj); \
     if(obj == ClassName::null) { \
 	    kdDebug(26004) << k_funcinfo << " Wrong object type: expected " << ClassName::s_classInfo.className << " got " << thisObj->classInfo()->className << endl; \
-        ObjectImp *err = Error::create(exec,TypeError); \
-      	exec->setException(err); \
+        ObjectImp *err = throwError(exec,TypeError); \
 	    return err; \
     }
 
@@ -333,8 +332,8 @@ namespace KDOM
 // Helpers to hide exception stuff...
 // used within get/putValueProprety
 #define KDOM_ENTER_SAFE try {
-#define KDOM_LEAVE_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); exec->setException(err); }
-#define KDOM_LEAVE_CALL_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = KJS::Error::create(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); exec->setException(err); return err; }
+#define KDOM_LEAVE_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = throwError(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); }
+#define KDOM_LEAVE_CALL_SAFE(Exception) } catch(Exception::Private *e) { KJS::ObjectImp *err = throwError(exec, KJS::GeneralError, QString::fromLatin1("%1 %2").arg(QString::fromLatin1(Exception(e).s_classInfo.className)).arg(QString::number(e->code())).latin1()); err->put(exec, "code", KJS::Number(e->code())); return err; }
 
 // Just a marker for kalyptus
 #define KDOM_CAST ;

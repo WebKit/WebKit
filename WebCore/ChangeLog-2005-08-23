@@ -1,3 +1,17 @@
+2005-08-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * WebCore.xcodeproj/project.pbxproj: bison cleanup.
+        * kdom/ecma/DOMLookup.h: now uses throwError
+        * kdom/ecma/Ecma.cpp: 
+        (Ecma::~Ecma): now uses clearProperties
+        * kdom/ecma/GlobalObject.cpp: now uses throwError
+        (GlobalObject::clear): now uses clearProperties
+        (GlobalObjectFunc::callAsFunction): now uses throwError
+        Fixes necessary for WebCore+SVG after 4437.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4453
+
 2005-08-15  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Maciej.

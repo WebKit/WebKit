@@ -104,7 +104,7 @@ Ecma::~Ecma()
 {
 	// Garbage collection magic, taken from khtml/ecma
 	if(d->globalObject && d->interpreter)
-		d->globalObject->deleteAllProperties(d->interpreter->globalExec());
+		d->globalObject->clearProperties();
 
 #ifndef APPLE_CHANGES
 	while(KJS::Interpreter::collect()) ;

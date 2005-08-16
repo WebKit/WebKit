@@ -2377,7 +2377,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nrm \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.*\"\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+			script = "[ \"$INPUT_FILE_BASE\" = \"parser\" ] && export PREFIX_BASE=\"css\" && echo \"success! css\"\n[ \"$INPUT_FILE_BASE\" = \"kdomparsercss\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ \"$INPUT_FILE_BASE\" = \"xpath\" ] && export PREFIX_BASE=\"$INPUT_FILE_BASE\"  && echo \"success! $INPUT_FILE_BASE\"\n[ -z \"$PREFIX_BASE\" ] && echo \"Unhandled yacc filename \\\"$INPUT_FILE_BASE\\\", edit build rule.\" && exit 1\nexport YY=\"yy\"\n\nrm -f \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.*\"\nbison -d -p \"$PREFIX_BASE$YY\" \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
 		};
 /* End PBXBuildRule section */
 
