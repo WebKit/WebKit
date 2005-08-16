@@ -72,7 +72,7 @@
 	- fixed <rdar://problem/4094363> Can't re-open a window at capripalace.com website because 
 	"close" fails on already-closed window
 
-        Test cases added: (NONE)
+        Test cases added: 
         * manual-tests/close-on-closedWindow.html: Added.
 
         * khtml/ecma/kjs_window.cpp:
