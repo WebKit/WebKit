@@ -1,3 +1,16 @@
+2005-08-16  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4119646> assertion failure in DOM::Position::upstream at babelfish.com
+        <rdar://problem/4125949> Assertion failure clicking outside of textarea in page containing only textarea
+
+        Removed asserts that did not account for iterating from a nested node to its parent.
+
+        Test cases added: n/a for assert removal
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+
 2005-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth Dakin.

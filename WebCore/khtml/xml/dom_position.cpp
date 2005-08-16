@@ -376,13 +376,11 @@ Position Position::upstream() const
             lastVisible = currentPos;
 
         // return position after replaced or BR elements
+        // NOTE: caretMaxOffset() can be less than childNodeCount()!!
+        // e.g. SELECT and APPLET nodes
         if (renderer->isReplaced() || renderer->isBR()) {
             if (currentOffset >= renderer->caretMaxOffset())
                 return Position(currentNode, renderer->caretMaxOffset());
-
-            // we could not have iterated here because we would have returned
-            // this node, caretMaxOffset, so we must have started here
-            assert(currentPos == start);
             continue;
         }
 
@@ -489,10 +487,6 @@ Position Position::downstream() const
         if (renderer->isReplaced() || renderer->isBR()) {
             if (currentOffset <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
-            
-            // we could not have iterated here because we would have returned
-            // this node, offset 0, so we must have started here
-            assert(currentPos == start);
             continue;
         }
 
