@@ -292,12 +292,12 @@ void KCanvasRenderingStyle::setImageRendering(KCImageRendering)
 }
 
 // Overall opacity
-int KCanvasRenderingStyle::opacity() const
+float KCanvasRenderingStyle::opacity() const
 {
-	return int(m_style->opacity() * 255.);
+	return m_style->opacity();
 }
 
-void KCanvasRenderingStyle::setOpacity(int)
+void KCanvasRenderingStyle::setOpacity(float)
 {
 	// no-op
 }

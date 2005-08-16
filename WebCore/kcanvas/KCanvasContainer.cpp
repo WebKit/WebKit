@@ -61,7 +61,7 @@ void KCanvasContainer::setDrawContents(bool drawContents)
 
 bool KCanvasContainer::needsTemporaryBuffer() const
 {
-	bool conditionOne = (style()->opacity() < 255);
+	bool conditionOne = (style()->opacity() < 1.0f);
 	bool conditionTwo = (style()->clipPaths().count() > 0);
 
 	return conditionOne || conditionTwo;

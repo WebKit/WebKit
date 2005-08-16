@@ -96,8 +96,8 @@ public:
 	virtual void setImageRendering(KCImageRendering ir);
 
 	// Overall opacity
-	virtual int opacity() const;
-	virtual void setOpacity(int opacity);
+	virtual float opacity() const;
+	virtual void setOpacity(float opacity);
 
 	// Clipping
 	virtual QStringList clipPaths() const;

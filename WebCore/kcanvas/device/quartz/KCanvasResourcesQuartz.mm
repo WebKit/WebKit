@@ -80,7 +80,7 @@ void KCanvasContainerQuartz::draw(const QRect &dirtyRect) const
 	applyClipPathsForStyle(context, canvas()->registry(), style(), bbox()); // apply any explicit clips
 	
 	// handle opacity.
-	float opacity = (style()->opacity() / 255.0f);
+	float opacity = style()->opacity();
 	if (opacity < 1.0f) {
 		CGContextSetAlpha(context, opacity);
 		CGContextBeginTransparencyLayer(context,NULL);

@@ -1,4 +1,33 @@
 2005-08-16  Eric Seidel  <eseidel@apple.com>
+        Fix from Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::needsTemporaryBuffer):
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        (KRenderingPaintServerSolid::opacity):
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/KRenderingStyle.cpp:
+        (KRenderingStyle::Private::Private):
+        (KRenderingStyle::opacity):
+        (KRenderingStyle::setOpacity):
+        * kcanvas/device/KRenderingStyle.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::draw):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw):
+        (KRenderingPaintServerPatternQuartz::draw):
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (applyStyleToContext):
+        * ksvg2/core/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::opacity):
+        (KCanvasRenderingStyle::setOpacity):
+        * ksvg2/core/KCanvasRenderingStyle.h:
+        Change all references to Opacity to use floats.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4431
+
+2005-08-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
 

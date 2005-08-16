@@ -51,7 +51,7 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
 		//NSLog(@"Filling in %p bbox(%@) with color: %@", context, NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(context)), nsColor(color()));
 		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->fillPainter()->opacity() * double(style->opacity() / 255.) * opacity());
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->fillPainter()->opacity() * style->opacity() * opacity());
 		CGContextSetFillColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);
@@ -65,7 +65,7 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 	if ( (type & APPLY_TO_STROKE) && style->isStroked() ) {
 		//NSLog(@"Stroking in %p bbox(%@) with color: %@", context, NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(context)), nsColor(color()));
 		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->strokePainter()->opacity() * double(style->opacity() / 255.) * opacity());		
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->strokePainter()->opacity() * style->opacity() * opacity());		
 		CGContextSetStrokeColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);
@@ -100,7 +100,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
 	CGSize cellSize = CGSize(cell->size());
 	
-	float alpha = 1; // style->opacity() / 255.0f; //which?
+	float alpha = 1; // style->opacity(); //which?
 		
 	// Patterns don't seem to resepect the CTM unless we make them...
 	CGAffineTransform ctm = CGContextGetCTM(context);

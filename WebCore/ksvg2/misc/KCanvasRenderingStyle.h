@@ -73,8 +73,8 @@ namespace KSVG
 		virtual void setImageRendering(KCImageRendering ir);
 
 		// Overall opacity
-		virtual int opacity() const;
-		virtual void setOpacity(int);
+		virtual float opacity() const;
+		virtual void setOpacity(float);
 
 		// Clipping
 		virtual QStringList clipPaths() const;

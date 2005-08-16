@@ -44,7 +44,7 @@ public:
 	
 		imageRendering = IR_OPTIMIZE_QUALITY;
 
-		opacity = 255;
+		opacity = 1.0f;
 	}
 
 	~Private()
@@ -74,7 +74,7 @@ public:
 	KCanvasMarker *midMarker;
 	KCanvasMarker *endMarker;
 
-	int opacity;
+	float opacity;
 };
 
 KRenderingStyle::KRenderingStyle() : d(new Private())
@@ -178,12 +178,12 @@ void KRenderingStyle::setImageRendering(KCImageRendering ir)
 }
 
 // Overall opacity
-int KRenderingStyle::opacity() const
+float KRenderingStyle::opacity() const
 {
 	return d->opacity;
 }
 
-void KRenderingStyle::setOpacity(int opacity)
+void KRenderingStyle::setOpacity(float opacity)
 {
 	d->opacity = opacity;
 }

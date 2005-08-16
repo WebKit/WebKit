@@ -115,7 +115,7 @@ void applyClipPathsForStyle(CGContextRef context, KCanvasRegistry *registry, KRe
 
 void applyStyleToContext(CGContextRef context, KRenderingStyle *style)
 {	
-	CGContextSetAlpha(context, style->opacity() / 255.0f);
+	CGContextSetAlpha(context, style->opacity());
 }
 
 void applyStrokeStyleToContext(CGContextRef context, KRenderingStyle *style)
