@@ -1,4 +1,15 @@
 2005-08-16  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/KCanvasItem.cpp:
+        (KCanvasItem::bbox):
+        (KCanvasItem::invalidate):
+        Now caches both stroke and fill bboxes for better performance.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4445
+
+2005-08-16  Eric Seidel  <eseidel@apple.com>
         Fix from Tobias Lidskog <tobiaslidskog@mac.com>
 
         Reviewed by eseidel.
