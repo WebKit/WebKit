@@ -95,10 +95,8 @@ jvalue JavaField::dispatchValueFromInstance(ExecState *exec, const JavaInstance 
 		
 		args[0].l = jinstance;
 		dispatchJNICall (execContext->nativeHandle(), fieldJInstance, false, returnType, mid, args, result, 0, exceptionDescription);
-		if (exceptionDescription) {
-		    ObjectImp *error = Error::create(exec, GeneralError, exceptionDescription->toString(exec).UTF8String().c_str());
-		    exec->setException(error);
-		}
+		if (exceptionDescription)
+		    throwError(exec, GeneralError, exceptionDescription->toString(exec));
 	    }
 	}
     }
@@ -183,10 +181,8 @@ void JavaField::dispatchSetValueToInstance(ExecState *exec, const JavaInstance *
 		args[0].l = jinstance;
 		args[1] = javaValue;
 		dispatchJNICall (execContext->nativeHandle(), fieldJInstance, false, void_type, mid, args, result, 0, exceptionDescription);
-		if (exceptionDescription) {
-		    ObjectImp *error = Error::create(exec, GeneralError, exceptionDescription->toString(exec).UTF8String().c_str());
-		    exec->setException(error);
-		}
+		if (exceptionDescription)
+		    throwError(exec, GeneralError, exceptionDescription->toString(exec));
 	    }
 	}
     }

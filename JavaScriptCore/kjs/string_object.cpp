@@ -369,11 +369,8 @@ ValueImp *StringProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
 
   // toString and valueOf are no generic function.
   if (id == ToString || id == ValueOf) {
-    if (!thisObj || !thisObj->inherits(&StringInstanceImp::info)) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!thisObj || !thisObj->inherits(&StringInstanceImp::info))
+      return throwError(exec, TypeError);
 
     return String(thisObj->internalValue()->toString(exec));
   }

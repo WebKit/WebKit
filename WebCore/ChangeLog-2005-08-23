@@ -1,3 +1,95 @@
+2005-08-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4437
+          clean up error creation with new throwError function
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::parseUASheet):
+        (khtml::CSSStyleSelector::initElementAndPseudoState):
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::locateCousinList):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSRuleSet::addToRuleSet):
+        (khtml::colorForCSSValue):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::mapBackgroundAttachment):
+        (khtml::CSSStyleSelector::mapBackgroundImage):
+        (khtml::CSSStyleSelector::mapBackgroundRepeat):
+        (khtml::CSSStyleSelector::mapBackgroundXPosition):
+        (khtml::CSSStyleSelector::mapBackgroundYPosition):
+        (khtml::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::putDOMObject):
+        (KJS::ScriptInterpreter::putDOMNodeForDocument):
+        (KJS::setDOMException):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        (KJS::DOMStyleSheetListFunc::callAsFunction):
+        (KJS::KJS::DOMMediaListProtoFunc::callAsFunction):
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        (KJS::DOMCSSRuleListFunc::callAsFunction):
+        (KJS::DOMCSSRuleFunc::callAsFunction):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::callAsFunction):
+        (KJS::DOMCSSValueListFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeListFunc::callAsFunction):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::DOMDOMImplementationProtoFunc::callAsFunction):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::DOMCharacterDataProtoFunc::callAsFunction):
+        (KJS::DOMTextProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMEventProtoFunc::callAsFunction):
+        (KJS::DOMUIEventProtoFunc::callAsFunction):
+        (KJS::DOMMouseEventProtoFunc::callAsFunction):
+        (KJS::DOMKeyboardEventProtoFunc::callAsFunction):
+        (KJS::DOMMutationEventProtoFunc::callAsFunction):
+        (KJS::DOMWheelEventProtoFunc::callAsFunction):
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::callAsFunction):
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        (KJS::KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::Context2D::putValueProperty):
+        (KJS::GradientFunction::callAsFunction):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::NavigatorFunc::callAsFunction):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIteratorProtoFunc::callAsFunction):
+        (KJS::DOMNodeFilterProtoFunc::callAsFunction):
+        (KJS::DOMTreeWalkerProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewFunc::callAsFunction):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::interpreter):
+        (KJS::Window::retrieveWindow):
+        (KJS::Window::retrieveActive):
+        (KJS::Window::isSafeScript):
+        (KJS::Window::clear):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::ScheduledAction::execute):
+        (KJS::WindowQObject::pauseTimeouts):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::Selection::toString):
+        (KJS::SelectionFunc::callAsFunction):
+        (KJS::HistoryFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::callAsFunction):
+
 2005-08-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

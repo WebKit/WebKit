@@ -97,11 +97,8 @@ ValueImp *DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMNodeIteratorProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
 {
-  if (!thisObj->inherits(&KJS::DOMNodeIterator::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNodeIterator::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NodeIteratorImpl &nodeIterator = *static_cast<DOMNodeIterator *>(thisObj)->impl();
   switch (id) {
@@ -186,11 +183,8 @@ DOMNodeFilter::~DOMNodeFilter()
 
 ValueImp *DOMNodeFilterProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMNodeFilter::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNodeFilter::info))
+    return throwError(exec, TypeError);
   NodeFilterImpl &nodeFilter = *static_cast<DOMNodeFilter *>(thisObj)->impl();
   switch (id) {
     case DOMNodeFilter::AcceptNode:
@@ -285,11 +279,8 @@ void DOMTreeWalker::put(ExecState *exec, const Identifier &propertyName,
 
 ValueImp *DOMTreeWalkerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
 {
-  if (!thisObj->inherits(&KJS::DOMTreeWalker::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMTreeWalker::info))
+    return throwError(exec, TypeError);
   TreeWalkerImpl &treeWalker = *static_cast<DOMTreeWalker *>(thisObj)->impl();
   switch (id) {
     case DOMTreeWalker::ParentNode:

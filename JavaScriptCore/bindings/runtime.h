@@ -29,11 +29,8 @@
 #include "object.h"
 #include "value.h"
 
-namespace KJS 
-{
-
-namespace Bindings
-{
+namespace KJS  {
+namespace Bindings {
 
 class Instance;
 class Method;
@@ -47,7 +44,7 @@ class Parameter
 {
 public:
     virtual RuntimeType type() const = 0;
-    virtual ~Parameter() {};
+    virtual ~Parameter() {}
 };
 
 // FIXME:  Constructor should be removed from abstract runtime classes
@@ -102,7 +99,7 @@ public:
 
     virtual long numParameters() const = 0;
         
-    virtual ~Method() {};
+    virtual ~Method() {}
 };
 
 class Class
@@ -140,7 +137,7 @@ public:
     static void *createLanguageInstanceForValue(ExecState *exec, BindingLanguage language, ObjectImp *value, const RootObject *origin, const RootObject *current);
     static ObjectImp *createRuntimeObject(BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
 
-    Instance() : _executionContext(0) {};
+    Instance() : _executionContext(0) {}
     
     Instance(const Instance &other);
 
@@ -149,23 +146,23 @@ public:
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
     // any needed state.
-    virtual void begin() {};
-    virtual void end() {};
+    virtual void begin() {}
+    virtual void end() {}
     
     virtual Class *getClass() const = 0;
     
     virtual ValueImp *getValueOfField(ExecState *exec, const Field *aField) const;
-    virtual ValueImp *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); };
+    virtual ValueImp *getValueOfUndefinedField(ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); }
     virtual void setValueOfField(ExecState *exec, const Field *aField, ValueImp *aValue) const;
-    virtual bool supportsSetValueOfUndefinedField() { return false; };
-    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, ValueImp *aValue) {};
+    virtual bool supportsSetValueOfUndefinedField() { return false; }
+    virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, ValueImp *aValue) {}
     
     virtual ValueImp *invokeMethod(ExecState *exec, const MethodList &method, const List &args) = 0;
     virtual ValueImp *invokeDefaultMethod(ExecState *exec, const List &args) = 0;
     
     virtual ValueImp *defaultValue(Type hint) const = 0;
     
-    virtual ValueImp *valueOf() const { return String(getClass()->name()); };
+    virtual ValueImp *valueOf() const { return String(getClass()->name()); }
     
     void setExecutionContext(const RootObject *r) { _executionContext = r; }
     const RootObject *executionContext() const { return _executionContext; }

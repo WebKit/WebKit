@@ -72,11 +72,8 @@ XMLSerializer::XMLSerializer(ExecState *exec)
 
 ValueImp *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&XMLSerializer::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&XMLSerializer::info))
+    return throwError(exec, TypeError);
 
   switch (id) {
   case XMLSerializer::SerializeToString:

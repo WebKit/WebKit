@@ -22,22 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+#include "objc_utility.h"
+
 #include <Foundation/Foundation.h>
 
-#include <JavaScriptCore/internal.h>
+#include "internal.h"
 
-#include <objc_instance.h>
-#include <objc_utility.h>
+#include "objc_instance.h"
 
-#include <runtime_array.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
+#include "runtime_array.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
 
-#include <WebScriptObjectPrivate.h>
+#include "WebScriptObjectPrivate.h"
 
-
-using namespace KJS;
-using namespace KJS::Bindings;
+namespace KJS {
+namespace Bindings {
 
 /*
     The default name concatenates the components of the
@@ -50,7 +51,7 @@ using namespace KJS::Bindings;
         moveTo$_                moveTo$$$_
     @result Returns the name to be used to represent the specificed selector in the
 */
-void Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
+void JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
 {
     const char *np = name;
     char *bp;
@@ -87,7 +88,7 @@ void Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer, unsi
     [], other       exception
 
 */
-ObjcValue Bindings::convertValueToObjcValue (ExecState *exec, ValueImp *value, ObjcValueType type)
+ObjcValue convertValueToObjcValue (ExecState *exec, ValueImp *value, ObjcValueType type)
 {
     ObjcValue result;
     double d = 0;
@@ -98,7 +99,7 @@ ObjcValue Bindings::convertValueToObjcValue (ExecState *exec, ValueImp *value, O
     switch (type){
         case ObjcObjectType: {
 	    Interpreter *originInterpreter = exec->interpreter();
-            const Bindings::RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
+            const RootObject *originExecutionContext = rootForInterpreter(originInterpreter);
 
 	    Interpreter *interpreter = 0;
 	    if (originInterpreter->isGlobalObject(value)) {
@@ -108,9 +109,9 @@ ObjcValue Bindings::convertValueToObjcValue (ExecState *exec, ValueImp *value, O
 	    if (!interpreter)
 		interpreter = originInterpreter;
 		
-            const Bindings::RootObject *executionContext = rootForInterpreter(interpreter);
+            const RootObject *executionContext = rootForInterpreter(interpreter);
             if (!executionContext) {
-                Bindings::RootObject *newExecutionContext = new Bindings::RootObject(0);
+                RootObject *newExecutionContext = new RootObject(0);
                 newExecutionContext->setInterpreter (interpreter);
                 executionContext = newExecutionContext;
             }
@@ -164,7 +165,7 @@ ObjcValue Bindings::convertValueToObjcValue (ExecState *exec, ValueImp *value, O
     return result;
 }
 
-ValueImp *Bindings::convertNSStringToString(NSString *nsstring)
+ValueImp *convertNSStringToString(NSString *nsstring)
 {
     unichar *chars;
     unsigned int length = [nsstring length];
@@ -192,7 +193,7 @@ ValueImp *Bindings::convertNSStringToString(NSString *nsstring)
     other           should not happen
 
 */
-ValueImp *Bindings::convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
+ValueImp *convertObjcValueToValue (ExecState *exec, void *buffer, ObjcValueType type)
 {
     ValueImp *aValue = NULL;
 
@@ -286,7 +287,7 @@ ValueImp *Bindings::convertObjcValueToValue (ExecState *exec, void *buffer, Objc
 }
 
 
-ObjcValueType Bindings::objcValueTypeForType (const char *type)
+ObjcValueType objcValueTypeForType (const char *type)
 {
     int typeLength = strlen(type);
     ObjcValueType objcValueType = ObjcInvalidType;
@@ -332,12 +333,24 @@ ObjcValueType Bindings::objcValueTypeForType (const char *type)
 }
 
 
-void *Bindings::createObjcInstanceForValue (ObjectImp *value, const RootObject *origin, const RootObject *current)
+void *createObjcInstanceForValue(ValueImp *value, const RootObject *origin, const RootObject *current)
 {
     if (!value->isObject())
 	return 0;
+    ObjectImp *object = static_cast<ObjectImp *>(value);
+    return [[[WebScriptObject alloc] _initWithObjectImp:object originExecutionContext:origin executionContext:current] autorelease];
+}
 
-    ObjectImp *imp = static_cast<ObjectImp*>(value);
-    
-    return [[[WebScriptObject alloc] _initWithObjectImp:imp originExecutionContext:origin executionContext:current] autorelease];
+ObjectImp *throwError(ExecState *exec, ErrorType type, NSString *message)
+{
+    assert(message);
+    size_t length = [message length];
+    unichar *buffer = new unichar[length];
+    [message getCharacters:buffer];
+    ObjectImp *error = throwError(exec, type, UString(reinterpret_cast<UChar *>(buffer), length));
+    delete [] buffer;
+    return error;
+}
+
+}
 }

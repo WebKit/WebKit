@@ -638,11 +638,8 @@ void DOMNode::pushEventHandlerScope(ExecState *, ScopeChain &) const
 
 ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMNode::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMNode::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
   switch (id) {
@@ -795,11 +792,8 @@ DOMNodeListFunc::DOMNodeListFunc(ExecState *exec, int i, int len)
 // Not a prototype class currently, but should probably be converted to one
 ValueImp *DOMNodeListFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMNodeList::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNodeList::info))
+    return throwError(exec, TypeError);
   DOM::NodeListImpl &list = *static_cast<DOMNodeList *>(thisObj)->impl();
 
   if (id == DOMNodeList::Item)
@@ -1003,11 +997,8 @@ void DOMDocument::putValueProperty(ExecState *exec, int token, ValueImp *value, 
 
 ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMNode::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNode::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
   DocumentImpl &doc = static_cast<DocumentImpl &>(node);
@@ -1212,11 +1203,8 @@ bool DOMElement::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
 
 ValueImp *DOMElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMNode::info)) { // node should be enough here, given the cast
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNode::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
   ElementImpl &element = static_cast<ElementImpl &>(node);
@@ -1321,11 +1309,8 @@ DOMDOMImplementation::~DOMDOMImplementation()
 
 ValueImp *DOMDOMImplementationProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMDOMImplementation::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMDOMImplementation::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   DOMImplementationImpl &implementation = *static_cast<DOMDOMImplementation *>(thisObj)->impl();
 
@@ -1465,11 +1450,8 @@ bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
 ValueImp *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NamedNodeMapImpl &map = *static_cast<DOMNamedNodeMap *>(thisObj)->impl();
 
@@ -2009,11 +1991,8 @@ void DOMCharacterData::put(ExecState *exec, const Identifier &propertyName, Valu
 
 ValueImp *DOMCharacterDataProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMCharacterData::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMCharacterData::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   CharacterDataImpl &data = *static_cast<CharacterDataImpl *>(static_cast<DOMCharacterData *>(thisObj)->impl());
   switch(id) {
@@ -2072,11 +2051,8 @@ DOMText::DOMText(ExecState *exec, TextImpl *t)
 
 ValueImp *DOMTextProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMText::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMText::info))
+    return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   TextImpl &text = *static_cast<TextImpl *>(static_cast<DOMText *>(thisObj)->impl());
   switch(id) {

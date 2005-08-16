@@ -526,9 +526,7 @@ ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
 
     // ToString and ValueOf are generic according to the spec, but the mozilla
     // tests suggest otherwise...
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
+    return throwError(exec, TypeError);
   }
 
 

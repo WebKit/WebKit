@@ -22,14 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_UTILITY_H_
-#define _BINDINGS_OBJC_UTILITY_H_
+
+#ifndef KJS_BINDINGS_OBJC_UTILITY_H
+#define KJS_BINDINGS_OBJC_UTILITY_H
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <value.h>
-
-#include <objc_header.h>
+#include "object.h"
+#include "objc_header.h"
 
 #ifdef __OBJC__
 @class NSString;
@@ -37,11 +37,8 @@
 class NSString;
 #endif
 
-namespace KJS
-{
-
-namespace Bindings 
-{
+namespace KJS {
+namespace Bindings {
 
 typedef union {
     ObjectStructPtr objectValue;
@@ -75,10 +72,11 @@ ObjcValueType objcValueTypeForType(const char *type);
 
 void JSMethodNameToObjCMethodName(const char *name, char *name, unsigned int length);
 
-void *createObjcInstanceForValue(ObjectImp *value, const RootObject *origin, const RootObject *current);
+void *createObjcInstanceForValue(ValueImp *value, const RootObject *origin, const RootObject *current);
+
+ObjectImp *throwError(ExecState *, ErrorType, NSString *message);
 
 } // namespace Bindings
-
 } // namespace KJS
 
 #endif

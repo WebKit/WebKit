@@ -151,9 +151,7 @@ ValueImp *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodL
         const char *callingURL = 0;  // FIXME, need to propagate calling URL to Java
         handled = dispatchJNICall (execContext->nativeHandle(), obj, jMethod->isStatic(), jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
         if (exceptionDescription) {
-            ObjectImp *error = Error::create(exec, GeneralError, exceptionDescription->toString(exec).UTF8String().c_str());
-            exec->setException(error);
-            
+            throwError(exec, GeneralError, exceptionDescription->toString(exec));
             free (jArgs);
             return Undefined();
         }

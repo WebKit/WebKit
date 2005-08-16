@@ -128,11 +128,8 @@ static UString char_sequence(char c, int count)
 ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
   // no generic function. "this" has to be a Number object
-  if (!thisObj->inherits(&NumberInstanceImp::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&NumberInstanceImp::info))
+    return throwError(exec, TypeError);
 
   ValueImp *v = thisObj->internalValue();
   switch (id) {
@@ -162,13 +159,8 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
   {
       ValueImp *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
-      if (!(df >= 0 && df <= 20)) { // true for NaN
-          ObjectImp *err = Error::create(exec, RangeError,
-                                     "toFixed() digits argument must be between 0 and 20");
-          
-          exec->setException(err);
-          return err;
-      }
+      if (!(df >= 0 && df <= 20)) // true for NaN
+          return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
       int f = (int)df;
       
       double x = v->toNumber(exec);
@@ -212,12 +204,8 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       
       ValueImp *fractionDigits = args[0];
       double df = fractionDigits->toInteger(exec);
-      if (!(df >= 0 && df <= 20)) { // true for NaN
-          ObjectImp *err = Error::create(exec, RangeError,
-                                     "toExponential() argument must between 0 and 20");
-          exec->setException(err);
-          return err;
-      }
+      if (!(df >= 0 && df <= 20)) // true for NaN
+          return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
       int f = (int)df;
       
       int decimalAdjust = 0;
@@ -314,12 +302,8 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
           x = -x;
       }
       
-      if (dp < 1 || dp > 21) {
-          ObjectImp *err = Error::create(exec, RangeError,
-                                     "toPrecision() argument must be between 1 and 21");
-          exec->setException(err);
-          return err;
-      }
+      if (!(dp >= 1 && dp <= 21)) // true for NaN
+          return throwError(exec, RangeError, "toPrecision() argument must be between 1 and 21");
       int p = (int)dp;
       
       if (x != 0) {

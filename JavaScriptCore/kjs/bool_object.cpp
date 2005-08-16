@@ -78,11 +78,8 @@ bool BooleanProtoFuncImp::implementsCall() const
 ValueImp *BooleanProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &/*args*/)
 {
   // no generic function. "this" has to be a Boolean object
-  if (!thisObj->inherits(&BooleanInstanceImp::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&BooleanInstanceImp::info))
+    return throwError(exec, TypeError);
 
   // execute "toString()" or "valueOf()", respectively
 

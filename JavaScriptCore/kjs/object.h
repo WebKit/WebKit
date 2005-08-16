@@ -90,15 +90,13 @@ namespace KJS {
     ObjectImp(ObjectImp *proto);
 
     /**
-     * Creates a new ObjectImp with a prototype of Null()
+     * Creates a new ObjectImp with a prototype of jsNull()
      * (that is, the ECMAScript "null" value, not a null object pointer).
-     *
      */
     ObjectImp();
 
     virtual void mark();
-
-    Type type() const;
+    virtual Type type() const;
 
     /**
      * A pointer to a ClassInfo struct for this class. This provides a basic
@@ -177,10 +175,6 @@ namespace KJS {
      *
      * @return The object's prototype
      */
-    /**
-     * Implementation of the [[Prototype]] internal property (implemented by
-     * all Objects)
-     */
     ValueImp *prototype() const;
     void setPrototype(ValueImp *proto);
 
@@ -214,16 +208,8 @@ namespace KJS {
      *
      * @return The specified property, or Undefined
      */
-    /**
-     * Implementation of the [[Get]] internal property (implemented by all
-     * Objects)
-     */
-    // [[Get]] - must be implemented by all Objects
     ValueImp *get(ExecState *exec, const Identifier &propertyName) const;
     ValueImp *get(ExecState *exec, unsigned propertyName) const;
-
-    bool getProperty(ExecState *exec, const Identifier& propertyName, ValueImp*& result) const;
-    bool getProperty(ExecState *exec, unsigned propertyName, ValueImp*& result) const;
 
     bool getPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     bool getPropertySlot(ExecState *, unsigned, PropertySlot&);
@@ -240,14 +226,8 @@ namespace KJS {
      * @param propertyName The name of the property to set
      * @param propertyValue The value to set
      */
-    /**
-     * Implementation of the [[Put]] internal property (implemented by all
-     * Objects)
-     */
-    virtual void put(ExecState *exec, const Identifier &propertyName,
-                     ValueImp *value, int attr = None);
-    virtual void put(ExecState *exec, unsigned propertyName,
-                     ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
+    virtual void put(ExecState *exec, unsigned propertyName, ValueImp *value, int attr = None);
 
     /**
      * Used to check whether or not a particular property is allowed to be set
@@ -275,25 +255,8 @@ namespace KJS {
      * @param propertyName The name of the property to check for
      * @return true if the object has the property, otherwise false
      */
-    /**
-     * Implementation of the [[HasProperty]] internal property (implemented by
-     * all Objects)
-     */
-    bool hasProperty(ExecState *exec,
-			     const Identifier &propertyName) const;
+    bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     bool hasProperty(ExecState *exec, unsigned propertyName) const;
-
-    /**
-     * Checks to see whether the object has a property with the specified name.
-     *
-     * See ECMA 15.2.4.5
-     *
-     * @param exec The current execution state
-     * @param propertyName The name of the property to check for
-     * @return true if the object has the property, otherwise false
-     */
-    virtual bool hasOwnProperty(ExecState *exec, const Identifier &propertyName) const;
-    virtual bool hasOwnProperty(ExecState *exec, unsigned propertyName) const;
 
     /**
      * Removes the specified property from the object.
@@ -306,20 +269,8 @@ namespace KJS {
      * exist on the object. false if deleting the specified property is not
      * allowed.
      */
-    /**
-     * Implementation of the [[Delete]] internal property (implemented by all
-     * Objects)
-     */
-    virtual bool deleteProperty(ExecState *exec,
-                                const Identifier &propertyName);
+    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
-
-    /**
-     * Remove all properties from this object.
-     * This doesn't take DontDelete into account, and isn't in the ECMA spec.
-     * It's simply a quick way to remove everything before destroying.
-     */
-    void deleteAllProperties(ExecState *);
 
     /**
      * Converts the object into a primitive value. The value return may differ
@@ -407,9 +358,6 @@ namespace KJS {
      * @param args List of arguments to be passed to the function
      * @return The return value from the function
      */
-    /**
-     * Implementation of the [[Call]] internal property
-     */
     ValueImp *call(ExecState *exec, ObjectImp *thisObj, const List &args);
     virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
 
@@ -431,9 +379,6 @@ namespace KJS {
      * @param value The value to check
      * @return true if value delegates behavior to this object, otherwise
      * false
-     */
-    /**
-     * Implementation of the [[HasInstance]] internal property
      */
     virtual bool hasInstance(ExecState *exec, ValueImp *value);
 
@@ -462,9 +407,6 @@ namespace KJS {
      *
      * @param exec The current execution state
      * @return The function's scope
-     */
-    /**
-     * Implementation of the [[Scope]] internal property
      */
     const ScopeChain &scope() const { return _scope; }
     void setScope(const ScopeChain &s) { _scope = s; }
@@ -504,7 +446,6 @@ namespace KJS {
      *
      * @param v The new internal value
      */
-
     void setInternalValue(ValueImp *v);
 
     ValueImp *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
@@ -513,8 +454,7 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     ObjectImp *toObject(ExecState *exec) const;
 
-    // This get method only looks at the property map.
-    // A bit like hasProperty(recursive=false), this doesn't go to the prototype.
+    // This get function only looks at the property map.
     // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
     // to look up in the prototype, it might already exist there)
     ValueImp *getDirect(const Identifier& propertyName) const
@@ -524,6 +464,13 @@ namespace KJS {
     void putDirect(const Identifier &propertyName, ValueImp *value, int attr = 0);
     void putDirect(const Identifier &propertyName, int value, int attr = 0);
     
+    /**
+     * Remove all properties from this object.
+     * This doesn't take DontDelete into account, and isn't in the ECMA spec.
+     * It's simply a quick way to remove everything stored in the property map.
+     */
+    void clearProperties() { _prop.clear(); }
+
     void saveProperties(SavedProperties &p) const { _prop.save(p); }
     void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
@@ -537,46 +484,6 @@ namespace KJS {
     ScopeChain _scope;
   };
 
-  // it may seem crazy to inline a function this large but it makes a big difference
-  // since this is function very hot in variable lookup
-  inline bool ObjectImp::getPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-  {
-    ObjectImp *imp = this;
-
-    while (true) {
-      if (imp->getOwnPropertySlot(exec, propertyName, slot))
-        return true;
-      
-      ValueImp *proto = imp->_proto;
-      if (!proto->isObject())
-        break;
-      
-      imp = static_cast<ObjectImp *>(proto);
-    }
-    
-    return false;
-  }
-
-  // it may seem crazy to inline a function this large, especially a virtual function,
-  // but it makes a big difference to property lookup if subclasses can inline their
-  // superclass call to this
-  inline bool ObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-  {
-      ValueImp **impLocation = getDirectLocation(propertyName);
-      if (impLocation) {
-        slot.setValueSlot(this, impLocation);
-        return true;
-      }
-
-      // non-standard netscape extension
-      if (propertyName == exec->dynamicInterpreter()->specialPrototypeIdentifier()) {
-        slot.setValueSlot(this, &_proto);
-        return true;
-      }
-
-      return false;
-  }
-
   /**
    * Types of Native Errors available. For custom errors, GeneralError
    * should be used.
@@ -589,9 +496,6 @@ namespace KJS {
                    TypeError      = 5,
                    URIError       = 6};
 
-  ObjectImp *error(ExecState *exec, ErrorType type = GeneralError,
-    const char *message = 0, int lineno = -1, int sourceId = -1, const UString *sourceURL = 0);
-
   /**
    * @short Factory methods for error objects.
    */
@@ -603,12 +507,12 @@ namespace KJS {
      * @param exec The current execution state
      * @param errtype Type of error.
      * @param message Optional error message.
-     * @param lineno Optional line number.
-     * @param lineno Optional source id.
+     * @param lineNumber Optional line number.
+     * @param sourceId Optional source id.
+     * @param sourceURL Optional source URL.
      */
-    static ObjectImp *create(ExecState *exec, ErrorType errtype = GeneralError,
-                             const char *message = 0, int lineno = -1,
-                             int sourceId = -1, const UString *sourceURL = 0);
+    static ObjectImp *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+    static ObjectImp *create(ExecState *, ErrorType, const char *message);
 
     /**
      * Array of error names corresponding to ErrorType
@@ -616,6 +520,11 @@ namespace KJS {
     static const char * const * const errorNames;
   };
 
+ObjectImp *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString *sourceURL);
+ObjectImp *throwError(ExecState *, ErrorType, const UString &message);
+ObjectImp *throwError(ExecState *, ErrorType, const char *message);
+ObjectImp *throwError(ExecState *, ErrorType);
+  
 inline bool AllocatedValueImp::isObject(const ClassInfo *info) const
 {
     return isObject() && static_cast<const ObjectImp *>(this)->inherits(info);
@@ -658,6 +567,42 @@ inline bool ObjectImp::inherits(const ClassInfo *info) const
     for (const ClassInfo *ci = classInfo(); ci; ci = ci->parentClass)
         if (ci == info)
             return true;
+    return false;
+}
+
+// It may seem crazy to inline a function this large but it makes a big difference
+// since this is function very hot in variable lookup
+inline bool ObjectImp::getPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    ObjectImp *object = this;
+    while (true) {
+        if (object->getOwnPropertySlot(exec, propertyName, slot))
+            return true;
+
+        ValueImp *proto = object->_proto;
+        if (!proto->isObject())
+            return false;
+
+        object = static_cast<ObjectImp *>(proto);
+    }
+}
+
+// It may seem crazy to inline a function this large, especially a virtual function,
+// but it makes a big difference to property lookup that derived classes can inline their
+// base class call to this.
+inline bool ObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    if (ValueImp **location = getDirectLocation(propertyName)) {
+        slot.setValueSlot(this, location);
+        return true;
+    }
+
+    // non-standard Netscape extension
+    if (propertyName == exec->dynamicInterpreter()->specialPrototypeIdentifier()) {
+        slot.setValueSlot(this, &_proto);
+        return true;
+    }
+
     return false;
 }
 

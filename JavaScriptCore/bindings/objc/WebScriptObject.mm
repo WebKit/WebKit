@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
+#import "WebScriptObjectPrivate.h"
 
-#include <JavaScriptCore/internal.h>
-#include <JavaScriptCore/list.h>
-#include <JavaScriptCore/value.h>
+#import "internal.h"
+#import "list.h"
+#import "value.h"
 
-#include <objc_jsobject.h>
-#include <objc_instance.h>
-#include <objc_utility.h>
+#import "objc_jsobject.h"
+#import "objc_instance.h"
+#import "objc_utility.h"
 
-#include <runtime_object.h>
-#include <runtime_root.h>
+#import "runtime_object.h"
+#import "runtime_root.h"
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
 
@@ -65,7 +65,7 @@ static void _didExecute(WebScriptObject *obj)
         func (exec, static_cast<ObjectImp*>([obj _executionContext]->rootObjectImp()));
 }
 
-- (void)_initializeWithObjectImp:(ObjectImp *)imp originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
+- (void)_initializeWithObjectImp:(ObjectImp *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     _private->imp = imp;
     _private->executionContext = executionContext;    
@@ -74,7 +74,7 @@ static void _didExecute(WebScriptObject *obj)
     addNativeReference (executionContext, imp);
 }
 
-- _initWithObjectImp:(ObjectImp *)imp originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
+- _initWithObjectImp:(ObjectImp *)imp originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     assert (imp != 0);
     //assert (root != 0);
@@ -158,8 +158,7 @@ static void _didExecute(WebScriptObject *obj)
         ExecState *exec = interp->globalExec();
         // If the interpreter has a context, we set the exception.
         if (interp->context()) {
-            ObjectImp *err = Error::create(exec, GeneralError, [exceptionMessage UTF8String]);
-            exec->setException (err);
+            throwError(exec, GeneralError, exceptionMessage);
             return YES;
         }
         interp = interp->nextInterpreter();
@@ -401,17 +400,13 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
     _didExecute(self);
 }
 
-- (void)setException: (NSString *)description
+- (void)setException:(NSString *)description
 {
-    if (![self _executionContext])
-        return;
-
-    ExecState *exec = [self _executionContext]->interpreter()->globalExec();
-    ObjectImp *err = Error::create(exec, GeneralError, [description UTF8String]);
-    exec->setException (err);
+    if (const RootObject *root = [self _executionContext])
+        throwError(root->interpreter()->globalExec(), GeneralError, description);
 }
 
-+ (id)_convertValueToObjcValue:(ValueImp *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
++ (id)_convertValueToObjcValue:(ValueImp *)value originExecutionContext:(const RootObject *)originExecutionContext executionContext:(const RootObject *)executionContext
 {
     id result = 0;
 

@@ -87,8 +87,7 @@ bool RuntimeArrayImp::getOwnPropertySlot(ExecState *exec, unsigned index, Proper
 void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
     if (propertyName == lengthPropertyName) {
-        ObjectImp *err = Error::create(exec,RangeError);
-        exec->setException(err);
+        throwError(exec, RangeError);
         return;
     }
     
@@ -105,8 +104,7 @@ void RuntimeArrayImp::put(ExecState *exec, const Identifier &propertyName, Value
 void RuntimeArrayImp::put(ExecState *exec, unsigned index, ValueImp *value, int attr)
 {
     if (index >= getLength()) {
-        ObjectImp *err = Error::create(exec,RangeError);
-        exec->setException(err);
+        throwError(exec, RangeError);
         return;
     }
     

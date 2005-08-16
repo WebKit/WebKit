@@ -22,21 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_RUNTIME_H_
-#define _BINDINGS_OBJC_RUNTIME_H_
+
+#ifndef KJS_BINDINGS_OBJC_RUNTIME_H
+#define KJS_BINDINGS_OBJC_RUNTIME_H
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <runtime.h>
-#include <ustring.h>
+#include "runtime.h"
+#include "ustring.h"
 
-#include <objc_header.h>
+#include "objc_header.h"
 
-namespace KJS
-{
-
-namespace Bindings
-{
+namespace KJS {
+namespace Bindings {
 
 class ObjcInstance;
 
@@ -44,28 +42,26 @@ class ObjcField : public Field
 {
 public:
     ObjcField(Ivar ivar);
-
     ObjcField(CFStringRef name);
     
-    ~ObjcField() {
+    ~ObjcField()
+    {
         if (_name)
-            CFRelease (_name);
-    };
+            CFRelease(_name);
+    }
 
-    ObjcField(const ObjcField &other) : Field() {
+    ObjcField(const ObjcField &other) : Field()
+    {
         _ivar = other._ivar;
 
-        if (other._name != _name) {
-            if (_name)
-                CFRelease (_name);
-            if (other._name)
-                _name = (CFStringRef)CFRetain (other._name);
-            else 
-                _name = 0;
-        }
-    };
+        if (other._name)
+            _name = (CFStringRef)CFRetain(other._name);
+        else 
+            _name = 0;
+    }
     
-    ObjcField &operator=(const ObjcField &other) {
+    ObjcField &operator=(const ObjcField &other)
+    {
         if (this == &other)
             return *this;
 
@@ -73,16 +69,16 @@ public:
         
         if (other._name != _name) {
             if (_name)
-                CFRelease (_name);
+                CFRelease(_name);
             if (other._name)
-                _name = (CFStringRef)CFRetain (other._name);
+                _name = (CFStringRef)CFRetain(other._name);
             else 
                 _name = 0;
         }
         
         return *this;
-    };
-        
+    }
+
     virtual ValueImp *valueFromInstance(ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(ExecState *exec, const Instance *instance, ValueImp *aValue) const;
     
@@ -94,41 +90,40 @@ private:
     CFStringRef _name;
 };
 
-
 class ObjcMethod : public Method
 {
 public:
-    ObjcMethod() : Method(), _objcClass(0), _selector(0) {};
-
+    ObjcMethod() : _objcClass(0), _selector(0) {}
     ObjcMethod(struct objc_class *aClass, const char *_selector);
-    ~ObjcMethod () {
+    ~ObjcMethod ()
+    {
         if (_javaScriptName);
-            CFRelease (_javaScriptName);
-    };
+            CFRelease(_javaScriptName);
+    }
 
-    ObjcMethod(const ObjcMethod &other) : Method() {
+    ObjcMethod(const ObjcMethod &other) : Method()
+    {
         _objcClass = other._objcClass;
         _selector = other._selector;
-    };
+    }
     
-    ObjcMethod &operator=(const ObjcMethod &other) {
+    ObjcMethod &operator=(const ObjcMethod &other)
+    {
         if (this == &other)
             return *this;
-
         _objcClass = other._objcClass;
         _selector = other._selector;
-        
         return *this;
     }
 
     virtual const char *name() const;
 
     virtual long numParameters() const;
-    
+
     NSMethodSignature *getMethodSignature() const;
     
     bool isFallbackMethod() const { return strcmp(_selector, "invokeUndefinedMethodFromWebScript:withArguments:") == 0; }
-    void setJavaScriptName (CFStringRef n);
+    void setJavaScriptName(CFStringRef n);
     CFStringRef javaScriptName() const { return _javaScriptName; }
     
 private:
@@ -140,21 +135,20 @@ private:
 class ObjcArray : public Array
 {
 public:
-    ObjcArray (ObjectStructPtr a);
+    ObjcArray(ObjectStructPtr);
 
-    ObjcArray (const ObjcArray &other);
-
-    ObjcArray &operator=(const ObjcArray &other);
+    ObjcArray(const ObjcArray &);
+    ObjcArray &operator=(const ObjcArray &);
     
+    virtual ~ObjcArray();
+
     virtual void setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const;
     virtual ValueImp *valueAt(ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
-    virtual ~ObjcArray();
-
     ObjectStructPtr getObjcArray() const { return _array; }
 
-    static ValueImp *convertObjcArrayToArray (ExecState *exec, ObjectStructPtr anObject);
+    static ValueImp *convertObjcArrayToArray(ExecState *exec, ObjectStructPtr anObject);
 
 private:
     ObjectStructPtr _array;
@@ -163,23 +157,16 @@ private:
 class ObjcFallbackObjectImp : public ObjectImp {
 public:
     ObjcFallbackObjectImp(ObjectImp *proto);
-        
     ObjcFallbackObjectImp(ObjcInstance *i, const Identifier propertyName);
 
     const ClassInfo *classInfo() const { return &info; }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-
-    virtual void put(ExecState *exec, const Identifier &propertyName,
-                     ValueImp *value, int attr = None);
-
     virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
-
+    virtual void put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr = None);
     virtual bool implementsCall() const;
     virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
-
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
-
     virtual ValueImp *defaultValue(ExecState *exec, Type hint) const;
 
     virtual Type type() const;
@@ -193,7 +180,6 @@ private:
 };
 
 } // namespace Bindings
-
 } // namespace KJS
 
 #endif

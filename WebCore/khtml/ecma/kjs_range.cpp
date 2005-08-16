@@ -113,11 +113,8 @@ ValueImp *DOMRange::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMRangeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::DOMRange::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::DOMRange::info))
+    return throwError(exec, TypeError);
   RangeImpl &range = *static_cast<DOMRange *>(thisObj)->impl();
   ValueImp *result = Undefined();
   int exception = 0;

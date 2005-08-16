@@ -421,6 +421,14 @@ bool ArrayProtoFuncImp::implementsCall() const
   return true;
 }
 
+static ValueImp *getProperty(ExecState *exec, ObjectImp *obj, unsigned index)
+{
+    PropertySlot slot;
+    if (!obj->getPropertySlot(exec, index, slot))
+        return NULL;
+    return slot.getValue(exec, index);
+}
+
 // ECMA 15.4.4
 ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
@@ -432,11 +440,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
   case ToLocaleString:
   case ToString:
 
-    if (!thisObj->inherits(&ArrayInstanceImp::info)) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!thisObj->inherits(&ArrayInstanceImp::info))
+      return throwError(exec, TypeError);
 
     // fall through
   case Join: {
@@ -472,10 +477,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
           if (conversionFunction->isObject() && static_cast<ObjectImp *>(conversionFunction)->implementsCall()) {
             str += static_cast<ObjectImp *>(conversionFunction)->call(exec, o, List())->toString(exec);
           } else {
-            UString msg = "Can't convert " + o->className() + " object to string";
-            ObjectImp *error = Error::create(exec, RangeError, msg.cstring().c_str());
-            exec->setException(error);
-            return error;
+            return throwError(exec, RangeError, "Can't convert " + o->className() + " object to string");
           }
         } else {
           str += element->toString(exec);
@@ -502,8 +504,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
         // by checking for n != 0, but that doesn't work if thisObj is an empty array.
         length = curObj->get(exec,lengthPropertyName)->toUInt32(exec);
         while (k < length) {
-          ValueImp *v;
-          if (curObj->getProperty(exec, k, v))
+          if (ValueImp *v = getProperty(exec, curObj, k))
             arr->put(exec, n, v);
           n++;
           k++;
@@ -546,17 +547,15 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
 
     for (unsigned int k = 0; k < middle; k++) {
       unsigned lk1 = length - k - 1;
-      ValueImp *obj;
-      ValueImp *obj2;
-      bool has2 = thisObj->getProperty(exec, lk1, obj2);
-      bool has1 = thisObj->getProperty(exec, k, obj);
+      ValueImp *obj2 = getProperty(exec, thisObj, lk1);
+      ValueImp *obj = getProperty(exec, thisObj, k);
 
-      if (has2) 
+      if (obj2) 
         thisObj->put(exec, k, obj2);
       else
         thisObj->deleteProperty(exec, k);
 
-      if (has1)
+      if (obj)
         thisObj->put(exec, lk1, obj);
       else
         thisObj->deleteProperty(exec, lk1);
@@ -571,8 +570,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     } else {
       result = thisObj->get(exec, 0);
       for(unsigned int k = 1; k < length; k++) {
-        ValueImp *obj;
-        if (thisObj->getProperty(exec, k, obj))
+        if (ValueImp *obj = getProperty(exec, thisObj, k))
           thisObj->put(exec, k-1, obj);
         else
           thisObj->deleteProperty(exec, k-1);
@@ -618,9 +616,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     int b = static_cast<int>(begin);
     int e = static_cast<int>(end);
     for(int k = b; k < e; k++, n++) {
-      ValueImp *obj;
-      if (thisObj->getProperty(exec, k, obj))
-        resObj->put(exec, n, obj);
+      if (ValueImp *v = getProperty(exec, thisObj, k))
+        resObj->put(exec, n, v);
     }
     resObj->put(exec, lengthPropertyName, Number(n), DontEnum | DontDelete);
     break;
@@ -712,9 +709,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
 
     //printf( "Splicing from %d, deleteCount=%d \n", begin, deleteCount );
     for(unsigned int k = 0; k < deleteCount; k++) {
-      ValueImp *obj;
-      if (thisObj->getProperty(exec, k+begin, obj))
-        resObj->put(exec, k, obj);
+      if (ValueImp *v = getProperty(exec, thisObj, k+begin))
+        resObj->put(exec, k, v);
     }
     resObj->put(exec, lengthPropertyName, Number(deleteCount), DontEnum | DontDelete);
 
@@ -725,9 +721,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       {
         for ( unsigned int k = begin; k < length - deleteCount; ++k )
         {
-          ValueImp *obj;
-          if (thisObj->getProperty(exec, k+deleteCount, obj))
-            thisObj->put(exec, k+additionalArgs, obj);
+          if (ValueImp *v = getProperty(exec, thisObj, k+deleteCount))
+            thisObj->put(exec, k+additionalArgs, v);
           else
             thisObj->deleteProperty(exec, k+additionalArgs);
         }
@@ -738,8 +733,7 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       {
         for ( unsigned int k = length - deleteCount; (int)k > begin; --k )
         {
-          ValueImp *obj;
-          if (thisObj->getProperty(exec, k + deleteCount - 1, obj))
+          if (ValueImp *obj = getProperty(exec, thisObj, k + deleteCount - 1))
             thisObj->put(exec, k + additionalArgs - 1, obj);
           else
             thisObj->deleteProperty(exec, k+additionalArgs-1);
@@ -757,9 +751,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     unsigned int nrArgs = args.size();
     for ( unsigned int k = length; k > 0; --k )
     {
-      ValueImp *obj;
-      if (thisObj->getProperty(exec, k - 1, obj))
-        thisObj->put(exec, k+nrArgs-1, obj);
+      if (ValueImp *v = getProperty(exec, thisObj, k - 1))
+        thisObj->put(exec, k+nrArgs-1, v);
       else
         thisObj->deleteProperty(exec, k+nrArgs-1);
     }
@@ -779,11 +772,8 @@ ValueImp *ArrayProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     
     ObjectImp *eachFunction = args[0]->toObject(exec);
     
-    if (!eachFunction->implementsCall()) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!eachFunction->implementsCall())
+      return throwError(exec, TypeError);
     
     ObjectImp *applyThis = args[1]->isUndefinedOrNull() ? exec->dynamicInterpreter()->globalObject() :  args[1]->toObject(exec);
     
@@ -847,11 +837,8 @@ ObjectImp *ArrayObjectImp::construct(ExecState *exec, const List &args)
   // a single numeric argument denotes the array size (!)
   if (args.size() == 1 && args[0]->isNumber()) {
     uint32_t n = args[0]->toUInt32(exec);
-    if (n != args[0]->toNumber(exec)) {
-      ObjectImp *error = Error::create(exec, RangeError, "Array size is not a small enough positive integer.");
-      exec->setException(error);
-      return error;
-    }
+    if (n != args[0]->toNumber(exec))
+      return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
     return new ArrayInstanceImp(exec->lexicalInterpreter()->builtinArrayPrototype(), n);
   }
 

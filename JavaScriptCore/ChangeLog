@@ -1,11 +1,123 @@
+2005-08-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4437
+          clean up error creation with new throwError function
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_SetException):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _initializeWithObjectImp:originExecutionContext:executionContext:]):
+        (-[WebScriptObject _initWithObjectImp:originExecutionContext:executionContext:]):
+        (+[WebScriptObject throwException:]):
+        (-[WebScriptObject setException:]):
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+        * bindings/objc/objc_class.h:
+        (KJS::Bindings::ObjcClass::~ObjcClass):
+        (KJS::Bindings::ObjcClass::ObjcClass):
+        (KJS::Bindings::ObjcClass::operator=):
+        (KJS::Bindings::ObjcClass::constructorAt):
+        (KJS::Bindings::ObjcClass::numConstructors):
+        * bindings/objc/objc_header.h:
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcField::~ObjcField):
+        (KJS::Bindings::ObjcField::ObjcField):
+        (KJS::Bindings::ObjcField::operator=):
+        (KJS::Bindings::ObjcMethod::ObjcMethod):
+        (KJS::Bindings::ObjcMethod::~ObjcMethod):
+        (KJS::Bindings::ObjcMethod::operator=):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::JSMethodNameToObjCMethodName):
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+        (KJS::Bindings::objcValueTypeForType):
+        (KJS::Bindings::createObjcInstanceForValue):
+        (KJS::Bindings::throwError):
+        * bindings/runtime.h:
+        (KJS::Bindings::Parameter::~Parameter):
+        (KJS::Bindings::Method::~Method):
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::begin):
+        (KJS::Bindings::Instance::end):
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::supportsSetValueOfUndefinedField):
+        (KJS::Bindings::Instance::setValueOfUndefinedField):
+        (KJS::Bindings::Instance::valueOf):
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::put):
+        * bindings/runtime_object.h:
+        (KJS::RuntimeObjectImp::setInternalInstance):
+        (KJS::RuntimeObjectImp::getInternalInstance):
+        * kjs/array_object.cpp:
+        (getProperty):
+        (ArrayProtoFuncImp::callAsFunction):
+        (ArrayObjectImp::construct):
+        * kjs/bool_object.cpp:
+        (BooleanProtoFuncImp::callAsFunction):
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFuncImp::callAsFunction):
+        * kjs/function.cpp:
+        (KJS::decode):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function_object.cpp:
+        (FunctionProtoFuncImp::callAsFunction):
+        (FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (KJS::UndefinedImp::toObject):
+        (KJS::NullImp::toObject):
+        (KJS::InterpreterImp::evaluate):
+        (KJS::InternalFunctionImp::hasInstance):
+        * kjs/nodes.cpp:
+        (Node::throwError):
+        (substitute):
+        (Node::setExceptionDetailsIfNeeded):
+        (undefinedVariableError):
+        (ProgramNode::ProgramNode):
+        * kjs/number_object.cpp:
+        (NumberProtoFuncImp::callAsFunction):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::call):
+        (KJS::ObjectImp::defaultValue):
+        (KJS::Error::create):
+        (KJS::throwError):
+        * kjs/object.h:
+        (KJS::ObjectImp::clearProperties):
+        (KJS::ObjectImp::getPropertySlot):
+        (KJS::ObjectImp::getOwnPropertySlot):
+        * kjs/object_object.cpp:
+        (ObjectProtoFuncImp::callAsFunction):
+        * kjs/reference.cpp:
+        (KJS::Reference::getBase):
+        (KJS::Reference::getValue):
+        (KJS::Reference::putValue):
+        (KJS::Reference::deleteValue):
+        * kjs/regexp_object.cpp:
+        (RegExpProtoFuncImp::callAsFunction):
+        (RegExpObjectImp::construct):
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::callAsFunction):
+
 2005-08-15  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
 
         * tests/mozilla/ecma_3/Date/15.9.5.5.js:
-	Remove the code which tests that Date.toLocaleString should be parsable
-	by Date.parse. That is not true according to the spec.
-	
+        Remove the code which tests that Date.toLocaleString should be parsable
+        by Date.parse. That is not true according to the spec.
+
 2005-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
@@ -132,7 +244,7 @@
 
         Reviewed by John.
 
-	- two simple speed improvements for a 3% speed gain
+        - two simple speed improvements for a 3% speed gain
 	
         * JavaScriptCore.xcodeproj/project.pbxproj: turn on -fstrict-aliasing
 

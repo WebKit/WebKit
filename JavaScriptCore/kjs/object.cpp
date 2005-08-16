@@ -88,10 +88,7 @@ ValueImp *ObjectImp::call(ExecState *exec, ObjectImp *thisObj, const List &args)
 
   if (++depth > KJS_MAX_STACK) {
     --depth;
-    ObjectImp *err = Error::create(exec, RangeError,
-                               "Maximum call stack size exceeded.");
-    exec->setException(err);
-    return err;
+    return throwError(exec, RangeError, "Maximum call stack size exceeded.");
   }
 #endif
 
@@ -167,28 +164,6 @@ ValueImp *ObjectImp::get(ExecState *exec, unsigned propertyName) const
     return slot.getValue(exec, propertyName);
     
   return Undefined();
-}
-
-bool ObjectImp::getProperty(ExecState *exec, const Identifier& propertyName, ValueImp*& result) const
-{
-  PropertySlot slot;
-  if (const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot)) {
-    result = slot.getValue(exec, propertyName);
-    return true;
-  }
-  
-  return false;
-}
-
-bool ObjectImp::getProperty(ExecState *exec, unsigned propertyName, ValueImp*& result) const
-{
-  PropertySlot slot;
-  if (const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot)) {
-    result = slot.getValue(exec, propertyName);
-    return true;
-  }
-    
-  return false;
 }
 
 bool ObjectImp::getPropertySlot(ExecState *exec, unsigned propertyName, PropertySlot& slot)
@@ -277,18 +252,6 @@ bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const
   return const_cast<ObjectImp *>(this)->getPropertySlot(exec, propertyName, slot);
 }
 
-bool ObjectImp::hasOwnProperty(ExecState *exec, const Identifier &propertyName) const
-{
-  PropertySlot slot;
-  return const_cast<ObjectImp *>(this)->getOwnPropertySlot(exec, propertyName, slot);
-}
-
-bool ObjectImp::hasOwnProperty(ExecState *exec, unsigned propertyName) const
-{
-  PropertySlot slot;
-  return const_cast<ObjectImp *>(this)->getOwnPropertySlot(exec, propertyName, slot);
-}
-
 // ECMA 8.6.2.5
 bool ObjectImp::deleteProperty(ExecState */*exec*/, const Identifier &propertyName)
 {
@@ -311,11 +274,6 @@ bool ObjectImp::deleteProperty(ExecState */*exec*/, const Identifier &propertyNa
 bool ObjectImp::deleteProperty(ExecState *exec, unsigned propertyName)
 {
   return deleteProperty(exec, Identifier::from(propertyName));
-}
-
-void ObjectImp::deleteAllProperties( ExecState * )
-{
-  _prop.clear();
 }
 
 // ECMA 8.6.2.6
@@ -371,9 +329,7 @@ ValueImp *ObjectImp::defaultValue(ExecState *exec, Type hint) const
   if (exec->hadException())
     return exec->exception();
 
-  ObjectImp *err = Error::create(exec, TypeError, I18N_NOOP("No default value"));
-  exec->setException(err);
-  return err;
+  return throwError(exec, TypeError, "No default value");
 }
 
 const HashEntry* ObjectImp::findPropertyHashEntry(const Identifier& propertyName) const
@@ -505,8 +461,8 @@ const char * const errorNamesArr[] = {
 
 const char * const * const Error::errorNames = errorNamesArr;
 
-ObjectImp *Error::create(ExecState *exec, ErrorType errtype, const char *message,
-                     int lineno, int sourceId, const UString *sourceURL)
+ObjectImp *Error::create(ExecState *exec, ErrorType errtype, const UString &message,
+                         int lineno, int sourceId, const UString *sourceURL)
 {
   ObjectImp *cons;
   switch (errtype) {
@@ -533,10 +489,11 @@ ObjectImp *Error::create(ExecState *exec, ErrorType errtype, const char *message
     break;
   }
 
-  if (!message)
-    message = errorNames[errtype];
   List args;
-  args.append(String(message));
+  if (message.isEmpty())
+    args.append(jsString(errorNames[errtype]));
+  else
+    args.append(jsString(message));
   ObjectImp *err = static_cast<ObjectImp *>(cons->construct(exec,args));
 
   if (lineno != -1)
@@ -562,9 +519,37 @@ ObjectImp *Error::create(ExecState *exec, ErrorType errtype, const char *message
 */
 }
 
-ObjectImp *error(ExecState *exec, ErrorType type, const char *message, int line, int sourceId, const UString *sourceURL)
+ObjectImp *Error::create(ExecState *exec, ErrorType type, const char *message)
 {
-    return Error::create(exec, type, message, line, sourceId, sourceURL);
+    return create(exec, type, message, -1, -1, NULL);
+}
+
+ObjectImp *throwError(ExecState *exec, ErrorType type)
+{
+    ObjectImp *error = Error::create(exec, type, UString(), -1, -1, NULL);
+    exec->setException(error);
+    return error;
+}
+
+ObjectImp *throwError(ExecState *exec, ErrorType type, const UString &message)
+{
+    ObjectImp *error = Error::create(exec, type, message, -1, -1, NULL);
+    exec->setException(error);
+    return error;
+}
+
+ObjectImp *throwError(ExecState *exec, ErrorType type, const char *message)
+{
+    ObjectImp *error = Error::create(exec, type, message, -1, -1, NULL);
+    exec->setException(error);
+    return error;
+}
+
+ObjectImp *throwError(ExecState *exec, ErrorType type, const UString &message, int line, int sourceId, const UString *sourceURL)
+{
+    ObjectImp *error = Error::create(exec, type, message, line, sourceId, sourceURL);
+    exec->setException(error);
+    return error;
 }
 
 } // namespace KJS

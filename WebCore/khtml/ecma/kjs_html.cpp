@@ -151,11 +151,8 @@ IMPLEMENT_PROTOFUNC(HTMLDocFunction)
 
 ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&HTMLDocument::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&HTMLDocument::info))
+    return throwError(exec, TypeError);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(static_cast<HTMLDocument *>(thisObj)->impl());
 
   switch (id) {
@@ -170,11 +167,8 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
 	Window *window = Window::retrieveWindow(part);
 	if (window) {
 	  ObjectImp *functionObject = window->get(exec, "open")->getObject();
-	  if (!functionObject || !functionObject->implementsCall()) {
-	    ObjectImp *exception = Error::create(exec, TypeError);
-	    exec->setException(exception);
-	    return exception;
-	  }
+	  if (!functionObject || !functionObject->implementsCall())
+	    return throwError(exec, TypeError);
 	  return functionObject->call(exec, window, args);
 	}
       }
@@ -2329,11 +2323,8 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
 
 ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj->inherits(&KJS::HTMLElement::info)) {
-        ObjectImp *err = Error::create(exec,TypeError);
-        exec->setException(err);
-        return err;
-    }
+    if (!thisObj->inherits(&KJS::HTMLElement::info))
+        return throwError(exec, TypeError);
     kdDebug() << "KJS::HTMLElementFunction::tryCall " << endl;
     DOMExceptionTranslator exception(exec);
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj)->impl());
@@ -3430,11 +3421,8 @@ ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &
 
 ValueImp *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::HTMLCollection::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::HTMLCollection::info))
+    return throwError(exec, TypeError);
   HTMLCollectionImpl &coll = *static_cast<HTMLCollection *>(thisObj)->impl();
 
   switch (id) {
@@ -3769,11 +3757,8 @@ static bool isImagePattern(ValueImp *value)
 
 ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj->inherits(&Context2D::info)) {
-        ObjectImp *err = Error::create(exec,TypeError);
-        exec->setException(err);
-        return err;
-    }
+    if (!thisObj->inherits(&Context2D::info))
+        return throwError(exec, TypeError);
 
     Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj);
     khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
@@ -3786,11 +3771,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
     
     switch (id) {
         case Context2D::Save: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextSaveGState(drawingContext);
             
             contextObject->save();
@@ -3798,11 +3780,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Restore: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextRestoreGState(drawingContext);
             
             contextObject->restore();
@@ -3810,20 +3789,14 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::BeginPath: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextBeginPath(drawingContext);
             break;
         }
         case Context2D::ClosePath: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextClosePath(drawingContext);
             break;
         }
@@ -3879,11 +3852,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
                 break;
-                default: {
-                    ObjectImp *err = Error::create(exec,SyntaxError);
-                    exec->setException(err);
-                    return err;
-                }
+                default:
+                    return throwError(exec, SyntaxError);
             }
             break;
         }
@@ -3938,30 +3908,21 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
                 break;
-                default: {
-                    ObjectImp *err = Error::create(exec,SyntaxError);
-                    exec->setException(err);
-                    return err;
-                }
+                default:
+                    return throwError(exec, SyntaxError);
             }
             break;
         }
         case Context2D::SetLineWidth: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             float w = (float)args[0]->toNumber(exec);
             CGContextSetLineWidth (drawingContext, w);
             break;
         }
         case Context2D::SetLineCap: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             CGLineCap cap = kCGLineCapButt;
             QString capString = args[0]->toString(exec).qstring().lower();
             if (capString == "round")
@@ -3972,11 +3933,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::SetLineJoin: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             CGLineJoin join = kCGLineJoinMiter;
             QString joinString = args[0]->toString(exec).qstring().lower();
             if (joinString == "round")
@@ -3987,21 +3945,15 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::SetMiterLimit: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             float l = (float)args[0]->toNumber(exec);
             CGContextSetMiterLimit (drawingContext, l);
             break;
         }
         case Context2D::Fill: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             
             if (isGradient(contextObject->_fillStyle)) {
                 CGContextSaveGState(drawingContext);
@@ -4027,11 +3979,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Stroke: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             if (isGradient(contextObject->_strokeStyle)) {
                 CGContextSaveGState(drawingContext);
                 
@@ -4059,11 +4008,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Scale: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
             float sx = (float)args[0]->toNumber(exec);
             float sy = (float)args[1]->toNumber(exec);
             CGContextScaleCTM (drawingContext, sx, sy);
@@ -4071,33 +4017,24 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Rotate: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             float angle = (float)args[0]->toNumber(exec);
             CGContextRotateCTM (drawingContext, angle);
             contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Translate: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
             float tx = (float)args[0]->toNumber(exec);
             float ty = (float)args[1]->toNumber(exec);
             CGContextTranslateCTM (drawingContext, tx, ty);
             break;
         }
         case Context2D::MoveTo: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             CGContextMoveToPoint (drawingContext, x, y);
@@ -4105,11 +4042,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::LineTo: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             CGContextAddLineToPoint (drawingContext, x, y);
@@ -4117,11 +4051,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::QuadraticCurveTo: {
-            if (args.size() != 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 4)
+                return throwError(exec, SyntaxError);
             float cpx = (float)args[0]->toNumber(exec);
             float cpy = (float)args[1]->toNumber(exec);
             float x = (float)args[2]->toNumber(exec);
@@ -4131,11 +4062,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::BezierCurveTo: {
-            if (args.size() != 6) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 6)
+                return throwError(exec, SyntaxError);
             float cp1x = (float)args[0]->toNumber(exec);
             float cp1y = (float)args[1]->toNumber(exec);
             float cp2x = (float)args[2]->toNumber(exec);
@@ -4147,11 +4075,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::ArcTo: {
-            if (args.size() != 5) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 5)
+                return throwError(exec, SyntaxError);
             float x1 = (float)args[0]->toNumber(exec);
             float y1 = (float)args[1]->toNumber(exec);
             float x2 = (float)args[2]->toNumber(exec);
@@ -4161,11 +4086,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Arc: {
-            if (args.size() != 6) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 6)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             float r = (float)args[2]->toNumber(exec);
@@ -4176,11 +4098,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Rect: {
-            if (args.size() != 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 4)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             float w = (float)args[2]->toNumber(exec);
@@ -4189,21 +4108,15 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::Clip: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextClip (drawingContext);
             break;
         }
 
         case Context2D::ClearRect: {
-            if (args.size() != 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 4)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             float w = (float)args[2]->toNumber(exec);
@@ -4213,11 +4126,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::FillRect: {
-            if (args.size() != 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 4)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             float w = (float)args[2]->toNumber(exec);
@@ -4230,11 +4140,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         }
         case Context2D::StrokeRect: {
             int size = args.size();
-            if (size < 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (size < 4)
+                return throwError(exec, SyntaxError);
             float x = (float)args[0]->toNumber(exec);
             float y = (float)args[1]->toNumber(exec);
             float w = (float)args[2]->toNumber(exec);
@@ -4252,11 +4159,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         case Context2D::SetShadow: {
             int numArgs = args.size();
             
-            if (numArgs < 3) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (numArgs < 3)
+                return throwError(exec, SyntaxError);
             CGSize offset;
             
             offset.width = (float)args[0]->toNumber(exec);
@@ -4325,11 +4229,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                         colorSpace = CGColorSpaceCreateDeviceCMYK();
                     }
                     break;
-                    default: {
-                        ObjectImp *err = Error::create(exec,SyntaxError);
-                        exec->setException(err);
-                        return err;
-                    }
+                    default:
+                        return throwError(exec, SyntaxError);
                 }
                 
                 CGColorRef colorRef = CGColorCreate (colorSpace, components);
@@ -4340,11 +4241,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::ClearShadow: {
-            if (args.size() != 0) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 0)
+                return throwError(exec, SyntaxError);
             CGContextSetShadowWithColor (drawingContext, CGSizeMake(0, 0), 0, nil);
             break;
         }
@@ -4356,19 +4254,13 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         // composite operation is specified with globalCompositeOperation
         // img parameter can be a JavaScript Image, <img>, or a <canvas>
         case Context2D::DrawImage: {
-            if (args.size() < 3) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() < 3)
+                return throwError(exec, SyntaxError);
             
             // Make sure first argument is an object.
             ObjectImp *o = static_cast<ObjectImp*>(args[0]);
-            if (!o->isObject()) {
-                ObjectImp *err = Error::create(exec,TypeError);
-                exec->setException(err);
-                return err;
-            }
+            if (!o->isObject())
+                return throwError(exec, TypeError);
 
             float w = 0; // quiet incorrect gcc 4.0 warning
             float h = 0; // quiet incorrect gcc 4.0 warning
@@ -4409,11 +4301,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 w = (float)CGBitmapContextGetWidth(sourceContext);
                 h = (float)CGBitmapContextGetHeight(sourceContext);
             }
-            else {
-                ObjectImp *err = Error::create(exec,TypeError);
-                exec->setException(err);
-                return err;
-            }
+            else
+                return throwError(exec, TypeError);
             
             float dx, dy, dw = w, dh = h;
             float sx = 0.f, sy = 0.f, sw = w, sh = h;
@@ -4438,11 +4327,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 dw = args[7]->toNumber(exec);
                 dh = args[8]->toNumber(exec);
             }
-            else {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            else
+                return throwError(exec, SyntaxError);
 
             if (!sourceContext) {
                 QPainter p;
@@ -4492,17 +4378,11 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::DrawImageFromRect: {
-            if (args.size() != 10) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 10)
+                return throwError(exec, SyntaxError);
             ObjectImp *o = static_cast<ObjectImp*>(args[0]);
-            if (!o->isObject() || !o->inherits(&Image::info)) {
-                ObjectImp *err = Error::create(exec,TypeError);
-                exec->setException(err);
-                return err;
-            }
+            if (!o->isObject() || !o->inherits(&Image::info))
+                return throwError(exec, TypeError);
             Image *i = static_cast<Image*>(o);
             float sx = args[1]->toNumber(exec);
             float sy = args[2]->toNumber(exec);
@@ -4528,32 +4408,23 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             break;
         }
         case Context2D::SetAlpha: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             float a =  (float)args[0]->toNumber(exec);
             CGContextSetAlpha (drawingContext, a);
             break;
         }
         case Context2D::SetCompositeOperation: {
-            if (args.size() != 1) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 1)
+                return throwError(exec, SyntaxError);
             QString compositeOperator = args[0]->toString(exec).qstring().lower();
             QPainter::setCompositeOperation (drawingContext,compositeOperator);
             break;
         }
         
         case Context2D::CreateLinearGradient: {
-            if (args.size() != 4) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 4)
+                return throwError(exec, SyntaxError);
             float x0 = args[0]->toNumber(exec);
             float y0 = args[1]->toNumber(exec);
             float x1 = args[2]->toNumber(exec);
@@ -4563,11 +4434,8 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         }
         
         case Context2D::CreateRadialGradient: {
-            if (args.size() != 6) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 6)
+                return throwError(exec, SyntaxError);
             float x0 = args[0]->toNumber(exec);
             float y0 = args[1]->toNumber(exec);
             float r0 = args[2]->toNumber(exec);
@@ -4579,17 +4447,11 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
         }
         
         case Context2D::CreatePattern: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
             ObjectImp *o = static_cast<ObjectImp*>(args[0]);
-            if (!o->isObject() || !o->inherits(&Image::info)) {
-                ObjectImp *err = Error::create(exec,TypeError);
-                exec->setException(err);
-                return err;
-            }
+            if (!o->isObject() || !o->inherits(&Image::info))
+                return throwError(exec, TypeError);
             int repetitionType = ImagePattern::Repeat;
             QString repetitionString = args[1]->toString(exec).qstring().lower();
             if (repetitionString == "repeat-x")
@@ -4842,11 +4704,8 @@ void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, in
                 // CG doesn't have the notion of a setting a stroke gradient.
                 ObjectImp *o = static_cast<ObjectImp*>(value);
                 
-                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info))) {
-                    ObjectImp *err = Error::create(exec,TypeError);
-                    exec->setException(err);
-                    return;
-                }
+                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
+                    throwError(exec, TypeError);
             }
             break;
         }
@@ -4862,11 +4721,8 @@ void Context2D::putValueProperty(ExecState *exec, int token, ValueImp *value, in
                 // CG doesn't have the notion of setting a fill gradient.
                 ObjectImp *o = static_cast<ObjectImp*>(value);
                 
-                if (o->type() != ObjectType || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info))) {
-                    ObjectImp *err = Error::create(exec,TypeError);
-                    exec->setException(err);
-                    return;
-                }
+                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
+                    throwError(exec, TypeError);
 
                 // Gradients and image patterns are constructed when needed during fill and stroke operations.
             }
@@ -5116,21 +4972,15 @@ IMPLEMENT_PROTOFUNC(GradientFunction)
 
 ValueImp *GradientFunction::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj->inherits(&Gradient::info)) {
-        ObjectImp *err = Error::create(exec,TypeError);
-        exec->setException(err);
-        return err;
-    }
+    if (!thisObj->inherits(&Gradient::info))
+        return throwError(exec, TypeError);
 
     Gradient *gradient = static_cast<KJS::Gradient *>(thisObj);
 
     switch (id) {
         case Gradient::AddColorStop: {
-            if (args.size() != 2) {
-                ObjectImp *err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 2)
+                return throwError(exec, SyntaxError);
 
             QColor color = colorFromValue(exec, args[1]);
             gradient->addColorStop ((float)args[0]->toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);

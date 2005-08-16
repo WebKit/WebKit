@@ -67,9 +67,10 @@ ValueImp *ObjectProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
     switch (id) {
         case ValueOf:
             return thisObj;
-        case HasOwnProperty:
-            // Same as the in operator but without checking the prototype
-            return jsBoolean(thisObj->hasOwnProperty(exec, Identifier(args[0]->toString(exec))));
+        case HasOwnProperty: {
+            PropertySlot slot;
+            return jsBoolean(thisObj->getOwnPropertySlot(exec, Identifier(args[0]->toString(exec)), slot));
+        }
         case ToLocaleString:
             return jsString(thisObj->toString(exec));
         case ToString:

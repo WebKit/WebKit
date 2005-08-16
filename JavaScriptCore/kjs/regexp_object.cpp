@@ -78,9 +78,7 @@ ValueImp *RegExpProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
         case ToString: return String("//");
       }
     }
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
+    return throwError(exec, TypeError);
   }
 
   RegExpImp *reimp = static_cast<RegExpImp*>(thisObj);
@@ -254,11 +252,8 @@ ObjectImp *RegExpObjectImp::construct(ExecState *exec, const List &args)
 {
   ObjectImp *o = args[0]->getObject();
   if (o && o->inherits(&RegExpImp::info)) {
-    if (!args[1]->isUndefined()) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!args[1]->isUndefined())
+      return throwError(exec, TypeError);
     return o;
   }
   

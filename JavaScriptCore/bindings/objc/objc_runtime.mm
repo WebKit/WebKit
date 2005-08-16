@@ -115,8 +115,7 @@ ValueImp *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance
         
     NS_HANDLER
         
-        ValueImp *exceptionValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
-        exec->setException(exceptionValue);
+        throwError(exec, GeneralError, [localException reason]);
         
     NS_ENDHANDLER
 
@@ -152,8 +151,7 @@ void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, Va
 
     NS_HANDLER
         
-        ValueImp *aValue = Error::create(exec, GeneralError, [[localException reason] lossyCString]);
-        exec->setException(aValue);
+        throwError(exec, GeneralError, [localException reason]);
         
     NS_ENDHANDLER
 }
@@ -189,14 +187,12 @@ ObjcArray &ObjcArray::operator=(const ObjcArray &other)
 void ObjcArray::setValueAt(ExecState *exec, unsigned int index, ValueImp *aValue) const
 {
     if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
-        ObjectImp *error = Error::create(exec, TypeError, "Array is not mutable.");
-        exec->setException(error);
+        throwError(exec, TypeError, "Array is not mutable.");
         return;
     }
 
     if (index > [_array count]) {
-        ObjectImp *error = Error::create(exec, RangeError, "Index exceeds array size.");
-        exec->setException(error);
+        throwError(exec, RangeError, "Index exceeds array size.");
         return;
     }
     
@@ -210,8 +206,7 @@ NS_DURING
 
 NS_HANDLER
     
-    ObjectImp *error = Error::create(exec, GeneralError, "ObjectiveC exception.");
-    exec->setException(error);
+    throwError(exec, GeneralError, "Objective-C exception.");
     
 NS_ENDHANDLER
 }
@@ -219,11 +214,8 @@ NS_ENDHANDLER
 
 ValueImp *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
 {
-    if (index > [_array count]) {
-        ObjectImp *error = Error::create(exec, RangeError, "Index exceeds array size.");
-        exec->setException(error);
-        return error;
-    }
+    if (index > [_array count])
+        return throwError(exec, RangeError, "Index exceeds array size.");
     
     ObjectStructPtr obj = 0;
     ObjectImp * volatile error;
@@ -235,8 +227,7 @@ NS_DURING
     
 NS_HANDLER
     
-    error = Error::create(exec, GeneralError, "ObjectiveC exception.");
-    exec->setException(error);
+    error = throwError(exec, GeneralError, "Objective-C exception.");
     haveError = true;
     
 NS_ENDHANDLER

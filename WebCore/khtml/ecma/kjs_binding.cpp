@@ -92,7 +92,7 @@ DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle)
 
 void ScriptInterpreter::putDOMObject(void* objectHandle, DOMObject* obj) 
 {
-    domObjects()->insert(objectHandle, obj);
+    domObjects()->set(objectHandle, obj);
 }
 
 void ScriptInterpreter::deleteDOMObject(void* objectHandle) 
@@ -126,9 +126,9 @@ void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeI
     NodeMap *documentDict = domNodesPerDocument()->get(document);
     if (!documentDict) {
         documentDict = new NodeMap();
-        domNodesPerDocument()->insert(document, documentDict);
+        domNodesPerDocument()->set(document, documentDict);
     }
-    documentDict->insert(nodeHandle, nodeWrapper);
+    documentDict->set(nodeHandle, nodeWrapper);
 }
 
 void ScriptInterpreter::forgetAllDOMNodesForDocument(DOM::DocumentImpl *document)
@@ -349,9 +349,8 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   char buffer[100]; // needs to fit 20 characters, plus an integer in ASCII, plus a null character
   sprintf(buffer, "%s exception %d", type, code);
 
-  ObjectImp *errorObject = Error::create(exec, GeneralError, buffer);
+  ObjectImp *errorObject = throwError(exec, GeneralError, buffer);
   errorObject->put(exec, "code", Number(code));
-  exec->setException(errorObject);
 }
 
 }

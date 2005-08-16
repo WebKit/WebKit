@@ -654,11 +654,8 @@ void XMLHttpRequest::cancelRequests(DOM::DocumentImpl *d)
 
 ValueImp *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&XMLHttpRequest::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&XMLHttpRequest::info))
+    return throwError(exec, TypeError);
 
   XMLHttpRequest *request = static_cast<XMLHttpRequest *>(thisObj);
 

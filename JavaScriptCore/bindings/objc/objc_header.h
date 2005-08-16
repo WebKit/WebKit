@@ -22,10 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_HEADER_H_
-#define _BINDINGS_OBJC_HEADER_H_
+
+#ifndef KJS_BINDINGS_OBJC_HEADER_H
+#define KJS_BINDINGS_OBJC_HEADER_H
 
 #ifdef __OBJC__
+
 #include <objc/objc-class.h>
 #include <objc/objc-runtime.h>
 
@@ -36,9 +38,9 @@ typedef struct objc_object *ObjectStructPtr;
 
 #else
 
-typedef struct objc_ivar {} *Ivar;
-typedef struct objc_class {} *ClassStructPtr;
-typedef struct objc_object {} *ObjectStructPtr;
+typedef struct objc_ivar *Ivar;
+typedef struct objc_class *ClassStructPtr;
+typedef struct objc_object *ObjectStructPtr;
 
 class NSMethodSignature;
 

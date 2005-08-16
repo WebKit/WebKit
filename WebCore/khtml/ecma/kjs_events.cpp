@@ -511,11 +511,8 @@ void DOMEvent::putValueProperty(ExecState *exec, int token, ValueImp *value, int
 
 ValueImp *DOMEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp * thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMEvent::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMEvent::info))
+    return throwError(exec, TypeError);
   EventImpl &event = *static_cast<DOMEvent *>( thisObj )->impl();
   switch (id) {
     case DOMEvent::StopPropagation:
@@ -661,11 +658,8 @@ ValueImp *DOMUIEvent::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMUIEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMUIEvent::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMUIEvent::info))
+    return throwError(exec, TypeError);
   UIEventImpl &uiEvent = *static_cast<UIEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMUIEvent::InitUIEvent:
@@ -803,11 +797,8 @@ ValueImp *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMMouseEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMMouseEvent::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMMouseEvent::info))
+    return throwError(exec, TypeError);
   MouseEventImpl &mouseEvent = *static_cast<MouseEventImpl *>(static_cast<DOMMouseEvent *>(thisObj)->impl());
   switch (id) {
     case DOMMouseEvent::InitMouseEvent:
@@ -899,11 +890,8 @@ ValueImp *DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMKeyboardEvent::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMKeyboardEvent::info))
+    return throwError(exec, TypeError);
   KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMKeyboardEvent::InitKeyboardEvent:
@@ -1005,11 +993,8 @@ ValueImp *DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMMutationEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMMutationEvent::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMMutationEvent::info))
+    return throwError(exec, TypeError);
   MutationEventImpl &mutationEvent = *static_cast<MutationEventImpl *>(static_cast<DOMEvent *>(thisObj)->impl());
   switch (id) {
     case DOMMutationEvent::InitMutationEvent:
@@ -1096,11 +1081,8 @@ ValueImp *DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
 
 ValueImp *DOMWheelEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj->inherits(&DOMWheelEvent::info)) {
-        ObjectImp *error = Error::create(exec,TypeError);
-        exec->setException(error);
-        return error;
-    }
+    if (!thisObj->inherits(&DOMWheelEvent::info))
+        return throwError(exec, TypeError);
     return Undefined();
 }
 
@@ -1208,11 +1190,8 @@ void Clipboard::putValueProperty(ExecState *exec, int token, ValueImp *value, in
 
 ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-    if (!thisObj->inherits(&Clipboard::info)) {
-        ObjectImp *err = Error::create(exec,TypeError);
-        exec->setException(err);
-        return err;
-    }
+    if (!thisObj->inherits(&Clipboard::info))
+        return throwError(exec, TypeError);
 
     Clipboard *cb = static_cast<Clipboard *>(thisObj);
     switch (id) {
@@ -1224,9 +1203,7 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                 cb->clipboard->clearData(args[0]->toString(exec).string());
                 return Undefined();
             } else {
-                ObjectImp *err = Error::create(exec,SyntaxError,"clearData: Invalid number of arguments");
-                exec->setException(err);
-                return err;
+                return throwError(exec, SyntaxError, "clearData: Invalid number of arguments");
             }
         case Clipboard::GetData:
         {
@@ -1239,18 +1216,14 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                     return Undefined();
                 }
             } else {
-                ObjectImp *err = Error::create(exec,SyntaxError,"getData: Invalid number of arguments");
-                exec->setException(err);
-                return err;
+                return throwError(exec, SyntaxError, "getData: Invalid number of arguments");
             }
         }
         case Clipboard::SetData:
             if (args.size() == 2) {
                 return Boolean(cb->clipboard->setData(args[0]->toString(exec).string(), args[1]->toString(exec).string()));
             } else {
-                ObjectImp *err = Error::create(exec,SyntaxError,"setData: Invalid number of arguments");
-                exec->setException(err);
-                return err;
+                return throwError(exec, SyntaxError, "setData: Invalid number of arguments");
             }
         case Clipboard::SetDragImage:
         {
@@ -1258,11 +1231,8 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                 return Undefined();
             }
 
-            if (args.size() != 3) {
-                ObjectImp *err = Error::create(exec, SyntaxError,"setDragImage: Invalid number of arguments");
-                exec->setException(err);
-                return err;
-            }
+            if (args.size() != 3)
+                return throwError(exec, SyntaxError, "setDragImage: Invalid number of arguments");
 
             int x = (int)args[1]->toNumber(exec);
             int y = (int)args[2]->toNumber(exec);
@@ -1274,9 +1244,7 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                     cb->clipboard->setDragImageElement(node, QPoint(x,y));                    
                     return Undefined();
                 } else {
-                    ObjectImp *err = Error::create(exec, SyntaxError,"setDragImageFromElement: Invalid first argument");
-                    exec->setException(err);
-                    return err;
+                    return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
                 }
             }
 
@@ -1287,9 +1255,7 @@ ValueImp *ClipboardProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj
                 cb->clipboard->setDragImage(JSImage->image()->pixmap(), QPoint(x,y));                
                 return Undefined();
             } else {
-                ObjectImp *err = Error::create(exec,TypeError);
-                exec->setException(err);
-                return err;
+                return throwError(exec, TypeError);
             }
         }
     }

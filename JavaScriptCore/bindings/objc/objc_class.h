@@ -22,26 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_CLASS_H_
-#define _BINDINGS_OBJC_CLASS_H_
+
+#ifndef KJS_BINDINGS_OBJC_CLASS_H
+#define KJS_BINDINGS_OBJC_CLASS_H
 
 #include <CoreFoundation/CoreFoundation.h>
 
-
-#include <runtime.h>
-#include <objc_header.h>
-#include <objc_runtime.h>
+#include "objc_runtime.h"
 
 namespace KJS {
-
 namespace Bindings {
 
-class ObjcClass : public KJS::Bindings::Class
+class ObjcClass : public Class
 {
     // Use the public static factory methods to get instances of JavaClass.
     
 protected:
-    void _commonInit (ClassStructPtr aClass);
+    void _commonInit(ClassStructPtr aClass);
     void _commonCopy(const ObjcClass &other);
     void _commonDelete();
     
@@ -49,16 +46,11 @@ protected:
     
 public:
     // Return the cached ObjC of the specified name.
-    //static ObjcClass *classForName (const char *name);
-    static ObjcClass *classForIsA (ClassStructPtr aClass);
+    static ObjcClass *classForIsA(ClassStructPtr);
             
-    ~ObjcClass () {
-        _commonDelete();
-    }
+    ~ObjcClass() { _commonDelete(); }
     
-    ObjcClass (const ObjcClass &other) : Class() {
-        _commonCopy (other);
-    };
+    ObjcClass(const ObjcClass &other) : Class() { _commonCopy(other); }
 
     ObjcClass &operator=(const ObjcClass &other)
     {
@@ -66,7 +58,7 @@ public:
             return *this;
             
         _commonDelete();
-        _commonCopy (other);
+        _commonCopy(other);
         
         return *this;
     }
@@ -74,16 +66,12 @@ public:
     virtual const char *name() const;
     
     virtual MethodList methodsNamed(const char *name, Instance *instance) const;
-    
     virtual Field *fieldNamed(const char *name, Instance *instance) const;
 
     virtual ValueImp *fallbackObject(ExecState *exec, Instance *instance, const Identifier &propertyName);
     
-    virtual Constructor *constructorAt(long i) const {
-        return 0;
-    };
-    
-    virtual long numConstructors() const { return 0; };
+    virtual Constructor *constructorAt(long i) const { return 0; }
+    virtual long numConstructors() const { return 0; }
     
     ClassStructPtr isa() { return _isa; }
     
@@ -94,7 +82,6 @@ private:
 };
 
 } // namespace Bindings
-
 } // namespace KJS
 
 #endif

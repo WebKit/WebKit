@@ -88,9 +88,7 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
 #ifndef NDEBUG
       fprintf(stderr,"attempted toString() call on null or non-function object\n");
 #endif
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
+      return throwError(exec, TypeError);
     }
     if (thisObj->inherits(&DeclaredFunctionImp::info)) {
        DeclaredFunctionImp *fi = static_cast<DeclaredFunctionImp*>
@@ -111,11 +109,8 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
     ValueImp *argArray = args[1];
     ObjectImp *func = thisObj;
 
-    if (!func->implementsCall()) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!func->implementsCall())
+      return throwError(exec, TypeError);
 
     ObjectImp *applyThis;
     if (thisArg->isUndefinedOrNull())
@@ -134,11 +129,8 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
         for (unsigned int i = 0; i < length; i++)
           applyArgs.append(argArrayObj->get(exec,i));
       }
-      else {
-        ObjectImp *err = Error::create(exec,TypeError);
-        exec->setException(err);
-        return err;
-      }
+      else
+        return throwError(exec, TypeError);
     }
     result = func->call(exec,applyThis,applyArgs);
     }
@@ -147,11 +139,8 @@ ValueImp *FunctionProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisO
     ValueImp *thisArg = args[0];
     ObjectImp *func = thisObj;
 
-    if (!func->implementsCall()) {
-      ObjectImp *err = Error::create(exec,TypeError);
-      exec->setException(err);
-      return err;
-    }
+    if (!func->implementsCall())
+      return throwError(exec, TypeError);
 
     ObjectImp *callThis;
     if (thisArg->isUndefinedOrNull())
@@ -222,13 +211,10 @@ ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args, const
   }
 
   // no program node == syntax error - throw a syntax error
-  if (!progNode) {
-    ObjectImp *err = Error::create(exec,SyntaxError,errMsg.ascii(),errLine);
+  if (!progNode)
     // we can't return a Completion(Throw) here, so just set the exception
     // and return it
-    exec->setException(err);
-    return err;
-  }
+    return throwError(exec, SyntaxError, errMsg, errLine, sid, &sourceURL);
 
   ScopeChain scopeChain;
   scopeChain.push(exec->dynamicInterpreter()->globalObject());
@@ -266,11 +252,7 @@ ObjectImp *FunctionObjectImp::construct(ExecState *exec, const List &args, const
 	      continue;
 	  } // else error
       }
-      ObjectImp *err = Error::create(exec,SyntaxError,
-				 I18N_NOOP("Syntax error in parameter list"),
-				 -1);
-      exec->setException(err);
-      return err;
+      return throwError(exec, SyntaxError, "Syntax error in parameter list");
   }
 
   List consArgs;

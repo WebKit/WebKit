@@ -580,11 +580,8 @@ ValueImp *PluginsFunc::callAsFunction(ExecState *exec, ObjectImp *, const List &
 
 ValueImp *NavigatorFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
 {
-  if (!thisObj->inherits(&KJS::Navigator::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&KJS::Navigator::info))
+    return throwError(exec, TypeError);
   Navigator *nav = static_cast<Navigator *>(thisObj);
   // javaEnabled()
   return Boolean(nav->part()->javaEnabled());

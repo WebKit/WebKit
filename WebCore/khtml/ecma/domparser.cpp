@@ -69,11 +69,8 @@ DOMParser::DOMParser(ExecState *exec, DOM::DocumentImpl *d)
 
 ValueImp *DOMParserProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&DOMParser::info)) {
-    ObjectImp *err = Error::create(exec,TypeError);
-    exec->setException(err);
-    return err;
-  }
+  if (!thisObj->inherits(&DOMParser::info))
+    return throwError(exec, TypeError);
   
   DOMParser *parser = static_cast<DOMParser *>(thisObj);
 
