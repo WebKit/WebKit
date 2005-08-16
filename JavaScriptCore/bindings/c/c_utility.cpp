@@ -22,19 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <c_instance.h> 
-#include <c_utility.h> 
-#include <internal.h>
-#include <npruntime_impl.h>
-#include <npruntime_priv.h>
-#include <runtime.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
-#include <value.h>
-#include <NP_jsobject.h>
 
-using namespace KJS;
-using namespace KJS::Bindings;
+#include "c_utility.h"
+
+#include "c_instance.h" 
+#include "npruntime_impl.h"
+#include "npruntime_priv.h"
+#include "NP_jsobject.h"
+
+namespace KJS { namespace Bindings {
 
 // Requires free() of returned UTF16Chars.
 void convertNPStringToUTF16(const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length)
@@ -49,7 +45,7 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
     
     if (UTF8Length == -1)
         UTF8Length = strlen(UTF8Chars);
-        
+
     CFStringRef stringRef = CFStringCreateWithBytes(NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingUTF8, false);
 
     *UTF16Length = (unsigned int)CFStringGetLength(stringRef);
@@ -175,10 +171,11 @@ ValueImp *convertNPVariantToValue(ExecState *exec, const NPVariant *variant)
         }
         else {
             //  Wrap NPObject in a CInstance.
-            return Instance::createRuntimeObject(Instance::CLanguage, (void *)obj);
+            return Instance::createRuntimeObject(Instance::CLanguage, obj);
         }
     }
     
     return Undefined();
 }
 
+} }

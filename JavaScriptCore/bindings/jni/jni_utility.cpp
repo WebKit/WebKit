@@ -22,13 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <interpreter.h>
-#include <list.h>
 
-#include "jni_runtime.h"
 #include "jni_utility.h"
+
+#include "interpreter.h"
+#include "list.h"
+#include "jni_runtime.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
+#include "softlinking.h"
 
 namespace KJS {
 
@@ -47,7 +49,7 @@ JavaVM *getJavaVM()
     jint jniError = 0;
 
     // Assumes JVM is already running ..., one per process
-    jniError = JNI_GetCreatedJavaVMs(jvmArray, bufLen, &nJVMs);
+    jniError = KJS_GetCreatedJavaVMs(jvmArray, bufLen, &nJVMs);
     if ( jniError == JNI_OK && nJVMs > 0 ) {
         jvm = jvmArray[0];
     }

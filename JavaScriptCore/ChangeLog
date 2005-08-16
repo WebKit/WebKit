@@ -1,3 +1,31 @@
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - clean up exported symbols that are not in a "KJS" namespace
+
+        * bindings/NP_jsobject.cpp: (identiferFromNPIdentifier): Marked this function static
+        so it no longer has external linkage.
+        * bindings/c/c_utility.h: Put all this stuff inside the KJS namespace.
+        * bindings/c/c_utility.cpp: Also marked some globals static so they don't have external
+        linkage; not as important given the namespace.
+        * bindings/npruntime.cpp: Marked functions static so they no longer have internal linkage.
+        Also removed unused _NPN_SetExceptionWithUTF8 function (not in header, had C++ linkage!).
+
+        * bindings/jni/jni_utility.cpp: (KJS::Bindings::getJavaVM): Call KJS_GetCreatedJavaVMs
+        using the soft linking header, instead of calling the JNI call. This allows processes
+        to link both JavaScriptCore and JavaVM without a symbol conflict.
+        * bindings/softlinking.c:
+        (loadFramework): Marked this function static so it no longer has external linkage.
+        (getFunctionPointer): Ditto.
+        (KJS_GetCreatedJavaVMs): Renamed this so it has a KJS prefix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added softlinking.h.
+        * bindings/softlinking.h: Added.
+
+        * kjs/nodes2string.cpp: (streamAssignmentOperatorTo): Marked this function static so it
+        no longer has external linkage.
+
 2005-08-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

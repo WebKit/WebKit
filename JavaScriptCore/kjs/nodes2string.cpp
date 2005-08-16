@@ -368,7 +368,7 @@ void ConditionalNode::streamTo(SourceStream &s) const
   s << logical << " ? " << expr1 << " : " << expr2;
 }
 
-void streamAssignmentOperatorTo(SourceStream &s, Operator oper)
+static void streamAssignmentOperatorTo(SourceStream &s, Operator oper)
 {
   const char *opStr;
   switch (oper) {

@@ -16,25 +16,23 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-                                        * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-                                        * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <JavaVM/jni.h>
-#import <mach-o/dyld.h>
+#include "softlinking.h"
 
-const struct mach_header *loadFramework(const char *execPath);
-void *getFunctionPointer(const struct mach_header *header, const char *functionName);
+#include <mach-o/dyld.h>
 
-const struct mach_header *loadFramework(const char *execPath)
+static const struct mach_header *loadFramework(const char *execPath)
 {
     return NSAddImage(execPath, NSADDIMAGE_OPTION_WITH_SEARCHING | NSADDIMAGE_OPTION_MATCH_FILENAME_BY_INSTALLNAME);
 }
 
-void *getFunctionPointer(const struct mach_header *header, const char *functionName)
+static void *getFunctionPointer(const struct mach_header *header, const char *functionName)
 {
     NSSymbol symbol = NSLookupSymbolInImage(header, functionName, NSLOOKUPSYMBOLINIMAGE_OPTION_BIND);
     if (symbol!=NULL) {
@@ -43,7 +41,7 @@ void *getFunctionPointer(const struct mach_header *header, const char *functionN
     return 0;
 }
 
-jint JNI_GetCreatedJavaVMs(JavaVM **vmBuf, jsize bufLen, jsize *nVMs)
+jint KJS_GetCreatedJavaVMs(JavaVM **vmBuf, jsize bufLen, jsize *nVMs)
 {
     static const struct mach_header *header = 0;
     if (!header) {
