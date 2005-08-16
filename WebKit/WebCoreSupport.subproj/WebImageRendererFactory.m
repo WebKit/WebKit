@@ -49,29 +49,7 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType
 {
-    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
-
-#ifndef USE_CGIMAGEREF
-    NSImage *image = [imageRenderer image];
-
-    if (![MIMEType isEqual:@"application/pdf"]) {
-        NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
-        [image addRepresentation:rep];
-        [rep autorelease];
-    }
-
-    [image setFlipped:YES];
-    
-    // Turn the default caching mode back on when the image has completed load.
-    // Caching intermediate progressive representations causes problems for
-    // progressive loads.  We also rely on the NSBitmapImageRep surviving during
-    // incremental loads.  See 3165631 and 3262592.
-    [image setCacheMode: NSImageCacheNever];
-
-    [image setScalesWhenResized:NO];
-#endif
-        
-    return [imageRenderer autorelease];
+    return [[[WebImageRenderer alloc] initWithMIMEType:MIMEType] autorelease];
 }
 
 - (id <WebCoreImageRenderer>)imageRenderer
@@ -81,30 +59,7 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithData:(NSData*)data MIMEType:(NSString *)MIMEType
 {
-    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
-
-#ifndef USE_CGIMAGEREF
-    NSImage *image = [imageRenderer image];
-
-    NSArray *reps = [image representations];
-    if ([reps count] == 0){
-        [imageRenderer release];
-        return nil;
-    }
-    
-    // Force the image to use the pixel size and ignore the dpi.
-    [image setScalesWhenResized:NO];
-    if ([reps count] > 0){
-        NSImageRep *rep = [reps objectAtIndex:0];
-        [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
-        if ([imageRenderer frameCount] > 1)
-            [imageRenderer setOriginalData:data];
-    }
-    
-    [image setFlipped:YES];
-#endif
-
-    return [imageRenderer autorelease];
+    return [[[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType] autorelease];
 }
 
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
@@ -122,21 +77,12 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)s
 {
-    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithSize:s] autorelease];
-#ifndef USE_CGIMAGEREF
-    [[imageRenderer image] setScalesWhenResized:NO];
-#endif
-    return imageRenderer;
+    return [[[WebImageRenderer alloc] initWithSize:s] autorelease];
 }
 
 - (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name
 {
-    WebImageRenderer *imageRenderer = [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
-#ifndef USE_CGIMAGEREF
-    [[imageRenderer image] setScalesWhenResized:NO];
-    [[imageRenderer image] setFlipped:YES];
-#endif
-    return imageRenderer;
+    return [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
 }
 
 struct CompositeOperator

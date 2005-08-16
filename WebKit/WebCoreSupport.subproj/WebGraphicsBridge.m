@@ -29,8 +29,6 @@
 #import "WebGraphicsBridge.h"
 
 #import "WebAssertions.h"
-
-#import "WebImageRenderer.h"
 #import <WebKitSystemInterface.h>
 
 @implementation WebGraphicsBridge
@@ -50,30 +48,20 @@
 
 - (void)setFocusRingStyle:(NSFocusRingPlacement)placement radius:(int)radius color:(NSColor *)color
 {
-	WKSetFocusRingStyle(placement, radius, color);
+    WKSetFocusRingStyle(placement, radius, color);
 }
 
-// Dashboard wants to set the drag image during dragging, but Cocoa does not allow this.  Instead we drop
-// down to the CG API.  Converting an NSImage to a CGImageSpec is copied from NSDragManager.
+// Dashboard wants to set the drag image during dragging, but Cocoa does not allow this.
+// Instead we drop down to the CG API.
 - (void)setDraggingImage:(NSImage *)image at:(NSPoint)offset
 {
-	WKSetDragImage(image, offset);
-	
-    // Hack:  We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
-    // up the stack from us because the CF drag manager is too lame to use the RunLoop by itself.  This
-    // is the most innocuous event, per Kristen.
-    
+    WKSetDragImage(image, offset);
+
+    // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
+    // up the stack from us because the CF drag manager does not use the run loop by itself.
+    // This is the most innocuous event to use, per Kristen.
     NSEvent *ev = [NSEvent mouseEventWithType:NSMouseMoved location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
     [NSApp postEvent:ev atStart:YES];
-}
-
-- (void)setAdditionalPatternPhase:(NSPoint)phase
-{
-    _phase = phase;
-}
-
-- (NSPoint)additionalPatternPhase {
-    return _phase;
 }
 
 @end

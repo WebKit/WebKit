@@ -26,18 +26,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
-#import <WebKit/WebGraphicsBridge.h>
-#import <WebKit/WebImageData.h>
-#import <WebKit/WebImageDecoder.h>
-#import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebImageRendererFactory.h>
-#import <WebKit/WebKitSystemBits.h>
+#import "WebImageData.h"
+
+#import "WebAssertions.h"
+#import "WebGraphicsBridge.h"
+#import "WebImageDecoder.h"
+#import "WebImageRenderer.h"
+#import "WebImageRendererFactory.h"
+#import "WebKitSystemBits.h"
+
 #import <WebKitSystemInterface.h>
-
 #import <WebCore/WebCoreImageRenderer.h>
-
-#ifdef USE_CGIMAGEREF
 
 // Forward declarations of internal methods.
 @interface WebImageData (WebInternal)
@@ -49,20 +48,18 @@
 - (void)_stopAnimation;
 - (void)_nextFrame;
 - (CFDictionaryRef)_imageSourceOptions;
--(void)_createPDFWithData:(NSData *)data;
+- (void)_createPDFWithData:(NSData *)data;
 - (CGPDFDocumentRef)_PDFDocumentRef;
 - (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(NSCompositingOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
 - (void)_cacheImages:(size_t)optionalIndex allImages:(BOOL)allImages;
 @end
 
-
 @implementation WebImageData
 
 + (void)initialize
 {
-    // Currently threaded decoding doesn't play well with the WebCore cache.  Until
-    // those issues are resolved threaded decoding is OFF by default, even on dual CPU
-    // machines.
+    // Currently threaded decoding doesn't play well with the WebCore cache.
+    // Until those issues are resolved threaded decoding is OFF by default, even on dual CPU machines.
     //[WebImageRendererFactory setShouldUseThreadedDecoding:(WebNumberOfCPUs() >= 2 ? YES : NO)];
     [WebImageRendererFactory setShouldUseThreadedDecoding:NO];
 }
@@ -74,7 +71,7 @@
     if ([WebImageRendererFactory shouldUseThreadedDecoding])
         decodeLock = [[NSLock alloc] init];
 
-    imageSource = CGImageSourceCreateIncremental ([self _imageSourceOptions]);
+    imageSource = CGImageSourceCreateIncremental([self _imageSourceOptions]);
     sizeAvailable = NO;
     
     return self;
@@ -92,21 +89,21 @@
 
 - (void)_commonTermination
 {
-    ASSERT (!frameTimer);
+    ASSERT(!frameTimer);
     
     [self _invalidateImages];
     [self _invalidateImageProperties];
         
     if (fileProperties)
-        CFRelease (fileProperties);
+        CFRelease(fileProperties);
 
     if (imageSource)
-        CFRelease (imageSource); 
+        CFRelease(imageSource); 
         
     if (animatingRenderers)
-        CFRelease (animatingRenderers);
+        CFRelease(animatingRenderers);
 
-    free (frameDurations);
+    free(frameDurations);
 }
 
 - (void)dealloc
@@ -130,7 +127,7 @@
     WebImageData *copy;
 
     copy = [[WebImageData alloc] init];
-    CFRetain (imageSource);
+    CFRetain(imageSource);
     copy->imageSource = imageSource;
     
     return copy;
@@ -155,9 +152,9 @@
         size_t i;
         for (i = 0; i < imagesSize; i++) {
             if (images[i])
-                CFRelease (images[i]);
+                CFRelease(images[i]);
         }
-        free (images);
+        free(images);
         images = 0;
         
         isSolidColor = NO;
@@ -173,10 +170,10 @@
     size_t i;
     for (i = 0; i < imagePropertiesSize; i++) {
         if (imageProperties[i])
-            CFRelease (imageProperties[i]);
+            CFRelease(imageProperties[i]);
     }
-    free (imageProperties);
-    imageProperties = 0;
+    free(imageProperties);
+    imageProperties = NULL;
     imagePropertiesSize = 0;
 }
 
@@ -184,9 +181,9 @@
 {
     static CFDictionaryRef imageSourceOptions;
     if (!imageSourceOptions) {
-        const void * keys[2] = { kCGImageSourceShouldCache, 0 };
+        const void *keys[2] = { kCGImageSourceShouldCache, 0 };
         keys[1] = WKPreferRGB32Key();
-        const void * values[2] = { kCFBooleanTrue, kCFBooleanTrue };
+        const void *values[2] = { kCFBooleanTrue, kCFBooleanTrue };
         imageSourceOptions = CFDictionaryCreate(NULL, keys, values, 2, 
             &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     }
@@ -198,19 +195,19 @@
     CGColorSpaceRef uncorrectedColorSpace = 0;
     CGImageRef noColorCorrectionImage = 0;
 
-    if (!CFDictionaryGetValue (props, kCGImagePropertyProfileName)) {
-        CFStringRef colorModel = CFDictionaryGetValue (props, kCGImagePropertyColorModel);
+    if (!CFDictionaryGetValue(props, kCGImagePropertyProfileName)) {
+        CFStringRef colorModel = CFDictionaryGetValue(props, kCGImagePropertyColorModel);
 
         if (colorModel) {
-            if (CFStringCompare (colorModel, CFSTR("RGB"), 0) == kCFCompareEqualTo)
+            if (CFStringCompare(colorModel, CFSTR("RGB"), 0) == kCFCompareEqualTo)
                 uncorrectedColorSpace = CGColorSpaceCreateDeviceRGB();
-            else if (CFStringCompare (colorModel, CFSTR("Gray"), 0) == kCFCompareEqualTo)
+            else if (CFStringCompare(colorModel, CFSTR("Gray"), 0) == kCFCompareEqualTo)
                 uncorrectedColorSpace = CGColorSpaceCreateDeviceGray();
         }
 
         if (uncorrectedColorSpace) {
-            noColorCorrectionImage = CGImageCreateCopyWithColorSpace (image, uncorrectedColorSpace);
-            CFRelease (uncorrectedColorSpace);
+            noColorCorrectionImage = CGImageCreateCopyWithColorSpace(image, uncorrectedColorSpace);
+            CFRelease(uncorrectedColorSpace);
         }
     }
     return noColorCorrectionImage;
@@ -221,7 +218,7 @@
     if (index >= [self numberOfImages])
         return 0;
 
-    if (!images || images[index] == 0){
+    if (!images || images[index] == 0) {
         [self _cacheImages:index allImages:NO];
     }
     
@@ -231,7 +228,7 @@
 - (CFDictionaryRef)fileProperties
 {
     if (!fileProperties) {
-        fileProperties = CGImageSourceCopyProperties (imageSource, [self _imageSourceOptions]);
+        fileProperties = CGImageSourceCopyProperties(imageSource, [self _imageSourceOptions]);
     }
     
     return fileProperties;
@@ -241,79 +238,63 @@
 {
     size_t num = [self numberOfImages];
     
-    // Number of images changed!
+    // if number of properties changed, clear the cache.
     if (imagePropertiesSize && num > imagePropertiesSize) {
-        // Clear cache.
         [self _invalidateImageProperties];
     }
 
-    if (imageProperties == 0 && num) {
-        imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
+    if (imageProperties == NULL && num) {
+        imageProperties = (CFDictionaryRef *)malloc(num * sizeof(CFDictionaryRef));
         size_t i;
         for (i = 0; i < num; i++) {
-#if USE_DEPRECATED_IMAGESOURCE_API
-            imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, [self _imageSourceOptions]);
-            if (imageProperties[i])
-                CFRetain (imageProperties[i]);
-#else
-            imageProperties[i] = CGImageSourceCopyPropertiesAtIndex (imageSource, i, [self _imageSourceOptions]);
-#endif
+            imageProperties[i] = CGImageSourceCopyPropertiesAtIndex(imageSource, i, [self _imageSourceOptions]);
         }
         imagePropertiesSize = num;
     }
     
     if (index < num) {
-        // If image properties are nil, try to get them again.  May have attempted to
-        // get them before enough data was available in the header.
-        if (imageProperties[index] == 0) {
-#if USE_DEPRECATED_IMAGESOURCE_API
-            imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, [self _imageSourceOptions]);
-            if (imageProperties[index])
-                CFRetain (imageProperties[index]);
-#else
-            imageProperties[index] = CGImageSourceCopyPropertiesAtIndex (imageSource, index, [self _imageSourceOptions]);
-#endif
+        // If image properties are nil, try to get them again.
+        // Earlier, we may have attempted to get them before enough data was available in the header.
+        if (imageProperties[index] == NULL) {
+            imageProperties[index] = CGImageSourceCopyPropertiesAtIndex(imageSource, index, [self _imageSourceOptions]);
         }
-        
         return imageProperties[index];
     }
     
     return 0;
 }
 
-- (void)_checkSolidColor: (CGImageRef)image
+- (void)_checkSolidColor:(CGImageRef)image
 {
     isSolidColor = NO;
-    if( solidColor ) {
+    if (solidColor) {
         CFRelease(solidColor);
         solidColor = NULL;
     }
     
-    // Currently we only check for solid color in the important special case of a 1x1 image
-    if( image && CGImageGetWidth(image)==1 && CGImageGetHeight(image)==1 ) {
+    // Currently we only check for solid color in the important special case of a 1x1 image.
+    if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
         float pixel[4]; // RGBA
         CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
-// This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS
-#if __ppc__	
-        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
-                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
+// This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS.
+#if __ppc__
+        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
+            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
 #else
-        CGContextRef bmap = CGBitmapContextCreate(&pixel,1,1,8*sizeof(float),sizeof(pixel),space,
-                                                  kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
+        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
+            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
 #endif
-        if( bmap ) {
+        if (bmap) {
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             [[NSGraphicsContext graphicsContextWithGraphicsPort:bmap flipped:NO] setCompositingOperation:NSCompositeCopy];
             [pool release];
 
-            CGRect dst = {{0,0},{1,1}};
-            CGContextDrawImage(bmap,dst,image);
-            if( pixel[3] > 0 )
+            CGRect dst = { {0, 0}, {1, 1} };
+            CGContextDrawImage(bmap, dst, image);
+            if (pixel[3] > 0)
                 solidColor = CGColorCreate(space,pixel);
             isSolidColor = YES;
             CFRelease(bmap);
-            /*NSLog(@"WebImageData %p: 1x1 image has color {%f,%f,%f,%f} => %p",
-                  self,pixel[0],pixel[1],pixel[2],pixel[3],solidColor);*/
         } else {
             ERROR("Couldn't create CGBitmapContext");
         }
@@ -338,15 +319,15 @@
     }
     for (i = from; i < to; i++) {
         if (!images) {
-            images = (CGImageRef *)calloc (imagesSize, sizeof(CGImageRef));
+            images = (CGImageRef *)calloc(imagesSize, sizeof(CGImageRef));
         }
 
-        images[i] = CGImageSourceCreateImageAtIndex (imageSource, i, [self _imageSourceOptions]);
+        images[i] = CGImageSourceCreateImageAtIndex(imageSource, i, [self _imageSourceOptions]);
     }
     
-    if (from==0 && to>0) {
+    if (from == 0 && to > 0) {
         // Loaded image 0. Check whether it's a solid color:
-        [self _checkSolidColor: images[0]];
+        [self _checkSolidColor:images[0]];
     }
 }
 
@@ -362,7 +343,7 @@
     }
     else {
         // The work of decoding is actually triggered by image creation.
-        CGImageSourceUpdateData (imageSource, data, isComplete);
+        CGImageSourceUpdateData(imageSource, data, isComplete);
         [self _invalidateImages];
         [self _cacheImages:0 allImages:YES];
     }
@@ -409,10 +390,10 @@
     // to indicate that the image is 'ready' for layout until we know the size.  So, we
     // have to try getting the meta until we have a valid width and height property.
     if (imageSourceStatus >= kCGImageStatusIncomplete) {
-        CFDictionaryRef image0Properties = CGImageSourceCopyPropertiesAtIndex (imageSource, 0, [self _imageSourceOptions]);
-        if  (image0Properties) {
-            CFNumberRef widthNumber = CFDictionaryGetValue (image0Properties, kCGImagePropertyPixelWidth);
-            CFNumberRef heightNumber = CFDictionaryGetValue (image0Properties, kCGImagePropertyPixelHeight);
+        CFDictionaryRef image0Properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, [self _imageSourceOptions]);
+        if (image0Properties) {
+            CFNumberRef widthNumber = CFDictionaryGetValue(image0Properties, kCGImagePropertyPixelWidth);
+            CFNumberRef heightNumber = CFDictionaryGetValue(image0Properties, kCGImagePropertyPixelHeight);
             sizeAvailable = widthNumber && heightNumber;
             
             if (imageProperties) {
@@ -421,7 +402,7 @@
             }
             else {
                 imagePropertiesSize = [self numberOfImages];
-                imageProperties = (CFDictionaryRef *)calloc (imagePropertiesSize, sizeof(CFDictionaryRef));
+                imageProperties = (CFDictionaryRef *)calloc(imagePropertiesSize, sizeof(CFDictionaryRef));
             }
                 
             imageProperties[0] = image0Properties;
@@ -443,12 +424,11 @@
     }
 #endif
     
-    CFDataRef data = CFDataCreate (NULL, bytes, length);
+    CFDataRef data = CFDataCreate(NULL, bytes, length);
     
     if (callback) {
         [WebImageDecoder performDecodeWithImage:self data:data isComplete:isComplete callback:callback];
-    }
-    else {
+    } else {
         if (isPDF) {
             if (isComplete) {
                 [self _createPDFWithData:(NSData *)data];
@@ -456,11 +436,11 @@
         }
         else {
             [self _invalidateImages];
-            CGImageSourceUpdateData (imageSource, data, isComplete);
+            CGImageSourceUpdateData(imageSource, data, isComplete);
         }
     }
     
-    CFRelease (data);
+    CFRelease(data);
 
     // Image properties will not be available until the first frame of the file
     // reaches kCGImageStatusIncomplete.  New as of ImageIO-55, see 4031602. 
@@ -473,16 +453,14 @@
 
 - (void)_fillSolidColorInRect:(CGRect)rect compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext
 {
-    /*NSLog(@"WebImageData %p: filling with color %p, in {%.0f,%.0f, %.0f x %.0f}",
-          self,solidColor,rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);*/
-    if( solidColor ) {
-        CGContextSaveGState (aContext);
+    if (solidColor) {
+        CGContextSaveGState(aContext);
         CGContextSetFillColorWithColor(aContext, solidColor);
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:op];
         [pool release];
-        CGContextFillRect (aContext, rect);
-        CGContextRestoreGState (aContext);
+        CGContextFillRect(aContext, rect);
+        CGContextRestoreGState(aContext);
     }
 }
 
@@ -490,13 +468,12 @@
 {
     if (isPDF) {
         [self _PDFDrawFromRect:NSMakeRect(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height)
-                toRect:NSMakeRect(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height)
-                operation:op 
-                alpha:1.0 
-                flipped:YES
-                context:aContext];
-    }
-    else {
+            toRect:NSMakeRect(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height)
+            operation:op 
+            alpha:1.0 
+            flipped:YES
+            context:aContext];
+    } else {
         [decodeLock lock];
         
         CGImageRef image = [self imageAtIndex:index];
@@ -507,10 +484,9 @@
         }
         
         if( isSolidColor && index==0 ) {
-            [self _fillSolidColorInRect: ir compositeOperation: op context: aContext];
-
+            [self _fillSolidColorInRect:ir compositeOperation:op context:aContext];
         } else {
-            CGContextSaveGState (aContext);
+            CGContextSaveGState(aContext);
             
             // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
             // that is currently decoded.  This could be less that the actual height.
@@ -537,9 +513,9 @@
             NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
             [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:op];
             [pool release];
-            CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
-            CGContextScaleCTM (aContext, 1, -1);
-            CGContextTranslateCTM (aContext, 0, -ir.size.height);
+            CGContextTranslateCTM(aContext, ir.origin.x, ir.origin.y);
+            CGContextScaleCTM(aContext, 1, -1);
+            CGContextTranslateCTM(aContext, 0, -ir.size.height);
             
             // Translated to origin, now draw at 0,0.
             ir.origin.x = ir.origin.y = 0;
@@ -556,18 +532,18 @@
                 fr.size.width /= xscale;
                 fr.size.height /= yscale;
                 
-                image = CGImageCreateWithImageInRect (image, fr);
+                image = CGImageCreateWithImageInRect(image, fr);
                 if (image) {
-                    CGContextDrawImage (aContext, ir, image);
-                    CFRelease (image);
+                    CGContextDrawImage(aContext, ir, image);
+                    CFRelease(image);
                 }
             }
             // otherwise draw the whole image.
             else { 
-                CGContextDrawImage (aContext, ir, image);
+                CGContextDrawImage(aContext, ir, image);
             }
 
-            CGContextRestoreGState (aContext);
+            CGContextRestoreGState(aContext);
         }
         
         [decodeLock unlock];
@@ -579,21 +555,21 @@
     [self drawImageAtIndex:index inRect:ir fromRect:fr adjustedSize:[self size] compositeOperation:op context:aContext];
 }
 
-static void drawPattern (void * info, CGContextRef context)
+static void drawPattern(void * info, CGContextRef context)
 {
     WebImageData *data = (WebImageData *)info;
     
     CGImageRef image = [data imageAtIndex:[data currentFrame]];
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
-    CGContextDrawImage (context, CGRectMake(0, [data size].height-h, w, h), image);    
+    CGContextDrawImage(context, CGRectMake(0, [data size].height - h, w, h), image);    
 }
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (void)tileInRect:(CGRect)rect fromPoint:(CGPoint)point context:(CGContextRef)aContext
 {
-    ASSERT (aContext);
+    ASSERT(aContext);
 
     [decodeLock lock];
     
@@ -604,9 +580,8 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         return;
     }
 
-    if( frame == 0 && isSolidColor ) {
-        [self _fillSolidColorInRect: rect compositeOperation: NSCompositeSourceOver context: aContext];
-        
+    if (frame == 0 && isSolidColor) {
+        [self _fillSolidColorInRect:rect compositeOperation:NSCompositeSourceOver context:aContext];
     } else {
         CGSize tileSize = [self size];
         
@@ -614,6 +589,12 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         NSRect oneTileRect;
         oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
         oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
+// I think this is a simpler way to say the same thing. Also, if either point.x or point.y is negative, both
+// methods will end up with the wrong answer. For example, fmod(-22,5) is -2, which is the correct delta to
+// the start of the pattern, but fmod(-(-23), 5) is 3.  This is the delta to the *end* of the pattern
+// instead of the start, so oneTileRect will be too far right.
+//      oneTileRect.origin.x = rect.origin.x - fmodf(point.x, size.width);
+//      oneTileRect.origin.y = rect.origin.y - fmodf(point.y, size.height);
         oneTileRect.size.height = tileSize.height;
         oneTileRect.size.width = tileSize.width;
 
@@ -653,14 +634,13 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:NSCompositeSourceOver];
             [pool release];
 
-            CGContextFillRect (aContext, rect);
+            CGContextFillRect(aContext, rect);
 
-            CGPatternRelease (pattern);
+            CGContextRestoreGState(aContext);
 
-            CGContextRestoreGState (aContext);
-        }
-        else {
-            ERROR ("unable to create pattern");
+            CGPatternRelease(pattern);
+        } else {
+            ERROR("unable to create pattern");
         }
     }
     
@@ -676,25 +656,23 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (CGSize)size
 {
-    float w = 0.f, h = 0.f;
-
     if (isPDF) {
         if (_PDFDoc) {
             CGRect mediaBox = [_PDFDoc mediaBox];
             return mediaBox.size;
         }
-    }
-    else {
+    } else {
         if (sizeAvailable && !haveSize) {
             [decodeLock lock];
             CFDictionaryRef properties = [self propertiesAtIndex:0];
             if (properties) {
-                CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
+                float w = 0.f, h = 0.f;
+                CFNumberRef num = CFDictionaryGetValue(properties, kCGImagePropertyPixelWidth);
                 if (num)
-                    CFNumberGetValue (num, kCFNumberFloat32Type, &w);
-                num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
+                    CFNumberGetValue(num, kCFNumberFloat32Type, &w);
+                num = CFDictionaryGetValue(properties, kCGImagePropertyPixelHeight);
                 if (num)
-                    CFNumberGetValue (num, kCFNumberFloat32Type, &h);
+                    CFNumberGetValue(num, kCFNumberFloat32Type, &h);
 
                 size.width = w;
                 size.height = h;
@@ -718,20 +696,20 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         return 0.f;
     }
     
-    CFDictionaryRef typeProperties = CFDictionaryGetValue (properties, type);
+    CFDictionaryRef typeProperties = CFDictionaryGetValue(properties, type);
     if (!typeProperties) {
         [decodeLock unlock];
         return 0.f;
     }
     
-    CFNumberRef num = CFDictionaryGetValue (typeProperties, property);
+    CFNumberRef num = CFDictionaryGetValue(typeProperties, property);
     if (!num) {
         [decodeLock unlock];
         return 0.f;
     }
     
     float value = 0.f;
-    CFNumberGetValue (num, kCFNumberFloat32Type, &value);
+    CFNumberGetValue(num, kCFNumberFloat32Type, &value);
 
     [decodeLock unlock];
     
@@ -751,21 +729,21 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     }
     
     if (type) {
-        properties = CFDictionaryGetValue (properties, type);
+        properties = CFDictionaryGetValue(properties, type);
         if (!properties) {
             [decodeLock unlock];
             return 0.f;
         }
     }
     
-    CFNumberRef num = CFDictionaryGetValue (properties, property);
+    CFNumberRef num = CFDictionaryGetValue(properties, property);
     if (!num) {
         [decodeLock unlock];
         return 0.f;
     }
     
     float value = 0.f;
-    CFNumberGetValue (num, kCFNumberFloat32Type, &value);
+    CFNumberGetValue(num, kCFNumberFloat32Type, &value);
 
     [decodeLock unlock];
 
@@ -796,15 +774,15 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 {
     size_t num = [self numberOfImages];
     if (frameDurationsSize && num > frameDurationsSize) {
-        free (frameDurations);
-        frameDurations = 0;
+        free(frameDurations);
+        frameDurations = NULL;
         frameDurationsSize = 0;
     }
     
     if (!frameDurations) {
         size_t i;
 
-        frameDurations = (float *)malloc (sizeof(float) * num);
+        frameDurations = (float *)malloc(sizeof(float) * num);
         for (i = 0; i < num; i++) {
             frameDurations[i] = [self _frameDurationAt:i];
         }
@@ -850,7 +828,7 @@ static NSMutableSet *activeAnimations;
     // before actually stopping them because the process of stopping them
     // will modify the active animations and animating renderer collections.
     while ((animation = [objectEnumerator nextObject])) {
-        NSSet *renderersInView = (NSSet *)CFDictionaryGetValue (animation->animatingRenderers, aView);
+        NSSet *renderersInView = (NSSet *)CFDictionaryGetValue(animation->animatingRenderers, aView);
         if (renderersInView) {
             if (!renderersToStop)
                 renderersToStop = [[NSMutableSet alloc] init];
@@ -866,9 +844,9 @@ static NSMutableSet *activeAnimations;
 - (void)addAnimatingRenderer:(WebImageRenderer *)r inView:(NSView *)view
 {
     if (!animatingRenderers)
-        animatingRenderers = CFDictionaryCreateMutable (NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+        animatingRenderers = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
     
-    NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue (animatingRenderers, view);
+    NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue(animatingRenderers, view);
     if (!renderers) {
         renderers = [[NSMutableSet alloc] init];
         CFDictionaryAddValue(animatingRenderers, view, renderers);
@@ -888,10 +866,10 @@ static NSMutableSet *activeAnimations;
     NSEnumerator *viewEnumerator = [(NSMutableDictionary *)animatingRenderers keyEnumerator];
     NSView *view;
     while ((view = [viewEnumerator nextObject])) {
-        NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue (animatingRenderers, view);
+        NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue(animatingRenderers, view);
         [renderers removeObject:r];
         if ([renderers count] == 0) {
-            CFDictionaryRemoveValue (animatingRenderers, view);
+            CFDictionaryRemoveValue(animatingRenderers, view);
         }
     }
     
@@ -1007,13 +985,13 @@ static NSMutableSet *activeAnimations;
     hScale = dstRect.size.width  / srcRect.size.width;
     vScale = dstRect.size.height / srcRect.size.height;
 
-    CGContextTranslateCTM (context, dstRect.origin.x - srcRect.origin.x * hScale, dstRect.origin.y - srcRect.origin.y * vScale);
-    CGContextScaleCTM (context, hScale, vScale);
+    CGContextTranslateCTM(context, dstRect.origin.x - srcRect.origin.x * hScale, dstRect.origin.y - srcRect.origin.y * vScale);
+    CGContextScaleCTM(context, hScale, vScale);
 
     // Reverse if flipped image.
     if (flipped) {
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM (context, 0, -dstRect.size.height);
+        CGContextTranslateCTM(context, 0, -dstRect.size.height);
     }
 
     // Clip to destination in case we are imaging part of the source only
@@ -1029,5 +1007,3 @@ static NSMutableSet *activeAnimations;
 }
 
 @end
-
-#endif

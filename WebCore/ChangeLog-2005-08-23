@@ -1,3 +1,16 @@
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - removed some unnecessary code
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::imageFromRect): Remove code to call
+        setAdditionalPatternPhase since that is no longer needed.
+
+        * kwq/WebCoreGraphicsBridge.h: Remove unused setAdditionalPatternPhase,
+        createRGBColorSpace, createGrayColorSpace, and createCMYKColorSpace methods.
+        * kwq/WebCoreGraphicsBridge.m: Ditto.
+
 2005-08-16  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 

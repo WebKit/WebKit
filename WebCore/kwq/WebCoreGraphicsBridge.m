@@ -54,23 +54,4 @@ static WebCoreGraphicsBridge *sharedBridge;
 {
 }
 
-- (void)setAdditionalPatternPhase:(NSPoint)phase
-{
-}
-
-- (CGColorSpaceRef)createRGBColorSpace
-{
-    return 0;
-}
-
-- (CGColorSpaceRef)createGrayColorSpace
-{
-    return 0;
-}
-
-- (CGColorSpaceRef)createCMYKColorSpace
-{
-    return 0;
-}
-
 @end

@@ -1,3 +1,24 @@
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - removed some unnecessary code
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.h: Removed pattern-phase related field and methods.
+        * WebCoreSupport.subproj/WebGraphicsBridge.m: Ditto.
+
+        * WebCoreSupport.subproj/WebImageData.m: Tweaked formatting and removed some unused code
+        inside #if and comments.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h: Removed USE_CGIMAGEREF (which is always true now).
+        * WebCoreSupport.subproj/WebImageRenderer.m: Removed old non-CGImageRef code.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]): Removed non-USE_CGIMAGEREF code.
+        (-[WebImageRendererFactory imageRendererWithData:MIMEType:]): Ditto.
+        (-[WebImageRendererFactory imageRendererWithSize:]): Ditto.
+        (-[WebImageRendererFactory imageRendererWithName:]): Ditto.
+
 2005-08-15  Darin  <darin@apple.com>
 	
         Reviewed by Beth.
