@@ -37,8 +37,6 @@
 #import "WebNSObjectExtras.h"
 #import <WebKitSystemInterface.h>
 
-#if !BUILDING_ON_PANTHER
-
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void *context);
 
 typedef struct {
@@ -226,7 +224,7 @@ static Boolean formCanRead(CFReadStreamRef stream, void *context)
         openNextStream(form);
     }
     if (!form->currentStream) {
-		WKSignalCFReadStreamEnd(stream);
+        WKSignalCFReadStreamEnd(stream);
         return FALSE;
     }
     return CFReadStreamHasBytesAvailable(form->currentStream);
@@ -292,8 +290,6 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-#endif // !BUILDING_ON_PANTHER
-
 void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
 {
     unsigned count = [formData count];
@@ -306,8 +302,6 @@ void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
             return;
         }
     }
-
-#if !BUILDING_ON_PANTHER
 
     // Precompute the content length so NSURLConnection doesn't use chunked mode.
     long long length = 0;
@@ -334,36 +328,7 @@ void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData)
     [request setValue:[NSString stringWithFormat:@"%lld", length] forHTTPHeaderField:@"Content-Length"];
 
     // Create and set the stream.
-	CFReadStreamRef stream = WKCreateCustomCFReadStream(formCreate, formFinalize, formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule, formData);
-	[request setHTTPBodyStream:(NSInputStream *)stream];
+    CFReadStreamRef stream = WKCreateCustomCFReadStream(formCreate, formFinalize, formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule, formData);
+    [request setHTTPBodyStream:(NSInputStream *)stream];
     CFRelease(stream);
-
-#else
-
-    NSMutableData *allData = [[NSMutableData alloc] init];
-
-    unsigned i;
-    for (i = 0; i < count; ++i) {
-        id data = [formData objectAtIndex:i];
-        if ([data isKindOfClass:[NSData class]]) {
-            NSData *d = data;
-            [allData appendData:d];
-        } else if ([data isKindOfClass:[NSString class]]) {
-            NSString *s = data;
-            NSData *d = [[NSData alloc] initWithContentsOfFile:s];
-            if (d != nil) {
-                [allData appendData:d];
-                [d release];
-            }
-        } else {
-            ERROR("item in form data array is neither NSData nor NSString");
-            return;
-        }
-    }
-
-    [request setHTTPBody:allData];
-    
-    [allData release];
-
-#endif
 }

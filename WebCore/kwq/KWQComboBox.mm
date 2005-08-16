@@ -84,11 +84,9 @@ QComboBox::QComboBox()
     [button release];
     
     KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] initWithQComboBox:this];
-#ifndef OMIT_TIGER_FEATURES
     // Work around problem where the pop-up menu gets a "..." in it
     // by turning off the default "ellipsizing" behavior.
     [cell setLineBreakMode:NSLineBreakByClipping];
-#endif
     [button setCell:cell];
     [cell release];
 

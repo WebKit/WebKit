@@ -2,6 +2,70 @@
 
         Reviewed by Beth Dakin.
 
+        - removed Panther-only code that was not being compiled and was
+          simply "bit-rotting"
+
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase _createLRUList:]):
+        (+[WebFileDatabase _syncLoop:]):
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors):
+        * Misc.subproj/WebNSObjectExtras.h:
+        (WebCFAutorelease):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]):
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageDecodeItem.h:
+        * WebCoreSupport.subproj/WebImageDecodeItem.m:
+        * WebCoreSupport.subproj/WebImageDecoder.h:
+        * WebCoreSupport.subproj/WebImageDecoder.m:
+        (decoderThread):
+        (startDecoderThread):
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp: Removed.
+        * WebCoreSupport.subproj/WebKeyGeneration.h: Removed.
+        * WebCoreSupport.subproj/WebKeyGenerator.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth):
+        (_drawGlyphs):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory getBytes:fromTextMarker:length:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebKitPrefix.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (-[WebDataSource isLoading]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (localizedMenuTitleFromAppKit):
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebFormDataStream.m:
+        (formCanRead):
+        (webSetHTTPBody):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:chosePlainText:]):
+        (-[WebHTMLView resourceForData:preferredFilename:]):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        (-[WebHTMLView _attributeStringFromDOMRange:]):
+        (-[WebHTMLView toggleBaseWritingDirection:]):
+        (-[WebHTMLView changeBaseWritingDirection:]):
+        * WebView.subproj/WebPDFRepresentation.h:
+        * WebView.subproj/WebPDFRepresentation.m:
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences _systemCFStringEncoding]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
         - removed some unnecessary code
 
         * WebCoreSupport.subproj/WebGraphicsBridge.h: Removed pattern-phase related field and methods.

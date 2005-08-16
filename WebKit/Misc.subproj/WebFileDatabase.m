@@ -230,11 +230,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     LOG(FileDatabaseActivity, "lru list created");
 
-#if BUILDING_ON_PANTHER
-    [pool release];
-#else
     [pool drain];
-#endif
 }
 
 -(void)_truncateToSizeLimit:(unsigned)size
@@ -298,11 +294,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     END_EXCEPTION_HANDLER
 
-#if BUILDING_ON_PANTHER
-    [pool release];
-#else
     [pool drain];
-#endif
 }
 
 static void databaseInit()

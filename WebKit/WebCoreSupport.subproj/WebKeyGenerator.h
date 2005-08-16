@@ -26,10 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BUILDING_ON_PANTHER
-#define USE_NEW_KEY_GENERATION
-#endif
-
 typedef enum {
     WebCertificateParseResultSucceeded  = 0,
     WebCertificateParseResultFailed     = 1,

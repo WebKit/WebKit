@@ -26,11 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebAssertions.h>
-#import <WebKit/WebImageDecoder.h>
-#import <WebKit/WebImageData.h>
+#import "WebImageDecoder.h"
 
-#ifndef OMIT_TIGER_FEATURES
+#import "WebAssertions.h"
+#import "WebImageData.h"
 
 @interface WebImageCallback : NSObject
 - (void)notify;
@@ -292,12 +291,13 @@ static void *decoderThread(void *arg)
         }
 
         [pool release];
-    };
+    }
     
     return 0;
 }
 
-static void startDecoderThread() {
+static void startDecoderThread(void)
+{
     pthread_attr_t attr;
     pthread_t tid;
     pthread_attr_init(&attr);
@@ -306,5 +306,3 @@ static void startDecoderThread() {
     pthread_create(&tid, &attr, decoderThread, 0);
     pthread_attr_destroy(&attr);
 }
-
-#endif

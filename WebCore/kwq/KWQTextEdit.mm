@@ -125,23 +125,15 @@ void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
 
     KWQ_BLOCK_EXCEPTIONS;
 
-#if !BUILDING_ON_PANTHER
     // this declaration must be inside the KWQ_BLOCK_EXCEPTIONS block or the deployment build fails
     bool autohides = hMode == Auto || vMode == Auto;
     
     ASSERT(!autohides || hMode != AlwaysOn);
     ASSERT(!autohides || vMode != AlwaysOn);
-#endif
 
     [textView setHasHorizontalScroller:hMode != AlwaysOff];
     [textView setHasVerticalScroller:vMode != AlwaysOff];
-
-#if !BUILDING_ON_PANTHER
-    // Bugs 3890352 and 4005435 are the reason we can't handle auto-hiding on Panther.
-    // Basically, the text machinery seems to be able to handle the case where new text
-    // causes the text view to become more narrow on Tiger, but not on Panther.
     [textView setAutohidesScrollers:autohides];
-#endif
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

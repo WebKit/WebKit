@@ -431,15 +431,6 @@
 
 - (NSString *)string
 {
-#if BUILDING_ON_PANTHER
-    // On Panther, the secure text field's editor does not contain the real
-    // string, so we must always call stringValue on the field. We'll live
-    // with the side effect of ending International inline input for these
-    // password fields on Panther only, since it's fixed in Tiger.
-    if ([field isKindOfClass:[NSSecureTextField class]]) {
-        return [field stringValue];
-    }
-#endif
     // Calling stringValue can have a side effect of ending International inline input.
     // So don't call it unless there's no editor.
     NSText *editor = [field _KWQ_currentEditor];

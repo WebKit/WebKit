@@ -26,8 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OMIT_TIGER_FEATURES
-
 @class PDFView;
 @class WebDataSource;
 @class PDFPrefUpdatingProxy;
@@ -51,5 +49,3 @@
 - (PDFView *)PDFSubview;
 
 @end
-
-#endif  // OMIT_TIGER_FEATURES

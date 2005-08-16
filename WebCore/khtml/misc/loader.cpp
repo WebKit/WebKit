@@ -619,14 +619,10 @@ CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl 
 #endif
     m_showAnimations = dl->showAnimations();
 #if APPLE_CHANGES
-#if BUILDING_ON_PANTHER
-    m_decoderCallback = 0;
-#else
     if (QPixmap::shouldUseThreadedDecoding())
         m_decoderCallback = new CachedImageCallback(this);
     else
         m_decoderCallback = 0;
-#endif
 #endif
 }
 

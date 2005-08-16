@@ -92,14 +92,8 @@ QPixmap::QPixmap(int w, int h)
 
 QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 {
-#if BUILDING_ON_PANTHER
-    imageRenderer = KWQRetain(copyFrom.imageRenderer);
-    copyFrom.needCopyOnWrite = true;
-    needCopyOnWrite = true;
-#else
     imageRenderer = KWQRetainNSRelease([copyFrom.imageRenderer copyWithZone:NULL]);;
     needCopyOnWrite = false;
-#endif
     MIMEType = KWQRetainNSRelease([copyFrom.MIMEType copy]);
 }
 
@@ -121,8 +115,6 @@ void QPixmap::resetAnimation()
     }
 }
 
-
-#if !defined(BUILDING_ON_PANTHER)
 @interface WebImageCallback : NSObject
 {
     khtml::CachedImageCallback *callback;
@@ -132,6 +124,7 @@ void QPixmap::resetAnimation()
 - (void)setImageSourceStatus:(CGImageSourceStatus)status;
 - (CGImageSourceStatus)status;
 @end
+
 @implementation WebImageCallback
 - initWithCallback:(khtml::CachedImageCallback *)c
 {
@@ -181,7 +174,6 @@ void QPixmap::resetAnimation()
 }
 
 @end
-#endif
 
 bool QPixmap::shouldUseThreadedDecoding()
 {
@@ -194,17 +186,13 @@ bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete, khtml::Cach
         imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:MIMEType]);
     }
     
-#if !defined(BUILDING_ON_PANTHER)
-    WebImageCallback *callbackWrapper = 0;
+    WebImageCallback *callbackWrapper = nil;
     if (decoderCallback)
         callbackWrapper = [[WebImageCallback alloc] initWithCallback:decoderCallback];
 
     bool result = [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:callbackWrapper];
 
     [callbackWrapper release];
-#else
-    bool result = [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:0];
-#endif
     
     return result;
 }

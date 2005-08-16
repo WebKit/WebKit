@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebImageDecodeItem.h>
-#import <WebKit/WebImageData.h>
+#import "WebImageDecodeItem.h"
 
-#ifndef OMIT_TIGER_FEATURES
+#import "WebImageData.h"
 
 @implementation WebImageDecodeItem
 
@@ -63,5 +62,3 @@
 }
 
 @end
-
-#endif

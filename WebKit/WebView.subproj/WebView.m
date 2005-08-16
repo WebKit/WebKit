@@ -1532,18 +1532,13 @@ NSMutableDictionary *countInvocations;
     [types release];
 }
 
-#if !BUILDING_ON_PANTHER
-static bool CGContextInitialized = false;
-#endif
-
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-#if !BUILDING_ON_PANTHER         
+    static bool CGContextInitialized = false;
     if (!CGContextInitialized) {
-		WKDisableCGDeferredUpdates();
+        WKDisableCGDeferredUpdates();
         CGContextInitialized = true;
     }
-#endif
 
     _private->drawsBackground = YES;
     _private->smartInsertDeleteEnabled = YES;

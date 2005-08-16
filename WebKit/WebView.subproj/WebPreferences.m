@@ -701,34 +701,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (CFStringEncoding)_systemCFStringEncoding
 {
-#if OMIT_TIGER_FEATURES
-    CFStringEncoding encoding = CFStringGetSystemEncoding();
-
-    // Map from system encodings to the appropriate default web encoding.
-    // Web pages that are not labeled will be decoded assuming this encoding,
-    // so it's important that this be the most likely encoding to encounter
-    // on a web page. MacArabic, MacHebrew, and MacRoman are not common on
-    // the web, so instead we map to the most common similar encoding actually used.
-    switch (encoding) {
-        case kCFStringEncodingMacArabic:
-            encoding = kCFStringEncodingDOSArabic;
-            break;
-        case kCFStringEncodingMacHebrew:
-            encoding = kCFStringEncodingDOSHebrew;
-            break;
-        case kCFStringEncodingMacRoman:
-            encoding = kCFStringEncodingISOLatin1;
-            break;
-    }
-
-    // We must not use any encoding that has no IANA character set name.
-    if (CFStringConvertEncodingToIANACharSetName(encoding) == NULL)
-        encoding = kCFStringEncodingISOLatin1;
-#else
-	CFStringEncoding encoding = WKGetWebDefaultCFStringEncoding();
-#endif
-
-    return encoding;
+    return WKGetWebDefaultCFStringEncoding();
 }
 
 + (void)_setInitialDefaultTextEncodingToSystemEncoding

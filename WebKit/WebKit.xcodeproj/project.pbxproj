@@ -140,7 +140,6 @@
 		939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810840824BF01008DF038 /* WebNSEventExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BE887BFF056D3A6E009BB3E7 /* WebNSEventExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810850824BF01008DF038 /* WebKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84723BE3056D719E0044BFEA /* WebKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810860824BF01008DF038 /* WebKeyGeneration.h in Headers */ = {isa = PBXBuildFile; fileRef = 830E81830585375700AD0891 /* WebKeyGeneration.h */; };
 		939810870824BF01008DF038 /* WebNSPrintOperationExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */; };
 		939810880824BF01008DF038 /* WebResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84311A1205EAAAF00088EDA4 /* WebResource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 84311AF105EAB12B0088EDA4 /* WebResourcePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -264,7 +263,6 @@
 		939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.m */; };
 		939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BE887C00056D3A6E009BB3E7 /* WebNSEventExtras.m */; };
 		939811170824BF01008DF038 /* WebKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84723BE4056D719E0044BFEA /* WebKeyGenerator.m */; };
-		939811180824BF01008DF038 /* WebKeyGeneration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 830E81840585375700AD0891 /* WebKeyGeneration.cpp */; };
 		939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */; };
 		9398111A0824BF01008DF038 /* WebResource.m in Sources */ = {isa = PBXBuildFile; fileRef = 84311A1305EAAAF00088EDA4 /* WebResource.m */; };
 		9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */; };
@@ -427,8 +425,6 @@
 		7E6FEF0508985A7200C44C3F /* WebScriptDebugDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegate.h; sourceTree = "<group>"; };
 		7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebScriptDebugDelegate.m; sourceTree = "<group>"; };
 		7E6FEF0708985A7200C44C3F /* WebScriptDebugDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugDelegatePrivate.h; sourceTree = "<group>"; };
-		830E81830585375700AD0891 /* WebKeyGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKeyGeneration.h; sourceTree = "<group>"; };
-		830E81840585375700AD0891 /* WebKeyGeneration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKeyGeneration.cpp; sourceTree = "<group>"; };
 		830E81E005853AC000AD0891 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		832D7E030709D8FB00F49B61 /* WebPluginDocumentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginDocumentView.h; sourceTree = "<group>"; };
 		832D7E040709D8FB00F49B61 /* WebPluginDocumentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebPluginDocumentView.m; sourceTree = "<group>"; };
@@ -1013,8 +1009,6 @@
 				9CE1F8A302A5C6F30ECA2ACD /* WebImageRendererFactory.m */,
 				9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */,
 				9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */,
-				830E81830585375700AD0891 /* WebKeyGeneration.h */,
-				830E81840585375700AD0891 /* WebKeyGeneration.cpp */,
 				84723BE3056D719E0044BFEA /* WebKeyGenerator.h */,
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.m */,
 				F5E0E10802BC45F8018635CA /* WebSubresourceLoader.h */,
@@ -1227,7 +1221,6 @@
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				939810840824BF01008DF038 /* WebNSEventExtras.h in Headers */,
 				939810850824BF01008DF038 /* WebKeyGenerator.h in Headers */,
-				939810860824BF01008DF038 /* WebKeyGeneration.h in Headers */,
 				939810870824BF01008DF038 /* WebNSPrintOperationExtras.h in Headers */,
 				939810880824BF01008DF038 /* WebResource.h in Headers */,
 				939810890824BF01008DF038 /* WebResourcePrivate.h in Headers */,
@@ -1784,7 +1777,6 @@
 				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
 				939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */,
 				939811170824BF01008DF038 /* WebKeyGenerator.m in Sources */,
-				939811180824BF01008DF038 /* WebKeyGeneration.cpp in Sources */,
 				939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.m in Sources */,
 				9398111B0824BF01008DF038 /* WebDefaultEditingDelegate.m in Sources */,

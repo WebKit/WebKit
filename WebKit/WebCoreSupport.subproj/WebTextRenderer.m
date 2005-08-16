@@ -205,45 +205,21 @@ static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *rend
 static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font);
 static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font);
 
-#if BUILDING_ON_PANTHER
-
 static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
-    WebGlyphWidth width;
-
     if (font == NULL)
         font = renderer->font;
 
-    if (!CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize])) {
-        ERROR ("Unable to cache glyph widths for %@ %f",  [font displayName], [font pointSize]);
-	return 0.0F;
-    }
-
-    return width;
-}
-
-#else
-
-static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
-{
-    float pointSize;
-    CGAffineTransform m;
+    float pointSize = [font pointSize];
+    CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-
-    if (font == NULL)
-        font = renderer->font;
-
-    pointSize = [font pointSize];
-    m = CGAffineTransformMakeScale(pointSize, pointSize);
     if (!WKGetGlyphTransformedAdvances(font, &m, &glyph, &advance)) {
-        ERROR ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
-		return 0;
+        ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+        return 0;
     }
 
     return advance.width;
 }
-
-#endif
 
 static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
@@ -923,24 +899,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 	originalShouldUseFontSmoothing = WKCGContextGetShouldSmoothFonts (cgContext);
 	CGContextSetShouldSmoothFonts (cgContext, [WebView _shouldUseFontSmoothing]);
         
-#if BUILDING_ON_PANTHER        
-        if ([gContext isDrawingToScreen]){
-            NSFont *screenFont = [font screenFont];
-            if (screenFont != font){
-                // We are getting this in too many places (3406411); use ERROR so it only prints on
-                // debug versions for now. (We should debug this also, eventually).
-                ERROR ("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
-            }
-            [screenFont set];
-        }
-        else {
-            NSFont *printerFont = [font printerFont];
-            if (printerFont != font){
-                NSLog (@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
-            }
-            [printerFont set];
-        }
-#else
         NSFont *drawFont;
         
         if ([gContext isDrawingToScreen]){
@@ -960,22 +918,21 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         
 	NSView *v = [NSView focusView];
 
-        CGContextSetFont (cgContext, WKGetCGFontFromNSFont(drawFont));
+        CGContextSetFont(cgContext, WKGetCGFontFromNSFont(drawFont));
         
-        // Deal will flipping flippyness.
+        // Deal with flipping flippyness.
         const float *matrix = [drawFont matrix];
         float flip = [v isFlipped] ? -1 : 1;
         CGContextSetTextMatrix(cgContext, CGAffineTransformMake(matrix[0], matrix[1] * flip, matrix[2], matrix[3] * flip, matrix[4], matrix[5]));
 		WKSetCGFontRenderingMode(cgContext, drawFont);
         CGContextSetFontSize(cgContext, 1.0F);
-#endif
 
         [color set];
 
-        CGContextSetTextPosition (cgContext, x, y);
-        CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+        CGContextSetTextPosition(cgContext, x, y);
+        CGContextShowGlyphsWithAdvances(cgContext, glyphs, advances, numGlyphs);
 
-	CGContextSetShouldSmoothFonts (cgContext, originalShouldUseFontSmoothing);
+	CGContextSetShouldSmoothFonts(cgContext, originalShouldUseFontSmoothing);
     }
 }
 

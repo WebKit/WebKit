@@ -215,12 +215,6 @@ inline QChar QChar::upper() const
 
 inline QChar::Direction QChar::direction() const
 {
-#if BUILDING_ON_PANTHER
-    // Panther gets the direction of the hyphen wrong.
-    // It returns "ET" (European Terminator) when it should return "ES" (European Separator).
-    if (c == '-')
-        return DirES;
-#endif
     return static_cast<Direction>(u_charDirection(c));
 }
 

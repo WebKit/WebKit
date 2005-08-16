@@ -97,13 +97,6 @@ using khtml::Selection;
 using khtml::TextIterator;
 using khtml::VisiblePosition;
 
-/* NSAccessibilityDescriptionAttribute is only defined on 10.4 and newer */
-#if BUILDING_ON_PANTHER
-#define ACCESSIBILITY_DESCRIPTION_ATTRIBUTE @"AXDescription"
-#else
-#define ACCESSIBILITY_DESCRIPTION_ATTRIBUTE NSAccessibilityDescriptionAttribute
-#endif
-
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
 
@@ -412,12 +405,6 @@ using khtml::VisiblePosition;
 
 -(NSString*)roleDescription
 {
-#if OMIT_TIGER_FEATURES
-    // We don't need role descriptions on Panther and we don't have the call
-    // to get at localized ones anyway. At some point we may want to conditionally
-    // compile this entire file instead, but this is OK too.
-    return nil;
-#else
     if (!m_renderer)
         return nil;
 
@@ -461,7 +448,6 @@ using khtml::VisiblePosition;
         return UI_STRING("image map", "accessibility role description for image map");
     
     return NSAccessibilityRoleDescription(NSAccessibilityUnknownRole, nil);
-#endif
 }
 
 -(NSString*)helpText
@@ -677,18 +663,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityPositionAttribute,
             NSAccessibilitySizeAttribute,
             NSAccessibilityTitleAttribute,
-            ACCESSIBILITY_DESCRIPTION_ATTRIBUTE,
+            NSAccessibilityDescriptionAttribute,
             NSAccessibilityValueAttribute,
             NSAccessibilityFocusedAttribute,
             NSAccessibilityEnabledAttribute,
             NSAccessibilityWindowAttribute,
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
-#endif
             nil];
     }
     if (anchorAttrs == nil) {
@@ -705,13 +687,9 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityEnabledAttribute,
             NSAccessibilityWindowAttribute,
             @"AXURL",
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
-#endif
             nil];
     }
     if (webAreaAttrs == nil) {
@@ -730,13 +708,9 @@ static QRect boundingBoxRect(RenderObject* obj)
             @"AXLinkUIElements",
             @"AXLoaded",
             @"AXLayoutCount",
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
             @"AXSelectedTextMarkerRange",
             @"AXStartTextMarker",
             @"AXEndTextMarker",
-#endif
             nil];
     }
     
@@ -761,15 +735,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (NSString *)accessibilityActionDescription:(NSString *)action
 {
-#if OMIT_TIGER_FEATURES
-    // We don't need action descriptions on Panther and we don't have the call
-    // to get at localized ones anyway. At some point we may want to conditionally
-    // compile this entire file instead, but this is OK too.
-    return nil;
-#else
     // we have no custom actions
     return NSAccessibilityActionDescription(action);
-#endif
 }
 
 - (void)accessibilityPerformAction:(NSString *)action
@@ -920,7 +887,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
         return [self title];
     
-    if ([attributeName isEqualToString: ACCESSIBILITY_DESCRIPTION_ATTRIBUTE])
+    if ([attributeName isEqualToString: NSAccessibilityDescriptionAttribute])
         return [self accessibilityDescription];
     
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute])
@@ -947,9 +914,6 @@ static QRect boundingBoxRect(RenderObject* obj)
         return nil;
     }
     
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
         // get the selection from the document part
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
@@ -979,14 +943,10 @@ static QRect boundingBoxRect(RenderObject* obj)
         VisiblePosition endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX);
         return (id) [self textMarkerForVisiblePosition: endPos];
     }
-#endif
 
     return nil;
 }
 
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
 - (NSArray *)accessibilityParameterizedAttributeNames
 {
     static NSArray* paramAttributes = nil;
@@ -1834,8 +1794,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     return nil;
 }
 
-#endif
-
 - (id)accessibilityHitTest:(NSPoint)point
 {
     if (!m_renderer)
@@ -1915,9 +1873,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRangeAttribute"])
         return YES;
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
@@ -1927,14 +1882,10 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
               m_renderer->element()->isEnabled()))
             return YES;
     }
-#endif
 
     return NO;
 }
 
-#if OMIT_TIGER_FEATURES
-// no parameterized attributes in Panther... they were introduced in Tiger
-#else
 - (void)doSetAXSelectedTextMarkerRange: (WebCoreTextMarkerRange *)textMarkerRange
 {
     // extract the start and end VisiblePosition
@@ -1982,7 +1933,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         }
     }
 }
-#endif
 
 - (void)childrenChanged
 {

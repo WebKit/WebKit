@@ -85,17 +85,12 @@ static char * currentTextBreakLocaleID(void)
     }
     
     if (prefLocaleStr) {
-#ifdef BUILDING_ON_PANTHER
-        CFStringGetCString( prefLocaleStr, localeString, localeStringLength, kCFStringEncodingASCII );
-#else
         // Canonicalize pref string in case it is not in the canonical format. This call is only available on Tiger and newer.
         CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString(kCFAllocatorDefault, prefLocaleStr);
         if (canonLocaleCFStr) {
             CFStringGetCString(canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII);
             CFRelease(canonLocaleCFStr);
         }
-#endif
-
         CFRelease(prefLocaleStr);
     }
    

@@ -27,41 +27,9 @@
 
 @implementation WebCoreScrollView
 
-#if !BUILDING_ON_PANTHER
-
 - (BOOL)autoforwardsScrollWheelEvents
 {
     return YES;
 }
-
-#else
-
-- (void)scrollWheel:(NSEvent *)event
-{
-    NSPoint origin = [[self contentView] bounds].origin;
-
-    // Compute a new origin as if we had scrolled a little bit.
-    // If we constrain this and nothing happens, that means we're already scrolled to the limit.
-    NSPoint newOrigin = origin;
-    if ([event deltaX] > 0) {
-        newOrigin.x -= 1;
-    } else if ([event deltaX] < 0) {
-        newOrigin.x += 1;
-    }
-    if ([event deltaY] > 0) {
-        newOrigin.y -= 1;
-    } else if ([event deltaY] < 0) {
-        newOrigin.y += 1;
-    }
-
-    // If we are already scrolled to the limit, pass on this event, and send it on to the next responder
-    if (NSEqualPoints(origin, [[self contentView] constrainScrollPoint:newOrigin])) {
-        [[self nextResponder] tryToPerform:@selector(scrollWheel:) with:event];
-    } else {
-        [super scrollWheel:event];
-    }
-}
-
-#endif
 
 @end

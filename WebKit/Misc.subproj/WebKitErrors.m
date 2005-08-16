@@ -155,11 +155,7 @@ static void registerErrors()
 
     [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
 
-#if BUILDING_ON_PANTHER
-    [pool release];
-#else
     [pool drain];
-#endif
 }
 
 @end

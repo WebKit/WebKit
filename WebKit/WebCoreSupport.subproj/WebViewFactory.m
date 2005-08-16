@@ -133,47 +133,6 @@
     return [NSUserDefaults _webkit_preferredLanguageCode];
 }
 
-// FIXME: The guts of this next set of methods needs to move inside WebKitSystemInterface.
-
-#if BUILDING_ON_PANTHER
-
-- (BOOL)objectIsTextMarker:(id)object
-{
-    return NO;
-}
-
-- (BOOL)objectIsTextMarkerRange:(id)object
-{
-    return NO;
-}
-
-- (WebCoreTextMarker *)textMarkerWithBytes:(const void *)bytes length:(size_t)length
-{
-    return nil;
-}
-
-- (BOOL)getBytes:(void *)bytes fromTextMarker:(WebCoreTextMarker *)textMarker length:(size_t)length
-{
-    return NO;
-}
-
-- (WebCoreTextMarkerRange *)textMarkerRangeWithStart:(WebCoreTextMarker *)start end:(WebCoreTextMarker *)end
-{
-    return nil;
-}
-
-- (WebCoreTextMarker *)startOfTextMarkerRange:(WebCoreTextMarkerRange *)range
-{
-    return nil;
-}
-
-- (WebCoreTextMarker *)endOfTextMarkerRange:(WebCoreTextMarkerRange *)range
-{
-    return nil;
-}
-
-#else
-
 - (BOOL)objectIsTextMarker:(id)object
 {
     return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerTypeID();
@@ -191,7 +150,7 @@
 
 - (BOOL)getBytes:(void *)bytes fromTextMarker:(WebCoreTextMarker *)textMarker length:(size_t)length
 {
-	return WKGetBytesFromAXTextMarker(textMarker, bytes, length);
+    return WKGetBytesFromAXTextMarker(textMarker, bytes, length);
 }
 
 - (WebCoreTextMarkerRange *)textMarkerRangeWithStart:(WebCoreTextMarker *)start end:(WebCoreTextMarker *)end
@@ -216,8 +175,6 @@
     ASSERT(CFGetTypeID(range) == WKGetAXTextMarkerRangeTypeID());
     return WebCFAutorelease(WKCopyAXTextMarkerRangeEnd(range));
 }
-
-#endif
 
 - (void)accessibilityHandleFocusChanged
 {

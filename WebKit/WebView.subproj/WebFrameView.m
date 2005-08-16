@@ -47,9 +47,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-#ifndef OMIT_TIGER_FEATURES
 #import <WebKit/WebPDFView.h>
-#endif
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewFactory.h>
@@ -260,14 +258,12 @@ static NSMutableDictionary *viewTypes;
             [WebTextView class], @"application/x-javascript",
             nil];
 
-#ifndef OMIT_TIGER_FEATURES
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];  
         if (!omitPDFSupport) {
             [viewTypes setObject:[WebPDFView class] forKey:@"text/pdf"];
             [viewTypes setObject:[WebPDFView class] forKey:@"application/pdf"];
         }
-#endif
     }
 
     if (!addedImageTypes && !allowImageTypeOmission) {

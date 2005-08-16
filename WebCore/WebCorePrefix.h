@@ -60,15 +60,6 @@
 #include <CoreServices/CoreServices.h>
 
 #define KHTML_NO_XBL 1
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
-#define BUILDING_ON_PANTHER 1
-#endif
-
-#if BUILDING_ON_PANTHER
-#define OMIT_TIGER_FEATURES 1
-#endif
-
 #define KHTML_XSLT 1
 
 #ifdef __OBJC__

@@ -67,20 +67,8 @@ static inline id KWQRetainNSRelease(id obj)
 
 static inline id KWQCFAutorelease(CFTypeRef obj)
 {
-#if !BUILDING_ON_PANTHER
-    if (obj) CFMakeCollectable(obj);
-#endif
+    if (obj)
+        CFMakeCollectable(obj);
     [(id)obj autorelease];
     return (id)obj;
 }
-
-// Definitions for GC-specific methods for Panther.
-// The finalize method simply won't be called.
-
-#if BUILDING_ON_PANTHER
-
-@interface NSObject (KWQFoundationExtras)
-- (void)finalize;
-@end
-
-#endif

@@ -274,14 +274,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
     }
     NSArray *extensions = [NSArray arrayWithObject:extension];
     
-#ifdef OMIT_TIGER_FEATURES
-    id dragSource = [[NSFilePromiseDragSource alloc] initWithSource:source];
-    [dragSource setTypes:extensions onPasteboard:self];
-    return dragSource;
-#else
     [self setPropertyList:extensions forType:NSFilesPromisePboardType];
     return source;
-#endif
 }
 
 @end

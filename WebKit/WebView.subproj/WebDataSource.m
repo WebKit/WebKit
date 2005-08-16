@@ -55,9 +55,7 @@
 #import <WebKit/WebMainResourceLoader.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-#ifndef OMIT_TIGER_FEATURES
 #import <WebKit/WebPDFRepresentation.h>
-#endif
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebTextRepresentation.h>
@@ -333,7 +331,7 @@
     _private->primaryLoadComplete = flag;
     
     if (flag) {
-	// FIXME: We could actually load it as soon as we've parsed
+        // FIXME: We could actually load it as soon as we've parsed
 	// the HEAD section, or determined there isn't one - but
 	// there's no callback for that.
         [self _loadIcon];
@@ -671,14 +669,12 @@
             [WebTextRepresentation class], @"application/x-javascript",
             nil];
 
-#ifndef OMIT_TIGER_FEATURES
         // Since this is a "secret default" we don't both registering it.
         BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];  
         if (!omitPDFSupport) {
             [repTypes setObject:[WebPDFRepresentation class] forKey:@"text/pdf"];
             [repTypes setObject:[WebPDFRepresentation class] forKey:@"application/pdf"];
         }
-#endif
     }
     
     if (!addedImageTypes && !allowImageTypeOmission) {
@@ -1157,11 +1153,7 @@
         }
     }
 
-#if BUILDING_ON_PANTHER
-    [pool release];
-#else
     [pool drain];
-#endif
     
     return childFrame != nil;
 }

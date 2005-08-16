@@ -421,12 +421,7 @@ const float LargeNumberForText = 1.0e7;
 - (void)tile
 {
     [super tile];
-#if !BUILDING_ON_PANTHER
     [self _updateTextViewWidth];
-#else
-    // Pre-Tiger, if we change the width here we re-enter in a way that makes NSText unhappy.
-    [self performSelector:@selector(_updateTextViewWidth) withObject:nil afterDelay:0];
-#endif
     
     // If we're still initializing, it's too early to call _isResizableByUser. -tile will be called
     // again before we're displayed, so just skip the resizable stuff.

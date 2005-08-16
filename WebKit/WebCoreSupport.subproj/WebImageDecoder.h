@@ -26,9 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OMIT_TIGER_FEATURES
-
 #import <WebKit/WebImageDecodeItem.h>
+
 @class WebImageData;
 
 @interface WebImageDecoder : NSObject
@@ -47,5 +46,3 @@
 - (void)addItem:(WebImageDecodeItem *)item;
 - (void)decodeItem:(WebImageDecodeItem *)item;
 @end
-
-#endif

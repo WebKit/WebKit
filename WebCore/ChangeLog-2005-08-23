@@ -2,6 +2,42 @@
 
         Reviewed by Beth Dakin.
 
+        - removed Panther-only code that was not being compiled and was
+          simply "bit-rotting"
+
+        * WebCorePrefix.h:
+        * khtml/misc/loader.cpp:
+        (CachedImage::CachedImage):
+        * khtml/rendering/render_canvasimage.cpp:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityActionDescription:]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox):
+        * kwq/KWQFoundationExtras.h:
+        (KWQCFAutorelease):
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        (QPixmap::receivedData):
+        * kwq/KWQString.h:
+        (QChar::direction):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea tile]):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setScrollBarModes):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController string]):
+        * kwq/KWQTextUtilities.mm:
+        (currentTextBreakLocaleID):
+        * kwq/WebCoreScrollView.m:
+
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth Dakin.
+
         - removed some unnecessary code
 
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::imageFromRect): Remove code to call

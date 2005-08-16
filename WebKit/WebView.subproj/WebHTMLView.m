@@ -140,10 +140,6 @@ void _NSResetKillRingOperationFlag(void);
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
-#ifndef OMIT_TIGER_FEATURES
-#define USE_APPKIT_FOR_ATTRIBUTED_STRINGS
-#endif
-
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
 
@@ -358,7 +354,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         }
     }
         
-#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
     NSAttributedString *string = nil;
     if ([types containsObject:NSRTFDPboardType]) {
         string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
@@ -379,7 +374,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         [string release];
         return fragment;
     }
-#endif
     
     if ([types containsObject:NSTIFFPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
@@ -418,7 +412,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return nil;
 }
 
-#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
 - (WebResource *)resourceForData:(NSData *)data preferredFilename:(NSString *)name
 {
     // This method is called by [NSAttributedString _documentFromRange::::] 
@@ -441,7 +434,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     [[self _dataSource] addSubresource:resource];
     return resource;
 }
-#endif
 
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
@@ -1540,8 +1532,6 @@ static WebHTMLView *lastHitView = nil;
     [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
 }
 
-#ifndef OMIT_TIGER_FEATURES
-
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
     // This should only be called when there's a selection, but play it safe.
@@ -1574,27 +1564,6 @@ static WebHTMLView *lastHitView = nil;
     NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
     (void)__dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
 }
-#endif
-
-#if APPKIT_CODE_FOR_REFERENCE
-
-- (void)_openLinkFromMenu:(id)sender
-{
-    NSTextStorage *text = _getTextStorage(self);
-    NSRange charRange = [self selectedRange];
-    if (charRange.location != NSNotFound && charRange.length > 0) {
-        id link = [text attribute:NSLinkAttributeName atIndex:charRange.location effectiveRange:NULL];
-        if (link) {
-            [self clickedOnLink:link atIndex:charRange.location];
-        } else {
-            NSString *string = [[text string] substringWithRange:charRange];
-            link = [NSURL URLWithString:string];
-            if (link) [[NSWorkspace sharedWorkspace] openURL:link];
-        }
-    }
-}
-
-#endif
 
 - (BOOL)_transparentBackground
 {
@@ -1960,10 +1929,8 @@ static WebHTMLView *lastHitView = nil;
             [menuItem setState:[[self _bridge] selectionHasStyle:style]];
         }
         return [self _canEdit];
-#ifndef OMIT_TIGER_FEATURES
     } else if (action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
-#endif
     }
     
     return YES;
@@ -2303,8 +2270,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
 {
-    NSAttributedString *attributedString = nil;
-#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
+    NSAttributedString *attributedString;
 #if !LOG_DISABLED        
     double start = CFAbsoluteTimeGetCurrent();
 #endif    
@@ -2312,7 +2278,6 @@ static WebHTMLView *lastHitView = nil;
 #if !LOG_DISABLED
     double duration = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
-#endif
 #endif
     return attributedString;
 }
@@ -4624,11 +4589,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             break;
         // The writingDirectionForSelectionStart method will never return "natural". It
         // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
-#if !BUILDING_ON_PANTHER
         case NSWritingDirectionNatural:
             ASSERT_NOT_REACHED();
             break;
-#endif
     }
 
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -4646,9 +4609,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     NSString *direction = @"LTR";
     switch (writingDirection) {
         case NSWritingDirectionLeftToRight:
-#if !BUILDING_ON_PANTHER
         case NSWritingDirectionNatural:
-#endif
             break;
         case NSWritingDirectionRightToLeft:
             direction = @"RTL";
@@ -4755,16 +4716,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     return [super nextResponder];
 }
-
-#if BUILDING_ON_PANTHER
-
-// Work around a bug in Panther where this is called without first calling respondsToSelector.
-- (float)_destinationFloatValueForScroller:(NSScroller *)scroller
-{
-    return [scroller floatValue];
-}
-
-#endif
 
 @end
 

@@ -26,15 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef OMIT_TIGER_FEATURES
-
 #import <Foundation/Foundation.h>
 
 @protocol WebDocumentRepresentation;
 
 @interface WebPDFRepresentation : NSObject <WebDocumentRepresentation>
-{
-}
 @end
-
-#endif  // OMIT_TIGER_FEATURES
