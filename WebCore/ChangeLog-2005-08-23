@@ -1,3 +1,21 @@
+2005-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed leak of HTML collection info - this can build up to
+	hundreds of leaks pretty quickly
+
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4450
+	
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::HTMLCollectionImpl): Initialize new
+	m_ownsInfo member.
+        (DOM::HTMLCollectionImpl::~HTMLCollectionImpl): Delete info if
+	owned.
+        (DOM::HTMLCollectionImpl::resetCollectionInfo): When creating new
+	info, indicate that it's owned.
+        * khtml/html/html_miscimpl.h: Declare new member.
+
 2005-08-16  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4119646> assertion failure in DOM::Position::upstream at babelfish.com
