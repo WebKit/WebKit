@@ -589,12 +589,6 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         NSRect oneTileRect;
         oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
         oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
-// I think this is a simpler way to say the same thing. Also, if either point.x or point.y is negative, both
-// methods will end up with the wrong answer. For example, fmod(-22,5) is -2, which is the correct delta to
-// the start of the pattern, but fmod(-(-23), 5) is 3.  This is the delta to the *end* of the pattern
-// instead of the start, so oneTileRect will be too far right.
-//      oneTileRect.origin.x = rect.origin.x - fmodf(point.x, size.width);
-//      oneTileRect.origin.y = rect.origin.y - fmodf(point.y, size.height);
         oneTileRect.size.height = tileSize.height;
         oneTileRect.size.width = tileSize.width;
 
@@ -620,7 +614,8 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         if (pattern) {
             CGContextSaveGState (aContext);
 
-            CGPoint transformedOrigin = CGPointApplyAffineTransform(rect.origin, CGContextGetCTM(aContext));
+            CGPoint tileOrigin = CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y);
+            CGPoint transformedOrigin = CGPointApplyAffineTransform(tileOrigin, CGContextGetCTM(aContext));
             CGContextSetPatternPhase(aContext, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
 
             CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
