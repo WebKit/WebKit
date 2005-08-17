@@ -1,3 +1,13 @@
+2005-08-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        - fixed <rdar://problem/4219817> Particular icon database + bookmarks + history crashes Safari on launch
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase releaseIconForURL:]):
+        Move line that might remove last reference to iconURL to the end of the block.
+
 2005-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

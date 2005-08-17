@@ -238,8 +238,6 @@ NSSize WebIconLargeSize = {128, 128};
                 // There's at least one other retainer of this icon, so we need to forget the
                 // two-way links between this page URL and the icon URL, without blowing away
                 // the icon entirely.                
-                [_private->pageURLToIconURL removeObjectForKey:pageURL];
-            
                 id pageURLs = [_private->iconURLToPageURLs objectForKey:iconURL];
                 if ([pageURLs isKindOfClass:[NSMutableSet class]]) {
                     ASSERT([pageURLs containsObject:pageURL]);
@@ -255,6 +253,10 @@ NSSize WebIconLargeSize = {128, 128};
                     ASSERT([pageURLs isEqualToString:pageURL]);
                     [_private->iconURLToPageURLs removeObjectForKey:pageURL];
                 }
+                
+                // Remove iconURL from this dictionary last, since this might be the last
+                // reference and we need to use it as a key for _private->iconURLToPageURLs above.
+                [_private->pageURLToIconURL removeObjectForKey:pageURL];
             }
         }
     } else {
