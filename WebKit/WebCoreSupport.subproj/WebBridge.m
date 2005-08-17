@@ -1695,4 +1695,9 @@ static NSCharacterSet *_getPostSmartSet(void)
     }
 }
 
+- (void)handledOnloadEvents
+{
+    [_frame _handledOnloadEvents];
+}
+
 @end

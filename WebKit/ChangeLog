@@ -1,3 +1,19 @@
+2005-08-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by rjw
+        
+        Addresses <rdar://problem/4192534> new frame load delegate SPI needed for Dashboard
+            Added handledOnloadEvents delegate method (private for now)
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge handledOnloadEvents]):
+        * WebView.subproj/WebDefaultFrameLoadDelegate.m:
+        (-[WebDefaultFrameLoadDelegate webView:didHandleOnloadEventsForFrame:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _handledOnloadEvents]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-08-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Geoff Garen.

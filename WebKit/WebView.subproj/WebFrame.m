@@ -1235,6 +1235,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT_NOT_REACHED();
 }
 
+- (void)_handledOnloadEvents
+{
+    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didHandleOnloadEventsForFrame:self];
+}
+
 - (void)_recursiveCheckLoadComplete
 {
     // Checking for load complete may indeed alter the set of child

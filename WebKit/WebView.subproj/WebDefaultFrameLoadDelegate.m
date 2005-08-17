@@ -59,6 +59,8 @@ static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame { }
 
+- (void)webView:(WebView *)sender didHandleOnloadEventsForFrame:(WebFrame *)frame { }
+
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame { }
 
 - (void)webView:(WebView *)sender didChangeLocationWithinPageForFrame:(WebFrame *)frame { }
