@@ -1,3 +1,14 @@
+2005-08-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4210320> URL tooltips should display a URL for elements that submit forms
+
+        When the setShowsURLsInToolTips preference is set, we will display a tooltip containing 
+        the form's url when you mouse over a submit button.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _updateMouseoverWithEvent:]):
+
 2005-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Beth Dakin.

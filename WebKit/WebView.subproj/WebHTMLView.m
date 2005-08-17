@@ -1024,7 +1024,16 @@ static WebHTMLView *lastHitView = nil;
     // Set a tool tip; it won't show up right away but will if the user pauses.
     NSString *newToolTip = nil;
     if (_private->showsURLsInToolTips) {
-        newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
+        DOMHTMLElement *domElement = [element objectForKey:WebElementDOMNodeKey];
+        if ([domElement isKindOfClass:[DOMHTMLInputElement class]]) {
+
+            if ([[(DOMHTMLInputElement *) domElement type] isEqualToString:@"submit"]) {
+                newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
+            }
+        }
+        if (newToolTip == nil) {
+            newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
+        }
     }
     if (newToolTip == nil) {
         newToolTip = [element objectForKey:WebCoreElementTitleKey];
