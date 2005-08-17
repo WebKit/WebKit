@@ -20,31 +20,15 @@
  *
  */
 
-#ifndef KHTMLMAINTTHREADMALLOC_H
-#define KHTMLMAINTTHREADMALLOC_H
+#ifndef KHTML_MAIN_THREAD_MALLOC_H
+#define KHTML_MAIN_THREAD_MALLOC_H
 
 // This is a copy of dlmalloc, a fast single-threaded malloc implementation.
-// JavaScriptCore is multi-threaded, but certain actions can only take place under
-// the global collector lock. Therefore, these functions should only be used
-// while holding the collector lock (this is true whenenever the interpreter is
-// executing or GC is taking place).
+// Therefore, these functions should only be used on the main thread.
 
-#ifndef NDEBUG
 #include <stdlib.h>
-#endif
 
 namespace khtml {
-
-#ifndef NDEBUG
-
-inline void *main_thread_malloc(size_t n) { return malloc(n); }
-inline void *main_thread_calloc(size_t n_elements, size_t element_size) { return calloc(n_elements, element_size); }
-inline void main_thread_free(void* p) { free(p); }
-inline void *main_thread_realloc(void* p, size_t n) { return realloc(p, n); }
-
-#define MAIN_THREAD_ALLOCATED
-
-#else
 
 void *main_thread_malloc(size_t n);
 void *main_thread_calloc(size_t n_elements, size_t element_size);
@@ -55,8 +39,6 @@ void *main_thread_realloc(void* p, size_t n);
 void* operator new(size_t s) { return khtml::main_thread_malloc(s); } \
 void operator delete(void* p) { khtml::main_thread_free(p); }
 
-#endif
-
 }
 
-#endif /* KHTMLMAINTTHREADMALLOC_H */
+#endif /* KHTML_MAIN_THREAD_MALLOC_H */

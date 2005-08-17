@@ -118,6 +118,8 @@ __ZN5QSizeC1Eii
 __ZN5QSizeC1Ev
 __ZN5QTime7restartEv
 __ZN5QTimeC1Eii
+__ZN5khtml16main_thread_freeEPv
+__ZN5khtml18main_thread_mallocEm
 __ZN6QPointC1Eii
 __ZN6QPointC1Ev
 __ZN7QBuffer10writeBlockEPKcj

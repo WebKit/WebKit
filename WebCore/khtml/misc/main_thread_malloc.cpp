@@ -224,7 +224,35 @@
     probably don't want to touch unless you are extending or adapting malloc.
 */
 
+#include "main_thread_malloc.h"
+
 namespace khtml {
+
+#ifndef NDEBUG
+
+// In debugging builds, use the system malloc for its debugging features.
+
+void *main_thread_malloc(size_t n)
+{
+    return malloc(n);
+}
+
+void *main_thread_calloc(size_t n_elements, size_t element_size)
+{
+    return calloc(n_elements, element_size);
+}
+
+void main_thread_free(void* p)
+{
+    free(p);
+}
+
+void *main_thread_realloc(void* p, size_t n)
+{
+    return realloc(p, n);
+}
+
+#else
 
 /*
   WIN32 sets up defaults for MS environment and compilers.
@@ -5413,7 +5441,9 @@ static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
 
 #endif /* WIN32 */
 
-};  /* end of namespace KJS */
+#endif
+
+}  /* end of namespace KJS */
 
 /* ------------------------------------------------------------
 History:

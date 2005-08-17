@@ -1,3 +1,16 @@
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - changed main_thread_malloc so we don't have two conflicting versions of the same function
+          This fixes a crash I was seeing running the WebKit tests.
+
+        * khtml/misc/main_thread_malloc.h: Took out all the ifdefs from this header.
+        * khtml/misc/main_thread_malloc.cpp: Added non-NDEBUG versions of the functions that just call
+        the system malloc, and put the NDEBUG versions in an #else.
+
+        * WebCore-tests.exp: Export the new stuff so the tests still work.
+
 2005-08-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
