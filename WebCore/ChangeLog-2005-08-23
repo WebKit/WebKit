@@ -1,3 +1,21 @@
+2005-08-17  Curt Arnold  <curt.arnold@mac.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4491
+          DOM L2 Events tests using addEventListener broken
+
+        * layout-tests/dom/html/level2/events/dispatchEvent08.js: Updated.
+        * layout-tests/dom/html/level2/events/dispatchEvent09.js: Ditto.
+        * layout-tests/dom/html/level2/events/dispatchEvent10.js: Ditto.
+        * layout-tests/dom/html/level2/events/dispatchEvent11.js: Ditto.
+        * layout-tests/dom/html/level2/events/dispatchEvent12.js: Ditto.
+        * layout-tests/dom/html/level2/events/dispatchEvent13.js: Ditto.
+
+        * layout-tests/dom/html/level2/events/dispatchEvent11-expected.txt: Now succeeds.
+        * layout-tests/dom/html/level2/events/dispatchEvent12-expected.txt: Now fails.
+        * layout-tests/dom/html/level2/events/dispatchEvent13-expected.txt: Now succeeds.
+
 2005-08-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by rjw

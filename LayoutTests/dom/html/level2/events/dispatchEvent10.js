@@ -105,8 +105,8 @@ function dispatchEvent10() {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-      doc.addEventListener("foo",monitor,false);
-      doc.addEventListener("foo",monitor,false);
+      doc.addEventListener("foo", monitor.handleEvent, false);
+      doc.addEventListener("foo", monitor.handleEvent, false);
       evt = doc.createEvent("Events");
       evt.initEvent("foo",true,false);
       preventDefault = doc.dispatchEvent(evt);

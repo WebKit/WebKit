@@ -75,6 +75,33 @@ function loadComplete() {
 //EventMonitor's require a document level variable named monitor
 var monitor;
 	 
+     /**
+      *    Inner class implementation for variable other 
+      */
+var other;
+
+/**
+        * Constructor
+
+        */
+	      
+function EventListenerN10035() { 
+           }
+   
+        /**
+         *    
+This method is called whenever an event occurs of the type for which theEventListenerinterface was registered.
+
+         * @param evt 
+TheEventcontains contextual information about the event. It also contains thestopPropagationand preventDefaultmethods which are used in determining the event's flow and default action.
+
+         */
+EventListenerN10035.prototype.handleEvent = function(evt) {
+         //
+         //   bring class variables into function scope
+         //
+        }
+
 /**
 * 
 A monitor is added, multiple calls to removeEventListener
@@ -104,7 +131,7 @@ function dispatchEvent12() {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-      doc.addEventListener("foo",monitor,false);
+      doc.addEventListener("foo", monitor.handleEvent, false);
       doc.removeEventListener("foo", monitor.handleEvent, true);
 	 doc.removeEventListener("food", monitor.handleEvent, false);
 	 doc.removeEventListener("foo", other.handleEvent, false);
