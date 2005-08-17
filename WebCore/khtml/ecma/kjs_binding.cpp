@@ -95,27 +95,27 @@ void ScriptInterpreter::putDOMObject(void* objectHandle, DOMObject* obj)
     domObjects()->set(objectHandle, obj);
 }
 
-void ScriptInterpreter::deleteDOMObject(void* objectHandle) 
+void ScriptInterpreter::forgetDOMObject(void* objectHandle)
 {
     domObjects()->remove(objectHandle);
 }
 
-void ScriptInterpreter::forgetDOMObject(void* objectHandle)
-{
-    deleteDOMObject(objectHandle);
-}
-
 DOMNode *ScriptInterpreter::getDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node)
 {
+    if (!document)
+        return static_cast<DOMNode *>(domObjects()->get(node));
     NodeMap *documentDict = domNodesPerDocument()->get(document);
     if (documentDict)
         return documentDict->get(node);
-
     return NULL;
 }
 
 void ScriptInterpreter::forgetDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *node)
 {
+    if (!document) {
+        domObjects()->remove(node);
+        return;
+    }
     NodeMap *documentDict = domNodesPerDocument()->get(document);
     if (documentDict)
         documentDict->remove(node);
@@ -123,6 +123,10 @@ void ScriptInterpreter::forgetDOMNodeForDocument(DOM::DocumentImpl *document, No
 
 void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *nodeHandle, DOMNode *nodeWrapper)
 {
+    if (!document) {
+        domObjects()->set(nodeHandle, nodeWrapper);
+        return;
+    }
     NodeMap *documentDict = domNodesPerDocument()->get(document);
     if (!documentDict) {
         documentDict = new NodeMap();
@@ -133,6 +137,7 @@ void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeI
 
 void ScriptInterpreter::forgetAllDOMNodesForDocument(DOM::DocumentImpl *document)
 {
+    assert(document);
     NodePerDocMap::iterator it = domNodesPerDocument()->find(document);
     if (it != domNodesPerDocument()->end()) {
         delete it->second;

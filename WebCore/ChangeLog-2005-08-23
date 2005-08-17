@@ -1,5 +1,20 @@
 2005-08-16  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed bug that was causing a crash when running layout tests
+
+        * khtml/ecma/kjs_binding.h: Remove unused deleteDOMObject.
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::forgetDOMObject): Move code in here from forgetDOMObject.
+        (KJS::ScriptInterpreter::getDOMNodeForDocument): For the null-document case, use the general
+        DOM objects map rather than a per-document map.
+        (KJS::ScriptInterpreter::forgetDOMNodeForDocument): Ditto.
+        (KJS::ScriptInterpreter::putDOMNodeForDocument): Ditto.
+        (KJS::ScriptInterpreter::forgetAllDOMNodesForDocument): Assert that document is not null.
+
+2005-08-16  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - changed main_thread_malloc so we don't have two conflicting versions of the same function

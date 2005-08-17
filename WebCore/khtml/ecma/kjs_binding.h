@@ -78,7 +78,6 @@ namespace KJS {
 
     static DOMObject* getDOMObject(void* objectHandle);
     static void putDOMObject(void* objectHandle, DOMObject* obj);
-    static void deleteDOMObject(void* objectHandle);
     static void forgetDOMObject(void* objectHandle);
 
     static DOMNode *getDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node);
