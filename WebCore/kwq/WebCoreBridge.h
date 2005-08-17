@@ -639,6 +639,8 @@ typedef enum
 
 - (BOOL)isCharacterSmartReplaceExempt:(unichar)c isPreviousCharacter:(BOOL)isPreviousCharacter;
 
+- (void)handledOnloadEvents;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

@@ -391,6 +391,8 @@ public:
     
     virtual bool mouseDownMayStartSelect() const { return _mouseDownMayStartSelect; }
     
+    void handledOnloadEvents();
+    
 private:
     bool canMouseDownStartSelect(DOM::NodeImpl* node);
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

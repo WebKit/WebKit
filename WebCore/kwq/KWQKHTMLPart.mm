@@ -4295,3 +4295,8 @@ DOM::NodeImpl *KWQKHTMLPart::mousePressNode()
 {
     return d->m_mousePressNode.get();
 }
+
+void KWQKHTMLPart::handledOnloadEvents()
+{
+    [_bridge handledOnloadEvents];
+}
