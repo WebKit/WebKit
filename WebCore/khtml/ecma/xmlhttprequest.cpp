@@ -151,7 +151,7 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
         if (header->isUndefined()) {
           mimeType = "text/xml";
         } else {
-	  mimeType = QStringList::split(";", header->toString(exec).qstring())[0].stripWhiteSpace();
+	  mimeType = QStringList::split(";", header->toString(exec).qstring(), true)[0].stripWhiteSpace();
         }
       } else {
         mimeType = MIMETypeOverride;
