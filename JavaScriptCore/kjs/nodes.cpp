@@ -189,8 +189,9 @@ ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueI
 
 void Node::setExceptionDetailsIfNeeded(ExecState *exec)
 {
-    if (exec->hadException()) {
-        ObjectImp *exception = static_cast<ObjectImp *>(exec->exception());
+    ValueImp *exceptionValue = exec->exception();
+    if (exceptionValue->isObject()) {
+        ObjectImp *exception = static_cast<ObjectImp *>(exceptionValue);
         if (!exception->hasProperty(exec, "line") && !exception->hasProperty(exec, "sourceURL")) {
             exception->put(exec, "line", Number(line));
             exception->put(exec, "sourceURL", String(sourceURL));

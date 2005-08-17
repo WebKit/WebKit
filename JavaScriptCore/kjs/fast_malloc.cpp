@@ -224,7 +224,35 @@
     probably don't want to touch unless you are extending or adapting malloc.
 */
 
+#include "fast_malloc.h"
+
 namespace KJS {
+
+#ifndef NDEBUG
+
+// In debugging builds, use the system malloc for its debugging features.
+
+void *kjs_fast_malloc(size_t n)
+{
+    return malloc(n);
+}
+
+void *kjs_fast_calloc(size_t n_elements, size_t element_size)
+{
+    return calloc(n_elements, element_size);
+}
+
+void kjs_fast_free(void* p)
+{
+    free(p);
+}
+
+void *kjs_fast_realloc(void* p, size_t n)
+{
+    return realloc(p, n);
+}
+
+#else
 
 /*
   WIN32 sets up defaults for MS environment and compilers.
@@ -5413,7 +5441,9 @@ static int cpuinfo (int whole, CHUNK_SIZE_T  *kernel, CHUNK_SIZE_T  *user) {
 
 #endif /* WIN32 */
 
-};  /* end of namespace KJS */
+#endif
+
+}  /* end of namespace KJS */
 
 /* ------------------------------------------------------------
 History:

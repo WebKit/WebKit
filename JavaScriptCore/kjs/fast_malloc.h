@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2005 Apple Computer, Inc.
@@ -20,9 +19,8 @@
  *
  */
 
-
-#ifndef _FAST_MALLOC_H_
-#define _FAST_MALLOC_H_
+#ifndef KJS_FAST_MALLOC_H
+#define KJS_FAST_MALLOC_H
 
 // This is a copy of dlmalloc, a fast single-threaded malloc implementation.
 // JavaScriptCore is multi-threaded, but certain actions can only take place under
@@ -30,17 +28,7 @@
 // while holding the collector lock (this is true whenenever the interpreter is
 // executing or GC is taking place).
 
-
-#ifndef NDEBUG
-
-#define kjs_fast_malloc malloc
-#define kjs_fast_calloc calloc
-#define kjs_fast_free free
-#define kjs_fast_realloc realloc
-
-#define KJS_FAST_ALLOCATED
-
-#else
+#include <stdlib.h>
 
 namespace KJS {
 
@@ -49,12 +37,10 @@ void *kjs_fast_calloc(size_t n_elements, size_t element_size);
 void kjs_fast_free(void* p);
 void *kjs_fast_realloc(void* p, size_t n);
 
-};
+}
 
 #define KJS_FAST_ALLOCATED \
 void* operator new(size_t s) { return KJS::kjs_fast_malloc(s); } \
 void operator delete(void* p) { KJS::kjs_fast_free(p); }
 
-#endif
-
-#endif /* _FAST_MALLOC_H_ */
+#endif /* KJS_FAST_MALLOC_H */

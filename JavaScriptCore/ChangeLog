@@ -2,6 +2,23 @@
 
         Reviewed by Geoff.
 
+        - fixed crash in one of the JavaScript tests (introduced by my throwError change)
+
+        * kjs/nodes.cpp: (Node::setExceptionDetailsIfNeeded): Check if the exception is an
+        object before setting the file and line number properties on it. Something to think
+        about in the future -- do we really want to do this on any object that's thrown?
+        How about limiting it to error objects that were created by the JavaScript engine?
+
+        - changed kjs_fast_malloc so we don't have two conflicting versions of the same function
+
+        * kjs/fast_malloc.h: Took out all the ifdefs from this header.
+        * kjs/fast_malloc.cpp: Added non-NDEBUG versions of the functions that just call
+        the system malloc, and put the NDEBUG versions in an #else.
+
+2005-08-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
         - clean up exported symbols that are not in a "KJS" namespace
 
         * bindings/NP_jsobject.cpp: (identiferFromNPIdentifier): Marked this function static
