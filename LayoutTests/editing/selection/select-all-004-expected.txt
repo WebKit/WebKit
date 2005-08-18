@@ -1,11 +1,11 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > BODY > HTML > #document to 0 of #text > BODY > HTML > #document toDOMRange:range from 1 of #text > BODY > HTML > #document to 0 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-layer at (0,0) size 812x585
-  RenderCanvas at (0,0) size 800x585
-layer at (0,0) size 812x585
-  RenderBlock {HTML} at (0,0) size 800x585
-    RenderBody {BODY} at (64,64) size 748x457 [border: (50px solid #FF0000)]
+layer at (0,0) size 812x600
+  RenderCanvas at (0,0) size 785x585
+layer at (0,0) size 812x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (64,64) size 748x472 [border: (50px solid #FF0000)]
       RenderBlock {DIV} at (74,74) size 600x0
       RenderBlock (anonymous) at (74,74) size 600x48
         RenderText {TEXT} at (0,10) size 54x48

@@ -1,28 +1,28 @@
-layer at (0,0) size 800x890
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x890
-  RenderBlock {HTML} at (0,0) size 800x890
-    RenderBody {BODY} at (8,8) size 784x874
-      RenderBlock {P} at (0,0) size 784x18
+layer at (0,0) size 785x890
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x890
+  RenderBlock {HTML} at (0,0) size 785x890
+    RenderBody {BODY} at (8,8) size 769x874
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {TEXT} at (0,0) size 284x18
           text run at (0,0) width 284: "Tests: the height attribute for the marquee tag"
         RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {P} at (0,34) size 784x72
+      RenderBlock {P} at (0,34) size 769x72
         RenderText {TEXT} at (0,0) size 73x18
           text run at (0,0) width 73: "Conditions:"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,18) size 773x54
-          text run at (0,18) width 773: "Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is overridden"
-          text run at (0,36) width 101: "when the given "
-          text run at (101,36) width 645: "height is smaller than the font height. We also make sure that the default height of a vertical marquee is"
-          text run at (0,54) width 44: "200px."
-      RenderBlock {P} at (0,122) size 784x36
-        RenderText {TEXT} at (0,0) size 773x36
-          text run at (0,0) width 773: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None of"
-          text run at (0,18) width 50: "the text "
-          text run at (50,18) width 678: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
-      RenderBlock {HR} at (0,174) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,184) size 784x690
+        RenderText {TEXT} at (0,18) size 746x54
+          text run at (0,18) width 701: "Because marquee is a WinIE element, we are honoring their treatment of the heigh attribute by making sure it is"
+          text run at (0,36) width 173: "overridden when the given "
+          text run at (173,36) width 573: "height is smaller than the font height. We also make sure that the default height of a vertical"
+          text run at (0,54) width 116: "marquee is 200px."
+      RenderBlock {P} at (0,122) size 769x36
+        RenderText {TEXT} at (0,0) size 756x36
+          text run at (0,0) width 756: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None"
+          text run at (0,18) width 67: "of the text "
+          text run at (67,18) width 678: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
+      RenderBlock {HR} at (0,174) size 769x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,184) size 769x690
         RenderText {TEXT} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
@@ -49,8 +49,8 @@ layer at (0,0) size 800x890
             text run at (0,0) width 113: "This is 100px tall."
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-layer at (8,192) size 784x16 scrollX -769 scrollWidth 1692 scrollHeight 18
-  RenderBlock {MARQUEE} at (0,0) size 784x16 [bgcolor=#00FFFF]
+layer at (8,192) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
+  RenderBlock {MARQUEE} at (0,0) size 769x16 [bgcolor=#00FFFF]
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
@@ -58,8 +58,8 @@ layer at (8,192) size 784x16 scrollX -769 scrollWidth 1692 scrollHeight 18
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {TEXT} at (0,0) size 0x0
-layer at (8,208) size 784x16 scrollX -769 scrollWidth 1692 scrollHeight 18
-  RenderBlock {MARQUEE} at (0,16) size 784x16 [bgcolor=#FFFF00]
+layer at (8,208) size 769x16 scrollX -769 scrollWidth 1692 scrollHeight 18
+  RenderBlock {MARQUEE} at (0,16) size 769x16 [bgcolor=#FFFF00]
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
@@ -67,8 +67,8 @@ layer at (8,208) size 784x16 scrollX -769 scrollWidth 1692 scrollHeight 18
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {TEXT} at (0,0) size 0x0
-layer at (8,224) size 784x18 scrollX -769 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,32) size 784x18 [bgcolor=#FFA500]
+layer at (8,224) size 769x18 scrollX -769 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,32) size 769x18 [bgcolor=#FFA500]
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
@@ -76,8 +76,8 @@ layer at (8,224) size 784x18 scrollX -769 scrollWidth 1692
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {TEXT} at (0,0) size 0x0
-layer at (8,242) size 784x18 scrollX -769 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,50) size 784x18 [bgcolor=#A52A2A]
+layer at (8,242) size 769x18 scrollX -769 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,50) size 769x18 [bgcolor=#A52A2A]
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18
@@ -85,8 +85,8 @@ layer at (8,242) size 784x18 scrollX -769 scrollWidth 1692
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {TEXT} at (0,0) size 0x0
-layer at (8,260) size 784x100 scrollX -769 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,68) size 784x100 [bgcolor=#FFC0CB]
+layer at (8,260) size 769x100 scrollX -769 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,68) size 769x100 [bgcolor=#FFC0CB]
     RenderText {TEXT} at (0,0) size 0x0
     RenderInline {B} at (0,0) size 1692x18
       RenderText {TEXT} at (0,0) size 1692x18

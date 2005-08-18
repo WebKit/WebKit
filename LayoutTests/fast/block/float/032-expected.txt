@@ -1,47 +1,47 @@
-layer at (0,0) size 800x1022
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x1022
-  RenderBlock {HTML} at (0,0) size 800x1022
-    RenderBody {BODY} at (8,8) size 784x1006
-      RenderBlock {DIV} at (0,0) size 784x110 [border: (5px solid #000000)]
+layer at (0,0) size 785x1022
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x1022
+  RenderBlock {HTML} at (0,0) size 785x1022
+    RenderBody {BODY} at (8,8) size 769x1006
+      RenderBlock {DIV} at (0,0) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (205,5) size 100x100 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,110) size 784x18
+      RenderBlock (anonymous) at (0,110) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,128) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,128) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (305,5) size 100x100 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,238) size 784x18
+      RenderBlock (anonymous) at (0,238) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,256) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,256) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (55,5) size 100x100 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,366) size 784x18
+      RenderBlock (anonymous) at (0,366) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,384) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,384) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderImage {IMG} at (55,5) size 100x100 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,494) size 784x18
+      RenderBlock (anonymous) at (0,494) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,512) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,512) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderLineEdit {INPUT} at (205,5) size 100x19 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,622) size 784x18
+      RenderBlock (anonymous) at (0,622) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,640) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,640) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderLineEdit {INPUT} at (305,5) size 100x19 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,750) size 784x18
+      RenderBlock (anonymous) at (0,750) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,768) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,768) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderLineEdit {INPUT} at (55,5) size 100x19 [bgcolor=#800080]
-      RenderBlock (anonymous) at (0,878) size 784x18
+      RenderBlock (anonymous) at (0,878) size 769x18
         RenderBR {BR} at (0,0) size 0x18
-      RenderBlock {DIV} at (0,896) size 784x110 [border: (5px solid #000000)]
+      RenderBlock {DIV} at (0,896) size 769x110 [border: (5px solid #000000)]
         RenderBlock (floating) {DIV} at (5,5) size 100x100 [bgcolor=#008000]
         RenderLineEdit {INPUT} at (55,5) size 100x19 [bgcolor=#800080]
         RenderText {TEXT} at (0,0) size 0x0

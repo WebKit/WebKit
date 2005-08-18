@@ -13,4 +13,4 @@ layer at (0,0) size 800x271
           text run at (0,0) width 170: "Measure Me"
       RenderBlock {DIV} at (0,237) size 784x18
         RenderText {TEXT} at (0,0) size 165x18
-          text run at (0,0) width 165: "The resulting width is 769"
+          text run at (0,0) width 165: "The resulting width is 784"

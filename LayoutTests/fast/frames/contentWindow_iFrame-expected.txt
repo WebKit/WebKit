@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (0,186) size 124x18
           text run at (0,186) width 124: "Here is the iFrame: "
         RenderPartObject {IFRAME} at (124,0) size 200x200
-          layer at (0,0) size 183x196
-            RenderCanvas at (0,0) size 183x196
-          layer at (0,0) size 183x8
-            RenderBlock {HTML} at (0,0) size 183x8
-              RenderBody {BODY} at (8,8) size 167x0
+          layer at (0,0) size 198x196
+            RenderCanvas at (0,0) size 198x196
+          layer at (0,0) size 198x8
+            RenderBlock {HTML} at (0,0) size 198x8
+              RenderBody {BODY} at (8,8) size 182x0
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,204) size 784x18
         RenderText {TEXT} at (0,0) size 74x18

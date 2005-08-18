@@ -1,9 +1,9 @@
-layer at (0,0) size 2008x585
-  RenderCanvas at (0,0) size 800x585
-layer at (0,0) size 2008x585
-  RenderBlock {HTML} at (0,0) size 800x585
-    RenderBody {BODY} at (8,8) size 784x569
-      RenderBlock {DIV} at (0,0) size 784x154
-        RenderBlock (floating) {DIV} at (700,0) size 84x104 [bgcolor=#008000] [border: (2px solid #808000)]
+layer at (0,0) size 2008x600
+  RenderCanvas at (0,0) size 785x585
+layer at (0,0) size 2008x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderBlock {DIV} at (0,0) size 769x154
+        RenderBlock (floating) {DIV} at (685,0) size 84x104 [bgcolor=#008000] [border: (2px solid #808000)]
         RenderImage {IMG} at (0,104) size 2000x50 [bgcolor=#FFA500]
         RenderText {TEXT} at (0,0) size 0x0

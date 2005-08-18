@@ -419,9 +419,6 @@ QString externalRepresentation(RenderObject *o)
     {
         QTextStream ts(&s);
         if (o) {
-            // FIXME: Hiding the vertical scrollbar is a total hack to preserve the
-            // layout test results until I can figure out what the heck is going on. -dwh
-            o->canvas()->view()->setVScrollBarMode(QScrollView::AlwaysOff);
             o->canvas()->view()->layout();
             RenderLayer* l = o->layer();
             if (l) {

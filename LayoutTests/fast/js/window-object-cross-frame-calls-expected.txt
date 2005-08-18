@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
           text run at (0,0) width 39: "parent"
       RenderBlock (anonymous) at (0,68) size 784x150
         RenderPartObject {IFRAME} at (0,0) size 300x150
-          layer at (0,0) size 285x150
-            RenderCanvas at (0,0) size 285x150
-          layer at (0,0) size 285x150
-            RenderBlock {HTML} at (0,0) size 285x150
-              RenderBody {BODY} at (8,8) size 269x134
+          layer at (0,0) size 300x150
+            RenderCanvas at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0

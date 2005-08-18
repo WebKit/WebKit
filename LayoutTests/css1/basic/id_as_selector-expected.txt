@@ -1,12 +1,12 @@
-layer at (0,0) size 800x627
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x627
-  RenderBlock {HTML} at (0,0) size 800x627
-    RenderBody {BODY} at (8,8) size 784x611 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18
+layer at (0,0) size 785x627
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x627
+  RenderBlock {HTML} at (0,0) size 785x627
+    RenderBody {BODY} at (8,8) size 769x611 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,34) size 784x120
+      RenderBlock {PRE} at (0,34) size 769x120
         RenderText {TEXT} at (0,0) size 272x120
           text run at (0,0) width 160: "#one {color: green;}"
           text run at (0,15) width 152: "#a1 {color: green;}"
@@ -16,14 +16,14 @@ layer at (0,0) size 800x627
           text run at (0,75) width 152: "#a2 {color: green;}"
           text run at (0,90) width 240: "P#five, P#five2 {color: blue;}"
           text run at (0,105) width 240: "P#six, P#six2 {color: purple;}"
-      RenderBlock {HR} at (0,167) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,185) size 784x18 [color=#008000]
+      RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,185) size 769x18 [color=#008000]
         RenderText {TEXT} at (0,0) size 194x18
           text run at (0,0) width 194: "This sentence should be green."
-      RenderBlock {P} at (0,219) size 784x18 [color=#008000]
+      RenderBlock {P} at (0,219) size 769x18 [color=#008000]
         RenderText {TEXT} at (0,0) size 194x18
           text run at (0,0) width 194: "This sentence should be green."
-      RenderBlock {P} at (0,253) size 784x18 [color=#0000FF]
+      RenderBlock {P} at (0,253) size 769x18 [color=#0000FF]
         RenderText {TEXT} at (0,0) size 200x18
           text run at (0,0) width 200: "This paragraph should be blue ["
         RenderInline {TT} at (0,0) size 64x15
@@ -31,14 +31,14 @@ layer at (0,0) size 800x627
             text run at (200,2) width 64: "ID=\"two\""
         RenderText {TEXT} at (264,0) size 9x18
           text run at (264,0) width 9: "]."
-      RenderBlock {PRE} at (0,287) size 784x15
+      RenderBlock {PRE} at (0,287) size 769x15
         RenderText {TEXT} at (0,0) size 392x15
           text run at (0,0) width 392: "This sentence should NOT be blue [PRE ID=\"two2\"]."
-      RenderBlock {PRE} at (0,315) size 784x15
+      RenderBlock {PRE} at (0,315) size 769x15
         RenderText {TEXT} at (0,0) size 472x15
           text run at (0,0) width 472: "This sentence should be black, not purple [PRE ID=\"three\"]."
-      RenderBlock {UL} at (0,346) size 784x18
-        RenderListItem {LI} at (40,0) size 744x18
+      RenderBlock {UL} at (0,346) size 769x18
+        RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (0,0) size 0x14
           RenderText {TEXT} at (0,0) size 237x18
             text run at (0,0) width 237: "This sentence should NOT be purple."

@@ -1,12 +1,12 @@
-layer at (0,0) size 800x699
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x699
-  RenderBlock {HTML} at (0,0) size 800x699
-    RenderBody {BODY} at (8,8) size 784x671 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x18
+layer at (0,0) size 785x699
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x699
+  RenderBlock {HTML} at (0,0) size 785x699
+    RenderBody {BODY} at (8,8) size 769x671 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 769x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,31) size 784x195
+      RenderBlock {PRE} at (0,31) size 769x195
         RenderText {TEXT} at (0,0) size 512x180
           text run at (0,0) width 392: "P { margin: 0; padding: 0; text-align:  justify;}"
           text run at (0,30) width 336: "DIV.yellow, DIV.blue, DIV.red, DIV.green {"
@@ -19,10 +19,10 @@ layer at (0,0) size 800x699
           text run at (0,135) width 352: "DIV.green {background: green; color: white;}"
           text run at (0,150) width 192: "DIV.below {clear: both;}"
           text run at (0,165) width 200: "TABLE {margin: 20px 0px;}"
-      RenderBlock {HR} at (0,239) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,249) size 784x36
-        RenderText {TEXT} at (0,0) size 784x36
-          text run at (0,0) width 784: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
+      RenderBlock {HR} at (0,239) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,249) size 769x36
+        RenderText {TEXT} at (0,0) size 769x36
+          text run at (0,0) width 769: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
           text run at (0,18) width 405: "indicates how the DIV elements should be laid out horizontally. "
           text run at (405,18) width 219: "They should align with each other."
       RenderBlock (floating) {DIV} at (0,295) size 140x98 [bgcolor=#FFFF00] [border: (20px solid #000000)]
@@ -41,7 +41,7 @@ layer at (0,0) size 800x699
         RenderBlock {P} at (40,40) size 60x18
           RenderText {TEXT} at (0,0) size 39x18
             text run at (0,0) width 39: "Green"
-      RenderBlock {DIV} at (0,403) size 784x19
+      RenderBlock {DIV} at (0,403) size 769x19
         RenderTable {TABLE} at (0,0) size 620x19
           RenderTableSection {TBODY} at (0,0) size 0x19
             RenderTableRow {TR} at (0,0) size 0x0
@@ -77,10 +77,10 @@ layer at (0,0) size 800x699
                 RenderImage {IMG} at (0,0) size 100x1
               RenderTableCell {TD} at (600,9) size 20x1 [bgcolor=#000000] [r=0 c=14 rs=1 cs=1]
                 RenderImage {IMG} at (0,0) size 20x1
-      RenderTable {TABLE} at (0,442) size 784x229 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (0,442) size 769x229 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x227
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+            RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {TEXT} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
@@ -88,12 +88,12 @@ layer at (0,0) size 800x699
             RenderTableCell {TD} at (0,113) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,26) size 770x201 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x36
-                RenderText {TEXT} at (0,0) size 762x36
-                  text run at (0,0) width 762: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
-                  text run at (0,18) width 405: "indicates how the DIV elements should be laid out horizontally. "
-                  text run at (405,18) width 219: "They should align with each other."
+            RenderTableCell {TD} at (12,26) size 755x201 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 747x36
+                RenderText {TEXT} at (0,0) size 747x36
+                  text run at (0,0) width 747: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this"
+                  text run at (0,18) width 439: "page indicates how the DIV elements should be laid out horizontally. "
+                  text run at (439,18) width 219: "They should align with each other."
               RenderBlock (floating) {DIV} at (4,50) size 140x98 [bgcolor=#FFFF00] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x18
                   RenderText {TEXT} at (0,0) size 47x18
@@ -110,7 +110,7 @@ layer at (0,0) size 800x699
                 RenderBlock {P} at (40,40) size 60x18
                   RenderText {TEXT} at (0,0) size 39x18
                     text run at (0,0) width 39: "Green"
-              RenderBlock {DIV} at (4,158) size 762x19
+              RenderBlock {DIV} at (4,158) size 747x19
                 RenderTable {TABLE} at (0,0) size 620x19
                   RenderTableSection {TBODY} at (0,0) size 0x19
                     RenderTableRow {TR} at (0,0) size 0x0

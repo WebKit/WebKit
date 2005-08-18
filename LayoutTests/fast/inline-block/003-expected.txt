@@ -21,11 +21,11 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
-layer at (8,66) size 784x22 clip at (10,68) size 780x18 scrollX -765
+layer at (8,66) size 784x22 clip at (10,68) size 780x18 scrollX -780
   RenderBlock {MARQUEE} at (0,18) size 784x22 [border: (2px solid #008000)]
     RenderText {TEXT} at (2,2) size 97x18
       text run at (2,2) width 97: "This is div one."
-layer at (8,88) size 784x22 clip at (10,90) size 780x18 scrollX -765
+layer at (8,88) size 784x22 clip at (10,90) size 780x18 scrollX -780
   RenderBlock {MARQUEE} at (0,40) size 784x22 [border: (2px solid #008000)]
     RenderText {TEXT} at (2,2) size 98x18
       text run at (2,2) width 98: "This is div two."

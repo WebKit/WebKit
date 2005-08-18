@@ -7,18 +7,18 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (163,136) size 158x18
           text run at (163,136) width 158: "This should be centered. "
         RenderPartObject {IFRAME} at (321,0) size 300x150
-          layer at (0,0) size 285x150
-            RenderCanvas at (0,0) size 285x150
-          layer at (0,0) size 285x150
-            RenderBlock {HTML} at (0,0) size 285x150
-              RenderBody {BODY} at (8,8) size 269x134 [bgcolor=#FF0000]
+          layer at (0,0) size 300x150
+            RenderCanvas at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FF0000]
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (163,290) size 158x18
           text run at (163,290) width 158: "This should be centered. "
         RenderPartObject {OBJECT} at (321,154) size 300x150
-          layer at (0,0) size 285x150
-            RenderCanvas at (0,0) size 285x150
-          layer at (0,0) size 285x150
-            RenderBlock {HTML} at (0,0) size 285x150
-              RenderBody {BODY} at (8,8) size 269x134 [bgcolor=#FF0000]
+          layer at (0,0) size 300x150
+            RenderCanvas at (0,0) size 300x150
+          layer at (0,0) size 300x150
+            RenderBlock {HTML} at (0,0) size 300x150
+              RenderBody {BODY} at (8,8) size 284x134 [bgcolor=#FF0000]
         RenderBR {BR} at (0,0) size 0x0

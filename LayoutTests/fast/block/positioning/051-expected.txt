@@ -1,6 +1,6 @@
-layer at (0,0) size 800x5269
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x5269 layerType: background only
+layer at (0,0) size 785x5269
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x5269 layerType: background only
 layer at (84,1479) size 200x200
   RenderBlock (positioned) zI: -3000000 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3000000 {TEXT} at (71,42) size 57x80
@@ -81,20 +81,20 @@ layer at (84,4993) size 200x200
   RenderBlock (positioned) zI: -1 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderText zI: -1 {TEXT} at (71,42) size 57x80
       text run at (71,42) width 57: "6"
-layer at (0,0) size 800x5269 layerType: foreground only
-  RenderBlock {HTML} at (0,0) size 800x5269
-    RenderBody {BODY} at (8,21) size 784x5232
-      RenderBlock {H1} at (0,0) size 784x37
+layer at (0,0) size 785x5269 layerType: foreground only
+  RenderBlock {HTML} at (0,0) size 785x5269
+    RenderBody {BODY} at (8,21) size 769x5232
+      RenderBlock {H1} at (0,0) size 769x37
         RenderText {TEXT} at (0,0) size 294x37
           text run at (0,0) width 294: "Layered Presentation"
-      RenderBlock {P} at (0,58) size 784x18
+      RenderBlock {P} at (0,58) size 769x18
         RenderText {TEXT} at (0,0) size 733x18
           text run at (0,0) width 398: "Robert O'Callahan pointed out to me some mistakes in this test "
           text run at (398,0) width 335: "that I have not yet had the time to examine or correct."
-      RenderBlock {P} at (0,92) size 784x18
+      RenderBlock {P} at (0,92) size 769x18
         RenderText {TEXT} at (0,0) size 463x18
           text run at (0,0) width 463: "In each of the following, 1 should be the top layer and 8 the bottom layer:"
-      RenderBlock {P} at (0,4578) size 784x18
+      RenderBlock {P} at (0,4578) size 769x18
         RenderText {TEXT} at (0,0) size 349x18
           text run at (0,0) width 349: "Using assumed default value of z-index (may not pass):"
 layer at (24,147) size 620x620
