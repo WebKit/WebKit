@@ -1,5 +1,16 @@
 2005-08-17  Maciej Stachowiak  <mjs@apple.com>
 
+        - add file that I forgot in the last checkin 
+
+        * DumpRenderTree/ImageDiff.m: Added.
+        (main):
+        (getImageFromStdin):
+        (compareImages):
+        (getDifferenceBitmap):
+        (computePercentageDifferent):
+
+2005-08-17  Maciej Stachowiak  <mjs@apple.com>
+
         Changes by Ben Lamonica and Eric Seidel, reviewed mostly by Eric and
 	somewhat by me, and also tweaked by me a little bit.
 
