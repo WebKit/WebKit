@@ -30,6 +30,7 @@
 
 use strict;
 use IPC::Open2;
+use Getopt::Long;
 use FindBin;
 use Cwd;
 use lib $FindBin::Bin;
@@ -54,27 +55,34 @@ my $productDir = productDir();
 chdirWebKit();
 
 # Argument handling
-my $testSVGs = 0;
-if (($#ARGV > -1) && ($ARGV[0] eq "--svg")) {
-    $testSVGs = 1;
-    shift @ARGV;
-}
+my $testSVGs = '';
+my $pixelTests = '';
+my $maxWidth = '';
+my $maxHeight = '';
+my $verbose = '';
+my $quiet = '';
 
-my $toolbuildscript = "build-dumprendertree";
-if ($testSVGs) {
-    $toolbuildscript = "build-dumpkcanvastree";
-}
-
-my $result = system "WebKitTools/Scripts/$toolbuildscript", @ARGV;
-exit $result if $result;
+GetOptions('svg' => \$testSVGs, 
+    'pixel-tests' => \$pixelTests,
+    'max-width' => \$maxWidth,
+    'max-height' => \$maxHeight, 
+    'verbose' => \$verbose,
+    'quiet' => \$quiet);
 
 my $toolname = "DumpRenderTree";
+
+my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
+exit $result if $result;
 if ($testSVGs) {
+    my $result = system "WebKitTools/Scripts/build-dumpkcanvastree", @ARGV;
+    exit $result if $result;
     $toolname = "DumpKCanvasTree";
 }
 
 my $tool = "$productDir/$toolname";
+my $imageDiffTool = "$productDir/ImageDiff";
 die "can't find executable $toolname tool (looked in $productDir)\n" if !-x $tool;
+die "can't find executable $imageDiffTool tool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 if ($testSVGs) {
     checkSVGFrameworks();
@@ -128,11 +136,33 @@ die "no tests to run\n" if !@tests;
 
 my %counts;
 my %tests;
+my %imagesPresent;
 my $count;
+my @toolArgs;
 
-open2(\*IN, \*OUT, $tool, "-") or die;
+if ($pixelTests) {
+    push @toolArgs, "--pixel-tests";
+    if ($maxWidth) {
+        push @toolArgs, ("--width", $maxWidth);
+    }
+ 
+    if ($maxWidth) {
+        push @toolArgs, ("--height", $maxWidth);
+    }
+}
+
+push  @toolArgs, "-";
 
 $| = 1;
+
+open2(\*IN, \*OUT, $tool, @toolArgs) or die;
+
+if ($pixelTests) {
+    open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
+}
+
+my $column = 0;
+my $lastDirectory = "";
 
 for my $test (@tests) {
     next if $test eq 'results.html';
@@ -140,18 +170,32 @@ for my $test (@tests) {
     my $base = $test;
     $base =~ s/\.(html|xml|xhtml|svg)$//;
     
-    print "running $base test";
-    
+    if ($verbose) {
+        print "running $base test";
+    } elsif (!$quiet) {
+        my $dir = $base;
+        $dir =~ s|/[^/]+$||;
+        if ($dir ne $lastDirectory) {
+            print "\n" unless $column == 0;
+            print $dir . " ";
+            $lastDirectory = $dir;
+            $column = 0;
+        }
+
+        print ".";
+        $column++;
+    }
+
     my $result;
 
     print OUT "$testDirectory/$test\n";
 
     my $actual = "";
     while (<IN>) {
-        last if /#EOF$/;
+        last if /#EOF/;
         $actual .= $_;
     }
-    
+
     my $expected;
     if (open EXPECTED, "<", "$testDirectory/$base-expected.txt") {
         $expected = "";
@@ -160,29 +204,170 @@ for my $test (@tests) {
         }
         close EXPECTED;
     }
+
+    my $textDumpMatches = $expected && ($actual eq $expected);
+    my $actualHash = "";
+    my $expectedHash = "";
+    my $hashMatches = "";
+    my $actualPNG = "";
+    my $actualPNGSize = 0;
+    my $expectedPNG = "";
+    my $expectedPNGSize = 0;
+    my $diffPNG = "";
+    my $diffPercentage = "";
+    my $diffResult = "passed";
+    
+    if ($pixelTests) {
+        while (<IN>) {
+            last if /#EOF/;
+            if (/ActualHash: ([a-f0-9]{32})/) {
+                $actualHash = $1;
+            } elsif (/BaselineHash: ([a-f0-9]{32})/) {
+                $expectedHash = $1;
+            } elsif (/Content-length: (\d+)\s*/) {
+                $actualPNGSize = $1;
+                read(IN, $actualPNG, $actualPNGSize);
+            }
+        }
+
+        if ($hashMatches = ($expectedHash eq $actualHash)) {
+            $diffResult = "passed";
+        }
+
+        if (!$hashMatches && -f "$testDirectory/$base-expected.png" && $textDumpMatches) {
+            $expectedPNGSize = getFilesize("$testDirectory/$base-expected.png");
+            open EXPECTEDPNG, "$testDirectory/$base-expected.png";
+            read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
+
+            print DIFFOUT "Content-length: $actualPNGSize\n";
+            print DIFFOUT $actualPNG;
+
+            print DIFFOUT "Content-length: $expectedPNGSize\n";
+            print DIFFOUT $expectedPNG;
+
+            while (<DIFFIN>) {
+		last if /^error/ || /^diff:/;
+                if (/Content-length: (\d+)\s*/) {
+                    read(DIFFIN, $diffPNG, $1);
+                }
+            }
+
+            if (/^diff: (.+)% (passed|failed)/) {
+                $diffPercentage = $1;
+                $diffResult = $2;
+            }
+        }
+    }
+
+    if ($pixelTests) {
+        if ($actualPNGSize != 0 && ! -f "$testDirectory/$base-expected.png") {
+            open EXPECTED, ">", "$testDirectory/$base-expected.png" or die "could not create $testDirectory/$base-expected.png\n";
+            print EXPECTED $actualPNG;
+            close EXPECTED;
+        }
+
+        # update the expected hash if the image diff said that there was no difference
+        if ($actualHash ne "" && ! -f "$testDirectory/$base-expected.checksum") {
+            open EXPECTED, ">", "$testDirectory/$base-expected.checksum" or die "could not create $testDirectory/$base-expected.checksum\n";
+            print EXPECTED $actualHash;
+            close EXPECTED;
+        }
+    }
+
     if (!defined $expected) {
-        print " -> new test\n";        
+        if ($verbose) {
+            print " -> new test\n";
+        }
         $result = "new";
         open EXPECTED, ">", "$testDirectory/$base-expected.txt" or die "could not create $testDirectory/$base-expected.txt\n";
         print EXPECTED $actual;
         close EXPECTED;
+
         unlink "$testResultsDirectory/$base-actual.txt";
         unlink "$testResultsDirectory/$base-diffs.txt";
-    } elsif ($actual eq $expected) {
-        print " -> succeeded\n";        
+    } elsif ($textDumpMatches && (!$pixelTests || ($pixelTests && $diffResult eq "passed"))) {
+        if ($verbose) {
+            print " -> succeeded\n";
+        }
         $result = "match";
         unlink "$testResultsDirectory/$base-actual.txt";
         unlink "$testResultsDirectory/$base-diffs.txt";
-    } else {
-        print " -> failed\n";        
+    } elsif (!$textDumpMatches || ($pixelTests && $diffResult ne "passed")) {
+        print "\n" unless $column == 0;
+        print "$test -> failed\n";
+        $column = 0;        
+
         $result = "mismatch";
+
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/[^/]+$||;
         system "mkdir", "-p", $dir;
+
         open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
         print ACTUAL $actual;
         close ACTUAL;
+
         system "diff -u \"$testDirectory/$base-expected.txt\" \"$testResultsDirectory/$base-actual.txt\" > \"$testResultsDirectory/$base-diffs.txt\"";
+
+        if ($pixelTests && $diffPNG && $diffPNG ne "") {
+            $imagesPresent{$base} = 1;
+
+            open ACTUAL, ">", "$testResultsDirectory/$base-actual.png" or die;
+            print ACTUAL $actualPNG;
+            close ACTUAL;
+
+            open DIFF, ">", "$testResultsDirectory/$base-diffs.png" or die;
+            print DIFF $diffPNG;
+            close DIFF;
+
+            open DIFFHTML, ">$testResultsDirectory/$base-diffs.html" or die;
+            print DIFFHTML "<html>\n";
+            print DIFFHTML "<head>\n";
+            print DIFFHTML "<title>$base Image Compare</title>\n";
+            print DIFFHTML "<script language=\"Javascript\" type=\"text/javascript\">\n";
+            print DIFFHTML "var actualImageVisible = true;\n";
+            print DIFFHTML "function animateImage() {\n";
+            print DIFFHTML "    var image = document.getElementById(\"animatedImage\");\n";
+            print DIFFHTML "    var imageText = document.getElementById(\"imageText\");\n";
+            print DIFFHTML "    if (actualImageVisible) {\n";
+            print DIFFHTML "        image.src=\"$testDirectory/$base-expected.png\";\n";
+            print DIFFHTML "        imageText.innerHTML = \"Expected Image\";\n";
+            print DIFFHTML "        actualImageVisible = false;\n";
+            print DIFFHTML "    } else {\n";
+            print DIFFHTML "        image.src=\"$testResultsDirectory/$base-actual.png\";\n";
+            print DIFFHTML "        imageText.innerHTML = \"Actual Image\";\n";
+            print DIFFHTML "        actualImageVisible = true;\n";
+            print DIFFHTML "    }\n";
+            print DIFFHTML "    setTimeout('animateImage()',2000);\n";
+            print DIFFHTML "}\n";
+            print DIFFHTML "</script>\n";
+            print DIFFHTML "</head>\n";
+            print DIFFHTML "<body onLoad=\"animateImage();\">\n";
+            print DIFFHTML "<table>\n";
+            if ($diffPercentage) {
+                print DIFFHTML "<tr>\n";
+                print DIFFHTML "<td>Difference between images: <a href=\"$testResultsDirectory/$base-diffs.png\">$diffPercentage%</a></td>\n";
+                print DIFFHTML "</tr>\n";
+            }
+            print DIFFHTML "<tr>\n";
+            print DIFFHTML "<td id=\"imageText\" style=\"text-weight: bold;\">Actual Image</td>\n";
+            print DIFFHTML "</tr>\n";
+            print DIFFHTML "<tr>\n";
+            print DIFFHTML "<td><img src=\"$testResultsDirectory/$base-actual.png\" id=\"animatedImage\"></td>\n";
+            print DIFFHTML "</tr>\n";
+            print DIFFHTML "</table>\n";
+            print DIFFHTML "</body>\n";
+            print DIFFHTML "</html>\n";
+        }
+    } else {
+        $result = "fail";
+        print "\n" unless $column == 0;
+        print "$test -> crashed\n";
+        $column = 0;
+
+        close IN;
+        close OUT;
+        open2(\*IN, \*OUT, $tool, @toolArgs) or die;
     }
     
     $count += 1;
@@ -242,6 +427,12 @@ if ($counts{match} && $counts{match} == $count) {
             print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
             print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
             print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
+            if ($pixelTests) {
+                print HTML "<td><a href=\"$testDirectory/$base-expected.png\">expected image</a></td>\n";
+                if ($imagesPresent{$base}) {
+                    print HTML "<td><a href=\"$base-diffs.html\">image diffs</a></td>\n";
+                }
+            }
             print HTML "</tr>\n";
         }
         print HTML "</table>\n";
@@ -269,6 +460,9 @@ if ($counts{match} && $counts{match} == $count) {
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
+            if ($pixelTests) {
+                print HTML "<td><a href=\"$testDirectory/$base-expected.png\">image</a></td>\n";
+            }
             print HTML "</tr>\n";
         }
         print HTML "</table>\n";
@@ -279,4 +473,14 @@ if ($counts{match} && $counts{match} == $count) {
     close HTML;
     
     system "open", $testResults;
+}
+
+sub getFilesize
+{
+    my $filename = shift;
+    my @fileStats;
+
+    @fileStats = stat($filename);
+
+    $fileStats[7];
 }

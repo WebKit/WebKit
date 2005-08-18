@@ -6,13 +6,44 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		A84F608D08B1370600E9745F /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A84F609208B1371400E9745F /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			buildSettings = {
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = All;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			dependencies = (
+				A84F609108B1370E00E9745F /* PBXTargetDependency */,
+				A84F608F08B1370E00E9745F /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */; };
 		9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */; settings = {ATTRIBUTES = (); }; };
-		9340995008540CAE007F3BC8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335435F03D75502008635CE /* WebKit.framework */; };
-		9340995208540CAE007F3BC8 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335436503D7553D008635CE /* WebCore.framework */; };
-		9340995308540CAE007F3BC8 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9335436903D75557008635CE /* JavaScriptCore.framework */; };
+		A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
+		A817090208B1643800CCB9FB /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090108B1643800CCB9FB /* WebCore.framework */; };
+		A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A817090308B164D300CCB9FB /* JavaScriptCore.framework */; };
+		A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84F608908B136DA00E9745F /* Cocoa.framework */; };
+		B5A752A008AF5CD400138E45 /* ImageDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A7525808AF4A3600138E45 /* ImageDiff.m */; };
+		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -32,14 +63,34 @@
 		};
 /* End PBXBuildStyle section */
 
+/* Begin PBXContainerItemProxy section */
+		A84F608E08B1370E00E9745F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B5A7525A08AF4A4A00138E45;
+			remoteInfo = ImageDiff;
+		};
+		A84F609008B1370E00E9745F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9340994A08540CAE007F3BC8;
+			remoteInfo = DumpRenderTree;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpRenderTree.m; sourceTree = "<group>"; };
-		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9335436503D7553D008635CE /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9335436903D75557008635CE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
+		A817090108B1643800CCB9FB /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A817090308B164D300CCB9FB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A84F608908B136DA00E9745F /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		B5A7525808AF4A3600138E45 /* ImageDiff.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageDiff.m; sourceTree = "<group>"; };
+		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,10 +98,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9340995008540CAE007F3BC8 /* Foundation.framework in Frameworks */,
 				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
-				9340995208540CAE007F3BC8 /* WebCore.framework in Frameworks */,
-				9340995308540CAE007F3BC8 /* JavaScriptCore.framework in Frameworks */,
+				A84F608A08B136DA00E9745F /* Cocoa.framework in Frameworks */,
+				A817090208B1643800CCB9FB /* WebCore.framework in Frameworks */,
+				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5A7525F08AF4A4A00138E45 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */,
+				A817090008B163EF00CCB9FB /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,12 +120,14 @@
 		08FB7794FE84155DC02AAC07 /* DumpRenderTree */ = {
 			isa = PBXGroup;
 			children = (
+				B5A7525808AF4A3600138E45 /* ImageDiff.m */,
 				08FB7796FE84155DC02AAC07 /* DumpRenderTree.m */,
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
-				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
-				9335436903D75557008635CE /* JavaScriptCore.framework */,
-				9335436503D7553D008635CE /* WebCore.framework */,
 				9335435F03D75502008635CE /* WebKit.framework */,
+				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
+				A817090108B1643800CCB9FB /* WebCore.framework */,
+				B5A752A108AF5D1F00138E45 /* QuartzCore.framework */,
+				A84F608908B136DA00E9745F /* Cocoa.framework */,
 				9340995508540CAF007F3BC8 /* Products */,
 			);
 			name = DumpRenderTree;
@@ -75,6 +137,7 @@
 			isa = PBXGroup;
 			children = (
 				9340995408540CAF007F3BC8 /* DumpRenderTree */,
+				B5A7526708AF4A4A00138E45 /* ImageDiff */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,6 +150,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5A7525B08AF4A4A00138E45 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +192,35 @@
 			productReference = 9340995408540CAF007F3BC8 /* DumpRenderTree */;
 			productType = "com.apple.product-type.tool";
 		};
+		B5A7525A08AF4A4A00138E45 /* ImageDiff */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */;
+			buildPhases = (
+				B5A7525B08AF4A4A00138E45 /* Headers */,
+				B5A7525D08AF4A4A00138E45 /* Sources */,
+				B5A7525F08AF4A4A00138E45 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				PRODUCT_NAME = DumpRenderTree;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wno-unused-parameter",
+				);
+			};
+			dependencies = (
+			);
+			name = ImageDiff;
+			productInstallPath = "$(HOME)/bin";
+			productName = DumpRenderTree;
+			productReference = B5A7526708AF4A4A00138E45 /* ImageDiff */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -139,7 +238,9 @@
 			productRefGroup = 9340995508540CAF007F3BC8 /* Products */;
 			projectDirPath = "";
 			targets = (
+				A84F608D08B1370600E9745F /* All */,
 				9340994A08540CAE007F3BC8 /* DumpRenderTree */,
+				B5A7525A08AF4A4A00138E45 /* ImageDiff */,
 			);
 		};
 /* End PBXProject section */
@@ -153,7 +254,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B5A7525D08AF4A4A00138E45 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5A752A008AF5CD400138E45 /* ImageDiff.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A84F608F08B1370E00E9745F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B5A7525A08AF4A4A00138E45 /* ImageDiff */;
+			targetProxy = A84F608E08B1370E00E9745F /* PBXContainerItemProxy */;
+		};
+		A84F609108B1370E00E9745F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9340994A08540CAE007F3BC8 /* DumpRenderTree */;
+			targetProxy = A84F609008B1370E00E9745F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		149C29C008902C6D008A9EFC /* Development */ = {
@@ -175,9 +297,12 @@
 		149C29C408902C6D008A9EFC /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
@@ -190,14 +315,73 @@
 		149C29C508902C6D008A9EFC /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
 					"-Wno-unused-parameter",
 				);
+			};
+			name = Deployment;
+		};
+		A84F609308B1371400E9745F /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = All;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Development;
+		};
+		A84F609408B1371400E9745F /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = All;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Deployment;
+		};
+		B5A7526508AF4A4A00138E45 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREFIX_HEADER = "";
+				PRODUCT_NAME = ImageDiff;
+			};
+			name = Development;
+		};
+		B5A7526608AF4A4A00138E45 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREFIX_HEADER = "";
+				PRODUCT_NAME = ImageDiff;
 			};
 			name = Deployment;
 		};
@@ -218,6 +402,23 @@
 			buildConfigurations = (
 				149C29C408902C6D008A9EFC /* Development */,
 				149C29C508902C6D008A9EFC /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
+		};
+		A84F609208B1371400E9745F /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A84F609308B1371400E9745F /* Development */,
+				A84F609408B1371400E9745F /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5A7526508AF4A4A00138E45 /* Development */,
+				B5A7526608AF4A4A00138E45 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Deployment;

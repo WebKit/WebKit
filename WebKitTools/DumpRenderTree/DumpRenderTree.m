@@ -40,6 +40,8 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 
+#define COMMON_DIGEST_FOR_OPENSSL
+#import <CommonCrypto/CommonDigest.h>
 #import <getopt.h>
 
 @interface WaitUntilDoneDelegate : NSObject
@@ -52,6 +54,8 @@
 @end
 
 static void dumpRenderTree(const char *filename);
+NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
+
 
 static volatile BOOL done;
 static WebFrame *frame;
@@ -62,6 +66,7 @@ static BOOL dumpTitleChanges;
 static int dumpPixels = NO;
 static int dumpTree = YES;
 static BOOL printSeparators;
+static NSString *currentTest = nil;
 
 int main(int argc, const char *argv[])
 {
@@ -84,8 +89,7 @@ int main(int argc, const char *argv[])
     struct option options[] = {
         {"width", required_argument, NULL, 'w'},
         {"height", required_argument, NULL, 'h'},
-        {"bitmap", no_argument, &dumpPixels, YES},
-        {"nobitmap", no_argument, &dumpPixels, NO},
+        {"pixel-tests", no_argument, &dumpPixels, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"notree", no_argument, &dumpTree, NO},
         {NULL, 0, NULL, 0}
@@ -132,21 +136,28 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
+    // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
+    // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
+    NSBitmapImageRep *imageRep = [webView bitmapImageRepForCachingDisplayInRect:[webView bounds]];
+    [webView cacheDisplayInRect:[webView bounds] toBitmapImageRep:imageRep];
+
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
         printSeparators = YES;
         while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
             char *newLineCharacter = strchr(filenameBuffer, '\n');
-            if (newLineCharacter) {
+            if (newLineCharacter)
                 *newLineCharacter = '\0';
-            }
+            
+            if (strlen(filenameBuffer) == 0)
+                continue;
+                
             dumpRenderTree(filenameBuffer);
             fflush(stdout);
         }
     } else {
-        int i;
         printSeparators = (optind < argc-1 || (dumpPixels && dumpTree));
-        for (i = optind; i != argc; ++i) {
+        for (int i = optind; i != argc; ++i) {
             dumpRenderTree(argv[i]);
         }
     }
@@ -171,32 +182,45 @@ static void dump(void)
     if (dumpTree) {
         if (dumpAsText) {
             DOMDocument *document = [frame DOMDocument];
-            if ([document isKindOfClass:[DOMHTMLDocument class]]) {
+            if ([document isKindOfClass:[DOMHTMLDocument class]])
                 result = [[[(DOMHTMLDocument *)document body] innerText] stringByAppendingString:@"\n"];
-            }
-        } else {
+        } else
             result = [frame renderTreeAsExternalRepresentation];
-        }
-        if (!result) {
+        
+        if (!result)
             puts("error");
-        } else {
+        else
             fputs([result UTF8String], stdout);
-        }
+        
         if (printSeparators)
             puts("#EOF");
     }
     
     if (dumpPixels) {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        WebView *view = [frame webView];
-        NSBitmapImageRep *imageRep = [view bitmapImageRepForCachingDisplayInRect:[view frame]];
-        NSData *imageData;
-        [view cacheDisplayInRect:[view frame] toBitmapImageRep:imageRep];
-        imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
-        if (printSeparators)
-            printf("%d\n", [imageData length]);
-        fwrite([imageData bytes], 1, [imageData length], stdout);
-        [pool release];
+        if (!dumpAsText) {
+            NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
+            NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
+            NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
+            
+            // grab a bitmap from the view
+            WebView *view = [frame webView];
+            NSBitmapImageRep *imageRep = [view bitmapImageRepForCachingDisplayInRect:[view frame]];
+            [view cacheDisplayInRect:[view frame] toBitmapImageRep:imageRep];
+            
+            // has the actual hash to compare to the expected image's hash
+            NSString *actualHash = md5HashStringForBitmap(imageRep);
+            printf("\nActualHash: %s\n", [actualHash UTF8String]);
+            printf("BaselineHash: %s\n", [baselineHash UTF8String]);
+            
+            // if the hashes don't match, send image back to stdout for diff comparision
+            if ([baselineHash isEqualToString:actualHash] == NO) {            
+                NSData *imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
+                printf("Content-length: %d\n", [imageData length]);
+                fwrite([imageData bytes], 1, [imageData length], stdout);
+            }
+        }
+
+        printf("#EOF\n");
     }
 
     done = YES;
@@ -422,11 +446,13 @@ static void dump(void)
 
 static void dumpRenderTree(const char *filename)
 {
+
     CFStringRef filenameString = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
     if (filenameString == NULL) {
         fprintf(stderr, "can't parse filename as UTF-8\n");
         return;
     }
+
     CFURLRef URL = CFURLCreateWithFileSystemPath(NULL, filenameString, kCFURLPOSIXPathStyle, FALSE);
     if (URL == NULL) {
         fprintf(stderr, "can't turn %s into a CFURL\n", filename);
@@ -438,6 +464,7 @@ static void dumpRenderTree(const char *filename)
     waitToDump = NO;
     dumpAsText = NO;
     dumpTitleChanges = NO;
+    currentTest = (NSString *) filenameString;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
@@ -449,3 +476,22 @@ static void dumpRenderTree(const char *filename)
     }
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
 }
+
+/* Hashes a bitmap and returns a text string for comparison and saving to a file */
+NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
+{
+    MD5_CTX md5Context;
+    unsigned char hash[16];
+
+    MD5_Init(&md5Context);
+    MD5_Update(&md5Context, [bitmap bitmapData], [bitmap bytesPerPlane]);
+    MD5_Final(hash, &md5Context);
+    
+    char hex[33] = "";
+    for (int i = 0; i < 16; i++) {
+       snprintf(hex, 33, "%s%02x", hex, hash[i]);
+    }
+
+    return [NSString stringWithUTF8String:hex];
+}
+

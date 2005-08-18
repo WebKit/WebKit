@@ -221,18 +221,30 @@
 		A810DEDA08A40F3100333D98 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 			};
 			name = Development;
 		};
 		A810DEDB08A40F3100333D98 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 			};
 			name = Deployment;
 		};
 		A810DEDC08A40F3100333D98 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 			};
 			name = Default;
 		};
