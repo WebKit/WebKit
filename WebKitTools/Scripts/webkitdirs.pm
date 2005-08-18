@@ -208,8 +208,7 @@ sub checkRequiredSystemConfig
         print "*************************************************************\n";
     }
     my $xcodeVersion = `xcodebuild -version`;
-    $xcodeVersion =~ s|DevToolsCore-(.+?); .*|$1|;
-    if ($xcodeVersion < 620) {
+    if ($xcodeVersion !~ /DevToolsCore-(\d+)/ || $1 < 620) {
         print "*************************************************************\n";
         print "Xcode Version 2.1 or later is required to build WebKit.\n";
         print "You have an earlier version of Xcode, thus the build will\n";

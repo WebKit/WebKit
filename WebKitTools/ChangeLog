@@ -1,3 +1,8 @@
+2005-08-18  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkitdirs.pm: Fix version checking to work on Xcode versions with
+        "." in them -- based on complaint by someone here at Apple.
+
 2005-08-18  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
