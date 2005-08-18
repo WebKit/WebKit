@@ -86,6 +86,7 @@ bool KWQArrayImpl::resize(size_t newSize)
 	    }
 	} else {
 	    newData = NULL;
+            main_thread_free(d->data);
 	}
 
 	d->data = newData;

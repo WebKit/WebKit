@@ -1,3 +1,17 @@
+2005-08-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Test cases added: (NONE)
+	
+	This is a fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4499
+	which describes a memory leak that happens on bugzilla after
+	searching for all open WebKit bugs.	
+
+        * kwq/KWQArrayImpl.mm: 
+        (KWQArrayImpl::resize): When resizing to 0, free the old data after setting it
+				to NULL.
+
 2005-08-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin, adele
