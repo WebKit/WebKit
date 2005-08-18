@@ -77,6 +77,7 @@ if ($testSVGs) {
     my $result = system "WebKitTools/Scripts/build-dumpkcanvastree", @ARGV;
     exit $result if $result;
     $toolname = "DumpKCanvasTree";
+    $pixelTests = 1; # Pixel tests are always on for SVG.
 }
 
 my $tool = "$productDir/$toolname";
