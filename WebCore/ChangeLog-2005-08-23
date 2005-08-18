@@ -1,3 +1,14 @@
+2005-08-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin, adele
+        
+        Fixes <rdar://problem/4219869> REGRESSION (OC): First frame never draws if it's delayed
+            A recent change uncovered a bug where on early returns from KHTMLView::layout(), layoutSchedulingEnabled 
+            was not reset to true, preventing later layouts from occuring. 
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+
 2005-08-17  Curt Arnold  <curt.arnold@mac.com>
 
         Reviewed and landed by Darin.

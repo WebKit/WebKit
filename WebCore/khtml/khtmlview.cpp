@@ -570,7 +570,6 @@ void KHTMLView::layout()
     if (d->layoutSuppressed)
         return;
     
-    d->layoutSchedulingEnabled=false;
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
     d->delayedLayout = false;
@@ -589,6 +588,8 @@ void KHTMLView::layout()
         return;
     }
 
+    d->layoutSchedulingEnabled = false;
+
     // Always ensure our style info is up-to-date.  This can happen in situations where
     // the layout beats any sort of style recalc update that needs to occur.
     if (document->hasChangedChild())
@@ -597,6 +598,7 @@ void KHTMLView::layout()
     khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas*>(document->renderer());
     if (!root) {
         // FIXME: Do we need to set _width or _height here?
+        d->layoutSchedulingEnabled = true;
         return;
     }
 
