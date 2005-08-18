@@ -88,8 +88,10 @@
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
+    WebDataSource *ds = [dataSource retain];
     [dataSource _receivedMainResourceError:error complete:YES];
     [super didFailWithError:error];
+    [ds release];
     [self release];
 }
 
@@ -106,9 +108,13 @@
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
+
     [self cancelContentPolicy];
+    [dataSource retain];
     [dataSource _receivedMainResourceError:error complete:YES];
+    [dataSource release];
     [super cancelWithError:error];
+
     [self release];
 }
 
