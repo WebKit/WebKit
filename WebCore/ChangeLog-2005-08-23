@@ -1,3 +1,18 @@
+2005-08-19  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Darin
+        Landed by David Harrison
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4379>
+          negative margins allowed where they should not
+
+        Test cases added:
+	layout-tests/fast/block/margin-collapse/104.html: Added.
+	layout-tests/fast/block/margin-collapse/104-expected.txt: Added.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHorizontalMargins):
+
 2005-08-19  Eric Seidel  <eseidel@apple.com>
         Change from Tobias Lidskog <tobiaslidskog@mac.com>
 
