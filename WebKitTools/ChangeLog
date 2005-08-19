@@ -1,3 +1,10 @@
+2005-08-19  Darin Adler  <darin@apple.com>
+
+        * Scripts/cvs-apply: Fix to not garble patches that are mix of cvs-style and
+        non-cvs-generated patches. Anders has been creating these, so it's bad that
+        the script can't handle them.
+        * Scripts/cvs-unapply: Ditto.
+
 2005-08-18  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitdirs.pm: Fix version checking to work on Xcode versions with

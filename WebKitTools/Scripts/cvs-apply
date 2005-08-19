@@ -62,7 +62,9 @@ while (<>) {
         # Fix paths on diff, ---, and +++ lines to match preceding Index: line.
         s/\S+$/$indexPath/ if /^diff/;
         s/^--- \S+/--- $indexPath/;
-        s/^\+\+\+ \S+/+++ $indexPath/;
+        if (s/^\+\+\+ \S+/+++ $indexPath/) {
+            $indexPath = "";
+        }
     }
     $patch .= $_;
     $patch .= "\n";
