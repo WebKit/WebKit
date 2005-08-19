@@ -204,9 +204,6 @@ namespace KJS {
      * @internal
      */
     struct Rep {
-      friend class UString;
-      friend bool operator==(const UString&, const UString&);
-      
       static Rep *create(UChar *d, int l);
       static Rep *createCopying(const UChar *d, int l);
       static Rep *create(Rep *base, int offset, int length);
@@ -516,6 +513,11 @@ namespace KJS {
   // Only allows Unicode characters (U-00000000 to U-0010FFFF).
   // Returns -1 if the sequence is not valid (including presence of extra bytes).
   int decodeUTF8Sequence(const char *);
+
+inline UString::UString()
+{
+    attach(&Rep::null);
+}
 
 } // namespace
 

@@ -294,12 +294,6 @@ void Identifier::rehash(int newTableSize)
     free(oldTable);
 }
 
-const Identifier &Identifier::null()
-{
-    static Identifier null;
-    return null;
-}
-
 // Global constants for property name strings.
 
 #if !AVOID_STATIC_CONSTRUCTORS
@@ -309,12 +303,16 @@ const Identifier &Identifier::null()
     // Define an Identifier-sized array of pointers to avoid static initialization.
     // Use an array of pointers instead of an array of char in case there is some alignment issue.
     #define DEFINE_GLOBAL(name, string) \
-        void * name ## PropertyName[(sizeof(Identifier) + sizeof(void *) - 1) / sizeof(void *)];
+        void * name[(sizeof(Identifier) + sizeof(void *) - 1) / sizeof(void *)];
 #endif
 
-#define CALL_DEFINE_GLOBAL(name) DEFINE_GLOBAL(name, #name)
-KJS_IDENTIFIER_EACH_GLOBAL(CALL_DEFINE_GLOBAL)
-DEFINE_GLOBAL(specialPrototype, "__proto__")
+const char * const nullCString = 0;
+
+DEFINE_GLOBAL(nullIdentifier, nullCString)
+DEFINE_GLOBAL(specialPrototypePropertyName, "__proto__")
+
+#define DEFINE_PROPERTY_NAME_GLOBAL(name) DEFINE_GLOBAL(name ## PropertyName, #name)
+KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(DEFINE_PROPERTY_NAME_GLOBAL)
 
 void Identifier::init()
 {
@@ -322,10 +320,13 @@ void Identifier::init()
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
-        #define PLACEMENT_NEW_GLOBAL(name, string) new (&name ## PropertyName) Identifier(string);
-        #define CALL_PLACEMENT_NEW_GLOBAL(name) PLACEMENT_NEW_GLOBAL(name, #name)
-        KJS_IDENTIFIER_EACH_GLOBAL(CALL_PLACEMENT_NEW_GLOBAL)
-        PLACEMENT_NEW_GLOBAL(specialPrototype, "__proto__")
+
+        new (&nullIdentifier) Identifier(nullCString);
+        new (&specialPrototypePropertyName) Identifier("__proto__");
+
+        #define PLACEMENT_NEW_PROPERTY_NAME_GLOBAL(name) new(&name ## PropertyName) Identifier(#name);
+        KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(PLACEMENT_NEW_PROPERTY_NAME_GLOBAL)
+
         initialized = true;
     }
 #endif

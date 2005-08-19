@@ -93,6 +93,13 @@ namespace KJS {
         static int _keyCount;
     };
     
+#if !KJS_IDENTIFIER_HIDE_GLOBALS
+    extern const Identifier nullIdentifier;
+
+    inline const Identifier &Identifier::null()
+        { return nullIdentifier; }
+#endif
+
     inline bool operator==(const Identifier &a, const Identifier &b)
         { return Identifier::equal(a, b); }
 
@@ -104,7 +111,7 @@ namespace KJS {
 
     // List of property names, passed to a macro so we can do set them up various
     // ways without repeating the list.
-    #define KJS_IDENTIFIER_EACH_GLOBAL(macro) \
+    #define KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(macro) \
         macro(arguments) \
         macro(callee) \
         macro(constructor) \
@@ -121,10 +128,11 @@ namespace KJS {
 
     // Define external global variables for all property names above (and one more).
 #if !KJS_IDENTIFIER_HIDE_GLOBALS
-    #define KJS_IDENTIFIER_DECLARE_GLOBAL(name) extern const Identifier name ## PropertyName;
-    KJS_IDENTIFIER_EACH_GLOBAL(KJS_IDENTIFIER_DECLARE_GLOBAL)
-    KJS_IDENTIFIER_DECLARE_GLOBAL(specialPrototype)
-    #undef KJS_IDENTIFIER_DECLARE_GLOBAL
+    extern const Identifier specialPrototypePropertyName;
+
+    #define KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) extern const Identifier name ## PropertyName;
+    KJS_IDENTIFIER_EACH_PROPERTY_NAME_GLOBAL(KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
+    #undef KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
 #endif
 
 }

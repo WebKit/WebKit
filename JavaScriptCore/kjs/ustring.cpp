@@ -389,11 +389,6 @@ void UString::expandPreCapacity(int requiredPreCap)
 }
 
 
-UString::UString()
-{
-  attach(&Rep::null);
-}
-
 UString::UString(char c)
 {
     UChar *d = static_cast<UChar *>(kjs_fast_malloc(sizeof(UChar)));
@@ -1126,7 +1121,7 @@ UString UString::substr(int pos, int len) const
   if (pos == 0 && len == s)
     return *this;
 
-  UString::Rep *newRep = Rep::create(rep, pos, len);
+  Rep *newRep = Rep::create(rep, pos, len);
   UString result(newRep);
   newRep->deref();
 

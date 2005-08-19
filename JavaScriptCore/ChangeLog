@@ -1,3 +1,18 @@
+2005-08-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4435
+          speed up JavaScript by tweaking the Identifier class
+
+        * kjs/identifier.h: Add a new global nullIdentifier and make Identifier::null a function
+        that returns it.
+        * kjs/identifier.cpp: (KJS::Identifier::init): Initialize a global for the null identifier
+        as well as all the other globals for special identifiers.
+
+        * kjs/ustring.h: (KJS::UString::UString): Make this empty constructor inline.
+        * kjs/ustring.cpp: Remove the old non-inline version.
+
 2005-08-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.
