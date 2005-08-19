@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 # Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005 Ben La Monica <ben.lamonica@gmail.com> All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -44,10 +45,17 @@
 
 use strict;
 use Cwd;
+use Getopt::Long;
+use Time::gmtime;
+use File::stat;
+use POSIX qw(:errno_h);
+use Config;
 
 my $startDir = getcwd();
-
+my $includeUnknowns = "";
 my %paths;
+
+GetOptions("include-unknowns", \$includeUnknowns);
 
 # Create list of paths to diff.
 if (!@ARGV) {
@@ -128,8 +136,15 @@ sub diff
             s/^--- \S+/--- $indexPath/;
             s/^\+\+\+ \S+/+++ $indexPath/;
         }
-        if (/^\?/) {
+        if (/^\? (.+)$/) {
             $errors .= $_;
+            if ($includeUnknowns) {
+                if (-d $1) {
+                    addNewDirectory($indexPath,$1);
+                } else {
+                    addNewFile($indexPath,$1);
+                }
+            }
         } else {
             print;
         }
@@ -137,6 +152,70 @@ sub diff
     close DIFF;
     chdir $startDir or die;
     print STDERR $errors;
+}
+
+sub addNewDirectory
+{
+    my $indexPath = "";
+    my $dir = "";
+    my @files;
+
+    $indexPath = shift;
+    $dir = shift;
+
+    opendir NEWDIR, $dir;
+    @files = readdir(NEWDIR);
+    closedir NEWDIR;
+
+    if (!defined $indexPath || $indexPath eq "") {
+        $indexPath = $dir;
+    } else {
+        $indexPath .= "/$dir";
+    }
+
+    for my $file (@files) {
+        next if $file eq "." || $file eq "..";
+        if (-d "$dir/$file") {
+            addNewDirectory($indexPath, "$dir/$file");
+        } else {
+            addNewFile("$indexPath", "$dir/$file");
+        }
+    }
+}
+
+sub addNewFile
+{
+    my $indexPath = "";
+    my $newFile = "";
+    my @fileContents;
+    my $fileDate = "";
+    my @months = ("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+
+    $indexPath = shift;
+    $newFile = shift;
+
+    $fileDate = gmtime(stat($newFile)->mtime);
+
+    @fileContents = `diff -Nup /dev/null $newFile`;
+
+    if ($#fileContents == 0) {
+        return;
+    }
+
+    $indexPath =~ s|[^/]+$|| if defined $indexPath;
+    $indexPath .= $newFile;
+
+    #get rid of the first 2 lines
+    shift @fileContents;
+    shift @fileContents;
+
+    print "Index: $indexPath\n";
+    print "===================================================================\n";
+    print "diff -Npu $indexPath\n";
+    print "--- $indexPath\t1 Jan 1970 00:00:00 -0000\n";
+    print "+++ $indexPath\t" . $fileDate->mday . " " . $months[$fileDate->mon] . " " . ($fileDate->year + 1900) . " ";
+    printf "%02d:%02d:%02d -0000\n", ($fileDate->hour, $fileDate->min,$fileDate->sec);
+    print @fileContents;
 }
 
 # Generate the diff for each passed file or directory.

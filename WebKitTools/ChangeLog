@@ -1,3 +1,10 @@
+2005-08-19  Ben La Monica  <ben.lamonica@gmail.com>
+
+        Reviewed by Darin.
+
+        * Scripts/cvs-create-patch: Add an --include-unknowns option that will cause
+        new files to be included in the patch even without "cvs add".
+
 2005-08-19  Darin Adler  <darin@apple.com>
 
         * Scripts/cvs-apply: Fix to not garble patches that are mix of cvs-style and
