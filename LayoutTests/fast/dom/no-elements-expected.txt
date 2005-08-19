@@ -1,0 +1,3 @@
+This tests that the elements noframes, nolayer, noscript and noembed are created as elements and put in the DOM tree. The elements should not contain any children. If the test is successful, the text "Success" will be seen below.
+Success
+

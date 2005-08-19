@@ -1,10 +1,47 @@
+2005-08-19  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+        Landed by David Harrison.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4475
+          <noscript>, <noframes>, <nolayer> and <noembed> elements should be in the DOM
+
+        Test cases added:
+        * layout-tests/fast/dom/no-elements-expected.txt: Added.
+        * layout-tests/fast/dom/no-elements.html: Added.
+
+        * khtml/html/html_elementimpl.cpp:
+        (blockTagList):
+        Add noembed and nolayer to the list of block tags.
+        
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::noembedCreateErrorCheck):
+        (HTMLParser::noframesCreateErrorCheck):
+        (HTMLParser::noscriptCreateErrorCheck):
+        (HTMLParser::nolayerCreateErrorCheck):
+        Make sure these elements are created, but that they won't have any children.
+        (Except for <noscript> when JavaScript is turned off).
+        
+        * layout-tests/dom/html/level2/html/HTMLElement113-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement114-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement142-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement143-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement26-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement27-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement55-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement56-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement84-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLElement85-expected.txt:
+        These tests pass now.
+
 2005-08-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
         Landed by David Harrison.
         
-        Test cases added: Manual test because Darin saw no way to exercise the hit testing code from JavaScript.
+        Test cases added:
 	manual-tests/onclick_in_noncontent.html: Added.
+        (a manual test because Darin saw no way to exercise the hit testing code from JavaScript)
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3662
           onClick event for TD element doesn't fire unless its contents are clicked

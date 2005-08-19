@@ -742,25 +742,26 @@ bool HTMLParser::tableSectionCreateErrorCheck(Token* t, NodeImpl*& result)
 bool HTMLParser::noembedCreateErrorCheck(Token* t, NodeImpl*& result)
 {
     setSkipMode(noembedTag);
-    return false;
+    return true;
 }
 
 bool HTMLParser::noframesCreateErrorCheck(Token* t, NodeImpl*& result)
 {
     setSkipMode(noframesTag);
-    return false;
+    return true;
 }
 
 bool HTMLParser::noscriptCreateErrorCheck(Token* t, NodeImpl*& result)
 {
     if (HTMLWidget && HTMLWidget->part()->jScriptEnabled())
         setSkipMode(noscriptTag);
-    return false;
+    return true;
 }
 
 bool HTMLParser::nolayerCreateErrorCheck(Token* t, NodeImpl*& result)
 {
-    return false;
+    setSkipMode(nolayerTag);
+    return true;
 }
 
 NodeImpl *HTMLParser::getNode(Token* t)

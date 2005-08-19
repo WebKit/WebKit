@@ -884,6 +884,8 @@ HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList() {
         tagList.insert(centerTag.localName().implementation());
         tagList.insert(noscriptTag.localName().implementation());
         tagList.insert(noframesTag.localName().implementation());
+        tagList.insert(noembedTag.localName().implementation());
+        tagList.insert(nolayerTag.localName().implementation());
         tagList.insert(blockquoteTag.localName().implementation());
         tagList.insert(formTag.localName().implementation());
         tagList.insert(isindexTag.localName().implementation());
