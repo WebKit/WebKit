@@ -1,3 +1,9 @@
+2005-08-18  Adele Peterson  <adele@apple.com>
+
+        Checked "Inline Functions Hidden" box
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2005-08-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
