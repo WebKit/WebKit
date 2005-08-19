@@ -1,3 +1,19 @@
+2005-08-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+        Revised and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4474
+          REGRESSION: Crash when using in-place operator on uninitialized array element
+
+        * kjs/nodes.cpp:
+        (AssignResolveNode::evaluate): Remove unneeded "isSet" assertion.
+        (AssignBracketNode::evaluate): Replace code that tested "isSet" with code that
+        tests the return value of getPropertySlot.
+
+        * kjs/property_slot.h: Removed unneeded "isSet" function. Property slots are
+        either uninitialized or set. There's no "initialized and not set" state.
+
 2005-08-18  Adele Peterson  <adele@apple.com>
 
         Checked "Inline Functions Hidden" box

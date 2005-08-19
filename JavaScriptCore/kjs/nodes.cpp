@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
@@ -1675,7 +1674,6 @@ ValueImp *AssignResolveNode::evaluate(ExecState *exec)
   if (m_oper == OpEqual) {
     v = m_right->evaluate(exec);
   } else {
-    assert(slot.isSet());
     ValueImp *v1 = slot.getValue(exec, m_ident);
     KJS_CHECKEXCEPTIONVALUE
     ValueImp *v2 = m_right->evaluate(exec);
@@ -1773,8 +1771,7 @@ ValueImp *AssignBracketNode::evaluate(ExecState *exec)
       v = m_right->evaluate(exec);
     } else {
       PropertySlot slot;
-      base->getPropertySlot(exec, propertyIndex, slot);    
-      ValueImp *v1 = slot.isSet() ? slot.getValue(exec, propertyIndex) : Undefined();
+      ValueImp *v1 = base->getPropertySlot(exec, propertyIndex, slot) ? slot.getValue(exec, propertyIndex) : Undefined();
       KJS_CHECKEXCEPTIONVALUE
       ValueImp *v2 = m_right->evaluate(exec);
       v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
@@ -1793,8 +1790,7 @@ ValueImp *AssignBracketNode::evaluate(ExecState *exec)
     v = m_right->evaluate(exec);
   } else {
     PropertySlot slot;
-    base->getPropertySlot(exec, propertyName, slot);    
-    ValueImp *v1 = slot.isSet() ? slot.getValue(exec, propertyName) : Undefined();
+    ValueImp *v1 = base->getPropertySlot(exec, propertyName, slot) ? slot.getValue(exec, propertyName) : Undefined();
     KJS_CHECKEXCEPTIONVALUE
     ValueImp *v2 = m_right->evaluate(exec);
     v = valueForReadModifyAssignment(exec, v1, v2, m_oper);
