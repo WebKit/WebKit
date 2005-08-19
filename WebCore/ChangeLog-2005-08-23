@@ -1,5 +1,11 @@
 2005-08-19  Vicki Murley  <vicki@apple.com>
 
+	- remove this test, I disabled it in my last checkin
+
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.html: Removed.
+
+2005-08-19  Vicki Murley  <vicki@apple.com>
+
         Reviewed by Geoff.
  
         - fixed <rdar://problem/4223107> frame tests in layout-tests/dom/html/level2/html 
