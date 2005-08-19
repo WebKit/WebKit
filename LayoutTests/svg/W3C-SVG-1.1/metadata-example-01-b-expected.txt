@@ -54,7 +54,7 @@ KCanvasContainer at (0,0) size 479x359
         KCanvasItem {path} at (201,64) size 20x10 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M221.00,210.00C295.00,210.00,497.00,210.00,595.00,210.00,0.00,69.60,0.00,-2.00,-2.00,-2.00"]
         KCanvasItem {path} at (201,67) size 16x10 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M216.00,220.00C224.00,224.00,232.00,227.00,240.00,229.00,0.00,69.60,0.00,-2.00,-2.00,-2.00C334.00,252.00,444.00,261.00,506.00,264.00,0.00,69.60,0.00,-2.00,-2.00,-2.00"]
         KCanvasItem {path} at (200,65) size 23x16 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M201.00,227.00C212.00,253.00,215.00,265.00,240.00,280.00,0.00,69.60,0.00,-2.00,-2.00,-2.00C352.00,344.00,508.00,337.00,592.00,325.00,0.00,69.60,0.00,-2.00,-2.00,-2.00"]
-      KCanvasContainer at (223,70) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+      KCanvasContainer at (209,63) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
         KCanvasItem {polygon} at (209,63) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M433.00,107.00L425.00,111.00L425.00,103.00"]
         KCanvasItem {polygon} at (210,66) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M428.00,160.00L421.00,165.00L420.00,157.00"]
         KCanvasItem {polygon} at (220,64) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M600.00,210.00L592.00,214.00L592.00,206.00"]

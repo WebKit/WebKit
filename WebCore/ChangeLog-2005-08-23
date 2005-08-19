@@ -1,4 +1,19 @@
 2005-08-19  Eric Seidel  <eseidel@apple.com>
+        Change from Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::bbox): avoid unnecessary computation.
+        (KCanvasContainer::collisions):
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::draw):
+        (KCanvasItemQuartz::hitsPath): use untranslated point
+        * svg-tests/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        Performance improvements to bbox and hit-testing fix.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4459
+
+2005-08-19  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
 

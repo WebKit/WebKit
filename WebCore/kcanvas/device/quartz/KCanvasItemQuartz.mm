@@ -93,7 +93,8 @@ void KCanvasItemQuartz::draw(const QRect &rect) const
 		context = quartzContext->cgContext();
 	}
 	
-	applyClipPathsForStyle(context, canvas()->registry(), style(), bboxPath(true)); // FIXME: need bbox when clipping.
+    if (!style()->clipPaths().isEmpty()) 
+        applyClipPathsForStyle(context, canvas()->registry(), style(), bboxPath(true)); // FIXME: need bbox when clipping.
 	
 	CGContextBeginPath(context);
 	
@@ -214,7 +215,7 @@ bool KCanvasItemQuartz::hitsPath(const QPoint &hitPoint, bool fill) const
 //				NSStringFromPoint(NSPoint(hitPoint)), CFStringFromCGPath(cgPath),
 //				NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(sharedContext)));
 	} else if (!fill && style()->strokePainter()->paintServer()) {
-		hitSuccess = CGContextPathContainsPoint(sharedContext, CGPoint(hitPoint), kCGPathStroke);
+		hitSuccess = CGContextPathContainsPoint(sharedContext, localHitPoint, kCGPathStroke);
 	}
 	
 	CGContextRestoreGState(sharedContext);

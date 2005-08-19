@@ -209,18 +209,21 @@ void KCanvasContainer::invalidate() const
 
 QRect KCanvasContainer::bbox(bool includeStroke) const
 {
-	QRect rect;
-
-	KCanvasItem *current = d->first;
-	for(; current != 0; current = current->next())
-	{
-		if(!rect.isValid())
-			rect = current->bbox(includeStroke);
-		else
-			rect = rect.unite(current->bbox(includeStroke));
-	}
-
-	return rect;
+    KCanvasItem *current = d->first;
+    
+    QRect rect;
+    
+    if (current) {
+        rect = current->bbox(includeStroke);
+        current = current->next();
+        
+        for(; current != 0; current = current->next())
+        {
+            rect = rect.unite(current->bbox(includeStroke));
+        }
+    }
+    
+    return rect;
 }
 
 bool KCanvasContainer::raiseItem(KCanvasItem *item)
@@ -279,24 +282,25 @@ KCanvasItem *KCanvasContainer::last() const
 
 void KCanvasContainer::collisions(const QPoint &p, KCanvasItemList &hits) const
 {
-	if(p.x() < 0 || p.y() < 0)
-		return;
-
-	KCanvasItem *current = d->last;
-	for(; current != 0; current = current->prev())
-	{
-		if(current->isContainer())
-		{
-			static_cast<const KCanvasContainer *>(current)->collisions(p, hits);
-			return;
-		}
-		
-		QRect rect(current->bbox());
-
-		// TODO: is this logic correct?
-		if(((current->fillContains(p) && rect.contains(p))) || current->strokeContains(p))
-			hits.append(current);
-	}
+    if(p.x() < 0 || p.y() < 0)
+        return;
+    
+    KCanvasItem *current = d->last;
+    for(; current != 0; current = current->prev())
+    {
+        if(current->isContainer())
+            static_cast<const KCanvasContainer *>(current)->collisions(p, hits);
+        else
+        {
+            QRect fillRect(current->bbox(false));
+            QRect strokeRect(current->bbox(true));
+            
+            // Test bounding boxes firsts for speed
+            if((fillRect.contains(p) && current->fillContains(p)) ||
+               (strokeRect.contains(p) && current->strokeContains(p)))
+                hits.append(current);
+        }
+    }
 }
 
 // vim:ts=4:noet
