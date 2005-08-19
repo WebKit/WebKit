@@ -1,3 +1,40 @@
+2005-08-19  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Geoff.
+ 
+        - fixed <rdar://problem/4223107> frame tests in layout-tests/dom/html/level2/html 
+        have empty expected results
+
+        * layout-tests/dom/html/level2/html/selfhtml.js: wait until done before
+        dumping the render tree
+
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.html-disabled: Disable this
+        test for now - its causing all tests after it to dump the render tree, even though
+        dumpAsText is enabled
+        
+        Update expected results for these tests:
+
+        * layout-tests/dom/html/level2/html/HTMLFrameElement01-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement02-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement03-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement04-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement05-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement06-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement07-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameElement08-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameSetElement01-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLFrameSetElement02-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement01-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement02-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement03-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement04-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement05-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement06-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement07-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement08-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement09-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement10-expected.txt:
+
 2005-08-19  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

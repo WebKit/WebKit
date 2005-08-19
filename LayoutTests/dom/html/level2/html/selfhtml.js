@@ -11,10 +11,12 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 
 //
-//   Webkit modification:  28-July-2005
+//   Webkit modification:  18-August-2005
 //
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 //
 //   End modification
 //
@@ -700,4 +702,13 @@ function startTest() {
             setResult("error", ex);
         }
     }
+//
+//   Webkit modification:  18-August-2005
+//
+if (window.layoutTestController) {
+    layoutTestController.notifyDone();
+}
+//
+//   End modification
+//      
 }
