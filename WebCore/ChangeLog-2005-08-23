@@ -1,3 +1,20 @@
+2005-08-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+        Landed by David Harrison.
+        
+        Test cases added: Manual test because Darin saw no way to exercise the hit testing code from JavaScript.
+	manual-tests/onclick_in_noncontent.html: Added.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3662
+          onClick event for TD element doesn't fire unless its contents are clicked
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::nodeAtPoint):
+        Take the border extra into account when hit testing just as we do when
+        painting the background of a table cell. OK for other renderers because
+        they have a border extra of 0.
+
 2005-08-19  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

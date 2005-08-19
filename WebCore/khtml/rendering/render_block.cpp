@@ -2530,7 +2530,8 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 
     // Now hit test our background.
     if (!inlineFlow && (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground)) {
-        QRect boundsRect(tx, ty, m_width, m_height);
+        int topExtra = borderTopExtra();
+        QRect boundsRect(tx, ty - topExtra, m_width, m_height + topExtra + borderBottomExtra());
         if (isRoot() || (style()->visibility() == VISIBLE && boundsRect.contains(_x, _y))) {
             setInnerNode(info);
             return true;
