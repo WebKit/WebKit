@@ -1,3 +1,20 @@
+2005-08-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+        Landed by David Harrison
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=4523>
+          REGRESSION assertion failure in Window::getValueProperty accessing window.konqueror
+
+        Test cases added: N/A for this code removal
+
+        Remove all traces of the konqueror property
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+
 2005-08-19  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Darin

@@ -139,7 +139,7 @@ namespace KJS {
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,
            NodeFilter, DOMException, CSSRule, Frames, _History, Event, InnerHeight,
-           InnerWidth, Length, _Location, Locationbar, Name, _Navigator, _Konqueror, ClientInformation,
+           InnerWidth, Length, _Location, Locationbar, Name, _Navigator, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
            ScreenTop, ScreenLeft,
@@ -275,20 +275,6 @@ namespace KJS {
     QGuardedPtr<KHTMLPart> m_part;
     Type m_type;
   };
-
-#ifdef Q_WS_QWS
-  class Konqueror : public ObjectImp {
-    friend class KonquerorFunc;
-  public:
-    Konqueror(KHTMLPart *p) : part(p) { }
-    virtual bool getOwnPropertySlot(ExecState *exec, const Identifier&, PropertySlot& slot) const;
-    virtual UString toString(ExecState *exec) const;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    KHTMLPart *part;
-  };
-#endif
 
 } // namespace
 

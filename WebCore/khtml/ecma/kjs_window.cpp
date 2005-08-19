@@ -132,19 +132,6 @@ namespace KJS {
     QGuardedPtr<KHTMLPart> part;
   };
 
-#ifdef Q_WS_QWS
-  class KonquerorFunc : public DOMFunction {
-  public:
-    KonquerorFunc(const Konqueror* k, const char* name)
-      : DOMFunction(), konqueror(k), m_name(name) { }
-    virtual ValueImp *callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args);
-
-  private:
-    const Konqueror* konqueror;
-    QCString m_name;
-  };
-#endif
-
 }
 
 #include "kjs_window.lut.h"
@@ -245,7 +232,6 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   name		Window::Name		DontDelete
   navigator	Window::_Navigator	DontDelete|ReadOnly
   clientInformation	Window::ClientInformation	DontDelete|ReadOnly
-  konqueror	Window::_Konqueror	DontDelete|ReadOnly
   menubar	Window::Menubar		DontDelete|ReadOnly
   offscreenBuffering	Window::OffscreenBuffering	DontDelete|ReadOnly
   opener	Window::Opener		DontDelete|ReadOnly
@@ -757,10 +743,6 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
       const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
       return n;
     }
-#ifdef Q_WS_QWS
-    case _Konqueror:
-      return new Konqueror(m_part);
-#endif
     case Locationbar:
       return locationbar(exec);
     case Menubar:
@@ -2813,71 +2795,6 @@ ValueImp *HistoryFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const
   return Undefined();
 }
 
-/////////////////////////////////////////////////////////////////////////////
-
-#ifdef Q_WS_QWS
-
-const ClassInfo Konqueror::info = { "Konqueror", 0, 0, 0 };
-
-bool Konqueror::hasOwnProperty(ExecState *exec, const Identifier &p) const
-{
-  if ( p.qstring().startsWith( "goHistory" ) ) return false;
-
-  return true;
-}
-
-ValueImp *Konqueror::get(ExecState *exec, const Identifier &p) const
-{
-  if ( p == "goHistory" || part->url().protocol() != "http" || part->url().host() != "localhost" )
-    return Undefined();
-
-  KParts::BrowserExtension *ext = part->browserExtension();
-  if ( ext ) {
-    KParts::BrowserInterface *iface = ext->browserInterface();
-    if ( iface ) {
-      QVariant prop = iface->property( p.qstring().latin1() );
-
-      if ( prop.isValid() ) {
-        switch( prop.type() ) {
-        case QVariant::Int:
-          return Number( prop.toInt() );
-        case QVariant::String:
-          return String( prop->toString() );
-        default:
-          break;
-        }
-      }
-    }
-  }
-
-  return /*Function*/( new KonquerorFunc(this, p.qstring().latin1() ) );
-}
-
-ValueImp *KonquerorFunc::callAsFunction(ExecState *exec, ObjectImp *, const List &args)
-{
-  KParts::BrowserExtension *ext = konqueror->part->browserExtension();
-
-  if(!ext)
-    return Undefined();
-
-  KParts::BrowserInterface *iface = ext->browserInterface();
-
-  if ( !iface )
-    return Undefined();
-
-  QCString n = m_name.data();
-  n += "()";
-  iface->callMethod( n.data(), QVariant() );
-
-  return Undefined();
-}
-
-UString Konqueror::toString(ExecState *) const
-{
-  return UString("[object Konqueror]");
-}
-
-#endif
 /////////////////////////////////////////////////////////////////////////////
 
 } // namespace KJS
