@@ -121,7 +121,7 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
     if (!(inValue > stops[0].offset)) {
         memcpy(outColor, stops[0].colorArray, 4 * sizeof(float));
     } else if (!(inValue < stops[stopsCount-1].offset)) {
-        outColor = stops[stopsCount-1].colorArray;
+        memcpy(outColor, stops[stopsCount-1].colorArray, 4 * sizeof(float));
     } else {
         int nextStopIndex = 0;
         while ( (nextStopIndex < stopsCount) && (stops[nextStopIndex].offset < inValue) ) {

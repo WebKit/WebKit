@@ -1,3 +1,12 @@
+2005-08-19  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (cgGradientCallback):
+        Fixes forgotten memcopy.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4529
+
 2005-08-19  Vicki Murley  <vicki@apple.com>
 
 	- remove this test, I disabled it in my last checkin
