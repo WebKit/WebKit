@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<script type="text/javascript">
+<![CDATA[
+function debug(str) {
+    li = document.createElementNS('http://www.w3.org/1999/xhtml', 'li');
+    li.appendChild(document.createTextNode(str));
+    document.getElementById('console').appendChild(li);
+}
+
+function runTests() {
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    e = document.getElementById('test');
+    e.innerHTML = '<b>Success!</b>';
+    
+    if (e.firstChild.namespaceURI == 'http://www.w3.org/1999/xhtml') 
+        debug('namespace is correct')
+    else
+        debug('namespace is incorrect');
+}	
+]]> 
+</script>
+<body onload="runTests();">
+<p>This tests that setting innerHTML on an xhtml document works. If this test is successful, the text below should say "Success", and "namespace is correct".</p>
+<p id="test"/>
+<ul id="console"/>
+</body>
+</html>

@@ -22,6 +22,7 @@
 
 #include "xml_tokenizer.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom_xmlimpl.h"
 #include "html/html_headimpl.h"
@@ -39,6 +40,9 @@
 
 #include <qptrstack.h>
 
+using DOM::AttributeImpl;
+using DOM::NamedAttrMapImpl;
+using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentPtr;
 using DOM::DOMString;
@@ -121,6 +125,8 @@ class XMLNamespaceStack
 public:
     ~XMLNamespaceStack();
     XMLNamespace *pushNamespaces(XMLAttributes& attributes);
+    XMLNamespace *pushNamespaces(ElementImpl& element);
+
     void popNamespaces();
 private:
     QPtrStack<XMLNamespace> m_namespaceStack;
@@ -130,6 +136,7 @@ class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
     XMLTokenizer(DocumentPtr *, KHTMLView * = 0);
+    XMLTokenizer(DocumentFragmentImpl *);
     ~XMLTokenizer();
 
     enum ErrorType { warning, nonFatal, fatal };
@@ -155,6 +162,8 @@ public:
     void processingInstruction(const xmlChar *target, const xmlChar *data);
     void cdataBlock(const xmlChar *s, int len);
     void comment(const xmlChar *s);
+
+    XMLNamespace *pushNamespaces(ElementImpl& element) { return m_namespaceStack.pushNamespaces(element); }
 
 private:
     void end();
@@ -257,6 +266,20 @@ XMLTokenizer::XMLTokenizer(DocumentPtr *_doc, KHTMLView *_view)
     if (m_doc)
         m_doc->ref();
     
+    //FIXME: XMLTokenizer should use this in a fashion similiar to how
+    //HTMLTokenizer uses loadStopped, in the future.
+    loadStopped = false;
+}
+
+XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment)
+    : m_doc(fragment->docPtr()), m_view(0),
+      m_context(0), m_currentNode(fragment),
+      m_sawError(false), m_parserStopped(false), m_errorCount(0),
+      m_lastErrorLine(0), m_scriptsIt(0), m_cachedScript(0)
+{
+    if (m_doc)
+        m_doc->ref();
+          
     //FIXME: XMLTokenizer should use this in a fashion similiar to how
     //HTMLTokenizer uses loadStopped, in the future.
     loadStopped = false;
@@ -755,6 +778,40 @@ void XMLTokenizer::stopParsing()
     m_parserStopped = true;
 }
 
+bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fragment, ElementImpl *parent)
+{
+    XMLTokenizer tokenizer(fragment);
+    
+    xmlSAXHandler sax;
+    memset(&sax, 0, sizeof(sax));
+    sax.characters = charactersHandler;
+    sax.endElement = endElementHandler;
+    sax.processingInstruction = processingInstructionHandler;
+    sax.startElement = startElementHandler;
+    sax.cdataBlock = cdataBlockHandler;
+    sax.comment = commentHandler;
+    sax.warning = warningHandler;
+    
+    // Add namespaces based on the parent node
+    QPtrStack<DOM::ElementImpl> elemStack;
+    while (parent) {
+        elemStack.push(parent);
+        
+        NodeImpl *n = parent->parentNode();
+        if (!n || !n->isElementNode())
+            break;
+        parent = static_cast<ElementImpl *>(n);
+    }
+    while (!elemStack.isEmpty()) {
+        tokenizer.pushNamespaces(*elemStack.pop());
+    }
+    
+    int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, 
+                                             (const xmlChar*)(const char*)(string.string().utf8()), 0);
+
+    return result == 0;
+}
+
 #if 0
 
 bool XMLHandler::attributeDecl(const QString &/*eName*/, const QString &/*aName*/, const QString &/*type*/,
@@ -807,6 +864,32 @@ void XMLNamespaceStack::popNamespaces()
     XMLNamespace *ns = m_namespaceStack.pop();
     if (ns)
         ns->deref();
+}
+
+XMLNamespace *XMLNamespaceStack::pushNamespaces(ElementImpl& element)
+{
+    XMLNamespace *ns = m_namespaceStack.current();
+    NamedAttrMapImpl *attrs = element.attributes();
+    
+    if (!ns)
+        ns = new XMLNamespace;
+
+    if (!attrs)
+        return ns;
+    
+    // Search for any xmlns attributes
+    for (unsigned i = 0; i < attrs->length(); i++) {
+        AttributeImpl *attr = attrs->attributeItem(i);
+        
+        if (attr->localName() == "xmlns")
+            ns = new XMLNamespace(QString::null, attr->value().string(), ns);
+        else if (attr->prefix() == "xmlns")
+            ns = new XMLNamespace(attr->localName().string(), attr->value().string(), ns);
+    }
+    
+    m_namespaceStack.push(ns);
+    ns->ref();
+    return ns;
 }
 
 XMLNamespace *XMLNamespaceStack::pushNamespaces(XMLAttributes& attrs)

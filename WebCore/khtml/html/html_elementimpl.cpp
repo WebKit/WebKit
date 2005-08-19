@@ -277,11 +277,18 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
         hasLocalName(headTag) || hasLocalName(styleTag) || hasLocalName(titleTag))
         return 0;
 
-    if (!getDocument()->isHTMLDocument())
-        return 0;
-
     DocumentFragmentImpl *fragment = new DocumentFragmentImpl(docPtr());
     fragment->ref();
+    
+    if (!getDocument()->isHTMLDocument()) {
+        bool ret = parseXMLDocumentFragment(html, fragment, this);
+        
+        if (!ret) {
+            // FIXME: We should propagate a syntax error exception out here.
+            return 0;
+        }
+    }
+    else
     {
         HTMLTokenizer tok(docPtr(), fragment);
         tok.setForceSynchronous(true);            // disable asynchronous parsing

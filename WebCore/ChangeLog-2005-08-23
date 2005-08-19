@@ -1,3 +1,36 @@
+2005-08-19  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+        Landed by Darin.
+
+	- Fixes <http://bugzilla.opendarwin.org/show_bug.cgi?id=3301>
+	innerHTML does not work for xhtml documents.
+	
+        Test cases added:
+	layout-tests/fast/dom/set-innerHTML.xhtml: Added.
+	layout-tests/fast/dom/set-innerHTML-expected.txt: Added.
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment):
+	Call parseXMLDocumentFragment if we're an xml document.
+	
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::pushNamespaces):
+	New function that takes an element.
+	
+        (khtml::XMLTokenizer::XMLTokenizer):
+	New constructor that takes a DocumentFragmentImpl and fills it.
+	
+        (khtml::parseXMLDocumentFragment):
+	New function that parses a document fragment.
+	
+        (khtml::XMLNamespaceStack::pushNamespaces):
+	New function that takes an element and pushes namespaces based on its 
+	xmlns attributes.
+	
+        * khtml/xml/xml_tokenizer.h:
+	Add parseXMLDocumentFragment declaration.
+	
 2005-08-18  Eric Seidel  <eseidel@apple.com>
 
         No review needed, affects only SVGSupport.
