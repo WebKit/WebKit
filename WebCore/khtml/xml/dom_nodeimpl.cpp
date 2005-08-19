@@ -233,10 +233,27 @@ bool NodeImpl::hasChildNodes(  ) const
 
 void NodeImpl::normalize ()
 {
-    // ### normalize attributes? (when we store attributes using child nodes)
     int exceptioncode = 0;
     NodeImpl *child = firstChild();
 
+    if (isElementNode()) {
+        // Normalize any attribute children we might have 
+        ElementImpl *element = static_cast<ElementImpl *>(this);
+        NamedAttrMapImpl *attrMap = element->attributes();
+        
+        if (attrMap) {
+            unsigned long numAttrs = attrMap->length();
+            
+            for (unsigned long i = 0; i < numAttrs; i++) {
+                AttributeImpl *attribute = attrMap->attributeItem(i);
+                AttrImpl *attr = attribute->attrImpl();
+                
+                if (attr)
+                    attr->normalize();
+            }
+        }
+    }
+    
     // Recursively go through the subtree beneath us, normalizing all nodes. In the case
     // where there are two adjacent text nodes, they are merged together
     while (child) {

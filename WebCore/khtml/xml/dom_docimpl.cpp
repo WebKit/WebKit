@@ -3030,7 +3030,7 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
     // documents if we're wrong.
     return new AttrImpl(0, docPtr(), new MappedAttributeImpl(QualifiedName(prefix.implementation(), 
                                                                            localName.implementation(),
-                                                                           namespaceURI.implementation()), DOMString("").implementation()));
+                                                                           namespaceURI.implementation()), DOMString("").implementation()), false);
 }
 
 SharedPtr<HTMLCollectionImpl> DocumentImpl::images()

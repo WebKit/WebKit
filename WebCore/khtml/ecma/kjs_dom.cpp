@@ -810,7 +810,7 @@ const ClassInfo DOMAttr::info = { "Attr", &DOMNode::info, &DOMAttrTable, 0 };
 @begin DOMAttrTable 5
   name		DOMAttr::Name		DontDelete|ReadOnly
   specified	DOMAttr::Specified	DontDelete|ReadOnly
-  value		DOMAttr::ValueProperty	DontDelete|ReadOnly
+  value		DOMAttr::ValueProperty	DontDelete
   ownerElement	DOMAttr::OwnerElement	DontDelete|ReadOnly
 @end
 */

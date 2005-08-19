@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrhaschildnodes	
-Status:	failure
-Detail:	hasChildrenIsTrue: assertTrue failed
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrhaschildnodes
+Status:	Success

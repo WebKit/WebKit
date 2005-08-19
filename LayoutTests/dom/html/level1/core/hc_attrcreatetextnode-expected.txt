@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrcreatetextnode	
-Status:	failure
-Detail:	value: assertEquals failed, actual Yα, expected Y&ent1;.
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrcreatetextnode
+Status:	Success

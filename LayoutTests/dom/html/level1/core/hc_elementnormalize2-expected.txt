@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_elementnormalize2	
-Status:	failure
-Detail:	firstChild: assertEquals failed, actual , expected Yes.
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_elementnormalize2
+Status:	Success

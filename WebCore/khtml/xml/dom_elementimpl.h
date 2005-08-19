@@ -115,7 +115,7 @@ class AttrImpl : public ContainerNodeImpl
     friend class NamedAttrMapImpl;
 
 public:
-    AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a);
+    AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a, bool createTextChild);
     ~AttrImpl();
 
 private:
@@ -147,11 +147,13 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
 
+    virtual void childrenChanged();
     virtual DOMString toString() const;
 
 protected:
     ElementImpl* m_element;
     AttributeImpl* m_attribute;
+    int m_ignoreChildrenChanged;
 };
 
 

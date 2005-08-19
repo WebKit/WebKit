@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrfirstchild	
-Status:	failure
-Detail:	textNodeNotNull: assertNotNull failed
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrfirstchild
+Status:	Success

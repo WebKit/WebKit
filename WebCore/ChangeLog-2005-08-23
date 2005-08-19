@@ -1,3 +1,67 @@
+2005-08-19  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+        Landed by David Harrison.
+
+        Test cases added: None.  Fixes existing tests.
+
+        * khtml/ecma/kjs_dom.cpp:
+        Attribute values are writable
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createAttributeNS):
+        Update for new AttrImpl constructor.
+        
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttributeImpl::allocateImpl):
+        Update for new AttrImpl constructor.
+        
+        (AttrImpl::AttrImpl):
+        Initialize m_ignoreChildCount to 0. If createTextChild.
+        is true, create a child text node with the contents
+        of the attribute value.
+        
+        (AttrImpl::setValue):
+        Remove all children and create a new text node with the contents
+        of the attribute value.
+        
+        (AttrImpl::cloneNode):
+        Make sure to clone any children.
+        
+        (AttrImpl::childrenChanged):
+        If m_ignoreChildrenChanged is 0, update the attribute value.
+        
+        * khtml/xml/dom_elementimpl.h:
+        Add childrenChanged, update AttrImpl constructor and
+        add m_ignoreChildrenChanged to AttrImpl.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::normalize):
+        If an element has attributes, make sure to normalize them.
+
+        * layout-tests/dom/html/level1/core/hc_attrappendchild1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrappendchild3-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrappendchild6-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrchildnodes1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrchildnodes2-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrclonenode1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrcreatetextnode-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrfirstchild-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrhaschildnodes-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore2-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore3-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore4-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrlastchild-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrnormalize-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrremovechild1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrreplacechild1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrreplacechild2-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrsetvalue1-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_attrsetvalue2-expected.txt:
+        * layout-tests/dom/html/level1/core/hc_elementnormalize2-expected.txt:
+        These tests pass now.
+
 2005-08-19  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

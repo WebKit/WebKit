@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrsetvalue2	
-Status:	failure
-Detail:	attrValue: assertEquals failed, actual Yes, expected Tomorrow.
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrsetvalue2
+Status:	Success
