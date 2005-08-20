@@ -1408,6 +1408,11 @@ static bool debugWidget = true;
     return shouldUseFontSmoothing;
 }
 
++ (NSString *)_minimumRequiredSafariBuildNumber
+{
+    return @"420+";
+}
+
 @end
 
 

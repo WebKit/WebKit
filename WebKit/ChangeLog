@@ -1,3 +1,17 @@
+2005-08-20  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        - WebKit part of fix for 
+        <rdar://problem/3977607> ER: Safari should check framework versions at launch
+
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebView.m:
+        (+[WebView _minimumRequiredSafariBuildNumber]):
+        new method, returns the minimum build number of Safari that this WebKit is
+        willing to work with. (The Safari version has to be new enough to check
+        for this value in order for this to have any effect.)
+
 2005-08-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by rjw
