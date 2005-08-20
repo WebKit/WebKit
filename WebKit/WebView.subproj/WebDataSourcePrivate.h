@@ -123,8 +123,6 @@
     NSMutableArray *responses;
     BOOL stopRecordingResponses;
 
-    BOOL justOpenedForTargetedLink;
-
     BOOL storedInPageCache;
     BOOL loadingFromPageCache;
 
@@ -204,8 +202,6 @@
 - (void)_setTriggeringAction:(NSDictionary *)action;
 - (NSURLRequest *)_lastCheckedRequest;
 - (void)_setLastCheckedRequest:(NSURLRequest *)request;
-- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
-- (BOOL)_justOpenedForTargetedLink;
 - (void)_setStoredInPageCache:(BOOL)f;
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;

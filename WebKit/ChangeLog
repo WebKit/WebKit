@@ -1,3 +1,16 @@
+2005-08-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by rjw
+        
+        The boolean justOpenedForTargetedLink is never used to determine a course of action.  
+        It was added long ago for findOrCreateFramedNamed, which has since been removed.
+
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        * WebView.subproj/WebFramePrivate.h:
+
 2005-08-19  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

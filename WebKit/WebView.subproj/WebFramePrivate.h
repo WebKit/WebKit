@@ -108,7 +108,6 @@ extern NSString *WebPageCacheDocumentViewKey;
     WebDataSource *policyDataSource;
     WebFrameLoadType policyLoadType;
 
-    BOOL justOpenedForTargetedLink;
     BOOL quickRedirectComing;
     BOOL isStoppingLoad;
     BOOL delegateIsHandlingProvisionalLoadError;
@@ -207,8 +206,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_receivedMainResourceError:(NSError *)error;
 
 - (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;
-
-- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 

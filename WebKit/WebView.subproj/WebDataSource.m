@@ -948,16 +948,6 @@
     [oldRequest release];
 }
 
-- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened
-{
-    _private->justOpenedForTargetedLink = justOpened;
-}
-
-- (BOOL)_justOpenedForTargetedLink
-{
-    return _private->justOpenedForTargetedLink;
-}
-
 - (void)_setStoredInPageCache:(BOOL)f
 {
     _private->storedInPageCache = f;

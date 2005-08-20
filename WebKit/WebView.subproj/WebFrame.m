@@ -2421,8 +2421,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
     }
     [newDataSource _setWebView:[self webView]];
-    [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
-    _private->justOpenedForTargetedLink = NO;
 
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
@@ -2433,11 +2431,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                  formState:formState
                                    andCall:self
                               withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:formState:)];
-}
-
-- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened
-{
-    _private->justOpenedForTargetedLink = justOpened;
 }
 
 - (void)_setProvisionalDataSource: (WebDataSource *)d
