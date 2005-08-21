@@ -1,3 +1,14 @@
+2005-08-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): cleans up delegates
+        (dumpRenderTree): closes CFString/CFURL leak
+        * Scripts/run-webkit-tests:
+        Adds --leaks option to run-webkit-tests
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4542
+
 2005-08-19  Ben La Monica  <ben.lamonica@gmail.com>
 
         Reviewed by Darin.

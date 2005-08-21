@@ -31,6 +31,7 @@
 use strict;
 use IPC::Open2;
 use Getopt::Long;
+use File::Path;
 use FindBin;
 use Cwd;
 use lib $FindBin::Bin;
@@ -57,6 +58,7 @@ chdirWebKit();
 # Argument handling
 my $testSVGs = '';
 my $pixelTests = '';
+my $checkLeaks = '';
 my $maxWidth = '';
 my $maxHeight = '';
 my $verbose = '';
@@ -64,6 +66,7 @@ my $quiet = '';
 
 GetOptions('svg' => \$testSVGs, 
     'pixel-tests' => \$pixelTests,
+    'leaks' => \$checkLeaks,
     'max-width' => \$maxWidth,
     'max-height' => \$maxHeight, 
     'verbose' => \$verbose,
@@ -103,6 +106,9 @@ my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+if ($checkLeaks) {
+    $ENV{MallocStackLogging} = 1;
+}
 
 my @tests;
 
@@ -156,10 +162,13 @@ push  @toolArgs, "-";
 
 $| = 1;
 
-open2(\*IN, \*OUT, $tool, @toolArgs) or die;
+my $toolPID;
+my $imageDiffToolPID;
+
+$toolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
 
 if ($pixelTests) {
-    open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
+    $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
 }
 
 my $column = 0;
@@ -302,7 +311,7 @@ for my $test (@tests) {
 
         my $dir = "$testResultsDirectory/$base";
         $dir =~ s|/[^/]+$||;
-        system "mkdir", "-p", $dir;
+        mkpath $dir;
 
         open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
         print ACTUAL $actual;
@@ -368,12 +377,28 @@ for my $test (@tests) {
 
         close IN;
         close OUT;
-        open2(\*IN, \*OUT, $tool, @toolArgs) or die;
+        $toolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
     }
     
     $count += 1;
     $counts{$result} += 1;
     push @{$tests{$result}}, $test;
+}
+
+if ($checkLeaks) {
+    print "Checking for leaks in $toolname:\n";
+    my $leaksResults = `leaks $toolPID`;
+    my $leaksResultFile = "$testDirectory/$toolname-leaks.txt"
+    
+    open EXPECTED, ">", $leaksResultFile or print "Could not write leaks output to leaksResultFile\n";
+        print EXPECTED $actualPNG;
+            close EXPECTED;
+        }
+    
+    if ($pixelTests) {
+        print "Checking for leaks in ImageDiff:\n";
+        system "leaks", $imageDiffToolPID , "> $testDirectory/ImageDiff-leaks.txt";
+    }
 }
 
 close IN;
@@ -408,7 +433,7 @@ if ($counts{match} && $counts{match} == $count) {
         }
     }
     
-    system "mkdir", "-p", $testResultsDirectory;
+    mkpath $testResultsDirectory;
 
     open HTML, ">", $testResults or die;
     print HTML "<html>\n";

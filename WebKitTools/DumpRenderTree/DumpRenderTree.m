@@ -171,6 +171,10 @@ int main(int argc, const char *argv[])
     [preferences setDefaultFontSize:defaultFontSize];
     [preferences setDefaultFixedFontSize:defaultFixedFontSize];
     [preferences setMinimumFontSize:minimumFontSize];
+    
+    [webView release];
+    [delegate release];
+    [editingDelegate release];
 
     [pool release];
     return 0;
@@ -446,7 +450,6 @@ static void dump(void)
 
 static void dumpRenderTree(const char *filename)
 {
-
     CFStringRef filenameString = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
     if (filenameString == NULL) {
         fprintf(stderr, "can't parse filename as UTF-8\n");
@@ -454,6 +457,7 @@ static void dumpRenderTree(const char *filename)
     }
 
     CFURLRef URL = CFURLCreateWithFileSystemPath(NULL, filenameString, kCFURLPOSIXPathStyle, FALSE);
+    CFRelease(filenameString);
     if (URL == NULL) {
         fprintf(stderr, "can't turn %s into a CFURL\n", filename);
         return;
@@ -468,6 +472,7 @@ static void dumpRenderTree(const char *filename)
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
+    CFRelease(URL);
     [pool release];
     while (!done) {
         pool = [[NSAutoreleasePool alloc] init];
