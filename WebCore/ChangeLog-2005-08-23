@@ -1,3 +1,9 @@
+2005-08-20  Darin Adler  <darin@apple.com>
+
+        * khtml/xml/xml_namespace_table.cpp: Removed this file that's been obsolete and
+        unused for a while.
+        * khtml/xml/xml_namespace_table.h: Ditto.
+
 2005-08-19  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
