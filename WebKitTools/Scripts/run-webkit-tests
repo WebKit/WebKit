@@ -387,17 +387,10 @@ for my $test (@tests) {
 
 if ($checkLeaks) {
     print "Checking for leaks in $toolname:\n";
-    my $leaksResults = `leaks $toolPID`;
-    my $leaksResultFile = "$testDirectory/$toolname-leaks.txt"
-    
-    open EXPECTED, ">", $leaksResultFile or print "Could not write leaks output to leaksResultFile\n";
-        print EXPECTED $actualPNG;
-            close EXPECTED;
-        }
-    
+    system "leaks", $toolPID;
     if ($pixelTests) {
         print "Checking for leaks in ImageDiff:\n";
-        system "leaks", $imageDiffToolPID , "> $testDirectory/ImageDiff-leaks.txt";
+        system "leaks", $imageDiffToolPID;
     }
 }
 
