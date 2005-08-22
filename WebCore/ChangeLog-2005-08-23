@@ -1,3 +1,17 @@
+2005-08-22  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4221384> Denver Regression: stickies widget crashed on 8F15 when pasting text
+
+        Test cases added:  None.  Problem triggered by simple paste, which lots of the
+        editing tests already do, but also required particular memory layout/cleanup state, which
+        is not specifiable in our tests.
+
+        * khtml/editing/markup.cpp:
+        (khtml::createFragmentFromText):
+        Ref the new paragraph element right away, rather than allocating more memory first.
+
 2005-08-22  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 

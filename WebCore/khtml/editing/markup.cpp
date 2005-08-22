@@ -594,8 +594,8 @@ DOM::DocumentFragmentImpl *createFragmentFromText(DOM::DocumentImpl *document, c
                 element->setAttribute(classAttr, AppleInterchangeNewline);            
             } else {
                 element = createDefaultParagraphElement(document);
-                createParagraphContentsFromString(document, element, s);
                 element->ref();
+                createParagraphContentsFromString(document, element, s);
             }
             fragment->appendChild(element, exceptionCode);
             ASSERT(exceptionCode == 0);
