@@ -79,12 +79,24 @@ static bool __useFilters = true;
 
 bool KRenderingDeviceQuartz::filtersEnabled()
 {
-	return __useFilters;
+    return __useFilters;
 }
 
 void KRenderingDeviceQuartz::setFiltersEnabled(bool enabled)
 {
-	__useFilters = enabled;
+    __useFilters = enabled;
+}
+
+static bool __useHardwareRendering = true;
+
+bool KRenderingDeviceQuartz::hardwareRenderingEnabled()
+{
+    return __useHardwareRendering;
+}
+
+void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled)
+{
+    __useHardwareRendering = enabled;
 }
 
 #pragma mark -

@@ -88,6 +88,9 @@ public:
 	// filters (mostly debugging)
 	static bool filtersEnabled();
 	static void setFiltersEnabled(bool enabled);
+        static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
+        static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
+            
 };
 
 // Wraps NSBezierPaths for c++ consumption

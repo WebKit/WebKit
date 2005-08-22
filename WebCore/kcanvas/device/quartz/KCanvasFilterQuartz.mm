@@ -94,7 +94,15 @@ void KCanvasFilterQuartz::prepareFilter(CGContextRef *context, const QRect &bbox
 	m_storedCGContext = *context;
 		
 	// get a CIContext, and CGLayer for drawing in.
-	m_filterCIContext = [[CIContext contextWithCGContext:m_storedCGContext options:nil] retain];
+        bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
+        NSDictionary *options = nil;
+        
+        if (useSoftware) {
+            options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], kCIContextUseSoftwareRenderer, nil];
+        }
+        
+	m_filterCIContext = [[CIContext contextWithCGContext:m_storedCGContext options:options] retain];
+        
 	m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
 	
 	// replace the current context with our new one.

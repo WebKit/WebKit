@@ -1,3 +1,19 @@
+2005-08-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::filtersEnabled):
+        (KRenderingDeviceQuartz::setFiltersEnabled):
+        (KRenderingDeviceQuartz::hardwareRenderingEnabled):
+        (KRenderingDeviceQuartz::setHardwareRenderingEnabled):
+        Added ability to disable hardware rendering (for testing).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4550
+
 2005-08-20  Darin Adler  <darin@apple.com>
 
         * khtml/xml/xml_namespace_table.cpp: Removed this file that's been obsolete and
