@@ -1,4 +1,12 @@
 2005-08-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Applied Darin's nmedit workaround/build-speedup to WebCore+SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4577
+
+2005-08-22  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
         Reviewed by eseidel.
