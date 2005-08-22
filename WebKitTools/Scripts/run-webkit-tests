@@ -443,14 +443,20 @@ if ($counts{match} && $counts{match} == $count) {
             $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
-            print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
-            print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
-            print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
+            if (-s "$testResultsDirectory/$base-diffs.txt") {
+                print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
+                print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
+                print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
+            } else {
+                print HTML "<td></td><td></td><td></td>\n";
+            }
             if ($pixelTests) {
-                print HTML "<td><a href=\"$testDirectory/$base-expected.png\">expected image</a></td>\n";
                 if ($imagesPresent{$base}) {
+                    print HTML "<td><a href=\"$testDirectory/$base-expected.png\">expected image</a></td>\n";
                     print HTML "<td><a href=\"$base-diffs.html\">image diffs</a></td>\n";
-                }
+                } else {
+                    print HTML "<td></td><td></td>\n";
+                }            
             }
             print HTML "</tr>\n";
         }

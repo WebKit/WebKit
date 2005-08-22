@@ -1,4 +1,13 @@
 2005-08-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by darin.
+
+        * Scripts/run-webkit-tests: hides "expected actual diffs" links
+        when they are not needed (for pixel-only failures)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4584
+
+2005-08-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
 
