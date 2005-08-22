@@ -1,3 +1,12 @@
+2005-08-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * Scripts/run-webkit-tests: Added the ability to display more than
+        just two images as part of the image-diff "slideshow".
+        Added display of "-w3c.png" baseline images for SVG.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4581
+
 2005-08-20  Eric Seidel  <eseidel@apple.com>
 
         * Scripts/run-webkit-tests:

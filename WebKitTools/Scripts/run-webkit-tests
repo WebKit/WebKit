@@ -335,19 +335,19 @@ for my $test (@tests) {
             print DIFFHTML "<head>\n";
             print DIFFHTML "<title>$base Image Compare</title>\n";
             print DIFFHTML "<script language=\"Javascript\" type=\"text/javascript\">\n";
-            print DIFFHTML "var actualImageVisible = true;\n";
+            print DIFFHTML "var currentImage = 0;\n";
+            print DIFFHTML "var imageNames = new Array(\"Actual\", \"Expected\");\n";
+            print DIFFHTML "var imagePaths = new Array(\"$testResultsDirectory/$base-actual.png\", \"$testDirectory/$base-expected.png\");\n";
+            if (-f "$testDirectory/$base-w3c.png") {
+                print DIFFHTML "imageNames.push(\"W3C\");\n";
+                print DIFFHTML "imagePaths.push(\"$testDirectory/$base-w3c.png\");\n";
+            }
             print DIFFHTML "function animateImage() {\n";
             print DIFFHTML "    var image = document.getElementById(\"animatedImage\");\n";
             print DIFFHTML "    var imageText = document.getElementById(\"imageText\");\n";
-            print DIFFHTML "    if (actualImageVisible) {\n";
-            print DIFFHTML "        image.src=\"$testDirectory/$base-expected.png\";\n";
-            print DIFFHTML "        imageText.innerHTML = \"Expected Image\";\n";
-            print DIFFHTML "        actualImageVisible = false;\n";
-            print DIFFHTML "    } else {\n";
-            print DIFFHTML "        image.src=\"$testResultsDirectory/$base-actual.png\";\n";
-            print DIFFHTML "        imageText.innerHTML = \"Actual Image\";\n";
-            print DIFFHTML "        actualImageVisible = true;\n";
-            print DIFFHTML "    }\n";
+            print DIFFHTML "    image.src = imagePaths[currentImage];\n";
+            print DIFFHTML "    imageText.innerHTML = imageNames[currentImage] + \" Image\";\n";
+            print DIFFHTML "    currentImage = (currentImage + 1) % imageNames.length;\n";
             print DIFFHTML "    setTimeout('animateImage()',2000);\n";
             print DIFFHTML "}\n";
             print DIFFHTML "</script>\n";
