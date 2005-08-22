@@ -41,7 +41,6 @@
 
 void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
-	//NSLog(@"KRenderingPaintServerSolidQuartz::draw()");
 	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
 	CGContextRef context = quartzContext->cgContext();
 	KRenderingStyle *style = args.style();
@@ -49,9 +48,8 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 	applyStyleToContext(context, style);
 		
 	if ( (type & APPLY_TO_FILL) && style->isFilled() ) {
-		//NSLog(@"Filling in %p bbox(%@) with color: %@", context, NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(context)), nsColor(color()));
-		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->fillPainter()->opacity() * style->opacity() * opacity());
+            CGColorRef colorCG = cgColor(color());
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->fillPainter()->opacity());
 		CGContextSetFillColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);
@@ -63,9 +61,8 @@ void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingCo
 	}
 	
 	if ( (type & APPLY_TO_STROKE) && style->isStroked() ) {
-		//NSLog(@"Stroking in %p bbox(%@) with color: %@", context, NSStringFromRect(*(NSRect *)&CGContextGetPathBoundingBox(context)), nsColor(color()));
 		CGColorRef colorCG = cgColor(color());
-		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->strokePainter()->opacity() * style->opacity() * opacity());		
+		CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, style->strokePainter()->opacity());		
 		CGContextSetStrokeColorWithColor(context, withAlpha);
 		CGColorRelease(colorCG);
 		CGColorRelease(withAlpha);

@@ -55,9 +55,4 @@ KCPaintServerType KRenderingPaintServerSolid::type() const
 	return PS_SOLID;
 }
 
-float KRenderingPaintServerSolid::opacity() const
-{
-	return float(qAlpha(d->color.rgb()) / 255.);
-}
-
 // vim:ts=4:noet

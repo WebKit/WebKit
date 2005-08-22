@@ -3,6 +3,20 @@
 
         Reviewed by eseidel.
 
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerSolidQuartz::draw):
+        * svg-tests/W3C-SVG-1.1/animate-elem-22-b-expected.png:
+        * svg-tests/W3C-SVG-1.1/masking-opacity-01-b-expected.png:
+        Group opacity was doubly-applied.  This patch fixes that.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4463
+
+2005-08-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         * kcanvas/device/quartz/QuartzSupport.mm:
         (CGPathToCFStringApplierFunction): Fixed output for curves.
         * svg-tests/W3C-SVG-1.1/Resources/filters-example-01-f-expected.txt:
