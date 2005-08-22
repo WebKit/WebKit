@@ -1,7 +1,7 @@
 KCanvasContainer at (-5,-11) size 84x70
   KCanvasContainer at (-5,-11) size 75x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
     KCanvasContainer at (-5,-11) size 75x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {path} at (14,26) size 50x16 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M15.00,43.00C15.00,43.00,36.00,20.00,65.00,33.00,0.00,0.00,0.00,-2.00,-2.00,-2.00"]
+      KCanvasItem {path} at (14,26) size 50x16 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M15.00,43.00C15.00,43.00,36.00,20.00,65.00,33.00"]
       KCanvasItem {rect} at (9,32) size 11x11 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M10.00,33.00L20.00,33.00L20.00,43.00L10.00,43.00"]
       KCanvasItem {rect} at (59,22) size 11x11 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M60.00,23.00L70.00,23.00L70.00,33.00L60.00,33.00"]
       KCanvasItem {path} at (-5,-11) size 11x11 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M-5.00,0.00L0.00,-10.00L5.00,0.00"]

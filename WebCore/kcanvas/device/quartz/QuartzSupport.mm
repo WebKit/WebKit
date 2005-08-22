@@ -159,15 +159,13 @@ void CGPathToCFStringApplierFunction(void *info, const CGPathElement *element) {
 		CFStringAppendFormat(string,NULL,CFSTR("L%.2f,%.2f"), points[0].x, points[0].y);
 		break;
 	case kCGPathElementAddQuadCurveToPoint:
-		CFStringAppendFormat(string,NULL,CFSTR("Q%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
-			points[0].x, points[0].y, points[1].x, points[1].y,
-			points[2].x, points[2].y, points[3].x, points[3].y);
+		CFStringAppendFormat(string,NULL,CFSTR("Q%.2f,%.2f,%.2f,%.2f"),
+			points[0].x, points[0].y, points[1].x, points[1].y);
 		break;
 	case kCGPathElementAddCurveToPoint:
-		CFStringAppendFormat(string,NULL,CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
+		CFStringAppendFormat(string,NULL,CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f"),
 			points[0].x, points[0].y, points[1].x, points[1].y,
-			points[2].x, points[2].y, points[3].x, points[3].y,
-			points[4].x, points[4].y, points[5].x, points[5].y);
+			points[2].x, points[2].y);
 		break;
 	case kCGPathElementCloseSubpath:
 		typeString = CFSTR("X"); break;

@@ -3,6 +3,38 @@
 
         Reviewed by eseidel.
 
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (CGPathToCFStringApplierFunction): Fixed output for curves.
+        * svg-tests/W3C-SVG-1.1/Resources/filters-example-01-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/Resources/paths-data-01-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/Resources/paths-data-02-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/Resources/paths-data-03-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/Resources/shapes-rect-01-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/Resources/shapes-rect-01-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/animate-elem-06-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/animate-elem-28-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * svg-tests/W3C-SVG-1.1/shapes-rect-01-t-expected.txt:
+        * svg-tests/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        Fixed output for curves and updated tests accordingly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4553
+
+2005-08-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
         (KCanvasFilterQuartz::prepareFilter):
         * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
