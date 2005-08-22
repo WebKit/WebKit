@@ -1,4 +1,19 @@
 2005-08-22  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::inputImage): null check
+        (KCanvasFEBlendQuartz::getCIFilter): ditto
+        (KCanvasFEColorMatrixQuartz::getCIFilter): ditto
+        (KCanvasFEMergeQuartz::getCIFilter): ditto
+        Added NULL checks to avoid throwing Obj-C exceptions from
+        CoreImage either when rendering bad SVGs or in cases where
+        we do not yet implement a certain SVG filter element.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4554
+
+2005-08-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
 

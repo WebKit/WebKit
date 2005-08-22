@@ -242,9 +242,11 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 			[onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputGVector"];
 			[onlyAlpha setValue:[CIVector vectorWithValues:zero count:4] forKey:@"inputBVector"];
 			CIImage *sourceGraphic = imageForName(QString::fromLatin1("SourceGraphic"));
-			[onlyAlpha setValue:sourceGraphic forKey:@"inputImage"];
-			sourceAlpha = [onlyAlpha valueForKey:@"outputImage"];
-			setImageForName(sourceAlpha,QString::fromLatin1("SourceAlpha"));
+            if (sourceGraphic) {
+                [onlyAlpha setValue:sourceGraphic forKey:@"inputImage"];
+                sourceAlpha = [onlyAlpha valueForKey:@"outputImage"];
+                setImageForName(sourceAlpha,QString::fromLatin1("SourceAlpha"));
+            }
 		}
 		return sourceAlpha;
 	}
@@ -267,10 +269,12 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 
 
 #define FE_QUARTZ_SETUP_INPUT(name) \
+    CIImage *inputImage = quartzFilter->inputImage(this); \
+    FE_QUARTZ_CHECK_INPUT(inputImage) \
 	CIFilter *filter = [CIFilter filterWithName:name]; \
 	KWQ_BLOCK_EXCEPTIONS \
 	[filter setDefaults]; \
-	[filter setValue:quartzFilter->inputImage(this) forKey:@"inputImage"];
+	[filter setValue:inputImage forKey:@"inputImage"];
 
 #define FE_QUARTZ_CHECK_INPUT(input) \
 	if (!input) { \
@@ -332,8 +336,10 @@ CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 	
 	[filter setDefaults];
 	CIImage *inputImage = quartzFilter->inputImage(this);
+    FE_QUARTZ_CHECK_INPUT(inputImage);
 	[filter setValue:inputImage forKey:@"inputImage"];
 	CIImage *backgroundImage = quartzFilter->imageForName(in2());
+    FE_QUARTZ_CHECK_INPUT(backgroundImage);
 	[filter setValue:backgroundImage forKey:@"inputBackgroundImage"];
 	
 	FE_QUARTZ_OUTPUT_RETURN;
@@ -407,6 +413,7 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFil
 		return nil;
 	}
 	CIImage *inputImage = quartzFilter->inputImage(this);
+    FE_QUARTZ_CHECK_INPUT(inputImage);
 	[filter setValue:inputImage forKey:@"inputImage"];
 
 	FE_QUARTZ_OUTPUT_RETURN;
@@ -544,6 +551,8 @@ CIFilter *KCanvasFEMergeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
 	CIImage *previousOutput = quartzFilter->inputImage(this);
 	for (;it != end; it++) {
 		CIImage *inputImage = quartzFilter->imageForName(*it);
+        FE_QUARTZ_CHECK_INPUT(inputImage);
+        FE_QUARTZ_CHECK_INPUT(previousOutput);
 		filter = [CIFilter filterWithName:@"CISourceOverCompositing"];
 		[filter setDefaults];
 		[filter setValue:inputImage forKey:@"inputImage"];
