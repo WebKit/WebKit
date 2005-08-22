@@ -83,6 +83,10 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
 	KDOM::Ecma *ecmaEngine = document->ecmaEngine();
 	if(!ecmaEngine)
 		return;
+                
+#ifdef APPLE_CHANGES
+    KJS::Interpreter::lock();
+#endif
 
 	// Run script
 	KJS::Completion comp = ecmaEngine->evaluate(jsCode.string(), ecmaEngine->globalObject());
@@ -118,6 +122,10 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
 		kdDebug() << "[SVGScriptElement] Return value: " << comp.value()->toString(ecmaEngine->globalExec()).qstring() << endl;
 	else if(comp.complType() == KJS::Normal)
 		kdDebug() << "[SVGScriptElement] Evaluated ecma script!" << endl;
+    
+#ifdef APPLE_CHANGES
+    KJS::Interpreter::unlock();
+#endif
 }
 
 // vim:ts=4:noet
