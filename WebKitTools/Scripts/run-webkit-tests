@@ -386,11 +386,10 @@ for my $test (@tests) {
 }
 
 if ($checkLeaks) {
-    print "Checking for leaks in $toolname:\n";
-    system "leaks", $toolPID;
+	print "\n";
+	printLeaks($toolname, $toolPID);
     if ($pixelTests) {
-        print "Checking for leaks in ImageDiff:\n";
-        system "leaks", $imageDiffToolPID;
+    	printLeaks("ImageDiff", $imageDiffToolPID);
     }
 }
 
@@ -498,6 +497,29 @@ if ($counts{match} && $counts{match} == $count) {
     close HTML;
     
     system "open", $testResults;
+}
+
+sub printLeaks
+{
+	my $toolName = shift;
+	my $toolPID = shift;
+	my $leaksFilePath = "";
+	
+	print "\nChecking for leaks in $toolName...\n";
+	my $leaksOutput = `leaks $toolPID`;
+    $leaksOutput =~ m/Process $toolPID: (\d+) leaks for (\d+) total leaked bytes./;
+    if ($1) {
+    	$leaksFilePath = "$testResultsDirectory/$toolName-leaks.txt";
+    	print "$1 leaks ($2 bytes) were found in $toolName, full results: $leaksFilePath\n";
+    	if (open LEAKS, ">", $leaksFilePath) {
+    		print LEAKS $leaksOutput;
+    		close LEAKS;
+    	} else {
+    		print "ERROR: Failed to write leaks to file: $leaksFilePath";
+    	}
+    }
+    
+    $leaksFilePath;
 }
 
 sub getFilesize

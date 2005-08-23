@@ -1,3 +1,11 @@
+2005-08-23  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * Scripts/run-webkit-tests:
+        Made --leaks option more readable by printing to a file.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4590
+
 2005-08-22  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
