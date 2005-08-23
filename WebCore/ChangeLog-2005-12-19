@@ -1,3 +1,15 @@
+2005-08-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4545
+          REGRESSION: content inside <nolayer> does not get in the DOM tree, but should
+
+        * khtml/html/htmlparser.cpp: (HTMLParser::getNode): Remove code to omit children of <nolayer>.
+
+        * layout-tests/fast/dom/no-elements.html: Update test for new behavior.
+        * layout-tests/fast/dom/no-elements-expected.txt: Updated test results.
+
 2005-08-23  Darin Adler  <darin@apple.com>
 
         - fixed test that was accessing a remote resource by accident

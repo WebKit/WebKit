@@ -758,12 +758,6 @@ bool HTMLParser::noscriptCreateErrorCheck(Token* t, NodeImpl*& result)
     return true;
 }
 
-bool HTMLParser::nolayerCreateErrorCheck(Token* t, NodeImpl*& result)
-{
-    setSkipMode(nolayerTag);
-    return true;
-}
-
 NodeImpl *HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
@@ -801,7 +795,6 @@ NodeImpl *HTMLParser::getNode(Token* t)
         gFunctionMap.insert(noembedTag.localName().implementation(), &HTMLParser::noembedCreateErrorCheck);
         gFunctionMap.insert(noframesTag.localName().implementation(), &HTMLParser::noframesCreateErrorCheck);
         gFunctionMap.insert(noscriptTag.localName().implementation(), &HTMLParser::noscriptCreateErrorCheck);
-        gFunctionMap.insert(nolayerTag.localName().implementation(), &HTMLParser::nolayerCreateErrorCheck);
     }
 
     bool proceed = true;

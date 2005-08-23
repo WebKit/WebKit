@@ -1,47 +1,38 @@
 <html>
 <head>
-<style>
-</style>
 <script>
-function debug(str) {
-	li = document.createElement('li');
-	li.appendChild(document.createTextNode(str));
-	document.getElementById('console').appendChild(li);
+function print(str) {
+    li = document.createElement('li');
+    li.appendChild(document.createTextNode(str));
+    document.getElementById('console').appendChild(li);
 }
-
-function checkElement(id) {
-	t = document.getElementById(id);
-	
-	if (t == null)
-		return false;
-		
-	if (t.firstChild != null)
-		return false;
-		
-	return true;
+function printNumChildren(id)
+{
+    t = document.getElementById(id);
+    if (t == null) {
+        print("Can't find " + id + ".");
+    } else {
+        print(id + " has " + t.childNodes.length + " children.");
+    }
 }
-
 function runTests() {
-	if (window.layoutTestController)
-		layoutTestController.dumpAsText();
-		
-	if (!checkElement('noframes') ||
-		!checkElement('nolayer') ||
-		!checkElement('noscript') ||
-		!checkElement('noembed')) 
-		debug("Failure");
-	else
-		debug("Success");
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    printNumChildren('noframes');
+    printNumChildren('noscript');
+    printNumChildren('noembed');
+    printNumChildren('nolayer');
 }
-
 </script>
 </head>
 <body onload="runTests()">
-This tests that the elements noframes, nolayer, noscript and noembed are created as elements and put in the DOM tree. The elements should not contain any children. If the test is successful, the text "Success" will be seen below.
-<noframes id="noframes">This is noframes</noframes>
-<nolayer id="nolayer">This is nolayer</nolayer>
-<noscript id="noscript">This is noscript</noscript>
-<noembed id="noembed">This is noembed</noembed>
+<p>This tests that the elements noframes, nolayer, noscript and noembed are created as elements and put in the DOM tree.
+The elements other than &lt;nolayer&gt; should not contain any children.
+If the test is successful, the four messages below will list 0, 0, 0, and 1 child.</p>
+<noframes id="noframes">This is noframes.</noframes>
+<noscript id="noscript">This is noscript.</noscript>
+<noembed id="noembed">This is noembed.</noembed>
+<nolayer id="nolayer">This is nolayer.</nolayer>
 <ul id="console">
 </ul>
 </body>

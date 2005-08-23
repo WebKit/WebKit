@@ -1,3 +1,8 @@
-This tests that the elements noframes, nolayer, noscript and noembed are created as elements and put in the DOM tree. The elements should not contain any children. If the test is successful, the text "Success" will be seen below.
-Success
+This tests that the elements noframes, nolayer, noscript and noembed are created as elements and put in the DOM tree. The elements other than <nolayer> should not contain any children. If the test is successful, the four messages below will list 0, 0, 0, and 1 child.
+
+This is nolayer.
+noframes has 0 children.
+noscript has 0 children.
+noembed has 0 children.
+nolayer has 1 children.
 
