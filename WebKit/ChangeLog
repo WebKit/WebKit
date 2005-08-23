@@ -1,3 +1,7 @@
+2005-08-23  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2005-08-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
