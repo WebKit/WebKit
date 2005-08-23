@@ -1751,6 +1751,8 @@ static WebCoreTextRun applyMirroringToRun(const WebCoreTextRun *run)
         // Failed to find offset!  Return 0 offset.
     }
        
+    ATSUDisposeTextLayout(layout);
+    
     if (style->visuallyOrdered || (style->rtl && !ATSUMirrors)) {
         free ((void *)swappedRun.characters);
     }

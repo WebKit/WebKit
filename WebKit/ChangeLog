@@ -1,3 +1,15 @@
+2005-08-23  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4604
+          LEAK -[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:] leaks an ATSUTextLayout
+          <rdar://problem/4228787> ATSUTextLayout leak in _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs: (4604)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:includePartialGlyphs:]):
+        Added missing call to ATSUDisposeTextLayout.
+
 2005-08-22  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed <rdar://problem/4227011> Debugger SPI should be removed from WebView.h API
