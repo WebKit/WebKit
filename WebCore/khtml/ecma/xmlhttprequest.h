@@ -125,8 +125,8 @@ namespace KJS {
     KIO::TransferJob * job;
 
     XMLHttpRequestState state;
-    JSUnprotectedEventListener *onReadyStateChangeListener;
-    JSUnprotectedEventListener *onLoadListener;
+    khtml::SharedPtr<JSUnprotectedEventListener> onReadyStateChangeListener;
+    khtml::SharedPtr<JSUnprotectedEventListener> onLoadListener;
 
     khtml::Decoder *decoder;
     QString encoding;

@@ -184,13 +184,13 @@ ValueImp *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
   case StatusText:
     return getStatusText();
   case Onreadystatechange:
-   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObjImp()) {
+   if (onReadyStateChangeListener.notNull() && onReadyStateChangeListener->listenerObjImp()) {
      return onReadyStateChangeListener->listenerObj();
    } else {
      return Null();
    }
   case Onload:
-   if (onLoadListener && onLoadListener->listenerObjImp()) {
+   if (onLoadListener.notNull() && onLoadListener->listenerObjImp()) {
      return onLoadListener->listenerObj();
    } else {
      return Null();
@@ -210,12 +210,10 @@ void XMLHttpRequest::putValueProperty(ExecState *exec, int token, ValueImp *valu
 {
   switch(token) {
   case Onreadystatechange:
-    onReadyStateChangeListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
-    if (onReadyStateChangeListener) onReadyStateChangeListener->ref();
+    onReadyStateChangeListener.reset(Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true));
     break;
   case Onload:
-    onLoadListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
-    if (onLoadListener) onLoadListener->ref();
+    onLoadListener.reset(Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true));
     break;
   default:
     kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
@@ -226,10 +224,10 @@ void XMLHttpRequest::mark()
 {
   DOMObject::mark();
 
-  if (onReadyStateChangeListener)
+  if (onReadyStateChangeListener.notNull())
     onReadyStateChangeListener->mark();
 
-  if (onLoadListener)
+  if (onLoadListener.notNull())
     onLoadListener->mark();
 }
 
@@ -240,8 +238,6 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, DOM::DocumentImpl *d)
     async(true),
     job(0),
     state(Uninitialized),
-    onReadyStateChangeListener(0),
-    onLoadListener(0),
     decoder(0),
     createdDocument(false),
     aborted(false)
@@ -262,7 +258,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   if (state != newState) {
     state = newState;
     
-    if (doc && doc->part() && onReadyStateChangeListener != 0) {
+    if (doc && doc->part() && onReadyStateChangeListener.notNull()) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
@@ -271,7 +267,7 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       ev->deref();
     }
     
-    if (doc && doc->part() && state == Completed && onLoadListener != 0) {
+    if (doc && doc->part() && state == Completed && onLoadListener.notNull()) {
       int ignoreException;
       EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->ref();
