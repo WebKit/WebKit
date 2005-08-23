@@ -1,1 +1,7 @@
+2005-08-23  Darin Adler  <darin@apple.com>
+
+        - fixed test that was accessing a remote resource by accident
+
+        * layout-tests/fast/lists/009.html: Correct URL to be relative.
+
 == Rolled over to ChangeLog-2004-08-23 ==
