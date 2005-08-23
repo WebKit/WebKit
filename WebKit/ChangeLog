@@ -1,3 +1,17 @@
+2005-08-22  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed <rdar://problem/4227011> Debugger SPI should be removed from WebView.h API
+        
+        Reviewed by mjs and adele.
+
+        Cut and pasted debugging SPI from WebView to WebView(WebPendingPublic)
+        
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView setScriptDebugDelegate:]):
+        (-[WebView scriptDebugDelegate]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2005-08-20  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

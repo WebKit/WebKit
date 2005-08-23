@@ -1796,18 +1796,6 @@ NS_ENDHANDLER
 {
     return _private->frameLoadDelegate;
 }
-- (void)setScriptDebugDelegate:delegate
-{
-    _private->scriptDebugDelegate = delegate;
-    [_private->scriptDebugDelegateForwarder release];
-    _private->scriptDebugDelegateForwarder = nil;
-}
-
-- scriptDebugDelegate
-{
-    return _private->scriptDebugDelegate;
-}
-
 
 - (WebFrame *)mainFrame
 {
@@ -2571,6 +2559,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     BOOL notAlreadyStandard = _private->textSizeMultiplier != 1.0;
     [self _performTextSizingSelector:@selector(_makeTextStandardSize:) withObject:sender onTrackingDocs:notAlreadyStandard selForNonTrackingDocs:@selector(_canMakeTextStandardSize) newScaleFactor:1.0];
+}
+
+- (void)setScriptDebugDelegate:delegate
+{
+    _private->scriptDebugDelegate = delegate;
+    [_private->scriptDebugDelegateForwarder release];
+    _private->scriptDebugDelegateForwarder = nil;
+}
+
+- scriptDebugDelegate
+{
+    return _private->scriptDebugDelegate;
 }
 
 @end

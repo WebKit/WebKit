@@ -90,6 +90,20 @@ typedef enum {
 // meets these criteria.
 - (WebFrame *)selectedFrame;
 
+/*!
+@method setScriptDebugDelegate:
+@abstract Set the WebView's WebScriptDebugDelegate delegate.
+@param delegate The WebScriptDebugDelegate to set as the delegate.
+*/    
+- (void)setScriptDebugDelegate:(id)delegate;
+
+/*!
+@method scriptDebugDelegate
+@abstract Return the WebView's WebScriptDebugDelegate.
+@result The WebView's WebScriptDebugDelegate.
+*/    
+- (id)scriptDebugDelegate;
+
 @end
 
 @interface WebView (WebPrivate)
