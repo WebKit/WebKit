@@ -3206,7 +3206,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
                     
                     NSURL *URL = kURL.getNSURL();
-                    [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
+                    NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314
+                    [result addAttribute:NSLinkAttributeName value:URL range:tempRange];
                     linkStartNode = 0;
                 }
             }
@@ -3324,7 +3325,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         [[[NSTextTab alloc] initWithType:NSRightTabStopType location:rx-(pointSize*2/3)] autorelease],
                         [[[NSTextTab alloc] initWithType:NSLeftTabStopType location:rx] autorelease],
                         nil]];
-            [result addAttribute:NSParagraphStyleAttributeName value:mps range:NSMakeRange(info.start, info.end-info.start)];
+            NSRange tempRange = { info.start, info.end-info.start }; // workaround for 4213314
+            [result addAttribute:NSParagraphStyleAttributeName value:mps range:tempRange];
             [mps release];
         }
     }

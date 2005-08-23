@@ -1,3 +1,25 @@
+2005-08-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        Temporary workaround for gcc-5216+ bug 4213314.  Don't use NSMake* convenience methods inside KWQ_BLOCK_EXCEPTIONS.
+
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readEntry):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawTiledPixmap):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::resizeContents):
+        (QScrollView::contentsToViewport):
+        (QScrollView::viewportToContents):
+        (QScrollView::setContentsPosRecursive):
+        (QScrollView::ensureVisible):
+        (QScrollView::ensureRectVisibleCentered):
+
 2005-08-22  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin.

@@ -534,7 +534,9 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
         return;
     
     KWQ_BLOCK_EXCEPTIONS;
-    [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy) context:context];
+    NSRect tempRect = { {x, y}, {w, h} }; // workaround for 4213314
+    NSPoint tempPoint = { sx, sy };
+    [pixmap.imageRenderer tileInRect:tempRect fromPoint:tempPoint context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

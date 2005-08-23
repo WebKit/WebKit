@@ -91,7 +91,8 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
                     [MIMEString appendFormat:@"%@,", extension];
                 }
                 // Delete the last ",".
-                [MIMEString deleteCharactersInRange:NSMakeRange([MIMEString length]-1, 1)];
+                NSRange tempRange = { [MIMEString length]-1, 1 }; // workaround for 4213314
+                [MIMEString deleteCharactersInRange:tempRange];
                 [MIMEString appendFormat:@":%@;", [plugin descriptionForMIMEType:MIME]];
             }
 
