@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<body>
+<h1>Success cases:</h1>
+<p>basic comments<p>
+<!-- basic comment -->
+<!-- basic comment with spaces after comment end --    >
+<p>comment series<p>
+<!-- comment -- -- series-->
+<!-- comment -- -- series with spaces after comment end-- >
+<p>dash runs<p>
+<!------ Hello -->
+<!------ Hello -- >
+<!-- --- Hello -->
+<!-- Hello --->
+<p>empty comments<p>
+<!---->
+<!---- >
+<!>
+<p>multiple lines<p>
+<!-- here's a comment, a little longer,
+    which occupies more than one line -->
+<!-- here's a comment, a little longer,
+    which occupies more than one line -- >
+
+
+<p>compatibility<p>
+<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -->
+<!-- Compatibility: comment series with --extraneous-- text -- between -- the comments -- >
+<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539>-->
+<!-- Compatibility: <!--extra comment start like www.the-leaky-cauldron.com has <rdar://problem/4226539> -- >
+
+<h1>Failure cases:</h1>
+<p>tab after comment close<p>
+<!-- tab after comment close--	><p> error! </p>-->
+<p>text after comment close<p>
+<!-- text after comment close--ouch><p> error! </p>-->
+
+<h1>Failure cases with output:</h1>
+
+<!-- this must fail --> extra comment end and markup declaration close --><br>
+<!-- this must fail -- > extra comment end w/space and markup declaration close --><br>
+<!-- nested: <!--inner comment --> outer nested comment -->
+
+</body>
+</html>

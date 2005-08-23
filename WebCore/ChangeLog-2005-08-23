@@ -1,3 +1,17 @@
+2005-08-23  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4226539> REGRESSION: Blank content at http://www.the-leaky-cauldron.org/ with Denver and TOT
+
+        Test cases added:
+        * layout-tests/fast/parser/comments-expected.txt: Added.
+        * layout-tests/fast/parser/comments.html: Added.
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseComment):
+        When non-space follows comment end, ignore that comment end.
+
 2005-08-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
