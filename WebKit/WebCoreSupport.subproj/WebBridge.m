@@ -405,7 +405,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate
 {
-    return [[WebFileButton alloc] initWithBridge:self delegate:delegate];
+    return [[[WebFileButton alloc] initWithBridge:self delegate:delegate] autorelease];
 }
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener

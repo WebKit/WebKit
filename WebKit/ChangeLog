@@ -1,3 +1,14 @@
+2005-08-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin.
+        
+        - fixed <rdar://problem/4229167> 14 leaks of WebFileButton and associated objects, 
+        seen after running webkit layout tests
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge fileButtonWithDelegate:]):
+        this method was returning a retained object; I added an autorelease
+
 2005-08-23  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
