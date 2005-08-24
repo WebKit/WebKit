@@ -1796,7 +1796,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 				   int mouseEventType)
 {
     // if the target node is a text node, dispatch on the parent node - rdar://4196646
-    if (targetNode->isTextNode())
+    if (targetNode && targetNode->isTextNode())
         targetNode = targetNode->parentNode();
     if (d->underMouse)
 	d->underMouse->deref();

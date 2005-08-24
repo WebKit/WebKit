@@ -1,3 +1,16 @@
+2005-08-23  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Adele.
+
+	- fixed <rdar://problem/4229177> REGRESSION (Denver): crash dispatching mouse events (4608)
+ 
+        Test cases added:
+        * manual-tests/mouseevent-on-closeddoc.html: Added.
+        * manual-tests/resources/mouseevent-on-closeddoc.html: Added.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent): add nil check 
+
 2005-08-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
