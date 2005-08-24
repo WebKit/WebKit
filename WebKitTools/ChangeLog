@@ -1,3 +1,22 @@
+2005-08-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4625
+          DumpRenderTree --pixel-tests crash
+        - landed some other small changes I had sitting in my tree
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Don't bother saving and restoring the preferences. Not sure
+        why this was ever done since the preferences are specific to DumpRenderTree.
+        Clear delegates before releasing the WebView, because you can't count on the
+        order of object deallocation.
+        (dumpRenderTree): Fix code that releases a string before storing it in a
+        global variable.
+
+        * Scripts/run-webkit-tests: Use "-s" rather than a function to get the size
+        of a file. Fix lots of cases that were using tabs for indenting to use spaces instead.
+
 2005-08-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

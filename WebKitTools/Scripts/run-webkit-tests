@@ -245,7 +245,7 @@ for my $test (@tests) {
         }
 
         if (!$hashMatches && -f "$testDirectory/$base-expected.png" && $textDumpMatches) {
-            $expectedPNGSize = getFilesize("$testDirectory/$base-expected.png");
+            $expectedPNGSize = -s "$testDirectory/$base-expected.png";
             open EXPECTEDPNG, "$testDirectory/$base-expected.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
@@ -256,7 +256,7 @@ for my $test (@tests) {
             print DIFFOUT $expectedPNG;
 
             while (<DIFFIN>) {
-		last if /^error/ || /^diff:/;
+                last if /^error/ || /^diff:/;
                 if (/Content-length: (\d+)\s*/) {
                     read(DIFFIN, $diffPNG, $1);
                 }
@@ -386,10 +386,10 @@ for my $test (@tests) {
 }
 
 if ($checkLeaks) {
-	print "\n";
-	printLeaks($toolname, $toolPID);
+    print "\n";
+    printLeaks($toolname, $toolPID);
     if ($pixelTests) {
-    	printLeaks("ImageDiff", $imageDiffToolPID);
+        printLeaks("ImageDiff", $imageDiffToolPID);
     }
 }
 
@@ -501,33 +501,23 @@ if ($counts{match} && $counts{match} == $count) {
 
 sub printLeaks
 {
-	my $toolName = shift;
-	my $toolPID = shift;
-	my $leaksFilePath = "";
-	
-	print "\nChecking for leaks in $toolName...\n";
-	my $leaksOutput = `leaks $toolPID`;
+    my $toolName = shift;
+    my $toolPID = shift;
+    my $leaksFilePath = "";
+    
+    print "\nChecking for leaks in $toolName...\n";
+    my $leaksOutput = `leaks $toolPID`;
     $leaksOutput =~ m/Process $toolPID: (\d+) leaks for (\d+) total leaked bytes./;
     if ($1) {
-    	$leaksFilePath = "$testResultsDirectory/$toolName-leaks.txt";
-    	print "$1 leaks ($2 bytes) were found in $toolName, full results: $leaksFilePath\n";
-    	if (open LEAKS, ">", $leaksFilePath) {
-    		print LEAKS $leaksOutput;
-    		close LEAKS;
-    	} else {
-    		print "ERROR: Failed to write leaks to file: $leaksFilePath";
-    	}
+        $leaksFilePath = "$testResultsDirectory/$toolName-leaks.txt";
+        print "$1 leaks ($2 bytes) were found in $toolName, full results: $leaksFilePath\n";
+        if (open LEAKS, ">", $leaksFilePath) {
+            print LEAKS $leaksOutput;
+            close LEAKS;
+        } else {
+            print "ERROR: Failed to write leaks to file: $leaksFilePath";
+        }
     }
     
-    $leaksFilePath;
-}
-
-sub getFilesize
-{
-    my $filename = shift;
-    my @fileStats;
-
-    @fileStats = stat($filename);
-
-    $fileStats[7];
+    return $leaksFilePath;
 }

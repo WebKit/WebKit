@@ -54,8 +54,7 @@
 @end
 
 static void dumpRenderTree(const char *filename);
-NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
-
+static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
 
 static volatile BOOL done;
 static WebFrame *frame;
@@ -72,17 +71,6 @@ int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    WebPreferences *preferences = [WebPreferences standardPreferences];
-    
-    NSString *standardFontFamily = [preferences standardFontFamily];
-    NSString *fixedFontFamily = [preferences fixedFontFamily];
-    NSString *serifFontFamily = [preferences serifFontFamily];
-    NSString *sansSerifFontFamily = [preferences sansSerifFontFamily];
-    NSString *cursiveFontFamily = [preferences cursiveFontFamily];
-    NSString *fantasyFontFamily = [preferences fantasyFontFamily];
-    int defaultFontSize = [preferences defaultFontSize];
-    int defaultFixedFontSize = [preferences defaultFixedFontSize];
-    int minimumFontSize = [preferences minimumFontSize];
     int width = 800;
     int height = 600;
     
@@ -94,8 +82,9 @@ int main(int argc, const char *argv[])
         {"notree", no_argument, &dumpTree, NO},
         {NULL, 0, NULL, 0}
     };
-    int option;
 
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+    
     [preferences setStandardFontFamily:@"Times"];
     [preferences setFixedFontFamily:@"Courier"];
     [preferences setSerifFontFamily:@"Times"];
@@ -106,6 +95,7 @@ int main(int argc, const char *argv[])
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:9];
 
+    int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
         switch (option) {
             case 'w':
@@ -162,16 +152,10 @@ int main(int argc, const char *argv[])
         }
     }
     
-    [preferences setStandardFontFamily:standardFontFamily];
-    [preferences setFixedFontFamily:fixedFontFamily];
-    [preferences setSerifFontFamily:serifFontFamily];
-    [preferences setSansSerifFontFamily:sansSerifFontFamily];
-    [preferences setCursiveFontFamily:cursiveFontFamily];
-    [preferences setFantasyFontFamily:fantasyFontFamily];
-    [preferences setDefaultFontSize:defaultFontSize];
-    [preferences setDefaultFixedFontSize:defaultFixedFontSize];
-    [preferences setMinimumFontSize:minimumFontSize];
-    
+    [webView setFrameLoadDelegate:nil];
+    [webView setEditingDelegate:nil];
+    [webView setUIDelegate:nil];
+
     [webView release];
     [delegate release];
     [editingDelegate release];
@@ -457,7 +441,6 @@ static void dumpRenderTree(const char *filename)
     }
 
     CFURLRef URL = CFURLCreateWithFileSystemPath(NULL, filenameString, kCFURLPOSIXPathStyle, FALSE);
-    CFRelease(filenameString);
     if (URL == NULL) {
         fprintf(stderr, "can't turn %s into a CFURL\n", filename);
         return;
@@ -468,7 +451,9 @@ static void dumpRenderTree(const char *filename)
     waitToDump = NO;
     dumpAsText = NO;
     dumpTitleChanges = NO;
-    currentTest = (NSString *) filenameString;
+    if (currentTest != nil)
+        CFRelease(currentTest);
+    currentTest = (NSString *)filenameString;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];
@@ -499,4 +484,3 @@ NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
 
     return [NSString stringWithUTF8String:hex];
 }
-
