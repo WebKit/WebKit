@@ -545,7 +545,8 @@ unsigned short CDATASectionImpl::nodeType() const
 
 NodeImpl *CDATASectionImpl::cloneNode(bool /*deep*/)
 {
-    return getDocument()->createCDATASection(str);
+    int ignoreException = 0;
+    return getDocument()->createCDATASection(str, ignoreException);
 }
 
 // DOM Section 1.1.1

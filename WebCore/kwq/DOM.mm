@@ -953,26 +953,25 @@ using khtml::SharedPtr;
 - (DOMCDATASection *)createCDATASection:(NSString *)data
 {
     ASSERT(data);
-
-    // Documentation says we can raise a NOT_SUPPORTED_ERR.
-    // However, the lower layer does not report that error up to us.
-    return static_cast<DOMCDATASection *>([DOMNode _nodeWithImpl:[self _documentImpl]->createCDATASection(data)]);
+    int exception = 0;
+    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWithImpl:[self _documentImpl]->createCDATASection(data, exception)]);
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMProcessingInstruction *)createProcessingInstruction:(NSString *)target :(NSString *)data
 {
     ASSERT(target);
     ASSERT(data);
-
-    // Documentation says we can raise a INVALID_CHARACTER_ERR or a NOT_SUPPORTED_ERR.
-    // However, the lower layer does not report these errors up to us.
-    return static_cast<DOMProcessingInstruction *>([DOMNode _nodeWithImpl:[self _documentImpl]->createProcessingInstruction(target, data)]);
+    int exception = 0;
+    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWithImpl:[self _documentImpl]->createProcessingInstruction(target, data, exception)]);
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMAttr *)createAttribute:(NSString *)name
 {
     ASSERT(name);
-
     int exception = 0;
     DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttribute(name, exception)];
     raiseOnDOMError(exception);
@@ -982,10 +981,10 @@ using khtml::SharedPtr;
 - (DOMEntityReference *)createEntityReference:(NSString *)name
 {
     ASSERT(name);
-
-    // Documentation says we can raise a INVALID_CHARACTER_ERR or a NOT_SUPPORTED_ERR.
-    // However, the lower layer does not report these errors up to us.
-    return static_cast<DOMEntityReference *>([DOMNode _nodeWithImpl:[self _documentImpl]->createEntityReference(name)]);
+    int exception = 0;
+    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWithImpl:[self _documentImpl]->createEntityReference(name, exception)]);
+    raiseOnDOMError(exception);
+    return result;
 }
 
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname

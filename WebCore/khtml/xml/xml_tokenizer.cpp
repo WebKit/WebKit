@@ -480,10 +480,16 @@ void XMLTokenizer::processingInstruction(const xmlChar *target, const xmlChar *d
 
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
+    
     // ### handle exceptions
+    int exception = 0;
     ProcessingInstructionImpl *pi = m_doc->document()->createProcessingInstruction(
         QString::fromUtf8(reinterpret_cast<const char *>(target)),
-        QString::fromUtf8(reinterpret_cast<const char *>(data)));
+        QString::fromUtf8(reinterpret_cast<const char *>(data)),
+        exception);
+    if (exception)
+        return;
+
     m_currentNode->addChild(pi);
     // don't load stylesheets for standalone documents
     if (m_doc->document()->part()) {
@@ -503,7 +509,8 @@ void XMLTokenizer::cdataBlock(const xmlChar *s, int len)
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
 
-    NodeImpl *newNode = m_doc->document()->createCDATASection("");
+    int ignoreException = 0;
+    NodeImpl *newNode = m_doc->document()->createCDATASection("", ignoreException);
     if (m_currentNode->addChild(newNode)) {
         if (m_view && !newNode->attached())
             newNode->attach();

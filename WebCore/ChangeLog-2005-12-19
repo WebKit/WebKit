@@ -1,3 +1,44 @@
+2005-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4551
+          implement exceptions for a few XML-specific Document DOM functions
+
+        * khtml/xml/dom_docimpl.h: Added exception codes to the three functions in question.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createCDATASection): Added exception parameter. Give NOT_SUPPORTED_ERR if the
+        document is an HTML document.
+        (DocumentImpl::createProcessingInstruction): Added exception parameter. Give INVALID_CHARACTER_ERR
+        if target's name is not valid, NOT_SUPPORTED_ERR if the document is an HTML document.
+        (DocumentImpl::createEntityReference): Ditto, with entity's name.
+        (DocumentImpl::importNode): Pass exception parameter in so we get exceptions in this case too.
+        (DocumentImpl::isValidName): Added comment with the specification's rules for valid names.
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::DOMDocumentProtoFunc::callAsFunction): Translate exceptions now
+        that the three functions have them.
+        * kwq/DOM.mm:
+        (-[DOMDocument createCDATASection:]): Ditto.
+        (-[DOMDocument createProcessingInstruction::]): Ditto.
+        (-[DOMDocument createEntityReference:]): Ditto.
+
+        * khtml/xml/dom_textimpl.cpp: (CDATASectionImpl::cloneNode): Ignore exception. It can never happen
+        since name is guaranteed to be valid and document is guaranteed to not be HTML document.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::processingInstruction): Added code to handle exception.
+        (khtml::XMLTokenizer::cdataBlock): Ditto.
+
+        * layout-tests/dom/html/level1/core/documentinvalidcharacterexceptioncreateentref-expected.txt: Now succeeds.
+        * layout-tests/dom/html/level1/core/documentinvalidcharacterexceptioncreateentref1-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/documentinvalidcharacterexceptioncreatepi-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/documentinvalidcharacterexceptioncreatepi1-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/hc_attrappendchild4-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/hc_attrgetvalue2-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore5-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/hc_attrinsertbefore7-expected.txt: Ditto.
+        * layout-tests/dom/html/level1/core/hc_nodevalue03-expected.txt: Ditto.
+
 2005-08-25  Eric Seidel  <eseidel@apple.com>
 
         No review, buildfix affecting SVG only.

@@ -1015,14 +1015,14 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   case DOMDocument::CreateComment:
     return getDOMNode(exec,doc.createComment(s));
   case DOMDocument::CreateCDATASection:
-    return getDOMNode(exec,doc.createCDATASection(s));  /* TODO: okay ? */
+    return getDOMNode(exec, doc.createCDATASection(s, exception));
   case DOMDocument::CreateProcessingInstruction:
-    return getDOMNode(exec,doc.createProcessingInstruction(args[0]->toString(exec).string(),
-                                                                 args[1]->toString(exec).string()));
+    return getDOMNode(exec, doc.createProcessingInstruction(args[0]->toString(exec).string(),
+        args[1]->toString(exec).string(), exception));
   case DOMDocument::CreateAttribute:
     return getDOMNode(exec,doc.createAttribute(s, exception));
   case DOMDocument::CreateEntityReference:
-    return getDOMNode(exec,doc.createEntityReference(s));
+    return getDOMNode(exec, doc.createEntityReference(s, exception));
   case DOMDocument::ElementFromPoint:
     return getDOMNode(exec,doc.elementFromPoint((int)args[0]->toNumber(exec), (int)args[1]->toNumber(exec)));
   case DOMDocument::GetElementsByTagName:

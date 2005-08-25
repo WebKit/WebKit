@@ -519,18 +519,38 @@ CommentImpl *DocumentImpl::createComment ( const DOMString &data )
     return new CommentImpl( docPtr(), data );
 }
 
-CDATASectionImpl *DocumentImpl::createCDATASection ( const DOMString &data )
+CDATASectionImpl *DocumentImpl::createCDATASection(const DOMString &data, int &exception)
 {
-    return new CDATASectionImpl( docPtr(), data );
+    if (isHTMLDocument()) {
+        exception = DOMException::NOT_SUPPORTED_ERR;
+        return NULL;
+    }
+    return new CDATASectionImpl(docPtr(), data);
 }
 
-ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction ( const DOMString &target, const DOMString &data )
+ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction(const DOMString &target, const DOMString &data, int &exception)
 {
-    return new ProcessingInstructionImpl( docPtr(),target,data);
+    if (!isValidName(target)) {
+        exception = DOMException::INVALID_CHARACTER_ERR;
+        return NULL;
+    }
+    if (isHTMLDocument()) {
+        exception = DOMException::NOT_SUPPORTED_ERR;
+        return NULL;
+    }
+    return new ProcessingInstructionImpl(docPtr(),target,data);
 }
 
-EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name )
+EntityReferenceImpl *DocumentImpl::createEntityReference(const DOMString &name, int &exception)
 {
+    if (!isValidName(name)) {
+        exception = DOMException::INVALID_CHARACTER_ERR;
+        return NULL;
+    }
+    if (isHTMLDocument()) {
+        exception = DOMException::NOT_SUPPORTED_ERR;
+        return NULL;
+    }
     return new EntityReferenceImpl(docPtr(), name.implementation());
 }
 
@@ -552,11 +572,11 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
         case Node::TEXT_NODE:
             return createTextNode(importedNode->nodeValue());
         case Node::CDATA_SECTION_NODE:
-            return createCDATASection(importedNode->nodeValue());
+            return createCDATASection(importedNode->nodeValue(), exceptioncode);
         case Node::ENTITY_REFERENCE_NODE:
-            return createEntityReference(importedNode->nodeName());
+            return createEntityReference(importedNode->nodeName(), exceptioncode);
         case Node::PROCESSING_INSTRUCTION_NODE:
-            return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue());
+            return createProcessingInstruction(importedNode->nodeName(), importedNode->nodeValue(), exceptioncode);
         case Node::COMMENT_NODE:
             return createComment(importedNode->nodeValue());
         case Node::ELEMENT_NODE: {
@@ -2552,6 +2572,21 @@ void DocumentImpl::setDomain(const DOMString &newDomain, bool force /*=false*/)
 
 bool DocumentImpl::isValidName(const DOMString &name)
 {
+    // DOM Level 2 says:
+    //
+    // Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
+    // Name characters other than Name-start characters must have one of the categories Mc, Me, Mn, Lm, or Nd.
+    // Characters in the compatibility area (i.e. with character code greater than #xF900 and less than #xFFFE) are not allowed in XML names.
+    // Characters which have a font or compatibility decomposition (i.e. those with a "compatibility formatting tag" in field 5 of the database -- marked by field 5 beginning with a "<") are not allowed.
+    // The following characters are treated as name-start characters rather than name characters, because the property file classifies them as Alphabetic: [#x02BB-#x02C1], #x0559, #x06E5, #x06E6.
+    // Characters #x20DD-#x20E0 are excluded (in accordance with Unicode, section 5.14).
+    // Character #x00B7 is classified as an extender, because the property list so identifies it.
+    // Character #x0387 is added as a name character, because #x00B7 is its canonical equivalent.
+    // Characters ':' and '_' are allowed as name-start characters.
+    // Characters '-' and '.' are allowed as name characters.
+    //
+    // FIXME: Implement the above!
+
     static const char validFirstCharacter[] = "ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijklmnopqrstuvwxyz";
     static const char validSubsequentCharacter[] = "ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijklmnopqrstuvwxyz0123456789-_:.";
     const unsigned length = name.length();
