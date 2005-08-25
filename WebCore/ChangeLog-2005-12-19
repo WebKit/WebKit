@@ -1,3 +1,21 @@
+2005-08-25  Eric Seidel  <eseidel@apple.com>
+
+        No review, buildfix affecting SVG only.
+
+        WebCore/kcanvas directory was accidentally excluded from
+        the original commit.
+        * kcanvas/KCanvas.cpp:
+        (KCanvas::~KCanvas):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (getTagName):
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        (KRenderingFillPainter::Private::~Private):
+        (KRenderingFillPainter::setPaintServer):
+        * kcanvas/device/KRenderingStrokePainter.cpp:
+        (KRenderingStrokePainter::Private::~Private):
+        (KRenderingStrokePainter::paintServer):
+        (KRenderingStrokePainter::setPaintServer):
+
 2005-08-24  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.

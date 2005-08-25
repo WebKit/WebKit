@@ -39,7 +39,11 @@ public:
 		joinStyle = JOIN_MITER;
 	}
 
-	~Private() { }
+	~Private()
+    {
+        if(pserver && (pserver->type() == PS_SOLID || pserver->type() == PS_IMAGE))
+            delete pserver;
+    }
 
 	KRenderingPaintServer *pserver;
 	
@@ -67,11 +71,13 @@ KRenderingStrokePainter::~KRenderingStrokePainter()
 
 KRenderingPaintServer *KRenderingStrokePainter::paintServer() const
 {
-	return d->pserver;
+    return d->pserver;
 }
 
 void KRenderingStrokePainter::setPaintServer(KRenderingPaintServer *pserver)
 {
+    if(d->pserver && (d->pserver->type() == PS_SOLID || d->pserver->type() == PS_IMAGE))
+        delete d->pserver;
 	setDirty();
 	d->pserver = pserver;
 }

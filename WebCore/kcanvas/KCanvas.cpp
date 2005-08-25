@@ -62,6 +62,8 @@ KCanvas::KCanvas(KRenderingDevice *device) : d(new Private(device))
 
 KCanvas::~KCanvas()
 {
+    delete d->rootContainer;
+    d->rootContainer = NULL;
 	reset();
 	delete d;
 }
