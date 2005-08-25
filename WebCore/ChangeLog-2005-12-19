@@ -1,3 +1,19 @@
+2005-08-25  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kdom/Helper.cpp:
+        (parseLength): change string() to qstring()
+        * kdom/css/impl/CSSStyleSelector.cpp:
+        (checkPseudoState): ditto.
+        * kdom/impl/DOMStringImpl.cpp:
+        (DOMStringImpl::toInt): ditto.
+        * kdom/impl/DocumentImpl.cpp:
+        (DocumentImpl::getId): ditto.
+	Fixes WebCore+SVG build after Darin's JSC change.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4657
+
 2005-08-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

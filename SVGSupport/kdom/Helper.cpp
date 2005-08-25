@@ -385,7 +385,7 @@ static Length parseLength(const QChar *s, unsigned int l)
 		++i;
 
 	bool ok;
-	int r = QConstString(s, i).string().toInt(&ok);
+	int r = QConstString(s, i).qstring().toInt(&ok);
 
 	/* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
 	while(i < l && (s[i].isDigit() || s[i] == '.'))

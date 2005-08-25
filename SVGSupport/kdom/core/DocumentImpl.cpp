@@ -903,22 +903,22 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 			{
 				case NodeImpl::ElementId:
 				{
-					if((id = interface->getTagID(n.string().ascii(), name->length())))
+					if((id = interface->getTagID(n.qstring().ascii(), name->length())))
 						return id;
 
 					// compatibility: upper case - case insensitive
-					if((id = interface->getTagID(n.string().lower().ascii(), name->length())))
+					if((id = interface->getTagID(n.qstring().lower().ascii(), name->length())))
 						return id;
 				
 					break;
 				}
 				default:
 				{
-					if((id = interface->getAttrID(n.string().ascii(), name->length())))
+					if((id = interface->getAttrID(n.qstring().ascii(), name->length())))
 						return id;
 
 					// compatibility: upper case - case insensitive
-					if((id = interface->getAttrID(n.string().lower().ascii(), name->length())))
+					if((id = interface->getAttrID(n.qstring().lower().ascii(), name->length())))
 						return id;
 				}
 			}
@@ -929,18 +929,18 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 	// compatibility mode has to lookup upper case
 	if(!name)
 	{
-		id = (NodeImpl::Id) map->ids.find(n.string());
+		id = (NodeImpl::Id) map->ids.find(n.qstring());
 		if(!id && type != NodeImpl::NamespaceId)
-			id = (NodeImpl::Id) map->ids.find(QString::fromLatin1("aliases: ") + n.string());
+			id = (NodeImpl::Id) map->ids.find(QString::fromLatin1("aliases: ") + n.qstring());
 	}
 	else 
 	{
-		id = (NodeImpl::Id) map->ids.find(n.string());
+		id = (NodeImpl::Id) map->ids.find(n.qstring());
 		if(!readonly && id && prefix && !prefix->isEmpty())
 		{
 			// we were called in registration mode... check if the alias exists
 			QConstString px(prefix->unicode(), prefix->length());
-			QString qn(QString::fromLatin1("aliases: ") + px.string() + QString::fromLatin1(":") + n.string());
+			QString qn(QString::fromLatin1("aliases: ") + px.qstring() + QString::fromLatin1(":") + n.qstring());
 			if(!map->ids.find(qn))
 				map->ids.insert(qn, (NodeImpl::Id *)id);
 		}
@@ -960,13 +960,13 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 	NodeImpl::Id cid = map->count++ + map->idStart;
 	map->names.insert(cid, name);
 	name->ref();
-	map->ids.insert(n.string(), (NodeImpl::Id *)cid);
+	map->ids.insert(n.qstring(), (NodeImpl::Id *)cid);
 
 	// and register an alias if needed for DOM1 methods compatibility
 	if(prefix && !prefix->isEmpty())
 	{
 		QConstString px(prefix->unicode(), prefix->length());
-		QString qn(QString::fromLatin1("aliases: ") + px.string() + QString::fromLatin1(":") + n.string());
+		QString qn(QString::fromLatin1("aliases: ") + px.qstring() + QString::fromLatin1(":") + n.qstring());
 		if(!map->ids.find(qn))
 			map->ids.insert(qn, (NodeImpl::Id *)cid);
 	}

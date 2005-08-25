@@ -429,7 +429,7 @@ int DOMStringImpl::toInt(bool *ok) const
 	while(i < m_len && m_str[i].isDigit())
 		++i;
 
-	return QConstString(m_str, i).string().toInt(ok);
+	return QConstString(m_str, i).qstring().toInt(ok);
 }
 
 DOMStringImpl *DOMStringImpl::copy() const
