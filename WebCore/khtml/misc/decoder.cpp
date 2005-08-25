@@ -40,8 +40,9 @@ using namespace khtml;
 
 #include "htmlnames.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::AtomicString;
-using namespace HTMLNames;
 using DOM::nullAtom;
 
 class KanjiCode

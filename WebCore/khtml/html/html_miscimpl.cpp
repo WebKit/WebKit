@@ -31,9 +31,9 @@
 
 #include <kdebug.h>
 
-using namespace HTMLNames;
-
 namespace DOM {
+
+using namespace HTMLNames;
 
 HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(basefontTag, doc)

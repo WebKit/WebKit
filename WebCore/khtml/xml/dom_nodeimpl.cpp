@@ -64,10 +64,12 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
-using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
+
+using namespace HTMLNames;
+
 /**
  * NodeList which lists all Nodes in a document with a given tag name
  */

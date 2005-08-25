@@ -55,6 +55,8 @@
 #include <kdebug.h>
 #include <stdlib.h>
 
+using namespace DOM::HTMLNames;
+
 using DOM::AtomicString;
 using DOM::AttributeImpl;
 using DOM::DOMString;
@@ -64,7 +66,6 @@ using DOM::emptyAtom;
 using DOM::commentAtom;
 using DOM::nullAtom;
 using DOM::textAtom;
-using namespace HTMLNames;
 using DOM::QualifiedName;
 using DOM::MappedAttributeImpl;
 using DOM::NamedMappedAttrMapImpl;
@@ -444,7 +445,7 @@ void HTMLTokenizer::scriptHandler()
     processToken();
 
     // Scripts following a frameset element should not be executed or even loaded in the case of extern scripts.
-    bool followingFrameset = (parser->doc()->body() && parser->doc()->body()->hasTagName(HTMLNames::framesetTag));
+    bool followingFrameset = (parser->doc()->body() && parser->doc()->body()->hasTagName(framesetTag));
     TokenizerString *savedPrependingSrc = currentPrependingSrc;
     TokenizerString prependingSrc;
     currentPrependingSrc = &prependingSrc;

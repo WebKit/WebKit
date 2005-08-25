@@ -57,6 +57,8 @@
 #define ASSERT(assertion) assert(assertion)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::CSSStyleDeclarationImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
@@ -67,7 +69,6 @@ using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::QualifiedName;
-using namespace HTMLNames;
 
 namespace khtml {
 

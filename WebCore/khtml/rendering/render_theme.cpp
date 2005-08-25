@@ -20,11 +20,13 @@
  */
 
 #include "render_theme.h"
+
 #include "render_style.h"
 #include "htmlnames.h"
 #include "html_formimpl.h"
 
-using namespace HTMLNames;
+using namespace DOM::HTMLNames;
+
 using DOM::HTMLInputElementImpl;
 
 // The methods in this file are shared by all themes on every platform.

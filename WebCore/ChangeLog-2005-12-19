@@ -1,5 +1,66 @@
 2005-08-25  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4654
+          one more pass of HTMLNames refinement
+
+        * khtml/html/htmlnames.h: Used new "for each" macros so the lists of tags here can
+        be re-used in other files.
+        * khtml/html/htmlnames.cpp: (DOM::HTMLNames::init): Changed the name of the function
+        and used the macros defined in the header to avoid repeating the lists.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::init): Update for function name change.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::isRecognizedTagName): Use the
+        macro from htmlnames.h to avoid repeating the list of tags.
+
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/editing/visible_text.cpp:
+        * khtml/editing/visible_units.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_formimpl.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        * khtml/html/html_listimpl.cpp:
+        * khtml/html/html_listimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/htmlfactory.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/decoder.cpp:
+        * khtml/rendering/render_applet.cpp:
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/rendering/render_list.cpp:
+        * khtml/rendering/render_table.cpp:
+        * khtml/rendering/render_theme.cpp:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_position.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        * kwq/DOM.mm:
+        * kwq/DOMHTML.mm:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQKHTMLPart.cpp:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/WebCoreBridge.mm:
+        Updated "using" because HTMLNames is now inside the DOM namespace.
+
+2005-08-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - removed WebCore-tests.exp since the tests it supported are now gone

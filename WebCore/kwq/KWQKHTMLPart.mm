@@ -86,6 +86,8 @@
 
 #undef _KWQ_TIMING
 
+using namespace DOM::HTMLNames;
+
 using DOM::AtomicString;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentFragmentImpl;
@@ -94,7 +96,6 @@ using DOM::DocumentMarker;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
-using namespace HTMLNames;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;

@@ -44,13 +44,14 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
-using namespace HTMLNames;
 
 namespace khtml {
 

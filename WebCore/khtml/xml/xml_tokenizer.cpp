@@ -40,6 +40,8 @@
 
 #include <qptrstack.h>
 
+using namespace DOM::HTMLNames;
+
 using DOM::AttributeImpl;
 using DOM::NamedAttrMapImpl;
 using DOM::DocumentFragmentImpl;
@@ -47,7 +49,6 @@ using DOM::DocumentImpl;
 using DOM::DocumentPtr;
 using DOM::DOMString;
 using DOM::ElementImpl;
-using namespace HTMLNames;
 using DOM::HTMLScriptElementImpl;
 using DOM::HTMLTableSectionElementImpl;
 using DOM::Node;

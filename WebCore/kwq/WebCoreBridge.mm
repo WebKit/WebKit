@@ -85,6 +85,8 @@
 
 @class NSView;
 
+using namespace DOM::HTMLNames;
+
 using DOM::AtomicString;
 using DOM::CSSStyleDeclarationImpl;
 using DOM::DocumentFragmentImpl;
@@ -97,7 +99,6 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
 using DOM::HTMLInputElementImpl;
-using namespace HTMLNames;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;

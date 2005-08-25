@@ -49,9 +49,9 @@
 #include "KWQSlider.h"
 #endif
 
-using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
+using namespace HTMLNames;
 
 RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
     : RenderWidget(element)

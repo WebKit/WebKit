@@ -31,6 +31,8 @@ using namespace khtml;
 
 namespace DOM {
 
+using namespace HTMLNames;
+
 bool HTMLUListElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == typeAttr) {

@@ -38,12 +38,13 @@
 #define ASSERT(assertion) assert(assertion)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::TextImpl;
-using namespace HTMLNames;
 
 namespace khtml {
 

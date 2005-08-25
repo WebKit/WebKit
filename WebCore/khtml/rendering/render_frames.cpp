@@ -48,9 +48,9 @@
 #include <qpainter.h>
 #include "qdict.h"
 
-using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
+using namespace HTMLNames;
 
 RenderFrameSet::RenderFrameSet( HTMLFrameSetElementImpl *frameSet)
     : RenderContainer(frameSet)

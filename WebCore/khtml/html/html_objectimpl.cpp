@@ -51,10 +51,11 @@
 #include "KWQKHTMLPart.h"
 #endif
 
-using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
+
+using namespace HTMLNames;
 
 // -------------------------------------------------------------------------
 

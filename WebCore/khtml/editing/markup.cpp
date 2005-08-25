@@ -37,6 +37,8 @@
 #include "rendering/render_text.h"
 #include "htmlnames.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::AttributeImpl;
 using DOM::CommentImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
@@ -53,7 +55,6 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
-using namespace HTMLNames;
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"

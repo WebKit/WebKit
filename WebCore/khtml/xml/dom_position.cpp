@@ -54,7 +54,6 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
-using namespace HTMLNames;
 using khtml::EAffinity;
 using khtml::InlineBox;
 using khtml::InlineTextBox;
@@ -68,6 +67,8 @@ using khtml::VISIBLE;
 using khtml::VisiblePosition;
 
 namespace DOM {
+
+using namespace HTMLNames;
 
 static NodeImpl *nextRenderedEditable(NodeImpl *node)
 {

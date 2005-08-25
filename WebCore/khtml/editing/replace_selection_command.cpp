@@ -47,6 +47,8 @@
 #define ASSERT(assertion) assert(assertion)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::DocumentImpl;
 using DOM::NodeImpl;
@@ -54,7 +56,6 @@ using DOM::DocumentFragmentImpl;
 using DOM::ElementImpl;
 using DOM::TextImpl;
 using DOM::DOMString;
-using namespace HTMLNames;
 using DOM::HTMLElementImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::Position;

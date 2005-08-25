@@ -37,9 +37,10 @@
 
 //#define BOX_DEBUG
 
-using DOM::DocumentImpl;
-using namespace HTMLNames;
+using namespace DOM::HTMLNames;
 using namespace khtml;
+
+using DOM::DocumentImpl;
 
 const int cMarkerPadding = 7;
 

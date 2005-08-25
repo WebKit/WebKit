@@ -36,12 +36,13 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
-using namespace HTMLNames;
 
 namespace khtml {
 

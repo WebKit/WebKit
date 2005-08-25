@@ -64,6 +64,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::DOMString;
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
@@ -107,7 +109,6 @@ using DOM::HTMLMapElementImpl;
 using DOM::HTMLMenuElementImpl;
 using DOM::HTMLMetaElementImpl;
 using DOM::HTMLModElementImpl;
-using namespace HTMLNames;
 using DOM::HTMLOListElementImpl;
 using DOM::HTMLObjectElementImpl;
 using DOM::HTMLOptGroupElementImpl;

@@ -30,9 +30,10 @@
 #include "htmltokenizer.h"
 #include "khtmlpart_p.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::DocumentImpl;
 using DOM::HTMLDocumentImpl;
-using namespace HTMLNames;
 using DOM::NodeImpl;
 
 // FIXME: What on earth is this single tiny file with only this method doing here?

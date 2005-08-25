@@ -45,10 +45,11 @@
 #include <kdebug.h>
 #include <kglobal.h>
 
-using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
+
+using namespace HTMLNames;
 
 HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
   : HTMLElementImpl(tableTag, doc)

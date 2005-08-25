@@ -66,12 +66,13 @@
 #import "qptrstack.h"
 #import "DOMInternal.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
 using DOM::HTMLAreaElementImpl;
-using namespace HTMLNames;
 using DOM::HTMLCollection;
 using DOM::HTMLCollectionImpl;
 using DOM::HTMLElementImpl;

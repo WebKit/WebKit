@@ -63,10 +63,11 @@
 
 #include <assert.h>
 
-using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
+
+using namespace HTMLNames;
 
 struct FormDataListItem {
     FormDataListItem(const QCString &data) : m_data(data) { }

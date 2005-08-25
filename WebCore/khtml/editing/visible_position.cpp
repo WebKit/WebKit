@@ -42,6 +42,8 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::CharacterDataImpl;
 using DOM::NodeImpl;
 using DOM::offsetInCharacters;
@@ -50,7 +52,6 @@ using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::TextImpl;
-using namespace HTMLNames;
 
 namespace khtml {
 

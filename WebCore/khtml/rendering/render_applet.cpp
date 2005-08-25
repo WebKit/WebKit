@@ -38,9 +38,9 @@
 #include "java/kjavaappletwidget.h"
 #include "html/html_objectimpl.h"
 
-using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
+using namespace HTMLNames;
 
 RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString> &args )
     : RenderWidget(applet)

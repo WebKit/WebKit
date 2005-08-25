@@ -39,10 +39,11 @@
 
 #include <kdebug.h>
 
-using namespace HTMLNames;
 using namespace khtml;
 
 namespace DOM {
+
+using namespace HTMLNames;
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(aTag, doc)

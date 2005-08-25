@@ -54,6 +54,8 @@
 #include "visible_text.h"
 #include "visible_units.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::AttrImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
@@ -80,7 +82,6 @@ using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
-using namespace HTMLNames;
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"

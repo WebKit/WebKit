@@ -57,6 +57,8 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::AttrImpl;
 using DOM::CharacterDataImpl;
 using DOM::DocumentFragmentImpl;
@@ -71,7 +73,6 @@ using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::FilterNode;
 using DOM::HTMLElementImpl;
-using namespace HTMLNames;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
 using DOM::NodeFilter;

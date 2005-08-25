@@ -43,6 +43,8 @@ using khtml::HashMap;
 namespace DOM
 {
 
+using namespace HTMLNames;
+
 typedef HTMLElementImpl* (*ConstructorFunc)(const AtomicString& tagName, DocumentPtr* docPtr, HTMLFormElementImpl* form, bool createdByParser);
 typedef HashMap<DOMStringImpl *, void*, PointerHash<DOMStringImpl *> > FunctionMap;
 static FunctionMap* gFunctionMap;

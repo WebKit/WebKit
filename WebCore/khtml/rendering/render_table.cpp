@@ -44,9 +44,9 @@
 
 #include "khtmlview.h"
 
-using namespace HTMLNames;
 using namespace khtml;
 using namespace DOM;
+using namespace HTMLNames;
 
 RenderTable::RenderTable(DOM::NodeImpl* node)
     : RenderBlock(node)

@@ -63,6 +63,7 @@
 #include <klocale.h>
 
 using namespace DOM;
+using namespace HTMLNames;
 using namespace khtml;
 
 //----------------------------------------------------------------------------

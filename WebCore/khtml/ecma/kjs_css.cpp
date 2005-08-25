@@ -35,6 +35,8 @@
 
 #include "kjs_css.lut.h"
 
+using namespace DOM::HTMLNames;
+
 using DOM::CSSCharsetRuleImpl;
 using DOM::CSSFontFaceRuleImpl;
 using DOM::CSSImportRuleImpl;
@@ -55,7 +57,6 @@ using DOM::CounterImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
-using namespace HTMLNames;
 using DOM::HTMLStyleElementImpl;
 using DOM::MediaListImpl;
 using DOM::RectImpl;

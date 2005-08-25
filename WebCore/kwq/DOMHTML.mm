@@ -48,7 +48,8 @@
 #import "KWQAssertions.h"
 #import "KWQFoundationExtras.h"
 
-using namespace HTMLNames;
+using namespace DOM::HTMLNames;
+
 using DOM::Document;
 using DOM::DocumentFragmentImpl;
 using DOM::DOMString;

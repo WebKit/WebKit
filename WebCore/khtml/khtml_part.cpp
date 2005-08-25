@@ -209,7 +209,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
   AtomicString::init();
   QualifiedName::init();
-  HTMLNames::initHTMLNames(); // FIXME: We should make this happen only when HTML is used.
+  HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
   else if ( prof == BrowserViewGUI )

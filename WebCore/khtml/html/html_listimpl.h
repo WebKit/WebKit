@@ -20,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_LISTIMPL_H
 #define HTML_LISTIMPL_H
 
@@ -28,8 +29,6 @@
  */
 
 #include "html_elementimpl.h"
-
-using namespace HTMLNames;
 
 namespace DOM
 {

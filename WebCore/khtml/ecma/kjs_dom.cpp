@@ -51,6 +51,8 @@
 #include <JavaScriptCore/runtime_object.h>
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::AttrImpl;
 using DOM::CharacterDataImpl;
 using DOM::DocumentImpl;
@@ -65,7 +67,6 @@ using DOM::HTMLAppletElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLEmbedElementImpl;
-using namespace HTMLNames;
 using DOM::HTMLObjectElementImpl;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;

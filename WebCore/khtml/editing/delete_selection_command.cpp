@@ -46,6 +46,8 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
+using namespace DOM::HTMLNames;
+
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::DOMString;
@@ -54,7 +56,6 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::RangeImpl;
 using DOM::TextImpl;
-using namespace HTMLNames;
 
 namespace khtml {
 
