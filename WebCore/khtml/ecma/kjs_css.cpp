@@ -208,7 +208,7 @@ void DOMCSSStyleDeclaration::put(ExecState *exec, const Identifier &propertyName
   DOMExceptionTranslator exception(exec);
   CSSStyleDeclarationImpl &styleDecl = *m_impl;
   if (propertyName == "cssText") {
-    styleDecl.setCssText(value->toString(exec).string(), exception);
+    styleDecl.setCssText(value->toString(exec).domString(), exception);
   } else {
     if (isCSSPropertyName(propertyName)) {
       bool pixelOrPos;
@@ -244,7 +244,7 @@ ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, Objec
   DOMExceptionTranslator exception(exec);
   CSSStyleDeclarationImpl &styleDecl = *static_cast<DOMCSSStyleDeclaration *>(thisObj)->impl();
   UString str = args[0]->toString(exec);
-  DOM::DOMString s = str.string();
+  DOM::DOMString s = str.domString();
 
   switch (id) {
     case DOMCSSStyleDeclaration::GetPropertyValue:
@@ -256,7 +256,7 @@ ValueImp *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, Objec
     case DOMCSSStyleDeclaration::GetPropertyPriority:
       return getStringOrNull(styleDecl.getPropertyPriority(s));
     case DOMCSSStyleDeclaration::SetProperty:
-      styleDecl.setProperty(s, args[1]->toString(exec).string(), args[2]->toString(exec).string(), exception);
+      styleDecl.setProperty(s, args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
       return Undefined();
     case DOMCSSStyleDeclaration::Item:
       return getStringOrNull(styleDecl.item(args[0]->toInt32(exec)));
@@ -381,7 +381,7 @@ ValueImp *DOMStyleSheetList::indexGetter(ExecState *exec, const Identifier& prop
 ValueImp *DOMStyleSheetList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
-  ElementImpl *element = thisObj->m_doc->getElementById(propertyName.string());
+  ElementImpl *element = thisObj->m_doc->getElementById(propertyName.domString());
   return getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
 }
 
@@ -417,7 +417,7 @@ bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& pr
   // so we can't use DOMNamedNodesCollection.....
   // We could duplicate it for stylesheets though - worth it ?
   // Other problem of this implementation: it doesn't look for the ID attribute!
-  DOM::NameNodeListImpl namedList( m_doc.documentElement().handle(), p.string() );
+  DOM::NameNodeListImpl namedList( m_doc.documentElement().handle(), p.domString() );
   int len = namedList.length();
   if ( len ) {
     QValueList<DOM::Node> styleSheets;
@@ -436,7 +436,7 @@ bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& pr
   // ### Bad implementation because returns a single element (are IDs always unique?)
   // and doesn't look for name attribute (see implementation above).
   // But unicity of stylesheet ids is good practice anyway ;)
-  ElementImpl *element = m_doc->getElementById(propertyName.string());
+  ElementImpl *element = m_doc->getElementById(propertyName.domString());
   if (element && element->hasTagName(styleTag)) {
     slot.setCustom(this, nameGetter);
     return true;
@@ -542,7 +542,7 @@ void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, ValueImp
 {
   MediaListImpl &mediaList = *m_impl;
   if (propertyName == "mediaText")
-    mediaList.setMediaText(value->toString(exec).string());
+    mediaList.setMediaText(value->toString(exec).domString());
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
@@ -561,10 +561,10 @@ ValueImp *KJS::DOMMediaListProtoFunc::callAsFunction(ExecState *exec, ObjectImp 
     case DOMMediaList::Item:
       return getStringOrNull(mediaList.item(args[0]->toInt32(exec)));
     case DOMMediaList::DeleteMedium:
-      mediaList.deleteMedium(args[0]->toString(exec).string());
+      mediaList.deleteMedium(args[0]->toString(exec).domString());
       return Undefined();
     case DOMMediaList::AppendMedium:
-      mediaList.appendMedium(args[0]->toString(exec).string());
+      mediaList.appendMedium(args[0]->toString(exec).domString());
       return Undefined();
     default:
       return Undefined();
@@ -630,13 +630,13 @@ ValueImp *DOMCSSStyleSheetProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
   CSSStyleSheetImpl &styleSheet = *static_cast<CSSStyleSheetImpl *>(static_cast<DOMCSSStyleSheet *>(thisObj)->impl());
   switch (id) {
     case DOMCSSStyleSheet::InsertRule:
-      return Number(styleSheet.insertRule(args[0]->toString(exec).string(), args[1]->toInt32(exec), exception));
+      return Number(styleSheet.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec), exception));
     case DOMCSSStyleSheet::DeleteRule:
       styleSheet.deleteRule(args[0]->toInt32(exec), exception);
       return Undefined();
     case DOMCSSStyleSheet::AddRule: {
       long index = args.size() >= 3 ? args[2]->toInt32(exec) : -1;
-      styleSheet.addRule(args[0]->toString(exec).string(), args[1]->toString(exec).string(), index, exception);
+      styleSheet.addRule(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), index, exception);
       // As per Microsoft documentation, always return -1.
       return Number(-1);
     }
@@ -880,17 +880,17 @@ void DOMCSSRule::putValueProperty(ExecState *exec, int token, ValueImp *value, i
   switch (token) {
   // for DOM::CSSRule::STYLE_RULE:
   case Style_SelectorText:
-    static_cast<CSSStyleRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).string());
+    static_cast<CSSStyleRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
     return;
 
   // for DOM::CSSRule::PAGE_RULE:
   case Page_SelectorText:
-    static_cast<CSSPageRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).string());
+    static_cast<CSSPageRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
     return;
 
   // for DOM::CSSRule::CHARSET_RULE:
   case Charset_Encoding:
-    static_cast<CSSCharsetRuleImpl *>(m_impl.get())->setEncoding(value->toString(exec).string());
+    static_cast<CSSCharsetRuleImpl *>(m_impl.get())->setEncoding(value->toString(exec).domString());
     return;
 
   default:
@@ -907,7 +907,7 @@ ValueImp *DOMCSSRuleFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, co
   if (cssRule.type() == DOM::CSSRule::MEDIA_RULE) {
     CSSMediaRuleImpl &rule = static_cast<CSSMediaRuleImpl &>(cssRule);
     if (id == DOMCSSRule::Media_InsertRule)
-      return Number(rule.insertRule(args[0]->toString(exec).string(),args[1]->toInt32(exec)));
+      return Number(rule.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec)));
     else if (id == DOMCSSRule::Media_DeleteRule)
       rule.deleteRule(args[0]->toInt32(exec));
   }
@@ -1004,7 +1004,7 @@ void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, ValueImp 
 {
   CSSValueImpl &cssValue = *m_impl;
   if (propertyName == "cssText")
-    cssValue.setCssText(value->toString(exec).string());
+    cssValue.setCssText(value->toString(exec).domString());
   else
     DOMObject::put(exec, propertyName, value, attr);
 }
@@ -1116,7 +1116,7 @@ ValueImp *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, ObjectI
     case DOMCSSPrimitiveValue::GetFloatValue:
       return Number(val.getFloatValue(args[0]->toInt32(exec)));
     case DOMCSSPrimitiveValue::SetStringValue:
-      val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec).string(), exception);
+      val.setStringValue(args[0]->toInt32(exec), args[1]->toString(exec).domString(), exception);
       return Undefined();
     case DOMCSSPrimitiveValue::GetStringValue:
       return getStringOrNull(val.getStringValue());

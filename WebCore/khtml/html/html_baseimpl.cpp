@@ -94,7 +94,7 @@ bool HTMLBodyElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttrib
 void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == backgroundAttr) {
-        QString url = khtml::parseURL(attr->value()).string();
+        QString url = khtml::parseURL(attr->value()).qstring();
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == marginwidthAttr) {
@@ -149,22 +149,22 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             getDocument()->recalcStyle(Force);
     } else if (attr->name() == onloadAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::LOAD_EVENT,	    
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onunloadAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::UNLOAD_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onblurAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::BLUR_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onfocusAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::FOCUS_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onresizeAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::RESIZE_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onscrollAttr) {
         getDocument()->setHTMLWindowEventListener(EventImpl::SCROLL_EVENT,
-                                                  getDocument()->createHTMLEventListener(attr->value().string(), NULL));
+                                                  getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -298,7 +298,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
 	return false;
     }
 
-    KURL newURL(getDocument()->completeURL(URLString.string()));
+    KURL newURL(getDocument()->completeURL(URLString.qstring()));
     newURL.setRef(QString::null);
 
     // Don't allow more than 1000 total frames in a set. This seems
@@ -371,11 +371,11 @@ void HTMLFrameElementImpl::openURL()
 
     // Load the frame contents.
     KHTMLPart *part = w->part();
-    KHTMLPart *framePart = part->findFrame(m_name.string());
+    KHTMLPart *framePart = part->findFrame(m_name.qstring());
     if (framePart) {
-        framePart->openURL(getDocument()->completeURL(relativeURL.string()));
+        framePart->openURL(getDocument()->completeURL(relativeURL.qstring()));
     } else {
-        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.string(), m_name.string());
+        part->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.qstring(), m_name.qstring());
     }
 }
 
@@ -418,10 +418,10 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().string(), this));
+                                getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().string(), this));
+                                getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -472,11 +472,11 @@ void HTMLFrameElementImpl::attach()
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if (m_name.isEmpty() || part->frameExists(m_name.string()))
+    if (m_name.isEmpty() || part->frameExists(m_name.qstring()))
         m_name = AtomicString(part->requestFrameName());
 
     // load the frame contents
-    part->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.string(), m_name.string());
+    part->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.qstring(), m_name.qstring());
 }
 
 void HTMLFrameElementImpl::detach()
@@ -485,7 +485,7 @@ void HTMLFrameElementImpl::detach()
 
     if (m_render && part) {
 	part->decrementFrameCount();
-        KHTMLPart *framePart = part->findFrame(m_name.string());
+        KHTMLPart *framePart = part->findFrame(m_name.qstring());
         if (framePart)
             framePart->frameDetached();
     }
@@ -527,7 +527,7 @@ KHTMLPart* HTMLFrameElementImpl::contentPart() const
     }
 
     // Find the part for the subframe that this element represents.
-    return ownerDocumentPart->findFrame(m_name.string());
+    return ownerDocumentPart->findFrame(m_name.qstring());
 }
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
@@ -684,10 +684,10 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             frameborder = false;
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(EventImpl::LOAD_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -920,7 +920,7 @@ void HTMLIFrameElementImpl::attach()
     if (m_render && part) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
         part->incrementFrameCount();
-        if (m_name.isEmpty() || part->frameExists(m_name.string()))
+        if (m_name.isEmpty() || part->frameExists(m_name.qstring()))
             m_name = AtomicString(part->requestFrameName());
 
         static_cast<RenderPartObject*>(m_render)->updateWidget();

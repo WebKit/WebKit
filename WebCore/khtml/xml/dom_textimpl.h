@@ -63,7 +63,7 @@ public:
 
     // Other methods (not part of DOM)
 
-    DOMStringImpl *string() { return str; }
+    DOMStringImpl *qstring() { return str; }
     virtual void checkCharDataOperation( const unsigned long offset, int &exceptioncode );
 
     virtual long maxOffset() const;

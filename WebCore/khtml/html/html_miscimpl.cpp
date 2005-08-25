@@ -427,8 +427,8 @@ void HTMLCollectionImpl::updateNameCache() const
         if (!n->isHTMLElement())
             continue;
         HTMLElementImpl* e = static_cast<HTMLElementImpl*>(n);
-        QString idAttrVal = e->getAttribute(idAttr).string();
-        QString nameAttrVal = e->getAttribute(nameAttr).string();
+        QString idAttrVal = e->getAttribute(idAttr).qstring();
+        QString nameAttrVal = e->getAttribute(nameAttr).qstring();
         if (!idAttrVal.isEmpty()) {
             // add to id cache
             QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttrVal);
@@ -466,8 +466,8 @@ QValueList< SharedPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const DOMString
     resetCollectionInfo();
     updateNameCache();
     
-    QPtrVector<NodeImpl> *idResults = info->idCache.find(name.string());
-    QPtrVector<NodeImpl> *nameResults = info->nameCache.find(name.string());
+    QPtrVector<NodeImpl> *idResults = info->idCache.find(name.qstring());
+    QPtrVector<NodeImpl> *nameResults = info->nameCache.find(name.qstring());
     
     for (unsigned i = 0; idResults && i < idResults->count(); ++i) {
         result.append(SharedPtr<NodeImpl>(idResults->at(i)));
@@ -705,8 +705,8 @@ void HTMLFormCollectionImpl::updateNameCache() const
     for (unsigned i = 0; i < f->formElements.count(); ++i) {
         HTMLGenericFormElementImpl* e = f->formElements[i];
         if (e->isEnumeratable()) {
-            QString idAttrVal = e->getAttribute(idAttr).string();
-            QString nameAttrVal = e->getAttribute(nameAttr).string();
+            QString idAttrVal = e->getAttribute(idAttr).qstring();
+            QString nameAttrVal = e->getAttribute(nameAttr).qstring();
             if (!idAttrVal.isEmpty()) {
                 // add to id cache
                 QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttrVal);
@@ -732,8 +732,8 @@ void HTMLFormCollectionImpl::updateNameCache() const
 
     for (unsigned i = 0; i < f->imgElements.count(); ++i) {
         HTMLImageElementImpl* e = f->imgElements[i];
-        QString idAttrVal = e->getAttribute(idAttr).string();
-        QString nameAttrVal = e->getAttribute(nameAttr).string();
+        QString idAttrVal = e->getAttribute(idAttr).qstring();
+        QString nameAttrVal = e->getAttribute(nameAttr).qstring();
         if (!idAttrVal.isEmpty() && !foundInputElements.find(idAttrVal)) {
             // add to id cache
             QPtrVector<NodeImpl> *idVector = info->idCache.find(idAttrVal);

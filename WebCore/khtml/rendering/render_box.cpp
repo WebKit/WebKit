@@ -130,7 +130,7 @@ void RenderBox::setStyle(RenderStyle *_style)
 
 RenderBox::~RenderBox()
 {
-    //kdDebug( 6040 ) << "Element destructor: this=" << nodeName().string() << endl;
+    //kdDebug( 6040 ) << "Element destructor: this=" << nodeName().qstring() << endl;
 }
 
 void RenderBox::detach()

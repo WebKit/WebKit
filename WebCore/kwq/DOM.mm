@@ -1415,7 +1415,7 @@ using khtml::SharedPtr;
     ASSERT(name);
     ElementImpl *e = [self _elementImpl];
     ASSERT(e);
-    return KURL(e->getDocument()->completeURL(khtml::parseURL(e->getAttribute(name)).string())).getNSURL();
+    return KURL(e->getDocument()->completeURL(khtml::parseURL(e->getAttribute(name)).qstring())).getNSURL();
 }
 
 @end
@@ -1835,7 +1835,7 @@ using khtml::SharedPtr;
 
 - (NSString *)_text
 {
-    return [self _rangeImpl]->text().string().getNSString();
+    return [self _rangeImpl]->text().qstring().getNSString();
 }
 
 @end

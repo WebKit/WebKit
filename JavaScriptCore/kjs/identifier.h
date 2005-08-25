@@ -37,7 +37,7 @@ namespace KJS {
         explicit Identifier(const UString &s) : _ustring(add(s.rep)) { }
         
         const UString &ustring() const { return _ustring; }
-        DOM::DOMString string() const;
+        DOM::DOMString domString() const;
         QString qstring() const;
         
         const UChar *data() const { return _ustring.data(); }

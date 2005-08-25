@@ -87,7 +87,7 @@ ValueImp *XMLSerializerProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
       }
 
       NodeImpl *node = static_cast<NodeImpl *>(static_cast<DOMNode *>(args[0]->toObject(exec))->impl());
-      return getStringOrNull(node->toString().string());
+      return getStringOrNull(node->toString());
     }
   }
 

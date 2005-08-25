@@ -67,7 +67,7 @@ KWQClipboard::AccessPolicy KWQClipboard::accessPolicy() const
 
 static NSString *cocoaTypeFromMIMEType(const DOMString &type)
 {
-    QString qType = type.string().stripWhiteSpace();
+    QString qType = type.qstring().stripWhiteSpace();
 
     // two special cases for IE compatibility
     if (qType == "Text") {
@@ -221,7 +221,7 @@ bool KWQClipboard::setData(const DOMString &type, const DOMString &data)
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
     NSString *cocoaType = cocoaTypeFromMIMEType(type);
-    NSString *cocoaData = data.string().getNSString();
+    NSString *cocoaData = data.qstring().getNSString();
 
     if ([cocoaType isEqualToString:NSURLPboardType]) {
         [m_pasteboard addTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];

@@ -216,7 +216,7 @@ bool TextIterator::handleTextNode()
     m_lastTextNode = m_node;
 
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
-    DOMString str = renderer->string();
+    DOMString str = renderer->qstring();
 
     // handle pre-formatted text
     if (renderer->style()->whiteSpace() == khtml::PRE) {
@@ -266,7 +266,7 @@ bool TextIterator::handleTextNode()
 void TextIterator::handleTextBox()
 {    
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
-    DOMString str = renderer->string();
+    DOMString str = renderer->qstring();
     long start = m_offset;
     long end = (m_node == m_endContainer) ? m_endOffset : LONG_MAX;
     while (m_textBox) {

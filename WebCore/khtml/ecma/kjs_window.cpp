@@ -959,7 +959,7 @@ ValueImp *Window::namedItemGetter(ExecState *exec, const Identifier& propertyNam
   DocumentImpl *doc = thisObj->m_part->xmlDocImpl();
   assert(thisObj->isSafeScript(exec) && doc && doc->isHTMLDocument());
 
-  DOMString name = propertyName.string();
+  DOMString name = propertyName.domString();
   SharedPtr<DOM::HTMLCollectionImpl> collection = doc->windowNamedItems(name);
   if (collection->length() == 1)
     return getDOMNode(exec, collection->firstItem());
@@ -1054,7 +1054,7 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   // allow shortcuts like 'Image1' instead of document.images.Image1
   DocumentImpl *doc = m_part->xmlDocImpl();
   if (isSafeScript(exec) && doc && doc->isHTMLDocument()) {
-    DOMString name = propertyName.string();
+    DOMString name = propertyName.domString();
     if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) || doc->getElementById(name)) {
       slot.setCustom(this, namedItemGetter);
       return true;
@@ -1390,7 +1390,7 @@ bool Window::isSafeScript(ExecState *exec) const
       thisDomain = ancestorPart->xmlDocImpl()->domain();
   }
 
-  //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
+  //kdDebug(6070) << "current domain:" << actDomain.qstring() << ", frame domain:" << thisDomain.qstring() << endl;
   if ( actDomain == thisDomain )
     return true;
 
@@ -1405,7 +1405,7 @@ bool Window::isSafeScript(ExecState *exec) const
   KWQ(m_part)->addMessageToConsole(message, 1, QString());
 #endif
   
-  kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.string() << "' to frame '" << thisDomain.string() << "'" << endl;
+  kdWarning(6070) << "Javascript: access denied for current frame '" << actDomain.qstring() << "' to frame '" << thisDomain.qstring() << "'" << endl;
   return false;
 }
 
@@ -1768,7 +1768,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
             khtmlpart->end();
 
             if (oldDoc) {
-              kdDebug(6070) << "Setting domain to " << oldDoc->domain().string() << endl;
+              kdDebug(6070) << "Setting domain to " << oldDoc->domain().qstring() << endl;
               khtmlpart->xmlDocImpl()->setDomain( oldDoc->domain(), true );
               khtmlpart->xmlDocImpl()->setBaseURL( oldDoc->baseURL() );
             }
@@ -1981,7 +1981,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
         if (listener) {
 	    DocumentImpl* docimpl = part->xmlDocImpl();
             if (docimpl)
-                docimpl->addWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).string()),listener,args[2]->toBoolean(exec));
+                docimpl->addWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).domString()),listener,args[2]->toBoolean(exec));
         }
         return Undefined();
     }
@@ -1992,7 +1992,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
         if (listener) {
 	    DocumentImpl* docimpl = part->xmlDocImpl();
             if (docimpl)
-                docimpl->removeWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).string()),listener,args[2]->toBoolean(exec));
+                docimpl->removeWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).domString()),listener,args[2]->toBoolean(exec));
         }
         return Undefined();
     }
@@ -2647,9 +2647,9 @@ ValueImp *SelectionFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
                 TypingCommand::closeTyping(part->lastEditCommand());
                 khtml::Selection s(part->selection());
                 khtml::Selection::EAlter alter = khtml::Selection::MOVE;
-                if (args[0]->toString(exec).string().lower() == "extend")
+                if (args[0]->toString(exec).domString().lower() == "extend")
                     alter = khtml::Selection::EXTEND;
-                DOMString directionString = args[1]->toString(exec).string().lower();
+                DOMString directionString = args[1]->toString(exec).domString().lower();
                 khtml::Selection::EDirection direction = khtml::Selection::FORWARD;
                 if (directionString == "backward")
                     direction = khtml::Selection::BACKWARD;
@@ -2658,7 +2658,7 @@ ValueImp *SelectionFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, con
                 if (directionString == "right")
                     direction = khtml::Selection::RIGHT;
                 khtml::ETextGranularity granularity = khtml::CHARACTER;
-                DOMString granularityString = args[2]->toString(exec).string().lower();
+                DOMString granularityString = args[2]->toString(exec).domString().lower();
                 if (granularityString == "word")
                     granularity = khtml::WORD;
                 else if (granularityString == "line")

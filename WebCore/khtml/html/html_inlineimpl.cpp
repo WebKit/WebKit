@@ -146,9 +146,9 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             }
         }
 
-        url = khtml::parseURL(getAttribute(hrefAttr)).string();
+        url = khtml::parseURL(getAttribute(hrefAttr)).qstring();
 
-        utarget = getAttribute(targetAttr).string();
+        utarget = getAttribute(targetAttr).qstring();
 
         if ( e && e->button() == 1 )
             utarget = "_blank";

@@ -56,7 +56,7 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
     p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 letterSpacing, wordSpacing, fontDef.smallCaps);
 #else
-    QString qstr = QConstString(str, slen).string();
+    QString qstr = QConstString(str, slen).qstring();
 
     //fprintf (stdout, "x %d, y %d, pos %d, qstr.length() %d, len %d, toAdd %d, from %d, to %d, str \"%s\"\n", x, y, pos, qstr.length(), len, toAdd, from, to, qstr.ascii());
     // hack for fonts that don't have a welldefined nbsp
@@ -142,7 +142,7 @@ int Font::width( QChar *chs, int slen, int pos, int len, int tabWidth, int xpos 
     return ROUND_TO_INT(fm.floatWidth(chs+pos, slen-pos, 0, len, tabWidth, xpos, letterSpacing, wordSpacing, fontDef.smallCaps));
 //    return fm.width(chs + pos, len);
 #else
-    QString qstr = QConstString(chs+pos, len).string();
+    QString qstr = QConstString(chs+pos, len).qstring();
     // hack for fonts that don't have a welldefined nbsp
     if ( !fontDef.hasNbsp ) {
 	// str.setLength() always does a deep copy, so the replacement code below is safe.
@@ -180,7 +180,7 @@ int Font::width( QChar *chs, int slen, int tabWidth, int xpos ) const
     if ( !fontDef.hasNbsp && (chs+pos)->unicode() == 0xa0 )
 	w = fm.width( QChar( ' ' ) );
     else
-	w = fm.charWidth( QConstString( chs, slen).string(), pos );
+	w = fm.charWidth( QConstString( chs, slen).qstring(), pos );
 
     if ( letterSpacing )
 	w += letterSpacing;

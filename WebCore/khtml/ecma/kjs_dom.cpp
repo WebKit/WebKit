@@ -454,10 +454,10 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
   NodeImpl &node = *m_impl;
   switch (token) {
   case NodeValue:
-    node.setNodeValue(value->toString(exec).string(), exception);
+    node.setNodeValue(value->toString(exec).domString(), exception);
     break;
   case Prefix:
-    node.setPrefix(value->toString(exec).string().implementation(), exception);
+    node.setPrefix(value->toString(exec).domString().implementation(), exception);
     break;
   case OnAbort:
     setListener(exec,DOM::EventImpl::ABORT_EVENT,value);
@@ -653,18 +653,18 @@ ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
       node.normalize();
       return Undefined();
     case DOMNode::IsSupported:
-        return Boolean(node.isSupported(args[0]->toString(exec).string(),
-            args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).string()));
+        return Boolean(node.isSupported(args[0]->toString(exec).domString(),
+            args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).domString()));
     case DOMNode::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)
-            node.addEventListener(args[0]->toString(exec).string(),listener,args[2]->toBoolean(exec));
+            node.addEventListener(args[0]->toString(exec).domString(),listener,args[2]->toBoolean(exec));
         return Undefined();
     }
     case DOMNode::RemoveEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)
-            node.removeEventListener(args[0]->toString(exec).string(),listener,args[2]->toBoolean(exec));
+            node.removeEventListener(args[0]->toString(exec).domString(),listener,args[2]->toBoolean(exec));
         return Undefined();
     }
     case DOMNode::DispatchEvent:
@@ -737,7 +737,7 @@ ValueImp *DOMNodeList::indexGetter(ExecState *exec, const Identifier& propertyNa
 ValueImp *DOMNodeList::nameGetter(ExecState *exec, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.string()));
+  return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.domString()));
 }
 
 bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -761,7 +761,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
     slot.setCustomIndex(this, idx, indexGetter);
     return true;
   } else {
-    if (list.itemById(propertyName.string())) {
+    if (list.itemById(propertyName.domString())) {
       slot.setCustom(this, nameGetter);
       return true;
     }
@@ -855,7 +855,7 @@ void DOMAttr::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
   DOMExceptionTranslator exception(exec);
   switch (token) {
   case ValueProperty:
-    static_cast<AttrImpl *>(impl())->setValue(value->toString(exec).string(), exception);
+    static_cast<AttrImpl *>(impl())->setValue(value->toString(exec).domString(), exception);
     return;
   default:
     kdWarning() << "DOMAttr::putValueProperty unhandled token " << token << endl;
@@ -989,7 +989,7 @@ void DOMDocument::putValueProperty(ExecState *exec, int token, ValueImp *value, 
   DocumentImpl &doc = *static_cast<DocumentImpl *>(impl());
   switch (token) {
     case SelectedStylesheetSet: {
-      doc.setSelectedStylesheetSet(value->toString(exec).string());
+      doc.setSelectedStylesheetSet(value->toString(exec).domString());
       break;
     }
   }
@@ -1003,7 +1003,7 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
   DocumentImpl &doc = static_cast<DocumentImpl &>(node);
   UString str = args[0]->toString(exec);
-  DOM::DOMString s = str.string();
+  DOM::DOMString s = str.domString();
 
   switch(id) {
   case DOMDocument::CreateElement:
@@ -1017,8 +1017,7 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   case DOMDocument::CreateCDATASection:
     return getDOMNode(exec, doc.createCDATASection(s, exception));
   case DOMDocument::CreateProcessingInstruction:
-    return getDOMNode(exec, doc.createProcessingInstruction(args[0]->toString(exec).string(),
-        args[1]->toString(exec).string(), exception));
+    return getDOMNode(exec, doc.createProcessingInstruction(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
   case DOMDocument::CreateAttribute:
     return getDOMNode(exec,doc.createAttribute(s, exception));
   case DOMDocument::CreateEntityReference:
@@ -1030,13 +1029,13 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
   case DOMDocument::ImportNode: // DOM2
     return getDOMNode(exec,doc.importNode(toNode(args[0]), args[1]->toBoolean(exec), exception));
   case DOMDocument::CreateElementNS: // DOM2
-    return getDOMNode(exec,doc.createElementNS(s, args[1]->toString(exec).string(), exception));
+    return getDOMNode(exec,doc.createElementNS(s, args[1]->toString(exec).domString(), exception));
   case DOMDocument::CreateAttributeNS: // DOM2
-    return getDOMNode(exec,doc.createAttributeNS(s, args[1]->toString(exec).string(), exception));
+    return getDOMNode(exec,doc.createAttributeNS(s, args[1]->toString(exec).domString(), exception));
   case DOMDocument::GetElementsByTagNameNS: // DOM2
-    return getDOMNodeList(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec).string()).get());
+    return getDOMNodeList(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec).domString()).get());
   case DOMDocument::GetElementById:
-    return getDOMNode(exec,doc.getElementById(args[0]->toString(exec).string()));
+    return getDOMNode(exec,doc.getElementById(args[0]->toString(exec).domString()));
   case DOMDocument::CreateRange:
     return getDOMRange(exec,doc.createRange());
   case DOMDocument::CreateNodeIterator: {
@@ -1063,26 +1062,26 @@ ValueImp *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisO
     return getDOMEvent(exec,doc.createEvent(s, exception));
   case DOMDocument::GetOverrideStyle:
     if (ElementImpl *element0 = toElement(args[0]))
-        return getDOMCSSStyleDeclaration(exec,doc.getOverrideStyle(element0, args[1]->toString(exec).string()));
+        return getDOMCSSStyleDeclaration(exec,doc.getOverrideStyle(element0, args[1]->toString(exec).domString()));
     // FIXME: Is undefined right here, or should we raise an exception?
     return Undefined();
   case DOMDocument::ExecCommand: {
-    return Boolean(doc.execCommand(args[0]->toString(exec).string(), args[1]->toBoolean(exec), args[2]->toString(exec).string()));
+    return Boolean(doc.execCommand(args[0]->toString(exec).domString(), args[1]->toBoolean(exec), args[2]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandEnabled: {
-    return Boolean(doc.queryCommandEnabled(args[0]->toString(exec).string()));
+    return Boolean(doc.queryCommandEnabled(args[0]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandIndeterm: {
-    return Boolean(doc.queryCommandIndeterm(args[0]->toString(exec).string()));
+    return Boolean(doc.queryCommandIndeterm(args[0]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandState: {
-    return Boolean(doc.queryCommandState(args[0]->toString(exec).string()));
+    return Boolean(doc.queryCommandState(args[0]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandSupported: {
-    return Boolean(doc.queryCommandSupported(args[0]->toString(exec).string()));
+    return Boolean(doc.queryCommandSupported(args[0]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandValue: {
-    DOM::DOMString commandValue(doc.queryCommandValue(args[0]->toString(exec).string()));
+    DOM::DOMString commandValue(doc.queryCommandValue(args[0]->toString(exec).domString()));
     // Method returns null DOMString to signal command is unsupported.
     // Microsoft documentation for this method says:
     // "If not supported [for a command identifier], this method returns a Boolean set to false."
@@ -1166,7 +1165,7 @@ ValueImp *DOMElement::attributeGetter(ExecState *exec, const Identifier& propert
   DOMElement *thisObj = static_cast<DOMElement *>(slot.slotBase());
 
   ElementImpl *element = static_cast<ElementImpl *>(thisObj->impl());
-  DOM::DOMString attr = element->getAttribute(propertyName.string());
+  DOM::DOMString attr = element->getAttribute(propertyName.domString());
   return getStringOrNull(attr);
 }
 
@@ -1192,7 +1191,7 @@ bool DOMElement::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
 
   // FIXME: do we really want to do this attribute lookup thing? Mozilla doesn't do it,
   // and it seems like it could interfere with XBL.
-  DOM::DOMString attr = element.getAttribute(propertyName.string());
+  DOM::DOMString attr = element.getAttribute(propertyName.domString());
   if (!attr.isNull()) {
     slot.setCustom(this, attributeGetter);
     return true;
@@ -1213,39 +1212,39 @@ ValueImp *DOMElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
     case DOMElement::GetAttribute:
       // getStringOrNull should be used here, since if the attribute isn't present at all, you should
       // return null and not "".
-      return getStringOrNull(element.getAttribute(args[0]->toString(exec).string()));
+      return getStringOrNull(element.getAttribute(args[0]->toString(exec).domString()));
     case DOMElement::SetAttribute:
-      element.setAttribute(args[0]->toString(exec).string(), args[1]->toString(exec).string(), exception);
+      element.setAttribute(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception);
       return Undefined();
     case DOMElement::RemoveAttribute:
-      element.removeAttribute(args[0]->toString(exec).string(), exception);
+      element.removeAttribute(args[0]->toString(exec).domString(), exception);
       return Undefined();
     case DOMElement::GetAttributeNode:
-      return getDOMNode(exec,element.getAttributeNode(args[0]->toString(exec).string()));
+      return getDOMNode(exec,element.getAttributeNode(args[0]->toString(exec).domString()));
     case DOMElement::SetAttributeNode:
       return getDOMNode(exec,element.setAttributeNode(toAttr(args[0]), exception).get());
     case DOMElement::RemoveAttributeNode:
       return getDOMNode(exec,element.removeAttributeNode(toAttr(args[0]), exception).get());
     case DOMElement::GetElementsByTagName:
-      return getDOMNodeList(exec, element.getElementsByTagName(args[0]->toString(exec).string()).get());
+      return getDOMNodeList(exec, element.getElementsByTagName(args[0]->toString(exec).domString()).get());
     case DOMElement::HasAttribute: // DOM2
-      return Boolean(element.hasAttribute(args[0]->toString(exec).string()));
+      return Boolean(element.hasAttribute(args[0]->toString(exec).domString()));
     case DOMElement::GetAttributeNS: // DOM2
-      return String(element.getAttributeNS(args[0]->toString(exec).string(),args[1]->toString(exec).string()).string());
+      return String(element.getAttributeNS(args[0]->toString(exec).domString(),args[1]->toString(exec).domString()).domString());
     case DOMElement::SetAttributeNS: // DOM2
-      element.setAttributeNS(args[0]->toString(exec).string(), args[1]->toString(exec).string(), args[2]->toString(exec).string(), exception);
+      element.setAttributeNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception);
       return Undefined();
     case DOMElement::RemoveAttributeNS: // DOM2
-      element.removeAttributeNS(args[0]->toString(exec).string(), args[1]->toString(exec).string(), exception);
+      element.removeAttributeNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception);
       return Undefined();
     case DOMElement::GetAttributeNodeNS: // DOM2
-      return getDOMNode(exec,element.getAttributeNodeNS(args[0]->toString(exec).string(),args[1]->toString(exec).string()));
+      return getDOMNode(exec,element.getAttributeNodeNS(args[0]->toString(exec).domString(),args[1]->toString(exec).domString()));
     case DOMElement::SetAttributeNodeNS: // DOM2
       return getDOMNode(exec, element.setAttributeNodeNS(toAttr(args[0]), exception).get());
     case DOMElement::GetElementsByTagNameNS: // DOM2
-      return getDOMNodeList(exec, element.getElementsByTagNameNS(args[0]->toString(exec).string() ,args[1]->toString(exec).string()).get());
+      return getDOMNodeList(exec, element.getElementsByTagNameNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString()).get());
     case DOMElement::HasAttributeNS: // DOM2
-      return Boolean(element.hasAttributeNS(args[0]->toString(exec).string(),args[1]->toString(exec).string()));
+      return Boolean(element.hasAttributeNS(args[0]->toString(exec).domString(),args[1]->toString(exec).domString()));
     case DOMElement::ScrollIntoView: 
         element.scrollIntoView(args[0]->isUndefinedOrNull() || args[0]->toBoolean(exec));
         return Undefined();
@@ -1316,18 +1315,18 @@ ValueImp *DOMDOMImplementationProtoFunc::callAsFunction(ExecState *exec, ObjectI
 
   switch(id) {
   case DOMDOMImplementation::HasFeature:
-    return Boolean(implementation.hasFeature(args[0]->toString(exec).string(),
-        args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).string()));
+    return Boolean(implementation.hasFeature(args[0]->toString(exec).domString(),
+        args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).domString()));
   case DOMDOMImplementation::CreateDocumentType: // DOM2
-    return getDOMNode(exec, implementation.createDocumentType(args[0]->toString(exec).string(),
-        args[1]->toString(exec).string(), args[2]->toString(exec).string(), exception));
+    return getDOMNode(exec, implementation.createDocumentType(args[0]->toString(exec).domString(),
+        args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception));
   case DOMDOMImplementation::CreateDocument: // DOM2
-    return getDOMNode(exec, implementation.createDocument(args[0]->toString(exec).string(),
-        args[1]->toString(exec).string(), toDocumentType(args[2]), exception));
+    return getDOMNode(exec, implementation.createDocument(args[0]->toString(exec).domString(),
+        args[1]->toString(exec).domString(), toDocumentType(args[2]), exception));
   case DOMDOMImplementation::CreateCSSStyleSheet: // DOM2
-    return getDOMStyleSheet(exec, implementation.createCSSStyleSheet(args[0]->toString(exec).string(), args[1]->toString(exec).string(), exception));
+    return getDOMStyleSheet(exec, implementation.createCSSStyleSheet(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
   case DOMDOMImplementation::CreateHTMLDocument: // DOM2-HTML
-    return getDOMNode(exec, implementation.createHTMLDocument(args[0]->toString(exec).string()));
+    return getDOMNode(exec, implementation.createHTMLDocument(args[0]->toString(exec).domString()));
   default:
     break;
   }
@@ -1457,19 +1456,19 @@ ValueImp *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, ObjectImp *t
 
   switch(id) {
     case DOMNamedNodeMap::GetNamedItem:
-      return getDOMNode(exec, map.getNamedItem(args[0]->toString(exec).string()));
+      return getDOMNode(exec, map.getNamedItem(args[0]->toString(exec).domString()));
     case DOMNamedNodeMap::SetNamedItem:
       return getDOMNode(exec, map.setNamedItem(toNode(args[0]), exception).get());
     case DOMNamedNodeMap::RemoveNamedItem:
-      return getDOMNode(exec, map.removeNamedItem(args[0]->toString(exec).string(), exception).get());
+      return getDOMNode(exec, map.removeNamedItem(args[0]->toString(exec).domString(), exception).get());
     case DOMNamedNodeMap::Item:
       return getDOMNode(exec, map.item(args[0]->toInt32(exec)));
     case DOMNamedNodeMap::GetNamedItemNS: // DOM2
-      return getDOMNode(exec, map.getNamedItemNS(args[0]->toString(exec).string(), args[1]->toString(exec).string()));
+      return getDOMNode(exec, map.getNamedItemNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString()));
     case DOMNamedNodeMap::SetNamedItemNS: // DOM2
       return getDOMNode(exec, map.setNamedItemNS(toNode(args[0]), exception).get());
     case DOMNamedNodeMap::RemoveNamedItemNS: // DOM2
-      return getDOMNode(exec, map.removeNamedItemNS(args[0]->toString(exec).string(), args[1]->toString(exec).string(), exception).get());
+      return getDOMNode(exec, map.removeNamedItemNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception).get());
     default:
       break;
   }
@@ -1521,7 +1520,7 @@ void DOMProcessingInstruction::put(ExecState *exec, const Identifier &propertyNa
   DOMExceptionTranslator exception(exec);
   // Not worth using the hashtable for this one ;)
   if (propertyName == "data")
-    pi->setData(value->toString(exec).string(), exception);
+    pi->setData(value->toString(exec).domString(), exception);
   else
     DOMNode::put(exec, propertyName, value, attr);
 }
@@ -1920,7 +1919,7 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
   for (QValueListConstIterator< SharedPtr<NodeImpl> > it = m_nodes.begin(); it != end; ++it, ++i) {
     NodeImpl *node = (*it).get();
     if (node->hasAttributes() &&
-        node->attributes()->id() == propertyName.string()) {
+        node->attributes()->id() == propertyName.domString()) {
       slot.setCustomIndex(this, i, indexGetter);
       return true;
     }
@@ -1984,7 +1983,7 @@ void DOMCharacterData::put(ExecState *exec, const Identifier &propertyName, Valu
 {
   DOMExceptionTranslator exception(exec);
   if (propertyName == "data")
-    static_cast<CharacterDataImpl *>(impl())->setData(value->toString(exec).string(), exception);
+    static_cast<CharacterDataImpl *>(impl())->setData(value->toString(exec).domString(), exception);
   else
     DOMNode::put(exec, propertyName,value,attr);
 }
@@ -2004,10 +2003,10 @@ ValueImp *DOMCharacterDataProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
         return getStringOrNull(data.substringData(args[0]->toInt32(exec), count, exception));
     }
     case DOMCharacterData::AppendData:
-      data.appendData(args[0]->toString(exec).string(), exception);
+      data.appendData(args[0]->toString(exec).domString(), exception);
       return Undefined();
     case DOMCharacterData::InsertData:
-      data.insertData(args[0]->toInt32(exec), args[1]->toString(exec).string(), exception);
+      data.insertData(args[0]->toInt32(exec), args[1]->toString(exec).domString(), exception);
       return Undefined();
     case DOMCharacterData::DeleteData: {
       const int count = args[1]->toInt32(exec);
@@ -2022,7 +2021,7 @@ ValueImp *DOMCharacterDataProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
       if (count < 0)
         setDOMException(exec, DOMException::INDEX_SIZE_ERR);
       else
-        data.replaceData(args[0]->toInt32(exec), count, args[2]->toString(exec).string(), exception);
+        data.replaceData(args[0]->toInt32(exec), count, args[2]->toString(exec).domString(), exception);
       return Undefined();
     }
     default:

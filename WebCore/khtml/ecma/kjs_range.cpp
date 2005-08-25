@@ -175,8 +175,7 @@ ValueImp *DOMRangeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj,
       range.detach(exception);
       break;
     case DOMRange::CreateContextualFragment:
-      DOMString str = args[0]->toString(exec).string();
-      result = getDOMNode(exec, range.createContextualFragment(str, exception));
+      result = getDOMNode(exec, range.createContextualFragment(args[0]->toString(exec).domString(), exception));
       break;
   };
 

@@ -556,7 +556,7 @@ static bool initializedKJS = FALSE;
     if (doc) {
         DocumentTypeImpl *doctype = doc->realDocType();
         if (doctype) {
-            documentTypeString = doctype->toString().string().getNSString();
+            documentTypeString = doctype->toString().qstring().getNSString();
         }
     }
     return documentTypeString;
@@ -777,8 +777,8 @@ static BOOL nowPrinting(WebCoreBridge *self)
     for (NodeImpl *child = node->firstChild(); child; child = child->nextSibling()) {
         [children addObject:[self copyDOMNode:child copier:copier]];
     }
-    NSObject *copiedNode = [copier nodeWithName:node->nodeName().string().getNSString()
-                                          value:node->nodeValue().string().getNSString()
+    NSObject *copiedNode = [copier nodeWithName:node->nodeName().qstring().getNSString()
+                                          value:node->nodeValue().qstring().getNSString()
                                          source:createMarkup(node, ChildrenOnly).getNSString()
                                        children:children];
     [children release];
@@ -1016,7 +1016,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(titleAttr);
             if (!title.isNull()) {
                 // We found a node with a title.
-                QString titleText = title.string();
+                QString titleText = title.qstring();
                 titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
                 [element setObject:titleText.getNSString() forKey:WebCoreElementTitleKey];
                 break;
@@ -1032,7 +1032,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
         const AtomicString& title = e->getAttribute(titleAttr);
         if (!title.isEmpty()) {
-            QString titleText = title.string();
+            QString titleText = title.qstring();
             titleText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
             [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
@@ -1043,7 +1043,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             if (!t.isEmpty()) {
                 [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
             }
-            QString URLString = parseURL(link).string();
+            QString URLString = parseURL(link).qstring();
             [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
@@ -1052,7 +1052,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             target = doc->baseTarget();
         }
         if (!target.isEmpty()) {
-            [element setObject:target.string().getNSString() forKey:WebCoreElementLinkTargetFrameKey];
+            [element setObject:target.qstring().getNSString() forKey:WebCoreElementLinkTargetFrameKey];
         }
     }
 
@@ -1084,7 +1084,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                 attr = i->getAttribute(srcAttr);
             }
             if (!attr.isEmpty()) {
-                QString URLString = parseURL(attr).string();
+                QString URLString = parseURL(attr).qstring();
                 [element setObject:i->getDocument()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
             }
             
@@ -1095,7 +1095,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             else if (i->hasTagName(imgTag))
                 alt = static_cast<HTMLImageElementImpl *>(i)->altText();
             if (!alt.isNull()) {
-                QString altText = alt.string();
+                QString altText = alt.qstring();
                 altText.replace(QChar('\\'), _part->backslashAsCurrencySymbol());
                 [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
             }
@@ -1111,7 +1111,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!doc) {
         return nil;
     }
-    QString rel = parseURL(QString::fromNSString(string)).string();
+    QString rel = parseURL(QString::fromNSString(string)).qstring();
     return KURL(doc->baseURL(), rel, doc->decoder() ? doc->decoder()->codec() : 0).getNSURL();
 }
 
@@ -1314,7 +1314,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     DocumentImpl *doc = _part->xmlDocImpl();
     if (doc && doc->isHTMLDocument()) {
-        return doc->domain().string().getNSString();
+        return doc->domain().qstring().getNSString();
     }
     return nil;
 }

@@ -105,7 +105,7 @@ void RenderApplet::createWidgetIfNecessary()
             while (child) {
                 if (child->hasTagName(paramTag)) {
                     HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                    m_args.insert(p->name().string(), p->value().string());
+                    m_args.insert(p->name().qstring(), p->value().qstring());
                 }
                 child = child->nextSibling();
             }

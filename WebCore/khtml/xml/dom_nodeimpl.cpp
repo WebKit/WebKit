@@ -1231,7 +1231,7 @@ void NodeImpl::dump(QTextStream *stream, QString ind) const
     NodeImpl *child = firstChild();
     while( child != 0 )
     {
-	*stream << ind << child->nodeName().string().ascii() << ": ";
+	*stream << ind << child->nodeName().qstring().ascii() << ": ";
         child->dump(stream,ind+"  ");
         child = child->nextSibling();
     }
@@ -1673,7 +1673,7 @@ static void appendAttributeDesc(const NodeImpl *node, QString &string, const Qua
         DOMString attr = static_cast<const ElementImpl *>(node)->getAttribute(name);
         if (!attr.isEmpty()) {
             string += attrDesc;
-            string += attr.string();
+            string += attr.qstring();
         }
     }
 }
@@ -1683,15 +1683,15 @@ void NodeImpl::showNode(const char *prefix) const
     if (!prefix)
         prefix = "";
     if (isTextNode()) {
-        QString value = nodeValue().string();
+        QString value = nodeValue().qstring();
         value.replace('\\', "\\\\");
         value.replace('\n', "\\n");
-        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().string().local8Bit().data(), this, value.local8Bit().data());
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().qstring().local8Bit().data(), this, value.local8Bit().data());
     } else {
         QString attrs = "";
         appendAttributeDesc(this, attrs, classAttr, " CLASS=");
         appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().string().local8Bit().data(), this, attrs.ascii());
+        fprintf(stderr, "%s%s\t%p%s\n", prefix, nodeName().qstring().local8Bit().data(), this, attrs.ascii());
     }
 }
 
@@ -1733,7 +1733,7 @@ void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
     else
         result += s;
           
-    strncpy(buffer, result.string().latin1(), length - 1);
+    strncpy(buffer, result.qstring().latin1(), length - 1);
 }
 
 #endif

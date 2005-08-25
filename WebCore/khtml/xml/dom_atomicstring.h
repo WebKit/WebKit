@@ -40,15 +40,13 @@ public:
     
     operator const DOMString&() const { return m_string; }
     const DOMString& domString() const { return m_string; };
-    QString string() const { return m_string.string(); };
+    QString qstring() const { return m_string.qstring(); };
     
     DOMStringImpl* implementation() const { return m_string.implementation(); }
     
     const QChar *unicode() const { return m_string.unicode(); }
     int length() const { return m_string.length(); }
     
-    const char *ascii() const { return m_string.string().ascii(); }
-
     int find(const QChar c, int start = 0) const { return m_string.find(c, start); }
     
     int toInt() const { return m_string.toInt(); }

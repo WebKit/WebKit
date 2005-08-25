@@ -3352,7 +3352,7 @@ void RenderBlock::updateFirstLetter()
                         ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
                     length++;
                 length++;
-                //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
+                //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).qstring() << "'" << endl;
                 
                 RenderTextFragment* remainingText = 
                     new (renderArena()) RenderTextFragment(textObj->node(), oldText, length, oldText->l-length);

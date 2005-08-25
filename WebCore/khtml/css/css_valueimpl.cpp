@@ -125,7 +125,7 @@ static DOMString quoteStringIfNeeded(const DOMString &string)
     }
 
     // FIXME: Also need to transform control characters into \ sequences.
-    QString s = string.string();
+    QString s = string.qstring();
     s.replace('\\', "\\\\");
     s.replace('\'', "\\'");
     return '\'' + s + '\'';
@@ -170,7 +170,7 @@ void CSSStyleDeclarationImpl::setProperty(const DOMString &propertyName, const D
     int propID = propertyID(propertyName);
     if (!propID) // set exception?
         return;
-    bool important = priority.string().find("important", 0, false) != -1;
+    bool important = priority.qstring().find("important", 0, false) != -1;
     setProperty(propID, value, important, exception);
 }
 
@@ -447,8 +447,8 @@ bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const DOMString
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
 #if !APPLE_CHANGES
-	kdDebug( 6080 ) << "CSSMutableStyleDeclarationImpl::setProperty invalid property: [" << getPropertyName(id).string()
-			<< "] value: [" << value.string() << "]"<< endl;
+	kdDebug( 6080 ) << "CSSMutableStyleDeclarationImpl::setProperty invalid property: [" << getPropertyName(id).qstring()
+			<< "] value: [" << value.qstring() << "]"<< endl;
 #endif
         exceptionCode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
     } else if (notifyChanged)

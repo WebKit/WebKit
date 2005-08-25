@@ -715,7 +715,7 @@ ValueImp *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, ObjectImp *th
       if (args.size() >= 1) {
 	if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
 	  DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
-          body = doc->toString().string();
+          body = doc->toString().qstring();
           // FIXME: also need to set content type, including encoding!
 	} else {
 	  // converting certain values (like null) to object can set an exception

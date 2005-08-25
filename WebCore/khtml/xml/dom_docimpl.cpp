@@ -114,7 +114,7 @@ DOMImplementationImpl::~DOMImplementationImpl()
 
 bool DOMImplementationImpl::hasFeature ( const DOMString &feature, const DOMString &version )
 {
-    QString lower = feature.string().lower();
+    QString lower = feature.qstring().lower();
     if (lower == "core" || lower == "html" || lower == "xml" || lower == "xhtml")
         return version.isEmpty() || version == "1.0" || version == "2.0";
     if (lower == "css"
@@ -263,7 +263,7 @@ HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument(const DOMString &tit
     HTMLDocumentImpl *d = createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
     d->open();
     // FIXME: Need to escape special characters in the title?
-    d->write("<html><head><title>" + title.string() + "</title></head>");
+    d->write("<html><head><title>" + title.qstring() + "</title></head>");
     return d;
 }
 
@@ -667,7 +667,7 @@ ElementImpl *DocumentImpl::createElementNS(const DOMString &_namespaceURI, const
 ElementImpl *DocumentImpl::getElementById( const DOMString &elementId ) const
 {
     ElementImpl *element;
-    QString qId = elementId.string();
+    QString qId = elementId.qstring();
 
     if (elementId.length() == 0) {
         return 0;
@@ -716,7 +716,7 @@ ElementImpl *DocumentImpl::elementFromPoint( const int _x, const int _y ) const
 
 void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *element)
 {
-    QString qId = elementId.string();
+    QString qId = elementId.qstring();
     
     if (m_elementsById.find(qId) == NULL) {
         m_elementsById.insert(qId, element);
@@ -729,7 +729,7 @@ void DocumentImpl::addElementById(const DOMString &elementId, ElementImpl *eleme
 
 void DocumentImpl::removeElementById(const DOMString &elementId, ElementImpl *element)
 {
-    QString qId = elementId.string();
+    QString qId = elementId.qstring();
 
     if (m_elementsById.find(qId) == element) {
         m_elementsById.remove(qId);
@@ -749,7 +749,7 @@ ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
     if (key.length() == 0)
 	return 0;
 
-    QString k(key.string());
+    QString k(key.qstring());
     if (!m_accessKeyDictValid) {
         m_elementsByAccessKey.clear();
     
@@ -760,7 +760,7 @@ ElementImpl *DocumentImpl::getElementByAccessKey( const DOMString &key )
             const ElementImpl *elementImpl = static_cast<const ElementImpl *>(n);
             DOMString accessKey(elementImpl->getAttribute(accesskeyAttr));;
             if (!accessKey.isEmpty()) {
-                QString ak = accessKey.string().lower();
+                QString ak = accessKey.qstring().lower();
                 if (m_elementsByAccessKey.find(ak) == NULL)
                     m_elementsByAccessKey.insert(ak, elementImpl);
             }
@@ -779,7 +779,7 @@ void DocumentImpl::updateTitle()
 #if APPLE_CHANGES
     KWQ(p)->setTitle(m_title);
 #else
-    QString titleStr = m_title.string();
+    QString titleStr = m_title.qstring();
     for (int i = 0; i < titleStr.length(); ++i)
         if (titleStr[i] < ' ')
             titleStr[i] = ' ';
@@ -1448,7 +1448,7 @@ int DocumentImpl::elapsedTime() const
 
 void DocumentImpl::write( const DOMString &text )
 {
-    write(text.string());
+    write(text.qstring());
 }
 
 void DocumentImpl::write( const QString &text )
@@ -1775,14 +1775,14 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         // For more info, see the test at:
         // http://www.hixie.ch/tests/evil/css/import/main/preferred.html
         // -dwh
-        part->d->m_sheetUsed = content.string();
+        part->d->m_sheetUsed = content.qstring();
         m_preferredStylesheetSet = content;
         updateStyleSelector();
     }
     else if(strcasecmp(equiv, "refresh") == 0 && part->metaRefreshEnabled())
     {
         // get delay and url
-        QString str = content.string().stripWhiteSpace();
+        QString str = content.qstring().stripWhiteSpace();
         int pos = str.find(QRegExp("[;,]"));
         if ( pos == -1 )
             pos = str.find(QRegExp("[ \t]"));
@@ -1809,7 +1809,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             if(str.find("url", 0,  false ) == 0)  str = str.mid(3);
             str = str.stripWhiteSpace();
             if ( str.length() && str[0] == '=' ) str = str.mid( 1 ).stripWhiteSpace();
-            str = parseURL( DOMString(str) ).string();
+            str = parseURL( DOMString(str) ).qstring();
             if ( ok && part )
 #if APPLE_CHANGES
                 // We want a new history item if the refresh timeout > 1 second
@@ -1821,14 +1821,14 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     }
     else if(strcasecmp(equiv, "expires") == 0)
     {
-        QString str = content.string().stripWhiteSpace();
+        QString str = content.qstring().stripWhiteSpace();
         time_t expire_date = str.toLong();
         if (m_docLoader)
             m_docLoader->setExpireDate(expire_date);
     }
     else if(strcasecmp(equiv, "pragma") == 0 || strcasecmp(equiv, "cache-control") == 0 && part)
     {
-        QString str = content.string().lower().stripWhiteSpace();
+        QString str = content.qstring().lower().stripWhiteSpace();
         KURL url = part->url();
         if ((str == "no-cache") && url.protocol().startsWith("http"))
         {
@@ -1868,7 +1868,7 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y,
             }
             else
                 ev->url = href;
-//            qDebug("url: *%s*", ev->url.string().latin1());
+//            qDebug("url: *%s*", ev->url.qstring().latin1());
         }
 
         if (!readonly)
@@ -1944,7 +1944,7 @@ void
 DocumentImpl::setSelectedStylesheetSet(const DOMString& aString)
 {
   if (view()) {
-    view()->part()->d->m_sheetUsed = aString.string();
+    view()->part()->d->m_sheetUsed = aString.qstring();
     updateStyleSelector();
     if (renderer())
       renderer()->repaint();
@@ -2050,7 +2050,7 @@ void DocumentImpl::recalcStyleSelector()
         }
         else if (n->isHTMLElement() && (n->hasTagName(linkTag) || n->hasTagName(styleTag))) {
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(n);
-            QString title = e->getAttribute(titleAttr).string();
+            QString title = e->getAttribute(titleAttr).qstring();
             bool enabledViaScript = false;
             if (e->hasLocalName(linkTag)) {
                 // <LINK> element
@@ -2080,7 +2080,7 @@ void DocumentImpl::recalcStyleSelector()
                     // we are NOT an alternate sheet, then establish
                     // us as the preferred set.  Otherwise, just ignore
                     // this sheet.
-                    QString rel = e->getAttribute(relAttr).string();
+                    QString rel = e->getAttribute(relAttr).qstring();
                     if (e->hasLocalName(styleTag) || !rel.contains("alternate"))
                         m_preferredStylesheetSet = view()->part()->d->m_sheetUsed = title;
                 }
@@ -2371,7 +2371,7 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
         KeyboardEventImpl *kevt = static_cast<KeyboardEventImpl *>(evt);
         if (kevt->ctrlKey()) {
             QKeyEvent *qevt = kevt->qKeyEvent();
-            QString key = (qevt ? qevt->unmodifiedText() : kevt->keyIdentifier().string()).lower();
+            QString key = (qevt ? qevt->unmodifiedText() : kevt->keyIdentifier().qstring()).lower();
             ElementImpl *elem = getElementByAccessKey(key);
             if (elem) {
                 elem->accessKeyAction(false);
@@ -2612,7 +2612,7 @@ void DocumentImpl::addImageMap(HTMLMapElementImpl *imageMap)
 {
     // Add the image map, unless there's already another with that name.
     // "First map wins" is the rule other browsers seem to implement.
-    QString name = imageMap->getName().string();
+    QString name = imageMap->getName().qstring();
     if (!m_imageMapsByName.contains(name))
         m_imageMapsByName.insert(name, imageMap);
 }
@@ -2621,7 +2621,7 @@ void DocumentImpl::removeImageMap(HTMLMapElementImpl *imageMap)
 {
     // Remove the image map by name.
     // But don't remove some other image map that just happens to have the same name.
-    QString name = imageMap->getName().string();
+    QString name = imageMap->getName().qstring();
     QMapIterator<QString, HTMLMapElementImpl *> it = m_imageMapsByName.find(name);
     if (it != m_imageMapsByName.end() && *it == imageMap)
         m_imageMapsByName.remove(it);
@@ -2633,7 +2633,7 @@ HTMLMapElementImpl *DocumentImpl::getImageMap(const DOMString &URL) const
         return 0;
     }
 
-    QString s = URL.string();
+    QString s = URL.qstring();
     int hashPos = s.find('#');
     if (hashPos >= 0)
         s = s.mid(hashPos + 1);
@@ -2664,7 +2664,7 @@ DOMString DocumentImpl::completeURL(const DOMString &URL)
 {
     if (URL.isNull())
         return URL;
-    return completeURL(URL.string());
+    return completeURL(URL.qstring());
 }
 
 bool DocumentImpl::inPageCache()

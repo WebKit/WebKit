@@ -202,7 +202,7 @@ bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id
 {
 #ifdef CSS_DEBUG
     kdDebug( 6080 ) << "CSSParser::parseValue: id=" << _id << " important=" << _important
-		    << " value='" << string.string() << "'" << endl;
+		    << " value='" << string.qstring() << "'" << endl;
 #endif
 
     styleElement = declaration->stylesheet();
@@ -240,7 +240,7 @@ QRgb CSSParser::parseColor( const DOM::DOMString &string )
     DOM::CSSParser parser(true);
 
     // First try creating a color specified by name or the "#" syntax.
-    if (!parser.parseColor(string.string(), color)) {
+    if (!parser.parseColor(string.qstring(), color)) {
     
         // Now try to create a color from the rgb() or rgba() syntax.
         bool ok = parser.parseColor(dummyStyleDeclaration, string);
@@ -284,7 +284,7 @@ bool CSSParser::parseColor( CSSMutableStyleDeclarationImpl *declaration, const D
 bool CSSParser::parseDeclaration( CSSMutableStyleDeclarationImpl *declaration, const DOMString &string )
 {
 #ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "CSSParser::parseDeclaration:value='" << string.string() << "'" << endl;
+    kdDebug( 6080 ) << "CSSParser::parseDeclaration:value='" << string.qstring() << "'" << endl;
 #endif
 
     styleElement = declaration->stylesheet();
@@ -721,7 +721,7 @@ bool CSSParser::parseValue( int propId, bool important )
 	    DOMString uri = khtml::parseURL( domString( value->string ) );
 	    if (!uri.isEmpty()) {
 		parsedValue = new CSSImageValueImpl(
-		    DOMString(KURL( styleElement->baseURL().string(), uri.string()).url()),
+		    DOMString(KURL( styleElement->baseURL().qstring(), uri.qstring()).url()),
 		    styleElement);
                 valueList->next();
 	    }
@@ -960,7 +960,7 @@ bool CSSParser::parseValue( int propId, bool important )
                 if (val->unit == CSSPrimitiveValue::CSS_URI) {
                     DOMString value = khtml::parseURL(domString(val->string));
                     parsedValue = new CSSPrimitiveValueImpl(
-                                    DOMString(KURL(styleElement->baseURL().string(), value.string()).url()), 
+                                    DOMString(KURL(styleElement->baseURL().qstring(), value.qstring()).url()), 
                                     CSSPrimitiveValue::CSS_URI);
                 } 
                 
@@ -1388,12 +1388,12 @@ bool CSSParser::parseShortHand( const int *properties, int numProperties, bool i
         for (int propIndex = 0; !found && propIndex < numProperties; ++propIndex) {
             if (!fnd[propIndex]) {
 #ifdef CSS_DEBUG
-		kdDebug(6080) << "LOOKING FOR: " << getPropertyName(properties[propIndex]).string() << endl;
+		kdDebug(6080) << "LOOKING FOR: " << getPropertyName(properties[propIndex]).qstring() << endl;
 #endif
 		if ( parseValue( properties[propIndex], important ) ) {
 		    fnd[propIndex] = found = true;
 #ifdef CSS_DEBUG
-		    kdDebug(6080) << "FOUND: " << getPropertyName(properties[propIndex]).string() << endl;
+		    kdDebug(6080) << "FOUND: " << getPropertyName(properties[propIndex]).qstring() << endl;
 #endif
 		}
 	    }
@@ -1489,9 +1489,9 @@ bool CSSParser::parseContent( int propId, bool important )
             // url
 	    DOMString value = khtml::parseURL(domString(val->string));
             parsedValue = new CSSImageValueImpl(
-		DOMString(KURL( styleElement->baseURL().string(), value.string()).url() ), styleElement );
+		DOMString(KURL( styleElement->baseURL().qstring(), value.qstring()).url() ), styleElement );
 #ifdef CSS_DEBUG
-	    kdDebug( 6080 ) << "content, url=" << value.string() << " base=" << styleElement->baseURL().string() << endl;
+	    kdDebug( 6080 ) << "content, url=" << value.qstring() << " base=" << styleElement->baseURL().qstring() << endl;
 #endif
         } else if ( val->unit == Value::Function ) {
 	    // attr( X )
@@ -1545,7 +1545,7 @@ CSSValueImpl* CSSParser::parseBackgroundImage()
     if (valueList->current()->unit == CSSPrimitiveValue::CSS_URI) {
         DOMString uri = khtml::parseURL(domString(valueList->current()->string));
         if (!uri.isEmpty())
-            return new CSSImageValueImpl(DOMString(KURL(styleElement->baseURL().string(), uri.string()).url()), 
+            return new CSSImageValueImpl(DOMString(KURL(styleElement->baseURL().qstring(), uri.qstring()).url()), 
                                          styleElement);
     }
     return 0;

@@ -238,7 +238,7 @@ const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& pr
 bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
 {
 #ifdef CSS_STYLESHEET_DEBUG
-    kdDebug( 6080 ) << "parsing sheet, len=" << string.length() << ", sheet is " << string.string() << endl;
+    kdDebug( 6080 ) << "parsing sheet, len=" << string.length() << ", sheet is " << string.qstring() << endl;
 #endif
 
     strictParsing = strict;
@@ -392,8 +392,8 @@ DOM::DOMString MediaListImpl::mediaText() const
 void MediaListImpl::setMediaText(const DOM::DOMString &value)
 {
     m_lstMedia.clear();
-    QString val = value.string();
-    QStringList list = QStringList::split( ',', value.string() );
+    QString val = value.qstring();
+    QStringList list = QStringList::split( ',', value.qstring() );
     for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
     {
         DOMString medium = (*it).stripWhiteSpace();

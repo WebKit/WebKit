@@ -191,11 +191,11 @@ ValueImp *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, ObjectImp *thisO
     if (id == HTMLDocument::WriteLn)
       str += "\n";
     //kdDebug() << "document.write: " << str.ascii() << endl;
-    doc.write(str.string());
+    doc.write(str.domString());
     return Undefined();
   }
   case HTMLDocument::GetElementsByName:
-    return getDOMNodeList(exec, doc.getElementsByName(args[0]->toString(exec).string()).get());
+    return getDOMNodeList(exec, doc.getElementsByName(args[0]->toString(exec).domString()).get());
   case HTMLDocument::CaptureEvents:
   case HTMLDocument::ReleaseEvents:
     // Do nothing for now. These are NS-specific legacy calls.
@@ -267,7 +267,7 @@ ValueImp *HTMLDocument::namedItemGetter(ExecState *exec, const Identifier& prope
   HTMLDocument *thisObj = static_cast<HTMLDocument *>(slot.slotBase());
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(thisObj->impl());
 
-  DOMString name = propertyName.string();
+  DOMString name = propertyName.domString();
   SharedPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
 
   if (collection->length() == 1) {
@@ -377,7 +377,7 @@ bool HTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propert
 {
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
 
-  DOMString name = propertyName.string();
+  DOMString name = propertyName.domString();
   if (doc.hasNamedItem(name) || doc.hasDocExtraNamedItem(name)) {
     slot.setCustom(this, namedItemGetter);
     return true;
@@ -412,16 +412,16 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *v
 
   switch (token) {
   case Title:
-    doc.setTitle(value->toString(exec).string());
+    doc.setTitle(value->toString(exec).domString());
     break;
   case Body:
     doc.setBody(toHTMLElement(value), exception);
     break;
   case Domain: // not part of the DOM
-    doc.setDomain(value->toString(exec).string());
+    doc.setDomain(value->toString(exec).domString());
     break;
   case Cookie:
-    doc.setCookie(value->toString(exec).string());
+    doc.setCookie(value->toString(exec).domString());
     break;
   case Location: {
     KHTMLPart *part = doc.part();
@@ -444,18 +444,18 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *v
   }
   case BgColor:
     if (bodyElement)
-      bodyElement->setBgColor(value->toString(exec).string());
+      bodyElement->setBgColor(value->toString(exec).domString());
     break;
   case FgColor:
     if (bodyElement)
-      bodyElement->setText(value->toString(exec).string());
+      bodyElement->setText(value->toString(exec).domString());
     break;
   case AlinkColor:
     if (bodyElement) {
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value->toString(exec).string();
+      DOMString newColor = value->toString(exec).domString();
       if (bodyElement->aLink() != newColor)
         bodyElement->setALink(newColor);
     }
@@ -465,7 +465,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *v
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value->toString(exec).string();
+      DOMString newColor = value->toString(exec).domString();
       if (bodyElement->link() != newColor)
 	bodyElement->setLink(newColor);
     }
@@ -475,17 +475,17 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, ValueImp *v
       // this check is a bit silly, but some benchmarks like to set the
       // document's link colors over and over to the same value and we
       // don't want to incur a style update each time.
-      DOMString newColor = value->toString(exec).string();
+      DOMString newColor = value->toString(exec).domString();
       if (bodyElement->vLink() != newColor)
 	bodyElement->setVLink(newColor);
     }
     break;
   case Dir:
-    body->setDir(value->toString(exec).string());
+    body->setDir(value->toString(exec).domString());
     break;
   case DesignMode:
     {
-      DOMString modeString = value->toString(exec).string();
+      DOMString modeString = value->toString(exec).domString();
       DocumentImpl::InheritedBool mode;
       if (!strcasecmp(modeString, "on"))
         mode = DocumentImpl::on;
@@ -1286,7 +1286,7 @@ ValueImp *HTMLElement::framesetNameGetter(ExecState *exec, const Identifier& pro
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(thisObj->impl());
 
-    NodeImpl *frame = element->children()->namedItem(propertyName.string());
+    NodeImpl *frame = element->children()->namedItem(propertyName.domString());
     if (DocumentImpl* doc = static_cast<HTMLFrameElementImpl *>(frame)->contentDocument())
         if (Window *window = Window::retrieveWindow(doc->part()))
             return window;
@@ -1353,7 +1353,7 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
             return true;
         }
     } else if (element.hasLocalName(framesetTag)) {
-        NodeImpl *frame = element.children()->namedItem(propertyName.string());
+        NodeImpl *frame = element.children()->namedItem(propertyName.domString());
         if (frame && frame->hasTagName(frameTag)) {
             slot.setCustom(this, framesetNameGetter);
         }
@@ -1899,20 +1899,20 @@ ValueImp *HTMLElement::anchorGetter(ExecState* exec, int token) const
         case AnchorCoords:          return String(anchor.coords());
         case AnchorHref:            return String(anchor.href());
         case AnchorHrefLang:        return String(anchor.hreflang());
-        case AnchorHash:            return String('#'+KURL(anchor.href().string()).ref());
-        case AnchorHost:            return String(KURL(anchor.href().string()).host());
+        case AnchorHash:            return String('#'+KURL(anchor.href().qstring()).ref());
+        case AnchorHost:            return String(KURL(anchor.href().qstring()).host());
         case AnchorHostname: {
-            KURL url(anchor.href().string());
+            KURL url(anchor.href().qstring());
             kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
                 return String(url.host());
             else
                 return String(url.host() + ":" + QString::number(url.port()));
         }
-        case AnchorPathName:        return String(KURL(anchor.href().string()).path());
-        case AnchorPort:            return String(QString::number(KURL(anchor.href().string()).port()));
-        case AnchorProtocol:        return String(KURL(anchor.href().string()).protocol()+":");
-        case AnchorSearch:          return String(KURL(anchor.href().string()).query());
+        case AnchorPathName:        return String(KURL(anchor.href().qstring()).path());
+        case AnchorPort:            return String(QString::number(KURL(anchor.href().qstring()).port()));
+        case AnchorProtocol:        return String(KURL(anchor.href().qstring()).protocol()+":");
+        case AnchorSearch:          return String(KURL(anchor.href().qstring()).query());
         case AnchorName:            return String(anchor.name());
         case AnchorRel:             return String(anchor.rel());
         case AnchorRev:             return String(anchor.rev());
@@ -2027,20 +2027,20 @@ ValueImp *HTMLElement::areaGetter(ExecState* exec, int token) const
         case AreaAlt:             return String(area.alt());
         case AreaCoords:          return String(area.coords());
         case AreaHref:            return String(area.href());
-        case AreaHash:            return String('#'+KURL(area.href().string()).ref());
-        case AreaHost:            return String(KURL(area.href().string()).host());
+        case AreaHash:            return String('#'+KURL(area.href().qstring()).ref());
+        case AreaHost:            return String(KURL(area.href().qstring()).host());
         case AreaHostName: {
-            KURL url(area.href().string());
+            KURL url(area.href().qstring());
             kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
                 return String(url.host());
             else
                 return String(url.host() + ":" + QString::number(url.port()));
         }
-        case AreaPathName:        return String(KURL(area.href().string()).path());
-        case AreaPort:            return String(QString::number(KURL(area.href().string()).port()));
-        case AreaProtocol:        return String(KURL(area.href().string()).protocol()+":");
-        case AreaSearch:          return String(KURL(area.href().string()).query());
+        case AreaPathName:        return String(KURL(area.href().qstring()).path());
+        case AreaPort:            return String(QString::number(KURL(area.href().qstring()).port()));
+        case AreaProtocol:        return String(KURL(area.href().qstring()).protocol()+":");
+        case AreaSearch:          return String(KURL(area.href().qstring()).query());
         case AreaNoHref:          return Boolean(area.noHref());
         case AreaShape:           return String(area.shape());
         case AreaTabIndex:        return Number(area.tabIndex());
@@ -2517,13 +2517,13 @@ ValueImp *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, ObjectImp *t
 void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, ValueImp *value, int attr)
 {
 #ifdef KJS_VERBOSE
-    DOM::DOMString str = value.isNull() ? DOM::DOMString() : value->toString(exec).string();
+    DOM::DOMString str = value.isNull() ? DOM::DOMString() : value->toString(exec).domString();
 #endif
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
 #ifdef KJS_VERBOSE
     kdDebug(6070) << "KJS::HTMLElement::tryPut " << propertyName.qstring()
-                  << " thisTag=" << element.tagName().string()
-                  << " str=" << str.string() << endl;
+                  << " thisTag=" << element.tagName().qstring()
+                  << " str=" << str.qstring() << endl;
 #endif
     // First look at dynamic properties
     if (element.hasLocalName(selectTag)) {
@@ -3221,7 +3221,7 @@ void HTMLElement::marqueeSetter(ExecState *exec, int token, ValueImp *value, con
 void HTMLElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
     DOMExceptionTranslator exception(exec);
-    DOM::DOMString str = value->toString(exec).string();
+    DOM::DOMString str = value->toString(exec).domString();
  
     // Check our set of generic properties first.
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
@@ -3384,7 +3384,7 @@ ValueImp *KJS::HTMLCollection::callAsFunction(ExecState *exec, ObjectImp *, cons
     unsigned int u = args[1]->toString(exec).toULong(&ok);
     if (ok)
     {
-      DOM::DOMString pstr = s.string();
+      DOM::DOMString pstr = s.domString();
       NodeImpl *node = collection.namedItem(pstr);
       while (node) {
         if (!u)
@@ -3402,7 +3402,7 @@ ValueImp *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
 #endif
-  DOM::DOMString pstr = propertyName.string();
+  DOM::DOMString pstr = propertyName.domString();
 
   QValueList< SharedPtr<NodeImpl> > namedItems = m_impl->namedItems(pstr);
 
@@ -3429,7 +3429,7 @@ ValueImp *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, ObjectIm
   case KJS::HTMLCollection::Item:
     return getDOMNode(exec,coll.item(args[0]->toUInt32(exec)));
   case KJS::HTMLCollection::Tags:
-    return getDOMNodeList(exec, coll.base()->getElementsByTagName(args[0]->toString(exec).string()).get());
+    return getDOMNodeList(exec, coll.base()->getElementsByTagName(args[0]->toString(exec).domString()).get());
   case KJS::HTMLCollection::NamedItem:
     return static_cast<HTMLCollection *>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:
@@ -3572,9 +3572,9 @@ ObjectImp *OptionConstructorImp::construct(ExecState *exec, const List &args)
     t->ref();
     opt->appendChild(t, exception);
     if (exception == 0 && sz > 0)
-      t->setData(args[0]->toString(exec).string(), exception); // set the text
+      t->setData(args[0]->toString(exec).domString(), exception); // set the text
     if (exception == 0 && sz > 1)
-      opt->setValue(args[1]->toString(exec).string());
+      opt->setValue(args[1]->toString(exec).domString());
     if (exception == 0 && sz > 2)
       opt->setDefaultSelected(args[2]->toBoolean(exec));
     if (exception == 0 && sz > 3)
@@ -3689,7 +3689,7 @@ void Image::putValueProperty(ExecState *exec, int token, ValueImp *value, int /*
   {
     src = value->toString(exec);
     if ( img ) img->deref(this);
-    img = doc ? doc->docLoader()->requestImage( src.string() ) : 0;
+    img = doc ? doc->docLoader()->requestImage( src.domString() ) : 0;
     if ( img ) img->ref(this);
     break;
   }
@@ -3811,7 +3811,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             switch (numArgs) {
                 case 1: {
                     if (args[0]->isString()) {                    
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
                         QColor qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
 
@@ -3825,7 +3825,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 case 2: {
                     float a = args[1]->toNumber(exec);
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
                         QColor qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
@@ -3868,7 +3868,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
             switch (numArgs) {
                 case 1: {
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
                         QColor qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
                     }
@@ -3881,7 +3881,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 case 2: {
                     float a = args[1]->toNumber(exec);
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).string());
+                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
                         QColor qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
@@ -4178,7 +4178,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                 switch (numArgs - 3) {
                     case 1: {
                         if (args[3]->isString()) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).string());
+                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
                             QColor qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
@@ -4196,7 +4196,7 @@ ValueImp *KJS::Context2DFunction::callAsFunction(ExecState *exec, ObjectImp *thi
                     case 2: {
                         float a = args[4]->toNumber(exec);
                         if (args[3]->isString()) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).string());
+                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
                             QColor qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
@@ -4610,7 +4610,7 @@ CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value)
     float components[4];
     
     if (value->isString()) {
-        QRgb color = DOM::CSSParser::parseColor(value->toString(exec).string());
+        QRgb color = DOM::CSSParser::parseColor(value->toString(exec).domString());
         QColor qc(color);
         components[0] = qc.red()/255.;
         components[1] = qc.green()/255.;
@@ -4629,7 +4629,7 @@ CGColorRef colorRefFromValue(ExecState *exec, ValueImp *value)
 
 QColor colorFromValue(ExecState *exec, ValueImp *value)
 {
-    QRgb color = DOM::CSSParser::parseColor(value->toString(exec).string());
+    QRgb color = DOM::CSSParser::parseColor(value->toString(exec).domString());
     return QColor(color);
 }
 

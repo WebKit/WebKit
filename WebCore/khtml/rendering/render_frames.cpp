@@ -720,12 +720,12 @@ void RenderPartObject::updateWidget()
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->hasTagName(paramTag)) {
               HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>( child );
-              QString name = p->name().string().lower();
+              QString name = p->name().qstring().lower();
               if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url")) {
-                  url = p->value().string();
+                  url = p->value().qstring();
               }
               if (serviceType.isEmpty() && name == "type") {
-                  serviceType = p->value().string();
+                  serviceType = p->value().qstring();
                   int pos = serviceType.find( ";" );
                   if (pos != -1) {
                       serviceType = serviceType.left(pos);
@@ -733,9 +733,9 @@ void RenderPartObject::updateWidget()
               }
               if (!embed) {
                   bool dummyValue = true;
-                  uniqueParamNames.insert(p->name().string(), &dummyValue);
-                  paramNames.append(p->name().string());
-                  paramValues.append(p->value().string());
+                  uniqueParamNames.insert(p->name().qstring(), &dummyValue);
+                  paramNames.append(p->name().qstring());
+                  paramValues.append(p->value().qstring());
               }
           }
           child = child->nextSibling();
@@ -756,10 +756,10 @@ void RenderPartObject::updateWidget()
       if (attributes) {
           for (unsigned long i = 0; i < attributes->length(); ++i) {
               AttributeImpl* it = attributes->attributeItem(i);
-              QString name = it->name().localName().string();
+              QString name = it->name().localName().qstring();
               if (embed || uniqueParamNames.find(name) == 0) {
                   paramNames.append(name);
-                  paramValues.append(it->value().string());
+                  paramValues.append(it->value().qstring());
               }
           }
       }
@@ -803,7 +803,7 @@ void RenderPartObject::updateWidget()
             
 #if !APPLE_CHANGES      
       params.append( QString::fromLatin1("__KHTML__CLASSID=\"%1\"").arg( o->classId ) );
-      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(codebaseAttr).string() ) );
+      params.append( QString::fromLatin1("__KHTML__CODEBASE=\"%1\"").arg( o->getAttribute(codebaseAttr).qstring() ) );
 #endif
 
       // Find out if we support fallback content.
@@ -837,22 +837,22 @@ void RenderPartObject::updateWidget()
       if (a) {
           for (unsigned long i = 0; i < a->length(); ++i) {
               AttributeImpl* it = a->attributeItem(i);
-              paramNames.append(it->name().localName().string());
-              paramValues.append(it->value().string());
+              paramNames.append(it->name().localName().qstring());
+              paramValues.append(it->value().qstring());
           }
       }
       part->requestObject( this, url, serviceType, paramNames, paramValues );
   } else {
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
-      url = o->m_URL.string();
+      url = o->m_URL.qstring();
       if (url.isEmpty()) {
 	  url = "about:blank";
       }
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
-      bool requestSucceeded = v->part()->requestFrame( this, url, o->m_name.string(), QStringList(), QStringList(), true );
+      bool requestSucceeded = v->part()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
-	  KHTMLPart *newPart = v->part()->findFrame( o->m_name.string() );
+	  KHTMLPart *newPart = v->part()->findFrame( o->m_name.qstring() );
 	  if (newPart && newPart->xmlDocImpl()) {
 	      newPart->xmlDocImpl()->setBaseURL( v->part()->baseURL().url() );
 	  }

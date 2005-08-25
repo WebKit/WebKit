@@ -129,7 +129,7 @@ void XSLStyleSheetImpl::loadChildSheets()
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the 
         // import/include list.
-        xmlAttrPtr idNode = xmlGetID(m_stylesheetDoc, (const xmlChar*)(const char*)(href().string().utf8()));
+        xmlAttrPtr idNode = xmlGetID(m_stylesheetDoc, (const xmlChar*)(const char*)(href().qstring().utf8()));
         if (idNode == NULL)
             return;
         stylesheetRoot = idNode->parent;
@@ -204,7 +204,7 @@ xmlDocPtr XSLStyleSheetImpl::locateStylesheetSubResource(xmlDocPtr parentDoc, co
                 // In order to ensure that libxml canonicalized both URLs, we get the original href
                 // string from the import rule and canonicalize it using libxml before comparing it
                 // with the URI argument.
-                QCString importHref = import->href().string().utf8();
+                QCString importHref = import->href().qstring().utf8();
                 xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
                 xmlChar* childURI = xmlBuildURI((const xmlChar*)(const char*)importHref, base);
                 if (xmlStrEqual(uri, childURI)) {
@@ -283,7 +283,7 @@ void XSLImportRuleImpl::loadSheet()
     XSLStyleSheetImpl* parentSheet = parentStyleSheet();
     if (!parentSheet->href().isNull())
         // use parent styleheet's URL as the base URL
-        absHref = KURL(parentSheet->href().string(),m_strHref.string()).url();
+        absHref = KURL(parentSheet->href().qstring(),m_strHref.qstring()).url();
     
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.

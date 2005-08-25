@@ -456,20 +456,20 @@ using khtml::VisiblePosition;
         return nil;
 
     if (m_areaElement) {
-        QString summary = static_cast<ElementImpl*>(m_areaElement)->getAttribute(summaryAttr).string();
+        QString summary = static_cast<ElementImpl*>(m_areaElement)->getAttribute(summaryAttr).qstring();
         if (!summary.isEmpty())
             return summary.getNSString();
-        QString title = static_cast<ElementImpl*>(m_areaElement)->getAttribute(titleAttr).string();
+        QString title = static_cast<ElementImpl*>(m_areaElement)->getAttribute(titleAttr).qstring();
         if (!title.isEmpty())
             return title.getNSString();
     }
 
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->element() && curr->element()->isHTMLElement()) {
-            QString summary = static_cast<ElementImpl*>(curr->element())->getAttribute(summaryAttr).string();
+            QString summary = static_cast<ElementImpl*>(curr->element())->getAttribute(summaryAttr).qstring();
             if (!summary.isEmpty())
                 return summary.getNSString();
-            QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(titleAttr).string();
+            QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(titleAttr).qstring();
             if (!title.isEmpty())
                 return title.getNSString();
         }
@@ -566,7 +566,7 @@ using khtml::VisiblePosition;
     
     if (m_renderer->isImage()) {
         if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
-            QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(altAttr).string();
+            QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(altAttr).qstring();
             return !alt.isEmpty() ? alt.getNSString() : nil;
         }
     } else if ([self isAttachment])
@@ -876,7 +876,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         (m_areaElement || (!m_renderer->isImage() && m_renderer->element() && m_renderer->element()->isLink()))) {
         HTMLAnchorElementImpl* anchor = [self anchorElement];
         if (anchor) {
-            QString s = anchor->getAttribute(hrefAttr).string();
+            QString s = anchor->getAttribute(hrefAttr).qstring();
             if (!s.isNull()) {
                 s = anchor->getDocument()->completeURL(s);
                 return s.getNSString();

@@ -937,7 +937,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
 {
     if (r->node()->isElementNode()) {
         ElementImpl *element = static_cast<ElementImpl *>(r->node());
-        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().string().latin1());
+        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().qstring().latin1());
     }
     else if (r->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(r);
@@ -947,7 +947,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
         }
         
         static const int max = 36;
-        QString text = DOMString(textRenderer->string()).string();
+        QString text = DOMString(textRenderer->qstring()).qstring();
         int textLength = text.length();
         if (selected) {
             int offset = 0;
@@ -1019,14 +1019,14 @@ void Selection::debugPosition() const
 
     if (m_start == m_end) {
         Position pos = m_start;
-        fprintf(stderr, "pos:        %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "pos:        %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
     }
     else {
         Position pos = m_start;
-        fprintf(stderr, "start:      %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "start:      %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
         pos = m_end;
-        fprintf(stderr, "end:        %s %p:%ld\n", pos.node()->nodeName().string().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "end:        %s %p:%ld\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
     }
           
@@ -1089,7 +1089,7 @@ void Selection::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.string().latin1(), length - 1);
+    strncpy(buffer, result.qstring().latin1(), length - 1);
 }
 #undef FormatBufferSize
 

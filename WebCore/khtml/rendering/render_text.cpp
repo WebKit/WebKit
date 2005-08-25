@@ -384,7 +384,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (m_truncation != cNoTruncation)
             endPoint = m_truncation - m_start;
         font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                       textObject()->string()->s, textObject()->string()->l, m_start, endPoint,
+                       textObject()->qstring()->s, textObject()->qstring()->l, m_start, endPoint,
                        m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
     } else {
         int sPos, ePos;
@@ -393,17 +393,17 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
             // paint only the text that is not selected
             if (sPos >= ePos) {
                 font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                               textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                               textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
                                m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
             } else {
                 if (sPos - 1 >= 0) {
                     font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                                   textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), 0, sPos);
                 }
                 if (ePos < m_start + m_len) {
                     font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                                   textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), ePos, -1);
                 }
             }
@@ -420,7 +420,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                                selectionTextShadow->blur,
                                selectionTextShadow->color);
             font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                           textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                           textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), sPos, ePos);
             if (selectionTextShadow)
                 i.p->clearShadow();
@@ -489,11 +489,11 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     int startPos, endPos;
     if (object()->selectionState() == RenderObject::SelectionInside) {
         startPos = 0;
-        endPos = textObject()->string()->l;
+        endPos = textObject()->qstring()->l;
     } else {
         textObject()->selectionStartEnd(startPos, endPos);
         if (object()->selectionState() == RenderObject::SelectionStart)
-            endPos = textObject()->string()->l;
+            endPos = textObject()->qstring()->l;
         else if (object()->selectionState() == RenderObject::SelectionEnd)
             startPos = 0;
     }
@@ -791,7 +791,7 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 
 #ifdef DEBUG_LAYOUT
     QConstString cstr(str->s, str->l);
-    kdDebug( 6040 ) << "RenderText ctr( "<< cstr.string().length() << " )  '" << cstr.string() << "'" << endl;
+    kdDebug( 6040 ) << "RenderText ctr( "<< cstr.qstring().length() << " )  '" << cstr.qstring() << "'" << endl;
 #endif
 }
 
@@ -901,7 +901,7 @@ bool RenderText::isTextFragment() const
 
 DOM::DOMStringImpl* RenderText::originalString() const
 {
-    return element() ? element()->string() : 0;
+    return element() ? element()->qstring() : 0;
 }
 
 void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
@@ -1625,7 +1625,7 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     
 #ifdef BIDI_DEBUG
     QConstString cstr(str->s, str->l);
-    kdDebug( 6040 ) << "RenderText::setText( " << cstr.string().length() << " ) '" << cstr.string() << "'" << endl;
+    kdDebug( 6040 ) << "RenderText::setText( " << cstr.qstring().length() << " ) '" << cstr.qstring() << "'" << endl;
 #endif
 }
 
@@ -1695,7 +1695,7 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse)
 #ifdef DEBUG_LAYOUT
     QChar *ch = str->s+from;
     QConstString cstr(ch, len);
-    qDebug("setting run text to *%s*, len=%d, w)=%d" , cstr.string().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
+    qDebug("setting run text to *%s*, len=%d, w)=%d" , cstr.qstring().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
 #endif
 
     s->m_reversed = reverse;
@@ -1892,7 +1892,7 @@ DOM::DOMStringImpl* RenderTextFragment::originalString() const
 {
     DOM::DOMStringImpl* result = 0;
     if (element())
-        result = element()->string();
+        result = element()->qstring();
     else
         result = contentString();
     if (result && (start() > 0 || start() < result->l))

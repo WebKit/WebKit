@@ -337,7 +337,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     if (element->hasClass()) {
         for (const AtomicStringList* singleClass = element->getClassList();
              singleClass; singleClass = singleClass->next())
-            matchRulesForList(rules->getClassRules(singleClass->string().implementation()),
+            matchRulesForList(rules->getClassRules(singleClass->qstring().implementation()),
                                                    firstRuleIndex, lastRuleIndex);
     }
     matchRulesForList(rules->getTagRules(element->localName().implementation()),
@@ -555,7 +555,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
     }
     
     QConstString cu(attr.unicode(), attr.length());
-    QString u = cu.string();
+    QString u = cu.qstring();
     if ( !u.contains("://") ) {
         if ( u[0] == '/' )
             u.prepend(currentEncodedURL->host);
@@ -565,7 +565,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
             u.prepend(currentEncodedURL->path);
         cleanpath( u );
     }
-    //completeURL( attr.string() );
+    //completeURL( attr.qstring() );
     pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 
@@ -1116,7 +1116,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             if (!e->hasClass())
                 return false;
             for (const AtomicStringList* c = e->getClassList(); c; c = c->next())
-                if (c->string() == sel->value)
+                if (c->qstring() == sel->value)
                     return true;
             return false;
         }
@@ -1152,8 +1152,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             if (spacePos != -1)
                 return false;
 
-            QString str = value.string();
-            QString selStr = sel->value.string();
+            QString str = value.qstring();
+            QString selStr = sel->value.qstring();
             int startSearchAt = 0;
             while (true) {
                 int foundPos = str.find(selStr, startSearchAt, isXMLDoc);
@@ -1173,8 +1173,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
         case CSSSelector::Contain:
         {
             //kdDebug( 6080 ) << "checking for contains match" << endl;
-            QString str = value.string();
-            QString selStr = sel->value.string();
+            QString str = value.qstring();
+            QString selStr = sel->value.qstring();
             int pos = str.find(selStr, 0, isXMLDoc);
             if(pos == -1) return false;
             break;
@@ -1182,8 +1182,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
         case CSSSelector::Begin:
         {
             //kdDebug( 6080 ) << "checking for beginswith match" << endl;
-            QString str = value.string();
-            QString selStr = sel->value.string();
+            QString str = value.qstring();
+            QString selStr = sel->value.qstring();
             int pos = str.find(selStr, 0, isXMLDoc);
             if(pos != 0) return false;
             break;
@@ -1191,8 +1191,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
         case CSSSelector::End:
         {
             //kdDebug( 6080 ) << "checking for endswith match" << endl;
-            QString str = value.string();
-            QString selStr = sel->value.string();
+            QString str = value.qstring();
+            QString selStr = sel->value.qstring();
 	    if (isXMLDoc && !str.endsWith(selStr)) return false;
 	    if (!isXMLDoc) {
 	        int pos = str.length() - selStr.length();
@@ -1204,8 +1204,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
         case CSSSelector::Hyphen:
         {
             //kdDebug( 6080 ) << "checking for hyphen match" << endl;
-            QString str = value.string();
-            QString selStr = sel->value.string();
+            QString str = value.qstring();
+            QString selStr = sel->value.qstring();
             if(str.length() < selStr.length()) return false;
             // Check if str begins with selStr:
             if(str.find(selStr, 0, isXMLDoc) != 0) return false;
@@ -1483,7 +1483,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
             CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(item);
 
             //kdDebug( 6080 ) << "@import: Media: "
-            //                << import->media()->mediaText().string() << endl;
+            //                << import->media()->mediaText().qstring() << endl;
 
             if (!import->media() || import->media()->contains(medium))
                 addRulesFromSheet(import->styleSheet(), medium);
@@ -1494,7 +1494,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
 
             //DOMString mediaText = media->mediaText();
             //kdDebug( 6080 ) << "@media: Media: "
-            //                << r->media()->mediaText().string() << endl;
+            //                << r->media()->mediaText().qstring() << endl;
 
             if ((!r->media() || r->media()->contains(medium)) && rules) {
                 // Traverse child elements of the @media rule.

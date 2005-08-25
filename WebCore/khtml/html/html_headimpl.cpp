@@ -88,10 +88,10 @@ void HTMLBaseElementImpl::process()
 	return;
 
     if(!m_href.isEmpty() && getDocument()->part())
-	getDocument()->setBaseURL( KURL( getDocument()->part()->url(), m_href.string() ).url() );
+	getDocument()->setBaseURL( KURL( getDocument()->part()->url(), m_href.qstring() ).url() );
 
     if(!m_target.isEmpty())
-	getDocument()->setBaseTarget( m_target.string() );
+	getDocument()->setBaseTarget( m_target.qstring() );
 
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }
@@ -168,13 +168,13 @@ void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         tokenizeRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
-        m_url = getDocument()->completeURL( khtml::parseURL(attr->value()).string() );
+        m_url = getDocument()->completeURL( khtml::parseURL(attr->value()).qstring() );
 	process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
 	process();
     } else if (attr->name() == mediaAttr) {
-        m_media = attr->value().string().lower();
+        m_media = attr->value().qstring().lower();
         process();
     } else if (attr->name() == disabledAttr) {
         setDisabledState(!attr->isNull());
@@ -185,7 +185,7 @@ void HTMLLinkElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 void HTMLLinkElementImpl::tokenizeRelAttribute(const AtomicString& relStr)
 {
     m_isStyleSheet = m_isIcon = m_alternate = false;
-    QString rel = relStr.string().lower();
+    QString rel = relStr.qstring().lower();
     if (rel == "stylesheet")
         m_isStyleSheet = true;
     else if (rel == "icon" || rel == "shortcut icon")
@@ -212,16 +212,16 @@ void HTMLLinkElementImpl::process()
     if (!inDocument())
         return;
 
-    QString type = m_type.string().lower();
+    QString type = m_type.qstring().lower();
     
     KHTMLPart* part = getDocument()->part();
 
     // IE extension: location of small icon for locationbar / bookmarks
     if (part && m_isIcon && !m_url.isEmpty() && !part->parentPart()) {
         if (!type.isEmpty()) // Mozilla extension to IE extension: icon specified with type
-            part->browserExtension()->setTypedIconURL(KURL(m_url.string()), type);
+            part->browserExtension()->setTypedIconURL(KURL(m_url.qstring()), type);
         else 
-            part->browserExtension()->setIconURL(KURL(m_url.string()));
+            part->browserExtension()->setIconURL(KURL(m_url.qstring()));
     }
 
     // Stylesheet
@@ -238,7 +238,7 @@ void HTMLLinkElementImpl::process()
             if (!isAlternate())
                 getDocument()->addPendingSheet();
             
-            QString chset = getAttribute(charsetAttr).string();
+            QString chset = getAttribute(charsetAttr).qstring();
             if (m_cachedSheet)
                 m_cachedSheet->deref(this);
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
@@ -512,9 +512,9 @@ void HTMLScriptElementImpl::insertedIntoDocument()
     if (m_createdByParser)
         return;
     
-    QString url = getAttribute(srcAttr).string();
+    QString url = getAttribute(srcAttr).qstring();
     if (!url.isEmpty()) {
-        QString charset = getAttribute(charsetAttr).string();
+        QString charset = getAttribute(charsetAttr).qstring();
         m_cachedScript = getDocument()->docLoader()->requestScript(DOMString(url), charset);
         m_cachedScript->ref(this);
         return;
@@ -544,7 +544,7 @@ void HTMLScriptElementImpl::notifyFinished(CachedObject* o)
 
     assert(cs == m_cachedScript);
 
-    evaluateScript(cs->url().string(), cs->script());
+    evaluateScript(cs->url().qstring(), cs->script());
 
     cs->deref(this);
     m_cachedScript = 0;
@@ -560,7 +560,7 @@ void HTMLScriptElementImpl::evaluateScript(const QString &URL, const DOMString &
         KJSProxy *proxy = KJSProxy::proxy(part);
         if (proxy) {
             m_evaluated = true;
-            proxy->evaluate(URL, 0, script.string(), 0);
+            proxy->evaluate(URL, 0, script.qstring(), 0);
             DocumentImpl::updateDocumentsRendering();
         }
     }
@@ -676,7 +676,7 @@ void HTMLStyleElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     if (attr->name() == typeAttr)
         m_type = attr->value().domString().lower();
     else if (attr->name() == mediaAttr)
-        m_media = attr->value().string().lower();
+        m_media = attr->value().qstring().lower();
     else
         HTMLElementImpl::parseMappedAttribute(attr);
 }

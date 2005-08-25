@@ -43,7 +43,7 @@ XBLPrototypeHandler::XBLPrototypeHandler(const DOMString& event,
         m_handlerText = action;
 
     if (!modifiers.isEmpty()) {
-        QStringList result = QStringList::split(",", modifiers.string());
+        QStringList result = QStringList::split(",", modifiers.qstring());
         for (QStringList::Iterator it = result.begin(); it != result.end(); ++it) {
             QString modifier = (*it).stripWhiteSpace();
             if (modifier == "shift")

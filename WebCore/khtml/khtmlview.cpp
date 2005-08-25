@@ -258,7 +258,7 @@ void KHTMLToolTip::maybeTip(const QPoint& /*p*/)
             AtomicString s = static_cast<DOM::ElementImpl*>( node )->getAttribute(ATTR_TITLE);
             if (!s.isEmpty()) {
                 QRect r( m_view->contentsToViewport( node->getRect().topLeft() ), node->getRect().size() );
-                tip( r,  s.string() );
+                tip( r,  s.qstring() );
             }
             break;
         }
@@ -870,7 +870,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
 	// ###
 	//if ( url.length() )
-	//emit doubleClick( url.string(), _mouse->button() );
+	//emit doubleClick( url.qstring(), _mouse->button() );
     }
 #endif    
 
@@ -1518,7 +1518,7 @@ void KHTMLView::focusNextPrevNode(bool next)
             anchor = static_cast<HTMLAnchorElementImpl *>(newFocusNode);
 
         if (anchor && !anchor->areaHref().isNull())
-            m_part->overURL(anchor->areaHref().string(), 0);
+            m_part->overURL(anchor->areaHref().qstring(), 0);
         else
             m_part->overURL(QString(), 0);
     }

@@ -105,7 +105,7 @@ static QString stringValueForRange(const NodeImpl *node, const RangeImpl *range)
             str.remove(0, range->startOffset(exceptionCode));
         }
     }
-    return str.string();
+    return str.qstring();
 }
 
 static QString renderedText(const NodeImpl *node, const RangeImpl *range)
@@ -130,7 +130,7 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
         endOffset = range->endOffset(exceptionCode);
     
     RenderText *textRenderer = static_cast<RenderText *>(r);
-    QString str = node->nodeValue().string();
+    QString str = node->nodeValue().qstring();
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         unsigned start = box->m_start;
         unsigned end = box->m_start + box->m_len;
@@ -190,7 +190,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                     defaultStyle->diff(style);
                     if (style->length() > 0) {
                         // FIXME: Handle case where style->cssText() has illegal characters in it, like "
-                        QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().string() + "\">";
+                        QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().qstring() + "\">";
                         markup = openTag + markup + "</span>";
                     }
                     style->deref();
@@ -199,11 +199,11 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
         }
         case Node::COMMENT_NODE:
-            return static_cast<const CommentImpl *>(node)->toString().string();
+            return static_cast<const CommentImpl *>(node)->toString().qstring();
         case Node::DOCUMENT_NODE:
             return "";
         default: {
-            QString markup = QChar('<') + node->nodeName().string();
+            QString markup = QChar('<') + node->nodeName().qstring();
             if (type == Node::ELEMENT_NODE) {
                 const ElementImpl *el = static_cast<const ElementImpl *>(node);
                 DOMString additionalStyle;
@@ -223,7 +223,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                 unsigned long length = attrs->length();
                 if (length == 0 && additionalStyle.length() > 0) {
                     // FIXME: Handle case where additionalStyle has illegal characters in it, like "
-                    markup += " " +  styleAttr.localName().string() + "=\"" + additionalStyle.string() + "\"";
+                    markup += " " +  styleAttr.localName().qstring() + "=\"" + additionalStyle.qstring() + "\"";
                 }
                 else {
                     for (unsigned int i=0; i<length; i++) {
@@ -233,7 +233,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                             value += "; " + additionalStyle;
                         // FIXME: Handle case where value has illegal characters in it, like "
                         // FIXME: Namespaces! XML! Ack!
-                        markup += " " + attr->name().localName().string() + "=\"" + value.string() + "\"";
+                        markup += " " + attr->name().localName().qstring() + "=\"" + value.qstring() + "\"";
                     }
                 }
             }
@@ -251,7 +251,7 @@ static QString endMarkup(const NodeImpl *node)
         hasEndTag = (htmlElt->endTagRequirement() != TagStatusForbidden);
     }
     if (hasEndTag)
-        return "</" + node->nodeName().string() + ">";
+        return "</" + node->nodeName().qstring() + ">";
     return "";
 }
 
@@ -298,7 +298,7 @@ static void completeURLs(NodeImpl *node, const QString &baseURL)
             for (unsigned long i = 0; i < length; i++) {
                 AttributeImpl *attr = attrs->attributeItem(i);
                 if (e->isURLAttribute(attr))
-                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().string()).url());
+                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().qstring()).url());
             }
         }
     }
@@ -454,7 +454,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     
     // add in the "default style" for this markup
     // FIXME: Handle case where value has illegal characters in it, like "
-    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().string() + "\">";
+    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().qstring() + "\">";
     markups.prepend(openTag);
     markups.append("</span>");
     defaultStyle->deref();

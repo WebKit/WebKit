@@ -75,7 +75,7 @@ public:
     DOMString toHTML() const;
     DOMString text() const;
 
-    DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode ) const;
+    DocumentFragmentImpl *createContextualFragment(const DOMString &html, int &exceptioncode) const;
     
     void detach ( int &exceptioncode );
     bool isDetached() const;

@@ -155,88 +155,88 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 // standard events
     else if (attr->name() == onclickAttr) {
         setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncontextmenuAttr) {
     	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondblclickAttr) {
 	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousedownAttr) {
         setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousemoveAttr) {
         setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseoutAttr) {
         setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseoverAttr) {
         setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseupAttr) {
         setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
-	                     getDocument()->createHTMLEventListener(attr->value().string(), this));
+	                     getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousewheelAttr) {
         setHTMLEventListener(EventImpl::MOUSEWHEEL_EVENT,
-                            getDocument()->createHTMLEventListener(attr->value().string(), this));
+                            getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onfocusAttr) {
         setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeydownAttr) {
         setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeypressAttr) {
         setHTMLEventListener(EventImpl::KEYPRESS_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeyupAttr) {
         setHTMLEventListener(EventImpl::KEYUP_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onscrollAttr) {
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforecutAttr) {
         setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncutAttr) {
         setHTMLEventListener(EventImpl::CUT_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforecopyAttr) {
         setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncopyAttr) {
         setHTMLEventListener(EventImpl::COPY_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforepasteAttr) {
         setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onpasteAttr) {
         setHTMLEventListener(EventImpl::PASTE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragenterAttr) {
         setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragoverAttr) {
         setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragleaveAttr) {
         setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondropAttr) {
         setHTMLEventListener(EventImpl::DROP_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragstartAttr) {
         setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragAttr) {
         setHTMLEventListener(EventImpl::DRAG_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragendAttr) {
         setHTMLEventListener(EventImpl::DRAGEND_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onselectstartAttr) {
         setHTMLEventListener(EventImpl::SELECTSTART_EVENT,
-                             getDocument()->createHTMLEventListener(attr->value().string(), this));
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } 
 }
 
@@ -292,7 +292,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     {
         HTMLTokenizer tok(docPtr(), fragment);
         tok.setForceSynchronous(true);            // disable asynchronous parsing
-        tok.write( html.string(), true );
+        tok.write( html.qstring(), true );
         tok.finish();
         assert(!tok.processingData());            // make sure we're done (see 3963151)
     }
@@ -450,7 +450,7 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 
 void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
 {
-    //qDebug("alignment is %s", alignment.string().latin1() );
+    //qDebug("alignment is %s", alignment.qstring().latin1() );
     // vertical alignment with respect to the current baseline of the text
     // right or left means floating images
     int propfloat = -1;

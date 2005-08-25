@@ -1330,7 +1330,7 @@ QString RenderObject::information() const
     if (element() && element()->active()) ts << "act ";
     if (element() && element()->isLink()) ts << "anchor ";
     if (element() && element()->focused()) ts << "focus ";
-    if (element()) ts << " <" <<  element()->localName().string() << ">";
+    if (element()) ts << " <" <<  element()->localName().qstring() << ">";
     ts << " (" << xPos() << "," << yPos() << "," << width() << "," << height() << ")"
 	<< (isTableCell() ?
 	    ( QString::fromLatin1(" [r=") +

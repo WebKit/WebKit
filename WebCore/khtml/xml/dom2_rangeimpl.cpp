@@ -857,7 +857,7 @@ DOMString RangeImpl::text() const
     return plainText(const_cast<RangeImpl *>(this));
 }
 
-DocumentFragmentImpl *RangeImpl::createContextualFragment ( DOMString &html, int &exceptioncode ) const
+DocumentFragmentImpl *RangeImpl::createContextualFragment(const DOMString &html, int &exceptioncode) const
 {
    if (m_detached) {
         exceptioncode = DOMException::INVALID_STATE_ERR;
@@ -1363,7 +1363,7 @@ void RangeImpl::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.string().latin1(), length - 1);
+    strncpy(buffer, result.qstring().latin1(), length - 1);
 }
 #undef FormatBufferSize
 #endif

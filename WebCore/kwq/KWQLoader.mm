@@ -49,7 +49,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
     LOG(Loading, "Serving request for base %s, url %s", 
         request->m_docLoader->part()->baseURL().url().latin1(),
-        request->object->url().string().latin1());
+        request->object->url().qstring().latin1());
     
     return KWQServeRequest(loader, request->m_docLoader, job);
 }
@@ -244,13 +244,13 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(loader->part());
 
-    QString urlString = cachedObject->url().string();
+    QString urlString = cachedObject->url().qstring();
 
     if (!part->haveToldBridgeAboutLoad(urlString)) {
 	WebCoreBridge *bridge = part->bridge();
 
 	KWQ_BLOCK_EXCEPTIONS;
-	[bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().string()).getNSURL()
+	[bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
                                     response:(NSURLResponse *)cachedObject->response()
                                         data:(NSData *)cachedObject->allData()];
 	KWQ_UNBLOCK_EXCEPTIONS;

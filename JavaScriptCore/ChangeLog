@@ -1,3 +1,13 @@
+2005-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - rename KJS::UString::string() to KJS::UString::domString()
+        - rename KJS::Identifier::string() to KJS::Identifier::domString()
+
+        * kjs/identifier.h: Renamed.
+        * kjs/ustring.h: Ditto.
+
 2005-08-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,396 @@
+2005-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - rename KJS::UString::string to KJS::UString::domString
+        - rename KJS::Identifier::string to KJS::Identifier::domString
+        - rename DOM::DOMString::string to DOM::DOMString::qstring
+
+        It was confusing to have functions named string() with subtly
+        different meaning. In some cases, we made a string of the wrong type
+        and then it got converted to the other type.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::print):
+        (CSSSelector::selectorText):
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSImportRuleImpl::init):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::parseString):
+        (MediaListImpl::setMediaText):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::quoteStringIfNeeded):
+        (DOM::CSSStyleDeclarationImpl::setProperty):
+        (DOM::CSSMutableStyleDeclarationImpl::setProperty):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseColor):
+        (CSSParser::parseDeclaration):
+        (CSSParser::parseShortHand):
+        (CSSParser::parseContent):
+        (CSSParser::parseBackgroundImage):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSRuleSet::addRulesFromSheet):
+        * khtml/dom/dom_string.cpp:
+        (DOM::DOMString::percentage):
+        (DOM::DOMString::qstring):
+        * khtml/dom/dom_string.h:
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::UString::domString):
+        (KJS::Identifier::domString):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMStyleSheetList::getOwnPropertySlot):
+        (KJS::DOMMediaList::put):
+        (KJS::KJS::DOMMediaListProtoFunc::callAsFunction):
+        (KJS::DOMCSSStyleSheetProtoFunc::callAsFunction):
+        (KJS::DOMCSSRule::putValueProperty):
+        (KJS::DOMCSSRuleFunc::callAsFunction):
+        (KJS::DOMCSSValue::put):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::getOwnPropertySlot):
+        (KJS::DOMAttr::putValueProperty):
+        (KJS::DOMDocument::putValueProperty):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElement::attributeGetter):
+        (KJS::DOMElement::getOwnPropertySlot):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::DOMDOMImplementationProtoFunc::callAsFunction):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::DOMProcessingInstruction::put):
+        (KJS::DOMNamedNodesCollection::getOwnPropertySlot):
+        (KJS::DOMCharacterData::put):
+        (KJS::DOMCharacterDataProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMEventProtoFunc::callAsFunction):
+        (KJS::DOMUIEventProtoFunc::callAsFunction):
+        (KJS::DOMMouseEventProtoFunc::callAsFunction):
+        (KJS::DOMKeyboardEventProtoFunc::callAsFunction):
+        (KJS::DOMMutationEventProtoFunc::callAsFunction):
+        (KJS::Clipboard::putValueProperty):
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocFunction::callAsFunction):
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLDocument::getOwnPropertySlot):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::HTMLElement::framesetNameGetter):
+        (KJS::HTMLElement::getOwnPropertySlot):
+        (KJS::HTMLElement::anchorGetter):
+        (KJS::HTMLElement::areaGetter):
+        (KJS::KJS::HTMLElement::put):
+        (KJS::HTMLElement::putValueProperty):
+        (KJS::KJS::HTMLCollection::callAsFunction):
+        (KJS::KJS::HTMLCollection::getNamedItems):
+        (KJS::KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::OptionConstructorImp::construct):
+        (KJS::Image::putValueProperty):
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::colorRefFromValue):
+        (KJS::colorFromValue):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewFunc::callAsFunction):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::SelectionFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/ecma/xmlserializer.cpp:
+        (KJS::XMLSerializerProtoFunc::callAsFunction):
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::StyleChange::init):
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantText):
+        * khtml/editing/delete_selection_command.cpp:
+        (khtml::debugPosition):
+        (khtml::debugNode):
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::queryCommandSupported):
+        * khtml/editing/markup.cpp:
+        (khtml::stringValueForRange):
+        (khtml::renderedText):
+        (khtml::startMarkup):
+        (khtml::endMarkup):
+        (khtml::completeURLs):
+        (khtml::createMarkup):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::debugRenderer):
+        (khtml::Selection::debugPosition):
+        (khtml::Selection::formatForDebugger):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::debugPosition):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode):
+        (khtml::TextIterator::handleTextBox):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::isURLAllowed):
+        (HTMLFrameElementImpl::openURL):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::detach):
+        (HTMLFrameElementImpl::contentPart):
+        (HTMLFrameSetElementImpl::parseMappedAttribute):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::HTMLDocumentImpl::setCookie):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::addHTMLAlignment):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::FormDataList::appendData):
+        (DOM::HTMLFormElementImpl::formWouldHaveSecureSubmission):
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::parseEnctype):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLGenericFormElementImpl::state):
+        (DOM::HTMLGenericFormElementImpl::findMatchingState):
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::state):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::appendFormData):
+        (DOM::HTMLLabelElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::appendFormData):
+        (DOM::HTMLKeygenElementImpl::appendFormData):
+        (DOM::HTMLOptionElementImpl::value):
+        (DOM::HTMLTextAreaElementImpl::state):
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute):
+        (DOM::HTMLTextAreaElementImpl::updateValue):
+        (DOM::HTMLTextAreaElementImpl::setValue):
+        (DOM::FormDataList::appendFile):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::process):
+        (HTMLLinkElementImpl::parseMappedAttribute):
+        (HTMLLinkElementImpl::tokenizeRelAttribute):
+        (HTMLLinkElementImpl::process):
+        (HTMLScriptElementImpl::insertedIntoDocument):
+        (HTMLScriptElementImpl::notifyFinished):
+        (HTMLScriptElementImpl::evaluateScript):
+        (HTMLStyleElementImpl::parseMappedAttribute):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseMappedAttribute):
+        (HTMLImageElementImpl::width):
+        (HTMLImageElementImpl::height):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/html_miscimpl.cpp:
+        (DOM::HTMLCollectionImpl::updateNameCache):
+        (DOM::HTMLCollectionImpl::namedItems):
+        (DOM::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLAppletElementImpl::createRenderer):
+        (DOM::HTMLEmbedElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLParamElementImpl::isURLAttribute):
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::addChild):
+        (DOM::HTMLTableElementImpl::parseMappedAttribute):
+        (DOM::HTMLTablePartElementImpl::parseMappedAttribute):
+        (DOM::HTMLTableSectionElementImpl::addChild):
+        (DOM::HTMLTableRowElementImpl::addChild):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleError):
+        (HTMLParser::processCloseTag):
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseComment):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::finish):
+        (khtml::HTMLTokenizer::processToken):
+        (khtml::HTMLTokenizer::notifyFinished):
+        * khtml/khtml_part.cpp:
+        (khtml::PartStyleSheetLoader::setStyleSheet):
+        (KHTMLPart::executeScript):
+        (KHTMLPart::checkEmitLoadEvent):
+        (KHTMLPart::findTextNext):
+        (KHTMLPart::overURL):
+        (KHTMLPart::backgroundURL):
+        (KHTMLPart::updateActions):
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::handleMouseMoveEventDrag):
+        (KHTMLPart::handleMouseMoveEventOver):
+        * khtml/khtmlview.cpp:
+        (KHTMLToolTip::maybeTip):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::focusNextPrevNode):
+        * khtml/misc/loader.cpp:
+        (CachedObject::finish):
+        (CachedCSSStyleSheet::checkNotify):
+        (CachedXSLStyleSheet::checkNotify):
+        (CachedXBLDocument::checkNotify):
+        (DocLoader::requestImage):
+        (DocLoader::requestStyleSheet):
+        (DocLoader::requestScript):
+        (DocLoader::requestXSLStyleSheet):
+        (DocLoader::requestXBLDocument):
+        (Loader::servePendingRequests):
+        (Loader::slotFinished):
+        (Loader::cancelRequests):
+        (Cache::requestImage):
+        (Cache::requestStyleSheet):
+        (Cache::requestScript):
+        (Cache::requestXSLStyleSheet):
+        (Cache::requestXBLDocument):
+        (Cache::removeCacheEntry):
+        * khtml/rendering/break_lines.cpp:
+        (khtml::isBreakable):
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        (Font::width):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::~RenderBox):
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::rawText):
+        (RenderLineEdit::RenderLineEdit):
+        (RenderLineEdit::updateFromElement):
+        (RenderFileButton::updateFromElement):
+        (RenderSelect::updateFromElement):
+        (RenderTextArea::updateFromElement):
+        (RenderSlider::updateFromElement):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setPixmap):
+        (RenderImage::paint):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::paint):
+        (RenderListMarker::paint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::information):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint):
+        (InlineTextBox::selectionStartEnd):
+        (RenderText::RenderText):
+        (RenderText::originalString):
+        (RenderText::setText):
+        (RenderText::position):
+        (RenderTextFragment::originalString):
+        * khtml/rendering/render_text.h:
+        (khtml::RenderText::qstring):
+        * khtml/xbl/xbl_binding.cpp:
+        (XBL::m_nextBinding):
+        (XBL::XBLBinding::setXBLDocument):
+        * khtml/xbl/xbl_docimpl.cpp:
+        (XBL::XBLDocumentImpl::setPrototypeBinding):
+        (XBL::XBLDocumentImpl::prototypeBinding):
+        * khtml/xbl/xbl_protohandler.cpp:
+        (XBL::m_unused):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::createContextualFragment):
+        (DOM::RangeImpl::formatForDebugger):
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::AtomicString::qstring):
+        * khtml/xml/dom_atomicstringlist.h:
+        (DOM::AtomicStringList::qstring):
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::hasFeature):
+        (DOMImplementationImpl::createHTMLDocument):
+        (DocumentImpl::getElementById):
+        (DocumentImpl::addElementById):
+        (DocumentImpl::removeElementById):
+        (DocumentImpl::getElementByAccessKey):
+        (DocumentImpl::updateTitle):
+        (DocumentImpl::write):
+        (DocumentImpl::processHttpEquiv):
+        (DocumentImpl::prepareMouseEvent):
+        (DocumentImpl::setSelectedStylesheetSet):
+        (DocumentImpl::recalcStyleSelector):
+        (DocumentImpl::defaultEventHandler):
+        (DocumentImpl::addImageMap):
+        (DocumentImpl::removeImageMap):
+        (DocumentImpl::getImageMap):
+        (DocumentImpl::completeURL):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        (ElementImpl::dump):
+        (ElementImpl::formatForDebugger):
+        (NamedMappedAttrMapImpl::parseClassAttribute):
+        (StyledElementImpl::addCSSColor):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dump):
+        (DOM::appendAttributeDesc):
+        (DOM::NodeImpl::showNode):
+        (DOM::NodeImpl::formatForDebugger):
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::debugPosition):
+        (DOM::Position::formatForDebugger):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::parseLength):
+        (DOM::DOMStringImpl::toInt):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::dump):
+        (CommentImpl::nodeName):
+        (TextImpl::nodeName):
+        (TextImpl::formatForDebugger):
+        * khtml/xml/dom_textimpl.h:
+        (DOM::CharacterDataImpl::qstring):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::executeScripts):
+        (khtml::XMLTokenizer::notifyFinished):
+        (khtml::parseXMLDocumentFragment):
+        (khtml::XMLNamespaceStack::pushNamespaces):
+        (khtml::parseAttributes):
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLStyleSheetImpl::loadChildSheets):
+        (DOM::XSLStyleSheetImpl::locateStylesheetSubResource):
+        (DOM::XSLImportRuleImpl::loadSheet):
+        * kwq/DOM.mm:
+        (-[DOMElement _getURLAttribute:]):
+        (-[DOMRange _text]):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject helpText]):
+        (-[KWQAccObject accessibilityDescription]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        * kwq/KWQClipboard.mm:
+        (cocoaTypeFromMIMEType):
+        (KWQClipboard::setData):
+        * kwq/KWQFont.mm:
+        (QFont::family):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::searchForLabelsAboveCell):
+        (KWQKHTMLPart::searchForLabelsBeforeElement):
+        (KWQKHTMLPart::matchLabelsAgainstElement):
+        (KWQKHTMLPart::setTitle):
+        (KWQKHTMLPart::fileWrapperForElement):
+        (KWQKHTMLPart::attributedString):
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        (KWQCheckCacheObjectStatus):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (getTagName):
+        (writeTextRun):
+        * kwq/KWQString.h:
+        (QConstString::qstring):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _documentTypeString]):
+        (-[WebCoreBridge copyDOMNode:copier:]):
+        (-[WebCoreBridge elementAtPoint:]):
+        (-[WebCoreBridge URLWithAttributeString:]):
+        (-[WebCoreBridge domain]):
+
 2005-08-25  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin.

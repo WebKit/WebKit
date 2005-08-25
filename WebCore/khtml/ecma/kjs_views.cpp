@@ -78,7 +78,7 @@ ValueImp *DOMAbstractViewFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
         else {
           if (DocumentImpl* doc = arg0->getDocument())
             doc->updateLayoutIgnorePendingStylesheets();
-          return getDOMCSSStyleDeclaration(exec, abstractView.getComputedStyle(arg0, args[1]->toString(exec).string().implementation()));
+          return getDOMCSSStyleDeclaration(exec, abstractView.getComputedStyle(arg0, args[1]->toString(exec).domString().implementation()));
         }
       }
   }

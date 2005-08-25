@@ -100,17 +100,17 @@ void CachedObject::finish()
         m_status = Uncacheable;
     else
         m_status = Cached;
-    KURL url(m_url.string());
+    KURL url(m_url.qstring());
     if (m_expireDateChanged && url.protocol().startsWith("http"))
     {
         m_expireDateChanged = false;
         KIO::http_update_cache(url, false, m_expireDate);
 #ifdef CACHE_DEBUG
-        kdDebug(6060) << " Setting expire date for image "<<m_url.string()<<" to " << m_expireDate << endl;
+        kdDebug(6060) << " Setting expire date for image "<<m_url.qstring()<<" to " << m_expireDate << endl;
 #endif
     }
 #ifdef CACHE_DEBUG
-    else kdDebug(6060) << " No expire date for image "<<m_url.string()<<endl;
+    else kdDebug(6060) << " No expire date for image "<<m_url.qstring()<<endl;
 #endif
 }
 
@@ -237,7 +237,7 @@ void CachedCSSStyleSheet::checkNotify()
     if(m_loading) return;
 
 #ifdef CACHE_DEBUG
-    kdDebug( 6060 ) << "CachedCSSStyleSheet:: finishedLoading " << m_url.string() << endl;
+    kdDebug( 6060 ) << "CachedCSSStyleSheet:: finishedLoading " << m_url.qstring() << endl;
 #endif
 
     CachedObjectClientWalker w(m_clients);
@@ -1135,7 +1135,7 @@ void CachedXSLStyleSheet::checkNotify()
         return;
     
 #ifdef CACHE_DEBUG
-    kdDebug( 6060 ) << "CachedCSSStyleSheet:: finishedLoading " << m_url.string() << endl;
+    kdDebug( 6060 ) << "CachedCSSStyleSheet:: finishedLoading " << m_url.qstring() << endl;
 #endif
     
     CachedObjectClientWalker w(m_clients);
@@ -1212,7 +1212,7 @@ void CachedXBLDocument::checkNotify()
     if(m_loading) return;
     
 #ifdef CACHE_DEBUG
-    kdDebug( 6060 ) << "CachedXBLDocument:: finishedLoading " << m_url.string() << endl;
+    kdDebug( 6060 ) << "CachedXBLDocument:: finishedLoading " << m_url.qstring() << endl;
 #endif
     
     CachedObjectClientWalker w(m_clients);
@@ -1305,7 +1305,7 @@ bool DocLoader::needReload(const KURL &fullURL)
 
 CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 {
-    KURL fullURL = m_doc->completeURL( url.string() );
+    KURL fullURL = m_doc->completeURL( url.qstring() );
     if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
 #if APPLE_CHANGES
@@ -1327,7 +1327,7 @@ CachedImage *DocLoader::requestImage( const DOM::DOMString &url)
 
 CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, const QString& charset)
 {
-    KURL fullURL = m_doc->completeURL( url.string() );
+    KURL fullURL = m_doc->completeURL( url.qstring() );
     if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
 #if APPLE_CHANGES
@@ -1349,7 +1349,7 @@ CachedCSSStyleSheet *DocLoader::requestStyleSheet( const DOM::DOMString &url, co
 
 CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString& charset)
 {
-    KURL fullURL = m_doc->completeURL( url.string() );
+    KURL fullURL = m_doc->completeURL( url.qstring() );
     if ( m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
 
 #if APPLE_CHANGES
@@ -1372,7 +1372,7 @@ CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString
 #ifdef KHTML_XSLT
 CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const DOM::DOMString &url)
 {
-    KURL fullURL = m_doc->completeURL(url.string());
+    KURL fullURL = m_doc->completeURL(url.qstring());
     
     if (m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
     
@@ -1396,7 +1396,7 @@ CachedXSLStyleSheet* DocLoader::requestXSLStyleSheet(const DOM::DOMString &url)
 #ifndef KHTML_NO_XBL
 CachedXBLDocument* DocLoader::requestXBLDocument(const DOM::DOMString &url)
 {
-    KURL fullURL = m_doc->completeURL(url.string());
+    KURL fullURL = m_doc->completeURL(url.qstring());
     
     // FIXME: Is this right for XBL?
     if (m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
@@ -1508,10 +1508,10 @@ void Loader::servePendingRequests()
   Request *req = m_requestsPending.take(0);
 
 #ifdef CACHE_DEBUG
-  kdDebug( 6060 ) << "starting Loader url=" << req->object->url().string() << endl;
+  kdDebug( 6060 ) << "starting Loader url=" << req->object->url().qstring() << endl;
 #endif
 
-  KURL u(req->object->url().string());
+  KURL u(req->object->url().qstring());
 #if APPLE_CHANGES
   KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/, true);
 #else
@@ -1529,7 +1529,7 @@ void Loader::servePendingRequests()
       job->addMetaData("referrer", r.url());
       QString domain = r.host();
       if (req->m_docLoader->doc()->isHTMLDocument())
-         domain = static_cast<HTMLDocumentImpl*>(req->m_docLoader->doc())->domain().string();
+         domain = static_cast<HTMLDocumentImpl*>(req->m_docLoader->doc())->domain().qstring();
       if (crossDomain(u.host(), domain))
          job->addMetaData("cross-domain", "true");
   }
@@ -1592,7 +1592,7 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
   r->object->finish();
 
 #ifdef CACHE_DEBUG
-  kdDebug( 6060 ) << "Loader:: JOB FINISHED " << r->object << ": " << r->object->url().string() << endl;
+  kdDebug( 6060 ) << "Loader:: JOB FINISHED " << r->object << ": " << r->object->url().qstring() << endl;
 #endif
 
   delete r;
@@ -1725,7 +1725,7 @@ void Loader::cancelRequests( DocLoader* dl )
     {
         if ( pIt.current()->m_docLoader == dl )
         {
-            kdDebug( 6060 ) << "cancelling pending request for " << pIt.current()->object->url().string() << endl;
+            kdDebug( 6060 ) << "cancelling pending request for " << pIt.current()->object->url().qstring() << endl;
             //emit requestFailed( dl, pIt.current()->object );
             Cache::removeCacheEntry( pIt.current()->object );
             m_requestsPending.remove( pIt );
@@ -1741,7 +1741,7 @@ void Loader::cancelRequests( DocLoader* dl )
     {
         if ( lIt.current()->m_docLoader == dl )
         {
-            //kdDebug( 6060 ) << "cancelling loading request for " << lIt.current()->object->url().string() << endl;
+            //kdDebug( 6060 ) << "cancelling loading request for " << lIt.current()->object->url().qstring() << endl;
             KIO::Job *job = static_cast<KIO::Job *>( lIt.currentKey() );
             Cache::removeCacheEntry( lIt.current()->object );
             m_requestsLoading.remove( lIt.currentKey() );
@@ -1758,7 +1758,7 @@ void Loader::cancelRequests( DocLoader* dl )
     {
         if ( bdIt.current()->m_docLoader == dl )
         {
-            kdDebug( 6060 ) << "cancelling pending request for " << bdIt.current()->object->url().string() << endl;
+            kdDebug( 6060 ) << "cancelling pending request for " << bdIt.current()->object->url().qstring() << endl;
             //emit requestFailed( dl, bdIt.current()->object );
             Cache::removeCacheEntry( bdIt.current()->object );
             m_requestsBackgroundDecoding.remove( bdIt );
@@ -1871,9 +1871,9 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
     // this brings the _url to a standard form...
     KURL kurl;
     if (dl)
-        kurl = dl->m_doc->completeURL( url.string() );
+        kurl = dl->m_doc->completeURL( url.qstring() );
     else
-        kurl = url.string();
+        kurl = url.qstring();
     return requestImage(dl, kurl, reload, _expireDate);
 }
 
@@ -1963,12 +1963,12 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
     KIO::CacheControl cachePolicy;
     if ( dl )
     {
-        kurl = dl->m_doc->completeURL( url.string() );
+        kurl = dl->m_doc->completeURL( url.qstring() );
         cachePolicy = dl->cachePolicy();
     }
     else
     {
-        kurl = url.string();
+        kurl = url.qstring();
         cachePolicy = KIO::CC_Verify;
     }
 
@@ -2049,12 +2049,12 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
     KIO::CacheControl cachePolicy;
     if ( dl )
     {
-        kurl = dl->m_doc->completeURL( url.string() );
+        kurl = dl->m_doc->completeURL( url.qstring() );
         cachePolicy = dl->cachePolicy();
     }
     else
     {
-        kurl = url.string();
+        kurl = url.qstring();
         cachePolicy = KIO::CC_Verify;
     }
 
@@ -2137,11 +2137,11 @@ CachedXSLStyleSheet* Cache::requestXSLStyleSheet(DocLoader* dl, const DOMString 
     KURL kurl;
     KIO::CacheControl cachePolicy;
     if (dl) {
-        kurl = dl->m_doc->completeURL(url.string());
+        kurl = dl->m_doc->completeURL(url.qstring());
         cachePolicy = dl->cachePolicy();
     }
     else {
-        kurl = url.string();
+        kurl = url.qstring();
         cachePolicy = KIO::CC_Verify;
     }
     
@@ -2211,11 +2211,11 @@ CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const DOMString & ur
     KURL kurl;
     KIO::CacheControl cachePolicy;
     if (dl) {
-        kurl = dl->m_doc->completeURL(url.string());
+        kurl = dl->m_doc->completeURL(url.qstring());
         cachePolicy = dl->cachePolicy();
     }
     else {
-        kurl = url.string();
+        kurl = url.qstring();
         cachePolicy = KIO::CC_Verify;
     }
     
@@ -2405,7 +2405,7 @@ void Cache::statistics()
 
 void Cache::removeCacheEntry( CachedObject *object )
 {
-  QString key = object->url().string();
+  QString key = object->url().qstring();
 
   // this indicates the deref() method of CachedObject to delete itself when the reference counter
   // drops down to zero

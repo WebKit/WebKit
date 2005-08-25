@@ -195,7 +195,7 @@ DOMString HTMLDocumentImpl::cookie() const
 void HTMLDocumentImpl::setCookie( const DOMString & value )
 {
 #if APPLE_CHANGES
-    return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.string(), value.string());
+    return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.qstring(), value.qstring());
 #else
     long windowId = 0;
     KHTMLView *v = view ();
@@ -206,7 +206,7 @@ void HTMLDocumentImpl::setCookie( const DOMString & value )
     QByteArray params;
     QDataStream stream(params, IO_WriteOnly);
     QString fake_header("Set-Cookie: ");
-    fake_header.append(value.string());
+    fake_header.append(value.qstring());
     fake_header.append("\n");
     stream << URL() << fake_header.utf8() << windowId;
     if (!kapp->dcopClient()->send("kcookiejar", "kcookiejar",

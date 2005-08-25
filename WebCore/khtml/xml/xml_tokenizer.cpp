@@ -692,7 +692,7 @@ void XMLTokenizer::executeScripts()
     // inside the tag
     while (m_scriptsIt->current()) {
         DOMString scriptSrc = m_scriptsIt->current()->getAttribute(srcAttr);
-        QString charset = m_scriptsIt->current()->getAttribute(charsetAttr).string();
+        QString charset = m_scriptsIt->current()->getAttribute(charsetAttr).qstring();
 
 	// don't load external scripts for standalone documents (for now)
         if (scriptSrc != "" && m_doc->document()->part()) {
@@ -708,7 +708,7 @@ void XMLTokenizer::executeScripts()
             NodeImpl *child;
             for (child = m_scriptsIt->current()->firstChild(); child; child = child->nextSibling()) {
                 if (child->nodeType() == Node::TEXT_NODE || child->nodeType() == Node::CDATA_SECTION_NODE) {
-                    scriptCode += static_cast<TextImpl*>(child)->data().string();
+                    scriptCode += static_cast<TextImpl*>(child)->data().qstring();
                 }
             }
             // the script cannot do document.write until we support incremental parsing
@@ -736,7 +736,7 @@ void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
         DOMString scriptSource = m_cachedScript->script();
         m_cachedScript->deref(this);
         m_cachedScript = 0;
-        m_view->part()->executeScript(scriptSource.string());
+        m_view->part()->executeScript(scriptSource.qstring());
         executeScripts();
     }
 }
@@ -814,7 +814,7 @@ bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fra
     }
     
     int result = xmlParseBalancedChunkMemory(0, &sax, &tokenizer, 0, 
-                                             (const xmlChar*)(const char*)(string.string().utf8()), 0);
+                                             (const xmlChar*)(const char*)(string.qstring().utf8()), 0);
 
     return result == 0;
 }
@@ -889,9 +889,9 @@ XMLNamespace *XMLNamespaceStack::pushNamespaces(ElementImpl& element)
         AttributeImpl *attr = attrs->attributeItem(i);
         
         if (attr->localName() == "xmlns")
-            ns = new XMLNamespace(QString::null, attr->value().string(), ns);
+            ns = new XMLNamespace(QString::null, attr->value().qstring(), ns);
         else if (attr->prefix() == "xmlns")
-            ns = new XMLNamespace(attr->localName().string(), attr->value().string(), ns);
+            ns = new XMLNamespace(attr->localName().qstring(), attr->value().qstring(), ns);
     }
     
     m_namespaceStack.push(ns);
@@ -954,7 +954,7 @@ QMap<QString, QString> parseAttributes(const DOMString &string, bool &attrsOK)
     memset(&sax, 0, sizeof(sax));
     sax.startElement = attributesStartElementHandler;
     xmlParserCtxtPtr parser = createQStringParser(&sax, &state);
-    parseQString(parser, "<?xml version=\"1.0\"?><attrs " + string.string() + " />");
+    parseQString(parser, "<?xml version=\"1.0\"?><attrs " + string.qstring() + " />");
     xmlFreeParserCtxt(parser);
 
     attrsOK = state.gotAttributes;

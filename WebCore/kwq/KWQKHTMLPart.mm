@@ -499,7 +499,7 @@ NSString *KWQKHTMLPart::searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellE
                     if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
                     {
                         // For each text chunk, run the regexp
-                        QString nodeString = n->nodeValue().string();
+                        QString nodeString = n->nodeValue().qstring();
                         int pos = regExp->searchRev(nodeString);
                         if (pos >= 0) {
                             return nodeString.mid(pos, regExp->matchedLength()).getNSString();
@@ -549,7 +549,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
         } else if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
         {
             // For each text chunk, run the regexp
-            QString nodeString = n->nodeValue().string();
+            QString nodeString = n->nodeValue().qstring();
             // add 100 for slop, to make it more likely that we'll search whole nodes
             if (lengthSearched + nodeString.length() > maxCharsSearched) {
                 nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
@@ -574,7 +574,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
 
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
 {
-    QString name = element->getAttribute(nameAttr).string();
+    QString name = element->getAttribute(nameAttr).qstring();
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     name.replace(QRegExp("[[:digit:]]"), " ");
     name.replace('_', ' ');
@@ -894,7 +894,7 @@ KHTMLView *KWQKHTMLPart::view() const
 
 void KWQKHTMLPart::setTitle(const DOMString &title)
 {
-    QString text = title.string();
+    QString text = title.qstring();
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
@@ -2866,7 +2866,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 
     AtomicString attr = e->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
-        NSURL *URL = completeURL(attr.string()).getNSURL();
+        NSURL *URL = completeURL(attr.qstring()).getNSURL();
         wrapper = [_bridge fileWrapperForURL:URL];
     }    
     if (!wrapper) {
@@ -2966,7 +2966,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     hasNewLine = false;
                 }
                 QString text;
-                QString str = n->nodeValue().string();
+                QString str = n->nodeValue().qstring();
                 int start = (n == _startNode) ? startOffset : -1;
                 int end = (n == endNode) ? endOffset : -1;
                 if (renderer->isText()) {
@@ -3203,7 +3203,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 // will have corrected any illegally nested <a> elements.
                 if (linkStartNode && n == linkStartNode) {
                     DOMString href = parseURL(linkStartNode->getAttribute(hrefAttr));
-                    KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
+                    KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.qstring());
                     
                     NSURL *URL = kURL.getNSURL();
                     NSRange tempRange = { linkStartLocation, [result length]-linkStartLocation }; // workaround for 4213314
