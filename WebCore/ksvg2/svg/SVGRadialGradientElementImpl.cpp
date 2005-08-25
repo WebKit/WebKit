@@ -45,7 +45,7 @@
 
 using namespace KSVG;
 
-SVGRadialGradientElementImpl::SVGRadialGradientElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : SVGGradientElementImpl(doc, id, prefix)
+SVGRadialGradientElementImpl::SVGRadialGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGGradientElementImpl(doc, id, prefix)
 {
 	m_cx = m_cy = m_fx = m_fy = m_r = 0;
 }
@@ -113,7 +113,7 @@ SVGAnimatedLengthImpl *SVGRadialGradientElementImpl::r() const
 void SVGRadialGradientElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_CX:
@@ -151,8 +151,8 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 	QString ref = KDOM::DOMString(href()->baseVal()).string();
 
 	bool bbox = (gradientUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-	bool fxSet = hasAttribute("fx");
-	bool fySet = hasAttribute("fy");
+	bool fxSet = hasAttribute(KDOM::DOMString("fx").handle());
+	bool fySet = hasAttribute(KDOM::DOMString("fy").handle());
 	cx()->baseVal()->setBboxRelative(bbox);
 	cy()->baseVal()->setBboxRelative(bbox);
 	r()->baseVal()->setBboxRelative(bbox);
@@ -177,31 +177,31 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 		bool isRadial = pserver->type() == PS_RADIAL_GRADIENT;
 		KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
 
-		if(!hasAttribute("gradientUnits"))
+		if(!hasAttribute(KDOM::DOMString("gradientUnits").handle()))
 			bbox = gradient->boundingBoxMode();
 
 		if(isRadial)
 		{
 			KRenderingPaintServerRadialGradient *radial = static_cast<KRenderingPaintServerRadialGradient *>(pserver);
-			if(!hasAttribute("cx"))
+			if(!hasAttribute(KDOM::DOMString("cx").handle()))
 				_cx = radial->gradientCenter().x();
 			else if(bbox)
 				_cx *= 100.;
-			if(!hasAttribute("cy"))
+			if(!hasAttribute(KDOM::DOMString("cy").handle()))
 				_cy = radial->gradientCenter().y();
 			else if(bbox)
 				_cy *= 100.;
 
-			if(!hasAttribute("fx"))
+			if(!hasAttribute(KDOM::DOMString("fx").handle()))
 				_fx = radial->gradientFocal().x();
 			else if(bbox)
 				_fx *= 100.;
-			if(!hasAttribute("fy"))
+			if(!hasAttribute(KDOM::DOMString("fy").handle()))
 				_fy = radial->gradientFocal().y();
 			else if(bbox)
 				_fy *= 100.;
 
-			if(!hasAttribute("r"))
+			if(!hasAttribute(KDOM::DOMString("r").handle()))
 				_r = radial->gradientRadius();
 			else if(bbox)
 				_r *= 100.;
@@ -215,7 +215,7 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 			_r *= 100.0;
 		}
 
-		if(!hasAttribute("gradientTransform"))
+		if(!hasAttribute(KDOM::DOMString("gradientTransform").handle()))
 			mat = gradient->gradientTransform();
 
 		// Inherit color stops if empty
@@ -226,7 +226,7 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
 				grad->gradientStops().addStop(it.current()->offset, it.current()->color);
 		}
 
-		if(!hasAttribute("spreadMethod"))
+		if(!hasAttribute(KDOM::DOMString("spreadMethod").handle()))
 			grad->setGradientSpreadMethod(gradient->spreadMethod());
 	}
 	else
@@ -262,14 +262,14 @@ KCanvasItem *SVGRadialGradientElementImpl::createCanvasItem(KCanvas *canvas, KRe
 
 	pserver->setListener(const_cast<SVGRadialGradientElementImpl *>(this));
 
-	canvas->registry()->addPaintServerById(getId().string(), pserver);
+	canvas->registry()->addPaintServerById(KDOM::DOMString(getId()).string(), pserver);
 	return 0;
 }
 
 void SVGRadialGradientElementImpl::resourceNotification() const
 {
 	// We're referenced by a "client", build the gradient now...
-	KRenderingPaintServer *pserver = canvas()->registry()->getPaintServerById(getId().string());
+	KRenderingPaintServer *pserver = canvas()->registry()->getPaintServerById(KDOM::DOMString(getId()).string());
 	KRenderingPaintServerGradient *gradient = static_cast<KRenderingPaintServerGradient *>(pserver);
 	buildGradient(gradient, canvas());
 }

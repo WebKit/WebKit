@@ -38,9 +38,9 @@ namespace KDOM
 		KeyboardEventImpl(EventImplType identifier);
 		virtual ~KeyboardEventImpl();
 
-		void initKeyboardEvent(const DOMString &typeArg, bool canBubbleArg,
+		void initKeyboardEvent(DOMStringImpl *typeArg, bool canBubbleArg,
 							   bool cancelableArg, AbstractViewImpl *viewArg,
-							   const DOMString &keyIdentifierArg,
+							   DOMStringImpl *keyIdentifierArg,
 							   unsigned long keyLocationArg,
 							   bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg,
 							   bool metaKeyArg);
@@ -52,10 +52,10 @@ namespace KDOM
 		bool altKey() const;
 		bool metaKey() const;
 
-		DOMString keyIdentifier() const { return DOMString(m_keyIdentifier); }
+		DOMStringImpl *keyIdentifier() const {  return m_keyIdentifier; }
 		unsigned long keyLocation() const { return m_keyLocation; }
     
-		bool getModifierState(const DOMString &keyIdentifierArg) const;
+		bool getModifierState(DOMStringImpl *keyIdentifierArg) const;
     
 		QKeyEvent *qKeyEvent() const { return m_keyEvent; }
 

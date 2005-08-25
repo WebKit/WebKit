@@ -20,17 +20,33 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "NodeImpl.h"
+#include "DOMStringImpl.h"
 #include "MutationEventImpl.h"
 
 using namespace KDOM;
 
-MutationEventImpl::MutationEventImpl(EventImplType identifier) : EventImpl(identifier), m_relatedNode(0)
+MutationEventImpl::MutationEventImpl(EventImplType identifier) : EventImpl(identifier)
 {
+	m_newValue = 0;
+	m_prevValue = 0;
+
+	m_attrName = 0;
 	m_attrChange = 0;
+
+	m_relatedNode = 0;
 }
 
 MutationEventImpl::~MutationEventImpl()
 {
+	if(m_newValue)
+		m_newValue->deref();
+	if(m_prevValue)
+		m_prevValue->deref();
+	if(m_attrName)
+		m_attrName->deref();
+	if(m_relatedNode)
+		m_relatedNode->deref();
 }
 
 NodeImpl *MutationEventImpl::relatedNode() const
@@ -38,17 +54,17 @@ NodeImpl *MutationEventImpl::relatedNode() const
 	return m_relatedNode;
 }
 
-DOMString MutationEventImpl::prevValue() const
+DOMStringImpl *MutationEventImpl::prevValue() const
 {
 	return m_prevValue;
 }
 
-DOMString MutationEventImpl::newValue() const
+DOMStringImpl *MutationEventImpl::newValue() const
 {
 	return m_newValue;
 }
 
-DOMString MutationEventImpl::attrName() const
+DOMStringImpl *MutationEventImpl::attrName() const
 {
 	return m_attrName;
 }
@@ -58,15 +74,16 @@ unsigned short MutationEventImpl::attrChange() const
 	return m_attrChange;
 }
 
-void MutationEventImpl::initMutationEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, const DOMString &prevValueArg, const DOMString &newValueArg, const DOMString &attrNameArg, unsigned short attrChangeArg)
+void MutationEventImpl::initMutationEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, DOMStringImpl *prevValueArg, DOMStringImpl *newValueArg, DOMStringImpl *attrNameArg, unsigned short attrChangeArg)
 {
 	initEvent(typeArg, canBubbleArg, cancelableArg);
 
-	m_prevValue = prevValueArg;
-	m_newValue = newValueArg;
-	m_attrName = attrNameArg;
 	m_attrChange = attrChangeArg;
-	m_relatedNode = relatedNodeArg;
+
+	KDOM_SAFE_SET(m_prevValue, prevValueArg);
+	KDOM_SAFE_SET(m_newValue, newValueArg);
+	KDOM_SAFE_SET(m_attrName, attrNameArg);
+	KDOM_SAFE_SET(m_relatedNode, relatedNodeArg);
 }
 
 // vim:ts=4:noet

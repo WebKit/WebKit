@@ -45,7 +45,7 @@
 
 using namespace KSVG;
 
-SVGFEImageElementImpl::SVGFEImageElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGFEImageElementImpl::SVGFEImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 	m_preserveAspectRatio = 0;
@@ -71,7 +71,7 @@ void SVGFEImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 	{
 		case ATTR_PRESERVEASPECTRATIO:
 		{
-			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.implementation());
+			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.handle());
 			break;
 		}
 		default:

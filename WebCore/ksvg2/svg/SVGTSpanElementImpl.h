@@ -30,7 +30,7 @@ namespace KSVG
 	class SVGTSpanElementImpl : public SVGTextPositioningElementImpl
 	{
 	public:
-		SVGTSpanElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id,  const KDOM::DOMString &prefix);
+		SVGTSpanElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
 		virtual ~SVGTSpanElementImpl();
 
 		// 'SVGTSpanElement' functions

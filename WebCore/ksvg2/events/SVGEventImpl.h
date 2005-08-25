@@ -34,7 +34,7 @@ namespace KSVG
 		SVGEventImpl();
 		virtual ~SVGEventImpl();
 
-		virtual void initEvent(const KDOM::DOMString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
+		virtual void initEvent(KDOM::DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg);
 	};
 };
 

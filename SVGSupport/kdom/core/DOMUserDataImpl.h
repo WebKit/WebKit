@@ -24,8 +24,6 @@
 #define KDOM_DOMUserDataImpl_H
 
 #include <kdom/Shared.h>
-#include <kdom/DOMUserData.h>
-#include <kdom/ecma/DOMLookup.h>
 
 namespace KJS
 {
@@ -53,6 +51,8 @@ namespace KDOM
 	};
 
 	// template specialization - for comparing with boolean
+
+/* FIXME - Think about this in the new ecma system
 	template<>
 	class DOMBridge<DOMUserData> : public KJS::ObjectImp
 	{
@@ -125,7 +125,7 @@ namespace KDOM
 	protected:
 		DOMUserDataImpl *m_impl;
 	};
-
+*/
 };
 
 #endif

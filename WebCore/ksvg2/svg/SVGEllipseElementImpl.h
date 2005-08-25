@@ -39,7 +39,7 @@ namespace KSVG
 								  public SVGTransformableImpl
 	{
 	public:
-		SVGEllipseElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGEllipseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGEllipseElementImpl();
 
 		// 'SVGEllipseElement' functions

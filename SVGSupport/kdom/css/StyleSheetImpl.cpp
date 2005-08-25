@@ -26,26 +26,44 @@
 
 using namespace KDOM;
 
-StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, const DOMString &href) : StyleListImpl(parentSheet)
+StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMStringImpl *href) : StyleListImpl(parentSheet)
 {
 	m_media = 0;
 	m_parentNode = 0;
+
 	m_strHref = href;
+	if(m_strHref)
+		m_strHref->ref();
+
+	m_strTitle = 0;
+
 	m_disabled = false;
 }
 
-StyleSheetImpl::StyleSheetImpl(NodeImpl *parentNode, const DOMString &href) : StyleListImpl()
+StyleSheetImpl::StyleSheetImpl(NodeImpl *parentNode, DOMStringImpl *href) : StyleListImpl()
 {
 	m_media = 0;
+
 	m_strHref = href;
+	if(m_strHref)
+		m_strHref->ref();
+
+	m_strTitle = 0;
+
 	m_disabled = false;
 	m_parentNode = parentNode;
 }
 
-StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMString href) : StyleListImpl(owner)
+StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMStringImpl *href) : StyleListImpl(owner)
 {
 	m_media = 0;
+
 	m_strHref = href;
+	if(m_strHref)
+		m_strHref->ref();
+
+	m_strTitle = 0;
+
 	m_disabled = false;
 	m_parentNode = 0;
 }
@@ -57,6 +75,11 @@ StyleSheetImpl::~StyleSheetImpl()
 		m_media->setParent(0);
 		m_media->deref();
 	}
+
+	if(m_strHref)
+		m_strHref->deref();
+	if(m_strTitle)
+		m_strTitle->deref();
 }
 
 void StyleSheetImpl::setDisabled(bool disabled)
@@ -85,12 +108,12 @@ StyleSheetImpl *StyleSheetImpl::parentStyleSheet() const
 	return 0;
 }
 
-DOMString StyleSheetImpl::href() const
+DOMStringImpl *StyleSheetImpl::href() const
 {
 	return m_strHref;
 }
 
-DOMString StyleSheetImpl::title() const
+DOMStringImpl *StyleSheetImpl::title() const
 {
 	return m_strTitle;
 }
@@ -100,9 +123,9 @@ MediaListImpl *StyleSheetImpl::media() const
 	return m_media;
 }
 
-void StyleSheetImpl::setTitle(const DOMString &title)
+void StyleSheetImpl::setTitle(DOMStringImpl *title)
 {
-	m_strTitle = title;
+	KDOM_SAFE_SET(m_strTitle, title);
 }
 
 void StyleSheetImpl::setMedia(MediaListImpl *media)

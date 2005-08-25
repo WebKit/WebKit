@@ -20,15 +20,13 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/ecma/Ecma.h>
-
 #include "SVGHelper.h"
 #include "SVGRectImpl.h"
 #include "SVGStyledElementImpl.h"
 
 using namespace KSVG;
 
-SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : KDOM::Shared(true)
+SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
 	m_context = context;
 	m_x = m_y = m_width = m_height = 0.0;

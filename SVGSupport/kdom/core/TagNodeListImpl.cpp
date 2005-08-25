@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,19 +26,30 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "NodeImpl.h"
+#include "DOMStringImpl.h"
 #include "TagNodeListImpl.h"
 
 using namespace KDOM;
 	
-TagNodeListImpl::TagNodeListImpl(NodeImpl *refNode, const DOMString &name, const DOMString &namespaceURI) : NodeListImpl(refNode)
+TagNodeListImpl::TagNodeListImpl(NodeImpl *refNode, DOMStringImpl *name, DOMStringImpl *namespaceURI) : NodeListImpl(refNode)
 {
 	m_name = name;
+	if(m_name)
+		m_name->ref();
+
 	m_namespaceURI = namespaceURI;
+	if(m_namespaceURI)
+		m_namespaceURI->ref();
 }
 
 TagNodeListImpl::~TagNodeListImpl()
 {
+	if(m_name)
+		m_name->deref();
+	if(m_namespaceURI)
+		m_namespaceURI->deref();
 }
 
 NodeImpl *TagNodeListImpl::item(unsigned long index) const
@@ -92,17 +109,21 @@ unsigned long TagNodeListImpl::recursiveLength(const NodeImpl *refNode) const
 // The caller has to check if n != 0
 bool TagNodeListImpl::check(NodeImpl *node) const
 {
-	if(!m_namespaceURI.isEmpty())
+	DOMString name(m_name);
+	DOMString ns(m_namespaceURI);
+
+	if(!ns.isEmpty())
 	{
+
 		// The special value "*" matches all namespaces & names.
-		return ((m_namespaceURI == "*" || m_namespaceURI == node->namespaceURI()) &&
-				(m_name == "*" || node->localName() == m_name));
+		return ((ns == "*" || ns == DOMString(node->namespaceURI())) &&
+				(name == "*" || DOMString(node->localName()) == name));
 	}
 
-	if(m_name == "*") // The special value "*" matches all tags.
+	if(name == "*") // The special value "*" matches all tags.
 		return true;
 
-	return node->nodeName() == m_name;
+	return DOMString(node->nodeName()) == name;
 }
 
 // vim:ts=4:noet

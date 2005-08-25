@@ -38,8 +38,8 @@ namespace KDOM
 		virtual ~CSSValueImpl();
 
 		// 'CSSValueImpl' functions
-		virtual void setCssText(const DOMString &cssText);
-		virtual DOMString cssText() const = 0;
+		virtual void setCssText(DOMStringImpl *cssText);
+		virtual DOMStringImpl *cssText() const = 0;
 
 		virtual unsigned short cssValueType() const;
 
@@ -51,14 +51,14 @@ namespace KDOM
 	{
 	public:
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 	};
 
 	class CSSInitialValueImpl : public CSSValueImpl
 	{
 	public:
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 	};
 
 	class CSSValueListImpl;
@@ -71,7 +71,7 @@ namespace KDOM
 		virtual ~FontValueImpl();
 
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 
 		virtual bool isFontValue() const { return true; }
 
@@ -91,7 +91,7 @@ namespace KDOM
 		virtual ~QuotesValueImpl();
 
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 
 		void addLevel(const QString &open, const QString &close);
 		QString openQuote(int level) const;
@@ -110,7 +110,7 @@ namespace KDOM
 		virtual ~ShadowValueImpl();
 
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 
 		CSSPrimitiveValueImpl *x;
 		CSSPrimitiveValueImpl *y;
@@ -122,18 +122,18 @@ namespace KDOM
 	class CounterActImpl : public CSSValueImpl
 	{
 	public:
-		CounterActImpl(DOMString &c, short v);
+		CounterActImpl(DOMStringImpl *c, short v);
 		virtual ~CounterActImpl();
 
 		virtual unsigned short cssValueType() const;
-		virtual DOMString cssText() const;
+		virtual DOMStringImpl *cssText() const;
 
-		DOMString counter() const;
+		DOMStringImpl *counter() const;
 
 		short value() const;
 		void setValue(const short v);
 
-		DOMString m_counter;
+		DOMStringImpl *m_counter;
 		short m_value;
 	};
 };

@@ -30,11 +30,16 @@
 
 #import <kdom/Namespace.h>
 #import <kdom/Helper.h>
+#import <kdom/DOMString.h>
 
 #import <ksvg2/impl/SVGStyledElementImpl.h>
 #import <ksvg2/impl/SVGEllipseElementImpl.h>
 #import <ksvg2/impl/SVGRectElementImpl.h>
 #import <ksvg2/impl/SVGPathElementImpl.h>
+
+#import "KWQTextStream.h"
+
+using namespace KDOM;
 
 @interface DrawCanvasItemPrivate : NSObject {
     @public
@@ -148,23 +153,24 @@
     //	self, NSStringFromRect([self boundingBox]), NSStringFromRect(newRect));
     KDOM::NodeImpl *node = (KDOM::NodeImpl *)_private->item->userData();
     int localId = node->localId();
+    KDOM::DOMStringImpl *svgNamespace = KDOM::NS_SVG.handle();
     switch (localId) {
 	case ID_ELLIPSE:
 	{
             KSVG::SVGEllipseElementImpl *ellipse = (KSVG::SVGEllipseElementImpl *)node;
-            ellipse->setAttributeNS(KDOM::NS_SVG, "cx", QString::number(newRect.origin.x + newRect.size.width/2.f));
-            ellipse->setAttributeNS(KDOM::NS_SVG, "cy", QString::number(newRect.origin.y + newRect.size.height/2.f));
-            ellipse->setAttributeNS(KDOM::NS_SVG, "rx", QString::number(newRect.size.width/2.f));
-            ellipse->setAttributeNS(KDOM::NS_SVG, "ry", QString::number(newRect.size.height/2.f));
+            ellipse->setAttributeNS(svgNamespace, DOMString("cx").handle(), DOMString(QString::number(newRect.origin.x + newRect.size.width/2.f)).handle());
+            ellipse->setAttributeNS(svgNamespace, DOMString("cy").handle(), DOMString(QString::number(newRect.origin.y + newRect.size.height/2.f)).handle());
+            ellipse->setAttributeNS(svgNamespace, DOMString("rx").handle(), DOMString(QString::number(newRect.size.width/2.f)).handle());
+            ellipse->setAttributeNS(svgNamespace, DOMString("ry").handle(), DOMString(QString::number(newRect.size.height/2.f)).handle());
             break;
 	}
 	case ID_RECT:
 	{
             KSVG::SVGRectElementImpl *rect = (KSVG::SVGRectElementImpl *)node;
-            rect->setAttributeNS(KDOM::NS_SVG, "x", QString::number(newRect.origin.x));
-            rect->setAttributeNS(KDOM::NS_SVG, "y", QString::number(newRect.origin.y));
-            rect->setAttributeNS(KDOM::NS_SVG, "width", QString::number(newRect.size.width - 1));
-            rect->setAttributeNS(KDOM::NS_SVG, "height", QString::number(newRect.size.height - 1));
+            rect->setAttributeNS(svgNamespace, DOMString("x").handle(), DOMString(QString::number(newRect.origin.x)).handle());
+            rect->setAttributeNS(svgNamespace, DOMString("y").handle(), DOMString(QString::number(newRect.origin.y)).handle());
+            rect->setAttributeNS(svgNamespace, DOMString("width").handle(), DOMString(QString::number(newRect.size.width - 1)).handle());
+            rect->setAttributeNS(svgNamespace, DOMString("height").handle(), DOMString(QString::number(newRect.size.height - 1)).handle());
             break;
 	}
 	default:
@@ -198,18 +204,19 @@
     KSVG::SVGStyledElementImpl *element = (KSVG::SVGStyledElementImpl *)_private->item->userData();
     id theValue = nil;
     
+    KDOM::DOMStringImpl *svgNamespace = KDOM::NS_SVG.handle();
     if ([key isEqualToString:@"isFilled"]) {
-        KDOM::DOMString value = element->getAttributeNS(KDOM::NS_SVG, "fill");
-        theValue = [NSNumber numberWithBool:(value != "none")];
+        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("fill").handle());
+        theValue = [NSNumber numberWithBool:(value->string().ascii() != "none")];
     } else if ([key isEqualToString:@"isStroked"]) {
-        KDOM::DOMString value = element->getAttributeNS(KDOM::NS_SVG, "stroke");
-        theValue = [NSNumber numberWithBool:(value != "none")];
+        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("stroke").handle());
+        theValue = [NSNumber numberWithBool:(value->string().ascii() != "none")];
     } else if ([key isEqualToString:@"fillColor"]) {
-        KDOM::DOMString value = element->getAttributeNS(KDOM::NS_SVG, "fill");
-        theValue = nsColor(QColor(value.string()));
+        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("fill").handle());
+        theValue = nsColor(QColor(value->string()));
     } else if ([key isEqualToString:@"strokeColor"]) {
-        KDOM::DOMString value = element->getAttributeNS(KDOM::NS_SVG, "stroke");
-        theValue = nsColor(QColor(value.string()));
+        KDOM::DOMStringImpl *value = element->getAttributeNS(svgNamespace, DOMString("stroke").handle());
+        theValue = nsColor(QColor(value->string()));
     }
     
     if (theValue)

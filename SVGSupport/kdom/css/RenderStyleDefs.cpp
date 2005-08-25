@@ -35,11 +35,11 @@ using namespace KDOM;
 
 // CSS says 'Fixed' for the default padding value, but we treat 'Variable' as 0
 // padding anyway, and like this is works fine for table paddings as well...
-StyleSurroundData::StyleSurroundData() : Shared(false), margin(LT_FIXED), padding(LT_VARIABLE)
+StyleSurroundData::StyleSurroundData() : Shared(), margin(LT_FIXED), padding(LT_VARIABLE)
 {
 }
 
-StyleSurroundData::StyleSurroundData(const StyleSurroundData &other) : Shared(false)
+StyleSurroundData::StyleSurroundData(const StyleSurroundData &other) : Shared()
 {
 	offset = other.offset; margin = other.margin;
 	padding = other.padding; border = other.border;
@@ -51,7 +51,7 @@ bool StyleSurroundData::operator==(const StyleSurroundData &other) const
 		   (padding == other.padding) && (border == other.border);
 }
 
-StyleBoxData::StyleBoxData() : Shared(false), zIndex(0), zAuto(true)
+StyleBoxData::StyleBoxData() : Shared(), zIndex(0), zAuto(true)
 {
 	width = RenderStyle::initialWidth();
 	height = RenderStyle::initialHeight();
@@ -62,7 +62,7 @@ StyleBoxData::StyleBoxData() : Shared(false), zIndex(0), zAuto(true)
     boxSizing = RenderStyle::initialBoxSizing();
 }
 
-StyleBoxData::StyleBoxData(const StyleBoxData &other) : Shared(false)
+StyleBoxData::StyleBoxData(const StyleBoxData &other) : Shared()
 {
 	width = other.width; height = other.height;
 	minWidth = other.minWidth; minHeight = other.minHeight;
@@ -80,13 +80,13 @@ bool StyleBoxData::operator==(const StyleBoxData &other) const
 		   (zAuto == other.zAuto);
 }
 
-StyleVisualData::StyleVisualData() : Shared(false)
+StyleVisualData::StyleVisualData() : Shared()
 {
 	textDecoration = RenderStyle::initialTextDecoration();
 	palette = QApplication::palette();
 }
 
-StyleVisualData::StyleVisualData(const StyleVisualData &other) : Shared(false)
+StyleVisualData::StyleVisualData(const StyleVisualData &other) : Shared()
 {
 	clip = other.clip;
 	textDecoration = other.textDecoration;
@@ -100,12 +100,12 @@ bool StyleVisualData::operator==(const StyleVisualData &other) const
 		   (palette == other.palette);
 }
 
-StyleBackgroundData::StyleBackgroundData() : Shared(false)
+StyleBackgroundData::StyleBackgroundData() : Shared()
 {
 	image = RenderStyle::initialBackgroundImage();
 }
 
-StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData &other) : Shared(false)
+StyleBackgroundData::StyleBackgroundData(const StyleBackgroundData &other) : Shared()
 {
 	color = other.color;
 	image = other.image;
@@ -121,7 +121,7 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData &other) const
 		   (outline == other.outline);
 }
 
-StyleMarqueeData::StyleMarqueeData() : Shared(false)
+StyleMarqueeData::StyleMarqueeData() : Shared()
 {
 	increment = RenderStyle::initialMarqueeIncrement();
 	speed = RenderStyle::initialMarqueeSpeed();
@@ -130,7 +130,7 @@ StyleMarqueeData::StyleMarqueeData() : Shared(false)
 	loops = RenderStyle::initialMarqueeLoopCount();
 }
 
-StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData &other) : Shared(false)
+StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData &other) : Shared()
 {
 	increment = other.increment;
 	speed = other.speed;
@@ -145,12 +145,12 @@ bool StyleMarqueeData::operator==(const StyleMarqueeData &other) const
 			direction == other.direction && behavior == other.behavior && loops == other.loops);
 }
 
-StyleCSS3NonInheritedData::StyleCSS3NonInheritedData() : Shared(false)
+StyleCSS3NonInheritedData::StyleCSS3NonInheritedData() : Shared()
 {
 	opacity = RenderStyle::initialOpacity();
 }
 
-StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData &other) : Shared(false)
+StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData &other) : Shared()
 {
 	opacity = other.opacity;
 	marquee = other.marquee;
@@ -161,11 +161,11 @@ bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData &othe
 	return (opacity == other.opacity) && (marquee == other.marquee);
 }
 
-StyleCSS3InheritedData::StyleCSS3InheritedData() : Shared(false), textShadow(0)
+StyleCSS3InheritedData::StyleCSS3InheritedData() : Shared(), textShadow(0)
 {
 }
 
-StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData &other) : Shared(false)
+StyleCSS3InheritedData::StyleCSS3InheritedData(const StyleCSS3InheritedData &other) : Shared()
 {
 	textShadow = other.textShadow ? new ShadowData(*other.textShadow) : 0;
 }
@@ -190,7 +190,7 @@ bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData &
 	return true;
 }
 
-StyleInheritedData::StyleInheritedData() : Shared(false), font()
+StyleInheritedData::StyleInheritedData() : Shared(), font()
 {
 	indent = RenderStyle::initialTextIndent();
 	lineHeight = RenderStyle::initialLineHeight();
@@ -206,7 +206,7 @@ StyleInheritedData::StyleInheritedData() : Shared(false), font()
 	pageBreakInside = RenderStyle::initialPageBreakInside();
 }
 
-StyleInheritedData::StyleInheritedData(const StyleInheritedData &other) : Shared(false)
+StyleInheritedData::StyleInheritedData(const StyleInheritedData &other) : Shared()
 {
 	indent = other.indent; lineHeight = other.lineHeight;
 	styleImage = other.styleImage; font = other.font;

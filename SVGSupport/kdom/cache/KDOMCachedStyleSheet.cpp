@@ -63,16 +63,17 @@ CachedStyleSheet::CachedStyleSheet(const DOMString &url, const QString &styleshe
 	m_sheet = DOMString(stylesheet_data);
 }
 
-
 void CachedStyleSheet::ref(CachedObjectClient *c)
 {
 	CachedObject::ref(c);
 
 	if(!m_loading)
+	{
 		if(m_hadError)
 			c->error(m_err, m_errText);
 		else
 			c->setStyleSheet(m_url, m_sheet);
+	}
 }
 
 void CachedStyleSheet::data(QBuffer &buffer, bool eof)
@@ -83,11 +84,11 @@ void CachedStyleSheet::data(QBuffer &buffer, bool eof)
 	buffer.close();
 	setSize(buffer.buffer().size());
 
-	QTextCodec* c = codecForBuffer(m_charset, buffer.buffer());
+	QTextCodec *c = codecForBuffer(m_charset, buffer.buffer());
 	QString data = c->toUnicode(buffer.buffer().data(), m_size);
+
 	// workaround Qt bugs
-	m_sheet = (data[0].unicode() == QChar::byteOrderMark) ? DOMString(data.mid(1)) : DOMString(data);
-	kdDebug() << "m_sheet now is : " << data << endl;
+	m_sheet = data[0].unicode() == QChar::byteOrderMark ? DOMString(data.mid(1)) : DOMString(data);
 	m_loading = false;
 
 	checkNotify();
@@ -95,7 +96,8 @@ void CachedStyleSheet::data(QBuffer &buffer, bool eof)
 
 void CachedStyleSheet::checkNotify()
 {
-	if(m_loading || m_hadError) return;
+	if(m_loading || m_hadError)
+		return;
 
 	kdDebug(6060) << "CachedStyleSheet:: finishedLoading " << m_url.string() << endl;
 
@@ -104,7 +106,6 @@ void CachedStyleSheet::checkNotify()
 	for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
 		it()->setStyleSheet(m_url, m_sheet);
 }
-
 
 void CachedStyleSheet::error(int err, const char *text)
 {

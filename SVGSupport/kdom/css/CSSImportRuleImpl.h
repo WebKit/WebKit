@@ -35,12 +35,12 @@ namespace KDOM
 							  public CachedObjectClient
 	{
 	public:
-		CSSImportRuleImpl(StyleBaseImpl *parent, const DOMString &href, const DOMString &media);
-		CSSImportRuleImpl(StyleBaseImpl *parent, const DOMString &href, MediaListImpl *media);
+		CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, DOMStringImpl *media);
+		CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, MediaListImpl *media);
 		virtual ~CSSImportRuleImpl();
 
 		// 'CSSImportRule' functions
-		DOMString href() const;
+		DOMStringImpl *href() const;
 		MediaListImpl *media() const;
 		CSSStyleSheetImpl *styleSheet() const;
 
@@ -48,14 +48,14 @@ namespace KDOM
 		virtual bool isImportRule() const { return true; }
 
 		// from CachedObjectClient
-		virtual void setStyleSheet(const DOMString &url, const DOMString &sheet);
+		virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
 		virtual void error(int err, const QString &text);
 
 		bool isLoading();
 		virtual void init();
 
 	protected:
-		DOMString m_strHref;
+		DOMStringImpl *m_strHref;
 		MediaListImpl *m_lstMedia;
 		CSSStyleSheetImpl *m_styleSheet;
 		CachedStyleSheet *m_cachedSheet;

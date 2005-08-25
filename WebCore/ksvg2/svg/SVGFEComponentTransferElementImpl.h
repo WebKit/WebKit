@@ -35,7 +35,7 @@ namespace KSVG
 	class SVGFEComponentTransferElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
 	{
 	public:
-		SVGFEComponentTransferElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGFEComponentTransferElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGFEComponentTransferElementImpl();
 
 		// 'SVGFEComponentTransferElement' functions

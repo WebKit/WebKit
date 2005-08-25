@@ -25,11 +25,8 @@
 
 namespace KDOM
 {
-	class Node;
 	class NodeImpl;
-	class Document;
 	class DOMString;
-	class DocumentType;
 	class DocumentImpl;
 	class DOMImplementation;
 
@@ -45,7 +42,7 @@ namespace KDOM
 		/**
 		 * @returns the parsed document.
 		 */
-		Document document() const;
+		DocumentImpl *document() const;
 
 	public:
 		virtual bool startDocument(const KURL &uri);
@@ -87,7 +84,7 @@ namespace KDOM
 		 *
 		 * This is used for error reporting.
 		 */
-		Node currentNode() const;
+		NodeImpl *currentNode() const;
 
 		// Used by DOM3 Load/Save part
 		void pushNode(NodeImpl *node);

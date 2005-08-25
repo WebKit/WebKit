@@ -402,12 +402,12 @@ maybe_media_list:
 media_list:
     medium {
 	$$ = new MediaListImpl();
-	$$->appendMedium( domString($1).lower() );
+	$$->appendMedium( DOMString(domString($1)).lower().handle() );
     }
     | media_list ',' maybe_space medium {
 	$$ = $1;
 	if ($$)
-	    $$->appendMedium( domString($4).lower() );
+	    $$->appendMedium( DOMString(domString($4)).lower().handle() );
     }
     | media_list error {
        delete $1;
@@ -640,7 +640,7 @@ element_name:
 	*/
 
 		const DOMString dtag(tag);
-		$$ = makeId(p->defaultNamespace, doc->getId(NodeImpl::ElementId, dtag.implementation(), false /* true */));
+		$$ = makeId(p->defaultNamespace, doc->getId(NodeImpl::ElementId, dtag.handle(), false /* true */));
 	} else {
 		$$ = makeId(p->defaultNamespace, p->interface()->getTagID(tag.lower().ascii(), tag.length()));
 		// this case should never happen - only when loading
@@ -681,7 +681,7 @@ specifier:
 	$$ = new CSSSelector(p->interface());
 	$$->match = CSSSelector::Id;
 	$$->attr = ATTR_ID;
-	$$->value = domString($1);
+	KDOM_SAFE_SET($$->value, domString($1));
     }
   | class
   | attrib
@@ -694,7 +694,7 @@ class:
 	$$ = new CSSSelector(p->interface());
 	$$->match = CSSSelector::List;
 	$$->attr = ATTR_CLASS;
-	$$->value = domString($2);
+	KDOM_SAFE_SET($$->value, domString($2));
     }
   ;
 
@@ -712,7 +712,7 @@ attrib_id:
 	*/
 		
 	    const DOMString dattr(attr);
-		$$ = doc->getId(NodeImpl::AttributeId, dattr.implementation(), false);
+		$$ = doc->getId(NodeImpl::AttributeId, dattr.handle(), false);
 	} else {
 		$$ = doc->implementation()->cdfInterface()->getAttrID(attr.lower().ascii(), attr.length());
 		// this case should never happen - only when loading
@@ -734,7 +734,7 @@ attrib:
 	$$ = new CSSSelector(p->interface());
 	$$->attr = $3;
 	$$->match = $4;
-	$$->value = domString($6);
+	KDOM_SAFE_SET($$->value, domString($6));
     }
     | '[' maybe_space namespace_selector '|' attrib_id ']' {
 		CSSParser *p = static_cast<CSSParser *>(parser);
@@ -749,7 +749,7 @@ attrib:
         $$ = new CSSSelector(p->interface());
         $$->attr = $5;
         $$->match = (CSSSelector::Match)$6;
-        $$->value = domString($8);
+		KDOM_SAFE_SET($$->value, domString($8));
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
             static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace($$->attr, domString($3));
    }
@@ -786,46 +786,46 @@ pseudo:
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	$$ = new CSSSelector(p->interface());
 	$$->match = CSSSelector::PseudoClass;
-	$$->value = domString($2);
+	KDOM_SAFE_SET($$->value, domString($2));
     }
     |
     ':' ':' IDENT {
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	$$ = new CSSSelector(p->interface());
 	$$->match = CSSSelector::PseudoElement;
-        $$->value = domString($3);
+	KDOM_SAFE_SET($$->value, domString($3));
     }
     // used by :nth-*
     | ':' FUNCTION NTH ')' {
 		CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = new CSSSelector(p->interface());
         $$->match = CSSSelector::PseudoClass;
-        $$->string_arg = domString($3);
-        $$->value = domString($2);
+		KDOM_SAFE_SET($$->string_arg, domString($3));
+		KDOM_SAFE_SET($$->value, domString($2));
     }
     // used by :nth-*
     | ':' FUNCTION NUMBER ')' {
 		CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = new CSSSelector(p->interface());
         $$->match = CSSSelector::PseudoClass;
-        $$->string_arg = QString::number($3);
-        $$->value = domString($2);
+		KDOM_SAFE_SET($$->string_arg, DOMString(QString::number($3)).handle());
+		KDOM_SAFE_SET($$->value, domString($2));
     }
     // used by :nth-* and :lang
     | ':' FUNCTION IDENT ')' {
 		CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = new CSSSelector(p->interface());
         $$->match = CSSSelector::PseudoClass;
-        $$->string_arg = domString($3);
-        $$->value = domString($2);
+		KDOM_SAFE_SET($$->string_arg, domString($3));
+		KDOM_SAFE_SET($$->value, domString($2));
     }
     // used by :contains
     | ':' FUNCTION STRING ')' {
 		CSSParser *p = static_cast<CSSParser *>(parser);
         $$ = new CSSSelector(p->interface());
         $$->match = CSSSelector::PseudoClass;
-        $$->string_arg = domString($3);
-        $$->value = domString($2);
+		KDOM_SAFE_SET($$->string_arg, domString($3));
+		KDOM_SAFE_SET($$->value, domString($2));
     }
     // used only by :not
     | ':' NOTFUNCTION maybe_space simple_selector ')' {
@@ -833,7 +833,7 @@ pseudo:
         $$ = new CSSSelector(p->interface());
         $$->match = CSSSelector::PseudoClass;
         $$->simpleSelector = $4;
-        $$->value = domString($2);
+        KDOM_SAFE_SET($$->value, domString($2));
     }
   ;
 

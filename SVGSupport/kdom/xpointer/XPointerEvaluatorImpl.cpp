@@ -25,13 +25,13 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 
-#include "DOMString.h"
+#include <kdebug.h>
+
 #include <kdom/Helper.h>
-#include "Node.h"
 
 #include "DocumentImpl.h"
+#include "DOMStringImpl.h"
 
-#include "XPointerExpression.h"
 #include "XPointerHelper.h"
 #include "kdomxpointer.h"
 
@@ -61,9 +61,11 @@ XPointerEvaluatorImpl::~XPointerEvaluatorImpl()
 {
 }
 
-XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &string,
+XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(DOMStringImpl *stringImpl,
 															  NodeImpl *relatedNode) const
 {
+	DOMString string(stringImpl);
+
 	/* Possible optimization:
 	 * All compiled XPointerExpressions could be pooled in a dictionary. Hence, compilations
 	 * are saved at the cost of an overhead of a dictionary lookup at compile time. */
@@ -76,10 +78,10 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 
 	if(firstParan == -1) /* We have an invalid SchemeName or a ShortHand pointer. Assume the latter. */
 	{
-		XPointerExpressionImpl *xpr = new XPointerExpressionImpl(string, relatedNode, THIS);
+		XPointerExpressionImpl *xpr = new XPointerExpressionImpl(stringImpl, relatedNode, THIS);
 		xpr->ref();
 
-		ShortHandImpl *sh = new ShortHandImpl(stripped);
+		ShortHandImpl *sh = new ShortHandImpl(DOMString(stripped).handle());
 		sh->ref();
 
 		xpr->appendPart(sh);
@@ -118,7 +120,7 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 				startData = i + 1;				
 				schemeName = qString.mid(endPrevScheme, i - endPrevScheme).stripWhiteSpace();
 	
-				if(!Helper::IsValidQName(schemeName))
+				if(!Helper::IsValidQName(schemeName.handle()))
 					throw new XPointerExceptionImpl(INVALID_EXPRESSION_ERR);
 			}
 
@@ -159,7 +161,7 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 	StrPairList::const_iterator it;
 	StrPairList::const_iterator end = pointerParts.constEnd();
 
-	XPointerExpressionImpl *xpr = new XPointerExpressionImpl(string, relatedNode, THIS);
+	XPointerExpressionImpl *xpr = new XPointerExpressionImpl(stringImpl, relatedNode, THIS);
 	
 	NBCImpl *currentNBC = new NBCImpl(0 /* This is the parent of the initial NBC, which is null. */);
 	currentNBC->ref();
@@ -171,14 +173,14 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 
 		if(schemeName == "element")
 		{
-			ElementSchemeImpl *p = new ElementSchemeImpl(schemeData);
+			ElementSchemeImpl *p = new ElementSchemeImpl(schemeData.handle());
 			p->ref();
 			xpr->appendPart(p);
 		}
 		else if(schemeName == "xmlns")
 		{
 			/* nbc becomes the parentNBC for p */
-			XMLNSSchemeImpl *p = new XMLNSSchemeImpl(schemeData, currentNBC);
+			XMLNSSchemeImpl *p = new XMLNSSchemeImpl(schemeData.handle(), currentNBC);
 
 			/* Make p the new 'current' nbc. */
 			currentNBC->deref();
@@ -188,25 +190,35 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 		else if(schemeName == "xpointer")
 		{
 			/* Pass current nbc to the XPointerScheme -- it needs it. */
-			XPointerSchemeImpl *p = new XPointerSchemeImpl(schemeData, currentNBC);
+			XPointerSchemeImpl *p = new XPointerSchemeImpl(schemeData.handle(), currentNBC);
 			p->ref();
 			xpr->appendPart(p);
 		}
 		else
 		{
-			DOMString prefix, dummy;
-			Helper::SplitPrefixLocalName(schemeName.implementation(), prefix, dummy);
+			DOMStringImpl *prefix = 0, *dummy = 0;
+			Helper::SplitPrefixLocalName(schemeName.handle(), prefix, dummy);
+
+			if(prefix)
+				prefix->ref();
+			if(dummy)
+				dummy->ref();
 
 			/* 3.3 "If the namespace binding context contains no corresponding prefix,
 			 * or if the (namespace name, LocalPart) pair does not correspond to a 
 			 * scheme name supported by the XPointer processor, the pointer part is skipped." */
-			if(!prefix.isEmpty() && currentNBC->lookupNamespaceURI(prefix).isEmpty())
+			if(prefix && !prefix->isEmpty() && DOMString(currentNBC->lookupNamespaceURI(prefix)).isEmpty())
 				continue; 
 
-			kdDebug() << "Encountered unknown scheme: \"" << schemeName << "\"." << endl;
-			PointerPartImpl *p = new PointerPartImpl(schemeName, schemeData, currentNBC);
+			kdDebug() << "Encountered unknown scheme: \"" << DOMString(schemeName).string() << "\"." << endl;
+			PointerPartImpl *p = new PointerPartImpl(schemeName.handle(), schemeData.handle(), currentNBC);
 			p->ref();
 			xpr->appendPart(p);
+
+			if(prefix)
+				prefix->deref();
+			if(dummy)
+				dummy->deref();
 		}
 
 		/* Do nothing for now, in other words.  */
@@ -215,7 +227,7 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(const DOMString &s
 	return xpr;
 }
 
-XPointerResultImpl *XPointerEvaluatorImpl::evaluateXPointer(const DOMString &string, NodeImpl *relatedNode) const
+XPointerResultImpl *XPointerEvaluatorImpl::evaluateXPointer(DOMStringImpl *string, NodeImpl *relatedNode) const
 {
 	XPointerExpressionImpl *xptr = createXPointer(string, relatedNode);
 	Q_ASSERT(xptr);

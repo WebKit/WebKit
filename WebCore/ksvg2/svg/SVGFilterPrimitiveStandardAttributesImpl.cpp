@@ -35,7 +35,7 @@
 
 using namespace KSVG;
 
-SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix)
 {
 	m_x = m_y = m_width = m_height = 0;
@@ -77,7 +77,7 @@ SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::width() const
 	if(!m_width)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_width, context, LM_WIDTH);
-		m_width->baseVal()->setValueAsString("100%");
+		m_width->baseVal()->setValueAsString(KDOM::DOMString("100%").handle());
 		return m_width;
 	}
 
@@ -91,7 +91,7 @@ SVGAnimatedLengthImpl *SVGFilterPrimitiveStandardAttributesImpl::height() const
 	if(!m_height)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_height, context, LM_HEIGHT);
-		m_height->baseVal()->setValueAsString("100%");
+		m_height->baseVal()->setValueAsString(KDOM::DOMString("100%").handle());
 		return m_height;
 	}
 
@@ -107,7 +107,7 @@ SVGAnimatedStringImpl *SVGFilterPrimitiveStandardAttributesImpl::result() const
 void SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_X:
@@ -132,7 +132,7 @@ void SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(KDOM::AttributeImp
 		}
 		case ATTR_RESULT:
 		{
-			result()->setBaseVal(value.implementation());
+			result()->setBaseVal(value);
 			break;
 		}
 		default:

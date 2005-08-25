@@ -38,7 +38,7 @@ namespace KSVG
 							   public SVGTransformableImpl
 	{
 	public:
-		SVGDefsElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGDefsElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGDefsElementImpl();
 
 		// Derived from: 'SVGStyledElementImpl'

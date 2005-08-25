@@ -30,20 +30,20 @@ namespace KDOM
 	class TextImpl : public CharacterDataImpl
 	{
 	public:
-		TextImpl(DocumentImpl *doc, DOMStringImpl *text);
+		TextImpl(DocumentPtr *doc, DOMStringImpl *text);
 		virtual ~TextImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
 
 		TextImpl *splitText(unsigned long offset);
 
 		bool isElementContentWhitespace() const;
-		DOMString wholeText() const;
+		DOMStringImpl *wholeText() const;
 		TextImpl *replaceWholeText(DOMStringImpl *content);
 
 		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
 	protected:
 		QPtrList<NodeImpl> logicallyAdjacentTextNodes() const;

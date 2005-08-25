@@ -22,6 +22,8 @@
 
 #include <qrect.h>
 
+#include <kdebug.h>
+
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasItem.h>
 #include <kcanvas/device/KRenderingStyle.h>
@@ -35,7 +37,10 @@
 #include "SVGAnimatedRectImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 
+#include <cmath>
+
 using namespace KSVG;
+using namespace std;
 
 // keep track of textual description of the unit type
 QString UnitText[] =
@@ -48,7 +53,7 @@ QString UnitText[] =
 	QString::fromLatin1("pc")
 };
 
-SVGLengthImpl::SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : KDOM::Shared(true)
+SVGLengthImpl::SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : KDOM::Shared()
 {
 	m_mode = mode;
 	m_context = context;
@@ -100,7 +105,7 @@ float SVGLengthImpl::value() const
 		else if(m_mode == LM_HEIGHT)
 			result = value * (bbox.height() - 1);
 		else if(m_mode == LM_OTHER)
-			result = value * sqrt(pow((bbox.width() - 1), 2) + pow((bbox.height() - 1), 2)) / sqrt(2.0);
+			result = value * sqrt(pow(double(bbox.width() - 1), 2) + pow(double(bbox.height() - 1), 2)) / sqrt(2.0);
 
 		return result;
 	}
@@ -119,12 +124,12 @@ float SVGLengthImpl::valueInSpecifiedUnits() const
 	return m_valueInSpecifiedUnits;
 }												
 
-void SVGLengthImpl::setValueAsString(const KDOM::DOMString &valueAsString)
+void SVGLengthImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
 {
-	if(valueAsString.isEmpty())
+	if(!valueAsString || valueAsString->isEmpty())
 		return;
 
-	QString valueAsQString = valueAsString.string();
+	QString valueAsQString = valueAsString->string();
 
 	double convertedNumber = 0;
 	const char *start = valueAsQString.latin1();
@@ -163,11 +168,9 @@ void SVGLengthImpl::setValueAsString(const KDOM::DOMString &valueAsString)
 	updateValue();
 }
 
-KDOM::DOMString SVGLengthImpl::valueAsString() const
+KDOM::DOMStringImpl *SVGLengthImpl::valueAsString() const
 {
-	KDOM::DOMString valueAsString = QString::number(m_valueInSpecifiedUnits);
-	valueAsString += UnitText[m_unitType];
-	return valueAsString;
+	return new KDOM::DOMStringImpl(QString::number(m_valueInSpecifiedUnits) + UnitText[m_unitType]);
 }
 
 void SVGLengthImpl::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

@@ -44,14 +44,14 @@ namespace KSVG
 								 public SVGStylableImpl
 	{
 	public:
-		SVGStyledElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGStyledElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGStyledElementImpl();
 
 		// 'SVGStylable' functions
 		virtual SVGAnimatedStringImpl *className() const;
 		virtual KDOM::CSSStyleDeclarationImpl *style();
 		virtual KDOM::CSSStyleDeclarationImpl *pa() const;
-		virtual KDOM::CSSValueImpl *getPresentationAttribute(const KDOM::DOMString &name);
+		virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name);
 
 		virtual void attach();
 		virtual void detach();

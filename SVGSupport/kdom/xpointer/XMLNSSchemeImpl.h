@@ -27,7 +27,6 @@
 
 namespace KDOM
 {
-	class DOMString;
 
 namespace XPointer
 {
@@ -41,7 +40,7 @@ namespace XPointer
 	class XMLNSSchemeImpl : public NBCImpl
 	{
 	public:
-		XMLNSSchemeImpl(const DOMString& schemeData, NBCImpl *nbc);
+		XMLNSSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
 		virtual ~XMLNSSchemeImpl();
 	};
 };

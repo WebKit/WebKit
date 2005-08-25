@@ -26,21 +26,21 @@
 
 using namespace KSVG;
 
-SVGPointImpl::SVGPointImpl(const SVGStyledElementImpl *context) : KDOM::Shared(true)
+SVGPointImpl::SVGPointImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
 	m_x = 0.0;
 	m_y = 0.0;
 	m_context = context;
 }
 
-SVGPointImpl::SVGPointImpl(float x, float y, const SVGStyledElementImpl *context) : KDOM::Shared(true)
+SVGPointImpl::SVGPointImpl(float x, float y, const SVGStyledElementImpl *context) : KDOM::Shared()
 {
 	m_x = x;
 	m_y = y;
 	m_context = context;
 }
 
-SVGPointImpl::SVGPointImpl(const QPoint &p, const SVGStyledElementImpl *context) : KDOM::Shared(true)
+SVGPointImpl::SVGPointImpl(const QPoint &p, const SVGStyledElementImpl *context) : KDOM::Shared()
 {
 	m_x = p.x();
 	m_y = p.y();

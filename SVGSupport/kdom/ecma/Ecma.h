@@ -23,37 +23,32 @@
 #ifndef KDOM_Ecma_H
 #define KDOM_Ecma_H
 
-#include <kdom/Node.h>
-
-class QVariant;
+#include <kjs/interpreter.h>
+#include <qvariant.h>
 
 namespace KJS
 {
-	class Value;
-	class Object;
 	class UString;
-	class ObjectImp;
 	class ExecState;
+	class ObjectImp;
 	class Completion;
 };
 
 namespace KDOM
 {
-	class Event;
-	class CSSRule;
-	class CSSValue;
+	class NodeImpl;
+	class EventImpl;
+	class CSSRuleImpl;
+	class CSSValueImpl;
+
+	class EventImpl;
 	class DOMString;
-	class EventTarget;
-	class AbstractView;
-	class GlobalObject;
-	class EcmaInterface;
-	class EventListener;
+	class CDFInterface;
+	class DocumentImpl;
+	class DOMStringImpl;
+	class EventListenerImpl;
 	class ScriptInterpreter;
 
-	class NodeImpl;
-	class DocumentImpl;
-	class CDFInterface;
-	class EventListenerImpl;
 	class Ecma
 	{
 	public:
@@ -67,7 +62,6 @@ namespace KDOM
 		KJS::ObjectImp *globalObject() const;
 		KJS::ExecState *globalExec() const;
 		
-		EcmaInterface *interface() const;
 		ScriptInterpreter *interpreter() const;
 
 		// Internal, used to handle event listeners
@@ -88,10 +82,10 @@ namespace KDOM
 		// debug(document.createElement('svg')); should show 'KSVG::SVGSVGElement'
 		// but KDOM doesn't know anything about it and will return 'KDOM::Element'
 		// Here is the standard way to avoid that!
-		virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, Node n);
-		virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, Event e);
-		virtual KJS::ObjectImp *inheritedGetDOMCSSRule(KJS::ExecState *exec, CSSRule c);
-		virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValue c);
+		virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, NodeImpl *n);
+		virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, EventImpl *e);
+		virtual KJS::ObjectImp *inheritedGetDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
+		virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
 
 	protected:
 		virtual void setupDocument(DocumentImpl *doc);
@@ -102,37 +96,40 @@ namespace KDOM
 	};
 
 	// Helpers
-	KJS::ValueImp *getDOMNode(KJS::ExecState *exec, Node n);
-	KJS::ValueImp *getDOMEvent(KJS::ExecState *exec, Event e);
-	KJS::ValueImp *getDOMCSSRule(KJS::ExecState *exec, CSSRule c);
-	KJS::ValueImp *getDOMCSSValue(KJS::ExecState *exec, CSSValue c);
+	KJS::ValueImp *getDOMNode(KJS::ExecState *exec, NodeImpl *n);
+	KJS::ValueImp *getDOMEvent(KJS::ExecState *exec, EventImpl *e);
+	KJS::ValueImp *getDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
+	KJS::ValueImp *getDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
 
-	KJS::ValueImp *getDOMString(const DOMString &str);
+	KJS::ValueImp *getDOMString(DOMStringImpl *str);
 
-	DOMString toDOMString(KJS::ExecState *exec, KJS::ValueImp *val);
+	DOMStringImpl *toDOMString(KJS::ExecState *exec, KJS::ValueImp *val);
 	QVariant toVariant(KJS::ExecState *exec, KJS::ValueImp *val);
 
 	// Convert between ecma values and real kdom objects
-	// Example: Node myNode = ecma_cast<Node>(exec, args[0], &toNode);
-	//          Attr myAttr = ecma_cast<Attr>(exec, args[1], &toAttr);
-	template<class T>
-	T ecma_cast(KJS::ExecState *exec, KJS::ValueImp *val, T (convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
+	// Example: NodeImpl *myNode = ecma_cast<NodeImpl>(exec, args[0], &toNode);
+	//          AttrImpl *myAttr = ecma_cast<AttrImpl>(exec, args[1], &toAttr);
+	template<class DOMObjImpl>
+	DOMObjImpl *ecma_cast(KJS::ExecState *exec,
+						  KJS::ValueImp *val,
+						  DOMObjImpl *(*convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
 	{
 		if(!val->isObject())
-			return T::null;
+			return 0;
 
 		return convFuncPtr(exec, static_cast<KJS::ObjectImp *>(val));
 	}
 
 	// Convert between real kdom objects and ecma values
-	// Example: return safe_cache<Attr>(exec, myAttr);
-	template<class T>
-	KJS::ValueImp *safe_cache(KJS::ExecState *exec, T obj)
+	// Example: return safe_cache<AttrImpl, AttrWrapper>(exec, myAttr);
+	template<class DOMObjImpl, class DOMObjWrapper>
+	KJS::ValueImp *safe_cache(KJS::ExecState *exec, DOMObjImpl *obj)
 	{
-		if(obj != T::null)
-			return obj.cache(exec);
+		if(!obj)
+			return KJS::Null();
 
-		return KJS::Null();
+		DOMObjWrapper *wrapper = new DOMObjWrapper(obj);
+		return wrapper->cache(exec);
 	}
 };
 

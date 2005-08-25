@@ -36,7 +36,7 @@ CSSImageValueImpl::CSSImageValueImpl(CDFInterface *interface)
 }
 
 CSSImageValueImpl::CSSImageValueImpl(CDFInterface *interface, const KURL &url, const StyleBaseImpl *style)
-: CSSPrimitiveValueImpl(interface, DOMString(url.url()), CSS_URI), CachedObjectClient()
+: CSSPrimitiveValueImpl(interface, DOMString(url.url()).handle(), CSS_URI), CachedObjectClient()
 {
 	DocumentLoader *docLoader = 0;
 	const StyleBaseImpl *root = style;

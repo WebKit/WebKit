@@ -20,10 +20,11 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "SVGAngle.h"
+//#include "SVGAngle.h"
+#include <math.h>
 
 #include <ksvg2/ksvg.h>
-#include <kdom/ecma/Ecma.h>
+//#include <kdom/ecma/Ecma.h>
 
 #include "SVGAngleImpl.h"
 #include "SVGHelper.h"
@@ -35,7 +36,7 @@ const double deg2grad = 400.0 / 360.0;
 const double rad2grad = deg2grad / deg2rad;
 
 SVGAngleImpl::SVGAngleImpl(const SVGStyledElementImpl *context)
-: KDOM::Shared(true)
+: KDOM::Shared()
 {
 	m_unitType = SVG_ANGLETYPE_UNKNOWN;
 	m_valueInSpecifiedUnits = 0;
@@ -84,11 +85,11 @@ float SVGAngleImpl::valueInSpecifiedUnits() const
 	return m_valueInSpecifiedUnits;
 }
 
-void SVGAngleImpl::setValueAsString(const KDOM::DOMString &valueAsString)
+void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
 {
-	m_valueAsString = valueAsString;
+	m_valueAsString = KDOM::DOMString(valueAsString);
 
-	QString s = valueAsString.string();
+	QString s = m_valueAsString.string();
 
 	bool bOK;
 	m_valueInSpecifiedUnits = s.toFloat(&bOK);
@@ -107,10 +108,10 @@ void SVGAngleImpl::setValueAsString(const KDOM::DOMString &valueAsString)
 	calculate();
 }
 
-KDOM::DOMString SVGAngleImpl::valueAsString() const
+KDOM::DOMStringImpl *SVGAngleImpl::valueAsString() const
 {
 	m_valueAsString.string().setNum(m_valueInSpecifiedUnits);
-	
+
 	switch(m_unitType)
 	{
 		case SVG_ANGLETYPE_UNSPECIFIED:
@@ -125,7 +126,7 @@ KDOM::DOMString SVGAngleImpl::valueAsString() const
 			break;
 	}
 	
-	return m_valueAsString;
+	return m_valueAsString.handle();
 }
 
 void SVGAngleImpl::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

@@ -24,7 +24,7 @@
 
 using namespace KSVG;
 
-SVGTitleElementImpl::SVGTitleElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : SVGStyledElementImpl(doc, id, prefix), SVGLangSpaceImpl()
+SVGTitleElementImpl::SVGTitleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix), SVGLangSpaceImpl()
 {
 }
 
@@ -32,7 +32,7 @@ SVGTitleElementImpl::~SVGTitleElementImpl()
 {
 }
 
-KDOM::DOMString SVGTitleElementImpl::title() const
+KDOM::DOMStringImpl *SVGTitleElementImpl::title() const
 {
 	return textContent();
 }

@@ -32,9 +32,9 @@ namespace KDOM
 	class StyleSheetImpl : public StyleListImpl
 	{
 	public:
-		StyleSheetImpl(NodeImpl *ownerNode, const DOMString &href = DOMString());
-		StyleSheetImpl(StyleSheetImpl *parentSheet, const DOMString &href = DOMString());
-		StyleSheetImpl(StyleBaseImpl *owner, DOMString href  = DOMString());
+		StyleSheetImpl(NodeImpl *ownerNode, DOMStringImpl *href = 0);
+		StyleSheetImpl(StyleSheetImpl *parentSheet, DOMStringImpl *href = 0);
+		StyleSheetImpl(StyleBaseImpl *owner, DOMStringImpl *href  = 0);
 		virtual ~StyleSheetImpl();
 
 		// 'StyleSheet' functions
@@ -44,21 +44,21 @@ namespace KDOM
 		NodeImpl *ownerNode() const;
 		StyleSheetImpl *parentStyleSheet() const;
 
-		DOMString href() const;
-		DOMString title() const;
+		DOMStringImpl *href() const;
+		DOMStringImpl *title() const;
 
 		MediaListImpl *media() const;
 
 		void setMedia(MediaListImpl *media);
-		void setTitle(const DOMString &title);
+		void setTitle(DOMStringImpl *title);
 
 		virtual bool isStyleSheet() const { return true; }
-		virtual DOMString type() const { return DOMString(); }
+		virtual DOMStringImpl *type() const { return 0; }
 
 	protected:
 		NodeImpl *m_parentNode;
-		DOMString m_strHref;
-		DOMString m_strTitle;
+		DOMStringImpl *m_strHref;
+		DOMStringImpl *m_strTitle;
 		MediaListImpl *m_media;
 		bool m_disabled : 1;
 	};

@@ -38,7 +38,7 @@
 
 using namespace KSVG;
 
-SVGAElementImpl::SVGAElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGAElementImpl::SVGAElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
 {
 	m_target = 0;
@@ -63,7 +63,7 @@ void SVGAElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 	{
 		case ATTR_TARGET:
 		{
-			target()->setBaseVal(value.implementation());
+			target()->setBaseVal(value.handle());
 			break;
 		}
 		default:
@@ -106,8 +106,10 @@ void SVGAElementImpl::defaultEventHandler(KDOM::EventImpl *evt)
 			return;
 		}
 
-		url = KDOM::Helper::parseURL(getAttribute(ATTR_HREF)).string();
-		utarget = getAttribute(ATTR_TARGET).string();
+		url = KDOM::DOMString(KDOM::Helper::parseURL(href()->baseVal())).string();
+		kdDebug() << "url : " << url << endl;
+		utarget = KDOM::DOMString(getAttribute(ATTR_TARGET)).string();
+		kdDebug() << "utarget : " << utarget << endl;
 
 		if(e && e->button() == 1)
 			utarget = "_blank";

@@ -34,7 +34,7 @@ namespace KSVG
 		virtual ~SVGPathSegLinetoAbsImpl();
 
 		virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
-		virtual KDOM::DOMString pathSegTypeAsLetter() const { return "L"; }
+		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("L"); }
 		virtual QString toString() const { return QString::fromLatin1("L %1 %2").arg(m_x).arg(m_y); }
 
 		void setX(double);
@@ -55,7 +55,7 @@ namespace KSVG
 		virtual ~SVGPathSegLinetoRelImpl();
 
 		virtual unsigned short pathSegType() const { return PATHSEG_LINETO_REL; }
-		virtual KDOM::DOMString pathSegTypeAsLetter() const { return "l"; }
+		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("l"); }
 		virtual QString toString() const { return QString::fromLatin1("l %1 %2").arg(m_x).arg(m_y); }
 
 		void setX(double);

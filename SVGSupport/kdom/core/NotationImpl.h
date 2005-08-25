@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -30,19 +33,19 @@ namespace KDOM
 	class NotationImpl : public NodeBaseImpl
 	{
 	public:
-		NotationImpl(DocumentImpl *doc, const DOMString &publicId, const DOMString &systemId);
-		NotationImpl(DocumentImpl *doc, const DOMString &name, const DOMString &publicId, const DOMString &systemId);
+		NotationImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId);
+		NotationImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId);
 		virtual ~NotationImpl();
 
 		// 'Notation' functions
-		virtual DOMString publicId() const;
-		virtual DOMString systemId() const;
+		virtual DOMStringImpl *publicId() const;
+		virtual DOMStringImpl *systemId() const;
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		virtual DOMString textContent() const; // DOM3
+		virtual DOMStringImpl *textContent() const; // DOM3
 
 	protected:
 		DOMStringImpl *m_publicId;

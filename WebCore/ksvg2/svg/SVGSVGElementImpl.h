@@ -37,7 +37,7 @@
 
 namespace KDOM
 {
-	class DocumentImpl;
+	class DocumentPtr;
 };
 
 class KCanvasClipper;
@@ -62,7 +62,7 @@ namespace KSVG
 							  public KDOM::DocumentEventImpl
 	{
 	public:
-		SVGSVGElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGSVGElementImpl();
 
 		// 'SVGSVGElement' functions
@@ -71,11 +71,11 @@ namespace KSVG
 		SVGAnimatedLengthImpl *width() const;
 		SVGAnimatedLengthImpl *height() const;
 
-		KDOM::DOMString contentScriptType() const;
-		void setContentScriptType(const KDOM::DOMString &type);
+		KDOM::DOMStringImpl *contentScriptType() const;
+		void setContentScriptType(KDOM::DOMStringImpl *type);
 
-		KDOM::DOMString contentStyleType() const;
-		void setContentStyleType(const KDOM::DOMString &type);
+		KDOM::DOMStringImpl *contentStyleType() const;
+		void setContentStyleType(KDOM::DOMStringImpl *type);
 
 		SVGRectImpl *viewport() const;
 

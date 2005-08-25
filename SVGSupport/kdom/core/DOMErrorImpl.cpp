@@ -21,20 +21,20 @@
 */
 
 #include "DOMErrorImpl.h"
-#include "DOMLocatorImpl.h"
-#include "DOMString.h"
+#include "DOMObjectImpl.h"
 #include "DOMStringImpl.h"
-#include "NodeImpl.h"
+#include "DOMLocatorImpl.h"
 
 using namespace KDOM;
 
-DOMErrorImpl::DOMErrorImpl() : Shared(true)
+DOMErrorImpl::DOMErrorImpl() : Shared()
 {
 	m_severity = 0;
-	m_location = 0;
 	m_message = 0;
 	m_type = 0;
+	m_relatedException = 0;
 	m_relatedData = 0;
+	m_location = 0;
 }
 
 DOMErrorImpl::~DOMErrorImpl()
@@ -43,8 +43,12 @@ DOMErrorImpl::~DOMErrorImpl()
 		m_message->deref();
 	if(m_type)
 		m_type->deref();
+	if(m_relatedException)
+		m_relatedException->deref();
 	if(m_relatedData)
 		m_relatedData->deref();
+	if(m_location)
+		m_location->deref();
 }
 
 unsigned short DOMErrorImpl::severity() const
@@ -62,15 +66,9 @@ DOMStringImpl *DOMErrorImpl::message() const
 	return m_message;
 }
 
-void DOMErrorImpl::setMessage(const DOMString &mess)
+void DOMErrorImpl::setMessage(DOMStringImpl *message)
 {
-	if(m_message)
-		m_message->deref();
-
-	m_message = mess.implementation();
-
-	if(m_message)
-		m_message->ref();
+	KDOM_SAFE_SET(m_message, message);
 }
 
 DOMStringImpl *DOMErrorImpl::type() const
@@ -78,38 +76,38 @@ DOMStringImpl *DOMErrorImpl::type() const
 	return m_type;
 }
 
-void DOMErrorImpl::setType(const DOMString &type)
+void DOMErrorImpl::setType(DOMStringImpl *type)
 {
-	if(m_type)
-		m_type->deref();
-
-	m_type = type.implementation();
-
-	if(m_type)
-		m_type->ref();
+	KDOM_SAFE_SET(m_type, type);
 }
 
-//DOMObject relatedException
-NodeImpl *DOMErrorImpl::relatedData() const
+DOMObjectImpl *DOMErrorImpl::relatedException() const
+{
+	return m_relatedException;
+}
+
+void DOMErrorImpl::setRelatedException(DOMObjectImpl *relatedException)
+{
+	KDOM_SAFE_SET(m_relatedException, relatedException);
+}
+
+DOMObjectImpl *DOMErrorImpl::relatedData() const
 {
 	return m_relatedData;
 }
 
-void DOMErrorImpl::setRelatedData(NodeImpl *relatedData)
+void DOMErrorImpl::setRelatedData(DOMObjectImpl *relatedData)
 {
-	if(m_relatedData)
-		m_relatedData->deref();
-
-	m_relatedData = relatedData;
-
-	if(m_relatedData)
-		m_relatedData->ref();
+	KDOM_SAFE_SET(m_relatedData, relatedData);
 }
 
 DOMLocatorImpl *DOMErrorImpl::location() const
 {
 	if(!m_location)
+	{
 		m_location = new DOMLocatorImpl();
+		m_location->ref();
+	}
 
 	return m_location;
 }

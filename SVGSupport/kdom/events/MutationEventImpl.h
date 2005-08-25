@@ -36,18 +36,18 @@ namespace KDOM
 
 		NodeImpl *relatedNode() const;
 		
-		DOMString prevValue() const;
-		DOMString newValue() const;
-		DOMString attrName() const;
+		DOMStringImpl *prevValue() const;
+		DOMStringImpl *newValue() const;
+		DOMStringImpl *attrName() const;
 
 		unsigned short attrChange() const;
 
-		void initMutationEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, const DOMString &prevValueArg, const DOMString &newValueArg, const DOMString &attrNameArg, unsigned short attrChangeArg);
+		void initMutationEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, DOMStringImpl *prevValueArg, DOMStringImpl *newValueArg, DOMStringImpl *attrNameArg, unsigned short attrChangeArg);
 
 	private:
-		DOMString m_prevValue;
-		DOMString m_newValue;
-		DOMString m_attrName;
+		DOMStringImpl *m_prevValue;
+		DOMStringImpl *m_newValue;
+		DOMStringImpl *m_attrName;
 
 		unsigned short m_attrChange;
 

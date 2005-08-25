@@ -39,13 +39,13 @@ unsigned short CSSRuleImpl::type() const
 	return m_type;
 }
 
-void CSSRuleImpl::setCssText(const DOMString &)
+DOMStringImpl *CSSRuleImpl::cssText() const
 {
+	return 0;
 }
 
-DOMString CSSRuleImpl::cssText() const
+void CSSRuleImpl::setCssText(DOMStringImpl *)
 {
-	return DOMString();
 }
 
 CSSStyleSheetImpl *CSSRuleImpl::parentStyleSheet() const

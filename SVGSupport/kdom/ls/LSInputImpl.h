@@ -42,23 +42,23 @@ namespace KDOM
 		QTextIStream *characterStream() const;
 		void setCharacterStream(QTextIStream *characterStream);
 
-		DOMString byteStream() const;
-		void setByteStream(const DOMString &byteStream);
+		DOMStringImpl *byteStream() const;
+		void setByteStream(DOMStringImpl *byteStream);
 
-		DOMString stringData() const;
-		void setStringData(const DOMString &stringData);
+		DOMStringImpl *stringData() const;
+		void setStringData(DOMStringImpl *stringData);
 
-		DOMString systemId() const;
-		void setSystemId(const DOMString &systemId);
+		DOMStringImpl *systemId() const;
+		void setSystemId(DOMStringImpl *systemId);
 
-		DOMString publicId() const;
-		void setPublicId(const DOMString &publicId);
+		DOMStringImpl *publicId() const;
+		void setPublicId(DOMStringImpl *publicId);
 
-		DOMString baseURI() const;
-		void setBaseURI(const DOMString &baseURI);
+		DOMStringImpl *baseURI() const;
+		void setBaseURI(DOMStringImpl *baseURI);
 
-		DOMString encoding() const;
-		void setEncoding(const DOMString &encoding);
+		DOMStringImpl *encoding() const;
+		void setEncoding(DOMStringImpl *encoding);
 
 		bool certifiedText() const;
 		void setCertifiedText(bool certifiedText);
@@ -71,7 +71,7 @@ namespace KDOM
 		DOMStringImpl *m_publicId;
 		DOMStringImpl *m_baseURI;
 		DOMStringImpl *m_encoding;
-		bool m_certifiedText;
+		bool m_certifiedText : 1;
 	};
 };
 

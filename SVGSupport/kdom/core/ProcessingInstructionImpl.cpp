@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -27,11 +30,12 @@
 #include <qxml.h>
 #endif
 
+#include "kdom.h"
+#include "KDOMLoader.h"
 #include "DocumentImpl.h"
-#include "ProcessingInstructionImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "KDOMCachedStyleSheet.h"
-#include "KDOMLoader.h"
+#include "ProcessingInstructionImpl.h"
 
 using namespace KDOM;
 
@@ -72,14 +76,16 @@ protected:
 };
 #endif // APPLE_CHANGES
 
-ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentImpl *doc, const DOMString &target, const DOMString &data) : NodeBaseImpl(doc)
+ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMStringImpl *target, DOMStringImpl *data) : NodeBaseImpl(doc)
 {
-	m_target = target.implementation();
+	m_target = target;
 	if(m_target)
 		m_target->ref();
-	m_data = data.implementation();
+
+	m_data = data;
 	if(m_data)
 		m_data->ref();
+
 	m_sheet = 0;
 	m_cachedSheet = 0;
 	m_localHref = 0;
@@ -97,9 +103,9 @@ ProcessingInstructionImpl::~ProcessingInstructionImpl()
 		m_sheet->deref();
 }
 
-DOMString ProcessingInstructionImpl::nodeName() const
+DOMStringImpl *ProcessingInstructionImpl::nodeName() const
 {
-	return DOMString(m_target);
+	return m_target;
 }
 
 unsigned short ProcessingInstructionImpl::nodeType() const
@@ -107,48 +113,48 @@ unsigned short ProcessingInstructionImpl::nodeType() const
 	return PROCESSING_INSTRUCTION_NODE;
 }
 
-DOMString ProcessingInstructionImpl::target() const
+DOMStringImpl *ProcessingInstructionImpl::target() const
 {
-	return DOMString(m_target);
+	return m_target;
 }
 
-DOMString ProcessingInstructionImpl::nodeValue() const
+DOMStringImpl *ProcessingInstructionImpl::nodeValue() const
 {
-	return DOMString(m_data);
+	return m_data;
 }
 
-void ProcessingInstructionImpl::setNodeValue(const DOMString &nodeValue)
+void ProcessingInstructionImpl::setNodeValue(DOMStringImpl *nodeValue)
 {
 	setData(nodeValue);
 }
 
-DOMString ProcessingInstructionImpl::textContent() const
+DOMStringImpl *ProcessingInstructionImpl::textContent() const
 {
 	return nodeValue();
 }
 
-DOMString ProcessingInstructionImpl::data() const
+DOMStringImpl *ProcessingInstructionImpl::data() const
 {
-	return DOMString(m_data);
+	return m_data;
 }
 
-void ProcessingInstructionImpl::setData(const DOMString &_data)
+void ProcessingInstructionImpl::setData(DOMStringImpl *_data)
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(isReadOnly())
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
-	KDOM_SAFE_SET(m_data, _data.implementation());
+	KDOM_SAFE_SET(m_data, _data);
 }
 
-NodeImpl *ProcessingInstructionImpl::cloneNode(bool, DocumentImpl *doc) const
+NodeImpl *ProcessingInstructionImpl::cloneNode(bool, DocumentPtr *doc) const
 {
-	return doc->createProcessingInstruction(target(), data());
+	return doc->document()->createProcessingInstruction(target(), data());
 }
 
-DOMString ProcessingInstructionImpl::localHref() const
+DOMStringImpl *ProcessingInstructionImpl::localHref() const
 {
-	return DOMString(m_localHref);
+	return m_localHref;
 }
 
 StyleSheetImpl *ProcessingInstructionImpl::sheet() const
@@ -176,7 +182,7 @@ void ProcessingInstructionImpl::checkStyleSheet()
 		if(href.length() > 1)
 		{
 			if(href[0] == '#')
-				KDOM_SAFE_SET(m_localHref, href.implementation()->split(1));
+				KDOM_SAFE_SET(m_localHref, href.handle()->split(1));
 			else
 			{
 				// ### some validation on the URL?
@@ -196,15 +202,18 @@ void ProcessingInstructionImpl::checkStyleSheet()
 #endif
 }
 
-void ProcessingInstructionImpl::setStyleSheet(const DOMString &url, const DOMString &sheet)
+void ProcessingInstructionImpl::setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet)
 {
 	if(m_sheet)
 		m_sheet->deref();
 
 	m_sheet = ownerDocument()->createCSSStyleSheet(this, url);
-	if(m_sheet) m_sheet->parseString(sheet);
+	if(m_sheet)
+		m_sheet->parseString(sheet);
+
 	if(m_cachedSheet)
 		m_cachedSheet->deref(this);
+
 	m_cachedSheet = 0;
 
 	if(m_sheet)

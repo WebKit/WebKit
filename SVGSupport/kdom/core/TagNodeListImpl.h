@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -35,11 +41,12 @@
 
 namespace KDOM
 {
-	class Node;
+	class NodeImpl;
+	class DOMStringImpl;
 	class TagNodeListImpl : public NodeListImpl
 	{
 	public:
-		TagNodeListImpl(NodeImpl *refNode, const DOMString &name, const DOMString &namespaceURI = DOMString());
+		TagNodeListImpl(NodeImpl *refNode, DOMStringImpl *name, DOMStringImpl *namespaceURI = 0);
 		virtual ~TagNodeListImpl();
 
 		bool check(NodeImpl *node) const;
@@ -53,7 +60,8 @@ namespace KDOM
 		unsigned long recursiveLength(const NodeImpl *refNode) const;
 
 	protected:
-		DOMString m_name, m_namespaceURI;
+		DOMStringImpl *m_name;
+		DOMStringImpl *m_namespaceURI;
 	};
 };
 

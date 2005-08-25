@@ -218,10 +218,10 @@ static const QColor cmap[] =
 void SVGColorImpl::setRGBColor(KDOM::DOMStringImpl *rgbColor)
 {
 	KDOM_SAFE_SET(m_rgbColor, rgbColor);
-	
+
 	if(!m_rgbColor)
 		return;
-		
+
 	QString parse = KDOM::DOMString(m_rgbColor).string().stripWhiteSpace();
 	if(parse.startsWith(QString::fromLatin1("rgb(")))
 	{
@@ -273,12 +273,12 @@ void SVGColorImpl::setColor(unsigned short colorType, KDOM::DOMStringImpl * /* r
 	m_colorType = colorType;
 }
 
-KDOM::DOMString SVGColorImpl::cssText() const
+KDOM::DOMStringImpl *SVGColorImpl::cssText() const
 {
 	if(m_colorType == SVG_COLORTYPE_RGBCOLOR)
-		return KDOM::DOMString(m_rgbColor);
+		return m_rgbColor;
 
-	return KDOM::DOMString();
+	return 0;
 }
 
 const QColor &SVGColorImpl::color() const

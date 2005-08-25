@@ -38,7 +38,7 @@ namespace KSVG
 							public SVGTransformableImpl
 	{
 	public:
-		SVGGElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGGElementImpl();
 
 		virtual void parseAttribute(KDOM::AttributeImpl *attr);
@@ -52,11 +52,11 @@ namespace KSVG
 	class SVGDummyElementImpl : public SVGGElementImpl
 	{
 	public:
-		SVGDummyElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGDummyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGDummyElementImpl();
 
 		// Derived from: 'ElementImpl'
-		virtual KDOM::DOMString localName() const;
+		virtual KDOM::DOMStringImpl *localName() const;
 	};
 };
 

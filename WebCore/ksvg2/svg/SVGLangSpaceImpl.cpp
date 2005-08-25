@@ -45,22 +45,22 @@ SVGLangSpaceImpl::~SVGLangSpaceImpl()
 		m_space->deref();
 }
 
-KDOM::DOMStringImpl *SVGLangSpaceImpl::xmlLang() const
+KDOM::DOMStringImpl *SVGLangSpaceImpl::xmllang() const
 {
 	return m_lang;
 }
 
-void SVGLangSpaceImpl::setXmlLang(KDOM::DOMStringImpl *xmlLang)
+void SVGLangSpaceImpl::setXmllang(KDOM::DOMStringImpl *xmlLang)
 {
 	KDOM_SAFE_SET(m_lang, xmlLang);
 }
 
-KDOM::DOMStringImpl *SVGLangSpaceImpl::xmlSpace() const
+KDOM::DOMStringImpl *SVGLangSpaceImpl::xmlspace() const
 {
 	return m_space;
 }
 
-void SVGLangSpaceImpl::setXmlSpace(KDOM::DOMStringImpl *xmlSpace)
+void SVGLangSpaceImpl::setXmlspace(KDOM::DOMStringImpl *xmlSpace)
 {
 	KDOM_SAFE_SET(m_space, xmlSpace);
 }
@@ -72,20 +72,20 @@ bool SVGLangSpaceImpl::parseAttribute(KDOM::AttributeImpl *attr)
 	{
 		case ATTR_LANG:
 		{
-			if(attr->val())
-				setXmlLang(attr->val()->copy());
+			if(attr->value())
+				setXmllang(attr->value()->copy());
 			else
-				setXmlLang(0);
-			
+				setXmllang(0);
+
 			return true;
 		}
 		case ATTR_SPACE:
 		{
-			if(attr->val())
-				setXmlSpace(attr->val()->copy());
+			if(attr->value())
+				setXmlspace(attr->value()->copy());
 			else
-				setXmlSpace(0);
-			
+				setXmlspace(0);
+
 			return true;
 		}
 	};

@@ -28,8 +28,6 @@
 namespace KDOM
 {
 
-class Node;
-class DOMString;
 namespace XPointer
 {
 	class NBC;
@@ -44,7 +42,7 @@ namespace XPointer
 	class ShortHandImpl : public PointerPartImpl
 	{
 	public:
-		ShortHandImpl(const DOMString &str);
+		ShortHandImpl(DOMStringImpl *str);
 		virtual ~ShortHandImpl();
 		
 		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;

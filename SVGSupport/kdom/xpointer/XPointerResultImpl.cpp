@@ -20,7 +20,9 @@
  *
  */
 
-#include "Node.h"
+#include <qglobal.h>
+
+#include "NodeImpl.h"
 #include "kdomxpointer.h"
 
 #include "XPointerExceptionImpl.h"
@@ -29,28 +31,36 @@
 using namespace KDOM;
 using namespace KDOM::XPointer;
 	
-XPointerResultImpl::XPointerResultImpl(const XPointerResult::ResultType code)
-: Shared(true), m_single(0), m_resultType(code)
+XPointerResultImpl::XPointerResultImpl(const ResultType code)
+: Shared(), m_single(0), m_resultType(code)
 {
 }
 
 XPointerResultImpl::~XPointerResultImpl()
 {
+	if(m_single)
+		m_single->deref();
 }
 
-XPointerResult::ResultType XPointerResultImpl::resultType() const
+ResultType XPointerResultImpl::resultType() const
 {
 	return m_resultType;
 }
 
-void XPointerResultImpl::setResultType(const XPointerResult::ResultType code)
+void XPointerResultImpl::setResultType(const ResultType code)
 {
 	m_resultType = code;
 }
 
+void XPointerResultImpl::setResultType(const unsigned short code)
+{
+	if(code >= NO_MATCH && code <= SINGLE_NODE)
+		m_resultType = (ResultType) code;
+}
+
 NodeImpl *XPointerResultImpl::singleNodeValue() const
 {
-	if(resultType() != XPointerResult::SINGLE_NODE)
+	if(resultType() != SINGLE_NODE)
 		throw new XPointerExceptionImpl(TYPE_ERR);
 
 	Q_ASSERT(m_single);
@@ -59,8 +69,7 @@ NodeImpl *XPointerResultImpl::singleNodeValue() const
 
 void XPointerResultImpl::setSingleNodeValue(NodeImpl *node)
 {
-	Q_ASSERT(node);
-	m_single = node;
+	KDOM_SAFE_SET(m_single, node);
 }
 
 // vim:ts=4:noet

@@ -20,12 +20,13 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "CommentImpl.h"
 #include "DocumentImpl.h"
 
 using namespace KDOM;
 
-CommentImpl::CommentImpl(DocumentImpl *doc, DOMStringImpl *text) : TextImpl(doc, text)
+CommentImpl::CommentImpl(DocumentPtr *doc, DOMStringImpl *text) : TextImpl(doc, text)
 {
 }
 
@@ -33,9 +34,9 @@ CommentImpl::~CommentImpl()
 {
 }
 
-DOMString CommentImpl::nodeName() const
+DOMStringImpl *CommentImpl::nodeName() const
 {
-	return "#comment";
+	return new DOMStringImpl("#comment");
 }
 
 unsigned short CommentImpl::nodeType() const
@@ -43,10 +44,9 @@ unsigned short CommentImpl::nodeType() const
 	return COMMENT_NODE;
 }
 
-NodeImpl *CommentImpl::cloneNode(bool, DocumentImpl *doc) const
+NodeImpl *CommentImpl::cloneNode(bool, DocumentPtr *doc) const
 {
-	DOMStringImpl *_data = (data() ? data()->copy() : 0);
-	return doc->createComment(DOMString(_data));
+	return doc->document()->createComment(data());
 }
 
 // vim:ts=4:noet

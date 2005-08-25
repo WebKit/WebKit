@@ -48,7 +48,7 @@ namespace KSVG
 								public KDOM::CachedObjectClient
 	{
 	public:
-		SVGImageElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id,  const KDOM::DOMString &prefix);
+		SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
 		virtual ~SVGImageElementImpl();
 
 		// 'SVGImageElement' functions

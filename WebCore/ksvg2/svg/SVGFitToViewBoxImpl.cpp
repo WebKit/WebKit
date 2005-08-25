@@ -107,12 +107,12 @@ bool SVGFitToViewBoxImpl::parseAttribute(KDOM::AttributeImpl *attr)
 	{
 		case ATTR_VIEWBOX:
 		{
-			parseViewBox(attr->val());
+			parseViewBox(attr->value());
 			return true;
 		}
 		case ATTR_PRESERVEASPECTRATIO:
 		{
-			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(attr->val());
+			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(attr->value());
 			return true;
 		}
 	}

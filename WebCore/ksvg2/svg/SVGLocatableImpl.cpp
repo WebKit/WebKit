@@ -20,6 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include <kdom/kdom.h>
 #include "SVGRectImpl.h"
 #include "SVGMatrixImpl.h"
 #include "SVGElementImpl.h"

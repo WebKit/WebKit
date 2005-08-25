@@ -47,7 +47,7 @@ namespace KSVG
 								 public SVGFitToViewBoxImpl
 	{
 	public:
-		SVGMarkerElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGMarkerElementImpl();
 
 		// Derived from: 'ElementImpl'

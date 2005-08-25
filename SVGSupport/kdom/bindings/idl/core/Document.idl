@@ -1,0 +1,109 @@
+/*
+ * Copyright (c) 2004 World Wide Web Consortium,
+ *
+ * (Massachusetts Institute of Technology, European Research Consortium for
+ * Informatics and Mathematics, Keio University). All Rights Reserved. This
+ * work is distributed under the W3C(r) Software License [1] in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ */
+
+module core
+{
+	interface Document : Node,
+						 css::DocumentCSS,
+						 views::DocumentView,
+						 events::DocumentEvent,
+						 range::DocumentRange,
+						 traversal::DocumentTraversal,
+						 xpointer::XPointerEvaluator,
+						 xpath::XPathEvaluator
+	{
+		// Modified in DOM Level 3:
+		readonly attribute DocumentType doctype;
+		readonly attribute DOMImplementation implementation;
+		readonly attribute Element documentElement;
+		
+		Element createElement(in DOMString tagName)
+				raises(DOMException);
+
+		DocumentFragment createDocumentFragment();
+
+		Text createTextNode(in DOMString data);
+
+		Comment createComment(in DOMString data);
+
+		CDATASection createCDATASection(in DOMString data)
+										raises(DOMException);
+
+		ProcessingInstruction createProcessingInstruction(in DOMString target,
+														  in DOMString data)
+														  raises(DOMException);
+
+		Attr createAttribute(in DOMString name)
+							 raises(DOMException);
+
+		EntityReference createEntityReference(in DOMString name)
+											  raises(DOMException);
+
+		NodeList getElementsByTagName(in DOMString tagname);
+
+		// Introduced in DOM Level 2:
+		Node importNode(in Node importedNode,
+						in boolean deep)
+						raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		Element createElementNS(in DOMString namespaceURI,
+								in DOMString qualifiedName)
+								raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		Attr createAttributeNS(in DOMString namespaceURI,
+							   in DOMString qualifiedName)
+							   raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		NodeList getElementsByTagNameNS(in DOMString namespaceURI,
+										in DOMString localName);
+
+		// Introduced in DOM Level 2:
+		Element getElementById(in DOMString elementId);
+
+		// Introduced in DOM Level 3:
+		readonly attribute DOMString inputEncoding;
+
+		// Introduced in DOM Level 3:
+		readonly attribute DOMString xmlEncoding;
+
+		// Introduced in DOM Level 3:
+		attribute boolean xmlStandalone;
+
+		// Introduced in DOM Level 3:
+		attribute DOMString xmlVersion;
+
+		// Introduced in DOM Level 3:
+		attribute boolean strictErrorChecking;
+
+		// Introduced in DOM Level 3:
+		attribute DOMString documentURI;
+
+		// Introduced in DOM Level 3:
+		Node adoptNode(in Node source)
+					   raises(DOMException);
+
+		// Introduced in DOM Level 3:
+		readonly attribute DOMConfiguration domConfig;
+
+		// Introduced in DOM Level 3:
+		void normalizeDocument();
+
+		// Introduced in DOM Level 3:
+		Node renameNode(in Node n,
+						in DOMString namespaceURI,
+						in DOMString qualifiedName)
+						raises(DOMException);
+	};
+};

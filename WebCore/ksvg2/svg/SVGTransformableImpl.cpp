@@ -121,7 +121,7 @@ void SVGTransformableImpl::updateSubtreeMatrices(KDOM::NodeImpl *node)
 
 			ctm->deref();
 		}
-		
+
 		styled->updateCTM(useMatrix);
 	}
 

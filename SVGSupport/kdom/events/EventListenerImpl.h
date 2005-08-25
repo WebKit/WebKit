@@ -24,8 +24,9 @@
 #define KDOM_EventListenerImpl_H
 
 #include <kdom/Shared.h>
-#include <kdom/ecma/Ecma.h>
 #include <kdom/impl/DocumentImpl.h>
+
+#include <kjs/object.h>
 
 namespace KDOM
 {
@@ -37,17 +38,17 @@ namespace KDOM
 
 		virtual void handleEvent(EventImpl *evt);
 		
-		DOMString internalType() const;
+		DOMStringImpl *internalType() const;
 		KJS::ValueImp *ecmaListener() const;
 
 		// Internal
-		void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::ObjectImp *listener, KJS::ValueImp *compareListener, const DOMString &internalType);
+		void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::ObjectImp *listener, KJS::ValueImp *compareListener, DOMStringImpl *internalType);
 
 	private:
 		DocumentImpl *m_doc;
 
 		bool m_ecmaEventListener;
-		DOMString m_internalType;
+		DOMStringImpl *m_internalType;
 
 		KJS::ObjectImp *m_listener;
 		KJS::ValueImp *m_compareListener;

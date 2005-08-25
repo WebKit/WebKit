@@ -22,6 +22,7 @@
 
 #include <kstaticdeleter.h>
 
+#include <kdom/kdom.h>
 #include <kdom/Helper.h>
 #include <kdom/DOMString.h>
 #include <kdom/Namespace.h>
@@ -113,9 +114,10 @@ SVGDOMImplementationImpl *SVGDOMImplementationImpl::self()
 	return s_instance;
 }
 
-bool SVGDOMImplementationImpl::hasFeature(const KDOM::DOMString &_feature, const KDOM::DOMString &version) const
+bool SVGDOMImplementationImpl::hasFeature(KDOM::DOMStringImpl *_feature, KDOM::DOMStringImpl *_version) const
 {
-	QString feature = _feature.upper().string();
+	QString feature = KDOM::DOMString(_feature).upper().string();
+	KDOM::DOMString version(_version);
 	if((version.isEmpty() || version == "1.1") &&
 	   feature.startsWith(QString::fromLatin1("HTTP://WWW.W3.ORG/TR/SVG11/FEATURE#")))
 	{
@@ -130,75 +132,83 @@ bool SVGDOMImplementationImpl::hasFeature(const KDOM::DOMString &_feature, const
 			return true;
 	}
 
-	return KDOM::DOMImplementationImpl::hasFeature(feature, version);
+	return KDOM::DOMImplementationImpl::hasFeature(_feature, _version);
 }
 
-KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(const KDOM::DOMString &qualifiedName, const KDOM::DOMString &publicId, const KDOM::DOMString &systemId) const
+KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId) const
 {
 	// INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-	if(qualifiedName.isEmpty() || !KDOM::Helper::ValidateAttributeName(qualifiedName.implementation()))
+	if((qualifiedName && !qualifiedName->isEmpty()) || !KDOM::Helper::ValidateAttributeName(qualifiedName))
 		throw new KDOM::DOMExceptionImpl(KDOM::INVALID_CHARACTER_ERR);
 
 	// NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
-	if(qualifiedName.isEmpty())
+	if(!qualifiedName || qualifiedName->isEmpty())
 		throw new KDOM::DOMExceptionImpl(KDOM::NAMESPACE_ERR);
 
 	// NAMESPACE_ERR: Raised if the qualifiedName is malformed.
 	KDOM::Helper::CheckMalformedQualifiedName(qualifiedName);
 
-	return new KDOM::DocumentTypeImpl(0, qualifiedName, publicId, systemId);
+	return new KDOM::DocumentTypeImpl(new KDOM::DocumentPtr(), qualifiedName, publicId, systemId);
 }
 
-KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &qualifiedName, const KDOM::DocumentType &doctype, bool createDocElement, KDOM::KDOMView *view) const
+KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype) const
 {
-	if((!namespaceURI.isEmpty() && namespaceURI != KDOM::NS_SVG) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
-		return KDOM::DOMImplementationImpl::createDocument(namespaceURI, qualifiedName, doctype, createDocElement, view);
+	return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0);
+}
+
+KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const
+{
+	KDOM::DOMString qualifiedName(qualifiedNameImpl);
+	if((namespaceURI && KDOM::DOMString(namespaceURI) != KDOM::NS_SVG) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
+		return KDOM::DOMImplementationImpl::createDocument(namespaceURI, qualifiedNameImpl, doctype, createDocElement, view);
 
 	int dummy;
-	KDOM::Helper::CheckQualifiedName(qualifiedName, namespaceURI, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
-
-	KDOM::DocumentTypeImpl *docTypeImpl = static_cast<KDOM::DocumentTypeImpl *>(doctype.handle());
+	KDOM::Helper::CheckQualifiedName(qualifiedNameImpl, namespaceURI, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
 
 	// WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
 	//                     document or was created from a different implementation.
-	if(docTypeImpl != 0 && docTypeImpl->ownerDocument() != 0)
+	if(doctype != 0 && doctype->ownerDocument() != 0)
 			throw new KDOM::DOMExceptionImpl(KDOM::WRONG_DOCUMENT_ERR);
 
 	SVGDocumentImpl *doc = new SVGDocumentImpl(const_cast<SVGDOMImplementationImpl *>(this), view);
 
-	// TODO : what to do when docTypeImpl is null?
-	if(docTypeImpl)
-		doc->setDocType(docTypeImpl);
+	// TODO : what to do when doctype is null?
+	if(doctype)
+		doc->setDocType(doctype);
 
 	// Add root element...
 	if(createDocElement)
 	{
-		KDOM::ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedName);
+		KDOM::ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedNameImpl);
 		doc->appendChild(svg);
 	}
 
 	return doc;
 }
 
-KDOM::CSSStyleSheetImpl *SVGDOMImplementationImpl::createCSSStyleSheet(const KDOM::DOMString &title, const KDOM::DOMString &media) const
+KDOM::CSSStyleSheetImpl *SVGDOMImplementationImpl::createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const
 {
 	// TODO : check whether media is valid
 	SVGCSSStyleSheetImpl *parent = 0;
-	SVGCSSStyleSheetImpl *sheet = new SVGCSSStyleSheetImpl(parent, KDOM::DOMString());
+	SVGCSSStyleSheetImpl *sheet = new SVGCSSStyleSheetImpl(parent, 0);
 	sheet->setTitle(title);
 	sheet->setMedia(new KDOM::MediaListImpl(sheet, media));
 	return sheet;
 }
 
-KDOM::DocumentType SVGDOMImplementationImpl::defaultDocumentType() const
+KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::defaultDocumentType() const
 {
-	return KDOM::DocumentType(createDocumentType("svg:svg",
-												 "-//W3C//DTD SVG20010904//EN",
-												 "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"));
+	return 0;
+	/*
+	return createDocumentType("svg:svg", "-//W3C//DTD SVG20010904//EN",
+							 "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd");
+	*/
 }
 
-int SVGDOMImplementationImpl::typeToId(const KDOM::DOMString &type)
+int SVGDOMImplementationImpl::typeToId(KDOM::DOMStringImpl *typeImpl)
 {
+	KDOM::DOMString type(typeImpl);
+
 	if(type == "load") return KDOM::LOAD_EVENT;
 	else if(type == "unload") return KDOM::UNLOAD_EVENT;
 	else if(type == "abort") return KDOM::ABORT_EVENT;
@@ -207,22 +217,25 @@ int SVGDOMImplementationImpl::typeToId(const KDOM::DOMString &type)
 	else if(type == "scroll") return KDOM::SCROLL_EVENT;
 	else if(type == "zoom") return ZOOM_EVENT;
 
-	return KDOM::DOMImplementationImpl::typeToId(type);
+	return KDOM::DOMImplementationImpl::typeToId(typeImpl);
 }
 
-KDOM::DOMString SVGDOMImplementationImpl::idToType(int eventId)
+KDOM::DOMStringImpl *SVGDOMImplementationImpl::idToType(int eventId)
 {
+	QString ret;
 	switch(eventId)
 	{
-		case KDOM::LOAD_EVENT: return "load";
-		case KDOM::UNLOAD_EVENT: return "unload";
-		case KDOM::ABORT_EVENT: return "abort";
-		case KDOM::ERROR_EVENT: return "error";
-		case KDOM::RESIZE_EVENT: return "resize";
-		case KDOM::SCROLL_EVENT: return "scroll";
-		case ZOOM_EVENT: return "zoom";
+		case KDOM::LOAD_EVENT: ret = "load"; break;
+		case KDOM::UNLOAD_EVENT: ret = "unload"; break;
+		case KDOM::ABORT_EVENT: ret = "abort"; break;
+		case KDOM::ERROR_EVENT: ret = "error"; break;
+		case KDOM::RESIZE_EVENT: ret = "resize"; break;
+		case KDOM::SCROLL_EVENT: ret = "scroll"; break;
+		case ZOOM_EVENT: ret = "zoom"; break;
 		default: return KDOM::DOMImplementationImpl::idToType(eventId);
 	}
+
+	return new KDOM::DOMStringImpl(ret);
 }
 
 bool SVGDOMImplementationImpl::inAnimationContext() const

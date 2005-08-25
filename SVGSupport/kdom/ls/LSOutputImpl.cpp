@@ -26,7 +26,7 @@
 
 using namespace KDOM;
 
-LSOutputImpl::LSOutputImpl() : Shared(true), m_systemId(0), m_encoding(0)
+LSOutputImpl::LSOutputImpl() : Shared(), m_systemId(0), m_encoding(0)
 {
 }
 
@@ -38,36 +38,24 @@ LSOutputImpl::~LSOutputImpl()
 		m_encoding->deref();
 }
 
-DOMString LSOutputImpl::systemId() const
+DOMStringImpl *LSOutputImpl::systemId() const
 {
-	return DOMString(m_systemId);
+	return m_systemId;
 }
 
-void LSOutputImpl::setSystemId(const DOMString &systemId)
+void LSOutputImpl::setSystemId(DOMStringImpl *systemId)
 {
-	if(m_systemId)
-		m_systemId->deref();
-
-	m_systemId = systemId.implementation();
-
-	if(m_systemId)
-		m_systemId->ref();
+	KDOM_SAFE_SET(m_systemId, systemId);
 }
 
-DOMString LSOutputImpl::encoding() const
+DOMStringImpl *LSOutputImpl::encoding() const
 {
-	return DOMString(m_encoding);
+	return m_encoding;
 }
 
-void LSOutputImpl::setEncoding(const DOMString &encoding)
+void LSOutputImpl::setEncoding(DOMStringImpl *encoding)
 {
-	if(m_encoding)
-		m_encoding->deref();
-
-	m_encoding = encoding.implementation();
-
-	if(m_encoding)
-		m_encoding->ref();
+	KDOM_SAFE_SET(m_encoding, encoding);
 }
 
 // vim:ts=4:noet

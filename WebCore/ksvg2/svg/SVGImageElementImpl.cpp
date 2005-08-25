@@ -56,12 +56,12 @@
 #ifndef APPLE_CHANGES
 #include <kdom/parser/KDOMParserFactory.h>
 #endif
-#include <kdom/DOMConfiguration.h>
+//#include <kdom/DOMConfiguration.h>
 #include <kdom/impl/DOMConfigurationImpl.h>
 
 using namespace KSVG;
 
-SVGImageElementImpl::SVGImageElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGImageElementImpl::SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGURIReferenceImpl(), KDOM::CachedObjectClient()
 {
 	m_x = m_y = m_width = m_height = 0;
@@ -115,7 +115,7 @@ SVGAnimatedPreserveAspectRatioImpl *SVGImageElementImpl::preserveAspectRatio() c
 void SVGImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_X:
@@ -130,7 +130,7 @@ void SVGImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_PRESERVEASPECTRATIO:
 		{
-			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.implementation());
+			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value);
 			break;
 		}
 		case ATTR_WIDTH:
@@ -159,10 +159,10 @@ void SVGImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 KCanvasItem *SVGImageElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
 	QString fname = KDOM::DOMString(href()->baseVal()).string();
-	KURL fullUrl(ownerDocument()->documentKURI(), fname);
 #ifndef APPLE_COMPILE_HACK
+	KURL fullUrl(ownerDocument()->documentKURI(), fname);
 	KMimeType::Ptr mimeType = KMimeType::findByURL(fullUrl);
-	if(mimeType->is(QString("image/svg+xml"))) // does it have svg content?
+	if(mimeType->is(QString::fromLatin1("image/svg+xml"))) // does it have svg content?
 	{
 		KCanvasItem *ret = canvas->renderingDevice()->createContainer(canvas, style);
 		m_cachedDocument = ownerDocument()->docLoader()->requestDocument(fullUrl, QString());
@@ -190,23 +190,23 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 	if(finishedObj == m_cachedDocument)
 	{
 #ifndef APPLE_COMPILE_HACK
-		KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(getDocument()->svgView());
+		KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(0);
 		KDOM::Parser *parser = KDOM::ParserFactory::self()->request(KURL(), builder);
-		parser->domConfig()->setParameter(KDOM::ENTITIES.implementation(), false);
-		parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.implementation(), false);
+		parser->domConfig()->setParameter(KDOM::ENTITIES.handle(), false);
+		parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.handle(), false);
 
 		QBuffer *temp = new QBuffer(m_cachedDocument->documentBuffer()->buffer());
-		m_svgDoc = static_cast<SVGDocumentImpl *>(parser->syncParse(temp).handle());
+		m_svgDoc = static_cast<SVGDocumentImpl *>(parser->syncParse(temp));
 		if(m_svgDoc)
 		{
 			SVGSVGElementImpl *root = m_svgDoc->rootElement();
-			KDOM::DOMString _x = x()->baseVal()->valueAsString(), _y = y()->baseVal()->valueAsString();
-			KDOM::DOMString _width = width()->baseVal()->valueAsString(), _height = height()->baseVal()->valueAsString();
+			KDOM::DOMStringImpl *_x = x()->baseVal()->valueAsString(), *_y = y()->baseVal()->valueAsString();
+			KDOM::DOMStringImpl *_width = width()->baseVal()->valueAsString(), *_height = height()->baseVal()->valueAsString();
 
-			root->setAttributeNS(KDOM::NS_SVG, "x", _x);
-			root->setAttributeNS(KDOM::NS_SVG, "y", _y);
-			root->setAttributeNS(KDOM::NS_SVG, "width", _width);
-			root->setAttributeNS(KDOM::NS_SVG, "height", _height);
+			root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("x").handle(), _x);
+			root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("y").handle(), _y);
+			root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("width").handle(), _width);
+			root->setAttributeNS(KDOM::NS_SVG.handle(), KDOM::DOMString("height").handle(), _height);
 
 			// TODO: viewBox handling? animations? ecmascript?
 
@@ -217,7 +217,6 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 			m_canvasItem->appendItem(root->canvasItem());
 		}
 #endif
-
 		m_cachedDocument->deref(this);
 		m_cachedDocument = 0;
 	}
@@ -225,11 +224,11 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 	{
 		if(m_canvasItem && m_canvasItem->style())
 		{	
-			KRenderingFillPainter *fillPainter = m_canvasItem->style()->fillPainter();
-			if(!fillPainter)
-				return;
-
 #ifndef APPLE_COMPILE_HACK
+		    KRenderingFillPainter *fillPainter = m_canvasItem->style()->fillPainter();
+			if(!fillPainter)
+
+
 			KRenderingPaintServer *fillPaintServer = fillPainter->paintServer();
 			KRenderingPaintServerImage *fillPaintServerImage = static_cast<KRenderingPaintServerImage *>(fillPaintServer);
 

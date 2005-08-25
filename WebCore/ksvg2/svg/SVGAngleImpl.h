@@ -44,8 +44,8 @@ namespace KSVG
 		void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
 		float valueInSpecifiedUnits() const;
 
-		void setValueAsString(const KDOM::DOMString &valueAsString);
-		KDOM::DOMString valueAsString() const;
+		void setValueAsString(KDOM::DOMStringImpl *valueAsString);
+		KDOM::DOMStringImpl *valueAsString() const;
 
 		void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
 		void convertToSpecifiedUnits(unsigned short unitType);

@@ -27,9 +27,8 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class NodeImpl;
-	class XPathExpressionImpl;
+
+class NodeImpl;
 
 namespace XPointer
 {
@@ -42,19 +41,19 @@ namespace XPointer
 	 *
 	 * @author Frans Englich <frans.englich@telia.com>
 	 */
-	class XPath1SchemeImpl: public PointerPartImpl
+	class XPath1SchemeImpl : public PointerPartImpl
 	{
 	public:
-		XPath1SchemeImpl(const DOMString &schemeData, NBCImpl *nbc);
+		XPath1SchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
 		virtual ~XPath1SchemeImpl();
 		
 		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
 
-	private:
-
-		XPathExpressionImpl *m_expr;
+//	private:
+//		XPathExpressionImpl *m_expr;
 	};
 };
+
 };
 
 #endif

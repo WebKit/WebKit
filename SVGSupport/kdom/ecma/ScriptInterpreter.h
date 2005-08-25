@@ -23,13 +23,12 @@
 #ifndef KDOM_ScriptInterpreter_H
 #define KDOM_ScriptInterpreter_H
 
-#include <kdom/ecma/DOMBridge.h>
+#include <kjs/interpreter.h>
 
 namespace KJS
 {
 	class ValueImp;
 	class ObjectImp;
-	class Interpreter;
 };
 
 namespace KDOM
@@ -63,42 +62,23 @@ namespace KDOM
 		Private *d;
 	};
 
-
 	// Lookup or create JS object around an existing "DOM Object"
-	template<class DOMObj>
-	inline KJS::ValueImp *cacheDOMObject(KJS::ExecState *exec, typename DOMObj::Private *domObj)
+	template<class DOMObjWrapper, class DOMObjImpl>
+	inline KJS::ValueImp *cacheDOMObject(KJS::ExecState *exec, const DOMObjWrapper *constWrapper)
 	{
-		KJS::ObjectImp *ret = 0;
-		if(!domObj)
+		KJS::ObjectImp *jsObject = 0;
+		if(!constWrapper)
 			return KJS::Null();
 
-		ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
-		if((ret = interpreter->getDOMObject(domObj)))
-			return ret;
-		else
-		{
-			ret = DOMObj(domObj).bridge(exec);
-			interpreter->putDOMObject(domObj, ret);
-			return ret;
-		}
-	}
+		DOMObjWrapper *wrapper = const_cast<DOMObjWrapper *>(constWrapper);
 
-	// Lookup or create singleton Impl object, and return a unique bridge object for it.
-	// (Very much like KJS::cacheGlobalObject, which is for a singleton ObjectImp)
-	// This one is _only_ used for Constructor objects.
-	template <class ClassCtor>
-	inline KJS::ObjectImp *cacheGlobalBridge(KJS::ExecState *exec, const KJS::Identifier &propertyName)
-	{
-		KJS::ValueImp *obj = static_cast<KJS::ObjectImp*>(exec->interpreter()->globalObject())->getDirect(propertyName);
-		if(obj)
-			return static_cast<KJS::ObjectImp*>(obj);
-		else
-		{
-			ClassCtor *ctor = new ClassCtor(exec); // create the ClassCtor instance
-			KJS::ObjectImp *newObject(new DOMBridgeCtor<ClassCtor>(exec, ctor)); // create the bridge around it
-			exec->interpreter()->globalObject()->put(exec, propertyName, newObject, KJS::Internal);
-			return newObject;
-		}
+		ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
+		if((jsObject = interpreter->getDOMObject(wrapper)))
+			return jsObject;
+
+		jsObject = constWrapper->bridge(exec);
+		interpreter->putDOMObject(wrapper, jsObject);
+		return jsObject;
 	}
 };
 

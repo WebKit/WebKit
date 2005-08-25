@@ -22,10 +22,11 @@
 #ifndef KDOM_GlobalObject_H
 #define KDOM_GlobalObject_H
 
-#include <qobject.h>
 #include <qmap.h>
-#include <kjs/object.h>
+#include <qobject.h>
 #include <qguardedptr.h>
+
+#include <kjs/object.h>
 
 namespace KDOM
 {
@@ -56,11 +57,23 @@ namespace KDOM
 		// EcmaScript specific stuff - only needed for GlobalObject
 		// You won't find it in "general" kdom ecma code...
 		virtual const KJS::ClassInfo *classInfo() const;
+
 		static const KJS::ClassInfo s_classInfo;
 		static const struct KJS::HashTable s_hashTable;
 
 		// Ecma updating logic
 		virtual void afterTimeout() const { }
+
+		enum
+		{
+			// Attributes
+			Closed, Window, Evt, Document,
+
+			// Functions
+			SetTimeout, ClearTimeout, SetInterval,
+			ClearInterval, PrintNode, Alert, Prompt,
+			Confirm, Debug
+		};
 
 	private:
 		class Private;

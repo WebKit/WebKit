@@ -35,19 +35,21 @@ namespace KDOM
 		virtual ~CounterImpl();
 
 		// 'Counter' functions
-		DOMString identifier() const;
-		void setIdentifier(const DOMString &value);
+		DOMStringImpl *identifier() const;
+		DOMStringImpl *listStyle() const;
+		DOMStringImpl *separator() const;
 
-		unsigned int listStyle() const;
+		// Internal
+		void setIdentifier(DOMStringImpl *value);
 		void setListStyle(unsigned int listStyle);
+		void setSeparator(DOMStringImpl *value);
 
-		DOMString separator() const;
-		void setSeparator(const DOMString &value);
+		unsigned int listStyleInt() const;
 		
 	private:
-		DOMString m_identifier;
+		DOMStringImpl *m_identifier;
 		unsigned int m_listStyle;
-		DOMString m_separator;
+		DOMStringImpl *m_separator;
 	};
 };
 

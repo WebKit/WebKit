@@ -41,7 +41,7 @@
 
 using namespace KSVG;
 
-SVGFEMergeElementImpl::SVGFEMergeElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : 
+SVGFEMergeElementImpl::SVGFEMergeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
 	m_filterEffect = 0;

@@ -24,14 +24,14 @@
 
 #include "svgattrs.h"
 #include "SVGHelper.h"
-#include "SVGDocument.h"
+//#include "SVGDocument.h"
 #include "SVGTextPositioningElementImpl.h"
 #include "SVGAnimatedLengthListImpl.h"
 #include "SVGAnimatedNumberListImpl.h"
 
 using namespace KSVG;
 
-SVGTextPositioningElementImpl::SVGTextPositioningElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGTextPositioningElementImpl::SVGTextPositioningElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGTextContentElementImpl(doc, id, prefix)
 {
 	m_x = m_y = m_dx = m_dy = 0;

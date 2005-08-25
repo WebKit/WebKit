@@ -20,26 +20,30 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "Event.h"
 #include "EventListenerImpl.h"
 #include "RegisteredEventListener.h"
 
 using namespace KDOM;
 
-RegisteredEventListener::RegisteredEventListener(const DOMString &type, EventListenerImpl *listener, bool useCapture)
+RegisteredEventListener::RegisteredEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture)
 {
 	m_type = type;
+	if(m_type)
+		m_type->ref();
+
 	m_listener = listener;
 	m_useCapture = useCapture;
 }
 
 RegisteredEventListener::~RegisteredEventListener()
 {
+	if(m_type)
+		m_type->deref();
 }
 
 bool RegisteredEventListener::operator==(const RegisteredEventListener &other) const
 {
-	return type() == other.type() &&
+	return DOMString(type()) == DOMString(other.type()) &&
 		   useCapture() == other.useCapture() &&
 		   listener() == other.listener();
 }
@@ -49,7 +53,7 @@ bool RegisteredEventListener::operator!=(const RegisteredEventListener &other) c
 	return !operator==(other);
 }
 
-DOMString RegisteredEventListener::type() const
+DOMStringImpl *RegisteredEventListener::type() const
 {
 	return m_type;
 }

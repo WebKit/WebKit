@@ -30,7 +30,7 @@ namespace KSVG
 	class SVGFEFuncBElementImpl : public SVGComponentTransferFunctionElementImpl
 	{
 	public:
-		SVGFEFuncBElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGFEFuncBElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGFEFuncBElementImpl();
 	};
 };

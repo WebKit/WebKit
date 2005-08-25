@@ -35,7 +35,7 @@ CSSValueImpl::~CSSValueImpl()
 {
 }
 
-void CSSValueImpl::setCssText(const DOMString &)
+void CSSValueImpl::setCssText(DOMStringImpl *)
 {
 }
 
@@ -49,9 +49,9 @@ unsigned short CSSInheritedValueImpl::cssValueType() const
 	return CSS_INHERIT;
 }
 
-DOMString CSSInheritedValueImpl::cssText() const
+DOMStringImpl *CSSInheritedValueImpl::cssText() const
 {
-	return DOMString("inherit");
+	return new DOMStringImpl("inherit");
 }
 
 unsigned short CSSInitialValueImpl::cssValueType() const
@@ -59,9 +59,9 @@ unsigned short CSSInitialValueImpl::cssValueType() const
 	return CSS_INITIAL;
 }
 
-DOMString CSSInitialValueImpl::cssText() const
+DOMStringImpl *CSSInitialValueImpl::cssText() const
 {
-	return DOMString("initial");
+	return new DOMStringImpl("initial");
 }
 
 FontValueImpl::FontValueImpl() : style(0), variant(0), weight(0), size(0), lineHeight(0), family(0)
@@ -78,48 +78,53 @@ FontValueImpl::~FontValueImpl()
 	delete family;
 }
 
-DOMString FontValueImpl::cssText() const
+DOMStringImpl *FontValueImpl::cssText() const
 {
 	// font variant weight size / line-height family
-	DOMString result("");
+	DOMStringImpl *result = new DOMStringImpl();
 
 	if(style)
-		result += style->cssText();
+		result->append(style->cssText());
+
 	if(variant)
 	{
-		if(result.length() > 0)
-			result += " ";
+		if(result->length() > 0)
+			result->append(" ");
 
-		result += variant->cssText();
+		result->append(variant->cssText());
 	}
+
 	if(weight)
 	{
-		if(result.length() > 0)
-			result += " ";
+		if(result->length() > 0)
+			result->append(" ");
 
-		result += weight->cssText();
+		result->append(weight->cssText());
 	}
+
 	if(size)
 	{
-		if(result.length() > 0)
-			result += " ";
+		if(result->length() > 0)
+			result->append(" ");
 
-		result += size->cssText();
+		result->append(size->cssText());
 	}
+
 	if(lineHeight)
 	{
 		if(!size)
-			result += " ";
+			result->append(" ");
 
-		result += "/";
-		result += lineHeight->cssText();
+		result->append("/");
+		result->append(lineHeight->cssText());
 	}
+
 	if(family)
 	{
-		if(result.length() > 0) 
-			result += " ";
+		if(result->length() > 0) 
+			result->append(" ");
 
-		result += family->cssText();
+		result->append(family->cssText());
 	}
 
 	return result;
@@ -143,11 +148,11 @@ unsigned short QuotesValueImpl::cssValueType() const
 	return CSS_CUSTOM;
 }
 
-DOMString QuotesValueImpl::cssText() const
+DOMStringImpl *QuotesValueImpl::cssText() const
 {
-    return QString::fromLatin1("\"") +
-		   data.join(QString::fromLatin1("\" \"")) +
-		   QString::fromLatin1("\"");
+    return new DOMStringImpl(QString::fromLatin1("\"") +
+							 data.join(QString::fromLatin1("\" \"")) +
+							 QString::fromLatin1("\""));
 }
 
 void QuotesValueImpl::addLevel(const QString& open, const QString& close)
@@ -217,18 +222,18 @@ unsigned short ShadowValueImpl::cssValueType() const
 	return CSS_CUSTOM;
 }
 
-DOMString ShadowValueImpl::cssText() const
+DOMStringImpl *ShadowValueImpl::cssText() const
 {
 	DOMString text("");
 	if(color)
-		text += color->cssText();
+		text += DOMString(color->cssText());
 	
 	if(x)
 	{
 		if(text.length() > 0)
 			text += " ";
 		
-		text += x->cssText();
+		text += DOMString(x->cssText());
 	}
 	
 	if(y)
@@ -236,7 +241,7 @@ DOMString ShadowValueImpl::cssText() const
 		if(text.length() > 0)
 			text += " ";
 		
-		text += y->cssText();
+		text += DOMString(y->cssText());
 	}
 	
 	if(blur)
@@ -244,20 +249,25 @@ DOMString ShadowValueImpl::cssText() const
 		if(text.length() > 0)
 			text += " ";
 		
-		text += blur->cssText();
+		text += DOMString(blur->cssText());
 	}
 
-	return text;
+	return text.handle()->copy();
 }
 
-CounterActImpl::CounterActImpl(DOMString &c, short v)
+CounterActImpl::CounterActImpl(DOMStringImpl *c, short v)
 {
 	m_counter = c;
+	if(m_counter)
+		m_counter->ref();
+
 	m_value = v;
 }
 
 CounterActImpl::~CounterActImpl()
 {
+	if(m_counter)
+		m_counter->deref();
 }
 
 unsigned short CounterActImpl::cssValueType() const
@@ -265,15 +275,15 @@ unsigned short CounterActImpl::cssValueType() const
 	return CSS_CUSTOM;
 }
 
-DOMString CounterActImpl::cssText() const
+DOMStringImpl *CounterActImpl::cssText() const
 {
     DOMString text(m_counter);
     text += DOMString(QString::number(m_value));
 
-    return text;
+    return text.handle()->copy();
 }
 
-DOMString CounterActImpl::counter() const
+DOMStringImpl *CounterActImpl::counter() const
 {
 	return m_counter;
 }

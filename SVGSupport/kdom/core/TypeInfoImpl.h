@@ -27,7 +27,7 @@
 
 namespace KDOM
 {
-	class DOMString;
+	class DOMStringImpl;
 
 	// Introduced in DOM Level 3:
 	class TypeInfoImpl : public Shared
@@ -36,12 +36,12 @@ namespace KDOM
 		TypeInfoImpl();
 		virtual ~TypeInfoImpl();
 
-		virtual DOMString typeName() const;
-		virtual DOMString typeNamespace() const;
+		virtual DOMStringImpl *typeName() const;
+		virtual DOMStringImpl *typeNamespace() const;
 		
-		virtual bool isDerivedFrom(const DOMString &typeNamespaceArg,
-						   const DOMString &typeNameArg,
-						   unsigned long derivationMethod) const;
+		virtual bool isDerivedFrom(DOMStringImpl *typeNamespaceArg,
+								   DOMStringImpl *typeNameArg,
+								   unsigned long derivationMethod) const;
 	};
 };
 

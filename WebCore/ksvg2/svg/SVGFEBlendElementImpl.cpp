@@ -40,7 +40,7 @@
 
 using namespace KSVG;
 
-SVGFEBlendElementImpl::SVGFEBlendElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : 
+SVGFEBlendElementImpl::SVGFEBlendElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
 	m_in1 = m_in2 = 0;
@@ -98,12 +98,12 @@ void SVGFEBlendElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_IN:
 		{
-			in1()->setBaseVal(value.implementation());
+			in1()->setBaseVal(value.handle());
 			break;
 		}
 		case ATTR_IN2:
 		{
-			in2()->setBaseVal(value.implementation());
+			in2()->setBaseVal(value.handle());
 			break;
 		}
 		default:

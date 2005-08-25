@@ -25,7 +25,7 @@
 
 using namespace KSVG;
 
-SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl(const SVGStyledElementImpl *context) : KDOM::Shared(true)
+SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
 	m_baseVal = 0;
 	m_animVal = 0;

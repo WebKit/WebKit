@@ -23,19 +23,17 @@
 #include <kdebug.h>
 
 #include "DOMString.h"
-#include "Node.h"
-
 #include "XPointerSchemeImpl.h"
 #include "XPointerResultImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-XPointerSchemeImpl::XPointerSchemeImpl(const DOMString &schemeData, NBCImpl *nbc)
-: PointerPartImpl("xpointer", schemeData, nbc)
+XPointerSchemeImpl::XPointerSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc)
+: PointerPartImpl(DOMString("xpointer").handle(), schemeData, nbc)
 {
 	kdWarning() << "KDOM::XPointer does currently not support "
-			"the xpointer() scheme. TODO submit DOMError" << endl;
+				<< "the xpointer() scheme. TODO submit DOMError" << endl;
 }
 
 XPointerSchemeImpl::~XPointerSchemeImpl()
@@ -44,7 +42,7 @@ XPointerSchemeImpl::~XPointerSchemeImpl()
 
 XPointerResultImpl *XPointerSchemeImpl::evaluate(NodeImpl *) const
 {
-	return new XPointerResultImpl(XPointerResult::NO_MATCH);
+	return new XPointerResultImpl(NO_MATCH);
 }
 
 // vim:ts=4:noet

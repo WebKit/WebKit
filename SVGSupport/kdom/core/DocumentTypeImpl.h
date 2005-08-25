@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2002-2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -31,33 +37,37 @@ namespace KDOM
 	class DocumentTypeImpl : public NodeImpl
 	{
 	public:
-		DocumentTypeImpl(DocumentImpl *doc, const DOMString &qualifiedName, const DOMString &publicId, const DOMString &systemId);
+		DocumentTypeImpl(DocumentPtr *doc, DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId);
 		virtual ~DocumentTypeImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		DOMString publicId() const;
-		DOMString systemId() const;
 
-		virtual DOMString textContent() const; // DOM3
+		// 'DocumentTypeImpl' functions
+		DOMStringImpl *name() const;
+		DOMStringImpl *publicId() const;
+		DOMStringImpl *systemId() const;
+		DOMStringImpl *internalSubset() const;
 
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual DOMStringImpl *textContent() const; // DOM3
+
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
 		NamedNodeMapImpl *entities() const;
 		NamedNodeMapImpl *notations() const;
 
 		// Other methods (not part of DOM)
-		void setName(const DOMString &n) { m_qualifiedName = n; }
-		void setPublicId(const DOMString &publicId) { m_publicId = publicId; }
-		void setSystemId(const DOMString &systemId) { m_systemId = systemId; }
+		void setName(DOMStringImpl *n);
+		void setPublicId(DOMStringImpl *publicId);
+		void setSystemId(DOMStringImpl *systemId);
 
 	protected:
 		mutable NamedNodeMapImpl *m_entities;
 		mutable NamedNodeMapImpl *m_notations;
 
-		DOMString m_qualifiedName;
-		DOMString m_publicId;
-		DOMString m_systemId;
+		DOMStringImpl *m_qualifiedName;
+		DOMStringImpl *m_publicId;
+		DOMStringImpl *m_systemId;
 	};
 };
 

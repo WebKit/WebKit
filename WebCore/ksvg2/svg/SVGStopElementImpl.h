@@ -31,7 +31,7 @@ namespace KSVG
 	class SVGStopElementImpl : public SVGStyledElementImpl
 	{
 	public:
-		SVGStopElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGStopElementImpl();
 
 		// 'SVGStoplement' functions

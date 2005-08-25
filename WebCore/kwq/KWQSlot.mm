@@ -33,6 +33,9 @@
 #import "render_form.h"
 #import "render_layer.h"
 #import "xmlhttprequest.h"
+#ifdef SVG_SUPPORT
+#import "ksvg2/core/KSVGTimeScheduler.h"
+#endif
 
 using DOM::DocumentImpl;
 using khtml::CachedObject;
@@ -49,6 +52,9 @@ using khtml::RenderScrollMediator;
 using KIO::Job;
 using KJS::WindowQObject;
 using KJS::XMLHttpRequestQObject;
+#ifdef SVG_SUPPORT
+using KSVG::TimeScheduler;
+#endif
 
 enum FunctionNumber {
     signalFinishedParsing,
@@ -82,6 +88,9 @@ enum FunctionNumber {
     slotFinished_Loader,
     slotFinished_XMLHttpRequest,
     slotReceivedResponse,
+#ifdef SVG_SUPPORT
+	slotTimerNotify,
+#endif
 };
 
 KWQSlot::KWQSlot(QObject *object, const char *member)
@@ -108,6 +117,9 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotTextChanged, (), RenderTextArea)
     CASE(slotValueChanged, (int), RenderScrollMediator)
     CASE(slotWidgetDestructed, (), RenderWidget)
+#ifdef SVG_SUPPORT
+	CASE(slotTimerNotify, (), TimeScheduler)
+#endif
        
     #undef CASE
 
@@ -178,6 +190,9 @@ void KWQSlot::call() const
         CASE(slotSubmitFormAgain, KHTMLPart, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
+#ifdef SVG_SUPPORT
+		CASE(slotTimerNotify, TimeScheduler, slotTimerNotify)
+#endif
     }
     
     #undef CASE

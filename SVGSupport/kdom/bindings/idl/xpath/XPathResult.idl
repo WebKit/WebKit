@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2004 World Wide Web Consortium,
+ *
+ * (Massachusetts Institute of Technology, European Research Consortium for
+ * Informatics and Mathematics, Keio University). All Rights Reserved. This
+ * work is distributed under the W3C(r) Software License [1] in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ */
+
+module xpath
+{
+  interface XPathResult {
+
+    // XPathResultType
+    const unsigned short      ANY_TYPE                       = 0;
+    const unsigned short      NUMBER_TYPE                    = 1;
+    const unsigned short      STRING_TYPE                    = 2;
+    const unsigned short      BOOLEAN_TYPE                   = 3;
+    const unsigned short      UNORDERED_NODE_ITERATOR_TYPE   = 4;
+    const unsigned short      ORDERED_NODE_ITERATOR_TYPE     = 5;
+    const unsigned short      UNORDERED_NODE_SNAPSHOT_TYPE   = 6;
+    const unsigned short      ORDERED_NODE_SNAPSHOT_TYPE     = 7;
+    const unsigned short      ANY_UNORDERED_NODE_TYPE        = 8;
+    const unsigned short      FIRST_ORDERED_NODE_TYPE        = 9;
+
+    readonly attribute unsigned short  resultType;
+    readonly attribute double          numberValue;
+                                        // raises(XPathException) on retrieval
+
+    readonly attribute core::DOMString       stringValue;
+                                        // raises(XPathException) on retrieval
+
+    readonly attribute boolean         booleanValue;
+                                        // raises(XPathException) on retrieval
+
+    readonly attribute boolean         singleNodeValue;
+                                        // raises(XPathException) on retrieval
+
+    readonly attribute boolean         invalidIteratorState;
+    readonly attribute unsigned long   snapshotLength;
+                                        // raises(XPathException) on retrieval
+
+    core::Node               iterateNext()
+                                        raises(XPathException, 
+                                               core::DOMException);
+    core::Node               snapshotItem(in unsigned long index)
+                                        raises(XPathException);
+  };
+};
+

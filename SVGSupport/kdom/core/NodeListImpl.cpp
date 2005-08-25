@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -25,14 +31,16 @@
 
 using namespace KDOM;
 
-NodeListImpl::NodeListImpl(NodeImpl *refNode) : Shared(true), m_refNode(refNode)
+NodeListImpl::NodeListImpl(NodeImpl *refNode) : Shared(), m_refNode(refNode)
 {
-	m_refNode->ref();
+	if(m_refNode)
+		m_refNode->ref();
 }
 
 NodeListImpl::~NodeListImpl()
 {
-	m_refNode->deref();
+	if(m_refNode)
+		m_refNode->deref();
 }
 
 NodeImpl *NodeListImpl::item(unsigned long index) const
@@ -71,7 +79,9 @@ int NodeListImpl::index(NodeImpl *_item) const
 		NodeImpl *n = m_refNode->firstChild();
 		while(n)
 		{
-			if(n == _item) return pos;
+			if(n == _item)
+				return pos;
+
 			n = n->nextSibling();
 			pos++;
 		}

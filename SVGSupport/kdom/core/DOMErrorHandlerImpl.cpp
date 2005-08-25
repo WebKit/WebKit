@@ -25,7 +25,7 @@
 
 using namespace KDOM;
 
-DOMErrorHandlerImpl::DOMErrorHandlerImpl() : Shared(true)
+DOMErrorHandlerImpl::DOMErrorHandlerImpl() : Shared()
 {
 }
 
@@ -35,7 +35,7 @@ DOMErrorHandlerImpl::~DOMErrorHandlerImpl()
 
 bool DOMErrorHandlerImpl::handleError(DOMErrorImpl *)
 {
-	//TODO
+	// FIXME!
 	return false;
 }
 

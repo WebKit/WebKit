@@ -34,7 +34,7 @@ namespace KSVG
 		virtual ~SVGPathSegCurvetoQuadraticSmoothAbsImpl();
 
 		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS; }
-		virtual KDOM::DOMString pathSegTypeAsLetter() const { return "T"; }
+		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("T"); }
 		virtual QString toString() const { return QString::fromLatin1("T %1 %2").arg(m_x).arg(m_y); }
 
 		void setX(double);
@@ -55,7 +55,7 @@ namespace KSVG
 		virtual ~SVGPathSegCurvetoQuadraticSmoothRelImpl();
 
 		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
-		virtual KDOM::DOMString pathSegTypeAsLetter() const { return "t"; }
+		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("t"); }
 		virtual QString toString() const { return QString::fromLatin1("t %1 %2").arg(m_x).arg(m_y); }
 
 		void setX(double);

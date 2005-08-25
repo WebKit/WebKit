@@ -27,6 +27,7 @@
 */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include <kdebug.h>
 #include <kconfig.h>
@@ -38,11 +39,9 @@
 #include <qpaintdevicemetrics.h>
 
 #include "Font.h"
-#include "CSSRule.h"
 #include "KDOMPart.h"
 #include "KDOMView.h"
 #include "RectImpl.h"
-#include "CSSValue.h"
 #include "Namespace.h"
 #include "DOMString.h"
 #include "ElementImpl.h"
@@ -121,26 +120,29 @@ namespace KDOM
 
 CSSStyleSelector::CSSStyleSelector(DocumentImpl *doc, const QString &userStyleSheet, StyleSheetListImpl *styleSheets, const KURL &url, bool _strictParsing)
 {
-	view = doc->view();
-	part = (view ? view->part() : 0);
-
-	init((part ? part->settings() : 0));
+	KDOMView *view = doc->view();
+	init((view ? view->part()->settings() : 0));
 
 	strictParsing = _strictParsing;
 	m_medium = view ? view->mediaType() : QString::fromLatin1("all");
 
+	selectors = 0;
+	selectorCache = 0;
+	properties = 0;
+	userStyle = 0;
+	userSheet = 0;
 	paintDeviceMetrics = doc->paintDeviceMetrics();
 
 	if(paintDeviceMetrics) // this may be null, not everyone uses khtmlview(Niko)
-		computeFontSizes(paintDeviceMetrics, /* FIXME (part ? part->zoomFactor() : */ 100);
+		computeFontSizes(paintDeviceMetrics, /* FIXME (view ? view->part()->zoomFactor() : */ 100);
 	
 	if(!userStyleSheet.isEmpty())
 	{
 		userSheet = new CSSStyleSheetImpl(doc);
-		userSheet->parseString(DOMString(userStyleSheet));
+		userSheet->parseString(DOMString(userStyleSheet).handle());
 
 		userStyle = new CSSStyleSelectorList();
-		userStyle->append(userSheet, m_medium);
+		userStyle->append(userSheet, DOMString(m_medium).handle());
 	}
 
 	// add stylesheets from document
@@ -150,7 +152,7 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl *doc, const QString &userStyleSh
 	for(; it.current(); ++it)
 	{
        	if(it.current()->isCSSStyleSheet())
-			authorStyle->append(static_cast<CSSStyleSheetImpl *>(it.current()), m_medium);
+			authorStyle->append(static_cast<CSSStyleSheetImpl *>(it.current()), DOMString(m_medium).handle());
 	}
 
 	KURL u = url;
@@ -170,7 +172,7 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl *doc, const QString &userStyleSh
 	u.setPath(QString::null);
 	encodedurl.host = u.url();
 
-	kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
+	// kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
 }
 
 CSSStyleSelector::CSSStyleSelector(CSSStyleSheetImpl *sheet)
@@ -181,7 +183,7 @@ CSSStyleSelector::CSSStyleSelector(CSSStyleSheetImpl *sheet)
 	m_medium = view ? view->mediaType() : QString::fromLatin1("all");
 
 	authorStyle = new CSSStyleSelectorList();
-	authorStyle->append(sheet, m_medium);
+	authorStyle->append(sheet, DOMString(m_medium).handle());
 }
 
 void CSSStyleSelector::init(const KDOMSettings *_settings)
@@ -197,12 +199,6 @@ void CSSStyleSelector::init(const KDOMSettings *_settings)
 	defaultStyle = 0;
 	defaultPrintStyle = 0;
 	defaultQuirksStyle = 0;
-
-	selectors = 0;
-	selectorCache = 0;
-	properties = 0;
-	userStyle = 0;
-	userSheet = 0;
 }
 
 CSSStyleSelector::~CSSStyleSelector()
@@ -211,9 +207,7 @@ CSSStyleSelector::~CSSStyleSelector()
 
 	delete authorStyle;
 	delete userStyle;
-
-	if(userSheet)
-		userSheet->deref();
+	delete userSheet;
 
 	free(propsToApply);
 	free(pseudoProps);
@@ -223,7 +217,7 @@ void CSSStyleSelector::addSheet(CSSStyleSheetImpl *sheet)
 {
 	KDOMView *view = sheet->doc()->view();
 	m_medium = view ? view->mediaType() : QString::fromLatin1("screen");
-	authorStyle->append(sheet, m_medium);
+	authorStyle->append(sheet, DOMString(m_medium).handle());
 }
 
 void CSSStyleSelector::clear()
@@ -242,9 +236,6 @@ void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics *paintDeviceMetrics,
 
 void CSSStyleSelector::computeFontSizesFor(QPaintDeviceMetrics *paintDeviceMetrics, int zoomFactor, QValueVector<int> &fontSizes, bool isFixed)
 {
-	if(!paintDeviceMetrics)
-		return;
-
 	Q_UNUSED(isFixed);
         
 #ifndef APPLE_COMPILE_HACK
@@ -358,15 +349,18 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
 	// set some variables we will need
 	pseudoState = PseudoUnknown;
-	element = e;
 	
+	element = e;	
 	parentNode = e->parentNode();
 	parentStyle = 0;
 
 	if(parentNode && parentNode->nodeType() == ELEMENT_NODE)
 		parentStyle = static_cast<ElementImpl *>(parentNode)->renderStyle();
-	else
-		parentNode = 0;
+
+	view = element->ownerDocument()->view();
+	part = view->part();
+	settings = part->settings();
+	paintDeviceMetrics = element->ownerDocument()->paintDeviceMetrics();
 
 	style = e->ownerDocument()->implementation()->cdfInterface()->renderStyle();
 	if(parentStyle)
@@ -460,7 +454,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 				{
 				    // we are past the font properties, time to update to the
 				    // correct font
-					CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics);
+					CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics, settings);
 				    fontDirty = false;
 				}
 
@@ -469,7 +463,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 			}
 
 			if(fontDirty)
-				CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics);
+				CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics, settings);
 		}
 
 		// Clean up our style object's display and text decorations (among other fixups).
@@ -489,7 +483,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 					RenderStyle *pseudoStyle = style->pseudoStyle;
 					while(pseudoStyle)
 					{
-						pseudoStyle->htmlFont().update(paintDeviceMetrics);
+						pseudoStyle->htmlFont().update(paintDeviceMetrics, settings);
 						pseudoStyle = pseudoStyle->pseudoStyle;
 					}
 
@@ -524,7 +518,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 				RenderStyle *pseudoStyle = style->pseudoStyle;
 				while(pseudoStyle)
 				{
-					pseudoStyle->htmlFont().update(paintDeviceMetrics);
+					pseudoStyle->htmlFont().update(paintDeviceMetrics, settings);
 					pseudoStyle = pseudoStyle->pseudoStyle;
 				}
 			}
@@ -644,13 +638,13 @@ static void cleanpath(QString &path)
 
 static void checkPseudoState(const CSSStyleSelector::Encodedurl &encodedurl, ElementImpl *e)
 {
-	if(e->localName() != QString::fromLatin1("a"))
+	if(DOMString(e->localName()) != QString::fromLatin1("a"))
 	{
 		pseudoState = PseudoNone;
 		return;
 	}
 
-	DOMString attr = e->getAttribute("href");
+	DOMString attr(e->getAttribute(DOMString("href").handle()));
 	if(attr.isNull())
 	{
 		pseudoState = PseudoNone;
@@ -713,7 +707,12 @@ static inline bool matchNth(int count, const QString& nth)
 
 			int p = nth.find('+');
 			if(p != -1)
-				b = nth.mid(p+1).toInt();
+				b = nth.mid(p + 1).toInt();
+			else
+			{
+				p = nth.find('-');
+				b = -nth.mid(p + 1).toInt();
+			}				
 		}
 		else
 			b = nth.toInt();
@@ -898,7 +897,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 
 	if(sel->attr)
 	{
-		DOMString value = e->getAttribute(sel->attr);
+		DOMString value(e->getAttribute(sel->attr));
+		DOMString selValue(sel->value);
 		if(value.isEmpty())
 			return false; // attribute is not set
 
@@ -911,20 +911,20 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 				even in the strict ones */
 			//if(e->ownerDocument()->htmlMode() != DocumentImpl::XHtml)
 			//{
-				if(strcasecmp(sel->value, value))
+				if(strcasecmp(selValue, value))
 					return false;
 			//}
 			//else
 			//{
-			//	if(strcmp(sel->value, value))
+			//	if(strcmp(selValue, value))
 			//		return false;
 			//}
 			break;
 		}
 		case CSSSelector::Id:
 		{
-			if((strictParsing && strcmp(sel->value, value)) ||
-			  (!strictParsing && strcasecmp(sel->value, value)))
+			if((strictParsing && strcmp(selValue, value)) ||
+			  (!strictParsing && strcasecmp(selValue, value)))
 				return false;
 
 			break;
@@ -939,19 +939,19 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 				// There is no list, just a single item.  We can avoid
 				// allocing QStrings and just treat this as an exact
 				// match check.
-				if((strictParsing && strcmp(sel->value, value)) ||
-				   (!strictParsing && strcasecmp(sel->value, value)))
+				if((strictParsing && strcmp(selValue, value)) ||
+				   (!strictParsing && strcasecmp(selValue, value)))
 					return false;
 				break;
 			}
 			// The selector's value can't contain a space, or it's
 			// totally bogus.
-			spacePos = sel->value.find(' ');
+			spacePos = selValue.find(' ');
 			if(spacePos != -1)
 				return false;
 
 			QString str = value.string();
-			QString selStr = sel->value.string();
+			QString selStr = selValue.string();
 			const int selStrlen = selStr.length();
 			int pos = 0;
 			for(;;)
@@ -972,7 +972,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			//kdDebug() << "checking for contains match" << endl;
 			QString str = value.string();
-			QString selStr = sel->value.string();
+			QString selStr = selValue.string();
 			int pos = str.find(selStr, 0, strictParsing);
 			if(pos == -1) return false;
 			break;
@@ -981,7 +981,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			//kdDebug() << "checking for beginswith match" << endl;
 			QString str = value.string();
-			QString selStr = sel->value.string();
+			QString selStr = selValue.string();
 			int pos = str.find(selStr, 0, strictParsing);
 			if(pos != 0) return false;
 			break;
@@ -990,7 +990,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			//kdDebug() << "checking for endswith match" << endl;
 			QString str = value.string();
-			QString selStr = sel->value.string();
+			QString selStr = selValue.string();
 			if(strictParsing && !str.endsWith(selStr)) return false;
 			if(!strictParsing)
 			{
@@ -1004,7 +1004,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			//kdDebug() << "checking for hyphen match" << endl;
 			QString str = value.string();
-			QString selStr = sel->value.string();
+			QString selStr = selValue.string();
 			if(str.length() < selStr.length()) return false;
 			// Check if str begins with selStr:
 			if(str.find(selStr, 0, strictParsing) != 0) return false;
@@ -1119,7 +1119,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					n = n->previousSibling();
 				}
 
-				if(matchNth(count,sel->string_arg.string()))
+				if(matchNth(count,DOMString(sel->string_arg).string()))
 					return true;
 			}
 			break;
@@ -1143,7 +1143,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					n = n->nextSibling();
 				}
 
-				if(matchNth(count,sel->string_arg.string()))
+				if(matchNth(count,DOMString(sel->string_arg).string()))
 					return true;
 			}
 			break;
@@ -1153,7 +1153,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 			// first-of-type matches the first element of its type!
 			if(e->parentNode() && isElementNode(e->parentNode()))
 			{
-				const DOMString &type = e->tagName();
+				DOMStringImpl *type = e->tagName();
 				NodeImpl *n = e->previousSibling();
 				while(n)
 				{
@@ -1183,7 +1183,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					return false;
 				}
 
-				const DOMString &type = e->tagName();
+				DOMStringImpl *type = e->tagName();
 				NodeImpl* n = e->nextSibling();
 				while(n)
 				{
@@ -1213,15 +1213,15 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					return false;
 				}
 
-				const DOMString& type = e->tagName();
+				DOMString type(e->tagName());
 				NodeImpl *n = e->previousSibling();
-				while(n && !(isElementNode(n) && static_cast<ElementImpl *>(n)->tagName() == type))
+				while(n && !(isElementNode(n) && DOMString(static_cast<ElementImpl *>(n)->tagName()) == type))
 					n = n->previousSibling();
 
 				if(!n)
 				{
 					n = e->nextSibling();
-					while(n && !(isElementNode(n) && static_cast<ElementImpl *>(n)->tagName() == type))
+					while(n && !(isElementNode(n) && DOMString(static_cast<ElementImpl *>(n)->tagName()) == type))
 						n = n->nextSibling();
 
 					if(!n)
@@ -1236,7 +1236,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 			if(e->parentNode() && isElementNode(e->parentNode()))
 			{
 				int count = 1;
-				const DOMString &type = e->tagName();
+				DOMStringImpl *type = e->tagName();
 				NodeImpl *n = e->previousSibling();
 				while(n)
 				{
@@ -1244,7 +1244,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					n = n->previousSibling();
 				}
 
-				if(matchNth(count,sel->string_arg.string()))
+				if(matchNth(count,DOMString(sel->string_arg).string()))
 					return true;
 			}
 			break;
@@ -1261,7 +1261,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 				}
 
 				int count = 1;
-				const DOMString &type = e->tagName();
+				DOMStringImpl *type = e->tagName();
 				NodeImpl *n = e->nextSibling();
 				while(n)
 				{
@@ -1269,7 +1269,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 					n = n->nextSibling();
 				}
 
-				if(matchNth(count,sel->string_arg.string()))
+				if(matchNth(count,DOMString(sel->string_arg).string()))
 					return true;
 			}
 			break;
@@ -1300,7 +1300,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			// If we're in quirks mode, then hover should never match anchors with no
 			// href.  This is important for sites like wsj.com.
-			if(strictParsing || e->tagName() != "a" || e->hasAnchor())
+			if(strictParsing || DOMString(e->tagName()) != "a" || e->hasAnchor())
 			{
 				if(element == e)
 					style->setAffectedByHoverRules(true);
@@ -1320,13 +1320,14 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		{
 			if(e && e->focused())
 				return true;
+
 			break;
 		}
 		case CSSSelector::PseudoActive:
 		{
 			// If we're in quirks mode, then :active should never match anchors with no
 			// href.
-			if(strictParsing || e->tagName() != "a" || e->hasAnchor())
+			if(strictParsing || DOMString(e->tagName()) != "a" || e->hasAnchor())
 			{
 				if(element == e)
 					style->setAffectedByActiveRules(true);
@@ -1348,10 +1349,10 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 		}
 		case CSSSelector::PseudoLang:
 		{
-			DOMString value = getLangAttribute(e);
+			DOMString value(getLangAttribute(e));
 			if(value.isNull()) return false;
 			QString langAttr = value.string();
-			QString langSel = sel->string_arg.string();
+			QString langSel = DOMString(sel->string_arg).string();
 			return langAttr.startsWith(langSel);
 		}
 		case CSSSelector::PseudoNot:
@@ -1399,8 +1400,8 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
 				return false;
 			}
 
-			DOMString s = e->textContent();
-			QString selStr = sel->string_arg.string();
+			DOMString s(e->textContent());
+			QString selStr = DOMString(sel->string_arg).string();
 			return s.string().contains(selStr);
 		}
 		case CSSSelector::PseudoChecked:
@@ -1594,7 +1595,7 @@ CSSStyleSelectorList::~CSSStyleSelectorList()
 {
 }
 
-void CSSStyleSelectorList::append(CSSStyleSheetImpl *sheet, const DOMString &medium)
+void CSSStyleSelectorList::append(CSSStyleSheetImpl *sheet, DOMStringImpl *medium)
 {
 	if(!sheet || !sheet->isCSSStyleSheet())
 		return;
@@ -2270,6 +2271,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 	case CSS_PROP_FONT_WEIGHT:
 	{
 		FontDef fontDef = style->htmlFont().fontDef();
+
 		if(isInherit)
 			fontDef.weight = parentStyle->htmlFont().fontDef().weight;
 		else if(isInitial)
@@ -2802,8 +2804,8 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 			}
 			else if(primitiveValue->primitiveType() == CSS_RGBCOLOR)
 			{
-				if(qAlpha(primitiveValue->getRGBColorValue()))
-					col.setRgb(primitiveValue->getRGBColorValue());
+				if(qAlpha(primitiveValue->getQRGBColorValue()))
+					col.setRgb(primitiveValue->getQRGBColorValue());
 			}
 			else
 				return;
@@ -3356,12 +3358,13 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 	}
 	case CSS_PROP_FONT_SIZE:
 	{
+#ifndef APPLE_COMPILE_HACK
 		FontDef fontDef = style->htmlFont().fontDef();
 		int oldSize;
 		int size = 0;
 
 		float toPix = paintDeviceMetrics->logicalDpiY() / 72.;
-		if(toPix  < 96. / 72.)
+		if(toPix < 96. / 72.)
 			toPix = 96. / 72.;
 
 		int minFontSize = int(settings->minFontSize() * toPix);
@@ -3373,14 +3376,13 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 
 		if(isInherit)
 			size = oldSize;
-		else if (isInitial)
+		else if(isInitial)
 			size = m_fontSizes[3];
 		else if(primitiveValue->getIdent())
 		{
 			// keywords are being used.  Pick the correct default
 			// based off the font family.
 			const QValueVector<int> &fontSizes = m_fontSizes;
-			
 			switch(primitiveValue->getIdent())
 			{
 				case CSS_VAL_XX_SMALL:
@@ -3456,7 +3458,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 			else
 				return;
 		}
-
+		
 		if(size < 1)
 			return;
 
@@ -3464,10 +3466,11 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 		if(size < minFontSize)
 			size = minFontSize;
 
-		// kdDebug( 6080 ) << "computed raw font size: " << size << endl;
+		kdDebug() << "computed raw font size: " << size << endl;
 
 		fontDef.size = size;
 		fontDirty |= style->setFontDef(fontDef);
+#endif
 		return;
 	}
 	case CSS_PROP_Z_INDEX:
@@ -3636,12 +3639,12 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 
 			CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
 			if(val->primitiveType() == CSS_STRING)
-				style->setContent(val->getStringValue(), i != 0);
+				style->setContent(val->getDOMStringValue(), i != 0);
 			else if(val->primitiveType() == CSS_ATTR)
 			{
-				int attrID = element->ownerDocument()->getId(NodeImpl::AttributeId, val->getStringValue(), false);
+				int attrID = element->ownerDocument()->getId(NodeImpl::AttributeId, val->getDOMStringValue(), false);
 				if(attrID)
-					style->setContent(element->getAttribute(attrID).implementation(), i != 0);
+					style->setContent(DOMString(element->getAttribute(attrID)).handle(), i != 0);
 			}
 			else if(val->primitiveType() == CSS_URI)
 			{
@@ -3705,6 +3708,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 	}
 	case CSS_PROP_FONT_FAMILY: // list of strings and ids
 	{
+#ifndef APPLE_COMPILE_HACK
 		if(isInherit)
 		{
 			FontDef parentFontDef = parentStyle->htmlFont().fontDef();
@@ -3788,7 +3792,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 				return;
 			}
 		}
-
+#endif
 		break;
 	}
 	case CSS_PROP_QUOTES:
@@ -3913,7 +3917,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 				if(ident)
 					col = colorForCSSValue(ident);
 				else if(item->color->primitiveType() == CSS_RGBCOLOR)
-					col.setRgb(item->color->getRGBColorValue());
+					col.setRgb(item->color->getQRGBColorValue());
 			}
 
 			ShadowData *shadowData = new ShadowData(x, y, blur, col);
@@ -4153,7 +4157,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 			// before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
 			// good enough: style="font:1em/1em; font-size:36px" should have a line-height of 36px.
 			if(fontDirty)
-				CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics);
+				CSSStyleSelector::style->htmlFont().update(paintDeviceMetrics, settings);
 
 			applyRule(CSS_PROP_LINE_HEIGHT, font->lineHeight);
 			applyRule(CSS_PROP_FONT_FAMILY, font->family);
@@ -4196,9 +4200,10 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
     }
 }
 
-DOMString CSSStyleSelector::getLangAttribute(ElementImpl *e)
+DOMStringImpl *CSSStyleSelector::getLangAttribute(ElementImpl *e)
 {
-	return e->getAttributeNS(NS_XML, "xml:lang");
+	return e->getAttributeNS(DOMString(NS_XML).handle(),
+							 DOMString("xml:lang").handle());
 }
 
 // vim:ts=4:noet

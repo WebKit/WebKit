@@ -22,15 +22,14 @@
 
 #include <qdir.h>
 #include <qbuffer.h>
-#include <qapplication.h>
 
 #include <kurl.h>
 #include <kdebug.h>
+
 #include <kio/job.h>
+#include <kio/netaccess.h>
 
 #include "kdom.h"
-#include "Document.h"
-#include "DOMError.h"
 #include "DOMString.h"
 #include "KDOMLoader.h"
 #include "KDOMParser.moc"
@@ -88,12 +87,28 @@ KURL Parser::url() const
 	return d->url;
 }
 
-Document Parser::document() const
+DocumentImpl *Parser::document() const
 {
 	if(!d->docBuilder)
-		return Document::null;
+		return 0;
 
-	return Document(d->docBuilder->document());
+	return d->docBuilder->document();
+}
+
+DOMConfigurationImpl *Parser::domConfig() const
+{
+	if(!d->config)
+	{
+		d->config = new DOMConfigurationImpl();
+		d->config->ref();
+	}
+
+	return d->config;
+}
+
+DocumentBuilder *Parser::documentBuilder() const
+{
+	return d->docBuilder;
 }
 
 void Parser::setDocumentBuilder(DocumentBuilder *builder)
@@ -102,80 +117,44 @@ void Parser::setDocumentBuilder(DocumentBuilder *builder)
 	d->docBuilder = builder;
 }
 
-DocumentBuilder *Parser::documentBuilder() const
+DocumentImpl *Parser::syncParse(QBuffer *buffer)
 {
-	return d->docBuilder;
-}
+	QBuffer *work = buffer;
+	if(!work)
+		work = bufferForUrl(d->url);
 
-void Parser::slotNotify(unsigned long jobTicket, QBuffer *buffer, bool /*hasError*/)
-{
+	if(!work)
+		return 0;
 
-	if(d->jobTicket == jobTicket)
-	{
-		emit loadingFinished(buffer);	
-		d->jobTicket = 0;
-	}
-}
+	// Ask 'custom parser' on top of us, to handle the incoming xml stream...
+	const_cast<Parser *>(this)->handleIncomingData(work, true);
 
-void Parser::slotNotifyIncremental(unsigned long jobTicket, const QByteArray &data, bool eof, bool hasError)
-{
-	if(d->jobTicket == jobTicket)
-	{
-		if(hasError)
-		{
-			emit parsingFinished(true, DOMString());
-			return;
-		}
+	delete work; // Delete as it's not cached.
 
-		if(eof)
-		{
-			emit loadingFinished(0);
-			d->jobTicket = 0;
-			return;
-		}
-
-		emit feedData(data, eof);
-	}
-}
-
-void Parser::startParsing(bool incremental)
-{
-#ifndef APPLE_COMPILE_HACK
-	// Pass the document url as baseURL to our data slave...
-	DataSlave::self()->setBaseURL(url());
-
-	d->jobTicket = DataSlave::self()->newAsyncJob(d->url, this, incremental);
-#endif
-}
-
-Document Parser::parse(QBuffer *buffer)
-{
-#ifndef APPLE_COMPILE_HACK
-	// Pass the document url as baseURL to our data slave...
-	DataSlave::self()->setBaseURL(url());
-
-	if(!buffer)
-	{
-		buffer = DataSlave::self()->newSyncJob(d->url);
-		if(!buffer)
-			return Document::null;
-	}
-
-	emit loadingFinished(buffer);
-
-	// Deregister our baseURL, when we're done with the current document!
-	KDOM::DataSlave::self()->setBaseURL(KURL());
-#endif
+	// Return parsed document...
 	return document();
 }
 
-void Parser::cachedParse(bool /* incremental */, const char *accept)
+void Parser::asyncParse(bool incremental, const char *accept)
 {
+	// Asynchronous parsing.
+	// TODO: INCREMENTAL PARSING!
 	if(!d->docLoader)
 		d->docLoader = new DocumentLoader(0, 0); // TODO: Fix usage of DocumentLoader!
 
-	d->cachedDoc = d->docLoader->requestDocument(url(), QString::fromLatin1(accept));
+	d->cachedDoc = d->docLoader->requestDocument(d->url, QString::fromLatin1(accept));
 	d->cachedDoc->ref(this);
+}
+
+void Parser::abortWork()
+{
+	// TODO: maybe fill DOMError object with information?
+	DOMErrorImpl *error = new DOMErrorImpl();
+	error->ref();
+	error->setSeverity(SEVERITY_ERROR);
+
+	handleError(error);
+	error->deref();
 }
 
 void Parser::notifyFinished(CachedObject *object)
@@ -183,8 +162,11 @@ void Parser::notifyFinished(CachedObject *object)
 	if(object == d->cachedDoc)
 	{
 		d->cachedDoc->deref(this);
-		
-		emit loadingFinished(d->cachedDoc->documentBuffer());
+
+		handleIncomingData(d->cachedDoc->documentBuffer(), true);
+
+		// No error.
+		emit parsingFinished(0);
 
 		d->cachedDoc = 0;
 	}
@@ -214,42 +196,43 @@ bool Parser::handleError(DOMErrorImpl *err)
 					err->location()->columnNumber(), DOMString(err->message()).string().latin1());
 					
 		kdDebug(26001) << str << endl;
-		
-		emit parsingFinished(true, DOMString(err->message()));
-                assert(0);
-		return false;
+		emit parsingFinished(err);
+		assert(0);
 	}
 
 	return true;
 }
 
-DOMConfigurationImpl *Parser::domConfig() const
+QBuffer *Parser::bufferForUrl(const KURL &url) const
 {
-	if(!d->config)
+#ifndef APPLE_COMPILE_HACK
+	QString temporaryFileName;
+	bool retVal = KIO::NetAccess::download(url, temporaryFileName, 0 /* No window for authentification etc.. */);
+	if(!retVal) // No temporary file created so far -> nothing to remove
+		return 0;
+
+	QFile file(temporaryFileName);
+	if(!file.open(IO_ReadOnly))
 	{
-		d->config = new DOMConfigurationImpl();
-		d->config->ref();
+		// Can a file be correctly downloaded but not opened?
+		KIO::NetAccess::removeTempFile(temporaryFileName);
+		return 0;
 	}
 
-	return d->config;
+	QBuffer *ret = new QBuffer(file.readAll());
+	KIO::NetAccess::removeTempFile(temporaryFileName);
+
+	return ret;
+#else
+	return NULL;
+#endif
 }
 
 #ifdef APPLE_CHANGES
-void Parser::loadingFinished(QBuffer *buffer)
+void Parser::parsingFinished(KDOM::DOMErrorImpl *)
 {
-
+    
 }
-
-void Parser::feedData(const QByteArray &data, bool eof)
-{
-
-}
-
-void Parser::parsingFinished(bool error, const KDOM::DOMString &errorDescription)
-{
-
-}
-
 #endif
 
 // vim:ts=4:noet

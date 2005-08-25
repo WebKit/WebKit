@@ -78,14 +78,14 @@ void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, 
 		setRGBColor(rgbPaint);
 }
 
-KDOM::DOMString SVGPaintImpl::cssText() const
+KDOM::DOMStringImpl *SVGPaintImpl::cssText() const
 {
 	if(m_paintType == SVG_PAINTTYPE_NONE)
-		return "none";
+		return new KDOM::DOMStringImpl("none");
 	else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
-		return "currentColor";
+		return new KDOM::DOMStringImpl("currentColor");
 	else if(m_paintType == SVG_PAINTTYPE_URI)
-		return KDOM::DOMString("url(") + KDOM::DOMString(m_uri) + KDOM::DOMString(")");
+		return new KDOM::DOMStringImpl(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).string() + QString::fromLatin1(")"));
 
 	return SVGColorImpl::cssText();
 }

@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -32,28 +39,29 @@ namespace KDOM
 	class AttrImpl : public NodeBaseImpl
 	{
 	public:
-		AttrImpl(DocumentImpl *doc, NodeImpl::Id id);
-		AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified = false);
-		AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *prefix, bool nullNSSpecified = false);
+		AttrImpl(DocumentPtr *doc, NodeImpl::Id id);
+		AttrImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified = false);
+		AttrImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *prefix, bool nullNSSpecified = false);
 		virtual ~AttrImpl();
 
 		// 'Attr' functions
-		DOMString name() const;
-		DOMString value() const;
-		virtual void setValue(const DOMString &value);
+		DOMStringImpl *name() const;
 
-		virtual DOMString nodeName() const;
-		virtual DOMString localName() const;
+		DOMStringImpl *value() const;
+		virtual void setValue(DOMStringImpl *value);
 
-		virtual DOMString nodeValue() const;
-		virtual void setNodeValue(const DOMString &nodeValue);
+		virtual DOMStringImpl *nodeName() const;
+		virtual DOMStringImpl *localName() const;
+
+		virtual DOMStringImpl *nodeValue() const;
+		virtual void setNodeValue(DOMStringImpl *nodeValue);
 
 		virtual unsigned short nodeType() const; 
 
-		virtual DOMString namespaceURI() const;
+		virtual DOMStringImpl *namespaceURI() const;
 
-		virtual DOMString prefix() const;
-		virtual void setPrefix(const DOMString &prefix);
+		virtual DOMStringImpl *prefix() const;
+		virtual void setPrefix(DOMStringImpl *prefix);
 
 		virtual bool specified() const;
 		virtual bool isId() const; // DOM3
@@ -67,7 +75,7 @@ namespace KDOM
 		virtual bool childAllowed(NodeImpl *newChild);
 		virtual bool childTypeAllowed(unsigned short type) const;
 
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
 		void setOwnerElement(ElementImpl* impl);
 
@@ -100,13 +108,12 @@ namespace KDOM
 	struct AttributeImpl
 	{
 		NodeImpl::Id id() const { return m_attrId ? m_attrId : m_data.attr->id(); }
-		DOMStringImpl *val() const { return m_attrId ? m_data.value : m_data.attr->val(); }
-		DOMString value() const { return DOMString(val()); }
+		DOMStringImpl *value() const { return m_attrId ? m_data.value : m_data.attr->val(); }
 		AttrImpl *attr() const { return m_attrId ? 0 : m_data.attr; }
-		DOMString namespaceURI() { return m_attrId ? DOMString() : m_data.attr->namespaceURI(); }
-		DOMString prefix() { return m_attrId ? DOMString() : m_data.attr->prefix(); }
-		DOMString localName() { return m_attrId ? DOMString() : m_data.attr->localName(); }
-		DOMString name() { return m_attrId ? DOMString() : m_data.attr->name(); }
+		DOMStringImpl *namespaceURI() { return m_attrId ? 0 : m_data.attr->namespaceURI(); }
+		DOMStringImpl *prefix() { return m_attrId ? 0 : m_data.attr->prefix(); }
+		DOMStringImpl *localName() { return m_attrId ? 0 : m_data.attr->localName(); }
+		DOMStringImpl *name() { return m_attrId ? 0 : m_data.attr->name(); }
 
 		void setValue(DOMStringImpl *value, ElementImpl *element);
 		AttrImpl *createAttr(ElementImpl *element);

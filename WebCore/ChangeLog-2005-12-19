@@ -1,3 +1,2008 @@
+2005-08-24  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by mjs.
+
+        A ridiculously large patch including all of the following:
+        1.  Sync-up with KDE SVN HEAD, including:
+          a. Removal of C++ DOM
+          b. JS bindings code auto-generation
+          c. DocumentPtr in addition to DocumentImpl
+          d. DOMStringImpl instead of DOMString
+          e. Completely different xpath implementation.
+        2.  Various WebCore specific fixes to KDE additions.
+        3.  Closed several memory leaks.
+        4.  Removed KSVGSlotStubs.h, added SVG_SUPPORT macro and
+            svg specific slot support into KWQSlot.mm
+
+        * WebCore+SVG/DrawCanvasItem.mm:
+        (-[DrawCanvasItem fitToNewBBox:]): DOMStringImpl changes.
+        (-[DrawCanvasItem valueForKey:]): ditto.
+        * WebCore+SVG/DrawDocument.mm:
+        (-[DrawDocumentPrivate init]): KCanvasView leak and circularity.
+        (-[DrawDocumentPrivate dealloc]): ditto
+        (-[DrawDocumentPrivate setPrimaryView:]): ditto.
+        (-[DrawDocument initWithSVGData:]): ditto.
+        (-[DrawDocument dealloc]): ditto.
+        (-[DrawDocument title]): DOMStringImpl
+        (-[DrawDocument registerView:]): KCanvasView leak.
+        (-[DrawDocument unregisterView:]): KCanvasView leak
+        (-[DrawDocument KDOM::newMouseEventWithEventId:KDOM::qMouseEvent:]): DOMStringImpl
+        (-[DrawDocument createItemForTool:atPoint:]): ditto
+        * WebCore+SVG/DrawView.mm:
+        (-[DrawViewPrivate setDocument:]): KCanvasView leak.
+        (-[DrawViewPrivate drawRect:]): ASSERT addition
+        (-[DrawView _clearDocument]): KCanvasView leak.
+        * WebCore+SVG/DrawViewPrivate.h:
+        * WebCore.xcodeproj/project.pbxproj: new files, SVG_SUPPORT macro
+        * kdom/Attr.cpp: Removed.
+        * kdom/Attr.h: Removed.
+        * kdom/CDATASection.cpp: Removed.
+        * kdom/CDATASection.h: Removed.
+        * kdom/CharacterData.cpp: Removed.
+        * kdom/CharacterData.h: Removed.
+        * kdom/Comment.cpp: Removed.
+        * kdom/Comment.h: Removed.
+        * kdom/DOMConfiguration.cpp: Removed.
+        * kdom/DOMConfiguration.h: Removed.
+        * kdom/DOMError.cpp: Removed.
+        * kdom/DOMError.h: Removed.
+        * kdom/DOMErrorHandler.cpp: Removed.
+        * kdom/DOMErrorHandler.h: Removed.
+        * kdom/DOMException.cpp: Removed.
+        * kdom/DOMException.h: Removed.
+        * kdom/DOMImplementation.cpp: Removed.
+        * kdom/DOMImplementation.h: Removed.
+        * kdom/DOMLocator.cpp: Removed.
+        * kdom/DOMLocator.h: Removed.
+        * kdom/DOMObject.cpp: Removed.
+        * kdom/DOMObject.h: Removed.
+        * kdom/DOMString.cpp:
+        (DOMString::handle):
+        (KDOM::operator==):
+        * kdom/DOMString.h:
+        * kdom/DOMStringList.cpp: Removed.
+        * kdom/DOMStringList.h: Removed.
+        * kdom/DOMUserData.cpp: Removed.
+        * kdom/DOMUserData.h: Removed.
+        * kdom/Document.cpp: Removed.
+        * kdom/Document.h: Removed.
+        * kdom/DocumentFragment.cpp: Removed.
+        * kdom/DocumentFragment.h: Removed.
+        * kdom/DocumentType.cpp: Removed.
+        * kdom/DocumentType.h: Removed.
+        * kdom/Element.cpp: Removed.
+        * kdom/Element.h: Removed.
+        * kdom/Entity.cpp: Removed.
+        * kdom/Entity.h: Removed.
+        * kdom/EntityReference.cpp: Removed.
+        * kdom/EntityReference.h: Removed.
+        * kdom/Helper.cpp:
+        (Helper::SplitPrefixLocalName):
+        (Helper::CheckPrefix):
+        (Helper::CheckQualifiedName):
+        (Helper::CheckMalformedQualifiedName):
+        (Helper::IsMalformedPrefix):
+        (Helper::ValidateAttributeName):
+        (Helper::ShowException):
+        (Helper::PrintNode):
+        (Helper::ResolveURI):
+        (Helper::IsValidNCName):
+        (Helper::IsValidQName):
+        (Helper::parseURL):
+        (parseLength):
+        (Helper::stringToLengthArray):
+        (Helper::stringToCoordsArray):
+        * kdom/Helper.h:
+        * kdom/KDOMPart.cpp:
+        (KDOMPart::KDOMPart):
+        (KDOMPart::~KDOMPart):
+        * kdom/KDOMSettings.cpp:
+        (KPerDomainSettings::dump):
+        (setup_per_domain_policy):
+        (lookup_hostname_policy):
+        (KDOMSettings::init):
+        (KDOMSettings::showAnimations):
+        (KDOMSettings::windowOpenPolicy):
+        (KDOMSettings::windowMovePolicy):
+        (KDOMSettings::windowResizePolicy):
+        (KDOMSettings::windowStatusPolicy):
+        (KDOMSettings::windowFocusPolicy):
+        (KDOMSettings::encoding):
+        (KDOMSettings::availableFamilies):
+        (KDOMSettings::isJavaEnabled):
+        (KDOMSettings::isJavaScriptEnabled):
+        (KDOMSettings::isJavaScriptDebugEnabled):
+        (KDOMSettings::isJavaScriptErrorReportingEnabled):
+        (KDOMSettings::isPluginsEnabled):
+        (KDOMSettings::isAdFiltered):
+        (KDOMSettings::isAdFilterEnabled):
+        (KDOMSettings::isHideAdsEnabled):
+        (KDOMSettings::addAdFilter):
+        (KDOMSettings::jsPopupBlockerPassivePopup):
+        (KDOMSettings::setJSPopupBlockerPassivePopup):
+        (KDOMSettings::jsErrorsEnabled):
+        (KDOMSettings::setJSErrorsEnabled):
+        (KDOMSettings::strToAdvice):
+        (KDOMSettings::splitDomainAdvice):
+        (KDOMSettings::adviceToStr):
+        (KDOMSettings::readDomainSettings):
+        (KDOMSettings::settingsToCSS):
+        (KDOMSettings::userStyleSheet):
+        * kdom/KDOMSettings.h:
+        (KDOM::KDOMSettings::):
+        * kdom/NamedNodeMap.cpp: Removed.
+        * kdom/NamedNodeMap.h: Removed.
+        * kdom/Namespace.h:
+        * kdom/Node.cpp: Removed.
+        * kdom/Node.h: Removed.
+        * kdom/NodeList.cpp: Removed.
+        * kdom/NodeList.h: Removed.
+        * kdom/Notation.cpp: Removed.
+        * kdom/Notation.h: Removed.
+        * kdom/ProcessingInstruction.cpp: Removed.
+        * kdom/ProcessingInstruction.h: Removed.
+        * kdom/Shared.cpp:
+        (Shared::Shared):
+        (Shared::deref):
+        * kdom/Shared.h:
+        (KDOM::KDOM_SAFE_SET):
+        * kdom/Text.cpp: Removed.
+        * kdom/Text.h: Removed.
+        * kdom/TreeShared.h:
+        (KDOM::TreeShared::TreeShared):
+        (KDOM::TreeShared::deref):
+        * kdom/TypeInfo.cpp: Removed.
+        * kdom/TypeInfo.h: Removed.
+        * kdom/backends/libxml/LibXMLParser.cpp:
+        (sax_get_entity):
+        (sax_notation_decl):
+        (sax_unparsed_entity):
+        (sax_start_doc):
+        (sax_end_doc):
+        (sax_end_element):
+        (sax_start_element_ns):
+        (sax_end_element_ns):
+        (sax_characters):
+        (sax_pi):
+        (sax_comment):
+        (sax_warning):
+        (sax_error):
+        (sax_fatal_error):
+        (sax_entity_decl):
+        (xmlMyExternalEntityLoader):
+        (LibXMLParser::LibXMLParser):
+        (LibXMLParser::syncParse):
+        (LibXMLParser::asyncParse):
+        (LibXMLParser::handleIncomingData):
+        (LibXMLParser::tryEndEntityRef):
+        * kdom/backends/libxml/LibXMLParser.h:
+        * kdom/bindings/DocParser.pm: Added.
+        * kdom/bindings/IDLCodeGenerator.pm: Added.
+        * kdom/bindings/IDLCodeGeneratorCpp.pm: Added.
+        * kdom/bindings/IDLCodeGeneratorJs.pm: Added.
+        * kdom/bindings/IDLParser.pm: Added.
+        * kdom/bindings/IDLStructure.pm: Added.
+        * kdom/bindings/idl/core/Attr.idl: Added.
+        * kdom/bindings/idl/core/CDATASection.idl: Added.
+        * kdom/bindings/idl/core/CharacterData.idl: Added.
+        * kdom/bindings/idl/core/Comment.idl: Added.
+        * kdom/bindings/idl/core/DOMConfiguration.idl: Added.
+        * kdom/bindings/idl/core/DOMError.idl: Added.
+        * kdom/bindings/idl/core/DOMErrorHandler.idl: Added.
+        * kdom/bindings/idl/core/DOMException.idl: Added.
+        * kdom/bindings/idl/core/DOMImplementation.idl: Added.
+        * kdom/bindings/idl/core/DOMImplementationList.idl: Added.
+        * kdom/bindings/idl/core/DOMImplementationSource.idl: Added.
+        * kdom/bindings/idl/core/DOMLocator.idl: Added.
+        * kdom/bindings/idl/core/DOMObject.idl: Added.
+        * kdom/bindings/idl/core/DOMString.idl: Added.
+        * kdom/bindings/idl/core/DOMStringList.idl: Added.
+        * kdom/bindings/idl/core/DOMUserData.idl: Added.
+        * kdom/bindings/idl/core/Document.idl: Added.
+        * kdom/bindings/idl/core/DocumentFragment.idl: Added.
+        * kdom/bindings/idl/core/DocumentType.idl: Added.
+        * kdom/bindings/idl/core/Element.idl: Added.
+        * kdom/bindings/idl/core/Entity.idl: Added.
+        * kdom/bindings/idl/core/EntityReference.idl: Added.
+        * kdom/bindings/idl/core/NameList.idl: Added.
+        * kdom/bindings/idl/core/NamedNodeMap.idl: Added.
+        * kdom/bindings/idl/core/Node.idl: Added.
+        * kdom/bindings/idl/core/NodeList.idl: Added.
+        * kdom/bindings/idl/core/Notation.idl: Added.
+        * kdom/bindings/idl/core/ProcessingInstruction.idl: Added.
+        * kdom/bindings/idl/core/Text.idl: Added.
+        * kdom/bindings/idl/core/TypeInfo.idl: Added.
+        * kdom/bindings/idl/core/UserDataHandler.idl: Added.
+        * kdom/bindings/idl/core/docs-core.xml: Added.
+        * kdom/bindings/idl/core/kdomdefs.idl: Added.
+        * kdom/bindings/idl/css/CSS2Properties.idl: Added.
+        * kdom/bindings/idl/css/CSSCharsetRule.idl: Added.
+        * kdom/bindings/idl/css/CSSFontFaceRule.idl: Added.
+        * kdom/bindings/idl/css/CSSImportRule.idl: Added.
+        * kdom/bindings/idl/css/CSSMediaRule.idl: Added.
+        * kdom/bindings/idl/css/CSSPageRule.idl: Added.
+        * kdom/bindings/idl/css/CSSPrimitiveValue.idl: Added.
+        * kdom/bindings/idl/css/CSSRule.idl: Added.
+        * kdom/bindings/idl/css/CSSRuleList.idl: Added.
+        * kdom/bindings/idl/css/CSSStyleDeclaration.idl: Added.
+        * kdom/bindings/idl/css/CSSStyleRule.idl: Added.
+        * kdom/bindings/idl/css/CSSStyleSheet.idl: Added.
+        * kdom/bindings/idl/css/CSSUnknownRule.idl: Added.
+        * kdom/bindings/idl/css/CSSValue.idl: Added.
+        * kdom/bindings/idl/css/CSSValueList.idl: Added.
+        * kdom/bindings/idl/css/Counter.idl: Added.
+        * kdom/bindings/idl/css/DocumentCSS.idl: Added.
+        * kdom/bindings/idl/css/ElementCSSInlineStyle.idl: Added.
+        * kdom/bindings/idl/css/RGBColor.idl: Added.
+        * kdom/bindings/idl/css/Rect.idl: Added.
+        * kdom/bindings/idl/css/ViewCSS.idl: Added.
+        * kdom/bindings/idl/css/kdomdefs.idl: Added.
+        * kdom/bindings/idl/events/DocumentEvent.idl: Added.
+        * kdom/bindings/idl/events/Event.idl: Added.
+        * kdom/bindings/idl/events/EventException.idl: Added.
+        * kdom/bindings/idl/events/EventListener.idl: Added.
+        * kdom/bindings/idl/events/EventTarget.idl: Added.
+        * kdom/bindings/idl/events/MouseEvent.idl: Added.
+        * kdom/bindings/idl/events/MutationEvent.idl: Added.
+        * kdom/bindings/idl/events/UIEvent.idl: Added.
+        * kdom/bindings/idl/events/kdomdefs.idl: Added.
+        * kdom/bindings/idl/range/DocumentRange.idl: Added.
+        * kdom/bindings/idl/range/Range.idl: Added.
+        * kdom/bindings/idl/range/RangeException.idl: Added.
+        * kdom/bindings/idl/range/kdomdefs.idl: Added.
+        * kdom/bindings/idl/stylesheets/DocumentStyle.idl: Added.
+        * kdom/bindings/idl/stylesheets/LinkStyle.idl: Added.
+        * kdom/bindings/idl/stylesheets/MediaList.idl: Added.
+        * kdom/bindings/idl/stylesheets/StyleSheet.idl: Added.
+        * kdom/bindings/idl/stylesheets/StyleSheetList.idl: Added.
+        * kdom/bindings/idl/stylesheets/kdomdefs.idl: Added.
+        * kdom/bindings/idl/traversal/DocumentTraversal.idl: Added.
+        * kdom/bindings/idl/traversal/NodeFilter.idl: Added.
+        * kdom/bindings/idl/traversal/NodeIterator.idl: Added.
+        * kdom/bindings/idl/traversal/TreeWalker.idl: Added.
+        * kdom/bindings/idl/traversal/kdomdefs.idl: Added.
+        * kdom/bindings/idl/views/AbstractView.idl: Added.
+        * kdom/bindings/idl/views/DocumentView.idl: Added.
+        * kdom/bindings/idl/views/kdomdefs.idl: Added.
+        * kdom/bindings/idl/xpath/XPathEvaluator.idl: Added.
+        * kdom/bindings/idl/xpath/XPathException.idl: Added.
+        * kdom/bindings/idl/xpath/XPathExpression.idl: Added.
+        * kdom/bindings/idl/xpath/XPathNSResolver.idl: Added.
+        * kdom/bindings/idl/xpath/XPathNamespace.idl: Added.
+        * kdom/bindings/idl/xpath/XPathResult.idl: Added.
+        * kdom/bindings/idl/xpath/kdomdefs.idl: Added.
+        * kdom/bindings/idl/xpointer/XPointerEvaluator.idl: Added.
+        * kdom/bindings/idl/xpointer/XPointerException.idl: Added.
+        * kdom/bindings/idl/xpointer/XPointerExpression.idl: Added.
+        * kdom/bindings/idl/xpointer/XPointerResult.idl: Added.
+        * kdom/bindings/idl/xpointer/kdomdefs.idl: Added.
+        * kdom/bindings/kdombinder.sh: Added.
+        * kdom/bindings/kdomidl.pl: Added.
+        * kdom/cache/KDOMCachedDocument.cpp:
+        (CachedDocument::~CachedDocument):
+        * kdom/cache/KDOMCachedDocument.h:
+        (KDOM::):
+        * kdom/cache/KDOMCachedImage.cpp:
+        (CachedImage::CachedImage):
+        (CachedImage::movieStatus):
+        (CachedImage::setShowAnimations):
+        (CachedImage::data):
+        * kdom/cache/KDOMCachedImage.h:
+        * kdom/cache/KDOMCachedObject.cpp:
+        (CachedObject::codecForBuffer):
+        * kdom/cache/KDOMCachedObject.h:
+        (KDOM::CachedObject::url):
+        * kdom/cache/KDOMCachedObjectClient.h:
+        (KDOM::CachedObjectClient::~CachedObjectClient):
+        * kdom/cache/KDOMCachedStyleSheet.cpp:
+        (CachedStyleSheet::ref):
+        (CachedStyleSheet::data):
+        (CachedStyleSheet::checkNotify):
+        * kdom/cache/KDOMLoader.cpp:
+        (DocumentLoader::requestImage):
+        (DocumentLoader::setShowAnimations):
+        * kdom/cache/KDOMLoader.h:
+        (KDOM::DocumentLoader::showAnimations):
+        * kdom/css/CSSCharsetRule.cpp: Removed.
+        * kdom/css/CSSCharsetRule.h: Removed.
+        * kdom/css/CSSFontFaceRule.cpp: Removed.
+        * kdom/css/CSSFontFaceRule.h: Removed.
+        * kdom/css/CSSHelper.h:
+        (KDOM::CSSHelper::unitTypeToString):
+        (KDOM::CSSHelper::stringForListStyleType):
+        * kdom/css/CSSImportRule.cpp: Removed.
+        * kdom/css/CSSImportRule.h: Removed.
+        * kdom/css/CSSMediaRule.cpp: Removed.
+        * kdom/css/CSSMediaRule.h: Removed.
+        * kdom/css/CSSPageRule.cpp: Removed.
+        * kdom/css/CSSPageRule.h: Removed.
+        * kdom/css/CSSPrimitiveValue.cpp: Removed.
+        * kdom/css/CSSPrimitiveValue.h: Removed.
+        * kdom/css/CSSRule.cpp: Removed.
+        * kdom/css/CSSRule.h: Removed.
+        * kdom/css/CSSRuleList.cpp: Removed.
+        * kdom/css/CSSRuleList.h: Removed.
+        * kdom/css/CSSStyleDeclaration.cpp: Removed.
+        * kdom/css/CSSStyleDeclaration.h: Removed.
+        * kdom/css/CSSStyleRule.cpp: Removed.
+        * kdom/css/CSSStyleRule.h: Removed.
+        * kdom/css/CSSStyleSheet.cpp: Removed.
+        * kdom/css/CSSStyleSheet.h: Removed.
+        * kdom/css/CSSUnknownRule.cpp: Removed.
+        * kdom/css/CSSUnknownRule.h: Removed.
+        * kdom/css/CSSValue.cpp: Removed.
+        * kdom/css/CSSValue.h: Removed.
+        * kdom/css/CSSValueList.cpp: Removed.
+        * kdom/css/CSSValueList.h: Removed.
+        * kdom/css/Counter.cpp: Removed.
+        * kdom/css/Counter.h: Removed.
+        * kdom/css/DOMImplementationCSS.cpp: Removed.
+        * kdom/css/DOMImplementationCSS.h: Removed.
+        * kdom/css/DocumentCSS.cpp: Removed.
+        * kdom/css/DocumentCSS.h: Removed.
+        * kdom/css/DocumentStyle.cpp: Removed.
+        * kdom/css/DocumentStyle.h: Removed.
+        * kdom/css/LinkStyle.cpp: Removed.
+        * kdom/css/LinkStyle.h: Removed.
+        * kdom/css/MediaList.cpp: Removed.
+        * kdom/css/MediaList.h: Removed.
+        * kdom/css/RGBColor.cpp: Removed.
+        * kdom/css/RGBColor.h: Removed.
+        * kdom/css/Rect.cpp: Removed.
+        * kdom/css/Rect.h: Removed.
+        * kdom/css/StyleSheet.cpp: Removed.
+        * kdom/css/StyleSheet.h: Removed.
+        * kdom/css/StyleSheetList.cpp: Removed.
+        * kdom/css/StyleSheetList.h: Removed.
+        * kdom/css/ViewCSS.cpp: Removed.
+        * kdom/css/ViewCSS.h: Removed.
+        * kdom/css/impl/CSSCharsetRuleImpl.cpp:
+        (CSSCharsetRuleImpl::CSSCharsetRuleImpl):
+        (CSSCharsetRuleImpl::~CSSCharsetRuleImpl):
+        (CSSCharsetRuleImpl::encoding):
+        (CSSCharsetRuleImpl::setEncoding):
+        * kdom/css/impl/CSSCharsetRuleImpl.h:
+        * kdom/css/impl/CSSImageValueImpl.cpp:
+        (CSSImageValueImpl::CSSImageValueImpl):
+        * kdom/css/impl/CSSImportRuleImpl.cpp:
+        (CSSImportRuleImpl::CSSImportRuleImpl):
+        (CSSImportRuleImpl::~CSSImportRuleImpl):
+        (CSSImportRuleImpl::href):
+        (CSSImportRuleImpl::setStyleSheet):
+        (CSSImportRuleImpl::error):
+        (CSSImportRuleImpl::init):
+        * kdom/css/impl/CSSImportRuleImpl.h:
+        * kdom/css/impl/CSSMediaRuleImpl.cpp:
+        (CSSMediaRuleImpl::CSSMediaRuleImpl):
+        (CSSMediaRuleImpl::insertRule):
+        * kdom/css/impl/CSSMediaRuleImpl.h:
+        * kdom/css/impl/CSSPageRuleImpl.cpp:
+        (CSSPageRuleImpl::setSelectorText):
+        (CSSPageRuleImpl::selectorText):
+        * kdom/css/impl/CSSPageRuleImpl.h:
+        * kdom/css/impl/CSSPrimitiveValueImpl.cpp:
+        (CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (CSSPrimitiveValueImpl::setStringValue):
+        (CSSPrimitiveValueImpl::getDOMStringValue):
+        (CSSPrimitiveValueImpl::getQRGBColorValue):
+        (CSSPrimitiveValueImpl::getRGBColorValue):
+        (CSSPrimitiveValueImpl::computeLength):
+        (CSSPrimitiveValueImpl::setCssText):
+        (CSSPrimitiveValueImpl::cssText):
+        (FontFamilyValueImpl::FontFamilyValueImpl):
+        * kdom/css/impl/CSSPrimitiveValueImpl.h:
+        * kdom/css/impl/CSSRuleImpl.cpp:
+        (CSSRuleImpl::cssText):
+        (CSSRuleImpl::setCssText):
+        * kdom/css/impl/CSSRuleImpl.h:
+        * kdom/css/impl/CSSRuleListImpl.cpp:
+        (CSSRuleListImpl::CSSRuleListImpl):
+        * kdom/css/impl/CSSStyleDeclarationImpl.cpp:
+        (CSSStyleDeclarationImpl::cssText):
+        (CSSStyleDeclarationImpl::setCssText):
+        (CSSStyleDeclarationImpl::get4Values):
+        (CSSStyleDeclarationImpl::getShortHandValue):
+        (CSSStyleDeclarationImpl::getPropertyValue):
+        (CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (CSSStyleDeclarationImpl::removeProperty):
+        (CSSStyleDeclarationImpl::getPropertyPriority):
+        (CSSStyleDeclarationImpl::setProperty):
+        (CSSStyleDeclarationImpl::setLengthProperty):
+        (CSSStyleDeclarationImpl::length):
+        (CSSStyleDeclarationImpl::item):
+        (CSSStyleDeclarationImpl::parseString):
+        (CSSProperty::cssText):
+        * kdom/css/impl/CSSStyleDeclarationImpl.h:
+        * kdom/css/impl/CSSStyleRuleImpl.cpp:
+        (CSSStyleRuleImpl::selectorText):
+        (CSSStyleRuleImpl::setSelectorText):
+        * kdom/css/impl/CSSStyleRuleImpl.h:
+        * kdom/css/impl/CSSStyleSelector.cpp:
+        (CSSStyleSelector::CSSStyleSelector):
+        (CSSStyleSelector::init):
+        (CSSStyleSelector::~CSSStyleSelector):
+        (CSSStyleSelector::addSheet):
+        (CSSStyleSelector::computeFontSizesFor):
+        (CSSStyleSelector::styleForElement):
+        (checkPseudoState):
+        (matchNth):
+        (CSSStyleSelector::checkOneSelector):
+        (CSSStyleSelectorList::append):
+        (CSSStyleSelector::applyRule):
+        (CSSStyleSelector::getLangAttribute):
+        * kdom/css/impl/CSSStyleSelector.h:
+        * kdom/css/impl/CSSStyleSheetImpl.cpp:
+        (CSSStyleSheetImpl::CSSStyleSheetImpl):
+        (CSSStyleSheetImpl::type):
+        (CSSStyleSheetImpl::cssRules):
+        (CSSStyleSheetImpl::insertRule):
+        (CSSStyleSheetImpl::addNamespace):
+        (CSSStyleSheetImpl::determineNamespace):
+        (CSSStyleSheetImpl::parseString):
+        * kdom/css/impl/CSSStyleSheetImpl.h:
+        * kdom/css/impl/CSSValueImpl.cpp:
+        (CSSValueImpl::setCssText):
+        (CSSInheritedValueImpl::cssText):
+        (CSSInitialValueImpl::cssText):
+        (FontValueImpl::cssText):
+        (QuotesValueImpl::cssText):
+        (ShadowValueImpl::cssText):
+        (CounterActImpl::CounterActImpl):
+        (CounterActImpl::~CounterActImpl):
+        (CounterActImpl::cssText):
+        (CounterActImpl::counter):
+        * kdom/css/impl/CSSValueImpl.h:
+        * kdom/css/impl/CSSValueListImpl.cpp:
+        (CSSValueListImpl::cssText):
+        (CSSValueListImpl::setCssText):
+        * kdom/css/impl/CSSValueListImpl.h:
+        * kdom/css/impl/CounterImpl.cpp:
+        (CounterImpl::CounterImpl):
+        (CounterImpl::~CounterImpl):
+        (CounterImpl::identifier):
+        (CounterImpl::setIdentifier):
+        (CounterImpl::listStyleInt):
+        (CounterImpl::listStyle):
+        (CounterImpl::separator):
+        (CounterImpl::setSeparator):
+        * kdom/css/impl/CounterImpl.h:
+        * kdom/css/impl/DocumentCSSImpl.cpp: Added.
+        (DocumentCSSImpl::DocumentCSSImpl):
+        (DocumentCSSImpl::~DocumentCSSImpl):
+        (DocumentCSSImpl::getOverrideStyle):
+        * kdom/css/impl/DocumentCSSImpl.h: Added.
+        * kdom/css/impl/Font.cpp:
+        (Font::operator==):
+        (Font::update):
+        * kdom/css/impl/Font.h:
+        * kdom/css/impl/KDOMCSSParser.cpp:
+        (KDOMCSSValueList::~KDOMCSSValueList):
+        (CSSParser::~CSSParser):
+        (CSSParser::parseSheet):
+        (CSSParser::parseRule):
+        (CSSParser::parseValue):
+        (CSSParser::parseDeclaration):
+        (CSSParser::parseCounter):
+        (CSSParser::parseContent):
+        (ShadowParseContext::commitLength):
+        * kdom/css/impl/KDOMCSSParser.h:
+        (KDOM::domString):
+        (KDOM::CSSParser::hasProperties):
+        * kdom/css/impl/MediaListImpl.cpp:
+        (MediaListImpl::MediaListImpl):
+        (MediaListImpl::mediaText):
+        (MediaListImpl::setMediaText):
+        (MediaListImpl::item):
+        (MediaListImpl::deleteMedium):
+        (MediaListImpl::appendMedium):
+        (MediaListImpl::contains):
+        * kdom/css/impl/MediaListImpl.h:
+        * kdom/css/impl/RGBColorImpl.cpp:
+        (RGBColorImpl::RGBColorImpl):
+        * kdom/css/impl/RectImpl.cpp:
+        (RectImpl::RectImpl):
+        * kdom/css/impl/RenderStyle.cpp:
+        (RenderStyle::RenderStyle):
+        (hasCounter):
+        (RenderStyle::hasCounterReset):
+        (RenderStyle::hasCounterIncrement):
+        (readCounter):
+        (RenderStyle::counterReset):
+        (RenderStyle::counterIncrement):
+        * kdom/css/impl/RenderStyle.h:
+        (KDOM::RenderStyle::RenderStyle):
+        * kdom/css/impl/RenderStyleDefs.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        (StyleBoxData::StyleBoxData):
+        (StyleVisualData::StyleVisualData):
+        (StyleBackgroundData::StyleBackgroundData):
+        (StyleMarqueeData::StyleMarqueeData):
+        (StyleCSS3NonInheritedData::StyleCSS3NonInheritedData):
+        (StyleCSS3InheritedData::StyleCSS3InheritedData):
+        (StyleInheritedData::StyleInheritedData):
+        * kdom/css/impl/RenderStyleDefs.h:
+        (KDOM::BorderData::BorderData):
+        * kdom/css/impl/StyleBaseImpl.cpp:
+        (StyleBaseImpl::StyleBaseImpl):
+        (StyleBaseImpl::parseString):
+        (StyleBaseImpl::baseURL):
+        (CSSSelector::CSSSelector):
+        (CSSSelector::~CSSSelector):
+        (CSSSelector::print):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::operator==):
+        (CSSSelector::selectorText):
+        * kdom/css/impl/StyleBaseImpl.h:
+        (KDOM::CSSNamespace::CSSNamespace):
+        (KDOM::CSSNamespace::~CSSNamespace):
+        (KDOM::CSSNamespace::uri):
+        (KDOM::CSSNamespace::prefix):
+        (KDOM::CSSNamespace::namespaceForPrefix):
+        * kdom/css/impl/StyleSheetImpl.cpp:
+        (StyleSheetImpl::StyleSheetImpl):
+        (StyleSheetImpl::~StyleSheetImpl):
+        (StyleSheetImpl::href):
+        (StyleSheetImpl::title):
+        (StyleSheetImpl::setTitle):
+        * kdom/css/impl/StyleSheetImpl.h:
+        (KDOM::StyleSheetImpl::type):
+        * kdom/css/impl/StyleSheetListImpl.cpp:
+        (StyleSheetListImpl::StyleSheetListImpl):
+        * kdom/css/impl/kdomparsercss.y:
+        * kdom/css/impl/tokenizer.cpp:
+        * kdom/data/CSSConstants.h: Removed.
+        * kdom/data/DOMConstants.h: Removed.
+        * kdom/data/EcmaConstants.h: Removed.
+        * kdom/data/EventsConstants.h: Removed.
+        * kdom/data/LSConstants.h: Removed.
+        * kdom/data/RangeConstants.h: Removed.
+        * kdom/data/TraversalConstants.h: Removed.
+        * kdom/data/ViewConstants.h: Removed.
+        * kdom/data/XPathConstants.h: Removed.
+        * kdom/data/generateddata.cpp: Removed.
+        * kdom/ecma/Constructors.cpp: Removed.
+        * kdom/ecma/Constructors.h: Removed.
+        * kdom/ecma/DOMBridge.h:
+        (KDOM::DOMBridge::DOMBridge):
+        (KDOM::DOMBridge::wrapper):
+        (KDOM::DOMBridge::get):
+        (KDOM::DOMBridge::hasProperty):
+        (KDOM::DOMBridge::classInfo):
+        (KDOM::DOMRWBridge::DOMRWBridge):
+        (KDOM::DOMRWBridge::put):
+        * kdom/ecma/DOMLookup.h:
+        * kdom/ecma/Ecma.cpp:
+        (Ecma::Private::Private):
+        (Ecma::setup):
+        (Ecma::setupDocument):
+        (Ecma::ecmaListenerToObject):
+        (Ecma::createEventListener):
+        (Ecma::inheritedGetDOMNode):
+        (Ecma::inheritedGetDOMEvent):
+        (Ecma::inheritedGetDOMCSSRule):
+        (Ecma::inheritedGetDOMCSSValue):
+        (KDOM::getDOMNode):
+        (KDOM::getDOMEvent):
+        (KDOM::getDOMCSSRule):
+        (KDOM::getDOMCSSValue):
+        (KDOM::toDOMString):
+        (KDOM::getDOMString):
+        * kdom/ecma/Ecma.h:
+        (KDOM::ecma_cast):
+        (KDOM::safe_cache):
+        * kdom/ecma/GlobalObject.cpp:
+        (KDOM::):
+        (GlobalObject::get):
+        (GlobalObject::put):
+        (GlobalObjectFunc::callAsFunction):
+        (ScheduledAction::execute):
+        * kdom/ecma/GlobalObject.h:
+        (KDOM::GlobalObject::):
+        * kdom/ecma/ScriptInterpreter.cpp:
+        * kdom/ecma/ScriptInterpreter.h:
+        (KDOM::cacheDOMObject):
+        * kdom/events/DocumentEvent.cpp: Removed.
+        * kdom/events/DocumentEvent.h: Removed.
+        * kdom/events/Event.cpp: Removed.
+        * kdom/events/Event.h: Removed.
+        * kdom/events/EventException.cpp: Removed.
+        * kdom/events/EventException.h: Removed.
+        * kdom/events/EventListener.cpp: Removed.
+        * kdom/events/EventListener.h: Removed.
+        * kdom/events/EventTarget.cpp: Removed.
+        * kdom/events/EventTarget.h: Removed.
+        * kdom/events/KeyboardEvent.cpp: Removed.
+        * kdom/events/KeyboardEvent.h: Removed.
+        * kdom/events/MouseEvent.cpp: Removed.
+        * kdom/events/MouseEvent.h: Removed.
+        * kdom/events/MutationEvent.cpp: Removed.
+        * kdom/events/MutationEvent.h: Removed.
+        * kdom/events/UIEvent.cpp: Removed.
+        * kdom/events/UIEvent.h: Removed.
+        * kdom/events/impl/DocumentEventImpl.cpp:
+        (DocumentEventImpl::createEvent):
+        * kdom/events/impl/DocumentEventImpl.h:
+        * kdom/events/impl/EventExceptionImpl.cpp:
+        (EventExceptionImpl::EventExceptionImpl):
+        * kdom/events/impl/EventImpl.cpp:
+        (EventImpl::EventImpl):
+        (EventImpl::~EventImpl):
+        (EventImpl::type):
+        (EventImpl::initEvent):
+        * kdom/events/impl/EventImpl.h:
+        * kdom/events/impl/EventListenerImpl.cpp:
+        (EventListenerImpl::EventListenerImpl):
+        (EventListenerImpl::~EventListenerImpl):
+        (EventListenerImpl::handleEvent):
+        (EventListenerImpl::internalType):
+        (EventListenerImpl::initListener):
+        * kdom/events/impl/EventListenerImpl.h:
+        * kdom/events/impl/EventTargetImpl.cpp:
+        (EventTargetImpl::EventTargetImpl):
+        (EventTargetImpl::addEventListener):
+        (EventTargetImpl::removeEventListener):
+        (EventTargetImpl::dispatchEvent):
+        (EventTargetImpl::handleLocalEvents):
+        * kdom/events/impl/EventTargetImpl.h:
+        * kdom/events/impl/KeyboardEventImpl.cpp:
+        (KeyboardEventImpl::~KeyboardEventImpl):
+        (KeyboardEventImpl::initKeyboardEvent):
+        (KeyboardEventImpl::getModifierState):
+        * kdom/events/impl/KeyboardEventImpl.h:
+        (KDOM::KeyboardEventImpl::keyIdentifier):
+        * kdom/events/impl/MouseEventImpl.cpp:
+        (MouseEventImpl::initMouseEvent):
+        * kdom/events/impl/MouseEventImpl.h:
+        * kdom/events/impl/MutationEventImpl.cpp:
+        (MutationEventImpl::MutationEventImpl):
+        (MutationEventImpl::~MutationEventImpl):
+        (MutationEventImpl::prevValue):
+        (MutationEventImpl::newValue):
+        (MutationEventImpl::attrName):
+        (MutationEventImpl::initMutationEvent):
+        * kdom/events/impl/MutationEventImpl.h:
+        * kdom/events/impl/RegisteredEventListener.cpp:
+        (RegisteredEventListener::RegisteredEventListener):
+        (RegisteredEventListener::~RegisteredEventListener):
+        (RegisteredEventListener::operator==):
+        (RegisteredEventListener::type):
+        * kdom/events/impl/RegisteredEventListener.h:
+        * kdom/events/impl/UIEventImpl.cpp:
+        (UIEventImpl::initUIEvent):
+        * kdom/events/impl/UIEventImpl.h:
+        * kdom/impl/AttrImpl.cpp:
+        (AttrImpl::AttrImpl):
+        (AttrImpl::nodeName):
+        (AttrImpl::localName):
+        (AttrImpl::nodeValue):
+        (AttrImpl::setNodeValue):
+        (AttrImpl::value):
+        (AttrImpl::val):
+        (AttrImpl::name):
+        (AttrImpl::namespaceURI):
+        (AttrImpl::prefix):
+        (AttrImpl::setPrefix):
+        (AttrImpl::cloneNode):
+        (AttrImpl::setValue):
+        (AttributeImpl::setValue):
+        (AttributeImpl::createAttr):
+        * kdom/impl/AttrImpl.h:
+        (KDOM::AttributeImpl::value):
+        (KDOM::AttributeImpl::namespaceURI):
+        (KDOM::AttributeImpl::prefix):
+        (KDOM::AttributeImpl::localName):
+        (KDOM::AttributeImpl::name):
+        * kdom/impl/CDATASectionImpl.cpp:
+        (CDATASectionImpl::CDATASectionImpl):
+        (CDATASectionImpl::nodeName):
+        (CDATASectionImpl::cloneNode):
+        * kdom/impl/CDATASectionImpl.h:
+        * kdom/impl/CDFInterface.cpp:
+        (CDFInterface::renderStyle):
+        (CDFInterface::globalObject):
+        * kdom/impl/CDFInterface.h:
+        * kdom/impl/CharacterDataImpl.cpp:
+        (CharacterDataImpl::CharacterDataImpl):
+        (CharacterDataImpl::textContent):
+        (CharacterDataImpl::nodeValue):
+        (CharacterDataImpl::setNodeValue):
+        (CharacterDataImpl::appendData):
+        (CharacterDataImpl::insertData):
+        (CharacterDataImpl::deleteData):
+        (CharacterDataImpl::replaceData):
+        (CharacterDataImpl::setData):
+        (CharacterDataImpl::dispatchModifiedEvent):
+        * kdom/impl/CharacterDataImpl.h:
+        * kdom/impl/CommentImpl.cpp:
+        (CommentImpl::CommentImpl):
+        (CommentImpl::nodeName):
+        (CommentImpl::cloneNode):
+        * kdom/impl/CommentImpl.h:
+        * kdom/impl/DOMConfigurationImpl.cpp:
+        (DOMConfigurationImpl::DOMConfigurationImpl):
+        (DOMConfigurationImpl::~DOMConfigurationImpl):
+        (DOMConfigurationImpl::setParameter):
+        (DOMConfigurationImpl::getParameter):
+        (DOMConfigurationImpl::canSetParameter):
+        (DOMConfigurationImpl::parameterNames):
+        (DOMConfigurationImpl::errHandler):
+        (DOMConfigurationImpl::normalizeCharacters):
+        * kdom/impl/DOMConfigurationImpl.h:
+        * kdom/impl/DOMErrorHandlerImpl.cpp:
+        (DOMErrorHandlerImpl::DOMErrorHandlerImpl):
+        (DOMErrorHandlerImpl::handleError):
+        * kdom/impl/DOMErrorImpl.cpp:
+        (DOMErrorImpl::DOMErrorImpl):
+        (DOMErrorImpl::~DOMErrorImpl):
+        (DOMErrorImpl::setMessage):
+        (DOMErrorImpl::setType):
+        (DOMErrorImpl::relatedException):
+        (DOMErrorImpl::setRelatedException):
+        (DOMErrorImpl::relatedData):
+        (DOMErrorImpl::setRelatedData):
+        (DOMErrorImpl::location):
+        * kdom/impl/DOMErrorImpl.h:
+        (KDOM::):
+        * kdom/impl/DOMExceptionImpl.cpp:
+        (DOMExceptionImpl::DOMExceptionImpl):
+        * kdom/impl/DOMImplementationImpl.cpp:
+        (DOMImplementationImpl::hasFeature):
+        (DOMImplementationImpl::getFeature):
+        (DOMImplementationImpl::createDocumentType):
+        (DOMImplementationImpl::createDocument):
+        (DOMImplementationImpl::createCSSStyleSheet):
+        (DOMImplementationImpl::createLSParser):
+        (DOMImplementationImpl::defaultDocumentType):
+        (DOMImplementationImpl::typeToId):
+        (DOMImplementationImpl::idToType):
+        (DOMImplementationImpl::createCDFInterface):
+        * kdom/impl/DOMImplementationImpl.h:
+        * kdom/impl/DOMList.h:
+        (KDOM::DOMList::DOMList):
+        (KDOM::DOMList::contains):
+        * kdom/impl/DOMLocatorImpl.cpp:
+        (DOMLocatorImpl::DOMLocatorImpl):
+        (DOMLocatorImpl::setRelatedNode):
+        (DOMLocatorImpl::setUri):
+        * kdom/impl/DOMLocatorImpl.h:
+        * kdom/impl/DOMObjectImpl.cpp: Added.
+        (DOMObjectImpl::DOMObjectImpl):
+        (DOMObjectImpl::~DOMObjectImpl):
+        (DOMObjectImpl::setObject):
+        (DOMObjectImpl::userData):
+        * kdom/impl/DOMObjectImpl.h: Added.
+        * kdom/impl/DOMStringImpl.cpp:
+        (DOMStringImpl::DOMStringImpl):
+        (DOMStringImpl::append):
+        (DOMStringImpl::isEmpty):
+        (DOMStringImpl::string):
+        * kdom/impl/DOMStringImpl.h:
+        * kdom/impl/DOMUserDataImpl.cpp:
+        (DOMUserDataImpl::DOMUserDataImpl):
+        * kdom/impl/DOMUserDataImpl.h:
+        * kdom/impl/DocumentFragmentImpl.cpp:
+        (DocumentFragmentImpl::DocumentFragmentImpl):
+        (DocumentFragmentImpl::nodeName):
+        (DocumentFragmentImpl::cloneNode):
+        * kdom/impl/DocumentFragmentImpl.h:
+        * kdom/impl/DocumentImpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::setDocType):
+        (DocumentImpl::nodeName):
+        (DocumentImpl::textContent):
+        (DocumentImpl::createElement):
+        (DocumentImpl::createElementNS):
+        (DocumentImpl::createAttribute):
+        (DocumentImpl::createAttributeNS):
+        (DocumentImpl::createDocumentFragment):
+        (DocumentImpl::createComment):
+        (DocumentImpl::createCDATASection):
+        (DocumentImpl::createEntityReference):
+        (DocumentImpl::createProcessingInstruction):
+        (DocumentImpl::createTextNode):
+        (DocumentImpl::cloneNode):
+        (DocumentImpl::addListenerType):
+        (DocumentImpl::removeListenerType):
+        (DocumentImpl::hasListenerType):
+        (DocumentImpl::elementSheet):
+        (DocumentImpl::getElementsByTagName):
+        (DocumentImpl::getElementsByTagNameNS):
+        (DocumentImpl::importNode):
+        (DocumentImpl::renameNode):
+        (DocumentImpl::normalizeNode):
+        (DocumentImpl::getElementById):
+        (DocumentImpl::xmlStandalone):
+        (DocumentImpl::setXmlStandalone):
+        (DocumentImpl::inputEncoding):
+        (DocumentImpl::setInputEncoding):
+        (DocumentImpl::xmlEncoding):
+        (DocumentImpl::setXmlEncoding):
+        (DocumentImpl::adoptNode):
+        (DocumentImpl::xmlVersion):
+        (DocumentImpl::setXmlVersion):
+        (DocumentImpl::getId):
+        (DocumentImpl::getName):
+        (DocumentImpl::defaultNS):
+        (DocumentImpl::createCSSStyleSheet):
+        (DocumentImpl::documentURI):
+        (DocumentImpl::setDocumentURI):
+        (DocumentImpl::setHoverNode):
+        (DocumentImpl::kdomDocumentType):
+        * kdom/impl/DocumentImpl.h:
+        * kdom/impl/DocumentTypeImpl.cpp:
+        (DocumentTypeImpl::DocumentTypeImpl):
+        (DocumentTypeImpl::~DocumentTypeImpl):
+        (DocumentTypeImpl::nodeName):
+        (DocumentTypeImpl::textContent):
+        (DocumentTypeImpl::name):
+        (DocumentTypeImpl::publicId):
+        (DocumentTypeImpl::systemId):
+        (DocumentTypeImpl::internalSubset):
+        (DocumentTypeImpl::cloneNode):
+        (DocumentTypeImpl::entities):
+        (DocumentTypeImpl::notations):
+        (DocumentTypeImpl::setName):
+        (DocumentTypeImpl::setPublicId):
+        (DocumentTypeImpl::setSystemId):
+        * kdom/impl/DocumentTypeImpl.h:
+        * kdom/impl/ElementImpl.cpp:
+        (ElementImpl::ElementImpl):
+        (ElementImpl::nodeName):
+        (ElementImpl::prefix):
+        (ElementImpl::setPrefix):
+        (ElementImpl::hasAttribute):
+        (ElementImpl::hasAttributeNS):
+        (ElementImpl::getAttribute):
+        (ElementImpl::getAttributeNS):
+        (ElementImpl::removeAttribute):
+        (ElementImpl::removeAttributeNS):
+        (ElementImpl::getElementsByTagName):
+        (ElementImpl::setAttributeNS):
+        (ElementImpl::getAttributeNode):
+        (ElementImpl::getAttributeNodeNS):
+        (ElementImpl::getElementsByTagNameNS):
+        (ElementImpl::cloneNode):
+        (ElementImpl::getIdAttribute):
+        (ElementImpl::namespaceURI):
+        (ElementImpl::setIdAttribute):
+        (ElementImpl::setIdAttributeNS):
+        (ElementImpl::setIdAttributeNode):
+        (ElementImpl::parseAttribute):
+        * kdom/impl/ElementImpl.h:
+        * kdom/impl/EntityImpl.cpp:
+        (EntityImpl::EntityImpl):
+        (EntityImpl::publicId):
+        (EntityImpl::systemId):
+        (EntityImpl::notationName):
+        (EntityImpl::inputEncoding):
+        (EntityImpl::xmlEncoding):
+        (EntityImpl::xmlVersion):
+        (EntityImpl::nodeName):
+        (EntityImpl::cloneNode):
+        * kdom/impl/EntityImpl.h:
+        * kdom/impl/EntityReferenceImpl.cpp:
+        (EntityReferenceImpl::EntityReferenceImpl):
+        (EntityReferenceImpl::nodeName):
+        (EntityReferenceImpl::cloneNode):
+        * kdom/impl/EntityReferenceImpl.h:
+        * kdom/impl/NamedAttrMapImpl.cpp:
+        (NamedAttrMapImpl::getNamedItem):
+        (NamedAttrMapImpl::removeNamedItem):
+        (NamedAttrMapImpl::setNamedItem):
+        (NamedAttrMapImpl::getValue):
+        (NamedAttrMapImpl::setValue):
+        (NamedAttrMapImpl::removeAttr):
+        (NamedAttrMapImpl::clone):
+        (NamedAttrMapImpl::dispatchAttrMutationEvent):
+        (NamedAttrMapImpl::dispatchSubtreeModifiedEvent):
+        (NamedAttrMapImpl::valueAt):
+        (NamedAttrMapImpl::lookupAttribute):
+        * kdom/impl/NamedAttrMapImpl.h:
+        * kdom/impl/NamedNodeMapImpl.cpp:
+        (NamedNodeMapImpl::NamedNodeMapImpl):
+        (RONamedNodeMapImpl::RONamedNodeMapImpl):
+        (RONamedNodeMapImpl::isReadOnly):
+        (RONamedNodeMapImpl::clone):
+        (RONamedNodeMapImpl::getNamedItem):
+        (RONamedNodeMapImpl::setNamedItem):
+        * kdom/impl/NamedNodeMapImpl.h:
+        * kdom/impl/NodeImpl.cpp:
+        (NodeImpl::NodeImpl):
+        (NodeImpl::~NodeImpl):
+        (NodeImpl::localName):
+        (NodeImpl::nodeName):
+        (NodeImpl::nodeValue):
+        (NodeImpl::setNodeValue):
+        (NodeImpl::namespaceURI):
+        (NodeImpl::prefix):
+        (NodeImpl::setPrefix):
+        (NodeImpl::isSupported):
+        (NodeImpl::textContent):
+        (NodeImpl::setTextContent):
+        (NodeImpl::isReadOnly):
+        (NodeImpl::cloneNode):
+        (NodeImpl::ownerDocument):
+        (NodeImpl::normalize):
+        (NodeImpl::toString):
+        (NodeImpl::setOwnerDocument):
+        (NodeBaseImpl::NodeBaseImpl):
+        (NodeBaseImpl::replaceChild):
+        (NodeBaseImpl::checkAddChild):
+        (NodeBaseImpl::checkDocumentAddChild):
+        (NodeBaseImpl::cloneChildNodes):
+        (NodeBaseImpl::removeChildren):
+        (NodeImpl::isDefaultNamespace):
+        (NodeImpl::lookupNamespaceURI):
+        (NodeImpl::lookupNamespacePrefix):
+        (NodeImpl::lookupPrefix):
+        (NodeImpl::dispatchSubtreeModifiedEvent):
+        (NodeImpl::dispatchChildRemovalEvents):
+        (NodeImpl::dispatchChildInsertedEvents):
+        (NodeImpl::baseURI):
+        (NodeImpl::baseKURI):
+        (NodeImpl::compareDocumentPosition):
+        * kdom/impl/NodeImpl.h:
+        (KDOM::DocumentPtr::DocumentPtr):
+        (KDOM::DocumentPtr::document):
+        (KDOM::NodeImpl::docPtr):
+        * kdom/impl/NodeListImpl.cpp:
+        (NodeListImpl::NodeListImpl):
+        (NodeListImpl::~NodeListImpl):
+        (NodeListImpl::index):
+        * kdom/impl/NodeListImpl.h:
+        * kdom/impl/NotationImpl.cpp:
+        (NotationImpl::NotationImpl):
+        (NotationImpl::nodeName):
+        (NotationImpl::textContent):
+        (NotationImpl::publicId):
+        (NotationImpl::systemId):
+        (NotationImpl::cloneNode):
+        * kdom/impl/NotationImpl.h:
+        * kdom/impl/ProcessingInstructionImpl.cpp:
+        (ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (ProcessingInstructionImpl::nodeName):
+        (ProcessingInstructionImpl::target):
+        (ProcessingInstructionImpl::nodeValue):
+        (ProcessingInstructionImpl::setNodeValue):
+        (ProcessingInstructionImpl::textContent):
+        (ProcessingInstructionImpl::data):
+        (ProcessingInstructionImpl::setData):
+        (ProcessingInstructionImpl::cloneNode):
+        (ProcessingInstructionImpl::localHref):
+        (ProcessingInstructionImpl::checkStyleSheet):
+        (ProcessingInstructionImpl::setStyleSheet):
+        * kdom/impl/ProcessingInstructionImpl.h:
+        * kdom/impl/TagNodeListImpl.cpp:
+        (TagNodeListImpl::TagNodeListImpl):
+        (TagNodeListImpl::~TagNodeListImpl):
+        (TagNodeListImpl::check):
+        * kdom/impl/TagNodeListImpl.h:
+        * kdom/impl/TextImpl.cpp:
+        (TextImpl::TextImpl):
+        (TextImpl::nodeName):
+        (TextImpl::cloneNode):
+        (TextImpl::splitText):
+        (TextImpl::isElementContentWhitespace):
+        (TextImpl::wholeText):
+        (TextImpl::replaceWholeText):
+        (TextImpl::logicallyAdjacentTextNodes):
+        * kdom/impl/TextImpl.h:
+        * kdom/impl/TypeInfoImpl.cpp:
+        (TypeInfoImpl::TypeInfoImpl):
+        (TypeInfoImpl::typeName):
+        (TypeInfoImpl::typeNamespace):
+        (TypeInfoImpl::isDerivedFrom):
+        * kdom/impl/TypeInfoImpl.h:
+        * kdom/impl/XMLElementImpl.cpp:
+        (XMLElementImpl::XMLElementImpl):
+        (XMLElementImpl::localName):
+        (XMLElementImpl::tagName):
+        * kdom/impl/XMLElementImpl.h:
+        * kdom/kdom.h:
+        (KDOM::):
+        * kdom/ls/DOMImplementationLS.cpp: Removed.
+        * kdom/ls/DOMImplementationLS.h: Removed.
+        * kdom/ls/LSException.cpp: Removed.
+        * kdom/ls/LSException.h: Removed.
+        * kdom/ls/LSInput.cpp: Removed.
+        * kdom/ls/LSInput.h: Removed.
+        * kdom/ls/LSOutput.cpp: Removed.
+        * kdom/ls/LSOutput.h: Removed.
+        * kdom/ls/LSParser.cpp: Removed.
+        * kdom/ls/LSParser.h: Removed.
+        * kdom/ls/LSParserFilter.cpp: Removed.
+        * kdom/ls/LSParserFilter.h: Removed.
+        * kdom/ls/LSResourceResolver.cpp: Removed.
+        * kdom/ls/LSResourceResolver.h: Removed.
+        * kdom/ls/LSSerializer.cpp: Removed.
+        * kdom/ls/LSSerializer.h: Removed.
+        * kdom/ls/LSSerializerFilter.cpp: Removed.
+        * kdom/ls/LSSerializerFilter.h: Removed.
+        * kdom/ls/impl/LSExceptionImpl.cpp:
+        (LSExceptionImpl::LSExceptionImpl):
+        * kdom/ls/impl/LSInputImpl.cpp:
+        (LSInputImpl::LSInputImpl):
+        (LSInputImpl::byteStream):
+        (LSInputImpl::setByteStream):
+        (LSInputImpl::stringData):
+        (LSInputImpl::setStringData):
+        (LSInputImpl::systemId):
+        (LSInputImpl::setSystemId):
+        (LSInputImpl::publicId):
+        (LSInputImpl::setPublicId):
+        (LSInputImpl::baseURI):
+        (LSInputImpl::setBaseURI):
+        (LSInputImpl::encoding):
+        (LSInputImpl::setEncoding):
+        * kdom/ls/impl/LSInputImpl.h:
+        * kdom/ls/impl/LSOutputImpl.cpp:
+        (LSOutputImpl::LSOutputImpl):
+        (LSOutputImpl::systemId):
+        (LSOutputImpl::setSystemId):
+        (LSOutputImpl::encoding):
+        (LSOutputImpl::setEncoding):
+        * kdom/ls/impl/LSOutputImpl.h:
+        * kdom/ls/impl/LSParserFilterImpl.cpp:
+        (LSParserFilterImpl::LSParserFilterImpl):
+        * kdom/ls/impl/LSParserImpl.cpp:
+        (hex2int):
+        (LSParserImpl::parse):
+        (LSParserImpl::abort):
+        * kdom/ls/impl/LSResourceResolverImpl.cpp:
+        (LSResourceResolverImpl::LSResourceResolverImpl):
+        * kdom/ls/impl/LSSerializerImpl.cpp:
+        (LSSerializerImpl::LSSerializerImpl):
+        (LSSerializerImpl::setNewLine):
+        (LSSerializerImpl::serialize):
+        (LSSerializerImpl::writeToURI):
+        (LSSerializerImpl::PrintInternalSubset):
+        (LSSerializerImpl::PrintNode):
+        (LSSerializerImpl::escape):
+        (LSSerializerImpl::escapeAttribute):
+        * kdom/ls/impl/LSSerializerImpl.h:
+        * kdom/parser/KDOMDocumentBuilder.cpp:
+        (DocumentBuilder::document):
+        (DocumentBuilder::startDocument):
+        (DocumentBuilder::startElement):
+        (DocumentBuilder::endElement):
+        (DocumentBuilder::startElementNS):
+        (DocumentBuilder::endElementNS):
+        (DocumentBuilder::startAttributeNS):
+        (DocumentBuilder::startAttribute):
+        (DocumentBuilder::characters):
+        (DocumentBuilder::comment):
+        (DocumentBuilder::startDTD):
+        (DocumentBuilder::startPI):
+        (DocumentBuilder::internalEntityDecl):
+        (DocumentBuilder::internalEntityDeclEnd):
+        (DocumentBuilder::externalEntityDecl):
+        (DocumentBuilder::unparsedEntityDecl):
+        (DocumentBuilder::notationDecl):
+        (DocumentBuilder::entityReferenceStart):
+        (DocumentBuilder::entityReferenceEnd):
+        (DocumentBuilder::currentNode):
+        * kdom/parser/KDOMDocumentBuilder.h:
+        * kdom/parser/KDOMParser.cpp:
+        (Parser::document):
+        (Parser::domConfig):
+        (Parser::setDocumentBuilder):
+        (Parser::syncParse):
+        (Parser::asyncParse):
+        (Parser::abortWork):
+        (Parser::notifyFinished):
+        (Parser::handleError):
+        (Parser::bufferForUrl):
+        (Parser::parsingFinished):
+        * kdom/parser/KDOMParser.h:
+        (KDOM::Parser::handleIncomingData):
+        * kdom/range/DocumentRange.cpp: Removed.
+        * kdom/range/DocumentRange.h: Removed.
+        * kdom/range/Range.cpp: Removed.
+        * kdom/range/Range.h: Removed.
+        * kdom/range/RangeException.cpp: Removed.
+        * kdom/range/RangeException.h: Removed.
+        * kdom/range/impl/DocumentRangeImpl.cpp:
+        (DocumentRangeImpl::createRange):
+        * kdom/range/impl/RangeExceptionImpl.cpp:
+        (RangeExceptionImpl::RangeExceptionImpl):
+        * kdom/range/impl/RangeImpl.cpp:
+        (RangeImpl::RangeImpl):
+        (RangeImpl::isCollapsed):
+        (RangeImpl::setStart):
+        (RangeImpl::setEnd):
+        (RangeImpl::processContents):
+        (RangeImpl::checkNodeWOffset):
+        (RangeImpl::toString):
+        (RangeImpl::setStartAfter):
+        (RangeImpl::setEndBefore):
+        (RangeImpl::setEndAfter):
+        (RangeImpl::setStartBefore):
+        * kdom/range/impl/RangeImpl.h:
+        * kdom/scripts/OVERVIEW: Removed.
+        * kdom/scripts/constants.pl: Removed.
+        * kdom/scripts/css.idl: Removed.
+        * kdom/scripts/dom2-core.idl: Removed.
+        * kdom/scripts/dom2-events.idl: Removed.
+        * kdom/scripts/dom2-range.idl: Removed.
+        * kdom/scripts/dom2-traversal.idl: Removed.
+        * kdom/scripts/dom2-views.idl: Removed.
+        * kdom/scripts/dommakeattrs: Removed.
+        * kdom/scripts/generate.pl: Removed.
+        * kdom/scripts/kalyptusKDOMEcma.pm: Removed.
+        * kdom/scripts/stylesheets.idl: Removed.
+        * kdom/traversal/DocumentTraversal.cpp: Removed.
+        * kdom/traversal/DocumentTraversal.h: Removed.
+        * kdom/traversal/NodeFilter.cpp: Removed.
+        * kdom/traversal/NodeFilter.h: Removed.
+        * kdom/traversal/NodeIterator.cpp: Removed.
+        * kdom/traversal/NodeIterator.h: Removed.
+        * kdom/traversal/TreeWalker.cpp: Removed.
+        * kdom/traversal/TreeWalker.h: Removed.
+        * kdom/traversal/impl/NodeFilterImpl.cpp:
+        (NodeFilterImpl::NodeFilterImpl):
+        (NodeFilterImpl::acceptNode):
+        * kdom/traversal/impl/NodeFilterImpl.h:
+        (KDOM::NodeFilterCondition::NodeFilterCondition):
+        (KDOM::NodeFilterCondition::acceptNode):
+        * kdom/traversal/impl/NodeIteratorImpl.cpp:
+        * kdom/traversal/impl/NodeIteratorImpl.h:
+        * kdom/traversal/impl/TraversalImpl.cpp:
+        (TraversalImpl::TraversalImpl):
+        * kdom/traversal/impl/TreeWalkerImpl.cpp:
+        * kdom/traversal/impl/TreeWalkerImpl.h:
+        * kdom/views/AbstractView.cpp: Removed.
+        * kdom/views/AbstractView.h: Removed.
+        * kdom/views/DocumentView.cpp: Removed.
+        * kdom/views/DocumentView.h: Removed.
+        * kdom/views/impl/AbstractViewImpl.cpp:
+        (AbstractViewImpl::AbstractViewImpl):
+        * kdom/views/impl/AbstractViewImpl.h:
+        * kdom/views/impl/DocumentViewImpl.cpp:
+        * kdom/views/impl/DocumentViewImpl.h:
+        * kdom/xpath/XPathEvaluator.cpp: Removed.
+        * kdom/xpath/XPathEvaluator.h: Removed.
+        * kdom/xpath/XPathEvaluatorImpl.cpp: Added.
+        (XPathEvaluatorImpl::createExpression):
+        (XPathEvaluatorImpl::createNSResolver):
+        (XPathEvaluatorImpl::evaluate):
+        * kdom/xpath/XPathEvaluatorImpl.h: Added.
+        * kdom/xpath/XPathException.cpp: Removed.
+        * kdom/xpath/XPathException.h: Removed.
+        * kdom/xpath/XPathExceptionImpl.cpp: Added.
+        (XPathExceptionImpl::XPathExceptionImpl):
+        (XPathExceptionImpl::code):
+        * kdom/xpath/XPathExceptionImpl.h: Added.
+        * kdom/xpath/XPathExpression.cpp: Removed.
+        * kdom/xpath/XPathExpression.h: Removed.
+        * kdom/xpath/XPathExpressionImpl.cpp: Added.
+        (XPathExpressionImpl::XPathExpressionImpl):
+        (XPathExpressionImpl::evaluate):
+        * kdom/xpath/XPathExpressionImpl.h: Added.
+        * kdom/xpath/XPathNSResolver.cpp: Removed.
+        * kdom/xpath/XPathNSResolver.h: Removed.
+        * kdom/xpath/XPathNSResolverImpl.cpp: Added.
+        (XPathNSResolverImpl::XPathNSResolverImpl):
+        (XPathNSResolverImpl::lookupNamespaceURI):
+        * kdom/xpath/XPathNSResolverImpl.h: Added.
+        * kdom/xpath/XPathNamespace.cpp: Removed.
+        * kdom/xpath/XPathNamespace.h: Removed.
+        * kdom/xpath/XPathNamespaceImpl.cpp: Added.
+        (XPathNamespaceImpl::XPathNamespaceImpl):
+        (XPathNamespaceImpl::ownerElement):
+        * kdom/xpath/XPathNamespaceImpl.h: Added.
+        * kdom/xpath/XPathResult.cpp: Removed.
+        * kdom/xpath/XPathResult.h: Removed.
+        * kdom/xpath/XPathResultImpl.cpp: Added.
+        (XPathResultImpl::XPathResultImpl):
+        (XPathResultImpl::convertTo):
+        (XPathResultImpl::resultType):
+        (XPathResultImpl::numberValue):
+        (XPathResultImpl::stringValue):
+        (XPathResultImpl::booleanValue):
+        (XPathResultImpl::singleNodeValue):
+        (XPathResultImpl::invalidIteratorState):
+        (XPathResultImpl::snapshotLength):
+        (XPathResultImpl::iterateNext):
+        (XPathResultImpl::snapshotItem):
+        * kdom/xpath/XPathResultImpl.h: Added.
+        * kdom/xpath/impl/AxisImpl.cpp: Removed.
+        * kdom/xpath/impl/AxisImpl.h: Removed.
+        * kdom/xpath/impl/ContextImpl.cpp: Removed.
+        * kdom/xpath/impl/ContextImpl.h: Removed.
+        * kdom/xpath/impl/ExprNodeImpl.cpp: Removed.
+        * kdom/xpath/impl/ExprNodeImpl.h: Removed.
+        * kdom/xpath/impl/FILES: Removed.
+        * kdom/xpath/impl/LiteralImpl.cpp: Removed.
+        * kdom/xpath/impl/LiteralImpl.h: Removed.
+        * kdom/xpath/impl/OperatorImpl.cpp: Removed.
+        * kdom/xpath/impl/OperatorImpl.h: Removed.
+        * kdom/xpath/impl/ScopeImpl.cpp: Removed.
+        * kdom/xpath/impl/ScopeImpl.h: Removed.
+        * kdom/xpath/impl/StepImpl.cpp: Removed.
+        * kdom/xpath/impl/StepImpl.h: Removed.
+        * kdom/xpath/impl/VariableRefImpl.cpp: Removed.
+        * kdom/xpath/impl/VariableRefImpl.h: Removed.
+        * kdom/xpath/impl/XPathCustomExceptionImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathCustomExceptionImpl.h: Removed.
+        * kdom/xpath/impl/XPathEvaluatorImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathEvaluatorImpl.h: Removed.
+        * kdom/xpath/impl/XPathExceptionImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathExceptionImpl.h: Removed.
+        * kdom/xpath/impl/XPathExpressionFilterImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathExpressionFilterImpl.h: Removed.
+        * kdom/xpath/impl/XPathExpressionImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathExpressionImpl.h: Removed.
+        * kdom/xpath/impl/XPathFactory1Impl.cpp: Removed.
+        * kdom/xpath/impl/XPathFactory1Impl.h: Removed.
+        * kdom/xpath/impl/XPathFactoryBaseImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathFactoryBaseImpl.h: Removed.
+        * kdom/xpath/impl/XPathHelper.cpp: Removed.
+        * kdom/xpath/impl/XPathHelper.h: Removed.
+        * kdom/xpath/impl/XPathNSResolverImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathNSResolverImpl.h: Removed.
+        * kdom/xpath/impl/XPathNamespaceImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathNamespaceImpl.h: Removed.
+        * kdom/xpath/impl/XPathResultImpl.cpp: Removed.
+        * kdom/xpath/impl/XPathResultImpl.h: Removed.
+        * kdom/xpath/impl/data/BooleanImpl.cpp: Removed.
+        * kdom/xpath/impl/data/BooleanImpl.h: Removed.
+        * kdom/xpath/impl/data/NodeSetImpl.cpp: Removed.
+        * kdom/xpath/impl/data/NodeSetImpl.h: Removed.
+        * kdom/xpath/impl/data/NumberImpl.cpp: Removed.
+        * kdom/xpath/impl/data/NumberImpl.h: Removed.
+        * kdom/xpath/impl/data/StringImpl.cpp: Removed.
+        * kdom/xpath/impl/data/StringImpl.h: Removed.
+        * kdom/xpath/impl/data/ValueImpl.cpp: Removed.
+        * kdom/xpath/impl/data/ValueImpl.h: Removed.
+        * kdom/xpath/impl/expression.cpp: Added.
+        (Value::Value):
+        (Value::type):
+        (Value::isNodeset):
+        (Value::isBoolean):
+        (Value::isNumber):
+        (Value::isString):
+        (Value::toNodeset):
+        (Value::toBoolean):
+        (Value::toNumber):
+        (Value::toString):
+        (Value::dump):
+        (Expression::evaluationContext):
+        (Expression::Expression):
+        (Expression::~Expression):
+        (Expression::evaluate):
+        (Expression::addSubExpression):
+        (Expression::optimize):
+        (Expression::subExprCount):
+        (Expression::subExpr):
+        (Expression::isConstant):
+        * kdom/xpath/impl/expression.h: Added.
+        (Value::):
+        * kdom/xpath/impl/functions.cpp: Added.
+        (Interval::Interval):
+        (Interval::contains):
+        (Interval::asString):
+        (Function::setArguments):
+        (Function::setName):
+        (Function::dump):
+        (Function::arg):
+        (Function::argCount):
+        (Function::name):
+        (FunLast::doEvaluate):
+        (FunLast::isConstant):
+        (FunPosition::doEvaluate):
+        (FunPosition::isConstant):
+        (FunLocalName::isConstant):
+        (FunLocalName::doEvaluate):
+        (FunNamespaceURI::isConstant):
+        (FunNamespaceURI::doEvaluate):
+        (FunName::isConstant):
+        (FunName::doEvaluate):
+        (FunCount::doEvaluate):
+        (FunCount::isConstant):
+        (FunString::doEvaluate):
+        (FunConcat::doEvaluate):
+        (FunStartsWith::doEvaluate):
+        (FunContains::doEvaluate):
+        (FunSubstringBefore::doEvaluate):
+        (FunSubstringAfter::doEvaluate):
+        (FunSubstring::doEvaluate):
+        (FunStringLength::doEvaluate):
+        (FunNormalizeSpace::doEvaluate):
+        (FunTranslate::doEvaluate):
+        (FunBoolean::doEvaluate):
+        (FunNot::doEvaluate):
+        (FunTrue::doEvaluate):
+        (FunTrue::isConstant):
+        (FunLang::doEvaluate):
+        (FunLang::isConstant):
+        (FunFalse::doEvaluate):
+        (FunFalse::isConstant):
+        (FunNumber::doEvaluate):
+        (FunSum::doEvaluate):
+        (FunFloor::doEvaluate):
+        (FunCeiling::doEvaluate):
+        (FunRound::doEvaluate):
+        (FunctionLibrary::FunctionRec::FunctionRec):
+        (FunctionLibrary::self):
+        (FunctionLibrary::FunctionLibrary):
+        (FunctionLibrary::getFunction):
+        (FunctionLibraryDeleter::~FunctionLibraryDeleter):
+        * kdom/xpath/impl/functions.h: Added.
+        * kdom/xpath/impl/functions1/FunctionCallImpl.cpp: Removed.
+        * kdom/xpath/impl/functions1/FunctionCallImpl.h: Removed.
+        * kdom/xpath/impl/functions1/README: Removed.
+        * kdom/xpath/impl/functions1/boolean_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/boolean_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/ceiling_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/ceiling_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/concat_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/concat_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/contains_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/contains_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/false_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/false_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/floor_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/floor_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/normalize-space_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/normalize-space_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/not_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/not_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/number_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/number_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/round_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/round_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/starts-with_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/starts-with_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/string-length_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/string-length_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/string_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/string_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/substring-after_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/substring-after_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/substring-before_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/substring-before_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/substring_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/substring_fnxp1.h: Removed.
+        * kdom/xpath/impl/functions1/true_fnxp1.cpp: Removed.
+        * kdom/xpath/impl/functions1/true_fnxp1.h: Removed.
+        * kdom/xpath/impl/parsedstatement.cpp: Added.
+        (ParsedStatement::ParsedStatement):
+        (ParsedStatement::~ParsedStatement):
+        (ParsedStatement::parse):
+        (ParsedStatement::optimize):
+        (ParsedStatement::evaluate):
+        (ParsedStatement::dump):
+        * kdom/xpath/impl/parsedstatement.h: Added.
+        * kdom/xpath/impl/parser/Lexer.cpp: Removed.
+        * kdom/xpath/impl/parser/Lexer.h: Removed.
+        * kdom/xpath/impl/parser/Lexer.l: Removed.
+        * kdom/xpath/impl/parser/ParserState.cpp: Removed.
+        * kdom/xpath/impl/parser/ParserState.h: Removed.
+        * kdom/xpath/impl/parser/xpath.ypp: Removed.
+        * kdom/xpath/impl/path.cpp: Added.
+        (Path::Path):
+        (Path::~Path):
+        (Path::addStep):
+        (Path::optimize):
+        (Path::doEvaluate):
+        (Path::dump):
+        * kdom/xpath/impl/path.h: Added.
+        * kdom/xpath/impl/predicate.cpp: Added.
+        (Number::Number):
+        (Number::isConstant):
+        (Number::dump):
+        (Number::doEvaluate):
+        (String::String):
+        (String::isConstant):
+        (String::dump):
+        (String::doEvaluate):
+        (Negative::doEvaluate):
+        (Negative::dump):
+        (BinaryExprBase::dump):
+        (NumericOp::NumericOp):
+        (NumericOp::doEvaluate):
+        (NumericOp::opName):
+        (EqTestOp::EqTestOp):
+        (EqTestOp::doEvaluate):
+        (EqTestOp::opName):
+        (LogicalOp::LogicalOp):
+        (LogicalOp::shortCircuitOn):
+        (LogicalOp::isConstant):
+        (LogicalOp::opName):
+        (LogicalOp::doEvaluate):
+        (Union::opName):
+        (Union::doEvaluate):
+        (Predicate::Predicate):
+        (Predicate::~Predicate):
+        (Predicate::evaluate):
+        (Predicate::optimize):
+        (Predicate::dump):
+        * kdom/xpath/impl/predicate.h: Added.
+        (NumericOp::):
+        (EqTestOp::):
+        (LogicalOp::):
+        * kdom/xpath/impl/step.cpp: Added.
+        (Step::axisAsString):
+        (Step::Step):
+        (Step::~Step):
+        (Step::evaluate):
+        (Step::nodesInAxis):
+        (Step::nodeTestMatches):
+        (Step::optimize):
+        (Step::dump):
+        * kdom/xpath/impl/step.h: Added.
+        (Step::):
+        * kdom/xpath/impl/tokenizer.cpp: Added.
+        (AxisNameMapping::AxisNameMapping):
+        (Tokenizer::self):
+        (Tokenizer::charCat):
+        (Tokenizer::isAxisName):
+        (Tokenizer::isNodeTypeName):
+        (Tokenizer::isOperatorContext):
+        (Tokenizer::skipWS):
+        (Tokenizer::makeTokenAndAdvance):
+        (Tokenizer::makeIntTokenAndAdvance):
+        (Tokenizer::peekAheadHelper):
+        (Tokenizer::peekCurHelper):
+        (Tokenizer::lexString):
+        (Tokenizer::lexNumber):
+        (Tokenizer::lexNCName):
+        (Tokenizer::lexQName):
+        (Tokenizer::nextTokenInternal):
+        (Tokenizer::nextToken):
+        (Tokenizer::Tokenizer):
+        (Tokenizer::reset):
+        (xpathyylex):
+        (initTokenizer):
+        (xpathyyerror):
+        (TokenizerDeleter::~TokenizerDeleter):
+        * kdom/xpath/impl/tokenizer.h: Added.
+        (Token::Token):
+        (Tokenizer::):
+        * kdom/xpath/impl/util.cpp: Added.
+        (isRootDomNode):
+        (stringValue):
+        (getChildrenRecursively):
+        * kdom/xpath/impl/util.h: Added.
+        * kdom/xpath/impl/utils/QNameImpl.cpp: Removed.
+        * kdom/xpath/impl/utils/QNameImpl.h: Removed.
+        * kdom/xpath/impl/variablereference.cpp: Added.
+        (VariableReference::VariableReference):
+        (VariableReference::isConstant):
+        (VariableReference::dump):
+        (VariableReference::doEvaluate):
+        * kdom/xpath/impl/variablereference.h: Added.
+        * kdom/xpath/impl/xpath.y: Added.
+        * kdom/xpath/kdomxpath.h:
+        (KDOM::XPath::):
+        * kdom/xpointer/XPointerEvaluator.cpp: Removed.
+        * kdom/xpointer/XPointerEvaluator.h: Removed.
+        * kdom/xpointer/XPointerException.cpp: Removed.
+        * kdom/xpointer/XPointerException.h: Removed.
+        * kdom/xpointer/XPointerExpression.cpp: Removed.
+        * kdom/xpointer/XPointerExpression.h: Removed.
+        * kdom/xpointer/XPointerHelper.cpp: Removed.
+        * kdom/xpointer/XPointerHelper.h: Removed.
+        * kdom/xpointer/XPointerResult.cpp: Removed.
+        * kdom/xpointer/XPointerResult.h: Removed.
+        * kdom/xpointer/impl/ElementSchemeImpl.cpp:
+        (ElementSchemeImpl::ElementSchemeImpl):
+        (ElementSchemeImpl::evaluate):
+        * kdom/xpointer/impl/ElementSchemeImpl.h:
+        * kdom/xpointer/impl/NBCImpl.cpp:
+        (NBCImpl::NBCImpl):
+        (NBCImpl::addMapping):
+        (NBCImpl::lookupNamespaceURI):
+        * kdom/xpointer/impl/NBCImpl.h:
+        * kdom/xpointer/impl/PointerPartImpl.cpp:
+        (PointerPartImpl::PointerPartImpl):
+        (PointerPartImpl::~PointerPartImpl):
+        (PointerPartImpl::evaluate):
+        (PointerPartImpl::name):
+        (PointerPartImpl::data):
+        * kdom/xpointer/impl/PointerPartImpl.h:
+        * kdom/xpointer/impl/ShortHandImpl.cpp:
+        (ShortHandImpl::ShortHandImpl):
+        (ShortHandImpl::evaluate):
+        * kdom/xpointer/impl/ShortHandImpl.h:
+        * kdom/xpointer/impl/XMLNSSchemeImpl.cpp:
+        (XMLNSSchemeImpl::XMLNSSchemeImpl):
+        * kdom/xpointer/impl/XMLNSSchemeImpl.h:
+        * kdom/xpointer/impl/XPath1SchemeImpl.cpp:
+        (XPath1SchemeImpl::XPath1SchemeImpl):
+        (XPath1SchemeImpl::~XPath1SchemeImpl):
+        (XPath1SchemeImpl::evaluate):
+        * kdom/xpointer/impl/XPath1SchemeImpl.h:
+        * kdom/xpointer/impl/XPointerEvaluatorImpl.cpp:
+        (XPointerEvaluatorImpl::createXPointer):
+        (XPointerEvaluatorImpl::evaluateXPointer):
+        * kdom/xpointer/impl/XPointerEvaluatorImpl.h:
+        * kdom/xpointer/impl/XPointerExceptionImpl.cpp:
+        (XPointerExceptionImpl::XPointerExceptionImpl):
+        * kdom/xpointer/impl/XPointerExpressionImpl.cpp:
+        (XPointerExpressionImpl::XPointerExpressionImpl):
+        (XPointerExpressionImpl::~XPointerExpressionImpl):
+        (XPointerExpressionImpl::evaluate):
+        (XPointerExpressionImpl::string):
+        * kdom/xpointer/impl/XPointerExpressionImpl.h:
+        * kdom/xpointer/impl/XPointerHelper.cpp: Added.
+        (XPointerHelper::EncodeSchemeData):
+        (XPointerHelper::DecodeSchemeData):
+        (XPointerHelper::createXPointer):
+        * kdom/xpointer/impl/XPointerHelper.h: Added.
+        * kdom/xpointer/impl/XPointerResultImpl.cpp:
+        (XPointerResultImpl::XPointerResultImpl):
+        (XPointerResultImpl::~XPointerResultImpl):
+        (XPointerResultImpl::resultType):
+        (XPointerResultImpl::setResultType):
+        (XPointerResultImpl::singleNodeValue):
+        (XPointerResultImpl::setSingleNodeValue):
+        * kdom/xpointer/impl/XPointerResultImpl.h:
+        (KDOM::XPointer::):
+        * kdom/xpointer/impl/XPointerSchemeImpl.cpp:
+        (XPointerSchemeImpl::XPointerSchemeImpl):
+        (XPointerSchemeImpl::evaluate):
+        * kdom/xpointer/impl/XPointerSchemeImpl.h:
+        (KDOM::XPointer::):
+        * ksvg2/KSVGFactory.cpp:
+        (KSVGFactory::createPartObject):
+        * ksvg2/KSVGSlotStubs.h: Removed.
+        * ksvg2/core/KSVGDocumentBuilder.cpp:
+        (DocumentBuilder::startDocument):
+        (DocumentBuilder::finishedDocument):
+        (DocumentBuilder::endDocument):
+        * ksvg2/core/KSVGDocumentBuilder.h:
+        * ksvg2/core/KSVGTimeScheduler.cpp:
+        (SVGTimer::start):
+        (SVGTimer::notifyAll):
+        (TimeScheduler::TimeScheduler):
+        (TimeScheduler::~TimeScheduler):
+        * ksvg2/core/KSVGTimeScheduler.h:
+        (KSVG::TimeScheduler::document):
+        * ksvg2/css/impl/KSVGCSSParser.cpp:
+        (SVGCSSParser::parseValue):
+        (SVGCSSParser::parsePaint):
+        (SVGCSSParser::parseColor):
+        * ksvg2/css/impl/SVGCSSStyleSelector.cpp:
+        (SVGCSSStyleSelector::loadDefaultStyle):
+        (SVGCSSStyleSelector::applyRule):
+        * ksvg2/css/impl/SVGCSSStyleSheetImpl.cpp:
+        (SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl):
+        * ksvg2/css/impl/SVGCSSStyleSheetImpl.h:
+        * ksvg2/css/impl/SVGRenderStyleDefs.cpp:
+        (StyleFillData::StyleFillData):
+        (StyleStrokeData::StyleStrokeData):
+        (StyleStopData::StyleStopData):
+        (StyleClipData::StyleClipData):
+        (StyleMarkerData::StyleMarkerData):
+        (StyleMiscData::StyleMiscData):
+        * ksvg2/data/CSSConstants.h: Removed.
+        * ksvg2/data/EcmaConstants.h: Removed.
+        * ksvg2/data/EventsConstants.h: Removed.
+        * ksvg2/data/SVGConstants.h: Removed.
+        * ksvg2/data/generateddata.cpp: Removed.
+        * ksvg2/events/impl/SVGEventImpl.cpp:
+        (SVGEventImpl::initEvent):
+        * ksvg2/events/impl/SVGEventImpl.h:
+        * ksvg2/impl/CDFInterface.cpp:
+        * ksvg2/impl/CDFInterface.h:
+        * ksvg2/impl/SVGAElementImpl.cpp:
+        (SVGAElementImpl::SVGAElementImpl):
+        (SVGAElementImpl::parseAttribute):
+        (SVGAElementImpl::defaultEventHandler):
+        * ksvg2/impl/SVGAElementImpl.h:
+        * ksvg2/impl/SVGAngleImpl.cpp:
+        (SVGAngleImpl::SVGAngleImpl):
+        (SVGAngleImpl::setValueAsString):
+        (SVGAngleImpl::valueAsString):
+        * ksvg2/impl/SVGAngleImpl.h:
+        * ksvg2/impl/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::SVGAnimateColorElementImpl):
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/impl/SVGAnimateColorElementImpl.h:
+        * ksvg2/impl/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::SVGAnimateElementImpl):
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/impl/SVGAnimateElementImpl.h:
+        * ksvg2/impl/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::SVGAnimateTransformElementImpl):
+        * ksvg2/impl/SVGAnimateTransformElementImpl.h:
+        * ksvg2/impl/SVGAnimatedBooleanImpl.cpp:
+        (SVGAnimatedBooleanImpl::SVGAnimatedBooleanImpl):
+        * ksvg2/impl/SVGAnimatedEnumerationImpl.cpp:
+        (SVGAnimatedEnumerationImpl::SVGAnimatedEnumerationImpl):
+        * ksvg2/impl/SVGAnimatedEnumerationImpl.h:
+        * ksvg2/impl/SVGAnimatedIntegerImpl.cpp:
+        (SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl):
+        * ksvg2/impl/SVGAnimatedIntegerImpl.h:
+        * ksvg2/impl/SVGAnimatedNumberImpl.cpp:
+        (SVGAnimatedNumberImpl::SVGAnimatedNumberImpl):
+        (SVGAnimatedNumberImpl::baseVal):
+        (SVGAnimatedNumberImpl::setBaseVal):
+        (SVGAnimatedNumberImpl::animVal):
+        (SVGAnimatedNumberImpl::setAnimVal):
+        * ksvg2/impl/SVGAnimatedNumberImpl.h:
+        * ksvg2/impl/SVGAnimatedTemplate.h:
+        (KSVG::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        * ksvg2/impl/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::SVGAnimationElementImpl):
+        (SVGAnimationElementImpl::targetElement):
+        (SVGAnimationElementImpl::getEndTime):
+        (SVGAnimationElementImpl::getStartTime):
+        (SVGAnimationElementImpl::getCurrentTime):
+        (SVGAnimationElementImpl::getSimpleDuration):
+        (SVGAnimationElementImpl::parseClockValue):
+        (SVGAnimationElementImpl::close):
+        (SVGAnimationElementImpl::targetAttribute):
+        (SVGAnimationElementImpl::setTargetAttribute):
+        * ksvg2/impl/SVGAnimationElementImpl.h:
+        * ksvg2/impl/SVGCircleElementImpl.cpp:
+        (SVGCircleElementImpl::SVGCircleElementImpl):
+        (SVGCircleElementImpl::parseAttribute):
+        * ksvg2/impl/SVGCircleElementImpl.h:
+        * ksvg2/impl/SVGClipPathElementImpl.cpp:
+        (SVGClipPathElementImpl::SVGClipPathElementImpl):
+        (SVGClipPathElementImpl::close):
+        * ksvg2/impl/SVGClipPathElementImpl.h:
+        * ksvg2/impl/SVGColorImpl.cpp:
+        (SVGColorImpl::setRGBColor):
+        (SVGColorImpl::cssText):
+        * ksvg2/impl/SVGColorImpl.h:
+        * ksvg2/impl/SVGComponentTransferFunctionElementImpl.cpp:
+        (SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl):
+        (SVGComponentTransferFunctionElementImpl::parseAttribute):
+        * ksvg2/impl/SVGComponentTransferFunctionElementImpl.h:
+        * ksvg2/impl/SVGDOMImplementationImpl.cpp:
+        (SVGDOMImplementationImpl::hasFeature):
+        (SVGDOMImplementationImpl::createDocumentType):
+        (SVGDOMImplementationImpl::createDocument):
+        (SVGDOMImplementationImpl::createCSSStyleSheet):
+        (SVGDOMImplementationImpl::defaultDocumentType):
+        (SVGDOMImplementationImpl::typeToId):
+        (SVGDOMImplementationImpl::idToType):
+        * ksvg2/impl/SVGDOMImplementationImpl.h:
+        * ksvg2/impl/SVGDefsElementImpl.cpp:
+        (SVGDefsElementImpl::SVGDefsElementImpl):
+        * ksvg2/impl/SVGDefsElementImpl.h:
+        * ksvg2/impl/SVGDescElementImpl.cpp:
+        (SVGDescElementImpl::SVGDescElementImpl):
+        (SVGDescElementImpl::description):
+        * ksvg2/impl/SVGDescElementImpl.h:
+        * ksvg2/impl/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::~SVGDocumentImpl):
+        (SVGDocumentImpl::title):
+        (SVGDocumentImpl::referrer):
+        (SVGDocumentImpl::domain):
+        (SVGDocumentImpl::URL):
+        (SVGDocumentImpl::createSVGElement):
+        (SVGDocumentImpl::createElement):
+        (SVGDocumentImpl::createElementNS):
+        (SVGDocumentImpl::createEvent):
+        (SVGDocumentImpl::dispatchZoomEvent):
+        (SVGDocumentImpl::dispatchScrollEvent):
+        (SVGDocumentImpl::dispatchKeyEvent):
+        (SVGDocumentImpl::defaultNS):
+        (SVGDocumentImpl::recalcStyleSelector):
+        (SVGDocumentImpl::executeScripts):
+        (SVGDocumentImpl::createCSSStyleSheet):
+        (SVGDocumentImpl::dispatchUIEvent):
+        (SVGDocumentImpl::dispatchMouseEvent):
+        * ksvg2/impl/SVGDocumentImpl.h:
+        * ksvg2/impl/SVGElementImpl.cpp:
+        (SVGElementImpl::SVGElementImpl):
+        (SVGElementImpl::isSupported):
+        (SVGElementImpl::getId):
+        (SVGElementImpl::setGetId):
+        (SVGElementImpl::xmlbase):
+        (SVGElementImpl::setXmlbase):
+        (SVGElementImpl::parseAttribute):
+        (SVGElementImpl::addSVGEventListener):
+        * ksvg2/impl/SVGElementImpl.h:
+        * ksvg2/impl/SVGEllipseElementImpl.cpp:
+        (SVGEllipseElementImpl::SVGEllipseElementImpl):
+        (SVGEllipseElementImpl::parseAttribute):
+        * ksvg2/impl/SVGEllipseElementImpl.h:
+        * ksvg2/impl/SVGExceptionImpl.cpp:
+        (SVGExceptionImpl::SVGExceptionImpl):
+        * ksvg2/impl/SVGFEBlendElementImpl.cpp:
+        (SVGFEBlendElementImpl::SVGFEBlendElementImpl):
+        (SVGFEBlendElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFEBlendElementImpl.h:
+        * ksvg2/impl/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl):
+        (SVGFEColorMatrixElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFEColorMatrixElementImpl.h:
+        * ksvg2/impl/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl):
+        (SVGFEComponentTransferElementImpl::parseAttribute):
+        (SVGFEComponentTransferElementImpl::close):
+        * ksvg2/impl/SVGFEComponentTransferElementImpl.h:
+        * ksvg2/impl/SVGFECompositeElementImpl.cpp:
+        (SVGFECompositeElementImpl::SVGFECompositeElementImpl):
+        (SVGFECompositeElementImpl::parseAttribute):
+        (SVGFECompositeElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGFECompositeElementImpl.h:
+        * ksvg2/impl/SVGFEFloodElementImpl.cpp:
+        (SVGFEFloodElementImpl::SVGFEFloodElementImpl):
+        (SVGFEFloodElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFEFloodElementImpl.h:
+        * ksvg2/impl/SVGFEFuncAElementImpl.cpp:
+        (SVGFEFuncAElementImpl::SVGFEFuncAElementImpl):
+        * ksvg2/impl/SVGFEFuncAElementImpl.h:
+        * ksvg2/impl/SVGFEFuncBElementImpl.cpp:
+        (SVGFEFuncBElementImpl::SVGFEFuncBElementImpl):
+        * ksvg2/impl/SVGFEFuncBElementImpl.h:
+        * ksvg2/impl/SVGFEFuncGElementImpl.cpp:
+        (SVGFEFuncGElementImpl::SVGFEFuncGElementImpl):
+        * ksvg2/impl/SVGFEFuncGElementImpl.h:
+        * ksvg2/impl/SVGFEFuncRElementImpl.cpp:
+        (SVGFEFuncRElementImpl::SVGFEFuncRElementImpl):
+        * ksvg2/impl/SVGFEFuncRElementImpl.h:
+        * ksvg2/impl/SVGFEGaussianBlurElementImpl.cpp:
+        (SVGFEGaussianBlurElementImpl::SVGFEGaussianBlurElementImpl):
+        (SVGFEGaussianBlurElementImpl::parseAttribute):
+        (SVGFEGaussianBlurElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGFEGaussianBlurElementImpl.h:
+        * ksvg2/impl/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::SVGFEImageElementImpl):
+        (SVGFEImageElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFEImageElementImpl.h:
+        * ksvg2/impl/SVGFEMergeElementImpl.cpp:
+        (SVGFEMergeElementImpl::SVGFEMergeElementImpl):
+        * ksvg2/impl/SVGFEMergeElementImpl.h:
+        * ksvg2/impl/SVGFEMergeNodeElementImpl.cpp:
+        (SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl):
+        (SVGFEMergeNodeElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFEMergeNodeElementImpl.h:
+        * ksvg2/impl/SVGFEOffsetElementImpl.cpp:
+        (SVGFEOffsetElementImpl::SVGFEOffsetElementImpl):
+        (SVGFEOffsetElementImpl::parseAttribute):
+        (SVGFEOffsetElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGFEOffsetElementImpl.h:
+        * ksvg2/impl/SVGFETileElementImpl.cpp:
+        (SVGFETileElementImpl::SVGFETileElementImpl):
+        (SVGFETileElementImpl::parseAttribute):
+        * ksvg2/impl/SVGFETileElementImpl.h:
+        * ksvg2/impl/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::SVGFETurbulenceElementImpl):
+        (SVGFETurbulenceElementImpl::parseAttribute):
+        (SVGFETurbulenceElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGFETurbulenceElementImpl.h:
+        * ksvg2/impl/SVGFilterElementImpl.cpp:
+        (SVGFilterElementImpl::SVGFilterElementImpl):
+        (SVGFilterElementImpl::x):
+        (SVGFilterElementImpl::y):
+        (SVGFilterElementImpl::width):
+        (SVGFilterElementImpl::height):
+        (SVGFilterElementImpl::parseAttribute):
+        (SVGFilterElementImpl::close):
+        * ksvg2/impl/SVGFilterElementImpl.h:
+        * ksvg2/impl/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        (SVGFilterPrimitiveStandardAttributesImpl::SVGFilterPrimitiveStandardAttributesImpl):
+        (SVGFilterPrimitiveStandardAttributesImpl::width):
+        (SVGFilterPrimitiveStandardAttributesImpl::height):
+        (SVGFilterPrimitiveStandardAttributesImpl::parseAttribute):
+        * ksvg2/impl/SVGFilterPrimitiveStandardAttributesImpl.h:
+        * ksvg2/impl/SVGFitToViewBoxImpl.cpp:
+        (SVGFitToViewBoxImpl::parseAttribute):
+        * ksvg2/impl/SVGGElementImpl.cpp:
+        (SVGGElementImpl::SVGGElementImpl):
+        (SVGDummyElementImpl::SVGDummyElementImpl):
+        (SVGDummyElementImpl::localName):
+        * ksvg2/impl/SVGGElementImpl.h:
+        * ksvg2/impl/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::SVGGradientElementImpl):
+        (SVGGradientElementImpl::notifyAttributeChange):
+        * ksvg2/impl/SVGGradientElementImpl.h:
+        * ksvg2/impl/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/impl/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::SVGImageElementImpl):
+        (SVGImageElementImpl::parseAttribute):
+        (SVGImageElementImpl::createCanvasItem):
+        (SVGImageElementImpl::notifyFinished):
+        * ksvg2/impl/SVGImageElementImpl.h:
+        * ksvg2/impl/SVGLangSpaceImpl.cpp:
+        (SVGLangSpaceImpl::xmllang):
+        (SVGLangSpaceImpl::setXmllang):
+        (SVGLangSpaceImpl::xmlspace):
+        (SVGLangSpaceImpl::setXmlspace):
+        (SVGLangSpaceImpl::parseAttribute):
+        * ksvg2/impl/SVGLangSpaceImpl.h:
+        * ksvg2/impl/SVGLengthImpl.cpp:
+        (SVGLengthImpl::SVGLengthImpl):
+        (SVGLengthImpl::value):
+        (SVGLengthImpl::setValueAsString):
+        (SVGLengthImpl::valueAsString):
+        * ksvg2/impl/SVGLengthImpl.h:
+        * ksvg2/impl/SVGLengthListImpl.cpp:
+        (SVGLengthListImpl::parse):
+        * ksvg2/impl/SVGLineElementImpl.cpp:
+        (SVGLineElementImpl::SVGLineElementImpl):
+        (SVGLineElementImpl::parseAttribute):
+        * ksvg2/impl/SVGLineElementImpl.h:
+        * ksvg2/impl/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::SVGLinearGradientElementImpl):
+        (SVGLinearGradientElementImpl::parseAttribute):
+        (SVGLinearGradientElementImpl::buildGradient):
+        (SVGLinearGradientElementImpl::createCanvasItem):
+        (SVGLinearGradientElementImpl::resourceNotification):
+        * ksvg2/impl/SVGLinearGradientElementImpl.h:
+        * ksvg2/impl/SVGLocatableImpl.cpp:
+        * ksvg2/impl/SVGMarkerElementImpl.cpp:
+        (SVGMarkerElementImpl::SVGMarkerElementImpl):
+        (SVGMarkerElementImpl::parseAttribute):
+        (SVGMarkerElementImpl::close):
+        * ksvg2/impl/SVGMarkerElementImpl.h:
+        * ksvg2/impl/SVGMatrixImpl.cpp:
+        (SVGMatrixImpl::SVGMatrixImpl):
+        * ksvg2/impl/SVGNumberImpl.cpp:
+        (SVGNumberImpl::SVGNumberImpl):
+        * ksvg2/impl/SVGPaintImpl.cpp:
+        (SVGPaintImpl::cssText):
+        * ksvg2/impl/SVGPaintImpl.h:
+        * ksvg2/impl/SVGPathElementImpl.cpp:
+        (SVGPathElementImpl::SVGPathElementImpl):
+        (SVGPathElementImpl::~SVGPathElementImpl):
+        * ksvg2/impl/SVGPathElementImpl.h:
+        * ksvg2/impl/SVGPathSegArcImpl.h:
+        (KSVG::SVGPathSegArcAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegArcRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegClosePathImpl.h:
+        (KSVG::SVGPathSegClosePathImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegCurvetoCubicImpl.h:
+        (KSVG::SVGPathSegCurvetoCubicAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegCurvetoCubicRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegCurvetoCubicSmoothImpl.h:
+        (KSVG::SVGPathSegCurvetoCubicSmoothAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegCurvetoCubicSmoothRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegCurvetoQuadraticImpl.h:
+        (KSVG::SVGPathSegCurvetoQuadraticAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegCurvetoQuadraticRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegCurvetoQuadraticSmoothImpl.h:
+        (KSVG::SVGPathSegCurvetoQuadraticSmoothAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegCurvetoQuadraticSmoothRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegImpl.cpp:
+        (SVGPathSegImpl::SVGPathSegImpl):
+        * ksvg2/impl/SVGPathSegImpl.h:
+        (KSVG::SVGPathSegImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegLinetoHorizontalImpl.h:
+        (KSVG::SVGPathSegLinetoHorizontalAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegLinetoHorizontalRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegLinetoImpl.h:
+        (KSVG::SVGPathSegLinetoAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegLinetoRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegLinetoVerticalImpl.h:
+        (KSVG::SVGPathSegLinetoVerticalAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegLinetoVerticalRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPathSegMovetoImpl.h:
+        (KSVG::SVGPathSegMovetoAbsImpl::pathSegTypeAsLetter):
+        (KSVG::SVGPathSegMovetoRelImpl::pathSegTypeAsLetter):
+        * ksvg2/impl/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::SVGPatternElementImpl):
+        (SVGPatternElementImpl::parseAttribute):
+        (SVGPatternElementImpl::notifyAttributeChange):
+        (SVGPatternElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGPatternElementImpl.h:
+        * ksvg2/impl/SVGPointImpl.cpp:
+        (SVGPointImpl::SVGPointImpl):
+        * ksvg2/impl/SVGPolyElementImpl.cpp:
+        (SVGPolyElementImpl::SVGPolyElementImpl):
+        (SVGPolyElementImpl::notifyAttributeChange):
+        * ksvg2/impl/SVGPolyElementImpl.h:
+        * ksvg2/impl/SVGPolygonElementImpl.cpp:
+        (SVGPolygonElementImpl::SVGPolygonElementImpl):
+        * ksvg2/impl/SVGPolygonElementImpl.h:
+        * ksvg2/impl/SVGPolylineElementImpl.cpp:
+        (SVGPolylineElementImpl::SVGPolylineElementImpl):
+        * ksvg2/impl/SVGPolylineElementImpl.h:
+        * ksvg2/impl/SVGPreserveAspectRatioImpl.cpp:
+        (SVGPreserveAspectRatioImpl::SVGPreserveAspectRatioImpl):
+        * ksvg2/impl/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::SVGRadialGradientElementImpl):
+        (SVGRadialGradientElementImpl::parseAttribute):
+        (SVGRadialGradientElementImpl::buildGradient):
+        (SVGRadialGradientElementImpl::createCanvasItem):
+        (SVGRadialGradientElementImpl::resourceNotification):
+        * ksvg2/impl/SVGRadialGradientElementImpl.h:
+        * ksvg2/impl/SVGRectElementImpl.cpp:
+        (SVGRectElementImpl::SVGRectElementImpl):
+        (SVGRectElementImpl::parseAttribute):
+        (SVGRectElementImpl::toPathData):
+        * ksvg2/impl/SVGRectElementImpl.h:
+        * ksvg2/impl/SVGRectImpl.cpp:
+        (SVGRectImpl::SVGRectImpl):
+        * ksvg2/impl/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::SVGSVGElementImpl):
+        (SVGSVGElementImpl::width):
+        (SVGSVGElementImpl::height):
+        (SVGSVGElementImpl::contentScriptType):
+        (SVGSVGElementImpl::setContentScriptType):
+        (SVGSVGElementImpl::contentStyleType):
+        (SVGSVGElementImpl::setContentStyleType):
+        (SVGSVGElementImpl::createEvent):
+        (SVGSVGElementImpl::parseAttribute):
+        (SVGSVGElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGSVGElementImpl.h:
+        * ksvg2/impl/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::SVGScriptElementImpl):
+        (SVGScriptElementImpl::parseAttribute):
+        (SVGScriptElementImpl::executeScript):
+        * ksvg2/impl/SVGScriptElementImpl.h:
+        * ksvg2/impl/SVGSetElementImpl.cpp:
+        (SVGSetElementImpl::SVGSetElementImpl):
+        * ksvg2/impl/SVGSetElementImpl.h:
+        * ksvg2/impl/SVGStopElementImpl.cpp:
+        (SVGStopElementImpl::SVGStopElementImpl):
+        (SVGStopElementImpl::parseAttribute):
+        (SVGStopElementImpl::createCanvasItem):
+        * ksvg2/impl/SVGStopElementImpl.h:
+        * ksvg2/impl/SVGStylableImpl.h:
+        * ksvg2/impl/SVGStyleElementImpl.cpp:
+        (SVGStyleElementImpl::SVGStyleElementImpl):
+        (SVGStyleElementImpl::xmlspace):
+        (SVGStyleElementImpl::type):
+        (SVGStyleElementImpl::media):
+        (SVGStyleElementImpl::title):
+        (SVGStyleElementImpl::childrenChanged):
+        * ksvg2/impl/SVGStyleElementImpl.h:
+        * ksvg2/impl/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::SVGStyledElementImpl):
+        (SVGStyledElementImpl::getPresentationAttribute):
+        (SVGStyledElementImpl::parseAttribute):
+        (SVGStyledElementImpl::renderStyle):
+        (SVGStyledElementImpl::attach):
+        (SVGStyledElementImpl::detach):
+        * ksvg2/impl/SVGStyledElementImpl.h:
+        * ksvg2/impl/SVGSwitchElementImpl.cpp:
+        (SVGSwitchElementImpl::SVGSwitchElementImpl):
+        * ksvg2/impl/SVGSwitchElementImpl.h:
+        * ksvg2/impl/SVGSymbolElementImpl.cpp:
+        (SVGSymbolElementImpl::SVGSymbolElementImpl):
+        * ksvg2/impl/SVGSymbolElementImpl.h:
+        * ksvg2/impl/SVGTSpanElementImpl.cpp:
+        (SVGTSpanElementImpl::SVGTSpanElementImpl):
+        * ksvg2/impl/SVGTSpanElementImpl.h:
+        * ksvg2/impl/SVGTestsImpl.cpp:
+        (SVGTestsImpl::hasExtension):
+        (SVGTestsImpl::isValid):
+        * ksvg2/impl/SVGTestsImpl.h:
+        * ksvg2/impl/SVGTextContentElementImpl.cpp:
+        (SVGTextContentElementImpl::SVGTextContentElementImpl):
+        * ksvg2/impl/SVGTextContentElementImpl.h:
+        * ksvg2/impl/SVGTextElementImpl.cpp:
+        (SVGTextElementImpl::SVGTextElementImpl):
+        * ksvg2/impl/SVGTextElementImpl.h:
+        * ksvg2/impl/SVGTextPositioningElementImpl.cpp:
+        (SVGTextPositioningElementImpl::SVGTextPositioningElementImpl):
+        * ksvg2/impl/SVGTextPositioningElementImpl.h:
+        * ksvg2/impl/SVGTitleElementImpl.cpp:
+        (SVGTitleElementImpl::SVGTitleElementImpl):
+        (SVGTitleElementImpl::title):
+        * ksvg2/impl/SVGTitleElementImpl.h:
+        * ksvg2/impl/SVGTransformImpl.cpp:
+        (SVGTransformImpl::SVGTransformImpl):
+        * ksvg2/impl/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::updateSubtreeMatrices):
+        * ksvg2/impl/SVGTransformableImpl.h:
+        * ksvg2/impl/SVGURIReferenceImpl.cpp:
+        (SVGURIReferenceImpl::parseAttribute):
+        * ksvg2/impl/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::SVGUseElementImpl):
+        (SVGUseElementImpl::parseAttribute):
+        (SVGUseElementImpl::close):
+        * ksvg2/impl/SVGUseElementImpl.h:
+        * ksvg2/impl/SVGViewElementImpl.cpp:
+        (SVGViewElementImpl::SVGViewElementImpl):
+        * ksvg2/impl/SVGViewElementImpl.h:
+        * ksvg2/scripts/generate.pl: Removed.
+        * ksvg2/scripts/kalyptusKDOMEcma.pm: Removed.
+        * ksvg2/scripts/svg.idl: Removed.
+        * kwq/KWQSlot.mm: SVG slot support
+        (KWQSlot::KWQSlot): slotTimerNotify
+        (KWQSlot::call): TimeScheduler::timerNotify()
+
 2005-08-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin/Maciej

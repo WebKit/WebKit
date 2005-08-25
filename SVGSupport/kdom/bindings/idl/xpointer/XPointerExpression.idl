@@ -1,0 +1,8 @@
+module xpointer
+{
+	interface XPointerExpression {
+		readonly attribute core::DOMString string;
+
+		XPointerResult evaluate();
+	};
+};

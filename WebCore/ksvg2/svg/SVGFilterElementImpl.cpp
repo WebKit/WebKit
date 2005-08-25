@@ -40,7 +40,7 @@
 
 using namespace KSVG;
 
-SVGFilterElementImpl::SVGFilterElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGFilterElementImpl::SVGFilterElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 	m_filterUnits = m_primitiveUnits = 0;
@@ -97,7 +97,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::x() const
 	if(!m_x)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
-		m_x->baseVal()->setValueAsString("-10%");
+		m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").handle());
 		return m_x;
 	}
 
@@ -110,7 +110,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::y() const
 	if(!m_y)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
-		m_y->baseVal()->setValueAsString("-10%");
+		m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").handle());
 		return m_y;
 	}
 
@@ -123,7 +123,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::width() const
 	if(!m_width)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
-		m_width->baseVal()->setValueAsString("120%");
+		m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").handle());
 		return m_width;
 	}
 
@@ -136,7 +136,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::height() const
 	if(!m_height)
 	{
 	 	lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
-		m_height->baseVal()->setValueAsString("120%");
+		m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").handle());
 		return m_height;
 	}
 
@@ -181,22 +181,22 @@ void SVGFilterElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_X:
 		{
-			x()->baseVal()->setValueAsString(value);
+			x()->baseVal()->setValueAsString(value.handle());
 			break;
 		}
 		case ATTR_Y:
 		{
-			y()->baseVal()->setValueAsString(value);
+			y()->baseVal()->setValueAsString(value.handle());
 			break;
 		}
 		case ATTR_WIDTH:
 		{
-			width()->baseVal()->setValueAsString(value);
+			width()->baseVal()->setValueAsString(value.handle());
 			break;
 		}
 		case ATTR_HEIGHT:
 		{
-			height()->baseVal()->setValueAsString(value);
+			height()->baseVal()->setValueAsString(value.handle());
 			break;
 		}
 		default:
@@ -219,7 +219,7 @@ void SVGFilterElementImpl::close()
 			return;
 
 		m_filter = static_cast<KCanvasFilter *>(_canvas->renderingDevice()->createResource(RS_FILTER));
-		_canvas->registry()->addResourceById(getId().string(), m_filter);
+		_canvas->registry()->addResourceById(KDOM::DOMString(getId()).string(), m_filter);
 	}
 
 	bool filterBBoxMode = filterUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;

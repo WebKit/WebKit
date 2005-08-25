@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2002-2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -32,19 +38,20 @@
 #include <kdom/impl/NodeImpl.h>
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/impl/DOMStringImpl.h>
-#include <kdom/css/impl/DocumentStyleImpl.h>
+#include <kdom/css/impl/DocumentCSSImpl.h>
 #include <kdom/views/impl/DocumentViewImpl.h>
 #include <kdom/range/impl/DocumentRangeImpl.h>
 #include <kdom/events/impl/DocumentEventImpl.h>
-#include <kdom/xpath/impl/XPathEvaluatorImpl.h>
 #include <kdom/traversal/impl/DocumentTraversalImpl.h>
 #include <kdom/xpointer/impl/XPointerEvaluatorImpl.h>
+#include <kdom/xpath/XPathEvaluatorImpl.h>
 
 class QPaintDevice;
 class QPaintDeviceMetrics;
 
 namespace KDOM
 {
+	class Ecma;
 	class KDOMView;
 	class KDOMPart;
 	class AttrImpl;
@@ -75,65 +82,66 @@ namespace KDOM
 	} KDOMDocumentType;
 
 	class DocumentImpl : public NodeBaseImpl,
-						 public DocumentEventImpl,
+						 public DocumentCSSImpl,
 						 public DocumentViewImpl,
-						 public DocumentStyleImpl,
-						 public DocumentTraversalImpl,
+						 public DocumentEventImpl,
 						 public DocumentRangeImpl,
+						 public DocumentTraversalImpl,
 						 public XPointer::XPointerEvaluatorImpl,
-						 public XPathEvaluatorImpl
+						 public XPath::XPathEvaluatorImpl
 	{
 	public:
 		DocumentImpl(DOMImplementationImpl *i, KDOMView *view, int nrTags = -1, int nrAttrs = -1);
 		virtual ~DocumentImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		virtual DOMString textContent() const; // DOM3
+		virtual DOMStringImpl *textContent() const; // DOM3
 
 		DOMImplementationImpl *implementation() const;
 		
 		// 'Document' functions
 		virtual DocumentTypeImpl *doctype() const;
 		virtual ElementImpl *documentElement() const;
-		virtual ElementImpl *createElement(const DOMString &tagName);
-		virtual ElementImpl *createElementNS(const DOMString &namespaceURI, const DOMString &qualifiedName);
+		virtual ElementImpl *createElement(DOMStringImpl *tagName);
+		virtual ElementImpl *createElementNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName);
 
-		virtual AttrImpl *createAttribute(const DOMString &name);
-		virtual AttrImpl *createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName);
+		virtual AttrImpl *createAttribute(DOMStringImpl *name);
+		virtual AttrImpl *createAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName);
 
 		virtual DocumentFragmentImpl *createDocumentFragment();
-		virtual TextImpl *createTextNode(const DOMString &data);
-		virtual CommentImpl *createComment(const DOMString &data);
-		virtual CDATASectionImpl *createCDATASection(const DOMString &data);
-		virtual EntityReferenceImpl *createEntityReference(const DOMString &data);
-		virtual ProcessingInstructionImpl *createProcessingInstruction(const DOMString &target, const DOMString &data);
+		virtual TextImpl *createTextNode(DOMStringImpl *data);
+		virtual CommentImpl *createComment(DOMStringImpl *data);
+		virtual CDATASectionImpl *createCDATASection(DOMStringImpl *data);
+		virtual EntityReferenceImpl *createEntityReference(DOMStringImpl *data);
+		virtual ProcessingInstructionImpl *createProcessingInstruction(DOMStringImpl *target, DOMStringImpl *data);
 
-		virtual NodeListImpl *getElementsByTagName(const DOMString &name);
-		virtual NodeListImpl *getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName);
+		virtual NodeListImpl *getElementsByTagName(DOMStringImpl *name);
+		virtual NodeListImpl *getElementsByTagNameNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
 
 		virtual NodeImpl *importNode(NodeImpl *importedNode, bool deep);
 		virtual void normalizeDocument();
 		
-		virtual NodeImpl *renameNode(NodeImpl *n, const DOMString &namespaceURI, const DOMString &qualifiedName);
-		virtual ElementImpl *getElementById(const DOMString &elementId);
+		virtual NodeImpl *renameNode(NodeImpl *n, DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName);
+		virtual ElementImpl *getElementById(DOMStringImpl *elementId);
 
-		DOMString documentURI() const;
+		DOMStringImpl *documentURI() const;
+		void setDocumentURI(DOMStringImpl *documentURI);
 
 		KURL documentKURI() const;
 		void setDocumentKURI(const KURL &url);
 
-		bool standalone() const;
-		void setStandalone(bool standalone);
+		bool xmlStandalone() const;
+		void setXmlStandalone(bool xmlStandalone);
 
-		DOMString inputEncoding() const;
-		void setInputEncoding(const DOMString &inputEncoding);
+		DOMStringImpl *inputEncoding() const;
+		void setInputEncoding(DOMStringImpl *inputEncoding);
 
-		DOMString xmlEncoding() const;
-		void setXmlEncoding(const DOMString &encoding);
+		DOMStringImpl *xmlEncoding() const;
+		void setXmlEncoding(DOMStringImpl *encoding);
 
-		DOMString xmlVersion() const;
-		void setXmlVersion(const DOMString &version);
+		DOMStringImpl *xmlVersion() const;
+		void setXmlVersion(DOMStringImpl *version);
 
 		bool strictErrorChecking() const;
 		void setStrictErrorChecking(bool strictErrorChecking);
@@ -141,23 +149,22 @@ namespace KDOM
 		DOMConfigurationImpl *domConfig() const;
 
 		// Internal
-		virtual bool childAllowed(NodeImpl *newChild);
 		virtual bool childTypeAllowed(unsigned short type) const;
 
 		virtual NodeImpl *adoptNode(NodeImpl *source) const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
 		void setParsing(bool b) { m_parsingMode = b; }
 		bool parsing() const { return m_parsingMode; }
 
 		virtual NodeImpl::Id getId(NodeImpl::IdType type, DOMStringImpl *namspaceURI,  DOMStringImpl *prefix, DOMStringImpl *name, bool readonly) const;
 		virtual NodeImpl::Id getId(NodeImpl::IdType type, DOMStringImpl *nodeName, bool readonly) const;
-		virtual DOMString getName(NodeImpl::IdType type, NodeImpl::Id id) const;
+		virtual DOMStringImpl *getName(NodeImpl::IdType type, NodeImpl::Id id) const;
 
 		// Keep track of listener types
-		int addListenerType(const DOMString &type);
-		int removeListenerType(const DOMString &type);
-		bool hasListenerType(const DOMString &type) const;
+		int addListenerType(DOMStringImpl *type);
+		int removeListenerType(DOMStringImpl *type);
+		bool hasListenerType(DOMStringImpl *type) const;
 
 		void addListenerType(int eventId);
 		void removeListenerType(int eventId);
@@ -173,8 +180,8 @@ namespace KDOM
 
 		void setDocType(DocumentTypeImpl *doctype);
 
-		virtual CSSStyleSheetImpl *createCSSStyleSheet(NodeImpl *parent, const DOMString &url) const;
-		virtual CSSStyleSheetImpl *createCSSStyleSheet(CSSRuleImpl *ownerRule, const DOMString &url) const;
+		virtual CSSStyleSheetImpl *createCSSStyleSheet(NodeImpl *parent, DOMStringImpl *url) const;
+		virtual CSSStyleSheetImpl *createCSSStyleSheet(CSSRuleImpl *ownerRule, DOMStringImpl *url) const;
 		
 		// Style selecting
 		CSSStyleSelector *styleSelector() { return m_styleSelector; }
@@ -234,8 +241,7 @@ namespace KDOM
 		 * Returns the type of this document - e.g. HTML, XHTML, MATHML etc
 		 * If you inherit from this class make sure you set m_kdomDocType;
 		 */
-		KDOMDocumentType kdomDocumentType();
-
+		KDOMDocumentType kdomDocumentType() const;
 
 	protected:
 		// Important function for users of this library
@@ -262,7 +268,7 @@ namespace KDOM
 
 		QPtrList<NodeIteratorImpl> m_nodeIterators;
 
-		virtual DOMString defaultNS() const;
+		virtual DOMStringImpl *defaultNS() const;
 
 		virtual StyleSheetImpl *checkForStyleSheet(NodeImpl *n, QString &title);
 		virtual CSSStyleSelector *createStyleSelector(const QString &userSheet);
@@ -276,7 +282,7 @@ namespace KDOM
 		mutable Ecma *m_ecmaEngine;
 		mutable CSSStyleSheetImpl *m_elementSheet;
 
-		bool m_standalone : 1;
+		bool m_xmlStandalone : 1;
 		bool m_strictErrorChecking : 1;
 		bool m_usesDescendantRules : 1;
 		bool m_parsingMode : 1;
@@ -285,9 +291,9 @@ namespace KDOM
 		int m_listenerTypes;
 
 		KURL m_url;
-		DOMString m_inputEncoding;
-		DOMString m_xmlEncoding;
-		DOMString m_xmlVersion;
+		DOMStringImpl *m_inputEncoding;
+		DOMStringImpl *m_xmlEncoding;
+		DOMStringImpl *m_xmlVersion;
 		DOMImplementationImpl *m_implementation;
 		mutable DOMConfigurationImpl *m_configuration;
 

@@ -45,12 +45,7 @@ CSSStyleRuleImpl::~CSSStyleRuleImpl()
 	delete m_selector;
 }
 
-void CSSStyleRuleImpl::setSelectorText(const DOMString &)
-{
-	// FIXME!
-}
-
-DOMString CSSStyleRuleImpl::selectorText() const
+DOMStringImpl *CSSStyleRuleImpl::selectorText() const
 {
 	if(m_selector && m_selector->first())
 	{
@@ -60,7 +55,12 @@ DOMString CSSStyleRuleImpl::selectorText() const
 		return cs->selectorText();
 	}
 
-	return DOMString();
+	return 0;
+}
+
+void CSSStyleRuleImpl::setSelectorText(DOMStringImpl *)
+{
+	// FIXME!
 }
 
 bool CSSStyleRuleImpl::parseString(const DOMString &, bool)

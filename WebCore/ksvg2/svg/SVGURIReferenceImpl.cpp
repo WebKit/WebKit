@@ -52,9 +52,9 @@ bool SVGURIReferenceImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
 	KDOM::DOMString value(attr->value());
-	if(id == ATTR_HREF || attr->name() == "xlink:href")
+	if(id == ATTR_HREF || KDOM::DOMString(attr->name()) == "xlink:href")
 	{
-		href()->setBaseVal(value.implementation());
+		href()->setBaseVal(value.handle());
 		return true;
 	}
 

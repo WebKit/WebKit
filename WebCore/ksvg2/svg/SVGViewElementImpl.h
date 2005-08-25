@@ -37,7 +37,7 @@ namespace KSVG
 							   public SVGZoomAndPanImpl
 	{
 	public:
-		SVGViewElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGViewElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGViewElementImpl();
 
 		virtual void parseAttribute(KDOM::AttributeImpl *);

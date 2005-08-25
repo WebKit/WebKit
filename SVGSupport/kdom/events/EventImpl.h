@@ -27,7 +27,6 @@
 
 #include <kdom/kdom.h>
 #include <kdom/Shared.h>
-#include <kdom/DOMString.h>
 
 namespace KDOM
 {
@@ -48,7 +47,7 @@ namespace KDOM
 		EventImpl(EventImplType identifier);
 		virtual ~EventImpl();
 
-		DOMString type() const;
+		DOMStringImpl *type() const;
 
 		EventTargetImpl *target() const;
 		EventTargetImpl *currentTarget() const;
@@ -63,7 +62,7 @@ namespace KDOM
 		void stopPropagation();
 		void preventDefault();
 
-		virtual void initEvent(const DOMString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
+		virtual void initEvent(DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg);
 
 		// Internal
 		void setTarget(EventTargetImpl *target);
@@ -81,7 +80,7 @@ namespace KDOM
 		bool defaultHandled() const { return m_defaultHandled; }
 		
 	protected:
-		DOMString m_type;
+		DOMStringImpl *m_type;
 		QDateTime m_createTime;
 
 		EventImplType m_identifier;

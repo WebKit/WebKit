@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -32,23 +35,23 @@ namespace KDOM
 	class EntityImpl : public NodeBaseImpl
 	{
 	public:
-		EntityImpl(DocumentImpl *doc, const DOMString &name);
-		EntityImpl(DocumentImpl *doc, const DOMString &publicId, const DOMString &systemId, const DOMString &notationName);
-		EntityImpl(DocumentImpl *doc, const DOMString &name, const DOMString &publicId, const DOMString &systemId, const DOMString &notationName);
+		EntityImpl(DocumentPtr *doc, DOMStringImpl *name);
+		EntityImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
+		EntityImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
 		virtual ~EntityImpl();
 
 		// 'Entity' functions
-		virtual DOMString publicId() const;
-		virtual DOMString systemId() const;
-		virtual DOMString notationName() const;
+		virtual DOMStringImpl *publicId() const;
+		virtual DOMStringImpl *systemId() const;
+		virtual DOMStringImpl *notationName() const;
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		DOMString inputEncoding() const;
-		DOMString xmlEncoding() const;
-		DOMString xmlVersion() const;
+		DOMStringImpl *inputEncoding() const;
+		DOMStringImpl *xmlEncoding() const;
+		DOMStringImpl *xmlVersion() const;
 
 		// Internal
 		virtual bool childTypeAllowed(unsigned short type) const;

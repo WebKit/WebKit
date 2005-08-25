@@ -32,7 +32,7 @@
 
 using namespace KSVG;
 
-SVGEllipseElementImpl::SVGEllipseElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGEllipseElementImpl::SVGEllipseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
 {
 	m_cx = m_cy = m_rx = m_ry = 0;
@@ -73,7 +73,7 @@ SVGAnimatedLengthImpl *SVGEllipseElementImpl::ry() const
 void SVGEllipseElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_CX:

@@ -30,7 +30,6 @@ namespace KDOM
 {
 	class DOMString;
 	class CDFInterface;
-	class DocumentType;
 	class DocumentImpl;
 	class DocumentTypeImpl;
 };
@@ -46,17 +45,18 @@ namespace KSVG
 		static SVGDOMImplementationImpl *self();
 
 		// 'SVGDOMImplementationImpl' functions
-		bool hasFeature(const KDOM::DOMString &feature, const KDOM::DOMString &version) const;
-		KDOM::DocumentTypeImpl *createDocumentType(const KDOM::DOMString &qualifiedName, const KDOM::DOMString &publicId, const KDOM::DOMString &systemId) const;
-		KDOM::DocumentImpl *createDocument(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &qualifiedName, const KDOM::DocumentType &doctype, bool createDocElement, KDOM::KDOMView *view) const;
+		bool hasFeature(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
+		KDOM::DocumentTypeImpl *createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId) const;
+		KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype) const;
+		KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const;
 
-		virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(const KDOM::DOMString &title, const KDOM::DOMString &media) const;
+		virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const;
 
 		// Internal
-		virtual int typeToId(const KDOM::DOMString &type);
-		virtual KDOM::DOMString idToType(int eventId);
+		virtual int typeToId(KDOM::DOMStringImpl *type);
+		virtual KDOM::DOMStringImpl *idToType(int eventId);
 
-		virtual KDOM::DocumentType defaultDocumentType() const;
+		virtual KDOM::DocumentTypeImpl *defaultDocumentType() const;
 
 		bool inAnimationContext() const;
 		void setAnimationContext(bool value);

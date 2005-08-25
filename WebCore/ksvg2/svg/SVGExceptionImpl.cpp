@@ -24,7 +24,7 @@
 
 using namespace KSVG;
 
-SVGExceptionImpl::SVGExceptionImpl(unsigned short code) : KDOM::Shared(true)
+SVGExceptionImpl::SVGExceptionImpl(unsigned short code) : KDOM::Shared()
 {
 	ref(); // ExceptionImpl classes need to ref themselves() as it's just
 		   // very convienient to just use 'throw new ExceptionImpl' ...

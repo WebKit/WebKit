@@ -42,7 +42,7 @@ namespace KDOM
 		CSSPrimitiveValueImpl(CDFInterface *interface);
 		CSSPrimitiveValueImpl(CDFInterface *interface, int ident);
 		CSSPrimitiveValueImpl(CDFInterface *interface, double num, UnitTypes type);
-		CSSPrimitiveValueImpl(CDFInterface *interface, const DOMString &str, UnitTypes type);
+		CSSPrimitiveValueImpl(CDFInterface *interface, DOMStringImpl *str, UnitTypes type);
 		CSSPrimitiveValueImpl(CDFInterface *interface, CounterImpl *c);
 		CSSPrimitiveValueImpl(CDFInterface *interface, RectImpl *r);
 		CSSPrimitiveValueImpl(CDFInterface *interface, const QRgb &color);
@@ -54,11 +54,13 @@ namespace KDOM
 		unsigned short primitiveType() const;
 		void setFloatValue(unsigned short unitType, float floatValue);
 		float getFloatValue(unsigned short unitType);
-		void setStringValue(unsigned short stringType, const DOMString &stringValue);
-		DOMStringImpl *getStringValue() const;
+		void setStringValue(unsigned short stringType, DOMStringImpl *stringValue);
+		DOMStringImpl *getDOMStringValue() const;
 		CounterImpl *getCounterValue() const;
 		RectImpl *getRectValue() const;
-		QRgb getRGBColorValue() const;
+
+		QRgb getQRGBColorValue() const;
+		RGBColorImpl *getRGBColorValue() const;
 
 		/*
 		 * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get
@@ -79,8 +81,8 @@ namespace KDOM
 		virtual bool isQuirkValue() const { return false; }
 
 		// 'CSSValue' functions
-		virtual void setCssText(const DOMString &cssText);
-		virtual DOMString cssText() const;
+		virtual void setCssText(DOMStringImpl *cssText);
+		virtual DOMStringImpl *cssText() const;
 		virtual unsigned short cssValueType() const;
 
 		virtual bool isPrimitiveValue() const { return true; }

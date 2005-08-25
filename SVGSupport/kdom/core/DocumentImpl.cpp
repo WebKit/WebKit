@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2002-2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -27,8 +33,8 @@
 #include <qptrstack.h>
 #include <qpaintdevicemetrics.h>
 
-#include "Ecma.h"
-#include "Attr.h"
+#include "kdom.h"
+#include <kdom/ecma/Ecma.h>
 #include <kdom/Helper.h>
 #include "TextImpl.h"
 #include "AttrImpl.h"
@@ -44,15 +50,13 @@
 #include "CDFInterface.h"
 #include "DOMStringImpl.h"
 #include "XMLElementImpl.h"
-#include "XPathNamespace.h"
 #include "StyleSheetImpl.h"
 #include "TagNodeListImpl.h"
 #include "KDOMCacheHelper.h"
 #include "NamedNodeMapImpl.h"
 #include "CDATASectionImpl.h"
 #include "NodeIteratorImpl.h"
-#include <kdom/css/impl/CSSStyleSelector.h>
-#include "DOMConfiguration.h"
+#include "kdom/css/impl/CSSStyleSelector.h"
 #include "DocumentTypeImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "StyleSheetListImpl.h"
@@ -66,14 +70,14 @@
 #include "domattrs.h"
 
 using namespace KDOM;
+using namespace KDOM::XPath;
 using namespace KDOM::XPointer;
 
 DocumentImpl::DocumentImpl(DOMImplementationImpl *i, KDOMView *view, int nrTags, int nrAttrs)
-: NodeBaseImpl(0), DocumentEventImpl(), DocumentViewImpl(),
-  DocumentStyleImpl(), DocumentTraversalImpl(), DocumentRangeImpl(),
-  XPointerEvaluatorImpl(), XPathEvaluatorImpl(),
-  m_implementation(i)
+: NodeBaseImpl(new DocumentPtr()), DocumentCSSImpl(), DocumentViewImpl(), DocumentEventImpl(),
+  DocumentRangeImpl(), DocumentTraversalImpl(), XPointerEvaluatorImpl(), XPathEvaluatorImpl(), m_implementation(i)
 {
+	document->doc = this;
 	m_view = view;
 	m_cssTarget = 0;
 	m_hoverNode = 0;
@@ -81,8 +85,15 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *i, KDOMView *view, int nrTags,
 	m_ecmaEngine = 0;
 	m_elementSheet = 0;
 	m_listenerTypes = 0;
-	m_standalone = false;
-	m_xmlVersion = "1.0"; // we support XML feature, so use this default
+
+	m_xmlStandalone = false;
+
+	m_xmlEncoding = 0;
+	m_inputEncoding = 0;
+
+	m_xmlVersion = new DOMStringImpl("1.0"); // we support XML feature, so use this default
+	m_xmlVersion->ref();
+
 	m_strictErrorChecking = true;
 
 	m_paintDevice = 0;
@@ -123,9 +134,16 @@ DocumentImpl::~DocumentImpl()
 		m_focusNode->deref();
 	if(m_hoverNode)
 		m_hoverNode->deref();
-
 	if(m_elementSheet)
 		m_elementSheet->deref();
+	if(m_xmlVersion)
+		m_xmlVersion->deref();
+	if(m_xmlEncoding)
+		m_xmlEncoding->deref();
+	if(m_inputEncoding)
+		m_inputEncoding->deref();
+	if(m_configuration)
+		m_configuration->deref();
 
 	delete m_styleSelector;
 	delete m_paintDeviceMetrics;
@@ -151,59 +169,27 @@ void DocumentImpl::setDocType(DocumentTypeImpl *_doctype)
 {
 	DocumentTypeImpl *existing = doctype();
 	if(existing)
-	{
 		replaceChild(_doctype, existing);
-		existing->deref();
-	}
 	else
 	{
 		appendChild(_doctype);
-
-		_doctype->ref();
 		_doctype->setOwnerDocument(this);
 	}
 }
 
-DOMString DocumentImpl::nodeName() const
+DOMStringImpl *DocumentImpl::nodeName() const
 {
-	return "#document";
+	return new DOMStringImpl("#document");
 }
 
-DOMString DocumentImpl::textContent() const
+DOMStringImpl *DocumentImpl::textContent() const
 {
-	return DOMString();
+	return 0;
 }
 
 unsigned short DocumentImpl::nodeType() const
 {
 	return DOCUMENT_NODE;
-}
-
-bool DocumentImpl::childAllowed(NodeImpl *newChild)
-{
-	// Documents may contain a maximum of one Element child
-	if(newChild->nodeType() == ELEMENT_NODE)
-	{
-		NodeImpl *c;
-		for(c = firstChild(); c; c = c->nextSibling())
-		{
-			if(c->nodeType() == ELEMENT_NODE)
-				return false;
-		}
-	}
-
-	// Documents may contain a maximum of one DocumentType child
-	if(newChild->nodeType() == DOCUMENT_TYPE_NODE)
-	{
-		NodeImpl *c;
-		for(c = firstChild(); c; c = c->nextSibling())
-		{
-			if(c->nodeType() == DOCUMENT_TYPE_NODE)
-				return false;
-		}
-	}
-
-	return childTypeAllowed(newChild->nodeType());
 }
 
 bool DocumentImpl::childTypeAllowed(unsigned short type) const
@@ -232,122 +218,164 @@ ElementImpl *DocumentImpl::documentElement() const
 	return 0;
 }
 
-ElementImpl *DocumentImpl::createElement(const DOMString &tagName)
+ElementImpl *DocumentImpl::createElement(DOMStringImpl *tagName)
 {
 	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
-	if(!KDOM::Helper::ValidateQualifiedName(tagName.implementation()))
+	if(!Helper::ValidateQualifiedName(tagName))
 		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
 
-	NodeImpl::Id id = getId(NodeImpl::ElementId, tagName.implementation(), false);
-	return new XMLElementImpl(this, id);
+	NodeImpl::Id id = getId(NodeImpl::ElementId, tagName, false);
+	return new XMLElementImpl(document, id);
 }
 
-ElementImpl *DocumentImpl::createElementNS(const DOMString &namespaceURI, const DOMString &qualifiedName)
+ElementImpl *DocumentImpl::createElementNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName)
 {
+	if(namespaceURI)
+		namespaceURI->ref();
+	if(qualifiedName)
+		qualifiedName->ref();
+
 	int dummy;
 	Helper::CheckQualifiedName(qualifiedName, namespaceURI, dummy, false, false);
-	DOMString prefix, localName;
-	Helper::SplitNamespace(prefix, localName, qualifiedName.implementation());
 
-	NodeImpl::Id id = getId(NodeImpl::ElementId, namespaceURI.implementation(), prefix.implementation(), localName.implementation(), false);
-	return new XMLElementImpl(this, id, prefix, namespaceURI.isNull());
+	DOMStringImpl *prefix = 0, *localName = 0;
+	Helper::SplitPrefixLocalName(qualifiedName, prefix, localName);
+
+	if(prefix)
+		prefix->ref();
+	if(localName)
+		localName->ref();
+
+	NodeImpl::Id id = getId(NodeImpl::ElementId, namespaceURI, prefix, localName, false);
+	ElementImpl *ret = new XMLElementImpl(document, id, prefix, !namespaceURI);
+
+	if(prefix)
+		prefix->deref();
+	if(localName)
+		localName->deref();
+	if(namespaceURI)
+		namespaceURI->deref();
+	if(qualifiedName)
+		qualifiedName->deref();
+
+	return ret;
 }
 
-AttrImpl *DocumentImpl::createAttribute(const DOMString &name)
+AttrImpl *DocumentImpl::createAttribute(DOMStringImpl *name)
 {
 	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
-	if(!Helper::ValidateAttributeName(name.implementation()))
+	if(!Helper::ValidateAttributeName(name))
 		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
 
-	NodeImpl::Id id = getId(NodeImpl::AttributeId, name.implementation(), false);
-	return new AttrImpl(this, id);
+	NodeImpl::Id id = getId(NodeImpl::AttributeId, name, false);
+	return new AttrImpl(document, id);
 }
 
-AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName)
+AttrImpl *DocumentImpl::createAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName)
 {
+	if(namespaceURI)
+		namespaceURI->ref();
+	if(qualifiedName)
+		qualifiedName->ref();
+
 	int dummy;
 	Helper::CheckQualifiedName(qualifiedName, namespaceURI, dummy, false, false);
-	DOMString prefix, localName;
-	Helper::SplitNamespace(prefix, localName, qualifiedName.implementation());
 
-	NodeImpl::Id id = getId(NodeImpl::AttributeId, namespaceURI.implementation(), prefix.implementation(), localName.implementation(), false);
-	return new AttrImpl(this, id, 0, prefix.implementation(), namespaceURI.isNull());
+	DOMStringImpl *prefix = 0, *localName = 0;
+	Helper::SplitPrefixLocalName(qualifiedName, prefix, localName);
+
+	if(prefix)
+		prefix->ref();
+	if(localName)
+		localName->ref();
+
+	NodeImpl::Id id = getId(NodeImpl::AttributeId, namespaceURI, prefix, localName, false);
+	AttrImpl *ret = new AttrImpl(document, id, 0, prefix, !namespaceURI);
+
+	if(prefix)
+		prefix->deref();
+	if(localName)
+		localName->deref();
+	if(namespaceURI)
+		namespaceURI->deref();
+	if(qualifiedName)
+		qualifiedName->deref();
+
+	return ret;
 }
 
 DocumentFragmentImpl *DocumentImpl::createDocumentFragment()
 {
-	return new DocumentFragmentImpl(this);
+	return new DocumentFragmentImpl(docPtr());
 }
 
-CommentImpl *DocumentImpl::createComment(const DOMString &data)
+CommentImpl *DocumentImpl::createComment(DOMStringImpl *data)
 {
-	return new CommentImpl(this, data.implementation());
+	return new CommentImpl(docPtr(), data);
 }
 
-CDATASectionImpl *DocumentImpl::createCDATASection(const DOMString &data)
+CDATASectionImpl *DocumentImpl::createCDATASection(DOMStringImpl *data)
 {
-	return new CDATASectionImpl(this, data.implementation());
+	return new CDATASectionImpl(docPtr(), data);
 }
 
-EntityReferenceImpl *DocumentImpl::createEntityReference(const DOMString &data)
-{
-	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
-	if(!Helper::ValidateAttributeName(data.implementation()))
-		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
-
-	return new EntityReferenceImpl(this, data.implementation());
-}
-
-ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction(const DOMString &target, const DOMString &data)
+EntityReferenceImpl *DocumentImpl::createEntityReference(DOMStringImpl *data)
 {
 	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
-	if(!Helper::ValidateAttributeName(target.implementation()))
+	if(!Helper::ValidateAttributeName(data))
 		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
 
-	return new ProcessingInstructionImpl(this, target, data);
+	return new EntityReferenceImpl(docPtr(), data);
 }
 
-TextImpl *DocumentImpl::createTextNode(const DOMString &data)
+ProcessingInstructionImpl *DocumentImpl::createProcessingInstruction(DOMStringImpl *target, DOMStringImpl *data)
 {
-	return new TextImpl(this, data.implementation());
+	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
+	if(!Helper::ValidateAttributeName(target))
+		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
+
+	return new ProcessingInstructionImpl(docPtr(), target, data);
 }
 
-NodeImpl *DocumentImpl::cloneNode(bool deep, DocumentImpl *) const
+TextImpl *DocumentImpl::createTextNode(DOMStringImpl *data)
 {
-	DocumentType docType;
+	return new TextImpl(docPtr(), data);
+}
 
-	DOMString namespaceURI = documentElement() ? documentElement()->namespaceURI() : DOMString();
-	DOMString qualifiedName = documentElement() ? documentElement()->nodeName() : DOMString();
+NodeImpl *DocumentImpl::cloneNode(bool deep, DocumentPtr *) const
+{
+	DOMStringImpl *namespaceURI = documentElement() ? documentElement()->namespaceURI() : 0;
+	DOMStringImpl *qualifiedName = documentElement() ? documentElement()->nodeName() : 0;
 
 	// TODO: Is passing view=0 correct? Investigate!
-	DocumentImpl *clone = implementation()->createDocument(namespaceURI, qualifiedName, docType, false, 0);
+	DocumentImpl *clone = implementation()->createDocument(namespaceURI, qualifiedName, 0, false, 0);
 	clone->ref();
 	clone->setXmlVersion(xmlVersion());
 	clone->setXmlEncoding(xmlEncoding());
 	clone->setInputEncoding(inputEncoding());
-	clone->setStandalone(standalone());
+	clone->setXmlStandalone(xmlStandalone());
 
 	if(deep)
-		cloneChildNodes(clone, clone);
+		cloneChildNodes(clone, clone->docPtr());
 
 	return clone;
 }
 
-int DocumentImpl::addListenerType(const DOMString &type)
+int DocumentImpl::addListenerType(DOMStringImpl *type)
 {
 	int eventId = implementation()->typeToId(type);
 	addListenerType(eventId);
 	return eventId;
 }
 
-int DocumentImpl::removeListenerType(const DOMString &type)
+int DocumentImpl::removeListenerType(DOMStringImpl *type)
 {
 	int eventId = implementation()->typeToId(type);
 	addListenerType(eventId);
 	return eventId;
 }
 
-bool DocumentImpl::hasListenerType(const DOMString &type) const
+bool DocumentImpl::hasListenerType(DOMStringImpl *type) const
 {
 	int eventId = implementation()->typeToId(type);
 	return hasListenerType(eventId);
@@ -383,19 +411,20 @@ CSSStyleSheetImpl *DocumentImpl::elementSheet() const
 {
 	if(!m_elementSheet)
 	{
-		m_elementSheet = new CSSStyleSheetImpl(const_cast<DocumentImpl *>(this), documentKURI().url());
+		m_elementSheet = new CSSStyleSheetImpl(const_cast<DocumentImpl *>(this),
+											   new DOMStringImpl(documentKURI().url()));
 		m_elementSheet->ref();
 	}
 
 	return m_elementSheet;
 }
 
-NodeListImpl *DocumentImpl::getElementsByTagName(const DOMString &tagName)
+NodeListImpl *DocumentImpl::getElementsByTagName(DOMStringImpl *tagName)
 {
 	return new TagNodeListImpl(this, tagName);
 }
 
-NodeListImpl *DocumentImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName)
+NodeListImpl *DocumentImpl::getElementsByTagNameNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName)
 {
 	return new TagNodeListImpl(this, localName, namespaceURI);
 }
@@ -413,17 +442,17 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep)
 
 	if(importedNode->nodeType() == ATTRIBUTE_NODE)
 	{
-		result = importedNode->cloneNode(true, this);
+		result = importedNode->cloneNode(true, docPtr());
 		deep = false;
 	}
 	else if(importedNode->nodeType() == ELEMENT_NODE)
-		result = importedNode->cloneNode(false, this);
+		result = importedNode->cloneNode(false, docPtr());
 	else if(importedNode->nodeType() == DOCUMENT_FRAGMENT_NODE)
 		result = createDocumentFragment();
 	else if(importedNode->nodeType() == ENTITY_NODE)
 	{
 		EntityImpl *importedEntity = static_cast<EntityImpl *>(importedNode);
-		result = importedEntity->cloneNode(false, this);
+		result = importedEntity->cloneNode(false, docPtr());
 	}
 	else if(importedNode->nodeType() == ENTITY_REFERENCE_NODE)
 	{
@@ -434,7 +463,7 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep)
 	else if(importedNode->nodeType() == NOTATION_NODE)
 	{
 		NotationImpl *importedNotation = static_cast<NotationImpl *>(importedNode);
-		NotationImpl *temp = new NotationImpl(this, importedNotation->publicId(), importedNotation->systemId());
+		NotationImpl *temp = new NotationImpl(docPtr(), importedNotation->publicId(), importedNotation->systemId());
 
 		result = temp;
 		deep = false;
@@ -465,11 +494,6 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep)
 		result = createCDATASection(importedCD->nodeValue());
 		deep = false;
 	}
-	else 
-	/* This includes XPathNamespace::XPATH_NAMESPACE_NODE, see:
-	 * http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226/xpath.html#XPathNamespace
-	 */
-		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
 
 	if(deep)
 	{
@@ -492,7 +516,7 @@ void DocumentImpl::normalizeDocument()
 	}
 }
 
-NodeImpl *DocumentImpl::renameNode(NodeImpl *n, const DOMString &namespaceURI, const DOMString &qualifiedName)
+NodeImpl *DocumentImpl::renameNode(NodeImpl *n, DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName)
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
 	if(isReadOnly())
@@ -595,7 +619,7 @@ NodeImpl *DocumentImpl::normalizeNode(NodeImpl *node)
 					NodeImpl *nextSibling = prevSibling->nextSibling();
 					if(nextSibling != 0 && nextSibling->nodeType() == TEXT_NODE)
 					{
-						((TextImpl *)nextSibling)->insertData(0, prevSibling->nodeValue().implementation());
+						static_cast<TextImpl *>(nextSibling)->insertData(0, prevSibling->nodeValue());
 						parent->removeChild(prevSibling);
 						return nextSibling;
 					}
@@ -615,7 +639,7 @@ NodeImpl *DocumentImpl::normalizeNode(NodeImpl *node)
 				node = parent->replaceChild(text, node);
 				if(prevSibling != 0 && prevSibling->nodeType() == TEXT_NODE)
 				{
-					text->insertData(0, prevSibling->nodeValue().implementation());
+					text->insertData(0, prevSibling->nodeValue());
 					parent->removeChild(prevSibling);
 				}
 				
@@ -628,12 +652,12 @@ NodeImpl *DocumentImpl::normalizeNode(NodeImpl *node)
 			NodeImpl *next = node->nextSibling();
 			if(next != 0 && next->nodeType() == TEXT_NODE)
 			{
-				static_cast<TextImpl *>(node)->appendData(next->nodeValue().implementation());
+				static_cast<TextImpl *>(node)->appendData(next->nodeValue());
 				node->parentNode()->removeChild(next);
 				node->normalize();
 				return node;
 			}
-			else if(node->nodeValue().isEmpty())
+			else if((!node->nodeValue() || node->nodeValue()->isEmpty()))
 				node->parentNode()->removeChild(node);
 			else
 				node->normalize();
@@ -650,8 +674,11 @@ NodeImpl *DocumentImpl::normalizeNode(NodeImpl *node)
 	return 0;
 }
 
-ElementImpl *DocumentImpl::getElementById(const DOMString &elementId)
+ElementImpl *DocumentImpl::getElementById(DOMStringImpl *elementId)
 {
+	if(elementId)
+		elementId->ref();
+
 	QPtrStack<NodeImpl> nodeStack;
 	NodeImpl *current = firstChild();
 
@@ -671,7 +698,12 @@ ElementImpl *DocumentImpl::getElementById(const DOMString &elementId)
 			{
 				ElementImpl *e = static_cast<ElementImpl *>(current);
 				if(e->getIdAttribute(elementId))
+				{
+					if(elementId)
+						elementId->deref();
+
 					return e;
+				}
 			}
 
 			NodeImpl *child = current->firstChild();
@@ -684,6 +716,9 @@ ElementImpl *DocumentImpl::getElementById(const DOMString &elementId)
 				current = current->nextSibling();
 		}
 	}
+
+	if(elementId)
+		elementId->deref();
 
 	return 0;
 }
@@ -698,34 +733,34 @@ KURL DocumentImpl::documentKURI() const
 	return m_url;
 }
 
-bool DocumentImpl::standalone() const
+bool DocumentImpl::xmlStandalone() const
 {
-	return m_standalone;
+	return m_xmlStandalone;
 }
 
-void DocumentImpl::setStandalone(bool standalone)
+void DocumentImpl::setXmlStandalone(bool xmlStandalone)
 {
-	m_standalone = standalone;
+	m_xmlStandalone = xmlStandalone;
 }
 
-DOMString DocumentImpl::inputEncoding() const
+DOMStringImpl *DocumentImpl::inputEncoding() const
 {
 	return m_inputEncoding;
 }
 
-void DocumentImpl::setInputEncoding(const DOMString &inputEncoding)
+void DocumentImpl::setInputEncoding(DOMStringImpl *inputEncoding)
 {
-	m_inputEncoding = inputEncoding;
+	KDOM_SAFE_SET(m_inputEncoding, inputEncoding);
 }
 
-DOMString DocumentImpl::xmlEncoding() const
+DOMStringImpl *DocumentImpl::xmlEncoding() const
 {
 	return m_xmlEncoding;
 }
 
-void DocumentImpl::setXmlEncoding(const DOMString &encoding)
+void DocumentImpl::setXmlEncoding(DOMStringImpl *encoding)
 {
-	m_xmlEncoding = encoding;
+	KDOM_SAFE_SET(m_xmlEncoding, encoding);
 }
 
 NodeImpl *DocumentImpl::adoptNode(NodeImpl *source) const
@@ -743,12 +778,6 @@ NodeImpl *DocumentImpl::adoptNode(NodeImpl *source) const
 	if(nType == ENTITY_NODE || nType == NOTATION_NODE)
 		return 0;
 
-	/* According to DOM XPath 26 February 2004; see:
-	 * http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226/xpath.html#XPathNamespace
-	 */
-	if(nType == XPathNamespace::XPATH_NAMESPACE_NODE)
-		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
-
 	if(source->parentNode())
 		source->parentNode()->removeChild(source);
 	else if(nType == ATTRIBUTE_NODE)
@@ -764,20 +793,22 @@ NodeImpl *DocumentImpl::adoptNode(NodeImpl *source) const
 	return source;
 }
 
-DOMString DocumentImpl::xmlVersion() const
+DOMStringImpl *DocumentImpl::xmlVersion() const
 {
 	return m_xmlVersion;
 }
 
-void DocumentImpl::setXmlVersion(const DOMString &version)
+void DocumentImpl::setXmlVersion(DOMStringImpl *versionImpl)
 {
+	DOMString version(versionImpl);
+
 	// NOT_SUPPORTED_ERR: Raised if the version is set to a value that is not
 	// supported by this Document or if this document does not support the
 	// "XML" feature.
 	if(version != "1.0" && version != "1.1")
 		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
 
-	m_xmlVersion = version;
+	KDOM_SAFE_SET(m_xmlVersion, versionImpl);
 }
 
 bool DocumentImpl::strictErrorChecking() const
@@ -844,7 +875,7 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 		case NodeImpl::NamespaceId:
 		{
 			// ### Id == 0 can't be used with ((void *) int) based QDicts...
-			if(!strcasecmp(DOMString(name), defaultNS().string().ascii()))
+			if(!strcasecmp(DOMString(name), DOMString(defaultNS())))
 				return 0;
 	
 			map = m_namespaceMap;
@@ -905,7 +936,7 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 	else 
 	{
 		id = (NodeImpl::Id) map->ids.find(n.string());
-		if(!readonly && id && prefix && prefix->length() != 0)
+		if(!readonly && id && prefix && !prefix->isEmpty())
 		{
 			// we were called in registration mode... check if the alias exists
 			QConstString px(prefix->unicode(), prefix->length());
@@ -932,7 +963,7 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 	map->ids.insert(n.string(), (NodeImpl::Id *)cid);
 
 	// and register an alias if needed for DOM1 methods compatibility
-	if(prefix && prefix->length() != 0)
+	if(prefix && !prefix->isEmpty())
 	{
 		QConstString px(prefix->unicode(), prefix->length());
 		QString qn(QString::fromLatin1("aliases: ") + px.string() + QString::fromLatin1(":") + n.string());
@@ -956,7 +987,7 @@ NodeImpl::Id DocumentImpl::getId(IdType type, DOMStringImpl *nodeName, bool read
 	return getId(type, 0, 0, nodeName, readonly);
 }
 
-DOMString DocumentImpl::getName(NodeImpl::IdType type, NodeImpl::Id id) const
+DOMStringImpl *DocumentImpl::getName(NodeImpl::IdType type, NodeImpl::Id id) const
 {
 	IdNameMapping *map;
 	bool hasNS = (id & NodeImpl_IdNSMask);
@@ -982,13 +1013,13 @@ DOMString DocumentImpl::getName(NodeImpl::IdType type, NodeImpl::Id id) const
 			break;
 		}
 		default:
-			return DOMString();
+			return 0;
 	}
 	
 	id = id & NodeImpl_IdLocalMask;
 
-	if(id >= map->idStart)
-		return DOMString(map->names[id]);
+	if(id >= map->idStart && map->names[id])
+		return new DOMStringImpl(map->names[id]->string());
 
 	// Actually perform the request...
 	CDFInterface *interface = implementation()->cdfInterface();
@@ -1008,16 +1039,16 @@ DOMString DocumentImpl::getName(NodeImpl::IdType type, NodeImpl::Id id) const
 		}
 		case NodeImpl::NamespaceId:
 		default:
-			return DOMString();
+			return 0;
 	}
 
 	QString ret = QString::fromLatin1(val, strlen(val));
-	return hasNS ? ret.lower() : ret;
+	return new DOMStringImpl(hasNS ? ret.lower() : ret);
 }
 
-DOMString DocumentImpl::defaultNS() const
+DOMStringImpl *DocumentImpl::defaultNS() const
 {
-	return NS_XHTML;
+	return new DOMStringImpl(NS_XHTML.string());
 }
 
 void DocumentImpl::updateRendering()
@@ -1078,14 +1109,14 @@ CSSStyleSelector *DocumentImpl::createStyleSelector(const QString &userSheet)
 	return new CSSStyleSelector(this, userSheet, m_styleSheets, m_url, false);
 }
 
-CSSStyleSheetImpl *DocumentImpl::createCSSStyleSheet(NodeImpl *parent, const DOMString &url) const
+CSSStyleSheetImpl *DocumentImpl::createCSSStyleSheet(NodeImpl *parent, DOMStringImpl *url) const
 {
 	CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent, url);
 	sheet->ref();
 	return sheet;
 }
 
-CSSStyleSheetImpl *DocumentImpl::createCSSStyleSheet(CSSRuleImpl *ownerRule, const DOMString &url) const
+CSSStyleSheetImpl *DocumentImpl::createCSSStyleSheet(CSSRuleImpl *ownerRule, DOMStringImpl *url) const
 {
 	CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(ownerRule, url);
 	sheet->ref();
@@ -1097,20 +1128,23 @@ bool DocumentImpl::prepareMouseEvent(bool, int, int, MouseEventImpl *)
 	return false;
 }
 
-DOMString DocumentImpl::documentURI() const
+DOMStringImpl *DocumentImpl::documentURI() const
 {
 	if(documentKURI().isEmpty())
-		return DOMString();
+		return 0;
 
-	return documentKURI().url();
+	return new DOMStringImpl(documentKURI().url());
+}
+
+void DocumentImpl::setDocumentURI(DOMStringImpl *documentURI)
+{
+	// TODO: check if that is enough.
+	m_url = KURL(DOMString(documentURI).string());
 }
 
 void DocumentImpl::setHoverNode(NodeImpl *newHoverNode)
 {
-	NodeImpl* oldHoverNode = m_hoverNode;
-	if(newHoverNode) newHoverNode->ref();
-	m_hoverNode = newHoverNode;
-	if(oldHoverNode) oldHoverNode->deref();
+	KDOM_SAFE_SET(m_hoverNode, newHoverNode);
 }
 
 void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
@@ -1191,7 +1225,7 @@ void DocumentImpl::setCSSTarget(NodeImpl *n)
 		n->setChanged();
 }
 
-KDOMDocumentType DocumentImpl::kdomDocumentType()
+KDOMDocumentType DocumentImpl::kdomDocumentType() const
 {
 	return m_kdomDocType;
 }

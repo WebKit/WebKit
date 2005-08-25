@@ -29,7 +29,8 @@ namespace KDOM
 {
 
 class NodeImpl;
-class DOMString;
+class DOMStringImpl;
+
 namespace XPointer
 {
 	class NBCImpl;
@@ -52,7 +53,6 @@ namespace XPointer
 	class PointerPartImpl : public Shared
 	{
 	public:
-
 	 	/**
 		 *
 		 * Constructs a PointerPartImpl instance.
@@ -66,7 +66,7 @@ namespace XPointer
 		 *
 		 * @note the arguments in the constructor must be passed to the base class, PointerPartImpl.
 		 */
-		PointerPartImpl(const DOMString &name, const DOMString &schemeData, NBCImpl *nbc);
+		PointerPartImpl(DOMStringImpl *name, DOMStringImpl *schemeData, NBCImpl *nbc);
 		virtual ~PointerPartImpl();
 
 		/**
@@ -76,7 +76,7 @@ namespace XPointer
 		 *
 		 * @returns the scheme name
 		 */
-		DOMString name() const;
+		DOMStringImpl *name() const;
 
 		/**
 		 * The scheme's scheme data. That is, the string between the paranteses.
@@ -85,7 +85,7 @@ namespace XPointer
 		 *
 		 * @returns the scheme data
 		 */
-		DOMString data() const;
+		DOMStringImpl *data() const;
 
 		/**
 		 * The pointer's Namespace Binding Context. It provides
@@ -101,8 +101,8 @@ namespace XPointer
 		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
 
 	private:
-		DOMString m_data;
-		DOMString m_name;
+		DOMStringImpl *m_data;
+		DOMStringImpl *m_name;
 		
 		NBCImpl *m_nbc;
 	};

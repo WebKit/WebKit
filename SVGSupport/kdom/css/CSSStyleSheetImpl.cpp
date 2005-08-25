@@ -20,17 +20,18 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "NodeImpl.h"
 #include "KDOMCSSParser.h"
-#include "CSSRuleList.h"
 #include "DocumentImpl.h"
+#include "CSSRuleListImpl.h"
 #include "CSSStyleRuleImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "CSSImportRuleImpl.h"
 
 using namespace KDOM;
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, const DOMString &href)
+CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMStringImpl *href)
 : StyleSheetImpl(parentSheet, href)
 {
 	m_lstChildren = new QPtrList<StyleBaseImpl>();
@@ -40,7 +41,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, const DOMSt
 	m_namespaces = 0;
 }
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, const DOMString &href, bool _implicit)
+CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, DOMStringImpl *href, bool _implicit)
 : StyleSheetImpl(parentNode, href)
 {
 	m_lstChildren = new QPtrList<StyleBaseImpl>();
@@ -50,7 +51,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, const DOMString &href
 	m_namespaces = 0;
 }
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, const DOMString &href)
+CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMStringImpl *href)
 : StyleSheetImpl(ownerRule, href)
 {
 	m_lstChildren = new QPtrList<StyleBaseImpl>();
@@ -100,6 +101,11 @@ CSSStyleSheetImpl::~CSSStyleSheetImpl()
 	delete m_namespaces;
 }
 
+DOMStringImpl *CSSStyleSheetImpl::type() const
+{
+	return DOMString("text/css").handle();
+}
+
 CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
 {
 	if(m_parent && m_parent->isRule())
@@ -108,12 +114,22 @@ CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
 	return 0;
 }
 
-CSSRuleList CSSStyleSheetImpl::cssRules()
+CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
 {
-	return CSSRuleList(this);
+	CSSRuleListImpl *ret = new CSSRuleListImpl();
+	ret->ref();
+
+	for(unsigned long i = 0; i < length() ; ++i)
+	{
+		StyleBaseImpl *style = item(i);
+		if(style->isRule())
+			ret->insertRule(static_cast<CSSRuleImpl *>(style), length());
+	}
+
+	return ret;
 }
 
-unsigned long CSSStyleSheetImpl::insertRule(const DOMString &rule, unsigned long index)
+unsigned long CSSStyleSheetImpl::insertRule(DOMStringImpl *rule, unsigned long index)
 {
 	if(index > m_lstChildren->count())
 	{
@@ -152,39 +168,39 @@ void CSSStyleSheetImpl::deleteRule(unsigned long index)
 	b->deref();
 }
 
-void CSSStyleSheetImpl::addNamespace(CSSParser *p, const DOMString &prefix, const DOMString &uri)
+void CSSStyleSheetImpl::addNamespace(CSSParser *p, DOMStringImpl *prefix, DOMStringImpl *uri)
 {
-	if(uri.isEmpty())
+	if(!uri || uri->isEmpty())
 		return;
 
 	m_namespaces = new CSSNamespace(prefix, uri, m_namespaces);
 
-	if(prefix.isEmpty())
+	if(!prefix || prefix->isEmpty())
 	{
 		// Set the default namespace on the parser so that selectors that
 		// omit namespace info will be able to pick it up easily.
-		p->defaultNamespace = m_doc->getId(NodeImpl::NamespaceId, uri.implementation(), false /* false */);
+		p->defaultNamespace = m_doc->getId(NodeImpl::NamespaceId, uri, false /* false */);
 	}
 }
 
-void CSSStyleSheetImpl::determineNamespace(Q_UINT32 &id, const DOMString &prefix)
+void CSSStyleSheetImpl::determineNamespace(Q_UINT32 &id, DOMStringImpl *prefix)
 {
 	// If the stylesheet has no namespaces we can just return.  There won't be
 	// any need to ever check namespace values in selectors.
 	if(!m_namespaces)
 		return;
 
-	if(prefix.isEmpty())
-		id = makeId(noNamespace, localNamePart(id)); // No namespace. If an element/attribute has a namespace, e won't match it.
-	else if(prefix == "*")
-		id = makeId(anyNamespace, localNamePart(id)); // We'll match any namespace.
+	if(!prefix || prefix->isEmpty())// No namespace. If an element/attribute has a namespace, we won't match it.
+		id = makeId(noNamespace, localNamePart(id));
+	else if(DOMString(prefix) == "*") // We'll match any namespace.
+		id = makeId(anyNamespace, localNamePart(id));
 	else
 	{
 		CSSNamespace *ns = m_namespaces->namespaceForPrefix(prefix);
 		if(ns)
 		{
 			// Look up the id for this namespace URI.
-			id = makeId(m_doc->getId(NodeImpl::NamespaceId, ns->uri().implementation(), false /* false */), localNamePart(id));
+			id = makeId(m_doc->getId(NodeImpl::NamespaceId, ns->uri(), false /* false */), localNamePart(id));
 		}
 	}
 }
@@ -237,7 +253,7 @@ bool CSSStyleSheetImpl::isLoading() const
 	return false;
 }
 
-bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
+bool CSSStyleSheetImpl::parseString(DOMStringImpl *string, bool strict)
 {
 #ifdef CSS_STYLESHEET_DEBUG
 	kdDebug(6080) << "parsing sheet, len=" << string.length() << ", sheet is " << string.string() << endl;

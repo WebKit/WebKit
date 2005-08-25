@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis           <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -23,19 +29,17 @@
 #ifndef KDOM_NodeImpl_H
 #define KDOM_NodeImpl_H
 
-#include <kdom/Element.h>
-#include <kdom/Document.h>
-#include <kdom/DocumentType.h>
-
 #include <kdom/impl/DOMExceptionImpl.h>
 #include <kdom/events/impl/EventTargetImpl.h>
 
-#ifdef _DOM_NodeImpl_h_
-#warning KDOM and DOM in same file!
-#endif
+//#ifdef _DOM_NodeImpl_h_
+//#warning KDOM and DOM in same file!
+//#endif
 
 #define NodeImpl_IdNSMask    0xffff0000
 #define NodeImpl_IdLocalMask 0x0000ffff
+
+class KURL;
 
 // Helpers
 const Q_UINT16 noNamespace = 0;
@@ -57,6 +61,20 @@ namespace KDOM
 	class DocumentImpl;
 	class NamedAttrMapImpl;
 
+	class DocumentPtr : public Shared
+	{
+	public:
+		DocumentPtr() { doc = 0; }
+		DocumentImpl *document() const { return doc; }
+
+	private:
+		friend class DocumentImpl;
+		friend class NodeImpl;
+		friend class DOMImplementationImpl;
+
+		DocumentImpl *doc;
+	};
+
 	// Any layer-on-top, which offers any rendering functionality
 	// needs to reimplement that (for instance. khtml2/ksvg2)
 	class RenderObject { };
@@ -64,25 +82,20 @@ namespace KDOM
 	class NodeImpl : public EventTargetImpl
 	{
 	public:
-		NodeImpl(DocumentImpl *i);
+		NodeImpl(DocumentPtr *doc);
 		virtual ~NodeImpl();
 
 		// Virtual functions
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 
-		virtual DOMString nodeValue() const;
-		virtual void setNodeValue(const DOMString &nodeValue);
+		virtual DOMStringImpl *nodeValue() const;
+		virtual void setNodeValue(DOMStringImpl *nodeValue);
 
 		virtual unsigned short nodeType() const; 
 
 		virtual NamedAttrMapImpl *attributes(bool readonly = false) const;
 
 		virtual NodeListImpl *childNodes() const;
-
-		// Function  virtual unsigned long childNodeCount()  has been removed in favor
-		// of childNodes()->length();
-		// Function  virtual NodeImpl *childNode(unsigned long index)  has also been removed
-		// in favor of childNodes()->item(index);
 
 		NodeImpl *parentNode() const;
 		NodeImpl *previousSibling() const;
@@ -91,7 +104,7 @@ namespace KDOM
 		virtual NodeImpl *firstChild() const;
 		virtual NodeImpl *lastChild() const;
 
-		virtual KDOM::DocumentImpl *ownerDocument() const;
+		virtual DocumentImpl *ownerDocument() const;
 		void setOwnerDocument(DocumentImpl *doc);
 
 		virtual NodeImpl *insertBefore(NodeImpl *newChild, NodeImpl *refChild);
@@ -101,36 +114,33 @@ namespace KDOM
 
 		virtual bool hasChildNodes() const;
 
-		/**
-		 * FIXME Why was 'doc' added?
-		 */
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc ) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 		NodeImpl *cloneNode(bool deep) const;
 
 		virtual void normalize();
 
-		virtual DOMString namespaceURI() const;
+		virtual DOMStringImpl *namespaceURI() const;
 
-		virtual DOMString prefix() const;
-		virtual void setPrefix(const DOMString &prefix);
+		virtual DOMStringImpl *prefix() const;
+		virtual void setPrefix(DOMStringImpl *prefix);
 
-		virtual DOMString localName() const;
+		virtual DOMStringImpl *localName() const;
 
 		virtual bool hasAttributes() const;
 
-		virtual bool isSupported(const DOMString &feature, const DOMString &version) const;
+		virtual bool isSupported(DOMStringImpl *feature, DOMStringImpl *version) const;
 
 		unsigned short compareDocumentPosition(NodeImpl *other) const; // DOM3
 
-		virtual DOMString textContent() const; // DOM3
-		void setTextContent(const DOMString &text); // DOM3
+		virtual DOMStringImpl *textContent() const; // DOM3
+		void setTextContent(DOMStringImpl *text); // DOM3
 
-		bool isDefaultNamespace(const DOMString &namespaceURI) const; // DOM3
+		bool isDefaultNamespace(DOMStringImpl *namespaceURI) const; // DOM3
 		bool isSameNode(NodeImpl *other) const; // DOM3
 		bool isEqualNode(NodeImpl *arg) const; // DOM3
 
-		DOMString lookupNamespaceURI(const DOMString &prefix) const; // DOM3
-		DOMString lookupPrefix(const DOMString &namespaceURI) const; // DOM3
+		DOMStringImpl *lookupNamespaceURI(DOMStringImpl *prefix) const; // DOM3
+		DOMStringImpl *lookupPrefix(DOMStringImpl *namespaceURI) const; // DOM3
 
 		// Event dispatching helpers
 		void dispatchSubtreeModifiedEvent();
@@ -147,7 +157,7 @@ namespace KDOM
 		void setPreviousSibling(NodeImpl *previous);
 		void setNextSibling(NodeImpl *next);
 
-		DOMString toString() const;
+		DOMStringImpl *toString() const;
 
 		/**
 		 * Count the number of previousSibling calls needed to find the start.
@@ -156,7 +166,7 @@ namespace KDOM
 		 */
 		unsigned long nodeIndex() const;
 
-		DOMString baseURI() const; // DOM3
+		DOMStringImpl *baseURI() const; // DOM3
 		KURL baseKURI() const;
 
 		// -----------------------------------------------------------------------------
@@ -208,6 +218,8 @@ namespace KDOM
 		};
 
 		NodeImpl *traverseNextNode(NodeImpl *stayWithin = 0) const;
+
+		DocumentPtr *docPtr() const { return document; }
 
 		virtual void attach();
 		virtual void detach();
@@ -261,13 +273,13 @@ namespace KDOM
 		// Helper methods (They will eventually throw exceptions!)
 		bool isAncestor(NodeImpl *current, NodeImpl *other);
 
-		DOMString lookupNamespacePrefix(DOMString namespaceURI, const ElementImpl *originalElement) const;
+		DOMStringImpl *lookupNamespacePrefix(DOMStringImpl *namespaceURI, const ElementImpl *originalElement) const;
 
 	public:
 		NodeImpl *next, *prev;
 
 	protected:
-		DocumentImpl *document;
+		DocumentPtr *document;
 		RenderObject *m_render;
 
 		// TODO: pad to 32 bits soon...
@@ -291,7 +303,7 @@ namespace KDOM
 	class NodeBaseImpl : public NodeImpl
 	{
 	public:
-		NodeBaseImpl(DocumentImpl *i);
+		NodeBaseImpl(DocumentPtr *doc);
 		virtual ~NodeBaseImpl();
 
 		// Virtual functions overridden from 'NodeImpl'
@@ -308,14 +320,14 @@ namespace KDOM
 		virtual void detach();
 
 		// Internal
-		void cloneChildNodes(NodeImpl *clone, DocumentImpl *doc) const;
+		void cloneChildNodes(NodeImpl *clone, DocumentPtr *doc) const;
 
 		void removeChildren();
 
 	protected:
 		// Helper methods (They will eventually throw exceptions!)
 		void checkAddChild(NodeImpl *current, NodeImpl *newChild);
-		void checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild);
+		void checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild, NodeImpl *oldChild = 0);
 
 	protected:
 		NodeImpl *first, *last;

@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis           <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -24,11 +30,11 @@
 
 #include "NodeImpl.h"
 #include "TextImpl.h"
+#include "kdomevents.h"
 #include "RenderStyle.h"
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
 #include "NodeListImpl.h"
-#include "XPathNamespace.h"
 #include "DOMExceptionImpl.h"
 #include "DocumentTypeImpl.h"
 #include "NamedAttrMapImpl.h"
@@ -37,14 +43,14 @@
 
 using namespace KDOM;
 
-NodeImpl::NodeImpl(DocumentImpl *i) : EventTargetImpl(), next(0), prev(0), document(i), m_render(0),
+NodeImpl::NodeImpl(DocumentPtr *doc) : EventTargetImpl(), next(0), prev(0), document(doc), m_render(0),
 									  m_hasId(false), m_hasStyle(false), m_attached(false),
 									  m_closed(false), m_changed(false), m_hasChangedChild(false),
 									  m_inDocument(false), m_hasAnchor(false), m_specified(false),
 									  m_focused(false), m_active(false), m_dom2(false), m_nullNSSpecified(false)
 {
-	if(i)
-		i->ref();
+	if(document)
+		document->ref();
 }
 
 NodeImpl::~NodeImpl()
@@ -54,10 +60,10 @@ NodeImpl::~NodeImpl()
 
 	if(document)
 		document->deref();
-		
+
 	if(prev)
 		prev->next = 0;
-	
+
 	if(next)
 		next->prev = 0;
 }
@@ -151,22 +157,22 @@ void NodeImpl::detach()
 	m_attached = false;
 }
 
-DOMString NodeImpl::localName() const
+DOMStringImpl *NodeImpl::localName() const
 {
-	return DOMString();
+	return 0;
 }
 
-DOMString NodeImpl::nodeName() const
+DOMStringImpl *NodeImpl::nodeName() const
 {
-	return DOMString();
+	return 0;
 }
 
-DOMString NodeImpl::nodeValue() const
+DOMStringImpl *NodeImpl::nodeValue() const
 {
-	return DOMString();
+	return 0;
 }
 
-void NodeImpl::setNodeValue(const DOMString &)
+void NodeImpl::setNodeValue(DOMStringImpl *)
 {
 }	
 
@@ -205,18 +211,18 @@ NodeImpl *NodeImpl::lastChild() const
 	return 0;
 }
 
-DOMString NodeImpl::namespaceURI() const
+DOMStringImpl *NodeImpl::namespaceURI() const
 {
-	return DOMString();
+	return 0;
 }
 
-DOMString NodeImpl::prefix() const
+DOMStringImpl *NodeImpl::prefix() const
 {
 	// For nodes other than elements and attributes, the prefix is always null
-	return DOMString();
+	return 0;
 }
 
-void NodeImpl::setPrefix(const DOMString &)
+void NodeImpl::setPrefix(DOMStringImpl *)
 {
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
@@ -229,65 +235,67 @@ bool NodeImpl::hasAttributes() const
 	return false;
 }
 
-bool NodeImpl::isSupported(const DOMString &feature, const DOMString &version) const
+bool NodeImpl::isSupported(DOMStringImpl *feature, DOMStringImpl *version) const
 {
 	return DOMImplementationImpl::self()->hasFeature(feature, version);
 }
 
-DOMString NodeImpl::textContent() const
+DOMStringImpl *NodeImpl::textContent() const
 {
-	DOMString ret("");
+	DOMStringImpl *ret = new DOMStringImpl();
 
 	NodeImpl *child = firstChild();
 	while(child != 0)
 	{
-		ret += child->textContent();
+		ret->append(DOMString(child->textContent()).string());
 		child = child->nextSibling();
 	}
 
 	return ret;
 }
 
-void NodeImpl::setTextContent(const DOMString &text)
+void NodeImpl::setTextContent(DOMStringImpl *text)
 {
 	switch(nodeType())
 	{
-	case ELEMENT_NODE:  
-	case ENTITY_NODE:  
-	case ENTITY_REFERENCE_NODE:  
-	case DOCUMENT_FRAGMENT_NODE:  
-	{
-		// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
-		if(isReadOnly())
-			throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
-
-		// Remove all childs
-		NodeImpl *current = firstChild();
-		while(current)
+		case ELEMENT_NODE:  
+		case ENTITY_NODE:  
+		case ENTITY_REFERENCE_NODE:
+		case DOCUMENT_FRAGMENT_NODE:  
 		{
-			removeChild(current);
-			current = firstChild();
+			// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
+			if(isReadOnly())
+				throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+
+			// Remove all childs
+			NodeImpl *current = firstChild();
+			while(current)
+			{
+				removeChild(current);
+				current = firstChild();
+			}
+
+			// Add textnode containing data
+			if(text && !text->isEmpty())
+				appendChild(ownerDocument()->createTextNode(text));
+
+			break;
 		}
-		// Add textnode containing data
-		if(!text.isEmpty())
-			appendChild(ownerDocument()->createTextNode(text));
-		break;
-	}
-	case ATTRIBUTE_NODE:
-	case TEXT_NODE:
-	case CDATA_SECTION_NODE:
-	case COMMENT_NODE:
-	case PROCESSING_INSTRUCTION_NODE:
-	{
-		setNodeValue(text);
-		break;
-	}
-	case DOCUMENT_NODE:
-	case DOCUMENT_TYPE_NODE:
-	case NOTATION_NODE:
-		break;
-	default:
-		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
+		case ATTRIBUTE_NODE:
+		case TEXT_NODE:
+		case CDATA_SECTION_NODE:
+		case COMMENT_NODE:
+		case PROCESSING_INSTRUCTION_NODE:
+		{
+			setNodeValue(text);
+			break;
+		}
+		case DOCUMENT_NODE:
+		case DOCUMENT_TYPE_NODE:
+		case NOTATION_NODE:
+			break;
+		default:
+			throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
 	}
 }
 
@@ -299,7 +307,7 @@ bool NodeImpl::isReadOnly() const
 		unsigned short type = n->nodeType();
 		if((type == ENTITY_NODE || type == ENTITY_REFERENCE_NODE ||
 		    type == NOTATION_NODE || type == DOCUMENT_TYPE_NODE)
-		    && !document->parsing())
+		    && !docPtr()->document()->parsing())
 			return true;
 
 		n = n->parentNode();
@@ -342,20 +350,18 @@ bool NodeImpl::childTypeAllowed(unsigned short) const
 
 NodeImpl *NodeImpl::cloneNode(bool deep) const
 {
-	return cloneNode(deep, ownerDocument());
+	return cloneNode(deep, docPtr());
 }
 
-NodeImpl *NodeImpl::cloneNode(bool, DocumentImpl *) const
+NodeImpl *NodeImpl::cloneNode(bool, DocumentPtr *) const
 {
 	return 0;
 }
 
 DocumentImpl *NodeImpl::ownerDocument() const
 {
-	if(!document || nodeType() == DOCUMENT_NODE)
-		return 0;
-
-	return document;
+	DocumentImpl *doc = document->document();
+	return doc == this ? 0 : doc;
 }
 
 NodeListImpl *NodeImpl::childNodes() const
@@ -372,7 +378,8 @@ void NodeImpl::normalize()
 	while(child)
 	{
 		// The simple case: an empty text node
-		if(child->nodeType() == TEXT_NODE && child->nodeValue().isEmpty())
+		DOMStringImpl *nodeValue = child->nodeValue();
+		if(child->nodeType() == TEXT_NODE && (!nodeValue || nodeValue->isEmpty()))
 			removeChild(child);
 
 		NodeImpl *nextChild = child->nextSibling();
@@ -401,12 +408,12 @@ void NodeImpl::normalize()
 	}
 }
 
-DOMString NodeImpl::toString() const
+DOMStringImpl *NodeImpl::toString() const
 {
 	QString str;
 	QTextOStream subset(&str);
-	KDOM::Helper::PrintNode(subset, Node(const_cast<NodeImpl *>(this)));
-	return str;
+	Helper::PrintNode(subset, const_cast<NodeImpl *>(this));
+	return new DOMStringImpl(str);
 }
 
 void NodeImpl::insertedIntoDocument()
@@ -427,7 +434,14 @@ void NodeImpl::childrenChanged()
 
 void NodeImpl::setOwnerDocument(DocumentImpl *doc)
 {
-	document = doc;
+	if(document)
+		document->deref();
+
+	document = new DocumentPtr();
+	document->doc = doc;
+
+	if(document)
+		document->ref();
 }
 
 NodeImpl *NodeImpl::addChild(NodeImpl *)
@@ -435,7 +449,7 @@ NodeImpl *NodeImpl::addChild(NodeImpl *)
 	return 0;
 }
 
-NodeBaseImpl::NodeBaseImpl(DocumentImpl *i) : NodeImpl(i), first(0), last(0)
+NodeBaseImpl::NodeBaseImpl(DocumentPtr *doc) : NodeImpl(doc), first(0), last(0)
 {
 }
 
@@ -579,8 +593,8 @@ NodeImpl *NodeBaseImpl::replaceChild(NodeImpl *newChild, NodeImpl *oldChild)
 	NodeImpl *prev = oldChild->previousSibling();
 	NodeImpl *next = oldChild->nextSibling();
 
+	checkDocumentAddChild(this, newChild, oldChild);
 	removeChild(oldChild);
-	checkDocumentAddChild(this, newChild);
 
 	// Now actually add the child(ren)
 	while(child != 0)
@@ -674,7 +688,6 @@ void NodeBaseImpl::checkAddChild(NodeImpl *current, NodeImpl *newChild)
 	if(!newChild)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(current->isReadOnly())
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
@@ -684,6 +697,7 @@ void NodeBaseImpl::checkAddChild(NodeImpl *current, NodeImpl *newChild)
 	// We assume that if newChild is a DocumentFragment, all children are created from the same document
 	// as the fragment itself (otherwise they could not have been added as children)
 	// Exception: ownerDocument() of #document is null!
+
 	bool isDoc = current->nodeType() == DOCUMENT_NODE;
 	if((current->ownerDocument() != newChild->ownerDocument() && !isDoc) ||
 		(isDoc && newChild->ownerDocument() && newChild->ownerDocument() != current))
@@ -691,7 +705,6 @@ void NodeBaseImpl::checkAddChild(NodeImpl *current, NodeImpl *newChild)
 
 	// HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type
 	//						  of the newChild node, or if the node to append is one of this node's ancestors.
-
 	// check for ancestor/same node
 	if(isAncestor(current, newChild))
 		throw new DOMExceptionImpl(HIERARCHY_REQUEST_ERR);
@@ -712,12 +725,9 @@ void NodeBaseImpl::checkAddChild(NodeImpl *current, NodeImpl *newChild)
 		if(!current->childAllowed(newChild))
 			throw new DOMExceptionImpl(HIERARCHY_REQUEST_ERR);
 	}
-
-	if(newChild->nodeType() == XPathNamespace::XPATH_NAMESPACE_NODE)
-		throw new DOMExceptionImpl(HIERARCHY_REQUEST_ERR);
 }
 
-void NodeBaseImpl::checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild)
+void NodeBaseImpl::checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild, NodeImpl *oldChild)
 {
 	// if this node is of type Document and the DOM application attempts to append
 	// a second DocumentType or Element node.
@@ -726,7 +736,7 @@ void NodeBaseImpl::checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild)
 		ElementImpl *docElement = 0;
 		for(NodeImpl *n = current->firstChild(); n != 0; n = n->nextSibling())
 		{
-			if(n->nodeType() == ELEMENT_NODE)
+			if(n->nodeType() == ELEMENT_NODE && n != oldChild)
 			{
 				docElement = static_cast<ElementImpl *>(n);
 				break;
@@ -736,7 +746,7 @@ void NodeBaseImpl::checkDocumentAddChild(NodeImpl *current, NodeImpl *newChild)
 		DocumentTypeImpl *docType = 0;
 		for(NodeImpl *n = current->firstChild(); n != 0; n = n->nextSibling())
 		{
-			if(n->nodeType() == DOCUMENT_TYPE_NODE)
+			if(n->nodeType() == DOCUMENT_TYPE_NODE && n != oldChild)
 			{
 				docType = static_cast<DocumentTypeImpl *>(n);
 				break;
@@ -759,7 +769,7 @@ NodeImpl *NodeBaseImpl::lastChild() const
 	return last;
 }
 
-void NodeBaseImpl::cloneChildNodes(NodeImpl *clone, DocumentImpl *doc) const
+void NodeBaseImpl::cloneChildNodes(NodeImpl *clone, DocumentPtr *doc) const
 {
 	for(NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
 	{
@@ -792,7 +802,7 @@ void NodeBaseImpl::removeChildren()
 			delete n;
 		else
 		{
-			for(NodeImpl* c = n; c; c = c->traverseNextNode(n))
+			for(NodeImpl *c = n; c; c = c->traverseNextNode(n))
 				c->removedFromDocument();
 		}
 	}
@@ -830,19 +840,14 @@ NodeImpl::Id NodeImpl::localId() const
 	return id() & NodeImpl_IdLocalMask;
 }
 
-bool NodeImpl::isDefaultNamespace(const DOMString &_namespaceURI) const
+bool NodeImpl::isDefaultNamespace(DOMStringImpl *_namespaceURI) const
 {
 	switch(nodeType())
 	{
 		case ELEMENT_NODE:  
 		{
-			if(prefix().isEmpty())
+			if((!prefix() || prefix()->isEmpty()))
 				return namespaceURI() == _namespaceURI;
-
-			//Element e(this);
-			//AttrImpl *xmlns = e.getAttributeNode("xmlns");
-			//if(xmlns)
-			//	return xmlns->value() == _namespaceURI;
 
 			// EntityReferences may have to be skipped to get to it
 			if(parentNode())
@@ -935,37 +940,45 @@ bool NodeImpl::isEqualNode(NodeImpl *arg) const
 	return true;
 }
 
-DOMString NodeImpl::lookupNamespaceURI(const DOMString &_prefix) const
+DOMStringImpl *NodeImpl::lookupNamespaceURI(DOMStringImpl *_prefix) const
 {
-	if(_prefix.isEmpty())
-		return DOMString();
+	if(!_prefix || _prefix->isEmpty())
+		return 0;
 
 	switch(nodeType())
 	{
 		case ELEMENT_NODE:
 		{
 			// Note: prefix could be "null" in this case we are looking for default namespace
-			if(!namespaceURI().isEmpty() && prefix() == _prefix)
-				return namespaceURI();
+			DOMStringImpl *ns = namespaceURI();
+			if((ns && !ns->isEmpty()) && DOMString(prefix()) == DOMString(_prefix))
+				return ns;
 
 			if(hasAttributes())
 			{
 				unsigned long len = attributes()->length();
-				for(unsigned long i = 0;i < len;i++)
+				for(unsigned long i = 0; i < len; i++)
 				{
 					NodeImpl *node = attributes()->item(i);
 					AttrImpl *attr = static_cast<AttrImpl *>(node);
-					if(attr->prefix() == "xmlns" && attr->localName() == _prefix) 
+
+					if(DOMString(attr->prefix()) == DOMString("xmlns") &&
+					   DOMString(attr->localName()) == DOMString(_prefix))
 					{ // non default namespace
-						if(!attr->value().isEmpty())
-							return attr->value();
-						return DOMString();
+						DOMStringImpl *value = attr->value();
+						if(value && !value->isEmpty())
+							return value;
+
+						return 0;
 					}
-					else if(attr->localName() == "xmlns" && _prefix.isEmpty())
+					else if(DOMString(attr->localName()) == DOMString("xmlns") &&
+							(!_prefix || _prefix->isEmpty()))
 					{ // default namespace
-						if(!attr->value().isEmpty())
-							return attr->value();
-						return DOMString();
+						DOMStringImpl *value = attr->value();
+						if(value && !value->isEmpty())
+							return value;
+
+						return 0;
 					}
 				}
 			}
@@ -973,7 +986,8 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &_prefix) const
 			// EntityReferences may have to be skipped to get to it 
 			if(parentNode())
 				return parentNode()->lookupNamespaceURI(_prefix);
-			return DOMString(); 
+
+			return 0; 
 		}
 		case DOCUMENT_NODE: 
 			return static_cast<const DocumentImpl *>(this)->documentElement()->lookupNamespaceURI(_prefix);
@@ -981,7 +995,7 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &_prefix) const
 		case NOTATION_NODE: 
 		case DOCUMENT_TYPE_NODE: 
 		case DOCUMENT_FRAGMENT_NODE: 
-			return DOMString();
+			return 0;
 		case ENTITY_REFERENCE_NODE:
 			return parentNode()->lookupNamespaceURI(_prefix);
 		case ATTRIBUTE_NODE: 
@@ -991,7 +1005,7 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &_prefix) const
 			if(attrPtr->ownerElement())
 				return attrPtr->ownerElement()->lookupNamespaceURI(_prefix);
 
-			return DOMString();
+			return 0;
 		}
 		default: 
 			// EntityReferences may have to be skipped to get to it 
@@ -999,15 +1013,17 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &_prefix) const
 				return parentNode()->lookupNamespaceURI(_prefix);
 	}
 
-	return DOMString();
+	return 0;
 }
 
-DOMString NodeImpl::lookupNamespacePrefix(DOMString _namespaceURI, const ElementImpl *originalElement) const
+DOMStringImpl *NodeImpl::lookupNamespacePrefix(DOMStringImpl *_namespaceURI, const ElementImpl *originalElement) const
 { 
-	if(!namespaceURI().isEmpty() && namespaceURI() == _namespaceURI && !prefix().isEmpty() &&
-		originalElement->lookupNamespaceURI(prefix()) == _namespaceURI)
+	DOMString ns(_namespaceURI);
+
+	if(!ns.isEmpty() && DOMString(namespaceURI()) == ns && (prefix() && !prefix()->isEmpty()) &&
+	   DOMString(originalElement->lookupNamespaceURI(prefix())) == ns)
 	{
-		return prefix(); 
+		return prefix();
 	}
 
 	if(hasAttributes())
@@ -1017,9 +1033,10 @@ DOMString NodeImpl::lookupNamespacePrefix(DOMString _namespaceURI, const Element
 		{
 			NodeImpl *node = attributes()->item(i);
 			AttrImpl *attr = static_cast<AttrImpl *>(node);
-			DOMString local = attr->localName();
-			if(attr->prefix() == "xmlns" && attr->value() == _namespaceURI &&
-				originalElement->lookupNamespaceURI(local) == _namespaceURI)
+
+			DOMStringImpl *local = attr->localName();
+			if(DOMString(attr->prefix()) == DOMString("xmlns") && DOMString(attr->value()) == ns &&
+			   DOMString(originalElement->lookupNamespaceURI(local)) == ns)
 			{
 				return local;
 			}
@@ -1030,13 +1047,13 @@ DOMString NodeImpl::lookupNamespacePrefix(DOMString _namespaceURI, const Element
 	if(parentNode())
 		return parentNode()->lookupNamespacePrefix(_namespaceURI, originalElement);
 
-	return DOMString();
+	return 0;
 }
 
-DOMString NodeImpl::lookupPrefix(const DOMString &_namespaceURI) const
+DOMStringImpl *NodeImpl::lookupPrefix(DOMStringImpl *_namespaceURI) const
 {
-	if(_namespaceURI.isEmpty())
-		return DOMString();
+	if(!_namespaceURI || _namespaceURI->isEmpty())
+		return 0;
 
 	switch(nodeType())
 	{
@@ -1048,7 +1065,7 @@ DOMString NodeImpl::lookupPrefix(const DOMString &_namespaceURI) const
 		case NOTATION_NODE: 
 		case DOCUMENT_FRAGMENT_NODE: 
 		case DOCUMENT_TYPE_NODE: 
-			return DOMString();
+			return 0;
 		case ATTRIBUTE_NODE: 
 		{
 			const AttrImpl *attrPtr = static_cast<const AttrImpl *>(this);
@@ -1056,7 +1073,7 @@ DOMString NodeImpl::lookupPrefix(const DOMString &_namespaceURI) const
 			if(attrPtr->ownerElement())
 				return attrPtr->ownerElement()->lookupPrefix(_namespaceURI);
 
-			return DOMString();
+			return 0;
 		}
 		default: 
 		{
@@ -1066,7 +1083,7 @@ DOMString NodeImpl::lookupPrefix(const DOMString &_namespaceURI) const
 		}
 	}
 
-	return DOMString();
+	return 0;
 }
 
 void NodeImpl::dispatchSubtreeModifiedEvent()
@@ -1075,10 +1092,15 @@ void NodeImpl::dispatchSubtreeModifiedEvent()
 	if(!ownerDocument() || !ownerDocument()->hasListenerType(DOMSUBTREEMODIFIED_EVENT))
 		return;
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent("MutationEvents"));
+	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+	eventType->ref();
+
+	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
+	eventType->deref();
+
 	event->ref();
 
-	event->initMutationEvent("DOMSubtreeModified", true, false, 0, DOMString(), DOMString(), DOMString(), 0);
+	event->initMutationEvent(new DOMStringImpl("DOMSubtreeModified"), true, false, 0, 0, 0, 0, 0);
 	dispatchEvent(event);
 
 	event->deref();
@@ -1089,10 +1111,13 @@ void NodeImpl::dispatchChildRemovalEvents(NodeImpl *child)
 	if(!ownerDocument() || !ownerDocument()->hasListenerType(DOMNODEREMOVED_EVENT))
 		return;
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent("MutationEvents"));
+	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+	eventType->ref();
+
+	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
 	event->ref();
 
-	event->initMutationEvent("DOMNodeRemoved", true, false, this, DOMString(), DOMString(), DOMString(), 0);
+	event->initMutationEvent(new DOMStringImpl("DOMNodeRemoved"), true, false, this, 0, 0, 0, 0);
 	dispatchEvent(event);
 
 	event->deref();
@@ -1100,15 +1125,17 @@ void NodeImpl::dispatchChildRemovalEvents(NodeImpl *child)
 	// dispatch the DOMNodeRemovedFromDocument event to all descendants
 	if(ownerDocument()->hasListenerType(DOMNODEREMOVEDFROMDOCUMENT_EVENT))
 	{
-		MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent("MutationEvents"));
+		MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
 		event->ref();
 
-		event->initMutationEvent("DOMNodeRemovedFromDocument", false, false, 0, DOMString(), DOMString(), DOMString(), 0);
+		event->initMutationEvent(new DOMStringImpl("DOMNodeRemovedFromDocument"), false, false, 0, 0, 0, 0, 0);
 		child->dispatchEvent(event);
 		dispatchEventToSubTree(child, event);
 
 		event->deref();
 	}
+
+	eventType->deref();
 }
 
 void NodeImpl::dispatchChildInsertedEvents(NodeImpl *child)
@@ -1116,10 +1143,13 @@ void NodeImpl::dispatchChildInsertedEvents(NodeImpl *child)
 	if(!ownerDocument() || !ownerDocument()->hasListenerType(DOMNODEINSERTED_EVENT))
 		return;
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent("MutationEvents"));
+	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+	eventType->ref();
+
+	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
 	event->ref();
 
-	event->initMutationEvent("DOMNodeInserted", true, false, this, DOMString(), DOMString(), DOMString(), 0);
+	event->initMutationEvent(new DOMStringImpl("DOMNodeInserted"), true, false, this, 0, 0, 0, 0);
 	child->dispatchEvent(event);
 
 	event->deref();
@@ -1127,15 +1157,17 @@ void NodeImpl::dispatchChildInsertedEvents(NodeImpl *child)
 	// dispatch the DOMNodeInsertedIntoDocument event to all descendants
 	if(ownerDocument()->hasListenerType(DOMNODEINSERTEDINTODOCUMENT_EVENT))
 	{
-		MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent("MutationEvents"));
+		MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
 		event->ref();
 
-		event->initMutationEvent("DOMNodeInsertedIntoDocument", false, false, 0, DOMString(), DOMString(), DOMString(), 0);
+		event->initMutationEvent(new DOMStringImpl("DOMNodeInsertedIntoDocument"), false, false, 0, 0, 0, 0, 0);
 		child->dispatchEvent(event);
 		dispatchEventToSubTree(child, event);
 
 		event->deref();
 	}
+
+	eventType->deref();
 }
 
 void NodeImpl::dispatchEventToSubTree(NodeImpl *node, EventImpl *event)
@@ -1218,9 +1250,9 @@ unsigned long NodeImpl::nodeIndex() const
 	return count;
 }
 
-DOMString NodeImpl::baseURI() const
+DOMStringImpl *NodeImpl::baseURI() const
 {
-	return DOMString(baseKURI().url());
+	return new DOMStringImpl(baseKURI().url());
 }
 
 KURL NodeImpl::baseKURI() const
@@ -1231,8 +1263,8 @@ KURL NodeImpl::baseKURI() const
 	{
 		case ELEMENT_NODE:
 		{
-			const ElementImpl* me = static_cast<const ElementImpl *>(this);
-			DOMString mine = me->getAttribute("xml:base");
+			const ElementImpl *me = static_cast<const ElementImpl *>(this);
+			DOMString mine(me->getAttribute(new DOMStringImpl("xml:base")));
 			myBase = mine.string();
 #ifndef APPLE_COMPILE_HACK
 			if(!KURL::isRelativeURL(myBase))
@@ -1267,8 +1299,8 @@ unsigned short NodeImpl::compareDocumentPosition(NodeImpl *other) const
 		return 0;
 
 	if(other->nodeType() == ENTITY_NODE || other->nodeType() == NOTATION_NODE ||
-		nodeType() == ENTITY_NODE || nodeType() == NOTATION_NODE)
-			return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+	   nodeType() == ENTITY_NODE || nodeType() == NOTATION_NODE)
+		return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
 
 	QPtrList<NodeImpl> containers;
 	NodeImpl *container = const_cast<NodeImpl *>(this);
@@ -1301,13 +1333,13 @@ unsigned short NodeImpl::compareDocumentPosition(NodeImpl *other) const
 	if(!self_determining)
 	{
 		if(other > this)
-			return	DOCUMENT_POSITION_DISCONNECTED |
-					DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC |
-					DOCUMENT_POSITION_FOLLOWING;
+			return DOCUMENT_POSITION_DISCONNECTED |
+				   DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC |
+				   DOCUMENT_POSITION_FOLLOWING;
 
-		return	DOCUMENT_POSITION_DISCONNECTED |
-				DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC |
-				DOCUMENT_POSITION_PRECEDING;
+		return DOCUMENT_POSITION_DISCONNECTED |
+			   DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC |
+			   DOCUMENT_POSITION_PRECEDING;
 	}
 	if(container == other)
 		return DOCUMENT_POSITION_CONTAINS | DOCUMENT_POSITION_PRECEDING;
@@ -1349,8 +1381,7 @@ unsigned short NodeImpl::compareDocumentPosition(NodeImpl *other) const
 	}
 
 	if(other_determining > self_determining)
-		return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC |
-				DOCUMENT_POSITION_FOLLOWING;
+		return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
 
 	return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_PRECEDING;
 }

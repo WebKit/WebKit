@@ -42,7 +42,7 @@ namespace KSVG
 								 public SVGExternalResourcesRequiredImpl
 	{
 	public:
-		SVGFilterElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id,  const KDOM::DOMString &prefix);
+		SVGFilterElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
 		virtual ~SVGFilterElementImpl();
 
 		// Derived from: 'ElementImpl'

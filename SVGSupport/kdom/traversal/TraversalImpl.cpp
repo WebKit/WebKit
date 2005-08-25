@@ -31,7 +31,7 @@ using namespace KDOM;
 TraversalImpl::TraversalImpl(NodeImpl *n, short show,
 							 NodeFilterImpl *nodeFilter,
 							 bool expandEntityReferences)
-: Shared(true), m_root(n), m_whatToShow(show),
+: Shared(), m_root(n), m_whatToShow(show),
 m_filter(nodeFilter), m_expandEntityReferences(expandEntityReferences)
 {
 	if(root())

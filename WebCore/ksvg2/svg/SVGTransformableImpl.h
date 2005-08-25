@@ -27,6 +27,7 @@
 
 namespace KDOM
 {
+	class NodeImpl;
 	class DOMString;
 	class AttributeImpl;
 };

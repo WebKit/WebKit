@@ -34,7 +34,7 @@ namespace KSVG
 	class SVGAnimateTransformElementImpl : public SVGAnimationElementImpl
 	{
 	public:
-		SVGAnimateTransformElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGAnimateTransformElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGAnimateTransformElementImpl();
 
 		virtual void parseAttribute(KDOM::AttributeImpl *attr);

@@ -32,10 +32,6 @@
 #include "SVGAnimatedTransformListImpl.h"
 #include "SVGAnimateTransformElementImpl.h"
 
-#ifdef APPLE_CHANGES
-#include "ksvg2/KSVGSlotStubs.h"
-#endif
-
 using namespace KSVG;
 
 SVGTimer::SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot)
@@ -64,12 +60,7 @@ const QTimer *SVGTimer::qtimer() const
 
 void SVGTimer::start(QObject *receiver, const char *member)
 {
-#ifdef APPLE_CHANGES
-	KSVGSlotStub *stub = dynamic_cast<TimeScheduler *>(receiver)->slotStub();
-	QObject::connect(m_timer, SIGNAL(timeout()), stub, member);
-#else
 	QObject::connect(m_timer, SIGNAL(timeout()), receiver, member);
-#endif
 	m_timer->start(m_ms, m_singleShot);
 }
 
@@ -156,7 +147,7 @@ void SVGTimer::notifyAll()
 		{
 			if(animation->isFrozen())
 			{
-				if(elapsed <= (animation->startTime() + animation->simpleDuration()))
+				if(elapsed <= (animation->getStartTime() + animation->getSimpleDuration()))
 					continue;
 			}
 			else
@@ -185,13 +176,14 @@ void SVGTimer::notifyAll()
 
 		QMap<QString, QColor> targetColor; // special <animateColor> case
 		SVGTransformListImpl *targetTransforms = 0; // special <animateTransform> case	
+
 		for(; it != end; ++it)
 		{
 			SVGAnimationElementImpl *animation = (*it);
 
-			double end = animation->endTime();
-			double start = animation->startTime();
-			double duration = animation->simpleDuration();
+			double end = animation->getEndTime();
+			double start = animation->getStartTime();
+			double duration = animation->getSimpleDuration();
 			double repeations = animation->repeations();
 
 			// Validate animation timing settings:
@@ -396,9 +388,6 @@ TimeScheduler::TimeScheduler(SVGDocumentImpl *document) : QObject(), m_document(
 
 	m_savedTime = 0;
 	m_creationTime = QTime::currentTime();
-#ifdef APPLE_CHANGES
-	m_slotStub = NULL;
-#endif
 }
 
 TimeScheduler::~TimeScheduler()
@@ -411,7 +400,6 @@ TimeScheduler::~TimeScheduler()
 		delete (*it);
 	
 	delete m_intervalTimer;
-	if (m_slotStub) delete m_slotStub;
 }
 
 void TimeScheduler::addTimer(SVGAnimationElementImpl *element, unsigned int ms)
@@ -516,23 +504,5 @@ float TimeScheduler::elapsed() const
 {
 	return float(m_creationTime.elapsed()) / 1000.0;
 }
-
-#ifdef APPLE_CHANGES
-
-void slotTimerNotifyFunc(void *ts)
-{
-	TimeScheduler *timeScheduler = static_cast<TimeScheduler *>(ts);
-	timeScheduler->slotTimerNotify();
-}
-
-KSVGSlotStub *TimeScheduler::slotStub()
-{
-	if (!m_slotStub) {
-		m_slotStub = new KSVGSlotStub(this, &slotTimerNotifyFunc);
-	}
-	return m_slotStub;
-}
-
-#endif
 
 // vim:ts=4:noet

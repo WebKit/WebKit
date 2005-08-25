@@ -26,7 +26,7 @@
 
 using namespace KDOM;
 
-LSParserFilterImpl::LSParserFilterImpl() : Shared(true)
+LSParserFilterImpl::LSParserFilterImpl() : Shared()
 {
 }
 

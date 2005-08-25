@@ -41,7 +41,7 @@ namespace KSVG
 									  public SVGExternalResourcesRequiredImpl
 	{
 	public:
-		SVGTextContentElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id,  const KDOM::DOMString &prefix);
+		SVGTextContentElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
 		virtual ~SVGTextContentElementImpl();
 
 		// 'SVGTextContentElement' functions

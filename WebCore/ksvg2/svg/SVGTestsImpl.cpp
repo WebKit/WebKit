@@ -65,7 +65,7 @@ SVGStringListImpl *SVGTestsImpl::systemLanguage() const
 	return lazy_create<SVGStringListImpl>(m_systemLanguage);
 }
 
-bool SVGTestsImpl::hasExtension(const KDOM::DOMString &) const
+bool SVGTestsImpl::hasExtension(KDOM::DOMStringImpl *) const
 {
 	return false;
 }
@@ -76,7 +76,7 @@ bool SVGTestsImpl::isValid()
 	for(unsigned long i = 0;i < list->numberOfItems();i++)
 	{
 		KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
-		if(value.isEmpty() || !SVGDOMImplementationImpl::self()->hasFeature(value, KDOM::DOMString()))
+		if(value.isEmpty() || !SVGDOMImplementationImpl::self()->hasFeature(value.handle(), 0))
 			return false;
 	}
 

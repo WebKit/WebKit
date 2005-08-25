@@ -43,7 +43,6 @@
 
 #import <kdom/Namespace.h>
 #import <kdom/Helper.h>
-#import <kdom/DOMConfiguration.h>
 #import <kdom/parser/KDOMParser.h>
 #import <kdom/backends/libxml/LibXMLParser.h>
 #import <kdom/impl/NodeImpl.h>
@@ -65,10 +64,6 @@
 #import <ksvg2/impl/SVGEllipseElementImpl.h>
 #import <ksvg2/impl/SVGRectElementImpl.h>
 
-// these shouldn't be used!
-#import <ksvg2/dom/SVGEllipseElement.h>
-#import <ksvg2/dom/SVGRectElement.h>
-
 #undef id
 
 using namespace KDOM;
@@ -80,9 +75,14 @@ using namespace KSVG;
     KCanvas *canvas;
     KCanvasViewQuartz *primaryView;
     
-    KCanvasViewQuartz *dummyView; // used to hold the canvas, until we get a real view.
+    KCanvasViewQuartz *dummyCanvasView; // used to hold the canvas, until we get a real view.
+	KSVGPart *part;
+	KSVGView *svgView;
 }
 
++ (KRenderingDeviceQuartz *)sharedRenderingDevice;
+- (void)setSVGDocument:(SVGDocumentImpl *)svgDocumentImpl;
+- (void)setPrimaryView:(KCanvasViewQuartz *)view;
 @end
 
 @implementation DrawDocumentPrivate
@@ -96,12 +96,26 @@ using namespace KSVG;
     return __quartzRenderingDevice;
 }
 
+- (id)init
+{
+	if ((self = [super init])) {
+		// FIXME: HACK: this is needed until post-parse attach works.
+		part = new KSVGPart();
+		svgView = static_cast<KSVGView *>(part->view());
+		dummyCanvasView =  static_cast<KCanvasViewQuartz *>(svgView->canvasView());
+		[self setPrimaryView:dummyCanvasView];
+	}
+	return self;
+}
+
 - (void)dealloc
 {
     if (canvas)
         delete canvas;
     if (svgDocument)
         svgDocument->deref();
+	//delete svgView;
+	delete part;
     [super dealloc];
 }
 
@@ -112,7 +126,8 @@ using namespace KSVG;
 
 - (void)setPrimaryView:(KCanvasViewQuartz *)view
 {
-    if (!primaryView || (primaryView == dummyView)) {
+	if (view == primaryView) return;
+    if (!primaryView || (primaryView == dummyCanvasView)) {
         if (!canvas)
             canvas = new KCanvas([DrawDocumentPrivate sharedRenderingDevice]);
         
@@ -128,8 +143,8 @@ using namespace KSVG;
 //          if (NSEqualSizes([self canvasSize], NSMakeSize(-1,-1))) {
 //              [self sizeCanvasToFitContent];
 //          }
-            delete dummyView;
-            dummyView = NULL;
+            delete dummyCanvasView;
+            dummyCanvasView = NULL;
         }
     }
 }
@@ -168,29 +183,19 @@ using namespace KSVG;
     
     _private = [[DrawDocumentPrivate alloc] init];
     
-    // total hack!
-    // this is needed until post-parse attach works.
-    // these are leaking for now...
-    KSVGPart *dummyPart = new KSVGPart();
-    KSVGView *dummySVGView = static_cast<KSVGView *>(dummyPart->view());
-    _private->dummyView =  static_cast<KCanvasViewQuartz *>(dummySVGView->canvasView());
-    // FIXME: HACK: I really need to be tracking these parts/views correctly...
-    
-    [_private setPrimaryView:_private->dummyView];
-    
     // Builder is owned (deleted) by parser...
-    KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(dummySVGView);
+    KSVG::DocumentBuilder *builder = new KSVG::DocumentBuilder(_private->svgView);
     KDOM::LibXMLParser *parser = new KDOM::LibXMLParser(KURL());
     parser->setDocumentBuilder(builder);
     
     // no entity refs
-    parser->domConfig()->setParameter(KDOM::ENTITIES.implementation(), false);
-    parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.implementation(), false);
+    parser->domConfig()->setParameter(KDOM::ENTITIES.handle(), false);
+    parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.handle(), false);
     
     // Feed the parser the whole document (a total hack)
     parser->doOneShotParse((const char *)[data bytes], [data length]);
     
-    SVGDocumentImpl *svgDoc = static_cast<SVGDocumentImpl *>(parser->document().handle());
+    SVGDocumentImpl *svgDoc = static_cast<SVGDocumentImpl *>(parser->document());
     [_private setSVGDocument:svgDoc];
     delete parser; // we're done parsing.
     if(!_private->svgDocument) {
@@ -226,6 +231,7 @@ using namespace KSVG;
 
 - (void)dealloc
 {
+	[[self primaryView] _clearDocument];
     [_private release];
     [super dealloc];
 }
@@ -233,8 +239,8 @@ using namespace KSVG;
 - (NSString *)title
 {
     // Detect title if possible...
-    KDOM::DOMString title = _private->svgDocument->title();
-    return title.string().getNSString();
+    KDOM::DOMStringImpl *title = _private->svgDocument->title();
+    return title->string().getNSString();
 }
 
 - (NSString *)description
@@ -263,7 +269,7 @@ using namespace KSVG;
 
 - (void)registerView:(DrawView *)view
 {
-    if (!_private->primaryView || (_private->primaryView == _private->dummyView))
+    if (!_private->primaryView || (_private->primaryView == _private->dummyCanvasView))
         [self setPrimaryView:view];
     else
         _private->canvas->addView([view canvasView]);
@@ -271,7 +277,7 @@ using namespace KSVG;
 
 - (void)unregisterView:(DrawView *)view
 {
-    _private->canvas->removeView([view canvasView]);
+	// canvas views clean up themselves on dealloc.
 }
 
 - (NSString *)svgText
@@ -321,13 +327,13 @@ using namespace KSVG;
     if (!_private->svgDocument)
         return NULL;
     
-    KDOM::DOMString eventString = KDOM::DOMImplementationImpl::self()->idToType(eventId);
+    KDOM::DOMStringImpl *eventString = KDOM::DOMImplementationImpl::self()->idToType(eventId);
     
     SVGSVGElementImpl *root = _private->svgDocument->rootElement();
     float scale = (root ? root->currentScale() : 1.0);
     
     // Setup kdom 'MouseEvent'...
-    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(_private->svgDocument->createEvent("MouseEvents"));
+    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(_private->svgDocument->createEvent(DOMString("MouseEvents").handle()));
     event->ref();
     
     event->initMouseEvent(eventString, qevent, scale);
@@ -511,21 +517,24 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
     KDOM::ElementImpl *newElement = NULL;
     KCanvasItem *newCanvasItem = NULL;
     
+    DOMString mouseX(QString::number(mousePoint.x));
+    DOMString mouseY(QString::number(mousePoint.x));
+    
     switch (tool) {
 	case DrawViewToolElipse:
 	{
-            newElement = _private->svgDocument->createElement("ellipse");
-            newElement->setAttributeNS(KDOM::NS_SVG, "cx", QString::number(mousePoint.x));
-            newElement->setAttributeNS(KDOM::NS_SVG, "cy", QString::number(mousePoint.y));
+            newElement = _private->svgDocument->createElement(DOMString("ellipse").handle());
+            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("cx").handle(), mouseX.handle());
+            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("cy").handle(), mouseY.handle());
             break;
 	}
 	case DrawViewToolTriangle:
             break;
 	case DrawViewToolRectangle:
 	{
-            newElement = _private->svgDocument->createElement("rect");
-            newElement->setAttributeNS(KDOM::NS_SVG, "x", QString::number(mousePoint.x));
-            newElement->setAttributeNS(KDOM::NS_SVG, "y", QString::number(mousePoint.y));
+            newElement = _private->svgDocument->createElement(DOMString("rect").handle());
+            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("x").handle(), mouseX.handle());
+            newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("y").handle(), mouseY.handle());
             break;
 	}
 	case DrawViewToolLine:
@@ -536,7 +545,7 @@ NSCursor *cursorForStyle(KDOM::RenderStyle *style)
             NSLog(@"Can't create item for unsupported tool.");
     }
     if (newElement) {
-        newElement->setAttributeNS(KDOM::NS_SVG, "fill", "navy");
+        newElement->setAttributeNS(KDOM::NS_SVG.handle(), DOMString("fill").handle(), DOMString("navy").handle());
         SVGSVGElementImpl *rootNode = _private->svgDocument->rootElement();
         rootNode->appendChild(newElement);
         newElement->ref(); // don't know why this is necessary...

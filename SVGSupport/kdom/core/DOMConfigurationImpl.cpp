@@ -20,19 +20,18 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "DOMConfigurationImpl.h"
-#include "DOMConfiguration.h"
+#include "kdom.h"
+#include "DOMStringImpl.h"
 #include "DOMUserDataImpl.h"
 #include "DOMStringListImpl.h"
-#include "DOMStringImpl.h"
 #include "DOMExceptionImpl.h"
-#include <kdom.h>
+#include "DOMConfigurationImpl.h"
 
 using namespace KDOM;
 
 DOMStringListImpl *DOMConfigurationImpl::m_paramNames = 0;
 
-DOMConfigurationImpl::DOMConfigurationImpl() : Shared(true)
+DOMConfigurationImpl::DOMConfigurationImpl() : Shared()
 {
 	m_flags = 0;
 	m_flags |= FEATURE_COMMENTS;
@@ -47,19 +46,25 @@ DOMConfigurationImpl::DOMConfigurationImpl() : Shared(true)
 	m_flags |= FEATURE_DISCARD_DEFAULT_CONTENT;
 	m_flags |= FEATURE_XML_DECLARATION;
 	m_flags |= FEATURE_IGNORE_UNKNOWN_CD;
+
+	m_errHandler = 0;
 }
 
 DOMConfigurationImpl::~DOMConfigurationImpl()
 {
+	if(m_errHandler)
+		m_errHandler->deref();
 }
 
 void DOMConfigurationImpl::setParameter(DOMStringImpl *name, DOMUserDataImpl *value)
 {
-	if(!value || !name) return;
+	if(!value || !name)
+		return;
+
 	DOMString temp(name);
 	if(temp.lower() == COMMENTS)
 	{
-		bool b = (bool)value->userData();
+		bool b = (bool) value->userData();
 		kdDebug() << "b : " << b << endl;
 		m_flags |= (b ? FEATURE_COMMENTS : 0);
 	}
@@ -67,7 +72,9 @@ void DOMConfigurationImpl::setParameter(DOMStringImpl *name, DOMUserDataImpl *va
 
 void DOMConfigurationImpl::setParameter(DOMStringImpl *name, bool value)
 {
-	if(!name) return;
+	if(!name)
+		return;
+
 	DOMString temp(name);
 	if(temp.lower() == COMMENTS)
 	{
@@ -251,7 +258,9 @@ void DOMConfigurationImpl::setParameter(DOMStringImpl *name, bool value)
 
 DOMUserDataImpl *DOMConfigurationImpl::getParameter(DOMStringImpl *name) const
 {
-	if(!name) return 0;
+	if(!name)
+		return 0;
+
 	DOMString temp(name);
 	if(temp.lower() == CANONICAL_FORM)
 		return new DOMUserDataImpl(getParameter(FEATURE_CANONICAL_FORM));
@@ -268,6 +277,7 @@ DOMUserDataImpl *DOMConfigurationImpl::getParameter(DOMStringImpl *name) const
 	else if(temp.lower() ==	ENTITIES)
 		return new DOMUserDataImpl(getParameter(FEATURE_ENTITIES));
 	else if(temp.lower() ==	INFOSET)
+	{
 		return new DOMUserDataImpl(!getParameter(FEATURE_ENTITIES) && 
 									!getParameter(FEATURE_CDATA_SECTIONS) &&
 									!getParameter(FEATURE_VALIDATE_IF_SCHEMA) &&
@@ -276,6 +286,7 @@ DOMUserDataImpl *DOMConfigurationImpl::getParameter(DOMStringImpl *name) const
 									getParameter(FEATURE_NAMESPACES) &&
 									getParameter(FEATURE_WHITESPACE_IN_ELEMENT_CONTENT) &&
 									getParameter(FEATURE_NAMESPACE_DECLARATIONS));
+	}
 	else if(temp.lower() ==	NAMESPACES)
 		return new DOMUserDataImpl(getParameter(FEATURE_NAMESPACES));
 	else if(temp.lower() ==	NAMESPACE_DECLARATIONS)
@@ -323,8 +334,12 @@ bool DOMConfigurationImpl::getParameter(int flag) const
 
 bool DOMConfigurationImpl::canSetParameter(DOMStringImpl *name, DOMUserDataImpl *value) const
 {
-	if(!value) return true;
-	if(!name) return false;
+	if(!value)
+		return true;
+
+	if(!name)
+		return false;
+
 	DOMString temp(name);
 	if(temp.lower() == ERROR_HANDLER)
 		return true;
@@ -389,75 +404,78 @@ DOMStringListImpl *DOMConfigurationImpl::parameterNames() const
 	if(!m_paramNames)
 	{
 		m_paramNames = new DOMStringListImpl();
-		m_paramNames->appendItem(CANONICAL_FORM.implementation());
+		m_paramNames->ref();
+
+		m_paramNames->appendItem(CANONICAL_FORM.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(CDATA_SECTIONS.implementation());
+		m_paramNames->appendItem(CDATA_SECTIONS.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(CHECK_CHARACTER_NORMALIZATION.implementation());
+		m_paramNames->appendItem(CHECK_CHARACTER_NORMALIZATION.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(COMMENTS.implementation());
+		m_paramNames->appendItem(COMMENTS.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(DATATYPE_NORMALIZATION.implementation());
+		m_paramNames->appendItem(DATATYPE_NORMALIZATION.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(ELEMENT_CONTENT_WHITESPACE.implementation());
+		m_paramNames->appendItem(ELEMENT_CONTENT_WHITESPACE.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(ENTITIES.implementation());
+		m_paramNames->appendItem(ENTITIES.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(ERROR_HANDLER.implementation());
+		m_paramNames->appendItem(ERROR_HANDLER.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(INFOSET.implementation());
+		m_paramNames->appendItem(INFOSET.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(NAMESPACES.implementation());
+		m_paramNames->appendItem(NAMESPACES.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(NAMESPACE_DECLARATIONS.implementation());
+		m_paramNames->appendItem(NAMESPACE_DECLARATIONS.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(NORMALIZE_CHARACTERS.implementation());
+		m_paramNames->appendItem(NORMALIZE_CHARACTERS.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(SCHEMA_LOCATION.implementation());
+		m_paramNames->appendItem(SCHEMA_LOCATION.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(SCHEMA_TYPE.implementation());
+		m_paramNames->appendItem(SCHEMA_TYPE.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(SPLIT_CDATA_SECTIONS.implementation());
+		m_paramNames->appendItem(SPLIT_CDATA_SECTIONS.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(VALIDATE.implementation());
+		m_paramNames->appendItem(VALIDATE.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(VALIDATE_IF_SCHEMA.implementation());
+		m_paramNames->appendItem(VALIDATE_IF_SCHEMA.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(WELL_FORMED.implementation());
+		m_paramNames->appendItem(WELL_FORMED.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(CHARSET_OVERRIDES_XML_ENCODING.implementation());
+		m_paramNames->appendItem(CHARSET_OVERRIDES_XML_ENCODING.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(DISALLOW_DOCTYPE.implementation());
+		m_paramNames->appendItem(DISALLOW_DOCTYPE.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(IGNORE_UNKNOWN_CD.implementation());
+		m_paramNames->appendItem(IGNORE_UNKNOWN_CD.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(RESOURCE_RESOLVER.implementation());
+		m_paramNames->appendItem(RESOURCE_RESOLVER.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(SUPPORTED_MEDIA_TYPE_ONLY.implementation());
+		m_paramNames->appendItem(SUPPORTED_MEDIA_TYPE_ONLY.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(DISCARD_DEFAULT_CONTENT.implementation());
+		m_paramNames->appendItem(DISCARD_DEFAULT_CONTENT.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(FORMAT_PRETTY_PRINT.implementation());
+		m_paramNames->appendItem(FORMAT_PRETTY_PRINT.handle());
 		m_paramNames->getLast()->ref();
-		m_paramNames->appendItem(XML_DECLARATION.implementation());
+		m_paramNames->appendItem(XML_DECLARATION.handle());
 		m_paramNames->getLast()->ref();
 	}
 
 	return m_paramNames;
 }
 
-DOMErrorHandler DOMConfigurationImpl::errHandler()
+DOMErrorHandlerImpl *DOMConfigurationImpl::errHandler() const
 {
 	return m_errHandler;
 }
 
-DOMStringImpl *DOMConfigurationImpl::normalizeCharacters(DOMStringImpl *data) const
+DOMStringImpl *DOMConfigurationImpl::normalizeCharacters(DOMStringImpl *dataImpl) const
 {
 	// TODO : possibly report error if check-character-normalization is set
 	if(!getParameter(FEATURE_NORMALIZE_CHARACTERS))
-		return data;
+		return dataImpl;
 
-	QString temp = DOMString(data).string();
+	DOMString data(dataImpl);
+	QString temp = data.string();
 #ifndef APPLE_COMPILE_HACK
 	temp.compose();
 #endif

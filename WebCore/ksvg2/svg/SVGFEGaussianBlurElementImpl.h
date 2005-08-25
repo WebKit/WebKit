@@ -36,7 +36,7 @@ namespace KSVG
 	class SVGFEGaussianBlurElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
 	{
 	public:
-		SVGFEGaussianBlurElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGFEGaussianBlurElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGFEGaussianBlurElementImpl();
 
 		// 'SVGFEGaussianBlurElement' functions

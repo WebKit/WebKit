@@ -25,12 +25,10 @@
 
 namespace KDOM
 {
-	// The class expects 'this' to be an ecmafied class which needs
-	// to call ScriptInterpreter::forgetDOMObject on destruction...
 	class Shared
 	{
 	public:
-		Shared(bool baseClass = false);
+		Shared();
 		virtual ~Shared();
 
 		void ref();
@@ -40,7 +38,6 @@ namespace KDOM
 
 	protected:
 		int m_ref;
-		bool m_baseClass : 1;
 	};
 
 	template<class T>
@@ -53,36 +50,6 @@ namespace KDOM
 			if(a) a->ref();
 		}
 	}
-
-#define KDOM_IMPL_DTOR_ASSIGN_OP(T) \
-T::~T() { if(d) d->deref(); } \
-T &T::operator=(const T &other) { \
-	KDOM_SAFE_SET(d, other.d); \
-	return *this; \
-} \
-bool T::operator==(const T &other) const { \
-	return d == other.d; \
-} \
-bool T::operator!=(const T &other) const { \
-	return !operator==(other); \
-} \
-
-/**
- * Add a null object singleton to the class, of the class' type.
- * This makes for efficient storage and can be used in comparisons
- * like this: someNode.firstChild() != Node::null; .
- *
- * TODO: is there demand for isNull() convenience method? If so, add
- * here.
- */
-#define KDOM_INTERNAL(ClassName) static ClassName null; typedef ClassName##Impl Private;
-
-/**
- * Base classes have a handle() convenience method that gives back
- * the internal impl pointer, in addition to the null object singleton.
- */
-#define KDOM_INTERNAL_BASE(ClassName) KDOM_INTERNAL(ClassName) ClassName##Impl *handle() const { return d; }
-
 };
 
 #endif

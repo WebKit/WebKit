@@ -92,7 +92,7 @@ namespace KDOM
 		bool isEmpty() const;
 
 		// Internal
-		DOMStringImpl *implementation() const;
+		DOMStringImpl *handle() const;
 
 	protected:
 		DOMStringImpl *d;

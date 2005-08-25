@@ -53,8 +53,8 @@ namespace KDOM
 		EventTargetImpl *relatedTarget() const;
 		void setRelatedTarget(EventTargetImpl *target);
 
-		void initMouseEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg);
-		void initMouseEvent(const DOMString &typeArg, QMouseEvent *qevent, float scale = 1.0);
+		void initMouseEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg);
+		void initMouseEvent(DOMStringImpl *typeArg, QMouseEvent *qevent, float scale = 1.0);
 
 		// Helpers
 		QMouseEvent *qEvent() const { return m_qevent; }

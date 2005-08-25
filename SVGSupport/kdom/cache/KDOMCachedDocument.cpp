@@ -65,6 +65,11 @@ CachedDocument::CachedDocument(DocumentLoader *docLoader, const DOMString &url, 
 	m_loading = true;
 }
 
+CachedDocument::~CachedDocument()
+{
+	delete d;
+}
+
 void CachedDocument::ref(CachedObjectClient *c)
 {
 	CachedObject::ref(c);

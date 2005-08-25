@@ -27,14 +27,16 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class DocumentImpl;
+
+class NodeImpl;
+class DocumentImpl;
+class DOMStringImpl;
 
 namespace XPointer
 {
-	class XPointerExpressionImpl;
-	class XPointerResultImpl;
 	class XPointerResult;
+	class XPointerResultImpl;
+	class XPointerExpressionImpl;
 
 	class XPointerEvaluatorImpl
 	{
@@ -42,12 +44,11 @@ namespace XPointer
 		XPointerEvaluatorImpl();
 		virtual ~XPointerEvaluatorImpl();
 
-		virtual XPointerExpressionImpl *createXPointer(const DOMString &string,
-											   NodeImpl *relatedNode = 0) const;
-
-		virtual XPointerResultImpl *evaluateXPointer(const DOMString &string, NodeImpl *relatedNode) const;
+		virtual XPointerExpressionImpl *createXPointer(DOMStringImpl *string, NodeImpl *relatedNode = 0) const;
+		virtual XPointerResultImpl *evaluateXPointer(DOMStringImpl *string, NodeImpl *relatedNode) const;
 	};
 };
+
 };
 
 #endif

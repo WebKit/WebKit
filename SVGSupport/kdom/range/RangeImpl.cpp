@@ -24,53 +24,50 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <kdom/DOMException.h>
-#include <kdom/impl/DOMExceptionImpl.h>
-#include <kdom/impl/DocumentFragmentImpl.h>
-#include <kdom/DocumentFragment.h>
-#include <kdom/impl/DocumentImpl.h>
-#include <kdom/impl/TextImpl.h>
-#include <kdom/impl/NodeListImpl.h>
-#include <kdom/impl/NodeImpl.h>
-#include <kdom/impl/XMLElementImpl.h>
-
-#include <kdom/impl/ProcessingInstructionImpl.h>
-
+#include "kdom.h"
+#include "TextImpl.h"
+#include "NodeImpl.h"
 #include "kdomrange.h"
 #include "RangeImpl.h"
+#include "DocumentImpl.h"
+#include "NodeListImpl.h"
+#include "XMLElementImpl.h"
+#include "DOMExceptionImpl.h"
 #include "RangeExceptionImpl.h"
+#include "DocumentFragmentImpl.h"
+#include "ProcessingInstructionImpl.h"
 
 using namespace KDOM;
 
-RangeImpl::RangeImpl(DocumentImpl * _ownerDocument )  : Shared(true)
+RangeImpl::RangeImpl(DocumentPtr *_ownerDocument)  : Shared()
 {
 	m_ownerDocument = _ownerDocument;
 	m_ownerDocument->ref();
-	
-	m_startContainer = _ownerDocument->documentElement();
+
+	m_startContainer = _ownerDocument->document();
 	m_startContainer->ref();
-	
-	m_endContainer = _ownerDocument->documentElement();
+
+	m_endContainer = _ownerDocument->document();
 	m_endContainer->ref();
-	
+
 	m_startOffset = 0;
 	m_endOffset = 0;
 	m_detached = false;
 }
 
-RangeImpl::RangeImpl(DocumentImpl *_ownerDocument,
+RangeImpl::RangeImpl(DocumentPtr *_ownerDocument,
 					 NodeImpl *_startContainer, long _startOffset,
-					 NodeImpl *_endContainer, long _endOffset) : Shared(true)
+					 NodeImpl *_endContainer, long _endOffset) : Shared()
 {
 	m_ownerDocument = _ownerDocument;
 	m_ownerDocument->ref();
-	
+
 	m_startContainer = _startContainer;
 	m_startContainer->ref();
-		
+
 	m_endContainer = _endContainer;
 	m_endContainer->ref();
-	
+
 	m_startOffset = _startOffset;
 	m_endOffset = _endOffset;
 	m_detached = false;
@@ -143,7 +140,7 @@ NodeImpl *RangeImpl::commonAncestorContainer(NodeImpl *containerA, NodeImpl *con
 	return parentStart;
 }
 
-bool RangeImpl::collapsed() const
+bool RangeImpl::isCollapsed() const
 {
 	if(m_detached)
 		throw new DOMExceptionImpl(INVALID_STATE_ERR);
@@ -155,11 +152,11 @@ void RangeImpl::setStart(NodeImpl *refNode, long offset)
 {
 	if(m_detached)
 		throw new DOMExceptionImpl(INVALID_STATE_ERR);
-		
+
 	if(!refNode)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
-	
-	if(refNode->ownerDocument() != m_ownerDocument)
+
+	if(refNode->ownerDocument() != m_ownerDocument->document())
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeWOffset(refNode, offset);
@@ -190,7 +187,7 @@ void RangeImpl::setEnd(NodeImpl *refNode, long offset)
 	if(!refNode)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	if(refNode->ownerDocument() != m_ownerDocument)
+	if(refNode->ownerDocument() != m_ownerDocument->document())
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeWOffset( refNode, offset);
@@ -398,7 +395,7 @@ DocumentFragmentImpl *RangeImpl::processContents(ActionType action)
 
 	// ### perhaps disable node deletion notification for this range while we do this?
 
-	if(collapsed())
+	if(isCollapsed())
 		return 0;
 
 	NodeImpl *cmnRoot = commonAncestorContainer();
@@ -867,7 +864,7 @@ void RangeImpl::checkNodeWOffset( NodeImpl *n, int offset ) const
 		case PROCESSING_INSTRUCTION_NODE:
 		{
 			// TODO: are we supposed to check with just data or the whole contents?
-			if((unsigned long) offset > static_cast<ProcessingInstructionImpl*>(n)->data().length())
+			if((unsigned long) offset > DOMString(static_cast<ProcessingInstructionImpl*>(n)->data()).length())
 				throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 				
 			break;
@@ -983,8 +980,7 @@ DOMString RangeImpl::toString()
 			if(n->nodeType() == TEXT_NODE ||
 			   n->nodeType() == CDATA_SECTION_NODE) {
 	
-				DOMString str;
-				str = static_cast<TextImpl *>(n)->toString();
+				DOMString str(static_cast<TextImpl *>(n)->toString());
 				if( n == m_endContainer || n == m_startContainer)		
 					str = str.copy();  //copy if we are going to modify.
 	
@@ -1027,7 +1023,7 @@ void RangeImpl::setStartAfter(NodeImpl *refNode)
 	if(!refNode)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	if(refNode->ownerDocument() != m_ownerDocument)
+	if(refNode->ownerDocument() != m_ownerDocument->document())
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeBA(refNode);
@@ -1042,7 +1038,7 @@ void RangeImpl::setEndBefore(NodeImpl *refNode)
 	if(!refNode)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	if(refNode->ownerDocument() != m_ownerDocument)
+	if(refNode->ownerDocument() != m_ownerDocument->document())
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeBA(refNode);
@@ -1057,7 +1053,7 @@ void RangeImpl::setEndAfter(NodeImpl *refNode)
 	if(!refNode) 
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	if(refNode->ownerDocument() != m_ownerDocument)
+	if(refNode->ownerDocument() != m_ownerDocument->document())
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeBA(refNode);
@@ -1214,7 +1210,7 @@ void RangeImpl::setStartBefore(NodeImpl *refNode)
 	if(!refNode)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	if(refNode->ownerDocument() != m_ownerDocument) 
+	if(refNode->ownerDocument() != m_ownerDocument->document()) 
 		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
 	checkNodeBA(refNode);

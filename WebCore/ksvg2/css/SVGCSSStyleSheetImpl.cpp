@@ -25,17 +25,17 @@
 
 using namespace KSVG;
 
-SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode, const KDOM::DOMString &href, bool _implicit)
+SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode, KDOM::DOMStringImpl *href, bool _implicit)
 : KDOM::CSSStyleSheetImpl(parentNode, href, _implicit)
 {
 }
 
-SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::CSSStyleSheetImpl *parentSheet, const KDOM::DOMString &href)
+SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::CSSStyleSheetImpl *parentSheet, KDOM::DOMStringImpl *href)
 : KDOM::CSSStyleSheetImpl(parentSheet, href)
 {
 }
 
-SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule, const KDOM::DOMString &href)
+SVGCSSStyleSheetImpl::SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule, KDOM::DOMStringImpl *href)
 : KDOM::CSSStyleSheetImpl(ownerRule, href)
 {
 }

@@ -1,0 +1,6 @@
+module xpointer
+{
+	exception XPointerException {
+		unsigned short code;
+	};
+};

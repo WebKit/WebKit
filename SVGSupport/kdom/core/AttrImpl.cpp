@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -25,22 +32,21 @@
 #include "NodeImpl.h"
 #include "AttrImpl.h"
 #include "TextImpl.h"
-#include "TypeInfoImpl.h"
-#include "DOMString.h"
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
+#include "TypeInfoImpl.h"
 #include "DOMStringImpl.h"
 #include "MutationEventImpl.h"
 
 using namespace KDOM;
 
-AttrImpl::AttrImpl(DocumentImpl *doc, NodeImpl::Id id) : NodeBaseImpl(doc), m_ownerElement(0), m_prefix(0), m_value(0), m_id(id)
+AttrImpl::AttrImpl(DocumentPtr *doc, NodeImpl::Id id) : NodeBaseImpl(doc), m_ownerElement(0), m_prefix(0), m_value(0), m_id(id)
 {
 	m_isId = false;
 	m_specified = true;
 }
 
-AttrImpl::AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_ownerElement(0), m_value(0), m_id(id)
+AttrImpl::AttrImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_ownerElement(0), m_value(0), m_id(id)
 {
 	m_prefix = prefix;
 	if(m_prefix)
@@ -52,7 +58,7 @@ AttrImpl::AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *prefix, bo
 	m_nullNSSpecified = nullNSSpecified;
 }
 
-AttrImpl::AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_ownerElement(0), m_id(id)
+AttrImpl::AttrImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_ownerElement(0), m_id(id)
 {
 	m_prefix = prefix;
 	if(m_prefix)
@@ -68,7 +74,7 @@ AttrImpl::AttrImpl(DocumentImpl *doc, NodeImpl::Id id, DOMStringImpl *value, DOM
 	m_nullNSSpecified = nullNSSpecified;
 
 	if(value)
-		appendChild(doc->createTextNode(DOMString(value)));
+		appendChild(ownerDocument()->createTextNode(value));
 }
 
 AttrImpl::~AttrImpl()
@@ -94,25 +100,25 @@ void AttrImpl::setIsId(bool isId)
 	m_isId = isId;
 }
 
-DOMString AttrImpl::nodeName() const
+DOMStringImpl *AttrImpl::nodeName() const
 {
 	return name();
 }
 	
-DOMString AttrImpl::localName() const
+DOMStringImpl *AttrImpl::localName() const
 {
 	if(!m_dom2)
-		return DOMString();
+		return 0;
 
 	return ownerDocument()->getName(NodeImpl::AttributeId, m_id);
 }
 
-DOMString AttrImpl::nodeValue() const
+DOMStringImpl *AttrImpl::nodeValue() const
 {
 	return value();
 }
 
-void AttrImpl::setNodeValue(const DOMString &nodeValue)
+void AttrImpl::setNodeValue(DOMStringImpl *nodeValue)
 {
 	setValue(nodeValue);
 }
@@ -122,22 +128,22 @@ unsigned short AttrImpl::nodeType() const
 	return ATTRIBUTE_NODE;
 }
 
-DOMString AttrImpl::value() const
+DOMStringImpl *AttrImpl::value() const
 {
-	DOMString result("");
+	DOMStringImpl *ret =  new DOMStringImpl();
 	
 	for(NodeImpl *child = firstChild(); child != 0; child = child->nextSibling())
-		result += child->textContent();
+		ret->append(DOMString(child->textContent()).string());
 
-	return result;
+	return ret;
 }
 
 DOMStringImpl *AttrImpl::val()
 {
 	if(!m_value)
 	{
-		DOMString result = value();
-		
+		DOMString result(value());
+
 		m_value = new DOMStringImpl(result.unicode(), result.length());
 		m_value->ref();
 	}
@@ -145,30 +151,32 @@ DOMStringImpl *AttrImpl::val()
 	return m_value;
 }
 
-DOMString AttrImpl::name() const
+DOMStringImpl *AttrImpl::name() const
 {
-	DOMString ret = ownerDocument()->getName(NodeImpl::AttributeId, m_id);
+	DOMStringImpl *ret = ownerDocument()->getName(NodeImpl::AttributeId, m_id);
+	if(!ret)
+		return 0;
 
 	if(m_prefix && m_prefix->length())
-		return DOMString(m_prefix) + ":" + ret;
+		return new DOMStringImpl(m_prefix->string() + QString::fromLatin1(":") + DOMString(ret).string());
 
 	return ret;
 }
 
-DOMString AttrImpl::namespaceURI() const
+DOMStringImpl *AttrImpl::namespaceURI() const
 {
 	if(m_nullNSSpecified || !m_dom2 || !ownerDocument())
-		return DOMString();
+		return 0;
 
 	return ownerDocument()->getName(NodeImpl::NamespaceId, m_id >> 16);
 }
 
-DOMString AttrImpl::prefix() const
+DOMStringImpl *AttrImpl::prefix() const
 {
-	return DOMString(m_prefix);
+	return m_prefix;
 }
 
-void AttrImpl::setPrefix(const DOMString &_prefix)
+void AttrImpl::setPrefix(DOMStringImpl *_prefix)
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(isReadOnly())
@@ -177,19 +185,10 @@ void AttrImpl::setPrefix(const DOMString &_prefix)
 	Helper::CheckPrefix(_prefix, localName(), namespaceURI());
 	
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is an attribute and the qualifiedName of this node is "xmlns"
-	if(nodeName() == "xmlns")
+	if(DOMString(nodeName()) == "xmlns")
 		throw new DOMExceptionImpl(NAMESPACE_ERR);
 
-	if(m_prefix == _prefix.implementation())
-		return;
-
-	if(m_prefix)
-		m_prefix->deref();
-	
-	m_prefix = _prefix.implementation();
-	
-	if(m_prefix)
-		m_prefix->ref();
+	KDOM_SAFE_SET(m_prefix, _prefix);
 }
 
 bool AttrImpl::isReadOnly() const
@@ -220,13 +219,13 @@ bool AttrImpl::childTypeAllowed(unsigned short type) const
 	}
 }
 
-NodeImpl *AttrImpl::cloneNode(bool, DocumentImpl *doc) const
+NodeImpl *AttrImpl::cloneNode(bool, DocumentPtr *doc) const
 {
 	AttrImpl *clone = 0;
 	if(m_dom2)
-		clone = doc->createAttributeNS(namespaceURI(), nodeName());
+		clone = doc->document()->createAttributeNS(namespaceURI(), nodeName());
 	else
-		clone = doc->createAttribute(nodeName());
+		clone = doc->document()->createAttribute(nodeName());
 
 	// Cloning an Attr always clones its children, since they
 	// represent its value,
@@ -234,27 +233,18 @@ NodeImpl *AttrImpl::cloneNode(bool, DocumentImpl *doc) const
 	return clone;
 }
 
-void AttrImpl::setValue(const DOMString &_value)
+void AttrImpl::setValue(DOMStringImpl *_value)
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(isReadOnly())
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
-//	DOMString prevValue = value(); TODO: Mutation events?
+//	DOMStringImpl *prevValue = value(); TODO: Mutation events?
 	removeChildren();
 
 	addChild(ownerDocument()->createTextNode(_value));
 
-	if(m_value == _value.implementation())
-		return;
-	
-	if(m_value)
-		m_value->deref();
-	
-	m_value = _value.implementation();
-	
-	if(m_value)
-		m_value->ref();
+	KDOM_SAFE_SET(m_value, _value);
 
 	// is attr owned?
 	if(m_ownerElement)
@@ -297,18 +287,18 @@ void AttributeImpl::setValue(DOMStringImpl *value, ElementImpl *element)
 			element->parseAttribute(this);
 	}
 	else
-		m_data.attr->setValue(DOMString(value));
+		m_data.attr->setValue(value);
 }
 
 AttrImpl *AttributeImpl::createAttr(ElementImpl *element)
 {
 	if(m_attrId)
 	{
-		AttrImpl *attr = new AttrImpl(element->ownerDocument(), m_attrId);
+		AttrImpl *attr = new AttrImpl(element->docPtr(), m_attrId);
 		if(!attr)
 			return 0;
 
-		attr->setValue(DOMString(m_data.value));
+		attr->setValue(m_data.value);
 		attr->setOwnerElement(element);	
 
 		m_data.value->deref();

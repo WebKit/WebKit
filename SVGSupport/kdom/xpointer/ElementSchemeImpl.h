@@ -25,13 +25,13 @@
 
 #include <kdom/xpointer/impl/PointerPartImpl.h>
 
-class QStringList;
-
 #include <qvaluelist.h>
+#include <qstringlist.h>
 
 namespace KDOM
 {
-	class DOMString;
+
+class DOMString;
 
 namespace XPointer
 {
@@ -47,10 +47,10 @@ namespace XPointer
 	class ElementSchemeImpl : public PointerPartImpl
 	{
 	public:
-		ElementSchemeImpl(const DOMString &schemeData);
+		ElementSchemeImpl(DOMStringImpl *schemeData);
 		virtual ~ElementSchemeImpl();
 
-		XPointerResultImpl *evaluate(NodeImpl *context) const;
+		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
 
 	private:
 		void parseChildSequence(const QStringList &steps);
@@ -59,6 +59,7 @@ namespace XPointer
 		QValueList<unsigned int> m_childSequence;
 	};
 };
+
 };
 
 #endif

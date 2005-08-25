@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,11 +27,14 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include <stdlib.h>
+
 #include <kdebug.h>
 
-#include "kdom/Helper.h"
+#include <kdom/Helper.h>
 #include "AttrImpl.h"
 #include "NodeImpl.h"
+#include "kdomevents.h"
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
 #include "NamedAttrMapImpl.h"
@@ -44,8 +54,10 @@ NamedAttrMapImpl::~NamedAttrMapImpl()
 	free(m_attrs);
 }
 
-NodeImpl *NamedAttrMapImpl::getNamedItem(NodeImpl::Id id, bool nsAware, DOMStringImpl *qName)
+NodeImpl *NamedAttrMapImpl::getNamedItem(NodeImpl::Id id, bool nsAware, DOMStringImpl *qNameImpl)
 {
+	DOMString qName(qNameImpl);
+
 	if(!m_ownerElement)
 		return 0;
 
@@ -55,11 +67,11 @@ NodeImpl *NamedAttrMapImpl::getNamedItem(NodeImpl::Id id, bool nsAware, DOMStrin
 	for(unsigned long i = 0; i < m_attrCount; i++)
 	{
 		if((m_attrs[i].id() & mask) == id)
-		{
+		{					  
 			// if we are called with a qualified name, filter
 			// out NS-aware elements with non-matching name.
-			if(qName && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
-				strcasecmp(m_attrs[i].name(), DOMString(qName)))
+			if(qNameImpl && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
+				strcasecmp(DOMString(m_attrs[i].name()), qName))
 				continue;
 
 			return m_attrs[i].createAttr(m_ownerElement);
@@ -88,7 +100,7 @@ NodeImpl *NamedAttrMapImpl::removeNamedItem(NodeImpl::Id id, bool nsAware, DOMSt
 			// if we are called with a qualified name, filter out NS-aware
 			// elements with non-matching name.
 			if(qName && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
-				strcasecmp(m_attrs[i].name(), DOMString(qName)))
+				strcasecmp(DOMString(m_attrs[i].name()), DOMString(qName)))
 				continue;
 
 			id = m_attrs[i].id();
@@ -104,7 +116,9 @@ NodeImpl *NamedAttrMapImpl::removeNamedItem(NodeImpl::Id id, bool nsAware, DOMSt
 
 			m_ownerElement->parseAttribute(id, 0);
 
-			dispatchAttrMutationEvent(m_ownerElement, removed->nodeValue(), "", removed->nodeName(), REMOVAL);
+			dispatchAttrMutationEvent(m_ownerElement, removed->nodeValue(),
+									  0, removed->nodeName(), REMOVAL);
+
 			dispatchSubtreeModifiedEvent();
 
 			return removed;
@@ -149,7 +163,7 @@ NodeImpl *NamedAttrMapImpl::setNamedItem(NodeImpl *arg, bool nsAware, DOMStringI
 			// if we are called with a qualified name, filter out NS-aware
 			// elements with non-matching name.
 			if(qName && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
-				strcasecmp(m_attrs[i].name(), DOMString(qName)))
+				strcasecmp(DOMString(m_attrs[i].name()), DOMString(qName)))
 				continue;
 
 			// Attribute exists; replace it
@@ -165,7 +179,9 @@ NodeImpl *NamedAttrMapImpl::setNamedItem(NodeImpl *arg, bool nsAware, DOMStringI
 			attr->setOwnerElement(m_ownerElement);
 			m_ownerElement->parseAttribute(&m_attrs[i]);
 	
-			dispatchAttrMutationEvent(m_ownerElement, replaced->nodeValue(), attr->nodeValue(), attr->name(), MODIFICATION);
+			dispatchAttrMutationEvent(m_ownerElement, replaced->nodeValue(),
+									  attr->nodeValue(), attr->name(), MODIFICATION);
+
 			dispatchSubtreeModifiedEvent();
 
 			return replaced;
@@ -182,7 +198,7 @@ NodeImpl *NamedAttrMapImpl::setNamedItem(NodeImpl *arg, bool nsAware, DOMStringI
 
 	m_ownerElement->parseAttribute(&m_attrs[m_attrCount - 1]);
 		
-	dispatchAttrMutationEvent(m_ownerElement, "", attr->nodeValue(), attr->name(), MODIFICATION);
+	dispatchAttrMutationEvent(m_ownerElement, 0, attr->nodeValue(), attr->name(), MODIFICATION);
 	dispatchSubtreeModifiedEvent();
 
 	return 0;
@@ -235,19 +251,21 @@ DOMStringImpl *NamedAttrMapImpl::getValue(NodeImpl::Id id, bool nsAware, DOMStri
 			// if we are called with a qualified name, filter out
 			// NS-aware elements with non-matching name.
 			if(qName && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
-				strcasecmp(m_attrs[i].name(), DOMString(qName)))
+				strcasecmp(DOMString(m_attrs[i].name()), DOMString(qName)))
 				continue;
 
-			return m_attrs[i].val();
+			return m_attrs[i].value();
 		}
 	}
 
 	return 0;
 }
 
-void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *qName, DOMStringImpl *prefix, bool nsAware, bool hasNS)
+void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *qNameImpl, DOMStringImpl *prefix, bool nsAware, bool hasNS)
 {
-	Q_ASSERT(!(qName && nsAware));
+	DOMString qName(qNameImpl);
+
+	Q_ASSERT(!(qNameImpl && nsAware));
 	if(!id)
 		return;
 
@@ -255,7 +273,7 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
 	// (the spec does not specify what to do in this situation).
 	if(!value)
 	{
-		removeNamedItem(id, nsAware, qName);
+		removeNamedItem(id, nsAware, qNameImpl);
 		return;
 	}
 
@@ -269,17 +287,17 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
 		{
 			// if we are called with a qualified name, filter out
 			// NS-aware elements with non-matching name.
-			if(qName && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
-				strcasecmp(m_attrs[i].name(), DOMString(qName)))
+			if(qNameImpl && (m_attrs[i].id() & NodeImpl_IdNSMask) &&
+				strcasecmp(DOMString(m_attrs[i].name()), qName))
 				continue;
 
 			if(prefix)
-				m_attrs[i].attr()->setPrefix(DOMString(prefix));
+				m_attrs[i].attr()->setPrefix(prefix);
 
-			DOMString prevValue(m_attrs[i].value()); 
-			m_attrs[i].setValue(value, m_ownerElement);
+			DOMStringImpl *prevValue = m_attrs[i].value(); 
+			m_attrs[i].setValue(value->copy(), m_ownerElement);
 	
-			dispatchAttrMutationEvent(m_ownerElement, prevValue, DOMString(value), m_attrs[i].name(), MODIFICATION);
+			dispatchAttrMutationEvent(m_ownerElement, prevValue, value, m_attrs[i].name(), MODIFICATION);
 			dispatchSubtreeModifiedEvent();
 
 			return;
@@ -302,7 +320,7 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
 		if(!m_ownerElement)
 			return;
 
-		m_attrs[m_attrCount - 1].m_data.attr = new AttrImpl(m_ownerElement->ownerDocument(), id, value, prefix, !hasNS);
+		m_attrs[m_attrCount - 1].m_data.attr = new AttrImpl(m_ownerElement->docPtr(), id, value, prefix, !hasNS);
 		m_attrs[m_attrCount - 1].m_attrId = 0; /* "has implementation" flag */
 		m_attrs[m_attrCount - 1].m_data.attr->ref();
 		m_attrs[m_attrCount - 1].m_data.attr->setOwnerElement(m_ownerElement);
@@ -312,7 +330,7 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
 	{
 		m_ownerElement->parseAttribute(&m_attrs[m_attrCount - 1]);
 			
-		dispatchAttrMutationEvent(m_ownerElement, "", DOMString(value), m_attrs[m_attrCount - 1].name(), ADDITION);
+		dispatchAttrMutationEvent(m_ownerElement, 0, value, m_attrs[m_attrCount - 1].name(), ADDITION);
 		dispatchSubtreeModifiedEvent();
 	}
 }
@@ -336,7 +354,7 @@ AttrImpl *NamedAttrMapImpl::removeAttr(AttrImpl *attr)
 			m_attrs = (AttributeImpl *) realloc(m_attrs, m_attrCount * sizeof(AttributeImpl));
 			m_ownerElement->parseAttribute(id, 0);
 
-			dispatchAttrMutationEvent(m_ownerElement, removed->nodeValue(), "", removed->nodeName(), REMOVAL);
+			dispatchAttrMutationEvent(m_ownerElement, removed->nodeValue(), 0, removed->nodeName(), REMOVAL);
 			dispatchSubtreeModifiedEvent();
  
 			return removed;
@@ -370,7 +388,7 @@ void NamedAttrMapImpl::clone(NamedNodeMapImpl *_other)
 		}
 		else
 		{
-			m_attrs[i].m_data.attr = static_cast<AttrImpl *>(other->m_attrs[i].m_data.attr->cloneNode(true, m_ownerElement->ownerDocument()));
+			m_attrs[i].m_data.attr = static_cast<AttrImpl *>(other->m_attrs[i].m_data.attr->cloneNode(true, m_ownerElement->docPtr()));
 			m_attrs[i].m_data.attr->ref();
 			m_attrs[i].m_data.attr->setOwnerElement(m_ownerElement);
 		}
@@ -383,7 +401,7 @@ NodeImpl *NamedAttrMapImpl::getNamedItem(DOMStringImpl *name)
 {
 	NodeImpl::Id nid = mapId(0, name, true);
 	if(!nid)
-		return lookupAttribute(DOMString(name));
+		return lookupAttribute(name);
 
 	return getNamedItem(nid, false, name);
 }
@@ -393,7 +411,7 @@ NodeImpl *NamedAttrMapImpl::setNamedItem(NodeImpl *arg)
 	if(!arg)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	return setNamedItem(arg, false, arg->nodeName().implementation());
+	return setNamedItem(arg, false, arg->nodeName());
 }
 
 NodeImpl *NamedAttrMapImpl::removeNamedItem(DOMStringImpl *name)
@@ -421,19 +439,48 @@ NodeImpl *NamedAttrMapImpl::removeNamedItemNS(DOMStringImpl *namespaceURI, DOMSt
 	return removeNamedItem(nid, true, 0);
 }
 
-void NamedAttrMapImpl::dispatchAttrMutationEvent(NodeImpl *node, const DOMString &prevValue, const DOMString &newValue, const DOMString &name, unsigned short attrChange)
+void NamedAttrMapImpl::dispatchAttrMutationEvent(NodeImpl *node, DOMStringImpl *prevValue, DOMStringImpl *newValue, DOMStringImpl *name, unsigned short attrChange)
 {
+	if(prevValue)
+		prevValue->ref();
+	if(newValue)
+		newValue->ref();
+	if(name)
+		name->ref();
+
 	DocumentImpl *document = (m_ownerElement ? m_ownerElement->ownerDocument() : 0);
 	if(!document || !document->hasListenerType(DOMATTRMODIFIED_EVENT))
-		return;
+	{
+		if(prevValue)
+			prevValue->deref();
+		if(newValue)
+			newValue->deref();
+		if(name)
+			name->deref();
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(document->createEvent("MutationEvents"));
+		return;
+	}
+
+	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+	eventType->ref();
+
+	MutationEventImpl *event = static_cast<MutationEventImpl *>(document->createEvent(eventType));
 	event->ref();
 
-	event->initMutationEvent("DOMAttrModified", true, false, node, prevValue, newValue, name, attrChange);
+	event->initMutationEvent(new DOMStringImpl("DOMAttrModified"), true, false,
+							 node, prevValue, newValue, name, attrChange);
+
 	m_ownerElement->dispatchEvent(event);
 
 	event->deref();
+	eventType->deref();
+
+	if(prevValue)
+		prevValue->deref();
+	if(newValue)
+		newValue->deref();
+	if(name)
+		name->deref();
 }
 
 void NamedAttrMapImpl::dispatchSubtreeModifiedEvent()
@@ -442,13 +489,17 @@ void NamedAttrMapImpl::dispatchSubtreeModifiedEvent()
 	if(!document || !document->hasListenerType(DOMSUBTREEMODIFIED_EVENT))
 		return;
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(document->createEvent("MutationEvents"));
+	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+	eventType->ref();
+
+	MutationEventImpl *event = static_cast<MutationEventImpl *>(document->createEvent(eventType));
 	event->ref();
 
-	event->initMutationEvent("DOMSubtreeModified", true, false, 0, DOMString(), DOMString(), DOMString(), 0);
+	event->initMutationEvent(new DOMStringImpl("DOMSubtreeModified"), true, false, 0, 0, 0, 0, 0);
 	m_ownerElement->dispatchEvent(event);
 
 	event->deref();
+	eventType->deref();
 }
 
 NodeImpl::Id NamedAttrMapImpl::idAt(unsigned long index) const
@@ -460,16 +511,18 @@ NodeImpl::Id NamedAttrMapImpl::idAt(unsigned long index) const
 DOMStringImpl *NamedAttrMapImpl::valueAt(unsigned long index) const
 {
 	Q_ASSERT(index <= m_attrCount);
-	return m_attrs[index].val();
+	return m_attrs[index].value();
 }
 
-AttrImpl *NamedAttrMapImpl::lookupAttribute(const DOMString &name) const
+AttrImpl *NamedAttrMapImpl::lookupAttribute(DOMStringImpl *name) const
 {
+	DOMString _name(name);
+
 	// reverting to simpler and slower algorithm
 	for(unsigned long i = 0; i < length(); ++i)
 	{
 		AttrImpl *attr = static_cast<AttrImpl *>(item(i));
-		if(attr && attr->nodeName() == name)
+		if(attr && DOMString(attr->nodeName()) == _name)
 			return attr;
 	}
 

@@ -29,15 +29,15 @@ namespace KDOM
 {
 	class NodeImpl;
 	class CSSRuleImpl;
-	class CSSRuleList;
 	class DocumentImpl;
+	class CSSRuleListImpl;
 
 	class CSSStyleSheetImpl : public StyleSheetImpl 
 	{
 	public:
-		CSSStyleSheetImpl(NodeImpl *parentNode, const DOMString &href = DOMString(), bool _implicit = false);
-		CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, const DOMString &href = DOMString());
-		CSSStyleSheetImpl(CSSRuleImpl *ownerRule, const DOMString &href = DOMString());
+		CSSStyleSheetImpl(NodeImpl *parentNode, DOMStringImpl *href = 0, bool _implicit = false);
+		CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMStringImpl *href = 0);
+		CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMStringImpl *href = 0);
 		
 		// clone from a cached version of the sheet
 		CSSStyleSheetImpl(NodeImpl *parentNode, CSSStyleSheetImpl *orig);
@@ -46,19 +46,20 @@ namespace KDOM
 		virtual ~CSSStyleSheetImpl();
 
 		virtual bool isCSSStyleSheet() const { return true; }
-		virtual DOMString type() const { return "text/css"; }
+
+		virtual DOMStringImpl *type() const;
 
 		// 'CSSStyleSheetImpl' functions
 		CSSRuleImpl *ownerRule() const;
-		CSSRuleList cssRules();
+		CSSRuleListImpl *cssRules();
 
-		unsigned long insertRule(const DOMString &rule, unsigned long index);
+		unsigned long insertRule(DOMStringImpl *rule, unsigned long index);
 		void deleteRule(unsigned long index);
 
-		void addNamespace(CSSParser *p, const DOMString &prefix, const DOMString &uri);
-		void determineNamespace(Q_UINT32 &id, const DOMString &prefix);
+		void addNamespace(CSSParser *p, DOMStringImpl *prefix, DOMStringImpl *uri);
+		void determineNamespace(Q_UINT32 &id, DOMStringImpl *prefix);
 
-		virtual bool parseString(const DOMString &string, bool strict = true);
+		virtual bool parseString(DOMStringImpl *string, bool strict = true);
 
 		bool isLoading() const;
 		void setNonCSSHints();

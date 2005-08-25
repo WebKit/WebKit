@@ -36,6 +36,7 @@
 #include <kio/job.h>
 #include <kio/global.h>
 
+#include <kdom/KDOMSettings.h>
 #include <kdom/cache/KDOMCachedObject.h>
 
 namespace KDOM
@@ -49,14 +50,6 @@ namespace KDOM
 	class DocumentImpl;
 	class CachedDocument;
 	class CachedStyleSheet;
-
-	// TODO Move to KDOMSettings class!
-	enum KAnimationAdvice
-	{
-		KAnimationDisabled = 0,
-		KAnimationLoopOnce,
-		KAnimationEnabled
-	};
 	
 	class DocumentLoader
 	{
@@ -73,7 +66,7 @@ namespace KDOM
 		CachedDocument *requestDocument(const KURL &url, const QString &charset,
 										const char *accept = 0);
 
-		KAnimationAdvice showAnimations() const { return m_showAnimations; }
+		KDOMSettings::KAnimationAdvice showAnimations() const { return m_showAnimations; }
 		bool autoloadImages() const { return m_autoloadImages; }
 		KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
 		time_t expireDate() const { return m_expireDate; }
@@ -82,7 +75,7 @@ namespace KDOM
 		void setCacheCreationDate(time_t date);
 		void setExpireDate(time_t date, bool relative);
 		void setAutoloadImages(bool load);
-		void setShowAnimations(KAnimationAdvice showAnimations);
+		void setShowAnimations(KDOMSettings::KAnimationAdvice showAnimations);
 		void setCachePolicy(KIO::CacheControl cachePolicy) { m_cachePolicy = cachePolicy; }
 
 		void insertCachedObject(CachedObject *object) const;
@@ -113,7 +106,7 @@ namespace KDOM
 		DocumentImpl *m_doc;
 
 		bool m_autoloadImages : 1;
-		KAnimationAdvice m_showAnimations : 2;
+		KDOMSettings::KAnimationAdvice m_showAnimations : 2;
 
 		time_t m_expireDate;
 		time_t m_creationDate;
@@ -144,9 +137,9 @@ namespace KDOM
 #endif
 
 	signals:
-		void requestStarted(DocumentLoader *docLoader, CachedObject *obj);
-		void requestDone(DocumentLoader *docLoader, CachedObject *obj);
-		void requestFailed(DocumentLoader *docLoader, CachedObject *obj);
+		void requestStarted(KDOM::DocumentLoader *docLoader, KDOM::CachedObject *obj);
+		void requestDone(KDOM::DocumentLoader *docLoader, KDOM::CachedObject *obj);
+		void requestFailed(KDOM::DocumentLoader *docLoader, KDOM::CachedObject *obj);
 
 	protected slots:
 		void slotFinished(KIO::Job *job);

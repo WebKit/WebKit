@@ -79,17 +79,17 @@ CachedImage::CachedImage(DocumentLoader *docLoader, const DOMString &url, KIO::C
 /* TODO: Add KHTML Settings class
 	if(KHTMLFactory::defaultHTMLSettings()->isAdFiltered(url.string()))
 */
-//	if(false)
-//	{
-//		m_wasBlocked = true;
-//		if(!Cache::blockedPixmap)
-//		{
-//			Cache::blockedPixmap = new QPixmap();
-//			Cache::blockedPixmap->loadFromData(blocked_icon_data, blocked_icon_len);
-//		}
-//		
-//		CachedObject::finish();
-//	}
+	if(false)
+	{
+		m_wasBlocked = true;
+		if(!Cache::blockedPixmap)
+		{
+			Cache::blockedPixmap = new QPixmap();
+			Cache::blockedPixmap->loadFromData(blocked_icon_data, blocked_icon_len);
+		}
+		
+		CachedObject::finish();
+	}
 }
 
 CachedImage::~CachedImage()
@@ -352,12 +352,12 @@ void CachedImage::movieStatus(int status)
 	}
 	
 	if((status == QMovie::EndOfMovie && (!m_movie || m_movie->frameNumber() <= 1)) ||
-	   ((status == QMovie::EndOfLoop) && (m_showAnimations == KAnimationLoopOnce)) ||
-	   ((status == QMovie::EndOfFrame) && (m_showAnimations == KAnimationDisabled)))
+	   ((status == QMovie::EndOfLoop) && (m_showAnimations == KDOMSettings::KAnimationLoopOnce)) ||
+	   ((status == QMovie::EndOfFrame) && (m_showAnimations == KDOMSettings::KAnimationDisabled)))
 	{
 		if(m_imgSource)
 		{
-			setShowAnimations(KAnimationDisabled);
+			setShowAnimations(KDOMSettings::KAnimationDisabled);
 
 			// monochrome alphamasked images are usually about 10000 times
 			// faster to draw, so this is worth the hack
@@ -394,11 +394,11 @@ void CachedImage::deleteMovie()
 }
 
 #ifndef APPLE_COMPILE_HACK
-void CachedImage::setShowAnimations(KAnimationAdvice showAnimations)
+void CachedImage::setShowAnimations(KDOMSettings::KAnimationAdvice showAnimations)
 {
 	m_showAnimations = showAnimations;
 	
-	if((m_showAnimations == KAnimationDisabled) && m_imgSource)
+	if((m_showAnimations == KDOMSettings::KAnimationDisabled) && m_imgSource)
 	{
 		m_imgSource->cleanBuffer();
 		
@@ -413,8 +413,8 @@ void CachedImage::setShowAnimations(KAnimationAdvice showAnimations)
 
 		m_imgSource = 0;
 	}
-}
 #endif
+}
 
 void CachedImage::clear()
 {
@@ -460,8 +460,8 @@ void CachedImage::deref(CachedObjectClient *consumer)
 }
 
 void CachedImage::data(QBuffer &buffer, bool eof)
-{
 #ifndef APPLE_COMPILE_HACK
+{
 #ifdef LOADER_DEBUG
 	kdDebug( 6060 ) << this << "in CachedImage::data(buffersize " <<buffer.buffer().size() <<", eof=" << eof << endl;
 #endif
@@ -522,7 +522,6 @@ void CachedImage::data(QBuffer &buffer, bool eof)
 			for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
 				it()->notifyFinished(this);
 		}
-	}
 #else // APPLE_COMPILE_HACK
     bool canDraw = false;
     
@@ -553,6 +552,7 @@ void CachedImage::data(QBuffer &buffer, bool eof)
         }
     }
 #endif // APPLE_COMPILE_HACK
+	}
 }
 
 void CachedImage::finish()

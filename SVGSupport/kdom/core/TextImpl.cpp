@@ -20,12 +20,13 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "TextImpl.h"
 #include "DocumentImpl.h"
 
 using namespace KDOM;
 
-TextImpl::TextImpl(DocumentImpl *doc, DOMStringImpl *text) : CharacterDataImpl(doc)
+TextImpl::TextImpl(DocumentPtr *doc, DOMStringImpl *text) : CharacterDataImpl(doc)
 {
 	str = text;
 	if(str)
@@ -36,9 +37,9 @@ TextImpl::~TextImpl()
 {
 }
 
-DOMString TextImpl::nodeName() const
+DOMStringImpl *TextImpl::nodeName() const
 {
-	return "#text";
+	return new DOMStringImpl("#text");
 }
 
 unsigned short TextImpl::nodeType() const
@@ -46,10 +47,9 @@ unsigned short TextImpl::nodeType() const
 	return TEXT_NODE;
 }
 
-NodeImpl *TextImpl::cloneNode(bool, DocumentImpl *doc) const
+NodeImpl *TextImpl::cloneNode(bool, DocumentPtr *doc) const
 {
-	DOMStringImpl *_data = (data() ? data()->copy() : 0);
-	return doc->createTextNode(DOMString(_data));
+	return doc->document()->createTextNode(data());
 }
 
 TextImpl *TextImpl::splitText(unsigned long offset)
@@ -64,7 +64,7 @@ TextImpl *TextImpl::splitText(unsigned long offset)
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
 	DOMStringImpl *oldStr = str;
-	TextImpl *p = new TextImpl(ownerDocument(), substringData(offset, length() - offset));
+	TextImpl *p = new TextImpl(docPtr(), substringData(offset, length() - offset));
 	
 	str = str->copy();
 	str->ref();
@@ -81,19 +81,19 @@ TextImpl *TextImpl::splitText(unsigned long offset)
 
 bool TextImpl::isElementContentWhitespace() const
 {
-	DOMString s(str);
-	return s.string().stripWhiteSpace().isEmpty() &&
+	return (str && str->string().stripWhiteSpace().isEmpty()) &&
 		   parentNode() && parentNode()->nodeType() == ELEMENT_NODE &&
 		   (previousSibling() || nextSibling());
 }
 
-DOMString TextImpl::wholeText() const
+DOMStringImpl *TextImpl::wholeText() const
 {
-	DOMString ret;
+	DOMStringImpl *ret = new DOMStringImpl();
+
 	QPtrList<NodeImpl> nodes = logicallyAdjacentTextNodes();
 	QPtrListIterator<NodeImpl> it(nodes);
 	for(;it.current(); ++it)
-		ret += (*it)->nodeValue();
+		ret->append((*it)->nodeValue());
 
 	return ret;
 }
@@ -116,7 +116,7 @@ TextImpl *TextImpl::replaceWholeText(DOMStringImpl *content)
 	TextImpl *replacement = 0;
 	bool haveReplaced = false;
 	if(isReadOnly() && content && content->length() > 0)
-		replacement = ownerDocument()->createTextNode(DOMString(content));
+		replacement = ownerDocument()->createTextNode(content);
 
 	QPtrList<NodeImpl> nodes = logicallyAdjacentTextNodes();
 	QPtrList<NodeImpl> removables;
@@ -126,6 +126,7 @@ TextImpl *TextImpl::replaceWholeText(DOMStringImpl *content)
 		NodeImpl *n = (*it);
 		if(n == this && !(!content || content->length() == 0 || isReadOnly()))
 			continue;
+
 		while(n->parentNode())
 		{
 			if(!n->parentNode()->isReadOnly())
@@ -134,6 +135,7 @@ TextImpl *TextImpl::replaceWholeText(DOMStringImpl *content)
 					removables.append(n);
 				break;
 			}
+
 			n = n->parentNode();
 		}
 	}
@@ -143,8 +145,10 @@ TextImpl *TextImpl::replaceWholeText(DOMStringImpl *content)
 	{
 		NodeImpl *removable = (*it2);
 		if(!checkChildren(removable, nodes))
+		{
 			// NO_MODIFICATION_ALLOWED_ERR: Raised if one of the Text nodes being replaced is readonly.
 			throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+		}
 
 		if(replacement && !haveReplaced)
 			removable->parentNode()->replaceChild(replacement, removable);
@@ -152,11 +156,13 @@ TextImpl *TextImpl::replaceWholeText(DOMStringImpl *content)
 			removable->parentNode()->removeChild(removable);
 	}
 
-	if(replacement) return replacement;
-	if(!content || content->length() == 0) return 0;
+	if(replacement)
+		return replacement;
+
+	if(!content || content->isEmpty())
+		return 0;
 
 	setData(content);
-
 	return this;
 }
 
@@ -169,6 +175,7 @@ QPtrList<NodeImpl> TextImpl::logicallyAdjacentTextNodes() const
 		NodeImpl *previous = 0;
 		if(go)
 			previous = n->lastChild();
+
 		if(!previous)
 		{
 			previous = n->previousSibling();
@@ -181,6 +188,7 @@ QPtrList<NodeImpl> TextImpl::logicallyAdjacentTextNodes() const
 			if(!previous || previous->nodeType() != ENTITY_REFERENCE_NODE)
 				break;
 		}
+
 		if(previous && previous->nodeType() != TEXT_NODE &&
 		   previous->nodeType() != CDATA_SECTION_NODE &&
 		   previous->nodeType() != ENTITY_REFERENCE_NODE)
@@ -188,20 +196,24 @@ QPtrList<NodeImpl> TextImpl::logicallyAdjacentTextNodes() const
 
 		n = previous;
 	}
+
 	QPtrList<NodeImpl> ret;
 	go = true;
 	while(true)
 	{
 		if(n->nodeType() != ENTITY_REFERENCE_NODE)
 			ret.append(n);
+
 		NodeImpl *_next = 0;
 		if(go)
 			_next = n->firstChild();
+
 		if(!_next)
 		{
 			_next = n->nextSibling();
 			go = true;
 		}
+
 		if(!_next)
 		{
 			_next = n->parentNode();
@@ -209,6 +221,7 @@ QPtrList<NodeImpl> TextImpl::logicallyAdjacentTextNodes() const
 			if(!_next || _next->nodeType() != ENTITY_REFERENCE_NODE)
 				break;
 		}
+
 		if(_next && _next->nodeType() != TEXT_NODE &&
 		   _next->nodeType() != CDATA_SECTION_NODE &&
 		   _next->nodeType() != ENTITY_REFERENCE_NODE)

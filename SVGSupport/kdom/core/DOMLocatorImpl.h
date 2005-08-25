@@ -28,8 +28,8 @@
 namespace KDOM
 {
 	class NodeImpl;
-	class DOMString;
 	class DOMStringImpl;
+
 	// Introduced in DOM Level 3:
 	class DOMLocatorImpl : public Shared
 	{
@@ -54,7 +54,7 @@ namespace KDOM
 		void setRelatedNode(NodeImpl *);
 	
 		DOMStringImpl *uri() const;
-		void setUri(const DOMString &uri);
+		void setUri(DOMStringImpl *uri);
 
 	protected:
 		long m_lineNumber;

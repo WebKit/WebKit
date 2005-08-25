@@ -23,20 +23,29 @@
 #ifndef KSVG_SVGAnimatedNumberImpl_H
 #define KSVG_SVGAnimatedNumberImpl_H
 
-#include "SVGNumberImpl.h"
-#include "SVGAnimatedTemplate.h"
+#include <kdom/Shared.h>
 
 namespace KSVG
 {
-	class SVGAnimatedNumberImpl : public SVGAnimatedTemplate<SVGNumberImpl>
+	class SVGStyledElementImpl;
+
+	class SVGAnimatedNumberImpl : public KDOM::Shared
 	{
 	public:
 		SVGAnimatedNumberImpl(const SVGStyledElementImpl *context);
 		virtual ~SVGAnimatedNumberImpl();
 
-	protected:
-		virtual SVGNumberImpl *create() const;
-		virtual void assign(SVGNumberImpl *src, SVGNumberImpl *dst) const;
+		float baseVal() const;
+		void setBaseVal(float baseVal);
+
+		float animVal() const;
+		void setAnimVal(float animVal);
+
+	private:
+		float m_baseVal;
+		float m_animVal;
+
+		const SVGStyledElementImpl *m_context;
 	};
 };
 

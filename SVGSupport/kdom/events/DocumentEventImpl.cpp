@@ -39,10 +39,11 @@ DocumentEventImpl::~DocumentEventImpl()
 {
 }
 
-EventImpl *DocumentEventImpl::createEvent(const DOMString &eventType)
+EventImpl *DocumentEventImpl::createEvent(DOMStringImpl *eventTypeImpl)
 {
 	EventImpl *i = 0;
 
+	DOMString eventType(eventTypeImpl);
 	if(eventType == "UIEvents")
 		i = new UIEventImpl(TypeUIEvent);
 	else if(eventType == "MouseEvents")

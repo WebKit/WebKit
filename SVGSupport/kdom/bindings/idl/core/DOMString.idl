@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2004 World Wide Web Consortium,
+ *
+ * (Massachusetts Institute of Technology, European Research Consortium for
+ * Informatics and Mathematics, Keio University). All Rights Reserved. This
+ * work is distributed under the W3C(r) Software License [1] in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ */
+
+module core
+{
+	// TODO: Handle default parameter values! int start = 0 for instance...
+	interface DOMString {
+		readonly attribute unsigned int length;
+
+		void insert(in DOMString string, in unsigned int position);
+		int find(in char c, in int start);
+
+		void truncate(in unsigned int length);
+		void remove(in unsigned int position, in int length);
+
+		DOMString substring(in unsigned int position, in unsigned int length);
+		DOMString split(in unsigned int position);
+
+		readonly attribute DOMString lower;
+		readonly attribute DOMString upper;
+
+		readonly attribute [ptr] char unicode;
+		readonly attribute string string;
+
+		int toInt(in [ptr] boolean ok) const;
+
+		DOMString copy();
+
+		boolean isEmpty();
+	};
+};
+
+// TODO: Handle special constructors!
+// DOMString(const DOMString &other);
+// DOMString(const QChar *string, unsigned int length);
+// DOMString(const QString &string);
+// DOMString(const char *string);
+
+// TODO: Handle special operators!
+// DOMString &operator=(const DOMString &other);
+// DOMString &operator+=(const DOMString &other);
+// DOMString operator+(const DOMString &other) const;
+// const QChar &operator[](unsigned int i) const;
+
+// TODO: Handle special global operators!
+// bool operator==(const DOMString &a, const DOMString &b);
+// bool operator==(const DOMString &a, const QString &b);
+// bool operator==(const DOMString &a, const char *b);
+// bool operator!=(const DOMString &a, const DOMString &b) { return !(a == b); }
+// bool operator!=(const DOMString &a, const QString &b) { return !(a == b); }
+// bool operator!=(const DOMString &a, const char *b) { return !(a == b); }
+// bool strcmp(const DOMString &a, const DOMString &b) { return a != b; }
+
+// TODO: Handle special global functions!
+// 	bool strcasecmp(const DOMString &a, const DOMString &b);
+// 	bool strcasecmp(const DOMString &a, const char *b);

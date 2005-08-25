@@ -155,7 +155,8 @@ namespace KDOM
 	/**
 	 * The namespace for identifying errors in XPath.
 	 *
-	 * Specification: http://www.w3.org/TR/xpath20/#id-identifying-errors
+	 * @see <a href="http://www.w3.org/TR/xpath20/#id-identifying-errors">XML Path Language (XPath) 
+	 * 2.0, 2.3.2 Identifying and Reporting Errors</a>
 	 */
 	const DOMString NS_XPERR = "http://www.w3.org/2004/07/xqt-errors";
 
@@ -164,6 +165,25 @@ namespace KDOM
 	 * specifies how strings are compared and ordered.
 	 */
 	const DOMString NS_UNICODE_COLLATION = "http://www.w3.org/2005/04/xpath-functions/collation/codepoint";
+
+	/**
+	 * Namespace for identifying error conditions defined by the KXPATH implementation. That is,
+	 * error conditions that are not defined in for example <a href="http://www.w3.org/TR/xpath20/">XML 
+	 * Path Language (XPath) 2.0</a>.
+	 *
+	 * @see <a href="http://www.w3.org/TR/xpath20/#id-identifying-errors">XML Path Language (XPath) 
+	 * 2.0, 2.3.2 Identifying and Reporting Errors</a>
+	 * @see NS_XPERR
+	 */
+	const DOMString NS_KXPATH_ERR = "http://www.example.org/KXPATH/ErrorNamespace/TODO";
+
+	/**
+	 * This namespace is similar to the W3C XML Schema namespace, with the difference that
+	 * it identifies artificial data types, used internally for implementation purposes. Using
+	 * this namespace in user code, most likely leads to severe, undefined errors.
+	 */
+	const DOMString NS_KDT = "http://www.example.org/KXPATH/DataTypeNamespace/TODO";
+
 };
 
 #endif // KDOM_Namespace_h

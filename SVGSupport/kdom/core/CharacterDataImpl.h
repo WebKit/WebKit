@@ -31,7 +31,7 @@ namespace KDOM
 	class CharacterDataImpl : public NodeImpl
 	{
 	public:
-		CharacterDataImpl(DocumentImpl *doc);
+		CharacterDataImpl(DocumentPtr *doc);
 		virtual ~CharacterDataImpl();
 
 		void checkCharDataOperation(CharacterDataImpl *node, const unsigned long offset);
@@ -40,10 +40,10 @@ namespace KDOM
 		DOMStringImpl *data() const;
 		void setData(DOMStringImpl *data);
 
-		virtual DOMString nodeValue() const;
-		virtual void setNodeValue(const DOMString &nodeValue);
+		virtual DOMStringImpl *nodeValue() const;
+		virtual void setNodeValue(DOMStringImpl *nodeValue);
 
-		virtual DOMString textContent() const; // DOM3
+		virtual DOMStringImpl *textContent() const; // DOM3
 
 		DOMStringImpl *substringData(unsigned long offset, unsigned long count);
 
@@ -59,7 +59,7 @@ namespace KDOM
 		virtual bool containsOnlyWhitespace() const;
 
 		// Internal
-		void dispatchModifiedEvent(const DOMString &prevValue);
+		void dispatchModifiedEvent(DOMStringImpl *prevValue);
 
 	protected:
 		DOMStringImpl *str;

@@ -38,22 +38,22 @@ namespace KDOM
 	public:
 		MediaListImpl();
 		MediaListImpl(CSSStyleSheetImpl *parentSheet);
-		MediaListImpl(CSSStyleSheetImpl *parentSheet, const DOMString &media);
-		MediaListImpl(CSSRuleImpl *parentRule, const DOMString &media);
+		MediaListImpl(CSSStyleSheetImpl *parentSheet, DOMStringImpl *media);
+		MediaListImpl(CSSRuleImpl *parentRule, DOMStringImpl *media);
 		virtual ~MediaListImpl();
 
 		// 'MediaList' functions
 		CSSRuleImpl *parentRule() const;
 		CSSStyleSheetImpl *parentStyleSheet() const;
 
-		void setMediaText(const DOMString &mediaText);
-		DOMString mediaText() const;
+		DOMStringImpl *mediaText() const;
+		void setMediaText(DOMStringImpl *mediaText);
 
 		unsigned long length() const;
-		DOMString item(unsigned long index) const;
+		DOMStringImpl *item(unsigned long index) const;
 
-		void deleteMedium(const DOMString &oldMedium);
-		void appendMedium(const DOMString &newMedium);
+		void deleteMedium(DOMStringImpl *oldMedium);
+		void appendMedium(DOMStringImpl *newMedium);
 
 		virtual bool isMediaList() const { return true; }
 
@@ -66,7 +66,7 @@ namespace KDOM
 		 *
 		 * _NOT_ part of the DOM!
 		 */
-		bool contains(const DOMString &medium) const;
+		bool contains(DOMStringImpl *medium) const;
 
 	protected:
 		QValueList<DOMString> m_lstMedia;

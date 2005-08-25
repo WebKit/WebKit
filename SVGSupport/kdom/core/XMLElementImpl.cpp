@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -25,11 +32,11 @@
 
 using namespace KDOM;
 
-XMLElementImpl::XMLElementImpl(DocumentImpl *doc, NodeImpl::Id id) : ElementImpl(doc), m_id(id)
+XMLElementImpl::XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id) : ElementImpl(doc), m_id(id)
 {
 }
 
-XMLElementImpl::XMLElementImpl(DocumentImpl *doc, NodeImpl::Id id, const DOMString &prefix, bool nullNSSpecified) : ElementImpl(doc, prefix, nullNSSpecified), m_id(id)
+XMLElementImpl::XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified) : ElementImpl(doc, prefix, nullNSSpecified), m_id(id)
 {
 }
 
@@ -37,22 +44,30 @@ XMLElementImpl::~XMLElementImpl()
 {
 }
 
-DOMString XMLElementImpl::localName() const
+DOMStringImpl *XMLElementImpl::localName() const
 {
 	if(!m_dom2)
-		return DOMString();
+		return 0;
 
 	return ownerDocument()->getName(NodeImpl::ElementId, id());
 }
 
-DOMString XMLElementImpl::tagName() const
+DOMStringImpl *XMLElementImpl::tagName() const
 {
-	DOMString tn = ownerDocument()->getName(NodeImpl::ElementId, id());
+	DOMStringImpl *name = ownerDocument()->getName(NodeImpl::ElementId, id());
+	if(!name)
+		return 0;
 
-	if(m_prefix && m_prefix->length() != 0)
-		return DOMString(m_prefix) + ":" + tn;
+	if(m_prefix && !m_prefix->isEmpty())
+	{
+		name->ref();
+		DOMStringImpl *ret = new DOMStringImpl(m_prefix->string() + QString::fromLatin1(":") + name->string());
 
-	return tn;
+		name->deref();
+		return ret;
+	}
+
+	return name;
 }
 
 // vim:ts=4:noet

@@ -45,7 +45,7 @@ namespace KSVG
 		void setUri(KDOM::DOMStringImpl *uri);
 		void setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *iccPaint);
 
-		virtual KDOM::DOMString cssText() const;
+		virtual KDOM::DOMStringImpl *cssText() const;
 
 	private:
 		unsigned short m_paintType;

@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,36 +23,38 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "NotationImpl.h"
 #include "DocumentImpl.h"
 
 using namespace KDOM;
 
-NotationImpl::NotationImpl(DocumentImpl *doc, const DOMString &name, const DOMString &publicId, const DOMString &systemId) : NodeBaseImpl(doc)
+NotationImpl::NotationImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId) : NodeBaseImpl(doc)
 {
-	m_name = name.implementation();
+	m_name = name;
 	if(m_name)
-	        m_name->ref();
+        m_name->ref();
 
-	m_publicId = publicId.implementation();
+	m_publicId = publicId;
 	if(m_publicId)
-	        m_publicId->ref();
+        m_publicId->ref();
 
-	m_systemId = systemId.implementation();
+	m_systemId = systemId;
 	if(m_systemId)
-	        m_systemId->ref();
+        m_systemId->ref();
 }
 
-NotationImpl::NotationImpl(DocumentImpl *doc, const DOMString &publicId, const DOMString &systemId) : NodeBaseImpl(doc)
+NotationImpl::NotationImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId) : NodeBaseImpl(doc)
 {
 	m_name = 0;
-	m_publicId = publicId.implementation();
-	if(m_publicId)
-	        m_publicId->ref();
 
-	m_systemId = systemId.implementation();
+	m_publicId = publicId;
+	if(m_publicId)
+		m_publicId->ref();
+
+	m_systemId = systemId;
 	if(m_systemId)
-	        m_systemId->ref();
+		m_systemId->ref();
 }
 
 NotationImpl::~NotationImpl()
@@ -62,9 +67,9 @@ NotationImpl::~NotationImpl()
 		m_systemId->deref();
 }
 
-DOMString NotationImpl::nodeName() const
+DOMStringImpl *NotationImpl::nodeName() const
 {
-	return DOMString(m_name);
+	return m_name;
 }
 
 unsigned short NotationImpl::nodeType() const
@@ -72,24 +77,24 @@ unsigned short NotationImpl::nodeType() const
 	return NOTATION_NODE;
 }
 
-DOMString NotationImpl::textContent() const
+DOMStringImpl *NotationImpl::textContent() const
 {
-	return DOMString();
+	return 0;
 }
 
-DOMString NotationImpl::publicId() const
+DOMStringImpl *NotationImpl::publicId() const
 {
-	return DOMString(m_publicId);
+	return m_publicId;
 }
 
-DOMString NotationImpl::systemId() const
+DOMStringImpl *NotationImpl::systemId() const
 {
-	return DOMString(m_systemId);
+	return m_systemId;
 }
 
-NodeImpl *NotationImpl::cloneNode(bool, DocumentImpl *doc) const
+NodeImpl *NotationImpl::cloneNode(bool, DocumentPtr *doc) const
 {
-	return new NotationImpl(doc, DOMString(m_name), DOMString(m_publicId), DOMString(m_systemId));
+	return new NotationImpl(doc, nodeName(), publicId(), systemId());
 }
 
 // vim:ts=4:noet

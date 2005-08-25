@@ -87,7 +87,7 @@ namespace KSVG
 		}
 		
 	protected:
-		SVGAnimatedTemplate(const SVGStyledElementImpl *context) : KDOM::Shared(true)
+		SVGAnimatedTemplate(const SVGStyledElementImpl *context) : KDOM::Shared()
 		{
 			m_baseVal = 0;
 			m_animVal = 0;

@@ -20,12 +20,13 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "CSSRuleImpl.h"
 #include "CSSRuleListImpl.h"
 
 using namespace KDOM;
 
-CSSRuleListImpl::CSSRuleListImpl() : Shared(false)
+CSSRuleListImpl::CSSRuleListImpl() : Shared()
 {
 }
 

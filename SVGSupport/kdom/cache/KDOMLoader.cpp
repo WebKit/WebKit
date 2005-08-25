@@ -70,6 +70,7 @@ CachedImage *DocumentLoader::requestImage(const KURL &url)
 
 	if(img && img->status() == CachedObject::Unknown && autoloadImages())
 		Cache::loader()->load(this, img, true);
+
 	return img;
 #else
 	// FIXME: this is just a hack to make compile...
@@ -153,7 +154,7 @@ void DocumentLoader::setAutoloadImages(bool load)
 	}
 }
 
-void DocumentLoader::setShowAnimations(KAnimationAdvice showAnimations)
+void DocumentLoader::setShowAnimations(KDOMSettings::KAnimationAdvice showAnimations)
 {
 	if(showAnimations == m_showAnimations)
 		return;

@@ -20,62 +20,64 @@
 	Boston, MA 02111-1307, USA.
 */
 
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
-#include <qstylesheet.h>
 #ifndef APPLE_CHANGES
 #include <kinputdialog.h>
 #endif
 
-#include <kjs/interpreter.h>
+#include <qstylesheet.h>
 
-#include "Node.h"
 #include "Ecma.h"
-#include "Event.h"
+#include "DOMLookup.h"
 #include "kdom/Helper.h"
-#include "Document.h"
-#include "EventTarget.h"
-#include "Constructors.h"
 #include "DocumentImpl.h"
 #include "GlobalObject.moc"
 #include "ScriptInterpreter.h"
 
-#include <kdom/data/EcmaConstants.h>
 #include "GlobalObject.lut.h"
+
 using namespace KDOM;
 
 /*
-@begin GlobalObject::s_hashTable 19
- closed			GlobalObjectConstants::Closed			DontDelete|ReadOnly
- window			GlobalObjectConstants::Window			DontDelete|ReadOnly
- evt			GlobalObjectConstants::Evt				DontDelete|ReadOnly
- document		GlobalObjectConstants::Document			DontDelete|ReadOnly
+@begin GlobalObject::s_hashTable 15
+ closed			GlobalObject::Closed		DontDelete|ReadOnly
+ window			GlobalObject::Window		DontDelete|ReadOnly
+ evt			GlobalObject::Evt			DontDelete|ReadOnly
+ document		GlobalObject::Document		DontDelete|ReadOnly
 
 # Functions
- setTimeout		GlobalObjectConstants::SetTimeout		DontDelete|Function 2
- clearTimeout	GlobalObjectConstants::ClearTimeout		DontDelete|Function 1
- setInterval	GlobalObjectConstants::SetInterval		DontDelete|Function 2
- clearInterval	GlobalObjectConstants::ClearInterval	DontDelete|Function 1
- printNode		GlobalObjectConstants::PrintNode		DontDelete|Function 1
- alert			GlobalObjectConstants::Alert			DontDelete|Function 1
- prompt			GlobalObjectConstants::Prompt			DontDelete|Function 2
- confirm		GlobalObjectConstants::Confirm			DontDelete|Function 1
- debug			GlobalObjectConstants::Debug			DontDelete|Function 1
-
-# Constructors
- Node				GlobalObjectConstants::Node					DontDelete|Function 1
- DOMException		GlobalObjectConstants::DOMException			DontDelete|Function 1
- CSSRule			GlobalObjectConstants::CSSRule				DontDelete|Function 1
- CSSValue			GlobalObjectConstants::CSSValue				DontDelete|Function 1
- CSSPrimitiveValue	GlobalObjectConstants::CSSPrimitiveValue	DontDelete|Function 1
- Event				GlobalObjectConstants::Event				DontDelete|Function 1
- EventException		GlobalObjectConstants::EventException		DontDelete|Function 1
- MutationEvent		GlobalObjectConstants::MutationEvent		DontDelete|Function 1
+ setTimeout		GlobalObject::SetTimeout	DontDelete|Function 2
+ clearTimeout	GlobalObject::ClearTimeout	DontDelete|Function 1
+ setInterval	GlobalObject::SetInterval	DontDelete|Function 2
+ clearInterval	GlobalObject::ClearInterval	DontDelete|Function 1
+ printNode		GlobalObject::PrintNode		DontDelete|Function 1
+ alert			GlobalObject::Alert			DontDelete|Function 1
+ prompt			GlobalObject::Prompt		DontDelete|Function 2
+ confirm		GlobalObject::Confirm		DontDelete|Function 1
+ debug			GlobalObject::Debug			DontDelete|Function 1
 @end
 */
 
-KDOM_IMPLEMENT_PROTOFUNC(GlobalObjectFunc, GlobalObject)
-const KJS::ClassInfo GlobalObject::s_classInfo = { "GlobalObject", 0, &s_hashTable, 0 };
+/*
+# Constructors - TODO IN THE NEW ECMA CONCEPT! FIX IT!
+ Node				GlobalObject::Node					DontDelete|Function 1
+ DOMException		GlobalObject::DOMException			DontDelete|Function 1
+ CSSRule			GlobalObject::CSSRule				DontDelete|Function 1
+ CSSValue			GlobalObject::CSSValue				DontDelete|Function 1
+ CSSPrimitiveValue	GlobalObject::CSSPrimitiveValue	DontDelete|Function 1
+ Event				GlobalObject::Event				DontDelete|Function 1
+ EventException		GlobalObject::EventException		DontDelete|Function 1
+ MutationEvent		GlobalObject::MutationEvent		DontDelete|Function 1
+@end
+*/
+
+namespace KDOM
+{
+	ECMA_IMPLEMENT_PROTOFUNC(GlobalObjectFunc, GlobalObject, GlobalObject)
+	const KJS::ClassInfo GlobalObject::s_classInfo = { "GlobalObject", 0, &s_hashTable, 0 };
+};
 
 class GlobalObject::Private
 {
@@ -145,22 +147,22 @@ KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p)
 	{
 		switch(entry->value)
 		{
-			case GlobalObjectConstants::Window:
+			case GlobalObject::Window:
 				return const_cast<GlobalObject *>(this);
-			case GlobalObjectConstants::Evt:
-				return getDOMEvent(exec, Event(interpreter->currentEvent()));
-			case GlobalObjectConstants::Document:
+/*			case GlobalObject::Evt:
+				return getDOMEvent(exec, Event(interpreter->currentEvent()));*/
+			case GlobalObject::Document:
 				// special case, Ecma::setup created it, so we don't need to do it
 				return interpreter->getDOMObject(d->document);
-			case GlobalObjectConstants::SetTimeout:
-			case GlobalObjectConstants::ClearTimeout:
-			case GlobalObjectConstants::SetInterval:
-			case GlobalObjectConstants::ClearInterval:
-			case GlobalObjectConstants::PrintNode:
-			case GlobalObjectConstants::Alert:
-			case GlobalObjectConstants::Confirm:
-			case GlobalObjectConstants::Debug:
-			case GlobalObjectConstants::Prompt:
+			case GlobalObject::SetTimeout:
+			case GlobalObject::ClearTimeout:
+			case GlobalObject::SetInterval:
+			case GlobalObject::ClearInterval:
+			case GlobalObject::PrintNode:
+			case GlobalObject::Alert:
+			case GlobalObject::Confirm:
+			case GlobalObject::Debug:
+			case GlobalObject::Prompt:
 			{
 #if 0
 				if(isSafeScript(exec))
@@ -169,22 +171,6 @@ KJS::ValueImp *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p)
 #endif
 					return KJS::Undefined();
 			}
-			case GlobalObjectConstants::Node:
-				return getNodeConstructor(exec);
-			case GlobalObjectConstants::DOMException:
-				return getDOMExceptionConstructor(exec);
-			case GlobalObjectConstants::CSSRule:
-				return getCSSRuleConstructor(exec);
-			case GlobalObjectConstants::CSSValue:
-				return getCSSValueConstructor(exec);
-			case GlobalObjectConstants::CSSPrimitiveValue:
-				return getCSSPrimitiveValueConstructor(exec);
-			case GlobalObjectConstants::Event:
-				return getEventConstructor(exec);
-			case GlobalObjectConstants::EventException:
-				return getEventExceptionConstructor(exec);
-			case GlobalObjectConstants::MutationEvent:
-				return getMutationEventConstructor(exec);
 		}
 	}
 
@@ -215,7 +201,7 @@ void GlobalObject::put(KJS::ExecState *exec, const KJS::Identifier &propertyName
 		// ...
 		//}
 	}
-	
+
 	if(isSafeScript(exec))
 		KJS::ObjectImp::put(exec, propertyName, value, attr);
 }
@@ -283,42 +269,43 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
 
 	switch(id)
 	{
-		case GlobalObjectConstants::Alert:
+		case GlobalObject::Alert:
 #if APPLE_COMPILE_HACK
 			//KWQ(part)->runJavaScriptAlert(str);
 			fprintf(stderr, "Ignoring JavaScriptAlert: %s (l: %i)\n", str.ascii(), str.length());
 #else
-			KMessageBox::error(0L, QStyleSheet::convertFromPlainText(str), "JavaScript");
+			KMessageBox::error(0, QStyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"));
 #endif
 			return KJS::Undefined();
-		case GlobalObjectConstants::Confirm:
+		case GlobalObject::Confirm:
 #if APPLE_COMPILE_HACK
 			//KWQ(part)->runJavaScriptConfirm(str);
 			fprintf(stderr, "Ignoring JavaScriptConfirm: %s (l: %i)\n", str.ascii(), str.length());
 			return KJS::Boolean(false);
 #else
-		    return KJS::Boolean(KMessageBox::warningYesNo(0L, QStyleSheet::convertFromPlainText(str), "JavaScript", i18n("&OK"), i18n("&Cancel")) == KMessageBox::Yes);
+		    return KJS::Boolean(KMessageBox::warningYesNo(0, QStyleSheet::convertFromPlainText(str), QString::fromLatin1("JavaScript"), i18n("&OK"), i18n("&Cancel")) == KMessageBox::Yes);
 #endif
-		case GlobalObjectConstants::Debug:
+		case GlobalObject::Debug:
 			kdDebug() << "[Debug] " << str << endl;
 			return KJS::Undefined();
-		case GlobalObjectConstants::ClearTimeout:
-		case GlobalObjectConstants::ClearInterval:
+		case GlobalObject::ClearTimeout:
+		case GlobalObject::ClearInterval:
 			global->clearTimeout(v->toInt32(exec));
 			return KJS::Undefined();
-		case GlobalObjectConstants::PrintNode:
+		case GlobalObject::PrintNode:
 		{
 			QString result;
 		    QTextOStream out(&result);
+/* FIXME
 			Helper::PrintNode(out, ecma_cast<Node>(exec, args[0], &toNode));
-
+*/
 			return KJS::String(result);
 		}
-		case GlobalObjectConstants::Prompt:
+		case GlobalObject::Prompt:
 		{
 		    bool ok = false;
+		    QString ret;
 
-			QString ret;
 #if APPLE_COMPILE_HACK
 			//ret = KWQ(part)->runJavaScriptPrompt(str, args.size() >= 2 ? args[1].toString(exec).qstring() : QString::null, ret);
 			fprintf(stderr, "Ignoring JavaScriptPrompt: %s (l: %i)\n", str.ascii(), str.length());
@@ -333,7 +320,7 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
 		    else
 				return KJS::Null();
 		}
-		case GlobalObjectConstants::SetInterval:
+		case GlobalObject::SetInterval:
 		{
 			if(args.size() >= 2 && v->isString())
 			{
@@ -350,12 +337,12 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
 			else
 				return KJS::Undefined();
 		}
-		case GlobalObjectConstants::SetTimeout:
+		case GlobalObject::SetTimeout:
 		{
 			if(args.size() == 2 && v->isString())
 			{
 				int i = args[1]->toInt32(exec);
-				int r = global->installTimeout(s, i, true /*single shot*/);
+				int r = global->installTimeout(s, i, true); // single shot
 				return KJS::Number(r);
 			}
 			else if(args.size() >= 2 && v->isObject() && static_cast<KJS::ObjectImp *>(v)->implementsCall())
@@ -368,7 +355,7 @@ KJS::ValueImp *GlobalObjectFunc::callAsFunction(KJS::ExecState *exec, KJS::Objec
 				return KJS::Undefined();
 		}
 	}
-	
+
 	return KJS::Undefined();
 }
 
@@ -415,20 +402,22 @@ void ScheduledAction::execute(GlobalObject *global)
 
 	Q_ASSERT(global->doc() != 0);
 
+/* FIXME
 	ScriptInterpreter *interpreter = global->doc()->ecmaEngine()->interpreter();
 	if(m_isFunction)
 	{
-		if(m_func->implementsCall())
+		if(m_func.implementsCall())
 		{
 			KJS::ExecState *exec = interpreter->globalExec();
-			Q_ASSERT(global == interpreter->globalObject());
+			Q_ASSERT(global == interpreter->globalObject().imp());
 			
-			KJS::ObjectImp *obj(global);
-			m_func->callAsFunction(exec, obj, m_args); // note that callAsFunction() creates its own execution state for the func call
+			KJS::Object obj(global);
+			m_func.call(exec, obj, m_args); // note that call() creates its own execution state for the func call
 		}
 	}
 	else
 		interpreter->evaluate(m_code);
+*/
 }
 
 ////////////////////// GlobalQObject ////////////////////////

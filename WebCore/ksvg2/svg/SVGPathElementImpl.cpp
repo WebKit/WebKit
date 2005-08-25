@@ -48,7 +48,7 @@
 
 using namespace KSVG;
 
-SVGPathElementImpl::SVGPathElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGPathElementImpl::SVGPathElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGPathParser()
 {
 	m_pathLength = 0;
@@ -58,11 +58,10 @@ SVGPathElementImpl::SVGPathElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::
 SVGPathElementImpl::~SVGPathElementImpl()
 {
 	if(m_pathSegList)
-		m_pathSegList->clear();
+		m_pathSegList->deref();
+
 	if(m_pathLength)
 		m_pathLength->deref();
-	if(m_pathSegList)
-		m_pathSegList->deref();
 }
 
 SVGAnimatedNumberImpl *SVGPathElementImpl::pathLength() const

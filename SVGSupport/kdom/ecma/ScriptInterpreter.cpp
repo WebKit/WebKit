@@ -22,11 +22,14 @@
 
 #include <assert.h>
 
+#include <kdebug.h>
+#include <kjs/object.h>
+
 #include <qptrdict.h>
 #include <qptrlist.h>
 
-#include "Document.h"
 #include "EventImpl.h"
+#include "DocumentImpl.h"
 #include "ScriptInterpreter.h"
 
 using namespace KDOM;

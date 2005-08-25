@@ -20,34 +20,33 @@
  *
  */
 
-#include "DOMString.h"
-#include "Node.h"
-
-#include "DocumentImpl.h"
 #include "NodeImpl.h"
+#include "DocumentImpl.h"
+// #include "XPathResultImpl.h"
 #include "XPath1SchemeImpl.h"
-#include "XPathEvaluatorImpl.h"
-#include "XPathExpressionImpl.h"
-#include "XPathResultImpl.h"
+// #include "XPathEvaluatorImpl.h"
+// #include "XPathExpressionImpl.h"
 #include "XPointerResultImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-XPath1SchemeImpl::XPath1SchemeImpl(const DOMString &schemeData, NBCImpl *nbc)
-: PointerPartImpl("xpointer", schemeData, nbc), m_expr(0)
+XPath1SchemeImpl::XPath1SchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc)
+: PointerPartImpl(DOMString("xpointer").handle(), schemeData, nbc) //, m_expr(0)
 {
-	m_expr->ref();
+//	if(m_expr)
+//		m_expr->ref();
 }
 
 XPath1SchemeImpl::~XPath1SchemeImpl()
 {
-	m_expr->deref();
+//	if(m_expr)
+//		m_expr->deref();
 }
 
 XPointerResultImpl *XPath1SchemeImpl::evaluate(NodeImpl *) const
 {
-	return new XPointerResultImpl(XPointerResult::NO_MATCH);
+	return new XPointerResultImpl(NO_MATCH);
 }
 
 // vim:ts=4:noet

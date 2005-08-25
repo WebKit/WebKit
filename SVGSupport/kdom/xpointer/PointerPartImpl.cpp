@@ -22,31 +22,34 @@
 
 #include <kdebug.h>
 
-#include <qmap.h>
-
-#include "DOMString.h"
-#include "Node.h"
-#include <kdom/Shared.h>
-
 #include "NBCImpl.h"
 
+#include "DOMStringImpl.h"
 #include "PointerPartImpl.h"
 #include "XPointerResultImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-PointerPartImpl::PointerPartImpl(const DOMString &name, const DOMString &schemeData, NBCImpl *nbc)
-: Shared(true), m_data(schemeData), m_name(name), m_nbc(nbc)
+PointerPartImpl::PointerPartImpl(DOMStringImpl *name, DOMStringImpl *schemeData, NBCImpl *nbc)
+: Shared(), m_data(schemeData), m_name(name), m_nbc(nbc)
 {
 	kdDebug(26550) << "Created PointerPart: name=\"" << name << "\" schemeData=\"" << schemeData << "\"." << endl;
 
+	if(m_name)
+		m_name->ref();
+	if(m_data)
+		m_data->ref();
 	if(m_nbc)
 		m_nbc->ref();
 }
 
 PointerPartImpl::~PointerPartImpl()
 {
+	if(m_name)
+		m_name->deref();
+	if(m_data)
+		m_data->deref();
 	if(m_nbc)
 		m_nbc->deref();
 }
@@ -55,7 +58,7 @@ XPointerResultImpl *PointerPartImpl::evaluate(NodeImpl *) const
 {
 	/* Unknown schemes are plain PointerPartImpl instances. This ensures
 	 * they trigger an evaluation of the next scheme. */
-	return new XPointerResultImpl(XPointerResult::NO_MATCH);
+	return new XPointerResultImpl(NO_MATCH);
 }
 
 NBCImpl *PointerPartImpl::nbc() const
@@ -63,12 +66,12 @@ NBCImpl *PointerPartImpl::nbc() const
 	return m_nbc;
 }
 
-DOMString PointerPartImpl::name() const
+DOMStringImpl *PointerPartImpl::name() const
 {
 	return m_name;
 }
 
-DOMString PointerPartImpl::data() const
+DOMStringImpl *PointerPartImpl::data() const
 {
 	return m_data;
 }

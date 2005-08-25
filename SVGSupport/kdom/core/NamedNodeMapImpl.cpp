@@ -2,6 +2,12 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,14 +26,14 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "kdom.h"
 #include "DocumentImpl.h"
-#include "XPathNamespace.h"
 #include "NamedNodeMapImpl.h"
 #include "DOMImplementationImpl.h"
 
 using namespace KDOM;
 
-NamedNodeMapImpl::NamedNodeMapImpl() : Shared(true)
+NamedNodeMapImpl::NamedNodeMapImpl() : Shared()
 {
 }
 
@@ -35,7 +41,8 @@ NamedNodeMapImpl::~NamedNodeMapImpl()
 {
 }
 
-RONamedNodeMapImpl::RONamedNodeMapImpl(DocumentImpl *doc) : NamedNodeMapImpl(), m_doc(doc)
+RONamedNodeMapImpl::RONamedNodeMapImpl(DocumentPtr *doc)
+: NamedNodeMapImpl(), m_doc(doc)
 {
 	m_map = new QPtrList<NodeImpl>;
 }
@@ -50,7 +57,7 @@ RONamedNodeMapImpl::~RONamedNodeMapImpl()
 
 bool RONamedNodeMapImpl::isReadOnly() const
 {
-	return !m_doc->parsing();
+	return !m_doc->document()->parsing();
 }
 
 NodeImpl *RONamedNodeMapImpl::item(unsigned long index) const
@@ -74,13 +81,13 @@ void RONamedNodeMapImpl::addNode(NodeImpl *n)
 
 void RONamedNodeMapImpl::clone(NamedNodeMapImpl *other)
 {
-	m_doc->setParsing(true);
+	m_doc->document()->setParsing(true);
 	
 	unsigned long len = other->length(); 
 	for(unsigned long i = 0; i < len; ++i)
 		addNode(other->item(i)->cloneNode(true, m_doc));
 
-	m_doc->setParsing(false);
+	m_doc->document()->setParsing(false);
 }
 
 NodeImpl *RONamedNodeMapImpl::getNamedItem(DOMStringImpl *name)
@@ -90,7 +97,7 @@ NodeImpl *RONamedNodeMapImpl::getNamedItem(DOMStringImpl *name)
 	QPtrListIterator<NodeImpl> it(*m_map);
 	for(; it.current(); ++it)
 	{
-		if(it.current()->nodeName() == DOMString(name))
+		if(DOMString(it.current()->nodeName()) == DOMString(name))
 			return it.current();
 	}
 	
@@ -102,9 +109,6 @@ NodeImpl *RONamedNodeMapImpl::setNamedItem(NodeImpl *arg)
 	if(!arg)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 		
-	if(arg->nodeType() == XPathNamespace::XPATH_NAMESPACE_NODE)
-		throw new DOMExceptionImpl(HIERARCHY_REQUEST_ERR);
-
 	if(!isReadOnly())
 	{
 		addNode(arg);

@@ -25,19 +25,19 @@
 
 #include <qptrstack.h>
 
+#include "kdom.h"
 #include <kdom/Helper.h>
 #include "NodeImpl.h"
 #include "TextImpl.h"
+#include "DOMString.h"
 #include "EntityImpl.h"
 #include "CommentImpl.h"
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
 #include "NotationImpl.h"
-#include "DOMException.h"
 #include "NamedNodeMapImpl.h"
 #include "CDATASectionImpl.h"
 #include "DocumentTypeImpl.h"
-#include "DOMImplementation.h"
 #include "CharacterDataImpl.h"
 #include "KDOMDocumentBuilder.h"
 #include "EntityReferenceImpl.h"
@@ -67,9 +67,9 @@ DocumentBuilder::~DocumentBuilder()
 	delete d;
 }
 
-Document DocumentBuilder::document() const
+DocumentImpl *DocumentBuilder::document() const
 {
-	return Document(d->doc);
+	return d->doc;
 }
 
 bool DocumentBuilder::startDocument(const KURL &uri)
@@ -79,7 +79,10 @@ bool DocumentBuilder::startDocument(const KURL &uri)
 	if(!d->doc)
 	{
 		DOMImplementationImpl *factory = DOMImplementationImpl::self();
-		d->doc = factory->createDocument("doc", "name", factory->defaultDocumentType(), false, 0 /* no view */);
+		d->doc = factory->createDocument(DOMString("doc").handle(),
+										 DOMString("name").handle(),
+										 factory->defaultDocumentType(),
+										 false, 0 /* no view */);
 		d->doc->ref();
 	}
 
@@ -87,7 +90,7 @@ bool DocumentBuilder::startDocument(const KURL &uri)
 	{
 		// In case we are dealing with an existing document
 		d->doc->removeChildren();
-		document().setDocumentKURI(uri);
+		d->doc->setDocumentKURI(uri);
 
 		pushNode(d->doc);
 	}
@@ -113,7 +116,7 @@ bool DocumentBuilder::startElement(const DOMString &tagName)
 
 	try
 	{
-		NodeImpl *n = d->doc->createElement(tagName);
+		NodeImpl *n = d->doc->createElement(tagName.handle());
 		if(current)
 			current->addChild(n);
 
@@ -122,7 +125,7 @@ bool DocumentBuilder::startElement(const DOMString &tagName)
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -145,7 +148,7 @@ bool DocumentBuilder::endElement(const DOMString &tagName)
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -165,7 +168,7 @@ bool DocumentBuilder::startElementNS(const DOMString &namespaceURI, const DOMStr
 
 	try
 	{
-		NodeImpl *n = d->doc->createElementNS(namespaceURI, qName);
+		NodeImpl *n = d->doc->createElementNS(namespaceURI.handle(), qName.handle());
 		if(current)
 			current->addChild(n);
 
@@ -174,7 +177,7 @@ bool DocumentBuilder::startElementNS(const DOMString &namespaceURI, const DOMStr
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -203,7 +206,7 @@ bool DocumentBuilder::endElementNS(const DOMString &namespaceURI, const DOMStrin
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -220,11 +223,11 @@ void DocumentBuilder::startAttributeNS(const DOMString &namespaceURI, const DOMS
 	try
 	{
 		if(current->nodeType() == ELEMENT_NODE)
-			static_cast<ElementImpl *>(current)->setAttributeNS(namespaceURI, qName, value);
+			static_cast<ElementImpl *>(current)->setAttributeNS(namespaceURI.handle(), qName.handle(), value.handle());
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 }
 
@@ -239,11 +242,11 @@ void DocumentBuilder::startAttribute(const DOMString &localName, const DOMString
 	try
 	{
 		if(current->nodeType() == ELEMENT_NODE)
-			static_cast<ElementImpl *>(current)->setAttribute(localName.implementation(), value.implementation());
+			static_cast<ElementImpl *>(current)->setAttribute(localName.handle(), value.handle());
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 }
 
@@ -258,22 +261,22 @@ bool DocumentBuilder::characters(const DOMString &ch)
 	try
 	{
 		if(d->cdata)
-			current->addChild(d->doc->createCDATASection(ch));
+			current->addChild(d->doc->createCDATASection(ch.handle()));
 		else
 		{
 			// if we just read character data into a Text node, append the new data
 			NodeImpl *lastChild = current->lastChild();
 			if(lastChild && lastChild->nodeType() == TEXT_NODE)
-				static_cast<TextImpl *>(lastChild)->appendData(ch.implementation());
+				static_cast<TextImpl *>(lastChild)->appendData(ch.handle());
 			else
-				current->addChild(d->doc->createTextNode(ch));
+				current->addChild(d->doc->createTextNode(ch.handle()));
 		}
 
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -292,12 +295,12 @@ bool DocumentBuilder::comment(const DOMString &ch)
 		if(ch.string().simplifyWhiteSpace().isEmpty())
 			return true;
 
-		current->addChild(d->doc->createComment(ch));
+		current->addChild(d->doc->createComment(ch.handle()));
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -310,12 +313,12 @@ bool DocumentBuilder::startDTD(const DOMString &name, const DOMString &publicId,
 	try
 	{
 		DOMImplementationImpl *factory = DOMImplementationImpl::self();
-		d->doc->setDocType(factory->createDocumentType(name, publicId, systemId));
+		d->doc->setDocType(factory->createDocumentType(name.handle(), publicId.handle(), systemId.handle()));
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -347,14 +350,14 @@ bool DocumentBuilder::startPI(const DOMString &target, const DOMString &data)
 
 	try
 	{
-		ProcessingInstructionImpl *pi = d->doc->createProcessingInstruction(target, data);
+		ProcessingInstructionImpl *pi = d->doc->createProcessingInstruction(target.handle(), data.handle());
 		current->addChild(pi);
 		pi->checkStyleSheet();
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -367,22 +370,22 @@ bool DocumentBuilder::internalEntityDecl(const DOMString &name, const DOMString 
 	try
 	{
 		NamedNodeMapImpl *entities = (d->doc->doctype() ? d->doc->doctype()->entities() : 0);
-		if(entities && !entities->getNamedItem(name.implementation())) // skip duplicates
+		if(entities && !entities->getNamedItem(name.handle())) // skip duplicates
 		{
-			EntityImpl *i = new EntityImpl(d->doc, name);
+			EntityImpl *i = new EntityImpl(d->doc->docPtr(), name.handle());
 			entities->setNamedItem(i);
 
 			if(deep)
 				pushNode(i);
 			else
-				i->addChild(d->doc->createTextNode(value));
+				i->addChild(d->doc->createTextNode(value.handle()));
 		}
 
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -399,7 +402,7 @@ bool DocumentBuilder::internalEntityDeclEnd()
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -412,9 +415,9 @@ bool DocumentBuilder::externalEntityDecl(const DOMString &name, const DOMString 
 	try
 	{
 		NamedNodeMapImpl *entities = (d->doc->doctype() ? d->doc->doctype()->entities() : 0);
-		if(entities && !entities->getNamedItem(name.implementation())) // skip duplicates
+		if(entities && !entities->getNamedItem(name.handle())) // skip duplicates
 		{
-			EntityImpl *i = new EntityImpl(d->doc, name, publicId, systemId, DOMString());
+			EntityImpl *i = new EntityImpl(d->doc->docPtr(), name.handle(), publicId.handle(), systemId.handle(), 0);
 			entities->setNamedItem(i);
 		}
 
@@ -422,7 +425,7 @@ bool DocumentBuilder::externalEntityDecl(const DOMString &name, const DOMString 
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -434,7 +437,7 @@ bool DocumentBuilder::unparsedEntityDecl(const DOMString &name, const DOMString 
 
 	try
 	{
-		EntityImpl *i = new EntityImpl(d->doc, name, publicId, systemId, notationName);
+		EntityImpl *i = new EntityImpl(d->doc->docPtr(), name.handle(), publicId.handle(), systemId.handle(), notationName.handle());
 		
 		NamedNodeMapImpl *entities = (d->doc->doctype() ? d->doc->doctype()->entities() : 0);
 		if(entities)
@@ -444,7 +447,7 @@ bool DocumentBuilder::unparsedEntityDecl(const DOMString &name, const DOMString 
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -456,7 +459,7 @@ bool DocumentBuilder::notationDecl(const DOMString &name, const DOMString &publi
 
 	try
 	{
-		NotationImpl *i = new NotationImpl(d->doc, name, publicId, systemId);
+		NotationImpl *i = new NotationImpl(d->doc->docPtr(), name.handle(), publicId.handle(), systemId.handle());
 
 		NamedNodeMapImpl *notations = (d->doc->doctype() ? d->doc->doctype()->notations() : 0);
 		if(notations)
@@ -466,7 +469,7 @@ bool DocumentBuilder::notationDecl(const DOMString &name, const DOMString &publi
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -478,12 +481,12 @@ bool DocumentBuilder::entityReferenceStart(const DOMString &name)
 
 	try
 	{
-		pushNode(d->doc->createEntityReference(name));
+		pushNode(d->doc->createEntityReference(name.handle()));
 		return true;
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -504,7 +507,7 @@ bool DocumentBuilder::entityReferenceEnd(const DOMString &name)
 	}
 	catch(DOMExceptionImpl *e)
 	{
-		Helper::ShowException(DOMException(e));
+		Helper::ShowException(e);
 	}
 
 	return false;
@@ -520,9 +523,9 @@ NodeImpl *DocumentBuilder::popNode()
 	return d->nodes.pop();
 }
 
-Node DocumentBuilder::currentNode() const
+NodeImpl *DocumentBuilder::currentNode() const
 {
-	return Node(d->nodes.current());
+	return d->nodes.current();
 }
 
 void DocumentBuilder::setDocument(DocumentImpl *doc)

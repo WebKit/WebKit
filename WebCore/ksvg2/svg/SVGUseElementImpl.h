@@ -42,7 +42,7 @@ namespace KSVG
 							  public SVGURIReferenceImpl
 	{
 	public:
-		SVGUseElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id,  const KDOM::DOMString &prefix);
+		SVGUseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
 		virtual ~SVGUseElementImpl();
 
 		// Derived from: 'ElementImpl'

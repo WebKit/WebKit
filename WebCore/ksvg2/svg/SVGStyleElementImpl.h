@@ -35,23 +35,23 @@ namespace KSVG
 	class SVGStyleElementImpl : public SVGElementImpl
 	{
 	public:
-		SVGStyleElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGStyleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGStyleElementImpl();
 
 		// Derived from: 'ElementImpl'
 		virtual void childrenChanged();
 
 		// 'SVGStyleElement' functions
-		KDOM::DOMString xmlspace() const;
+		KDOM::DOMStringImpl *xmlspace() const;
 		void setXmlspace(KDOM::DOMStringImpl *);
 
-		KDOM::DOMString type() const;
+		KDOM::DOMStringImpl *type() const;
 		void setType(KDOM::DOMStringImpl *);
 
-		KDOM::DOMString media() const;
+		KDOM::DOMStringImpl *media() const;
 		void setMedia(KDOM::DOMStringImpl *);
 
-		KDOM::DOMString title() const;
+		KDOM::DOMStringImpl *title() const;
 		void setTitle(KDOM::DOMStringImpl *);
 
 		KDOM::CSSStyleSheetImpl *sheet();

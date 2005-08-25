@@ -30,14 +30,13 @@
 
 namespace KSVG
 {
-	class KDOM::DocumentImpl;
 	class SVGSymbolElementImpl : public SVGStyledElementImpl,
 								 public SVGLangSpaceImpl,
 								 public SVGExternalResourcesRequiredImpl,
 								 public SVGFitToViewBoxImpl
 	{
 	public:
-		SVGSymbolElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGSymbolElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGSymbolElementImpl();
 
 		virtual void parseAttribute(KDOM::AttributeImpl *);

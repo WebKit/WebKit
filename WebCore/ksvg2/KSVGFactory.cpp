@@ -97,9 +97,9 @@ KParts::Part *KSVGFactory::createPartObject(QWidget *parentWidget, const char *w
 	for(QValueListConstIterator<QString> it = args.begin(); it != args.end(); ++it) 
 	{
 		if(r1.search(*it) > -1)
-			width = r1.cap(3)->toUInt(&dummy);
+			width = r1.cap(3).toUInt(&dummy);
 		if(r2.search(*it) > -1)
-			height = r2.cap(3)->toUInt(&dummy);
+			height = r2.cap(3).toUInt(&dummy);
 	}
 	
 	return new KSVGPart(parentWidget, widgetName, parent, name, width, height);

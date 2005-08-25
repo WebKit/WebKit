@@ -20,24 +20,25 @@
  *
  */
 
-#include <qglobal.h>
+#include <kdebug.h>
 
+#include <kdom/kdom.h>
 #include <kdom/Helper.h>
-#include "Node.h"
+
 #include "ElementImpl.h"
 #include "DocumentImpl.h"
 
 #include "kdomxpointer.h"
 
-#include "PointerPartImpl.h"
 #include "ShortHandImpl.h"
-#include "XPointerExceptionImpl.h"
+#include "PointerPartImpl.h"
 #include "XPointerResultImpl.h"
+#include "XPointerExceptionImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-ShortHandImpl::ShortHandImpl(const DOMString &str)
+ShortHandImpl::ShortHandImpl(DOMStringImpl *str)
 : PointerPartImpl(str, str, 0) // shortHand pointers have no data nor NBC, set it to 0.
 {
 	if(!Helper::IsValidNCName(str))
@@ -59,9 +60,9 @@ XPointerResultImpl *ShortHandImpl::evaluate(NodeImpl *context) const
 	NodeImpl *node = static_cast<DocumentImpl*>(context)->getElementById(data());
 
 	if(!node)
-		return new XPointerResultImpl(XPointerResult::NO_MATCH);
+		return new XPointerResultImpl(NO_MATCH);
 		
-	XPointerResultImpl *result = new XPointerResultImpl(XPointerResult::SINGLE_NODE);
+	XPointerResultImpl *result = new XPointerResultImpl(SINGLE_NODE);
 	result->setSingleNodeValue(node);
 	return result;
 }

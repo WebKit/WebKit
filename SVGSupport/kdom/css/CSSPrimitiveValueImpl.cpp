@@ -25,12 +25,12 @@
 #include <qpaintdevicemetrics.h>
 
 #include "RectImpl.h"
-#include "RGBColor.h"
 #include <kdom/css/CSSHelper.h>
 #include <kdom/css/impl/cssvalues.h>
 #include "CounterImpl.h"
 #include "RenderStyle.h"
 #include "CDFInterface.h"
+#include "RGBColorImpl.h"
 #include "DOMStringImpl.h"
 #include "CSSPrimitiveValueImpl.h"
 
@@ -56,9 +56,9 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CDFInterface *interface, double num
 	m_interface = interface;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CDFInterface *interface, const DOMString &str, UnitTypes type)
+CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(CDFInterface *interface, DOMStringImpl *str, UnitTypes type)
 {
-	m_value.string = str.implementation();
+	m_value.string = str;
 	if(m_value.string)
 		m_value.string->ref();
 		
@@ -153,7 +153,7 @@ float CSSPrimitiveValueImpl::getFloatValue(unsigned short /*unitType*/)
 	return m_value.num;
 }
 
-void CSSPrimitiveValueImpl::setStringValue(unsigned short stringType, const DOMString &stringValue)
+void CSSPrimitiveValueImpl::setStringValue(unsigned short stringType, DOMStringImpl *stringValue)
 {
 	// TODO: check exception handling!
 
@@ -170,7 +170,7 @@ void CSSPrimitiveValueImpl::setStringValue(unsigned short stringType, const DOMS
 		if(m_value.string)
 			m_value.string->deref();
 		
-		m_value.string = stringValue.implementation();
+		m_value.string = stringValue;
 		
 		if(m_value.string)
 			m_value.string->ref();
@@ -181,7 +181,7 @@ void CSSPrimitiveValueImpl::setStringValue(unsigned short stringType, const DOMS
 	// ### parse ident
 }
 
-DOMStringImpl *CSSPrimitiveValueImpl::getStringValue() const
+DOMStringImpl *CSSPrimitiveValueImpl::getDOMStringValue() const
 {
 	return (m_type < CSS_STRING || m_type > CSS_ATTR ||
 			m_type == CSS_IDENT) ? // fix IDENT
@@ -198,23 +198,23 @@ RectImpl *CSSPrimitiveValueImpl::getRectValue() const
 	return m_type != CSS_RECT ? 0 : m_value.rect;
 }
 
-QRgb CSSPrimitiveValueImpl::getRGBColorValue() const
+QRgb CSSPrimitiveValueImpl::getQRGBColorValue() const
 {
 	return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor;
+}
+
+RGBColorImpl *CSSPrimitiveValueImpl::getRGBColorValue() const
+{
+	return new RGBColorImpl(m_interface, getQRGBColorValue());
 }
 
 int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, QPaintDeviceMetrics *devMetrics)
 {
 	double result = computeLengthFloat(style, devMetrics);
-	int intResult = (int) result;
 
-	// This conversion is imprecise, often resulting in values of e.g., 44.99998.  We
+	// This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
 	// need to go ahead and round if we're really close to the next integer value.
-	double newResult = (intResult < 0) ? result - 0.01 : result + 0.01;
-	int secondIntResult = (int) newResult;
-	if(secondIntResult != intResult)
-		return secondIntResult;
-	
+	int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
 	return intResult;
 }
 
@@ -281,7 +281,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, QPaintDevic
 	return getFloatValue(type) * factor;
 }
 
-void CSSPrimitiveValueImpl::setCssText(const DOMString &)
+void CSSPrimitiveValueImpl::setCssText(DOMStringImpl *)
 {
 }
 
@@ -293,37 +293,45 @@ int CSSPrimitiveValueImpl::getIdent() const
 	return m_value.ident;
 }
 
-DOMString CSSPrimitiveValueImpl::cssText() const
+DOMStringImpl *CSSPrimitiveValueImpl::cssText() const
 {
 	// ### return the original value instead of a generated one (e.g. color
 	// name if it was specified) - check what spec says about this
-	DOMString text = KDOM::CSSHelper::unitTypeToString(m_type);
-	if(!text.isEmpty())
-		text = DOMString(QString::number(m_value.num) + text.string());
+	DOMStringImpl *text = CSSHelper::unitTypeToString(m_type);
+	if(text)
+		text->ref();
+
+	if(text && !text->isEmpty())
+	{
+		QString str = text->string();
+		text->deref();
+
+		text = new DOMStringImpl(QString::number(m_value.num) + text->string());
+	}
 	else
 	{
-	switch(m_type)
-	{
+		switch(m_type)
+		{
 		case CSS_UNKNOWN:
 			// ###
 			break;
 		case CSS_NUMBER:
-			text = DOMString(QString::number((int)m_value.num));
+			KDOM_SAFE_SET(text, new DOMStringImpl(QString::number((int) m_value.num)));
 			break;
 		case CSS_DIMENSION:
 			// ###
-			text = DOMString(QString::number(m_value.num));
+			KDOM_SAFE_SET(text, new DOMStringImpl(QString::number(m_value.num)));
 			break;
 		case CSS_STRING:
 			// ###
 			break;
 		case CSS_URI:
-			text  = "url(";
-			text += DOMString(m_value.string);
-			text += ")";
+			KDOM_SAFE_SET(text, new DOMStringImpl(QString::fromLatin1("url(") +
+												  DOMString(m_value.string).string() +
+												  QString::fromLatin1(")")));
 			break;
 		case CSS_IDENT:
-			text = (m_interface ? m_interface->getValueName(m_value.ident) : "");
+			KDOM_SAFE_SET(text, new DOMStringImpl((m_interface ? m_interface->getValueName(m_value.ident) : "")));
 			break;
 		case CSS_ATTR:
 			// ###
@@ -333,20 +341,24 @@ DOMString CSSPrimitiveValueImpl::cssText() const
 			break;
 		case CSS_RECT:
 		{
-			RectImpl* rectVal = getRectValue();
-			text = "rect(";
-			text += rectVal->top()->cssText() + " ";
-			text += rectVal->right()->cssText() + " ";
-			text += rectVal->bottom()->cssText() + " ";
-			text += rectVal->left()->cssText() + ")";
+			RectImpl *rectVal = getRectValue();
+			KDOM_SAFE_SET(text, new DOMStringImpl(QString::fromLatin1("rect(") +
+												  DOMString(rectVal->top()->cssText()).string() +
+												  QString::fromLatin1(" ") +
+												  DOMString(rectVal->right()->cssText()).string() +
+												  QString::fromLatin1(" ") +
+												  DOMString(rectVal->bottom()->cssText()).string() +
+												  QString::fromLatin1(" ") +
+												  DOMString(rectVal->left()->cssText()).string() +
+												  QString::fromLatin1(")")));
+			break;
 		}
-		break;
 		case CSS_RGBCOLOR:
-			text = QColor(m_value.rgbcolor).name();
+			KDOM_SAFE_SET(text, new DOMStringImpl(QColor(m_value.rgbcolor).name()));
 			break;
 		default:
 			break;
-	}
+		}
 	}
 
 	return text;
@@ -357,7 +369,7 @@ unsigned short CSSPrimitiveValueImpl::cssValueType() const
 	return CSS_PRIMITIVE_VALUE;
 }
 
-FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString &string) : CSSPrimitiveValueImpl(interface, DOMString(string), CSS_STRING)
+FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString &string) : CSSPrimitiveValueImpl(interface, DOMString(string).handle(), CSS_STRING)
 {
     static const QRegExp parenReg(QString::fromLatin1(" \\(.*\\)$"));
     static const QRegExp braceReg(QString::fromLatin1(" \\[.*\\]$"));
@@ -368,7 +380,6 @@ FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString 
     // remove [Xft] qualifiers
     parsedFontName.replace(braceReg, QString::null);
 
-#if 0
 #ifndef APPLE_COMPILE_HACK
     const QString &available = KHTMLSettings::availableFamilies();
 
@@ -399,7 +410,6 @@ FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString 
     else
         parsedFontName = QString::null;
 
-#endif // !APPLE_COMPILE_HACK
-#endif
+#endif // APPLE_COMPILE_HACK
 }
 // vim:ts=4:noet

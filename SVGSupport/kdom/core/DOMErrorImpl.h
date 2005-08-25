@@ -27,10 +27,16 @@
 
 namespace KDOM
 {
-	class DOMString;
 	class DOMStringImpl;
+	class DOMObjectImpl;
 	class DOMLocatorImpl;
-	class NodeImpl;
+
+	enum ErrorSeverity
+	{
+		SEVERITY_WARNING = 1,
+		SEVERITY_ERROR = 2,
+		SEVERITY_FATAL_ERROR = 3,
+	};
 
 	// Introduced in DOM Level 3:
 	class DOMErrorImpl : public Shared
@@ -40,26 +46,32 @@ namespace KDOM
 		virtual ~DOMErrorImpl();
 
 		unsigned short severity() const;
-		void setSeverity(unsigned short);
 
 		DOMStringImpl *message() const;
-		void setMessage(const DOMString &);
-
 		DOMStringImpl *type() const;
-		void setType(const DOMString &);
 
-		//DOMObject relatedException;
-		NodeImpl *relatedData() const;
-		void setRelatedData(NodeImpl *relatedData);
+		DOMObjectImpl *relatedException() const;
+		DOMObjectImpl *relatedData() const;
 
 		DOMLocatorImpl *location() const;
+
+		// Helpers
+		void setSeverity(unsigned short severity);
+
+		void setMessage(DOMStringImpl *message);
+		void setType(DOMStringImpl *type);
+
+		void setRelatedException(DOMObjectImpl *relatedException);
+		void setRelatedData(DOMObjectImpl *relatedData);
+
+		void setLocation(DOMLocatorImpl *location);
 
 	protected:
 		unsigned short m_severity;
 		DOMStringImpl *m_message;
 		DOMStringImpl *m_type;
-		//DOMObject m_relatedException;
-		NodeImpl *m_relatedData;
+		DOMObjectImpl *m_relatedException;
+		DOMObjectImpl *m_relatedData;
 		mutable DOMLocatorImpl *m_location;
 	};
 

@@ -45,6 +45,9 @@ extern NSArray *DrawViewDragTypes;
 // FIXME: should be Obj-C DOM objects, not render tree objects.
 - (NSArray *)selectedCanvasItems;
 
+// for DrawDocument delloc
+- (void)_clearDocument;
+
 // Zoom/Pan
 
 - (CGAffineTransform)transformFromViewToCanvas;

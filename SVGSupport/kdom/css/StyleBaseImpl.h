@@ -31,9 +31,9 @@
 
 #include <qptrlist.h>
 
-#include <kdom/DOMString.h>
 #include <kdom/TreeShared.h>
 #include <kdom/impl/NodeImpl.h>
+#include <kdom/impl/DOMStringImpl.h>
 
 namespace KDOM
 {
@@ -45,20 +45,40 @@ namespace KDOM
 
 	struct CSSNamespace
 	{
-		DOMString m_prefix;
-		DOMString m_uri;
+		DOMStringImpl *m_prefix;
+		DOMStringImpl *m_uri;
 		CSSNamespace *m_parent;
 
-		CSSNamespace(const DOMString &p, const DOMString &u, CSSNamespace *parent)
-		: m_prefix(p), m_uri(u), m_parent(parent) { }
-		~CSSNamespace() { delete m_parent; }
-
-		const DOMString &uri() { return m_uri; }
-		const DOMString &prefix() { return m_prefix; }
-
-		CSSNamespace* namespaceForPrefix(const DOMString &prefix)
+		CSSNamespace(DOMStringImpl *p, DOMStringImpl *u, CSSNamespace *parent)
 		{
-			if(prefix == m_prefix)
+			m_prefix = p;
+			if(m_prefix)
+				m_prefix->ref();
+
+			m_uri = u;
+			if(m_uri)
+				m_uri->ref();
+
+			m_parent = parent;
+		}
+
+		~CSSNamespace()
+		{
+			if(m_prefix)
+				m_prefix->deref();
+
+			if(m_uri)
+				m_uri->deref();
+
+			delete m_parent;
+		}
+
+		DOMStringImpl *uri() { return m_uri; }
+		DOMStringImpl *prefix() { return m_prefix; }
+
+		CSSNamespace *namespaceForPrefix(DOMStringImpl *prefix)
+		{
+			if(DOMString(prefix) == DOMString(m_prefix))
 				return this;
 
 			if(m_parent)
@@ -104,7 +124,7 @@ namespace KDOM
 		static void setParsedValue(int propId, const CSSValueImpl *parsedValue,
 								   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
 
-		virtual bool parseString(const DOMString &cssString, bool = false);
+		virtual bool parseString(DOMStringImpl *cssString, bool = false);
 
 		virtual void checkLoaded() const;
 
@@ -155,7 +175,7 @@ namespace KDOM
 		/**
 		 * Re-create selector text from selector's data
 		 */
-		DOMString selectorText() const;
+		DOMStringImpl *selectorText() const;
 
 		// checks if the 2 selectors (including sub selectors) agree.
 		bool operator==(const CSSSelector &other) const;
@@ -227,10 +247,10 @@ namespace KDOM
 
 		PseudoType pseudoType() const;
 
-		mutable DOMString value;
+		mutable DOMStringImpl *value;
 		CSSSelector *tagHistory;
 		CSSSelector *simpleSelector; // Used by :not.
-		DOMString string_arg; // Used by :contains, :lang and :nth-*
+		DOMStringImpl *string_arg; // Used by :contains, :lang and :nth-*
 		NodeImpl::Id attr;
 		NodeImpl::Id tag;
 

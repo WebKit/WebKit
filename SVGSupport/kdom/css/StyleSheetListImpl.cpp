@@ -26,7 +26,7 @@
 
 using namespace KDOM;
 
-StyleSheetListImpl::StyleSheetListImpl() : Shared(false)
+StyleSheetListImpl::StyleSheetListImpl() : Shared()
 {
 }
 

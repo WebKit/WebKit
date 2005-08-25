@@ -20,33 +20,45 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "DOMString.h"
+#include <kdom/css/CSSHelper.h>
+#include <kdom/DOMString.h>
 #include "CounterImpl.h"
 
 using namespace KDOM;
 
-CounterImpl::CounterImpl() : Shared(true)
+CounterImpl::CounterImpl() : Shared()
 {
 	m_listStyle = 0;
+	m_separator = 0;
+	m_identifier = 0;
 }
 
 CounterImpl::~CounterImpl()
 {
+	if(m_separator)
+		m_separator->deref();
+	if(m_identifier)
+		m_identifier->deref();
 }
 
-DOMString CounterImpl::identifier() const
+DOMStringImpl *CounterImpl::identifier() const
 {
 	return m_identifier;
 }
 
-void CounterImpl::setIdentifier(const DOMString &value)
+void CounterImpl::setIdentifier(DOMStringImpl *value)
 {
-	m_identifier = value;
+	KDOM_SAFE_SET(m_identifier, value);
 }
 
-unsigned int CounterImpl::listStyle() const
+unsigned int CounterImpl::listStyleInt() const
 {
 	return m_listStyle;
+}
+
+DOMStringImpl *CounterImpl::listStyle() const
+{
+	return CSSHelper::stringForListStyleType((EListStyleType) m_listStyle);
 }
 
 void CounterImpl::setListStyle(unsigned int value)
@@ -54,14 +66,14 @@ void CounterImpl::setListStyle(unsigned int value)
 	m_listStyle = value;
 }
 
-DOMString CounterImpl::separator() const
+DOMStringImpl *CounterImpl::separator() const
 {
 	return m_separator;
 }
 
-void CounterImpl::setSeparator(const DOMString &value)
+void CounterImpl::setSeparator(DOMStringImpl *value)
 {
-	m_separator = value;
+	KDOM_SAFE_SET(m_separator, value);
 }
 
 // vim:ts=4:noet

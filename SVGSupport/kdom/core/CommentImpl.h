@@ -30,14 +30,14 @@ namespace KDOM
 	class CommentImpl : public TextImpl
 	{
 	public:
-		CommentImpl(DocumentImpl *doc, DOMStringImpl *text);
+		CommentImpl(DocumentPtr *doc, DOMStringImpl *text);
 		virtual ~CommentImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
 
 		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 	};
 };
 

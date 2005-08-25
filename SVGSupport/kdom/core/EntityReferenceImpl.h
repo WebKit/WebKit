@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -30,12 +33,12 @@ namespace KDOM
 	class EntityReferenceImpl : public NodeBaseImpl
 	{
 	public:
-		EntityReferenceImpl(DocumentImpl *doc, DOMStringImpl *name, bool expand = true);
+		EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *name, bool expand = true);
 		virtual ~EntityReferenceImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
 		// Internal
 		virtual bool childTypeAllowed(unsigned short type) const;

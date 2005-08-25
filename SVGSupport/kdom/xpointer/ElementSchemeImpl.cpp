@@ -25,26 +25,25 @@
 
 #include <kdebug.h>
 
-#include "DOMString.h"
 #include "kdom.h"
 #include "NodeImpl.h"
+#include "DOMString.h"
 #include "DocumentImpl.h"
 #include "NodeListImpl.h"
-
-#include "XPointerResult.h"
 #include "kdomxpointer.h"
-
-#include "ElementSchemeImpl.h"
 #include "ShortHandImpl.h"
-#include "XPointerExceptionImpl.h"
+#include "ElementSchemeImpl.h"
 #include "XPointerResultImpl.h"
+#include "XPointerExceptionImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-ElementSchemeImpl::ElementSchemeImpl(const DOMString &schemeData)
-: PointerPartImpl("element", schemeData, 0), m_shorthand(0)
+ElementSchemeImpl::ElementSchemeImpl(DOMStringImpl *schemeDataImpl)
+: PointerPartImpl(DOMString("element").handle(), schemeDataImpl, 0), m_shorthand(0)
 {
+	DOMString schemeData(schemeDataImpl);
+
 	const QChar *unicode = schemeData.unicode();
 	const QChar ch = unicode[0];
 
@@ -59,9 +58,9 @@ ElementSchemeImpl::ElementSchemeImpl(const DOMString &schemeData)
 		const int startSeq = schemeData.find('/', 0);
 		
 		if(startSeq == -1)
-			m_shorthand = new ShortHandImpl(schemeData);
+			m_shorthand = new ShortHandImpl(schemeDataImpl);
 		else
-			m_shorthand = new ShortHandImpl(schemeData.string().left(startSeq));
+			m_shorthand = new ShortHandImpl(DOMString(schemeData.string().left(startSeq)).handle());
 
 		m_shorthand->ref();
 		if(startSeq != -1)
@@ -134,10 +133,10 @@ XPointerResultImpl *ElementSchemeImpl::evaluate(NodeImpl *context) const
 		XPointerResultImpl *result = m_shorthand->evaluate(context);
 		Q_ASSERT(result);
 
-		if(result->resultType() == XPointerResult::SINGLE_NODE)
+		if(result->resultType() == SINGLE_NODE)
 			resultNode = result->singleNodeValue();
 		else
-			return new XPointerResultImpl(XPointerResult::NO_MATCH);
+			return new XPointerResultImpl(NO_MATCH);
 	}
 	else
 		resultNode = context; /* Guranteed to be document node. */
@@ -175,13 +174,13 @@ XPointerResultImpl *ElementSchemeImpl::evaluate(NodeImpl *context) const
 			}
 		}
 		if(specifiedLevel > level)
-			return new XPointerResultImpl(XPointerResult::NO_MATCH);
+			return new XPointerResultImpl(NO_MATCH);
 	}
 
 	if(!resultNode)
-		return new XPointerResultImpl(XPointerResult::NO_MATCH);
+		return new XPointerResultImpl(NO_MATCH);
 	
-	XPointerResultImpl *result = new XPointerResultImpl(XPointerResult::SINGLE_NODE);
+	XPointerResultImpl *result = new XPointerResultImpl(SINGLE_NODE);
 	result->setSingleNodeValue(resultNode);
 	return result;
 }

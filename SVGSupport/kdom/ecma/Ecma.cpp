@@ -24,72 +24,92 @@
 #include <qvariant.h>
 #include <qptrdict.h>
 
-#include <kjs/interpreter.h>
-#include <kjs/scope_chain.h>
+#include "kdom.h"
+#include "Ecma.h"
+#include "CDFInterface.h"
+#include "GlobalObject.h"
+#include "ScriptInterpreter.h"
+#include "EventListenerImpl.h"
+
 #include <kjs/protect.h>
 
-#include "Attr.h"
-#include "Text.h"
-#include "Ecma.h"
-#include "Event.h"
-#include "Entity.h"
-#include <kdom/Helper.h>
-#include "CSSRule.h"
-#include "Element.h"
-#include "Comment.h"
-#include "UIEvent.h"
-#include "CSSValue.h"
-#include "Notation.h"
-#include "Document.h"
-#include "NodeImpl.h"
+// for getDOMNode
+#include "TextImpl.h"
+#include "AttrImpl.h"
+#include "EntityImpl.h"
+#include "ElementImpl.h"
+#include "CommentImpl.h"
+#include "NotationImpl.h"
+#include "CDATASectionImpl.h"
+#include "DocumentTypeImpl.h"
+#include "EntityReferenceImpl.h"
+#include "DocumentFragmentImpl.h"
+#include "ProcessingInstructionImpl.h"
+
+#include <kdom/bindings/js/core/TextWrapper.h>
+#include <kdom/bindings/js/core/AttrWrapper.h>
+#include <kdom/bindings/js/core/EntityWrapper.h>
+#include <kdom/bindings/js/core/ElementWrapper.h>
+#include <kdom/bindings/js/core/CommentWrapper.h>
+#include <kdom/bindings/js/core/NotationWrapper.h>
+#include <kdom/bindings/js/core/DocumentWrapper.h>
+#include <kdom/bindings/js/core/DocumentTypeWrapper.h>
+#include <kdom/bindings/js/core/CDATASectionWrapper.h>
+#include <kdom/bindings/js/core/EntityReferenceWrapper.h>
+#include <kdom/bindings/js/core/DocumentFragmentWrapper.h>
+#include <kdom/bindings/js/core/ProcessingInstructionWrapper.h>
+
+// for getDOMEvent
 #include "EventImpl.h"
-#include "MouseEvent.h"
-#include "KeyboardEvent.h"
-#include "CSSRuleImpl.h"
 #include "UIEventImpl.h"
-#include "CSSPageRule.h"
-#include "CDFInterface.h"
-#include "CSSStyleRule.h"
-#include "CSSMediaRule.h"
-#include "CSSValueImpl.h"
-#include "AbstractView.h"
-#include "DocumentType.h"
-#include "CDATASection.h"
-#include "GlobalObject.h"
-#include "DocumentImpl.h"
-#include "CSSValueList.h"
-#include "CSSImportRule.h"
-#include "EventListener.h"
-#include "EcmaInterface.h"
-#include "MutationEvent.h"
-#include "CSSUnknownRule.h"
-#include "CSSCharsetRule.h"
 #include "MouseEventImpl.h"
 #include "KeyboardEventImpl.h"
-#include "EntityReference.h"
-#include "EventTargetImpl.h"
-#include "CSSFontFaceRule.h"
-#include "DocumentFragment.h"
-#include "ScriptInterpreter.h"
 #include "MutationEventImpl.h"
-#include "EventListenerImpl.h"
-#include "CSSPrimitiveValue.h"
-#include "ProcessingInstruction.h"
 
-#include "Ecma.lut.h"
+#include <kdom/bindings/js/events/UIEventWrapper.h>
+#include <kdom/bindings/js/events/MouseEventWrapper.h>
+// #include <kdom/bindings/js/events/KeyboardEventWrapper.h>
+#include <kdom/bindings/js/events/MutationEventWrapper.h>
+
+// for getDOMCSSRule
+#include "CSSRuleImpl.h"
+#include "CSSPageRuleImpl.h"
+#include "CSSMediaRuleImpl.h"
+#include "CSSStyleRuleImpl.h"
+#include "CSSImportRuleImpl.h"
+#include "CSSUnknownRuleImpl.h"
+#include "CSSCharsetRuleImpl.h"
+#include "CSSFontFaceRuleImpl.h"
+
+#include <kdom/bindings/js/css/CSSPageRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSMediaRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSStyleRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSImportRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSUnknownRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSCharsetRuleWrapper.h>
+#include <kdom/bindings/js/css/CSSFontFaceRuleWrapper.h>
+
+// for getDOMCSSValue
+#include "CSSValueImpl.h"
+#include "CSSValueListImpl.h"
+#include "CSSPrimitiveValueImpl.h"
+
+#include <kdom/bindings/js/css/CSSValueWrapper.h>
+#include <kdom/bindings/js/css/CSSValueListWrapper.h>
+#include <kdom/bindings/js/css/CSSPrimitiveValueWrapper.h>
+
 using namespace KDOM;
 
 class Ecma::Private
 {
 public:
-	Private(DocumentImpl *doc) : document(doc), globalObject(0), ecmaInterface(0), interpreter(0) { init = false; }
+	Private(DocumentImpl *doc) : document(doc), globalObject(0), interpreter(0) { init = false; }
 	virtual ~Private() { delete globalObject; }
 
 	bool init;
 
 	DocumentImpl *document;
 	GlobalObject *globalObject;
-	EcmaInterface *ecmaInterface;
 	ScriptInterpreter *interpreter;
 
 	QPtrDict<EventListenerImpl> eventListeners;
@@ -125,9 +145,9 @@ void Ecma::setup(CDFInterface *interface)
 	d->init = true;
 
 	KJS::Interpreter::lock();
+
 	// Create handler for js calls
 	d->globalObject = interface->globalObject(d->document);
-	d->ecmaInterface = interface->ecmaInterface();
 
 	// Create code interpreter
 	KJS::ObjectImp *kjsGlobalObject(d->globalObject);
@@ -143,15 +163,14 @@ void Ecma::setup(CDFInterface *interface)
 void Ecma::setupDocument(DocumentImpl *document)
 {
 	// Create base bridge for document
-	Document docObj(document);
+	DocumentWrapper *wrapper = new DocumentWrapper(document);
 	
-	KJS::ObjectImp *kjsObj = docObj.bridge(d->interpreter->globalExec());
+	KJS::ObjectImp *kjsObj = wrapper->bridge(d->interpreter->globalExec());
 #ifndef APPLE_CHANGES
 	kjsObj->ref();
 #endif
-	
+
 	d->interpreter->putDOMObject(document, kjsObj);
-	document->deref(); // 'docObj' is held in memory until the ecma engine is destructed...
 }
 
 KJS::Completion Ecma::evaluate(const KJS::UString &code, KJS::ValueImp *thisV)
@@ -173,11 +192,6 @@ KJS::ExecState *Ecma::globalExec() const
 	return d->interpreter->globalExec();
 }
 
-EcmaInterface *Ecma::interface() const
-{
-	return d->ecmaInterface;
-}
-
 ScriptInterpreter *Ecma::interpreter() const
 {
 	return d->interpreter;
@@ -187,7 +201,7 @@ KJS::ObjectImp *Ecma::ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *
 {
 	if(!listener->isObject())
 		return NULL;
-        KJS::ObjectImp *listenerObject = static_cast<KJS::ObjectImp *>(listener);
+    KJS::ObjectImp *listenerObject = static_cast<KJS::ObjectImp *>(listener);
 	
 	// 'listener' may be a simple ecma function...
 	if(listenerObject->implementsCall())
@@ -230,7 +244,7 @@ EventListenerImpl *Ecma::createEventListener(KJS::ExecState *exec, KJS::ValueImp
 		return 0;
 
 	EventListenerImpl *i = new EventListenerImpl();
-	i->initListener(d->document, true, listenerObject, listener, DOMString());
+	i->initListener(d->document, true, listenerObject, listener, 0);
 
 	addEventListener(i, static_cast<KJS::ObjectImp *>(listenerObject));
 	return i;
@@ -239,14 +253,15 @@ EventListenerImpl *Ecma::createEventListener(KJS::ExecState *exec, KJS::ValueImp
 EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMString &jsCode)
 {	
 	KJS::Interpreter::lock();
+
 	// We probably deal with sth. like onload="alert('hi');' ...
-	DOMString internalType = KDOM::DOMString("[KDOM] - ") + jsCode;
+	DOMString internalType = DOMString("[KDOM] - ") + jsCode;
 	
 	QPtrDictIterator<EventListenerImpl> it(d->eventListeners);
 	for( ; it.current(); ++it)
 	{
 		EventListenerImpl *current = it.current();
-		if(current->internalType() == internalType)
+		if(DOMString(current->internalType()) == internalType)
 			return current;
 	}
 	
@@ -273,13 +288,13 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
 	if(obj)
 	{
 		i = new EventListenerImpl();
-		i->initListener(d->document, true, obj, obj, internalType);
+		i->initListener(d->document, true, obj, obj, internalType.handle());
 		addEventListener(i, obj);
 	}
 	else
 		kdError() << "Unable to create event listener object for event type \"" << type << "\"" << endl;
-	KJS::Interpreter::unlock();
-	
+
+	KJS::Interpreter::unlock();	
 	return i;
 }
 
@@ -301,35 +316,35 @@ void Ecma::finishedWithEvent(EventImpl *evt)
 	interpreter->removeDOMObject(evt);
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMNode(KJS::ExecState *, Node)
+KJS::ObjectImp *Ecma::inheritedGetDOMNode(KJS::ExecState *, NodeImpl *)
 {
 	// Of course we are a stub within KDOM...
 	return 0;
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMEvent(KJS::ExecState *, Event)
+KJS::ObjectImp *Ecma::inheritedGetDOMEvent(KJS::ExecState *, EventImpl *)
 {
 	// Of course we are a stub within KDOM...
 	return 0;
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMCSSRule(KJS::ExecState *, CSSRule)
+KJS::ObjectImp *Ecma::inheritedGetDOMCSSRule(KJS::ExecState *, CSSRuleImpl *)
 {
 	// Of course we are a stub within KDOM...
 	return 0;
 }
 
-KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *, CSSValue)
+KJS::ObjectImp *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *, CSSValueImpl *)
 {
 	// Of course we are a stub within KDOM...
 	return 0;
 }
 
 // Helpers in namespace 'KDOM'
-KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, Node n)
+KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, NodeImpl *n)
 {
 	KJS::ObjectImp *ret = 0;
-	if(n == Node::null)
+	if(!n)
 		return KJS::Null();
 
 	ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
@@ -345,7 +360,7 @@ KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, Node n)
 		return KJS::Null();
 
 	// Reuse existing bridge, if possible
-	KJS::ObjectImp *request = interpreter->getDOMObject(n.handle());
+	KJS::ObjectImp *request = interpreter->getDOMObject(n);
 
 	// Try hard to ask any DOM/SVG/HTML/whatever implementation
 	// which may reside on top of KDOM, how to convert the current
@@ -361,62 +376,86 @@ KJS::ValueImp *KDOM::getDOMNode(KJS::ExecState *exec, Node n)
 	else if(topRequest)
 		return topRequest;
 	
-	switch(n.nodeType())
+	switch(n->nodeType())
 	{
 		case ELEMENT_NODE:
-			ret = Element(n).bridge(exec);
+		{
+			ret = (new ElementWrapper(static_cast<ElementImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case ATTRIBUTE_NODE:
-			ret = Attr(n).bridge(exec);
+		{
+			ret = (new AttrWrapper(static_cast<AttrImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case TEXT_NODE:
-			ret = Text(n).bridge(exec);
+		{
+			ret = (new TextWrapper(static_cast<TextImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case CDATA_SECTION_NODE:
-			ret = CDATASection(n).bridge(exec);
+		{
+			ret = (new CDATASectionWrapper(static_cast<CDATASectionImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case ENTITY_REFERENCE_NODE:
-			ret = EntityReference(n).bridge(exec);
+		{
+			ret = (new EntityReferenceWrapper(static_cast<EntityReferenceImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case ENTITY_NODE:
-			ret = Entity(n).bridge(exec);
+		{
+			ret = (new EntityWrapper(static_cast<EntityImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case PROCESSING_INSTRUCTION_NODE:
-			ret = ProcessingInstruction(n).bridge(exec);
+		{
+			ret = (new ProcessingInstructionWrapper(static_cast<ProcessingInstructionImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case COMMENT_NODE:
-			ret = Comment(n).bridge(exec);
+		{
+			ret = (new CommentWrapper(static_cast<CommentImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case DOCUMENT_NODE:
-			ret = Document(n).bridge(exec);
+		{
+			ret = (new DocumentWrapper(static_cast<DocumentImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case DOCUMENT_TYPE_NODE:
-			ret = DocumentType(n).bridge(exec);
+		{
+			ret = (new DocumentTypeWrapper(static_cast<DocumentTypeImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case DOCUMENT_FRAGMENT_NODE:
-			ret = DocumentFragment(n).bridge(exec);
+		{
+			ret = (new DocumentFragmentWrapper(static_cast<DocumentFragmentImpl *>(n)))->bridge(exec);
 			break;
+		}
 		case NOTATION_NODE:
-			ret = Notation(n).bridge(exec);
+		{
+			ret = (new NotationWrapper(static_cast<NotationImpl *>(n)))->bridge(exec);
 			break;
+		}
 		default:
-			ret = n.bridge(exec);
+			ret = (new NodeWrapper(static_cast<NodeImpl *>(n)))->bridge(exec);
 	}
 
-	interpreter->putDOMObject(n.handle(), ret);
+	interpreter->putDOMObject(n, ret);
 	return ret;
 }
 
-KJS::ValueImp *KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
+KJS::ValueImp *KDOM::getDOMEvent(KJS::ExecState *exec, EventImpl *e)
 {
 	KJS::ObjectImp *ret = 0;
-	if(e == Event::null)
+	if(!e)
 		return KJS::Null();
 
 	ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
 
 	// Reuse existing bridge, if possible
-	KJS::ObjectImp *request = interpreter->getDOMObject(e.handle());
+	KJS::ObjectImp *request = interpreter->getDOMObject(e);
 	if(request)
 		return request;
 
@@ -432,40 +471,43 @@ KJS::ValueImp *KDOM::getDOMEvent(KJS::ExecState *exec, Event e)
 
 		if(ret)
 		{
-			interpreter->putDOMObject(e.handle(), ret);
+			interpreter->putDOMObject(e, ret);
 			return ret;
 		}
 	}
 
 	KJS::Interpreter::lock();
-	EventImplType identifier = (e.handle() ? (static_cast<EventImpl *>(e.handle())->identifier()) : TypeGenericEvent);
+	EventImplType identifier = e->identifier();
 
     if(identifier == TypeUIEvent)
-		ret = UIEvent(static_cast<UIEventImpl *>(e.handle())).bridge(exec);
+		ret = (new UIEventWrapper(static_cast<UIEventImpl *>(e)))->bridge(exec);
     else if(identifier == TypeMouseEvent)
-		ret = MouseEvent(static_cast<MouseEventImpl *>(e.handle())).bridge(exec);
-    else if(identifier == TypeKeyboardEvent)
-		ret = KeyboardEvent(static_cast<KeyboardEventImpl *>(e.handle())).bridge(exec);
+		ret = (new MouseEventWrapper(static_cast<MouseEventImpl *>(e)))->bridge(exec);
+/*
+	else if(identifier == TypeKeyboardEvent) // FIXME!
+		ret = (new KeyboardEventWrapper(static_cast<KeyboardEventImpl *>(e)))->bridge(exec);
+*/
     else if(identifier == TypeMutationEvent)
-		ret = MutationEvent(static_cast<MutationEventImpl *>(e.handle())).bridge(exec);
+		ret = (new MutationEventWrapper(static_cast<MutationEventImpl *>(e)))->bridge(exec);
 	else if(identifier == TypeGenericEvent)
-		ret = e.bridge(exec);
+		ret = (new EventWrapper(e))->bridge(exec);
+
 	KJS::Interpreter::unlock();
 
-	interpreter->putDOMObject(e.handle(), ret);
+	interpreter->putDOMObject(e, ret);
 	return ret;
 }
 
-KJS::ValueImp *KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
+KJS::ValueImp *KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c)
 {
 	KJS::ObjectImp *ret = 0;
-	if(c == CSSRule::null)
+	if(!c)
 		return KJS::Null();
 
 	ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
 
 	// Reuse existing bridge, if possible
-	KJS::ObjectImp *request = interpreter->getDOMObject(c.handle());
+	KJS::ObjectImp *request = interpreter->getDOMObject(c);
 	if(request)
 		return request;
 
@@ -479,44 +521,42 @@ KJS::ValueImp *KDOM::getDOMCSSRule(KJS::ExecState *exec, CSSRule c)
 
 		if(ret)
 		{
-			interpreter->putDOMObject(c.handle(), ret);
+			interpreter->putDOMObject(c, ret);
 			return ret;
 		}
 	}
 
-	CSSRuleImpl *impl = static_cast<CSSRuleImpl *>(c.handle());
-
-	if(impl->isCharsetRule())
-		ret = CSSCharsetRule(c).bridge(exec);
-	else if(impl->isFontFaceRule())
-		ret = CSSFontFaceRule(c).bridge(exec);
-	else if(impl->isImportRule())
-		ret = CSSImportRule(c).bridge(exec);
-	else if(impl->isMediaRule())
-		ret = CSSMediaRule(c).bridge(exec);
-	else if(impl->isPageRule())
-		ret = CSSPageRule(c).bridge(exec);
-	else if(impl->isStyleRule())
-		ret = CSSStyleRule(c).bridge(exec);
-	else if(impl->isUnknownRule())
-		ret = CSSUnknownRule(c).bridge(exec);
+	if(c->isCharsetRule())
+		ret = (new CSSCharsetRuleWrapper(static_cast<CSSCharsetRuleImpl *>(c)))->bridge(exec);
+	else if(c->isFontFaceRule())
+		ret = (new CSSFontFaceRuleWrapper(static_cast<CSSFontFaceRuleImpl *>(c)))->bridge(exec);
+	else if(c->isImportRule())
+		ret = (new CSSImportRuleWrapper(static_cast<CSSImportRuleImpl *>(c)))->bridge(exec);
+	else if(c->isMediaRule())
+		ret = (new CSSMediaRuleWrapper(static_cast<CSSMediaRuleImpl *>(c)))->bridge(exec);
+	else if(c->isPageRule())
+		ret = (new CSSPageRuleWrapper(static_cast<CSSPageRuleImpl *>(c)))->bridge(exec);
+	else if(c->isStyleRule())
+		ret = (new CSSStyleRuleWrapper(static_cast<CSSStyleRuleImpl *>(c)))->bridge(exec);
+	else if(c->isUnknownRule())
+		ret = (new CSSUnknownRuleWrapper(static_cast<CSSUnknownRuleImpl *>(c)))->bridge(exec);
 	else
-		ret = c.bridge(exec);
+		ret = (new CSSRuleWrapper(c))->bridge(exec);
 	
-	interpreter->putDOMObject(c.handle(), ret);
+	interpreter->putDOMObject(c, ret);
 	return ret;
 }
 
-KJS::ValueImp *KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
+KJS::ValueImp *KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c)
 {
 	KJS::ObjectImp *ret = 0;
-	if(c == CSSValue::null)
+	if(!c)
 		return KJS::Null();
 
 	ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
 
 	// Reuse existing bridge, if possible
-	KJS::ObjectImp *request = interpreter->getDOMObject(c.handle());
+	KJS::ObjectImp *request = interpreter->getDOMObject(c);
 	if(request)
 		return request;
 
@@ -530,43 +570,41 @@ KJS::ValueImp *KDOM::getDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 
 		if(ret)
 		{
-			interpreter->putDOMObject(c.handle(), ret);
+			interpreter->putDOMObject(c, ret);
 			return ret;
 		}
 	}
 
-	CSSValueImpl *impl = static_cast<CSSValueImpl *>(c.handle());
-
-	if(impl->isPrimitiveValue())
-		ret = CSSPrimitiveValue(c).bridge(exec);
-	else if(impl->isValueList())
-		ret = CSSValueList(c).bridge(exec);
+	if(c->isPrimitiveValue())
+		ret = (new CSSPrimitiveValueWrapper(static_cast<CSSPrimitiveValueImpl *>(c)))->bridge(exec);
+	else if(c->isValueList())
+		ret = (new CSSValueListWrapper(static_cast<CSSValueListImpl *>(c)))->bridge(exec);
 	else
-		ret = c.bridge(exec);
+		ret = (new CSSValueWrapper(c))->bridge(exec);
 	
-	interpreter->putDOMObject(c.handle(), ret);
+	interpreter->putDOMObject(c, ret);
 	return ret;
 }
 
-DOMString KDOM::toDOMString(KJS::ExecState *exec, KJS::ValueImp *val)
+DOMStringImpl *KDOM::toDOMString(KJS::ExecState *exec, KJS::ValueImp *val)
 {
 	// We have to distinguish between null and empty strings!
 	// Very important to get the dom test suite running correctly :)
 	QString string = val->toString(exec).qstring();
 	if(string == "null")
-		return DOMString();
+		return 0;
 	else if(string.isEmpty())
-		return DOMString("");
+		return new DOMStringImpl(string);
 
-	return DOMString(string);
+	return new DOMStringImpl(string);
 }
 
-KJS::ValueImp *KDOM::getDOMString(const DOMString &str)
+KJS::ValueImp *KDOM::getDOMString(DOMStringImpl *str)
 {
-	if(str.isNull() && str.isEmpty())
+	if(!str || str->isEmpty())
 		return KJS::Null();
 
-	return KJS::String(str.string());
+	return KJS::String(str->string());
 }
 
 QVariant KDOM::toVariant(KJS::ExecState *exec, KJS::ValueImp *val)

@@ -22,6 +22,7 @@
 
 #include <qevent.h>
 
+#include "DOMStringImpl.h"
 #include "MouseEventImpl.h"
 
 using namespace KDOM;
@@ -102,7 +103,7 @@ void MouseEventImpl::setRelatedTarget(EventTargetImpl *target)
 	m_relatedTarget = target;
 }
 
-void MouseEventImpl::initMouseEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg)
+void MouseEventImpl::initMouseEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg)
 {
 	initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg);
 
@@ -118,9 +119,9 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg, bool canBubbleArg,
 	m_relatedTarget = relatedTargetArg;
 }
 
-void MouseEventImpl::initMouseEvent(const DOMString &typeArg, QMouseEvent *qevent, float scale)
+void MouseEventImpl::initMouseEvent(DOMStringImpl *typeArg, QMouseEvent *qevent, float scale)
 {
-	if(!qevent || typeArg.isEmpty())
+	if(!qevent || !typeArg || typeArg->isEmpty())
 		return;
 
 	int clientX = qevent->x(), screenX = qevent->globalX();

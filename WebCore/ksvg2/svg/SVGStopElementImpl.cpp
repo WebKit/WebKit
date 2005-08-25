@@ -36,7 +36,7 @@
 
 using namespace KSVG;
 
-SVGStopElementImpl::SVGStopElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : SVGStyledElementImpl(doc, id, prefix)
+SVGStopElementImpl::SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix)
 {
 	m_offset = 0;
 }
@@ -61,9 +61,9 @@ void SVGStopElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		case ATTR_OFFSET:
 		{
 			if(value.string().endsWith(QString::fromLatin1("%")))
-				offset()->baseVal()->setValue(value.string().left(value.length() - 1).toFloat() / 100.);
+				offset()->setBaseVal(value.string().left(value.length() - 1).toFloat() / 100.);
 			else
-				offset()->baseVal()->setValue(value.string().toFloat());
+				offset()->setBaseVal(value.string().toFloat());
 			break;
 		}
 		default:
@@ -90,11 +90,11 @@ KCanvasItem *SVGStopElementImpl::createCanvasItem(KCanvas *canvas, KRenderingSty
 {
 	if(renderStyle())
 	{
-		QString gradientId = static_cast<SVGElementImpl *>(parentNode())->getId().string();
+		QString gradientId = KDOM::DOMString(static_cast<SVGElementImpl *>(parentNode())->getId()).string();
 		KRenderingPaintServer *paintServer = canvas->registry()->getPaintServerById(gradientId);
 		KRenderingPaintServerGradient *paintServerGradient  = static_cast<KRenderingPaintServerGradient *>(paintServer);
 
-		float _offset = offset()->baseVal()->value();
+		float _offset = offset()->baseVal();
 
 		QColor c = static_cast<SVGRenderStyle *>(renderStyle())->stopColor();
 		float opacity = static_cast<SVGRenderStyle *>(renderStyle())->stopOpacity();

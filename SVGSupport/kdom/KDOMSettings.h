@@ -23,7 +23,11 @@
 #ifndef KDOM_KDOMSettings_H
 #define KDOM_KDOMSettings_H
 
+#include <qcolor.h>
+#include <qstring.h>
+
 class KConfig;
+struct KPerDomainSettings;
 
 // browser window color defaults -- Bernd
 #define DOM_DEFAULT_LNK_COLOR Qt::blue
@@ -33,15 +37,12 @@ class KConfig;
 
 // KEEP IN SYNC WITH konqdefaults.h in kdebase/libkonq!
 // lets be modern .. -- Bernd
-#define DOM_DEFAULT_VIEW_FONT QString::fromLatin1("helvetica")
-#define DOM_DEFAULT_VIEW_FIXED_FONT QString::fromLatin1("courier")
-
-// generic CSS fonts. Since usual X distributions don't have
-// a good set of fonts, this is quite conservative...
-#define DOM_DEFAULT_VIEW_SERIF_FONT QString::fromLatin1("times")
-#define DOM_DEFAULT_VIEW_SANSSERIF_FONT QString::fromLatin1("helvetica")
-#define DOM_DEFAULT_VIEW_CURSIVE_FONT QString::fromLatin1("helvetica")
-#define DOM_DEFAULT_VIEW_FANTASY_FONT QString::fromLatin1("helvetica")
+#define DOM_DEFAULT_VIEW_FONT QString::fromLatin1("Sans Serif")
+#define DOM_DEFAULT_VIEW_FIXED_FONT QString::fromLatin1("Monospace")
+#define DOM_DEFAULT_VIEW_SERIF_FONT QString::fromLatin1("Serif")
+#define DOM_DEFAULT_VIEW_SANSSERIF_FONT QString::fromLatin1("Sans Serif")
+#define DOM_DEFAULT_VIEW_CURSIVE_FONT QString::fromLatin1("Sans Serif")
+#define DOM_DEFAULT_VIEW_FANTASY_FONT QString::fromLatin1("Sans Serif")
 #define DOM_DEFAULT_MIN_FONT_SIZE 7 // everything smaller is usually unreadable.
 
 namespace KDOM
@@ -52,6 +53,70 @@ namespace KDOM
 	class KDOMSettings
 	{
 	public:
+		/**
+		 * This enum specifies whether Java/JavaScript execution is allowed.
+		 */
+		enum KJavaScriptAdvice
+		{
+			KJavaScriptDunno = 0,
+			KJavaScriptAccept,
+			KJavaScriptReject
+		};
+
+		enum KAnimationAdvice
+		{
+			KAnimationDisabled = 0,
+			KAnimationLoopOnce,
+			KAnimationEnabled
+		};
+
+		/**
+		 * This enum specifies the policy for window.open
+		 */
+		enum KJSWindowOpenPolicy
+		{
+			KJSWindowOpenAllow = 0,
+			KJSWindowOpenAsk,
+			KJSWindowOpenDeny,
+			KJSWindowOpenSmart
+		};
+		
+		/**
+		 * This enum specifies the policy for window.status and .defaultStatus
+		 */
+		enum KJSWindowStatusPolicy
+		{
+			KJSWindowStatusAllow = 0,
+			KJSWindowStatusIgnore
+		};
+
+		/**
+		 * This enum specifies the policy for window.moveBy and .moveTo
+		 */
+		enum KJSWindowMovePolicy
+		{
+			KJSWindowMoveAllow = 0,
+			KJSWindowMoveIgnore
+		};
+
+		/**
+		 * This enum specifies the policy for window.resizeBy and .resizeTo
+		 */
+		enum KJSWindowResizePolicy
+		{
+			KJSWindowResizeAllow = 0,
+			KJSWindowResizeIgnore
+		};
+
+		/**
+		 * This enum specifies the policy for window.focus
+		 */
+		enum KJSWindowFocusPolicy
+		{
+			KJSWindowFocusAllow = 0,
+			KJSWindowFocusIgnore
+		};
+
 		KDOMSettings();
 		KDOMSettings(const KDOMSettings &other);
 		virtual ~KDOMSettings();
@@ -63,10 +128,20 @@ namespace KDOM
 
 		/**
 		 * Read settings from @p config.
+		 * @param config is a pointer to KConfig object.
 		 * @param reset if true, settings are always set; if false,
-		 *  settings are only set if the config file has a corresponding key.
+		 *        settings are only set if the config file has a corresponding key.
 		 */
 		virtual void init(KConfig *config, bool reset = true);
+
+		// Behaviour settings
+		KAnimationAdvice showAnimations() const;
+
+		KJSWindowOpenPolicy windowOpenPolicy(const QString &hostname = QString::null) const;
+		KJSWindowMovePolicy windowMovePolicy(const QString &hostname = QString::null) const;
+		KJSWindowResizePolicy windowResizePolicy(const QString &hostname = QString::null) const;
+		KJSWindowStatusPolicy windowStatusPolicy(const QString &hostname = QString::null) const;
+		KJSWindowFocusPolicy windowFocusPolicy(const QString &hostname = QString::null) const;
 
 		// Font settings
 		QString stdFontName() const;
@@ -79,11 +154,53 @@ namespace KDOM
 		int minFontSize() const;
 		int mediumFontSize() const;
 
+		const QString &encoding() const;
+		static const QString &availableFamilies();
+
 		// Color settings
 		const QColor &textColor() const;
 		const QColor &baseColor() const;
 		const QColor &linkColor() const;
 		const QColor &vLinkColor() const;
+
+		// Java and JavaScript
+		bool isJavaEnabled(const QString &hostname = QString::null) const;
+		bool isJavaScriptEnabled(const QString &hostname = QString::null) const;
+		bool isJavaScriptDebugEnabled(const QString &hostname = QString::null) const;
+		bool isJavaScriptErrorReportingEnabled(const QString &hostname = QString::null) const;
+		bool isPluginsEnabled(const QString &hostname = QString::null) const;
+		
+		// AdBlocK Filtering
+		bool isAdFiltered(const QString &url) const;
+		bool isAdFilterEnabled() const;
+		bool isHideAdsEnabled() const;
+		void addAdFilter(const QString &url);
+
+		// Whether to show passive popup when windows are blocked (@since 3.5)
+		bool jsPopupBlockerPassivePopup() const;
+		void setJSPopupBlockerPassivePopup(bool enabled);
+
+		bool jsErrorsEnabled() const;
+		void setJSErrorsEnabled(bool enabled);
+
+		// helpers for parsing domain-specific configuration, used in KControl module as well
+		static KJavaScriptAdvice strToAdvice(const QString &str);
+		static void splitDomainAdvice(const QString &configStr, QString &domain,
+									  KJavaScriptAdvice &javaAdvice, KJavaScriptAdvice &javaScriptAdvice);
+
+		static const char *adviceToStr(KJavaScriptAdvice _advice);
+
+		/** reads from @p config's current group, forcing initialization if @p reset is true.
+		 * @param config is a pointer to KConfig object.
+		 * @param reset true if initialization is to be forced.
+		 * @param global true if the global domain is to be read.
+		 * @param pd_settings will be initialised with the computed (inherited) settings.
+		 */
+		virtual void readDomainSettings(KConfig *config, bool reset, bool global, KPerDomainSettings &pd_settings);
+
+		// CSS helpers
+		virtual QString settingsToCSS() const;
+		QString userStyleSheet() const;
 
 	private:
 		QString lookupFont(unsigned int i) const;

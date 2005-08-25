@@ -20,14 +20,13 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "DOMLocatorImpl.h"
-#include "DOMStringImpl.h"
-#include "DOMString.h"
 #include "NodeImpl.h"
+#include "DOMStringImpl.h"
+#include "DOMLocatorImpl.h"
 
 using namespace KDOM;
 
-DOMLocatorImpl::DOMLocatorImpl() : Shared(true)
+DOMLocatorImpl::DOMLocatorImpl() : Shared()
 {
 	m_utf16Offset = -1;
 	m_relatedNode = 0;
@@ -89,13 +88,7 @@ NodeImpl *DOMLocatorImpl::relatedNode() const
 
 void DOMLocatorImpl::setRelatedNode(NodeImpl *relatedNode)
 {
-	if(m_relatedNode)
-		m_relatedNode->deref();
-
-	m_relatedNode = relatedNode;
-
-	if(m_relatedNode)
-		m_relatedNode->ref();
+	KDOM_SAFE_SET(m_relatedNode, relatedNode);
 }
 
 DOMStringImpl *DOMLocatorImpl::uri() const
@@ -103,15 +96,9 @@ DOMStringImpl *DOMLocatorImpl::uri() const
 	return m_uri;
 }
 
-void DOMLocatorImpl::setUri(const DOMString &uri)
+void DOMLocatorImpl::setUri(DOMStringImpl *uri)
 {
-	if(m_uri)
-		m_uri->deref();
-
-	m_uri = uri.implementation();
-
-	if(m_uri)
-		m_uri->ref();
+	KDOM_SAFE_SET(m_uri, uri);
 }
 
 // vim:ts=4:noet

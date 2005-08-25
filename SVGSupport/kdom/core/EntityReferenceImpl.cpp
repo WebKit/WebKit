@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,29 +23,31 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "EntityReferenceImpl.h"
+#include "kdom.h"
 #include "EntityImpl.h"
 #include "DocumentImpl.h"
 #include "DocumentTypeImpl.h"
 #include "NamedNodeMapImpl.h"
+#include "EntityReferenceImpl.h"
 #include "DOMImplementationImpl.h"
 
 using namespace KDOM;
 
-EntityReferenceImpl::EntityReferenceImpl(DocumentImpl *doc, DOMStringImpl *name, bool expand) : NodeBaseImpl(doc)
+EntityReferenceImpl::EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *name, bool expand) : NodeBaseImpl(doc)
 {
 	m_entityName = name;
 	if(m_entityName)
 		m_entityName->ref();
 
-	if(expand && doc->doctype() && doc->parsing() == false)
+	DocumentImpl *_doc = doc->document();
+	if(expand && _doc->doctype() && _doc->parsing() == false)
 	{
-		NodeImpl *n = doc->doctype()->entities()->getNamedItem(name);
+		NodeImpl *n = _doc->doctype()->entities()->getNamedItem(name);
 		if(n && n->nodeType() == ENTITY_NODE)
 		{
-			doc->setParsing(true);
+			_doc->setParsing(true);
 			static_cast<EntityImpl *>(n)->cloneChildNodes(this, doc);
-			doc->setParsing(false);
+			_doc->setParsing(false);
 		}
 	}
 }
@@ -53,9 +58,9 @@ EntityReferenceImpl::~EntityReferenceImpl()
 		m_entityName->deref();
 }
 
-DOMString EntityReferenceImpl::nodeName() const
+DOMStringImpl *EntityReferenceImpl::nodeName() const
 {
-	return DOMString(m_entityName);
+	return m_entityName;
 }
 
 unsigned short EntityReferenceImpl::nodeType() const
@@ -63,16 +68,16 @@ unsigned short EntityReferenceImpl::nodeType() const
 	return ENTITY_REFERENCE_NODE;
 }
 
-NodeImpl *EntityReferenceImpl::cloneNode(bool deep, DocumentImpl *doc) const
+NodeImpl *EntityReferenceImpl::cloneNode(bool deep, DocumentPtr *doc) const
 {
-	EntityReferenceImpl *p = new EntityReferenceImpl(doc, m_entityName, false);
+	EntityReferenceImpl *p = new EntityReferenceImpl(doc, nodeName(), false);
 
 	if(deep)
 	{
-		bool oldMode = doc->parsing();
-		doc->setParsing(true);
+		bool oldMode = doc->document()->parsing();
+		doc->document()->setParsing(true);
 		cloneChildNodes(p, doc);
-		doc->setParsing(oldMode);
+		doc->document()->setParsing(oldMode);
 	}
 
 	return p;

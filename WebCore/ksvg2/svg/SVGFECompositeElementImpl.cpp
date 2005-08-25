@@ -43,7 +43,7 @@
 
 using namespace KSVG;
 
-SVGFECompositeElementImpl::SVGFECompositeElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : 
+SVGFECompositeElementImpl::SVGFECompositeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
 	m_in1 = m_in2 = 0;
@@ -136,12 +136,12 @@ void SVGFECompositeElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_IN:
 		{
-			in1()->setBaseVal(value.implementation());
+			in1()->setBaseVal(value.handle());
 			break;
 		}
 		case ATTR_IN2:
 		{
-			in2()->setBaseVal(value.implementation());
+			in2()->setBaseVal(value.handle());
 			break;
 		}
 		default:
@@ -158,10 +158,10 @@ KCanvasItem *SVGFECompositeElementImpl::createCanvasItem(KCanvas *canvas, KRende
 	m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
 	m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).string());
 	setStandardAttributes(m_filterEffect);
-	m_filterEffect->setK1(k1()->baseVal()->value());
-	m_filterEffect->setK2(k2()->baseVal()->value());
-	m_filterEffect->setK3(k3()->baseVal()->value());
-	m_filterEffect->setK4(k4()->baseVal()->value());
+	m_filterEffect->setK1(k1()->baseVal());
+	m_filterEffect->setK2(k2()->baseVal());
+	m_filterEffect->setK3(k3()->baseVal());
+	m_filterEffect->setK4(k4()->baseVal());
 	return 0;
 }
 

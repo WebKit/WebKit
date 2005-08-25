@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2004 World Wide Web Consortium,
+ *
+ * (Massachusetts Institute of Technology, European Research Consortium for
+ * Informatics and Mathematics, Keio University). All Rights Reserved. This
+ * work is distributed under the W3C(r) Software License [1] in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ */
+
+module core
+{
+	interface [nodptr] DOMImplementation {
+		boolean hasFeature(in DOMString feature,
+						   in DOMString version);
+
+		// Introduced in DOM Level 2:
+		DocumentType createDocumentType(in DOMString qualifiedName,
+										in DOMString publicId,
+										in DOMString systemId)
+										raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		Document createDocument(in DOMString namespaceURI,
+								in DOMString qualifiedName,
+								in DocumentType doctype)
+								raises(DOMException);
+
+		// Introduced in DOM Level 3:
+		DOMObject getFeature(in DOMString feature,
+							 in DOMString version);
+
+		// Introduced in DOM Level 2: [specified in seperated DOMImplementationCSS]
+		css::CSSStyleSheet createCSSStyleSheet(in DOMString title,
+											   in DOMString media) raises(DOMException);
+	};
+};

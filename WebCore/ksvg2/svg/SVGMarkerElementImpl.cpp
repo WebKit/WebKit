@@ -45,7 +45,7 @@
 
 using namespace KSVG;
 
-SVGMarkerElementImpl::SVGMarkerElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGMarkerElementImpl::SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGLangSpaceImpl(),
   SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl()
 {
@@ -76,7 +76,7 @@ SVGMarkerElementImpl::~SVGMarkerElementImpl()
 void SVGMarkerElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_REFX:
@@ -101,7 +101,7 @@ void SVGMarkerElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_ORIENT:
 		{
-			if(value == "auto")
+			if(KDOM::DOMString(value) == "auto")
 				setOrientToAuto();
 			else
 			{
@@ -179,7 +179,7 @@ void SVGMarkerElementImpl::close()
 	if(!m_marker)
 	{
 		m_marker = static_cast<KCanvasMarker *>(canvas()->renderingDevice()->createResource(RS_MARKER));
-		canvas()->registry()->addResourceById(getId().string(), m_marker);
+		canvas()->registry()->addResourceById(KDOM::DOMString(getId()).string(), m_marker);
 	}
 	
 	m_marker->setMarker(m_canvasItem);
@@ -189,7 +189,7 @@ void SVGMarkerElementImpl::close()
 	if(!m_orientType)
 	{
 		SVGAngleImpl *angle = SVGSVGElementImpl::createSVGAngle();
-		angle->setValueAsString("0");
+		angle->setValueAsString(KDOM::DOMString("0").handle());
 		setOrientToAngle(angle);
 	}
 	

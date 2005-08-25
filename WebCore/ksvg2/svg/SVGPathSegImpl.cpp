@@ -25,7 +25,7 @@
 using namespace KSVG;
 
 SVGPathSegImpl::SVGPathSegImpl(const SVGStyledElementImpl *context)
-: KDOM::Shared(true), m_context(context)
+: KDOM::Shared(), m_context(context)
 {
 }
 

@@ -235,7 +235,7 @@ bool SVGCSSParser::parseValue(int propId, bool important, int expected)
 			else if(id == SVGCSS_VAL_CURRENTCOLOR)
 				parsedValue = new SVGPaintImpl(SVG_PAINTTYPE_CURRENTCOLOR);
 			else if(value->unit == CSS_URI)
-				parsedValue = new SVGPaintImpl(SVG_PAINTTYPE_URI, new DOMStringImpl(domString(value->string).string()));
+				parsedValue = new SVGPaintImpl(SVG_PAINTTYPE_URI, domString(value->string));
 			else
 				parsedValue = parsePaint();
 
@@ -247,7 +247,7 @@ bool SVGCSSParser::parseValue(int propId, bool important, int expected)
 	case CSS_PROP_COLOR:                // <color> | inherit
 		if((id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) ||
 		   (id >= SVGCSS_VAL_ALICEBLUE && id <= SVGCSS_VAL_YELLOWGREEN))
-			parsedValue = new SVGColorImpl(new DOMStringImpl(domString(value->string).string()));
+			parsedValue = new SVGColorImpl(domString(value->string));
 		else
 			parsedValue = parseColor();
 
@@ -260,7 +260,7 @@ bool SVGCSSParser::parseValue(int propId, bool important, int expected)
 	case SVGCSS_PROP_LIGHTING_COLOR:
 		if((id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT) ||
 		   (id >= SVGCSS_VAL_ALICEBLUE && id <= SVGCSS_VAL_YELLOWGREEN))
-			parsedValue = new SVGColorImpl(new DOMStringImpl(domString(value->string).string()));
+			parsedValue = new SVGColorImpl(domString(value->string));
 		else if(id == SVGCSS_VAL_CURRENTCOLOR)
 			parsedValue = new SVGColorImpl(SVG_COLORTYPE_CURRENTCOLOR);
 		else // TODO : svgcolor (iccColor)
@@ -398,12 +398,15 @@ CSSValueImpl *SVGCSSParser::parsePaint()
 	}
 	else if(value->unit == CSS_RGBCOLOR)
 	{
-		QString str = QString::fromLatin1("#") + domString(value->string).string();
+		QString str = QString::fromLatin1("#") + qString(value->string);
 		return new SVGPaintImpl(SVG_PAINTTYPE_RGBCOLOR, 0, new DOMStringImpl(str));
 	}
 	else if(value->unit == CSS_IDENT ||
 		   (!strict && value->unit == CSS_DIMENSION))
-		return new SVGPaintImpl(SVG_PAINTTYPE_RGBCOLOR, 0, new DOMStringImpl(domString(value->string).string()));
+	{
+		QString str = qString(value->string);
+		return new SVGPaintImpl(SVG_PAINTTYPE_RGBCOLOR, 0, new DOMStringImpl(str));
+	}
 	else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
 			value->function->args->numValues == 5 /* rgb + two commas */ &&
 			qString(value->function->name).lower() == "rgb(")
@@ -452,12 +455,12 @@ CSSValueImpl *SVGCSSParser::parseColor()
 	}
 	else if(value->unit == CSS_RGBCOLOR)
 	{
-		QString str = QString::fromLatin1("#") + domString(value->string).string();
+		QString str = QString::fromLatin1("#") + qString(value->string);
 		return new SVGColorImpl(new DOMStringImpl(str));
 	}
 	else if(value->unit == CSS_IDENT ||
 		   (!strict && value->unit == CSS_DIMENSION))
-		return new SVGColorImpl(new DOMStringImpl(domString(value->string).string()));
+		return new SVGColorImpl(domString(value->string));
 	else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
 			value->function->args->numValues == 5 /* rgb + two commas */ &&
 			qString(value->function->name).lower() == "rgb(")

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "KWQAssertions.h"
 
 #import "DrawViewPrivate.h"
 #import "DrawCanvasItem.h"
@@ -115,7 +116,6 @@ typedef enum {
         [document unregisterView:drawView];
         [document release];
         document = [doc retain];
-        [document registerView:drawView];
         
         delete canvasView;
         canvasView = NULL;
@@ -125,6 +125,7 @@ typedef enum {
             canvasView->setView(drawView);
             canvasView->setContext(quartzContext);
         }
+		[document registerView:drawView];
     }
 }
 
@@ -136,6 +137,7 @@ typedef enum {
     
     // push the drawing context
     KRenderingDevice *renderingDevice = [document canvas]->renderingDevice();
+	ASSERT(renderingDevice);
     
     // Apply the top-level "world transform" for zoom/pan
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
@@ -202,6 +204,15 @@ NSArray *DrawViewDragTypes;
 {
     [_private release];
     [super dealloc];
+}
+
+// Used when the document dellocs
+// to avoid recursion.
+- (void)_clearDocument
+{
+	_private->document = nil;
+	delete _private->canvasView;
+	_private->canvasView = NULL;
 }
 
 - (NSRect)selectionCanvasBoundingBox

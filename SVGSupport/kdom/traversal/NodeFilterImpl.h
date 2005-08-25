@@ -1,7 +1,12 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
+              (C) 2001 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -24,6 +29,7 @@
 #define KDOM_NodeFilterImpl_H
 
 #include <kdom/Shared.h>
+#include <kdom/traversal/kdomtraversal.h>
 
 namespace KDOM
 {
@@ -43,6 +49,14 @@ namespace KDOM
 		NodeFilterImpl &operator=(const NodeFilterImpl &);
 
 		NodeFilterCondition *m_condition;
+	};
+
+	class NodeFilterCondition : public Shared
+	{
+	public:
+		NodeFilterCondition() : Shared() { }
+
+		virtual short acceptNode(NodeImpl *n) const { return FILTER_ACCEPT; }
 	};
 };
 

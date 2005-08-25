@@ -46,7 +46,7 @@ namespace KSVG
 		virtual SVGAnimatedStringImpl *className() const = 0;
 
 		virtual KDOM::CSSStyleDeclarationImpl *style() = 0;
-		virtual KDOM::CSSValueImpl *getPresentationAttribute(const KDOM::DOMString &name) = 0;
+		virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name) = 0;
 	};
 };
 

@@ -4,6 +4,7 @@
 
     Additional copyright (KHTML code)
               (C) 1999 Lars Knoll <knoll@kde.org>
+              (C) 2003 Dirk Mueller (mueller@kde.org)
 
     This file is part of the KDE project
 
@@ -30,14 +31,13 @@ using namespace KDOM;
 #define QT_ALLOC_QCHAR_VEC(N)	(QChar *) new char[sizeof(QChar) * (N)]
 #define QT_DELETE_QCHAR_VEC(P)	delete[]((char *) (P))
 
-	
-DOMStringImpl::DOMStringImpl() : Shared(false)
+DOMStringImpl::DOMStringImpl() : Shared()
 {
 	m_str = 0;
 	m_len = 0;
 }
 
-DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared(false)
+DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared()
 {
 	bool haveStr = str && len;
 	m_str = QT_ALLOC_QCHAR_VEC(haveStr ? len : 1);
@@ -55,16 +55,15 @@ DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) : Shared(false)
 	}
 }
 
-DOMStringImpl::DOMStringImpl(const QString &str) : Shared(false)
+DOMStringImpl::DOMStringImpl(const QString &str) : Shared()
 {
-	//(*this) = str;
 	int len = str.length();
 	m_str = QT_ALLOC_QCHAR_VEC(len);
 	memcpy(m_str, str.unicode(), len * sizeof(QChar));
 	m_len = len;
 }
 
-DOMStringImpl::DOMStringImpl(const char *str) : Shared(false)
+DOMStringImpl::DOMStringImpl(const char *str) : Shared()
 {
 	if(str && *str)
 	{
@@ -94,15 +93,6 @@ DOMStringImpl::~DOMStringImpl()
 const QChar &DOMStringImpl::operator[](int i) const
 {
 	return m_str[i];
-}
-
-DOMStringImpl DOMStringImpl::operator=(const QString &str)
-{
-	int len = str.length();
-	m_str = QT_ALLOC_QCHAR_VEC(len);
-	memcpy(m_str, str.unicode(), len * sizeof(QChar));
-	m_len = len;
-	return *this;
 }
 
 unsigned int DOMStringImpl::length() const
@@ -140,6 +130,44 @@ void DOMStringImpl::insert(DOMStringImpl *str, unsigned int pos)
 	}
 }
 
+void DOMStringImpl::append(const char *str)
+{
+	if(str && *str)
+	{
+		int len = strlen(str);
+		int newLen = m_len + len;
+		QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+
+		memcpy(c, m_str, m_len * sizeof(QChar));
+		memcpy(c + m_len, str, len * sizeof(QChar));
+		
+		if(m_str)
+			QT_DELETE_QCHAR_VEC(m_str);
+
+		m_str = c;
+		m_len = newLen;
+	}
+}
+
+void DOMStringImpl::append(const QString &str)
+{
+	if(!str.isEmpty())
+	{
+		int len = str.length();
+		int newLen = m_len + len;
+		QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+
+		memcpy(c, m_str, m_len * sizeof(QChar));
+		memcpy(c + m_len, str.unicode(), len * sizeof(QChar));
+		
+		if(m_str)
+			QT_DELETE_QCHAR_VEC(m_str);
+
+		m_str = c;
+		m_len = newLen;
+	}
+}
+
 void DOMStringImpl::append(DOMStringImpl *str)
 {
 	if(str && str->length() != 0)
@@ -158,6 +186,10 @@ void DOMStringImpl::append(DOMStringImpl *str)
 	}
 }
 
+bool DOMStringImpl::isEmpty() const
+{
+	return !length();
+}
 
 // FIXME: should be a cached flag maybe.
 bool DOMStringImpl::containsOnlyWhitespace() const
@@ -374,6 +406,14 @@ DOMStringImpl *DOMStringImpl::capitalize() const
 QChar *DOMStringImpl::unicode() const
 {
 	return m_str;
+}
+
+QString DOMStringImpl::string() const
+{
+	if(!m_str || !m_len)
+		return QString();
+
+	return QString(m_str, m_len);
 }
 
 int DOMStringImpl::toInt(bool *ok) const

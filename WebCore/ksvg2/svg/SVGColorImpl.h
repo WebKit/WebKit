@@ -52,7 +52,7 @@ namespace KSVG
 		void setRGBColorICCColor(KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
 		void setColor(unsigned short colorType, KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
 
-		virtual KDOM::DOMString cssText() const;
+		virtual KDOM::DOMStringImpl *cssText() const;
 
 		// Helpers
 		const QColor &color() const;

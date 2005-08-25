@@ -43,7 +43,7 @@ void SVGLengthListImpl::parse(const QString &value, const SVGStyledElementImpl *
 	for(unsigned int i = 0;i < lengths.count();i++)
 	{
 		SVGLengthImpl *length = new SVGLengthImpl(context, mode);
-		length->setValueAsString(lengths[i]);
+		length->setValueAsString(KDOM::DOMString(lengths[i]).handle());
 		appendItem(length);
 	}
 }

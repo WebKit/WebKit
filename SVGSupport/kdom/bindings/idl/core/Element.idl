@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2004 World Wide Web Consortium,
+ *
+ * (Massachusetts Institute of Technology, European Research Consortium for
+ * Informatics and Mathematics, Keio University). All Rights Reserved. This
+ * work is distributed under the W3C(r) Software License [1] in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+ */
+
+module core
+{
+	interface Element : Node {
+		readonly attribute DOMString tagName;
+
+		DOMString getAttribute(in DOMString name);
+
+		void setAttribute(in DOMString name,
+						  in DOMString value)
+						  raises(DOMException);
+
+		void removeAttribute(in DOMString name)
+							 raises(DOMException);
+
+		Attr getAttributeNode(in DOMString name);
+
+		Attr setAttributeNode(in Attr newAttr)
+							  raises(DOMException);
+
+		Attr removeAttributeNode(in Attr oldAttr)
+								 raises(DOMException);
+
+		NodeList getElementsByTagName(in DOMString name);
+
+		// Introduced in DOM Level 2:
+		DOMString getAttributeNS(in DOMString namespaceURI,
+								 in DOMString localName)
+								 raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		void setAttributeNS(in DOMString namespaceURI,
+							in DOMString qualifiedName,
+							in DOMString value)
+							raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		void removeAttributeNS(in DOMString namespaceURI,
+							   in DOMString localName)
+							   raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		Attr getAttributeNodeNS(in DOMString namespaceURI,
+								in DOMString localName)
+								raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		Attr setAttributeNodeNS(in Attr newAttr)
+								raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		NodeList getElementsByTagNameNS(in DOMString namespaceURI,
+										in DOMString localName)
+										raises(DOMException);
+
+		// Introduced in DOM Level 2:
+		boolean hasAttribute(in DOMString name);
+
+		// Introduced in DOM Level 2:
+		boolean hasAttributeNS(in DOMString namespaceURI,
+							   in DOMString localName)
+							   raises(DOMException);
+
+		// Introduced in DOM Level 3:
+		readonly attribute TypeInfo schemaTypeInfo;
+
+		// Introduced in DOM Level 3:
+		void setIdAttribute(in DOMString name,
+							in boolean isId)
+							raises(DOMException);
+
+		// Introduced in DOM Level 3:
+		void setIdAttributeNS(in DOMString namespaceURI,
+							  in DOMString localName,
+							  in boolean isId)
+							  raises(DOMException);
+
+		// Introduced in DOM Level 3:
+		void setIdAttributeNode(in Attr idAttr,
+								in boolean isId)
+								raises(DOMException);
+	};
+};

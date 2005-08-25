@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2000 World Wide Web Consortium,
+ * (Massachusetts Institute of Technology, Institut National de
+ * Recherche en Informatique et en Automatique, Keio University). All
+ * Rights Reserved. This program is distributed under the W3C's Software
+ * Intellectual Property License. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.
+ * See W3C License http://www.w3.org/Consortium/Legal/ for more details.
+ */
+
+// File: http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113/events.idl
+
+module events
+{
+	// Introduced in DOM Level 2:
+	interface MutationEvent : Event {
+		// attrChangeType
+		const unsigned short MODIFICATION	= 1;
+		const unsigned short ADDITION		= 2;
+		const unsigned short REMOVAL		= 3;
+
+		readonly attribute core::Node relatedNode;
+		readonly attribute core::DOMString prevValue;
+		readonly attribute core::DOMString newValue;
+		readonly attribute core::DOMString attrName;
+		readonly attribute unsigned short attrChange;
+
+		void initMutationEvent(in core::DOMString typeArg,
+							   in boolean canBubbleArg,
+							   in boolean cancelableArg,
+							   in core::Node relatedNodeArg,
+							   in core::DOMString prevValueArg,
+							   in core::DOMString newValueArg,
+							   in core::DOMString attrNameArg,
+							   in unsigned short attrChangeArg);
+	};
+};

@@ -20,29 +20,51 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "SVGStyledElementImpl.h"
 #include "SVGAnimatedNumberImpl.h"
 
 using namespace KSVG;
 
-SVGAnimatedNumberImpl::SVGAnimatedNumberImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGNumberImpl>(context)
+SVGAnimatedNumberImpl::SVGAnimatedNumberImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
+	m_baseVal = 0;
+	m_animVal = 0;
+
+	m_context = context;
 }
 
 SVGAnimatedNumberImpl::~SVGAnimatedNumberImpl()
 {
 }
 
-SVGNumberImpl *SVGAnimatedNumberImpl::create() const
+float SVGAnimatedNumberImpl::baseVal() const
 {
-	return new SVGNumberImpl(m_context);
+	return m_baseVal;
 }
 
-void SVGAnimatedNumberImpl::assign(SVGNumberImpl *src, SVGNumberImpl *dst) const
+void SVGAnimatedNumberImpl::setBaseVal(float baseVal)
 {
-	if(!src || !dst)
-		return;
+	m_baseVal = baseVal;
 	
-	dst->setValue(src->value());
+	// Spec: If the given attribute or property is not currently
+	//		 being animated, contains the same value as 'baseVal'
+	m_animVal = baseVal;
+
+	if(m_context)
+		m_context->notifyAttributeChange();
+}
+
+float SVGAnimatedNumberImpl::animVal() const
+{
+	return m_animVal;
+}
+
+void SVGAnimatedNumberImpl::setAnimVal(float animVal)
+{
+	m_animVal = animVal;
+
+	if(m_context)
+		m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

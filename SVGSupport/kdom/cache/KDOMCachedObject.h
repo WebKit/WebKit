@@ -100,7 +100,7 @@ namespace KDOM
 		bool isExpired() const;
 
 		// Helpers
-		const KDOM::DOMString &url() const { return m_url; }
+		const DOMString &url() const { return m_url; }
 		Type type() const { return m_type; }
 
 		int count() const { return m_clients.count(); }

@@ -20,38 +20,32 @@
  *
  */
 
-#include <qglobal.h>
 #include <qvaluelist.h>
 
-#include "DOMString.h"
-#include "Node.h"
-#include <kdom/Shared.h>
-
-#include "DocumentImpl.h"
+#include "kdom/Shared.h"
 #include "NodeImpl.h"
-
-#include "PointerPartImpl.h"
-#include "XPointerResult.h"
 #include "kdomxpointer.h"
-
+#include "DocumentImpl.h"
+#include "DOMStringImpl.h"
+#include "PointerPartImpl.h"
+#include "XPointerResultImpl.h"
 #include "XPointerExceptionImpl.h"
 #include "XPointerExpressionImpl.h"
-#include "XPointerResultImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
 
-XPointerExpressionImpl::XPointerExpressionImpl(const DOMString &raw, NodeImpl* r, DocumentImpl* context)
-											: Shared(true), m_isShortHand(false), m_pointer(raw),
-											m_relatedNode(r), m_context(context)
+XPointerExpressionImpl::XPointerExpressionImpl(DOMStringImpl *raw, NodeImpl *r, DocumentImpl *context)
+: Shared(), m_isShortHand(false), m_pointer(raw), m_relatedNode(r), m_context(context)
 {
-	Q_ASSERT(!raw.isEmpty());
-	Q_ASSERT(context);
+	Q_ASSERT((m_pointer && !m_pointer->isEmpty()));
+	Q_ASSERT(m_context);
 
-	if(r)
-		r->ref();
+	if(m_relatedNode)
+		m_relatedNode->ref();
 
-	context->ref();
+	m_pointer->ref();
+	m_context->ref();
 }
 
 XPointerExpressionImpl::~XPointerExpressionImpl()
@@ -72,6 +66,9 @@ XPointerExpressionImpl::~XPointerExpressionImpl()
 
 	Q_ASSERT(m_context);
 	m_context->deref();
+
+	Q_ASSERT(m_pointer);
+	m_pointer->deref();
 }
 
 XPointerResultImpl *XPointerExpressionImpl::evaluate() const
@@ -86,16 +83,16 @@ XPointerResultImpl *XPointerExpressionImpl::evaluate() const
 			continue;
 			
 		XPointerResultImpl *result = part->evaluate(static_cast<NodeImpl *>(m_context));
-		if(!result || result->resultType() == XPointerResult::NO_MATCH && !isShortHand())
+		if(!result || result->resultType() == NO_MATCH && !isShortHand())
 			continue;
 		
 		return result;
 	}
 
-	return new XPointerResultImpl(XPointerResult::NO_MATCH);
+	return new XPointerResultImpl(NO_MATCH);
 }
 
-DOMString XPointerExpressionImpl::string() const
+DOMStringImpl *XPointerExpressionImpl::string() const
 {
 	return m_pointer;
 }

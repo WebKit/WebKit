@@ -22,8 +22,6 @@
 
 #include <math.h>
 
-#include <kdom/ecma/Ecma.h>
-
 #include "ksvg.h"
 #include "SVGHelper.h"
 #include "SVGAngleImpl.h"
@@ -31,16 +29,16 @@
 
 using namespace KSVG;
 
-SVGMatrixImpl::SVGMatrixImpl() : KDOM::Shared(true)
+SVGMatrixImpl::SVGMatrixImpl() : KDOM::Shared()
 {
 }
 
-SVGMatrixImpl::SVGMatrixImpl(QWMatrix mat) : KDOM::Shared(true)
+SVGMatrixImpl::SVGMatrixImpl(QWMatrix mat) : KDOM::Shared()
 {
 	m_mat = mat;
 }
 
-SVGMatrixImpl::SVGMatrixImpl(double a, double b, double c, double d, double e, double f) : KDOM::Shared(true)
+SVGMatrixImpl::SVGMatrixImpl(double a, double b, double c, double d, double e, double f) : KDOM::Shared()
 {
 	m_mat.setMatrix(a, b, c, d, e, f);
 }

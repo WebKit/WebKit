@@ -37,8 +37,8 @@ namespace KDOM
 		virtual ~CSSStyleRuleImpl();
 
 		// 'CSSStyleRule' functions
-		void setSelectorText(const DOMString &selectorText);
-		DOMString selectorText() const;
+		DOMStringImpl *selectorText() const;
+		void setSelectorText(DOMStringImpl *selectorText);
 
 		virtual bool parseString(const DOMString &string, bool = false);
 

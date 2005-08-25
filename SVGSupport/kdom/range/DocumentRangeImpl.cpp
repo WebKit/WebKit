@@ -36,7 +36,7 @@ DocumentRangeImpl::~DocumentRangeImpl()
 
 RangeImpl *DocumentRangeImpl::createRange()
 {
-	return new RangeImpl(static_cast<DocumentImpl *>(this));
+	return new RangeImpl(static_cast<DocumentImpl *>(this)->docPtr());
 }
 
 // vim:ts=4:noet

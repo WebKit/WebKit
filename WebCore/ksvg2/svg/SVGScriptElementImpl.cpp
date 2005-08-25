@@ -21,7 +21,7 @@
 */
 
 #include <kdom/DOMString.h>
-#include <kdom/ecma/Ecma.h>
+//#include <kdom/ecma/Ecma.h>
 #include <kdom/impl/AttrImpl.h>
 
 #include "ksvg.h"
@@ -33,7 +33,7 @@
 
 using namespace KSVG;
 
-SVGScriptElementImpl::SVGScriptElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : SVGElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
+SVGScriptElementImpl::SVGScriptElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
 {
 	m_type = 0;
 }
@@ -61,7 +61,7 @@ void SVGScriptElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 	{
 		case ATTR_TYPE:
 		{
-			KDOM::DOMStringImpl *type = (attr->val() ? attr->val()->copy() : 0);
+			KDOM::DOMStringImpl *type = (attr->value() ? attr->value()->copy() : 0);
 			setType(type);
 			break;
 		}
@@ -79,7 +79,7 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
 {
 	if(!document)
 		return;
-
+#if 0
 	KDOM::Ecma *ecmaEngine = document->ecmaEngine();
 	if(!ecmaEngine)
 		return;
@@ -125,6 +125,8 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
     
 #ifdef APPLE_CHANGES
     KJS::Interpreter::unlock();
+#endif
+
 #endif
 }
 

@@ -24,6 +24,7 @@
 #include <kdom/impl/AttrImpl.h>
 #include <kdom/impl/domattrs.h>
 #include <kdom/impl/CDFInterface.h>
+#include <kdom/DOMString.h>
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasItem.h>
@@ -50,7 +51,7 @@
 
 using namespace KSVG;
 
-SVGStyledElementImpl::SVGStyledElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGStyledElementImpl::SVGStyledElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGElementImpl(doc, id, prefix), SVGStylableImpl(), m_pa(0), m_className(0)
 {
 	m_canvasItem = 0;
@@ -95,7 +96,7 @@ KDOM::CSSStyleDeclarationImpl *SVGStyledElementImpl::pa() const
 	return m_pa;
 }
 
-KDOM::CSSValueImpl *SVGStyledElementImpl::getPresentationAttribute(const KDOM::DOMString &name)
+KDOM::CSSValueImpl *SVGStyledElementImpl::getPresentationAttribute(KDOM::DOMStringImpl *name)
 {
 	return pa()->getPropertyCSSValue(name);
 }
@@ -117,7 +118,7 @@ KCanvasItem *SVGStyledElementImpl::createCanvasItem(KCanvas *canvas, KRenderingS
 void SVGStyledElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMStringImpl *value = attr->val();
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_CLASS:
@@ -127,7 +128,7 @@ void SVGStyledElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 		}
 		case ATTR_STYLE:
 		{
-			style()->setProperty(KDOM::DOMString(value));
+			style()->setProperty(value);
 			break;
 		}
 		default:
@@ -140,7 +141,7 @@ void SVGStyledElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 				if(svgPropId > 0)
 				{
 					if(value)
-						pa()->setProperty(svgPropId, KDOM::DOMString(value));
+						pa()->setProperty(svgPropId, value);
 					else
 						pa()->removeProperty(svgPropId);
 
@@ -160,7 +161,7 @@ KDOM::RenderStyle *SVGStyledElementImpl::renderStyle() const
 {
 	if(!m_renderStyle)
 	{
-		kdDebug(26002) << "[SVGStyledElementImpl::renderStyle] Updating rendering style of " << localName() << " ..." << endl;
+		kdDebug(26002) << "[SVGStyledElementImpl::renderStyle] Updating rendering style of " << KDOM::DOMString(localName()) << " ..." << endl;
 		SVGDocumentImpl *doc = static_cast<SVGDocumentImpl *>(ownerDocument());
 		if(!doc)
 			return 0;
@@ -172,7 +173,7 @@ KDOM::RenderStyle *SVGStyledElementImpl::renderStyle() const
 		m_renderStyle = styleSelector->styleForElement(const_cast<SVGStyledElementImpl *>(this));
 	}
 	else
-		kdDebug(26002) << "[SVGStyledElementImpl::renderStyle] Getting cached rendering style of " << localName() << " ..." << endl;
+		kdDebug(26002) << "[SVGStyledElementImpl::renderStyle] Getting cached rendering style of " << KDOM::DOMString(localName()) << " ..." << endl;
 
 	return m_renderStyle;
 }
@@ -199,10 +200,10 @@ void SVGStyledElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool need
 
 void SVGStyledElementImpl::attach()
 {
-	kdDebug(26002) << "[SVGStyledElementImpl::attach] About to attach canvas item for element " << localName() << endl;
+	kdDebug(26002) << "[SVGStyledElementImpl::attach] About to attach canvas item for element " << KDOM::DOMString(localName()) << endl;
 
 	SVGDocumentImpl *doc = static_cast<SVGDocumentImpl *>(ownerDocument());
-	KCanvas *canvas = (doc ? doc->canvas() : 0);	
+	KCanvas *canvas = (doc ? doc->canvas() : 0);
 	if(canvas && implementsCanvasItem())
 	{
 		SVGRenderStyle *svgStyle = static_cast<SVGRenderStyle *>(renderStyle());
@@ -248,7 +249,7 @@ void SVGStyledElementImpl::attach()
 
 void SVGStyledElementImpl::detach()
 {
-	kdDebug(26002) << "[SVGStyledElementImpl::detach] About to detach canvas item for element " << localName() << endl;
+	kdDebug(26002) << "[SVGStyledElementImpl::detach] About to detach canvas item for element " << KDOM::DOMString(localName()) << endl;
 
 	if(m_canvasItem)
 	{

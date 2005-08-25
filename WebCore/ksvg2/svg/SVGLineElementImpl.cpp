@@ -32,7 +32,7 @@
 
 using namespace KSVG;
 
-SVGLineElementImpl::SVGLineElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix)
+SVGLineElementImpl::SVGLineElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
 {
 	m_x1 = m_y1 = m_x2 = m_y2 = 0;
@@ -73,7 +73,7 @@ SVGAnimatedLengthImpl *SVGLineElementImpl::y2() const
 void SVGLineElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
 	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
+	KDOM::DOMStringImpl *value = attr->value();
 	switch(id)
 	{
 		case ATTR_X1:

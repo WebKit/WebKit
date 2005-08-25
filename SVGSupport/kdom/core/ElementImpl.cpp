@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,7 +27,6 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "Ecma.h"
 #include "kdom/Helper.h"
 #include "AttrImpl.h"
 #include "NodeImpl.h"
@@ -39,7 +45,7 @@
 
 using namespace KDOM;
 	
-ElementImpl::ElementImpl(DocumentImpl *doc) : NodeBaseImpl(doc), m_attributes(0)
+ElementImpl::ElementImpl(DocumentPtr *doc) : NodeBaseImpl(doc), m_attributes(0)
 {
 	m_styleDeclarations = 0;
 	m_prefix = 0;
@@ -49,7 +55,7 @@ ElementImpl::ElementImpl(DocumentImpl *doc) : NodeBaseImpl(doc), m_attributes(0)
 	m_restyleChildrenLate = false;
 }
 
-ElementImpl::ElementImpl(DocumentImpl *doc, const DOMString &prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_attributes(0)
+ElementImpl::ElementImpl(DocumentPtr *doc, DOMStringImpl *prefix, bool nullNSSpecified) : NodeBaseImpl(doc), m_attributes(0)
 {
 	m_dom2 = true;
 	m_restyleLate = false;
@@ -58,7 +64,7 @@ ElementImpl::ElementImpl(DocumentImpl *doc, const DOMString &prefix, bool nullNS
 	
 	m_styleDeclarations = 0;
 
-	m_prefix = prefix.implementation();
+	m_prefix = prefix;
 	if(m_prefix)
 		m_prefix->ref();
 		
@@ -84,7 +90,7 @@ ElementImpl::~ElementImpl()
 		m_prefix->deref();
 }
 
-DOMString ElementImpl::nodeName() const
+DOMStringImpl *ElementImpl::nodeName() const
 {
 	return tagName();
 }
@@ -94,19 +100,19 @@ unsigned short ElementImpl::nodeType() const
 	return ELEMENT_NODE;
 }
 
-DOMString ElementImpl::prefix() const
+DOMStringImpl *ElementImpl::prefix() const
 {
-	return DOMString(m_prefix);
+	return m_prefix;
 }
 
-void ElementImpl::setPrefix(const DOMString &prefix)
+void ElementImpl::setPrefix(DOMStringImpl *prefix)
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(isReadOnly())
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
 	Helper::CheckPrefix(prefix, nodeName(), namespaceURI());
-	KDOM_SAFE_SET(m_prefix, prefix.implementation());
+	KDOM_SAFE_SET(m_prefix, prefix);
 }
 
 bool ElementImpl::hasAttributes() const
@@ -114,24 +120,24 @@ bool ElementImpl::hasAttributes() const
 	return attributes()->length() > 0;
 }
 
-bool ElementImpl::hasAttribute(const DOMString &name) const
+bool ElementImpl::hasAttribute(DOMStringImpl *name) const
 {
 	if(!attributes())
 		return false;
 
-	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name.implementation(), true);
+	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name, true);
 	if(!id)
 		return (attributes()->lookupAttribute(name) != 0);
 
-	return attributes()->getValue(id, false, name.implementation()) != 0;
+	return attributes()->getValue(id, false, name) != 0;
 }
 
-bool ElementImpl::hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const
+bool ElementImpl::hasAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const
 {
 	if(!attributes())
 		return false;
 
-	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, namespaceURI.implementation(), 0, localName.implementation(), true);
+	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, namespaceURI, 0, localName, true);
 	if(!id)
 		return (attributes()->lookupAttribute(localName) != 0);
 
@@ -180,49 +186,49 @@ bool ElementImpl::childTypeAllowed(unsigned short type) const
 	}
 }
 
-DOMString ElementImpl::getAttribute(NodeImpl::Id id, bool nsAware, DOMStringImpl *qName) const
+DOMStringImpl *ElementImpl::getAttribute(NodeImpl::Id id, bool nsAware, DOMStringImpl *qName) const
 {
 	if(m_attributes)
 	{
 		DOMStringImpl *value = m_attributes->getValue(id, nsAware, qName);
 		if(value)
-			return DOMString(value);
+			return value;
 	}
 
-	return DOMString(""); // Spec says empty, not null string
+	return new DOMStringImpl(""); // Spec says empty, not null string
 }
 
-DOMString ElementImpl::getAttribute(const DOMString &name) const
+DOMStringImpl *ElementImpl::getAttribute(DOMStringImpl *name) const
 {
-	if(name.isNull())
+	if(!name)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name.implementation(), true);
+	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name, true);
 	if(!id)
 	{
 		AttrImpl *attr = attributes()->lookupAttribute(name);
 		if(attr)
 			return attr->value();
 
-		return DOMString("");
+		return 0;
 	}
 
-	return getAttribute(id, false, name.implementation());
+	return getAttribute(id, false, name);
 }
 
-DOMString ElementImpl::getAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const
+DOMStringImpl *ElementImpl::getAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const
 {
-	if(localName.isNull())
+	if(!localName)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, namespaceURI.implementation(), 0, localName.implementation(), true);
+	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, namespaceURI, 0, localName, true);
 	if(!id)
 	{
 		AttrImpl *attr = attributes()->lookupAttribute(localName);
 		if(attr)
 			return attr->value();
 
-		return "";
+		return 0;
 	}
 
 	return getAttribute(id, true);
@@ -250,38 +256,60 @@ void ElementImpl::setAttribute(DOMStringImpl *name, DOMStringImpl *value)
 void ElementImpl::removeAttribute(DOMStringImpl *name)
 {
 	NodeImpl *ret =attributes()->removeNamedItem(name);
-	if(ret) ret->deref();
+	if(ret)
+		ret->deref();
 }
 
 void ElementImpl::removeAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName)
 {
 	NodeImpl *ret = attributes()->removeNamedItemNS(namespaceURI, localName);
-	if(ret) ret->deref();
+	if(ret)
+		ret->deref();
 }
 
-NodeListImpl *ElementImpl::getElementsByTagName(const DOMString &name) const
+NodeListImpl *ElementImpl::getElementsByTagName(DOMStringImpl *name) const
 {
 	return new TagNodeListImpl(const_cast<ElementImpl *>(this), name);
 }
 
-void ElementImpl::setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value) 
+void ElementImpl::setAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DOMStringImpl *value) 
 {
 	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
 	if(isReadOnly())
 		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
  
-	int colonPos = 0;
-	Helper::CheckQualifiedName(qualifiedName, namespaceURI, colonPos, false /* nameCanBeNull */, false /* nameCanBeEmpty */);
+ 	if(namespaceURI)
+		namespaceURI->ref();
+	if(qualifiedName)
+		qualifiedName->ref();
 
-	DOMString prefix, localName;
-	Helper::SplitPrefixLocalName(qualifiedName.implementation(), prefix, localName, colonPos);
+	int colonPos = 0;
+	Helper::CheckQualifiedName(qualifiedName, namespaceURI, colonPos,
+							   false /* nameCanBeNull */, false /* nameCanBeEmpty */);
+
+	DOMStringImpl *prefix = 0, *localName = 0;
+	Helper::SplitPrefixLocalName(qualifiedName, prefix, localName, colonPos);
+
+	if(prefix)
+		prefix->ref();
+	if(localName)
+		localName->ref();
 
 	// INVALID_CHARACTER_ERR: Raised if the specified name contains an illegal character.
-	if(!Helper::ValidateAttributeName(localName.implementation()))
+	if(!Helper::ValidateAttributeName(localName))
 		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
 
-	NodeImpl::Id id = ownerDocument()->getId(AttributeId, namespaceURI.implementation(), prefix.implementation(), localName.implementation(), false);
-	attributes()->setValue(id, value.implementation(), 0, prefix.implementation(), true /*nsAware*/, !namespaceURI.isEmpty() /*hasNS*/);
+	NodeImpl::Id id = ownerDocument()->getId(AttributeId, namespaceURI, prefix, localName, false);
+	attributes()->setValue(id, value, 0, prefix, true /* nsAware */, (namespaceURI && !namespaceURI->isEmpty()) /* hasNS */);
+
+	if(prefix)
+		prefix->deref();
+	if(localName)
+		localName->deref();
+	if(namespaceURI)
+		namespaceURI->deref();
+	if(qualifiedName)
+		qualifiedName->deref();
 }
 
 AttrImpl *ElementImpl::getAttributeNode(DOMStringImpl *name) const
@@ -294,7 +322,7 @@ AttrImpl *ElementImpl::getAttributeNode(DOMStringImpl *name) const
 
 	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name, true);
 	if(!id)
-		return attributes()->lookupAttribute(DOMString(name));
+		return attributes()->lookupAttribute(name);
 
 	return static_cast<AttrImpl *>(attributes()->getNamedItem(id, false, name));
 }
@@ -334,7 +362,7 @@ AttrImpl *ElementImpl::getAttributeNodeNS(DOMStringImpl *namespaceURI, DOMString
 
 	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, namespaceURI, 0, localName, true);
 	if(!id)
-		return attributes()->lookupAttribute(DOMString(localName));
+		return attributes()->lookupAttribute(localName);
 
 	return static_cast<AttrImpl *>(attributes()->getNamedItem(id, true));
 }
@@ -349,18 +377,18 @@ AttrImpl *ElementImpl::setAttributeNodeNS(AttrImpl *newAttr)
 	return attr;
 }
 
-NodeListImpl *ElementImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName) const
+NodeListImpl *ElementImpl::getElementsByTagNameNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const
 {
 	return new TagNodeListImpl(const_cast<ElementImpl *>(this), localName, namespaceURI);
 }
 
-NodeImpl *ElementImpl::cloneNode(bool deep, DocumentImpl *doc) const
+NodeImpl *ElementImpl::cloneNode(bool deep, DocumentPtr *doc) const
 {
 	ElementImpl *clone = 0;
 	if(m_dom2)
-		clone = doc->createElementNS(namespaceURI(), nodeName());
+		clone = doc->document()->createElementNS(namespaceURI(), nodeName());
 	else
-		clone = doc->createElement(nodeName());
+		clone = doc->document()->createElement(nodeName());
 
 	clone->attributes()->clone(attributes());
 
@@ -373,36 +401,50 @@ NodeImpl *ElementImpl::cloneNode(bool deep, DocumentImpl *doc) const
 	return clone;
 }
 
-AttrImpl *ElementImpl::getIdAttribute(const DOMString &name) const
+AttrImpl *ElementImpl::getIdAttribute(DOMStringImpl *name) const
 {
+	DOMString _name(name);
+
 	unsigned long len = attributes()->length();
 	for(unsigned long i = 0; i < len; i++)
 	{
 		AttrImpl *attr = static_cast<AttrImpl *>(attributes()->item(i));
-		if(attr && attr->isId() && attr->value() == name)
+		DOMStringImpl *val = attr->value();
+		if(val)
+			val->ref();
+
+		if(attr && attr->isId() && DOMString(val) == _name)
+		{
+			if(val)
+				val->deref();
+
 			return attr;
+		}
+
+		if(val)
+			val->deref();
 	}
 
 	return 0;
 }
 
-DOMString ElementImpl::namespaceURI() const
+DOMStringImpl *ElementImpl::namespaceURI() const
 {
 	if(m_nullNSSpecified || !m_dom2 || !ownerDocument())
-		return DOMString();
+		return 0;
 
 	return ownerDocument()->getName(NodeImpl::NamespaceId, id() >> 16);
 }
 
-void ElementImpl::setIdAttribute(const DOMString &name, bool isId)
+void ElementImpl::setIdAttribute(DOMStringImpl *name, bool isId)
 {
-	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name.implementation(), true);
+	NodeImpl::Id id = ownerDocument()->getId(NodeImpl::AttributeId, name, true);
 	
 	// NOT_FOUND_ERR: Raised if there is no node named name in this map.
 	if(!id)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
-	AttrImpl *attr = static_cast<AttrImpl *>(attributes()->getNamedItem(id, false, name.implementation()));
+	AttrImpl *attr = static_cast<AttrImpl *>(attributes()->getNamedItem(id, false, name));
 
 	// NOT_FOUND_ERR: Raised if there is no node named name in this map.
 	if(!attr)
@@ -411,10 +453,10 @@ void ElementImpl::setIdAttribute(const DOMString &name, bool isId)
 	attr->setIsId(isId);
 }
 
-void ElementImpl::setIdAttributeNS(const DOMString &namespaceURI, const DOMString &localName, bool isId)
+void ElementImpl::setIdAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName, bool isId)
 {
 	// NOT_FOUND_ERR: Raised if there is no node named name in this map.
-	NodeImpl::Id id = ownerDocument()->getId(AttributeId, namespaceURI.implementation(), 0, localName.implementation(), false);
+	NodeImpl::Id id = ownerDocument()->getId(AttributeId, namespaceURI, 0, localName, false);
 	if(!id)
 		throw new DOMExceptionImpl(NOT_FOUND_ERR);
 
@@ -432,10 +474,18 @@ void ElementImpl::setIdAttributeNode(AttrImpl *idAttr, bool isId)
 	if(!idAttr)
 		return;
 
-	if(idAttr->localName().isEmpty())
-		setIdAttribute(idAttr->name(), isId);
+	if((!idAttr->localName() || idAttr->localName()->isEmpty()))
+	{
+		DOMStringImpl *_name = (idAttr->name() ? idAttr->name()->copy() : 0);
+		setIdAttribute(_name, isId);
+	}
 	else
-		setIdAttributeNS(idAttr->namespaceURI(), idAttr->localName(), isId);
+	{
+		DOMStringImpl *_localName = (idAttr->localName() ? idAttr->localName()->copy() : 0);
+		DOMStringImpl *_namespaceURI = (idAttr->namespaceURI() ? idAttr->namespaceURI()->copy() : 0);
+
+		setIdAttributeNS(_namespaceURI, _localName, isId);
+	}
 }
 
 void ElementImpl::parseAttribute(AttributeImpl *attr)
@@ -462,8 +512,8 @@ void ElementImpl::parseAttribute(AttributeImpl *attr)
 		case ATTR_ONKEYDOWN:
 		case ATTR_ONKEYUP:
 		{
-			Ecma *ecmaEngine = (ownerDocument() ? ownerDocument()->ecmaEngine() : 0);
-			addDOMEventListener(ecmaEngine, DOMImplementationImpl::self()->idToType(id - 2), value);
+//			Ecma *ecmaEngine = (ownerDocument() ? ownerDocument()->ecmaEngine() : 0);
+//			addDOMEventListener(ecmaEngine, DOMImplementationImpl::self()->idToType(id - 2), value);
 			break;
 		}
 		default:
@@ -495,8 +545,8 @@ void ElementImpl::createStyleDeclaration() const
 	m_styleDeclarations->setNode(const_cast<ElementImpl *>(this));
 	m_styleDeclarations->setParent(ownerDocument()->elementSheet());
 }
-
-void ElementImpl::addDOMEventListener(Ecma *ecmaEngine, const DOMString &type, const DOMString &value)
+/*
+void ElementImpl::addDOMEventListener(Ecma *ecmaEngine, DOMStringImpl *type, DOMStringImpl *value)
 {
 	if(!ecmaEngine)
 		return;
@@ -508,7 +558,7 @@ void ElementImpl::addDOMEventListener(Ecma *ecmaEngine, const DOMString &type, c
 		addEventListener(type, listener, false);
 	}
 }
-
+*/
 bool ElementImpl::hasListenerType(int eventId) const
 {
 	if(EventTargetImpl::hasListenerType(eventId))

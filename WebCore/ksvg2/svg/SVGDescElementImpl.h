@@ -32,10 +32,10 @@ namespace KSVG
 							   public SVGLangSpaceImpl
 	{
 	public:
-		SVGDescElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGDescElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGDescElementImpl();
 
-		KDOM::DOMString description() const;
+		KDOM::DOMStringImpl *description() const;
 	};
 };
 

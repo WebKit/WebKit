@@ -123,10 +123,18 @@ QTextCodec *CachedObject::codecForBuffer(const QString &charset, const QByteArra
 	int s = buffer.size();
 
 	if(s >= 3 && d[0] == 0xef && d[1] == 0xbb && d[2] == 0xbf)
+#ifdef APPLE_CHANGES
 		return QTextCodec::codecForName("utf-8"); // UTF-8
+#else
+		return QTextCodec::codecForMib( 106 ); // UTF-8
+#endif
 
 	if(s >= 2 && ((d[0] == 0xff && d[1] == 0xfe) || (d[0] == 0xfe && d[1] == 0xff)))
+#ifdef APPLE_CHANGES
 		return QTextCodec::codecForName("ucs-2"); // UCS-2
+#else
+		return QTextCodec::codecForMib( 1000 ); // UCS-2
+#endif
 
 #ifndef APPLE_COMPILE_HACK
 	if(!charset.isEmpty())
@@ -139,7 +147,11 @@ QTextCodec *CachedObject::codecForBuffer(const QString &charset, const QByteArra
 	}
 #endif
 
+#ifdef APPLE_CHANGES
 	return QTextCodec::codecForName("latin-1");; // latin-1
+#else
+	return QTextCodec::codecForMib(4); // latin-1
+#endif
 }
 	
 void CachedObject::setRequest(Request *request)

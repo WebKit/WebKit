@@ -158,7 +158,7 @@ namespace KDOM
 		virtual void adjustRenderStyle(RenderStyle *, ElementImpl *) { }
 		virtual unsigned int addExtraDeclarations(ElementImpl *, unsigned int numProps) { return numProps; }
 
-		DOMString getLangAttribute(ElementImpl *e);
+		DOMStringImpl *getLangAttribute(ElementImpl *e);
 
 		// Helper function (used for instance by khtml's HTMLCSSStyleSelector)
 		static Length convertToLength(CSSPrimitiveValueImpl *primitiveValue, RenderStyle *style,
@@ -174,11 +174,11 @@ namespace KDOM
 		CSSStyleSelectorList *userStyle;
 		CSSStyleSheetImpl *userSheet;
 
-	private:
-		void init(const KDOMSettings *settings);
-
 	protected:
 		static QColor colorForCSSValue(int css_value); // Helper
+
+	private:
+		void init(const KDOMSettings *settings);
 
 	public: // we need to make the enum public for SelectorCache
 		enum SelectorState
@@ -306,7 +306,7 @@ namespace KDOM
 		CSSStyleSelectorList();
 		virtual ~CSSStyleSelectorList();
 
-		void append(CSSStyleSheetImpl *sheet, const DOMString &medium = "screen");
+		void append(CSSStyleSheetImpl *sheet, DOMStringImpl *medium);
 		void collect(QPtrList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
 					 Source regular, Source important);
 	};

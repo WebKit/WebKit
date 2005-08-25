@@ -48,17 +48,17 @@ CSSValueImpl *CSSValueListImpl::item(unsigned long index)
 	return m_values.at(index);
 }
 
-DOMString CSSValueListImpl::cssText() const
+DOMStringImpl *CSSValueListImpl::cssText() const
 {
-	DOMString result = "";
+	DOMStringImpl *result = new DOMStringImpl();
 
 	for(QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator)
-		result += iterator.current()->cssText();
+		result->append(iterator.current()->cssText());
 
 	return result;
 }
 
-void CSSValueListImpl::setCssText(const DOMString &)
+void CSSValueListImpl::setCssText(DOMStringImpl *)
 {
 }
 

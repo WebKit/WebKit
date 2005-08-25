@@ -2,6 +2,13 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+              (C) 1999 Antti Koivisto (koivisto@kde.org)
+              (C) 2001 Peter Kelly (pmk@post.com)
+              (C) 2001 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Apple Computer, Inc.
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -39,31 +46,32 @@ namespace KDOM
 	class ElementImpl : public NodeBaseImpl
 	{
 	public:
-		ElementImpl(DocumentImpl *doc);
-		ElementImpl(DocumentImpl *doc, const DOMString &prefix, bool nullNSSpecified = false);
+		ElementImpl(DocumentPtr *doc);
+		ElementImpl(DocumentPtr *doc, DOMStringImpl *prefix, bool nullNSSpecified = false);
 		virtual ~ElementImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
-		virtual DOMString tagName() const = 0;
+		virtual DOMStringImpl *tagName() const = 0;
 
-		virtual DOMString prefix() const;
-		virtual void setPrefix(const DOMString &prefix);
+		virtual DOMStringImpl *prefix() const;
+		virtual void setPrefix(DOMStringImpl *prefix);
 
 		virtual bool hasAttributes() const;
 		
-		bool hasAttribute(const DOMString &name) const;
-		bool hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+		bool hasAttribute(DOMStringImpl *name) const;
+		bool hasAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
 		
 		virtual NamedAttrMapImpl *attributes(bool readonly = false) const;
 
-		DOMString getAttribute(NodeImpl::Id id, bool nsAware = 0, DOMStringImpl *qName = 0) const;
-		DOMString getAttribute(const DOMString &name) const;
-		DOMString getAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+		DOMStringImpl *getAttribute(NodeImpl::Id id, bool nsAware = 0, DOMStringImpl *qName = 0) const;
+		DOMStringImpl *getAttribute(DOMStringImpl *name) const;
+		DOMStringImpl *getAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
 		
 		void setAttribute(NodeImpl::Id id, DOMStringImpl *value, DOMStringImpl *qName);
 		void setAttribute(DOMStringImpl *name, DOMStringImpl *value);
-		
+		void setAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DOMStringImpl *value);
+	
 		void removeAttribute(DOMStringImpl *name);
 		void removeAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
 		
@@ -71,17 +79,16 @@ namespace KDOM
 		AttrImpl *setAttributeNode(AttrImpl *newAttr);
 		AttrImpl *removeAttributeNode(AttrImpl *oldAttr);
 		
-		void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value);
 		virtual AttrImpl *getAttributeNodeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
 		virtual AttrImpl *setAttributeNodeNS(AttrImpl *newAttr);
-		virtual NodeListImpl *getElementsByTagName(const DOMString &name) const;
 
-		virtual NodeListImpl *getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName) const;
+		virtual NodeListImpl *getElementsByTagName(DOMStringImpl *name) const;
+		virtual NodeListImpl *getElementsByTagNameNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) const;
 
-		virtual DOMString namespaceURI() const;
+		virtual DOMStringImpl *namespaceURI() const;
 
-		void setIdAttribute(const DOMString &name, bool isId); // DOM3
-		void setIdAttributeNS(const DOMString &namespaceURI, const DOMString &localName, bool isId); // DOM3
+		void setIdAttribute(DOMStringImpl *name, bool isId); // DOM3
+		void setIdAttributeNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName, bool isId); // DOM3
 		void setIdAttributeNode(AttrImpl *idAttr, bool isId); // DOM3
 
 		// Internal
@@ -90,9 +97,9 @@ namespace KDOM
 
 		virtual bool checkChild(unsigned short /* tagID */, unsigned short /* childID */) { return true; }
 
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		AttrImpl *getIdAttribute(const DOMString &name) const;
+		AttrImpl *getIdAttribute(DOMStringImpl *name) const;
 
 		virtual void parseAttribute(AttributeImpl *);
 		void parseAttribute(Id attrId, DOMStringImpl *value);
@@ -118,8 +125,8 @@ namespace KDOM
 
 		void setAttributeMap(NamedAttrMapImpl *list);
 
-	private:
-		void addDOMEventListener(Ecma *ecmaEngine, const DOMString &type, const DOMString &value);
+//	private:
+//		void addDOMEventListener(Ecma *ecmaEngine, DOMStringImpl *type, DOMStringImpl *value);
 
 	protected:
 		mutable NamedAttrMapImpl *m_attributes;

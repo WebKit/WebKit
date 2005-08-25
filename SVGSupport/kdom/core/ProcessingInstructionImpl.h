@@ -2,6 +2,9 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
 				  2004, 2005 Rob Buis <buis@kde.org>
 
+    Based on khtml code by:
+    Copyright (C) 2000 Peter Kelly (pmk@post.com)
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -36,30 +39,30 @@ namespace KDOM
 									  private CachedObjectClient
 	{
 	public:
-		ProcessingInstructionImpl(DocumentImpl *doc, const DOMString &target, const DOMString &data);
+		ProcessingInstructionImpl(DocumentPtr *doc, DOMStringImpl *target, DOMStringImpl *data);
 		virtual ~ProcessingInstructionImpl();
 
 		// 'ProcessingInstruction' functions
-		DOMString target() const;
+		DOMStringImpl *target() const;
 
-		DOMString data() const;
-		void setData(const DOMString &data);
+		DOMStringImpl *data() const;
+		void setData(DOMStringImpl *data);
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
 
-		virtual DOMString nodeValue() const;
-		virtual void setNodeValue(const DOMString &nodeValue);
+		virtual DOMStringImpl *nodeValue() const;
+		virtual void setNodeValue(DOMStringImpl *nodeValue);
 
-		virtual DOMString textContent() const; // DOM3
+		virtual DOMStringImpl *textContent() const; // DOM3
 
 		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		virtual DOMString localHref() const;
-    		StyleSheetImpl *sheet() const;
+		virtual DOMStringImpl *localHref() const;
+		StyleSheetImpl *sheet() const;
 		void checkStyleSheet();
-		virtual void setStyleSheet(const DOMString &url, const DOMString &sheet);
+		virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
 		virtual void setStyleSheet(CSSStyleSheetImpl *sheet);
 
 	protected:

@@ -30,14 +30,14 @@ namespace KDOM
 	class CDATASectionImpl : public TextImpl
 	{
 	public:
-		CDATASectionImpl(DocumentImpl *doc, DOMStringImpl *text);
+		CDATASectionImpl(DocumentPtr *doc, DOMStringImpl *text);
 		virtual ~CDATASectionImpl();
 
-		virtual DOMString nodeName() const;
+		virtual DOMStringImpl *nodeName() const;
 		virtual unsigned short nodeType() const;
 
 		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentImpl *doc) const;
+		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 	};
 };
 

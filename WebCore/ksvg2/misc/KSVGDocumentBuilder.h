@@ -31,7 +31,7 @@ class KURL;
 
 namespace KSVG
 {
-	class SVGDocument;
+	//class SVGDocument;
 	class SVGDocumentImpl;
 
 	// KSVG Document builder 
@@ -45,10 +45,10 @@ namespace KSVG
 		// Use this function to link a newly created 'KDOM::Document'
 		// with the passed 'KCanvas', and the other for indicate that
 		// you are done creating your tree (invokes rendering in non-progr. mode)
-		static void linkDocumentToCanvas(const SVGDocument &doc, KSVGView *view);
+//		static void linkDocumentToCanvas(const SVGDocument &doc, KSVGView *view);
 		static void linkDocumentToCanvas(SVGDocumentImpl *docImpl, KSVGView *view);
 
-		static void finishedDocument(const SVGDocument &doc);
+		static void finishedDocument(SVGDocumentImpl *doc);
 
 	protected:
 		virtual bool startDocument(const KURL &uri);

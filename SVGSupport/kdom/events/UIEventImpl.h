@@ -37,7 +37,7 @@ namespace KDOM
 		AbstractViewImpl *view() const;
 		long detail() const;
 
-		void initUIEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg);
+		void initUIEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg);
 
 	private:
 		AbstractViewImpl *m_abstractView;

@@ -25,6 +25,7 @@
 
 #include <qptrlist.h>
 
+#include <kdom/DOMString.h>
 #include <kdom/TreeShared.h>
 
 namespace KDOM
@@ -38,8 +39,8 @@ namespace KDOM
 		EventTargetImpl();
 		virtual ~EventTargetImpl();
 
-		void addEventListener(const DOMString &type, EventListenerImpl *listener, bool useCapture);
-		void removeEventListener(const DOMString &type, EventListenerImpl *listener, bool useCapture);
+		void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+		void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
 		bool dispatchEvent(EventImpl *evt);
 
 		void handleLocalEvents(EventImpl *evt, bool useCapture);

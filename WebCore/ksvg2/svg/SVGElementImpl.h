@@ -28,7 +28,8 @@
 
 namespace KDOM
 {
-	class DocumentImpl;
+	class Ecma;
+	class DocumentPtr;
 };
 
 namespace KSVG
@@ -41,22 +42,19 @@ namespace KSVG
 	class SVGElementImpl : public KDOM::XMLElementImpl
 	{
 	public:
-		SVGElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGElementImpl();
 
-		virtual bool isSupported(const KDOM::DOMString &feature, const KDOM::DOMString &version) const;
+		virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
 
 		// 'SVGElement' functions
-		KDOM::DOMString getId() const;
-		KDOM::DOMString xmlbase() const;
+		KDOM::DOMStringImpl *getId() const;
+		void setGetId(KDOM::DOMStringImpl *);
+		KDOM::DOMStringImpl *xmlbase() const;
+		void setXmlbase(KDOM::DOMStringImpl *);
 
 		SVGSVGElementImpl *ownerSVGElement() const;
 		SVGElementImpl *viewportElement() const;
-
-		// Helper methods that returns the attr value if attr is set, otherwise the default value.
-		// It throws NO_MODIFICATION_ALLOWED_ERR if the element is read-only.
-		KDOM::DOMString tryGetAttribute(const KDOM::DOMString &name, const KDOM::DOMString &defaultVal = "") const;
-		KDOM::DOMString tryGetAttributeNS(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &localName, const KDOM::DOMString &defaultVal = "") const;
 
 		// Internal
 		virtual void parseAttribute(KDOM::AttributeImpl *attr);
@@ -69,7 +67,9 @@ namespace KSVG
 		SVGDocumentImpl *getDocument() const;
 
 	private:
+#if 0
 		void addSVGEventListener(KDOM::Ecma *ecmaEngine, const KDOM::DOMString &type, const KDOM::DOMString &value);
+#endif
 	};
 };
 

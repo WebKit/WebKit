@@ -1,6 +1,9 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004,2005 Nikolas Zimmermann <wildfox@kde.org>
+				  2004,2005 Rob Buis <buis@kde.org>
+
+    Based on khtml code by:
+    (C) 2001 Peter Kelly (pmk@post.com)
 
     This file is part of the KDE project
 
@@ -33,7 +36,7 @@ namespace KDOM
 	public:
 		AbstractViewImpl();
 		virtual ~AbstractViewImpl();
-		
+
 		// 'AbstractViewImpl' functions
 		DocumentViewImpl *document() const;
 

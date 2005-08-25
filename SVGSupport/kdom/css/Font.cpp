@@ -20,14 +20,19 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <alloca.h>
+#include "config.h"
+#ifdef HAVE_ALLOCA_H
+#  include <alloca.h>
+#endif
 
+#include <kdebug.h>
 #include <kglobal.h>
 
 #include <qfontdatabase.h>
 #include <qpaintdevicemetrics.h>
 
 #include "Font.h"
+#include "KDOMSettings.h"
 
 using namespace KDOM;
 
@@ -58,20 +63,18 @@ bool Font::operator==(const Font &other) const
 	return (m_fontDef == other.m_fontDef &&
 			m_wordSpacing == other.m_wordSpacing &&
 			m_letterSpacing == other.m_letterSpacing);
-
 }
 
-void Font::update(QPaintDeviceMetrics *devMetrics) const
+void Font::update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const
 {
-/* FIXME
-	m_font.setFamily(fontDef.family.isEmpty() ? KHTMLFactory::defaultHTMLSettings()->stdFontName() : fontDef.family);
-*/
+#ifndef APPLE_COMPILE_HACK
+	m_font.setFamily(m_fontDef.family.isEmpty() ? settings->stdFontName() : m_fontDef.family);
+
 	m_font.setFamily(m_fontDef.family);
 	m_font.setItalic(m_fontDef.italic);
 	m_font.setWeight(m_fontDef.weight);
 
 	int size = m_fontDef.size;
-#ifndef APPLE_COMPILE_HACK
 	const int lDpiY = kMax(devMetrics->logicalDpiY(), 96);
         
 	QFontDatabase db;
@@ -110,19 +113,16 @@ void Font::update(QPaintDeviceMetrics *devMetrics) const
 		if(bestSize != 0 && diff < 0.2) // 20% deviation, otherwise we use a scaled font...
 			size = (int)((bestSize * lDpiY) / 72);
 	}
-#endif
 
 	// make sure we don't bust up X11
 	size = kMax(0, kMin(255, size));
 
-	// qDebug("setting font to %s, italic=%d, weight=%d, size=%d", m_fontDef.family.latin1(), m_fontDef.italic, m_fontDef.weight, size );
+	qDebug("setting font to %s, italic=%d, weight=%d, size=%d", m_fontDef.family.latin1(), m_fontDef.italic, m_fontDef.weight, size );
 
 	m_font.setPixelSize(size);
 
 	m_fontMetrics = QFontMetrics(m_font);
-#ifndef APPLE_COMPILE_HACK
 	m_fontDef.hasNbsp = m_fontMetrics.inFont(0xa0);
-#endif
 
 	// small caps
 	delete m_scFont;
@@ -133,6 +133,7 @@ void Font::update(QPaintDeviceMetrics *devMetrics) const
 		m_scFont = new QFont(m_font);
 		m_scFont->setPixelSize(m_font.pixelSize() * 7 / 10);
 	}
+#endif
 }
 
 #ifndef APPLE_COMPILE_HACK

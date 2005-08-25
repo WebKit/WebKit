@@ -41,7 +41,7 @@ namespace KDOM
 	class CachedObjectClient
 	{
 	public:
-		virtual ~CachedObjectClient() { }
+		virtual ~CachedObjectClient() {}
 		virtual void setPixmap(const QPixmap &, const QRect &, CachedImage *) { }
 		virtual void setStyleSheet(const DOMString &, const DOMString &) { }
 		virtual void notifyFinished(CachedObject *) { }

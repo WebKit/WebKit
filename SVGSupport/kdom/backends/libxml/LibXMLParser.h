@@ -27,53 +27,29 @@
 
 namespace KDOM
 {
-	typedef enum
-	{
-		KDOM_ENTITY_UNKNOWN = 0,
-		KDOM_INTERNAL_ENTITY = 1,
-		KDOM_EXTERNAL_ENTITY = 2,
-		KDOM_ENTITY_NEW_TREE = 4,
-		KDOM_ENTITY_LIBXML2_BUG = 8
-	} LibXmlEntityMode;
-	
 	// A libxml2 based KDOM parser
 	class LibXMLParser : public Parser
 	{
-	Q_OBJECT
 	public:
 		LibXMLParser(const KURL &url);
 		virtual ~LibXMLParser();
 
-		// Starts parsing the document
-		virtual void startParsing(bool incremental);
-
-		virtual Document parse(QBuffer *buffer = 0);
+		virtual DocumentImpl *syncParse(QBuffer *buffer = 0);
+		virtual void asyncParse(bool incremental = false, const char *accept = 0);
 		void doOneShotParse(const char *rawData, unsigned int rawLength);
 
-		// User-defined break of parsing on specific errors
-		virtual void stopParsing(const DOMString &errorDescription = DOMString());
-
-		// Helper for sax_end_doc
-		void endDocument();
-
-		LibXmlEntityMode entityMode() { return m_entityMode; }
-		void setEntityMode(LibXmlEntityMode mode) { m_entityMode = mode; } 
+		virtual void handleIncomingData(QBuffer *buffer, bool eof);
 
 		QString entityRef() const { return m_entityRef; }
 		void setEntityRef(const QString &entityRef) { m_entityRef = entityRef; }
 
 		void tryEndEntityRef(const QString &name);
 
-	public slots:
-		void slotLoadingFinished(QBuffer *buffer);
-		void slotFeedData(const QByteArray &data, bool eof);
-
 	private:
 		// Real type: xmlParserCtxtPtr
 		void *m_incrementalParserContext;
 
 		QString m_entityRef;
-		LibXmlEntityMode m_entityMode;
 	};
 };
 

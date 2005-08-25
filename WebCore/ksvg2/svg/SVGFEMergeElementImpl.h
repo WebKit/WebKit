@@ -33,7 +33,7 @@ namespace KSVG
 	class SVGFEMergeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
 	{
 	public:
-		SVGFEMergeElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix);
+		SVGFEMergeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
 		virtual ~SVGFEMergeElementImpl();
 
 		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;

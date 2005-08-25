@@ -52,6 +52,7 @@ public:
 	bool hasNbsp : 1;
 };
 
+class KDOMSettings;
 class Font
 {
 public:
@@ -62,7 +63,7 @@ public:
 
 	bool operator==(const Font &other) const;
 	
-	void update(QPaintDeviceMetrics *devMetrics) const;
+	void update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const;
 
 	/**
 	 * Draws a piece from the given piece of text.

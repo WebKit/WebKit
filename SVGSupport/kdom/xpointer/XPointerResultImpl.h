@@ -25,31 +25,45 @@
 
 #include <kdom/Shared.h>
 
-#include <kdom/xpointer/XPointerResult.h>
-
 namespace KDOM
 {
-	class Node;
+
+class NodeImpl;
 
 namespace XPointer
 {
+	/**
+	 * An integer indicating what type of result this is.
+	 */
+	enum ResultType
+	{
+		/**
+		 * The pointer matched no nodes.
+		 */
+		NO_MATCH = 1,
+
+		/**
+		 * The pointer identifed a single node.
+		 */
+		SINGLE_NODE = 2
+	};
+
 	class XPointerResultImpl : public Shared
 	{
 	public:
-		XPointerResultImpl(const XPointerResult::ResultType code);
-
+		XPointerResultImpl(const ResultType code);
 		virtual ~XPointerResultImpl();
 
 		NodeImpl *singleNodeValue() const;
-
 		void setSingleNodeValue(NodeImpl *node);
 
-		XPointerResult::ResultType resultType() const;
-		void setResultType(const XPointerResult::ResultType code);
+		ResultType resultType() const;
+		void setResultType(const ResultType code);
+		void setResultType(const unsigned short code);
 
 	private:
 		NodeImpl *m_single;
-		XPointerResult::ResultType m_resultType;
+		ResultType m_resultType;
 	};
 };
 

@@ -44,7 +44,7 @@ long UIEventImpl::detail() const
 	return m_detail;
 }
 
-void UIEventImpl::initUIEvent(const DOMString &typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg)
+void UIEventImpl::initUIEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg)
 {
 	initEvent(typeArg, canBubbleArg, cancelableArg);
 

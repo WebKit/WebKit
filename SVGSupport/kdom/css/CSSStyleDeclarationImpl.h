@@ -45,27 +45,33 @@ namespace KDOM
 		CSSStyleDeclarationImpl& operator=(const CSSStyleDeclarationImpl &);
 
 		// 'CSSStyleDeclaration' functions
-		void setCssText(const DOMString &cssText);
-		DOMString cssText() const;
+		void setCssText(DOMStringImpl *cssText);
+		DOMStringImpl *cssText() const;
 
-		DOMString getPropertyValue(int propertyID) const;
+		DOMStringImpl *getPropertyValue(int propertyID) const;
+		DOMStringImpl *getPropertyValue(DOMStringImpl *propertyName) const;
+
 		CSSValueImpl *getPropertyCSSValue(int propertyID) const;
-		CSSValueImpl *getPropertyCSSValue(const DOMString &propertyName); 
+		CSSValueImpl *getPropertyCSSValue(DOMStringImpl *propertyName) const;
 
 		bool getPropertyPriority(int propertyID) const;
+		DOMStringImpl *getPropertyPriority(DOMStringImpl *propertyName) const;
 
-		bool setProperty(int propertyID, const DOMString &value, bool important = false, bool nonCSSHint = false);
 		void setProperty(int propertyId, int value, bool important = false, bool nonCSSHint = false);
-		void setLengthProperty(int id, const DOMString &value, bool important, bool nonCSSHint = true, bool multiLength = false);
+		bool setProperty(int propertyID, DOMStringImpl *value, bool important = false, bool nonCSSHint = false);
+
+		void setProperty(DOMStringImpl *propertyName, DOMStringImpl *value, DOMStringImpl *priority);
+		void setLengthProperty(int id, DOMStringImpl *value, bool important, bool nonCSSHint = true, bool multiLength = false);
 
 		// add a whole, unparsed property
-		void setProperty(const DOMString &propertyString);
+		void setProperty(DOMStringImpl *propertyString);
 		unsigned long length() const;
-		DOMString item(unsigned long index) const;
+		DOMStringImpl *item(unsigned long index) const;
 
 		CSSRuleImpl *parentRule() const;
 
-		virtual DOMString removeProperty(int propertyID, bool NonCSSHints = false);
+		DOMStringImpl *removeProperty(DOMStringImpl *propertyName);
+		DOMStringImpl *removeProperty(int propertyID, bool NonCSSHints = false);
 
 		void setNode(NodeImpl *node) { m_node = node; }
 		
@@ -75,14 +81,14 @@ namespace KDOM
 		virtual void setChanged();
 
 		virtual bool isStyleDeclaration() const { return true; }
-		virtual bool parseString(const DOMString &string, bool = false);
+		virtual bool parseString(DOMStringImpl *string, bool = false);
 
 		// Helper
 		void removeCSSHints();
 
 	protected:
-		DOMString getShortHandValue(const int *properties, int number) const;
-		DOMString get4Values(const int *properties) const;
+		DOMStringImpl *getShortHandValue(const int *properties, int number) const;
+		DOMStringImpl *get4Values(const int *properties) const;
 
 	protected:
 		QPtrList<CSSProperty> *m_lstValues;
@@ -101,7 +107,7 @@ namespace KDOM
 		void setValue(CSSValueImpl *val);
 
 		CSSValueImpl *value() const;
-		DOMString cssText(const CSSStyleDeclarationImpl &decl) const;
+		DOMStringImpl *cssText(const CSSStyleDeclarationImpl &decl) const;
 
 		// make sure the following fits in 4 bytes.
 		signed int m_id : 29;

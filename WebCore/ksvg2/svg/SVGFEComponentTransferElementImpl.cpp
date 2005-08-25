@@ -45,7 +45,7 @@
 
 using namespace KSVG;
 
-SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl(KDOM::DocumentImpl *doc, KDOM::NodeImpl::Id id, const KDOM::DOMString &prefix) : 
+SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
 	m_in1 = 0;
@@ -72,7 +72,7 @@ void SVGFEComponentTransferElementImpl::parseAttribute(KDOM::AttributeImpl *attr
 	{
 		case ATTR_IN:
 		{
-			in1()->setBaseVal(value.implementation());
+			in1()->setBaseVal(value.handle());
 			break;
 		}
 		default:
@@ -104,44 +104,44 @@ void SVGFEComponentTransferElementImpl::close()
 		{
 			SVGFEFuncRElementImpl *funcR = static_cast<SVGFEFuncRElementImpl *>(n);
 			func.type = (KCComponentTransferType)(funcR->type()->baseVal() - 1);
-			func.slope = funcR->slope()->baseVal()->value();
-			func.intercept = funcR->intercept()->baseVal()->value();
-			func.amplitude = funcR->amplitude()->baseVal()->value();
-			func.exponent = funcR->exponent()->baseVal()->value();
-			func.offset = funcR->offset()->baseVal()->value();
+			func.slope = funcR->slope()->baseVal();
+			func.intercept = funcR->intercept()->baseVal();
+			func.amplitude = funcR->amplitude()->baseVal();
+			func.exponent = funcR->exponent()->baseVal();
+			func.offset = funcR->offset()->baseVal();
 			m_filterEffect->setRedFunction(func);
 		}
 		else if(n->id() == ID_FEFUNCG)
 		{
 			SVGFEFuncGElementImpl *funcG = static_cast<SVGFEFuncGElementImpl *>(n);
 			func.type = (KCComponentTransferType)(funcG->type()->baseVal() - 1);
-			func.slope = funcG->slope()->baseVal()->value();
-			func.intercept = funcG->intercept()->baseVal()->value();
-			func.amplitude = funcG->amplitude()->baseVal()->value();
-			func.exponent = funcG->exponent()->baseVal()->value();
-			func.offset = funcG->offset()->baseVal()->value();
+			func.slope = funcG->slope()->baseVal();
+			func.intercept = funcG->intercept()->baseVal();
+			func.amplitude = funcG->amplitude()->baseVal();
+			func.exponent = funcG->exponent()->baseVal();
+			func.offset = funcG->offset()->baseVal();
 			m_filterEffect->setGreenFunction(func);
 		}
 		else if(n->id() == ID_FEFUNCB)
 		{
 			SVGFEFuncBElementImpl *funcB = static_cast<SVGFEFuncBElementImpl *>(n);
 			func.type = (KCComponentTransferType)(funcB->type()->baseVal() - 1);
-			func.slope = funcB->slope()->baseVal()->value();
-			func.intercept = funcB->intercept()->baseVal()->value();
-			func.amplitude = funcB->amplitude()->baseVal()->value();
-			func.exponent = funcB->exponent()->baseVal()->value();
-			func.offset = funcB->offset()->baseVal()->value();
+			func.slope = funcB->slope()->baseVal();
+			func.intercept = funcB->intercept()->baseVal();
+			func.amplitude = funcB->amplitude()->baseVal();
+			func.exponent = funcB->exponent()->baseVal();
+			func.offset = funcB->offset()->baseVal();
 			m_filterEffect->setBlueFunction(func);
 		}
 		else if(n->id() == ID_FEFUNCA)
 		{
 			SVGFEFuncAElementImpl *funcA = static_cast<SVGFEFuncAElementImpl *>(n);
 			func.type = (KCComponentTransferType)(funcA->type()->baseVal() - 1);
-			func.slope = funcA->slope()->baseVal()->value();
-			func.intercept = funcA->intercept()->baseVal()->value();
-			func.amplitude = funcA->amplitude()->baseVal()->value();
-			func.exponent = funcA->exponent()->baseVal()->value();
-			func.offset = funcA->offset()->baseVal()->value();
+			func.slope = funcA->slope()->baseVal();
+			func.intercept = funcA->intercept()->baseVal();
+			func.amplitude = funcA->amplitude()->baseVal();
+			func.exponent = funcA->exponent()->baseVal();
+			func.offset = funcA->offset()->baseVal();
 			m_filterEffect->setAlphaFunction(func);
 		}
 	}

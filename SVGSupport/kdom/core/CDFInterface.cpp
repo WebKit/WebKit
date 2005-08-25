@@ -23,7 +23,6 @@
 #include "RenderStyle.h"
 #include <kdom/ecma/GlobalObject.h>
 #include "CDFInterface.h"
-#include <kdom/ecma/EcmaInterface.h>
 
 // The auto-generated parts
 #include "domattrs.h"
@@ -62,7 +61,7 @@ int CDFInterface::getPropertyID(const char *propStr, int len) const
 
 RenderStyle *CDFInterface::renderStyle() const
 {
-	return new KDOM::RenderStyle();
+	return new RenderStyle();
 }
 
 bool CDFInterface::cssPropertyApplyFirst(int id) const
@@ -109,12 +108,7 @@ int CDFInterface::getAttrID(const char *attrStr, int len) const
 
 GlobalObject *CDFInterface::globalObject(DocumentImpl *doc) const
 {
-	return new KDOM::GlobalObject(doc);
-}
-
-EcmaInterface *CDFInterface::ecmaInterface() const
-{
-	return new KDOM::EcmaInterface();
+	return new GlobalObject(doc);
 }
 
 // vim:ts=4:noet
