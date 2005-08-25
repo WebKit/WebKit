@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrcreatedocumentfragment	
-Status:	failure
-Detail:	hasLangAttr: assertEquals failed, actual 0, expected 1.
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrcreatedocumentfragment
+Status:	Success

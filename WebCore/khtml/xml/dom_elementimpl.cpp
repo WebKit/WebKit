@@ -88,8 +88,6 @@ AttrImpl::~AttrImpl()
 
 DOMString AttrImpl::nodeName() const
 {
-    if (m_element && m_element->getDocument()->isHTMLDocument())
-        return name().upper(); // Have to uppercase attributes when returned in HTML (and not XML).
     return name();
 }
 

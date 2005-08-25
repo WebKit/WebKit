@@ -2,6 +2,19 @@
 
         Reviewed by John Sullivan.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4564
+          nodeName for attributes in HTML documents should be lowercase
+
+        * khtml/xml/dom_elementimpl.cpp: (AttrImpl::nodeName): Removed the code to
+        uppercase the name when in HTML documents.
+
+        * layout-tests/dom/html/level1/core/hc_attrcreatedocumentfragment-expected.txt:
+        Updated to reflect the fact that this test now succeeds.
+
+2005-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4551
           implement exceptions for a few XML-specific Document DOM functions
 
