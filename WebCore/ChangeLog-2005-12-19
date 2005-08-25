@@ -1,3 +1,12 @@
+2005-08-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - removed WebCore-tests.exp since the tests it supported are now gone
+
+        * WebCore-tests.exp: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Removed rules that use WebCore-tests.exp and WebCore-combined.exp.
+
 2005-08-25  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 

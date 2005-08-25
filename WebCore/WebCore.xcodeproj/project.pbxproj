@@ -3608,7 +3608,6 @@
 		F58786C302DE3B8601EA4122 /* KWQVariant.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQVariant.h; sourceTree = "<group>"; };
 		F58786C402DE3B8601EA4122 /* KWQPtrVector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQPtrVector.h; sourceTree = "<group>"; };
 		F58786C502DE3B8601EA4122 /* KWQWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQWidget.h; sourceTree = "<group>"; };
-		F58EF58D02DFDFB7018635CA /* WebCore-tests.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; name = "WebCore-tests.exp"; path = "../WebCore-tests.exp"; sourceTree = "<group>"; };
 		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; name = WebCore.exp; path = ../WebCore.exp; sourceTree = "<group>"; };
 		F5A1B04902DE8ABA018635CA /* linkCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = linkCursor.tiff; path = Resources/linkCursor.tiff; sourceTree = "<group>"; };
 		F5A1B05302DE8B46018635CA /* html4.css */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = html4.css; path = khtml/css/html4.css; sourceTree = "<group>"; };
@@ -5632,7 +5631,6 @@
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
 				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
 				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
-				F58EF58D02DFDFB7018635CA /* WebCore-tests.exp */,
 			);
 			name = "WebCore SPI";
 			path = kwq;
@@ -6992,7 +6990,6 @@
 				932FC0DA0824A337005B3C75 /* KWQColorData.c */,
 				93EA68440824979000687F56 /* libxml2-WebCore */,
 				932FC38F0824BA30005B3C75 /* tokenizer.cpp */,
-				93F19B3A08246077001E9ABC /* WebCore-combined.exp */,
 				932FC1710824A913005B3C75 /* xmlhttprequest.lut.h */,
 				932FC1730824A919005B3C75 /* xmlserializer.lut.h */,
 				1A69D387085628650009880D /* domparser.lut.h */,
@@ -7090,7 +7087,6 @@
 				A8212A7F08794A2300677359 /* KWQColorData.c */,
 				A8212A8008794A2300677359 /* libxml2-WebCore */,
 				A8212A8108794A2300677359 /* tokenizer.cpp */,
-				A8212A8208794A2300677359 /* WebCore-combined.exp */,
 				A8AA619B089CDABF00666825 /* WebCore+SVG.exp */,
 				A8212A8308794A2300677359 /* xmlhttprequest.lut.h */,
 				A8212A8408794A2300677359 /* xmlserializer.lut.h */,
@@ -7597,23 +7593,6 @@
 			shellPath = /bin/sh;
 			shellScript = "gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 khtml/html/kentities.gperf > \"$DERIVED_FILE_DIR/kentities.c\"";
 		};
-		93F19B3A08246077001E9ABC /* WebCore-combined.exp */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				WebCore.exp,
-				"WebCore-tests.exp",
-			);
-			name = "WebCore-combined.exp";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/WebCore-combined.exp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-tests.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\nelse\n    cat WebCore.exp WebCore-tests.exp > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\nfi";
-		};
 		A81D5AAB08ADFAA200136AC1 /* GlobalObject.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -7918,24 +7897,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "flex -t khtml/css/tokenizer.flex | perl khtml/css/maketokenizer > \"$DERIVED_FILE_DIR/tokenizer.cpp\"";
-		};
-		A8212A8208794A2300677359 /* WebCore-combined.exp */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				WebCore.exp,
-				"WebCore-svg.exp",
-				"WebCore-tests.exp",
-			);
-			name = "WebCore-combined.exp";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/WebCore-combined.exp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if gcc -dumpversion | grep -q '^3\\.'\nthen\n    cat WebCore.exp WebCore-tests.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\n    cat WebCore.exp WebCore-svg.exp | grep -v '^__ZTI' > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nelse\n    cat WebCore.exp WebCore-tests.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore-combined.exp\"\n    cat WebCore.exp WebCore-svg.exp > \"$DERIVED_FILE_DIR/WebCore+SVG.exp\"\nfi";
 		};
 		A8212A8308794A2300677359 /* xmlhttprequest.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9049,7 +9010,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -9067,7 +9028,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 			};
 			name = Development;
 		};
@@ -9108,7 +9068,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -9126,7 +9086,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = Deployment;
 		};
@@ -9167,7 +9126,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
@@ -9185,7 +9144,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = OptimizedWithSymbols;
 		};
@@ -9225,7 +9183,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = (
@@ -9247,7 +9205,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = Default;
 		};
@@ -9292,7 +9249,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "WebCore+SVG";
@@ -9309,7 +9266,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore-combined.exp";
 			};
 			name = Development;
 		};
@@ -9354,7 +9310,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "WebCore+SVG";
@@ -9371,7 +9327,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = "$(DERIVED_FILES_DIR)/WebCore+SVG.exp";
 			};
 			name = Deployment;
 		};
@@ -9416,7 +9371,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "WebCore+SVG";
@@ -9434,7 +9389,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = OptimizedWithSymbols;
 		};
@@ -9478,7 +9432,7 @@
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,$(WEBCORE_EXPORTED_SYMBOLS_FILE)",
+					"-Wl,-exported_symbols_list,$(DERIVED_FILES_DIR)/WebCore+SVG.exp",
 				);
 				PRODUCT_NAME = "WebCore+SVG";
 				SECTORDER_FLAGS = (
@@ -9500,7 +9454,6 @@
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
 				);
-				WEBCORE_EXPORTED_SYMBOLS_FILE = WebCore.exp;
 			};
 			name = Default;
 		};
