@@ -41,10 +41,17 @@ my $root = <ROOT>;
 chomp $root;
 close ROOT;
 
+my @sources = ("WebKitTools", "JavaScriptCore", "WebCore", "WebKitLibraries", "WebKit");
+push @sources, "SVGSupport" if -d "SVGSupport";
+
 # Check out all the sources.
 print "CVS root is $root\n";
-print "Updating WebKitTools, JavaScriptCore, WebCore, WebKitLibraries, and WebKit\n";
-open CVS, "cvs -d '$root' co -P WebKitTools JavaScriptCore WebCore WebKitLibraries WebKit |" or die;
+
+my $directories = join ", ", @sources;
+$directories =~ s/, ([^,]+)$/, and $1/;
+print "Updating $directories\n";
+
+open CVS, "cvs -d '$root' co -P @sources |" or die;
 while (<CVS>) {
     print;
 }

@@ -1,6 +1,18 @@
+2005-08-25  Ben La Monica  <ben.lamonica@gmail.com>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4585
+          update-webkit doesn't notice when you have SVGSupport and update properly
+
+        * Scripts/update-webkit: Build SVGSupport directory if it's present.
+
 2005-08-25  Anders Carlsson  <andersca@mac.com>
 
         Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4572
+          layout test machinery can't handle tests with applets that have code attributes
 
         * DumpRenderTree/DumpRenderTree.m: (main): Disable Java while running tests.
 
