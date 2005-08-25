@@ -1857,9 +1857,12 @@ void RenderObject::remove()
 
 void RenderObject::detach()
 {
+    // By default no ref-counting. RenderWidget::detach() doesn't call
+    // this function because it needs to do ref-counting. If anything
+    // in this function changes, be sure to fix RenderWidget::detach() as well. 
+
     remove();
     
-    // by default no refcounting
     arenaDelete(document()->renderArena(), this);
 }
 

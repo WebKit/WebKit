@@ -234,6 +234,12 @@ RenderWidget::RenderWidget(DOM::NodeImpl* node)
 
 void RenderWidget::detach()
 {
+    // We can't call the base class's detach because we don't
+    // want to unconditionally delete ourselves (we're ref-counted).
+    // So the code below includes copied and pasted contents of
+    // both RenderBox::detach() and RenderObject::detach().
+    // Fix originally made for <rdar://problem/4228818>.
+    
     remove();
 
     if ( m_widget ) {
@@ -244,15 +250,24 @@ void RenderWidget::detach()
         m_widget->setMouseTracking( false );
     }
 
+    RenderLayer* layer = m_layer;
     RenderArena* arena = renderArena();
+    
+    if (layer)
+        layer->clearClipRect();
+    
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
             m_inlineBoxWrapper->remove();
         m_inlineBoxWrapper->detach(arena);
         m_inlineBoxWrapper = 0;
     }
+    
     setNode(0);
     deref(arena);
+    
+    if (layer)
+        layer->detach(arena);
 }
 
 RenderWidget::~RenderWidget()

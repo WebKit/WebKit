@@ -1,3 +1,22 @@
+2005-08-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin/Maciej
+
+        Test cases added: (NONE -- doesn't affect layout)
+
+	- fixed <rdar://problem/4228818> leak of RenderLayer loading the Dictionary, 
+	Flight Tracker, and Translation widget (maybe others) in Safari.
+
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle): added assert to avoid potential problems.
+        (RenderBox::detach): Added comment.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::detach): Added comment.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach): Added code from RenderBox::deatch() that frees the layer used
+				in setStyle()
+
 2005-08-23  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Adele.
