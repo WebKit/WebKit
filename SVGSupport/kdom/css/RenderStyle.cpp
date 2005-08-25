@@ -657,15 +657,15 @@ static QString describeFont(const QFont &f)
 	if(f.bold())
 		res += QString::fromLatin1(" bold");
 	if(f.italic())
-#ifndef APPLE_COMPILE_HACK
 		res += QString::fromLatin1(" italic");
+#ifndef APPLE_COMPILE_HACK
 	if(f.underline())
 		res += QString::fromLatin1(" underline");
 	if(f.overline())
 		res += QString::fromLatin1(" overline");
 	if(f.strikeOut())
-#endif
 		res += QString::fromLatin1(" strikeout");
+#endif
 	
 	return res;
 }

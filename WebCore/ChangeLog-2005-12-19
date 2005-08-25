@@ -3,6 +3,15 @@
 
         Reviewed by eseidel.
 
+        * kdom/css/impl/RenderStyle.cpp:
+        (describeFont): fixed APPLE_COMPILE_HACK usage
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4589
+
+2005-08-25  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         * kdom/Helper.cpp:
         (parseLength): change string() to qstring()
         * kdom/css/impl/CSSStyleSelector.cpp:
