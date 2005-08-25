@@ -2078,7 +2078,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     // Now that we have glyph and font, get its width.
     WebGlyphWidth width;
     if (style->tabWidth != 0.0F && c == '\t') {
-        width = style->tabWidth - fmodf(style->xpos+iterator->widthToStart+iterator->runWidthSoFar, style->tabWidth);
+        width = style->tabWidth - fmodf(style->xpos+iterator->runWidthSoFar, style->tabWidth);
     } else {
         width = widthForGlyph(renderer, _glyphUsed, _fontUsed);
         // We special case spaces in two ways when applying word rounding.
