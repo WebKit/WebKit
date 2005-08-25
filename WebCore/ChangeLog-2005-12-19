@@ -1,3 +1,22 @@
+2005-08-25  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin.
+
+        * layout-tests/dom/html/level2/html/HTMLAppletElement01.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement02.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement03.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement04.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement05.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement06.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement07.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement08.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement09.html:
+        * layout-tests/dom/html/level2/html/HTMLAppletElement10.html:
+        Put CODE attribute inside of the APPLET element again.
+        
+        * layout-tests/dom/html/level2/html/HTMLAppletElement04-expected.txt:
+        This passes now.
+        
 2005-08-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
@@ -76,7 +95,7 @@
 
         A ridiculously large patch including all of the following:
         1.  Sync-up with KDE SVN HEAD, including:
-          a. Removal of C++ DOM
+          a. Removal of C+DOM
           b. JS bindings code auto-generation
           c. DocumentPtr in addition to DocumentImpl
           d. DOMStringImpl instead of DOMString

@@ -1,3 +1,9 @@
+2005-08-25  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed and landed by Darin.
+
+        * DumpRenderTree/DumpRenderTree.m: (main): Disable Java while running tests.
+
 2005-08-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -43,6 +49,7 @@
         Added display of "-w3c.png" baseline images for SVG.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=4581
 
+>>>>>>> 1.80
 2005-08-20  Eric Seidel  <eseidel@apple.com>
 
         * Scripts/run-webkit-tests:
