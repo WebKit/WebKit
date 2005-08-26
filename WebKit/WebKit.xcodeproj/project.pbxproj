@@ -2084,7 +2084,7 @@
 					/AppleInternal/OrderFiles/WebKit.order,
 				);
 				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
-				UMBRELLA_FRAMEWORKS_DIR = /System/Library/Frameworks/WebKit.Framework/Frameworks;
+				UMBRELLA_FRAMEWORKS_DIR = /System/Library/Frameworks/WebKit.framework/Frameworks;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",

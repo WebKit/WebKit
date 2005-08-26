@@ -1,3 +1,9 @@
+2005-08-26  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        * WebKit.xcodeproj/project.pbxproj: Changed WebKit.Framework to WebKit.framework in UMBRELLA_FRAMEWORK.
+
 2005-08-25  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.
