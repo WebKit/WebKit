@@ -2,6 +2,25 @@
 
         Reviewed by John.
 
+	<rdar://problem/4224911> many many leaks in kjsyyparse with malformed Javascript        
+
+	Record all nodes that are created during parsing, and delete any
+	that are left floating with a refcount of 0.
+	
+	* kjs/internal.cpp:
+        (KJS::Parser::saveNewNode):
+        (KJS::clearNewNodes):
+        (KJS::Parser::parse):
+        * kjs/internal.h:
+        * kjs/nodes.cpp:
+        (Node::Node):
+        * kjs/nodes.h:
+        (KJS::Node::refcount):
+
+2005-08-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 	- fixed <rdar://problem/4232452> many many leaks in kjsyyparse on some well-formed JavaScript (can repro on sony.com, webkit tests)
         
 	Fixed by changing the refcounting scheme for nodes. Instead of each node implementing a custom ref and

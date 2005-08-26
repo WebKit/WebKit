@@ -38,6 +38,7 @@
 
 namespace KJS {
 
+  class Node;
   class ProgramNode;
   class FunctionBodyNode;
   class FunctionPrototypeImp;
@@ -199,6 +200,8 @@ namespace KJS {
                                                   const UChar *code, unsigned int length, int *sourceId = 0,
                                                   int *errLine = 0, UString *errMsg = 0);
     static void accept(ProgramNode *prog);
+
+    static void saveNewNode(Node *node);
 
     static int sid;
   };

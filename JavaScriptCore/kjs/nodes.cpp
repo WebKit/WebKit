@@ -99,6 +99,7 @@ Node::Node()
   line = Lexer::curr()->lineNo();
   sourceURL = Lexer::curr()->sourceURL();
   m_refcount = 0;
+  Parser::saveNewNode(this);
 }
 
 Node::~Node()

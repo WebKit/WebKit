@@ -94,6 +94,7 @@ namespace KJS {
     // reference counting mechanism
     void ref() { ++m_refcount; }
     void deref() { --m_refcount; if (!m_refcount) delete this; }
+    unsigned int refcount() { return m_refcount; }
 
   protected:
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg);
