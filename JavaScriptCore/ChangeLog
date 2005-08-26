@@ -1,3 +1,15 @@
+2005-08-26  Geoff Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+        Landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4664
+          TOT Crash from backwards null check in WebScriptObject.mm
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+        Remove bogus !.
+
 2005-08-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

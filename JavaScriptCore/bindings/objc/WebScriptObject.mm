@@ -419,7 +419,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	
         if (objectImp->classInfo() != &RuntimeObjectImp::info) {
 	    ValueImp *runtimeObject = objectImp->get(exec, "__apple_runtime_object");
-	    if (!runtimeObject && runtimeObject->isObject())
+	    if (runtimeObject && runtimeObject->isObject())
 		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject);
 	}
         
