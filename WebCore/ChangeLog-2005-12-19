@@ -1,3 +1,32 @@
+2005-08-26  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed these leaks:
+        <rdar://problem/4232514> many leaks of StyleBaseImpl called within computeAndStoreNodeDesiredStyle within -[WebView paste:], 
+        seen running webkit tests (probably affects Mail)
+        <rdar://problem/4232572> many leaks of StyleBaseImpl called within fixupNodeStyles within -[WebView paste:], 
+        seen running webkit tests (probably affects Mail)
+        <rdar://problem/4232629> many leaks of StyleBaseImpl within startMarkup within -[WebHTMLView _writeSelectionToPasteboard:], 
+        seen running webkit tests
+        <rdar://problem/4232779> many leaks of StyleBaseImpl within createMarkup within -[WebHTMLView _writeSelectionToPasteboard:], 
+        seen running webkit tests        
+
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup):
+        Put Position::computedStyle() result into a local variable so it can be reffed/dereffed, avoids a leak.
+        Done in two places in this method. This fixes 4232629.
+        (khtml::createMarkup):
+        ditto, but only in one place. This fixes 4232779.
+        
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles):
+        ditto. This fixes 4232572.
+        (khtml::computeAndStoreNodeDesiredStyle):
+        ditto, but in two places. This fixes 4232514.
+
 2005-08-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
