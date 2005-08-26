@@ -31,6 +31,8 @@
 		65621E6E089E859700760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65621E6F089E85D300760F35 /* property_slot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65621E6B089E859700760F35 /* property_slot.cpp */; };
 		65621E70089E85D300760F35 /* property_slot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* property_slot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65EF2DF508BECC80000894BB /* shared_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EF2DF408BECC80000894BB /* shared_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		65EF2DF808BECC8A000894BB /* shared_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EF2DF408BECC80000894BB /* shared_ptr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B400822A1C700736975 /* array_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* array_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B420822A1C700736975 /* collector.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8530255597D01FF60F7 /* collector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B430822A1C700736975 /* date_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8560255597D01FF60F7 /* date_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -472,6 +474,7 @@
 		65AB004806261CBA0076DE63 /* interpreter_map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = interpreter_map.cpp; sourceTree = "<group>"; };
 		65AB004906261CBA0076DE63 /* interpreter_map.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = interpreter_map.h; sourceTree = "<group>"; };
 		65C02FBB0637462A003E7EE6 /* protect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = protect.h; sourceTree = "<group>"; };
+		65EF2DF408BECC80000894BB /* shared_ptr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = shared_ptr.h; sourceTree = "<group>"; };
 		700DA117065984CE00747C0B /* WebScriptObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = WebScriptObjectPrivate.h; path = bindings/objc/WebScriptObjectPrivate.h; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* bool_object.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = bool_object.h; sourceTree = "<group>"; };
 		704FD44505698F17003DBED9 /* runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = runtime.cpp; path = bindings/runtime.cpp; sourceTree = "<group>"; };
@@ -645,6 +648,7 @@
 			isa = PBXGroup;
 			children = (
 				65305EAE08A58DDE00F31E73 /* protected_object.h */,
+				65EF2DF408BECC80000894BB /* shared_ptr.h */,
 				65621E6B089E859700760F35 /* property_slot.cpp */,
 				65621E6C089E859700760F35 /* property_slot.h */,
 				938772E5038BFE19008635CE /* array_instance.h */,
@@ -919,6 +923,7 @@
 				932FC11D0824A6A3005B3C75 /* create_hash_table in Headers */,
 				65621E6E089E859700760F35 /* property_slot.h in Headers */,
 				93E26CCF08B2921900F85226 /* softlinking.h in Headers */,
+				65EF2DF508BECC80000894BB /* shared_ptr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1001,6 +1006,7 @@
 				65621E70089E85D300760F35 /* property_slot.h in Headers */,
 				A85D823F087B2822006A9172 /* create_hash_table in Headers */,
 				93E26CD008B2921900F85226 /* softlinking.h in Headers */,
+				65EF2DF808BECC8A000894BB /* shared_ptr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

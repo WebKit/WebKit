@@ -31,6 +31,7 @@
 #include "operations.h"
 #include "debugger.h"
 #include "context.h"
+#include "shared_ptr.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -41,6 +42,8 @@
 #if APPLE_CHANGES
 #include <unicode/uchar.h>
 #endif
+
+using namespace kxmlcore;
 
 namespace KJS {
 
@@ -303,14 +306,7 @@ DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
 					 FunctionBodyNode *b, const ScopeChain &sc)
   : FunctionImp(exec,n), body(b)
 {
-  body->ref();
   setScope(sc);
-}
-
-DeclaredFunctionImp::~DeclaredFunctionImp()
-{
-  if ( body->deref() )
-    delete body;
 }
 
 bool DeclaredFunctionImp::implementsConstruct() const
@@ -793,7 +789,7 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         int sid;
         int errLine;
         UString errMsg;
-        ProgramNode *progNode = Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg);
+        SharedPtr<ProgramNode> progNode(Parser::parse(UString(), 0, s.data(),s.size(),&sid,&errLine,&errMsg));
 
         Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
         if (dbg) {
@@ -803,11 +799,10 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
         }
 
         // no program node means a syntax occurred
-        if (!progNode)
+        if (!progNode) {
           return throwError(exec, SyntaxError, errMsg, errLine, sid, NULL);
-        
-        progNode->ref();
-        
+        }
+
         // enter a new execution context
         ObjectImp *thisVal = static_cast<ObjectImp *>(exec->context().thisValue());
         ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
@@ -832,9 +827,6 @@ ValueImp *GlobalFuncImp::callAsFunction(ExecState *exec, ObjectImp */*thisObj*/,
           exec->setException(c.value());
         else if (c.isValueCompletion())
             res = c.value();
-
-        if ( progNode->deref() )
-          delete progNode;
       }
       break;
     }

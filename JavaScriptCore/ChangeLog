@@ -1,3 +1,141 @@
+2005-08-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed <rdar://problem/4232452> many many leaks in kjsyyparse on some well-formed JavaScript (can repro on sony.com, webkit tests)
+        
+	Fixed by changing the refcounting scheme for nodes. Instead of each node implementing a custom ref and
+	deref for all its children (and being responsible for deleting them), nodes use a smart pointer to
+	hold their children, and smart pointers are used outside the node tree as well. This change mostly
+	removes code.
+	
+	* JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/function.cpp:
+        (KJS::DeclaredFunctionImp::DeclaredFunctionImp):
+        (KJS::GlobalFuncImp::callAsFunction):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        (KJS::Parser::parse):
+        (KJS::Parser::accept):
+        (KJS::InterpreterImp::checkSyntax):
+        (KJS::InterpreterImp::evaluate):
+        * kjs/internal.h:
+        * kjs/nodes.cpp:
+        (Node::Node):
+        (Node::~Node):
+        (ElementNode::evaluate):
+        (PropertyValueNode::evaluate):
+        (ArgumentListNode::evaluateList):
+        (NewExprNode::evaluate):
+        (FunctionCallValueNode::evaluate):
+        (FunctionCallBracketNode::evaluate):
+        (FunctionCallDotNode::evaluate):
+        (RelationalNode::evaluate):
+        (StatListNode::execute):
+        (StatListNode::processVarDecls):
+        (VarDeclListNode::evaluate):
+        (VarDeclListNode::processVarDecls):
+        (ForInNode::ForInNode):
+        (ClauseListNode::processVarDecls):
+        (CaseBlockNode::evalBlock):
+        (FuncDeclNode::processFuncDecl):
+        (FuncExprNode::evaluate):
+        (SourceElementsNode::execute):
+        (SourceElementsNode::processFuncDecl):
+        (SourceElementsNode::processVarDecls):
+        * kjs/nodes.h:
+        (KJS::Node::ref):
+        (KJS::Node::deref):
+        (KJS::NumberNode::NumberNode):
+        (KJS::GroupNode::GroupNode):
+        (KJS::ElementNode::ElementNode):
+        (KJS::ArrayNode::ArrayNode):
+        (KJS::PropertyValueNode::PropertyValueNode):
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        (KJS::BracketAccessorNode::BracketAccessorNode):
+        (KJS::DotAccessorNode::DotAccessorNode):
+        (KJS::ArgumentListNode::ArgumentListNode):
+        (KJS::ArgumentsNode::ArgumentsNode):
+        (KJS::NewExprNode::NewExprNode):
+        (KJS::FunctionCallValueNode::FunctionCallValueNode):
+        (KJS::FunctionCallResolveNode::FunctionCallResolveNode):
+        (KJS::FunctionCallBracketNode::FunctionCallBracketNode):
+        (KJS::FunctionCallDotNode::FunctionCallDotNode):
+        (KJS::PostfixNode::PostfixNode):
+        (KJS::DeleteNode::DeleteNode):
+        (KJS::VoidNode::VoidNode):
+        (KJS::TypeOfNode::TypeOfNode):
+        (KJS::PrefixNode::PrefixNode):
+        (KJS::UnaryPlusNode::UnaryPlusNode):
+        (KJS::NegateNode::NegateNode):
+        (KJS::BitwiseNotNode::BitwiseNotNode):
+        (KJS::LogicalNotNode::LogicalNotNode):
+        (KJS::MultNode::MultNode):
+        (KJS::AddNode::AddNode):
+        (KJS::ShiftNode::ShiftNode):
+        (KJS::RelationalNode::RelationalNode):
+        (KJS::EqualNode::EqualNode):
+        (KJS::BitOperNode::BitOperNode):
+        (KJS::BinaryLogicalNode::BinaryLogicalNode):
+        (KJS::ConditionalNode::ConditionalNode):
+        (KJS::AssignResolveNode::AssignResolveNode):
+        (KJS::AssignBracketNode::AssignBracketNode):
+        (KJS::AssignDotNode::AssignDotNode):
+        (KJS::CommaNode::CommaNode):
+        (KJS::AssignExprNode::AssignExprNode):
+        (KJS::VarDeclListNode::VarDeclListNode):
+        (KJS::VarStatementNode::VarStatementNode):
+        (KJS::ExprStatementNode::ExprStatementNode):
+        (KJS::IfNode::IfNode):
+        (KJS::DoWhileNode::DoWhileNode):
+        (KJS::WhileNode::WhileNode):
+        (KJS::ForNode::ForNode):
+        (KJS::ReturnNode::ReturnNode):
+        (KJS::WithNode::WithNode):
+        (KJS::CaseClauseNode::CaseClauseNode):
+        (KJS::ClauseListNode::ClauseListNode):
+        (KJS::ClauseListNode::clause):
+        (KJS::ClauseListNode::next):
+        (KJS::SwitchNode::SwitchNode):
+        (KJS::LabelNode::LabelNode):
+        (KJS::ThrowNode::ThrowNode):
+        (KJS::CatchNode::CatchNode):
+        (KJS::FinallyNode::FinallyNode):
+        (KJS::TryNode::TryNode):
+        (KJS::ParameterNode::ParameterNode):
+        (KJS::ParameterNode::nextParam):
+        (KJS::FuncDeclNode::FuncDeclNode):
+        (KJS::FuncExprNode::FuncExprNode):
+        * kjs/nodes2string.cpp:
+        (KJS::SourceStream::operator<<):
+        (ElementNode::streamTo):
+        (PropertyValueNode::streamTo):
+        (ArgumentListNode::streamTo):
+        (StatListNode::streamTo):
+        (VarDeclListNode::streamTo):
+        (CaseBlockNode::streamTo):
+        (ParameterNode::streamTo):
+        (SourceElementsNode::streamTo):
+        * kjs/shared_ptr.h: Added.
+        (kxmlcore::SharedPtr::SharedPtr):
+        (kxmlcore::SharedPtr::~SharedPtr):
+        (kxmlcore::SharedPtr::isNull):
+        (kxmlcore::SharedPtr::notNull):
+        (kxmlcore::SharedPtr::reset):
+        (kxmlcore::SharedPtr::get):
+        (kxmlcore::SharedPtr::operator*):
+        (kxmlcore::SharedPtr::operator->):
+        (kxmlcore::SharedPtr::operator!):
+        (kxmlcore::SharedPtr::operator bool):
+        (kxmlcore::SharedPtr::operator==):
+        (kxmlcore::::operator):
+        (kxmlcore::operator!=):
+        (kxmlcore::static_pointer_cast):
+        (kxmlcore::const_pointer_cast):
+
 2005-08-26  Geoff Garen  <ggaren@apple.com>
 
         Reviewed by John.

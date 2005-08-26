@@ -98,19 +98,11 @@ Node::Node()
 {
   line = Lexer::curr()->lineNo();
   sourceURL = Lexer::curr()->sourceURL();
-  refcount = 0;
-#ifdef KJS_DEBUG_MEM
-  if (!s_nodes)
-    s_nodes = new std::list<Node *>;
-  s_nodes->push_back(this);
-#endif
+  m_refcount = 0;
 }
 
 Node::~Node()
 {
-#ifdef KJS_DEBUG_MEM
-  s_nodes->remove( this );
-#endif
 }
 
 Reference Node::evaluateReference(ExecState *exec)
@@ -336,20 +328,6 @@ Reference ResolveNode::evaluateReference(ExecState *exec)
 
 // ------------------------------ GroupNode ------------------------------------
 
-void GroupNode::ref()
-{
-  Node::ref();
-  if ( group )
-    group->ref();
-}
-
-bool GroupNode::deref()
-{
-  if ( group && group->deref() )
-    delete group;
-  return Node::deref();
-}
-
 // ECMA 11.1.6
 ValueImp *GroupNode::evaluate(ExecState *exec)
 {
@@ -363,34 +341,12 @@ Reference GroupNode::evaluateReference(ExecState *exec)
 
 // ------------------------------ ElementNode ----------------------------------
 
-void ElementNode::ref()
-{
-  for (ElementNode *n = this; n; n = n->list) {
-    n->Node::ref();
-    if (n->node)
-      n->node->ref();
-  }
-}
-
-bool ElementNode::deref()
-{
-  ElementNode *next;
-  for (ElementNode *n = this; n; n = next) {
-    next = n->list;
-    if (n->node && n->node->deref())
-      delete n->node;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 // ECMA 11.1.4
 ValueImp *ElementNode::evaluate(ExecState *exec)
 {
   ObjectImp *array = exec->lexicalInterpreter()->builtinArray()->construct(exec, List::empty());
   int length = 0;
-  for (ElementNode *n = this; n; n = n->list) {
+  for (ElementNode *n = this; n; n = n->list.get()) {
     ValueImp *val = n->node->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     length += n->elision;
@@ -400,20 +356,6 @@ ValueImp *ElementNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ArrayNode ------------------------------------
-
-void ArrayNode::ref()
-{
-  Node::ref();
-  if ( element )
-    element->ref();
-}
-
-bool ArrayNode::deref()
-{
-  if ( element && element->deref() )
-    delete element;
-  return Node::deref();
-}
 
 // ECMA 11.1.4
 ValueImp *ArrayNode::evaluate(ExecState *exec)
@@ -439,20 +381,6 @@ ValueImp *ArrayNode::evaluate(ExecState *exec)
 
 // ------------------------------ ObjectLiteralNode ----------------------------
 
-void ObjectLiteralNode::ref()
-{
-  Node::ref();
-  if ( list )
-    list->ref();
-}
-
-bool ObjectLiteralNode::deref()
-{
-  if ( list && list->deref() )
-    delete list;
-  return Node::deref();
-}
-
 // ECMA 11.1.5
 ValueImp *ObjectLiteralNode::evaluate(ExecState *exec)
 {
@@ -464,38 +392,12 @@ ValueImp *ObjectLiteralNode::evaluate(ExecState *exec)
 
 // ------------------------------ PropertyValueNode ----------------------------
 
-void PropertyValueNode::ref()
-{
-  for (PropertyValueNode *n = this; n; n = n->list) {
-    n->Node::ref();
-    if (n->name)
-      n->name->ref();
-    if (n->assign)
-      n->assign->ref();
-  }
-}
-
-bool PropertyValueNode::deref()
-{
-  PropertyValueNode *next;
-  for (PropertyValueNode *n = this; n; n = next) {
-    next = n->list;
-    if ( n->name && n->name->deref() )
-      delete n->name;
-    if ( n->assign && n->assign->deref() )
-      delete n->assign;
-    if (n != this && n->Node::deref() )
-      delete n;
-  }
-  return Node::deref();
-}
-
 // ECMA 11.1.5
 ValueImp *PropertyValueNode::evaluate(ExecState *exec)
 {
   ObjectImp *obj = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   
-  for (PropertyValueNode *p = this; p; p = p->list) {
+  for (PropertyValueNode *p = this; p; p = p->list.get()) {
     ValueImp *n = p->name->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
     ValueImp *v = p->assign->evaluate(exec);
@@ -524,24 +426,6 @@ ValueImp *PropertyNode::evaluate(ExecState */*exec*/)
 }
 
 // ------------------------------ BracketAccessorNode --------------------------------
-
-void BracketAccessorNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool BracketAccessorNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
 
 // ECMA 11.2.1a
 ValueImp *BracketAccessorNode::evaluate(ExecState *exec)
@@ -572,20 +456,6 @@ Reference BracketAccessorNode::evaluateReference(ExecState *exec)
 
 // ------------------------------ DotAccessorNode --------------------------------
 
-void DotAccessorNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool DotAccessorNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.2.1b
 ValueImp *DotAccessorNode::evaluate(ExecState *exec)
 {
@@ -605,28 +475,6 @@ Reference DotAccessorNode::evaluateReference(ExecState *exec)
 
 // ------------------------------ ArgumentListNode -----------------------------
 
-void ArgumentListNode::ref()
-{
-  for (ArgumentListNode *n = this; n; n = n->list) {
-    n->Node::ref();
-    if (n->expr)
-      n->expr->ref();
-  }
-}
-
-bool ArgumentListNode::deref()
-{
-  ArgumentListNode *next;
-  for (ArgumentListNode *n = this; n; n = next) {
-    next = n->list;
-    if (n->expr && n->expr->deref())
-      delete n->expr;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 ValueImp *ArgumentListNode::evaluate(ExecState */*exec*/)
 {
   assert(0);
@@ -638,7 +486,7 @@ List ArgumentListNode::evaluateList(ExecState *exec)
 {
   List l;
 
-  for (ArgumentListNode *n = this; n; n = n->list) {
+  for (ArgumentListNode *n = this; n; n = n->list.get()) {
     ValueImp *v = n->expr->evaluate(exec);
     KJS_CHECKEXCEPTIONLIST
     l.append(v);
@@ -648,20 +496,6 @@ List ArgumentListNode::evaluateList(ExecState *exec)
 }
 
 // ------------------------------ ArgumentsNode --------------------------------
-
-void ArgumentsNode::ref()
-{
-  Node::ref();
-  if ( list )
-    list->ref();
-}
-
-bool ArgumentsNode::deref()
-{
-  if ( list && list->deref() )
-    delete list;
-  return Node::deref();
-}
 
 ValueImp *ArgumentsNode::evaluate(ExecState */*exec*/)
 {
@@ -682,24 +516,6 @@ List ArgumentsNode::evaluateList(ExecState *exec)
 
 // ECMA 11.2.2
 
-void NewExprNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-  if ( args )
-    args->ref();
-}
-
-bool NewExprNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  if ( args && args->deref() )
-    delete args;
-  return Node::deref();
-}
-
 ValueImp *NewExprNode::evaluate(ExecState *exec)
 {
   ValueImp *v = expr->evaluate(exec);
@@ -712,33 +528,15 @@ ValueImp *NewExprNode::evaluate(ExecState *exec)
   }
 
   if (!v->isObject()) {
-    return throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with new.", v, expr);
+    return throwError(exec, TypeError, "Value %s (result of expression %s) is not an object. Cannot be used with new.", v, expr.get());
   }
 
   ObjectImp *constr = static_cast<ObjectImp*>(v);
   if (!constr->implementsConstruct()) {
-    return throwError(exec, TypeError, "Value %s (result of expression %s) is not a constructor. Cannot be used with new.", v, expr);
+    return throwError(exec, TypeError, "Value %s (result of expression %s) is not a constructor. Cannot be used with new.", v, expr.get());
   }
 
   return constr->construct(exec, argList);
-}
-
-void FunctionCallValueNode::ref()
-{
-  Node::ref();
-  if (expr)
-    expr->ref();
-  if (args)
-    args->ref();
-}
-
-bool FunctionCallValueNode::deref()
-{
-  if (expr && expr->deref())
-    delete expr;
-  if (args && args->deref())
-    delete args;
-  return Node::deref();
 }
 
 // ECMA 11.2.3
@@ -748,13 +546,13 @@ ValueImp *FunctionCallValueNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   if (!v->isObject()) {
-    return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, expr);
+    return throwError(exec, TypeError, "Value %s (result of expression %s) is not object.", v, expr.get());
   }
   
   ObjectImp *func = static_cast<ObjectImp*>(v);
 
   if (!func->implementsCall()) {
-    return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, expr);
+    return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, expr.get());
   }
 
   List argList = args->evaluateList(exec);
@@ -763,21 +561,6 @@ ValueImp *FunctionCallValueNode::evaluate(ExecState *exec)
   ObjectImp *thisObj =  exec->dynamicInterpreter()->globalObject();
 
   return func->call(exec, thisObj, argList);
-}
-
-
-void FunctionCallResolveNode::ref()
-{
-  Node::ref();
-  if (args)
-    args->ref();
-}
-
-bool FunctionCallResolveNode::deref()
-{
-  if (args && args->deref())
-    delete args;
-  return Node::deref();
 }
 
 // ECMA 11.2.3
@@ -829,28 +612,6 @@ ValueImp *FunctionCallResolveNode::evaluate(ExecState *exec)
   return undefinedVariableError(exec, ident);
 }
 
-void FunctionCallBracketNode::ref()
-{
-  Node::ref();
-  if (base)
-    base->ref();
-  if (subscript)
-    base->ref();
-  if (args)
-    args->ref();
-}
-
-bool FunctionCallBracketNode::deref()
-{
-  if (base && base->deref())
-    delete base;
-  if (subscript && subscript->deref())
-    delete subscript;
-  if (args && args->deref())
-    delete args;
-  return Node::deref();
-}
-
 // ECMA 11.2.3
 ValueImp *FunctionCallBracketNode::evaluate(ExecState *exec)
 {
@@ -880,13 +641,13 @@ ValueImp *FunctionCallBracketNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
   
   if (!funcVal->isObject()) {
-    return throwError(exec, TypeError, "Value %s (result of expression %s[%s]) is not object.", funcVal, base, subscript);
+    return throwError(exec, TypeError, "Value %s (result of expression %s[%s]) is not object.", funcVal, base.get(), subscript.get());
   }
   
   ObjectImp *func = static_cast<ObjectImp*>(funcVal);
 
   if (!func->implementsCall()) {
-    return throwError(exec, TypeError, "Object %s (result of expression %s[%s]) does not allow calls.", funcVal, base, subscript);
+    return throwError(exec, TypeError, "Object %s (result of expression %s[%s]) does not allow calls.", funcVal, base.get(), subscript.get());
   }
 
   List argList = args->evaluateList(exec);
@@ -898,25 +659,6 @@ ValueImp *FunctionCallBracketNode::evaluate(ExecState *exec)
   assert(!thisObj->isActivation());
 
   return func->call(exec, thisObj, argList);
-}
-
-
-void FunctionCallDotNode::ref()
-{
-  Node::ref();
-  if (base)
-    base->ref();
-  if (args)
-    args->ref();
-}
-
-bool FunctionCallDotNode::deref()
-{
-  if (base && base->deref())
-    delete base;
-  if (args && args->deref())
-    delete args;
-  return Node::deref();
 }
 
 static const char *dotExprNotAnObjectString()
@@ -940,12 +682,12 @@ ValueImp *FunctionCallDotNode::evaluate(ExecState *exec)
   KJS_CHECKEXCEPTIONVALUE
 
   if (!funcVal->isObject())
-    return throwError(exec, TypeError, dotExprNotAnObjectString(), funcVal, base, ident);
+    return throwError(exec, TypeError, dotExprNotAnObjectString(), funcVal, base.get(), ident);
   
   ObjectImp *func = static_cast<ObjectImp*>(funcVal);
 
   if (!func->implementsCall())
-    return throwError(exec, TypeError, dotExprDoesNotAllowCallsString(), funcVal, base, ident);
+    return throwError(exec, TypeError, dotExprDoesNotAllowCallsString(), funcVal, base.get(), ident);
 
   List argList = args->evaluateList(exec);
   KJS_CHECKEXCEPTIONVALUE
@@ -959,20 +701,6 @@ ValueImp *FunctionCallDotNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ PostfixNode ----------------------------------
-
-void PostfixNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool PostfixNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 11.3
 ValueImp *PostfixNode::evaluate(ExecState *exec)
@@ -992,20 +720,6 @@ ValueImp *PostfixNode::evaluate(ExecState *exec)
 
 // ------------------------------ DeleteNode -----------------------------------
 
-void DeleteNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool DeleteNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.4.1
 ValueImp *DeleteNode::evaluate(ExecState *exec)
 {
@@ -1015,20 +729,6 @@ ValueImp *DeleteNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ VoidNode -------------------------------------
-
-void VoidNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool VoidNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 11.4.2
 ValueImp *VoidNode::evaluate(ExecState *exec)
@@ -1040,20 +740,6 @@ ValueImp *VoidNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ TypeOfNode -----------------------------------
-
-void TypeOfNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool TypeOfNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 11.4.3
 ValueImp *TypeOfNode::evaluate(ExecState *exec)
@@ -1095,20 +781,6 @@ ValueImp *TypeOfNode::evaluate(ExecState *exec)
 
 // ------------------------------ PrefixNode -----------------------------------
 
-void PrefixNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool PrefixNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.4.4 and 11.4.5
 ValueImp *PrefixNode::evaluate(ExecState *exec)
 {
@@ -1129,20 +801,6 @@ ValueImp *PrefixNode::evaluate(ExecState *exec)
 
 // ------------------------------ UnaryPlusNode --------------------------------
 
-void UnaryPlusNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool UnaryPlusNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.4.6
 ValueImp *UnaryPlusNode::evaluate(ExecState *exec)
 {
@@ -1153,20 +811,6 @@ ValueImp *UnaryPlusNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ NegateNode -----------------------------------
-
-void NegateNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool NegateNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 11.4.7
 ValueImp *NegateNode::evaluate(ExecState *exec)
@@ -1181,20 +825,6 @@ ValueImp *NegateNode::evaluate(ExecState *exec)
 
 // ------------------------------ BitwiseNotNode -------------------------------
 
-void BitwiseNotNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool BitwiseNotNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.4.8
 ValueImp *BitwiseNotNode::evaluate(ExecState *exec)
 {
@@ -1205,20 +835,6 @@ ValueImp *BitwiseNotNode::evaluate(ExecState *exec)
 
 // ------------------------------ LogicalNotNode -------------------------------
 
-void LogicalNotNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool LogicalNotNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 11.4.9
 ValueImp *LogicalNotNode::evaluate(ExecState *exec)
 {
@@ -1228,24 +844,6 @@ ValueImp *LogicalNotNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ MultNode -------------------------------------
-
-void MultNode::ref()
-{
-  Node::ref();
-  if ( term1 )
-    term1->ref();
-  if ( term2 )
-    term2->ref();
-}
-
-bool MultNode::deref()
-{
-  if ( term1 && term1->deref() )
-    delete term1;
-  if ( term2 && term2->deref() )
-    delete term2;
-  return Node::deref();
-}
 
 // ECMA 11.5
 ValueImp *MultNode::evaluate(ExecState *exec)
@@ -1261,24 +859,6 @@ ValueImp *MultNode::evaluate(ExecState *exec)
 
 // ------------------------------ AddNode --------------------------------------
 
-void AddNode::ref()
-{
-  Node::ref();
-  if ( term1 )
-    term1->ref();
-  if ( term2 )
-    term2->ref();
-}
-
-bool AddNode::deref()
-{
-  if ( term1 && term1->deref() )
-    delete term1;
-  if ( term2 && term2->deref() )
-    delete term2;
-  return Node::deref();
-}
-
 // ECMA 11.6
 ValueImp *AddNode::evaluate(ExecState *exec)
 {
@@ -1292,24 +872,6 @@ ValueImp *AddNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ShiftNode ------------------------------------
-
-void ShiftNode::ref()
-{
-  Node::ref();
-  if ( term1 )
-    term1->ref();
-  if ( term2 )
-    term2->ref();
-}
-
-bool ShiftNode::deref()
-{
-  if ( term1 && term1->deref() )
-    delete term1;
-  if ( term2 && term2->deref() )
-    delete term2;
-  return Node::deref();
-}
 
 // ECMA 11.7
 ValueImp *ShiftNode::evaluate(ExecState *exec)
@@ -1336,24 +898,6 @@ ValueImp *ShiftNode::evaluate(ExecState *exec)
 
 // ------------------------------ RelationalNode -------------------------------
 
-void RelationalNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool RelationalNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
-
 // ECMA 11.8
 ValueImp *RelationalNode::evaluate(ExecState *exec)
 {
@@ -1379,13 +923,13 @@ ValueImp *RelationalNode::evaluate(ExecState *exec)
       // Is all of this OK for host objects?
       if (!v2->isObject())
           return throwError(exec,  TypeError,
-                             "Value %s (result of expression %s) is not an object. Cannot be used with IN expression.", v2, expr2);
+                             "Value %s (result of expression %s) is not an object. Cannot be used with IN expression.", v2, expr2.get());
       ObjectImp *o2(static_cast<ObjectImp*>(v2));
       b = o2->hasProperty(exec, Identifier(v1->toString(exec)));
   } else {
     if (!v2->isObject())
         return throwError(exec,  TypeError,
-                           "Value %s (result of expression %s) is not an object. Cannot be used with instanceof operator.", v2, expr2);
+                           "Value %s (result of expression %s) is not an object. Cannot be used with instanceof operator.", v2, expr2.get());
 
     ObjectImp *o2(static_cast<ObjectImp*>(v2));
     if (!o2->implementsHasInstance()) {
@@ -1404,24 +948,6 @@ ValueImp *RelationalNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ EqualNode ------------------------------------
-
-void EqualNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool EqualNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
 
 // ECMA 11.9
 ValueImp *EqualNode::evaluate(ExecState *exec)
@@ -1446,24 +972,6 @@ ValueImp *EqualNode::evaluate(ExecState *exec)
 
 // ------------------------------ BitOperNode ----------------------------------
 
-void BitOperNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool BitOperNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
-
 // ECMA 11.10
 ValueImp *BitOperNode::evaluate(ExecState *exec)
 {
@@ -1486,24 +994,6 @@ ValueImp *BitOperNode::evaluate(ExecState *exec)
 
 // ------------------------------ BinaryLogicalNode ----------------------------
 
-void BinaryLogicalNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool BinaryLogicalNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
-
 // ECMA 11.11
 ValueImp *BinaryLogicalNode::evaluate(ExecState *exec)
 {
@@ -1520,28 +1010,6 @@ ValueImp *BinaryLogicalNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ ConditionalNode ------------------------------
-
-void ConditionalNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-  if ( logical )
-    logical->ref();
-}
-
-bool ConditionalNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  if ( logical && logical->deref() )
-    delete logical;
-  return Node::deref();
-}
 
 // ECMA 11.12
 ValueImp *ConditionalNode::evaluate(ExecState *exec)
@@ -1631,21 +1099,6 @@ static inline ValueImp *valueForReadModifyAssignment(ExecState * exec, ValueImp 
 
 // ------------------------------ AssignResolveNode -----------------------------------
 
-void AssignResolveNode::ref()
-{
-  Node::ref();
-  if (m_right)
-    m_right->ref();
-}
-
-bool AssignResolveNode::deref()
-{
-  if (m_right && m_right->deref())
-    delete m_right;
-
-  return Node::deref();
-}
-
 ValueImp *AssignResolveNode::evaluate(ExecState *exec)
 {
   const ScopeChain& chain = exec->context().imp()->scopeChain();
@@ -1688,24 +1141,6 @@ ValueImp *AssignResolveNode::evaluate(ExecState *exec)
 
 // ------------------------------ AssignDotNode -----------------------------------
 
-void AssignDotNode::ref()
-{
-  Node::ref();
-  if (m_base)
-    m_base->ref();
-  if (m_right)
-    m_right->ref();
-}
-
-bool AssignDotNode::deref()
-{
-  if (m_base && m_base->deref())
-    delete m_base;
-  if (m_right && m_right->deref())
-    delete m_right;
-  return Node::deref();
-}
-
 ValueImp *AssignDotNode::evaluate(ExecState *exec)
 {
   ValueImp *baseValue = m_base->evaluate(exec);
@@ -1731,29 +1166,6 @@ ValueImp *AssignDotNode::evaluate(ExecState *exec)
 }
 
 // ------------------------------ AssignBracketNode -----------------------------------
-
-void AssignBracketNode::ref()
-{
-  Node::ref();
-  if (m_base)
-    m_base->ref();
-  if (m_subscript)
-    m_subscript->ref();
-  if (m_right)
-    m_right->ref();
-}
-
-bool AssignBracketNode::deref()
-{
-  if (m_base && m_base->deref())
-    delete m_base;
-  if (m_subscript && m_subscript->deref())
-    delete m_subscript;
-  if (m_right && m_right->deref())
-    delete m_right;
-
-  return Node::deref();
-}
 
 ValueImp *AssignBracketNode::evaluate(ExecState *exec)
 {
@@ -1804,24 +1216,6 @@ ValueImp *AssignBracketNode::evaluate(ExecState *exec)
 
 // ------------------------------ CommaNode ------------------------------------
 
-void CommaNode::ref()
-{
-  Node::ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-}
-
-bool CommaNode::deref()
-{
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  return Node::deref();
-}
-
 // ECMA 11.14
 ValueImp *CommaNode::evaluate(ExecState *exec)
 {
@@ -1848,28 +1242,6 @@ StatListNode::StatListNode(StatListNode *l, StatementNode *s)
   setLoc(l->firstLine(), s->lastLine(), l->sourceId());
 }
 
-void StatListNode::ref()
-{
-  for (StatListNode *n = this; n; n = n->list) {
-    n->Node::ref();
-    if (n->statement)
-      n->statement->ref();
-  }
-}
-
-bool StatListNode::deref()
-{
-  StatListNode *next;
-  for (StatListNode *n = this; n; n = next) {
-    next = n->list;
-    if (n->statement && n->statement->deref())
-      delete n->statement;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 // ECMA 12.1
 Completion StatListNode::execute(ExecState *exec)
 {
@@ -1886,7 +1258,7 @@ Completion StatListNode::execute(ExecState *exec)
   
   ValueImp *v = c.value();
   
-  for (StatListNode *n = list; n; n = n->list) {
+  for (StatListNode *n = list.get(); n; n = n->list.get()) {
     Completion c2 = n->statement->execute(exec);
     KJS_ABORTPOINT
     if (c2.complType() != Normal)
@@ -1908,25 +1280,11 @@ Completion StatListNode::execute(ExecState *exec)
 
 void StatListNode::processVarDecls(ExecState *exec)
 {
-  for (StatListNode *n = this; n; n = n->list)
+  for (StatListNode *n = this; n; n = n->list.get())
     n->statement->processVarDecls(exec);
 }
 
 // ------------------------------ AssignExprNode -------------------------------
-
-void AssignExprNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool AssignExprNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 12.2
 ValueImp *AssignExprNode::evaluate(ExecState *exec)
@@ -1940,20 +1298,6 @@ ValueImp *AssignExprNode::evaluate(ExecState *exec)
 VarDeclNode::VarDeclNode(const Identifier &id, AssignExprNode *in, Type t)
     : varType(t), ident(id), init(in)
 {
-}
-
-void VarDeclNode::ref()
-{
-  Node::ref();
-  if ( init )
-    init->ref();
-}
-
-bool VarDeclNode::deref()
-{
-  if ( init && init->deref() )
-    delete init;
-  return Node::deref();
 }
 
 // ECMA 12.2
@@ -2006,33 +1350,10 @@ void VarDeclNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ VarDeclListNode ------------------------------
 
-void VarDeclListNode::ref()
-{
-  for (VarDeclListNode *n = this; n; n = n->list) {
-    n->Node::ref();
-    if (n->var)
-      n->var->ref();
-  }
-}
-
-bool VarDeclListNode::deref()
-{
-  VarDeclListNode *next;
-  for (VarDeclListNode *n = this; n; n = next) {
-    next = n->list;
-    if (n->var && n->var->deref())
-      delete n->var;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
-
 // ECMA 12.2
 ValueImp *VarDeclListNode::evaluate(ExecState *exec)
 {
-  for (VarDeclListNode *n = this; n; n = n->list) {
+  for (VarDeclListNode *n = this; n; n = n->list.get()) {
     n->var->evaluate(exec);
     KJS_CHECKEXCEPTIONVALUE
   }
@@ -2041,25 +1362,11 @@ ValueImp *VarDeclListNode::evaluate(ExecState *exec)
 
 void VarDeclListNode::processVarDecls(ExecState *exec)
 {
-  for (VarDeclListNode *n = this; n; n = n->list)
+  for (VarDeclListNode *n = this; n; n = n->list.get())
     n->var->processVarDecls(exec);
 }
 
 // ------------------------------ VarStatementNode -----------------------------
-
-void VarStatementNode::ref()
-{
-  Node::ref();
-  if ( list )
-    list->ref();
-}
-
-bool VarStatementNode::deref()
-{
-  if ( list && list->deref() )
-    delete list;
-  return Node::deref();
-}
 
 // ECMA 12.2
 Completion VarStatementNode::execute(ExecState *exec)
@@ -2090,20 +1397,6 @@ BlockNode::BlockNode(SourceElementsNode *s)
   }
 }
 
-void BlockNode::ref()
-{
-  Node::ref();
-  if ( source )
-    source->ref();
-}
-
-bool BlockNode::deref()
-{
-  if ( source && source->deref() )
-    delete source;
-  return Node::deref();
-}
-
 // ECMA 12.1
 Completion BlockNode::execute(ExecState *exec)
 {
@@ -2131,20 +1424,6 @@ Completion EmptyStatementNode::execute(ExecState */*exec*/)
 
 // ------------------------------ ExprStatementNode ----------------------------
 
-void ExprStatementNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool ExprStatementNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 12.4
 Completion ExprStatementNode::execute(ExecState *exec)
 {
@@ -2157,28 +1436,6 @@ Completion ExprStatementNode::execute(ExecState *exec)
 }
 
 // ------------------------------ IfNode ---------------------------------------
-
-void IfNode::ref()
-{
-  Node::ref();
-  if ( statement1 )
-    statement1->ref();
-  if ( statement2 )
-    statement2->ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool IfNode::deref()
-{
-  if ( statement1 && statement1->deref() )
-    delete statement1;
-  if ( statement2 && statement2->deref() )
-    delete statement2;
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 12.5
 Completion IfNode::execute(ExecState *exec)
@@ -2210,24 +1467,6 @@ void IfNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ DoWhileNode ----------------------------------
-
-void DoWhileNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool DoWhileNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 12.6.1
 Completion DoWhileNode::execute(ExecState *exec)
@@ -2263,24 +1502,6 @@ void DoWhileNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ WhileNode ------------------------------------
-
-void WhileNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool WhileNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 12.6.2
 Completion WhileNode::execute(ExecState *exec)
@@ -2326,32 +1547,6 @@ void WhileNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ ForNode --------------------------------------
-
-void ForNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( expr1 )
-    expr1->ref();
-  if ( expr2 )
-    expr2->ref();
-  if ( expr3 )
-    expr3->ref();
-}
-
-bool ForNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( expr1 && expr1->deref() )
-    delete expr1;
-  if ( expr2 && expr2->deref() )
-    delete expr2;
-  if ( expr3 && expr3->deref() )
-    delete expr3;
-  return Node::deref();
-}
 
 // ECMA 12.6.3
 Completion ForNode::execute(ExecState *exec)
@@ -2411,38 +1606,8 @@ ForInNode::ForInNode(const Identifier &i, AssignExprNode *in, Node *e, Statement
   : ident(i), init(in), expr(e), statement(s)
 {
   // for( var foo = bar in baz )
-  varDecl = new VarDeclNode(ident, init, VarDeclNode::Variable);
+  varDecl = new VarDeclNode(ident, init.get(), VarDeclNode::Variable);
   lexpr = new ResolveNode(ident);
-}
-
-void ForInNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( expr )
-    expr->ref();
-  if ( lexpr )
-    lexpr->ref();
-  if ( init )
-    init->ref();
-  if ( varDecl )
-    varDecl->ref();
-}
-
-bool ForInNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( expr && expr->deref() )
-    delete expr;
-  if ( lexpr && lexpr->deref() )
-    delete lexpr;
-  if ( init && init->deref() )
-    delete init;
-  if ( varDecl && varDecl->deref() )
-    delete varDecl;
-  return Node::deref();
 }
 
 // ECMA 12.6.4
@@ -2551,20 +1716,6 @@ Completion BreakNode::execute(ExecState *exec)
 
 // ------------------------------ ReturnNode -----------------------------------
 
-void ReturnNode::ref()
-{
-  Node::ref();
-  if ( value )
-    value->ref();
-}
-
-bool ReturnNode::deref()
-{
-  if ( value && value->deref() )
-    delete value;
-  return Node::deref();
-}
-
 // ECMA 12.9
 Completion ReturnNode::execute(ExecState *exec)
 {
@@ -2585,24 +1736,6 @@ Completion ReturnNode::execute(ExecState *exec)
 }
 
 // ------------------------------ WithNode -------------------------------------
-
-void WithNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool WithNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
 
 // ECMA 12.10
 Completion WithNode::execute(ExecState *exec)
@@ -2626,24 +1759,6 @@ void WithNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ CaseClauseNode -------------------------------
-
-void CaseClauseNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-  if ( list )
-    list->ref();
-}
-
-bool CaseClauseNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  if ( list && list->deref() )
-    delete list;
-  return Node::deref();
-}
 
 // ECMA 12.11
 ValueImp *CaseClauseNode::evaluate(ExecState *exec)
@@ -2671,28 +1786,6 @@ void CaseClauseNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ ClauseListNode -------------------------------
 
-void ClauseListNode::ref()
-{
-  for (ClauseListNode *n = this; n; n = n->nx) {
-    n->Node::ref();
-    if (n->cl)
-      n->cl->ref();
-  }
-}
-
-bool ClauseListNode::deref()
-{
-  ClauseListNode *next;
-  for (ClauseListNode *n = this; n; n = next) {
-    next = n->nx;
-    if (n->cl && n->cl->deref())
-      delete n->cl;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 ValueImp *ClauseListNode::evaluate(ExecState */*exec*/)
 {
   /* should never be called */
@@ -2703,7 +1796,7 @@ ValueImp *ClauseListNode::evaluate(ExecState */*exec*/)
 // ECMA 12.11
 void ClauseListNode::processVarDecls(ExecState *exec)
 {
-  for (ClauseListNode *n = this; n; n = n->nx)
+  for (ClauseListNode *n = this; n; n = n->nx.get())
     if (n->cl)
       n->cl->processVarDecls(exec);
 }
@@ -2730,28 +1823,6 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
   }
 }
  
-void CaseBlockNode::ref()
-{
-  Node::ref();
-  if ( def )
-    def->ref();
-  if ( list1 )
-    list1->ref();
-  if ( list2 )
-    list2->ref();
-}
-
-bool CaseBlockNode::deref()
-{
-  if ( def && def->deref() )
-    delete def;
-  if ( list1 && list1->deref() )
-    delete list1;
-  if ( list2 && list2->deref() )
-    delete list2;
-  return Node::deref();
-}
-
 ValueImp *CaseBlockNode::evaluate(ExecState */*exec*/)
 {
   /* should never be called */
@@ -2764,7 +1835,8 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, ValueImp *input)
 {
   ValueImp *v;
   Completion res;
-  ClauseListNode *a = list1, *b = list2;
+  ClauseListNode *a = list1.get();
+  ClauseListNode *b = list2.get();
   CaseClauseNode *clause;
 
     while (a) {
@@ -2805,7 +1877,7 @@ Completion CaseBlockNode::evalBlock(ExecState *exec, ValueImp *input)
     if (res.complType() != Normal)
       return res;
   }
-  b = list2;
+  b = list2.get();
  step18:
   while (b) {
     clause = b->clause();
@@ -2833,24 +1905,6 @@ void CaseBlockNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ SwitchNode -----------------------------------
 
-void SwitchNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-  if ( block )
-    block->ref();
-}
-
-bool SwitchNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  if ( block && block->deref() )
-    delete block;
-  return Node::deref();
-}
-
 // ECMA 12.11
 Completion SwitchNode::execute(ExecState *exec)
 {
@@ -2874,20 +1928,6 @@ void SwitchNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ LabelNode ------------------------------------
-
-void LabelNode::ref()
-{
-  Node::ref();
-  if ( statement )
-    statement->ref();
-}
-
-bool LabelNode::deref()
-{
-  if ( statement && statement->deref() )
-    delete statement;
-  return Node::deref();
-}
 
 // ECMA 12.12
 Completion LabelNode::execute(ExecState *exec)
@@ -2913,20 +1953,6 @@ void LabelNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ ThrowNode ------------------------------------
 
-void ThrowNode::ref()
-{
-  Node::ref();
-  if ( expr )
-    expr->ref();
-}
-
-bool ThrowNode::deref()
-{
-  if ( expr && expr->deref() )
-    delete expr;
-  return Node::deref();
-}
-
 // ECMA 12.13
 Completion ThrowNode::execute(ExecState *exec)
 {
@@ -2939,20 +1965,6 @@ Completion ThrowNode::execute(ExecState *exec)
 }
 
 // ------------------------------ CatchNode ------------------------------------
-
-void CatchNode::ref()
-{
-  Node::ref();
-  if ( block )
-    block->ref();
-}
-
-bool CatchNode::deref()
-{
-  if ( block && block->deref() )
-    delete block;
-  return Node::deref();
-}
 
 Completion CatchNode::execute(ExecState */*exec*/)
 {
@@ -2984,20 +1996,6 @@ void CatchNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ FinallyNode ----------------------------------
 
-void FinallyNode::ref()
-{
-  Node::ref();
-  if ( block )
-    block->ref();
-}
-
-bool FinallyNode::deref()
-{
-  if ( block && block->deref() )
-    delete block;
-  return Node::deref();
-}
-
 // ECMA 12.14
 Completion FinallyNode::execute(ExecState *exec)
 {
@@ -3010,28 +2008,6 @@ void FinallyNode::processVarDecls(ExecState *exec)
 }
 
 // ------------------------------ TryNode --------------------------------------
-
-void TryNode::ref()
-{
-  Node::ref();
-  if ( block )
-    block->ref();
-  if ( _final )
-    _final->ref();
-  if ( _catch )
-    _catch->ref();
-}
-
-bool TryNode::deref()
-{
-  if ( block && block->deref() )
-    delete block;
-  if ( _final && _final->deref() )
-    delete _final;
-  if ( _catch && _catch->deref() )
-    delete _catch;
-  return Node::deref();
-}
 
 // ECMA 12.14
 Completion TryNode::execute(ExecState *exec)
@@ -3078,23 +2054,6 @@ void TryNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ ParameterNode --------------------------------
 
-void ParameterNode::ref()
-{
-  for (ParameterNode *n = this; n; n = n->next)
-    n->Node::ref();
-}
-
-bool ParameterNode::deref()
-{
-  ParameterNode *next;
-  for (ParameterNode *n = this; n; n = next) {
-    next = n->next;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 // ECMA 13
 ValueImp *ParameterNode::evaluate(ExecState */*exec*/)
 {
@@ -3118,31 +2077,13 @@ void FunctionBodyNode::processFuncDecl(ExecState *exec)
 
 // ------------------------------ FuncDeclNode ---------------------------------
 
-void FuncDeclNode::ref()
-{
-  Node::ref();
-  if ( param )
-    param->ref();
-  if ( body )
-    body->ref();
-}
-
-bool FuncDeclNode::deref()
-{
-  if ( param && param->deref() )
-    delete param;
-  if ( body && body->deref() )
-    delete body;
-  return Node::deref();
-}
-
 // ECMA 13
 void FuncDeclNode::processFuncDecl(ExecState *exec)
 {
   ContextImp *context = exec->context().imp();
 
   // TODO: let this be an object with [[Class]] property "Function"
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body, context->scopeChain());
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
   ObjectImp *func(fimp); // protect from GC
 
   ObjectImp *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
@@ -3150,7 +2091,7 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
   func->put(exec, prototypePropertyName, proto, Internal|DontDelete);
 
   int plen = 0;
-  for(ParameterNode *p = param; p != 0L; p = p->nextParam(), plen++)
+  for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
     fimp->addParameter(p->ident());
 
   func->put(exec, lengthPropertyName, Number(plen), ReadOnly|DontDelete|DontEnum);
@@ -3172,35 +2113,16 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 
 // ------------------------------ FuncExprNode ---------------------------------
 
-void FuncExprNode::ref()
-{
-  Node::ref();
-  if ( param )
-    param->ref();
-  if ( body )
-    body->ref();
-}
-
-bool FuncExprNode::deref()
-{
-  if ( param && param->deref() )
-    delete param;
-  if ( body && body->deref() )
-    delete body;
-  return Node::deref();
-}
-
-
 // ECMA 13
 ValueImp *FuncExprNode::evaluate(ExecState *exec)
 {
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), body, exec->context().imp()->scopeChain());
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), body.get(), exec->context().imp()->scopeChain());
   ValueImp *ret(fimp);
   ValueImp *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   fimp->put(exec, prototypePropertyName, proto, Internal|DontDelete);
 
   int plen = 0;
-  for(ParameterNode *p = param; p != 0L; p = p->nextParam(), plen++)
+  for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
     fimp->addParameter(p->ident());
 
   return ret;
@@ -3221,28 +2143,6 @@ SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2
   setLoc(s1->firstLine(), s2->lastLine(), s1->sourceId());
 }
 
-void SourceElementsNode::ref()
-{
-  for (SourceElementsNode *n = this; n; n = n->elements) {
-    n->Node::ref();
-    if (n->element)
-      n->element->ref();
-  }
-}
-
-bool SourceElementsNode::deref()
-{
-  SourceElementsNode *next;
-  for (SourceElementsNode *n = this; n; n = next) {
-    next = n->elements;
-    if (n->element && n->element->deref())
-      delete n->element;
-    if (n != this && n->Node::deref())
-      delete n;
-  }
-  return Node::deref();
-}
-
 // ECMA 14
 Completion SourceElementsNode::execute(ExecState *exec)
 {
@@ -3253,7 +2153,7 @@ Completion SourceElementsNode::execute(ExecState *exec)
   if (c1.complType() != Normal)
     return c1;
   
-  for (SourceElementsNode *n = elements; n; n = n->elements) {
+  for (SourceElementsNode *n = elements.get(); n; n = n->elements.get()) {
     Completion c2 = n->element->execute(exec);
     if (c2.complType() != Normal)
       return c2;
@@ -3269,13 +2169,13 @@ Completion SourceElementsNode::execute(ExecState *exec)
 // ECMA 14
 void SourceElementsNode::processFuncDecl(ExecState *exec)
 {
-  for (SourceElementsNode *n = this; n; n = n->elements)
+  for (SourceElementsNode *n = this; n; n = n->elements.get())
     n->element->processFuncDecl(exec);
 }
 
 void SourceElementsNode::processVarDecls(ExecState *exec)
 {
-  for (SourceElementsNode *n = this; n; n = n->elements)
+  for (SourceElementsNode *n = this; n; n = n->elements.get())
     n->element->processVarDecls(exec);
 }
 

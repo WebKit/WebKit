@@ -23,6 +23,8 @@
 
 #include "nodes.h"
 
+using namespace kxmlcore;
+
 namespace KJS {
   /**
    * A simple text streaming class that helps with code indentation.
@@ -40,6 +42,7 @@ namespace KJS {
     SourceStream& operator<<(char);
     SourceStream& operator<<(Format f);
     SourceStream& operator<<(const Node *);
+    template <typename T> SourceStream& operator<<(SharedPtr<T> n) { return this->operator<<(n.get()); }
   private:
     UString str; /* TODO: buffer */
     UString ind;
@@ -131,7 +134,7 @@ void GroupNode::streamTo(SourceStream &s) const
 
 void ElementNode::streamTo(SourceStream &s) const
 {
-  for (const ElementNode *n = this; n; n = n->list) {
+  for (const ElementNode *n = this; n; n = n->list.get()) {
     for (int i = 0; i < n->elision; i++)
       s << ",";
     s << n->node;
@@ -156,7 +159,7 @@ void ObjectLiteralNode::streamTo(SourceStream &s) const
 
 void PropertyValueNode::streamTo(SourceStream &s) const
 {
-  for (const PropertyValueNode *n = this; n; n = n->list)
+  for (const PropertyValueNode *n = this; n; n = n->list.get())
     s << n->name << ": " << n->assign;
 }
 
@@ -181,7 +184,7 @@ void DotAccessorNode::streamTo(SourceStream &s) const
 void ArgumentListNode::streamTo(SourceStream &s) const
 {
   s << expr;
-  for (ArgumentListNode *n = list; n; n = n->list)
+  for (ArgumentListNode *n = list.get(); n; n = n->list.get())
     s << ", " << n->expr;
 }
 
@@ -442,7 +445,7 @@ void CommaNode::streamTo(SourceStream &s) const
 
 void StatListNode::streamTo(SourceStream &s) const
 {
-  for (const StatListNode *n = this; n; n = n->list)
+  for (const StatListNode *n = this; n; n = n->list.get())
     s << n->statement;
 }
 
@@ -459,7 +462,7 @@ void VarDeclNode::streamTo(SourceStream &s) const
 void VarDeclListNode::streamTo(SourceStream &s) const
 {
   s << var;
-  for (VarDeclListNode *n = list; n; n = n->list)
+  for (VarDeclListNode *n = list.get(); n; n = n->list.get())
     s << ", " << n->var;
 }
 
@@ -577,11 +580,11 @@ void ClauseListNode::streamTo(SourceStream &s) const
 
 void CaseBlockNode::streamTo(SourceStream &s) const
 {
-  for (const ClauseListNode *n = list1; n; n = n->next())
+  for (const ClauseListNode *n = list1.get(); n; n = n->next())
     s << n->clause();
   if (def)
     s << def;
-  for (const ClauseListNode *n = list2; n; n = n->next())
+  for (const ClauseListNode *n = list2.get(); n; n = n->next())
     s << n->clause();
 }
 
@@ -623,7 +626,7 @@ void TryNode::streamTo(SourceStream &s) const
 void ParameterNode::streamTo(SourceStream &s) const
 {
   s << id;
-  for (ParameterNode *n = next; n; n = n->next)
+  for (ParameterNode *n = next.get(); n; n = n->next.get())
     s << ", " << n->id;
 }
 
@@ -643,7 +646,7 @@ void FuncExprNode::streamTo(SourceStream &s) const
 
 void SourceElementsNode::streamTo(SourceStream &s) const
 {
-  for (const SourceElementsNode *n = this; n; n = n->elements)
+  for (const SourceElementsNode *n = this; n; n = n->elements.get())
     s << n->element;
 }
 
