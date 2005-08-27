@@ -1,3 +1,13 @@
+2005-08-27  Jussi Hagman  <juhagman@abo.fi>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4676
+          output of update-webkit is too verbose
+
+        * Scripts/update-webkit:
+        Added option --quiet (-q) to decrease the amount of output.
+
 2005-08-27  Darin Adler  <darin@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4596
@@ -125,12 +135,12 @@
 2005-08-17  Maciej Stachowiak  <mjs@apple.com>
 
         Changes by Ben Lamonica and Eric Seidel, reviewed mostly by Eric and
-	somewhat by me, and also tweaked by me a little bit.
+        somewhat by me, and also tweaked by me a little bit.
 
-	- better support for pixel-dumping
-	- use checksums of the images so the tests are fast
-	- change output format to make the tests run faster
-	- don't dump pixel results for tests that dump as text
+        - better support for pixel-dumping
+        - use checksums of the images so the tests are fast
+        - change output format to make the tests run faster
+        - don't dump pixel results for tests that dump as text
 
         * DumpKCanvasTree/DumpKCanvasTree.m:
         (main):
@@ -152,7 +162,7 @@
 
         Reviewed by Darin.
 
-	- hacked DumpRenderTree to make the scrollbars appear and disappear properly.
+        - hacked DumpRenderTree to make the scrollbars appear and disappear properly.
 
         * DumpRenderTree/DumpRenderTree.m:
         (main):
@@ -181,11 +191,11 @@
 
         At Least Roughly Glanced At by Anders.
 
-	- fix change with totally breaks the layout tests.
+        - fix change with totally breaks the layout tests.
 
         * DumpRenderTree/DumpRenderTree.m:
         (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]): Make tests unready if you start another
-	load, to avoid dumping twice accidentally.
+        load, to avoid dumping twice accidentally.
 
 2005-08-10  Eric Seidel  <eseidel@apple.com>
         Fixed made by Mitz Pettel <opendarwin.org@mitzpettel.com>

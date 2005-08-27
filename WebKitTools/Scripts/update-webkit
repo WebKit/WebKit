@@ -31,7 +31,14 @@
 use strict;
 use FindBin;
 use lib $FindBin::Bin;
+use Getopt::Long;
 use webkitdirs;
+
+# Handle options
+my $quiet ='';
+my $cvsoptions= '';
+GetOptions('quiet|q' => \$quiet); 
+$cvsoptions = '-q' if $quiet;
 
 chdirWebKit();
 
@@ -51,7 +58,7 @@ my $directories = join ", ", @sources;
 $directories =~ s/, ([^,]+)$/, and $1/;
 print "Updating $directories\n";
 
-open CVS, "cvs -d '$root' co -P @sources |" or die;
+open CVS, "cvs $cvsoptions -d '$root' co -P @sources |" or die;
 while (<CVS>) {
     print;
 }
