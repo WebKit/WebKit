@@ -2,6 +2,21 @@
 
         Reviewed and landed by Darin.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4391
+          layout-tests/dom/html/level2/html/HTMLBaseElement01 and HTMLBaseElement02 fail
+
+        * layout-tests/dom/html/level2/html/HTMLBaseElement01.html: New version.
+        * layout-tests/dom/html/level2/html/HTMLBaseElement01-expected.txt: Now says "success".
+        * layout-tests/dom/html/level2/html/HTMLBaseElement02.html: New version.
+        * layout-tests/dom/html/level2/html/HTMLBaseElement02-expected.txt: Now says "success".
+
+        * layout-tests/dom/html/level2/html/HTMLBaseElement01.js: Removed.
+        * layout-tests/dom/html/level2/html/HTMLBaseElement02.js: Removed.
+
+2005-08-26  Curt Arnold  <curt.arnold@mac.com>
+
+        Reviewed and landed by Darin.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4570
           dispatchEvent12 test is incorrect
 
