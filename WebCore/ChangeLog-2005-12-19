@@ -1,3 +1,7 @@
+2005-08-26  Darin Adler  <darin@apple.com>
+
+        * khtml/html/htmlnames.cpp: (DOM::HTMLNames::init): Tweaked a wrong character in a comment.
+
 2005-08-26  David Hyatt  <hyatt@apple.com>
 
 	Implement four new CSS properties from CSS3.  border-image, background-clip,

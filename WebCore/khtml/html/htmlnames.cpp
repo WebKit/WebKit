@@ -55,7 +55,7 @@ void init()
         DOM_HTMLNAMES_FOR_EACH_TAG(INITIALIZE_TAG_GLOBAL)
 
         // Attributes
-        // Need a little trick to handle accept_charset and http_equiv, which need "_" characters.
+        // Need a little trick to handle accept_charset and http_equiv, which need "-" characters.
         #define DEFINE_ATTR_STRING(name) const char *name##AttrString = #name;
         DOM_HTMLNAMES_FOR_EACH_ATTR(DEFINE_ATTR_STRING)
         accept_charsetAttrString = "accept-charset";
