@@ -1,3 +1,14 @@
+2005-08-26  David Hyatt  <hyatt@apple.com>
+
+	Fix comment parsing so that it is lax for <style>.  Better fix eventually
+	will be to not even have the tokenizer do anything with <!-- and --> inside
+	<style> and <script>.
+	
+        Reviewed by adele
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::parseComment):
+        
 2005-08-26  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
