@@ -197,6 +197,20 @@
     [self _startOrContinueAnimationIfNecessary];
 }
 
+- (void)scaleAndTileInRect:(NSRect)ir fromRect:(NSRect)fr withHorizontalTileRule:(WebImageTileRule)hRule 
+      withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)context
+{
+    if (context == 0)
+        context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+    [imageData scaleAndTileInRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height)
+            fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
+            withHorizontalTileRule:hRule withVerticalTileRule:vRule context:context];
+
+    targetAnimationRect = ir;
+    [self _startOrContinueAnimationIfNecessary];
+}
+
 - (void)_startOrContinueAnimationIfNecessary
 {
     NSView *targetView = [NSView focusView];
@@ -230,6 +244,12 @@
 - (NSRect)targetAnimationRect
 {
     return targetAnimationRect;
+}
+
+- (void)setAnimationRect:(NSRect)r
+{
+    targetAnimationRect = r;
+    [self _startOrContinueAnimationIfNecessary];
 }
 
 - (void)increaseUseCount

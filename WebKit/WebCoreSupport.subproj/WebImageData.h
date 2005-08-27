@@ -27,6 +27,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <WebCore/WebCoreImageRenderer.h>
 
 @class WebImageRenderer;
 
@@ -69,6 +70,7 @@
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)size compositeOperation:(NSCompositingOperation)op context:(CGContextRef)aContext;
 - (void)tileInRect:(CGRect)rect fromPoint:(CGPoint)point context:(CGContextRef)aContext;
+- (void)scaleAndTileInRect:(CGRect)ir fromRect:(CGRect)fr withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)aContext;
 - (BOOL)isNull;
 - (CGSize)size;
 - (void)animate;

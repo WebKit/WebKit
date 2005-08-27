@@ -36,6 +36,7 @@
 #import "WebKitSystemBits.h"
 
 #import <WebKitSystemInterface.h>
+
 #import <WebCore/WebCoreImageRenderer.h>
 
 // Forward declarations of internal methods.
@@ -640,6 +641,100 @@ static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     }
     
     [decodeLock unlock];
+}
+
+- (void)scaleAndTileInRect:(CGRect)ir fromRect:(CGRect)fr 
+    withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)aContext
+{
+    ASSERT(aContext);
+
+    [decodeLock lock];
+    
+    size_t frame = [self currentFrame];
+    CGImageRef image = [self imageAtIndex:frame];
+    if (!image) {
+        [decodeLock unlock];
+        return;
+    }
+
+    if (frame == 0 && isSolidColor)
+        [self _fillSolidColorInRect:ir compositeOperation: NSCompositeSourceOver context: aContext];
+    else {
+        CGContextSaveGState(aContext);
+        CGSize tileSize = fr.size;
+         
+        // Now scale the slice in the appropriate direction using an affine transform that we will pass into
+        // the pattern.
+        float scaleX = 1.0f, scaleY = 1.0f;
+
+        if (hRule == WebImageStretch)
+            scaleX = ir.size.width / fr.size.width;
+        if (vRule == WebImageStretch)
+            scaleY = ir.size.height / fr.size.height;
+        
+        if (hRule == WebImageRepeat)
+            scaleX = scaleY;
+        if (vRule == WebImageRepeat)
+            scaleY = scaleX;
+            
+        if (hRule == WebImageRound) {
+            // Complicated math ensues.
+            float imageWidth = fr.size.width * scaleY;
+            float newWidth = ir.size.width / ceilf(ir.size.width / imageWidth);
+            scaleX = newWidth / fr.size.width;
+        }
+        
+        if (vRule == WebImageRound) {
+            // More complicated math ensues.
+            float imageHeight = fr.size.height * scaleX;
+            float newHeight = ir.size.height / ceilf(ir.size.height / imageHeight);
+            scaleY = newHeight / fr.size.height;
+        }
+        
+        CGAffineTransform patternTransform = CGAffineTransformMakeScale(scaleX, scaleY);
+
+        // Possible optimization:  We may want to cache the CGPatternRef    
+        CGPatternRef pattern = CGPatternCreate(self, CGRectMake(fr.origin.x, fr.origin.y, tileSize.width, tileSize.height),
+                                               patternTransform, tileSize.width, tileSize.height, 
+                                               kCGPatternTilingConstantSpacing, true, &patternCallbacks);
+        if (pattern) {
+            // We want to construct the phase such that the pattern is centered (when stretch is not
+            // set for a particular rule).
+            float hPhase = scaleX * fr.origin.x;
+            float vPhase = scaleY * (tileSize.height - fr.origin.y);
+            if (hRule == WebImageRepeat)
+                hPhase -= fmodf(ir.size.width, scaleX * tileSize.width) / 2.0f;
+            if (vRule == WebImageRepeat)
+                vPhase -= fmodf(ir.size.height, scaleY * tileSize.height) / 2.0f;
+            
+            CGPoint tileOrigin = CGPointMake(ir.origin.x - hPhase, ir.origin.y - vPhase);
+            CGPoint transformedOrigin = CGPointApplyAffineTransform(tileOrigin, CGContextGetCTM(aContext));
+            CGContextSetPatternPhase(aContext, CGSizeMake(transformedOrigin.x, transformedOrigin.y));
+
+            CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
+            CGContextSetFillColorSpace(aContext, patternSpace);
+            CGColorSpaceRelease(patternSpace);
+
+            float patternAlpha = 1;
+            CGContextSetFillPattern(aContext, pattern, &patternAlpha);
+
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+            [[NSGraphicsContext graphicsContextWithGraphicsPort:aContext flipped:NO] setCompositingOperation:NSCompositeSourceOver];
+            [pool release];
+
+            CGContextFillRect (aContext, ir);
+
+            CGPatternRelease (pattern);
+        }
+        else {
+            ERROR ("unable to create pattern");
+        }
+        
+        CGContextRestoreGState (aContext);
+    }
+    
+    [decodeLock unlock];
+
 }
 
 - (BOOL)isNull

@@ -613,14 +613,15 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)updateFocusState
 {
     // This method does the job of updating the view based on the view's firstResponder-ness and
-    // the window key-ness of the window containing this view. This involves three kinds of 
+    // the window key-ness of the window containing this view. This involves four kinds of 
     // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
     // 
-    // The three display attributes are as follows:
+    // The four display attributes are as follows:
     // 
     // 1. The background color used to draw behind selected content (active | inactive color)
     // 2. Caret blinking (blinks | does not blink)
     // 3. The drawing of a focus ring around links in web pages.
+    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa
     //
     // Also, this is responsible for letting the bridge know if the window has gained or lost focus
     // so we can send focus and blur events.
