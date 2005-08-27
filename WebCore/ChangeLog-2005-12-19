@@ -1,3 +1,13 @@
+2005-08-26  Curt Arnold  <curt.arnold@mac.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4570
+          dispatchEvent12 test is incorrect
+
+        * layout-tests/dom/html/level2/events/dispatchEvent12.js: Fixed to match real updated test.
+        Before we mis-merged a change.
+
 2005-08-26  Darin Adler  <darin@apple.com>
 
         * khtml/html/htmlnames.cpp: (DOM::HTMLNames::init): Tweaked a wrong character in a comment.

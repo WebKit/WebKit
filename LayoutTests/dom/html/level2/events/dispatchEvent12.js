@@ -121,7 +121,7 @@ function dispatchEvent12() {
       var preventDefault;
       monitor = new EventMonitor();
       
-      other = new EventMonitor();
+      other = new EventListenerN10035();
       
       var events = new Array();
 
