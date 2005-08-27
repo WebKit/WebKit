@@ -184,6 +184,8 @@ public:
         void init();
         
         void mapBackgroundAttachment(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundClip(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundOrigin(BackgroundLayer* layer, DOM::CSSValueImpl* value);
         void mapBackgroundImage(BackgroundLayer* layer, DOM::CSSValueImpl* value);
         void mapBackgroundRepeat(BackgroundLayer* layer, DOM::CSSValueImpl* value);
         void mapBackgroundXPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);

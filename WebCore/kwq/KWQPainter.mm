@@ -330,6 +330,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 // This method is only used to draw the little circles used in lists.
 void QPainter::drawEllipse(int x, int y, int w, int h)
 {
+    // FIXME: CG added CGContextAddEllipseinRect in Tiger, so we should be able to quite easily draw an ellipse.
     // This code can only handle circles, not ellipses. But khtml only
     // uses it for circles.
     ASSERT(w == h);
@@ -540,6 +541,22 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+void QPainter::drawScaledAndTiledPixmap(int x, int y, int w, int h, const QPixmap &pixmap, int sx, int sy, int sw, int sh, 
+                                        TileRule hRule, TileRule vRule, CGContextRef context)
+{
+    if (data->state.paintingDisabled)
+        return;
+    
+    if (hRule == STRETCH && vRule == STRETCH)
+        // Just do a scale.
+        return drawPixmap(x, y, w, h, pixmap, sx, sy, sw, sh, -1, context);
+
+    KWQ_BLOCK_EXCEPTIONS;
+    [pixmap.imageRenderer scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
+                      withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:context];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 void QPainter::_updateRenderer()
 {
     if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
@@ -744,6 +761,57 @@ void QPainter::fillRect(const QRect &rect, const QBrush &brush)
 void QPainter::addClip(const QRect &rect)
 {
     [NSBezierPath clipRect:rect];
+}
+
+void QPainter::addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
+                                  const QSize& bottomLeft, const QSize& bottomRight)
+{
+    // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
+    // values and our width/height values to make sure the curves can all fit.
+    int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
+    if (requiredWidth > rect.width())
+        return;
+    int requiredHeight = kMax(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
+    if (requiredHeight > rect.height())
+        return;
+ 
+    // Clip to our rect.
+    addClip(rect);
+
+    // Ok, the curves can fit.
+    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    
+    // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
+    // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
+    // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
+    // be subsumed by the other).
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + rect.width() - topRight.width() * 2, rect.y(),
+                                                  topRight.width() * 2, topRight.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y() + rect.height() - bottomLeft.height() * 2,
+                                                  bottomLeft.width() * 2, bottomLeft.height() * 2));
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + rect.width() - bottomRight.width() * 2,
+                                                  rect.y() + rect.height() - bottomRight.height() * 2,
+                                                  bottomRight.width() * 2, bottomRight.height() * 2));
+    
+    // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
+    CGContextAddRect(context, CGRectMake(rect.x() + topLeft.width(), rect.y(),
+                                         rect.width() - topLeft.width() - topRight.width(),
+                                         kMax(topLeft.height(), topRight.height())));
+    CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
+                                         rect.y() + rect.height() - kMax(bottomLeft.height(), bottomRight.height()),
+                                         rect.width() - bottomLeft.width() - bottomRight.width(),
+                                         kMax(bottomLeft.height(), bottomRight.height())));
+    CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
+                                         kMax(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
+    CGContextAddRect(context, CGRectMake(rect.x() + rect.width() - kMax(topRight.width(), bottomRight.width()),
+                                         rect.y() + topRight.height(),
+                                         kMax(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
+    CGContextAddRect(context, CGRectMake(rect.x() + kMax(topLeft.width(), bottomLeft.width()),
+                                         rect.y() + kMax(topLeft.height(), topRight.height()),
+                                         rect.width() - kMax(topLeft.width(), bottomLeft.width()) - kMax(topRight.width(), bottomRight.width()),
+                                         rect.height() - kMax(topLeft.height(), topRight.height()) - kMax(bottomLeft.height(), bottomRight.height())));
+    CGContextClip(context);
 }
 
 Qt::RasterOp QPainter::rasterOp() const

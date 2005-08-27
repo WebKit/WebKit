@@ -40,6 +40,7 @@ class CSSMutableStyleDeclarationImpl;
 class CounterImpl;
 class DashboardRegionImpl;
 class RectImpl;
+class PairImpl;
 
 extern const int inheritableProperties[];
 extern const unsigned numInheritableProperties;
@@ -143,8 +144,9 @@ public:
     CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type);
     CSSPrimitiveValueImpl(CounterImpl *c);
     CSSPrimitiveValueImpl(RectImpl *r);
-    CSSPrimitiveValueImpl(DashboardRegionImpl *r);
+    CSSPrimitiveValueImpl(DashboardRegionImpl *r); // FIXME: Why is dashboard region a primitive value? This makes no sense.
     CSSPrimitiveValueImpl(QRgb color);
+    CSSPrimitiveValueImpl(PairImpl* p);
 
     virtual ~CSSPrimitiveValueImpl();
 
@@ -191,6 +193,10 @@ public:
 	return ( m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor );
     }
 
+    PairImpl* getPairValue() const {
+	return (m_type != CSSPrimitiveValue::CSS_PAIR ? 0 : m_value.pair);
+    }
+
     DashboardRegionImpl *getDashboardRegionValue () const {
 	return ( m_type != CSSPrimitiveValue::CSS_DASHBOARD_REGION ? 0 : m_value.region );
     }
@@ -214,6 +220,7 @@ protected:
 	CounterImpl *counter;
 	RectImpl *rect;
         QRgb rgbcolor;
+        PairImpl *pair;
         DashboardRegionImpl *region;
     } m_value;
 };
@@ -251,10 +258,10 @@ public:
 
     MAIN_THREAD_ALLOCATED;
 
-    CSSPrimitiveValueImpl *top() { return m_top; }
-    CSSPrimitiveValueImpl *right() { return m_right; }
-    CSSPrimitiveValueImpl *bottom() { return m_bottom; }
-    CSSPrimitiveValueImpl *left() { return m_left; }
+    CSSPrimitiveValueImpl *top() const { return m_top; }
+    CSSPrimitiveValueImpl *right() const { return m_right; }
+    CSSPrimitiveValueImpl *bottom() const { return m_bottom; }
+    CSSPrimitiveValueImpl *left() const { return m_left; }
 
     void setTop( CSSPrimitiveValueImpl *top );
     void setRight( CSSPrimitiveValueImpl *right );
@@ -265,6 +272,28 @@ protected:
     CSSPrimitiveValueImpl *m_right;
     CSSPrimitiveValueImpl *m_bottom;
     CSSPrimitiveValueImpl *m_left;
+};
+
+// A primitive value representing a pair.  This is useful for properties like border-radius, background-size/position,
+// and border-spacing (all of which are space-separated sets of two values).  At the moment we are only using it for
+// border-radius, but (FIXME) border-spacing and background-position could be converted over to use it
+// (eliminating some extra -khtml- internal properties).
+class PairImpl : public khtml::Shared<PairImpl> {
+public:
+    PairImpl();
+    virtual ~PairImpl();
+
+    MAIN_THREAD_ALLOCATED;
+
+    CSSPrimitiveValueImpl *first() const { return m_first; }
+    CSSPrimitiveValueImpl *second() const { return m_second; }
+
+    void setFirst(CSSPrimitiveValueImpl *first);
+    void setSecond(CSSPrimitiveValueImpl *second);
+
+protected:
+    CSSPrimitiveValueImpl *m_first;
+    CSSPrimitiveValueImpl *m_second;
 };
 
 #if APPLE_CHANGES
@@ -301,11 +330,39 @@ public:
     CSSImageValueImpl(const DOMString &url, StyleBaseImpl *style);
     virtual ~CSSImageValueImpl();
 
+    MAIN_THREAD_ALLOCATED;
+
     khtml::CachedImage *image(khtml::DocLoader* loader);
 
 protected:
     khtml::CachedImage* m_image;
     bool m_accessedImage;
+};
+
+class CSSBorderImageValueImpl : public CSSValueImpl
+{
+public:
+    CSSBorderImageValueImpl();
+    CSSBorderImageValueImpl(CSSImageValueImpl* image, RectImpl* imageRect,
+                            int horizontalRule, int verticalRule);
+    virtual ~CSSBorderImageValueImpl();
+
+    MAIN_THREAD_ALLOCATED;
+
+    virtual DOMString cssText() const;
+    virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
+
+public:
+    // The border image.
+    CSSImageValueImpl* m_image;
+
+    // These four values are used to make "cuts" in the image.  They can be numbers
+    // or percentages.
+    RectImpl* m_imageSliceRect;
+    
+    // Values for how to handle the scaling/stretching/tiling of the image slices.
+    int m_horizontalSizeRule; // Rule for how to adjust the widths of the top/middle/bottom
+    int m_verticalSizeRule; // Rule for how to adjust the heights of the left/middle/right
 };
 
 class FontFamilyValueImpl : public CSSPrimitiveValueImpl

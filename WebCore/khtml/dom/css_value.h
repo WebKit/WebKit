@@ -436,7 +436,8 @@ public:
         CSS_COUNTER = 23,
         CSS_RECT = 24,
         CSS_RGBCOLOR = 25,
-        CSS_DASHBOARD_REGION = 26,
+        CSS_PAIR = 26, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
+        CSS_DASHBOARD_REGION = 27, // FIXME: What on earth is this doing as a primitive value? This is insane.
         CSS_HTML_RELATIVE = 255
     };
 

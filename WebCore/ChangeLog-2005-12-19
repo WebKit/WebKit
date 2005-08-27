@@ -1,5 +1,154 @@
 2005-08-26  David Hyatt  <hyatt@apple.com>
 
+	Implement four new CSS properties from CSS3.  border-image, background-clip,
+	background-origin, and border-radius.  Border radius support is still in the
+	initial stages, with only transparent borders supported.
+	
+        Reviewed by darin
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::):
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (DOM::CSSPrimitiveValueImpl::cssText):
+        (DOM::PairImpl::PairImpl):
+        (DOM::PairImpl::~PairImpl):
+        (DOM::PairImpl::setFirst):
+        (DOM::PairImpl::setSecond):
+        (DOM::CSSImageValueImpl::~CSSImageValueImpl):
+        (DOM::CSSImageValueImpl::image):
+        (DOM::CSSBorderImageValueImpl::CSSBorderImageValueImpl):
+        (DOM::CSSBorderImageValueImpl::~CSSBorderImageValueImpl):
+        (DOM::CSSBorderImageValueImpl::cssText):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSPrimitiveValueImpl::getPairValue):
+        (DOM::CSSPrimitiveValueImpl::):
+        (DOM::RectImpl::top):
+        (DOM::RectImpl::right):
+        (DOM::RectImpl::bottom):
+        (DOM::RectImpl::left):
+        (DOM::PairImpl::first):
+        (DOM::PairImpl::second):
+        (DOM::CSSBorderImageValueImpl::cssValueType):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseBackgroundShorthand):
+        (CSSParser::parseBackgroundProperty):
+        (BorderImageParseContext::m_verticalRule):
+        (BorderImageParseContext::~BorderImageParseContext):
+        (BorderImageParseContext::failed):
+        (BorderImageParseContext::allowBreak):
+        (BorderImageParseContext::allowNumber):
+        (BorderImageParseContext::allowSlash):
+        (BorderImageParseContext::allowWidth):
+        (BorderImageParseContext::allowRule):
+        (BorderImageParseContext::commitImage):
+        (BorderImageParseContext::commitNumber):
+        (BorderImageParseContext::commitSlash):
+        (BorderImageParseContext::commitWidth):
+        (BorderImageParseContext::commitRule):
+        (BorderImageParseContext::commitBorderImage):
+        (CSSParser::parseBorderImage):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::mapBackgroundClip):
+        (khtml::CSSStyleSelector::mapBackgroundOrigin):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/cssvalues.in:
+        * khtml/dom/css_value.h:
+        (DOM::CSSPrimitiveValue::):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::isLoaded):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackground):
+        (RenderBox::paintBackgroundExtended):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::onEndChain):
+        (khtml::InlineFlowBox::determineSpacingForFlowBoxes):
+        (khtml::InlineFlowBox::paintBackground):
+        (khtml::InlineFlowBox::paintBackgroundAndBorder):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintBorderImage):
+        (RenderObject::paintBorder):
+        (RenderObject::updateBackgroundImages):
+        (RenderObject::setPixmap):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::paintBackgroundExtended):
+        * khtml/rendering/render_style.cpp:
+        (m_next):
+        (BackgroundLayer::BackgroundLayer):
+        (BackgroundLayer::operator=):
+        (BackgroundLayer::operator==):
+        (BackgroundLayer::fillUnsetProperties):
+        (BackgroundLayer::cullEmptyLayers):
+        * khtml/rendering/render_style.h:
+        (khtml::BorderValue::nonZero):
+        (khtml::):
+        (khtml::BorderImage::m_verticalRule):
+        (khtml::BorderImage::operator==):
+        (khtml::BorderImage::hasImage):
+        (khtml::BorderImage::image):
+        (khtml::BorderData::hasBorder):
+        (khtml::BorderData::hasBorderRadius):
+        (khtml::BorderData::borderLeftWidth):
+        (khtml::BorderData::borderRightWidth):
+        (khtml::BorderData::borderTopWidth):
+        (khtml::BorderData::borderBottomWidth):
+        (khtml::BorderData::operator==):
+        (khtml::BackgroundLayer::backgroundClip):
+        (khtml::BackgroundLayer::backgroundOrigin):
+        (khtml::BackgroundLayer::isBackgroundClipSet):
+        (khtml::BackgroundLayer::isBackgroundOriginSet):
+        (khtml::BackgroundLayer::setBackgroundClip):
+        (khtml::BackgroundLayer::setBackgroundOrigin):
+        (khtml::BackgroundLayer::clearBackgroundClip):
+        (khtml::BackgroundLayer::clearBackgroundOrigin):
+        (khtml::RenderStyle::borderImage):
+        (khtml::RenderStyle::borderTopLeftRadius):
+        (khtml::RenderStyle::borderTopRightRadius):
+        (khtml::RenderStyle::borderBottomLeftRadius):
+        (khtml::RenderStyle::borderBottomRightRadius):
+        (khtml::RenderStyle::hasBorderRadius):
+        (khtml::RenderStyle::borderLeftWidth):
+        (khtml::RenderStyle::borderRightWidth):
+        (khtml::RenderStyle::borderTopWidth):
+        (khtml::RenderStyle::borderBottomWidth):
+        (khtml::RenderStyle::backgroundClip):
+        (khtml::RenderStyle::backgroundOrigin):
+        (khtml::RenderStyle::resetBorder):
+        (khtml::RenderStyle::resetBorderImage):
+        (khtml::RenderStyle::resetBorderRadius):
+        (khtml::RenderStyle::resetBorderTopLeftRadius):
+        (khtml::RenderStyle::resetBorderTopRightRadius):
+        (khtml::RenderStyle::resetBorderBottomLeftRadius):
+        (khtml::RenderStyle::resetBorderBottomRightRadius):
+        (khtml::RenderStyle::setBorderImage):
+        (khtml::RenderStyle::setBorderTopLeftRadius):
+        (khtml::RenderStyle::setBorderTopRightRadius):
+        (khtml::RenderStyle::setBorderBottomLeftRadius):
+        (khtml::RenderStyle::setBorderBottomRightRadius):
+        (khtml::RenderStyle::setBorderRadius):
+        (khtml::RenderStyle::initialBackgroundClip):
+        (khtml::RenderStyle::initialBackgroundOrigin):
+        (khtml::RenderStyle::initialBorderImage):
+        (khtml::RenderStyle::initialBorderRadius):
+        * kwq/KWQPainter.h:
+        (QPainter::):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawEllipse):
+        (QPainter::drawScaledAndTiledPixmap):
+        (QPainter::addRoundedRectClip):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::setAnimationRect):
+        * kwq/WebCoreImageRenderer.h:
+
+2005-08-26  David Hyatt  <hyatt@apple.com>
+
 	Fix comment parsing so that it is lax for <style>.  Better fix eventually
 	will be to not even have the tokenizer do anything with <!-- and --> inside
 	<style> and <script>.

@@ -1806,6 +1806,12 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     case CSS_PROP_BACKGROUND_ATTACHMENT:
         HANDLE_BACKGROUND_VALUE(backgroundAttachment, BackgroundAttachment, value)
         break;
+    case CSS_PROP_BACKGROUND_CLIP:
+        HANDLE_BACKGROUND_VALUE(backgroundClip, BackgroundClip, value)
+        break;
+    case CSS_PROP_BACKGROUND_ORIGIN:
+        HANDLE_BACKGROUND_VALUE(backgroundOrigin, BackgroundOrigin, value)
+        break;
     case CSS_PROP_BACKGROUND_REPEAT:
         HANDLE_BACKGROUND_VALUE(backgroundRepeat, BackgroundRepeat, value)
         break;
@@ -3439,6 +3445,139 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         break;
     }
 
+    case CSS_PROP_BORDER_IMAGE: {
+        HANDLE_INHERIT_AND_INITIAL(borderImage, BorderImage)
+        BorderImage image;
+        if (primitiveValue) {
+            if (primitiveValue->getIdent() == CSS_VAL_NONE)
+                style->setBorderImage(image);
+        } else {
+            // Retrieve the border image value.
+            CSSBorderImageValueImpl* borderImage = static_cast<CSSBorderImageValueImpl*>(value);
+            
+            // Set the image (this kicks off the load).
+            image.m_image = borderImage->m_image->image(element->getDocument()->docLoader());
+            
+            // Set up a length box to represent our image slices.
+            LengthBox& l = image.m_slices;
+            RectImpl* r = borderImage->m_imageSliceRect;
+            if (r->top()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                l.top = Length((int)r->top()->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+            else
+                l.top = Length((int)r->top()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+            if (r->bottom()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                l.bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+            else
+                l.bottom = Length((int)r->bottom()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+            if (r->left()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                l.left = Length((int)r->left()->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+            else
+                l.left = Length((int)r->left()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+            if (r->right()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                l.right = Length((int)r->right()->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+            else
+                l.right = Length((int)r->right()->getFloatValue(CSSPrimitiveValue::CSS_NUMBER), Fixed);
+            
+            // Set the appropriate rules for stretch/round/repeat of the slices
+            switch (borderImage->m_horizontalSizeRule) {
+                case CSS_VAL_STRETCH:
+                    image.m_horizontalRule = BI_STRETCH;
+                    break;
+                case CSS_VAL_ROUND:
+                    image.m_horizontalRule = BI_ROUND;
+                    break;
+                default: // CSS_VAL_REPEAT
+                    image.m_horizontalRule = BI_REPEAT;
+                    break;
+            }
+
+            switch (borderImage->m_verticalSizeRule) {
+                case CSS_VAL_STRETCH:
+                    image.m_verticalRule = BI_STRETCH;
+                    break;
+                case CSS_VAL_ROUND:
+                    image.m_verticalRule = BI_ROUND;
+                    break;
+                default: // CSS_VAL_REPEAT
+                    image.m_verticalRule = BI_REPEAT;
+                    break;
+            }
+
+            style->setBorderImage(image);
+        }
+        break;
+    }
+
+    case CSS_PROP_BORDER_RADIUS:
+        if (isInherit) {
+            style->setBorderTopLeftRadius(parentStyle->borderTopLeftRadius());
+            style->setBorderTopRightRadius(parentStyle->borderTopRightRadius());
+            style->setBorderBottomLeftRadius(parentStyle->borderBottomLeftRadius());
+            style->setBorderBottomRightRadius(parentStyle->borderBottomRightRadius());
+            return;
+        }
+        if (isInitial) {
+            style->resetBorderRadius();
+            return;
+        }
+        // Fall through
+    case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
+    case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
+    case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
+    case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS: {
+	if (isInherit) {
+            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_LEFT_RADIUS, borderTopLeftRadius, BorderTopLeftRadius)
+            HANDLE_INHERIT_COND(CSS_PROP_BORDER_TOP_RIGHT_RADIUS, borderTopRightRadius, BorderTopRightRadius)
+            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS, borderBottomLeftRadius, BorderBottomLeftRadius)
+            HANDLE_INHERIT_COND(CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius, BorderBottomRightRadius)
+            return;
+        }
+        
+        if (isInitial) {
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_TOP_LEFT_RADIUS, BorderTopLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_TOP_RIGHT_RADIUS, BorderTopRightRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS, BorderBottomLeftRadius, BorderRadius)
+            HANDLE_INITIAL_COND_WITH_VALUE(CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS, BorderBottomRightRadius, BorderRadius)
+            return;
+        }
+
+        if (!primitiveValue)
+            return;
+
+        PairImpl* pair = primitiveValue->getPairValue();
+        if (!pair)
+            return;
+
+        int width = pair->first()->computeLength(style, paintDeviceMetrics);
+        int height = pair->second()->computeLength(style, paintDeviceMetrics);
+        if (width < 0 || height < 0)
+            return;
+
+        if (width == 0)
+            height = 0; // Null out the other value.
+        else if (height == 0)
+            width = 0; // Null out the other value.
+
+        QSize size(width, height);
+        switch (id) {
+            case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
+                style->setBorderTopLeftRadius(size);
+                break;
+            case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
+                style->setBorderTopRightRadius(size);
+                break;
+            case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
+                style->setBorderBottomLeftRadius(size);
+                break;
+            case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
+                style->setBorderBottomRightRadius(size);
+                break;
+            default:
+                style->setBorderRadius(size);
+                break;
+        }
+    }
+
     case CSS_PROP_OUTLINE_OFFSET: {
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
 
@@ -3877,6 +4016,50 @@ void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValueI
             break;
         default:
             return;
+    }
+}
+
+void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundClip(RenderStyle::initialBackgroundClip());
+        return;
+    }
+
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    switch (primitiveValue->getIdent()) {
+        case CSS_VAL_BORDER:
+            layer->setBackgroundClip(BGBORDER);
+            break;
+        case CSS_VAL_PADDING:
+            layer->setBackgroundClip(BGPADDING);
+            break;
+        default: // CSS_VAL_CONTENT
+            layer->setBackgroundClip(BGCONTENT);
+            break;
+    }
+}
+
+void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValueImpl* value)
+{
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
+        layer->setBackgroundOrigin(RenderStyle::initialBackgroundOrigin());
+        return;
+    }
+
+    if (!value->isPrimitiveValue()) return;
+    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    switch (primitiveValue->getIdent()) {
+        case CSS_VAL_BORDER:
+            layer->setBackgroundOrigin(BGBORDER);
+            break;
+        case CSS_VAL_PADDING:
+            layer->setBackgroundOrigin(BGPADDING);
+            break;
+        default: // CSS_VAL_CONTENT
+            layer->setBackgroundOrigin(BGCONTENT);
+            break;
     }
 }
 

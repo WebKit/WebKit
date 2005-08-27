@@ -696,7 +696,9 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     case CSS_PROP_BACKGROUND_ATTACHMENT:
+    case CSS_PROP_BACKGROUND_CLIP:
     case CSS_PROP_BACKGROUND_IMAGE:
+    case CSS_PROP_BACKGROUND_ORIGIN:
     case CSS_PROP_BACKGROUND_POSITION:
     case CSS_PROP_BACKGROUND_POSITION_X:
     case CSS_PROP_BACKGROUND_POSITION_Y:
@@ -980,6 +982,43 @@ bool CSSParser::parseValue( int propId, bool important )
         }
 #endif
         break;
+    case CSS_PROP_BORDER_IMAGE:
+        if (id == CSS_VAL_NONE)
+            valid_primitive = true;
+        else
+            return parseBorderImage(propId, important);
+        break;
+    case CSS_PROP_BORDER_TOP_RIGHT_RADIUS:
+    case CSS_PROP_BORDER_TOP_LEFT_RADIUS:
+    case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
+    case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
+    case CSS_PROP_BORDER_RADIUS: {
+        int num = valueList->numValues;
+        if (num != 1 && num != 2)
+            return false;
+        valid_primitive = validUnit(value, FLength, strict);
+        if (!valid_primitive)
+            return false;
+        CSSPrimitiveValueImpl* parsedValue1 = new CSSPrimitiveValueImpl(value->fValue,
+                                                                        (CSSPrimitiveValue::UnitTypes)value->unit);
+        CSSPrimitiveValueImpl* parsedValue2 = parsedValue1;
+        if (num == 2) {
+            value = valueList->next();
+            valid_primitive = validUnit(value, FLength, strict);
+            if (!valid_primitive) {
+                delete parsedValue1;
+                return false;
+            }
+            parsedValue2 = new CSSPrimitiveValueImpl(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+        }
+        
+        PairImpl* pair = new PairImpl;
+        pair->setFirst(parsedValue1);
+        pair->setSecond(parsedValue2);
+        CSSPrimitiveValueImpl* val = new CSSPrimitiveValueImpl(pair);
+        addProperty(propId, val, important);
+	return true;
+    }
     case CSS_PROP_OUTLINE_OFFSET:
         valid_primitive = validUnit(value, FLength, strict);
         break;
@@ -1282,9 +1321,10 @@ bool CSSParser::parseBackgroundShorthand(bool important)
 {
     // Position must come before color in this array because a plain old "0" is a legal color
     // in quirks mode but it's usually the X coordinate of a position.
-    const int numProperties = 5;
+    const int numProperties = 7;
     const int properties[numProperties] = { CSS_PROP_BACKGROUND_IMAGE, CSS_PROP_BACKGROUND_REPEAT,
-        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP_BACKGROUND_COLOR };
+        CSS_PROP_BACKGROUND_ATTACHMENT, CSS_PROP_BACKGROUND_POSITION, CSS_PROP_BACKGROUND_CLIP,
+        CSS_PROP_BACKGROUND_ORIGIN, CSS_PROP_BACKGROUND_COLOR };
     
     inParseShortHand = true;
     
@@ -1672,6 +1712,13 @@ bool CSSParser::parseBackgroundProperty(int propId, int& propId1, int& propId2,
                     currValue = parseBackgroundImage();
                     if (currValue)
                         valueList->next();
+                    break;
+                case CSS_PROP_BACKGROUND_CLIP:
+                case CSS_PROP_BACKGROUND_ORIGIN:
+                    if (val->id == CSS_VAL_BORDER || val->id == CSS_VAL_PADDING || val->id == CSS_VAL_CONTENT) {
+                        currValue = new CSSPrimitiveValueImpl(val->id);
+                        valueList->next();
+                    }
                     break;
                 case CSS_PROP_BACKGROUND_POSITION:
                     parseBackgroundPosition(currValue, currValue2);
@@ -2407,6 +2454,178 @@ bool CSSParser::parseShadow(int propId, bool important)
             valueList->next();
             return true;
         }
+    }
+    
+    return context.failed();
+}
+
+struct BorderImageParseContext
+{
+    BorderImageParseContext()
+    :m_allowBreak(false), m_allowNumber(false), m_allowSlash(false), m_allowWidth(false),
+     m_allowRule(false), m_image(0), m_top(0), m_right(0), m_bottom(0), m_left(0), m_borderTop(0), m_borderRight(0), m_borderBottom(0),
+     m_borderLeft(0), m_horizontalRule(0), m_verticalRule(0)
+    {}
+    
+    ~BorderImageParseContext() {
+        if (!m_allowBreak) {
+            delete m_image;
+            delete m_top; delete m_right; delete m_bottom; delete m_left;
+            delete m_borderTop; delete m_borderRight; delete m_borderBottom; delete m_borderLeft;
+        }
+    }
+
+    bool failed() { return m_allowBreak = false; }
+    bool allowBreak() const { return m_allowBreak; }
+    bool allowNumber() const { return m_allowNumber; }
+    bool allowSlash() const { return m_allowSlash; }
+    bool allowWidth() const { return m_allowWidth; }
+    bool allowRule() const { return m_allowRule; }
+
+    void commitImage(CSSImageValueImpl* image) { m_image = image; m_allowNumber = true; }
+    void commitNumber(Value* v) {
+        CSSPrimitiveValueImpl* val = new CSSPrimitiveValueImpl(v->fValue,
+                                                               (CSSPrimitiveValue::UnitTypes)v->unit);
+        if (!m_top)
+            m_top = val;
+        else if (!m_right)
+            m_right = val;
+        else if (!m_bottom)
+            m_bottom = val;
+        else {
+            assert(!m_left);
+            m_left = val;
+        }
+        
+        m_allowBreak = m_allowSlash = true;
+        m_allowNumber = !m_left;
+    }
+    void commitSlash() { m_allowBreak = m_allowSlash = m_allowNumber = false; m_allowWidth = true; }
+    void commitWidth(Value* val) {
+        if (!m_borderTop)
+            m_borderTop = val;
+        else if (!m_borderRight)
+            m_borderRight = val;
+        else if (!m_borderBottom)
+            m_borderBottom = val;
+        else {
+            assert(!m_borderLeft);
+            m_borderLeft = val;
+        }
+
+        m_allowBreak = m_allowRule = true;
+        m_allowWidth = !m_borderLeft;
+    }
+    void commitRule(int keyword) {
+        if (!m_horizontalRule)
+            m_horizontalRule = keyword;
+        else if (!m_verticalRule)
+            m_verticalRule = keyword;
+        m_allowRule = !m_verticalRule;
+    }
+    void commitBorderImage(CSSParser* p, int propId, bool important) {
+        // We need to clone and repeat values for any omissions.
+        if (!m_right) {
+            m_right = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+        }
+        if (!m_bottom) {
+            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValueImpl(m_right->getFloatValue(m_right->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+        }
+        if (!m_left)
+             m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+             
+        // Now build a rect value to hold all four of our primitive values.
+        RectImpl* rect = new RectImpl;
+        rect->setTop(m_top); rect->setRight(m_right); rect->setBottom(m_bottom); rect->setLeft(m_left);
+
+        // Fill in STRETCH as the default if it wasn't specified.
+        if (!m_horizontalRule)
+            m_horizontalRule = CSS_VAL_STRETCH;
+        if (!m_verticalRule)
+            m_verticalRule = CSS_VAL_STRETCH;
+
+        // Make our new border image value now and add it as the result.
+        CSSBorderImageValueImpl* borderImage = new CSSBorderImageValueImpl(m_image, rect, m_horizontalRule, m_verticalRule);
+        p->addProperty(propId, borderImage, important);
+            
+        // Now we have to deal with the border widths.  The best way to deal with these is to actually put these values into a value
+        // list and then make our parsing machinery do the parsing.
+        if (m_borderTop) {
+            ValueList newList;
+            newList.addValue(*m_borderTop);
+            if (m_borderRight)
+                newList.addValue(*m_borderRight);
+            if (m_borderBottom)
+                newList.addValue(*m_borderBottom);
+            if (m_borderLeft)
+                newList.addValue(*m_borderLeft);
+            p->valueList = &newList;
+            p->parseValue(CSS_PROP_BORDER_WIDTH, important);
+            newList.numValues = 0; // Trick valuelist into not destroying the values we put into it.
+            p->valueList = 0;
+        }
+    }
+    
+    bool m_allowBreak;
+    bool m_allowNumber;
+    bool m_allowSlash;
+    bool m_allowWidth;
+    bool m_allowRule;
+    
+    CSSImageValueImpl* m_image;
+    
+    CSSPrimitiveValueImpl* m_top;
+    CSSPrimitiveValueImpl* m_right;
+    CSSPrimitiveValueImpl* m_bottom;
+    CSSPrimitiveValueImpl* m_left;
+    
+    Value* m_borderTop;
+    Value* m_borderRight;
+    Value* m_borderBottom;
+    Value* m_borderLeft;
+    
+    int m_horizontalRule;
+    int m_verticalRule;
+};
+
+bool CSSParser::parseBorderImage(int propId, bool important)
+{
+    // Look for an image initially.  If the first value is not a URI, then we're done.
+    BorderImageParseContext context;
+    Value* val = valueList->current();
+    if (val->unit != CSSPrimitiveValue::CSS_URI)
+        return context.failed();
+        
+    DOMString uri = khtml::parseURL(domString(val->string));
+    if (uri.isEmpty())
+        return context.failed();
+    
+    context.commitImage(new CSSImageValueImpl(DOMString(KURL(styleElement->baseURL().qstring(), uri.qstring()).url()),
+                                                             styleElement));
+    while ((val = valueList->next())) {
+        if (context.allowNumber() && validUnit(val, FInteger|FNonNeg|FPercent, true)) {
+            context.commitNumber(val);
+        } else if (context.allowSlash() && val->unit == Value::Operator && val->iValue == '/') {
+            context.commitSlash();
+        } else if (context.allowWidth() &&
+            (val->id == CSS_VAL_THIN || val->id == CSS_VAL_MEDIUM || val->id == CSS_VAL_THICK || validUnit(val, FLength, strict))) {
+            context.commitWidth(val);
+        } else if (context.allowRule() &&
+            (val->id == CSS_VAL_STRETCH || val->id == CSS_VAL_ROUND || val->id == CSS_VAL_REPEAT)) {
+            context.commitRule(val->id);
+        } else {
+            // Something invalid was encountered.
+            return context.failed();
+        }
+    }
+    
+    if (context.allowBreak()) {
+        // Need to fully commit as a single value.
+        context.commitBorderImage(this, propId, important);
+        return true;
     }
     
     return context.failed();

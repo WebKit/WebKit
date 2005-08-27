@@ -462,3 +462,17 @@ searchfield
 searchfield-results
 searchfield-close
 textfield
+
+#
+# CSS_PROP_BORDER_IMAGE
+#
+# stretch
+# repeat
+round
+
+#
+# CSS_PROP_BACKGROUND_CLIP/ORIGIN
+#
+border
+content
+padding

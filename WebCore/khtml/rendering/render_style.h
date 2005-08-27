@@ -205,10 +205,8 @@ public:
     unsigned short width : 12;
     EBorderStyle style : 4;
 
-    bool nonZero() const
-    {
-      // rikkus: workaround for gcc 2.95.3
-      return width!=0 && !(style==BNONE);
+    bool nonZero(bool checkStyle = true) const {
+        return width != 0 && (!checkStyle || style != BNONE);
     }
 
     bool isTransparent() const {
@@ -273,6 +271,32 @@ struct CollapsedBorderValue
     EBorderPrecedence precedence;    
 };
 
+enum EBorderImageRule {
+    BI_STRETCH, BI_ROUND, BI_REPEAT
+};
+
+class BorderImage
+{
+public:
+    BorderImage() :m_image(0), m_horizontalRule(BI_STRETCH), m_verticalRule(BI_STRETCH) {}
+    BorderImage(CachedImage* image, LengthBox slices, EBorderImageRule h, EBorderImageRule v) 
+      :m_image(image), m_slices(slices), m_horizontalRule(h), m_verticalRule(v) {}
+
+    bool operator==(const BorderImage& o) const
+    {
+        return m_image == o.m_image && m_slices == o.m_slices && m_horizontalRule == o.m_horizontalRule &&
+               m_verticalRule == o.m_verticalRule;
+    }
+
+    bool hasImage() const { return m_image != 0; }
+    CachedImage* image() const { return m_image; }
+
+    CachedImage* m_image;
+    LengthBox m_slices;
+    EBorderImageRule m_horizontalRule : 2;
+    EBorderImageRule m_verticalRule : 2;
+};
+
 class BorderData
 {
 public:
@@ -280,17 +304,61 @@ public:
     BorderValue right;
     BorderValue top;
     BorderValue bottom;
+    
+    BorderImage image;
+
+    QSize topLeft;
+    QSize topRight;
+    QSize bottomLeft;
+    QSize bottomRight;
 
     bool hasBorder() const
     {
-    	return left.nonZero() || right.nonZero() || top.nonZero() || bottom.nonZero();
+        bool haveImage = image.hasImage();
+    	return left.nonZero(haveImage) || right.nonZero(haveImage) || top.nonZero(haveImage) || bottom.nonZero(haveImage);
     }
 
+    bool hasBorderRadius() const {
+        if (topLeft.width() > 0)
+            return true;
+        if (topRight.width() > 0)
+            return true;
+        if (bottomLeft.width() > 0)
+            return true;
+        if (bottomRight.width() > 0)
+            return true;
+        return false;
+    }
+    
+    unsigned short borderLeftWidth() const {
+        if (!image.hasImage() && (left.style == BNONE || left.style == BHIDDEN))
+            return 0; 
+        return left.width;
+    }
+    
+    unsigned short borderRightWidth() const {
+        if (!image.hasImage() && (right.style == BNONE || right.style == BHIDDEN))
+            return 0;
+        return right.width;
+    }
+    
+    unsigned short borderTopWidth() const {
+        if (!image.hasImage() && (top.style == BNONE || top.style == BHIDDEN))
+            return 0;
+        return top.width;
+    }
+    
+    unsigned short borderBottomWidth() const {
+        if (!image.hasImage() && (bottom.style == BNONE || bottom.style == BHIDDEN))
+            return 0;
+        return bottom.width;
+    }
+    
     bool operator==(const BorderData& o) const
     {
-    	return left==o.left && right==o.right && top==o.top && bottom==o.bottom;
+    	return left == o.left && right == o.right && top == o.top && bottom == o.bottom && image == o.image &&
+               topLeft == o.topLeft && topRight == o.topRight && bottomLeft == o.bottomLeft && bottomRight == o.bottomRight;
     }
-
 };
 
 enum EMarginCollapse { MCOLLAPSE, MSEPARATE, MDISCARD };
@@ -436,6 +504,10 @@ public:
 };
 
 //------------------------------------------------
+enum EBackgroundBox {
+    BGBORDER, BGPADDING, BGCONTENT
+};
+
 enum EBackgroundRepeat {
     REPEAT, REPEAT_X, REPEAT_Y, NO_REPEAT
 };
@@ -451,7 +523,10 @@ public:
     Length backgroundXPosition() const { return m_xPosition; }
     Length backgroundYPosition() const { return m_yPosition; }
     bool backgroundAttachment() const { return m_bgAttachment; }
+    EBackgroundBox backgroundClip() const { return m_bgClip; }
+    EBackgroundBox backgroundOrigin() const { return m_bgOrigin; }
     EBackgroundRepeat backgroundRepeat() const { return m_bgRepeat; }
+
     BackgroundLayer* next() const { return m_next; }
     BackgroundLayer* next() { return m_next; }
 
@@ -459,18 +534,24 @@ public:
     bool isBackgroundXPositionSet() const { return m_xPosSet; }
     bool isBackgroundYPositionSet() const { return m_yPosSet; }
     bool isBackgroundAttachmentSet() const { return m_attachmentSet; }
+    bool isBackgroundClipSet() const { return m_clipSet; }
+    bool isBackgroundOriginSet() const { return m_originSet; }
     bool isBackgroundRepeatSet() const { return m_repeatSet; }
-
+    
     void setBackgroundImage(CachedImage* i) { m_image = i; m_imageSet = true; }
     void setBackgroundXPosition(const Length& l) { m_xPosition = l; m_xPosSet = true; }
     void setBackgroundYPosition(const Length& l) { m_yPosition = l; m_yPosSet = true; }
     void setBackgroundAttachment(bool b) { m_bgAttachment = b; m_attachmentSet = true; }
+    void setBackgroundClip(EBackgroundBox b) { m_bgClip = b; m_clipSet = true; }
+    void setBackgroundOrigin(EBackgroundBox b) { m_bgOrigin = b; m_originSet = true; }
     void setBackgroundRepeat(EBackgroundRepeat r) { m_bgRepeat = r; m_repeatSet = true; }
     
     void clearBackgroundImage() { m_imageSet = false; }
     void clearBackgroundXPosition() { m_xPosSet = false; }
     void clearBackgroundYPosition() { m_yPosSet = false; }
     void clearBackgroundAttachment() { m_attachmentSet = false; }
+    void clearBackgroundClip() { m_clipSet = false; }
+    void clearBackgroundOrigin() { m_originSet = false; }
     void clearBackgroundRepeat() { m_repeatSet = false; }
 
     void setNext(BackgroundLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
@@ -505,10 +586,14 @@ public:
     Length m_yPosition;
 
     bool m_bgAttachment : 1;
+    EBackgroundBox m_bgClip : 2;
+    EBackgroundBox m_bgOrigin : 2;
     EBackgroundRepeat m_bgRepeat : 2;
 
     bool m_imageSet : 1;
     bool m_attachmentSet : 1;
+    bool m_clipSet : 1;
+    bool m_originSet : 1;
     bool m_repeatSet : 1;
     bool m_xPosSet : 1;
     bool m_yPosSet : 1;
@@ -1146,23 +1231,27 @@ public:
     const BorderValue& borderTop() const { return surround->border.top; }
     const BorderValue& borderBottom() const { return surround->border.bottom; }
 
-    unsigned short  borderLeftWidth() const
-    { if( surround->border.left.style == BNONE || surround->border.left.style == BHIDDEN) return 0; return surround->border.left.width; }
+    const BorderImage& borderImage() const { return surround->border.image; }
+
+    QSize borderTopLeftRadius() const { return surround->border.topLeft; }
+    QSize borderTopRightRadius() const { return surround->border.topRight; }
+    QSize borderBottomLeftRadius() const { return surround->border.bottomLeft; }
+    QSize borderBottomRightRadius() const { return surround->border.bottomRight; }
+    bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
+
+    unsigned short  borderLeftWidth() const { return surround->border.borderLeftWidth(); }
     EBorderStyle    borderLeftStyle() const { return surround->border.left.style; }
     const QColor &  borderLeftColor() const { return surround->border.left.color; }
     bool borderLeftIsTransparent() const { return surround->border.left.isTransparent(); }
-    unsigned short  borderRightWidth() const
-    { if (surround->border.right.style == BNONE || surround->border.right.style == BHIDDEN) return 0; return surround->border.right.width; }
+    unsigned short  borderRightWidth() const { return surround->border.borderRightWidth(); }
     EBorderStyle    borderRightStyle() const {  return surround->border.right.style; }
     const QColor &  	    borderRightColor() const {  return surround->border.right.color; }
     bool borderRightIsTransparent() const { return surround->border.right.isTransparent(); }
-    unsigned short  borderTopWidth() const
-    { if(surround->border.top.style == BNONE || surround->border.top.style == BHIDDEN) return 0; return surround->border.top.width; }
+    unsigned short  borderTopWidth() const { return surround->border.borderTopWidth(); }
     EBorderStyle    borderTopStyle() const {return surround->border.top.style; }
     const QColor &  borderTopColor() const {  return surround->border.top.color; }
     bool borderTopIsTransparent() const { return surround->border.top.isTransparent(); }
-    unsigned short  borderBottomWidth() const
-    { if(surround->border.bottom.style == BNONE || surround->border.bottom.style == BHIDDEN) return 0; return surround->border.bottom.width; }
+    unsigned short  borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle    borderBottomStyle() const {  return surround->border.bottom.style; }
     const QColor &  	    borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
@@ -1216,6 +1305,8 @@ public:
     CachedImage *backgroundImage() const { return background->m_background.m_image; }
     EBackgroundRepeat backgroundRepeat() const { return background->m_background.m_bgRepeat; }
     bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
+    EBackgroundBox backgroundClip() const { return background->m_background.m_bgClip; }
+    EBackgroundBox backgroundOrigin() const { return background->m_background.m_bgOrigin; }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
     Length backgroundYPosition() const { return background->m_background.m_yPosition; }
     BackgroundLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
@@ -1334,14 +1425,31 @@ public:
     }
 #endif
 
-    void resetBorder() { resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); }
+    void resetBorder() { resetBorderImage(); resetBorderTop(); resetBorderRight(); resetBorderBottom(); resetBorderLeft(); resetBorderRadius(); }
     void resetBorderTop() { SET_VAR(surround, border.top, BorderValue()) }
     void resetBorderRight() { SET_VAR(surround, border.right, BorderValue()) }
     void resetBorderBottom() { SET_VAR(surround, border.bottom, BorderValue()) }
     void resetBorderLeft() { SET_VAR(surround, border.left, BorderValue()) }
+    void resetBorderImage() { SET_VAR(surround, border.image, BorderImage()) }
+    void resetBorderRadius() { resetBorderTopLeftRadius(); resetBorderTopRightRadius(); resetBorderBottomLeftRadius(); resetBorderBottomRightRadius(); }
+    void resetBorderTopLeftRadius() { SET_VAR(surround, border.topLeft, initialBorderRadius()) }
+    void resetBorderTopRightRadius() { SET_VAR(surround, border.topRight, initialBorderRadius()) }
+    void resetBorderBottomLeftRadius() { SET_VAR(surround, border.bottomLeft, initialBorderRadius()) }
+    void resetBorderBottomRightRadius() { SET_VAR(surround, border.bottomRight, initialBorderRadius()) }
+    
     void resetOutline() { SET_VAR(background, m_outline, OutlineValue()) }
     
     void setBackgroundColor(const QColor& v)    { SET_VAR(background, m_color, v) }
+
+    void setBorderImage(const BorderImage& b)   { SET_VAR(surround, border.image, b) }
+
+    void setBorderTopLeftRadius(const QSize& s) { SET_VAR(surround, border.topLeft, s) }
+    void setBorderTopRightRadius(const QSize& s) { SET_VAR(surround, border.topRight, s) }
+    void setBorderBottomLeftRadius(const QSize& s) { SET_VAR(surround, border.bottomLeft, s) }
+    void setBorderBottomRightRadius(const QSize& s) { SET_VAR(surround, border.bottomRight, s) }
+    void setBorderRadius(const QSize& s) { 
+        setBorderTopLeftRadius(s); setBorderTopRightRadius(s); setBorderBottomLeftRadius(s); setBorderBottomRightRadius(s);
+    }
 
     void setBorderLeftWidth(unsigned short v)   {  SET_VAR(surround,border.left.width,v) }
     void setBorderLeftStyle(EBorderStyle v)     {  SET_VAR(surround,border.left.style,v) }
@@ -1546,9 +1654,13 @@ public:
 
     // Initial values for all the properties
     static bool initialBackgroundAttachment() { return true; }
+    static EBackgroundBox initialBackgroundClip() { return BGBORDER; }
+    static EBackgroundBox initialBackgroundOrigin() { return BGPADDING; }
     static EBackgroundRepeat initialBackgroundRepeat() { return REPEAT; }
     static bool initialBorderCollapse() { return false; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
+    static BorderImage initialBorderImage() { return BorderImage(); }
+    static QSize initialBorderRadius() { return QSize(0,0); }
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
     static EClear initialClear() { return CNONE; }
     static EDirection initialDirection() { return LTR; }

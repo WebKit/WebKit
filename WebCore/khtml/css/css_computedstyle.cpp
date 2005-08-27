@@ -39,6 +39,7 @@
 #import "KWQLogging.h"
 #endif
 
+using khtml::EBackgroundBox;
 using khtml::EBorderStyle;
 using khtml::ETextAlign;
 using khtml::Font;
@@ -60,6 +61,8 @@ static const int computedProperties[] = {
     CSS_PROP_BACKGROUND_IMAGE,
     CSS_PROP_BACKGROUND_REPEAT,
     CSS_PROP_BACKGROUND_ATTACHMENT,
+    CSS_PROP_BACKGROUND_CLIP,
+    CSS_PROP_BACKGROUND_ORIGIN,
     CSS_PROP_BACKGROUND_POSITION,
     CSS_PROP_BACKGROUND_POSITION_X,
     CSS_PROP_BACKGROUND_POSITION_Y,
@@ -361,8 +364,16 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_BACKGROUND_ATTACHMENT:
         if (style->backgroundAttachment())
             return new CSSPrimitiveValueImpl(CSS_VAL_SCROLL);
-        else
-            return new CSSPrimitiveValueImpl(CSS_VAL_FIXED);
+        return new CSSPrimitiveValueImpl(CSS_VAL_FIXED);
+    case CSS_PROP_BACKGROUND_CLIP:
+    case CSS_PROP_BACKGROUND_ORIGIN: {
+        EBackgroundBox box = (propertyID == CSS_PROP_BACKGROUND_CLIP ? style->backgroundClip() : style->backgroundOrigin());
+        if (box == khtml::BGBORDER)
+            return new CSSPrimitiveValueImpl(CSS_VAL_BORDER);
+        if (box == khtml::BGPADDING)
+            return new CSSPrimitiveValueImpl(CSS_VAL_PADDING);
+        return new CSSPrimitiveValueImpl(CSS_VAL_CONTENT);
+    }
     case CSS_PROP_BACKGROUND_POSITION:
     {
         DOMString string;

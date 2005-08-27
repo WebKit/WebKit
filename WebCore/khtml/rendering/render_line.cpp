@@ -394,8 +394,9 @@ bool InlineFlowBox::onEndChain(RenderObject* endObject)
     RenderObject* curr = endObject;
     RenderObject* parent = curr->parent();
     while (parent && !parent->isRenderBlock()) {
-        if (parent->lastChild() != curr)
+        if (parent->lastChild() != curr || parent == object())
             return false;
+            
         curr = parent;
         parent = curr->parent();
     }
@@ -446,7 +447,6 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
                      prevOnLineExists() || onEndChain(endObject)))
                     includeLeftEdge = true;
             }
-            
         }
     }
 
@@ -807,7 +807,8 @@ void InlineFlowBox::paintBackground(QPainter* p, const QColor& c, const Backgrou
     bool hasBackgroundImage = bg && (bg->pixmap_size() == bg->valid_rect().size()) &&
                               !bg->isTransparent() && !bg->isErrorImage();
     if (!hasBackgroundImage || (!prevLineBox() && !nextLineBox()) || !parent())
-        object()->paintBackgroundExtended(p, c, bgLayer, my, mh, _tx, _ty, w, h, borderLeft(), borderRight());
+        object()->paintBackgroundExtended(p, c, bgLayer, my, mh, _tx, _ty, w, h, 
+                                          borderLeft(), borderRight(), paddingLeft(), paddingRight());
     else {
         // We have a background image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -815,6 +816,8 @@ void InlineFlowBox::paintBackground(QPainter* p, const QColor& c, const Backgrou
         // strip.  Even though that strip has been broken up across multiple lines, you still paint it
         // as though you had one single line.  This means each line has to pick up the background where
         // the previous line left off.
+        // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
+        // but it isn't even clear how this should work at all.
         int xOffsetOnLine = 0;
         for (InlineRunBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
             xOffsetOnLine += curr->width();
@@ -827,7 +830,7 @@ void InlineFlowBox::paintBackground(QPainter* p, const QColor& c, const Backgrou
         p->save();
         p->addClip(clipRect);
         object()->paintBackgroundExtended(p, c, bgLayer, my, mh, startX, _ty,
-                                          totalWidth, h, borderLeft(), borderRight());
+                                          totalWidth, h, borderLeft(), borderRight(), paddingLeft(), paddingRight());
         p->restore();
     }
 }
@@ -864,8 +867,41 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
         // non-first-line style.
-        if (parent() && object()->style()->hasBorder())
-            object()->paintBorder(p, _tx, _ty, w, h, object()->style(), includeLeftEdge(), includeRightEdge());
+        if (parent() && object()->style()->hasBorder()) {
+            CachedImage* borderImage = object()->style()->borderImage().image();
+            bool hasBorderImage = borderImage && (borderImage->pixmap_size() == borderImage->valid_rect().size()) &&
+                                  !borderImage->isTransparent() && !borderImage->isErrorImage();
+            if (hasBorderImage && !borderImage->isLoaded())
+                return; // Don't paint anything while we wait for the image to load.
+            
+            // The simple case is where we either have no border image or we are the only box for this object.  In those
+            // cases only a single call to draw is required.
+            if (!hasBorderImage || (!prevLineBox() && !nextLineBox()))
+                object()->paintBorder(p, _tx, _ty, w, h, object()->style(), includeLeftEdge(), includeRightEdge());
+            else {
+                // We have a border image that spans multiple lines.
+                // We need to adjust _tx and _ty by the width of all previous lines.
+                // Think of border image painting on inlines as though you had one long line, a single continuous
+                // strip.  Even though that strip has been broken up across multiple lines, you still paint it
+                // as though you had one single line.  This means each line has to pick up the image where
+                // the previous line left off.
+                // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
+                // but it isn't even clear how this should work at all.
+                int xOffsetOnLine = 0;
+                for (InlineRunBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
+                    xOffsetOnLine += curr->width();
+                int startX = _tx - xOffsetOnLine;
+                int totalWidth = xOffsetOnLine;
+                for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
+                    totalWidth += curr->width();
+                QRect clipRect(_tx, _ty, width(), height());
+                clipRect = p->xForm(clipRect);
+                p->save();
+                p->addClip(clipRect);
+                object()->paintBorder(p, startX, _ty, totalWidth, h, object()->style());
+                p->restore();
+            }
+        }
     }
 }
 

@@ -98,7 +98,8 @@ public:
     static bool shouldUseThreadedDecoding();
 
     void resetAnimation();
-    
+    void setAnimationRect(const QRect&) const;
+
 private:
 
     WebCoreImageRendererPtr imageRenderer;

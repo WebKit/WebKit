@@ -115,6 +115,11 @@ void QPixmap::resetAnimation()
     }
 }
 
+void QPixmap::setAnimationRect(const QRect& rect) const
+{
+    [imageRenderer setAnimationRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
+}
+
 @interface WebImageCallback : NSObject
 {
     khtml::CachedImageCallback *callback;

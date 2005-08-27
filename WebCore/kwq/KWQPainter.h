@@ -47,6 +47,7 @@ class QPainterPrivate;
 class QPainter : public Qt {
 public:
     typedef enum { RTL, LTR } TextDirection;
+    typedef enum { STRETCH, ROUND, REPEAT } TileRule;
 
     QPainter();
     QPainter(bool forPrinting);
@@ -92,8 +93,12 @@ public:
     void drawFloatPixmap( float x, float y, float w, float h, const QPixmap &,
 			    float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1, CGContextRef context=0);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0, CGContextRef context=0);
+    void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH,
+                                  CGContextRef context=0);
 
     void addClip(const QRect &);
+    void addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
+                            const QSize& bottomLeft, const QSize& bottomRight);
 
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);

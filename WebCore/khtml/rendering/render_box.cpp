@@ -347,13 +347,36 @@ void RenderBox::paintBackgrounds(QPainter *p, const QColor& c, const BackgroundL
 void RenderBox::paintBackground(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     paintBackgroundExtended(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height,
-                            borderLeft(), borderRight());
+                            borderLeft(), borderRight(), paddingLeft(), paddingRight());
 }
 
 void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                         int _tx, int _ty, int w, int h,
-                                        int bleft, int bright)
+                                        int bleft, int bright, int pleft, int pright)
 {
+    bool clippedToBorderRadius = false;
+    if (style()->hasBorderRadius()) {
+        QRect clipRect(_tx, _ty, w, h);
+        clipRect = p->xForm(clipRect);
+        p->save();
+        p->addRoundedRectClip(clipRect, style()->borderTopLeftRadius(), style()->borderTopRightRadius(),
+                              style()->borderBottomLeftRadius(), style()->borderBottomRightRadius());
+        clippedToBorderRadius = true;
+    }
+    
+    if (bgLayer->backgroundClip() != BGBORDER) {
+        // Clip to the padding or content boxes as necessary.
+        bool includePadding = bgLayer->backgroundClip() == BGCONTENT;
+        int x = _tx + bleft + (includePadding ? pleft : 0);
+        int y = _ty + borderTop() + (includePadding ? paddingTop() : 0);
+        int width = w - bleft - bright - (includePadding ? pleft + pright : 0);
+        int height = h - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0);
+        QRect clipRect(x, y, width, height);
+        clipRect = p->xForm(clipRect);
+        p->save();
+        p->addClip(clipRect);
+    }
+
     CachedImage* bg = bgLayer->backgroundImage();
     bool shouldPaintBackgroundImage = bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage();
     QColor bgColor = c;
@@ -413,17 +436,28 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
         int sy = 0;
         int cw,ch;
         int cx,cy;
-        int vpab = bleft + bright;
-        int hpab = borderTop() + borderBottom();
         
         // CSS2 chapter 14.2.1
 
-        if (bgLayer->backgroundAttachment())
-        {
-            //scroll
-            int pw = w - vpab;
-            int ph = h - hpab;
-            
+        if (bgLayer->backgroundAttachment()) {
+            // scroll
+            int hpab = 0, vpab = 0, left = 0, top = 0; // Init to 0 for background-origin of 'border'
+            if (bgLayer->backgroundOrigin() != BGBORDER) {
+                hpab += bleft + bright;
+                vpab += borderTop() + borderBottom();
+                left += bleft;
+                top += borderTop();
+                if (bgLayer->backgroundOrigin() == BGCONTENT) {
+                    hpab += pleft + pright;
+                    vpab += paddingTop() + paddingBottom();
+                    left += pleft;
+                    top += paddingTop();
+                }
+            }
+
+            int pw = w - hpab;
+            int ph = h - vpab;
+                        
             int pixw = bg->pixmap_size().width();
             int pixh = bg->pixmap_size().height();
             EBackgroundRepeat bgr = bgLayer->backgroundRepeat();
@@ -439,20 +473,20 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                         cw += xPosition;
                     }
                 }
-                cx += bleft;
+                cx += left;
             } else {
                 // repeat over x or background is wider than box
                 cw = w;
                 cx = _tx;
                 if (pixw > 0) {
-					int xPosition = bgLayer->backgroundXPosition().minWidth(pw-pixw);
-					if ((xPosition > 0) && (bgr == NO_REPEAT)) {
-						cx += xPosition;
-						cw -= xPosition;
-					} else {
-						sx =  pixw - (xPosition % pixw );
-						sx -= bleft % pixw;
-					}
+                    int xPosition = bgLayer->backgroundXPosition().minWidth(pw-pixw);
+                    if ((xPosition > 0) && (bgr == NO_REPEAT)) {
+                        cx += xPosition;
+                        cw -= xPosition;
+                    } else {
+                        sx =  pixw - (xPosition % pixw );
+                        sx -= left % pixw;
+                    }
                 }
             }
 
@@ -469,20 +503,20 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
                     }
                 }
                 
-                cy += borderTop();
+                cy += top;
             } else {
                 // repeat over y or background is taller than box
                 ch = h;
                 cy = _ty;
                 if (pixh > 0) {
-					int yPosition = bgLayer->backgroundYPosition().minWidth(ph-pixh);
-					if ((yPosition > 0) && (bgr == NO_REPEAT)) {
-						cy += yPosition;
-						ch -= yPosition;
-					} else {
-						sy = pixh - (yPosition % pixh );
-						sy -= borderTop() % pixh;
-					}
+                    int yPosition = bgLayer->backgroundYPosition().minWidth(ph-pixh);
+                    if ((yPosition > 0) && (bgr == NO_REPEAT)) {
+                        cy += yPosition;
+                        ch -= yPosition;
+                    } else {
+                        sy = pixh - (yPosition % pixh );
+                        sy -= top % pixh;
+                    }
                 }
             }
         }
@@ -532,6 +566,12 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
         if (cw>0 && ch>0)
             p->drawTiledPixmap(cx, cy, cw, ch, bg->tiled_pixmap(c), sx, sy);
     }
+    
+    if (bgLayer->backgroundClip() != BGBORDER)
+        p->restore(); // Undo the background clip
+        
+    if (clippedToBorderRadius)
+        p->restore(); // Undo the border radius clip
 }
 
 void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)

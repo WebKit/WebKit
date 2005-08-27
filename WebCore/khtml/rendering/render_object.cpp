@@ -978,8 +978,130 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
         p->setRasterOp(Qt::CopyROP);
 }
 
+bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
+{
+    CachedImage* borderImage = style->borderImage().image();
+    if (!borderImage->isLoaded())
+        return true; // Never paint a border image incrementally, but don't paint the fallback borders either.
+    
+    // If we have a border radius, the border image gets clipped to the rounded rect.
+    bool clipped = false;
+    if (style->hasBorderRadius()) {
+        QRect clipRect(_tx, _ty, w, h);
+        clipRect = p->xForm(clipRect);
+        p->save();
+        p->addRoundedRectClip(clipRect, style->borderTopLeftRadius(), style->borderTopRightRadius(),
+                              style->borderBottomLeftRadius(), style->borderBottomRightRadius());
+        clipped = true;
+    }
+
+    int imageWidth = borderImage->pixmap().width();
+    int imageHeight = borderImage->pixmap().height();
+
+    int topSlice = kMin(imageHeight, style->borderImage().m_slices.top.width(borderImage->pixmap().height()));
+    int bottomSlice = kMin(imageHeight, style->borderImage().m_slices.bottom.width(borderImage->pixmap().height()));
+    int leftSlice = kMin(imageWidth, style->borderImage().m_slices.left.width(borderImage->pixmap().width()));    
+    int rightSlice = kMin(imageWidth, style->borderImage().m_slices.right.width(borderImage->pixmap().width()));
+
+    EBorderImageRule hRule = style->borderImage().m_horizontalRule;
+    EBorderImageRule vRule = style->borderImage().m_verticalRule;
+    
+    bool drawLeft = leftSlice > 0 && style->borderLeftWidth() > 0;
+    bool drawTop = topSlice > 0 && style->borderTopWidth() > 0;
+    bool drawRight = rightSlice > 0 && style->borderRightWidth() > 0;
+    bool drawBottom = bottomSlice > 0 && style->borderBottomWidth() > 0;
+    bool drawMiddle = (imageWidth - leftSlice - rightSlice) > 0 && (w - style->borderLeftWidth() - style->borderRightWidth()) > 0 &&
+                      (imageHeight - topSlice - bottomSlice) > 0 && (h - style->borderTopWidth() - style->borderBottomWidth()) > 0;
+
+    if (drawLeft) {
+        // Paint the top and bottom left corners.
+        
+        // The top left corner rect is (_tx, _ty, leftWidth, topWidth)
+        // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
+        if (drawTop)
+            p->drawPixmap(_tx, _ty, style->borderLeftWidth(), style->borderTopWidth(),
+                          borderImage->pixmap(), 0, 0, leftSlice, topSlice);
+        
+        // The bottom left corner rect is (_tx, _ty + h - bottomWidth, leftWidth, bottomWidth)
+        // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
+        if (drawBottom)
+            p->drawPixmap(_tx, _ty + h - style->borderBottomWidth(), style->borderLeftWidth(), style->borderBottomWidth(),
+                          borderImage->pixmap(), 0, imageHeight - bottomSlice, leftSlice, bottomSlice);
+                      
+        // Paint the left edge.
+        // Have to scale and tile into the border rect.
+        p->drawScaledAndTiledPixmap(_tx, _ty + style->borderTopWidth(), style->borderLeftWidth(),
+                                    h - style->borderTopWidth() - style->borderBottomWidth(), borderImage->pixmap(),
+                                    0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice, 
+                                    QPainter::STRETCH, (QPainter::TileRule)vRule);
+    }
+    
+    if (drawRight) {
+        // Paint the top and bottom right corners
+        // The top right corner rect is (_tx + w - rightWidth, _ty, rightWidth, topWidth)
+        // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
+        if (drawTop)
+            p->drawPixmap(_tx + w - style->borderRightWidth(), _ty, style->borderRightWidth(), style->borderTopWidth(),
+                          borderImage->pixmap(), imageWidth - rightSlice, 0, rightSlice, topSlice);
+        
+        // The bottom right corner rect is (_tx + w - rightWidth, _ty + h - bottomWidth, rightWidth, bottomWidth)
+        // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, botomSlice)
+        if (drawBottom)
+            p->drawPixmap(_tx + w - style->borderRightWidth(), _ty + h - style->borderBottomWidth(), style->borderRightWidth(), style->borderBottomWidth(),
+                          borderImage->pixmap(), imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice);
+                      
+        // Paint the right edge.
+        p->drawScaledAndTiledPixmap(_tx + w - style->borderRightWidth(), _ty + style->borderTopWidth(), style->borderRightWidth(),
+                          h - style->borderTopWidth() - style->borderBottomWidth(), borderImage->pixmap(),
+                          imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice,
+                          QPainter::STRETCH, (QPainter::TileRule)vRule);
+    }
+
+    // Paint the top edge.
+    if (drawTop)
+        p->drawScaledAndTiledPixmap(_tx + style->borderLeftWidth(), _ty, w - style->borderLeftWidth() - style->borderRightWidth(),
+                          style->borderTopWidth(), borderImage->pixmap(),
+                          leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice,
+                          (QPainter::TileRule)hRule, QPainter::STRETCH);
+    
+    // Paint the bottom edge.
+    if (drawBottom)
+        p->drawScaledAndTiledPixmap(_tx + style->borderLeftWidth(), _ty + h - style->borderBottomWidth(), 
+                          w - style->borderLeftWidth() - style->borderRightWidth(),
+                          style->borderBottomWidth(), borderImage->pixmap(),
+                          leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice,
+                          (QPainter::TileRule)hRule, QPainter::STRETCH);
+    
+    // Paint the middle.
+    if (drawMiddle)
+        p->drawScaledAndTiledPixmap(_tx + style->borderLeftWidth(), _ty + style->borderTopWidth(), w - style->borderLeftWidth() - style->borderRightWidth(),
+                          h - style->borderTopWidth() - style->borderBottomWidth(), borderImage->pixmap(),
+                          leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice,
+                          (QPainter::TileRule)hRule, (QPainter::TileRule)vRule);
+    
+    // Because of the bizarre way we do animations in WebKit, WebCore does not get any sort of notification when the image changes
+    // animation frames.  We have to tell WebKit about the rect so that it can do the animation itself and invalidate the right
+    // rect.
+    borderImage->pixmap().setAnimationRect(QRect(_tx, _ty, w, h));
+    
+    // Clear the clip for the border radius.
+    if (clipped)
+        p->restore();
+
+    return true;
+}
+
 void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin, bool end)
 {
+    CachedImage* borderImage = style->borderImage().image();
+    bool shouldPaintBackgroundImage = borderImage && borderImage->pixmap_size() == borderImage->valid_rect().size() && 
+                                      !borderImage->isTransparent() && !borderImage->isErrorImage();
+    if (shouldPaintBackgroundImage)
+        shouldPaintBackgroundImage = paintBorderImage(p, _tx, _ty, w, h, style);
+    
+    if (shouldPaintBackgroundImage)
+        return;
+
     const QColor& tc = style->borderTopColor();
     const QColor& bc = style->borderBottomColor();
     const QColor& lc = style->borderLeftColor();
@@ -1000,68 +1122,113 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     bool render_r = rs > BHIDDEN && end && !rt;
     bool render_b = bs > BHIDDEN && !bt;
 
-    if(render_t) {
-        bool ignore_left =
-            (tc == lc) && (tt == lt) &&
-            (ts >= OUTSET) &&
-            (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET);
+    // Need sufficient width and height to contain border radius curves.  Sanity check our top/bottom
+    // values and our width/height values to make sure the curves can all fit. If not, then we won't paint
+    // any border radii.
+    bool render_radii = false;
+    QSize topLeft = style->borderTopLeftRadius();
+    QSize topRight = style->borderTopRightRadius();
+    QSize bottomLeft = style->borderBottomLeftRadius();
+    QSize bottomRight = style->borderBottomRightRadius();
 
-        bool ignore_right =
-            (tc == rc) && (tt == rt) &&
-            (ts >= OUTSET) &&
-            (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET);
-        
-        drawBorder(p, _tx, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   ignore_left?0:style->borderLeftWidth(),
-                   ignore_right?0:style->borderRightWidth());
-    }
-
-    if(render_b) {
-        bool ignore_left =
-        (bc == lc) && (bt == lt) &&
-        (bs >= OUTSET) &&
-        (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET);
-
-        bool ignore_right =
-            (bc == rc) && (bt == rt) &&
-            (bs >= OUTSET) &&
-            (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET);
-        
-        drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
-                   ignore_left?0:style->borderLeftWidth(),
-                   ignore_right?0:style->borderRightWidth());
+    if (style->hasBorderRadius()) {
+        int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
+        int requiredHeight = kMax(topLeft.height() + bottomLeft.height(), topRight.height() + bottomRight.height());
+        render_radii = (requiredWidth <= w && requiredHeight <= h);
     }
     
-    if(render_l)
-    {
-	bool ignore_top =
-	  (tc == lc) && (tt == lt) &&
-	  (ls >= OUTSET) &&
-	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+    // Clip to the rounded rectangle.
+    if (render_radii)
+        p->addRoundedRectClip(QRect(_tx, _ty, w, h), topLeft, topRight, bottomLeft, bottomRight);
 
-	bool ignore_bottom =
-	  (bc == lc) && (bt == lt) &&
-	  (ls >= OUTSET) &&
-	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+    if (render_t) {
+        bool ignore_left = (render_radii && topLeft.width() > 0) ||
+            ((tc == lc) && (tt == lt) &&
+            (ts >= OUTSET) &&
+            (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET));
 
-        drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
+        bool ignore_right = (render_radii && topRight.width() > 0) ||
+            ((tc == rc) && (tt == rt) &&
+            (ts >= OUTSET) &&
+            (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET));
+        
+        int x = _tx;
+        int x2 = _tx + w;
+        if (render_radii) {
+            x += topLeft.width();
+            x2 -= topRight.width();
+        }
+        
+        drawBorder(p, x, _ty, x2, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
+                   ignore_left ? 0 : style->borderLeftWidth(),
+                   ignore_right? 0 : style->borderRightWidth());
+    }
+
+    if (render_b) {
+        bool ignore_left = (render_radii && bottomLeft.width() > 0) ||
+        ((bc == lc) && (bt == lt) &&
+        (bs >= OUTSET) &&
+        (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET));
+
+        bool ignore_right = (render_radii && bottomRight.width() > 0) ||
+            ((bc == rc) && (bt == rt) &&
+            (bs >= OUTSET) &&
+            (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET));
+        
+        int x = _tx;
+        int x2 = _tx + w;
+        if (render_radii) {
+            x += bottomLeft.width();
+            x2 -= bottomRight.width();
+        }
+
+        drawBorder(p, x, _ty + h - style->borderBottomWidth(), x2, _ty + h, BSBottom, bc, style->color(), bs,
+                   ignore_left ? 0 :style->borderLeftWidth(),
+                   ignore_right? 0 :style->borderRightWidth());
+    }
+    
+    if (render_l) {
+	bool ignore_top = (render_radii && topLeft.height() > 0) ||
+	  ((tc == lc) && (tt == lt) &&
+	  (ls >= OUTSET) &&
+	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET));
+
+	bool ignore_bottom = (render_radii && bottomLeft.height() > 0) ||
+	  ((bc == lc) && (bt == lt) &&
+	  (ls >= OUTSET) &&
+	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET));
+
+        int y = _ty;
+        int y2 = _ty + h;
+        if (render_radii) {
+            y += topLeft.height();
+            y2 -= bottomLeft.height();
+        }
+        
+        drawBorder(p, _tx, y, _tx + style->borderLeftWidth(), y2, BSLeft, lc, style->color(), ls,
 		   ignore_top?0:style->borderTopWidth(),
 		   ignore_bottom?0:style->borderBottomWidth());
     }
 
-    if(render_r)
-    {
-	bool ignore_top =
-	  (tc == rc) && (tt == rt) &&
+    if (render_r) {
+	bool ignore_top = (render_radii && topRight.height() > 0) ||
+	  ((tc == rc) && (tt == rt) &&
 	  (rs >= DOTTED || rs == INSET) &&
-	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
+	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET));
 
-	bool ignore_bottom =
-	  (bc == rc) && (bt == rt) &&
+	bool ignore_bottom = (render_radii && bottomRight.height() > 0) ||
+	  ((bc == rc) && (bt == rt) &&
 	  (rs >= DOTTED || rs == INSET) &&
-	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
+	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET));
 
-        drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,
+        int y = _ty;
+        int y2 = _ty + h;
+        if (render_radii) {
+            y += topRight.height();
+            y2 -= bottomRight.height();
+        }
+
+        drawBorder(p, _tx + w - style->borderRightWidth(), y, _tx + w, y2, BSRight, rc, style->color(), rs,
 		   ignore_top?0:style->borderTopWidth(),
 		   ignore_bottom?0:style->borderBottomWidth());
     }
@@ -1660,6 +1827,15 @@ void RenderObject::updateBackgroundImages(RenderStyle* oldStyle)
     for (const BackgroundLayer* currNew = newLayers; currNew; currNew = currNew->next()) {
         if (currNew->backgroundImage() && (!oldLayers || !oldLayers->containsImage(currNew->backgroundImage())))
             currNew->backgroundImage()->ref(this);
+    }
+    
+    CachedImage* oldBorderImage = oldStyle ? oldStyle->borderImage().image() : 0;
+    CachedImage* newBorderImage = m_style ? m_style->borderImage().image() : 0;
+    if (oldBorderImage != newBorderImage) {
+        if (oldBorderImage)
+            oldBorderImage->deref(this);
+        if (newBorderImage)
+            newBorderImage->ref(this);
     }
 }
 
@@ -2320,7 +2496,7 @@ QChar RenderObject::backslashAsCurrencySymbol() const
 
 void RenderObject::setPixmap(const QPixmap&, const QRect&, CachedImage *image)
 {
-    // Repaint when the background image finishes loading.
+    // Repaint when the background image or border image finishes loading.
     // This is needed for RenderBox objects, and also for table objects that hold
     // backgrounds that are then respected by the table cells (which are RenderBox
     // subclasses). It would be even better to find a more elegant way of doing this that

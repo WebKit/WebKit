@@ -53,6 +53,7 @@ extern DOM::DOMString getPropertyName(unsigned short id);
 
 using khtml::FontDef;
 using khtml::CSSStyleSelector;
+using khtml::CachedImage;
 
 namespace DOM {
 
@@ -800,6 +801,14 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(QRgb color)
     m_type = CSSPrimitiveValue::CSS_RGBCOLOR;
 }
 
+CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PairImpl* p)
+{
+    m_value.pair = p;
+    if (p)
+	p->ref();
+    m_type = CSSPrimitiveValue::CSS_PAIR;
+}
+
 CSSPrimitiveValueImpl::~CSSPrimitiveValueImpl()
 {
     cleanup();
@@ -1085,6 +1094,12 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
             text += ")";
             break;
         }
+        case CSSPrimitiveValue::CSS_PAIR:
+            text = m_value.pair->first()->cssText();
+            text += " ";
+            text += m_value.pair->second()->cssText();
+            break;
+
 #if APPLE_CHANGES        
         case CSSPrimitiveValue::CSS_DASHBOARD_REGION: {
             DashboardRegionImpl *region = getDashboardRegionValue();
@@ -1161,6 +1176,33 @@ void RectImpl::setLeft( CSSPrimitiveValueImpl *left )
 
 // -----------------------------------------------------------------
 
+PairImpl::PairImpl()
+{
+    m_first = m_second = 0;
+}
+
+PairImpl::~PairImpl()
+{
+    if (m_first) m_first->deref();
+    if (m_second) m_second->deref();
+}
+
+void PairImpl::setFirst(CSSPrimitiveValueImpl *first)
+{
+    if (first) first->ref();
+    if (m_first) m_first->deref();
+    m_first = first;
+}
+
+void PairImpl::setSecond(CSSPrimitiveValueImpl *second)
+{
+    if (second) second->ref();
+    if (m_second) m_second->deref();
+    m_second = second;
+}
+
+// -----------------------------------------------------------------
+
 CSSImageValueImpl::CSSImageValueImpl(const DOMString &url, StyleBaseImpl *style)
     : CSSPrimitiveValueImpl(url, CSSPrimitiveValue::CSS_URI), m_image(0), m_accessedImage(false)
 {
@@ -1173,10 +1215,11 @@ CSSImageValueImpl::CSSImageValueImpl()
 
 CSSImageValueImpl::~CSSImageValueImpl()
 {
-    if(m_image) m_image->deref(this);
+    if (m_image)
+        m_image->deref(this);
 }
 
-khtml::CachedImage* CSSImageValueImpl::image(khtml::DocLoader* loader)
+CachedImage* CSSImageValueImpl::image(khtml::DocLoader* loader)
 {
     if (!m_accessedImage) {
         m_accessedImage = true;
@@ -1186,10 +1229,56 @@ khtml::CachedImage* CSSImageValueImpl::image(khtml::DocLoader* loader)
         else
             m_image = khtml::Cache::requestImage(0, getStringValue());
         
-        if(m_image) m_image->ref(this);
+        if (m_image)
+            m_image->ref(this);
     }
     
     return m_image;
+}
+
+// ------------------------------------------------------------------------
+
+CSSBorderImageValueImpl::CSSBorderImageValueImpl(CSSImageValueImpl* image, RectImpl* imageRect,
+                                                 int horizontalRule, int verticalRule)
+: m_image(image), m_imageSliceRect(imageRect),
+  m_horizontalSizeRule(horizontalRule), m_verticalSizeRule(verticalRule)
+{
+    if (m_image)
+        m_image->ref();
+    if (m_imageSliceRect)
+        m_imageSliceRect->ref();
+}
+
+CSSBorderImageValueImpl::~CSSBorderImageValueImpl()
+{
+    if (m_image)
+        m_image->deref();
+    if (m_imageSliceRect)
+        m_imageSliceRect->deref();
+}
+
+DOMString CSSBorderImageValueImpl::cssText() const
+{
+    // Image first.
+    DOMString text(m_image->cssText());
+    text += " ";
+    
+    // Now the rect, but it isn't really a rect, so we dump manually
+    text += m_imageSliceRect->top()->cssText();
+    text += " ";
+    text += m_imageSliceRect->right()->cssText();
+    text += " ";
+    text += m_imageSliceRect->bottom()->cssText();
+    text += " ";
+    text += m_imageSliceRect->left()->cssText();
+    
+    // Now the keywords.
+    text += " ";
+    text += CSSPrimitiveValueImpl(m_horizontalSizeRule).cssText();
+    text += " ";
+    text += CSSPrimitiveValueImpl(m_verticalSizeRule).cssText();
+
+    return text;
 }
 
 // ------------------------------------------------------------------------
