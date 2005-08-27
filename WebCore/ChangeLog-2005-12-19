@@ -1,3 +1,18 @@
+2005-08-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3963
+          Trailing space included in line if next line begins with non-Latin-1 character
+
+        Test cases added:
+        * layout-tests/fast/text/line-breaks.html: Added.
+        * layout-tests/fast/text/line-breaks-expected.txt: Added.
+
+        * khtml/rendering/break_lines.cpp: (khtml::isBreakable): Disallow breaks in a few cases where UCFindTextBreak
+        says things are breakable. This is only an intermediate step. We're going to improve this code and consider a port
+        to ICU instead of Carbon.
+
 2005-08-26  Darin Adler  <darin@apple.com>
 
         - fixed a few things in the DOM test suite

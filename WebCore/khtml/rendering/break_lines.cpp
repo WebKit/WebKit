@@ -102,10 +102,10 @@ bool isBreakable(const QChar *s, int pos, int len, bool breakNBSP)
             status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakLineMask, &breakLocator);
         if (status == 0)
             findStatus = UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, (const UniChar *)s, len, pos, &end);
-
-        // If carbon fails, fail back on simple white space detection.
         if (findStatus == 0)
-            return ((int)end == pos) ? true : false;
+            return (int)end == pos && !(lastCh == ' ' || lastCh == '\n' || lastCh == '\t' || (breakNBSP && lastCh == 0xa0));
+
+        // If Carbon fails, fail back on simple white space detection.
     }
     
     // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
