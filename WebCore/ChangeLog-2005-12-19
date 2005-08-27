@@ -1,3 +1,39 @@
+2005-08-26  Darin Adler  <darin@apple.com>
+
+        - fixed a few things in the DOM test suite
+
+        * layout-tests/dom/html/level1/core/selfhtml.js:
+        * layout-tests/dom/html/level2/core/selfhtml.js:
+        * layout-tests/dom/html/level2/events/selfhtml.js:
+        * layout-tests/dom/html/level2/html/selfhtml.js:
+        Updated all 4 of these to match and have better comments.
+
+        * layout-tests/dom/html/level2/html/HTMLDocument17-expected.txt: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument17.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument17.html-disabled: Removed.
+        Re-enabled this test since it's no longer crashing (and succeeding)!
+
+        * layout-tests/dom/html/level2/html/HTMLDocument19-expected.txt: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument19.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument19.html-disabled: Removed.
+        Re-enabled this test since it's no longer crashing (and succeeding)!
+
+        * layout-tests/dom/html/level2/html/HTMLDocument20-expected.txt: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument20.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument20.html-disabled: Removed.
+        Re-enabled this test since it's no longer crashing (and succeeding)!
+
+        * layout-tests/dom/html/level2/html/HTMLDocument21-expected.txt: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument21.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLDocument21.html-disabled: Removed.
+        Re-enabled this test since it's no longer crashing (and succeeding)!
+
+        * layout-tests/dom/html/level2/html/HTMLFormElement10-expected.txt: Removed.
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.html-disabled: Reverted the changes
+        to this disabled test; it's still disabled, but now not changed locally in WebKit.
+        * layout-tests/dom/html/level2/html/HTMLFormElement10.js: Reverted the changes in this
+        script. Should no longer be needed.
+
 2005-08-26  Curt Arnold  <curt.arnold@mac.com>
 
         Reviewed and landed by Darin.

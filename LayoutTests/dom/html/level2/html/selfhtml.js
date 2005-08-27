@@ -10,18 +10,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
 
-//
-//   Webkit modification:  18-August-2005
-//
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText();
-    layoutTestController.waitUntilDone();
-}
-//
-//   End modification
-//
-
-
   function assertSize(descr, expected, actual) {
     var actualSize;
     assertNotNull(descr, actual);
@@ -683,6 +671,21 @@ function getResourceURI(name, scheme, contentType) {
 
 
 function startTest() {
+
+//
+//  WebKit modification: 18-August-2005
+//
+//  Inform the test controller that this test has a text-format result and so should
+//  be dumped as text, and also that the dump should not occur automatically.
+//
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+//
+//  End WebKit modification
+//
+
 	//
 	//   invoke test setup
 	//
@@ -702,13 +705,17 @@ function startTest() {
             setResult("error", ex);
         }
     }
+
 //
-//   Webkit modification:  18-August-2005
+//  WebKit modification: 18-August-2005
 //
-if (window.layoutTestController) {
-    layoutTestController.notifyDone();
-}
+//  Inform the test controller that this test is complete, so it's time to dump.
 //
-//   End modification
+    if (window.layoutTestController) {
+        layoutTestController.notifyDone();
+    }
+//
+//  End WebKit modification
 //      
+
 }

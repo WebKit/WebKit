@@ -95,10 +95,6 @@ function HTMLFormElement10() {
       nodeList = doc.getElementsByTagName("form");
       assertSize("Asize",1,nodeList);
 testNode = nodeList.item(0);
-
-      if (window.layoutTestController)
-          layoutTestController.waitUntilDone();
-
       testNode.submit();
       
 }
