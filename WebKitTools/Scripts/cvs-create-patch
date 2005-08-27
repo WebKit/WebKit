@@ -138,11 +138,12 @@ sub diff
         }
         if (/^\? (.+)$/) {
             $errors .= $_;
-            if ($includeUnknowns) {
-                if (-d $1) {
-                    addNewDirectory($indexPath,$1);
+            my $unknown = $1;
+            if ($includeUnknowns && $unknown !~ /^\./) {
+                if (-d $unknown) {
+                    addNewDirectory($indexPath, $unknown);
                 } else {
-                    addNewFile($indexPath,$1);
+                    addNewFile($indexPath, $unknown);
                 }
             }
         } else {

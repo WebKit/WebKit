@@ -1,3 +1,10 @@
+2005-08-27  Darin Adler  <darin@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4596
+          cvs-create-patch --include-unknowns should ignore hidden files
+
+        * Scripts/cvs-create-patch: Add code to check for files starting with ".".
+
 2005-08-25  Ben La Monica  <ben.lamonica@gmail.com>
 
         Reviewed, tweaked, and landed by Darin.
