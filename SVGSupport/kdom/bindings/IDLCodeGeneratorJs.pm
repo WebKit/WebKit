@@ -122,8 +122,8 @@ sub GenerateInterface
 	my %type = $codeGenerator->ExtractNamespace($dataNode->name, 1, $useModuleNS);
 
 	# Open files for writing...
-	my $implFileName = $useOutputDir . "/" . $type{'type'} . "Wrapper.cpp";
-	my $headerFileName = $useOutputDir . "/" . $type{'type'} . "Wrapper.h";
+	my $implFileName = $useOutputDir . "/$useModule/" . $type{'type'} . "Wrapper.cpp";
+	my $headerFileName = $useOutputDir . "/$useModule/" . $type{'type'} . "Wrapper.h";
 
 	open($IMPL, ">$implFileName") || die "Coudln't open file $implFileName";
 	open($HEADER, ">$headerFileName") || die "Coudln't open file $headerFileName";
@@ -337,17 +337,10 @@ sub GenerateImplementation
 	if(!defined($IMPL)) {
 		# - Add default header template
 		@implContent = split("\r", $headerTemplate);
-		
-		# - Temporary hack necessary for WebCore+SVG
-		# until we sync up with kdom's file re-org
-		my $implIncludePath = "kdom/$useModule/impl/";
-		$implIncludePath =~ s|core/impl|impl|;
-		$implIncludePath =~ s|xpath/impl|xpath|;
-		$implIncludePath =~ s|stylesheets/|css/|;
 
 		# - Add absolutely needed includes
 		push(@implContent, "\n#include \"" . $extractedType{'type'} . ".h\"");
-		push(@implContent, "\n#include <$implIncludePath/$implClass.h>\n");
+		push(@implContent, "\n#include \"$implClass.h\"\n");
 
 		push(@implContent, "\n#include <kdom/ecma/Ecma.h>");
 		push(@implContent, "\n#include <kdom/ecma/DOMBridge.h>");

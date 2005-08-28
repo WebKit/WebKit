@@ -1,5 +1,14 @@
 2005-08-28  Eric Seidel  <eseidel@apple.com>
 
+	Rolling back out the previous commit.  Although that's
+        the right idea, the current Build Rule implementation in
+        Xcode doesn't seem to allow me to generated all of the
+        .h/.cpp files first, then build them.  Thus resulting
+        in build failures due to circular header/idl dependencies.
+        Rolling out the change until I can find a workaround.
+
+2005-08-28  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         * ForwardingHeaders/kdom/bindings/js/core/AttrWrapper.h: Added.
