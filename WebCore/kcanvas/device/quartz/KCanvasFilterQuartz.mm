@@ -59,6 +59,9 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
 
 void KCanvasFilterQuartz::prepareFilter(KRenderingDeviceContext *renderingContext, const QRect &bbox)
 {
+    if (! bbox.isValid())
+        return;
+    
 	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
 	ASSERT(quartzContext);
 	
@@ -71,6 +74,9 @@ void KCanvasFilterQuartz::prepareFilter(KRenderingDeviceContext *renderingContex
 
 void KCanvasFilterQuartz::applyFilter(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, const QRect &bbox)
 {
+    if (! bbox.isValid())
+        return;
+    
 	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
 	ASSERT(quartzContext);
 	if (!KRenderingDeviceQuartz::filtersEnabled()) return;

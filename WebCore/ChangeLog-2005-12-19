@@ -1,3 +1,20 @@
+2005-08-28  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/KCanvasItem.cpp:
+        (KCanvasItem::fillContains): added missing return.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter): ignore empty rects
+        (KCanvasFilterQuartz::applyFilter): ditto
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (getSharedContext): memory leak fix.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::draw): avoid drawing when 0 children
+        Various performance enhancements and layout fixes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4588
+
 2005-08-27  David Hyatt  <hyatt@apple.com>
 
 	Fix two minor bugs with border-image and border-radius.

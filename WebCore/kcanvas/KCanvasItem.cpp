@@ -104,7 +104,7 @@ bool KCanvasItem::isVisible() const
 bool KCanvasItem::fillContains(const QPoint &p) const
 {
 	if(d->path && d->style && canvas() && canvas()->renderingDevice())
-		hitsPath(p, true);
+		return hitsPath(p, true);
 
 	return false;
 }

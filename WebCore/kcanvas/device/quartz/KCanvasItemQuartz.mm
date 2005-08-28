@@ -139,7 +139,9 @@ CGContextRef getSharedContext() {
 		CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
 		CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
 		sharedContext = CGPDFContextCreate(consumer, NULL, NULL);
-		
+        CGDataConsumerRelease(consumer);
+        CFRelease(empty);
+
 	//	CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
 	//	CGContextRef context = CGGLContextCreate(NULL, CGSizeMake(canvas->canvasWidth(), canvas->canvasHeight()), colorspace);
 	//	CGColorSpaceRelease(colorspace);

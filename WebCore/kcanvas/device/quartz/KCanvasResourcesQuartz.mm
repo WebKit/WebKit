@@ -67,6 +67,10 @@ KCanvasContainerQuartz::KCanvasContainerQuartz(KCanvas *canvas, KRenderingStyle 
 
 void KCanvasContainerQuartz::draw(const QRect &dirtyRect) const
 {
+    // don't draw if there are no children
+    if (first() == 0)
+        return;
+    
 	KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(canvas()->renderingDevice());
 	CGContextRef context = quartzDevice->currentCGContext();
 	ASSERT(context != NULL);
@@ -77,7 +81,8 @@ void KCanvasContainerQuartz::draw(const QRect &dirtyRect) const
 //	NSLog(@"clipping to viewport rect: %@", NSStringFromRect(NSRect(dirtyRect)));
 //	CGContextAddRect(context,CGRect(dirtyRect));
 //	CGContextClip(context);
-	applyClipPathsForStyle(context, canvas()->registry(), style(), bbox()); // apply any explicit clips
+	if (! style()->clipPaths().isEmpty())
+        applyClipPathsForStyle(context, canvas()->registry(), style(), bbox()); // apply any explicit clips
 	
 	// handle opacity.
 	float opacity = style()->opacity();
