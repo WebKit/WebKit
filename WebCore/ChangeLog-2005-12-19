@@ -1,4 +1,40 @@
 2005-08-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * ForwardingHeaders/kdom/bindings/js/core/AttrWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/CDATASectionWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/CommentWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/DocumentFragmentWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/DocumentTypeWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/DocumentWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/ElementWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/EntityReferenceWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/EntityWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/NotationWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/ProcessingInstructionWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/core/TextWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSCharsetRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSFontFaceRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSImportRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSMediaRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSPageRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSPrimitiveValueWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSStyleRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSUnknownRuleWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSValueListWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/css/CSSValueWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/events/MouseEventWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/events/MutationEventWrapper.h: Added.
+        * ForwardingHeaders/kdom/bindings/js/events/UIEventWrapper.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: removed phase, added rule.
+        * kdom/bindings/IDLCodeGeneratorJs.pm: include path changes.
+        Converted "Generate JS Bindings" build phase into an
+        idl -> h/cpp build rule.  This also now writes the generated
+        files into DerivedSources instead of the source root.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4647
+
+2005-08-28  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
         Reviewed by eseidel.
