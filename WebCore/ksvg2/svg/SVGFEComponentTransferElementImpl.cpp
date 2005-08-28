@@ -85,9 +85,12 @@ void SVGFEComponentTransferElementImpl::parseAttribute(KDOM::AttributeImpl *attr
 KCanvasItem *SVGFEComponentTransferElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
 	m_filterEffect = static_cast<KCanvasFEComponentTransfer *>(canvas->renderingDevice()->createFilterEffect(FE_COMPONENT_TRANSFER));
+    if (!m_filterEffect)
+        return 0;
+
 	m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
 	setStandardAttributes(m_filterEffect);
-	return 0;
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEComponentTransferElementImpl::filterEffect() const
@@ -97,6 +100,9 @@ KCanvasFilterEffect *SVGFEComponentTransferElementImpl::filterEffect() const
 
 void SVGFEComponentTransferElementImpl::close()
 {
+    if (!m_filterEffect)
+        return;
+
 	for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
 	{
 		KCComponentTransferFunction func;

@@ -3,6 +3,32 @@
 
         Reviewed by eseidel.
 
+        Test cases added:
+        * svg-tests/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum: Added.
+        * svg-tests/W3C-SVG-1.1/filters-comptran-01-b-expected.png: Added.
+        * svg-tests/W3C-SVG-1.1/filters-comptran-01-b-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/filters-comptran-01-b.svg: Added.
+        * svg-tests/W3C-SVG-1.1/filters-comptran-01-b.svg-disabled: Removed.
+        * svg-tests/W3C-SVG-1.1/filters-turb-01-f-expected.checksum: Added.
+        * svg-tests/W3C-SVG-1.1/filters-turb-01-f-expected.png: Added.
+        * svg-tests/W3C-SVG-1.1/filters-turb-01-f-expected.txt: Added.
+        * svg-tests/W3C-SVG-1.1/filters-turb-01-f.svg: Added.
+        * svg-tests/W3C-SVG-1.1/filters-turb-01-f.svg-disabled: Removed.
+
+	Re-enabled disabled filter tests.
+        * ksvg2/impl/SVGFEComponentTransferElementImpl.cpp:
+        (SVGFEComponentTransferElementImpl::createCanvasItem):
+        (SVGFEComponentTransferElementImpl::close):
+        * ksvg2/impl/SVGFETurbulenceElementImpl.cpp:
+        (SVGFETurbulenceElementImpl::createCanvasItem):
+	Added null check to filter code, preventing crash.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4701
+
+2005-08-28  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         * WebCore+SVG/DrawCanvasItem.mm: correct spelling typo
         (-[DrawCanvasItem attributedXMLString]):
         * WebCore+SVG/DrawView.mm:

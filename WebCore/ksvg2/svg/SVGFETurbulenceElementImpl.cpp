@@ -158,6 +158,9 @@ KCanvasItem *SVGFETurbulenceElementImpl::createCanvasItem(KCanvas *canvas, KRend
 {
 
 	m_filterEffect = static_cast<KCanvasFETurbulence *>(canvas->renderingDevice()->createFilterEffect(FE_TURBULENCE));
+    if (!m_filterEffect)
+        return 0;
+    
 	m_filterEffect->setType((KCTurbulanceType)(type()->baseVal() - 1));
 	setStandardAttributes(m_filterEffect);
 	m_filterEffect->setBaseFrequencyX(baseFrequencyX()->baseVal());
@@ -165,7 +168,7 @@ KCanvasItem *SVGFETurbulenceElementImpl::createCanvasItem(KCanvas *canvas, KRend
 	m_filterEffect->setNumOctaves(numOctaves()->baseVal());
 	m_filterEffect->setSeed(seed()->baseVal());
 	m_filterEffect->setStitchTiles(stitchTiles()->baseVal() == SVG_STITCHTYPE_STITCH);
-	return 0;
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFETurbulenceElementImpl::filterEffect() const
