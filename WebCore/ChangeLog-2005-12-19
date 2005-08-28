@@ -3,6 +3,24 @@
 
         Reviewed by eseidel.
 
+        Test cases updated:
+        * svg-tests/W3C-SVG-1.1/Resources/animation-extRef-image1-expected.checksum:
+        * svg-tests/W3C-SVG-1.1/Resources/animation-extRef-image1-expected.txt:
+        * svg-tests/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * svg-tests/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+
+        * kcanvas/KCanvasCreator.cpp:
+        (KCanvasCreator::createRoundedRectangle): ignore 0 rects
+        (KCanvasCreator::createRectangle): ignore 0 rects
+        (KCanvasCreator::createEllipse): ignore empty elipses
+        (KCanvasCreator::createLine): ignore 0 lines
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4706
+
+2005-08-28  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         Test cases added:
         * svg-tests/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum: Added.
         * svg-tests/W3C-SVG-1.1/filters-comptran-01-b-expected.png: Added.
