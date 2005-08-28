@@ -1,3 +1,18 @@
+2005-08-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Adele and John.
+
+        - fixes <rdar://problem/4214259> (REGRESSION: DENVER )Safari app will crash when pressing Command + a to select all (Word XML format)
+
+        Problem is that NodeImpl::maxDeepOffset() was using the wrong test for being able to call the
+        TextImpl length() function, so it was being called on a ProcessingInstruction node.
+ 
+        Test cases added:
+        * manual-tests/wordXML-selectall.xml: Added.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::maxDeepOffset): use isTextNode() instead of offsetInCharacters(). 
+
 2005-08-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
