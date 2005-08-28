@@ -225,7 +225,7 @@ using namespace KDOM;
     return [super valueForKey:key];
 }
 
-- (NSAttributedString *)attribtuedXMLString
+- (NSAttributedString *)attributedXMLString
 {
     QString *nodeText = new QString();
     QTextStream nodeTextStream(nodeText, IO_WriteOnly);

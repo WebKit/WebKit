@@ -3,6 +3,20 @@
 
         Reviewed by eseidel.
 
+        * WebCore+SVG/DrawCanvasItem.mm: correct spelling typo
+        (-[DrawCanvasItem attributedXMLString]):
+        * WebCore+SVG/DrawView.mm:
+        (+[DrawView setHardwareFilterSupportEnabled:]): c++ wrapper
+        (+[DrawView isHardwareFilterSupportEnabled]): ditto
+        (-[DrawView resetCursorRects]): added browse cursor
+        * WebCore+SVG/DrawViewPrivate.h: exposed hardware filter support SPI
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4697
+
+2005-08-28  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
         * kcanvas/KCanvasItem.cpp:
         (KCanvasItem::fillContains): added missing return.
         * kcanvas/device/quartz/KCanvasFilterQuartz.mm:

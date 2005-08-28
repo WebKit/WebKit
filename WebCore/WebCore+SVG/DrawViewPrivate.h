@@ -38,6 +38,8 @@ extern NSArray *DrawViewDragTypes;
 // For debuging (filter support is partially broken)
 + (void)setFilterSupportEnabled:(BOOL)enabled;
 + (BOOL)isFilterSupportEnabled;
++ (void)setHardwareFilterSupportEnabled:(BOOL)enabled;
++ (BOOL)isHardwareFilterSupportEnabled;
 
 - (void)setBackgroundColor:(NSColor *)color;
 - (NSColor *)backgroundColor;

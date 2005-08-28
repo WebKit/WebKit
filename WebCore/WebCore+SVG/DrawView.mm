@@ -192,6 +192,16 @@ NSArray *DrawViewDragTypes;
     return KRenderingDeviceQuartz::filtersEnabled();
 }
 
++ (void)setHardwareFilterSupportEnabled:(BOOL)enabled
+{
+    KRenderingDeviceQuartz::setHardwareRenderingEnabled(enabled);
+}
+
++ (BOOL)isHardwareFilterSupportEnabled
+{
+    return KRenderingDeviceQuartz::hardwareRenderingEnabled();
+}
+
 - (id)initWithFrame:(NSRect)frameRect
 {
     if ((self = [super initWithFrame:frameRect]) != nil) {
@@ -494,6 +504,9 @@ NSArray *DrawViewDragTypes;
     
     NSCursor *toolCursor = nil;
     switch (_toolMode) {
+        case DrawViewToolBrowse:
+            toolCursor = [NSCursor pointingHandCursor];
+            break;            
 	case DrawViewToolPan:
             toolCursor = [NSCursor openHandCursor];
             break;
