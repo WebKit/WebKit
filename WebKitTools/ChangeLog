@@ -1,3 +1,13 @@
+2005-08-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4720
+	(webkit pixel tests don't give consistent results with changed scrollbar arrow setting)
+	
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): set scrollbar arrow setting to a consistent value
+
 2005-08-27  Jussi Hagman  <juhagman@abo.fi>
 
         Reviewed and landed by Darin.

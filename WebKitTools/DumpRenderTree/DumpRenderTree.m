@@ -83,6 +83,9 @@ int main(int argc, const char *argv[])
         {NULL, 0, NULL, 0}
     };
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
+
     WebPreferences *preferences = [WebPreferences standardPreferences];
     
     [preferences setStandardFontFamily:@"Times"];
