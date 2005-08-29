@@ -1,3 +1,13 @@
+2005-08-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4723
+	(some pixel tests fail when AA settings are changed)
+	
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): set AA settings to the default values
+
 2005-08-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -85,7 +85,10 @@ int main(int argc, const char *argv[])
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@"DoubleMax" forKey:@"AppleScrollBarVariant"];
-
+    [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"];
+    // 2 is the "Medium" font smoothing mode
+    [defaults setInteger:2 forKey:@"AppleFontSmoothing"];
+    
     WebPreferences *preferences = [WebPreferences standardPreferences];
     
     [preferences setStandardFontFamily:@"Times"];
