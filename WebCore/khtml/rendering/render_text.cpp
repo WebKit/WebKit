@@ -384,7 +384,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         if (m_truncation != cNoTruncation)
             endPoint = m_truncation - m_start;
         font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                       textObject()->qstring()->s, textObject()->qstring()->l, m_start, endPoint,
+                       textObject()->string()->s, textObject()->string()->l, m_start, endPoint,
                        m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
     } else {
         int sPos, ePos;
@@ -393,17 +393,17 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
             // paint only the text that is not selected
             if (sPos >= ePos) {
                 font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                               textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
+                               textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered());
             } else {
                 if (sPos - 1 >= 0) {
                     font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
+                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), 0, sPos);
                 }
                 if (ePos < m_start + m_len) {
                     font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
+                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                                    m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), ePos, -1);
                 }
             }
@@ -420,7 +420,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                                selectionTextShadow->blur,
                                selectionTextShadow->color);
             font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                           textObject()->qstring()->s, textObject()->qstring()->l, m_start, m_len,
+                           textObject()->string()->s, textObject()->string()->l, m_start, m_len,
                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, styleToUse->visuallyOrdered(), sPos, ePos);
             if (selectionTextShadow)
                 i.p->clearShadow();
@@ -489,11 +489,11 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     int startPos, endPos;
     if (object()->selectionState() == RenderObject::SelectionInside) {
         startPos = 0;
-        endPos = textObject()->qstring()->l;
+        endPos = textObject()->string()->l;
     } else {
         textObject()->selectionStartEnd(startPos, endPos);
         if (object()->selectionState() == RenderObject::SelectionStart)
-            endPos = textObject()->qstring()->l;
+            endPos = textObject()->string()->l;
         else if (object()->selectionState() == RenderObject::SelectionEnd)
             startPos = 0;
     }
@@ -901,7 +901,7 @@ bool RenderText::isTextFragment() const
 
 DOM::DOMStringImpl* RenderText::originalString() const
 {
-    return element() ? element()->qstring() : 0;
+    return element() ? element()->string() : 0;
 }
 
 void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
@@ -1892,7 +1892,7 @@ DOM::DOMStringImpl* RenderTextFragment::originalString() const
 {
     DOM::DOMStringImpl* result = 0;
     if (element())
-        result = element()->qstring();
+        result = element()->string();
     else
         result = contentString();
     if (result && (start() > 0 || start() < result->l))

@@ -178,7 +178,7 @@ public:
     virtual void detach();
     
     DOM::DOMString data() const { return str; }
-    DOM::DOMStringImpl *qstring() const { return str; }
+    DOM::DOMStringImpl *string() const { return str; }
 
     virtual InlineBox* createInlineBox(bool,bool, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);

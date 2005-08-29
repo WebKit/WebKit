@@ -365,7 +365,7 @@ void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start
             gapStart = kMax(gapStart, start);
             gapEnd = kMin(gapEnd, end);
             if (!str) {
-                str = textNode->qstring()->substring(start, end - start);
+                str = textNode->string()->substring(start, end - start);
                 str->ref();
             }    
             // remove text in the gap

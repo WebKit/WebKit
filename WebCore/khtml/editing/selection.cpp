@@ -947,7 +947,7 @@ void Selection::debugRenderer(RenderObject *r, bool selected) const
         }
         
         static const int max = 36;
-        QString text = DOMString(textRenderer->qstring()).qstring();
+        QString text = DOMString(textRenderer->string()).qstring();
         int textLength = text.length();
         if (selected) {
             int offset = 0;

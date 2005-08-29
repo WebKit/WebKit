@@ -1,3 +1,32 @@
+2005-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed cases where I changed functions from string() to qstring() incorrectly
+
+        * khtml/rendering/render_text.h: Change function name back to string().
+        * khtml/xml/dom_textimpl.h: Ditto.
+
+        * khtml/xml/dom_textimpl.cpp:
+        (CommentImpl::nodeName): Call domString(), not qstring().
+        (TextImpl::nodeName): Ditto.
+
+        * khtml/editing/composite_edit_command.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantText):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::debugRenderer):
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextNode):
+        (khtml::TextIterator::handleTextBox):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleError):
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paint):
+        (InlineTextBox::selectionStartEnd):
+        (RenderText::originalString):
+        (RenderTextFragment::originalString):
+        Change callers back from qstring() to string().
+
 2005-08-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin.

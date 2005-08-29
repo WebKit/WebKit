@@ -505,7 +505,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                     TextImpl *t = static_cast<TextImpl *>(n);
                     if (t->containsOnlyWhitespace())
                         return false;
-                    DOMStringImpl *i = t->qstring();
+                    DOMStringImpl *i = t->string();
                     unsigned int pos = 0;
                     while (pos < i->l && (*(i->s+pos) == QChar(' ') ||
                                           *(i->s+pos) == QChar(0xa0))) pos++;
