@@ -95,7 +95,7 @@ public:
     NodeImpl *parentNode() const { return m_parent; }
     NodeImpl *previousSibling() const { return m_previous; }
     NodeImpl *nextSibling() const { return m_next; }
-    virtual NodeListImpl *childNodes();
+    virtual SharedPtr<NodeListImpl> childNodes();
     virtual NodeImpl *firstChild() const;
     virtual NodeImpl *lastChild() const;
     virtual bool hasAttributes() const;

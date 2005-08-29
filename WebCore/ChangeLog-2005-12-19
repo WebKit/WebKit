@@ -1,3 +1,38 @@
+2005-08-29  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed <rdar://problem/4232588> many leaks beneath ApplyStyleCommand::mergeEndWithNextIfIdentical, 
+        seen running webkit tests (probably affects Mail)
+        
+        Fixed by making NodeImpl::childNodes() return a SharedPtr.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        use get() to get the pointer from the SharedPtr
+        
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableSectionElementImpl::insertRow):
+        expect a SharedPtr for childNodes(); no need to delete at end of block. (This code was already 
+        managing memory correctly, but other callers of childNodes() where not.)
+        (DOM::HTMLTableSectionElementImpl::deleteRow):
+        ditto
+        (DOM::HTMLTableRowElementImpl::insertCell):
+        ditto
+        (DOM::HTMLTableRowElementImpl::deleteCell):
+        ditto
+        
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::childNodes):
+        return SharedPtr
+        
+        * kwq/DOM.mm:
+        (-[DOMNode childNodes]):
+        use get() to get the pointer from the SharedPtr
+
 2005-08-28  Maciej Stachowiak  <mjs@apple.com>
 
 	- added pixel test results for the layout tests, so others can check if their resutls match

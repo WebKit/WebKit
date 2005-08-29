@@ -224,7 +224,7 @@ using khtml::SharedPtr;
 
 - (DOMNodeList *)childNodes
 {
-    return [DOMNodeList _nodeListWithImpl:[self _nodeImpl]->childNodes()];
+    return [DOMNodeList _nodeListWithImpl:[self _nodeImpl]->childNodes().get()];
 }
 
 - (DOMNode *)firstChild

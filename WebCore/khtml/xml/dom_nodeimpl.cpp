@@ -164,9 +164,9 @@ void NodeImpl::setNodeValue( const DOMString &/*_nodeValue*/, int &exceptioncode
     // be default nodeValue is null, so setting it has no effect
 }
 
-NodeListImpl *NodeImpl::childNodes()
+SharedPtr<NodeListImpl> NodeImpl::childNodes()
 {
-  return new ChildNodeListImpl(this);
+    return SharedPtr<NodeListImpl>(new ChildNodeListImpl(this));
 }
 
 NodeImpl *NodeImpl::firstChild() const

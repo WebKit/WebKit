@@ -290,7 +290,7 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
   case ParentElement: // IE only apparently
     return getDOMNode(exec,node.parentNode());
   case ChildNodes:
-    return getDOMNodeList(exec,node.childNodes());
+    return getDOMNodeList(exec,node.childNodes().get());
   case FirstChild:
     return getDOMNode(exec,node.firstChild());
   case LastChild:
