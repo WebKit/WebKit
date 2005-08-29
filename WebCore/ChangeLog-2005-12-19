@@ -1,3 +1,18 @@
+2005-08-29  John Sullivan  <sullivan@apple.com>
+
+        Written by Justin Garcia
+        Reviewed by me and Darin Adler
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed <rdar://problem/4232303> many objects leaked from HTMLTokenizer::parseTag() 
+        within -[WebView paste:], seen running webkit tests (probably affects Mail)
+
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplacementFragment::removeNode):
+        guard removeChild call with ref/deref, so if this is the last reference it won't
+        be left floating, and will properly self-destruct
+
 2005-08-29  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Maciej.

@@ -269,7 +269,9 @@ void ReplacementFragment::removeNode(NodeImpl *node)
         return;
         
     int exceptionCode = 0;
+    node->ref();
     parent->removeChild(node, exceptionCode);
+    node->deref();
     ASSERT(exceptionCode == 0);
 }
 
