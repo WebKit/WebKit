@@ -1,3 +1,11 @@
+2005-08-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * Scripts/run-webkit-tests: Added a mode where each test is run with a separate
+        executable -- much slower but can help pinpoint leaks. Changed formatting of some
+        messages too.
+
 2005-08-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

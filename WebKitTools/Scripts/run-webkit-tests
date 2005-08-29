@@ -61,32 +61,33 @@ my $pixelTests = '';
 my $checkLeaks = '';
 my $maxWidth = '';
 my $maxHeight = '';
-my $verbose = '';
+my $verbose = 0;
 my $quiet = '';
+my $singly = 0;
 
 GetOptions('svg' => \$testSVGs, 
-    'pixel-tests' => \$pixelTests,
-    'leaks' => \$checkLeaks,
-    'max-width' => \$maxWidth,
-    'max-height' => \$maxHeight, 
-    'verbose' => \$verbose,
-    'quiet' => \$quiet);
+    'pixel-tests|p' => \$pixelTests,
+    'leaks|l' => \$checkLeaks,
+    'max-width|w' => \$maxWidth,
+    'max-height|h' => \$maxHeight, 
+    'verbose|v' => \$verbose,
+    'quiet|q' => \$quiet,
+    'singly|1' => \$singly);
 
-my $toolname = "DumpRenderTree";
-
+my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
 if ($testSVGs) {
     my $result = system "WebKitTools/Scripts/build-dumpkcanvastree", @ARGV;
     exit $result if $result;
-    $toolname = "DumpKCanvasTree";
+    $dumpToolName = "DumpKCanvasTree";
     $pixelTests = 1; # Pixel tests are always on for SVG.
 }
 
-my $tool = "$productDir/$toolname";
+my $tool = "$productDir/$dumpToolName";
 my $imageDiffTool = "$productDir/ImageDiff";
-die "can't find executable $toolname tool (looked in $productDir)\n" if !-x $tool;
-die "can't find executable $imageDiffTool tool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
+die "can't find executable $dumpToolName (looked in $productDir)\n" if !-x $tool;
+die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 if ($testSVGs) {
     checkSVGFrameworks();
@@ -105,12 +106,7 @@ my $testDirectory = "$WebCoreDirectory/$layoutTestsName";
 my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
 
-$ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-if ($checkLeaks) {
-    $ENV{MallocStackLogging} = 1;
-}
-
-my @tests;
+my @tests = ();
 
 my $findArguments = "\\( -name resources \\! -prune \\) -or -name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
@@ -144,56 +140,58 @@ die "no tests to run\n" if !@tests;
 my %counts;
 my %tests;
 my %imagesPresent;
-my $count;
-my @toolArgs;
+my $count = 0;
+
+my @toolArgs = ();
 
 if ($pixelTests) {
     push @toolArgs, "--pixel-tests";
-    if ($maxWidth) {
-        push @toolArgs, ("--width", $maxWidth);
-    }
- 
-    if ($maxWidth) {
-        push @toolArgs, ("--height", $maxWidth);
-    }
+    push @toolArgs, ("--width", $maxWidth) if $maxWidth;
+    push @toolArgs, ("--height", $maxHeight) if $maxHeight;
 }
 
-push  @toolArgs, "-";
+push @toolArgs, "-";
 
 $| = 1;
 
-my $toolPID;
 my $imageDiffToolPID;
-
-$toolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
-
 if ($pixelTests) {
     $imageDiffToolPID = open2(\*DIFFIN, \*DIFFOUT, $imageDiffTool, "") or die "unable to open $imageDiffTool\n";
 }
 
-my $column = 0;
+my $dumpToolPID;
+my $toolOpen = 0;
+
+my $atLineStart = 1;
 my $lastDirectory = "";
 
 for my $test (@tests) {
     next if $test eq 'results.html';
-    
+
+    if (!$toolOpen) {
+        local %ENV;
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{MallocStackLogging} = 1 if $checkLeaks;
+        $dumpToolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
+        $toolOpen = 1;
+    }
+
     my $base = $test;
     $base =~ s/\.(html|xml|xhtml|svg)$//;
     
-    if ($verbose) {
-        print "running $base test";
+    if ($verbose || $singly) {
+        print "running $test -> ";
+        $atLineStart = 0;
     } elsif (!$quiet) {
         my $dir = $base;
         $dir =~ s|/[^/]+$||;
         if ($dir ne $lastDirectory) {
-            print "\n" unless $column == 0;
-            print $dir . " ";
+            print "\n" unless $atLineStart;
+            print "$dir ";
             $lastDirectory = $dir;
-            $column = 0;
         }
-
         print ".";
-        $column++;
+        $atLineStart = 0;
     }
 
     my $result;
@@ -213,6 +211,10 @@ for my $test (@tests) {
             $expected .= $_;
         }
         close EXPECTED;
+    }
+
+    if ($checkLeaks && $singly) {
+        print "        $test -> ";
     }
 
     my $textDumpMatches = $expected && ($actual eq $expected);
@@ -285,32 +287,36 @@ for my $test (@tests) {
     }
 
     if (!defined $expected) {
-        if ($verbose) {
-            print " -> new test\n";
+        if ($verbose || $singly) {
+            print "new test\n";
+            $atLineStart = 1;
         }
         $result = "new";
         open EXPECTED, ">", "$testDirectory/$base-expected.txt" or die "could not create $testDirectory/$base-expected.txt\n";
         print EXPECTED $actual;
         close EXPECTED;
-
         unlink "$testResultsDirectory/$base-actual.txt";
         unlink "$testResultsDirectory/$base-diffs.txt";
     } elsif ($textDumpMatches && (!$pixelTests || ($pixelTests && $diffResult eq "passed"))) {
-        if ($verbose) {
-            print " -> succeeded\n";
+        if ($verbose || $singly) {
+            print "succeeded\n";
+            $atLineStart = 1;
         }
         $result = "match";
         unlink "$testResultsDirectory/$base-actual.txt";
         unlink "$testResultsDirectory/$base-diffs.txt";
     } elsif (!$textDumpMatches || ($pixelTests && $diffResult ne "passed")) {
-        print "\n" unless $column == 0;
-        print "$test -> failed\n";
-        $column = 0;        
+        unless ($verbose || $singly) {
+            print "\n" unless $atLineStart;
+            print "$test -> ";
+        }
+        print "failed\n";
+        $atLineStart = 1;
 
         $result = "mismatch";
 
         my $dir = "$testResultsDirectory/$base";
-        $dir =~ s|/[^/]+$||;
+        $dir =~ s|/[^/]+$|| or die;
         mkpath $dir;
 
         open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
@@ -371,26 +377,38 @@ for my $test (@tests) {
         }
     } else {
         $result = "fail";
-        print "\n" unless $column == 0;
-        print "$test -> crashed\n";
-        $column = 0;
+        print "\n" unless $atLineStart;
+        print "$test -> crashed?\n";
+        $atLineStart = 1;
 
         close IN;
         close OUT;
-        $toolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
+        $toolOpen = 0;
     }
-    
+
+    if ($checkLeaks && $singly && $toolOpen) {
+        printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
+    }
+
+    if ($singly && $toolOpen) {
+        close IN;
+        close OUT;
+        waitpid $dumpToolPID, 0;
+        $toolOpen = 0;
+    }
+
     $count += 1;
     $counts{$result} += 1;
     push @{$tests{$result}}, $test;
 }
 
-if ($checkLeaks) {
-    print "\n";
-    printLeaks($toolname, $toolPID);
-    if ($pixelTests) {
-        printLeaks("ImageDiff", $imageDiffToolPID);
-    }
+if ($checkLeaks && !$singly && $toolOpen) {
+    printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$dumpToolName-leaks.txt");
+}
+
+# FIXME: Do we really want to check the image-comparison tool for leaks?
+if ($checkLeaks && $pixelTests) {
+    printLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
 }
 
 close IN;
@@ -501,23 +519,24 @@ if ($counts{match} && $counts{match} == $count) {
 
 sub printLeaks
 {
-    my $toolName = shift;
-    my $toolPID = shift;
-    my $leaksFilePath = "";
-    
-    print "\nChecking for leaks in $toolName...\n";
-    my $leaksOutput = `leaks $toolPID`;
-    $leaksOutput =~ m/Process $toolPID: (\d+) leaks for (\d+) total leaked bytes./;
-    if ($1) {
-        $leaksFilePath = "$testResultsDirectory/$toolName-leaks.txt";
-        print "$1 leaks ($2 bytes) were found in $toolName, full results: $leaksFilePath\n";
-        if (open LEAKS, ">", $leaksFilePath) {
-            print LEAKS $leaksOutput;
-            close LEAKS;
-        } else {
-            print "ERROR: Failed to write leaks to file: $leaksFilePath";
-        }
+    my ($toolName, $toolPID, $leaksFilePath) = @_;
+
+    print " ? checking for leaks in $toolName\n";
+    my $leaksOutput = `leaks -exclude pthread_create $toolPID`;
+    my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
+    my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;
+
+    if ($count == 0 || ($excluded && $count <= $excluded)) {
+        print " - no leaks found\n";
+        unlink $leaksFilePath;
+    } else {
+        my $dir = $leaksFilePath;
+        $dir =~ s|/[^/]+$|| or die;
+        mkpath $dir;
+
+        print " + $count leaks ($bytes bytes) were found, details in $leaksFilePath\n";
+        open LEAKS, ">", $leaksFilePath or die;
+        print LEAKS $leaksOutput;
+        close LEAKS;
     }
-    
-    return $leaksFilePath;
 }
