@@ -350,8 +350,10 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
     if (!inSameBlock(visibleStart, visibleStart.next())) {
-        if (visibleStart == visibleEnd.previous())
+        if (visibleStart == visibleEnd.previous()) {
+            defaultStyle->deref();
             return interchangeNewlineString;
+        }
         markups.append(interchangeNewlineString);
         startNode = startNode->traverseNextNode();
     }
