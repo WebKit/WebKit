@@ -142,7 +142,7 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 	}
     } else if (attr->name() == widthAttr) {
         bool ok;
-        int v = attr->value().implementation()->toInt(&ok);
+        int v = attr->value().impl()->toInt(&ok);
         if(ok && !v)
             addCSSLength(attr, CSS_PROP_WIDTH, "1");
         else
@@ -162,7 +162,7 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         addCSSColor(attr, CSS_PROP_BORDER_COLOR, DOMString("grey"));
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, DOMString("grey"));
     } else if (attr->name() == sizeAttr) {
-        DOMStringImpl* si = attr->value().implementation();
+        DOMStringImpl* si = attr->value().impl();
         int size = si->toInt();
         if (size <= 1)
             addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString("0"));

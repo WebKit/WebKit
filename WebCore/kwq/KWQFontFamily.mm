@@ -82,10 +82,10 @@ NSString *KWQFontFamily::getNSFamily() const
             static CFMutableDictionaryRef families;
             if (families == NULL)
                 families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-            _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.implementation());
+            _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.impl());
             if (!_NSFamily) {
                 _NSFamily = [NSString stringWithCharacters:(const unichar *)_family.unicode() length:_family.length()];
-                CFDictionarySetValue(families, _family.implementation(), _NSFamily);
+                CFDictionarySetValue(families, _family.impl(), _NSFamily);
             }
         }
     }

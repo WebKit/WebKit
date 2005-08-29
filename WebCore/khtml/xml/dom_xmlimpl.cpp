@@ -48,20 +48,20 @@ EntityImpl::EntityImpl(DocumentPtr *doc, DOMString _name) : ContainerNodeImpl(do
     m_publicId = 0;
     m_systemId = 0;
     m_notationName = 0;
-    m_name = _name.implementation();
+    m_name = _name.impl();
     if (m_name)
         m_name->ref();
 }
 
 EntityImpl::EntityImpl(DocumentPtr *doc, DOMString _publicId, DOMString _systemId, DOMString _notationName) : ContainerNodeImpl(doc)
 {
-    m_publicId = _publicId.implementation();
+    m_publicId = _publicId.impl();
     if (m_publicId)
         m_publicId->ref();
-    m_systemId = _systemId.implementation();
+    m_systemId = _systemId.impl();
     if (m_systemId)
         m_systemId->ref();
-    m_notationName = _notationName.implementation();
+    m_notationName = _notationName.impl();
     if (m_notationName)
         m_notationName->ref();
     m_name = 0;
@@ -238,13 +238,13 @@ NotationImpl::NotationImpl(DocumentPtr *doc) : ContainerNodeImpl(doc)
 
 NotationImpl::NotationImpl(DocumentPtr *doc, DOMString _name, DOMString _publicId, DOMString _systemId) : ContainerNodeImpl(doc)
 {
-    m_name = _name.implementation();
+    m_name = _name.impl();
     if (m_name)
         m_name->ref();
-    m_publicId = _publicId.implementation();
+    m_publicId = _publicId.impl();
     if (m_publicId)
         m_publicId->ref();
-    m_systemId = _systemId.implementation();
+    m_systemId = _systemId.impl();
     if (m_systemId)
         m_systemId->ref();
 }
@@ -312,10 +312,10 @@ ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc) : Contain
 
 ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentPtr *doc, DOMString _target, DOMString _data) : ContainerNodeImpl(doc)
 {
-    m_target = _target.implementation();
+    m_target = _target.impl();
     if (m_target)
         m_target->ref();
-    m_data = _data.implementation();
+    m_data = _data.impl();
     if (m_data)
         m_data->ref();
     m_sheet = 0;
@@ -358,7 +358,7 @@ void ProcessingInstructionImpl::setData( const DOMString &_data, int &exceptionc
 
     if (m_data)
         m_data->deref();
-    m_data = _data.implementation();
+    m_data = _data.impl();
     if (m_data)
         m_data->ref();
 }
@@ -444,7 +444,7 @@ bool ProcessingInstructionImpl::checkStyleSheet()
                 DOMString newLocalHref = href.mid(1);
                 if (m_localHref)
                     m_localHref->deref();
-                m_localHref = newLocalHref.implementation();
+                m_localHref = newLocalHref.impl();
                 if (m_localHref)
                     m_localHref->ref();
 #ifdef KHTML_XSLT

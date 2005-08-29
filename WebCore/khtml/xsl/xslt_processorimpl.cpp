@@ -171,9 +171,9 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         if (method == NULL && resultDoc->type == XML_HTML_DOCUMENT_NODE)
             method = (const xmlChar *)"html";
         if (xmlStrEqual(method, (const xmlChar *)"html"))
-            result = m_sourceDocument->implementation()->createHTMLDocument(view);
+            result = m_sourceDocument->impl()->createHTMLDocument(view);
         else
-            result = m_sourceDocument->implementation()->createDocument(view);
+            result = m_sourceDocument->impl()->createDocument(view);
         result->attach();
         result->setURL(m_sourceDocument->URL());
         result->setBaseURL(m_sourceDocument->baseURL());

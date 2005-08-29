@@ -332,15 +332,15 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (element->hasID())
-        matchRulesForList(rules->getIDRules(element->getIDAttribute().implementation()),
+        matchRulesForList(rules->getIDRules(element->getIDAttribute().impl()),
                           firstRuleIndex, lastRuleIndex);
     if (element->hasClass()) {
         for (const AtomicStringList* singleClass = element->getClassList();
              singleClass; singleClass = singleClass->next())
-            matchRulesForList(rules->getClassRules(singleClass->qstring().implementation()),
+            matchRulesForList(rules->getClassRules(singleClass->qstring().impl()),
                                                    firstRuleIndex, lastRuleIndex);
     }
-    matchRulesForList(rules->getTagRules(element->localName().implementation()),
+    matchRulesForList(rules->getTagRules(element->localName().impl()),
                       firstRuleIndex, lastRuleIndex);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
     
@@ -1440,17 +1440,17 @@ void CSSRuleSet::addToRuleSet(DOMStringImpl* key, AtomRuleMap& map,
 void CSSRuleSet::addRule(CSSStyleRuleImpl* rule, CSSSelector* sel)
 {
     if (sel->match == CSSSelector::Id) {
-        addToRuleSet(sel->value.implementation(), m_idRules, rule, sel);
+        addToRuleSet(sel->value.impl(), m_idRules, rule, sel);
         return;
     }
     if (sel->match == CSSSelector::Class) {
-        addToRuleSet(sel->value.implementation(), m_classRules, rule, sel);
+        addToRuleSet(sel->value.impl(), m_classRules, rule, sel);
         return;
     }
      
     const AtomicString& localName = sel->tag.localName();
     if (localName != starAtom) {
-        addToRuleSet(localName.implementation(), m_tagRules, rule, sel);
+        addToRuleSet(localName.impl(), m_tagRules, rule, sel);
         return;
     }
     
@@ -3082,11 +3082,11 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             if (!item->isPrimitiveValue()) continue;
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
             if (val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
-                style->setContent(val->getStringValue().implementation(), i != 0);
+                style->setContent(val->getStringValue().impl(), i != 0);
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_ATTR) {
                 // FIXME: Can a namespace be specified for an attr(foo)?
-                QualifiedName attr(nullAtom, val->getStringValue().implementation(), nullAtom);
-                style->setContent(element->getAttribute(attr).implementation(), i != 0);
+                QualifiedName attr(nullAtom, val->getStringValue().impl(), nullAtom);
+                style->setContent(element->getAttribute(attr).impl(), i != 0);
             }
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI) {
                 CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(val);

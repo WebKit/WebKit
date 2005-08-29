@@ -1,3 +1,178 @@
+2005-08-29  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej.
+
+        - renamed DOMString::implementation() to DOMString::impl()
+          and DOMString::impl to DOMString::m_impl
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (DOM::CSSPrimitiveValueImpl::setStringValue):
+        * khtml/css/csshelper.cpp:
+        (khtml::parseURL):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::CSSRuleSet::addRule):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/dom/dom_string.cpp:
+        (DOM::DOMString::DOMString):
+        (DOM::DOMString::operator =):
+        (DOM::DOMString::operator += ):
+        (DOM::DOMString::insert):
+        (DOM::DOMString::operator []):
+        (DOM::DOMString::find):
+        (DOM::DOMString::length):
+        (DOM::DOMString::truncate):
+        (DOM::DOMString::remove):
+        (DOM::DOMString::substring):
+        (DOM::DOMString::split):
+        (DOM::DOMString::lower):
+        (DOM::DOMString::upper):
+        (DOM::DOMString::percentage):
+        (DOM::DOMString::unicode):
+        (DOM::DOMString::qstring):
+        (DOM::DOMString::toInt):
+        (DOM::DOMString::copy):
+        (DOM::DOMString::isEmpty):
+        (DOM::DOMString::toCoordsArray):
+        (DOM::DOMString::toLengthArray):
+        (DOM::DOMString::ascii):
+        (DOM::operator==):
+        * khtml/dom/dom_string.h:
+        (DOM::DOMString::DOMString):
+        (DOM::DOMString::~DOMString):
+        (DOM::DOMString::isNull):
+        (DOM::DOMString::impl):
+        * khtml/ecma/domparser.cpp:
+        (KJS::DOMParserProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMDocument::getValueProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::getSetInfo):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty):
+        * khtml/editing/jsediting.cpp:
+        (DOM::DocumentImpl::commandImp):
+        * khtml/editing/remove_node_attribute_command.cpp:
+        (khtml::RemoveNodeAttributeCommand::doUnapply):
+        * khtml/editing/set_node_attribute_command.cpp:
+        (khtml::SetNodeAttributeCommand::doApply):
+        (khtml::SetNodeAttributeCommand::doUnapply):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLHRElementImpl::parseMappedAttribute):
+        * khtml/html/html_documentimpl.cpp:
+        (DOM::addItemToMap):
+        (DOM::removeItemFromMap):
+        (DOM::HTMLDocumentImpl::hasNamedItem):
+        (DOM::HTMLDocumentImpl::hasDocExtraNamedItem):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::nodeName):
+        (HTMLElementImpl::isRecognizedTagName):
+        (inlineTagList):
+        (blockTagList):
+        (HTMLElementImpl::inEitherTagList):
+        (HTMLElementImpl::inInlineTagList):
+        (HTMLElementImpl::inBlockTagList):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::radioButtonChecked):
+        (DOM::HTMLFormElementImpl::removeFormElement):
+        (DOM::HTMLInputElementImpl::isKeyboardFocusable):
+        (DOM::HTMLInputElementImpl::setInputType):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::setText):
+        (HTMLTitleElementImpl::setText):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::getNode):
+        (HTMLParser::isHeaderTag):
+        (HTMLParser::isResidualStyleTag):
+        (HTMLParser::isAffectedByResidualStyle):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findTextNext):
+        (KHTMLPart::selectionComputedStyle):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::paint):
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::EventImpl):
+        (EventImpl::initEvent):
+        (KeyboardEventImpl::KeyboardEventImpl):
+        (KeyboardEventImpl::initKeyboardEvent):
+        (MutationEventImpl::MutationEventImpl):
+        (MutationEventImpl::initMutationEvent):
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::equal):
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::AtomicString::AtomicString):
+        (DOM::AtomicString::impl):
+        (DOM::AtomicString::equal):
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument):
+        (DocumentImpl::impl):
+        (DocumentImpl::createEntityReference):
+        (DocumentImpl::importNode):
+        (DocumentImpl::createAttributeNS):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentTypeImpl::impl):
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::AttrImpl):
+        (AttrImpl::setValue):
+        (AttrImpl::childrenChanged):
+        (ElementImpl::setAttribute):
+        (ElementImpl::getAttributeNS):
+        (ElementImpl::setAttributeNS):
+        (ElementImpl::removeAttributeNS):
+        (ElementImpl::getAttributeNodeNS):
+        (ElementImpl::hasAttributeNS):
+        (NamedAttrMapImpl::getNamedItemNS):
+        (NamedAttrMapImpl::removeNamedItemNS):
+        (StyledElementImpl::getMappedAttributeDecl):
+        (StyledElementImpl::setMappedAttributeDecl):
+        (StyledElementImpl::removeMappedAttributeDecl):
+        (NamedMappedAttrMapImpl::parseClassAttribute):
+        (StyledElementImpl::parseMappedAttribute):
+        (StyledElementImpl::addCSSLength):
+        * khtml/xml/dom_qname.cpp:
+        (DOM::QNameHash::hash):
+        (DOM::equalComponents):
+        (DOM::QualifiedName::QualifiedName):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::CharacterDataImpl):
+        (CharacterDataImpl::setData):
+        (CharacterDataImpl::appendData):
+        (CharacterDataImpl::insertData):
+        (CharacterDataImpl::replaceData):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::EntityImpl::EntityImpl):
+        (DOM::NotationImpl::NotationImpl):
+        (DOM::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (DOM::ProcessingInstructionImpl::setData):
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::startElement):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+        * kwq/DOM-CSS.mm:
+        (-[DOMDocument getComputedStyle::]):
+        * kwq/DOM.mm:
+        (-[DOMNode setPrefix:]):
+        (-[DOMDocument implementation]):
+        (-[DOMDocument getComputedStyle::]):
+        (-[DOMDocument getOverrideStyle::]):
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLSelectElement setValue:]):
+        (-[DOMHTMLOptionElement setValue:]):
+        * kwq/DOMInternal.mm:
+        (DOMString::DOMString):
+        * kwq/KWQFontFamily.mm:
+        (KWQFontFamily::getNSFamily):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::styleForSelectionStart):
+
 2005-08-29  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

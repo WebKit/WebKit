@@ -129,7 +129,7 @@ DOMString::DOMString(NSString *str)
 
     CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(str));
     if (size == 0)
-        impl = DOMStringImpl::empty();
+        m_impl = DOMStringImpl::empty();
     else {
         UniChar fixedSizeBuffer[1024];
         UniChar *buffer;
@@ -139,12 +139,12 @@ DOMString::DOMString(NSString *str)
             buffer = fixedSizeBuffer;
         }
         CFStringGetCharacters(reinterpret_cast<CFStringRef>(str), CFRangeMake(0, size), buffer);
-        impl = new DOMStringImpl(reinterpret_cast<const QChar *>(buffer), (uint)size);
+        m_impl = new DOMStringImpl(reinterpret_cast<const QChar *>(buffer), (uint)size);
         if (buffer != fixedSizeBuffer) {
             free(buffer);
         }
     }
-    impl->ref();
+    m_impl->ref();
 }
 
 //------------------------------------------------------------------------------------------

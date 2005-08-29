@@ -55,7 +55,7 @@ inline bool equal(DOMStringImpl* const& r, const char* const& s)
 
 bool AtomicString::equal(const AtomicString &a, const char *b)
 { 
-    DOMStringImpl *impl = a.m_string.implementation();
+    DOMStringImpl *impl = a.m_string.impl();
     if ((!impl || !impl->s) && !b)
         return true;
     if ((!impl || !impl->s) || !b)

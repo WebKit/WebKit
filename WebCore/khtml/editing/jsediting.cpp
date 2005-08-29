@@ -63,7 +63,7 @@ CommandMap *createCommandDictionary();
 const CommandImp *commandImp(const DOMString &command)
 {
     static CommandMap *commandDictionary = createCommandDictionary();
-    return commandDictionary->get(command.implementation());
+    return commandDictionary->get(command.impl());
 }
 
 } // anonymous namespace

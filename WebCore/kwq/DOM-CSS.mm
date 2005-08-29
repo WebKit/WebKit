@@ -2548,7 +2548,7 @@ void removeWrapperForRGB(QRgb value)
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
     return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:
-        AbstractViewImpl([self _documentImpl]).getComputedStyle([elt _elementImpl], DOMString(pseudoElt).implementation())];
+        AbstractViewImpl([self _documentImpl]).getComputedStyle([elt _elementImpl], DOMString(pseudoElt).impl())];
 }
 
 @end

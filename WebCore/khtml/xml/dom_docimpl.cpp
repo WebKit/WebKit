@@ -193,7 +193,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
     int colonpos = -1;
     uint i;
-    DOMStringImpl *qname = qualifiedName.implementation();
+    DOMStringImpl *qname = qualifiedName.impl();
     for (i = 0; i < qname->l && colonpos < 0; i++) {
         if ((*qname)[i] == ':')
             colonpos = i;
@@ -214,7 +214,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
 
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
-    if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
+    if (doctype && (doctype->getDocument() || doctype->impl() != this)) {
         exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
         return 0;
     }
@@ -486,7 +486,7 @@ DocumentTypeImpl *DocumentImpl::doctype() const
     return m_doctype;
 }
 
-DOMImplementationImpl *DocumentImpl::implementation() const
+DOMImplementationImpl *DocumentImpl::impl() const
 {
     return m_implementation;
 }
@@ -551,7 +551,7 @@ EntityReferenceImpl *DocumentImpl::createEntityReference(const DOMString &name, 
         exception = DOMException::NOT_SUPPORTED_ERR;
         return NULL;
     }
-    return new EntityReferenceImpl(docPtr(), name.implementation());
+    return new EntityReferenceImpl(docPtr(), name.impl());
 }
 
 EditingTextImpl *DocumentImpl::createEditingTextNode(const DOMString &text)
@@ -593,7 +593,7 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
                 unsigned length = attrs->length();
                 for (unsigned i = 0; i < length; i++) {
                     AttributeImpl* attr = attrs->attributeItem(i);
-                    newElement->setAttribute(attr->name(), attr->value().implementation(), exceptioncode);
+                    newElement->setAttribute(attr->name(), attr->value().impl(), exceptioncode);
                     if (exceptioncode != 0) {
                         newElement->deref();
                         return 0;
@@ -3063,9 +3063,9 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
     
     // FIXME: Assume this is a mapped attribute, since createAttribute isn't namespace-aware.  There's no harm to XML
     // documents if we're wrong.
-    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(QualifiedName(prefix.implementation(), 
-                                                                           localName.implementation(),
-                                                                           namespaceURI.implementation()), DOMString("").implementation()), false);
+    return new AttrImpl(0, docPtr(), new MappedAttributeImpl(QualifiedName(prefix.impl(), 
+                                                                           localName.impl(),
+                                                                           namespaceURI.impl()), DOMString("").impl()), false);
 }
 
 SharedPtr<HTMLCollectionImpl> DocumentImpl::images()

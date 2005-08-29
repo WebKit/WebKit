@@ -1057,7 +1057,7 @@ using DOM::NodeImpl;
 - (void)setValue:(NSString *)value
 {
     DOMString s(value);
-    [self _selectElementImpl]->setValue(s.implementation());
+    [self _selectElementImpl]->setValue(s.impl());
 }
 
 - (long)length
@@ -1255,7 +1255,7 @@ using DOM::NodeImpl;
 - (void)setValue:(NSString *)value
 {
     DOMString string = value;
-    [self _optionElementImpl]->setValue(string.implementation());
+    [self _optionElementImpl]->setValue(string.impl());
 }
 
 @end

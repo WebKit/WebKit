@@ -57,7 +57,7 @@ EventImpl::EventImpl()
 EventImpl::EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg)
 {
     DOMString t = EventImpl::idToType(_id);
-    m_type = t.implementation();
+    m_type = t.impl();
     if (m_type)
 	m_type->ref();
     m_canBubble = canBubbleArg;
@@ -156,7 +156,7 @@ void EventImpl::initEvent(const DOMString &eventTypeArg, bool canBubbleArg, bool
     if (m_type)
 	m_type->deref();
 
-    m_type = eventTypeArg.implementation();
+    m_type = eventTypeArg.impl();
     if (m_type)
 	m_type->ref();
 
@@ -583,7 +583,7 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
 
 #if APPLE_CHANGES
     DOMString identifier(key->keyIdentifier());
-    m_keyIdentifier = identifier.implementation();
+    m_keyIdentifier = identifier.impl();
     m_keyIdentifier->ref();
 #else
     m_keyIdentifier = 0;
@@ -612,7 +612,7 @@ KeyboardEventImpl::KeyboardEventImpl(EventId _id,
   : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
     m_keyEvent = 0;
-    m_keyIdentifier = keyIdentifierArg.implementation();
+    m_keyIdentifier = keyIdentifierArg.impl();
     if (m_keyIdentifier)
         m_keyIdentifier->ref();
     m_keyLocation = keyLocationArg;
@@ -642,7 +642,7 @@ void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
         m_keyIdentifier->deref();
 
     UIEventImpl::initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, 0);
-    m_keyIdentifier = keyIdentifierArg.implementation();
+    m_keyIdentifier = keyIdentifierArg.impl();
     if (m_keyIdentifier)
         m_keyIdentifier->ref();
     m_keyLocation = keyLocationArg;
@@ -719,13 +719,13 @@ MutationEventImpl::MutationEventImpl(EventId _id,
     m_relatedNode = relatedNodeArg;
     if (m_relatedNode)
 	m_relatedNode->ref();
-    m_prevValue = prevValueArg.implementation();
+    m_prevValue = prevValueArg.impl();
     if (m_prevValue)
 	m_prevValue->ref();
-    m_newValue = newValueArg.implementation();
+    m_newValue = newValueArg.impl();
     if (m_newValue)
 	m_newValue->ref();
-    m_attrName = attrNameArg.implementation();
+    m_attrName = attrNameArg.impl();
     if (m_attrName)
 	m_attrName->ref();
     m_attrChange = attrChangeArg;
@@ -766,13 +766,13 @@ void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
     m_relatedNode = relatedNodeArg;
     if (m_relatedNode)
 	m_relatedNode->ref();
-    m_prevValue = prevValueArg.implementation();
+    m_prevValue = prevValueArg.impl();
     if (m_prevValue)
 	m_prevValue->ref();
-    m_newValue = newValueArg.implementation();
+    m_newValue = newValueArg.impl();
     if (m_newValue)
 	m_newValue->ref();
-    m_attrName = attrNameArg.implementation();
+    m_attrName = attrNameArg.impl();
     if (m_attrName)
 	m_attrName->ref();
     m_attrChange = attrChangeArg;

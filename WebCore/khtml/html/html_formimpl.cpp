@@ -686,14 +686,14 @@ void HTMLFormElementImpl::radioButtonChecked(HTMLInputElementImpl *caller)
     if (!m_selectedRadioButtons)
         m_selectedRadioButtons = new HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> >;
 
-    HTMLInputElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(caller->name().implementation());
+    HTMLInputElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(caller->name().impl());
     if (currentCheckedRadio && currentCheckedRadio != caller)
         currentCheckedRadio->setChecked(false);
         
     // Now insert ourselves into the hash. There should really be a replace method
     // in HashMap...
-    m_selectedRadioButtons->remove(caller->name().implementation());
-    m_selectedRadioButtons->insert(caller->name().implementation(), caller);
+    m_selectedRadioButtons->remove(caller->name().impl());
+    m_selectedRadioButtons->insert(caller->name().impl(), caller);
 }
 
 HTMLInputElementImpl* HTMLFormElementImpl::checkedRadioButtonForGroup(DOMStringImpl* name)
@@ -769,9 +769,9 @@ void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
 {
     if (m_selectedRadioButtons && !e->name().isEmpty()) {
-        HTMLGenericFormElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(e->name().implementation());
+        HTMLGenericFormElementImpl* currentCheckedRadio = m_selectedRadioButtons->get(e->name().impl());
         if (currentCheckedRadio == e)
-            m_selectedRadioButtons->remove(e->name().implementation());
+            m_selectedRadioButtons->remove(e->name().impl());
     }
             
     removeFromVector(formElements, e);
@@ -1413,7 +1413,7 @@ bool HTMLInputElementImpl::isKeyboardFocusable() const
         }
         
         // Allow keyboard focus if we're checked or if nothing in the group is checked.
-        return checked() || !m_form->checkedRadioButtonForGroup(name().implementation());
+        return checked() || !m_form->checkedRadioButtonForGroup(name().impl());
     }
     
     return true;
@@ -1472,8 +1472,8 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
             setAttribute(typeAttr, type());
         } else {
             if (m_form && m_type == RADIO && !name().isEmpty()) {
-                if (m_form->checkedRadioButtonForGroup(name().implementation()) == this)
-                    m_form->removeRadioButtonGroup(name().implementation());
+                if (m_form->checkedRadioButtonForGroup(name().impl()) == this)
+                    m_form->removeRadioButtonGroup(name().impl());
             }
             bool wasAttached = m_attached;
             if (wasAttached)

@@ -30,84 +30,84 @@ namespace DOM {
 DOMString::DOMString(const QChar *str, uint len)
 {
     if (!str) {
-        impl = 0;
+        m_impl = 0;
         return;
     }
     
     if (len == 0)
-        impl = DOMStringImpl::empty();
+        m_impl = DOMStringImpl::empty();
     else
-        impl = new DOMStringImpl(str, len);
-    impl->ref();
+        m_impl = new DOMStringImpl(str, len);
+    m_impl->ref();
 }
 
 DOMString::DOMString(const QString &str)
 {
     if (str.isNull()) {
-	impl = 0;
+	m_impl = 0;
 	return;
     }
     
     if (str.isEmpty())
-        impl = DOMStringImpl::empty();
+        m_impl = DOMStringImpl::empty();
     else 
-        impl = new DOMStringImpl(str.unicode(), str.length());
-    impl->ref();
+        m_impl = new DOMStringImpl(str.unicode(), str.length());
+    m_impl->ref();
 }
 
 DOMString::DOMString(const char *str)
 {
     if (!str) {
-	impl = 0;
+	m_impl = 0;
 	return;
     }
 
     int l = strlen(str);
     if (l == 0)
-        impl = DOMStringImpl::empty();
+        m_impl = DOMStringImpl::empty();
     else
-        impl = new DOMStringImpl(str, l);
-    impl->ref();
+        m_impl = new DOMStringImpl(str, l);
+    m_impl->ref();
 }
 
 DOMString::DOMString(DOMStringImpl *i)
 {
-    impl = i;
-    if(impl) impl->ref();
+    m_impl = i;
+    if(m_impl) m_impl->ref();
 }
 
 DOMString::DOMString(const DOMString &other)
 {
-    impl = other.impl;
-    if(impl) impl->ref();
+    m_impl = other.m_impl;
+    if(m_impl) m_impl->ref();
 }
 
 DOMString &DOMString::operator =(const DOMString &other)
 {
-    if ( impl != other.impl ) {
-    if(impl) impl->deref();
-    impl = other.impl;
-    if(impl) impl->ref();
+    if ( m_impl != other.m_impl ) {
+    if(m_impl) m_impl->deref();
+    m_impl = other.m_impl;
+    if(m_impl) m_impl->ref();
     }
     return *this;
 }
 
 DOMString &DOMString::operator += (const DOMString &str)
 {
-    if(str.impl)
+    if(str.m_impl)
     {
-        if(!impl)
+        if(!m_impl)
         {
             // ### FIXME!!!
-            impl = str.impl;
-            impl->ref();
+            m_impl = str.m_impl;
+            m_impl->ref();
             return *this;
         }
-	DOMStringImpl *i = impl->copy();
-	impl->deref();
-	impl = i;
-	impl->ref();
-	impl->append(str.impl);
+	DOMStringImpl *i = m_impl->copy();
+	m_impl->deref();
+	m_impl = i;
+	m_impl->ref();
+	m_impl->append(str.m_impl);
     }
     return *this;
 }
@@ -125,13 +125,13 @@ DOMString operator + (const DOMString &a, const DOMString &b)
 
 void DOMString::insert(DOMString str, uint pos)
 {
-    if(!impl)
+    if(!m_impl)
     {
-	impl = str.impl->copy();
-	impl->ref();
+	m_impl = str.m_impl->copy();
+	m_impl->ref();
     }
     else
-	impl->insert(str.impl, pos);
+	m_impl->insert(str.m_impl, pos);
 }
 
 
@@ -139,18 +139,18 @@ const QChar &DOMString::operator [](unsigned int i) const
 {
     static const QChar nullChar = 0;
 
-    if(!impl || i >= impl->l ) return nullChar;
+    if(!m_impl || i >= m_impl->l ) return nullChar;
 
-    return *(impl->s+i);
+    return *(m_impl->s+i);
 }
 
 int DOMString::find(const QChar c, int start) const
 {
     unsigned int l = start;
-    if(!impl || l >= impl->l ) return -1;
-    while( l < impl->l )
+    if(!m_impl || l >= m_impl->l ) return -1;
+    while( l < m_impl->l )
     {
-	if( *(impl->s+l) == c ) return l;
+	if( *(m_impl->s+l) == c ) return l;
 	l++;
     }
     return -1;
@@ -158,80 +158,80 @@ int DOMString::find(const QChar c, int start) const
 
 uint DOMString::length() const
 {
-    if(!impl) return 0;
-    return impl->l;
+    if(!m_impl) return 0;
+    return m_impl->l;
 }
 
 void DOMString::truncate( unsigned int len )
 {
-    if(impl) impl->truncate(len);
+    if(m_impl) m_impl->truncate(len);
 }
 
 void DOMString::remove(unsigned int pos, int len)
 {
-  if(impl) impl->remove(pos, len);
+  if(m_impl) m_impl->remove(pos, len);
 }
 
 DOMString DOMString::substring(unsigned int pos, unsigned int len) const
 {
-    if (!impl) 
+    if (!m_impl) 
         return DOMString();
-    return impl->substring(pos, len);
+    return m_impl->substring(pos, len);
 }
 
 DOMString DOMString::split(unsigned int pos)
 {
-  if(!impl) return DOMString();
-  return impl->split(pos);
+  if(!m_impl) return DOMString();
+  return m_impl->split(pos);
 }
 
 DOMString DOMString::lower() const
 {
-  if(!impl) return DOMString();
-  return impl->lower();
+  if(!m_impl) return DOMString();
+  return m_impl->lower();
 }
 
 DOMString DOMString::upper() const
 {
-  if(!impl) return DOMString();
-  return impl->upper();
+  if(!m_impl) return DOMString();
+  return m_impl->upper();
 }
 
 bool DOMString::percentage(int &_percentage) const
 {
-    if(!impl || !impl->l) return false;
+    if(!m_impl || !m_impl->l) return false;
 
-    if ( *(impl->s+impl->l-1) != QChar('%'))
+    if ( *(m_impl->s+m_impl->l-1) != QChar('%'))
        return false;
 
-    _percentage = QConstString(impl->s, impl->l-1).qstring().toInt();
+    _percentage = QConstString(m_impl->s, m_impl->l-1).qstring().toInt();
     return true;
 }
 
 QChar *DOMString::unicode() const
 {
-    if(!impl) return 0;
-    return impl->s;
+    if(!m_impl) return 0;
+    return m_impl->s;
 }
 
 QString DOMString::qstring() const
 {
-    if(!impl) return QString::null;
+    if(!m_impl) return QString::null;
 
-    return QString(impl->s, impl->l);
+    return QString(m_impl->s, m_impl->l);
 }
 
 int DOMString::toInt() const
 {
-    if(!impl) return 0;
+    if(!m_impl) return 0;
 
-    return impl->toInt();
+    return m_impl->toInt();
 }
 
 DOMString DOMString::copy() const
 {
-    if(!impl) return DOMString();
-    return impl->copy();
+    if(!m_impl) return DOMString();
+    return m_impl->copy();
 }
 
 // ------------------------------------------------------------------------
@@ -269,23 +269,23 @@ bool strcasecmp( const DOMString &as, const char* bs )
 
 bool DOMString::isEmpty() const
 {
-    return (!impl || impl->l == 0);
+    return (!m_impl || m_impl->l == 0);
 }
 
 khtml::Length* DOMString::toCoordsArray(int& len) const 
 { 
-    return impl ? impl->toCoordsArray(len) : 0;
+    return m_impl ? m_impl->toCoordsArray(len) : 0;
 }
 
 khtml::Length* DOMString::toLengthArray(int& len) const 
 { 
-    return impl ? impl->toLengthArray(len) : 0;
+    return m_impl ? m_impl->toLengthArray(len) : 0;
 }
 
 #ifndef NDEBUG
 const char *DOMString::ascii() const
 {
-    return impl ? impl->ascii() : "(null impl)";
+    return m_impl ? m_impl->ascii() : "(null impl)";
 }
 #endif
 
@@ -293,7 +293,7 @@ const char *DOMString::ascii() const
 
 bool operator==( const DOMString &a, const DOMString &b )
 {
-    if (a.impl == b.impl)
+    if (a.m_impl == b.m_impl)
         return true;
     
     unsigned int l = a.length();
@@ -318,7 +318,7 @@ bool operator==( const DOMString &a, const QString &b )
 
 bool operator==( const DOMString &a, const char *b )
 {
-    DOMStringImpl *aimpl = a.impl;
+    DOMStringImpl *aimpl = a.m_impl;
     
     if (!b)
         return !aimpl;

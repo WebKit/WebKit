@@ -81,9 +81,9 @@ inline unsigned hashComponents(const QualifiedNameComponents& buf)
 
 struct QNameHash {
     static unsigned hash(const QualifiedName::QualifiedNameImpl *name) {    
-        QualifiedNameComponents components = { name->m_prefix.implementation(), 
-                                               name->m_localName.implementation(), 
-                                               name->m_namespace.implementation() };
+        QualifiedNameComponents components = { name->m_prefix.impl(), 
+                                               name->m_localName.impl(), 
+                                               name->m_namespace.impl() };
         return hashComponents(components);
     }
     static bool equal(const QualifiedName::QualifiedNameImpl *a, const QualifiedName::QualifiedNameImpl *b) { return a == b; }
@@ -95,9 +95,9 @@ static QNameSet *gNameCache;
 
 inline bool equalComponents(QualifiedName::QualifiedNameImpl* const& name, const QualifiedNameComponents &components)
 {
-    return components.m_localName == name->m_localName.implementation() &&
-           components.m_namespace == name->m_namespace.implementation() &&
-           components.m_prefix == name->m_prefix.implementation();
+    return components.m_localName == name->m_localName.impl() &&
+           components.m_namespace == name->m_namespace.impl() &&
+           components.m_prefix == name->m_prefix.impl();
 }
 
 inline QualifiedName::QualifiedNameImpl *convertComponents(const QualifiedNameComponents& components, unsigned hash)
@@ -111,7 +111,7 @@ QualifiedName::QualifiedName(const AtomicString& p, const AtomicString& l, const
 {
     if (!gNameCache)
         gNameCache = new QNameSet;
-    QualifiedNameComponents components = { p.implementation(), l.implementation(), n.implementation() };
+    QualifiedNameComponents components = { p.impl(), l.impl(), n.impl() };
     m_impl = *gNameCache->insert<QualifiedNameComponents, hashComponents, equalComponents, convertComponents>(components).first;    
     ref();
 }

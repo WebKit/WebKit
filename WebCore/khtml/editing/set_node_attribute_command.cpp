@@ -63,7 +63,7 @@ void SetNodeAttributeCommand::doApply()
 
     int exceptionCode = 0;
     m_oldValue = m_element->getAttribute(m_attribute);
-    m_element->setAttribute(m_attribute, m_value.implementation(), exceptionCode);
+    m_element->setAttribute(m_attribute, m_value.impl(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -75,7 +75,7 @@ void SetNodeAttributeCommand::doUnapply()
     if (m_oldValue.isNull())
         m_element->removeAttribute(m_attribute, exceptionCode);
     else
-        m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
+        m_element->setAttribute(m_attribute, m_oldValue.impl(), exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 

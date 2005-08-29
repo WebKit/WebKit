@@ -340,7 +340,7 @@ using khtml::SharedPtr;
 
     int exceptionCode = 0;
     DOMString prefixStr(prefix);
-    [self _nodeImpl]->setPrefix(prefixStr.implementation(), exceptionCode);
+    [self _nodeImpl]->setPrefix(prefixStr.impl(), exceptionCode);
     raiseOnDOMError(exceptionCode);
 }
 
@@ -916,7 +916,7 @@ using khtml::SharedPtr;
 
 - (DOMImplementation *)implementation
 {
-    return [DOMImplementation _DOMImplementationWithImpl:[self _documentImpl]->implementation()];
+    return [DOMImplementation _DOMImplementationWithImpl:[self _documentImpl]->impl()];
 }
 
 - (DOMElement *)documentElement
@@ -1056,14 +1056,14 @@ using khtml::SharedPtr;
 {
     ElementImpl *elementImpl = [elt _elementImpl];
     DOMString pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.implementation())];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->defaultView()->getComputedStyle(elementImpl, pseudoEltString.impl())];
 }
 
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
     ElementImpl *elementImpl = [elt _elementImpl];
     DOMString pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->getOverrideStyle(elementImpl, pseudoEltString.implementation())];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->getOverrideStyle(elementImpl, pseudoEltString.impl())];
 }
 
 @end

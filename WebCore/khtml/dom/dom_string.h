@@ -52,13 +52,13 @@ public:
     /**
      * default constructor. Gives an empty DOMString
      */
-    DOMString() : impl(0) { }
+    DOMString() : m_impl(0) { }
 
     DOMString(const QChar *str, uint len);
     DOMString(const QString &);
     DOMString(const char *str);
     DOMString(DOMStringImpl *i);
-    ~DOMString() { if(impl) impl->deref(); }
+    ~DOMString() { if(m_impl) m_impl->deref(); }
 
 
     // assign and copy
@@ -110,14 +110,14 @@ public:
 
     DOMString copy() const;
 
-    bool isNull()  const { return (impl == 0); }
+    bool isNull()  const { return (m_impl == 0); }
     bool isEmpty()  const;
 
     /**
      * @internal get a handle to the imlementation of the DOMString
      * Use at own risk!!!
      */
-    DOMStringImpl *implementation() const { return impl; }
+    DOMStringImpl *impl() const { return m_impl; }
 
 #ifdef __OBJC__
     DOMString(NSString *);
@@ -130,7 +130,7 @@ public:
 #endif
 
 protected:
-    DOMStringImpl *impl;
+    DOMStringImpl *m_impl;
 };
 
 DOMString operator + (const DOMString &a, const DOMString &b);

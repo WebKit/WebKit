@@ -271,9 +271,9 @@ static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& n
     if (name.length() == 0)
 	return;
  
-    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.implementation()); 
+    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.impl()); 
     if (it == map.end())
-        map.insert(name.implementation(), 1);
+        map.insert(name.impl(), 1);
     else
         ++(it->second);
 }
@@ -283,7 +283,7 @@ static void removeItemFromMap(HTMLDocumentImpl::NameCountMap& map, const DOMStri
     if (name.length() == 0)
 	return;
  
-    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.implementation()); 
+    HTMLDocumentImpl::NameCountMap::iterator it = map.find(name.impl()); 
     if (it == map.end())
         return;
 
@@ -308,7 +308,7 @@ void HTMLDocumentImpl::removeNamedItem(const DOMString &name)
 
 bool HTMLDocumentImpl::hasNamedItem(const DOMString& name)
 {
-    return namedItemCounts.get(name.implementation()) != 0;
+    return namedItemCounts.get(name.impl()) != 0;
 }
 
 void HTMLDocumentImpl::addDocExtraNamedItem(const DOMString& name)
@@ -323,7 +323,7 @@ void HTMLDocumentImpl::removeDocExtraNamedItem(const DOMString& name)
 
 bool HTMLDocumentImpl::hasDocExtraNamedItem(const DOMString& name)
 {
-    return docExtraNamedItemCounts.get(name.implementation()) != 0;
+    return docExtraNamedItemCounts.get(name.impl()) != 0;
 }
 
 const int PARSEMODE_HAVE_DOCTYPE	=	(1<<0);

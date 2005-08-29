@@ -74,7 +74,7 @@ AttrImpl::AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a, 
     if (createTextChild && !m_attribute->value().isEmpty()) {
         int exceptioncode = 0;
         m_ignoreChildrenChanged++;
-        appendChild(getDocument()->createTextNode(m_attribute->value().implementation()), exceptioncode);
+        appendChild(getDocument()->createTextNode(m_attribute->value().impl()), exceptioncode);
         m_ignoreChildrenChanged--;
     }
 }
@@ -136,10 +136,10 @@ void AttrImpl::setValue( const DOMString &v, int &exceptioncode )
     int e = 0;
     m_ignoreChildrenChanged++;
     removeChildren();
-    appendChild(getDocument()->createTextNode(v.implementation()), e);
+    appendChild(getDocument()->createTextNode(v.impl()), e);
     m_ignoreChildrenChanged--;
     
-    m_attribute->setValue(v.implementation());
+    m_attribute->setValue(v.impl());
     if (m_element)
         m_element->attributeChanged(m_attribute);
 }
@@ -195,7 +195,7 @@ void AttrImpl::childrenChanged()
             val += static_cast<TextImpl *>(n)->data();
     }
     
-    m_attribute->setValue(val.implementation());
+    m_attribute->setValue(val.impl());
     if (m_element)
         m_element->attributeChanged(m_attribute);
 }
@@ -278,7 +278,7 @@ void ElementImpl::removeAttribute(const QualifiedName& name, int &exceptioncode)
 void ElementImpl::setAttribute(const QualifiedName& name, const DOMString &value)
 {
     int exceptioncode = 0;
-    setAttribute(name, value.implementation(), exceptioncode);
+    setAttribute(name, value.impl(), exceptioncode);
 }
 
 // Virtual function, defined in base class.
@@ -344,7 +344,7 @@ const AtomicString& ElementImpl::getAttributeNS(const DOMString &namespaceURI,
     DOMString ln(localName);
     if (getDocument()->isHTMLDocument())
         ln = localName.lower();
-    QualifiedName name(nullAtom, ln.implementation(), namespaceURI.implementation());
+    QualifiedName name(nullAtom, ln.impl(), namespaceURI.impl());
     return getAttribute(name);
 }
 
@@ -752,8 +752,8 @@ void ElementImpl::setAttributeNS(const DOMString &namespaceURI, const DOMString 
     if (getDocument()->isHTMLDocument())
         localName = localName.lower();
         
-    setAttribute(QualifiedName(prefix.implementation(), localName.implementation(),
-                               namespaceURI.implementation()), value.implementation(), exception);
+    setAttribute(QualifiedName(prefix.impl(), localName.impl(),
+                               namespaceURI.impl()), value.impl(), exception);
 }
 
 void ElementImpl::removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
@@ -761,7 +761,7 @@ void ElementImpl::removeAttributeNS(const DOMString &namespaceURI, const DOMStri
     DOMString ln(localName);
     if (getDocument() && getDocument()->isHTMLDocument())
         ln = localName.lower();
-    removeAttribute(QualifiedName(nullAtom, ln.implementation(), namespaceURI.implementation()), exception);
+    removeAttribute(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()), exception);
 }
 
 AttrImpl *ElementImpl::getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName)
@@ -772,7 +772,7 @@ AttrImpl *ElementImpl::getAttributeNodeNS(const DOMString &namespaceURI, const D
     DOMString ln(localName);
     if (getDocument() && getDocument()->isHTMLDocument())
         ln = localName.lower();
-    return attrs->getNamedItem(QualifiedName(nullAtom, localName.implementation(), namespaceURI.implementation()));
+    return attrs->getNamedItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()));
 }
 
 bool ElementImpl::hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const
@@ -783,8 +783,8 @@ bool ElementImpl::hasAttributeNS(const DOMString &namespaceURI, const DOMString 
     DOMString ln(localName);
     if (getDocument() && getDocument()->isHTMLDocument())
         ln = localName.lower();
-    return attrs->getAttributeItem(QualifiedName(nullAtom, localName.implementation(), 
-                                                 namespaceURI.implementation()));
+    return attrs->getAttributeItem(QualifiedName(nullAtom, localName.impl(), 
+                                                 namespaceURI.impl()));
 }
 
 CSSStyleDeclarationImpl *ElementImpl::style()
@@ -853,7 +853,7 @@ NodeImpl *NamedAttrMapImpl::getNamedItemNS(const DOMString &namespaceURI, const 
     DOMString ln(localName);
     if (element->getDocument()->isHTMLDocument())
         ln = localName.lower();
-    return getNamedItem(QualifiedName(nullAtom, ln.implementation(), namespaceURI.implementation()));
+    return getNamedItem(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()));
 }
 
 SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
@@ -861,7 +861,7 @@ SharedPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespa
     DOMString ln(localName);
     if (element->getDocument()->isHTMLDocument())
         ln = localName.lower();
-    return removeNamedItem(QualifiedName(nullAtom, ln.implementation(), namespaceURI.implementation()), exception);
+    return removeNamedItem(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()), exception);
 }
 
 AttrImpl *NamedAttrMapImpl::getNamedItem(const QualifiedName& name) const
@@ -1126,9 +1126,9 @@ CSSMappedAttributeDeclarationImpl* StyledElementImpl::getMappedAttributeDecl(Map
     QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
     if (attrNameDict) {
         QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = 
-            attrNameDict->find((void*)attr->name().localName().implementation());
+            attrNameDict->find((void*)attr->name().localName().impl());
         if (attrValueDict)
-            return attrValueDict->find(attr->value().implementation());
+            return attrValueDict->find(attr->value().impl());
     }
     return 0;
 }
@@ -1146,14 +1146,14 @@ void StyledElementImpl::setMappedAttributeDecl(MappedAttributeEntry entryType, A
         m_mappedAttributeDecls->insert((void*)entryType, attrNameDict);
     }
     else
-        attrValueDict = attrNameDict->find((void*)attr->name().localName().implementation());
+        attrValueDict = attrNameDict->find((void*)attr->name().localName().impl());
     if (!attrValueDict) {
         attrValueDict = new QPtrDict<CSSMappedAttributeDeclarationImpl>;
         if (entryType == ePersistent)
             attrValueDict->setAutoDelete(true);
-        attrNameDict->insert((void*)attr->name().localName().implementation(), attrValueDict);
+        attrNameDict->insert((void*)attr->name().localName().impl(), attrValueDict);
     }
-    attrValueDict->replace(attr->value().implementation(), decl);
+    attrValueDict->replace(attr->value().impl(), decl);
 }
 
 void StyledElementImpl::removeMappedAttributeDecl(MappedAttributeEntry entryType,
@@ -1165,10 +1165,10 @@ void StyledElementImpl::removeMappedAttributeDecl(MappedAttributeEntry entryType
     QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> >* attrNameDict = m_mappedAttributeDecls->find((void*)entryType);
     if (!attrNameDict)
         return;
-    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attrName.localName().implementation());
+    QPtrDict<CSSMappedAttributeDeclarationImpl>* attrValueDict = attrNameDict->find((void*)attrName.localName().impl());
     if (!attrValueDict)
         return;
-    attrValueDict->remove(attrValue.implementation());
+    attrValueDict->remove(attrValue.impl());
 }
 
 void StyledElementImpl::invalidateStyleAttribute()
@@ -1250,7 +1250,7 @@ void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
         return;
     
     DOMString classAttr = element->getDocument()->inCompatMode() ? 
-        (classStr.implementation()->isLower() ? classStr : DOMString(classStr.implementation()->lower())) :
+        (classStr.impl()->isLower() ? classStr : DOMString(classStr.impl()->lower())) :
         classStr;
     
     if (classAttr.find(' ') == -1 && classAttr.find('\n') == -1)
@@ -1377,7 +1377,7 @@ void StyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (namedAttrMap) {
             if (attr->isNull())
                 namedAttrMap->setID(nullAtom);
-            else if (getDocument() && getDocument()->inCompatMode() && !attr->value().implementation()->isLower())
+            else if (getDocument() && getDocument()->inCompatMode() && !attr->value().impl()->isLower())
                 namedAttrMap->setID(AtomicString(attr->value().domString().lower()));
             else
                 namedAttrMap->setID(attr->value());
@@ -1474,7 +1474,7 @@ void StyledElementImpl::addCSSLength(MappedAttributeImpl* attr, int id, const DO
     if (!attr->decl()) createMappedDecl(attr);
 
     // strip attribute garbage..
-    DOMStringImpl* v = value.implementation();
+    DOMStringImpl* v = value.impl();
     if ( v ) {
         unsigned int l = 0;
         

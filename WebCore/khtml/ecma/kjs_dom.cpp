@@ -458,7 +458,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     node.setNodeValue(value->toString(exec).domString(), exception);
     break;
   case Prefix:
-    node.setPrefix(value->toString(exec).domString().implementation(), exception);
+    node.setPrefix(value->toString(exec).domString().impl(), exception);
     break;
   case OnAbort:
     setListener(exec,DOM::EventImpl::ABORT_EVENT,value);
@@ -950,7 +950,7 @@ ValueImp *DOMDocument::getValueProperty(ExecState *exec, int token) const
   case DocType:
     return getDOMNode(exec,doc.doctype());
   case Implementation:
-    return getDOMDOMImplementation(exec,doc.implementation());
+    return getDOMDOMImplementation(exec,doc.impl());
   case DocumentElement:
     return getDOMNode(exec,doc.documentElement());
   case StyleSheets:

@@ -73,7 +73,7 @@ DOMString HTMLElementImpl::nodeName() const
     // FIXME: Would be nice to have an atomicstring lookup based off uppercase chars that does not have to copy
     // the string on a hit in the hash.
     if (getDocument()->isHTMLDocument())
-        return m_tagName.localName().implementation()->upper();
+        return m_tagName.localName().impl()->upper();
     return ElementImpl::nodeName();
 }
     
@@ -700,10 +700,10 @@ bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        #define INSERT_TAG(name) tagList.insert(name##Tag.localName().implementation());
+        #define INSERT_TAG(name) tagList.insert(name##Tag.localName().impl());
         DOM_HTMLNAMES_FOR_EACH_TAG(INSERT_TAG)
     }
-    return tagList.contains(tagName.localName().implementation());
+    return tagList.contains(tagName.localName().impl());
 }
 
 // The terms inline and block are used here loosely.  Don't make the mistake of assuming all inlines or all blocks
@@ -711,51 +711,51 @@ bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        tagList.insert(ttTag.localName().implementation());
-        tagList.insert(iTag.localName().implementation());
-        tagList.insert(bTag.localName().implementation());
-        tagList.insert(uTag.localName().implementation());
-        tagList.insert(sTag.localName().implementation());
-        tagList.insert(strikeTag.localName().implementation());
-        tagList.insert(bigTag.localName().implementation());
-        tagList.insert(smallTag.localName().implementation());
-        tagList.insert(emTag.localName().implementation());
-        tagList.insert(strongTag.localName().implementation());
-        tagList.insert(dfnTag.localName().implementation());
-        tagList.insert(codeTag.localName().implementation());
-        tagList.insert(sampTag.localName().implementation());
-        tagList.insert(kbdTag.localName().implementation());
-        tagList.insert(varTag.localName().implementation());
-        tagList.insert(citeTag.localName().implementation());
-        tagList.insert(abbrTag.localName().implementation());
-        tagList.insert(acronymTag.localName().implementation());
-        tagList.insert(aTag.localName().implementation());
-        tagList.insert(canvasTag.localName().implementation());
-        tagList.insert(imgTag.localName().implementation());
-        tagList.insert(appletTag.localName().implementation());
-        tagList.insert(objectTag.localName().implementation());
-        tagList.insert(embedTag.localName().implementation());
-        tagList.insert(fontTag.localName().implementation());
-        tagList.insert(basefontTag.localName().implementation());
-        tagList.insert(brTag.localName().implementation());
-        tagList.insert(scriptTag.localName().implementation());
-        tagList.insert(mapTag.localName().implementation());
-        tagList.insert(qTag.localName().implementation());
-        tagList.insert(subTag.localName().implementation());
-        tagList.insert(supTag.localName().implementation());
-        tagList.insert(spanTag.localName().implementation());
-        tagList.insert(bdoTag.localName().implementation());
-        tagList.insert(iframeTag.localName().implementation());
-        tagList.insert(inputTag.localName().implementation());
-        tagList.insert(keygenTag.localName().implementation());
-        tagList.insert(selectTag.localName().implementation());
-        tagList.insert(textareaTag.localName().implementation());
-        tagList.insert(labelTag.localName().implementation());
-        tagList.insert(buttonTag.localName().implementation());
-        tagList.insert(insTag.localName().implementation());
-        tagList.insert(delTag.localName().implementation());
-        tagList.insert(nobrTag.localName().implementation());
-        tagList.insert(wbrTag.localName().implementation());
+        tagList.insert(ttTag.localName().impl());
+        tagList.insert(iTag.localName().impl());
+        tagList.insert(bTag.localName().impl());
+        tagList.insert(uTag.localName().impl());
+        tagList.insert(sTag.localName().impl());
+        tagList.insert(strikeTag.localName().impl());
+        tagList.insert(bigTag.localName().impl());
+        tagList.insert(smallTag.localName().impl());
+        tagList.insert(emTag.localName().impl());
+        tagList.insert(strongTag.localName().impl());
+        tagList.insert(dfnTag.localName().impl());
+        tagList.insert(codeTag.localName().impl());
+        tagList.insert(sampTag.localName().impl());
+        tagList.insert(kbdTag.localName().impl());
+        tagList.insert(varTag.localName().impl());
+        tagList.insert(citeTag.localName().impl());
+        tagList.insert(abbrTag.localName().impl());
+        tagList.insert(acronymTag.localName().impl());
+        tagList.insert(aTag.localName().impl());
+        tagList.insert(canvasTag.localName().impl());
+        tagList.insert(imgTag.localName().impl());
+        tagList.insert(appletTag.localName().impl());
+        tagList.insert(objectTag.localName().impl());
+        tagList.insert(embedTag.localName().impl());
+        tagList.insert(fontTag.localName().impl());
+        tagList.insert(basefontTag.localName().impl());
+        tagList.insert(brTag.localName().impl());
+        tagList.insert(scriptTag.localName().impl());
+        tagList.insert(mapTag.localName().impl());
+        tagList.insert(qTag.localName().impl());
+        tagList.insert(subTag.localName().impl());
+        tagList.insert(supTag.localName().impl());
+        tagList.insert(spanTag.localName().impl());
+        tagList.insert(bdoTag.localName().impl());
+        tagList.insert(iframeTag.localName().impl());
+        tagList.insert(inputTag.localName().impl());
+        tagList.insert(keygenTag.localName().impl());
+        tagList.insert(selectTag.localName().impl());
+        tagList.insert(textareaTag.localName().impl());
+        tagList.insert(labelTag.localName().impl());
+        tagList.insert(buttonTag.localName().impl());
+        tagList.insert(insTag.localName().impl());
+        tagList.insert(delTag.localName().impl());
+        tagList.insert(nobrTag.localName().impl());
+        tagList.insert(wbrTag.localName().impl());
     }
     return &tagList;
 }
@@ -763,39 +763,39 @@ HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
 HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList() {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
-        tagList.insert(pTag.localName().implementation());
-        tagList.insert(h1Tag.localName().implementation());
-        tagList.insert(h2Tag.localName().implementation());
-        tagList.insert(h3Tag.localName().implementation());
-        tagList.insert(h4Tag.localName().implementation());
-        tagList.insert(h5Tag.localName().implementation());
-        tagList.insert(h6Tag.localName().implementation());
-        tagList.insert(ulTag.localName().implementation());
-        tagList.insert(olTag.localName().implementation());
-        tagList.insert(dirTag.localName().implementation());
-        tagList.insert(menuTag.localName().implementation());
-        tagList.insert(preTag.localName().implementation());
-        tagList.insert(plaintextTag.localName().implementation());
-        tagList.insert(xmpTag.localName().implementation());
-        tagList.insert(dlTag.localName().implementation());
-        tagList.insert(divTag.localName().implementation());
-        tagList.insert(layerTag.localName().implementation());
-        tagList.insert(centerTag.localName().implementation());
-        tagList.insert(noscriptTag.localName().implementation());
-        tagList.insert(noframesTag.localName().implementation());
-        tagList.insert(noembedTag.localName().implementation());
-        tagList.insert(nolayerTag.localName().implementation());
-        tagList.insert(blockquoteTag.localName().implementation());
-        tagList.insert(formTag.localName().implementation());
-        tagList.insert(isindexTag.localName().implementation());
-        tagList.insert(hrTag.localName().implementation());
-        tagList.insert(tableTag.localName().implementation());
-        tagList.insert(fieldsetTag.localName().implementation());
-        tagList.insert(addressTag.localName().implementation());
-        tagList.insert(liTag.localName().implementation());
-        tagList.insert(ddTag.localName().implementation());
-        tagList.insert(dtTag.localName().implementation());
-        tagList.insert(marqueeTag.localName().implementation());
+        tagList.insert(pTag.localName().impl());
+        tagList.insert(h1Tag.localName().impl());
+        tagList.insert(h2Tag.localName().impl());
+        tagList.insert(h3Tag.localName().impl());
+        tagList.insert(h4Tag.localName().impl());
+        tagList.insert(h5Tag.localName().impl());
+        tagList.insert(h6Tag.localName().impl());
+        tagList.insert(ulTag.localName().impl());
+        tagList.insert(olTag.localName().impl());
+        tagList.insert(dirTag.localName().impl());
+        tagList.insert(menuTag.localName().impl());
+        tagList.insert(preTag.localName().impl());
+        tagList.insert(plaintextTag.localName().impl());
+        tagList.insert(xmpTag.localName().impl());
+        tagList.insert(dlTag.localName().impl());
+        tagList.insert(divTag.localName().impl());
+        tagList.insert(layerTag.localName().impl());
+        tagList.insert(centerTag.localName().impl());
+        tagList.insert(noscriptTag.localName().impl());
+        tagList.insert(noframesTag.localName().impl());
+        tagList.insert(noembedTag.localName().impl());
+        tagList.insert(nolayerTag.localName().impl());
+        tagList.insert(blockquoteTag.localName().impl());
+        tagList.insert(formTag.localName().impl());
+        tagList.insert(isindexTag.localName().impl());
+        tagList.insert(hrTag.localName().impl());
+        tagList.insert(tableTag.localName().impl());
+        tagList.insert(fieldsetTag.localName().impl());
+        tagList.insert(addressTag.localName().impl());
+        tagList.insert(liTag.localName().impl());
+        tagList.insert(ddTag.localName().impl());
+        tagList.insert(dtTag.localName().impl());
+        tagList.insert(marqueeTag.localName().impl());
     }
     return &tagList;
 }
@@ -807,9 +807,9 @@ bool HTMLElementImpl::inEitherTagList(const NodeImpl* newChild)
         
     if (newChild->isHTMLElement()) {
         const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
-        if (inlineTagList()->contains(child->tagName().localName().implementation()))
+        if (inlineTagList()->contains(child->tagName().localName().impl()))
             return true;
-        if (blockTagList()->contains(child->tagName().localName().implementation()))
+        if (blockTagList()->contains(child->tagName().localName().impl()))
             return true;
         return !isRecognizedTagName(child->tagName()); // Accept custom html tags
     }
@@ -824,7 +824,7 @@ bool HTMLElementImpl::inInlineTagList(const NodeImpl* newChild)
 
     if (newChild->isHTMLElement()) {
         const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
-        if (inlineTagList()->contains(child->tagName().localName().implementation()))
+        if (inlineTagList()->contains(child->tagName().localName().impl()))
             return true;
         return !isRecognizedTagName(child->tagName()); // Accept custom html tags
     }
@@ -839,7 +839,7 @@ bool HTMLElementImpl::inBlockTagList(const NodeImpl* newChild)
             
     if (newChild->isHTMLElement()) {
         const HTMLElementImpl* child = static_cast<const HTMLElementImpl*>(newChild);
-        return (blockTagList()->contains(child->tagName().localName().implementation()));
+        return (blockTagList()->contains(child->tagName().localName().impl()));
     }
 
     return false;

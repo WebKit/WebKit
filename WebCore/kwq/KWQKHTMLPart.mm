@@ -3479,7 +3479,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
 
     styleElement->ref();
 
-    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().implementation(), exceptionCode);
+    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
     TextImpl *text = xmlDocImpl()->createEditingTextNode("");
