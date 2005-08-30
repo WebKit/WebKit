@@ -61,6 +61,7 @@ namespace KJS {
     virtual ~JSUnprotectedEventListener();
     virtual ObjectImp *listenerObj() const;
     virtual ObjectImp *windowObj() const;
+    void clearWindowObj();
     void mark();
   protected:
     ObjectImp *listener;
@@ -73,6 +74,7 @@ namespace KJS {
     virtual ~JSEventListener();
     virtual ObjectImp *listenerObj() const;
     virtual ObjectImp *windowObj() const;
+    void clearWindowObj();
   protected:
     mutable ProtectedObject listener;
     ProtectedObject win;
