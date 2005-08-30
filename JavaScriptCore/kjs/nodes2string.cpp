@@ -23,7 +23,7 @@
 
 #include "nodes.h"
 
-using namespace kxmlcore;
+using KXMLCore::SharedPtr;
 
 namespace KJS {
   /**

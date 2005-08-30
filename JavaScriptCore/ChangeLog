@@ -1,3 +1,24 @@
+2005-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4758
+          unify SharedPtr in WebCore and JavaScriptCore
+
+        * kjs/shared_ptr.h: Updated namespace to KXMLCore instead of kxhmlcore.
+        Made a few small improvements to use local variables a bit more and added
+        an "operator int" to reduce the chance that we'll convert a SharedPtr to
+        an int by accident. Also made the == operators normal functions rather than
+        friend functions, added a couple of comemnts.
+
+        * kjs/function.h: Updated for namespace change.
+        * kjs/function.cpp: Ditto.
+        * kjs/function_object.cpp: Ditto.
+        * kjs/internal.h: Ditto.
+        * kjs/internal.cpp: Ditto.
+        * kjs/nodes.h: Ditto.
+        * kjs/nodes2string.cpp: Ditto.
+
 2005-08-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

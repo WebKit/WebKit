@@ -23,65 +23,72 @@
 #ifndef KXMLCORE_SHARED_PTR_H
 #define KXMLCORE_SHARED_PTR_H
 
-namespace kxmlcore {
+namespace KXMLCore {
 
+// FIXME: Change template name to RefPtr?
 template <class T> class SharedPtr
 {
 public:
-    SharedPtr() : m_ptr(0) {}
-    explicit SharedPtr(T *ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->ref(); }
-    SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (m_ptr) m_ptr->ref(); }
-    ~SharedPtr() { if (m_ptr) m_ptr->deref(); }
+    SharedPtr() : m_ptr(NULL) {}
+    SharedPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
+    SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->ref(); }
+    ~SharedPtr() { if (T *ptr = m_ptr) ptr->deref(); }
 
-    template <class U> explicit SharedPtr(SharedPtr<U> o)  : m_ptr(o.get()) { if (m_ptr) m_ptr->ref(); }
-	
-    bool isNull() const { return m_ptr == 0; }
-    bool notNull() const { return m_ptr != 0; }
+    template <class U> SharedPtr(const SharedPtr<U> &o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->ref(); }
 
-    void reset() { if (m_ptr) m_ptr->deref(); m_ptr = 0; }
-    void reset(T *o) { if (o) o->ref(); if (m_ptr) m_ptr->deref(); m_ptr = o; }
+    // FIXME: Deprecate in favor of operators below, then remove?
+    bool isNull() const { return m_ptr == NULL; }
+    bool notNull() const { return m_ptr != NULL; }
+
+    // FIXME: Deprecate in favor of operator=, then remove?
+    void reset() { if (T *ptr = m_ptr) ptr->deref(); m_ptr = NULL; }
+    void reset(T *o) { if (o) o->ref(); if (T *ptr = m_ptr) ptr->deref(); m_ptr = o; }
     
-    T * get() const { return m_ptr; }
+    T *get() const { return m_ptr; }
+
     T &operator*() const { return *m_ptr; }
     T *operator->() const { return m_ptr; }
 
-    bool operator!() const { return m_ptr == 0; }
-    operator bool() const { return m_ptr != 0; }
-
-    inline friend bool operator==(const SharedPtr &a, const SharedPtr &b) { return a.m_ptr == b.m_ptr; }
-    inline friend bool operator==(const SharedPtr &a, const T *b) { return a.m_ptr == b; }
-    inline friend bool operator==(const T *a, const SharedPtr &b) { return a == b.m_ptr; }
+    bool operator!() const { return m_ptr == NULL; }
+    operator bool() const { return m_ptr != NULL; }
 
     SharedPtr &operator=(const SharedPtr &);
     SharedPtr &operator=(T *);
 
 private:
-    T* m_ptr;
+    T *m_ptr;
+
+    operator int() const; // deliberately not implemented; helps prevent operator bool from converting to int accidentally
 };
 
 template <class T> SharedPtr<T> &SharedPtr<T>::operator=(const SharedPtr<T> &o) 
 {
-    if (o.m_ptr) 
-        o.m_ptr->ref();
-    if (m_ptr)
-        m_ptr->deref();
-    m_ptr = o.m_ptr;
+    T *optr = o.m_ptr;
+    if (optr)
+        optr->ref();
+    if (T *ptr = m_ptr)
+        ptr->deref();
+    m_ptr = optr;
     return *this;
 }
 
-template <class T> inline SharedPtr<T> &SharedPtr<T>::operator=(T *ptr) 
+template <class T> inline SharedPtr<T> &SharedPtr<T>::operator=(T *optr)
 {
-    if (ptr) 
-        ptr->ref();
-    if (m_ptr)
-        m_ptr->deref();
-    m_ptr = ptr;
+    if (optr)
+        optr->ref();
+    if (T *ptr = m_ptr)
+        ptr->deref();
+    m_ptr = optr;
     return *this;
 }
 
-template <class T> inline bool operator!=(const SharedPtr<T> &a, const SharedPtr<T> &b) { return !(a==b); }
-template <class T> inline bool operator!=(const SharedPtr<T> &a, const T *b) { return !(a == b); }
-template <class T> inline bool operator!=(const T *a, const SharedPtr<T> &b) { return !(a == b); }
+template <class T> inline bool operator==(const SharedPtr<T> &a, const SharedPtr<T> &b) { return a.get() == b.get(); }
+template <class T> inline bool operator==(const SharedPtr<T> &a, const T *b) { return a.get() == b; }
+template <class T> inline bool operator==(const T *a, const SharedPtr<T> &b) { return a == b.get(); }
+
+template <class T> inline bool operator!=(const SharedPtr<T> &a, const SharedPtr<T> &b) { return a.get() != b.get(); }
+template <class T> inline bool operator!=(const SharedPtr<T> &a, const T *b) { return a.get() != b; }
+template <class T> inline bool operator!=(const T *a, const SharedPtr<T> &b) { return a != b.get(); }
 
 template <class T, class U> inline SharedPtr<T> static_pointer_cast(const SharedPtr<U> &p) { return SharedPtr<T>(static_cast<T *>(p.get())); }
 template <class T, class U> inline SharedPtr<T> const_pointer_cast(const SharedPtr<U> &p) { return SharedPtr<T>(const_cast<T *>(p.get())); }

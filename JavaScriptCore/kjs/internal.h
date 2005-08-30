@@ -196,7 +196,7 @@ namespace KJS {
    */
   class Parser {
   public:
-    static kxmlcore::SharedPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
+    static KXMLCore::SharedPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
                                                   const UChar *code, unsigned int length, int *sourceId = 0,
                                                   int *errLine = 0, UString *errMsg = 0);
     static void accept(ProgramNode *prog);

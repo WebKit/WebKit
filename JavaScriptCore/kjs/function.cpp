@@ -43,7 +43,7 @@
 #include <unicode/uchar.h>
 #endif
 
-using namespace kxmlcore;
+using namespace KXMLCore;
 
 namespace KJS {
 

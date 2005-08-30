@@ -53,7 +53,7 @@
 
 extern int kjsyyparse();
 
-using namespace kxmlcore;
+using namespace KXMLCore;
 
 namespace KJS {
 

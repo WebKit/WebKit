@@ -34,7 +34,7 @@
 #include <string.h>
 
 using namespace KJS;
-using namespace kxmlcore;
+using namespace KXMLCore;
 
 // ------------------------------ FunctionPrototypeImp -------------------------
 
