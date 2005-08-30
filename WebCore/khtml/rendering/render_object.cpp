@@ -36,6 +36,7 @@
 #include "css/cssstyleselector.h"
 #include <kdebug.h>
 #include <qpainter.h>
+#include <qpen.h>
 #include "khtmlview.h"
 #include "khtml_part.h"
 #include "render_arena.h"

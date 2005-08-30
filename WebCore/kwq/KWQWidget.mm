@@ -29,6 +29,7 @@
 #import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
+#import "KWQStyle.h"
 #import "KWQView.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"

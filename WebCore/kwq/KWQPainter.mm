@@ -26,16 +26,15 @@
 #import "KWQPainter.h"
 
 #import "KWQAssertions.h"
+#import "KWQBrush.h"
 #import "KWQExceptions.h"
-#import "KWQFontMetrics.h"
-#import "KWQKHTMLPart.h"
+#import "KWQFoundationExtras.h"
 #import "KWQPaintDevice.h"
+#import "KWQPen.h"
 #import "KWQPixmap.h"
-#import "KWQPointArray.h"
 #import "KWQPrinter.h"
 #import "KWQPtrStack.h"
-#import "KWQWidget.h"
-#import "KWQFoundationExtras.h"
+#import "KWQRegion.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
@@ -461,7 +460,7 @@ int QPainter::getCompositeOperation(CGContextRef context)
     return (int)[[WebCoreImageRendererFactory sharedFactory] CGCompositeOperationInContext:context];
 }
 
-void QPainter::setCompositeOperation (CGContextRef context, QString op)
+void QPainter::setCompositeOperation (CGContextRef context, const QString &op)
 {
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op.getNSString() inContext:context];
 }
@@ -471,7 +470,7 @@ void QPainter::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-int QPainter::compositeOperatorFromString (QString aString)
+int QPainter::compositeOperatorFromString (const QString &aString)
 {
     NSCompositingOperation op = NSCompositeSourceOver;
     

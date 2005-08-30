@@ -26,6 +26,7 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
+#include "KWQPalette.h"
 #include "KWQWidget.h"
 
 class QDesktopWidget;

@@ -27,6 +27,7 @@
 #define KWQLISTBOX_H_
 
 #include "KWQScrollView.h"
+#include "KWQPainter.h"
 
 struct KWQListBoxItem
 {

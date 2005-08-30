@@ -30,6 +30,7 @@
 #include "htmlnames.h"
 
 #include <qpainter.h>
+#include <qpen.h>
 
 #include "misc/helper.h"
 

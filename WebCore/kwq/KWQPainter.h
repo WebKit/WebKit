@@ -26,23 +26,21 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
-#include "KWQNamespace.h"
-#include "KWQPaintDevice.h"
-#include "KWQColor.h"
-#include "KWQPen.h"
-#include "KWQBrush.h"
-#include "KWQRect.h"
-#include "KWQRegion.h"
-#include "KWQPointArray.h"
-#include "KWQString.h"
 #include "KWQFontMetrics.h"
+#include "KWQNamespace.h"
+#include "KWQRect.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
+class QBrush;
 class QFont;
+class QPaintDevice;
 class QPixmap;
+class QPen;
+class QPointArray;
 class QWidget;
 class QPainterPrivate;
+class QString;
 
 class QPainter : public Qt {
 public:
@@ -138,9 +136,9 @@ public:
     
     CGContextRef currentContext();
     
-    static int compositeOperatorFromString (QString aString);
+    static int compositeOperatorFromString (const QString &aString);
     static int getCompositeOperation(CGContextRef context);
-    static void setCompositeOperation (CGContextRef context, QString operation);
+    static void setCompositeOperation (CGContextRef context, const QString &operation);
     static void setCompositeOperation (CGContextRef context, int operation);
 
 private:

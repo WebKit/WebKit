@@ -23,6 +23,7 @@
 #include <kdebug.h>
 #include <assert.h>
 #include <qpainter.h>
+#include <qpen.h>
 #include <kglobal.h>
 
 #include "rendering/render_flow.h"

@@ -28,14 +28,9 @@
 
 #include "KWQObject.h"
 #include "KWQPaintDevice.h"
-#include "KWQPainter.h"
-#include "KWQPointArray.h"
 #include "KWQSize.h"
-#include "KWQPalette.h"
 #include "KWQFont.h"
 #include "KWQCursor.h"
-#include "KWQEvent.h"
-#include "KWQStyle.h"
 
 #ifdef __OBJC__
 @class NSView;
@@ -44,6 +39,10 @@ class NSView;
 #endif
 
 class KWQWidgetPrivate;
+class QEvent;
+class QPalette;
+class QPainter;
+class QStyle;
 
 class QWidget : public QObject, public QPaintDevice {
 public:

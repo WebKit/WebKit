@@ -28,6 +28,7 @@
 #import "KWQAssertions.h"
 #import "KWQExceptions.h"
 #import "KWQLineEdit.h"
+#import "KWQPalette.h"
 #import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)

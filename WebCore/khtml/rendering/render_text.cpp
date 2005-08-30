@@ -40,6 +40,7 @@
 #include "khtml_part.h"
 
 #include <qpainter.h>
+#include <qpen.h>
 #include <kdebug.h>
 #include <assert.h>
 

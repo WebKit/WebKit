@@ -29,6 +29,7 @@
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
+#import "KWQPalette.h"
 #import "KWQTextField.h"
 #import "WebCoreBridge.h"
 #import "WebCoreTextRenderer.h"

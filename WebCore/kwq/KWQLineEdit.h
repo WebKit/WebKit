@@ -28,6 +28,7 @@
 
 #include "KWQString.h"
 #include "KWQWidget.h"
+#include "KWQPainter.h"
 
 #ifdef __OBJC__
 @class KWQTextFieldController;

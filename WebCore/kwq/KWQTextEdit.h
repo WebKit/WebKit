@@ -29,6 +29,7 @@
 #include "KWQScrollView.h"
 
 #include "KWQSignal.h"
+#include "KWQPainter.h"
 
 class QTextEdit : public QScrollView
 {

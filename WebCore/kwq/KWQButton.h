@@ -29,6 +29,7 @@
 #include "KWQWidget.h"
 #include "KWQString.h"
 #include "KWQSignal.h"
+#include "KWQPainter.h"
 
 class QButton : public QWidget {
 public:

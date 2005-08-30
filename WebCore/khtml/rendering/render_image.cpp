@@ -29,6 +29,7 @@
 
 #include <qdrawutil.h>
 #include <qpainter.h>
+#include <qpen.h>
 #include <qwmatrix.h>
 
 #include <kapplication.h>

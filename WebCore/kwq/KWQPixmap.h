@@ -33,7 +33,8 @@
 #include "KWQImage.h"
 #include "KWQSize.h"
 #include "KWQRect.h"
-#include "KWQPainter.h"
+
+#include <ApplicationServices/ApplicationServices.h>
 
 #ifdef __OBJC__
 @protocol WebCoreImageRenderer;
@@ -46,6 +47,8 @@ class NSString;
 #endif
 
 class QWMatrix;
+class QPainter;
+class QPixmap;
 
 namespace khtml
 {

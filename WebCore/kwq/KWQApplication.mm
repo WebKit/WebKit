@@ -24,6 +24,7 @@
  */
 
 #import "KWQApplication.h"
+#import "KWQStyle.h"
 
 // The NSScreen Cocoa calls in this file should never throw, so
 // there's no need to block exceptions.

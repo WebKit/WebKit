@@ -26,6 +26,7 @@
 #ifndef KHTMLFONT_H
 #define KHTMLFONT_H
 
+#include <qcolor.h>
 #include <qfont.h>
 #include <qfontmetrics.h>
 #include <qpainter.h>

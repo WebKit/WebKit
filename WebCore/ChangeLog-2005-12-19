@@ -1,3 +1,37 @@
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4749
+	(Reduce header dependencies);
+	
+        Test cases added: None, no functional change.
+
+        * ForwardingHeaders/qpen.h: Added.
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_box.cpp:
+        * khtml/rendering/render_image.cpp:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_list.cpp:
+        * khtml/rendering/render_object.cpp:
+        * khtml/rendering/render_text.cpp:
+        * kwq/KWQApplication.h:
+        * kwq/KWQApplication.mm:
+        * kwq/KWQButton.h:
+        * kwq/KWQKCursor.h:
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQListBox.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::setCompositeOperation):
+        (QPainter::compositeOperatorFromString):
+        * kwq/KWQPixmap.h:
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+
 2005-08-29  Maciej Stachowiak  <mjs@apple.com>
 
         - make the JS tests that weren't already doing so dump as text, and remove
