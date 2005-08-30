@@ -1,7 +1,1 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x34
-  RenderBlock {HTML} at (0,0) size 800x34
-    RenderBody {BODY} at (8,8) size 784x18
-      RenderText {TEXT} at (0,0) size 60x18
-        text run at (0,0) width 60: "all is well"
+all is well

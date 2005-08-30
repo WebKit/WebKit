@@ -1,6 +1,9 @@
 <html>
  <head>
   <script>
+  if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
    function bar() { which = "parent"; document.getElementById("result").innerHTML = which; }
   </script>
  </head>

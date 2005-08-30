@@ -2,6 +2,10 @@
     <head>
         <title>Test of hasOwnProperty</title>
         <script type="text/javascript">
+	    if (window.layoutTestController) {
+	        layoutTestController.dumpAsText();
+	    }
+
             function print(message)
             {
                 var paragraph = document.createElement("li");

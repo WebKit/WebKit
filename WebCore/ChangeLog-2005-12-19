@@ -1,3 +1,39 @@
+2005-08-29  Maciej Stachowiak  <mjs@apple.com>
+
+        - make the JS tests that weren't already doing so dump as text, and remove
+	their image results.
+
+        * layout-tests/fast/js/date-parse-test-expected.checksum: Removed.
+        * layout-tests/fast/js/date-parse-test-expected.png: Removed.
+        * layout-tests/fast/js/date-parse-test-expected.txt:
+        * layout-tests/fast/js/date-parse-test.html:
+        * layout-tests/fast/js/declaration-in-block-expected.checksum: Removed.
+        * layout-tests/fast/js/declaration-in-block-expected.png: Removed.
+        * layout-tests/fast/js/declaration-in-block-expected.txt:
+        * layout-tests/fast/js/declaration-in-block.html:
+        * layout-tests/fast/js/encode-URI-test-expected.txt: Added.
+        * layout-tests/fast/js/encode-URI-test.html: Added.
+        * layout-tests/fast/js/global/encode-URI-test-expected.checksum: Removed.
+        * layout-tests/fast/js/global/encode-URI-test-expected.png: Removed.
+        * layout-tests/fast/js/global/encode-URI-test-expected.txt: Removed.
+        * layout-tests/fast/js/global/encode-URI-test.html: Removed.
+        * layout-tests/fast/js/has-own-property-expected.checksum: Removed.
+        * layout-tests/fast/js/has-own-property-expected.png: Removed.
+        * layout-tests/fast/js/has-own-property-expected.txt:
+        * layout-tests/fast/js/has-own-property.html:
+        * layout-tests/fast/js/slash-lineterminator-parse-expected.checksum: Removed.
+        * layout-tests/fast/js/slash-lineterminator-parse-expected.png: Removed.
+        * layout-tests/fast/js/slash-lineterminator-parse-expected.txt:
+        * layout-tests/fast/js/slash-lineterminator-parse.html:
+        * layout-tests/fast/js/string-from-char-code-expected.checksum: Removed.
+        * layout-tests/fast/js/string-from-char-code-expected.png: Removed.
+        * layout-tests/fast/js/string-from-char-code-expected.txt:
+        * layout-tests/fast/js/string-from-char-code.html:
+        * layout-tests/fast/js/window-object-cross-frame-calls-expected.checksum: Removed.
+        * layout-tests/fast/js/window-object-cross-frame-calls-expected.png: Removed.
+        * layout-tests/fast/js/window-object-cross-frame-calls-expected.txt:
+        * layout-tests/fast/js/window-object-cross-frame-calls.html:
+
 2005-08-29  John Sullivan  <sullivan@apple.com>
 
         Written by Justin Garcia

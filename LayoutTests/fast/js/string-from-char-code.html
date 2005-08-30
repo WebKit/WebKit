@@ -2,6 +2,8 @@
 <body>
 This test should not crash and should display an X on the next line:<br>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 document.write(String.fromCharCode(88));
 document.write('<br>');
 </script>

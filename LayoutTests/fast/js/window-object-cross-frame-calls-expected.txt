@@ -1,20 +1,5 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 566x18
-          text run at (0,0) width 566: "The following line should say \"parent\", meaning that the proper window object was used."
-      RenderBlock {P} at (0,34) size 784x18
-        RenderText {TEXT} at (0,0) size 39x18
-          text run at (0,0) width 39: "parent"
-      RenderBlock (anonymous) at (0,68) size 784x150
-        RenderPartObject {IFRAME} at (0,0) size 300x150
-          layer at (0,0) size 300x150
-            RenderCanvas at (0,0) size 300x150
-          layer at (0,0) size 300x150
-            RenderBlock {HTML} at (0,0) size 300x150
-              RenderBody {BODY} at (8,8) size 284x134
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+The following line should say "parent", meaning that the proper window object was used.
+
+parent
+
+
