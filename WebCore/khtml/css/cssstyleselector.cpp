@@ -3881,8 +3881,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 	    case CSS_VAL_TEXT:
 		style->setUserSelect(SELECT_TEXT);
 		break;
-            case CSS_VAL_ELEMENT:
-                style->setUserSelect(SELECT_ELEMENT);
+            case CSS_VAL_IGNORE:
+                style->setUserSelect(SELECT_IGNORE);
 	    default:
 		return;
 	}

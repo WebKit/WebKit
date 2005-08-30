@@ -67,16 +67,24 @@ int getPropertyID(const char *tagStr, int len)
         if (prop.startsWith("-apple-")) {
             prop = "-khtml-" + prop.mid(7);
             tagStr = prop.ascii();
-        } else if (prop.startsWith("-moz-")) {
-            prop = "-khtml-" + prop.mid(5);
-            len += 2;
+        } else if (prop.startsWith("-webkit-")) {
+            prop = "-khtml-" + prop.mid(8);
+            len--;
             tagStr = prop.ascii();
         }
         
         // Honor the use of -khtml-opacity (for Safari 1.1) and also the use of -moz-opacity in Mozilla.
-        if (prop == "-khtml-opacity") {
-            tagStr = "opacity";
-            len = 7;
+        if (prop == "-khtml-opacity" || prop == "-moz-opacity") {
+            const char * const opacity = "opacity";
+            tagStr = opacity;
+            len = strlen(opacity);
+        }
+        
+        // Honor the use of -moz-border-radius (for compatibility with sites that use Mozilla's border-radius
+        if (prop == "-moz-border-radius") {
+            const char * const borderRadius = "border-radius";
+            tagStr = borderRadius;
+            len = strlen(borderRadius);
         }
     }
     

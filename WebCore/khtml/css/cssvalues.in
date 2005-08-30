@@ -384,6 +384,11 @@ read-write
 element
 
 #
+# CSS_PROP__KHTML_USER_SELECT
+#
+ignore
+
+#
 # CSS_PROP_WIDTH/MIN_WIDTH/MAX_WIDTH
 #
 intrinsic

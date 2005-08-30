@@ -1,3 +1,22 @@
+2005-08-30  David Hyatt  <hyatt@apple.com>
+
+	Change the value of "element" for khtml-user-select to "ignore".  Also undo the support of "-moz"
+	for any -moz property.  Add support for -webkit as an alternative to -khtml.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/css/parser.y:
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canMouseDownStartSelect):
+
 2005-08-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin Decker.

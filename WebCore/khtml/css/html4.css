@@ -308,11 +308,11 @@ input[type="hidden"] {
 
 input[type="radio"], input[type="checkbox"] {
     margin: 3px 0.5ex;
-    -khtml-user-select: element
+    -khtml-user-select: ignore
 }
 
 select, button, input[type="button"], input[type="image"], input[type="submit"], input[type="reset"], img {
-    -khtml-user-select: element
+    -khtml-user-select: ignore
 }
 
 option, optgroup, area, param {
@@ -395,7 +395,7 @@ html:focus, body:focus {
 a:-khtml-any-link {
     color: -khtml-link;
     text-decoration: underline;
-    -khtml-user-select: element
+    -khtml-user-select: ignore
 }
 
 a:-khtml-any-link:active {

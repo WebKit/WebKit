@@ -138,7 +138,7 @@ using khtml::theme;
 using khtml::RenderWidget;
 using khtml::RightWordIfOnBoundary;
 using khtml::Selection;
-using khtml::SELECT_ELEMENT;
+using khtml::SELECT_IGNORE;
 using khtml::setEnd;
 using khtml::setStart;
 using khtml::ShadowData;
@@ -2014,7 +2014,7 @@ bool KWQKHTMLPart::canMouseDownStartSelect(NodeImpl* node)
 
     // Some controls and images can't start a select on a mouse down.
     for (RenderObject* curr = node->renderer(); curr; curr = curr->parent()) {
-        if (curr->style()->userSelect() == SELECT_ELEMENT)
+        if (curr->style()->userSelect() == SELECT_IGNORE)
             return false;
     }
 
