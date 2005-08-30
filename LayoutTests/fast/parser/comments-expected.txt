@@ -1,56 +1,58 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x539
-  RenderBlock {HTML} at (0,0) size 800x539
-    RenderBody {BODY} at (8,21) size 784x510
-      RenderBlock {H1} at (0,0) size 784x37
+layer at (0,0) size 785x615
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x615
+  RenderBlock {HTML} at (0,0) size 785x615
+    RenderBody {BODY} at (8,8) size 769x599
+      RenderBlock (anonymous) at (0,0) size 769x18
+        RenderText {TEXT} at (0,0) size 724x18
+          text run at (0,0) width 724: "Output of this test is correct, but needs to be changed to actually have real strict SGML comment parsing test cases."
+      RenderBlock {H1} at (0,39) size 769x37
         RenderText {TEXT} at (0,0) size 189x37
           text run at (0,0) width 189: "Success cases:"
-      RenderBlock {P} at (0,58) size 784x18
+      RenderBlock {P} at (0,97) size 769x18
         RenderText {TEXT} at (0,0) size 100x18
           text run at (0,0) width 100: "basic comments"
-      RenderBlock {P} at (0,92) size 784x0
-      RenderBlock {P} at (0,92) size 784x18
+      RenderBlock {P} at (0,131) size 769x0
+      RenderBlock {P} at (0,131) size 769x18
         RenderText {TEXT} at (0,0) size 97x18
           text run at (0,0) width 97: "comment series"
-      RenderBlock {P} at (0,126) size 784x0
-      RenderBlock {P} at (0,126) size 784x18
+      RenderBlock {P} at (0,165) size 769x0
+      RenderBlock {P} at (0,165) size 769x18
         RenderText {TEXT} at (0,0) size 60x18
           text run at (0,0) width 60: "dash runs"
-      RenderBlock {P} at (0,160) size 784x0
-      RenderBlock {P} at (0,160) size 784x18
-        RenderText {TEXT} at (0,0) size 107x18
-          text run at (0,0) width 107: "empty comments"
-      RenderBlock {P} at (0,194) size 784x0
-      RenderBlock {P} at (0,194) size 784x18
-        RenderText {TEXT} at (0,0) size 84x18
-          text run at (0,0) width 84: "multiple lines"
-      RenderBlock {P} at (0,228) size 784x0
-      RenderBlock {P} at (0,228) size 784x18
-        RenderText {TEXT} at (0,0) size 82x18
-          text run at (0,0) width 82: "compatibility"
-      RenderBlock {P} at (0,262) size 784x0
-      RenderBlock {H1} at (0,267) size 784x37
+      RenderBlock {P} at (0,199) size 769x18
+        RenderText {TEXT} at (0,0) size 23x18
+          text run at (0,0) width 23: "-- >"
+      RenderBlock {H1} at (0,238) size 769x37
         RenderText {TEXT} at (0,0) size 187x37
           text run at (0,0) width 187: "Failure cases:"
-      RenderBlock {P} at (0,325) size 784x18
+      RenderBlock {P} at (0,296) size 769x18
         RenderText {TEXT} at (0,0) size 149x18
           text run at (0,0) width 149: "tab after comment close"
-      RenderBlock {P} at (0,359) size 784x0
-      RenderBlock {P} at (0,359) size 784x18
+      RenderBlock {P} at (0,330) size 769x0
+      RenderBlock {P} at (0,330) size 769x18
+        RenderText {TEXT} at (0,0) size 35x18
+          text run at (0,0) width 35: "error!"
+      RenderBlock (anonymous) at (0,364) size 769x18
+        RenderText {TEXT} at (0,0) size 19x18
+          text run at (0,0) width 19: "-->"
+      RenderBlock {P} at (0,398) size 769x18
         RenderText {TEXT} at (0,0) size 153x18
           text run at (0,0) width 153: "text after comment close"
-      RenderBlock {P} at (0,393) size 784x0
-      RenderBlock {H1} at (0,398) size 784x37
+      RenderBlock {P} at (0,432) size 769x0
+      RenderBlock {P} at (0,432) size 769x18
+        RenderText {TEXT} at (0,0) size 35x18
+          text run at (0,0) width 35: "error!"
+      RenderBlock (anonymous) at (0,466) size 769x18
+        RenderText {TEXT} at (0,0) size 19x18
+          text run at (0,0) width 19: "-->"
+      RenderBlock {H1} at (0,505) size 769x37
         RenderText {TEXT} at (0,0) size 356x37
           text run at (0,0) width 356: "Failure cases with output:"
-      RenderBlock (anonymous) at (0,456) size 784x54
+      RenderBlock (anonymous) at (0,563) size 769x36
         RenderText {TEXT} at (0,0) size 331x18
           text run at (0,0) width 331: "extra comment end and markup declaration close -->"
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,18) size 386x18
           text run at (0,18) width 386: "extra comment end w/space and markup declaration close -->"
         RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (0,36) size 161x18
-          text run at (0,36) width 161: "outer nested comment -->"
-        RenderText {TEXT} at (0,0) size 0x0
