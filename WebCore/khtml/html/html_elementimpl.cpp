@@ -285,6 +285,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
         
         if (!ret) {
             // FIXME: We should propagate a syntax error exception out here.
+            fragment->deref();
             return 0;
         }
     }

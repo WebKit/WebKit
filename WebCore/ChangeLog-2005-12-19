@@ -1,5 +1,17 @@
 2005-08-30  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed <rdar://problem/4238024> leak of DocumentFragmentImpl if parseXMLDocumentFragment fails
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment):
+        deref fragment before early return
+
+2005-08-30  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Maciej.
 
         Test cases added: none, doesn't affect layout
