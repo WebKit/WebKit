@@ -580,7 +580,7 @@ void HTMLElementImpl::click(bool sendMouseEvents, bool showPressedLook)
 
     // always send click
     QMouseEvent clickEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-    dispatchMouseEvent(&clickEvent, EventImpl::KHTML_CLICK_EVENT);
+    dispatchMouseEvent(&clickEvent, EventImpl::CLICK_EVENT);
 }
 
 // accessKeyAction is used by the accessibility support code

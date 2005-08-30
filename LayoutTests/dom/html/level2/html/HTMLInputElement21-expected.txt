@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLInputElement21	
-Status:	failure
-Detail:	checkedAfterClick: assertTrue failed
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLInputElement21
+Status:	Success
