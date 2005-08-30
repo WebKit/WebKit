@@ -1,0 +1,29 @@
+<body> 
+<div> This test checks whether converting function code to a
+string preserves semantically significant parentheses. The results
+should say PASS.
+</div>
+<hr>
+
+<div id="console">
+</dic>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(s)
+{
+    document.getElementById("console").innerHTML += s + "<br>";
+}
+
+var functionStr = (function () { return (x + y) * z; }).toString();
+
+if (functionStr.search('return.*\\(') < 0) {
+    log("FAIL (functionStr == \"" + functionStr + "\")");
+} else {
+    log("PASS");
+}
+
+</script>
+</body>

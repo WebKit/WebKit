@@ -1,5 +1,14 @@
 2005-08-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Add some test cases that I apparently forgot to commit before.
+
+        * layout-tests/fast/js/assign-expected.txt: Added.
+        * layout-tests/fast/js/assign.html: Added.
+        * layout-tests/fast/js/code-serialize-paren-expected.txt: Added.
+        * layout-tests/fast/js/code-serialize-paren.html: Added.
+
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
 	- http://bugzilla.opendarwin.org/show_bug.cgi?id=4749
