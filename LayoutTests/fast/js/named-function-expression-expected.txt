@@ -1,0 +1,10 @@
+Bug 4698 - kjs does not allow named functions in function expressions
+You should see 7 lines with OK in them below this line.
+OK
+OK
+OK
+OK
+OK
+OK
+OK
+

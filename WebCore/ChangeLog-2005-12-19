@@ -1,3 +1,13 @@
+2005-08-31  Geoffrey Garen  <ggaren@apple.com>
+
+        -rolled in layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
+        kjs does not allow named functions in function expressions
+        
+        Test cases added:
+
+        * layout-tests/fast/js/named-function-expression-expected.txt: Added.
+        * layout-tests/fast/js/named-function-expression.html: Added.
+
 2005-08-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
