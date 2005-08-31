@@ -1,3 +1,15 @@
+2005-08-30  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * Scripts/build-svg2png: Removed.
+        * svg2png/ImageDiff.h: Removed.
+        * svg2png/ImageDiff.m: Removed.
+        * svg2png/svg2png.m: Removed.
+        * svg2png/svg2png.xcodeproj/project.pbxproj: Removed.
+        * svg2png/svg2png_Prefix.pch: Removed.
+        svg2png is no longer needed.
+
 2005-08-30  Darin Adler  <darin@apple.com>
 
         * Scripts/check-dom-results: Special case 100% to say something nice.
