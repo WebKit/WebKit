@@ -432,7 +432,9 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 	textPrev->appendData(t->data(), exception);
         if (exception)
             return;
+        t->ref();
 	t->parentNode()->removeChild(t, exception);
+        t->deref();
         if (exception)
             return;
 	t = textPrev;

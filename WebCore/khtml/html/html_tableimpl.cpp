@@ -170,7 +170,9 @@ void HTMLTableElementImpl::deleteTHead(  )
 {
     if(head) {
         int exceptioncode = 0;
+        head->ref();
         HTMLElementImpl::removeChild(head, exceptioncode);
+        head->deref();
     }
     head = 0;
 }
@@ -193,7 +195,9 @@ void HTMLTableElementImpl::deleteTFoot(  )
 {
     if(foot) {
         int exceptioncode = 0;
+        foot->ref();
         HTMLElementImpl::removeChild(foot, exceptioncode);
+        foot->deref();
     }
     foot = 0;
 }
@@ -213,7 +217,9 @@ void HTMLTableElementImpl::deleteCaption(  )
 {
     if(tCaption) {
         int exceptioncode = 0;
+        tCaption->ref();
         HTMLElementImpl::removeChild(tCaption, exceptioncode);
+        tCaption->deref();
     }
     tCaption = 0;
 }
@@ -834,9 +840,12 @@ void HTMLTableSectionElementImpl::deleteRow( long index, int &exceptioncode )
     SharedPtr<NodeListImpl> children = childNodes();
     int numRows = children.notNull() ? (int)children->length() : 0;
     if ( index == -1 ) index = numRows - 1;
-    if( index >= 0 && index < numRows )
-        HTMLElementImpl::removeChild(children->item(index), exceptioncode);
-    else
+    if( index >= 0 && index < numRows ) {
+        NodeImpl *row = children->item(index);
+        row->ref();
+        HTMLElementImpl::removeChild(row, exceptioncode);
+        row->deref();
+    } else
         exceptioncode = DOMException::INDEX_SIZE_ERR;
 }
 
@@ -1002,9 +1011,12 @@ void HTMLTableRowElementImpl::deleteCell( long index, int &exceptioncode )
     SharedPtr<NodeListImpl> children = childNodes();
     int numCells = children.notNull() ? children->length() : 0;
     if ( index == -1 ) index = numCells-1;
-    if( index >= 0 && index < numCells )
-        HTMLElementImpl::removeChild(children->item(index), exceptioncode);
-    else
+    if( index >= 0 && index < numCells ) {
+        NodeImpl *row = children->item(index);
+        row->ref();
+        HTMLElementImpl::removeChild(row, exceptioncode);
+        row->deref();
+    } else
         exceptioncode = DOMException::INDEX_SIZE_ERR;
 }
 

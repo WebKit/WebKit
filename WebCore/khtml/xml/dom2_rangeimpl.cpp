@@ -479,8 +479,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                     fragment->appendChild(n,exceptioncode); // will remove n from it's parent
                 else if (action == CLONE_CONTENTS)
                     fragment->appendChild(n->cloneNode(true),exceptioncode);
-                else
+                else {
+                    n->ref();
                     m_startContainer->removeChild(n,exceptioncode);
+                    n->deref();
+                }
                 n = next;
                 i++;
             }
@@ -540,8 +543,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                     leftContents->appendChild(n,exceptioncode); // will remove n from m_startContainer
                 else if (action == CLONE_CONTENTS)
                     leftContents->appendChild(n->cloneNode(true),exceptioncode);
-                else
+                else {
+                    n->ref();
                     m_startContainer->removeChild(n,exceptioncode);
+                    n->deref();
+                }
                 n = next;
             }
         }
@@ -562,8 +568,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                     leftContents->appendChild(n,exceptioncode); // will remove n from leftParent
                 else if (action == CLONE_CONTENTS)
                     leftContents->appendChild(n->cloneNode(true),exceptioncode);
-                else
+                else {
+                    n->ref();
                     leftParent->removeChild(n,exceptioncode);
+                    n->deref();
+                }
             }
             n = leftParent->nextSibling();
         }
@@ -607,8 +616,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                         rightContents->insertBefore(n,rightContents->firstChild(),exceptioncode); // will remove n from it's parent
                     else if (action == CLONE_CONTENTS)
                         rightContents->insertBefore(n->cloneNode(true),rightContents->firstChild(),exceptioncode);
-                    else
+                    else {
+                        n->ref();
                         m_endContainer->removeChild(n,exceptioncode);
+                        n->deref();
+                    }
                 }
             }
         }
@@ -629,8 +641,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                     rightContents->insertBefore(n,rightContents->firstChild(),exceptioncode); // will remove n from it's parent
                 else if (action == CLONE_CONTENTS)
                     rightContents->insertBefore(n->cloneNode(true),rightContents->firstChild(),exceptioncode);
-                else
+                else {
+                    n->ref();
                     rightParent->removeChild(n,exceptioncode);
+                    n->deref();
+                }
 
             }
             n = rightParent->previousSibling();
@@ -681,8 +696,11 @@ DocumentFragmentImpl *RangeImpl::processContents ( ActionType action, int &excep
                 fragment->appendChild(n,exceptioncode); // will remove from cmnRoot
             else if (action == CLONE_CONTENTS)
                 fragment->appendChild(n->cloneNode(true),exceptioncode);
-            else
+            else {
+                n->ref();
                 cmnRoot->removeChild(n,exceptioncode);
+                n->deref();
+            }
         }
     }
 
@@ -1180,8 +1198,10 @@ void RangeImpl::surroundContents( NodeImpl *newParent, int &exceptioncode )
         }
     }
 
-    while (newParent->firstChild()) {
-    	newParent->removeChild(newParent->firstChild(),exceptioncode);
+    while (NodeImpl *n = newParent->firstChild()) {
+        n->ref();
+    	newParent->removeChild(n,exceptioncode);
+        n->deref();
 	if (exceptioncode)
 	    return;
     }

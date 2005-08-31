@@ -1,3 +1,25 @@
+2005-08-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4766
+          many callers of removeChild are leaking the removed node
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setOuterText): Added ref/deref around removeChild call.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLSelectElementImpl::remove): Ditto.
+        (DOM::HTMLTextAreaElementImpl::setDefaultValue): Ditto.
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::deleteTHead): Ditto.
+        (DOM::HTMLTableElementImpl::deleteTFoot): Ditto.
+        (DOM::HTMLTableElementImpl::deleteCaption): Ditto.
+        (DOM::HTMLTableSectionElementImpl::deleteRow): Ditto.
+        (DOM::HTMLTableRowElementImpl::deleteCell): Ditto.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::processContents): Ditto.
+        (DOM::RangeImpl::surroundContents): Ditto.
+
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

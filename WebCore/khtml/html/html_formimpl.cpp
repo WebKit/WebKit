@@ -2824,7 +2824,10 @@ void HTMLSelectElementImpl::remove( long index )
     if(listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
-    removeChild(items[listIndex], exceptioncode);
+    NodeImpl *item = items[listIndex];
+    item->ref();
+    removeChild(item, exceptioncode);
+    item->deref();
     if( !exceptioncode )
         setRecalcListItems();
 }
@@ -3674,7 +3677,10 @@ void HTMLTextAreaElementImpl::setDefaultValue(const DOMString &defaultValue)
     QPtrListIterator<NodeImpl> it(toRemove);
     int exceptioncode = 0;
     for (; it.current(); ++it) {
-        removeChild(it.current(), exceptioncode);
+        NodeImpl *n = it.current();
+        n->ref();
+        removeChild(n, exceptioncode);
+        n->deref();
     }
     insertBefore(getDocument()->createTextNode(defaultValue),firstChild(), exceptioncode);
     setValue(defaultValue);
