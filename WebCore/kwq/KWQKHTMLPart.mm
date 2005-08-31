@@ -3445,6 +3445,7 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect,
     _elementToDraw.reset(node);              // invoke special sub-tree drawing mode
     NSImage *result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
+    d->m_doc->updateLayout();
     _elementToDraw.reset();
 
     if (elementRect) {

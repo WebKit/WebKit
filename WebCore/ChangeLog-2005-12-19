@@ -1,3 +1,20 @@
+2005-08-31  David Harrison  <harrison@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/4234658> SUTiDenver8F17: Dragging in this HTML example crashes Safari
+
+        Problem is KWQKHTMLPart::snapshotDragImage() leaves the layout needing updating, that
+        layout gets triggered (in this case) by the foreground draw in the RenderLayer code,
+        thereby deleting the RenderLayer itself.   Simple fix is for snapshotDragImage() to
+        updateLayout() after resetting the drag state.
+
+        Test cases added:
+        * manual-tests/drag_with_opacity.html: Added.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::snapshotDragImage):  Call updateLayout() after resetting the drag state 
+
 2005-08-31  Vicki Murley  <vicki@apple.com>
 
         Reviewed by hyatt.
