@@ -1,6 +1,6 @@
 2005-08-31  Anders Carlsson  <andersca@mac.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin and Maciej.
 
         * khtml/xsl/xslt_processorimpl.cpp:
         (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
