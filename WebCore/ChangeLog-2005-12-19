@@ -1,5 +1,14 @@
 2005-08-30  Maciej Stachowiak  <mjs@apple.com>
 
+        - update image results
+
+        * layout-tests/fast/parser/comments-expected.checksum:
+        * layout-tests/fast/parser/comments-expected.png:
+        * layout-tests/fast/text/line-breaks-expected.checksum: Added.
+        * layout-tests/fast/text/line-breaks-expected.png: Added.
+
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Justin.
 
         <rdar://problem/4232371> leak of DOMStringImpl called from DOMStringImpl::substring, seen running webkit tests
