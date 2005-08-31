@@ -1,3 +1,25 @@
+2005-08-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=4768
+        (Add counters for NodeImpl, ElementImpl and RenderObject in debug builds)
+	
+	Test cases added: None, this just adds debug output (which shows up on the regular layout tests).
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObjectCounter::~RenderObjectCounter):
+        (RenderObject::RenderObject):
+        (RenderObject::~RenderObject):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImplCounter::~ElementImplCounter):
+        (ElementImpl::ElementImpl):
+        (ElementImpl::~ElementImpl):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImplCounter::~NodeImplCounter):
+        (DOM::NodeImpl::NodeImpl):
+        (DOM::NodeImpl::~NodeImpl):
+
 2005-08-31  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin and Maciej.

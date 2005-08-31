@@ -235,14 +235,30 @@ DOMString AttrImpl::value() const
 
 // -------------------------------------------------------------------------
 
+#ifndef NDEBUG
+struct ElementImplCounter 
+{ 
+    static int count; 
+    ~ElementImplCounter() { if (count != 0) fprintf(stderr, "LEAK: %d ElementImpl\n", count); } 
+};
+int ElementImplCounter::count;
+static ElementImplCounter elementImplCounter;
+#endif NDEBUG
+
 ElementImpl::ElementImpl(const QualifiedName& qName, DocumentPtr *doc)
     : ContainerNodeImpl(doc), m_tagName(qName)
 {
+#ifndef NDEBUG
+    ++ElementImplCounter::count;
+#endif
     namedAttrMap = 0;
 }
 
 ElementImpl::~ElementImpl()
 {
+#ifndef NDEBUG
+    --ElementImplCounter::count;
+#endif
     if (namedAttrMap) {
         namedAttrMap->detachFromElement();
         namedAttrMap->deref();

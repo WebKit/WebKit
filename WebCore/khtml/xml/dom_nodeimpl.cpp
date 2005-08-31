@@ -93,6 +93,15 @@ protected:
     AtomicString m_localName;
 };
 
+#ifndef NDEBUG
+struct NodeImplCounter { 
+    static int count; 
+    ~NodeImplCounter() { if (count != 0) fprintf(stderr, "LEAK: %d NodeImpl\n", count); } 
+};
+int NodeImplCounter::count = 0;
+static NodeImplCounter nodeImplCounter;
+#endif NDEBUG
+
 NodeImpl::NodeImpl(DocumentPtr *doc)
     : document(doc),
       m_previous(0),
@@ -116,6 +125,9 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
       m_styleElement( false ),
       m_implicit( false )
 {
+#ifndef NDEBUG
+    ++NodeImplCounter::count;
+#endif
     if (document)
         document->ref();
 }
@@ -136,6 +148,9 @@ void NodeImpl::setDocument(DocumentPtr *doc)
 
 NodeImpl::~NodeImpl()
 {
+#ifndef NDEBUG
+    --NodeImplCounter::count;
+#endif
     if (m_render)
         detach();
     if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument() && !inDocument())
