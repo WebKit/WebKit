@@ -1,5 +1,24 @@
 2005-08-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Justin.
+
+        <rdar://problem/4232371> leak of DOMStringImpl called from DOMStringImpl::substring, seen running webkit tests
+        <rdar://problem/4232355> leak of DOMStringImpl called from RenderTextFragment::originalString, seen running webkit tests
+        
+        Test cases added: None, these leaks were already caught by the layout tests.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        (RenderText::originalString):
+        (RenderTextFragment::originalString):
+        * khtml/rendering/render_text.h:
+
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Vicki
 
 	<rdar://problem/4231978> many leaks of StyleSurroundData called beneath RenderStyle::setMarginTop, seen running webkit tests

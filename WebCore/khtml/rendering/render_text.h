@@ -165,7 +165,7 @@ public:
     virtual ~RenderText();
 
     virtual bool isTextFragment() const;
-    virtual DOM::DOMStringImpl* originalString() const;
+    virtual SharedPtr<DOM::DOMStringImpl> originalString() const;
     
     virtual const char *renderName() const { return "RenderText"; }
 
@@ -330,7 +330,7 @@ public:
     uint end() const { return m_end; }
     
     DOM::DOMStringImpl* contentString() const { return m_generatedContentStr; }
-    virtual DOM::DOMStringImpl* originalString() const;
+    virtual SharedPtr<DOM::DOMStringImpl> originalString() const;
     
 private:
     uint m_start;
