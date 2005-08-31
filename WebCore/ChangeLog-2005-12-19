@@ -1,5 +1,16 @@
 2005-08-30  Maciej Stachowiak  <mjs@apple.com>
 
+        - remove color profile info from some of the w3c images, and update results
+
+        * layout-tests/dom/html/level2/html/frame-expected.checksum:
+        * layout-tests/dom/html/level2/html/frame-expected.png:
+        * layout-tests/dom/html/level2/html/iframe-expected.checksum:
+        * layout-tests/dom/html/level2/html/iframe-expected.png:
+        * layout-tests/dom/html/level2/html/right.png:
+        * layout-tests/dom/html/level2/html/w3c_main.png:
+
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
         - update image results
 
         * layout-tests/fast/parser/comments-expected.checksum:
