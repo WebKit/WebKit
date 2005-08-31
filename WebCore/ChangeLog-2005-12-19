@@ -1,3 +1,12 @@
+use 2005-08-31  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by vicki.
+
+        * WebCore.xcodeproj/project.pbxproj: added EventNames.*
+        * kdom/css/impl/Font.h: Fixed includes.
+        Build fixes necessary after recent WebCore changes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4780
+
 2005-08-31  Geoffrey Garen  <ggaren@apple.com>
 
         -rolled in layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4698

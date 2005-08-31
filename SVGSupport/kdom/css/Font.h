@@ -23,9 +23,12 @@
 #ifndef KDOM_FONT_H
 #define KDOM_FONT_H
 
+#include <qcolor.h>
 #include <qfont.h>
 #include <qpainter.h>
 #include <qfontmetrics.h>
+
+class QPaintDeviceMetrics;
 
 namespace KDOM
 {

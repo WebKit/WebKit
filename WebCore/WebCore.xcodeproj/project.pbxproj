@@ -1386,6 +1386,8 @@
 		A8212D0308794A2300677359 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		A8212D0408794A2300677359 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		A8212D0508794A2300677359 /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
+		A82FBB6608C6241300EFEE23 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
+		A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
 		A856E9AE08B45ABC0042E303 /* XPathResultWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D592108ADDFF900136AC1 /* XPathResultWrapper.h */; };
 		A856E9AF08B45ABC0042E303 /* XPathResultWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81D592008ADDFF900136AC1 /* XPathResultWrapper.cpp */; };
 		A856E9B008B45ABC0042E303 /* XPathNSResolverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D591F08ADDFF900136AC1 /* XPathNSResolverWrapper.h */; };
@@ -6970,6 +6972,7 @@
 				A856E9D608B45B1E0042E303 /* kdomxpath.h in Headers */,
 				A856E9D708B45B1E0042E303 /* functions.h in Headers */,
 				A856E9D908B45B1E0042E303 /* expression.h in Headers */,
+				A82FBB6608C6241300EFEE23 /* EventNames.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8975,6 +8978,7 @@
 				A856E9D808B45B1E0042E303 /* functions.cpp in Sources */,
 				A856E9DA08B45B1E0042E303 /* expression.cpp in Sources */,
 				A856E9F908B4608F0042E303 /* xpath.y in Sources */,
+				A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
