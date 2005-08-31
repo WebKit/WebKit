@@ -32,6 +32,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"
+#include "xml/EventNames.h"
 #include "xml/xml_tokenizer.h"
 
 #include "css/csshelper.h"
@@ -92,6 +93,7 @@ using XBL::XBLBindingManager;
 #endif
 
 using namespace DOM;
+using namespace DOM::EventNames;
 using namespace HTMLNames;
 using namespace khtml;
 
@@ -1344,7 +1346,7 @@ void DocumentImpl::implicitClose()
 
         if (body) {
             dispatchImageLoadEventsNow();
-            body->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+            body->dispatchWindowEvent(loadEvent, false, false);
 #if APPLE_CHANGES
             KWQ(part())->handledOnloadEvents();
 #endif
@@ -2214,13 +2216,13 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
             oldFocusNode->setActive(false);
 
         oldFocusNode->setFocus(false);
-        oldFocusNode->dispatchHTMLEvent(EventImpl::BLUR_EVENT, false, false);
+        oldFocusNode->dispatchHTMLEvent(blurEvent, false, false);
         if (m_focusNode != 0) {
             // handler shifted focus
             focusChangeBlocked = true;
             newFocusNode = 0;
         }
-        oldFocusNode->dispatchUIEvent(EventImpl::DOMFOCUSOUT_EVENT);
+        oldFocusNode->dispatchUIEvent(DOMFocusOutEvent);
         if (m_focusNode != 0) {
             // handler shifted focus
             focusChangeBlocked = true;
@@ -2254,13 +2256,13 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         // Set focus on the new node
         m_focusNode = newFocusNode;
         m_focusNode->ref();
-        m_focusNode->dispatchHTMLEvent(EventImpl::FOCUS_EVENT, false, false);
+        m_focusNode->dispatchHTMLEvent(focusEvent, false, false);
         if (m_focusNode != newFocusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             goto SetFocusNodeDone;
         }
-        m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSIN_EVENT);
+        m_focusNode->dispatchUIEvent(DOMFocusInEvent);
         if (m_focusNode != newFocusNode) { 
             // handler shifted focus
             focusChangeBlocked = true;
@@ -2360,14 +2362,12 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
     // if any html event listeners are registered on the window, then dispatch them here
     QPtrList<RegisteredEventListener> listenersCopy = m_windowEventListeners;
     QPtrListIterator<RegisteredEventListener> it(listenersCopy);
-    for (; it.current(); ++it) {
-        if (it.current()->id == evt->id()) {
-            it.current()->listener->handleEventImpl(evt, true);
-	}
-    }
+    for (; it.current(); ++it)
+        if (it.current()->eventType() == evt->type())
+            it.current()->listener()->handleEventImpl(evt, true);
 
     // handle accesskey
-    if (evt->id()==EventImpl::KEYDOWN_EVENT) {
+    if (evt->type()==keydownEvent) {
         KeyboardEventImpl *kevt = static_cast<KeyboardEventImpl *>(evt);
         if (kevt->ctrlKey()) {
             QKeyEvent *qevt = kevt->qKeyEvent();
@@ -2381,61 +2381,52 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
     }
 }
 
-void DocumentImpl::setHTMLWindowEventListener(int id, EventListener *listener)
+void DocumentImpl::setHTMLWindowEventListener(const AtomicString &eventType, EventListener *listener)
 {
     // If we already have it we don't want removeWindowEventListener to delete it
     if (listener)
 	listener->ref();
-    removeHTMLWindowEventListener(id);
+    removeHTMLWindowEventListener(eventType);
     if (listener) {
-	addWindowEventListener(id, listener, false);
+	addWindowEventListener(eventType, listener, false);
 	listener->deref();
     }
 }
 
-EventListener *DocumentImpl::getHTMLWindowEventListener(int id)
+EventListener *DocumentImpl::getHTMLWindowEventListener(const AtomicString &eventType)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
-    for (; it.current(); ++it) {
-	if (it.current()->id == id &&
-            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
-	    return it.current()->listener;
-	}
-    }
-
+    for (; it.current(); ++it)
+	if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener")
+	    return it.current()->listener();
     return 0;
 }
 
-void DocumentImpl::removeHTMLWindowEventListener(int id)
+void DocumentImpl::removeHTMLWindowEventListener(const AtomicString &eventType)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
-    for (; it.current(); ++it) {
-	if (it.current()->id == id &&
-            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
+    for (; it.current(); ++it)
+	if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener") {
 	    m_windowEventListeners.removeRef(it.current());
 	    return;
 	}
-    }
 }
 
-void DocumentImpl::addWindowEventListener(int id, EventListener *listener, const bool useCapture)
+void DocumentImpl::addWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
 {
     listener->ref();
 
-    // remove existing identical listener set with identical arguments - the DOM2
-    // spec says that "duplicate instances are discarded" in this case.
-    removeWindowEventListener(id,listener,useCapture);
-
-    RegisteredEventListener *rl = new RegisteredEventListener(static_cast<EventImpl::EventId>(id), listener, useCapture);
-    m_windowEventListeners.append(rl);
+    // Remove existing identical listener set with identical arguments.
+    // The DOM 2 spec says that "duplicate instances are discarded" in this case.
+    removeWindowEventListener(eventType, listener, useCapture);
+    m_windowEventListeners.append(new RegisteredEventListener(eventType, listener, useCapture));
 
     listener->deref();
 }
 
-void DocumentImpl::removeWindowEventListener(int id, EventListener *listener, bool useCapture)
+void DocumentImpl::removeWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
 {
-    RegisteredEventListener rl(static_cast<EventImpl::EventId>(id),listener,useCapture);
-
+    RegisteredEventListener rl(eventType, listener, useCapture);
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it)
         if (*(it.current()) == rl) {
@@ -2444,11 +2435,11 @@ void DocumentImpl::removeWindowEventListener(int id, EventListener *listener, bo
         }
 }
 
-bool DocumentImpl::hasWindowEventListener(int id)
+bool DocumentImpl::hasWindowEventListener(const AtomicString &eventType)
 {
     QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
     for (; it.current(); ++it) {
-	if (it.current()->id == id) {
+	if (it.current()->eventType() == eventType) {
 	    return true;
 	}
     }

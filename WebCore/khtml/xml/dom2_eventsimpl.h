@@ -22,12 +22,12 @@
  *
  */
 
-#ifndef _DOM_EventsImpl_h_
-#define _DOM_EventsImpl_h_
+#ifndef DOM_EVENTSIMPL_H
+#define DOM_EVENTSIMPL_H
 
 #include <qdatetime.h>
 #include "dom/dom_node.h"
-#include "dom/dom_string.h"
+#include "xml/dom_atomicstring.h"
 #include "misc/shared.h"
 
 class KHTMLPart;
@@ -44,109 +44,28 @@ class EventListener;
 class NodeImpl;
 class ClipboardImpl;
 
-// ### support user-defined events
-
 class EventImpl : public khtml::Shared<EventImpl>
 {
 public:
-    enum EventId {
-	UNKNOWN_EVENT = 0,
-	// UI events
-        DOMFOCUSIN_EVENT,
-        DOMFOCUSOUT_EVENT,
-        DOMACTIVATE_EVENT,
-        // Mouse events
-        CLICK_EVENT,
-        MOUSEDOWN_EVENT,
-        MOUSEUP_EVENT,
-        MOUSEOVER_EVENT,
-        MOUSEMOVE_EVENT,
-        MOUSEOUT_EVENT,
-        // IE copy/paste events
-        BEFORECUT_EVENT,
-        CUT_EVENT,
-        BEFORECOPY_EVENT,
-        COPY_EVENT,
-        BEFOREPASTE_EVENT,
-        PASTE_EVENT,
-        // IE drag and drop events
-        DRAGENTER_EVENT,
-        DRAGOVER_EVENT,
-        DRAGLEAVE_EVENT,
-        DROP_EVENT,
-        DRAGSTART_EVENT,
-        DRAG_EVENT,
-        DRAGEND_EVENT,
-	// IE selection events
-	SELECTSTART_EVENT,
-        // Mutation events
-        DOMSUBTREEMODIFIED_EVENT,
-        DOMNODEINSERTED_EVENT,
-        DOMNODEREMOVED_EVENT,
-        DOMNODEREMOVEDFROMDOCUMENT_EVENT,
-        DOMNODEINSERTEDINTODOCUMENT_EVENT,
-        DOMATTRMODIFIED_EVENT,
-        DOMCHARACTERDATAMODIFIED_EVENT,
-	// HTML events
-	LOAD_EVENT,
-	UNLOAD_EVENT,
-	ABORT_EVENT,
-	ERROR_EVENT,
-	SELECT_EVENT,
-	CHANGE_EVENT,
-	SUBMIT_EVENT,
-	RESET_EVENT,
-	FOCUS_EVENT,
-	BLUR_EVENT,
-	RESIZE_EVENT,
-	SCROLL_EVENT,
-        CONTEXTMENU_EVENT,
-#if APPLE_CHANGES
-        SEARCH_EVENT,
-#endif
-        INPUT_EVENT,
-        // Keyboard events
-	KEYDOWN_EVENT,
-	KEYUP_EVENT,
-        // Text events
-        TEXTINPUT_EVENT,
-	// khtml events (not part of DOM)
-	KHTML_DBLCLICK_EVENT, // for html ondblclick
-	KHTML_CLICK_EVENT, // for html onclick
-	KHTML_DRAGDROP_EVENT,
-	KHTML_ERROR_EVENT,
-	KEYPRESS_EVENT,
-	KHTML_MOVE_EVENT,
-	KHTML_ORIGCLICK_MOUSEUP_EVENT,
-	// XMLHttpRequest events
-	KHTML_READYSTATECHANGE_EVENT,
-        // extensions
-        MOUSEWHEEL_EVENT,
-        HORIZONTALMOUSEWHEEL_EVENT,
-        numEventIds
-    };
-
     EventImpl();
-    EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg);
+    EventImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg);
     virtual ~EventImpl();
 
     MAIN_THREAD_ALLOCATED;
 
-    EventId id() const { return m_id; }
-
-    DOMString type() const;
-    NodeImpl *target() const;
-    void setTarget(NodeImpl *_target);
-    NodeImpl *currentTarget() const;
-    void setCurrentTarget(NodeImpl *_currentTarget);
-    unsigned short eventPhase() const;
-    void setEventPhase(unsigned short _eventPhase);
-    bool bubbles() const;
-    bool cancelable() const;
+    const AtomicString &type() const { return m_type; }
+    NodeImpl *target() const { return m_target; }
+    void setTarget(NodeImpl *target);
+    NodeImpl *currentTarget() const { return m_currentTarget; }
+    void setCurrentTarget(NodeImpl *currentTarget) { m_currentTarget = currentTarget; }
+    unsigned short eventPhase() const { return m_eventPhase; }
+    void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
+    bool bubbles() const { return m_canBubble; }
+    bool cancelable() const { return m_cancelable; }
     DOMTimeStamp timeStamp();
-    void stopPropagation();
+    void stopPropagation() { m_propagationStopped = true; }
     void preventDefault();
-    void initEvent(const DOMString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
+    void initEvent(const AtomicString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
 
     virtual bool isUIEvent() const;
     virtual bool isMouseEvent() const;
@@ -159,9 +78,6 @@ public:
     bool propagationStopped() const { return m_propagationStopped; }
     bool defaultPrevented() const { return m_defaultPrevented; }
 
-    static EventId typeToId(const DOMString &type);
-    static DOMString idToType(EventId id);
-
     void setDefaultHandled() { m_defaultHandled = true; }
     bool defaultHandled() const { return m_defaultHandled; }
 
@@ -170,7 +86,7 @@ public:
     bool getCancelBubble() const { return m_cancelBubble; }
 
 protected:
-    DOMStringImpl *m_type;
+    AtomicString m_type;
     bool m_canBubble;
     bool m_cancelable;
 
@@ -179,7 +95,6 @@ protected:
     bool m_defaultHandled;
     bool m_cancelBubble;
 
-    EventId m_id;
     NodeImpl *m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
     NodeImpl *m_target;
@@ -192,7 +107,7 @@ class UIEventImpl : public EventImpl
 {
 public:
     UIEventImpl();
-    UIEventImpl(EventId _id,
+    UIEventImpl(const AtomicString &type,
 		bool canBubbleArg,
 		bool cancelableArg,
 		AbstractViewImpl *viewArg,
@@ -200,7 +115,7 @@ public:
     virtual ~UIEventImpl();
     AbstractViewImpl *view() const { return m_view; }
     long detail() const { return m_detail; }
-    void initUIEvent(const DOMString &typeArg,
+    void initUIEvent(const AtomicString &typeArg,
 		     bool canBubbleArg,
 		     bool cancelableArg,
 		     AbstractViewImpl *viewArg,
@@ -227,9 +142,9 @@ protected:
 class UIEventWithKeyStateImpl : public UIEventImpl {
 public:
     UIEventWithKeyStateImpl() : m_ctrlKey(false), m_altKey(false), m_shiftKey(false), m_metaKey(false) { }
-    UIEventWithKeyStateImpl(EventId eventID, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg,
+    UIEventWithKeyStateImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg,
         long detailArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg)
-        : UIEventImpl(eventID, canBubbleArg, cancelableArg, viewArg, detailArg)
+        : UIEventImpl(type, canBubbleArg, cancelableArg, viewArg, detailArg)
         , m_ctrlKey(ctrlKeyArg), m_altKey(altKeyArg), m_shiftKey(shiftKeyArg), m_metaKey(metaKeyArg) { }
 
     bool ctrlKey() const { return m_ctrlKey; }
@@ -248,7 +163,7 @@ protected: // expose these so init functions can set them
 class MouseRelatedEventImpl : public UIEventWithKeyStateImpl {
 public:
     MouseRelatedEventImpl();
-    MouseRelatedEventImpl(EventId _id,
+    MouseRelatedEventImpl(const AtomicString &type,
                           bool canBubbleArg,
                           bool cancelableArg,
                           AbstractViewImpl *viewArg,
@@ -284,7 +199,7 @@ private:
 class MouseEventImpl : public MouseRelatedEventImpl {
 public:
     MouseEventImpl();
-    MouseEventImpl(EventId _id,
+    MouseEventImpl(const AtomicString &type,
 		   bool canBubbleArg,
 		   bool cancelableArg,
 		   AbstractViewImpl *viewArg,
@@ -304,7 +219,7 @@ public:
     unsigned short button() const { return m_button; }
     NodeImpl *relatedTarget() const { return m_relatedTarget; }
     ClipboardImpl *clipboard() const { return m_clipboard; }
-    void initMouseEvent(const DOMString &typeArg,
+    void initMouseEvent(const AtomicString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,
 			AbstractViewImpl *viewArg,
@@ -334,7 +249,7 @@ class KeyboardEventImpl : public UIEventWithKeyStateImpl {
 public:
     KeyboardEventImpl();
     KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view);
-    KeyboardEventImpl(EventId _id,
+    KeyboardEventImpl(const AtomicString &type,
                 bool canBubbleArg,
                 bool cancelableArg,
                 AbstractViewImpl *viewArg,
@@ -347,7 +262,7 @@ public:
                 bool altGraphKeyArg);
     virtual ~KeyboardEventImpl();
     
-    void initKeyboardEvent(const DOMString &typeArg,
+    void initKeyboardEvent(const AtomicString &typeArg,
                 bool canBubbleArg,
                 bool cancelableArg,
                 AbstractViewImpl *viewArg,
@@ -383,7 +298,7 @@ class MutationEventImpl : public EventImpl {
 // ### fire these during parsing (if necessary)
 public:
     MutationEventImpl();
-    MutationEventImpl(EventId _id,
+    MutationEventImpl(const AtomicString &type,
 		      bool canBubbleArg,
 		      bool cancelableArg,
 		      NodeImpl *relatedNodeArg,
@@ -398,7 +313,7 @@ public:
     DOMString newValue() const { return m_newValue; }
     DOMString attrName() const { return m_attrName; }
     unsigned short attrChange() const { return m_attrChange; }
-    void initMutationEvent(const DOMString &typeArg,
+    void initMutationEvent(const AtomicString &typeArg,
 			   bool canBubbleArg,
 			   bool cancelableArg,
 			   NodeImpl *relatedNodeArg,
@@ -418,7 +333,7 @@ protected:
 class ClipboardEventImpl : public EventImpl {
 public:
     ClipboardEventImpl();
-    ClipboardEventImpl(EventId _id, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg);
+    ClipboardEventImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg);
     ~ClipboardEventImpl();
 
     ClipboardImpl *clipboard() const { return m_clipboard; }
@@ -448,20 +363,26 @@ private:
 
 class RegisteredEventListener {
 public:
-    RegisteredEventListener(EventImpl::EventId _id, EventListener *_listener, bool _useCapture);
+    RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
     ~RegisteredEventListener();
 
     MAIN_THREAD_ALLOCATED;
     
-    bool operator==(const RegisteredEventListener &other);
+    const AtomicString &eventType() const { return m_eventType; }
+    EventListener *listener() const { return m_listener; }
+    bool useCapture() const { return m_useCapture; }
 
-    EventImpl::EventId id;
-    EventListener *listener;
-    bool useCapture;
 private:
-    RegisteredEventListener( const RegisteredEventListener & );
-    RegisteredEventListener & operator=( const RegisteredEventListener & );
+    AtomicString m_eventType;
+    EventListener *m_listener;
+    bool m_useCapture;
+
+    RegisteredEventListener(const RegisteredEventListener &);
+    RegisteredEventListener &operator=(const RegisteredEventListener &);
 };
+
+bool operator==(const RegisteredEventListener &, const RegisteredEventListener &);
+inline bool operator!=(const RegisteredEventListener &a, const RegisteredEventListener &b) { return !(a == b); }
 
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardImpl : public khtml::Shared<ClipboardImpl> {

@@ -39,6 +39,7 @@
 #include "css/cssvalues.h"
 #include "css/csshelper.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 
 #include <qstring.h>
 #include <qpoint.h>
@@ -48,6 +49,7 @@
 #include <qpointarray.h>
 
 using namespace DOM;
+using namespace DOM::EventNames;
 using namespace HTMLNames;
 using namespace khtml;
 
@@ -111,9 +113,9 @@ void HTMLImageLoader::dispatchLoadEvent()
     if (!m_firedLoad) {
         m_firedLoad = true;
         if (m_image->isErrorImage())
-            element()->dispatchHTMLEvent(EventImpl::ERROR_EVENT, false, false);
+            element()->dispatchHTMLEvent(errorEvent, false, false);
         else
-            element()->dispatchHTMLEvent(EventImpl::LOAD_EVENT, false, false);
+            element()->dispatchHTMLEvent(loadEvent, false, false);
     }
 }
 
@@ -216,13 +218,13 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == ismapAttr) {
         ismap = true;
     } else if (attr->name() == onabortAttr) {
-        setHTMLEventListener(EventImpl::ABORT_EVENT,
+        setHTMLEventListener(abortEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onerrorAttr) {
-        setHTMLEventListener(EventImpl::ERROR_EVENT,
+        setHTMLEventListener(errorEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(EventImpl::LOAD_EVENT,
+        setHTMLEventListener(loadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     }
 #if APPLE_CHANGES

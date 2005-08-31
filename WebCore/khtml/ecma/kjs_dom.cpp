@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
@@ -30,6 +29,7 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_textimpl.h"
+#include "xml/EventNames.h"
 #include "xml/dom_xmlimpl.h"
 #include "html/html_documentimpl.h"
 #include "css/css_ruleimpl.h"
@@ -53,6 +53,7 @@
 
 using namespace DOM::HTMLNames;
 
+using DOM::AtomicString;
 using DOM::AttrImpl;
 using DOM::CharacterDataImpl;
 using DOM::DocumentImpl;
@@ -63,6 +64,7 @@ using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EntityImpl;
 using DOM::EventImpl;
+using namespace DOM::EventNames;
 using DOM::HTMLAppletElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
@@ -310,91 +312,91 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
   case OwnerDocument:
     return getDOMNode(exec,node.ownerDocument());
   case OnAbort:
-    return getListener(DOM::EventImpl::ABORT_EVENT);
+    return getListener(abortEvent);
   case OnBlur:
-    return getListener(DOM::EventImpl::BLUR_EVENT);
+    return getListener(blurEvent);
   case OnChange:
-    return getListener(DOM::EventImpl::CHANGE_EVENT);
+    return getListener(changeEvent);
   case OnClick:
-    return getListener(DOM::EventImpl::KHTML_CLICK_EVENT);
+    return getListener(khtmlClickEvent);
   case OnContextMenu:
-    return getListener(DOM::EventImpl::CONTEXTMENU_EVENT);
+    return getListener(contextmenuEvent);
   case OnDblClick:
-    return getListener(DOM::EventImpl::KHTML_DBLCLICK_EVENT);
+    return getListener(khtmlDblclickEvent);
   case OnDragDrop:
-    return getListener(DOM::EventImpl::KHTML_DRAGDROP_EVENT);
+    return getListener(khtmlDragdropEvent);
   case OnError:
-    return getListener(DOM::EventImpl::KHTML_ERROR_EVENT);
+    return getListener(khtmlErrorEvent);
   case OnFocus:
-    return getListener(DOM::EventImpl::FOCUS_EVENT);
+    return getListener(focusEvent);
   case OnInput:
-    return getListener(DOM::EventImpl::INPUT_EVENT);
+    return getListener(inputEvent);
   case OnKeyDown:
-    return getListener(DOM::EventImpl::KEYDOWN_EVENT);
+    return getListener(keydownEvent);
   case OnKeyPress:
-    return getListener(DOM::EventImpl::KEYPRESS_EVENT);
+    return getListener(keypressEvent);
   case OnKeyUp:
-    return getListener(DOM::EventImpl::KEYUP_EVENT);
+    return getListener(keyupEvent);
   case OnLoad:
-    return getListener(DOM::EventImpl::LOAD_EVENT);
+    return getListener(loadEvent);
   case OnMouseDown:
-    return getListener(DOM::EventImpl::MOUSEDOWN_EVENT);
+    return getListener(mousedownEvent);
   case OnMouseMove:
-    return getListener(DOM::EventImpl::MOUSEMOVE_EVENT);
+    return getListener(mousemoveEvent);
   case OnMouseOut:
-    return getListener(DOM::EventImpl::MOUSEOUT_EVENT);
+    return getListener(mouseoutEvent);
   case OnMouseOver:
-    return getListener(DOM::EventImpl::MOUSEOVER_EVENT);
+    return getListener(mouseoverEvent);
   case OnMouseUp:
-    return getListener(DOM::EventImpl::MOUSEUP_EVENT);      
+    return getListener(mouseupEvent);      
   case OnMouseWheel:
-    return getListener(DOM::EventImpl::MOUSEWHEEL_EVENT);      
+    return getListener(mousewheelEvent);      
   case OnBeforeCut:
-    return getListener(DOM::EventImpl::BEFORECUT_EVENT);
+    return getListener(beforecutEvent);
   case OnCut:
-    return getListener(DOM::EventImpl::CUT_EVENT);
+    return getListener(cutEvent);
   case OnBeforeCopy:
-    return getListener(DOM::EventImpl::BEFORECOPY_EVENT);
+    return getListener(beforecopyEvent);
   case OnCopy:
-    return getListener(DOM::EventImpl::COPY_EVENT);
+    return getListener(copyEvent);
   case OnBeforePaste:
-    return getListener(DOM::EventImpl::BEFOREPASTE_EVENT);
+    return getListener(beforepasteEvent);
   case OnPaste:
-    return getListener(DOM::EventImpl::PASTE_EVENT);
+    return getListener(pasteEvent);
   case OnDragEnter:
-    return getListener(DOM::EventImpl::DRAGENTER_EVENT);
+    return getListener(dragenterEvent);
   case OnDragOver:
-    return getListener(DOM::EventImpl::DRAGOVER_EVENT);
+    return getListener(dragoverEvent);
   case OnDragLeave:
-    return getListener(DOM::EventImpl::DRAGLEAVE_EVENT);
+    return getListener(dragleaveEvent);
   case OnDrop:
-    return getListener(DOM::EventImpl::DROP_EVENT);
+    return getListener(dropEvent);
   case OnDragStart:
-    return getListener(DOM::EventImpl::DRAGSTART_EVENT);
+    return getListener(dragstartEvent);
   case OnDrag:
-    return getListener(DOM::EventImpl::DRAG_EVENT);
+    return getListener(dragEvent);
   case OnDragEnd:
-    return getListener(DOM::EventImpl::DRAGEND_EVENT);
+    return getListener(dragendEvent);
   case OnMove:
-    return getListener(DOM::EventImpl::KHTML_MOVE_EVENT);
+    return getListener(khtmlMoveEvent);
   case OnReset:
-    return getListener(DOM::EventImpl::RESET_EVENT);
+    return getListener(resetEvent);
   case OnResize:
-    return getListener(DOM::EventImpl::RESIZE_EVENT);
+    return getListener(resizeEvent);
   case OnScroll:
-    return getListener(DOM::EventImpl::SCROLL_EVENT);
+    return getListener(scrollEvent);
 #if APPLE_CHANGES
   case OnSearch:
-    return getListener(DOM::EventImpl::SEARCH_EVENT);
+    return getListener(searchEvent);
 #endif
   case OnSelect:
-    return getListener(DOM::EventImpl::SELECT_EVENT);
+    return getListener(selectEvent);
   case OnSelectStart:
-    return getListener(DOM::EventImpl::SELECTSTART_EVENT);
+    return getListener(selectstartEvent);
   case OnSubmit:
-    return getListener(DOM::EventImpl::SUBMIT_EVENT);
+    return getListener(submitEvent);
   case OnUnload:
-    return getListener(DOM::EventImpl::UNLOAD_EVENT);
+    return getListener(scrollEvent);
   default:
     // no DOM standard, found in IE only
 
@@ -461,130 +463,130 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     node.setPrefix(value->toString(exec).domString().impl(), exception);
     break;
   case OnAbort:
-    setListener(exec,DOM::EventImpl::ABORT_EVENT,value);
+    setListener(exec,abortEvent,value);
     break;
   case OnBlur:
-    setListener(exec,DOM::EventImpl::BLUR_EVENT,value);
+    setListener(exec,blurEvent,value);
     break;
   case OnChange:
-    setListener(exec,DOM::EventImpl::CHANGE_EVENT,value);
+    setListener(exec,changeEvent,value);
     break;
   case OnClick:
-    setListener(exec,DOM::EventImpl::KHTML_CLICK_EVENT,value);
+    setListener(exec,khtmlClickEvent,value);
     break;
   case OnContextMenu:
-    setListener(exec,DOM::EventImpl::CONTEXTMENU_EVENT,value);
+    setListener(exec,contextmenuEvent,value);
     break;
   case OnDblClick:
-    setListener(exec,DOM::EventImpl::KHTML_DBLCLICK_EVENT,value);
+    setListener(exec,khtmlDblclickEvent,value);
     break;
   case OnDragDrop:
-    setListener(exec,DOM::EventImpl::KHTML_DRAGDROP_EVENT,value);
+    setListener(exec,khtmlDragdropEvent,value);
     break;
   case OnError:
-    setListener(exec,DOM::EventImpl::KHTML_ERROR_EVENT,value);
+    setListener(exec,khtmlErrorEvent,value);
     break;
   case OnFocus:
-    setListener(exec,DOM::EventImpl::FOCUS_EVENT,value);
+    setListener(exec,focusEvent,value);
     break;
   case OnInput:
-    setListener(exec,DOM::EventImpl::INPUT_EVENT,value);
+    setListener(exec,inputEvent,value);
     break;
   case OnKeyDown:
-    setListener(exec,DOM::EventImpl::KEYDOWN_EVENT,value);
+    setListener(exec,keydownEvent,value);
     break;
   case OnKeyPress:
-    setListener(exec,DOM::EventImpl::KEYPRESS_EVENT,value);
+    setListener(exec,keypressEvent,value);
     break;
   case OnKeyUp:
-    setListener(exec,DOM::EventImpl::KEYUP_EVENT,value);
+    setListener(exec,keyupEvent,value);
     break;
   case OnLoad:
-    setListener(exec,DOM::EventImpl::LOAD_EVENT,value);
+    setListener(exec,loadEvent,value);
     break;
   case OnMouseDown:
-    setListener(exec,DOM::EventImpl::MOUSEDOWN_EVENT,value);
+    setListener(exec,mousedownEvent,value);
     break;
   case OnMouseMove:
-    setListener(exec,DOM::EventImpl::MOUSEMOVE_EVENT,value);
+    setListener(exec,mousemoveEvent,value);
     break;
   case OnMouseOut:
-    setListener(exec,DOM::EventImpl::MOUSEOUT_EVENT,value);
+    setListener(exec,mouseoutEvent,value);
     break;
   case OnMouseOver:
-    setListener(exec,DOM::EventImpl::MOUSEOVER_EVENT,value);
+    setListener(exec,mouseoverEvent,value);
     break;
   case OnMouseUp:
-    setListener(exec,DOM::EventImpl::MOUSEUP_EVENT,value);
+    setListener(exec,mouseupEvent,value);
     break;
   case OnMouseWheel:
-    setListener(exec,DOM::EventImpl::MOUSEWHEEL_EVENT,value);
+    setListener(exec,mousewheelEvent,value);
     break;
   case OnBeforeCut:
-    setListener(exec,DOM::EventImpl::BEFORECUT_EVENT,value);
+    setListener(exec,beforecutEvent,value);
     break;
   case OnCut:
-    setListener(exec,DOM::EventImpl::CUT_EVENT,value);
+    setListener(exec,cutEvent,value);
     break;
   case OnBeforeCopy:
-    setListener(exec,DOM::EventImpl::BEFORECOPY_EVENT,value);
+    setListener(exec,beforecopyEvent,value);
     break;
   case OnCopy:
-    setListener(exec,DOM::EventImpl::COPY_EVENT,value);
+    setListener(exec,copyEvent,value);
     break;
   case OnBeforePaste:
-    setListener(exec,DOM::EventImpl::BEFOREPASTE_EVENT,value);
+    setListener(exec,beforepasteEvent,value);
     break;
   case OnPaste:
-    setListener(exec,DOM::EventImpl::PASTE_EVENT,value);
+    setListener(exec,pasteEvent,value);
     break;
   case OnDragEnter:
-    setListener(exec,DOM::EventImpl::DRAGENTER_EVENT,value);
+    setListener(exec,dragenterEvent,value);
     break;
   case OnDragOver:
-    setListener(exec,DOM::EventImpl::DRAGOVER_EVENT,value);
+    setListener(exec,dragoverEvent,value);
     break;
   case OnDragLeave:
-    setListener(exec,DOM::EventImpl::DRAGLEAVE_EVENT,value);
+    setListener(exec,dragleaveEvent,value);
     break;
   case OnDrop:
-    setListener(exec,DOM::EventImpl::DROP_EVENT,value);
+    setListener(exec,dropEvent,value);
     break;
   case OnDragStart:
-    setListener(exec,DOM::EventImpl::DRAGSTART_EVENT,value);
+    setListener(exec,dragstartEvent,value);
     break;
   case OnDrag:
-    setListener(exec,DOM::EventImpl::DRAG_EVENT,value);
+    setListener(exec,dragEvent,value);
     break;
   case OnDragEnd:
-    setListener(exec,DOM::EventImpl::DRAGEND_EVENT,value);
+    setListener(exec,dragendEvent,value);
     break;
   case OnMove:
-    setListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT,value);
+    setListener(exec,khtmlMoveEvent,value);
     break;
   case OnReset:
-    setListener(exec,DOM::EventImpl::RESET_EVENT,value);
+    setListener(exec,resetEvent,value);
     break;
   case OnResize:
-    setListener(exec,DOM::EventImpl::RESIZE_EVENT,value);
+    setListener(exec,resizeEvent,value);
     break;
   case OnScroll:
-    setListener(exec,DOM::EventImpl::SCROLL_EVENT,value);
+    setListener(exec,scrollEvent,value);
     break;
   case OnSearch:
-    setListener(exec,DOM::EventImpl::SEARCH_EVENT,value);
+    setListener(exec,searchEvent,value);
     break;
   case OnSelect:
-    setListener(exec,DOM::EventImpl::SELECT_EVENT,value);
+    setListener(exec,selectEvent,value);
     break;
   case OnSelectStart:
-    setListener(exec,DOM::EventImpl::SELECTSTART_EVENT,value);
+    setListener(exec,selectstartEvent,value);
     break;
   case OnSubmit:
-    setListener(exec,DOM::EventImpl::SUBMIT_EVENT,value);
+    setListener(exec,submitEvent,value);
     break;
   case OnUnload:
-    setListener(exec,DOM::EventImpl::UNLOAD_EVENT,value);
+    setListener(exec,scrollEvent,value);
     break;
   case ScrollTop: {
     khtml::RenderObject *rend = node.renderer();
@@ -618,14 +620,14 @@ UString DOMNode::toString(ExecState *) const
   return "[object " + (m_impl->isElementNode() ? m_impl->nodeName() : className()) + "]";
 }
 
-void DOMNode::setListener(ExecState *exec, int eventId, ValueImp *func) const
+void DOMNode::setListener(ExecState *exec, const AtomicString &eventType, ValueImp *func) const
 {
-  m_impl->setHTMLEventListener(eventId, Window::retrieveActive(exec)->getJSEventListener(func, true));
+  m_impl->setHTMLEventListener(eventType, Window::retrieveActive(exec)->getJSEventListener(func, true));
 }
 
-ValueImp *DOMNode::getListener(int eventId) const
+ValueImp *DOMNode::getListener(const AtomicString &eventType) const
 {
-    DOM::EventListener *listener = m_impl->getHTMLEventListener(eventId);
+    DOM::EventListener *listener = m_impl->getHTMLEventListener(eventType);
     JSEventListener *jsListener = static_cast<JSEventListener*>(listener);
     if ( jsListener && jsListener->listenerObjImp() )
 	return jsListener->listenerObj();
@@ -659,13 +661,13 @@ ValueImp *DOMNodeProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
     case DOMNode::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)
-            node.addEventListener(args[0]->toString(exec).domString(),listener,args[2]->toBoolean(exec));
+            node.addEventListener(AtomicString(args[0]->toString(exec).domString()), listener,args[2]->toBoolean(exec));
         return Undefined();
     }
     case DOMNode::RemoveEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
         if (listener)
-            node.removeEventListener(args[0]->toString(exec).domString(),listener,args[2]->toBoolean(exec));
+            node.removeEventListener(AtomicString(args[0]->toString(exec).domString()), listener,args[2]->toBoolean(exec));
         return Undefined();
     }
     case DOMNode::DispatchEvent:

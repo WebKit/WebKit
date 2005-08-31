@@ -27,6 +27,7 @@
 
 #import "DOMCSS.h"
 #import "DOMHTML.h"
+#import "EventNames.h"
 #import "KWQAssertions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
@@ -34,7 +35,9 @@
 #import "render_replaced.h"
 #import "WebCoreBridge.h"
 
+using DOM::AtomicString;
 using DOM::EventImpl;
+using namespace DOM::EventNames;
 using DOM::NodeImpl;
 using khtml::RenderWidget;
 
@@ -1129,56 +1132,51 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 // FIXME: This does not yet implement the feature of canceling the operation, or the necessary
 // support to implement the clipboard operations entirely in JavaScript.
-- (void)dispatchHTMLEvent:(EventImpl::EventId)eventID
+- (void)dispatchHTMLEvent:(const AtomicString &)eventType
 {
-    if (widget) {
-        const RenderWidget *rw = static_cast<const RenderWidget *>(widget->eventFilterObject());
-        if (rw) {
-            NodeImpl *node = rw->element();
-            if (node) {
-                node->dispatchHTMLEvent(eventID, false, false);
-            }
-        }
-    }
+    if (widget)
+        if (const RenderWidget *rw = static_cast<const RenderWidget *>(widget->eventFilterObject()))
+            if (NodeImpl *node = rw->element())
+                node->dispatchHTMLEvent(eventType, false, false);
 }
 
 - (void)cut:(id)sender
 {
     inCut = YES;
-    [self dispatchHTMLEvent:EventImpl::BEFORECUT_EVENT];
+    [self dispatchHTMLEvent:beforecutEvent];
     [super cut:sender];
-    [self dispatchHTMLEvent:EventImpl::CUT_EVENT];
+    [self dispatchHTMLEvent:cutEvent];
     inCut = NO;
 }
 
 - (void)copy:(id)sender
 {
     if (!inCut)
-        [self dispatchHTMLEvent:EventImpl::BEFORECOPY_EVENT];
+        [self dispatchHTMLEvent:beforecopyEvent];
     [super copy:sender];
     if (!inCut)
-        [self dispatchHTMLEvent:EventImpl::COPY_EVENT];
+        [self dispatchHTMLEvent:copyEvent];
 }
 
 - (void)paste:(id)sender
 {
-    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [self dispatchHTMLEvent:beforepasteEvent];
     [super paste:sender];
-    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+    [self dispatchHTMLEvent:pasteEvent];
 }
 
 - (void)pasteAsPlainText:(id)sender
 {
-    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [self dispatchHTMLEvent:beforepasteEvent];
     [super pasteAsPlainText:sender];
-    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+    [self dispatchHTMLEvent:pasteEvent];
 }
 
 - (void)pasteAsRichText:(id)sender
 {
-    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [self dispatchHTMLEvent:beforepasteEvent];
     [super pasteAsRichText:sender];
-    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+    [self dispatchHTMLEvent:pasteEvent];
 }
 
 - (BOOL)inResponderChange

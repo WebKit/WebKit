@@ -1,5 +1,195 @@
 2005-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4540
+          event handlers for all custom events called when any custom event is set
+
+        * layout-tests/dom/html/level2/events/dispatchEvent12-expected.txt: Updated results
+        to expect success.
+
+        * khtml/xml/EventNames.h: Added.
+        * khtml/xml/EventNames.cpp: Added.
+        * ForwardingHeaders/xml/EventNames.h: Added.
+        * WebCore.xcodeproj/project.pbxproj: Added EventNames.h and EventNames.cpp.
+
+        * khtml/xml/dom2_eventsimpl.h: Removed EventId type. Made a few more functions inline.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (DOM::EventImpl::EventImpl):
+        (DOM::EventImpl::~EventImpl):
+        (DOM::EventImpl::initEvent):
+        (DOM::UIEventImpl::UIEventImpl):
+        (DOM::UIEventImpl::initUIEvent):
+        (DOM::MouseRelatedEventImpl::MouseRelatedEventImpl):
+        (DOM::MouseEventImpl::MouseEventImpl):
+        (DOM::MouseEventImpl::initMouseEvent):
+        (DOM::MouseEventImpl::isDragEvent):
+        (DOM::KeyboardEventImpl::KeyboardEventImpl):
+        (DOM::KeyboardEventImpl::initKeyboardEvent):
+        (DOM::KeyboardEventImpl::keyCode):
+        (DOM::MutationEventImpl::MutationEventImpl):
+        (DOM::MutationEventImpl::initMutationEvent):
+        (DOM::ClipboardEventImpl::ClipboardEventImpl):
+        (DOM::WheelEventImpl::WheelEventImpl):
+        (DOM::RegisteredEventListener::RegisteredEventListener):
+        (DOM::RegisteredEventListener::~RegisteredEventListener):
+        Updated to use the new AtomicString type rather than a type string and separate ID.
+
+        * khtml/xml/dom_atomicstring.h: Implemented the constructor that takes an NSString.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNode::setListener):
+        (KJS::DOMNode::getListener):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::getNodeEventListener):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMEventProtoFunc::callAsFunction):
+        (KJS::DOMUIEventProtoFunc::callAsFunction):
+        (KJS::DOMMouseEvent::getValueProperty):
+        (KJS::DOMMouseEventProtoFunc::callAsFunction):
+        (KJS::DOMKeyboardEventProtoFunc::callAsFunction):
+        (KJS::DOMMutationEventProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/ecma/kjs_window.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseMappedAttribute):
+        (HTMLFrameElementImpl::parseMappedAttribute):
+        (HTMLFrameSetElementImpl::parseMappedAttribute):
+        (HTMLFrameSetElementImpl::detach):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::click):
+        (inlineTagList):
+        (blockTagList):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::prepareSubmit):
+        (DOM::HTMLFormElementImpl::reset):
+        (DOM::HTMLFormElementImpl::parseMappedAttribute):
+        (DOM::HTMLGenericFormElementImpl::onSelect):
+        (DOM::HTMLGenericFormElementImpl::onChange):
+        (DOM::HTMLGenericFormElementImpl::defaultEventHandler):
+        (DOM::HTMLButtonElementImpl::parseMappedAttribute):
+        (DOM::HTMLButtonElementImpl::defaultEventHandler):
+        (DOM::HTMLInputElementImpl::parseMappedAttribute):
+        (DOM::HTMLInputElementImpl::setValueFromRenderer):
+        (DOM::HTMLInputElementImpl::preDispatchEventHandler):
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        (DOM::HTMLLabelElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::parseMappedAttribute):
+        (DOM::HTMLSelectElementImpl::defaultEventHandler):
+        (DOM::HTMLTextAreaElementImpl::parseMappedAttribute):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::dispatchLoadEvent):
+        (HTMLImageElementImpl::parseMappedAttribute):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/html_objectimpl.cpp:
+        (DOM::HTMLObjectElementImpl::parseMappedAttribute):
+        (DOM::HTMLObjectElementImpl::attach):
+        (DOM::HTMLObjectElementImpl::detach):
+        (DOM::HTMLObjectElementImpl::recalcStyle):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::stopLoading):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::resizeEvent):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseMoveEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        (KHTMLView::dispatchDragEvent):
+        (KHTMLView::updateDragAndDrop):
+        (KHTMLView::cancelDragAndDrop):
+        (KHTMLView::performDragAndDrop):
+        (KHTMLView::dispatchMouseEvent):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::slotClicked):
+        (RenderLineEdit::slotPerformSearch):
+        (RenderSlider::slotSliderValueChanged):
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        * khtml/rendering/render_layer.cpp:
+        (khtml::RenderLayer::scrollToOffset):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::shouldSelect):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::sendConsumedMouseUp):
+        (RenderWidget::eventFilter):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::implicitClose):
+        (DocumentImpl::setFocusNode):
+        (DocumentImpl::defaultEventHandler):
+        (DocumentImpl::setHTMLWindowEventListener):
+        (DocumentImpl::getHTMLWindowEventListener):
+        (DocumentImpl::removeHTMLWindowEventListener):
+        (DocumentImpl::addWindowEventListener):
+        (DocumentImpl::removeWindowEventListener):
+        (DocumentImpl::hasWindowEventListener):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::dispatchAttrRemovalEvent):
+        (ElementImpl::dispatchAttrAdditionEvent):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::addEventListener):
+        (DOM::NodeImpl::removeEventListener):
+        (DOM::NodeImpl::removeHTMLEventListener):
+        (DOM::NodeImpl::setHTMLEventListener):
+        (DOM::NodeImpl::getHTMLEventListener):
+        (DOM::NodeImpl::dispatchHTMLEvent):
+        (DOM::NodeImpl::dispatchWindowEvent):
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::dispatchUIEvent):
+        (DOM::NodeImpl::dispatchSubtreeModifiedEvent):
+        (DOM::NodeImpl::handleLocalEvents):
+        (DOM::ContainerNodeImpl::removeChild):
+        (DOM::ContainerNodeImpl::dispatchChildInsertedEvents):
+        (DOM::ContainerNodeImpl::dispatchChildRemovalEvents):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::dispatchModifiedEvent):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject mouseButtonListener]):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage):
+        (KWQKHTMLPart::sendScrollEvent):
+        (KWQKHTMLPart::dispatchDragSrcEvent):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        (KWQKHTMLPart::dragSourceMovedTo):
+        (KWQKHTMLPart::dragSourceEndedAt):
+        (KWQKHTMLPart::dispatchCPPEvent):
+        (KWQKHTMLPart::mayCut):
+        (KWQKHTMLPart::mayCopy):
+        (KWQKHTMLPart::mayPaste):
+        (KWQKHTMLPart::tryCut):
+        (KWQKHTMLPart::tryCopy):
+        (KWQKHTMLPart::tryPaste):
+        (KWQKHTMLPart::sendContextMenuEvent):
+        (KWQKHTMLPart::setWindowHasFocus):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView dispatchHTMLEvent:]):
+        (-[KWQTextAreaTextView cut:]):
+        (-[KWQTextAreaTextView copy:]):
+        (-[KWQTextAreaTextView paste:]):
+        (-[KWQTextAreaTextView pasteAsPlainText:]):
+        (-[KWQTextAreaTextView pasteAsRichText:]):
+        Use the new namespace, types, and use AtomicString instead of event ID.
+
+2005-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4758

@@ -34,6 +34,7 @@
 #include "css/cssvalues.h"
 #include "css/cssstyleselector.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 #include "rendering/render_br.h"
 #include "rendering/render_image.h"
 
@@ -43,6 +44,7 @@ using namespace khtml;
 
 namespace DOM {
 
+using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentPtr *doc)
@@ -116,14 +118,14 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
     // React on clicks and on keypresses.
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
-    if ( ( evt->id() == EventImpl::KHTML_CLICK_EVENT ||
-         ( evt->id() == EventImpl::KEYDOWN_EVENT && m_focused)) && m_isLink) {
+    if ( ( evt->type() == khtmlClickEvent ||
+         ( evt->type() == keydownEvent && m_focused)) && m_isLink) {
         MouseEventImpl *e = 0;
-        if ( evt->id() == EventImpl::KHTML_CLICK_EVENT )
+        if ( evt->type() == khtmlClickEvent )
             e = static_cast<MouseEventImpl*>( evt );
 
         KeyboardEventImpl *k = 0;
-        if (evt->id() == EventImpl::KEYDOWN_EVENT)
+        if (evt->type() == keydownEvent)
             k = static_cast<KeyboardEventImpl *>( evt );
 
         QString utarget;

@@ -33,6 +33,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
+#include "xml/EventNames.h"
 #include "css/cssstyleselector.h"
 #include <kdebug.h>
 #include <qpainter.h>
@@ -51,7 +52,9 @@
 #endif
 
 #include <assert.h>
+
 using namespace DOM;
+using namespace DOM::EventNames;
 using namespace HTMLNames;
 using namespace khtml;
 
@@ -1594,7 +1597,7 @@ bool RenderObject::shouldSelect() const
     NodeImpl *node = selectStartNode(this);
     if (!node)
         return false;
-    return node->dispatchHTMLEvent(DOM::EventImpl::SELECTSTART_EVENT, true, true);
+    return node->dispatchHTMLEvent(selectstartEvent, true, true);
 }
 
 QColor RenderObject::selectionColor(QPainter *p) const

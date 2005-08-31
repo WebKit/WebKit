@@ -65,7 +65,9 @@
 #import "html_miscimpl.h"
 #import "qptrstack.h"
 #import "DOMInternal.h"
+#import "EventNames.h"
 
+using namespace DOM::EventNames;
 using namespace DOM::HTMLNames;
 
 using DOM::DocumentImpl;
@@ -181,18 +183,10 @@ using khtml::VisiblePosition;
 -(ElementImpl *)mouseButtonListener
 {
     // FIXME: Do the continuation search like anchorElement does
-    NodeImpl* elt = m_renderer->element();
-    for ( ; elt; elt = elt->parentNode()) {
-        if (elt->getHTMLEventListener(DOM::EventImpl::KHTML_CLICK_EVENT))
-            return static_cast<HTMLAnchorElementImpl*>(elt);
-            
-        if (elt->getHTMLEventListener(DOM::EventImpl::MOUSEDOWN_EVENT))
-            return static_cast<HTMLAnchorElementImpl*>(elt);
-            
-        if (elt->getHTMLEventListener(DOM::EventImpl::MOUSEUP_EVENT))
-            return static_cast<HTMLAnchorElementImpl*>(elt);
+    for (NodeImpl *elt = m_renderer->element(); elt; elt = elt->parentNode()) {
+        if (elt->getHTMLEventListener(khtmlClickEvent) || elt->getHTMLEventListener(mousedownEvent) || elt->getHTMLEventListener(mouseupEvent))
+            return static_cast<ElementImpl*>(elt);
     }
-    
     return NULL;
 }
 

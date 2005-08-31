@@ -40,6 +40,7 @@
 #include "rendering/render_text.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 #include "css/cssstyleselector.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
@@ -71,8 +72,10 @@
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 using namespace DOM;
+using namespace EventNames;
 using namespace HTMLNames;
 using namespace khtml;
+
 class KHTMLToolTip;
 
 #ifndef QT_NO_TOOLTIP
@@ -428,7 +431,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
         layout();
 #endif
     if ( m_part && m_part->xmlDocImpl() )
-        m_part->xmlDocImpl()->dispatchWindowEvent( EventImpl::RESIZE_EVENT, false, false );
+        m_part->xmlDocImpl()->dispatchWindowEvent( EventNames::resizeEvent, false, false );
 
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
@@ -794,7 +797,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
         d->clickNode->ref();
 #endif    
 
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.get(),true,
+    bool swallowEvent = dispatchMouseEvent(mousedownEvent,mev.innerNode.get(),true,
                                            d->clickCount,_mouse,true,DOM::NodeImpl::MousePress);
 
     if (!swallowEvent) {
@@ -841,11 +844,11 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
         return;
 
     d->clickCount = _mouse->clickCount();
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.get(),true,
+    bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
 
     if (mev.innerNode == d->clickNode)
-        dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.get(),true,
+        dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
 			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
 
     // Qt delivers a release event AND a double click event.
@@ -861,7 +864,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     // single and double-click events as separate (only the detail, i.e. number of clicks differs)
     // In other words an even detail value for a mouse click event means a double click, and an
     // odd detail value means a single click
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEDOWN_EVENT,mev.innerNode.get(),true,
+    bool swallowEvent = dispatchMouseEvent(mousedownEvent,mev.innerNode.get(),true,
                                            d->clickCount,_mouse,true,DOM::NodeImpl::MouseDblClick);
 
     if (!swallowEvent) {
@@ -905,7 +908,7 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         return;
 #endif
 
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEMOVE_EVENT,mev.innerNode.get(),false,
+    bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
                                            0,_mouse,true,DOM::NodeImpl::MouseMove);
 
 #if !APPLE_CHANGES
@@ -1066,7 +1069,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
         return;
 #endif
 
-    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.get(),true,
+    bool swallowEvent = dispatchMouseEvent(mouseupEvent,mev.innerNode.get(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
 
     if (d->clickCount > 0 && mev.innerNode == d->clickNode
@@ -1074,7 +1077,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
             && QPoint(d->clickX-xm,d->clickY-ym).manhattanLength() <= QApplication::startDragDistance()
 #endif
         )
-	dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.get(),true,
+	dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
 			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
 
     if (!swallowEvent) {
@@ -1226,7 +1229,7 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
 #endif
 }
 
-bool KHTMLView::dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard)
+bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard)
 {
     int clientX, clientY;
     viewportToContents(loc.x(), loc.y(), clientX, clientY);
@@ -1244,7 +1247,7 @@ bool KHTMLView::dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const 
     bool shiftKey = 0;
     bool metaKey = 0;
     
-    MouseEventImpl *me = new MouseEventImpl(static_cast<EventImpl::EventId>(eventId),
+    MouseEventImpl *me = new MouseEventImpl(eventType,
                                             true, true, m_part->xmlDocImpl()->defaultView(),
                                             0, screenX, screenY, clientX, clientY,
                                             ctrlKey, altKey, shiftKey, metaKey,
@@ -1274,13 +1277,13 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     if (d->dragTarget != newTarget) {
         // note this ordering is explicitly chosen to match WinIE
         if (newTarget) {
-            accept = dispatchDragEvent(EventImpl::DRAGENTER_EVENT, newTarget, loc, clipboard);
+            accept = dispatchDragEvent(dragenterEvent, newTarget, loc, clipboard);
         }
         if (!d->dragTarget.isNull()) {
-            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.get(), loc, clipboard);
+            dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), loc, clipboard);
         }
     } else if (newTarget) {
-        accept = dispatchDragEvent(EventImpl::DRAGOVER_EVENT, newTarget, loc, clipboard);
+        accept = dispatchDragEvent(dragoverEvent, newTarget, loc, clipboard);
     }
     d->dragTarget.reset(newTarget);
 
@@ -1290,7 +1293,7 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
 void KHTMLView::cancelDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
 {
     if (!d->dragTarget.isNull()) {
-        dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.get(), loc, clipboard);
+        dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), loc, clipboard);
     }
     d->dragTarget.reset();
 }
@@ -1299,7 +1302,7 @@ bool KHTMLView::performDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipbo
 {
     bool accept = false;
     if (!d->dragTarget.isNull()) {
-        accept = dispatchDragEvent(EventImpl::DROP_EVENT, d->dragTarget.get(), loc, clipboard);
+        accept = dispatchDragEvent(dropEvent, d->dragTarget.get(), loc, clipboard);
     }
     d->dragTarget.reset();
     return accept;
@@ -1791,7 +1794,7 @@ void KHTMLView::addFormCompletionItem(const QString &name, const QString &value)
 
 #endif
 
-bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool cancelable,
+bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, DOM::NodeImpl *targetNode, bool cancelable,
 				   int detail,QMouseEvent *_mouse, bool setUnder,
 				   int mouseEventType)
 {
@@ -1849,7 +1852,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 	    // send mouseout event to the old node
 	    if (oldUnder){
 		oldUnder->ref();
-		MouseEventImpl *me = new MouseEventImpl(EventImpl::MOUSEOUT_EVENT,
+		MouseEventImpl *me = new MouseEventImpl(mouseoutEvent,
 							true,true,m_part->xmlDocImpl()->defaultView(),
 							0,screenX,screenY,clientX,clientY,
 							ctrlKey,altKey,shiftKey,metaKey,
@@ -1859,7 +1862,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 
 	    // send mouseover event to the new node
 	    if (targetNode) {
-		MouseEventImpl *me = new MouseEventImpl(EventImpl::MOUSEOVER_EVENT,
+		MouseEventImpl *me = new MouseEventImpl(mouseoverEvent,
 							true,true,m_part->xmlDocImpl()->defaultView(),
 							0,screenX,screenY,clientX,clientY,
 							ctrlKey,altKey,shiftKey,metaKey,
@@ -1879,7 +1882,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
         // which do a lot of the same stuff.
 
 	// send the actual event
-	MouseEventImpl *me = new MouseEventImpl(static_cast<EventImpl::EventId>(eventId),
+	MouseEventImpl *me = new MouseEventImpl(eventType,
 						true,cancelable,m_part->xmlDocImpl()->defaultView(),
 						detail,screenX,screenY,clientX,clientY,
 						ctrlKey,altKey,shiftKey,metaKey,
@@ -1892,12 +1895,12 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
             swallowEvent = true;
 	me->deref();
 
-	// Special case: If it's a click event, we also send the KHTML_CLICK or KHTML_DBLCLICK event. This is not part
+	// Special case: If it's a click event, we also send the khtmlClickEvent or khtmlDblclickEvent. This is not part
 	// of the DOM specs, but is used for compatibility with the traditional onclick="" and ondblclick="" attributes,
 	// as there is no way to tell the difference between single & double clicks using DOM (only the click count is
-	// stored, which is not necessarily the same)
-	if (eventId == EventImpl::CLICK_EVENT) {
-	    me = new MouseEventImpl(EventImpl::KHTML_CLICK_EVENT,
+	// stored, which is not necessarily the same).
+	if (eventType == clickEvent) {
+	    me = new MouseEventImpl(khtmlClickEvent,
 				    true,cancelable,m_part->xmlDocImpl()->defaultView(),
 				    detail,screenX,screenY,clientX,clientY,
 				    ctrlKey,altKey,shiftKey,metaKey,
@@ -1915,7 +1918,7 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 	    me->deref();
 
             if (d->isDoubleClick) {
-                me = new MouseEventImpl(EventImpl::KHTML_DBLCLICK_EVENT,
+                me = new MouseEventImpl(khtmlDblclickEvent,
                                         true,cancelable,m_part->xmlDocImpl()->defaultView(),
                                         detail,screenX,screenY,clientX,clientY,
                                         ctrlKey,altKey,shiftKey,metaKey,
@@ -1931,9 +1934,9 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 
             // Also send a DOMActivate event, which causes things like form submissions to occur.
             if (!defaultPrevented && !targetNode->disabled())
-                targetNode->dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, detail);
+                targetNode->dispatchUIEvent(DOMActivateEvent, detail);
         }
-        else if (eventId == EventImpl::MOUSEDOWN_EVENT) {
+        else if (eventType == mousedownEvent) {
             // Focus should be shifted on mouse down, not on a click.  -dwh
             // Blur current focus node when a link/button is clicked; this
             // is expected by some sites that rely on onChange handlers running

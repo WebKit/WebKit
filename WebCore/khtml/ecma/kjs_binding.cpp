@@ -31,16 +31,21 @@
 #include "misc/hashmap.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 #include "dom/css_stylesheet.h"
 
 #include <kdebug.h>
 
+using namespace DOM::EventNames;
+
+using DOM::AtomicString;
 using DOM::CSSException;
 using DOM::DOMString;
 using DOM::DocumentImpl;
 using DOM::EventException;
 using DOM::NodeImpl;
 using DOM::RangeException;
+
 using khtml::HashMap;
 using khtml::PointerHash;
 
@@ -180,19 +185,18 @@ bool ScriptInterpreter::wasRunByUserGesture() const
 {
   if ( m_evt )
   {
-    int id = m_evt->id();
+    const AtomicString &type = m_evt->type();
     bool eventOk = ( // mouse events
-      id == DOM::EventImpl::CLICK_EVENT || id == DOM::EventImpl::MOUSEDOWN_EVENT ||
-      id == DOM::EventImpl::MOUSEUP_EVENT || id == DOM::EventImpl::KHTML_DBLCLICK_EVENT ||
-      id == DOM::EventImpl::KHTML_CLICK_EVENT ||
+      type == clickEvent || type == mousedownEvent ||
+      type == mouseupEvent || type == khtmlDblclickEvent ||
+      type == khtmlClickEvent ||
       // keyboard events
-      id == DOM::EventImpl::KEYDOWN_EVENT || id == DOM::EventImpl::KEYPRESS_EVENT ||
-      id == DOM::EventImpl::KEYUP_EVENT ||
+      type == keydownEvent || type == keypressEvent ||
+      type == keyupEvent ||
       // other accepted events
-      id == DOM::EventImpl::SELECT_EVENT || id == DOM::EventImpl::CHANGE_EVENT ||
-      id == DOM::EventImpl::FOCUS_EVENT || id == DOM::EventImpl::BLUR_EVENT ||
-      id == DOM::EventImpl::SUBMIT_EVENT );
-    kdDebug(6070) << "Window.open, smart policy: id=" << id << " eventOk=" << eventOk << endl;
+      type == selectEvent || type == changeEvent ||
+      type == focusEvent || type == blurEvent ||
+      type == submitEvent );
     if (eventOk)
       return true;
   } else // no event

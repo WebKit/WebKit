@@ -53,6 +53,7 @@ namespace DOM {
 
 using khtml::SharedPtr;
 
+class AtomicString;
 class DocumentImpl;
 class ElementImpl;
 class EventImpl;
@@ -266,22 +267,20 @@ public:
 
     void setDocument(DocumentPtr *doc);
 
-    void addEventListener(const DOMString &, EventListener *listener, bool useCapture);
-    void removeEventListener(const DOMString &, EventListener *listener, bool useCapture);
-
-    void addEventListener(int id, EventListener *listener, bool useCapture);
-    void removeEventListener(int id, EventListener *listener, bool useCapture);
-    void removeHTMLEventListener(int id);
-    void setHTMLEventListener(int id, EventListener *listener);
-    EventListener *getHTMLEventListener(int id);
+    void addEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
+    void removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
+    void removeHTMLEventListener(const AtomicString &eventType);
+    void setHTMLEventListener(const AtomicString &eventType, EventListener *listener);
+    EventListener *getHTMLEventListener(const AtomicString &eventType);
     void removeAllEventListeners();
 
     bool dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent = false);
     bool dispatchGenericEvent( EventImpl *evt, int &exceptioncode);
-    bool dispatchHTMLEvent(int _id, bool canBubbleArg, bool cancelableArg);
-    bool dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableArg);
-    bool dispatchMouseEvent(QMouseEvent *e, int overrideId = 0, int overrideDetail = 0);
-    bool dispatchUIEvent(int _id, int detail = 0);
+    bool dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg);
+    bool dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg);
+    bool dispatchMouseEvent(QMouseEvent *e);
+    bool dispatchMouseEvent(QMouseEvent *e, const AtomicString &overrideType, int overrideDetail = 0);
+    bool dispatchUIEvent(const AtomicString &eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     bool dispatchKeyEvent(QKeyEvent *key);
     void dispatchWheelEvent(QWheelEvent *);

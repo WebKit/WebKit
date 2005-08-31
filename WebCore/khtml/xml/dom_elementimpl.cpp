@@ -588,7 +588,7 @@ void ElementImpl::dispatchAttrRemovalEvent(AttributeImpl *attr)
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
     //int exceptioncode = 0;
-//     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
+//     dispatchEvent(new MutationEventImpl(DOMAttrModifiedEvent,true,false,attr,attr->value(),
 // 		  attr->value(), getDocument()->attrName(attr->id()),MutationEvent::REMOVAL),exceptioncode);
 }
 
@@ -597,7 +597,7 @@ void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
 	return;
    // int exceptioncode = 0;
-//     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
+//     dispatchEvent(new MutationEventImpl(DOMAttrModifiedEvent,true,false,attr,attr->value(),
 //                                         attr->value(),getDocument()->attrName(attr->id()),MutationEvent::ADDITION),exceptioncode);
 }
 

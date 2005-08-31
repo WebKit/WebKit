@@ -77,6 +77,8 @@
 		7E6FEEDA0898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEEDB0898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		937C34ED0868E4B4006F4B22 /* parser.y in Sources */ = {isa = PBXBuildFile; fileRef = 934E43780414294A008635CE /* parser.y */; };
+		939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
+		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		93F198A708245E59001E9ABC /* css_base.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F618B040594BA00A80004 /* css_base.h */; };
 		93F198A808245E59001E9ABC /* css_ruleimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D16502DE42E6018635CA /* css_ruleimpl.h */; };
 		93F198A908245E59001E9ABC /* css_stylesheetimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D16702DE42E6018635CA /* css_stylesheetimpl.h */; };
@@ -2228,6 +2230,8 @@
 		9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFontFamily.mm; sourceTree = "<group>"; };
 		93955A4103D72932008635CE /* KWQRenderTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KWQRenderTreeDebug.h; sourceTree = "<group>"; };
 		93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRenderTreeDebug.cpp; sourceTree = "<group>"; };
+		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; };
+		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; };
 		939FF8EC0702B1B100979E5E /* visible_range.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = visible_range.cpp; path = editing/visible_range.cpp; sourceTree = "<group>"; };
 		939FF8ED0702B1B100979E5E /* visible_range.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = visible_range.h; path = editing/visible_range.h; sourceTree = "<group>"; };
 		93ABCE5D06E1A42E0085925B /* formdata.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = formdata.cpp; sourceTree = "<group>"; };
@@ -5510,6 +5514,8 @@
 		F523D32402DE4478018635CA /* xml */ = {
 			isa = PBXGroup;
 			children = (
+				939885C108B7E3D100E707C4 /* EventNames.cpp */,
+				939885C208B7E3D100E707C4 /* EventNames.h */,
 				550A0BC7085F6039007353D6 /* dom_qname.cpp */,
 				550A0BC8085F6039007353D6 /* dom_qname.h */,
 				BC3B364505C9D5E200E42902 /* dom_atomicstring.cpp */,
@@ -6221,6 +6227,7 @@
 				BC179894088D975F006068A5 /* render_theme.h in Headers */,
 				BC1798DA088DA4F8006068A5 /* render_theme_mac.h in Headers */,
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
+				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8326,6 +8333,7 @@
 				BC179892088D975F006068A5 /* render_theme_mac.mm in Sources */,
 				BC179893088D975F006068A5 /* render_theme.cpp in Sources */,
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,
+				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

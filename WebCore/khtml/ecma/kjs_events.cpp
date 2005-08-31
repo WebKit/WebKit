@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -18,21 +17,29 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "khtml_part.h"
-#include "kjs_window.h"
+
+#include <kjs/protected_object.h> // temporary, remove after landing interpreter lock patch
+
 #include "kjs_events.h"
 #include "kjs_events.lut.h"
+
+#include "khtml_part.h"
+#include "kjs_window.h"
 #include "kjs_views.h"
 #include "kjs_proxy.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"
+#include "xml/EventNames.h"
 #include "rendering/render_object.h"
 #include "misc/loader.h"
 
 #include <kdebug.h>
 
+using namespace DOM::EventNames;
+
+using DOM::AtomicString;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentImpl;
 using DOM::EventImpl;
@@ -344,9 +351,9 @@ void JSLazyEventListener::parseCode() const
   }
 }
 
-ValueImp *getNodeEventListener(NodeImpl *n, int eventId)
+ValueImp *getNodeEventListener(NodeImpl *n, const AtomicString &eventType)
 {
-  JSAbstractEventListener *listener = static_cast<JSAbstractEventListener *>(n->getHTMLEventListener(eventId));
+  JSAbstractEventListener *listener = static_cast<JSAbstractEventListener *>(n->getHTMLEventListener(eventType));
   if (listener)
     if (ValueImp *obj = listener->listenerObjImp())
       return obj;
@@ -454,7 +461,7 @@ ValueImp *DOMEvent::getValueProperty(ExecState *exec, int token) const
   EventImpl &event = *m_impl;
   switch (token) {
   case Type:
-    return String(event.type());
+    return String(event.type().domString());
   case Target:
   case SrcElement: /*MSIE extension - "the object that fired the event"*/
     return getDOMNode(exec, event.target());
@@ -536,7 +543,7 @@ ValueImp *DOMEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp * thisObj
       event.preventDefault();
       return Undefined();
     case DOMEvent::InitEvent:
-      event.initEvent(args[0]->toString(exec).domString(),args[1]->toBoolean(exec),args[2]->toBoolean(exec));
+      event.initEvent(AtomicString(args[0]->toString(exec).domString()), args[1]->toBoolean(exec), args[2]->toBoolean(exec));
       return Undefined();
   };
   return Undefined();
@@ -678,7 +685,7 @@ ValueImp *DOMUIEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisOb
   UIEventImpl &uiEvent = *static_cast<UIEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMUIEvent::InitUIEvent:
-      uiEvent.initUIEvent(args[0]->toString(exec).domString(),
+      uiEvent.initUIEvent(AtomicString(args[0]->toString(exec).domString()),
                           args[1]->toBoolean(exec),
                           args[2]->toBoolean(exec),
                           toAbstractView(args[3]),
@@ -788,15 +795,10 @@ ValueImp *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
     return Number(event.button());
   case ToElement:
     // MSIE extension - "the object toward which the user is moving the mouse pointer"
-    if (event.id() == DOM::EventImpl::MOUSEOUT_EVENT)
-      return getDOMNode(exec, event.relatedTarget());
-    return getDOMNode(exec,event.target());
+    return getDOMNode(exec, event.type() == mouseoutEvent ? event.relatedTarget() : event.target());
   case FromElement:
-    // MSIE extension - "object from which activation
-    // or the mouse pointer is exiting during the event" (huh?)
-    if (event.id() == DOM::EventImpl::MOUSEOUT_EVENT)
-      return getDOMNode(exec, event.target());
-    /* fall through */
+    // MSIE extension - "object from which activation or the mouse pointer is exiting during the event" (huh?)
+    return getDOMNode(exec, event.type() == mouseoutEvent ? event.target() : event.relatedTarget());
   case RelatedTarget:
     return getDOMNode(exec, event.relatedTarget());
   default:
@@ -812,7 +814,7 @@ ValueImp *DOMMouseEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thi
   MouseEventImpl &mouseEvent = *static_cast<MouseEventImpl *>(static_cast<DOMMouseEvent *>(thisObj)->impl());
   switch (id) {
     case DOMMouseEvent::InitMouseEvent:
-      mouseEvent.initMouseEvent(args[0]->toString(exec).domString(), // typeArg
+      mouseEvent.initMouseEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg
                                 args[1]->toBoolean(exec), // canBubbleArg
                                 args[2]->toBoolean(exec), // cancelableArg
                                 toAbstractView(args[3]), // viewArg
@@ -905,7 +907,7 @@ ValueImp *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
   KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMKeyboardEvent::InitKeyboardEvent:
-      event.initKeyboardEvent(args[0]->toString(exec).domString(), // typeArg
+      event.initKeyboardEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg
                               args[1]->toBoolean(exec), // canBubbleArg
                               args[2]->toBoolean(exec), // cancelableArg
                               toAbstractView(args[3]), // viewArg
@@ -1008,7 +1010,7 @@ ValueImp *DOMMutationEventProtoFunc::callAsFunction(ExecState *exec, ObjectImp *
   MutationEventImpl &mutationEvent = *static_cast<MutationEventImpl *>(static_cast<DOMEvent *>(thisObj)->impl());
   switch (id) {
     case DOMMutationEvent::InitMutationEvent:
-      mutationEvent.initMutationEvent(args[0]->toString(exec).domString(), // typeArg,
+      mutationEvent.initMutationEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg,
                                       args[1]->toBoolean(exec), // canBubbleArg
                                       args[2]->toBoolean(exec), // cancelableArg
                                       toNode(args[3]), // relatedNodeArg

@@ -65,6 +65,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_position.h"
+#include "xml/EventNames.h"
 #include "html/html_documentimpl.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
@@ -76,6 +77,9 @@
 // isnan are not defined.
 #include <cmath>
 
+using namespace DOM::EventNames;
+
+using DOM::AtomicString;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
@@ -885,59 +889,59 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
      }
      return getDOMNode(exec, m_part->xmlDocImpl());
    case Onabort:
-     return getListener(exec, DOM::EventImpl::ABORT_EVENT);
+     return getListener(exec, abortEvent);
    case Onblur:
-     return getListener(exec, DOM::EventImpl::BLUR_EVENT);
+     return getListener(exec, blurEvent);
    case Onchange:
-     return getListener(exec, DOM::EventImpl::CHANGE_EVENT);
+     return getListener(exec, changeEvent);
    case Onclick:
-     return getListener(exec, DOM::EventImpl::KHTML_CLICK_EVENT);
+     return getListener(exec, khtmlClickEvent);
    case Ondblclick:
-     return getListener(exec, DOM::EventImpl::KHTML_DBLCLICK_EVENT);
+     return getListener(exec, khtmlDblclickEvent);
    case Ondragdrop:
-     return getListener(exec, DOM::EventImpl::KHTML_DRAGDROP_EVENT);
+     return getListener(exec, khtmlDragdropEvent);
    case Onerror:
-     return getListener(exec, DOM::EventImpl::KHTML_ERROR_EVENT);
+     return getListener(exec, khtmlErrorEvent);
    case Onfocus:
-     return getListener(exec, DOM::EventImpl::FOCUS_EVENT);
+     return getListener(exec, focusEvent);
    case Onkeydown:
-     return getListener(exec, DOM::EventImpl::KEYDOWN_EVENT);
+     return getListener(exec, keydownEvent);
    case Onkeypress:
-     return getListener(exec, DOM::EventImpl::KEYPRESS_EVENT);
+     return getListener(exec, keypressEvent);
    case Onkeyup:
-     return getListener(exec, DOM::EventImpl::KEYUP_EVENT);
+     return getListener(exec, keyupEvent);
    case Onload:
-     return getListener(exec, DOM::EventImpl::LOAD_EVENT);
+     return getListener(exec, loadEvent);
    case Onmousedown:
-     return getListener(exec, DOM::EventImpl::MOUSEDOWN_EVENT);
+     return getListener(exec, mousedownEvent);
    case Onmousemove:
-     return getListener(exec, DOM::EventImpl::MOUSEMOVE_EVENT);
+     return getListener(exec, mousemoveEvent);
    case Onmouseout:
-     return getListener(exec, DOM::EventImpl::MOUSEOUT_EVENT);
+     return getListener(exec, mouseoutEvent);
    case Onmouseover:
-     return getListener(exec, DOM::EventImpl::MOUSEOVER_EVENT);
+     return getListener(exec, mouseoverEvent);
    case Onmouseup:
-     return getListener(exec, DOM::EventImpl::MOUSEUP_EVENT);
+     return getListener(exec, mouseupEvent);
    case OnWindowMouseWheel:
-     return getListener(exec, DOM::EventImpl::MOUSEWHEEL_EVENT);
+     return getListener(exec, mousewheelEvent);
    case Onmove:
-     return getListener(exec, DOM::EventImpl::KHTML_MOVE_EVENT);
+     return getListener(exec, khtmlMoveEvent);
    case Onreset:
-     return getListener(exec, DOM::EventImpl::RESET_EVENT);
+     return getListener(exec, resetEvent);
    case Onresize:
-     return getListener(exec,DOM::EventImpl::RESIZE_EVENT);
+     return getListener(exec,resizeEvent);
    case Onscroll:
-     return getListener(exec,DOM::EventImpl::SCROLL_EVENT);
+     return getListener(exec,scrollEvent);
 #if APPLE_CHANGES
    case Onsearch:
-     return getListener(exec,DOM::EventImpl::SEARCH_EVENT);
+     return getListener(exec,searchEvent);
 #endif
    case Onselect:
-     return getListener(exec,DOM::EventImpl::SELECT_EVENT);
+     return getListener(exec,selectEvent);
    case Onsubmit:
-     return getListener(exec,DOM::EventImpl::SUBMIT_EVENT);
+     return getListener(exec,submitEvent);
    case Onunload:
-     return getListener(exec,DOM::EventImpl::UNLOAD_EVENT);
+     return getListener(exec,scrollEvent);
    }
    assert(0);
    return Undefined();
@@ -1123,109 +1127,109 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
     }
     case Onabort:
       if (isSafeScript(exec))
-        setListener(exec, DOM::EventImpl::ABORT_EVENT,value);
+        setListener(exec, abortEvent,value);
       return;
     case Onblur:
       if (isSafeScript(exec))
-        setListener(exec, DOM::EventImpl::BLUR_EVENT,value);
+        setListener(exec, blurEvent,value);
       return;
     case Onchange:
       if (isSafeScript(exec))
-        setListener(exec, DOM::EventImpl::CHANGE_EVENT,value);
+        setListener(exec, changeEvent,value);
       return;
     case Onclick:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_CLICK_EVENT,value);
+        setListener(exec,khtmlClickEvent,value);
       return;
     case Ondblclick:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_DBLCLICK_EVENT,value);
+        setListener(exec,khtmlDblclickEvent,value);
       return;
     case Ondragdrop:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_DRAGDROP_EVENT,value);
+        setListener(exec,khtmlDragdropEvent,value);
       return;
     case Onerror:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_ERROR_EVENT,value);
+        setListener(exec,khtmlErrorEvent,value);
       return;
     case Onfocus:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::FOCUS_EVENT,value);
+        setListener(exec,focusEvent,value);
       return;
     case Onkeydown:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KEYDOWN_EVENT,value);
+        setListener(exec,keydownEvent,value);
       return;
     case Onkeypress:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KEYPRESS_EVENT,value);
+        setListener(exec,keypressEvent,value);
       return;
     case Onkeyup:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KEYUP_EVENT,value);
+        setListener(exec,keyupEvent,value);
       return;
     case Onload:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::LOAD_EVENT,value);
+        setListener(exec,loadEvent,value);
       return;
     case Onmousedown:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::MOUSEDOWN_EVENT,value);
+        setListener(exec,mousedownEvent,value);
       return;
     case Onmousemove:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::MOUSEMOVE_EVENT,value);
+        setListener(exec,mousemoveEvent,value);
       return;
     case Onmouseout:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::MOUSEOUT_EVENT,value);
+        setListener(exec,mouseoutEvent,value);
       return;
     case Onmouseover:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::MOUSEOVER_EVENT,value);
+        setListener(exec,mouseoverEvent,value);
       return;
     case Onmouseup:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::MOUSEUP_EVENT,value);
+        setListener(exec,mouseupEvent,value);
       return;
     case OnWindowMouseWheel:
       if (isSafeScript(exec))
-        setListener(exec, DOM::EventImpl::MOUSEWHEEL_EVENT,value);
+        setListener(exec, mousewheelEvent,value);
       return;
     case Onmove:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT,value);
+        setListener(exec,khtmlMoveEvent,value);
       return;
     case Onreset:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::RESET_EVENT,value);
+        setListener(exec,resetEvent,value);
       return;
     case Onresize:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::RESIZE_EVENT,value);
+        setListener(exec,resizeEvent,value);
       return;
     case Onscroll:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::SCROLL_EVENT,value);
+        setListener(exec,scrollEvent,value);
       return;
 #if APPLE_CHANGES
     case Onsearch:
         if (isSafeScript(exec))
-            setListener(exec,DOM::EventImpl::SEARCH_EVENT,value);
+            setListener(exec,searchEvent,value);
         return;
 #endif
     case Onselect:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::SELECT_EVENT,value);
+        setListener(exec,selectEvent,value);
       return;
     case Onsubmit:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::SUBMIT_EVENT,value);
+        setListener(exec,submitEvent,value);
       return;
     case Onunload:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::UNLOAD_EVENT,value);
+        setListener(exec,scrollEvent,value);
       return;
     case Name:
       if (isSafeScript(exec))
@@ -1422,7 +1426,7 @@ bool Window::isSafeScript(ExecState *exec) const
   return false;
 }
 
-void Window::setListener(ExecState *exec, int eventId, ValueImp *func)
+void Window::setListener(ExecState *exec, const AtomicString &eventType, ValueImp *func)
 {
   if (!isSafeScript(exec))
     return;
@@ -1430,10 +1434,10 @@ void Window::setListener(ExecState *exec, int eventId, ValueImp *func)
   if (!doc)
     return;
 
-  doc->setHTMLWindowEventListener(eventId,getJSEventListener(func,true));
+  doc->setHTMLWindowEventListener(eventType, getJSEventListener(func,true));
 }
 
-ValueImp *Window::getListener(ExecState *exec, int eventId) const
+ValueImp *Window::getListener(ExecState *exec, const AtomicString &eventType) const
 {
   if (!isSafeScript(exec))
     return Undefined();
@@ -1441,7 +1445,7 @@ ValueImp *Window::getListener(ExecState *exec, int eventId) const
   if (!doc)
     return Undefined();
 
-  DOM::EventListener *listener = doc->getHTMLWindowEventListener(eventId);
+  DOM::EventListener *listener = doc->getHTMLWindowEventListener(eventType);
   if (listener && static_cast<JSEventListener*>(listener)->listenerObjImp())
     return static_cast<JSEventListener*>(listener)->listenerObj();
   else
@@ -1987,28 +1991,20 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
 
     // Do nothing for now. These are NS-specific legacy calls.
     break;
-  case Window::AddEventListener: {
+  case Window::AddEventListener:
         if (!window->isSafeScript(exec))
 	    return Undefined();
-        JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        if (listener) {
-	    DocumentImpl* docimpl = part->xmlDocImpl();
-            if (docimpl)
-                docimpl->addWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).domString()),listener,args[2]->toBoolean(exec));
-        }
+        if (JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]))
+            if (DocumentImpl *doc = part->xmlDocImpl())
+                doc->addWindowEventListener(AtomicString(args[0]->toString(exec).domString()), listener, args[2]->toBoolean(exec));
         return Undefined();
-    }
-  case Window::RemoveEventListener: {
+  case Window::RemoveEventListener:
         if (!window->isSafeScript(exec))
 	    return Undefined();
-        JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
-        if (listener) {
-	    DocumentImpl* docimpl = part->xmlDocImpl();
-            if (docimpl)
-                docimpl->removeWindowEventListener(DOM::EventImpl::typeToId(args[0]->toString(exec).domString()),listener,args[2]->toBoolean(exec));
-        }
+        if (JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]))
+            if (DocumentImpl *doc = part->xmlDocImpl())
+                doc->addWindowEventListener(AtomicString(args[0]->toString(exec).domString()), listener, args[2]->toBoolean(exec));
         return Undefined();
-    }
   case Window::ShowModalDialog:
     return showModalDialog(exec, window, args);
   }

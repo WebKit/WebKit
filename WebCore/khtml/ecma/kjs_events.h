@@ -95,7 +95,7 @@ namespace KJS {
     DOM::NodeImpl *originalNode;
   };
 
-  ValueImp *getNodeEventListener(DOM::NodeImpl *n, int eventId);
+  ValueImp *getNodeEventListener(DOM::NodeImpl *n, const DOM::AtomicString &eventType);
 
   // Constructor for Event - currently only used for some global vars
   class EventConstructor : public DOMObject {

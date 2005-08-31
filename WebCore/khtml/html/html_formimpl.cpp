@@ -41,6 +41,7 @@
 #include "css/csshelper.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 #include "khtml_ext.h"
 
 #include "rendering/render_form.h"
@@ -67,6 +68,7 @@ using namespace khtml;
 
 namespace DOM {
 
+using namespace EventNames;
 using namespace HTMLNames;
 
 struct FormDataListItem {
@@ -507,7 +509,7 @@ bool HTMLFormElementImpl::prepareSubmit()
     m_insubmit = true;
     m_doingsubmit = false;
 
-    if ( dispatchHTMLEvent(EventImpl::SUBMIT_EVENT,false,true) && !m_doingsubmit )
+    if ( dispatchHTMLEvent(submitEvent,false,true) && !m_doingsubmit )
         m_doingsubmit = true;
 
     m_insubmit = false;
@@ -616,7 +618,7 @@ void HTMLFormElementImpl::reset(  )
 
     // ### DOM2 labels this event as not cancelable, however
     // common browsers( sick! ) allow it be cancelled.
-    if ( !dispatchHTMLEvent(EventImpl::RESET_EVENT,true, true) ) {
+    if ( !dispatchHTMLEvent(resetEvent,true, true) ) {
         m_inreset = false;
         return;
     }
@@ -663,10 +665,10 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = strcasecmp( attr->value(), "off" );
     } else if (attr->name() == onsubmitAttr) {
-        setHTMLEventListener(EventImpl::SUBMIT_EVENT,
+        setHTMLEventListener(submitEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onresetAttr) {
-        setHTMLEventListener(EventImpl::RESET_EVENT,
+        setHTMLEventListener(resetEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == nameAttr) {
         DOMString newNameAttr = attr->value();
@@ -1003,13 +1005,13 @@ void HTMLGenericFormElementImpl::setOverrideName(const DOMString& value)
 void HTMLGenericFormElementImpl::onSelect()
 {
     // ### make this work with new form events architecture
-    dispatchHTMLEvent(EventImpl::SELECT_EVENT,true,false);
+    dispatchHTMLEvent(selectEvent,true,false);
 }
 
 void HTMLGenericFormElementImpl::onChange()
 {
     // ### make this work with new form events architecture
-    dispatchHTMLEvent(EventImpl::CHANGE_EVENT,true,false);
+    dispatchHTMLEvent(changeEvent,true,false);
 }
 
 bool HTMLGenericFormElementImpl::disabled() const
@@ -1082,7 +1084,7 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
     {
         // Report focus in/out changes to the browser extension (editable widgets only)
         KHTMLPart *part = getDocument()->part();
-        if (evt->id()==EventImpl::DOMFOCUSIN_EVENT && isEditable() && part && m_render && m_render->isWidget()) {
+        if (evt->type()==DOMFocusInEvent && isEditable() && part && m_render && m_render->isWidget()) {
             KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>(part->browserExtension());
             QWidget *widget = static_cast<RenderWidget*>(m_render)->widget();
             if (ext)
@@ -1093,8 +1095,8 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
 	// We don't want this default key event handling, we'll count on
 	// Cocoa event dispatch if the event doesn't get blocked.
 #else
-	if (evt->id()==EventImpl::KEYDOWN_EVENT ||
-	    evt->id()==EventImpl::KEYUP_EVENT)
+	if (evt->type()==keydownEvent ||
+	    evt->type()==keyupEvent)
 	{
 	    KeyboardEventImpl * k = static_cast<KeyboardEventImpl *>(evt);
 	    if (k->keyVal() == QChar('\n').unicode() && m_render && m_render->isWidget() && k->qKeyEvent)
@@ -1102,7 +1104,7 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
 	}
 #endif
 
-	if (evt->id()==EventImpl::DOMFOCUSOUT_EVENT && isEditable() && part && m_render && m_render->isWidget()) {
+	if (evt->type()==DOMFocusOutEvent && isEditable() && part && m_render && m_render->isWidget()) {
 	    KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>(part->browserExtension());
 	    QWidget *widget = static_cast<RenderWidget*>(m_render)->widget();
 	    if (ext)
@@ -1235,10 +1237,10 @@ void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // Do nothing.
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::FOCUS_EVENT,
+        setHTMLEventListener(focusEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(EventImpl::BLUR_EVENT,
+        setHTMLEventListener(blurEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
@@ -1246,7 +1248,7 @@ void HTMLButtonElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 void HTMLButtonElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    if (m_type != BUTTON && (evt->id() == EventImpl::DOMACTIVATE_EVENT)) {
+    if (m_type != BUTTON && (evt->type() == DOMActivateEvent)) {
 
         if(m_form && m_type == SUBMIT) {
             m_activeSubmit = true;
@@ -1829,25 +1831,25 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == heightAttr) {
         addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::FOCUS_EVENT,
+        setHTMLEventListener(focusEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(EventImpl::BLUR_EVENT,
+        setHTMLEventListener(blurEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onselectAttr) {
-        setHTMLEventListener(EventImpl::SELECT_EVENT,
+        setHTMLEventListener(selectEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(EventImpl::CHANGE_EVENT,
+        setHTMLEventListener(changeEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oninputAttr) {
-        setHTMLEventListener(EventImpl::INPUT_EVENT,
+        setHTMLEventListener(inputEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     }
     // Search field and slider attributes all just cause updateFromElement to be called through style
     // recalcing.
     else if (attr->name() == onsearchAttr) {
-        setHTMLEventListener(EventImpl::SEARCH_EVENT,
+        setHTMLEventListener(searchEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == resultsAttr) {
         m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
@@ -2235,7 +2237,7 @@ void HTMLInputElementImpl::setValueFromRenderer(const DOMString &value)
     m_valueMatchesRenderer = true;
     
     // Fire the "input" DOM event.
-    dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);
+    dispatchHTMLEvent(inputEvent, true, false);
 }
 
 bool HTMLInputElementImpl::storesValueSeparateFromAttribute() const
@@ -2277,7 +2279,7 @@ void HTMLInputElementImpl::focus()
 
 void HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent() && evt->id() == EventImpl::CLICK_EVENT && static_cast<MouseEventImpl*>(evt)->button() == 0) {
+    if (evt->isMouseEvent() && evt->type() == clickEvent && static_cast<MouseEventImpl*>(evt)->button() == 0) {
         if (m_type == CHECKBOX || m_type == RADIO)
             setChecked(!checked());
     }
@@ -2286,7 +2288,7 @@ void HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->isMouseEvent() &&
-        ( evt->id() == EventImpl::KHTML_CLICK_EVENT || evt->id() == EventImpl::KHTML_DBLCLICK_EVENT ) &&
+        ( evt->type() == khtmlClickEvent || evt->type() == khtmlDblclickEvent ) &&
         m_type == IMAGE
         && m_render) {
         // record the mouse position for when we get the DOMActivate event
@@ -2303,7 +2305,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
     // actually submitting the form. For reset inputs, the form is reset. These events are sent when the user clicks
     // on the element, or presses enter while it is the active element. Javacsript code wishing to activate the element
     // must dispatch a DOMActivate event - a click event will not do the job.
-    if (evt->id() == EventImpl::DOMACTIVATE_EVENT) {
+    if (evt->type() == DOMActivateEvent) {
         if (m_type == IMAGE || m_type == SUBMIT || m_type == RESET) {
             if (!m_form)
                 return;
@@ -2323,7 +2325,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 #if APPLE_CHANGES
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->id() == EventImpl::KEYPRESS_EVENT && evt->isKeyboardEvent()) {
+    if (evt->type() == keypressEvent && evt->isKeyboardEvent()) {
         bool clickElement = false;
         bool clickDefaultFormButton = false;
 
@@ -2550,10 +2552,10 @@ bool HTMLLabelElementImpl::isFocusable() const
 void HTMLLabelElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::FOCUS_EVENT,
+        setHTMLEventListener(focusEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(EventImpl::BLUR_EVENT,
+        setHTMLEventListener(blurEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -2971,13 +2973,13 @@ void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // FIXME: ignore for the moment
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::FOCUS_EVENT,
+        setHTMLEventListener(focusEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(EventImpl::BLUR_EVENT,
+        setHTMLEventListener(blurEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(EventImpl::CHANGE_EVENT,
+        setHTMLEventListener(changeEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);
@@ -3156,7 +3158,7 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
 {
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->id() == EventImpl::KEYPRESS_EVENT) {
+    if (evt->type() == keypressEvent) {
     
         if (!m_form || !m_render || !evt->isKeyboardEvent())
             return;
@@ -3578,16 +3580,16 @@ void HTMLTextAreaElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == accesskeyAttr) {
         // ignore for the moment
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::FOCUS_EVENT,
+        setHTMLEventListener(focusEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(EventImpl::BLUR_EVENT,
+        setHTMLEventListener(blurEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onselectAttr) {
-        setHTMLEventListener(EventImpl::SELECT_EVENT,
+        setHTMLEventListener(selectEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onchangeAttr) {
-        setHTMLEventListener(EventImpl::CHANGE_EVENT,
+        setHTMLEventListener(changeEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLGenericFormElementImpl::parseMappedAttribute(attr);

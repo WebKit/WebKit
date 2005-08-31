@@ -39,11 +39,12 @@
 #include "khtml_part.h"
 #include "xml/dom_docimpl.h" // ### remove dependency
 #include "xml/dom_position.h"
+#include "xml/EventNames.h"
 #include <kdebug.h>
 
 using namespace khtml;
 using namespace DOM;
-
+using namespace DOM::EventNames;
 
 RenderReplaced::RenderReplaced(DOM::NodeImpl* node)
     : RenderBox(node)
@@ -358,7 +359,7 @@ void RenderWidget::sendConsumedMouseUp(const QPoint &mousePos, int button, int s
     RenderArena *arena = ref();
     QMouseEvent e( QEvent::MouseButtonRelease, mousePos, button, state);
 
-    element()->dispatchMouseEvent(&e, EventImpl::MOUSEUP_EVENT, 0);
+    element()->dispatchMouseEvent(&e, mouseupEvent, 0);
     deref(arena);
 }
 #endif
@@ -522,20 +523,20 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 //         m_state  = _e->state();
 //         QMouseEvent e2(e->type(),QPoint(absX,absY)+_e->pos(),_e->button(),_e->state());
 
-//         elem->dispatchMouseEvent(&e2,EventImpl::MOUSEUP_EVENT,m_clickCount);
+//         elem->dispatchMouseEvent(&e2,mouseupEvent,m_clickCount);
 
 //         if((m_mousePos - e2.pos()).manhattanLength() <= QApplication::startDragDistance()) {
 //             // DOM2 Events section 1.6.2 says that a click is if the mouse was pressed
 //             // and released in the "same screen location"
 //             // As people usually can't click on the same pixel, we're a bit tolerant here
-//             elem->dispatchMouseEvent(&e2,EventImpl::CLICK_EVENT,m_clickCount);
+//             elem->dispatchMouseEvent(&e2,clickEvent,m_clickCount);
 //         }
 
 //         if(!isRenderButton()) {
 //             // ### DOMActivate is also dispatched for thigs like selects & textareas -
 //             // not sure if this is correct
-//             elem->dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT,m_isDoubleClick ? 2 : 1);
-//             elem->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
+//             elem->dispatchUIEvent(DOMActivateEvent,m_isDoubleClick ? 2 : 1);
+//             elem->dispatchMouseEvent(&e2, m_isDoubleClick ? khtmlDblclickEvent : khtmlClickEvent, m_clickCount);
 //             m_isDoubleClick = false;
 //         }
 //         else

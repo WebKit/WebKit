@@ -28,25 +28,26 @@
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom2_viewsimpl.h"
+#include "xml/EventNames.h"
 #include "rendering/render_object.h"
 #include "rendering/render_layer.h"
 
 #include <kdebug.h>
 
-using namespace DOM;
-
 using khtml::RenderObject;
+
+using namespace DOM::EventNames;
+
+namespace DOM {
 
 EventImpl::EventImpl()
 {
-    m_type = 0;
     m_canBubble = false;
     m_cancelable = false;
 
     m_propagationStopped = false;
     m_defaultPrevented = false;
     m_cancelBubble = false;
-    m_id = UNKNOWN_EVENT;
     m_currentTarget = 0;
     m_eventPhase = 0;
     m_target = 0;
@@ -54,19 +55,15 @@ EventImpl::EventImpl()
     m_defaultHandled = false;
 }
 
-EventImpl::EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg)
+EventImpl::EventImpl(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
+    : m_type(eventType)
 {
-    DOMString t = EventImpl::idToType(_id);
-    m_type = t.impl();
-    if (m_type)
-	m_type->ref();
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
 
     m_propagationStopped = false;
     m_defaultPrevented = false;
     m_cancelBubble = false;
-    m_id = _id;
     m_currentTarget = 0;
     m_eventPhase = 0;
     m_target = 0;
@@ -76,20 +73,8 @@ EventImpl::EventImpl(EventId _id, bool canBubbleArg, bool cancelableArg)
 
 EventImpl::~EventImpl()
 {
-    if (m_type)
-        m_type->deref();
     if (m_target)
         m_target->deref();
-}
-
-DOMString EventImpl::type() const
-{
-    return m_type;
-}
-
-NodeImpl *EventImpl::target() const
-{
-    return m_target;
 }
 
 void EventImpl::setTarget(NodeImpl *_target)
@@ -101,46 +86,11 @@ void EventImpl::setTarget(NodeImpl *_target)
         m_target->ref();
 }
 
-NodeImpl *EventImpl::currentTarget() const
-{
-    return m_currentTarget;
-}
-
-void EventImpl::setCurrentTarget(NodeImpl *_currentTarget)
-{
-    m_currentTarget = _currentTarget;
-}
-
-unsigned short EventImpl::eventPhase() const
-{
-    return m_eventPhase;
-}
-
-void EventImpl::setEventPhase(unsigned short _eventPhase)
-{
-    m_eventPhase = _eventPhase;
-}
-
-bool EventImpl::bubbles() const
-{
-    return m_canBubble;
-}
-
-bool EventImpl::cancelable() const
-{
-    return m_cancelable;
-}
-
 DOMTimeStamp EventImpl::timeStamp()
 {
     QDateTime epoch(QDate(1970,1,1),QTime(0,0));
     // ### kjs does not yet support long long (?) so the value wraps around
     return epoch.secsTo(m_createTime)*1000+m_createTime.time().msec();
-}
-
-void EventImpl::stopPropagation()
-{
-    m_propagationStopped = true;
 }
 
 void EventImpl::preventDefault()
@@ -149,118 +99,13 @@ void EventImpl::preventDefault()
 	m_defaultPrevented = true;
 }
 
-void EventImpl::initEvent(const DOMString &eventTypeArg, bool canBubbleArg, bool cancelableArg)
+void EventImpl::initEvent(const AtomicString &eventTypeArg, bool canBubbleArg, bool cancelableArg)
 {
     // ### ensure this is not called after we have been dispatched (also for subclasses)
 
-    if (m_type)
-	m_type->deref();
-
-    m_type = eventTypeArg.impl();
-    if (m_type)
-	m_type->ref();
-
-    m_id = typeToId(eventTypeArg);
-
+    m_type = eventTypeArg;
     m_canBubble = canBubbleArg;
     m_cancelable = cancelableArg;
-}
-
-static const char * const eventNames[EventImpl::numEventIds] = {
-    0,
-    "DOMFocusIn",
-    "DOMFocusOut",
-    "DOMActivate",
-    "click",
-    "mousedown",
-    "mouseup",
-    "mouseover",
-    "mousemove",
-    "mouseout",
-    "onbeforecut",
-    "oncut",
-    "onbeforecopy",
-    "oncopy",
-    "onbeforepaste",
-    "onpaste",
-    "dragenter",
-    "dragover",
-    "dragleave",
-    "drop",
-    "dragstart",
-    "drag",
-    "dragend",
-    "selectstart",
-    "DOMSubtreeModified",
-    "DOMNodeInserted",
-    "DOMNodeRemoved",
-    "DOMNodeRemovedFromDocument",
-    "DOMNodeInsertedIntoDocument",
-    "DOMAttrModified",
-    "DOMCharacterDataModified",
-    "load",
-    "unload",
-    "abort",
-    "error",
-    "select",
-    "change",
-    "submit",
-    "reset",
-    "focus",
-    "blur",
-    "resize",
-    "scroll",
-    "contextmenu",
-#if APPLE_CHANGES
-    "search",
-#endif
-    "input",
-    "keydown",
-    "keyup",
-    "textInput", // FIXME: is the capital I correct?
-    0, // KHTML_DBLCLICK_EVENT
-    0, // KHTML_CLICK_EVENT
-    0, // KHTML_DRAGDROP_EVENT
-    0, // KHTML_ERROR_EVENT
-    "keypress",
-    0, // KHTML_MOVE_EVENT
-    0, // KHTML_ORIGCLICK_MOUSEUP_EVENT
-    "readystatechange",
-    "mousewheel",
-    0, // horizontal mouse wheel
-};
-
-EventImpl::EventId EventImpl::typeToId(const DOMString &type)
-{
-    for (int i = 0; i < numEventIds; ++i) {
-        const char *n = eventNames[i];
-        if (n && type == n)
-            return static_cast<EventId>(i);
-    }
-    return UNKNOWN_EVENT;
-}
-
-DOMString EventImpl::idToType(EventId id)
-{
-    switch (id) {
-	case KHTML_DBLCLICK_EVENT:
-            return "dblclick";
-	case KHTML_CLICK_EVENT:
-            return "click";
-	case KHTML_DRAGDROP_EVENT:
-            return "khtml_dragdrop";
-	case KHTML_ERROR_EVENT:
-            return "khtml_error";
-	case KHTML_MOVE_EVENT:
-            return "khtml_move";
-        case KHTML_ORIGCLICK_MOUSEUP_EVENT:
-            return "khtml_origclick_mouseup_event";
-        default:
-            break;
-    }
-    if (id >= numEventIds)
-        return DOMString();
-    return eventNames[id];
 }
 
 bool EventImpl::isUIEvent() const
@@ -306,9 +151,8 @@ UIEventImpl::UIEventImpl()
     m_detail = 0;
 }
 
-UIEventImpl::UIEventImpl(EventId _id, bool canBubbleArg, bool cancelableArg,
-		AbstractViewImpl *viewArg, long detailArg)
-		: EventImpl(_id,canBubbleArg,cancelableArg)
+UIEventImpl::UIEventImpl(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg)
+    : EventImpl(eventType, canBubbleArg, cancelableArg)
 {
     m_view = viewArg;
     if (m_view)
@@ -322,7 +166,7 @@ UIEventImpl::~UIEventImpl()
         m_view->deref();
 }
 
-void UIEventImpl::initUIEvent(const DOMString &typeArg,
+void UIEventImpl::initUIEvent(const AtomicString &typeArg,
 			      bool canBubbleArg,
 			      bool cancelableArg,
 			      AbstractViewImpl *viewArg,
@@ -386,7 +230,7 @@ MouseRelatedEventImpl::MouseRelatedEventImpl()
 {
 }
 
-MouseRelatedEventImpl::MouseRelatedEventImpl(EventId _id,
+MouseRelatedEventImpl::MouseRelatedEventImpl(const AtomicString &eventType,
 			       bool canBubbleArg,
 			       bool cancelableArg,
 			       AbstractViewImpl *viewArg,
@@ -399,7 +243,7 @@ MouseRelatedEventImpl::MouseRelatedEventImpl(EventId _id,
 			       bool altKeyArg,
 			       bool shiftKeyArg,
 			       bool metaKeyArg)
-    : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, detailArg,
+    : UIEventWithKeyStateImpl(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
     m_screenX = screenXArg;
@@ -463,7 +307,7 @@ MouseEventImpl::MouseEventImpl()
     m_clipboard = 0;
 }
 
-MouseEventImpl::MouseEventImpl(EventId _id,
+MouseEventImpl::MouseEventImpl(const AtomicString &eventType,
 			       bool canBubbleArg,
 			       bool cancelableArg,
 			       AbstractViewImpl *viewArg,
@@ -479,7 +323,7 @@ MouseEventImpl::MouseEventImpl(EventId _id,
 			       unsigned short buttonArg,
 			       NodeImpl *relatedTargetArg,
                                ClipboardImpl *clipboardArg)
-    : MouseRelatedEventImpl(_id, canBubbleArg, cancelableArg, viewArg, detailArg,
+    : MouseRelatedEventImpl(eventType, canBubbleArg, cancelableArg, viewArg, detailArg,
         screenXArg, screenYArg, clientXArg, clientYArg,
         ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
@@ -500,7 +344,7 @@ MouseEventImpl::~MouseEventImpl()
 	m_clipboard->deref();
 }
 
-void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
+void MouseEventImpl::initMouseEvent(const AtomicString &typeArg,
                                     bool canBubbleArg,
                                     bool cancelableArg,
                                     AbstractViewImpl *viewArg,
@@ -543,10 +387,10 @@ bool MouseEventImpl::isMouseEvent() const
 
 bool MouseEventImpl::isDragEvent() const
 {
-    return (m_id == EventImpl::DRAGENTER_EVENT || m_id == EventImpl::DRAGOVER_EVENT
-            || m_id == EventImpl::DRAGLEAVE_EVENT || m_id == EventImpl::DROP_EVENT 
-            || m_id == EventImpl::DRAGSTART_EVENT || m_id == EventImpl::DRAG_EVENT
-            || m_id == EventImpl::DRAGEND_EVENT);
+    return (m_type == dragenterEvent || m_type == dragoverEvent
+            || m_type == dragleaveEvent || m_type == dropEvent 
+            || m_type == dragstartEvent || m_type == dragEvent
+            || m_type == dragendEvent);
 }
 
 long MouseEventImpl::which() const
@@ -568,7 +412,7 @@ KeyboardEventImpl::KeyboardEventImpl()
 }
 
 KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
-  : UIEventWithKeyStateImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KEYPRESS_EVENT : KEYDOWN_EVENT,
+  : UIEventWithKeyStateImpl(key->type() == QEvent::KeyRelease ? keyupEvent : key->isAutoRepeat() ? keypressEvent : keydownEvent,
     true, true, view, 0,
     key->state() & Qt::ControlButton,
     key->state() & Qt::AltButton,
@@ -598,7 +442,7 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
     m_keyLocation = (keyState & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
 }
 
-KeyboardEventImpl::KeyboardEventImpl(EventId _id,
+KeyboardEventImpl::KeyboardEventImpl(const AtomicString &eventType,
                                         bool canBubbleArg,
                                         bool cancelableArg,
                                         AbstractViewImpl *viewArg, 
@@ -609,7 +453,7 @@ KeyboardEventImpl::KeyboardEventImpl(EventId _id,
                                         bool shiftKeyArg, 
                                         bool metaKeyArg, 
                                         bool altGraphKeyArg)
-  : UIEventWithKeyStateImpl(_id, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
+  : UIEventWithKeyStateImpl(eventType, canBubbleArg, cancelableArg, viewArg, 0, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg)
 {
     m_keyEvent = 0;
     m_keyIdentifier = keyIdentifierArg.impl();
@@ -626,7 +470,7 @@ KeyboardEventImpl::~KeyboardEventImpl()
         m_keyIdentifier->deref();
 }
 
-void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
+void KeyboardEventImpl::initKeyboardEvent(const AtomicString &typeArg,
                         bool canBubbleArg,
                         bool cancelableArg,
                         AbstractViewImpl *viewArg, 
@@ -655,20 +499,11 @@ void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
 
 int KeyboardEventImpl::keyCode() const
 {
-    if (!m_keyEvent) {
+    if (!m_keyEvent)
         return 0;
-    }
-    switch (m_id) {
-        case KEYDOWN_EVENT:
-        case KEYUP_EVENT:
-#if APPLE_CHANGES
-            return m_keyEvent->WindowsKeyCode();
-#else
-            // need the equivalent of the above for KDE
-#endif
-        default:
-            return charCode();
-    }
+    if (m_type == keydownEvent || m_type == keyupEvent)
+        return m_keyEvent->WindowsKeyCode();
+    return charCode();
 }
 
 int KeyboardEventImpl::charCode() const
@@ -706,7 +541,7 @@ MutationEventImpl::MutationEventImpl()
     m_attrChange = 0;
 }
 
-MutationEventImpl::MutationEventImpl(EventId _id,
+MutationEventImpl::MutationEventImpl(const AtomicString &eventType,
 				     bool canBubbleArg,
 				     bool cancelableArg,
 				     NodeImpl *relatedNodeArg,
@@ -714,7 +549,7 @@ MutationEventImpl::MutationEventImpl(EventId _id,
 				     const DOMString &newValueArg,
 				     const DOMString &attrNameArg,
 				     unsigned short attrChangeArg)
-		      : EventImpl(_id,canBubbleArg,cancelableArg)
+		      : EventImpl(eventType,canBubbleArg,cancelableArg)
 {
     m_relatedNode = relatedNodeArg;
     if (m_relatedNode)
@@ -743,7 +578,7 @@ MutationEventImpl::~MutationEventImpl()
 	m_attrName->deref();
 }
 
-void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
+void MutationEventImpl::initMutationEvent(const AtomicString &typeArg,
 					  bool canBubbleArg,
 					  bool cancelableArg,
 					  NodeImpl *relatedNodeArg,
@@ -790,8 +625,8 @@ ClipboardEventImpl::ClipboardEventImpl()
     m_clipboard = 0;
 }
 
-ClipboardEventImpl::ClipboardEventImpl(EventId _id, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg)
-  : EventImpl(_id, canBubbleArg, cancelableArg), m_clipboard(clipboardArg)
+ClipboardEventImpl::ClipboardEventImpl(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg)
+    : EventImpl(eventType, canBubbleArg, cancelableArg), m_clipboard(clipboardArg)
 {
       if (m_clipboard)
           m_clipboard->ref();
@@ -816,7 +651,7 @@ WheelEventImpl::WheelEventImpl() : m_horizontal(false), m_wheelDelta(0)
 
 WheelEventImpl::WheelEventImpl(bool h, long d, AbstractViewImpl *v,
     long sx, long sy, long cx, long cy, bool ctrl, bool alt, bool shift, bool meta)
-    : MouseRelatedEventImpl(h ? HORIZONTALMOUSEWHEEL_EVENT : MOUSEWHEEL_EVENT,
+    : MouseRelatedEventImpl(h ? khtmlHorizontalmousewheelEvent : mousewheelEvent,
         true, true, v, 0, sx, sy, cx, cy, ctrl, alt, shift, meta)
     , m_horizontal(h), m_wheelDelta(d)
 {
@@ -829,27 +664,27 @@ bool WheelEventImpl::isWheelEvent() const
 
 // -----------------------------------------------------------------------------
 
-RegisteredEventListener::RegisteredEventListener(EventImpl::EventId _id, EventListener *_listener, bool _useCapture)
+RegisteredEventListener::RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
+    : m_eventType(eventType), m_listener(listener), m_useCapture(useCapture)
 {
-    id = _id;
-    listener = _listener;
-    useCapture = _useCapture;
+    assert(listener);
     listener->ref();
 }
 
-RegisteredEventListener::~RegisteredEventListener() {
-    listener->deref();
+RegisteredEventListener::~RegisteredEventListener()
+{
+    m_listener->deref();
 }
 
-bool RegisteredEventListener::operator==(const RegisteredEventListener &other)
+bool operator==(const RegisteredEventListener &a, const RegisteredEventListener &b)
 {
-    return (id == other.id &&
-	    listener == other.listener &&
-	    useCapture == other.useCapture);
+    return a.eventType() == b.eventType() && a.listener() == b.listener() && a.useCapture() == b.useCapture();
 }
 
 // -----------------------------------------------------------------------------
 
 ClipboardImpl::~ClipboardImpl()
 {
+}
+
 }

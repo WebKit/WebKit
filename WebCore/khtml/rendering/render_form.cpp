@@ -41,6 +41,7 @@
 #include "khtmlview.h"
 #include "khtml_ext.h"
 #include "xml/dom_docimpl.h"
+#include "xml/EventNames.h"
 
 #include <kdebug.h>
 
@@ -51,6 +52,7 @@
 
 using namespace khtml;
 using namespace DOM;
+using namespace EventNames;
 using namespace HTMLNames;
 
 RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
@@ -189,7 +191,7 @@ void RenderFormElement::slotClicked()
 
 #if APPLE_CHANGES
     QMouseEvent event(QEvent::MouseButtonRelease); // gets "current event"
-    element()->dispatchMouseEvent(&event, EventImpl::CLICK_EVENT, event.clickCount());
+    element()->dispatchMouseEvent(&event, clickEvent, event.clickCount());
 #else
     // We also send the KHTML_CLICK or KHTML_DBLCLICK event for
     // CLICK. This is not part of the DOM specs, but is used for
@@ -199,8 +201,8 @@ void RenderFormElement::slotClicked()
     // stored, which is not necessarily the same)
 
     QMouseEvent e2(QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
-    element()->dispatchMouseEvent(&e2, EventImpl::CLICK_EVENT, m_clickCount);
-    element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
+    element()->dispatchMouseEvent(&e2, clickEvent, m_clickCount);
+    element()->dispatchMouseEvent(&e2, m_isDoubleClick ? khtmlDblclickEvent : khtmlClickEvent, m_clickCount);
 #endif
 
     deref(arena);
@@ -510,7 +512,7 @@ void RenderLineEdit::slotReturnPressed()
 void RenderLineEdit::slotPerformSearch()
 {
     // Fire the "search" DOM event.
-    element()->dispatchHTMLEvent(EventImpl::SEARCH_EVENT, true, false);
+    element()->dispatchHTMLEvent(searchEvent, true, false);
 }
 
 void RenderLineEdit::addSearchResult()
@@ -1744,7 +1746,7 @@ void RenderSlider::slotSliderValueChanged()
     element()->setValue(QString::number(val));
     
     // Fire the "input" DOM event.
-    element()->dispatchHTMLEvent(EventImpl::INPUT_EVENT, true, false);
+    element()->dispatchHTMLEvent(inputEvent, true, false);
 }
 
 void RenderSlider::slotClicked()

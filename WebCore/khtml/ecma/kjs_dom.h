@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
@@ -19,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_DOM_H_
-#define _KJS_DOM_H_
+#ifndef KJS_DOM_H
+#define KJS_DOM_H
 
 #include "kjs_binding.h"
 
@@ -28,6 +27,7 @@
 #include "misc/shared.h"
 
 namespace DOM {
+    class AtomicString;
     class AttrImpl;
     class CharacterDataImpl;
     class DocumentTypeImpl;
@@ -40,7 +40,7 @@ namespace DOM {
     class NotationImpl;
     class ProcessingInstructionImpl;
     class TextImpl;
-};
+}
 
 namespace KJS {
 
@@ -60,8 +60,8 @@ namespace KJS {
 
     virtual ValueImp *toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
     virtual UString toString(ExecState *exec) const;
-    void setListener(ExecState *exec, int eventId, ValueImp *func) const;
-    ValueImp *getListener(int eventId) const;
+    void setListener(ExecState *exec, const DOM::AtomicString &eventType, ValueImp *func) const;
+    ValueImp *getListener(const DOM::AtomicString &eventType) const;
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
 
     enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,

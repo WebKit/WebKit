@@ -54,6 +54,7 @@
 #import "dom2_rangeimpl.h"
 #import "dom_position.h"
 #import "dom_textimpl.h"
+#import "EventNames.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_tableimpl.h"
@@ -86,6 +87,7 @@
 
 #undef _KWQ_TIMING
 
+using namespace DOM::EventNames;
 using namespace DOM::HTMLNames;
 
 using DOM::AtomicString;
@@ -1485,7 +1487,7 @@ bool KWQKHTMLPart::canCachePage()
         parentPart() ||
         m_url.protocol().startsWith("https") || 
 	(d->m_doc && (d->m_doc->applets()->length() != 0 ||
-                      d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
+                      d->m_doc->hasWindowEventListener(unloadEvent) ||
 		      d->m_doc->hasPasswordField()))) {
         return false;
     }
@@ -1812,7 +1814,7 @@ void KWQKHTMLPart::sendScrollEvent()
         DocumentImpl *doc = xmlDocImpl();
         if (!doc)
             return;
-        doc->dispatchHTMLEvent(EventImpl::SCROLL_EVENT, true, false);
+        doc->dispatchHTMLEvent(scrollEvent, true, false);
     }
 }
 
@@ -2250,9 +2252,9 @@ bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocatio
 }
 
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc) const
+bool KWQKHTMLPart::dispatchDragSrcEvent(const AtomicString &eventType, const QPoint &loc) const
 {
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventId, _dragSrc.get(), loc, _dragClipboard);
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
     return !noDefaultProc;
 }
 
@@ -2369,7 +2371,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                         _dragClipboard->setDragImageElement(_dragSrc.get(), QPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     }
                     
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(_mouseDownWinX, _mouseDownWinY));
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, QPoint(_mouseDownWinX, _mouseDownWinY));
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(KWQClipboard::ImageWritable);
@@ -2396,7 +2398,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
                     if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation));
+                        dispatchDragSrcEvent(dragendEvent, QPoint(dragLocation));
                         _mouseDownMayStartDrag = false;
                     }
                 } 
@@ -2438,7 +2440,7 @@ void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 {
     if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc);
+        dispatchDragSrcEvent(dragEvent, loc);
     }
 }
 
@@ -2447,7 +2449,7 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operatio
     if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
         _dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc);
+        dispatchDragSrcEvent(dragendEvent, loc);
     }
     freeClipboard();
     _dragSrc.reset();
@@ -2455,7 +2457,7 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operatio
 
 // Returns whether caller should continue with "the default processing", which is the same as 
 // the event handler NOT setting the return value to false
-bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy)
+bool KWQKHTMLPart::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::AccessPolicy policy)
 {
     NodeImpl *target = d->m_selection.start().element();
     if (!target && xmlDocImpl()) {
@@ -2469,7 +2471,7 @@ bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy poli
     clipboard->ref();
 
     int exceptioncode = 0;
-    EventImpl *evt = new ClipboardEventImpl(static_cast<EventImpl::EventId>(eventId), true, true, clipboard);
+    EventImpl *evt = new ClipboardEventImpl(eventType, true, true, clipboard);
     evt->ref();
     target->dispatchEvent(evt, exceptioncode, true);
     bool noDefaultProcessing = evt->defaultPrevented();
@@ -2489,17 +2491,17 @@ bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy poli
 
 bool KWQKHTMLPart::mayCut()
 {
-    return !dispatchCPPEvent(EventImpl::BEFORECUT_EVENT, KWQClipboard::Numb);
+    return !dispatchCPPEvent(beforecutEvent, KWQClipboard::Numb);
 }
 
 bool KWQKHTMLPart::mayCopy()
 {
-    return !dispatchCPPEvent(EventImpl::BEFORECOPY_EVENT, KWQClipboard::Numb);
+    return !dispatchCPPEvent(beforecopyEvent, KWQClipboard::Numb);
 }
 
 bool KWQKHTMLPart::mayPaste()
 {
-    return !dispatchCPPEvent(EventImpl::BEFOREPASTE_EVENT, KWQClipboard::Numb);
+    return !dispatchCPPEvent(beforepasteEvent, KWQClipboard::Numb);
 }
 
 bool KWQKHTMLPart::tryCut()
@@ -2508,7 +2510,7 @@ bool KWQKHTMLPart::tryCut()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    return !dispatchCPPEvent(EventImpl::CUT_EVENT, KWQClipboard::Writable);
+    return !dispatchCPPEvent(cutEvent, KWQClipboard::Writable);
 }
 
 bool KWQKHTMLPart::tryCopy()
@@ -2517,12 +2519,12 @@ bool KWQKHTMLPart::tryCopy()
     // also done for security, as it erases data from the last copy/paste.
     [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
 
-    return !dispatchCPPEvent(EventImpl::COPY_EVENT, KWQClipboard::Writable);
+    return !dispatchCPPEvent(copyEvent, KWQClipboard::Writable);
 }
 
 bool KWQKHTMLPart::tryPaste()
 {
-    return !dispatchCPPEvent(EventImpl::PASTE_EVENT, KWQClipboard::Readable);
+    return !dispatchCPPEvent(pasteEvent, KWQClipboard::Readable);
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
@@ -2836,7 +2838,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     NodeImpl::MouseEvent mev(qev.stateAfter(), NodeImpl::MousePress);
     doc->prepareMouseEvent(false, xm, ym, &mev);
 
-    bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
+    bool swallowEvent = v->dispatchMouseEvent(contextmenuEvent,
         mev.innerNode.get(), true, 0, &qev, true, NodeImpl::MousePress);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode->isContentEditable())) {
@@ -3765,14 +3767,9 @@ void KWQKHTMLPart::setWindowHasFocus(bool flag)
         return;
     m_windowHasFocus = flag;
 
-    DocumentImpl *doc = xmlDocImpl();
-    if (doc) {
-        NodeImpl *body = doc->body();
-        if (body) {
-            int eventID = flag ? EventImpl::FOCUS_EVENT : EventImpl::BLUR_EVENT;
-            body->dispatchWindowEvent(eventID, false, false);
-        }
-    }
+    if (DocumentImpl *doc = xmlDocImpl())
+        if (NodeImpl *body = doc->body())
+            body->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
 }
 
 QChar KWQKHTMLPart::backslashAsCurrencySymbol() const

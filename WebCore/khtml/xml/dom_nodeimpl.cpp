@@ -32,6 +32,7 @@
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/EventNames.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
 #include "editing/html_interchange.h"
@@ -68,6 +69,7 @@ using namespace khtml;
 
 namespace DOM {
 
+using namespace EventNames;
 using namespace HTMLNames;
 
 /**
@@ -380,38 +382,29 @@ unsigned long NodeImpl::nodeIndex() const
     return count;
 }
 
-void NodeImpl::addEventListener(int id, EventListener *listener, const bool useCapture)
+void NodeImpl::addEventListener(const AtomicString &eventType, EventListener *listener, const bool useCapture)
 {
     if (getDocument() && !getDocument()->attached())
         return;
 
-    switch (id) {
-	case EventImpl::DOMSUBTREEMODIFIED_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER);
-	    break;
-	case EventImpl::DOMNODEINSERTED_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER);
-	    break;
-	case EventImpl::DOMNODEREMOVED_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER);
-	    break;
-        case EventImpl::DOMNODEREMOVEDFROMDOCUMENT_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
-	    break;
-        case EventImpl::DOMNODEINSERTEDINTODOCUMENT_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER);
-	    break;
-        case EventImpl::DOMATTRMODIFIED_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER);
-	    break;
-        case EventImpl::DOMCHARACTERDATAMODIFIED_EVENT:
-	    getDocument()->addListenerType(DocumentImpl::DOMCHARACTERDATAMODIFIED_LISTENER);
-	    break;
-	default:
-	    break;
-    }
+    DocumentImpl::ListenerType type = static_cast<DocumentImpl::ListenerType>(0);
+    if (eventType == DOMSubtreeModifiedEvent)
+        type = DocumentImpl::DOMSUBTREEMODIFIED_LISTENER;
+    else if (eventType == DOMNodeInsertedEvent)
+        type = DocumentImpl::DOMNODEINSERTED_LISTENER;
+    else if (eventType == DOMNodeRemovedEvent)
+        type = DocumentImpl::DOMNODEREMOVED_LISTENER;
+    else if (eventType == DOMNodeRemovedFromDocumentEvent)
+        type = DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER;
+    else if (eventType == DOMNodeInsertedIntoDocumentEvent)
+        type = DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER;
+    else if (eventType == DOMAttrModifiedEvent)
+        type = DocumentImpl::DOMATTRMODIFIED_LISTENER;
+    else if (eventType == DOMCharacterDataModifiedEvent)
+        type = DocumentImpl::DOMCHARACTERDATAMODIFIED_LISTENER;
+    if (type)
+        getDocument()->addListenerType(type);
 
-    RegisteredEventListener *rl = new RegisteredEventListener(static_cast<EventImpl::EventId>(id),listener,useCapture);
     if (!m_regdListeners) {
         m_regdListeners = new QPtrList<RegisteredEventListener>;
 	m_regdListeners->setAutoDelete(true);
@@ -419,24 +412,25 @@ void NodeImpl::addEventListener(int id, EventListener *listener, const bool useC
 
     listener->ref();
 
-    // remove existing identical listener set with identical arguments - the DOM2
-    // spec says that "duplicate instances are discarded" in this case.
-    removeEventListener(id,listener,useCapture);
+    // Remove existing identical listener set with identical arguments.
+    // The DOM2 spec says that "duplicate instances are discarded" in this case.
+    removeEventListener(eventType, listener, useCapture);
 
     // adding the first one
     if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
         getDocument()->registerDisconnectedNodeWithEventListeners(this);
         
-    m_regdListeners->append(rl);
+    m_regdListeners->append(new RegisteredEventListener(eventType, listener, useCapture));
+
     listener->deref();
 }
 
-void NodeImpl::removeEventListener(int id, EventListener *listener, bool useCapture)
+void NodeImpl::removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
 {
     if (!m_regdListeners) // nothing to remove
         return;
 
-    RegisteredEventListener rl(static_cast<EventImpl::EventId>(id),listener,useCapture);
+    RegisteredEventListener rl(eventType, listener, useCapture);
 
     QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
     for (; it.current(); ++it)
@@ -455,15 +449,14 @@ void NodeImpl::removeAllEventListeners()
     m_regdListeners = 0;
 }
 
-void NodeImpl::removeHTMLEventListener(int id)
+void NodeImpl::removeHTMLEventListener(const AtomicString &eventType)
 {
     if (!m_regdListeners) // nothing to remove
         return;
 
     QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
     for (; it.current(); ++it)
-        if (it.current()->id == id &&
-            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
+        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener") {
             m_regdListeners->removeRef(it.current());
             // removed last
             if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
@@ -472,30 +465,27 @@ void NodeImpl::removeHTMLEventListener(int id)
         }
 }
 
-void NodeImpl::setHTMLEventListener(int id, EventListener *listener)
+void NodeImpl::setHTMLEventListener(const AtomicString &eventType, EventListener *listener)
 {
-    // in case we already have it, we don't want removeHTMLEventListener to destroy it
+    // In case we are the only one holding a reference to it, we don't want removeHTMLEventListener to destroy it.
     if (listener)
         listener->ref();
-    removeHTMLEventListener(id);
-    if (listener)
-    {
-        addEventListener(id,listener,false);
+    removeHTMLEventListener(eventType);
+    if (listener) {
+        addEventListener(eventType, listener, false);
         listener->deref();
     }
 }
 
-EventListener *NodeImpl::getHTMLEventListener(int id)
+EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
 {
     if (!m_regdListeners)
         return 0;
 
     QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
     for (; it.current(); ++it)
-        if (it.current()->id == id &&
-            it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
-            return it.current()->listener;
-        }
+        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener")
+            return it.current()->listener();
     return 0;
 }
 
@@ -639,18 +629,16 @@ DocumentPtr *DocumentPtr::nullDocumentPtr()
     return &doc;
 }
 
-bool NodeImpl::dispatchHTMLEvent(int _id, bool canBubbleArg, bool cancelableArg)
+bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     int exceptioncode = 0;
-    EventImpl *evt = new EventImpl(static_cast<EventImpl::EventId>(_id),canBubbleArg,cancelableArg);
-    return dispatchEvent(evt,exceptioncode,true);
+    return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), exceptioncode, true);
 }
 
-bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableArg)
+bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     int exceptioncode = 0;
-    EventImpl *evt = new EventImpl(static_cast<EventImpl::EventId>(_id),canBubbleArg,cancelableArg);
-    evt->setTarget( 0 );
+    EventImpl *evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     evt->ref();
     DocumentPtr *doc = document;
     doc->ref();
@@ -658,7 +646,7 @@ bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableAr
     if (!evt->defaultPrevented() && doc->document())
 	doc->document()->defaultEventHandler(evt);
     
-    if (_id == EventImpl::LOAD_EVENT && !evt->propagationStopped() && doc->document()) {
+    if (eventType == loadEvent && !evt->propagationStopped() && doc->document()) {
         // For onload events, send them to the enclosing frame only.
         // This is a DOM extension and is independent of bubbling/capturing rules of
         // the DOM.  You send the event only to the enclosing frame.  It does not
@@ -686,24 +674,23 @@ bool NodeImpl::dispatchWindowEvent(int _id, bool canBubbleArg, bool cancelableAr
     return r;
 }
 
-bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overrideDetail)
+bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType, int overrideDetail)
 {
     bool cancelable = true;
     int detail = overrideDetail; // defaults to 0
-    EventImpl::EventId evtId = EventImpl::UNKNOWN_EVENT;
-    if (overrideId) {
-        evtId = static_cast<EventImpl::EventId>(overrideId);
-    }
-    else {
+    AtomicString eventType;
+    if (!overrideType.isEmpty()) {
+        eventType = overrideType;
+    } else {
         switch (_mouse->type()) {
             case QEvent::MouseButtonPress:
-                evtId = EventImpl::MOUSEDOWN_EVENT;
+                eventType = mousedownEvent;
                 break;
             case QEvent::MouseButtonRelease:
-                evtId = EventImpl::MOUSEUP_EVENT;
+                eventType = mouseupEvent;
                 break;
             case QEvent::MouseButtonDblClick:
-                evtId = EventImpl::CLICK_EVENT;
+                eventType = clickEvent;
 #if APPLE_CHANGES
                 detail = _mouse->clickCount();
 #else
@@ -711,16 +698,16 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
 #endif
                 break;
             case QEvent::MouseMove:
-                evtId = EventImpl::MOUSEMOVE_EVENT;
+                eventType = mousemoveEvent;
                 cancelable = false;
                 break;
             default:
                 break;
         }
     }
-    if (evtId == EventImpl::UNKNOWN_EVENT)
-        return false; // shouldn't happen
 
+    if (eventType.isEmpty())
+        return false; // shouldn't happen
 
     int exceptioncode = 0;
 
@@ -777,7 +764,7 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
 
     bool swallowEvent = false;
 
-    EventImpl *me = new MouseEventImpl(evtId,true,cancelable,getDocument()->defaultView(),
+    EventImpl *me = new MouseEventImpl(eventType,true,cancelable,getDocument()->defaultView(),
                    detail,screenX,screenY,clientX,clientY,ctrlKey,altKey,shiftKey,metaKey,
                    button,0);
     me->ref();
@@ -793,10 +780,10 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
     // of the DOM specs, but is used for compatibility with the traditional onclick="" and ondblclick="" attributes,
     // as there is no way to tell the difference between single & double clicks using DOM (only the click count is
     // stored, which is not necessarily the same)
-    if (evtId == EventImpl::CLICK_EVENT) {
-        evtId = EventImpl::KHTML_CLICK_EVENT;
+    if (eventType == clickEvent) {
+        eventType = khtmlClickEvent;
 
-        me = new MouseEventImpl(EventImpl::KHTML_CLICK_EVENT,
+        me = new MouseEventImpl(khtmlClickEvent,
                                 true,cancelable,getDocument()->defaultView(),
                                 detail,screenX,screenY,clientX,clientY,
                                 ctrlKey,altKey,shiftKey,metaKey,
@@ -814,7 +801,7 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
         me->deref();
 
         if (_mouse->isDoubleClick()) {
-            me = new MouseEventImpl(EventImpl::KHTML_DBLCLICK_EVENT,
+            me = new MouseEventImpl(khtmlDblclickEvent,
                                     true,cancelable,getDocument()->defaultView(),
                                     detail,screenX,screenY,clientX,clientY,
                                     ctrlKey,altKey,shiftKey,metaKey,
@@ -831,29 +818,29 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
 #endif
 
     // Also send a DOMActivate event, which causes things like form submissions to occur.
-    if (evtId == EventImpl::KHTML_CLICK_EVENT && !defaultPrevented && !disabled())
-        dispatchUIEvent(EventImpl::DOMACTIVATE_EVENT, detail);
+    if (eventType == khtmlClickEvent && !defaultPrevented && !disabled())
+        dispatchUIEvent(DOMActivateEvent, detail);
 
     return swallowEvent;
 }
 
-bool NodeImpl::dispatchUIEvent(int _id, int detail)
+bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
 {
-    assert (!( (_id != EventImpl::DOMFOCUSIN_EVENT &&
-        _id != EventImpl::DOMFOCUSOUT_EVENT &&
-                _id != EventImpl::DOMACTIVATE_EVENT)));
+    assert (!( (eventType != DOMFocusInEvent &&
+                eventType != DOMFocusOutEvent &&
+                eventType != DOMActivateEvent)));
+
+    if (!getDocument())
+        return false;
 
     bool cancelable = false;
-    if (_id == EventImpl::DOMACTIVATE_EVENT)
+    if (eventType == DOMActivateEvent)
         cancelable = true;
 
     int exceptioncode = 0;
-    if (getDocument()) {
-        UIEventImpl *evt = new UIEventImpl(static_cast<EventImpl::EventId>(_id),true,
-                                           cancelable,getDocument()->defaultView(),detail);
-        return dispatchEvent(evt,exceptioncode,true);
-    }
-    return false;
+
+    UIEventImpl *evt = new UIEventImpl(eventType, true, cancelable, getDocument()->defaultView(), detail);
+    return dispatchEvent(evt,exceptioncode,true);
 }
 
 void NodeImpl::registerNodeList(NodeListImpl *list)
@@ -925,7 +912,7 @@ bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
     if (!getDocument()->hasListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER))
 	return false;
     int exceptioncode = 0;
-    return dispatchEvent(new MutationEventImpl(EventImpl::DOMSUBTREEMODIFIED_EVENT,
+    return dispatchEvent(new MutationEventImpl(DOMSubtreeModifiedEvent,
 			 true,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
 }
 
@@ -991,12 +978,9 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
 
     QPtrList<RegisteredEventListener> listenersCopy = *m_regdListeners;
     QPtrListIterator<RegisteredEventListener> it(listenersCopy);
-    for (; it.current(); ++it) {
-        if (it.current()->id == evt->id() && it.current()->useCapture == useCapture) {
-            it.current()->listener->handleEventImpl(evt, false);
-        }
-    }
-
+    for (; it.current(); ++it)
+        if (it.current()->eventType() == evt->type() && it.current()->useCapture() == useCapture)
+            it.current()->listener()->handleEventImpl(evt, false);
 }
 
 void NodeImpl::defaultEventHandler(EventImpl *evt)
@@ -1625,16 +1609,6 @@ bool NodeImpl::inSameContainingBlockFlowElement(NodeImpl *n)
 
 // FIXME: End of obviously misplaced HTML editing functions.  Try to move these out of NodeImpl.
 
-void NodeImpl::addEventListener(const DOMString &type, EventListener *listener, bool useCapture)
-{
-    addEventListener(EventImpl::typeToId(type), listener, useCapture);
-}
-
-void NodeImpl::removeEventListener(const DOMString &type, EventListener *listener, bool useCapture)
-{
-    removeEventListener(EventImpl::typeToId(type), listener, useCapture);
-}
-
 SharedPtr<NodeListImpl> NodeImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName)
 {
     if (namespaceURI.isNull() || localName.isNull())
@@ -1974,7 +1948,7 @@ NodeImpl *ContainerNodeImpl::removeChild ( NodeImpl *oldChild, int &exceptioncod
     // Dispatch pre-removal mutation events
     getDocument()->notifyBeforeNodeRemoval(oldChild); // ### use events instead
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
-	oldChild->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEREMOVED_EVENT,
+	oldChild->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent,
 			     true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
 	if (exceptioncode)
 	    return 0;
@@ -2460,7 +2434,7 @@ void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &excep
         child->insertedIntoTree(true);
 
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER)) {
-        child->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTED_EVENT,
+        child->dispatchEvent(new MutationEventImpl(DOMNodeInsertedEvent,
                                                    true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
         if (exceptioncode)
             return;
@@ -2471,7 +2445,7 @@ void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &excep
 
     if (hasInsertedListeners && inDocument()) {
         for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
-            c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTEDINTODOCUMENT_EVENT,
+            c->dispatchEvent(new MutationEventImpl(DOMNodeInsertedIntoDocumentEvent,
                                                    false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
             if (exceptioncode)
                 return;
@@ -2485,7 +2459,7 @@ void ContainerNodeImpl::dispatchChildRemovalEvents( NodeImpl *child, int &except
     // Dispatch pre-removal mutation events
     getDocument()->notifyBeforeNodeRemoval(child); // ### use events instead
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
-	child->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEREMOVED_EVENT,
+	child->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent,
 			     true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
 	if (exceptioncode)
 	    return;
@@ -2497,7 +2471,7 @@ void ContainerNodeImpl::dispatchChildRemovalEvents( NodeImpl *child, int &except
     if (inDocument()) {
 	for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
 	    if (hasRemovalListeners) {
-		c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEREMOVEDFROMDOCUMENT_EVENT,
+		c->dispatchEvent(new MutationEventImpl(DOMNodeRemovedFromDocumentEvent,
 				 false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
 		if (exceptioncode)
 		    return;

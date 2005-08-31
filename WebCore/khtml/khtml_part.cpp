@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /* This file is part of the KDE project
  *
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
@@ -58,6 +57,7 @@
 #include "misc/loader.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/EventNames.h"
 #include "xml/xml_tokenizer.h"
 
 using namespace DOM;
@@ -111,6 +111,8 @@ using namespace HTMLNames;
 #if APPLE_CHANGES
 #include <CoreServices/CoreServices.h>
 #endif
+
+using namespace DOM::EventNames;
 
 using khtml::ApplyStyleCommand;
 using khtml::CHARACTER;
@@ -209,6 +211,7 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
   AtomicString::init();
   QualifiedName::init();
+  EventNames::init();
   HTMLNames::init(); // FIXME: We should make this happen only when HTML is used.
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
@@ -613,7 +616,7 @@ void KHTMLPart::stopLoading(bool sendUnload)
       HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
       
       if ( hdoc->body() && d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
-        hdoc->body()->dispatchWindowEvent( EventImpl::UNLOAD_EVENT, false, false );
+        hdoc->body()->dispatchWindowEvent( unloadEvent, false, false );
         if ( d->m_doc )
           d->m_doc->updateRendering();
         d->m_bUnloadEventEmitted = true;

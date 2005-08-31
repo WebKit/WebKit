@@ -24,7 +24,8 @@
  */
 // -------------------------------------------------------------------------
 
-#include "html/html_baseimpl.h"
+#include "html_baseimpl.h"
+
 #include "html/html_documentimpl.h"
 
 #include "khtmlview.h"
@@ -39,11 +40,13 @@
 #include "misc/loader.h"
 #include "dom/dom_string.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 
 #include <kurl.h>
 #include <kdebug.h>
 
 using namespace DOM;
+using namespace DOM::EventNames;
 using namespace khtml;
 using namespace HTMLNames;
 
@@ -148,22 +151,22 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (attached())
             getDocument()->recalcStyle(Force);
     } else if (attr->name() == onloadAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::LOAD_EVENT,	    
+        getDocument()->setHTMLWindowEventListener(loadEvent,	    
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onunloadAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::UNLOAD_EVENT,
+        getDocument()->setHTMLWindowEventListener(unloadEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onblurAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::BLUR_EVENT,
+        getDocument()->setHTMLWindowEventListener(blurEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onfocusAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::FOCUS_EVENT,
+        getDocument()->setHTMLWindowEventListener(focusEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onresizeAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::RESIZE_EVENT,
+        getDocument()->setHTMLWindowEventListener(resizeEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else if (attr->name() == onscrollAttr) {
-        getDocument()->setHTMLWindowEventListener(EventImpl::SCROLL_EVENT,
+        getDocument()->setHTMLWindowEventListener(scrollEvent,
                                                   getDocument()->createHTMLEventListener(attr->value().qstring(), NULL));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -417,11 +420,11 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_scrolling = QScrollView::AlwaysOff;
         // FIXME: If we are already attached, this has no effect.
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(EventImpl::LOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(loadEvent,
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(EventImpl::UNLOAD_EVENT,
-                                getDocument()->createHTMLEventListener(attr->value().qstring(), this));
+        setHTMLEventListener(unloadEvent,
+                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }
@@ -683,10 +686,10 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if(!m_border)
             frameborder = false;
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(EventImpl::LOAD_EVENT,
+        setHTMLEventListener(loadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(EventImpl::UNLOAD_EVENT,
+        setHTMLEventListener(unloadEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
@@ -735,7 +738,7 @@ void HTMLFrameSetElementImpl::detach()
 {
     if(attached())
         // ### send the event when we actually get removed from the doc instead of here
-        dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
+        dispatchHTMLEvent(unloadEvent,false,false);
 
     HTMLElementImpl::detach();
 }

@@ -33,6 +33,7 @@
 #include "html/htmltokenizer.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/EventNames.h"
 #include "khtmlview.h"
 #include "khtml_part.h"
 #include "render_arena.h"
@@ -50,6 +51,7 @@
 
 using namespace khtml;
 using namespace DOM;
+using namespace EventNames;
 using namespace HTMLNames;
 
 RenderFrameSet::RenderFrameSet( HTMLFrameSetElementImpl *frameSet)
@@ -347,7 +349,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     int _x = evt->clientX();
     int _y = evt->clientY();
     
-    if ( !m_resizing && evt->id() == EventImpl::MOUSEMOVE_EVENT || evt->id() == EventImpl::MOUSEDOWN_EVENT )
+    if ( !m_resizing && evt->type() == mousemoveEvent || evt->type() == mousedownEvent )
     {
 #ifdef DEBUG_LAYOUT
         kdDebug( 6031 ) << "mouseEvent:check" << endl;
@@ -406,7 +408,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
             cursor = KCursor::sizeVerCursor();
         }
         
-        if(evt->id() == EventImpl::MOUSEDOWN_EVENT)
+        if(evt->type() == mousedownEvent)
         {
             setResizing(true);
             KApplication::setOverrideCursor(cursor);
@@ -420,7 +422,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     }
     
     // ### check the resize is not going out of bounds.
-    if(m_resizing && evt->id() == EventImpl::MOUSEUP_EVENT)
+    if(m_resizing && evt->type() == mouseupEvent)
     {
         setResizing(false);
         KApplication::restoreOverrideCursor();
@@ -449,7 +451,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         setNeedsLayout(true);
     }
     
-    else if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
+    else if (m_resizing || evt->type() == mouseupEvent) {
 #if APPLE_CHANGES
         KHTMLView *v = canvas()->view();
         QPainter paint;

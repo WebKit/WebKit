@@ -49,11 +49,13 @@
 #include "css/css_ruleimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
+#include "xml/EventNames.h"
 #include "editing/markup.h"
 
 #include <kdebug.h>
 
 using namespace DOM;
+using namespace DOM::EventNames;
 using namespace HTMLNames;
 using namespace khtml;
 
@@ -154,88 +156,88 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     }
 // standard events
     else if (attr->name() == onclickAttr) {
-        setHTMLEventListener(EventImpl::KHTML_CLICK_EVENT,
+        setHTMLEventListener(khtmlClickEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncontextmenuAttr) {
-    	setHTMLEventListener(EventImpl::CONTEXTMENU_EVENT,
+    	setHTMLEventListener(contextmenuEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondblclickAttr) {
-	setHTMLEventListener(EventImpl::KHTML_DBLCLICK_EVENT,
+	setHTMLEventListener(khtmlDblclickEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousedownAttr) {
-        setHTMLEventListener(EventImpl::MOUSEDOWN_EVENT,
+        setHTMLEventListener(mousedownEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousemoveAttr) {
-        setHTMLEventListener(EventImpl::MOUSEMOVE_EVENT,
+        setHTMLEventListener(mousemoveEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseoutAttr) {
-        setHTMLEventListener(EventImpl::MOUSEOUT_EVENT,
+        setHTMLEventListener(mouseoutEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseoverAttr) {
-        setHTMLEventListener(EventImpl::MOUSEOVER_EVENT,
+        setHTMLEventListener(mouseoverEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmouseupAttr) {
-        setHTMLEventListener(EventImpl::MOUSEUP_EVENT,
+        setHTMLEventListener(mouseupEvent,
 	                     getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onmousewheelAttr) {
-        setHTMLEventListener(EventImpl::MOUSEWHEEL_EVENT,
+        setHTMLEventListener(mousewheelEvent,
                             getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(EventImpl::DOMFOCUSIN_EVENT,
+        setHTMLEventListener(DOMFocusInEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeydownAttr) {
-        setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
+        setHTMLEventListener(keydownEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeypressAttr) {
-        setHTMLEventListener(EventImpl::KEYPRESS_EVENT,
+        setHTMLEventListener(keypressEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onkeyupAttr) {
-        setHTMLEventListener(EventImpl::KEYUP_EVENT,
+        setHTMLEventListener(keyupEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onscrollAttr) {
-        setHTMLEventListener(EventImpl::SCROLL_EVENT,
+        setHTMLEventListener(scrollEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforecutAttr) {
-        setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
+        setHTMLEventListener(beforecutEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncutAttr) {
-        setHTMLEventListener(EventImpl::CUT_EVENT,
+        setHTMLEventListener(cutEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforecopyAttr) {
-        setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
+        setHTMLEventListener(beforecopyEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == oncopyAttr) {
-        setHTMLEventListener(EventImpl::COPY_EVENT,
+        setHTMLEventListener(copyEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onbeforepasteAttr) {
-        setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
+        setHTMLEventListener(beforepasteEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onpasteAttr) {
-        setHTMLEventListener(EventImpl::PASTE_EVENT,
+        setHTMLEventListener(pasteEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragenterAttr) {
-        setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
+        setHTMLEventListener(dragenterEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragoverAttr) {
-        setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
+        setHTMLEventListener(dragoverEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragleaveAttr) {
-        setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
+        setHTMLEventListener(dragleaveEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondropAttr) {
-        setHTMLEventListener(EventImpl::DROP_EVENT,
+        setHTMLEventListener(dropEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragstartAttr) {
-        setHTMLEventListener(EventImpl::DRAGSTART_EVENT,
+        setHTMLEventListener(dragstartEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragAttr) {
-        setHTMLEventListener(EventImpl::DRAG_EVENT,
+        setHTMLEventListener(dragEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == ondragendAttr) {
-        setHTMLEventListener(EventImpl::DRAGEND_EVENT,
+        setHTMLEventListener(dragendEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } else if (attr->name() == onselectstartAttr) {
-        setHTMLEventListener(EventImpl::SELECTSTART_EVENT,
+        setHTMLEventListener(selectstartEvent,
                              getDocument()->createHTMLEventListener(attr->value().qstring(), this));
     } 
 }
@@ -566,11 +568,11 @@ void HTMLElementImpl::click(bool sendMouseEvents, bool showPressedLook)
     // send mousedown and mouseup before the click, if requested
     if (sendMouseEvents) {
         QMouseEvent pressEvt(QEvent::MouseButtonPress, QPoint(x,y), Qt::LeftButton, 0);
-        dispatchMouseEvent(&pressEvt, EventImpl::MOUSEDOWN_EVENT);
+        dispatchMouseEvent(&pressEvt, mousedownEvent);
         if (r)
             setActive(true, showPressedLook);
         QMouseEvent upEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-        dispatchMouseEvent(&upEvent, EventImpl::MOUSEUP_EVENT);
+        dispatchMouseEvent(&upEvent, mouseupEvent);
         if (r)
             setActive(false);
     } else if (r) {
@@ -579,8 +581,8 @@ void HTMLElementImpl::click(bool sendMouseEvents, bool showPressedLook)
     }
 
     // always send click
-    QMouseEvent clickEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-    dispatchMouseEvent(&clickEvent, EventImpl::CLICK_EVENT);
+    QMouseEvent clickMouseEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+    dispatchMouseEvent(&clickMouseEvent, clickEvent);
 }
 
 // accessKeyAction is used by the accessibility support code
@@ -709,7 +711,8 @@ bool HTMLElementImpl::isRecognizedTagName(const QualifiedName& tagName)
 
 // The terms inline and block are used here loosely.  Don't make the mistake of assuming all inlines or all blocks
 // need to be in these two lists.
-HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
+HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList()
+{
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
         tagList.insert(ttTag.localName().impl());
@@ -761,7 +764,8 @@ HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* inlineTagList() {
     return &tagList;
 }
 
-HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList() {
+HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> >* blockTagList()
+{
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > tagList;
     if (tagList.isEmpty()) {
         tagList.insert(pTag.localName().impl());
