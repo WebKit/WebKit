@@ -1,3 +1,22 @@
+2005-08-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki
+
+	<rdar://problem/4231978> many leaks of StyleSurroundData called beneath RenderStyle::setMarginTop, seen running webkit tests
+	<rdar://problem/4232017> many leaks of StyleInheritedData called from different RenderStyle methods, seen running webkit tests
+	<rdar://problem/4232175> leak of RenderObject called from RenderContainer::updatePseudoChild, seen running webkit tests
+	<rdar://problem/4232214> many leaks of RenderStyle from CSSStyleSelector::pseudoStyleForElement, seen running webkit tests
+	<rdar://problem/4232252> many leaks of RenderStyle called beneath NodeImpl::createRendererIfNeeded, seen running webkit tests
+	<rdar://problem/4232263> many leaks of RenderObject called from TextImpl::createRenderer, seen running webkit tests
+	<rdar://problem/4233690> leaks of StyleBackgroundData called within setBackgroundColor, seen running webkit tests
+
+        Test cases added: None, these leaks were already caught by the layout tests.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::updateFirstLetter):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+
 2005-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
