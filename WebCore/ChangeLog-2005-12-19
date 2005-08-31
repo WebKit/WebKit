@@ -2,6 +2,21 @@
 
         Reviewed by Maciej.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4574
+          HTML parser does not put attributes on the <isindex> element
+
+        * layout-tests/dom/html/level2/html/HTMLIsIndexElement01-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIsIndexElement02-expected.txt:
+        * layout-tests/dom/html/level2/html/HTMLIsIndexElement03-expected.txt:
+        Updated to expect success.
+
+        * khtml/html/htmlparser.cpp: (HTMLParser::handleIsindex): Updated to
+        put the attributes on the <isindex> element.
+
+2005-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4540
           event handlers for all custom events called when any custom event is set
 

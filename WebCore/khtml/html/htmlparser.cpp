@@ -1316,28 +1316,34 @@ NodeImpl *HTMLParser::handleIsindex( Token *t )
 {
     NodeImpl *n;
     HTMLFormElementImpl *myform = form;
-    if ( !myform ) {
+    if (!myform) {
         myform = new HTMLFormElementImpl(document);
         n = myform;
     } else
-        n = new HTMLDivElementImpl( document );
-    NodeImpl *child = new HTMLHRElementImpl( document );
-    n->addChild( child );
-    AttributeImpl* a = t->attrs ? t->attrs->getAttributeItem(promptAttr) : 0;
+        n = new HTMLDivElementImpl(document);
+
+    NamedMappedAttrMapImpl *attrs = t->attrs;
+    t->attrs = NULL;
+
+    HTMLIsIndexElementImpl *isIndex = new HTMLIsIndexElementImpl(document, myform);
+    isIndex->setAttributeMap(attrs);
+    isIndex->setAttribute(typeAttr, "khtml_isindex");
+
 #if APPLE_CHANGES
     DOMString text = searchableIndexIntroduction();
 #else
     DOMString text = i18n("This is a searchable index. Enter search keywords: ");
 #endif
-    if (a)
-        text = DOMString(a->value()) + " ";
-    child = new TextImpl(document, text);
-    n->addChild( child );
-    child = new HTMLIsIndexElementImpl(document, myform);
-    static_cast<ElementImpl *>(child)->setAttribute(typeAttr, "khtml_isindex");
-    n->addChild( child );
-    child = new HTMLHRElementImpl( document );
-    n->addChild( child );
+    if (attrs)
+        if (AttributeImpl *a = attrs->getAttributeItem(promptAttr))
+            text = a->value().domString() + " ";
+
+    attrs->deref();
+
+    n->addChild(new HTMLHRElementImpl(document));
+    n->addChild(new TextImpl(document, text));
+    n->addChild(isIndex);
+    n->addChild(new HTMLHRElementImpl(document));
 
     return n;
 }
