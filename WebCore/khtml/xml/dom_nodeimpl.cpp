@@ -2272,7 +2272,7 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
             }
             o = next;
         }
-        if((o->isText() && !o->isBR()) || o->isReplaced()) {
+        if((o->isText() && !o->isBR() && static_cast<RenderText*>(o)->firstTextBox()) || o->isReplaced()) {
             o->container()->absolutePosition( xPos, yPos );
             if (o->isText())
                 xPos += static_cast<RenderText *>(o)->minXPos();

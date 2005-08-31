@@ -1,3 +1,15 @@
+2005-08-31  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by hyatt.
+
+	- fixed <rdar://problem/4233844> in some cases, HTML href named anchors don't scroll to the right place
+        
+	Test cases added: 
+        * manual-tests/scrollToAnchorWithNewline.html: Added.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::getUpperLeftCorner): skip text nodes that do not have associated text boxes
+
 use 2005-08-31  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by vicki.
