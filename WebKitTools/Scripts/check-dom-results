@@ -87,7 +87,11 @@ foreach my $suite (@suites) {
     my $successCount = $count - $failureCount - $disabledCount;
     my $percentage = (sprintf "%.1f", ($successCount * 100.0 / $count));
     
-    print "${name}: ${successCount} out of ${count} tests succeeded (${percentage}%)\n";
+    if ($percentage == 100) {
+        print "${name}: all ${count} tests succeeded\n";
+    } else {
+        print "${name}: ${successCount} out of ${count} tests succeeded (${percentage}%)\n";
+    }
     if ($verbose) {
 	print "\n";
 	if (@disabled) {

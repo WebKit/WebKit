@@ -1,5 +1,12 @@
 2005-08-30  Darin Adler  <darin@apple.com>
 
+        * Scripts/check-dom-results: Special case 100% to say something nice.
+        * Scripts/cvs-apply: Added "--merge" which automatically rolls back the tree before
+        applying the patch (need a better name).
+        * Scripts/find-extra-includes: Added. Experimental tool to find unneeded includes.
+
+2005-08-30  Darin Adler  <darin@apple.com>
+
         * Scripts/run-webkit-tests: Small formatting fix for leaks mode.
 
 2005-08-29  Maciej Stachowiak  <mjs@apple.com>
