@@ -2117,7 +2117,19 @@ void FuncDeclNode::processFuncDecl(ExecState *exec)
 // ECMA 13
 ValueImp *FuncExprNode::evaluate(ExecState *exec)
 {
-  FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null(), body.get(), exec->context().imp()->scopeChain());
+  ContextImp *context = exec->context().imp();
+  bool named = !ident.isNull();
+  ObjectImp *functionScopeObject = NULL;
+
+  if (named) {
+    // named FunctionExpressions can recursively call themselves,
+    // but they won't register with the current scope chain and should
+    // be contained as single property in an anonymous object.
+    functionScopeObject = new ObjectImp;
+    context->pushScope(functionScopeObject);
+  }
+
+  FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body.get(), context->scopeChain());
   ValueImp *ret(fimp);
   ValueImp *proto = exec->lexicalInterpreter()->builtinObject()->construct(exec, List::empty());
   fimp->put(exec, prototypePropertyName, proto, Internal|DontDelete);
@@ -2125,6 +2137,11 @@ ValueImp *FuncExprNode::evaluate(ExecState *exec)
   int plen = 0;
   for(ParameterNode *p = param.get(); p != 0L; p = p->nextParam(), plen++)
     fimp->addParameter(p->ident());
+
+  if (named) {
+    functionScopeObject->put(exec, ident, ret, Internal | ReadOnly | (context->codeType() == EvalCode ? 0 : DontDelete));
+    context->popScope();
+  }
 
   return ret;
 }

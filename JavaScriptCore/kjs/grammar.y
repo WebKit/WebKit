@@ -667,15 +667,23 @@ Finally:
 ;
 
 FunctionDeclaration:
-    FUNCTION IDENT '(' ')' FunctionBody    { $$ = new FuncDeclNode(*$2, $5); }
+    FUNCTION '(' ')' FunctionBody  { YYABORT; }
+  | FUNCTION '(' FormalParameterList ')' FunctionBody
+                                   { YYABORT; }
+  | FUNCTION IDENT '(' ')' FunctionBody
+                                   { $$ = new FuncDeclNode(*$2, $5); }
   | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
                                    { $$ = new FuncDeclNode(*$2, $4, $6); }
+;
 
 FunctionExpr:
-    FUNCTION '(' ')' FunctionBody  { $$ = new FuncExprNode($4); }
+    FUNCTION '(' ')' FunctionBody  { $$ = new FuncExprNode(Identifier::null(), $4); }
   | FUNCTION '(' FormalParameterList ')' FunctionBody
-                                   { $$ = new FuncExprNode($3, $5); }
-
+                                   { $$ = new FuncExprNode(Identifier::null(), $3, $5); }
+  | FUNCTION IDENT '(' ')' FunctionBody
+                                   { $$ = new FuncExprNode(*$2, $5); }
+  | FUNCTION IDENT '(' FormalParameterList ')' FunctionBody
+                                   { $$ = new FuncExprNode(*$2, $4, $6); }
 ;
 
 FormalParameterList:
@@ -703,8 +711,8 @@ SourceElements:
 ;
 
 SourceElement:
-    Statement                      { $$ = $1; }
-  | FunctionDeclaration            { $$ = $1; }
+    FunctionDeclaration            { $$ = $1; }
+  | Statement                      { $$ = $1; }
 ;
 
 %%
