@@ -521,6 +521,9 @@ sub printLeaks
 {
     my ($toolName, $toolPID, $leaksFilePath) = @_;
 
+    print "\n" unless $atLineStart;
+    $atLineStart = 1;
+
     print " ? checking for leaks in $toolName\n";
     my $leaksOutput = `leaks -exclude pthread_create $toolPID`;
     my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;

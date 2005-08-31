@@ -1,3 +1,7 @@
+2005-08-30  Darin Adler  <darin@apple.com>
+
+        * Scripts/run-webkit-tests: Small formatting fix for leaks mode.
+
 2005-08-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
