@@ -23,10 +23,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef HAVE_FLOAT_H   /* just for !Windows */
-#define HAVE_FLOAT_H 0
-#define HAVE_FUNC__FINITE 0
-#endif
 
 #include <stdio.h>
 #include <assert.h>

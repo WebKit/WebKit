@@ -38,10 +38,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <ctype.h>
 
-#if APPLE_CHANGES
 #include <unicode/uchar.h>
-#endif
 
 using namespace KXMLCore;
 
@@ -660,12 +659,7 @@ static bool isStrWhiteSpace(unsigned short c)
         case 0x2029:
             return true;
         default:
-#if APPLE_CHANGES
             return u_charType(c) == U_SPACE_SEPARATOR;
-#else
-            // ### properly support other Unicode Zs characters
-            return false;
-#endif
     }
 }
 

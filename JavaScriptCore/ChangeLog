@@ -1,3 +1,17 @@
+2005-08-31  Justin Haygood  <justin@xiondigital.net>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4085
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4087
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4096
+          Some fixes for compiling on windows.
+
+        * kjs/config.h: Added a WIN32 case in here, with suitable defines.
+        (To be tweaked as necessary.)
+        * kjs/function.cpp: Took out APPLE_CHANGES around use of ICU.
+        * kjs/operations.cpp: Removed some bogus code that always set HAVE_FLOAT_H.
+
 2005-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
