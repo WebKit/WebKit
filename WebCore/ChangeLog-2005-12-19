@@ -1,3 +1,11 @@
+2005-08-31  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+        Close the output buffer so we won't leak it.
+        
 2005-08-30  Maciej Stachowiak  <mjs@apple.com>
 
         - remove color profile info from some of the w3c images, and update results

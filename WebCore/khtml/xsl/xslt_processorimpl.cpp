@@ -159,7 +159,10 @@ DocumentImpl *XSLTProcessorImpl::documentFromXMLDocPtr(xmlDocPtr resultDoc, xslt
         outputBuf->context = this;
         outputBuf->writecallback = bufferWrite;
         
-        if (xsltSaveResultTo(outputBuf, resultDoc, sheet) < 0)
+        int retval = xsltSaveResultTo(outputBuf, resultDoc, sheet);
+        xmlOutputBufferClose(outputBuf);
+        
+        if (retval < 0)
             return 0;
         
         // There are three types of output we need to be able to deal with:
