@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,34 +28,34 @@
 
 namespace KSVG
 {
-	class SVGAnimatedTransformList;
-	class SVGTransformableImpl;
-	class SVGTransformable : public SVGLocatable
-	{
-	public:
-		SVGTransformable();
-		explicit SVGTransformable(SVGTransformableImpl *i);
-		SVGTransformable(const SVGTransformable &other);
-		virtual ~SVGTransformable();
+    class SVGAnimatedTransformList;
+    class SVGTransformableImpl;
+    class SVGTransformable : public SVGLocatable
+    {
+    public:
+        SVGTransformable();
+        explicit SVGTransformable(SVGTransformableImpl *i);
+        SVGTransformable(const SVGTransformable &other);
+        virtual ~SVGTransformable();
 
-		// Operators
-		SVGTransformable &operator=(const SVGTransformable &other);
-		SVGTransformable &operator=(SVGTransformableImpl *other);
+        // Operators
+        SVGTransformable &operator=(const SVGTransformable &other);
+        SVGTransformable &operator=(SVGTransformableImpl *other);
 
-		// 'SVGTransformable' functions
-		SVGAnimatedTransformList transform() const;
+        // 'SVGTransformable' functions
+        SVGAnimatedTransformList transform() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGTransformable)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGTransformable)
 
-	protected:
-		SVGTransformableImpl *impl;
+    protected:
+        SVGTransformableImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_GET
+    public: // EcmaScript section
+        KDOM_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

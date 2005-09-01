@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,8 +32,8 @@ using namespace KDOM::XPointer;
 XPointerSchemeImpl::XPointerSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc)
 : PointerPartImpl(DOMString("xpointer").handle(), schemeData, nbc)
 {
-	kdWarning() << "KDOM::XPointer does currently not support "
-				<< "the xpointer() scheme. TODO submit DOMError" << endl;
+    kdWarning() << "KDOM::XPointer does currently not support "
+                << "the xpointer() scheme. TODO submit DOMError" << endl;
 }
 
 XPointerSchemeImpl::~XPointerSchemeImpl()
@@ -42,7 +42,7 @@ XPointerSchemeImpl::~XPointerSchemeImpl()
 
 XPointerResultImpl *XPointerSchemeImpl::evaluate(NodeImpl *) const
 {
-	return new XPointerResultImpl(NO_MATCH);
+    return new XPointerResultImpl(NO_MATCH);
 }
 
 // vim:ts=4:noet

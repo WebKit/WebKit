@@ -1,8 +1,8 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
-	This file is part of the KDE project
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -40,112 +40,112 @@ static InterpreterList *s_interpreterList;
 class ScriptInterpreter::Private
 {
 public:
-	Private(DocumentImpl *doc) : document(doc), currentEvent(0) { }
-	virtual ~Private() { }
+    Private(DocumentImpl *doc) : document(doc), currentEvent(0) { }
+    virtual ~Private() { }
 
-	DocumentImpl *document;
-	EventImpl *currentEvent;
+    DocumentImpl *document;
+    EventImpl *currentEvent;
 
-	QPtrDict<KJS::ObjectImp> domObjects;
+    QPtrDict<KJS::ObjectImp> domObjects;
 };
 
 ScriptInterpreter::ScriptInterpreter(KJS::ObjectImp *global, DocumentImpl *doc) : KJS::Interpreter(global), d(new Private(doc))
 {
-	if(!s_interpreterList)
-		s_interpreterList = new InterpreterList();
+    if(!s_interpreterList)
+        s_interpreterList = new InterpreterList();
 
-	s_interpreterList->append(this);
+    s_interpreterList->append(this);
 }
 
 ScriptInterpreter::~ScriptInterpreter()
 {
-	assert(s_interpreterList && s_interpreterList->containsRef(this));
-	s_interpreterList->remove(this);
-	
-	if(s_interpreterList->isEmpty())
-	{
-		delete s_interpreterList;
-		s_interpreterList = 0;
-	}
+    assert(s_interpreterList && s_interpreterList->containsRef(this));
+    s_interpreterList->remove(this);
+    
+    if(s_interpreterList->isEmpty())
+    {
+        delete s_interpreterList;
+        s_interpreterList = 0;
+    }
 
-	delete d;
+    delete d;
 }
 
 DocumentImpl *ScriptInterpreter::document() const
 {
-	if(!d)
-		return 0;
+    if(!d)
+        return 0;
 
-	return d->document;
+    return d->document;
 }
 
 EventImpl *ScriptInterpreter::currentEvent() const
 {
-	if(!d)
-		return 0;
+    if(!d)
+        return 0;
 
-	return d->currentEvent;
+    return d->currentEvent;
 }
 
 void ScriptInterpreter::setCurrentEvent(EventImpl *evt)
 {
-	if(d)
-		d->currentEvent = evt;
+    if(d)
+        d->currentEvent = evt;
 }
 
 KJS::ObjectImp *ScriptInterpreter::getDOMObject(void *handle) const
 {
-	if(!d)
-		return 0;
-		
-	return d->domObjects[handle];
+    if(!d)
+        return 0;
+        
+    return d->domObjects[handle];
 }
 
 void ScriptInterpreter::putDOMObject(void *handle, KJS::ObjectImp *obj)
 {
-	if(!handle)
-	{
-		kdFatal() << k_funcinfo << " Cannot cache nil object! Backtrace: " << kdBacktrace() << endl;
-		return;
-	}
-	
-	if(d)
-		d->domObjects.insert(handle, obj);
+    if(!handle)
+    {
+        kdFatal() << k_funcinfo << " Cannot cache nil object! Backtrace: " << kdBacktrace() << endl;
+        return;
+    }
+    
+    if(d)
+        d->domObjects.insert(handle, obj);
 }
 
 void ScriptInterpreter::removeDOMObject(void *handle)
 {
-	if(d)
-		d->domObjects.take(handle);
+    if(d)
+        d->domObjects.take(handle);
 }
 
 void ScriptInterpreter::forgetDOMObject(void *handle)
 {
-	// Shared()'s deref() method uses this function to make us forget
-	// about nearly deleted objects; it deletes the handle
-	// in all interpreter instances, if multiple exist
-	if(!s_interpreterList)
-		return;
+    // Shared()'s deref() method uses this function to make us forget
+    // about nearly deleted objects; it deletes the handle
+    // in all interpreter instances, if multiple exist
+    if(!s_interpreterList)
+        return;
 
-	QPtrListIterator<ScriptInterpreter> it(*s_interpreterList);
-	while(it.current())
-	{
-		(*it)->removeDOMObject(handle);
-		++it;
-	}
+    QPtrListIterator<ScriptInterpreter> it(*s_interpreterList);
+    while(it.current())
+    {
+        (*it)->removeDOMObject(handle);
+        ++it;
+    }
 }
 
 void ScriptInterpreter::mark()
 {
-	KJS::Interpreter::mark();
+    KJS::Interpreter::mark();
 
-	if(!d)
-		return;
+    if(!d)
+        return;
 
-	kdDebug() << "!!!!!!!!!! ScriptInterpreter::mark " << this << " marking " << d->domObjects.count() << " DOM objects" << endl;
-	QPtrDictIterator<KJS::ObjectImp> it(d->domObjects);
-	for(; it.current(); ++it)
-		it.current()->mark();
+    kdDebug() << "!!!!!!!!!! ScriptInterpreter::mark " << this << " marking " << d->domObjects.count() << " DOM objects" << endl;
+    QPtrDictIterator<KJS::ObjectImp> it(d->domObjects);
+    for(; it.current(); ++it)
+        it.current()->mark();
 }
 
 // vim:ts=4:noet

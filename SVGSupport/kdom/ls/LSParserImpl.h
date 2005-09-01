@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,50 +30,50 @@ class KURL;
 
 namespace KDOM
 {
-	class NodeImpl;
-	class DOMConfigurationImpl;
-	class DocumentImpl;
-	class Parser;
-	class LSInputImpl;
-	class LSParserFilterImpl;
+    class NodeImpl;
+    class DOMConfigurationImpl;
+    class DocumentImpl;
+    class Parser;
+    class LSInputImpl;
+    class LSParserFilterImpl;
 
-	class LSParserImpl : public EventTargetImpl
-	{
-	public:
-		LSParserImpl();
-		virtual ~LSParserImpl();
+    class LSParserImpl : public EventTargetImpl
+    {
+    public:
+        LSParserImpl();
+        virtual ~LSParserImpl();
 
-		// 'LSParser' functions
-		DOMConfigurationImpl *domConfig() const;
+        // 'LSParser' functions
+        DOMConfigurationImpl *domConfig() const;
 
-		LSParserFilterImpl *filter() const;
-		void setFilter(LSParserFilterImpl *filter);
+        LSParserFilterImpl *filter() const;
+        void setFilter(LSParserFilterImpl *filter);
 
-		/**
-		 * true if the LSParser is asynchronous, false if it is synchronous. 
-		 */
-		bool async() const;
-		// not in spec
-		void setASync(bool async);
+        /**
+         * true if the LSParser is asynchronous, false if it is synchronous. 
+         */
+        bool async() const;
+        // not in spec
+        void setASync(bool async);
 
-		bool busy() const;
+        bool busy() const;
 
-		DocumentImpl *parse(LSInputImpl *input);
-		DocumentImpl *parseURI(const DOMString &uri);
+        DocumentImpl *parse(LSInputImpl *input);
+        DocumentImpl *parseURI(const DOMString &uri);
 
-		NodeImpl *parseWithContext(LSInputImpl *input, NodeImpl *contextArg,
-								   unsigned short action);
+        NodeImpl *parseWithContext(LSInputImpl *input, NodeImpl *contextArg,
+                                   unsigned short action);
 
-		void abort() const;
+        void abort() const;
 
-	private:
-		DocumentImpl *parse(KURL url, LSInputImpl *input, bool async, NodeImpl *contextArg = 0);
+    private:
+        DocumentImpl *parse(KURL url, LSInputImpl *input, bool async, NodeImpl *contextArg = 0);
 
-	private:
-		bool m_async;
-		Parser *m_activeParser;
-		mutable DOMConfigurationImpl *m_config;
-	};
+    private:
+        bool m_async;
+        Parser *m_activeParser;
+        mutable DOMConfigurationImpl *m_config;
+    };
 };
 
 #endif

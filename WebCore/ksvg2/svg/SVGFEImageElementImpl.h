@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,38 +35,38 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatioImpl;
+    class SVGAnimatedPreserveAspectRatioImpl;
 
-	class SVGFEImageElementImpl : public SVGFilterPrimitiveStandardAttributesImpl,
-								  public SVGURIReferenceImpl,
-								  public SVGLangSpaceImpl,
-								  public SVGExternalResourcesRequiredImpl,
-								  public KDOM::CachedObjectClient
-	{
-	public:
-		SVGFEImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFEImageElementImpl();
+    class SVGFEImageElementImpl : public SVGFilterPrimitiveStandardAttributesImpl,
+                                  public SVGURIReferenceImpl,
+                                  public SVGLangSpaceImpl,
+                                  public SVGExternalResourcesRequiredImpl,
+                                  public KDOM::CachedObjectClient
+    {
+    public:
+        SVGFEImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFEImageElementImpl();
 
-		// 'SVGFEImageElement' functions
-		SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
+        // 'SVGFEImageElement' functions
+        SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual void notifyFinished(KDOM::CachedObject *finishedObj);
+        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
-	protected:
-		virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
+    protected:
+        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-	private:
-		mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
-		KDOM::CachedImage *m_cachedImage;
-		mutable KCanvasFEImage *m_filterEffect;
-	};
+    private:
+        mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
+        KDOM::CachedImage *m_cachedImage;
+        mutable KCanvasFEImage *m_filterEffect;
+    };
 };
 
 #endif

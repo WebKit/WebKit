@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegMovetoAbsImpl::SVGPathSegMovetoAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = 0.0;
+    m_x = m_y = 0.0;
 }
 
 SVGPathSegMovetoAbsImpl::~SVGPathSegMovetoAbsImpl()
@@ -37,28 +37,28 @@ SVGPathSegMovetoAbsImpl::~SVGPathSegMovetoAbsImpl()
 
 void SVGPathSegMovetoAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegMovetoAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegMovetoAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegMovetoAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 
@@ -67,7 +67,7 @@ double SVGPathSegMovetoAbsImpl::y() const
 SVGPathSegMovetoRelImpl::SVGPathSegMovetoRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = 0.0;
+    m_x = m_y = 0.0;
 }
 
 SVGPathSegMovetoRelImpl::~SVGPathSegMovetoRelImpl()
@@ -76,28 +76,28 @@ SVGPathSegMovetoRelImpl::~SVGPathSegMovetoRelImpl()
 
 void SVGPathSegMovetoRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegMovetoRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegMovetoRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegMovetoRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 // vim:ts=4:noet

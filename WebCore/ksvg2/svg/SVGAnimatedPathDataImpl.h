@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,19 +25,19 @@
 
 namespace KSVG
 {
-	class SVGPathSegListImpl;
-	class SVGAnimatedPathDataImpl
-	{
-	public:
-		SVGAnimatedPathDataImpl();
-		virtual ~SVGAnimatedPathDataImpl();
+    class SVGPathSegListImpl;
+    class SVGAnimatedPathDataImpl
+    {
+    public:
+        SVGAnimatedPathDataImpl();
+        virtual ~SVGAnimatedPathDataImpl();
 
-		// 'SVGAnimatedPathData' functions
-		virtual SVGPathSegListImpl *pathSegList() const = 0;
-		virtual SVGPathSegListImpl *normalizedPathSegList() const = 0;
-		virtual SVGPathSegListImpl *animatedPathSegList() const = 0;
-		virtual SVGPathSegListImpl *animatedNormalizedPathSegList() const = 0;
-	};
+        // 'SVGAnimatedPathData' functions
+        virtual SVGPathSegListImpl *pathSegList() const = 0;
+        virtual SVGPathSegListImpl *normalizedPathSegList() const = 0;
+        virtual SVGPathSegListImpl *animatedPathSegList() const = 0;
+        virtual SVGPathSegListImpl *animatedNormalizedPathSegList() const = 0;
+    };
 };
 
 #endif

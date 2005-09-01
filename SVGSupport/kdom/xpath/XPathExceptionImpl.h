@@ -35,13 +35,13 @@ namespace XPath
 
 class XPathExceptionImpl : public Shared
 {
-	public:
-		XPathExceptionImpl( unsigned short code );
+    public:
+        XPathExceptionImpl( unsigned short code );
 
-		unsigned short code() const;
+        unsigned short code() const;
 
-	private:
-		unsigned short m_code;
+    private:
+        unsigned short m_code;
 };
 
 }

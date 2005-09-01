@@ -35,15 +35,15 @@ SVGAnimatedAngleImpl::~SVGAnimatedAngleImpl()
 
 SVGAngleImpl *SVGAnimatedAngleImpl::create() const
 {
-	return new SVGAngleImpl(m_context);
+    return new SVGAngleImpl(m_context);
 }
 
 void SVGAnimatedAngleImpl::assign(SVGAngleImpl *src, SVGAngleImpl *dst) const
 {
-	if(!src || !dst)
-		return;
+    if(!src || !dst)
+        return;
 
-	dst->setValueAsString(src->valueAsString());
+    dst->setValueAsString(src->valueAsString());
 }
 
 // vim:ts=4:noet

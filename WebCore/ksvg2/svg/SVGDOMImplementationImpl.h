@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,48 +28,48 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class CDFInterface;
-	class DocumentImpl;
-	class DocumentTypeImpl;
+    class DOMString;
+    class CDFInterface;
+    class DocumentImpl;
+    class DocumentTypeImpl;
 };
 
 namespace KSVG
 {
-	class SVGDOMImplementationImpl : public KDOM::DOMImplementationImpl
-	{
-	public:
-		SVGDOMImplementationImpl();
-		virtual ~SVGDOMImplementationImpl();
+    class SVGDOMImplementationImpl : public KDOM::DOMImplementationImpl
+    {
+    public:
+        SVGDOMImplementationImpl();
+        virtual ~SVGDOMImplementationImpl();
 
-		static SVGDOMImplementationImpl *self();
+        static SVGDOMImplementationImpl *self();
 
-		// 'SVGDOMImplementationImpl' functions
-		bool hasFeature(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
-		KDOM::DocumentTypeImpl *createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId) const;
-		KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype) const;
-		KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const;
+        // 'SVGDOMImplementationImpl' functions
+        bool hasFeature(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
+        KDOM::DocumentTypeImpl *createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId) const;
+        KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype) const;
+        KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const;
 
-		virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const;
+        virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const;
 
-		// Internal
-		virtual int typeToId(KDOM::DOMStringImpl *type);
-		virtual KDOM::DOMStringImpl *idToType(int eventId);
+        // Internal
+        virtual int typeToId(KDOM::DOMStringImpl *type);
+        virtual KDOM::DOMStringImpl *idToType(int eventId);
 
-		virtual KDOM::DocumentTypeImpl *defaultDocumentType() const;
+        virtual KDOM::DocumentTypeImpl *defaultDocumentType() const;
 
-		bool inAnimationContext() const;
-		void setAnimationContext(bool value);
+        bool inAnimationContext() const;
+        void setAnimationContext(bool value);
 
-	protected:
-		virtual KDOM::CDFInterface *createCDFInterface() const;
+    protected:
+        virtual KDOM::CDFInterface *createCDFInterface() const;
 
-	private:
-		bool m_animationContext : 1;
+    private:
+        bool m_animationContext : 1;
 
-		static SVGDOMImplementationImpl *s_instance;
-		static QStringList s_features;
-	};
+        static SVGDOMImplementationImpl *s_instance;
+        static QStringList s_features;
+    };
 };
 
 #endif

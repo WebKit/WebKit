@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -48,78 +48,78 @@ using namespace KSVG;
 SVGFEImageElementImpl::SVGFEImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
-	m_preserveAspectRatio = 0;
-	m_cachedImage = 0;
+    m_preserveAspectRatio = 0;
+    m_cachedImage = 0;
 }
 
 SVGFEImageElementImpl::~SVGFEImageElementImpl()
 {
-	if(m_preserveAspectRatio)
-		m_preserveAspectRatio->deref();
+    if(m_preserveAspectRatio)
+        m_preserveAspectRatio->deref();
 }
 
 SVGAnimatedPreserveAspectRatioImpl *SVGFEImageElementImpl::preserveAspectRatio() const
 {
-	return lazy_create<SVGAnimatedPreserveAspectRatioImpl>(m_preserveAspectRatio, this);
+    return lazy_create<SVGAnimatedPreserveAspectRatioImpl>(m_preserveAspectRatio, this);
 }
 
 void SVGFEImageElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_PRESERVEASPECTRATIO:
-		{
-			preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.handle());
-			break;
-		}
-		default:
-		{
-			if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-			if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_PRESERVEASPECTRATIO:
+        {
+            preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.handle());
+            break;
+        }
+        default:
+        {
+            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
+            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
 
-			SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-		}
-	};
+            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
+        }
+    };
 }
 
 void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
-	if(finishedObj == m_cachedImage)
-	{
+    if(finishedObj == m_cachedImage)
+    {
 #if 0
-		KCanvasImage *imageBuffer = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
-		imageBuffer->init(m_cachedImage->pixmap());
-		//m_filterEffect->setImageBuffer(imageBuffer);
+        KCanvasImage *imageBuffer = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
+        imageBuffer->init(m_cachedImage->pixmap());
+        //m_filterEffect->setImageBuffer(imageBuffer);
 
-		m_cachedImage->deref(this);
-		m_cachedImage = 0;
+        m_cachedImage->deref(this);
+        m_cachedImage = 0;
 #endif
-	}
+    }
 }
 
 void SVGFEImageElementImpl::finalizeStyle(KCanvasRenderingStyle *style, bool /* needFillStrokeUpdate */)
 {
-	KURL fullUrl(ownerDocument()->documentKURI(), KDOM::DOMString(href()->baseVal()).string());
-	kdDebug() << "REQUESTING LOAD OF " << fullUrl.prettyURL() << endl;
+    KURL fullUrl(ownerDocument()->documentKURI(), KDOM::DOMString(href()->baseVal()).string());
+    kdDebug() << "REQUESTING LOAD OF " << fullUrl.prettyURL() << endl;
 
-	m_cachedImage = ownerDocument()->docLoader()->requestImage(fullUrl);
-	if(m_cachedImage)
-		m_cachedImage->ref(this);
+    m_cachedImage = ownerDocument()->docLoader()->requestImage(fullUrl);
+    if(m_cachedImage)
+        m_cachedImage->ref(this);
 }
 
 KCanvasItem *SVGFEImageElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
-	m_filterEffect = static_cast<KCanvasFEImage *>(canvas->renderingDevice()->createFilterEffect(FE_IMAGE));
-	setStandardAttributes(m_filterEffect);
-	return 0;
+    m_filterEffect = static_cast<KCanvasFEImage *>(canvas->renderingDevice()->createFilterEffect(FE_IMAGE));
+    setStandardAttributes(m_filterEffect);
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEImageElementImpl::filterEffect() const
 {
-	return m_filterEffect;
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

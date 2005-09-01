@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,48 +30,48 @@ class KRenderingStyle;
 class KCanvasContainer : public KCanvasItem
 {
 public:
-	KCanvasContainer(KCanvas *canvas, KRenderingStyle *style);
-	virtual ~KCanvasContainer();
+    KCanvasContainer(KCanvas *canvas, KRenderingStyle *style);
+    virtual ~KCanvasContainer();
 
-	// Some containers do not want it's children
-	// to be drawn, because they may be 'referenced'
-	// Example: <marker> children in SVG
-	void setDrawContents(bool drawContents);
+    // Some containers do not want it's children
+    // to be drawn, because they may be 'referenced'
+    // Example: <marker> children in SVG
+    void setDrawContents(bool drawContents);
 
-	virtual bool needsTemporaryBuffer() const;
-	virtual bool isContainer() const { return true; }
+    virtual bool needsTemporaryBuffer() const;
+    virtual bool isContainer() const { return true; }
 
-	// Container logic
-	virtual void appendItem(KCanvasItem *item);
-	virtual void insertItemBefore(KCanvasItem *item, KCanvasItem *reference);
-	virtual void removeItem(const KCanvasItem *item);
+    // Container logic
+    virtual void appendItem(KCanvasItem *item);
+    virtual void insertItemBefore(KCanvasItem *item, KCanvasItem *reference);
+    virtual void removeItem(const KCanvasItem *item);
 
-	// 'KCanvasItem' functions
-	virtual bool fillContains(const QPoint &p) const;
-	virtual bool strokeContains(const QPoint &p) const;
+    // 'KCanvasItem' functions
+    virtual bool fillContains(const QPoint &p) const;
+    virtual bool strokeContains(const QPoint &p) const;
 
-	virtual void draw(const QRect &rect) const;
-	
-	virtual void invalidate() const;
-	virtual QRect bbox(bool includeStroke = true) const;
+    virtual void draw(const QRect &rect) const;
+    
+    virtual void invalidate() const;
+    virtual QRect bbox(bool includeStroke = true) const;
         
         KCanvasItem *first() const;
         KCanvasItem *last() const;
         
 private:
-	friend class KCanvasItem;
+    friend class KCanvasItem;
 
-	virtual bool raiseItem(KCanvasItem *item);
-	virtual bool lowerItem(KCanvasItem *item);
-
-private:
-	friend class KCanvas;
-
-	void collisions(const QPoint &p, KCanvasItemList &hits) const;
+    virtual bool raiseItem(KCanvasItem *item);
+    virtual bool lowerItem(KCanvasItem *item);
 
 private:
-	class Private;
-	Private *d;
+    friend class KCanvas;
+
+    void collisions(const QPoint &p, KCanvasItemList &hits) const;
+
+private:
+    class Private;
+    Private *d;
 };
 
 #endif

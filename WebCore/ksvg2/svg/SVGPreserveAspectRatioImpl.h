@@ -27,39 +27,39 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
+    class DOMStringImpl;
 };
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGStyledElementImpl;
-	class SVGPreserveAspectRatioImpl : public KDOM::Shared
-	{ 
-	public:
-		SVGPreserveAspectRatioImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGPreserveAspectRatioImpl();
+    class SVGMatrixImpl;
+    class SVGStyledElementImpl;
+    class SVGPreserveAspectRatioImpl : public KDOM::Shared
+    { 
+    public:
+        SVGPreserveAspectRatioImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGPreserveAspectRatioImpl();
 
-		void setAlign(unsigned short);
-		unsigned short align() const;
+        void setAlign(unsigned short);
+        unsigned short align() const;
 
-		void setMeetOrSlice(unsigned short);
-		unsigned short meetOrSlice() const;
-		
-		SVGMatrixImpl *getCTM(float logicX, float logicY,
-							  float logicWidth, float logicHeight,
-							  float physX, float physY, float physWidth,
-							  float physHeight);
+        void setMeetOrSlice(unsigned short);
+        unsigned short meetOrSlice() const;
+        
+        SVGMatrixImpl *getCTM(float logicX, float logicY,
+                              float logicWidth, float logicHeight,
+                              float physX, float physY, float physWidth,
+                              float physHeight);
 
-		// Helper
-		void parsePreserveAspectRatio(KDOM::DOMStringImpl *string);
+        // Helper
+        void parsePreserveAspectRatio(KDOM::DOMStringImpl *string);
 
-	protected:
-		unsigned short m_align;
-		unsigned short m_meetOrSlice;
+    protected:
+        unsigned short m_align;
+        unsigned short m_meetOrSlice;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

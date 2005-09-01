@@ -27,44 +27,44 @@
 
 namespace KDOM
 {
-	class KDOMPart;
+    class KDOMPart;
 
-	/**
-	 * A generic view class for any layer-on-top of kdom
-	 * which can perform rendering... (ie. khtml2/ksvg2)
-	 */
-	class KDOMView
-	{
-	public:
-		/**
-		 * Constructs a KDOMView.
-		 */
-		KDOMView(KDOMPart *part);
-		virtual ~KDOMView();
+    /**
+     * A generic view class for any layer-on-top of kdom
+     * which can perform rendering... (ie. khtml2/ksvg2)
+     */
+    class KDOMView
+    {
+    public:
+        /**
+         * Constructs a KDOMView.
+         */
+        KDOMView(KDOMPart *part);
+        virtual ~KDOMView();
 
-		/**
-		 * Returns a pointer to the KDOMPart that is
-		 * rendering the page.
-		 */
-		KDOMPart *part() const;
+        /**
+         * Returns a pointer to the KDOMPart that is
+         * rendering the page.
+         */
+        KDOMPart *part() const;
 
-		/**
-		* Get/set the CSS Media Type.
-		*
-		* Media type is set to "screen" for on-screen rendering and "print"
-		* during printing. Other media types lack the proper support in the
-		* renderer and are not activated. The DOM tree and the parser itself,
-		* however, properly handle other media types. To make them actually work
-		* you only need to enable the media type in the view and if necessary
-		* add the media type dependent changes to the renderer.
-		*/
-		QString mediaType() const;
-		void setMediaType(const QString &medium);
+        /**
+        * Get/set the CSS Media Type.
+        *
+        * Media type is set to "screen" for on-screen rendering and "print"
+        * during printing. Other media types lack the proper support in the
+        * renderer and are not activated. The DOM tree and the parser itself,
+        * however, properly handle other media types. To make them actually work
+        * you only need to enable the media type in the view and if necessary
+        * add the media type dependent changes to the renderer.
+        */
+        QString mediaType() const;
+        void setMediaType(const QString &medium);
 
-	private:
-		struct KDOMViewPrivate;
-		KDOMViewPrivate *d;
-	};
+    private:
+        struct KDOMViewPrivate;
+        KDOMViewPrivate *d;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,28 +27,28 @@
 
 namespace KDOM
 {
-	class TextImpl : public CharacterDataImpl
-	{
-	public:
-		TextImpl(DocumentPtr *doc, DOMStringImpl *text);
-		virtual ~TextImpl();
+    class TextImpl : public CharacterDataImpl
+    {
+    public:
+        TextImpl(DocumentPtr *doc, DOMStringImpl *text);
+        virtual ~TextImpl();
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
 
-		TextImpl *splitText(unsigned long offset);
+        TextImpl *splitText(unsigned long offset);
 
-		bool isElementContentWhitespace() const;
-		DOMStringImpl *wholeText() const;
-		TextImpl *replaceWholeText(DOMStringImpl *content);
+        bool isElementContentWhitespace() const;
+        DOMStringImpl *wholeText() const;
+        TextImpl *replaceWholeText(DOMStringImpl *content);
 
-		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+        // Internal
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-	protected:
-		QPtrList<NodeImpl> logicallyAdjacentTextNodes() const;
-		bool checkChildren(NodeImpl *node, const QPtrList<NodeImpl> &removables) const;
-	};
+    protected:
+        QPtrList<NodeImpl> logicallyAdjacentTextNodes() const;
+        bool checkChildren(NodeImpl *node, const QPtrList<NodeImpl> &removables) const;
+    };
 };
 
 #endif

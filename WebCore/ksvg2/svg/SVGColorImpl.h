@@ -30,38 +30,38 @@
 
 namespace KDOM
 {
-	class RGBColorImpl;
+    class RGBColorImpl;
 };
 
 namespace KSVG
 {
-	class SVGColorImpl : public KDOM::CSSValueImpl
-	{
-	public:
-		SVGColorImpl();
-		SVGColorImpl(KDOM::DOMStringImpl *rgbColor);
-		SVGColorImpl(unsigned short colorType);
-		virtual ~SVGColorImpl();
+    class SVGColorImpl : public KDOM::CSSValueImpl
+    {
+    public:
+        SVGColorImpl();
+        SVGColorImpl(KDOM::DOMStringImpl *rgbColor);
+        SVGColorImpl(unsigned short colorType);
+        virtual ~SVGColorImpl();
 
-		// 'SVGColor' functions
-		unsigned short colorType() const;
+        // 'SVGColor' functions
+        unsigned short colorType() const;
 
-		KDOM::RGBColorImpl *rgbColor() const;
+        KDOM::RGBColorImpl *rgbColor() const;
 
-		void setRGBColor(KDOM::DOMStringImpl *rgbColor);
-		void setRGBColorICCColor(KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
-		void setColor(unsigned short colorType, KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
+        void setRGBColor(KDOM::DOMStringImpl *rgbColor);
+        void setRGBColorICCColor(KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
+        void setColor(unsigned short colorType, KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
 
-		virtual KDOM::DOMStringImpl *cssText() const;
+        virtual KDOM::DOMStringImpl *cssText() const;
 
-		// Helpers
-		const QColor &color() const;
+        // Helpers
+        const QColor &color() const;
 
-	private:	
-		QColor m_qColor;
-		unsigned short m_colorType;
-		KDOM::DOMStringImpl *m_rgbColor;
-	};
+    private:    
+        QColor m_qColor;
+        unsigned short m_colorType;
+        KDOM::DOMStringImpl *m_rgbColor;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,39 +37,39 @@ SVGViewElementImpl::SVGViewElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::I
 : SVGStyledElementImpl(doc, id, prefix), SVGExternalResourcesRequiredImpl(),
 SVGFitToViewBoxImpl(), SVGZoomAndPanImpl()
 {
-	m_viewTarget = 0;
+    m_viewTarget = 0;
 }
 
 SVGViewElementImpl::~SVGViewElementImpl()
 {
-	if(m_viewTarget)
-		m_viewTarget->deref();
+    if(m_viewTarget)
+        m_viewTarget->deref();
 }
 
 SVGStringListImpl *SVGViewElementImpl::viewTarget() const
 {
-	return lazy_create<SVGStringListImpl>(m_viewTarget);
+    return lazy_create<SVGStringListImpl>(m_viewTarget);
 }
 
 void SVGViewElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_VIEWTARGET:
-		{
-			viewTarget()->reset(value.string());
-			break;
-		}
-		default:
-		{
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-			if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
-			if(SVGZoomAndPanImpl::parseAttribute(attr)) return;
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_VIEWTARGET:
+        {
+            viewTarget()->reset(value.string());
+            break;
+        }
+        default:
+        {
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+            if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
+            if(SVGZoomAndPanImpl::parseAttribute(attr)) return;
 
-			SVGStyledElementImpl::parseAttribute(attr);
-		}
-	};
+            SVGStyledElementImpl::parseAttribute(attr);
+        }
+    };
 }
 

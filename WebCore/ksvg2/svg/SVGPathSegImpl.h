@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,21 +31,21 @@
 
 namespace KSVG
 {
-	class SVGPathElementImpl;
-	class SVGStyledElementImpl;
-	class SVGPathSegImpl : public KDOM::Shared
-	{
-	public:
-		SVGPathSegImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegImpl();
+    class SVGPathElementImpl;
+    class SVGStyledElementImpl;
+    class SVGPathSegImpl : public KDOM::Shared
+    {
+    public:
+        SVGPathSegImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl(""); }
-		virtual QString toString() const { return QString::fromLatin1(""); }
+        virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl(""); }
+        virtual QString toString() const { return QString::fromLatin1(""); }
 
-	protected:
-		const SVGStyledElementImpl *m_context;
-	};
+    protected:
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

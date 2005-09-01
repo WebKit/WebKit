@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,26 +32,26 @@ class NodeImpl;
 
 namespace XPointer
 {
-	class NBCImpl;
-	class XPointerResultImpl;
+    class NBCImpl;
+    class XPointerResultImpl;
 
-	/**
-	 * Implementation of the (currently) xpath1() 3rd party scheme:
-	 * http://simonstl.com/ietf/draft-stlaurent-xpath-frag-01.html
-	 *
-	 * @author Frans Englich <frans.englich@telia.com>
-	 */
-	class XPath1SchemeImpl : public PointerPartImpl
-	{
-	public:
-		XPath1SchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
-		virtual ~XPath1SchemeImpl();
-		
-		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
+    /**
+     * Implementation of the (currently) xpath1() 3rd party scheme:
+     * http://simonstl.com/ietf/draft-stlaurent-xpath-frag-01.html
+     *
+     * @author Frans Englich <frans.englich@telia.com>
+     */
+    class XPath1SchemeImpl : public PointerPartImpl
+    {
+    public:
+        XPath1SchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
+        virtual ~XPath1SchemeImpl();
+        
+        virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
 
-//	private:
-//		XPathExpressionImpl *m_expr;
-	};
+//    private:
+//        XPathExpressionImpl *m_expr;
+    };
 };
 
 };

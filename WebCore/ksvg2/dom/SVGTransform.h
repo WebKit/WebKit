@@ -27,45 +27,45 @@
 
 namespace KSVG
 {
-	class SVGMatrix;
-	class SVGTransformImpl;
-	class SVGTransform
-	{ 
-	public:
-		SVGTransform();
-		explicit SVGTransform(SVGTransformImpl *i);
-		SVGTransform(const SVGTransform &other);
-		virtual ~SVGTransform();
+    class SVGMatrix;
+    class SVGTransformImpl;
+    class SVGTransform
+    { 
+    public:
+        SVGTransform();
+        explicit SVGTransform(SVGTransformImpl *i);
+        SVGTransform(const SVGTransform &other);
+        virtual ~SVGTransform();
 
-		// Operators
-		SVGTransform &operator=(const SVGTransform &other);
-		bool operator==(const SVGTransform &other) const;
-		bool operator!=(const SVGTransform &other) const;
+        // Operators
+        SVGTransform &operator=(const SVGTransform &other);
+        bool operator==(const SVGTransform &other) const;
+        bool operator!=(const SVGTransform &other) const;
 
-		// 'SVGTransform' functions
-		unsigned short type() const;
-		SVGMatrix matrix() const;
-		double angle() const;
+        // 'SVGTransform' functions
+        unsigned short type() const;
+        SVGMatrix matrix() const;
+        double angle() const;
 
-		void setMatrix(const SVGMatrix &);
-		void setTranslate(double, double);
-		void setScale(double, double);
-		void setRotate(double, double, double);
-		void setSkewX(double);
-		void setSkewY(double);
+        void setMatrix(const SVGMatrix &);
+        void setTranslate(double, double);
+        void setScale(double, double);
+        void setRotate(double, double, double);
+        void setSkewX(double);
+        void setSkewY(double);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGTransform)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGTransform)
 
-	private:
-		SVGTransformImpl *impl;
+    private:
+        SVGTransformImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGTransformProto)

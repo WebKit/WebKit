@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml css code by:
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
@@ -37,234 +37,234 @@
 
 namespace KDOM
 {
-	class CSSParser;
-	class CSSProperty;
-	class CSSValueImpl;
-	class CDFInterface;
-	class StyleSheetImpl;
+    class CSSParser;
+    class CSSProperty;
+    class CSSValueImpl;
+    class CDFInterface;
+    class StyleSheetImpl;
 
-	struct CSSNamespace
-	{
-		DOMStringImpl *m_prefix;
-		DOMStringImpl *m_uri;
-		CSSNamespace *m_parent;
+    struct CSSNamespace
+    {
+        DOMStringImpl *m_prefix;
+        DOMStringImpl *m_uri;
+        CSSNamespace *m_parent;
 
-		CSSNamespace(DOMStringImpl *p, DOMStringImpl *u, CSSNamespace *parent)
-		{
-			m_prefix = p;
-			if(m_prefix)
-				m_prefix->ref();
+        CSSNamespace(DOMStringImpl *p, DOMStringImpl *u, CSSNamespace *parent)
+        {
+            m_prefix = p;
+            if(m_prefix)
+                m_prefix->ref();
 
-			m_uri = u;
-			if(m_uri)
-				m_uri->ref();
+            m_uri = u;
+            if(m_uri)
+                m_uri->ref();
 
-			m_parent = parent;
-		}
+            m_parent = parent;
+        }
 
-		~CSSNamespace()
-		{
-			if(m_prefix)
-				m_prefix->deref();
+        ~CSSNamespace()
+        {
+            if(m_prefix)
+                m_prefix->deref();
 
-			if(m_uri)
-				m_uri->deref();
+            if(m_uri)
+                m_uri->deref();
 
-			delete m_parent;
-		}
+            delete m_parent;
+        }
 
-		DOMStringImpl *uri() { return m_uri; }
-		DOMStringImpl *prefix() { return m_prefix; }
+        DOMStringImpl *uri() { return m_uri; }
+        DOMStringImpl *prefix() { return m_prefix; }
 
-		CSSNamespace *namespaceForPrefix(DOMStringImpl *prefix)
-		{
-			if(DOMString(prefix) == DOMString(m_prefix))
-				return this;
+        CSSNamespace *namespaceForPrefix(DOMStringImpl *prefix)
+        {
+            if(DOMString(prefix) == DOMString(m_prefix))
+                return this;
 
-			if(m_parent)
-				return m_parent->namespaceForPrefix(prefix);
+            if(m_parent)
+                return m_parent->namespaceForPrefix(prefix);
 
-			return 0;
-		}
-	};
+            return 0;
+        }
+    };
 
-	// a style class which has a parent (almost all have)
-	class StyleBaseImpl : public TreeShared<StyleBaseImpl>
-	{
-	public:
-		StyleBaseImpl();
-		StyleBaseImpl(StyleBaseImpl *p);
-		virtual ~StyleBaseImpl();
+    // a style class which has a parent (almost all have)
+    class StyleBaseImpl : public TreeShared<StyleBaseImpl>
+    {
+    public:
+        StyleBaseImpl();
+        StyleBaseImpl(StyleBaseImpl *p);
+        virtual ~StyleBaseImpl();
 
-		// returns the url of the style sheet this object belongs to
-		// not const
-		KURL baseURL();
+        // returns the url of the style sheet this object belongs to
+        // not const
+        KURL baseURL();
 
-		virtual bool isStyleSheet() const { return false; }
-		virtual bool isCSSStyleSheet() const { return false; }
-		virtual bool isStyleSheetList() const { return false; }
-		virtual bool isMediaList() const { return false; }
-		virtual bool isRuleList() const { return false; }
-		virtual bool isRule() const { return false; }
-		virtual bool isStyleRule() const { return false; }
-		virtual bool isCharsetRule() const { return false; }
-		virtual bool isImportRule() const { return false; }
-		virtual bool isMediaRule() const { return false; }
-		virtual bool isFontFaceRule() const { return false; }
-		virtual bool isPageRule() const { return false; }
-		virtual bool isUnknownRule() const { return false; }
-		virtual bool isStyleDeclaration() const { return false; }
-		virtual bool isValue() const { return false; }
-		virtual bool isPrimitiveValue() const { return false; }
-		virtual bool isValueList() const { return false; }
-		virtual bool isValueCustom() const { return false; }
+        virtual bool isStyleSheet() const { return false; }
+        virtual bool isCSSStyleSheet() const { return false; }
+        virtual bool isStyleSheetList() const { return false; }
+        virtual bool isMediaList() const { return false; }
+        virtual bool isRuleList() const { return false; }
+        virtual bool isRule() const { return false; }
+        virtual bool isStyleRule() const { return false; }
+        virtual bool isCharsetRule() const { return false; }
+        virtual bool isImportRule() const { return false; }
+        virtual bool isMediaRule() const { return false; }
+        virtual bool isFontFaceRule() const { return false; }
+        virtual bool isPageRule() const { return false; }
+        virtual bool isUnknownRule() const { return false; }
+        virtual bool isStyleDeclaration() const { return false; }
+        virtual bool isValue() const { return false; }
+        virtual bool isPrimitiveValue() const { return false; }
+        virtual bool isValueList() const { return false; }
+        virtual bool isValueCustom() const { return false; }
 
-		void setParent(StyleBaseImpl *parent);
+        void setParent(StyleBaseImpl *parent);
 
-		static void setParsedValue(int propId, const CSSValueImpl *parsedValue,
-								   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
+        static void setParsedValue(int propId, const CSSValueImpl *parsedValue,
+                                   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
 
-		virtual bool parseString(DOMStringImpl *cssString, bool = false);
+        virtual bool parseString(DOMStringImpl *cssString, bool = false);
 
-		virtual void checkLoaded() const;
+        virtual void checkLoaded() const;
 
-		void setStrictParsing(bool b);
-		bool useStrictParsing() const;
+        void setStrictParsing(bool b);
+        bool useStrictParsing() const;
 
-		// not const
-		StyleSheetImpl *stylesheet();
+        // not const
+        StyleSheetImpl *stylesheet();
 
-		// KDOM extension
-		virtual CSSParser *createCSSParser(bool strictParsing = true) const;
+        // KDOM extension
+        virtual CSSParser *createCSSParser(bool strictParsing = true) const;
 
-	protected:
-		bool m_hasInlinedDecl : 1;
-		bool m_strictParsing : 1;
-		bool m_multiLength : 1;
-	};
+    protected:
+        bool m_hasInlinedDecl : 1;
+        bool m_strictParsing : 1;
+        bool m_multiLength : 1;
+    };
 
-	// a style class which has a list of children (StyleSheets for example)
-	class StyleListImpl : public StyleBaseImpl
-	{
-	public:
-		StyleListImpl();
-		StyleListImpl(StyleBaseImpl *parent);
-		virtual ~StyleListImpl();
+    // a style class which has a list of children (StyleSheets for example)
+    class StyleListImpl : public StyleBaseImpl
+    {
+    public:
+        StyleListImpl();
+        StyleListImpl(StyleBaseImpl *parent);
+        virtual ~StyleListImpl();
 
-		unsigned long length() const;
-		StyleBaseImpl *item(unsigned long num) const;
+        unsigned long length() const;
+        StyleBaseImpl *item(unsigned long num) const;
 
-		void append(StyleBaseImpl *item);
+        void append(StyleBaseImpl *item);
 
-	protected:
-		QPtrList<StyleBaseImpl> *m_lstChildren;
-	};
+    protected:
+        QPtrList<StyleBaseImpl> *m_lstChildren;
+    };
 
-	// this class represents a selector for a StyleRule
-	class CSSSelector
-	{
-	public:
-		CSSSelector(CDFInterface *interface);
-		~CSSSelector();
+    // this class represents a selector for a StyleRule
+    class CSSSelector
+    {
+    public:
+        CSSSelector(CDFInterface *interface);
+        ~CSSSelector();
 
-		/**
-		 * Print debug output for this selector
-		 */
-		void print();
+        /**
+         * Print debug output for this selector
+         */
+        void print();
 
-		/**
-		 * Re-create selector text from selector's data
-		 */
-		DOMStringImpl *selectorText() const;
+        /**
+         * Re-create selector text from selector's data
+         */
+        DOMStringImpl *selectorText() const;
 
-		// checks if the 2 selectors (including sub selectors) agree.
-		bool operator==(const CSSSelector &other) const;
+        // checks if the 2 selectors (including sub selectors) agree.
+        bool operator==(const CSSSelector &other) const;
 
-		// tag == -1 means apply to all elements (Selector = *)
-		unsigned int specificity() const;
+        // tag == -1 means apply to all elements (Selector = *)
+        unsigned int specificity() const;
 
-		/* how the attribute value has to match.... Default is Exact */
-		enum Match
-		{
-			None = 0,
-			Id,
-			Exact,
-			Set,
-			List,
-			Hyphen,
-			PseudoClass,
-			PseudoElement,
-			Contain,   // css3: E[foo*="bar"]
-			Begin,     // css3: E[foo^="bar"]
-			End        // css3: E[foo$="bar"]
-		};
+        /* how the attribute value has to match.... Default is Exact */
+        enum Match
+        {
+            None = 0,
+            Id,
+            Exact,
+            Set,
+            List,
+            Hyphen,
+            PseudoClass,
+            PseudoElement,
+            Contain,   // css3: E[foo*="bar"]
+            Begin,     // css3: E[foo^="bar"]
+            End        // css3: E[foo$="bar"]
+        };
 
-		enum Relation
-		{
-			Descendant = 0,
-			Child,
-			DirectAdjacent,
-			IndirectAdjacent,
-			SubSelector
-		};
+        enum Relation
+        {
+            Descendant = 0,
+            Child,
+            DirectAdjacent,
+            IndirectAdjacent,
+            SubSelector
+        };
 
-		enum PseudoType
-		{
-			PseudoNotParsed = 0,
-			PseudoOther,
-			PseudoEmpty,
-			PseudoFirstChild,
-			PseudoLastChild,
-			PseudoNthChild,
-			PseudoNthLastChild,
-			PseudoOnlyChild,
-			PseudoFirstOfType,
-			PseudoLastOfType,
-			PseudoNthOfType,
-			PseudoNthLastOfType,
-			PseudoOnlyOfType,
-			PseudoFirstLine,
-			PseudoFirstLetter,
-			PseudoLink,
-			PseudoVisited,
-			PseudoHover,
-			PseudoFocus,
-			PseudoActive,
-			PseudoTarget,
-			PseudoBefore,
-			PseudoAfter,
-			PseudoLang,
-			PseudoNot,
-			PseudoContains,
-			PseudoRoot,
-			PseudoSelection,
-			PseudoEnabled,
-			PseudoDisabled,
-			PseudoChecked,
-			PseudoIndeterminate
+        enum PseudoType
+        {
+            PseudoNotParsed = 0,
+            PseudoOther,
+            PseudoEmpty,
+            PseudoFirstChild,
+            PseudoLastChild,
+            PseudoNthChild,
+            PseudoNthLastChild,
+            PseudoOnlyChild,
+            PseudoFirstOfType,
+            PseudoLastOfType,
+            PseudoNthOfType,
+            PseudoNthLastOfType,
+            PseudoOnlyOfType,
+            PseudoFirstLine,
+            PseudoFirstLetter,
+            PseudoLink,
+            PseudoVisited,
+            PseudoHover,
+            PseudoFocus,
+            PseudoActive,
+            PseudoTarget,
+            PseudoBefore,
+            PseudoAfter,
+            PseudoLang,
+            PseudoNot,
+            PseudoContains,
+            PseudoRoot,
+            PseudoSelection,
+            PseudoEnabled,
+            PseudoDisabled,
+            PseudoChecked,
+            PseudoIndeterminate
 
-		};
+        };
 
-		PseudoType pseudoType() const;
+        PseudoType pseudoType() const;
 
-		mutable DOMStringImpl *value;
-		CSSSelector *tagHistory;
-		CSSSelector *simpleSelector; // Used by :not.
-		DOMStringImpl *string_arg; // Used by :contains, :lang and :nth-*
-		NodeImpl::Id attr;
-		NodeImpl::Id tag;
+        mutable DOMStringImpl *value;
+        CSSSelector *tagHistory;
+        CSSSelector *simpleSelector; // Used by :not.
+        DOMStringImpl *string_arg; // Used by :contains, :lang and :nth-*
+        NodeImpl::Id attr;
+        NodeImpl::Id tag;
 
-		Relation relation : 3;
-		mutable Match match : 4;
-		bool nonCSSHint : 1;
-		unsigned int pseudoId : 3;
-		mutable PseudoType _pseudoType : 5;
+        Relation relation : 3;
+        mutable Match match : 4;
+        bool nonCSSHint : 1;
+        unsigned int pseudoId : 3;
+        mutable PseudoType _pseudoType : 5;
 
-	private:
-		void extractPseudoType() const;
+    private:
+        void extractPseudoType() const;
 
-		CDFInterface *m_interface;
-	};
+        CDFInterface *m_interface;
+    };
 }
 
 #endif

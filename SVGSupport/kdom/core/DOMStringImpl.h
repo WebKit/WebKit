@@ -4,7 +4,7 @@
 
     Additional copyright (KHTML code)
               (C) 1999 Lars Knoll <knoll@kde.org>
-			  (C) 2003 Dirk Mueller (mueller@kde.org)
+              (C) 2003 Dirk Mueller (mueller@kde.org)
 
     This file is part of the KDE project
 
@@ -33,52 +33,52 @@
 
 namespace KDOM
 {
-	class DOMStringImpl : public Shared
-	{
-	public:
-		DOMStringImpl();
-		DOMStringImpl(const QChar *str, unsigned int len);
-		DOMStringImpl(const QString &str);
-		DOMStringImpl(const char *str);
-		virtual ~DOMStringImpl();
+    class DOMStringImpl : public Shared
+    {
+    public:
+        DOMStringImpl();
+        DOMStringImpl(const QChar *str, unsigned int len);
+        DOMStringImpl(const QString &str);
+        DOMStringImpl(const char *str);
+        virtual ~DOMStringImpl();
 
-		const QChar &operator[](int i) const;
+        const QChar &operator[](int i) const;
 
-		unsigned int length() const;
-		void setLength(unsigned int len);
+        unsigned int length() const;
+        void setLength(unsigned int len);
 
-		void insert(DOMStringImpl *str, unsigned int pos);
+        void insert(DOMStringImpl *str, unsigned int pos);
 
-		void append(const char *str);
-		void append(const QString &str);
-		void append(DOMStringImpl *str);
+        void append(const char *str);
+        void append(const QString &str);
+        void append(DOMStringImpl *str);
 
-		bool isEmpty() const;
-		bool containsOnlyWhitespace() const;
+        bool isEmpty() const;
+        bool containsOnlyWhitespace() const;
 
-		void truncate(int len);
-		void remove(unsigned int pos, int len = 1);
+        void truncate(int len);
+        void remove(unsigned int pos, int len = 1);
 
-		DOMStringImpl *substring(unsigned int pos, unsigned int len);
-		DOMStringImpl *split(unsigned int pos);
+        DOMStringImpl *substring(unsigned int pos, unsigned int len);
+        DOMStringImpl *split(unsigned int pos);
 
-		DOMStringImpl *collapseWhiteSpace(bool preserveLF, bool preserveWS);
+        DOMStringImpl *collapseWhiteSpace(bool preserveLF, bool preserveWS);
 
-		DOMStringImpl *lower() const;
-		DOMStringImpl *upper() const;
-		DOMStringImpl *capitalize() const;
+        DOMStringImpl *lower() const;
+        DOMStringImpl *upper() const;
+        DOMStringImpl *capitalize() const;
 
-		QChar *unicode() const;
-		QString string() const;
+        QChar *unicode() const;
+        QString string() const;
 
-		int toInt(bool *ok = 0) const;
+        int toInt(bool *ok = 0) const;
 
-		DOMStringImpl *copy() const;
+        DOMStringImpl *copy() const;
 
-	private:
-		QChar *m_str;
-		unsigned int m_len;
-	};
+    private:
+        QChar *m_str;
+        unsigned int m_len;
+    };
 };
 
 #endif

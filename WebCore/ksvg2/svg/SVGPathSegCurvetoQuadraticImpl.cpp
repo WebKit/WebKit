@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegCurvetoQuadraticAbsImpl::SVGPathSegCurvetoQuadraticAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_x1 = m_y1 = 0.0;
+    m_x = m_y = m_x1 = m_y1 = 0.0;
 }
 
 SVGPathSegCurvetoQuadraticAbsImpl::~SVGPathSegCurvetoQuadraticAbsImpl()
@@ -37,54 +37,54 @@ SVGPathSegCurvetoQuadraticAbsImpl::~SVGPathSegCurvetoQuadraticAbsImpl()
 
 void SVGPathSegCurvetoQuadraticAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoQuadraticAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegCurvetoQuadraticAbsImpl::setX1(double x1)
 {
-	m_x1 = x1;
+    m_x1 = x1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbsImpl::x1() const
 {
-	return m_x1;
+    return m_x1;
 }
 
 void SVGPathSegCurvetoQuadraticAbsImpl::setY1(double y1)
 {
-	m_y1 = y1;
+    m_y1 = y1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticAbsImpl::y1() const
 {
-	return m_y1;
+    return m_y1;
 }
 
 
@@ -93,7 +93,7 @@ double SVGPathSegCurvetoQuadraticAbsImpl::y1() const
 SVGPathSegCurvetoQuadraticRelImpl::SVGPathSegCurvetoQuadraticRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_x1 = m_y1 = 0.0;
+    m_x = m_y = m_x1 = m_y1 = 0.0;
 }
 
 SVGPathSegCurvetoQuadraticRelImpl::~SVGPathSegCurvetoQuadraticRelImpl()
@@ -102,54 +102,54 @@ SVGPathSegCurvetoQuadraticRelImpl::~SVGPathSegCurvetoQuadraticRelImpl()
 
 void SVGPathSegCurvetoQuadraticRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoQuadraticRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegCurvetoQuadraticRelImpl::setX1(double x1)
 {
-	m_x1 = x1;
+    m_x1 = x1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRelImpl::x1() const
 {
-	return m_x1;
+    return m_x1;
 }
 
 void SVGPathSegCurvetoQuadraticRelImpl::setY1(double y1)
 {
-	m_y1 = y1;
+    m_y1 = y1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticRelImpl::y1() const
 {
-	return m_y1;
+    return m_y1;
 }
 
 // vim:ts=4:noet

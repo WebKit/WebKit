@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,7 +27,7 @@ using namespace KDOM;
 
 CSSRuleImpl::CSSRuleImpl(StyleBaseImpl *parent) : StyleBaseImpl(parent)
 {
-	m_type = UNKNOWN_RULE;
+    m_type = UNKNOWN_RULE;
 }
 
 CSSRuleImpl::~CSSRuleImpl()
@@ -36,12 +36,12 @@ CSSRuleImpl::~CSSRuleImpl()
 
 unsigned short CSSRuleImpl::type() const
 {
-	return m_type;
+    return m_type;
 }
 
 DOMStringImpl *CSSRuleImpl::cssText() const
 {
-	return 0;
+    return 0;
 }
 
 void CSSRuleImpl::setCssText(DOMStringImpl *)
@@ -50,14 +50,14 @@ void CSSRuleImpl::setCssText(DOMStringImpl *)
 
 CSSStyleSheetImpl *CSSRuleImpl::parentStyleSheet() const
 {
-	return (m_parent && m_parent->isCSSStyleSheet()) ?
-			static_cast<CSSStyleSheetImpl *>(m_parent) : 0;
+    return (m_parent && m_parent->isCSSStyleSheet()) ?
+            static_cast<CSSStyleSheetImpl *>(m_parent) : 0;
 }
 
 CSSRuleImpl *CSSRuleImpl::parentRule() const
 {
-	return (m_parent && m_parent->isRule()) ?
-			static_cast<CSSRuleImpl *>(m_parent) : 0;
+    return (m_parent && m_parent->isRule()) ?
+            static_cast<CSSRuleImpl *>(m_parent) : 0;
 }
 
 // vim:ts=4:noet

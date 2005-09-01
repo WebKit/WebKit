@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,36 +25,36 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class AttributeImpl;
+    class DOMStringImpl;
+    class AttributeImpl;
 };
 
 namespace KSVG
 {
-	class SVGStringListImpl;
+    class SVGStringListImpl;
 
-	class SVGTestsImpl
-	{
-	public:
-		SVGTestsImpl();
-		virtual ~SVGTestsImpl();
+    class SVGTestsImpl
+    {
+    public:
+        SVGTestsImpl();
+        virtual ~SVGTestsImpl();
 
-		// 'SVGTests' functions
-		SVGStringListImpl *requiredFeatures() const;
-		SVGStringListImpl *requiredExtensions() const;
-		SVGStringListImpl *systemLanguage() const;
+        // 'SVGTests' functions
+        SVGStringListImpl *requiredFeatures() const;
+        SVGStringListImpl *requiredExtensions() const;
+        SVGStringListImpl *systemLanguage() const;
 
-		bool hasExtension(KDOM::DOMStringImpl *extension) const;
+        bool hasExtension(KDOM::DOMStringImpl *extension) const;
 
-		bool isValid();
-		
-		bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool isValid();
+        
+        bool parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGStringListImpl *m_features;
-		mutable SVGStringListImpl *m_extensions;
-		mutable SVGStringListImpl *m_systemLanguage;
-	};
+    private:
+        mutable SVGStringListImpl *m_features;
+        mutable SVGStringListImpl *m_extensions;
+        mutable SVGStringListImpl *m_systemLanguage;
+    };
 };
 
 #endif

@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,18 +30,18 @@
 class KRenderingPaintServerPattern::Private
 {
 public:
-	Private()
-	{
-		tile = 0;
-		x = y = width = height = 0;
-		useBoundingBoxMode = true;
-	}
-	~Private() { delete tile; }
+    Private()
+    {
+        tile = 0;
+        x = y = width = height = 0;
+        useBoundingBoxMode = true;
+    }
+    ~Private() { delete tile; }
 
-	KCanvasImage *tile;
-	KCanvasMatrix patternTransform;
-	float x, y, width, height;
-	bool useBoundingBoxMode;
+    KCanvasImage *tile;
+    KCanvasMatrix patternTransform;
+    float x, y, width, height;
+    bool useBoundingBoxMode;
 };
 
 KRenderingPaintServerPattern::KRenderingPaintServerPattern() : KRenderingPaintServer(), KCanvasResource(), d(new Private())
@@ -50,82 +50,82 @@ KRenderingPaintServerPattern::KRenderingPaintServerPattern() : KRenderingPaintSe
 
 KRenderingPaintServerPattern::~KRenderingPaintServerPattern()
 {
-	delete d;
+    delete d;
 }
 
 float KRenderingPaintServerPattern::x() const
 {
-	return d->x;
+    return d->x;
 }
 
 void KRenderingPaintServerPattern::setX(float x)
 {
-	d->x = x;
+    d->x = x;
 }
-	
+    
 float KRenderingPaintServerPattern::y() const
 {
-	return d->y;
+    return d->y;
 }
 
 void KRenderingPaintServerPattern::setY(float y)
 {
-	d->y = y;
+    d->y = y;
 }
 
 bool KRenderingPaintServerPattern::boundingBoxMode() const
 {
-	return d->useBoundingBoxMode;
+    return d->useBoundingBoxMode;
 }
 
 void KRenderingPaintServerPattern::setBoundingBoxMode(bool mode)
 {
-	d->useBoundingBoxMode = mode;
+    d->useBoundingBoxMode = mode;
 }
 
 float KRenderingPaintServerPattern::width() const
 {
-	return d->width;
+    return d->width;
 }
 
 void KRenderingPaintServerPattern::setWidth(float width)
 {
-	d->width = width;
+    d->width = width;
 }
 
 float KRenderingPaintServerPattern::height() const
 {
-	return d->height;
+    return d->height;
 }
 
 void KRenderingPaintServerPattern::setHeight(float height)
 {
-	d->height = height;
+    d->height = height;
 }
 
 KCanvasImage *KRenderingPaintServerPattern::tile() const
 {
-	return d->tile;
+    return d->tile;
 }
 
 void KRenderingPaintServerPattern::setTile(KCanvasImage *tile)
 {
-	d->tile = tile;
+    d->tile = tile;
 }
 
 KCanvasMatrix KRenderingPaintServerPattern::patternTransform() const
 {
-	return d->patternTransform;
+    return d->patternTransform;
 }
 
 void KRenderingPaintServerPattern::setPatternTransform(const KCanvasMatrix &mat)
 {
-	d->patternTransform = mat;
+    d->patternTransform = mat;
 }
 
 KCPaintServerType KRenderingPaintServerPattern::type() const
 {
-	return PS_PATTERN;
+    return PS_PATTERN;
 }
 
 QTextStream &KRenderingPaintServerPattern::externalRepresentation(QTextStream &ts) const

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005 Frans Englich 		<frans.englich@telia.com>
+    Copyright (C) 2005 Frans Englich         <frans.englich@telia.com>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -33,43 +33,43 @@ class QBuffer;
 
 namespace KDOM
 {
-	class DOMString;
-	class Parser;
+    class DOMString;
+    class Parser;
 
-	class CachedDocument: public CachedObject
-	{
-	public:
-		CachedDocument(DocumentLoader *docLoader, const DOMString &url, 
-						KIO::CacheControl cachePolicy, const char *accept);
+    class CachedDocument: public CachedObject
+    {
+    public:
+        CachedDocument(DocumentLoader *docLoader, const DOMString &url, 
+                        KIO::CacheControl cachePolicy, const char *accept);
 
-		virtual ~CachedDocument();
+        virtual ~CachedDocument();
 
-		virtual void ref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient *consumer);
 
-		virtual void data( QBuffer &buffer, bool eof );
+        virtual void data( QBuffer &buffer, bool eof );
 
-		virtual void error( int err, const char *text );
+        virtual void error( int err, const char *text );
 
-		virtual bool schedule() const;
+        virtual bool schedule() const;
 
-		const DOMString& document() const;
+        const DOMString& document() const;
 
-		void setCharset(const QString &charset);
+        void setCharset(const QString &charset);
 
-		QBuffer* documentBuffer() const;
+        QBuffer* documentBuffer() const;
 
-	protected:
+    protected:
 
-		/**
-		 * Calls all listerners, the object clients, of this cache object.
-		 */
-		void checkNotify();
+        /**
+         * Calls all listerners, the object clients, of this cache object.
+         */
+        void checkNotify();
 
-	private:
+    private:
 
-		class Private;
-		Private * d;
-	};
+        class Private;
+        Private * d;
+    };
 };
 
 #endif

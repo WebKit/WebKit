@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,22 +32,22 @@ using namespace KSVG;
 
 /*
 @begin SVGSymbolElement::s_hashTable 3
- dummy	SVGSymbolElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGSymbolElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGSymbolElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGSymbolElement SVGSymbolElement::null;
@@ -68,14 +68,14 @@ SVGSymbolElement::SVGSymbolElement(const SVGSymbolElement &other)
 : SVGElement(), SVGLangSpace(), SVGExternalResourcesRequired(),
   SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGSymbolElement::SVGSymbolElement(const KDOM::Node &other)
 : SVGElement(), SVGLangSpace(), SVGExternalResourcesRequired(),
   SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGSymbolElement::~SVGSymbolElement()
@@ -84,37 +84,37 @@ SVGSymbolElement::~SVGSymbolElement()
 
 SVGSymbolElement &SVGSymbolElement::operator=(const SVGSymbolElement &other)
 {
-	SVGElement::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGFitToViewBox::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGFitToViewBox::operator=(other);
+    return *this;
 }
 
 SVGSymbolElement &SVGSymbolElement::operator=(const KDOM::Node &other)
 {
-	SVGSymbolElementImpl *ohandle = static_cast<SVGSymbolElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
+    SVGSymbolElementImpl *ohandle = static_cast<SVGSymbolElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
 
-			Node::d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGFitToViewBox::operator=(ohandle);
-		}
-	}
+            Node::d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGFitToViewBox::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

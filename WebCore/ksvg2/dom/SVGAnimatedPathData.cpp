@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,33 +36,33 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedPathData::s_hashTable 5
- pathSegList					SVGAnimatedPathDataConstants::PathSegList						DontDelete|ReadOnly
- normalizedPathSegList			SVGAnimatedPathDataConstants::NormalizedPathSegList				DontDelete|ReadOnly
- animatedPathSegList			SVGAnimatedPathDataConstants::AnimatedPathSegList				DontDelete|ReadOnly
- animatedNormalizedPathSegList	SVGAnimatedPathDataConstants::AnimatedNormalizedPathSegList		DontDelete|ReadOnly
+ pathSegList                    SVGAnimatedPathDataConstants::PathSegList                        DontDelete|ReadOnly
+ normalizedPathSegList            SVGAnimatedPathDataConstants::NormalizedPathSegList                DontDelete|ReadOnly
+ animatedPathSegList            SVGAnimatedPathDataConstants::AnimatedPathSegList                DontDelete|ReadOnly
+ animatedNormalizedPathSegList    SVGAnimatedPathDataConstants::AnimatedNormalizedPathSegList        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedPathData::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedPathDataConstants::PathSegList:
-			return KDOM::safe_cache<SVGPathSegList>(exec, pathSegList());
-		case SVGAnimatedPathDataConstants::NormalizedPathSegList:
-			return KDOM::safe_cache<SVGPathSegList>(exec, normalizedPathSegList());
-		case SVGAnimatedPathDataConstants::AnimatedPathSegList:
-			return KDOM::safe_cache<SVGPathSegList>(exec, animatedPathSegList());
-		case SVGAnimatedPathDataConstants::AnimatedNormalizedPathSegList:
-			return KDOM::safe_cache<SVGPathSegList>(exec, animatedNormalizedPathSegList());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedPathDataConstants::PathSegList:
+            return KDOM::safe_cache<SVGPathSegList>(exec, pathSegList());
+        case SVGAnimatedPathDataConstants::NormalizedPathSegList:
+            return KDOM::safe_cache<SVGPathSegList>(exec, normalizedPathSegList());
+        case SVGAnimatedPathDataConstants::AnimatedPathSegList:
+            return KDOM::safe_cache<SVGPathSegList>(exec, animatedPathSegList());
+        case SVGAnimatedPathDataConstants::AnimatedNormalizedPathSegList:
+            return KDOM::safe_cache<SVGPathSegList>(exec, animatedNormalizedPathSegList());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedPathData::SVGAnimatedPathData() : impl(0)
@@ -75,7 +75,7 @@ SVGAnimatedPathData::SVGAnimatedPathData(SVGAnimatedPathDataImpl *i) : impl(i)
 
 SVGAnimatedPathData::SVGAnimatedPathData(const SVGAnimatedPathData &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimatedPathData::~SVGAnimatedPathData()
@@ -84,50 +84,50 @@ SVGAnimatedPathData::~SVGAnimatedPathData()
 
 SVGAnimatedPathData &SVGAnimatedPathData::operator=(const SVGAnimatedPathData &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedPathData &SVGAnimatedPathData::operator=(SVGAnimatedPathDataImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGPathSegList SVGAnimatedPathData::pathSegList() const
 {
-	if(!impl)
-		return SVGPathSegList::null;
+    if(!impl)
+        return SVGPathSegList::null;
 
-	return SVGPathSegList(impl->pathSegList());
+    return SVGPathSegList(impl->pathSegList());
 }
 
 SVGPathSegList SVGAnimatedPathData::normalizedPathSegList() const
 {
-	if(!impl)
-		return SVGPathSegList::null;
+    if(!impl)
+        return SVGPathSegList::null;
 
-	return SVGPathSegList(impl->normalizedPathSegList());
+    return SVGPathSegList(impl->normalizedPathSegList());
 }
 
 SVGPathSegList SVGAnimatedPathData::animatedPathSegList() const
 {
-	if(!impl)
-		return SVGPathSegList::null;
+    if(!impl)
+        return SVGPathSegList::null;
 
-	return SVGPathSegList(impl->animatedPathSegList());
+    return SVGPathSegList(impl->animatedPathSegList());
 }
 
 SVGPathSegList SVGAnimatedPathData::animatedNormalizedPathSegList() const
 {
-	if(!impl)
-		return SVGPathSegList::null;
+    if(!impl)
+        return SVGPathSegList::null;
 
-	return SVGPathSegList(impl->animatedNormalizedPathSegList());
+    return SVGPathSegList(impl->animatedNormalizedPathSegList());
 }
 
 // vim:ts=4:noet

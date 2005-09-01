@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,29 +35,29 @@ class DOMString;
 
 namespace XPointer
 {
-	class NBC;
-	class ShortHandImpl;
+    class NBC;
+    class ShortHandImpl;
 
-	/**
-	 * An implementation of the element() scheme, as described in:
-	 * http://www.w3.org/TR/xptr-element/
-	 *
-	 * @author Frans Englich <frans.englich@telia.com>
-	 */
-	class ElementSchemeImpl : public PointerPartImpl
-	{
-	public:
-		ElementSchemeImpl(DOMStringImpl *schemeData);
-		virtual ~ElementSchemeImpl();
+    /**
+     * An implementation of the element() scheme, as described in:
+     * http://www.w3.org/TR/xptr-element/
+     *
+     * @author Frans Englich <frans.englich@telia.com>
+     */
+    class ElementSchemeImpl : public PointerPartImpl
+    {
+    public:
+        ElementSchemeImpl(DOMStringImpl *schemeData);
+        virtual ~ElementSchemeImpl();
 
-		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
+        virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
 
-	private:
-		void parseChildSequence(const QStringList &steps);
+    private:
+        void parseChildSequence(const QStringList &steps);
 
-		ShortHandImpl *m_shorthand;
-		QValueList<unsigned int> m_childSequence;
-	};
+        ShortHandImpl *m_shorthand;
+        QValueList<unsigned int> m_childSequence;
+    };
 };
 
 };

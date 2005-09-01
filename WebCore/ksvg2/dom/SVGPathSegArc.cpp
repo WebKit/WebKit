@@ -29,76 +29,76 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSegArcAbs::s_hashTable 11
- x				SVGPathSegArcConstants::X				DontDelete
- y				SVGPathSegArcConstants::Y				DontDelete
- r1				SVGPathSegArcConstants::R1				DontDelete
- r2				SVGPathSegArcConstants::R2				DontDelete
- angle			SVGPathSegArcConstants::Angle			DontDelete
- largeArcFlag	SVGPathSegArcConstants::LargeArcFlag	DontDelete
- sweepFlag		SVGPathSegArcConstants::SweepFlag		DontDelete
+ x                SVGPathSegArcConstants::X                DontDelete
+ y                SVGPathSegArcConstants::Y                DontDelete
+ r1                SVGPathSegArcConstants::R1                DontDelete
+ r2                SVGPathSegArcConstants::R2                DontDelete
+ angle            SVGPathSegArcConstants::Angle            DontDelete
+ largeArcFlag    SVGPathSegArcConstants::LargeArcFlag    DontDelete
+ sweepFlag        SVGPathSegArcConstants::SweepFlag        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegArcAbs::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegArcConstants::X:
-		return Number(x());
-	case SVGPathSegArcConstants::Y:
-		return Number(y());
-	case SVGPathSegArcConstants::R1:
-		return Number(r1());
-	case SVGPathSegArcConstants::R2:
-		return Number(r2());
-	case SVGPathSegArcConstants::LargeArcFlag:
-		return KJS::Boolean(largeArcFlag());
-	case SVGPathSegArcConstants::SweepFlag:
-		return KJS::Boolean(sweepFlag());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegArcConstants::X:
+        return Number(x());
+    case SVGPathSegArcConstants::Y:
+        return Number(y());
+    case SVGPathSegArcConstants::R1:
+        return Number(r1());
+    case SVGPathSegArcConstants::R2:
+        return Number(r2());
+    case SVGPathSegArcConstants::LargeArcFlag:
+        return KJS::Boolean(largeArcFlag());
+    case SVGPathSegArcConstants::SweepFlag:
+        return KJS::Boolean(sweepFlag());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegArcAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegArcConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::R1:
-		{
-			setR1(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::R2:
-		{
-			setR2(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::LargeArcFlag:
-		{
-			setLargeArcFlag(value->toBoolean(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::SweepFlag:
-		{
-			setSweepFlag(value->toBoolean(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegArcConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::R1:
+        {
+            setR1(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::R2:
+        {
+            setR2(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::LargeArcFlag:
+        {
+            setLargeArcFlag(value->toBoolean(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::SweepFlag:
+        {
+            setSweepFlag(value->toBoolean(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -116,12 +116,12 @@ SVGPathSegArcAbs::SVGPathSegArcAbs(SVGPathSegArcAbsImpl *other) : SVGPathSeg(oth
 
 SVGPathSegArcAbs::SVGPathSegArcAbs(const SVGPathSegArcAbs &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegArcAbs::SVGPathSegArcAbs(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegArcAbs::~SVGPathSegArcAbs()
@@ -130,184 +130,184 @@ SVGPathSegArcAbs::~SVGPathSegArcAbs()
 
 SVGPathSegArcAbs &SVGPathSegArcAbs::operator=(const SVGPathSegArcAbs &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegArcAbs, PATHSEG_ARC_ABS)
 
 void SVGPathSegArcAbs::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegArcAbs::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegArcAbs::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegArcAbs::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 void SVGPathSegArcAbs::setR1(float r1)
 {
-	if(impl)
-		_impl->setR1(r1);
+    if(impl)
+        _impl->setR1(r1);
 }
 
 float SVGPathSegArcAbs::r1() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->r1();
+    return _impl->r1();
 }
 
 void SVGPathSegArcAbs::setR2(float r2)
 {
-	if(impl)
-		_impl->setR2(r2);
+    if(impl)
+        _impl->setR2(r2);
 }
 
 float SVGPathSegArcAbs::r2() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->r2();
+    return _impl->r2();
 }
 
 void SVGPathSegArcAbs::setAngle(float angle)
 {
-	if(impl)
-		_impl->setAngle(angle);
+    if(impl)
+        _impl->setAngle(angle);
 }
 
 float SVGPathSegArcAbs::angle() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->angle();
+    return _impl->angle();
 }
 
 void SVGPathSegArcAbs::setLargeArcFlag(bool largeArcFlag)
 {
-	if(impl)
-		_impl->setLargeArcFlag(largeArcFlag);
+    if(impl)
+        _impl->setLargeArcFlag(largeArcFlag);
 }
 
 bool SVGPathSegArcAbs::largeArcFlag() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return _impl->largeArcFlag();
+    return _impl->largeArcFlag();
 }
 
 void SVGPathSegArcAbs::setSweepFlag(bool sweepFlag)
 {
-	if(impl)
-		_impl->setSweepFlag(sweepFlag);
+    if(impl)
+        _impl->setSweepFlag(sweepFlag);
 }
 
 bool SVGPathSegArcAbs::sweepFlag() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return _impl->sweepFlag();
+    return _impl->sweepFlag();
 }
 
 
 
 /*
 @begin SVGPathSegArcRel::s_hashTable 11
- x				SVGPathSegArcConstants::X				DontDelete
- y				SVGPathSegArcConstants::Y				DontDelete
- r1				SVGPathSegArcConstants::R1				DontDelete
- r2				SVGPathSegArcConstants::R2				DontDelete
- angle			SVGPathSegArcConstants::Angle			DontDelete
- largeArcFlag	SVGPathSegArcConstants::LargeArcFlag	DontDelete
- sweepFlag		SVGPathSegArcConstants::SweepFlag		DontDelete
+ x                SVGPathSegArcConstants::X                DontDelete
+ y                SVGPathSegArcConstants::Y                DontDelete
+ r1                SVGPathSegArcConstants::R1                DontDelete
+ r2                SVGPathSegArcConstants::R2                DontDelete
+ angle            SVGPathSegArcConstants::Angle            DontDelete
+ largeArcFlag    SVGPathSegArcConstants::LargeArcFlag    DontDelete
+ sweepFlag        SVGPathSegArcConstants::SweepFlag        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegArcRel::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegArcConstants::X:
-		return Number(x());
-	case SVGPathSegArcConstants::Y:
-		return Number(y());
-	case SVGPathSegArcConstants::R1:
-		return Number(r1());
-	case SVGPathSegArcConstants::R2:
-		return Number(r2());
-	case SVGPathSegArcConstants::LargeArcFlag:
-		return KJS::Boolean(largeArcFlag());
-	case SVGPathSegArcConstants::SweepFlag:
-		return KJS::Boolean(sweepFlag());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegArcConstants::X:
+        return Number(x());
+    case SVGPathSegArcConstants::Y:
+        return Number(y());
+    case SVGPathSegArcConstants::R1:
+        return Number(r1());
+    case SVGPathSegArcConstants::R2:
+        return Number(r2());
+    case SVGPathSegArcConstants::LargeArcFlag:
+        return KJS::Boolean(largeArcFlag());
+    case SVGPathSegArcConstants::SweepFlag:
+        return KJS::Boolean(sweepFlag());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegArcRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegArcConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::R1:
-		{
-			setR1(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::R2:
-		{
-			setR2(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::LargeArcFlag:
-		{
-			setLargeArcFlag(value->toBoolean(exec));
-			return;
-		}
-		case SVGPathSegArcConstants::SweepFlag:
-		{
-			setSweepFlag(value->toBoolean(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegArcConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::R1:
+        {
+            setR1(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::R2:
+        {
+            setR2(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::LargeArcFlag:
+        {
+            setLargeArcFlag(value->toBoolean(exec));
+            return;
+        }
+        case SVGPathSegArcConstants::SweepFlag:
+        {
+            setSweepFlag(value->toBoolean(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -326,12 +326,12 @@ SVGPathSegArcRel::SVGPathSegArcRel(SVGPathSegArcRelImpl *other) : SVGPathSeg(oth
 
 SVGPathSegArcRel::SVGPathSegArcRel(const SVGPathSegArcRel &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegArcRel::SVGPathSegArcRel(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegArcRel::~SVGPathSegArcRel()
@@ -340,108 +340,108 @@ SVGPathSegArcRel::~SVGPathSegArcRel()
 
 SVGPathSegArcRel &SVGPathSegArcRel::operator=(const SVGPathSegArcRel &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegArcRel, PATHSEG_ARC_REL)
 
 void SVGPathSegArcRel::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegArcRel::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegArcRel::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegArcRel::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 void SVGPathSegArcRel::setR1(float r1)
 {
-	if(impl)
-		_impl->setR1(r1);
+    if(impl)
+        _impl->setR1(r1);
 }
 
 float SVGPathSegArcRel::r1() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->r1();
+    return _impl->r1();
 }
 
 void SVGPathSegArcRel::setR2(float r2)
 {
-	if(impl)
-		_impl->setR2(r2);
+    if(impl)
+        _impl->setR2(r2);
 }
 
 float SVGPathSegArcRel::r2() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->r2();
+    return _impl->r2();
 }
 
 void SVGPathSegArcRel::setAngle(float angle)
 {
-	if(impl)
-		_impl->setAngle(angle);
+    if(impl)
+        _impl->setAngle(angle);
 }
 
 float SVGPathSegArcRel::angle() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->angle();
+    return _impl->angle();
 }
 
 void SVGPathSegArcRel::setLargeArcFlag(bool largeArcFlag)
 {
-	if(impl)
-		_impl->setLargeArcFlag(largeArcFlag);
+    if(impl)
+        _impl->setLargeArcFlag(largeArcFlag);
 }
 
 bool SVGPathSegArcRel::largeArcFlag() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return _impl->largeArcFlag();
+    return _impl->largeArcFlag();
 }
 
 void SVGPathSegArcRel::setSweepFlag(bool sweepFlag)
 {
-	if(impl)
-		_impl->setSweepFlag(sweepFlag);
+    if(impl)
+        _impl->setSweepFlag(sweepFlag);
 }
 
 bool SVGPathSegArcRel::sweepFlag() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return _impl->sweepFlag();
+    return _impl->sweepFlag();
 }
 
 // vim:ts=4:noet

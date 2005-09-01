@@ -32,21 +32,21 @@ template <typename T> class QValueList;
 
 class Path : public Expression
 {
-	friend int yyparse();
-	public:
-		Path();
-		virtual ~Path();
+    friend int yyparse();
+    public:
+        Path();
+        virtual ~Path();
 
-		void addStep( Step *step );
+        void addStep( Step *step );
 
-		void optimize();
-		virtual QString dump() const;
+        void optimize();
+        virtual QString dump() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 
-		QValueList<Step *> m_steps;
-		bool m_absolute;
+        QValueList<Step *> m_steps;
+        bool m_absolute;
 };
 
 #endif // PATH_H

@@ -34,27 +34,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedRect::s_hashTable 3
- baseVal	SVGAnimatedRectConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedRectConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedRectConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedRectConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedRect::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedRectConstants::BaseVal:
-			return KDOM::safe_cache<SVGRect>(exec, baseVal());
-		case SVGAnimatedRectConstants::AnimVal:
-			return KDOM::safe_cache<SVGRect>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedRectConstants::BaseVal:
+            return KDOM::safe_cache<SVGRect>(exec, baseVal());
+        case SVGAnimatedRectConstants::AnimVal:
+            return KDOM::safe_cache<SVGRect>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedRect SVGAnimatedRect::null;
@@ -65,31 +65,31 @@ SVGAnimatedRect::SVGAnimatedRect() : impl(0)
 
 SVGAnimatedRect::SVGAnimatedRect(SVGAnimatedRectImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedRect::SVGAnimatedRect(const SVGAnimatedRect &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedRect)
 
 SVGRect SVGAnimatedRect::baseVal() const
 {
-	if(!impl)
-		return SVGRect::null;
+    if(!impl)
+        return SVGRect::null;
 
-	return SVGRect(impl->baseVal());
+    return SVGRect(impl->baseVal());
 }
 
 SVGRect SVGAnimatedRect::animVal() const
 {
-	if(!impl)
-		return SVGRect::null;
+    if(!impl)
+        return SVGRect::null;
 
-	return SVGRect(impl->animVal());
+    return SVGRect(impl->animVal());
 }
 
 // vim:ts=4:noet

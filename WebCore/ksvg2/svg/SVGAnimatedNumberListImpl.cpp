@@ -35,16 +35,16 @@ SVGAnimatedNumberListImpl::~SVGAnimatedNumberListImpl()
 
 SVGNumberListImpl *SVGAnimatedNumberListImpl::create() const
 {
-	return new SVGNumberListImpl(m_context);
+    return new SVGNumberListImpl(m_context);
 }
 
 void SVGAnimatedNumberListImpl::assign(SVGNumberListImpl *src, SVGNumberListImpl *dst) const
 {
-	if(!src || !dst)
-		return;
+    if(!src || !dst)
+        return;
 
-	// Use SVGList<SVGNumberImpl>::operator=
-	*dst = *src;
+    // Use SVGList<SVGNumberImpl>::operator=
+    *dst = *src;
 }
 
 // vim:ts=4:noet

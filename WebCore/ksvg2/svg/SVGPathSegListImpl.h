@@ -28,12 +28,12 @@
 
 namespace KSVG
 {
-	class SVGPathSegListImpl : public SVGList<SVGPathSegImpl>
-	{
-	public:
-		SVGPathSegListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegListImpl();
-	};
+    class SVGPathSegListImpl : public SVGList<SVGPathSegImpl>
+    {
+    public:
+        SVGPathSegListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegListImpl();
+    };
 };
 
 #endif

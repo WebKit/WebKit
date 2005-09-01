@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,35 +33,35 @@
 
 namespace KSVG
 {
-	class SVGPolylineElementImpl;
-	class SVGPolylineElement : public SVGElement,
-							   public SVGTests,
-							   public SVGLangSpace,
-							   public SVGExternalResourcesRequired,
-							   public SVGStylable,
-							   public SVGTransformable,
-							   public SVGAnimatedPoints
-	{
-	public:
-		SVGPolylineElement();
-		explicit SVGPolylineElement(SVGPolylineElementImpl *i);
-		SVGPolylineElement(const SVGPolylineElement &other);
-		SVGPolylineElement(const KDOM::Node &other);
-		virtual ~SVGPolylineElement();
+    class SVGPolylineElementImpl;
+    class SVGPolylineElement : public SVGElement,
+                               public SVGTests,
+                               public SVGLangSpace,
+                               public SVGExternalResourcesRequired,
+                               public SVGStylable,
+                               public SVGTransformable,
+                               public SVGAnimatedPoints
+    {
+    public:
+        SVGPolylineElement();
+        explicit SVGPolylineElement(SVGPolylineElementImpl *i);
+        SVGPolylineElement(const SVGPolylineElement &other);
+        SVGPolylineElement(const KDOM::Node &other);
+        virtual ~SVGPolylineElement();
 
-		// Operators
-		SVGPolylineElement &operator=(const SVGPolylineElement &other);
-		SVGPolylineElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGPolylineElement &operator=(const SVGPolylineElement &other);
+        SVGPolylineElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGPolylineElement)
+        // Internal
+        KSVG_INTERNAL(SVGPolylineElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,30 +40,30 @@ using namespace KSVG;
 
 /*
 @begin SVGFEOffsetElement::s_hashTable 5
- in1	SVGFEOffsetElementConstants::In1	DontDelete|ReadOnly
- dx		SVGFEOffsetElementConstants::Dx		DontDelete|ReadOnly
- dy		SVGFEOffsetElementConstants::Dy		DontDelete|ReadOnly
+ in1    SVGFEOffsetElementConstants::In1    DontDelete|ReadOnly
+ dx        SVGFEOffsetElementConstants::Dx        DontDelete|ReadOnly
+ dy        SVGFEOffsetElementConstants::Dy        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEOffsetElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEOffsetElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		case SVGFEOffsetElementConstants::Dx:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, dx());
-		case SVGFEOffsetElementConstants::Dy:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, dy());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEOffsetElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        case SVGFEOffsetElementConstants::Dx:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, dx());
+        case SVGFEOffsetElementConstants::Dy:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, dy());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -81,12 +81,12 @@ SVGFEOffsetElement::SVGFEOffsetElement(SVGFEOffsetElementImpl *i) : SVGElement(i
 
 SVGFEOffsetElement::SVGFEOffsetElement(const SVGFEOffsetElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEOffsetElement::SVGFEOffsetElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEOffsetElement::~SVGFEOffsetElement()
@@ -95,55 +95,55 @@ SVGFEOffsetElement::~SVGFEOffsetElement()
 
 SVGFEOffsetElement &SVGFEOffsetElement::operator=(const SVGFEOffsetElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEOffsetElement &SVGFEOffsetElement::operator=(const KDOM::Node &other)
 {
-	SVGFEOffsetElementImpl *ohandle = static_cast<SVGFEOffsetElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEOffsetElementImpl *ohandle = static_cast<SVGFEOffsetElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEOffsetElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 SVGAnimatedNumber SVGFEOffsetElement::dx() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->dx());
+    return SVGAnimatedNumber(impl->dx());
 }
 
 SVGAnimatedNumber SVGFEOffsetElement::dy() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->dy());
+    return SVGAnimatedNumber(impl->dy());
 }
 
 // vim:ts=4:noet

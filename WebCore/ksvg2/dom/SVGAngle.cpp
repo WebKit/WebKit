@@ -36,14 +36,14 @@ using namespace KSVG;
 
 /*
 @begin SVGAngle::s_hashTable 5
- value						SVGAngleConstants::Value					DontDelete
- valueInSpecifiedUnits		SVGAngleConstants::ValueInSpecifiedUnits	DontDelete
- valueAsString				SVGAngleConstants::ValueAsString			DontDelete
- unitType					SVGAngleConstants::UnitType					DontDelete|ReadOnly
+ value                        SVGAngleConstants::Value                    DontDelete
+ valueInSpecifiedUnits        SVGAngleConstants::ValueInSpecifiedUnits    DontDelete
+ valueAsString                SVGAngleConstants::ValueAsString            DontDelete
+ unitType                    SVGAngleConstants::UnitType                    DontDelete|ReadOnly
 @end
 @begin SVGAngleProto::s_hashTable 3
- convertToSpecifiedUnits	SVGAngleConstants::ConvertToSpecifiedUnits	DontDelete|Function 1
- newValueSpecifiedUnits		SVGAngleConstants::NewValueSpecifiedUnits	DontDelete|Function 2
+ convertToSpecifiedUnits    SVGAngleConstants::ConvertToSpecifiedUnits    DontDelete|Function 1
+ newValueSpecifiedUnits        SVGAngleConstants::NewValueSpecifiedUnits    DontDelete|Function 2
 @end
 */
 
@@ -51,78 +51,78 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGAngle", SVGAngleProto, SVGAngleProtoFunc)
 
 ValueImp *SVGAngle::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAngleConstants::Value:
-			return Number(value());
-		case SVGAngleConstants::ValueInSpecifiedUnits:
-			return Number(valueInSpecifiedUnits());
-		case SVGAngleConstants::ValueAsString:
-			return getDOMString(valueAsString());
-		case SVGAngleConstants::UnitType:
-			return Number(unitType());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAngleConstants::Value:
+            return Number(value());
+        case SVGAngleConstants::ValueInSpecifiedUnits:
+            return Number(valueInSpecifiedUnits());
+        case SVGAngleConstants::ValueAsString:
+            return getDOMString(valueAsString());
+        case SVGAngleConstants::UnitType:
+            return Number(unitType());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGAngle::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAngleConstants::Value:
-		{
-			setValue(value->toNumber(exec));
-			break;
-		}
-		case SVGAngleConstants::ValueInSpecifiedUnits:
-		{
-			setValueInSpecifiedUnits(value->toNumber(exec));
-			break;
-		}
-		case SVGAngleConstants::ValueAsString:
-		{
-			setValueAsString(KDOM::toDOMString(exec, value));
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAngleConstants::Value:
+        {
+            setValue(value->toNumber(exec));
+            break;
+        }
+        case SVGAngleConstants::ValueInSpecifiedUnits:
+        {
+            setValueInSpecifiedUnits(value->toNumber(exec));
+            break;
+        }
+        case SVGAngleConstants::ValueAsString:
+        {
+            setValueAsString(KDOM::toDOMString(exec, value));
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 ValueImp *SVGAngleProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGAngle)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGAngle)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGAngleConstants::ConvertToSpecifiedUnits:
-		{
-			unsigned short unitType = args[0]->toUInt16(exec);
-			obj.convertToSpecifiedUnits(unitType);
-		}
-		case SVGAngleConstants::NewValueSpecifiedUnits:
-		{
-			unsigned short unitType = args[0]->toUInt16(exec);
-			float valueInSpecifiedUnits = args[1]->toNumber(exec);
-			obj.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGAngleConstants::ConvertToSpecifiedUnits:
+        {
+            unsigned short unitType = args[0]->toUInt16(exec);
+            obj.convertToSpecifiedUnits(unitType);
+        }
+        case SVGAngleConstants::NewValueSpecifiedUnits:
+        {
+            unsigned short unitType = args[0]->toUInt16(exec);
+            float valueInSpecifiedUnits = args[1]->toNumber(exec);
+            obj.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGAngle SVGAngle::null;
@@ -133,77 +133,77 @@ SVGAngle::SVGAngle() : impl(0)
 
 SVGAngle::SVGAngle(SVGAngleImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAngle::SVGAngle(const SVGAngle &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAngle)
 
 unsigned short SVGAngle::unitType() const
 {
-	if(!impl)
-		return SVG_ANGLETYPE_UNKNOWN;
+    if(!impl)
+        return SVG_ANGLETYPE_UNKNOWN;
 
-	return impl->unitType();
+    return impl->unitType();
 }
 
 void SVGAngle::setValue(float value)
 {
-	if(impl)
-		impl->setValue(value);
+    if(impl)
+        impl->setValue(value);
 }
 
 float SVGAngle::value() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return impl->value();
+    return impl->value();
 }
 
 void SVGAngle::setValueInSpecifiedUnits(float valueInSpecifiedUnits)
 {
-	if(impl)
-		impl->setValueInSpecifiedUnits(valueInSpecifiedUnits);
+    if(impl)
+        impl->setValueInSpecifiedUnits(valueInSpecifiedUnits);
 }
 
 float SVGAngle::valueInSpecifiedUnits() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return impl->valueInSpecifiedUnits();
+    return impl->valueInSpecifiedUnits();
 }
 
 void SVGAngle::setValueAsString(const KDOM::DOMString &valueAsString)
 {
-	if(impl)
-		impl->setValueAsString(valueAsString);
+    if(impl)
+        impl->setValueAsString(valueAsString);
 }
 
 KDOM::DOMString SVGAngle::valueAsString() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->valueAsString();
+    return impl->valueAsString();
 }
 
 void SVGAngle::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
-	if(impl)
-		impl->newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
+    if(impl)
+        impl->newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
 }
 
 void SVGAngle::convertToSpecifiedUnits(unsigned short unitType)
 {
-	if(impl)
-		impl->convertToSpecifiedUnits(unitType);
+    if(impl)
+        impl->convertToSpecifiedUnits(unitType);
 }
 
 // vim:ts=4:noet

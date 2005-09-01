@@ -39,13 +39,13 @@ SVGLengthListImpl::~SVGLengthListImpl()
 
 void SVGLengthListImpl::parse(const QString &value, const SVGStyledElementImpl *context, LengthMode mode)
 {
-	QStringList lengths = QStringList::split(' ', value);
-	for(unsigned int i = 0;i < lengths.count();i++)
-	{
-		SVGLengthImpl *length = new SVGLengthImpl(context, mode);
-		length->setValueAsString(KDOM::DOMString(lengths[i]).handle());
-		appendItem(length);
-	}
+    QStringList lengths = QStringList::split(' ', value);
+    for(unsigned int i = 0;i < lengths.count();i++)
+    {
+        SVGLengthImpl *length = new SVGLengthImpl(context, mode);
+        length->setValueAsString(KDOM::DOMString(lengths[i]).handle());
+        appendItem(length);
+    }
 }
 
 // vim:ts=4:noet

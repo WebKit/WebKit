@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -44,7 +44,7 @@ using namespace KSVG;
 SVGFEMergeElementImpl::SVGFEMergeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
-	m_filterEffect = 0;
+    m_filterEffect = 0;
 }
 
 SVGFEMergeElementImpl::~SVGFEMergeElementImpl()
@@ -53,30 +53,30 @@ SVGFEMergeElementImpl::~SVGFEMergeElementImpl()
 
 KCanvasItem *SVGFEMergeElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
 {
-	m_filterEffect = static_cast<KCanvasFEMerge *>(canvas->renderingDevice()->createFilterEffect(FE_MERGE));
-	setStandardAttributes(m_filterEffect);
-	return 0;
+    m_filterEffect = static_cast<KCanvasFEMerge *>(canvas->renderingDevice()->createFilterEffect(FE_MERGE));
+    setStandardAttributes(m_filterEffect);
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEMergeElementImpl::filterEffect() const
 {
-	return m_filterEffect;
+    return m_filterEffect;
 }
 
 void SVGFEMergeElementImpl::close()
 {
-	QStringList mergeInputs;
-	for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
-	{
-		if(n->id() == ID_FEMERGENODE)
-		{
-			SVGFEMergeNodeElementImpl *mergeNode = static_cast<SVGFEMergeNodeElementImpl *>(n);
-			mergeInputs.append(KDOM::DOMString(mergeNode->in1()->baseVal()).string());
-		}
-	}
+    QStringList mergeInputs;
+    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
+    {
+        if(n->id() == ID_FEMERGENODE)
+        {
+            SVGFEMergeNodeElementImpl *mergeNode = static_cast<SVGFEMergeNodeElementImpl *>(n);
+            mergeInputs.append(KDOM::DOMString(mergeNode->in1()->baseVal()).string());
+        }
+    }
 
-	if(m_filterEffect) // we may not be attached...
-		m_filterEffect->setMergeInputs(mergeInputs);
+    if(m_filterEffect) // we may not be attached...
+        m_filterEffect->setMergeInputs(mergeInputs);
 }
 
 // vim:ts=4:noet

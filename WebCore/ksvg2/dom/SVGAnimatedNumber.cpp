@@ -38,47 +38,47 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedNumber::s_hashTable 3
- baseVal	SVGAnimatedNumberConstants::BaseVal	DontDelete
- animVal	SVGAnimatedNumberConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedNumberConstants::BaseVal    DontDelete
+ animVal    SVGAnimatedNumberConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedNumber::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedNumberConstants::BaseVal:
-			return Number(baseVal());
-		case SVGAnimatedNumberConstants::AnimVal:
-			return Number(animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedNumberConstants::BaseVal:
+            return Number(baseVal());
+        case SVGAnimatedNumberConstants::AnimVal:
+            return Number(animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGAnimatedNumber::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedNumberConstants::BaseVal:
-		{
-			if(impl)
-				impl->setBaseVal(KDOM::ecma_cast<SVGNumber>(exec, value, &toSVGNumber).handle());
+    switch(token)
+    {
+        case SVGAnimatedNumberConstants::BaseVal:
+        {
+            if(impl)
+                impl->setBaseVal(KDOM::ecma_cast<SVGNumber>(exec, value, &toSVGNumber).handle());
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGAnimatedNumber SVGAnimatedNumber::null;
@@ -89,31 +89,31 @@ SVGAnimatedNumber::SVGAnimatedNumber() : impl(0)
 
 SVGAnimatedNumber::SVGAnimatedNumber(SVGAnimatedNumberImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedNumber::SVGAnimatedNumber(const SVGAnimatedNumber &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedNumber)
 
 float SVGAnimatedNumber::baseVal() const
 {
-	if(!impl)
-		return 0.;
+    if(!impl)
+        return 0.;
 
-	return impl->baseVal()->value();
+    return impl->baseVal()->value();
 }
 
 float SVGAnimatedNumber::animVal() const
 {
-	if(!impl)
-		return 0.;
+    if(!impl)
+        return 0.;
 
-	return impl->animVal()->value();
+    return impl->animVal()->value();
 }
 
 // vim:ts=4:noet

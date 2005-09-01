@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,17 +25,17 @@
 
 namespace KDOM
 {
-	class EventImpl;
-	class DOMStringImpl;
-	class DocumentEventImpl
-	{
-	public:
-		DocumentEventImpl();
-		virtual ~DocumentEventImpl();
+    class EventImpl;
+    class DOMStringImpl;
+    class DocumentEventImpl
+    {
+    public:
+        DocumentEventImpl();
+        virtual ~DocumentEventImpl();
 
-		// 'DocumentEvent' functions
-		virtual EventImpl *createEvent(DOMStringImpl *eventType);
-	};
+        // 'DocumentEvent' functions
+        virtual EventImpl *createEvent(DOMStringImpl *eventType);
+    };
 };
 
 #endif

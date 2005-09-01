@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,23 +41,23 @@ DocumentEventImpl::~DocumentEventImpl()
 
 EventImpl *DocumentEventImpl::createEvent(DOMStringImpl *eventTypeImpl)
 {
-	EventImpl *i = 0;
+    EventImpl *i = 0;
 
-	DOMString eventType(eventTypeImpl);
-	if(eventType == "UIEvents")
-		i = new UIEventImpl(TypeUIEvent);
-	else if(eventType == "MouseEvents")
-		i = new MouseEventImpl(TypeMouseEvent);
-	else if(eventType == "KeyboardEvents")
-		i = new KeyboardEventImpl(TypeKeyboardEvent);
-	else if(eventType == "MutationEvents")
-		i = new MutationEventImpl(TypeMutationEvent);
-	else if(eventType == "Events")
-		i = new EventImpl(TypeGenericEvent);
-	else
-		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
+    DOMString eventType(eventTypeImpl);
+    if(eventType == "UIEvents")
+        i = new UIEventImpl(TypeUIEvent);
+    else if(eventType == "MouseEvents")
+        i = new MouseEventImpl(TypeMouseEvent);
+    else if(eventType == "KeyboardEvents")
+        i = new KeyboardEventImpl(TypeKeyboardEvent);
+    else if(eventType == "MutationEvents")
+        i = new MutationEventImpl(TypeMutationEvent);
+    else if(eventType == "Events")
+        i = new EventImpl(TypeGenericEvent);
+    else
+        throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
 
-	return i;
+    return i;
 }
 
 // vim:ts=4:noet

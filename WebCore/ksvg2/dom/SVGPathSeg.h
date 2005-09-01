@@ -28,52 +28,52 @@
 
 namespace KSVG
 {
-	class SVGPathSegImpl;
-	class SVGPathSeg 
-	{ 
-	public:
-		SVGPathSeg();
-		explicit SVGPathSeg(SVGPathSegImpl *);
-		SVGPathSeg(const SVGPathSeg &);
-		virtual ~SVGPathSeg();
+    class SVGPathSegImpl;
+    class SVGPathSeg 
+    { 
+    public:
+        SVGPathSeg();
+        explicit SVGPathSeg(SVGPathSegImpl *);
+        SVGPathSeg(const SVGPathSeg &);
+        virtual ~SVGPathSeg();
 
-		// Operators
-		SVGPathSeg &operator=(const SVGPathSeg &other);
-		bool operator==(const SVGPathSeg &other) const;
-		bool operator!=(const SVGPathSeg &other) const;
+        // Operators
+        SVGPathSeg &operator=(const SVGPathSeg &other);
+        bool operator==(const SVGPathSeg &other) const;
+        bool operator!=(const SVGPathSeg &other) const;
 
-		unsigned short pathSegType() const;
-		KDOM::DOMString pathSegTypeAsLetter() const;
+        unsigned short pathSegType() const;
+        KDOM::DOMString pathSegTypeAsLetter() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSeg)
-		SVGPathSegImpl *handle() const { return impl; }
+        // Internal
+        KSVG_INTERNAL(SVGPathSeg)
+        SVGPathSegImpl *handle() const { return impl; }
 
-	protected:
-		SVGPathSegImpl *impl;
+    protected:
+        SVGPathSegImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 
-	KDOM_DEFINE_CAST(SVGPathSeg)
+    KDOM_DEFINE_CAST(SVGPathSeg)
 
 #define KSVG_PATHSEG_DERIVED_ASSIGN_OP(T, PATHSEG_TYPE) \
 T &T::operator=(const SVGPathSeg &other) \
 { \
-	SVGPathSegImpl *ohandle = static_cast<SVGPathSegImpl *>(other.handle()); \
-	if(impl != ohandle) { \
-		if(!ohandle || ohandle->pathSegType() != PATHSEG_TYPE) { \
-			if(impl) impl->deref(); \
-			impl = 0; \
-		} \
-		else \
-			SVGPathSeg::operator=(other); \
-	} \
-	return *this; \
+    SVGPathSegImpl *ohandle = static_cast<SVGPathSegImpl *>(other.handle()); \
+    if(impl != ohandle) { \
+        if(!ohandle || ohandle->pathSegType() != PATHSEG_TYPE) { \
+            if(impl) impl->deref(); \
+            impl = 0; \
+        } \
+        else \
+            SVGPathSeg::operator=(other); \
+    } \
+    return *this; \
 }
 
 };

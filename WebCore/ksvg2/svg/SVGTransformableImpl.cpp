@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,198 +41,198 @@ using namespace KSVG;
 
 SVGTransformableImpl::SVGTransformableImpl() : SVGLocatableImpl()
 {
-	m_transform = 0;
-	m_localMatrix = 0;
+    m_transform = 0;
+    m_localMatrix = 0;
 }
 
 SVGTransformableImpl::~SVGTransformableImpl()
 {
-	if(m_transform)
-		m_transform->deref();
-	if(m_localMatrix)
-		m_localMatrix->deref();
+    if(m_transform)
+        m_transform->deref();
+    if(m_localMatrix)
+        m_localMatrix->deref();
 }
 
 SVGAnimatedTransformListImpl *SVGTransformableImpl::transform() const
 {
-	const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-	return lazy_create<SVGAnimatedTransformListImpl>(m_transform, context);
+    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
+    return lazy_create<SVGAnimatedTransformListImpl>(m_transform, context);
 }
 
 SVGMatrixImpl *SVGTransformableImpl::localMatrix() const
 {
-	return lazy_create<SVGMatrixImpl>(m_localMatrix);
+    return lazy_create<SVGMatrixImpl>(m_localMatrix);
 }
 
 SVGMatrixImpl *SVGTransformableImpl::getCTM() const
 {
-	SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM();
+    SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM();
 
-	if(m_localMatrix)
-		ctm->multiply(m_localMatrix);
+    if(m_localMatrix)
+        ctm->multiply(m_localMatrix);
 
-	return ctm;
+    return ctm;
 }
 
 SVGMatrixImpl *SVGTransformableImpl::getScreenCTM() const
 {
-	SVGMatrixImpl *ctm = SVGLocatableImpl::getScreenCTM();
+    SVGMatrixImpl *ctm = SVGLocatableImpl::getScreenCTM();
 
-	if(m_localMatrix)
-		ctm->multiply(m_localMatrix);
+    if(m_localMatrix)
+        ctm->multiply(m_localMatrix);
 
-	return ctm;
+    return ctm;
 }
 
 void SVGTransformableImpl::updateLocalTransform(SVGTransformListImpl *localTransforms)
 {
-	// Update cached local matrix
-	SVGTransformImpl *localTransform = localTransforms->concatenate();
-	if(localTransform)
-	{
-		localTransform->ref();
-		
-		KDOM_SAFE_SET(m_localMatrix, localTransform->matrix());
+    // Update cached local matrix
+    SVGTransformImpl *localTransform = localTransforms->concatenate();
+    if(localTransform)
+    {
+        localTransform->ref();
+        
+        KDOM_SAFE_SET(m_localMatrix, localTransform->matrix());
 
-		localTransform->deref();
-	}
+        localTransform->deref();
+    }
 }
 
 void SVGTransformableImpl::updateSubtreeMatrices(KDOM::NodeImpl *node)
 {
-	if(!node)
-		return;
+    if(!node)
+        return;
 
-	// First update local matrix...
-	SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(node);
-	SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(node);
+    // First update local matrix...
+    SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(node);
+    SVGTransformableImpl *transform = dynamic_cast<SVGTransformableImpl *>(node);
 
-	if(styled && transform && transform->localMatrix())
-	{
-		QWMatrix useMatrix = transform->localMatrix()->qmatrix();
-	
-		KDOM::ElementImpl *parentElement = dynamic_cast<KDOM::ElementImpl *>(node->parentNode());
-		if(parentElement && parentElement->id() == ID_G)
-		{
-			SVGMatrixImpl *ctm = transform->getCTM();
-			ctm->ref();
-				
-			useMatrix *= ctm->qmatrix();
+    if(styled && transform && transform->localMatrix())
+    {
+        QWMatrix useMatrix = transform->localMatrix()->qmatrix();
+    
+        KDOM::ElementImpl *parentElement = dynamic_cast<KDOM::ElementImpl *>(node->parentNode());
+        if(parentElement && parentElement->id() == ID_G)
+        {
+            SVGMatrixImpl *ctm = transform->getCTM();
+            ctm->ref();
+                
+            useMatrix *= ctm->qmatrix();
 
-			ctm->deref();
-		}
+            ctm->deref();
+        }
 
-		styled->updateCTM(useMatrix);
-	}
+        styled->updateCTM(useMatrix);
+    }
 
-	// ... then update the whole subtree, if possible.
-	for(KDOM::NodeImpl *n = node->firstChild(); n != 0; n = n->nextSibling())
-		updateSubtreeMatrices(n);
+    // ... then update the whole subtree, if possible.
+    for(KDOM::NodeImpl *n = node->firstChild(); n != 0; n = n->nextSibling())
+        updateSubtreeMatrices(n);
 }
 
 bool SVGTransformableImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	if(id == ATTR_TRANSFORM)
-	{
-		SVGTransformListImpl *localTransforms = transform()->baseVal();
-		
-		localTransforms->clear();
-		SVGTransformableImpl::parseTransformAttribute(localTransforms, value);
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    if(id == ATTR_TRANSFORM)
+    {
+        SVGTransformListImpl *localTransforms = transform()->baseVal();
+        
+        localTransforms->clear();
+        SVGTransformableImpl::parseTransformAttribute(localTransforms, value);
 
-		// Update cached local matrix
-		updateLocalTransform(localTransforms);
+        // Update cached local matrix
+        updateLocalTransform(localTransforms);
 
-		SVGStyledElementImpl *styledElement = dynamic_cast<SVGStyledElementImpl *>(this);
-		if(!styledElement)
-			return false;
-			
-		updateSubtreeMatrices(styledElement);
-		return true;
-	}
+        SVGStyledElementImpl *styledElement = dynamic_cast<SVGStyledElementImpl *>(this);
+        if(!styledElement)
+            return false;
+            
+        updateSubtreeMatrices(styledElement);
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, const KDOM::DOMString &transform)
 {
-	// Split string for handling 1 transform statement at a time
-	QStringList subtransforms = QStringList::split(')', transform.string());
-	QStringList::ConstIterator it = subtransforms.begin();
-	QStringList::ConstIterator end = subtransforms.end();
-	for(; it != end; ++it)
-	{
-		QStringList subtransform = QStringList::split('(', (*it));
+    // Split string for handling 1 transform statement at a time
+    QStringList subtransforms = QStringList::split(')', transform.string());
+    QStringList::ConstIterator it = subtransforms.begin();
+    QStringList::ConstIterator end = subtransforms.end();
+    for(; it != end; ++it)
+    {
+        QStringList subtransform = QStringList::split('(', (*it));
 
-		subtransform[0] = subtransform[0].stripWhiteSpace().lower();
-		subtransform[1] = subtransform[1].simplifyWhiteSpace();
-		QRegExp reg(QString::fromLatin1("([-]?\\d*\\.?\\d+(?:e[-]?\\d+)?)"));
+        subtransform[0] = subtransform[0].stripWhiteSpace().lower();
+        subtransform[1] = subtransform[1].simplifyWhiteSpace();
+        QRegExp reg(QString::fromLatin1("([-]?\\d*\\.?\\d+(?:e[-]?\\d+)?)"));
 
-		int pos = 0;
-		QStringList params;
-		
-		while(pos >= 0)
-		{
-			pos = reg.search(subtransform[1], pos);
-			if(pos != -1)
-			{
-				params += reg.cap(1);
-				pos += reg.matchedLength();
-			}
-		}
+        int pos = 0;
+        QStringList params;
+        
+        while(pos >= 0)
+        {
+            pos = reg.search(subtransform[1], pos);
+            if(pos != -1)
+            {
+                params += reg.cap(1);
+                pos += reg.matchedLength();
+            }
+        }
 
-		if(subtransform[0].startsWith(QString::fromLatin1(";")) ||
-		   subtransform[0].startsWith(QString::fromLatin1(",")))
-		{
-			subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
-		}
+        if(subtransform[0].startsWith(QString::fromLatin1(";")) ||
+           subtransform[0].startsWith(QString::fromLatin1(",")))
+        {
+            subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
+        }
 
-		SVGTransformImpl *t = new SVGTransformImpl();
+        SVGTransformImpl *t = new SVGTransformImpl();
 
-		if(subtransform[0] == QString::fromLatin1("rotate"))
-		{
-			if(params.count() == 3)
-				t->setRotate(params[0].toDouble(),
-							 params[1].toDouble(),
-	 						 params[2].toDouble());
-			else
-				t->setRotate(params[0].toDouble(), 0, 0);
-		}
-		else if(subtransform[0] == QString::fromLatin1("translate"))
-		{
-			if(params.count() == 2)
-				t->setTranslate(params[0].toDouble(), params[1].toDouble());
-			else // Spec: if only one param given, assume 2nd param to be 0
-				t->setTranslate(params[0].toDouble(), 0);
-		}
-		else if(subtransform[0] == QString::fromLatin1("scale"))
-		{
-			if(params.count() == 2)
-				t->setScale(params[0].toDouble(), params[1].toDouble());
-			else // Spec: if only one param given, assume uniform scaling
-				t->setScale(params[0].toDouble(), params[0].toDouble());
-		}
-		else if(subtransform[0] == QString::fromLatin1("skewx"))
-			t->setSkewX(params[0].toDouble());
-		else if(subtransform[0] == QString::fromLatin1("skewy"))
-			t->setSkewY(params[0].toDouble());
-		else if(subtransform[0] == QString::fromLatin1("matrix"))
-		{
-			if(params.count() >= 6)
-			{
-				SVGMatrixImpl *ret = new SVGMatrixImpl(params[0].toDouble(),
-													   params[1].toDouble(),
-													   params[2].toDouble(),
-													   params[3].toDouble(),
-													   params[4].toDouble(),
-													   params[5].toDouble());
-				t->setMatrix(ret);
-			}
-		}
+        if(subtransform[0] == QString::fromLatin1("rotate"))
+        {
+            if(params.count() == 3)
+                t->setRotate(params[0].toDouble(),
+                             params[1].toDouble(),
+                              params[2].toDouble());
+            else
+                t->setRotate(params[0].toDouble(), 0, 0);
+        }
+        else if(subtransform[0] == QString::fromLatin1("translate"))
+        {
+            if(params.count() == 2)
+                t->setTranslate(params[0].toDouble(), params[1].toDouble());
+            else // Spec: if only one param given, assume 2nd param to be 0
+                t->setTranslate(params[0].toDouble(), 0);
+        }
+        else if(subtransform[0] == QString::fromLatin1("scale"))
+        {
+            if(params.count() == 2)
+                t->setScale(params[0].toDouble(), params[1].toDouble());
+            else // Spec: if only one param given, assume uniform scaling
+                t->setScale(params[0].toDouble(), params[0].toDouble());
+        }
+        else if(subtransform[0] == QString::fromLatin1("skewx"))
+            t->setSkewX(params[0].toDouble());
+        else if(subtransform[0] == QString::fromLatin1("skewy"))
+            t->setSkewY(params[0].toDouble());
+        else if(subtransform[0] == QString::fromLatin1("matrix"))
+        {
+            if(params.count() >= 6)
+            {
+                SVGMatrixImpl *ret = new SVGMatrixImpl(params[0].toDouble(),
+                                                       params[1].toDouble(),
+                                                       params[2].toDouble(),
+                                                       params[3].toDouble(),
+                                                       params[4].toDouble(),
+                                                       params[5].toDouble());
+                t->setMatrix(ret);
+            }
+        }
 
-		list->appendItem(t);
-	}
+        list->appendItem(t);
+    }
 }
 
 // vim:ts=4:noet

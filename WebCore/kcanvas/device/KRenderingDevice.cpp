@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,9 +25,9 @@
 
 KCanvasCommonArgs::KCanvasCommonArgs()
 {
-	m_path = 0;
-	m_style = 0;
-	m_canvas = 0;
+    m_path = 0;
+    m_style = 0;
+    m_canvas = 0;
 }
 
 KCanvasCommonArgs::~KCanvasCommonArgs()
@@ -36,37 +36,37 @@ KCanvasCommonArgs::~KCanvasCommonArgs()
 
 KCanvas *KCanvasCommonArgs::canvas() const
 {
-	return m_canvas;
+    return m_canvas;
 }
 
 void KCanvasCommonArgs::setCanvas(KCanvas *canvas)
 {
-	m_canvas = canvas;
+    m_canvas = canvas;
 }
 
 KCanvasUserData KCanvasCommonArgs::path() const
 {
-	return m_path;
+    return m_path;
 }
 
 void KCanvasCommonArgs::setPath(KCanvasUserData path)
 {
-	m_path = path;
+    m_path = path;
 }
 
 KRenderingStyle *KCanvasCommonArgs::style() const
 {
-	return m_style;
+    return m_style;
 }
 
 void KCanvasCommonArgs::setStyle(KRenderingStyle *style)
 {
-	m_style = style;
+    m_style = style;
 }
 
 KRenderingDevice::KRenderingDevice()
 {
-	m_currentPath = 0;
+    m_currentPath = 0;
 }
 
 KRenderingDevice::~KRenderingDevice()
@@ -75,27 +75,27 @@ KRenderingDevice::~KRenderingDevice()
 
 KCanvasUserData KRenderingDevice::currentPath() const
 {
-	return m_currentPath;
+    return m_currentPath;
 }
 
 KRenderingDeviceContext *KRenderingDevice::currentContext() const
 {
-	return m_contextStack.current();
+    return m_contextStack.current();
 }
 
 KRenderingDeviceContext *KRenderingDevice::popContext()
 {
-	return m_contextStack.pop();
+    return m_contextStack.pop();
 }
 
 void KRenderingDevice::pushContext(KRenderingDeviceContext *context)
 {
-	m_contextStack.push(context);
+    m_contextStack.push(context);
 }
 
 void KRenderingDevice::setCurrentPath(KCanvasUserData path)
 {
-	m_currentPath = path;
+    m_currentPath = path;
 }
 
 // vim:ts=4:noet

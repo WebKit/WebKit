@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,28 +27,28 @@
 
 namespace KDOM
 {
-	class EventListenerImpl;
-	class RegisteredEventListener 
-	{
-	public:
-		RegisteredEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
-		~RegisteredEventListener();
+    class EventListenerImpl;
+    class RegisteredEventListener 
+    {
+    public:
+        RegisteredEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+        ~RegisteredEventListener();
 
-		bool operator==(const RegisteredEventListener &other) const;
-		bool operator!=(const RegisteredEventListener &other) const;
+        bool operator==(const RegisteredEventListener &other) const;
+        bool operator!=(const RegisteredEventListener &other) const;
 
-		DOMStringImpl *type() const;
-		bool useCapture() const;
-		EventListenerImpl *listener() const;
-		
-	private:
-		RegisteredEventListener(const RegisteredEventListener &other);
-		RegisteredEventListener &operator=(const RegisteredEventListener &other);
+        DOMStringImpl *type() const;
+        bool useCapture() const;
+        EventListenerImpl *listener() const;
+        
+    private:
+        RegisteredEventListener(const RegisteredEventListener &other);
+        RegisteredEventListener &operator=(const RegisteredEventListener &other);
 
-		DOMStringImpl *m_type;
-		bool m_useCapture;
-		EventListenerImpl *m_listener;
-	};
+        DOMStringImpl *m_type;
+        bool m_useCapture;
+        EventListenerImpl *m_listener;
+    };
 };
 
 #endif

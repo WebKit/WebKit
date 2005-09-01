@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,28 +29,28 @@
 
 namespace KDOM
 {
-	class CSSValueListImpl : public CSSValueImpl
-	{
-	public:
-		CSSValueListImpl();
-		virtual ~CSSValueListImpl();
+    class CSSValueListImpl : public CSSValueImpl
+    {
+    public:
+        CSSValueListImpl();
+        virtual ~CSSValueListImpl();
 
-		// 'CSSValueList' functions
-		unsigned long length() const;
-		CSSValueImpl *item(unsigned long index);
+        // 'CSSValueList' functions
+        unsigned long length() const;
+        CSSValueImpl *item(unsigned long index);
 
-		// 'CSSValue' functions
-		virtual DOMStringImpl *cssText() const;
-		virtual void setCssText(DOMStringImpl *cssText);
-		virtual unsigned short cssValueType() const;
+        // 'CSSValue' functions
+        virtual DOMStringImpl *cssText() const;
+        virtual void setCssText(DOMStringImpl *cssText);
+        virtual unsigned short cssValueType() const;
 
-		virtual bool isValueList() const { return true; }
+        virtual bool isValueList() const { return true; }
 
-		void append(CSSValueImpl *val);
+        void append(CSSValueImpl *val);
 
-	protected:
-		QPtrList<CSSValueImpl> m_values;
-	};
+    protected:
+        QPtrList<CSSValueImpl> m_values;
+    };
 };
 
 #endif

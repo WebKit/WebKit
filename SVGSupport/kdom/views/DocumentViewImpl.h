@@ -28,19 +28,19 @@
 
 namespace KDOM
 {
-	class AbstractViewImpl;
-	class DocumentViewImpl
-	{
-	public:
-		DocumentViewImpl();
-		virtual ~DocumentViewImpl();
+    class AbstractViewImpl;
+    class DocumentViewImpl
+    {
+    public:
+        DocumentViewImpl();
+        virtual ~DocumentViewImpl();
 
-		// 'DocumentViewImpl' functions
-		virtual AbstractViewImpl *defaultView() const;
+        // 'DocumentViewImpl' functions
+        virtual AbstractViewImpl *defaultView() const;
 
-	protected:
-		AbstractViewImpl *m_defaultView;
-	};
+    protected:
+        AbstractViewImpl *m_defaultView;
+    };
 };
 
 #endif

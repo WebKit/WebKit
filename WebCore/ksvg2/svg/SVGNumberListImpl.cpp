@@ -40,13 +40,13 @@ SVGNumberListImpl::~SVGNumberListImpl()
 
 void SVGNumberListImpl::parse(const QString &value, const SVGStyledElementImpl *context)
 {
-	QStringList numbers = QStringList::split(' ', value);
-	for(unsigned int i = 0;i < numbers.count();i++)
-	{
-		SVGNumberImpl *number = new SVGNumberImpl(context);
-		number->setValue(numbers[i].toFloat());
-		appendItem(number);
-	}
+    QStringList numbers = QStringList::split(' ', value);
+    for(unsigned int i = 0;i < numbers.count();i++)
+    {
+        SVGNumberImpl *number = new SVGNumberImpl(context);
+        number->setValue(numbers[i].toFloat());
+        appendItem(number);
+    }
 }
 
 // vim:ts=4:noet

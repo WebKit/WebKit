@@ -1,3 +1,11 @@
+2005-09-01  Eric Seidel  <eseidel@apple.com>
+
+        Rubber stamped by mjs.
+
+        Replaced tabs with spaces throughout all of SVGSupport, excepting
+        kdom/xpath upon specific request of the kdom/xpath maintainer.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4752
+
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
         - update test results for Mitz's recent border AA change

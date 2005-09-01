@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,26 +25,26 @@
 
 namespace KDOM
 {
-	class AttributeImpl;
+    class AttributeImpl;
 };
 
 namespace KSVG
 {
-	class SVGAnimatedBooleanImpl;
-	class SVGExternalResourcesRequiredImpl
-	{
-	public:
-		SVGExternalResourcesRequiredImpl();
-		virtual ~SVGExternalResourcesRequiredImpl();
+    class SVGAnimatedBooleanImpl;
+    class SVGExternalResourcesRequiredImpl
+    {
+    public:
+        SVGExternalResourcesRequiredImpl();
+        virtual ~SVGExternalResourcesRequiredImpl();
 
-		// 'SVGExternalResourcesRequired' functions
-		SVGAnimatedBooleanImpl *externalResourcesRequired() const;
+        // 'SVGExternalResourcesRequired' functions
+        SVGAnimatedBooleanImpl *externalResourcesRequired() const;
 
-		bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGAnimatedBooleanImpl *m_external;
-	};
+    private:
+        mutable SVGAnimatedBooleanImpl *m_external;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,24 +27,24 @@
 
 namespace KSVG
 {
-	class SVGFEFuncRElementImpl;
+    class SVGFEFuncRElementImpl;
 
-	class SVGFEFuncRElement :  public SVGComponentTransferFunctionElement
-	{
-	public:
-		SVGFEFuncRElement();
-		explicit SVGFEFuncRElement(SVGFEFuncRElementImpl *i);
-		SVGFEFuncRElement(const SVGFEFuncRElement &other);
-		SVGFEFuncRElement(const KDOM::Node &other);
-		virtual ~SVGFEFuncRElement();
+    class SVGFEFuncRElement :  public SVGComponentTransferFunctionElement
+    {
+    public:
+        SVGFEFuncRElement();
+        explicit SVGFEFuncRElement(SVGFEFuncRElementImpl *i);
+        SVGFEFuncRElement(const SVGFEFuncRElement &other);
+        SVGFEFuncRElement(const KDOM::Node &other);
+        virtual ~SVGFEFuncRElement();
 
-		// Operators
-		SVGFEFuncRElement &operator=(const SVGFEFuncRElement &other);
-		SVGFEFuncRElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEFuncRElement &operator=(const SVGFEFuncRElement &other);
+        SVGFEFuncRElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGFEFuncRElement)
-	};
+        // Internal
+        KSVG_INTERNAL(SVGFEFuncRElement)
+    };
 };
 
 #endif

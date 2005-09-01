@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -46,22 +46,22 @@ class KRenderingStyle;
 class KCanvasCommonArgs
 {
 public:
-	KCanvasCommonArgs();
-	~KCanvasCommonArgs();
-	
-	KCanvas *canvas() const;
-	void setCanvas(KCanvas *canvas);
+    KCanvasCommonArgs();
+    ~KCanvasCommonArgs();
+    
+    KCanvas *canvas() const;
+    void setCanvas(KCanvas *canvas);
 
-	KCanvasUserData path() const;
-	void setPath(KCanvasUserData path);
+    KCanvasUserData path() const;
+    void setPath(KCanvasUserData path);
 
-	KRenderingStyle *style() const;
-	void setStyle(KRenderingStyle *style);
-	
+    KRenderingStyle *style() const;
+    void setStyle(KRenderingStyle *style);
+    
 private:
-	KCanvas *m_canvas;
-	KCanvasUserData m_path;
-	KRenderingStyle *m_style;
+    KCanvas *m_canvas;
+    KCanvasUserData m_path;
+    KRenderingStyle *m_style;
 };
 
 

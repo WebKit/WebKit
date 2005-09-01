@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedAngleImpl;
-	class SVGAnimatedAngle
-	{
-	public:
-		SVGAnimatedAngle();
-		explicit SVGAnimatedAngle(SVGAnimatedAngleImpl *i);
-		SVGAnimatedAngle(const SVGAnimatedAngle &other);
-		virtual ~SVGAnimatedAngle();
+    class SVGAnimatedAngleImpl;
+    class SVGAnimatedAngle
+    {
+    public:
+        SVGAnimatedAngle();
+        explicit SVGAnimatedAngle(SVGAnimatedAngleImpl *i);
+        SVGAnimatedAngle(const SVGAnimatedAngle &other);
+        virtual ~SVGAnimatedAngle();
 
-		// Operators
-		SVGAnimatedAngle &operator=(const SVGAnimatedAngle &other);
-		bool operator==(const SVGAnimatedAngle &other) const;
-		bool operator!=(const SVGAnimatedAngle &other) const;
+        // Operators
+        SVGAnimatedAngle &operator=(const SVGAnimatedAngle &other);
+        bool operator==(const SVGAnimatedAngle &other) const;
+        bool operator!=(const SVGAnimatedAngle &other) const;
 
-		// 'SVGAnimatedAngle' functions
-		SVGAngle baseVal() const;
-		SVGAngle animVal() const;
+        // 'SVGAnimatedAngle' functions
+        SVGAngle baseVal() const;
+        SVGAngle animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedAngle)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedAngle)
 
-	protected:
-		SVGAnimatedAngleImpl *impl;
+    protected:
+        SVGAnimatedAngleImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

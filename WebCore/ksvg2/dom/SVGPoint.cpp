@@ -39,11 +39,11 @@ using namespace KSVG;
 
 /*
 @begin SVGPoint::s_hashTable 3
- x	SVGPointConstants::X	DontDelete
- y	SVGPointConstants::Y	DontDelete
+ x    SVGPointConstants::X    DontDelete
+ y    SVGPointConstants::Y    DontDelete
 @end
 @begin SVGPointProto::s_hashTable 3
- matrixTransform	SVGPointConstants::MatrixTransform	DontDelete|Function 1
+ matrixTransform    SVGPointConstants::MatrixTransform    DontDelete|Function 1
 @end
 */
 
@@ -51,59 +51,59 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGPoint", SVGPointProto, SVGPointProtoFunc)
 
 ValueImp *SVGPoint::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPointConstants::X:
-			return Number(x());
-		case SVGPointConstants::Y:
-			return Number(y());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPointConstants::X:
+            return Number(x());
+        case SVGPointConstants::Y:
+            return Number(y());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGPoint::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPointConstants::X:
-			setX(value->toNumber(exec));
-			break;
-		case SVGPointConstants::Y:
-			setY(value->toNumber(exec));
-			break;
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPointConstants::X:
+            setX(value->toNumber(exec));
+            break;
+        case SVGPointConstants::Y:
+            setY(value->toNumber(exec));
+            break;
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 ValueImp *SVGPointProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGPoint)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGPoint)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGPointConstants::MatrixTransform:
-		{
-			SVGMatrix matrix = KDOM::ecma_cast<SVGMatrix>(exec, args[0], &toSVGMatrix);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.matrixTransform(matrix));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGPointConstants::MatrixTransform:
+        {
+            SVGMatrix matrix = KDOM::ecma_cast<SVGMatrix>(exec, args[0], &toSVGMatrix);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.matrixTransform(matrix));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGPoint SVGPoint::null;
@@ -114,51 +114,51 @@ SVGPoint::SVGPoint() : impl(0)
 
 SVGPoint::SVGPoint(SVGPointImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGPoint::SVGPoint(const SVGPoint &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGPoint)
 
 float SVGPoint::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return impl->x();
+    return impl->x();
 }
 
 float SVGPoint::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return impl->y();
+    return impl->y();
 }
 
 void SVGPoint::setX(float x)
 {
-	if(impl)
-		impl->setX(x);
+    if(impl)
+        impl->setX(x);
 }
 
 void SVGPoint::setY(float y)
 {
-	if(impl)
-		impl->setY(y);
+    if(impl)
+        impl->setY(y);
 }
 
 SVGPoint SVGPoint::matrixTransform(const SVGMatrix &matrix)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->matrixTransform(matrix.handle()));
+    return SVGPoint(impl->matrixTransform(matrix.handle()));
 }
 
 // vim:ts=4:noet

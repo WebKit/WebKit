@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,26 +29,26 @@
 
 namespace KSVG
 {
-	class SVGScriptElementImpl : public SVGElementImpl,
-								 public SVGURIReferenceImpl,
-							     public SVGExternalResourcesRequiredImpl
-	{
-	public:
-		SVGScriptElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGScriptElementImpl();
+    class SVGScriptElementImpl : public SVGElementImpl,
+                                 public SVGURIReferenceImpl,
+                                 public SVGExternalResourcesRequiredImpl
+    {
+    public:
+        SVGScriptElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGScriptElementImpl();
 
-		// 'SVGScriptElement' functions
-		KDOM::DOMStringImpl *type() const;
-		void setType(KDOM::DOMStringImpl *type);
+        // 'SVGScriptElement' functions
+        KDOM::DOMStringImpl *type() const;
+        void setType(KDOM::DOMStringImpl *type);
 
-		// Internal
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Internal
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		static void executeScript(KDOM::DocumentImpl *document, const KDOM::DOMString &jsCode);
+        static void executeScript(KDOM::DocumentImpl *document, const KDOM::DOMString &jsCode);
 
-	private:
-		KDOM::DOMStringImpl *m_type;
-	};
+    private:
+        KDOM::DOMStringImpl *m_type;
+    };
 };
 
 #endif

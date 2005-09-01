@@ -27,79 +27,79 @@
 
 namespace KSVG
 {
-	class SVGPathSegCurvetoCubicSmoothAbsImpl;
-	class SVGPathSegCurvetoCubicSmoothAbs : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegCurvetoCubicSmoothAbs();
-		explicit SVGPathSegCurvetoCubicSmoothAbs(SVGPathSegCurvetoCubicSmoothAbsImpl *);
-		SVGPathSegCurvetoCubicSmoothAbs(const SVGPathSegCurvetoCubicSmoothAbs &);
-		SVGPathSegCurvetoCubicSmoothAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegCurvetoCubicSmoothAbs();
+    class SVGPathSegCurvetoCubicSmoothAbsImpl;
+    class SVGPathSegCurvetoCubicSmoothAbs : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegCurvetoCubicSmoothAbs();
+        explicit SVGPathSegCurvetoCubicSmoothAbs(SVGPathSegCurvetoCubicSmoothAbsImpl *);
+        SVGPathSegCurvetoCubicSmoothAbs(const SVGPathSegCurvetoCubicSmoothAbs &);
+        SVGPathSegCurvetoCubicSmoothAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegCurvetoCubicSmoothAbs();
 
-		// Operators
-		SVGPathSegCurvetoCubicSmoothAbs &operator=(const SVGPathSegCurvetoCubicSmoothAbs &other);
-		SVGPathSegCurvetoCubicSmoothAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegCurvetoCubicSmoothAbs &operator=(const SVGPathSegCurvetoCubicSmoothAbs &other);
+        SVGPathSegCurvetoCubicSmoothAbs &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		void setX2(float);
-		float x2() const;
+        void setX2(float);
+        float x2() const;
 
-		void setY2(float);
-		float y2() const;
+        void setY2(float);
+        float y2() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegCurvetoCubicSmoothAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegCurvetoCubicSmoothAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegCurvetoCubicSmoothRelImpl;
-	class SVGPathSegCurvetoCubicSmoothRel : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegCurvetoCubicSmoothRel();
-		explicit SVGPathSegCurvetoCubicSmoothRel(SVGPathSegCurvetoCubicSmoothRelImpl *);
-		SVGPathSegCurvetoCubicSmoothRel(const SVGPathSegCurvetoCubicSmoothRel &);
-		SVGPathSegCurvetoCubicSmoothRel(const SVGPathSeg &);
-		virtual ~SVGPathSegCurvetoCubicSmoothRel();
+    class SVGPathSegCurvetoCubicSmoothRelImpl;
+    class SVGPathSegCurvetoCubicSmoothRel : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegCurvetoCubicSmoothRel();
+        explicit SVGPathSegCurvetoCubicSmoothRel(SVGPathSegCurvetoCubicSmoothRelImpl *);
+        SVGPathSegCurvetoCubicSmoothRel(const SVGPathSegCurvetoCubicSmoothRel &);
+        SVGPathSegCurvetoCubicSmoothRel(const SVGPathSeg &);
+        virtual ~SVGPathSegCurvetoCubicSmoothRel();
 
-		// Operators
-		SVGPathSegCurvetoCubicSmoothRel &operator=(const SVGPathSegCurvetoCubicSmoothRel &other);
-		SVGPathSegCurvetoCubicSmoothRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegCurvetoCubicSmoothRel &operator=(const SVGPathSegCurvetoCubicSmoothRel &other);
+        SVGPathSegCurvetoCubicSmoothRel &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		void setX2(float);
-		float x2() const;
+        void setX2(float);
+        float x2() const;
 
-		void setY2(float);
-		float y2() const;
+        void setY2(float);
+        float y2() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegCurvetoCubicSmoothRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegCurvetoCubicSmoothRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

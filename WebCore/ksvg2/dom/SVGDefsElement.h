@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,34 +32,34 @@
 
 namespace KSVG
 {
-	class SVGDefsElementImpl;
-	class SVGDefsElement :  public SVGElement,
-							public SVGTests,
-							public SVGLangSpace,
-							public SVGExternalResourcesRequired,
-							public SVGStylable,
-							public SVGTransformable
-	{
-	public:
-		SVGDefsElement();
-		explicit SVGDefsElement(SVGDefsElementImpl *i);
-		SVGDefsElement(const SVGDefsElement &other);
-		SVGDefsElement(const KDOM::Node &other);
-		virtual ~SVGDefsElement();
+    class SVGDefsElementImpl;
+    class SVGDefsElement :  public SVGElement,
+                            public SVGTests,
+                            public SVGLangSpace,
+                            public SVGExternalResourcesRequired,
+                            public SVGStylable,
+                            public SVGTransformable
+    {
+    public:
+        SVGDefsElement();
+        explicit SVGDefsElement(SVGDefsElementImpl *i);
+        SVGDefsElement(const SVGDefsElement &other);
+        SVGDefsElement(const KDOM::Node &other);
+        virtual ~SVGDefsElement();
 
-		// Operators
-		SVGDefsElement &operator=(const SVGDefsElement &other);
-		SVGDefsElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGDefsElement &operator=(const SVGDefsElement &other);
+        SVGDefsElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGDefsElement)
+        // Internal
+        KSVG_INTERNAL(SVGDefsElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

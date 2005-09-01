@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,12 +31,12 @@ RGBColorImpl::RGBColorImpl(CDFInterface *interface) : Shared(), m_interface(inte
 
 RGBColorImpl::RGBColorImpl(CDFInterface *interface, const QRgb &color) : Shared(), m_interface(interface)
 {
-	m_color = color;
+    m_color = color;
 }
 
 RGBColorImpl::RGBColorImpl(CDFInterface *interface, const QColor &color) : Shared(), m_interface(interface)
 {
-	m_color = color.rgb();
+    m_color = color.rgb();
 }
 
 RGBColorImpl::~RGBColorImpl()
@@ -45,17 +45,17 @@ RGBColorImpl::~RGBColorImpl()
 
 CSSPrimitiveValueImpl *RGBColorImpl::red() const
 {
-	return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qRed(m_color) : 0), CSS_DIMENSION);
+    return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qRed(m_color) : 0), CSS_DIMENSION);
 }
 
 CSSPrimitiveValueImpl *RGBColorImpl::green() const
 {
-	return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qGreen(m_color) : 0), CSS_DIMENSION);
+    return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qGreen(m_color) : 0), CSS_DIMENSION);
 }
 
 CSSPrimitiveValueImpl *RGBColorImpl::blue() const
 {
-	return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qBlue(m_color) : 0), CSS_DIMENSION);
+    return new CSSPrimitiveValueImpl(m_interface, float(qAlpha(m_color) ? qBlue(m_color) : 0), CSS_DIMENSION);
 }
 
 // vim:ts=4:noet

@@ -34,6 +34,6 @@ XPathNamespaceImpl::XPathNamespaceImpl( DocumentPtr *ptr ) : NodeImpl( ptr )
 
 ElementImpl *XPathNamespaceImpl::ownerElement() const
 {
-	return 0;
+    return 0;
 }
 

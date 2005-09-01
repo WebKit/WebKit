@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,8 +26,8 @@ using namespace KDOM;
 
 UIEventImpl::UIEventImpl(EventImplType identifier) : EventImpl(identifier)
 {
-	m_detail = 0;
-	m_abstractView = 0;
+    m_detail = 0;
+    m_abstractView = 0;
 }
 
 UIEventImpl::~UIEventImpl()
@@ -36,20 +36,20 @@ UIEventImpl::~UIEventImpl()
 
 AbstractViewImpl *UIEventImpl::view() const
 {
-	return m_abstractView;
+    return m_abstractView;
 }
 
 long UIEventImpl::detail() const
 {
-	return m_detail;
+    return m_detail;
 }
 
 void UIEventImpl::initUIEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg)
 {
-	initEvent(typeArg, canBubbleArg, cancelableArg);
+    initEvent(typeArg, canBubbleArg, cancelableArg);
 
-	m_abstractView = viewArg;
-	m_detail = detailArg;
+    m_abstractView = viewArg;
+    m_detail = detailArg;
 }
 
 // vim:ts=4:noet

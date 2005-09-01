@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,36 +29,36 @@
 
 namespace KDOM
 {
-	class CSSStyleDeclarationImpl;
-	class CSSStyleRuleImpl : public CSSRuleImpl
-	{
-	public:
-		CSSStyleRuleImpl(StyleBaseImpl *parent);
-		virtual ~CSSStyleRuleImpl();
+    class CSSStyleDeclarationImpl;
+    class CSSStyleRuleImpl : public CSSRuleImpl
+    {
+    public:
+        CSSStyleRuleImpl(StyleBaseImpl *parent);
+        virtual ~CSSStyleRuleImpl();
 
-		// 'CSSStyleRule' functions
-		DOMStringImpl *selectorText() const;
-		void setSelectorText(DOMStringImpl *selectorText);
+        // 'CSSStyleRule' functions
+        DOMStringImpl *selectorText() const;
+        void setSelectorText(DOMStringImpl *selectorText);
 
-		virtual bool parseString(const DOMString &string, bool = false);
+        virtual bool parseString(const DOMString &string, bool = false);
 
-		CSSStyleDeclarationImpl *style() const;
+        CSSStyleDeclarationImpl *style() const;
 
-		// 'CSSRule' functions
-		virtual bool isStyleRule() const { return true; }
+        // 'CSSRule' functions
+        virtual bool isStyleRule() const { return true; }
 
-		void setSelector(QPtrList<CSSSelector> *selector);
-		void setDeclaration(CSSStyleDeclarationImpl *style);
+        void setSelector(QPtrList<CSSSelector> *selector);
+        void setDeclaration(CSSStyleDeclarationImpl *style);
 
-		QPtrList<CSSSelector> *selector() { return m_selector; }
-		CSSStyleDeclarationImpl *declaration() { return m_style; }
+        QPtrList<CSSSelector> *selector() { return m_selector; }
+        CSSStyleDeclarationImpl *declaration() { return m_style; }
 
-		void setNonCSSHints();
+        void setNonCSSHints();
 
-	protected:
-		CSSStyleDeclarationImpl *m_style;
-		QPtrList<CSSSelector> *m_selector;
-	};
+    protected:
+        CSSStyleDeclarationImpl *m_style;
+        QPtrList<CSSSelector> *m_selector;
+    };
 };
 
 #endif

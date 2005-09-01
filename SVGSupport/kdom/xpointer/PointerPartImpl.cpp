@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,46 +34,46 @@ using namespace KDOM::XPointer;
 PointerPartImpl::PointerPartImpl(DOMStringImpl *name, DOMStringImpl *schemeData, NBCImpl *nbc)
 : Shared(), m_data(schemeData), m_name(name), m_nbc(nbc)
 {
-	kdDebug(26550) << "Created PointerPart: name=\"" << name << "\" schemeData=\"" << schemeData << "\"." << endl;
+    kdDebug(26550) << "Created PointerPart: name=\"" << name << "\" schemeData=\"" << schemeData << "\"." << endl;
 
-	if(m_name)
-		m_name->ref();
-	if(m_data)
-		m_data->ref();
-	if(m_nbc)
-		m_nbc->ref();
+    if(m_name)
+        m_name->ref();
+    if(m_data)
+        m_data->ref();
+    if(m_nbc)
+        m_nbc->ref();
 }
 
 PointerPartImpl::~PointerPartImpl()
 {
-	if(m_name)
-		m_name->deref();
-	if(m_data)
-		m_data->deref();
-	if(m_nbc)
-		m_nbc->deref();
+    if(m_name)
+        m_name->deref();
+    if(m_data)
+        m_data->deref();
+    if(m_nbc)
+        m_nbc->deref();
 }
 
 XPointerResultImpl *PointerPartImpl::evaluate(NodeImpl *) const
 {
-	/* Unknown schemes are plain PointerPartImpl instances. This ensures
-	 * they trigger an evaluation of the next scheme. */
-	return new XPointerResultImpl(NO_MATCH);
+    /* Unknown schemes are plain PointerPartImpl instances. This ensures
+     * they trigger an evaluation of the next scheme. */
+    return new XPointerResultImpl(NO_MATCH);
 }
 
 NBCImpl *PointerPartImpl::nbc() const
 {
-	return m_nbc;
+    return m_nbc;
 }
 
 DOMStringImpl *PointerPartImpl::name() const
 {
-	return m_name;
+    return m_name;
 }
 
 DOMStringImpl *PointerPartImpl::data() const
 {
-	return m_data;
+    return m_data;
 }
 
 // vim:ts=4:noet

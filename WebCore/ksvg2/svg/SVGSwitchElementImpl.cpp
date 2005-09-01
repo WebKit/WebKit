@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -46,27 +46,27 @@ SVGSwitchElementImpl::~SVGSwitchElementImpl()
 
 bool SVGSwitchElementImpl::allowAttachChildren(KDOM::ElementImpl *child) const
 {
-	for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
-	{
-		SVGTestsImpl *element = dynamic_cast<SVGTestsImpl *>(n);
+    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
+    {
+        SVGTestsImpl *element = dynamic_cast<SVGTestsImpl *>(n);
 
-		// Lookup first valid item...
-		if(element && element->isValid())
-		{
-			// Only render first valid child!
-			if(n == child)
-				return true;
+        // Lookup first valid item...
+        if(element && element->isValid())
+        {
+            // Only render first valid child!
+            if(n == child)
+                return true;
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 
-	return false;
+    return false;
 }
 
 KCanvasItem *SVGSwitchElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
-	return KCanvasCreator::self()->createContainer(canvas, style);
+    return KCanvasCreator::self()->createContainer(canvas, style);
 }
 
 // vim:ts=4:noet

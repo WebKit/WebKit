@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -46,30 +46,30 @@ QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m)
 //KCSortedGradientStopList
 KCSortedGradientStopList::KCSortedGradientStopList()
 {
-	setAutoDelete(true);
+    setAutoDelete(true);
 }
 
 void KCSortedGradientStopList::addStop(float offset, const QColor &color)
 {
-	KCGradientOffsetPair *pair = new KCGradientOffsetPair;
-	pair->offset = offset;
-	pair->color = color;
+    KCGradientOffsetPair *pair = new KCGradientOffsetPair;
+    pair->offset = offset;
+    pair->color = color;
 
-	append(pair);
-	sort();
+    append(pair);
+    sort();
 }
 
 int KCSortedGradientStopList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
 {
-	KCGradientOffsetPair *pair1 = static_cast<KCGradientOffsetPair *>(item1);
-	KCGradientOffsetPair *pair2 = static_cast<KCGradientOffsetPair *>(item2);
+    KCGradientOffsetPair *pair1 = static_cast<KCGradientOffsetPair *>(item1);
+    KCGradientOffsetPair *pair2 = static_cast<KCGradientOffsetPair *>(item2);
 
-	if(pair1->offset == pair2->offset)
-		return 0;
-	else if(pair1->offset < pair2->offset)
-		return -1;
+    if(pair1->offset == pair2->offset)
+        return 0;
+    else if(pair1->offset < pair2->offset)
+        return -1;
 
-	return 1;
+    return 1;
 }
 
 QTextStream &operator<<(QTextStream &ts, const KCSortedGradientStopList &l)
@@ -90,13 +90,13 @@ QTextStream &operator<<(QTextStream &ts, const KCSortedGradientStopList &l)
 class KRenderingPaintServerGradient::Private
 {
 public:
-	Private() { boundingBoxMode = true; spreadMethod = SPREADMETHOD_PAD; }
-	~Private() { }
+    Private() { boundingBoxMode = true; spreadMethod = SPREADMETHOD_PAD; }
+    ~Private() { }
 
-	KCSortedGradientStopList stops;
-	KCGradientSpreadMethod spreadMethod;
-	bool boundingBoxMode;
-	KCanvasMatrix gradientTransform;
+    KCSortedGradientStopList stops;
+    KCGradientSpreadMethod spreadMethod;
+    bool boundingBoxMode;
+    KCanvasMatrix gradientTransform;
 };
 
 KRenderingPaintServerGradient::KRenderingPaintServerGradient() : KRenderingPaintServer(), KCanvasResource(), d(new Private())
@@ -105,47 +105,47 @@ KRenderingPaintServerGradient::KRenderingPaintServerGradient() : KRenderingPaint
 
 KRenderingPaintServerGradient::~KRenderingPaintServerGradient()
 {
-	delete d;
+    delete d;
 }
 
 KCSortedGradientStopList &KRenderingPaintServerGradient::gradientStops() const{
 
-	return d->stops;
+    return d->stops;
 }
 
 void KRenderingPaintServerGradient::setGradientStops(const KCSortedGradientStopList &stops)
 {
-	d->stops = stops;
+    d->stops = stops;
 }
 
 KCGradientSpreadMethod KRenderingPaintServerGradient::spreadMethod() const
 {
-	return d->spreadMethod;
+    return d->spreadMethod;
 }
 
 void KRenderingPaintServerGradient::setGradientSpreadMethod(const KCGradientSpreadMethod &method)
 {
-	d->spreadMethod = method;
+    d->spreadMethod = method;
 }
 
 bool KRenderingPaintServerGradient::boundingBoxMode() const
 {
-	return d->boundingBoxMode;
+    return d->boundingBoxMode;
 }
 
 void KRenderingPaintServerGradient::setBoundingBoxMode(bool mode)
 {
-	d->boundingBoxMode = mode;
+    d->boundingBoxMode = mode;
 }
 
 KCanvasMatrix KRenderingPaintServerGradient::gradientTransform() const
 {
-	return d->gradientTransform;
+    return d->gradientTransform;
 }
 
 void KRenderingPaintServerGradient::setGradientTransform(const KCanvasMatrix &mat)
 {
-	d->gradientTransform = mat;
+    d->gradientTransform = mat;
 }
 
 QTextStream &KRenderingPaintServerGradient::externalRepresentation(QTextStream &ts) const
@@ -166,10 +166,10 @@ QTextStream &KRenderingPaintServerGradient::externalRepresentation(QTextStream &
 class KRenderingPaintServerLinearGradient::Private
 {
 public:
-	Private() { }
-	~Private() { }
+    Private() { }
+    ~Private() { }
 
-	QPoint start, end;
+    QPoint start, end;
 };
 
 KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient() : KRenderingPaintServerGradient(), d(new Private())
@@ -178,32 +178,32 @@ KRenderingPaintServerLinearGradient::KRenderingPaintServerLinearGradient() : KRe
 
 KRenderingPaintServerLinearGradient::~KRenderingPaintServerLinearGradient()
 {
-	delete d;
+    delete d;
 }
 
 QPoint KRenderingPaintServerLinearGradient::gradientStart() const
 {
-	return d->start;
+    return d->start;
 }
 
 void KRenderingPaintServerLinearGradient::setGradientStart(const QPoint &start)
 {
-	d->start = start;
+    d->start = start;
 }
 
 QPoint KRenderingPaintServerLinearGradient::gradientEnd() const
 {
-	return d->end;
+    return d->end;
 }
 
 void KRenderingPaintServerLinearGradient::setGradientEnd(const QPoint &end)
 {
-	d->end = end;
+    d->end = end;
 }
 
 KCPaintServerType KRenderingPaintServerLinearGradient::type() const
 {
-	return PS_LINEAR_GRADIENT;
+    return PS_LINEAR_GRADIENT;
 }
 
 QTextStream &KRenderingPaintServerLinearGradient::externalRepresentation(QTextStream &ts) const
@@ -219,11 +219,11 @@ QTextStream &KRenderingPaintServerLinearGradient::externalRepresentation(QTextSt
 class KRenderingPaintServerRadialGradient::Private
 {
 public:
-	Private() { }
-	~Private() { }
+    Private() { }
+    ~Private() { }
 
-	float radius;
-	QPoint center, focal;
+    float radius;
+    QPoint center, focal;
 };
 
 KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient() : KRenderingPaintServerGradient(), d(new Private())
@@ -232,42 +232,42 @@ KRenderingPaintServerRadialGradient::KRenderingPaintServerRadialGradient() : KRe
 
 KRenderingPaintServerRadialGradient::~KRenderingPaintServerRadialGradient()
 {
-	delete d;
+    delete d;
 }
 
 QPoint KRenderingPaintServerRadialGradient::gradientCenter() const
 {
-	return d->center;
+    return d->center;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientCenter(const QPoint &center)
 {
-	d->center = center;
+    d->center = center;
 }
 
 QPoint KRenderingPaintServerRadialGradient::gradientFocal() const
 {
-	return d->focal;
+    return d->focal;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientFocal(const QPoint &focal)
 {
-	d->focal = focal;
+    d->focal = focal;
 }
 
 float KRenderingPaintServerRadialGradient::gradientRadius() const
 {
-	return d->radius;
+    return d->radius;
 }
 
 void KRenderingPaintServerRadialGradient::setGradientRadius(float radius)
 {
-	d->radius = radius;
+    d->radius = radius;
 }
 
 KCPaintServerType KRenderingPaintServerRadialGradient::type() const
 {
-	return PS_RADIAL_GRADIENT;
+    return PS_RADIAL_GRADIENT;
 }
 
 QTextStream &KRenderingPaintServerRadialGradient::externalRepresentation(QTextStream &ts) const

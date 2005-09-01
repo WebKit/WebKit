@@ -28,109 +28,109 @@
 
 namespace KJS
 {
-	class UString;
-	class ExecState;
-	class ObjectImp;
-	class Completion;
+    class UString;
+    class ExecState;
+    class ObjectImp;
+    class Completion;
 };
 
 namespace KDOM
 {
-	class NodeImpl;
-	class EventImpl;
-	class CSSRuleImpl;
-	class CSSValueImpl;
+    class NodeImpl;
+    class EventImpl;
+    class CSSRuleImpl;
+    class CSSValueImpl;
 
-	class EventImpl;
-	class DOMString;
-	class CDFInterface;
-	class DocumentImpl;
-	class DOMStringImpl;
-	class EventListenerImpl;
-	class ScriptInterpreter;
+    class EventImpl;
+    class DOMString;
+    class CDFInterface;
+    class DocumentImpl;
+    class DOMStringImpl;
+    class EventListenerImpl;
+    class ScriptInterpreter;
 
-	class Ecma
-	{
-	public:
-		Ecma(DocumentImpl *doc);
-		virtual ~Ecma();
+    class Ecma
+    {
+    public:
+        Ecma(DocumentImpl *doc);
+        virtual ~Ecma();
 
-		void setup(CDFInterface *interface);
+        void setup(CDFInterface *interface);
 
-		KJS::Completion evaluate(const KJS::UString &code, KJS::ValueImp *thisV);
+        KJS::Completion evaluate(const KJS::UString &code, KJS::ValueImp *thisV);
 
-		KJS::ObjectImp *globalObject() const;
-		KJS::ExecState *globalExec() const;
-		
-		ScriptInterpreter *interpreter() const;
+        KJS::ObjectImp *globalObject() const;
+        KJS::ExecState *globalExec() const;
+        
+        ScriptInterpreter *interpreter() const;
 
-		// Internal, used to handle event listeners
-		KJS::ObjectImp *ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *listener);
+        // Internal, used to handle event listeners
+        KJS::ObjectImp *ecmaListenerToObject(KJS::ExecState *exec, KJS::ValueImp *listener);
 
-		EventListenerImpl *createEventListener(const DOMString &type, const DOMString &jsCode);
-		EventListenerImpl *createEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
-		EventListenerImpl *findEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
+        EventListenerImpl *createEventListener(const DOMString &type, const DOMString &jsCode);
+        EventListenerImpl *createEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
+        EventListenerImpl *findEventListener(KJS::ExecState *exec, KJS::ValueImp *listener);
 
-		void addEventListener(EventListenerImpl *listener, KJS::ObjectImp *imp);
-		void removeEventListener(KJS::ObjectImp *imp);
+        void addEventListener(EventListenerImpl *listener, KJS::ObjectImp *imp);
+        void removeEventListener(KJS::ObjectImp *imp);
 
-		void finishedWithEvent(EventImpl *evt);
+        void finishedWithEvent(EventImpl *evt);
 
-		// Very important function that needs to be reimplemented by any user of
-		// KDOM which builds another W3C Language on our top, who needs EcmaScript
-		// bindings; Example for SVG: var document; <- That's a 'KSVG::SVGDocument'
-		// debug(document.createElement('svg')); should show 'KSVG::SVGSVGElement'
-		// but KDOM doesn't know anything about it and will return 'KDOM::Element'
-		// Here is the standard way to avoid that!
-		virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, NodeImpl *n);
-		virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, EventImpl *e);
-		virtual KJS::ObjectImp *inheritedGetDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
-		virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
+        // Very important function that needs to be reimplemented by any user of
+        // KDOM which builds another W3C Language on our top, who needs EcmaScript
+        // bindings; Example for SVG: var document; <- That's a 'KSVG::SVGDocument'
+        // debug(document.createElement('svg')); should show 'KSVG::SVGSVGElement'
+        // but KDOM doesn't know anything about it and will return 'KDOM::Element'
+        // Here is the standard way to avoid that!
+        virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, NodeImpl *n);
+        virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, EventImpl *e);
+        virtual KJS::ObjectImp *inheritedGetDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
+        virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
 
-	protected:
-		virtual void setupDocument(DocumentImpl *doc);
+    protected:
+        virtual void setupDocument(DocumentImpl *doc);
 
-	private:
-		class Private;
-		Private *d;
-	};
+    private:
+        class Private;
+        Private *d;
+    };
 
-	// Helpers
-	KJS::ValueImp *getDOMNode(KJS::ExecState *exec, NodeImpl *n);
-	KJS::ValueImp *getDOMEvent(KJS::ExecState *exec, EventImpl *e);
-	KJS::ValueImp *getDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
-	KJS::ValueImp *getDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
+    // Helpers
+    KJS::ValueImp *getDOMNode(KJS::ExecState *exec, NodeImpl *n);
+    KJS::ValueImp *getDOMEvent(KJS::ExecState *exec, EventImpl *e);
+    KJS::ValueImp *getDOMCSSRule(KJS::ExecState *exec, CSSRuleImpl *c);
+    KJS::ValueImp *getDOMCSSValue(KJS::ExecState *exec, CSSValueImpl *c);
 
-	KJS::ValueImp *getDOMString(DOMStringImpl *str);
+    KJS::ValueImp *getDOMString(DOMStringImpl *str);
 
-	DOMStringImpl *toDOMString(KJS::ExecState *exec, KJS::ValueImp *val);
-	QVariant toVariant(KJS::ExecState *exec, KJS::ValueImp *val);
+    DOMStringImpl *toDOMString(KJS::ExecState *exec, KJS::ValueImp *val);
+    QVariant toVariant(KJS::ExecState *exec, KJS::ValueImp *val);
 
-	// Convert between ecma values and real kdom objects
-	// Example: NodeImpl *myNode = ecma_cast<NodeImpl>(exec, args[0], &toNode);
-	//          AttrImpl *myAttr = ecma_cast<AttrImpl>(exec, args[1], &toAttr);
-	template<class DOMObjImpl>
-	DOMObjImpl *ecma_cast(KJS::ExecState *exec,
-						  KJS::ValueImp *val,
-						  DOMObjImpl *(*convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
-	{
-		if(!val->isObject())
-			return 0;
+    // Convert between ecma values and real kdom objects
+    // Example: NodeImpl *myNode = ecma_cast<NodeImpl>(exec, args[0], &toNode);
+    //          AttrImpl *myAttr = ecma_cast<AttrImpl>(exec, args[1], &toAttr);
+    template<class DOMObjImpl>
+    DOMObjImpl *ecma_cast(KJS::ExecState *exec,
+                          KJS::ValueImp *val,
+                          DOMObjImpl *(*convFuncPtr)(KJS::ExecState *, const KJS::ObjectImp *))
+    {
+        if(!val->isObject())
+            return 0;
 
-		return convFuncPtr(exec, static_cast<KJS::ObjectImp *>(val));
-	}
+        return convFuncPtr(exec, static_cast<KJS::ObjectImp *>(val));
+    }
 
-	// Convert between real kdom objects and ecma values
-	// Example: return safe_cache<AttrImpl, AttrWrapper>(exec, myAttr);
-	template<class DOMObjImpl, class DOMObjWrapper>
-	KJS::ValueImp *safe_cache(KJS::ExecState *exec, DOMObjImpl *obj)
-	{
-		if(!obj)
-			return KJS::Null();
+    // Convert between real kdom objects and ecma values
+    // Example: return safe_cache<AttrImpl, AttrWrapper>(exec, myAttr);
+    template<class DOMObjImpl, class DOMObjWrapper>
+    KJS::ValueImp *safe_cache(KJS::ExecState *exec, DOMObjImpl *obj)
+    {
+        if(!obj)
+            return KJS::Null();
 
-		DOMObjWrapper *wrapper = new DOMObjWrapper(obj);
-		return wrapper->cache(exec);
-	}
+        DOMObjWrapper *wrapper = new DOMObjWrapper(obj);
+        return wrapper->cache(exec);
+    }
 };
 
 #endif

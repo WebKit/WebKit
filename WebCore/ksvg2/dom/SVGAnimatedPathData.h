@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGPathSegList;
-	class SVGAnimatedPathDataImpl;
-	class SVGAnimatedPathData
-	{
-	public:
-		SVGAnimatedPathData();
-		explicit SVGAnimatedPathData(SVGAnimatedPathDataImpl *i);
-		SVGAnimatedPathData(const SVGAnimatedPathData &other);
-		virtual ~SVGAnimatedPathData();
+    class SVGPathSegList;
+    class SVGAnimatedPathDataImpl;
+    class SVGAnimatedPathData
+    {
+    public:
+        SVGAnimatedPathData();
+        explicit SVGAnimatedPathData(SVGAnimatedPathDataImpl *i);
+        SVGAnimatedPathData(const SVGAnimatedPathData &other);
+        virtual ~SVGAnimatedPathData();
 
-		// Operators
-		SVGAnimatedPathData &operator=(const SVGAnimatedPathData &other);
-		SVGAnimatedPathData &operator=(SVGAnimatedPathDataImpl *other);
+        // Operators
+        SVGAnimatedPathData &operator=(const SVGAnimatedPathData &other);
+        SVGAnimatedPathData &operator=(SVGAnimatedPathDataImpl *other);
 
-		// 'SVGAnimatedPathData' functions
-		SVGPathSegList pathSegList() const;
-		SVGPathSegList normalizedPathSegList() const;
-		SVGPathSegList animatedPathSegList() const;
-		SVGPathSegList animatedNormalizedPathSegList() const;
+        // 'SVGAnimatedPathData' functions
+        SVGPathSegList pathSegList() const;
+        SVGPathSegList normalizedPathSegList() const;
+        SVGPathSegList animatedPathSegList() const;
+        SVGPathSegList animatedNormalizedPathSegList() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedPathData)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedPathData)
 
-	protected:
-		SVGAnimatedPathDataImpl *impl;
+    protected:
+        SVGAnimatedPathDataImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

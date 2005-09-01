@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,24 +32,24 @@ using namespace KSVG;
 
 /*
 @begin SVGPolylineElement::s_hashTable 3
- dummy	SVGPolylineElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGPolylineElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGPolylineElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPolylineElementConstants::Dummy: // shouldnt happen!
-			return Undefined();
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPolylineElementConstants::Dummy: // shouldnt happen!
+            return Undefined();
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGPolylineElement SVGPolylineElement::null;
@@ -64,12 +64,12 @@ SVGPolylineElement::SVGPolylineElement(SVGPolylineElementImpl *i) : SVGElement(i
 
 SVGPolylineElement::SVGPolylineElement(const SVGPolylineElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGAnimatedPoints()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPolylineElement::SVGPolylineElement(const Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGAnimatedPoints()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPolylineElement::~SVGPolylineElement()
@@ -78,40 +78,40 @@ SVGPolylineElement::~SVGPolylineElement()
 
 SVGPolylineElement &SVGPolylineElement::operator=(const SVGPolylineElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	SVGAnimatedPoints::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    SVGAnimatedPoints::operator=(other);
+    return *this;
 }
 
 SVGPolylineElement &SVGPolylineElement::operator=(const KDOM::Node &other)
 {
-	SVGPolylineElementImpl *ohandle = static_cast<SVGPolylineElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-			SVGAnimatedPoints::operator=(ohandle);
-		}
-	}
+    SVGPolylineElementImpl *ohandle = static_cast<SVGPolylineElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+            SVGAnimatedPoints::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

@@ -27,26 +27,26 @@
 
 namespace KSVG
 {
-	class SVGStyledElementImpl;
+    class SVGStyledElementImpl;
 
-	class SVGAnimatedNumberImpl : public KDOM::Shared
-	{
-	public:
-		SVGAnimatedNumberImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedNumberImpl();
+    class SVGAnimatedNumberImpl : public KDOM::Shared
+    {
+    public:
+        SVGAnimatedNumberImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedNumberImpl();
 
-		float baseVal() const;
-		void setBaseVal(float baseVal);
+        float baseVal() const;
+        void setBaseVal(float baseVal);
 
-		float animVal() const;
-		void setAnimVal(float animVal);
+        float animVal() const;
+        void setAnimVal(float animVal);
 
-	private:
-		float m_baseVal;
-		float m_animVal;
+    private:
+        float m_baseVal;
+        float m_animVal;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

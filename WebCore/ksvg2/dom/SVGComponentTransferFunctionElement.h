@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,42 +27,42 @@
 
 namespace KSVG
 {
-	class SVGAnimatedNumber;
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedNumberList;
-	class SVGComponentTransferFunctionElementImpl;
+    class SVGAnimatedNumber;
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedNumberList;
+    class SVGComponentTransferFunctionElementImpl;
 
-	class SVGComponentTransferFunctionElement :  public SVGElement
-	{
-	public:
-		SVGComponentTransferFunctionElement();
-		explicit SVGComponentTransferFunctionElement(SVGComponentTransferFunctionElementImpl *i);
-		SVGComponentTransferFunctionElement(const SVGComponentTransferFunctionElement &other);
-		SVGComponentTransferFunctionElement(const KDOM::Node &other);
-		virtual ~SVGComponentTransferFunctionElement();
+    class SVGComponentTransferFunctionElement :  public SVGElement
+    {
+    public:
+        SVGComponentTransferFunctionElement();
+        explicit SVGComponentTransferFunctionElement(SVGComponentTransferFunctionElementImpl *i);
+        SVGComponentTransferFunctionElement(const SVGComponentTransferFunctionElement &other);
+        SVGComponentTransferFunctionElement(const KDOM::Node &other);
+        virtual ~SVGComponentTransferFunctionElement();
 
-		// Operators
-		SVGComponentTransferFunctionElement &operator=(const SVGComponentTransferFunctionElement &other);
-		SVGComponentTransferFunctionElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGComponentTransferFunctionElement &operator=(const SVGComponentTransferFunctionElement &other);
+        SVGComponentTransferFunctionElement &operator=(const KDOM::Node &other);
 
-		// 'SVGComponentTransferFunctionlement' functions
-		SVGAnimatedEnumeration type() const;
-		SVGAnimatedNumberList tableValues() const;
-		SVGAnimatedNumber slope() const;
-		SVGAnimatedNumber intercept() const;
-		SVGAnimatedNumber amplitude() const;
-		SVGAnimatedNumber exponent() const;
-		SVGAnimatedNumber offset() const;
+        // 'SVGComponentTransferFunctionlement' functions
+        SVGAnimatedEnumeration type() const;
+        SVGAnimatedNumberList tableValues() const;
+        SVGAnimatedNumber slope() const;
+        SVGAnimatedNumber intercept() const;
+        SVGAnimatedNumber amplitude() const;
+        SVGAnimatedNumber exponent() const;
+        SVGAnimatedNumber offset() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGComponentTransferFunctionElement)
+        // Internal
+        KSVG_INTERNAL(SVGComponentTransferFunctionElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

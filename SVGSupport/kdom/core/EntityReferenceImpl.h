@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -30,22 +30,22 @@
 
 namespace KDOM
 {
-	class EntityReferenceImpl : public NodeBaseImpl
-	{
-	public:
-		EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *name, bool expand = true);
-		virtual ~EntityReferenceImpl();
+    class EntityReferenceImpl : public NodeBaseImpl
+    {
+    public:
+        EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *name, bool expand = true);
+        virtual ~EntityReferenceImpl();
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		// Internal
-		virtual bool childTypeAllowed(unsigned short type) const;
+        // Internal
+        virtual bool childTypeAllowed(unsigned short type) const;
 
-	protected:
-		DOMStringImpl *m_entityName;
-	};
+    protected:
+        DOMStringImpl *m_entityName;
+    };
 };
 
 #endif

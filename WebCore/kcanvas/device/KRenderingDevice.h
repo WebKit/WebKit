@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -36,14 +36,14 @@ class KCanvasMatrix;
 class KRenderingDeviceContext
 {
 public:
-	KRenderingDeviceContext() { }
-	virtual ~KRenderingDeviceContext() { }
+    KRenderingDeviceContext() { }
+    virtual ~KRenderingDeviceContext() { }
 
-	virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix) = 0;
-	virtual KCanvasMatrix worldMatrix() const = 0;
-	
-	virtual QRect mapFromVisual(const QRect &rect) = 0;
-	virtual QRect mapToVisual(const QRect &rect) = 0;
+    virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix) = 0;
+    virtual KCanvasMatrix worldMatrix() const = 0;
+    
+    virtual QRect mapFromVisual(const QRect &rect) = 0;
+    virtual QRect mapToVisual(const QRect &rect) = 0;
 };
 
 // Must be a QObject to be able to be loaded by KLibLoader...
@@ -53,51 +53,51 @@ class KRenderingDevice : public QObject
 {
 Q_OBJECT
 public:
-	KRenderingDevice();
-	virtual ~KRenderingDevice();
+    KRenderingDevice();
+    virtual ~KRenderingDevice();
 
-	// The rendering device will be directly inited
-	// after the canvas target, it may be overwritten.
-	virtual bool isBuffered() const = 0;
+    // The rendering device will be directly inited
+    // after the canvas target, it may be overwritten.
+    virtual bool isBuffered() const = 0;
 
-	// Returns a pointer to the last constructed vector path
-	// Call it after startPath()....endPath() to get the result!
-	KCanvasUserData currentPath() const;
+    // Returns a pointer to the last constructed vector path
+    // Call it after startPath()....endPath() to get the result!
+    KCanvasUserData currentPath() const;
 
-	// Global rendering device context
-	KRenderingDeviceContext *currentContext() const;
+    // Global rendering device context
+    KRenderingDeviceContext *currentContext() const;
 
-	KRenderingDeviceContext *popContext();
-	void pushContext(KRenderingDeviceContext *context);
-	
-	virtual KRenderingDeviceContext *contextForImage(KCanvasImage *image) const = 0;
+    KRenderingDeviceContext *popContext();
+    void pushContext(KRenderingDeviceContext *context);
+    
+    virtual KRenderingDeviceContext *contextForImage(KCanvasImage *image) const = 0;
 
-	// Vector path creation
-	virtual void deletePath(KCanvasUserData path) = 0;
-	virtual void startPath() = 0;
-	virtual void endPath() = 0;
+    // Vector path creation
+    virtual void deletePath(KCanvasUserData path) = 0;
+    virtual void startPath() = 0;
+    virtual void endPath() = 0;
 
-	virtual void moveTo(double x, double y) = 0;
-	virtual void lineTo(double x, double y) = 0;
-	virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) = 0;
-	virtual void closeSubpath() = 0;
+    virtual void moveTo(double x, double y) = 0;
+    virtual void lineTo(double x, double y) = 0;
+    virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3) = 0;
+    virtual void closeSubpath() = 0;
 
-	// Creation tools
-	virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
-	virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
-	virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
+    // Creation tools
+    virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
+    virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
+    virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-	virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const = 0;
-	virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const = 0;
+    virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const = 0;
+    virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const = 0;
 
 protected: // To be used by from inherited endPath()
-	friend class KCanvasItem;
+    friend class KCanvasItem;
 
-	void setCurrentPath(KCanvasUserData path);
+    void setCurrentPath(KCanvasUserData path);
 
 private:
-	KCanvasUserData m_currentPath;
-	QPtrStack<KRenderingDeviceContext> m_contextStack;
+    KCanvasUserData m_currentPath;
+    QPtrStack<KRenderingDeviceContext> m_contextStack;
 };
 
 #endif

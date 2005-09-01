@@ -34,18 +34,18 @@ SVGAnimatedRectImpl::~SVGAnimatedRectImpl()
 
 SVGRectImpl *SVGAnimatedRectImpl::create() const
 {
-	return new SVGRectImpl(m_context);
+    return new SVGRectImpl(m_context);
 }
 
 void SVGAnimatedRectImpl::assign(SVGRectImpl *src, SVGRectImpl *dst) const
 {
-	if(!src || !dst)
-		return;
-	
-	dst->setX(src->x());
-	dst->setY(src->y());
-	dst->setWidth(src->width());
-	dst->setHeight(src->height());
+    if(!src || !dst)
+        return;
+    
+    dst->setX(src->x());
+    dst->setY(src->y());
+    dst->setWidth(src->width());
+    dst->setHeight(src->height());
 }
 
 // vim:ts=4:noet

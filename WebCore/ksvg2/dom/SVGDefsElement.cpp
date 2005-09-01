@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,22 +32,22 @@ using namespace KSVG;
 
 /*
 @begin SVGDefsElement::s_hashTable 3
- dummy	SVGDefsElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGDefsElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGDefsElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGDefsElement SVGDefsElement::null;
@@ -62,12 +62,12 @@ SVGDefsElement::SVGDefsElement(SVGDefsElementImpl *i) : SVGElement(i), SVGTests(
 
 SVGDefsElement::SVGDefsElement(const SVGDefsElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGDefsElement::SVGDefsElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGDefsElement::~SVGDefsElement()
@@ -76,39 +76,39 @@ SVGDefsElement::~SVGDefsElement()
 
 SVGDefsElement &SVGDefsElement::operator=(const SVGDefsElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGDefsElement &SVGDefsElement::operator=(const KDOM::Node &other)
 {
-	SVGDefsElementImpl *ohandle = static_cast<SVGDefsElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
+    SVGDefsElementImpl *ohandle = static_cast<SVGDefsElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
 
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

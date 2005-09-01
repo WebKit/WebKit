@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,77 +28,77 @@ using namespace KDOM;
 
 DOMLocatorImpl::DOMLocatorImpl() : Shared()
 {
-	m_utf16Offset = -1;
-	m_relatedNode = 0;
-	m_uri = 0;
+    m_utf16Offset = -1;
+    m_relatedNode = 0;
+    m_uri = 0;
 }
 
 DOMLocatorImpl::~DOMLocatorImpl()
 {
-	if(m_uri)
-		m_uri->deref();
-	if(m_relatedNode)
-		m_relatedNode->deref();
+    if(m_uri)
+        m_uri->deref();
+    if(m_relatedNode)
+        m_relatedNode->deref();
 }
 
 long DOMLocatorImpl::lineNumber() const
 {
-	return m_lineNumber;
+    return m_lineNumber;
 }
 
 void DOMLocatorImpl::setLineNumber(long lineNumber)
 {
-	m_lineNumber = lineNumber;
+    m_lineNumber = lineNumber;
 }
 
 long DOMLocatorImpl::columnNumber() const
 {
-	return m_columnNumber;
+    return m_columnNumber;
 }
 
 void DOMLocatorImpl::setColumnNumber(long columnNumber)
 {
-	m_columnNumber = columnNumber;
+    m_columnNumber = columnNumber;
 }
 
 long DOMLocatorImpl::byteOffset() const
 {
-	return m_byteOffset;
+    return m_byteOffset;
 }
 
 void DOMLocatorImpl::setByteOffset(long byteOffset)
 {
-	m_byteOffset = byteOffset;
+    m_byteOffset = byteOffset;
 }
 
 long DOMLocatorImpl::utf16Offset() const
 {
-	return m_utf16Offset;
+    return m_utf16Offset;
 }
 
 void DOMLocatorImpl::setUtf16Offset(long utf16Offset)
 {
-	m_utf16Offset = utf16Offset;
+    m_utf16Offset = utf16Offset;
 }
 
 NodeImpl *DOMLocatorImpl::relatedNode() const
 {
-	return m_relatedNode;
+    return m_relatedNode;
 }
 
 void DOMLocatorImpl::setRelatedNode(NodeImpl *relatedNode)
 {
-	KDOM_SAFE_SET(m_relatedNode, relatedNode);
+    KDOM_SAFE_SET(m_relatedNode, relatedNode);
 }
 
 DOMStringImpl *DOMLocatorImpl::uri() const
 {
-	return m_uri;
+    return m_uri;
 }
 
 void DOMLocatorImpl::setUri(DOMStringImpl *uri)
 {
-	KDOM_SAFE_SET(m_uri, uri);
+    KDOM_SAFE_SET(m_uri, uri);
 }
 
 // vim:ts=4:noet

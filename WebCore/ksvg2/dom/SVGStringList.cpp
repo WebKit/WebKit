@@ -39,16 +39,16 @@ using namespace KSVG;
 
 /*
 @begin SVGStringList::s_hashTable 3
- numberOfItems		SVGStringListConstants::NumberOfItems		DontDelete|ReadOnly
+ numberOfItems        SVGStringListConstants::NumberOfItems        DontDelete|ReadOnly
 @end
 @begin SVGStringListProto::s_hashTable 9
- clear				SVGStringListConstants::Clear				DontDelete|Function 0
- initialize			SVGStringListConstants::Initialize			DontDelete|Function 1
- getItem			SVGStringListConstants::GetItem				DontDelete|Function 1
- insertItemBefore	SVGStringListConstants::InsertItemBefore	DontDelete|Function 2
- replaceItem		SVGStringListConstants::ReplaceItem			DontDelete|Function 2
- removeItem			SVGStringListConstants::RemoveItem			DontDelete|Function 1
- appendItem			SVGStringListConstants::AppendItem			DontDelete|Function 1
+ clear                SVGStringListConstants::Clear                DontDelete|Function 0
+ initialize            SVGStringListConstants::Initialize            DontDelete|Function 1
+ getItem            SVGStringListConstants::GetItem                DontDelete|Function 1
+ insertItemBefore    SVGStringListConstants::InsertItemBefore    DontDelete|Function 2
+ replaceItem        SVGStringListConstants::ReplaceItem            DontDelete|Function 2
+ removeItem            SVGStringListConstants::RemoveItem            DontDelete|Function 1
+ appendItem            SVGStringListConstants::AppendItem            DontDelete|Function 1
 @end
 */
 
@@ -56,70 +56,70 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGStringList", SVGStringListProto, SVGStringListProto
 
 ValueImp *SVGStringList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGStringListConstants::NumberOfItems:
-			return Number(numberOfItems());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGStringListConstants::NumberOfItems:
+            return Number(numberOfItems());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGStringListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGStringList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGStringList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGStringListConstants::Clear:
-		{
-			obj.clear();
-			return Undefined();
-		}
-		case SVGStringListConstants::Initialize:
-		{
-			KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
-			return KDOM::getDOMString(obj.initialize(newItem));
-		}
-		case SVGStringListConstants::GetItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::getDOMString(obj.getItem(index));
-		}
-		case SVGStringListConstants::InsertItemBefore:
-		{
-			KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::getDOMString(obj.insertItemBefore(newItem, index));
-		}
-		case SVGStringListConstants::ReplaceItem:
-		{
-			KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::getDOMString(obj.replaceItem(newItem, index));
-		}
-		case SVGStringListConstants::RemoveItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::getDOMString(obj.removeItem(index));
-		}
-		case SVGStringListConstants::AppendItem:
-		{
-			KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
-			return KDOM::getDOMString(obj.appendItem(newItem));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGStringListConstants::Clear:
+        {
+            obj.clear();
+            return Undefined();
+        }
+        case SVGStringListConstants::Initialize:
+        {
+            KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
+            return KDOM::getDOMString(obj.initialize(newItem));
+        }
+        case SVGStringListConstants::GetItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::getDOMString(obj.getItem(index));
+        }
+        case SVGStringListConstants::InsertItemBefore:
+        {
+            KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::getDOMString(obj.insertItemBefore(newItem, index));
+        }
+        case SVGStringListConstants::ReplaceItem:
+        {
+            KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::getDOMString(obj.replaceItem(newItem, index));
+        }
+        case SVGStringListConstants::RemoveItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::getDOMString(obj.removeItem(index));
+        }
+        case SVGStringListConstants::AppendItem:
+        {
+            KDOM::DOMString newItem = KDOM::toDOMString(exec, args[0]);
+            return KDOM::getDOMString(obj.appendItem(newItem));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGStringList SVGStringList::null;
@@ -130,77 +130,77 @@ SVGStringList::SVGStringList() : impl(0)
 
 SVGStringList::SVGStringList(SVGStringListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGStringList::SVGStringList(const SVGStringList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGStringList)
 
 unsigned long SVGStringList::numberOfItems() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 void SVGStringList::clear()
 {
-	if(impl)
-		impl->clear();
+    if(impl)
+        impl->clear();
 }
 
 KDOM::DOMString SVGStringList::initialize(const KDOM::DOMString &newItem)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->initialize(newItem.implementation()));
+    return KDOM::DOMString(impl->initialize(newItem.implementation()));
 }
 
 KDOM::DOMString SVGStringList::getItem(unsigned long index)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->getItem(index));
+    return KDOM::DOMString(impl->getItem(index));
 }
 
 KDOM::DOMString SVGStringList::insertItemBefore(const KDOM::DOMString &newItem, unsigned long index)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->insertItemBefore(newItem.implementation(), index));
+    return KDOM::DOMString(impl->insertItemBefore(newItem.implementation(), index));
 }
 
 KDOM::DOMString SVGStringList::replaceItem(const KDOM::DOMString &newItem, unsigned long index)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->replaceItem(newItem.implementation(), index));
+    return KDOM::DOMString(impl->replaceItem(newItem.implementation(), index));
 }
 
 KDOM::DOMString SVGStringList::removeItem(unsigned long index)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->removeItem(index));
+    return KDOM::DOMString(impl->removeItem(index));
 }
 
 KDOM::DOMString SVGStringList::appendItem(const KDOM::DOMString &newItem)
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->appendItem(newItem.implementation()));
+    return KDOM::DOMString(impl->appendItem(newItem.implementation()));
 }
 
 // vim:ts=4:noet

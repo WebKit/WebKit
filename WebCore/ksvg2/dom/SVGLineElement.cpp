@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,33 +35,33 @@ using namespace KSVG;
 
 /*
 @begin SVGLineElement::s_hashTable 5
- x1		SVGLineElementConstants::X1		DontDelete|ReadOnly
- y1		SVGLineElementConstants::Y1		DontDelete|ReadOnly
- x2		SVGLineElementConstants::X2		DontDelete|ReadOnly
- y2		SVGLineElementConstants::Y2		DontDelete|ReadOnly
+ x1        SVGLineElementConstants::X1        DontDelete|ReadOnly
+ y1        SVGLineElementConstants::Y1        DontDelete|ReadOnly
+ x2        SVGLineElementConstants::X2        DontDelete|ReadOnly
+ y2        SVGLineElementConstants::Y2        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGLineElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGLineElementConstants::X1:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x1());
-		case SVGLineElementConstants::Y1:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y1());
-		case SVGLineElementConstants::X2:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x2());
-		case SVGLineElementConstants::Y2:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y2());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLineElementConstants::X1:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x1());
+        case SVGLineElementConstants::Y1:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y1());
+        case SVGLineElementConstants::X2:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x2());
+        case SVGLineElementConstants::Y2:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y2());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -79,12 +79,12 @@ SVGLineElement::SVGLineElement(SVGLineElementImpl *i) : SVGElement(i), SVGTests(
 
 SVGLineElement::SVGLineElement(const SVGLineElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLineElement::SVGLineElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLineElement::~SVGLineElement()
@@ -93,71 +93,71 @@ SVGLineElement::~SVGLineElement()
 
 SVGLineElement &SVGLineElement::operator=(const SVGLineElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGLineElement &SVGLineElement::operator=(const KDOM::Node &other)
 {
-	SVGLineElementImpl *ohandle = static_cast<SVGLineElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGLineElementImpl *ohandle = static_cast<SVGLineElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGLineElement::x1() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x1());
+    return SVGAnimatedLength(impl->x1());
 }
 
 SVGAnimatedLength SVGLineElement::y1() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y1());
+    return SVGAnimatedLength(impl->y1());
 }
 
 SVGAnimatedLength SVGLineElement::x2() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x2());
+    return SVGAnimatedLength(impl->x2());
 }
 
 SVGAnimatedLength SVGLineElement::y2() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y2());
+    return SVGAnimatedLength(impl->y2());
 }
 
 // vim:ts=4:noet

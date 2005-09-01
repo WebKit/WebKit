@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,30 +32,30 @@ LSOutputImpl::LSOutputImpl() : Shared(), m_systemId(0), m_encoding(0)
 
 LSOutputImpl::~LSOutputImpl()
 {
-	if(m_systemId)
-		m_systemId->deref();
-	if(m_encoding)
-		m_encoding->deref();
+    if(m_systemId)
+        m_systemId->deref();
+    if(m_encoding)
+        m_encoding->deref();
 }
 
 DOMStringImpl *LSOutputImpl::systemId() const
 {
-	return m_systemId;
+    return m_systemId;
 }
 
 void LSOutputImpl::setSystemId(DOMStringImpl *systemId)
 {
-	KDOM_SAFE_SET(m_systemId, systemId);
+    KDOM_SAFE_SET(m_systemId, systemId);
 }
 
 DOMStringImpl *LSOutputImpl::encoding() const
 {
-	return m_encoding;
+    return m_encoding;
 }
 
 void LSOutputImpl::setEncoding(DOMStringImpl *encoding)
 {
-	KDOM_SAFE_SET(m_encoding, encoding);
+    KDOM_SAFE_SET(m_encoding, encoding);
 }
 
 // vim:ts=4:noet

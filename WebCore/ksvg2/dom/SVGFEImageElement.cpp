@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,24 +41,24 @@ using namespace KSVG;
 
 /*
 @begin SVGFEImageElement::s_hashTable 3
- preserveAspectRatio	SVGFEImageElementConstants::PreserveAspectRatio	DontDelete|ReadOnly
+ preserveAspectRatio    SVGFEImageElementConstants::PreserveAspectRatio    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEImageElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEImageElementConstants::PreserveAspectRatio:
-			return KDOM::safe_cache<SVGAnimatedPreserveAspectRatio>(exec, preserveAspectRatio());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEImageElementConstants::PreserveAspectRatio:
+            return KDOM::safe_cache<SVGAnimatedPreserveAspectRatio>(exec, preserveAspectRatio());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -76,12 +76,12 @@ SVGFEImageElement::SVGFEImageElement(SVGFEImageElementImpl *i) : SVGElement(i), 
 
 SVGFEImageElement::SVGFEImageElement(const SVGFEImageElement &other) : SVGElement(), SVGURIReference(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEImageElement::SVGFEImageElement(const KDOM::Node &other) : SVGElement(), SVGURIReference(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEImageElement::~SVGFEImageElement()
@@ -90,45 +90,45 @@ SVGFEImageElement::~SVGFEImageElement()
 
 SVGFEImageElement &SVGFEImageElement::operator=(const SVGFEImageElement &other)
 {
-	SVGElement::operator=(other);
-	SVGURIReference::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGURIReference::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEImageElement &SVGFEImageElement::operator=(const KDOM::Node &other)
 {
-	SVGFEImageElementImpl *ohandle = static_cast<SVGFEImageElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGURIReference::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEImageElementImpl *ohandle = static_cast<SVGFEImageElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGURIReference::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedPreserveAspectRatio SVGFEImageElement::preserveAspectRatio() const
 {
-	if(!d)
-		return SVGAnimatedPreserveAspectRatio::null;
+    if(!d)
+        return SVGAnimatedPreserveAspectRatio::null;
 
-	return SVGAnimatedPreserveAspectRatio(impl->preserveAspectRatio());
+    return SVGAnimatedPreserveAspectRatio(impl->preserveAspectRatio());
 }
 
 // vim:ts=4:noet

@@ -29,15 +29,15 @@
 
 namespace KSVG
 {
-	class SVGStringListImpl : public SVGList<KDOM::DOMStringImpl>
-	{
-	public:
-		SVGStringListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGStringListImpl();
-		
-		// Internal
-		void reset(const QString &str);
-	};
+    class SVGStringListImpl : public SVGList<KDOM::DOMStringImpl>
+    {
+    public:
+        SVGStringListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGStringListImpl();
+        
+        // Internal
+        void reset(const QString &str);
+    };
 };
 
 #endif

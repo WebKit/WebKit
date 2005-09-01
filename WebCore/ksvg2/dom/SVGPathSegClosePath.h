@@ -27,23 +27,23 @@
 
 namespace KSVG
 {
-	class SVGPathSegClosePathImpl;
-	class SVGPathSegClosePath : public SVGPathSeg 
-	{
-	public:
-		SVGPathSegClosePath();
-		explicit SVGPathSegClosePath(SVGPathSegClosePathImpl *);
-		SVGPathSegClosePath(const SVGPathSegClosePath &);
-		SVGPathSegClosePath(const SVGPathSeg &);
-		virtual ~SVGPathSegClosePath();
+    class SVGPathSegClosePathImpl;
+    class SVGPathSegClosePath : public SVGPathSeg 
+    {
+    public:
+        SVGPathSegClosePath();
+        explicit SVGPathSegClosePath(SVGPathSegClosePathImpl *);
+        SVGPathSegClosePath(const SVGPathSegClosePath &);
+        SVGPathSegClosePath(const SVGPathSeg &);
+        virtual ~SVGPathSegClosePath();
 
-		// Operators
-		SVGPathSegClosePath &operator=(const SVGPathSegClosePath &other);
-		SVGPathSegClosePath &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegClosePath &operator=(const SVGPathSegClosePath &other);
+        SVGPathSegClosePath &operator=(const SVGPathSeg &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegClosePath)
-	};
+        // Internal
+        KSVG_INTERNAL(SVGPathSegClosePath)
+    };
 };
 
 #endif

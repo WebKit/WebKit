@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,28 +33,28 @@ class DOMStringImpl;
 
 namespace XPointer
 {
-	class NBCImpl;
-	class XPointerResultImpl;
+    class NBCImpl;
+    class XPointerResultImpl;
 
-	/**
-	 * This is a placeholder for the unimplemented XPointer scheme xpointer(), as
-	 * described in the W3C Working Draft:
-	 * http://www.w3.org/TR/xptr-xpointer/
-	 *
-	 * For a description of the SchemeData in the EBNF grammar, see:
-	 * http://xpointerlib.mozdev.org/xpointerGrammar.html
-	 *
-	 * @see PointerPartImpl
-	 * @see PointerPart
-	 */
-	class XPointerSchemeImpl: public PointerPartImpl
-	{
-	public:
-		XPointerSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
-		virtual ~XPointerSchemeImpl();
-		
-		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
-	};
+    /**
+     * This is a placeholder for the unimplemented XPointer scheme xpointer(), as
+     * described in the W3C Working Draft:
+     * http://www.w3.org/TR/xptr-xpointer/
+     *
+     * For a description of the SchemeData in the EBNF grammar, see:
+     * http://xpointerlib.mozdev.org/xpointerGrammar.html
+     *
+     * @see PointerPartImpl
+     * @see PointerPart
+     */
+    class XPointerSchemeImpl: public PointerPartImpl
+    {
+    public:
+        XPointerSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
+        virtual ~XPointerSchemeImpl();
+        
+        virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
+    };
 };
 
 };

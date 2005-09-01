@@ -30,86 +30,86 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class DOMString
-	{
-	public:
-		DOMString();
-		explicit DOMString(DOMStringImpl *i);
-		DOMString(const DOMString &other);
-		DOMString(const QChar *string, unsigned int length);
-		DOMString(const QString &string);
-		DOMString(const char *string);
-		virtual ~DOMString();
+    class DOMStringImpl;
+    class DOMString
+    {
+    public:
+        DOMString();
+        explicit DOMString(DOMStringImpl *i);
+        DOMString(const DOMString &other);
+        DOMString(const QChar *string, unsigned int length);
+        DOMString(const QString &string);
+        DOMString(const char *string);
+        virtual ~DOMString();
 
-		DOMString &operator=(const DOMString &other);
-		DOMString &operator+=(const DOMString &other);
-		DOMString operator+(const DOMString &other) const;
+        DOMString &operator=(const DOMString &other);
+        DOMString &operator+=(const DOMString &other);
+        DOMString operator+(const DOMString &other) const;
 
-		/**
-		 * The character at position i of the DOMString.
-		 * If i >= length(), the character returned will be 0.
-		 */
-		const QChar &operator[](unsigned int i) const;
+        /**
+         * The character at position i of the DOMString.
+         * If i >= length(), the character returned will be 0.
+         */
+        const QChar &operator[](unsigned int i) const;
 
-		unsigned int length() const;
+        unsigned int length() const;
 
-		void insert(DOMString string, unsigned int position);
-		int find(const QChar c, int start = 0) const;
+        void insert(DOMString string, unsigned int position);
+        int find(const QChar c, int start = 0) const;
 
-		void truncate(unsigned int length);
-		void remove(unsigned int position, int length = 1);
+        void truncate(unsigned int length);
+        void remove(unsigned int position, int length = 1);
 
-		/**
-		 * Returns a sub-portion of this string
-		 */
-		DOMString substring(unsigned int position, unsigned int length);
+        /**
+         * Returns a sub-portion of this string
+         */
+        DOMString substring(unsigned int position, unsigned int length);
 
-		/**
-		 * Splits the string into two. The original string
-		 * gets truncated to pos, and the rest is returned.
-		 */
-		DOMString split(unsigned int position);
+        /**
+         * Splits the string into two. The original string
+         * gets truncated to pos, and the rest is returned.
+         */
+        DOMString split(unsigned int position);
 
-		/**
-		 * Returns a lowercase version of the string
-		 */
-		DOMString lower() const;
+        /**
+         * Returns a lowercase version of the string
+         */
+        DOMString lower() const;
 
-		/**
-		 * Returns an uppercase version of the string
-		 */
-		DOMString upper() const;
+        /**
+         * Returns an uppercase version of the string
+         */
+        DOMString upper() const;
 
-		QChar *unicode() const;
-		QString string() const;
+        QChar *unicode() const;
+        QString string() const;
 
-		int toInt(bool *ok = 0) const;
+        int toInt(bool *ok = 0) const;
 
-		DOMString copy() const;
+        DOMString copy() const;
 
-		bool isNull() const;
-		bool isEmpty() const;
+        bool isNull() const;
+        bool isEmpty() const;
 
-		// Internal
-		DOMStringImpl *handle() const;
+        // Internal
+        DOMStringImpl *handle() const;
 
-	protected:
-		DOMStringImpl *d;
-	};
+    protected:
+        DOMStringImpl *d;
+    };
 
-	bool operator==(const DOMString &a, const DOMString &b);
-	bool operator==(const DOMString &a, const QString &b);
-	bool operator==(const DOMString &a, const char *b);
+    bool operator==(const DOMString &a, const DOMString &b);
+    bool operator==(const DOMString &a, const QString &b);
+    bool operator==(const DOMString &a, const char *b);
 
-	inline bool operator!=(const DOMString &a, const DOMString &b) { return !(a == b); }
-	inline bool operator!=(const DOMString &a, const QString &b) { return !(a == b); }
-	inline bool operator!=(const DOMString &a, const char *b) { return !(a == b); }
-	inline bool strcmp(const DOMString &a, const DOMString &b) { return a != b; }
+    inline bool operator!=(const DOMString &a, const DOMString &b) { return !(a == b); }
+    inline bool operator!=(const DOMString &a, const QString &b) { return !(a == b); }
+    inline bool operator!=(const DOMString &a, const char *b) { return !(a == b); }
+    inline bool strcmp(const DOMString &a, const DOMString &b) { return a != b; }
 
-	// returns false when equal, true otherwise (ignoring case)
-	bool strcasecmp(const DOMString &a, const DOMString &b);
-	bool strcasecmp(const DOMString &a, const char *b);
+    // returns false when equal, true otherwise (ignoring case)
+    bool strcasecmp(const DOMString &a, const DOMString &b);
+    bool strcasecmp(const DOMString &a, const char *b);
 };
 
 #endif

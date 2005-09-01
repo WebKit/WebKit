@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,87 +30,87 @@
 
 namespace KSVG
 {
-	class SVGRenderStyle;
-	class KCanvasRenderingStyle : public KRenderingStyle
-	{
-	public:
-		KCanvasRenderingStyle(KCanvas *canvas, const SVGRenderStyle *style);
-		virtual ~KCanvasRenderingStyle();
+    class SVGRenderStyle;
+    class KCanvasRenderingStyle : public KRenderingStyle
+    {
+    public:
+        KCanvasRenderingStyle(KCanvas *canvas, const SVGRenderStyle *style);
+        virtual ~KCanvasRenderingStyle();
 
-		void updateFill(KCanvasItem *item);
-		void updateStroke(KCanvasItem *item);
+        void updateFill(KCanvasItem *item);
+        void updateStroke(KCanvasItem *item);
 
-		void updateStyle(const SVGRenderStyle *style, KCanvasItem *item);
+        void updateStyle(const SVGRenderStyle *style, KCanvasItem *item);
 
-		// World matrix property
-		virtual KCanvasMatrix objectMatrix() const;
-		virtual void setObjectMatrix(const KCanvasMatrix &objectMatrix);
+        // World matrix property
+        virtual KCanvasMatrix objectMatrix() const;
+        virtual void setObjectMatrix(const KCanvasMatrix &objectMatrix);
 
-		// Stroke (aka Pen) properties
-		virtual bool isStroked() const;
+        // Stroke (aka Pen) properties
+        virtual bool isStroked() const;
 
-		virtual KRenderingStrokePainter *strokePainter();
-		virtual void disableStrokePainter();
+        virtual KRenderingStrokePainter *strokePainter();
+        virtual void disableStrokePainter();
 
-		double cssPrimitiveToLength(KCanvasItem *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0) const;
+        double cssPrimitiveToLength(KCanvasItem *item, KDOM::CSSValueImpl *value, double defaultValue = 0.0) const;
 
-		// Fill (aka Brush) properties
-		virtual bool isFilled() const;
+        // Fill (aka Brush) properties
+        virtual bool isFilled() const;
 
-		virtual KRenderingFillPainter *fillPainter();
-		virtual void disableFillPainter();
+        virtual KRenderingFillPainter *fillPainter();
+        virtual void disableFillPainter();
 
-		// Display states
-		virtual bool visible() const;
-		virtual void setVisible(bool visible);
+        // Display states
+        virtual bool visible() const;
+        virtual void setVisible(bool visible);
 
-		// Color interpolation
-		virtual KCColorInterpolation colorInterpolation() const;
-		virtual void setColorInterpolation(KCColorInterpolation interpolation);
+        // Color interpolation
+        virtual KCColorInterpolation colorInterpolation() const;
+        virtual void setColorInterpolation(KCColorInterpolation interpolation);
 
-		// Quality vs. speed control
-		virtual KCImageRendering imageRendering() const;
-		virtual void setImageRendering(KCImageRendering ir);
+        // Quality vs. speed control
+        virtual KCImageRendering imageRendering() const;
+        virtual void setImageRendering(KCImageRendering ir);
 
-		// Overall opacity
-		virtual float opacity() const;
-		virtual void setOpacity(float);
+        // Overall opacity
+        virtual float opacity() const;
+        virtual void setOpacity(float);
 
-		// Clipping
-		virtual QStringList clipPaths() const;
+        // Clipping
+        virtual QStringList clipPaths() const;
 
-		void addClipPath(const QString &clipPath);
-		void removeClipPaths();
+        void addClipPath(const QString &clipPath);
+        void removeClipPaths();
 
-		// Markers
-		virtual KCanvasMarker *startMarker() const;
-		virtual void setStartMarker(KCanvasMarker *marker);
+        // Markers
+        virtual KCanvasMarker *startMarker() const;
+        virtual void setStartMarker(KCanvasMarker *marker);
 
-		virtual KCanvasMarker *midMarker() const;
-		virtual void setMidMarker(KCanvasMarker *marker);
+        virtual KCanvasMarker *midMarker() const;
+        virtual void setMidMarker(KCanvasMarker *marker);
 
-		virtual KCanvasMarker *endMarker() const;
-		virtual void setEndMarker(KCanvasMarker *marker);
+        virtual KCanvasMarker *endMarker() const;
+        virtual void setEndMarker(KCanvasMarker *marker);
 
-		virtual bool hasMarkers() const;
+        virtual bool hasMarkers() const;
 
-		// Filter support
-		virtual KCanvasFilter *filter() const;
+        // Filter support
+        virtual KCanvasFilter *filter() const;
 
-	private:
-		KCanvasRenderingStyle(const KCanvasRenderingStyle &other);
+    private:
+        KCanvasRenderingStyle(const KCanvasRenderingStyle &other);
 
-		// Data
-		KCanvasMatrix m_matrix;
-		mutable QStringList m_clipPaths;
+        // Data
+        KCanvasMatrix m_matrix;
+        mutable QStringList m_clipPaths;
 
-		const SVGRenderStyle *m_style;
+        const SVGRenderStyle *m_style;
 
-		// KCanvas stuff
-		KCanvas *m_canvas;
-		KRenderingFillPainter *m_fillPainter;
-		KRenderingStrokePainter *m_strokePainter;
-	};
+        // KCanvas stuff
+        KCanvas *m_canvas;
+        KRenderingFillPainter *m_fillPainter;
+        KRenderingStrokePainter *m_strokePainter;
+    };
 };
 
 #endif

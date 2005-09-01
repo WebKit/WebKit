@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,40 +28,40 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGAnimatedString;
-	class SVGFilterPrimitiveStandardAttributesImpl;
+    class SVGAnimatedLength;
+    class SVGAnimatedString;
+    class SVGFilterPrimitiveStandardAttributesImpl;
 
-	class SVGFilterPrimitiveStandardAttributes : public SVGStylable
-	{
-	public:
-		SVGFilterPrimitiveStandardAttributes();
-		explicit SVGFilterPrimitiveStandardAttributes(SVGFilterPrimitiveStandardAttributesImpl *i);
-		SVGFilterPrimitiveStandardAttributes(const SVGFilterPrimitiveStandardAttributes &other);
-		virtual ~SVGFilterPrimitiveStandardAttributes();
+    class SVGFilterPrimitiveStandardAttributes : public SVGStylable
+    {
+    public:
+        SVGFilterPrimitiveStandardAttributes();
+        explicit SVGFilterPrimitiveStandardAttributes(SVGFilterPrimitiveStandardAttributesImpl *i);
+        SVGFilterPrimitiveStandardAttributes(const SVGFilterPrimitiveStandardAttributes &other);
+        virtual ~SVGFilterPrimitiveStandardAttributes();
 
-		// Operators
-		SVGFilterPrimitiveStandardAttributes &operator=(const SVGFilterPrimitiveStandardAttributes &other);
-		SVGFilterPrimitiveStandardAttributes &operator=(SVGFilterPrimitiveStandardAttributesImpl *other);
+        // Operators
+        SVGFilterPrimitiveStandardAttributes &operator=(const SVGFilterPrimitiveStandardAttributes &other);
+        SVGFilterPrimitiveStandardAttributes &operator=(SVGFilterPrimitiveStandardAttributesImpl *other);
 
-		// 'SVGFilterPrimitiveStandardAttributes' functions
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
-		SVGAnimatedString result() const;
+        // 'SVGFilterPrimitiveStandardAttributes' functions
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
+        SVGAnimatedString result() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGFilterPrimitiveStandardAttributes)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGFilterPrimitiveStandardAttributes)
 
-	protected:
-		SVGFilterPrimitiveStandardAttributesImpl *impl;
+    protected:
+        SVGFilterPrimitiveStandardAttributesImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_GET
+    public: // EcmaScript section
+        KDOM_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

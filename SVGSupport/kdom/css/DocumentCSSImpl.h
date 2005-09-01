@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,19 +27,19 @@
 
 namespace KDOM
 {
-	class ElementImpl;
-	class DOMStringImpl;
-	class StyleSheetListImpl;
-	class CSSStyleDeclarationImpl;
-	class DocumentCSSImpl : public DocumentStyleImpl
-	{
-	public:
-		DocumentCSSImpl();
-		virtual ~DocumentCSSImpl();
+    class ElementImpl;
+    class DOMStringImpl;
+    class StyleSheetListImpl;
+    class CSSStyleDeclarationImpl;
+    class DocumentCSSImpl : public DocumentStyleImpl
+    {
+    public:
+        DocumentCSSImpl();
+        virtual ~DocumentCSSImpl();
 
-		// 'DocumentCSSImpl' functions
-		virtual CSSStyleDeclarationImpl *getOverrideStyle(ElementImpl *elt, DOMStringImpl *pseudoElt);
-	};
+        // 'DocumentCSSImpl' functions
+        virtual CSSStyleDeclarationImpl *getOverrideStyle(ElementImpl *elt, DOMStringImpl *pseudoElt);
+    };
 };
 
 #endif

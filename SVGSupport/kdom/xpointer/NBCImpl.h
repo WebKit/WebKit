@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,30 +36,30 @@ class DOMStringImpl;
 
 namespace XPointer
 {
-	class NBCImpl : public Shared // : public XPathNSResolverImpl
-	{
-	public:
-		NBCImpl(NBCImpl *parent);
-		virtual ~NBCImpl();
+    class NBCImpl : public Shared // : public XPathNSResolverImpl
+    {
+    public:
+        NBCImpl(NBCImpl *parent);
+        virtual ~NBCImpl();
 
-		/**
-		 * Does not check syntactical validness of @prefix and @p ns.
-		 *
-		 * @returns true if the insertion succeeded.
-		 */
-		bool addMapping(DOMStringImpl *prefix, DOMStringImpl *s);
+        /**
+         * Does not check syntactical validness of @prefix and @p ns.
+         *
+         * @returns true if the insertion succeeded.
+         */
+        bool addMapping(DOMStringImpl *prefix, DOMStringImpl *s);
 
-		/**
-		 * The parent NBC.
-		 */
-		NBCImpl *parentNBC() const;
+        /**
+         * The parent NBC.
+         */
+        NBCImpl *parentNBC() const;
 
-		virtual DOMStringImpl *lookupNamespaceURI(DOMStringImpl *prefix) const;
+        virtual DOMStringImpl *lookupNamespaceURI(DOMStringImpl *prefix) const;
 
-	private:
-		QMap<QString, QString> m_mapping;
-		NBCImpl *m_parent;
-	};
+    private:
+        QMap<QString, QString> m_mapping;
+        NBCImpl *m_parent;
+    };
 };
 
 };

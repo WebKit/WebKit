@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,22 +27,22 @@
 
 namespace KDOM
 {
-	class AbstractViewImpl;
-	class UIEventImpl : public EventImpl
-	{
-	public:
-		UIEventImpl(EventImplType identifier);
-		virtual ~UIEventImpl();
+    class AbstractViewImpl;
+    class UIEventImpl : public EventImpl
+    {
+    public:
+        UIEventImpl(EventImplType identifier);
+        virtual ~UIEventImpl();
 
-		AbstractViewImpl *view() const;
-		long detail() const;
+        AbstractViewImpl *view() const;
+        long detail() const;
 
-		void initUIEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg);
+        void initUIEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg);
 
-	private:
-		AbstractViewImpl *m_abstractView;
-		long m_detail;
-	};
+    private:
+        AbstractViewImpl *m_abstractView;
+        long m_detail;
+    };
 };
 
 #endif

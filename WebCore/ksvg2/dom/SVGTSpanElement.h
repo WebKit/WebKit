@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,30 +28,30 @@
 
 namespace KSVG
 {
-	class SVGTSpanElementImpl;
+    class SVGTSpanElementImpl;
 
-	class SVGTSpanElement : public SVGTextPositioningElement
-	{
-	public:
-		SVGTSpanElement();
-		explicit SVGTSpanElement(SVGTSpanElementImpl *i);
-		SVGTSpanElement(const SVGTSpanElement &other);
-		SVGTSpanElement(const KDOM::Node &other);
-		virtual ~SVGTSpanElement();
+    class SVGTSpanElement : public SVGTextPositioningElement
+    {
+    public:
+        SVGTSpanElement();
+        explicit SVGTSpanElement(SVGTSpanElementImpl *i);
+        SVGTSpanElement(const SVGTSpanElement &other);
+        SVGTSpanElement(const KDOM::Node &other);
+        virtual ~SVGTSpanElement();
 
-		// Operators
-		SVGTSpanElement &operator=(const SVGTSpanElement &other);
-		SVGTSpanElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGTSpanElement &operator=(const SVGTSpanElement &other);
+        SVGTSpanElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGTSpanElement)
+        // Internal
+        KSVG_INTERNAL(SVGTSpanElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

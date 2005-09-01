@@ -32,52 +32,52 @@ class KCanvasItem;
 
 namespace KSVG
 {
-	class SVGElementImpl;
-	class SVGStyledElementImpl;
-	class SVGLengthImpl : public KDOM::Shared
-	{
-	public:
-		SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode = LM_UNKNOWN, const SVGElementImpl *viewport = 0);
-		virtual ~SVGLengthImpl();
+    class SVGElementImpl;
+    class SVGStyledElementImpl;
+    class SVGLengthImpl : public KDOM::Shared
+    {
+    public:
+        SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mode = LM_UNKNOWN, const SVGElementImpl *viewport = 0);
+        virtual ~SVGLengthImpl();
 
-		// 'SVGLength' functions
-		unsigned short unitType() const;
+        // 'SVGLength' functions
+        unsigned short unitType() const;
 
-		float value() const;
-		void setValue(float value);
+        float value() const;
+        void setValue(float value);
 
-		float valueInSpecifiedUnits() const;
-		void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
+        float valueInSpecifiedUnits() const;
+        void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
 
-		KDOM::DOMStringImpl *valueAsString() const;
-		void setValueAsString(KDOM::DOMStringImpl *valueAsString);
+        KDOM::DOMStringImpl *valueAsString() const;
+        void setValueAsString(KDOM::DOMStringImpl *valueAsString);
 
-		void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
-		void convertToSpecifiedUnits(unsigned short unitType);
+        void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+        void convertToSpecifiedUnits(unsigned short unitType);
 
-		// Helpers
-		bool bboxRelative() const;
-		void setBboxRelative(bool relative);
+        // Helpers
+        bool bboxRelative() const;
+        void setBboxRelative(bool relative);
 
-		const SVGStyledElementImpl *context() const;
-		void setContext(const SVGStyledElementImpl *context);
+        const SVGStyledElementImpl *context() const;
+        void setContext(const SVGStyledElementImpl *context);
 
-	private:
-		bool updateValueInSpecifiedUnits();
-		void updateValue();
+    private:
+        bool updateValueInSpecifiedUnits();
+        void updateValue();
 
-		double dpi() const;
+        double dpi() const;
 
-		float m_value;
-		float m_valueInSpecifiedUnits;
+        float m_value;
+        float m_valueInSpecifiedUnits;
 
-		LengthMode m_mode : 2;
-		bool m_bboxRelative : 1;
-		unsigned short m_unitType : 4;
+        LengthMode m_mode : 2;
+        bool m_bboxRelative : 1;
+        unsigned short m_unitType : 4;
 
-		const SVGStyledElementImpl *m_context;
-		const SVGElementImpl *m_viewportElement;
-	};
+        const SVGStyledElementImpl *m_context;
+        const SVGElementImpl *m_viewportElement;
+    };
 };
 
 #endif

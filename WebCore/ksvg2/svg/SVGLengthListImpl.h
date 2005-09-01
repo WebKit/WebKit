@@ -28,14 +28,14 @@
 
 namespace KSVG
 {
-	class SVGLengthListImpl : public SVGList<SVGLengthImpl>
-	{
-	public:
-		SVGLengthListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGLengthListImpl();
+    class SVGLengthListImpl : public SVGList<SVGLengthImpl>
+    {
+    public:
+        SVGLengthListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGLengthListImpl();
 
-		void parse(const QString &value, const SVGStyledElementImpl *context, LengthMode mode);
-	};
+        void parse(const QString &value, const SVGStyledElementImpl *context, LengthMode mode);
+    };
 };
 
 #endif

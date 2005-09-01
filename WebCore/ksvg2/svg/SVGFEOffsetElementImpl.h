@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,35 +30,35 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
-	class SVGAnimatedNumberImpl;
+    class SVGAnimatedStringImpl;
+    class SVGAnimatedNumberImpl;
 
-	class SVGFEOffsetElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
-	{
-	public:
-		SVGFEOffsetElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFEOffsetElementImpl();
+    class SVGFEOffsetElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
+    {
+    public:
+        SVGFEOffsetElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFEOffsetElementImpl();
 
-		// 'SVGFEOffsetElement' functions
-		SVGAnimatedStringImpl *in1() const;
-		SVGAnimatedNumberImpl *dx() const;
-		SVGAnimatedNumberImpl *dy() const;
+        // 'SVGFEOffsetElement' functions
+        SVGAnimatedStringImpl *in1() const;
+        SVGAnimatedNumberImpl *dx() const;
+        SVGAnimatedNumberImpl *dy() const;
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-	private:
-		mutable SVGAnimatedStringImpl *m_in1;
-		mutable SVGAnimatedNumberImpl *m_dx;
-		mutable SVGAnimatedNumberImpl *m_dy;
-		mutable KCanvasFEOffset *m_filterEffect;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_in1;
+        mutable SVGAnimatedNumberImpl *m_dx;
+        mutable SVGAnimatedNumberImpl *m_dy;
+        mutable KCanvasFEOffset *m_filterEffect;
+    };
 };
 
 #endif

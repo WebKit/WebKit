@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,32 +30,32 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
+    class SVGAnimatedStringImpl;
 
-	class SVGFEComponentTransferElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
-	{
-	public:
-		SVGFEComponentTransferElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFEComponentTransferElementImpl();
+    class SVGFEComponentTransferElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
+    {
+    public:
+        SVGFEComponentTransferElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFEComponentTransferElementImpl();
 
-		// 'SVGFEComponentTransferElement' functions
-		SVGAnimatedStringImpl *in1() const;
+        // 'SVGFEComponentTransferElement' functions
+        SVGAnimatedStringImpl *in1() const;
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-		virtual void close();
+        virtual void close();
 
-	private:
-		mutable SVGAnimatedStringImpl *m_in1;
-		mutable KCanvasFEComponentTransfer *m_filterEffect;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_in1;
+        mutable KCanvasFEComponentTransfer *m_filterEffect;
+    };
 };
 
 #endif

@@ -30,16 +30,16 @@
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatioImpl : public SVGAnimatedTemplate<SVGPreserveAspectRatioImpl>
-	{
-	public:
-		SVGAnimatedPreserveAspectRatioImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedPreserveAspectRatioImpl();
+    class SVGAnimatedPreserveAspectRatioImpl : public SVGAnimatedTemplate<SVGPreserveAspectRatioImpl>
+    {
+    public:
+        SVGAnimatedPreserveAspectRatioImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedPreserveAspectRatioImpl();
 
-	protected:
-		virtual SVGPreserveAspectRatioImpl *create() const;
-		virtual void assign(SVGPreserveAspectRatioImpl *src, SVGPreserveAspectRatioImpl *dst) const;
-	};
+    protected:
+        virtual SVGPreserveAspectRatioImpl *create() const;
+        virtual void assign(SVGPreserveAspectRatioImpl *src, SVGPreserveAspectRatioImpl *dst) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -43,89 +43,89 @@ using namespace KSVG;
 SVGFEBlendElementImpl::SVGFEBlendElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
-	m_in1 = m_in2 = 0;
-	m_mode = 0;
-	m_filterEffect = 0;
+    m_in1 = m_in2 = 0;
+    m_mode = 0;
+    m_filterEffect = 0;
 }
 
 SVGFEBlendElementImpl::~SVGFEBlendElementImpl()
 {
-	if(m_in1)
-		m_in1->deref();
-	if(m_in2)
-		m_in2->deref();
-	if(m_mode)
-		m_mode->deref();
+    if(m_in1)
+        m_in1->deref();
+    if(m_in2)
+        m_in2->deref();
+    if(m_mode)
+        m_mode->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEBlendElementImpl::in1() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
 SVGAnimatedStringImpl *SVGFEBlendElementImpl::in2() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedStringImpl>(m_in2, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedStringImpl>(m_in2, dummy);
 }
 
 SVGAnimatedEnumerationImpl *SVGFEBlendElementImpl::mode() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedEnumerationImpl>(m_mode, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedEnumerationImpl>(m_mode, dummy);
 }
 
 void SVGFEBlendElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_MODE:
-		{
-			if(value == "normal")
-				mode()->setBaseVal(SVG_FEBLEND_MODE_NORMAL);
-			else if(value == "multiply")
-				mode()->setBaseVal(SVG_FEBLEND_MODE_MULTIPLY);
-			else if(value == "screen")
-				mode()->setBaseVal(SVG_FEBLEND_MODE_SCREEN);
-			else if(value == "darken")
-				mode()->setBaseVal(SVG_FEBLEND_MODE_DARKEN);
-			else if(value == "lighten")
-				mode()->setBaseVal(SVG_FEBLEND_MODE_LIGHTEN);
-			break;
-		}
-		case ATTR_IN:
-		{
-			in1()->setBaseVal(value.handle());
-			break;
-		}
-		case ATTR_IN2:
-		{
-			in2()->setBaseVal(value.handle());
-			break;
-		}
-		default:
-		{
-			SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_MODE:
+        {
+            if(value == "normal")
+                mode()->setBaseVal(SVG_FEBLEND_MODE_NORMAL);
+            else if(value == "multiply")
+                mode()->setBaseVal(SVG_FEBLEND_MODE_MULTIPLY);
+            else if(value == "screen")
+                mode()->setBaseVal(SVG_FEBLEND_MODE_SCREEN);
+            else if(value == "darken")
+                mode()->setBaseVal(SVG_FEBLEND_MODE_DARKEN);
+            else if(value == "lighten")
+                mode()->setBaseVal(SVG_FEBLEND_MODE_LIGHTEN);
+            break;
+        }
+        case ATTR_IN:
+        {
+            in1()->setBaseVal(value.handle());
+            break;
+        }
+        case ATTR_IN2:
+        {
+            in2()->setBaseVal(value.handle());
+            break;
+        }
+        default:
+        {
+            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
+        }
+    };
 }
 
 KCanvasItem *SVGFEBlendElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
-	m_filterEffect = static_cast<KCanvasFEBlend *>(canvas->renderingDevice()->createFilterEffect(FE_BLEND));
-	m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));
-	m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
-	m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).string());
-	setStandardAttributes(m_filterEffect);
-	return 0;
+    m_filterEffect = static_cast<KCanvasFEBlend *>(canvas->renderingDevice()->createFilterEffect(FE_BLEND));
+    m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).string());
+    setStandardAttributes(m_filterEffect);
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEBlendElementImpl::filterEffect() const
 {
-	return m_filterEffect;
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

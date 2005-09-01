@@ -27,31 +27,31 @@
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGTransformImpl : public KDOM::Shared
-	{
-	public:
-		SVGTransformImpl();
-		virtual ~SVGTransformImpl();
+    class SVGMatrixImpl;
+    class SVGTransformImpl : public KDOM::Shared
+    {
+    public:
+        SVGTransformImpl();
+        virtual ~SVGTransformImpl();
 
-		unsigned short type() const;
+        unsigned short type() const;
 
-		SVGMatrixImpl *matrix() const;
-	
-		double angle() const;
+        SVGMatrixImpl *matrix() const;
+    
+        double angle() const;
 
-		void setMatrix(SVGMatrixImpl *matrix);
-		void setTranslate(double tx, double ty);
-		void setScale(double sx, double sy);
-		void setRotate(double angle, double cx, double cy);
-		void setSkewX(double angle);
-		void setSkewY(double angle);
+        void setMatrix(SVGMatrixImpl *matrix);
+        void setTranslate(double tx, double ty);
+        void setScale(double sx, double sy);
+        void setRotate(double angle, double cx, double cy);
+        void setSkewX(double angle);
+        void setSkewY(double angle);
 
-	private:
-		double m_angle;
-		unsigned short m_type;
-		SVGMatrixImpl *m_matrix;
-	};
+    private:
+        double m_angle;
+        unsigned short m_type;
+        SVGMatrixImpl *m_matrix;
+    };
 };
 
 #endif

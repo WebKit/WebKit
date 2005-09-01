@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,10 +26,10 @@ using namespace KSVG;
 
 SVGExceptionImpl::SVGExceptionImpl(unsigned short code) : KDOM::Shared()
 {
-	ref(); // ExceptionImpl classes need to ref themselves() as it's just
-		   // very convienient to just use 'throw new ExceptionImpl' ...
-	
-	m_code = code;
+    ref(); // ExceptionImpl classes need to ref themselves() as it's just
+           // very convienient to just use 'throw new ExceptionImpl' ...
+    
+    m_code = code;
 }
 
 SVGExceptionImpl::~SVGExceptionImpl()
@@ -38,7 +38,7 @@ SVGExceptionImpl::~SVGExceptionImpl()
 
 unsigned short SVGExceptionImpl::code() const
 {
-	return m_code;
+    return m_code;
 }
 
 // vim:ts=4:noet

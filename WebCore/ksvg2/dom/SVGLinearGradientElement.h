@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,36 +27,36 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGLinearGradientElementImpl;
-	class SVGLinearGradientElement : public SVGGradientElement
-	{
-	public:
-		SVGLinearGradientElement();
-		explicit SVGLinearGradientElement(SVGLinearGradientElementImpl *i);
-		SVGLinearGradientElement(const SVGLinearGradientElement &other);
-		SVGLinearGradientElement(const KDOM::Node &other);
-		virtual ~SVGLinearGradientElement();
+    class SVGAnimatedLength;
+    class SVGLinearGradientElementImpl;
+    class SVGLinearGradientElement : public SVGGradientElement
+    {
+    public:
+        SVGLinearGradientElement();
+        explicit SVGLinearGradientElement(SVGLinearGradientElementImpl *i);
+        SVGLinearGradientElement(const SVGLinearGradientElement &other);
+        SVGLinearGradientElement(const KDOM::Node &other);
+        virtual ~SVGLinearGradientElement();
 
-		// Operators
-		SVGLinearGradientElement &operator=(const SVGLinearGradientElement &other);
-		SVGLinearGradientElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGLinearGradientElement &operator=(const SVGLinearGradientElement &other);
+        SVGLinearGradientElement &operator=(const KDOM::Node &other);
 
-		// 'SVGLinearGradientElement' functions
-		SVGAnimatedLength x1() const;
-		SVGAnimatedLength y1() const;
-		SVGAnimatedLength x2() const;
-		SVGAnimatedLength y2() const;
+        // 'SVGLinearGradientElement' functions
+        SVGAnimatedLength x1() const;
+        SVGAnimatedLength y1() const;
+        SVGAnimatedLength x2() const;
+        SVGAnimatedLength y2() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGLinearGradientElement)
+        // Internal
+        KSVG_INTERNAL(SVGLinearGradientElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

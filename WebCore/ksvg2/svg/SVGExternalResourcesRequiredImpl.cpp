@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,31 +32,31 @@ using namespace KSVG;
 
 SVGExternalResourcesRequiredImpl::SVGExternalResourcesRequiredImpl()
 {
-	m_external = 0;
+    m_external = 0;
 }
 
 SVGExternalResourcesRequiredImpl::~SVGExternalResourcesRequiredImpl()
 {
-	if(m_external)
-		m_external->deref();
+    if(m_external)
+        m_external->deref();
 }
 
 SVGAnimatedBooleanImpl *SVGExternalResourcesRequiredImpl::externalResourcesRequired() const
 {
-	return lazy_create<SVGAnimatedBooleanImpl>(m_external, static_cast<const SVGStyledElementImpl *>(0));
+    return lazy_create<SVGAnimatedBooleanImpl>(m_external, static_cast<const SVGStyledElementImpl *>(0));
 }
 
 bool SVGExternalResourcesRequiredImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	if(id == ATTR_EXTERNALRESOURCESREQUIRED)
-	{
-		externalResourcesRequired()->setBaseVal(value == "true");
-		return true;
-	}
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    if(id == ATTR_EXTERNALRESOURCESREQUIRED)
+    {
+        externalResourcesRequired()->setBaseVal(value == "true");
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 // vim:ts=4:noet

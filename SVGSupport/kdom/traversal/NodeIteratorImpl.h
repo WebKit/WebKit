@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
               (C) 2001 Peter Kelly (pmk@post.com)
-	      
+          
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -32,50 +32,50 @@
 
 namespace KDOM
 {
-	class DocumentImpl;
+    class DocumentImpl;
 
-	class NodeIteratorImpl : public TraversalImpl
-	{
-	public:
-		NodeIteratorImpl(NodeImpl *n, short show,
-						 NodeFilterImpl *filter, bool expansion);
-		virtual ~NodeIteratorImpl();
+    class NodeIteratorImpl : public TraversalImpl
+    {
+    public:
+        NodeIteratorImpl(NodeImpl *n, short show,
+                         NodeFilterImpl *filter, bool expansion);
+        virtual ~NodeIteratorImpl();
 
-		NodeImpl *nextNode();
-		NodeImpl *previousNode();
-		void detach();
+        NodeImpl *nextNode();
+        NodeImpl *previousNode();
+        void detach();
 
-		NodeImpl *referenceNode() const { return m_referenceNode; }
-		bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
+        NodeImpl *referenceNode() const { return m_referenceNode; }
+        bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
 
-		/**
-		 * This function has to be called if you delete a node from the
-		 * document tree and you want the Iterator to react if there
-		 * are any changes concerning it.
-		 */
-		void notifyBeforeNodeRemoval(NodeImpl *removed);
+        /**
+         * This function has to be called if you delete a node from the
+         * document tree and you want the Iterator to react if there
+         * are any changes concerning it.
+         */
+        void notifyBeforeNodeRemoval(NodeImpl *removed);
 
-	private:
-		NodeIteratorImpl(const NodeIteratorImpl &);
-		NodeIteratorImpl &operator=(const NodeIteratorImpl &);
+    private:
+        NodeIteratorImpl(const NodeIteratorImpl &);
+        NodeIteratorImpl &operator=(const NodeIteratorImpl &);
 
-	    void setReferenceNode(NodeImpl *);
-		void setPointerBeforeReferenceNode(bool flag = true)
-		{
-			m_beforeReferenceNode = flag;
-		}
+        void setReferenceNode(NodeImpl *);
+        void setPointerBeforeReferenceNode(bool flag = true)
+        {
+            m_beforeReferenceNode = flag;
+        }
 
-		bool detached() const { return m_detached; }
-		void setDetached(bool flag = true) { m_detached = flag; }
-		DocumentImpl *document() const { return m_doc; }
-		void setDocument(DocumentImpl *);
+        bool detached() const { return m_detached; }
+        void setDetached(bool flag = true) { m_detached = flag; }
+        DocumentImpl *document() const { return m_doc; }
+        void setDocument(DocumentImpl *);
 
-	private:
-		NodeImpl *m_referenceNode;
-		bool m_beforeReferenceNode;
-		bool m_detached;
-		DocumentImpl *m_doc;
-	};
+    private:
+        NodeImpl *m_referenceNode;
+        bool m_beforeReferenceNode;
+        bool m_detached;
+        DocumentImpl *m_doc;
+    };
 };
 
 #endif

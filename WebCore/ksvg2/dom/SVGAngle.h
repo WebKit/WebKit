@@ -27,54 +27,54 @@
 
 namespace KDOM
 {
-	class DOMString;
+    class DOMString;
 };
 
 namespace KSVG
 {
-	class SVGAngleImpl;
-	class SVGAngle 
-	{ 
-	public:
-		SVGAngle();
-		explicit SVGAngle(SVGAngleImpl *i);
-		SVGAngle(const SVGAngle &other);
-		virtual ~SVGAngle();
+    class SVGAngleImpl;
+    class SVGAngle 
+    { 
+    public:
+        SVGAngle();
+        explicit SVGAngle(SVGAngleImpl *i);
+        SVGAngle(const SVGAngle &other);
+        virtual ~SVGAngle();
 
-		// Operators
-		SVGAngle &operator=(const SVGAngle &other);
-		bool operator==(const SVGAngle &other) const;
-		bool operator!=(const SVGAngle &other) const;
+        // Operators
+        SVGAngle &operator=(const SVGAngle &other);
+        bool operator==(const SVGAngle &other) const;
+        bool operator!=(const SVGAngle &other) const;
 
-		// 'SVGAngle' functions
-		unsigned short unitType() const;
+        // 'SVGAngle' functions
+        unsigned short unitType() const;
 
-		void setValue(float value);
-		float value() const;
+        void setValue(float value);
+        float value() const;
 
-		void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
-		float valueInSpecifiedUnits() const;
+        void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
+        float valueInSpecifiedUnits() const;
 
-		void setValueAsString(const KDOM::DOMString &valueAsString);
-		KDOM::DOMString valueAsString() const;
+        void setValueAsString(const KDOM::DOMString &valueAsString);
+        KDOM::DOMString valueAsString() const;
 
-		void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
-		void convertToSpecifiedUnits(unsigned short unitType);
+        void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+        void convertToSpecifiedUnits(unsigned short unitType);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAngle)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAngle)
 
-	protected:
-		SVGAngleImpl *impl;
+    protected:
+        SVGAngleImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
 };
 

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,27 +36,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedNumberList::s_hashTable 3
- baseVal	SVGAnimatedNumberListConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedNumberListConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedNumberListConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedNumberListConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedNumberList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedNumberListConstants::BaseVal:
-			return KDOM::safe_cache<SVGNumberList>(exec, baseVal());
-		case SVGAnimatedNumberListConstants::AnimVal:
-			return KDOM::safe_cache<SVGNumberList>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedNumberListConstants::BaseVal:
+            return KDOM::safe_cache<SVGNumberList>(exec, baseVal());
+        case SVGAnimatedNumberListConstants::AnimVal:
+            return KDOM::safe_cache<SVGNumberList>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedNumberList SVGAnimatedNumberList::null;
@@ -67,31 +67,31 @@ SVGAnimatedNumberList::SVGAnimatedNumberList() : impl(0)
 
 SVGAnimatedNumberList::SVGAnimatedNumberList(SVGAnimatedNumberListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedNumberList::SVGAnimatedNumberList(const SVGAnimatedNumberList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedNumberList)
 
 SVGNumberList SVGAnimatedNumberList::baseVal() const
 {
-	if(!impl)
-		return SVGNumberList::null;
+    if(!impl)
+        return SVGNumberList::null;
 
-	return SVGNumberList(impl->baseVal());
+    return SVGNumberList(impl->baseVal());
 }
 
 SVGNumberList SVGAnimatedNumberList::animVal() const
 {
-	if(!impl)
-		return SVGNumberList::null;
+    if(!impl)
+        return SVGNumberList::null;
 
-	return SVGNumberList(impl->animVal());
+    return SVGNumberList(impl->animVal());
 }
 
 // vim:ts=4:noet

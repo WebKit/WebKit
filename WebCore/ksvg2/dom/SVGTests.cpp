@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,12 +35,12 @@ using namespace KSVG;
 
 /*
 @begin SVGTests::s_hashTable 5
- requiredFeatures	SVGTestsConstants::RequiredFeatures		DontDelete|ReadOnly
- requiredExtensions	SVGTestsConstants::RequiredExtensions	DontDelete|ReadOnly
- systemLanguage		SVGTestsConstants::SystemLanguage		DontDelete|ReadOnly
+ requiredFeatures    SVGTestsConstants::RequiredFeatures        DontDelete|ReadOnly
+ requiredExtensions    SVGTestsConstants::RequiredExtensions    DontDelete|ReadOnly
+ systemLanguage        SVGTestsConstants::SystemLanguage        DontDelete|ReadOnly
 @end
 @begin SVGTestsProto::s_hashTable 3
- hasExtension	SVGTestsConstants::HasExtension	DontDelete|Function 1
+ hasExtension    SVGTestsConstants::HasExtension    DontDelete|Function 1
 @end
 */
 
@@ -48,42 +48,42 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGTests", SVGTestsProto, SVGTestsProtoFunc)
 
 ValueImp *SVGTests::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGTestsConstants::RequiredFeatures:
-			return KDOM::safe_cache<SVGStringList>(exec, requiredFeatures());
-		case SVGTestsConstants::RequiredExtensions:
-			return KDOM::safe_cache<SVGStringList>(exec, requiredExtensions());
-		case SVGTestsConstants::SystemLanguage:
-			return KDOM::safe_cache<SVGStringList>(exec, systemLanguage());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGTestsConstants::RequiredFeatures:
+            return KDOM::safe_cache<SVGStringList>(exec, requiredFeatures());
+        case SVGTestsConstants::RequiredExtensions:
+            return KDOM::safe_cache<SVGStringList>(exec, requiredExtensions());
+        case SVGTestsConstants::SystemLanguage:
+            return KDOM::safe_cache<SVGStringList>(exec, systemLanguage());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGTestsProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGTests obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGTests obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGTestsConstants::HasExtension:
-		{
-			KDOM::DOMString extension = KDOM::toDOMString(exec, args[0]);
-			return KJS::Boolean(obj.hasExtension(extension));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGTestsConstants::HasExtension:
+        {
+            KDOM::DOMString extension = KDOM::toDOMString(exec, args[0]);
+            return KJS::Boolean(obj.hasExtension(extension));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGTests SVGTests::null;
@@ -98,7 +98,7 @@ SVGTests::SVGTests(SVGTestsImpl *i) : impl(i)
 
 SVGTests::SVGTests(const SVGTests &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTests::~SVGTests()
@@ -107,50 +107,50 @@ SVGTests::~SVGTests()
 
 SVGTests &SVGTests::operator=(const SVGTests &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGTests &SVGTests::operator=(SVGTestsImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGStringList SVGTests::requiredFeatures() const
 {
-	if(!impl)
-		return SVGStringList::null;
+    if(!impl)
+        return SVGStringList::null;
 
-	return SVGStringList(impl->requiredFeatures());
+    return SVGStringList(impl->requiredFeatures());
 }
 
 SVGStringList SVGTests::requiredExtensions() const
 {
-	if(!impl)
-		return SVGStringList::null;
+    if(!impl)
+        return SVGStringList::null;
 
-	return SVGStringList(impl->requiredExtensions());
+    return SVGStringList(impl->requiredExtensions());
 }
 
 SVGStringList SVGTests::systemLanguage() const
 {
-	if(!impl)
-		return SVGStringList::null;
+    if(!impl)
+        return SVGStringList::null;
 
-	return SVGStringList(impl->systemLanguage());
+    return SVGStringList(impl->systemLanguage());
 }
 
 bool SVGTests::hasExtension(const KDOM::DOMString &extension) const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->hasExtension(extension);
+    return impl->hasExtension(extension);
 }
 
 // vim:ts=4:noet

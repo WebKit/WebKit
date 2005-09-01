@@ -29,28 +29,28 @@
 
 namespace KSVG
 {
-	class SVGPaintImpl : public SVGColorImpl
-	{
-	public:
-		SVGPaintImpl();
-		SVGPaintImpl(KDOM::DOMStringImpl *uri);
-		SVGPaintImpl(unsigned short paintType);
-		SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint = 0, KDOM::DOMStringImpl *iccPaint = 0);
-		virtual ~SVGPaintImpl();
+    class SVGPaintImpl : public SVGColorImpl
+    {
+    public:
+        SVGPaintImpl();
+        SVGPaintImpl(KDOM::DOMStringImpl *uri);
+        SVGPaintImpl(unsigned short paintType);
+        SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint = 0, KDOM::DOMStringImpl *iccPaint = 0);
+        virtual ~SVGPaintImpl();
 
-		// 'SVGPaint' functions
-		unsigned short paintType() const;
-		KDOM::DOMStringImpl *uri() const;
+        // 'SVGPaint' functions
+        unsigned short paintType() const;
+        KDOM::DOMStringImpl *uri() const;
 
-		void setUri(KDOM::DOMStringImpl *uri);
-		void setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *iccPaint);
+        void setUri(KDOM::DOMStringImpl *uri);
+        void setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *iccPaint);
 
-		virtual KDOM::DOMStringImpl *cssText() const;
+        virtual KDOM::DOMStringImpl *cssText() const;
 
-	private:
-		unsigned short m_paintType;
-		KDOM::DOMStringImpl *m_uri;
-	};
+    private:
+        unsigned short m_paintType;
+        KDOM::DOMStringImpl *m_uri;
+    };
 };
 
 #endif

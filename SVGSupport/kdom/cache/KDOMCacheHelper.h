@@ -1,13 +1,13 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
     Copyright (C) 2001-2003 Dirk Mueller <mueller@kde.org>
     Copyright (C) 2003 Apple Computer, Inc
     
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -42,62 +42,62 @@
 
 namespace KDOM
 {
-	static const int kdom_primes_t[] =
-	{
-		31,    61,   107,   233,   353,   541,
-		821,  1237,  1861,  2797,  4201,  6311,
-		9467, 14207, 21313, 31973, 47963, 0
-	};
+    static const int kdom_primes_t[] =
+    {
+        31,    61,   107,   233,   353,   541,
+        821,  1237,  1861,  2797,  4201,  6311,
+        9467, 14207, 21313, 31973, 47963, 0
+    };
 
-	static inline int cacheNextSeed(int curSize)
-	{
-		for(int i = 0 ; kdom_primes_t[i] ; i++)
-		{
-			if(kdom_primes_t[i] > curSize)
-				return kdom_primes_t[i];
-		}
+    static inline int cacheNextSeed(int curSize)
+    {
+        for(int i = 0 ; kdom_primes_t[i] ; i++)
+        {
+            if(kdom_primes_t[i] > curSize)
+                return kdom_primes_t[i];
+        }
 
-		return curSize;
-	}
+        return curSize;
+    }
 
-	struct LRUList
-	{
-		LRUList() : head(0), tail(0) { }
+    struct LRUList
+    {
+        LRUList() : head(0), tail(0) { }
 
-		CachedObject *head;
-		CachedObject *tail;
-	};
+        CachedObject *head;
+        CachedObject *tail;
+    };
 
-	static LRUList s_lruLists[KDOM_CACHE_MAX_LRU_LISTS];
+    static LRUList s_lruLists[KDOM_CACHE_MAX_LRU_LISTS];
 
-	static inline LRUList *lruListFor(CachedObject *object)
-	{
-		int accessCount = object->accessCount();
-		int queueIndex = 0;
+    static inline LRUList *lruListFor(CachedObject *object)
+    {
+        int accessCount = object->accessCount();
+        int queueIndex = 0;
 
-		if(accessCount != 0)
-		{
-			unsigned int size = object->size();
+        if(accessCount != 0)
+        {
+            unsigned int size = object->size();
 
-			// Fast log2 implementation
-			unsigned int log2 = 0;
-			if(size & (size - 1)) log2 += 1;
-			if(size >> 16) log2 += 16, size >>= 16;
-			if(size >> 8) log2 += 8, size >>= 8;
-			if(size >> 4) log2 += 4, size >>= 4;
-			if(size >> 2) log2 += 2, size >>= 2;
-			if(size >> 1) log2 += 1;
+            // Fast log2 implementation
+            unsigned int log2 = 0;
+            if(size & (size - 1)) log2 += 1;
+            if(size >> 16) log2 += 16, size >>= 16;
+            if(size >> 8) log2 += 8, size >>= 8;
+            if(size >> 4) log2 += 4, size >>= 4;
+            if(size >> 2) log2 += 2, size >>= 2;
+            if(size >> 1) log2 += 1;
 
-			queueIndex = (log2 / accessCount) - 1;
+            queueIndex = (log2 / accessCount) - 1;
 
-			if(queueIndex < 0)
-				queueIndex = 0;
-			if(queueIndex >= KDOM_CACHE_MAX_LRU_LISTS)
-				queueIndex = KDOM_CACHE_MAX_LRU_LISTS - 1;
-		}
+            if(queueIndex < 0)
+                queueIndex = 0;
+            if(queueIndex >= KDOM_CACHE_MAX_LRU_LISTS)
+                queueIndex = KDOM_CACHE_MAX_LRU_LISTS - 1;
+        }
 
-		return &s_lruLists[queueIndex];
-	}
+        return &s_lruLists[queueIndex];
+    }
 };
 
 #endif

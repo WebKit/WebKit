@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,42 +42,42 @@ using namespace KSVG;
 
 /*
 @begin SVGPatternElement::s_hashTable 9
- patternUnits			SVGPatternElementConstants::PatternUnits		DontDelete|ReadOnly
- patternContentUnits	SVGPatternElementConstants::PatternContentUnits		DontDelete|ReadOnly
- patternTransform		SVGPatternElementConstants::PatternTransform	DontDelete|ReadOnly
- x						SVGPatternElementConstants::X		DontDelete|ReadOnly
- y						SVGPatternElementConstants::Y		DontDelete|ReadOnly
- width					SVGPatternElementConstants::Width	DontDelete|ReadOnly
- height					SVGPatternElementConstants::Height	DontDelete|ReadOnly
+ patternUnits            SVGPatternElementConstants::PatternUnits        DontDelete|ReadOnly
+ patternContentUnits    SVGPatternElementConstants::PatternContentUnits        DontDelete|ReadOnly
+ patternTransform        SVGPatternElementConstants::PatternTransform    DontDelete|ReadOnly
+ x                        SVGPatternElementConstants::X        DontDelete|ReadOnly
+ y                        SVGPatternElementConstants::Y        DontDelete|ReadOnly
+ width                    SVGPatternElementConstants::Width    DontDelete|ReadOnly
+ height                    SVGPatternElementConstants::Height    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGPatternElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGPatternElementConstants::PatternUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, patternUnits());
-		case SVGPatternElementConstants::PatternContentUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, patternContentUnits());
-		case SVGPatternElementConstants::PatternTransform:
-			return KDOM::safe_cache<SVGAnimatedTransformList>(exec, patternTransform());
-		case SVGPatternElementConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
-		case SVGPatternElementConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
-		case SVGPatternElementConstants::Width:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
-		case SVGPatternElementConstants::Height:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGPatternElementConstants::PatternUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, patternUnits());
+        case SVGPatternElementConstants::PatternContentUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, patternContentUnits());
+        case SVGPatternElementConstants::PatternTransform:
+            return KDOM::safe_cache<SVGAnimatedTransformList>(exec, patternTransform());
+        case SVGPatternElementConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
+        case SVGPatternElementConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
+        case SVGPatternElementConstants::Width:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
+        case SVGPatternElementConstants::Height:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -95,12 +95,12 @@ SVGPatternElement::SVGPatternElement(SVGPatternElementImpl *i) : SVGElement(i), 
 
 SVGPatternElement::SVGPatternElement(const SVGPatternElement &other) : SVGElement(), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPatternElement::SVGPatternElement(const KDOM::Node &other) : SVGElement(), SVGURIReference(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPatternElement::~SVGPatternElement()
@@ -109,97 +109,97 @@ SVGPatternElement::~SVGPatternElement()
 
 SVGPatternElement &SVGPatternElement::operator=(const SVGPatternElement &other)
 {
-	SVGElement::operator=(other);
-	SVGURIReference::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGFitToViewBox::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGURIReference::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGFitToViewBox::operator=(other);
+    return *this;
 }
 
 SVGPatternElement &SVGPatternElement::operator=(const KDOM::Node &other)
 {
-	SVGPatternElementImpl *ohandle = static_cast<SVGPatternElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
+    SVGPatternElementImpl *ohandle = static_cast<SVGPatternElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
 
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGURIReference::operator=(ohandle);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGFitToViewBox::operator=(ohandle);
-		}
-	}
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGURIReference::operator=(ohandle);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGFitToViewBox::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedEnumeration SVGPatternElement::patternUnits() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->patternUnits());
+    return SVGAnimatedEnumeration(impl->patternUnits());
 }
 
 SVGAnimatedEnumeration SVGPatternElement::patternContentUnits() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->patternContentUnits());
+    return SVGAnimatedEnumeration(impl->patternContentUnits());
 }
 
 SVGAnimatedTransformList SVGPatternElement::patternTransform() const
 {
-	if(!d)
-		return SVGAnimatedTransformList::null;
+    if(!d)
+        return SVGAnimatedTransformList::null;
 
-	return SVGAnimatedTransformList(impl->patternTransform());
+    return SVGAnimatedTransformList(impl->patternTransform());
 }
 
 SVGAnimatedLength SVGPatternElement::x() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x());
+    return SVGAnimatedLength(impl->x());
 }
 
 SVGAnimatedLength SVGPatternElement::y() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y());
+    return SVGAnimatedLength(impl->y());
 }
 
 SVGAnimatedLength SVGPatternElement::width() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->width());
+    return SVGAnimatedLength(impl->width());
 }
 
 SVGAnimatedLength SVGPatternElement::height() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->height());
+    return SVGAnimatedLength(impl->height());
 }
 
 // vim:ts=4:noet

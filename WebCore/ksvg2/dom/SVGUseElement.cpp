@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,35 +41,35 @@ using namespace KSVG;
 
 /*
 @begin SVGUseElement::s_hashTable 7
- x					SVGUseElementConstants::X				DontDelete|ReadOnly
- y					SVGUseElementConstants::Y				DontDelete|ReadOnly
- width				SVGUseElementConstants::Width			DontDelete|ReadOnly
- height				SVGUseElementConstants::Height			DontDelete|ReadOnly
+ x                    SVGUseElementConstants::X                DontDelete|ReadOnly
+ y                    SVGUseElementConstants::Y                DontDelete|ReadOnly
+ width                SVGUseElementConstants::Width            DontDelete|ReadOnly
+ height                SVGUseElementConstants::Height            DontDelete|ReadOnly
 @end
 */
 
-// TODO: instanceRoot		SVGUseElementConstants::InstanceRoot	DontDelete|ReadOnly
+// TODO: instanceRoot        SVGUseElementConstants::InstanceRoot    DontDelete|ReadOnly
 
 ValueImp *SVGUseElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGUseElementConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
-		case SVGUseElementConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
-		case SVGUseElementConstants::Width:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
-		case SVGUseElementConstants::Height:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGUseElementConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
+        case SVGUseElementConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
+        case SVGUseElementConstants::Width:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
+        case SVGUseElementConstants::Height:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -87,12 +87,12 @@ SVGUseElement::SVGUseElement(SVGUseElementImpl *i) : SVGElement(i), SVGTests(i),
 
 SVGUseElement::SVGUseElement(const SVGUseElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGURIReference()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGUseElement::SVGUseElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGURIReference()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGUseElement::~SVGUseElement()
@@ -101,89 +101,89 @@ SVGUseElement::~SVGUseElement()
 
 SVGUseElement &SVGUseElement::operator=(const SVGUseElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	SVGURIReference::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    SVGURIReference::operator=(other);
+    return *this;
 }
 
 SVGUseElement &SVGUseElement::operator=(const KDOM::Node &other)
 {
-	SVGUseElementImpl *ohandle = static_cast<SVGUseElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-			SVGURIReference::operator=(ohandle);
-		}
-	}
+    SVGUseElementImpl *ohandle = static_cast<SVGUseElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+            SVGURIReference::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGUseElement::x() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x());
+    return SVGAnimatedLength(impl->x());
 }
 
 SVGAnimatedLength SVGUseElement::y() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y());
+    return SVGAnimatedLength(impl->y());
 }
 
 SVGAnimatedLength SVGUseElement::width() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->width());
+    return SVGAnimatedLength(impl->width());
 }
 
 SVGAnimatedLength SVGUseElement::height() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->height());
+    return SVGAnimatedLength(impl->height());
 }
 /*
 SVGElementInstance SVGUseElement::instanceRoot() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->instanceRoot());
+    return SVGElementInstance(impl->instanceRoot());
 }
 
 SVGElementInstance SVGUseElement::animatedInstanceRoot() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->animatedInstanceRoot());
+    return SVGElementInstance(impl->animatedInstanceRoot());
 }*/
 
 // vim:ts=4:noet

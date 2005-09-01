@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
  
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -32,32 +32,32 @@
 
 namespace KDOM
 {
-	class TreeWalkerImpl : public TraversalImpl
-	{
-	public:
-		TreeWalkerImpl(NodeImpl *rootNode, short whatToShow,
-					   NodeFilterImpl *nodeFilter,
-					   bool expandEntityReferences);
-		virtual ~TreeWalkerImpl();
+    class TreeWalkerImpl : public TraversalImpl
+    {
+    public:
+        TreeWalkerImpl(NodeImpl *rootNode, short whatToShow,
+                       NodeFilterImpl *nodeFilter,
+                       bool expandEntityReferences);
+        virtual ~TreeWalkerImpl();
 
-		NodeImpl *currentNode() const { return m_current; }
-		void setCurrentNode(NodeImpl *);
+        NodeImpl *currentNode() const { return m_current; }
+        void setCurrentNode(NodeImpl *);
 
-		NodeImpl *parentNode();
-		NodeImpl *firstChild();
-		NodeImpl *lastChild();
-		NodeImpl *previousSibling();
-		NodeImpl *nextSibling();
-		NodeImpl *previousNode();
-		NodeImpl *nextNode();
+        NodeImpl *parentNode();
+        NodeImpl *firstChild();
+        NodeImpl *lastChild();
+        NodeImpl *previousSibling();
+        NodeImpl *nextSibling();
+        NodeImpl *previousNode();
+        NodeImpl *nextNode();
 
-	private:
-		TreeWalkerImpl(const TreeWalkerImpl &);
-		TreeWalkerImpl &operator=(const TreeWalkerImpl &);
+    private:
+        TreeWalkerImpl(const TreeWalkerImpl &);
+        TreeWalkerImpl &operator=(const TreeWalkerImpl &);
 
-	private:
-		NodeImpl *m_current;
-	};
+    private:
+        NodeImpl *m_current;
+    };
 };
 
 #endif

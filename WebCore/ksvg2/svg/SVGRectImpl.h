@@ -27,34 +27,34 @@
 
 namespace KSVG
 {
-	class SVGStyledElementImpl;
-	class SVGRectImpl : public KDOM::Shared
-	{
-	public:
-		SVGRectImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGRectImpl();
+    class SVGStyledElementImpl;
+    class SVGRectImpl : public KDOM::Shared
+    {
+    public:
+        SVGRectImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGRectImpl();
 
-		// 'SVGRect' functions
-		double x() const;
-		void setX(double value);
+        // 'SVGRect' functions
+        double x() const;
+        void setX(double value);
 
-		double y() const;
-		void setY(double value);
+        double y() const;
+        void setY(double value);
 
-		double width() const;
-		void setWidth(double value);
+        double width() const;
+        void setWidth(double value);
 
-		double height() const;
-		void setHeight(double value);
+        double height() const;
+        void setHeight(double value);
 
-	private:
-		double m_x;
-		double m_y;
-		double m_width;
-		double m_height;
+    private:
+        double m_x;
+        double m_y;
+        double m_width;
+        double m_height;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +27,9 @@ using namespace KDOM::XPointer;
 
 XPointerExceptionImpl::XPointerExceptionImpl(unsigned short code) : Shared()
 {
-	ref(); /* See comment in DOMExceptionImpl.cc */
-	     
-	m_code = code;
+    ref(); /* See comment in DOMExceptionImpl.cc */
+         
+    m_code = code;
 }
 
 XPointerExceptionImpl::~XPointerExceptionImpl()
@@ -38,7 +38,7 @@ XPointerExceptionImpl::~XPointerExceptionImpl()
 
 unsigned short XPointerExceptionImpl::code() const
 {
-	return m_code;
+    return m_code;
 }
 
 // vim:ts=4:noet

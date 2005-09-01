@@ -35,192 +35,192 @@
 
 namespace KDOM
 {
-	/**
-	 * Helper method for property lookups.
-	 *
-	 * This method does it all (looking in the hashtable, checking for function
-	 * overrides, creating the function or retrieving from cache, calling
-	 * getValueProperty in case of a non-function property, forwarding to parent[s] if
-	 * unknown property).
-	 *
-	 * Template arguments:
-	 * @param FuncImp the class which implements this object's functions
-	 * @param ThisImp the class of "this". It must implement the getValueProperty(exec,token) method,
-	 * for non-function properties, and the getInParents() method (auto-generated).
-	 *
-	 * Method arguments:
-	 * @param exec execution state, as usual
-	 * @param propertyName the property we're looking for
-	 * @param table the static hashtable for this class
-	 * @param thisObj "this"
-	 */
-	template<class FuncImp, class ThisImp>
-	inline KJS::ValueImp *lookupGet(KJS::ExecState *exec,
-								const KJS::Identifier &propertyName,
-								const KJS::HashTable *table,
-								const ThisImp *thisObj, // the 'impl' object
-								const KJS::ObjectImp *bridge)
-	{
+    /**
+     * Helper method for property lookups.
+     *
+     * This method does it all (looking in the hashtable, checking for function
+     * overrides, creating the function or retrieving from cache, calling
+     * getValueProperty in case of a non-function property, forwarding to parent[s] if
+     * unknown property).
+     *
+     * Template arguments:
+     * @param FuncImp the class which implements this object's functions
+     * @param ThisImp the class of "this". It must implement the getValueProperty(exec,token) method,
+     * for non-function properties, and the getInParents() method (auto-generated).
+     *
+     * Method arguments:
+     * @param exec execution state, as usual
+     * @param propertyName the property we're looking for
+     * @param table the static hashtable for this class
+     * @param thisObj "this"
+     */
+    template<class FuncImp, class ThisImp>
+    inline KJS::ValueImp *lookupGet(KJS::ExecState *exec,
+                                const KJS::Identifier &propertyName,
+                                const KJS::HashTable *table,
+                                const ThisImp *thisObj, // the 'impl' object
+                                const KJS::ObjectImp *bridge)
+    {
 #if 0
-		const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
+        const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
 
-		if(!entry) // not found, forward to parents
-			return thisObj->getInParents(exec, propertyName, bridge);
+        if(!entry) // not found, forward to parents
+            return thisObj->getInParents(exec, propertyName, bridge);
 
-		if(entry->attr & KJS::Function)
-			return KJS::lookupOrCreateFunction<FuncImp>(exec, propertyName,
-														const_cast<KJS::ObjectImp *>(bridge),
-														entry->value, entry->params, entry->attr);
+        if(entry->attr & KJS::Function)
+            return KJS::lookupOrCreateFunction<FuncImp>(exec, propertyName,
+                                                        const_cast<KJS::ObjectImp *>(bridge),
+                                                        entry->value, entry->params, entry->attr);
 
-		return thisObj->getValueProperty(exec, entry->value);
+        return thisObj->getValueProperty(exec, entry->value);
 #endif
                 return KJS::Undefined();
-	}
+    }
 
-	/**
-	 * Simplified version of lookupGet in case there are no functions, only "values".
-	 * Using this instead of lookupGet removes the need for a FuncImp class.
-	 */
-	template <class ThisImp>
-	inline KJS::ValueImp *lookupGetValue(KJS::ExecState *exec,
-									 const KJS::Identifier &propertyName,
-									 const KJS::HashTable *table,
-									 const ThisImp *thisObj, // the 'impl' object
+    /**
+     * Simplified version of lookupGet in case there are no functions, only "values".
+     * Using this instead of lookupGet removes the need for a FuncImp class.
+     */
+    template <class ThisImp>
+    inline KJS::ValueImp *lookupGetValue(KJS::ExecState *exec,
+                                     const KJS::Identifier &propertyName,
+                                     const KJS::HashTable *table,
+                                     const ThisImp *thisObj, // the 'impl' object
                                      const KJS::ObjectImp *bridge)
-	{
+    {
 #if 0
-		const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
+        const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
 
-		if(!entry) // not found, forward to parents
-			return thisObj->getInParents(exec, propertyName, bridge);
+        if(!entry) // not found, forward to parents
+            return thisObj->getInParents(exec, propertyName, bridge);
 
-		if(entry->attr & KJS::Function)
-			kdError(26004) << "Function bit set! Shouldn't happen in lookupGetValue! propertyName was " << propertyName.qstring() << endl;
+        if(entry->attr & KJS::Function)
+            kdError(26004) << "Function bit set! Shouldn't happen in lookupGetValue! propertyName was " << propertyName.qstring() << endl;
 
-		return thisObj->getValueProperty(exec, entry->value);
+        return thisObj->getValueProperty(exec, entry->value);
 #endif
                 return KJS::Undefined();
-	}
+    }
 
-	/**
-	 * This one is for "put".
-	 * Lookup hash entry for property to be set, and set the value.
-	 * The "this" class must implement putValueProperty.
-	 * If it returns false, put() will return false, and KDOMRequest will set a dynamic property in ObjectImp
-	 */
-	template <class ThisImp>
-	inline bool lookupPut(KJS::ExecState *exec,
-						  const KJS::Identifier &propertyName,
-						  KJS::ValueImp *value,
-						  int attr,
-						  const KJS::HashTable *table,
-						  ThisImp *thisObj)
-	{
-		const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
+    /**
+     * This one is for "put".
+     * Lookup hash entry for property to be set, and set the value.
+     * The "this" class must implement putValueProperty.
+     * If it returns false, put() will return false, and KDOMRequest will set a dynamic property in ObjectImp
+     */
+    template <class ThisImp>
+    inline bool lookupPut(KJS::ExecState *exec,
+                          const KJS::Identifier &propertyName,
+                          KJS::ValueImp *value,
+                          int attr,
+                          const KJS::HashTable *table,
+                          ThisImp *thisObj)
+    {
+        const KJS::HashEntry *entry = KJS::Lookup::findEntry(table, propertyName);
 
-		if(!entry) // not found, forward to parents
-			return thisObj->putInParents(exec, propertyName, value, attr);
-		else if(entry->attr & KJS::Function) // Function: put as override property
-			return false;
-		else if(entry->attr & KJS::ReadOnly && !(attr & KJS::Internal)) // readonly! Can't put!
-		{
+        if(!entry) // not found, forward to parents
+            return thisObj->putInParents(exec, propertyName, value, attr);
+        else if(entry->attr & KJS::Function) // Function: put as override property
+            return false;
+        else if(entry->attr & KJS::ReadOnly && !(attr & KJS::Internal)) // readonly! Can't put!
+        {
 #ifdef KJS_VERBOSE
-			kdWarning(26004) <<" Attempt to change value of readonly property '" << propertyName.qstring() << "'" << endl;
+            kdWarning(26004) <<" Attempt to change value of readonly property '" << propertyName.qstring() << "'" << endl;
 #endif
-			return true; // "we did it" -> don't put override property
-		}
-		else
-		{
-			thisObj->putValueProperty(exec, entry->value, value, attr);
-			return true;
-		}
-	}
+            return true; // "we did it" -> don't put override property
+        }
+        else
+        {
+            thisObj->putValueProperty(exec, entry->value, value, attr);
+            return true;
+        }
+    }
 }
 
 // These macros are used by the generated files in kdom/bindings/js/*.
 // IDLCodeGeneratorJs.pm knows how to use them, read it's source :-)
 #define ECMA_IMPLEMENT_CONSTRUCTOR(ClassName, Class) \
-	KJS::ValueImp *ClassName::get(KJS::ExecState *, const KJS::Identifier &propertyName, const KJS::ObjectImp *) const { \
-		const KJS::HashEntry *entry = KJS::Lookup::findEntry(&s_hashTable, propertyName); \
-		if(entry) return KJS::Number(entry->value); \
-		return KJS::Undefined(); \
-	} \
-	bool ClassName::hasProperty(KJS::ExecState *, const KJS::Identifier &propertyName) const { \
-		return KJS::Lookup::findEntry(&s_hashTable, propertyName); \
-	} \
-	KJS::ObjectImp *ClassName::prototype(KJS::ExecState *exec) const { \
-		if(exec) return exec->interpreter()->builtinObjectPrototype(); \
-		return KJS::Object::dynamicCast(KJS::Null()); \
-	} \
-	const KJS::ClassInfo ClassName::s_classInfo = { Class "Constructor", 0, &s_hashTable, 0 }; \
-	KJS::ValueImp *get##ClassName(KJS::ExecState *exec) { \
-		return KDOM::cacheGlobalBridge<ClassName>(exec, "[[" Class ".constructor]]"); \
-	}
+    KJS::ValueImp *ClassName::get(KJS::ExecState *, const KJS::Identifier &propertyName, const KJS::ObjectImp *) const { \
+        const KJS::HashEntry *entry = KJS::Lookup::findEntry(&s_hashTable, propertyName); \
+        if(entry) return KJS::Number(entry->value); \
+        return KJS::Undefined(); \
+    } \
+    bool ClassName::hasProperty(KJS::ExecState *, const KJS::Identifier &propertyName) const { \
+        return KJS::Lookup::findEntry(&s_hashTable, propertyName); \
+    } \
+    KJS::ObjectImp *ClassName::prototype(KJS::ExecState *exec) const { \
+        if(exec) return exec->interpreter()->builtinObjectPrototype(); \
+        return KJS::Object::dynamicCast(KJS::Null()); \
+    } \
+    const KJS::ClassInfo ClassName::s_classInfo = { Class "Constructor", 0, &s_hashTable, 0 }; \
+    KJS::ValueImp *get##ClassName(KJS::ExecState *exec) { \
+        return KDOM::cacheGlobalBridge<ClassName>(exec, "[[" Class ".constructor]]"); \
+    }
  
 #define ECMA_DEFINE_CONSTRUCTOR(ClassName) \
-	class ClassName : public KJS::ObjectImp { \
-	public: \
-		ClassName(KJS::ExecState *) : KJS::ObjectImp() { } \
-		KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp *obj) const; \
-		bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
-		KJS::ObjectImp *prototype(KJS::ExecState *exec) const; \
-		\
-		static const KJS::ClassInfo s_classInfo; \
-		static const struct KJS::HashTable s_hashTable; \
-	}; \
-	KJS::ValueImp *get##ClassName(KJS::ExecState *exec);
+    class ClassName : public KJS::ObjectImp { \
+    public: \
+        ClassName(KJS::ExecState *) : KJS::ObjectImp() { } \
+        KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName, const KJS::ObjectImp *obj) const; \
+        bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
+        KJS::ObjectImp *prototype(KJS::ExecState *exec) const; \
+        \
+        static const KJS::ClassInfo s_classInfo; \
+        static const struct KJS::HashTable s_hashTable; \
+    }; \
+    KJS::ValueImp *get##ClassName(KJS::ExecState *exec);
 
 #define ECMA_DEFINE_PROTOTYPE(ClassProto) \
-	class ClassProto : public KJS::ObjectImp { \
-	public: \
-		static KJS::ObjectImp *self(KJS::ExecState *exec); \
-		ClassProto(KJS::ExecState *exec) : KJS::ObjectImp(exec->interpreter()->builtinObjectPrototype()) { } \
-		virtual const KJS::ClassInfo *classInfo() const { return &info; } \
-		static const KJS::ClassInfo info; \
-		KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
-		bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
-		static const struct KJS::HashTable s_hashTable; \
-	};
+    class ClassProto : public KJS::ObjectImp { \
+    public: \
+        static KJS::ObjectImp *self(KJS::ExecState *exec); \
+        ClassProto(KJS::ExecState *exec) : KJS::ObjectImp(exec->interpreter()->builtinObjectPrototype()) { } \
+        virtual const KJS::ClassInfo *classInfo() const { return &info; } \
+        static const KJS::ClassInfo info; \
+        KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
+        bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const; \
+        static const struct KJS::HashTable s_hashTable; \
+    };
 
 #define ECMA_IMPLEMENT_PROTOTYPE(ClassName, ClassProto, ClassFunc) \
-	KJS::ValueImp *ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const { \
-		return KJS::Undefined(); \
-	} \
-	bool ClassProto::hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const { \
-		return KJS::ObjectImp::hasProperty(exec, propertyName); \
-	} \
-	KJS::ObjectImp *ClassProto::self(KJS::ExecState *exec) { \
-		return KJS::cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
-	} \
-	const KJS::ClassInfo ClassProto::info = { ClassName, 0, &s_hashTable, 0 };
+    KJS::ValueImp *ClassProto::get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const { \
+        return KJS::Undefined(); \
+    } \
+    bool ClassProto::hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const { \
+        return KJS::ObjectImp::hasProperty(exec, propertyName); \
+    } \
+    KJS::ObjectImp *ClassProto::self(KJS::ExecState *exec) { \
+        return KJS::cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
+    } \
+    const KJS::ClassInfo ClassProto::info = { ClassName, 0, &s_hashTable, 0 };
 
 #define ECMA_IMPLEMENT_PROTOFUNC(ClassFunc, Class, ClassImpl) \
-	class ClassFunc : public KJS::ObjectImp { \
-	public: \
-		ClassFunc(KJS::ExecState *exec, int i, int len) : KJS::ObjectImp(/* proto? */), id(i) { \
-			put(exec, "length", KJS::Number(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); \
-		} \
-		/** Used by callAsFunction() to check the type of thisObj. Generated code */ \
-		ClassImpl *cast(KJS::ExecState *exec, const KJS::ObjectImp *bridge) const; \
-		\
-		virtual bool implementsCall() const { return true; } \
-		virtual KJS::ValueImp *callAsFunction(KJS::ExecState *exec, KJS::ObjectImp *thisObj, const KJS::List &args); \
-		\
-	private: \
-		int id; \
-	};
+    class ClassFunc : public KJS::ObjectImp { \
+    public: \
+        ClassFunc(KJS::ExecState *exec, int i, int len) : KJS::ObjectImp(/* proto? */), id(i) { \
+            put(exec, "length", KJS::Number(len), KJS::DontDelete | KJS::ReadOnly | KJS::DontEnum); \
+        } \
+        /** Used by callAsFunction() to check the type of thisObj. Generated code */ \
+        ClassImpl *cast(KJS::ExecState *exec, const KJS::ObjectImp *bridge) const; \
+        \
+        virtual bool implementsCall() const { return true; } \
+        virtual KJS::ValueImp *callAsFunction(KJS::ExecState *exec, KJS::ObjectImp *thisObj, const KJS::List &args); \
+        \
+    private: \
+        int id; \
+    };
 
 // To be used when casting the type of an argument
 // TODO: sync with khtml's check! (is a bit different...)
 #define KDOM_CHECK(ClassName, theObj) \
-	ClassName obj = cast(exec, theObj); \
-	if(obj == ClassName::null) { \
-		kdDebug(26004) << k_funcinfo << " Wrong object type: expected " \
-					   << ClassName::s_classInfo.className << " got " \
-					   << thisObj->classInfo()->className << endl; \
-		ObjectImp *err = throwError(exec,TypeError); \
-		return err; \
-	}
+    ClassName obj = cast(exec, theObj); \
+    if(obj == ClassName::null) { \
+        kdDebug(26004) << k_funcinfo << " Wrong object type: expected " \
+                       << ClassName::s_classInfo.className << " got " \
+                       << thisObj->classInfo()->className << endl; \
+        ObjectImp *err = throwError(exec,TypeError); \
+        return err; \
+    }
 
 // To be used in all callAsFunction() implementations!
 // Can't use if (!thisObj.inherits(&ClassName::s_classInfo) since we don't

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,30 +25,30 @@
 
 namespace KDOM
 {
-	class AttributeImpl;
+    class AttributeImpl;
 };
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
+    class SVGAnimatedStringImpl;
 
-	class SVGURIReferenceImpl
-	{
-	public:
-		SVGURIReferenceImpl();
-		virtual ~SVGURIReferenceImpl();
+    class SVGURIReferenceImpl
+    {
+    public:
+        SVGURIReferenceImpl();
+        virtual ~SVGURIReferenceImpl();
 
-		// 'SVGURIReference' functions
-		virtual SVGAnimatedStringImpl *href() const;
+        // 'SVGURIReference' functions
+        virtual SVGAnimatedStringImpl *href() const;
 
-		bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseAttribute(KDOM::AttributeImpl *attr);
 
-		// Helpers
-		static QString getTarget(const QString &url);
+        // Helpers
+        static QString getTarget(const QString &url);
 
-	private:
-		mutable SVGAnimatedStringImpl *m_href;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_href;
+    };
 };
 
 #endif

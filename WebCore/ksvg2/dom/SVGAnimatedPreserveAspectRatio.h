@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatioImpl;
-	class SVGAnimatedPreserveAspectRatio
-	{
-	public:
-		SVGAnimatedPreserveAspectRatio();
-		explicit SVGAnimatedPreserveAspectRatio(SVGAnimatedPreserveAspectRatioImpl *i);
-		SVGAnimatedPreserveAspectRatio(const SVGAnimatedPreserveAspectRatio &other);
-		virtual ~SVGAnimatedPreserveAspectRatio();
+    class SVGAnimatedPreserveAspectRatioImpl;
+    class SVGAnimatedPreserveAspectRatio
+    {
+    public:
+        SVGAnimatedPreserveAspectRatio();
+        explicit SVGAnimatedPreserveAspectRatio(SVGAnimatedPreserveAspectRatioImpl *i);
+        SVGAnimatedPreserveAspectRatio(const SVGAnimatedPreserveAspectRatio &other);
+        virtual ~SVGAnimatedPreserveAspectRatio();
 
-		// Operators
-		SVGAnimatedPreserveAspectRatio &operator=(const SVGAnimatedPreserveAspectRatio &other);
-		bool operator==(const SVGAnimatedPreserveAspectRatio &other) const;
-		bool operator!=(const SVGAnimatedPreserveAspectRatio &other) const;
+        // Operators
+        SVGAnimatedPreserveAspectRatio &operator=(const SVGAnimatedPreserveAspectRatio &other);
+        bool operator==(const SVGAnimatedPreserveAspectRatio &other) const;
+        bool operator!=(const SVGAnimatedPreserveAspectRatio &other) const;
 
-		// 'SVGAnimatedPreserveAspectRatio' functions
-		SVGPreserveAspectRatio baseVal() const;
-		SVGPreserveAspectRatio animVal() const;
+        // 'SVGAnimatedPreserveAspectRatio' functions
+        SVGPreserveAspectRatio baseVal() const;
+        SVGPreserveAspectRatio animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedPreserveAspectRatio)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedPreserveAspectRatio)
 
-	protected:
-		SVGAnimatedPreserveAspectRatioImpl *impl;
+    protected:
+        SVGAnimatedPreserveAspectRatioImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

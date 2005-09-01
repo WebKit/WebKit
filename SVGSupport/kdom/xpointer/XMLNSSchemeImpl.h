@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,19 +30,19 @@ namespace KDOM
 
 namespace XPointer
 {
-	class NBC;
+    class NBC;
 
-	/**
-	 * An implementation of the xmlns() scheme: http://www.w3.org/TR/xptr-xmlns/
-	 *
-	 * @author Frans Englich <frans.englich@telia.com>
-	 */
-	class XMLNSSchemeImpl : public NBCImpl
-	{
-	public:
-		XMLNSSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
-		virtual ~XMLNSSchemeImpl();
-	};
+    /**
+     * An implementation of the xmlns() scheme: http://www.w3.org/TR/xptr-xmlns/
+     *
+     * @author Frans Englich <frans.englich@telia.com>
+     */
+    class XMLNSSchemeImpl : public NBCImpl
+    {
+    public:
+        XMLNSSchemeImpl(DOMStringImpl *schemeData, NBCImpl *nbc);
+        virtual ~XMLNSSchemeImpl();
+    };
 };
 
 };

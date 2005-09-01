@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,46 +34,46 @@
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatio;
-	class SVGAnimatedLength;
-	class SVGImageElementImpl;
-	class SVGImageElement : public SVGElement,
-						    public SVGTests,
-						    public SVGLangSpace,
-						    public SVGExternalResourcesRequired,
-						    public SVGStylable,
-						    public SVGTransformable,
-							public SVGURIReference
-	{
-	public:
-		SVGImageElement();
-		explicit SVGImageElement(SVGImageElementImpl *i);
-		SVGImageElement(const SVGImageElement &other);
-		SVGImageElement(const KDOM::Node &other);
-		virtual ~SVGImageElement();
+    class SVGAnimatedPreserveAspectRatio;
+    class SVGAnimatedLength;
+    class SVGImageElementImpl;
+    class SVGImageElement : public SVGElement,
+                            public SVGTests,
+                            public SVGLangSpace,
+                            public SVGExternalResourcesRequired,
+                            public SVGStylable,
+                            public SVGTransformable,
+                            public SVGURIReference
+    {
+    public:
+        SVGImageElement();
+        explicit SVGImageElement(SVGImageElementImpl *i);
+        SVGImageElement(const SVGImageElement &other);
+        SVGImageElement(const KDOM::Node &other);
+        virtual ~SVGImageElement();
 
-		// Operators
-		SVGImageElement &operator=(const SVGImageElement &other);
-		SVGImageElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGImageElement &operator=(const SVGImageElement &other);
+        SVGImageElement &operator=(const KDOM::Node &other);
 
-		// 'SVGImageElement' functions
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
+        // 'SVGImageElement' functions
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
 
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
 
-		SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
+        SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGImageElement)
+        // Internal
+        KSVG_INTERNAL(SVGImageElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

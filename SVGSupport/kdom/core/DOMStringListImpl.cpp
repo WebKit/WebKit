@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,12 +35,12 @@ DOMStringListImpl::~DOMStringListImpl()
 
 DOMStringImpl *DOMStringListImpl::item(unsigned long index)
 {
-	return getItem(index);
+    return getItem(index);
 }
 
 unsigned long DOMStringListImpl::length() const
 {
-	return numberOfItems();
+    return numberOfItems();
 }
 
 // vim:ts=4:noet

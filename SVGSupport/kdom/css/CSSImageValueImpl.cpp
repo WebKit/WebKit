@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,29 +32,29 @@ using namespace KDOM;
 CSSImageValueImpl::CSSImageValueImpl(CDFInterface *interface)
 : CSSPrimitiveValueImpl(interface, CSS_VAL_NONE), CachedObjectClient()
 {
-	m_image = 0;
+    m_image = 0;
 }
 
 CSSImageValueImpl::CSSImageValueImpl(CDFInterface *interface, const KURL &url, const StyleBaseImpl *style)
 : CSSPrimitiveValueImpl(interface, DOMString(url.url()).handle(), CSS_URI), CachedObjectClient()
 {
-	DocumentLoader *docLoader = 0;
-	const StyleBaseImpl *root = style;
-	while(root->parent())
-		root = root->parent();
+    DocumentLoader *docLoader = 0;
+    const StyleBaseImpl *root = style;
+    while(root->parent())
+        root = root->parent();
 
-	if(root->isCSSStyleSheet())
-		docLoader = static_cast<const CSSStyleSheetImpl *>(root)->doc()->docLoader();
+    if(root->isCSSStyleSheet())
+        docLoader = static_cast<const CSSStyleSheetImpl *>(root)->doc()->docLoader();
 
-	m_image = docLoader->requestImage(url);
-	if(m_image)
-		m_image->ref(this);
+    m_image = docLoader->requestImage(url);
+    if(m_image)
+        m_image->ref(this);
 }
 
 CSSImageValueImpl::~CSSImageValueImpl()
 {
-	if(m_image)
-		m_image->deref(this);
+    if(m_image)
+        m_image->deref(this);
 }
 
 // vim:ts=4:noet

@@ -27,31 +27,31 @@
 
 namespace KSVG
 {
-	class CDFInterface : public KDOM::CDFInterface
-	{
-	public:
-		CDFInterface();
-		virtual ~CDFInterface();
+    class CDFInterface : public KDOM::CDFInterface
+    {
+    public:
+        CDFInterface();
+        virtual ~CDFInterface();
 
-		// CSS values/properties
-		virtual const char *getValueName(KDOM::NodeImpl::Id id) const;
-		virtual const char *getPropertyName(KDOM::NodeImpl::Id id) const;
-		
-		virtual int getValueID(const char *valStr, int len) const;
-		virtual int getPropertyID(const char *propStr, int len) const;
+        // CSS values/properties
+        virtual const char *getValueName(KDOM::NodeImpl::Id id) const;
+        virtual const char *getPropertyName(KDOM::NodeImpl::Id id) const;
+        
+        virtual int getValueID(const char *valStr, int len) const;
+        virtual int getPropertyID(const char *propStr, int len) const;
 
-		virtual KDOM::RenderStyle *renderStyle() const;
+        virtual KDOM::RenderStyle *renderStyle() const;
 
-		// XML tags/attributes 
-		virtual const char *getTagName(KDOM::NodeImpl::Id id) const;
-		virtual const char *getAttrName(KDOM::NodeImpl::Id id) const;
-		
-		virtual int getTagID(const char *tagStr, int len) const;
-		virtual int getAttrID(const char *attrStr, int len) const;
+        // XML tags/attributes 
+        virtual const char *getTagName(KDOM::NodeImpl::Id id) const;
+        virtual const char *getAttrName(KDOM::NodeImpl::Id id) const;
+        
+        virtual int getTagID(const char *tagStr, int len) const;
+        virtual int getAttrID(const char *attrStr, int len) const;
 
-		// EcmaScript interface
-		//virtual KDOM::GlobalObject *globalObject(KDOM::DocumentImpl *doc) const;
-	};
+        // EcmaScript interface
+        //virtual KDOM::GlobalObject *globalObject(KDOM::DocumentImpl *doc) const;
+    };
 };
 
 #endif

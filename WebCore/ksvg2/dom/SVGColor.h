@@ -31,43 +31,43 @@ class KCanvasItem;
 
 namespace KDOM
 {
-	class RGBColor;
+    class RGBColor;
 };
 
 namespace KSVG
 {
-	class SVGColorImpl;
-	class SVGColor : public KDOM::CSSValue
-	{
-	public:
-		SVGColor();
-		explicit SVGColor(SVGColorImpl *i);
-		SVGColor(const SVGColor &other);
-		SVGColor(const KDOM::CSSValue &other);
-		virtual ~SVGColor();
+    class SVGColorImpl;
+    class SVGColor : public KDOM::CSSValue
+    {
+    public:
+        SVGColor();
+        explicit SVGColor(SVGColorImpl *i);
+        SVGColor(const SVGColor &other);
+        SVGColor(const KDOM::CSSValue &other);
+        virtual ~SVGColor();
 
-		// Operators
-		SVGColor &operator=(const SVGColor &other);
-		SVGColor &operator=(const KDOM::CSSValue &other);
+        // Operators
+        SVGColor &operator=(const SVGColor &other);
+        SVGColor &operator=(const KDOM::CSSValue &other);
 
-		// 'SVGColor' functions
-		unsigned short colorType() const;
+        // 'SVGColor' functions
+        unsigned short colorType() const;
 
-		KDOM::RGBColor rgbColor() const;
+        KDOM::RGBColor rgbColor() const;
 
-		void setRGBColor(const KDOM::DOMString &rgbColor);
-		void setRGBColorICCColor(const KDOM::DOMString &rgbColor, const KDOM::DOMString &iccColor);
-		void setColor(unsigned short colorType, const KDOM::DOMString &rgbColor, const KDOM::DOMString &iccColor);
+        void setRGBColor(const KDOM::DOMString &rgbColor);
+        void setRGBColorICCColor(const KDOM::DOMString &rgbColor, const KDOM::DOMString &iccColor);
+        void setColor(unsigned short colorType, const KDOM::DOMString &rgbColor, const KDOM::DOMString &iccColor);
 
-		// Internal
-		KSVG_INTERNAL(SVGColor)
+        // Internal
+        KSVG_INTERNAL(SVGColor)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGColorProto)

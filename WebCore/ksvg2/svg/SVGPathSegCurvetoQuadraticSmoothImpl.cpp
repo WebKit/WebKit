@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegCurvetoQuadraticSmoothAbsImpl::SVGPathSegCurvetoQuadraticSmoothAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = 0.0;
+    m_x = m_y = 0.0;
 }
 
 SVGPathSegCurvetoQuadraticSmoothAbsImpl::~SVGPathSegCurvetoQuadraticSmoothAbsImpl()
@@ -37,28 +37,28 @@ SVGPathSegCurvetoQuadraticSmoothAbsImpl::~SVGPathSegCurvetoQuadraticSmoothAbsImp
 
 void SVGPathSegCurvetoQuadraticSmoothAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticSmoothAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoQuadraticSmoothAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticSmoothAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 
@@ -66,7 +66,7 @@ double SVGPathSegCurvetoQuadraticSmoothAbsImpl::y() const
 SVGPathSegCurvetoQuadraticSmoothRelImpl::SVGPathSegCurvetoQuadraticSmoothRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = 0.0;
+    m_x = m_y = 0.0;
 }
 
 SVGPathSegCurvetoQuadraticSmoothRelImpl::~SVGPathSegCurvetoQuadraticSmoothRelImpl()
@@ -75,28 +75,28 @@ SVGPathSegCurvetoQuadraticSmoothRelImpl::~SVGPathSegCurvetoQuadraticSmoothRelImp
 
 void SVGPathSegCurvetoQuadraticSmoothRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticSmoothRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoQuadraticSmoothRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoQuadraticSmoothRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 // vim:ts=4:noet

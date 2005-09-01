@@ -32,40 +32,40 @@
 
 class Function : public Expression
 {
-	public:
-		void setArguments( const QValueList<Expression *> &args );
-		void setName( const QString &name );
+    public:
+        void setArguments( const QValueList<Expression *> &args );
+        void setName( const QString &name );
 
-		virtual QString dump() const;
+        virtual QString dump() const;
 
-	protected:
-		Expression *arg( int pos );
-		const Expression *arg( int pos ) const;
-		unsigned int argCount() const;
-		QString name() const;
+    protected:
+        Expression *arg( int pos );
+        const Expression *arg( int pos ) const;
+        unsigned int argCount() const;
+        QString name() const;
 
-	private:
-		QString m_name;
+    private:
+        QString m_name;
 };
 
 class FunctionLibrary
 {
-	friend class FunctionLibraryDeleter;
-	public:
-		static FunctionLibrary &self();
+    friend class FunctionLibraryDeleter;
+    public:
+        static FunctionLibrary &self();
 
-		Function *getFunction( const char *name,
-		                       const QValueList<Expression *> &args = QValueList<Expression *>() ) const;
+        Function *getFunction( const char *name,
+                               const QValueList<Expression *> &args = QValueList<Expression *>() ) const;
 
-	private:
-		struct FunctionRec;
+    private:
+        struct FunctionRec;
 
-		FunctionLibrary();
-		FunctionLibrary( const FunctionLibrary &rhs );
-		FunctionLibrary &operator=( const FunctionLibrary &rhs );
+        FunctionLibrary();
+        FunctionLibrary( const FunctionLibrary &rhs );
+        FunctionLibrary &operator=( const FunctionLibrary &rhs );
 
-		static FunctionLibrary *s_instance;
-		QDict<FunctionRec> m_functionDict;
+        static FunctionLibrary *s_instance;
+        QDict<FunctionRec> m_functionDict;
 };
 
 #endif // FUNCTIONS_H

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -31,64 +31,64 @@
 
 namespace KDOM
 {
-	class KDOMView;
-	class DOMString;
-	class LSInputImpl;
-	class LSOutputImpl;
-	class LSParserImpl;
-	class DocumentImpl;
-	class CDFInterface;
-	class DOMObjectImpl;
-	class DOMStringImpl;
-	class LSSerializerImpl;
-	class DocumentTypeImpl;
-	class CSSStyleSheetImpl;
+    class KDOMView;
+    class DOMString;
+    class LSInputImpl;
+    class LSOutputImpl;
+    class LSParserImpl;
+    class DocumentImpl;
+    class CDFInterface;
+    class DOMObjectImpl;
+    class DOMStringImpl;
+    class LSSerializerImpl;
+    class DocumentTypeImpl;
+    class CSSStyleSheetImpl;
 
-	class DOMImplementationImpl 
-	{
-	public:
-		DOMImplementationImpl();
-		virtual ~DOMImplementationImpl();
+    class DOMImplementationImpl 
+    {
+    public:
+        DOMImplementationImpl();
+        virtual ~DOMImplementationImpl();
 
-		static DOMImplementationImpl *self();
+        static DOMImplementationImpl *self();
 
-		// Gives access to shared css/ecma/... handler
-		CDFInterface *cdfInterface() const;
+        // Gives access to shared css/ecma/... handler
+        CDFInterface *cdfInterface() const;
 
-		// 'DOMImplementationImpl' functions
-		virtual bool hasFeature(DOMStringImpl *feature, DOMStringImpl *version) const; // DOM Level 2
-		virtual DOMObjectImpl *getFeature(DOMStringImpl *feature, DOMStringImpl *version) const; // DOM Level 3
+        // 'DOMImplementationImpl' functions
+        virtual bool hasFeature(DOMStringImpl *feature, DOMStringImpl *version) const; // DOM Level 2
+        virtual DOMObjectImpl *getFeature(DOMStringImpl *feature, DOMStringImpl *version) const; // DOM Level 3
 
-		virtual DocumentTypeImpl *createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId) const;
+        virtual DocumentTypeImpl *createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId) const;
 
-		/**
-		 * @param createDocElement this is outside the specification, and is used internally for avoiding
-		 * creating document elements even if a @p qualifiedName and @p namespaceURI is supplied. If true,
-		 * it follows the specification, e.g, creates an element if the other arguments allows so.
-		 */
-		virtual DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement = false, KDOMView *view = 0) const;
+        /**
+         * @param createDocElement this is outside the specification, and is used internally for avoiding
+         * creating document elements even if a @p qualifiedName and @p namespaceURI is supplied. If true,
+         * it follows the specification, e.g, creates an element if the other arguments allows so.
+         */
+        virtual DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement = false, KDOMView *view = 0) const;
 
-		virtual CSSStyleSheetImpl *createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
+        virtual CSSStyleSheetImpl *createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
 
-		virtual LSParserImpl *createLSParser(unsigned short mode, DOMStringImpl *schemaType) const;
-		virtual LSInputImpl *createLSInput() const;
-		virtual LSOutputImpl *createLSOutput() const;
-		virtual LSSerializerImpl *createLSSerializer() const;
+        virtual LSParserImpl *createLSParser(unsigned short mode, DOMStringImpl *schemaType) const;
+        virtual LSInputImpl *createLSInput() const;
+        virtual LSOutputImpl *createLSOutput() const;
+        virtual LSSerializerImpl *createLSSerializer() const;
 
-		// Map events to types...
-		virtual int typeToId(DOMStringImpl *type);
-		virtual DOMStringImpl *idToType(int id);
+        // Map events to types...
+        virtual int typeToId(DOMStringImpl *type);
+        virtual DOMStringImpl *idToType(int id);
 
-		virtual DocumentTypeImpl *defaultDocumentType() const;
+        virtual DocumentTypeImpl *defaultDocumentType() const;
 
-	protected:
-		virtual CDFInterface *createCDFInterface() const;
+    protected:
+        virtual CDFInterface *createCDFInterface() const;
 
-	private:
-		mutable CDFInterface *m_cdfInterface;
+    private:
+        mutable CDFInterface *m_cdfInterface;
 
-		static DOMImplementationImpl *s_instance;
-	};
+        static DOMImplementationImpl *s_instance;
+    };
 };
 
 #endif

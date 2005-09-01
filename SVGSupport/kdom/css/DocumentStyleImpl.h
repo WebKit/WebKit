@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,19 +25,19 @@
 
 namespace KDOM
 {
-	class StyleSheetListImpl;
-	class DocumentStyleImpl
-	{
-	public:
-		DocumentStyleImpl();
-		virtual ~DocumentStyleImpl();
+    class StyleSheetListImpl;
+    class DocumentStyleImpl
+    {
+    public:
+        DocumentStyleImpl();
+        virtual ~DocumentStyleImpl();
 
-		// 'DocumentStyleImpl' functions
-		virtual StyleSheetListImpl *styleSheets() const;
+        // 'DocumentStyleImpl' functions
+        virtual StyleSheetListImpl *styleSheets() const;
 
-	protected:
-		mutable StyleSheetListImpl *m_styleSheets;
-	};
+    protected:
+        mutable StyleSheetListImpl *m_styleSheets;
+    };
 };
 
 #endif

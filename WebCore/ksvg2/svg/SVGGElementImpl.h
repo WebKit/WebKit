@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,33 +31,33 @@
 
 namespace KSVG
 {
-	class SVGGElementImpl : public SVGStyledElementImpl,
-							public SVGTestsImpl,
-							public SVGLangSpaceImpl,
-							public SVGExternalResourcesRequiredImpl,
-							public SVGTransformableImpl
-	{
-	public:
-		SVGGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGGElementImpl();
+    class SVGGElementImpl : public SVGStyledElementImpl,
+                            public SVGTestsImpl,
+                            public SVGLangSpaceImpl,
+                            public SVGExternalResourcesRequiredImpl,
+                            public SVGTransformableImpl
+    {
+    public:
+        SVGGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGGElementImpl();
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual void setChanged(bool b = true, bool deep = false);
-	};
+        virtual void setChanged(bool b = true, bool deep = false);
+    };
 
-	class SVGDummyElementImpl : public SVGGElementImpl
-	{
-	public:
-		SVGDummyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGDummyElementImpl();
+    class SVGDummyElementImpl : public SVGGElementImpl
+    {
+    public:
+        SVGDummyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGDummyElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual KDOM::DOMStringImpl *localName() const;
-	};
+        // Derived from: 'ElementImpl'
+        virtual KDOM::DOMStringImpl *localName() const;
+    };
 };
 
 #endif

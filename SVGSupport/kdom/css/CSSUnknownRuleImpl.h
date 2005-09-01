@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,14 +27,14 @@
 
 namespace KDOM
 {
-	class CSSUnknownRuleImpl : public CSSRuleImpl
-	{
-	public:
-		CSSUnknownRuleImpl(StyleBaseImpl *parent);
-		virtual ~CSSUnknownRuleImpl();
+    class CSSUnknownRuleImpl : public CSSRuleImpl
+    {
+    public:
+        CSSUnknownRuleImpl(StyleBaseImpl *parent);
+        virtual ~CSSUnknownRuleImpl();
 
-		virtual bool isUnknownRule() const { return true; }
-	};
+        virtual bool isUnknownRule() const { return true; }
+    };
 };
 
 #endif

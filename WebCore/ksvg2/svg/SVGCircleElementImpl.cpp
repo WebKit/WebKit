@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,86 +35,86 @@ using namespace KSVG;
 SVGCircleElementImpl::SVGCircleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
 {
-	m_cx = m_cy = m_r = 0;
+    m_cx = m_cy = m_r = 0;
 }
 
 SVGCircleElementImpl::~SVGCircleElementImpl()
 {
-	if(m_cx)
-		m_cx->deref();
-	if(m_cy)
-		m_cy->deref();
-	if(m_r)
-		m_r->deref();
+    if(m_cx)
+        m_cx->deref();
+    if(m_cy)
+        m_cy->deref();
+    if(m_r)
+        m_r->deref();
 }
 
 SVGAnimatedLengthImpl *SVGCircleElementImpl::cx() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_cx, this, LM_WIDTH, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_cx, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGCircleElementImpl::cy() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_cy, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_cy, this, LM_HEIGHT, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGCircleElementImpl::r() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_r, this, LM_OTHER, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_r, this, LM_OTHER, viewportElement());
 }
 
 void SVGCircleElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMStringImpl *value = attr->value();
-	switch(id)
-	{
-		case ATTR_CX:
-		{
-			cx()->baseVal()->setValueAsString(value);
-			break;
-		}
-		case ATTR_CY:
-		{
-			cy()->baseVal()->setValueAsString(value);
-			break;
-		}
-		case ATTR_R:
-		{
-			r()->baseVal()->setValueAsString(value);
-			break;
-		}
-		default:
-		{
-			if(SVGTestsImpl::parseAttribute(attr)) return;
-			if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-			if(SVGTransformableImpl::parseAttribute(attr)) return;
-			
-			SVGStyledElementImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMStringImpl *value = attr->value();
+    switch(id)
+    {
+        case ATTR_CX:
+        {
+            cx()->baseVal()->setValueAsString(value);
+            break;
+        }
+        case ATTR_CY:
+        {
+            cy()->baseVal()->setValueAsString(value);
+            break;
+        }
+        case ATTR_R:
+        {
+            r()->baseVal()->setValueAsString(value);
+            break;
+        }
+        default:
+        {
+            if(SVGTestsImpl::parseAttribute(attr)) return;
+            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+            if(SVGTransformableImpl::parseAttribute(attr)) return;
+            
+            SVGStyledElementImpl::parseAttribute(attr);
+        }
+    };
 }
 
 KCPathDataList SVGCircleElementImpl::toPathData() const
 {
-	float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
-	float _r = r()->baseVal()->value();
+    float _cx = cx()->baseVal()->value(), _cy = cy()->baseVal()->value();
+    float _r = r()->baseVal()->value();
 
-	return KCanvasCreator::self()->createCircle(_cx, _cy, _r);
+    return KCanvasCreator::self()->createCircle(_cx, _cy, _r);
 }
 
 const SVGStyledElementImpl *SVGCircleElementImpl::pushAttributeContext(const SVGStyledElementImpl *context)
 {
-	// All attribute's contexts are equal (so just take the one from 'cx').
-	const SVGStyledElementImpl *restore = cx()->baseVal()->context();
+    // All attribute's contexts are equal (so just take the one from 'cx').
+    const SVGStyledElementImpl *restore = cx()->baseVal()->context();
 
-	cx()->baseVal()->setContext(context);
-	cy()->baseVal()->setContext(context);
-	r()->baseVal()->setContext(context);
-	
-	SVGStyledElementImpl::pushAttributeContext(context);
-	return restore;
+    cx()->baseVal()->setContext(context);
+    cy()->baseVal()->setContext(context);
+    r()->baseVal()->setContext(context);
+    
+    SVGStyledElementImpl::pushAttributeContext(context);
+    return restore;
 }
 
 // vim:ts=4:noet

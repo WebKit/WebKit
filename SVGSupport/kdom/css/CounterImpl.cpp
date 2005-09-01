@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,52 +28,52 @@ using namespace KDOM;
 
 CounterImpl::CounterImpl() : Shared()
 {
-	m_listStyle = 0;
-	m_separator = 0;
-	m_identifier = 0;
+    m_listStyle = 0;
+    m_separator = 0;
+    m_identifier = 0;
 }
 
 CounterImpl::~CounterImpl()
 {
-	if(m_separator)
-		m_separator->deref();
-	if(m_identifier)
-		m_identifier->deref();
+    if(m_separator)
+        m_separator->deref();
+    if(m_identifier)
+        m_identifier->deref();
 }
 
 DOMStringImpl *CounterImpl::identifier() const
 {
-	return m_identifier;
+    return m_identifier;
 }
 
 void CounterImpl::setIdentifier(DOMStringImpl *value)
 {
-	KDOM_SAFE_SET(m_identifier, value);
+    KDOM_SAFE_SET(m_identifier, value);
 }
 
 unsigned int CounterImpl::listStyleInt() const
 {
-	return m_listStyle;
+    return m_listStyle;
 }
 
 DOMStringImpl *CounterImpl::listStyle() const
 {
-	return CSSHelper::stringForListStyleType((EListStyleType) m_listStyle);
+    return CSSHelper::stringForListStyleType((EListStyleType) m_listStyle);
 }
 
 void CounterImpl::setListStyle(unsigned int value)
 {
-	m_listStyle = value;
+    m_listStyle = value;
 }
 
 DOMStringImpl *CounterImpl::separator() const
 {
-	return m_separator;
+    return m_separator;
 }
 
 void CounterImpl::setSeparator(DOMStringImpl *value)
 {
-	KDOM_SAFE_SET(m_separator, value);
+    KDOM_SAFE_SET(m_separator, value);
 }
 
 // vim:ts=4:noet

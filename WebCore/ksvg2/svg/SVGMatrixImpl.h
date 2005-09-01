@@ -29,74 +29,74 @@
 
 namespace KSVG
 {
-	class SVGMatrixImpl : public KDOM::Shared
-	{ 
-	public:
-		SVGMatrixImpl();
-		SVGMatrixImpl(double a, double b, double c, double d, double e, double f);
-		SVGMatrixImpl(QWMatrix mat);
-		virtual ~SVGMatrixImpl();
+    class SVGMatrixImpl : public KDOM::Shared
+    { 
+    public:
+        SVGMatrixImpl();
+        SVGMatrixImpl(double a, double b, double c, double d, double e, double f);
+        SVGMatrixImpl(QWMatrix mat);
+        virtual ~SVGMatrixImpl();
 
-		void setA(double a);
-		double a() const;
+        void setA(double a);
+        double a() const;
 
-		void setB(double b);
-		double b() const;
+        void setB(double b);
+        double b() const;
 
-		void setC(double c);
-		double c() const;
+        void setC(double c);
+        double c() const;
 
-		void setD(double d);
-		double d() const;
+        void setD(double d);
+        double d() const;
 
-		void setE(double e);
-		double e() const;
+        void setE(double e);
+        double e() const;
 
-		void setF(double f);
-		double f() const;
+        void setF(double f);
+        double f() const;
 
-		void copy(const SVGMatrixImpl *other);
+        void copy(const SVGMatrixImpl *other);
 
-		SVGMatrixImpl *inverse();
+        SVGMatrixImpl *inverse();
 
-		// Pre-multiplied operations, as per the specs.
-		SVGMatrixImpl *multiply(const SVGMatrixImpl *secondMatrix);
-		SVGMatrixImpl *translate(double x, double y);
-		SVGMatrixImpl *scale(double scaleFactor);
-		SVGMatrixImpl *scaleNonUniform(double scaleFactorX, double scaleFactorY);
-		SVGMatrixImpl *rotate(double angle);
-		SVGMatrixImpl *rotateFromVector(double x, double y);
-		SVGMatrixImpl *flipX();
-		SVGMatrixImpl *flipY();
-		SVGMatrixImpl *skewX(double angle);
-		SVGMatrixImpl *skewY(double angle);
+        // Pre-multiplied operations, as per the specs.
+        SVGMatrixImpl *multiply(const SVGMatrixImpl *secondMatrix);
+        SVGMatrixImpl *translate(double x, double y);
+        SVGMatrixImpl *scale(double scaleFactor);
+        SVGMatrixImpl *scaleNonUniform(double scaleFactorX, double scaleFactorY);
+        SVGMatrixImpl *rotate(double angle);
+        SVGMatrixImpl *rotateFromVector(double x, double y);
+        SVGMatrixImpl *flipX();
+        SVGMatrixImpl *flipY();
+        SVGMatrixImpl *skewX(double angle);
+        SVGMatrixImpl *skewY(double angle);
 
-		// Post-multiplied operations
-		SVGMatrixImpl *postMultiply(const SVGMatrixImpl *secondMatrix);
-		SVGMatrixImpl *postTranslate(double x, double y);
-		SVGMatrixImpl *postScale(double scaleFactor);
-		SVGMatrixImpl *postScaleNonUniform(double scaleFactorX, double scaleFactorY);
-		SVGMatrixImpl *postRotate(double angle);
-		SVGMatrixImpl *postRotateFromVector(double x, double y);
-		SVGMatrixImpl *postFlipX();
-		SVGMatrixImpl *postFlipY();
-		SVGMatrixImpl *postSkewX(double angle);
-		SVGMatrixImpl *postSkewY(double angle);
+        // Post-multiplied operations
+        SVGMatrixImpl *postMultiply(const SVGMatrixImpl *secondMatrix);
+        SVGMatrixImpl *postTranslate(double x, double y);
+        SVGMatrixImpl *postScale(double scaleFactor);
+        SVGMatrixImpl *postScaleNonUniform(double scaleFactorX, double scaleFactorY);
+        SVGMatrixImpl *postRotate(double angle);
+        SVGMatrixImpl *postRotateFromVector(double x, double y);
+        SVGMatrixImpl *postFlipX();
+        SVGMatrixImpl *postFlipY();
+        SVGMatrixImpl *postSkewX(double angle);
+        SVGMatrixImpl *postSkewY(double angle);
 
-		void reset();
+        void reset();
 
-		// KSVG helper method
-		QWMatrix &qmatrix();
-		const QWMatrix &qmatrix() const;
+        // KSVG helper method
+        QWMatrix &qmatrix();
+        const QWMatrix &qmatrix() const;
 
-		// Determine the scaling component of the matrix and factor it out. After
-		// this operation, the matrix has x and y scale of one.
-		void removeScale(double *xScale, double *yScale);
+        // Determine the scaling component of the matrix and factor it out. After
+        // this operation, the matrix has x and y scale of one.
+        void removeScale(double *xScale, double *yScale);
 
-	private:
-		void setMatrix(QWMatrix mat);
-		QWMatrix m_mat;
-	};
+    private:
+        void setMatrix(QWMatrix mat);
+        QWMatrix m_mat;
+    };
 };
 
 #endif

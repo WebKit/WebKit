@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,33 +27,33 @@
 
 namespace KDOM
 {
-	class MediaListImpl;
-	class CSSRuleListImpl;
-	class CSSMediaRuleImpl : public CSSRuleImpl
-	{
-	public:
-		CSSMediaRuleImpl(StyleBaseImpl *parent);
-		CSSMediaRuleImpl(StyleBaseImpl *parent, DOMStringImpl *media);
-		CSSMediaRuleImpl(StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList);
-		virtual ~CSSMediaRuleImpl();
+    class MediaListImpl;
+    class CSSRuleListImpl;
+    class CSSMediaRuleImpl : public CSSRuleImpl
+    {
+    public:
+        CSSMediaRuleImpl(StyleBaseImpl *parent);
+        CSSMediaRuleImpl(StyleBaseImpl *parent, DOMStringImpl *media);
+        CSSMediaRuleImpl(StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList);
+        virtual ~CSSMediaRuleImpl();
 
-		// 'CSSMediaRuleImpl' functions
-		MediaListImpl *media() const;
-		CSSRuleListImpl *cssRules() const;
+        // 'CSSMediaRuleImpl' functions
+        MediaListImpl *media() const;
+        CSSRuleListImpl *cssRules() const;
 
-		unsigned long insertRule(DOMStringImpl *rule, unsigned long index);
-		void deleteRule(unsigned long index);
+        unsigned long insertRule(DOMStringImpl *rule, unsigned long index);
+        void deleteRule(unsigned long index);
 
-		// 'CSSRule' functions
-		virtual bool isMediaRule() const { return true; }
+        // 'CSSRule' functions
+        virtual bool isMediaRule() const { return true; }
 
-		// Helper
-		unsigned long append(CSSRuleImpl *rule);
+        // Helper
+        unsigned long append(CSSRuleImpl *rule);
 
-	protected:
-		MediaListImpl *m_lstMedia;
-		CSSRuleListImpl *m_lstCSSRules;
-	};
+    protected:
+        MediaListImpl *m_lstMedia;
+        CSSRuleListImpl *m_lstCSSRules;
+    };
 };
 
 #endif

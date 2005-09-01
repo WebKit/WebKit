@@ -27,49 +27,49 @@
 
 namespace KSVG
 {
-	class SVGRectImpl;
-	class SVGRect
-	{
-	public:
-		SVGRect();
-		SVGRect(SVGRectImpl *p);
-		SVGRect(const SVGRect &other);
-		virtual ~SVGRect();
+    class SVGRectImpl;
+    class SVGRect
+    {
+    public:
+        SVGRect();
+        SVGRect(SVGRectImpl *p);
+        SVGRect(const SVGRect &other);
+        virtual ~SVGRect();
 
-		// Operators
-		SVGRect &operator=(const SVGRect &other);
-		bool operator==(const SVGRect &other) const;
-		bool operator!=(const SVGRect &other) const;
+        // Operators
+        SVGRect &operator=(const SVGRect &other);
+        bool operator==(const SVGRect &other) const;
+        bool operator!=(const SVGRect &other) const;
 
-		// 'SVGRect' functions
-		double x() const;
-		void setX(double value);
+        // 'SVGRect' functions
+        double x() const;
+        void setX(double value);
 
-		double y() const;
-		void setY(double value);
+        double y() const;
+        void setY(double value);
 
-		double width() const;
-		void setWidth(double value);
+        double width() const;
+        void setWidth(double value);
 
-		double height() const;
-		void setHeight(double value);
+        double height() const;
+        void setHeight(double value);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGRect)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGRect)
 
-	protected:
-		SVGRectImpl *impl;
+    protected:
+        SVGRectImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	KDOM_DEFINE_CAST(SVGRect)
+    KDOM_DEFINE_CAST(SVGRect)
 };
 
 #endif

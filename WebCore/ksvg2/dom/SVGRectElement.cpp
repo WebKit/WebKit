@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,39 +41,39 @@ using namespace KSVG;
 
 /*
 @begin SVGRectElement::s_hashTable 7
- x		SVGRectElementConstants::X		DontDelete|ReadOnly
- y		SVGRectElementConstants::Y		DontDelete|ReadOnly
- width	SVGRectElementConstants::Width	DontDelete|ReadOnly
- height	SVGRectElementConstants::Height	DontDelete|ReadOnly
- rx		SVGRectElementConstants::Rx		DontDelete|ReadOnly
- ry		SVGRectElementConstants::Ry		DontDelete|ReadOnly
+ x        SVGRectElementConstants::X        DontDelete|ReadOnly
+ y        SVGRectElementConstants::Y        DontDelete|ReadOnly
+ width    SVGRectElementConstants::Width    DontDelete|ReadOnly
+ height    SVGRectElementConstants::Height    DontDelete|ReadOnly
+ rx        SVGRectElementConstants::Rx        DontDelete|ReadOnly
+ ry        SVGRectElementConstants::Ry        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGRectElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGRectElementConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
-		case SVGRectElementConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
-		case SVGRectElementConstants::Width:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
-		case SVGRectElementConstants::Height:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
-		case SVGRectElementConstants::Rx:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, rx());
-		case SVGRectElementConstants::Ry:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, ry());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGRectElementConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
+        case SVGRectElementConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
+        case SVGRectElementConstants::Width:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
+        case SVGRectElementConstants::Height:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
+        case SVGRectElementConstants::Rx:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, rx());
+        case SVGRectElementConstants::Ry:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, ry());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -91,12 +91,12 @@ SVGRectElement::SVGRectElement(SVGRectElementImpl *i) : SVGElement(i), SVGTests(
 
 SVGRectElement::SVGRectElement(const SVGRectElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGRectElement::SVGRectElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGRectElement::~SVGRectElement()
@@ -105,87 +105,87 @@ SVGRectElement::~SVGRectElement()
 
 SVGRectElement &SVGRectElement::operator=(const SVGRectElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGRectElement &SVGRectElement::operator=(const KDOM::Node &other)
 {
-	SVGRectElementImpl *ohandle = static_cast<SVGRectElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGRectElementImpl *ohandle = static_cast<SVGRectElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGRectElement::x() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x());
+    return SVGAnimatedLength(impl->x());
 }
 
 SVGAnimatedLength SVGRectElement::y() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y());
+    return SVGAnimatedLength(impl->y());
 }
 
 SVGAnimatedLength SVGRectElement::width() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->width());
+    return SVGAnimatedLength(impl->width());
 }
 
 SVGAnimatedLength SVGRectElement::height() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->height());
+    return SVGAnimatedLength(impl->height());
 }
 
 SVGAnimatedLength SVGRectElement::rx() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->rx());
+    return SVGAnimatedLength(impl->rx());
 }
 
 SVGAnimatedLength SVGRectElement::ry() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->ry());
+    return SVGAnimatedLength(impl->ry());
 }
 
 // vim:ts=4:noet

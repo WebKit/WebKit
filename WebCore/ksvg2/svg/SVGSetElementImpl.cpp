@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,45 +36,45 @@ SVGSetElementImpl::~SVGSetElementImpl()
 
 void SVGSetElementImpl::handleTimerEvent(double timePercentage)
 {
-	// Start condition.
-	if(!m_connected)
-	{	
-		SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-		if(document)
-		{
-			document->timeScheduler()->connectIntervalTimer(this);
-			m_connected = true;
-		}
+    // Start condition.
+    if(!m_connected)
+    {    
+        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
+        if(document)
+        {
+            document->timeScheduler()->connectIntervalTimer(this);
+            m_connected = true;
+        }
 
-		return;
-	}
+        return;
+    }
 
-	// Calculations...
-	if(timePercentage >= 1.0)
-		timePercentage = 1.0;
+    // Calculations...
+    if(timePercentage >= 1.0)
+        timePercentage = 1.0;
 
-	// Commit change now...
-	if(m_savedTo.isEmpty())
-	{
-		m_savedTo = targetAttribute().string();
-		setTargetAttribute(m_to);
-	}
+    // Commit change now...
+    if(m_savedTo.isEmpty())
+    {
+        m_savedTo = targetAttribute().string();
+        setTargetAttribute(m_to);
+    }
 
-	// End condition.
-	if(timePercentage == 1.0)
-	{
-		SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-		if(document)
-		{
-			document->timeScheduler()->disconnectIntervalTimer(this);
-			m_connected = false;
-		}
+    // End condition.
+    if(timePercentage == 1.0)
+    {
+        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
+        if(document)
+        {
+            document->timeScheduler()->disconnectIntervalTimer(this);
+            m_connected = false;
+        }
 
-		if(!isFrozen())
-			setTargetAttribute(m_savedTo);
+        if(!isFrozen())
+            setTargetAttribute(m_savedTo);
 
-		m_savedTo = QString();
-	}
+        m_savedTo = QString();
+    }
 }
 
 // vim:ts=4:noet

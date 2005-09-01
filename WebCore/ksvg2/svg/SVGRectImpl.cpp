@@ -28,8 +28,8 @@ using namespace KSVG;
 
 SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_context = context;
-	m_x = m_y = m_width = m_height = 0.0;
+    m_context = context;
+    m_x = m_y = m_width = m_height = 0.0;
 }
 
 SVGRectImpl::~SVGRectImpl()
@@ -38,54 +38,54 @@ SVGRectImpl::~SVGRectImpl()
 
 double SVGRectImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGRectImpl::setX(double value)
 {
-	m_x = value;
+    m_x = value;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGRectImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGRectImpl::setY(double value)
 {
-	m_y = value;
+    m_y = value;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGRectImpl::width() const
 {
-	return m_width;
+    return m_width;
 }
 
 void SVGRectImpl::setWidth(double value)
 {
-	m_width = value;
+    m_width = value;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGRectImpl::height() const
 {
-	return m_height;
+    return m_height;
 }
 
 void SVGRectImpl::setHeight(double value)
 {
-	m_height = value;
+    m_height = value;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -33,22 +33,22 @@ using namespace KSVG;
 
 /*
 @begin SVGEvent::s_hashTable 3
- dummy	SVGEventConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGEventConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGEvent::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGEvent SVGEvent::null;
@@ -63,12 +63,12 @@ SVGEvent::SVGEvent(SVGEventImpl *i) : KDOM::Event(i)
 
 SVGEvent::SVGEvent(const SVGEvent &other) : KDOM::Event()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGEvent::SVGEvent(const KDOM::Event &other) : KDOM::Event()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGEvent::~SVGEvent()
@@ -77,8 +77,8 @@ SVGEvent::~SVGEvent()
 
 SVGEvent &SVGEvent::operator=(const SVGEvent &other)
 {
-	KDOM::Event::operator=(other);
-	return *this;
+    KDOM::Event::operator=(other);
+    return *this;
 }
 
 KDOM_EVENT_DERIVED_ASSIGN_OP(SVGEvent, Event, KDOM::TypeLastEvent)

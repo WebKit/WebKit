@@ -27,47 +27,47 @@
 
 namespace KSVG
 {
-	class SVGMatrix;
-	class SVGTransform;
-	class SVGTransformListImpl;
-	class SVGTransformList
-	{
-	public:
-		SVGTransformList();
-		explicit SVGTransformList(SVGTransformListImpl *i);
-		SVGTransformList(const SVGTransformList &other);
-		virtual ~SVGTransformList();
+    class SVGMatrix;
+    class SVGTransform;
+    class SVGTransformListImpl;
+    class SVGTransformList
+    {
+    public:
+        SVGTransformList();
+        explicit SVGTransformList(SVGTransformListImpl *i);
+        SVGTransformList(const SVGTransformList &other);
+        virtual ~SVGTransformList();
 
-		// Operators
-		SVGTransformList &operator=(const SVGTransformList &other);
-		bool operator==(const SVGTransformList &other) const;
-		bool operator!=(const SVGTransformList &other) const;
+        // Operators
+        SVGTransformList &operator=(const SVGTransformList &other);
+        bool operator==(const SVGTransformList &other) const;
+        bool operator!=(const SVGTransformList &other) const;
 
-		// 'SVGTransformList' functions
-		unsigned long numberOfItems() const;
-		void clear();
+        // 'SVGTransformList' functions
+        unsigned long numberOfItems() const;
+        void clear();
 
-		SVGTransform initialize(const SVGTransform &newItem);
-		SVGTransform getItem(unsigned long index);
-		SVGTransform insertItemBefore(const SVGTransform &newItem, unsigned long index);
-		SVGTransform replaceItem(const SVGTransform &newItem, unsigned long index);
-		SVGTransform removeItem(unsigned long index);
-		SVGTransform appendItem(const SVGTransform &newItem);
+        SVGTransform initialize(const SVGTransform &newItem);
+        SVGTransform getItem(unsigned long index);
+        SVGTransform insertItemBefore(const SVGTransform &newItem, unsigned long index);
+        SVGTransform replaceItem(const SVGTransform &newItem, unsigned long index);
+        SVGTransform removeItem(unsigned long index);
+        SVGTransform appendItem(const SVGTransform &newItem);
 
-		SVGTransform createSVGTransformFromMatrix(const SVGMatrix &matrix) const;
-		SVGTransform consolidate();
+        SVGTransform createSVGTransformFromMatrix(const SVGMatrix &matrix) const;
+        SVGTransform consolidate();
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGTransformList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGTransformList)
 
-	protected:
-		SVGTransformListImpl *impl;
+    protected:
+        SVGTransformListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGTransformListProto)

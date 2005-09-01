@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,24 +30,24 @@
 
 namespace KSVG
 {
-	class SVGStringListImpl;
-	class SVGViewElementImpl : public SVGStyledElementImpl,
-							   public SVGExternalResourcesRequiredImpl,
-							   public SVGFitToViewBoxImpl,
-							   public SVGZoomAndPanImpl
-	{
-	public:
-		SVGViewElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGViewElementImpl();
+    class SVGStringListImpl;
+    class SVGViewElementImpl : public SVGStyledElementImpl,
+                               public SVGExternalResourcesRequiredImpl,
+                               public SVGFitToViewBoxImpl,
+                               public SVGZoomAndPanImpl
+    {
+    public:
+        SVGViewElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGViewElementImpl();
 
-		virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseAttribute(KDOM::AttributeImpl *);
 
-		// 'SVGViewElement' functions
-		SVGStringListImpl *viewTarget() const;
+        // 'SVGViewElement' functions
+        SVGStringListImpl *viewTarget() const;
 
-	private:
-		mutable SVGStringListImpl *m_viewTarget;
-	};
+    private:
+        mutable SVGStringListImpl *m_viewTarget;
+    };
 };
 
 #endif

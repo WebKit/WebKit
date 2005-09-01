@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,36 +27,36 @@
 
 namespace KSVG
 {
-	class SVGTransformList;
-	class SVGAnimatedTransformListImpl;
-	class SVGAnimatedTransformList
-	{
-	public:
-		SVGAnimatedTransformList();
-		explicit SVGAnimatedTransformList(SVGAnimatedTransformListImpl *i);
-		SVGAnimatedTransformList(const SVGAnimatedTransformList &other);
-		virtual ~SVGAnimatedTransformList();
+    class SVGTransformList;
+    class SVGAnimatedTransformListImpl;
+    class SVGAnimatedTransformList
+    {
+    public:
+        SVGAnimatedTransformList();
+        explicit SVGAnimatedTransformList(SVGAnimatedTransformListImpl *i);
+        SVGAnimatedTransformList(const SVGAnimatedTransformList &other);
+        virtual ~SVGAnimatedTransformList();
 
-		// Operators
-		SVGAnimatedTransformList &operator=(const SVGAnimatedTransformList &other);
-		bool operator==(const SVGAnimatedTransformList &other) const;
-		bool operator!=(const SVGAnimatedTransformList &other) const;
+        // Operators
+        SVGAnimatedTransformList &operator=(const SVGAnimatedTransformList &other);
+        bool operator==(const SVGAnimatedTransformList &other) const;
+        bool operator!=(const SVGAnimatedTransformList &other) const;
 
-		// 'SVGAnimatedTransformList' functions
-		SVGTransformList baseVal() const;
-		SVGTransformList animVal() const;
+        // 'SVGAnimatedTransformList' functions
+        SVGTransformList baseVal() const;
+        SVGTransformList animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedTransformList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedTransformList)
 
-	protected:
-		SVGAnimatedTransformListImpl *impl;
+    protected:
+        SVGAnimatedTransformListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

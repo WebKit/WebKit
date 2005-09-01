@@ -29,7 +29,7 @@
 #include <qvaluelist.h>
 
 namespace KDOM {
-	class NodeImpl;
+    class NodeImpl;
 }
 
 typedef QValueList<KDOM::NodeImpl *> DomNodeList;

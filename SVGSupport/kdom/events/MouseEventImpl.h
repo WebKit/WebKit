@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,51 +29,51 @@ class QMouseEvent;
 
 namespace KDOM
 {
-	class EventTargetImpl;
-	class AbstractViewImpl;
-	class MouseEventImpl : public UIEventImpl
-	{
-	public:
-		MouseEventImpl(EventImplType identifier);
-		virtual ~MouseEventImpl();
+    class EventTargetImpl;
+    class AbstractViewImpl;
+    class MouseEventImpl : public UIEventImpl
+    {
+    public:
+        MouseEventImpl(EventImplType identifier);
+        virtual ~MouseEventImpl();
 
-		long screenX() const;
-		long screenY() const;
-		
-		long clientX() const;
-		long clientY() const;
-		
-		bool ctrlKey() const;
-		bool shiftKey() const;
-		bool altKey() const;
-		bool metaKey() const;
-		
-		unsigned short button() const;
+        long screenX() const;
+        long screenY() const;
+        
+        long clientX() const;
+        long clientY() const;
+        
+        bool ctrlKey() const;
+        bool shiftKey() const;
+        bool altKey() const;
+        bool metaKey() const;
+        
+        unsigned short button() const;
 
-		EventTargetImpl *relatedTarget() const;
-		void setRelatedTarget(EventTargetImpl *target);
+        EventTargetImpl *relatedTarget() const;
+        void setRelatedTarget(EventTargetImpl *target);
 
-		void initMouseEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg);
-		void initMouseEvent(DOMStringImpl *typeArg, QMouseEvent *qevent, float scale = 1.0);
+        void initMouseEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, AbstractViewImpl *viewArg, long detailArg, long screenXArg, long screenYArg, long clientXArg, long clientYArg, bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, bool metaKeyArg, unsigned short buttonArg, EventTargetImpl *relatedTargetArg);
+        void initMouseEvent(DOMStringImpl *typeArg, QMouseEvent *qevent, float scale = 1.0);
 
-		// Helpers
-		QMouseEvent *qEvent() const { return m_qevent; }
-		void setQEvent(QMouseEvent *event) { m_qevent = event; }
-	
-	private:
-		long m_screenX, m_screenY;
-		long m_clientX, m_clientY;
+        // Helpers
+        QMouseEvent *qEvent() const { return m_qevent; }
+        void setQEvent(QMouseEvent *event) { m_qevent = event; }
+    
+    private:
+        long m_screenX, m_screenY;
+        long m_clientX, m_clientY;
 
-		bool m_ctrlKey : 1;
-		bool m_altKey : 1;
-		bool m_shiftKey : 1;
-		bool m_metaKey : 1;
+        bool m_ctrlKey : 1;
+        bool m_altKey : 1;
+        bool m_shiftKey : 1;
+        bool m_metaKey : 1;
 
-		unsigned short m_button;
-		EventTargetImpl *m_relatedTarget;
+        unsigned short m_button;
+        EventTargetImpl *m_relatedTarget;
 
-		QMouseEvent *m_qevent;
-	};
+        QMouseEvent *m_qevent;
+    };
 };
 
 #endif

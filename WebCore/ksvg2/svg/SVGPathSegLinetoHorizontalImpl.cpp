@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegLinetoHorizontalAbsImpl::SVGPathSegLinetoHorizontalAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = 0.0;
+    m_x = 0.0;
 }
 
 SVGPathSegLinetoHorizontalAbsImpl::~SVGPathSegLinetoHorizontalAbsImpl()
@@ -37,15 +37,15 @@ SVGPathSegLinetoHorizontalAbsImpl::~SVGPathSegLinetoHorizontalAbsImpl()
 
 void SVGPathSegLinetoHorizontalAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoHorizontalAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 
@@ -53,7 +53,7 @@ double SVGPathSegLinetoHorizontalAbsImpl::x() const
 SVGPathSegLinetoHorizontalRelImpl::SVGPathSegLinetoHorizontalRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = 0.0;
+    m_x = 0.0;
 }
 
 SVGPathSegLinetoHorizontalRelImpl::~SVGPathSegLinetoHorizontalRelImpl()
@@ -62,15 +62,15 @@ SVGPathSegLinetoHorizontalRelImpl::~SVGPathSegLinetoHorizontalRelImpl()
 
 void SVGPathSegLinetoHorizontalRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoHorizontalRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 // vim:ts=4:noet

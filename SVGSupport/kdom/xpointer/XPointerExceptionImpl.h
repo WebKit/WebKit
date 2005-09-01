@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,17 +30,17 @@ namespace KDOM
 
 namespace XPointer
 {
-	class XPointerExceptionImpl : public Shared
-	{
-	public:
-		XPointerExceptionImpl(unsigned short code);
-		virtual ~XPointerExceptionImpl();
+    class XPointerExceptionImpl : public Shared
+    {
+    public:
+        XPointerExceptionImpl(unsigned short code);
+        virtual ~XPointerExceptionImpl();
 
-		unsigned short code() const;
+        unsigned short code() const;
 
-	protected:
-		unsigned short m_code;
-	};
+    protected:
+        unsigned short m_code;
+    };
 };
 
 };

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,44 +27,44 @@
 
 namespace KDOM
 {
-	class DOMString;
+    class DOMString;
 };
 
 namespace KSVG
 {
-	class SVGLangSpaceImpl;
-	class SVGLangSpace
-	{
-	public:
-		SVGLangSpace();
-		explicit SVGLangSpace(SVGLangSpaceImpl *i);
-		SVGLangSpace(const SVGLangSpace &other);
-		virtual ~SVGLangSpace();
+    class SVGLangSpaceImpl;
+    class SVGLangSpace
+    {
+    public:
+        SVGLangSpace();
+        explicit SVGLangSpace(SVGLangSpaceImpl *i);
+        SVGLangSpace(const SVGLangSpace &other);
+        virtual ~SVGLangSpace();
 
-		// Operators
-		SVGLangSpace &operator=(const SVGLangSpace &other);
-		SVGLangSpace &operator=(SVGLangSpaceImpl *other);
+        // Operators
+        SVGLangSpace &operator=(const SVGLangSpace &other);
+        SVGLangSpace &operator=(SVGLangSpaceImpl *other);
 
-		// 'SVGLangSpace' functions
-		KDOM::DOMString xmlLang() const;
-		void setXmlLang(const KDOM::DOMString &xmlLang);
+        // 'SVGLangSpace' functions
+        KDOM::DOMString xmlLang() const;
+        void setXmlLang(const KDOM::DOMString &xmlLang);
 
-		KDOM::DOMString xmlSpace() const;
-		void setXmlSpace(const KDOM::DOMString &xmlSpace);
+        KDOM::DOMString xmlSpace() const;
+        void setXmlSpace(const KDOM::DOMString &xmlSpace);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGLangSpace)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGLangSpace)
 
-	protected:
-		SVGLangSpaceImpl *impl;
+    protected:
+        SVGLangSpaceImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

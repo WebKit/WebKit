@@ -28,12 +28,12 @@
 
 namespace KSVG
 {
-	class SVGPointListImpl : public SVGList<SVGPointImpl>
-	{
-	public:
-		SVGPointListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPointListImpl();
-	};
+    class SVGPointListImpl : public SVGList<SVGPointImpl>
+    {
+    public:
+        SVGPointListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPointListImpl();
+    };
 };
 
 #endif

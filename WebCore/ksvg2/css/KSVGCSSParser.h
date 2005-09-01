@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,22 +27,22 @@
 
 namespace KSVG
 {
-	class SVGCSSParser : public KDOM::CSSParser
-	{
-	public:
-		SVGCSSParser(bool strictParsing = true);
-		virtual ~SVGCSSParser();
+    class SVGCSSParser : public KDOM::CSSParser
+    {
+    public:
+        SVGCSSParser(bool strictParsing = true);
+        virtual ~SVGCSSParser();
 
-		virtual bool parseValue(int propId, bool important, int expected = 1);
+        virtual bool parseValue(int propId, bool important, int expected = 1);
 
-		KDOM::CSSValueImpl *parsePaint();
-		KDOM::CSSValueImpl *parseColor();
-		KDOM::CSSValueImpl *parseStrokeDasharray();
+        KDOM::CSSValueImpl *parsePaint();
+        KDOM::CSSValueImpl *parseColor();
+        KDOM::CSSValueImpl *parseStrokeDasharray();
 
-		virtual bool parseShape(int propId, bool important);
+        virtual bool parseShape(int propId, bool important);
 
-		virtual KDOM::CSSStyleDeclarationImpl *createCSSStyleDeclaration(KDOM::CSSStyleRuleImpl *rule, QPtrList<KDOM::CSSProperty> *propList);
-	};
+        virtual KDOM::CSSStyleDeclarationImpl *createCSSStyleDeclaration(KDOM::CSSStyleRuleImpl *rule, QPtrList<KDOM::CSSProperty> *propList);
+    };
 }
 
 #endif

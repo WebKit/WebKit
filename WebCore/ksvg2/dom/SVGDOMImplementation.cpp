@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -55,7 +55,7 @@ SVGDOMImplementation::SVGDOMImplementation(SVGDOMImplementationImpl *i) : KDOM::
 
 SVGDOMImplementation::SVGDOMImplementation(const SVGDOMImplementation &other) : KDOM::DOMImplementation(), impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGDOMImplementation::~SVGDOMImplementation()
@@ -64,52 +64,52 @@ SVGDOMImplementation::~SVGDOMImplementation()
 
 SVGDOMImplementation &SVGDOMImplementation::operator=(const SVGDOMImplementation &other)
 {
-	KDOM::DOMImplementation::operator=(other);
-	
-	impl = other.impl;
-	return *this;
+    KDOM::DOMImplementation::operator=(other);
+    
+    impl = other.impl;
+    return *this;
 }
 
 bool SVGDOMImplementation::operator==(const SVGDOMImplementation &other) const
 {
-	return impl == other.impl;
+    return impl == other.impl;
 }
 
 bool SVGDOMImplementation::operator!=(const SVGDOMImplementation &other) const
 {
-	return !operator==(other);
+    return !operator==(other);
 }
 
 bool SVGDOMImplementation::hasFeature(const KDOM::DOMString &feature, const KDOM::DOMString &version)
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->hasFeature(feature, version);
+    return impl->hasFeature(feature, version);
 }
 
 KDOM::DocumentType SVGDOMImplementation::createDocumentType(const KDOM::DOMString &qualifiedName, const KDOM::DOMString &publicId, const KDOM::DOMString &systemId)
 {
-	if(!impl)
-		return KDOM::DocumentType::null;
+    if(!impl)
+        return KDOM::DocumentType::null;
 
-	return KDOM::DocumentType(impl->createDocumentType(qualifiedName, publicId, systemId));
+    return KDOM::DocumentType(impl->createDocumentType(qualifiedName, publicId, systemId));
 }
 
 KDOM::Document SVGDOMImplementation::createDocument(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &qualifiedName, const KDOM::DocumentType &doctype)
 {
-	if(!impl)
-		return KDOM::Document::null;
+    if(!impl)
+        return KDOM::Document::null;
 
-	return KDOM::Document(impl->createDocument(namespaceURI, qualifiedName, doctype, true, 0 /* no view */));
+    return KDOM::Document(impl->createDocument(namespaceURI, qualifiedName, doctype, true, 0 /* no view */));
 }
 
 KDOM::CSSStyleSheet SVGDOMImplementation::createCSSStyleSheet(const KDOM::DOMString &title, const KDOM::DOMString &media)
 {
-	if(!impl)
-		return KDOM::CSSStyleSheet::null;
+    if(!impl)
+        return KDOM::CSSStyleSheet::null;
 
-	return KDOM::CSSStyleSheet(impl->createCSSStyleSheet(title, media));
+    return KDOM::CSSStyleSheet(impl->createCSSStyleSheet(title, media));
 }
 
 // vim:ts=4:noet

@@ -28,16 +28,16 @@
 
 namespace KSVG
 {
-	class SVGAnimatedRectImpl : public SVGAnimatedTemplate<SVGRectImpl>
-	{
-	public:
-		SVGAnimatedRectImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedRectImpl();
+    class SVGAnimatedRectImpl : public SVGAnimatedTemplate<SVGRectImpl>
+    {
+    public:
+        SVGAnimatedRectImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedRectImpl();
 
-	protected:
-		virtual SVGRectImpl *create() const;
-		virtual void assign(SVGRectImpl *src, SVGRectImpl *dst) const;
-	};
+    protected:
+        virtual SVGRectImpl *create() const;
+        virtual void assign(SVGRectImpl *src, SVGRectImpl *dst) const;
+    };
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2005 Frans Englich 		<frans.englich@telia.com>
+    Copyright (C) 2005 Frans Englich         <frans.englich@telia.com>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -39,105 +39,105 @@ using namespace KDOM;
 
 class CachedDocument::Private
 {
-	public:
-		Private(): errorCode(0)
-		{ }
+    public:
+        Private(): errorCode(0)
+        { }
 
-		int errorCode;
-		DOMString document;
-		QString errorDescription;
-		QString charset;
-		QBuffer docBuffer;
+        int errorCode;
+        DOMString document;
+        QString errorDescription;
+        QString charset;
+        QBuffer docBuffer;
 };
 
 
 CachedDocument::CachedDocument(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl _cachePolicy, const char *accept)
 : CachedObject(url, CachedObject::TextDocument, _cachePolicy, 0), d(new Private())
 {
-	QString ah = QString::fromLatin1(accept);
-	if(!ah.isEmpty())
-		ah += QString::fromLatin1(",");
+    QString ah = QString::fromLatin1(accept);
+    if(!ah.isEmpty())
+        ah += QString::fromLatin1(",");
 
-	ah += QString::fromLatin1("*/*;q=0.1");
-	setAccept(ah);
+    ah += QString::fromLatin1("*/*;q=0.1");
+    setAccept(ah);
 
-	Cache::loader()->load(docLoader, this, false);
-	m_loading = true;
+    Cache::loader()->load(docLoader, this, false);
+    m_loading = true;
 }
 
 CachedDocument::~CachedDocument()
 {
-	delete d;
+    delete d;
 }
 
 void CachedDocument::ref(CachedObjectClient *c)
 {
-	CachedObject::ref(c);
+    CachedObject::ref(c);
 
-	if(!m_loading)
-		if(m_hadError)
-			c->error(d->errorCode, d->errorDescription);
-		else
-			c->notifyFinished(this);
+    if(!m_loading)
+        if(m_hadError)
+            c->error(d->errorCode, d->errorDescription);
+        else
+            c->notifyFinished(this);
 }
 
 void CachedDocument::data(QBuffer &buffer, bool eof)
 {
-	kdDebug() << k_funcinfo << endl;
+    kdDebug() << k_funcinfo << endl;
 
-	if(!eof)
-		return;
+    if(!eof)
+        return;
 
-	setSize(buffer.buffer().size());
-	buffer.close();
-	d->docBuffer.setBuffer(buffer.buffer());
+    setSize(buffer.buffer().size());
+    buffer.close();
+    d->docBuffer.setBuffer(buffer.buffer());
 
-	QTextCodec *c = codecForBuffer(d->charset, buffer.buffer());
-	QString data = c->toUnicode( buffer.buffer().data(), m_size );
-	d->document = (data[0].unicode() == QChar::byteOrderMark) ? DOMString(data.mid(1)) : DOMString(data);
+    QTextCodec *c = codecForBuffer(d->charset, buffer.buffer());
+    QString data = c->toUnicode( buffer.buffer().data(), m_size );
+    d->document = (data[0].unicode() == QChar::byteOrderMark) ? DOMString(data.mid(1)) : DOMString(data);
 
-	m_loading = false;
-	checkNotify();
+    m_loading = false;
+    checkNotify();
 }
 
 void CachedDocument::checkNotify()
 {
-	if(m_loading) 
-		return;
+    if(m_loading) 
+        return;
 
-	for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
-		it()->notifyFinished(this);
+    for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
+        it()->notifyFinished(this);
 }
 
 void CachedDocument::error(int err, const char *text)
 {
-	m_hadError = true;
-	d->errorCode = err;
-	d->errorDescription = text;
-	m_loading = false;
+    m_hadError = true;
+    d->errorCode = err;
+    d->errorDescription = text;
+    m_loading = false;
 
-	for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
-		it()->error(d->errorCode, d->errorDescription);
+    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+        it()->error(d->errorCode, d->errorDescription);
 }
 
 bool CachedDocument::schedule() const
 {
-	return true;
+    return true;
 }
 
 void CachedDocument::setCharset(const QString &charset)
 {
-	d->charset = charset;
+    d->charset = charset;
 }
 
 QBuffer* CachedDocument::documentBuffer() const
 {
-	return &d->docBuffer;
+    return &d->docBuffer;
 }
 
 const DOMString& CachedDocument::document() const
 {
-	return d->document;
+    return d->document;
 }
 
 

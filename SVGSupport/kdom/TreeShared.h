@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,27 +27,27 @@
 
 namespace KDOM
 {
-	template<class T> class TreeShared : public Shared
-	{
-	public:
-		TreeShared() : Shared() { m_parent = 0; }
-		virtual ~TreeShared() { }
+    template<class T> class TreeShared : public Shared
+    {
+    public:
+        TreeShared() : Shared() { m_parent = 0; }
+        virtual ~TreeShared() { }
 
-		void setParent(T *parent) { m_parent = parent; }
-		T *parent() const { return m_parent; }
+        void setParent(T *parent) { m_parent = parent; }
+        T *parent() const { return m_parent; }
 
-		virtual void deref()
-		{
-			if(m_ref)
-				m_ref--; 
+        virtual void deref()
+        {
+            if(m_ref)
+                m_ref--; 
 
-			if(!m_ref && !m_parent)
-				delete this;
-		}
+            if(!m_ref && !m_parent)
+                delete this;
+        }
 
-	protected:
-		T *m_parent;
-	};
+    protected:
+        T *m_parent;
+    };
 };
 
 #endif

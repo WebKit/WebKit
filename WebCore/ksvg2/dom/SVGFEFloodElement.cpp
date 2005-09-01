@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -38,24 +38,24 @@ using namespace KSVG;
 
 /*
 @begin SVGFEFloodElement::s_hashTable 3
- in1			SVGFEFloodElementConstants::In1		DontDelete|ReadOnly
+ in1            SVGFEFloodElementConstants::In1        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEFloodElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEFloodElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEFloodElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -73,12 +73,12 @@ SVGFEFloodElement::SVGFEFloodElement(SVGFEFloodElementImpl *i) : SVGElement(i), 
 
 SVGFEFloodElement::SVGFEFloodElement(const SVGFEFloodElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEFloodElement::SVGFEFloodElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEFloodElement::~SVGFEFloodElement()
@@ -87,39 +87,39 @@ SVGFEFloodElement::~SVGFEFloodElement()
 
 SVGFEFloodElement &SVGFEFloodElement::operator=(const SVGFEFloodElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEFloodElement &SVGFEFloodElement::operator=(const KDOM::Node &other)
 {
-	SVGFEFloodElementImpl *ohandle = static_cast<SVGFEFloodElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEFloodElementImpl *ohandle = static_cast<SVGFEFloodElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEFloodElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -46,28 +46,28 @@ XMLElementImpl::~XMLElementImpl()
 
 DOMStringImpl *XMLElementImpl::localName() const
 {
-	if(!m_dom2)
-		return 0;
+    if(!m_dom2)
+        return 0;
 
-	return ownerDocument()->getName(NodeImpl::ElementId, id());
+    return ownerDocument()->getName(NodeImpl::ElementId, id());
 }
 
 DOMStringImpl *XMLElementImpl::tagName() const
 {
-	DOMStringImpl *name = ownerDocument()->getName(NodeImpl::ElementId, id());
-	if(!name)
-		return 0;
+    DOMStringImpl *name = ownerDocument()->getName(NodeImpl::ElementId, id());
+    if(!name)
+        return 0;
 
-	if(m_prefix && !m_prefix->isEmpty())
-	{
-		name->ref();
-		DOMStringImpl *ret = new DOMStringImpl(m_prefix->string() + QString::fromLatin1(":") + name->string());
+    if(m_prefix && !m_prefix->isEmpty())
+    {
+        name->ref();
+        DOMStringImpl *ret = new DOMStringImpl(m_prefix->string() + QString::fromLatin1(":") + name->string());
 
-		name->deref();
-		return ret;
-	}
+        name->deref();
+        return ret;
+    }
 
-	return name;
+    return name;
 }
 
 // vim:ts=4:noet

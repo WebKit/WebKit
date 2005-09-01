@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -35,69 +35,69 @@ using namespace KDOM;
 
 EntityReferenceImpl::EntityReferenceImpl(DocumentPtr *doc, DOMStringImpl *name, bool expand) : NodeBaseImpl(doc)
 {
-	m_entityName = name;
-	if(m_entityName)
-		m_entityName->ref();
+    m_entityName = name;
+    if(m_entityName)
+        m_entityName->ref();
 
-	DocumentImpl *_doc = doc->document();
-	if(expand && _doc->doctype() && _doc->parsing() == false)
-	{
-		NodeImpl *n = _doc->doctype()->entities()->getNamedItem(name);
-		if(n && n->nodeType() == ENTITY_NODE)
-		{
-			_doc->setParsing(true);
-			static_cast<EntityImpl *>(n)->cloneChildNodes(this, doc);
-			_doc->setParsing(false);
-		}
-	}
+    DocumentImpl *_doc = doc->document();
+    if(expand && _doc->doctype() && _doc->parsing() == false)
+    {
+        NodeImpl *n = _doc->doctype()->entities()->getNamedItem(name);
+        if(n && n->nodeType() == ENTITY_NODE)
+        {
+            _doc->setParsing(true);
+            static_cast<EntityImpl *>(n)->cloneChildNodes(this, doc);
+            _doc->setParsing(false);
+        }
+    }
 }
 
 EntityReferenceImpl::~EntityReferenceImpl()
 {
-	if(m_entityName)
-		m_entityName->deref();
+    if(m_entityName)
+        m_entityName->deref();
 }
 
 DOMStringImpl *EntityReferenceImpl::nodeName() const
 {
-	return m_entityName;
+    return m_entityName;
 }
 
 unsigned short EntityReferenceImpl::nodeType() const
 {
-	return ENTITY_REFERENCE_NODE;
+    return ENTITY_REFERENCE_NODE;
 }
 
 NodeImpl *EntityReferenceImpl::cloneNode(bool deep, DocumentPtr *doc) const
 {
-	EntityReferenceImpl *p = new EntityReferenceImpl(doc, nodeName(), false);
+    EntityReferenceImpl *p = new EntityReferenceImpl(doc, nodeName(), false);
 
-	if(deep)
-	{
-		bool oldMode = doc->document()->parsing();
-		doc->document()->setParsing(true);
-		cloneChildNodes(p, doc);
-		doc->document()->setParsing(oldMode);
-	}
+    if(deep)
+    {
+        bool oldMode = doc->document()->parsing();
+        doc->document()->setParsing(true);
+        cloneChildNodes(p, doc);
+        doc->document()->setParsing(oldMode);
+    }
 
-	return p;
+    return p;
 }
 
 bool EntityReferenceImpl::childTypeAllowed(unsigned short type) const
 {
-	switch(type)
-	{
-		case ELEMENT_NODE:
-		case TEXT_NODE:
-		case COMMENT_NODE:
-		case PROCESSING_INSTRUCTION_NODE:
-		case CDATA_SECTION_NODE:
-		case ENTITY_REFERENCE_NODE:
-			return true;
-			break;
-		default:
-			return false;
-	}
+    switch(type)
+    {
+        case ELEMENT_NODE:
+        case TEXT_NODE:
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+        case CDATA_SECTION_NODE:
+        case ENTITY_REFERENCE_NODE:
+            return true;
+            break;
+        default:
+            return false;
+    }
 }
 
 // vim:ts=4:noet

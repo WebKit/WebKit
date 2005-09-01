@@ -32,60 +32,60 @@
 
 class KRenderingPaintServerSolidQuartz : public KRenderingPaintServerSolid {
 public:
-	KRenderingPaintServerSolidQuartz() {};
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    KRenderingPaintServerSolidQuartz() {};
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerPatternQuartz : public KRenderingPaintServerPattern {
 public:
-	KRenderingPaintServerPatternQuartz() {};
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    KRenderingPaintServerPatternQuartz() {};
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerImageQuartz : public KRenderingPaintServerImage {
 public:
-	KRenderingPaintServerImageQuartz() {};
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    KRenderingPaintServerImageQuartz() {};
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
 };
 
 typedef struct {
-	float colorArray[4];
-	float offset;
-	float previousDeltaInverse;
+    float colorArray[4];
+    float offset;
+    float previousDeltaInverse;
 } QuartzGradientStop;
 
 // Does not subclass from KRenderingPaintServerRadialGradient intentionally.
 class KRenderingPaintServerGradientQuartz {
 
 public:
-	KRenderingPaintServerGradientQuartz();
-	~KRenderingPaintServerGradientQuartz();
-	
-	void updateQuartzGradientStopsCache(const KCSortedGradientStopList &stops);
-	void updateQuartzGradientCache(const KRenderingPaintServerGradient *server);
+    KRenderingPaintServerGradientQuartz();
+    ~KRenderingPaintServerGradientQuartz();
+    
+    void updateQuartzGradientStopsCache(const KCSortedGradientStopList &stops);
+    void updateQuartzGradientCache(const KRenderingPaintServerGradient *server);
 
 public:
-	// due to c functions
-	QuartzGradientStop *m_stopsCache;
-	int					m_stopsCount;
+    // due to c functions
+    QuartzGradientStop *m_stopsCache;
+    int                    m_stopsCount;
 
 protected:
-	void invalidateCaches();
-	CGShadingRef		m_shadingCache;
+    void invalidateCaches();
+    CGShadingRef        m_shadingCache;
 };
 
 class KRenderingPaintServerLinearGradientQuartz : public KRenderingPaintServerLinearGradient,
-												  public KRenderingPaintServerGradientQuartz {
+                                                  public KRenderingPaintServerGradientQuartz {
 public:
-	KRenderingPaintServerLinearGradientQuartz() {};
-	virtual void invalidate();
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    KRenderingPaintServerLinearGradientQuartz() {};
+    virtual void invalidate();
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
 };
 
 class KRenderingPaintServerRadialGradientQuartz : public KRenderingPaintServerRadialGradient,
-												  public KRenderingPaintServerGradientQuartz {
+                                                  public KRenderingPaintServerGradientQuartz {
 public:
-	KRenderingPaintServerRadialGradientQuartz() {};
-	virtual void invalidate();
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
+    KRenderingPaintServerRadialGradientQuartz() {};
+    virtual void invalidate();
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const;
 };

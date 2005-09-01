@@ -29,131 +29,131 @@
 
 class Number : public Expression
 {
-	public:
-		Number( double value );
+    public:
+        Number( double value );
 
-		bool isConstant() const;
-		virtual QString dump() const;
+        bool isConstant() const;
+        virtual QString dump() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 
-		double m_value;
+        double m_value;
 };
 
 class String : public Expression
 {
-	public:
-		String( const DomString &value );
+    public:
+        String( const DomString &value );
 
-		bool isConstant() const;
-		virtual QString dump() const;
+        bool isConstant() const;
+        virtual QString dump() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 
-		DomString m_value;
+        DomString m_value;
 };
 
 class Negative : public Expression
 {
-	public:
-		virtual QString dump() const;
+    public:
+        virtual QString dump() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class BinaryExprBase : public Expression
 {
-	public:
-		virtual QString dump() const;
+    public:
+        virtual QString dump() const;
 
-	protected:
-		virtual QString opName() const = 0;
+    protected:
+        virtual QString opName() const = 0;
 };
 
 class NumericOp : public BinaryExprBase
 {
-	public:
-		enum {
-			OP_Add = 1,
-			OP_Sub,
-			OP_Mul,
-			OP_Div,
-			OP_Mod,
-			OP_GT,
-			OP_LT,
-			OP_GE,
-			OP_LE
-		};
+    public:
+        enum {
+            OP_Add = 1,
+            OP_Sub,
+            OP_Mul,
+            OP_Div,
+            OP_Mod,
+            OP_GT,
+            OP_LT,
+            OP_GE,
+            OP_LE
+        };
 
-		NumericOp( int opCode, Expression* lhs, Expression* rhs );
+        NumericOp( int opCode, Expression* lhs, Expression* rhs );
 
-	private:
-		virtual QString opName() const;
-		virtual Value doEvaluate() const;
-		int opCode;
+    private:
+        virtual QString opName() const;
+        virtual Value doEvaluate() const;
+        int opCode;
 };
 
 class EqTestOp : public BinaryExprBase
 {
-	public:
-		enum {
-			OP_EQ = 1,
-			OP_NE
-		};
+    public:
+        enum {
+            OP_EQ = 1,
+            OP_NE
+        };
 
-		EqTestOp( int opCode, Expression* lhs, Expression* rhs );
+        EqTestOp( int opCode, Expression* lhs, Expression* rhs );
 
-	private:
-		virtual QString opName() const;
-		virtual Value doEvaluate() const;
-		int opCode;
+    private:
+        virtual QString opName() const;
+        virtual Value doEvaluate() const;
+        int opCode;
 };
 
 class LogicalOp : public BinaryExprBase
 {
-	public:
-		enum {
-			OP_And = 1,
-			OP_Or
-		};
+    public:
+        enum {
+            OP_And = 1,
+            OP_Or
+        };
 
-		LogicalOp( int opCode, Expression* lhs, Expression* rhs );
+        LogicalOp( int opCode, Expression* lhs, Expression* rhs );
 
-		virtual bool isConstant() const;
+        virtual bool isConstant() const;
 
-	private:
-		bool    shortCircuitOn() const;
-		virtual QString opName() const;
-		virtual Value doEvaluate() const;
-		int opCode;
+    private:
+        bool    shortCircuitOn() const;
+        virtual QString opName() const;
+        virtual Value doEvaluate() const;
+        int opCode;
 };
 
 class Union : public BinaryExprBase
 {
-	private:
-		virtual QString opName() const;
-		virtual Value doEvaluate() const;
+    private:
+        virtual QString opName() const;
+        virtual Value doEvaluate() const;
 };
 
 class Predicate
 {
-	public:
-		Predicate( Expression *expr );
-		~Predicate();
+    public:
+        Predicate( Expression *expr );
+        ~Predicate();
 
-		bool evaluate() const;
+        bool evaluate() const;
 
-		void optimize();
-		QString dump() const;
+        void optimize();
+        QString dump() const;
 
-	private:
-		Predicate( const Predicate &rhs );
-		Predicate &operator=( const Predicate &rhs );
+    private:
+        Predicate( const Predicate &rhs );
+        Predicate &operator=( const Predicate &rhs );
 
-		Expression *m_expr;
+        Expression *m_expr;
 };
 
 #endif // PREDICATE_H

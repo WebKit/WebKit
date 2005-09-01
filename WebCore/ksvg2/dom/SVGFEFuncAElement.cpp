@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,12 +40,12 @@ SVGFEFuncAElement::SVGFEFuncAElement(SVGFEFuncAElementImpl *i) : SVGComponentTra
 
 SVGFEFuncAElement::SVGFEFuncAElement(const SVGFEFuncAElement &other) : SVGComponentTransferFunctionElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEFuncAElement::SVGFEFuncAElement(const KDOM::Node &other) : SVGComponentTransferFunctionElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEFuncAElement::~SVGFEFuncAElement()
@@ -54,29 +54,29 @@ SVGFEFuncAElement::~SVGFEFuncAElement()
 
 SVGFEFuncAElement &SVGFEFuncAElement::operator=(const SVGFEFuncAElement &other)
 {
-	SVGComponentTransferFunctionElement::operator=(other);
-	return *this;
+    SVGComponentTransferFunctionElement::operator=(other);
+    return *this;
 }
 
 SVGFEFuncAElement &SVGFEFuncAElement::operator=(const KDOM::Node &other)
 {
-	SVGFEFuncAElementImpl *ohandle = static_cast<SVGFEFuncAElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGComponentTransferFunctionElement::operator=(other);
-		}
-	}
+    SVGFEFuncAElementImpl *ohandle = static_cast<SVGFEFuncAElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGComponentTransferFunctionElement::operator=(other);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

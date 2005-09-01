@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -34,21 +34,21 @@
 
 namespace KDOM
 {
-	class XMLElementImpl : public ElementImpl
-	{
-	public:
-		XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id);
-		XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified = false);
-		virtual ~XMLElementImpl();
+    class XMLElementImpl : public ElementImpl
+    {
+    public:
+        XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id);
+        XMLElementImpl(DocumentPtr *doc, NodeImpl::Id id, DOMStringImpl *prefix, bool nullNSSpecified = false);
+        virtual ~XMLElementImpl();
 
-		virtual DOMStringImpl *localName() const;
-		virtual DOMStringImpl *tagName() const;
+        virtual DOMStringImpl *localName() const;
+        virtual DOMStringImpl *tagName() const;
 
-		virtual NodeImpl::Id id() const { return m_id; }
+        virtual NodeImpl::Id id() const { return m_id; }
 
-	protected:
-		NodeImpl::Id m_id;
-	};
+    protected:
+        NodeImpl::Id m_id;
+    };
 };
 
 #endif

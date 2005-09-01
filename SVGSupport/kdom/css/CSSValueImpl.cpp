@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,27 +41,27 @@ void CSSValueImpl::setCssText(DOMStringImpl *)
 
 unsigned short CSSValueImpl::cssValueType() const
 {
-	return CSS_CUSTOM;
+    return CSS_CUSTOM;
 }
 
 unsigned short CSSInheritedValueImpl::cssValueType() const
 {
-	return CSS_INHERIT;
+    return CSS_INHERIT;
 }
 
 DOMStringImpl *CSSInheritedValueImpl::cssText() const
 {
-	return new DOMStringImpl("inherit");
+    return new DOMStringImpl("inherit");
 }
 
 unsigned short CSSInitialValueImpl::cssValueType() const
 {
-	return CSS_INITIAL;
+    return CSS_INITIAL;
 }
 
 DOMStringImpl *CSSInitialValueImpl::cssText() const
 {
-	return new DOMStringImpl("initial");
+    return new DOMStringImpl("initial");
 }
 
 FontValueImpl::FontValueImpl() : style(0), variant(0), weight(0), size(0), lineHeight(0), family(0)
@@ -70,69 +70,69 @@ FontValueImpl::FontValueImpl() : style(0), variant(0), weight(0), size(0), lineH
 
 FontValueImpl::~FontValueImpl()
 {
-	delete style;
-	delete variant;
-	delete weight;
-	delete size;
-	delete lineHeight;
-	delete family;
+    delete style;
+    delete variant;
+    delete weight;
+    delete size;
+    delete lineHeight;
+    delete family;
 }
 
 DOMStringImpl *FontValueImpl::cssText() const
 {
-	// font variant weight size / line-height family
-	DOMStringImpl *result = new DOMStringImpl();
+    // font variant weight size / line-height family
+    DOMStringImpl *result = new DOMStringImpl();
 
-	if(style)
-		result->append(style->cssText());
+    if(style)
+        result->append(style->cssText());
 
-	if(variant)
-	{
-		if(result->length() > 0)
-			result->append(" ");
+    if(variant)
+    {
+        if(result->length() > 0)
+            result->append(" ");
 
-		result->append(variant->cssText());
-	}
+        result->append(variant->cssText());
+    }
 
-	if(weight)
-	{
-		if(result->length() > 0)
-			result->append(" ");
+    if(weight)
+    {
+        if(result->length() > 0)
+            result->append(" ");
 
-		result->append(weight->cssText());
-	}
+        result->append(weight->cssText());
+    }
 
-	if(size)
-	{
-		if(result->length() > 0)
-			result->append(" ");
+    if(size)
+    {
+        if(result->length() > 0)
+            result->append(" ");
 
-		result->append(size->cssText());
-	}
+        result->append(size->cssText());
+    }
 
-	if(lineHeight)
-	{
-		if(!size)
-			result->append(" ");
+    if(lineHeight)
+    {
+        if(!size)
+            result->append(" ");
 
-		result->append("/");
-		result->append(lineHeight->cssText());
-	}
+        result->append("/");
+        result->append(lineHeight->cssText());
+    }
 
-	if(family)
-	{
-		if(result->length() > 0) 
-			result->append(" ");
+    if(family)
+    {
+        if(result->length() > 0) 
+            result->append(" ");
 
-		result->append(family->cssText());
-	}
+        result->append(family->cssText());
+    }
 
-	return result;
+    return result;
 }
 
 unsigned short FontValueImpl::cssValueType() const
 {
-	return CSS_CUSTOM;
+    return CSS_CUSTOM;
 }
 
 QuotesValueImpl::QuotesValueImpl() : levels(0)
@@ -145,14 +145,14 @@ QuotesValueImpl::~QuotesValueImpl()
 
 unsigned short QuotesValueImpl::cssValueType() const
 {
-	return CSS_CUSTOM;
+    return CSS_CUSTOM;
 }
 
 DOMStringImpl *QuotesValueImpl::cssText() const
 {
     return new DOMStringImpl(QString::fromLatin1("\"") +
-							 data.join(QString::fromLatin1("\" \"")) +
-							 QString::fromLatin1("\""));
+                             data.join(QString::fromLatin1("\" \"")) +
+                             QString::fromLatin1("\""));
 }
 
 void QuotesValueImpl::addLevel(const QString& open, const QString& close)
@@ -164,49 +164,49 @@ void QuotesValueImpl::addLevel(const QString& open, const QString& close)
 
 QString QuotesValueImpl::openQuote(int level) const
 {
-	if(levels == 0)
-		return QString::fromLatin1("");
-	
-	level--; // increments are calculated before openQuote is called
-	
-	//     kdDebug( 6080 ) << "Open quote level:" << level << endl;
-	if(level < 0)
-		level = 0;
-	else
-	{
-		if((unsigned int)level >= levels)
-			level = levels - 1;
-	}
+    if(levels == 0)
+        return QString::fromLatin1("");
+    
+    level--; // increments are calculated before openQuote is called
+    
+    //     kdDebug( 6080 ) << "Open quote level:" << level << endl;
+    if(level < 0)
+        level = 0;
+    else
+    {
+        if((unsigned int)level >= levels)
+            level = levels - 1;
+    }
 
-	return data[level * 2];
+    return data[level * 2];
 }
 
 QString QuotesValueImpl::closeQuote(int level) const
 {
-	if(levels == 0)
-		return QString::fromLatin1("");
-		
-	//     kdDebug( 6080 ) << "Close quote level:" << level << endl;
+    if(levels == 0)
+        return QString::fromLatin1("");
+        
+    //     kdDebug( 6080 ) << "Close quote level:" << level << endl;
 
-	if(level < 0)
-		level = 0;
-	else
-	{
-		if((unsigned int)level >= levels)
-			level = levels - 1;
-	}
+    if(level < 0)
+        level = 0;
+    else
+    {
+        if((unsigned int)level >= levels)
+            level = levels - 1;
+    }
 
-	return data[level * 2 + 1];
+    return data[level * 2 + 1];
 }
 
 // Used for text-shadow and box-shadow
 ShadowValueImpl::ShadowValueImpl(CSSPrimitiveValueImpl *_x, CSSPrimitiveValueImpl *_y,
-								 CSSPrimitiveValueImpl *_blur, CSSPrimitiveValueImpl *_color)
+                                 CSSPrimitiveValueImpl *_blur, CSSPrimitiveValueImpl *_color)
 {
-	x = _x;
-	y = _y;
-	blur = _blur;
-	color = _color;
+    x = _x;
+    y = _y;
+    blur = _blur;
+    color = _color;
 }
 
 ShadowValueImpl::~ShadowValueImpl()
@@ -219,60 +219,60 @@ ShadowValueImpl::~ShadowValueImpl()
 
 unsigned short ShadowValueImpl::cssValueType() const
 {
-	return CSS_CUSTOM;
+    return CSS_CUSTOM;
 }
 
 DOMStringImpl *ShadowValueImpl::cssText() const
 {
-	DOMString text("");
-	if(color)
-		text += DOMString(color->cssText());
-	
-	if(x)
-	{
-		if(text.length() > 0)
-			text += " ";
-		
-		text += DOMString(x->cssText());
-	}
-	
-	if(y)
-	{
-		if(text.length() > 0)
-			text += " ";
-		
-		text += DOMString(y->cssText());
-	}
-	
-	if(blur)
-	{
-		if(text.length() > 0)
-			text += " ";
-		
-		text += DOMString(blur->cssText());
-	}
+    DOMString text("");
+    if(color)
+        text += DOMString(color->cssText());
+    
+    if(x)
+    {
+        if(text.length() > 0)
+            text += " ";
+        
+        text += DOMString(x->cssText());
+    }
+    
+    if(y)
+    {
+        if(text.length() > 0)
+            text += " ";
+        
+        text += DOMString(y->cssText());
+    }
+    
+    if(blur)
+    {
+        if(text.length() > 0)
+            text += " ";
+        
+        text += DOMString(blur->cssText());
+    }
 
-	return text.handle()->copy();
+    return text.handle()->copy();
 }
 
 CounterActImpl::CounterActImpl(DOMStringImpl *c, short v)
 {
-	m_counter = c;
-	if(m_counter)
-		m_counter->ref();
+    m_counter = c;
+    if(m_counter)
+        m_counter->ref();
 
-	m_value = v;
+    m_value = v;
 }
 
 CounterActImpl::~CounterActImpl()
 {
-	if(m_counter)
-		m_counter->deref();
+    if(m_counter)
+        m_counter->deref();
 }
 
 unsigned short CounterActImpl::cssValueType() const
 {
-	return CSS_CUSTOM;
+    return CSS_CUSTOM;
 }
 
 DOMStringImpl *CounterActImpl::cssText() const
@@ -285,17 +285,17 @@ DOMStringImpl *CounterActImpl::cssText() const
 
 DOMStringImpl *CounterActImpl::counter() const
 {
-	return m_counter;
+    return m_counter;
 }
 
 short CounterActImpl::value() const
 {
-	return m_value;
+    return m_value;
 }
 
 void CounterActImpl::setValue(const short v)
 {
-	m_value = v;
+    m_value = v;
 }
 
 // vim:ts=4:noet

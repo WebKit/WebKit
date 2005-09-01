@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,12 +40,12 @@ using namespace KSVG;
 
 /*
 @begin SVGFEGaussianBlurElement::s_hashTable 5
- in1			SVGFEGaussianBlurElementConstants::In1				DontDelete|ReadOnly
- stdDeviationX	SVGFEGaussianBlurElementConstants::StdDeviationX	DontDelete|ReadOnly
- stdDeviationY	SVGFEGaussianBlurElementConstants::StdDeviationY	DontDelete|ReadOnly
+ in1            SVGFEGaussianBlurElementConstants::In1                DontDelete|ReadOnly
+ stdDeviationX    SVGFEGaussianBlurElementConstants::StdDeviationX    DontDelete|ReadOnly
+ stdDeviationY    SVGFEGaussianBlurElementConstants::StdDeviationY    DontDelete|ReadOnly
 @end
 @begin SVGFEGaussianBlurElementProto::s_hashTable 3
- setStdDeviation	SVGFEGaussianBlurElementConstants::SetStdDeviation	DontDelete|Function 2
+ setStdDeviation    SVGFEGaussianBlurElementConstants::SetStdDeviation    DontDelete|Function 2
 @end
 */
 
@@ -53,45 +53,45 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGFEGaussianBlurElement", SVGFEGaussianBlurElementPro
 
 ValueImp *SVGFEGaussianBlurElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEGaussianBlurElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		case SVGFEGaussianBlurElementConstants::StdDeviationX:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, stdDeviationX());
-		case SVGFEGaussianBlurElementConstants::StdDeviationY:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, stdDeviationY());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEGaussianBlurElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        case SVGFEGaussianBlurElementConstants::StdDeviationX:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, stdDeviationX());
+        case SVGFEGaussianBlurElementConstants::StdDeviationY:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, stdDeviationY());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 ValueImp *SVGFEGaussianBlurElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGFEGaussianBlurElement obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGFEGaussianBlurElement obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGFEGaussianBlurElementConstants::SetStdDeviation:
-		{
-			float stdDeviationX = args[0]->toNumber(exec);
-			float stdDeviationY = args[1]->toNumber(exec);
-			obj.setStdDeviation(stdDeviationX, stdDeviationY);
+    switch(id)
+    {
+        case SVGFEGaussianBlurElementConstants::SetStdDeviation:
+        {
+            float stdDeviationX = args[0]->toNumber(exec);
+            float stdDeviationY = args[1]->toNumber(exec);
+            obj.setStdDeviation(stdDeviationX, stdDeviationY);
 
-			return Undefined();
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+            return Undefined();
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -109,12 +109,12 @@ SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(SVGFEGaussianBlurElementImpl 
 
 SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const SVGFEGaussianBlurElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
@@ -123,61 +123,61 @@ SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 
 SVGFEGaussianBlurElement &SVGFEGaussianBlurElement::operator=(const SVGFEGaussianBlurElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEGaussianBlurElement &SVGFEGaussianBlurElement::operator=(const KDOM::Node &other)
 {
-	SVGFEGaussianBlurElementImpl *ohandle = static_cast<SVGFEGaussianBlurElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEGaussianBlurElementImpl *ohandle = static_cast<SVGFEGaussianBlurElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEGaussianBlurElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 SVGAnimatedNumber SVGFEGaussianBlurElement::stdDeviationX() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->stdDeviationX());
+    return SVGAnimatedNumber(impl->stdDeviationX());
 }
 
 SVGAnimatedNumber SVGFEGaussianBlurElement::stdDeviationY() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->stdDeviationY());
+    return SVGAnimatedNumber(impl->stdDeviationY());
 }
 
 void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDeviationY)
 {
-	if(d)
-		impl->setStdDeviation(stdDeviationX, stdDeviationY);
+    if(d)
+        impl->setStdDeviation(stdDeviationX, stdDeviationY);
 }
 
 // vim:ts=4:noet

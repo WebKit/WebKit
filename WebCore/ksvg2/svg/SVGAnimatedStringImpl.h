@@ -28,16 +28,16 @@
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl : public SVGAnimatedTemplate<KDOM::DOMStringImpl>
-	{
-	public:
-		SVGAnimatedStringImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedStringImpl();
+    class SVGAnimatedStringImpl : public SVGAnimatedTemplate<KDOM::DOMStringImpl>
+    {
+    public:
+        SVGAnimatedStringImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedStringImpl();
 
-	protected:
-		virtual KDOM::DOMStringImpl *create() const;
-		virtual void assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const;
-	};
+    protected:
+        virtual KDOM::DOMStringImpl *create() const;
+        virtual void assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const;
+    };
 };
 
 #endif

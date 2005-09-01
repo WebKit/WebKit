@@ -27,43 +27,43 @@
 
 namespace KSVG
 {
-	class SVGPoint;
-	class SVGPointListImpl;
-	class SVGPointList
-	{
-	public:
-		SVGPointList();
-		explicit SVGPointList(SVGPointListImpl *i);
-		SVGPointList(const SVGPointList &other);
-		virtual ~SVGPointList();
+    class SVGPoint;
+    class SVGPointListImpl;
+    class SVGPointList
+    {
+    public:
+        SVGPointList();
+        explicit SVGPointList(SVGPointListImpl *i);
+        SVGPointList(const SVGPointList &other);
+        virtual ~SVGPointList();
 
-		// Operators
-		SVGPointList &operator=(const SVGPointList &other);
-		bool operator==(const SVGPointList &other) const;
-		bool operator!=(const SVGPointList &other) const;
+        // Operators
+        SVGPointList &operator=(const SVGPointList &other);
+        bool operator==(const SVGPointList &other) const;
+        bool operator!=(const SVGPointList &other) const;
 
-		// 'SVGPointList' functions
-		unsigned long numberOfItems() const;
-		void clear();
+        // 'SVGPointList' functions
+        unsigned long numberOfItems() const;
+        void clear();
 
-		SVGPoint initialize(const SVGPoint &newItem);
-		SVGPoint getItem(unsigned long index);
-		SVGPoint insertItemBefore(const SVGPoint &newItem, unsigned long index);
-		SVGPoint replaceItem(const SVGPoint &newItem, unsigned long index);
-		SVGPoint removeItem(unsigned long index);
-		SVGPoint appendItem(const SVGPoint &newItem);
+        SVGPoint initialize(const SVGPoint &newItem);
+        SVGPoint getItem(unsigned long index);
+        SVGPoint insertItemBefore(const SVGPoint &newItem, unsigned long index);
+        SVGPoint replaceItem(const SVGPoint &newItem, unsigned long index);
+        SVGPoint removeItem(unsigned long index);
+        SVGPoint appendItem(const SVGPoint &newItem);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGPointList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGPointList)
 
-	protected:
-		SVGPointListImpl *impl;
+    protected:
+        SVGPointListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGPointListProto)

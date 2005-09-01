@@ -32,43 +32,43 @@ using namespace KDOM;
 extern Path *parseStatement( const DomString &statement );
 
 ParsedStatement::ParsedStatement()
-	: m_path( 0 )
+    : m_path( 0 )
 {
 }
 
 ParsedStatement::ParsedStatement( const DomString &statement )
-	: m_path( 0 )
+    : m_path( 0 )
 {
-	parse( statement );
+    parse( statement );
 }
 
 ParsedStatement::~ParsedStatement()
 {
-	delete m_path;
+    delete m_path;
 }
 
 void ParsedStatement::parse( const DomString &statement )
 {
-	delete m_path;
-	m_path = parseStatement( statement );
+    delete m_path;
+    m_path = parseStatement( statement );
 }
 
 void ParsedStatement::optimize()
 {
-	if ( !m_path ) {
-		return;
-	}
-	m_path->optimize();
+    if ( !m_path ) {
+        return;
+    }
+    m_path->optimize();
 }
 
 Value ParsedStatement::evaluate( NodeImpl *context ) const
 {
-	Expression::evaluationContext().node = context;
-	return m_path->evaluate();
+    Expression::evaluationContext().node = context;
+    return m_path->evaluate();
 }
 
 QString ParsedStatement::dump() const
 {
-	return m_path->dump();
+    return m_path->dump();
 }
 

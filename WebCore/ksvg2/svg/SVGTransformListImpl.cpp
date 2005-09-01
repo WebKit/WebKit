@@ -38,39 +38,39 @@ SVGTransformListImpl::~SVGTransformListImpl()
 
 SVGTransformImpl *SVGTransformListImpl::createSVGTransformFromMatrix(SVGMatrixImpl *matrix) const
 {
-	return SVGSVGElementImpl::createSVGTransformFromMatrix(matrix);
+    return SVGSVGElementImpl::createSVGTransformFromMatrix(matrix);
 }
 
 SVGTransformImpl *SVGTransformListImpl::consolidate()
 {
-	SVGTransformImpl *obj = concatenate();
-	if(!obj)
-		return 0;
+    SVGTransformImpl *obj = concatenate();
+    if(!obj)
+        return 0;
 
-	// Disable notifications here...
-	const SVGStyledElementImpl *savedContext = m_context;
+    // Disable notifications here...
+    const SVGStyledElementImpl *savedContext = m_context;
 
-	m_context = 0;
-	SVGTransformImpl *ret = initialize(obj);
-	m_context = savedContext;
-	
-	return ret;
+    m_context = 0;
+    SVGTransformImpl *ret = initialize(obj);
+    m_context = savedContext;
+    
+    return ret;
 }
 
 SVGTransformImpl *SVGTransformListImpl::concatenate() const
 {
-	unsigned int length = numberOfItems();
-	if(!length)
-		return 0;
-		
-	SVGTransformImpl *obj = SVGSVGElementImpl::createSVGTransform();
-	SVGMatrixImpl *matrix = SVGSVGElementImpl::createSVGMatrix();
+    unsigned int length = numberOfItems();
+    if(!length)
+        return 0;
+        
+    SVGTransformImpl *obj = SVGSVGElementImpl::createSVGTransform();
+    SVGMatrixImpl *matrix = SVGSVGElementImpl::createSVGMatrix();
 
-	for(unsigned int i = 0; i < length; i++)
-		matrix->multiply(getItem(i)->matrix());
+    for(unsigned int i = 0; i < length; i++)
+        matrix->multiply(getItem(i)->matrix());
 
-	obj->setMatrix(matrix);
-	return obj;
+    obj->setMatrix(matrix);
+    return obj;
 }
 
 // vim:ts=4:noet

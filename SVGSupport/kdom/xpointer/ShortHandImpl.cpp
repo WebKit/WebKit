@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,11 +41,11 @@ using namespace KDOM::XPointer;
 ShortHandImpl::ShortHandImpl(DOMStringImpl *str)
 : PointerPartImpl(str, str, 0) // shortHand pointers have no data nor NBC, set it to 0.
 {
-	if(!Helper::IsValidNCName(str))
-	{
-		kdWarning() << "\"" << str << "\" is not a valid short hand pointer. TODO DOMError." << endl;
-		throw new XPointerExceptionImpl(INVALID_EXPRESSION_ERR);
-	}
+    if(!Helper::IsValidNCName(str))
+    {
+        kdWarning() << "\"" << str << "\" is not a valid short hand pointer. TODO DOMError." << endl;
+        throw new XPointerExceptionImpl(INVALID_EXPRESSION_ERR);
+    }
 }
 
 ShortHandImpl::~ShortHandImpl()
@@ -54,17 +54,17 @@ ShortHandImpl::~ShortHandImpl()
 
 XPointerResultImpl *ShortHandImpl::evaluate(NodeImpl *context) const
 {
-	if(!context)
-		return 0;
+    if(!context)
+        return 0;
 
-	NodeImpl *node = static_cast<DocumentImpl*>(context)->getElementById(data());
+    NodeImpl *node = static_cast<DocumentImpl*>(context)->getElementById(data());
 
-	if(!node)
-		return new XPointerResultImpl(NO_MATCH);
-		
-	XPointerResultImpl *result = new XPointerResultImpl(SINGLE_NODE);
-	result->setSingleNodeValue(node);
-	return result;
+    if(!node)
+        return new XPointerResultImpl(NO_MATCH);
+        
+    XPointerResultImpl *result = new XPointerResultImpl(SINGLE_NODE);
+    result->setSingleNodeValue(node);
+    return result;
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,50 +33,50 @@ using namespace KSVG;
 
 SVGURIReferenceImpl::SVGURIReferenceImpl()
 {
-	m_href = 0;
+    m_href = 0;
 }
 
 SVGURIReferenceImpl::~SVGURIReferenceImpl()
 {
-	if(m_href)
-		m_href->deref();
+    if(m_href)
+        m_href->deref();
 }
 
 SVGAnimatedStringImpl *SVGURIReferenceImpl::href() const
 {
-	const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
-	return lazy_create<SVGAnimatedStringImpl>(m_href, context);
+    const SVGStyledElementImpl *context = dynamic_cast<const SVGStyledElementImpl *>(this);
+    return lazy_create<SVGAnimatedStringImpl>(m_href, context);
 }
 
 bool SVGURIReferenceImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	if(id == ATTR_HREF || KDOM::DOMString(attr->name()) == "xlink:href")
-	{
-		href()->setBaseVal(value.handle());
-		return true;
-	}
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    if(id == ATTR_HREF || KDOM::DOMString(attr->name()) == "xlink:href")
+    {
+        href()->setBaseVal(value.handle());
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 QString SVGURIReferenceImpl::getTarget(const QString &url)
 {
-	if(url.startsWith(QString::fromLatin1("url("))) // URI References, ie. fill:url(#target)
-	{
-		unsigned int start = url.find('#') + 1;
-		unsigned int end = url.findRev(')');
+    if(url.startsWith(QString::fromLatin1("url("))) // URI References, ie. fill:url(#target)
+    {
+        unsigned int start = url.find('#') + 1;
+        unsigned int end = url.findRev(')');
 
-		return url.mid(start, end - start);
-	}
-	else if(url.find('#') > -1) // format is #target
-	{
-		unsigned int start = url.find('#') + 1;
-		return url.mid(start, url.length() - start);
-	}
-	else // Normal Reference, ie. style="color-profile:changeColor"
-		return url;
+        return url.mid(start, end - start);
+    }
+    else if(url.find('#') > -1) // format is #target
+    {
+        unsigned int start = url.find('#') + 1;
+        return url.mid(start, url.length() - start);
+    }
+    else // Normal Reference, ie. style="color-profile:changeColor"
+        return url;
 }
 
 // vim:ts=4:noet

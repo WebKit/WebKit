@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,18 +27,18 @@
 
 namespace KDOM
 {
-	class EventExceptionImpl : public Shared
-	{
-	public:
-		EventExceptionImpl(unsigned short code);
-		virtual ~EventExceptionImpl();
+    class EventExceptionImpl : public Shared
+    {
+    public:
+        EventExceptionImpl(unsigned short code);
+        virtual ~EventExceptionImpl();
 
-		// 'EventExceptionImpl' functions
-		unsigned short code() const;
+        // 'EventExceptionImpl' functions
+        unsigned short code() const;
 
-	protected:
-		unsigned short m_code;
-	};
+    protected:
+        unsigned short m_code;
+    };
 };
 
 #endif

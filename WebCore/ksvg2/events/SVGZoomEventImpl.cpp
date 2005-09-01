@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,58 +28,58 @@ using namespace KSVG;
 
 SVGZoomEventImpl::SVGZoomEventImpl() : KDOM::UIEventImpl(KDOM::TypeLastEvent)
 {
-	m_newScale = 0.0;
-	m_previousScale = 0.0;
+    m_newScale = 0.0;
+    m_previousScale = 0.0;
 
-	m_zoomRectScreen = 0;
+    m_zoomRectScreen = 0;
 
-	m_newTranslate = 0;
-	m_previousTranslate = 0;
+    m_newTranslate = 0;
+    m_previousTranslate = 0;
 }
 
 SVGZoomEventImpl::~SVGZoomEventImpl()
 {
-	if(m_newTranslate)
-		m_newTranslate->deref();
-	if(m_previousTranslate)
-		m_previousTranslate->deref();
-	if(m_zoomRectScreen)
-		m_zoomRectScreen->deref();
+    if(m_newTranslate)
+        m_newTranslate->deref();
+    if(m_previousTranslate)
+        m_previousTranslate->deref();
+    if(m_zoomRectScreen)
+        m_zoomRectScreen->deref();
 }
 
 SVGRectImpl *SVGZoomEventImpl::zoomRectScreen() const
 {
-	return m_zoomRectScreen;
+    return m_zoomRectScreen;
 }
 
 float SVGZoomEventImpl::previousScale() const
 {
-	return m_previousScale;
+    return m_previousScale;
 }
 
 void SVGZoomEventImpl::setPreviousScale(float scale)
 {
-	m_previousScale = scale;
+    m_previousScale = scale;
 }
 
 SVGPointImpl *SVGZoomEventImpl::previousTranslate() const
 {
-	return m_previousTranslate;
+    return m_previousTranslate;
 }
 
 float SVGZoomEventImpl::newScale() const
 {
-	return m_newScale;
+    return m_newScale;
 }
 
 void SVGZoomEventImpl::setNewScale(float scale)
 {
-	m_newScale = scale;
+    m_newScale = scale;
 }
 
 SVGPointImpl *SVGZoomEventImpl::newTranslate() const
 {
-	return m_newTranslate;
+    return m_newTranslate;
 }
 
 // vim:ts=4:noet

@@ -27,10 +27,10 @@ using namespace KSVG;
 
 SVGAnimatedNumberImpl::SVGAnimatedNumberImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_baseVal = 0;
-	m_animVal = 0;
+    m_baseVal = 0;
+    m_animVal = 0;
 
-	m_context = context;
+    m_context = context;
 }
 
 SVGAnimatedNumberImpl::~SVGAnimatedNumberImpl()
@@ -39,32 +39,32 @@ SVGAnimatedNumberImpl::~SVGAnimatedNumberImpl()
 
 float SVGAnimatedNumberImpl::baseVal() const
 {
-	return m_baseVal;
+    return m_baseVal;
 }
 
 void SVGAnimatedNumberImpl::setBaseVal(float baseVal)
 {
-	m_baseVal = baseVal;
-	
-	// Spec: If the given attribute or property is not currently
-	//		 being animated, contains the same value as 'baseVal'
-	m_animVal = baseVal;
+    m_baseVal = baseVal;
+    
+    // Spec: If the given attribute or property is not currently
+    //         being animated, contains the same value as 'baseVal'
+    m_animVal = baseVal;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 float SVGAnimatedNumberImpl::animVal() const
 {
-	return m_animVal;
+    return m_animVal;
 }
 
 void SVGAnimatedNumberImpl::setAnimVal(float animVal)
 {
-	m_animVal = animVal;
+    m_animVal = animVal;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

@@ -28,37 +28,37 @@
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
-	class SVGAnimatedString
-	{
-	public:
-		SVGAnimatedString();
-		explicit SVGAnimatedString(SVGAnimatedStringImpl *i);
-		SVGAnimatedString(const SVGAnimatedString &other);
-		virtual ~SVGAnimatedString();
+    class SVGAnimatedStringImpl;
+    class SVGAnimatedString
+    {
+    public:
+        SVGAnimatedString();
+        explicit SVGAnimatedString(SVGAnimatedStringImpl *i);
+        SVGAnimatedString(const SVGAnimatedString &other);
+        virtual ~SVGAnimatedString();
 
-		// Operators
-		SVGAnimatedString &operator=(const SVGAnimatedString &other);
-		bool operator==(const SVGAnimatedString &other) const;
-		bool operator!=(const SVGAnimatedString &other) const;
+        // Operators
+        SVGAnimatedString &operator=(const SVGAnimatedString &other);
+        bool operator==(const SVGAnimatedString &other) const;
+        bool operator!=(const SVGAnimatedString &other) const;
 
-		// 'SVGAnimatedString' functions
-		KDOM::DOMString baseVal() const;
-		KDOM::DOMString animVal() const;
+        // 'SVGAnimatedString' functions
+        KDOM::DOMString baseVal() const;
+        KDOM::DOMString animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedString)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedString)
 
-	protected:
-		SVGAnimatedStringImpl *impl;
+    protected:
+        SVGAnimatedStringImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

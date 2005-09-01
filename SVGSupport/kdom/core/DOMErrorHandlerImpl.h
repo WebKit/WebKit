@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
                   2005 Frans Englich <frans.englich@telia.com>
 
     This file is part of the KDE project
@@ -28,16 +28,16 @@
 
 namespace KDOM
 {
-	class DOMErrorImpl;
+    class DOMErrorImpl;
 
-	class DOMErrorHandlerImpl : public Shared
-	{
-	public:
-		DOMErrorHandlerImpl();
-		virtual ~DOMErrorHandlerImpl();
+    class DOMErrorHandlerImpl : public Shared
+    {
+    public:
+        DOMErrorHandlerImpl();
+        virtual ~DOMErrorHandlerImpl();
 
-		virtual bool handleError(DOMErrorImpl *error);
-	};
+        virtual bool handleError(DOMErrorImpl *error);
+    };
 };
 
 #endif

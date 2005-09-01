@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,7 +30,7 @@ using namespace KSVG;
 SVGAnimateElementImpl::SVGAnimateElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGAnimationElementImpl(doc, id, prefix)
 {
-	m_currentItem = -1;
+    m_currentItem = -1;
 }
 
 SVGAnimateElementImpl::~SVGAnimateElementImpl()
@@ -39,180 +39,180 @@ SVGAnimateElementImpl::~SVGAnimateElementImpl()
 
 void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
 {
-	// Start condition.
-	if(!m_connected)
-	{
-		// Save initial attribute value...
-		m_savedTo = targetAttribute().string();
+    // Start condition.
+    if(!m_connected)
+    {
+        // Save initial attribute value...
+        m_savedTo = targetAttribute().string();
 
-		// Animation mode handling
-		switch(detectAnimationMode())
-		{
-/*			case TO_ANIMATION:
-			case FROM_TO_ANIMATION:
-			{
-				KDOM::DOMString toColorString(m_to);
-				m_toColor->setRGBColor(toColorString.handle());
-	
-				KDOM::DOMString fromColorString;
-				if(!m_from.isEmpty()) // from-to animation
-					fromColorString = m_from;
-				else // to animation
-					fromColorString = m_initialColor.name();
-	
-				m_fromColor->setRGBColor(fromColorString.handle());	
+        // Animation mode handling
+        switch(detectAnimationMode())
+        {
+/*            case TO_ANIMATION:
+            case FROM_TO_ANIMATION:
+            {
+                KDOM::DOMString toColorString(m_to);
+                m_toColor->setRGBColor(toColorString.handle());
+    
+                KDOM::DOMString fromColorString;
+                if(!m_from.isEmpty()) // from-to animation
+                    fromColorString = m_from;
+                else // to animation
+                    fromColorString = m_initialColor.name();
+    
+                m_fromColor->setRGBColor(fromColorString.handle());    
 
-				// Calculate color differences, once.
-				QColor qTo = m_toColor->color();
-				QColor qFrom = m_fromColor->color();
-	
-				m_redDiff = qTo.red() - qFrom.red();
-				m_greenDiff = qTo.green() - qFrom.green();
-				m_blueDiff = qTo.blue() - qFrom.blue();
-				
-				break;
-			}
-			case BY_ANIMATION:
-			case FROM_BY_ANIMATION:
-			{
-				KDOM::DOMString byColorString(m_by);
-				m_toColor->setRGBColor(byColorString.handle());
+                // Calculate color differences, once.
+                QColor qTo = m_toColor->color();
+                QColor qFrom = m_fromColor->color();
+    
+                m_redDiff = qTo.red() - qFrom.red();
+                m_greenDiff = qTo.green() - qFrom.green();
+                m_blueDiff = qTo.blue() - qFrom.blue();
+                
+                break;
+            }
+            case BY_ANIMATION:
+            case FROM_BY_ANIMATION:
+            {
+                KDOM::DOMString byColorString(m_by);
+                m_toColor->setRGBColor(byColorString.handle());
 
-				KDOM::DOMString fromColorString;
-			
-				if(!m_from.isEmpty()) // from-by animation
-					fromColorString = m_from;
-				else // by animation
-					fromColorString = m_initialColor.name();
+                KDOM::DOMString fromColorString;
+            
+                if(!m_from.isEmpty()) // from-by animation
+                    fromColorString = m_from;
+                else // by animation
+                    fromColorString = m_initialColor.name();
 
-				m_fromColor->setRGBColor(fromColorString.handle());
+                m_fromColor->setRGBColor(fromColorString.handle());
 
-				QColor qBy = m_toColor->color();
-				QColor qFrom = m_fromColor->color();
+                QColor qBy = m_toColor->color();
+                QColor qFrom = m_fromColor->color();
 
-				// Calculate 'm_toColor' using relative values
-				int r = qFrom.red() + qBy.red();
-				int g = qFrom.green() + qBy.green();
-				int b = qFrom.blue() + qBy.blue();
+                // Calculate 'm_toColor' using relative values
+                int r = qFrom.red() + qBy.red();
+                int g = qFrom.green() + qBy.green();
+                int b = qFrom.blue() + qBy.blue();
 
-				QColor qTo = clampColor(r, g, b);
-			
-				KDOM::DOMString toColorString(qTo.name());
-				m_toColor->setRGBColor(toColorString.handle());
-			
-				m_redDiff = qTo.red() - qFrom.red();
-				m_greenDiff = qTo.green() - qFrom.green();
-				m_blueDiff = qTo.blue() - qFrom.blue();
+                QColor qTo = clampColor(r, g, b);
+            
+                KDOM::DOMString toColorString(qTo.name());
+                m_toColor->setRGBColor(toColorString.handle());
+            
+                m_redDiff = qTo.red() - qFrom.red();
+                m_greenDiff = qTo.green() - qFrom.green();
+                m_blueDiff = qTo.blue() - qFrom.blue();
 
-				break;
-			}
-			case VALUES_ANIMATION:
-				break;*/
-			default:
-			{
-				kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
-				return;
-			}
-		}
+                break;
+            }
+            case VALUES_ANIMATION:
+                break;*/
+            default:
+            {
+                kdError() << k_funcinfo << " Unable to detect animation mode! Aborting creation!" << endl;
+                return;
+            }
+        }
 
-		SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-		if(document)
-		{
-			document->timeScheduler()->connectIntervalTimer(this);
-			m_connected = true;
-		}
+        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
+        if(document)
+        {
+            document->timeScheduler()->connectIntervalTimer(this);
+            m_connected = true;
+        }
 
-		return;
-	}
+        return;
+    }
 
-	// Calculations...
-	if(timePercentage >= 1.0)
-		timePercentage = 1.0;
+    // Calculations...
+    if(timePercentage >= 1.0)
+        timePercentage = 1.0;
 
-//	int r = 0, g = 0, b = 0;
-//	if((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
-//		calculateColor(timePercentage, r, g, b);
-/*	else */if(m_values)
-	{
-/*		int itemByPercentage = calculateCurrentValueItem(timePercentage);
+//    int r = 0, g = 0, b = 0;
+//    if((m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0) && !m_values)
+//        calculateColor(timePercentage, r, g, b);
+/*    else */if(m_values)
+    {
+/*        int itemByPercentage = calculateCurrentValueItem(timePercentage);
 
-		if(itemByPercentage == -1)
-			return;
+        if(itemByPercentage == -1)
+            return;
 
-		if(m_currentItem != itemByPercentage) // Item changed...
-		{
-			// Extract current 'from' / 'to' values
-			KDOM::DOMString value1 = KDOM::DOMString(m_values->getItem(itemByPercentage));
-			KDOM::DOMString value2 = KDOM::DOMString(m_values->getItem(itemByPercentage + 1));
+        if(m_currentItem != itemByPercentage) // Item changed...
+        {
+            // Extract current 'from' / 'to' values
+            KDOM::DOMString value1 = KDOM::DOMString(m_values->getItem(itemByPercentage));
+            KDOM::DOMString value2 = KDOM::DOMString(m_values->getItem(itemByPercentage + 1));
 
-			// Calculate r/g/b shifting values...
-			if(!value1.isEmpty() && !value2.isEmpty())
-			{
-				bool apply = false;
-				if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
-				{
-					r = m_toColor->color().red();
-					g = m_toColor->color().green();
-					b = m_toColor->color().blue();
+            // Calculate r/g/b shifting values...
+            if(!value1.isEmpty() && !value2.isEmpty())
+            {
+                bool apply = false;
+                if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
+                {
+                    r = m_toColor->color().red();
+                    g = m_toColor->color().green();
+                    b = m_toColor->color().blue();
 
-					apply = true;
-				}
+                    apply = true;
+                }
 
-				KDOM::DOMString toColorString(value2);
-				m_toColor->setRGBColor(toColorString.handle());
-	
-				KDOM::DOMString fromColorString(value1);
-				m_fromColor->setRGBColor(fromColorString.handle());	
+                KDOM::DOMString toColorString(value2);
+                m_toColor->setRGBColor(toColorString.handle());
+    
+                KDOM::DOMString fromColorString(value1);
+                m_fromColor->setRGBColor(fromColorString.handle());    
 
-				QColor qTo = m_toColor->color();
-				QColor qFrom = m_fromColor->color();
+                QColor qTo = m_toColor->color();
+                QColor qFrom = m_fromColor->color();
 
-				m_redDiff = qTo.red() - qFrom.red();
-				m_greenDiff = qTo.green() - qFrom.green();
-				m_blueDiff = qTo.blue() - qFrom.blue();
+                m_redDiff = qTo.red() - qFrom.red();
+                m_greenDiff = qTo.green() - qFrom.green();
+                m_blueDiff = qTo.blue() - qFrom.blue();
 
-				m_currentItem = itemByPercentage;
+                m_currentItem = itemByPercentage;
 
-				if(!apply)
-					return;
-			}
-		}
-		else if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
-		{
-			double relativeTime = calculateRelativeTimePercentage(timePercentage, m_currentItem);
-			calculateColor(relativeTime, r, g, b);
-		}*/
-	}
-	
-	if(!isFrozen() && timePercentage == 1.0)
-	{
-	}
+                if(!apply)
+                    return;
+            }
+        }
+        else if(m_redDiff != 0 || m_greenDiff != 0 || m_blueDiff != 0)
+        {
+            double relativeTime = calculateRelativeTimePercentage(timePercentage, m_currentItem);
+            calculateColor(relativeTime, r, g, b);
+        }*/
+    }
+    
+    if(!isFrozen() && timePercentage == 1.0)
+    {
+    }
 
-	if(isAccumulated() && repeations() != 0.0)
-	{
-	}
+    if(isAccumulated() && repeations() != 0.0)
+    {
+    }
 
-	// Commit changes!
-	
-	// End condition.
-	if(timePercentage == 1.0)
-	{
-		if((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount))
-		{
-			m_repeations++;
-			return;
-		}
+    // Commit changes!
+    
+    // End condition.
+    if(timePercentage == 1.0)
+    {
+        if((m_repeatCount > 0 && m_repeations < m_repeatCount - 1) || isIndefinite(m_repeatCount))
+        {
+            m_repeations++;
+            return;
+        }
 
-		SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-		if(document)
-		{
-			document->timeScheduler()->disconnectIntervalTimer(this);
-			m_connected = false;
-		}
+        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
+        if(document)
+        {
+            document->timeScheduler()->disconnectIntervalTimer(this);
+            m_connected = false;
+        }
 
-		// Reset...
-		m_currentItem = -1;
-	}
+        // Reset...
+        m_currentItem = -1;
+    }
 }
 
 // vim:ts=4:noet

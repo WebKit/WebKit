@@ -33,12 +33,12 @@ using namespace KDOM::XPath;
 XPathExpressionImpl *XPathEvaluatorImpl::createExpression( DOMStringImpl *expression,
                                                            XPathNSResolverImpl *resolver )
 {
-	return new XPathExpressionImpl( expression, resolver );
+    return new XPathExpressionImpl( expression, resolver );
 }
 
 XPathNSResolverImpl *XPathEvaluatorImpl::createNSResolver( NodeImpl *nodeResolver )
 {
-	return new XPathNSResolverImpl( nodeResolver );
+    return new XPathNSResolverImpl( nodeResolver );
 }
 
 XPathResultImpl *XPathEvaluatorImpl::evaluate( DOMStringImpl *expression,
@@ -47,13 +47,13 @@ XPathResultImpl *XPathEvaluatorImpl::evaluate( DOMStringImpl *expression,
                                                unsigned short type,
                                                XPathResultImpl *result )
 {
-	XPathExpressionImpl *expr = createExpression( expression, resolver );
-	XPathResultImpl *res = expr->evaluate( contextNode, type, result );
-	delete expr;
-	if ( result ) {
-		result = res;
-		result->ref();
-	}
-	return res;
+    XPathExpressionImpl *expr = createExpression( expression, resolver );
+    XPathResultImpl *res = expr->evaluate( contextNode, type, result );
+    delete expr;
+    if ( result ) {
+        result = res;
+        result->ref();
+    }
+    return res;
 }
 

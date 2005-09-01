@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,30 +35,30 @@ using namespace KSVG;
 
 /*
 @begin SVGCircleElement::s_hashTable 5
- cx		SVGCircleElementConstants::Cx		DontDelete|ReadOnly
- cy		SVGCircleElementConstants::Cy		DontDelete|ReadOnly
- r		SVGCircleElementConstants::R		DontDelete|ReadOnly
+ cx        SVGCircleElementConstants::Cx        DontDelete|ReadOnly
+ cy        SVGCircleElementConstants::Cy        DontDelete|ReadOnly
+ r        SVGCircleElementConstants::R        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGCircleElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGCircleElementConstants::Cx:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, cx());
-		case SVGCircleElementConstants::Cy:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, cy());
-		case SVGCircleElementConstants::R:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, r());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGCircleElementConstants::Cx:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, cx());
+        case SVGCircleElementConstants::Cy:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, cy());
+        case SVGCircleElementConstants::R:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, r());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -76,12 +76,12 @@ SVGCircleElement::SVGCircleElement(SVGCircleElementImpl *i) : SVGElement(i), SVG
 
 SVGCircleElement::SVGCircleElement(const SVGCircleElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGCircleElement::SVGCircleElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGCircleElement::~SVGCircleElement()
@@ -90,63 +90,63 @@ SVGCircleElement::~SVGCircleElement()
 
 SVGCircleElement &SVGCircleElement::operator=(const SVGCircleElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGCircleElement &SVGCircleElement::operator=(const KDOM::Node &other)
 {
-	SVGCircleElementImpl *ohandle = static_cast<SVGCircleElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGCircleElementImpl *ohandle = static_cast<SVGCircleElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGCircleElement::cx() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->cx());
+    return SVGAnimatedLength(impl->cx());
 }
 
 SVGAnimatedLength SVGCircleElement::cy() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->cy());
+    return SVGAnimatedLength(impl->cy());
 }
 
 SVGAnimatedLength SVGCircleElement::r() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->r());
+    return SVGAnimatedLength(impl->r());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,30 +40,30 @@ using namespace KSVG;
 
 /*
 @begin SVGGradientElement::s_hashTable 5
- gradientUnits		SVGGradientElementConstants::GradientUnits		DontDelete|ReadOnly
- gradientTransform	SVGGradientElementConstants::GradientTransform	DontDelete|ReadOnly
- spreadMethod		SVGGradientElementConstants::SpreadMethod		DontDelete|ReadOnly
+ gradientUnits        SVGGradientElementConstants::GradientUnits        DontDelete|ReadOnly
+ gradientTransform    SVGGradientElementConstants::GradientTransform    DontDelete|ReadOnly
+ spreadMethod        SVGGradientElementConstants::SpreadMethod        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGGradientElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGGradientElementConstants::GradientUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, gradientUnits());
-		case SVGGradientElementConstants::GradientTransform:
-			return KDOM::safe_cache<SVGAnimatedTransformList>(exec, gradientTransform());
-		case SVGGradientElementConstants::SpreadMethod:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, spreadMethod());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGGradientElementConstants::GradientUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, gradientUnits());
+        case SVGGradientElementConstants::GradientTransform:
+            return KDOM::safe_cache<SVGAnimatedTransformList>(exec, gradientTransform());
+        case SVGGradientElementConstants::SpreadMethod:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, spreadMethod());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -81,12 +81,12 @@ SVGGradientElement::SVGGradientElement(SVGGradientElementImpl *i) : SVGElement(i
 
 SVGGradientElement::SVGGradientElement(const SVGGradientElement &other) : SVGElement(), SVGURIReference(), SVGExternalResourcesRequired(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGGradientElement::SVGGradientElement(const KDOM::Node &other) : SVGElement(), SVGURIReference(), SVGExternalResourcesRequired(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGGradientElement::~SVGGradientElement()
@@ -95,59 +95,59 @@ SVGGradientElement::~SVGGradientElement()
 
 SVGGradientElement &SVGGradientElement::operator=(const SVGGradientElement &other)
 {
-	SVGElement::operator=(other);
-	SVGURIReference::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGURIReference::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    return *this;
 }
 
 SVGGradientElement &SVGGradientElement::operator=(const KDOM::Node &other)
 {
-	SVGGradientElementImpl *ohandle = static_cast<SVGGradientElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
+    SVGGradientElementImpl *ohandle = static_cast<SVGGradientElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
 
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGURIReference::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-		}
-	}
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGURIReference::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedEnumeration SVGGradientElement::gradientUnits() const
 {
-	if(!impl)
-		return SVGAnimatedEnumeration::null;
+    if(!impl)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->gradientUnits());
+    return SVGAnimatedEnumeration(impl->gradientUnits());
 }
 
 SVGAnimatedTransformList SVGGradientElement::gradientTransform() const
 {
-	if(!impl)
-		return SVGAnimatedTransformList::null;
+    if(!impl)
+        return SVGAnimatedTransformList::null;
 
-	return SVGAnimatedTransformList(impl->gradientTransform());
+    return SVGAnimatedTransformList(impl->gradientTransform());
 }
 
 SVGAnimatedEnumeration SVGGradientElement::spreadMethod() const
 {
-	if(!impl)
-		return SVGAnimatedEnumeration::null;
+    if(!impl)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->spreadMethod());
+    return SVGAnimatedEnumeration(impl->spreadMethod());
 }
 
 // vim:ts=4:noet

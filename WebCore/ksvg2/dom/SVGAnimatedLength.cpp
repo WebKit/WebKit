@@ -34,27 +34,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedLength::s_hashTable 3
- baseVal	SVGAnimatedLengthConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedLengthConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedLengthConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedLengthConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedLength::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedLengthConstants::BaseVal:
-			return KDOM::safe_cache<SVGLength>(exec, baseVal());
-		case SVGAnimatedLengthConstants::AnimVal:
-			return KDOM::safe_cache<SVGLength>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedLengthConstants::BaseVal:
+            return KDOM::safe_cache<SVGLength>(exec, baseVal());
+        case SVGAnimatedLengthConstants::AnimVal:
+            return KDOM::safe_cache<SVGLength>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedLength SVGAnimatedLength::null;
@@ -65,31 +65,31 @@ SVGAnimatedLength::SVGAnimatedLength() : impl(0)
 
 SVGAnimatedLength::SVGAnimatedLength(SVGAnimatedLengthImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedLength::SVGAnimatedLength(const SVGAnimatedLength &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedLength)
 
 SVGLength SVGAnimatedLength::baseVal() const
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->baseVal());
+    return SVGLength(impl->baseVal());
 }
 
 SVGLength SVGAnimatedLength::animVal() const
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->animVal());
+    return SVGLength(impl->animVal());
 }
 
 // vim:ts=4:noet

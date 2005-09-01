@@ -27,34 +27,34 @@ using namespace KDOM;
 
 struct KDOMView::KDOMViewPrivate
 {
-	KDOMPart *part;
-	QString medium; // media type
+    KDOMPart *part;
+    QString medium; // media type
 };
 
 KDOMView::KDOMView(KDOMPart *part) : d(new KDOMViewPrivate())
 {
-	d->part = part;
-	d->medium = "screen";
+    d->part = part;
+    d->medium = "screen";
 }
 
 KDOMView::~KDOMView()
 {
-	delete d;
+    delete d;
 }
 
 KDOMPart *KDOMView::part() const
 {
-	return d->part;
+    return d->part;
 }
 
 QString KDOMView::mediaType() const
 {
-	return d->medium;
+    return d->medium;
 }
 
 void KDOMView::setMediaType(const QString &medium)
 {
-	d->medium = medium;
+    d->medium = medium;
 }
 
 // vim:ts=4:noet

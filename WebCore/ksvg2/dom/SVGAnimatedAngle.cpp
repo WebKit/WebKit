@@ -34,27 +34,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedAngle::s_hashTable 3
- baseVal	SVGAnimatedAngleConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedAngleConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedAngleConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedAngleConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedAngle::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedAngleConstants::BaseVal:
-			return KDOM::safe_cache<SVGAngle>(exec, baseVal());
-		case SVGAnimatedAngleConstants::AnimVal:
-			return KDOM::safe_cache<SVGAngle>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedAngleConstants::BaseVal:
+            return KDOM::safe_cache<SVGAngle>(exec, baseVal());
+        case SVGAnimatedAngleConstants::AnimVal:
+            return KDOM::safe_cache<SVGAngle>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedAngle SVGAnimatedAngle::null;
@@ -65,31 +65,31 @@ SVGAnimatedAngle::SVGAnimatedAngle() : impl(0)
 
 SVGAnimatedAngle::SVGAnimatedAngle(SVGAnimatedAngleImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedAngle::SVGAnimatedAngle(const SVGAnimatedAngle &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedAngle)
 
 SVGAngle SVGAnimatedAngle::baseVal() const
 {
-	if(!impl)
-		return SVGAngle::null;
+    if(!impl)
+        return SVGAngle::null;
 
-	return SVGAngle(impl->baseVal());
+    return SVGAngle(impl->baseVal());
 }
 
 SVGAngle SVGAnimatedAngle::animVal() const
 {
-	if(!impl)
-		return SVGAngle::null;
+    if(!impl)
+        return SVGAngle::null;
 
-	return SVGAngle(impl->animVal());
+    return SVGAngle(impl->animVal());
 }
 
 // vim:ts=4:noet

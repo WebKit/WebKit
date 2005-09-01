@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -36,12 +36,12 @@ DocumentTraversalImpl::~DocumentTraversalImpl()
 
 NodeIteratorImpl *DocumentTraversalImpl::createNodeIterator(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion)
 {
-	return new NodeIteratorImpl(root, whatToShow, filter, entityReferenceExpansion);
+    return new NodeIteratorImpl(root, whatToShow, filter, entityReferenceExpansion);
 }
 
 TreeWalkerImpl *DocumentTraversalImpl::createTreeWalker(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion)
 {
-	return new TreeWalkerImpl(root, whatToShow, filter, entityReferenceExpansion);
+    return new TreeWalkerImpl(root, whatToShow, filter, entityReferenceExpansion);
 }
 
 // vim:ts=4:noet

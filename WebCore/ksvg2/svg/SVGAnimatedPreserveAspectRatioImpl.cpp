@@ -34,16 +34,16 @@ SVGAnimatedPreserveAspectRatioImpl::~SVGAnimatedPreserveAspectRatioImpl()
 
 SVGPreserveAspectRatioImpl *SVGAnimatedPreserveAspectRatioImpl::create() const
 {
-	return new SVGPreserveAspectRatioImpl(m_context);
+    return new SVGPreserveAspectRatioImpl(m_context);
 }
 
 void SVGAnimatedPreserveAspectRatioImpl::assign(SVGPreserveAspectRatioImpl *src, SVGPreserveAspectRatioImpl *dst) const
 {
-	if(!src || !dst)
-		return;
-	
-	dst->setAlign(src->align());
-	dst->setMeetOrSlice(src->meetOrSlice());
+    if(!src || !dst)
+        return;
+    
+    dst->setAlign(src->align());
+    dst->setMeetOrSlice(src->meetOrSlice());
 }
 
 // vim:ts=4:noet

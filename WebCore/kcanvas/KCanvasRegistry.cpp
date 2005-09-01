@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
     
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,8 +28,8 @@
 
 KCanvasRegistry::KCanvasRegistry()
 {
-	m_pservers.setAutoDelete(true);
-	m_resources.setAutoDelete(true);
+    m_pservers.setAutoDelete(true);
+    m_resources.setAutoDelete(true);
 }
 
 KCanvasRegistry::~KCanvasRegistry()
@@ -38,30 +38,30 @@ KCanvasRegistry::~KCanvasRegistry()
 
 void KCanvasRegistry::addPaintServerById(const QString &id, KRenderingPaintServer *pserver)
 {
-	m_pservers.insert(id, pserver);
+    m_pservers.insert(id, pserver);
     pserver->setIdInRegistry(id);
 }
 
 KRenderingPaintServer *KCanvasRegistry::getPaintServerById(const QString &id) const
 {
-	return m_pservers[id];
+    return m_pservers[id];
 }
 
 void KCanvasRegistry::addResourceById(const QString &id, KCanvasResource *resource)
 {
-	m_resources.insert(id, resource);
+    m_resources.insert(id, resource);
     resource->setIdInRegistry(id);
 }
 
 KCanvasResource *KCanvasRegistry::getResourceById(const QString &id) const
 {
-	return m_resources[id];
+    return m_resources[id];
 }
 
 void KCanvasRegistry::cleanup()
 {
-	m_pservers.clear();
-	m_resources.clear();
+    m_pservers.clear();
+    m_resources.clear();
 }
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasRegistry &r)

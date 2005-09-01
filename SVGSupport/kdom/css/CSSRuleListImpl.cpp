@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,45 +32,45 @@ CSSRuleListImpl::CSSRuleListImpl() : Shared()
 
 CSSRuleListImpl::~CSSRuleListImpl()
 {
-	CSSRuleImpl *rule;
-	while(!m_lstCSSRules.isEmpty() && (rule = m_lstCSSRules.take(0)))
-		rule->deref();
+    CSSRuleImpl *rule;
+    while(!m_lstCSSRules.isEmpty() && (rule = m_lstCSSRules.take(0)))
+        rule->deref();
 }
 
 unsigned long CSSRuleListImpl::length() const
 {
-	return m_lstCSSRules.count();
+    return m_lstCSSRules.count();
 }
 
 CSSRuleImpl *CSSRuleListImpl::item(unsigned long index)
 {
-	return m_lstCSSRules.at(index);
+    return m_lstCSSRules.at(index);
 }
 
 void CSSRuleListImpl::deleteRule(unsigned long index)
 {
-	CSSRuleImpl *rule = m_lstCSSRules.take(index);
-	if(rule)
-		rule->deref();
-	else
-		throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    CSSRuleImpl *rule = m_lstCSSRules.take(index);
+    if(rule)
+        rule->deref();
+    else
+        throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 }
 
 unsigned long CSSRuleListImpl::insertRule(CSSRuleImpl *rule, unsigned long index)
 {
-	if(rule && m_lstCSSRules.insert(index, rule))
-	{
-		rule->ref();
-		return index;
-	}
+    if(rule && m_lstCSSRules.insert(index, rule))
+    {
+        rule->ref();
+        return index;
+    }
 
-	throw new DOMExceptionImpl(INDEX_SIZE_ERR);
-	return 0;
+    throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    return 0;
 }
 
 void CSSRuleListImpl::append(CSSRuleImpl *rule)
 {
-	m_lstCSSRules.append(rule);
+    m_lstCSSRules.append(rule);
 }
 
 // vim:ts=4:noet

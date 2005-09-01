@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,18 +27,18 @@
 
 namespace KDOM
 {
-	class LSExceptionImpl : public Shared
-	{
-	public:
-		LSExceptionImpl(unsigned short code);
-		virtual ~LSExceptionImpl();
+    class LSExceptionImpl : public Shared
+    {
+    public:
+        LSExceptionImpl(unsigned short code);
+        virtual ~LSExceptionImpl();
 
-		// 'LSExceptionImpl' functions
-		unsigned short code() const;
+        // 'LSExceptionImpl' functions
+        unsigned short code() const;
 
-	protected:
-		unsigned short m_code;
-	};
+    protected:
+        unsigned short m_code;
+    };
 };
 
 #endif

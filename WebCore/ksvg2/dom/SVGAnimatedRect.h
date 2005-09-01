@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedRectImpl;
-	class SVGAnimatedRect
-	{
-	public:
-		SVGAnimatedRect();
-		explicit SVGAnimatedRect(SVGAnimatedRectImpl *i);
-		SVGAnimatedRect(const SVGAnimatedRect &other);
-		virtual ~SVGAnimatedRect();
+    class SVGAnimatedRectImpl;
+    class SVGAnimatedRect
+    {
+    public:
+        SVGAnimatedRect();
+        explicit SVGAnimatedRect(SVGAnimatedRectImpl *i);
+        SVGAnimatedRect(const SVGAnimatedRect &other);
+        virtual ~SVGAnimatedRect();
 
-		// Operators
-		SVGAnimatedRect &operator=(const SVGAnimatedRect &other);
-		bool operator==(const SVGAnimatedRect &other) const;
-		bool operator!=(const SVGAnimatedRect &other) const;
+        // Operators
+        SVGAnimatedRect &operator=(const SVGAnimatedRect &other);
+        bool operator==(const SVGAnimatedRect &other) const;
+        bool operator!=(const SVGAnimatedRect &other) const;
 
-		// 'SVGAnimatedRect' functions
-		SVGRect baseVal() const;
-		SVGRect animVal() const;
+        // 'SVGAnimatedRect' functions
+        SVGRect baseVal() const;
+        SVGRect animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedRect)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedRect)
 
-	protected:
-		SVGAnimatedRectImpl *impl;
+    protected:
+        SVGAnimatedRectImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

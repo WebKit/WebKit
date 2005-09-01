@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,43 +28,43 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedNumber;
-	class SVGFECompositeElementImpl;
+    class SVGAnimatedString;
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedNumber;
+    class SVGFECompositeElementImpl;
 
-	class SVGFECompositeElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFECompositeElement();
-		explicit SVGFECompositeElement(SVGFECompositeElementImpl *i);
-		SVGFECompositeElement(const SVGFECompositeElement &other);
-		SVGFECompositeElement(const KDOM::Node &other);
-		virtual ~SVGFECompositeElement();
+    class SVGFECompositeElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFECompositeElement();
+        explicit SVGFECompositeElement(SVGFECompositeElementImpl *i);
+        SVGFECompositeElement(const SVGFECompositeElement &other);
+        SVGFECompositeElement(const KDOM::Node &other);
+        virtual ~SVGFECompositeElement();
 
-		// Operators
-		SVGFECompositeElement &operator=(const SVGFECompositeElement &other);
-		SVGFECompositeElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFECompositeElement &operator=(const SVGFECompositeElement &other);
+        SVGFECompositeElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFECompositelement' functions
-		SVGAnimatedString in1() const;
-		SVGAnimatedString in2() const;
-		SVGAnimatedEnumeration _operator() const;
-		SVGAnimatedNumber k1() const;
-		SVGAnimatedNumber k2() const;
-		SVGAnimatedNumber k3() const;
-		SVGAnimatedNumber k4() const;
+        // 'SVGFECompositelement' functions
+        SVGAnimatedString in1() const;
+        SVGAnimatedString in2() const;
+        SVGAnimatedEnumeration _operator() const;
+        SVGAnimatedNumber k1() const;
+        SVGAnimatedNumber k2() const;
+        SVGAnimatedNumber k3() const;
+        SVGAnimatedNumber k4() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFECompositeElement)
+        // Internal
+        KSVG_INTERNAL(SVGFECompositeElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

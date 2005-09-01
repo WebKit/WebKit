@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,29 +28,29 @@
 
 namespace KSVG
 {
-	class SVGAnimateTransformElementImpl;
-	class SVGAnimateTransformElement : public SVGAnimationElement
-	{
-	public:
-		SVGAnimateTransformElement();
-		explicit SVGAnimateTransformElement(SVGAnimateTransformElementImpl *i);
-		SVGAnimateTransformElement(const SVGAnimateTransformElement &other);
-		SVGAnimateTransformElement(const KDOM::Node &other);
-		virtual ~SVGAnimateTransformElement();
+    class SVGAnimateTransformElementImpl;
+    class SVGAnimateTransformElement : public SVGAnimationElement
+    {
+    public:
+        SVGAnimateTransformElement();
+        explicit SVGAnimateTransformElement(SVGAnimateTransformElementImpl *i);
+        SVGAnimateTransformElement(const SVGAnimateTransformElement &other);
+        SVGAnimateTransformElement(const KDOM::Node &other);
+        virtual ~SVGAnimateTransformElement();
 
-		// Operators
-		SVGAnimateTransformElement &operator=(const SVGAnimateTransformElement &other);
-		SVGAnimateTransformElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGAnimateTransformElement &operator=(const SVGAnimateTransformElement &other);
+        SVGAnimateTransformElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGAnimateTransformElement)
+        // Internal
+        KSVG_INTERNAL(SVGAnimateTransformElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

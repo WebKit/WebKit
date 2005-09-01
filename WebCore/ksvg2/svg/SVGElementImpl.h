@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,56 +28,56 @@
 
 namespace KDOM
 {
-	class Ecma;
-	class DocumentPtr;
+    class Ecma;
+    class DocumentPtr;
 };
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGSVGElementImpl;
-	class SVGStyledElementImpl;
-	class SVGDocumentImpl;
+    class SVGMatrixImpl;
+    class SVGSVGElementImpl;
+    class SVGStyledElementImpl;
+    class SVGDocumentImpl;
 
-	class SVGElementImpl : public KDOM::XMLElementImpl
-	{
-	public:
-		SVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGElementImpl();
+    class SVGElementImpl : public KDOM::XMLElementImpl
+    {
+    public:
+        SVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGElementImpl();
 
-		virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
+        virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
 
-		// 'SVGElement' functions
-		KDOM::DOMStringImpl *getId() const;
-		void setGetId(KDOM::DOMStringImpl *);
-		KDOM::DOMStringImpl *xmlbase() const;
-		void setXmlbase(KDOM::DOMStringImpl *);
+        // 'SVGElement' functions
+        KDOM::DOMStringImpl *getId() const;
+        void setGetId(KDOM::DOMStringImpl *);
+        KDOM::DOMStringImpl *xmlbase() const;
+        void setXmlbase(KDOM::DOMStringImpl *);
 
-		SVGSVGElementImpl *ownerSVGElement() const;
-		SVGElementImpl *viewportElement() const;
+        SVGSVGElementImpl *ownerSVGElement() const;
+        SVGElementImpl *viewportElement() const;
 
-		// Internal
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Internal
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual void createStyleDeclaration() const;
+        virtual void createStyleDeclaration() const;
 
-		// To be implemented by any element which can establish new viewports...
-		virtual QString adjustViewportClipping() const { return QString::null; }
+        // To be implemented by any element which can establish new viewports...
+        virtual QString adjustViewportClipping() const { return QString::null; }
 
-		SVGDocumentImpl *getDocument() const;
+        SVGDocumentImpl *getDocument() const;
 
-	private:
+    private:
 #if 0
-		void addSVGEventListener(KDOM::Ecma *ecmaEngine, const KDOM::DOMString &type, const KDOM::DOMString &value);
+        void addSVGEventListener(KDOM::Ecma *ecmaEngine, const KDOM::DOMString &type, const KDOM::DOMString &value);
 #endif
-	};
+    };
 };
 
 // Same like KDOM_IMPL_DTOR_ASSIGN_OP, just uses 'impl' instead of 'd'.
 #define KSVG_IMPL_DTOR_ASSIGN_OP(T) \
 T::~T() { if(impl) impl->deref(); } \
 T &T::operator=(const T &other) { \
-	KDOM_SAFE_SET(impl, other.impl); \
+    KDOM_SAFE_SET(impl, other.impl); \
     return *this; \
 } \
 bool T::operator==(const T &other) const { \

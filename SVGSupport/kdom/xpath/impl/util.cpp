@@ -31,45 +31,45 @@ using namespace KDOM;
 
 bool isRootDomNode( NodeImpl *node )
 {
-	return node && !node->parentNode();
+    return node && !node->parentNode();
 }
 
 DomString stringValue( NodeImpl *node )
 {
-	switch ( node->nodeType() ) {
-		case KDOM::ATTRIBUTE_NODE:
-		case KDOM::PROCESSING_INSTRUCTION_NODE:
-		case KDOM::COMMENT_NODE:
-		case KDOM::TEXT_NODE:
-			return node->nodeValue()->string();
-		default:
-			if ( isRootDomNode( node )
-			     || node->nodeType() == KDOM::ELEMENT_NODE ) {
-				QString str;
-				DomNodeList nodes = getChildrenRecursively( node );
-				DomNodeList::ConstIterator it, end = nodes.end();
-				for ( it = nodes.begin(); it != end; ++it ) {
-					str.append( stringValue( *it ) );
-				}
-				return str;
-			}
-	}
-	return DomString();
+    switch ( node->nodeType() ) {
+        case KDOM::ATTRIBUTE_NODE:
+        case KDOM::PROCESSING_INSTRUCTION_NODE:
+        case KDOM::COMMENT_NODE:
+        case KDOM::TEXT_NODE:
+            return node->nodeValue()->string();
+        default:
+            if ( isRootDomNode( node )
+                 || node->nodeType() == KDOM::ELEMENT_NODE ) {
+                QString str;
+                DomNodeList nodes = getChildrenRecursively( node );
+                DomNodeList::ConstIterator it, end = nodes.end();
+                for ( it = nodes.begin(); it != end; ++it ) {
+                    str.append( stringValue( *it ) );
+                }
+                return str;
+            }
+    }
+    return DomString();
 }
 
 DomNodeList getChildrenRecursively( NodeImpl *node )
 {
-	DomNodeList nodes;
-	NodeImpl *n = node->firstChild();
-	while ( n ) {
-		nodes.append( n );
-		DomNodeList childNodes = getChildrenRecursively( n );
-		DomNodeList::ConstIterator it, end = childNodes.end();
-		for ( it = childNodes.begin(); it != end; ++it ) {
-			nodes.append( *it );
-		}
-		n = n->nextSibling();
-	}
-	return nodes;
+    DomNodeList nodes;
+    NodeImpl *n = node->firstChild();
+    while ( n ) {
+        nodes.append( n );
+        DomNodeList childNodes = getChildrenRecursively( n );
+        DomNodeList::ConstIterator it, end = childNodes.end();
+        for ( it = childNodes.begin(); it != end; ++it ) {
+            nodes.append( *it );
+        }
+        n = n->nextSibling();
+    }
+    return nodes;
 }
 

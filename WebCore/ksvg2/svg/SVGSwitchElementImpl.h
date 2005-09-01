@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,25 +31,25 @@
 
 namespace KSVG
 {
-	class SVGSwitchElementImpl : public SVGStyledElementImpl,
-								 public SVGTestsImpl,
-								 public SVGLangSpaceImpl,
-								 public SVGExternalResourcesRequiredImpl,
-								 public SVGTransformableImpl
-	{
-	public:
-		SVGSwitchElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGSwitchElementImpl();
+    class SVGSwitchElementImpl : public SVGStyledElementImpl,
+                                 public SVGTestsImpl,
+                                 public SVGLangSpaceImpl,
+                                 public SVGExternalResourcesRequiredImpl,
+                                 public SVGTransformableImpl
+    {
+    public:
+        SVGSwitchElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGSwitchElementImpl();
 
-		// Derived from: 'SVGStyledElementImpl'
-		virtual bool allowAttachChildren(KDOM::ElementImpl *child) const;
-		virtual bool implementsCanvasItem() const { return true; }
+        // Derived from: 'SVGStyledElementImpl'
+        virtual bool allowAttachChildren(KDOM::ElementImpl *child) const;
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-	private:
-		mutable bool m_insideRenderSection;
-	};
+    private:
+        mutable bool m_insideRenderSection;
+    };
 };
 
 #endif

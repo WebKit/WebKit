@@ -55,7 +55,7 @@ typedef enum {
     
 @private
     DrawViewTool _toolMode;
-    BOOL	_isEditable;
+    BOOL    _isEditable;
     NSImageScaling _scaleRule;
     
     DrawViewPrivate *_private;

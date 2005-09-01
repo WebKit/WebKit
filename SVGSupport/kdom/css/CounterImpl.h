@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,29 +28,29 @@
 
 namespace KDOM
 {
-	class CounterImpl : public Shared
-	{
-	public:
-		CounterImpl();
-		virtual ~CounterImpl();
+    class CounterImpl : public Shared
+    {
+    public:
+        CounterImpl();
+        virtual ~CounterImpl();
 
-		// 'Counter' functions
-		DOMStringImpl *identifier() const;
-		DOMStringImpl *listStyle() const;
-		DOMStringImpl *separator() const;
+        // 'Counter' functions
+        DOMStringImpl *identifier() const;
+        DOMStringImpl *listStyle() const;
+        DOMStringImpl *separator() const;
 
-		// Internal
-		void setIdentifier(DOMStringImpl *value);
-		void setListStyle(unsigned int listStyle);
-		void setSeparator(DOMStringImpl *value);
+        // Internal
+        void setIdentifier(DOMStringImpl *value);
+        void setListStyle(unsigned int listStyle);
+        void setSeparator(DOMStringImpl *value);
 
-		unsigned int listStyleInt() const;
-		
-	private:
-		DOMStringImpl *m_identifier;
-		unsigned int m_listStyle;
-		DOMStringImpl *m_separator;
-	};
+        unsigned int listStyleInt() const;
+        
+    private:
+        DOMStringImpl *m_identifier;
+        unsigned int m_listStyle;
+        DOMStringImpl *m_separator;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,47 +28,47 @@
 
 namespace KSVG
 {
-	class SVGStyleElementImpl;
-	class SVGStyleElement : public SVGElement,	
-							public KDOM::LinkStyle
-	{
-	public:
-		SVGStyleElement();
-		explicit SVGStyleElement(SVGStyleElementImpl *i);
-		SVGStyleElement(const SVGStyleElement &other);
-		SVGStyleElement(const KDOM::Node &other);
-		virtual ~SVGStyleElement();
+    class SVGStyleElementImpl;
+    class SVGStyleElement : public SVGElement,    
+                            public KDOM::LinkStyle
+    {
+    public:
+        SVGStyleElement();
+        explicit SVGStyleElement(SVGStyleElementImpl *i);
+        SVGStyleElement(const SVGStyleElement &other);
+        SVGStyleElement(const KDOM::Node &other);
+        virtual ~SVGStyleElement();
 
-		// Operators
-		SVGStyleElement &operator=(const SVGStyleElement &other);
-		SVGStyleElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGStyleElement &operator=(const SVGStyleElement &other);
+        SVGStyleElement &operator=(const KDOM::Node &other);
 
-		// 'SVGStyleElement' functions
-		KDOM::DOMString xmlspace() const;
-		void setXmlspace(const KDOM::DOMString &);
+        // 'SVGStyleElement' functions
+        KDOM::DOMString xmlspace() const;
+        void setXmlspace(const KDOM::DOMString &);
 
-		KDOM::DOMString type() const;
-		void setType(const KDOM::DOMString &);
+        KDOM::DOMString type() const;
+        void setType(const KDOM::DOMString &);
 
-		KDOM::DOMString media() const;
-		void setMedia(const KDOM::DOMString &);
+        KDOM::DOMString media() const;
+        void setMedia(const KDOM::DOMString &);
 
-		KDOM::DOMString title() const;
-		void setTitle(const KDOM::DOMString &);
+        KDOM::DOMString title() const;
+        void setTitle(const KDOM::DOMString &);
 
-		// LinkStyle
-		virtual KDOM::StyleSheet sheet() const;
+        // LinkStyle
+        virtual KDOM::StyleSheet sheet() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGStyleElement)
+        // Internal
+        KSVG_INTERNAL(SVGStyleElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

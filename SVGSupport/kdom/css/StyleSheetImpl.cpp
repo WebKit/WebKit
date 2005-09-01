@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,109 +28,109 @@ using namespace KDOM;
 
 StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMStringImpl *href) : StyleListImpl(parentSheet)
 {
-	m_media = 0;
-	m_parentNode = 0;
+    m_media = 0;
+    m_parentNode = 0;
 
-	m_strHref = href;
-	if(m_strHref)
-		m_strHref->ref();
+    m_strHref = href;
+    if(m_strHref)
+        m_strHref->ref();
 
-	m_strTitle = 0;
+    m_strTitle = 0;
 
-	m_disabled = false;
+    m_disabled = false;
 }
 
 StyleSheetImpl::StyleSheetImpl(NodeImpl *parentNode, DOMStringImpl *href) : StyleListImpl()
 {
-	m_media = 0;
+    m_media = 0;
 
-	m_strHref = href;
-	if(m_strHref)
-		m_strHref->ref();
+    m_strHref = href;
+    if(m_strHref)
+        m_strHref->ref();
 
-	m_strTitle = 0;
+    m_strTitle = 0;
 
-	m_disabled = false;
-	m_parentNode = parentNode;
+    m_disabled = false;
+    m_parentNode = parentNode;
 }
 
 StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMStringImpl *href) : StyleListImpl(owner)
 {
-	m_media = 0;
+    m_media = 0;
 
-	m_strHref = href;
-	if(m_strHref)
-		m_strHref->ref();
+    m_strHref = href;
+    if(m_strHref)
+        m_strHref->ref();
 
-	m_strTitle = 0;
+    m_strTitle = 0;
 
-	m_disabled = false;
-	m_parentNode = 0;
+    m_disabled = false;
+    m_parentNode = 0;
 }
 
 StyleSheetImpl::~StyleSheetImpl()
 {
-	if(m_media)
-	{
-		m_media->setParent(0);
-		m_media->deref();
-	}
+    if(m_media)
+    {
+        m_media->setParent(0);
+        m_media->deref();
+    }
 
-	if(m_strHref)
-		m_strHref->deref();
-	if(m_strTitle)
-		m_strTitle->deref();
+    if(m_strHref)
+        m_strHref->deref();
+    if(m_strTitle)
+        m_strTitle->deref();
 }
 
 void StyleSheetImpl::setDisabled(bool disabled)
 {
-	bool updateStyle = isCSSStyleSheet() && m_parentNode && disabled != m_disabled;
-	m_disabled = disabled;
-	if(updateStyle)
-		m_parentNode->ownerDocument()->updateStyleSelector();
+    bool updateStyle = isCSSStyleSheet() && m_parentNode && disabled != m_disabled;
+    m_disabled = disabled;
+    if(updateStyle)
+        m_parentNode->ownerDocument()->updateStyleSelector();
 }
 
 bool StyleSheetImpl::disabled() const
 {
-	return m_disabled;
+    return m_disabled;
 }
 
 NodeImpl *StyleSheetImpl::ownerNode() const
 {
-	return m_parentNode;
+    return m_parentNode;
 }
 
 StyleSheetImpl *StyleSheetImpl::parentStyleSheet() const
 {
-	if(m_parent && m_parent->isStyleSheet())
-		return static_cast<StyleSheetImpl *>(m_parent);
+    if(m_parent && m_parent->isStyleSheet())
+        return static_cast<StyleSheetImpl *>(m_parent);
 
-	return 0;
+    return 0;
 }
 
 DOMStringImpl *StyleSheetImpl::href() const
 {
-	return m_strHref;
+    return m_strHref;
 }
 
 DOMStringImpl *StyleSheetImpl::title() const
 {
-	return m_strTitle;
+    return m_strTitle;
 }
 
 MediaListImpl *StyleSheetImpl::media() const
 {
-	return m_media;
+    return m_media;
 }
 
 void StyleSheetImpl::setTitle(DOMStringImpl *title)
 {
-	KDOM_SAFE_SET(m_strTitle, title);
+    KDOM_SAFE_SET(m_strTitle, title);
 }
 
 void StyleSheetImpl::setMedia(MediaListImpl *media)
 {
-	KDOM_SAFE_SET(m_media, media);
+    KDOM_SAFE_SET(m_media, media);
 }
 
 // vim:ts=4:noet

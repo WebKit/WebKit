@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -41,65 +41,65 @@ class KRenderingPaintServerPattern;
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGPatternElementImpl;
-	class SVGAnimatedEnumerationImpl;
-	class SVGAnimatedTransformListImpl;
-	class SVGPatternElementImpl : public SVGStyledElementImpl,
-								  public SVGURIReferenceImpl,
-								  public SVGTestsImpl,
-								  public SVGLangSpaceImpl,
-								  public SVGExternalResourcesRequiredImpl,
-								  public SVGFitToViewBoxImpl,
-								  public SVGLocatableImpl, // TODO : really needed?
-								  public KCanvasResourceListener
-	{
-	public:
-		SVGPatternElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGPatternElementImpl();
+    class SVGAnimatedLengthImpl;
+    class SVGPatternElementImpl;
+    class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedTransformListImpl;
+    class SVGPatternElementImpl : public SVGStyledElementImpl,
+                                  public SVGURIReferenceImpl,
+                                  public SVGTestsImpl,
+                                  public SVGLangSpaceImpl,
+                                  public SVGExternalResourcesRequiredImpl,
+                                  public SVGFitToViewBoxImpl,
+                                  public SVGLocatableImpl, // TODO : really needed?
+                                  public KCanvasResourceListener
+    {
+    public:
+        SVGPatternElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGPatternElementImpl();
 
-		// 'SVGPatternElement' functions
-		SVGAnimatedEnumerationImpl *patternUnits() const;
-		SVGAnimatedEnumerationImpl *patternContentUnits() const;
-		SVGAnimatedTransformListImpl *patternTransform() const;
+        // 'SVGPatternElement' functions
+        SVGAnimatedEnumerationImpl *patternUnits() const;
+        SVGAnimatedEnumerationImpl *patternContentUnits() const;
+        SVGAnimatedTransformListImpl *patternTransform() const;
 
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
+        const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
-		virtual void resourceNotification() const;
-		virtual void notifyAttributeChange() const;
+        virtual void resourceNotification() const;
+        virtual void notifyAttributeChange() const;
 
-		// Derived from: 'SVGStyledElementImpl'
-		virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
+        // Derived from: 'SVGStyledElementImpl'
+        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		// 'virtual SVGLocatable' functions
-		virtual SVGMatrixImpl *getCTM() const;
+        // 'virtual SVGLocatable' functions
+        virtual SVGMatrixImpl *getCTM() const;
 
-	protected:
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
-		
-		mutable SVGAnimatedEnumerationImpl *m_patternUnits;
-		mutable SVGAnimatedEnumerationImpl *m_patternContentUnits;
+    protected:
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
+        
+        mutable SVGAnimatedEnumerationImpl *m_patternUnits;
+        mutable SVGAnimatedEnumerationImpl *m_patternContentUnits;
 
-		mutable SVGAnimatedTransformListImpl *m_patternTransform;
+        mutable SVGAnimatedTransformListImpl *m_patternTransform;
 
-		mutable KCanvasImage *m_tile;
-		mutable bool m_ignoreAttributeChanges;
-		mutable KRenderingPaintServer *m_paintServer;
-	};
+        mutable KCanvasImage *m_tile;
+        mutable bool m_ignoreAttributeChanges;
+        mutable KRenderingPaintServer *m_paintServer;
+    };
 };
 
 #endif

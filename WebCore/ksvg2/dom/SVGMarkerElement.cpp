@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,17 +35,17 @@ using namespace KSVG;
 
 /*
 @begin SVGMarkerElement::s_hashTable 9
- refX			SVGMarkerElementConstants::RefX			DontDelete|ReadOnly
- refY			SVGMarkerElementConstants::RefY			DontDelete|ReadOnly
- markerUnits	SVGMarkerElementConstants::MarkerUnits	DontDelete|ReadOnly
- markerWidth	SVGMarkerElementConstants::MarkerWidth	DontDelete|ReadOnly
- markerHeight	SVGMarkerElementConstants::MarkerHeight	DontDelete|ReadOnly
- orientType		SVGMarkerElementConstants::OrientType	DontDelete|ReadOnly
- orientAngle	SVGMarkerElementConstants::OrientAngle	DontDelete|ReadOnly
+ refX            SVGMarkerElementConstants::RefX            DontDelete|ReadOnly
+ refY            SVGMarkerElementConstants::RefY            DontDelete|ReadOnly
+ markerUnits    SVGMarkerElementConstants::MarkerUnits    DontDelete|ReadOnly
+ markerWidth    SVGMarkerElementConstants::MarkerWidth    DontDelete|ReadOnly
+ markerHeight    SVGMarkerElementConstants::MarkerHeight    DontDelete|ReadOnly
+ orientType        SVGMarkerElementConstants::OrientType    DontDelete|ReadOnly
+ orientAngle    SVGMarkerElementConstants::OrientAngle    DontDelete|ReadOnly
 @end
 @begin SVGMarkerElementProto::s_hashTable 3
- setOrientToAuto	SVGMarkerElementConstants::SetOrientToAuto		DontDelete|Function 0
- setOrientToAngle	SVGMarkerElementConstants::SetOrientToAngle		DontDelete|Function 1
+ setOrientToAuto    SVGMarkerElementConstants::SetOrientToAuto        DontDelete|Function 0
+ setOrientToAngle    SVGMarkerElementConstants::SetOrientToAngle        DontDelete|Function 1
 @end
 */
 
@@ -53,50 +53,50 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGMarkerElement", SVGMarkerElementProto, SVGMarkerEle
 
 ValueImp *SVGMarkerElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGMarkerElementConstants::RefX:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, refX());
-		case SVGMarkerElementConstants::RefY:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, refY());
-		case SVGMarkerElementConstants::MarkerWidth:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, markerWidth());
-		case SVGMarkerElementConstants::MarkerHeight:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, markerHeight());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGMarkerElementConstants::RefX:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, refX());
+        case SVGMarkerElementConstants::RefY:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, refY());
+        case SVGMarkerElementConstants::MarkerWidth:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, markerWidth());
+        case SVGMarkerElementConstants::MarkerHeight:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, markerHeight());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGMarkerElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGMarkerElement obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGMarkerElement obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGMarkerElementConstants::SetOrientToAuto:
-		{
-			obj.setOrientToAuto();
-			return Undefined();
-		}
-		case SVGMarkerElementConstants::SetOrientToAngle:
-		{
-			SVGAngle angle = KDOM::ecma_cast<SVGAngle>(exec, args[0], &toSVGAngle);
-			obj.setOrientToAngle(angle);
-			return Undefined();
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGMarkerElementConstants::SetOrientToAuto:
+        {
+            obj.setOrientToAuto();
+            return Undefined();
+        }
+        case SVGMarkerElementConstants::SetOrientToAngle:
+        {
+            SVGAngle angle = KDOM::ecma_cast<SVGAngle>(exec, args[0], &toSVGAngle);
+            obj.setOrientToAngle(angle);
+            return Undefined();
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -120,14 +120,14 @@ SVGMarkerElement::SVGMarkerElement(const SVGMarkerElement &other)
 : SVGElement(), SVGLangSpace(), SVGExternalResourcesRequired(),
   SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGMarkerElement::SVGMarkerElement(const KDOM::Node &other)
 : SVGElement(), SVGLangSpace(), SVGExternalResourcesRequired(),
   SVGStylable(), SVGFitToViewBox()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGMarkerElement::~SVGMarkerElement()
@@ -136,105 +136,105 @@ SVGMarkerElement::~SVGMarkerElement()
 
 SVGMarkerElement &SVGMarkerElement::operator=(const SVGMarkerElement &other)
 {
-	SVGElement::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGFitToViewBox::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGFitToViewBox::operator=(other);
+    return *this;
 }
 
 SVGMarkerElement &SVGMarkerElement::operator=(const KDOM::Node &other)
 {
-	SVGMarkerElementImpl *ohandle = static_cast<SVGMarkerElementImpl *>(other.handle());
-	if(impl != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(impl)
-				impl->deref();
+    SVGMarkerElementImpl *ohandle = static_cast<SVGMarkerElementImpl *>(other.handle());
+    if(impl != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(impl)
+                impl->deref();
 
-			Node::d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGFitToViewBox::operator=(ohandle);
-		}
-	}
+            Node::d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGFitToViewBox::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGMarkerElement::refX() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->refX());
+    return SVGAnimatedLength(impl->refX());
 }
 
 SVGAnimatedLength SVGMarkerElement::refY() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->refY());
+    return SVGAnimatedLength(impl->refY());
 }
 
 SVGAnimatedEnumeration SVGMarkerElement::markerUnits() const
 {
-	if(!impl)
-		return SVGAnimatedEnumeration::null;
+    if(!impl)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->markerUnits());
+    return SVGAnimatedEnumeration(impl->markerUnits());
 }
 
 SVGAnimatedLength SVGMarkerElement::markerWidth() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->markerWidth());
+    return SVGAnimatedLength(impl->markerWidth());
 }
 
 SVGAnimatedLength SVGMarkerElement::markerHeight() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->markerHeight());
+    return SVGAnimatedLength(impl->markerHeight());
 }
 
 SVGAnimatedEnumeration SVGMarkerElement::orientType() const
 {
-	if(!impl)
-		return SVGAnimatedEnumeration::null;
+    if(!impl)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->orientType());
+    return SVGAnimatedEnumeration(impl->orientType());
 }
 
 SVGAnimatedAngle SVGMarkerElement::orientAngle() const
 {
-	if(!impl)
-		return SVGAnimatedAngle::null;
+    if(!impl)
+        return SVGAnimatedAngle::null;
 
-	return SVGAnimatedAngle(impl->orientAngle());
+    return SVGAnimatedAngle(impl->orientAngle());
 }
 
 void SVGMarkerElement::setOrientToAuto()
 {
-	if(impl)
-		impl->setOrientToAuto();
+    if(impl)
+        impl->setOrientToAuto();
 }
 
 void SVGMarkerElement::setOrientToAngle(const SVGAngle &angle)
 {
-	if(impl)
-		impl->setOrientToAngle(angle.handle());
+    if(impl)
+        impl->setOrientToAngle(angle.handle());
 }
 
 // vim:ts=4:noet

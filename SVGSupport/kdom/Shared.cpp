@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,7 +26,7 @@ using namespace KDOM;
 
 Shared::Shared()
 {
-	m_ref = 0;
+    m_ref = 0;
 }
 
 Shared::~Shared()
@@ -35,21 +35,21 @@ Shared::~Shared()
 
 void Shared::ref()
 {
-	m_ref++;
+    m_ref++;
 }
 
 void Shared::deref()
 { 
-	if(m_ref)
-		m_ref--; 
+    if(m_ref)
+        m_ref--; 
 
-	if(!m_ref)
-		delete this;
+    if(!m_ref)
+        delete this;
 }
 
 int Shared::refCount() const
 {
-	return m_ref;
+    return m_ref;
 }
 
 // vim:ts=4:noet

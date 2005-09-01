@@ -30,7 +30,7 @@ using namespace KDOM;
 
 DocumentViewImpl::DocumentViewImpl()
 {
-	m_defaultView = 0;
+    m_defaultView = 0;
 }
 
 DocumentViewImpl::~DocumentViewImpl()
@@ -39,7 +39,7 @@ DocumentViewImpl::~DocumentViewImpl()
 
 AbstractViewImpl *DocumentViewImpl::defaultView() const
 {
-	return m_defaultView;
+    return m_defaultView;
 }
 
 // vim:ts=4:noet

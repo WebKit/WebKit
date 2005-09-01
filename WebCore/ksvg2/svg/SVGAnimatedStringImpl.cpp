@@ -34,17 +34,17 @@ SVGAnimatedStringImpl::~SVGAnimatedStringImpl()
 
 KDOM::DOMStringImpl *SVGAnimatedStringImpl::create() const
 {
-	// TODO: Do we need notifications on string manipulations? ie. appendData()?
-	return new KDOM::DOMStringImpl();
+    // TODO: Do we need notifications on string manipulations? ie. appendData()?
+    return new KDOM::DOMStringImpl();
 }
 
 void SVGAnimatedStringImpl::assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const
 {
-	if(!src || !dst)
-		return;
-	
-	dst->truncate(0);
-	dst->insert(src->copy(), 0);
+    if(!src || !dst)
+        return;
+    
+    dst->truncate(0);
+    dst->insert(src->copy(), 0);
 }
 
 // vim:ts=4:noet

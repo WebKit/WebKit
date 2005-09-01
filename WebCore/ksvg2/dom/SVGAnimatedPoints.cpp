@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,27 +36,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedPoints::s_hashTable 3
- points			SVGAnimatedPointsConstants::Points			DontDelete|ReadOnly
- animatedPoints	SVGAnimatedPointsConstants::AnimatedPoints	DontDelete|ReadOnly
+ points            SVGAnimatedPointsConstants::Points            DontDelete|ReadOnly
+ animatedPoints    SVGAnimatedPointsConstants::AnimatedPoints    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedPoints::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedPointsConstants::Points:
-			return KDOM::safe_cache<SVGPointList>(exec, points());
-		case SVGAnimatedPointsConstants::AnimatedPoints:
-			return KDOM::safe_cache<SVGPointList>(exec, animatedPoints());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedPointsConstants::Points:
+            return KDOM::safe_cache<SVGPointList>(exec, points());
+        case SVGAnimatedPointsConstants::AnimatedPoints:
+            return KDOM::safe_cache<SVGPointList>(exec, animatedPoints());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedPoints::SVGAnimatedPoints() : impl(0)
@@ -69,7 +69,7 @@ SVGAnimatedPoints::SVGAnimatedPoints(SVGAnimatedPointsImpl *i) : impl(i)
 
 SVGAnimatedPoints::SVGAnimatedPoints(const SVGAnimatedPoints &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimatedPoints::~SVGAnimatedPoints()
@@ -78,34 +78,34 @@ SVGAnimatedPoints::~SVGAnimatedPoints()
 
 SVGAnimatedPoints &SVGAnimatedPoints::operator=(const SVGAnimatedPoints &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedPoints &SVGAnimatedPoints::operator=(SVGAnimatedPointsImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGPointList SVGAnimatedPoints::points() const
 {
-	if(!impl)
-		return SVGPointList::null;
+    if(!impl)
+        return SVGPointList::null;
 
-	return SVGPointList(impl->points());
+    return SVGPointList(impl->points());
 }
 
 SVGPointList SVGAnimatedPoints::animatedPoints() const
 {
-	if(!impl)
-		return SVGPointList::null;
+    if(!impl)
+        return SVGPointList::null;
 
-	return SVGPointList(impl->animatedPoints());
+    return SVGPointList(impl->animatedPoints());
 }
 
 // vim:ts=4:noet

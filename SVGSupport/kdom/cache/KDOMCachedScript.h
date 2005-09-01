@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -34,27 +34,27 @@ namespace KDOM
 {
     class CachedScript : public CachedObject
     {
-	public:
-		CachedScript(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl cachePolicy, const char *accept);
+    public:
+        CachedScript(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl cachePolicy, const char *accept);
 
-		const DOMString &script() const { return m_script; }
+        const DOMString &script() const { return m_script; }
 
-		virtual void ref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient *consumer);
 
-		virtual void data( QBuffer &buffer, bool eof );
-		virtual void error( int err, const char *text );
+        virtual void data( QBuffer &buffer, bool eof );
+        virtual void error( int err, const char *text );
 
-		virtual bool schedule() const { return false; }
+        virtual bool schedule() const { return false; }
 
-		void checkNotify();
+        void checkNotify();
 
-		bool isLoaded() const { return !m_loading; }
-		void setCharset(const QString &charset) { m_charset = charset; }
+        bool isLoaded() const { return !m_loading; }
+        void setCharset(const QString &charset) { m_charset = charset; }
 
-	private:
-		QString m_charset;
-		DOMString m_script;
-	};
+    private:
+        QString m_charset;
+        DOMString m_script;
+    };
 };
 
 #endif

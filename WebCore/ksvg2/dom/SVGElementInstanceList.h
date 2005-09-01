@@ -27,36 +27,36 @@
 
 namespace KSVG
 {
-	class SVGElementInstance;
-	class SVGElementInstanceListImpl;
-	class SVGElementInstanceList
-	{
-	public:
-		SVGElementInstanceList();
-		explicit SVGElementInstanceList(SVGElementInstanceListImpl *i);
-		SVGElementInstanceList(const SVGElementInstanceList &other);
-		virtual ~SVGElementInstanceList();
+    class SVGElementInstance;
+    class SVGElementInstanceListImpl;
+    class SVGElementInstanceList
+    {
+    public:
+        SVGElementInstanceList();
+        explicit SVGElementInstanceList(SVGElementInstanceListImpl *i);
+        SVGElementInstanceList(const SVGElementInstanceList &other);
+        virtual ~SVGElementInstanceList();
 
-		// Operators
-		SVGElementInstanceList &operator=(const SVGElementInstanceList &other);
-		bool operator==(const SVGElementInstanceList &other) const;
-		bool operator!=(const SVGElementInstanceList &other) const;
+        // Operators
+        SVGElementInstanceList &operator=(const SVGElementInstanceList &other);
+        bool operator==(const SVGElementInstanceList &other) const;
+        bool operator!=(const SVGElementInstanceList &other) const;
 
-		// 'SVGElementInstanceList' functions
-		unsigned long length() const;
-		SVGElementInstance item(unsigned long index);
+        // 'SVGElementInstanceList' functions
+        unsigned long length() const;
+        SVGElementInstance item(unsigned long index);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGElementInstanceList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGElementInstanceList)
 
-	protected:
-		SVGElementInstanceListImpl *impl;
+    protected:
+        SVGElementInstanceListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGElementInstanceListProto)

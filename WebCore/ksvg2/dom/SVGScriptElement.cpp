@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,24 +35,24 @@ using namespace KSVG;
 
 /*
 @begin SVGScriptElement::s_hashTable 3
- type	SVGScriptElementConstants::Type	DontDelete
+ type    SVGScriptElementConstants::Type    DontDelete
 @end
 */
 
 ValueImp *SVGScriptElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGScriptElementConstants::Type:
-			return KDOM::getDOMString(type());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGScriptElementConstants::Type:
+            return KDOM::getDOMString(type());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -60,25 +60,25 @@ ValueImp *SVGScriptElement::getValueProperty(ExecState *exec, int token) const
 
 void SVGScriptElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGScriptElementConstants::Type:
-		{
-			// No need to call setType(.), as it just calls setAttribute('type', 'value'),
-			// which has already been done by KDOMDocumentBuilder::startAttribute.
-			// In every other case an ecma script wants to change the type, which is legal.
-			if(d && impl->ownerDocument()->parsing())
-				setType(KDOM::toDOMString(exec, value));
+    switch(token)
+    {
+        case SVGScriptElementConstants::Type:
+        {
+            // No need to call setType(.), as it just calls setAttribute('type', 'value'),
+            // which has already been done by KDOMDocumentBuilder::startAttribute.
+            // In every other case an ecma script wants to change the type, which is legal.
+            if(d && impl->ownerDocument()->parsing())
+                setType(KDOM::toDOMString(exec, value));
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
+    KDOM_LEAVE_SAFE(SVGException)
 }
 
 SVGScriptElement SVGScriptElement::null;
@@ -93,12 +93,12 @@ SVGScriptElement::SVGScriptElement(SVGScriptElementImpl *i) : SVGElement(i), SVG
 
 SVGScriptElement::SVGScriptElement(const SVGScriptElement &other) : SVGElement(), SVGURIReference(), SVGExternalResourcesRequired()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGScriptElement::SVGScriptElement(const KDOM::Node &other) : SVGElement(), SVGURIReference(), SVGExternalResourcesRequired()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGScriptElement::~SVGScriptElement()
@@ -107,47 +107,47 @@ SVGScriptElement::~SVGScriptElement()
 
 SVGScriptElement &SVGScriptElement::operator=(const SVGScriptElement &other)
 {
-	SVGElement::operator=(other);
-	SVGURIReference::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGURIReference::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    return *this;
 }
 
 SVGScriptElement &SVGScriptElement::operator=(const KDOM::Node &other)
 {
-	SVGScriptElementImpl *ohandle = static_cast<SVGScriptElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGURIReference::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-		}
-	}
+    SVGScriptElementImpl *ohandle = static_cast<SVGScriptElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGURIReference::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 KDOM::DOMString SVGScriptElement::type() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->type());
+    return KDOM::DOMString(impl->type());
 }
 
 void SVGScriptElement::setType(const KDOM::DOMString &type)
 {
-	if(impl)
-		impl->setType(type.implementation());
+    if(impl)
+        impl->setType(type.implementation());
 }
 
 // vim:ts=4:noet

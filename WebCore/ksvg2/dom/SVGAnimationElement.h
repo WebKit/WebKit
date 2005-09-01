@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,38 +30,38 @@
 
 namespace KSVG
 {
-	class SVGAnimationElementImpl;
-	class SVGAnimationElement : public SVGElement,
-								public SVGTests,
-								public SVGExternalResourcesRequired
-	{
-	public:
-		SVGAnimationElement();
-		explicit SVGAnimationElement(SVGAnimationElementImpl *i);
-		SVGAnimationElement(const SVGAnimationElement &other);
-		SVGAnimationElement(const KDOM::Node &other);
-		virtual ~SVGAnimationElement();
+    class SVGAnimationElementImpl;
+    class SVGAnimationElement : public SVGElement,
+                                public SVGTests,
+                                public SVGExternalResourcesRequired
+    {
+    public:
+        SVGAnimationElement();
+        explicit SVGAnimationElement(SVGAnimationElementImpl *i);
+        SVGAnimationElement(const SVGAnimationElement &other);
+        SVGAnimationElement(const KDOM::Node &other);
+        virtual ~SVGAnimationElement();
 
-		// Operators
-		SVGAnimationElement &operator=(const SVGAnimationElement &other);
-		SVGAnimationElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGAnimationElement &operator=(const SVGAnimationElement &other);
+        SVGAnimationElement &operator=(const KDOM::Node &other);
 
-		// 'SVGAnimationElement' functions
-		SVGElement targetElement() const;
+        // 'SVGAnimationElement' functions
+        SVGElement targetElement() const;
 
-		float getStartTime() const;
-		float getCurrentTime() const;
-		float getSimpleDuration() const;
+        float getStartTime() const;
+        float getCurrentTime() const;
+        float getSimpleDuration() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGAnimationElement)
+        // Internal
+        KSVG_INTERNAL(SVGAnimationElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGAnimationElementProto)

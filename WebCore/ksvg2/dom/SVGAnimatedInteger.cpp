@@ -36,47 +36,47 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedInteger::s_hashTable 3
- baseVal	SVGAnimatedIntegerConstants::BaseVal	DontDelete
- animVal	SVGAnimatedIntegerConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedIntegerConstants::BaseVal    DontDelete
+ animVal    SVGAnimatedIntegerConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedInteger::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedIntegerConstants::BaseVal:
-			return Number(baseVal());
-		case SVGAnimatedIntegerConstants::AnimVal:
-			return Number(animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedIntegerConstants::BaseVal:
+            return Number(baseVal());
+        case SVGAnimatedIntegerConstants::AnimVal:
+            return Number(animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGAnimatedInteger::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedIntegerConstants::BaseVal:
-		{
-			if(impl)
-				impl->setBaseVal(static_cast<long>(value->toNumber(exec)));
+    switch(token)
+    {
+        case SVGAnimatedIntegerConstants::BaseVal:
+        {
+            if(impl)
+                impl->setBaseVal(static_cast<long>(value->toNumber(exec)));
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGAnimatedInteger SVGAnimatedInteger::null;
@@ -87,31 +87,31 @@ SVGAnimatedInteger::SVGAnimatedInteger() : impl(0)
 
 SVGAnimatedInteger::SVGAnimatedInteger(SVGAnimatedIntegerImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedInteger::SVGAnimatedInteger(const SVGAnimatedInteger &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedInteger)
 
 long SVGAnimatedInteger::baseVal() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->baseVal();
+    return impl->baseVal();
 }
 
 long SVGAnimatedInteger::animVal() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->animVal();
+    return impl->animVal();
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,32 +31,32 @@ class KURL;
 
 namespace KSVG
 {
-	//class SVGDocument;
-	class SVGDocumentImpl;
+    //class SVGDocument;
+    class SVGDocumentImpl;
 
-	// KSVG Document builder 
-	class DocumentBuilder : public KDOM::DocumentBuilder
-	{
-	public:
-		DocumentBuilder(KSVGView *view);
-		virtual ~DocumentBuilder();
+    // KSVG Document builder 
+    class DocumentBuilder : public KDOM::DocumentBuilder
+    {
+    public:
+        DocumentBuilder(KSVGView *view);
+        virtual ~DocumentBuilder();
 
-		// Helper function for in-memory created documents.
-		// Use this function to link a newly created 'KDOM::Document'
-		// with the passed 'KCanvas', and the other for indicate that
-		// you are done creating your tree (invokes rendering in non-progr. mode)
-//		static void linkDocumentToCanvas(const SVGDocument &doc, KSVGView *view);
-		static void linkDocumentToCanvas(SVGDocumentImpl *docImpl, KSVGView *view);
+        // Helper function for in-memory created documents.
+        // Use this function to link a newly created 'KDOM::Document'
+        // with the passed 'KCanvas', and the other for indicate that
+        // you are done creating your tree (invokes rendering in non-progr. mode)
+//        static void linkDocumentToCanvas(const SVGDocument &doc, KSVGView *view);
+        static void linkDocumentToCanvas(SVGDocumentImpl *docImpl, KSVGView *view);
 
-		static void finishedDocument(SVGDocumentImpl *doc);
+        static void finishedDocument(SVGDocumentImpl *doc);
 
-	protected:
-		virtual bool startDocument(const KURL &uri);
-		virtual bool endDocument();
+    protected:
+        virtual bool startDocument(const KURL &uri);
+        virtual bool endDocument();
 
-	private:
-		KSVGView *m_view;
-	};
+    private:
+        KSVGView *m_view;
+    };
 };
 
 #endif

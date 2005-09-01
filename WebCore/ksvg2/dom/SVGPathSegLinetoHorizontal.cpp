@@ -29,35 +29,35 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSegLinetoHorizontalAbs::s_hashTable 3
- x		SVGPathSegLinetoHorizontalConstants::X		DontDelete
+ x        SVGPathSegLinetoHorizontalConstants::X        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegLinetoHorizontalAbs::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegLinetoHorizontalConstants::X:
-		return Number(x());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegLinetoHorizontalConstants::X:
+        return Number(x());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegLinetoHorizontalAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegLinetoHorizontalConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegLinetoHorizontalConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 // The qdom way...
 #define _impl (static_cast<SVGPathSegLinetoHorizontalAbsImpl *>(impl))
@@ -74,12 +74,12 @@ SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs(SVGPathSegLinetoHor
 
 SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs(const SVGPathSegLinetoHorizontalAbs &other) : SVGPathSeg(other)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoHorizontalAbs::SVGPathSegLinetoHorizontalAbs(const SVGPathSeg &other) : SVGPathSeg(other)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoHorizontalAbs::~SVGPathSegLinetoHorizontalAbs()
@@ -88,59 +88,59 @@ SVGPathSegLinetoHorizontalAbs::~SVGPathSegLinetoHorizontalAbs()
    
 SVGPathSegLinetoHorizontalAbs &SVGPathSegLinetoHorizontalAbs::operator=(const SVGPathSegLinetoHorizontalAbs &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegLinetoHorizontalAbs, PATHSEG_LINETO_HORIZONTAL_ABS)
 
 void SVGPathSegLinetoHorizontalAbs::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
-	    
+        
 float SVGPathSegLinetoHorizontalAbs::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 
 
 /*
 @begin SVGPathSegLinetoHorizontalRel::s_hashTable 3
- x		SVGPathSegLinetoHorizontalConstants::X		DontDelete
+ x        SVGPathSegLinetoHorizontalConstants::X        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegLinetoHorizontalRel::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegLinetoHorizontalConstants::X:
-		return Number(x());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegLinetoHorizontalConstants::X:
+        return Number(x());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegLinetoHorizontalRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegLinetoHorizontalConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegLinetoHorizontalConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -159,12 +159,12 @@ SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel(SVGPathSegLinetoHor
 
 SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel(const SVGPathSegLinetoHorizontalRel &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoHorizontalRel::SVGPathSegLinetoHorizontalRel(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoHorizontalRel::~SVGPathSegLinetoHorizontalRel()
@@ -173,24 +173,24 @@ SVGPathSegLinetoHorizontalRel::~SVGPathSegLinetoHorizontalRel()
    
 SVGPathSegLinetoHorizontalRel &SVGPathSegLinetoHorizontalRel::operator=(const SVGPathSegLinetoHorizontalRel &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegLinetoHorizontalRel, PATHSEG_LINETO_HORIZONTAL_REL)
 
 void SVGPathSegLinetoHorizontalRel::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
-	    
+        
 float SVGPathSegLinetoHorizontalRel::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 // vim:ts=4:noet

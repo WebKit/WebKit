@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -30,28 +30,28 @@
 
 namespace KDOM
 {
-	class NotationImpl : public NodeBaseImpl
-	{
-	public:
-		NotationImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId);
-		NotationImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId);
-		virtual ~NotationImpl();
+    class NotationImpl : public NodeBaseImpl
+    {
+    public:
+        NotationImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId);
+        NotationImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId);
+        virtual ~NotationImpl();
 
-		// 'Notation' functions
-		virtual DOMStringImpl *publicId() const;
-		virtual DOMStringImpl *systemId() const;
+        // 'Notation' functions
+        virtual DOMStringImpl *publicId() const;
+        virtual DOMStringImpl *systemId() const;
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		virtual DOMStringImpl *textContent() const; // DOM3
+        virtual DOMStringImpl *textContent() const; // DOM3
 
-	protected:
-		DOMStringImpl *m_publicId;
-		DOMStringImpl *m_systemId;
-		DOMStringImpl *m_name;
-	};
+    protected:
+        DOMStringImpl *m_publicId;
+        DOMStringImpl *m_systemId;
+        DOMStringImpl *m_name;
+    };
 };
 
 #endif

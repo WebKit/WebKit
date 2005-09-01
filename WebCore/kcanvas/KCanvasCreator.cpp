@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
     
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -45,184 +45,184 @@ KCanvasCreator::~KCanvasCreator()
 KCanvasCreator *KCanvasCreator::self()
 {
     if(!s_creator)
-		s_creator = canvasCreatorDeleter.setObject(s_creator, new KCanvasCreator());
+        s_creator = canvasCreatorDeleter.setObject(s_creator, new KCanvasCreator());
 
-	return s_creator;
+    return s_creator;
 }
 
 KCPathDataList KCanvasCreator::createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const
 {
-	KCPathDataList list;
+    KCPathDataList list;
 
     if (width <= 0.0f || height <= 0.0f)
         return list;
 
-	double nrx = rx, nry = ry;
-	// If rx is greater than half of the width of the rectangle
-	// then set rx to half of the width (required in SVG spec)
-	if(nrx > width / 2)
-		nrx = width / 2;
+    double nrx = rx, nry = ry;
+    // If rx is greater than half of the width of the rectangle
+    // then set rx to half of the width (required in SVG spec)
+    if(nrx > width / 2)
+        nrx = width / 2;
 
-	// If ry is greater than half of the height of the rectangle
-	// then set ry to half of the height (required in SVG spec)
-	if(nry > height / 2)
-		nry = height / 2;
+    // If ry is greater than half of the height of the rectangle
+    // then set ry to half of the height (required in SVG spec)
+    if(nry > height / 2)
+        nry = height / 2;
 
-	list.moveTo(x + nrx, y);
-	list.curveTo(x + nrx * (1 - 0.552), y, x, y + nry * (1 - 0.552), x, y + nry);
+    list.moveTo(x + nrx, y);
+    list.curveTo(x + nrx * (1 - 0.552), y, x, y + nry * (1 - 0.552), x, y + nry);
 
-	if(nry < height / 2)
-		list.lineTo(x, y + height - nry);
+    if(nry < height / 2)
+        list.lineTo(x, y + height - nry);
 
-	list.curveTo(x, y + height - nry * (1 - 0.552), x + nrx * (1 - 0.552), y + height, x + nrx, y + height);
+    list.curveTo(x, y + height - nry * (1 - 0.552), x + nrx * (1 - 0.552), y + height, x + nrx, y + height);
 
-	if(nrx < width / 2)
-		list.lineTo(x + width - nrx, y + height);
+    if(nrx < width / 2)
+        list.lineTo(x + width - nrx, y + height);
 
-	list.curveTo(x + width - nrx * (1 - 0.552), y + height, x + width, y + height - nry * (1 - 0.552), x + width, y + height - nry);
+    list.curveTo(x + width - nrx * (1 - 0.552), y + height, x + width, y + height - nry * (1 - 0.552), x + width, y + height - nry);
 
-	if(nry < height / 2)
-		list.lineTo(x + width, y + nry);
+    if(nry < height / 2)
+        list.lineTo(x + width, y + nry);
 
-	list.curveTo(x + width, y + nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y, x + width - nrx, y);
+    list.curveTo(x + width, y + nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y, x + width - nrx, y);
 
-	if(nrx < width / 2)
-		list.lineTo(x + nrx, y);
+    if(nrx < width / 2)
+        list.lineTo(x + nrx, y);
 
-	list.closeSubpath();
-	return list;
+    list.closeSubpath();
+    return list;
 }
 
 KCPathDataList KCanvasCreator::createRectangle(float x, float y, float width, float height) const
 {
-	KCPathDataList list;
+    KCPathDataList list;
     
     if (width <= 0.0f || height <= 0.0f)
         return list;
     
-	list.moveTo(x, y);
-	list.lineTo(x + width, y);
-	list.lineTo(x + width, y + height);
-	list.lineTo(x, y + height);
-	list.closeSubpath();
-	return list;
+    list.moveTo(x, y);
+    list.lineTo(x + width, y);
+    list.lineTo(x + width, y + height);
+    list.lineTo(x, y + height);
+    list.closeSubpath();
+    return list;
 }
 
 KCPathDataList KCanvasCreator::createEllipse(float cx, float cy, float rx, float ry) const
 {
-	KCPathDataList list;
+    KCPathDataList list;
 
     if (rx <= 0.0f || ry <= 0.0f)
         return list;
 
-	// Ellipse creation - nice & clean agg2 code
-	double x = cx, y = cy;
+    // Ellipse creation - nice & clean agg2 code
+    double x = cx, y = cy;
 
-	unsigned step = 0, num = 100;
-	bool running = true;
-	while(running)
-	{
-		if(step == num)
-		{
-			running = false;
-			break;
-		}
+    unsigned step = 0, num = 100;
+    bool running = true;
+    while(running)
+    {
+        if(step == num)
+        {
+            running = false;
+            break;
+        }
 
-		double angle = double(step) / double(num) * 2.0 * M_PI;
-		x = cx + cos(angle) * rx;
-		y = cy + sin(angle) * ry;
+        double angle = double(step) / double(num) * 2.0 * M_PI;
+        x = cx + cos(angle) * rx;
+        y = cy + sin(angle) * ry;
 
-		step++;
-		if(step == 1)
-			list.moveTo(x, y);
-		else
-			list.lineTo(x, y);
-	}
+        step++;
+        if(step == 1)
+            list.moveTo(x, y);
+        else
+            list.lineTo(x, y);
+    }
 
-	list.closeSubpath();
-	return list;
+    list.closeSubpath();
+    return list;
 }
 
 KCPathDataList KCanvasCreator::createCircle(float cx, float cy, float r) const
 {
-	return createEllipse(cx, cy, r, r);
+    return createEllipse(cx, cy, r, r);
 }
 
 KCPathDataList KCanvasCreator::createLine(float x1, float y1, float x2, float y2) const
 {
-	KCPathDataList list;
+    KCPathDataList list;
     
     if (x1 == x2 && y1 == y2)
         return list;
 
-	list.moveTo(x1, y1);
-	list.lineTo(x2, y2);
-	return list;
+    list.moveTo(x1, y1);
+    list.lineTo(x2, y2);
+    return list;
 }
 
 KCanvasUserData KCanvasCreator::createCanvasPathData(KCanvas *canvas, const KCPathDataList &pathData) const
 {
-	if(!canvas || !canvas->renderingDevice())
-	{
-		kdError() << k_funcinfo << " 'canvas' can't be null!" << endl;
-		return 0;
-	}
+    if(!canvas || !canvas->renderingDevice())
+    {
+        kdError() << k_funcinfo << " 'canvas' can't be null!" << endl;
+        return 0;
+    }
 
-	KRenderingDevice *device = canvas->renderingDevice();
+    KRenderingDevice *device = canvas->renderingDevice();
 
-	device->startPath();
+    device->startPath();
 
-	int dataLength = pathData.count();
-	if(dataLength == 0)
-	{
-		device->endPath();
-		return device->currentPath();
-	}
+    int dataLength = pathData.count();
+    if(dataLength == 0)
+    {
+        device->endPath();
+        return device->currentPath();
+    }
 
-	KCPathDataList::ConstIterator it;
-	KCPathDataList::ConstIterator end = pathData.end();
+    KCPathDataList::ConstIterator it;
+    KCPathDataList::ConstIterator end = pathData.end();
 
-	// There are pure-moveto paths which reference
-	// paint servers *bah* -> Do NOT render them!
-	bool valid = false;
-	for(it = pathData.begin(); it != end; ++it)
-	{
-		KCPathData data = *it;		
+    // There are pure-moveto paths which reference
+    // paint servers *bah* -> Do NOT render them!
+    bool valid = false;
+    for(it = pathData.begin(); it != end; ++it)
+    {
+        KCPathData data = *it;        
 
-		if(data.cmd == CMD_MOVE)
-			device->moveTo(data.x3, data.y3);
-		else if(data.cmd == CMD_LINE)
-		{
-			device->lineTo(data.x3, data.y3);
-			valid = true;
-		}
-		else if(data.cmd == CMD_CLOSE_SUBPATH)
-			device->closeSubpath();
-		else
-		{
-			device->curveTo(data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
-			valid = true;
-		}
-	}
+        if(data.cmd == CMD_MOVE)
+            device->moveTo(data.x3, data.y3);
+        else if(data.cmd == CMD_LINE)
+        {
+            device->lineTo(data.x3, data.y3);
+            valid = true;
+        }
+        else if(data.cmd == CMD_CLOSE_SUBPATH)
+            device->closeSubpath();
+        else
+        {
+            device->curveTo(data.x1, data.y1, data.x2, data.y2, data.x3, data.y3);
+            valid = true;
+        }
+    }
 
-	if(!valid)
-	{
-		device->endPath();
-		device->startPath();
-	}
+    if(!valid)
+    {
+        device->endPath();
+        device->startPath();
+    }
 
-	device->endPath();
-	return device->currentPath();
+    device->endPath();
+    return device->currentPath();
 }
 
 KCanvasItem *KCanvasCreator::createPathItem(KCanvas *canvas, KRenderingStyle *style, const KCPathDataList &pathData) const
 {
-	return static_cast<KCanvasItem *>(canvas->renderingDevice()->createItem(canvas, style, createCanvasPathData(canvas, pathData)));
+    return static_cast<KCanvasItem *>(canvas->renderingDevice()->createItem(canvas, style, createCanvasPathData(canvas, pathData)));
 }
 
 KCanvasContainer *KCanvasCreator::createContainer(KCanvas *canvas, KRenderingStyle *style) const
 {
-	return static_cast<KCanvasContainer *>(canvas->renderingDevice()->createContainer(canvas, style));
+    return static_cast<KCanvasContainer *>(canvas->renderingDevice()->createContainer(canvas, style));
 }
 
 // vim:ts=4:noet

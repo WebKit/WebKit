@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,42 +31,42 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGRectElementImpl : public SVGStyledElementImpl,
-							   public SVGTestsImpl,
-							   public SVGLangSpaceImpl,
-							   public SVGExternalResourcesRequiredImpl,
-							   public SVGTransformableImpl
-	{
-	public:
-		SVGRectElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGRectElementImpl();
+    class SVGAnimatedLengthImpl;
+    class SVGRectElementImpl : public SVGStyledElementImpl,
+                               public SVGTestsImpl,
+                               public SVGLangSpaceImpl,
+                               public SVGExternalResourcesRequiredImpl,
+                               public SVGTransformableImpl
+    {
+    public:
+        SVGRectElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGRectElementImpl();
 
-		// 'SVGRectElement' functions
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
+        // 'SVGRectElement' functions
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		SVGAnimatedLengthImpl *rx() const;
-		SVGAnimatedLengthImpl *ry() const;	
+        SVGAnimatedLengthImpl *rx() const;
+        SVGAnimatedLengthImpl *ry() const;    
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCPathDataList toPathData() const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCPathDataList toPathData() const;
 
-		virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
+        virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
-		mutable SVGAnimatedLengthImpl *m_rx;
-		mutable SVGAnimatedLengthImpl *m_ry;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
+        mutable SVGAnimatedLengthImpl *m_rx;
+        mutable SVGAnimatedLengthImpl *m_ry;
+    };
 };
 
 #endif

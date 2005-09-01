@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGRadialGradientElementImpl : public SVGGradientElementImpl
-	{
-	public:
-		SVGRadialGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGRadialGradientElementImpl();
+    class SVGAnimatedLengthImpl;
+    class SVGRadialGradientElementImpl : public SVGGradientElementImpl
+    {
+    public:
+        SVGRadialGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGRadialGradientElementImpl();
 
-		// 'SVGRadialGradientElement' functions
-		SVGAnimatedLengthImpl *cx() const;
-		SVGAnimatedLengthImpl *cy() const;
-		SVGAnimatedLengthImpl *fx() const;
-		SVGAnimatedLengthImpl *fy() const;
-		SVGAnimatedLengthImpl *r() const;
+        // 'SVGRadialGradientElement' functions
+        SVGAnimatedLengthImpl *cx() const;
+        SVGAnimatedLengthImpl *cy() const;
+        SVGAnimatedLengthImpl *fx() const;
+        SVGAnimatedLengthImpl *fy() const;
+        SVGAnimatedLengthImpl *r() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual void resourceNotification() const;
+        virtual void resourceNotification() const;
 
-	protected:
-		virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const;
+    protected:
+        virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const;
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_cx;
-		mutable SVGAnimatedLengthImpl *m_cy;
-		mutable SVGAnimatedLengthImpl *m_r;
-		mutable SVGAnimatedLengthImpl *m_fx;
-		mutable SVGAnimatedLengthImpl *m_fy;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_cx;
+        mutable SVGAnimatedLengthImpl *m_cy;
+        mutable SVGAnimatedLengthImpl *m_r;
+        mutable SVGAnimatedLengthImpl *m_fx;
+        mutable SVGAnimatedLengthImpl *m_fy;
+    };
 };
 
 #endif

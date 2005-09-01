@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -39,22 +39,22 @@ using namespace KSVG;
 
 /*
 @begin SVGTextElement::s_hashTable 2
- dummy	SVGTextElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGTextElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGTextElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGTextElement SVGTextElement::null;
@@ -72,13 +72,13 @@ SVGTextElement::SVGTextElement(SVGTextElementImpl *i)
 SVGTextElement::SVGTextElement(const SVGTextElement &other)
 : SVGTextPositioningElement(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTextElement::SVGTextElement(const KDOM::Node &other)
 : SVGTextPositioningElement(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTextElement::~SVGTextElement()
@@ -87,31 +87,31 @@ SVGTextElement::~SVGTextElement()
 
 SVGTextElement &SVGTextElement::operator=(const SVGTextElement &other)
 {
-	SVGTextPositioningElement::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGTextPositioningElement::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGTextElement &SVGTextElement::operator=(const KDOM::Node &other)
 {
-	SVGTextElementImpl *ohandle = static_cast<SVGTextElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGTextPositioningElement::operator=(other);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGTextElementImpl *ohandle = static_cast<SVGTextElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGTextPositioningElement::operator=(other);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

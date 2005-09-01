@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -36,51 +36,51 @@ using namespace KDOM;
 
 CachedScript::CachedScript(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl cachePolicy, const char *) : CachedObject(url, Script, cachePolicy, 0)
 {
-	// It's javascript we want.
-	// But some websites think their scripts are <some wrong mimetype here>
-	// and refuse to serve them if we only accept application/x-javascript.
-	setAccept(QString::fromLatin1("*/*"));
+    // It's javascript we want.
+    // But some websites think their scripts are <some wrong mimetype here>
+    // and refuse to serve them if we only accept application/x-javascript.
+    setAccept(QString::fromLatin1("*/*"));
 
-	// load the file
-	Cache::loader()->load(docLoader, this, false);
-	m_loading = true;
+    // load the file
+    Cache::loader()->load(docLoader, this, false);
+    m_loading = true;
 }
 
 void CachedScript::ref(CachedObjectClient *consumer)
 {
-	CachedObject::ref(consumer);
-	if(!m_loading)
-		consumer->notifyFinished(this);
+    CachedObject::ref(consumer);
+    if(!m_loading)
+        consumer->notifyFinished(this);
 }
 
 void CachedScript::data(QBuffer &buffer, bool eof)
 {
-	if(!eof)
-		return;
-	
-	buffer.close();
-	setSize(buffer.buffer().size());
+    if(!eof)
+        return;
+    
+    buffer.close();
+    setSize(buffer.buffer().size());
 
-	QTextCodec *c = codecForBuffer(m_charset, buffer.buffer());
-	QString data = c->toUnicode( buffer.buffer().data(), m_size );
-	m_script = (data[0].unicode() == QChar::byteOrderMark) ? DOMString(data.mid(1)) : DOMString(data);
-	m_loading = false;
-	checkNotify();
+    QTextCodec *c = codecForBuffer(m_charset, buffer.buffer());
+    QString data = c->toUnicode( buffer.buffer().data(), m_size );
+    m_script = (data[0].unicode() == QChar::byteOrderMark) ? DOMString(data.mid(1)) : DOMString(data);
+    m_loading = false;
+    checkNotify();
 }
 
 void CachedScript::checkNotify()
 {
-	if(m_loading)
-		return;
+    if(m_loading)
+        return;
 
-	for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
-		it()->notifyFinished(this);
+    for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
+        it()->notifyFinished(this);
 }
 
 void CachedScript::error(int, const char *)
 {
-	m_loading = false;
-	checkNotify();
+    m_loading = false;
+    checkNotify();
 }
 
 // vim:ts=4:noet

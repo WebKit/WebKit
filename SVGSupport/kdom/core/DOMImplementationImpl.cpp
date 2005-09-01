@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -56,221 +56,221 @@ DOMImplementationImpl *DOMImplementationImpl::s_instance = 0;
 
 DOMImplementationImpl::DOMImplementationImpl()
 {
-	m_cdfInterface = 0;
+    m_cdfInterface = 0;
 
-	Cache::init();
+    Cache::init();
 }
 
 DOMImplementationImpl::~DOMImplementationImpl()
 {
-	// clean up static data
-	CSSStyleSelector::clear();
-	RenderStyle::cleanup();
+    // clean up static data
+    CSSStyleSelector::clear();
+    RenderStyle::cleanup();
 
-	delete m_cdfInterface;
+    delete m_cdfInterface;
 }
 
 DOMImplementationImpl *DOMImplementationImpl::self()
 {
-	if(!s_instance)
-		s_instance = instanceDeleter.setObject(s_instance, new DOMImplementationImpl());
+    if(!s_instance)
+        s_instance = instanceDeleter.setObject(s_instance, new DOMImplementationImpl());
 
-	return s_instance;
+    return s_instance;
 }
 
 CDFInterface *DOMImplementationImpl::cdfInterface() const
 {
-	if(!m_cdfInterface)
-		m_cdfInterface = createCDFInterface();
-	
-	return m_cdfInterface;
+    if(!m_cdfInterface)
+        m_cdfInterface = createCDFInterface();
+    
+    return m_cdfInterface;
 }
 
 bool DOMImplementationImpl::hasFeature(DOMStringImpl *feature, DOMStringImpl *_version) const
 {
-	DOMString upFeature = DOMString(feature).upper();
-	DOMString version(_version);
+    DOMString upFeature = DOMString(feature).upper();
+    DOMString version(_version);
 
-	if(upFeature[0] == '+')
-		upFeature.remove(0, 1);
+    if(upFeature[0] == '+')
+        upFeature.remove(0, 1);
 
-	if((upFeature == "XML" || upFeature == "CORE" || upFeature == "EVENTS" || upFeature == "UIEVENTS" ||
-		upFeature == "MOUSEEVENTS" || upFeature == "MUTATIONEVENTS" || upFeature == "LS-ASYNC" ||
-		upFeature == "LS" || upFeature == "XPATH" || upFeature == "RANGE" || upFeature == "TRAVERSAL") &&
-	   (version == "1.0" || version == "2.0" || version == "3.0" || version.isEmpty()))
-	{
-		return true;
-	}
+    if((upFeature == "XML" || upFeature == "CORE" || upFeature == "EVENTS" || upFeature == "UIEVENTS" ||
+        upFeature == "MOUSEEVENTS" || upFeature == "MUTATIONEVENTS" || upFeature == "LS-ASYNC" ||
+        upFeature == "LS" || upFeature == "XPATH" || upFeature == "RANGE" || upFeature == "TRAVERSAL") &&
+       (version == "1.0" || version == "2.0" || version == "3.0" || version.isEmpty()))
+    {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 DOMObjectImpl *DOMImplementationImpl::getFeature(DOMStringImpl *, DOMStringImpl *) const
 {
-	// FIXME!
-	return 0;
+    // FIXME!
+    return 0;
 }
 
 DocumentTypeImpl *DOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedName,
-															DOMStringImpl *publicId,
-															DOMStringImpl *systemId) const
+                                                            DOMStringImpl *publicId,
+                                                            DOMStringImpl *systemId) const
 {
-	// INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-	if((!qualifiedName || qualifiedName->isEmpty()) || !Helper::ValidateAttributeName(qualifiedName))
-		throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
+    // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
+    if((!qualifiedName || qualifiedName->isEmpty()) || !Helper::ValidateAttributeName(qualifiedName))
+        throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
 
-	// NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
-	// FIXME: This is never reached! What now?
-	if(!qualifiedName || qualifiedName->isEmpty())
-		throw new DOMExceptionImpl(NAMESPACE_ERR);
+    // NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
+    // FIXME: This is never reached! What now?
+    if(!qualifiedName || qualifiedName->isEmpty())
+        throw new DOMExceptionImpl(NAMESPACE_ERR);
 
-	// NAMESPACE_ERR: Raised if the qualifiedName is malformed.
-	Helper::CheckMalformedQualifiedName(qualifiedName);
+    // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
+    Helper::CheckMalformedQualifiedName(qualifiedName);
 
-	return new DocumentTypeImpl(new DocumentPtr(), qualifiedName, publicId, systemId);
+    return new DocumentTypeImpl(new DocumentPtr(), qualifiedName, publicId, systemId);
 }
 
 DocumentImpl *DOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI,
-													DOMStringImpl *qualifiedName,
-													DocumentTypeImpl *docType,
-													bool createDocElement,
-													KDOMView *) const
+                                                    DOMStringImpl *qualifiedName,
+                                                    DocumentTypeImpl *docType,
+                                                    bool createDocElement,
+                                                    KDOMView *) const
 {
-	if(namespaceURI)
-		namespaceURI->ref();
-	if(qualifiedName)
-		qualifiedName->ref();
+    if(namespaceURI)
+        namespaceURI->ref();
+    if(qualifiedName)
+        qualifiedName->ref();
 
-	int temp;
-	Helper::CheckQualifiedName(qualifiedName, namespaceURI, temp, 
-							   true /*nameCanBeNull*/,
-							   true /*nameCanBeEmpty, see #61650*/);
+    int temp;
+    Helper::CheckQualifiedName(qualifiedName, namespaceURI, temp, 
+                               true /*nameCanBeNull*/,
+                               true /*nameCanBeEmpty, see #61650*/);
 
-	// WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
-	//					   document or was created from a different implementation.
-	if(docType != 0 && docType->ownerDocument() != 0)
-		throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
+    // WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
+    //                       document or was created from a different implementation.
+    if(docType != 0 && docType->ownerDocument() != 0)
+        throw new DOMExceptionImpl(WRONG_DOCUMENT_ERR);
 
-	DocumentImpl *doc = new DocumentImpl(const_cast<DOMImplementationImpl *>(this), 0 /* default: no view! */);
-	if(docType)
-		doc->setDocType(docType);
+    DocumentImpl *doc = new DocumentImpl(const_cast<DOMImplementationImpl *>(this), 0 /* default: no view! */);
+    if(docType)
+        doc->setDocType(docType);
 
-	/* isEmpty instead if isNull, for the reason given in #61650 */
-	if(qualifiedName && !qualifiedName->isEmpty() && namespaceURI && !namespaceURI->isEmpty() && createDocElement)
-		doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName));
+    /* isEmpty instead if isNull, for the reason given in #61650 */
+    if(qualifiedName && !qualifiedName->isEmpty() && namespaceURI && !namespaceURI->isEmpty() && createDocElement)
+        doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName));
 
-	if(namespaceURI)
-		namespaceURI->deref();
-	if(qualifiedName)
-		qualifiedName->deref();
+    if(namespaceURI)
+        namespaceURI->deref();
+    if(qualifiedName)
+        qualifiedName->deref();
 
-	return doc;
+    return doc;
 }
 
 CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const
 {
-	// TODO : check whether media is valid
-	CSSStyleSheetImpl *parent = 0;
-	CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent, 0);
-	sheet->setTitle(title);
-	sheet->setMedia(new MediaListImpl(sheet, media));
-	return sheet;
+    // TODO : check whether media is valid
+    CSSStyleSheetImpl *parent = 0;
+    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent, 0);
+    sheet->setTitle(title);
+    sheet->setMedia(new MediaListImpl(sheet, media));
+    return sheet;
 }
 
 LSParserImpl *DOMImplementationImpl::createLSParser(unsigned short mode, DOMStringImpl *schemaTypeImpl) const
 {
-	DOMString schemaType(schemaTypeImpl);
+    DOMString schemaType(schemaTypeImpl);
 
-	// NOT_SUPPORTED_ERR: Raised if the requested mode or schema type is not supported.
-	if((mode == 0 || mode > MODE_ASYNCHRONOUS) ||
-		!(schemaType == NS_SCHEMATYPE_DTD || schemaType == NS_SCHEMATYPE_WXS || schemaType.isEmpty()))
-		throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
+    // NOT_SUPPORTED_ERR: Raised if the requested mode or schema type is not supported.
+    if((mode == 0 || mode > MODE_ASYNCHRONOUS) ||
+        !(schemaType == NS_SCHEMATYPE_DTD || schemaType == NS_SCHEMATYPE_WXS || schemaType.isEmpty()))
+        throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
 
-	LSParserImpl *ret = new LSParserImpl();
-	ret->setASync(mode == MODE_ASYNCHRONOUS);
-	return ret;
+    LSParserImpl *ret = new LSParserImpl();
+    ret->setASync(mode == MODE_ASYNCHRONOUS);
+    return ret;
 }
 
 LSInputImpl *DOMImplementationImpl::createLSInput() const
 {
-	return new LSInputImpl();
+    return new LSInputImpl();
 }
 
 LSOutputImpl *DOMImplementationImpl::createLSOutput() const
 {
-	return new LSOutputImpl();
+    return new LSOutputImpl();
 }
 
 LSSerializerImpl *DOMImplementationImpl::createLSSerializer() const
 {
-	return new LSSerializerImpl();
+    return new LSSerializerImpl();
 }
 
 DocumentTypeImpl *DOMImplementationImpl::defaultDocumentType() const
 {
-	return createDocumentType(new DOMStringImpl("name"),
-							  new DOMStringImpl("public"),
-							  new DOMStringImpl("system"));
+    return createDocumentType(new DOMStringImpl("name"),
+                              new DOMStringImpl("public"),
+                              new DOMStringImpl("system"));
 }
 
 int DOMImplementationImpl::typeToId(DOMStringImpl *typeImpl)
 {
-	DOMString type(typeImpl);
+    DOMString type(typeImpl);
 
-	if(type == "DOMFocusIn") return DOMFOCUSIN_EVENT;
-	else if(type == "DOMFocusOut") return DOMFOCUSOUT_EVENT;
-	else if(type == "DOMActivate") return DOMACTIVATE_EVENT;
-	else if(type == "click") return CLICK_EVENT;
-	else if(type == "mousedown") return MOUSEDOWN_EVENT;
-	else if(type == "mouseup") return MOUSEUP_EVENT;
-	else if(type == "mouseover") return MOUSEOVER_EVENT;
-	else if(type == "mousemove") return MOUSEMOVE_EVENT;
-	else if(type == "mouseout") return MOUSEOUT_EVENT;
-	else if(type == "keydown") return KEYDOWN_EVENT;
-	else if(type == "keyup") return KEYUP_EVENT;
-	else if(type == "DOMSubtreeModified") return DOMSUBTREEMODIFIED_EVENT;
-	else if(type == "DOMNodeInserted") return DOMNODEINSERTED_EVENT;
-	else if(type == "DOMNodeRemoved") return DOMNODEREMOVED_EVENT;
-	else if(type == "DOMNodeRemovedFromDocument") return DOMNODEREMOVEDFROMDOCUMENT_EVENT;
-	else if(type == "DOMNodeInsertedIntoDocument") return DOMNODEINSERTEDINTODOCUMENT_EVENT;
-	else if(type == "DOMAttrModified") return DOMATTRMODIFIED_EVENT;
-	else if(type == "DOMCharacterDataModified")	return DOMCHARACTERDATAMODIFIED_EVENT;
+    if(type == "DOMFocusIn") return DOMFOCUSIN_EVENT;
+    else if(type == "DOMFocusOut") return DOMFOCUSOUT_EVENT;
+    else if(type == "DOMActivate") return DOMACTIVATE_EVENT;
+    else if(type == "click") return CLICK_EVENT;
+    else if(type == "mousedown") return MOUSEDOWN_EVENT;
+    else if(type == "mouseup") return MOUSEUP_EVENT;
+    else if(type == "mouseover") return MOUSEOVER_EVENT;
+    else if(type == "mousemove") return MOUSEMOVE_EVENT;
+    else if(type == "mouseout") return MOUSEOUT_EVENT;
+    else if(type == "keydown") return KEYDOWN_EVENT;
+    else if(type == "keyup") return KEYUP_EVENT;
+    else if(type == "DOMSubtreeModified") return DOMSUBTREEMODIFIED_EVENT;
+    else if(type == "DOMNodeInserted") return DOMNODEINSERTED_EVENT;
+    else if(type == "DOMNodeRemoved") return DOMNODEREMOVED_EVENT;
+    else if(type == "DOMNodeRemovedFromDocument") return DOMNODEREMOVEDFROMDOCUMENT_EVENT;
+    else if(type == "DOMNodeInsertedIntoDocument") return DOMNODEINSERTEDINTODOCUMENT_EVENT;
+    else if(type == "DOMAttrModified") return DOMATTRMODIFIED_EVENT;
+    else if(type == "DOMCharacterDataModified")    return DOMCHARACTERDATAMODIFIED_EVENT;
 
-	return UNKNOWN_EVENT;
+    return UNKNOWN_EVENT;
 }
 
 DOMStringImpl *DOMImplementationImpl::idToType(int id)
 {
-	QString ret;
-	switch(id)
-	{
-		case DOMFOCUSIN_EVENT: ret = "DOMFocusIn";
-		case DOMFOCUSOUT_EVENT: ret = "DOMFocusOut";
-		case DOMACTIVATE_EVENT: ret = "DOMActivate";
-		case CLICK_EVENT: ret = "click";
-		case MOUSEDOWN_EVENT: ret = "mousedown";
-		case MOUSEUP_EVENT: ret = "mouseup";
-		case MOUSEOVER_EVENT: ret = "mouseover";
-		case MOUSEMOVE_EVENT: ret = "mousemove";
-		case MOUSEOUT_EVENT: ret = "mouseout";
-		case KEYDOWN_EVENT: ret = "keydown";
-		case KEYUP_EVENT: ret = "keyup";
-		case DOMSUBTREEMODIFIED_EVENT: ret = "DOMSubtreeModified";
-		case DOMNODEINSERTED_EVENT: ret = "DOMNodeInserted";
-		case DOMNODEREMOVED_EVENT: ret = "DOMNodeRemoved";
-		case DOMNODEREMOVEDFROMDOCUMENT_EVENT: ret = "DOMNodeRemovedFromDocument";
-		case DOMNODEINSERTEDINTODOCUMENT_EVENT: ret = "DOMNodeInsertedIntoDocument";
-		case DOMATTRMODIFIED_EVENT: ret = "DOMAttrModified";
-		case DOMCHARACTERDATAMODIFIED_EVENT: ret = "DOMCharacterDataModified";
-		default: ret = QString::null;
-	}
+    QString ret;
+    switch(id)
+    {
+        case DOMFOCUSIN_EVENT: ret = "DOMFocusIn";
+        case DOMFOCUSOUT_EVENT: ret = "DOMFocusOut";
+        case DOMACTIVATE_EVENT: ret = "DOMActivate";
+        case CLICK_EVENT: ret = "click";
+        case MOUSEDOWN_EVENT: ret = "mousedown";
+        case MOUSEUP_EVENT: ret = "mouseup";
+        case MOUSEOVER_EVENT: ret = "mouseover";
+        case MOUSEMOVE_EVENT: ret = "mousemove";
+        case MOUSEOUT_EVENT: ret = "mouseout";
+        case KEYDOWN_EVENT: ret = "keydown";
+        case KEYUP_EVENT: ret = "keyup";
+        case DOMSUBTREEMODIFIED_EVENT: ret = "DOMSubtreeModified";
+        case DOMNODEINSERTED_EVENT: ret = "DOMNodeInserted";
+        case DOMNODEREMOVED_EVENT: ret = "DOMNodeRemoved";
+        case DOMNODEREMOVEDFROMDOCUMENT_EVENT: ret = "DOMNodeRemovedFromDocument";
+        case DOMNODEINSERTEDINTODOCUMENT_EVENT: ret = "DOMNodeInsertedIntoDocument";
+        case DOMATTRMODIFIED_EVENT: ret = "DOMAttrModified";
+        case DOMCHARACTERDATAMODIFIED_EVENT: ret = "DOMCharacterDataModified";
+        default: ret = QString::null;
+    }
 
-	return new DOMStringImpl(ret);
+    return new DOMStringImpl(ret);
 }
 
 CDFInterface *DOMImplementationImpl::createCDFInterface() const
 {
-	return new CDFInterface();
+    return new CDFInterface();
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,21 +29,21 @@
 
 namespace KDOM
 {
-	class CDFInterface;
-	class CSSImageValueImpl : public CSSPrimitiveValueImpl,
-							  public CachedObjectClient
-	{
-	public:
-		CSSImageValueImpl(CDFInterface *interface);
-		CSSImageValueImpl(CDFInterface *interface, const KURL &url, const StyleBaseImpl *style);
-		virtual ~CSSImageValueImpl();
+    class CDFInterface;
+    class CSSImageValueImpl : public CSSPrimitiveValueImpl,
+                              public CachedObjectClient
+    {
+    public:
+        CSSImageValueImpl(CDFInterface *interface);
+        CSSImageValueImpl(CDFInterface *interface, const KURL &url, const StyleBaseImpl *style);
+        virtual ~CSSImageValueImpl();
 
-		// 'CSSImageValueImpl' functions
-		CachedImage *image() { return m_image; }
+        // 'CSSImageValueImpl' functions
+        CachedImage *image() { return m_image; }
 
-	private:
-		CachedImage *m_image;
-	};
+    private:
+        CachedImage *m_image;
+    };
 };
 
 #endif

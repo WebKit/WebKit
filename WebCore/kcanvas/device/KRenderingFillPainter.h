@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -31,24 +31,24 @@ class KRenderingDeviceContext;
 class KRenderingFillPainter
 {
 public:
-	KRenderingFillPainter();
-	virtual ~KRenderingFillPainter();
+    KRenderingFillPainter();
+    virtual ~KRenderingFillPainter();
 
-	KCWindRule fillRule() const;
-	void setFillRule(KCWindRule rule);
+    KCWindRule fillRule() const;
+    void setFillRule(KCWindRule rule);
 
-	KRenderingPaintServer *paintServer() const;
-	void setPaintServer(KRenderingPaintServer *pserver);
+    KRenderingPaintServer *paintServer() const;
+    void setPaintServer(KRenderingPaintServer *pserver);
 
-	float opacity() const;
-	void setOpacity(float opacity);
+    float opacity() const;
+    void setOpacity(float opacity);
 
-	// Actual rendering function
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const;
+    // Actual rendering function
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const;
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,12 +40,12 @@ using namespace KSVG;
 
 /*
 @begin SVGStylable::s_hashTable 3
- className			SVGStylableConstants::ClassName		DontDelete|ReadOnly
- style				SVGStylableConstants::Style			DontDelete|ReadOnly
+ className            SVGStylableConstants::ClassName        DontDelete|ReadOnly
+ style                SVGStylableConstants::Style            DontDelete|ReadOnly
 @end
 @begin SVGStylableProto::s_hashTable 3
- getPresentationAttribute	SVGStylableConstants::GetPresentationAttribute		DontDelete|Function 1
- getStyle					SVGStylableConstants::GetStyle						DontDelete|Function 0
+ getPresentationAttribute    SVGStylableConstants::GetPresentationAttribute        DontDelete|Function 1
+ getStyle                    SVGStylableConstants::GetStyle                        DontDelete|Function 0
 @end
 */
 
@@ -53,42 +53,42 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGStylable", SVGStylableProto, SVGStylableProtoFunc)
 
 ValueImp *SVGStylable::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGStylableConstants::ClassName:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, className());
-		case SVGStylableConstants::Style:
-			return KDOM::safe_cache<KDOM::CSSStyleDeclaration>(exec, style());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGStylableConstants::ClassName:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, className());
+        case SVGStylableConstants::Style:
+            return KDOM::safe_cache<KDOM::CSSStyleDeclaration>(exec, style());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGStylableProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGStylable obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGStylable obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGStylableConstants::GetPresentationAttribute:
-		{
-			KDOM::DOMString name = KDOM::toDOMString(exec, args[0]);
-			return getDOMCSSValue(exec, obj.getPresentationAttribute(name));
-		}
-		case SVGStylableConstants::GetStyle:
-			return KDOM::safe_cache<KDOM::CSSStyleDeclaration>(exec, obj.style());
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGStylableConstants::GetPresentationAttribute:
+        {
+            KDOM::DOMString name = KDOM::toDOMString(exec, args[0]);
+            return getDOMCSSValue(exec, obj.getPresentationAttribute(name));
+        }
+        case SVGStylableConstants::GetStyle:
+            return KDOM::safe_cache<KDOM::CSSStyleDeclaration>(exec, obj.style());
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGStylable SVGStylable::null;
@@ -103,7 +103,7 @@ SVGStylable::SVGStylable(SVGStylableImpl *i) : impl(i)
 
 SVGStylable::SVGStylable(const SVGStylable &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGStylable::~SVGStylable()
@@ -112,42 +112,42 @@ SVGStylable::~SVGStylable()
 
 SVGStylable &SVGStylable::operator=(const SVGStylable &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGStylable &SVGStylable::operator=(SVGStylableImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGStylable::className() const
 {
-	if(!impl)
-		return SVGAnimatedString::null;
+    if(!impl)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->className());
+    return SVGAnimatedString(impl->className());
 }
 
 KDOM::CSSStyleDeclaration SVGStylable::style() const
 {
-	if(!impl)
-		return KDOM::CSSStyleDeclaration::null;
+    if(!impl)
+        return KDOM::CSSStyleDeclaration::null;
 
-	return KDOM::CSSStyleDeclaration(impl->style());
+    return KDOM::CSSStyleDeclaration(impl->style());
 }
 
 KDOM::CSSValue SVGStylable::getPresentationAttribute(const KDOM::DOMString &name)
 {
-	if(!impl)
-		return KDOM::CSSValue::null;
+    if(!impl)
+        return KDOM::CSSValue::null;
 
-	return KDOM::CSSValue(impl->getPresentationAttribute(name));
+    return KDOM::CSSValue(impl->getPresentationAttribute(name));
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,118 +37,118 @@
 
 namespace KDOM
 {
-	class DocumentPtr;
+    class DocumentPtr;
 };
 
 class KCanvasClipper;
 
 namespace KSVG
 {
-	class SVGRectImpl;
-	class SVGAngleImpl;
-	class SVGPointImpl;
-	class SVGNumberImpl;
-	class SVGLengthImpl;
-	class SVGMatrixImpl;
-	class SVGTransformImpl;
-	class SVGAnimatedLengthImpl;
-	class SVGSVGElementImpl : public SVGStyledElementImpl,
-							  public SVGTestsImpl,
-							  public SVGLangSpaceImpl,
-							  public SVGExternalResourcesRequiredImpl,
-							  public SVGLocatableImpl,
-							  public SVGFitToViewBoxImpl,
-							  public SVGZoomAndPanImpl,
-							  public KDOM::DocumentEventImpl
-	{
-	public:
-		SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGSVGElementImpl();
+    class SVGRectImpl;
+    class SVGAngleImpl;
+    class SVGPointImpl;
+    class SVGNumberImpl;
+    class SVGLengthImpl;
+    class SVGMatrixImpl;
+    class SVGTransformImpl;
+    class SVGAnimatedLengthImpl;
+    class SVGSVGElementImpl : public SVGStyledElementImpl,
+                              public SVGTestsImpl,
+                              public SVGLangSpaceImpl,
+                              public SVGExternalResourcesRequiredImpl,
+                              public SVGLocatableImpl,
+                              public SVGFitToViewBoxImpl,
+                              public SVGZoomAndPanImpl,
+                              public KDOM::DocumentEventImpl
+    {
+    public:
+        SVGSVGElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGSVGElementImpl();
 
-		// 'SVGSVGElement' functions
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        // 'SVGSVGElement' functions
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		KDOM::DOMStringImpl *contentScriptType() const;
-		void setContentScriptType(KDOM::DOMStringImpl *type);
+        KDOM::DOMStringImpl *contentScriptType() const;
+        void setContentScriptType(KDOM::DOMStringImpl *type);
 
-		KDOM::DOMStringImpl *contentStyleType() const;
-		void setContentStyleType(KDOM::DOMStringImpl *type);
+        KDOM::DOMStringImpl *contentStyleType() const;
+        void setContentStyleType(KDOM::DOMStringImpl *type);
 
-		SVGRectImpl *viewport() const;
+        SVGRectImpl *viewport() const;
 
-		float pixelUnitToMillimeterX() const;
-		float pixelUnitToMillimeterY() const;
-		float screenPixelToMillimeterX() const;
-		float screenPixelToMillimeterY() const;
+        float pixelUnitToMillimeterX() const;
+        float pixelUnitToMillimeterY() const;
+        float screenPixelToMillimeterX() const;
+        float screenPixelToMillimeterY() const;
 
-		bool useCurrentView() const;
-		void setUseCurrentView(bool currentView);
+        bool useCurrentView() const;
+        void setUseCurrentView(bool currentView);
 
-		// SVGViewSpecImpl *currentView() const;
+        // SVGViewSpecImpl *currentView() const;
 
-		float currentScale() const;
-		void setCurrentScale(float scale);
+        float currentScale() const;
+        void setCurrentScale(float scale);
 
-		SVGPointImpl *currentTranslate() const;
+        SVGPointImpl *currentTranslate() const;
 
-		unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
-		void unsuspendRedraw(unsigned long suspend_handle_id);
-		void unsuspendRedrawAll();
-		void forceRedraw();
+        unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
+        void unsuspendRedraw(unsigned long suspend_handle_id);
+        void unsuspendRedrawAll();
+        void forceRedraw();
 
-		void pauseAnimations();
-		void unpauseAnimations();
-		bool animationsPaused();
+        void pauseAnimations();
+        void unpauseAnimations();
+        bool animationsPaused();
 
-		float getCurrentTime();
-		void setCurrentTime(float seconds);
+        float getCurrentTime();
+        void setCurrentTime(float seconds);
 
-		KDOM::NodeListImpl *getIntersectionList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
-		KDOM::NodeListImpl *getEnclosureList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
-		bool checkIntersection(SVGElementImpl *element, SVGRectImpl *rect);
-		bool checkEnclosure(SVGElementImpl *element, SVGRectImpl *rect);
-		void deselectAll();
+        KDOM::NodeListImpl *getIntersectionList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
+        KDOM::NodeListImpl *getEnclosureList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
+        bool checkIntersection(SVGElementImpl *element, SVGRectImpl *rect);
+        bool checkEnclosure(SVGElementImpl *element, SVGRectImpl *rect);
+        void deselectAll();
 
-		static SVGNumberImpl *createSVGNumber();
-		static SVGLengthImpl *createSVGLength();
-		static SVGAngleImpl *createSVGAngle();
-		static SVGPointImpl *createSVGPoint(const QPoint &p = QPoint());
-		static SVGMatrixImpl *createSVGMatrix();
-		static SVGRectImpl *createSVGRect();
-		static SVGTransformImpl *createSVGTransform();
-		static SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix);
+        static SVGNumberImpl *createSVGNumber();
+        static SVGLengthImpl *createSVGLength();
+        static SVGAngleImpl *createSVGAngle();
+        static SVGPointImpl *createSVGPoint(const QPoint &p = QPoint());
+        static SVGMatrixImpl *createSVGMatrix();
+        static SVGRectImpl *createSVGRect();
+        static SVGTransformImpl *createSVGTransform();
+        static SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix);
 
-		// 'DocumentEvent' functions
-		virtual KDOM::EventImpl *createEvent(const KDOM::DOMString &eventType);
+        // 'DocumentEvent' functions
+        virtual KDOM::EventImpl *createEvent(const KDOM::DOMString &eventType);
 
-		virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseAttribute(KDOM::AttributeImpl *);
 
-		// 'virtual SVGLocatable' functions
-		virtual SVGMatrixImpl *getCTM() const;
-		virtual SVGMatrixImpl *getScreenCTM() const;
+        // 'virtual SVGLocatable' functions
+        virtual SVGMatrixImpl *getCTM() const;
+        virtual SVGMatrixImpl *getScreenCTM() const;
 
-		virtual QString adjustViewportClipping() const;
+        virtual QString adjustViewportClipping() const;
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
-		virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
-		// 'virtual SVGZoomAndPan functions
-		virtual void setZoomAndPan(unsigned short zoomAndPan);
+        // 'virtual SVGZoomAndPan functions
+        virtual void setZoomAndPan(unsigned short zoomAndPan);
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
+    private:
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
 
-		bool m_useCurrentView;
+        bool m_useCurrentView;
 
-		mutable KCanvasClipper *m_clipper;
-	};
+        mutable KCanvasClipper *m_clipper;
+    };
 };
 
 #endif

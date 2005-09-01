@@ -27,30 +27,30 @@
 
 namespace KDOM
 {
-	class Node;
-	class DocumentImpl;
+    class Node;
+    class DocumentImpl;
 };
 
 namespace KSVG
 {
-	class Ecma : public KDOM::Ecma
-	{
-	public:
-		Ecma(KDOM::DocumentImpl *doc);
-		virtual ~Ecma();
+    class Ecma : public KDOM::Ecma
+    {
+    public:
+        Ecma(KDOM::DocumentImpl *doc);
+        virtual ~Ecma();
 
-		// We are a KDOM user, so implement the hook to convert svg elements to kjs objects
-		virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n);
-		virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e);
-		virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c);
+        // We are a KDOM user, so implement the hook to convert svg elements to kjs objects
+        virtual KJS::ObjectImp *inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n);
+        virtual KJS::ObjectImp *inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e);
+        virtual KJS::ObjectImp *inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c);
 
-	protected:
-		virtual void setupDocument(KDOM::DocumentImpl *document);
-	};
+    protected:
+        virtual void setupDocument(KDOM::DocumentImpl *document);
+    };
 
-	// Helpers
-	class SVGPathSeg;
-	KJS::ValueImp *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
+    // Helpers
+    class SVGPathSeg;
+    KJS::ValueImp *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,46 +35,46 @@ using namespace KSVG;
 
 /*
 @begin SVGPreserveAspectRatio::s_hashTable 3
- align			SVGPreserveAspectRatioConstants::Align			DontDelete
- meetOrSlice	SVGPreserveAspectRatioConstants::MeetOrSlice	DontDelete
+ align            SVGPreserveAspectRatioConstants::Align            DontDelete
+ meetOrSlice    SVGPreserveAspectRatioConstants::MeetOrSlice    DontDelete
 @end
 */
 
 ValueImp *SVGPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPreserveAspectRatioConstants::Align:
-			return Number(align());
-		case SVGPreserveAspectRatioConstants::MeetOrSlice:
-			return Number(meetOrSlice());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPreserveAspectRatioConstants::Align:
+            return Number(align());
+        case SVGPreserveAspectRatioConstants::MeetOrSlice:
+            return Number(meetOrSlice());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGPreserveAspectRatio::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPreserveAspectRatioConstants::Align:
-			setAlign(value->toUInt32(exec));
-			break;
-		case SVGPreserveAspectRatioConstants::MeetOrSlice:
-			setMeetOrSlice(value->toUInt32(exec));
-			break;
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPreserveAspectRatioConstants::Align:
+            setAlign(value->toUInt32(exec));
+            break;
+        case SVGPreserveAspectRatioConstants::MeetOrSlice:
+            setMeetOrSlice(value->toUInt32(exec));
+            break;
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGPreserveAspectRatio SVGPreserveAspectRatio::null;
@@ -86,83 +86,83 @@ SVGPreserveAspectRatio::SVGPreserveAspectRatio() : impl(0)
 SVGPreserveAspectRatio::SVGPreserveAspectRatio(SVGPreserveAspectRatioImpl *i)
 : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGPreserveAspectRatio::SVGPreserveAspectRatio(const SVGPreserveAspectRatio &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPreserveAspectRatio::~SVGPreserveAspectRatio()
 {
-	if(impl)
-	{
-		if(impl->refCount() == 1)
-			KDOM::ScriptInterpreter::forgetDOMObject(impl);
+    if(impl)
+    {
+        if(impl->refCount() == 1)
+            KDOM::ScriptInterpreter::forgetDOMObject(impl);
 
-		impl->deref();
-	}
+        impl->deref();
+    }
 }
 
 SVGPreserveAspectRatio &SVGPreserveAspectRatio::operator=(const SVGPreserveAspectRatio &other)
 {
-	if(impl != other.impl)
-	{
-		if(impl)
-		{
-			if(impl->refCount() == 1)
-				KDOM::ScriptInterpreter::forgetDOMObject(impl);
+    if(impl != other.impl)
+    {
+        if(impl)
+        {
+            if(impl->refCount() == 1)
+                KDOM::ScriptInterpreter::forgetDOMObject(impl);
 
-			impl->deref();
-		}
+            impl->deref();
+        }
 
-		impl = other.impl;
+        impl = other.impl;
 
-		if(impl)
-			impl->ref();
-	}
+        if(impl)
+            impl->ref();
+    }
 
-	return *this;
+    return *this;
 }
 
 bool SVGPreserveAspectRatio::operator==(const SVGPreserveAspectRatio &other) const
 {
-	return impl == other.impl;
+    return impl == other.impl;
 }
 
 bool SVGPreserveAspectRatio::operator!=(const SVGPreserveAspectRatio &other) const
 {
-	return !operator==(other);
+    return !operator==(other);
 }
 
 void SVGPreserveAspectRatio::setAlign(unsigned short align)
 {
-	if(impl)
-		impl->setAlign(align);
+    if(impl)
+        impl->setAlign(align);
 }
 
 unsigned short SVGPreserveAspectRatio::align() const
 {
-	if(!impl)
-		return SVG_PRESERVEASPECTRATIO_UNKNOWN;
+    if(!impl)
+        return SVG_PRESERVEASPECTRATIO_UNKNOWN;
 
-	return impl->align();
+    return impl->align();
 }
 
 void SVGPreserveAspectRatio::setMeetOrSlice(unsigned short meetOrSlice)
 {
-	if(impl)
-		impl->setMeetOrSlice(meetOrSlice);
+    if(impl)
+        impl->setMeetOrSlice(meetOrSlice);
 }
 
 unsigned short SVGPreserveAspectRatio::meetOrSlice() const
 {
-	if(!impl)
-		return SVG_MEETORSLICE_UNKNOWN;
+    if(!impl)
+        return SVG_MEETORSLICE_UNKNOWN;
 
-	return impl->meetOrSlice();
+    return impl->meetOrSlice();
 }
 
 // vim:ts=4:noet

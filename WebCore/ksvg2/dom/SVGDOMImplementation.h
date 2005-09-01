@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,46 +27,46 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class Document;
-	class DocumentType;
-	class DocumentImpl;
-	class DocumentTypeImpl;
+    class DOMString;
+    class Document;
+    class DocumentType;
+    class DocumentImpl;
+    class DocumentTypeImpl;
 };
 
 namespace KSVG
 {
-	class SVGDOMImplementationImpl;
-	class SVGDOMImplementation : public KDOM::DOMImplementation
-	{
-	public:
-		SVGDOMImplementation();
-		explicit SVGDOMImplementation(SVGDOMImplementationImpl *i);
-		SVGDOMImplementation(const SVGDOMImplementation &other);
-		virtual ~SVGDOMImplementation();
+    class SVGDOMImplementationImpl;
+    class SVGDOMImplementation : public KDOM::DOMImplementation
+    {
+    public:
+        SVGDOMImplementation();
+        explicit SVGDOMImplementation(SVGDOMImplementationImpl *i);
+        SVGDOMImplementation(const SVGDOMImplementation &other);
+        virtual ~SVGDOMImplementation();
 
-		// Operators
-		SVGDOMImplementation &operator=(const SVGDOMImplementation &other);
-		bool operator==(const SVGDOMImplementation &other) const;
-		bool operator!=(const SVGDOMImplementation &other) const;
+        // Operators
+        SVGDOMImplementation &operator=(const SVGDOMImplementation &other);
+        bool operator==(const SVGDOMImplementation &other) const;
+        bool operator!=(const SVGDOMImplementation &other) const;
 
-		// 'SVGDOMImplementation' functions
-		bool hasFeature(const KDOM::DOMString &feature, const KDOM::DOMString &version);
-		KDOM::DocumentType createDocumentType(const KDOM::DOMString &qualifiedName, const KDOM::DOMString &publicId, const KDOM::DOMString &systemId);
-		KDOM::Document createDocument(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &qualifiedName, const KDOM::DocumentType &doctype);
+        // 'SVGDOMImplementation' functions
+        bool hasFeature(const KDOM::DOMString &feature, const KDOM::DOMString &version);
+        KDOM::DocumentType createDocumentType(const KDOM::DOMString &qualifiedName, const KDOM::DOMString &publicId, const KDOM::DOMString &systemId);
+        KDOM::Document createDocument(const KDOM::DOMString &namespaceURI, const KDOM::DOMString &qualifiedName, const KDOM::DocumentType &doctype);
 
-		// DOMImplementationCSS inherited function
-		KDOM::CSSStyleSheet createCSSStyleSheet(const KDOM::DOMString &title, const KDOM::DOMString &media);
+        // DOMImplementationCSS inherited function
+        KDOM::CSSStyleSheet createCSSStyleSheet(const KDOM::DOMString &title, const KDOM::DOMString &media);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGDOMImplementation)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGDOMImplementation)
 
-	protected:
-		SVGDOMImplementationImpl *impl;
+    protected:
+        SVGDOMImplementationImpl *impl;
 
-	private:
-		static SVGDOMImplementation *s_instance;
-	};
+    private:
+        static SVGDOMImplementation *s_instance;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,44 +30,44 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
-	class SVGAnimatedNumberImpl;
-	class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedStringImpl;
+    class SVGAnimatedNumberImpl;
+    class SVGAnimatedEnumerationImpl;
 
-	class SVGFECompositeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
-	{
-	public:
-		SVGFECompositeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFECompositeElementImpl();
+    class SVGFECompositeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
+    {
+    public:
+        SVGFECompositeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFECompositeElementImpl();
 
-		// 'SVGFECompositeElement' functions
-		SVGAnimatedStringImpl *in1() const;
-		SVGAnimatedStringImpl *in2() const;
-		SVGAnimatedEnumerationImpl *_operator() const;
-		SVGAnimatedNumberImpl *k1() const;
-		SVGAnimatedNumberImpl *k2() const;
-		SVGAnimatedNumberImpl *k3() const;
-		SVGAnimatedNumberImpl *k4() const;
+        // 'SVGFECompositeElement' functions
+        SVGAnimatedStringImpl *in1() const;
+        SVGAnimatedStringImpl *in2() const;
+        SVGAnimatedEnumerationImpl *_operator() const;
+        SVGAnimatedNumberImpl *k1() const;
+        SVGAnimatedNumberImpl *k2() const;
+        SVGAnimatedNumberImpl *k3() const;
+        SVGAnimatedNumberImpl *k4() const;
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-	private:
-		mutable SVGAnimatedStringImpl *m_in1;
-		mutable SVGAnimatedStringImpl *m_in2;
-		mutable SVGAnimatedEnumerationImpl *m_operator;
-		mutable SVGAnimatedNumberImpl *m_k1;
-		mutable SVGAnimatedNumberImpl *m_k2;
-		mutable SVGAnimatedNumberImpl *m_k3;
-		mutable SVGAnimatedNumberImpl *m_k4;
-		mutable KCanvasFEComposite *m_filterEffect;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_in1;
+        mutable SVGAnimatedStringImpl *m_in2;
+        mutable SVGAnimatedEnumerationImpl *m_operator;
+        mutable SVGAnimatedNumberImpl *m_k1;
+        mutable SVGAnimatedNumberImpl *m_k2;
+        mutable SVGAnimatedNumberImpl *m_k3;
+        mutable SVGAnimatedNumberImpl *m_k4;
+        mutable KCanvasFEComposite *m_filterEffect;
+    };
 };
 
 #endif

@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,23 +27,23 @@
 class KRenderingFillPainter::Private
 {
 public:
-	Private()
-	{
-		pserver = 0;
-		opacity = 1.0;
-		fillRule = RULE_NONZERO;
-	}
+    Private()
+    {
+        pserver = 0;
+        opacity = 1.0;
+        fillRule = RULE_NONZERO;
+    }
 
-	~Private()
+    ~Private()
     {
         if(pserver && (pserver->type() == PS_SOLID || pserver->type() == PS_IMAGE))
             delete pserver;
     }
 
-	float opacity;
-	KCWindRule fillRule;
+    float opacity;
+    KCWindRule fillRule;
 
-	KRenderingPaintServer *pserver;
+    KRenderingPaintServer *pserver;
 };
 
 KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
@@ -52,12 +52,12 @@ KRenderingFillPainter::KRenderingFillPainter() : d(new Private())
 
 KRenderingFillPainter::~KRenderingFillPainter()
 {
-	delete d;
+    delete d;
 }
 
 KRenderingPaintServer *KRenderingFillPainter::paintServer() const
 {
-	return d->pserver;
+    return d->pserver;
 }
 
 void KRenderingFillPainter::setPaintServer(KRenderingPaintServer *pserver)
@@ -69,34 +69,34 @@ void KRenderingFillPainter::setPaintServer(KRenderingPaintServer *pserver)
 
 KCWindRule KRenderingFillPainter::fillRule() const
 {
-	return d->fillRule;
+    return d->fillRule;
 }
 
 void KRenderingFillPainter::setFillRule(KCWindRule rule)
 {
-	d->fillRule = rule;
+    d->fillRule = rule;
 }
 
 float KRenderingFillPainter::opacity() const
 {
-	return d->opacity;
+    return d->opacity;
 }
 
 void KRenderingFillPainter::setOpacity(float opacity)
 {
-	d->opacity = opacity;
+    d->opacity = opacity;
 }
 
 void KRenderingFillPainter::draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const
 {
-	if(d->pserver)
-	{
-		KCanvasResource *res = dynamic_cast<KCanvasResource *>(d->pserver);
-		if(res && res->listener())		
-			res->listener()->resourceNotification();
+    if(d->pserver)
+    {
+        KCanvasResource *res = dynamic_cast<KCanvasResource *>(d->pserver);
+        if(res && res->listener())        
+            res->listener()->resourceNotification();
 
-		d->pserver->draw(context, args, APPLY_TO_FILL);
-	}
+        d->pserver->draw(context, args, APPLY_TO_FILL);
+    }
 }
 
 // vim:ts=4:noet

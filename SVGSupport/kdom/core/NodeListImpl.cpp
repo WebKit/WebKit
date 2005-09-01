@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -33,61 +33,61 @@ using namespace KDOM;
 
 NodeListImpl::NodeListImpl(NodeImpl *refNode) : Shared(), m_refNode(refNode)
 {
-	if(m_refNode)
-		m_refNode->ref();
+    if(m_refNode)
+        m_refNode->ref();
 }
 
 NodeListImpl::~NodeListImpl()
 {
-	if(m_refNode)
-		m_refNode->deref();
+    if(m_refNode)
+        m_refNode->deref();
 }
 
 NodeImpl *NodeListImpl::item(unsigned long index) const
 {
-	if(!m_refNode)
-		return 0;
+    if(!m_refNode)
+        return 0;
 
-	unsigned int pos = 0;
-	NodeImpl *n = m_refNode->firstChild();
-	while(n != 0 && pos < index)
-	{
-		n = n->nextSibling();
-		pos++;
-	}
+    unsigned int pos = 0;
+    NodeImpl *n = m_refNode->firstChild();
+    while(n != 0 && pos < index)
+    {
+        n = n->nextSibling();
+        pos++;
+    }
 
-	return n;
+    return n;
 }
 
 unsigned long NodeListImpl::length() const
 {
-	if(!m_refNode)
-		return 0;
-		
-	unsigned long len = 0;
-	for(NodeImpl *n = m_refNode->firstChild(); n != 0; n = n->nextSibling())
-		len++;
+    if(!m_refNode)
+        return 0;
+        
+    unsigned long len = 0;
+    for(NodeImpl *n = m_refNode->firstChild(); n != 0; n = n->nextSibling())
+        len++;
 
-	return len;
+    return len;
 }
 
 int NodeListImpl::index(NodeImpl *_item) const
 {
-	if(m_refNode)
-	{
-		unsigned int pos = 0;
-		NodeImpl *n = m_refNode->firstChild();
-		while(n)
-		{
-			if(n == _item)
-				return pos;
+    if(m_refNode)
+    {
+        unsigned int pos = 0;
+        NodeImpl *n = m_refNode->firstChild();
+        while(n)
+        {
+            if(n == _item)
+                return pos;
 
-			n = n->nextSibling();
-			pos++;
-		}
-	}
+            n = n->nextSibling();
+            pos++;
+        }
+    }
 
-	return -1;
+    return -1;
 }
 
 // vim:ts=4:noet

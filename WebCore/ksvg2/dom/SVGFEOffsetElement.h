@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,40 +28,40 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAnimatedNumber;
-	class SVGFEOffsetElementImpl;
+    class SVGAnimatedString;
+    class SVGAnimatedNumber;
+    class SVGFEOffsetElementImpl;
 
-	class SVGFEOffsetElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEOffsetElement();
-		explicit SVGFEOffsetElement(SVGFEOffsetElementImpl *i);
-		SVGFEOffsetElement(const SVGFEOffsetElement &other);
-		SVGFEOffsetElement(const KDOM::Node &other);
-		virtual ~SVGFEOffsetElement();
+    class SVGFEOffsetElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEOffsetElement();
+        explicit SVGFEOffsetElement(SVGFEOffsetElementImpl *i);
+        SVGFEOffsetElement(const SVGFEOffsetElement &other);
+        SVGFEOffsetElement(const KDOM::Node &other);
+        virtual ~SVGFEOffsetElement();
 
-		// Operators
-		SVGFEOffsetElement &operator=(const SVGFEOffsetElement &other);
-		SVGFEOffsetElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEOffsetElement &operator=(const SVGFEOffsetElement &other);
+        SVGFEOffsetElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEOffsetlement' functions
-		SVGAnimatedString in1() const;
-		SVGAnimatedNumber dx() const;
-		SVGAnimatedNumber dy() const;
+        // 'SVGFEOffsetlement' functions
+        SVGAnimatedString in1() const;
+        SVGAnimatedNumber dx() const;
+        SVGAnimatedNumber dy() const;
 
-		void setStdDeviation(float stdDeviationX, float stdDeviationY);
+        void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-		// Internal
-		KSVG_INTERNAL(SVGFEOffsetElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEOffsetElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

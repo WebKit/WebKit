@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,17 +27,17 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class DOMStringListImpl : public DOMList<DOMStringImpl>
-	{
-	public:
-		DOMStringListImpl();
-		virtual ~DOMStringListImpl();
+    class DOMStringImpl;
+    class DOMStringListImpl : public DOMList<DOMStringImpl>
+    {
+    public:
+        DOMStringListImpl();
+        virtual ~DOMStringListImpl();
 
-		// 'DOMStringListImpl' functions
-		DOMStringImpl *item(unsigned long index);
-		unsigned long length() const;
-	};
+        // 'DOMStringListImpl' functions
+        DOMStringImpl *item(unsigned long index);
+        unsigned long length() const;
+    };
 };
 
 #endif

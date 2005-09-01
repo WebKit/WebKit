@@ -27,61 +27,61 @@
 
 namespace KSVG
 {
-	class SVGPathSegLinetoHorizontalAbsImpl;
-	class SVGPathSegLinetoHorizontalAbs : public SVGPathSeg
-	{
-	public:
-		SVGPathSegLinetoHorizontalAbs();
-		explicit SVGPathSegLinetoHorizontalAbs(SVGPathSegLinetoHorizontalAbsImpl *);
-		SVGPathSegLinetoHorizontalAbs(const SVGPathSegLinetoHorizontalAbs &);
-		SVGPathSegLinetoHorizontalAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegLinetoHorizontalAbs();
+    class SVGPathSegLinetoHorizontalAbsImpl;
+    class SVGPathSegLinetoHorizontalAbs : public SVGPathSeg
+    {
+    public:
+        SVGPathSegLinetoHorizontalAbs();
+        explicit SVGPathSegLinetoHorizontalAbs(SVGPathSegLinetoHorizontalAbsImpl *);
+        SVGPathSegLinetoHorizontalAbs(const SVGPathSegLinetoHorizontalAbs &);
+        SVGPathSegLinetoHorizontalAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegLinetoHorizontalAbs();
 
-		// Operators
-		SVGPathSegLinetoHorizontalAbs &operator=(const SVGPathSegLinetoHorizontalAbs &other);
-		SVGPathSegLinetoHorizontalAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegLinetoHorizontalAbs &operator=(const SVGPathSegLinetoHorizontalAbs &other);
+        SVGPathSegLinetoHorizontalAbs &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegLinetoHorizontalAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegLinetoHorizontalAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegLinetoHorizontalRelImpl;
-	class SVGPathSegLinetoHorizontalRel : public SVGPathSeg
-	{
-	public:
-		SVGPathSegLinetoHorizontalRel();
-		explicit SVGPathSegLinetoHorizontalRel(SVGPathSegLinetoHorizontalRelImpl *);
-		SVGPathSegLinetoHorizontalRel(const SVGPathSegLinetoHorizontalRel &);
-		SVGPathSegLinetoHorizontalRel(const SVGPathSeg &);
-		virtual ~SVGPathSegLinetoHorizontalRel();
+    class SVGPathSegLinetoHorizontalRelImpl;
+    class SVGPathSegLinetoHorizontalRel : public SVGPathSeg
+    {
+    public:
+        SVGPathSegLinetoHorizontalRel();
+        explicit SVGPathSegLinetoHorizontalRel(SVGPathSegLinetoHorizontalRelImpl *);
+        SVGPathSegLinetoHorizontalRel(const SVGPathSegLinetoHorizontalRel &);
+        SVGPathSegLinetoHorizontalRel(const SVGPathSeg &);
+        virtual ~SVGPathSegLinetoHorizontalRel();
 
-		// Operators
-		SVGPathSegLinetoHorizontalRel &operator=(const SVGPathSegLinetoHorizontalRel &other);
-		SVGPathSegLinetoHorizontalRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegLinetoHorizontalRel &operator=(const SVGPathSegLinetoHorizontalRel &other);
+        SVGPathSegLinetoHorizontalRel &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegLinetoHorizontalRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegLinetoHorizontalRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

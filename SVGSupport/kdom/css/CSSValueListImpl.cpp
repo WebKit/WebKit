@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,32 +30,32 @@ CSSValueListImpl::CSSValueListImpl() : CSSValueImpl()
 
 CSSValueListImpl::~CSSValueListImpl()
 {
-	CSSValueImpl *val = m_values.first();
-	while(val)
-	{
-		val->deref();
-		val = m_values.next();
-	}
+    CSSValueImpl *val = m_values.first();
+    while(val)
+    {
+        val->deref();
+        val = m_values.next();
+    }
 }
 
 unsigned long CSSValueListImpl::length() const
 {
-	return m_values.count();
+    return m_values.count();
 }
 
 CSSValueImpl *CSSValueListImpl::item(unsigned long index)
 {
-	return m_values.at(index);
+    return m_values.at(index);
 }
 
 DOMStringImpl *CSSValueListImpl::cssText() const
 {
-	DOMStringImpl *result = new DOMStringImpl();
+    DOMStringImpl *result = new DOMStringImpl();
 
-	for(QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator)
-		result->append(iterator.current()->cssText());
+    for(QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator)
+        result->append(iterator.current()->cssText());
 
-	return result;
+    return result;
 }
 
 void CSSValueListImpl::setCssText(DOMStringImpl *)
@@ -64,13 +64,13 @@ void CSSValueListImpl::setCssText(DOMStringImpl *)
 
 unsigned short CSSValueListImpl::cssValueType() const
 {
-	return CSS_VALUE_LIST;
+    return CSS_VALUE_LIST;
 }
 
 void CSSValueListImpl::append(CSSValueImpl *val)
 {
-	m_values.append(val);
-	val->ref();
+    m_values.append(val);
+    val->ref();
 }
 
 // vim:ts=4:noet

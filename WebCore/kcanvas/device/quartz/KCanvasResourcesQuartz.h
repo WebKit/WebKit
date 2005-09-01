@@ -33,32 +33,32 @@ typedef struct CGLayer *CGLayerRef;
 
 class KCanvasContainerQuartz : public KCanvasContainer {
 public:
-	KCanvasContainerQuartz(KCanvas *canvas, KRenderingStyle *style);
-	
-	// Draw onto the canvas
-	virtual void draw(const QRect &dirtyRect) const;
+    KCanvasContainerQuartz(KCanvas *canvas, KRenderingStyle *style);
+    
+    // Draw onto the canvas
+    virtual void draw(const QRect &dirtyRect) const;
 };
 
 class KCanvasClipperQuartz : public KCanvasClipper {
 public:
-	KCanvasClipperQuartz() {};
-	
-	void applyClip(CGContextRef, const QRect &) const;
+    KCanvasClipperQuartz() {};
+    
+    void applyClip(CGContextRef, const QRect &) const;
 };
 
 class KCanvasImageQuartz : public KCanvasImage {
 public:
-	KCanvasImageQuartz() : m_cgLayer(0) {};
-	~KCanvasImageQuartz();
-	void init(const QPixmap &) { }
-	void init(QSize size) { m_size = size; }
-	
-	CGLayerRef cgLayer();
-	void setCGLayer(CGLayerRef layer);
+    KCanvasImageQuartz() : m_cgLayer(0) {};
+    ~KCanvasImageQuartz();
+    void init(const QPixmap &) { }
+    void init(QSize size) { m_size = size; }
+    
+    CGLayerRef cgLayer();
+    void setCGLayer(CGLayerRef layer);
 
-	QSize size() { return m_size; }
-	
-	private:
-	QSize m_size;
-	CGLayerRef m_cgLayer;
+    QSize size() { return m_size; }
+    
+    private:
+    QSize m_size;
+    CGLayerRef m_cgLayer;
 };

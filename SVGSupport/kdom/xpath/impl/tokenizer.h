@@ -38,60 +38,60 @@
 
 struct Token
 {
-	int     type;
-	QString value;
-	int     intValue; //0 if not set
+    int     type;
+    QString value;
+    int     intValue; //0 if not set
 
-	Token(int _type): type(_type), intValue(0) {}
-	Token(QString _value): type(ERROR+1), value(_value),intValue(0) {}
-	Token(int _type, QString _value): type(_type), value(_value) {}
-	Token(int _type, int     _value): type(_type), intValue(_value) {}
+    Token(int _type): type(_type), intValue(0) {}
+    Token(QString _value): type(ERROR+1), value(_value),intValue(0) {}
+    Token(int _type, QString _value): type(_type), value(_value) {}
+    Token(int _type, int     _value): type(_type), intValue(_value) {}
 };
 
 class Tokenizer
 {
 friend class TokenizerDeleter;
 private:
-	unsigned int m_nextPos;
-	QString m_data;
-	int m_lastTokenType;
+    unsigned int m_nextPos;
+    QString m_data;
+    int m_lastTokenType;
 
-	static QDict<Step::AxisType>* s_axisNamesDict;
-	static QDict<char>* s_nodeTypeNamesDict;
-	static Tokenizer* s_instance;
+    static QDict<Step::AxisType>* s_axisNamesDict;
+    static QDict<char>* s_nodeTypeNamesDict;
+    static Tokenizer* s_instance;
 
-	enum XMLCat {
-		NameStart,
-		NameCont,
-		NotPartOfName
-	};
+    enum XMLCat {
+        NameStart,
+        NameCont,
+        NotPartOfName
+    };
 
-	XMLCat charCat(QChar aChar);
-	
-	bool isAxisName(QString name, Step::AxisType *type = 0);
-	bool isNodeTypeName(QString name);
-	bool isOperatorContext();
+    XMLCat charCat(QChar aChar);
+    
+    bool isAxisName(QString name, Step::AxisType *type = 0);
+    bool isNodeTypeName(QString name);
+    bool isOperatorContext();
 
-	void  skipWS();
-	Token makeTokenAndAdvance(int code, int advance = 1);
-	Token makeIntTokenAndAdvance(int code, int val, int advance = 1);
-	char  peekAheadHelper();
-	char  peekCurHelper();
-	
-	Token lexString();
-	Token lexNumber();
-	Token lexNCName();
-	Token lexQName();
-	
-	Token nextTokenInternal();
-	Tokenizer();
-	Tokenizer(const Tokenizer &rhs);                  // disabled
-	Tokenizer &operator=(const Tokenizer &rhs);       // disabled
+    void  skipWS();
+    Token makeTokenAndAdvance(int code, int advance = 1);
+    Token makeIntTokenAndAdvance(int code, int val, int advance = 1);
+    char  peekAheadHelper();
+    char  peekCurHelper();
+    
+    Token lexString();
+    Token lexNumber();
+    Token lexNCName();
+    Token lexQName();
+    
+    Token nextTokenInternal();
+    Tokenizer();
+    Tokenizer(const Tokenizer &rhs);                  // disabled
+    Tokenizer &operator=(const Tokenizer &rhs);       // disabled
 public:
-	static Tokenizer &self();
+    static Tokenizer &self();
 
-	void reset(QString);
-	Token nextToken();
+    void reset(QString);
+    Token nextToken();
 };
 
 // Interface to the parser

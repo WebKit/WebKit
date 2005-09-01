@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,30 +40,30 @@ using namespace KSVG;
 
 /*
 @begin SVGFEBlendElement::s_hashTable 5
- in1			SVGFEBlendElementConstants::In1		DontDelete|ReadOnly
- in2			SVGFEBlendElementConstants::In2		DontDelete|ReadOnly
- mode			SVGFEBlendElementConstants::Mode	DontDelete|ReadOnly
+ in1            SVGFEBlendElementConstants::In1        DontDelete|ReadOnly
+ in2            SVGFEBlendElementConstants::In2        DontDelete|ReadOnly
+ mode            SVGFEBlendElementConstants::Mode    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEBlendElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEBlendElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		case SVGFEBlendElementConstants::In2:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in2());
-		case SVGFEBlendElementConstants::Mode:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, mode());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEBlendElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        case SVGFEBlendElementConstants::In2:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in2());
+        case SVGFEBlendElementConstants::Mode:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, mode());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -81,12 +81,12 @@ SVGFEBlendElement::SVGFEBlendElement(SVGFEBlendElementImpl *i) : SVGElement(i), 
 
 SVGFEBlendElement::SVGFEBlendElement(const SVGFEBlendElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEBlendElement::SVGFEBlendElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEBlendElement::~SVGFEBlendElement()
@@ -95,55 +95,55 @@ SVGFEBlendElement::~SVGFEBlendElement()
 
 SVGFEBlendElement &SVGFEBlendElement::operator=(const SVGFEBlendElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEBlendElement &SVGFEBlendElement::operator=(const KDOM::Node &other)
 {
-	SVGFEBlendElementImpl *ohandle = static_cast<SVGFEBlendElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEBlendElementImpl *ohandle = static_cast<SVGFEBlendElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEBlendElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 SVGAnimatedString SVGFEBlendElement::in2() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in2());
+    return SVGAnimatedString(impl->in2());
 }
 
 SVGAnimatedEnumeration SVGFEBlendElement::mode() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->mode());
+    return SVGAnimatedEnumeration(impl->mode());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,24 +25,24 @@
 
 namespace KSVG
 {
-	class SVGRectImpl;
-	class SVGMatrixImpl;
-	class SVGElementImpl;
-	class SVGLocatableImpl
-	{
-	public:
-		SVGLocatableImpl();
-		virtual ~SVGLocatableImpl();
+    class SVGRectImpl;
+    class SVGMatrixImpl;
+    class SVGElementImpl;
+    class SVGLocatableImpl
+    {
+    public:
+        SVGLocatableImpl();
+        virtual ~SVGLocatableImpl();
 
-		// 'SVGLocatable' functions
-		SVGElementImpl *nearestViewportElement() const;
-		SVGElementImpl *farthestViewportElement() const;
+        // 'SVGLocatable' functions
+        SVGElementImpl *nearestViewportElement() const;
+        SVGElementImpl *farthestViewportElement() const;
 
-		virtual SVGRectImpl *getBBox() const;
-		virtual SVGMatrixImpl *getCTM() const;
-		virtual SVGMatrixImpl *getScreenCTM() const;
-		virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const;
-	};
+        virtual SVGRectImpl *getBBox() const;
+        virtual SVGMatrixImpl *getCTM() const;
+        virtual SVGMatrixImpl *getScreenCTM() const;
+        virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const;
+    };
 };
 
 #endif

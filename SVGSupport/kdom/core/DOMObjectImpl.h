@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,21 +27,21 @@
 
 namespace KDOM
 {
-	// Introduced in DOM Level 3:
-	class DOMObjectImpl : public Shared
-	{
-	public:
-		DOMObjectImpl();
-		DOMObjectImpl(bool b);
-		virtual ~DOMObjectImpl();
+    // Introduced in DOM Level 3:
+    class DOMObjectImpl : public Shared
+    {
+    public:
+        DOMObjectImpl();
+        DOMObjectImpl(bool b);
+        virtual ~DOMObjectImpl();
 
-		// Internal
-		void setObject(void *userData);
-		void *userData() const;
+        // Internal
+        void setObject(void *userData);
+        void *userData() const;
 
-	private:
-		void *m_userData;
-	};
+    private:
+        void *m_userData;
+    };
 };
 
 #endif

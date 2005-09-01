@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,56 +25,56 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class Element;
-	class Node;
+    class DOMString;
+    class Element;
+    class Node;
 
 namespace XPointer
 {
 
-	/**
-	 * A utility class for XPointer related functions.
-	 *
-	 * @author Frans Englich <frans.englich@telia.com>
-	 */
-	class XPointerHelper
-	{
-	public:
+    /**
+     * A utility class for XPointer related functions.
+     *
+     * @author Frans Englich <frans.englich@telia.com>
+     */
+    class XPointerHelper
+    {
+    public:
 
-		/**
-		 * Performs XPointer escaping on @p string.
-		 *
-		 * An example:
-		 * \code
-		 * DOMString str("str'ing(to be^ escaped%))");
-		 *
-		 * DOMString result = XPointerHelper::EncodeSchemeData(str);
-		 *
-		 * // result == "str'ing^(to be^^ escaped%^)^)"
-		 * \endcode
-		 *
-		 * All paranteses are escaped, even if they are balanced.
-		 */
-		static DOMString EncodeSchemeData(const DOMString &string);
+        /**
+         * Performs XPointer escaping on @p string.
+         *
+         * An example:
+         * \code
+         * DOMString str("str'ing(to be^ escaped%))");
+         *
+         * DOMString result = XPointerHelper::EncodeSchemeData(str);
+         *
+         * // result == "str'ing^(to be^^ escaped%^)^)"
+         * \endcode
+         *
+         * All paranteses are escaped, even if they are balanced.
+         */
+        static DOMString EncodeSchemeData(const DOMString &string);
 
-		/**
-		 * Removes any XPointer escaping of @pstring and returns a plain string.
-		 *
-		 * An example:
-		 * \code
-		 * DOMString str("str'ing^(to be^^ un-escaped%^)^)");
-		 *
-		 * DOMString result = XPointerHelper::DecodeSchemeData(str);
-		 *
-		 * // result == "str'ing(to be^ un-escaped%))"
-		 * \endcode
-		 *
-		 * @throws INVALID_ENCODING when the circumflex(^) is used to
-		 * escape anything but paranteses or itself.
-		 */
-		static DOMString DecodeSchemeData(const DOMString &string);
+        /**
+         * Removes any XPointer escaping of @pstring and returns a plain string.
+         *
+         * An example:
+         * \code
+         * DOMString str("str'ing^(to be^^ un-escaped%^)^)");
+         *
+         * DOMString result = XPointerHelper::DecodeSchemeData(str);
+         *
+         * // result == "str'ing(to be^ un-escaped%))"
+         * \endcode
+         *
+         * @throws INVALID_ENCODING when the circumflex(^) is used to
+         * escape anything but paranteses or itself.
+         */
+        static DOMString DecodeSchemeData(const DOMString &string);
 
-	};
+    };
 };
 
 };

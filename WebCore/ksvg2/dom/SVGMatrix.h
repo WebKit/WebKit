@@ -27,67 +27,67 @@
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGMatrix
-	{ 
-	public:
-		SVGMatrix();
-		explicit SVGMatrix(SVGMatrixImpl *i);
-		SVGMatrix(const SVGMatrix &other);
-		virtual ~SVGMatrix();
+    class SVGMatrixImpl;
+    class SVGMatrix
+    { 
+    public:
+        SVGMatrix();
+        explicit SVGMatrix(SVGMatrixImpl *i);
+        SVGMatrix(const SVGMatrix &other);
+        virtual ~SVGMatrix();
 
-		// Operators
-		SVGMatrix &operator=(const SVGMatrix &other);
-		bool operator==(const SVGMatrix &other) const;
-		bool operator!=(const SVGMatrix &other) const;
+        // Operators
+        SVGMatrix &operator=(const SVGMatrix &other);
+        bool operator==(const SVGMatrix &other) const;
+        bool operator!=(const SVGMatrix &other) const;
 
-		// 'SVGMatrix' functions
-		void setA(double);
-		double a() const;
+        // 'SVGMatrix' functions
+        void setA(double);
+        double a() const;
 
-		void setB(double);
-		double b() const;
+        void setB(double);
+        double b() const;
 
-		void setC(double);
-		double c() const;
+        void setC(double);
+        double c() const;
 
-		void setD(double);
-		double d() const;
+        void setD(double);
+        double d() const;
 
-		void setE(double);
-		double e() const;
+        void setE(double);
+        double e() const;
 
-		void setF(double);
-		double f() const;
+        void setF(double);
+        double f() const;
 
-		SVGMatrix multiply(const SVGMatrix &secondMatrix);
-		SVGMatrix inverse();
-		SVGMatrix translate(double x, double y);
-		SVGMatrix scale(double scaleFactor);
-		SVGMatrix scaleNonUniform(double scaleFactorX, double scaleFactorY);
-		SVGMatrix rotate(double angle);
-		SVGMatrix rotateFromVector(double x, double y);
-		SVGMatrix flipX();
-		SVGMatrix flipY();
-		SVGMatrix skewX(double angle);
-		SVGMatrix skewY(double angle);
+        SVGMatrix multiply(const SVGMatrix &secondMatrix);
+        SVGMatrix inverse();
+        SVGMatrix translate(double x, double y);
+        SVGMatrix scale(double scaleFactor);
+        SVGMatrix scaleNonUniform(double scaleFactorX, double scaleFactorY);
+        SVGMatrix rotate(double angle);
+        SVGMatrix rotateFromVector(double x, double y);
+        SVGMatrix flipX();
+        SVGMatrix flipY();
+        SVGMatrix skewX(double angle);
+        SVGMatrix skewY(double angle);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGMatrix)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGMatrix)
 
-	protected:
-		SVGMatrixImpl *impl;
+    protected:
+        SVGMatrixImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	KDOM_DEFINE_CAST(SVGMatrix)
+    KDOM_DEFINE_CAST(SVGMatrix)
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGMatrixProto)

@@ -27,42 +27,42 @@
 
 namespace KSVG
 {
-	class SVGPathSeg;
-	class SVGPathSegListImpl; 
-	class SVGPathSegList 
-	{ 
-	public:
-		SVGPathSegList();
-		explicit SVGPathSegList(SVGPathSegListImpl *);
-		SVGPathSegList(const SVGPathSegList &);
-		virtual ~SVGPathSegList();
+    class SVGPathSeg;
+    class SVGPathSegListImpl; 
+    class SVGPathSegList 
+    { 
+    public:
+        SVGPathSegList();
+        explicit SVGPathSegList(SVGPathSegListImpl *);
+        SVGPathSegList(const SVGPathSegList &);
+        virtual ~SVGPathSegList();
 
-		// Operators
-		SVGPathSegList &operator=(const SVGPathSegList &other);
-		bool operator==(const SVGPathSegList &other) const;
-		bool operator!=(const SVGPathSegList &other) const;
+        // Operators
+        SVGPathSegList &operator=(const SVGPathSegList &other);
+        bool operator==(const SVGPathSegList &other) const;
+        bool operator!=(const SVGPathSegList &other) const;
 
-		unsigned long numberOfItems() const;
-		void clear();
+        unsigned long numberOfItems() const;
+        void clear();
 
-		SVGPathSeg initialize(SVGPathSeg newItem);
-		SVGPathSeg getItem(unsigned long index);
-		SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
-		SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
-		SVGPathSeg removeItem(unsigned long index);
-		SVGPathSeg appendItem(SVGPathSeg newItem);
+        SVGPathSeg initialize(SVGPathSeg newItem);
+        SVGPathSeg getItem(unsigned long index);
+        SVGPathSeg insertItemBefore(SVGPathSeg newItem, unsigned long index);
+        SVGPathSeg replaceItem(SVGPathSeg newItem, unsigned long index);
+        SVGPathSeg removeItem(unsigned long index);
+        SVGPathSeg appendItem(SVGPathSeg newItem);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGPathSegList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGPathSegList)
 
-	private:
-		SVGPathSegListImpl *impl;
+    private:
+        SVGPathSegListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGPathSegListProto)

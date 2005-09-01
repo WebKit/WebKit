@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,41 +28,41 @@
 
 namespace KDOM
 {
-	class CachedStyleSheet;
-	class MediaListImpl;
-	class CSSStyleSheetImpl;
-	class CSSImportRuleImpl : public CSSRuleImpl,
-							  public CachedObjectClient
-	{
-	public:
-		CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, DOMStringImpl *media);
-		CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, MediaListImpl *media);
-		virtual ~CSSImportRuleImpl();
+    class CachedStyleSheet;
+    class MediaListImpl;
+    class CSSStyleSheetImpl;
+    class CSSImportRuleImpl : public CSSRuleImpl,
+                              public CachedObjectClient
+    {
+    public:
+        CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, DOMStringImpl *media);
+        CSSImportRuleImpl(StyleBaseImpl *parent, DOMStringImpl *href, MediaListImpl *media);
+        virtual ~CSSImportRuleImpl();
 
-		// 'CSSImportRule' functions
-		DOMStringImpl *href() const;
-		MediaListImpl *media() const;
-		CSSStyleSheetImpl *styleSheet() const;
+        // 'CSSImportRule' functions
+        DOMStringImpl *href() const;
+        MediaListImpl *media() const;
+        CSSStyleSheetImpl *styleSheet() const;
 
-		// 'CSSRule' functions
-		virtual bool isImportRule() const { return true; }
+        // 'CSSRule' functions
+        virtual bool isImportRule() const { return true; }
 
-		// from CachedObjectClient
-		virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
-		virtual void error(int err, const QString &text);
+        // from CachedObjectClient
+        virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
+        virtual void error(int err, const QString &text);
 
-		bool isLoading();
-		virtual void init();
+        bool isLoading();
+        virtual void init();
 
-	protected:
-		DOMStringImpl *m_strHref;
-		MediaListImpl *m_lstMedia;
-		CSSStyleSheetImpl *m_styleSheet;
-		CachedStyleSheet *m_cachedSheet;
+    protected:
+        DOMStringImpl *m_strHref;
+        MediaListImpl *m_lstMedia;
+        CSSStyleSheetImpl *m_styleSheet;
+        CachedStyleSheet *m_cachedSheet;
 
-		bool m_done : 1;
-		bool m_loading : 1;
-	};
+        bool m_done : 1;
+        bool m_loading : 1;
+    };
 };
 
 #endif

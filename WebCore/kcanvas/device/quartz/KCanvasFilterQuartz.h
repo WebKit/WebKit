@@ -31,80 +31,80 @@
 
 class KCanvasFilterQuartz : public KCanvasFilter {
 public:
-	KCanvasFilterQuartz();
-	virtual ~KCanvasFilterQuartz();
-	
-	virtual void prepareFilter(KRenderingDeviceContext *context, const QRect &bbox);
-	virtual void applyFilter(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, const QRect &bbox);
-	
-	// quartz only.
-	void prepareFilter(CGContextRef *context, const QRect &bbox);
-	void applyFilter(CGContextRef *context, const QRect &bbox, CGAffineTransform objectTransform);
-	
-	CIImage *imageForName(const QString &name) const;
-	void setImageForName(CIImage *image, const QString &name);
-	
-	void setOutputImage(const KCanvasFilterEffect *filterEffect, CIImage *output);
-	CIImage *inputImage(const KCanvasFilterEffect *filterEffect);
-	
+    KCanvasFilterQuartz();
+    virtual ~KCanvasFilterQuartz();
+    
+    virtual void prepareFilter(KRenderingDeviceContext *context, const QRect &bbox);
+    virtual void applyFilter(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, const QRect &bbox);
+    
+    // quartz only.
+    void prepareFilter(CGContextRef *context, const QRect &bbox);
+    void applyFilter(CGContextRef *context, const QRect &bbox, CGAffineTransform objectTransform);
+    
+    CIImage *imageForName(const QString &name) const;
+    void setImageForName(CIImage *image, const QString &name);
+    
+    void setOutputImage(const KCanvasFilterEffect *filterEffect, CIImage *output);
+    CIImage *inputImage(const KCanvasFilterEffect *filterEffect);
+    
 private:
-	NSArray *getCIFilterStack(CIImage *inputImage);
-	
-	CGRect filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const;
+    NSArray *getCIFilterStack(CIImage *inputImage);
+    
+    CGRect filterBBoxForItemBBox(CGRect itemBBox, CGAffineTransform currentCTM) const;
 
-	CGContextRef m_storedCGContext;
-	CIContext *m_filterCIContext;
-	CGLayerRef m_filterCGLayer;
-	NSMutableDictionary *m_imagesByName;
+    CGContextRef m_storedCGContext;
+    CIContext *m_filterCIContext;
+    CGLayerRef m_filterCGLayer;
+    NSMutableDictionary *m_imagesByName;
 };
 
 class KCanvasFEBlendQuartz : public KCanvasFEBlend {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFEColorMatrixQuartz : public KCanvasFEColorMatrix {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 //class KCanvasFEComponentTransferQuartz : public KCanvasFEComponentTransfer {
 //public:
-//	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+//    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 //};
 
 class KCanvasFECompositeQuartz : public KCanvasFEComposite {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFEFloodQuartz : public KCanvasFEFlood {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFEGaussianBlurQuartz : public KCanvasFEGaussianBlur {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFEImageQuartz : public KCanvasFEImage {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 
 class KCanvasFEMergeQuartz : public KCanvasFEMerge {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFEOffsetQuartz : public KCanvasFEOffset {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
 
 class KCanvasFETileQuartz : public KCanvasFETile {
 public:
-	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
+    virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };

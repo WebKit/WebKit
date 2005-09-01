@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,33 +36,33 @@ using namespace KSVG;
 
 /*
 @begin SVGLinearGradientElement::s_hashTable 5
- x1	SVGLinearGradientElementConstants::X1	DontDelete|ReadOnly
- y1	SVGLinearGradientElementConstants::Y1	DontDelete|ReadOnly
- x2	SVGLinearGradientElementConstants::X2	DontDelete|ReadOnly
- y2	SVGLinearGradientElementConstants::Y2	DontDelete|ReadOnly
+ x1    SVGLinearGradientElementConstants::X1    DontDelete|ReadOnly
+ y1    SVGLinearGradientElementConstants::Y1    DontDelete|ReadOnly
+ x2    SVGLinearGradientElementConstants::X2    DontDelete|ReadOnly
+ y2    SVGLinearGradientElementConstants::Y2    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGLinearGradientElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGLinearGradientElementConstants::X1:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x1());
-		case SVGLinearGradientElementConstants::Y1:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y1());
-		case SVGLinearGradientElementConstants::X2:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x2());
-		case SVGLinearGradientElementConstants::Y2:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y2());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGLinearGradientElementConstants::X1:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x1());
+        case SVGLinearGradientElementConstants::Y1:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y1());
+        case SVGLinearGradientElementConstants::X2:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x2());
+        case SVGLinearGradientElementConstants::Y2:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y2());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -80,12 +80,12 @@ SVGLinearGradientElement::SVGLinearGradientElement(SVGLinearGradientElementImpl 
 
 SVGLinearGradientElement::SVGLinearGradientElement(const SVGLinearGradientElement &other) : SVGGradientElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLinearGradientElement::SVGLinearGradientElement(const KDOM::Node &other) : SVGGradientElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLinearGradientElement::~SVGLinearGradientElement()
@@ -94,59 +94,59 @@ SVGLinearGradientElement::~SVGLinearGradientElement()
 
 SVGLinearGradientElement &SVGLinearGradientElement::operator=(const SVGLinearGradientElement &other)
 {
-	SVGGradientElement::operator=(other);
-	return *this;
+    SVGGradientElement::operator=(other);
+    return *this;
 }
 
 SVGLinearGradientElement &SVGLinearGradientElement::operator=(const KDOM::Node &other)
 {
-	SVGLinearGradientElementImpl *ohandle = static_cast<SVGLinearGradientElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
+    SVGLinearGradientElementImpl *ohandle = static_cast<SVGLinearGradientElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
 
-			d = 0;
-		}
-		else
-			SVGGradientElement::operator=(other);
-	}
+            d = 0;
+        }
+        else
+            SVGGradientElement::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGLinearGradientElement::x1() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x1());
+    return SVGAnimatedLength(impl->x1());
 }
 
 SVGAnimatedLength SVGLinearGradientElement::y1() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y1());
+    return SVGAnimatedLength(impl->y1());
 }
 
 SVGAnimatedLength SVGLinearGradientElement::x2() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x2());
+    return SVGAnimatedLength(impl->x2());
 }
 
 SVGAnimatedLength SVGLinearGradientElement::y2() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y2());
+    return SVGAnimatedLength(impl->y2());
 }
 
 // vim:ts=4:noet

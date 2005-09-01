@@ -28,13 +28,13 @@
 
 class KCanvasItemQuartz : public KCanvasItem {
 public:
-	KCanvasItemQuartz(KCanvas *, KRenderingStyle *, KCanvasUserData);
-	virtual ~KCanvasItemQuartz() { }
-	
-	virtual void draw(const QRect &rect) const;
-	virtual QRect bboxPath(bool includeStroke, bool applyTransforms = true) const;
-	virtual bool hitsPath(const QPoint &p, bool fill /* false means stroke */) const;
-	
+    KCanvasItemQuartz(KCanvas *, KRenderingStyle *, KCanvasUserData);
+    virtual ~KCanvasItemQuartz() { }
+    
+    virtual void draw(const QRect &rect) const;
+    virtual QRect bboxPath(bool includeStroke, bool applyTransforms = true) const;
+    virtual bool hitsPath(const QPoint &p, bool fill /* false means stroke */) const;
+    
 private:
-	void drawMarkers() const;
+    void drawMarkers() const;
 };

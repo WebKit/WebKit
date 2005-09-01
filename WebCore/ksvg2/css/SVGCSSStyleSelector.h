@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml css code by:
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
@@ -31,57 +31,57 @@
 
 namespace KDOM
 {
-	class RenderStyle;
-	class ElementImpl;
-	class DocumentImpl;
-	class CSSValueImpl;
-	class CSSStyleSheetImpl;
-	class StyleSheetListImpl;
-	class CSSOrderedProperty;
-	class CSSStyleDeclarationImpl;
+    class RenderStyle;
+    class ElementImpl;
+    class DocumentImpl;
+    class CSSValueImpl;
+    class CSSStyleSheetImpl;
+    class StyleSheetListImpl;
+    class CSSOrderedProperty;
+    class CSSStyleDeclarationImpl;
 }
 
 namespace KSVG
 {
-	/*
-	 * the StyleSelector implementation for SVG css props.
-	 */
-	class SVGCSSStyleSelector : public KDOM::CSSStyleSelector
-	{
-	public:
-		/**
-		 * creates a new StyleSelector for a Document.
-		 * goes through all StyleSheets defined in the document and
-		 * creates a list of rules it needs to apply to objects
-		 *
-		 * Also takes into account special cases for HTML documents,
-		 * including the defaultStyle (which is html only)
-		 */
-		SVGCSSStyleSelector(KDOM::DocumentImpl *doc, const QString &userStyleSheet,
-							KDOM::StyleSheetListImpl *styleSheets,
-							const KURL &url, bool strictParsing);
-		/*
-		 * same as above but for a single stylesheet.
-		 */
-		SVGCSSStyleSelector(KDOM::CSSStyleSheetImpl *sheet);
-		
-		virtual ~SVGCSSStyleSelector();
+    /*
+     * the StyleSelector implementation for SVG css props.
+     */
+    class SVGCSSStyleSelector : public KDOM::CSSStyleSelector
+    {
+    public:
+        /**
+         * creates a new StyleSelector for a Document.
+         * goes through all StyleSheets defined in the document and
+         * creates a list of rules it needs to apply to objects
+         *
+         * Also takes into account special cases for HTML documents,
+         * including the defaultStyle (which is html only)
+         */
+        SVGCSSStyleSelector(KDOM::DocumentImpl *doc, const QString &userStyleSheet,
+                            KDOM::StyleSheetListImpl *styleSheets,
+                            const KURL &url, bool strictParsing);
+        /*
+         * same as above but for a single stylesheet.
+         */
+        SVGCSSStyleSelector(KDOM::CSSStyleSheetImpl *sheet);
+        
+        virtual ~SVGCSSStyleSelector();
 
-	protected:
-		static KDOM::CSSStyleSheetImpl *s_defaultSheet;
-		static KDOM::CSSStyleSheetImpl *s_quirksSheet;
-		static KDOM::CSSStyleSelectorList *s_defaultStyle;
-		static KDOM::CSSStyleSelectorList *s_defaultPrintStyle;
+    protected:
+        static KDOM::CSSStyleSheetImpl *s_defaultSheet;
+        static KDOM::CSSStyleSheetImpl *s_quirksSheet;
+        static KDOM::CSSStyleSelectorList *s_defaultStyle;
+        static KDOM::CSSStyleSelectorList *s_defaultPrintStyle;
 
-	protected:
-		virtual unsigned int addExtraDeclarations(KDOM::ElementImpl *e, unsigned int numProps);
+    protected:
+        virtual unsigned int addExtraDeclarations(KDOM::ElementImpl *e, unsigned int numProps);
 
-		QMemArray<KDOM::CSSOrderedProperty> presentationAttrs;
+        QMemArray<KDOM::CSSOrderedProperty> presentationAttrs;
 
-		void loadDefaultStyle(KDOM::DocumentImpl *doc);
+        void loadDefaultStyle(KDOM::DocumentImpl *doc);
 
-		virtual void applyRule(int id, KDOM::CSSValueImpl *value);
-	};
+        virtual void applyRule(int id, KDOM::CSSValueImpl *value);
+    };
 }
 
 #endif

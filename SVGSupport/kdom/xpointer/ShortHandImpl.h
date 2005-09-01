@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,23 +30,23 @@ namespace KDOM
 
 namespace XPointer
 {
-	class NBC;
-	class XPointerResultImpl;
+    class NBC;
+    class XPointerResultImpl;
 
-	/**
-	 * An implementation of short hand pointers, as described
-	 * in the XPointer Framework: http://www.w3.org/TR/xptr-framework/
-	 *
-	 * @author Frans Englich <frans.englich@telia.com>
-	 */
-	class ShortHandImpl : public PointerPartImpl
-	{
-	public:
-		ShortHandImpl(DOMStringImpl *str);
-		virtual ~ShortHandImpl();
-		
-		virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
-	};
+    /**
+     * An implementation of short hand pointers, as described
+     * in the XPointer Framework: http://www.w3.org/TR/xptr-framework/
+     *
+     * @author Frans Englich <frans.englich@telia.com>
+     */
+    class ShortHandImpl : public PointerPartImpl
+    {
+    public:
+        ShortHandImpl(DOMStringImpl *str);
+        virtual ~ShortHandImpl();
+        
+        virtual XPointerResultImpl *evaluate(NodeImpl *context) const;
+    };
 };
 
 };

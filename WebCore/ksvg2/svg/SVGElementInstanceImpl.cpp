@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,42 +37,42 @@ SVGElementInstanceImpl::~SVGElementInstanceImpl()
 
 SVGElementImpl *SVGElementInstanceImpl::correspondingElement() const
 {
-	return 0;
+    return 0;
 }
 
 SVGUseElementImpl *SVGElementInstanceImpl::correspondingUseElement() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceImpl *SVGElementInstanceImpl::parentNode() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceListImpl *SVGElementInstanceImpl::childNodes() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceImpl *SVGElementInstanceImpl::previousSibling() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceImpl *SVGElementInstanceImpl::nextSibling() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceImpl *SVGElementInstanceImpl::firstChild() const
 {
-	return 0;
+    return 0;
 }
 
 SVGElementInstanceImpl *SVGElementInstanceImpl::lastChild() const
 {
-	return 0;
+    return 0;
 }
 
 // vim:ts=4:noet

@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -29,36 +29,36 @@
 
 namespace KSVG
 {
-	class SVGRectImpl;
-	class SVGPointImpl;
-	class SVGZoomEventImpl : public KDOM::UIEventImpl
-	{
-	public:
-		SVGZoomEventImpl();
-		virtual ~SVGZoomEventImpl();
+    class SVGRectImpl;
+    class SVGPointImpl;
+    class SVGZoomEventImpl : public KDOM::UIEventImpl
+    {
+    public:
+        SVGZoomEventImpl();
+        virtual ~SVGZoomEventImpl();
 
-		// 'SVGZoomEvent' functions
-		SVGRectImpl *zoomRectScreen() const;
+        // 'SVGZoomEvent' functions
+        SVGRectImpl *zoomRectScreen() const;
 
-		float previousScale() const;
-		void setPreviousScale(float scale);
+        float previousScale() const;
+        void setPreviousScale(float scale);
 
-		SVGPointImpl *previousTranslate() const;
+        SVGPointImpl *previousTranslate() const;
 
-		float newScale() const;
-		void setNewScale(float scale);
+        float newScale() const;
+        void setNewScale(float scale);
 
-		SVGPointImpl *newTranslate() const;
+        SVGPointImpl *newTranslate() const;
 
-	private:
-		float m_newScale;
-		float m_previousScale;
-		
-		SVGRectImpl *m_zoomRectScreen;
-		
-		SVGPointImpl *m_newTranslate;
-		SVGPointImpl *m_previousTranslate;
-	};
+    private:
+        float m_newScale;
+        float m_previousScale;
+        
+        SVGRectImpl *m_zoomRectScreen;
+        
+        SVGPointImpl *m_newTranslate;
+        SVGPointImpl *m_previousTranslate;
+    };
 };
 
 #endif

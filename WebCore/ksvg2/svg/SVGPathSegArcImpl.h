@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,89 +27,89 @@
 
 namespace KSVG
 {
-	class SVGPathSegArcAbsImpl : public SVGPathSegImpl
-	{
-	public:
-		SVGPathSegArcAbsImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegArcAbsImpl();
+    class SVGPathSegArcAbsImpl : public SVGPathSegImpl
+    {
+    public:
+        SVGPathSegArcAbsImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegArcAbsImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("A"); }
-		virtual QString toString() const { return QString::fromLatin1("A %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_ARC_ABS; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("A"); }
+        virtual QString toString() const { return QString::fromLatin1("A %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
 
-		void setX(double x);
-		double x() const;
+        void setX(double x);
+        double x() const;
 
-		void setY(double y);
-		double y() const;
+        void setY(double y);
+        double y() const;
 
-		void setR1(double r1);
-		double r1() const;
+        void setR1(double r1);
+        double r1() const;
 
-		void setR2(double r2);
-		double r2() const;
+        void setR2(double r2);
+        double r2() const;
 
-		void setAngle(double angle);
-		double angle() const;
+        void setAngle(double angle);
+        double angle() const;
 
-		void setLargeArcFlag(bool largeArcFlag);
-		bool largeArcFlag() const;
+        void setLargeArcFlag(bool largeArcFlag);
+        bool largeArcFlag() const;
 
-		void setSweepFlag(bool sweepFlag);
-		bool sweepFlag() const;
+        void setSweepFlag(bool sweepFlag);
+        bool sweepFlag() const;
 
-	private:
-		double m_x;
-		double m_y;
-		double m_r1;
-		double m_r2;
-		double m_angle;
+    private:
+        double m_x;
+        double m_y;
+        double m_r1;
+        double m_r2;
+        double m_angle;
 
-		bool m_largeArcFlag	: 1;
-		bool m_sweepFlag : 1;
-	};
+        bool m_largeArcFlag    : 1;
+        bool m_sweepFlag : 1;
+    };
 
-	class SVGPathSegArcRelImpl : public SVGPathSegImpl
-	{
-	public:
-		SVGPathSegArcRelImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegArcRelImpl();
+    class SVGPathSegArcRelImpl : public SVGPathSegImpl
+    {
+    public:
+        SVGPathSegArcRelImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegArcRelImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("a"); }
-		virtual QString toString() const { return QString::fromLatin1("a %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_ARC_REL; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("a"); }
+        virtual QString toString() const { return QString::fromLatin1("a %1 %2 %3 %4 %5 %6 %7").arg(m_r1).arg(m_r2).arg(m_angle).arg(m_largeArcFlag).arg(m_sweepFlag).arg(m_x).arg(m_y); }
 
-		void setX(double x);
-		double x() const;
+        void setX(double x);
+        double x() const;
 
-		void setY(double y);
-		double y() const;
+        void setY(double y);
+        double y() const;
 
-		void setR1(double r1);
-		double r1() const;
+        void setR1(double r1);
+        double r1() const;
 
-		void setR2(double r2);
-		double r2() const;
+        void setR2(double r2);
+        double r2() const;
 
-		void setAngle(double angle);
-		double angle() const;
+        void setAngle(double angle);
+        double angle() const;
 
-		void setLargeArcFlag(bool largeArcFlag);
-		bool largeArcFlag() const;
+        void setLargeArcFlag(bool largeArcFlag);
+        bool largeArcFlag() const;
 
-		void setSweepFlag(bool sweepFlag);
-		bool sweepFlag() const;
+        void setSweepFlag(bool sweepFlag);
+        bool sweepFlag() const;
 
-	private:
-		double m_x;
-		double m_y;
-		double m_r1;
-		double m_r2;
-		double m_angle;
+    private:
+        double m_x;
+        double m_y;
+        double m_r1;
+        double m_r2;
+        double m_angle;
 
-		bool m_largeArcFlag : 1;
-		bool m_sweepFlag : 1;
-	};
+        bool m_largeArcFlag : 1;
+        bool m_sweepFlag : 1;
+    };
 };
 
 #endif

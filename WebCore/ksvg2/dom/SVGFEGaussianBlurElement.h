@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,40 +28,40 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAnimatedNumber;
-	class SVGFEGaussianBlurElementImpl;
+    class SVGAnimatedString;
+    class SVGAnimatedNumber;
+    class SVGFEGaussianBlurElementImpl;
 
-	class SVGFEGaussianBlurElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEGaussianBlurElement();
-		explicit SVGFEGaussianBlurElement(SVGFEGaussianBlurElementImpl *i);
-		SVGFEGaussianBlurElement(const SVGFEGaussianBlurElement &other);
-		SVGFEGaussianBlurElement(const KDOM::Node &other);
-		virtual ~SVGFEGaussianBlurElement();
+    class SVGFEGaussianBlurElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEGaussianBlurElement();
+        explicit SVGFEGaussianBlurElement(SVGFEGaussianBlurElementImpl *i);
+        SVGFEGaussianBlurElement(const SVGFEGaussianBlurElement &other);
+        SVGFEGaussianBlurElement(const KDOM::Node &other);
+        virtual ~SVGFEGaussianBlurElement();
 
-		// Operators
-		SVGFEGaussianBlurElement &operator=(const SVGFEGaussianBlurElement &other);
-		SVGFEGaussianBlurElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEGaussianBlurElement &operator=(const SVGFEGaussianBlurElement &other);
+        SVGFEGaussianBlurElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEGaussianBlurlement' functions
-		SVGAnimatedString in1() const;
-		SVGAnimatedNumber stdDeviationX() const;
-		SVGAnimatedNumber stdDeviationY() const;
+        // 'SVGFEGaussianBlurlement' functions
+        SVGAnimatedString in1() const;
+        SVGAnimatedNumber stdDeviationX() const;
+        SVGAnimatedNumber stdDeviationY() const;
 
-		void setStdDeviation(float stdDeviationX, float stdDeviationY);
+        void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
-		// Internal
-		KSVG_INTERNAL(SVGFEGaussianBlurElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEGaussianBlurElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGFEGaussianBlurElementProto)

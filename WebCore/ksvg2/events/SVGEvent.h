@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -29,29 +29,29 @@
 
 namespace KSVG
 {
-	class SVGEventImpl;
-	class SVGEvent : public KDOM::Event
-	{
-	public:
-		SVGEvent();
-		explicit SVGEvent(SVGEventImpl *i);
-		SVGEvent(const SVGEvent &other);
-		SVGEvent(const KDOM::Event &other);
-		virtual ~SVGEvent();
+    class SVGEventImpl;
+    class SVGEvent : public KDOM::Event
+    {
+    public:
+        SVGEvent();
+        explicit SVGEvent(SVGEventImpl *i);
+        SVGEvent(const SVGEvent &other);
+        SVGEvent(const KDOM::Event &other);
+        virtual ~SVGEvent();
 
-		// Operators
-		SVGEvent &operator=(const SVGEvent &other);
-		SVGEvent &operator=(const KDOM::Event &other);
-		
-		// Internal
-		KSVG_INTERNAL(SVGEvent)
-	
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
-		
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        // Operators
+        SVGEvent &operator=(const SVGEvent &other);
+        SVGEvent &operator=(const KDOM::Event &other);
+        
+        // Internal
+        KSVG_INTERNAL(SVGEvent)
+    
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
+        
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

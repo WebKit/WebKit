@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,63 +27,63 @@
 
 namespace KSVG
 {
-	class SVGPathSegCurvetoCubicSmoothAbsImpl : public SVGPathSegImpl
-	{
-	public:
-		SVGPathSegCurvetoCubicSmoothAbsImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegCurvetoCubicSmoothAbsImpl();
+    class SVGPathSegCurvetoCubicSmoothAbsImpl : public SVGPathSegImpl
+    {
+    public:
+        SVGPathSegCurvetoCubicSmoothAbsImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegCurvetoCubicSmoothAbsImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_ABS; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("S"); }
-		virtual QString toString() const { return QString::fromLatin1("S %1 %2 %3 %4").arg(m_x2).arg(m_y2).arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_ABS; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("S"); }
+        virtual QString toString() const { return QString::fromLatin1("S %1 %2 %3 %4").arg(m_x2).arg(m_y2).arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-		void setX2(double);
-		double x2() const;
+        void setX2(double);
+        double x2() const;
 
-		void setY2(double);
-		double y2() const;
+        void setY2(double);
+        double y2() const;
 
-	private:
-		double m_x;
-		double m_y;
-		double m_x2;
-		double m_y2;
-	};
+    private:
+        double m_x;
+        double m_y;
+        double m_x2;
+        double m_y2;
+    };
 
-	class SVGPathSegCurvetoCubicSmoothRelImpl : public SVGPathSegImpl
-	{ 
-	public:
-		SVGPathSegCurvetoCubicSmoothRelImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegCurvetoCubicSmoothRelImpl();
+    class SVGPathSegCurvetoCubicSmoothRelImpl : public SVGPathSegImpl
+    { 
+    public:
+        SVGPathSegCurvetoCubicSmoothRelImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegCurvetoCubicSmoothRelImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("s"); }
-		virtual QString toString() const { return QString::fromLatin1("s %1 %2 %3 %4").arg(m_x2).arg(m_y2).arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_CUBIC_SMOOTH_REL; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("s"); }
+        virtual QString toString() const { return QString::fromLatin1("s %1 %2 %3 %4").arg(m_x2).arg(m_y2).arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-		void setX2(double);
-		double x2() const;
+        void setX2(double);
+        double x2() const;
 
-		void setY2(double);
-		double y2() const;
+        void setY2(double);
+        double y2() const;
 
-	private:
-		double m_x;
-		double m_y;
-		double m_x2;
-		double m_y2;
-	};
+    private:
+        double m_x;
+        double m_y;
+        double m_x2;
+        double m_y2;
+    };
 };
 
 #endif

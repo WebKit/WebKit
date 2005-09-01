@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -25,20 +25,20 @@
 
 namespace KDOM
 {
-	class NodeFilterImpl;
-	class NodeIteratorImpl;
-	class TreeWalkerImpl;
-	class NodeImpl;
+    class NodeFilterImpl;
+    class NodeIteratorImpl;
+    class TreeWalkerImpl;
+    class NodeImpl;
 
-	class DocumentTraversalImpl
-	{
-	public:
-		DocumentTraversalImpl();
-		virtual ~DocumentTraversalImpl();
+    class DocumentTraversalImpl
+    {
+    public:
+        DocumentTraversalImpl();
+        virtual ~DocumentTraversalImpl();
 
-		NodeIteratorImpl *createNodeIterator(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion);
-		TreeWalkerImpl *createTreeWalker(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion);
-	};
+        NodeIteratorImpl *createNodeIterator(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion);
+        TreeWalkerImpl *createTreeWalker(NodeImpl *root, short whatToShow, NodeFilterImpl *filter, bool entityReferenceExpansion);
+    };
 };
 
 #endif

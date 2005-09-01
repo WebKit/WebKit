@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,28 +26,28 @@
 // General namespace specific definitions
 namespace KDOM
 {
-	enum LSExceptionCode
-	{
-		PARSE_ERR		= 81,
-		SERIALIZE_ERR	= 82
-	};
+    enum LSExceptionCode
+    {
+        PARSE_ERR        = 81,
+        SERIALIZE_ERR    = 82
+    };
 
-	// Integer parser mode constants.
-	enum DOMImplementationLSMode
-	{
-		MODE_SYNCHRONOUS	= 1,
-		MODE_ASYNCHRONOUS	= 2
-	};
+    // Integer parser mode constants.
+    enum DOMImplementationLSMode
+    {
+        MODE_SYNCHRONOUS    = 1,
+        MODE_ASYNCHRONOUS    = 2
+    };
 
-	// A set of possible actions for the parseWithContext method.
-	enum ACTION_TYPES
-	{
-		ACTION_APPEND_AS_CHILDREN	= 1,
-		ACTION_REPLACE_CHILDREN		= 2,
-		ACTION_INSERT_BEFORE		= 3,
-		ACTION_INSERT_AFTER			= 4,
-		ACTION_REPLACE				= 5
-	};
+    // A set of possible actions for the parseWithContext method.
+    enum ACTION_TYPES
+    {
+        ACTION_APPEND_AS_CHILDREN    = 1,
+        ACTION_REPLACE_CHILDREN        = 2,
+        ACTION_INSERT_BEFORE        = 3,
+        ACTION_INSERT_AFTER            = 4,
+        ACTION_REPLACE                = 5
+    };
 };
 
 #endif

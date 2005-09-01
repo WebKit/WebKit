@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
@@ -34,92 +34,92 @@ using namespace KSVG;
 
 StyleFillData::StyleFillData() : KDOM::Shared()
 {
-	paint = SVGRenderStyle::initialFillPaint();
-	opacity = SVGRenderStyle::initialFillOpacity();
+    paint = SVGRenderStyle::initialFillPaint();
+    opacity = SVGRenderStyle::initialFillOpacity();
 }
 
 StyleFillData::StyleFillData(const StyleFillData &other) : KDOM::Shared()
 {
-	paint = other.paint;
-	opacity = other.opacity;
+    paint = other.paint;
+    opacity = other.opacity;
 }
 
 bool StyleFillData::operator==(const StyleFillData &other) const
 {
-	if(opacity != other.opacity)
-		return false;
+    if(opacity != other.opacity)
+        return false;
 
-	if(!paint || !other.paint)
-		return paint == other.paint;
+    if(!paint || !other.paint)
+        return paint == other.paint;
 
-	if(paint->paintType() != other.paint->paintType())
-		return false;
+    if(paint->paintType() != other.paint->paintType())
+        return false;
 
-	if(paint->paintType() == SVG_PAINTTYPE_URI)
-		return paint->uri() == other.paint->uri();
+    if(paint->paintType() == SVG_PAINTTYPE_URI)
+        return paint->uri() == other.paint->uri();
 
-	if(paint->paintType() == SVG_PAINTTYPE_RGBCOLOR)
-		return paint->color() == other.paint->color();
+    if(paint->paintType() == SVG_PAINTTYPE_RGBCOLOR)
+        return paint->color() == other.paint->color();
 
-	return (paint == other.paint) && (opacity == other.opacity);
+    return (paint == other.paint) && (opacity == other.opacity);
 }
 
 StyleStrokeData::StyleStrokeData() : KDOM::Shared()
 {
-	width = SVGRenderStyle::initialStrokeWidth();
-	paint = SVGRenderStyle::initialStrokePaint();
-	opacity = SVGRenderStyle::initialStrokeOpacity();
-	miterLimit = SVGRenderStyle::initialStrokeMiterLimit();
-	dashOffset = SVGRenderStyle::initialStrokeDashOffset();
-	dashArray = SVGRenderStyle::initialStrokeDashArray();
+    width = SVGRenderStyle::initialStrokeWidth();
+    paint = SVGRenderStyle::initialStrokePaint();
+    opacity = SVGRenderStyle::initialStrokeOpacity();
+    miterLimit = SVGRenderStyle::initialStrokeMiterLimit();
+    dashOffset = SVGRenderStyle::initialStrokeDashOffset();
+    dashArray = SVGRenderStyle::initialStrokeDashArray();
 }
 
 StyleStrokeData::StyleStrokeData(const StyleStrokeData &other) : KDOM::Shared()
 {
-	width = other.width;
-	paint = other.paint;
-	opacity = other.opacity;
-	miterLimit = other.miterLimit;
-	dashOffset = other.dashOffset;
-	dashArray = other.dashArray;
+    width = other.width;
+    paint = other.paint;
+    opacity = other.opacity;
+    miterLimit = other.miterLimit;
+    dashOffset = other.dashOffset;
+    dashArray = other.dashArray;
 }
 
 bool StyleStrokeData::operator==(const StyleStrokeData &other) const
 {
     return (paint == other.paint) &&
-		   (width == other.width) &&
-		   (opacity == other.opacity) &&
-		   (miterLimit == other.miterLimit) &&
-		   (dashOffset == other.dashOffset) &&
-		   (dashArray == other.dashArray);
+           (width == other.width) &&
+           (opacity == other.opacity) &&
+           (miterLimit == other.miterLimit) &&
+           (dashOffset == other.dashOffset) &&
+           (dashArray == other.dashArray);
 }
 
 StyleStopData::StyleStopData() : KDOM::Shared()
 {
-	color = SVGRenderStyle::initialStopColor();
-	opacity = SVGRenderStyle::initialStopOpacity();
+    color = SVGRenderStyle::initialStopColor();
+    opacity = SVGRenderStyle::initialStopOpacity();
 }
 
 StyleStopData::StyleStopData(const StyleStopData &other) : KDOM::Shared()
 {
-	color = other.color;
-	opacity = other.opacity;
+    color = other.color;
+    opacity = other.opacity;
 }
 
 bool StyleStopData::operator==(const StyleStopData &other) const
 {
     return (color == other.color) &&
-		   (opacity == other.opacity);
+           (opacity == other.opacity);
 }
 
 StyleClipData::StyleClipData() : KDOM::Shared()
 {
-	clipPath = SVGRenderStyle::initialClipPath();
+    clipPath = SVGRenderStyle::initialClipPath();
 }
 
 StyleClipData::StyleClipData(const StyleClipData &other) : KDOM::Shared()
 {
-	clipPath = other.clipPath;
+    clipPath = other.clipPath;
 }
 
 bool StyleClipData::operator==(const StyleClipData &other) const
@@ -129,16 +129,16 @@ bool StyleClipData::operator==(const StyleClipData &other) const
 
 StyleMarkerData::StyleMarkerData() : KDOM::Shared()
 {
-	startMarker = SVGRenderStyle::initialStartMarker();
-	midMarker = SVGRenderStyle::initialMidMarker();
-	endMarker = SVGRenderStyle::initialEndMarker();
+    startMarker = SVGRenderStyle::initialStartMarker();
+    midMarker = SVGRenderStyle::initialMidMarker();
+    endMarker = SVGRenderStyle::initialEndMarker();
 }
 
 StyleMarkerData::StyleMarkerData(const StyleMarkerData &other) : KDOM::Shared()
 {
-	startMarker = other.startMarker;
-	midMarker = other.midMarker;
-	endMarker = other.endMarker;
+    startMarker = other.startMarker;
+    midMarker = other.midMarker;
+    endMarker = other.endMarker;
 }
 
 bool StyleMarkerData::operator==(const StyleMarkerData &other) const
@@ -148,23 +148,23 @@ bool StyleMarkerData::operator==(const StyleMarkerData &other) const
 
 StyleMiscData::StyleMiscData() : KDOM::Shared()
 {
-	opacity = SVGRenderStyle::initialOpacity();
-	floodColor = SVGRenderStyle::initialColor();
-	floodOpacity = SVGRenderStyle::initialOpacity();
+    opacity = SVGRenderStyle::initialOpacity();
+    floodColor = SVGRenderStyle::initialColor();
+    floodOpacity = SVGRenderStyle::initialOpacity();
 }
 
 StyleMiscData::StyleMiscData(const StyleMiscData &other) : KDOM::Shared()
 {
-	opacity = other.opacity;
-	filter = other.filter;
-	floodColor = other.floodColor;
-	floodOpacity = other.floodOpacity;
+    opacity = other.opacity;
+    filter = other.filter;
+    floodColor = other.floodColor;
+    floodOpacity = other.floodOpacity;
 }
 
 bool StyleMiscData::operator==(const StyleMiscData &other) const
 {
-	return (opacity == other.opacity && filter == other.filter &&
-			floodOpacity == other.floodOpacity && floodColor == other.floodColor);
+    return (opacity == other.opacity && filter == other.filter &&
+            floodOpacity == other.floodOpacity && floodColor == other.floodColor);
 }
 
 // vim:ts=4:noet

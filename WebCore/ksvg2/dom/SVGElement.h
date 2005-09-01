@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,41 +28,41 @@
 
 namespace KSVG
 {
-	class SVGSVGElement;
-	class SVGElementImpl;
-	class SVGElement : public KDOM::Element
-	{
-	public:
-		SVGElement();
-		explicit SVGElement(SVGElementImpl *i);
-		SVGElement(const SVGElement &other);
-		SVGElement(const KDOM::Node &other);
-		virtual ~SVGElement();
+    class SVGSVGElement;
+    class SVGElementImpl;
+    class SVGElement : public KDOM::Element
+    {
+    public:
+        SVGElement();
+        explicit SVGElement(SVGElementImpl *i);
+        SVGElement(const SVGElement &other);
+        SVGElement(const KDOM::Node &other);
+        virtual ~SVGElement();
 
-		// Operators
-		SVGElement &operator=(const SVGElement &other);
-		SVGElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGElement &operator=(const SVGElement &other);
+        SVGElement &operator=(const KDOM::Node &other);
 
-		// 'SVGElement' functions
-		KDOM::DOMString id() const;
-		KDOM::DOMString xmlbase() const;
+        // 'SVGElement' functions
+        KDOM::DOMString id() const;
+        KDOM::DOMString xmlbase() const;
 
-		SVGSVGElement ownerSVGElement() const;
-		SVGElement viewportElement() const;
+        SVGSVGElement ownerSVGElement() const;
+        SVGElement viewportElement() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGElement)
+        // Internal
+        KSVG_INTERNAL(SVGElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	KDOM_DEFINE_CAST(SVGElement)
+    KDOM_DEFINE_CAST(SVGElement)
 };
 
 #endif

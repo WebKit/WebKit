@@ -37,47 +37,47 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedBoolean::s_hashTable 3
- baseVal	SVGAnimatedBooleanConstants::BaseVal	DontDelete
- animVal	SVGAnimatedBooleanConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedBooleanConstants::BaseVal    DontDelete
+ animVal    SVGAnimatedBooleanConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedBoolean::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedBooleanConstants::BaseVal:
-			return KJS::Boolean(baseVal());
-		case SVGAnimatedBooleanConstants::AnimVal:
-			return KJS::Boolean(animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedBooleanConstants::BaseVal:
+            return KJS::Boolean(baseVal());
+        case SVGAnimatedBooleanConstants::AnimVal:
+            return KJS::Boolean(animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGAnimatedBoolean::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedBooleanConstants::BaseVal:
-		{
-			if(impl)
-				impl->setBaseVal(value->toBoolean(exec));
+    switch(token)
+    {
+        case SVGAnimatedBooleanConstants::BaseVal:
+        {
+            if(impl)
+                impl->setBaseVal(value->toBoolean(exec));
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGAnimatedBoolean SVGAnimatedBoolean::null;
@@ -88,31 +88,31 @@ SVGAnimatedBoolean::SVGAnimatedBoolean() : impl(0)
 
 SVGAnimatedBoolean::SVGAnimatedBoolean(SVGAnimatedBooleanImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedBoolean::SVGAnimatedBoolean(const SVGAnimatedBoolean &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedBoolean)
 
 bool SVGAnimatedBoolean::baseVal() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->baseVal();
+    return impl->baseVal();
 }
 
 bool SVGAnimatedBoolean::animVal() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->animVal();
+    return impl->animVal();
 }
 
 // vim:ts=4:noet

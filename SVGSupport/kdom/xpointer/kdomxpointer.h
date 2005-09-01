@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,16 +34,16 @@ namespace KDOM
  * The following is supported:
  *
  * <ul>
- * 	<li>The XPointer Framework</li>
- * 	<li>Shorthand pointers</li>
- * 	<li>The xmlns() scheme</li>
- * 	<li>The element() scheme</li>
+ *     <li>The XPointer Framework</li>
+ *     <li>Shorthand pointers</li>
+ *     <li>The xmlns() scheme</li>
+ *     <li>The element() scheme</li>
  * </ul>
  *
  * The following is not supported:
  * <ul>
- * 	<li>The xpointer() scheme</li>
- * 	<li>Any 3rd party schemes.</li>
+ *     <li>The xpointer() scheme</li>
+ *     <li>Any 3rd party schemes.</li>
  * </ul>
  *
  * \section usage Usage
@@ -74,28 +74,28 @@ namespace KDOM
 namespace XPointer
 {
 
-	/**
-	 * An integer indicating the type of error generated.
-	 */
-	enum ExceptionCode
-	{
-		/**
-		 * An XPointer was syntactically invalid.
-		 */
-		INVALID_EXPRESSION_ERR = 1,
+    /**
+     * An integer indicating the type of error generated.
+     */
+    enum ExceptionCode
+    {
+        /**
+         * An XPointer was syntactically invalid.
+         */
+        INVALID_EXPRESSION_ERR = 1,
 
-		/**
-		 * Thrown by the XPointerResultImpl's functions when requested
-		 * result type and contained result doesn't matc.
-		 */
-		TYPE_ERR = 3,
+        /**
+         * Thrown by the XPointerResultImpl's functions when requested
+         * result type and contained result doesn't matc.
+         */
+        TYPE_ERR = 3,
 
-		/**
-		 * The circumflex(^) were used for invalid escaping. This is a subset of
-		 * syntax error.
-		 */
-		INVALID_ENCODING = 4
-	};
+        /**
+         * The circumflex(^) were used for invalid escaping. This is a subset of
+         * syntax error.
+         */
+        INVALID_ENCODING = 4
+    };
 };
 };
 

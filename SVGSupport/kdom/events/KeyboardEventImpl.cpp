@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,41 +30,41 @@ using namespace KDOM;
 
 KeyboardEventImpl::KeyboardEventImpl(EventImplType identifier) : UIEventImpl(identifier)
 {
-	m_keyEvent = 0;
-	m_keyIdentifier = 0;
-	//m_keyLocation = KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
-	m_ctrlKey = false;
-	m_altKey = false;
-	m_shiftKey = false;
-	m_metaKey = false;
+    m_keyEvent = 0;
+    m_keyIdentifier = 0;
+    //m_keyLocation = KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+    m_ctrlKey = false;
+    m_altKey = false;
+    m_shiftKey = false;
+    m_metaKey = false;
 }
 
 KeyboardEventImpl::~KeyboardEventImpl()
 {
-	delete m_keyEvent;
+    delete m_keyEvent;
 
-	if(m_keyIdentifier)
-		m_keyIdentifier->deref();
+    if(m_keyIdentifier)
+        m_keyIdentifier->deref();
 }
 
 bool KeyboardEventImpl::ctrlKey() const
 {
-	return m_ctrlKey;
+    return m_ctrlKey;
 }
 
 bool KeyboardEventImpl::shiftKey() const
 {
-	return m_shiftKey;
+    return m_shiftKey;
 }
 
 bool KeyboardEventImpl::altKey() const
 {
-	return m_altKey;
+    return m_altKey;
 }
 
 bool KeyboardEventImpl::metaKey() const
 {
-	return m_metaKey;
+    return m_metaKey;
 }
 
 
@@ -75,50 +75,50 @@ void KeyboardEventImpl::initKeyboardEvent(DOMStringImpl *typeArg, bool canBubble
                         bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg, 
                         bool metaKeyArg)
 {
-	initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, 0);
+    initUIEvent(typeArg, canBubbleArg, cancelableArg, viewArg, 0);
 
-	KDOM_SAFE_SET(m_keyIdentifier, keyIdentifierArg);
+    KDOM_SAFE_SET(m_keyIdentifier, keyIdentifierArg);
 
-	m_keyLocation = keyLocationArg;
-	m_ctrlKey = ctrlKeyArg;
-	m_shiftKey = shiftKeyArg;
-	m_altKey = altKeyArg;
-	m_metaKey = metaKeyArg;
+    m_keyLocation = keyLocationArg;
+    m_ctrlKey = ctrlKeyArg;
+    m_shiftKey = shiftKeyArg;
+    m_altKey = altKeyArg;
+    m_metaKey = metaKeyArg;
 }
 
 void KeyboardEventImpl::initKeyboardEvent(QKeyEvent *key)
 {
-	initUIEvent(key->type() == QEvent::KeyRelease ? DOMString("keyup").handle() : key->isAutoRepeat() ?
-				DOMString("keypress").handle() : DOMString("keydown").handle(), true, true, 0, 0);
+    initUIEvent(key->type() == QEvent::KeyRelease ? DOMString("keyup").handle() : key->isAutoRepeat() ?
+                DOMString("keypress").handle() : DOMString("keydown").handle(), true, true, 0, 0);
 
-	m_ctrlKey = key->state() & Qt::ControlButton;
-	m_shiftKey = key->state() & Qt::AltButton;
-	m_altKey = key->state() & Qt::ShiftButton;
-	m_metaKey = key->state() & Qt::MetaButton;
+    m_ctrlKey = key->state() & Qt::ControlButton;
+    m_shiftKey = key->state() & Qt::AltButton;
+    m_altKey = key->state() & Qt::ShiftButton;
+    m_metaKey = key->state() & Qt::MetaButton;
 
 #if APPLE_CHANGES
-	m_keyEvent = new QKeyEvent(*key);
+    m_keyEvent = new QKeyEvent(*key);
 #else
-	m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
+    m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
 #endif
 
 #if APPLE_CHANGES
-	DOMString identifier(key->keyIdentifier());
-	m_keyIdentifier = identifier.handle();
-	m_keyIdentifier->ref();
+    DOMString identifier(key->keyIdentifier());
+    m_keyIdentifier = identifier.handle();
+    m_keyIdentifier->ref();
 #else
-	m_keyIdentifier = 0;
-	// need the equivalent of the above for KDE
+    m_keyIdentifier = 0;
+    // need the equivalent of the above for KDE
 #endif
 
 #ifndef APPLE_COMPILE_HACK // Hack out KeyboardEvent support for now.
-	int keyState = key->state();
+    int keyState = key->state();
 
-	m_numPad = false;
-	m_virtKeyVal = DOM_VK_UNDEFINED;
+    m_numPad = false;
+    m_virtKeyVal = DOM_VK_UNDEFINED;
     
-	// Note: we only support testing for num pad
-//	m_keyLocation = (keyState & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+    // Note: we only support testing for num pad
+//    m_keyLocation = (keyState & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
   switch(key->key())
   {
   case Qt::Key_Enter:
@@ -285,55 +285,55 @@ void KeyboardEventImpl::initKeyboardEvent(QKeyEvent *key)
 
 bool KeyboardEventImpl::getModifierState(DOMStringImpl *keyIdentifierArg) const
 {
-	// TODO
-	return false;
+    // TODO
+    return false;
 }
 
 int KeyboardEventImpl::keyCode() const
 {
-	if(!m_keyEvent)
-		return 0;
+    if(!m_keyEvent)
+        return 0;
 
-	if(m_virtKeyVal != DOM_VK_UNDEFINED)
-		return m_virtKeyVal;
-	else
-	{
-		int c = charCode();
-		if(c != 0)
-			return QChar(c).upper().unicode();
-		else
-		{
+    if(m_virtKeyVal != DOM_VK_UNDEFINED)
+        return m_virtKeyVal;
+    else
+    {
+        int c = charCode();
+        if(c != 0)
+            return QChar(c).upper().unicode();
+        else
+        {
 #ifndef APPLE_CHANGES
-			c = m_keyEvent->key();
-			if(c == Qt::Key_unknown)
-				kdDebug( 6020 ) << "Unknown key" << endl;
+            c = m_keyEvent->key();
+            if(c == Qt::Key_unknown)
+                kdDebug( 6020 ) << "Unknown key" << endl;
 #else
-			c = m_keyEvent->WindowsKeyCode();
+            c = m_keyEvent->WindowsKeyCode();
 #endif
-			return c;
-		}
-	}
+            return c;
+        }
+    }
 }
 
 int KeyboardEventImpl::charCode() const
 {
-	if(!m_keyEvent)
-		return 0;
+    if(!m_keyEvent)
+        return 0;
 
-	QString text = m_keyEvent->text();
-	if(text.length() != 1)
-		return 0;
+    QString text = m_keyEvent->text();
+    if(text.length() != 1)
+        return 0;
 
-	return text[0].unicode();
+    return text[0].unicode();
 }
 
 long KeyboardEventImpl::which() const
 {
-	// Netscape's "which" returns a virtual key code for keydown and
-	// keyup, and a character code for keypress.
-	// That's exactly what IE's "keyCode" returns. So they are the
-	// same for keyboard events.
-	return keyCode();
+    // Netscape's "which" returns a virtual key code for keydown and
+    // keyup, and a character code for keypress.
+    // That's exactly what IE's "keyCode" returns. So they are the
+    // same for keyboard events.
+    return keyCode();
 }
 
 // vim:ts=4:noet

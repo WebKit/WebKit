@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -43,36 +43,36 @@ using namespace KSVG;
 
 /*
 @begin SVGTextPositioningElement::s_hashTable 7
- x			SVGTextPositioningElementConstants::X		DontDelete|ReadOnly
- y			SVGTextPositioningElementConstants::Y		DontDelete|ReadOnly
- dx			SVGTextPositioningElementConstants::Dx		DontDelete|ReadOnly
- dy			SVGTextPositioningElementConstants::Dy		DontDelete|ReadOnly
- rotate		SVGTextPositioningElementConstants::Rotate	DontDelete|ReadOnly
+ x            SVGTextPositioningElementConstants::X        DontDelete|ReadOnly
+ y            SVGTextPositioningElementConstants::Y        DontDelete|ReadOnly
+ dx            SVGTextPositioningElementConstants::Dx        DontDelete|ReadOnly
+ dy            SVGTextPositioningElementConstants::Dy        DontDelete|ReadOnly
+ rotate        SVGTextPositioningElementConstants::Rotate    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGTextPositioningElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGTextPositioningElementConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLengthList>(exec, x());
-		case SVGTextPositioningElementConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLengthList>(exec, y());
-		case SVGTextPositioningElementConstants::Dx:
-			return KDOM::safe_cache<SVGAnimatedLengthList>(exec, dx());
-		case SVGTextPositioningElementConstants::Dy:
-			return KDOM::safe_cache<SVGAnimatedLengthList>(exec, dy());
-		case SVGTextPositioningElementConstants::Rotate:
-			return KDOM::safe_cache<SVGAnimatedNumberList>(exec, rotate());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGTextPositioningElementConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLengthList>(exec, x());
+        case SVGTextPositioningElementConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLengthList>(exec, y());
+        case SVGTextPositioningElementConstants::Dx:
+            return KDOM::safe_cache<SVGAnimatedLengthList>(exec, dx());
+        case SVGTextPositioningElementConstants::Dy:
+            return KDOM::safe_cache<SVGAnimatedLengthList>(exec, dy());
+        case SVGTextPositioningElementConstants::Rotate:
+            return KDOM::safe_cache<SVGAnimatedNumberList>(exec, rotate());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -90,12 +90,12 @@ SVGTextPositioningElement::SVGTextPositioningElement(SVGTextPositioningElementIm
 
 SVGTextPositioningElement::SVGTextPositioningElement(const SVGTextPositioningElement &other) : SVGTextContentElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTextPositioningElement::SVGTextPositioningElement(const KDOM::Node &other) : SVGTextContentElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTextPositioningElement::~SVGTextPositioningElement()
@@ -104,67 +104,67 @@ SVGTextPositioningElement::~SVGTextPositioningElement()
 
 SVGTextPositioningElement &SVGTextPositioningElement::operator=(const SVGTextPositioningElement &other)
 {
-	SVGTextContentElement::operator=(other);
-	return *this;
+    SVGTextContentElement::operator=(other);
+    return *this;
 }
 
 SVGTextPositioningElement &SVGTextPositioningElement::operator=(const KDOM::Node &other)
 {
-	SVGTextPositioningElementImpl *ohandle = static_cast<SVGTextPositioningElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-			SVGTextContentElement::operator=(other);
-	}
+    SVGTextPositioningElementImpl *ohandle = static_cast<SVGTextPositioningElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+            SVGTextContentElement::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLengthList SVGTextPositioningElement::x() const
 {
-	if(!d)
-		return SVGAnimatedLengthList::null;
+    if(!d)
+        return SVGAnimatedLengthList::null;
 
-	return SVGAnimatedLengthList(impl->x());
+    return SVGAnimatedLengthList(impl->x());
 }
 
 SVGAnimatedLengthList SVGTextPositioningElement::y() const
 {
-	if(!d)
-		return SVGAnimatedLengthList::null;
+    if(!d)
+        return SVGAnimatedLengthList::null;
 
-	return SVGAnimatedLengthList(impl->y());
+    return SVGAnimatedLengthList(impl->y());
 }
 
 SVGAnimatedLengthList SVGTextPositioningElement::dx() const
 {
-	if(!d)
-		return SVGAnimatedLengthList::null;
+    if(!d)
+        return SVGAnimatedLengthList::null;
 
-	return SVGAnimatedLengthList(impl->dx());
+    return SVGAnimatedLengthList(impl->dx());
 }
 
 SVGAnimatedLengthList SVGTextPositioningElement::dy() const
 {
-	if(!d)
-		return SVGAnimatedLengthList::null;
+    if(!d)
+        return SVGAnimatedLengthList::null;
 
-	return SVGAnimatedLengthList(impl->dy());
+    return SVGAnimatedLengthList(impl->dy());
 }
 
 SVGAnimatedNumberList SVGTextPositioningElement::rotate() const
 {
-	if(!d)
-		return SVGAnimatedNumberList::null;
+    if(!d)
+        return SVGAnimatedNumberList::null;
 
-	return SVGAnimatedNumberList(impl->rotate());
+    return SVGAnimatedNumberList(impl->rotate());
 }
 
 // vim:ts=4:noet

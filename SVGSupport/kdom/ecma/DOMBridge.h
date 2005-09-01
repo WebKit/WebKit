@@ -29,103 +29,103 @@
 
 namespace KJS
 {
-	class ValueImp;
-	class UString;
-	class ExecState;
+    class ValueImp;
+    class UString;
+    class ExecState;
 };
 
 namespace KDOM
 {
-	// A 'DOMBridge' inherits from KJS::ObjectImp, and operates on the
-	// generated DOMClassWrapper classes located in kdom/bindings/js.
-	//
-	// If your wrapper contains writable properties, use 'DOMRWBridge'.
-	//
-	// The DOMClassWrapper functions support multiple inheritance.
-	// This serves as a 'glue' between the 'flat' kjs inheritance structure
-	// (one class <-> one parent) and our auto-generated MI ecma concept.
-	template<class DOMObjWrapper, class DOMObjImpl>
-	class DOMBridge : public KJS::ObjectImp
-	{
-	public:
-		DOMBridge(KJS::ExecState *exec, DOMObjImpl *impl)
-		: KJS::ObjectImp((m_wrapper = new DOMObjWrapper(impl))->prototype(exec)) { }
+    // A 'DOMBridge' inherits from KJS::ObjectImp, and operates on the
+    // generated DOMClassWrapper classes located in kdom/bindings/js.
+    //
+    // If your wrapper contains writable properties, use 'DOMRWBridge'.
+    //
+    // The DOMClassWrapper functions support multiple inheritance.
+    // This serves as a 'glue' between the 'flat' kjs inheritance structure
+    // (one class <-> one parent) and our auto-generated MI ecma concept.
+    template<class DOMObjWrapper, class DOMObjImpl>
+    class DOMBridge : public KJS::ObjectImp
+    {
+    public:
+        DOMBridge(KJS::ExecState *exec, DOMObjImpl *impl)
+        : KJS::ObjectImp((m_wrapper = new DOMObjWrapper(impl))->prototype(exec)) { }
 
-		DOMObjWrapper *wrapper() const { return m_wrapper; }
+        DOMObjWrapper *wrapper() const { return m_wrapper; }
 
-		virtual KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
-		{
+        virtual KJS::ValueImp *get(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
+        {
 #if DEBUG_BRIDGE > 0
-			kdDebug(26004) << "DOMBridge::get(), " << propertyName.qstring()
-						   << " Name: " << classInfo()->className
-						   << " Wrapper object: " << m_wrapper << endl;
+            kdDebug(26004) << "DOMBridge::get(), " << propertyName.qstring()
+                           << " Name: " << classInfo()->className
+                           << " Wrapper object: " << m_wrapper << endl;
 #endif
-			// Look for standard properties (e.g. those in the hashtables)
-			KJS::ValueImp *val = m_wrapper->get(exec, propertyName, this);
+            // Look for standard properties (e.g. those in the hashtables)
+            KJS::ValueImp *val = m_wrapper->get(exec, propertyName, this);
 
-			if(val->type() != KJS::UndefinedType)
-				return val;
+            if(val->type() != KJS::UndefinedType)
+                return val;
 
-			// Not found -> forward to ObjectImp.
-			val = KJS::ObjectImp::get(exec, propertyName);
+            // Not found -> forward to ObjectImp.
+            val = KJS::ObjectImp::get(exec, propertyName);
 #if DEBUG_BRIDGE > 0
-			if(val->type() == KJS::UndefinedType)
-			{
-				kdDebug(26004) << "WARNING: " << propertyName.qstring()
-							   << " not found in... Name: " << classInfo()->className
-							   << " Wrapper object: " << m_wrapper << " on line: "
-							   << exec->context().curStmtFirstLine() << endl;
-			}
+            if(val->type() == KJS::UndefinedType)
+            {
+                kdDebug(26004) << "WARNING: " << propertyName.qstring()
+                               << " not found in... Name: " << classInfo()->className
+                               << " Wrapper object: " << m_wrapper << " on line: "
+                               << exec->context().curStmtFirstLine() << endl;
+            }
 #endif
-			return val;
-		}
+            return val;
+        }
 
-		virtual bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
-		{
+        virtual bool hasProperty(KJS::ExecState *exec, const KJS::Identifier &propertyName) const
+        {
 #if DEBUG_BRIDGE > 0
-			kdDebug(26004) << "DOMBridge::hasProperty(), " << propertyName.qstring()
-						   << " Name: " << classInfo()->className
-						   << " Wrapper object: " << m_wrapper << endl;
+            kdDebug(26004) << "DOMBridge::hasProperty(), " << propertyName.qstring()
+                           << " Name: " << classInfo()->className
+                           << " Wrapper object: " << m_wrapper << endl;
 #endif
 
-			if(m_wrapper->hasProperty(exec, propertyName))
-				return true;
+            if(m_wrapper->hasProperty(exec, propertyName))
+                return true;
 
-			return KJS::ObjectImp::hasProperty(exec, propertyName);
-		}
+            return KJS::ObjectImp::hasProperty(exec, propertyName);
+        }
 
-		virtual const KJS::ClassInfo *classInfo() const { return &DOMObjWrapper::s_classInfo; }
+        virtual const KJS::ClassInfo *classInfo() const { return &DOMObjWrapper::s_classInfo; }
 
-	protected:
-		DOMObjWrapper *m_wrapper;
-	};
+    protected:
+        DOMObjWrapper *m_wrapper;
+    };
 
-	// Base class for readwrite bridges
-	// T must also implement put (use KDOM_PUT in the header file)
-	template<class DOMObjWrapper, class DOMObjImpl>
-	class DOMRWBridge : public DOMBridge<DOMObjWrapper, DOMObjImpl>
-	{
-	public:
-		DOMRWBridge(KJS::ExecState *exec, DOMObjImpl *impl)
-		: DOMBridge<DOMObjWrapper, DOMObjImpl>(exec, impl) { }
+    // Base class for readwrite bridges
+    // T must also implement put (use KDOM_PUT in the header file)
+    template<class DOMObjWrapper, class DOMObjImpl>
+    class DOMRWBridge : public DOMBridge<DOMObjWrapper, DOMObjImpl>
+    {
+    public:
+        DOMRWBridge(KJS::ExecState *exec, DOMObjImpl *impl)
+        : DOMBridge<DOMObjWrapper, DOMObjImpl>(exec, impl) { }
 
-		virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)
-		{
+        virtual void put(KJS::ExecState *exec, const KJS::Identifier &propertyName, KJS::ValueImp *value, int attr)
+        {
 /*
 #if DEBUG_BRIDGE > 0
-			kdDebug(26004) << "DOMRWBridge::put(), " << propertyName.qstring()
-						   << " Name: " << classInfo()->className
-						   << " Wrapper object: " << m_wrapper << endl;
+            kdDebug(26004) << "DOMRWBridge::put(), " << propertyName.qstring()
+                           << " Name: " << classInfo()->className
+                           << " Wrapper object: " << m_wrapper << endl;
 #endif
 
-			// Try to see if we know this property (and need to take special action)
-			if(m_wrapper->put(exec, propertyName, value, attr))
-				return;
+            // Try to see if we know this property (and need to take special action)
+            if(m_wrapper->put(exec, propertyName, value, attr))
+                return;
 */
-			// We don't -> set property in ObjectImp.
-			KJS::ObjectImp::put(exec, propertyName, value, attr);
-		}
-	};
+            // We don't -> set property in ObjectImp.
+            KJS::ObjectImp::put(exec, propertyName, value, attr);
+        }
+    };
 };
 
 #endif

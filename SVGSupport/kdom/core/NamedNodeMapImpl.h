@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -36,56 +36,56 @@
 
 namespace KDOM
 {
-	class NamedNodeMapImpl : public Shared
-	{
-	public:
-		NamedNodeMapImpl();
-		virtual ~NamedNodeMapImpl();
+    class NamedNodeMapImpl : public Shared
+    {
+    public:
+        NamedNodeMapImpl();
+        virtual ~NamedNodeMapImpl();
 
-		// 'NamedNodeMapImpl' functions
-		virtual NodeImpl *getNamedItem(DOMStringImpl *name) = 0;
-		virtual NodeImpl *setNamedItem(NodeImpl *arg) = 0;
+        // 'NamedNodeMapImpl' functions
+        virtual NodeImpl *getNamedItem(DOMStringImpl *name) = 0;
+        virtual NodeImpl *setNamedItem(NodeImpl *arg) = 0;
 
-		virtual NodeImpl *removeNamedItem(DOMStringImpl *name) = 0;
-		virtual NodeImpl *getNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) = 0;
-		virtual NodeImpl *setNamedItemNS(NodeImpl *arg) = 0;
-		virtual NodeImpl *removeNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) = 0;
+        virtual NodeImpl *removeNamedItem(DOMStringImpl *name) = 0;
+        virtual NodeImpl *getNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) = 0;
+        virtual NodeImpl *setNamedItemNS(NodeImpl *arg) = 0;
+        virtual NodeImpl *removeNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName) = 0;
 
-		virtual NodeImpl *item(unsigned long index) const = 0;
-		virtual unsigned long length() const = 0;
+        virtual NodeImpl *item(unsigned long index) const = 0;
+        virtual unsigned long length() const = 0;
 
-		virtual bool isReadOnly() const = 0;
+        virtual bool isReadOnly() const = 0;
 
-		virtual void clone(NamedNodeMapImpl *other) = 0;
-	};
+        virtual void clone(NamedNodeMapImpl *other) = 0;
+    };
 
-	class RONamedNodeMapImpl : public NamedNodeMapImpl
-	{
-	public:
-		RONamedNodeMapImpl(DocumentPtr *doc);
-		virtual ~RONamedNodeMapImpl();
+    class RONamedNodeMapImpl : public NamedNodeMapImpl
+    {
+    public:
+        RONamedNodeMapImpl(DocumentPtr *doc);
+        virtual ~RONamedNodeMapImpl();
 
-		// 'NamedNodeMapImpl' functions
-		virtual NodeImpl *getNamedItem(DOMStringImpl *name);
-		virtual NodeImpl *setNamedItem(NodeImpl *arg);
-		virtual NodeImpl *removeNamedItem(DOMStringImpl *name);
-		virtual NodeImpl *getNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
-		virtual NodeImpl *setNamedItemNS(NodeImpl *arg);
-		virtual NodeImpl *removeNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
+        // 'NamedNodeMapImpl' functions
+        virtual NodeImpl *getNamedItem(DOMStringImpl *name);
+        virtual NodeImpl *setNamedItem(NodeImpl *arg);
+        virtual NodeImpl *removeNamedItem(DOMStringImpl *name);
+        virtual NodeImpl *getNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
+        virtual NodeImpl *setNamedItemNS(NodeImpl *arg);
+        virtual NodeImpl *removeNamedItemNS(DOMStringImpl *namespaceURI, DOMStringImpl *localName);
 
-		virtual NodeImpl *item(unsigned long index) const;
-		virtual unsigned long length() const;
+        virtual NodeImpl *item(unsigned long index) const;
+        virtual unsigned long length() const;
 
-		virtual bool isReadOnly() const;
+        virtual bool isReadOnly() const;
 
-		virtual void clone(NamedNodeMapImpl *other);
+        virtual void clone(NamedNodeMapImpl *other);
 
-		void addNode(NodeImpl *n);
+        void addNode(NodeImpl *n);
 
-	protected:
-		QPtrList<NodeImpl> *m_map;
-		DocumentPtr *m_doc;
-	};
+    protected:
+        QPtrList<NodeImpl> *m_map;
+        DocumentPtr *m_doc;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,22 +27,22 @@
 
 namespace KDOM
 {
-	class CSSStyleDeclarationImpl;
-	class CSSFontFaceRuleImpl : public CSSRuleImpl
-	{
-	public:
-		CSSFontFaceRuleImpl(StyleBaseImpl *parent);
-		virtual ~CSSFontFaceRuleImpl();
+    class CSSStyleDeclarationImpl;
+    class CSSFontFaceRuleImpl : public CSSRuleImpl
+    {
+    public:
+        CSSFontFaceRuleImpl(StyleBaseImpl *parent);
+        virtual ~CSSFontFaceRuleImpl();
 
-		// 'CSSFontFaceRuleImpl' functions
-		CSSStyleDeclarationImpl *style() const;
+        // 'CSSFontFaceRuleImpl' functions
+        CSSStyleDeclarationImpl *style() const;
 
-		// 'CSSRule' functions
-		virtual bool isFontFaceRule() const { return true; }
+        // 'CSSRule' functions
+        virtual bool isFontFaceRule() const { return true; }
 
-	protected:
-		CSSStyleDeclarationImpl *m_style;
-	};
+    protected:
+        CSSStyleDeclarationImpl *m_style;
+    };
 };
 
 #endif

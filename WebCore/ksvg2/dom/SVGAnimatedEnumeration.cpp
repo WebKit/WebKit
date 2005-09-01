@@ -37,47 +37,47 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedEnumeration::s_hashTable 3
- baseVal	SVGAnimatedEnumerationConstants::BaseVal	DontDelete
- animVal	SVGAnimatedEnumerationConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedEnumerationConstants::BaseVal    DontDelete
+ animVal    SVGAnimatedEnumerationConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedEnumeration::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedEnumerationConstants::BaseVal:
-			return Number(baseVal());
-		case SVGAnimatedEnumerationConstants::AnimVal:
-			return Number(animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedEnumerationConstants::BaseVal:
+            return Number(baseVal());
+        case SVGAnimatedEnumerationConstants::AnimVal:
+            return Number(animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGAnimatedEnumeration::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedEnumerationConstants::BaseVal:
-		{
-			if(impl)
-				impl->setBaseVal(static_cast<unsigned short>(value->toNumber(exec)));
+    switch(token)
+    {
+        case SVGAnimatedEnumerationConstants::BaseVal:
+        {
+            if(impl)
+                impl->setBaseVal(static_cast<unsigned short>(value->toNumber(exec)));
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGAnimatedEnumeration SVGAnimatedEnumeration::null;
@@ -88,31 +88,31 @@ SVGAnimatedEnumeration::SVGAnimatedEnumeration() : impl(0)
 
 SVGAnimatedEnumeration::SVGAnimatedEnumeration(SVGAnimatedEnumerationImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedEnumeration::SVGAnimatedEnumeration(const SVGAnimatedEnumeration &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedEnumeration)
 
 unsigned short SVGAnimatedEnumeration::baseVal() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->baseVal();
+    return impl->baseVal();
 }
 
 unsigned short SVGAnimatedEnumeration::animVal() const
 {
-	if(!impl)
-		return false;
+    if(!impl)
+        return false;
 
-	return impl->animVal();
+    return impl->animVal();
 }
 
 // vim:ts=4:noet

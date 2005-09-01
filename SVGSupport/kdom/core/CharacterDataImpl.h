@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,43 +27,43 @@
 
 namespace KDOM
 {
-	class CharacterData;
-	class CharacterDataImpl : public NodeImpl
-	{
-	public:
-		CharacterDataImpl(DocumentPtr *doc);
-		virtual ~CharacterDataImpl();
+    class CharacterData;
+    class CharacterDataImpl : public NodeImpl
+    {
+    public:
+        CharacterDataImpl(DocumentPtr *doc);
+        virtual ~CharacterDataImpl();
 
-		void checkCharDataOperation(CharacterDataImpl *node, const unsigned long offset);
+        void checkCharDataOperation(CharacterDataImpl *node, const unsigned long offset);
 
-		// 'CharacterData' functions
-		DOMStringImpl *data() const;
-		void setData(DOMStringImpl *data);
+        // 'CharacterData' functions
+        DOMStringImpl *data() const;
+        void setData(DOMStringImpl *data);
 
-		virtual DOMStringImpl *nodeValue() const;
-		virtual void setNodeValue(DOMStringImpl *nodeValue);
+        virtual DOMStringImpl *nodeValue() const;
+        virtual void setNodeValue(DOMStringImpl *nodeValue);
 
-		virtual DOMStringImpl *textContent() const; // DOM3
+        virtual DOMStringImpl *textContent() const; // DOM3
 
-		DOMStringImpl *substringData(unsigned long offset, unsigned long count);
+        DOMStringImpl *substringData(unsigned long offset, unsigned long count);
 
-		void appendData(DOMStringImpl *arg);
-		void insertData(unsigned long offset, DOMStringImpl *arg);
-		void deleteData(unsigned long offset, unsigned long count);
-		void replaceData(unsigned long offset, unsigned long count, DOMStringImpl *arg);
+        void appendData(DOMStringImpl *arg);
+        void insertData(unsigned long offset, DOMStringImpl *arg);
+        void deleteData(unsigned long offset, unsigned long count);
+        void replaceData(unsigned long offset, unsigned long count, DOMStringImpl *arg);
 
-		unsigned long length() const;
+        unsigned long length() const;
 
-		virtual void normalize();
-		
-		virtual bool containsOnlyWhitespace() const;
+        virtual void normalize();
+        
+        virtual bool containsOnlyWhitespace() const;
 
-		// Internal
-		void dispatchModifiedEvent(DOMStringImpl *prevValue);
+        // Internal
+        void dispatchModifiedEvent(DOMStringImpl *prevValue);
 
-	protected:
-		DOMStringImpl *str;
-	};
+    protected:
+        DOMStringImpl *str;
+    };
 };
 
 #endif

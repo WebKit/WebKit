@@ -28,23 +28,23 @@ using namespace KSVG;
 
 SVGPointImpl::SVGPointImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_x = 0.0;
-	m_y = 0.0;
-	m_context = context;
+    m_x = 0.0;
+    m_y = 0.0;
+    m_context = context;
 }
 
 SVGPointImpl::SVGPointImpl(float x, float y, const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_x = x;
-	m_y = y;
-	m_context = context;
+    m_x = x;
+    m_y = y;
+    m_context = context;
 }
 
 SVGPointImpl::SVGPointImpl(const QPoint &p, const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_x = p.x();
-	m_y = p.y();
-	m_context = context;
+    m_x = p.x();
+    m_y = p.y();
+    m_context = context;
 }
 
 SVGPointImpl::~SVGPointImpl()
@@ -53,34 +53,34 @@ SVGPointImpl::~SVGPointImpl()
 
 float SVGPointImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 float SVGPointImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPointImpl::setX(float x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 void SVGPointImpl::setY(float y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 SVGPointImpl *SVGPointImpl::matrixTransform(SVGMatrixImpl * /* matrix */)
 {
-	// TODO: implement me!
-	return 0;
+    // TODO: implement me!
+    return 0;
 }
 
 // vim:ts=4:noet

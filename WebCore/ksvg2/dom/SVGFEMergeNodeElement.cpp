@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,24 +35,24 @@ using namespace KSVG;
 
 /*
 @begin SVGFEMergeNodeElement::s_hashTable 3
- in1	SVGFEMergeNodeElementConstants::In1	DontDelete|ReadOnly
+ in1    SVGFEMergeNodeElementConstants::In1    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEMergeNodeElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGFEMergeNodeElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGFEMergeNodeElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -70,12 +70,12 @@ SVGFEMergeNodeElement::SVGFEMergeNodeElement(SVGFEMergeNodeElementImpl *i) : SVG
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const SVGFEMergeNodeElement &other) : SVGElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const KDOM::Node &other) : SVGElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
@@ -84,35 +84,35 @@ SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 
 SVGFEMergeNodeElement &SVGFEMergeNodeElement::operator=(const SVGFEMergeNodeElement &other)
 {
-	SVGElement::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    return *this;
 }
 
 SVGFEMergeNodeElement &SVGFEMergeNodeElement::operator=(const KDOM::Node &other)
 {
-	SVGFEMergeNodeElementImpl *ohandle = static_cast<SVGFEMergeNodeElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-			SVGElement::operator=(other);
-	}
+    SVGFEMergeNodeElementImpl *ohandle = static_cast<SVGFEMergeNodeElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+            SVGElement::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEMergeNodeElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString();
+    if(!d)
+        return SVGAnimatedString();
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,42 +28,42 @@
 
 namespace KSVG
 {
-	class SVGAnimatedInteger;
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedNumber;
-	class SVGFETurbulenceElementImpl;
+    class SVGAnimatedInteger;
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedNumber;
+    class SVGFETurbulenceElementImpl;
 
-	class SVGFETurbulenceElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFETurbulenceElement();
-		explicit SVGFETurbulenceElement(SVGFETurbulenceElementImpl *i);
-		SVGFETurbulenceElement(const SVGFETurbulenceElement &other);
-		SVGFETurbulenceElement(const KDOM::Node &other);
-		virtual ~SVGFETurbulenceElement();
+    class SVGFETurbulenceElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFETurbulenceElement();
+        explicit SVGFETurbulenceElement(SVGFETurbulenceElementImpl *i);
+        SVGFETurbulenceElement(const SVGFETurbulenceElement &other);
+        SVGFETurbulenceElement(const KDOM::Node &other);
+        virtual ~SVGFETurbulenceElement();
 
-		// Operators
-		SVGFETurbulenceElement &operator=(const SVGFETurbulenceElement &other);
-		SVGFETurbulenceElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFETurbulenceElement &operator=(const SVGFETurbulenceElement &other);
+        SVGFETurbulenceElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFETurbulencelement' functions
-		SVGAnimatedNumber baseFrequencyX() const;
-		SVGAnimatedNumber baseFrequencyY() const;
-		SVGAnimatedInteger numOctaves() const;
-		SVGAnimatedNumber seed() const;
-		SVGAnimatedEnumeration stitchTiles() const;
-		SVGAnimatedEnumeration type() const;
+        // 'SVGFETurbulencelement' functions
+        SVGAnimatedNumber baseFrequencyX() const;
+        SVGAnimatedNumber baseFrequencyY() const;
+        SVGAnimatedInteger numOctaves() const;
+        SVGAnimatedNumber seed() const;
+        SVGAnimatedEnumeration stitchTiles() const;
+        SVGAnimatedEnumeration type() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFETurbulenceElement)
+        // Internal
+        KSVG_INTERNAL(SVGFETurbulenceElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

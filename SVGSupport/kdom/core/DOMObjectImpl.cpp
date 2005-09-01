@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,12 +29,12 @@ const bool True = true;
 
 DOMObjectImpl::DOMObjectImpl() : Shared()
 {
-	m_userData = 0;
+    m_userData = 0;
 }
 
 DOMObjectImpl::DOMObjectImpl(bool b) : Shared()
 {
-	m_userData = b ? (void *)&True : (void *)&False;
+    m_userData = b ? (void *)&True : (void *)&False;
 }
 
 DOMObjectImpl::~DOMObjectImpl()
@@ -43,12 +43,12 @@ DOMObjectImpl::~DOMObjectImpl()
 
 void DOMObjectImpl::setObject(void *userData)
 {
-	m_userData = userData;
+    m_userData = userData;
 }
 
 void *DOMObjectImpl::userData() const
 {
-	return m_userData;
+    return m_userData;
 }
 
 // vim:ts=4:noet

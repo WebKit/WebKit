@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -39,22 +39,22 @@ using namespace KSVG;
 
 /*
 @begin SVGTSpanElement::s_hashTable 2
- dummy	SVGTSpanElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGTSpanElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGTSpanElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGTSpanElement SVGTSpanElement::null;
@@ -72,13 +72,13 @@ SVGTSpanElement::SVGTSpanElement(SVGTSpanElementImpl *i)
 SVGTSpanElement::SVGTSpanElement(const SVGTSpanElement &other)
 : SVGTextPositioningElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTSpanElement::SVGTSpanElement(const KDOM::Node &other)
 : SVGTextPositioningElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTSpanElement::~SVGTSpanElement()
@@ -87,27 +87,27 @@ SVGTSpanElement::~SVGTSpanElement()
 
 SVGTSpanElement &SVGTSpanElement::operator=(const SVGTSpanElement &other)
 {
-	SVGTextPositioningElement::operator=(other);
-	return *this;
+    SVGTextPositioningElement::operator=(other);
+    return *this;
 }
 
 SVGTSpanElement &SVGTSpanElement::operator=(const KDOM::Node &other)
 {
-	SVGTSpanElementImpl *ohandle = static_cast<SVGTSpanElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-			SVGTextPositioningElement::operator=(other);
-	}
+    SVGTSpanElementImpl *ohandle = static_cast<SVGTSpanElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+            SVGTextPositioningElement::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

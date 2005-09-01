@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,26 +33,26 @@ class KRenderingDevice;
 
 struct KRenderingDeviceInfo
 {
-	QString name, internal;
+    QString name, internal;
 };
 
 class KRenderingDeviceFactory
 {
 public:
-	KRenderingDeviceFactory();
-	virtual ~KRenderingDeviceFactory();
+    KRenderingDeviceFactory();
+    virtual ~KRenderingDeviceFactory();
 
-	static KRenderingDeviceFactory *self();
+    static KRenderingDeviceFactory *self();
 
-	// Request a rendering device named 'device'
-	KRenderingDevice *request(const QString &device) const;
-	
-	// Request a list of all available rendering devices
-	const QValueList<KRenderingDeviceInfo> deviceList() const;
+    // Request a rendering device named 'device'
+    KRenderingDevice *request(const QString &device) const;
+    
+    // Request a list of all available rendering devices
+    const QValueList<KRenderingDeviceInfo> deviceList() const;
 
 private:
-	static KInstance *s_instance;
-	static KRenderingDeviceFactory *s_factory;
+    static KInstance *s_instance;
+    static KRenderingDeviceFactory *s_factory;
 };
 
 #endif

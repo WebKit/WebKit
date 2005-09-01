@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -29,39 +29,39 @@
 
 namespace KSVG
 {
-	class SVGRect;
-	class SVGPoint;
-	class SVGZoomEventImpl;
+    class SVGRect;
+    class SVGPoint;
+    class SVGZoomEventImpl;
 
-	class SVGZoomEvent : public KDOM::UIEvent
-	{
-	public:
-		SVGZoomEvent();
-		explicit SVGZoomEvent(SVGZoomEventImpl *i);
-		SVGZoomEvent(const SVGZoomEvent &other);
-		SVGZoomEvent(const KDOM::Event &other);
-		virtual ~SVGZoomEvent();
+    class SVGZoomEvent : public KDOM::UIEvent
+    {
+    public:
+        SVGZoomEvent();
+        explicit SVGZoomEvent(SVGZoomEventImpl *i);
+        SVGZoomEvent(const SVGZoomEvent &other);
+        SVGZoomEvent(const KDOM::Event &other);
+        virtual ~SVGZoomEvent();
 
-		// Operators
-		SVGZoomEvent &operator=(const SVGZoomEvent &other);
-		SVGZoomEvent &operator=(const KDOM::Event &other);
+        // Operators
+        SVGZoomEvent &operator=(const SVGZoomEvent &other);
+        SVGZoomEvent &operator=(const KDOM::Event &other);
 
-		// 'SVGZoomEvent' functions
-		SVGRect zoomRectScreen() const;
-		float previousScale() const;
-		SVGPoint previousTranslate() const;
-		float newScale() const;
-		SVGPoint newTranslate() const;
+        // 'SVGZoomEvent' functions
+        SVGRect zoomRectScreen() const;
+        float previousScale() const;
+        SVGPoint previousTranslate() const;
+        float newScale() const;
+        SVGPoint newTranslate() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGZoomEvent)
+        // Internal
+        KSVG_INTERNAL(SVGZoomEvent)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

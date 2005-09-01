@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,15 +28,15 @@
 
 namespace KSVG
 {
-	class SVGTextElementImpl : public SVGTextPositioningElementImpl,
-							   public SVGTransformableImpl
-	{
-	public:
-		SVGTextElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGTextElementImpl();
+    class SVGTextElementImpl : public SVGTextPositioningElementImpl,
+                               public SVGTransformableImpl
+    {
+    public:
+        SVGTextElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGTextElementImpl();
 
-		// 'SVGTextElement' functions
-	};
+        // 'SVGTextElement' functions
+    };
 };
 
 #endif

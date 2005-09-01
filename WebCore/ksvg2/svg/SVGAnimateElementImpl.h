@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,19 +27,19 @@
 
 namespace KSVG
 {
-	class SVGAnimateElementImpl : public SVGAnimationElementImpl
-	{
-	public:
-		SVGAnimateElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGAnimateElementImpl();
+    class SVGAnimateElementImpl : public SVGAnimationElementImpl
+    {
+    public:
+        SVGAnimateElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGAnimateElementImpl();
 
-		virtual void handleTimerEvent(double timePercentage);
-	
-	private:
-		int m_currentItem;
+        virtual void handleTimerEvent(double timePercentage);
+    
+    private:
+        int m_currentItem;
 
-		QString m_savedTo;
-	};
+        QString m_savedTo;
+    };
 };
 
 #endif

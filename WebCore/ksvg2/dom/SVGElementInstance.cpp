@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -38,45 +38,45 @@ using namespace KDOM;
 
 /*
 @begin SVGElementInstance::s_hashTable 9
- correspondingElement		SVGElementInstanceConstants::CorrespondingElement	DontDelete|ReadOnly
- correspondingUseElement	SVGElementInstanceConstants::CorrespondingUseElement	DontDelete|ReadOnly
- parentNode		SVGElementInstanceConstants::ParentNode			DontDelete|ReadOnly
- childNodes		SVGElementInstanceConstants::ChildNodes			DontDelete|ReadOnly
- firstChild		SVGElementInstanceConstants::FirstChild			DontDelete|ReadOnly
- lastChild		SVGElementInstanceConstants::LastChild			DontDelete|ReadOnly
- previousSibling	SVGElementInstanceConstants::PreviousSibling	DontDelete|ReadOnly
- nextSibling	SVGElementInstanceConstants::NextSibling		DontDelete|ReadOnly
+ correspondingElement        SVGElementInstanceConstants::CorrespondingElement    DontDelete|ReadOnly
+ correspondingUseElement    SVGElementInstanceConstants::CorrespondingUseElement    DontDelete|ReadOnly
+ parentNode        SVGElementInstanceConstants::ParentNode            DontDelete|ReadOnly
+ childNodes        SVGElementInstanceConstants::ChildNodes            DontDelete|ReadOnly
+ firstChild        SVGElementInstanceConstants::FirstChild            DontDelete|ReadOnly
+ lastChild        SVGElementInstanceConstants::LastChild            DontDelete|ReadOnly
+ previousSibling    SVGElementInstanceConstants::PreviousSibling    DontDelete|ReadOnly
+ nextSibling    SVGElementInstanceConstants::NextSibling        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGElementInstance::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGElementInstanceConstants::CorrespondingElement:
-			return getDOMNode(exec, correspondingElement());
-		case SVGElementInstanceConstants::CorrespondingUseElement:
-			return safe_cache<SVGUseElement>(exec, correspondingUseElement());
-		case SVGElementInstanceConstants::ParentNode:
-			return safe_cache<SVGElementInstance>(exec, parentNode());
-		case SVGElementInstanceConstants::ChildNodes:
-			return safe_cache<SVGElementInstanceList>(exec, childNodes());
-		case SVGElementInstanceConstants::FirstChild:
-			return safe_cache<SVGElementInstance>(exec, firstChild());
-		case SVGElementInstanceConstants::LastChild:
-			return safe_cache<SVGElementInstance>(exec, lastChild());
-		case SVGElementInstanceConstants::PreviousSibling:
-			return safe_cache<SVGElementInstance>(exec, previousSibling());
-		case SVGElementInstanceConstants::NextSibling:
-			return safe_cache<SVGElementInstance>(exec, nextSibling());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGElementInstanceConstants::CorrespondingElement:
+            return getDOMNode(exec, correspondingElement());
+        case SVGElementInstanceConstants::CorrespondingUseElement:
+            return safe_cache<SVGUseElement>(exec, correspondingUseElement());
+        case SVGElementInstanceConstants::ParentNode:
+            return safe_cache<SVGElementInstance>(exec, parentNode());
+        case SVGElementInstanceConstants::ChildNodes:
+            return safe_cache<SVGElementInstanceList>(exec, childNodes());
+        case SVGElementInstanceConstants::FirstChild:
+            return safe_cache<SVGElementInstance>(exec, firstChild());
+        case SVGElementInstanceConstants::LastChild:
+            return safe_cache<SVGElementInstance>(exec, lastChild());
+        case SVGElementInstanceConstants::PreviousSibling:
+            return safe_cache<SVGElementInstance>(exec, previousSibling());
+        case SVGElementInstanceConstants::NextSibling:
+            return safe_cache<SVGElementInstance>(exec, nextSibling());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 };
 
 // The qdom way...
@@ -96,7 +96,7 @@ SVGElementInstance::SVGElementInstance(SVGElementInstanceImpl *i)
 SVGElementInstance::SVGElementInstance(const SVGElementInstance &other)
 : KDOM::EventTarget()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGElementInstance::~SVGElementInstance()
@@ -105,73 +105,73 @@ SVGElementInstance::~SVGElementInstance()
 
 SVGElementInstance &SVGElementInstance::operator=(const SVGElementInstance &other)
 {
-	KDOM::EventTarget::operator=(other);
-	return *this;
+    KDOM::EventTarget::operator=(other);
+    return *this;
 }
 
 SVGElement SVGElementInstance::correspondingElement() const
 {
-	if(!d)
-		return SVGElement::null;
+    if(!d)
+        return SVGElement::null;
 
-	return SVGElement(impl->correspondingElement());
+    return SVGElement(impl->correspondingElement());
 }
 
 SVGUseElement SVGElementInstance::correspondingUseElement() const
 {
-	if(!d)
-		return SVGUseElement::null;
+    if(!d)
+        return SVGUseElement::null;
 
-	return SVGUseElement(impl->correspondingUseElement());
-	
+    return SVGUseElement(impl->correspondingUseElement());
+    
 }
 
 SVGElementInstance SVGElementInstance::parentNode() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->parentNode());
+    return SVGElementInstance(impl->parentNode());
 }
 
 SVGElementInstanceList SVGElementInstance::childNodes() const
 {
-	if(!d)
-		return SVGElementInstanceList::null;
+    if(!d)
+        return SVGElementInstanceList::null;
 
-	return SVGElementInstanceList(impl->childNodes());
+    return SVGElementInstanceList(impl->childNodes());
 }
 
 SVGElementInstance SVGElementInstance::firstChild() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->firstChild());
+    return SVGElementInstance(impl->firstChild());
 }
 
 SVGElementInstance SVGElementInstance::lastChild() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->lastChild());
+    return SVGElementInstance(impl->lastChild());
 }
 
 SVGElementInstance SVGElementInstance::previousSibling() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->previousSibling());
+    return SVGElementInstance(impl->previousSibling());
 }
 
 SVGElementInstance SVGElementInstance::nextSibling() const
 {
-	if(!d)
-		return SVGElementInstance::null;
+    if(!d)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->nextSibling());
+    return SVGElementInstance(impl->nextSibling());
 }
 
 // vim:ts=4:noet

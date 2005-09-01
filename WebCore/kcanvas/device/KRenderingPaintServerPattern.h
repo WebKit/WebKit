@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -31,44 +31,44 @@
 class KCanvasImage;
 
 class KRenderingPaintServerPattern : public KRenderingPaintServer,
-									 public KCanvasResource
+                                     public KCanvasResource
 {
 public:
-	KRenderingPaintServerPattern();
-	virtual ~KRenderingPaintServerPattern();
+    KRenderingPaintServerPattern();
+    virtual ~KRenderingPaintServerPattern();
 
-	virtual KCPaintServerType type() const;
+    virtual KCPaintServerType type() const;
 
-	// Pattern bbox (should be QRectF!)
-	float x() const;
-	void setX(float x);
-	
-	float y() const;
-	void setY(float y);
-	
-	// Pattern x,y phase points are relative when in boundingBoxMode
-	// BoundingBox mode is true by default.
-	bool boundingBoxMode() const;
-	void setBoundingBoxMode(bool mode = true);
-	
-	float width() const;
-	void setWidth(float width);
-	
-	float height() const;
-	void setHeight(float height);
-	
-	// 'Pattern' interface
-	KCanvasImage *tile() const;
-	void setTile(KCanvasImage *tile);
+    // Pattern bbox (should be QRectF!)
+    float x() const;
+    void setX(float x);
+    
+    float y() const;
+    void setY(float y);
+    
+    // Pattern x,y phase points are relative when in boundingBoxMode
+    // BoundingBox mode is true by default.
+    bool boundingBoxMode() const;
+    void setBoundingBoxMode(bool mode = true);
+    
+    float width() const;
+    void setWidth(float width);
+    
+    float height() const;
+    void setHeight(float height);
+    
+    // 'Pattern' interface
+    KCanvasImage *tile() const;
+    void setTile(KCanvasImage *tile);
 
-	KCanvasMatrix patternTransform() const;
-	void setPatternTransform(const KCanvasMatrix &mat);
+    KCanvasMatrix patternTransform() const;
+    void setPatternTransform(const KCanvasMatrix &mat);
 
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 #endif

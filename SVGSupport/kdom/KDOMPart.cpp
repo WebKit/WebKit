@@ -29,68 +29,68 @@ using namespace KDOM;
 
 struct KDOMPart::Private
 {
-	KDOMView *view;
-	KDOMSettings *settings;
+    KDOMView *view;
+    KDOMSettings *settings;
 
-	DocumentImpl *doc;
+    DocumentImpl *doc;
 };
 
 KDOMPart::KDOMPart(KDOMView *view, QObject *parent, const char *name)
 : KParts::ReadOnlyPart(parent, name), d(new Private())
 {
-	d->doc = 0;
+    d->doc = 0;
 #ifndef APPLE_COMPILE_HACK
-	/* FIXME
-	d->settings = new KDOMSettings(*KDOMFactory::defaultSettings());;
-	*/
-	d->settings = new KDOMSettings();
+    /* FIXME
+    d->settings = new KDOMSettings(*KDOMFactory::defaultSettings());;
+    */
+    d->settings = new KDOMSettings();
 #else
-	d->settings = NULL;
+    d->settings = NULL;
 #endif
-	d->view = view;
+    d->view = view;
 }
 
 KDOMPart::~KDOMPart()
 {
-	delete d->settings;
-	delete d;
+    delete d->settings;
+    delete d;
 }
 
 KDOMView *KDOMPart::view() const
 {
-	return d->view;
+    return d->view;
 }
 
 KDOMSettings *KDOMPart::settings() const
 {
-	return d->settings;
+    return d->settings;
 }
 
 DocumentImpl *KDOMPart::document() const
 {
-	return d->doc;
+    return d->doc;
 }
 
 void KDOMPart::setDocument(DocumentImpl *doc)
 {
-	d->doc = doc;
+    d->doc = doc;
 }
 
 void KDOMPart::setView(KDOMView *view)
 {
-	d->view = view;
+    d->view = view;
 }
 
 void KDOMPart::setSettings(KDOMSettings *settings)
 {
-	d->settings = settings;
+    d->settings = settings;
 }
 
 // This executes in the active part on a click or other url selection action in
 // that active part.
 bool KDOMPart::urlSelected(const QString &url, int button, int state, const QString &_target, KParts::URLArgs args)
 {
-	return true;
+    return true;
 }
 
 // vim:ts=4:noet

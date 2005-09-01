@@ -29,40 +29,40 @@
 #include "util.h"
 
 namespace KDOM {
-	class NodeImpl;
+    class NodeImpl;
 }
 
 class Step
 {
-	public:
-		enum AxisType {
-			AncestorAxis, AncestorOrSelfAxis, AttributeAxis,
-			ChildAxis, DescendantAxis, DescendantOrSelfAxis,
-			FollowingAxis, FollowingSiblingAxis, NamespaceAxis,
-			ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
-			SelfAxis
-		};
+    public:
+        enum AxisType {
+            AncestorAxis, AncestorOrSelfAxis, AttributeAxis,
+            ChildAxis, DescendantAxis, DescendantOrSelfAxis,
+            FollowingAxis, FollowingSiblingAxis, NamespaceAxis,
+            ParentAxis, PrecedingAxis, PrecedingSiblingAxis,
+            SelfAxis
+        };
 
-		static QString axisAsString( AxisType axis );
+        static QString axisAsString( AxisType axis );
 
-		Step();
-		Step( AxisType axis,
-		      const DomString &nodeTest,
-		      const QValueList<Predicate *> &predicates = QValueList<Predicate *>() );
-		~Step();
+        Step();
+        Step( AxisType axis,
+              const DomString &nodeTest,
+              const QValueList<Predicate *> &predicates = QValueList<Predicate *>() );
+        ~Step();
 
-		DomNodeList evaluate( KDOM::NodeImpl *context ) const;
+        DomNodeList evaluate( KDOM::NodeImpl *context ) const;
 
-		void optimize();
-		QString dump() const;
+        void optimize();
+        QString dump() const;
 
-	private:
-		DomNodeList nodesInAxis( KDOM::NodeImpl *context ) const;
-		DomNodeList nodeTestMatches( const DomNodeList &nodes ) const;
+    private:
+        DomNodeList nodesInAxis( KDOM::NodeImpl *context ) const;
+        DomNodeList nodeTestMatches( const DomNodeList &nodes ) const;
 
-		AxisType m_axis;
-		DomString m_nodeTest;
-		QValueList<Predicate *> m_predicates;
+        AxisType m_axis;
+        DomString m_nodeTest;
+        QValueList<Predicate *> m_predicates;
 };
 
 #endif // STEP_H

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,51 +35,51 @@
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatioImpl;
-	class SVGAnimatedLengthImpl;
-	class SVGDocumentImpl;
+    class SVGAnimatedPreserveAspectRatioImpl;
+    class SVGAnimatedLengthImpl;
+    class SVGDocumentImpl;
 
-	class SVGImageElementImpl : public SVGStyledElementImpl,
-								public SVGTestsImpl,
-								public SVGLangSpaceImpl,
-								public SVGExternalResourcesRequiredImpl,
-								public SVGTransformableImpl,
-								public SVGURIReferenceImpl,
-								public KDOM::CachedObjectClient
-	{
-	public:
-		SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGImageElementImpl();
+    class SVGImageElementImpl : public SVGStyledElementImpl,
+                                public SVGTestsImpl,
+                                public SVGLangSpaceImpl,
+                                public SVGExternalResourcesRequiredImpl,
+                                public SVGTransformableImpl,
+                                public SVGURIReferenceImpl,
+                                public KDOM::CachedObjectClient
+    {
+    public:
+        SVGImageElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGImageElementImpl();
 
-		// 'SVGImageElement' functions
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
+        // 'SVGImageElement' functions
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
+        SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual void notifyFinished(KDOM::CachedObject *finishedObj);
+        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
-	protected:
-		virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
+    protected:
+        virtual void finalizeStyle(KCanvasRenderingStyle *style, bool needFillStrokeUpdate = true);
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
-		mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
-		mutable KDOM::CachedDocument *m_cachedDocument;
-		KDOM::CachedImage *m_cachedImage;
-		SVGDocumentImpl *m_svgDoc;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
+        mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
+        mutable KDOM::CachedDocument *m_cachedDocument;
+        KDOM::CachedImage *m_cachedImage;
+        SVGDocumentImpl *m_svgDoc;
+    };
 };
 
 #endif

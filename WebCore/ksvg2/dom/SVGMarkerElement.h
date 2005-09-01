@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,50 +31,50 @@
 
 namespace KSVG
 {
-	class SVGAngle;
-	class SVGAnimatedAngle;
-	class SVGAnimatedLength;
-	class SVGAnimatedEnumeration;
-	class SVGMarkerElementImpl;
+    class SVGAngle;
+    class SVGAnimatedAngle;
+    class SVGAnimatedLength;
+    class SVGAnimatedEnumeration;
+    class SVGMarkerElementImpl;
 
-	class SVGMarkerElement : public SVGElement,
-							 public SVGLangSpace,
-							 public SVGExternalResourcesRequired,
-							 public SVGStylable,
-							 public SVGFitToViewBox
-	{
-	public:
-		SVGMarkerElement();
-		explicit SVGMarkerElement(SVGMarkerElementImpl *i);
-		SVGMarkerElement(const SVGMarkerElement &other);
-		SVGMarkerElement(const KDOM::Node &other);
-		virtual ~SVGMarkerElement();
+    class SVGMarkerElement : public SVGElement,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGStylable,
+                             public SVGFitToViewBox
+    {
+    public:
+        SVGMarkerElement();
+        explicit SVGMarkerElement(SVGMarkerElementImpl *i);
+        SVGMarkerElement(const SVGMarkerElement &other);
+        SVGMarkerElement(const KDOM::Node &other);
+        virtual ~SVGMarkerElement();
 
-		// Operators
-		SVGMarkerElement &operator=(const SVGMarkerElement &other);
-		SVGMarkerElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGMarkerElement &operator=(const SVGMarkerElement &other);
+        SVGMarkerElement &operator=(const KDOM::Node &other);
 
-		// 'SVGMarkerElement' functions
-		SVGAnimatedLength refX() const;
-		SVGAnimatedLength refY() const;
-		SVGAnimatedEnumeration markerUnits() const;
-		SVGAnimatedLength markerWidth() const;
-		SVGAnimatedLength markerHeight() const;
-		SVGAnimatedEnumeration orientType() const;
-		SVGAnimatedAngle orientAngle() const;
+        // 'SVGMarkerElement' functions
+        SVGAnimatedLength refX() const;
+        SVGAnimatedLength refY() const;
+        SVGAnimatedEnumeration markerUnits() const;
+        SVGAnimatedLength markerWidth() const;
+        SVGAnimatedLength markerHeight() const;
+        SVGAnimatedEnumeration orientType() const;
+        SVGAnimatedAngle orientAngle() const;
 
-		void setOrientToAuto();
-		void setOrientToAngle(const SVGAngle &angle);
+        void setOrientToAuto();
+        void setOrientToAngle(const SVGAngle &angle);
 
-		// Internal
-		KSVG_INTERNAL(SVGMarkerElement)
+        // Internal
+        KSVG_INTERNAL(SVGMarkerElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGMarkerElementProto)

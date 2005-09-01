@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,33 +35,33 @@ using namespace KSVG;
 
 /*
 @begin SVGEllipseElement::s_hashTable 5
- cx		SVGEllipseElementConstants::Cx		DontDelete|ReadOnly
- cy		SVGEllipseElementConstants::Cy		DontDelete|ReadOnly
- rx		SVGEllipseElementConstants::Rx		DontDelete|ReadOnly
- ry		SVGEllipseElementConstants::Ry		DontDelete|ReadOnly
+ cx        SVGEllipseElementConstants::Cx        DontDelete|ReadOnly
+ cy        SVGEllipseElementConstants::Cy        DontDelete|ReadOnly
+ rx        SVGEllipseElementConstants::Rx        DontDelete|ReadOnly
+ ry        SVGEllipseElementConstants::Ry        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGEllipseElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGEllipseElementConstants::Cx:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, cx());
-		case SVGEllipseElementConstants::Cy:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, cy());
-		case SVGEllipseElementConstants::Rx:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, rx());
-		case SVGEllipseElementConstants::Ry:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, ry());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGEllipseElementConstants::Cx:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, cx());
+        case SVGEllipseElementConstants::Cy:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, cy());
+        case SVGEllipseElementConstants::Rx:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, rx());
+        case SVGEllipseElementConstants::Ry:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, ry());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -79,12 +79,12 @@ SVGEllipseElement::SVGEllipseElement(SVGEllipseElementImpl *i) : SVGElement(i), 
 
 SVGEllipseElement::SVGEllipseElement(const SVGEllipseElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGEllipseElement::SVGEllipseElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGEllipseElement::~SVGEllipseElement()
@@ -93,71 +93,71 @@ SVGEllipseElement::~SVGEllipseElement()
 
 SVGEllipseElement &SVGEllipseElement::operator=(const SVGEllipseElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGEllipseElement &SVGEllipseElement::operator=(const KDOM::Node &other)
 {
-	SVGEllipseElementImpl *ohandle = static_cast<SVGEllipseElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGEllipseElementImpl *ohandle = static_cast<SVGEllipseElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGEllipseElement::cx() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->cx());
+    return SVGAnimatedLength(impl->cx());
 }
 
 SVGAnimatedLength SVGEllipseElement::cy() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->cy());
+    return SVGAnimatedLength(impl->cy());
 }
 
 SVGAnimatedLength SVGEllipseElement::rx() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->rx());
+    return SVGAnimatedLength(impl->rx());
 }
 
 SVGAnimatedLength SVGEllipseElement::ry() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->ry());
+    return SVGAnimatedLength(impl->ry());
 }
 
 // vim:ts=4:noet

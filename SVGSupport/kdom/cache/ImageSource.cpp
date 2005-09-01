@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -30,56 +30,56 @@
 using namespace KDOM;
 
 ImageSource::ImageSource(QByteArray buf) : buffer(buf), pos(0),
-										   eof(false), rew(false), rewable(true)
+                                           eof(false), rew(false), rewable(true)
 {
 }
 
 int ImageSource::readyToSend()
 {
-	if(eof && pos == buffer.size())
-		return -1;
+    if(eof && pos == buffer.size())
+        return -1;
 
-	return buffer.size() - pos;
+    return buffer.size() - pos;
 }
 
 void ImageSource::sendTo(QDataSink *sink, int n)
 {
-	sink->receive((const unsigned char *) &buffer.at(pos), n);
+    sink->receive((const unsigned char *) &buffer.at(pos), n);
 
-	pos += n;
+    pos += n;
 
-	// buffer is no longer needed
-	if(eof && pos == buffer.size() && !rewable)
-	{
-		buffer.resize(0);
-		pos = 0;
-	}
+    // buffer is no longer needed
+    if(eof && pos == buffer.size() && !rewable)
+    {
+        buffer.resize(0);
+        pos = 0;
+    }
 }
 
 void ImageSource::rewind()
 {
-	pos = 0;
-	
-	if(!rew)
-		QDataSource::rewind();
-	else
-		ready();
+    pos = 0;
+    
+    if(!rew)
+        QDataSource::rewind();
+    else
+        ready();
 }
 
 void ImageSource::cleanBuffer()
 {
-	// if we need to be able to rewind, buffer is needed
-	if(rew)
-		return;
+    // if we need to be able to rewind, buffer is needed
+    if(rew)
+        return;
 
-	rewable = false;
+    rewable = false;
 
-	// buffer is no longer needed
-	if(eof && pos == buffer.size())
-	{
-		buffer.resize(0);
-		pos = 0;
-	}
+    // buffer is no longer needed
+    if(eof && pos == buffer.size())
+    {
+        buffer.resize(0);
+        pos = 0;
+    }
 }
 
 // vim:ts=4:noet

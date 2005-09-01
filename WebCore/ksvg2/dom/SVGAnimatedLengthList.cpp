@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,27 +36,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedLengthList::s_hashTable 3
- baseVal	SVGAnimatedLengthListConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedLengthListConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedLengthListConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedLengthListConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedLengthList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedLengthListConstants::BaseVal:
-			return KDOM::safe_cache<SVGLengthList>(exec, baseVal());
-		case SVGAnimatedLengthListConstants::AnimVal:
-			return KDOM::safe_cache<SVGLengthList>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedLengthListConstants::BaseVal:
+            return KDOM::safe_cache<SVGLengthList>(exec, baseVal());
+        case SVGAnimatedLengthListConstants::AnimVal:
+            return KDOM::safe_cache<SVGLengthList>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedLengthList SVGAnimatedLengthList::null;
@@ -67,31 +67,31 @@ SVGAnimatedLengthList::SVGAnimatedLengthList() : impl(0)
 
 SVGAnimatedLengthList::SVGAnimatedLengthList(SVGAnimatedLengthListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedLengthList::SVGAnimatedLengthList(const SVGAnimatedLengthList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedLengthList)
 
 SVGLengthList SVGAnimatedLengthList::baseVal() const
 {
-	if(!impl)
-		return SVGLengthList::null;
+    if(!impl)
+        return SVGLengthList::null;
 
-	return SVGLengthList(impl->baseVal());
+    return SVGLengthList(impl->baseVal());
 }
 
 SVGLengthList SVGAnimatedLengthList::animVal() const
 {
-	if(!impl)
-		return SVGLengthList::null;
+    if(!impl)
+        return SVGLengthList::null;
 
-	return SVGLengthList(impl->animVal());
+    return SVGLengthList(impl->animVal());
 }
 
 // vim:ts=4:noet

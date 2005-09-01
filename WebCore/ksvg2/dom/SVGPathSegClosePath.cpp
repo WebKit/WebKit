@@ -37,12 +37,12 @@ SVGPathSegClosePath::SVGPathSegClosePath(SVGPathSegClosePathImpl *other) : SVGPa
 
 SVGPathSegClosePath::SVGPathSegClosePath(const SVGPathSegClosePath &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegClosePath::SVGPathSegClosePath(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegClosePath::~SVGPathSegClosePath()
@@ -51,8 +51,8 @@ SVGPathSegClosePath::~SVGPathSegClosePath()
 
 SVGPathSegClosePath &SVGPathSegClosePath::operator=(const SVGPathSegClosePath &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegClosePath, PATHSEG_CLOSEPATH)

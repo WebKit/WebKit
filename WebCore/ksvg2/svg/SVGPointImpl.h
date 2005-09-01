@@ -29,31 +29,31 @@ class QPoint;
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGStyledElementImpl;
-	class SVGPointImpl : public KDOM::Shared
-	{
-	public:
-		SVGPointImpl(const SVGStyledElementImpl *context = 0);
-		SVGPointImpl(float x, float y, const SVGStyledElementImpl *context = 0);
-		SVGPointImpl(const QPoint &p, const SVGStyledElementImpl *context = 0);
-		~SVGPointImpl();
+    class SVGMatrixImpl;
+    class SVGStyledElementImpl;
+    class SVGPointImpl : public KDOM::Shared
+    {
+    public:
+        SVGPointImpl(const SVGStyledElementImpl *context = 0);
+        SVGPointImpl(float x, float y, const SVGStyledElementImpl *context = 0);
+        SVGPointImpl(const QPoint &p, const SVGStyledElementImpl *context = 0);
+        ~SVGPointImpl();
 
-		// 'SVGPoint' functions
-		void setX(float x);
-		float x() const;
+        // 'SVGPoint' functions
+        void setX(float x);
+        float x() const;
 
-		void setY(float y);
-		float y() const;
+        void setY(float y);
+        float y() const;
 
-		SVGPointImpl *matrixTransform(SVGMatrixImpl *matrix);
+        SVGPointImpl *matrixTransform(SVGMatrixImpl *matrix);
 
-	private:
-		float m_x;
-		float m_y;
+    private:
+        float m_x;
+        float m_y;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,42 +27,42 @@
 
 namespace KDOM
 {
-	class CSSStyleSheetImpl;
+    class CSSStyleSheetImpl;
 };
 
 namespace KSVG
 {
-	class SVGStyleElementImpl : public SVGElementImpl
-	{
-	public:
-		SVGStyleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGStyleElementImpl();
+    class SVGStyleElementImpl : public SVGElementImpl
+    {
+    public:
+        SVGStyleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGStyleElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual void childrenChanged();
+        // Derived from: 'ElementImpl'
+        virtual void childrenChanged();
 
-		// 'SVGStyleElement' functions
-		KDOM::DOMStringImpl *xmlspace() const;
-		void setXmlspace(KDOM::DOMStringImpl *);
+        // 'SVGStyleElement' functions
+        KDOM::DOMStringImpl *xmlspace() const;
+        void setXmlspace(KDOM::DOMStringImpl *);
 
-		KDOM::DOMStringImpl *type() const;
-		void setType(KDOM::DOMStringImpl *);
+        KDOM::DOMStringImpl *type() const;
+        void setType(KDOM::DOMStringImpl *);
 
-		KDOM::DOMStringImpl *media() const;
-		void setMedia(KDOM::DOMStringImpl *);
+        KDOM::DOMStringImpl *media() const;
+        void setMedia(KDOM::DOMStringImpl *);
 
-		KDOM::DOMStringImpl *title() const;
-		void setTitle(KDOM::DOMStringImpl *);
+        KDOM::DOMStringImpl *title() const;
+        void setTitle(KDOM::DOMStringImpl *);
 
-		KDOM::CSSStyleSheetImpl *sheet();
+        KDOM::CSSStyleSheetImpl *sheet();
 
-		// Internal
-		bool isLoading() const;
+        // Internal
+        bool isLoading() const;
 
-	protected:
-		KDOM::CSSStyleSheetImpl *m_sheet;
-		bool m_loading;
-	};
+    protected:
+        KDOM::CSSStyleSheetImpl *m_sheet;
+        bool m_loading;
+    };
 };
 
 #endif

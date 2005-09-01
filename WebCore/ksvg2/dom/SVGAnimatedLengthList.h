@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,36 +27,36 @@
 
 namespace KSVG
 {
-	class SVGLengthList;
-	class SVGAnimatedLengthListImpl;
-	class SVGAnimatedLengthList
-	{
-	public:
-		SVGAnimatedLengthList();
-		explicit SVGAnimatedLengthList(SVGAnimatedLengthListImpl *i);
-		SVGAnimatedLengthList(const SVGAnimatedLengthList &other);
-		virtual ~SVGAnimatedLengthList();
+    class SVGLengthList;
+    class SVGAnimatedLengthListImpl;
+    class SVGAnimatedLengthList
+    {
+    public:
+        SVGAnimatedLengthList();
+        explicit SVGAnimatedLengthList(SVGAnimatedLengthListImpl *i);
+        SVGAnimatedLengthList(const SVGAnimatedLengthList &other);
+        virtual ~SVGAnimatedLengthList();
 
-		// Operators
-		SVGAnimatedLengthList &operator=(const SVGAnimatedLengthList &other);
-		bool operator==(const SVGAnimatedLengthList &other) const;
-		bool operator!=(const SVGAnimatedLengthList &other) const;
+        // Operators
+        SVGAnimatedLengthList &operator=(const SVGAnimatedLengthList &other);
+        bool operator==(const SVGAnimatedLengthList &other) const;
+        bool operator!=(const SVGAnimatedLengthList &other) const;
 
-		// 'SVGAnimatedLengthList' functions
-		SVGLengthList baseVal() const;
-		SVGLengthList animVal() const;
+        // 'SVGAnimatedLengthList' functions
+        SVGLengthList baseVal() const;
+        SVGLengthList animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedLengthList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedLengthList)
 
-	protected:
-		SVGAnimatedLengthListImpl *impl;
+    protected:
+        SVGAnimatedLengthListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

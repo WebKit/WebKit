@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,15 +27,15 @@
 
 namespace KDOM
 {
-	class LSSerializerFilterImpl : public NodeFilterImpl
-	{
-	public:
-		LSSerializerFilterImpl();
-		virtual ~LSSerializerFilterImpl();
+    class LSSerializerFilterImpl : public NodeFilterImpl
+    {
+    public:
+        LSSerializerFilterImpl();
+        virtual ~LSSerializerFilterImpl();
 
-		// 'LSSerializerFilterImpl' functions
-		unsigned long whatToShow() const;
-	};
+        // 'LSSerializerFilterImpl' functions
+        unsigned long whatToShow() const;
+    };
 };
 
 #endif

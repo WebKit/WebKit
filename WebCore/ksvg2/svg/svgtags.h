@@ -8,8 +8,8 @@
 
 namespace KSVG
 {
-	const char *getTagName(unsigned short id);
-	int getTagID(const char *tagStr, int len);
+    const char *getTagName(unsigned short id);
+    int getTagID(const char *tagStr, int len);
 };
 
 #define ID_A 1

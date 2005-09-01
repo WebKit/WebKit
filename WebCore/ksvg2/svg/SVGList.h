@@ -29,64 +29,64 @@
 
 namespace KSVG
 {
-	template<class T>
-	class SVGList : public KDOM::DOMList<T>
-	{
-	public:
-		SVGList(const SVGStyledElementImpl *context = 0)
-		: KDOM::DOMList<T>(), m_context(context) {}
+    template<class T>
+    class SVGList : public KDOM::DOMList<T>
+    {
+    public:
+        SVGList(const SVGStyledElementImpl *context = 0)
+        : KDOM::DOMList<T>(), m_context(context) {}
 
-		void clear()
-		{
-			KDOM::DOMList<T>::clear();
+        void clear()
+        {
+            KDOM::DOMList<T>::clear();
 
-			if(m_context)
-				m_context->notifyAttributeChange();
-		}
+            if(m_context)
+                m_context->notifyAttributeChange();
+        }
 
-		T *insertItemBefore(T *newItem, unsigned int index)
-		{
-			T *ret = KDOM::DOMList<T>::insertItemBefore(newItem, index);
+        T *insertItemBefore(T *newItem, unsigned int index)
+        {
+            T *ret = KDOM::DOMList<T>::insertItemBefore(newItem, index);
 
-			if(m_context)
-				m_context->notifyAttributeChange();
+            if(m_context)
+                m_context->notifyAttributeChange();
 
-			return ret;
-		}
+            return ret;
+        }
 
-		T *replaceItem(T *newItem, unsigned int index)
-		{
-			T *ret = KDOM::DOMList<T>::replaceItem(newItem, index);
+        T *replaceItem(T *newItem, unsigned int index)
+        {
+            T *ret = KDOM::DOMList<T>::replaceItem(newItem, index);
 
-			if(m_context)
-				m_context->notifyAttributeChange();
+            if(m_context)
+                m_context->notifyAttributeChange();
 
-			return ret;
-		}
+            return ret;
+        }
 
-		T *removeItem(unsigned int index)
-		{
-			T *ret = KDOM::DOMList<T>::removeItem(index);
+        T *removeItem(unsigned int index)
+        {
+            T *ret = KDOM::DOMList<T>::removeItem(index);
 
-			if(m_context)
-				m_context->notifyAttributeChange();
+            if(m_context)
+                m_context->notifyAttributeChange();
 
-			return ret;
-		}
+            return ret;
+        }
 
-		T *appendItem(T *newItem)
-		{
-			T *ret = KDOM::DOMList<T>::appendItem(newItem);
+        T *appendItem(T *newItem)
+        {
+            T *ret = KDOM::DOMList<T>::appendItem(newItem);
 
-			if(m_context)
-				m_context->notifyAttributeChange();
+            if(m_context)
+                m_context->notifyAttributeChange();
 
-			return ret;
-		}
+            return ret;
+        }
 
-	protected:
-		const SVGStyledElementImpl *m_context;
-	};
+    protected:
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

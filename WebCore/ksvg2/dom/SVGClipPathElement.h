@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,38 +33,38 @@
 
 namespace KSVG
 {
-	class SVGAnimatedEnumeration;
-	class SVGClipPathElementImpl;
-	class SVGClipPathElement : public SVGElement,
-						   public SVGTests,
-						   public SVGLangSpace,
-						   public SVGExternalResourcesRequired,
-						   public SVGStylable,
-						   public SVGTransformable
-	{
-	public:
-		SVGClipPathElement();
-		explicit SVGClipPathElement(SVGClipPathElementImpl *i);
-		SVGClipPathElement(const SVGClipPathElement &other);
-		SVGClipPathElement(const KDOM::Node &other);
-		virtual ~SVGClipPathElement();
+    class SVGAnimatedEnumeration;
+    class SVGClipPathElementImpl;
+    class SVGClipPathElement : public SVGElement,
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired,
+                           public SVGStylable,
+                           public SVGTransformable
+    {
+    public:
+        SVGClipPathElement();
+        explicit SVGClipPathElement(SVGClipPathElementImpl *i);
+        SVGClipPathElement(const SVGClipPathElement &other);
+        SVGClipPathElement(const KDOM::Node &other);
+        virtual ~SVGClipPathElement();
 
-		// Operators
-		SVGClipPathElement &operator=(const SVGClipPathElement &other);
-		SVGClipPathElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGClipPathElement &operator=(const SVGClipPathElement &other);
+        SVGClipPathElement &operator=(const KDOM::Node &other);
 
-		// 'SVGClipPathElement' functions
-		SVGAnimatedEnumeration clipPathUnits() const;
+        // 'SVGClipPathElement' functions
+        SVGAnimatedEnumeration clipPathUnits() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGClipPathElement)
+        // Internal
+        KSVG_INTERNAL(SVGClipPathElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,47 +27,47 @@
 
 namespace KSVG
 {
-	class SVGPathSegLinetoAbsImpl : public SVGPathSegImpl
-	{ 
-	public:
-		SVGPathSegLinetoAbsImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegLinetoAbsImpl();
+    class SVGPathSegLinetoAbsImpl : public SVGPathSegImpl
+    { 
+    public:
+        SVGPathSegLinetoAbsImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegLinetoAbsImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("L"); }
-		virtual QString toString() const { return QString::fromLatin1("L %1 %2").arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_ABS; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("L"); }
+        virtual QString toString() const { return QString::fromLatin1("L %1 %2").arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-	private:
-		double m_x;
-		double m_y;
-	};
+    private:
+        double m_x;
+        double m_y;
+    };
 
-	class SVGPathSegLinetoRelImpl : public SVGPathSegImpl
-	{ 
-	public:
-		SVGPathSegLinetoRelImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegLinetoRelImpl();
+    class SVGPathSegLinetoRelImpl : public SVGPathSegImpl
+    { 
+    public:
+        SVGPathSegLinetoRelImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegLinetoRelImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_LINETO_REL; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("l"); }
-		virtual QString toString() const { return QString::fromLatin1("l %1 %2").arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_LINETO_REL; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("l"); }
+        virtual QString toString() const { return QString::fromLatin1("l %1 %2").arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-	private:
-		double m_x;
-		double m_y;
-	};
+    private:
+        double m_x;
+        double m_y;
+    };
 };
 
 #endif

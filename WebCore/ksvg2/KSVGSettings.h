@@ -27,44 +27,44 @@
 
 namespace KSVG
 {
-	/**
-	 * Settings for the SVG view.
-	 */
-	class KSVGSettings : public KDOM::KDOMSettings
-	{
-	public:
-		KSVGSettings();
-		KSVGSettings(const KSVGSettings &other);
-		virtual ~KSVGSettings();
+    /**
+     * Settings for the SVG view.
+     */
+    class KSVGSettings : public KDOM::KDOMSettings
+    {
+    public:
+        KSVGSettings();
+        KSVGSettings(const KSVGSettings &other);
+        virtual ~KSVGSettings();
 
-		/**
-		 * Called by constructor and reparseConfiguration
-		 */
-		virtual void init();
+        /**
+         * Called by constructor and reparseConfiguration
+         */
+        virtual void init();
 
-		/** Read settings from @p config.
-		 * @param reset if true, settings are always set; if false,
-		 *  settings are only set if the config file has a corresponding key.
-		 */
-		virtual void init(KConfig *config, bool reset = true);
+        /** Read settings from @p config.
+         * @param reset if true, settings are always set; if false,
+         *  settings are only set if the config file has a corresponding key.
+         */
+        virtual void init(KConfig *config, bool reset = true);
 
-		// Settings
-		QString parsingBackend() const;
-		void setParsingBackend(const QString &backend) const;
+        // Settings
+        QString parsingBackend() const;
+        void setParsingBackend(const QString &backend) const;
 
-		QString renderingBackend() const;
-		void setRenderingBackend(const QString &backend) const;
+        QString renderingBackend() const;
+        void setRenderingBackend(const QString &backend) const;
 
-		bool fontKerning() const;
-		void setFontKerning(bool value);
-		
-		bool progressiveRendering() const;
-		void setProgressiveRendering(bool value);
+        bool fontKerning() const;
+        void setFontKerning(bool value);
+        
+        bool progressiveRendering() const;
+        void setProgressiveRendering(bool value);
 
-	private:
-		class Private;
-		Private *d;
-	};
+    private:
+        class Private;
+        Private *d;
+    };
 }
 
 #endif

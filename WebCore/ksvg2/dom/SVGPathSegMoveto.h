@@ -27,67 +27,67 @@
 
 namespace KSVG
 {
-	class SVGPathSegMovetoAbsImpl;
-	class SVGPathSegMovetoAbs : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegMovetoAbs();
-		explicit SVGPathSegMovetoAbs(SVGPathSegMovetoAbsImpl *);
-		SVGPathSegMovetoAbs(const SVGPathSegMovetoAbs &);
-		SVGPathSegMovetoAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegMovetoAbs();
+    class SVGPathSegMovetoAbsImpl;
+    class SVGPathSegMovetoAbs : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegMovetoAbs();
+        explicit SVGPathSegMovetoAbs(SVGPathSegMovetoAbsImpl *);
+        SVGPathSegMovetoAbs(const SVGPathSegMovetoAbs &);
+        SVGPathSegMovetoAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegMovetoAbs();
 
-		// Operators
-		SVGPathSegMovetoAbs &operator=(const SVGPathSegMovetoAbs &other);
-		SVGPathSegMovetoAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegMovetoAbs &operator=(const SVGPathSegMovetoAbs &other);
+        SVGPathSegMovetoAbs &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegMovetoAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegMovetoAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegMovetoRelImpl;
-	class SVGPathSegMovetoRel : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegMovetoRel();
-		explicit SVGPathSegMovetoRel(SVGPathSegMovetoRelImpl *);
-		SVGPathSegMovetoRel(const SVGPathSegMovetoRel &);
-		SVGPathSegMovetoRel(const SVGPathSeg &);
-		virtual ~SVGPathSegMovetoRel();
+    class SVGPathSegMovetoRelImpl;
+    class SVGPathSegMovetoRel : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegMovetoRel();
+        explicit SVGPathSegMovetoRel(SVGPathSegMovetoRelImpl *);
+        SVGPathSegMovetoRel(const SVGPathSegMovetoRel &);
+        SVGPathSegMovetoRel(const SVGPathSeg &);
+        virtual ~SVGPathSegMovetoRel();
 
-		// Operators
-		SVGPathSegMovetoRel &operator=(const SVGPathSegMovetoRel &other);
-		SVGPathSegMovetoRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegMovetoRel &operator=(const SVGPathSegMovetoRel &other);
+        SVGPathSegMovetoRel &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegMovetoRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegMovetoRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

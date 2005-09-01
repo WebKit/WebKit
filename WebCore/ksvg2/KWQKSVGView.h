@@ -35,7 +35,7 @@ namespace KSVG
 
     class KSVGView : public QPaintDevice, 
         public KDOM::KDOMView {
-    	Q_OBJECT
+        Q_OBJECT
     public:
         KSVGView(KSVGPart *part);
         virtual ~KSVGView();

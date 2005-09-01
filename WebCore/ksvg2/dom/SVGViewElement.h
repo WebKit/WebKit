@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,37 +30,37 @@
 
 namespace KSVG
 {
-	class SVGStringList;
-	class SVGViewElementImpl;
+    class SVGStringList;
+    class SVGViewElementImpl;
 
-	class SVGViewElement : public SVGElement,
-						   public SVGExternalResourcesRequired,
-						   public SVGFitToViewBox,
-						   public SVGZoomAndPan
-	{
-	public:
-		SVGViewElement();
-		explicit SVGViewElement(SVGViewElementImpl *i);
-		SVGViewElement(const SVGViewElement &other);
-		SVGViewElement(const KDOM::Node &other);
-		virtual ~SVGViewElement();
+    class SVGViewElement : public SVGElement,
+                           public SVGExternalResourcesRequired,
+                           public SVGFitToViewBox,
+                           public SVGZoomAndPan
+    {
+    public:
+        SVGViewElement();
+        explicit SVGViewElement(SVGViewElementImpl *i);
+        SVGViewElement(const SVGViewElement &other);
+        SVGViewElement(const KDOM::Node &other);
+        virtual ~SVGViewElement();
 
-		// Operators
-		SVGViewElement &operator=(const SVGViewElement &other);
-		SVGViewElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGViewElement &operator=(const SVGViewElement &other);
+        SVGViewElement &operator=(const KDOM::Node &other);
 
-		// 'SVGViewElement' functions
-		SVGStringList viewTarget() const;
+        // 'SVGViewElement' functions
+        SVGStringList viewTarget() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGViewElement)
+        // Internal
+        KSVG_INTERNAL(SVGViewElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

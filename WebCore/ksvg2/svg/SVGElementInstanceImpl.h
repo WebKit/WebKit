@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,26 +27,26 @@
 
 namespace KSVG
 {
-	class SVGElementImpl;
-	class SVGUseElementImpl;
-	class SVGElementInstanceListImpl;
-	class SVGElementInstanceImpl : public KDOM::EventTargetImpl
-	{
-	public:
-		SVGElementInstanceImpl();
-		virtual ~SVGElementInstanceImpl();
+    class SVGElementImpl;
+    class SVGUseElementImpl;
+    class SVGElementInstanceListImpl;
+    class SVGElementInstanceImpl : public KDOM::EventTargetImpl
+    {
+    public:
+        SVGElementInstanceImpl();
+        virtual ~SVGElementInstanceImpl();
 
-		// 'SVGElementInstance' functions
-		SVGElementImpl *correspondingElement() const;
-		SVGUseElementImpl *correspondingUseElement() const;
+        // 'SVGElementInstance' functions
+        SVGElementImpl *correspondingElement() const;
+        SVGUseElementImpl *correspondingUseElement() const;
 
-		SVGElementInstanceImpl *parentNode() const;
-		SVGElementInstanceListImpl *childNodes() const;
-		SVGElementInstanceImpl *previousSibling() const;
-		SVGElementInstanceImpl *nextSibling() const;
-		SVGElementInstanceImpl *firstChild() const;
-		SVGElementInstanceImpl *lastChild() const;
-	};
+        SVGElementInstanceImpl *parentNode() const;
+        SVGElementInstanceListImpl *childNodes() const;
+        SVGElementInstanceImpl *previousSibling() const;
+        SVGElementInstanceImpl *nextSibling() const;
+        SVGElementInstanceImpl *firstChild() const;
+        SVGElementInstanceImpl *lastChild() const;
+    };
 };
 
 #endif

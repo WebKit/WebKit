@@ -28,12 +28,12 @@ using namespace KDOM;
 using namespace KDOM::XPath;
 
 XPathExceptionImpl::XPathExceptionImpl( unsigned short code )
-	: m_code( code )
+    : m_code( code )
 {
 }
 
 unsigned short XPathExceptionImpl::code() const
 {
-	return m_code;
+    return m_code;
 }
 

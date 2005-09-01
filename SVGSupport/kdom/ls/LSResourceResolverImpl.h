@@ -26,20 +26,20 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class LSInputImpl;
+    class DOMString;
+    class LSInputImpl;
 
-	class LSResourceResolverImpl : public Shared
-	{
-	public:
-		LSResourceResolverImpl();
-		virtual ~LSResourceResolverImpl();
+    class LSResourceResolverImpl : public Shared
+    {
+    public:
+        LSResourceResolverImpl();
+        virtual ~LSResourceResolverImpl();
 
-		LSInputImpl *resolveResource(const DOMString &type, const DOMString &ns,
-									 const DOMString &publicId, const DOMString &systemId,
-									 const DOMString &baseURI);
+        LSInputImpl *resolveResource(const DOMString &type, const DOMString &ns,
+                                     const DOMString &publicId, const DOMString &systemId,
+                                     const DOMString &baseURI);
 
-	};
+    };
 };
 
 #endif

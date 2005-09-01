@@ -28,14 +28,14 @@
 
 namespace KSVG
 {
-	class SVGNumberListImpl : public SVGList<SVGNumberImpl>
-	{
-	public:
-		SVGNumberListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGNumberListImpl();
+    class SVGNumberListImpl : public SVGList<SVGNumberImpl>
+    {
+    public:
+        SVGNumberListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGNumberListImpl();
 
-		void parse(const QString &value, const SVGStyledElementImpl *context = 0);
-	};
+        void parse(const QString &value, const SVGStyledElementImpl *context = 0);
+    };
 };
 
 #endif

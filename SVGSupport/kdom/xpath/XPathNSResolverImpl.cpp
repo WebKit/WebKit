@@ -30,12 +30,12 @@ using namespace KDOM;
 using namespace XPath;
 
 XPathNSResolverImpl::XPathNSResolverImpl( NodeImpl *node )
-	: m_node( node )
+    : m_node( node )
 {
 }
 
 DOMStringImpl *XPathNSResolverImpl::lookupNamespaceURI( DOMStringImpl *prefix )
 {
-	return m_node->lookupNamespaceURI( prefix );
+    return m_node->lookupNamespaceURI( prefix );
 }
 

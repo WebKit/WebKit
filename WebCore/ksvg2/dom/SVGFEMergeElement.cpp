@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,22 +36,22 @@ using namespace KSVG;
 
 /*
 @begin SVGFEMergeElement::s_hashTable 5
- dummy		SVGFEMergeElementConstants::Dummy		DontDelete|ReadOnly
+ dummy        SVGFEMergeElementConstants::Dummy        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEMergeElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -69,12 +69,12 @@ SVGFEMergeElement::SVGFEMergeElement(SVGFEMergeElementImpl *i) : SVGElement(i), 
 
 SVGFEMergeElement::SVGFEMergeElement(const SVGFEMergeElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEMergeElement::SVGFEMergeElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEMergeElement::~SVGFEMergeElement()
@@ -83,31 +83,31 @@ SVGFEMergeElement::~SVGFEMergeElement()
 
 SVGFEMergeElement &SVGFEMergeElement::operator=(const SVGFEMergeElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEMergeElement &SVGFEMergeElement::operator=(const KDOM::Node &other)
 {
-	SVGFEMergeElementImpl *ohandle = static_cast<SVGFEMergeElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEMergeElementImpl *ohandle = static_cast<SVGFEMergeElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

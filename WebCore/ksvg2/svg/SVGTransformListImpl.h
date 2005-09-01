@@ -28,18 +28,18 @@
 
 namespace KSVG
 {
-	class SVGTransformListImpl : public SVGList<SVGTransformImpl>
-	{
-	public:
-		SVGTransformListImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGTransformListImpl();
+    class SVGTransformListImpl : public SVGList<SVGTransformImpl>
+    {
+    public:
+        SVGTransformListImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGTransformListImpl();
 
-		SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix) const;
-		SVGTransformImpl *consolidate();
+        SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix) const;
+        SVGTransformImpl *consolidate();
 
-		// Internal use only
-		SVGTransformImpl *concatenate() const;
-	};
+        // Internal use only
+        SVGTransformImpl *concatenate() const;
+    };
 };
 
 #endif

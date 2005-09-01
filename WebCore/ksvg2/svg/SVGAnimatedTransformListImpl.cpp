@@ -35,16 +35,16 @@ SVGAnimatedTransformListImpl::~SVGAnimatedTransformListImpl()
 
 SVGTransformListImpl *SVGAnimatedTransformListImpl::create() const
 {
-	return new SVGTransformListImpl(m_context);
+    return new SVGTransformListImpl(m_context);
 }
 
 void SVGAnimatedTransformListImpl::assign(SVGTransformListImpl *src, SVGTransformListImpl *dst) const
 {
-	if(!src || !dst)
-		return;
-	
-	// Use SVGList<SVGTransformImpl>::operator=
-	*dst = *src;
+    if(!src || !dst)
+        return;
+    
+    // Use SVGList<SVGTransformImpl>::operator=
+    *dst = *src;
 }
 
 // vim:ts=4:noet

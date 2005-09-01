@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,35 +34,35 @@ using namespace KDOM::XPointer;
 
 XMLNSSchemeImpl::XMLNSSchemeImpl(DOMStringImpl *schemeDataImpl, NBCImpl *nbc) : NBCImpl(nbc)
 {
-	DOMString schemeData(schemeDataImpl);
+    DOMString schemeData(schemeDataImpl);
 
-	/* Note:
-	 * "[...] if scheme data in a pointer part with the xmlns() scheme does not conform to 
-	 * the syntax defined in this section the pointer part does not contribute an entry to 
-	 * the namespace binding context."
-	 *
-	 * It doesn't say syntax errors should be flagged as errors, only not added.
-	 */
-	const int delimiter = schemeData.find('=');
-	const unsigned int length = schemeData.length();
+    /* Note:
+     * "[...] if scheme data in a pointer part with the xmlns() scheme does not conform to 
+     * the syntax defined in this section the pointer part does not contribute an entry to 
+     * the namespace binding context."
+     *
+     * It doesn't say syntax errors should be flagged as errors, only not added.
+     */
+    const int delimiter = schemeData.find('=');
+    const unsigned int length = schemeData.length();
 
-	if(delimiter == -1)
-		return;
+    if(delimiter == -1)
+        return;
 
-	const QString qSchemeData = schemeData.string();
+    const QString qSchemeData = schemeData.string();
 
-	DOMString prefix = qSchemeData.mid(0, delimiter).stripWhiteSpace();
-	DOMString ns = qSchemeData.mid(delimiter + 1, length).stripWhiteSpace();
+    DOMString prefix = qSchemeData.mid(0, delimiter).stripWhiteSpace();
+    DOMString ns = qSchemeData.mid(delimiter + 1, length).stripWhiteSpace();
 
-	if(!Helper::IsValidNCName(prefix.handle()))
-		return;
+    if(!Helper::IsValidNCName(prefix.handle()))
+        return;
 
-	/* The ns string is simply xpointer-escaped unicode chars, and any wrong escaping would
-	 * be caught by the builder, so no syntax checking needed. */
+    /* The ns string is simply xpointer-escaped unicode chars, and any wrong escaping would
+     * be caught by the builder, so no syntax checking needed. */
 
-	/* NBCImpl does the xml/xmlns checks. */
-	
-	addMapping(prefix.handle(), ns.handle());
+    /* NBCImpl does the xml/xmlns checks. */
+    
+    addMapping(prefix.handle(), ns.handle());
 }
 
 XMLNSSchemeImpl::~XMLNSSchemeImpl()

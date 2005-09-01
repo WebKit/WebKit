@@ -28,51 +28,51 @@
 
 namespace KDOM
 {
-	class KDOMView;
-	class KDOMSettings;
-	class DocumentImpl;
+    class KDOMView;
+    class KDOMSettings;
+    class DocumentImpl;
 
-	class KDOMPart : public KParts::ReadOnlyPart
-	{
-	public:
-		/**
-		 * Constructs a new KDOMPart.
-		 *
-		 */
-		KDOMPart(KDOMView *view, QObject *parent = 0, const char *name = 0);
-		virtual ~KDOMPart();
+    class KDOMPart : public KParts::ReadOnlyPart
+    {
+    public:
+        /**
+         * Constructs a new KDOMPart.
+         *
+         */
+        KDOMPart(KDOMView *view, QObject *parent = 0, const char *name = 0);
+        virtual ~KDOMPart();
 
-		/**
-		 * Returns a pointer to the internal Document implementation.
-		 */
-		DocumentImpl *document() const;
-	
-		/**
-		 * Assign a DocumentImpl pointer to the part.
-		 */	
-		void setDocument(DocumentImpl *doc);
+        /**
+         * Returns a pointer to the internal Document implementation.
+         */
+        DocumentImpl *document() const;
+    
+        /**
+         * Assign a DocumentImpl pointer to the part.
+         */    
+        void setDocument(DocumentImpl *doc);
 
-		/**
-		 * Returns a pointer to the DOM document view.
-		 */
-		KDOMView *view() const;
+        /**
+         * Returns a pointer to the DOM document view.
+         */
+        KDOMView *view() const;
 
-		/**
-		 * Returns a pointer to the DOM document settings.
-		 */
-		KDOMSettings *settings() const;
+        /**
+         * Returns a pointer to the DOM document settings.
+         */
+        KDOMSettings *settings() const;
 
-		virtual bool urlSelected(const QString &url, int button, int state,
-								 const QString &_target,
-								 KParts::URLArgs args = KParts::URLArgs());
-	protected:
-		void setView(KDOMView *view);
-		void setSettings(KDOMSettings *settings);
+        virtual bool urlSelected(const QString &url, int button, int state,
+                                 const QString &_target,
+                                 KParts::URLArgs args = KParts::URLArgs());
+    protected:
+        void setView(KDOMView *view);
+        void setSettings(KDOMSettings *settings);
 
-	private:
-		struct Private;
-		Private *d;
-	};
+    private:
+        struct Private;
+        Private *d;
+    };
 };
 
 #endif

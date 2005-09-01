@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -30,41 +30,41 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
+    class DOMStringImpl;
 
-	class EntityImpl : public NodeBaseImpl
-	{
-	public:
-		EntityImpl(DocumentPtr *doc, DOMStringImpl *name);
-		EntityImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
-		EntityImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
-		virtual ~EntityImpl();
+    class EntityImpl : public NodeBaseImpl
+    {
+    public:
+        EntityImpl(DocumentPtr *doc, DOMStringImpl *name);
+        EntityImpl(DocumentPtr *doc, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
+        EntityImpl(DocumentPtr *doc, DOMStringImpl *name, DOMStringImpl *publicId, DOMStringImpl *systemId, DOMStringImpl *notationName);
+        virtual ~EntityImpl();
 
-		// 'Entity' functions
-		virtual DOMStringImpl *publicId() const;
-		virtual DOMStringImpl *systemId() const;
-		virtual DOMStringImpl *notationName() const;
+        // 'Entity' functions
+        virtual DOMStringImpl *publicId() const;
+        virtual DOMStringImpl *systemId() const;
+        virtual DOMStringImpl *notationName() const;
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		DOMStringImpl *inputEncoding() const;
-		DOMStringImpl *xmlEncoding() const;
-		DOMStringImpl *xmlVersion() const;
+        DOMStringImpl *inputEncoding() const;
+        DOMStringImpl *xmlEncoding() const;
+        DOMStringImpl *xmlVersion() const;
 
-		// Internal
-		virtual bool childTypeAllowed(unsigned short type) const;
+        // Internal
+        virtual bool childTypeAllowed(unsigned short type) const;
 
-	protected:
-		DOMStringImpl *m_name;
-		DOMStringImpl *m_publicId; 
-		DOMStringImpl *m_systemId; 
-		DOMStringImpl *m_notationName;
-		DOMStringImpl *m_inputEncoding;
-		DOMStringImpl *m_xmlEncoding;
-		DOMStringImpl *m_xmlVersion;
-	};
+    protected:
+        DOMStringImpl *m_name;
+        DOMStringImpl *m_publicId; 
+        DOMStringImpl *m_systemId; 
+        DOMStringImpl *m_notationName;
+        DOMStringImpl *m_inputEncoding;
+        DOMStringImpl *m_xmlEncoding;
+        DOMStringImpl *m_xmlVersion;
+    };
 };
 
 #endif

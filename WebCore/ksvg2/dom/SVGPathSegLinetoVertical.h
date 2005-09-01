@@ -27,61 +27,61 @@
 
 namespace KSVG
 {
-	class SVGPathSegLinetoVerticalAbsImpl;
-	class SVGPathSegLinetoVerticalAbs : public SVGPathSeg
-	{
-	public:
-		SVGPathSegLinetoVerticalAbs();
-		explicit SVGPathSegLinetoVerticalAbs(SVGPathSegLinetoVerticalAbsImpl *);
-		SVGPathSegLinetoVerticalAbs(const SVGPathSegLinetoVerticalAbs &);
-		SVGPathSegLinetoVerticalAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegLinetoVerticalAbs();
+    class SVGPathSegLinetoVerticalAbsImpl;
+    class SVGPathSegLinetoVerticalAbs : public SVGPathSeg
+    {
+    public:
+        SVGPathSegLinetoVerticalAbs();
+        explicit SVGPathSegLinetoVerticalAbs(SVGPathSegLinetoVerticalAbsImpl *);
+        SVGPathSegLinetoVerticalAbs(const SVGPathSegLinetoVerticalAbs &);
+        SVGPathSegLinetoVerticalAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegLinetoVerticalAbs();
 
-		// Operators
-		SVGPathSegLinetoVerticalAbs &operator=(const SVGPathSegLinetoVerticalAbs &other);
-		SVGPathSegLinetoVerticalAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegLinetoVerticalAbs &operator=(const SVGPathSegLinetoVerticalAbs &other);
+        SVGPathSegLinetoVerticalAbs &operator=(const SVGPathSeg &other);
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegLinetoVerticalAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegLinetoVerticalAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegLinetoVerticalRelImpl;
-	class SVGPathSegLinetoVerticalRel : public SVGPathSeg
-	{
-	public:
-		SVGPathSegLinetoVerticalRel();
-		explicit SVGPathSegLinetoVerticalRel(SVGPathSegLinetoVerticalRelImpl *);
-		SVGPathSegLinetoVerticalRel(const SVGPathSegLinetoVerticalRel &);
-		SVGPathSegLinetoVerticalRel(const SVGPathSeg &);
-		virtual ~SVGPathSegLinetoVerticalRel();
+    class SVGPathSegLinetoVerticalRelImpl;
+    class SVGPathSegLinetoVerticalRel : public SVGPathSeg
+    {
+    public:
+        SVGPathSegLinetoVerticalRel();
+        explicit SVGPathSegLinetoVerticalRel(SVGPathSegLinetoVerticalRelImpl *);
+        SVGPathSegLinetoVerticalRel(const SVGPathSegLinetoVerticalRel &);
+        SVGPathSegLinetoVerticalRel(const SVGPathSeg &);
+        virtual ~SVGPathSegLinetoVerticalRel();
 
-		// Operators
-		SVGPathSegLinetoVerticalRel &operator=(const SVGPathSegLinetoVerticalRel &other);
-		SVGPathSegLinetoVerticalRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegLinetoVerticalRel &operator=(const SVGPathSegLinetoVerticalRel &other);
+        SVGPathSegLinetoVerticalRel &operator=(const SVGPathSeg &other);
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegLinetoVerticalRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegLinetoVerticalRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

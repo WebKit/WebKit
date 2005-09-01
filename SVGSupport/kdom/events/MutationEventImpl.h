@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,32 +27,32 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class MutationEventImpl : public EventImpl
-	{
-	public:
-		MutationEventImpl(EventImplType identifier);
-		virtual ~MutationEventImpl();
+    class NodeImpl;
+    class MutationEventImpl : public EventImpl
+    {
+    public:
+        MutationEventImpl(EventImplType identifier);
+        virtual ~MutationEventImpl();
 
-		NodeImpl *relatedNode() const;
-		
-		DOMStringImpl *prevValue() const;
-		DOMStringImpl *newValue() const;
-		DOMStringImpl *attrName() const;
+        NodeImpl *relatedNode() const;
+        
+        DOMStringImpl *prevValue() const;
+        DOMStringImpl *newValue() const;
+        DOMStringImpl *attrName() const;
 
-		unsigned short attrChange() const;
+        unsigned short attrChange() const;
 
-		void initMutationEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, DOMStringImpl *prevValueArg, DOMStringImpl *newValueArg, DOMStringImpl *attrNameArg, unsigned short attrChangeArg);
+        void initMutationEvent(DOMStringImpl *typeArg, bool canBubbleArg, bool cancelableArg, NodeImpl *relatedNodeArg, DOMStringImpl *prevValueArg, DOMStringImpl *newValueArg, DOMStringImpl *attrNameArg, unsigned short attrChangeArg);
 
-	private:
-		DOMStringImpl *m_prevValue;
-		DOMStringImpl *m_newValue;
-		DOMStringImpl *m_attrName;
+    private:
+        DOMStringImpl *m_prevValue;
+        DOMStringImpl *m_newValue;
+        DOMStringImpl *m_attrName;
 
-		unsigned short m_attrChange;
+        unsigned short m_attrChange;
 
-		NodeImpl *m_relatedNode;
-	};
+        NodeImpl *m_relatedNode;
+    };
 };
 
 #endif

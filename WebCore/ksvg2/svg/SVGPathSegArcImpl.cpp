@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,8 +28,8 @@ using namespace KSVG;
 SVGPathSegArcAbsImpl::SVGPathSegArcAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
-	m_largeArcFlag = m_sweepFlag = false;
+    m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
+    m_largeArcFlag = m_sweepFlag = false;
 }
 
 SVGPathSegArcAbsImpl::~SVGPathSegArcAbsImpl()
@@ -38,93 +38,93 @@ SVGPathSegArcAbsImpl::~SVGPathSegArcAbsImpl()
 
 void SVGPathSegArcAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegArcAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegArcAbsImpl::setR1(double r1)
 {
-	m_r1 = r1;
+    m_r1 = r1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcAbsImpl::r1() const
 {
-	return m_r1;
+    return m_r1;
 }
 
 void SVGPathSegArcAbsImpl::setR2(double r2)
 {
-	m_r2 = r2;
+    m_r2 = r2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcAbsImpl::r2() const
 {
-	return m_r2;
+    return m_r2;
 }
 
 void SVGPathSegArcAbsImpl::setAngle(double angle)
 {
-	m_angle = angle;
+    m_angle = angle;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcAbsImpl::angle() const
 {
-	return m_angle;
+    return m_angle;
 }
 
 void SVGPathSegArcAbsImpl::setLargeArcFlag(bool largeArcFlag)
 {
-	m_largeArcFlag = largeArcFlag;
+    m_largeArcFlag = largeArcFlag;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 bool SVGPathSegArcAbsImpl::largeArcFlag() const
 {
-	return m_largeArcFlag;
+    return m_largeArcFlag;
 }
 
 void SVGPathSegArcAbsImpl::setSweepFlag(bool sweepFlag)
 {
-	m_sweepFlag = sweepFlag;
+    m_sweepFlag = sweepFlag;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 bool SVGPathSegArcAbsImpl::sweepFlag() const
 {
-	return m_sweepFlag;
+    return m_sweepFlag;
 }
 
 
@@ -132,8 +132,8 @@ bool SVGPathSegArcAbsImpl::sweepFlag() const
 SVGPathSegArcRelImpl::SVGPathSegArcRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
-	m_largeArcFlag = m_sweepFlag = false;
+    m_x = m_y = m_r1 = m_r2 = m_angle = 0.0;
+    m_largeArcFlag = m_sweepFlag = false;
 }
 
 SVGPathSegArcRelImpl::~SVGPathSegArcRelImpl()
@@ -142,93 +142,93 @@ SVGPathSegArcRelImpl::~SVGPathSegArcRelImpl()
 
 void SVGPathSegArcRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegArcRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegArcRelImpl::setR1(double r1)
 {
-	m_r1 = r1;
+    m_r1 = r1;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcRelImpl::r1() const
 {
-	return m_r1;
+    return m_r1;
 }
 
 void SVGPathSegArcRelImpl::setR2(double r2)
 {
-	m_r2 = r2;
+    m_r2 = r2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcRelImpl::r2() const
 {
-	return m_r2;
+    return m_r2;
 }
 
 void SVGPathSegArcRelImpl::setAngle(double angle)
 {
-	m_angle = angle;
+    m_angle = angle;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegArcRelImpl::angle() const
 {
-	return m_angle;
+    return m_angle;
 }
 
 void SVGPathSegArcRelImpl::setLargeArcFlag(bool largeArcFlag)
 {
-	m_largeArcFlag = largeArcFlag;
+    m_largeArcFlag = largeArcFlag;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 bool SVGPathSegArcRelImpl::largeArcFlag() const
 {
-	return m_largeArcFlag;
+    return m_largeArcFlag;
 }
 
 void SVGPathSegArcRelImpl::setSweepFlag(bool sweepFlag)
 {
-	m_sweepFlag = sweepFlag;
+    m_sweepFlag = sweepFlag;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 bool SVGPathSegArcRelImpl::sweepFlag() const
 {
-	return m_sweepFlag;
+    return m_sweepFlag;
 }
 
 // vim:ts=4:noet

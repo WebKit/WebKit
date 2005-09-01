@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
+    class SVGAnimatedString;
 
-	class SVGURIReferenceImpl;
-	class SVGURIReference
-	{
-	public:
-		SVGURIReference();
-		explicit SVGURIReference(SVGURIReferenceImpl *i);
-		SVGURIReference(const SVGURIReference &other);
-		virtual ~SVGURIReference();
+    class SVGURIReferenceImpl;
+    class SVGURIReference
+    {
+    public:
+        SVGURIReference();
+        explicit SVGURIReference(SVGURIReferenceImpl *i);
+        SVGURIReference(const SVGURIReference &other);
+        virtual ~SVGURIReference();
 
-		// Operators
-		SVGURIReference &operator=(const SVGURIReference &other);
-		SVGURIReference &operator=(SVGURIReferenceImpl *other);
+        // Operators
+        SVGURIReference &operator=(const SVGURIReference &other);
+        SVGURIReference &operator=(SVGURIReferenceImpl *other);
 
-		// 'SVGURIReference' functions
-		SVGAnimatedString href() const;
+        // 'SVGURIReference' functions
+        SVGAnimatedString href() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGURIReference)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGURIReference)
 
-	protected:
-		SVGURIReferenceImpl *impl;
+    protected:
+        SVGURIReferenceImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

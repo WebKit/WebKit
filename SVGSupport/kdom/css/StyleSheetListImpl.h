@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,22 +29,22 @@
 
 namespace KDOM
 {
-	class StyleSheetImpl;
-	class StyleSheetListImpl : public Shared
-	{
-	public:
-		StyleSheetListImpl();
-		virtual ~StyleSheetListImpl();
+    class StyleSheetImpl;
+    class StyleSheetListImpl : public Shared
+    {
+    public:
+        StyleSheetListImpl();
+        virtual ~StyleSheetListImpl();
 
-		// 'StyleSheetList' functions
-		unsigned long length() const;
-		StyleSheetImpl *item(unsigned long index) const;
+        // 'StyleSheetList' functions
+        unsigned long length() const;
+        StyleSheetImpl *item(unsigned long index) const;
 
-		void add(StyleSheetImpl *s);
-		void remove(StyleSheetImpl *s);
+        void add(StyleSheetImpl *s);
+        void remove(StyleSheetImpl *s);
 
-		QPtrList<StyleSheetImpl> styleSheets;
-	};
+        QPtrList<StyleSheetImpl> styleSheets;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,89 +32,89 @@
 
 namespace KSVG
 {
-	typedef struct
-	{
-		bool enabled : 1;
-		SVGAnimationElementImpl *animation;
-	} SVGNotificationStruct;
-	
-	typedef QValueList<SVGNotificationStruct> SVGNotifyList;
+    typedef struct
+    {
+        bool enabled : 1;
+        SVGAnimationElementImpl *animation;
+    } SVGNotificationStruct;
+    
+    typedef QValueList<SVGNotificationStruct> SVGNotifyList;
 
-	class TimeScheduler;
-	class SVGTimer
-	{
-	public:
-		SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot);
-		~SVGTimer();
+    class TimeScheduler;
+    class SVGTimer
+    {
+    public:
+        SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot);
+        ~SVGTimer();
 
-		bool operator==(const QTimer *timer);
-		const QTimer *qtimer() const;
+        bool operator==(const QTimer *timer);
+        const QTimer *qtimer() const;
 
-		void start(QObject *receiver, const char *member);
-		void stop();
+        void start(QObject *receiver, const char *member);
+        void stop();
 
-		bool isActive() const;
+        bool isActive() const;
 
-		unsigned int ms() const;
-		bool singleShot() const;
+        unsigned int ms() const;
+        bool singleShot() const;
 
-		void notifyAll();
-		void addNotify(SVGAnimationElementImpl *element, bool enabled = false);
-		void removeNotify(SVGAnimationElementImpl *element);
+        void notifyAll();
+        void addNotify(SVGAnimationElementImpl *element, bool enabled = false);
+        void removeNotify(SVGAnimationElementImpl *element);
 
-	private:
-		double calculateTimePercentage(double elapsed, double start, double end, double duration, double repeations);
+    private:
+        double calculateTimePercentage(double elapsed, double start, double end, double duration, double repeations);
 
-		unsigned int m_ms;
-		bool m_invoked, m_singleShot;
+        unsigned int m_ms;
+        bool m_invoked, m_singleShot;
 
-		QTimer *m_timer;
-		TimeScheduler *m_scheduler;
-		SVGNotifyList m_notifyList;
-	};
+        QTimer *m_timer;
+        TimeScheduler *m_scheduler;
+        SVGNotifyList m_notifyList;
+    };
 
-	typedef QValueList<SVGTimer *> SVGTimerList;
+    typedef QValueList<SVGTimer *> SVGTimerList;
 
-	class SVGDocumentImpl;
-	class TimeScheduler : public QObject
-	{
-	Q_OBJECT
-	public:
-		TimeScheduler(SVGDocumentImpl *doc);
-		~TimeScheduler();
+    class SVGDocumentImpl;
+    class TimeScheduler : public QObject
+    {
+    Q_OBJECT
+    public:
+        TimeScheduler(SVGDocumentImpl *doc);
+        ~TimeScheduler();
 
-		// Adds singleShot Timers
-		void addTimer(SVGAnimationElementImpl *element, unsigned int ms);
+        // Adds singleShot Timers
+        void addTimer(SVGAnimationElementImpl *element, unsigned int ms);
 
-		// (Dis-)Connects to interval timer with ms = 'staticTimerInterval'
-		void connectIntervalTimer(SVGAnimationElementImpl *element);
-		void disconnectIntervalTimer(SVGAnimationElementImpl *element);
+        // (Dis-)Connects to interval timer with ms = 'staticTimerInterval'
+        void connectIntervalTimer(SVGAnimationElementImpl *element);
+        void disconnectIntervalTimer(SVGAnimationElementImpl *element);
 
-		void startAnimations();
-		void toggleAnimations();
-		bool animationsPaused() const;
+        void startAnimations();
+        void toggleAnimations();
+        bool animationsPaused() const;
 
-		// time elapsed in seconds after creation of this object
-		float elapsed() const;
+        // time elapsed in seconds after creation of this object
+        float elapsed() const;
 
-		static const unsigned int staticTimerInterval;
+        static const unsigned int staticTimerInterval;
 
-	private slots:
-		void slotTimerNotify();
+    private slots:
+        void slotTimerNotify();
 
-	private: // Helper
-		friend class SVGTimer;
-		SVGDocumentImpl *document() const { return m_document; }
+    private: // Helper
+        friend class SVGTimer;
+        SVGDocumentImpl *document() const { return m_document; }
 
-	private:
-		int m_savedTime;
-		QTime m_creationTime;
-		
-		SVGTimerList m_timerList;
-		
-		SVGTimer *m_intervalTimer;
-		SVGDocumentImpl *m_document;
-	};
+    private:
+        int m_savedTime;
+        QTime m_creationTime;
+        
+        SVGTimerList m_timerList;
+        
+        SVGTimer *m_intervalTimer;
+        SVGDocumentImpl *m_document;
+    };
 };
 
 #endif

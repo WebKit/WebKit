@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,41 +33,41 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGEllipseElementImpl;
-	class SVGEllipseElement : public SVGElement,
-						     public SVGTests,
-						     public SVGLangSpace,
-						     public SVGExternalResourcesRequired,
-							 public SVGStylable,
-						     public SVGTransformable
-	{
-	public:
-		SVGEllipseElement();
-		explicit SVGEllipseElement(SVGEllipseElementImpl *i);
-		SVGEllipseElement(const SVGEllipseElement &other);
-		SVGEllipseElement(const KDOM::Node &other);
-		virtual ~SVGEllipseElement();
+    class SVGAnimatedLength;
+    class SVGEllipseElementImpl;
+    class SVGEllipseElement : public SVGElement,
+                             public SVGTests,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGStylable,
+                             public SVGTransformable
+    {
+    public:
+        SVGEllipseElement();
+        explicit SVGEllipseElement(SVGEllipseElementImpl *i);
+        SVGEllipseElement(const SVGEllipseElement &other);
+        SVGEllipseElement(const KDOM::Node &other);
+        virtual ~SVGEllipseElement();
 
-		// Operators
-		SVGEllipseElement &operator=(const SVGEllipseElement &other);
-		SVGEllipseElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGEllipseElement &operator=(const SVGEllipseElement &other);
+        SVGEllipseElement &operator=(const KDOM::Node &other);
 
-		// 'SVGEllipseElement' functions
-		SVGAnimatedLength cx() const;
-		SVGAnimatedLength cy() const;
-		SVGAnimatedLength rx() const;
-		SVGAnimatedLength ry() const;
+        // 'SVGEllipseElement' functions
+        SVGAnimatedLength cx() const;
+        SVGAnimatedLength cy() const;
+        SVGAnimatedLength rx() const;
+        SVGAnimatedLength ry() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGEllipseElement)
+        // Internal
+        KSVG_INTERNAL(SVGEllipseElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

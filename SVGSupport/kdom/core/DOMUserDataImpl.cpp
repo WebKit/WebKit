@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,12 +29,12 @@ const bool True = true;
 
 DOMUserDataImpl::DOMUserDataImpl() : Shared()
 {
-	m_userData = 0;
+    m_userData = 0;
 }
 
 DOMUserDataImpl::DOMUserDataImpl(bool b) : Shared()
 {
-	m_userData = b ? (void *)&True : (void *)&False;
+    m_userData = b ? (void *)&True : (void *)&False;
 }
 
 DOMUserDataImpl::~DOMUserDataImpl()
@@ -43,12 +43,12 @@ DOMUserDataImpl::~DOMUserDataImpl()
 
 void DOMUserDataImpl::setUserData(void *userData)
 {
-	m_userData = userData;
+    m_userData = userData;
 }
 
 void *DOMUserDataImpl::userData() const
 {
-	return m_userData;
+    return m_userData;
 }
 
 // vim:ts=4:noet

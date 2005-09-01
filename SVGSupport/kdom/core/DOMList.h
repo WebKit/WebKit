@@ -28,96 +28,96 @@
 
 namespace KDOM
 {
-	template<class T>
-	class DOMList : public Shared
-	{
-	public:
-		DOMList() : Shared() { m_impl.setAutoDelete(false); }
-		DOMList(const DOMList &other) { *this = other; }
-		~DOMList() { clear(); }
+    template<class T>
+    class DOMList : public Shared
+    {
+    public:
+        DOMList() : Shared() { m_impl.setAutoDelete(false); }
+        DOMList(const DOMList &other) { *this = other; }
+        ~DOMList() { clear(); }
 
-		DOMList<T> &operator=(const DOMList<T> &other)
-		{
-			// Clear own list
-			clear();
+        DOMList<T> &operator=(const DOMList<T> &other)
+        {
+            // Clear own list
+            clear();
 
-			// Clone other's elements and append them
-			DOMList<T> &get = const_cast<DOMList<T> &>(other);
-			unsigned int nr = other.numberOfItems();
-			for(unsigned int i = 0; i < nr; i++)
-			{
-				T *obj = new T(*get.getItem(i));
-				obj->ref();
+            // Clone other's elements and append them
+            DOMList<T> &get = const_cast<DOMList<T> &>(other);
+            unsigned int nr = other.numberOfItems();
+            for(unsigned int i = 0; i < nr; i++)
+            {
+                T *obj = new T(*get.getItem(i));
+                obj->ref();
 
-				appendItem(obj);
-			}
+                appendItem(obj);
+            }
 
-			return *this;
-		}
+            return *this;
+        }
 
-		unsigned int numberOfItems() const { return m_impl.count(); }
+        unsigned int numberOfItems() const { return m_impl.count(); }
 
-		virtual void clear()
-		{
-			for(unsigned int i = 0; i < numberOfItems(); i++)
-				getItem(i)->deref();
+        virtual void clear()
+        {
+            for(unsigned int i = 0; i < numberOfItems(); i++)
+                getItem(i)->deref();
 
-			m_impl.clear();
-		}
+            m_impl.clear();
+        }
 
-		T *initialize(T *newItem)
-		{
-			clear();
-			return appendItem(newItem);
-		}
+        T *initialize(T *newItem)
+        {
+            clear();
+            return appendItem(newItem);
+        }
 
-		T *getFirst() const { return m_impl.getFirst(); }
+        T *getFirst() const { return m_impl.getFirst(); }
 
-		T *getLast() const { return m_impl.getLast(); }
+        T *getLast() const { return m_impl.getLast(); }
 
-		T *getItem(unsigned int index) { return m_impl.at(index); }
-		const T *getItem(unsigned int index) const { return const_cast<DOMList<T> *>(this)->m_impl.at(index); }
+        T *getItem(unsigned int index) { return m_impl.at(index); }
+        const T *getItem(unsigned int index) const { return const_cast<DOMList<T> *>(this)->m_impl.at(index); }
 
-		virtual T *insertItemBefore(T *newItem, unsigned int index)
-		{
-			m_impl.insert(index, newItem);
-			return newItem;
-		}
+        virtual T *insertItemBefore(T *newItem, unsigned int index)
+        {
+            m_impl.insert(index, newItem);
+            return newItem;
+        }
 
-		virtual T *replaceItem(T *newItem, unsigned int index)
-		{
-			m_impl.take(index);
-			m_impl.insert(index, newItem);
-			return newItem;
-		}
+        virtual T *replaceItem(T *newItem, unsigned int index)
+        {
+            m_impl.take(index);
+            m_impl.insert(index, newItem);
+            return newItem;
+        }
 
-		virtual T *removeItem(unsigned int index)
-		{
-			return m_impl.take(index);
-		}
+        virtual T *removeItem(unsigned int index)
+        {
+            return m_impl.take(index);
+        }
 
-		virtual void removeItem(const T *item)
-		{
-			m_impl.remove(item);
-		}
+        virtual void removeItem(const T *item)
+        {
+            m_impl.remove(item);
+        }
 
-		virtual T *appendItem(T *newItem)
-		{
-			m_impl.append(newItem);
-			return newItem;
-		}
+        virtual T *appendItem(T *newItem)
+        {
+            m_impl.append(newItem);
+            return newItem;
+        }
 
-		virtual bool contains(const T *item)
-		{
-			if(m_impl.findRef(item) != -1)
-				return true;
+        virtual bool contains(const T *item)
+        {
+            if(m_impl.findRef(item) != -1)
+                return true;
 
-			return false;
-		}
+            return false;
+        }
 
-	private:
-		QPtrList<T> m_impl;
-	};
+    private:
+        QPtrList<T> m_impl;
+    };
 };
 
 #endif

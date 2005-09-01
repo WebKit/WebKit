@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,34 +31,34 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGCircleElementImpl : public SVGStyledElementImpl,
-								 public SVGTestsImpl,
-								 public SVGLangSpaceImpl,
-							  	 public SVGExternalResourcesRequiredImpl,
-								 public SVGTransformableImpl
-	{
-	public:
-		SVGCircleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGCircleElementImpl();
+    class SVGAnimatedLengthImpl;
+    class SVGCircleElementImpl : public SVGStyledElementImpl,
+                                 public SVGTestsImpl,
+                                 public SVGLangSpaceImpl,
+                                   public SVGExternalResourcesRequiredImpl,
+                                 public SVGTransformableImpl
+    {
+    public:
+        SVGCircleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGCircleElementImpl();
 
-		// 'SVGCircleElement' functions
-		SVGAnimatedLengthImpl *cx() const;
-		SVGAnimatedLengthImpl *cy() const;
-		SVGAnimatedLengthImpl *r() const;
+        // 'SVGCircleElement' functions
+        SVGAnimatedLengthImpl *cx() const;
+        SVGAnimatedLengthImpl *cy() const;
+        SVGAnimatedLengthImpl *r() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCPathDataList toPathData() const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCPathDataList toPathData() const;
 
-		virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
+        virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_cx;
-		mutable SVGAnimatedLengthImpl *m_cy;
-		mutable SVGAnimatedLengthImpl *m_r;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_cx;
+        mutable SVGAnimatedLengthImpl *m_cy;
+        mutable SVGAnimatedLengthImpl *m_r;
+    };
 };
 
 #endif

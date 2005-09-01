@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGZoomAndPanImpl;
+    class SVGZoomAndPanImpl;
 
-	class SVGZoomAndPan 
-	{ 
-	public:
-		SVGZoomAndPan();
-		SVGZoomAndPan(const SVGZoomAndPan &other);
-		explicit SVGZoomAndPan(SVGZoomAndPanImpl *i);
-		virtual ~SVGZoomAndPan();
+    class SVGZoomAndPan 
+    { 
+    public:
+        SVGZoomAndPan();
+        SVGZoomAndPan(const SVGZoomAndPan &other);
+        explicit SVGZoomAndPan(SVGZoomAndPanImpl *i);
+        virtual ~SVGZoomAndPan();
 
-		// Operators
-		SVGZoomAndPan &operator=(const SVGZoomAndPan &other);    
-		SVGZoomAndPan &operator=(SVGZoomAndPanImpl *other);    
+        // Operators
+        SVGZoomAndPan &operator=(const SVGZoomAndPan &other);    
+        SVGZoomAndPan &operator=(SVGZoomAndPanImpl *other);    
 
-		// 'SVGZoomAndPan' functions
-		unsigned short zoomAndPan() const;
-		void setZoomAndPan(unsigned short zoomAndPan) const;
+        // 'SVGZoomAndPan' functions
+        unsigned short zoomAndPan() const;
+        void setZoomAndPan(unsigned short zoomAndPan) const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGZoomAndPan)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGZoomAndPan)
 
-	private:
-		SVGZoomAndPanImpl *impl;
+    private:
+        SVGZoomAndPanImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

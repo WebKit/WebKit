@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -35,36 +35,36 @@ using namespace KSVG;
 
 /*
 @begin SVGZoomEvent::s_hashTable 7
- zoomRectScreen		SVGZoomEventConstants::ZoomRectScreen		DontDelete|ReadOnly
- previousScale		SVGZoomEventConstants::PreviousScale		DontDelete|ReadOnly
- previousTranslate	SVGZoomEventConstants::PreviousTranslate	DontDelete|ReadOnly
- newScale			SVGZoomEventConstants::NewScale				DontDelete|ReadOnly
- newTranslate		SVGZoomEventConstants::NewTranslate			DontDelete|ReadOnly
+ zoomRectScreen        SVGZoomEventConstants::ZoomRectScreen        DontDelete|ReadOnly
+ previousScale        SVGZoomEventConstants::PreviousScale        DontDelete|ReadOnly
+ previousTranslate    SVGZoomEventConstants::PreviousTranslate    DontDelete|ReadOnly
+ newScale            SVGZoomEventConstants::NewScale                DontDelete|ReadOnly
+ newTranslate        SVGZoomEventConstants::NewTranslate            DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGZoomEvent::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGZoomEventConstants::ZoomRectScreen:
-			return KDOM::safe_cache<SVGRect>(exec, zoomRectScreen());
-		case SVGZoomEventConstants::PreviousTranslate:
-			return KDOM::safe_cache<SVGPoint>(exec, previousTranslate());
-		case SVGZoomEventConstants::PreviousScale:
-			return Number(previousScale());
-		case SVGZoomEventConstants::NewTranslate:
-			return KDOM::safe_cache<SVGPoint>(exec, newTranslate());
-		case SVGZoomEventConstants::NewScale:
-			return Number(newScale());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGZoomEventConstants::ZoomRectScreen:
+            return KDOM::safe_cache<SVGRect>(exec, zoomRectScreen());
+        case SVGZoomEventConstants::PreviousTranslate:
+            return KDOM::safe_cache<SVGPoint>(exec, previousTranslate());
+        case SVGZoomEventConstants::PreviousScale:
+            return Number(previousScale());
+        case SVGZoomEventConstants::NewTranslate:
+            return KDOM::safe_cache<SVGPoint>(exec, newTranslate());
+        case SVGZoomEventConstants::NewScale:
+            return Number(newScale());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -82,12 +82,12 @@ SVGZoomEvent::SVGZoomEvent(SVGZoomEventImpl *i) : KDOM::UIEvent(i)
 
 SVGZoomEvent::SVGZoomEvent(const SVGZoomEvent &other) : KDOM::UIEvent()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGZoomEvent::SVGZoomEvent(const KDOM::Event &other) : KDOM::UIEvent()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGZoomEvent::~SVGZoomEvent()
@@ -96,50 +96,50 @@ SVGZoomEvent::~SVGZoomEvent()
 
 SVGZoomEvent &SVGZoomEvent::operator=(const SVGZoomEvent &other)
 {
-	KDOM::Event::operator=(other);
-	return *this;
+    KDOM::Event::operator=(other);
+    return *this;
 }
 
 KDOM_EVENT_DERIVED_ASSIGN_OP(SVGZoomEvent, Event, KDOM::TypeLastEvent)
 
 SVGRect SVGZoomEvent::zoomRectScreen() const
 {
-	if(!d)
-		return SVGRect::null;
+    if(!d)
+        return SVGRect::null;
 
-	return SVGRect(impl->zoomRectScreen());
+    return SVGRect(impl->zoomRectScreen());
 }
 
 float SVGZoomEvent::previousScale() const
 {
-	if(!d)
-		return 1.;
+    if(!d)
+        return 1.;
 
-	return impl->previousScale();
+    return impl->previousScale();
 }
 
 SVGPoint SVGZoomEvent::previousTranslate() const
 {
-	if(!d)
-		return SVGPoint::null;
+    if(!d)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->previousTranslate());
+    return SVGPoint(impl->previousTranslate());
 }
 
 float SVGZoomEvent::newScale() const
 {
-	if(!d)
-		return 1.;
+    if(!d)
+        return 1.;
 
-	return impl->newScale();
+    return impl->newScale();
 }
 
 SVGPoint SVGZoomEvent::newTranslate() const
 {
-	if(!d)
-		return SVGPoint::null;
+    if(!d)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->newTranslate());
+    return SVGPoint(impl->newTranslate());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,34 +28,34 @@
 
 namespace KSVG
 {
-	class SVGAnimatedNumber;
-	class SVGStopElementImpl;
-	class SVGStopElement :  public SVGElement,
-							public SVGStylable
-	{
-	public:
-		SVGStopElement();
-		explicit SVGStopElement(SVGStopElementImpl *i);
-		SVGStopElement(const SVGStopElement &other);
-		SVGStopElement(const KDOM::Node &other);
-		virtual ~SVGStopElement();
+    class SVGAnimatedNumber;
+    class SVGStopElementImpl;
+    class SVGStopElement :  public SVGElement,
+                            public SVGStylable
+    {
+    public:
+        SVGStopElement();
+        explicit SVGStopElement(SVGStopElementImpl *i);
+        SVGStopElement(const SVGStopElement &other);
+        SVGStopElement(const KDOM::Node &other);
+        virtual ~SVGStopElement();
 
-		// Operators
-		SVGStopElement &operator=(const SVGStopElement &other);
-		SVGStopElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGStopElement &operator=(const SVGStopElement &other);
+        SVGStopElement &operator=(const KDOM::Node &other);
 
-		// 'SVGStoplement' functions
-		SVGAnimatedNumber offset() const;
+        // 'SVGStoplement' functions
+        SVGAnimatedNumber offset() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGStopElement)
+        // Internal
+        KSVG_INTERNAL(SVGStopElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

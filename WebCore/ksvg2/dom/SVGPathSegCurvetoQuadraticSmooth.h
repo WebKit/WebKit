@@ -27,67 +27,67 @@
 
 namespace KSVG
 {
-	class SVGPathSegCurvetoQuadraticSmoothAbsImpl;
-	class SVGPathSegCurvetoQuadraticSmoothAbs : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegCurvetoQuadraticSmoothAbs();
-		explicit SVGPathSegCurvetoQuadraticSmoothAbs(SVGPathSegCurvetoQuadraticSmoothAbsImpl *);
-		SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSegCurvetoQuadraticSmoothAbs &);
-		SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegCurvetoQuadraticSmoothAbs();
+    class SVGPathSegCurvetoQuadraticSmoothAbsImpl;
+    class SVGPathSegCurvetoQuadraticSmoothAbs : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegCurvetoQuadraticSmoothAbs();
+        explicit SVGPathSegCurvetoQuadraticSmoothAbs(SVGPathSegCurvetoQuadraticSmoothAbsImpl *);
+        SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSegCurvetoQuadraticSmoothAbs &);
+        SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegCurvetoQuadraticSmoothAbs();
 
-		// Operators
-		SVGPathSegCurvetoQuadraticSmoothAbs &operator=(const SVGPathSegCurvetoQuadraticSmoothAbs &other);
-		SVGPathSegCurvetoQuadraticSmoothAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegCurvetoQuadraticSmoothAbs &operator=(const SVGPathSegCurvetoQuadraticSmoothAbs &other);
+        SVGPathSegCurvetoQuadraticSmoothAbs &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegCurvetoQuadraticSmoothAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegCurvetoQuadraticSmoothAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegCurvetoQuadraticSmoothRelImpl;
-	class SVGPathSegCurvetoQuadraticSmoothRel : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegCurvetoQuadraticSmoothRel();
-		explicit SVGPathSegCurvetoQuadraticSmoothRel(SVGPathSegCurvetoQuadraticSmoothRelImpl *);
-		SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSegCurvetoQuadraticSmoothRel &);
-		SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSeg &);
-		virtual ~SVGPathSegCurvetoQuadraticSmoothRel();
+    class SVGPathSegCurvetoQuadraticSmoothRelImpl;
+    class SVGPathSegCurvetoQuadraticSmoothRel : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegCurvetoQuadraticSmoothRel();
+        explicit SVGPathSegCurvetoQuadraticSmoothRel(SVGPathSegCurvetoQuadraticSmoothRelImpl *);
+        SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSegCurvetoQuadraticSmoothRel &);
+        SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSeg &);
+        virtual ~SVGPathSegCurvetoQuadraticSmoothRel();
 
-		// Operators
-		SVGPathSegCurvetoQuadraticSmoothRel &operator=(const SVGPathSegCurvetoQuadraticSmoothRel &other);
-		SVGPathSegCurvetoQuadraticSmoothRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegCurvetoQuadraticSmoothRel &operator=(const SVGPathSegCurvetoQuadraticSmoothRel &other);
+        SVGPathSegCurvetoQuadraticSmoothRel &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegCurvetoQuadraticSmoothRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegCurvetoQuadraticSmoothRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

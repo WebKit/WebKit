@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,34 +34,34 @@ class KRenderingPaintServerGradient;
 
 namespace KSVG
 {
-	class SVGGradientElementImpl;
-	class SVGAnimatedEnumerationImpl;
-	class SVGAnimatedTransformListImpl;
-	class SVGGradientElementImpl : public SVGStyledElementImpl,
-								   public SVGURIReferenceImpl,
-								   public SVGExternalResourcesRequiredImpl,
-								   public KCanvasResourceListener
-	{
-	public:
-		SVGGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGGradientElementImpl();
+    class SVGGradientElementImpl;
+    class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedTransformListImpl;
+    class SVGGradientElementImpl : public SVGStyledElementImpl,
+                                   public SVGURIReferenceImpl,
+                                   public SVGExternalResourcesRequiredImpl,
+                                   public KCanvasResourceListener
+    {
+    public:
+        SVGGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGGradientElementImpl();
 
-		// 'SVGGradientElement' functions
-		SVGAnimatedEnumerationImpl *gradientUnits() const;
-		SVGAnimatedTransformListImpl *gradientTransform() const;
-		SVGAnimatedEnumerationImpl *spreadMethod() const;
+        // 'SVGGradientElement' functions
+        SVGAnimatedEnumerationImpl *gradientUnits() const;
+        SVGAnimatedTransformListImpl *gradientTransform() const;
+        SVGAnimatedEnumerationImpl *spreadMethod() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
-		virtual void notifyAttributeChange() const;
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void notifyAttributeChange() const;
 
-	protected:
-		virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const = 0;
+    protected:
+        virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const = 0;
 
-	protected:
-		mutable SVGAnimatedEnumerationImpl *m_spreadMethod;
-		mutable SVGAnimatedEnumerationImpl *m_gradientUnits;
-		mutable SVGAnimatedTransformListImpl *m_gradientTransform;
-	};
+    protected:
+        mutable SVGAnimatedEnumerationImpl *m_spreadMethod;
+        mutable SVGAnimatedEnumerationImpl *m_gradientUnits;
+        mutable SVGAnimatedTransformListImpl *m_gradientTransform;
+    };
 };
 
 #endif

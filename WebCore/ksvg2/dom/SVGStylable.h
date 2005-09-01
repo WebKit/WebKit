@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,45 +27,45 @@
 
 namespace KDOM
 {
-	class CSSValue;
-	class DOMString;
-	class CSSStyleDeclaration;
+    class CSSValue;
+    class DOMString;
+    class CSSStyleDeclaration;
 };
 
 namespace KSVG
 {
-	class SVGElement;
-	class SVGStylableImpl;
-	class SVGAnimatedString;
+    class SVGElement;
+    class SVGStylableImpl;
+    class SVGAnimatedString;
 
-	class SVGStylable
-	{
-	public:
-		SVGStylable();
-		explicit SVGStylable(SVGStylableImpl *i);
-		SVGStylable(const SVGStylable &other);
-		virtual ~SVGStylable();
+    class SVGStylable
+    {
+    public:
+        SVGStylable();
+        explicit SVGStylable(SVGStylableImpl *i);
+        SVGStylable(const SVGStylable &other);
+        virtual ~SVGStylable();
 
-		// Operators
-		SVGStylable &operator=(const SVGStylable &other);
-		SVGStylable &operator=(SVGStylableImpl *other);
+        // Operators
+        SVGStylable &operator=(const SVGStylable &other);
+        SVGStylable &operator=(SVGStylableImpl *other);
 
-		// 'SVGStylable' functions
-		SVGAnimatedString className() const;
-		KDOM::CSSStyleDeclaration style() const;
-		KDOM::CSSValue getPresentationAttribute(const KDOM::DOMString &name);
+        // 'SVGStylable' functions
+        SVGAnimatedString className() const;
+        KDOM::CSSStyleDeclaration style() const;
+        KDOM::CSSValue getPresentationAttribute(const KDOM::DOMString &name);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGStylable)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGStylable)
 
-	protected:
-		SVGStylableImpl *impl;
+    protected:
+        SVGStylableImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGStylableProto)

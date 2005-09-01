@@ -39,203 +39,203 @@ static Function *create##Class() { return new Class; }
 
 class Interval
 {
-	public:
-		static const int Inf =-1;
+    public:
+        static const int Inf =-1;
 
-		Interval();
-		Interval( int value );
-		Interval( int min, int max );
+        Interval();
+        Interval( int value );
+        Interval( int min, int max );
 
-		bool contains( int value ) const;
+        bool contains( int value ) const;
 
-		QString asString() const;
+        QString asString() const;
 
-	private:
-		int m_min;
-		int m_max;
+    private:
+        int m_min;
+        int m_max;
 };
 
 class FunLast : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunPosition : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunCount : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunLocalName : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunNamespaceURI : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunName : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunString : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunConcat : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunStartsWith : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunContains : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunSubstringBefore : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunSubstringAfter : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunSubstring : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunStringLength : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunNormalizeSpace : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunTranslate : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunBoolean : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunNot : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunTrue : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunFalse : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunLang : public Function
 {
-	public:
-		virtual bool isConstant() const;
+    public:
+        virtual bool isConstant() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunNumber : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunSum : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunFloor : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunCeiling : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 class FunRound : public Function
 {
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 };
 
 DEFINE_FUNCTION_CREATOR( FunLast )
@@ -271,666 +271,666 @@ DEFINE_FUNCTION_CREATOR( FunRound )
 #undef DEFINE_FUNCTION_CREATOR
 
 Interval::Interval()
-	: m_min( Inf ),
-	m_max( Inf )
+    : m_min( Inf ),
+    m_max( Inf )
 {
 }
 
 Interval::Interval( int value )
-	: m_min( value ),
-	m_max( value )
+    : m_min( value ),
+    m_max( value )
 {
 }
 
 Interval::Interval( int min, int max )
-	: m_min( min ),
-	m_max( max )
+    : m_min( min ),
+    m_max( max )
 {
 }
 
 bool Interval::contains( int value ) const
 {
-	if ( m_min == Inf && m_max == Inf ) {
-		return true;
-	}
+    if ( m_min == Inf && m_max == Inf ) {
+        return true;
+    }
 
-	if ( m_min == Inf ) {
-		return value <= m_max;
-	}
+    if ( m_min == Inf ) {
+        return value <= m_max;
+    }
 
-	if ( m_max == Inf ) {
-		return value >= m_min;
-	}
+    if ( m_max == Inf ) {
+        return value >= m_min;
+    }
 
-	return value >= m_min && value <= m_max;
+    return value >= m_min && value <= m_max;
 }
 
 QString Interval::asString() const
 {
-	QString s = "[";
+    QString s = "[";
 
-	if ( m_min == Inf ) {
-		s += "-Infinity";
-	} else {
-		s += QString::number( m_min );
-	}
+    if ( m_min == Inf ) {
+        s += "-Infinity";
+    } else {
+        s += QString::number( m_min );
+    }
 
-	s += "..";
+    s += "..";
 
-	if ( m_max == Inf ) {
-		s += "Infinity";
-	} else {
-		s += QString::number( m_max );
-	}
+    if ( m_max == Inf ) {
+        s += "Infinity";
+    } else {
+        s += QString::number( m_max );
+    }
 
-	s += "]";
+    s += "]";
 
-	return s;
+    return s;
 }
 
 void Function::setArguments( const QValueList<Expression *> &args )
 {
-	QValueList<Expression *>::ConstIterator it, end = args.end();
-	for ( it = args.begin(); it != end; ++it ) {
-		addSubExpression( *it );
-	}
+    QValueList<Expression *>::ConstIterator it, end = args.end();
+    for ( it = args.begin(); it != end; ++it ) {
+        addSubExpression( *it );
+    }
 }
 
 void Function::setName( const QString &name )
 {
-	m_name = name;
+    m_name = name;
 }
 
 QString Function::dump() const
 {
-	if ( argCount() == 0 ) {
-		return QString( "<function name=\"%1\"/>" ).arg( name() );
-	}
+    if ( argCount() == 0 ) {
+        return QString( "<function name=\"%1\"/>" ).arg( name() );
+    }
 
-	QString s = QString( "<function name=\"%1\">" ).arg( name() );
-	for ( unsigned int i = 0; i < argCount(); ++i ) {
-		s += "<operand>" + arg( i )->dump() + "</operand>";
-	}
-	s += "</function>";
-	return s;
+    QString s = QString( "<function name=\"%1\">" ).arg( name() );
+    for ( unsigned int i = 0; i < argCount(); ++i ) {
+        s += "<operand>" + arg( i )->dump() + "</operand>";
+    }
+    s += "</function>";
+    return s;
 }
 
 
 Expression *Function::arg( int i )
 {
-	return subExpr( i );
+    return subExpr( i );
 }
 
 const Expression *Function::arg( int i ) const
 {
-	return subExpr( i );
+    return subExpr( i );
 }
 
 unsigned int Function::argCount() const
 {
-	return subExprCount();
+    return subExprCount();
 }
 
 QString Function::name() const
 {
-	return m_name;
+    return m_name;
 }
 
 Value FunLast::doEvaluate() const
 {
-	return Value( double( Expression::evaluationContext().size ) );
+    return Value( double( Expression::evaluationContext().size ) );
 }
 
 bool FunLast::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunPosition::doEvaluate() const
 {
-	return Value( double( Expression::evaluationContext().position ) );
+    return Value( double( Expression::evaluationContext().position ) );
 }
 
 bool FunPosition::isConstant() const
 {
-	return false;
+    return false;
 }
 
 bool FunLocalName::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunLocalName::doEvaluate() const
 {
-	NodeImpl *node = 0;
-	if ( argCount() > 0 ) {
-		Value a = arg( 0 )->evaluate();
-		if ( a.isNodeset() ) {
-			node = a.toNodeset().first();
-		}
-	}
+    NodeImpl *node = 0;
+    if ( argCount() > 0 ) {
+        Value a = arg( 0 )->evaluate();
+        if ( a.isNodeset() ) {
+            node = a.toNodeset().first();
+        }
+    }
 
-	if ( !node ) {
-		node = evaluationContext().node;
-	}
+    if ( !node ) {
+        node = evaluationContext().node;
+    }
 
-	return Value( node->localName()->string() );
+    return Value( node->localName()->string() );
 }
 
 bool FunNamespaceURI::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunNamespaceURI::doEvaluate() const
 {
-	NodeImpl *node = 0;
-	if ( argCount() > 0 ) {
-		Value a = arg( 0 )->evaluate();
-		if ( a.isNodeset() ) {
-			node = a.toNodeset().first();
-		}
-	}
+    NodeImpl *node = 0;
+    if ( argCount() > 0 ) {
+        Value a = arg( 0 )->evaluate();
+        if ( a.isNodeset() ) {
+            node = a.toNodeset().first();
+        }
+    }
 
-	if ( !node ) {
-		node = evaluationContext().node;
-	}
+    if ( !node ) {
+        node = evaluationContext().node;
+    }
 
-	return Value( node->namespaceURI()->string() );
+    return Value( node->namespaceURI()->string() );
 }
 
 bool FunName::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunName::doEvaluate() const
 {
-	NodeImpl *node = 0;
-	if ( argCount() > 0 ) {
-		Value a = arg( 0 )->evaluate();
-		if ( a.isNodeset() ) {
-			node = a.toNodeset().first();
-		}
-	}
+    NodeImpl *node = 0;
+    if ( argCount() > 0 ) {
+        Value a = arg( 0 )->evaluate();
+        if ( a.isNodeset() ) {
+            node = a.toNodeset().first();
+        }
+    }
 
-	if ( !node ) {
-		node = evaluationContext().node;
-	}
+    if ( !node ) {
+        node = evaluationContext().node;
+    }
 
-	QString s = node->namespaceURI()->string();
-	s += ":";
-	s += node->localName()->string();
+    QString s = node->namespaceURI()->string();
+    s += ":";
+    s += node->localName()->string();
 
-	return Value( s );
+    return Value( s );
 }
 
 Value FunCount::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
-	if ( !a.isNodeset() ) {
-		qWarning( "count() expects <nodeset>" );
-		return Value( 0.0 );
-	}
-	return Value( double( a.toNodeset().count() ) );
+    Value a = arg( 0 )->evaluate();
+    if ( !a.isNodeset() ) {
+        qWarning( "count() expects <nodeset>" );
+        return Value( 0.0 );
+    }
+    return Value( double( a.toNodeset().count() ) );
 }
 
 bool FunCount::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunString::doEvaluate() const
 {
-	if ( argCount() == 0 ) {
-		DomString s = Value( Expression::evaluationContext().node ).toString();
-		return Value( s );
-	}
-	return Value( arg( 0 )->evaluate().toString() );
+    if ( argCount() == 0 ) {
+        DomString s = Value( Expression::evaluationContext().node ).toString();
+        return Value( s );
+    }
+    return Value( arg( 0 )->evaluate().toString() );
 }
 
 Value FunConcat::doEvaluate() const
 {
-	QString str;
-	for ( unsigned int i = 0; i < argCount(); ++i ) {
-		Value p = arg( i )->evaluate();
-		if ( p.isString() ) {
-			str.append( p.toString() );
-		} else {
-			qWarning( "concat() expects <string, string>" );
-		}
-	}
-	return Value( DomString( str ) );
+    QString str;
+    for ( unsigned int i = 0; i < argCount(); ++i ) {
+        Value p = arg( i )->evaluate();
+        if ( p.isString() ) {
+            str.append( p.toString() );
+        } else {
+            qWarning( "concat() expects <string, string>" );
+        }
+    }
+    return Value( DomString( str ) );
 }
 
 Value FunStartsWith::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
 
-	if ( !arg1.isString() || !arg2.isString() ) {
-		qWarning( "starts-with() expects <string, string>" );
-		return Value( "" );
-	}
+    if ( !arg1.isString() || !arg2.isString() ) {
+        qWarning( "starts-with() expects <string, string>" );
+        return Value( "" );
+    }
 
-	DomString s1 = arg1.toString();
-	DomString s2 = arg2.toString();
+    DomString s1 = arg1.toString();
+    DomString s2 = arg2.toString();
 
-	if ( s2.isEmpty() ) {
-		return Value( true );
-	}
+    if ( s2.isEmpty() ) {
+        return Value( true );
+    }
 
-	return Value( s1.startsWith( s2 ) );
+    return Value( s1.startsWith( s2 ) );
 }
 
 Value FunContains::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
 
-	if ( !arg1.isString() || !arg2.isString() ) {
-		qWarning( "contains() expects <string, string>" );
-		return Value( "" );
-	}
+    if ( !arg1.isString() || !arg2.isString() ) {
+        qWarning( "contains() expects <string, string>" );
+        return Value( "" );
+    }
 
-	DomString s1 = arg1.toString();
-	DomString s2 = arg2.toString();
+    DomString s1 = arg1.toString();
+    DomString s2 = arg2.toString();
 
-	if ( s2.isEmpty() ) {
-		return Value( true );
-	}
+    if ( s2.isEmpty() ) {
+        return Value( true );
+    }
 
-	return Value( s1.find( s2 ) > -1 );
+    return Value( s1.find( s2 ) > -1 );
 }
 
 Value FunSubstringBefore::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
 
-	if ( !arg1.isString() || !arg2.isString() ) {
-		qWarning( "substring-before() expects <string, string>" );
-		return Value( "" );
-	}
+    if ( !arg1.isString() || !arg2.isString() ) {
+        qWarning( "substring-before() expects <string, string>" );
+        return Value( "" );
+    }
 
-	QString s1 = arg1.toString();
-	QString s2 = arg2.toString();
+    QString s1 = arg1.toString();
+    QString s2 = arg2.toString();
 
-	if ( s2.isEmpty() ) {
-		return Value( "" );
-	}
+    if ( s2.isEmpty() ) {
+        return Value( "" );
+    }
 
-	int i = s1.find( s2 );
-	if ( i == -1 ) {
-		return Value( "" );
-	}
+    int i = s1.find( s2 );
+    if ( i == -1 ) {
+        return Value( "" );
+    }
 
-	return Value( DomString( s1.left( i ) ) );
+    return Value( DomString( s1.left( i ) ) );
 }
 
 Value FunSubstringAfter::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
 
-	if ( !arg1.isString() || !arg2.isString() ) {
-		qWarning( "substring-after() expects <string, string>" );
-		return Value( "" );
-	}
+    if ( !arg1.isString() || !arg2.isString() ) {
+        qWarning( "substring-after() expects <string, string>" );
+        return Value( "" );
+    }
 
-	QString s1 = arg1.toString();
-	QString s2 = arg2.toString();
+    QString s1 = arg1.toString();
+    QString s2 = arg2.toString();
 
-	if ( s2.isEmpty() ) {
-		return Value( arg1.toString() );
-	}
+    if ( s2.isEmpty() ) {
+        return Value( arg1.toString() );
+    }
 
-	int i = s1.find( s2 );
-	if ( i == -1 ) {
-		return Value( "" );
-	}
+    int i = s1.find( s2 );
+    if ( i == -1 ) {
+        return Value( "" );
+    }
 
-	return Value( DomString( s1.mid( i + 1 ) ) );
+    return Value( DomString( s1.mid( i + 1 ) ) );
 }
 
 Value FunSubstring::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
-	bool haveLength = false;
-	Value arg3;
-	if ( argCount() == 3 ) {
-		arg3 = arg( 2 )->evaluate();
-		haveLength = true;
-	}
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
+    bool haveLength = false;
+    Value arg3;
+    if ( argCount() == 3 ) {
+        arg3 = arg( 2 )->evaluate();
+        haveLength = true;
+    }
 
-	if ( haveLength && ( !arg1.isString() || !arg2.isNumber() || !arg3.isNumber() ) ||
-	     !haveLength && ( !arg1.isString() || !arg2.isNumber() ) ) {
-		qWarning( "substring() expects <string, number> or <string, number, number>" );
-		return Value( "" );
-	}
+    if ( haveLength && ( !arg1.isString() || !arg2.isNumber() || !arg3.isNumber() ) ||
+         !haveLength && ( !arg1.isString() || !arg2.isNumber() ) ) {
+        qWarning( "substring() expects <string, number> or <string, number, number>" );
+        return Value( "" );
+    }
 
-	QString s = arg1.toString();
-	long pos = long( qRound( arg2.toNumber() ) );
-	long len = haveLength ? long( qRound( arg3.toNumber() ) ) : -1;
+    QString s = arg1.toString();
+    long pos = long( qRound( arg2.toNumber() ) );
+    long len = haveLength ? long( qRound( arg3.toNumber() ) ) : -1;
 
-	if ( pos > long( s.length() ) ) {
-		return Value( "" );
-	}
+    if ( pos > long( s.length() ) ) {
+        return Value( "" );
+    }
 
-	if ( haveLength && pos < 1 ) {
-		len -= 1 - pos;
-		pos = 1;
-		if ( len < 1 ) {
-			return Value( "" );
-		}
-	}
+    if ( haveLength && pos < 1 ) {
+        len -= 1 - pos;
+        pos = 1;
+        if ( len < 1 ) {
+            return Value( "" );
+        }
+    }
 
-	return Value( DomString( s.mid( pos - 1, len ) ) );
+    return Value( DomString( s.mid( pos - 1, len ) ) );
 }
 
 Value FunStringLength::doEvaluate() const
 {
-	if ( argCount() == 0 ) {
-		DomString s = Value( Expression::evaluationContext().node ).toString();
-		return Value( double( s.length() ) );
-	}
+    if ( argCount() == 0 ) {
+        DomString s = Value( Expression::evaluationContext().node ).toString();
+        return Value( double( s.length() ) );
+    }
 
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isString() ) {
-		qWarning( "string-length() expects <string>" );
-		return Value( 0.0 );
-	}
+    if ( !a.isString() ) {
+        qWarning( "string-length() expects <string>" );
+        return Value( 0.0 );
+    }
 
-	return Value( double( a.toString().length() ) );
+    return Value( double( a.toString().length() ) );
 }
 
 Value FunNormalizeSpace::doEvaluate() const
 {
-	if ( argCount() == 0 ) {
-		DomString s = Value( Expression::evaluationContext().node ).toString();
-		return Value( DomString( s.simplifyWhiteSpace() ) );
-	}
+    if ( argCount() == 0 ) {
+        DomString s = Value( Expression::evaluationContext().node ).toString();
+        return Value( DomString( s.simplifyWhiteSpace() ) );
+    }
 
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isString() ) {
-		qWarning( "normalize-space() expects <string>" );
-		return Value( 0.0 );
-	}
+    if ( !a.isString() ) {
+        qWarning( "normalize-space() expects <string>" );
+        return Value( 0.0 );
+    }
 
-	QString s = a.toString();
-	s = s.simplifyWhiteSpace();
-	return Value( DomString( s ) );
+    QString s = a.toString();
+    s = s.simplifyWhiteSpace();
+    return Value( DomString( s ) );
 }
 
 Value FunTranslate::doEvaluate() const
 {
-	Value arg1 = arg( 0 )->evaluate();
-	Value arg2 = arg( 1 )->evaluate();
-	Value arg3 = arg( 2 )->evaluate();
+    Value arg1 = arg( 0 )->evaluate();
+    Value arg2 = arg( 1 )->evaluate();
+    Value arg3 = arg( 2 )->evaluate();
 
-	if ( !arg1.isString() || !arg2.isString() || !arg3.isString() ) {
-		qWarning( "translate() expects <string, string, string>" );
-		return Value( "" );
-	}
+    if ( !arg1.isString() || !arg2.isString() || !arg3.isString() ) {
+        qWarning( "translate() expects <string, string, string>" );
+        return Value( "" );
+    }
 
-	QString s1 = arg1.toString();
-	QString s2 = arg2.toString();
-	QString s3 = arg3.toString();
-	QString newString;
+    QString s1 = arg1.toString();
+    QString s2 = arg2.toString();
+    QString s3 = arg3.toString();
+    QString newString;
 
-	for ( unsigned long i1 = 0; i1 < s1.length(); ++i1 ) {
-		QChar ch = s1[ i1 ];
-		long i2 = s2.find( ch );
-		if ( i2 == -1 ) {
-			newString += ch;
-		} else if ( static_cast<unsigned long>( i2 ) < s3.length() ) {
-			newString += s3[ i2 ];
-		}
-	}
+    for ( unsigned long i1 = 0; i1 < s1.length(); ++i1 ) {
+        QChar ch = s1[ i1 ];
+        long i2 = s2.find( ch );
+        if ( i2 == -1 ) {
+            newString += ch;
+        } else if ( static_cast<unsigned long>( i2 ) < s3.length() ) {
+            newString += s3[ i2 ];
+        }
+    }
 
-	return Value( DomString( newString ) );
+    return Value( DomString( newString ) );
 }
 
 Value FunBoolean::doEvaluate() const
 {
-	return Value( arg( 0 )->evaluate().toBoolean() );
+    return Value( arg( 0 )->evaluate().toBoolean() );
 }
 
 Value FunNot::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isBoolean() ) {
-		qWarning( "not() expects <boolean>" );
-		return Value( true );
-	}
+    if ( !a.isBoolean() ) {
+        qWarning( "not() expects <boolean>" );
+        return Value( true );
+    }
 
-	return Value( !a.toBoolean() );
+    return Value( !a.toBoolean() );
 }
 
 Value FunTrue::doEvaluate() const
 {
-	return Value( true );
+    return Value( true );
 }
 
 bool FunTrue::isConstant() const
 {
-	return true;
+    return true;
 }
 
 Value FunLang::doEvaluate() const
 {
-	Value v = arg( 0 )->evaluate();
-	if ( !v.isString() ) {
-		qWarning( "lang() expects <string>" );
-		return Value( false );
-	}
-	QString lang = v.toString();
+    Value v = arg( 0 )->evaluate();
+    if ( !v.isString() ) {
+        qWarning( "lang() expects <string>" );
+        return Value( false );
+    }
+    QString lang = v.toString();
 
-	NodeImpl *langNode = 0;
-	NodeImpl *node = evaluationContext().node;
+    NodeImpl *langNode = 0;
+    NodeImpl *node = evaluationContext().node;
 
-	DOMStringImpl xms( "xms" );
-	DOMStringImpl *xmsnsURI = node->lookupNamespaceURI( &xms );
+    DOMStringImpl xms( "xms" );
+    DOMStringImpl *xmsnsURI = node->lookupNamespaceURI( &xms );
 
-	while ( node ) {
-		NamedAttrMapImpl *attrs = node->attributes( true /* r/o */ );
-		DOMStringImpl l( "lang" );
-		langNode = attrs->getNamedItemNS( xmsnsURI, &l );
-		if ( langNode ) {
-			break;
-		}
-		node = node->parentNode();
-	}
+    while ( node ) {
+        NamedAttrMapImpl *attrs = node->attributes( true /* r/o */ );
+        DOMStringImpl l( "lang" );
+        langNode = attrs->getNamedItemNS( xmsnsURI, &l );
+        if ( langNode ) {
+            break;
+        }
+        node = node->parentNode();
+    }
 
-	if ( !langNode ) {
-		return Value( false );
-	}
+    if ( !langNode ) {
+        return Value( false );
+    }
 
-	QString langNodeValue = langNode->nodeValue()->string();
+    QString langNodeValue = langNode->nodeValue()->string();
 
-	// extract 'en' out of 'en-us'
-	langNodeValue = langNodeValue.left( langNodeValue.find( '-' ) );
+    // extract 'en' out of 'en-us'
+    langNodeValue = langNodeValue.left( langNodeValue.find( '-' ) );
 
-	return Value( langNodeValue.lower() == lang.lower() );
+    return Value( langNodeValue.lower() == lang.lower() );
 }
 
 bool FunLang::isConstant() const
 {
-	return false;
+    return false;
 }
 
 Value FunFalse::doEvaluate() const
 {
-	return Value( false );
+    return Value( false );
 }
 
 bool FunFalse::isConstant() const
 {
-	return true;
+    return true;
 }
 
 Value FunNumber::doEvaluate() const
 {
-	return Value( arg( 0 )->evaluate().toNumber() );
+    return Value( arg( 0 )->evaluate().toNumber() );
 }
 
 Value FunSum::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
-	if ( !a.isNodeset() ) {
-		qWarning( "sum() expects <nodeset>" );
-		return Value( 0.0 );
-	}
+    Value a = arg( 0 )->evaluate();
+    if ( !a.isNodeset() ) {
+        qWarning( "sum() expects <nodeset>" );
+        return Value( 0.0 );
+    }
 
-	double sum = 0.0;
-	const DomNodeList nodes = a.toNodeset();
-	DomNodeList::ConstIterator it, end = nodes.end();
-	for ( it = nodes.begin(); it != end; ++it ) {
-		sum += Value( stringValue( *it ) ).toNumber();
-	}
-	return Value( sum );
+    double sum = 0.0;
+    const DomNodeList nodes = a.toNodeset();
+    DomNodeList::ConstIterator it, end = nodes.end();
+    for ( it = nodes.begin(); it != end; ++it ) {
+        sum += Value( stringValue( *it ) ).toNumber();
+    }
+    return Value( sum );
 }
 
 Value FunFloor::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isNumber() ) {
-		qWarning( "floor() expects <number>" );
-		return Value( 0.0 );
-	}
+    if ( !a.isNumber() ) {
+        qWarning( "floor() expects <number>" );
+        return Value( 0.0 );
+    }
 
-	const double num = a.toNumber();
+    const double num = a.toNumber();
 
-	if ( isnan( num ) || isinf( num ) ) {
-		return Value( num );
-	}
+    if ( isnan( num ) || isinf( num ) ) {
+        return Value( num );
+    }
 
-	return Value( floor( num ) );
+    return Value( floor( num ) );
 }
 
 Value FunCeiling::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isNumber() ) {
-		qWarning( "ceiling() expects <number>" );
-		return Value( 0.0 );
-	}
+    if ( !a.isNumber() ) {
+        qWarning( "ceiling() expects <number>" );
+        return Value( 0.0 );
+    }
 
-	const double num = a.toNumber();
+    const double num = a.toNumber();
 
-	if ( isnan( num ) || isinf( num ) ) {
-		return Value( num );
-	}
+    if ( isnan( num ) || isinf( num ) ) {
+        return Value( num );
+    }
 
-	return Value( ceil( num ) );
+    return Value( ceil( num ) );
 }
 
 Value FunRound::doEvaluate() const
 {
-	Value a = arg( 0 )->evaluate();
+    Value a = arg( 0 )->evaluate();
 
-	if ( !a.isNumber() ) {
-		qWarning( "round() expects <number>" );
-		return Value( 0.0 );
-	}
+    if ( !a.isNumber() ) {
+        qWarning( "round() expects <number>" );
+        return Value( 0.0 );
+    }
 
-	return Value( (double)qRound( a.toNumber() ) );
+    return Value( (double)qRound( a.toNumber() ) );
 }
 
 struct FunctionLibrary::FunctionRec
 {
-	typedef Function *(*FactoryFn )();
+    typedef Function *(*FactoryFn )();
 
-	FunctionRec() {}
-	FunctionRec( FactoryFn factoryFn_, Interval args_ )
-		: factoryFn( factoryFn_ ),
-		args( args_ )
-	{
-	}
+    FunctionRec() {}
+    FunctionRec( FactoryFn factoryFn_, Interval args_ )
+        : factoryFn( factoryFn_ ),
+        args( args_ )
+    {
+    }
 
-	FactoryFn factoryFn;
-	Interval args;
+    FactoryFn factoryFn;
+    Interval args;
 };
 
 FunctionLibrary *FunctionLibrary::s_instance = 0;
 
 FunctionLibrary &FunctionLibrary::self()
 {
-	if ( !s_instance ) {
-		s_instance = new FunctionLibrary;
-	}
-	return *s_instance;
+    if ( !s_instance ) {
+        s_instance = new FunctionLibrary;
+    }
+    return *s_instance;
 }
 
 FunctionLibrary::FunctionLibrary()
-	: m_functionDict( 32 )
+    : m_functionDict( 32 )
 {
-	m_functionDict.insert( "last", new FunctionRec( &createFunLast, 0 ) );
-	m_functionDict.insert( "position", new FunctionRec( &createFunPosition, 0 ) );
-	m_functionDict.insert( "count", new FunctionRec( &createFunCount, 1 ) );
-	m_functionDict.insert( "sum", new FunctionRec( &createFunSum, 1 ) );
-	m_functionDict.insert( "local-name", new FunctionRec( &createFunLocalName, Interval( 0, 1 ) ) );
-	m_functionDict.insert( "namespace-uri", new FunctionRec( &createFunNamespaceURI, Interval( 0, 1 ) ) );
-	m_functionDict.insert( "name", new FunctionRec( &createFunName, Interval( 0, 1 ) ) );
+    m_functionDict.insert( "last", new FunctionRec( &createFunLast, 0 ) );
+    m_functionDict.insert( "position", new FunctionRec( &createFunPosition, 0 ) );
+    m_functionDict.insert( "count", new FunctionRec( &createFunCount, 1 ) );
+    m_functionDict.insert( "sum", new FunctionRec( &createFunSum, 1 ) );
+    m_functionDict.insert( "local-name", new FunctionRec( &createFunLocalName, Interval( 0, 1 ) ) );
+    m_functionDict.insert( "namespace-uri", new FunctionRec( &createFunNamespaceURI, Interval( 0, 1 ) ) );
+    m_functionDict.insert( "name", new FunctionRec( &createFunName, Interval( 0, 1 ) ) );
 
-	m_functionDict.insert( "string", new FunctionRec( &createFunString, Interval( 0, 1 ) ) );
-	m_functionDict.insert( "concat", new FunctionRec( &createFunConcat, Interval( 2, Interval::Inf ) ) );
-	m_functionDict.insert( "starts-with", new FunctionRec( &createFunStartsWith, 2 ) );
-	m_functionDict.insert( "contains", new FunctionRec( &createFunContains, 2 ) );
-	m_functionDict.insert( "substring-before", new FunctionRec( &createFunSubstringBefore, 2 ) );
-	m_functionDict.insert( "substring-after", new FunctionRec( &createFunSubstringAfter, 2 ) );
-	m_functionDict.insert( "substring", new FunctionRec( &createFunSubstring, Interval( 2, 3 ) ) );
-	m_functionDict.insert( "string-length", new FunctionRec( &createFunStringLength, 1 ) );
-	m_functionDict.insert( "normalize-space", new FunctionRec( &createFunNormalizeSpace, 1 ) );
-	m_functionDict.insert( "translate", new FunctionRec( &createFunTranslate, 3 ) );
+    m_functionDict.insert( "string", new FunctionRec( &createFunString, Interval( 0, 1 ) ) );
+    m_functionDict.insert( "concat", new FunctionRec( &createFunConcat, Interval( 2, Interval::Inf ) ) );
+    m_functionDict.insert( "starts-with", new FunctionRec( &createFunStartsWith, 2 ) );
+    m_functionDict.insert( "contains", new FunctionRec( &createFunContains, 2 ) );
+    m_functionDict.insert( "substring-before", new FunctionRec( &createFunSubstringBefore, 2 ) );
+    m_functionDict.insert( "substring-after", new FunctionRec( &createFunSubstringAfter, 2 ) );
+    m_functionDict.insert( "substring", new FunctionRec( &createFunSubstring, Interval( 2, 3 ) ) );
+    m_functionDict.insert( "string-length", new FunctionRec( &createFunStringLength, 1 ) );
+    m_functionDict.insert( "normalize-space", new FunctionRec( &createFunNormalizeSpace, 1 ) );
+    m_functionDict.insert( "translate", new FunctionRec( &createFunTranslate, 3 ) );
 
-	m_functionDict.insert( "boolean", new FunctionRec( &createFunBoolean, 1 ) );
-	m_functionDict.insert( "not", new FunctionRec( &createFunNot, 1 ) );
-	m_functionDict.insert( "true", new FunctionRec( &createFunTrue, 0 ) );
-	m_functionDict.insert( "false", new FunctionRec( &createFunFalse, 0 ) );
-	m_functionDict.insert( "lang", new FunctionRec( &createFunLang, 1 ) );
+    m_functionDict.insert( "boolean", new FunctionRec( &createFunBoolean, 1 ) );
+    m_functionDict.insert( "not", new FunctionRec( &createFunNot, 1 ) );
+    m_functionDict.insert( "true", new FunctionRec( &createFunTrue, 0 ) );
+    m_functionDict.insert( "false", new FunctionRec( &createFunFalse, 0 ) );
+    m_functionDict.insert( "lang", new FunctionRec( &createFunLang, 1 ) );
 
-	m_functionDict.insert( "number", new FunctionRec( &createFunNumber, 1 ) );
-	m_functionDict.insert( "floor", new FunctionRec( &createFunFloor, 1 ) );
-	m_functionDict.insert( "ceiling", new FunctionRec( &createFunCeiling, 1 ) );
-	m_functionDict.insert( "round", new FunctionRec( &createFunRound, 1 ) );
+    m_functionDict.insert( "number", new FunctionRec( &createFunNumber, 1 ) );
+    m_functionDict.insert( "floor", new FunctionRec( &createFunFloor, 1 ) );
+    m_functionDict.insert( "ceiling", new FunctionRec( &createFunCeiling, 1 ) );
+    m_functionDict.insert( "round", new FunctionRec( &createFunRound, 1 ) );
 
-	m_functionDict.setAutoDelete( true );
+    m_functionDict.setAutoDelete( true );
 }
 
 Function *FunctionLibrary::getFunction( const char *name,
                                         const QValueList<Expression *> &args ) const
 {
-	if ( !m_functionDict.find( name ) ) {
-		qWarning( "Function '%s' not supported by this implementation.", name );
-		return 0;
-	}
+    if ( !m_functionDict.find( name ) ) {
+        qWarning( "Function '%s' not supported by this implementation.", name );
+        return 0;
+    }
 
-	FunctionRec functionRec = *m_functionDict[ name ];
-	if ( !functionRec.args.contains( args.count() ) ) {
-		qWarning( "Function '%s' requires %s arguments, but %d given.", name, functionRec.args.asString().latin1(), args.count() );
-		return 0;
-	}
+    FunctionRec functionRec = *m_functionDict[ name ];
+    if ( !functionRec.args.contains( args.count() ) ) {
+        qWarning( "Function '%s' requires %s arguments, but %d given.", name, functionRec.args.asString().latin1(), args.count() );
+        return 0;
+    }
 
-	Function *function = functionRec.factoryFn();
-	function->setArguments( args );
-	function->setName( name );
-	return function;
+    Function *function = functionRec.factoryFn();
+    function->setArguments( args );
+    function->setName( name );
+    return function;
 }
 
 class FunctionLibraryDeleter
 {
-	public:
-		~FunctionLibraryDeleter() {
-			delete FunctionLibrary::s_instance;
-		}
+    public:
+        ~FunctionLibraryDeleter() {
+            delete FunctionLibrary::s_instance;
+        }
 };
 
 static FunctionLibraryDeleter functionLibraryDeleter;

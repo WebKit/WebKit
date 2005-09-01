@@ -25,27 +25,27 @@
 #include "variablereference.h"
 
 VariableReference::VariableReference( const DomString &name )
-	: m_name( name )
+    : m_name( name )
 {
 }
 
 bool VariableReference::isConstant() const
 {
-	return false;
+    return false;
 }
 
 QString VariableReference::dump() const
 {
-	return QString() + "<variablereference name=\"" + m_name + "\"/>";
+    return QString() + "<variablereference name=\"" + m_name + "\"/>";
 }
 
 Value VariableReference::doEvaluate() const
 {
-	QDict<KDOM::DOMStringImpl> bindings = evaluationContext().variableBindings;
-	if ( !bindings.find( m_name ) ) {
-		// XXX What to do if an unknown variable is referenced?
-		return Value( "" );
-	}
-	return Value( bindings[ m_name ]->string() );
+    QDict<KDOM::DOMStringImpl> bindings = evaluationContext().variableBindings;
+    if ( !bindings.find( m_name ) ) {
+        // XXX What to do if an unknown variable is referenced?
+        return Value( "" );
+    }
+    return Value( bindings[ m_name ]->string() );
 }
 

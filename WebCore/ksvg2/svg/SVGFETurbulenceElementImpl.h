@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,42 +30,42 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGAnimatedIntegerImpl;
-	class SVGAnimatedNumberImpl;
-	class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedIntegerImpl;
+    class SVGAnimatedNumberImpl;
+    class SVGAnimatedEnumerationImpl;
 
-	class SVGFETurbulenceElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
-	{
-	public:
-		SVGFETurbulenceElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFETurbulenceElementImpl();
+    class SVGFETurbulenceElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
+    {
+    public:
+        SVGFETurbulenceElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFETurbulenceElementImpl();
 
-		// 'SVGFETurbulenceElement' functions
-		SVGAnimatedNumberImpl *baseFrequencyX() const;
-		SVGAnimatedNumberImpl *baseFrequencyY() const;
-		SVGAnimatedIntegerImpl *numOctaves() const;
-		SVGAnimatedNumberImpl *seed() const;
-		SVGAnimatedEnumerationImpl *stitchTiles() const;
-		SVGAnimatedEnumerationImpl *type() const;
+        // 'SVGFETurbulenceElement' functions
+        SVGAnimatedNumberImpl *baseFrequencyX() const;
+        SVGAnimatedNumberImpl *baseFrequencyY() const;
+        SVGAnimatedIntegerImpl *numOctaves() const;
+        SVGAnimatedNumberImpl *seed() const;
+        SVGAnimatedEnumerationImpl *stitchTiles() const;
+        SVGAnimatedEnumerationImpl *type() const;
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-	private:
-		mutable SVGAnimatedNumberImpl *m_baseFrequencyX;
-		mutable SVGAnimatedNumberImpl *m_baseFrequencyY;
-		mutable SVGAnimatedIntegerImpl *m_numOctaves;
-		mutable SVGAnimatedNumberImpl *m_seed;
-		mutable SVGAnimatedEnumerationImpl *m_stitchTiles;
-		mutable SVGAnimatedEnumerationImpl *m_type;
-		mutable KCanvasFETurbulence *m_filterEffect;
-	};
+    private:
+        mutable SVGAnimatedNumberImpl *m_baseFrequencyX;
+        mutable SVGAnimatedNumberImpl *m_baseFrequencyY;
+        mutable SVGAnimatedIntegerImpl *m_numOctaves;
+        mutable SVGAnimatedNumberImpl *m_seed;
+        mutable SVGAnimatedEnumerationImpl *m_stitchTiles;
+        mutable SVGAnimatedEnumerationImpl *m_type;
+        mutable KCanvasFETurbulence *m_filterEffect;
+    };
 };
 
 #endif

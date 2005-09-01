@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,35 +28,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGFETileElementImpl;
+    class SVGAnimatedString;
+    class SVGFETileElementImpl;
 
-	class SVGFETileElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFETileElement();
-		explicit SVGFETileElement(SVGFETileElementImpl *i);
-		SVGFETileElement(const SVGFETileElement &other);
-		SVGFETileElement(const KDOM::Node &other);
-		virtual ~SVGFETileElement();
+    class SVGFETileElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFETileElement();
+        explicit SVGFETileElement(SVGFETileElementImpl *i);
+        SVGFETileElement(const SVGFETileElement &other);
+        SVGFETileElement(const KDOM::Node &other);
+        virtual ~SVGFETileElement();
 
-		// Operators
-		SVGFETileElement &operator=(const SVGFETileElement &other);
-		SVGFETileElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFETileElement &operator=(const SVGFETileElement &other);
+        SVGFETileElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFETilelement' functions
-		SVGAnimatedString in1() const;
+        // 'SVGFETilelement' functions
+        SVGAnimatedString in1() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFETileElement)
+        // Internal
+        KSVG_INTERNAL(SVGFETileElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

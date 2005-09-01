@@ -41,18 +41,18 @@ class XPathResultImpl;
 
 class XPathExpressionImpl : public Shared
 {
-	public:
-		XPathExpressionImpl( DOMStringImpl *expression,
-		                     XPathNSResolverImpl *resolver );
+    public:
+        XPathExpressionImpl( DOMStringImpl *expression,
+                             XPathNSResolverImpl *resolver );
 
-		XPathResultImpl *evaluate( NodeImpl *contextNode,
-		                           unsigned short type,
-		                           XPathResultImpl *result );
-		
+        XPathResultImpl *evaluate( NodeImpl *contextNode,
+                                   unsigned short type,
+                                   XPathResultImpl *result );
+        
 
-	private:
-		ParsedStatement m_statement;
-		XPathNSResolverImpl *m_resolver;
+    private:
+        ParsedStatement m_statement;
+        XPathNSResolverImpl *m_resolver;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
     Copyright(C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,86 +28,86 @@ using namespace KDOM;
 
 RectImpl::RectImpl(CDFInterface *interface) : Shared(), m_interface(interface)
 {
-	m_top = 0;
-	m_right = 0;
-	m_bottom = 0;
-	m_left = 0;
+    m_top = 0;
+    m_right = 0;
+    m_bottom = 0;
+    m_left = 0;
 }
 
 RectImpl::~RectImpl()
 {
-	if(m_top)
-		m_top->deref();
-	if(m_right)
-		m_right->deref();
-	if(m_bottom)
-		m_bottom->deref();
-	if(m_left)
-		m_left->deref();
+    if(m_top)
+        m_top->deref();
+    if(m_right)
+        m_right->deref();
+    if(m_bottom)
+        m_bottom->deref();
+    if(m_left)
+        m_left->deref();
 }
 
 CSSPrimitiveValueImpl *RectImpl::top() const
 {
-	if(!m_top)
-	{
-		m_top = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-		m_top->ref();
-	}
+    if(!m_top)
+    {
+        m_top = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
+        m_top->ref();
+    }
 
-	return m_top;
+    return m_top;
 }
 
 CSSPrimitiveValueImpl *RectImpl::right() const
 {
-	if(!m_right)
-	{
-		m_right = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-		m_right->ref();
-	}
+    if(!m_right)
+    {
+        m_right = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
+        m_right->ref();
+    }
 
-	return m_right;
+    return m_right;
 }
 
 CSSPrimitiveValueImpl *RectImpl::bottom() const
 {
-	if(!m_bottom)
-	{
-		m_bottom = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-		m_bottom->ref();
-	}
+    if(!m_bottom)
+    {
+        m_bottom = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
+        m_bottom->ref();
+    }
 
-	return m_bottom;
+    return m_bottom;
 }
 
 CSSPrimitiveValueImpl *RectImpl::left() const
 {
-	if(!m_left)
-	{
-		m_left = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-		m_left->ref();
-	}
+    if(!m_left)
+    {
+        m_left = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
+        m_left->ref();
+    }
 
-	return m_left;
+    return m_left;
 }
 
 void RectImpl::setTop(CSSPrimitiveValueImpl *top)
 {
-	KDOM_SAFE_SET(m_top, top);
+    KDOM_SAFE_SET(m_top, top);
 }
 
 void RectImpl::setRight(CSSPrimitiveValueImpl *right)
 {
-	KDOM_SAFE_SET(m_right, right);
+    KDOM_SAFE_SET(m_right, right);
 }
 
 void RectImpl::setBottom(CSSPrimitiveValueImpl *bottom)
 {
-	KDOM_SAFE_SET(m_bottom, bottom);
+    KDOM_SAFE_SET(m_bottom, bottom);
 }
 
 void RectImpl::setLeft(CSSPrimitiveValueImpl *left)
 {
-	KDOM_SAFE_SET(m_left, left);
+    KDOM_SAFE_SET(m_left, left);
 }
 
 // vim:ts=4:noet

@@ -30,13 +30,13 @@ class QPixmap;
 class KCanvasImage : public KCanvasResource
 {
 public:
-	KCanvasImage() { };
-	virtual ~KCanvasImage() { };
+    KCanvasImage() { };
+    virtual ~KCanvasImage() { };
 
-	virtual void init(const QPixmap &) = 0;
-	virtual void init(QSize) = 0;
+    virtual void init(const QPixmap &) = 0;
+    virtual void init(QSize) = 0;
 
-	virtual QSize size() = 0;
+    virtual QSize size() = 0;
 };
 
 #endif

@@ -29,16 +29,16 @@
 
 class VariableReference : public Expression
 {
-	public:
-		VariableReference( const DomString &name );
+    public:
+        VariableReference( const DomString &name );
 
-		virtual bool isConstant() const;
-		virtual QString dump() const;
+        virtual bool isConstant() const;
+        virtual QString dump() const;
 
-	private:
-		virtual Value doEvaluate() const;
+    private:
+        virtual Value doEvaluate() const;
 
-		DomString m_name;
+        DomString m_name;
 };
 
 #endif // VARIABLEREFERENCE_H

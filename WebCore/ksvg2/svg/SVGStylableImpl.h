@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,27 +27,27 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class CSSValueImpl;
-	class CSSStyleDeclarationImpl;
+    class DOMString;
+    class CSSValueImpl;
+    class CSSStyleDeclarationImpl;
 };
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
+    class SVGAnimatedStringImpl;
 
-	class SVGStylableImpl
-	{
-	public:
-		SVGStylableImpl();
-		virtual ~SVGStylableImpl();
+    class SVGStylableImpl
+    {
+    public:
+        SVGStylableImpl();
+        virtual ~SVGStylableImpl();
 
-		// 'SVGStylable' functions
-		virtual SVGAnimatedStringImpl *className() const = 0;
+        // 'SVGStylable' functions
+        virtual SVGAnimatedStringImpl *className() const = 0;
 
-		virtual KDOM::CSSStyleDeclarationImpl *style() = 0;
-		virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name) = 0;
-	};
+        virtual KDOM::CSSStyleDeclarationImpl *style() = 0;
+        virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name) = 0;
+    };
 };
 
 #endif

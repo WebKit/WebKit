@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,81 +29,81 @@ using namespace KDOM;
 
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent) : CSSRuleImpl(parent)
 {
-	m_type = MEDIA_RULE;
+    m_type = MEDIA_RULE;
 
-	m_lstMedia = 0;
+    m_lstMedia = 0;
 
-	m_lstCSSRules = new CSSRuleListImpl();
-	m_lstCSSRules->ref();
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
 }
 
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent, DOMStringImpl *media) : CSSRuleImpl(parent)
 {
-	m_type = MEDIA_RULE;
+    m_type = MEDIA_RULE;
 
-	m_lstMedia = new MediaListImpl(this, media);
-	m_lstMedia->ref();
-	
-	m_lstCSSRules = new CSSRuleListImpl();
-	m_lstCSSRules->ref();
+    m_lstMedia = new MediaListImpl(this, media);
+    m_lstMedia->ref();
+    
+    m_lstCSSRules = new CSSRuleListImpl();
+    m_lstCSSRules->ref();
 }
 
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList) : CSSRuleImpl(parent)
 {
-	m_type = MEDIA_RULE;
+    m_type = MEDIA_RULE;
 
-	m_lstMedia = mediaList;
-	m_lstMedia->ref();
-	
-	m_lstCSSRules = ruleList;
-	m_lstCSSRules->ref();
+    m_lstMedia = mediaList;
+    m_lstMedia->ref();
+    
+    m_lstCSSRules = ruleList;
+    m_lstCSSRules->ref();
 }
 
 CSSMediaRuleImpl::~CSSMediaRuleImpl()
 {
-	if(m_lstMedia)
-	{
-		m_lstMedia->setParent(0);
-		m_lstMedia->deref();
-	}
-	
-	for(unsigned int i = 0; i < m_lstCSSRules->length(); ++i)
-		m_lstCSSRules->item(i)->setParent(0);
-		
-	m_lstCSSRules->deref();
+    if(m_lstMedia)
+    {
+        m_lstMedia->setParent(0);
+        m_lstMedia->deref();
+    }
+    
+    for(unsigned int i = 0; i < m_lstCSSRules->length(); ++i)
+        m_lstCSSRules->item(i)->setParent(0);
+        
+    m_lstCSSRules->deref();
 }
 
 MediaListImpl *CSSMediaRuleImpl::media() const
 {
-	return m_lstMedia;
+    return m_lstMedia;
 }
 
 CSSRuleListImpl *CSSMediaRuleImpl::cssRules() const
 {
-	// FIXME!
-	return m_lstCSSRules;
+    // FIXME!
+    return m_lstCSSRules;
 }
 
 unsigned long CSSMediaRuleImpl::insertRule(DOMStringImpl *rule, unsigned long index)
 {
-	CSSParser *p = createCSSParser(m_strictParsing);
-	if(!p)
-		return 0;
-		
-	CSSRuleImpl *newRule = p->parseRule(parentStyleSheet(), rule);
-	delete p;
+    CSSParser *p = createCSSParser(m_strictParsing);
+    if(!p)
+        return 0;
+        
+    CSSRuleImpl *newRule = p->parseRule(parentStyleSheet(), rule);
+    delete p;
 
-	return newRule ? m_lstCSSRules->insertRule(newRule, index) : 0;
+    return newRule ? m_lstCSSRules->insertRule(newRule, index) : 0;
 }
 
 void CSSMediaRuleImpl::deleteRule(unsigned long index)
 {
-	m_lstCSSRules->deleteRule(index);
+    m_lstCSSRules->deleteRule(index);
 }
 
 unsigned long CSSMediaRuleImpl::append(CSSRuleImpl *rule)
 {
-	return rule ? m_lstCSSRules->insertRule(rule, m_lstCSSRules->length()) : 0;
+    return rule ? m_lstCSSRules->insertRule(rule, m_lstCSSRules->length()) : 0;
 }
 
 // vim:ts=4:noet

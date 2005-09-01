@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,32 +28,32 @@
 
 namespace KSVG
 {
-	class SVGAnimateColorElementImpl : public SVGAnimationElementImpl
-	{
-	public:
-		SVGAnimateColorElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGAnimateColorElementImpl();
+    class SVGAnimateColorElementImpl : public SVGAnimationElementImpl
+    {
+    public:
+        SVGAnimateColorElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGAnimateColorElementImpl();
 
-		virtual void handleTimerEvent(double timePercentage);
+        virtual void handleTimerEvent(double timePercentage);
 
-		// Helper
-		QColor clampColor(int r, int g, int b) const;
-		void calculateColor(double time, int &r, int &g, int &b) const;
+        // Helper
+        QColor clampColor(int r, int g, int b) const;
+        void calculateColor(double time, int &r, int &g, int &b) const;
 
-		QColor color() const;
-		QColor initialColor() const;
+        QColor color() const;
+        QColor initialColor() const;
 
-	private:
-		QColor m_lastColor;
-		QColor m_currentColor;
-		QColor m_initialColor;
+    private:
+        QColor m_lastColor;
+        QColor m_currentColor;
+        QColor m_initialColor;
 
-		SVGColorImpl *m_toColor;
-		SVGColorImpl *m_fromColor;
+        SVGColorImpl *m_toColor;
+        SVGColorImpl *m_fromColor;
 
-		int m_currentItem;
-		int m_redDiff, m_greenDiff, m_blueDiff;
-	};
+        int m_currentItem;
+        int m_redDiff, m_greenDiff, m_blueDiff;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -46,93 +46,93 @@ using namespace KSVG;
 SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
-	m_in1 = 0;
-	m_type = 0;
-	m_values = 0;
-	m_filterEffect = 0;
+    m_in1 = 0;
+    m_type = 0;
+    m_values = 0;
+    m_filterEffect = 0;
 }
 
 SVGFEColorMatrixElementImpl::~SVGFEColorMatrixElementImpl()
 {
-	if(m_in1)
-		m_in1->deref();
-	if(m_type)
-		m_type->deref();
-	if(m_values)
-		m_values->deref();
+    if(m_in1)
+        m_in1->deref();
+    if(m_type)
+        m_type->deref();
+    if(m_values)
+        m_values->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEColorMatrixElementImpl::in1() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
 SVGAnimatedEnumerationImpl *SVGFEColorMatrixElementImpl::type() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedEnumerationImpl>(m_type, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedEnumerationImpl>(m_type, dummy);
 }
 
 SVGAnimatedNumberListImpl *SVGFEColorMatrixElementImpl::values() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedNumberListImpl>(m_values, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedNumberListImpl>(m_values, dummy);
 }
 
 void SVGFEColorMatrixElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_TYPE:
-		{
-			if(value == "matrix")
-				type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_MATRIX);
-			else if(value == "saturate")
-				type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_SATURATE);
-			else if(value == "hueRotate")
-				type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
-			else if(value == "luminanceToAlpha")
-				type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
-			break;
-		}
-		case ATTR_IN:
-		{
-			in1()->setBaseVal(value.handle());
-			break;
-		}
-		case ATTR_VALUES:
-		{
-			values()->baseVal()->parse(value.string(), this);
-			break;
-		}
-		default:
-		{
-			SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_TYPE:
+        {
+            if(value == "matrix")
+                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_MATRIX);
+            else if(value == "saturate")
+                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_SATURATE);
+            else if(value == "hueRotate")
+                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_HUEROTATE);
+            else if(value == "luminanceToAlpha")
+                type()->setBaseVal(SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
+            break;
+        }
+        case ATTR_IN:
+        {
+            in1()->setBaseVal(value.handle());
+            break;
+        }
+        case ATTR_VALUES:
+        {
+            values()->baseVal()->parse(value.string(), this);
+            break;
+        }
+        default:
+        {
+            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
+        }
+    };
 }
 
 KCanvasItem *SVGFEColorMatrixElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
 {
-	m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
-	m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
-	setStandardAttributes(m_filterEffect);
-	QValueList<float> _values;
-	SVGNumberListImpl *numbers = values()->baseVal();
-	unsigned int nr = numbers->numberOfItems();
-	for(unsigned int i = 0;i < nr;i++)
-		_values.append(numbers->getItem(i)->value());
-	m_filterEffect->setValues(_values);
-	m_filterEffect->setType((KCColorMatrixType)(type()->baseVal() - 1));
-	return 0;
+    m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    setStandardAttributes(m_filterEffect);
+    QValueList<float> _values;
+    SVGNumberListImpl *numbers = values()->baseVal();
+    unsigned int nr = numbers->numberOfItems();
+    for(unsigned int i = 0;i < nr;i++)
+        _values.append(numbers->getItem(i)->value());
+    m_filterEffect->setValues(_values);
+    m_filterEffect->setType((KCColorMatrixType)(type()->baseVal() - 1));
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEColorMatrixElementImpl::filterEffect() const
 {
-	return m_filterEffect;
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

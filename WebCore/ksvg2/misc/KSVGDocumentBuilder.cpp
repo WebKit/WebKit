@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,7 +40,7 @@ using namespace KSVG;
 
 DocumentBuilder::DocumentBuilder(KSVGView *view) : KDOM::DocumentBuilder()
 {
-	m_view = view;
+    m_view = view;
 }
 
 DocumentBuilder::~DocumentBuilder()
@@ -49,52 +49,52 @@ DocumentBuilder::~DocumentBuilder()
 
 bool DocumentBuilder::startDocument(const KURL &uri)
 {
-	kdDebug(26001) << "KSVG::DocumentBuilder::startDocument, uri = " << uri.prettyURL() << endl;
+    kdDebug(26001) << "KSVG::DocumentBuilder::startDocument, uri = " << uri.prettyURL() << endl;
 
-	SVGDOMImplementationImpl *factory = SVGDOMImplementationImpl::self();
-	SVGDocumentImpl *docImpl = static_cast<SVGDocumentImpl *>(factory->createDocument(KDOM::NS_SVG.handle(), KDOM::DOMString("svg:svg").handle(),
-															  factory->defaultDocumentType(), false, m_view));
+    SVGDOMImplementationImpl *factory = SVGDOMImplementationImpl::self();
+    SVGDocumentImpl *docImpl = static_cast<SVGDocumentImpl *>(factory->createDocument(KDOM::NS_SVG.handle(), KDOM::DOMString("svg:svg").handle(),
+                                                              factory->defaultDocumentType(), false, m_view));
 
-	if(!docImpl)
-		return false;
+    if(!docImpl)
+        return false;
 
-	DocumentBuilder::linkDocumentToCanvas(docImpl, m_view);
+    DocumentBuilder::linkDocumentToCanvas(docImpl, m_view);
 
-	setDocument(docImpl); // Register in kdom...
-	return KDOM::DocumentBuilder::startDocument(uri);
+    setDocument(docImpl); // Register in kdom...
+    return KDOM::DocumentBuilder::startDocument(uri);
 }
 #if 0
 void DocumentBuilder::linkDocumentToCanvas(const SVGDocument &doc, KSVGView *view)
 {
-	SVGDocumentImpl *docImpl = static_cast<SVGDocumentImpl *>(doc.handle());
-	if(!docImpl)
-		return;
+    SVGDocumentImpl *docImpl = static_cast<SVGDocumentImpl *>(doc.handle());
+    if(!docImpl)
+        return;
 
-	DocumentBuilder::linkDocumentToCanvas(docImpl, view);
+    DocumentBuilder::linkDocumentToCanvas(docImpl, view);
 }
 #endif
 void DocumentBuilder::linkDocumentToCanvas(SVGDocumentImpl *docImpl, KSVGView *view)
 {
-	docImpl->ref();
+    docImpl->ref();
 
-	docImpl->setCanvasView((view ? view->canvasView() : 0));
-	docImpl->attach();
+    docImpl->setCanvasView((view ? view->canvasView() : 0));
+    docImpl->attach();
 }
 
 void DocumentBuilder::finishedDocument(SVGDocumentImpl *docImpl)
 {
-	if(docImpl)
-		docImpl->finishedParsing();
+    if(docImpl)
+        docImpl->finishedParsing();
 }
 
 bool DocumentBuilder::endDocument()
 {
-	kdDebug(26001) << "KSVG::DocumentBuilder::endDocument" << endl;
+    kdDebug(26001) << "KSVG::DocumentBuilder::endDocument" << endl;
 
-	KDOM::DocumentBuilder::endDocument();
-	DocumentBuilder::finishedDocument(static_cast<SVGDocumentImpl *>(document()));
+    KDOM::DocumentBuilder::endDocument();
+    DocumentBuilder::finishedDocument(static_cast<SVGDocumentImpl *>(document()));
 
-	return true;
+    return true;
 }
 
 // vim:ts=4:noet

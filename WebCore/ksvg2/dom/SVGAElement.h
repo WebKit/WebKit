@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,39 +34,39 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAElementImpl;
-	class SVGAElement : public SVGElement,
-						public SVGURIReference,
-						public SVGTests,
-						public SVGLangSpace,
-						public SVGExternalResourcesRequired,
-						public SVGStylable,
-						public SVGTransformable
-	{
-	public:
-		SVGAElement();
-		explicit SVGAElement(SVGAElementImpl *i);
-		SVGAElement(const SVGAElement &other);
-		SVGAElement(const KDOM::Node &other);
-		virtual ~SVGAElement();
+    class SVGAnimatedString;
+    class SVGAElementImpl;
+    class SVGAElement : public SVGElement,
+                        public SVGURIReference,
+                        public SVGTests,
+                        public SVGLangSpace,
+                        public SVGExternalResourcesRequired,
+                        public SVGStylable,
+                        public SVGTransformable
+    {
+    public:
+        SVGAElement();
+        explicit SVGAElement(SVGAElementImpl *i);
+        SVGAElement(const SVGAElement &other);
+        SVGAElement(const KDOM::Node &other);
+        virtual ~SVGAElement();
 
-		// Operators
-		SVGAElement &operator=(const SVGAElement &other);
-		SVGAElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGAElement &operator=(const SVGAElement &other);
+        SVGAElement &operator=(const KDOM::Node &other);
 
-		// 'SVGAElement' functions
-		SVGAnimatedString target() const;
+        // 'SVGAElement' functions
+        SVGAnimatedString target() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGAElement)
+        // Internal
+        KSVG_INTERNAL(SVGAElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

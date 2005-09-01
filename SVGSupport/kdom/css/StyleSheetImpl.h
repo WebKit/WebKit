@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,41 +27,41 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class MediaListImpl;
-	class StyleSheetImpl : public StyleListImpl
-	{
-	public:
-		StyleSheetImpl(NodeImpl *ownerNode, DOMStringImpl *href = 0);
-		StyleSheetImpl(StyleSheetImpl *parentSheet, DOMStringImpl *href = 0);
-		StyleSheetImpl(StyleBaseImpl *owner, DOMStringImpl *href  = 0);
-		virtual ~StyleSheetImpl();
+    class NodeImpl;
+    class MediaListImpl;
+    class StyleSheetImpl : public StyleListImpl
+    {
+    public:
+        StyleSheetImpl(NodeImpl *ownerNode, DOMStringImpl *href = 0);
+        StyleSheetImpl(StyleSheetImpl *parentSheet, DOMStringImpl *href = 0);
+        StyleSheetImpl(StyleBaseImpl *owner, DOMStringImpl *href  = 0);
+        virtual ~StyleSheetImpl();
 
-		// 'StyleSheet' functions
-		void setDisabled(bool disabled);
-		bool disabled() const;
+        // 'StyleSheet' functions
+        void setDisabled(bool disabled);
+        bool disabled() const;
 
-		NodeImpl *ownerNode() const;
-		StyleSheetImpl *parentStyleSheet() const;
+        NodeImpl *ownerNode() const;
+        StyleSheetImpl *parentStyleSheet() const;
 
-		DOMStringImpl *href() const;
-		DOMStringImpl *title() const;
+        DOMStringImpl *href() const;
+        DOMStringImpl *title() const;
 
-		MediaListImpl *media() const;
+        MediaListImpl *media() const;
 
-		void setMedia(MediaListImpl *media);
-		void setTitle(DOMStringImpl *title);
+        void setMedia(MediaListImpl *media);
+        void setTitle(DOMStringImpl *title);
 
-		virtual bool isStyleSheet() const { return true; }
-		virtual DOMStringImpl *type() const { return 0; }
+        virtual bool isStyleSheet() const { return true; }
+        virtual DOMStringImpl *type() const { return 0; }
 
-	protected:
-		NodeImpl *m_parentNode;
-		DOMStringImpl *m_strHref;
-		DOMStringImpl *m_strTitle;
-		MediaListImpl *m_media;
-		bool m_disabled : 1;
-	};
+    protected:
+        NodeImpl *m_parentNode;
+        DOMStringImpl *m_strHref;
+        DOMStringImpl *m_strTitle;
+        MediaListImpl *m_media;
+        bool m_disabled : 1;
+    };
 };
 
 #endif

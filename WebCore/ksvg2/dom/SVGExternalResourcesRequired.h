@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,34 +27,34 @@
 
 namespace KSVG
 {
-	class SVGAnimatedBoolean;
-	class SVGExternalResourcesRequiredImpl;
-	class SVGExternalResourcesRequired
-	{
-	public:
-		SVGExternalResourcesRequired();
-		explicit SVGExternalResourcesRequired(SVGExternalResourcesRequiredImpl *i);
-		SVGExternalResourcesRequired(const SVGExternalResourcesRequired &other);
-		virtual ~SVGExternalResourcesRequired();
+    class SVGAnimatedBoolean;
+    class SVGExternalResourcesRequiredImpl;
+    class SVGExternalResourcesRequired
+    {
+    public:
+        SVGExternalResourcesRequired();
+        explicit SVGExternalResourcesRequired(SVGExternalResourcesRequiredImpl *i);
+        SVGExternalResourcesRequired(const SVGExternalResourcesRequired &other);
+        virtual ~SVGExternalResourcesRequired();
 
-		// Operators
-		SVGExternalResourcesRequired &operator=(const SVGExternalResourcesRequired &other);
-		SVGExternalResourcesRequired &operator=(SVGExternalResourcesRequiredImpl *other);
+        // Operators
+        SVGExternalResourcesRequired &operator=(const SVGExternalResourcesRequired &other);
+        SVGExternalResourcesRequired &operator=(SVGExternalResourcesRequiredImpl *other);
 
-		// 'SVGExternalResourcesRequired' functions
-		SVGAnimatedBoolean externalResourcesRequired() const;
+        // 'SVGExternalResourcesRequired' functions
+        SVGAnimatedBoolean externalResourcesRequired() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGExternalResourcesRequired)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGExternalResourcesRequired)
 
-	protected:
-		SVGExternalResourcesRequiredImpl *impl;
+    protected:
+        SVGExternalResourcesRequiredImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

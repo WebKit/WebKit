@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,29 +30,29 @@
 
 namespace KDOM
 {
-	class EventListenerImpl : public Shared
-	{
-	public:
-		EventListenerImpl();
-		virtual ~EventListenerImpl();
+    class EventListenerImpl : public Shared
+    {
+    public:
+        EventListenerImpl();
+        virtual ~EventListenerImpl();
 
-		virtual void handleEvent(EventImpl *evt);
-		
-		DOMStringImpl *internalType() const;
-		KJS::ValueImp *ecmaListener() const;
+        virtual void handleEvent(EventImpl *evt);
+        
+        DOMStringImpl *internalType() const;
+        KJS::ValueImp *ecmaListener() const;
 
-		// Internal
-		void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::ObjectImp *listener, KJS::ValueImp *compareListener, DOMStringImpl *internalType);
+        // Internal
+        void initListener(DocumentImpl *doc, bool ecmaEventListener, KJS::ObjectImp *listener, KJS::ValueImp *compareListener, DOMStringImpl *internalType);
 
-	private:
-		DocumentImpl *m_doc;
+    private:
+        DocumentImpl *m_doc;
 
-		bool m_ecmaEventListener;
-		DOMStringImpl *m_internalType;
+        bool m_ecmaEventListener;
+        DOMStringImpl *m_internalType;
 
-		KJS::ObjectImp *m_listener;
-		KJS::ValueImp *m_compareListener;
-	};
+        KJS::ObjectImp *m_listener;
+        KJS::ValueImp *m_compareListener;
+    };
 };
 
 #endif

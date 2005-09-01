@@ -27,47 +27,47 @@
 
 namespace KDOM
 {
-	class DOMString;
+    class DOMString;
 }
 
 namespace KSVG
 {
-	class SVGStringListImpl;
-	class SVGStringList
-	{
-	public:
-		SVGStringList();
-		explicit SVGStringList(SVGStringListImpl *i);
-		SVGStringList(const SVGStringList &other);
-		virtual ~SVGStringList();
+    class SVGStringListImpl;
+    class SVGStringList
+    {
+    public:
+        SVGStringList();
+        explicit SVGStringList(SVGStringListImpl *i);
+        SVGStringList(const SVGStringList &other);
+        virtual ~SVGStringList();
 
-		// Operators
-		SVGStringList &operator=(const SVGStringList &other);
-		bool operator==(const SVGStringList &other) const;
-		bool operator!=(const SVGStringList &other) const;
+        // Operators
+        SVGStringList &operator=(const SVGStringList &other);
+        bool operator==(const SVGStringList &other) const;
+        bool operator!=(const SVGStringList &other) const;
 
-		// 'SVGStringList' functions
-		unsigned long numberOfItems() const;
-		void clear();
+        // 'SVGStringList' functions
+        unsigned long numberOfItems() const;
+        void clear();
 
-		KDOM::DOMString initialize(const KDOM::DOMString &newItem);
-		KDOM::DOMString getItem(unsigned long index);
-		KDOM::DOMString insertItemBefore(const KDOM::DOMString &newItem, unsigned long index);
-		KDOM::DOMString replaceItem(const KDOM::DOMString &newItem, unsigned long index);
-		KDOM::DOMString removeItem(unsigned long index);
-		KDOM::DOMString appendItem(const KDOM::DOMString &newItem);
+        KDOM::DOMString initialize(const KDOM::DOMString &newItem);
+        KDOM::DOMString getItem(unsigned long index);
+        KDOM::DOMString insertItemBefore(const KDOM::DOMString &newItem, unsigned long index);
+        KDOM::DOMString replaceItem(const KDOM::DOMString &newItem, unsigned long index);
+        KDOM::DOMString removeItem(unsigned long index);
+        KDOM::DOMString appendItem(const KDOM::DOMString &newItem);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGStringList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGStringList)
 
-	protected:
-		SVGStringListImpl *impl;
+    protected:
+        SVGStringListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGStringListProto)

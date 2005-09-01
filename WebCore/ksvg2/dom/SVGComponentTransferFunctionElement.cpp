@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,42 +42,42 @@ using namespace KSVG;
 
 /*
 @begin SVGComponentTransferFunctionElement::s_hashTable 9
- type		SVGComponentTransferFunctionElementConstants::Type	DontDelete|ReadOnly
- tableValues	SVGComponentTransferFunctionElementConstants::TableValues	DontDelete|ReadOnly
- slope		SVGComponentTransferFunctionElementConstants::Slope	DontDelete|ReadOnly
- intercept	SVGComponentTransferFunctionElementConstants::Intercept	DontDelete|ReadOnly
- amplitude	SVGComponentTransferFunctionElementConstants::Amplitude	DontDelete|ReadOnly
- exponent	SVGComponentTransferFunctionElementConstants::Exponent	DontDelete|ReadOnly
- offset		SVGComponentTransferFunctionElementConstants::Offset	DontDelete|ReadOnly
+ type        SVGComponentTransferFunctionElementConstants::Type    DontDelete|ReadOnly
+ tableValues    SVGComponentTransferFunctionElementConstants::TableValues    DontDelete|ReadOnly
+ slope        SVGComponentTransferFunctionElementConstants::Slope    DontDelete|ReadOnly
+ intercept    SVGComponentTransferFunctionElementConstants::Intercept    DontDelete|ReadOnly
+ amplitude    SVGComponentTransferFunctionElementConstants::Amplitude    DontDelete|ReadOnly
+ exponent    SVGComponentTransferFunctionElementConstants::Exponent    DontDelete|ReadOnly
+ offset        SVGComponentTransferFunctionElementConstants::Offset    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGComponentTransferFunctionElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGComponentTransferFunctionElementConstants::Type:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, type());
-		case SVGComponentTransferFunctionElementConstants::TableValues:
-			return KDOM::safe_cache<SVGAnimatedNumberList>(exec, tableValues());
-		case SVGComponentTransferFunctionElementConstants::Slope:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, slope());
-		case SVGComponentTransferFunctionElementConstants::Intercept:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, intercept());
-		case SVGComponentTransferFunctionElementConstants::Amplitude:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, amplitude());
-		case SVGComponentTransferFunctionElementConstants::Exponent:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, exponent());
-		case SVGComponentTransferFunctionElementConstants::Offset:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, offset());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGComponentTransferFunctionElementConstants::Type:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, type());
+        case SVGComponentTransferFunctionElementConstants::TableValues:
+            return KDOM::safe_cache<SVGAnimatedNumberList>(exec, tableValues());
+        case SVGComponentTransferFunctionElementConstants::Slope:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, slope());
+        case SVGComponentTransferFunctionElementConstants::Intercept:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, intercept());
+        case SVGComponentTransferFunctionElementConstants::Amplitude:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, amplitude());
+        case SVGComponentTransferFunctionElementConstants::Exponent:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, exponent());
+        case SVGComponentTransferFunctionElementConstants::Offset:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, offset());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -95,12 +95,12 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(SVGComp
 
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const SVGComponentTransferFunctionElement &other) : SVGElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const KDOM::Node &other) : SVGElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
@@ -109,85 +109,85 @@ SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
 
 SVGComponentTransferFunctionElement &SVGComponentTransferFunctionElement::operator=(const SVGComponentTransferFunctionElement &other)
 {
-	SVGElement::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    return *this;
 }
 
 SVGComponentTransferFunctionElement &SVGComponentTransferFunctionElement::operator=(const KDOM::Node &other)
 {
-	SVGComponentTransferFunctionElementImpl *ohandle = static_cast<SVGComponentTransferFunctionElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-		}
-	}
+    SVGComponentTransferFunctionElementImpl *ohandle = static_cast<SVGComponentTransferFunctionElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedEnumeration SVGComponentTransferFunctionElement::type() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->type());
+    return SVGAnimatedEnumeration(impl->type());
 }
 
 SVGAnimatedNumberList SVGComponentTransferFunctionElement::tableValues() const
 {
-	if(!d)
-		return SVGAnimatedNumberList::null;
+    if(!d)
+        return SVGAnimatedNumberList::null;
 
-	return SVGAnimatedNumberList(impl->tableValues());
+    return SVGAnimatedNumberList(impl->tableValues());
 }
 
 SVGAnimatedNumber SVGComponentTransferFunctionElement::slope() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->slope());
+    return SVGAnimatedNumber(impl->slope());
 }
 
 SVGAnimatedNumber SVGComponentTransferFunctionElement::intercept() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->intercept());
+    return SVGAnimatedNumber(impl->intercept());
 }
 
 SVGAnimatedNumber SVGComponentTransferFunctionElement::amplitude() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->amplitude());
+    return SVGAnimatedNumber(impl->amplitude());
 }
 
 SVGAnimatedNumber SVGComponentTransferFunctionElement::exponent() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->exponent());
+    return SVGAnimatedNumber(impl->exponent());
 }
 
 SVGAnimatedNumber SVGComponentTransferFunctionElement::offset() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->offset());
+    return SVGAnimatedNumber(impl->offset());
 }
 
 // vim:ts=4:noet

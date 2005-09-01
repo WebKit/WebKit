@@ -29,43 +29,43 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSegMovetoAbs::s_hashTable 3
- x		SVGPathSegMovetoConstants::X		DontDelete
- y		SVGPathSegMovetoConstants::Y		DontDelete
+ x        SVGPathSegMovetoConstants::X        DontDelete
+ y        SVGPathSegMovetoConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegMovetoAbs::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegMovetoConstants::X:
-		return Number(x());
-	case SVGPathSegMovetoConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegMovetoConstants::X:
+        return Number(x());
+    case SVGPathSegMovetoConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegMovetoAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegMovetoConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegMovetoConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegMovetoConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegMovetoConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -83,12 +83,12 @@ SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(SVGPathSegMovetoAbsImpl *other) : SVGPa
 
 SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(const SVGPathSegMovetoAbs &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegMovetoAbs::SVGPathSegMovetoAbs(const SVGPathSeg &other) : SVGPathSeg(other)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegMovetoAbs::~SVGPathSegMovetoAbs()
@@ -97,80 +97,80 @@ SVGPathSegMovetoAbs::~SVGPathSegMovetoAbs()
 
 SVGPathSegMovetoAbs &SVGPathSegMovetoAbs::operator=(const SVGPathSegMovetoAbs &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegMovetoAbs, PATHSEG_MOVETO_ABS)
 
 void SVGPathSegMovetoAbs::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegMovetoAbs::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegMovetoAbs::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegMovetoAbs::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 
 /*
 @begin SVGPathSegMovetoRel::s_hashTable 3
- x		SVGPathSegMovetoConstants::X		DontDelete
- y		SVGPathSegMovetoConstants::Y		DontDelete
+ x        SVGPathSegMovetoConstants::X        DontDelete
+ y        SVGPathSegMovetoConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegMovetoRel::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegMovetoConstants::X:
-		return Number(x());
-	case SVGPathSegMovetoConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegMovetoConstants::X:
+        return Number(x());
+    case SVGPathSegMovetoConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegMovetoRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegMovetoConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegMovetoConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegMovetoConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegMovetoConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -190,12 +190,12 @@ SVGPathSegMovetoRel::SVGPathSegMovetoRel(SVGPathSegMovetoRelImpl *other) : SVGPa
 
 SVGPathSegMovetoRel::SVGPathSegMovetoRel(const SVGPathSegMovetoRel &other) : SVGPathSeg(other)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegMovetoRel::SVGPathSegMovetoRel(const SVGPathSeg &other) : SVGPathSeg(other)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegMovetoRel::~SVGPathSegMovetoRel()
@@ -204,38 +204,38 @@ SVGPathSegMovetoRel::~SVGPathSegMovetoRel()
 
 SVGPathSegMovetoRel &SVGPathSegMovetoRel::operator=(const SVGPathSegMovetoRel &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegMovetoRel, PATHSEG_MOVETO_REL)
 
 void SVGPathSegMovetoRel::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegMovetoRel::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegMovetoRel::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegMovetoRel::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 // vim:ts=4:noet

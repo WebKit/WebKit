@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -49,369 +49,369 @@ using namespace KSVG;
 
 SVGPatternElementImpl::SVGPatternElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGStyledElementImpl(doc, id, prefix), SVGURIReferenceImpl(), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl(), KCanvasResourceListener()
 {
-	m_patternUnits = 0;
-	m_patternTransform = 0;
-	m_patternContentUnits = 0;
-	m_x = m_y = m_width = m_height = 0;
+    m_patternUnits = 0;
+    m_patternTransform = 0;
+    m_patternContentUnits = 0;
+    m_x = m_y = m_width = m_height = 0;
 
-	m_tile = 0;
-	m_paintServer = 0;
-	m_ignoreAttributeChanges = false;
+    m_tile = 0;
+    m_paintServer = 0;
+    m_ignoreAttributeChanges = false;
 }
 
 SVGPatternElementImpl::~SVGPatternElementImpl()
 {
-	if(m_x)
-		m_x->deref();
-	if(m_y)
-		m_y->deref();
-	if(m_width)
-		m_width->deref();
-	if(m_height)
-		m_height->deref();
-	if(m_patternUnits)
-		m_patternUnits->deref();
-	if(m_patternContentUnits)
-		m_patternContentUnits->deref();
-	if(m_patternTransform)
-		m_patternTransform->deref();
+    if(m_x)
+        m_x->deref();
+    if(m_y)
+        m_y->deref();
+    if(m_width)
+        m_width->deref();
+    if(m_height)
+        m_height->deref();
+    if(m_patternUnits)
+        m_patternUnits->deref();
+    if(m_patternContentUnits)
+        m_patternContentUnits->deref();
+    if(m_patternTransform)
+        m_patternTransform->deref();
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternUnits() const
 {
-	if(!m_patternUnits)
-	{
-		lazy_create<SVGAnimatedEnumerationImpl>(m_patternUnits, this);
-		m_patternUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-	}
+    if(!m_patternUnits)
+    {
+        lazy_create<SVGAnimatedEnumerationImpl>(m_patternUnits, this);
+        m_patternUnits->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    }
 
-	return m_patternUnits;
+    return m_patternUnits;
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternContentUnits() const
 {
-	if(!m_patternContentUnits)
-	{
-		lazy_create<SVGAnimatedEnumerationImpl>(m_patternContentUnits, this);
-		m_patternContentUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-	}
+    if(!m_patternContentUnits)
+    {
+        lazy_create<SVGAnimatedEnumerationImpl>(m_patternContentUnits, this);
+        m_patternContentUnits->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+    }
 
-	return m_patternContentUnits;
+    return m_patternContentUnits;
 }
 
 SVGAnimatedLengthImpl *SVGPatternElementImpl::x() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGPatternElementImpl::y() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGPatternElementImpl::width() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGPatternElementImpl::height() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
 }
 
 SVGAnimatedTransformListImpl *SVGPatternElementImpl::patternTransform() const
 {
-	return lazy_create<SVGAnimatedTransformListImpl>(m_patternTransform, this);
+    return lazy_create<SVGAnimatedTransformListImpl>(m_patternTransform, this);
 }
 
 void SVGPatternElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_PATTERNUNITS:
-		{
-			if(value == "userSpaceOnUse")
-				patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-			else if(value == "objectBoundingBox")
-				patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-			break;
-		}
-		case ATTR_PATTERNCONTENTUNITS:
-		{
-			if(value == "userSpaceOnUse")
-				patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-			else if(value == "objectBoundingBox")
-				patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-			break;
-		}
-		case ATTR_PATTERNTRANSFORM:
-		{
-			SVGTransformListImpl *patternTransforms = patternTransform()->baseVal();
-			SVGTransformableImpl::parseTransformAttribute(patternTransforms, value);
-			break;
-		}
-		case ATTR_X:
-		{
-			x()->baseVal()->setValueAsString(value.handle());
-			break;
-		}
-		case ATTR_Y:
-		{
-			y()->baseVal()->setValueAsString(value.handle());
-			break;
-		}
-		case ATTR_WIDTH:
-		{
-			width()->baseVal()->setValueAsString(value.handle());
-			break;
-		}
-		case ATTR_HEIGHT:
-		{
-			height()->baseVal()->setValueAsString(value.handle());
-			break;
-		}
-		default:
-		{
-			if(SVGURIReferenceImpl::parseAttribute(attr)) return;
-			if(SVGTestsImpl::parseAttribute(attr)) return;
-			if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-			if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_PATTERNUNITS:
+        {
+            if(value == "userSpaceOnUse")
+                patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            else if(value == "objectBoundingBox")
+                patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            break;
+        }
+        case ATTR_PATTERNCONTENTUNITS:
+        {
+            if(value == "userSpaceOnUse")
+                patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            else if(value == "objectBoundingBox")
+                patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+            break;
+        }
+        case ATTR_PATTERNTRANSFORM:
+        {
+            SVGTransformListImpl *patternTransforms = patternTransform()->baseVal();
+            SVGTransformableImpl::parseTransformAttribute(patternTransforms, value);
+            break;
+        }
+        case ATTR_X:
+        {
+            x()->baseVal()->setValueAsString(value.handle());
+            break;
+        }
+        case ATTR_Y:
+        {
+            y()->baseVal()->setValueAsString(value.handle());
+            break;
+        }
+        case ATTR_WIDTH:
+        {
+            width()->baseVal()->setValueAsString(value.handle());
+            break;
+        }
+        case ATTR_HEIGHT:
+        {
+            height()->baseVal()->setValueAsString(value.handle());
+            break;
+        }
+        default:
+        {
+            if(SVGURIReferenceImpl::parseAttribute(attr)) return;
+            if(SVGTestsImpl::parseAttribute(attr)) return;
+            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+            if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
 
-			SVGStyledElementImpl::parseAttribute(attr);
-		}
-	};
+            SVGStyledElementImpl::parseAttribute(attr);
+        }
+    };
 }
 
 const SVGStyledElementImpl *SVGPatternElementImpl::pushAttributeContext(const SVGStyledElementImpl *context)
 {
-	// All attribute's contexts are equal (so just take the one from 'x').
-	const SVGStyledElementImpl *restore = x()->baseVal()->context();
+    // All attribute's contexts are equal (so just take the one from 'x').
+    const SVGStyledElementImpl *restore = x()->baseVal()->context();
 
-	x()->baseVal()->setContext(context);
-	y()->baseVal()->setContext(context);
-	width()->baseVal()->setContext(context);
-	height()->baseVal()->setContext(context);
+    x()->baseVal()->setContext(context);
+    y()->baseVal()->setContext(context);
+    width()->baseVal()->setContext(context);
+    height()->baseVal()->setContext(context);
 
-	return restore;
+    return restore;
 }
 
 void SVGPatternElementImpl::resourceNotification() const
 {
-	// We're referenced by a "client", calculate the tile now...
-	notifyAttributeChange();
+    // We're referenced by a "client", calculate the tile now...
+    notifyAttributeChange();
 }
 
 void SVGPatternElementImpl::notifyAttributeChange() const
 {
-	if(!m_paintServer || !m_paintServer->activeClient())
-		return;
+    if(!m_paintServer || !m_paintServer->activeClient())
+        return;
 
-	if(m_ignoreAttributeChanges)
-		return;
+    if(m_ignoreAttributeChanges)
+        return;
 
-	float w = width()->baseVal()->value();
-	float h = height()->baseVal()->value();
+    float w = width()->baseVal()->value();
+    float h = height()->baseVal()->value();
 
-	QSize newSize = QSize(qRound(w), qRound(h));
-	if(m_tile && (m_tile->size() == newSize))
-		return;
+    QSize newSize = QSize(qRound(w), qRound(h));
+    if(m_tile && (m_tile->size() == newSize))
+        return;
 
-	m_ignoreAttributeChanges = true;
+    m_ignoreAttributeChanges = true;
 
-	// Find first pattern def that has children
-	const KDOM::ElementImpl *target = this;
+    // Find first pattern def that has children
+    const KDOM::ElementImpl *target = this;
 
-	const KDOM::NodeImpl *test = static_cast<const KDOM::NodeImpl *>(target);
-	while(test && !test->hasChildNodes())
-	{
-		QString ref = KDOM::DOMString(href()->baseVal()).string();
-		test = ownerDocument()->getElementById(KDOM::DOMString(ref.mid(1)).handle());
-		if(test && test->id() == ID_PATTERN)
-			target = static_cast<const KDOM::ElementImpl *>(test);
-	}
+    const KDOM::NodeImpl *test = static_cast<const KDOM::NodeImpl *>(target);
+    while(test && !test->hasChildNodes())
+    {
+        QString ref = KDOM::DOMString(href()->baseVal()).string();
+        test = ownerDocument()->getElementById(KDOM::DOMString(ref.mid(1)).handle());
+        if(test && test->id() == ID_PATTERN)
+            target = static_cast<const KDOM::ElementImpl *>(test);
+    }
 
-	unsigned short savedPatternUnits = patternUnits()->baseVal();
-	unsigned short savedPatternContentUnits = patternContentUnits()->baseVal();
+    unsigned short savedPatternUnits = patternUnits()->baseVal();
+    unsigned short savedPatternContentUnits = patternContentUnits()->baseVal();
 
-	KRenderingPaintServer *refServer = 0;
-	QString ref = KDOM::DOMString(href()->baseVal()).string();
-	if(!ref.isEmpty())
-	{
-		SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
-		KCanvas *canvas = (document ? document->canvas() : 0);
-		Q_ASSERT(canvas != 0);
-		
-		refServer = canvas->registry()->getPaintServerById(ref.mid(1));
-	}
+    KRenderingPaintServer *refServer = 0;
+    QString ref = KDOM::DOMString(href()->baseVal()).string();
+    if(!ref.isEmpty())
+    {
+        SVGDocumentImpl *document = static_cast<SVGDocumentImpl *>(ownerDocument());
+        KCanvas *canvas = (document ? document->canvas() : 0);
+        Q_ASSERT(canvas != 0);
+        
+        refServer = canvas->registry()->getPaintServerById(ref.mid(1));
+    }
 
-	KCanvasMatrix patternTransformMatrix;
-	if(patternTransform()->baseVal()->numberOfItems() > 0)
-		patternTransformMatrix = KCanvasMatrix(patternTransform()->baseVal()->consolidate()->matrix()->qmatrix());
+    KCanvasMatrix patternTransformMatrix;
+    if(patternTransform()->baseVal()->numberOfItems() > 0)
+        patternTransformMatrix = KCanvasMatrix(patternTransform()->baseVal()->consolidate()->matrix()->qmatrix());
 
-	if(refServer && refServer->type() == PS_PATTERN)
-	{
-		KRenderingPaintServerPattern *refPattern = static_cast<KRenderingPaintServerPattern *>(refServer);
-		
-		if(!hasAttribute(KDOM::DOMString("patternUnits").handle()))
-		{
-			KDOM::DOMString value(target->getAttribute(KDOM::DOMString("patternUnits").handle()));
-			if(value == "userSpaceOnUse")
-				patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-			else if(value == "objectBoundingBox")
-				patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-		}
-		
-		if(!hasAttribute(KDOM::DOMString("patternContentUnits").handle()))
-		{
-			KDOM::DOMString value(target->getAttribute(KDOM::DOMString("patternContentUnits").handle()));
-			if(value == "userSpaceOnUse")
-				patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
-			else if(value == "objectBoundingBox")
-				patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
-		}
+    if(refServer && refServer->type() == PS_PATTERN)
+    {
+        KRenderingPaintServerPattern *refPattern = static_cast<KRenderingPaintServerPattern *>(refServer);
+        
+        if(!hasAttribute(KDOM::DOMString("patternUnits").handle()))
+        {
+            KDOM::DOMString value(target->getAttribute(KDOM::DOMString("patternUnits").handle()));
+            if(value == "userSpaceOnUse")
+                patternUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            else if(value == "objectBoundingBox")
+                patternUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        }
+        
+        if(!hasAttribute(KDOM::DOMString("patternContentUnits").handle()))
+        {
+            KDOM::DOMString value(target->getAttribute(KDOM::DOMString("patternContentUnits").handle()));
+            if(value == "userSpaceOnUse")
+                patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_USERSPACEONUSE);
+            else if(value == "objectBoundingBox")
+                patternContentUnits()->setBaseVal(SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        }
 
-		if(!hasAttribute(KDOM::DOMString("patternTransform").handle()))
-			patternTransformMatrix = refPattern->patternTransform();
-	}
+        if(!hasAttribute(KDOM::DOMString("patternTransform").handle()))
+            patternTransformMatrix = refPattern->patternTransform();
+    }
 
-	SVGStyledElementImpl *activeElement = static_cast<SVGStyledElementImpl *>(m_paintServer->activeClient()->userData());
+    SVGStyledElementImpl *activeElement = static_cast<SVGStyledElementImpl *>(m_paintServer->activeClient()->userData());
 
-	bool bbox = (patternUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+    bool bbox = (patternUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
-	const SVGStyledElementImpl *savedContext = 0;
-	if(bbox)
-	{
-		if(width()->baseVal()->unitType() != SVG_LENGTHTYPE_PERCENTAGE)
-			width()->baseVal()->newValueSpecifiedUnits(SVG_LENGTHTYPE_PERCENTAGE, width()->baseVal()->value() * 100.);
-		if(height()->baseVal()->unitType() != SVG_LENGTHTYPE_PERCENTAGE)
-			height()->baseVal()->newValueSpecifiedUnits(SVG_LENGTHTYPE_PERCENTAGE, height()->baseVal()->value() * 100.);
-		if(activeElement)
-			savedContext = const_cast<SVGPatternElementImpl *>(this)->pushAttributeContext(activeElement);
-	}	
+    const SVGStyledElementImpl *savedContext = 0;
+    if(bbox)
+    {
+        if(width()->baseVal()->unitType() != SVG_LENGTHTYPE_PERCENTAGE)
+            width()->baseVal()->newValueSpecifiedUnits(SVG_LENGTHTYPE_PERCENTAGE, width()->baseVal()->value() * 100.);
+        if(height()->baseVal()->unitType() != SVG_LENGTHTYPE_PERCENTAGE)
+            height()->baseVal()->newValueSpecifiedUnits(SVG_LENGTHTYPE_PERCENTAGE, height()->baseVal()->value() * 100.);
+        if(activeElement)
+            savedContext = const_cast<SVGPatternElementImpl *>(this)->pushAttributeContext(activeElement);
+    }    
 
-	delete m_tile;
-	m_tile = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
-	m_tile->init(newSize);
+    delete m_tile;
+    m_tile = static_cast<KCanvasImage *>(canvas()->renderingDevice()->createResource(RS_IMAGE));
+    m_tile->init(newSize);
 
-	KRenderingDeviceContext *patternContext = canvas()->renderingDevice()->contextForImage(m_tile);
-	canvas()->renderingDevice()->pushContext(patternContext);
-//	KCanvasCommonArgs args;
-//	args.setCanvas(canvas());
-//	args.setStyle(item->style());
-	
-	KRenderingPaintServerPattern *pattern = static_cast<KRenderingPaintServerPattern *>(m_paintServer);
-	pattern->setX(x()->baseVal()->value());
-	pattern->setY(y()->baseVal()->value());
-	pattern->setWidth(width()->baseVal()->value());
-	pattern->setHeight(height()->baseVal()->value());
-	pattern->setPatternTransform(patternTransformMatrix);
-	pattern->setTile(m_tile);
+    KRenderingDeviceContext *patternContext = canvas()->renderingDevice()->contextForImage(m_tile);
+    canvas()->renderingDevice()->pushContext(patternContext);
+//    KCanvasCommonArgs args;
+//    args.setCanvas(canvas());
+//    args.setStyle(item->style());
+    
+    KRenderingPaintServerPattern *pattern = static_cast<KRenderingPaintServerPattern *>(m_paintServer);
+    pattern->setX(x()->baseVal()->value());
+    pattern->setY(y()->baseVal()->value());
+    pattern->setWidth(width()->baseVal()->value());
+    pattern->setHeight(height()->baseVal()->value());
+    pattern->setPatternTransform(patternTransformMatrix);
+    pattern->setTile(m_tile);
 
-	for(KDOM::NodeImpl *n = target->firstChild(); n != 0; n = n->nextSibling())
-	{
-		SVGStyledElementImpl *e = dynamic_cast<SVGStyledElementImpl *>(n);
-		KCanvasItem *item = (e ? e->canvasItem() : 0);
-		if(item && item->style())
-		{
-			KCanvasMatrix savedMatrix = item->style()->objectMatrix();
+    for(KDOM::NodeImpl *n = target->firstChild(); n != 0; n = n->nextSibling())
+    {
+        SVGStyledElementImpl *e = dynamic_cast<SVGStyledElementImpl *>(n);
+        KCanvasItem *item = (e ? e->canvasItem() : 0);
+        if(item && item->style())
+        {
+            KCanvasMatrix savedMatrix = item->style()->objectMatrix();
 
-			const SVGStyledElementImpl *savedContext = 0;
-			if(patternContentUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-			{
-				if(activeElement)
-					savedContext = e->pushAttributeContext(activeElement);
-			}
+            const SVGStyledElementImpl *savedContext = 0;
+            if(patternContentUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+            {
+                if(activeElement)
+                    savedContext = e->pushAttributeContext(activeElement);
+            }
 
-			// Take into account viewportElement's viewBox, if existant...
-			if(viewportElement() && viewportElement()->id() == ID_SVG)
-			{
-				SVGSVGElementImpl *svgElement = static_cast<SVGSVGElementImpl *>(viewportElement());
+            // Take into account viewportElement's viewBox, if existant...
+            if(viewportElement() && viewportElement()->id() == ID_SVG)
+            {
+                SVGSVGElementImpl *svgElement = static_cast<SVGSVGElementImpl *>(viewportElement());
 
-				SVGMatrixImpl *svgCTM = svgElement->getCTM();
-				svgCTM->ref();
+                SVGMatrixImpl *svgCTM = svgElement->getCTM();
+                svgCTM->ref();
 
-				SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM();
-				ctm->ref();
+                SVGMatrixImpl *ctm = SVGLocatableImpl::getCTM();
+                ctm->ref();
 
-				KCanvasMatrix newMatrix(svgCTM->qmatrix());
-				newMatrix.multiply(savedMatrix);
-				newMatrix.scale(1.0 / ctm->a(), 1.0 / ctm->d());
+                KCanvasMatrix newMatrix(svgCTM->qmatrix());
+                newMatrix.multiply(savedMatrix);
+                newMatrix.scale(1.0 / ctm->a(), 1.0 / ctm->d());
 
-				item->style()->setObjectMatrix(newMatrix);
+                item->style()->setObjectMatrix(newMatrix);
 
-				ctm->deref();
-				svgCTM->deref();
-			}
+                ctm->deref();
+                svgCTM->deref();
+            }
 
-			item->draw(QRect());
+            item->draw(QRect());
 
-			if(savedContext)
-				e->pushAttributeContext(savedContext);
+            if(savedContext)
+                e->pushAttributeContext(savedContext);
 
-			item->style()->setObjectMatrix(savedMatrix);
-		}
-	}
+            item->style()->setObjectMatrix(savedMatrix);
+        }
+    }
 
-	if(savedContext)
-		const_cast<SVGPatternElementImpl *>(this)->pushAttributeContext(savedContext);
+    if(savedContext)
+        const_cast<SVGPatternElementImpl *>(this)->pushAttributeContext(savedContext);
 
-	canvas()->renderingDevice()->popContext();
-	delete patternContext;
+    canvas()->renderingDevice()->popContext();
+    delete patternContext;
 
-	patternUnits()->setBaseVal(savedPatternUnits);
-	patternContentUnits()->setBaseVal(savedPatternContentUnits);
+    patternUnits()->setBaseVal(savedPatternUnits);
+    patternContentUnits()->setBaseVal(savedPatternContentUnits);
 
-	// Update all users of this resource...
-	const KCanvasItemList &clients = pattern->clients();
+    // Update all users of this resource...
+    const KCanvasItemList &clients = pattern->clients();
 
-	KCanvasItemList::ConstIterator it = clients.begin();
-	KCanvasItemList::ConstIterator end = clients.end();
+    KCanvasItemList::ConstIterator it = clients.begin();
+    KCanvasItemList::ConstIterator end = clients.end();
 
-	for(; it != end; ++it)
-	{
-		const KCanvasItem *current = (*it);
+    for(; it != end; ++it)
+    {
+        const KCanvasItem *current = (*it);
 
-		SVGStyledElementImpl *styled = (current ? static_cast<SVGStyledElementImpl *>(current->userData()) : 0);
-		if(styled)
-		{
-			styled->setChanged(true);
+        SVGStyledElementImpl *styled = (current ? static_cast<SVGStyledElementImpl *>(current->userData()) : 0);
+        if(styled)
+        {
+            styled->setChanged(true);
 
-			if(styled->canvasItem())
-				styled->canvasItem()->invalidate();
-		}
-	}
+            if(styled->canvasItem())
+                styled->canvasItem()->invalidate();
+        }
+    }
 
-	m_ignoreAttributeChanges = false;
+    m_ignoreAttributeChanges = false;
 }
 
 KCanvasItem *SVGPatternElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *) const
 {
-	m_paintServer = canvas->renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
-	KRenderingPaintServerPattern *pserver = static_cast<KRenderingPaintServerPattern *>(m_paintServer);
+    m_paintServer = canvas->renderingDevice()->createPaintServer(KCPaintServerType(PS_PATTERN));
+    KRenderingPaintServerPattern *pserver = static_cast<KRenderingPaintServerPattern *>(m_paintServer);
 
-	pserver->setListener(const_cast<SVGPatternElementImpl *>(this));
+    pserver->setListener(const_cast<SVGPatternElementImpl *>(this));
 
-	canvas->registry()->addPaintServerById(KDOM::DOMString(getId()).string(), pserver);
-	return 0;
+    canvas->registry()->addPaintServerById(KDOM::DOMString(getId()).string(), pserver);
+    return 0;
 }
 
 SVGMatrixImpl *SVGPatternElementImpl::getCTM() const
 {
-	SVGMatrixImpl *mat = SVGSVGElementImpl::createSVGMatrix();
-	if(mat)
-	{
-		SVGMatrixImpl *viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
-														height()->baseVal()->value());
+    SVGMatrixImpl *mat = SVGSVGElementImpl::createSVGMatrix();
+    if(mat)
+    {
+        SVGMatrixImpl *viewBox = viewBoxToViewTransform(width()->baseVal()->value(),
+                                                        height()->baseVal()->value());
 
-		viewBox->ref();
-		mat->multiply(viewBox);
-		viewBox->deref();
-	}
+        viewBox->ref();
+        mat->multiply(viewBox);
+        viewBox->deref();
+    }
 
-	return mat;
+    return mat;
 }
 
 // vim:ts=4:noet

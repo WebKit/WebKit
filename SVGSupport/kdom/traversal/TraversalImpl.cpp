@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,74 +29,74 @@
 using namespace KDOM;
 
 TraversalImpl::TraversalImpl(NodeImpl *n, short show,
-							 NodeFilterImpl *nodeFilter,
-							 bool expandEntityReferences)
+                             NodeFilterImpl *nodeFilter,
+                             bool expandEntityReferences)
 : Shared(), m_root(n), m_whatToShow(show),
 m_filter(nodeFilter), m_expandEntityReferences(expandEntityReferences)
 {
-	if(root())
-		root()->ref();
-	if(filter())
-		filter()->ref();
+    if(root())
+        root()->ref();
+    if(filter())
+        filter()->ref();
 }
 
 TraversalImpl::~TraversalImpl()
 {
-	if(root())
-		root()->deref();
-	if(filter())
-		filter()->deref();
+    if(root())
+        root()->deref();
+    if(filter())
+        filter()->deref();
 }
 
 short TraversalImpl::acceptNode(NodeImpl *node) const
 {
-	// FIXME: If XML is implemented we have to check expandEntityRerefences
-	// in this function.  The bit twiddling here is done to map DOM node types,
-	// which are given as integers from 1 through 12, to whatToShow bit masks.
-	if(node && ((1 << (node->nodeType() - 1)) & m_whatToShow) != 0)
-	// cast to short silences "enumeral and non-enumeral types in return" warning
-		return m_filter ? m_filter->acceptNode(node) : static_cast<short>(FILTER_ACCEPT);
+    // FIXME: If XML is implemented we have to check expandEntityRerefences
+    // in this function.  The bit twiddling here is done to map DOM node types,
+    // which are given as integers from 1 through 12, to whatToShow bit masks.
+    if(node && ((1 << (node->nodeType() - 1)) & m_whatToShow) != 0)
+    // cast to short silences "enumeral and non-enumeral types in return" warning
+        return m_filter ? m_filter->acceptNode(node) : static_cast<short>(FILTER_ACCEPT);
 
-	   return FILTER_SKIP;
+       return FILTER_SKIP;
 }
 
 
 NodeImpl *TraversalImpl::findParentNode(NodeImpl *node, short accept) const
 {
-	if(!node || node == root())
-		return 0;
-	NodeImpl *n = node->parentNode();
-	while(n)
-	{
-		if(acceptNode(n) & accept)
-			return n;
-		if(n == root())
-			return 0;
-		n = n->parentNode();
-	}
+    if(!node || node == root())
+        return 0;
+    NodeImpl *n = node->parentNode();
+    while(n)
+    {
+        if(acceptNode(n) & accept)
+            return n;
+        if(n == root())
+            return 0;
+        n = n->parentNode();
+    }
 
-	return 0;
+    return 0;
 }
 
 NodeImpl *TraversalImpl::findFirstChild(NodeImpl *node) const
 {
-	if(!node || acceptNode(node) == FILTER_REJECT)
-		return 0;
-	NodeImpl *n = node->firstChild();
-	while(n)
-	{
-		if(acceptNode(n) == FILTER_ACCEPT)
-			return n;
-		n = n->nextSibling();
-	}
+    if(!node || acceptNode(node) == FILTER_REJECT)
+        return 0;
+    NodeImpl *n = node->firstChild();
+    while(n)
+    {
+        if(acceptNode(n) == FILTER_ACCEPT)
+            return n;
+        n = n->nextSibling();
+    }
 
-	return 0;
+    return 0;
 }
 
 NodeImpl *TraversalImpl::findLastChild(NodeImpl *node) const
 {
     if(!node || acceptNode(node) == FILTER_REJECT)
-	return 0;
+    return 0;
     NodeImpl *n = node->lastChild();
     while(n)
     {
@@ -104,7 +104,7 @@ NodeImpl *TraversalImpl::findLastChild(NodeImpl *node) const
             return n;
         n = n->previousSibling();
     }
-	return 0;
+    return 0;
 }
 
 NodeImpl *TraversalImpl::findPreviousSibling(NodeImpl *node) const
@@ -137,104 +137,104 @@ NodeImpl *TraversalImpl::findNextSibling(NodeImpl *node) const
 
 NodeImpl *TraversalImpl::findLastDescendant(NodeImpl *node) const
 {
-	NodeImpl *n = node;
-	NodeImpl *r = node;
-	while(n)
-	{
-		short accepted = acceptNode(n);
-		if(accepted != FILTER_REJECT)
-		{
-			if(accepted == FILTER_ACCEPT)
-				r = n;
-			if(n->lastChild())
-				n = n->lastChild();
-			else if(n != node && n->previousSibling())
-				n = n->previousSibling();
-			else
-				break;
-		}
-		else
-			break;
-	}
+    NodeImpl *n = node;
+    NodeImpl *r = node;
+    while(n)
+    {
+        short accepted = acceptNode(n);
+        if(accepted != FILTER_REJECT)
+        {
+            if(accepted == FILTER_ACCEPT)
+                r = n;
+            if(n->lastChild())
+                n = n->lastChild();
+            else if(n != node && n->previousSibling())
+                n = n->previousSibling();
+            else
+                break;
+        }
+        else
+            break;
+    }
 
-	return r;
+    return r;
 }
 
 NodeImpl *TraversalImpl::findPreviousNode(NodeImpl *node) const
 {
-	NodeImpl *n = node->previousSibling();
-	while(n)
-	{
-		short accepted = acceptNode(n);
-		if(accepted != FILTER_REJECT)
-		{
-			NodeImpl *d = findLastDescendant(n);
-			if(acceptNode(d) == FILTER_ACCEPT)
-				return d;
-			// else FILTER_SKIP
-		}
-		n = n->previousSibling();
-	}
+    NodeImpl *n = node->previousSibling();
+    while(n)
+    {
+        short accepted = acceptNode(n);
+        if(accepted != FILTER_REJECT)
+        {
+            NodeImpl *d = findLastDescendant(n);
+            if(acceptNode(d) == FILTER_ACCEPT)
+                return d;
+            // else FILTER_SKIP
+        }
+        n = n->previousSibling();
+    }
 
-	return findParentNode(node);
+    return findParentNode(node);
 }
 
 NodeImpl *TraversalImpl::findNextNode(NodeImpl *node) const
 {
-	NodeImpl *n = node->firstChild();
-	while(n)
-	{
-		switch(acceptNode(n))
-		{
-		case FILTER_ACCEPT:
-			return n;
-		case FILTER_SKIP:
-			if(n->firstChild())
-				n = n->firstChild();
-			else
-				n = n->nextSibling();
-			break;
-		case FILTER_REJECT:
-			n = n->nextSibling();
-			break;
-		}
-	}
+    NodeImpl *n = node->firstChild();
+    while(n)
+    {
+        switch(acceptNode(n))
+        {
+        case FILTER_ACCEPT:
+            return n;
+        case FILTER_SKIP:
+            if(n->firstChild())
+                n = n->firstChild();
+            else
+                n = n->nextSibling();
+            break;
+        case FILTER_REJECT:
+            n = n->nextSibling();
+            break;
+        }
+    }
 
-	n = node->nextSibling();
-	while(n)
-	{
-		switch(acceptNode(n))
-		{
-		case FILTER_ACCEPT:
-			return n;
-		case FILTER_SKIP:
-			return findNextNode(n);
-		case FILTER_REJECT:
-			n = n->nextSibling();
-		break;
-		}
-	}
+    n = node->nextSibling();
+    while(n)
+    {
+        switch(acceptNode(n))
+        {
+        case FILTER_ACCEPT:
+            return n;
+        case FILTER_SKIP:
+            return findNextNode(n);
+        case FILTER_REJECT:
+            n = n->nextSibling();
+        break;
+        }
+    }
 
-	NodeImpl *parent = findParentNode(node, FILTER_ACCEPT | FILTER_SKIP);
-	while(parent)
-	{
-		n = parent->nextSibling();
-		while(n)
-		{
-			switch(acceptNode(n))
-			{
-			case FILTER_ACCEPT:
-				return n;
-			case FILTER_SKIP:
-				return findNextNode(n);
-			case FILTER_REJECT:
-				n = n->nextSibling();
-				break;
-			}
-		}
-		parent = findParentNode(parent, FILTER_ACCEPT | FILTER_SKIP);
-	}
+    NodeImpl *parent = findParentNode(node, FILTER_ACCEPT | FILTER_SKIP);
+    while(parent)
+    {
+        n = parent->nextSibling();
+        while(n)
+        {
+            switch(acceptNode(n))
+            {
+            case FILTER_ACCEPT:
+                return n;
+            case FILTER_SKIP:
+                return findNextNode(n);
+            case FILTER_REJECT:
+                n = n->nextSibling();
+                break;
+            }
+        }
+        parent = findParentNode(parent, FILTER_ACCEPT | FILTER_SKIP);
+    }
 
-	return 0;
+    return 0;
 }
 

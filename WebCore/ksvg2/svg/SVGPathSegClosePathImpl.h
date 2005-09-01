@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,16 +27,16 @@
 
 namespace KSVG
 {
-	class SVGPathSegClosePathImpl : public SVGPathSegImpl
-	{
-	public:
-		SVGPathSegClosePathImpl();
-		virtual ~SVGPathSegClosePathImpl();
+    class SVGPathSegClosePathImpl : public SVGPathSegImpl
+    {
+    public:
+        SVGPathSegClosePathImpl();
+        virtual ~SVGPathSegClosePathImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_CLOSEPATH; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("Z"); }
-		virtual QString toString() const { return QString::fromLatin1("Z"); }
-	};
+        virtual unsigned short pathSegType() const { return PATHSEG_CLOSEPATH; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("Z"); }
+        virtual QString toString() const { return QString::fromLatin1("Z"); }
+    };
 };
 
 #endif

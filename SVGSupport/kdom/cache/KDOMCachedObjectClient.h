@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -35,18 +35,18 @@ class QPixmap;
 
 namespace KDOM
 {
-	class CachedImage;
-	class CachedObject;
+    class CachedImage;
+    class CachedObject;
 
-	class CachedObjectClient
-	{
-	public:
-		virtual ~CachedObjectClient() {}
-		virtual void setPixmap(const QPixmap &, const QRect &, CachedImage *) { }
-		virtual void setStyleSheet(const DOMString &, const DOMString &) { }
-		virtual void notifyFinished(CachedObject *) { }
-		virtual void error(int, const QString &) { }
-	};
+    class CachedObjectClient
+    {
+    public:
+        virtual ~CachedObjectClient() {}
+        virtual void setPixmap(const QPixmap &, const QRect &, CachedImage *) { }
+        virtual void setStyleSheet(const DOMString &, const DOMString &) { }
+        virtual void notifyFinished(CachedObject *) { }
+        virtual void error(int, const QString &) { }
+    };
 };
 
 #endif

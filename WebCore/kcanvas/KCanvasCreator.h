@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,26 +33,26 @@ class KCanvasContainer;
 class KCanvasCreator
 {
 public:
-	KCanvasCreator();
-	virtual ~KCanvasCreator();
+    KCanvasCreator();
+    virtual ~KCanvasCreator();
 
-	static KCanvasCreator *self();
+    static KCanvasCreator *self();
 
-	// Canvas path creation
-	KCPathDataList createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const;
-	KCPathDataList createRectangle(float x, float y, float width, float height) const;
-	KCPathDataList createEllipse(float cx, float cy, float rx, float ry) const;
-	KCPathDataList createCircle(float cx, float cy, float r) const;
-	KCPathDataList createLine(float x1, float y1, float x2, float y2) const;
+    // Canvas path creation
+    KCPathDataList createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const;
+    KCPathDataList createRectangle(float x, float y, float width, float height) const;
+    KCPathDataList createEllipse(float cx, float cy, float rx, float ry) const;
+    KCPathDataList createCircle(float cx, float cy, float r) const;
+    KCPathDataList createLine(float x1, float y1, float x2, float y2) const;
 
-	// Canvas item creation
-	KCanvasUserData createCanvasPathData(KCanvas *canvas, const KCPathDataList &pathData) const;
+    // Canvas item creation
+    KCanvasUserData createCanvasPathData(KCanvas *canvas, const KCPathDataList &pathData) const;
 
-	KCanvasItem *createPathItem(KCanvas *canvas, KRenderingStyle *style, const KCPathDataList &pathData) const;
-	KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const;
+    KCanvasItem *createPathItem(KCanvas *canvas, KRenderingStyle *style, const KCPathDataList &pathData) const;
+    KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const;
 
 private:
-	static KCanvasCreator *s_creator;
+    static KCanvasCreator *s_creator;
 };
 
 #endif

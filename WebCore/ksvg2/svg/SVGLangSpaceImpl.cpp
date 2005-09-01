@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,64 +33,64 @@ using namespace KSVG;
 
 SVGLangSpaceImpl::SVGLangSpaceImpl()
 {
-	m_lang = 0;
-	m_space = 0;
+    m_lang = 0;
+    m_space = 0;
 }
 
 SVGLangSpaceImpl::~SVGLangSpaceImpl()
 {
-	if(m_lang)
-		m_lang->deref();
-	if(m_space)
-		m_space->deref();
+    if(m_lang)
+        m_lang->deref();
+    if(m_space)
+        m_space->deref();
 }
 
 KDOM::DOMStringImpl *SVGLangSpaceImpl::xmllang() const
 {
-	return m_lang;
+    return m_lang;
 }
 
 void SVGLangSpaceImpl::setXmllang(KDOM::DOMStringImpl *xmlLang)
 {
-	KDOM_SAFE_SET(m_lang, xmlLang);
+    KDOM_SAFE_SET(m_lang, xmlLang);
 }
 
 KDOM::DOMStringImpl *SVGLangSpaceImpl::xmlspace() const
 {
-	return m_space;
+    return m_space;
 }
 
 void SVGLangSpaceImpl::setXmlspace(KDOM::DOMStringImpl *xmlSpace)
 {
-	KDOM_SAFE_SET(m_space, xmlSpace);
+    KDOM_SAFE_SET(m_space, xmlSpace);
 }
 
 bool SVGLangSpaceImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	switch(id)
-	{
-		case ATTR_LANG:
-		{
-			if(attr->value())
-				setXmllang(attr->value()->copy());
-			else
-				setXmllang(0);
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    switch(id)
+    {
+        case ATTR_LANG:
+        {
+            if(attr->value())
+                setXmllang(attr->value()->copy());
+            else
+                setXmllang(0);
 
-			return true;
-		}
-		case ATTR_SPACE:
-		{
-			if(attr->value())
-				setXmlspace(attr->value()->copy());
-			else
-				setXmlspace(0);
+            return true;
+        }
+        case ATTR_SPACE:
+        {
+            if(attr->value())
+                setXmlspace(attr->value()->copy());
+            else
+                setXmlspace(0);
 
-			return true;
-		}
-	};
+            return true;
+        }
+    };
 
-	return false;
+    return false;
 }
 
 // vim:ts=4:noet

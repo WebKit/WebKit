@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -27,30 +27,30 @@
 
 namespace KDOM
 {
-	// A libxml2 based KDOM parser
-	class LibXMLParser : public Parser
-	{
-	public:
-		LibXMLParser(const KURL &url);
-		virtual ~LibXMLParser();
+    // A libxml2 based KDOM parser
+    class LibXMLParser : public Parser
+    {
+    public:
+        LibXMLParser(const KURL &url);
+        virtual ~LibXMLParser();
 
-		virtual DocumentImpl *syncParse(QBuffer *buffer = 0);
-		virtual void asyncParse(bool incremental = false, const char *accept = 0);
-		void doOneShotParse(const char *rawData, unsigned int rawLength);
+        virtual DocumentImpl *syncParse(QBuffer *buffer = 0);
+        virtual void asyncParse(bool incremental = false, const char *accept = 0);
+        void doOneShotParse(const char *rawData, unsigned int rawLength);
 
-		virtual void handleIncomingData(QBuffer *buffer, bool eof);
+        virtual void handleIncomingData(QBuffer *buffer, bool eof);
 
-		QString entityRef() const { return m_entityRef; }
-		void setEntityRef(const QString &entityRef) { m_entityRef = entityRef; }
+        QString entityRef() const { return m_entityRef; }
+        void setEntityRef(const QString &entityRef) { m_entityRef = entityRef; }
 
-		void tryEndEntityRef(const QString &name);
+        void tryEndEntityRef(const QString &name);
 
-	private:
-		// Real type: xmlParserCtxtPtr
-		void *m_incrementalParserContext;
+    private:
+        // Real type: xmlParserCtxtPtr
+        void *m_incrementalParserContext;
 
-		QString m_entityRef;
-	};
+        QString m_entityRef;
+    };
 };
 
 #endif

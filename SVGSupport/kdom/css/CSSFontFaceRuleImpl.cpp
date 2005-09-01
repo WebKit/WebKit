@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,19 +27,19 @@ using namespace KDOM;
 
 CSSFontFaceRuleImpl::CSSFontFaceRuleImpl(StyleBaseImpl *parent) : CSSRuleImpl(parent)
 {
-	m_style = 0;
-	m_type = FONT_FACE_RULE;
+    m_style = 0;
+    m_type = FONT_FACE_RULE;
 }
 
 CSSFontFaceRuleImpl::~CSSFontFaceRuleImpl()
 {
     if(m_style)
-    	m_style->deref();
+        m_style->deref();
 }
 
 CSSStyleDeclarationImpl *CSSFontFaceRuleImpl::style() const
 {
-	return m_style;
+    return m_style;
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,36 +29,36 @@
 
 namespace KSVG
 {
-	class SVGScriptElementImpl;
-	class SVGScriptElement : public SVGElement,
-							 public SVGURIReference,
-						     public SVGExternalResourcesRequired
-	{
-	public:
-		SVGScriptElement();
-		explicit SVGScriptElement(SVGScriptElementImpl *i);
-		SVGScriptElement(const SVGScriptElement &other);
-		SVGScriptElement(const KDOM::Node &other);
-		virtual ~SVGScriptElement();
+    class SVGScriptElementImpl;
+    class SVGScriptElement : public SVGElement,
+                             public SVGURIReference,
+                             public SVGExternalResourcesRequired
+    {
+    public:
+        SVGScriptElement();
+        explicit SVGScriptElement(SVGScriptElementImpl *i);
+        SVGScriptElement(const SVGScriptElement &other);
+        SVGScriptElement(const KDOM::Node &other);
+        virtual ~SVGScriptElement();
 
-		// Operators
-		SVGScriptElement &operator=(const SVGScriptElement &other);
-		SVGScriptElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGScriptElement &operator=(const SVGScriptElement &other);
+        SVGScriptElement &operator=(const KDOM::Node &other);
 
-		// 'SVGScriptElement' functions
-		KDOM::DOMString type() const;
-		void setType(const KDOM::DOMString &type);
+        // 'SVGScriptElement' functions
+        KDOM::DOMString type() const;
+        void setType(const KDOM::DOMString &type);
 
-		// Internal
-		KSVG_INTERNAL(SVGScriptElement)
+        // Internal
+        KSVG_INTERNAL(SVGScriptElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

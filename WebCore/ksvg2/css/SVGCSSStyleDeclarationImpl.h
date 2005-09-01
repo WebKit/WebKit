@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,23 +27,23 @@
 
 namespace KDOM
 {
-	class CSSRuleImpl;
-	class CSSProperty;
+    class CSSRuleImpl;
+    class CSSProperty;
 };
 
 namespace KSVG
 {
-	class SVGCSSStyleDeclarationImpl : public KDOM::CSSStyleDeclarationImpl
-	{
-	public:
-		SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule);
-		SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule, QPtrList<KDOM::CSSProperty> *lstValues);
-		virtual ~SVGCSSStyleDeclarationImpl();
+    class SVGCSSStyleDeclarationImpl : public KDOM::CSSStyleDeclarationImpl
+    {
+    public:
+        SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule);
+        SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule, QPtrList<KDOM::CSSProperty> *lstValues);
+        virtual ~SVGCSSStyleDeclarationImpl();
 
-		SVGCSSStyleDeclarationImpl &operator=(const SVGCSSStyleDeclarationImpl &other);
-		
-		virtual KDOM::CSSParser *createCSSParser(bool strictParsing = true) const;
-	};
+        SVGCSSStyleDeclarationImpl &operator=(const SVGCSSStyleDeclarationImpl &other);
+        
+        virtual KDOM::CSSParser *createCSSParser(bool strictParsing = true) const;
+    };
 };
 
 #endif

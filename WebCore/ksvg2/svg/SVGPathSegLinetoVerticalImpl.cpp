@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegLinetoVerticalAbsImpl::SVGPathSegLinetoVerticalAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_y = 0.0;
+    m_y = 0.0;
 }
 
 SVGPathSegLinetoVerticalAbsImpl::~SVGPathSegLinetoVerticalAbsImpl()
@@ -37,15 +37,15 @@ SVGPathSegLinetoVerticalAbsImpl::~SVGPathSegLinetoVerticalAbsImpl()
 
 void SVGPathSegLinetoVerticalAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoVerticalAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 
@@ -54,7 +54,7 @@ double SVGPathSegLinetoVerticalAbsImpl::y() const
 SVGPathSegLinetoVerticalRelImpl::SVGPathSegLinetoVerticalRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_y = 0.0;
+    m_y = 0.0;
 }
 
 SVGPathSegLinetoVerticalRelImpl::~SVGPathSegLinetoVerticalRelImpl()
@@ -63,15 +63,15 @@ SVGPathSegLinetoVerticalRelImpl::~SVGPathSegLinetoVerticalRelImpl()
 
 void SVGPathSegLinetoVerticalRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegLinetoVerticalRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 // vim:ts=4:noet

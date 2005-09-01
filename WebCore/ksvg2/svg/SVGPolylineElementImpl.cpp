@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -39,19 +39,19 @@ SVGPolylineElementImpl::~SVGPolylineElementImpl()
 
 KCPathDataList SVGPolylineElementImpl::toPathData() const
 {
-	KCPathDataList polyData;
-	int len = points()->numberOfItems();
-	if(len < 1)
-		return polyData;
+    KCPathDataList polyData;
+    int len = points()->numberOfItems();
+    if(len < 1)
+        return polyData;
 
-	polyData.moveTo(points()->getItem(0)->x(), points()->getItem(0)->y());
-	for(int i = 1; i < len; ++i)
-	{
-		SVGPointImpl *p = points()->getItem(i);
-		polyData.lineTo(p->x(), p->y());
-	}
+    polyData.moveTo(points()->getItem(0)->x(), points()->getItem(0)->y());
+    for(int i = 1; i < len; ++i)
+    {
+        SVGPointImpl *p = points()->getItem(i);
+        polyData.lineTo(p->x(), p->y());
+    }
 
-	return polyData;
+    return polyData;
 }
 
 // vim:ts=4:noet

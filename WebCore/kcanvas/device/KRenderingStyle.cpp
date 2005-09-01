@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,52 +29,52 @@
 class KRenderingStyle::Private
 {
 public:
-	Private()
-	{
-		fillPainter = 0;
-		strokePainter = 0;
+    Private()
+    {
+        fillPainter = 0;
+        strokePainter = 0;
 
-		visible = true;
+        visible = true;
 
-		endMarker = 0;
-		midMarker = 0;
-		startMarker = 0;
-		
-		filter = 0;
-	
-		imageRendering = IR_OPTIMIZE_QUALITY;
+        endMarker = 0;
+        midMarker = 0;
+        startMarker = 0;
+        
+        filter = 0;
+    
+        imageRendering = IR_OPTIMIZE_QUALITY;
 
-		opacity = 1.0f;
-	}
+        opacity = 1.0f;
+    }
 
-	~Private()
-	{
-		delete fillPainter;
-		delete strokePainter;
+    ~Private()
+    {
+        delete fillPainter;
+        delete strokePainter;
 
-		delete endMarker;
-		delete midMarker;
-		delete startMarker;
-	}
+        delete endMarker;
+        delete midMarker;
+        delete startMarker;
+    }
 
-	KCanvasMatrix objectMatrix;
+    KCanvasMatrix objectMatrix;
 
-	KRenderingFillPainter *fillPainter;
-	KRenderingStrokePainter *strokePainter;
+    KRenderingFillPainter *fillPainter;
+    KRenderingStrokePainter *strokePainter;
 
-	bool visible : 1;
+    bool visible : 1;
 
-	KCImageRendering imageRendering : 1;
+    KCImageRendering imageRendering : 1;
 
-	QStringList clipPaths;
-	
-	KCanvasFilter *filter;
+    QStringList clipPaths;
+    
+    KCanvasFilter *filter;
 
-	KCanvasMarker *startMarker;
-	KCanvasMarker *midMarker;
-	KCanvasMarker *endMarker;
+    KCanvasMarker *startMarker;
+    KCanvasMarker *midMarker;
+    KCanvasMarker *endMarker;
 
-	float opacity;
+    float opacity;
 };
 
 KRenderingStyle::KRenderingStyle() : d(new Private())
@@ -83,167 +83,167 @@ KRenderingStyle::KRenderingStyle() : d(new Private())
 
 KRenderingStyle::~KRenderingStyle()
 {
-	delete d;
+    delete d;
 }
 
 // World matrix property
 KCanvasMatrix KRenderingStyle::objectMatrix() const
 {
-	return d->objectMatrix;
+    return d->objectMatrix;
 }
 
 void KRenderingStyle::setObjectMatrix(const KCanvasMatrix &objectMatrix)
 {
-	d->objectMatrix = objectMatrix;
+    d->objectMatrix = objectMatrix;
 }
 
 // Stroke (aka Pen) properties
 bool KRenderingStyle::isStroked() const
 {
-	return (d->strokePainter != 0);
+    return (d->strokePainter != 0);
 }
 
 KRenderingStrokePainter *KRenderingStyle::strokePainter()
 {
-	if(!d->strokePainter)
-		d->strokePainter = new KRenderingStrokePainter();
-		
-	return d->strokePainter;
+    if(!d->strokePainter)
+        d->strokePainter = new KRenderingStrokePainter();
+        
+    return d->strokePainter;
 }
 
 void KRenderingStyle::disableStrokePainter()
 {
-	if(d->strokePainter)
-	{
-		delete d->strokePainter;
-		d->strokePainter = 0;
-	}
+    if(d->strokePainter)
+    {
+        delete d->strokePainter;
+        d->strokePainter = 0;
+    }
 }
 
 // Fill (aka Bush) properties
 bool KRenderingStyle::isFilled() const
 {
-	return (d->fillPainter != 0);
+    return (d->fillPainter != 0);
 }
 
 KRenderingFillPainter *KRenderingStyle::fillPainter()
 {
-	if(!d->fillPainter)
-		d->fillPainter = new KRenderingFillPainter();
-		
-	return d->fillPainter;
+    if(!d->fillPainter)
+        d->fillPainter = new KRenderingFillPainter();
+        
+    return d->fillPainter;
 }
 
 void KRenderingStyle::disableFillPainter()
 {
-	if(d->fillPainter)
-	{
-		delete d->fillPainter;
-		d->fillPainter = 0;
-	}
+    if(d->fillPainter)
+    {
+        delete d->fillPainter;
+        d->fillPainter = 0;
+    }
 }
 
 // Display states
 bool KRenderingStyle::visible() const
 {
-	return d->visible;
+    return d->visible;
 }
 
 void KRenderingStyle::setVisible(bool visible)
 {
-	d->visible = visible;
+    d->visible = visible;
 }
 
 // Color interpolation
 KCColorInterpolation KRenderingStyle::colorInterpolation() const
 {
-	// TODO!
-	return KCColorInterpolation();
+    // TODO!
+    return KCColorInterpolation();
 }
 
 void KRenderingStyle::setColorInterpolation(KCColorInterpolation /*interpolation*/)
 {
-	// TODO!
+    // TODO!
 }
 
 // Quality vs. speed control
 KCImageRendering KRenderingStyle::imageRendering() const
 {
-	return d->imageRendering;
+    return d->imageRendering;
 }
 
 void KRenderingStyle::setImageRendering(KCImageRendering ir)
 {
-	d->imageRendering = ir;
+    d->imageRendering = ir;
 }
 
 // Overall opacity
 float KRenderingStyle::opacity() const
 {
-	return d->opacity;
+    return d->opacity;
 }
 
 void KRenderingStyle::setOpacity(float opacity)
 {
-	d->opacity = opacity;
+    d->opacity = opacity;
 }
 
 // Clipping
 QStringList KRenderingStyle::clipPaths() const
 {
-	return d->clipPaths;
+    return d->clipPaths;
 }
 
 void KRenderingStyle::setClipPaths(const QStringList &data) const
 {
-	d->clipPaths = data;
+    d->clipPaths = data;
 }
 
 // Filters
 KCanvasFilter *KRenderingStyle::filter() const
 {
-	return d->filter;
+    return d->filter;
 }
 
 void KRenderingStyle::setFilter(KCanvasFilter *newFilter) const
 {
-	d->filter = newFilter;
+    d->filter = newFilter;
 }
 
 // Markers
 KCanvasMarker *KRenderingStyle::startMarker() const
 {
-	return d->startMarker;
+    return d->startMarker;
 }
 
 void KRenderingStyle::setStartMarker(KCanvasMarker *marker)
 {
-	d->startMarker = marker;
+    d->startMarker = marker;
 }
 
 KCanvasMarker *KRenderingStyle::midMarker() const
 {
-	return d->midMarker;
+    return d->midMarker;
 }
 
 void KRenderingStyle::setMidMarker(KCanvasMarker *marker)
 {
-	d->midMarker = marker;
+    d->midMarker = marker;
 }
 
 KCanvasMarker *KRenderingStyle::endMarker() const
 {
-	return d->endMarker;
+    return d->endMarker;
 }
 
 void KRenderingStyle::setEndMarker(KCanvasMarker *marker)
 {
-	d->endMarker = marker;
+    d->endMarker = marker;
 }
 
 bool KRenderingStyle::hasMarkers() const
 {
-	return d->startMarker || d->midMarker || d->endMarker;
+    return d->startMarker || d->midMarker || d->endMarker;
 }
 
 // vim:ts=4:noet

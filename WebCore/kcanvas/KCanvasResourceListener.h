@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,10 +26,10 @@
 class KCanvasResourceListener
 {
 public:
-	KCanvasResourceListener() { }
-	virtual ~KCanvasResourceListener() { }
+    KCanvasResourceListener() { }
+    virtual ~KCanvasResourceListener() { }
 
-	virtual void resourceNotification() const = 0;
+    virtual void resourceNotification() const = 0;
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,32 +33,32 @@ class KCanvasClipper;
 
 namespace KSVG
 {
-	class SVGAnimatedEnumerationImpl;
-	class SVGClipPathElementImpl : public SVGStyledElementImpl,
-								   public SVGTestsImpl,
-								   public SVGLangSpaceImpl,
-								   public SVGExternalResourcesRequiredImpl,
-								   public SVGTransformableImpl
-	{
-	public:
-		SVGClipPathElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGClipPathElementImpl();
+    class SVGAnimatedEnumerationImpl;
+    class SVGClipPathElementImpl : public SVGStyledElementImpl,
+                                   public SVGTestsImpl,
+                                   public SVGLangSpaceImpl,
+                                   public SVGExternalResourcesRequiredImpl,
+                                   public SVGTransformableImpl
+    {
+    public:
+        SVGClipPathElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGClipPathElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual void close();
+        // Derived from: 'ElementImpl'
+        virtual void close();
 
-		// 'SVGClipPathElement' functions
-		SVGAnimatedEnumerationImpl *clipPathUnits() const;
+        // 'SVGClipPathElement' functions
+        SVGAnimatedEnumerationImpl *clipPathUnits() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		// Derived from: 'SVGStyledElementImpl'
-		virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
+        // Derived from: 'SVGStyledElementImpl'
+        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
 
-	private:
-		mutable SVGAnimatedEnumerationImpl *m_clipPathUnits;
-		KCanvasClipper *m_clipper;
-	};
+    private:
+        mutable SVGAnimatedEnumerationImpl *m_clipPathUnits;
+        KCanvasClipper *m_clipper;
+    };
 };
 
 #endif

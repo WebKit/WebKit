@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,37 +32,37 @@ using namespace KSVG;
 
 SVGFEMergeNodeElementImpl::SVGFEMergeNodeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGElementImpl(doc, id, prefix)
 {
-	m_in1 = 0;
+    m_in1 = 0;
 }
 
 SVGFEMergeNodeElementImpl::~SVGFEMergeNodeElementImpl()
 {
-	if(m_in1)
-		m_in1->deref();
+    if(m_in1)
+        m_in1->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEMergeNodeElementImpl::in1() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
 void SVGFEMergeNodeElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_IN:
-		{
-			in1()->setBaseVal(value.handle());
-			break;
-		}
-		default:
-		{
-			SVGElementImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_IN:
+        {
+            in1()->setBaseVal(value.handle());
+            break;
+        }
+        default:
+        {
+            SVGElementImpl::parseAttribute(attr);
+        }
+    };
 }
 
 

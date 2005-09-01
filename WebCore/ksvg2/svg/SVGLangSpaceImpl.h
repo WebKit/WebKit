@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,34 +25,34 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class AttributeImpl;
+    class DOMStringImpl;
+    class AttributeImpl;
 };
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGAnimatedStringImpl;
+    class SVGAnimatedLengthImpl;
+    class SVGAnimatedStringImpl;
 
-	class SVGLangSpaceImpl
-	{
-	public:
-		SVGLangSpaceImpl();
-		virtual ~SVGLangSpaceImpl();
+    class SVGLangSpaceImpl
+    {
+    public:
+        SVGLangSpaceImpl();
+        virtual ~SVGLangSpaceImpl();
 
-		// 'SVGLangSpace' functions
-		KDOM::DOMStringImpl *xmllang() const;
-		void setXmllang(KDOM::DOMStringImpl *xmlLang);
+        // 'SVGLangSpace' functions
+        KDOM::DOMStringImpl *xmllang() const;
+        void setXmllang(KDOM::DOMStringImpl *xmlLang);
 
-		KDOM::DOMStringImpl *xmlspace() const;
-		void setXmlspace(KDOM::DOMStringImpl *xmlSpace);
+        KDOM::DOMStringImpl *xmlspace() const;
+        void setXmlspace(KDOM::DOMStringImpl *xmlSpace);
 
-		bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable KDOM::DOMStringImpl *m_lang;
-		mutable KDOM::DOMStringImpl *m_space;
-	};
+    private:
+        mutable KDOM::DOMStringImpl *m_lang;
+        mutable KDOM::DOMStringImpl *m_space;
+    };
 };
 
 #endif

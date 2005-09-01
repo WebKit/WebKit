@@ -39,16 +39,16 @@ using namespace KSVG;
 
 /*
 @begin SVGPointList::s_hashTable 3
- numberOfItems		SVGPointListConstants::NumberOfItems	DontDelete|ReadOnly
+ numberOfItems        SVGPointListConstants::NumberOfItems    DontDelete|ReadOnly
 @end
 @begin SVGPointListProto::s_hashTable 9
- clear				SVGPointListConstants::Clear			DontDelete|Function 0
- initialize			SVGPointListConstants::Initialize		DontDelete|Function 1
- getItem			SVGPointListConstants::GetItem			DontDelete|Function 1
- insertItemBefore	SVGPointListConstants::InsertItemBefore	DontDelete|Function 2
- replaceItem		SVGPointListConstants::ReplaceItem		DontDelete|Function 2
- removeItem			SVGPointListConstants::RemoveItem		DontDelete|Function 1
- appendItem			SVGPointListConstants::AppendItem		DontDelete|Function 1
+ clear                SVGPointListConstants::Clear            DontDelete|Function 0
+ initialize            SVGPointListConstants::Initialize        DontDelete|Function 1
+ getItem            SVGPointListConstants::GetItem            DontDelete|Function 1
+ insertItemBefore    SVGPointListConstants::InsertItemBefore    DontDelete|Function 2
+ replaceItem        SVGPointListConstants::ReplaceItem        DontDelete|Function 2
+ removeItem            SVGPointListConstants::RemoveItem        DontDelete|Function 1
+ appendItem            SVGPointListConstants::AppendItem        DontDelete|Function 1
 @end
 */
 
@@ -56,70 +56,70 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGPointList", SVGPointListProto, SVGPointListProtoFun
 
 ValueImp *SVGPointList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPointListConstants::NumberOfItems:
-			return Number(numberOfItems());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPointListConstants::NumberOfItems:
+            return Number(numberOfItems());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGPointListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGPointList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGPointList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGPointListConstants::Clear:
-		{
-			obj.clear();
-			return Undefined();
-		}
-		case SVGPointListConstants::Initialize:
-		{
-			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.initialize(newItem));
-		}
-		case SVGPointListConstants::GetItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.getItem(index));
-		}
-		case SVGPointListConstants::InsertItemBefore:
-		{
-			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.insertItemBefore(newItem, index));
-		}
-		case SVGPointListConstants::ReplaceItem:
-		{
-			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.replaceItem(newItem, index));
-		}
-		case SVGPointListConstants::RemoveItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.removeItem(index));
-		}
-		case SVGPointListConstants::AppendItem:
-		{
-			SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
-			return KDOM::safe_cache<SVGPoint>(exec, obj.appendItem(newItem));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGPointListConstants::Clear:
+        {
+            obj.clear();
+            return Undefined();
+        }
+        case SVGPointListConstants::Initialize:
+        {
+            SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.initialize(newItem));
+        }
+        case SVGPointListConstants::GetItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.getItem(index));
+        }
+        case SVGPointListConstants::InsertItemBefore:
+        {
+            SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.insertItemBefore(newItem, index));
+        }
+        case SVGPointListConstants::ReplaceItem:
+        {
+            SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.replaceItem(newItem, index));
+        }
+        case SVGPointListConstants::RemoveItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.removeItem(index));
+        }
+        case SVGPointListConstants::AppendItem:
+        {
+            SVGPoint newItem = KDOM::ecma_cast<SVGPoint>(exec, args[0], &toSVGPoint);
+            return KDOM::safe_cache<SVGPoint>(exec, obj.appendItem(newItem));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGPointList SVGPointList::null;
@@ -130,77 +130,77 @@ SVGPointList::SVGPointList() : impl(0)
 
 SVGPointList::SVGPointList(SVGPointListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGPointList::SVGPointList(const SVGPointList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGPointList)
 
 unsigned long SVGPointList::numberOfItems() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 void SVGPointList::clear()
 {
-	if(impl)
-		impl->clear();
+    if(impl)
+        impl->clear();
 }
 
 SVGPoint SVGPointList::initialize(const SVGPoint &newItem)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->initialize(newItem.handle()));
+    return SVGPoint(impl->initialize(newItem.handle()));
 }
 
 SVGPoint SVGPointList::getItem(unsigned long index)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->getItem(index));
+    return SVGPoint(impl->getItem(index));
 }
 
 SVGPoint SVGPointList::insertItemBefore(const SVGPoint &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->insertItemBefore(newItem.handle(), index));
+    return SVGPoint(impl->insertItemBefore(newItem.handle(), index));
 }
 
 SVGPoint SVGPointList::replaceItem(const SVGPoint &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->replaceItem(newItem.handle(), index));
+    return SVGPoint(impl->replaceItem(newItem.handle(), index));
 }
 
 SVGPoint SVGPointList::removeItem(unsigned long index)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->removeItem(index));
+    return SVGPoint(impl->removeItem(index));
 }
 
 SVGPoint SVGPointList::appendItem(const SVGPoint &newItem)
 {
-	if(!impl)
-		return SVGPoint::null;
+    if(!impl)
+        return SVGPoint::null;
 
-	return SVGPoint(impl->appendItem(newItem.handle()));
+    return SVGPoint(impl->appendItem(newItem.handle()));
 }
 
 // vim:ts=4:noet

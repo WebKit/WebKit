@@ -26,8 +26,8 @@ using namespace KSVG;
 
 SVGAnimatedLengthImpl::SVGAnimatedLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : SVGAnimatedTemplate<SVGLengthImpl>(context)
 {
-	m_mode = mode;
-	m_viewportElement = viewport;
+    m_mode = mode;
+    m_viewportElement = viewport;
 }
 
 SVGAnimatedLengthImpl::~SVGAnimatedLengthImpl()
@@ -36,15 +36,15 @@ SVGAnimatedLengthImpl::~SVGAnimatedLengthImpl()
 
 SVGLengthImpl *SVGAnimatedLengthImpl::create() const
 {
-	return new SVGLengthImpl(m_context, m_mode, m_viewportElement);
+    return new SVGLengthImpl(m_context, m_mode, m_viewportElement);
 }
 
 void SVGAnimatedLengthImpl::assign(SVGLengthImpl *src, SVGLengthImpl *dst) const
 {
-	if(!src || !dst)
-		return;
-	
-	dst->setValueAsString(src->valueAsString());
+    if(!src || !dst)
+        return;
+    
+    dst->setValueAsString(src->valueAsString());
 }
 
 // vim:ts=4:noet

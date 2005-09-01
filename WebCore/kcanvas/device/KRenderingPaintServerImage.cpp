@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -30,10 +30,10 @@
 class KRenderingPaintServerImage::Private
 {
 public:
-	Private() { }
-	~Private() { }
+    Private() { }
+    ~Private() { }
 
-	QPixmap image;
+    QPixmap image;
 };
 
 KRenderingPaintServerImage::KRenderingPaintServerImage() : KRenderingPaintServer(), d(new Private())
@@ -42,22 +42,22 @@ KRenderingPaintServerImage::KRenderingPaintServerImage() : KRenderingPaintServer
 
 KRenderingPaintServerImage::~KRenderingPaintServerImage()
 {
-	delete d;
+    delete d;
 }
 
 void KRenderingPaintServerImage::setImage(const QPixmap &image)
 {
-	d->image = image;
+    d->image = image;
 }
 
 const QPixmap &KRenderingPaintServerImage::image() const
 {
-	return d->image;
+    return d->image;
 }
 
 KCPaintServerType KRenderingPaintServerImage::type() const
 {
-	return PS_IMAGE;
+    return PS_IMAGE;
 }
 
 QTextStream &KRenderingPaintServerImage::externalRepresentation(QTextStream &ts) const

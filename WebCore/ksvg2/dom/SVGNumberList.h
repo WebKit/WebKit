@@ -27,44 +27,44 @@
 
 namespace KSVG
 {
-	class SVGMatrix;
-	class SVGNumber;
-	class SVGNumberListImpl;
-	class SVGNumberList
-	{
-	public:
-		SVGNumberList();
-		explicit SVGNumberList(SVGNumberListImpl *i);
-		SVGNumberList(const SVGNumberList &other);
-		virtual ~SVGNumberList();
+    class SVGMatrix;
+    class SVGNumber;
+    class SVGNumberListImpl;
+    class SVGNumberList
+    {
+    public:
+        SVGNumberList();
+        explicit SVGNumberList(SVGNumberListImpl *i);
+        SVGNumberList(const SVGNumberList &other);
+        virtual ~SVGNumberList();
 
-		// Operators
-		SVGNumberList &operator=(const SVGNumberList &other);
-		bool operator==(const SVGNumberList &other) const;
-		bool operator!=(const SVGNumberList &other) const;
+        // Operators
+        SVGNumberList &operator=(const SVGNumberList &other);
+        bool operator==(const SVGNumberList &other) const;
+        bool operator!=(const SVGNumberList &other) const;
 
-		// 'SVGNumberList' functions
-		unsigned long numberOfItems() const;
-		void clear();
+        // 'SVGNumberList' functions
+        unsigned long numberOfItems() const;
+        void clear();
 
-		SVGNumber initialize(const SVGNumber &newItem);
-		SVGNumber getItem(unsigned long index);
-		SVGNumber insertItemBefore(const SVGNumber &newItem, unsigned long index);
-		SVGNumber replaceItem(const SVGNumber &newItem, unsigned long index);
-		SVGNumber removeItem(unsigned long index);
-		SVGNumber appendItem(const SVGNumber &newItem);
+        SVGNumber initialize(const SVGNumber &newItem);
+        SVGNumber getItem(unsigned long index);
+        SVGNumber insertItemBefore(const SVGNumber &newItem, unsigned long index);
+        SVGNumber replaceItem(const SVGNumber &newItem, unsigned long index);
+        SVGNumber removeItem(unsigned long index);
+        SVGNumber appendItem(const SVGNumber &newItem);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGNumberList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGNumberList)
 
-	protected:
-		SVGNumberListImpl *impl;
+    protected:
+        SVGNumberListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGNumberListProto)

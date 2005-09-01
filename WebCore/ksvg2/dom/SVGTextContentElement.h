@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,52 +32,52 @@
 
 namespace KSVG
 {
-	class SVGRect;
-	class SVGPoint;
-	class SVGAnimatedLength;
-	class SVGAnimatedEnumeration;
-	class SVGTextContentElementImpl;
+    class SVGRect;
+    class SVGPoint;
+    class SVGAnimatedLength;
+    class SVGAnimatedEnumeration;
+    class SVGTextContentElementImpl;
 
-	class SVGTextContentElement : public SVGElement,
-								  public SVGTests,
-								  public SVGLangSpace,
-								  public SVGExternalResourcesRequired,
-								  public SVGStylable
-	{
-	public:
-		SVGTextContentElement();
-		explicit SVGTextContentElement(SVGTextContentElementImpl *i);
-		SVGTextContentElement(const SVGTextContentElement &other);
-		SVGTextContentElement(const KDOM::Node &other);
-		virtual ~SVGTextContentElement();
+    class SVGTextContentElement : public SVGElement,
+                                  public SVGTests,
+                                  public SVGLangSpace,
+                                  public SVGExternalResourcesRequired,
+                                  public SVGStylable
+    {
+    public:
+        SVGTextContentElement();
+        explicit SVGTextContentElement(SVGTextContentElementImpl *i);
+        SVGTextContentElement(const SVGTextContentElement &other);
+        SVGTextContentElement(const KDOM::Node &other);
+        virtual ~SVGTextContentElement();
 
-		// Operators
-		SVGTextContentElement &operator=(const SVGTextContentElement &other);
-		SVGTextContentElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGTextContentElement &operator=(const SVGTextContentElement &other);
+        SVGTextContentElement &operator=(const KDOM::Node &other);
 
-		// 'SVGTextContentElement' functions
-		SVGAnimatedLength textLength() const;
-		SVGAnimatedEnumeration lengthAdjust() const;
+        // 'SVGTextContentElement' functions
+        SVGAnimatedLength textLength() const;
+        SVGAnimatedEnumeration lengthAdjust() const;
 
-		long getNumberOfChars() const;
-		float getComputedTextLength() const;
-		float getSubStringLength(unsigned long charnum, unsigned long nchars) const;
-		SVGPoint getStartPositionOfChar(unsigned long charnum) const;
-		SVGPoint getEndPositionOfChar(unsigned long charnum) const;
-		SVGRect getExtentOfChar(unsigned long charnum) const;
-		float getRotationOfChar(unsigned long charnum) const;
-		long getCharNumAtPosition(const SVGPoint &point) const;
-		void selectSubString(unsigned long charnum, unsigned long nchars) const;
+        long getNumberOfChars() const;
+        float getComputedTextLength() const;
+        float getSubStringLength(unsigned long charnum, unsigned long nchars) const;
+        SVGPoint getStartPositionOfChar(unsigned long charnum) const;
+        SVGPoint getEndPositionOfChar(unsigned long charnum) const;
+        SVGRect getExtentOfChar(unsigned long charnum) const;
+        float getRotationOfChar(unsigned long charnum) const;
+        long getCharNumAtPosition(const SVGPoint &point) const;
+        void selectSubString(unsigned long charnum, unsigned long nchars) const;
 
-		// Internal
-		KSVG_INTERNAL(SVGTextContentElement)
+        // Internal
+        KSVG_INTERNAL(SVGTextContentElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGTextContentElementProto)

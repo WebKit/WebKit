@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,14 +40,14 @@ using namespace KSVG;
 
 /*
 @begin SVGLocatable::s_hashTable 3
- nearestViewportElement		SVGLocatableConstants::NearestViewportElement	DontDelete|ReadOnly
- farthestViewportElement	SVGLocatableConstants::FarthestViewportElement	DontDelete|ReadOnly
+ nearestViewportElement        SVGLocatableConstants::NearestViewportElement    DontDelete|ReadOnly
+ farthestViewportElement    SVGLocatableConstants::FarthestViewportElement    DontDelete|ReadOnly
 @end
 @begin SVGLocatableProto::s_hashTable 5
- getBBox					SVGLocatableConstants::GetBBox					DontDelete|Function 0
- getCTM						SVGLocatableConstants::GetCTM					DontDelete|Function 0
- getScreenCTM				SVGLocatableConstants::GetScreenCTM				DontDelete|Function 0
- getTransformToElement		SVGLocatableConstants::GetTransformToElement	DontDelete|Function 1
+ getBBox                    SVGLocatableConstants::GetBBox                    DontDelete|Function 0
+ getCTM                        SVGLocatableConstants::GetCTM                    DontDelete|Function 0
+ getScreenCTM                SVGLocatableConstants::GetScreenCTM                DontDelete|Function 0
+ getTransformToElement        SVGLocatableConstants::GetTransformToElement    DontDelete|Function 1
 @end
 */
 
@@ -55,46 +55,46 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGLocatable", SVGLocatableProto, SVGLocatableProtoFun
 
 ValueImp *SVGLocatable::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGLocatableConstants::NearestViewportElement:
-			return KDOM::getDOMNode(exec, nearestViewportElement());
-		case SVGLocatableConstants::FarthestViewportElement:
-			return KDOM::getDOMNode(exec, farthestViewportElement());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLocatableConstants::NearestViewportElement:
+            return KDOM::getDOMNode(exec, nearestViewportElement());
+        case SVGLocatableConstants::FarthestViewportElement:
+            return KDOM::getDOMNode(exec, farthestViewportElement());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGLocatableProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGLocatable obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGLocatable obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGLocatableConstants::GetBBox:
-			return KDOM::safe_cache<SVGRect>(exec, obj.getBBox());
-		case SVGLocatableConstants::GetCTM:
-			return KDOM::safe_cache<SVGMatrix>(exec, obj.getCTM());
-		case SVGLocatableConstants::GetScreenCTM:
-			return KDOM::safe_cache<SVGMatrix>(exec, obj.getScreenCTM());
-		case SVGLocatableConstants::GetTransformToElement:
-		{
-			SVGElement element = KDOM::ecma_cast<SVGElement>(exec, args[0], &toSVGElement);
-			return KDOM::safe_cache<SVGMatrix>(exec, obj.getTransformToElement(element));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGLocatableConstants::GetBBox:
+            return KDOM::safe_cache<SVGRect>(exec, obj.getBBox());
+        case SVGLocatableConstants::GetCTM:
+            return KDOM::safe_cache<SVGMatrix>(exec, obj.getCTM());
+        case SVGLocatableConstants::GetScreenCTM:
+            return KDOM::safe_cache<SVGMatrix>(exec, obj.getScreenCTM());
+        case SVGLocatableConstants::GetTransformToElement:
+        {
+            SVGElement element = KDOM::ecma_cast<SVGElement>(exec, args[0], &toSVGElement);
+            return KDOM::safe_cache<SVGMatrix>(exec, obj.getTransformToElement(element));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGLocatable SVGLocatable::null;
@@ -117,66 +117,66 @@ SVGLocatable::~SVGLocatable()
 
 SVGLocatable &SVGLocatable::operator=(const SVGLocatable &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGLocatable &SVGLocatable::operator=(SVGLocatableImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGElement SVGLocatable::nearestViewportElement() const
 {
-	if(!impl)
-		return SVGElement::null;
+    if(!impl)
+        return SVGElement::null;
 
-	return SVGElement(impl->nearestViewportElement());
+    return SVGElement(impl->nearestViewportElement());
 }
 
 SVGElement SVGLocatable::farthestViewportElement() const
 {
-	if(!impl)
-		return SVGElement::null;
+    if(!impl)
+        return SVGElement::null;
 
-	return SVGElement(impl->farthestViewportElement());
+    return SVGElement(impl->farthestViewportElement());
 }
 
 SVGRect SVGLocatable::getBBox() const
 {
-	if(!impl)
-		return SVGRect::null;
+    if(!impl)
+        return SVGRect::null;
 
-	return SVGRect(impl->getBBox());
+    return SVGRect(impl->getBBox());
 }
 
 SVGMatrix SVGLocatable::getCTM() const
 {
-	if(!impl)
-		return SVGMatrix::null;
+    if(!impl)
+        return SVGMatrix::null;
 
-	return SVGMatrix(impl->getCTM());
+    return SVGMatrix(impl->getCTM());
 }
 
 SVGMatrix SVGLocatable::getScreenCTM() const
 {
-	if(!impl)
-		return SVGMatrix::null;
+    if(!impl)
+        return SVGMatrix::null;
 
-	return SVGMatrix(impl->getScreenCTM());
+    return SVGMatrix(impl->getScreenCTM());
 }
 
 SVGMatrix SVGLocatable::getTransformToElement(const SVGElement &element) const
 {
-	if(!impl)
-		return SVGMatrix::null;
+    if(!impl)
+        return SVGMatrix::null;
 
-	return SVGMatrix(impl->getTransformToElement(static_cast<SVGElementImpl *>(element.handle())));
+    return SVGMatrix(impl->getTransformToElement(static_cast<SVGElementImpl *>(element.handle())));
 }
 
 // vim:ts=4:noet

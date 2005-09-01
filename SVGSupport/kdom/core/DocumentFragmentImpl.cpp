@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -42,28 +42,28 @@ DocumentFragmentImpl::~DocumentFragmentImpl()
 
 DOMStringImpl *DocumentFragmentImpl::nodeName() const
 {
-	return new DOMStringImpl("#document-fragment");
+    return new DOMStringImpl("#document-fragment");
 }
 
 unsigned short DocumentFragmentImpl::nodeType() const
 {
-	return DOCUMENT_FRAGMENT_NODE;
+    return DOCUMENT_FRAGMENT_NODE;
 }
 
 bool DocumentFragmentImpl::childTypeAllowed(unsigned short type) const
 {
-	switch(type)
-	{
-		case ELEMENT_NODE:
-		case TEXT_NODE:
-		case COMMENT_NODE:
-		case PROCESSING_INSTRUCTION_NODE:
-		case CDATA_SECTION_NODE:
-		case ENTITY_REFERENCE_NODE:
-			return true;
-		default:
-			return false;
-	}
+    switch(type)
+    {
+        case ELEMENT_NODE:
+        case TEXT_NODE:
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+        case CDATA_SECTION_NODE:
+        case ENTITY_REFERENCE_NODE:
+            return true;
+        default:
+            return false;
+    }
 }
 
 NodeImpl *DocumentFragmentImpl::cloneNode(bool deep, DocumentPtr *doc) const

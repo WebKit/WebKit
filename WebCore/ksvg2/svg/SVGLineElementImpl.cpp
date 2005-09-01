@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,99 +35,99 @@ using namespace KSVG;
 SVGLineElementImpl::SVGLineElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl()
 {
-	m_x1 = m_y1 = m_x2 = m_y2 = 0;
+    m_x1 = m_y1 = m_x2 = m_y2 = 0;
 }
 
 SVGLineElementImpl::~SVGLineElementImpl()
 {
-	if(m_x1)
-		m_x1->deref();
-	if(m_y1)
-		m_y1->deref();
-	if(m_x2)
-		m_x2->deref();
-	if(m_y2)
-		m_y2->deref();
+    if(m_x1)
+        m_x1->deref();
+    if(m_y1)
+        m_y1->deref();
+    if(m_x2)
+        m_x2->deref();
+    if(m_y2)
+        m_y2->deref();
 }
 
 SVGAnimatedLengthImpl *SVGLineElementImpl::x1() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_x1, this, LM_WIDTH, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_x1, this, LM_WIDTH, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGLineElementImpl::y1() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_y1, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_y1, this, LM_HEIGHT, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGLineElementImpl::x2() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_x2, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_x2, this, LM_HEIGHT, viewportElement());
 }
 
 SVGAnimatedLengthImpl *SVGLineElementImpl::y2() const
 {
-	return lazy_create<SVGAnimatedLengthImpl>(m_y2, this, LM_HEIGHT, viewportElement());
+    return lazy_create<SVGAnimatedLengthImpl>(m_y2, this, LM_HEIGHT, viewportElement());
 }
 
 void SVGLineElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMStringImpl *value = attr->value();
-	switch(id)
-	{
-		case ATTR_X1:
-		{
-			x1()->baseVal()->setValueAsString(value);
-			break;
-		}
-		case ATTR_Y1:
-		{
-			y1()->baseVal()->setValueAsString(value);
-			break;
-		}
-		case ATTR_X2:
-		{
-			x2()->baseVal()->setValueAsString(value);
-			break;
-		}
-		case ATTR_Y2:
-		{
-			y2()->baseVal()->setValueAsString(value);
-			break;
-		}
-		default:
-		{
-			if(SVGTestsImpl::parseAttribute(attr)) return;
-			if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-			if(SVGTransformableImpl::parseAttribute(attr)) return;
-			
-			SVGStyledElementImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMStringImpl *value = attr->value();
+    switch(id)
+    {
+        case ATTR_X1:
+        {
+            x1()->baseVal()->setValueAsString(value);
+            break;
+        }
+        case ATTR_Y1:
+        {
+            y1()->baseVal()->setValueAsString(value);
+            break;
+        }
+        case ATTR_X2:
+        {
+            x2()->baseVal()->setValueAsString(value);
+            break;
+        }
+        case ATTR_Y2:
+        {
+            y2()->baseVal()->setValueAsString(value);
+            break;
+        }
+        default:
+        {
+            if(SVGTestsImpl::parseAttribute(attr)) return;
+            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+            if(SVGTransformableImpl::parseAttribute(attr)) return;
+            
+            SVGStyledElementImpl::parseAttribute(attr);
+        }
+    };
 }
 
 KCPathDataList SVGLineElementImpl::toPathData() const
 {
-	float _x1 = x1()->baseVal()->value(), _y1 = y1()->baseVal()->value();
-	float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();
+    float _x1 = x1()->baseVal()->value(), _y1 = y1()->baseVal()->value();
+    float _x2 = x2()->baseVal()->value(), _y2 = y2()->baseVal()->value();
 
-	return KCanvasCreator::self()->createLine(_x1, _y1, _x2, _y2);
+    return KCanvasCreator::self()->createLine(_x1, _y1, _x2, _y2);
 }
 
 const SVGStyledElementImpl *SVGLineElementImpl::pushAttributeContext(const SVGStyledElementImpl *context)
 {
-	// All attribute's contexts are equal (so just take the one from 'x1').
-	const SVGStyledElementImpl *restore = x1()->baseVal()->context();
+    // All attribute's contexts are equal (so just take the one from 'x1').
+    const SVGStyledElementImpl *restore = x1()->baseVal()->context();
 
-	x1()->baseVal()->setContext(context);
-	y1()->baseVal()->setContext(context);
-	x2()->baseVal()->setContext(context);
-	y2()->baseVal()->setContext(context);
-	
-	SVGStyledElementImpl::pushAttributeContext(context);
-	return restore;
+    x1()->baseVal()->setContext(context);
+    y1()->baseVal()->setContext(context);
+    x2()->baseVal()->setContext(context);
+    y2()->baseVal()->setContext(context);
+    
+    SVGStyledElementImpl::pushAttributeContext(context);
+    return restore;
 }
 
 // vim:ts=4:noet

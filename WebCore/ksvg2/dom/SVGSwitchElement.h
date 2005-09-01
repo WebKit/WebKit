@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,34 +32,34 @@
 
 namespace KSVG
 {
-	class SVGSwitchElementImpl;
-	class SVGSwitchElement : public SVGElement,
-							 public SVGTests,
-							 public SVGLangSpace,
-							 public SVGExternalResourcesRequired,
-							 public SVGStylable,
-							 public SVGTransformable
-	{
-	public:
-		SVGSwitchElement();
-		explicit SVGSwitchElement(SVGSwitchElementImpl *i);
-		SVGSwitchElement(const SVGSwitchElement &other);
-		SVGSwitchElement(const KDOM::Node &other);
-		virtual ~SVGSwitchElement();
+    class SVGSwitchElementImpl;
+    class SVGSwitchElement : public SVGElement,
+                             public SVGTests,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGStylable,
+                             public SVGTransformable
+    {
+    public:
+        SVGSwitchElement();
+        explicit SVGSwitchElement(SVGSwitchElementImpl *i);
+        SVGSwitchElement(const SVGSwitchElement &other);
+        SVGSwitchElement(const KDOM::Node &other);
+        virtual ~SVGSwitchElement();
 
-		// Operators
-		SVGSwitchElement &operator=(const SVGSwitchElement &other);
-		SVGSwitchElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGSwitchElement &operator=(const SVGSwitchElement &other);
+        SVGSwitchElement &operator=(const KDOM::Node &other);
 
-		// Internal
-		KSVG_INTERNAL(SVGSwitchElement)
+        // Internal
+        KSVG_INTERNAL(SVGSwitchElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

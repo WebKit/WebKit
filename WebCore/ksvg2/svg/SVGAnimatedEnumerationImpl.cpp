@@ -27,10 +27,10 @@ using namespace KSVG;
 
 SVGAnimatedEnumerationImpl::SVGAnimatedEnumerationImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_baseVal = 0;
-	m_animVal = 0;
+    m_baseVal = 0;
+    m_animVal = 0;
 
-	m_context = context;
+    m_context = context;
 }
 
 SVGAnimatedEnumerationImpl::~SVGAnimatedEnumerationImpl()
@@ -39,32 +39,32 @@ SVGAnimatedEnumerationImpl::~SVGAnimatedEnumerationImpl()
 
 unsigned short SVGAnimatedEnumerationImpl::baseVal() const
 {
-	return m_baseVal;
+    return m_baseVal;
 }
 
 void SVGAnimatedEnumerationImpl::setBaseVal(unsigned short baseVal)
 {
-	m_baseVal = baseVal;
-	
-	// Spec: If the given attribute or property is not currently
-	//		 being animated, contains the same value as 'baseVal'
-	m_animVal = baseVal;
+    m_baseVal = baseVal;
+    
+    // Spec: If the given attribute or property is not currently
+    //         being animated, contains the same value as 'baseVal'
+    m_animVal = baseVal;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 unsigned short SVGAnimatedEnumerationImpl::animVal() const
 {
-	return m_animVal;
+    return m_animVal;
 }
 
 void SVGAnimatedEnumerationImpl::setAnimVal(unsigned short animVal)
 {
-	m_animVal = animVal;
-	
-	if(m_context)
-		m_context->notifyAttributeChange();
+    m_animVal = animVal;
+    
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

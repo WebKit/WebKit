@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -38,24 +38,24 @@ using namespace KSVG;
 
 /*
 @begin SVGFEComponentTransferElement::s_hashTable 3
- in1			SVGFEComponentTransferElementConstants::In1		DontDelete|ReadOnly
+ in1            SVGFEComponentTransferElementConstants::In1        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFEComponentTransferElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFEComponentTransferElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFEComponentTransferElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -73,12 +73,12 @@ SVGFEComponentTransferElement::SVGFEComponentTransferElement(SVGFEComponentTrans
 
 SVGFEComponentTransferElement::SVGFEComponentTransferElement(const SVGFEComponentTransferElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEComponentTransferElement::SVGFEComponentTransferElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
@@ -87,39 +87,39 @@ SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
 
 SVGFEComponentTransferElement &SVGFEComponentTransferElement::operator=(const SVGFEComponentTransferElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFEComponentTransferElement &SVGFEComponentTransferElement::operator=(const KDOM::Node &other)
 {
-	SVGFEComponentTransferElementImpl *ohandle = static_cast<SVGFEComponentTransferElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFEComponentTransferElementImpl *ohandle = static_cast<SVGFEComponentTransferElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFEComponentTransferElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,40 +28,40 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthList;
-	class SVGAnimatedNumberList;
-	class SVGTextContentElement;
-	class SVGTextPositioningElementImpl;
+    class SVGAnimatedLengthList;
+    class SVGAnimatedNumberList;
+    class SVGTextContentElement;
+    class SVGTextPositioningElementImpl;
 
-	class SVGTextPositioningElement : public SVGTextContentElement
-	{
-	public:
-		SVGTextPositioningElement();
-		explicit SVGTextPositioningElement(SVGTextPositioningElementImpl *i);
-		SVGTextPositioningElement(const SVGTextPositioningElement &other);
-		SVGTextPositioningElement(const KDOM::Node &other);
-		virtual ~SVGTextPositioningElement();
+    class SVGTextPositioningElement : public SVGTextContentElement
+    {
+    public:
+        SVGTextPositioningElement();
+        explicit SVGTextPositioningElement(SVGTextPositioningElementImpl *i);
+        SVGTextPositioningElement(const SVGTextPositioningElement &other);
+        SVGTextPositioningElement(const KDOM::Node &other);
+        virtual ~SVGTextPositioningElement();
 
-		// Operators
-		SVGTextPositioningElement &operator=(const SVGTextPositioningElement &other);
-		SVGTextPositioningElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGTextPositioningElement &operator=(const SVGTextPositioningElement &other);
+        SVGTextPositioningElement &operator=(const KDOM::Node &other);
 
-		// 'SVGTextPositioningElement' functions
-		SVGAnimatedLengthList x() const;
-		SVGAnimatedLengthList y() const;
-		SVGAnimatedLengthList dx() const;
-		SVGAnimatedLengthList dy() const;
-		SVGAnimatedNumberList rotate() const;
+        // 'SVGTextPositioningElement' functions
+        SVGAnimatedLengthList x() const;
+        SVGAnimatedLengthList y() const;
+        SVGAnimatedLengthList dx() const;
+        SVGAnimatedLengthList dy() const;
+        SVGAnimatedNumberList rotate() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGTextPositioningElement)
+        // Internal
+        KSVG_INTERNAL(SVGTextPositioningElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

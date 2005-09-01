@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,90 +35,90 @@ using namespace KSVG;
 
 SVGTestsImpl::SVGTestsImpl()
 {
-	m_features = 0;
-	m_extensions = 0;
-	m_systemLanguage = 0;
+    m_features = 0;
+    m_extensions = 0;
+    m_systemLanguage = 0;
 }
 
 SVGTestsImpl::~SVGTestsImpl()
 {
-	if(m_features)
-		m_features->deref();
-	if(m_extensions)
-		m_extensions->deref();
-	if(m_systemLanguage)
-		m_systemLanguage->deref();
+    if(m_features)
+        m_features->deref();
+    if(m_extensions)
+        m_extensions->deref();
+    if(m_systemLanguage)
+        m_systemLanguage->deref();
 }
 
 SVGStringListImpl *SVGTestsImpl::requiredFeatures() const
 {
-	return lazy_create<SVGStringListImpl>(m_features);
+    return lazy_create<SVGStringListImpl>(m_features);
 }
 
 SVGStringListImpl *SVGTestsImpl::requiredExtensions() const
 {
-	return lazy_create<SVGStringListImpl>(m_extensions);
+    return lazy_create<SVGStringListImpl>(m_extensions);
 }
 
 SVGStringListImpl *SVGTestsImpl::systemLanguage() const
 {
-	return lazy_create<SVGStringListImpl>(m_systemLanguage);
+    return lazy_create<SVGStringListImpl>(m_systemLanguage);
 }
 
 bool SVGTestsImpl::hasExtension(KDOM::DOMStringImpl *) const
 {
-	return false;
+    return false;
 }
 
 bool SVGTestsImpl::isValid()
 {
-	SVGStringListImpl *list = requiredFeatures();
-	for(unsigned long i = 0;i < list->numberOfItems();i++)
-	{
-		KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
-		if(value.isEmpty() || !SVGDOMImplementationImpl::self()->hasFeature(value.handle(), 0))
-			return false;
-	}
+    SVGStringListImpl *list = requiredFeatures();
+    for(unsigned long i = 0;i < list->numberOfItems();i++)
+    {
+        KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
+        if(value.isEmpty() || !SVGDOMImplementationImpl::self()->hasFeature(value.handle(), 0))
+            return false;
+    }
 
-	list = systemLanguage();
-	for(unsigned long i = 0;i < list->numberOfItems();i++)
-	{
-		KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
-		if(value.isEmpty() || value.string() != (KGlobal::locale()->language()).left(2))
-			return false;
-	}
+    list = systemLanguage();
+    for(unsigned long i = 0;i < list->numberOfItems();i++)
+    {
+        KDOM::DOMString value = KDOM::DOMString(list->getItem(i));
+        if(value.isEmpty() || value.string() != (KGlobal::locale()->language()).left(2))
+            return false;
+    }
 
-	list = requiredExtensions();
-	if(list->numberOfItems() > 0)
-		return false;
+    list = requiredExtensions();
+    if(list->numberOfItems() > 0)
+        return false;
 
-	return true;
+    return true;
 }
 
 bool SVGTestsImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_REQUIREDFEATURES:
-		{
-			requiredFeatures()->reset(value.string());
-			return true;
-		}
-		case ATTR_REQUIREDEXTENSIONS:
-		{
-			requiredExtensions()->reset(value.string());
-			return true;
-		}
-		case ATTR_SYSTEMLANGUAGE:
-		{
-			systemLanguage()->reset(value.string());
-			return true;
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_REQUIREDFEATURES:
+        {
+            requiredFeatures()->reset(value.string());
+            return true;
+        }
+        case ATTR_REQUIREDEXTENSIONS:
+        {
+            requiredExtensions()->reset(value.string());
+            return true;
+        }
+        case ATTR_SYSTEMLANGUAGE:
+        {
+            systemLanguage()->reset(value.string());
+            return true;
+        }
+    };
 
-	return false;
+    return false;
 }
 
 // vim:ts=4:noet

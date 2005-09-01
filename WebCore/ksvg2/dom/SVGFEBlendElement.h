@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,38 +28,38 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAnimatedEnumeration;
-	class SVGFEBlendElementImpl;
+    class SVGAnimatedString;
+    class SVGAnimatedEnumeration;
+    class SVGFEBlendElementImpl;
 
-	class SVGFEBlendElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEBlendElement();
-		explicit SVGFEBlendElement(SVGFEBlendElementImpl *i);
-		SVGFEBlendElement(const SVGFEBlendElement &other);
-		SVGFEBlendElement(const KDOM::Node &other);
-		virtual ~SVGFEBlendElement();
+    class SVGFEBlendElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEBlendElement();
+        explicit SVGFEBlendElement(SVGFEBlendElementImpl *i);
+        SVGFEBlendElement(const SVGFEBlendElement &other);
+        SVGFEBlendElement(const KDOM::Node &other);
+        virtual ~SVGFEBlendElement();
 
-		// Operators
-		SVGFEBlendElement &operator=(const SVGFEBlendElement &other);
-		SVGFEBlendElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEBlendElement &operator=(const SVGFEBlendElement &other);
+        SVGFEBlendElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEBlendlement' functions
-		SVGAnimatedString in1() const;
-		SVGAnimatedString in2() const;
-		SVGAnimatedEnumeration mode() const;
+        // 'SVGFEBlendlement' functions
+        SVGAnimatedString in1() const;
+        SVGAnimatedString in2() const;
+        SVGAnimatedEnumeration mode() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEBlendElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEBlendElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

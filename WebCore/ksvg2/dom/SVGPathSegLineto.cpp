@@ -29,43 +29,43 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSegLinetoAbs::s_hashTable 3
- x		SVGPathSegLinetoConstants::X		DontDelete
- y		SVGPathSegLinetoConstants::Y		DontDelete
+ x        SVGPathSegLinetoConstants::X        DontDelete
+ y        SVGPathSegLinetoConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegLinetoAbs::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegLinetoConstants::X:
-		return Number(x());
-	case SVGPathSegLinetoConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegLinetoConstants::X:
+        return Number(x());
+    case SVGPathSegLinetoConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegLinetoAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegLinetoConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegLinetoConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegLinetoConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegLinetoConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -83,12 +83,12 @@ SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(SVGPathSegLinetoAbsImpl *other) : SVGPa
 
 SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(const SVGPathSegLinetoAbs &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoAbs::SVGPathSegLinetoAbs(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoAbs::~SVGPathSegLinetoAbs()
@@ -97,81 +97,81 @@ SVGPathSegLinetoAbs::~SVGPathSegLinetoAbs()
 
 SVGPathSegLinetoAbs &SVGPathSegLinetoAbs::operator=(const SVGPathSegLinetoAbs &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegLinetoAbs, PATHSEG_LINETO_ABS)
 
 void SVGPathSegLinetoAbs::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegLinetoAbs::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegLinetoAbs::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegLinetoAbs::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 
 
 /*
 @begin SVGPathSegLinetoRel::s_hashTable 3
- x		SVGPathSegLinetoConstants::X		DontDelete
- y		SVGPathSegLinetoConstants::Y		DontDelete
+ x        SVGPathSegLinetoConstants::X        DontDelete
+ y        SVGPathSegLinetoConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegLinetoRel::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegLinetoConstants::X:
-		return Number(x());
-	case SVGPathSegLinetoConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegLinetoConstants::X:
+        return Number(x());
+    case SVGPathSegLinetoConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegLinetoRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegLinetoConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegLinetoConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegLinetoConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegLinetoConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -190,12 +190,12 @@ SVGPathSegLinetoRel::SVGPathSegLinetoRel(SVGPathSegLinetoRelImpl *other) : SVGPa
 
 SVGPathSegLinetoRel::SVGPathSegLinetoRel(const SVGPathSegLinetoRel &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoRel::SVGPathSegLinetoRel(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSegLinetoRel::~SVGPathSegLinetoRel()
@@ -204,38 +204,38 @@ SVGPathSegLinetoRel::~SVGPathSegLinetoRel()
 
 SVGPathSegLinetoRel &SVGPathSegLinetoRel::operator=(const SVGPathSegLinetoRel &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegLinetoRel, PATHSEG_LINETO_REL)
 
 void SVGPathSegLinetoRel::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegLinetoRel::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegLinetoRel::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegLinetoRel::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 // vim:ts=4:noet

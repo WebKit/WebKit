@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,52 +32,52 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGAnimatedInteger;
-	class SVGAnimatedEnumeration;
-	class SVGFilterElementImpl;
+    class SVGAnimatedLength;
+    class SVGAnimatedInteger;
+    class SVGAnimatedEnumeration;
+    class SVGFilterElementImpl;
 
-	class SVGFilterElement : public SVGElement,
-							 public SVGURIReference,
-							 public SVGLangSpace,
-							 public SVGExternalResourcesRequired,
-							 public SVGStylable
-	{
-	public:
-		SVGFilterElement();
-		explicit SVGFilterElement(SVGFilterElementImpl *i);
-		SVGFilterElement(const SVGFilterElement &other);
-		SVGFilterElement(const KDOM::Node &other);
-		virtual ~SVGFilterElement();
+    class SVGFilterElement : public SVGElement,
+                             public SVGURIReference,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGStylable
+    {
+    public:
+        SVGFilterElement();
+        explicit SVGFilterElement(SVGFilterElementImpl *i);
+        SVGFilterElement(const SVGFilterElement &other);
+        SVGFilterElement(const KDOM::Node &other);
+        virtual ~SVGFilterElement();
 
-		// Operators
-		SVGFilterElement &operator=(const SVGFilterElement &other);
-		SVGFilterElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFilterElement &operator=(const SVGFilterElement &other);
+        SVGFilterElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFilterElement' functions
-		SVGAnimatedEnumeration filterUnits() const;
-		SVGAnimatedEnumeration primitiveUnits() const;
+        // 'SVGFilterElement' functions
+        SVGAnimatedEnumeration filterUnits() const;
+        SVGAnimatedEnumeration primitiveUnits() const;
 
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
 
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
 
-		SVGAnimatedInteger filterResX() const;
-		SVGAnimatedInteger filterResY() const;
+        SVGAnimatedInteger filterResX() const;
+        SVGAnimatedInteger filterResY() const;
 
-		void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
+        void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFilterElement)
+        // Internal
+        KSVG_INTERNAL(SVGFilterElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGFilterElementProto)

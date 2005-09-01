@@ -32,83 +32,83 @@
 #include <qdict.h>
 
 namespace KDOM {
-	class NodeImpl;
+    class NodeImpl;
 }
 
 struct EvaluationContext
 {
-	KDOM::NodeImpl *node;
-	unsigned long size;
-	unsigned long position;
-	QDict<KDOM::DOMStringImpl> variableBindings;
-	/* The function library is globally accessible through
-	 * FunctionLibrary::self()
-	 */
+    KDOM::NodeImpl *node;
+    unsigned long size;
+    unsigned long position;
+    QDict<KDOM::DOMStringImpl> variableBindings;
+    /* The function library is globally accessible through
+     * FunctionLibrary::self()
+     */
 };
 
 class Value
 {
-	public:
-		enum Type {
-			Nodeset, Boolean, Number, String
-		};
+    public:
+        enum Type {
+            Nodeset, Boolean, Number, String
+        };
 
-		Value();
-		explicit Value( KDOM::NodeImpl *value );
-		explicit Value( const DomNodeList &value );
-		explicit Value( bool value );
-		explicit Value( double value );
-		explicit Value( const DomString &value );
+        Value();
+        explicit Value( KDOM::NodeImpl *value );
+        explicit Value( const DomNodeList &value );
+        explicit Value( bool value );
+        explicit Value( double value );
+        explicit Value( const DomString &value );
 
-		Type type() const;
-		bool isNodeset() const;
-		bool isBoolean() const;
-		bool isNumber() const;
-		bool isString() const;
+        Type type() const;
+        bool isNodeset() const;
+        bool isBoolean() const;
+        bool isNumber() const;
+        bool isString() const;
 
-		DomNodeList &toNodeset();
-		const DomNodeList &toNodeset() const;
-		bool toBoolean() const;
-		double toNumber() const;
-		DomString toString() const;
+        DomNodeList &toNodeset();
+        const DomNodeList &toNodeset() const;
+        bool toBoolean() const;
+        double toNumber() const;
+        DomString toString() const;
 
-		QString dump() const;
+        QString dump() const;
 
-	private:
-		Type m_type;
-		DomNodeList m_nodeset;
-		bool m_bool;
-		double m_number;
-		DomString m_string;
+    private:
+        Type m_type;
+        DomNodeList m_nodeset;
+        bool m_bool;
+        double m_number;
+        DomString m_string;
 };
 
 class Expression
 {
-	public:
-		static EvaluationContext &evaluationContext();
+    public:
+        static EvaluationContext &evaluationContext();
 
-		Expression();
-		virtual ~Expression();
-		virtual Value evaluate() const;
+        Expression();
+        virtual ~Expression();
+        virtual Value evaluate() const;
 
-		void addSubExpression( Expression *expr );
-		void optimize();
-		virtual bool isConstant() const;
+        void addSubExpression( Expression *expr );
+        void optimize();
+        virtual bool isConstant() const;
 
-		virtual QString dump() const = 0;
+        virtual QString dump() const = 0;
 
-	protected:
-		unsigned int subExprCount() const;
-		Expression *subExpr( unsigned int i );
-		const Expression *subExpr( unsigned int i ) const;
+    protected:
+        unsigned int subExprCount() const;
+        Expression *subExpr( unsigned int i );
+        const Expression *subExpr( unsigned int i ) const;
 
-	private:
-		virtual Value doEvaluate() const = 0;
+    private:
+        virtual Value doEvaluate() const = 0;
 
-		static EvaluationContext s_evaluationContext;
+        static EvaluationContext s_evaluationContext;
 
-		QValueList<Expression *> m_subExpressions;
-		Value *m_constantValue;
+        QValueList<Expression *> m_subExpressions;
+        Value *m_constantValue;
 };
 
 #endif // EXPRESSION_H

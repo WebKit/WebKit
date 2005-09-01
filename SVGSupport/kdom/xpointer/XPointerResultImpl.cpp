@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
-	
+    
 XPointerResultImpl::XPointerResultImpl(const ResultType code)
 : Shared(), m_single(0), m_resultType(code)
 {
@@ -38,38 +38,38 @@ XPointerResultImpl::XPointerResultImpl(const ResultType code)
 
 XPointerResultImpl::~XPointerResultImpl()
 {
-	if(m_single)
-		m_single->deref();
+    if(m_single)
+        m_single->deref();
 }
 
 ResultType XPointerResultImpl::resultType() const
 {
-	return m_resultType;
+    return m_resultType;
 }
 
 void XPointerResultImpl::setResultType(const ResultType code)
 {
-	m_resultType = code;
+    m_resultType = code;
 }
 
 void XPointerResultImpl::setResultType(const unsigned short code)
 {
-	if(code >= NO_MATCH && code <= SINGLE_NODE)
-		m_resultType = (ResultType) code;
+    if(code >= NO_MATCH && code <= SINGLE_NODE)
+        m_resultType = (ResultType) code;
 }
 
 NodeImpl *XPointerResultImpl::singleNodeValue() const
 {
-	if(resultType() != SINGLE_NODE)
-		throw new XPointerExceptionImpl(TYPE_ERR);
+    if(resultType() != SINGLE_NODE)
+        throw new XPointerExceptionImpl(TYPE_ERR);
 
-	Q_ASSERT(m_single);
-	return m_single;
+    Q_ASSERT(m_single);
+    return m_single;
 }
 
 void XPointerResultImpl::setSingleNodeValue(NodeImpl *node)
 {
-	KDOM_SAFE_SET(m_single, node);
+    KDOM_SAFE_SET(m_single, node);
 }
 
 // vim:ts=4:noet

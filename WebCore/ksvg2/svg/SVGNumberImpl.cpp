@@ -27,8 +27,8 @@ using namespace KSVG;
 
 SVGNumberImpl::SVGNumberImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_value = 0.0;
-	m_context = context;
+    m_value = 0.0;
+    m_context = context;
 }
 
 SVGNumberImpl::~SVGNumberImpl()
@@ -37,15 +37,15 @@ SVGNumberImpl::~SVGNumberImpl()
 
 float SVGNumberImpl::value() const
 {
-	return m_value;
+    return m_value;
 }
 
 void SVGNumberImpl::setValue(float value)
 {
-	m_value = value;
+    m_value = value;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

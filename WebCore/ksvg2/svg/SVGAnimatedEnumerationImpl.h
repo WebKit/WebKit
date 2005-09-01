@@ -27,26 +27,26 @@
 
 namespace KSVG
 {
-	class SVGStyledElementImpl;
+    class SVGStyledElementImpl;
 
-	class SVGAnimatedEnumerationImpl : public KDOM::Shared
-	{
-	public:
-		SVGAnimatedEnumerationImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedEnumerationImpl();
+    class SVGAnimatedEnumerationImpl : public KDOM::Shared
+    {
+    public:
+        SVGAnimatedEnumerationImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedEnumerationImpl();
 
-		unsigned short baseVal() const;
-		void setBaseVal(unsigned short baseVal);
+        unsigned short baseVal() const;
+        void setBaseVal(unsigned short baseVal);
 
-		unsigned short animVal() const;
-		void setAnimVal(unsigned short animVal);
+        unsigned short animVal() const;
+        void setAnimVal(unsigned short animVal);
 
-	private:
-		unsigned short m_baseVal;
-		unsigned short m_animVal;
+    private:
+        unsigned short m_baseVal;
+        unsigned short m_animVal;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,43 +27,43 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class DOMStringImpl;
+    class NodeImpl;
+    class DOMStringImpl;
 
-	// Introduced in DOM Level 3:
-	class DOMLocatorImpl : public Shared
-	{
-	public:
-		DOMLocatorImpl();
-		virtual ~DOMLocatorImpl();
+    // Introduced in DOM Level 3:
+    class DOMLocatorImpl : public Shared
+    {
+    public:
+        DOMLocatorImpl();
+        virtual ~DOMLocatorImpl();
 
-		// 'DOMLocatorImpl' functions
-		long lineNumber() const;
-		void setLineNumber(long);
+        // 'DOMLocatorImpl' functions
+        long lineNumber() const;
+        void setLineNumber(long);
 
-		long columnNumber() const;
-		void setColumnNumber(long);
+        long columnNumber() const;
+        void setColumnNumber(long);
 
-		long byteOffset() const;
-		void setByteOffset(long);
+        long byteOffset() const;
+        void setByteOffset(long);
 
-		long utf16Offset() const;
-		void setUtf16Offset(long);
+        long utf16Offset() const;
+        void setUtf16Offset(long);
 
-		NodeImpl *relatedNode() const;
-		void setRelatedNode(NodeImpl *);
-	
-		DOMStringImpl *uri() const;
-		void setUri(DOMStringImpl *uri);
+        NodeImpl *relatedNode() const;
+        void setRelatedNode(NodeImpl *);
+    
+        DOMStringImpl *uri() const;
+        void setUri(DOMStringImpl *uri);
 
-	protected:
-		long m_lineNumber;
-		long m_columnNumber;
-		long m_byteOffset;
-		long m_utf16Offset;
-		NodeImpl *m_relatedNode;
-		DOMStringImpl *m_uri;
-	};
+    protected:
+        long m_lineNumber;
+        long m_columnNumber;
+        long m_byteOffset;
+        long m_utf16Offset;
+        NodeImpl *m_relatedNode;
+        DOMStringImpl *m_uri;
+    };
 };
 
 #endif

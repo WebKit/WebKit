@@ -34,14 +34,14 @@ LSResourceResolverImpl::~LSResourceResolverImpl()
 }
 
 LSInputImpl *LSResourceResolverImpl::resolveResource(const DOMString &/*type*/, const DOMString &/*ns*/,
-									 				 const DOMString &/*publicId*/,
-													 const DOMString &/*systemId*/, 
-													 const DOMString &/*baseURI*/)
+                                                      const DOMString &/*publicId*/,
+                                                     const DOMString &/*systemId*/, 
+                                                     const DOMString &/*baseURI*/)
 {
-	/* Hm, "Return Value: A LSInput object describing the new 
-	 * input source, or null to request that the parser open a 
-	 * regular URI connection to the resource." */
-	return 0;
+    /* Hm, "Return Value: A LSInput object describing the new 
+     * input source, or null to request that the parser open a 
+     * regular URI connection to the resource." */
+    return 0;
 }
 
 // vim:ts=4:noet

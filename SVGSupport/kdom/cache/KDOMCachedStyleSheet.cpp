@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -39,85 +39,85 @@ using namespace KDOM;
 CachedStyleSheet::CachedStyleSheet(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl _cachePolicy, const char *accept)
 : CachedObject(url, StyleSheet, _cachePolicy, 0)
 {
-	// Set the type we want (probably css or xml)
-	QString ah = QString::fromLatin1(accept);
-	if(!ah.isEmpty())
-		ah += QString::fromLatin1(",");
-		
-	ah += QString::fromLatin1("*/*;q=0.1");
-	setAccept(ah);
-	
-	m_err = 0;
-	m_hadError = false;
+    // Set the type we want (probably css or xml)
+    QString ah = QString::fromLatin1(accept);
+    if(!ah.isEmpty())
+        ah += QString::fromLatin1(",");
+        
+    ah += QString::fromLatin1("*/*;q=0.1");
+    setAccept(ah);
+    
+    m_err = 0;
+    m_hadError = false;
 
-	// load the file
-	Cache::loader()->load(docLoader, this, false);
-	m_loading = true;
+    // load the file
+    Cache::loader()->load(docLoader, this, false);
+    m_loading = true;
 }
 
 CachedStyleSheet::CachedStyleSheet(const DOMString &url, const QString &stylesheet_data)
 : CachedObject(url, StyleSheet, KIO::CC_Verify, stylesheet_data.length())
 {
-	m_loading = false;
-	m_status = Persistent;
-	m_sheet = DOMString(stylesheet_data);
+    m_loading = false;
+    m_status = Persistent;
+    m_sheet = DOMString(stylesheet_data);
 }
 
 void CachedStyleSheet::ref(CachedObjectClient *c)
 {
-	CachedObject::ref(c);
+    CachedObject::ref(c);
 
-	if(!m_loading)
-	{
-		if(m_hadError)
-			c->error(m_err, m_errText);
-		else
-			c->setStyleSheet(m_url, m_sheet);
-	}
+    if(!m_loading)
+    {
+        if(m_hadError)
+            c->error(m_err, m_errText);
+        else
+            c->setStyleSheet(m_url, m_sheet);
+    }
 }
 
 void CachedStyleSheet::data(QBuffer &buffer, bool eof)
 {
-	if(!eof)
-		return;
+    if(!eof)
+        return;
 
-	buffer.close();
-	setSize(buffer.buffer().size());
+    buffer.close();
+    setSize(buffer.buffer().size());
 
-	QTextCodec *c = codecForBuffer(m_charset, buffer.buffer());
-	QString data = c->toUnicode(buffer.buffer().data(), m_size);
+    QTextCodec *c = codecForBuffer(m_charset, buffer.buffer());
+    QString data = c->toUnicode(buffer.buffer().data(), m_size);
 
-	// workaround Qt bugs
-	m_sheet = data[0].unicode() == QChar::byteOrderMark ? DOMString(data.mid(1)) : DOMString(data);
-	m_loading = false;
+    // workaround Qt bugs
+    m_sheet = data[0].unicode() == QChar::byteOrderMark ? DOMString(data.mid(1)) : DOMString(data);
+    m_loading = false;
 
-	checkNotify();
+    checkNotify();
 }
 
 void CachedStyleSheet::checkNotify()
 {
-	if(m_loading || m_hadError)
-		return;
+    if(m_loading || m_hadError)
+        return;
 
-	kdDebug(6060) << "CachedStyleSheet:: finishedLoading " << m_url.string() << endl;
+    kdDebug(6060) << "CachedStyleSheet:: finishedLoading " << m_url.string() << endl;
 
-	// it() first increments, then returnes the current item.
-	// this avoids skipping an item when setStyleSheet deletes the "current" one.
-	for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
-		it()->setStyleSheet(m_url, m_sheet);
+    // it() first increments, then returnes the current item.
+    // this avoids skipping an item when setStyleSheet deletes the "current" one.
+    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+        it()->setStyleSheet(m_url, m_sheet);
 }
 
 void CachedStyleSheet::error(int err, const char *text)
 {
-	m_hadError = true;
-	m_err = err;
-	m_errText = text;
-	m_loading = false;
+    m_hadError = true;
+    m_err = err;
+    m_errText = text;
+    m_loading = false;
 
-	// it() first increments, then returnes the current item.
-	// this avoids skipping an item when setStyleSheet deletes the "current" one.
-	for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
-		it()->error(m_err, m_errText);
+    // it() first increments, then returnes the current item.
+    // this avoids skipping an item when setStyleSheet deletes the "current" one.
+    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+        it()->error(m_err, m_errText);
 }
 
 // vim:ts=4:noet

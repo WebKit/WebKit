@@ -38,136 +38,136 @@ XPathResultImpl::XPathResultImpl()
 }
 
 XPathResultImpl::XPathResultImpl( const Value &value )
-	: m_value( value )
+    : m_value( value )
 {
-	switch ( m_value.type() ) {
-		case Value::Boolean:
-			m_resultType = BOOLEAN_TYPE;
-			break;
-		case Value::Number:
-			m_resultType = NUMBER_TYPE;
-			break;
-		case Value::String:
-			m_resultType = STRING_TYPE;
-			break;
-		case Value::Nodeset:
-			m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
-			m_nodeIterator = m_value.toNodeset().begin();
-	}
+    switch ( m_value.type() ) {
+        case Value::Boolean:
+            m_resultType = BOOLEAN_TYPE;
+            break;
+        case Value::Number:
+            m_resultType = NUMBER_TYPE;
+            break;
+        case Value::String:
+            m_resultType = STRING_TYPE;
+            break;
+        case Value::Nodeset:
+            m_resultType = UNORDERED_NODE_ITERATOR_TYPE;
+            m_nodeIterator = m_value.toNodeset().begin();
+    }
 }
 
 void XPathResultImpl::convertTo( unsigned short type )
 {
-	switch ( type ) {
-		case ANY_TYPE:
-			break;
-		case NUMBER_TYPE:
-			m_resultType = type;
-			m_value = Value( m_value.toNumber() );
-			break;
-		case STRING_TYPE:
-			m_resultType = type;
-			m_value = Value( m_value.toString() );
-			break;
-		case BOOLEAN_TYPE:
-			m_resultType = type;
-			m_value = Value( m_value.toBoolean() );
-			break;
-		case UNORDERED_NODE_ITERATOR_TYPE:
-		case ORDERED_NODE_ITERATOR_TYPE:
-		case UNORDERED_NODE_SNAPSHOT_TYPE:
-		case ORDERED_NODE_SNAPSHOT_TYPE:
-		case ANY_UNORDERED_NODE_TYPE:
-		case FIRST_ORDERED_NODE_TYPE:
-			if ( !m_value.isNodeset() ) {
-				throw new XPathExceptionImpl( TYPE_ERR );
-				return;
-			}
-			m_resultType = type;
-		default:
-			qWarning( "Cannot convert XPathResultImpl to unknown type '%u'!", type );
-	}
+    switch ( type ) {
+        case ANY_TYPE:
+            break;
+        case NUMBER_TYPE:
+            m_resultType = type;
+            m_value = Value( m_value.toNumber() );
+            break;
+        case STRING_TYPE:
+            m_resultType = type;
+            m_value = Value( m_value.toString() );
+            break;
+        case BOOLEAN_TYPE:
+            m_resultType = type;
+            m_value = Value( m_value.toBoolean() );
+            break;
+        case UNORDERED_NODE_ITERATOR_TYPE:
+        case ORDERED_NODE_ITERATOR_TYPE:
+        case UNORDERED_NODE_SNAPSHOT_TYPE:
+        case ORDERED_NODE_SNAPSHOT_TYPE:
+        case ANY_UNORDERED_NODE_TYPE:
+        case FIRST_ORDERED_NODE_TYPE:
+            if ( !m_value.isNodeset() ) {
+                throw new XPathExceptionImpl( TYPE_ERR );
+                return;
+            }
+            m_resultType = type;
+        default:
+            qWarning( "Cannot convert XPathResultImpl to unknown type '%u'!", type );
+    }
 }
 
 unsigned short XPathResultImpl::resultType() const
 {
-	return m_resultType;
+    return m_resultType;
 }
 
 double XPathResultImpl::numberValue() const
 {
-	if ( resultType() != NUMBER_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return m_value.toNumber();
+    if ( resultType() != NUMBER_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return m_value.toNumber();
 }
 
 DOMStringImpl *XPathResultImpl::stringValue() const
 {
-	if ( resultType() != STRING_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return new DOMStringImpl( m_value.toString() );
+    if ( resultType() != STRING_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return new DOMStringImpl( m_value.toString() );
 }
 
 bool XPathResultImpl::booleanValue() const
 {
-	if ( resultType() != BOOLEAN_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return m_value.toBoolean();
+    if ( resultType() != BOOLEAN_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return m_value.toBoolean();
 }
 
 NodeImpl *XPathResultImpl::singleNodeValue() const
 {
-	if ( resultType() != ANY_UNORDERED_NODE_TYPE &&
-	     resultType() != FIRST_ORDERED_NODE_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return 0;
+    if ( resultType() != ANY_UNORDERED_NODE_TYPE &&
+         resultType() != FIRST_ORDERED_NODE_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return 0;
 }
 
 bool XPathResultImpl::invalidIteratorState() const
 {
-	if ( resultType() != UNORDERED_NODE_ITERATOR_TYPE &&
-	     resultType() != ORDERED_NODE_ITERATOR_TYPE ) {
-		return false;
-	}
-	// XXX How to tell whether the document was changed since this
-	// result was returned?
-	return true;
+    if ( resultType() != UNORDERED_NODE_ITERATOR_TYPE &&
+         resultType() != ORDERED_NODE_ITERATOR_TYPE ) {
+        return false;
+    }
+    // XXX How to tell whether the document was changed since this
+    // result was returned?
+    return true;
 }
 
 unsigned long XPathResultImpl::snapshotLength() const
 {
-	if ( resultType() != UNORDERED_NODE_SNAPSHOT_TYPE &&
-	     resultType() != ORDERED_NODE_SNAPSHOT_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return m_value.toNodeset().count();
+    if ( resultType() != UNORDERED_NODE_SNAPSHOT_TYPE &&
+         resultType() != ORDERED_NODE_SNAPSHOT_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return m_value.toNodeset().count();
 }
 
 NodeImpl *XPathResultImpl::iterateNext()
 {
-	if ( resultType() != UNORDERED_NODE_ITERATOR_TYPE &&
-	     resultType() != ORDERED_NODE_ITERATOR_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	// XXX How to tell whether the document was changed since this
-	// result was returned? We need to throw an INVALID_STATE_ERR if that
-	// is the case.
-	if ( m_nodeIterator == m_value.toNodeset().end() ) {
-		return 0;
-	}
-	return *m_nodeIterator++;
+    if ( resultType() != UNORDERED_NODE_ITERATOR_TYPE &&
+         resultType() != ORDERED_NODE_ITERATOR_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    // XXX How to tell whether the document was changed since this
+    // result was returned? We need to throw an INVALID_STATE_ERR if that
+    // is the case.
+    if ( m_nodeIterator == m_value.toNodeset().end() ) {
+        return 0;
+    }
+    return *m_nodeIterator++;
 }
 
 NodeImpl *XPathResultImpl::snapshotItem( unsigned long index )
 {
-	if ( resultType() != UNORDERED_NODE_SNAPSHOT_TYPE &&
-	     resultType() != ORDERED_NODE_SNAPSHOT_TYPE ) {
-		throw new XPathExceptionImpl( TYPE_ERR );
-	}
-	return m_value.toNodeset()[index];
+    if ( resultType() != UNORDERED_NODE_SNAPSHOT_TYPE &&
+         resultType() != ORDERED_NODE_SNAPSHOT_TYPE ) {
+        throw new XPathExceptionImpl( TYPE_ERR );
+    }
+    return m_value.toNodeset()[index];
 }
 

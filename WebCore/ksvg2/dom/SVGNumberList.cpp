@@ -39,16 +39,16 @@ using namespace KSVG;
 
 /*
 @begin SVGNumberList::s_hashTable 3
- numberOfItems					SVGNumberListConstants::NumberOfItems				DontDelete|ReadOnly
+ numberOfItems                    SVGNumberListConstants::NumberOfItems                DontDelete|ReadOnly
 @end
 @begin SVGNumberListProto::s_hashTable 9
- clear							SVGNumberListConstants::Clear						DontDelete|Function 0
- initialize						SVGNumberListConstants::Initialize					DontDelete|Function 1
- getItem						SVGNumberListConstants::GetItem						DontDelete|Function 1
- insertItemBefore				SVGNumberListConstants::InsertItemBefore				DontDelete|Function 2
- replaceItem					SVGNumberListConstants::ReplaceItem					DontDelete|Function 2
- removeItem						SVGNumberListConstants::RemoveItem					DontDelete|Function 1
- appendItem						SVGNumberListConstants::AppendItem					DontDelete|Function 1
+ clear                            SVGNumberListConstants::Clear                        DontDelete|Function 0
+ initialize                        SVGNumberListConstants::Initialize                    DontDelete|Function 1
+ getItem                        SVGNumberListConstants::GetItem                        DontDelete|Function 1
+ insertItemBefore                SVGNumberListConstants::InsertItemBefore                DontDelete|Function 2
+ replaceItem                    SVGNumberListConstants::ReplaceItem                    DontDelete|Function 2
+ removeItem                        SVGNumberListConstants::RemoveItem                    DontDelete|Function 1
+ appendItem                        SVGNumberListConstants::AppendItem                    DontDelete|Function 1
 @end
 */
 
@@ -56,70 +56,70 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGNumberList", SVGNumberListProto, SVGNumberListProto
 
 ValueImp *SVGNumberList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGNumberListConstants::NumberOfItems:
-			return Number(numberOfItems());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGNumberListConstants::NumberOfItems:
+            return Number(numberOfItems());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGNumberListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGNumberList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGNumberList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGNumberListConstants::Clear:
-		{
-			obj.clear();
-			return Undefined();
-		}
-		case SVGNumberListConstants::Initialize:
-		{
-			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.initialize(newItem));
-		}
-		case SVGNumberListConstants::GetItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.getItem(index));
-		}
-		case SVGNumberListConstants::InsertItemBefore:
-		{
-			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.insertItemBefore(newItem, index));
-		}
-		case SVGNumberListConstants::ReplaceItem:
-		{
-			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.replaceItem(newItem, index));
-		}
-		case SVGNumberListConstants::RemoveItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.removeItem(index));
-		}
-		case SVGNumberListConstants::AppendItem:
-		{
-			SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
-			return KDOM::safe_cache<SVGNumber>(exec, obj.appendItem(newItem));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGNumberListConstants::Clear:
+        {
+            obj.clear();
+            return Undefined();
+        }
+        case SVGNumberListConstants::Initialize:
+        {
+            SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.initialize(newItem));
+        }
+        case SVGNumberListConstants::GetItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.getItem(index));
+        }
+        case SVGNumberListConstants::InsertItemBefore:
+        {
+            SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.insertItemBefore(newItem, index));
+        }
+        case SVGNumberListConstants::ReplaceItem:
+        {
+            SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.replaceItem(newItem, index));
+        }
+        case SVGNumberListConstants::RemoveItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.removeItem(index));
+        }
+        case SVGNumberListConstants::AppendItem:
+        {
+            SVGNumber newItem = KDOM::ecma_cast<SVGNumber>(exec, args[0], &toSVGNumber);
+            return KDOM::safe_cache<SVGNumber>(exec, obj.appendItem(newItem));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGNumberList SVGNumberList::null;
@@ -130,77 +130,77 @@ SVGNumberList::SVGNumberList() : impl(0)
 
 SVGNumberList::SVGNumberList(SVGNumberListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGNumberList::SVGNumberList(const SVGNumberList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGNumberList)
 
 unsigned long SVGNumberList::numberOfItems() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 void SVGNumberList::clear()
 {
-	if(impl)
-		impl->clear();
+    if(impl)
+        impl->clear();
 }
 
 SVGNumber SVGNumberList::initialize(const SVGNumber &newItem)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->initialize(newItem.handle()));
+    return SVGNumber(impl->initialize(newItem.handle()));
 }
 
 SVGNumber SVGNumberList::getItem(unsigned long index)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->getItem(index));
+    return SVGNumber(impl->getItem(index));
 }
 
 SVGNumber SVGNumberList::insertItemBefore(const SVGNumber &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->insertItemBefore(newItem.handle(), index));
+    return SVGNumber(impl->insertItemBefore(newItem.handle(), index));
 }
 
 SVGNumber SVGNumberList::replaceItem(const SVGNumber &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->replaceItem(newItem.handle(), index));
+    return SVGNumber(impl->replaceItem(newItem.handle(), index));
 }
 
 SVGNumber SVGNumberList::removeItem(unsigned long index)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->removeItem(index));
+    return SVGNumber(impl->removeItem(index));
 }
 
 SVGNumber SVGNumberList::appendItem(const SVGNumber &newItem)
 {
-	if(!impl)
-		return SVGNumber::null;
+    if(!impl)
+        return SVGNumber::null;
 
-	return SVGNumber(impl->appendItem(newItem.handle()));
+    return SVGNumber(impl->appendItem(newItem.handle()));
 }
 
 // vim:ts=4:noet

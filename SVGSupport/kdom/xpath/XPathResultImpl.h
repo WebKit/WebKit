@@ -40,28 +40,28 @@ namespace XPath
 
 class XPathResultImpl : public Shared
 {
-	public:
-		XPathResultImpl();
-		XPathResultImpl( const Value &value );
+    public:
+        XPathResultImpl();
+        XPathResultImpl( const Value &value );
 
-		void convertTo( unsigned short type );
+        void convertTo( unsigned short type );
 
-		unsigned short resultType() const;
+        unsigned short resultType() const;
 
-		double numberValue() const;
-		DOMStringImpl *stringValue() const;
-		bool booleanValue() const;
-		NodeImpl *singleNodeValue() const;
+        double numberValue() const;
+        DOMStringImpl *stringValue() const;
+        bool booleanValue() const;
+        NodeImpl *singleNodeValue() const;
 
-		bool invalidIteratorState() const;
-		unsigned long snapshotLength() const;
-		NodeImpl *iterateNext();
-		NodeImpl *snapshotItem( unsigned long index );
+        bool invalidIteratorState() const;
+        unsigned long snapshotLength() const;
+        NodeImpl *iterateNext();
+        NodeImpl *snapshotItem( unsigned long index );
 
-	private:
-		Value m_value;
-		DomNodeList::Iterator m_nodeIterator;
-		unsigned short m_resultType;
+    private:
+        Value m_value;
+        DomNodeList::Iterator m_nodeIterator;
+        unsigned short m_resultType;
 };
 
 }

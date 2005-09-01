@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
@@ -36,196 +36,196 @@ RenderStyle *RenderStyle::s_defaultStyle = 0;
 
 RenderStyle::RenderStyle() : Shared()
 {
-	if(!s_defaultStyle)
-		s_defaultStyle = new RenderStyle(true);
+    if(!s_defaultStyle)
+        s_defaultStyle = new RenderStyle(true);
 
-	box = s_defaultStyle->box;
-	visual = s_defaultStyle->visual;
-	surround = s_defaultStyle->surround;
-	background = s_defaultStyle->background;
-	css3InheritedData = s_defaultStyle->css3InheritedData;
-	css3NonInheritedData = s_defaultStyle->css3NonInheritedData;
+    box = s_defaultStyle->box;
+    visual = s_defaultStyle->visual;
+    surround = s_defaultStyle->surround;
+    background = s_defaultStyle->background;
+    css3InheritedData = s_defaultStyle->css3InheritedData;
+    css3NonInheritedData = s_defaultStyle->css3NonInheritedData;
 
-	inherited = s_defaultStyle->inherited;
+    inherited = s_defaultStyle->inherited;
 
-	setBitDefaults();
-	
-	pseudoStyle = 0;
-	content = 0;
-	counter_reset = 0;
-	counter_increment = 0;
+    setBitDefaults();
+    
+    pseudoStyle = 0;
+    content = 0;
+    counter_reset = 0;
+    counter_increment = 0;
 }
 
 RenderStyle::RenderStyle(bool) : Shared()
 {
-	setBitDefaults();
-	
-	box.init();
-	visual.init();
-	surround.init();
-	background.init();
-	css3InheritedData.init();
-	css3NonInheritedData.init();
-	css3NonInheritedData.access()->marquee.init();
+    setBitDefaults();
+    
+    box.init();
+    visual.init();
+    surround.init();
+    background.init();
+    css3InheritedData.init();
+    css3NonInheritedData.init();
+    css3NonInheritedData.access()->marquee.init();
 
-	inherited.init();
-	pseudoStyle = 0;
-	content = 0;
-	counter_reset = 0;
-	counter_increment = 0;
+    inherited.init();
+    pseudoStyle = 0;
+    content = 0;
+    counter_reset = 0;
+    counter_increment = 0;
 }
 
 RenderStyle::RenderStyle(const RenderStyle &other) : Shared()
 {
-	inherited_flags = other.inherited_flags;
-	noninherited_flags = other.noninherited_flags;
+    inherited_flags = other.inherited_flags;
+    noninherited_flags = other.noninherited_flags;
 
-	box = other.box;
-	visual = other.visual;
-	surround = other.surround;
-	background = other.background;
-	css3InheritedData = other.css3InheritedData;
-	css3NonInheritedData = other.css3NonInheritedData;
+    box = other.box;
+    visual = other.visual;
+    surround = other.surround;
+    background = other.background;
+    css3InheritedData = other.css3InheritedData;
+    css3NonInheritedData = other.css3NonInheritedData;
 
-	inherited = other.inherited;
-	
-	pseudoStyle = 0;
-	
-	content = other.content;
-	counter_reset = other.counter_reset;
-	counter_increment = other.counter_increment;
+    inherited = other.inherited;
+    
+    pseudoStyle = 0;
+    
+    content = other.content;
+    counter_reset = other.counter_reset;
+    counter_increment = other.counter_increment;
 
-	if(counter_reset)
-		counter_reset->ref();
-		
-	if(counter_increment)
-		counter_increment->ref();
+    if(counter_reset)
+        counter_reset->ref();
+        
+    if(counter_increment)
+        counter_increment->ref();
 }
 
 RenderStyle::~RenderStyle()
 {
-	RenderStyle *ps = pseudoStyle;
-	RenderStyle *prev = 0;
+    RenderStyle *ps = pseudoStyle;
+    RenderStyle *prev = 0;
 
-	while(ps)
-	{
-		prev = ps;
-		ps = ps->pseudoStyle;
-		
-		// to prevent a double deletion.
-		// this works only because the styles below aren't really shared
-		// Dirk said we need another construct as soon as these are shared
-		prev->pseudoStyle = 0;
-		prev->deref();
-	}
-	
-	delete content;
-	
-	if(counter_reset)
-		counter_reset->deref();
-		
-	if(counter_increment)
-		counter_increment->deref();
+    while(ps)
+    {
+        prev = ps;
+        ps = ps->pseudoStyle;
+        
+        // to prevent a double deletion.
+        // this works only because the styles below aren't really shared
+        // Dirk said we need another construct as soon as these are shared
+        prev->pseudoStyle = 0;
+        prev->deref();
+    }
+    
+    delete content;
+    
+    if(counter_reset)
+        counter_reset->deref();
+        
+    if(counter_increment)
+        counter_increment->deref();
 }
 
 void RenderStyle::cleanup()
 {
-	delete s_defaultStyle;
-	s_defaultStyle = 0;
+    delete s_defaultStyle;
+    s_defaultStyle = 0;
 }
 
 bool RenderStyle::equals(RenderStyle *other) const
 {
-	// compare everything except the pseudoStyle pointer
-	return (inherited_flags == other->inherited_flags) &&
-		   (noninherited_flags == other->noninherited_flags) &&
-		   (box == other->box) && (visual == other->visual) &&
-		   (surround == other->surround) && (background == other->background) &&
-		   (inherited == other->inherited) && (css3InheritedData == other->css3InheritedData) &&
-		   (css3NonInheritedData == other->css3NonInheritedData);
+    // compare everything except the pseudoStyle pointer
+    return (inherited_flags == other->inherited_flags) &&
+           (noninherited_flags == other->noninherited_flags) &&
+           (box == other->box) && (visual == other->visual) &&
+           (surround == other->surround) && (background == other->background) &&
+           (inherited == other->inherited) && (css3InheritedData == other->css3InheritedData) &&
+           (css3NonInheritedData == other->css3NonInheritedData);
 }
 
 void RenderStyle::inheritFrom(const RenderStyle *inheritParent)
 {
-	inherited = inheritParent->inherited;
-	css3InheritedData = inheritParent->css3InheritedData;
+    inherited = inheritParent->inherited;
+    css3InheritedData = inheritParent->css3InheritedData;
 
-	inherited_flags = inheritParent->inherited_flags;
+    inherited_flags = inheritParent->inherited_flags;
 
-	// Simulate ":after,:before { white-space: pre-line }"
-	if(noninherited_flags.f._styleType == AFTER ||
-	   noninherited_flags.f._styleType == BEFORE)
-		setWhiteSpace(WS_PRE_LINE);
+    // Simulate ":after,:before { white-space: pre-line }"
+    if(noninherited_flags.f._styleType == AFTER ||
+       noninherited_flags.f._styleType == BEFORE)
+        setWhiteSpace(WS_PRE_LINE);
 }
 
 RenderStyle *RenderStyle::getPseudoStyle(PseudoId pid)
 {
-	RenderStyle *ps = 0;
-	if(noninherited_flags.f._styleType == NOPSEUDO)
-	{
-		for(ps = pseudoStyle; ps != 0; ps = ps->pseudoStyle)
-		{
-			if(ps->noninherited_flags.f._styleType == pid)
-				break;
-		}
-	}
+    RenderStyle *ps = 0;
+    if(noninherited_flags.f._styleType == NOPSEUDO)
+    {
+        for(ps = pseudoStyle; ps != 0; ps = ps->pseudoStyle)
+        {
+            if(ps->noninherited_flags.f._styleType == pid)
+                break;
+        }
+    }
 
-	return ps;
+    return ps;
 }
 
 RenderStyle *RenderStyle::addPseudoStyle(PseudoId pid)
 {
-	RenderStyle *ps = getPseudoStyle(pid);
+    RenderStyle *ps = getPseudoStyle(pid);
 
-	if(!ps)
-	{
-		switch(pid)
-		{
-			case FIRST_LETTER: // pseudo-elements (FIRST_LINE has a special handling)
-			case BEFORE:
-			case AFTER:
-			{
-				ps = new RenderStyle();
-				break;
-			}
-			default:
-				ps = new RenderStyle(*this); // use the real copy constructor to get an identical copy
-		}
-		
-		ps->ref();
-		ps->noninherited_flags.f._styleType = pid;
-		ps->pseudoStyle = pseudoStyle;
+    if(!ps)
+    {
+        switch(pid)
+        {
+            case FIRST_LETTER: // pseudo-elements (FIRST_LINE has a special handling)
+            case BEFORE:
+            case AFTER:
+            {
+                ps = new RenderStyle();
+                break;
+            }
+            default:
+                ps = new RenderStyle(*this); // use the real copy constructor to get an identical copy
+        }
+        
+        ps->ref();
+        ps->noninherited_flags.f._styleType = pid;
+        ps->pseudoStyle = pseudoStyle;
 
-		pseudoStyle = ps;
-	}
+        pseudoStyle = ps;
+    }
 
-	return ps;
+    return ps;
 }
 
 void RenderStyle::removePseudoStyle(PseudoId pid)
 {
-	RenderStyle *ps = pseudoStyle;
-	RenderStyle *prev = this;
+    RenderStyle *ps = pseudoStyle;
+    RenderStyle *prev = this;
 
-	while(ps)
-	{
-		if(ps->noninherited_flags.f._styleType == pid)
-		{
-			prev->pseudoStyle = ps->pseudoStyle;
-			ps->deref();
-			return;
-		}
-		
-		prev = ps;
-		ps = ps->pseudoStyle;
-	}
+    while(ps)
+    {
+        if(ps->noninherited_flags.f._styleType == pid)
+        {
+            prev->pseudoStyle = ps->pseudoStyle;
+            ps->deref();
+            return;
+        }
+        
+        prev = ps;
+        ps = ps->pseudoStyle;
+    }
 }
 
 bool RenderStyle::inheritedNotEqual(RenderStyle *other) const
 {
-	return (inherited_flags != other->inherited_flags) ||
-		   (inherited != other->inherited) ||
-		   (css3InheritedData != other->css3InheritedData);
+    return (inherited_flags != other->inherited_flags) ||
+           (inherited != other->inherited) ||
+           (css3InheritedData != other->css3InheritedData);
 }
 
 /*
@@ -244,443 +244,443 @@ bool RenderStyle::inheritedNotEqual(RenderStyle *other) const
 */
 RenderStyle::Diff RenderStyle::diff(const RenderStyle *other) const
 {
-	if(*box.get() != *other->box.get() ||
-	   *visual.get() != *other->visual.get() ||
-	   *surround.get() != *other->surround.get() ||
-	   !(inherited->indent == other->inherited->indent) ||
-	   !(inherited->lineHeight == other->inherited->lineHeight) ||
-	   !(inherited->styleImage == other->inherited->styleImage) ||
-	   !(inherited->font == other->inherited->font) ||
-	   !(inherited->borderHSpacing == other->inherited->borderHSpacing) ||
-	   !(inherited->borderVSpacing == other->inherited->borderVSpacing))
-		return CbLayout;
+    if(*box.get() != *other->box.get() ||
+       *visual.get() != *other->visual.get() ||
+       *surround.get() != *other->surround.get() ||
+       !(inherited->indent == other->inherited->indent) ||
+       !(inherited->lineHeight == other->inherited->lineHeight) ||
+       !(inherited->styleImage == other->inherited->styleImage) ||
+       !(inherited->font == other->inherited->font) ||
+       !(inherited->borderHSpacing == other->inherited->borderHSpacing) ||
+       !(inherited->borderVSpacing == other->inherited->borderVSpacing))
+        return CbLayout;
 
-	if(((int) noninherited_flags.f._display) >= DS_TABLE)
-	{
-		if(!(inherited_flags.f._emptyCells == other->inherited_flags.f._emptyCells) ||
-		   !(inherited_flags.f._captionSide == other->inherited_flags.f._captionSide) ||
-		   !(inherited_flags.f._borderCollapse == other->inherited_flags.f._borderCollapse) ||
-		   !(noninherited_flags.f._tableLayout == other->noninherited_flags.f._tableLayout) ||
-		   !(noninherited_flags.f._position == other->noninherited_flags.f._position) ||
-		   !(noninherited_flags.f._floating == other->noninherited_flags.f._floating) ||
-		   !(noninherited_flags.f._unicodeBidi == other->noninherited_flags.f._unicodeBidi) )
-			return CbLayout;
-	}
+    if(((int) noninherited_flags.f._display) >= DS_TABLE)
+    {
+        if(!(inherited_flags.f._emptyCells == other->inherited_flags.f._emptyCells) ||
+           !(inherited_flags.f._captionSide == other->inherited_flags.f._captionSide) ||
+           !(inherited_flags.f._borderCollapse == other->inherited_flags.f._borderCollapse) ||
+           !(noninherited_flags.f._tableLayout == other->noninherited_flags.f._tableLayout) ||
+           !(noninherited_flags.f._position == other->noninherited_flags.f._position) ||
+           !(noninherited_flags.f._floating == other->noninherited_flags.f._floating) ||
+           !(noninherited_flags.f._unicodeBidi == other->noninherited_flags.f._unicodeBidi) )
+            return CbLayout;
+    }
 
-	if(noninherited_flags.f._display == DS_LIST_ITEM)
-	{
-		if(!(inherited_flags.f._listStyleType == other->inherited_flags.f._listStyleType) ||
-		   !(inherited_flags.f._listStylePosition == other->inherited_flags.f._listStylePosition))
-		   return Layout;
-	}
-	
-	if(!(inherited_flags.f._textAlign == other->inherited_flags.f._textAlign) ||
-	   !(inherited_flags.f._textTransform == other->inherited_flags.f._textTransform) ||
-	   !(inherited_flags.f._direction == other->inherited_flags.f._direction) ||
-	   !(inherited_flags.f._whiteSpace == other->inherited_flags.f._whiteSpace) ||
-	   !(noninherited_flags.f._clear == other->noninherited_flags.f._clear))
-		return Layout;
-	
-	if(!(noninherited_flags.f._display == DS_INLINE) &&
-	   !(noninherited_flags.f._verticalAlign == other->noninherited_flags.f._verticalAlign))
-		return Layout;
+    if(noninherited_flags.f._display == DS_LIST_ITEM)
+    {
+        if(!(inherited_flags.f._listStyleType == other->inherited_flags.f._listStyleType) ||
+           !(inherited_flags.f._listStylePosition == other->inherited_flags.f._listStylePosition))
+           return Layout;
+    }
+    
+    if(!(inherited_flags.f._textAlign == other->inherited_flags.f._textAlign) ||
+       !(inherited_flags.f._textTransform == other->inherited_flags.f._textTransform) ||
+       !(inherited_flags.f._direction == other->inherited_flags.f._direction) ||
+       !(inherited_flags.f._whiteSpace == other->inherited_flags.f._whiteSpace) ||
+       !(noninherited_flags.f._clear == other->noninherited_flags.f._clear))
+        return Layout;
+    
+    if(!(noninherited_flags.f._display == DS_INLINE) &&
+       !(noninherited_flags.f._verticalAlign == other->noninherited_flags.f._verticalAlign))
+        return Layout;
 
-	if(inherited->color != other->inherited->color ||
-	   inherited->decorationColor != other->inherited->decorationColor ||
-	   !(inherited_flags.f._visibility == other->inherited_flags.f._visibility) ||
-	   !(noninherited_flags.f._overflow == other->noninherited_flags.f._overflow) ||
-	   !(noninherited_flags.f._backgroundRepeat == other->noninherited_flags.f._backgroundRepeat) ||
-	   !(noninherited_flags.f._backgroundAttachment == other->noninherited_flags.f._backgroundAttachment) ||
-	   !(inherited_flags.f._textDecoration == other->inherited_flags.f._textDecoration) ||
-	   !(noninherited_flags.f._hasClip == other->noninherited_flags.f._hasClip) ||
-	   visual->textDecoration != other->visual->textDecoration ||
-	   *background.get() != *other->background.get() ||
-	   css3NonInheritedData->opacity != other->css3NonInheritedData->opacity ||
-	   !css3InheritedData->shadowDataEquivalent(*other->css3InheritedData.get()))
-		return Visible;
+    if(inherited->color != other->inherited->color ||
+       inherited->decorationColor != other->inherited->decorationColor ||
+       !(inherited_flags.f._visibility == other->inherited_flags.f._visibility) ||
+       !(noninherited_flags.f._overflow == other->noninherited_flags.f._overflow) ||
+       !(noninherited_flags.f._backgroundRepeat == other->noninherited_flags.f._backgroundRepeat) ||
+       !(noninherited_flags.f._backgroundAttachment == other->noninherited_flags.f._backgroundAttachment) ||
+       !(inherited_flags.f._textDecoration == other->inherited_flags.f._textDecoration) ||
+       !(noninherited_flags.f._hasClip == other->noninherited_flags.f._hasClip) ||
+       visual->textDecoration != other->visual->textDecoration ||
+       *background.get() != *other->background.get() ||
+       css3NonInheritedData->opacity != other->css3NonInheritedData->opacity ||
+       !css3InheritedData->shadowDataEquivalent(*other->css3InheritedData.get()))
+        return Visible;
 
-	return Equal;
+    return Equal;
 }
 
 void RenderStyle::setTextShadow(ShadowData *val, bool add)
 {
-	StyleCSS3InheritedData *css3Data = css3InheritedData.access();
-	if(!add)
-	{
-		delete css3Data->textShadow;
-		css3Data->textShadow = val;
-		return;
-	}
+    StyleCSS3InheritedData *css3Data = css3InheritedData.access();
+    if(!add)
+    {
+        delete css3Data->textShadow;
+        css3Data->textShadow = val;
+        return;
+    }
 
-	ShadowData *last = css3Data->textShadow;
-	while(last->next != 0)
-		last = last->next;
-	
-	last->next = val;
+    ShadowData *last = css3Data->textShadow;
+    while(last->next != 0)
+        last = last->next;
+    
+    last->next = val;
 }
 
 void RenderStyle::setClip(Length top, Length right, Length bottom, Length left)
 {
-	StyleVisualData *data = visual.access();
-	data->clip.top = top;
-	data->clip.right = right;
-	data->clip.bottom = bottom;
-	data->clip.left = left;
+    StyleVisualData *data = visual.access();
+    data->clip.top = top;
+    data->clip.right = right;
+    data->clip.bottom = bottom;
+    data->clip.left = left;
 }
 
 void RenderStyle::setQuotes(QuotesValueImpl *q)
 {
-	QuotesValueImpl *t = inherited->quotes;
-	inherited.access()->quotes = q;
-	
-	if(q)
-		q->ref();
-	
-	if(t)
-		t->deref();
+    QuotesValueImpl *t = inherited->quotes;
+    inherited.access()->quotes = q;
+    
+    if(q)
+        q->ref();
+    
+    if(t)
+        t->deref();
 }
 
 QString RenderStyle::openQuote(int level) const
 {
-	if(inherited->quotes)
-		return inherited->quotes->openQuote(level);
+    if(inherited->quotes)
+        return inherited->quotes->openQuote(level);
 
-	return QString::fromLatin1("\""); // 0 is default quotes
+    return QString::fromLatin1("\""); // 0 is default quotes
 }
 
 QString RenderStyle::closeQuote(int level) const
 {
-	if(inherited->quotes)
-			return inherited->quotes->closeQuote(level);
-	
-	return QString::fromLatin1("\""); // 0 is default quotes
+    if(inherited->quotes)
+            return inherited->quotes->closeQuote(level);
+    
+    return QString::fromLatin1("\""); // 0 is default quotes
 }
 
 bool RenderStyle::contentDataEquivalent(RenderStyle *otherStyle)
 {
-	ContentData *c1 = content;
-	ContentData *c2 = otherStyle->content;
+    ContentData *c1 = content;
+    ContentData *c2 = otherStyle->content;
 
-	while(c1 && c2)
-	{
-		if(c1->_contentType != c2->_contentType)
-			return false;
-			
-		if(c1->_contentType == CONTENT_TEXT)
-		{
-			DOMString c1Str(c1->_content.text);
-			DOMString c2Str(c2->_content.text);
-			
-			if(c1Str != c2Str)
-				return false;
-		}
-		else if(c1->_contentType == CONTENT_OBJECT)
-		{
-			if(c1->_content.object != c2->_content.object)
-				return false;
-		}
-		else if(c1->_contentType == CONTENT_COUNTER)
-		{
-			if(c1->_content.counter != c2->_content.counter)
-				return false;
-		}
+    while(c1 && c2)
+    {
+        if(c1->_contentType != c2->_contentType)
+            return false;
+            
+        if(c1->_contentType == CONTENT_TEXT)
+        {
+            DOMString c1Str(c1->_content.text);
+            DOMString c2Str(c2->_content.text);
+            
+            if(c1Str != c2Str)
+                return false;
+        }
+        else if(c1->_contentType == CONTENT_OBJECT)
+        {
+            if(c1->_content.object != c2->_content.object)
+                return false;
+        }
+        else if(c1->_contentType == CONTENT_COUNTER)
+        {
+            if(c1->_content.counter != c2->_content.counter)
+                return false;
+        }
 
-		c1 = c1->_nextContent;
-		c2 = c2->_nextContent;
-	}
+        c1 = c1->_nextContent;
+        c2 = c2->_nextContent;
+    }
 
-	return !c1 && !c2;
+    return !c1 && !c2;
 }
 
 void RenderStyle::setContent(CachedObject *o, bool add)
 {
-	if(!o)
-		return; // The object is null. Nothing to do. Just bail.
+    if(!o)
+        return; // The object is null. Nothing to do. Just bail.
 
-	ContentData *lastContent = content;
-	while(lastContent && lastContent->_nextContent)
-		lastContent = lastContent->_nextContent;
+    ContentData *lastContent = content;
+    while(lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
 
-	bool reuseContent = !add;
-	
-	ContentData *newContentData = 0;
-	if(reuseContent && content)
-	{
-		content->clearContent();
-		newContentData = content;
-	}
-	else
-		newContentData = new ContentData();
+    bool reuseContent = !add;
+    
+    ContentData *newContentData = 0;
+    if(reuseContent && content)
+    {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData();
 
-	if(lastContent && !reuseContent)
-		lastContent->_nextContent = newContentData;
-	else
-		content = newContentData;
+    if(lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
 
-	//    o->ref();
-	newContentData->_content.object = o;
-	newContentData->_contentType = CONTENT_OBJECT;
+    //    o->ref();
+    newContentData->_content.object = o;
+    newContentData->_contentType = CONTENT_OBJECT;
 }
 
 void RenderStyle::setContent(DOMStringImpl *s, bool add)
 {
-	if(!s)
-		return; // The string is null. Nothing to do. Just bail.
+    if(!s)
+        return; // The string is null. Nothing to do. Just bail.
 
-	ContentData *lastContent = content;
-	while(lastContent && lastContent->_nextContent)
-		lastContent = lastContent->_nextContent;
+    ContentData *lastContent = content;
+    while(lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
 
-	bool reuseContent = !add;
-	if(add)
-	{
-		if(!lastContent)
-			return; // Something's wrong.  We had no previous content, and we should have.
+    bool reuseContent = !add;
+    if(add)
+    {
+        if(!lastContent)
+            return; // Something's wrong.  We had no previous content, and we should have.
 
-		if(lastContent->_contentType == CONTENT_TEXT)
-		{
-			// We can augment the existing string and share this ContentData node.
-			DOMStringImpl *oldStr = lastContent->_content.text;
-			DOMStringImpl *newStr = oldStr->copy();
-			newStr->ref();
-			oldStr->deref();
-			
-			newStr->append(s);
-			
-			lastContent->_content.text = newStr;
-			return;
-		}
-	}
+        if(lastContent->_contentType == CONTENT_TEXT)
+        {
+            // We can augment the existing string and share this ContentData node.
+            DOMStringImpl *oldStr = lastContent->_content.text;
+            DOMStringImpl *newStr = oldStr->copy();
+            newStr->ref();
+            oldStr->deref();
+            
+            newStr->append(s);
+            
+            lastContent->_content.text = newStr;
+            return;
+        }
+    }
 
-	ContentData *newContentData = 0;
-	if(reuseContent && content)
-	{
-		content->clearContent();
-		newContentData = content;
-	}
-	else
-		newContentData = new ContentData();
+    ContentData *newContentData = 0;
+    if(reuseContent && content)
+    {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData();
 
-	if(lastContent && !reuseContent)
-		lastContent->_nextContent = newContentData;
-	else
-		content = newContentData;
+    if(lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
 
-	newContentData->_content.text = s;
-	newContentData->_content.text->ref();
-	newContentData->_contentType = CONTENT_TEXT;
+    newContentData->_content.text = s;
+    newContentData->_content.text->ref();
+    newContentData->_contentType = CONTENT_TEXT;
 }
 
 void RenderStyle::setContent(CounterImpl *c, bool add)
 {
-	if(!c)
-		return;
+    if(!c)
+        return;
 
-	ContentData *lastContent = content;
-	while(lastContent && lastContent->_nextContent)
-		lastContent = lastContent->_nextContent;
+    ContentData *lastContent = content;
+    while(lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
 
-	bool reuseContent = !add;
-	ContentData *newContentData = 0;
-	if(reuseContent && content)
-	{
-		content->clearContent();
-		newContentData = content;
-	}
-	else
-		newContentData = new ContentData();
+    bool reuseContent = !add;
+    ContentData *newContentData = 0;
+    if(reuseContent && content)
+    {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData();
 
-	if(lastContent && !reuseContent)
-		lastContent->_nextContent = newContentData;
-	else
-		content = newContentData;
+    if(lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
 
-	c->ref();
-	newContentData->_content.counter = c;
-	newContentData->_contentType = CONTENT_COUNTER;
+    c->ref();
+    newContentData->_content.counter = c;
+    newContentData->_contentType = CONTENT_COUNTER;
 }
 
 void RenderStyle::setContent(EQuoteContent q, bool add)
 {
-	if(q == QC_NO_QUOTE)
-		return;
+    if(q == QC_NO_QUOTE)
+        return;
 
-	ContentData* lastContent = content;
-	while(lastContent && lastContent->_nextContent)
-		lastContent = lastContent->_nextContent;
+    ContentData* lastContent = content;
+    while(lastContent && lastContent->_nextContent)
+        lastContent = lastContent->_nextContent;
 
-	bool reuseContent = !add;
-	ContentData *newContentData = 0;
-	if(reuseContent && content)
-	{
-		content->clearContent();
-		newContentData = content;
-	}
-	else
-		newContentData = new ContentData();
+    bool reuseContent = !add;
+    ContentData *newContentData = 0;
+    if(reuseContent && content)
+    {
+        content->clearContent();
+        newContentData = content;
+    }
+    else
+        newContentData = new ContentData();
 
-	if(lastContent && !reuseContent)
-		lastContent->_nextContent = newContentData;
-	else
-		content = newContentData;
+    if(lastContent && !reuseContent)
+        lastContent->_nextContent = newContentData;
+    else
+        content = newContentData;
 
-	newContentData->_content.quote = q;
-	newContentData->_contentType = CONTENT_QUOTE;
+    newContentData->_content.quote = q;
+    newContentData->_contentType = CONTENT_QUOTE;
 }
 
 bool RenderStyle::counterDataEquivalent(RenderStyle *otherStyle)
 {
-	// ### Should we compare content?
-	return counter_reset == otherStyle->counter_reset &&
-		   counter_increment == otherStyle->counter_increment;
+    // ### Should we compare content?
+    return counter_reset == otherStyle->counter_reset &&
+           counter_increment == otherStyle->counter_increment;
 }
 
 void RenderStyle::setCounterReset(CSSValueListImpl *l)
 {
-	CSSValueListImpl *t = counter_reset;
-	counter_reset = l;
+    CSSValueListImpl *t = counter_reset;
+    counter_reset = l;
 
-	if(l)
-		l->ref();
-	
-	if(t)
-		t->deref();
+    if(l)
+        l->ref();
+    
+    if(t)
+        t->deref();
 }
 
 void RenderStyle::setCounterIncrement(CSSValueListImpl *l)
 {
-	CSSValueListImpl *t = counter_increment;
-	counter_increment = l;
+    CSSValueListImpl *t = counter_increment;
+    counter_increment = l;
 
-	if(l)
-		l->ref();
-		
-	if(t)
-		t->deref();
+    if(l)
+        l->ref();
+        
+    if(t)
+        t->deref();
 }
 
 void RenderStyle::addCounterReset(CounterActImpl *c)
 {
-	if(!counter_reset)
-	{
-		counter_reset = new CSSValueListImpl();
-		counter_reset->ref();
-	}
+    if(!counter_reset)
+    {
+        counter_reset = new CSSValueListImpl();
+        counter_reset->ref();
+    }
 
-	counter_reset->append(c);
+    counter_reset->append(c);
 }
 
 void RenderStyle::addCounterIncrement(CounterActImpl *c)
 {
-	if(!counter_increment)
-	{
-		counter_increment = new CSSValueListImpl();
-		counter_increment->ref();
-	}
+    if(!counter_increment)
+    {
+        counter_increment = new CSSValueListImpl();
+        counter_increment->ref();
+    }
 
-	counter_increment->append(c);
+    counter_increment->append(c);
 }
 
 static bool hasCounter(DOMStringImpl *c, CSSValueListImpl *l)
 {
-	int len = l->length();
-	for(int i = 0; i < len; i++)
-	{
-		CounterActImpl *ca = static_cast<CounterActImpl *>(l->item(i));
-		Q_ASSERT(ca != 0);
-		
-		if(DOMString(ca->m_counter) == DOMString(c))
-			return true;
-	}
+    int len = l->length();
+    for(int i = 0; i < len; i++)
+    {
+        CounterActImpl *ca = static_cast<CounterActImpl *>(l->item(i));
+        Q_ASSERT(ca != 0);
+        
+        if(DOMString(ca->m_counter) == DOMString(c))
+            return true;
+    }
 
-	return false;
+    return false;
 }
 
 bool RenderStyle::hasCounterReset(DOMStringImpl *c) const
 {
-	if(counter_reset)
-		return hasCounter(c, counter_reset);
-	
-	return false;
+    if(counter_reset)
+        return hasCounter(c, counter_reset);
+    
+    return false;
 }
 
 bool RenderStyle::hasCounterIncrement(DOMStringImpl *c) const
 {
-	if(counter_increment)
-		return hasCounter(c, counter_increment);
-	
-	return false;
+    if(counter_increment)
+        return hasCounter(c, counter_increment);
+    
+    return false;
 }
 
 static short readCounter(DOMStringImpl *c, CSSValueListImpl *l)
 {
-	int len = l->length();
-	for(int i = 0; i < len; i++)
-	{
-		CounterActImpl *ca = static_cast<CounterActImpl *>(l->item(i));
-		Q_ASSERT(ca != 0);
-		
-		if(ca->m_counter == c)
-			return ca->m_value;
-	}
-	
-	return 0;
+    int len = l->length();
+    for(int i = 0; i < len; i++)
+    {
+        CounterActImpl *ca = static_cast<CounterActImpl *>(l->item(i));
+        Q_ASSERT(ca != 0);
+        
+        if(ca->m_counter == c)
+            return ca->m_value;
+    }
+    
+    return 0;
 }
 
 short RenderStyle::counterReset(DOMStringImpl *c) const
 {
-	if(counter_reset)
-		return readCounter(c, counter_reset);
-	
-	return 0;
+    if(counter_reset)
+        return readCounter(c, counter_reset);
+    
+    return 0;
 }
 
 short RenderStyle::counterIncrement(DOMStringImpl *c) const
 {
-	if(counter_increment)
-		return readCounter(c, counter_increment);
-	
-	return 0;
+    if(counter_increment)
+        return readCounter(c, counter_increment);
+    
+    return 0;
 }
 
 static QString describeFont(const QFont &f)
 {
-	QString res = QString::fromLatin1("'") + f.family() + QString::fromLatin1("' ");
+    QString res = QString::fromLatin1("'") + f.family() + QString::fromLatin1("' ");
 
 #ifndef APPLE_COMPILE_HACK
-	if(f.pointSize() > 0)
-		res += QString::number(f.pointSize()) + QString::fromLatin1("pt");
-	else
-		res += QString::number(f.pixelSize()) + QString::fromLatin1("px");
+    if(f.pointSize() > 0)
+        res += QString::number(f.pointSize()) + QString::fromLatin1("pt");
+    else
+        res += QString::number(f.pixelSize()) + QString::fromLatin1("px");
 #endif
 
-	if(f.bold())
-		res += QString::fromLatin1(" bold");
-	if(f.italic())
-		res += QString::fromLatin1(" italic");
+    if(f.bold())
+        res += QString::fromLatin1(" bold");
+    if(f.italic())
+        res += QString::fromLatin1(" italic");
 #ifndef APPLE_COMPILE_HACK
-	if(f.underline())
-		res += QString::fromLatin1(" underline");
-	if(f.overline())
-		res += QString::fromLatin1(" overline");
-	if(f.strikeOut())
-		res += QString::fromLatin1(" strikeout");
+    if(f.underline())
+        res += QString::fromLatin1(" underline");
+    if(f.overline())
+        res += QString::fromLatin1(" overline");
+    if(f.strikeOut())
+        res += QString::fromLatin1(" strikeout");
 #endif
-	
-	return res;
+    
+    return res;
 }
 
 QString RenderStyle::createDiff(const RenderStyle &parent) const
 {
-	QString res;
-	if(color().isValid() && parent.color() != color())
-		res += QString::fromLatin1(" [color=") + color().name() + QString::fromLatin1("]");
-	if(backgroundColor().isValid() && parent.backgroundColor() != backgroundColor())
-		res += QString::fromLatin1(" [bgcolor=") + backgroundColor().name() + QString::fromLatin1("]");
-	if(parent.font() != font())
-		res += QString::fromLatin1(" [font=") + describeFont(font()) + QString::fromLatin1("]");
-	
-	return res;
+    QString res;
+    if(color().isValid() && parent.color() != color())
+        res += QString::fromLatin1(" [color=") + color().name() + QString::fromLatin1("]");
+    if(backgroundColor().isValid() && parent.backgroundColor() != backgroundColor())
+        res += QString::fromLatin1(" [bgcolor=") + backgroundColor().name() + QString::fromLatin1("]");
+    if(parent.font() != font())
+        res += QString::fromLatin1(" [font=") + describeFont(font()) + QString::fromLatin1("]");
+    
+    return res;
 }
 
 // vim:ts=4:noet

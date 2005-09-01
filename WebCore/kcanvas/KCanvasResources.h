@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -35,11 +35,11 @@ class QTextStream;
 // Enumerations
 typedef enum
 {
-	// Painting mode
-	RS_CLIPPER = 0,
-	RS_MARKER = 1,
-	RS_IMAGE = 2,
-	RS_FILTER = 3
+    // Painting mode
+    RS_CLIPPER = 0,
+    RS_MARKER = 1,
+    RS_IMAGE = 2,
+    RS_FILTER = 3
 } KCResourceType;
 
 
@@ -48,79 +48,79 @@ class KCanvasMatrix;
 class KCanvasResource
 {
 public:
-	KCanvasResource();
-	virtual ~KCanvasResource();
+    KCanvasResource();
+    virtual ~KCanvasResource();
 
-	bool changed() const;
-	void setChanged(bool changed);
+    bool changed() const;
+    void setChanged(bool changed);
 
-	virtual void invalidate();
-	void addClient(KCanvasItem *item);
+    virtual void invalidate();
+    void addClient(KCanvasItem *item);
 
-	const KCanvasItemList &clients() const;
+    const KCanvasItemList &clients() const;
 
-	KCanvasResourceListener *listener() const;
-	void setListener(KCanvasResourceListener *listener);
+    KCanvasResourceListener *listener() const;
+    void setListener(KCanvasResourceListener *listener);
     
     QString idInRegistry() const;
     void setIdInRegistry(const QString& newId);
     
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
-	bool m_changed : 1;
+    bool m_changed : 1;
 
-	KCanvasItemList m_clients;
-	KCanvasResourceListener *m_listener;
+    KCanvasItemList m_clients;
+    KCanvasResourceListener *m_listener;
     QString registryId;
 };
 
 class KCanvasClipper : public KCanvasResource
 {
 public:
-	KCanvasClipper();
-	virtual ~KCanvasClipper();
+    KCanvasClipper();
+    virtual ~KCanvasClipper();
 
-	// Differentiate between viewport clipping and normal clipping data...
-	bool viewportClipper() const;
-	void setViewportClipper(bool viewport);
+    // Differentiate between viewport clipping and normal clipping data...
+    bool viewportClipper() const;
+    void setViewportClipper(bool viewport);
 
-	void resetClipData();
-	void addClipData(const KCPathDataList &path, KCWindRule rule, bool bbox);
+    void resetClipData();
+    void addClipData(const KCPathDataList &path, KCWindRule rule, bool bbox);
 
-	KCClipDataList clipData() const;
+    KCClipDataList clipData() const;
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
-	bool m_viewportMode : 1;
-	KCClipDataList m_clipData;
+    bool m_viewportMode : 1;
+    KCClipDataList m_clipData;
 };
 
 class KCanvasMarker : public KCanvasResource
 {
 public:
-	KCanvasMarker(KCanvasItem *marker = 0);
-	virtual ~KCanvasMarker();
+    KCanvasMarker(KCanvasItem *marker = 0);
+    virtual ~KCanvasMarker();
 
-	void setMarker(KCanvasItem *marker);
+    void setMarker(KCanvasItem *marker);
 
-	void setRefX(double refX);
-	double refX() const;
+    void setRefX(double refX);
+    double refX() const;
 
-	void setRefY(double refY);
-	double refY() const;
+    void setRefY(double refY);
+    double refY() const;
 
-	void setAutoAngle();
-	void setAngle(float angle);
-	float angle() const;
+    void setAutoAngle();
+    void setAngle(float angle);
+    float angle() const;
 
-	// Draw onto the canvas
-	void draw(double x, double y, double angle = 0.0);
+    // Draw onto the canvas
+    void draw(double x, double y, double angle = 0.0);
 
     QTextStream& externalRepresentation(QTextStream &) const; 
 private:
-	double m_refX, m_refY;
-	float m_angle;
-	KCanvasItem *m_marker;
+    double m_refX, m_refY;
+    float m_angle;
+    KCanvasItem *m_marker;
 };
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);

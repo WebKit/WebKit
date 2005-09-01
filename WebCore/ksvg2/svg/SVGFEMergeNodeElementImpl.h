@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,22 +27,22 @@
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
-	class SVGFEMergeNodeElementImpl : public SVGElementImpl
-	{
-	public:
-		SVGFEMergeNodeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFEMergeNodeElementImpl();
+    class SVGAnimatedStringImpl;
+    class SVGFEMergeNodeElementImpl : public SVGElementImpl
+    {
+    public:
+        SVGFEMergeNodeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFEMergeNodeElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		// 'SVGFEMergeNodeElement' functions
-		SVGAnimatedStringImpl *in1() const;
+        // 'SVGFEMergeNodeElement' functions
+        SVGAnimatedStringImpl *in1() const;
 
-	private:
-		mutable SVGAnimatedStringImpl *m_in1;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_in1;
+    };
 };
 
 #endif

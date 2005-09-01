@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,22 +27,22 @@
 
 namespace KDOM
 {
-	class CSSCharsetRuleImpl : public CSSRuleImpl
-	{
-	public:
-		CSSCharsetRuleImpl(StyleBaseImpl *parent);
-		virtual ~CSSCharsetRuleImpl();
+    class CSSCharsetRuleImpl : public CSSRuleImpl
+    {
+    public:
+        CSSCharsetRuleImpl(StyleBaseImpl *parent);
+        virtual ~CSSCharsetRuleImpl();
 
-		// 'CSSCharsetRule' functions
-		DOMStringImpl *encoding() const;
-		void setEncoding(DOMStringImpl *encoding);
+        // 'CSSCharsetRule' functions
+        DOMStringImpl *encoding() const;
+        void setEncoding(DOMStringImpl *encoding);
 
-		// 'CSSRule' functions
-		virtual bool isCharsetRule() const { return true; }
+        // 'CSSRule' functions
+        virtual bool isCharsetRule() const { return true; }
 
-	protected:
-		DOMStringImpl *m_encoding;
-	};
+    protected:
+        DOMStringImpl *m_encoding;
+    };
 };
 
 #endif

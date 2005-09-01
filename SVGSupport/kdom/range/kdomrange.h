@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,22 +26,22 @@
 // General namespace specific definitions
 namespace KDOM
 {
-	/**
-	 * An integer indicating the type of error generated.
-	 */
-	enum RangeExceptionCode
-	{
-		BAD_BOUNDARYPOINTS_ERR         = 1,
-		INVALID_NODE_TYPE_ERR          = 2,
-	};
+    /**
+     * An integer indicating the type of error generated.
+     */
+    enum RangeExceptionCode
+    {
+        BAD_BOUNDARYPOINTS_ERR         = 1,
+        INVALID_NODE_TYPE_ERR          = 2,
+    };
 
-	enum CompareHow
-	{
-		START_TO_START = 0,
-		START_TO_END = 1,
-		END_TO_END = 2,
-		END_TO_START = 3
-	};
+    enum CompareHow
+    {
+        START_TO_START = 0,
+        START_TO_END = 1,
+        END_TO_END = 2,
+        END_TO_START = 3
+    };
 
 };
 

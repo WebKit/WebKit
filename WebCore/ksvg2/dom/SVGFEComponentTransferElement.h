@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,35 +28,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGFEComponentTransferElementImpl;
+    class SVGAnimatedString;
+    class SVGFEComponentTransferElementImpl;
 
-	class SVGFEComponentTransferElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEComponentTransferElement();
-		explicit SVGFEComponentTransferElement(SVGFEComponentTransferElementImpl *i);
-		SVGFEComponentTransferElement(const SVGFEComponentTransferElement &other);
-		SVGFEComponentTransferElement(const KDOM::Node &other);
-		virtual ~SVGFEComponentTransferElement();
+    class SVGFEComponentTransferElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEComponentTransferElement();
+        explicit SVGFEComponentTransferElement(SVGFEComponentTransferElementImpl *i);
+        SVGFEComponentTransferElement(const SVGFEComponentTransferElement &other);
+        SVGFEComponentTransferElement(const KDOM::Node &other);
+        virtual ~SVGFEComponentTransferElement();
 
-		// Operators
-		SVGFEComponentTransferElement &operator=(const SVGFEComponentTransferElement &other);
-		SVGFEComponentTransferElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEComponentTransferElement &operator=(const SVGFEComponentTransferElement &other);
+        SVGFEComponentTransferElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEComponentTransferElement' functions
-		SVGAnimatedString in1() const;
+        // 'SVGFEComponentTransferElement' functions
+        SVGAnimatedString in1() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEComponentTransferElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEComponentTransferElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

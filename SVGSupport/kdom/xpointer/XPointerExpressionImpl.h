@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,41 +36,41 @@ class DOMStringImpl;
 
 namespace XPointer
 {
-	class PointerPartImpl;
-	class XPointerResultImpl;
+    class PointerPartImpl;
+    class XPointerResultImpl;
 
-	class XPointerExpressionImpl : public Shared
-	{
-	public:
-		typedef QValueList<PointerPartImpl *> List;
+    class XPointerExpressionImpl : public Shared
+    {
+    public:
+        typedef QValueList<PointerPartImpl *> List;
 
-		XPointerExpressionImpl(DOMStringImpl *raw, NodeImpl *relatedNode, DocumentImpl *context);
-		virtual ~XPointerExpressionImpl();
+        XPointerExpressionImpl(DOMStringImpl *raw, NodeImpl *relatedNode, DocumentImpl *context);
+        virtual ~XPointerExpressionImpl();
 
-		XPointerResultImpl *evaluate() const;
+        XPointerResultImpl *evaluate() const;
 
-		DOMStringImpl *string() const;
+        DOMStringImpl *string() const;
 
-		/**
-		 * Determines whether the expression is a ShortHand pointer.
-		 *
-		 * @returns true if the only component is a ShortHand
-		 */
-		bool isShortHand() const;
-		void setIsShortHand(bool state);
+        /**
+         * Determines whether the expression is a ShortHand pointer.
+         *
+         * @returns true if the only component is a ShortHand
+         */
+        bool isShortHand() const;
+        void setIsShortHand(bool state);
 
-		void appendPart(PointerPartImpl *part);
-		
-		List pointerParts() const;
+        void appendPart(PointerPartImpl *part);
+        
+        List pointerParts() const;
 
-	private:
-		bool m_isShortHand : 1;
-		DOMStringImpl *m_pointer;
+    private:
+        bool m_isShortHand : 1;
+        DOMStringImpl *m_pointer;
 
-		List m_parts;
-		NodeImpl *m_relatedNode;
-		DocumentImpl *m_context;
-	};
+        List m_parts;
+        NodeImpl *m_relatedNode;
+        DocumentImpl *m_context;
+    };
 };
 
 };

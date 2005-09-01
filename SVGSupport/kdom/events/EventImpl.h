@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,73 +30,73 @@
 
 namespace KDOM
 {
-	typedef enum
-	{
-		TypeGenericEvent = 0,
-		TypeUIEvent = 1,
-		TypeMouseEvent = 2,
-		TypeMutationEvent = 3,
-		TypeKeyboardEvent = 4,
-		TypeLastEvent = 99
-	} EventImplType;
+    typedef enum
+    {
+        TypeGenericEvent = 0,
+        TypeUIEvent = 1,
+        TypeMouseEvent = 2,
+        TypeMutationEvent = 3,
+        TypeKeyboardEvent = 4,
+        TypeLastEvent = 99
+    } EventImplType;
 
-	class EventTargetImpl;
-	class EventImpl : public Shared
-	{
-	public:
-		EventImpl(EventImplType identifier);
-		virtual ~EventImpl();
+    class EventTargetImpl;
+    class EventImpl : public Shared
+    {
+    public:
+        EventImpl(EventImplType identifier);
+        virtual ~EventImpl();
 
-		DOMStringImpl *type() const;
+        DOMStringImpl *type() const;
 
-		EventTargetImpl *target() const;
-		EventTargetImpl *currentTarget() const;
+        EventTargetImpl *target() const;
+        EventTargetImpl *currentTarget() const;
 
-		unsigned short eventPhase() const;
+        unsigned short eventPhase() const;
 
-		bool bubbles() const;
-		bool cancelable() const;
+        bool bubbles() const;
+        bool cancelable() const;
 
-		DOMTimeStamp timeStamp() const;
+        DOMTimeStamp timeStamp() const;
 
-		void stopPropagation();
-		void preventDefault();
+        void stopPropagation();
+        void preventDefault();
 
-		virtual void initEvent(DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg);
+        virtual void initEvent(DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg);
 
-		// Internal
-		void setTarget(EventTargetImpl *target);
-		void setCurrentTarget(EventTargetImpl *currentTarget);
+        // Internal
+        void setTarget(EventTargetImpl *target);
+        void setCurrentTarget(EventTargetImpl *currentTarget);
 
-		void setEventPhase(unsigned short eventPhase);
+        void setEventPhase(unsigned short eventPhase);
 
-		int id() const;
-		EventImplType identifier() const;
+        int id() const;
+        EventImplType identifier() const;
 
-		bool defaultPrevented() const;
-		bool propagationStopped() const;
+        bool defaultPrevented() const;
+        bool propagationStopped() const;
 
-		void setDefaultHandled() { m_defaultHandled = true; }
-		bool defaultHandled() const { return m_defaultHandled; }
-		
-	protected:
-		DOMStringImpl *m_type;
-		QDateTime m_createTime;
+        void setDefaultHandled() { m_defaultHandled = true; }
+        bool defaultHandled() const { return m_defaultHandled; }
+        
+    protected:
+        DOMStringImpl *m_type;
+        QDateTime m_createTime;
 
-		EventImplType m_identifier;
+        EventImplType m_identifier;
 
-		EventTargetImpl *m_target;
-		EventTargetImpl *m_currentTarget;
+        EventTargetImpl *m_target;
+        EventTargetImpl *m_currentTarget;
 
-		int m_id;	
-		unsigned short m_eventPhase : 2;
+        int m_id;    
+        unsigned short m_eventPhase : 2;
 
-		bool m_bubbles : 1;
-		bool m_cancelable : 1;
-		bool m_propagationStopped : 1;
-		bool m_defaultPrevented : 1;
-		bool m_defaultHandled : 1;
-	};
+        bool m_bubbles : 1;
+        bool m_cancelable : 1;
+        bool m_propagationStopped : 1;
+        bool m_defaultPrevented : 1;
+        bool m_defaultHandled : 1;
+    };
 };
 
 #endif

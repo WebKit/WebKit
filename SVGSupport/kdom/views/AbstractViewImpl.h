@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004,2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004,2005 Rob Buis <buis@kde.org>
+                  2004,2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     (C) 2001 Peter Kelly (pmk@post.com)
@@ -30,19 +30,19 @@
 
 namespace KDOM
 {
-	class DocumentViewImpl;
-	class AbstractViewImpl : public Shared
-	{
-	public:
-		AbstractViewImpl();
-		virtual ~AbstractViewImpl();
+    class DocumentViewImpl;
+    class AbstractViewImpl : public Shared
+    {
+    public:
+        AbstractViewImpl();
+        virtual ~AbstractViewImpl();
 
-		// 'AbstractViewImpl' functions
-		DocumentViewImpl *document() const;
+        // 'AbstractViewImpl' functions
+        DocumentViewImpl *document() const;
 
-	protected:
-		DocumentViewImpl *m_documentView;
-	};
+    protected:
+        DocumentViewImpl *m_documentView;
+    };
 };
 
 #endif

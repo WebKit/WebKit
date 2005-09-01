@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,24 +27,24 @@
 
 namespace KSVG
 {
-	class SVGAnimatedNumberImpl;
-	class SVGStopElementImpl : public SVGStyledElementImpl
-	{
-	public:
-		SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGStopElementImpl();
+    class SVGAnimatedNumberImpl;
+    class SVGStopElementImpl : public SVGStyledElementImpl
+    {
+    public:
+        SVGStopElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGStopElementImpl();
 
-		// 'SVGStoplement' functions
-		SVGAnimatedNumberImpl *offset() const;
+        // 'SVGStoplement' functions
+        SVGAnimatedNumberImpl *offset() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-	private:
-		mutable SVGAnimatedNumberImpl *m_offset;
-	};
+    private:
+        mutable SVGAnimatedNumberImpl *m_offset;
+    };
 };
 
 #endif

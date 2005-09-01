@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -39,24 +39,24 @@ SVGGElementImpl::~SVGGElementImpl()
 
 void SVGGElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	if(SVGTestsImpl::parseAttribute(attr)) return;
-	if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-	if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-	if(SVGTransformableImpl::parseAttribute(attr)) return;
+    if(SVGTestsImpl::parseAttribute(attr)) return;
+    if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+    if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+    if(SVGTransformableImpl::parseAttribute(attr)) return;
 
-	SVGStyledElementImpl::parseAttribute(attr);
+    SVGStyledElementImpl::parseAttribute(attr);
 }
 
 void SVGGElementImpl::setChanged(bool b, bool)
 {
-	// FIXME: this is waaay to slow & wrong!
-	KDOM::NodeImpl::setChanged(b, true);
-	//KDOM::NodeImpl::setChanged(b, false);
+    // FIXME: this is waaay to slow & wrong!
+    KDOM::NodeImpl::setChanged(b, true);
+    //KDOM::NodeImpl::setChanged(b, false);
 }
 
 KCanvasItem *SVGGElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
-	return KCanvasCreator::self()->createContainer(canvas, style);
+    return KCanvasCreator::self()->createContainer(canvas, style);
 }
 
 // Helper class for <use> support
@@ -70,7 +70,7 @@ SVGDummyElementImpl::~SVGDummyElementImpl()
 
 KDOM::DOMStringImpl *SVGDummyElementImpl::localName() const
 {
-	return new KDOM::DOMStringImpl("dummy");
+    return new KDOM::DOMStringImpl("dummy");
 }
 
 // vim:ts=4:noet

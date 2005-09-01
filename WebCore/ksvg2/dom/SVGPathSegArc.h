@@ -27,97 +27,97 @@
 
 namespace KSVG
 {
-	class SVGPathSegArcAbsImpl;
-	class SVGPathSegArcAbs : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegArcAbs();
-		explicit SVGPathSegArcAbs(SVGPathSegArcAbsImpl *);
-		SVGPathSegArcAbs(const SVGPathSegArcAbs &);
-		SVGPathSegArcAbs(const SVGPathSeg &);
-		virtual ~SVGPathSegArcAbs();
+    class SVGPathSegArcAbsImpl;
+    class SVGPathSegArcAbs : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegArcAbs();
+        explicit SVGPathSegArcAbs(SVGPathSegArcAbsImpl *);
+        SVGPathSegArcAbs(const SVGPathSegArcAbs &);
+        SVGPathSegArcAbs(const SVGPathSeg &);
+        virtual ~SVGPathSegArcAbs();
 
-		// Operators
-		SVGPathSegArcAbs &operator=(const SVGPathSegArcAbs &other);
-		SVGPathSegArcAbs &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegArcAbs &operator=(const SVGPathSegArcAbs &other);
+        SVGPathSegArcAbs &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		void setR1(float);
-		float r1() const;
+        void setR1(float);
+        float r1() const;
 
-		void setR2(float);
-		float r2() const;
+        void setR2(float);
+        float r2() const;
 
-		void setAngle(float);
-		float angle() const;
+        void setAngle(float);
+        float angle() const;
 
-		void setLargeArcFlag(bool);
-		bool largeArcFlag() const;
+        void setLargeArcFlag(bool);
+        bool largeArcFlag() const;
 
-		void setSweepFlag(bool);
-		bool sweepFlag() const;
+        void setSweepFlag(bool);
+        bool sweepFlag() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegArcAbs)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegArcAbs)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	class SVGPathSegArcRelImpl;
-	class SVGPathSegArcRel : public SVGPathSeg 
-	{ 
-	public:
-		SVGPathSegArcRel();
-		explicit SVGPathSegArcRel(SVGPathSegArcRelImpl *);
-		SVGPathSegArcRel(const SVGPathSegArcRel &);
-		SVGPathSegArcRel(const SVGPathSeg &);
-		virtual ~SVGPathSegArcRel();
+    class SVGPathSegArcRelImpl;
+    class SVGPathSegArcRel : public SVGPathSeg 
+    { 
+    public:
+        SVGPathSegArcRel();
+        explicit SVGPathSegArcRel(SVGPathSegArcRelImpl *);
+        SVGPathSegArcRel(const SVGPathSegArcRel &);
+        SVGPathSegArcRel(const SVGPathSeg &);
+        virtual ~SVGPathSegArcRel();
 
-		// Operators
-		SVGPathSegArcRel &operator=(const SVGPathSegArcRel &other);
-		SVGPathSegArcRel &operator=(const SVGPathSeg &other);
+        // Operators
+        SVGPathSegArcRel &operator=(const SVGPathSegArcRel &other);
+        SVGPathSegArcRel &operator=(const SVGPathSeg &other);
 
-		void setX(float);
-		float x() const;
+        void setX(float);
+        float x() const;
 
-		void setY(float);
-		float y() const;
+        void setY(float);
+        float y() const;
 
-		void setR1(float);
-		float r1() const;
+        void setR1(float);
+        float r1() const;
 
-		void setR2(float);
-		float r2() const;
+        void setR2(float);
+        float r2() const;
 
-		void setAngle(float);
-		float angle() const;
+        void setAngle(float);
+        float angle() const;
 
-		void setLargeArcFlag(bool);
-		bool largeArcFlag() const;
+        void setLargeArcFlag(bool);
+        bool largeArcFlag() const;
 
-		void setSweepFlag(bool);
-		bool sweepFlag() const;
+        void setSweepFlag(bool);
+        bool sweepFlag() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPathSegArcRel)
+        // Internal
+        KSVG_INTERNAL(SVGPathSegArcRel)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

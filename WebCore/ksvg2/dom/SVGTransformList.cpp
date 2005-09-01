@@ -41,18 +41,18 @@ using namespace KSVG;
 
 /*
 @begin SVGTransformList::s_hashTable 3
- numberOfItems					SVGTransformListConstants::NumberOfItems				DontDelete|ReadOnly
+ numberOfItems                    SVGTransformListConstants::NumberOfItems                DontDelete|ReadOnly
 @end
 @begin SVGTransformListProto::s_hashTable 9
- clear							SVGTransformListConstants::Clear						DontDelete|Function 0
- initialize						SVGTransformListConstants::Initialize					DontDelete|Function 1
- getItem						SVGTransformListConstants::GetItem						DontDelete|Function 1
- insertItemBefore				SVGTransformListConstants::InsertItemBefore				DontDelete|Function 2
- replaceItem					SVGTransformListConstants::ReplaceItem					DontDelete|Function 2
- removeItem						SVGTransformListConstants::RemoveItem					DontDelete|Function 1
- appendItem						SVGTransformListConstants::AppendItem					DontDelete|Function 1
- createSVGTransformFromMatrix	SVGTransformListConstants::CreateSVGTransformFromMatrix	DontDelete|Function 1
- consolidate					SVGTransformListConstants::Consolidate					DontDelete|Function 0
+ clear                            SVGTransformListConstants::Clear                        DontDelete|Function 0
+ initialize                        SVGTransformListConstants::Initialize                    DontDelete|Function 1
+ getItem                        SVGTransformListConstants::GetItem                        DontDelete|Function 1
+ insertItemBefore                SVGTransformListConstants::InsertItemBefore                DontDelete|Function 2
+ replaceItem                    SVGTransformListConstants::ReplaceItem                    DontDelete|Function 2
+ removeItem                        SVGTransformListConstants::RemoveItem                    DontDelete|Function 1
+ appendItem                        SVGTransformListConstants::AppendItem                    DontDelete|Function 1
+ createSVGTransformFromMatrix    SVGTransformListConstants::CreateSVGTransformFromMatrix    DontDelete|Function 1
+ consolidate                    SVGTransformListConstants::Consolidate                    DontDelete|Function 0
 @end
 */
 
@@ -60,77 +60,77 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGTransformList", SVGTransformListProto, SVGTransform
 
 ValueImp *SVGTransformList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGTransformListConstants::NumberOfItems:
-			return Number(numberOfItems());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGTransformListConstants::NumberOfItems:
+            return Number(numberOfItems());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGTransformListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGTransformList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGTransformList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGTransformListConstants::Clear:
-		{
-			obj.clear();
-			return Undefined();
-		}
-		case SVGTransformListConstants::Initialize:
-		{
-			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.initialize(newItem));
-		}
-		case SVGTransformListConstants::GetItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.getItem(index));
-		}
-		case SVGTransformListConstants::InsertItemBefore:
-		{
-			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.insertItemBefore(newItem, index));
-		}
-		case SVGTransformListConstants::ReplaceItem:
-		{
-			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.replaceItem(newItem, index));
-		}
-		case SVGTransformListConstants::RemoveItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.removeItem(index));
-		}
-		case SVGTransformListConstants::AppendItem:
-		{
-			SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.appendItem(newItem));
-		}
-		case SVGTransformListConstants::CreateSVGTransformFromMatrix:
-		{
-			SVGMatrix newMatrix = KDOM::ecma_cast<SVGMatrix>(exec, args[0], &toSVGMatrix);
-			return KDOM::safe_cache<SVGTransform>(exec, obj.createSVGTransformFromMatrix(newMatrix));
-		}
-		case SVGTransformListConstants::Consolidate:
-			return KDOM::safe_cache<SVGTransform>(exec, obj.consolidate());
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGTransformListConstants::Clear:
+        {
+            obj.clear();
+            return Undefined();
+        }
+        case SVGTransformListConstants::Initialize:
+        {
+            SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.initialize(newItem));
+        }
+        case SVGTransformListConstants::GetItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.getItem(index));
+        }
+        case SVGTransformListConstants::InsertItemBefore:
+        {
+            SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.insertItemBefore(newItem, index));
+        }
+        case SVGTransformListConstants::ReplaceItem:
+        {
+            SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.replaceItem(newItem, index));
+        }
+        case SVGTransformListConstants::RemoveItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.removeItem(index));
+        }
+        case SVGTransformListConstants::AppendItem:
+        {
+            SVGTransform newItem = KDOM::ecma_cast<SVGTransform>(exec, args[0], &toSVGTransform);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.appendItem(newItem));
+        }
+        case SVGTransformListConstants::CreateSVGTransformFromMatrix:
+        {
+            SVGMatrix newMatrix = KDOM::ecma_cast<SVGMatrix>(exec, args[0], &toSVGMatrix);
+            return KDOM::safe_cache<SVGTransform>(exec, obj.createSVGTransformFromMatrix(newMatrix));
+        }
+        case SVGTransformListConstants::Consolidate:
+            return KDOM::safe_cache<SVGTransform>(exec, obj.consolidate());
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGTransformList SVGTransformList::null;
@@ -141,93 +141,93 @@ SVGTransformList::SVGTransformList() : impl(0)
 
 SVGTransformList::SVGTransformList(SVGTransformListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGTransformList::SVGTransformList(const SVGTransformList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGTransformList)
 
 unsigned long SVGTransformList::numberOfItems() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 void SVGTransformList::clear()
 {
-	if(impl)
-		impl->clear();
+    if(impl)
+        impl->clear();
 }
 
 SVGTransform SVGTransformList::initialize(const SVGTransform &newItem)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->initialize(newItem.handle()));
+    return SVGTransform(impl->initialize(newItem.handle()));
 }
 
 SVGTransform SVGTransformList::getItem(unsigned long index)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->getItem(index));
+    return SVGTransform(impl->getItem(index));
 }
 
 SVGTransform SVGTransformList::insertItemBefore(const SVGTransform &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->insertItemBefore(newItem.handle(), index));
+    return SVGTransform(impl->insertItemBefore(newItem.handle(), index));
 }
 
 SVGTransform SVGTransformList::replaceItem(const SVGTransform &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->replaceItem(newItem.handle(), index));
+    return SVGTransform(impl->replaceItem(newItem.handle(), index));
 }
 
 SVGTransform SVGTransformList::removeItem(unsigned long index)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->removeItem(index));
+    return SVGTransform(impl->removeItem(index));
 }
 
 SVGTransform SVGTransformList::appendItem(const SVGTransform &newItem)
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->appendItem(newItem.handle()));
+    return SVGTransform(impl->appendItem(newItem.handle()));
 }
 
 SVGTransform SVGTransformList::createSVGTransformFromMatrix(const SVGMatrix &matrix) const
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->createSVGTransformFromMatrix(matrix.handle()));
+    return SVGTransform(impl->createSVGTransformFromMatrix(matrix.handle()));
 }
-	
+    
 SVGTransform SVGTransformList::consolidate()
 {
-	if(!impl)
-		return SVGTransform::null;
+    if(!impl)
+        return SVGTransform::null;
 
-	return SVGTransform(impl->consolidate());
+    return SVGTransform(impl->consolidate());
 }
 
 // vim:ts=4:noet

@@ -27,46 +27,46 @@
 
 namespace KSVG
 {
-	class SVGMatrix;
-	class SVGPointImpl;
-	class SVGPoint
-	{
-	public:
-		SVGPoint();
-		explicit SVGPoint(SVGPointImpl *i);
-		SVGPoint(const SVGPoint &other);
-		virtual ~SVGPoint();
+    class SVGMatrix;
+    class SVGPointImpl;
+    class SVGPoint
+    {
+    public:
+        SVGPoint();
+        explicit SVGPoint(SVGPointImpl *i);
+        SVGPoint(const SVGPoint &other);
+        virtual ~SVGPoint();
 
-		// Operators
-		SVGPoint &operator=(const SVGPoint &other);
-		bool operator==(const SVGPoint &other) const;
-		bool operator!=(const SVGPoint &other) const;
+        // Operators
+        SVGPoint &operator=(const SVGPoint &other);
+        bool operator==(const SVGPoint &other) const;
+        bool operator!=(const SVGPoint &other) const;
 
-		// 'SVGPoint' functions
-		void setX(float x);
-		float x() const;
+        // 'SVGPoint' functions
+        void setX(float x);
+        float x() const;
 
-		void setY(float y);
-		float y() const;
+        void setY(float y);
+        float y() const;
 
-		SVGPoint matrixTransform(const SVGMatrix &matrix);
+        SVGPoint matrixTransform(const SVGMatrix &matrix);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGPoint)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGPoint)
 
-	protected:
-		SVGPointImpl *impl;
+    protected:
+        SVGPointImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	KDOM_DEFINE_CAST(SVGPoint)
+    KDOM_DEFINE_CAST(SVGPoint)
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGPointProto)

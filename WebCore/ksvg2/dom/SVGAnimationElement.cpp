@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,12 +33,12 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimationElement::s_hashTable 2
- targetElement		SVGAnimationElementConstants::TargetElement		DontDelete|ReadOnly
+ targetElement        SVGAnimationElementConstants::TargetElement        DontDelete|ReadOnly
 @end
 @begin SVGAnimationElementProto::s_hashTable 5
- getStartTime		SVGAnimationElementConstants::GetStartTime		DontDelete|Function 0
- getCurrentTime		SVGAnimationElementConstants::GetCurrentTime	DontDelete|Function 0
- getSimpleDuration	SVGAnimationElementConstants::GetSimpleDuration	DontDelete|Function 0
+ getStartTime        SVGAnimationElementConstants::GetStartTime        DontDelete|Function 0
+ getCurrentTime        SVGAnimationElementConstants::GetCurrentTime    DontDelete|Function 0
+ getSimpleDuration    SVGAnimationElementConstants::GetSimpleDuration    DontDelete|Function 0
 @end
 */
 
@@ -46,40 +46,40 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGAnimationElement", SVGAnimationElementProto, SVGAni
 
 ValueImp *SVGAnimationElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimationElementConstants::TargetElement:
-			return KDOM::getDOMNode(exec, targetElement());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimationElementConstants::TargetElement:
+            return KDOM::getDOMNode(exec, targetElement());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 
 ValueImp *SVGAnimationElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &)
 {
-	SVGAnimationElement obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGAnimationElement obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGAnimationElementConstants::GetStartTime:
-			return Number(obj.getStartTime());
-		case SVGAnimationElementConstants::GetCurrentTime:
-			return Number(obj.getCurrentTime());
-		case SVGAnimationElementConstants::GetSimpleDuration:
-			return Number(obj.getSimpleDuration());
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGAnimationElementConstants::GetStartTime:
+            return Number(obj.getStartTime());
+        case SVGAnimationElementConstants::GetCurrentTime:
+            return Number(obj.getCurrentTime());
+        case SVGAnimationElementConstants::GetSimpleDuration:
+            return Number(obj.getSimpleDuration());
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -97,12 +97,12 @@ SVGAnimationElement::SVGAnimationElement(SVGAnimationElementImpl *i) : SVGElemen
 
 SVGAnimationElement::SVGAnimationElement(const SVGAnimationElement &other) : SVGElement(), SVGTests(), SVGExternalResourcesRequired()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimationElement::SVGAnimationElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGExternalResourcesRequired()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimationElement::~SVGAnimationElement()
@@ -111,65 +111,65 @@ SVGAnimationElement::~SVGAnimationElement()
 
 SVGAnimationElement &SVGAnimationElement::operator=(const SVGAnimationElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    return *this;
 }
 
 SVGAnimationElement &SVGAnimationElement::operator=(const KDOM::Node &other)
 {
-	SVGAnimationElementImpl *ohandle = static_cast<SVGAnimationElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-		}
-	}
+    SVGAnimationElementImpl *ohandle = static_cast<SVGAnimationElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGElement SVGAnimationElement::targetElement() const
 {
-	if(!d)
-		return SVGElement::null;
+    if(!d)
+        return SVGElement::null;
 
-	return SVGElement(const_cast<SVGElementImpl *>(impl->targetElement()));
+    return SVGElement(const_cast<SVGElementImpl *>(impl->targetElement()));
 }
 
 float SVGAnimationElement::getStartTime() const
 {
-	if(!d)
-		return 0.0;
+    if(!d)
+        return 0.0;
 
-	return float(impl->startTime() / 1000.0);
+    return float(impl->startTime() / 1000.0);
 }
 
 float SVGAnimationElement::getCurrentTime() const
 {
-	if(!d)
-		return 0.0;
+    if(!d)
+        return 0.0;
 
-	return float(impl->currentTime() / 1000.0);
+    return float(impl->currentTime() / 1000.0);
 }
 
 float SVGAnimationElement::getSimpleDuration() const
 {
-	if(!d)
-		return 0.0;
+    if(!d)
+        return 0.0;
 
-	return float(impl->simpleDuration() / 1000.0);
+    return float(impl->simpleDuration() / 1000.0);
 }
 
 // vim:ts=4:noet

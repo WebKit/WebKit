@@ -40,60 +40,60 @@ class RangeImpl : public Shared
 {
 friend class DocumentImpl;
 public:
-	RangeImpl(DocumentPtr *_ownerDocument);
-	RangeImpl(DocumentPtr *_ownerDocument,
-			  NodeImpl *_startContainer, long _startOffset,
-			  NodeImpl *_endContainer, long _endOffset);
-	virtual ~RangeImpl();
+    RangeImpl(DocumentPtr *_ownerDocument);
+    RangeImpl(DocumentPtr *_ownerDocument,
+              NodeImpl *_startContainer, long _startOffset,
+              NodeImpl *_endContainer, long _endOffset);
+    virtual ~RangeImpl();
 
-	NodeImpl *startContainer() const;
-	long startOffset() const;
-	NodeImpl *endContainer() const;
-	long endOffset() const;
-	bool isCollapsed() const;
+    NodeImpl *startContainer() const;
+    long startOffset() const;
+    NodeImpl *endContainer() const;
+    long endOffset() const;
+    bool isCollapsed() const;
 
-	NodeImpl *commonAncestorContainer();
-	static NodeImpl *commonAncestorContainer(NodeImpl *containerA, NodeImpl *containerB);
-	
-	void setStart(NodeImpl *refNode, long offset);
-	void setEnd(NodeImpl *refNode, long offset);
-	void collapse(bool toStart);
-	
-	short compareBoundaryPoints(unsigned short how, RangeImpl *sourceRange);
-	static short compareBoundaryPoints(NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB);
-	
-	bool boundaryPointsValid();
-	void deleteContents();
-	
-	DocumentFragmentImpl *extractContents();
-	DocumentFragmentImpl *cloneContents();
-	
-	void insertNode(NodeImpl *newNode);
+    NodeImpl *commonAncestorContainer();
+    static NodeImpl *commonAncestorContainer(NodeImpl *containerA, NodeImpl *containerB);
+    
+    void setStart(NodeImpl *refNode, long offset);
+    void setEnd(NodeImpl *refNode, long offset);
+    void collapse(bool toStart);
+    
+    short compareBoundaryPoints(unsigned short how, RangeImpl *sourceRange);
+    static short compareBoundaryPoints(NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB);
+    
+    bool boundaryPointsValid();
+    void deleteContents();
+    
+    DocumentFragmentImpl *extractContents();
+    DocumentFragmentImpl *cloneContents();
+    
+    void insertNode(NodeImpl *newNode);
 
-	void detach();
-	bool isDetached() const;
-	
-	RangeImpl *cloneRange();
-	DOMString toString();
+    void detach();
+    bool isDetached() const;
+    
+    RangeImpl *cloneRange();
+    DOMString toString();
 
-	void setStartAfter(NodeImpl *refNode);
-	void setEndBefore(NodeImpl *refNode);
-	void setEndAfter(NodeImpl *refNode);
-	void selectNode(NodeImpl *refNode);
-	void selectNodeContents(NodeImpl *refNode);
-	void surroundContents(NodeImpl *newParent);
-	void setStartBefore(NodeImpl *refNode);
+    void setStartAfter(NodeImpl *refNode);
+    void setEndBefore(NodeImpl *refNode);
+    void setEndAfter(NodeImpl *refNode);
+    void selectNode(NodeImpl *refNode);
+    void selectNodeContents(NodeImpl *refNode);
+    void surroundContents(NodeImpl *newParent);
+    void setStartBefore(NodeImpl *refNode);
 
-	enum ActionType
-	{
-		DELETE_CONTENTS,
-		EXTRACT_CONTENTS,
-		CLONE_CONTENTS
-	};
-	
-	DocumentFragmentImpl *processContents(ActionType action);
+    enum ActionType
+    {
+        DELETE_CONTENTS,
+        EXTRACT_CONTENTS,
+        CLONE_CONTENTS
+    };
+    
+    DocumentFragmentImpl *processContents(ActionType action);
 
-	bool readOnly() { return false; }
+    bool readOnly() { return false; }
 
 protected:
     DocumentPtr *m_ownerDocument;

@@ -38,42 +38,42 @@ using namespace KSVG;
 
 /*
 @begin SVGNumber::s_hashTable 3
- value	SVGNumberConstants::Value	DontDelete
+ value    SVGNumberConstants::Value    DontDelete
 @end
 */
 
 ValueImp *SVGNumber::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGNumberConstants::Value:
-			return Number(value());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGNumberConstants::Value:
+            return Number(value());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGNumber::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGNumberConstants::Value:
-		{
-			setValue(value->toNumber(exec));
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGNumberConstants::Value:
+        {
+            setValue(value->toNumber(exec));
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGNumber SVGNumber::null;
@@ -84,29 +84,29 @@ SVGNumber::SVGNumber() : impl(0)
 
 SVGNumber::SVGNumber(SVGNumberImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGNumber::SVGNumber(const SVGNumber &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGNumber)
 
 float SVGNumber::value() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return impl->value();
+    return impl->value();
 }
 
 void SVGNumber::setValue(float value)
 {
-	if(impl)
-		impl->setValue(value);
+    if(impl)
+        impl->setValue(value);
 }
 
 // vim:ts=4:noet

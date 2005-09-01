@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,53 +27,53 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class DOMObjectImpl;
-	class DOMLocatorImpl;
+    class DOMStringImpl;
+    class DOMObjectImpl;
+    class DOMLocatorImpl;
 
-	enum ErrorSeverity
-	{
-		SEVERITY_WARNING = 1,
-		SEVERITY_ERROR = 2,
-		SEVERITY_FATAL_ERROR = 3,
-	};
+    enum ErrorSeverity
+    {
+        SEVERITY_WARNING = 1,
+        SEVERITY_ERROR = 2,
+        SEVERITY_FATAL_ERROR = 3,
+    };
 
-	// Introduced in DOM Level 3:
-	class DOMErrorImpl : public Shared
-	{
-	public:
-		DOMErrorImpl();
-		virtual ~DOMErrorImpl();
+    // Introduced in DOM Level 3:
+    class DOMErrorImpl : public Shared
+    {
+    public:
+        DOMErrorImpl();
+        virtual ~DOMErrorImpl();
 
-		unsigned short severity() const;
+        unsigned short severity() const;
 
-		DOMStringImpl *message() const;
-		DOMStringImpl *type() const;
+        DOMStringImpl *message() const;
+        DOMStringImpl *type() const;
 
-		DOMObjectImpl *relatedException() const;
-		DOMObjectImpl *relatedData() const;
+        DOMObjectImpl *relatedException() const;
+        DOMObjectImpl *relatedData() const;
 
-		DOMLocatorImpl *location() const;
+        DOMLocatorImpl *location() const;
 
-		// Helpers
-		void setSeverity(unsigned short severity);
+        // Helpers
+        void setSeverity(unsigned short severity);
 
-		void setMessage(DOMStringImpl *message);
-		void setType(DOMStringImpl *type);
+        void setMessage(DOMStringImpl *message);
+        void setType(DOMStringImpl *type);
 
-		void setRelatedException(DOMObjectImpl *relatedException);
-		void setRelatedData(DOMObjectImpl *relatedData);
+        void setRelatedException(DOMObjectImpl *relatedException);
+        void setRelatedData(DOMObjectImpl *relatedData);
 
-		void setLocation(DOMLocatorImpl *location);
+        void setLocation(DOMLocatorImpl *location);
 
-	protected:
-		unsigned short m_severity;
-		DOMStringImpl *m_message;
-		DOMStringImpl *m_type;
-		DOMObjectImpl *m_relatedException;
-		DOMObjectImpl *m_relatedData;
-		mutable DOMLocatorImpl *m_location;
-	};
+    protected:
+        unsigned short m_severity;
+        DOMStringImpl *m_message;
+        DOMStringImpl *m_type;
+        DOMObjectImpl *m_relatedException;
+        DOMObjectImpl *m_relatedData;
+        mutable DOMLocatorImpl *m_location;
+    };
 
 };
 

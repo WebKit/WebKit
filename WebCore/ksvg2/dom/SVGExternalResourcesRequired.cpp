@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,24 +35,24 @@ using namespace KSVG;
 
 /*
 @begin SVGExternalResourcesRequired::s_hashTable 3
- externalResourcesRequired	SVGExternalResourcesRequiredConstants::ExternalResourcesRequired	DontDelete|ReadOnly
+ externalResourcesRequired    SVGExternalResourcesRequiredConstants::ExternalResourcesRequired    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGExternalResourcesRequired::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGExternalResourcesRequiredConstants::ExternalResourcesRequired:
-			return KDOM::safe_cache<SVGAnimatedBoolean>(exec, externalResourcesRequired());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGExternalResourcesRequiredConstants::ExternalResourcesRequired:
+            return KDOM::safe_cache<SVGAnimatedBoolean>(exec, externalResourcesRequired());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired() : impl(0)
@@ -65,7 +65,7 @@ SVGExternalResourcesRequired::SVGExternalResourcesRequired(SVGExternalResourcesR
 
 SVGExternalResourcesRequired::SVGExternalResourcesRequired(const SVGExternalResourcesRequired &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
@@ -74,26 +74,26 @@ SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 
 SVGExternalResourcesRequired &SVGExternalResourcesRequired::operator=(const SVGExternalResourcesRequired &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGExternalResourcesRequired &SVGExternalResourcesRequired::operator=(SVGExternalResourcesRequiredImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedBoolean SVGExternalResourcesRequired::externalResourcesRequired() const
 {
-	if(!impl)
-		return SVGAnimatedBoolean::null;
+    if(!impl)
+        return SVGAnimatedBoolean::null;
 
-	return SVGAnimatedBoolean(impl->externalResourcesRequired());
+    return SVGAnimatedBoolean(impl->externalResourcesRequired());
 }
 
 // vim:ts=4:noet

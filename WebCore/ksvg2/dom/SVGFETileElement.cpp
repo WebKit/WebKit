@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -38,24 +38,24 @@ using namespace KSVG;
 
 /*
 @begin SVGFETileElement::s_hashTable 3
- in1			SVGFETileElementConstants::In1		DontDelete|ReadOnly
+ in1            SVGFETileElementConstants::In1        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFETileElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFETileElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFETileElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -73,12 +73,12 @@ SVGFETileElement::SVGFETileElement(SVGFETileElementImpl *i) : SVGElement(i), SVG
 
 SVGFETileElement::SVGFETileElement(const SVGFETileElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFETileElement::SVGFETileElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFETileElement::~SVGFETileElement()
@@ -87,39 +87,39 @@ SVGFETileElement::~SVGFETileElement()
 
 SVGFETileElement &SVGFETileElement::operator=(const SVGFETileElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFETileElement &SVGFETileElement::operator=(const KDOM::Node &other)
 {
-	SVGFETileElementImpl *ohandle = static_cast<SVGFETileElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFETileElementImpl *ohandle = static_cast<SVGFETileElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFETileElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 // vim:ts=4:noet

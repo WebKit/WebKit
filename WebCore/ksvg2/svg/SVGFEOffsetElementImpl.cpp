@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -44,81 +44,81 @@ using namespace KSVG;
 SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : 
 SVGFilterPrimitiveStandardAttributesImpl(doc, id, prefix)
 {
-	m_in1 = 0;
-	m_dx = 0;
-	m_dy = 0;
-	m_filterEffect = 0;
+    m_in1 = 0;
+    m_dx = 0;
+    m_dy = 0;
+    m_filterEffect = 0;
 }
 
 SVGFEOffsetElementImpl::~SVGFEOffsetElementImpl()
 {
-	if(m_in1)
-		m_in1->deref();
-	if(m_dx)
-		m_dx->deref();
-	if(m_dy)
-		m_dy->deref();
+    if(m_in1)
+        m_in1->deref();
+    if(m_dx)
+        m_dx->deref();
+    if(m_dy)
+        m_dy->deref();
 }
 
 SVGAnimatedStringImpl *SVGFEOffsetElementImpl::in1() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
 SVGAnimatedNumberImpl *SVGFEOffsetElementImpl::dx() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedNumberImpl>(m_dx, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedNumberImpl>(m_dx, dummy);
 }
 
 SVGAnimatedNumberImpl *SVGFEOffsetElementImpl::dy() const
 {
-	SVGStyledElementImpl *dummy = 0;
-	return lazy_create<SVGAnimatedNumberImpl>(m_dy, dummy);
+    SVGStyledElementImpl *dummy = 0;
+    return lazy_create<SVGAnimatedNumberImpl>(m_dy, dummy);
 }
 
 void SVGFEOffsetElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	KDOM::DOMString value(attr->value());
-	switch(id)
-	{
-		case ATTR_DX:
-		{
-			dx()->setBaseVal(value.string().toFloat());
-			break;
-		}
-		case ATTR_DY:
-		{
-			dy()->setBaseVal(value.string().toFloat());
-			break;
-		}
-		case ATTR_IN:
-		{
-			in1()->setBaseVal(value.handle());
-			break;
-		}
-		default:
-		{
-			SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
-		}
-	};
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    KDOM::DOMString value(attr->value());
+    switch(id)
+    {
+        case ATTR_DX:
+        {
+            dx()->setBaseVal(value.string().toFloat());
+            break;
+        }
+        case ATTR_DY:
+        {
+            dy()->setBaseVal(value.string().toFloat());
+            break;
+        }
+        case ATTR_IN:
+        {
+            in1()->setBaseVal(value.handle());
+            break;
+        }
+        default:
+        {
+            SVGFilterPrimitiveStandardAttributesImpl::parseAttribute(attr);
+        }
+    };
 }
 
 KCanvasItem *SVGFEOffsetElementImpl::createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const
 {
-	m_filterEffect = static_cast<KCanvasFEOffset *>(canvas->renderingDevice()->createFilterEffect(FE_OFFSET));
-	m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
-	setStandardAttributes(m_filterEffect);
-	m_filterEffect->setDx(dx()->baseVal());
-	m_filterEffect->setDy(dy()->baseVal());
-	return 0;
+    m_filterEffect = static_cast<KCanvasFEOffset *>(canvas->renderingDevice()->createFilterEffect(FE_OFFSET));
+    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
+    setStandardAttributes(m_filterEffect);
+    m_filterEffect->setDx(dx()->baseVal());
+    m_filterEffect->setDy(dy()->baseVal());
+    return 0;
 }
 
 KCanvasFilterEffect *SVGFEOffsetElementImpl::filterEffect() const
 {
-	return m_filterEffect;
+    return m_filterEffect;
 }
 
 // vim:ts=4:noet

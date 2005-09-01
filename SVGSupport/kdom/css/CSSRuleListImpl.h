@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,25 +29,25 @@
 
 namespace KDOM
 {
-	class CSSRuleImpl;
-	class CSSRuleListImpl : public Shared
-	{
-	public:
-		CSSRuleListImpl();
-		virtual ~CSSRuleListImpl();
+    class CSSRuleImpl;
+    class CSSRuleListImpl : public Shared
+    {
+    public:
+        CSSRuleListImpl();
+        virtual ~CSSRuleListImpl();
 
-		// 'CSSRuleList' functions
-		unsigned long length() const;
-		CSSRuleImpl *item(unsigned long index);
+        // 'CSSRuleList' functions
+        unsigned long length() const;
+        CSSRuleImpl *item(unsigned long index);
 
-		/* not part of the DOM */
-		unsigned long insertRule(CSSRuleImpl *rule, unsigned long index);
-		void deleteRule(unsigned long index);
-		void append(CSSRuleImpl *rule);
+        /* not part of the DOM */
+        unsigned long insertRule(CSSRuleImpl *rule, unsigned long index);
+        void deleteRule(unsigned long index);
+        void append(CSSRuleImpl *rule);
 
-	protected:
-		QPtrList<CSSRuleImpl> m_lstCSSRules;
-	};
+    protected:
+        QPtrList<CSSRuleImpl> m_lstCSSRules;
+    };
 };
 
 #endif

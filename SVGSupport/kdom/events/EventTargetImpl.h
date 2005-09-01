@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,36 +30,36 @@
 
 namespace KDOM
 {
-	class EventImpl;
-	class EventListenerImpl;
-	class RegisteredEventListener;
-	class EventTargetImpl : public TreeShared<EventTargetImpl>
-	{
-	public:
-		EventTargetImpl();
-		virtual ~EventTargetImpl();
+    class EventImpl;
+    class EventListenerImpl;
+    class RegisteredEventListener;
+    class EventTargetImpl : public TreeShared<EventTargetImpl>
+    {
+    public:
+        EventTargetImpl();
+        virtual ~EventTargetImpl();
 
-		void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
-		void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
-		bool dispatchEvent(EventImpl *evt);
+        void addEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+        void removeEventListener(DOMStringImpl *type, EventListenerImpl *listener, bool useCapture);
+        bool dispatchEvent(EventImpl *evt);
 
-		void handleLocalEvents(EventImpl *evt, bool useCapture);
+        void handleLocalEvents(EventImpl *evt, bool useCapture);
 
-		// Helpers
-		void addListenerType(int eventId);
-		void removeListenerType(int eventId);
-		virtual bool hasListenerType(int eventId) const;
+        // Helpers
+        void addListenerType(int eventId);
+        void removeListenerType(int eventId);
+        virtual bool hasListenerType(int eventId) const;
 
-		/**
-		 * Perform the default action for an event e.g. submitting a form
-		 */
-		virtual void defaultEventHandler(EventImpl *) {}
+        /**
+         * Perform the default action for an event e.g. submitting a form
+         */
+        virtual void defaultEventHandler(EventImpl *) {}
 
-	private:
-		int m_listenerTypes;
+    private:
+        int m_listenerTypes;
 
-		QPtrList<RegisteredEventListener> *m_eventListeners;
-	};
+        QPtrList<RegisteredEventListener> *m_eventListeners;
+    };
 };
 
 #endif

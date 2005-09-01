@@ -27,44 +27,44 @@
 
 namespace KDOM
 {
-	/**
-	 * The CDFInterface class has to be implemented by 'layers on top'
-	 * of kdom (ie. ksvg2/khtml2). This class connects kdom with the
-	 * layer on top in following ways:
-	 *
-	 * - CSS values/properties access / render-style
-	 * - XML attribute/tag names access
-	 * - EcmaScript global object
-	 *
-	 **/
-	class RenderStyle;
-	class GlobalObject;
-	class CDFInterface
-	{
-	public:
-		CDFInterface();
-		virtual ~CDFInterface();
+    /**
+     * The CDFInterface class has to be implemented by 'layers on top'
+     * of kdom (ie. ksvg2/khtml2). This class connects kdom with the
+     * layer on top in following ways:
+     *
+     * - CSS values/properties access / render-style
+     * - XML attribute/tag names access
+     * - EcmaScript global object
+     *
+     **/
+    class RenderStyle;
+    class GlobalObject;
+    class CDFInterface
+    {
+    public:
+        CDFInterface();
+        virtual ~CDFInterface();
 
-		// CSS values/properties
-		virtual const char *getValueName(NodeImpl::Id id) const;
-		virtual const char *getPropertyName(NodeImpl::Id id) const;
-		
-		virtual int getValueID(const char *valStr, int len) const;
-		virtual int getPropertyID(const char *propStr, int len) const;
+        // CSS values/properties
+        virtual const char *getValueName(NodeImpl::Id id) const;
+        virtual const char *getPropertyName(NodeImpl::Id id) const;
+        
+        virtual int getValueID(const char *valStr, int len) const;
+        virtual int getPropertyID(const char *propStr, int len) const;
 
-		virtual RenderStyle *renderStyle() const;
-		virtual bool cssPropertyApplyFirst(int id) const;
+        virtual RenderStyle *renderStyle() const;
+        virtual bool cssPropertyApplyFirst(int id) const;
 
-		// XML tags/attributes 
-		virtual const char *getTagName(NodeImpl::Id id) const;
-		virtual const char *getAttrName(NodeImpl::Id id) const;
-		
-		virtual int getTagID(const char *tagStr, int len) const;
-		virtual int getAttrID(const char *attrStr, int len) const;
+        // XML tags/attributes 
+        virtual const char *getTagName(NodeImpl::Id id) const;
+        virtual const char *getAttrName(NodeImpl::Id id) const;
+        
+        virtual int getTagID(const char *tagStr, int len) const;
+        virtual int getAttrID(const char *attrStr, int len) const;
 
-		// EcmaScript interface
-		virtual GlobalObject *globalObject(DocumentImpl *doc) const;
-	};
+        // EcmaScript interface
+        virtual GlobalObject *globalObject(DocumentImpl *doc) const;
+    };
 };
 
 #endif

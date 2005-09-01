@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGAnimatedLength
-	{
-	public:
-		SVGAnimatedLength();
-		explicit SVGAnimatedLength(SVGAnimatedLengthImpl *i);
-		SVGAnimatedLength(const SVGAnimatedLength &other);
-		virtual ~SVGAnimatedLength();
+    class SVGAnimatedLengthImpl;
+    class SVGAnimatedLength
+    {
+    public:
+        SVGAnimatedLength();
+        explicit SVGAnimatedLength(SVGAnimatedLengthImpl *i);
+        SVGAnimatedLength(const SVGAnimatedLength &other);
+        virtual ~SVGAnimatedLength();
 
-		// Operators
-		SVGAnimatedLength &operator=(const SVGAnimatedLength &other);
-		bool operator==(const SVGAnimatedLength &other) const;
-		bool operator!=(const SVGAnimatedLength &other) const;
+        // Operators
+        SVGAnimatedLength &operator=(const SVGAnimatedLength &other);
+        bool operator==(const SVGAnimatedLength &other) const;
+        bool operator!=(const SVGAnimatedLength &other) const;
 
-		// 'SVGAnimatedLength' functions
-		SVGLength baseVal() const;
-		SVGLength animVal() const;
+        // 'SVGAnimatedLength' functions
+        SVGLength baseVal() const;
+        SVGLength animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedLength)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedLength)
 
-	protected:
-		SVGAnimatedLengthImpl *impl;
+    protected:
+        SVGAnimatedLengthImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

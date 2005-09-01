@@ -656,70 +656,70 @@ static yyconst short int yy_chk[1928] =
 
 
 YY_DECL
-	{
-	register yy_state_type yy_current_state;
-	register unsigned short *yy_cp, *yy_bp;
-	register int yy_act;
+    {
+    register yy_state_type yy_current_state;
+    register unsigned short *yy_cp, *yy_bp;
+    register int yy_act;
 
 #line 24 "tokenizer.flex"
 
 
 #line 1146"lex.yy.c"
 
-	while ( 1 )		/* loops until end-of-file is reached */
-		{
-		yy_cp = yy_c_buf_p;
+    while ( 1 )        /* loops until end-of-file is reached */
+        {
+        yy_cp = yy_c_buf_p;
 
-		/* Support of yytext. */
-		*yy_cp = yy_hold_char;
+        /* Support of yytext. */
+        *yy_cp = yy_hold_char;
 
-		/* yy_bp points to the position in yy_ch_buf of the start of
-		 * the current run.
-		 */
-		yy_bp = yy_cp;
+        /* yy_bp points to the position in yy_ch_buf of the start of
+         * the current run.
+         */
+        yy_bp = yy_cp;
 
-		yy_current_state = yy_start;
+        yy_current_state = yy_start;
 //yy_match:
-		do
-			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
-			if ( yy_accept[yy_current_state] )
-				{
-				(yy_last_accepting_state) = yy_current_state;
-				(yy_last_accepting_cpos) = yy_cp;
-				}
-			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
-				{
-				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 370 )
-					yy_c = yy_meta[(unsigned int) yy_c];
-				}
-			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-			++yy_cp;
-			}
-		while ( yy_base[yy_current_state] != 1871 );
+        do
+            {
+            register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
+            if ( yy_accept[yy_current_state] )
+                {
+                (yy_last_accepting_state) = yy_current_state;
+                (yy_last_accepting_cpos) = yy_cp;
+                }
+            while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
+                {
+                yy_current_state = (int) yy_def[yy_current_state];
+                if ( yy_current_state >= 370 )
+                    yy_c = yy_meta[(unsigned int) yy_c];
+                }
+            yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
+            ++yy_cp;
+            }
+        while ( yy_base[yy_current_state] != 1871 );
 
 yy_find_action:
-		yy_act = yy_accept[yy_current_state];
-		if ( yy_act == 0 )
-			{ /* have to back up */
-			yy_cp = (yy_last_accepting_cpos);
-			yy_current_state = (yy_last_accepting_state);
-			yy_act = yy_accept[yy_current_state];
-			}
+        yy_act = yy_accept[yy_current_state];
+        if ( yy_act == 0 )
+            { /* have to back up */
+            yy_cp = (yy_last_accepting_cpos);
+            yy_current_state = (yy_last_accepting_state);
+            yy_act = yy_accept[yy_current_state];
+            }
 
-		YY_DO_BEFORE_ACTION;
+        YY_DO_BEFORE_ACTION;
 
-do_action:	/* This label is used only to access EOF actions. */
+do_action:    /* This label is used only to access EOF actions. */
 
-		switch ( yy_act )
-	{ /* beginning of action switch */
-			case 0: /* must back up */
-			/* undo the effects of YY_DO_BEFORE_ACTION */
-			*yy_cp = (yy_hold_char);
-			yy_cp = (yy_last_accepting_cpos);
-			yy_current_state = (yy_last_accepting_state);
-			goto yy_find_action;
+        switch ( yy_act )
+    { /* beginning of action switch */
+            case 0: /* must back up */
+            /* undo the effects of YY_DO_BEFORE_ACTION */
+            *yy_cp = (yy_hold_char);
+            yy_cp = (yy_last_accepting_cpos);
+            yy_current_state = (yy_last_accepting_state);
+            goto yy_find_action;
 
 
 case 1:
@@ -727,273 +727,273 @@ case 1:
 YY_RULE_SETUP
 #line 26 "tokenizer.flex"
 /* ignore comments */
-	YY_BREAK
+    YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
 #line 28 "tokenizer.flex"
 {yyTok = S; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 30 "tokenizer.flex"
 {yyTok = SGML_CD; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 31 "tokenizer.flex"
 {yyTok = SGML_CD; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 32 "tokenizer.flex"
 {yyTok = INCLUDES; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 33 "tokenizer.flex"
 {yyTok = DASHMATCH; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 34 "tokenizer.flex"
 {yyTok = BEGINSWITH; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 35 "tokenizer.flex"
 {yyTok = ENDSWITH; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 36 "tokenizer.flex"
 {yyTok = CONTAINS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
 #line 38 "tokenizer.flex"
 {yyTok = STRING; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
 #line 40 "tokenizer.flex"
 {yyTok = IDENT; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 42 "tokenizer.flex"
 {yyTok = NTH; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
 #line 44 "tokenizer.flex"
 {yyTok = HASH; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 46 "tokenizer.flex"
 {yyTok = IMPORT_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 47 "tokenizer.flex"
 {yyTok = PAGE_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 48 "tokenizer.flex"
 {yyTok = MEDIA_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 49 "tokenizer.flex"
 {yyTok = FONT_FACE_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 50 "tokenizer.flex"
 {yyTok = CHARSET_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 51 "tokenizer.flex"
 {yyTok = NAMESPACE_SYM; return yyTok; }
-	YY_BREAK
+    YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 52 "tokenizer.flex"
 {yyTok = KHTML_RULE_SYM; return yyTok; }
-	YY_BREAK
+    YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 53 "tokenizer.flex"
 {yyTok = KHTML_DECLS_SYM; return yyTok; }
-	YY_BREAK
+    YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 54 "tokenizer.flex"
 {yyTok = KHTML_VALUE_SYM; return yyTok; }
-	YY_BREAK
+    YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
 #line 56 "tokenizer.flex"
 {yyTok = IMPORTANT_SYM; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 58 "tokenizer.flex"
 {yyTok = EMS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 59 "tokenizer.flex"
 {yyTok = QEMS; return yyTok;} /* quirky ems */
-	YY_BREAK
+    YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 60 "tokenizer.flex"
 {yyTok = EXS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 61 "tokenizer.flex"
 {yyTok = PXS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 62 "tokenizer.flex"
 {yyTok = CMS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 63 "tokenizer.flex"
 {yyTok = MMS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 64 "tokenizer.flex"
 {yyTok = INS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 65 "tokenizer.flex"
 {yyTok = PTS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 66 "tokenizer.flex"
 {yyTok = PCS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 67 "tokenizer.flex"
 {yyTok = DEGS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 68 "tokenizer.flex"
 {yyTok = RADS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 69 "tokenizer.flex"
 {yyTok = GRADS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 70 "tokenizer.flex"
 {yyTok = MSECS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 71 "tokenizer.flex"
 {yyTok = SECS; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 72 "tokenizer.flex"
 {yyTok = HERZ; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 73 "tokenizer.flex"
 {yyTok = KHERZ; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
 #line 74 "tokenizer.flex"
 {yyTok = DIMEN; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 41:
 YY_RULE_SETUP
 #line 75 "tokenizer.flex"
 {yyTok = PERCENTAGE; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 76 "tokenizer.flex"
 {yyTok = NUMBER; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 78 "tokenizer.flex"
 {yyTok = NOTFUNCTION; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
 #line 79 "tokenizer.flex"
 {yyTok = URI; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
 #line 80 "tokenizer.flex"
 {yyTok = URI; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 46:
 /* rule 46 can match eol */
 YY_RULE_SETUP
 #line 81 "tokenizer.flex"
 {yyTok = FUNCTION; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 83 "tokenizer.flex"
 {yyTok = UNICODERANGE; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 84 "tokenizer.flex"
 {yyTok = UNICODERANGE; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 86 "tokenizer.flex"
 {yyTok = *yytext; return yyTok;}
-	YY_BREAK
+    YY_BREAK
 case 50:
 YY_RULE_SETUP
 #line 88 "tokenizer.flex"
 ECHO;
-	YY_BREAK
+    YY_BREAK
 #line 1489 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
-    	yyterminate();
+        yyterminate();
 
-	case YY_END_OF_BUFFER:
+    case YY_END_OF_BUFFER:
         yy_c_buf_p = yytext;
         yy_act = YY_STATE_EOF(YY_START);
         goto do_action;
 
-	default:
-		YY_FATAL_ERROR(
-			"fatal flex scanner internal error--no action found" );
-	} /* end of action switch */
-		} /* end of scanning one token */
+    default:
+        YY_FATAL_ERROR(
+            "fatal flex scanner internal error--no action found" );
+    } /* end of action switch */
+        } /* end of scanning one token */
 } /* end of yylex */

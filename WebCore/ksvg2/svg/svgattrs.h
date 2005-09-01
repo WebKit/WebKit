@@ -257,8 +257,8 @@ svgattrs.in by dommakeattrs, do not edit */
 
 namespace KSVG
 {
-	const char *getAttrName(unsigned short id);
-	int getAttrID(const char *tagStr, int len);
+    const char *getAttrName(unsigned short id);
+    int getAttrID(const char *tagStr, int len);
 };
 
 #endif

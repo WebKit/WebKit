@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,33 +42,33 @@ using namespace KSVG;
 
 /*
 @begin SVGDocument::s_hashTable 7
- title			SVGDocumentConstants::Title			DontDelete|ReadOnly
- referrer		SVGDocumentConstants::Referrer		DontDelete|ReadOnly
- domain			SVGDocumentConstants::Domain		DontDelete|ReadOnly
- URL			SVGDocumentConstants::URL			DontDelete|ReadOnly
- rootElement	SVGDocumentConstants::RootElement	DontDelete|ReadOnly
+ title            SVGDocumentConstants::Title            DontDelete|ReadOnly
+ referrer        SVGDocumentConstants::Referrer        DontDelete|ReadOnly
+ domain            SVGDocumentConstants::Domain        DontDelete|ReadOnly
+ URL            SVGDocumentConstants::URL            DontDelete|ReadOnly
+ rootElement    SVGDocumentConstants::RootElement    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGDocument::getValueProperty(ExecState *exec, int token) const
 {
-	switch(token)
-	{
-		case SVGDocumentConstants::Title:
-			return getDOMString(title());
-		case SVGDocumentConstants::Referrer:
-			return getDOMString(referrer());
-		case SVGDocumentConstants::Domain:
-			return getDOMString(domain());
-		case SVGDocumentConstants::URL:
-			return getDOMString(URL());
-		case SVGDocumentConstants::RootElement:
-			return getDOMNode(exec, rootElement());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGDocumentConstants::Title:
+            return getDOMString(title());
+        case SVGDocumentConstants::Referrer:
+            return getDOMString(referrer());
+        case SVGDocumentConstants::Domain:
+            return getDOMString(domain());
+        case SVGDocumentConstants::URL:
+            return getDOMString(URL());
+        case SVGDocumentConstants::RootElement:
+            return getDOMNode(exec, rootElement());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 // The qdom way...
@@ -78,7 +78,7 @@ SVGDocument SVGDocument::null;
 
 SVGDocument::SVGDocument() : KDOM::Document()
 {
-	// A document with d = 0, won't be able to create any elements!
+    // A document with d = 0, won't be able to create any elements!
 }
 
 SVGDocument::SVGDocument(SVGDocumentImpl *i) : KDOM::Document(i)
@@ -87,12 +87,12 @@ SVGDocument::SVGDocument(SVGDocumentImpl *i) : KDOM::Document(i)
 
 SVGDocument::SVGDocument(const SVGDocument &other) : KDOM::Document()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGDocument::SVGDocument(const KDOM::Node &other) : KDOM::Document()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGDocument::~SVGDocument()
@@ -101,67 +101,67 @@ SVGDocument::~SVGDocument()
 
 SVGDocument &SVGDocument::operator=(const SVGDocument &other)
 {
-	KDOM::Document::operator=(other);
-	return *this;
+    KDOM::Document::operator=(other);
+    return *this;
 }
 
 SVGDocument &SVGDocument::operator=(const KDOM::Node &other)
 {
-	KDOM::NodeImpl *ohandle = static_cast<KDOM::NodeImpl *>(other.handle());
-	if(impl != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::DOCUMENT_NODE)
-		{
-			if(impl)
-				impl->deref();
+    KDOM::NodeImpl *ohandle = static_cast<KDOM::NodeImpl *>(other.handle());
+    if(impl != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::DOCUMENT_NODE)
+        {
+            if(impl)
+                impl->deref();
 
-			Node::d = 0;
-		}
-		else
-			KDOM::Document::operator=(other);
-	}
+            Node::d = 0;
+        }
+        else
+            KDOM::Document::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 KDOM::DOMString SVGDocument::title() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->title();
+    return impl->title();
 }
 
 KDOM::DOMString SVGDocument::referrer() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->referrer();
+    return impl->referrer();
 }
 
 KDOM::DOMString SVGDocument::domain() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->domain();
+    return impl->domain();
 }
 
 KDOM::DOMString SVGDocument::URL() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->URL();
+    return impl->URL();
 }
 
 SVGSVGElement SVGDocument::rootElement() const
 {
-	if(!impl)
-		return SVGSVGElement::null;
+    if(!impl)
+        return SVGSVGElement::null;
 
-	return SVGSVGElement(impl->rootElement());
+    return SVGSVGElement(impl->rootElement());
 }
 
 // vim:ts=4:noet

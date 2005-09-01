@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,29 +28,29 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class CSSStyleSheetImpl;
-	class CSSRuleImpl : public StyleBaseImpl
-	{
-	public:
-		CSSRuleImpl(StyleBaseImpl *parent);
-		virtual ~CSSRuleImpl();
+    class DOMStringImpl;
+    class CSSStyleSheetImpl;
+    class CSSRuleImpl : public StyleBaseImpl
+    {
+    public:
+        CSSRuleImpl(StyleBaseImpl *parent);
+        virtual ~CSSRuleImpl();
 
-		// 'CSSRule' functions
-		virtual unsigned short type() const;
+        // 'CSSRule' functions
+        virtual unsigned short type() const;
 
-		virtual DOMStringImpl *cssText() const;
-		virtual void setCssText(DOMStringImpl *cssText);
+        virtual DOMStringImpl *cssText() const;
+        virtual void setCssText(DOMStringImpl *cssText);
 
-		virtual CSSStyleSheetImpl *parentStyleSheet() const;
-		virtual CSSRuleImpl *parentRule() const;
+        virtual CSSStyleSheetImpl *parentStyleSheet() const;
+        virtual CSSRuleImpl *parentRule() const;
 
-		virtual void init() { }
-		virtual bool isRule() const { return true; }
+        virtual void init() { }
+        virtual bool isRule() const { return true; }
 
-	protected:
-		RuleType m_type;
-	};
+    protected:
+        RuleType m_type;
+    };
 };
 
 #endif

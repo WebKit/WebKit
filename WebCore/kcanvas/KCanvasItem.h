@@ -37,65 +37,65 @@ class KCanvasContainer;
 class KCanvasItem
 {
 public:
-	KCanvasItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path);
-	virtual ~KCanvasItem();
+    KCanvasItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path);
+    virtual ~KCanvasItem();
 
-	int zIndex() const;
-	bool isVisible() const;
+    int zIndex() const;
+    bool isVisible() const;
 
-	// Hit-detection seperated for the fill and the stroke
-	virtual bool fillContains(const QPoint &p) const;
-	virtual bool strokeContains(const QPoint &p) const;
+    // Hit-detection seperated for the fill and the stroke
+    virtual bool fillContains(const QPoint &p) const;
+    virtual bool strokeContains(const QPoint &p) const;
 
-	// Returns an unscaled bounding box for this vector path
-	virtual QRect bbox(bool includeStroke = true) const;
+    // Returns an unscaled bounding box for this vector path
+    virtual QRect bbox(bool includeStroke = true) const;
 
-	// Drawing
-	virtual void draw(const QRect &rect) const;
+    // Drawing
+    virtual void draw(const QRect &rect) const;
 
-	// Update
-	void changePath(KCanvasUserData newPath);
+    // Update
+    void changePath(KCanvasUserData newPath);
 
-	KCanvas *canvas() const;
-	KCanvasUserData path() const;
-	KRenderingStyle *style() const;
+    KCanvas *canvas() const;
+    KCanvasUserData path() const;
+    KRenderingStyle *style() const;
 
-	// Convenience function
-	virtual void invalidate() const;
+    // Convenience function
+    virtual void invalidate() const;
 
-	// Returns pointer to a self-specified data structure
-	// ie. to "link" a KCanvasItem to a KDOM::NodeImpl *
-	KCanvasUserData userData() const;
-	void setUserData(KCanvasUserData userData);
+    // Returns pointer to a self-specified data structure
+    // ie. to "link" a KCanvasItem to a KDOM::NodeImpl *
+    KCanvasUserData userData() const;
+    void setUserData(KCanvasUserData userData);
 
-	// Container handling...
-	virtual bool isContainer() const { return false; }
-	
-	virtual void appendItem(KCanvasItem *) { }
-	virtual void insertItemBefore(KCanvasItem *, KCanvasItem *) { }
-	virtual void removeItem(const KCanvasItem *) { }
+    // Container handling...
+    virtual bool isContainer() const { return false; }
+    
+    virtual void appendItem(KCanvasItem *) { }
+    virtual void insertItemBefore(KCanvasItem *, KCanvasItem *) { }
+    virtual void removeItem(const KCanvasItem *) { }
 
-	virtual bool raise();
-	virtual bool lower();
-	
-	KCanvasContainer *parent() const;
-	void setParent(KCanvasContainer *parent);
+    virtual bool raise();
+    virtual bool lower();
+    
+    KCanvasContainer *parent() const;
+    void setParent(KCanvasContainer *parent);
 
-	KCanvasItem *prev() const;
-	void setPrev(KCanvasItem *prev);
+    KCanvasItem *prev() const;
+    void setPrev(KCanvasItem *prev);
 
-	KCanvasItem *next() const;
-	void setNext(KCanvasItem *next);
-	
+    KCanvasItem *next() const;
+    void setNext(KCanvasItem *next);
+    
 protected:
-	// restricted set of args for passing to paint servers, etc.
-	const KCanvasCommonArgs commonArgs() const;
-	virtual bool hitsPath(const QPoint &hitPoint, bool fill) const;
-	virtual QRect bboxPath(bool includeStroke, bool includeTransforms = true) const;
+    // restricted set of args for passing to paint servers, etc.
+    const KCanvasCommonArgs commonArgs() const;
+    virtual bool hitsPath(const QPoint &hitPoint, bool fill) const;
+    virtual QRect bboxPath(bool includeStroke, bool includeTransforms = true) const;
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 // Helper data structure

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,47 +27,47 @@
 
 namespace KSVG
 {
-	class SVGPathSegCurvetoQuadraticSmoothAbsImpl : public SVGPathSegImpl
-	{ 
-	public:
-		SVGPathSegCurvetoQuadraticSmoothAbsImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegCurvetoQuadraticSmoothAbsImpl();
+    class SVGPathSegCurvetoQuadraticSmoothAbsImpl : public SVGPathSegImpl
+    { 
+    public:
+        SVGPathSegCurvetoQuadraticSmoothAbsImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegCurvetoQuadraticSmoothAbsImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("T"); }
-		virtual QString toString() const { return QString::fromLatin1("T %1 %2").arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("T"); }
+        virtual QString toString() const { return QString::fromLatin1("T %1 %2").arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-	private:
-		double m_x;
-		double m_y;
-	};
+    private:
+        double m_x;
+        double m_y;
+    };
 
-	class SVGPathSegCurvetoQuadraticSmoothRelImpl : public SVGPathSegImpl 
-	{ 
-	public:
-		SVGPathSegCurvetoQuadraticSmoothRelImpl(const SVGStyledElementImpl *context = 0);
-		virtual ~SVGPathSegCurvetoQuadraticSmoothRelImpl();
+    class SVGPathSegCurvetoQuadraticSmoothRelImpl : public SVGPathSegImpl 
+    { 
+    public:
+        SVGPathSegCurvetoQuadraticSmoothRelImpl(const SVGStyledElementImpl *context = 0);
+        virtual ~SVGPathSegCurvetoQuadraticSmoothRelImpl();
 
-		virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
-		virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("t"); }
-		virtual QString toString() const { return QString::fromLatin1("t %1 %2").arg(m_x).arg(m_y); }
+        virtual unsigned short pathSegType() const { return PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL; }
+        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl("t"); }
+        virtual QString toString() const { return QString::fromLatin1("t %1 %2").arg(m_x).arg(m_y); }
 
-		void setX(double);
-		double x() const;
+        void setX(double);
+        double x() const;
 
-		void setY(double);
-		double y() const;
+        void setY(double);
+        double y() const;
 
-	private:
-		double m_x;
-		double m_y;
-	};
+    private:
+        double m_x;
+        double m_y;
+    };
 };
 
 #endif

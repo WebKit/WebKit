@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1998 Lars Knoll <knoll@kde.org>
@@ -32,30 +32,30 @@
 
 namespace KDOM
 {
-	class CachedStyleSheet : public CachedObject
-	{
-	public:
-		CachedStyleSheet(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl cachePolicy, const char *accept);
-		CachedStyleSheet(const DOMString &url, const QString &stylesheet_data);
+    class CachedStyleSheet : public CachedObject
+    {
+    public:
+        CachedStyleSheet(DocumentLoader *docLoader, const DOMString &url, KIO::CacheControl cachePolicy, const char *accept);
+        CachedStyleSheet(const DOMString &url, const QString &stylesheet_data);
 
-		const DOMString &sheet() const { return m_sheet; }
+        const DOMString &sheet() const { return m_sheet; }
 
-		virtual void ref(CachedObjectClient *consumer);
+        virtual void ref(CachedObjectClient *consumer);
 
-		virtual void data( QBuffer &buffer, bool eof );
-		virtual void error( int err, const char *text );
+        virtual void data( QBuffer &buffer, bool eof );
+        virtual void error( int err, const char *text );
 
-		virtual bool schedule() const { return true; }
-		void setCharset( const QString& charset ) { m_charset = charset; }
+        virtual bool schedule() const { return true; }
+        void setCharset( const QString& charset ) { m_charset = charset; }
 
-	protected:
-		void checkNotify();
+    protected:
+        void checkNotify();
 
-		DOMString m_sheet;
-		QString m_charset;
-		int m_err;
-		QString m_errText;
-	};
+        DOMString m_sheet;
+        QString m_charset;
+        int m_err;
+        QString m_errText;
+    };
 };
 
 #endif

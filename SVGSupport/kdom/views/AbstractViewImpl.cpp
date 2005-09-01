@@ -30,7 +30,7 @@ using namespace KDOM;
 
 AbstractViewImpl::AbstractViewImpl() : Shared()
 {
-	m_documentView = 0;
+    m_documentView = 0;
 }
 
 AbstractViewImpl::~AbstractViewImpl()
@@ -39,7 +39,7 @@ AbstractViewImpl::~AbstractViewImpl()
 
 DocumentViewImpl *AbstractViewImpl::document() const
 {
-	return m_documentView;
+    return m_documentView;
 }
 
 // vim:ts=4:noet

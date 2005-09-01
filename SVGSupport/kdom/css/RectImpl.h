@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,33 +27,33 @@
 
 namespace KDOM
 {
-	class CDFInterface;
-	class CSSPrimitiveValueImpl;
-	class RectImpl : public Shared
-	{
-	public:
-		RectImpl(CDFInterface *interface);
-		virtual ~RectImpl();
+    class CDFInterface;
+    class CSSPrimitiveValueImpl;
+    class RectImpl : public Shared
+    {
+    public:
+        RectImpl(CDFInterface *interface);
+        virtual ~RectImpl();
 
-		// 'Rect' functions
-		CSSPrimitiveValueImpl *top() const;
-		CSSPrimitiveValueImpl *right() const;
-		CSSPrimitiveValueImpl *bottom() const;
-		CSSPrimitiveValueImpl *left() const;
+        // 'Rect' functions
+        CSSPrimitiveValueImpl *top() const;
+        CSSPrimitiveValueImpl *right() const;
+        CSSPrimitiveValueImpl *bottom() const;
+        CSSPrimitiveValueImpl *left() const;
 
-		void setTop(CSSPrimitiveValueImpl *top);
-		void setRight(CSSPrimitiveValueImpl *right);
-		void setBottom(CSSPrimitiveValueImpl *bottom);
-		void setLeft(CSSPrimitiveValueImpl *left);
+        void setTop(CSSPrimitiveValueImpl *top);
+        void setRight(CSSPrimitiveValueImpl *right);
+        void setBottom(CSSPrimitiveValueImpl *bottom);
+        void setLeft(CSSPrimitiveValueImpl *left);
 
-	protected:
-		CDFInterface *m_interface;
+    protected:
+        CDFInterface *m_interface;
 
-		mutable CSSPrimitiveValueImpl *m_top;
-		mutable CSSPrimitiveValueImpl *m_right;
-		mutable CSSPrimitiveValueImpl *m_bottom;
-		mutable CSSPrimitiveValueImpl *m_left;
-	};
+        mutable CSSPrimitiveValueImpl *m_top;
+        mutable CSSPrimitiveValueImpl *m_right;
+        mutable CSSPrimitiveValueImpl *m_bottom;
+        mutable CSSPrimitiveValueImpl *m_left;
+    };
 };
 
 #endif

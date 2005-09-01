@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,34 +25,34 @@
 
 namespace KDOM
 {
-	class AttributeImpl;
-	class DOMStringImpl;
+    class AttributeImpl;
+    class DOMStringImpl;
 };
 
 namespace KSVG
 {
-	class SVGAnimatedRectImpl;
-	class SVGAnimatedPreserveAspectRatioImpl;
-	class SVGMatrixImpl;
-	class SVGFitToViewBoxImpl
-	{
-	public:
-		SVGFitToViewBoxImpl();
-		virtual ~SVGFitToViewBoxImpl();
+    class SVGAnimatedRectImpl;
+    class SVGAnimatedPreserveAspectRatioImpl;
+    class SVGMatrixImpl;
+    class SVGFitToViewBoxImpl
+    {
+    public:
+        SVGFitToViewBoxImpl();
+        virtual ~SVGFitToViewBoxImpl();
 
-		// 'SVGFitToViewBoxImpl' functions
-		SVGAnimatedRectImpl *viewBox() const;
-		SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
+        // 'SVGFitToViewBoxImpl' functions
+        SVGAnimatedRectImpl *viewBox() const;
+        SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-		void parseViewBox(KDOM::DOMStringImpl *str);
-		SVGMatrixImpl *viewBoxToViewTransform(float viewWidth, float viewHeight) const;
+        void parseViewBox(KDOM::DOMStringImpl *str);
+        SVGMatrixImpl *viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
-		bool parseAttribute(KDOM::AttributeImpl *attr);
+        bool parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGAnimatedRectImpl *m_viewBox;
-		mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
-	};
+    private:
+        mutable SVGAnimatedRectImpl *m_viewBox;
+        mutable SVGAnimatedPreserveAspectRatioImpl *m_preserveAspectRatio;
+    };
 };
 
 #endif

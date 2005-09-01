@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,41 +28,41 @@
 
 namespace KSVG
 {
-	class SVGElement;
-	class SVGUseElement;
-	class SVGElementInstanceImpl;
-	class SVGElementInstanceList;
-	class SVGElementInstance : public KDOM::EventTarget
-	{
-	public:
-		SVGElementInstance();
-		SVGElementInstance(SVGElementInstanceImpl *p);
-		SVGElementInstance(const SVGElementInstance &other);
-		virtual ~SVGElementInstance();
+    class SVGElement;
+    class SVGUseElement;
+    class SVGElementInstanceImpl;
+    class SVGElementInstanceList;
+    class SVGElementInstance : public KDOM::EventTarget
+    {
+    public:
+        SVGElementInstance();
+        SVGElementInstance(SVGElementInstanceImpl *p);
+        SVGElementInstance(const SVGElementInstance &other);
+        virtual ~SVGElementInstance();
 
-		// Operators
-		SVGElementInstance &operator=(const SVGElementInstance &other);
+        // Operators
+        SVGElementInstance &operator=(const SVGElementInstance &other);
 
-		// 'SVGElementInstance' functions
-		SVGElement correspondingElement() const;
-		SVGUseElement correspondingUseElement() const;
+        // 'SVGElementInstance' functions
+        SVGElement correspondingElement() const;
+        SVGUseElement correspondingUseElement() const;
 
-		SVGElementInstance parentNode() const;
-		SVGElementInstanceList childNodes() const;
-		SVGElementInstance firstChild() const;
-		SVGElementInstance lastChild() const;
-		SVGElementInstance previousSibling() const;
-		SVGElementInstance nextSibling() const;
+        SVGElementInstance parentNode() const;
+        SVGElementInstanceList childNodes() const;
+        SVGElementInstance firstChild() const;
+        SVGElementInstance lastChild() const;
+        SVGElementInstance previousSibling() const;
+        SVGElementInstance nextSibling() const;
 
-		// Internal
-		KDOM_INTERNAL(SVGElementInstance)
+        // Internal
+        KDOM_INTERNAL(SVGElementInstance)
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

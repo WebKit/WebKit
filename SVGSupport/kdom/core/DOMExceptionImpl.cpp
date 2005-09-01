@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,10 +26,10 @@ using namespace KDOM;
 
 DOMExceptionImpl::DOMExceptionImpl(unsigned short code) : Shared()
 {
-	ref(); // ExceptionImpl classes need to ref themselves() as it's just
-	       // very convienient to just use 'throw new ExceptionImpl' ...
+    ref(); // ExceptionImpl classes need to ref themselves() as it's just
+           // very convienient to just use 'throw new ExceptionImpl' ...
 
-	m_code = code;
+    m_code = code;
 }
 
 DOMExceptionImpl::~DOMExceptionImpl()
@@ -38,7 +38,7 @@ DOMExceptionImpl::~DOMExceptionImpl()
 
 unsigned short DOMExceptionImpl::code() const
 {
-	return m_code;
+    return m_code;
 }
 
 // vim:ts=4:noet

@@ -38,15 +38,15 @@ class XPathResultImpl;
 
 class XPathEvaluatorImpl
 {
-	public:
-		XPathExpressionImpl *createExpression( DOMStringImpl *expression,
-		                                       XPathNSResolverImpl *resolver );
-		XPathNSResolverImpl *createNSResolver( NodeImpl *nodeResolver );
-		XPathResultImpl *evaluate( DOMStringImpl *expression,
-		                           NodeImpl *contextNode,
-		                           XPathNSResolverImpl *resolver,
-		                           unsigned short type,
-		                           XPathResultImpl *result );
+    public:
+        XPathExpressionImpl *createExpression( DOMStringImpl *expression,
+                                               XPathNSResolverImpl *resolver );
+        XPathNSResolverImpl *createNSResolver( NodeImpl *nodeResolver );
+        XPathResultImpl *evaluate( DOMStringImpl *expression,
+                                   NodeImpl *contextNode,
+                                   XPathNSResolverImpl *resolver,
+                                   unsigned short type,
+                                   XPathResultImpl *result );
 };
 
 }

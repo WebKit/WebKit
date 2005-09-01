@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,31 +25,31 @@
 
 namespace KDOM
 {
-	class Shared
-	{
-	public:
-		Shared();
-		virtual ~Shared();
+    class Shared
+    {
+    public:
+        Shared();
+        virtual ~Shared();
 
-		void ref();
-		virtual void deref();
+        void ref();
+        virtual void deref();
 
-		int refCount() const;
+        int refCount() const;
 
-	protected:
-		int m_ref;
-	};
+    protected:
+        int m_ref;
+    };
 
-	template<class T>
-	inline void KDOM_SAFE_SET(T *&a, T *b)
-	{
-		if(a != b)
-		{
-			if(a) a->deref();
-			a = b;
-			if(a) a->ref();
-		}
-	}
+    template<class T>
+    inline void KDOM_SAFE_SET(T *&a, T *b)
+    {
+        if(a != b)
+        {
+            if(a) a->deref();
+            a = b;
+            if(a) a->ref();
+        }
+    }
 };
 
 #endif

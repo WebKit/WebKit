@@ -39,23 +39,23 @@ void applyTransformForStyle(CGContextRef context,  KRenderingStyle *style);
 void applyClipPathsForStyle(CGContextRef context, KCanvasRegistry *registry, KRenderingStyle *style, const QRect &bbox);
 
 static inline CGLineCap CGLineCapFromKC( KCCapStyle cap) {
-	if (cap == CAP_BUTT)
-		return kCGLineCapButt;
-	else if (cap == CAP_ROUND)
-		return kCGLineCapRound;
-	else if (cap == CAP_SQUARE)
-		return kCGLineCapSquare;
-	
-	return kCGLineCapButt;
+    if (cap == CAP_BUTT)
+        return kCGLineCapButt;
+    else if (cap == CAP_ROUND)
+        return kCGLineCapRound;
+    else if (cap == CAP_SQUARE)
+        return kCGLineCapSquare;
+    
+    return kCGLineCapButt;
 }
 
 static inline CGLineJoin CGLineJoinFromKC( KCJoinStyle join) {
-	if (join == JOIN_MITER)
-		return kCGLineJoinMiter;
-	else if (join == JOIN_ROUND)
-		return kCGLineJoinRound;
-	else if (join == JOIN_BEVEL)
-		return kCGLineJoinBevel;
-	
-	return kCGLineJoinMiter;
+    if (join == JOIN_MITER)
+        return kCGLineJoinMiter;
+    else if (join == JOIN_ROUND)
+        return kCGLineJoinRound;
+    else if (join == JOIN_BEVEL)
+        return kCGLineJoinBevel;
+    
+    return kCGLineJoinMiter;
 }

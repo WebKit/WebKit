@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -38,36 +38,36 @@ using namespace KSVG;
 
 /*
 @begin SVGFilterPrimitiveStandardAttributes::s_hashTable 7
- x			SVGFilterPrimitiveStandardAttributesConstants::X		DontDelete|ReadOnly
- y			SVGFilterPrimitiveStandardAttributesConstants::Y		DontDelete|ReadOnly
- width		SVGFilterPrimitiveStandardAttributesConstants::Width	DontDelete|ReadOnly
- height		SVGFilterPrimitiveStandardAttributesConstants::Height	DontDelete|ReadOnly
- result		SVGFilterPrimitiveStandardAttributesConstants::Result	DontDelete|ReadOnly
+ x            SVGFilterPrimitiveStandardAttributesConstants::X        DontDelete|ReadOnly
+ y            SVGFilterPrimitiveStandardAttributesConstants::Y        DontDelete|ReadOnly
+ width        SVGFilterPrimitiveStandardAttributesConstants::Width    DontDelete|ReadOnly
+ height        SVGFilterPrimitiveStandardAttributesConstants::Height    DontDelete|ReadOnly
+ result        SVGFilterPrimitiveStandardAttributesConstants::Result    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFilterPrimitiveStandardAttributes::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFilterPrimitiveStandardAttributesConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
-		case SVGFilterPrimitiveStandardAttributesConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
-		case SVGFilterPrimitiveStandardAttributesConstants::Width:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
-		case SVGFilterPrimitiveStandardAttributesConstants::Height:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
-		case SVGFilterPrimitiveStandardAttributesConstants::Result:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, result());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFilterPrimitiveStandardAttributesConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
+        case SVGFilterPrimitiveStandardAttributesConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
+        case SVGFilterPrimitiveStandardAttributesConstants::Width:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
+        case SVGFilterPrimitiveStandardAttributesConstants::Height:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
+        case SVGFilterPrimitiveStandardAttributesConstants::Result:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, result());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGFilterPrimitiveStandardAttributes SVGFilterPrimitiveStandardAttributes::null;
@@ -82,7 +82,7 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(SVGFi
 
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const SVGFilterPrimitiveStandardAttributes &other) : SVGStylable(), impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
@@ -91,60 +91,60 @@ SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
 
 SVGFilterPrimitiveStandardAttributes &SVGFilterPrimitiveStandardAttributes::operator=(const SVGFilterPrimitiveStandardAttributes &other)
 {
-	SVGStylable::operator=(other);
-	if(impl != other.impl)
-		impl = other.impl;
+    SVGStylable::operator=(other);
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGFilterPrimitiveStandardAttributes &SVGFilterPrimitiveStandardAttributes::operator=(SVGFilterPrimitiveStandardAttributesImpl *other)
 {
-	SVGStylable::operator=(other);
-	if(impl != other)
-		impl = other;
+    SVGStylable::operator=(other);
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedLength SVGFilterPrimitiveStandardAttributes::x() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x());
+    return SVGAnimatedLength(impl->x());
 }
 
 SVGAnimatedLength SVGFilterPrimitiveStandardAttributes::y() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y());
+    return SVGAnimatedLength(impl->y());
 }
 
 SVGAnimatedLength SVGFilterPrimitiveStandardAttributes::width() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->width());
+    return SVGAnimatedLength(impl->width());
 }
 
 SVGAnimatedLength SVGFilterPrimitiveStandardAttributes::height() const
 {
-	if(!impl)
-		return SVGAnimatedLength::null;
+    if(!impl)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->height());
+    return SVGAnimatedLength(impl->height());
 }
 
 SVGAnimatedString SVGFilterPrimitiveStandardAttributes::result() const
 {
-	if(!impl)
-		return SVGAnimatedString::null;
+    if(!impl)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->result());
+    return SVGAnimatedString(impl->result());
 }
 
 // vim:ts=4:noet

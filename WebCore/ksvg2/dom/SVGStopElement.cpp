@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,24 +35,24 @@ using namespace KSVG;
 
 /*
 @begin SVGStopElement::s_hashTable 3
- offset	SVGStopElementConstants::Offset	DontDelete|ReadOnly
+ offset    SVGStopElementConstants::Offset    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGStopElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGStopElementConstants::Offset:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, offset());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGStopElementConstants::Offset:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, offset());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -70,12 +70,12 @@ SVGStopElement::SVGStopElement(SVGStopElementImpl *i) : SVGElement(i), SVGStylab
 
 SVGStopElement::SVGStopElement(const SVGStopElement &other) : SVGElement(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGStopElement::SVGStopElement(const KDOM::Node &other) : SVGElement(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGStopElement::~SVGStopElement()
@@ -84,39 +84,39 @@ SVGStopElement::~SVGStopElement()
 
 SVGStopElement &SVGStopElement::operator=(const SVGStopElement &other)
 {
-	SVGElement::operator=(other);
-	SVGStylable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGStylable::operator=(other);
+    return *this;
 }
 
 SVGStopElement &SVGStopElement::operator=(const KDOM::Node &other)
 {
-	SVGStopElementImpl *ohandle = static_cast<SVGStopElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGStylable::operator=(ohandle);
-		}
-	}
+    SVGStopElementImpl *ohandle = static_cast<SVGStopElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGStylable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedNumber SVGStopElement::offset() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->offset());
+    return SVGAnimatedNumber(impl->offset());
 }
 
 // vim:ts=4:noet

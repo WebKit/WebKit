@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,141 +30,141 @@
 
 namespace KSVG
 {
-	enum EFillMode
-	{
-		FILL_REMOVE = 0,
-		FILL_FREEZE
-	};
+    enum EFillMode
+    {
+        FILL_REMOVE = 0,
+        FILL_FREEZE
+    };
 
-	enum EAdditiveMode
-	{
-		ADDITIVE_REPLACE = 0,
-		ADDITIVE_SUM
-	};
+    enum EAdditiveMode
+    {
+        ADDITIVE_REPLACE = 0,
+        ADDITIVE_SUM
+    };
 
-	enum EAccumulateMode
-	{
-		ACCUMULATE_NONE = 0,
-		ACCUMULATE_SUM
-	};
+    enum EAccumulateMode
+    {
+        ACCUMULATE_NONE = 0,
+        ACCUMULATE_SUM
+    };
 
-	enum ECalcMode
-	{
-		CALCMODE_DISCRETE = 0,
-		CALCMODE_LINEAR,
-		CALCMODE_PACED,
-		CALCMODE_SPLINE
-	};
+    enum ECalcMode
+    {
+        CALCMODE_DISCRETE = 0,
+        CALCMODE_LINEAR,
+        CALCMODE_PACED,
+        CALCMODE_SPLINE
+    };
 
-	enum ERestart
-	{
-		RESTART_ALWAYS = 0,
-		RESTART_WHENNOTACTIVE,
-		RESTART_NEVER
-	};
+    enum ERestart
+    {
+        RESTART_ALWAYS = 0,
+        RESTART_WHENNOTACTIVE,
+        RESTART_NEVER
+    };
 
-	enum EAttributeType
-	{
-		ATTRIBUTETYPE_CSS = 0,
-		ATTRIBUTETYPE_XML,
-		ATTRIBUTETYPE_AUTO
-	};
+    enum EAttributeType
+    {
+        ATTRIBUTETYPE_CSS = 0,
+        ATTRIBUTETYPE_XML,
+        ATTRIBUTETYPE_AUTO
+    };
 
-	enum EAnimationMode // internal
-	{
-		NO_ANIMATION = 0,
-		TO_ANIMATION,
-		BY_ANIMATION,
-		VALUES_ANIMATION,
-		FROM_TO_ANIMATION,
-		FROM_BY_ANIMATION
-	};
+    enum EAnimationMode // internal
+    {
+        NO_ANIMATION = 0,
+        TO_ANIMATION,
+        BY_ANIMATION,
+        VALUES_ANIMATION,
+        FROM_TO_ANIMATION,
+        FROM_BY_ANIMATION
+    };
 
-	class SVGAnimationElementImpl : public SVGElementImpl,
-									public SVGTestsImpl,
-									public SVGExternalResourcesRequiredImpl
-	{
-	public:
-		SVGAnimationElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGAnimationElementImpl();
+    class SVGAnimationElementImpl : public SVGElementImpl,
+                                    public SVGTestsImpl,
+                                    public SVGExternalResourcesRequiredImpl
+    {
+    public:
+        SVGAnimationElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGAnimationElementImpl();
 
-		// 'SVGAnimationElement' functions
-		SVGElementImpl *targetElement() const;
+        // 'SVGAnimationElement' functions
+        SVGElementImpl *targetElement() const;
 
-		double getEndTime() const;
-		double getStartTime() const;
-		double getCurrentTime() const;
-		double getSimpleDuration() const;
-	
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
-		virtual bool implementsCanvasItem() const { return false; }
+        double getEndTime() const;
+        double getStartTime() const;
+        double getCurrentTime() const;
+        double getSimpleDuration() const;
+    
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual bool implementsCanvasItem() const { return false; }
 
-		virtual void close();
+        virtual void close();
 
-		// Helpers
-		virtual void handleTimerEvent(double timePercentage) = 0;
+        // Helpers
+        virtual void handleTimerEvent(double timePercentage) = 0;
 
-		double parseClockValue(const QString &data) const;
+        double parseClockValue(const QString &data) const;
 
-		KDOM::DOMString targetAttribute() const;
-		void setTargetAttribute(const KDOM::DOMString &value);
+        KDOM::DOMString targetAttribute() const;
+        void setTargetAttribute(const KDOM::DOMString &value);
 
-		static void setTargetAttribute(SVGElementImpl *target,
-									   const KDOM::DOMString &name,
-									   const KDOM::DOMString &value,
-									   EAttributeType type = ATTRIBUTETYPE_AUTO);
+        static void setTargetAttribute(SVGElementImpl *target,
+                                       const KDOM::DOMString &name,
+                                       const KDOM::DOMString &value,
+                                       EAttributeType type = ATTRIBUTETYPE_AUTO);
 
-		QString attributeName() const;
+        QString attributeName() const;
 
-		bool connected() const;
+        bool connected() const;
 
-		bool isFrozen() const;
-		bool isAdditive() const;
-		bool isAccumulated() const;
+        bool isFrozen() const;
+        bool isAdditive() const;
+        bool isAccumulated() const;
 
-		EAnimationMode detectAnimationMode() const;
+        EAnimationMode detectAnimationMode() const;
 
-		int calculateCurrentValueItem(double timePercentage);
-		double calculateRelativeTimePercentage(double timePercentage, int currentItem);
+        int calculateCurrentValueItem(double timePercentage);
+        double calculateRelativeTimePercentage(double timePercentage, int currentItem);
 
-		double repeations() const;
-		bool isIndefinite(double value) const;
+        double repeations() const;
+        bool isIndefinite(double value) const;
 
-	protected:
-		mutable SVGElementImpl *m_targetElement;
+    protected:
+        mutable SVGElementImpl *m_targetElement;
 
-		bool m_connected : 1;
-		
-		double m_currentTime;
-		double m_simpleDuration;
+        bool m_connected : 1;
+        
+        double m_currentTime;
+        double m_simpleDuration;
 
-		// Shared animation properties
-		EFillMode m_fill : 1;
-		ERestart m_restart : 2;
-		ECalcMode m_calcMode : 2;
-		EAdditiveMode m_additive : 1;
-		EAccumulateMode m_accumulate : 1;
-		EAttributeType m_attributeType : 2;
-		
-		QString m_to;
-		QString m_by;
-		QString m_from;
-		QString m_href;
-		QString m_repeatDur;
-		QString m_attributeName;
+        // Shared animation properties
+        EFillMode m_fill : 1;
+        ERestart m_restart : 2;
+        ECalcMode m_calcMode : 2;
+        EAdditiveMode m_additive : 1;
+        EAccumulateMode m_accumulate : 1;
+        EAttributeType m_attributeType : 2;
+        
+        QString m_to;
+        QString m_by;
+        QString m_from;
+        QString m_href;
+        QString m_repeatDur;
+        QString m_attributeName;
 
-		double m_max;
-		double m_min;
-		double m_end;
-		double m_begin;
+        double m_max;
+        double m_min;
+        double m_end;
+        double m_begin;
 
-		double m_repeations;
-		double m_repeatCount;
+        double m_repeations;
+        double m_repeatCount;
 
-		SVGStringListImpl *m_values;
-		SVGStringListImpl *m_keyTimes;
-		SVGStringListImpl *m_keySplines;
-	};
+        SVGStringListImpl *m_values;
+        SVGStringListImpl *m_keyTimes;
+        SVGStringListImpl *m_keySplines;
+    };
 };
 
 #endif

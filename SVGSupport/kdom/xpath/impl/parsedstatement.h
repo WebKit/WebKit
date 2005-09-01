@@ -28,7 +28,7 @@
 #include "util.h"
 
 namespace KDOM {
-	class NodeImpl;
+    class NodeImpl;
 }
 
 class Path;
@@ -36,21 +36,21 @@ class Value;
 
 class ParsedStatement
 {
-	public:
-		ParsedStatement();
-		ParsedStatement( const DomString &statement );
-		~ParsedStatement();
+    public:
+        ParsedStatement();
+        ParsedStatement( const DomString &statement );
+        ~ParsedStatement();
 
-		void parse( const DomString &statement );
+        void parse( const DomString &statement );
 
-		void optimize();
+        void optimize();
 
-		QString dump() const;
+        QString dump() const;
 
-		Value evaluate( KDOM::NodeImpl *context ) const;
+        Value evaluate( KDOM::NodeImpl *context ) const;
 
-	private:
-		Path *m_path;
+    private:
+        Path *m_path;
 };
 
 #endif // PARSEDSTATEMENT_H

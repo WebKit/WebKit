@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,17 +36,17 @@ CDATASectionImpl::~CDATASectionImpl()
 
 DOMStringImpl *CDATASectionImpl::nodeName() const
 {
-	return new DOMStringImpl("#cdata-section");
+    return new DOMStringImpl("#cdata-section");
 }
 
 unsigned short CDATASectionImpl::nodeType() const
 {
-	return CDATA_SECTION_NODE;
+    return CDATA_SECTION_NODE;
 }
 
 NodeImpl *CDATASectionImpl::cloneNode(bool, DocumentPtr *doc) const
 {
-	return doc->document()->createCDATASection(data());
+    return doc->document()->createCDATASection(data());
 }
 
 // vim:ts=4:noet

@@ -28,20 +28,20 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl : public SVGAnimatedTemplate<SVGLengthImpl>
-	{
-	public:
-		SVGAnimatedLengthImpl(const SVGStyledElementImpl *context, LengthMode mode = LM_UNKNOWN, const SVGElementImpl *viewport = 0);
-		virtual ~SVGAnimatedLengthImpl();
+    class SVGAnimatedLengthImpl : public SVGAnimatedTemplate<SVGLengthImpl>
+    {
+    public:
+        SVGAnimatedLengthImpl(const SVGStyledElementImpl *context, LengthMode mode = LM_UNKNOWN, const SVGElementImpl *viewport = 0);
+        virtual ~SVGAnimatedLengthImpl();
 
-	protected:
-		virtual SVGLengthImpl *create() const;
-		virtual void assign(SVGLengthImpl *src, SVGLengthImpl *dst) const;
+    protected:
+        virtual SVGLengthImpl *create() const;
+        virtual void assign(SVGLengthImpl *src, SVGLengthImpl *dst) const;
 
-	private:
-		LengthMode m_mode;
-		const SVGElementImpl *m_viewportElement;
-	};
+    private:
+        LengthMode m_mode;
+        const SVGElementImpl *m_viewportElement;
+    };
 };
 
 #endif

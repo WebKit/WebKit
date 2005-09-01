@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,31 +27,31 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthListImpl;
-	class SVGAnimatedNumberListImpl;
+    class SVGAnimatedLengthListImpl;
+    class SVGAnimatedNumberListImpl;
 
-	class SVGTextPositioningElementImpl : public SVGTextContentElementImpl
-	{
-	public:
-		SVGTextPositioningElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGTextPositioningElementImpl();
+    class SVGTextPositioningElementImpl : public SVGTextContentElementImpl
+    {
+    public:
+        SVGTextPositioningElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGTextPositioningElementImpl();
 
-		// 'SVGTextPositioningElement' functions
-		SVGAnimatedLengthListImpl *x() const;
-		SVGAnimatedLengthListImpl *y() const;
-		SVGAnimatedLengthListImpl *dx() const;
-		SVGAnimatedLengthListImpl *dy() const;
-		SVGAnimatedNumberListImpl *rotate() const;
+        // 'SVGTextPositioningElement' functions
+        SVGAnimatedLengthListImpl *x() const;
+        SVGAnimatedLengthListImpl *y() const;
+        SVGAnimatedLengthListImpl *dx() const;
+        SVGAnimatedLengthListImpl *dy() const;
+        SVGAnimatedNumberListImpl *rotate() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGAnimatedLengthListImpl *m_x;
-		mutable SVGAnimatedLengthListImpl *m_y;
-		mutable SVGAnimatedLengthListImpl *m_dx;
-		mutable SVGAnimatedLengthListImpl *m_dy;
-		mutable SVGAnimatedNumberListImpl *m_rotate;
-	};
+    private:
+        mutable SVGAnimatedLengthListImpl *m_x;
+        mutable SVGAnimatedLengthListImpl *m_y;
+        mutable SVGAnimatedLengthListImpl *m_dx;
+        mutable SVGAnimatedLengthListImpl *m_dy;
+        mutable SVGAnimatedNumberListImpl *m_rotate;
+    };
 };
 
 #endif

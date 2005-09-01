@@ -32,36 +32,36 @@ class KCanvasItem;
 
 namespace KSVG
 {
-	class SVGPaintImpl;
-	class SVGPaint : public SVGColor
-	{
-	public:
-		SVGPaint();
-		explicit SVGPaint(SVGPaintImpl *i);
-		SVGPaint(const SVGPaint &other);
-		SVGPaint(const KDOM::CSSValue &other);
-		virtual ~SVGPaint();
+    class SVGPaintImpl;
+    class SVGPaint : public SVGColor
+    {
+    public:
+        SVGPaint();
+        explicit SVGPaint(SVGPaintImpl *i);
+        SVGPaint(const SVGPaint &other);
+        SVGPaint(const KDOM::CSSValue &other);
+        virtual ~SVGPaint();
 
-		// Operators
-		SVGPaint &operator=(const SVGPaint &other);
-		SVGPaint &operator=(const KDOM::CSSValue &other);
+        // Operators
+        SVGPaint &operator=(const SVGPaint &other);
+        SVGPaint &operator=(const KDOM::CSSValue &other);
 
-		// 'SVGPaint' functions
-		unsigned short paintType() const;
-		KDOM::DOMString uri() const;
+        // 'SVGPaint' functions
+        unsigned short paintType() const;
+        KDOM::DOMString uri() const;
 
-		void setUri(const KDOM::DOMString &uri);
-		void setPaint(unsigned short paintType, const KDOM::DOMString &uri, const KDOM::DOMString &rgbPaint, const KDOM::DOMString &iccPaint);
+        void setUri(const KDOM::DOMString &uri);
+        void setPaint(unsigned short paintType, const KDOM::DOMString &uri, const KDOM::DOMString &rgbPaint, const KDOM::DOMString &iccPaint);
 
-		// Internal
-		KSVG_INTERNAL(SVGPaint)
+        // Internal
+        KSVG_INTERNAL(SVGPaint)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGPaintProto)

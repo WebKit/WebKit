@@ -34,8 +34,8 @@ using namespace KDOM;
 using namespace XPath;
 
 XPathExpressionImpl::XPathExpressionImpl( DOMStringImpl *expression, XPathNSResolverImpl *resolver )
-	: m_statement( expression->string() ),
-	m_resolver( resolver )
+    : m_statement( expression->string() ),
+    m_resolver( resolver )
 {
 }
 
@@ -43,13 +43,13 @@ XPathResultImpl *XPathExpressionImpl::evaluate( NodeImpl *contextNode,
                                                 unsigned short type,
                                                 XPathResultImpl *result_ )
 {
-	XPathResultImpl *result = result_ ? result_ : new XPathResultImpl;
+    XPathResultImpl *result = result_ ? result_ : new XPathResultImpl;
 
-	*result = XPathResultImpl( m_statement.evaluate( contextNode ) );
-	if ( type != ANY_TYPE ) {
-		result->convertTo( type );
-	}
+    *result = XPathResultImpl( m_statement.evaluate( contextNode ) );
+    if ( type != ANY_TYPE ) {
+        result->convertTo( type );
+    }
 
-	return result;
+    return result;
 }
 

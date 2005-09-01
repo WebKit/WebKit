@@ -29,7 +29,7 @@
 // Filters
 void KCanvasFilter::addFilterEffect(KCanvasFilterEffect *effect)
 {
-	m_effects.append(effect);
+    m_effects.append(effect);
 }
 
 QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const
@@ -52,31 +52,31 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasFilterEffect &e)
 
 QRect KCanvasFilterEffect::subRegion() const
 {
-	return m_subregion;
+    return m_subregion;
 }
 
 void KCanvasFilterEffect::setSubRegion(const QRect &subregion)
 {
-	m_subregion = subregion;
+    m_subregion = subregion;
 }
 
 QString KCanvasFilterEffect::in() const
 {
-	return m_in;
+    return m_in;
 }
 void KCanvasFilterEffect::setIn(const QString &in)
 {
-	m_in = in;
+    m_in = in;
 }
 
 QString KCanvasFilterEffect::result() const
 {
-	return m_result;
+    return m_result;
 }
 
 void KCanvasFilterEffect::setResult(const QString &result)
 {
-	m_result = result;
+    m_result = result;
 }
 
 QTextStream &KCanvasFilterEffect::externalRepresentation(QTextStream &ts) const
@@ -298,22 +298,22 @@ QTextStream &KCanvasFEFlood::externalRepresentation(QTextStream &ts) const
 
 float KCanvasFEGaussianBlur::stdDeviationX() const
 {
-	return m_x;
+    return m_x;
 }
 
 void KCanvasFEGaussianBlur::setStdDeviationX(float x)
 {
-	m_x = x;
+    m_x = x;
 }
 
 float KCanvasFEGaussianBlur::stdDeviationY() const
 {
-	return m_y;
+    return m_y;
 }
 
 void KCanvasFEGaussianBlur::setStdDeviationY(float y)
 {
-	m_y = y;
+    m_y = y;
 }
 
 QTextStream &KCanvasFEGaussianBlur::externalRepresentation(QTextStream &ts) const
@@ -326,7 +326,7 @@ QTextStream &KCanvasFEGaussianBlur::externalRepresentation(QTextStream &ts) cons
 
 KCanvasFEImage::~KCanvasFEImage()
 {
-	delete m_image;
+    delete m_image;
 }
 
 QTextStream &KCanvasFEImage::externalRepresentation(QTextStream &ts) const

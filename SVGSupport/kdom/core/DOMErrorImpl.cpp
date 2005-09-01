@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,87 +29,87 @@ using namespace KDOM;
 
 DOMErrorImpl::DOMErrorImpl() : Shared()
 {
-	m_severity = 0;
-	m_message = 0;
-	m_type = 0;
-	m_relatedException = 0;
-	m_relatedData = 0;
-	m_location = 0;
+    m_severity = 0;
+    m_message = 0;
+    m_type = 0;
+    m_relatedException = 0;
+    m_relatedData = 0;
+    m_location = 0;
 }
 
 DOMErrorImpl::~DOMErrorImpl()
 {
-	if(m_message)
-		m_message->deref();
-	if(m_type)
-		m_type->deref();
-	if(m_relatedException)
-		m_relatedException->deref();
-	if(m_relatedData)
-		m_relatedData->deref();
-	if(m_location)
-		m_location->deref();
+    if(m_message)
+        m_message->deref();
+    if(m_type)
+        m_type->deref();
+    if(m_relatedException)
+        m_relatedException->deref();
+    if(m_relatedData)
+        m_relatedData->deref();
+    if(m_location)
+        m_location->deref();
 }
 
 unsigned short DOMErrorImpl::severity() const
 {
-	return m_severity;
+    return m_severity;
 }
 
 void DOMErrorImpl::setSeverity(unsigned short severity)
 {
-	m_severity = severity;
+    m_severity = severity;
 }
 
 DOMStringImpl *DOMErrorImpl::message() const
 {
-	return m_message;
+    return m_message;
 }
 
 void DOMErrorImpl::setMessage(DOMStringImpl *message)
 {
-	KDOM_SAFE_SET(m_message, message);
+    KDOM_SAFE_SET(m_message, message);
 }
 
 DOMStringImpl *DOMErrorImpl::type() const
 {
-	return m_type;
+    return m_type;
 }
 
 void DOMErrorImpl::setType(DOMStringImpl *type)
 {
-	KDOM_SAFE_SET(m_type, type);
+    KDOM_SAFE_SET(m_type, type);
 }
 
 DOMObjectImpl *DOMErrorImpl::relatedException() const
 {
-	return m_relatedException;
+    return m_relatedException;
 }
 
 void DOMErrorImpl::setRelatedException(DOMObjectImpl *relatedException)
 {
-	KDOM_SAFE_SET(m_relatedException, relatedException);
+    KDOM_SAFE_SET(m_relatedException, relatedException);
 }
 
 DOMObjectImpl *DOMErrorImpl::relatedData() const
 {
-	return m_relatedData;
+    return m_relatedData;
 }
 
 void DOMErrorImpl::setRelatedData(DOMObjectImpl *relatedData)
 {
-	KDOM_SAFE_SET(m_relatedData, relatedData);
+    KDOM_SAFE_SET(m_relatedData, relatedData);
 }
 
 DOMLocatorImpl *DOMErrorImpl::location() const
 {
-	if(!m_location)
-	{
-		m_location = new DOMLocatorImpl();
-		m_location->ref();
-	}
+    if(!m_location)
+    {
+        m_location = new DOMLocatorImpl();
+        m_location->ref();
+    }
 
-	return m_location;
+    return m_location;
 }
 
 // vim:ts=4:noet

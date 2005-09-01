@@ -37,47 +37,47 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedString::s_hashTable 3
- baseVal	SVGAnimatedStringConstants::BaseVal	DontDelete
- animVal	SVGAnimatedStringConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedStringConstants::BaseVal    DontDelete
+ animVal    SVGAnimatedStringConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedString::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedStringConstants::BaseVal:
-			return getDOMString(baseVal());
-		case SVGAnimatedStringConstants::AnimVal:
-			return getDOMString(animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedStringConstants::BaseVal:
+            return getDOMString(baseVal());
+        case SVGAnimatedStringConstants::AnimVal:
+            return getDOMString(animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGAnimatedString::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedStringConstants::BaseVal:
-		{
-			if(impl)
-				impl->setBaseVal(KDOM::toDOMString(exec, value).implementation());
+    switch(token)
+    {
+        case SVGAnimatedStringConstants::BaseVal:
+        {
+            if(impl)
+                impl->setBaseVal(KDOM::toDOMString(exec, value).implementation());
 
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 SVGAnimatedString SVGAnimatedString::null;
@@ -88,31 +88,31 @@ SVGAnimatedString::SVGAnimatedString() : impl(0)
 
 SVGAnimatedString::SVGAnimatedString(SVGAnimatedStringImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedString::SVGAnimatedString(const SVGAnimatedString &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedString)
 
 KDOM::DOMString SVGAnimatedString::baseVal() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->baseVal());
+    return KDOM::DOMString(impl->baseVal());
 }
 
 KDOM::DOMString SVGAnimatedString::animVal() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->animVal());
+    return KDOM::DOMString(impl->animVal());
 }
 
 // vim:ts=4:noet

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,21 +30,21 @@ using namespace KSVG;
 
 /*
 @begin SVGException::s_hashTable 2
- code	SVGExceptionConstants::Code	DontDelete|ReadOnly
+ code    SVGExceptionConstants::Code    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGException::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-		case SVGExceptionConstants::Code:
-			return Number(code());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGExceptionConstants::Code:
+            return Number(code());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 SVGException SVGException::null;
@@ -55,23 +55,23 @@ SVGException::SVGException() : impl(0)
 
 SVGException::SVGException(SVGExceptionImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGException::SVGException(const SVGException &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGException)
 
 unsigned short SVGException::code() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->code();
+    return impl->code();
 }
 
 // vim:ts=4:noet

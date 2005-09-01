@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,41 +33,41 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGLineElementImpl;
-	class SVGLineElement : public SVGElement,
-						   public SVGTests,
-						   public SVGLangSpace,
-						   public SVGExternalResourcesRequired,
-						   public SVGStylable,
-						   public SVGTransformable
-	{
-	public:
-		SVGLineElement();
-		explicit SVGLineElement(SVGLineElementImpl *i);
-		SVGLineElement(const SVGLineElement &other);
-		SVGLineElement(const KDOM::Node &other);
-		virtual ~SVGLineElement();
+    class SVGAnimatedLength;
+    class SVGLineElementImpl;
+    class SVGLineElement : public SVGElement,
+                           public SVGTests,
+                           public SVGLangSpace,
+                           public SVGExternalResourcesRequired,
+                           public SVGStylable,
+                           public SVGTransformable
+    {
+    public:
+        SVGLineElement();
+        explicit SVGLineElement(SVGLineElementImpl *i);
+        SVGLineElement(const SVGLineElement &other);
+        SVGLineElement(const KDOM::Node &other);
+        virtual ~SVGLineElement();
 
-		// Operators
-		SVGLineElement &operator=(const SVGLineElement &other);
-		SVGLineElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGLineElement &operator=(const SVGLineElement &other);
+        SVGLineElement &operator=(const KDOM::Node &other);
 
-		// 'SVGLineElement' functions
-		SVGAnimatedLength x1() const;
-		SVGAnimatedLength y1() const;
-		SVGAnimatedLength x2() const;
-		SVGAnimatedLength y2() const;
+        // 'SVGLineElement' functions
+        SVGAnimatedLength x1() const;
+        SVGAnimatedLength y1() const;
+        SVGAnimatedLength x2() const;
+        SVGAnimatedLength y2() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGLineElement)
+        // Internal
+        KSVG_INTERNAL(SVGLineElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

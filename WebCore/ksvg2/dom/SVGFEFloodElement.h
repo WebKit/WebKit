@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,35 +28,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGFEFloodElementImpl;
+    class SVGAnimatedString;
+    class SVGFEFloodElementImpl;
 
-	class SVGFEFloodElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEFloodElement();
-		explicit SVGFEFloodElement(SVGFEFloodElementImpl *i);
-		SVGFEFloodElement(const SVGFEFloodElement &other);
-		SVGFEFloodElement(const KDOM::Node &other);
-		virtual ~SVGFEFloodElement();
+    class SVGFEFloodElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEFloodElement();
+        explicit SVGFEFloodElement(SVGFEFloodElementImpl *i);
+        SVGFEFloodElement(const SVGFEFloodElement &other);
+        SVGFEFloodElement(const KDOM::Node &other);
+        virtual ~SVGFEFloodElement();
 
-		// Operators
-		SVGFEFloodElement &operator=(const SVGFEFloodElement &other);
-		SVGFEFloodElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEFloodElement &operator=(const SVGFEFloodElement &other);
+        SVGFEFloodElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEFloodlement' functions
-		SVGAnimatedString in1() const;
+        // 'SVGFEFloodlement' functions
+        SVGAnimatedString in1() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEFloodElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEFloodElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

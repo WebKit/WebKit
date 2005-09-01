@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,56 +32,56 @@ StyleSheetListImpl::StyleSheetListImpl() : Shared()
 
 StyleSheetListImpl::~StyleSheetListImpl()
 {
-	QPtrListIterator<StyleSheetImpl> it(styleSheets);
-	for(; it.current(); ++it)
-		it.current()->deref();
+    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    for(; it.current(); ++it)
+        it.current()->deref();
 }
 
 unsigned long StyleSheetListImpl::length() const
 {
-	// hack so implicit BODY stylesheets don't get counted here
-	unsigned long l = 0;
-	QPtrListIterator<StyleSheetImpl> it(styleSheets);
-	for(; it.current(); ++it)
-	{
-		if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit())
-			++l;
-	}
+    // hack so implicit BODY stylesheets don't get counted here
+    unsigned long l = 0;
+    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    for(; it.current(); ++it)
+    {
+        if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit())
+            ++l;
+    }
 
-	return l;
+    return l;
 }
 
 StyleSheetImpl *StyleSheetListImpl::item(unsigned long index) const
 {
-	unsigned long l = 0;
-	QPtrListIterator<StyleSheetImpl> it(styleSheets);
-	for(; it.current(); ++it)
-	{
-		if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl *>(it.current())->implicit())
-		{
-			if(l == index)
-				return it.current();
+    unsigned long l = 0;
+    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    for(; it.current(); ++it)
+    {
+        if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl *>(it.current())->implicit())
+        {
+            if(l == index)
+                return it.current();
 
-			++l;
-		}
-	}
+            ++l;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 void StyleSheetListImpl::add(StyleSheetImpl *s)
 {
-	if(!styleSheets.containsRef(s))
-	{
-		s->ref();
-		styleSheets.append(s);
-	}
+    if(!styleSheets.containsRef(s))
+    {
+        s->ref();
+        styleSheets.append(s);
+    }
 }
 
 void StyleSheetListImpl::remove(StyleSheetImpl *s)
 {
-	if(styleSheets.removeRef(s))
-		s->deref();
+    if(styleSheets.removeRef(s))
+        s->deref();
 }
 
 // vim:ts=4:noet

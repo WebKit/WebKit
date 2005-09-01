@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,26 +27,26 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class DOMStringImpl;
+    class DOMString;
+    class DOMStringImpl;
 
-	class LSOutputImpl : public Shared
-	{
-	public:
-		LSOutputImpl();
-		virtual ~LSOutputImpl();
+    class LSOutputImpl : public Shared
+    {
+    public:
+        LSOutputImpl();
+        virtual ~LSOutputImpl();
 
-		// 'LSOutput' functions
-		DOMStringImpl *systemId() const;
-		void setSystemId(DOMStringImpl *systemId);
+        // 'LSOutput' functions
+        DOMStringImpl *systemId() const;
+        void setSystemId(DOMStringImpl *systemId);
 
-		DOMStringImpl *encoding() const;
-		void setEncoding(DOMStringImpl *encoding);
+        DOMStringImpl *encoding() const;
+        void setEncoding(DOMStringImpl *encoding);
 
-	private:
-		DOMStringImpl *m_systemId;
-		DOMStringImpl *m_encoding;
-	};
+    private:
+        DOMStringImpl *m_systemId;
+        DOMStringImpl *m_encoding;
+    };
 };
 
 #endif

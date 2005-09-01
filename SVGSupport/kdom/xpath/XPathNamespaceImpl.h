@@ -37,10 +37,10 @@ namespace XPath
 
 class XPathNamespaceImpl : public KDOM::NodeImpl
 {
-	public:
-		XPathNamespaceImpl( DocumentPtr *ptr );
+    public:
+        XPathNamespaceImpl( DocumentPtr *ptr );
 
-		ElementImpl *ownerElement() const;
+        ElementImpl *ownerElement() const;
 };
 
 }

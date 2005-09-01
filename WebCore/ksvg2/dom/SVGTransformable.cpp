@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,24 +37,24 @@ using namespace KSVG;
 
 /*
 @begin SVGTransformable::s_hashTable 3
- transform	SVGTransformableConstants::Transform	DontDelete|ReadOnly
+ transform    SVGTransformableConstants::Transform    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGTransformable::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGTransformableConstants::Transform:
-			return KDOM::safe_cache<SVGAnimatedTransformList>(exec, transform());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGTransformableConstants::Transform:
+            return KDOM::safe_cache<SVGAnimatedTransformList>(exec, transform());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGTransformable SVGTransformable::null;
@@ -69,7 +69,7 @@ SVGTransformable::SVGTransformable(SVGTransformableImpl *i) : SVGLocatable(i), i
 
 SVGTransformable::SVGTransformable(const SVGTransformable &other) : SVGLocatable(), impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTransformable::~SVGTransformable()
@@ -78,28 +78,28 @@ SVGTransformable::~SVGTransformable()
 
 SVGTransformable &SVGTransformable::operator=(const SVGTransformable &other)
 {
-	SVGLocatable::operator=(other);
-	if(impl != other.impl)
-		impl = other.impl;
+    SVGLocatable::operator=(other);
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGTransformable &SVGTransformable::operator=(SVGTransformableImpl *other)
 {
-	SVGLocatable::operator=(other);
-	if(impl != other)
-		impl = other;
+    SVGLocatable::operator=(other);
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedTransformList SVGTransformable::transform() const
 {
-	if(!impl)
-		return SVGAnimatedTransformList::null;
+    if(!impl)
+        return SVGAnimatedTransformList::null;
 
-	return SVGAnimatedTransformList(impl->transform());
+    return SVGAnimatedTransformList(impl->transform());
 }
 
 // vim:ts=4:noet

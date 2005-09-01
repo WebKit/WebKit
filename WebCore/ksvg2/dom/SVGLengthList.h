@@ -27,44 +27,44 @@
 
 namespace KSVG
 {
-	class SVGMatrix;
-	class SVGLength;
-	class SVGLengthListImpl;
-	class SVGLengthList
-	{
-	public:
-		SVGLengthList();
-		explicit SVGLengthList(SVGLengthListImpl *i);
-		SVGLengthList(const SVGLengthList &other);
-		virtual ~SVGLengthList();
+    class SVGMatrix;
+    class SVGLength;
+    class SVGLengthListImpl;
+    class SVGLengthList
+    {
+    public:
+        SVGLengthList();
+        explicit SVGLengthList(SVGLengthListImpl *i);
+        SVGLengthList(const SVGLengthList &other);
+        virtual ~SVGLengthList();
 
-		// Operators
-		SVGLengthList &operator=(const SVGLengthList &other);
-		bool operator==(const SVGLengthList &other) const;
-		bool operator!=(const SVGLengthList &other) const;
+        // Operators
+        SVGLengthList &operator=(const SVGLengthList &other);
+        bool operator==(const SVGLengthList &other) const;
+        bool operator!=(const SVGLengthList &other) const;
 
-		// 'SVGLengthList' functions
-		unsigned long numberOfItems() const;
-		void clear();
+        // 'SVGLengthList' functions
+        unsigned long numberOfItems() const;
+        void clear();
 
-		SVGLength initialize(const SVGLength &newItem);
-		SVGLength getItem(unsigned long index);
-		SVGLength insertItemBefore(const SVGLength &newItem, unsigned long index);
-		SVGLength replaceItem(const SVGLength &newItem, unsigned long index);
-		SVGLength removeItem(unsigned long index);
-		SVGLength appendItem(const SVGLength &newItem);
+        SVGLength initialize(const SVGLength &newItem);
+        SVGLength getItem(unsigned long index);
+        SVGLength insertItemBefore(const SVGLength &newItem, unsigned long index);
+        SVGLength replaceItem(const SVGLength &newItem, unsigned long index);
+        SVGLength removeItem(unsigned long index);
+        SVGLength appendItem(const SVGLength &newItem);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGLengthList)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGLengthList)
 
-	protected:
-		SVGLengthListImpl *impl;
+    protected:
+        SVGLengthListImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGLengthListProto)

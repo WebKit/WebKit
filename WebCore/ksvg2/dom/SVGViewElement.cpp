@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,24 +35,24 @@ using namespace KSVG;
 
 /*
 @begin SVGViewElement::s_hashTable 3
- viewTarget		SVGViewElementConstants::ViewTarget		DontDelete|ReadOnly
+ viewTarget        SVGViewElementConstants::ViewTarget        DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGViewElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGViewElementConstants::ViewTarget:
-			return KDOM::safe_cache<SVGStringList>(exec, viewTarget());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGViewElementConstants::ViewTarget:
+            return KDOM::safe_cache<SVGStringList>(exec, viewTarget());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -73,13 +73,13 @@ SVGViewElement::SVGViewElement(SVGViewElementImpl *i)
 SVGViewElement::SVGViewElement(const SVGViewElement &other)
 : SVGElement(), SVGExternalResourcesRequired(), SVGFitToViewBox(), SVGZoomAndPan()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGViewElement::SVGViewElement(const KDOM::Node &other)
 : SVGElement(), SVGExternalResourcesRequired(), SVGFitToViewBox(), SVGZoomAndPan()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGViewElement::~SVGViewElement()
@@ -88,43 +88,43 @@ SVGViewElement::~SVGViewElement()
 
 SVGViewElement &SVGViewElement::operator=(const SVGViewElement &other)
 {
-	SVGElement::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGFitToViewBox::operator=(other);
-	SVGZoomAndPan::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGFitToViewBox::operator=(other);
+    SVGZoomAndPan::operator=(other);
+    return *this;
 }
 
 SVGViewElement &SVGViewElement::operator=(const KDOM::Node &other)
 {
-	SVGViewElementImpl *ohandle = static_cast<SVGViewElementImpl *>(other.handle());
-	if(impl != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(impl)
-				impl->deref();
+    SVGViewElementImpl *ohandle = static_cast<SVGViewElementImpl *>(other.handle());
+    if(impl != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(impl)
+                impl->deref();
 
-			Node::d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGFitToViewBox::operator=(ohandle);
-			SVGZoomAndPan::operator=(ohandle);
-		}
-	}
+            Node::d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGFitToViewBox::operator=(ohandle);
+            SVGZoomAndPan::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGStringList SVGViewElement::viewTarget() const
 {
-	if(!impl)
-		return SVGStringList::null;
+    if(!impl)
+        return SVGStringList::null;
 
-	return SVGStringList(impl->viewTarget());
+    return SVGStringList(impl->viewTarget());
 }
 
 // vim:ts=4:noet

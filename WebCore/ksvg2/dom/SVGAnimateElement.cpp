@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,22 +33,22 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimateElement::s_hashTable 2
- dummy	SVGAnimateElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGAnimateElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimateElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -66,12 +66,12 @@ SVGAnimateElement::SVGAnimateElement(SVGAnimateElementImpl *i) : SVGAnimationEle
 
 SVGAnimateElement::SVGAnimateElement(const SVGAnimateElement &other) : SVGAnimationElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimateElement::SVGAnimateElement(const KDOM::Node &other) : SVGAnimationElement()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGAnimateElement::~SVGAnimateElement()
@@ -80,27 +80,27 @@ SVGAnimateElement::~SVGAnimateElement()
 
 SVGAnimateElement &SVGAnimateElement::operator=(const SVGAnimateElement &other)
 {
-	SVGAnimationElement::operator=(other);
-	return *this;
+    SVGAnimationElement::operator=(other);
+    return *this;
 }
 
 SVGAnimateElement &SVGAnimateElement::operator=(const KDOM::Node &other)
 {
-	SVGAnimateElementImpl *ohandle = static_cast<SVGAnimateElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-			SVGAnimationElement::operator=(other);
-	}
+    SVGAnimateElementImpl *ohandle = static_cast<SVGAnimateElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+            SVGAnimationElement::operator=(other);
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

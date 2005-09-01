@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -44,187 +44,187 @@ using namespace KDOM;
 class Parser::Private
 {
 public:
-	Private(const KURL &u): url(u), jobTicket(0), docLoader(0), cachedDoc(0), docBuilder(0), config(0)
-	{
-	}
+    Private(const KURL &u): url(u), jobTicket(0), docLoader(0), cachedDoc(0), docBuilder(0), config(0)
+    {
+    }
 
-	~Private()
-	{
-		if(config)
-			config->deref();
+    ~Private()
+    {
+        if(config)
+            config->deref();
 
-		delete docBuilder;
-		delete docLoader;
-	}
+        delete docBuilder;
+        delete docLoader;
+    }
 
-	KURL url;
+    KURL url;
 
-	// DataSlave interface
-	unsigned long jobTicket;
+    // DataSlave interface
+    unsigned long jobTicket;
 
-	DocumentLoader *docLoader;
-	CachedDocument *cachedDoc;
-	DocumentBuilder *docBuilder;
-	DOMConfigurationImpl *config;
+    DocumentLoader *docLoader;
+    CachedDocument *cachedDoc;
+    DocumentBuilder *docBuilder;
+    DOMConfigurationImpl *config;
 };
 
 Parser::Parser(const KURL &url) : QObject(0, "KDOM Parser"), d(new Private(url))
 {
 #ifndef APPLE_COMPILE_HACK
-	// Make @p url absolute from current working directory if it's local(and relative).
-	if(KURL::isRelativeURL(url.url()))
-		d->url = KURL(KURL(QDir::currentDirPath() + '/'), url.url());
+    // Make @p url absolute from current working directory if it's local(and relative).
+    if(KURL::isRelativeURL(url.url()))
+        d->url = KURL(KURL(QDir::currentDirPath() + '/'), url.url());
 #endif
 }
 
 Parser::~Parser()
 {
-	delete d;
+    delete d;
 }
 
 KURL Parser::url() const
 {
-	return d->url;
+    return d->url;
 }
 
 DocumentImpl *Parser::document() const
 {
-	if(!d->docBuilder)
-		return 0;
+    if(!d->docBuilder)
+        return 0;
 
-	return d->docBuilder->document();
+    return d->docBuilder->document();
 }
 
 DOMConfigurationImpl *Parser::domConfig() const
 {
-	if(!d->config)
-	{
-		d->config = new DOMConfigurationImpl();
-		d->config->ref();
-	}
+    if(!d->config)
+    {
+        d->config = new DOMConfigurationImpl();
+        d->config->ref();
+    }
 
-	return d->config;
+    return d->config;
 }
 
 DocumentBuilder *Parser::documentBuilder() const
 {
-	return d->docBuilder;
+    return d->docBuilder;
 }
 
 void Parser::setDocumentBuilder(DocumentBuilder *builder)
 {
-	delete d->docBuilder;
-	d->docBuilder = builder;
+    delete d->docBuilder;
+    d->docBuilder = builder;
 }
 
 DocumentImpl *Parser::syncParse(QBuffer *buffer)
 {
-	QBuffer *work = buffer;
-	if(!work)
-		work = bufferForUrl(d->url);
+    QBuffer *work = buffer;
+    if(!work)
+        work = bufferForUrl(d->url);
 
-	if(!work)
-		return 0;
+    if(!work)
+        return 0;
 
-	// Ask 'custom parser' on top of us, to handle the incoming xml stream...
-	const_cast<Parser *>(this)->handleIncomingData(work, true);
+    // Ask 'custom parser' on top of us, to handle the incoming xml stream...
+    const_cast<Parser *>(this)->handleIncomingData(work, true);
 
-	delete work; // Delete as it's not cached.
+    delete work; // Delete as it's not cached.
 
-	// Return parsed document...
-	return document();
+    // Return parsed document...
+    return document();
 }
 
 void Parser::asyncParse(bool incremental, const char *accept)
 {
-	// Asynchronous parsing.
-	// TODO: INCREMENTAL PARSING!
-	if(!d->docLoader)
-		d->docLoader = new DocumentLoader(0, 0); // TODO: Fix usage of DocumentLoader!
+    // Asynchronous parsing.
+    // TODO: INCREMENTAL PARSING!
+    if(!d->docLoader)
+        d->docLoader = new DocumentLoader(0, 0); // TODO: Fix usage of DocumentLoader!
 
-	d->cachedDoc = d->docLoader->requestDocument(d->url, QString::fromLatin1(accept));
-	d->cachedDoc->ref(this);
+    d->cachedDoc = d->docLoader->requestDocument(d->url, QString::fromLatin1(accept));
+    d->cachedDoc->ref(this);
 }
 
 void Parser::abortWork()
 {
-	// TODO: maybe fill DOMError object with information?
-	DOMErrorImpl *error = new DOMErrorImpl();
-	error->ref();
-	error->setSeverity(SEVERITY_ERROR);
+    // TODO: maybe fill DOMError object with information?
+    DOMErrorImpl *error = new DOMErrorImpl();
+    error->ref();
+    error->setSeverity(SEVERITY_ERROR);
 
-	handleError(error);
-	error->deref();
+    handleError(error);
+    error->deref();
 }
 
 void Parser::notifyFinished(CachedObject *object)
 {
-	if(object == d->cachedDoc)
-	{
-		d->cachedDoc->deref(this);
+    if(object == d->cachedDoc)
+    {
+        d->cachedDoc->deref(this);
 
-		handleIncomingData(d->cachedDoc->documentBuffer(), true);
+        handleIncomingData(d->cachedDoc->documentBuffer(), true);
 
-		// No error.
-		emit parsingFinished(0);
+        // No error.
+        emit parsingFinished(0);
 
-		d->cachedDoc = 0;
-	}
+        d->cachedDoc = 0;
+    }
 }
 
 bool Parser::handleError(DOMErrorImpl *err)
 {
-	if(err->severity() == SEVERITY_WARNING)
-	{
-		QString str;
-		str.sprintf("[%ld:%ld]: WARNING: %s\n", err->location()->lineNumber(),
-					err->location()->columnNumber(), DOMString(err->message()).string().latin1());
+    if(err->severity() == SEVERITY_WARNING)
+    {
+        QString str;
+        str.sprintf("[%ld:%ld]: WARNING: %s\n", err->location()->lineNumber(),
+                    err->location()->columnNumber(), DOMString(err->message()).string().latin1());
 
-		kdDebug(26001) << str << endl;
-	}
-	else if(err->severity() == SEVERITY_ERROR)
-	{
-		QString str;
-		str.sprintf("[%ld:%ld]: ERROR: %s\n", err->location()->lineNumber(),
-					err->location()->columnNumber(), DOMString(err->message()).string().latin1());
-		kdDebug(26001) << str << endl;
-	}
-	else
-	{
-		QString str;
-		str.sprintf("[%ld:%ld]: FATAL ERROR: %s\n", err->location()->lineNumber(),
-					err->location()->columnNumber(), DOMString(err->message()).string().latin1());
-					
-		kdDebug(26001) << str << endl;
-		emit parsingFinished(err);
-		assert(0);
-	}
+        kdDebug(26001) << str << endl;
+    }
+    else if(err->severity() == SEVERITY_ERROR)
+    {
+        QString str;
+        str.sprintf("[%ld:%ld]: ERROR: %s\n", err->location()->lineNumber(),
+                    err->location()->columnNumber(), DOMString(err->message()).string().latin1());
+        kdDebug(26001) << str << endl;
+    }
+    else
+    {
+        QString str;
+        str.sprintf("[%ld:%ld]: FATAL ERROR: %s\n", err->location()->lineNumber(),
+                    err->location()->columnNumber(), DOMString(err->message()).string().latin1());
+                    
+        kdDebug(26001) << str << endl;
+        emit parsingFinished(err);
+        assert(0);
+    }
 
-	return true;
+    return true;
 }
 
 QBuffer *Parser::bufferForUrl(const KURL &url) const
 {
 #ifndef APPLE_COMPILE_HACK
-	QString temporaryFileName;
-	bool retVal = KIO::NetAccess::download(url, temporaryFileName, 0 /* No window for authentification etc.. */);
-	if(!retVal) // No temporary file created so far -> nothing to remove
-		return 0;
+    QString temporaryFileName;
+    bool retVal = KIO::NetAccess::download(url, temporaryFileName, 0 /* No window for authentification etc.. */);
+    if(!retVal) // No temporary file created so far -> nothing to remove
+        return 0;
 
-	QFile file(temporaryFileName);
-	if(!file.open(IO_ReadOnly))
-	{
-		// Can a file be correctly downloaded but not opened?
-		KIO::NetAccess::removeTempFile(temporaryFileName);
-		return 0;
-	}
+    QFile file(temporaryFileName);
+    if(!file.open(IO_ReadOnly))
+    {
+        // Can a file be correctly downloaded but not opened?
+        KIO::NetAccess::removeTempFile(temporaryFileName);
+        return 0;
+    }
 
-	QBuffer *ret = new QBuffer(file.readAll());
-	KIO::NetAccess::removeTempFile(temporaryFileName);
+    QBuffer *ret = new QBuffer(file.readAll());
+    KIO::NetAccess::removeTempFile(temporaryFileName);
 
-	return ret;
+    return ret;
 #else
-	return NULL;
+    return NULL;
 #endif
 }
 

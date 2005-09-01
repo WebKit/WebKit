@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
@@ -32,20 +32,20 @@ using namespace KDOM;
 NodeFilterImpl::NodeFilterImpl(NodeFilterCondition *condition)
 : Shared(), m_condition(condition)
 {
-	if(m_condition)
-		m_condition->ref();
+    if(m_condition)
+        m_condition->ref();
 }
 
 NodeFilterImpl::~NodeFilterImpl()
 {
-	if(m_condition)
-		m_condition->deref();
+    if(m_condition)
+        m_condition->deref();
 }
 
 short NodeFilterImpl::acceptNode(NodeImpl *node) const
 {
-	// cast to short silences "enumeral and non-enumeral types in return" warning
-	return m_condition ? m_condition->acceptNode(node) : static_cast<short>(FILTER_ACCEPT);
+    // cast to short silences "enumeral and non-enumeral types in return" warning
+    return m_condition ? m_condition->acceptNode(node) : static_cast<short>(FILTER_ACCEPT);
 
 }
 

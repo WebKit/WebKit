@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGAnimatedBooleanImpl;
-	class SVGAnimatedBoolean
-	{
-	public:
-		SVGAnimatedBoolean();
-		explicit SVGAnimatedBoolean(SVGAnimatedBooleanImpl *i);
-		SVGAnimatedBoolean(const SVGAnimatedBoolean &other);
-		virtual ~SVGAnimatedBoolean();
+    class SVGAnimatedBooleanImpl;
+    class SVGAnimatedBoolean
+    {
+    public:
+        SVGAnimatedBoolean();
+        explicit SVGAnimatedBoolean(SVGAnimatedBooleanImpl *i);
+        SVGAnimatedBoolean(const SVGAnimatedBoolean &other);
+        virtual ~SVGAnimatedBoolean();
 
-		// Operators
-		SVGAnimatedBoolean &operator=(const SVGAnimatedBoolean &other);
-		bool operator==(const SVGAnimatedBoolean &other) const;
-		bool operator!=(const SVGAnimatedBoolean &other) const;
+        // Operators
+        SVGAnimatedBoolean &operator=(const SVGAnimatedBoolean &other);
+        bool operator==(const SVGAnimatedBoolean &other) const;
+        bool operator!=(const SVGAnimatedBoolean &other) const;
 
-		// 'SVGAnimatedBoolean' functions
-		bool baseVal() const;
-		bool animVal() const;
+        // 'SVGAnimatedBoolean' functions
+        bool baseVal() const;
+        bool animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedBoolean)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedBoolean)
 
-	protected:
-		SVGAnimatedBooleanImpl *impl;
+    protected:
+        SVGAnimatedBooleanImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

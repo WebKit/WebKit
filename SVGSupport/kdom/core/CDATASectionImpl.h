@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,18 +27,18 @@
 
 namespace KDOM
 {
-	class CDATASectionImpl : public TextImpl
-	{
-	public:
-		CDATASectionImpl(DocumentPtr *doc, DOMStringImpl *text);
-		virtual ~CDATASectionImpl();
+    class CDATASectionImpl : public TextImpl
+    {
+    public:
+        CDATASectionImpl(DocumentPtr *doc, DOMStringImpl *text);
+        virtual ~CDATASectionImpl();
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
 
-		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
-	};
+        // Internal
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+    };
 };
 
 #endif

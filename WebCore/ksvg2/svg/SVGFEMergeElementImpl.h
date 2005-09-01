@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,23 +30,23 @@ class KCanvasFilterEffect;
 
 namespace KSVG
 {
-	class SVGFEMergeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
-	{
-	public:
-		SVGFEMergeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFEMergeElementImpl();
+    class SVGFEMergeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
+    {
+    public:
+        SVGFEMergeElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFEMergeElementImpl();
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasFilterEffect *filterEffect() const;
+        virtual KCanvasFilterEffect *filterEffect() const;
 
-		virtual void close();
+        virtual void close();
 
-	private:
-		mutable KCanvasFEMerge *m_filterEffect;
-	};
+    private:
+        mutable KCanvasFEMerge *m_filterEffect;
+    };
 };
 
 #endif

@@ -27,20 +27,20 @@
 
 KJS::UString::UString(const QString &d)
 {
-	unsigned int len = d.length();
-	KJS::UChar *dat = new UChar[len];
-	memcpy(dat, d.unicode(), len * sizeof(UChar));
-	rep = KJS::UString::Rep::create(dat, len);
+    unsigned int len = d.length();
+    KJS::UChar *dat = new UChar[len];
+    memcpy(dat, d.unicode(), len * sizeof(UChar));
+    rep = KJS::UString::Rep::create(dat, len);
 }
 
 QString KJS::UString::qstring() const
 {
-	return QString(reinterpret_cast<QChar *>(const_cast<KJS::UChar *>(data())), size());
+    return QString(reinterpret_cast<QChar *>(const_cast<KJS::UChar *>(data())), size());
 }
 
 QString KJS::Identifier::qstring() const
 {
-	return QString((QChar*) data(), size());
+    return QString((QChar*) data(), size());
 }
 
 // vim:ts=4:noet

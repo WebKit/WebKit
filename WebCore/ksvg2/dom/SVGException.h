@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,34 +28,34 @@
 
 namespace KSVG
 {
-	class SVGExceptionImpl;
-	class SVGException
-	{
-	public:
-		SVGException();
-		explicit SVGException(SVGExceptionImpl *i);
-		SVGException(const SVGException &other);
-		virtual ~SVGException();
+    class SVGExceptionImpl;
+    class SVGException
+    {
+    public:
+        SVGException();
+        explicit SVGException(SVGExceptionImpl *i);
+        SVGException(const SVGException &other);
+        virtual ~SVGException();
 
-		// Operators
-		SVGException &operator=(const SVGException &other);
-		bool operator==(const SVGException &other) const;
-		bool operator!=(const SVGException &other) const;
+        // Operators
+        SVGException &operator=(const SVGException &other);
+        bool operator==(const SVGException &other) const;
+        bool operator!=(const SVGException &other) const;
 
-		// 'SVGException' functions
-		unsigned short code() const;
+        // 'SVGException' functions
+        unsigned short code() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGException)
+        // Internal
+        KSVG_INTERNAL(SVGException)
 
-	protected:
-		SVGExceptionImpl *impl;
+    protected:
+        SVGExceptionImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_GET
+    public: // EcmaScript section
+        KDOM_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

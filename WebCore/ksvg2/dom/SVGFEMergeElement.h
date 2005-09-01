@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,33 +28,33 @@
 
 namespace KSVG
 {
-	class SVGFEMergeElementImpl;
+    class SVGFEMergeElementImpl;
 
-	class SVGFEMergeElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEMergeElement();
-		explicit SVGFEMergeElement(SVGFEMergeElementImpl *i);
-		SVGFEMergeElement(const SVGFEMergeElement &other);
-		SVGFEMergeElement(const KDOM::Node &other);
-		virtual ~SVGFEMergeElement();
+    class SVGFEMergeElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEMergeElement();
+        explicit SVGFEMergeElement(SVGFEMergeElementImpl *i);
+        SVGFEMergeElement(const SVGFEMergeElement &other);
+        SVGFEMergeElement(const KDOM::Node &other);
+        virtual ~SVGFEMergeElement();
 
-		// Operators
-		SVGFEMergeElement &operator=(const SVGFEMergeElement &other);
-		SVGFEMergeElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEMergeElement &operator=(const SVGFEMergeElement &other);
+        SVGFEMergeElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEMergelement' functions
+        // 'SVGFEMergelement' functions
 
-		// Internal
-		KSVG_INTERNAL(SVGFEMergeElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEMergeElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

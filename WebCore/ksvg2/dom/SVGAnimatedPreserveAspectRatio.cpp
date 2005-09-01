@@ -34,27 +34,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedPreserveAspectRatio::s_hashTable 3
- baseVal	SVGAnimatedPreserveAspectRatioConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedPreserveAspectRatioConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedPreserveAspectRatioConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedPreserveAspectRatioConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedPreserveAspectRatio::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedPreserveAspectRatioConstants::BaseVal:
-			return KDOM::safe_cache<SVGPreserveAspectRatio>(exec, baseVal());
-		case SVGAnimatedPreserveAspectRatioConstants::AnimVal:
-			return KDOM::safe_cache<SVGPreserveAspectRatio>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedPreserveAspectRatioConstants::BaseVal:
+            return KDOM::safe_cache<SVGPreserveAspectRatio>(exec, baseVal());
+        case SVGAnimatedPreserveAspectRatioConstants::AnimVal:
+            return KDOM::safe_cache<SVGPreserveAspectRatio>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedPreserveAspectRatio SVGAnimatedPreserveAspectRatio::null;
@@ -65,31 +65,31 @@ SVGAnimatedPreserveAspectRatio::SVGAnimatedPreserveAspectRatio() : impl(0)
 
 SVGAnimatedPreserveAspectRatio::SVGAnimatedPreserveAspectRatio(SVGAnimatedPreserveAspectRatioImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedPreserveAspectRatio::SVGAnimatedPreserveAspectRatio(const SVGAnimatedPreserveAspectRatio &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedPreserveAspectRatio)
 
 SVGPreserveAspectRatio SVGAnimatedPreserveAspectRatio::baseVal() const
 {
-	if(!impl)
-		return SVGPreserveAspectRatio::null;
+    if(!impl)
+        return SVGPreserveAspectRatio::null;
 
-	return SVGPreserveAspectRatio(impl->baseVal());
+    return SVGPreserveAspectRatio(impl->baseVal());
 }
 
 SVGPreserveAspectRatio SVGAnimatedPreserveAspectRatio::animVal() const
 {
-	if(!impl)
-		return SVGPreserveAspectRatio::null;
+    if(!impl)
+        return SVGPreserveAspectRatio::null;
 
-	return SVGPreserveAspectRatio(impl->animVal());
+    return SVGPreserveAspectRatio(impl->animVal());
 }
 
 // vim:ts=4:noet

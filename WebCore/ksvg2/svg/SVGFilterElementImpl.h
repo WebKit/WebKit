@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,50 +32,50 @@ class KCanvasFilter;
 
 namespace KSVG
 {
-	class SVGAnimatedEnumerationImpl;
-	class SVGAnimatedIntegerImpl;
-	class SVGAnimatedLengthImpl;
+    class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedIntegerImpl;
+    class SVGAnimatedLengthImpl;
 
-	class SVGFilterElementImpl : public SVGStyledElementImpl,
-								 public SVGURIReferenceImpl,
-								 public SVGLangSpaceImpl,
-								 public SVGExternalResourcesRequiredImpl
-	{
-	public:
-		SVGFilterElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGFilterElementImpl();
+    class SVGFilterElementImpl : public SVGStyledElementImpl,
+                                 public SVGURIReferenceImpl,
+                                 public SVGLangSpaceImpl,
+                                 public SVGExternalResourcesRequiredImpl
+    {
+    public:
+        SVGFilterElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGFilterElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual void close();
+        // Derived from: 'ElementImpl'
+        virtual void close();
 
-		// 'SVGFilterElement' functions
-		SVGAnimatedEnumerationImpl *filterUnits() const;
-		SVGAnimatedEnumerationImpl *primitiveUnits() const;
+        // 'SVGFilterElement' functions
+        SVGAnimatedEnumerationImpl *filterUnits() const;
+        SVGAnimatedEnumerationImpl *primitiveUnits() const;
 
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		SVGAnimatedIntegerImpl *filterResX() const;
-		SVGAnimatedIntegerImpl *filterResY() const;
+        SVGAnimatedIntegerImpl *filterResX() const;
+        SVGAnimatedIntegerImpl *filterResY() const;
 
-		void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
+        void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGAnimatedEnumerationImpl *m_filterUnits;
-		mutable SVGAnimatedEnumerationImpl *m_primitiveUnits;
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
-		mutable SVGAnimatedIntegerImpl *m_filterResX;
-		mutable SVGAnimatedIntegerImpl *m_filterResY;
-		KCanvasFilter *m_filter;
-	};
+    private:
+        mutable SVGAnimatedEnumerationImpl *m_filterUnits;
+        mutable SVGAnimatedEnumerationImpl *m_primitiveUnits;
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
+        mutable SVGAnimatedIntegerImpl *m_filterResX;
+        mutable SVGAnimatedIntegerImpl *m_filterResY;
+        KCanvasFilter *m_filter;
+    };
 };
 
 #endif

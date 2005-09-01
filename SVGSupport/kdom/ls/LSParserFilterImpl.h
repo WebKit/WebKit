@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,20 +27,20 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class ElementImpl;
+    class NodeImpl;
+    class ElementImpl;
 
-	class LSParserFilterImpl : public Shared
-	{
-	public:
-		LSParserFilterImpl();
-		virtual ~LSParserFilterImpl();
+    class LSParserFilterImpl : public Shared
+    {
+    public:
+        LSParserFilterImpl();
+        virtual ~LSParserFilterImpl();
 
-		// 'LSParserFilterImpl' functions
-		unsigned short acceptNode(NodeImpl *nodeArg);
-		unsigned short startElement(ElementImpl *elementArg);
-		unsigned long whatToShow() const;
-	};
+        // 'LSParserFilterImpl' functions
+        unsigned short acceptNode(NodeImpl *nodeArg);
+        unsigned short startElement(ElementImpl *elementArg);
+        unsigned long whatToShow() const;
+    };
 };
 
 #endif

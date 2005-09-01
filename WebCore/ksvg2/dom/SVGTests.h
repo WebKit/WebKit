@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,39 +27,39 @@
 
 namespace KSVG
 {
-	class SVGStringList;
-	class SVGTestsImpl;
+    class SVGStringList;
+    class SVGTestsImpl;
 
-	class SVGTests
-	{
-	public:
-		SVGTests();
-		explicit SVGTests(SVGTestsImpl *i);
-		SVGTests(const SVGTests &other);
-		virtual ~SVGTests();
+    class SVGTests
+    {
+    public:
+        SVGTests();
+        explicit SVGTests(SVGTestsImpl *i);
+        SVGTests(const SVGTests &other);
+        virtual ~SVGTests();
 
-		// Operators
-		SVGTests &operator=(const SVGTests &other);
-		SVGTests &operator=(SVGTestsImpl *other);
+        // Operators
+        SVGTests &operator=(const SVGTests &other);
+        SVGTests &operator=(SVGTestsImpl *other);
 
-		// 'SVGTests' functions
-		SVGStringList requiredFeatures() const;
-		SVGStringList requiredExtensions() const;
-		SVGStringList systemLanguage() const;
+        // 'SVGTests' functions
+        SVGStringList requiredFeatures() const;
+        SVGStringList requiredExtensions() const;
+        SVGStringList systemLanguage() const;
 
-		bool hasExtension(const KDOM::DOMString &extension) const;
+        bool hasExtension(const KDOM::DOMString &extension) const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGTests)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGTests)
 
-	protected:
-		SVGTestsImpl *impl;
+    protected:
+        SVGTestsImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGTestsProto)

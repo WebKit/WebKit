@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,39 +27,39 @@
 
 namespace KSVG
 {
-	class SVGPreserveAspectRatioImpl;
-	class SVGPreserveAspectRatio 
-	{ 
-	public:
-		SVGPreserveAspectRatio();
-		explicit SVGPreserveAspectRatio(SVGPreserveAspectRatioImpl *);
-		SVGPreserveAspectRatio(const SVGPreserveAspectRatio &);
-		virtual ~SVGPreserveAspectRatio();
+    class SVGPreserveAspectRatioImpl;
+    class SVGPreserveAspectRatio 
+    { 
+    public:
+        SVGPreserveAspectRatio();
+        explicit SVGPreserveAspectRatio(SVGPreserveAspectRatioImpl *);
+        SVGPreserveAspectRatio(const SVGPreserveAspectRatio &);
+        virtual ~SVGPreserveAspectRatio();
 
-		// 'SVGPreserveAspectRatio' functions
-		SVGPreserveAspectRatio &operator=(const SVGPreserveAspectRatio &other);
-		bool operator==(const SVGPreserveAspectRatio &other) const;
-		bool operator!=(const SVGPreserveAspectRatio &other) const;
+        // 'SVGPreserveAspectRatio' functions
+        SVGPreserveAspectRatio &operator=(const SVGPreserveAspectRatio &other);
+        bool operator==(const SVGPreserveAspectRatio &other) const;
+        bool operator!=(const SVGPreserveAspectRatio &other) const;
 
-		void setAlign(unsigned short);
-		unsigned short align() const;
+        void setAlign(unsigned short);
+        unsigned short align() const;
 
-		void setMeetOrSlice(unsigned short);
-		unsigned short meetOrSlice() const;
+        void setMeetOrSlice(unsigned short);
+        unsigned short meetOrSlice() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGPreserveAspectRatio)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGPreserveAspectRatio)
 
-	protected:
-		SVGPreserveAspectRatioImpl *impl;
+    protected:
+        SVGPreserveAspectRatioImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

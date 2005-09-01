@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,191 +30,191 @@ using namespace KDOM;
 
 CharacterDataImpl::CharacterDataImpl(DocumentPtr *doc) : NodeImpl(doc)
 {
-	str = 0;
+    str = 0;
 }
 
 CharacterDataImpl::~CharacterDataImpl()
 {
-	if(str)
-		str->deref();
+    if(str)
+        str->deref();
 }
 
 void CharacterDataImpl::checkCharDataOperation(CharacterDataImpl *node, const unsigned long offset)
 {
-	if(!str)
-		return;
+    if(!str)
+        return;
 
-	// INDEX_SIZE_ERR: Raised if the specified offset is negative or
-	//				   greater than the number of 16-bit units in data.
-	if(offset > str->length())
-		throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    // INDEX_SIZE_ERR: Raised if the specified offset is negative or
+    //                   greater than the number of 16-bit units in data.
+    if(offset > str->length())
+        throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 
-	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-	if(node->isReadOnly())
-		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if(node->isReadOnly())
+        throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 }
 
 DOMStringImpl *CharacterDataImpl::textContent() const
 {
-	return nodeValue();
+    return nodeValue();
 }
 
 DOMStringImpl *CharacterDataImpl::nodeValue() const
 {
-	return str;
+    return str;
 }
 
 void CharacterDataImpl::setNodeValue(DOMStringImpl *nodeValue)
 {
-	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-	if(isReadOnly())
-		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if(isReadOnly())
+        throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
-	KDOM_SAFE_SET(str, nodeValue);
+    KDOM_SAFE_SET(str, nodeValue);
 }
 
 DOMStringImpl *CharacterDataImpl::data() const
 {
-	return str;
+    return str;
 }
 
 DOMStringImpl *CharacterDataImpl::substringData(unsigned long offset, unsigned long count)
 {
-	if(!str)
-		return 0;
+    if(!str)
+        return 0;
 
-	if((long) count < 0)
-		throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    if((long) count < 0)
+        throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 
-	checkCharDataOperation(this, offset);
-	return str->substring(offset, count);
+    checkCharDataOperation(this, offset);
+    return str->substring(offset, count);
 }
 
 void CharacterDataImpl::appendData(DOMStringImpl *arg)
 {
-	if(!str)
-		return;
+    if(!str)
+        return;
 
-	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-	if(isReadOnly())
-		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if(isReadOnly())
+        throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
-	DOMStringImpl *prevValue = nodeValue();
-	str->append(arg);
+    DOMStringImpl *prevValue = nodeValue();
+    str->append(arg);
 
-	dispatchModifiedEvent(prevValue);
+    dispatchModifiedEvent(prevValue);
 }
 
 void CharacterDataImpl::insertData(unsigned long offset, DOMStringImpl *arg)
 {
-	if(!str)
-		return;
-		
-	checkCharDataOperation(this, offset);
-	
-	DOMStringImpl *prevValue = nodeValue();
-	str->insert(arg, offset);
+    if(!str)
+        return;
+        
+    checkCharDataOperation(this, offset);
+    
+    DOMStringImpl *prevValue = nodeValue();
+    str->insert(arg, offset);
 
-	dispatchModifiedEvent(prevValue);
+    dispatchModifiedEvent(prevValue);
 }
 
 void CharacterDataImpl::deleteData(unsigned long offset, unsigned long count)
 {
-	if(!str)
-		return;
-		
-	if((long) count < 0)
-		throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    if(!str)
+        return;
+        
+    if((long) count < 0)
+        throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 
-	checkCharDataOperation(this, offset);
-	
-	DOMStringImpl *prevValue = nodeValue();
-	str->remove(offset, count);
+    checkCharDataOperation(this, offset);
+    
+    DOMStringImpl *prevValue = nodeValue();
+    str->remove(offset, count);
 
-	dispatchModifiedEvent(prevValue);
+    dispatchModifiedEvent(prevValue);
 }
 
 void CharacterDataImpl::replaceData(unsigned long offset, unsigned long count, DOMStringImpl *arg)
 {
-	if(!str)
-		return;
-		
-	if((long) count < 0)
-		throw new DOMExceptionImpl(INDEX_SIZE_ERR);
+    if(!str)
+        return;
+        
+    if((long) count < 0)
+        throw new DOMExceptionImpl(INDEX_SIZE_ERR);
 
-	checkCharDataOperation(this, offset);
+    checkCharDataOperation(this, offset);
 
-	DOMStringImpl *prevValue = nodeValue();
-	
-	unsigned long realCount;
-	if(offset + count > str->length())
-		realCount = str->length() - offset;
-	else
-		realCount = count;
+    DOMStringImpl *prevValue = nodeValue();
+    
+    unsigned long realCount;
+    if(offset + count > str->length())
+        realCount = str->length() - offset;
+    else
+        realCount = count;
 
-	str->remove(offset, realCount);
-	str->insert(arg, offset);
+    str->remove(offset, realCount);
+    str->insert(arg, offset);
 
-	dispatchModifiedEvent(prevValue);
+    dispatchModifiedEvent(prevValue);
 }
 
 unsigned long CharacterDataImpl::length() const
 {
-	if(!str)
-		return 0;
-		
-	return str->length();
+    if(!str)
+        return 0;
+        
+    return str->length();
 }
 
 void CharacterDataImpl::setData(DOMStringImpl *data)
 {
-	if(!str || data == str)
-		return;
+    if(!str || data == str)
+        return;
 
-	// NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
-	if(isReadOnly())
-		throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
+    // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
+    if(isReadOnly())
+        throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
-	DOMStringImpl *prevValue = nodeValue();
-	KDOM_SAFE_SET(str, data);
+    DOMStringImpl *prevValue = nodeValue();
+    KDOM_SAFE_SET(str, data);
 
-	dispatchModifiedEvent(prevValue);
+    dispatchModifiedEvent(prevValue);
 }
 
 void CharacterDataImpl::dispatchModifiedEvent(DOMStringImpl *prevValue)
 {
-	if(parentNode())
-		parentNode()->childrenChanged();
+    if(parentNode())
+        parentNode()->childrenChanged();
 
-	if(!ownerDocument()->hasListenerType(DOMCHARACTERDATAMODIFIED_EVENT))
-		return;
+    if(!ownerDocument()->hasListenerType(DOMCHARACTERDATAMODIFIED_EVENT))
+        return;
 
-	DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
-	eventType->ref();
+    DOMStringImpl *eventType = new DOMStringImpl("MutationEvents");
+    eventType->ref();
 
-	MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
-	event->ref();
+    MutationEventImpl *event = static_cast<MutationEventImpl *>(ownerDocument()->createEvent(eventType));
+    event->ref();
 
-	event->initMutationEvent(new DOMStringImpl("DOMCharacterDataModified"),
-							 true, false, 0, prevValue, nodeValue(), 0, 0);
+    event->initMutationEvent(new DOMStringImpl("DOMCharacterDataModified"),
+                             true, false, 0, prevValue, nodeValue(), 0, 0);
 
-	dispatchEvent(event);
-	dispatchSubtreeModifiedEvent();
+    dispatchEvent(event);
+    dispatchSubtreeModifiedEvent();
 
-	event->deref();
+    event->deref();
 
-	eventType->deref();
+    eventType->deref();
 }
 
 void CharacterDataImpl::normalize()
 {
-	NodeImpl::normalize();
-	setData(ownerDocument()->domConfig()->normalizeCharacters(data()));
+    NodeImpl::normalize();
+    setData(ownerDocument()->domConfig()->normalizeCharacters(data()));
 }
 
 bool CharacterDataImpl::containsOnlyWhitespace() const
 {
-	return str->containsOnlyWhitespace();
+    return str->containsOnlyWhitespace();
 }
 
 // vim:ts=4:noet

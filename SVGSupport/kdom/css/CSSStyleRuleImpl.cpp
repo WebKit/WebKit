@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,70 +28,70 @@ using namespace KDOM;
 
 CSSStyleRuleImpl::CSSStyleRuleImpl(StyleBaseImpl *parent) : CSSRuleImpl(parent)
 {
-	m_type = STYLE_RULE;
+    m_type = STYLE_RULE;
 
-	m_style = 0;
-	m_selector = 0;
+    m_style = 0;
+    m_selector = 0;
 }
 
 CSSStyleRuleImpl::~CSSStyleRuleImpl()
 {
-	if(m_style)
-	{
-		m_style->setParent(0);
-		m_style->deref();
-	}
+    if(m_style)
+    {
+        m_style->setParent(0);
+        m_style->deref();
+    }
 
-	delete m_selector;
+    delete m_selector;
 }
 
 DOMStringImpl *CSSStyleRuleImpl::selectorText() const
 {
-	if(m_selector && m_selector->first())
-	{
-		// ### m_selector will be a single selector hopefully. so ->first() will disappear
-		CSSSelector *cs = m_selector->first();
-		//cs->print(); // debug
-		return cs->selectorText();
-	}
+    if(m_selector && m_selector->first())
+    {
+        // ### m_selector will be a single selector hopefully. so ->first() will disappear
+        CSSSelector *cs = m_selector->first();
+        //cs->print(); // debug
+        return cs->selectorText();
+    }
 
-	return 0;
+    return 0;
 }
 
 void CSSStyleRuleImpl::setSelectorText(DOMStringImpl *)
 {
-	// FIXME!
+    // FIXME!
 }
 
 bool CSSStyleRuleImpl::parseString(const DOMString &, bool)
 {
-	// FIXME!
-	return false;
+    // FIXME!
+    return false;
 }
 
 CSSStyleDeclarationImpl *CSSStyleRuleImpl::style() const
 {
-	return m_style;
+    return m_style;
 }
 
 void CSSStyleRuleImpl::setSelector(QPtrList<CSSSelector> *selector)
 {
-	m_selector = selector;
+    m_selector = selector;
 }
 
 void CSSStyleRuleImpl::setDeclaration(CSSStyleDeclarationImpl *style)
 {
-	KDOM_SAFE_SET(m_style, style);
+    KDOM_SAFE_SET(m_style, style);
 }
 
 void CSSStyleRuleImpl::setNonCSSHints()
 {
-	CSSSelector *s = m_selector->first();
-	while(s)
-	{
-		s->nonCSSHint = true;
-		s = m_selector->next();
-	}
+    CSSSelector *s = m_selector->first();
+    while(s)
+    {
+        s->nonCSSHint = true;
+        s = m_selector->next();
+    }
 }
 
 // vim:ts=4:noet

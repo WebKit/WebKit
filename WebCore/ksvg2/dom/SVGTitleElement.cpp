@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,22 +33,22 @@ using namespace KSVG;
 
 /*
 @begin SVGTitleElement::s_hashTable 2
- dummy	SVGTitleElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGTitleElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGTitleElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -66,12 +66,12 @@ SVGTitleElement::SVGTitleElement(SVGTitleElementImpl *i) : SVGElement(i), SVGLan
 
 SVGTitleElement::SVGTitleElement(const SVGTitleElement &other) : SVGElement(), SVGLangSpace(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTitleElement::SVGTitleElement(const KDOM::Node &other) : SVGElement(), SVGLangSpace(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGTitleElement::~SVGTitleElement()
@@ -80,33 +80,33 @@ SVGTitleElement::~SVGTitleElement()
 
 SVGTitleElement &SVGTitleElement::operator=(const SVGTitleElement &other)
 {
-	SVGElement::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGStylable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGStylable::operator=(other);
+    return *this;
 }
 
 SVGTitleElement &SVGTitleElement::operator=(const KDOM::Node &other)
 {
-	SVGTitleElementImpl *ohandle = static_cast<SVGTitleElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGLangSpace::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-		}
-	}
+    SVGTitleElementImpl *ohandle = static_cast<SVGTitleElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGLangSpace::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet

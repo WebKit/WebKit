@@ -41,16 +41,16 @@ using namespace KSVG;
 
 /*
 @begin SVGLengthList::s_hashTable 3
- numberOfItems					SVGLengthListConstants::NumberOfItems				DontDelete|ReadOnly
+ numberOfItems                    SVGLengthListConstants::NumberOfItems                DontDelete|ReadOnly
 @end
 @begin SVGLengthListProto::s_hashTable 9
- clear					SVGLengthListConstants::Clear				DontDelete|Function 0
- initialize				SVGLengthListConstants::Initialize			DontDelete|Function 1
- getItem				SVGLengthListConstants::GetItem				DontDelete|Function 1
- insertItemBefore		SVGLengthListConstants::InsertItemBefore	DontDelete|Function 2
- replaceItem			SVGLengthListConstants::ReplaceItem			DontDelete|Function 2
- removeItem				SVGLengthListConstants::RemoveItem			DontDelete|Function 1
- appendItem				SVGLengthListConstants::AppendItem			DontDelete|Function 1
+ clear                    SVGLengthListConstants::Clear                DontDelete|Function 0
+ initialize                SVGLengthListConstants::Initialize            DontDelete|Function 1
+ getItem                SVGLengthListConstants::GetItem                DontDelete|Function 1
+ insertItemBefore        SVGLengthListConstants::InsertItemBefore    DontDelete|Function 2
+ replaceItem            SVGLengthListConstants::ReplaceItem            DontDelete|Function 2
+ removeItem                SVGLengthListConstants::RemoveItem            DontDelete|Function 1
+ appendItem                SVGLengthListConstants::AppendItem            DontDelete|Function 1
 @end
 */
 
@@ -58,70 +58,70 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGLengthList", SVGLengthListProto, SVGLengthListProto
 
 ValueImp *SVGLengthList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGLengthListConstants::NumberOfItems:
-			return Number(numberOfItems());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLengthListConstants::NumberOfItems:
+            return Number(numberOfItems());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGLengthListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGLengthList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGLengthList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGLengthListConstants::Clear:
-		{
-			obj.clear();
-			return Undefined();
-		}
-		case SVGLengthListConstants::Initialize:
-		{
-			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			return KDOM::safe_cache<SVGLength>(exec, obj.initialize(newItem));
-		}
-		case SVGLengthListConstants::GetItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGLength>(exec, obj.getItem(index));
-		}
-		case SVGLengthListConstants::InsertItemBefore:
-		{
-			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGLength>(exec, obj.insertItemBefore(newItem, index));
-		}
-		case SVGLengthListConstants::ReplaceItem:
-		{
-			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			unsigned long index = args[1]->toUInt32(exec);
-			return KDOM::safe_cache<SVGLength>(exec, obj.replaceItem(newItem, index));
-		}
-		case SVGLengthListConstants::RemoveItem:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGLength>(exec, obj.removeItem(index));
-		}
-		case SVGLengthListConstants::AppendItem:
-		{
-			SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
-			return KDOM::safe_cache<SVGLength>(exec, obj.appendItem(newItem));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGLengthListConstants::Clear:
+        {
+            obj.clear();
+            return Undefined();
+        }
+        case SVGLengthListConstants::Initialize:
+        {
+            SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
+            return KDOM::safe_cache<SVGLength>(exec, obj.initialize(newItem));
+        }
+        case SVGLengthListConstants::GetItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGLength>(exec, obj.getItem(index));
+        }
+        case SVGLengthListConstants::InsertItemBefore:
+        {
+            SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGLength>(exec, obj.insertItemBefore(newItem, index));
+        }
+        case SVGLengthListConstants::ReplaceItem:
+        {
+            SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
+            unsigned long index = args[1]->toUInt32(exec);
+            return KDOM::safe_cache<SVGLength>(exec, obj.replaceItem(newItem, index));
+        }
+        case SVGLengthListConstants::RemoveItem:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGLength>(exec, obj.removeItem(index));
+        }
+        case SVGLengthListConstants::AppendItem:
+        {
+            SVGLength newItem = KDOM::ecma_cast<SVGLength>(exec, args[0], &toSVGLength);
+            return KDOM::safe_cache<SVGLength>(exec, obj.appendItem(newItem));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGLengthList SVGLengthList::null;
@@ -132,77 +132,77 @@ SVGLengthList::SVGLengthList() : impl(0)
 
 SVGLengthList::SVGLengthList(SVGLengthListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGLengthList::SVGLengthList(const SVGLengthList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGLengthList)
 
 unsigned long SVGLengthList::numberOfItems() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 void SVGLengthList::clear()
 {
-	if(impl)
-		impl->clear();
+    if(impl)
+        impl->clear();
 }
 
 SVGLength SVGLengthList::initialize(const SVGLength &newItem)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->initialize(newItem.handle()));
+    return SVGLength(impl->initialize(newItem.handle()));
 }
 
 SVGLength SVGLengthList::getItem(unsigned long index)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->getItem(index));
+    return SVGLength(impl->getItem(index));
 }
 
 SVGLength SVGLengthList::insertItemBefore(const SVGLength &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->insertItemBefore(newItem.handle(), index));
+    return SVGLength(impl->insertItemBefore(newItem.handle(), index));
 }
 
 SVGLength SVGLengthList::replaceItem(const SVGLength &newItem, unsigned long index)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->replaceItem(newItem.handle(), index));
+    return SVGLength(impl->replaceItem(newItem.handle(), index));
 }
 
 SVGLength SVGLengthList::removeItem(unsigned long index)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->removeItem(index));
+    return SVGLength(impl->removeItem(index));
 }
 
 SVGLength SVGLengthList::appendItem(const SVGLength &newItem)
 {
-	if(!impl)
-		return SVGLength::null;
+    if(!impl)
+        return SVGLength::null;
 
-	return SVGLength(impl->appendItem(newItem.handle()));
+    return SVGLength(impl->appendItem(newItem.handle()));
 }
 
 // vim:ts=4:noet

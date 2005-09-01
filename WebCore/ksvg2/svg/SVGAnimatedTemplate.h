@@ -27,87 +27,87 @@
 
 namespace KSVG
 {
-	// SVGAnimatedTemplate
-	// - lazy creation of baseVal/animVal
-	//   (no more waste of mostly unused animVal variable!)
-	// - not directly creatable (only by child classes)
-	// - no copy ctor/no assignment operator available
-	//   (-> a class for only for pointer usage)
-	template<class T>
-	class SVGAnimatedTemplate : public KDOM::Shared
-	{
-	public:
-		virtual ~SVGAnimatedTemplate()
-		{
-			if(m_baseVal)
-				m_baseVal->deref();
-			if(m_animVal)
-				m_animVal->deref();
-		}
+    // SVGAnimatedTemplate
+    // - lazy creation of baseVal/animVal
+    //   (no more waste of mostly unused animVal variable!)
+    // - not directly creatable (only by child classes)
+    // - no copy ctor/no assignment operator available
+    //   (-> a class for only for pointer usage)
+    template<class T>
+    class SVGAnimatedTemplate : public KDOM::Shared
+    {
+    public:
+        virtual ~SVGAnimatedTemplate()
+        {
+            if(m_baseVal)
+                m_baseVal->deref();
+            if(m_animVal)
+                m_animVal->deref();
+        }
 
-		T *baseVal() const
-		{
-			if(!m_baseVal)
-			{
-				m_baseVal = create();
-				m_baseVal->ref();
-			}
+        T *baseVal() const
+        {
+            if(!m_baseVal)
+            {
+                m_baseVal = create();
+                m_baseVal->ref();
+            }
 
-			return m_baseVal;
-		}
+            return m_baseVal;
+        }
 
-		void setBaseVal(T *baseVal) const
-		{
-			KDOM_SAFE_SET(m_baseVal, baseVal);
+        void setBaseVal(T *baseVal) const
+        {
+            KDOM_SAFE_SET(m_baseVal, baseVal);
 
-			if(m_context)
-				m_context->notifyAttributeChange();
+            if(m_context)
+                m_context->notifyAttributeChange();
 
-			setAnimVal(baseVal);
-		}
+            setAnimVal(baseVal);
+        }
 
-		T *animVal() const
-		{
-			if(!m_animVal)
-			{
-				m_animVal = create();
-				m_animVal->ref();
-			}
+        T *animVal() const
+        {
+            if(!m_animVal)
+            {
+                m_animVal = create();
+                m_animVal->ref();
+            }
 
-			return m_animVal;
-		}
+            return m_animVal;
+        }
 
-		void setAnimVal(T *animVal) const
-		{
-			KDOM_SAFE_SET(m_animVal, animVal);
-			
-			// I think this is superfluous... -- ECS 4/25/05
-			if(m_context)
-				m_context->notifyAttributeChange();
-		}
-		
-	protected:
-		SVGAnimatedTemplate(const SVGStyledElementImpl *context) : KDOM::Shared()
-		{
-			m_baseVal = 0;
-			m_animVal = 0;
-			m_context = context;
-		}
+        void setAnimVal(T *animVal) const
+        {
+            KDOM_SAFE_SET(m_animVal, animVal);
+            
+            // I think this is superfluous... -- ECS 4/25/05
+            if(m_context)
+                m_context->notifyAttributeChange();
+        }
+        
+    protected:
+        SVGAnimatedTemplate(const SVGStyledElementImpl *context) : KDOM::Shared()
+        {
+            m_baseVal = 0;
+            m_animVal = 0;
+            m_context = context;
+        }
 
-		// This methods need to be reimplemented.		
-		virtual T *create() const = 0;
-		virtual void assign(T *src, T *dst) const = 0;
+        // This methods need to be reimplemented.        
+        virtual T *create() const = 0;
+        virtual void assign(T *src, T *dst) const = 0;
 
-		// Attribute notification context
-		const SVGStyledElementImpl *m_context;
+        // Attribute notification context
+        const SVGStyledElementImpl *m_context;
 
-	private:
-		SVGAnimatedTemplate(const SVGAnimatedTemplate &) { }
-		SVGAnimatedTemplate<T> &operator=(const SVGAnimatedTemplate<T> &) { }
-		
-		mutable T *m_baseVal;
-		mutable T *m_animVal;
-	};
+    private:
+        SVGAnimatedTemplate(const SVGAnimatedTemplate &) { }
+        SVGAnimatedTemplate<T> &operator=(const SVGAnimatedTemplate<T> &) { }
+        
+        mutable T *m_baseVal;
+        mutable T *m_animVal;
+    };
 };
 
 #endif

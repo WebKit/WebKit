@@ -29,43 +29,43 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSegCurvetoQuadraticSmoothAbs::s_hashTable 3
- x	SVGPathSegCurvetoQuadraticSmoothConstants::X		DontDelete
- y	SVGPathSegCurvetoQuadraticSmoothConstants::Y		DontDelete
+ x    SVGPathSegCurvetoQuadraticSmoothConstants::X        DontDelete
+ y    SVGPathSegCurvetoQuadraticSmoothConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegCurvetoQuadraticSmoothAbs::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegCurvetoQuadraticSmoothConstants::X:
-		return Number(x());
-	case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegCurvetoQuadraticSmoothConstants::X:
+        return Number(x());
+    case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegCurvetoQuadraticSmoothAbs::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegCurvetoQuadraticSmoothConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegCurvetoQuadraticSmoothConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 // The qdom way...
 #define _impl (static_cast<SVGPathSegCurvetoQuadraticSmoothAbsImpl *>(impl))
@@ -82,12 +82,12 @@ SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(SVGPath
 
 SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSegCurvetoQuadraticSmoothAbs &other) : SVGPathSeg()
 {
-	(*this)= other;
+    (*this)= other;
 }
 
 SVGPathSegCurvetoQuadraticSmoothAbs::SVGPathSegCurvetoQuadraticSmoothAbs(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this)= other;
+    (*this)= other;
 }
 
 SVGPathSegCurvetoQuadraticSmoothAbs::~SVGPathSegCurvetoQuadraticSmoothAbs()
@@ -96,81 +96,81 @@ SVGPathSegCurvetoQuadraticSmoothAbs::~SVGPathSegCurvetoQuadraticSmoothAbs()
 
 SVGPathSegCurvetoQuadraticSmoothAbs &SVGPathSegCurvetoQuadraticSmoothAbs::operator=(const SVGPathSegCurvetoQuadraticSmoothAbs &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegCurvetoQuadraticSmoothAbs, PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS)
 
 void SVGPathSegCurvetoQuadraticSmoothAbs::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegCurvetoQuadraticSmoothAbs::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegCurvetoQuadraticSmoothAbs::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegCurvetoQuadraticSmoothAbs::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 
 
 /*
 @begin SVGPathSegCurvetoQuadraticSmoothRel::s_hashTable 3
- x	SVGPathSegCurvetoQuadraticSmoothConstants::X		DontDelete
- y	SVGPathSegCurvetoQuadraticSmoothConstants::Y		DontDelete
+ x    SVGPathSegCurvetoQuadraticSmoothConstants::X        DontDelete
+ y    SVGPathSegCurvetoQuadraticSmoothConstants::Y        DontDelete
 @end
 */
 
 ValueImp *SVGPathSegCurvetoQuadraticSmoothRel::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegCurvetoQuadraticSmoothConstants::X:
-		return Number(x());
-	case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
-		return Number(y());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegCurvetoQuadraticSmoothConstants::X:
+        return Number(x());
+    case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
+        return Number(y());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 void SVGPathSegCurvetoQuadraticSmoothRel::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	switch(token)
-	{
-		case SVGPathSegCurvetoQuadraticSmoothConstants::X:
-		{
-			setX(value->toNumber(exec));
-			return;
-		}
-		case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
-		{
-			setY(value->toNumber(exec));
-			return;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPathSegCurvetoQuadraticSmoothConstants::X:
+        {
+            setX(value->toNumber(exec));
+            return;
+        }
+        case SVGPathSegCurvetoQuadraticSmoothConstants::Y:
+        {
+            setY(value->toNumber(exec));
+            return;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 }
 
 // The qdom way...
@@ -190,12 +190,12 @@ SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(SVGPath
 
 SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSegCurvetoQuadraticSmoothRel &other) : SVGPathSeg()
 {
-	(*this)= other;
+    (*this)= other;
 }
 
 SVGPathSegCurvetoQuadraticSmoothRel::SVGPathSegCurvetoQuadraticSmoothRel(const SVGPathSeg &other) : SVGPathSeg()
 {
-	(*this)= other;
+    (*this)= other;
 }
 
 SVGPathSegCurvetoQuadraticSmoothRel::~SVGPathSegCurvetoQuadraticSmoothRel()
@@ -204,38 +204,38 @@ SVGPathSegCurvetoQuadraticSmoothRel::~SVGPathSegCurvetoQuadraticSmoothRel()
 
 SVGPathSegCurvetoQuadraticSmoothRel &SVGPathSegCurvetoQuadraticSmoothRel::operator=(const SVGPathSegCurvetoQuadraticSmoothRel &other)
 {
-	SVGPathSeg::operator=(other);
-	return *this;
+    SVGPathSeg::operator=(other);
+    return *this;
 }
 
 KSVG_PATHSEG_DERIVED_ASSIGN_OP(SVGPathSegCurvetoQuadraticSmoothRel, PATHSEG_CURVETO_QUADRATIC_SMOOTH_REL)
 
 void SVGPathSegCurvetoQuadraticSmoothRel::setX(float x)
 {
-	if(impl)
-		_impl->setX(x);
+    if(impl)
+        _impl->setX(x);
 }
 
 float SVGPathSegCurvetoQuadraticSmoothRel::x() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->x();
+    return _impl->x();
 }
 
 void SVGPathSegCurvetoQuadraticSmoothRel::setY(float y)
 {
-	if(impl)
-		_impl->setY(y);
+    if(impl)
+        _impl->setY(y);
 }
 
 float SVGPathSegCurvetoQuadraticSmoothRel::y() const
 {
-	if(!impl)
-		return -1;
+    if(!impl)
+        return -1;
 
-	return _impl->y();
+    return _impl->y();
 }
 
 // vim:ts=4:noet

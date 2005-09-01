@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,25 +33,25 @@ class KRenderingPaintServer;
 class KCanvasRegistry
 {
 public:
-	KCanvasRegistry();
-	virtual ~KCanvasRegistry();
+    KCanvasRegistry();
+    virtual ~KCanvasRegistry();
 
-	// Add/get named paint servers
-	void addPaintServerById(const QString &id, KRenderingPaintServer *pserver);
-	KRenderingPaintServer *getPaintServerById(const QString &id) const;
+    // Add/get named paint servers
+    void addPaintServerById(const QString &id, KRenderingPaintServer *pserver);
+    KRenderingPaintServer *getPaintServerById(const QString &id) const;
 
-	void addResourceById(const QString &id, KCanvasResource *pserver);
-	KCanvasResource *getResourceById(const QString &id) const;
+    void addResourceById(const QString &id, KCanvasResource *pserver);
+    KCanvasResource *getResourceById(const QString &id) const;
 
-	// Helpers
-	void cleanup();
+    // Helpers
+    void cleanup();
 
 private:
     friend QTextStream &operator<<(QTextStream &, const KCanvasRegistry &);
     
 private:
-	QDict<KCanvasResource> m_resources;
-	QDict<KRenderingPaintServer> m_pservers;
+    QDict<KCanvasResource> m_resources;
+    QDict<KRenderingPaintServer> m_pservers;
 };
 
 QTextStream &operator<<(QTextStream &, const KCanvasRegistry &);

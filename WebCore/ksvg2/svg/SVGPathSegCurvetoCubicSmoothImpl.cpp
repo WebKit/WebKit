@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,7 +28,7 @@ using namespace KSVG;
 SVGPathSegCurvetoCubicSmoothAbsImpl::SVGPathSegCurvetoCubicSmoothAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_x2 = m_y2 = 0.0;
+    m_x = m_y = m_x2 = m_y2 = 0.0;
 }
 
 SVGPathSegCurvetoCubicSmoothAbsImpl::~SVGPathSegCurvetoCubicSmoothAbsImpl()
@@ -37,54 +37,54 @@ SVGPathSegCurvetoCubicSmoothAbsImpl::~SVGPathSegCurvetoCubicSmoothAbsImpl()
 
 void SVGPathSegCurvetoCubicSmoothAbsImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothAbsImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoCubicSmoothAbsImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothAbsImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegCurvetoCubicSmoothAbsImpl::setX2(double x2)
 {
-	m_x2 = x2;
+    m_x2 = x2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothAbsImpl::x2() const
 {
-	return m_x2;
+    return m_x2;
 }
 
 void SVGPathSegCurvetoCubicSmoothAbsImpl::setY2(double y2)
 {
-	m_y2 = y2;
+    m_y2 = y2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothAbsImpl::y2() const
 {
-	return m_y2;
+    return m_y2;
 }
 
 
@@ -92,7 +92,7 @@ double SVGPathSegCurvetoCubicSmoothAbsImpl::y2() const
 SVGPathSegCurvetoCubicSmoothRelImpl::SVGPathSegCurvetoCubicSmoothRelImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)
 {
-	m_x = m_y = m_x2 = m_y2 = 0.0;
+    m_x = m_y = m_x2 = m_y2 = 0.0;
 }
 
 SVGPathSegCurvetoCubicSmoothRelImpl::~SVGPathSegCurvetoCubicSmoothRelImpl()
@@ -101,54 +101,54 @@ SVGPathSegCurvetoCubicSmoothRelImpl::~SVGPathSegCurvetoCubicSmoothRelImpl()
 
 void SVGPathSegCurvetoCubicSmoothRelImpl::setX(double x)
 {
-	m_x = x;
+    m_x = x;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothRelImpl::x() const
 {
-	return m_x;
+    return m_x;
 }
 
 void SVGPathSegCurvetoCubicSmoothRelImpl::setY(double y)
 {
-	m_y = y;
+    m_y = y;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothRelImpl::y() const
 {
-	return m_y;
+    return m_y;
 }
 
 void SVGPathSegCurvetoCubicSmoothRelImpl::setX2(double x2)
 {
-	m_x2 = x2;
+    m_x2 = x2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothRelImpl::x2() const
 {
-	return m_x2;
+    return m_x2;
 }
 
 void SVGPathSegCurvetoCubicSmoothRelImpl::setY2(double y2)
 {
-	m_y2 = y2;
+    m_y2 = y2;
 
-	if(m_context)
-		m_context->notifyAttributeChange();
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 double SVGPathSegCurvetoCubicSmoothRelImpl::y2() const
 {
-	return m_y2;
+    return m_y2;
 }
 
 // vim:ts=4:noet

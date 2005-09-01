@@ -41,14 +41,14 @@ using namespace KSVG;
 
 /*
 @begin SVGLength::s_hashTable 5
- unitType					SVGLengthConstants::UnitType				DontDelete|ReadOnly
- value						SVGLengthConstants::Value					DontDelete
- valueAsString				SVGLengthConstants::ValueAsString			DontDelete
- valueInSpecifiedUnits		SVGLengthConstants::ValueInSpecifiedUnits	DontDelete
+ unitType                    SVGLengthConstants::UnitType                DontDelete|ReadOnly
+ value                        SVGLengthConstants::Value                    DontDelete
+ valueAsString                SVGLengthConstants::ValueAsString            DontDelete
+ valueInSpecifiedUnits        SVGLengthConstants::ValueInSpecifiedUnits    DontDelete
 @end
 @begin SVGLengthProto::s_hashTable 3
- newValueSpecifiedUnits		SVGLengthConstants::NewValueSpecifiedUnits	DontDelete|Function 2
- convertToSpecifiedUnits	SVGLengthConstants::ConvertToSpecifiedUnits	DontDelete|Function 1
+ newValueSpecifiedUnits        SVGLengthConstants::NewValueSpecifiedUnits    DontDelete|Function 2
+ convertToSpecifiedUnits    SVGLengthConstants::ConvertToSpecifiedUnits    DontDelete|Function 1
 @end
 */
 
@@ -56,74 +56,74 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGLength", SVGLengthProto, SVGLengthProtoFunc)
 
 ValueImp *SVGLength::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGLengthConstants::UnitType:
-			return Number(unitType());
-		case SVGLengthConstants::Value:
-			return Number(value());
-		case SVGLengthConstants::ValueAsString:
-			return KDOM::getDOMString(valueAsString());
-		case SVGLengthConstants::ValueInSpecifiedUnits:
-			return Number(valueInSpecifiedUnits());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLengthConstants::UnitType:
+            return Number(unitType());
+        case SVGLengthConstants::Value:
+            return Number(value());
+        case SVGLengthConstants::ValueAsString:
+            return KDOM::getDOMString(valueAsString());
+        case SVGLengthConstants::ValueInSpecifiedUnits:
+            return Number(valueInSpecifiedUnits());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 void SVGLength::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
-	
-	switch(token)
-	{
-		case SVGLengthConstants::Value:
-			setValue(value->toNumber(exec));
-			break;
-		case SVGLengthConstants::ValueAsString:
-			setValueAsString(KDOM::toDOMString(exec, value));
-			break;
-		case SVGLengthConstants::ValueInSpecifiedUnits:
-			setValueInSpecifiedUnits(value->toNumber(exec));
-			break;
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    KDOM_ENTER_SAFE
+    
+    switch(token)
+    {
+        case SVGLengthConstants::Value:
+            setValue(value->toNumber(exec));
+            break;
+        case SVGLengthConstants::ValueAsString:
+            setValueAsString(KDOM::toDOMString(exec, value));
+            break;
+        case SVGLengthConstants::ValueInSpecifiedUnits:
+            setValueInSpecifiedUnits(value->toNumber(exec));
+            break;
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
 }
 
 ValueImp *SVGLengthProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGLength)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGLength)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGLengthConstants::NewValueSpecifiedUnits:
-		{
-			unsigned short unitType = args[0]->toUInt16(exec);
-			float valueInSpecifiedUnits = args[1]->toNumber(exec);
-			obj.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
-			return Undefined();
-		}
-		case SVGLengthConstants::ConvertToSpecifiedUnits:
-		{
-			unsigned short unitType = args[0]->toUInt16(exec);
-			obj.convertToSpecifiedUnits(unitType);
-			return Undefined();
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGLengthConstants::NewValueSpecifiedUnits:
+        {
+            unsigned short unitType = args[0]->toUInt16(exec);
+            float valueInSpecifiedUnits = args[1]->toNumber(exec);
+            obj.newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
+            return Undefined();
+        }
+        case SVGLengthConstants::ConvertToSpecifiedUnits:
+        {
+            unsigned short unitType = args[0]->toUInt16(exec);
+            obj.convertToSpecifiedUnits(unitType);
+            return Undefined();
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGLength SVGLength::null;
@@ -134,117 +134,117 @@ SVGLength::SVGLength() : impl(0)
 
 SVGLength::SVGLength(SVGLengthImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGLength::SVGLength(const SVGLength &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLength::~SVGLength()
 {
-	if(impl)
-	{
-		if(impl->refCount() == 1)
-			KDOM::ScriptInterpreter::forgetDOMObject(impl);
+    if(impl)
+    {
+        if(impl->refCount() == 1)
+            KDOM::ScriptInterpreter::forgetDOMObject(impl);
 
-		impl->deref();
-	}
+        impl->deref();
+    }
 }
 
 SVGLength &SVGLength::operator=(const SVGLength &other)
 {
-	if(impl != other.impl)
-	{
-		if(impl)
-		{
-			if(impl->refCount() == 1)
-				KDOM::ScriptInterpreter::forgetDOMObject(impl);
+    if(impl != other.impl)
+    {
+        if(impl)
+        {
+            if(impl->refCount() == 1)
+                KDOM::ScriptInterpreter::forgetDOMObject(impl);
 
-			impl->deref();
-		}
+            impl->deref();
+        }
 
-		impl = other.impl;
+        impl = other.impl;
 
-		if(impl)
-			impl->ref();
-	}
+        if(impl)
+            impl->ref();
+    }
 
-	return *this;
+    return *this;
 }
 
 bool SVGLength::operator==(const SVGLength &other) const
 {
-	return impl == other.impl;
+    return impl == other.impl;
 }
 
 bool SVGLength::operator!=(const SVGLength &other) const
 {
-	return !operator==(other);
+    return !operator==(other);
 }
 
 unsigned short SVGLength::unitType() const
 {
-	if(!impl)
-		return SVG_LENGTHTYPE_UNKNOWN;
+    if(!impl)
+        return SVG_LENGTHTYPE_UNKNOWN;
 
-	return impl->unitType();
+    return impl->unitType();
 }
 
 void SVGLength::setValue(float value)
 {
-	if(impl)
-		impl->setValue(value);
+    if(impl)
+        impl->setValue(value);
 }
 
 float SVGLength::value() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->value();
+    return impl->value();
 }
 
 void SVGLength::setValueInSpecifiedUnits(float valueInSpecifiedUnits)
 {
-	if(impl)
-		impl->setValueInSpecifiedUnits(valueInSpecifiedUnits);
+    if(impl)
+        impl->setValueInSpecifiedUnits(valueInSpecifiedUnits);
 }
 
 float SVGLength::valueInSpecifiedUnits() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->valueInSpecifiedUnits();
+    return impl->valueInSpecifiedUnits();
 }
 
 void SVGLength::setValueAsString(const KDOM::DOMString &valueAsString)
 {
-	if(impl)
-		impl->setValueAsString(valueAsString);
+    if(impl)
+        impl->setValueAsString(valueAsString);
 }
 
 KDOM::DOMString SVGLength::valueAsString() const
 {
-	if(!impl)
-		return KDOM::DOMString("");
+    if(!impl)
+        return KDOM::DOMString("");
 
-	return impl->valueAsString();		
+    return impl->valueAsString();        
 }
 
 void SVGLength::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
-	if(impl)
-		impl->newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
+    if(impl)
+        impl->newValueSpecifiedUnits(unitType, valueInSpecifiedUnits);
 }
 
 void SVGLength::convertToSpecifiedUnits(unsigned short unitType)
 {
-	if(impl)
-		impl->convertToSpecifiedUnits(unitType);
+    if(impl)
+        impl->convertToSpecifiedUnits(unitType);
 }
 
 // vim:ts=4:noet

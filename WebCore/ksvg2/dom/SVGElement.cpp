@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,57 +42,57 @@ using namespace KSVG;
 
 /*
 @begin SVGElement::s_hashTable 5
- id						SVGElementConstants::Id					DontDelete
- xmlbase				SVGElementConstants::Xmlbase			DontDelete
- ownerSVGElement		SVGElementConstants::OwnerSVGElement	DontDelete|ReadOnly
- viewportElement		SVGElementConstants::ViewportElement	DontDelete|ReadOnly
+ id                        SVGElementConstants::Id                    DontDelete
+ xmlbase                SVGElementConstants::Xmlbase            DontDelete
+ ownerSVGElement        SVGElementConstants::OwnerSVGElement    DontDelete|ReadOnly
+ viewportElement        SVGElementConstants::ViewportElement    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGElementConstants::Id:
-			return KDOM::getDOMString(id());
-		case SVGElementConstants::Xmlbase:
-			return KDOM::getDOMString(xmlbase());
-		case SVGElementConstants::OwnerSVGElement:
-			return KDOM::getDOMNode(exec, ownerSVGElement());
-		case SVGElementConstants::ViewportElement:
-			return KDOM::getDOMNode(exec, viewportElement());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGElementConstants::Id:
+            return KDOM::getDOMString(id());
+        case SVGElementConstants::Xmlbase:
+            return KDOM::getDOMString(xmlbase());
+        case SVGElementConstants::OwnerSVGElement:
+            return KDOM::getDOMNode(exec, ownerSVGElement());
+        case SVGElementConstants::ViewportElement:
+            return KDOM::getDOMNode(exec, viewportElement());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGElement::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGElementConstants::Id:
-		{
-			setAttribute("id", KDOM::toDOMString(exec, value));
-			break;
-		}
-		case SVGElementConstants::Xmlbase:
-		{
-			// FIXME: Shouldn't that use setAttributeNS?!
-			setAttribute("xml:base", KDOM::toDOMString(exec, value));
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGElementConstants::Id:
+        {
+            setAttribute("id", KDOM::toDOMString(exec, value));
+            break;
+        }
+        case SVGElementConstants::Xmlbase:
+        {
+            // FIXME: Shouldn't that use setAttributeNS?!
+            setAttribute("xml:base", KDOM::toDOMString(exec, value));
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
+    KDOM_LEAVE_SAFE(SVGException)
 }
 
 SVGElement SVGElement::null;
@@ -107,12 +107,12 @@ SVGElement::SVGElement(SVGElementImpl *i) : KDOM::Element(i)
 
 SVGElement::SVGElement(const SVGElement &other) : KDOM::Element()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGElement::SVGElement(const KDOM::Node &other) : KDOM::Element()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGElement::~SVGElement()
@@ -121,42 +121,42 @@ SVGElement::~SVGElement()
 
 SVGElement &SVGElement::operator=(const SVGElement &other)
 {
-	KDOM::Element::operator=(other);
-	return *this;
+    KDOM::Element::operator=(other);
+    return *this;
 }
 
 KDOM_NODE_DERIVED_ASSIGN_OP(SVGElement, KDOM::ELEMENT_NODE)
 
 KDOM::DOMString SVGElement::id() const
 {
-	if(!d)
-		return KDOM::DOMString();
+    if(!d)
+        return KDOM::DOMString();
 
-	return impl->getId();
+    return impl->getId();
 }
 
 KDOM::DOMString SVGElement::xmlbase() const
 {
-	if(!d)
-		return KDOM::DOMString();
+    if(!d)
+        return KDOM::DOMString();
 
-	return impl->xmlbase();
+    return impl->xmlbase();
 }
 
 SVGSVGElement SVGElement::ownerSVGElement() const
 {
-	if(!d)
-		return SVGSVGElement::null;
+    if(!d)
+        return SVGSVGElement::null;
 
-	return SVGSVGElement(impl->ownerSVGElement());
+    return SVGSVGElement(impl->ownerSVGElement());
 }
 
 SVGElement SVGElement::viewportElement() const
 {
-	if(!d)
-		return SVGElement::null;
+    if(!d)
+        return SVGElement::null;
 
-	return SVGElement(impl->viewportElement());
+    return SVGElement(impl->viewportElement());
 }
 
 // vim:ts=4:noet

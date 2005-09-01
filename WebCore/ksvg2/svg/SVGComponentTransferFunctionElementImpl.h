@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,37 +29,37 @@ class KCanvasComponentTransferFunctionElement;
 
 namespace KSVG
 {
-	class SVGAnimatedNumberImpl;
-	class SVGAnimatedNumberListImpl;
-	class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedNumberImpl;
+    class SVGAnimatedNumberListImpl;
+    class SVGAnimatedEnumerationImpl;
 
-	class SVGComponentTransferFunctionElementImpl : public SVGElementImpl
-	{
-	public:
-		SVGComponentTransferFunctionElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGComponentTransferFunctionElementImpl();
+    class SVGComponentTransferFunctionElementImpl : public SVGElementImpl
+    {
+    public:
+        SVGComponentTransferFunctionElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGComponentTransferFunctionElementImpl();
 
-		// 'SVGComponentTransferFunctionElement' functions
-		SVGAnimatedEnumerationImpl *type() const;
-		SVGAnimatedNumberListImpl *tableValues() const;
-		SVGAnimatedNumberImpl *slope() const;
-		SVGAnimatedNumberImpl *intercept() const;
-		SVGAnimatedNumberImpl *amplitude() const;
-		SVGAnimatedNumberImpl *exponent() const;
-		SVGAnimatedNumberImpl *offset() const;
+        // 'SVGComponentTransferFunctionElement' functions
+        SVGAnimatedEnumerationImpl *type() const;
+        SVGAnimatedNumberListImpl *tableValues() const;
+        SVGAnimatedNumberImpl *slope() const;
+        SVGAnimatedNumberImpl *intercept() const;
+        SVGAnimatedNumberImpl *amplitude() const;
+        SVGAnimatedNumberImpl *exponent() const;
+        SVGAnimatedNumberImpl *offset() const;
 
-		// Derived from: 'ElementImpl'
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        // Derived from: 'ElementImpl'
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-	private:
-		mutable SVGAnimatedEnumerationImpl *m_type;
-		mutable SVGAnimatedNumberListImpl *m_tableValues;
-		mutable SVGAnimatedNumberImpl *m_slope;
-		mutable SVGAnimatedNumberImpl *m_intercept;
-		mutable SVGAnimatedNumberImpl *m_amplitude;
-		mutable SVGAnimatedNumberImpl *m_exponent;
-		mutable SVGAnimatedNumberImpl *m_offset;
-	};
+    private:
+        mutable SVGAnimatedEnumerationImpl *m_type;
+        mutable SVGAnimatedNumberListImpl *m_tableValues;
+        mutable SVGAnimatedNumberImpl *m_slope;
+        mutable SVGAnimatedNumberImpl *m_intercept;
+        mutable SVGAnimatedNumberImpl *m_amplitude;
+        mutable SVGAnimatedNumberImpl *m_exponent;
+        mutable SVGAnimatedNumberImpl *m_offset;
+    };
 };
 
 #endif

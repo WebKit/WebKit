@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,47 +30,47 @@
 
 namespace KDOM
 {
-	class CSSRuleImpl;
-	class CSSStyleSheetImpl;
+    class CSSRuleImpl;
+    class CSSStyleSheetImpl;
 
-	class MediaListImpl : public StyleBaseImpl
-	{
-	public:
-		MediaListImpl();
-		MediaListImpl(CSSStyleSheetImpl *parentSheet);
-		MediaListImpl(CSSStyleSheetImpl *parentSheet, DOMStringImpl *media);
-		MediaListImpl(CSSRuleImpl *parentRule, DOMStringImpl *media);
-		virtual ~MediaListImpl();
+    class MediaListImpl : public StyleBaseImpl
+    {
+    public:
+        MediaListImpl();
+        MediaListImpl(CSSStyleSheetImpl *parentSheet);
+        MediaListImpl(CSSStyleSheetImpl *parentSheet, DOMStringImpl *media);
+        MediaListImpl(CSSRuleImpl *parentRule, DOMStringImpl *media);
+        virtual ~MediaListImpl();
 
-		// 'MediaList' functions
-		CSSRuleImpl *parentRule() const;
-		CSSStyleSheetImpl *parentStyleSheet() const;
+        // 'MediaList' functions
+        CSSRuleImpl *parentRule() const;
+        CSSStyleSheetImpl *parentStyleSheet() const;
 
-		DOMStringImpl *mediaText() const;
-		void setMediaText(DOMStringImpl *mediaText);
+        DOMStringImpl *mediaText() const;
+        void setMediaText(DOMStringImpl *mediaText);
 
-		unsigned long length() const;
-		DOMStringImpl *item(unsigned long index) const;
+        unsigned long length() const;
+        DOMStringImpl *item(unsigned long index) const;
 
-		void deleteMedium(DOMStringImpl *oldMedium);
-		void appendMedium(DOMStringImpl *newMedium);
+        void deleteMedium(DOMStringImpl *oldMedium);
+        void appendMedium(DOMStringImpl *newMedium);
 
-		virtual bool isMediaList() const { return true; }
+        virtual bool isMediaList() const { return true; }
 
-		/**
-		 * Check if the list contains either the requested medium, or
-		 * the catch-all "all" media type. Returns true when found,
-		 * false otherwise. Since not specifying media types should be
-		 * treated as "all" according * to DOM specs, an empty list
-		 * always returns true.
-		 *
-		 * _NOT_ part of the DOM!
-		 */
-		bool contains(DOMStringImpl *medium) const;
+        /**
+         * Check if the list contains either the requested medium, or
+         * the catch-all "all" media type. Returns true when found,
+         * false otherwise. Since not specifying media types should be
+         * treated as "all" according * to DOM specs, an empty list
+         * always returns true.
+         *
+         * _NOT_ part of the DOM!
+         */
+        bool contains(DOMStringImpl *medium) const;
 
-	protected:
-		QValueList<DOMString> m_lstMedia;
-	};
+    protected:
+        QValueList<DOMString> m_lstMedia;
+    };
 };
 
 #endif

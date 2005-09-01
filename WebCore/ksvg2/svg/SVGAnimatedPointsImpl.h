@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -25,17 +25,17 @@
 
 namespace KSVG
 {
-	class SVGPointListImpl;
-	class SVGAnimatedPointsImpl
-	{
-	public:
-		SVGAnimatedPointsImpl();
-		virtual ~SVGAnimatedPointsImpl();
+    class SVGPointListImpl;
+    class SVGAnimatedPointsImpl
+    {
+    public:
+        SVGAnimatedPointsImpl();
+        virtual ~SVGAnimatedPointsImpl();
 
-		// 'SVGAnimatedPoints' functions
-		virtual SVGPointListImpl *points() const = 0;
-		virtual SVGPointListImpl *animatedPoints() const = 0;
-	};
+        // 'SVGAnimatedPoints' functions
+        virtual SVGPointListImpl *points() const = 0;
+        virtual SVGPointListImpl *animatedPoints() const = 0;
+    };
 };
 
 #endif

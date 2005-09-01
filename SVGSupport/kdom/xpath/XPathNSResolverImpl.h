@@ -38,13 +38,13 @@ namespace XPath
 
 class XPathNSResolverImpl : public Shared
 {
-	public:
-		XPathNSResolverImpl( NodeImpl *node );
+    public:
+        XPathNSResolverImpl( NodeImpl *node );
 
-		DOMStringImpl *lookupNamespaceURI( DOMStringImpl *prefix );
+        DOMStringImpl *lookupNamespaceURI( DOMStringImpl *prefix );
 
-	private:
-		NodeImpl *m_node;
+    private:
+        NodeImpl *m_node;
 };
 
 }

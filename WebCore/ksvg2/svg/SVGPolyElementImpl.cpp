@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -35,78 +35,78 @@ using namespace KSVG;
 SVGPolyElementImpl::SVGPolyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix)
 : SVGStyledElementImpl(doc, id, prefix), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGTransformableImpl(), SVGAnimatedPointsImpl(), SVGPolyParser()
 {
-	m_points = 0;
+    m_points = 0;
 }
 
 SVGPolyElementImpl::~SVGPolyElementImpl()
 {
-	if(m_points)
-		m_points->deref();
+    if(m_points)
+        m_points->deref();
 }
 
 SVGPointListImpl *SVGPolyElementImpl::points() const
 {
-	return lazy_create<SVGPointListImpl>(m_points, this);
+    return lazy_create<SVGPointListImpl>(m_points, this);
 }
 
 SVGPointListImpl *SVGPolyElementImpl::animatedPoints() const
 {
-	return 0;
+    return 0;
 }
 
 void SVGPolyElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	int id = (attr->id() & NodeImpl_IdLocalMask);
-	switch(id)
-	{
-		case ATTR_POINTS:
-		{
-			parsePoints(KDOM::DOMString(attr->value()).string());
-			break;
-		}
-		default:
-		{
-			if(SVGTestsImpl::parseAttribute(attr)) return;
-			if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-			if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-			if(SVGTransformableImpl::parseAttribute(attr)) return;
+    int id = (attr->id() & NodeImpl_IdLocalMask);
+    switch(id)
+    {
+        case ATTR_POINTS:
+        {
+            parsePoints(KDOM::DOMString(attr->value()).string());
+            break;
+        }
+        default:
+        {
+            if(SVGTestsImpl::parseAttribute(attr)) return;
+            if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+            if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+            if(SVGTransformableImpl::parseAttribute(attr)) return;
 
-			SVGStyledElementImpl::parseAttribute(attr);
-		}
-	};
+            SVGStyledElementImpl::parseAttribute(attr);
+        }
+    };
 }
 
 void SVGPolyElementImpl::svgPolyTo(double x1, double y1, int) const
 {
-	points()->appendItem(new SVGPointImpl(x1, y1, this));
+    points()->appendItem(new SVGPointImpl(x1, y1, this));
 }
 
 void SVGPolyElementImpl::notifyAttributeChange() const
 {
-	if(ownerDocument()->parsing())
-		return;
+    if(ownerDocument()->parsing())
+        return;
 
-	SVGStyledElementImpl::notifyAttributeChange();
+    SVGStyledElementImpl::notifyAttributeChange();
 
-	// Spec: Additionally, the 'points' attribute on the original element
-	// accessed via the XML DOM (e.g., using the getAttribute() method call)
-	// will reflect any changes made to points.
-	KDOM::DOMString _points;
-	int len = points()->numberOfItems();
-	for(int i = 0; i < len; ++i)
-	{
-		SVGPointImpl *p = points()->getItem(i);
-		_points += QString::fromLatin1("%1 %2 ").arg(p->x()).arg(p->y());
-	}
+    // Spec: Additionally, the 'points' attribute on the original element
+    // accessed via the XML DOM (e.g., using the getAttribute() method call)
+    // will reflect any changes made to points.
+    KDOM::DOMString _points;
+    int len = points()->numberOfItems();
+    for(int i = 0; i < len; ++i)
+    {
+        SVGPointImpl *p = points()->getItem(i);
+        _points += QString::fromLatin1("%1 %2 ").arg(p->x()).arg(p->y());
+    }
 
-	KDOM::DOMString p("points");
-	KDOM::AttrImpl *attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.handle());
-	if(attr)
-	{
-		attr->setOwnerElement(0);
-		attr->setValue(_points.handle());
-		attr->setOwnerElement(const_cast<SVGPolyElementImpl *>(this));
-	}
+    KDOM::DOMString p("points");
+    KDOM::AttrImpl *attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.handle());
+    if(attr)
+    {
+        attr->setOwnerElement(0);
+        attr->setValue(_points.handle());
+        attr->setOwnerElement(const_cast<SVGPolyElementImpl *>(this));
+    }
 }
 
 // vim:ts=4:noet

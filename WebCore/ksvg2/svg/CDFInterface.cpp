@@ -47,73 +47,73 @@ CDFInterface::~CDFInterface()
 
 const char *CDFInterface::getValueName(KDOM::NodeImpl::Id id) const
 {
-	if(id > CSS_VAL_MAX && id <= SVGCSS_VAL_MAX)
-		return KSVG::getValueName(id - CSS_VAL_MAX);
-	
-	return KDOM::CDFInterface::getValueName(id);
+    if(id > CSS_VAL_MAX && id <= SVGCSS_VAL_MAX)
+        return KSVG::getValueName(id - CSS_VAL_MAX);
+    
+    return KDOM::CDFInterface::getValueName(id);
 }
 
 const char *CDFInterface::getPropertyName(KDOM::NodeImpl::Id id) const
 {
-	if(id > CSS_PROP_MAX && id <= SVGCSS_PROP_MAX)
-		return KSVG::getPropertyName(id - CSS_PROP_MAX);
+    if(id > CSS_PROP_MAX && id <= SVGCSS_PROP_MAX)
+        return KSVG::getPropertyName(id - CSS_PROP_MAX);
 
-	return KDOM::CDFInterface::getPropertyName(id);
+    return KDOM::CDFInterface::getPropertyName(id);
 }
-		
+        
 int CDFInterface::getValueID(const char *valStr, int len) const
 {
-	int ret = KSVG::getValueID(valStr, len);
-	if(ret)
-		return ret;
+    int ret = KSVG::getValueID(valStr, len);
+    if(ret)
+        return ret;
 
-	return KDOM::CDFInterface::getValueID(valStr, len);
+    return KDOM::CDFInterface::getValueID(valStr, len);
 }
 
 int CDFInterface::getPropertyID(const char *propStr, int len) const
 {
-	int ret = KSVG::getPropertyID(propStr, len);
-	if(ret)
-		return ret;
+    int ret = KSVG::getPropertyID(propStr, len);
+    if(ret)
+        return ret;
 
-	return KDOM::CDFInterface::getPropertyID(propStr, len);
+    return KDOM::CDFInterface::getPropertyID(propStr, len);
 }
 
 KDOM::RenderStyle *CDFInterface::renderStyle() const
 {
-	return new KSVG::SVGRenderStyle();
+    return new KSVG::SVGRenderStyle();
 }
 
 const char *CDFInterface::getTagName(KDOM::NodeImpl::Id id) const
 {
-	return KSVG::getTagName(id);
+    return KSVG::getTagName(id);
 }
 
 const char *CDFInterface::getAttrName(KDOM::NodeImpl::Id id) const
 {
-	if(id > ATTR_LAST_DOMATTR && id <= ATTR_LAST_SVGATTR)
-		return KSVG::getAttrName(id - ATTR_LAST_DOMATTR);
+    if(id > ATTR_LAST_DOMATTR && id <= ATTR_LAST_SVGATTR)
+        return KSVG::getAttrName(id - ATTR_LAST_DOMATTR);
 
-	return KDOM::CDFInterface::getAttrName(id);
+    return KDOM::CDFInterface::getAttrName(id);
 }
-		
+        
 int CDFInterface::getTagID(const char *tagStr, int len) const
 {
-	return KSVG::getTagID(tagStr, len);
+    return KSVG::getTagID(tagStr, len);
 }
 
 int CDFInterface::getAttrID(const char *attrStr, int len) const
 {
-	int ret = KSVG::getAttrID(attrStr, len);
-	if(ret > ATTR_LAST_DOMATTR)
-		return ret;
+    int ret = KSVG::getAttrID(attrStr, len);
+    if(ret > ATTR_LAST_DOMATTR)
+        return ret;
 
-	return KDOM::CDFInterface::getAttrID(attrStr, len);
+    return KDOM::CDFInterface::getAttrID(attrStr, len);
 }
 #if 0
 KDOM::GlobalObject *CDFInterface::globalObject(KDOM::DocumentImpl *doc) const
 {
-	return new KSVG::GlobalObject(doc);
+    return new KSVG::GlobalObject(doc);
 }
 #endif
 // vim:ts=4:noet

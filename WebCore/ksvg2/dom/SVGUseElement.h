@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,47 +34,47 @@
 
 namespace KSVG
 {
-	class SVGElementInstance;
-	class SVGAnimatedLength;
-	class SVGUseElementImpl;
-	class SVGUseElement : public SVGElement,
-						  public SVGTests,
-						  public SVGLangSpace,
-						  public SVGExternalResourcesRequired,
-						  public SVGStylable,
-						  public SVGTransformable,
-						  public SVGURIReference
-	{
-	public:
-		SVGUseElement();
-		explicit SVGUseElement(SVGUseElementImpl *i);
-		SVGUseElement(const SVGUseElement &other);
-		SVGUseElement(const KDOM::Node &other);
-		virtual ~SVGUseElement();
+    class SVGElementInstance;
+    class SVGAnimatedLength;
+    class SVGUseElementImpl;
+    class SVGUseElement : public SVGElement,
+                          public SVGTests,
+                          public SVGLangSpace,
+                          public SVGExternalResourcesRequired,
+                          public SVGStylable,
+                          public SVGTransformable,
+                          public SVGURIReference
+    {
+    public:
+        SVGUseElement();
+        explicit SVGUseElement(SVGUseElementImpl *i);
+        SVGUseElement(const SVGUseElement &other);
+        SVGUseElement(const KDOM::Node &other);
+        virtual ~SVGUseElement();
 
-		// Operators
-		SVGUseElement &operator=(const SVGUseElement &other);
-		SVGUseElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGUseElement &operator=(const SVGUseElement &other);
+        SVGUseElement &operator=(const KDOM::Node &other);
 
-		// 'SVGUseElement' functions
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
+        // 'SVGUseElement' functions
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
 
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
 
-		//SVGElementInstance instanceRoot() const;
-		//SVGElementInstance animatedInstanceRoot() const;
+        //SVGElementInstance instanceRoot() const;
+        //SVGElementInstance animatedInstanceRoot() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGUseElement)
+        // Internal
+        KSVG_INTERNAL(SVGUseElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

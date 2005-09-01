@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,55 +32,55 @@ class KCanvasMarker;
 
 namespace KDOM
 {
-	class DocumentImpl;
+    class DocumentImpl;
 };
 
 namespace KSVG
 {
-	class SVGAngleImpl;
-	class SVGAnimatedAngleImpl;
-	class SVGAnimatedLengthImpl;
-	class SVGAnimatedEnumerationImpl;
-	class SVGMarkerElementImpl : public SVGStyledElementImpl,
-								 public SVGLangSpaceImpl,
-								 public SVGExternalResourcesRequiredImpl,
-								 public SVGFitToViewBoxImpl
-	{
-	public:
-		SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGMarkerElementImpl();
+    class SVGAngleImpl;
+    class SVGAnimatedAngleImpl;
+    class SVGAnimatedLengthImpl;
+    class SVGAnimatedEnumerationImpl;
+    class SVGMarkerElementImpl : public SVGStyledElementImpl,
+                                 public SVGLangSpaceImpl,
+                                 public SVGExternalResourcesRequiredImpl,
+                                 public SVGFitToViewBoxImpl
+    {
+    public:
+        SVGMarkerElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGMarkerElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual void close();
+        // Derived from: 'ElementImpl'
+        virtual void close();
 
-		// 'SVGMarkerElement' functions
-		SVGAnimatedLengthImpl *refX() const;
-		SVGAnimatedLengthImpl *refY() const;
-		SVGAnimatedEnumerationImpl *markerUnits() const;
-		SVGAnimatedLengthImpl *markerWidth() const;
-		SVGAnimatedLengthImpl *markerHeight() const;
-		SVGAnimatedEnumerationImpl *orientType() const;
-		SVGAnimatedAngleImpl *orientAngle() const;
+        // 'SVGMarkerElement' functions
+        SVGAnimatedLengthImpl *refX() const;
+        SVGAnimatedLengthImpl *refY() const;
+        SVGAnimatedEnumerationImpl *markerUnits() const;
+        SVGAnimatedLengthImpl *markerWidth() const;
+        SVGAnimatedLengthImpl *markerHeight() const;
+        SVGAnimatedEnumerationImpl *orientType() const;
+        SVGAnimatedAngleImpl *orientAngle() const;
 
-		void setOrientToAuto();
-		void setOrientToAngle(SVGAngleImpl *angle);
+        void setOrientToAuto();
+        void setOrientToAngle(SVGAngleImpl *angle);
 
-		virtual void parseAttribute(KDOM::AttributeImpl *);
-	
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual void parseAttribute(KDOM::AttributeImpl *);
+    
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_refX;
-		mutable SVGAnimatedLengthImpl *m_refY;
-		mutable SVGAnimatedLengthImpl *m_markerWidth;
-		mutable SVGAnimatedLengthImpl *m_markerHeight;
-		mutable SVGAnimatedEnumerationImpl *m_markerUnits;
-		mutable SVGAnimatedEnumerationImpl *m_orientType;
-		mutable SVGAnimatedAngleImpl *m_orientAngle;
-		KCanvasMarker *m_marker;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_refX;
+        mutable SVGAnimatedLengthImpl *m_refY;
+        mutable SVGAnimatedLengthImpl *m_markerWidth;
+        mutable SVGAnimatedLengthImpl *m_markerHeight;
+        mutable SVGAnimatedEnumerationImpl *m_markerUnits;
+        mutable SVGAnimatedEnumerationImpl *m_orientType;
+        mutable SVGAnimatedAngleImpl *m_orientAngle;
+        KCanvasMarker *m_marker;
+    };
 };
 
 #endif

@@ -27,67 +27,67 @@ using namespace KSVG;
 
 SVGPaintImpl::SVGPaintImpl() : SVGColorImpl(), m_uri(0)
 {
-	m_paintType = SVG_PAINTTYPE_UNKNOWN;
+    m_paintType = SVG_PAINTTYPE_UNKNOWN;
 }
 
 SVGPaintImpl::SVGPaintImpl(KDOM::DOMStringImpl *uri) : SVGColorImpl(), m_uri(0)
 {
-	m_paintType = SVG_PAINTTYPE_URI;
-	setUri(uri);
+    m_paintType = SVG_PAINTTYPE_URI;
+    setUri(uri);
 }
 
 SVGPaintImpl::SVGPaintImpl(unsigned short paintType) : SVGColorImpl(), m_uri(0)
 {
-	m_paintType = paintType;
+    m_paintType = paintType;
 }
 
 SVGPaintImpl::SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *) : SVGColorImpl(rgbPaint), m_uri(0)
 {
-	m_paintType = paintType;
-	setUri(uri);
+    m_paintType = paintType;
+    setUri(uri);
 }
 
 SVGPaintImpl::~SVGPaintImpl()
 {
-	if(m_uri)
-		m_uri->deref();
+    if(m_uri)
+        m_uri->deref();
 }
 
 unsigned short SVGPaintImpl::paintType() const
 {
-	return m_paintType;
+    return m_paintType;
 }
 
 KDOM::DOMStringImpl *SVGPaintImpl::uri() const
 {
-	return m_uri;
+    return m_uri;
 }
 
 void SVGPaintImpl::setUri(KDOM::DOMStringImpl *uri)
 {
-	KDOM_SAFE_SET(m_uri, uri);
+    KDOM_SAFE_SET(m_uri, uri);
 }
 
 void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *)
 {
-	m_paintType = paintType;
+    m_paintType = paintType;
 
-	if(m_paintType == SVG_PAINTTYPE_URI)
-		setUri(uri);
-	else if(m_paintType == SVG_PAINTTYPE_RGBCOLOR)
-		setRGBColor(rgbPaint);
+    if(m_paintType == SVG_PAINTTYPE_URI)
+        setUri(uri);
+    else if(m_paintType == SVG_PAINTTYPE_RGBCOLOR)
+        setRGBColor(rgbPaint);
 }
 
 KDOM::DOMStringImpl *SVGPaintImpl::cssText() const
 {
-	if(m_paintType == SVG_PAINTTYPE_NONE)
-		return new KDOM::DOMStringImpl("none");
-	else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
-		return new KDOM::DOMStringImpl("currentColor");
-	else if(m_paintType == SVG_PAINTTYPE_URI)
-		return new KDOM::DOMStringImpl(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).string() + QString::fromLatin1(")"));
+    if(m_paintType == SVG_PAINTTYPE_NONE)
+        return new KDOM::DOMStringImpl("none");
+    else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
+        return new KDOM::DOMStringImpl("currentColor");
+    else if(m_paintType == SVG_PAINTTYPE_URI)
+        return new KDOM::DOMStringImpl(QString::fromLatin1("url(") + KDOM::DOMString(m_uri).string() + QString::fromLatin1(")"));
 
-	return SVGColorImpl::cssText();
+    return SVGColorImpl::cssText();
 }
 
 // vim:ts=4:noet

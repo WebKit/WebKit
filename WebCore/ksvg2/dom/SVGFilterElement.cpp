@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -45,17 +45,17 @@ using namespace KSVG;
 
 /*
 @begin SVGFilterElement::s_hashTable 9
- filterUnits	SVGFilterElementConstants::FilterUnits		DontDelete|ReadOnly
- primitiveUnits	SVGFilterElementConstants::PrimitiveUnits	DontDelete|ReadOnly
- x				SVGFilterElementConstants::X				DontDelete|ReadOnly
- y				SVGFilterElementConstants::Y				DontDelete|ReadOnly
- width			SVGFilterElementConstants::Width			DontDelete|ReadOnly
- height			SVGFilterElementConstants::Height			DontDelete|ReadOnly
- filterResX		SVGFilterElementConstants::FilterResX		DontDelete|ReadOnly
- filterResY		SVGFilterElementConstants::FilterResY		DontDelete|ReadOnly
+ filterUnits    SVGFilterElementConstants::FilterUnits        DontDelete|ReadOnly
+ primitiveUnits    SVGFilterElementConstants::PrimitiveUnits    DontDelete|ReadOnly
+ x                SVGFilterElementConstants::X                DontDelete|ReadOnly
+ y                SVGFilterElementConstants::Y                DontDelete|ReadOnly
+ width            SVGFilterElementConstants::Width            DontDelete|ReadOnly
+ height            SVGFilterElementConstants::Height            DontDelete|ReadOnly
+ filterResX        SVGFilterElementConstants::FilterResX        DontDelete|ReadOnly
+ filterResY        SVGFilterElementConstants::FilterResY        DontDelete|ReadOnly
 @end
 @begin SVGFilterElementProto::s_hashTable 3
- setFilterRes	SVGFilterElementConstants::SetFilterRes		DontDelete|Function 2
+ setFilterRes    SVGFilterElementConstants::SetFilterRes        DontDelete|Function 2
 @end
 */
 
@@ -63,54 +63,54 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGFilterElement", SVGFilterElementProto, SVGFilterEle
 
 ValueImp *SVGFilterElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFilterElementConstants::FilterUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, filterUnits());
-		case SVGFilterElementConstants::PrimitiveUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, primitiveUnits());
-		case SVGFilterElementConstants::X:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
-		case SVGFilterElementConstants::Y:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
-		case SVGFilterElementConstants::Width:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
-		case SVGFilterElementConstants::Height:
-			return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
-		case SVGFilterElementConstants::FilterResX:
-			return KDOM::safe_cache<SVGAnimatedInteger>(exec, filterResX());
-		case SVGFilterElementConstants::FilterResY:
-			return KDOM::safe_cache<SVGAnimatedInteger>(exec, filterResY());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFilterElementConstants::FilterUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, filterUnits());
+        case SVGFilterElementConstants::PrimitiveUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, primitiveUnits());
+        case SVGFilterElementConstants::X:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, x());
+        case SVGFilterElementConstants::Y:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, y());
+        case SVGFilterElementConstants::Width:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, width());
+        case SVGFilterElementConstants::Height:
+            return KDOM::safe_cache<SVGAnimatedLength>(exec, height());
+        case SVGFilterElementConstants::FilterResX:
+            return KDOM::safe_cache<SVGAnimatedInteger>(exec, filterResX());
+        case SVGFilterElementConstants::FilterResY:
+            return KDOM::safe_cache<SVGAnimatedInteger>(exec, filterResY());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGFilterElementProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	SVGFilterElement obj(cast(exec, thisObj));
-	KDOM_ENTER_SAFE
+    SVGFilterElement obj(cast(exec, thisObj));
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGFilterElementConstants::SetFilterRes:
-		{
-			unsigned long filterResX = args[0]->toUInt32(exec);;
-			unsigned long filterResY = args[1]->toUInt32(exec);;
-			obj.setFilterRes(filterResX, filterResY);
-			return Undefined();
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGFilterElementConstants::SetFilterRes:
+        {
+            unsigned long filterResX = args[0]->toUInt32(exec);;
+            unsigned long filterResY = args[1]->toUInt32(exec);;
+            obj.setFilterRes(filterResX, filterResY);
+            return Undefined();
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -128,12 +128,12 @@ SVGFilterElement::SVGFilterElement(SVGFilterElementImpl *i) : SVGElement(i), SVG
 
 SVGFilterElement::SVGFilterElement(const SVGFilterElement &other) : SVGElement(), SVGURIReference(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFilterElement::SVGFilterElement(const KDOM::Node &other) : SVGElement(), SVGURIReference(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFilterElement::~SVGFilterElement()
@@ -142,107 +142,107 @@ SVGFilterElement::~SVGFilterElement()
 
 SVGFilterElement &SVGFilterElement::operator=(const SVGFilterElement &other)
 {
-	SVGElement::operator=(other);
-	SVGURIReference::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGURIReference::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    return *this;
 }
 
 SVGFilterElement &SVGFilterElement::operator=(const KDOM::Node &other)
 {
-	SVGFilterElementImpl *ohandle = static_cast<SVGFilterElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGURIReference::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-		}
-	}
+    SVGFilterElementImpl *ohandle = static_cast<SVGFilterElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGURIReference::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedEnumeration SVGFilterElement::filterUnits() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->filterUnits());
+    return SVGAnimatedEnumeration(impl->filterUnits());
 }
 
 SVGAnimatedEnumeration SVGFilterElement::primitiveUnits() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->primitiveUnits());
+    return SVGAnimatedEnumeration(impl->primitiveUnits());
 }
 
 SVGAnimatedLength SVGFilterElement::x() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->x());
+    return SVGAnimatedLength(impl->x());
 }
 
 SVGAnimatedLength SVGFilterElement::y() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->y());
+    return SVGAnimatedLength(impl->y());
 }
 
 SVGAnimatedLength SVGFilterElement::width() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->width());
+    return SVGAnimatedLength(impl->width());
 }
 
 SVGAnimatedLength SVGFilterElement::height() const
 {
-	if(!d)
-		return SVGAnimatedLength::null;
+    if(!d)
+        return SVGAnimatedLength::null;
 
-	return SVGAnimatedLength(impl->height());
+    return SVGAnimatedLength(impl->height());
 }
 
 SVGAnimatedInteger SVGFilterElement::filterResX() const
 {
-	if(!d)
-		return SVGAnimatedInteger::null;
+    if(!d)
+        return SVGAnimatedInteger::null;
 
-	return SVGAnimatedInteger(impl->filterResX());
+    return SVGAnimatedInteger(impl->filterResX());
 }
 
 SVGAnimatedInteger SVGFilterElement::filterResY() const
 {
-	if(!d)
-		return SVGAnimatedInteger::null;
+    if(!d)
+        return SVGAnimatedInteger::null;
 
-	return SVGAnimatedInteger(impl->filterResY());
+    return SVGAnimatedInteger(impl->filterResY());
 }
 
 void SVGFilterElement::setFilterRes(unsigned long filterResX, unsigned long filterResY) const
 {
-	if(d)
-		return impl->setFilterRes(filterResX, filterResY);
+    if(d)
+        return impl->setFilterRes(filterResX, filterResY);
 }
 
 // vim:ts=4:noet

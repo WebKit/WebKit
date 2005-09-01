@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,42 +27,42 @@
 
 namespace KSVG
 {
-	class SVGRect;
-	class SVGMatrix;
-	class SVGElement;
-	class SVGLocatableImpl;
-	class SVGLocatable
-	{
-	public:
-		SVGLocatable();
-		explicit SVGLocatable(SVGLocatableImpl *i);
-		SVGLocatable(const SVGLocatable &other);
-		virtual ~SVGLocatable();
+    class SVGRect;
+    class SVGMatrix;
+    class SVGElement;
+    class SVGLocatableImpl;
+    class SVGLocatable
+    {
+    public:
+        SVGLocatable();
+        explicit SVGLocatable(SVGLocatableImpl *i);
+        SVGLocatable(const SVGLocatable &other);
+        virtual ~SVGLocatable();
 
-		// Operators
-		SVGLocatable &operator=(const SVGLocatable &other);
-		SVGLocatable &operator=(SVGLocatableImpl *other);
+        // Operators
+        SVGLocatable &operator=(const SVGLocatable &other);
+        SVGLocatable &operator=(SVGLocatableImpl *other);
 
-		// 'SVGLocatable' functions
-		SVGElement nearestViewportElement() const;
-		SVGElement farthestViewportElement() const;
+        // 'SVGLocatable' functions
+        SVGElement nearestViewportElement() const;
+        SVGElement farthestViewportElement() const;
 
-		SVGRect getBBox() const;
-		SVGMatrix getCTM() const;
-		SVGMatrix getScreenCTM() const;
-		SVGMatrix getTransformToElement(const SVGElement &element) const;
+        SVGRect getBBox() const;
+        SVGMatrix getCTM() const;
+        SVGMatrix getScreenCTM() const;
+        SVGMatrix getTransformToElement(const SVGElement &element) const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGLocatable)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGLocatable)
 
-	protected:
-		SVGLocatableImpl *impl;
+    protected:
+        SVGLocatableImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGLocatableProto)

@@ -30,16 +30,16 @@
 
 namespace KSVG
 {
-	class SVGAnimatedNumberListImpl : public SVGAnimatedTemplate<SVGNumberListImpl>
-	{
-	public:
-		SVGAnimatedNumberListImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedNumberListImpl();
+    class SVGAnimatedNumberListImpl : public SVGAnimatedTemplate<SVGNumberListImpl>
+    {
+    public:
+        SVGAnimatedNumberListImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedNumberListImpl();
 
-	protected:
-		virtual SVGNumberListImpl *create() const;
-		virtual void assign(SVGNumberListImpl *src, SVGNumberListImpl *dst) const;
-	};
+    protected:
+        virtual SVGNumberListImpl *create() const;
+        virtual void assign(SVGNumberListImpl *src, SVGNumberListImpl *dst) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,98 +27,98 @@
 
 namespace KSVG
 {
-	class SVGElementImpl;
-	class SVGStringListImpl;
+    class SVGElementImpl;
+    class SVGStringListImpl;
 
-	// KSVG extension
-	enum LengthMode
-	{
-		LM_UNKNOWN = 0,
-		LM_WIDTH,
-		LM_HEIGHT,
-		LM_OTHER
-	};
+    // KSVG extension
+    enum LengthMode
+    {
+        LM_UNKNOWN = 0,
+        LM_WIDTH,
+        LM_HEIGHT,
+        LM_OTHER
+    };
 
-	class SVGHelper
-	{
-	public:
-		static float PercentageOfViewport(float value, const SVGElementImpl *viewportElement, LengthMode mode);
+    class SVGHelper
+    {
+    public:
+        static float PercentageOfViewport(float value, const SVGElementImpl *viewportElement, LengthMode mode);
 
-		static void ParseSeperatedList(SVGStringListImpl *list, const QString &data, const QChar &delimiter = ',');
-	};
+        static void ParseSeperatedList(SVGStringListImpl *list, const QString &data, const QChar &delimiter = ',');
+    };
 
-	// Lazy creation, template-based
-	template<class T>
-	T *lazy_create(T *&variable)
-	{ 
-		if(!variable)
-		{
-			variable = new T();
-			variable->ref();
-		}
+    // Lazy creation, template-based
+    template<class T>
+    T *lazy_create(T *&variable)
+    { 
+        if(!variable)
+        {
+            variable = new T();
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 
-	template<class T, class Arg1>
-	T *lazy_create(T *&variable, Arg1 arg1)
-	{ 
-		if(!variable)
-		{
-			variable = new T(arg1);
-			variable->ref();
-		}
+    template<class T, class Arg1>
+    T *lazy_create(T *&variable, Arg1 arg1)
+    { 
+        if(!variable)
+        {
+            variable = new T(arg1);
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 
-	template<class T, class Arg1, class Arg2>
-	T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2)
-	{ 
-		if(!variable)
-		{
-			variable = new T(arg1, arg2);
-			variable->ref();
-		}
+    template<class T, class Arg1, class Arg2>
+    T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2)
+    { 
+        if(!variable)
+        {
+            variable = new T(arg1, arg2);
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 
-	template<class T, class Arg1, class Arg2, class Arg3>
-	T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3)
-	{ 
-		if(!variable)
-		{
-			variable = new T(arg1, arg2, arg3);
-			variable->ref();
-		}
+    template<class T, class Arg1, class Arg2, class Arg3>
+    T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3)
+    { 
+        if(!variable)
+        {
+            variable = new T(arg1, arg2, arg3);
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
-	T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
-	{ 
-		if(!variable)
-		{
-			variable = new T(arg1, arg2, arg3, arg4);
-			variable->ref();
-		}
+    template<class T, class Arg1, class Arg2, class Arg3, class Arg4>
+    T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4)
+    { 
+        if(!variable)
+        {
+            variable = new T(arg1, arg2, arg3, arg4);
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 
-	template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
-	T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
-	{ 
-		if(!variable)
-		{
-			variable = new T(arg1, arg2, arg3, arg4, arg5);
-			variable->ref();
-		}
+    template<class T, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+    T *lazy_create(T *&variable, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4, Arg5 arg5)
+    { 
+        if(!variable)
+        {
+            variable = new T(arg1, arg2, arg3, arg4, arg5);
+            variable->ref();
+        }
 
-		return variable;
-	}
+        return variable;
+    }
 };
 
 #endif

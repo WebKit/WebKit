@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGAnimatedEnumerationImpl;
-	class SVGAnimatedEnumeration
-	{
-	public:
-		SVGAnimatedEnumeration();
-		explicit SVGAnimatedEnumeration(SVGAnimatedEnumerationImpl *i);
-		SVGAnimatedEnumeration(const SVGAnimatedEnumeration &other);
-		virtual ~SVGAnimatedEnumeration();
+    class SVGAnimatedEnumerationImpl;
+    class SVGAnimatedEnumeration
+    {
+    public:
+        SVGAnimatedEnumeration();
+        explicit SVGAnimatedEnumeration(SVGAnimatedEnumerationImpl *i);
+        SVGAnimatedEnumeration(const SVGAnimatedEnumeration &other);
+        virtual ~SVGAnimatedEnumeration();
 
-		// Operators
-		SVGAnimatedEnumeration &operator=(const SVGAnimatedEnumeration &other);
-		bool operator==(const SVGAnimatedEnumeration &other) const;
-		bool operator!=(const SVGAnimatedEnumeration &other) const;
+        // Operators
+        SVGAnimatedEnumeration &operator=(const SVGAnimatedEnumeration &other);
+        bool operator==(const SVGAnimatedEnumeration &other) const;
+        bool operator!=(const SVGAnimatedEnumeration &other) const;
 
-		// 'SVGAnimatedEnumeration' functions
-		unsigned short baseVal() const;
-		unsigned short animVal() const;
+        // 'SVGAnimatedEnumeration' functions
+        unsigned short baseVal() const;
+        unsigned short animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedEnumeration)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedEnumeration)
 
-	protected:
-		SVGAnimatedEnumerationImpl *impl;
+    protected:
+        SVGAnimatedEnumerationImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,67 +29,67 @@
 
 namespace KDOM
 {
-	class DOMStringImpl;
-	class DOMUserDataImpl;
-	class DOMStringListImpl;
+    class DOMStringImpl;
+    class DOMUserDataImpl;
+    class DOMStringListImpl;
 
-	class DOMConfigurationImpl : public Shared
-	{
-	public:
-		DOMConfigurationImpl();
-		virtual ~DOMConfigurationImpl();
+    class DOMConfigurationImpl : public Shared
+    {
+    public:
+        DOMConfigurationImpl();
+        virtual ~DOMConfigurationImpl();
 
-		void setParameter(DOMStringImpl *name, DOMUserDataImpl *value);
-		void setParameter(DOMStringImpl *name, bool value);
-		DOMUserDataImpl *getParameter(DOMStringImpl *name) const;
-		bool canSetParameter(DOMStringImpl *name, DOMUserDataImpl *value) const;
-		DOMStringListImpl *parameterNames() const;
+        void setParameter(DOMStringImpl *name, DOMUserDataImpl *value);
+        void setParameter(DOMStringImpl *name, bool value);
+        DOMUserDataImpl *getParameter(DOMStringImpl *name) const;
+        bool canSetParameter(DOMStringImpl *name, DOMUserDataImpl *value) const;
+        DOMStringListImpl *parameterNames() const;
 
-		// Internal
-		DOMErrorHandlerImpl *errHandler() const;
-		bool getParameter(int flag) const;
-		void setParameter(int flag, bool b);
+        // Internal
+        DOMErrorHandlerImpl *errHandler() const;
+        bool getParameter(int flag) const;
+        void setParameter(int flag, bool b);
 
-		DOMStringImpl *normalizeCharacters(DOMStringImpl *data) const;
+        DOMStringImpl *normalizeCharacters(DOMStringImpl *data) const;
 
-	private:
-		DOMErrorHandlerImpl *m_errHandler;
+    private:
+        DOMErrorHandlerImpl *m_errHandler;
 
-		int m_flags;
-		static DOMStringListImpl *m_paramNames;
-	};
+        int m_flags;
+        static DOMStringListImpl *m_paramNames;
+    };
 
-	// TODO: Rob created these and I feel bad about that (Niko)
-	static DOMString CANONICAL_FORM("canonical-form");
-	static DOMString CDATA_SECTIONS("cdata-sections");
-	static DOMString CHECK_CHARACTER_NORMALIZATION("check-character-normalization");
-	static DOMString COMMENTS("comments");
-	static DOMString DATATYPE_NORMALIZATION("datatype-normalization");
-	static DOMString ELEMENT_CONTENT_WHITESPACE("element-content-whitespace");
-	static DOMString ENTITIES("entities");
-	static DOMString ERROR_HANDLER("error-handler");
-	static DOMString INFOSET("infoset");
-	static DOMString NAMESPACES("namespaces");
-	static DOMString NAMESPACE_DECLARATIONS("namespace-declarations");
-	static DOMString NORMALIZE_CHARACTERS("normalize-characters");
-	static DOMString SCHEMA_LOCATION("schema-location");
-	static DOMString SCHEMA_TYPE("schema-type");
-	static DOMString SPLIT_CDATA_SECTIONS("split-cdata-sections");
-	static DOMString VALIDATE("validate");
-	static DOMString VALIDATE_IF_SCHEMA("validate-if-schema");
-	static DOMString WELL_FORMED("well-formed");
+    // TODO: Rob created these and I feel bad about that (Niko)
+    static DOMString CANONICAL_FORM("canonical-form");
+    static DOMString CDATA_SECTIONS("cdata-sections");
+    static DOMString CHECK_CHARACTER_NORMALIZATION("check-character-normalization");
+    static DOMString COMMENTS("comments");
+    static DOMString DATATYPE_NORMALIZATION("datatype-normalization");
+    static DOMString ELEMENT_CONTENT_WHITESPACE("element-content-whitespace");
+    static DOMString ENTITIES("entities");
+    static DOMString ERROR_HANDLER("error-handler");
+    static DOMString INFOSET("infoset");
+    static DOMString NAMESPACES("namespaces");
+    static DOMString NAMESPACE_DECLARATIONS("namespace-declarations");
+    static DOMString NORMALIZE_CHARACTERS("normalize-characters");
+    static DOMString SCHEMA_LOCATION("schema-location");
+    static DOMString SCHEMA_TYPE("schema-type");
+    static DOMString SPLIT_CDATA_SECTIONS("split-cdata-sections");
+    static DOMString VALIDATE("validate");
+    static DOMString VALIDATE_IF_SCHEMA("validate-if-schema");
+    static DOMString WELL_FORMED("well-formed");
 
-	// LSParser specific
-	static DOMString CHARSET_OVERRIDES_XML_ENCODING("charset-overrides-xml-encoding");
-	static DOMString DISALLOW_DOCTYPE("disallow-doctype");
-	static DOMString IGNORE_UNKNOWN_CD("ignore-unknown-character-denormalizations");
-	static DOMString RESOURCE_RESOLVER("resource-resolver");
-	static DOMString SUPPORTED_MEDIA_TYPE_ONLY("supported-media-types-only");
+    // LSParser specific
+    static DOMString CHARSET_OVERRIDES_XML_ENCODING("charset-overrides-xml-encoding");
+    static DOMString DISALLOW_DOCTYPE("disallow-doctype");
+    static DOMString IGNORE_UNKNOWN_CD("ignore-unknown-character-denormalizations");
+    static DOMString RESOURCE_RESOLVER("resource-resolver");
+    static DOMString SUPPORTED_MEDIA_TYPE_ONLY("supported-media-types-only");
 
-	// LSSerializer specific
-	static DOMString DISCARD_DEFAULT_CONTENT("discard-default-content");
-	static DOMString FORMAT_PRETTY_PRINT("format-pretty-print");
-	static DOMString XML_DECLARATION("xml-declaration");
+    // LSSerializer specific
+    static DOMString DISCARD_DEFAULT_CONTENT("discard-default-content");
+    static DOMString FORMAT_PRETTY_PRINT("format-pretty-print");
+    static DOMString XML_DECLARATION("xml-declaration");
 };
 
 #endif

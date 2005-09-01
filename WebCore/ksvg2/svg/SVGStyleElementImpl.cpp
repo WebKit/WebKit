@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -34,119 +34,119 @@ using namespace KSVG;
 
 SVGStyleElementImpl::SVGStyleElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix) : SVGElementImpl(doc, id, prefix)
 {
-	m_sheet = 0;
-	m_loading = false;
+    m_sheet = 0;
+    m_loading = false;
 }
 
 SVGStyleElementImpl::~SVGStyleElementImpl()
 {
-	if(m_sheet)
-		m_sheet->deref();
+    if(m_sheet)
+        m_sheet->deref();
 }
 
 KDOM::DOMStringImpl *SVGStyleElementImpl::xmlspace() const
 {
-	KDOM::DOMString name("xml:space");
-	if(hasAttribute(name.handle()))
-		return getAttribute(name.handle());
+    KDOM::DOMString name("xml:space");
+    if(hasAttribute(name.handle()))
+        return getAttribute(name.handle());
 
-	return NULL;
+    return NULL;
 }
 
 void SVGStyleElementImpl::setXmlspace(KDOM::DOMStringImpl *)
 {
-	throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
+    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
 }
 
 KDOM::DOMStringImpl *SVGStyleElementImpl::type() const
 {
-	KDOM::DOMString name("type");
-	if(hasAttribute(name.handle()))
-		return getAttribute(name.handle());
+    KDOM::DOMString name("type");
+    if(hasAttribute(name.handle()))
+        return getAttribute(name.handle());
 
-	return new KDOM::DOMStringImpl("text/css");
+    return new KDOM::DOMStringImpl("text/css");
 }
 
 void SVGStyleElementImpl::setType(KDOM::DOMStringImpl *)
 {
-	throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
+    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
 }
 
 KDOM::DOMStringImpl *SVGStyleElementImpl::media() const
 {
-	KDOM::DOMString name("media");
-	if(hasAttribute(name.handle()))
-		return getAttribute(name.handle());
+    KDOM::DOMString name("media");
+    if(hasAttribute(name.handle()))
+        return getAttribute(name.handle());
 
-	return new KDOM::DOMStringImpl("all");
+    return new KDOM::DOMStringImpl("all");
 }
 
 void SVGStyleElementImpl::setMedia(KDOM::DOMStringImpl *)
 {
-	throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
+    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
 }
 
 KDOM::DOMStringImpl *SVGStyleElementImpl::title() const
 {
-	KDOM::DOMString name("title");
-	if(hasAttribute(name.handle()))
-		return getAttribute(name.handle());
+    KDOM::DOMString name("title");
+    if(hasAttribute(name.handle()))
+        return getAttribute(name.handle());
 
-	return NULL;
+    return NULL;
 }
 
 void SVGStyleElementImpl::setTitle(KDOM::DOMStringImpl *)
 {
-	throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
+    throw new KDOM::DOMExceptionImpl(KDOM::NO_MODIFICATION_ALLOWED_ERR);
 }
 
 KDOM::CSSStyleSheetImpl *SVGStyleElementImpl::sheet()
 {
-	return m_sheet;
+    return m_sheet;
 }
 
 void SVGStyleElementImpl::childrenChanged()
 {
-	SVGElementImpl::childrenChanged();
+    SVGElementImpl::childrenChanged();
 
-	KDOM::DOMString text(textContent());
+    KDOM::DOMString text(textContent());
 
-	if(m_sheet)
-	{
-		m_sheet->deref();
-		m_sheet = 0;
-	}
+    if(m_sheet)
+    {
+        m_sheet->deref();
+        m_sheet = 0;
+    }
 
-	m_loading = false;
-	QString _media = KDOM::DOMString(media()).string();
-	if((KDOM::DOMString(type()).isEmpty() || KDOM::DOMString(type()) == "text/css") && (_media.isNull() ||
-		_media.contains(QString::fromLatin1("screen")) ||
-		_media.contains(QString::fromLatin1("all")) |
-		_media.contains(QString::fromLatin1("print"))))
-	{
-		ownerDocument()->addPendingSheet();
-		
-		m_loading = true;
-		
-		m_sheet = new SVGCSSStyleSheetImpl(this);
-		m_sheet->ref();
-		m_sheet->parseString(text.handle(), false);//!getDocument()->inCompatMode());
-		
-		KDOM::MediaListImpl *media = new KDOM::MediaListImpl(m_sheet, KDOM::DOMString(_media).handle());
-		m_sheet->setMedia(media);
-		m_loading = false;
-	}
+    m_loading = false;
+    QString _media = KDOM::DOMString(media()).string();
+    if((KDOM::DOMString(type()).isEmpty() || KDOM::DOMString(type()) == "text/css") && (_media.isNull() ||
+        _media.contains(QString::fromLatin1("screen")) ||
+        _media.contains(QString::fromLatin1("all")) |
+        _media.contains(QString::fromLatin1("print"))))
+    {
+        ownerDocument()->addPendingSheet();
+        
+        m_loading = true;
+        
+        m_sheet = new SVGCSSStyleSheetImpl(this);
+        m_sheet->ref();
+        m_sheet->parseString(text.handle(), false);//!getDocument()->inCompatMode());
+        
+        KDOM::MediaListImpl *media = new KDOM::MediaListImpl(m_sheet, KDOM::DOMString(_media).handle());
+        m_sheet->setMedia(media);
+        m_loading = false;
+    }
 
-	if(!isLoading() && m_sheet)
-	{
-		if(getDocument())
-			getDocument()->styleSheetLoaded();
-	}
+    if(!isLoading() && m_sheet)
+    {
+        if(getDocument())
+            getDocument()->styleSheetLoaded();
+    }
 }
 
 bool SVGStyleElementImpl::isLoading() const
 {
-	return false;
+    return false;
 }
 
 // vim:ts=4:noet

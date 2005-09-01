@@ -38,10 +38,10 @@ const double rad2grad = deg2grad / deg2rad;
 SVGAngleImpl::SVGAngleImpl(const SVGStyledElementImpl *context)
 : KDOM::Shared()
 {
-	m_unitType = SVG_ANGLETYPE_UNKNOWN;
-	m_valueInSpecifiedUnits = 0;
-	m_value = 0;
-	m_context = context;
+    m_unitType = SVG_ANGLETYPE_UNKNOWN;
+    m_valueInSpecifiedUnits = 0;
+    m_value = 0;
+    m_context = context;
 }
 
 SVGAngleImpl::~SVGAngleImpl()
@@ -50,142 +50,142 @@ SVGAngleImpl::~SVGAngleImpl()
 
 unsigned short SVGAngleImpl::unitType() const
 {
-	return m_unitType;
+    return m_unitType;
 }
 
 void SVGAngleImpl::setValue(float value)
 {
-	m_value = value;
+    m_value = value;
 }
 
 float SVGAngleImpl::value() const
 {
-	return m_value;
+    return m_value;
 }
 
 // calc m_value
 void SVGAngleImpl::calculate()
 {
-	if(m_unitType == SVG_ANGLETYPE_GRAD)
-		m_value = m_valueInSpecifiedUnits / deg2grad;
-	else if(m_unitType == SVG_ANGLETYPE_RAD)
-		m_value = m_valueInSpecifiedUnits / deg2rad;
-	else if(m_unitType == SVG_ANGLETYPE_UNSPECIFIED || m_unitType == SVG_ANGLETYPE_DEG)
-		m_value = m_valueInSpecifiedUnits;
+    if(m_unitType == SVG_ANGLETYPE_GRAD)
+        m_value = m_valueInSpecifiedUnits / deg2grad;
+    else if(m_unitType == SVG_ANGLETYPE_RAD)
+        m_value = m_valueInSpecifiedUnits / deg2rad;
+    else if(m_unitType == SVG_ANGLETYPE_UNSPECIFIED || m_unitType == SVG_ANGLETYPE_DEG)
+        m_value = m_valueInSpecifiedUnits;
 }
 
 void SVGAngleImpl::setValueInSpecifiedUnits(float valueInSpecifiedUnits)
 {
-	m_valueInSpecifiedUnits = valueInSpecifiedUnits;
-	calculate();
+    m_valueInSpecifiedUnits = valueInSpecifiedUnits;
+    calculate();
 }
 
 float SVGAngleImpl::valueInSpecifiedUnits() const
 {
-	return m_valueInSpecifiedUnits;
+    return m_valueInSpecifiedUnits;
 }
 
 void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
 {
-	m_valueAsString = KDOM::DOMString(valueAsString);
+    m_valueAsString = KDOM::DOMString(valueAsString);
 
-	QString s = m_valueAsString.string();
+    QString s = m_valueAsString.string();
 
-	bool bOK;
-	m_valueInSpecifiedUnits = s.toFloat(&bOK);
-	m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
+    bool bOK;
+    m_valueInSpecifiedUnits = s.toFloat(&bOK);
+    m_unitType = SVG_ANGLETYPE_UNSPECIFIED;
 
-	if(!bOK)
+    if(!bOK)
     {
-		if(s.endsWith(QString::fromLatin1("deg")))
-			m_unitType = SVG_ANGLETYPE_DEG;
-		else if(s.endsWith(QString::fromLatin1("grad")))
-			m_unitType = SVG_ANGLETYPE_GRAD;
-		else if(s.endsWith(QString::fromLatin1("rad")))
-			m_unitType = SVG_ANGLETYPE_RAD;
-	}
-	
-	calculate();
+        if(s.endsWith(QString::fromLatin1("deg")))
+            m_unitType = SVG_ANGLETYPE_DEG;
+        else if(s.endsWith(QString::fromLatin1("grad")))
+            m_unitType = SVG_ANGLETYPE_GRAD;
+        else if(s.endsWith(QString::fromLatin1("rad")))
+            m_unitType = SVG_ANGLETYPE_RAD;
+    }
+    
+    calculate();
 }
 
 KDOM::DOMStringImpl *SVGAngleImpl::valueAsString() const
 {
-	m_valueAsString.string().setNum(m_valueInSpecifiedUnits);
+    m_valueAsString.string().setNum(m_valueInSpecifiedUnits);
 
-	switch(m_unitType)
-	{
-		case SVG_ANGLETYPE_UNSPECIFIED:
-		case SVG_ANGLETYPE_DEG:
-			m_valueAsString.string() += QString::fromLatin1("deg");
-			break;
-		case SVG_ANGLETYPE_RAD:
-			m_valueAsString.string() += QString::fromLatin1("rad");
-			break;
-		case SVG_ANGLETYPE_GRAD:
-			m_valueAsString.string() += QString::fromLatin1("grad");
-			break;
-	}
-	
-	return m_valueAsString.handle();
+    switch(m_unitType)
+    {
+        case SVG_ANGLETYPE_UNSPECIFIED:
+        case SVG_ANGLETYPE_DEG:
+            m_valueAsString.string() += QString::fromLatin1("deg");
+            break;
+        case SVG_ANGLETYPE_RAD:
+            m_valueAsString.string() += QString::fromLatin1("rad");
+            break;
+        case SVG_ANGLETYPE_GRAD:
+            m_valueAsString.string() += QString::fromLatin1("grad");
+            break;
+    }
+    
+    return m_valueAsString.handle();
 }
 
 void SVGAngleImpl::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)
 {
-	m_unitType = unitType;
-	m_valueInSpecifiedUnits = valueInSpecifiedUnits;
-	calculate();
+    m_unitType = unitType;
+    m_valueInSpecifiedUnits = valueInSpecifiedUnits;
+    calculate();
 }
 
 void SVGAngleImpl::convertToSpecifiedUnits(unsigned short unitType)
 {
-	if(m_unitType == unitType)
-		return;
+    if(m_unitType == unitType)
+        return;
 
-	if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_RAD)
-		m_valueInSpecifiedUnits *= deg2rad;
-	else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_RAD)
-		m_valueInSpecifiedUnits /= rad2grad;
-	else if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_GRAD)
-		m_valueInSpecifiedUnits *= deg2grad;
-	else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_GRAD)
-		m_valueInSpecifiedUnits *= rad2grad;
-	else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_DEG)
-		m_valueInSpecifiedUnits /= deg2rad;
-	else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
-		m_valueInSpecifiedUnits /= deg2grad;
+    if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_RAD)
+        m_valueInSpecifiedUnits *= deg2rad;
+    else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_RAD)
+        m_valueInSpecifiedUnits /= rad2grad;
+    else if(m_unitType == SVG_ANGLETYPE_DEG && unitType == SVG_ANGLETYPE_GRAD)
+        m_valueInSpecifiedUnits *= deg2grad;
+    else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_GRAD)
+        m_valueInSpecifiedUnits *= rad2grad;
+    else if(m_unitType == SVG_ANGLETYPE_RAD && unitType == SVG_ANGLETYPE_DEG)
+        m_valueInSpecifiedUnits /= deg2rad;
+    else if(m_unitType == SVG_ANGLETYPE_GRAD && unitType == SVG_ANGLETYPE_DEG)
+        m_valueInSpecifiedUnits /= deg2grad;
 
-	m_unitType = unitType;
+    m_unitType = unitType;
 }
 
 // Helpers
 double SVGAngleImpl::todeg(double rad)
 {
-	return rad / deg2rad;
+    return rad / deg2rad;
 }
 
 double SVGAngleImpl::torad(double deg)
 {
-	return deg * deg2rad;
+    return deg * deg2rad;
 }
 
 double SVGAngleImpl::shortestArcBisector(double angle1, double angle2)
 {
-	double bisector = (angle1 + angle2) / 2;
+    double bisector = (angle1 + angle2) / 2;
 
-	if(fabs(angle1 - angle2) > 180)
-		bisector += 180;
+    if(fabs(angle1 - angle2) > 180)
+        bisector += 180;
 
-	return bisector;
+    return bisector;
 }
 
 const SVGStyledElementImpl *SVGAngleImpl::context() const
 {
-	return m_context;
+    return m_context;
 }
 
 void SVGAngleImpl::setContext(const SVGStyledElementImpl *context)
 {
-	m_context = context;
+    m_context = context;
 }
 
 

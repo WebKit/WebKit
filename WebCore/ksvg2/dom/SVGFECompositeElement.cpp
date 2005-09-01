@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,40 +42,40 @@ using namespace KSVG;
 
 /*
 @begin SVGFECompositeElement::s_hashTable 5
- in1		SVGFECompositeElementConstants::In1			DontDelete|ReadOnly
- in2		SVGFECompositeElementConstants::In2			DontDelete|ReadOnly
- operator	SVGFECompositeElementConstants::Operator	DontDelete|ReadOnly
- k1			SVGFECompositeElementConstants::K1			DontDelete|ReadOnly
- k2			SVGFECompositeElementConstants::K2			DontDelete|ReadOnly
- k3			SVGFECompositeElementConstants::K3			DontDelete|ReadOnly
- k4			SVGFECompositeElementConstants::K4			DontDelete|ReadOnly
+ in1        SVGFECompositeElementConstants::In1            DontDelete|ReadOnly
+ in2        SVGFECompositeElementConstants::In2            DontDelete|ReadOnly
+ operator    SVGFECompositeElementConstants::Operator    DontDelete|ReadOnly
+ k1            SVGFECompositeElementConstants::K1            DontDelete|ReadOnly
+ k2            SVGFECompositeElementConstants::K2            DontDelete|ReadOnly
+ k3            SVGFECompositeElementConstants::K3            DontDelete|ReadOnly
+ k4            SVGFECompositeElementConstants::K4            DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFECompositeElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFECompositeElementConstants::In1:
-			return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
-		case SVGFECompositeElementConstants::Operator:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, _operator());
-		case SVGFECompositeElementConstants::K1:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, k1());
-		case SVGFECompositeElementConstants::K2:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, k2());
-		case SVGFECompositeElementConstants::K3:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, k3());
-		case SVGFECompositeElementConstants::K4:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, k4());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFECompositeElementConstants::In1:
+            return KDOM::safe_cache<SVGAnimatedString>(exec, in1());
+        case SVGFECompositeElementConstants::Operator:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, _operator());
+        case SVGFECompositeElementConstants::K1:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, k1());
+        case SVGFECompositeElementConstants::K2:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, k2());
+        case SVGFECompositeElementConstants::K3:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, k3());
+        case SVGFECompositeElementConstants::K4:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, k4());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -93,12 +93,12 @@ SVGFECompositeElement::SVGFECompositeElement(SVGFECompositeElementImpl *i) : SVG
 
 SVGFECompositeElement::SVGFECompositeElement(const SVGFECompositeElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFECompositeElement::SVGFECompositeElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFECompositeElement::~SVGFECompositeElement()
@@ -107,87 +107,87 @@ SVGFECompositeElement::~SVGFECompositeElement()
 
 SVGFECompositeElement &SVGFECompositeElement::operator=(const SVGFECompositeElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFECompositeElement &SVGFECompositeElement::operator=(const KDOM::Node &other)
 {
-	SVGFECompositeElementImpl *ohandle = static_cast<SVGFECompositeElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFECompositeElementImpl *ohandle = static_cast<SVGFECompositeElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedString SVGFECompositeElement::in1() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in1());
+    return SVGAnimatedString(impl->in1());
 }
 
 SVGAnimatedString SVGFECompositeElement::in2() const
 {
-	if(!d)
-		return SVGAnimatedString::null;
+    if(!d)
+        return SVGAnimatedString::null;
 
-	return SVGAnimatedString(impl->in2());
+    return SVGAnimatedString(impl->in2());
 }
 
 SVGAnimatedEnumeration SVGFECompositeElement::_operator() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->_operator());
+    return SVGAnimatedEnumeration(impl->_operator());
 }
 
 SVGAnimatedNumber SVGFECompositeElement::k1() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->k1());
+    return SVGAnimatedNumber(impl->k1());
 }
 
 SVGAnimatedNumber SVGFECompositeElement::k2() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->k2());
+    return SVGAnimatedNumber(impl->k2());
 }
 
 SVGAnimatedNumber SVGFECompositeElement::k3() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->k3());
+    return SVGAnimatedNumber(impl->k3());
 }
 
 SVGAnimatedNumber SVGFECompositeElement::k4() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->k4());
+    return SVGAnimatedNumber(impl->k4());
 }
 
 // vim:ts=4:noet

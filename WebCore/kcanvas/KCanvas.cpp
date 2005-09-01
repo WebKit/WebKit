@@ -1,6 +1,6 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -32,28 +32,28 @@
 class KCanvas::Private
 {
 public:
-	Private(KRenderingDevice *device)
-	{
-		rootContainer = 0;
-		registry = new KCanvasRegistry();
-		renderingDevice = device;
-	}
+    Private(KRenderingDevice *device)
+    {
+        rootContainer = 0;
+        registry = new KCanvasRegistry();
+        renderingDevice = device;
+    }
 
-	~Private()
-	{
-		delete registry;
-		delete rootContainer;
-		//delete renderingDevice;  // Should not delete the rendering device!
-	}
+    ~Private()
+    {
+        delete registry;
+        delete rootContainer;
+        //delete renderingDevice;  // Should not delete the rendering device!
+    }
 
-	QSize canvasSize;
+    QSize canvasSize;
 
-	KCanvasContainer *rootContainer;
-	
-	KCanvasRegistry *registry;
-	KRenderingDevice *renderingDevice;
+    KCanvasContainer *rootContainer;
+    
+    KCanvasRegistry *registry;
+    KRenderingDevice *renderingDevice;
 
-	QValueList<const KCanvasView *> viewList;
+    QValueList<const KCanvasView *> viewList;
 };
 
 KCanvas::KCanvas(KRenderingDevice *device) : d(new Private(device))
@@ -64,81 +64,81 @@ KCanvas::~KCanvas()
 {
     delete d->rootContainer;
     d->rootContainer = NULL;
-	reset();
-	delete d;
+    reset();
+    delete d;
 }
 
 void KCanvas::setRootContainer(KCanvasContainer *root)
 {
-	d->rootContainer = root;
+    d->rootContainer = root;
 }
 
 void KCanvas::addView(const KCanvasView *view)
 {
-	Q_ASSERT(view);
-	d->viewList.append(view);
+    Q_ASSERT(view);
+    d->viewList.append(view);
 }
 
 void KCanvas::removeView(const KCanvasView *view)
 {
-	Q_ASSERT(view);
-	d->viewList.remove(view);
+    Q_ASSERT(view);
+    d->viewList.remove(view);
 }
 
 KRenderingDevice *KCanvas::renderingDevice() const
 {
-	Q_ASSERT(d->renderingDevice);
-	return d->renderingDevice;
+    Q_ASSERT(d->renderingDevice);
+    return d->renderingDevice;
 }
 
 KCanvasRegistry *KCanvas::registry() const
 {
-	Q_ASSERT(d->registry);
-	return d->registry;
+    Q_ASSERT(d->registry);
+    return d->registry;
 }
 
 QSize KCanvas::canvasSize() const
 {
-	return d->canvasSize;
+    return d->canvasSize;
 }
 
 void KCanvas::setCanvasSize(const QSize &size)
 {
-	d->canvasSize = size;
+    d->canvasSize = size;
 
-	// Resize all views...
-	QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
-	QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
+    // Resize all views...
+    QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
+    QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
 
-	for(; it != end; ++it)
-		const_cast<KCanvasView *>(*it)->canvasSizeChanged(size.width(), size.height());
+    for(; it != end; ++it)
+        const_cast<KCanvasView *>(*it)->canvasSizeChanged(size.width(), size.height());
 }
 
 void KCanvas::reset()
 {
-	registry()->cleanup();
+    registry()->cleanup();
 }
 
 void KCanvas::collisions(const QPoint &p, KCanvasItemList &hits) const
 {
-	Q_ASSERT(d->rootContainer);
-	return d->rootContainer->collisions(p, hits);
+    Q_ASSERT(d->rootContainer);
+    return d->rootContainer->collisions(p, hits);
 }
 
 // Helpers
 KCanvasContainer *KCanvas::rootContainer() const
 {
-	return d->rootContainer;
+    return d->rootContainer;
 }
 
 void KCanvas::invalidate(const KCanvasItem *item)
 {
-	// Invalidate the item in all views
-	QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
-	QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
+    // Invalidate the item in all views
+    QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
+    QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
 
-	for(; it != end; ++it)
-		(*it)->invalidateCanvasItem(item);
+    for(; it != end; ++it)
+        (*it)->invalidateCanvasItem(item);
 }
 
 // vim:ts=4:noet

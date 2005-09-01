@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,45 +32,45 @@
 
 namespace KSVG
 {
-	//class SVGElementInstanceImpl;
-	class SVGAnimatedLengthImpl;
-	class SVGUseElementImpl : public SVGStyledElementImpl,
-							  public SVGTestsImpl,
-							  public SVGLangSpaceImpl,
-							  public SVGExternalResourcesRequiredImpl,
-							  public SVGTransformableImpl,
-							  public SVGURIReferenceImpl
-	{
-	public:
-		SVGUseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
-		virtual ~SVGUseElementImpl();
+    //class SVGElementInstanceImpl;
+    class SVGAnimatedLengthImpl;
+    class SVGUseElementImpl : public SVGStyledElementImpl,
+                              public SVGTestsImpl,
+                              public SVGLangSpaceImpl,
+                              public SVGExternalResourcesRequiredImpl,
+                              public SVGTransformableImpl,
+                              public SVGURIReferenceImpl
+    {
+    public:
+        SVGUseElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGUseElementImpl();
 
-		// Derived from: 'ElementImpl'
-		virtual bool hasChildNodes() const;
+        // Derived from: 'ElementImpl'
+        virtual bool hasChildNodes() const;
 
-		virtual void close();
+        virtual void close();
 
-		// 'SVGUseElement' functions
-		SVGAnimatedLengthImpl *x() const;
-		SVGAnimatedLengthImpl *y() const;
+        // 'SVGUseElement' functions
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-		SVGAnimatedLengthImpl *width() const;
-		SVGAnimatedLengthImpl *height() const;
+        SVGAnimatedLengthImpl *width() const;
+        SVGAnimatedLengthImpl *height() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		// TODO: not sure about this API yet
-		// SVGElementInstanceImpl *instanceRoot() const;
+        // TODO: not sure about this API yet
+        // SVGElementInstanceImpl *instanceRoot() const;
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_x;
-		mutable SVGAnimatedLengthImpl *m_y;
-		mutable SVGAnimatedLengthImpl *m_width;
-		mutable SVGAnimatedLengthImpl *m_height;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        mutable SVGAnimatedLengthImpl *m_width;
+        mutable SVGAnimatedLengthImpl *m_height;
+    };
 };
 
 #endif

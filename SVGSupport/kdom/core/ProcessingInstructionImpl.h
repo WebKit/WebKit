@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 2000 Peter Kelly (pmk@post.com)
@@ -31,47 +31,47 @@
 
 namespace KDOM
 {
-	class CSSStyleSheetImpl;
-	class CachedStyleSheet;
-	class StyleSheetImpl;
+    class CSSStyleSheetImpl;
+    class CachedStyleSheet;
+    class StyleSheetImpl;
 
-	class ProcessingInstructionImpl : public NodeBaseImpl,
-									  private CachedObjectClient
-	{
-	public:
-		ProcessingInstructionImpl(DocumentPtr *doc, DOMStringImpl *target, DOMStringImpl *data);
-		virtual ~ProcessingInstructionImpl();
+    class ProcessingInstructionImpl : public NodeBaseImpl,
+                                      private CachedObjectClient
+    {
+    public:
+        ProcessingInstructionImpl(DocumentPtr *doc, DOMStringImpl *target, DOMStringImpl *data);
+        virtual ~ProcessingInstructionImpl();
 
-		// 'ProcessingInstruction' functions
-		DOMStringImpl *target() const;
+        // 'ProcessingInstruction' functions
+        DOMStringImpl *target() const;
 
-		DOMStringImpl *data() const;
-		void setData(DOMStringImpl *data);
+        DOMStringImpl *data() const;
+        void setData(DOMStringImpl *data);
 
-		virtual DOMStringImpl *nodeName() const;
-		virtual unsigned short nodeType() const;
+        virtual DOMStringImpl *nodeName() const;
+        virtual unsigned short nodeType() const;
 
-		virtual DOMStringImpl *nodeValue() const;
-		virtual void setNodeValue(DOMStringImpl *nodeValue);
+        virtual DOMStringImpl *nodeValue() const;
+        virtual void setNodeValue(DOMStringImpl *nodeValue);
 
-		virtual DOMStringImpl *textContent() const; // DOM3
+        virtual DOMStringImpl *textContent() const; // DOM3
 
-		// Internal
-		virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
+        // Internal
+        virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
-		virtual DOMStringImpl *localHref() const;
-		StyleSheetImpl *sheet() const;
-		void checkStyleSheet();
-		virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
-		virtual void setStyleSheet(CSSStyleSheetImpl *sheet);
+        virtual DOMStringImpl *localHref() const;
+        StyleSheetImpl *sheet() const;
+        void checkStyleSheet();
+        virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
+        virtual void setStyleSheet(CSSStyleSheetImpl *sheet);
 
-	protected:
-		DOMStringImpl *m_target;
-		DOMStringImpl *m_data;
-		DOMStringImpl *m_localHref;
-		CachedStyleSheet *m_cachedSheet;
-		CSSStyleSheetImpl *m_sheet;
-	};
+    protected:
+        DOMStringImpl *m_target;
+        DOMStringImpl *m_data;
+        DOMStringImpl *m_localHref;
+        CachedStyleSheet *m_cachedSheet;
+        CSSStyleSheetImpl *m_sheet;
+    };
 };
 
 #endif

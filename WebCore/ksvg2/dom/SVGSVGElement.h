@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,102 +36,102 @@
 
 namespace KSVG
 {
-	class SVGRect;
-	class SVGAngle;
-	class SVGPoint;
-	class SVGMatrix;
-	class SVGNumber;
-	class SVGLength;
-	class SVGTransform;
-	class SVGSVGElementImpl;
-	class SVGAnimatedLength;
-	class SVGSVGElement : public SVGElement,
-						  public SVGTests,
-						  public SVGLangSpace,
-						  public SVGExternalResourcesRequired,
-						  public SVGStylable,
-						  public SVGLocatable,
-						  public SVGFitToViewBox,
-						  public SVGZoomAndPan,
-						  public KDOM::DocumentEvent
-	{
-	public:
-		SVGSVGElement();
-		explicit SVGSVGElement(SVGSVGElementImpl *i);
-		SVGSVGElement(const SVGSVGElement &other);
-		SVGSVGElement(const KDOM::Node &other);
-		virtual ~SVGSVGElement();
+    class SVGRect;
+    class SVGAngle;
+    class SVGPoint;
+    class SVGMatrix;
+    class SVGNumber;
+    class SVGLength;
+    class SVGTransform;
+    class SVGSVGElementImpl;
+    class SVGAnimatedLength;
+    class SVGSVGElement : public SVGElement,
+                          public SVGTests,
+                          public SVGLangSpace,
+                          public SVGExternalResourcesRequired,
+                          public SVGStylable,
+                          public SVGLocatable,
+                          public SVGFitToViewBox,
+                          public SVGZoomAndPan,
+                          public KDOM::DocumentEvent
+    {
+    public:
+        SVGSVGElement();
+        explicit SVGSVGElement(SVGSVGElementImpl *i);
+        SVGSVGElement(const SVGSVGElement &other);
+        SVGSVGElement(const KDOM::Node &other);
+        virtual ~SVGSVGElement();
 
-		// Operators
-		SVGSVGElement &operator=(const SVGSVGElement &other);
-		SVGSVGElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGSVGElement &operator=(const SVGSVGElement &other);
+        SVGSVGElement &operator=(const KDOM::Node &other);
 
-		// 'SVGSVGElement' functions
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
-		
-		KDOM::DOMString contentScriptType() const;
-		void setContentScriptType(const KDOM::DOMString &type);
-		
-		KDOM::DOMString contentStyleType() const;
-		void setContentStyleType(const KDOM::DOMString &type);
-		
-		SVGRect viewport() const;
+        // 'SVGSVGElement' functions
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
+        
+        KDOM::DOMString contentScriptType() const;
+        void setContentScriptType(const KDOM::DOMString &type);
+        
+        KDOM::DOMString contentStyleType() const;
+        void setContentStyleType(const KDOM::DOMString &type);
+        
+        SVGRect viewport() const;
 
-		float pixelUnitToMillimeterX() const;
-		float pixelUnitToMillimeterY() const;
-		float screenPixelToMillimeterX() const;
-		float screenPixelToMillimeterY() const;
-		
-		bool useCurrentView() const;
-		void setUseCurrentView(bool currentView);
-		
-		// SVGViewSpec currentView() const;
-		
-		float currentScale() const;
-		void setCurrentScale(float scale);
-		
-		SVGPoint currentTranslate() const;
+        float pixelUnitToMillimeterX() const;
+        float pixelUnitToMillimeterY() const;
+        float screenPixelToMillimeterX() const;
+        float screenPixelToMillimeterY() const;
+        
+        bool useCurrentView() const;
+        void setUseCurrentView(bool currentView);
+        
+        // SVGViewSpec currentView() const;
+        
+        float currentScale() const;
+        void setCurrentScale(float scale);
+        
+        SVGPoint currentTranslate() const;
 
-		unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
-		void unsuspendRedraw(unsigned long suspend_handle_id);
-		void unsuspendRedrawAll();
-		void forceRedraw();
+        unsigned long suspendRedraw(unsigned long max_wait_milliseconds);
+        void unsuspendRedraw(unsigned long suspend_handle_id);
+        void unsuspendRedrawAll();
+        void forceRedraw();
 
-		void pauseAnimations();
-		void unpauseAnimations();
-		bool animationsPaused();
+        void pauseAnimations();
+        void unpauseAnimations();
+        bool animationsPaused();
 
-		float getCurrentTime();
-		void setCurrentTime(float seconds);
+        float getCurrentTime();
+        void setCurrentTime(float seconds);
 
-		KDOM::NodeList getIntersectionList(const SVGRect &rect, const SVGElement &referenceElement);
-		KDOM::NodeList getEnclosureList(const SVGRect &rect, const SVGElement &referenceElement);
-		bool checkIntersection(const SVGElement &element, const SVGRect &rect);
-		bool checkEnclosure(const SVGElement &element, const SVGRect &rect);
-		void deselectAll();
+        KDOM::NodeList getIntersectionList(const SVGRect &rect, const SVGElement &referenceElement);
+        KDOM::NodeList getEnclosureList(const SVGRect &rect, const SVGElement &referenceElement);
+        bool checkIntersection(const SVGElement &element, const SVGRect &rect);
+        bool checkEnclosure(const SVGElement &element, const SVGRect &rect);
+        void deselectAll();
 
-		SVGNumber createSVGNumber() const;
-		SVGLength createSVGLength() const;
-		SVGAngle createSVGAngle() const;
-		SVGPoint createSVGPoint() const;
-		SVGMatrix createSVGMatrix() const;
-		SVGRect createSVGRect() const;
-		SVGTransform createSVGTransform() const;
-		SVGTransform createSVGTransformFromMatrix(const SVGMatrix &) const;
+        SVGNumber createSVGNumber() const;
+        SVGLength createSVGLength() const;
+        SVGAngle createSVGAngle() const;
+        SVGPoint createSVGPoint() const;
+        SVGMatrix createSVGMatrix() const;
+        SVGRect createSVGRect() const;
+        SVGTransform createSVGTransform() const;
+        SVGTransform createSVGTransformFromMatrix(const SVGMatrix &) const;
 
-		// Internal
-		KSVG_INTERNAL(SVGSVGElement)
+        // Internal
+        KSVG_INTERNAL(SVGSVGElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGSVGElementProto)

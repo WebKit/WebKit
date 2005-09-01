@@ -27,37 +27,37 @@
 
 namespace KSVG
 {
-	class SVGAnimatedNumberImpl;
-	class SVGAnimatedNumber
-	{
-	public:
-		SVGAnimatedNumber();
-		explicit SVGAnimatedNumber(SVGAnimatedNumberImpl *i);
-		SVGAnimatedNumber(const SVGAnimatedNumber &other);
-		virtual ~SVGAnimatedNumber();
+    class SVGAnimatedNumberImpl;
+    class SVGAnimatedNumber
+    {
+    public:
+        SVGAnimatedNumber();
+        explicit SVGAnimatedNumber(SVGAnimatedNumberImpl *i);
+        SVGAnimatedNumber(const SVGAnimatedNumber &other);
+        virtual ~SVGAnimatedNumber();
 
-		// Operators
-		SVGAnimatedNumber &operator=(const SVGAnimatedNumber &other);
-		bool operator==(const SVGAnimatedNumber &other) const;
-		bool operator!=(const SVGAnimatedNumber &other) const;
+        // Operators
+        SVGAnimatedNumber &operator=(const SVGAnimatedNumber &other);
+        bool operator==(const SVGAnimatedNumber &other) const;
+        bool operator!=(const SVGAnimatedNumber &other) const;
 
-		// 'SVGAnimatedNumber' functions
-		float baseVal() const;
-		float animVal() const;
+        // 'SVGAnimatedNumber' functions
+        float baseVal() const;
+        float animVal() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedNumber)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedNumber)
 
-	protected:
-		SVGAnimatedNumberImpl *impl;
+    protected:
+        SVGAnimatedNumberImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 #endif

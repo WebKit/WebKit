@@ -31,49 +31,49 @@ class KCanvasItem;
 
 namespace KSVG
 {
-	class SVGLengthImpl;
-	class SVGLength
-	{
-	public:
-		SVGLength();
-		explicit SVGLength(SVGLengthImpl *i);
-		SVGLength(const SVGLength &other);
-		virtual ~SVGLength();
+    class SVGLengthImpl;
+    class SVGLength
+    {
+    public:
+        SVGLength();
+        explicit SVGLength(SVGLengthImpl *i);
+        SVGLength(const SVGLength &other);
+        virtual ~SVGLength();
 
-		// Operators
-		SVGLength &operator=(const SVGLength &other);
-		bool operator==(const SVGLength &other) const;
-		bool operator!=(const SVGLength &other) const;
+        // Operators
+        SVGLength &operator=(const SVGLength &other);
+        bool operator==(const SVGLength &other) const;
+        bool operator!=(const SVGLength &other) const;
 
-		// 'SVGLength' functions
-		unsigned short unitType() const;
+        // 'SVGLength' functions
+        unsigned short unitType() const;
 
-		float value() const;
-		void setValue(float value);
+        float value() const;
+        void setValue(float value);
 
-		float valueInSpecifiedUnits() const;
-		void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
+        float valueInSpecifiedUnits() const;
+        void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
 
-		KDOM::DOMString valueAsString() const;
-		void setValueAsString(const KDOM::DOMString &valueAsString);
+        KDOM::DOMString valueAsString() const;
+        void setValueAsString(const KDOM::DOMString &valueAsString);
 
-		void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
-		void convertToSpecifiedUnits(unsigned short unitType);
+        void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+        void convertToSpecifiedUnits(unsigned short unitType);
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGLength)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGLength)
 
-	protected:
-		SVGLengthImpl *impl;
+    protected:
+        SVGLengthImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 };
 
 KSVG_DEFINE_PROTOTYPE(SVGLengthProto)

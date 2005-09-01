@@ -27,10 +27,10 @@ using namespace KSVG;
 
 SVGAnimatedBooleanImpl::SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context) : KDOM::Shared()
 {
-	m_baseVal = false;
-	m_animVal = false;
+    m_baseVal = false;
+    m_animVal = false;
 
-	m_context = context;
+    m_context = context;
 }
 
 SVGAnimatedBooleanImpl::~SVGAnimatedBooleanImpl()
@@ -39,32 +39,32 @@ SVGAnimatedBooleanImpl::~SVGAnimatedBooleanImpl()
 
 bool SVGAnimatedBooleanImpl::baseVal() const
 {
-	return m_baseVal;
+    return m_baseVal;
 }
 
 void SVGAnimatedBooleanImpl::setBaseVal(bool baseVal)
 {
-	m_baseVal = baseVal;
+    m_baseVal = baseVal;
 
-	// Spec: If the given attribute or property is not currently
-	//		 being animated, contains the same value as 'baseVal'
-	m_animVal = baseVal;
-	
-	if(m_context)
-		m_context->notifyAttributeChange();
+    // Spec: If the given attribute or property is not currently
+    //         being animated, contains the same value as 'baseVal'
+    m_animVal = baseVal;
+    
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 bool SVGAnimatedBooleanImpl::animVal() const
 {
-	return m_animVal;
+    return m_animVal;
 }
 
 void SVGAnimatedBooleanImpl::setAnimVal(bool animVal)
 {
-	m_animVal = animVal;
-	
-	if(m_context)
-		m_context->notifyAttributeChange();
+    m_animVal = animVal;
+    
+    if(m_context)
+        m_context->notifyAttributeChange();
 }
 
 // vim:ts=4:noet

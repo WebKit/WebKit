@@ -30,289 +30,289 @@
 #include <cmath>
 
 Number::Number( double value )
-	: m_value( value )
+    : m_value( value )
 {
 }
 
 bool Number::isConstant() const
 {
-	return true;
+    return true;
 }
 
 QString Number::dump() const
 {
-	return "<number>" + QString::number( m_value ) + "</number>";
+    return "<number>" + QString::number( m_value ) + "</number>";
 }
 
 Value Number::doEvaluate() const
 {
-	return Value( m_value );
+    return Value( m_value );
 }
 
 String::String( const DomString &value )
-	: m_value( value )
+    : m_value( value )
 {
 }
 
 bool String::isConstant() const
 {
-	return true;
+    return true;
 }
 
 QString String::dump() const
 {
-	return "<string>" + m_value + "</string>";
+    return "<string>" + m_value + "</string>";
 }
 
 Value String::doEvaluate() const
 {
-	return Value( m_value );
+    return Value( m_value );
 }
 
 Value Negative::doEvaluate() const
 {
-	Value p( subExpr( 0 )->evaluate() );
-	if ( !p.isNumber() ) {
-		qWarning( "Unary minus is undefined for non-numeric types." );
-		return Value();
-	}
-	return Value( -p.toNumber() );
+    Value p( subExpr( 0 )->evaluate() );
+    if ( !p.isNumber() ) {
+        qWarning( "Unary minus is undefined for non-numeric types." );
+        return Value();
+    }
+    return Value( -p.toNumber() );
 }
 
 QString Negative::dump() const
 {
-	return "<negative>" + subExpr( 0 )->dump() + "</number>";
+    return "<negative>" + subExpr( 0 )->dump() + "</number>";
 }
 
 QString BinaryExprBase::dump() const
 {
-	QString s = "<" + opName() + ">";
-	s += "<operand>" + subExpr( 0 )->dump() + "</operand>";
-	s += "<operand>" + subExpr( 1 )->dump() + "</operand>";
-	s += "</" + opName() + ">";
-	return s;
+    QString s = "<" + opName() + ">";
+    s += "<operand>" + subExpr( 0 )->dump() + "</operand>";
+    s += "<operand>" + subExpr( 1 )->dump() + "</operand>";
+    s += "</" + opName() + ">";
+    return s;
 }
 
 NumericOp::NumericOp( int _opCode, Expression* lhs, Expression* rhs ) :
-	opCode( _opCode )
+    opCode( _opCode )
 {
-	addSubExpression( lhs );
-	addSubExpression( rhs );
+    addSubExpression( lhs );
+    addSubExpression( rhs );
 }
 
 Value NumericOp::doEvaluate() const
 {
-	Value lhs( subExpr( 0 )->evaluate() );
-	Value rhs( subExpr( 1 )->evaluate() );
-	if ( !lhs.isNumber() || !rhs.isNumber() ) {
-		qWarning( "Cannot perform operation on non-numeric types." );
-		return Value();
-	}
+    Value lhs( subExpr( 0 )->evaluate() );
+    Value rhs( subExpr( 1 )->evaluate() );
+    if ( !lhs.isNumber() || !rhs.isNumber() ) {
+        qWarning( "Cannot perform operation on non-numeric types." );
+        return Value();
+    }
 
-	double leftVal = lhs.toNumber(), rightVal = rhs.toNumber();
+    double leftVal = lhs.toNumber(), rightVal = rhs.toNumber();
 
-	switch (opCode) {
-		case OP_Add:
-			return Value( leftVal + rightVal );
-		case OP_Sub:
-			return Value( leftVal - rightVal );
-		case OP_Mul:
-			return Value( leftVal * rightVal );
-		case OP_Div:
-			if ( rightVal == 0.0 || rightVal == -0.0 )
-				return Value(); //Divide by 0;
-			else
-				return Value( leftVal / rightVal );
-		case OP_Mod:
-			if ( rightVal == 0.0 || rightVal == -0.0 )
-				return Value(); //Divide by 0;
-			else
-				return Value( remainder( leftVal, rightVal ) );
-		case OP_GT:
-			return Value ( leftVal > rightVal );
-		case OP_GE:
-			return Value ( leftVal >= rightVal );
-		case OP_LT:
-			return Value ( leftVal < rightVal );
-		case OP_LE:
-			return Value ( leftVal <= rightVal );
-		default:
-			assert(0);
-		return Value();
-	}
+    switch (opCode) {
+        case OP_Add:
+            return Value( leftVal + rightVal );
+        case OP_Sub:
+            return Value( leftVal - rightVal );
+        case OP_Mul:
+            return Value( leftVal * rightVal );
+        case OP_Div:
+            if ( rightVal == 0.0 || rightVal == -0.0 )
+                return Value(); //Divide by 0;
+            else
+                return Value( leftVal / rightVal );
+        case OP_Mod:
+            if ( rightVal == 0.0 || rightVal == -0.0 )
+                return Value(); //Divide by 0;
+            else
+                return Value( remainder( leftVal, rightVal ) );
+        case OP_GT:
+            return Value ( leftVal > rightVal );
+        case OP_GE:
+            return Value ( leftVal >= rightVal );
+        case OP_LT:
+            return Value ( leftVal < rightVal );
+        case OP_LE:
+            return Value ( leftVal <= rightVal );
+        default:
+            assert(0);
+        return Value();
+    }
 }
 
 QString NumericOp::opName() const
 {
-	switch (opCode) {
-		case OP_Add:
-			return QString::fromLatin1( "addition" );
-		case OP_Sub:
-			return QString::fromLatin1( "subtraction" );
-		case OP_Mul:
-			return QString::fromLatin1( "multiplication" );
-		case OP_Div:
-			return QString::fromLatin1( "division" );
-		case OP_Mod:
-			return QString::fromLatin1( "modulo" );
-		case OP_GT:
-			return QString::fromLatin1( "relationGT" );
-		case OP_GE:
-			return QString::fromLatin1( "relationGE" );
-		case OP_LT:
-			return QString::fromLatin1( "relationLT" );
-		case OP_LE:
-			return QString::fromLatin1( "relationLE" );
-		default:
-			assert(0);
-			return QString::null;
-	}
+    switch (opCode) {
+        case OP_Add:
+            return QString::fromLatin1( "addition" );
+        case OP_Sub:
+            return QString::fromLatin1( "subtraction" );
+        case OP_Mul:
+            return QString::fromLatin1( "multiplication" );
+        case OP_Div:
+            return QString::fromLatin1( "division" );
+        case OP_Mod:
+            return QString::fromLatin1( "modulo" );
+        case OP_GT:
+            return QString::fromLatin1( "relationGT" );
+        case OP_GE:
+            return QString::fromLatin1( "relationGE" );
+        case OP_LT:
+            return QString::fromLatin1( "relationLT" );
+        case OP_LE:
+            return QString::fromLatin1( "relationLE" );
+        default:
+            assert(0);
+            return QString::null;
+    }
 }
 
 EqTestOp::EqTestOp( int _opCode, Expression* lhs, Expression* rhs ) :
-	opCode(_opCode)
+    opCode(_opCode)
 {
-	addSubExpression( lhs );
-	addSubExpression( rhs );
+    addSubExpression( lhs );
+    addSubExpression( rhs );
 }
 
 Value EqTestOp::doEvaluate() const
 {
-	Value lhs( subExpr( 0 )->evaluate() );
-	Value rhs( subExpr( 1 )->evaluate() );
+    Value lhs( subExpr( 0 )->evaluate() );
+    Value rhs( subExpr( 1 )->evaluate() );
 
-	bool equal;
-	if ( lhs.isBoolean() || rhs.isBoolean() ) {
-		equal = ( lhs.toBoolean() == rhs.toBoolean() );
-	} else if ( lhs.isNumber() || rhs.isNumber() ) {
-		equal = ( lhs.toNumber() == rhs.toNumber() );
-	} else {
-		equal = ( lhs.toString() == rhs.toString() );
-	}
+    bool equal;
+    if ( lhs.isBoolean() || rhs.isBoolean() ) {
+        equal = ( lhs.toBoolean() == rhs.toBoolean() );
+    } else if ( lhs.isNumber() || rhs.isNumber() ) {
+        equal = ( lhs.toNumber() == rhs.toNumber() );
+    } else {
+        equal = ( lhs.toString() == rhs.toString() );
+    }
 
-	if ( opCode == OP_EQ )
-		return Value( equal );
-	else
-		return Value( !equal );
+    if ( opCode == OP_EQ )
+        return Value( equal );
+    else
+        return Value( !equal );
 }
 
 QString EqTestOp::opName() const
 {
-	if ( opCode == OP_EQ )
-		return QString::fromLatin1( "relationEQ" );
-	else
-		return QString::fromLatin1( "relationNE" );
+    if ( opCode == OP_EQ )
+        return QString::fromLatin1( "relationEQ" );
+    else
+        return QString::fromLatin1( "relationNE" );
 }
 
 LogicalOp::LogicalOp( int _opCode, Expression* lhs, Expression* rhs ) :
-	opCode( _opCode )
+    opCode( _opCode )
 {
-	addSubExpression( lhs );
-	addSubExpression( rhs );
+    addSubExpression( lhs );
+    addSubExpression( rhs );
 }
 
 bool LogicalOp::shortCircuitOn() const
 {
-	if (opCode == OP_And)
-		return false; //false and foo
-	else
-		return true;  //true or bar
+    if (opCode == OP_And)
+        return false; //false and foo
+    else
+        return true;  //true or bar
 }
 
 bool LogicalOp::isConstant() const
 {
-	return subExpr( 0 )->isConstant() &&
-	       subExpr( 0 )->evaluate().toBoolean() == shortCircuitOn();
+    return subExpr( 0 )->isConstant() &&
+           subExpr( 0 )->evaluate().toBoolean() == shortCircuitOn();
 }
 
 QString LogicalOp::opName() const
 {
-	if ( opCode == OP_And )
-		return QString::fromLatin1( "conjunction" );
-	else
-		return QString::fromLatin1( "disjunction" );
+    if ( opCode == OP_And )
+        return QString::fromLatin1( "conjunction" );
+    else
+        return QString::fromLatin1( "disjunction" );
 }
 
 Value LogicalOp::doEvaluate() const
 {
-	Value lhs( subExpr( 0 )->evaluate() );
+    Value lhs( subExpr( 0 )->evaluate() );
 
-	// This is not only an optimization, http://www.w3.org/TR/xpath
-	// dictates that we must do short-circuit evaluation
-	bool lhsBool = lhs.toBoolean();
-	if ( lhsBool == shortCircuitOn() ) {
-		return Value( lhsBool );
-	}
+    // This is not only an optimization, http://www.w3.org/TR/xpath
+    // dictates that we must do short-circuit evaluation
+    bool lhsBool = lhs.toBoolean();
+    if ( lhsBool == shortCircuitOn() ) {
+        return Value( lhsBool );
+    }
 
-	return Value( subExpr( 1 )->evaluate().toBoolean() );
+    return Value( subExpr( 1 )->evaluate().toBoolean() );
 }
 
 QString Union::opName() const
 {
-	return QString::fromLatin1("union");
+    return QString::fromLatin1("union");
 }
 
 Value Union::doEvaluate() const
 {
-	Value lhs = subExpr( 0 )->evaluate();
-	Value rhs = subExpr( 1 )->evaluate();
-	if ( !lhs.isNodeset() || !rhs.isNodeset() ) {
-		qWarning( "Union operator '|' works only with nodesets." );
-		return Value( DomNodeList() );
-	}
+    Value lhs = subExpr( 0 )->evaluate();
+    Value rhs = subExpr( 1 )->evaluate();
+    if ( !lhs.isNodeset() || !rhs.isNodeset() ) {
+        qWarning( "Union operator '|' works only with nodesets." );
+        return Value( DomNodeList() );
+    }
 
-	DomNodeList lhsNodes = lhs.toNodeset();
-	DomNodeList rhsNodes = rhs.toNodeset();
-	DomNodeList result = lhsNodes;
-	DomNodeList::ConstIterator it, end = rhsNodes.end();
-	for ( it = rhsNodes.begin(); it != end; ++it ) {
-		if ( lhsNodes.find( *it ) == lhsNodes.end() ) {
-			result.append( *it );
-		}
-	}
+    DomNodeList lhsNodes = lhs.toNodeset();
+    DomNodeList rhsNodes = rhs.toNodeset();
+    DomNodeList result = lhsNodes;
+    DomNodeList::ConstIterator it, end = rhsNodes.end();
+    for ( it = rhsNodes.begin(); it != end; ++it ) {
+        if ( lhsNodes.find( *it ) == lhsNodes.end() ) {
+            result.append( *it );
+        }
+    }
 
-	return Value( result );
+    return Value( result );
 }
 
 Predicate::Predicate( Expression *expr )
-	: m_expr( expr )
+    : m_expr( expr )
 {
 }
 
 Predicate::~Predicate()
 {
-	delete m_expr;
+    delete m_expr;
 }
 
 bool Predicate::evaluate() const
 {
-	Q_ASSERT( m_expr != 0 );
+    Q_ASSERT( m_expr != 0 );
 
-	Value result( m_expr->evaluate() );
+    Value result( m_expr->evaluate() );
 
-	// foo[3] really means foo[position()=3]
-	if ( result.isNumber() ) {
-		Expression *realExpr = new EqTestOp(EqTestOp::OP_EQ,
-		                FunctionLibrary::self().getFunction( "position" ),
-		                new Number( result.toNumber() ) );
-		result = realExpr->evaluate();
-		delete realExpr;
-	}
+    // foo[3] really means foo[position()=3]
+    if ( result.isNumber() ) {
+        Expression *realExpr = new EqTestOp(EqTestOp::OP_EQ,
+                        FunctionLibrary::self().getFunction( "position" ),
+                        new Number( result.toNumber() ) );
+        result = realExpr->evaluate();
+        delete realExpr;
+    }
 
-	if ( result.isBoolean() ) {
-		return result.toBoolean();
-	}
+    if ( result.isBoolean() ) {
+        return result.toBoolean();
+    }
 
-	qWarning( "Predicate expression is neither boolean nor a number." );
-	return false;
+    qWarning( "Predicate expression is neither boolean nor a number." );
+    return false;
 }
 
 void Predicate::optimize()
 {
-	m_expr->optimize();
+    m_expr->optimize();
 }
 
 QString Predicate::dump() const
 {
-	return QString() + "<predicate>" + m_expr->dump() + "</predicate>";
+    return QString() + "<predicate>" + m_expr->dump() + "</predicate>";
 }

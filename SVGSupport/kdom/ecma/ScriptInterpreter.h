@@ -27,59 +27,59 @@
 
 namespace KJS
 {
-	class ValueImp;
-	class ObjectImp;
+    class ValueImp;
+    class ObjectImp;
 };
 
 namespace KDOM
 {
-	class EventImpl;
-	class DocumentImpl;
+    class EventImpl;
+    class DocumentImpl;
 
-	class ScriptInterpreter : public KJS::Interpreter
-	{
-	public:
-		ScriptInterpreter(KJS::ObjectImp *global, DocumentImpl *doc);
-		virtual ~ScriptInterpreter();
+    class ScriptInterpreter : public KJS::Interpreter
+    {
+    public:
+        ScriptInterpreter(KJS::ObjectImp *global, DocumentImpl *doc);
+        virtual ~ScriptInterpreter();
 
-		DocumentImpl *document() const;
+        DocumentImpl *document() const;
 
-		KJS::ObjectImp *getDOMObject(void *handle) const;
-		void putDOMObject(void *handle, KJS::ObjectImp *obj);
-		void removeDOMObject(void *handle);
-	
-		// Used by Shared()'s deref() function
-		static void forgetDOMObject(void *handle);
+        KJS::ObjectImp *getDOMObject(void *handle) const;
+        void putDOMObject(void *handle, KJS::ObjectImp *obj);
+        void removeDOMObject(void *handle);
+    
+        // Used by Shared()'s deref() function
+        static void forgetDOMObject(void *handle);
 
-		EventImpl *currentEvent() const;
-		void setCurrentEvent(EventImpl *evt);
+        EventImpl *currentEvent() const;
+        void setCurrentEvent(EventImpl *evt);
 
-		// Internal
-		virtual void mark();
+        // Internal
+        virtual void mark();
 
-	private:
-		class Private;
-		Private *d;
-	};
+    private:
+        class Private;
+        Private *d;
+    };
 
-	// Lookup or create JS object around an existing "DOM Object"
-	template<class DOMObjWrapper, class DOMObjImpl>
-	inline KJS::ValueImp *cacheDOMObject(KJS::ExecState *exec, const DOMObjWrapper *constWrapper)
-	{
-		KJS::ObjectImp *jsObject = 0;
-		if(!constWrapper)
-			return KJS::Null();
+    // Lookup or create JS object around an existing "DOM Object"
+    template<class DOMObjWrapper, class DOMObjImpl>
+    inline KJS::ValueImp *cacheDOMObject(KJS::ExecState *exec, const DOMObjWrapper *constWrapper)
+    {
+        KJS::ObjectImp *jsObject = 0;
+        if(!constWrapper)
+            return KJS::Null();
 
-		DOMObjWrapper *wrapper = const_cast<DOMObjWrapper *>(constWrapper);
+        DOMObjWrapper *wrapper = const_cast<DOMObjWrapper *>(constWrapper);
 
-		ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
-		if((jsObject = interpreter->getDOMObject(wrapper)))
-			return jsObject;
+        ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
+        if((jsObject = interpreter->getDOMObject(wrapper)))
+            return jsObject;
 
-		jsObject = constWrapper->bridge(exec);
-		interpreter->putDOMObject(wrapper, jsObject);
-		return jsObject;
-	}
+        jsObject = constWrapper->bridge(exec);
+        interpreter->putDOMObject(wrapper, jsObject);
+        return jsObject;
+    }
 };
 
 #endif

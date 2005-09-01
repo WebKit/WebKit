@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,20 +30,20 @@
 
 namespace KSVG
 {
-	class SVGSymbolElementImpl : public SVGStyledElementImpl,
-								 public SVGLangSpaceImpl,
-								 public SVGExternalResourcesRequiredImpl,
-								 public SVGFitToViewBoxImpl
-	{
-	public:
-		SVGSymbolElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGSymbolElementImpl();
+    class SVGSymbolElementImpl : public SVGStyledElementImpl,
+                                 public SVGLangSpaceImpl,
+                                 public SVGExternalResourcesRequiredImpl,
+                                 public SVGFitToViewBoxImpl
+    {
+    public:
+        SVGSymbolElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGSymbolElementImpl();
 
-		virtual void parseAttribute(KDOM::AttributeImpl *);
+        virtual void parseAttribute(KDOM::AttributeImpl *);
 
-		// Derived from: 'SVGStyledElementImpl'
-		virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
-	};
+        // Derived from: 'SVGStyledElementImpl'
+        virtual bool allowAttachChildren(KDOM::ElementImpl *) const { return false; }
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,94 +29,94 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class DOMString;
-	class CSSProperty;
-	class CSSRuleImpl;
-	class CSSValueImpl;
-	class CDFInterface;
-	class CSSStyleDeclarationImpl : public StyleBaseImpl
-	{
-	public:
-		CSSStyleDeclarationImpl(CDFInterface *interface, CSSRuleImpl *parentRule);
-		CSSStyleDeclarationImpl(CDFInterface *interface, CSSRuleImpl *parentRule, QPtrList<CSSProperty> *lstValues);
-		virtual ~CSSStyleDeclarationImpl();
+    class NodeImpl;
+    class DOMString;
+    class CSSProperty;
+    class CSSRuleImpl;
+    class CSSValueImpl;
+    class CDFInterface;
+    class CSSStyleDeclarationImpl : public StyleBaseImpl
+    {
+    public:
+        CSSStyleDeclarationImpl(CDFInterface *interface, CSSRuleImpl *parentRule);
+        CSSStyleDeclarationImpl(CDFInterface *interface, CSSRuleImpl *parentRule, QPtrList<CSSProperty> *lstValues);
+        virtual ~CSSStyleDeclarationImpl();
 
-		CSSStyleDeclarationImpl& operator=(const CSSStyleDeclarationImpl &);
+        CSSStyleDeclarationImpl& operator=(const CSSStyleDeclarationImpl &);
 
-		// 'CSSStyleDeclaration' functions
-		void setCssText(DOMStringImpl *cssText);
-		DOMStringImpl *cssText() const;
+        // 'CSSStyleDeclaration' functions
+        void setCssText(DOMStringImpl *cssText);
+        DOMStringImpl *cssText() const;
 
-		DOMStringImpl *getPropertyValue(int propertyID) const;
-		DOMStringImpl *getPropertyValue(DOMStringImpl *propertyName) const;
+        DOMStringImpl *getPropertyValue(int propertyID) const;
+        DOMStringImpl *getPropertyValue(DOMStringImpl *propertyName) const;
 
-		CSSValueImpl *getPropertyCSSValue(int propertyID) const;
-		CSSValueImpl *getPropertyCSSValue(DOMStringImpl *propertyName) const;
+        CSSValueImpl *getPropertyCSSValue(int propertyID) const;
+        CSSValueImpl *getPropertyCSSValue(DOMStringImpl *propertyName) const;
 
-		bool getPropertyPriority(int propertyID) const;
-		DOMStringImpl *getPropertyPriority(DOMStringImpl *propertyName) const;
+        bool getPropertyPriority(int propertyID) const;
+        DOMStringImpl *getPropertyPriority(DOMStringImpl *propertyName) const;
 
-		void setProperty(int propertyId, int value, bool important = false, bool nonCSSHint = false);
-		bool setProperty(int propertyID, DOMStringImpl *value, bool important = false, bool nonCSSHint = false);
+        void setProperty(int propertyId, int value, bool important = false, bool nonCSSHint = false);
+        bool setProperty(int propertyID, DOMStringImpl *value, bool important = false, bool nonCSSHint = false);
 
-		void setProperty(DOMStringImpl *propertyName, DOMStringImpl *value, DOMStringImpl *priority);
-		void setLengthProperty(int id, DOMStringImpl *value, bool important, bool nonCSSHint = true, bool multiLength = false);
+        void setProperty(DOMStringImpl *propertyName, DOMStringImpl *value, DOMStringImpl *priority);
+        void setLengthProperty(int id, DOMStringImpl *value, bool important, bool nonCSSHint = true, bool multiLength = false);
 
-		// add a whole, unparsed property
-		void setProperty(DOMStringImpl *propertyString);
-		unsigned long length() const;
-		DOMStringImpl *item(unsigned long index) const;
+        // add a whole, unparsed property
+        void setProperty(DOMStringImpl *propertyString);
+        unsigned long length() const;
+        DOMStringImpl *item(unsigned long index) const;
 
-		CSSRuleImpl *parentRule() const;
+        CSSRuleImpl *parentRule() const;
 
-		DOMStringImpl *removeProperty(DOMStringImpl *propertyName);
-		DOMStringImpl *removeProperty(int propertyID, bool NonCSSHints = false);
+        DOMStringImpl *removeProperty(DOMStringImpl *propertyName);
+        DOMStringImpl *removeProperty(int propertyID, bool NonCSSHints = false);
 
-		void setNode(NodeImpl *node) { m_node = node; }
-		
-		CDFInterface *interface() const { return m_interface; }
-		QPtrList<CSSProperty> *values() const { return m_lstValues; }
+        void setNode(NodeImpl *node) { m_node = node; }
+        
+        CDFInterface *interface() const { return m_interface; }
+        QPtrList<CSSProperty> *values() const { return m_lstValues; }
 
-		virtual void setChanged();
+        virtual void setChanged();
 
-		virtual bool isStyleDeclaration() const { return true; }
-		virtual bool parseString(DOMStringImpl *string, bool = false);
+        virtual bool isStyleDeclaration() const { return true; }
+        virtual bool parseString(DOMStringImpl *string, bool = false);
 
-		// Helper
-		void removeCSSHints();
+        // Helper
+        void removeCSSHints();
 
-	protected:
-		DOMStringImpl *getShortHandValue(const int *properties, int number) const;
-		DOMStringImpl *get4Values(const int *properties) const;
+    protected:
+        DOMStringImpl *getShortHandValue(const int *properties, int number) const;
+        DOMStringImpl *get4Values(const int *properties) const;
 
-	protected:
-		QPtrList<CSSProperty> *m_lstValues;
-		CDFInterface *m_interface;
-		NodeImpl *m_node;
-	};
+    protected:
+        QPtrList<CSSProperty> *m_lstValues;
+        CDFInterface *m_interface;
+        NodeImpl *m_node;
+    };
 
-	class DOMImplementationCSS;
-	class CSSProperty
-	{
-	public:
-		CSSProperty();
-		CSSProperty(const CSSProperty &other);
-		~CSSProperty();
+    class DOMImplementationCSS;
+    class CSSProperty
+    {
+    public:
+        CSSProperty();
+        CSSProperty(const CSSProperty &other);
+        ~CSSProperty();
 
-		void setValue(CSSValueImpl *val);
+        void setValue(CSSValueImpl *val);
 
-		CSSValueImpl *value() const;
-		DOMStringImpl *cssText(const CSSStyleDeclarationImpl &decl) const;
+        CSSValueImpl *value() const;
+        DOMStringImpl *cssText(const CSSStyleDeclarationImpl &decl) const;
 
-		// make sure the following fits in 4 bytes.
-		signed int m_id : 29;
-		bool m_important : 1;
-		bool m_nonCSSHint : 1;
+        // make sure the following fits in 4 bytes.
+        signed int m_id : 29;
+        bool m_important : 1;
+        bool m_nonCSSHint : 1;
 
-	protected:
-		CSSValueImpl *m_value;
-	};
+    protected:
+        CSSValueImpl *m_value;
+    };
 };
 
 #endif

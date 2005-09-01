@@ -27,21 +27,21 @@
 
 class KCanvasViewQuartz : public KCanvasView {
 public:
-	KCanvasViewQuartz();
-	~KCanvasViewQuartz();
-	
-	NSView *view();
-	void setView(NSView *view);
+    KCanvasViewQuartz();
+    ~KCanvasViewQuartz();
+    
+    NSView *view();
+    void setView(NSView *view);
 
-	virtual void invalidateCanvasRect(const QRect &rect) const;
+    virtual void invalidateCanvasRect(const QRect &rect) const;
 
 protected:
-	virtual KCanvasMatrix viewToCanvasMatrix() const;
-	virtual int viewHeight() const;
-	virtual int viewWidth() const;
-	
+    virtual KCanvasMatrix viewToCanvasMatrix() const;
+    virtual int viewHeight() const;
+    virtual int viewWidth() const;
+    
 private:
-	NSView *m_view;
-	
-	virtual void canvasSizeChanged(int width, int height);
+    NSView *m_view;
+    
+    virtual void canvasSizeChanged(int width, int height);
 };

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,44 +27,44 @@
 
 namespace KDOM
 {
-	class NodeImpl;
-	class DOMString;
-	class AttributeImpl;
+    class NodeImpl;
+    class DOMString;
+    class AttributeImpl;
 };
 
 class QWMatrix;
 
 namespace KSVG
 {
-	class SVGMatrixImpl;
-	class SVGTransformListImpl;
-	class SVGAnimatedTransformListImpl;
-	class SVGTransformableImpl : public SVGLocatableImpl
-	{
-	public:
-		SVGTransformableImpl();
-		virtual ~SVGTransformableImpl();
+    class SVGMatrixImpl;
+    class SVGTransformListImpl;
+    class SVGAnimatedTransformListImpl;
+    class SVGTransformableImpl : public SVGLocatableImpl
+    {
+    public:
+        SVGTransformableImpl();
+        virtual ~SVGTransformableImpl();
 
-		// 'SVGTransformable' functions
-		SVGAnimatedTransformListImpl *transform() const;
-		SVGMatrixImpl *localMatrix() const;
+        // 'SVGTransformable' functions
+        SVGAnimatedTransformListImpl *transform() const;
+        SVGMatrixImpl *localMatrix() const;
 
-		// Derived from: 'SVGLocatable'
-		virtual SVGMatrixImpl *getCTM() const;
-		virtual SVGMatrixImpl *getScreenCTM() const;
+        // Derived from: 'SVGLocatable'
+        virtual SVGMatrixImpl *getCTM() const;
+        virtual SVGMatrixImpl *getScreenCTM() const;
 
-		// Special parseAttribute function, returning a bool,
-		// whether it could handle the passed attribute or not.
-		bool parseAttribute(KDOM::AttributeImpl *attr);
-		static void parseTransformAttribute(SVGTransformListImpl *list, const KDOM::DOMString &transform);
+        // Special parseAttribute function, returning a bool,
+        // whether it could handle the passed attribute or not.
+        bool parseAttribute(KDOM::AttributeImpl *attr);
+        static void parseTransformAttribute(SVGTransformListImpl *list, const KDOM::DOMString &transform);
 
-		void updateSubtreeMatrices(KDOM::NodeImpl *node);
-		void updateLocalTransform(SVGTransformListImpl *localTransforms);
+        void updateSubtreeMatrices(KDOM::NodeImpl *node);
+        void updateLocalTransform(SVGTransformListImpl *localTransforms);
 
-	protected:
-		mutable SVGMatrixImpl *m_localMatrix;
-		mutable SVGAnimatedTransformListImpl *m_transform;
-	};
+    protected:
+        mutable SVGMatrixImpl *m_localMatrix;
+        mutable SVGAnimatedTransformListImpl *m_transform;
+    };
 };
 
 #endif

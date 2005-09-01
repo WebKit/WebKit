@@ -47,167 +47,167 @@ struct KPerDomainSettings;
 
 namespace KDOM
 {
-	/**
-	 * General KDOM settings....
-	 */
-	class KDOMSettings
-	{
-	public:
-		/**
-		 * This enum specifies whether Java/JavaScript execution is allowed.
-		 */
-		enum KJavaScriptAdvice
-		{
-			KJavaScriptDunno = 0,
-			KJavaScriptAccept,
-			KJavaScriptReject
-		};
+    /**
+     * General KDOM settings....
+     */
+    class KDOMSettings
+    {
+    public:
+        /**
+         * This enum specifies whether Java/JavaScript execution is allowed.
+         */
+        enum KJavaScriptAdvice
+        {
+            KJavaScriptDunno = 0,
+            KJavaScriptAccept,
+            KJavaScriptReject
+        };
 
-		enum KAnimationAdvice
-		{
-			KAnimationDisabled = 0,
-			KAnimationLoopOnce,
-			KAnimationEnabled
-		};
+        enum KAnimationAdvice
+        {
+            KAnimationDisabled = 0,
+            KAnimationLoopOnce,
+            KAnimationEnabled
+        };
 
-		/**
-		 * This enum specifies the policy for window.open
-		 */
-		enum KJSWindowOpenPolicy
-		{
-			KJSWindowOpenAllow = 0,
-			KJSWindowOpenAsk,
-			KJSWindowOpenDeny,
-			KJSWindowOpenSmart
-		};
-		
-		/**
-		 * This enum specifies the policy for window.status and .defaultStatus
-		 */
-		enum KJSWindowStatusPolicy
-		{
-			KJSWindowStatusAllow = 0,
-			KJSWindowStatusIgnore
-		};
+        /**
+         * This enum specifies the policy for window.open
+         */
+        enum KJSWindowOpenPolicy
+        {
+            KJSWindowOpenAllow = 0,
+            KJSWindowOpenAsk,
+            KJSWindowOpenDeny,
+            KJSWindowOpenSmart
+        };
+        
+        /**
+         * This enum specifies the policy for window.status and .defaultStatus
+         */
+        enum KJSWindowStatusPolicy
+        {
+            KJSWindowStatusAllow = 0,
+            KJSWindowStatusIgnore
+        };
 
-		/**
-		 * This enum specifies the policy for window.moveBy and .moveTo
-		 */
-		enum KJSWindowMovePolicy
-		{
-			KJSWindowMoveAllow = 0,
-			KJSWindowMoveIgnore
-		};
+        /**
+         * This enum specifies the policy for window.moveBy and .moveTo
+         */
+        enum KJSWindowMovePolicy
+        {
+            KJSWindowMoveAllow = 0,
+            KJSWindowMoveIgnore
+        };
 
-		/**
-		 * This enum specifies the policy for window.resizeBy and .resizeTo
-		 */
-		enum KJSWindowResizePolicy
-		{
-			KJSWindowResizeAllow = 0,
-			KJSWindowResizeIgnore
-		};
+        /**
+         * This enum specifies the policy for window.resizeBy and .resizeTo
+         */
+        enum KJSWindowResizePolicy
+        {
+            KJSWindowResizeAllow = 0,
+            KJSWindowResizeIgnore
+        };
 
-		/**
-		 * This enum specifies the policy for window.focus
-		 */
-		enum KJSWindowFocusPolicy
-		{
-			KJSWindowFocusAllow = 0,
-			KJSWindowFocusIgnore
-		};
+        /**
+         * This enum specifies the policy for window.focus
+         */
+        enum KJSWindowFocusPolicy
+        {
+            KJSWindowFocusAllow = 0,
+            KJSWindowFocusIgnore
+        };
 
-		KDOMSettings();
-		KDOMSettings(const KDOMSettings &other);
-		virtual ~KDOMSettings();
+        KDOMSettings();
+        KDOMSettings(const KDOMSettings &other);
+        virtual ~KDOMSettings();
 
-		/**
-		 * Called by constructor and reparseConfiguration
-		 */
-		virtual void init();
+        /**
+         * Called by constructor and reparseConfiguration
+         */
+        virtual void init();
 
-		/**
-		 * Read settings from @p config.
-		 * @param config is a pointer to KConfig object.
-		 * @param reset if true, settings are always set; if false,
-		 *        settings are only set if the config file has a corresponding key.
-		 */
-		virtual void init(KConfig *config, bool reset = true);
+        /**
+         * Read settings from @p config.
+         * @param config is a pointer to KConfig object.
+         * @param reset if true, settings are always set; if false,
+         *        settings are only set if the config file has a corresponding key.
+         */
+        virtual void init(KConfig *config, bool reset = true);
 
-		// Behaviour settings
-		KAnimationAdvice showAnimations() const;
+        // Behaviour settings
+        KAnimationAdvice showAnimations() const;
 
-		KJSWindowOpenPolicy windowOpenPolicy(const QString &hostname = QString::null) const;
-		KJSWindowMovePolicy windowMovePolicy(const QString &hostname = QString::null) const;
-		KJSWindowResizePolicy windowResizePolicy(const QString &hostname = QString::null) const;
-		KJSWindowStatusPolicy windowStatusPolicy(const QString &hostname = QString::null) const;
-		KJSWindowFocusPolicy windowFocusPolicy(const QString &hostname = QString::null) const;
+        KJSWindowOpenPolicy windowOpenPolicy(const QString &hostname = QString::null) const;
+        KJSWindowMovePolicy windowMovePolicy(const QString &hostname = QString::null) const;
+        KJSWindowResizePolicy windowResizePolicy(const QString &hostname = QString::null) const;
+        KJSWindowStatusPolicy windowStatusPolicy(const QString &hostname = QString::null) const;
+        KJSWindowFocusPolicy windowFocusPolicy(const QString &hostname = QString::null) const;
 
-		// Font settings
-		QString stdFontName() const;
-		QString fixedFontName() const;
-		QString serifFontName() const;
-		QString sansSerifFontName() const;
-		QString cursiveFontName() const;
-		QString fantasyFontName() const;
+        // Font settings
+        QString stdFontName() const;
+        QString fixedFontName() const;
+        QString serifFontName() const;
+        QString sansSerifFontName() const;
+        QString cursiveFontName() const;
+        QString fantasyFontName() const;
 
-		int minFontSize() const;
-		int mediumFontSize() const;
+        int minFontSize() const;
+        int mediumFontSize() const;
 
-		const QString &encoding() const;
-		static const QString &availableFamilies();
+        const QString &encoding() const;
+        static const QString &availableFamilies();
 
-		// Color settings
-		const QColor &textColor() const;
-		const QColor &baseColor() const;
-		const QColor &linkColor() const;
-		const QColor &vLinkColor() const;
+        // Color settings
+        const QColor &textColor() const;
+        const QColor &baseColor() const;
+        const QColor &linkColor() const;
+        const QColor &vLinkColor() const;
 
-		// Java and JavaScript
-		bool isJavaEnabled(const QString &hostname = QString::null) const;
-		bool isJavaScriptEnabled(const QString &hostname = QString::null) const;
-		bool isJavaScriptDebugEnabled(const QString &hostname = QString::null) const;
-		bool isJavaScriptErrorReportingEnabled(const QString &hostname = QString::null) const;
-		bool isPluginsEnabled(const QString &hostname = QString::null) const;
-		
-		// AdBlocK Filtering
-		bool isAdFiltered(const QString &url) const;
-		bool isAdFilterEnabled() const;
-		bool isHideAdsEnabled() const;
-		void addAdFilter(const QString &url);
+        // Java and JavaScript
+        bool isJavaEnabled(const QString &hostname = QString::null) const;
+        bool isJavaScriptEnabled(const QString &hostname = QString::null) const;
+        bool isJavaScriptDebugEnabled(const QString &hostname = QString::null) const;
+        bool isJavaScriptErrorReportingEnabled(const QString &hostname = QString::null) const;
+        bool isPluginsEnabled(const QString &hostname = QString::null) const;
+        
+        // AdBlocK Filtering
+        bool isAdFiltered(const QString &url) const;
+        bool isAdFilterEnabled() const;
+        bool isHideAdsEnabled() const;
+        void addAdFilter(const QString &url);
 
-		// Whether to show passive popup when windows are blocked (@since 3.5)
-		bool jsPopupBlockerPassivePopup() const;
-		void setJSPopupBlockerPassivePopup(bool enabled);
+        // Whether to show passive popup when windows are blocked (@since 3.5)
+        bool jsPopupBlockerPassivePopup() const;
+        void setJSPopupBlockerPassivePopup(bool enabled);
 
-		bool jsErrorsEnabled() const;
-		void setJSErrorsEnabled(bool enabled);
+        bool jsErrorsEnabled() const;
+        void setJSErrorsEnabled(bool enabled);
 
-		// helpers for parsing domain-specific configuration, used in KControl module as well
-		static KJavaScriptAdvice strToAdvice(const QString &str);
-		static void splitDomainAdvice(const QString &configStr, QString &domain,
-									  KJavaScriptAdvice &javaAdvice, KJavaScriptAdvice &javaScriptAdvice);
+        // helpers for parsing domain-specific configuration, used in KControl module as well
+        static KJavaScriptAdvice strToAdvice(const QString &str);
+        static void splitDomainAdvice(const QString &configStr, QString &domain,
+                                      KJavaScriptAdvice &javaAdvice, KJavaScriptAdvice &javaScriptAdvice);
 
-		static const char *adviceToStr(KJavaScriptAdvice _advice);
+        static const char *adviceToStr(KJavaScriptAdvice _advice);
 
-		/** reads from @p config's current group, forcing initialization if @p reset is true.
-		 * @param config is a pointer to KConfig object.
-		 * @param reset true if initialization is to be forced.
-		 * @param global true if the global domain is to be read.
-		 * @param pd_settings will be initialised with the computed (inherited) settings.
-		 */
-		virtual void readDomainSettings(KConfig *config, bool reset, bool global, KPerDomainSettings &pd_settings);
+        /** reads from @p config's current group, forcing initialization if @p reset is true.
+         * @param config is a pointer to KConfig object.
+         * @param reset true if initialization is to be forced.
+         * @param global true if the global domain is to be read.
+         * @param pd_settings will be initialised with the computed (inherited) settings.
+         */
+        virtual void readDomainSettings(KConfig *config, bool reset, bool global, KPerDomainSettings &pd_settings);
 
-		// CSS helpers
-		virtual QString settingsToCSS() const;
-		QString userStyleSheet() const;
+        // CSS helpers
+        virtual QString settingsToCSS() const;
+        QString userStyleSheet() const;
 
-	private:
-		QString lookupFont(unsigned int i) const;
+    private:
+        QString lookupFont(unsigned int i) const;
 
-		class Private;
-		Private *d;
-	};
+        class Private;
+        Private *d;
+    };
 }
 
 #endif

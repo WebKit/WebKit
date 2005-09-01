@@ -35,12 +35,12 @@ SVGMatrixImpl::SVGMatrixImpl() : KDOM::Shared()
 
 SVGMatrixImpl::SVGMatrixImpl(QWMatrix mat) : KDOM::Shared()
 {
-	m_mat = mat;
+    m_mat = mat;
 }
 
 SVGMatrixImpl::SVGMatrixImpl(double a, double b, double c, double d, double e, double f) : KDOM::Shared()
 {
-	m_mat.setMatrix(a, b, c, d, e, f);
+    m_mat.setMatrix(a, b, c, d, e, f);
 }
 
 SVGMatrixImpl::~SVGMatrixImpl()
@@ -49,246 +49,246 @@ SVGMatrixImpl::~SVGMatrixImpl()
 
 void SVGMatrixImpl::setA(double a)
 {
-	m_mat.setMatrix(a, m_mat.m12(), m_mat.m21(), m_mat.m22(), m_mat.dx(), m_mat.dy());
+    m_mat.setMatrix(a, m_mat.m12(), m_mat.m21(), m_mat.m22(), m_mat.dx(), m_mat.dy());
 }
 
 double SVGMatrixImpl::a() const
 {
-	return m_mat.m11();
+    return m_mat.m11();
 }
 
 void SVGMatrixImpl::setB(double b)
 {
-	m_mat.setMatrix(m_mat.m11(), b, m_mat.m21(), m_mat.m22(), m_mat.dx(), m_mat.dy());
+    m_mat.setMatrix(m_mat.m11(), b, m_mat.m21(), m_mat.m22(), m_mat.dx(), m_mat.dy());
 }
 
 double SVGMatrixImpl::b() const
 {
-	return m_mat.m12();
+    return m_mat.m12();
 }
 
 void SVGMatrixImpl::setC(double c)
 {
-	m_mat.setMatrix(m_mat.m11(), m_mat.m12(), c, m_mat.m22(), m_mat.dx(), m_mat.dy());
+    m_mat.setMatrix(m_mat.m11(), m_mat.m12(), c, m_mat.m22(), m_mat.dx(), m_mat.dy());
 }
 
 double SVGMatrixImpl::c() const
 {
-	return m_mat.m21();
+    return m_mat.m21();
 }
 
 void SVGMatrixImpl::setD(double d)
 {
-	m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), d, m_mat.dx(), m_mat.dy());
+    m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), d, m_mat.dx(), m_mat.dy());
 }
 
 double SVGMatrixImpl::d() const
 {
-	return m_mat.m22();
+    return m_mat.m22();
 }
 
 void SVGMatrixImpl::setE(double e)
 {
-	m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), m_mat.m22(), e, m_mat.dy());
+    m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), m_mat.m22(), e, m_mat.dy());
 }
 
 double SVGMatrixImpl::e() const
 {
-	return m_mat.dx();
+    return m_mat.dx();
 }
 
 void SVGMatrixImpl::setF(double f)
 {
-	m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), m_mat.m22(), m_mat.dx(), f);
+    m_mat.setMatrix(m_mat.m11(), m_mat.m12(), m_mat.m21(), m_mat.m22(), m_mat.dx(), f);
 }
 
 double SVGMatrixImpl::f() const
 {
-	return m_mat.dy();
+    return m_mat.dy();
 }
 
 void SVGMatrixImpl::copy(const SVGMatrixImpl *other)
 {
-	m_mat.setMatrix(other->m_mat.m11(), other->m_mat.m12(), other->m_mat.m21(), other->m_mat.m22(), other->m_mat.dx(), other->m_mat.dy());
+    m_mat.setMatrix(other->m_mat.m11(), other->m_mat.m12(), other->m_mat.m21(), other->m_mat.m22(), other->m_mat.dx(), other->m_mat.dy());
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postMultiply(const SVGMatrixImpl *secondMatrix)
 {
-	QWMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
-	m_mat *= temp;
-	return this;
+    QWMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::inverse()
 {
-	m_mat = m_mat.invert();
-	return this;
+    m_mat = m_mat.invert();
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postTranslate(double x,  double y)
 {
-	// Could optimise these.
-	QWMatrix temp;
-	temp.translate(x, y);
-	m_mat *= temp;
-	return this;
+    // Could optimise these.
+    QWMatrix temp;
+    temp.translate(x, y);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postScale(double scaleFactor)
 {
-	QWMatrix temp;
-	temp.scale(scaleFactor, scaleFactor);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.scale(scaleFactor, scaleFactor);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postScaleNonUniform(double scaleFactorX, double scaleFactorY)
 {
-	QWMatrix temp;
-	temp.scale(scaleFactorX, scaleFactorY);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.scale(scaleFactorX, scaleFactorY);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postRotate(double angle)
 {
-	QWMatrix temp;
-	temp.rotate(angle);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.rotate(angle);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postRotateFromVector(double x, double y)
 {
-	QWMatrix temp;
-	temp.rotate(SVGAngleImpl::todeg(atan2(y, x)));
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.rotate(SVGAngleImpl::todeg(atan2(y, x)));
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postFlipX()
 {
-	QWMatrix temp(-1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp(-1.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postFlipY()
 {
-	QWMatrix temp(1.0F, 0.0F, 0.0F, -1.0F, 0.0F, 0.0F);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp(1.0F, 0.0F, 0.0F, -1.0F, 0.0F, 0.0F);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postSkewX(double angle)
 {
-	QWMatrix temp;
-	temp.shear(tan(SVGAngleImpl::torad(angle)), 0.0F);
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.shear(tan(SVGAngleImpl::torad(angle)), 0.0F);
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::postSkewY(double angle)
 {
-	QWMatrix temp;
-	temp.shear(0.0F, tan(SVGAngleImpl::torad(angle)));
-	m_mat *= temp;
-	return this;
+    QWMatrix temp;
+    temp.shear(0.0F, tan(SVGAngleImpl::torad(angle)));
+    m_mat *= temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::multiply(const SVGMatrixImpl *secondMatrix)
 {
-	QWMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
-	temp *= m_mat;
-	m_mat = temp;
-	return this;
+    QWMatrix temp(secondMatrix->a(), secondMatrix->b(), secondMatrix->c(), secondMatrix->d(), secondMatrix->e(), secondMatrix->f());
+    temp *= m_mat;
+    m_mat = temp;
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::translate(double x,  double y)
 {
-	m_mat.translate(x, y);
-	return this;
+    m_mat.translate(x, y);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::scale(double scaleFactor)
 {
-	m_mat.scale(scaleFactor, scaleFactor);
-	return this;
+    m_mat.scale(scaleFactor, scaleFactor);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::scaleNonUniform(double scaleFactorX, double scaleFactorY)
 {
-	m_mat.scale(scaleFactorX, scaleFactorY);
-	return this;
+    m_mat.scale(scaleFactorX, scaleFactorY);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::rotate(double angle)
 {
-	m_mat.rotate(angle);
-	return this;
+    m_mat.rotate(angle);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::rotateFromVector(double x, double y)
 {
-	m_mat.rotate(SVGAngleImpl::todeg(atan2(y, x)));
-	return this;
+    m_mat.rotate(SVGAngleImpl::todeg(atan2(y, x)));
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::flipX()
 {
-	m_mat.scale(-1.0f, 1.0f);
-	return this;
+    m_mat.scale(-1.0f, 1.0f);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::flipY()
 {
-	m_mat.scale(1.0f, -1.0f);
-	return this;
+    m_mat.scale(1.0f, -1.0f);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::skewX(double angle)
 {
-	m_mat.shear(tan(SVGAngleImpl::torad(angle)), 0.0F);
-	return this;
+    m_mat.shear(tan(SVGAngleImpl::torad(angle)), 0.0F);
+    return this;
 }
 
 SVGMatrixImpl *SVGMatrixImpl::skewY(double angle)
 {
-	m_mat.shear(0.0F, tan(SVGAngleImpl::torad(angle)));
-	return this;
+    m_mat.shear(0.0F, tan(SVGAngleImpl::torad(angle)));
+    return this;
 }
 
 void SVGMatrixImpl::setMatrix(QWMatrix mat)
 {
-	m_mat = mat;
+    m_mat = mat;
 }
 
 QWMatrix &SVGMatrixImpl::qmatrix()
 {
-	return m_mat;
+    return m_mat;
 }
 
 const QWMatrix &SVGMatrixImpl::qmatrix() const
 {
-	return m_mat;
+    return m_mat;
 }
 
 void SVGMatrixImpl::reset()
 {
-	m_mat.reset();
+    m_mat.reset();
 }
 
 void SVGMatrixImpl::removeScale(double *xScale, double *yScale)
 {
-	double sx = sqrt(a() * a() + b() * b());
-	double sy = sqrt(c() * c() + d() * d());
+    double sx = sqrt(a() * a() + b() * b());
+    double sy = sqrt(c() * c() + d() * d());
 
-	// Remove the scaling from the matrix.
-	setA(a() / sx); setB(b() / sx);
-	setC(c() / sy); setD(d() / sy);
+    // Remove the scaling from the matrix.
+    setA(a() / sx); setB(b() / sx);
+    setC(c() / sy); setD(d() / sy);
 
-	*xScale = sx;
-	*yScale = sy;
+    *xScale = sx;
+    *yScale = sy;
 }
 
 // vim:ts=4:noet

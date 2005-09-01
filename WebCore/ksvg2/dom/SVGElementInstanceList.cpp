@@ -39,10 +39,10 @@ using namespace KSVG;
 
 /*
 @begin SVGElementInstanceList::s_hashTable 3
- length	SVGElementInstanceListConstants::Length	DontDelete|ReadOnly
+ length    SVGElementInstanceListConstants::Length    DontDelete|ReadOnly
 @end
 @begin SVGElementInstanceListProto::s_hashTable 3
- item	SVGElementInstanceListConstants::Item	DontDelete|Function 1
+ item    SVGElementInstanceListConstants::Item    DontDelete|Function 1
 @end
 */
 
@@ -50,38 +50,38 @@ KSVG_IMPLEMENT_PROTOTYPE("SVGElementInstanceList", SVGElementInstanceListProto, 
 
 ValueImp *SVGElementInstanceList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGElementInstanceListConstants::Length:
-			return Number(length());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGElementInstanceListConstants::Length:
+            return Number(length());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 ValueImp *SVGElementInstanceListProtoFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const List &args)
 {
-	KDOM_CHECK_THIS(SVGElementInstanceList)
-	KDOM_ENTER_SAFE
+    KDOM_CHECK_THIS(SVGElementInstanceList)
+    KDOM_ENTER_SAFE
 
-	switch(id)
-	{
-		case SVGElementInstanceListConstants::Item:
-		{
-			unsigned long index = args[0]->toUInt32(exec);
-			return KDOM::safe_cache<SVGElementInstance>(exec, obj.item(index));
-		}
-		default:
-			kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
-	}
+    switch(id)
+    {
+        case SVGElementInstanceListConstants::Item:
+        {
+            unsigned long index = args[0]->toUInt32(exec);
+            return KDOM::safe_cache<SVGElementInstance>(exec, obj.item(index));
+        }
+        default:
+            kdWarning() << "Unhandled function id in " << k_funcinfo << " : " << id << endl;
+    }
 
-	KDOM_LEAVE_CALL_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_CALL_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGElementInstanceList SVGElementInstanceList::null;
@@ -92,31 +92,31 @@ SVGElementInstanceList::SVGElementInstanceList() : impl(0)
 
 SVGElementInstanceList::SVGElementInstanceList(SVGElementInstanceListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGElementInstanceList::SVGElementInstanceList(const SVGElementInstanceList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGElementInstanceList)
 
 unsigned long SVGElementInstanceList::length() const
 {
-	if(!impl)
-		return 0;
+    if(!impl)
+        return 0;
 
-	return impl->numberOfItems();
+    return impl->numberOfItems();
 }
 
 SVGElementInstance SVGElementInstanceList::item(unsigned long index)
 {
-	if(!impl)
-		return SVGElementInstance::null;
+    if(!impl)
+        return SVGElementInstance::null;
 
-	return SVGElementInstance(impl->getItem(index));
+    return SVGElementInstance(impl->getItem(index));
 }
 
 // vim:ts=4:noet

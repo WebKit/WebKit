@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -29,26 +29,26 @@
 
 namespace KDOM
 {
-	class DOMString;
-	class CDFInterface;
-	class CSSPrimitiveValueImpl;
-	class RGBColorImpl : public Shared
-	{
-	public:
-		RGBColorImpl(CDFInterface *interface);
- 		RGBColorImpl(CDFInterface *interface, const QRgb &color);
-		RGBColorImpl(CDFInterface *interface, const QColor &color);
-		virtual ~RGBColorImpl();
+    class DOMString;
+    class CDFInterface;
+    class CSSPrimitiveValueImpl;
+    class RGBColorImpl : public Shared
+    {
+    public:
+        RGBColorImpl(CDFInterface *interface);
+         RGBColorImpl(CDFInterface *interface, const QRgb &color);
+        RGBColorImpl(CDFInterface *interface, const QColor &color);
+        virtual ~RGBColorImpl();
 
-		// 'RGBColorImpl' functions
-		CSSPrimitiveValueImpl *red() const;
-		CSSPrimitiveValueImpl *green() const;
-		CSSPrimitiveValueImpl *blue() const;
+        // 'RGBColorImpl' functions
+        CSSPrimitiveValueImpl *red() const;
+        CSSPrimitiveValueImpl *green() const;
+        CSSPrimitiveValueImpl *blue() const;
 
-	protected:
-		QRgb m_color;
-		CDFInterface *m_interface;
-	};
+    protected:
+        QRgb m_color;
+        CDFInterface *m_interface;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,36 +27,36 @@
 
 namespace KSVG
 {
-	class SVGAnimatedRect;
-	class SVGAnimatedPreserveAspectRatio;
-	class SVGFitToViewBoxImpl;
-	class SVGFitToViewBox 
-	{ 
-	public:
-		SVGFitToViewBox();
-		SVGFitToViewBox(const SVGFitToViewBox &other);
-		explicit SVGFitToViewBox(SVGFitToViewBoxImpl *i);
-		virtual ~SVGFitToViewBox();
+    class SVGAnimatedRect;
+    class SVGAnimatedPreserveAspectRatio;
+    class SVGFitToViewBoxImpl;
+    class SVGFitToViewBox 
+    { 
+    public:
+        SVGFitToViewBox();
+        SVGFitToViewBox(const SVGFitToViewBox &other);
+        explicit SVGFitToViewBox(SVGFitToViewBoxImpl *i);
+        virtual ~SVGFitToViewBox();
 
-		// Operators
-		SVGFitToViewBox &operator=(const SVGFitToViewBox &other);    
-		SVGFitToViewBox &operator=(SVGFitToViewBoxImpl *other);    
+        // Operators
+        SVGFitToViewBox &operator=(const SVGFitToViewBox &other);    
+        SVGFitToViewBox &operator=(SVGFitToViewBoxImpl *other);    
 
-		// 'SVGFitToViewBox' functions
-		SVGAnimatedRect viewBox() const;
-		SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
+        // 'SVGFitToViewBox' functions
+        SVGAnimatedRect viewBox() const;
+        SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGFitToViewBox)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGFitToViewBox)
 
-	private:
-		SVGFitToViewBoxImpl *impl;
+    private:
+        SVGFitToViewBoxImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,19 +28,19 @@
 // Enumerations
 typedef enum
 {
-	// Painting mode
-	PS_SOLID = 0,
-	PS_PATTERN = 1,
-	PS_LINEAR_GRADIENT = 2,
-	PS_RADIAL_GRADIENT = 3,
-	PS_IMAGE = 4
+    // Painting mode
+    PS_SOLID = 0,
+    PS_PATTERN = 1,
+    PS_LINEAR_GRADIENT = 2,
+    PS_RADIAL_GRADIENT = 3,
+    PS_IMAGE = 4
 } KCPaintServerType;
 
 typedef enum
 {
-	// Target mode
-	APPLY_TO_FILL = 1,
-	APPLY_TO_STROKE = 2
+    // Target mode
+    APPLY_TO_FILL = 1,
+    APPLY_TO_STROKE = 2
 } KCPaintTargetType;
 
 class QTextStream;
@@ -49,23 +49,23 @@ class KRenderingDeviceContext;
 class KRenderingPaintServer
 {
 public:
-	KRenderingPaintServer() { m_activeClient = 0; }
-	virtual ~KRenderingPaintServer() { }
+    KRenderingPaintServer() { m_activeClient = 0; }
+    virtual ~KRenderingPaintServer() { }
 
-	const KCanvasItem *activeClient() const { return m_activeClient;}
-	void setActiveClient(const KCanvasItem *client) { m_activeClient = client; }
+    const KCanvasItem *activeClient() const { return m_activeClient;}
+    void setActiveClient(const KCanvasItem *client) { m_activeClient = client; }
 
     QString idInRegistry() const {  return m_registryId; }
     void setIdInRegistry(const QString& newId) { m_registryId = newId; } 
     
-	virtual KCPaintServerType type() const = 0;
+    virtual KCPaintServerType type() const = 0;
 
-	// Actual rendering function
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const = 0;
+    // Actual rendering function
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const = 0;
 
     virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
 private:
-	const KCanvasItem *m_activeClient;
+    const KCanvasItem *m_activeClient;
     QString m_registryId;
 };
 

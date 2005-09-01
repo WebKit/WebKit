@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,30 +27,30 @@ using namespace KDOM;
 
 CSSPageRuleImpl::CSSPageRuleImpl(StyleBaseImpl *parent) : CSSRuleImpl(parent)
 {
-	m_type = PAGE_RULE;
+    m_type = PAGE_RULE;
 
-	m_style = 0;
+    m_style = 0;
 }
 
 CSSPageRuleImpl::~CSSPageRuleImpl()
 {
     if(m_style)
-    	m_style->deref();
+        m_style->deref();
 }
 
 void CSSPageRuleImpl::setSelectorText(DOMStringImpl *)
 {
-	// FIXME!
+    // FIXME!
 }
 
 DOMStringImpl *CSSPageRuleImpl::selectorText() const
 {
-	return 0;
+    return 0;
 }
 
 CSSStyleDeclarationImpl *CSSPageRuleImpl::style() const
 {
-	return m_style;
+    return m_style;
 }
 
 // vim:ts=4:noet

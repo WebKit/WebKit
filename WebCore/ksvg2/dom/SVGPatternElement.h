@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,49 +33,49 @@
 
 namespace KSVG
 {
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedLength;
-	class SVGAnimatedTransformList;
-	class SVGPatternElementImpl;
-	class SVGPatternElement :	public SVGElement,
-								public SVGURIReference,
-						   		public SVGTests,
-								public SVGLangSpace,
-								public SVGExternalResourcesRequired,
-								public SVGStylable,
-								public SVGFitToViewBox
-	{
-	public:
-		SVGPatternElement();
-		explicit SVGPatternElement(SVGPatternElementImpl *i);
-		SVGPatternElement(const SVGPatternElement &other);
-		SVGPatternElement(const KDOM::Node &other);
-		virtual ~SVGPatternElement();
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedLength;
+    class SVGAnimatedTransformList;
+    class SVGPatternElementImpl;
+    class SVGPatternElement :    public SVGElement,
+                                public SVGURIReference,
+                                   public SVGTests,
+                                public SVGLangSpace,
+                                public SVGExternalResourcesRequired,
+                                public SVGStylable,
+                                public SVGFitToViewBox
+    {
+    public:
+        SVGPatternElement();
+        explicit SVGPatternElement(SVGPatternElementImpl *i);
+        SVGPatternElement(const SVGPatternElement &other);
+        SVGPatternElement(const KDOM::Node &other);
+        virtual ~SVGPatternElement();
 
-		// Operators
-		SVGPatternElement &operator=(const SVGPatternElement &other);
-		SVGPatternElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGPatternElement &operator=(const SVGPatternElement &other);
+        SVGPatternElement &operator=(const KDOM::Node &other);
 
-		// 'SVGPatternElement' functions
-		SVGAnimatedEnumeration patternUnits() const;
-		SVGAnimatedEnumeration patternContentUnits() const;
-		SVGAnimatedTransformList patternTransform() const;
+        // 'SVGPatternElement' functions
+        SVGAnimatedEnumeration patternUnits() const;
+        SVGAnimatedEnumeration patternContentUnits() const;
+        SVGAnimatedTransformList patternTransform() const;
 
-		SVGAnimatedLength x() const;
-		SVGAnimatedLength y() const;
+        SVGAnimatedLength x() const;
+        SVGAnimatedLength y() const;
 
-		SVGAnimatedLength width() const;
-		SVGAnimatedLength height() const;
+        SVGAnimatedLength width() const;
+        SVGAnimatedLength height() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGPatternElement)
+        // Internal
+        KSVG_INTERNAL(SVGPatternElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

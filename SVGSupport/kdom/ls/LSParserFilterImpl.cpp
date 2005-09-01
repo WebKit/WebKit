@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,17 +36,17 @@ LSParserFilterImpl::~LSParserFilterImpl()
 
 unsigned short LSParserFilterImpl::startElement(ElementImpl *elementArg)
 {
-	return 0;
+    return 0;
 }
 
 unsigned short LSParserFilterImpl::acceptNode(NodeImpl *nodeArg)
 {
-	return 0;
+    return 0;
 }
 
 unsigned long LSParserFilterImpl::whatToShow() const
 {
-	return 0;
+    return 0;
 }
 
 // vim:ts=4:noet

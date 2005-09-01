@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,19 +34,19 @@ class DOMStringImpl;
 
 namespace XPointer
 {
-	class XPointerResult;
-	class XPointerResultImpl;
-	class XPointerExpressionImpl;
+    class XPointerResult;
+    class XPointerResultImpl;
+    class XPointerExpressionImpl;
 
-	class XPointerEvaluatorImpl
-	{
-	public:
-		XPointerEvaluatorImpl();
-		virtual ~XPointerEvaluatorImpl();
+    class XPointerEvaluatorImpl
+    {
+    public:
+        XPointerEvaluatorImpl();
+        virtual ~XPointerEvaluatorImpl();
 
-		virtual XPointerExpressionImpl *createXPointer(DOMStringImpl *string, NodeImpl *relatedNode = 0) const;
-		virtual XPointerResultImpl *evaluateXPointer(DOMStringImpl *string, NodeImpl *relatedNode) const;
-	};
+        virtual XPointerExpressionImpl *createXPointer(DOMStringImpl *string, NodeImpl *relatedNode = 0) const;
+        virtual XPointerResultImpl *evaluateXPointer(DOMStringImpl *string, NodeImpl *relatedNode) const;
+    };
 };
 
 };

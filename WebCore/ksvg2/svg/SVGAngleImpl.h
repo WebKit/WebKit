@@ -28,47 +28,47 @@
 
 namespace KSVG
 {
-	class SVGStyledElementImpl;
+    class SVGStyledElementImpl;
 
-	class SVGAngleImpl : public KDOM::Shared
-	{
-	public:
-		SVGAngleImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAngleImpl();
+    class SVGAngleImpl : public KDOM::Shared
+    {
+    public:
+        SVGAngleImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAngleImpl();
 
-		unsigned short unitType() const;
+        unsigned short unitType() const;
 
-		void setValue(float value);
-		float value() const; 
+        void setValue(float value);
+        float value() const; 
 
-		void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
-		float valueInSpecifiedUnits() const;
+        void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
+        float valueInSpecifiedUnits() const;
 
-		void setValueAsString(KDOM::DOMStringImpl *valueAsString);
-		KDOM::DOMStringImpl *valueAsString() const;
+        void setValueAsString(KDOM::DOMStringImpl *valueAsString);
+        KDOM::DOMStringImpl *valueAsString() const;
 
-		void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
-		void convertToSpecifiedUnits(unsigned short unitType);
+        void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
+        void convertToSpecifiedUnits(unsigned short unitType);
 
-		// Helpers
-		static double todeg(double rad);
-		static double torad(double deg);
+        // Helpers
+        static double todeg(double rad);
+        static double torad(double deg);
 
-		// Returns the angle that divides the shortest arc between the two angles.
-		static double shortestArcBisector(double angle1, double angle2);
+        // Returns the angle that divides the shortest arc between the two angles.
+        static double shortestArcBisector(double angle1, double angle2);
 
-		const SVGStyledElementImpl *context() const;
-		void setContext(const SVGStyledElementImpl *context);
+        const SVGStyledElementImpl *context() const;
+        void setContext(const SVGStyledElementImpl *context);
 
-	private:
-		unsigned short m_unitType;
-		float m_value;
-		float m_valueInSpecifiedUnits;
-		KDOM::DOMString m_valueAsString;
-		const SVGStyledElementImpl *m_context;
+    private:
+        unsigned short m_unitType;
+        float m_value;
+        float m_valueInSpecifiedUnits;
+        KDOM::DOMString m_valueAsString;
+        const SVGStyledElementImpl *m_context;
 
-		void calculate();
-	};
+        void calculate();
+    };
 };
 
 #endif

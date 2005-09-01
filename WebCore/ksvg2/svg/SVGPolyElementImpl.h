@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,33 +33,33 @@
 
 namespace KSVG
 {
-	class SVGPolyElementImpl :  public SVGStyledElementImpl,
-								public SVGTestsImpl,
-								public SVGLangSpaceImpl,
-								public SVGExternalResourcesRequiredImpl,
-						   		public SVGTransformableImpl,
-								public SVGAnimatedPointsImpl,
-								public SVGPolyParser
-	{
-	public:
-		SVGPolyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGPolyElementImpl();
+    class SVGPolyElementImpl :  public SVGStyledElementImpl,
+                                public SVGTestsImpl,
+                                public SVGLangSpaceImpl,
+                                public SVGExternalResourcesRequiredImpl,
+                                   public SVGTransformableImpl,
+                                public SVGAnimatedPointsImpl,
+                                public SVGPolyParser
+    {
+    public:
+        SVGPolyElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGPolyElementImpl();
 
-		// Derived from: 'SVGAnimatedPoints'
-		virtual SVGPointListImpl *points() const;
-		virtual SVGPointListImpl *animatedPoints() const;
+        // Derived from: 'SVGAnimatedPoints'
+        virtual SVGPointListImpl *points() const;
+        virtual SVGPointListImpl *animatedPoints() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
  
-		virtual bool implementsCanvasItem() const { return true; }
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual void notifyAttributeChange() const;
+        virtual void notifyAttributeChange() const;
 
-	private:
-		mutable SVGPointListImpl *m_points;
+    private:
+        mutable SVGPointListImpl *m_points;
 
-		virtual void svgPolyTo(double x1, double y1, int nr) const;
-	};
+        virtual void svgPolyTo(double x1, double y1, int nr) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,39 +28,39 @@
 
 namespace KSVG
 {
-	class SVGElement;
-	class SVGSVGElement;
-	class SVGDocumentImpl;
-	class SVGDocument : public KDOM::Document
-	{
-	public:
-		SVGDocument();
-		explicit SVGDocument(SVGDocumentImpl *i);
-		SVGDocument(const SVGDocument &other);
-		SVGDocument(const KDOM::Node &other);
-		virtual ~SVGDocument();
+    class SVGElement;
+    class SVGSVGElement;
+    class SVGDocumentImpl;
+    class SVGDocument : public KDOM::Document
+    {
+    public:
+        SVGDocument();
+        explicit SVGDocument(SVGDocumentImpl *i);
+        SVGDocument(const SVGDocument &other);
+        SVGDocument(const KDOM::Node &other);
+        virtual ~SVGDocument();
 
-		// Operators
-		SVGDocument &operator=(const SVGDocument &other);
-		SVGDocument &operator=(const KDOM::Node &other);
+        // Operators
+        SVGDocument &operator=(const SVGDocument &other);
+        SVGDocument &operator=(const KDOM::Node &other);
 
-		// 'SVGDocument' functions
-		KDOM::DOMString title() const;
-		KDOM::DOMString referrer() const;
-		KDOM::DOMString domain() const;
-		KDOM::DOMString URL() const;
+        // 'SVGDocument' functions
+        KDOM::DOMString title() const;
+        KDOM::DOMString referrer() const;
+        KDOM::DOMString domain() const;
+        KDOM::DOMString URL() const;
 
-		SVGSVGElement rootElement() const;
+        SVGSVGElement rootElement() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGDocument)
+        // Internal
+        KSVG_INTERNAL(SVGDocument)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_PUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_PUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLengthImpl;
-	class SVGLinearGradientElementImpl : public SVGGradientElementImpl
-	{
-	public:
-		SVGLinearGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGLinearGradientElementImpl();
+    class SVGAnimatedLengthImpl;
+    class SVGLinearGradientElementImpl : public SVGGradientElementImpl
+    {
+    public:
+        SVGLinearGradientElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGLinearGradientElementImpl();
 
-		// 'SVGLinearGradientElement' functions
-		SVGAnimatedLengthImpl *x1() const;
-		SVGAnimatedLengthImpl *y1() const;
-		SVGAnimatedLengthImpl *x2() const;
-		SVGAnimatedLengthImpl *y2() const;
+        // 'SVGLinearGradientElement' functions
+        SVGAnimatedLengthImpl *x1() const;
+        SVGAnimatedLengthImpl *y1() const;
+        SVGAnimatedLengthImpl *x2() const;
+        SVGAnimatedLengthImpl *y2() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
-		
-		virtual bool implementsCanvasItem() const { return true; }
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        
+        virtual bool implementsCanvasItem() const { return true; }
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual void resourceNotification() const;
+        virtual void resourceNotification() const;
 
-	protected:
-		virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const;
+    protected:
+        virtual void buildGradient(KRenderingPaintServerGradient *grad, KCanvas *canvas) const;
 
-	private:
-		mutable SVGAnimatedLengthImpl *m_x1;
-		mutable SVGAnimatedLengthImpl *m_y1;
-		mutable SVGAnimatedLengthImpl *m_x2;
-		mutable SVGAnimatedLengthImpl *m_y2;
-	};
+    private:
+        mutable SVGAnimatedLengthImpl *m_x1;
+        mutable SVGAnimatedLengthImpl *m_y1;
+        mutable SVGAnimatedLengthImpl *m_x2;
+        mutable SVGAnimatedLengthImpl *m_y2;
+    };
 };
 
 #endif

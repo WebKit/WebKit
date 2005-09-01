@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
-				  
+                  2004, 2005 Rob Buis <buis@kde.org>
+                  
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -35,10 +35,10 @@ SVGEventImpl::~SVGEventImpl()
 
 void SVGEventImpl::initEvent(KDOM::DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg)
 {
-	m_id = SVGDOMImplementationImpl::self()->typeToId(eventTypeArg);
-	m_type = eventTypeArg;
-	m_bubbles = canBubbleArg;
-	m_cancelable = cancelableArg;
+    m_id = SVGDOMImplementationImpl::self()->typeToId(eventTypeArg);
+    m_type = eventTypeArg;
+    m_bubbles = canBubbleArg;
+    m_cancelable = cancelableArg;
 }
 
 // vim:ts=4:noet

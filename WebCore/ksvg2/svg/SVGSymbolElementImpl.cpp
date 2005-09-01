@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,11 +40,11 @@ SVGSymbolElementImpl::~SVGSymbolElementImpl()
 
 void SVGSymbolElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-	if(SVGLangSpaceImpl::parseAttribute(attr)) return;
-	if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
-	if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
+    if(SVGLangSpaceImpl::parseAttribute(attr)) return;
+    if(SVGExternalResourcesRequiredImpl::parseAttribute(attr)) return;
+    if(SVGFitToViewBoxImpl::parseAttribute(attr)) return;
 
-	SVGStyledElementImpl::parseAttribute(attr);
+    SVGStyledElementImpl::parseAttribute(attr);
 }
 
 // vim:ts=4:noet

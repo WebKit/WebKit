@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,38 +32,38 @@
 
 namespace KSVG
 {
-	class SVGAnimatedPreserveAspectRatio;
-	class SVGFEImageElementImpl;
+    class SVGAnimatedPreserveAspectRatio;
+    class SVGFEImageElementImpl;
 
-	class SVGFEImageElement : public SVGElement,
-							  public SVGURIReference,
-						      public SVGLangSpace,
-						      public SVGExternalResourcesRequired,
-						      public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEImageElement();
-		explicit SVGFEImageElement(SVGFEImageElementImpl *i);
-		SVGFEImageElement(const SVGFEImageElement &other);
-		SVGFEImageElement(const KDOM::Node &other);
-		virtual ~SVGFEImageElement();
+    class SVGFEImageElement : public SVGElement,
+                              public SVGURIReference,
+                              public SVGLangSpace,
+                              public SVGExternalResourcesRequired,
+                              public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEImageElement();
+        explicit SVGFEImageElement(SVGFEImageElementImpl *i);
+        SVGFEImageElement(const SVGFEImageElement &other);
+        SVGFEImageElement(const KDOM::Node &other);
+        virtual ~SVGFEImageElement();
 
-		// Operators
-		SVGFEImageElement &operator=(const SVGFEImageElement &other);
-		SVGFEImageElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEImageElement &operator=(const SVGFEImageElement &other);
+        SVGFEImageElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEImageElement' functions
-		SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
+        // 'SVGFEImageElement' functions
+        SVGAnimatedPreserveAspectRatio preserveAspectRatio() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEImageElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEImageElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

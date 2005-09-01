@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,40 +33,40 @@
 
 namespace KSVG
 {
-	class SVGAnimatedLength;
-	class SVGCircleElementImpl;
-	class SVGCircleElement : public SVGElement,
-						     public SVGTests,
-						     public SVGLangSpace,
-						     public SVGExternalResourcesRequired,
-							 public SVGStylable,
-						     public SVGTransformable
-	{
-	public:
-		SVGCircleElement();
-		explicit SVGCircleElement(SVGCircleElementImpl *i);
-		SVGCircleElement(const SVGCircleElement &other);
-		SVGCircleElement(const KDOM::Node &other);
-		virtual ~SVGCircleElement();
+    class SVGAnimatedLength;
+    class SVGCircleElementImpl;
+    class SVGCircleElement : public SVGElement,
+                             public SVGTests,
+                             public SVGLangSpace,
+                             public SVGExternalResourcesRequired,
+                             public SVGStylable,
+                             public SVGTransformable
+    {
+    public:
+        SVGCircleElement();
+        explicit SVGCircleElement(SVGCircleElementImpl *i);
+        SVGCircleElement(const SVGCircleElement &other);
+        SVGCircleElement(const KDOM::Node &other);
+        virtual ~SVGCircleElement();
 
-		// Operators
-		SVGCircleElement &operator=(const SVGCircleElement &other);
-		SVGCircleElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGCircleElement &operator=(const SVGCircleElement &other);
+        SVGCircleElement &operator=(const KDOM::Node &other);
 
-		// 'SVGCircleElement' functions
-		SVGAnimatedLength cx() const;
-		SVGAnimatedLength cy() const;
-		SVGAnimatedLength r() const;
+        // 'SVGCircleElement' functions
+        SVGAnimatedLength cx() const;
+        SVGAnimatedLength cy() const;
+        SVGAnimatedLength r() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGCircleElement)
+        // Internal
+        KSVG_INTERNAL(SVGCircleElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

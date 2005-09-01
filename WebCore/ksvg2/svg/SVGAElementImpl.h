@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -32,33 +32,33 @@
 
 namespace KSVG
 {
-	class SVGAnimatedStringImpl;
-	class SVGAElementImpl : public SVGStyledElementImpl,
-							public SVGURIReferenceImpl,
-							public SVGTestsImpl,
-							public SVGLangSpaceImpl,
-							public SVGExternalResourcesRequiredImpl,
-							public SVGTransformableImpl
-	{
-	public:
-		SVGAElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-		virtual ~SVGAElementImpl();
+    class SVGAnimatedStringImpl;
+    class SVGAElementImpl : public SVGStyledElementImpl,
+                            public SVGURIReferenceImpl,
+                            public SVGTestsImpl,
+                            public SVGLangSpaceImpl,
+                            public SVGExternalResourcesRequiredImpl,
+                            public SVGTransformableImpl
+    {
+    public:
+        SVGAElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
+        virtual ~SVGAElementImpl();
 
-		// 'SVGAElement' functions
-		SVGAnimatedStringImpl *target() const;
+        // 'SVGAElement' functions
+        SVGAnimatedStringImpl *target() const;
 
-		virtual void parseAttribute(KDOM::AttributeImpl *attr);
+        virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-		// Derived from: 'SVGStyledElementImpl'
-		virtual bool implementsCanvasItem() const { return true; }
+        // Derived from: 'SVGStyledElementImpl'
+        virtual bool implementsCanvasItem() const { return true; }
 
-		virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
+        virtual KCanvasItem *createCanvasItem(KCanvas *canvas, KRenderingStyle *style) const;
 
-		virtual void defaultEventHandler(KDOM::EventImpl *evt);
+        virtual void defaultEventHandler(KDOM::EventImpl *evt);
 
-	private:
-		mutable SVGAnimatedStringImpl *m_target;
-	};
+    private:
+        mutable SVGAnimatedStringImpl *m_target;
+    };
 };
 
 #endif

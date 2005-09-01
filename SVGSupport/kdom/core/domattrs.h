@@ -38,8 +38,8 @@ domattrs.in by dommakeattrs, do not edit */
 
 namespace KDOM
 {
-	const char *getAttrName(unsigned short id);
-	int getAttrID(const char *tagStr, int len);
+    const char *getAttrName(unsigned short id);
+    int getAttrID(const char *tagStr, int len);
 };
 
 #endif

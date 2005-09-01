@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -28,39 +28,39 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedNumberList;
-	class SVGFEColorMatrixElementImpl;
+    class SVGAnimatedString;
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedNumberList;
+    class SVGFEColorMatrixElementImpl;
 
-	class SVGFEColorMatrixElement :  public SVGElement,
-									  public SVGFilterPrimitiveStandardAttributes
-	{
-	public:
-		SVGFEColorMatrixElement();
-		explicit SVGFEColorMatrixElement(SVGFEColorMatrixElementImpl *i);
-		SVGFEColorMatrixElement(const SVGFEColorMatrixElement &other);
-		SVGFEColorMatrixElement(const KDOM::Node &other);
-		virtual ~SVGFEColorMatrixElement();
+    class SVGFEColorMatrixElement :  public SVGElement,
+                                      public SVGFilterPrimitiveStandardAttributes
+    {
+    public:
+        SVGFEColorMatrixElement();
+        explicit SVGFEColorMatrixElement(SVGFEColorMatrixElementImpl *i);
+        SVGFEColorMatrixElement(const SVGFEColorMatrixElement &other);
+        SVGFEColorMatrixElement(const KDOM::Node &other);
+        virtual ~SVGFEColorMatrixElement();
 
-		// Operators
-		SVGFEColorMatrixElement &operator=(const SVGFEColorMatrixElement &other);
-		SVGFEColorMatrixElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEColorMatrixElement &operator=(const SVGFEColorMatrixElement &other);
+        SVGFEColorMatrixElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEColorMatrixlement' functions
-		SVGAnimatedString in1() const;
-		SVGAnimatedEnumeration type() const;
-		SVGAnimatedNumberList values() const;
+        // 'SVGFEColorMatrixlement' functions
+        SVGAnimatedString in1() const;
+        SVGAnimatedEnumeration type() const;
+        SVGAnimatedNumberList values() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEColorMatrixElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEColorMatrixElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

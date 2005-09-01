@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -26,56 +26,56 @@
 // General namespace specific definitions
 namespace KDOM
 {
-	enum UnitTypes
-	{
-		CSS_UNKNOWN			= 0,
-		CSS_NUMBER			= 1,
-		CSS_PERCENTAGE		= 2,
-		CSS_EMS				= 3,
-		CSS_EXS				= 4,
-		CSS_PX				= 5,
-		CSS_CM				= 6,
-		CSS_MM				= 7,
-		CSS_IN				= 8,
-		CSS_PT				= 9,
-		CSS_PC				= 10,
-		CSS_DEG				= 11,
-		CSS_RAD				= 12,
-		CSS_GRAD			= 13,
-		CSS_MS				= 14,
-		CSS_S				= 15,
-		CSS_HZ				= 16,
-		CSS_KHZ				= 17,
-		CSS_DIMENSION		= 18,
-		CSS_STRING			= 19,
-		CSS_URI				= 20,
-		CSS_IDENT			= 21,
-		CSS_ATTR			= 22,
-		CSS_COUNTER			= 23,
-		CSS_RECT			= 24,
-		CSS_RGBCOLOR		= 25,
-		CSS_HTML_RELATIVE	= 255 // quirk
-	};
+    enum UnitTypes
+    {
+        CSS_UNKNOWN            = 0,
+        CSS_NUMBER            = 1,
+        CSS_PERCENTAGE        = 2,
+        CSS_EMS                = 3,
+        CSS_EXS                = 4,
+        CSS_PX                = 5,
+        CSS_CM                = 6,
+        CSS_MM                = 7,
+        CSS_IN                = 8,
+        CSS_PT                = 9,
+        CSS_PC                = 10,
+        CSS_DEG                = 11,
+        CSS_RAD                = 12,
+        CSS_GRAD            = 13,
+        CSS_MS                = 14,
+        CSS_S                = 15,
+        CSS_HZ                = 16,
+        CSS_KHZ                = 17,
+        CSS_DIMENSION        = 18,
+        CSS_STRING            = 19,
+        CSS_URI                = 20,
+        CSS_IDENT            = 21,
+        CSS_ATTR            = 22,
+        CSS_COUNTER            = 23,
+        CSS_RECT            = 24,
+        CSS_RGBCOLOR        = 25,
+        CSS_HTML_RELATIVE    = 255 // quirk
+    };
 
-	enum RuleType
-	{
-		UNKNOWN_RULE		= 0,
-		STYLE_RULE			= 1,
-		CHARSET_RULE		= 2,
-		IMPORT_RULE			= 3,
-		MEDIA_RULE			= 4,
-		FONT_FACE_RULE		= 5,
-		PAGE_RULE			= 6
-	};
+    enum RuleType
+    {
+        UNKNOWN_RULE        = 0,
+        STYLE_RULE            = 1,
+        CHARSET_RULE        = 2,
+        IMPORT_RULE            = 3,
+        MEDIA_RULE            = 4,
+        FONT_FACE_RULE        = 5,
+        PAGE_RULE            = 6
+    };
 
-	enum ValueTypes /* Was also named UnitTypes, in the css.idl! Name clash! */
-	{
-		CSS_INHERIT			= 0,
-		CSS_PRIMITIVE_VALUE	= 1,
-		CSS_VALUE_LIST		= 2,
-		CSS_CUSTOM			= 3,
-		CSS_INITIAL			= 4
-	};
+    enum ValueTypes /* Was also named UnitTypes, in the css.idl! Name clash! */
+    {
+        CSS_INHERIT            = 0,
+        CSS_PRIMITIVE_VALUE    = 1,
+        CSS_VALUE_LIST        = 2,
+        CSS_CUSTOM            = 3,
+        CSS_INITIAL            = 4
+    };
 };
 
 #endif

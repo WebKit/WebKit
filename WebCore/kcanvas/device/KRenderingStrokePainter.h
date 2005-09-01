@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,44 +33,44 @@ class KRenderingDeviceContext;
 class KRenderingStrokePainter
 {
 public:
-	KRenderingStrokePainter();
-	virtual ~KRenderingStrokePainter();
+    KRenderingStrokePainter();
+    virtual ~KRenderingStrokePainter();
 
-	KRenderingPaintServer *paintServer() const;
-	void setPaintServer(KRenderingPaintServer *pserver);
+    KRenderingPaintServer *paintServer() const;
+    void setPaintServer(KRenderingPaintServer *pserver);
 
-	// Common interface for fill and stroke parameters
-	float strokeWidth() const;
-	void setStrokeWidth(float width);
+    // Common interface for fill and stroke parameters
+    float strokeWidth() const;
+    void setStrokeWidth(float width);
 
-	unsigned int strokeMiterLimit() const;
-	void setStrokeMiterLimit(unsigned int limit);
+    unsigned int strokeMiterLimit() const;
+    void setStrokeMiterLimit(unsigned int limit);
 
-	KCCapStyle strokeCapStyle() const;
-	void setStrokeCapStyle(KCCapStyle style);
+    KCCapStyle strokeCapStyle() const;
+    void setStrokeCapStyle(KCCapStyle style);
 
-	KCJoinStyle strokeJoinStyle() const;
-	void setStrokeJoinStyle(KCJoinStyle style);
+    KCJoinStyle strokeJoinStyle() const;
+    void setStrokeJoinStyle(KCJoinStyle style);
 
-	float dashOffset() const;
-	void setDashOffset(float offset);
+    float dashOffset() const;
+    void setDashOffset(float offset);
 
-	KCDashArray &dashArray() const;
-	void setDashArray(const KCDashArray &dashArray);
+    KCDashArray &dashArray() const;
+    void setDashArray(const KCDashArray &dashArray);
 
-	float opacity() const;
-	void setOpacity(float opacity);
+    float opacity() const;
+    void setOpacity(float opacity);
 
-	// Helpers
-	bool dirty() const;
-	void setDirty(bool dirty = true);
+    // Helpers
+    bool dirty() const;
+    void setDirty(bool dirty = true);
 
-	// Actual rendering function
-	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const;
+    // Actual rendering function
+    virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const;
 
 private:
-	class Private;
-	Private *d;
+    class Private;
+    Private *d;
 };
 
 #endif

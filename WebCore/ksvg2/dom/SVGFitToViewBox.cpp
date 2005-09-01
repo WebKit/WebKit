@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,27 +33,27 @@ using namespace KSVG;
 
 /*
 @begin SVGFitToViewBox::s_hashTable 3
- viewBox		SVGFitToViewBoxConstants::ViewBox	DontDelete|ReadOnly
- preserveAspectRatio	SVGFitToViewBoxConstants::PreserveAspectRatio	DontDelete|ReadOnly
+ viewBox        SVGFitToViewBoxConstants::ViewBox    DontDelete|ReadOnly
+ preserveAspectRatio    SVGFitToViewBoxConstants::PreserveAspectRatio    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFitToViewBox::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFitToViewBoxConstants::ViewBox:
-			return KDOM::safe_cache<SVGAnimatedRect>(exec, viewBox());
-		case SVGFitToViewBoxConstants::PreserveAspectRatio:
-			return KDOM::safe_cache<SVGAnimatedPreserveAspectRatio>(exec, preserveAspectRatio());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFitToViewBoxConstants::ViewBox:
+            return KDOM::safe_cache<SVGAnimatedRect>(exec, viewBox());
+        case SVGFitToViewBoxConstants::PreserveAspectRatio:
+            return KDOM::safe_cache<SVGAnimatedPreserveAspectRatio>(exec, preserveAspectRatio());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGFitToViewBox::SVGFitToViewBox() : impl(0)
@@ -66,7 +66,7 @@ SVGFitToViewBox::SVGFitToViewBox(SVGFitToViewBoxImpl *i) : impl(i)
 
 SVGFitToViewBox::SVGFitToViewBox(const SVGFitToViewBox &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFitToViewBox::~SVGFitToViewBox()
@@ -75,34 +75,34 @@ SVGFitToViewBox::~SVGFitToViewBox()
 
 SVGFitToViewBox &SVGFitToViewBox::operator=(const SVGFitToViewBox &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGFitToViewBox &SVGFitToViewBox::operator=(SVGFitToViewBoxImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedRect SVGFitToViewBox::viewBox() const
 {
-	if(!impl)
-		return SVGAnimatedRect::null;
+    if(!impl)
+        return SVGAnimatedRect::null;
 
-	return SVGAnimatedRect(impl->viewBox());
+    return SVGAnimatedRect(impl->viewBox());
 }
 
 SVGAnimatedPreserveAspectRatio SVGFitToViewBox::preserveAspectRatio() const
 {
-	if(!impl)
-		return SVGAnimatedPreserveAspectRatio::null;
+    if(!impl)
+        return SVGAnimatedPreserveAspectRatio::null;
 
-	return SVGAnimatedPreserveAspectRatio(impl->preserveAspectRatio());
+    return SVGAnimatedPreserveAspectRatio(impl->preserveAspectRatio());
 }
 
 // vim:ts=4:noet

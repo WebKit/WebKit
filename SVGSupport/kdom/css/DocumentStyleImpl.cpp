@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,19 +31,19 @@ DocumentStyleImpl::DocumentStyleImpl() : m_styleSheets(0)
 
 DocumentStyleImpl::~DocumentStyleImpl()
 {
-	if(m_styleSheets)
-		m_styleSheets->deref();
+    if(m_styleSheets)
+        m_styleSheets->deref();
 }
 
 StyleSheetListImpl *DocumentStyleImpl::styleSheets() const
 {
-	if(!m_styleSheets)
-	{
-		m_styleSheets = new StyleSheetListImpl();
-		m_styleSheets->ref();
-	}
+    if(!m_styleSheets)
+    {
+        m_styleSheets = new StyleSheetListImpl();
+        m_styleSheets->ref();
+    }
 
-	return m_styleSheets;
+    return m_styleSheets;
 }
 
 // vim:ts=4:noet

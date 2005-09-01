@@ -1,8 +1,8 @@
 /*
-	Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
-	This file is part of the KDE project
+    This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -33,10 +33,10 @@ QTextStream &operator<<(QTextStream &ts, const KRenderingPaintServer &ps)
 class KRenderingPaintServerSolid::Private
 {
 public:
-	Private() { }
-	~Private() { }
+    Private() { }
+    ~Private() { }
 
-	QColor color;
+    QColor color;
 };
 
 KRenderingPaintServerSolid::KRenderingPaintServerSolid() : KRenderingPaintServer(), d(new Private())
@@ -45,22 +45,22 @@ KRenderingPaintServerSolid::KRenderingPaintServerSolid() : KRenderingPaintServer
 
 KRenderingPaintServerSolid::~KRenderingPaintServerSolid()
 {
-	delete d;
+    delete d;
 }
 
 QColor KRenderingPaintServerSolid::color() const
 {
-	return d->color;
+    return d->color;
 }
 
 void KRenderingPaintServerSolid::setColor(const QColor &color)
 {
-	d->color = color;
+    d->color = color;
 }
 
 KCPaintServerType KRenderingPaintServerSolid::type() const
 {
-	return PS_SOLID;
+    return PS_SOLID;
 }
 
 QTextStream &KRenderingPaintServerSolid::externalRepresentation(QTextStream &ts) const

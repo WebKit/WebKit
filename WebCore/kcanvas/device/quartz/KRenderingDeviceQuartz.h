@@ -36,58 +36,58 @@ typedef struct CGContext *CGContextRef;
 class KRenderingDeviceContextQuartz : public KRenderingDeviceContext
 {
 public:
-	KRenderingDeviceContextQuartz() : m_cgContext(0) { }
-	virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix);
-	virtual KCanvasMatrix worldMatrix() const;
-	
-	virtual QRect mapFromVisual(const QRect &rect);
-	virtual QRect mapToVisual(const QRect &rect);
-	
-	CGContextRef cgContext() { return m_cgContext; };
-	void setCGContext(CGContextRef newContext) { m_cgContext = newContext; }
-	
+    KRenderingDeviceContextQuartz() : m_cgContext(0) { }
+    virtual void setWorldMatrix(const KCanvasMatrix &worldMatrix);
+    virtual KCanvasMatrix worldMatrix() const;
+    
+    virtual QRect mapFromVisual(const QRect &rect);
+    virtual QRect mapToVisual(const QRect &rect);
+    
+    CGContextRef cgContext() { return m_cgContext; };
+    void setCGContext(CGContextRef newContext) { m_cgContext = newContext; }
+    
 private:
-	CGContextRef m_cgContext;
+    CGContextRef m_cgContext;
 };
 
 class KRenderingDeviceQuartz : public KRenderingDevice
 {
 Q_OBJECT
 public:
-	KRenderingDeviceQuartz() { }
-	virtual ~KRenderingDeviceQuartz() { }
+    KRenderingDeviceQuartz() { }
+    virtual ~KRenderingDeviceQuartz() { }
 
-	virtual bool isBuffered() const { return false; }
+    virtual bool isBuffered() const { return false; }
 
-	// context management.
-	KRenderingDeviceContextQuartz *quartzContext() const;
-	CGContextRef currentCGContext() const;
-	virtual KRenderingDeviceContext *contextForImage(KCanvasImage *) const;
+    // context management.
+    KRenderingDeviceContextQuartz *quartzContext() const;
+    CGContextRef currentCGContext() const;
+    virtual KRenderingDeviceContext *contextForImage(KCanvasImage *) const;
 
-	// Vector path creation
-	virtual void deletePath(KCanvasUserData path);
-	virtual void startPath();
-	virtual void endPath();
+    // Vector path creation
+    virtual void deletePath(KCanvasUserData path);
+    virtual void startPath();
+    virtual void endPath();
 
-	virtual void moveTo(double x, double y);
-	virtual void lineTo(double x, double y);
-	virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3);
-	virtual void closeSubpath();
-	
-	KCanvasUserData pathForRect(const QRect &) const;
+    virtual void moveTo(double x, double y);
+    virtual void lineTo(double x, double y);
+    virtual void curveTo(double x1, double y1, double x2, double y2, double x3, double y3);
+    virtual void closeSubpath();
+    
+    KCanvasUserData pathForRect(const QRect &) const;
 
-	// Resource creation
-	virtual KCanvasResource *createResource(const KCResourceType &type) const;
-	virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const;
-	virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const;
-	
-	// item creation
-	virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const;
-	virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const;
+    // Resource creation
+    virtual KCanvasResource *createResource(const KCResourceType &type) const;
+    virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const;
+    virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const;
+    
+    // item creation
+    virtual KCanvasItem *createItem(KCanvas *canvas, KRenderingStyle *style, KCanvasUserData path) const;
+    virtual KCanvasContainer *createContainer(KCanvas *canvas, KRenderingStyle *style) const;
 
-	// filters (mostly debugging)
-	static bool filtersEnabled();
-	static void setFiltersEnabled(bool enabled);
+    // filters (mostly debugging)
+    static bool filtersEnabled();
+    static void setFiltersEnabled(bool enabled);
         static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
         static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
             
@@ -97,19 +97,19 @@ public:
 class KCanvasQuartzPathData
 {
 public:
-	KCanvasQuartzPathData();
+    KCanvasQuartzPathData();
 
-	~KCanvasQuartzPathData();
+    ~KCanvasQuartzPathData();
 
-	CGMutablePathRef path;
-	bool hasValidBBox;
-	CGRect bbox;
+    CGMutablePathRef path;
+    bool hasValidBBox;
+    CGRect bbox;
 };
 
 class KCanvasQuartzUserData : public KCanvasPrivateUserData {
 public: 
-	KCanvasQuartzUserData();
-	~KCanvasQuartzUserData();
+    KCanvasQuartzUserData();
+    ~KCanvasQuartzUserData();
 };
 
 #endif

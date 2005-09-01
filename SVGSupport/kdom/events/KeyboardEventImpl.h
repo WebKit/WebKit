@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,51 +30,51 @@ class QKeyEvent;
 // Introduced in DOM Level 3
 namespace KDOM
 {
-	class EventTargetImpl;
-	class AbstractViewImpl;
-	class KeyboardEventImpl : public UIEventImpl
-	{
-	public:
-		KeyboardEventImpl(EventImplType identifier);
-		virtual ~KeyboardEventImpl();
+    class EventTargetImpl;
+    class AbstractViewImpl;
+    class KeyboardEventImpl : public UIEventImpl
+    {
+    public:
+        KeyboardEventImpl(EventImplType identifier);
+        virtual ~KeyboardEventImpl();
 
-		void initKeyboardEvent(DOMStringImpl *typeArg, bool canBubbleArg,
-							   bool cancelableArg, AbstractViewImpl *viewArg,
-							   DOMStringImpl *keyIdentifierArg,
-							   unsigned long keyLocationArg,
-							   bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg,
-							   bool metaKeyArg);
+        void initKeyboardEvent(DOMStringImpl *typeArg, bool canBubbleArg,
+                               bool cancelableArg, AbstractViewImpl *viewArg,
+                               DOMStringImpl *keyIdentifierArg,
+                               unsigned long keyLocationArg,
+                               bool ctrlKeyArg, bool altKeyArg, bool shiftKeyArg,
+                               bool metaKeyArg);
 
-		void initKeyboardEvent(QKeyEvent *key);
+        void initKeyboardEvent(QKeyEvent *key);
 
-		bool ctrlKey() const;
-		bool shiftKey() const;
-		bool altKey() const;
-		bool metaKey() const;
+        bool ctrlKey() const;
+        bool shiftKey() const;
+        bool altKey() const;
+        bool metaKey() const;
 
-		DOMStringImpl *keyIdentifier() const {  return m_keyIdentifier; }
-		unsigned long keyLocation() const { return m_keyLocation; }
+        DOMStringImpl *keyIdentifier() const {  return m_keyIdentifier; }
+        unsigned long keyLocation() const { return m_keyLocation; }
     
-		bool getModifierState(DOMStringImpl *keyIdentifierArg) const;
+        bool getModifierState(DOMStringImpl *keyIdentifierArg) const;
     
-		QKeyEvent *qKeyEvent() const { return m_keyEvent; }
+        QKeyEvent *qKeyEvent() const { return m_keyEvent; }
 
-		int keyCode() const; // key code for keydown and keyup, character for other events
-		int charCode() const;
+        int keyCode() const; // key code for keydown and keyup, character for other events
+        int charCode() const;
     
-		virtual long which() const;
+        virtual long which() const;
 
-	private:
-		QKeyEvent *m_keyEvent;
-		DOMStringImpl *m_keyIdentifier;
-		unsigned long m_keyLocation;
-		unsigned long m_virtKeyVal;
-		bool m_ctrlKey : 1;
-		bool m_altKey : 1;
-		bool m_shiftKey : 1;
-		bool m_metaKey : 1;
-		bool m_numPad : 1;
-	};
+    private:
+        QKeyEvent *m_keyEvent;
+        DOMStringImpl *m_keyIdentifier;
+        unsigned long m_keyLocation;
+        unsigned long m_virtKeyVal;
+        bool m_ctrlKey : 1;
+        bool m_altKey : 1;
+        bool m_shiftKey : 1;
+        bool m_metaKey : 1;
+        bool m_numPad : 1;
+    };
 };
 
 #endif

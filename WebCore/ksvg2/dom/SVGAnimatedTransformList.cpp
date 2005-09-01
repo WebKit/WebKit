@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -36,27 +36,27 @@ using namespace KSVG;
 
 /*
 @begin SVGAnimatedTransformList::s_hashTable 3
- baseVal	SVGAnimatedTransformListConstants::BaseVal	DontDelete|ReadOnly
- animVal	SVGAnimatedTransformListConstants::AnimVal	DontDelete|ReadOnly
+ baseVal    SVGAnimatedTransformListConstants::BaseVal    DontDelete|ReadOnly
+ animVal    SVGAnimatedTransformListConstants::AnimVal    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGAnimatedTransformList::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGAnimatedTransformListConstants::BaseVal:
-			return KDOM::safe_cache<SVGTransformList>(exec, baseVal());
-		case SVGAnimatedTransformListConstants::AnimVal:
-			return KDOM::safe_cache<SVGTransformList>(exec, animVal());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGAnimatedTransformListConstants::BaseVal:
+            return KDOM::safe_cache<SVGTransformList>(exec, baseVal());
+        case SVGAnimatedTransformListConstants::AnimVal:
+            return KDOM::safe_cache<SVGTransformList>(exec, animVal());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 SVGAnimatedTransformList SVGAnimatedTransformList::null;
@@ -67,31 +67,31 @@ SVGAnimatedTransformList::SVGAnimatedTransformList() : impl(0)
 
 SVGAnimatedTransformList::SVGAnimatedTransformList(SVGAnimatedTransformListImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGAnimatedTransformList::SVGAnimatedTransformList(const SVGAnimatedTransformList &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 KSVG_IMPL_DTOR_ASSIGN_OP(SVGAnimatedTransformList)
 
 SVGTransformList SVGAnimatedTransformList::baseVal() const
 {
-	if(!impl)
-		return SVGTransformList::null;
+    if(!impl)
+        return SVGTransformList::null;
 
-	return SVGTransformList(impl->baseVal());
+    return SVGTransformList(impl->baseVal());
 }
 
 SVGTransformList SVGAnimatedTransformList::animVal() const
 {
-	if(!impl)
-		return SVGTransformList::null;
+    if(!impl)
+        return SVGTransformList::null;
 
-	return SVGTransformList(impl->animVal());
+    return SVGTransformList(impl->animVal());
 }
 
 // vim:ts=4:noet

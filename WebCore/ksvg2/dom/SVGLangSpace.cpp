@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -37,52 +37,52 @@ using namespace KSVG;
 
 /*
 @begin SVGLangSpace::s_hashTable 3
- xmllang	SVGLangSpaceConstants::Xmllang	DontDelete
- xmlspace	SVGLangSpaceConstants::Xmlspace	DontDelete
+ xmllang    SVGLangSpaceConstants::Xmllang    DontDelete
+ xmlspace    SVGLangSpaceConstants::Xmlspace    DontDelete
 @end
 */
 
 ValueImp *SVGLangSpace::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGLangSpaceConstants::Xmllang:
-			return KDOM::getDOMString(xmlLang());
-		case SVGLangSpaceConstants::Xmlspace:
-			return KDOM::getDOMString(xmlSpace());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLangSpaceConstants::Xmllang:
+            return KDOM::getDOMString(xmlLang());
+        case SVGLangSpaceConstants::Xmlspace:
+            return KDOM::getDOMString(xmlSpace());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 void SVGLangSpace::putValueProperty(ExecState *exec, int token, ValueImp *value, int)
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	KDOM::DOMString stringValue = KDOM::toDOMString(exec, value);
+    KDOM::DOMString stringValue = KDOM::toDOMString(exec, value);
 
-	switch(token)
-	{
-		case SVGLangSpaceConstants::Xmllang:
-		{
-			setXmlLang(stringValue);
-			break;
-		}
-		case SVGLangSpaceConstants::Xmlspace:
-		{
-			setXmlSpace(stringValue);
-			break;
-		}
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGLangSpaceConstants::Xmllang:
+        {
+            setXmlLang(stringValue);
+            break;
+        }
+        case SVGLangSpaceConstants::Xmlspace:
+        {
+            setXmlSpace(stringValue);
+            break;
+        }
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
+    KDOM_LEAVE_SAFE(SVGException)
 }
 
 SVGLangSpace::SVGLangSpace() : impl(0)
@@ -95,7 +95,7 @@ SVGLangSpace::SVGLangSpace(SVGLangSpaceImpl *i) : impl(i)
 
 SVGLangSpace::SVGLangSpace(const SVGLangSpace &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGLangSpace::~SVGLangSpace()
@@ -104,46 +104,46 @@ SVGLangSpace::~SVGLangSpace()
 
 SVGLangSpace &SVGLangSpace::operator=(const SVGLangSpace &other)
 {
-	if(impl != other.impl)
-		impl = other.impl;
+    if(impl != other.impl)
+        impl = other.impl;
 
-	return *this;
+    return *this;
 }
 
 SVGLangSpace &SVGLangSpace::operator=(SVGLangSpaceImpl *other)
 {
-	if(impl != other)
-		impl = other;
+    if(impl != other)
+        impl = other;
 
-	return *this;
+    return *this;
 }
 
 KDOM::DOMString SVGLangSpace::xmlLang() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->xmlLang());
+    return KDOM::DOMString(impl->xmlLang());
 }
 
 void SVGLangSpace::setXmlLang(const KDOM::DOMString &xmlLang)
 {
-	if(impl)
-		impl->setXmlLang(xmlLang.implementation());
+    if(impl)
+        impl->setXmlLang(xmlLang.implementation());
 }
 
 KDOM::DOMString SVGLangSpace::xmlSpace() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return KDOM::DOMString(impl->xmlSpace());
+    return KDOM::DOMString(impl->xmlSpace());
 }
 
 void SVGLangSpace::setXmlSpace(const KDOM::DOMString &xmlSpace)
 {
-	if(impl)
-		impl->setXmlSpace(xmlSpace.implementation());
+    if(impl)
+        impl->setXmlSpace(xmlSpace.implementation());
 }
 
 // vim:ts=4:noet

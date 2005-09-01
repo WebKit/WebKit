@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,32 +27,32 @@
 
 namespace KDOM
 {
-	class CSSParser;
+    class CSSParser;
 };
 
 namespace KSVG
 {
-	class SVGCSSStyleSheetImpl : public KDOM::CSSStyleSheetImpl 
-	{
-	public:
-		SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode,
-							 KDOM::DOMStringImpl *href = 0,
-							 bool _implicit = false);
+    class SVGCSSStyleSheetImpl : public KDOM::CSSStyleSheetImpl 
+    {
+    public:
+        SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode,
+                             KDOM::DOMStringImpl *href = 0,
+                             bool _implicit = false);
 
-		SVGCSSStyleSheetImpl(KDOM::CSSStyleSheetImpl *parentSheet,
-							 KDOM::DOMStringImpl *href = 0);
+        SVGCSSStyleSheetImpl(KDOM::CSSStyleSheetImpl *parentSheet,
+                             KDOM::DOMStringImpl *href = 0);
 
-		SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule,
-							 KDOM::DOMStringImpl *href = 0);
+        SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule,
+                             KDOM::DOMStringImpl *href = 0);
 
-		// clone from a cached version of the sheet
-		SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode, KDOM::CSSStyleSheetImpl *orig);
-		SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule, KDOM::CSSStyleSheetImpl *orig);
+        // clone from a cached version of the sheet
+        SVGCSSStyleSheetImpl(KDOM::NodeImpl *parentNode, KDOM::CSSStyleSheetImpl *orig);
+        SVGCSSStyleSheetImpl(KDOM::CSSRuleImpl *ownerRule, KDOM::CSSStyleSheetImpl *orig);
 
-		virtual ~SVGCSSStyleSheetImpl();
+        virtual ~SVGCSSStyleSheetImpl();
 
-		virtual KDOM::CSSParser *createCSSParser(bool strictParsing = true) const;
-	};
+        virtual KDOM::CSSParser *createCSSParser(bool strictParsing = true) const;
+    };
 };
 
 #endif

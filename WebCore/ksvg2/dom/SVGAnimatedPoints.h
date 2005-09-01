@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,35 +27,35 @@
 
 namespace KSVG
 {
-	class SVGPointList;
-	class SVGAnimatedPointsImpl;
-	class SVGAnimatedPoints
-	{
-	public:
-		SVGAnimatedPoints();
-		explicit SVGAnimatedPoints(SVGAnimatedPointsImpl *i);
-		SVGAnimatedPoints(const SVGAnimatedPoints &other);
-		virtual ~SVGAnimatedPoints();
+    class SVGPointList;
+    class SVGAnimatedPointsImpl;
+    class SVGAnimatedPoints
+    {
+    public:
+        SVGAnimatedPoints();
+        explicit SVGAnimatedPoints(SVGAnimatedPointsImpl *i);
+        SVGAnimatedPoints(const SVGAnimatedPoints &other);
+        virtual ~SVGAnimatedPoints();
 
-		// Operators
-		SVGAnimatedPoints &operator=(const SVGAnimatedPoints &other);
-		SVGAnimatedPoints &operator=(SVGAnimatedPointsImpl *other);
+        // Operators
+        SVGAnimatedPoints &operator=(const SVGAnimatedPoints &other);
+        SVGAnimatedPoints &operator=(SVGAnimatedPointsImpl *other);
 
-		// 'SVGAnimatedPoints' functions
-		SVGPointList points() const;
-		SVGPointList animatedPoints() const;
+        // 'SVGAnimatedPoints' functions
+        SVGPointList points() const;
+        SVGPointList animatedPoints() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGAnimatedPoints)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGAnimatedPoints)
 
-	protected:
-		SVGAnimatedPointsImpl *impl;
+    protected:
+        SVGAnimatedPointsImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

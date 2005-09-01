@@ -27,40 +27,40 @@
 
 namespace KSVG
 {
-	class SVGNumberImpl;
-	class SVGNumber
-	{
-	public:
-		SVGNumber();
-		explicit SVGNumber(SVGNumberImpl *i);
-		SVGNumber(const SVGNumber &other);
-		virtual ~SVGNumber();
+    class SVGNumberImpl;
+    class SVGNumber
+    {
+    public:
+        SVGNumber();
+        explicit SVGNumber(SVGNumberImpl *i);
+        SVGNumber(const SVGNumber &other);
+        virtual ~SVGNumber();
 
-		// Operators
-		SVGNumber &operator=(const SVGNumber &other);
-		bool operator==(const SVGNumber &other) const;
-		bool operator!=(const SVGNumber &other) const;
+        // Operators
+        SVGNumber &operator=(const SVGNumber &other);
+        bool operator==(const SVGNumber &other) const;
+        bool operator!=(const SVGNumber &other) const;
 
-		// 'SVGNumber' functions
-		void setValue(float value);
-		float value() const;
+        // 'SVGNumber' functions
+        void setValue(float value);
+        float value() const;
 
-		// Internal
-		KSVG_INTERNAL_BASE(SVGNumber)
+        // Internal
+        KSVG_INTERNAL_BASE(SVGNumber)
 
-	protected:
-		SVGNumberImpl *impl;
+    protected:
+        SVGNumberImpl *impl;
 
-	public: // EcmaScript section
-		KDOM_BASECLASS_GET
-		KDOM_PUT
-		KDOM_CAST
+    public: // EcmaScript section
+        KDOM_BASECLASS_GET
+        KDOM_PUT
+        KDOM_CAST
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-		void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+        void putValueProperty(KJS::ExecState *exec, int token, KJS::ValueImp *value, int attr);
+    };
 
-	KDOM_DEFINE_CAST(SVGNumber)
+    KDOM_DEFINE_CAST(SVGNumber)
 };
 
 #endif

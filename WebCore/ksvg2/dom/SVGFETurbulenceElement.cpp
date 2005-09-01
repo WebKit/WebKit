@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -42,39 +42,39 @@ using namespace KSVG;
 
 /*
 @begin SVGFETurbulenceElement::s_hashTable 7
- baseFrequencyX		SVGFETurbulenceElementConstants::BaseFrequencyX	DontDelete|ReadOnly
- baseFrequencyY		SVGFETurbulenceElementConstants::BaseFrequencyY	DontDelete|ReadOnly
- numOctaves			SVGFETurbulenceElementConstants::NumOctaves		DontDelete|ReadOnly
- seed				SVGFETurbulenceElementConstants::Seed			DontDelete|ReadOnly
- stitchTiles		SVGFETurbulenceElementConstants::StitchTiles	DontDelete|ReadOnly
- type				SVGFETurbulenceElementConstants::Type			DontDelete|ReadOnly
+ baseFrequencyX        SVGFETurbulenceElementConstants::BaseFrequencyX    DontDelete|ReadOnly
+ baseFrequencyY        SVGFETurbulenceElementConstants::BaseFrequencyY    DontDelete|ReadOnly
+ numOctaves            SVGFETurbulenceElementConstants::NumOctaves        DontDelete|ReadOnly
+ seed                SVGFETurbulenceElementConstants::Seed            DontDelete|ReadOnly
+ stitchTiles        SVGFETurbulenceElementConstants::StitchTiles    DontDelete|ReadOnly
+ type                SVGFETurbulenceElementConstants::Type            DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGFETurbulenceElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGFETurbulenceElementConstants::BaseFrequencyX:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, baseFrequencyX());
-		case SVGFETurbulenceElementConstants::BaseFrequencyY:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, baseFrequencyY());
-		case SVGFETurbulenceElementConstants::NumOctaves:
-			return KDOM::safe_cache<SVGAnimatedInteger>(exec, numOctaves());
-		case SVGFETurbulenceElementConstants::Seed:
-			return KDOM::safe_cache<SVGAnimatedNumber>(exec, seed());
-		case SVGFETurbulenceElementConstants::StitchTiles:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, stitchTiles());
-		case SVGFETurbulenceElementConstants::Type:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, type());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGFETurbulenceElementConstants::BaseFrequencyX:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, baseFrequencyX());
+        case SVGFETurbulenceElementConstants::BaseFrequencyY:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, baseFrequencyY());
+        case SVGFETurbulenceElementConstants::NumOctaves:
+            return KDOM::safe_cache<SVGAnimatedInteger>(exec, numOctaves());
+        case SVGFETurbulenceElementConstants::Seed:
+            return KDOM::safe_cache<SVGAnimatedNumber>(exec, seed());
+        case SVGFETurbulenceElementConstants::StitchTiles:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, stitchTiles());
+        case SVGFETurbulenceElementConstants::Type:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, type());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -92,12 +92,12 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(SVGFETurbulenceElementImpl *i) : 
 
 SVGFETurbulenceElement::SVGFETurbulenceElement(const SVGFETurbulenceElement &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFETurbulenceElement::SVGFETurbulenceElement(const KDOM::Node &other) : SVGElement(), SVGFilterPrimitiveStandardAttributes()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGFETurbulenceElement::~SVGFETurbulenceElement()
@@ -106,79 +106,79 @@ SVGFETurbulenceElement::~SVGFETurbulenceElement()
 
 SVGFETurbulenceElement &SVGFETurbulenceElement::operator=(const SVGFETurbulenceElement &other)
 {
-	SVGElement::operator=(other);
-	SVGFilterPrimitiveStandardAttributes::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGFilterPrimitiveStandardAttributes::operator=(other);
+    return *this;
 }
 
 SVGFETurbulenceElement &SVGFETurbulenceElement::operator=(const KDOM::Node &other)
 {
-	SVGFETurbulenceElementImpl *ohandle = static_cast<SVGFETurbulenceElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-			
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
-		}
-	}
+    SVGFETurbulenceElementImpl *ohandle = static_cast<SVGFETurbulenceElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+            
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGFilterPrimitiveStandardAttributes::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedNumber SVGFETurbulenceElement::baseFrequencyX() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->baseFrequencyX());
+    return SVGAnimatedNumber(impl->baseFrequencyX());
 }
 
 SVGAnimatedNumber SVGFETurbulenceElement::baseFrequencyY() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->baseFrequencyY());
+    return SVGAnimatedNumber(impl->baseFrequencyY());
 }
 
 SVGAnimatedInteger SVGFETurbulenceElement::numOctaves() const
 {
-	if(!d)
-		return SVGAnimatedInteger::null;
+    if(!d)
+        return SVGAnimatedInteger::null;
 
-	return SVGAnimatedInteger(impl->numOctaves());
+    return SVGAnimatedInteger(impl->numOctaves());
 }
 
 SVGAnimatedNumber SVGFETurbulenceElement::seed() const
 {
-	if(!d)
-		return SVGAnimatedNumber::null;
+    if(!d)
+        return SVGAnimatedNumber::null;
 
-	return SVGAnimatedNumber(impl->seed());
+    return SVGAnimatedNumber(impl->seed());
 }
 
 SVGAnimatedEnumeration SVGFETurbulenceElement::stitchTiles() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->stitchTiles());
+    return SVGAnimatedEnumeration(impl->stitchTiles());
 }
 
 SVGAnimatedEnumeration SVGFETurbulenceElement::type() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->type());
+    return SVGAnimatedEnumeration(impl->type());
 }
 
 // vim:ts=4:noet

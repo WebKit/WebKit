@@ -33,20 +33,20 @@ TypeInfoImpl::~TypeInfoImpl()
 
 DOMStringImpl *TypeInfoImpl::typeName() const
 {
-	// FIXME!
-	return 0;
+    // FIXME!
+    return 0;
 }
 
 DOMStringImpl *TypeInfoImpl::typeNamespace() const
 {
-	// FIXME!
-	return 0;
+    // FIXME!
+    return 0;
 }
 
 bool TypeInfoImpl::isDerivedFrom(DOMStringImpl *, DOMStringImpl *, unsigned long) const
 {
-	// FIXME!
-	return false;
+    // FIXME!
+    return false;
 }
 
 // vim:ts=4:noet

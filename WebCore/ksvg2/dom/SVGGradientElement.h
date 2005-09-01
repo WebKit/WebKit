@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -30,39 +30,39 @@
 
 namespace KSVG
 {
-	class SVGAnimatedEnumeration;
-	class SVGAnimatedTransformList;
-	class SVGGradientElementImpl;
-	class SVGGradientElement :	public SVGElement,
-								public SVGURIReference,
-								public SVGExternalResourcesRequired,
-								public SVGStylable
-	{
-	public:
-		SVGGradientElement();
-		explicit SVGGradientElement(SVGGradientElementImpl *i);
-		SVGGradientElement(const SVGGradientElement &other);
-		SVGGradientElement(const KDOM::Node &other);
-		virtual ~SVGGradientElement();
+    class SVGAnimatedEnumeration;
+    class SVGAnimatedTransformList;
+    class SVGGradientElementImpl;
+    class SVGGradientElement :    public SVGElement,
+                                public SVGURIReference,
+                                public SVGExternalResourcesRequired,
+                                public SVGStylable
+    {
+    public:
+        SVGGradientElement();
+        explicit SVGGradientElement(SVGGradientElementImpl *i);
+        SVGGradientElement(const SVGGradientElement &other);
+        SVGGradientElement(const KDOM::Node &other);
+        virtual ~SVGGradientElement();
 
-		// Operators
-		SVGGradientElement &operator=(const SVGGradientElement &other);
-		SVGGradientElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGGradientElement &operator=(const SVGGradientElement &other);
+        SVGGradientElement &operator=(const KDOM::Node &other);
 
-		// 'SVGGradientElement' functions
-		SVGAnimatedEnumeration gradientUnits() const;
-		SVGAnimatedTransformList gradientTransform() const;
-		SVGAnimatedEnumeration spreadMethod() const;
+        // 'SVGGradientElement' functions
+        SVGAnimatedEnumeration gradientUnits() const;
+        SVGAnimatedTransformList gradientTransform() const;
+        SVGAnimatedEnumeration spreadMethod() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGGradientElement)
+        // Internal
+        KSVG_INTERNAL(SVGGradientElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

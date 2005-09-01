@@ -30,24 +30,24 @@ using namespace KSVG;
 
 /*
 @begin SVGPathSeg::s_hashTable 3
- pathSegType		SVGPathSegConstants::PathSegType			DontDelete|ReadOnly
- pathSegTypeAsLetter	SVGPathSegConstants::PathSegTypeAsLetter	DontDelete|ReadOnly
+ pathSegType        SVGPathSegConstants::PathSegType            DontDelete|ReadOnly
+ pathSegTypeAsLetter    SVGPathSegConstants::PathSegTypeAsLetter    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGPathSeg::getValueProperty(ExecState *, int token) const
 {
-	switch(token)
-	{
-	case SVGPathSegConstants::PathSegType:
-		return Number(pathSegType());
-	case SVGPathSegConstants::PathSegTypeAsLetter:
-		return String(pathSegTypeAsLetter().string());
-	default:
-		kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+    case SVGPathSegConstants::PathSegType:
+        return Number(pathSegType());
+    case SVGPathSegConstants::PathSegTypeAsLetter:
+        return String(pathSegTypeAsLetter().string());
+    default:
+        kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	return Undefined();
+    return Undefined();
 }
 
 SVGPathSeg SVGPathSeg::null;
@@ -58,51 +58,51 @@ SVGPathSeg::SVGPathSeg() : impl(0)
 
 SVGPathSeg::SVGPathSeg(const SVGPathSeg &other) : impl(0)
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPathSeg::SVGPathSeg(SVGPathSegImpl *i) : impl(i)
 {
-	if(impl)
-		impl->ref();
+    if(impl)
+        impl->ref();
 }
 
 SVGPathSeg::~SVGPathSeg()
 {
-	if(impl)
-		impl->deref();
+    if(impl)
+        impl->deref();
 }
 
 SVGPathSeg &SVGPathSeg::operator=(const SVGPathSeg &other)
 {
-	KDOM_SAFE_SET(impl, other.impl);
-	return *this;
+    KDOM_SAFE_SET(impl, other.impl);
+    return *this;
 }
 
 bool SVGPathSeg::operator==(const SVGPathSeg &other) const
 {
-	return impl == other.impl;
+    return impl == other.impl;
 }
 
 bool SVGPathSeg::operator!=(const SVGPathSeg &other) const
 {
-	return !operator==(other);
+    return !operator==(other);
 }
 
 unsigned short SVGPathSeg::pathSegType() const
 {
-	if(!impl)
-		return PATHSEG_UNKNOWN;
+    if(!impl)
+        return PATHSEG_UNKNOWN;
 
-	return impl->pathSegType();
+    return impl->pathSegType();
 }
 
 KDOM::DOMString SVGPathSeg::pathSegTypeAsLetter() const
 {
-	if(!impl)
-		return KDOM::DOMString();
+    if(!impl)
+        return KDOM::DOMString();
 
-	return impl->pathSegTypeAsLetter();
+    return impl->pathSegTypeAsLetter();
 }
 
 // vim:ts=4:noet

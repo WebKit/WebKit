@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -31,111 +31,111 @@
 
 namespace KDOM
 {
-	class CSSValueImpl : public StyleBaseImpl
-	{
-	public:
-		CSSValueImpl();
-		virtual ~CSSValueImpl();
+    class CSSValueImpl : public StyleBaseImpl
+    {
+    public:
+        CSSValueImpl();
+        virtual ~CSSValueImpl();
 
-		// 'CSSValueImpl' functions
-		virtual void setCssText(DOMStringImpl *cssText);
-		virtual DOMStringImpl *cssText() const = 0;
+        // 'CSSValueImpl' functions
+        virtual void setCssText(DOMStringImpl *cssText);
+        virtual DOMStringImpl *cssText() const = 0;
 
-		virtual unsigned short cssValueType() const;
+        virtual unsigned short cssValueType() const;
 
-		virtual bool isValue() const { return true; }
-		virtual bool isFontValue() const { return false; }
-	};
+        virtual bool isValue() const { return true; }
+        virtual bool isFontValue() const { return false; }
+    };
 
-	class CSSInheritedValueImpl : public CSSValueImpl
-	{
-	public:
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
-	};
+    class CSSInheritedValueImpl : public CSSValueImpl
+    {
+    public:
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
+    };
 
-	class CSSInitialValueImpl : public CSSValueImpl
-	{
-	public:
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
-	};
+    class CSSInitialValueImpl : public CSSValueImpl
+    {
+    public:
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
+    };
 
-	class CSSValueListImpl;
-	class CSSPrimitiveValueImpl;
+    class CSSValueListImpl;
+    class CSSPrimitiveValueImpl;
 
-	class FontValueImpl : public CSSValueImpl
-	{
-	public:
-		FontValueImpl();
-		virtual ~FontValueImpl();
+    class FontValueImpl : public CSSValueImpl
+    {
+    public:
+        FontValueImpl();
+        virtual ~FontValueImpl();
 
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
 
-		virtual bool isFontValue() const { return true; }
+        virtual bool isFontValue() const { return true; }
 
-		CSSPrimitiveValueImpl *style;
-		CSSPrimitiveValueImpl *variant;
-		CSSPrimitiveValueImpl *weight;
-		CSSPrimitiveValueImpl *size;
-		CSSPrimitiveValueImpl *lineHeight;
-		CSSValueListImpl *family;
-	};
+        CSSPrimitiveValueImpl *style;
+        CSSPrimitiveValueImpl *variant;
+        CSSPrimitiveValueImpl *weight;
+        CSSPrimitiveValueImpl *size;
+        CSSPrimitiveValueImpl *lineHeight;
+        CSSValueListImpl *family;
+    };
 
-	// Used for quotes
-	class QuotesValueImpl : public CSSValueImpl
-	{
-	public:
-    	QuotesValueImpl();
-		virtual ~QuotesValueImpl();
+    // Used for quotes
+    class QuotesValueImpl : public CSSValueImpl
+    {
+    public:
+        QuotesValueImpl();
+        virtual ~QuotesValueImpl();
 
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
 
-		void addLevel(const QString &open, const QString &close);
-		QString openQuote(int level) const;
-		QString closeQuote(int level) const;
+        void addLevel(const QString &open, const QString &close);
+        QString openQuote(int level) const;
+        QString closeQuote(int level) const;
 
-		unsigned int levels;
-		QStringList data;
-	};
-	
-	// Used for text-shadow and box-shadow
-	class ShadowValueImpl : public CSSValueImpl
-	{
-	public:
-    	ShadowValueImpl(CSSPrimitiveValueImpl *_x, CSSPrimitiveValueImpl *_y,
-						CSSPrimitiveValueImpl *_blur, CSSPrimitiveValueImpl *_color);
-		virtual ~ShadowValueImpl();
+        unsigned int levels;
+        QStringList data;
+    };
+    
+    // Used for text-shadow and box-shadow
+    class ShadowValueImpl : public CSSValueImpl
+    {
+    public:
+        ShadowValueImpl(CSSPrimitiveValueImpl *_x, CSSPrimitiveValueImpl *_y,
+                        CSSPrimitiveValueImpl *_blur, CSSPrimitiveValueImpl *_color);
+        virtual ~ShadowValueImpl();
 
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
 
-		CSSPrimitiveValueImpl *x;
-		CSSPrimitiveValueImpl *y;
-		CSSPrimitiveValueImpl *blur;
-		CSSPrimitiveValueImpl *color;
-	};
+        CSSPrimitiveValueImpl *x;
+        CSSPrimitiveValueImpl *y;
+        CSSPrimitiveValueImpl *blur;
+        CSSPrimitiveValueImpl *color;
+    };
 
-	// Used for counter-reset and counter-increment
-	class CounterActImpl : public CSSValueImpl
-	{
-	public:
-		CounterActImpl(DOMStringImpl *c, short v);
-		virtual ~CounterActImpl();
+    // Used for counter-reset and counter-increment
+    class CounterActImpl : public CSSValueImpl
+    {
+    public:
+        CounterActImpl(DOMStringImpl *c, short v);
+        virtual ~CounterActImpl();
 
-		virtual unsigned short cssValueType() const;
-		virtual DOMStringImpl *cssText() const;
+        virtual unsigned short cssValueType() const;
+        virtual DOMStringImpl *cssText() const;
 
-		DOMStringImpl *counter() const;
+        DOMStringImpl *counter() const;
 
-		short value() const;
-		void setValue(const short v);
+        short value() const;
+        void setValue(const short v);
 
-		DOMStringImpl *m_counter;
-		short m_value;
-	};
+        DOMStringImpl *m_counter;
+        short m_value;
+    };
 };
 
 #endif

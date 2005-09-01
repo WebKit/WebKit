@@ -1,7 +1,7 @@
 /*
  * This file is part of the KDE libraries
  *
- * Copyright (C) 2005 Frans Englich 	<frans.englich@telia.com>
+ * Copyright (C) 2005 Frans Englich     <frans.englich@telia.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,39 +32,39 @@ class NodeImpl;
 
 namespace XPointer
 {
-	/**
-	 * An integer indicating what type of result this is.
-	 */
-	enum ResultType
-	{
-		/**
-		 * The pointer matched no nodes.
-		 */
-		NO_MATCH = 1,
+    /**
+     * An integer indicating what type of result this is.
+     */
+    enum ResultType
+    {
+        /**
+         * The pointer matched no nodes.
+         */
+        NO_MATCH = 1,
 
-		/**
-		 * The pointer identifed a single node.
-		 */
-		SINGLE_NODE = 2
-	};
+        /**
+         * The pointer identifed a single node.
+         */
+        SINGLE_NODE = 2
+    };
 
-	class XPointerResultImpl : public Shared
-	{
-	public:
-		XPointerResultImpl(const ResultType code);
-		virtual ~XPointerResultImpl();
+    class XPointerResultImpl : public Shared
+    {
+    public:
+        XPointerResultImpl(const ResultType code);
+        virtual ~XPointerResultImpl();
 
-		NodeImpl *singleNodeValue() const;
-		void setSingleNodeValue(NodeImpl *node);
+        NodeImpl *singleNodeValue() const;
+        void setSingleNodeValue(NodeImpl *node);
 
-		ResultType resultType() const;
-		void setResultType(const ResultType code);
-		void setResultType(const unsigned short code);
+        ResultType resultType() const;
+        void setResultType(const ResultType code);
+        void setResultType(const unsigned short code);
 
-	private:
-		NodeImpl *m_single;
-		ResultType m_resultType;
-	};
+    private:
+        NodeImpl *m_single;
+        ResultType m_resultType;
+    };
 };
 
 };

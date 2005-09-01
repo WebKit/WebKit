@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -27,34 +27,34 @@
 
 namespace KSVG
 {
-	class SVGAnimatedString;
-	class SVGFEMergeNodeElementImpl;
+    class SVGAnimatedString;
+    class SVGFEMergeNodeElementImpl;
 
-	class SVGFEMergeNodeElement : public SVGElement
-	{
-	public:
-		SVGFEMergeNodeElement();
-		explicit SVGFEMergeNodeElement(SVGFEMergeNodeElementImpl *i);
-		SVGFEMergeNodeElement(const SVGFEMergeNodeElement &other);
-		SVGFEMergeNodeElement(const KDOM::Node &other);
-		virtual ~SVGFEMergeNodeElement();
+    class SVGFEMergeNodeElement : public SVGElement
+    {
+    public:
+        SVGFEMergeNodeElement();
+        explicit SVGFEMergeNodeElement(SVGFEMergeNodeElementImpl *i);
+        SVGFEMergeNodeElement(const SVGFEMergeNodeElement &other);
+        SVGFEMergeNodeElement(const KDOM::Node &other);
+        virtual ~SVGFEMergeNodeElement();
 
-		// Operators
-		SVGFEMergeNodeElement &operator=(const SVGFEMergeNodeElement &other);
-		SVGFEMergeNodeElement &operator=(const KDOM::Node &other);
+        // Operators
+        SVGFEMergeNodeElement &operator=(const SVGFEMergeNodeElement &other);
+        SVGFEMergeNodeElement &operator=(const KDOM::Node &other);
 
-		// 'SVGFEMergeNodeElement' functions
-		SVGAnimatedString in1() const;
+        // 'SVGFEMergeNodeElement' functions
+        SVGAnimatedString in1() const;
 
-		// Internal
-		KSVG_INTERNAL(SVGFEMergeNodeElement)
+        // Internal
+        KSVG_INTERNAL(SVGFEMergeNodeElement)
 
-	public: // EcmaScript section
-		KDOM_GET
-		KDOM_FORWARDPUT
+    public: // EcmaScript section
+        KDOM_GET
+        KDOM_FORWARDPUT
 
-		KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
-	};
+        KJS::ValueImp *getValueProperty(KJS::ExecState *exec, int token) const;
+    };
 };
 
 #endif

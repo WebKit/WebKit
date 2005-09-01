@@ -34,46 +34,46 @@ class KAboutData;
 
 namespace KSVG
 {
-	class KSVGPart;
-	class KSVGSettings;
-	class KSVGFactory : public KParts::Factory
-	{
-	public:
-		KSVGFactory(bool clone = false);
-		virtual ~KSVGFactory();
+    class KSVGPart;
+    class KSVGSettings;
+    class KSVGFactory : public KParts::Factory
+    {
+    public:
+        KSVGFactory(bool clone = false);
+        virtual ~KSVGFactory();
 
-		virtual KParts::Part *createPartObject(QWidget *parentWidget, const char *widgetName,
-											   QObject *parent, const char *name,
-											   const char *className, const QStringList &args);
+        virtual KParts::Part *createPartObject(QWidget *parentWidget, const char *widgetName,
+                                               QObject *parent, const char *name,
+                                               const char *className, const QStringList &args);
 
-		static void registerPart(KSVGPart *part);
-		static void deregisterPart(KSVGPart *part);
+        static void registerPart(KSVGPart *part);
+        static void deregisterPart(KSVGPart *part);
 
-		static QPtrList<KSVGPart> *partList() { return s_parts; }
+        static QPtrList<KSVGPart> *partList() { return s_parts; }
 
-		static KInstance *instance();
-		static KSVGSettings *defaultSVGSettings();
-		
-		// list of visited URLs
-		static KParts::HistoryProvider *vLinks()
-		{
-			return KParts::HistoryProvider::self();
-		}
-		
-	protected:
-		static void ref();
-		static void deref();
+        static KInstance *instance();
+        static KSVGSettings *defaultSVGSettings();
+        
+        // list of visited URLs
+        static KParts::HistoryProvider *vLinks()
+        {
+            return KParts::HistoryProvider::self();
+        }
+        
+    protected:
+        static void ref();
+        static void deref();
 
-	private:
-		static unsigned long s_refcnt;
-		static KSVGFactory *s_self;
-		
-		static KInstance *s_instance;
-		static KAboutData *s_about;
-		static KSVGSettings *s_settings;
-		
-		static QPtrList<KSVGPart> *s_parts;
-	};
+    private:
+        static unsigned long s_refcnt;
+        static KSVGFactory *s_self;
+        
+        static KInstance *s_instance;
+        static KAboutData *s_about;
+        static KSVGSettings *s_settings;
+        
+        static QPtrList<KSVGPart> *s_parts;
+    };
 }
 
 #endif

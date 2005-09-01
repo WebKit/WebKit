@@ -41,74 +41,74 @@ CDFInterface::~CDFInterface()
 
 const char *CDFInterface::getValueName(NodeImpl::Id id) const
 {
-	return KDOM::getValueName(id);
+    return KDOM::getValueName(id);
 }
 
 const char *CDFInterface::getPropertyName(NodeImpl::Id id) const
 {
-	return KDOM::getPropertyName(id);
+    return KDOM::getPropertyName(id);
 }
-		
+        
 int CDFInterface::getValueID(const char *valStr, int len) const
 {
-	return KDOM::getValueID(valStr, len);
+    return KDOM::getValueID(valStr, len);
 }
 
 int CDFInterface::getPropertyID(const char *propStr, int len) const
 {
-	return KDOM::getPropertyID(propStr, len);
+    return KDOM::getPropertyID(propStr, len);
 }
 
 RenderStyle *CDFInterface::renderStyle() const
 {
-	return new RenderStyle();
+    return new RenderStyle();
 }
 
 bool CDFInterface::cssPropertyApplyFirst(int id) const
 {
-	// give special priority to font-xxx, color properties
-	switch(id)
-	{
-		case CSS_PROP_FONT_STYLE:
-		case CSS_PROP_FONT_SIZE:
-		case CSS_PROP_FONT_WEIGHT:
-		case CSS_PROP_FONT_FAMILY:
-		case CSS_PROP_FONT:
-		case CSS_PROP_COLOR:
-		case CSS_PROP_DIRECTION:
-		case CSS_PROP_BACKGROUND_IMAGE:
-		case CSS_PROP_DISPLAY:
-			// these have to be applied first, because other properties use
-			// the computed values of these properties.
-			return true;
-		default:
-			return false;
-	}
+    // give special priority to font-xxx, color properties
+    switch(id)
+    {
+        case CSS_PROP_FONT_STYLE:
+        case CSS_PROP_FONT_SIZE:
+        case CSS_PROP_FONT_WEIGHT:
+        case CSS_PROP_FONT_FAMILY:
+        case CSS_PROP_FONT:
+        case CSS_PROP_COLOR:
+        case CSS_PROP_DIRECTION:
+        case CSS_PROP_BACKGROUND_IMAGE:
+        case CSS_PROP_DISPLAY:
+            // these have to be applied first, because other properties use
+            // the computed values of these properties.
+            return true;
+        default:
+            return false;
+    }
 }
 
 const char *CDFInterface::getTagName(NodeImpl::Id) const
 {
-	return "";
+    return "";
 }
 
 const char *CDFInterface::getAttrName(NodeImpl::Id id) const
 {
-	return KDOM::getAttrName(id);
+    return KDOM::getAttrName(id);
 }
-		
+        
 int CDFInterface::getTagID(const char *, int) const
 {
-	return 0;
+    return 0;
 }
 
 int CDFInterface::getAttrID(const char *attrStr, int len) const
 {
-	return KDOM::getAttrID(attrStr, len);
+    return KDOM::getAttrID(attrStr, len);
 }
 
 GlobalObject *CDFInterface::globalObject(DocumentImpl *doc) const
 {
-	return new GlobalObject(doc);
+    return new GlobalObject(doc);
 }
 
 // vim:ts=4:noet

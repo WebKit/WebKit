@@ -27,25 +27,25 @@
 
 namespace KSVG
 {
-	class SVGStyledElementImpl;
-	class SVGAnimatedBooleanImpl : public KDOM::Shared
-	{
-	public:
-		SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context);
-		virtual ~SVGAnimatedBooleanImpl();
+    class SVGStyledElementImpl;
+    class SVGAnimatedBooleanImpl : public KDOM::Shared
+    {
+    public:
+        SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context);
+        virtual ~SVGAnimatedBooleanImpl();
 
-		bool baseVal() const;
-		void setBaseVal(bool baseVal);
+        bool baseVal() const;
+        void setBaseVal(bool baseVal);
 
-		bool animVal() const;
-		void setAnimVal(bool animVal);
+        bool animVal() const;
+        void setAnimVal(bool animVal);
 
-	private:
-		bool m_baseVal : 1;
-		bool m_animVal : 1;
+    private:
+        bool m_baseVal : 1;
+        bool m_animVal : 1;
 
-		const SVGStyledElementImpl *m_context;
-	};
+        const SVGStyledElementImpl *m_context;
+    };
 };
 
 #endif

@@ -1,12 +1,12 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     Based on khtml code by:
     Copyright (C) 1999 Lars Knoll (knoll@kde.org)
               (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
               (C) 2001 Peter Kelly (pmk@post.com)
-	      
+          
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -35,104 +35,104 @@
 using namespace KDOM;
 
 NodeIteratorImpl::NodeIteratorImpl(NodeImpl *n, short show,
-							 	   NodeFilterImpl *filter,
-								   bool expansion)
+                                    NodeFilterImpl *filter,
+                                   bool expansion)
 : TraversalImpl(n, show, filter, expansion), m_referenceNode(0),
 m_beforeReferenceNode(true),  m_detached(false), m_doc(0)
 {
-	if(root())
-	{
-		setDocument(root()->ownerDocument());
-		if(document())
-		{
-			document()->attachNodeIterator(this);
-			document()->ref();
-		}
-	}
+    if(root())
+    {
+        setDocument(root()->ownerDocument());
+        if(document())
+        {
+            document()->attachNodeIterator(this);
+            document()->ref();
+        }
+    }
 }
 
 NodeIteratorImpl::~NodeIteratorImpl()
 {
-	if(referenceNode())
-		referenceNode()->deref();
-	if(document())
-	{
-		document()->detachNodeIterator(this);
-		document()->deref();
-	}
+    if(referenceNode())
+        referenceNode()->deref();
+    if(document())
+    {
+        document()->detachNodeIterator(this);
+        document()->deref();
+    }
 }
 
 NodeImpl *NodeIteratorImpl::nextNode()
 {
-	if(m_detached)
-		throw new DOMExceptionImpl(INVALID_STATE_ERR);
+    if(m_detached)
+        throw new DOMExceptionImpl(INVALID_STATE_ERR);
 
-	NodeImpl *result = 0;
-	NodeImpl *refNode = referenceNode() ? referenceNode() : root();
+    NodeImpl *result = 0;
+    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
 
-	if(pointerBeforeReferenceNode() && acceptNode(refNode) == FILTER_ACCEPT)
-		result = refNode;
-	else
-		result = findNextNode(refNode);
+    if(pointerBeforeReferenceNode() && acceptNode(refNode) == FILTER_ACCEPT)
+        result = refNode;
+    else
+        result = findNextNode(refNode);
 
-	if(result)
-		setReferenceNode(result);
-	setPointerBeforeReferenceNode(false);
+    if(result)
+        setReferenceNode(result);
+    setPointerBeforeReferenceNode(false);
 
-	return result;
+    return result;
 }
 
 NodeImpl *NodeIteratorImpl::previousNode()
 {
-	if(m_detached)
-		throw new DOMExceptionImpl(INVALID_STATE_ERR);
+    if(m_detached)
+        throw new DOMExceptionImpl(INVALID_STATE_ERR);
 
-	NodeImpl *result = 0;
-	NodeImpl *refNode = referenceNode() ? referenceNode() : root();
+    NodeImpl *result = 0;
+    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
 
-	if(!pointerBeforeReferenceNode() && acceptNode(refNode) == FILTER_ACCEPT)
-		result = refNode;
-	else
-		result = findPreviousNode(refNode);
+    if(!pointerBeforeReferenceNode() && acceptNode(refNode) == FILTER_ACCEPT)
+        result = refNode;
+    else
+        result = findPreviousNode(refNode);
 
-	if(result)
-		setReferenceNode(result);
-	setPointerBeforeReferenceNode();
+    if(result)
+        setReferenceNode(result);
+    setPointerBeforeReferenceNode();
 
-	return result;
+    return result;
 }
 
 void NodeIteratorImpl::detach()
 {
-	if(!detached() && document())
-		document()->detachNodeIterator(this);
-	setDetached();
+    if(!detached() && document())
+        document()->detachNodeIterator(this);
+    setDetached();
 }
 
 void NodeIteratorImpl::setReferenceNode(NodeImpl *node)
 {
-	if(node == m_referenceNode)
-		return;
+    if(node == m_referenceNode)
+        return;
 
-	NodeImpl *old = m_referenceNode;
-	m_referenceNode = node;
-	if(m_referenceNode)
-		m_referenceNode->ref();
-	if(old)
-		old->deref();
+    NodeImpl *old = m_referenceNode;
+    m_referenceNode = node;
+    if(m_referenceNode)
+        m_referenceNode->ref();
+    if(old)
+        old->deref();
 }
 
 void NodeIteratorImpl::setDocument(DocumentImpl *doc)
 {
-	if(doc == m_doc)
-		return;
+    if(doc == m_doc)
+        return;
 
-	DocumentImpl *old = m_doc;
-	m_doc = doc;
-	if(m_doc)
-		m_doc->ref();
-	if(old)
-		old->deref();
+    DocumentImpl *old = m_doc;
+    m_doc = doc;
+    if(m_doc)
+        m_doc->ref();
+    if(old)
+        old->deref();
 }
 
 void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *)

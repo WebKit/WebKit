@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -40,24 +40,24 @@ using namespace KSVG;
 
 /*
 @begin SVGClipPathElement::s_hashTable 3
- clipPathUnits	SVGClipPathElementConstants::ClipPathUnits	DontDelete|ReadOnly
+ clipPathUnits    SVGClipPathElementConstants::ClipPathUnits    DontDelete|ReadOnly
 @end
 */
 
 ValueImp *SVGClipPathElement::getValueProperty(ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGClipPathElementConstants::ClipPathUnits:
-			return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, clipPathUnits());
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGClipPathElementConstants::ClipPathUnits:
+            return KDOM::safe_cache<SVGAnimatedEnumeration>(exec, clipPathUnits());
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(SVGException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(SVGException)
+    return Undefined();
 }
 
 // The qdom way...
@@ -75,12 +75,12 @@ SVGClipPathElement::SVGClipPathElement(SVGClipPathElementImpl *i) : SVGElement(i
 
 SVGClipPathElement::SVGClipPathElement(const SVGClipPathElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGClipPathElement::SVGClipPathElement(const KDOM::Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGClipPathElement::~SVGClipPathElement()
@@ -89,47 +89,47 @@ SVGClipPathElement::~SVGClipPathElement()
 
 SVGClipPathElement &SVGClipPathElement::operator=(const SVGClipPathElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    return *this;
 }
 
 SVGClipPathElement &SVGClipPathElement::operator=(const KDOM::Node &other)
 {
-	SVGClipPathElementImpl *ohandle = static_cast<SVGClipPathElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-				
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-		}
-	}
+    SVGClipPathElementImpl *ohandle = static_cast<SVGClipPathElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+                
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 SVGAnimatedEnumeration SVGClipPathElement::clipPathUnits() const
 {
-	if(!d)
-		return SVGAnimatedEnumeration::null;
+    if(!d)
+        return SVGAnimatedEnumeration::null;
 
-	return SVGAnimatedEnumeration(impl->clipPathUnits());
+    return SVGAnimatedEnumeration(impl->clipPathUnits());
 }
 
 // vim:ts=4:noet

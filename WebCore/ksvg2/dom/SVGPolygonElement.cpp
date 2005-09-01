@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-				  2004, 2005 Rob Buis <buis@kde.org>
+                  2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -33,24 +33,24 @@ using namespace KJS;
 
 /*
 @begin SVGPolygonElement::s_hashTable 3
- dummy	SVGPolygonElementConstants::Dummy	DontDelete|ReadOnly
+ dummy    SVGPolygonElementConstants::Dummy    DontDelete|ReadOnly
 @end
 */
 
 KJS::ValueImp *SVGPolygonElement::getValueProperty(KJS::ExecState *exec, int token) const
 {
-	KDOM_ENTER_SAFE
+    KDOM_ENTER_SAFE
 
-	switch(token)
-	{
-		case SVGPolygonElementConstants::Dummy: // shouldnt happen!
-			return Undefined();
-		default:
-			kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
-	}
+    switch(token)
+    {
+        case SVGPolygonElementConstants::Dummy: // shouldnt happen!
+            return Undefined();
+        default:
+            kdWarning() << "Unhandled token in " << k_funcinfo << " : " << token << endl;
+    }
 
-	KDOM_LEAVE_SAFE(KDOM::DOMException)
-	return Undefined();
+    KDOM_LEAVE_SAFE(KDOM::DOMException)
+    return Undefined();
 }
 
 SVGPolygonElement SVGPolygonElement::null;
@@ -65,12 +65,12 @@ SVGPolygonElement::SVGPolygonElement(SVGPolygonElementImpl *i) : SVGElement(i), 
 
 SVGPolygonElement::SVGPolygonElement(const SVGPolygonElement &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGAnimatedPoints()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPolygonElement::SVGPolygonElement(const Node &other) : SVGElement(), SVGTests(), SVGLangSpace(), SVGExternalResourcesRequired(), SVGStylable(), SVGTransformable(), SVGAnimatedPoints()
 {
-	(*this) = other;
+    (*this) = other;
 }
 
 SVGPolygonElement::~SVGPolygonElement()
@@ -79,41 +79,41 @@ SVGPolygonElement::~SVGPolygonElement()
 
 SVGPolygonElement &SVGPolygonElement::operator=(const SVGPolygonElement &other)
 {
-	SVGElement::operator=(other);
-	SVGTests::operator=(other);
-	SVGLangSpace::operator=(other);
-	SVGExternalResourcesRequired::operator=(other);
-	SVGStylable::operator=(other);
-	SVGTransformable::operator=(other);
-	SVGAnimatedPoints::operator=(other);
-	return *this;
+    SVGElement::operator=(other);
+    SVGTests::operator=(other);
+    SVGLangSpace::operator=(other);
+    SVGExternalResourcesRequired::operator=(other);
+    SVGStylable::operator=(other);
+    SVGTransformable::operator=(other);
+    SVGAnimatedPoints::operator=(other);
+    return *this;
 }
 
 SVGPolygonElement &SVGPolygonElement::operator=(const KDOM::Node &other)
 {
-	SVGPolygonElementImpl *ohandle = static_cast<SVGPolygonElementImpl *>(other.handle());
-	if(d != ohandle)
-	{
-		if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
-		{
-			if(d)
-				d->deref();
-	
-			d = 0;
-		}
-		else
-		{
-			SVGElement::operator=(other);
-			SVGTests::operator=(ohandle);
-			SVGLangSpace::operator=(ohandle);
-			SVGExternalResourcesRequired::operator=(ohandle);
-			SVGStylable::operator=(ohandle);
-			SVGTransformable::operator=(ohandle);
-			SVGAnimatedPoints::operator=(ohandle);
-		}
-	}
+    SVGPolygonElementImpl *ohandle = static_cast<SVGPolygonElementImpl *>(other.handle());
+    if(d != ohandle)
+    {
+        if(!ohandle || ohandle->nodeType() != KDOM::ELEMENT_NODE)
+        {
+            if(d)
+                d->deref();
+    
+            d = 0;
+        }
+        else
+        {
+            SVGElement::operator=(other);
+            SVGTests::operator=(ohandle);
+            SVGLangSpace::operator=(ohandle);
+            SVGExternalResourcesRequired::operator=(ohandle);
+            SVGStylable::operator=(ohandle);
+            SVGTransformable::operator=(ohandle);
+            SVGAnimatedPoints::operator=(ohandle);
+        }
+    }
 
-	return *this;
+    return *this;
 }
 
 // vim:ts=4:noet
