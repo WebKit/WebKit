@@ -1,0 +1,133 @@
+<html>
+<body>
+These are some tests to make sure that adding an hr element in a select works properly.
+<br>Other good select & option tests are included in the W3C DOM tests.
+
+<br><br>Expected results:  A disabled popup menu.
+<br><select id = "s1">
+<hr>
+</select>
+<input type="button" onclick="alert(document.getElementById('s1').length)" value ="Check length = 0"></input>
+
+<br>Expected results:  A popup menu - separator, option, separator.
+<br><select id = "s2">
+<hr>
+<option>opt 1</option>
+<hr>
+</select>
+<input type="button" onclick="alert(document.getElementById('s2').length)" value="Check length = 1"></input>
+
+<br>Expected results:  A popup menu - option, separator, option.
+<br><select id = "s3">
+<option>opt 1</option>
+<hr>
+<option>opt 2</option>
+</select>
+<input type="button" onclick="alert(document.getElementById('s3').length)" value="Check length = 2"></input>
+
+<br>Expected results:  A popup menu - option, four separators, two options, separator, option.
+<br><select id = "s4">
+<option>opt 1</option>
+<hr>
+<hr>
+<hr>
+<hr>
+<option>opt 2</option>
+<option>opt 3</option>
+<hr>
+<option>opt 4</option>
+</select>
+<input type="button" onclick="alert(document.getElementById('s4').length)" value="Check length = 4"></input>
+
+<br>Expected results:  A popup menu - group label, option, separator (incl. in group).
+<br><select id = "s5">
+<optgroup label="Group 1">
+<option>opt 1</option>
+<hr>
+</optgroup>
+</select>
+<input type="button" onclick="alert(document.getElementById('s5').length)" value="Check length = 1"></input>
+
+<br>Expected results:  A popup menu - separator, group label, option.
+<br><select id = "s6">
+<hr>
+<optgroup label="Group 1">
+<option>opt 1</option>
+</optgroup>
+</select>
+<input type="button" onclick="alert(document.getElementById('s6').length)" value="Check length = 1"></input>
+
+<br>Expected results:  A popup menu - group label, option, separator, option, separator, option, two separators, (end of group), one option.
+<br><select id = "s7">
+<optgroup label="Group 1">
+<option>opt 1</option>
+<hr>
+<option>opt 2</option>
+<hr>
+<option>opt 3</option>
+<hr>
+<hr>
+</optgroup>
+<option>opt 4</option>
+</select>
+<input type="button" onclick="alert(document.getElementById('s7').length)" value="Check length = 4"></input>
+
+<br>Expected results:  A popup menu - group label, one option two separators, (end of group), separator, group label, separator, two options, separator, (end of group), option.
+<br><select id = "s8">
+<optgroup label="Group 1">
+<option>opt 1</option>
+<hr>
+<hr>
+</optgroup>
+<hr>
+<optgroup label="Group 2">
+<hr>
+<option>opt 2</option>
+<option>opt 3</option>
+<hr>
+</optgroup>
+<option>opt 4</option>
+</select>
+<input type="button" onclick="alert(document.getElementById('s8').length)" value="Check length = 4"></input>
+
+<br>Expected results:  A disabled popup menu.
+<br><select id = "s9">
+<optgroup label="Group 1">
+<hr>
+</optgroup>
+</select>
+<input type="button" onclick="alert(document.getElementById('s9').length)" value="Check length = 0"></input>
+
+<br>Expected results:  A list box - 4 options.
+<br><select id = "s10" multiple>
+<option value="test">opt 1</option>
+<hr>
+<hr>
+<hr>
+<hr>
+<option>opt 2</option>
+<option>opt 3</option>
+<hr>
+<option>opt 4</option>
+</select>
+<input type="button" onclick="alert(document.getElementById('s10').length)" value="Check length = 4"></input>
+
+<br>Expected results:  A list box - one option, group label, 3 options.
+<br><select id = "s11" multiple>
+<option value="test">opt 1</option>
+<hr>
+<hr>
+<optgroup label="Group 1">
+<hr>
+<hr>
+<option>opt 2</option>
+<option>opt 3</option>
+<hr>
+<option>opt 4</option>
+</optgroup>
+</select>
+<input type="button" onclick="alert(document.getElementById('s11').length)" value="Check length = 4"></input>
+
+<body>
+</html>
+

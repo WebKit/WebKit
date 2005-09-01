@@ -113,7 +113,7 @@ QComboBox::~QComboBox()
 
 void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
 {
-    if (title.isGroupLabel) {
+    if (title.type == GroupLabel) {
         NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:labelFont(), NSFontAttributeName, nil];
         NSAttributedString *string = [[NSAttributedString alloc] initWithString:title.string.getNSString() attributes:attributes];
         [menuItem setAttributedTitle:string];
@@ -125,21 +125,26 @@ void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
     }
 }
 
-void QComboBox::appendItem(const QString &text, bool isLabel)
+void QComboBox::appendItem(const QString &text, ItemType type)
 {
-    const KWQListBoxItem listItem(text, isLabel);
+    const KWQListBoxItem listItem(text, type);
     _items.append(listItem);
     if (_menuPopulated) {
         KWQPopUpButton *button = (KWQPopUpButton *)getView();
         if (![[button cell] isHighlighted]) {
             _menuPopulated = false;
         } else {
-            // We must add the item with no title and then set the title because
-            // addItemWithTitle does not allow duplicate titles.
             KWQ_BLOCK_EXCEPTIONS;
-            [button addItemWithTitle:@""];
-            NSMenuItem *menuItem = [button lastItem];
-            setTitle(menuItem, listItem);
+            if (type == Separator) {
+                NSMenuItem *separator = [NSMenuItem separatorItem];
+                [[button menu] addItem:separator];
+            } else {
+                // We must add the item with no title and then set the title because
+                // addItemWithTitle does not allow duplicate titles.
+                [button addItemWithTitle:@""];
+                NSMenuItem *menuItem = [button lastItem];
+                setTitle(menuItem, listItem);
+            }
             KWQ_UNBLOCK_EXCEPTIONS;
         }
     }
@@ -167,7 +172,7 @@ QSize QComboBox::sizeHint() const
             style.applyWordRounding = NO;
             do {
                 const QString &s = (*i).string;
-                bool isLabel = (*i).isGroupLabel;
+                bool isGroupLabel = ((*i).type == GroupLabel);
                 ++i;
 
                 WebCoreTextRun run;
@@ -175,7 +180,7 @@ QSize QComboBox::sizeHint() const
                 WebCoreInitializeTextRun(&run, reinterpret_cast<const UniChar *>(s.unicode()), length, 0, length);
 
                 id <WebCoreTextRenderer> renderer;
-                if (isLabel) {
+                if (isGroupLabel) {
                     if (labelRenderer == nil) {
                         labelRenderer = [[WebCoreTextRendererFactory sharedFactory]
                             rendererWithFont:labelFont()
@@ -359,11 +364,16 @@ void QComboBox::populateMenu()
         QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
         QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
         for (; i != e; ++i) {
-            // We must add the item with no title and then set the title because
-            // addItemWithTitle does not allow duplicate titles.
-            [button addItemWithTitle:@""];
-            NSMenuItem *menuItem = [button lastItem];
-            setTitle(menuItem, *i);
+            if ((*i).type == Separator) {
+                NSMenuItem *separator = [NSMenuItem separatorItem];
+                [[button menu] addItem:separator];
+            } else {
+                // We must add the item with no title and then set the title because
+                // addItemWithTitle does not allow duplicate titles.
+                [button addItemWithTitle:@""];
+                NSMenuItem *menuItem = [button lastItem];
+                setTitle(menuItem, *i);
+            }
         }
         [button selectItemAtIndex:_currentItem];
 	[button setPopulatingMenu:NO];

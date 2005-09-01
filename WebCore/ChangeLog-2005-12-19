@@ -1,3 +1,70 @@
+2005-08-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fixed <rdar://problem/4229189> add a way to get a separator into a <select>
+
+        This will allow an <hr> within a select element to display a separator in a popup menu.
+        These extra elements are added to our listItems array, which we use internally.  But this should not
+        affect JavaScript operations, such as getting an index of an option element, or getting the length of the select,
+        or getting the selected index.  In these cases, the <hr>s will be ignored.
+
+        Test cases added:
+        * manual-tests/select_hr.html: Added.
+
+        * khtml/html/html_formimpl.h: 
+        (DOM::HTMLSelectElementImpl::listItems): Now that our listItems can also contain <hr>s, 
+        I've changed listItems to be a QMemArray<HTMLElementImpl*> instead of QMemArray<HTMLGenericFormElementImpl*>
+        (DOM::HTMLOptGroupElementImpl::checkDTD): Added check for <hr>
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLSelectElementImpl::checkDTD): Added check for <hr>
+        (DOM::HTMLSelectElementImpl::add): Added check for <hr> so these elements can be added through Javascript.
+        (DOM::HTMLSelectElementImpl::recalcListItems): Added case for <hr> to add the element to the listItems array.
+        (DOM::HTMLSelectElementImpl::selectedIndex): Updated type for array of listItems.
+        (DOM::HTMLSelectElementImpl::setSelectedIndex): ditto.
+        (DOM::HTMLSelectElementImpl::length): ditto.
+        (DOM::HTMLSelectElementImpl::remove): ditto.
+        (DOM::HTMLSelectElementImpl::value): ditto.
+        (DOM::HTMLSelectElementImpl::setValue): ditto.
+        (DOM::HTMLSelectElementImpl::state): ditto.
+        (DOM::HTMLSelectElementImpl::restoreState): ditto.
+        (DOM::HTMLSelectElementImpl::appendFormData): ditto.
+        (DOM::HTMLSelectElementImpl::optionToListIndex): ditto.
+        (DOM::HTMLSelectElementImpl::listToOptionIndex): ditto.
+        (DOM::HTMLSelectElementImpl::reset): ditto.
+        (DOM::HTMLSelectElementImpl::notifyOptionSelected): ditto.
+        (DOM::HTMLOptionElementImpl::index): ditto.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSelect::updateFromElement): If the list item is an <hr>, and we're not using a ListBox, then we call appendSeparator on the widget.  
+        (RenderSelect::layout): Updated type for array of listItems.
+        (RenderSelect::slotSelected): ditto.
+        (RenderSelect::slotSelectionChanged): ditto.
+        (RenderSelect::updateSelection): ditto.
+
+        * kwq/KWQListBox.h: Added ItemType enum with the following values: Option, GroupLabel, and Separator.
+        (KWQListBoxItem::KWQListBoxItem): Updated to use ItemType instead of old isGroupLabel bool.
+        (QListBox::appendItem): ditto.
+        (QListBox::appendGroupLabel): ditto.
+
+        * kwq/KWQComboBox.h:
+        (QComboBox::appendItem): the private version of appendItem used to take isLabel as a parameter.  Now it takes an ItemType.
+        (QComboBox::appendGroupLabel): calls appendItem with an ItemType of GroupLabel
+        (QComboBox::appendSeparator): calls appendItem with an ItemType of Separator
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::setTitle): Updated to check for the ItemType instead of the old isGroupLabel bool.
+        (QComboBox::appendItem): If the new item is a Separator, then we add a separatorItem to the popup menu.
+        (QComboBox::sizeHint): Updated to check for the ItemType instead of the old isGroupLabel bool.
+        (QComboBox::populateMenu): If the new item is a Separator, then we add a separatorItem to the popup menu.
+
+        * kwq/KWQListBox.mm:
+        (QListBox::appendItem): Updated to use the ItemType instead of the old isLabel bool.
+        (QListBox::sizeForNumberOfLines): ditto.
+        (-[KWQTableView tableView:shouldSelectRow:]): ditto.
+        (-[KWQTableView drawRow:clipRect:]): ditto.
+
 2005-09-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
