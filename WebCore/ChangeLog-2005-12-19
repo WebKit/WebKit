@@ -1,3 +1,17 @@
+2005-08-31  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4560
+          Markup in <title> prevents decoder from looking for a charset
+
+	Test cases added: 
+        * layout-tests/fast/encoding/tag-in-title.html: Added.
+        * layout-tests/fast/encoding/tag-in-title-expected.png: Added.
+        * layout-tests/fast/encoding/tag-in-title-expected.txt: Added.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Ignore tags within <title>.
+
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
         - updated pixel test baselines that had the button text off by one - I think
