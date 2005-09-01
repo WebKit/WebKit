@@ -1,4 +1,17 @@
-  2005-08-31  Eric Seidel  <eseidel@apple.com>
+2005-08-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4626
+          bidi-fallback-font-weight test requires font that's not part of default OS X install
+
+        * layout-tests/fast/text/international/bidi-fallback-font-weight.html: Removed the part that
+        used the Raanana font.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.checksum: Updated.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.png: Ditto.
+        * layout-tests/fast/text/international/bidi-fallback-font-weight-expected.txt: Ditto.
+
+2005-08-31  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
         Reviewed by eseidel.
