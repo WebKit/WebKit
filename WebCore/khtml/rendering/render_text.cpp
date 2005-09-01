@@ -83,11 +83,6 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
-RenderText* InlineTextBox::textObject()
-{
-    return static_cast<RenderText*>(m_object);
-}
-
 bool InlineTextBox::checkVerticalPoint(int _y, int _ty, int _h)
 {
     int topY = m_y;
@@ -140,6 +135,7 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
         return QRect();
 
     RootInlineBox* rootBox = root();
+    RenderText* textObj = textObject();
     int selStart = m_reversed ? m_x + m_width : m_x;
     int selEnd = selStart;
     int selTop = rootBox->selectionTop();
@@ -149,7 +145,7 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     // way to get the width of a run including the justification padding.
     if (sPos > 0 && !m_toAdd) {
         // The selection begins in the middle of our run.
-        int w = textObject()->width(m_start, sPos, m_firstLine, m_x);
+        int w = textObj->width(m_start, sPos, m_firstLine, m_x);
         if (m_reversed)
             selStart -= w;
         else
@@ -164,7 +160,9 @@ QRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     }
     else {
         // Our run is partially selected, and so we need to measure.
-        int w = textObject()->width(sPos + m_start, ePos - sPos, m_firstLine);
+        int w = textObj->width(sPos + m_start, ePos - sPos, m_firstLine);
+        if (sPos + m_start > 0 && textObj->str->s[sPos + m_start].isSpace() && !textObj->str->s[sPos + m_start - 1].isSpace())
+            w += textObj->style(m_firstLine)->wordSpacing();
         if (m_reversed)
             selEnd = selStart - w;
         else

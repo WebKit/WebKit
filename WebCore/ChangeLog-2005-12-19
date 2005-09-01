@@ -1,3 +1,17 @@
+2005-09-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4672
+          Incorrect highlight when selection begins with space and word-spacing>0
+
+        Test cases added:
+        * manual-tests/word-spacing-highlight.html: Added.
+
+        * khtml/rendering/render_text.h: (InlineTextBox::textObject): Made inline.
+        * khtml/rendering/render_text.cpp: (InlineTextBox::selectionRect): Add word
+        spacing in as necessary when computing the rect.
+
 2005-09-01  Eric Seidel  <eseidel@apple.com>
 
         Removing unused files from SVG repository, no review requested.

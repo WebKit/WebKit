@@ -88,7 +88,7 @@ public:
     virtual void paint(RenderObject::PaintInfo& i, int tx, int ty);
     virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
 
-    RenderText* textObject();
+    RenderText* textObject() const;
     
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
@@ -337,5 +337,12 @@ private:
     uint m_end;
     DOM::DOMStringImpl* m_generatedContentStr;
 };
-};
+
+inline RenderText *InlineTextBox::textObject() const
+{
+    return static_cast<RenderText *>(m_object);
+}
+
+}
+
 #endif
