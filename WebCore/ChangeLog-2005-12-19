@@ -1,3 +1,22 @@
+2005-09-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3524912> repro crash in KHTMLParser::parseToken, due to parser's current element being destroyed (www.gnnetcom.dk)
+
+        Test cases added:
+        * layout-tests/fast/parser/remove-parser-current-node.html: Added.
+        * layout-tests/fast/parser/remove-parser-current-node-expected.txt: Added.
+
+        * khtml/html/htmlparser.cpp: Changed block stack to hold a SharedPtr to the
+        nodes in the stack -- needed because they might be destroyed by JavaScript.
+        (HTMLParser::insertNode): Don't call attach() on the new node if the parent
+        node isn't also attached. This happens when the parent node is no longer in
+        the DOM tree because it was removed by JavaScript.
+        (HTMLParser::popNestedHeaderTag): Updated since node is now a SharedPtr.
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Ditto.
+        (HTMLParser::popOneBlock): Ditto.
+
 2005-09-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by sullivan.
