@@ -1,3 +1,13 @@
+2005-08-31  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by Darin.
+
+	- set color variant and font settings to a consistent value.
+	(http://bugzilla.opendarwin.org/show_bug.cgi?id=4769)
+	
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+
 2005-08-30  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -88,6 +88,10 @@ int main(int argc, const char *argv[])
     [defaults setInteger:4 forKey:@"AppleAntiAliasingThreshold"];
     // 2 is the "Medium" font smoothing mode
     [defaults setInteger:2 forKey:@"AppleFontSmoothing"];
+
+    [defaults setInteger:1 forKey:@"AppleAquaColorVariant"];
+    [defaults setObject:@"0.709800 0.835300 1.000000" forKey:@"AppleHighlightColor"];
+    [defaults setObject:@"0.500000 0.500000 0.500000" forKey:@"AppleOtherHighlightColor"];
     
     WebPreferences *preferences = [WebPreferences standardPreferences];
     
