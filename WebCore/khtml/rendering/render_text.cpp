@@ -960,12 +960,8 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
                 // and the x coordinate is to the left of the right edge of this box
                 // check to see if position goes in this box
                 int offset = box->offsetForPosition(_x - absx);
-                if (offset != -1) {
-                    EAffinity affinity = offset >= box->m_len && !box->nextOnLine() ? UPSTREAM : DOWNSTREAM;
-                    VisiblePosition result = VisiblePosition(element(), offset + box->m_start, affinity);
-                    setAffinityUsingLinePosition(result);
-                    return result;
-                }
+                if (offset != -1)
+                    return VisiblePosition(element(), offset + box->m_start, VP_UPSTREAM_IF_POSSIBLE);
             }
             else if (!box->prevOnLine() && _x < absx + box->m_x) {
                 // box is first on line
@@ -975,9 +971,8 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
             else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width) {
                 // box is last on line
                 // and the x coordinate is to the right of the last text box right edge
-                VisiblePosition result = VisiblePosition(element(), box->m_start + box->m_len, UPSTREAM);
-                setAffinityUsingLinePosition(result);
-                return result;
+                // generate VisiblePosition, use UPSTREAM affinity if possible
+                return VisiblePosition(element(), box->m_start + box->m_len, VP_UPSTREAM_IF_POSSIBLE);
             }
         }
     }

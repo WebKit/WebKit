@@ -1,3 +1,37 @@
+2005-09-01  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4054701> assertion failure in khtml::isEqualIgnoringAffinity using VoiceOver in new Mail message
+
+        Problem was that an AXTextMarker was erroneously given UPSTREAM affinity.  Fixed by having the
+        VisiblePosition constructors make the actual affinity DOWNSTREAM if UPSTREAM was specified, but
+        the Position is not at a line wrap.
+        
+        Test cases added:
+            There is no way to automate a test for this because it requires using the AX APIs, which are
+            not available to the tests.
+            A manual test involves creating an email and using VoiceOver on it.  Seems like too much.
+
+        * khtml/editing/selection.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::next):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::nextBoundary):
+        (khtml::endOfLine):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findTextNext):
+        (KHTMLPart::selectFrameElementInParentIfFullySelected):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:closeTyping:]):
+
 2005-08-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dave Hyatt.

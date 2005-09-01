@@ -39,7 +39,18 @@ namespace DOM {
 
 namespace khtml {
 
+// VisiblePosition default affinity is downstream because
+// the callers do not really care (they just want the
+// deep position without regard to line position), and this
+// is cheaper than UPSTREAM
 #define VP_DEFAULT_AFFINITY DOWNSTREAM
+
+// Callers who do not know where on the line the position is,
+// but would like UPSTREAM if at a line break or DOWNSTREAM
+// otherwise, need a clear way to specify that.  The
+// constructors auto-correct UPSTREAM to DOWNSTREAM if the
+// position is not at a line break.
+#define VP_UPSTREAM_IF_POSSIBLE UPSTREAM
 
 class VisiblePosition
 {
@@ -47,6 +58,8 @@ public:
     typedef DOM::NodeImpl NodeImpl;
     typedef DOM::Position Position;
 
+    // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
+    // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
     VisiblePosition(NodeImpl *, long offset, EAffinity);
     VisiblePosition(const Position &, EAffinity);
@@ -120,8 +133,6 @@ bool setStart(DOM::RangeImpl *, const VisiblePosition &start);
 bool setEnd(DOM::RangeImpl *, const VisiblePosition &start);
 VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);
 VisiblePosition endVisiblePosition(const DOM::RangeImpl *, EAffinity);
-
-void setAffinityUsingLinePosition(VisiblePosition &);
 
 DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &);
 

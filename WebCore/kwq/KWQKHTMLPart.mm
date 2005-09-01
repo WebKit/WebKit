@@ -150,6 +150,7 @@ using khtml::startVisiblePosition;
 using khtml::StyleDashboardRegion;
 using khtml::TextIterator;
 using khtml::DOWNSTREAM;
+using khtml::VP_UPSTREAM_IF_POSSIBLE;
 using khtml::VISIBLE;
 using khtml::VisiblePosition;
 using khtml::WordAwareIterator;
@@ -654,7 +655,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
         return false;
     }
 
-    setSelection(Selection(resultRange.get(), DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+    setSelection(Selection(resultRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
     jumpToSelection();
     return true;
 }
@@ -1021,7 +1022,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                     QString result = chars.string(misspelling.length);
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
 
-                    setSelection(Selection(misspellingRange.get(), DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+                    setSelection(Selection(misspellingRange.get(), DOWNSTREAM, VP_UPSTREAM_IF_POSSIBLE));
                     jumpToSelection();
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);

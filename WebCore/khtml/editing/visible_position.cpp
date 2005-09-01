@@ -80,6 +80,10 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
         initUpstream(pos);
     else
         initDownstream(pos);
+
+    // when not at line break, make sure to end up with DOWNSTREAM affinity.  
+    if (m_affinity == UPSTREAM && (isNull() || inSameLine(VisiblePosition(pos, DOWNSTREAM), *this)))
+        m_affinity = DOWNSTREAM;
 }
 
 void VisiblePosition::initUpstream(const Position &pos)
@@ -153,9 +157,7 @@ void VisiblePosition::initDownstream(const Position &pos)
 
 VisiblePosition VisiblePosition::next() const
 {
-    VisiblePosition result = VisiblePosition(nextVisiblePosition(m_deepPosition), m_affinity);
-    setAffinityUsingLinePosition(result);
-    return result;
+    return VisiblePosition(nextVisiblePosition(m_deepPosition), m_affinity);
 }
 
 VisiblePosition VisiblePosition::previous() const
@@ -455,17 +457,6 @@ bool setEnd(RangeImpl *r, const VisiblePosition &c)
     int code = 0;
     r->setEnd(p.node(), p.offset(), code);
     return code == 0;
-}
-
-void setAffinityUsingLinePosition(VisiblePosition &pos)
-{
-    // When not moving across line wrap, make sure to end up with DOWNSTREAM affinity.  
-    if (pos.isNotNull() && pos.affinity() == UPSTREAM) {
-        VisiblePosition temp(pos);
-        temp.setAffinity(DOWNSTREAM);
-        if (inSameLine(temp, pos))
-            pos.setAffinity(DOWNSTREAM);
-    }
 }
 
 DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &vp)

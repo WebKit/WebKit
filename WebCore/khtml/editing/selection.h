@@ -47,10 +47,6 @@ public:
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
 #define SEL_DEFAULT_AFFINITY DOWNSTREAM
 
-// FIXME: Implement as "caller does not know whether it is OK to be upstream,
-// but that would be the desired affinity"
-#define SEL_PREFER_UPSTREAM_AFFINITY DOWNSTREAM
-
     typedef DOM::Position Position;
     typedef DOM::RangeImpl RangeImpl;
 

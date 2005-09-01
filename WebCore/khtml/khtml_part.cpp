@@ -2398,7 +2398,7 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
                 d->m_view->setContentsPos(x-50, y-50);
                 Position p1(d->m_findNode, d->m_findPos);
                 Position p2(d->m_findNode, d->m_findPos + matchLen);
-                Selection sel = Selection(p1, khtml::DOWNSTREAM, p2, khtml::SEL_PREFER_UPSTREAM_AFFINITY);
+                Selection sel = Selection(p1, khtml::DOWNSTREAM, p2, khtml::VP_UPSTREAM_IF_POSSIBLE);
                 if (shouldChangeSelection(sel)) {
                     setSelection(sel);
                 }
@@ -5985,7 +5985,7 @@ void KHTMLPart::selectFrameElementInParentIfFullySelected()
     // Create compute positions before and after the element.
     unsigned long ownerElementNodeIndex = ownerElement->nodeIndex();
     VisiblePosition beforeOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex, khtml::SEL_DEFAULT_AFFINITY));
-    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, khtml::VP_UPSTREAM_IF_POSSIBLE));
 
     // Focus on the parent frame, and then select from before this element to after.
     if (parent->shouldChangeSelection(Selection(beforeOwnerElement, afterOwnerElement))) {
