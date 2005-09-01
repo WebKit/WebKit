@@ -1,18 +1,28 @@
+KCanvasRegistry: 
+  KRenderingPaintServer {id="patternBoundingBoxFraction" [type=PATTERN] [x=0.00 y=0.00 w=0.00 h=0.00]}
+  KRenderingPaintServer {id="linearUserSpace" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(0,0)]}
+  KRenderingPaintServer {id="linearBoundingBoxFraction" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(0,0)]}
+  KRenderingPaintServer {id="radialBoundingBoxFraction" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0,0)] [focal=(0,0)] [radius=0.00]}
+  KRenderingPaintServer {id="radialBoundingBoxPercentage" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0,0)] [focal=(0,0)] [radius=0.00]}
+  KRenderingPaintServer {id="linearBoundingBoxPercentage" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [start=(0,0)] [end=(0,0)]}
+  KRenderingPaintServer {id="patternUserSpace" [type=PATTERN] [x=0.00 y=0.00 w=0.00 h=0.00]}
+  KRenderingPaintServer {id="radialUserSpace" [type=RADIAL-GRADIENT] [stops=[(0.00,#FF0000), (1.00,#0000FF)]] [center=(0,0)] [focal=(0,0)] [radius=0.00]}
+  KRenderingPaintServer {id="patternBoundingBoxPercentage" [type=PATTERN] [x=0.00 y=0.00 w=0.00 h=0.00]}
 KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-    KCanvasContainer at (29,39) size 51x61 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(30.000000,40.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (29,39) size 51x21 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-      KCanvasItem {rect} at (29,59) size 51x21 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(30.000000,60.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-      KCanvasItem {rect} at (29,79) size 51x21 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(30.000000,80.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
-      KCanvasItem {line} at (30,59) size 50x1 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,20.00L50.00,20.00"]
-      KCanvasItem {line} at (30,79) size 50x1 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,40.00L50.00,40.00"]
-    KCanvasContainer at (29,139) size 183x61 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(30.000000,140.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (29,139) size 61x61 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-      KCanvasItem {rect} at (90,139) size 61x61 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(91.000000,140.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-      KCanvasItem {rect} at (151,139) size 61x61 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(152.000000,140.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
-    KCanvasContainer at (29,249) size 351x31 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(30.000000,250.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (29,249) size 51x31 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-      KCanvasItem {rect} at (179,249) size 51x31 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(180.000000,250.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-      KCanvasItem {rect} at (329,249) size 51x31 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(330.000000,250.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
-    KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+  KCanvasContainer at (0,0) size 479x359 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+    KCanvasContainer at (29,39) size 51x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,40.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (29,39) size 51x21 [stroke={}] [fill={[id="linearBoundingBoxPercentage"]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+      KCanvasItem {rect} at (29,59) size 51x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,60.00)}] [stroke={}] [fill={[id="linearBoundingBoxFraction"]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+      KCanvasItem {rect} at (29,79) size 51x21 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,80.00)}] [stroke={}] [fill={[id="linearUserSpace"]}] [data="M0.00,0.00L50.00,0.00L50.00,20.00L0.00,20.00"]
+      KCanvasItem {line} at (30,59) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,20.00L50.00,20.00"]
+      KCanvasItem {line} at (30,79) size 50x1 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,40.00L50.00,40.00"]
+    KCanvasContainer at (29,139) size 183x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (29,139) size 61x61 [stroke={}] [fill={[id="radialBoundingBoxPercentage"]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+      KCanvasItem {rect} at (90,139) size 61x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(91.00,140.00)}] [stroke={}] [fill={[id="radialBoundingBoxFraction"]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+      KCanvasItem {rect} at (151,139) size 61x61 [transform={m=((1.00,0.00)(0.00,1.00)) t=(152.00,140.00)}] [stroke={}] [fill={[id="radialUserSpace"]}] [data="M0.00,0.00L60.00,0.00L60.00,60.00L0.00,60.00"]
+    KCanvasContainer at (29,249) size 351x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,250.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (29,249) size 51x31 [stroke={[type=SOLID] [color=#000000]}] [fill={[id="patternBoundingBoxPercentage"]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+      KCanvasItem {rect} at (179,249) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(180.00,250.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[id="patternBoundingBoxFraction"]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+      KCanvasItem {rect} at (329,249) size 51x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(330.00,250.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[id="patternUserSpace"]}] [data="M0.00,0.00L50.00,0.00L50.00,30.00L0.00,30.00"]
+    KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

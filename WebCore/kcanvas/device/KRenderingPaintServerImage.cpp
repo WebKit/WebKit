@@ -24,6 +24,9 @@
 
 #include "KRenderingPaintServerImage.h"
 
+#include <qtextstream.h>
+#include "KCanvasTreeDebug.h"
+
 class KRenderingPaintServerImage::Private
 {
 public:
@@ -55,6 +58,14 @@ const QPixmap &KRenderingPaintServerImage::image() const
 KCPaintServerType KRenderingPaintServerImage::type() const
 {
 	return PS_IMAGE;
+}
+
+QTextStream &KRenderingPaintServerImage::externalRepresentation(QTextStream &ts) const
+{
+    ts << "[type=IMAGE]";
+    if (!image().rect().isEmpty())
+        ts << " [bounding box=" << image().rect() << "]";
+    return ts;
 }
 
 // vim:ts=4:noet

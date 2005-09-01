@@ -76,6 +76,8 @@ public:
 	virtual void prepareFilter(KRenderingDeviceContext *context, const QRect &bbox) = 0;
 	virtual void applyFilter(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, const QRect &bbox) = 0;
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 protected:
 	QRect m_filterRect;
 	QValueList<KCanvasFilterEffect *> m_effects;
@@ -114,23 +116,27 @@ public:
 	virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const = 0;
 #endif
 
+    virtual QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	QRect m_subregion;
 	QString m_in;
 	QString m_result;
 };
 
+QTextStream &operator<<(QTextStream &, const KCanvasFilterEffect &);
+
 class KCanvasFEDistantLight : public KCanvasFilterEffect
 {
 public:
-	float azimuth() const;
+	float azimuth() const { return m_azimuth; }
 	void setAzimuth(float azimuth) { m_azimuth = azimuth; }
 
-	float elevation() const;
+	float elevation() const { return m_elevation; }
 	void setElevation(float elevation) { m_elevation = elevation; }
 	
 	// FIXME, more here...
-	
+	 QTextStream &externalRepresentation(QTextStream &) const;
 private:
 	float m_azimuth;
 	float m_elevation;
@@ -139,6 +145,8 @@ private:
 class KCanvasFEPointLight : public KCanvasFilterEffect
 {
 public:
+
+    QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
 	float m_x;
@@ -149,6 +157,8 @@ private:
 class KCanvasFESpotLight : public KCanvasFilterEffect
 {
 public:
+
+    QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
 	float m_x;
@@ -178,6 +188,8 @@ public:
 	KCBlendModeType blendMode() const { return m_mode; }
 	void setBlendMode(KCBlendModeType mode) { m_mode = mode; }
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	KCBlendModeType m_mode;
 	QString m_in2;
@@ -198,6 +210,9 @@ public:
 	
 	QValueList<float> values() const { return m_values; }
 	void setValues(const QValueList<float> &values) { m_values = values; };
+
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	KCColorMatrixType m_type;
 	QValueList<float> m_values;
@@ -259,6 +274,9 @@ public:
 	
 	KCComponentTransferFunction alphaFunction() const { return m_alphaFunc; }
 	void setAlphaFunction(const KCComponentTransferFunction &func) { m_alphaFunc = func; }
+
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	KCComponentTransferFunction m_redFunc;
 	KCComponentTransferFunction m_greenFunc;
@@ -284,15 +302,17 @@ public:
 	KCCompositeOperationType operation() const { return m_operation; }
 	void setOperation(KCCompositeOperationType oper) { m_operation = oper; }
 	
-	float k1() const;
+	float k1() const { return m_k1; }
 	void setK1(float k1) { m_k1 = k1; }
-	float k2() const;
+	float k2() const { return m_k2;}
 	void setK2(float k2) { m_k2 = k2; }
-	float k3() const;
+	float k3() const { return m_k3; }
 	void setK3(float k3) { m_k3 = k3; }
-	float k4() const;
+	float k4() const { return m_k4; }
 	void setK4(float k4) { m_k4 = k4; }
-	
+
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	QString m_in2;
 	KCCompositeOperationType m_operation;
@@ -312,14 +332,16 @@ class KCanvasFEConvolveMatrix : public KCanvasFilterEffect
 {
 public:
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	int m_orderX;
 	int m_orderY;
 	QValueList<float> m_kernelMatrix; // maybe should be a real matrix?
 	float m_divisor;
 	float m_bias;
-	int targetX;
-	int targetY;
+	int m_targetX;
+	int m_targetY;
 	KCEdgeModeType m_edgeMode;
 	float m_kernelUnitLengthX;
 	float m_kernelUnitLengthY;
@@ -329,6 +351,8 @@ private:
 class KCanvasFEDiffuseLighting : public KCanvasFilterEffect
 {
 public:
+
+    QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
 	float m_surfaceScale;
@@ -350,6 +374,8 @@ public:
 	QString in2() const { return m_in2; }
 	void setIn2(const QString &in2) { m_in2 = in2; }
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	float m_scale;
 	KCChannelSelectorType m_XChannelSelector;
@@ -367,6 +393,8 @@ public:
 	float floodOpacity() const { return m_floodOpacity; }
 	void setFloodOpacity(float floodOpacity) { m_floodOpacity = floodOpacity; }
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+
 private:
 	QColor m_floodColor;
 	float m_floodOpacity;
@@ -380,6 +408,8 @@ public:
 
 	float stdDeviationY() const;
 	void setStdDeviationY(float y);
+
+    QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
 	float m_x;
@@ -395,6 +425,8 @@ public:
 	KCanvasItem *image() const { return m_image; }
 	void setImage(KCanvasItem *image) { m_image = image; }
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	KCanvasItem *m_image;
 };
@@ -404,6 +436,9 @@ class KCanvasFEMerge : public KCanvasFilterEffect
 public:
 	QStringList mergeInputs() const { return m_mergeInputs; }
 	void setMergeInputs(const QStringList &mergeInputs) { m_mergeInputs = mergeInputs; }
+
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	QStringList m_mergeInputs;
 };
@@ -424,7 +459,9 @@ public:
 
 	float radiusY() const { return m_radiusY; }
 	void setRadiusY(float radiusY) { m_radiusY = radiusY; }
-
+    
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	KCMorphologyOperatorType m_operator;
 	float m_radiusX;
@@ -439,7 +476,9 @@ public:
 
 	float dy() const { return m_dy; }
 	void setDy(float dy) { m_dy = dy; }
-
+    
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	float m_dx;
 	float m_dy;
@@ -449,9 +488,11 @@ class KCanvasFESpecularLighting : public KCanvasFilterEffect
 {
 public:
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	float m_surfaceScale;
-	float m_spectularConstant;
+	float m_specularConstant;
 	float m_specularExponent;
 };
 
@@ -483,6 +524,8 @@ public:
 	bool stitchTiles() const { return m_stitchTiles; }
 	void setStitchTiles(bool stitch) { m_stitchTiles = stitch; }
 
+    QTextStream &externalRepresentation(QTextStream &) const;
+    
 private:
 	float m_baseFrequencyX;
 	float m_baseFrequencyY;

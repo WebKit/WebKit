@@ -24,7 +24,62 @@
  */
 
 #include <qstring.h>
+#include <qtextstream.h>
+#include <qvaluelist.h>
+
+class KCanvasMatrix;
+class QRect;
+class QPoint;
+class QColor;
+class QStringList;
+class KCClipData;
+class KCPathData;
 
 class KCanvasItem;
 
 QString externalRepresentation(KCanvasItem *);
+
+// helper operators defined used in various classes to dump the render tree. 
+QTextStream &operator<<(QTextStream &ts, const KCanvasMatrix &);
+QTextStream &operator<<(QTextStream &ts, const QRect &);
+QTextStream &operator<<(QTextStream &ts, const QColor &);
+QTextStream &operator<<(QTextStream &ts, const QPoint &);
+
+// helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
+// these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
+    
+QTextStream &operator<<(QTextStream &ts, const QStringList &l);
+    
+template<typename Item>
+QTextStream &operator<<(QTextStream &ts, const QValueList<Item*> &l)
+{
+    ts << "[";
+    typename QValueList<Item*>::ConstIterator it = l.begin();
+    typename QValueList<Item*>::ConstIterator it_e = l.end();
+    while (it != it_e)
+    {
+        ts << *(*it);
+        ++it;
+        if (it != it_e) ts << ", ";
+    }
+    ts << "]";
+    
+    return ts;
+}
+
+template<typename Item>
+QTextStream &operator<<(QTextStream &ts, const QValueList<Item> &l)
+{
+    ts << "[";
+    typename QValueList<Item>::ConstIterator it = l.begin();
+    typename QValueList<Item>::ConstIterator it_e = l.end();
+    while (it != it_e)
+    {
+        ts << *it;
+        ++it;
+        if (it != it_e) ts << ", ";
+    }
+    ts << "]";
+    
+    return ts;
+}

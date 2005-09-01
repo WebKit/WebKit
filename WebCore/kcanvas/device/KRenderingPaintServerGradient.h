@@ -36,6 +36,8 @@ typedef enum
 	SPREADMETHOD_REFLECT = 4
 } KCGradientSpreadMethod;
 
+QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m);
+
 struct KCGradientOffsetPair
 {
 	float offset;
@@ -50,9 +52,14 @@ public:
 
 	typedef QPtrListIterator<KCGradientOffsetPair> Iterator;
 
+    
 protected:
 	virtual int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2);
+private:
+    friend QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
 };
+
+QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
 
 class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer,
@@ -79,6 +86,7 @@ public:
 	KCanvasMatrix gradientTransform() const;
 	void setGradientTransform(const KCanvasMatrix &mat);
 
+    QTextStream &externalRepresentation(QTextStream &) const;
 private:
 	class Private;
 	Private *d;
@@ -99,6 +107,7 @@ public:
 	QPoint gradientEnd() const;
 	void setGradientEnd(const QPoint &end);
 
+    QTextStream &externalRepresentation(QTextStream &) const;
 private:
 	class Private;
 	Private *d;
@@ -122,6 +131,7 @@ public:
 	float gradientRadius() const;
 	void setGradientRadius(float radius);
 
+    QTextStream &externalRepresentation(QTextStream &) const;
 private:
 	class Private;
 	Private *d;

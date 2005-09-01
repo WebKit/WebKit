@@ -24,6 +24,8 @@
 #include "KCanvasRegistry.h"
 #include "KRenderingPaintServer.h"
 
+#include <qtextstream.h>
+
 KCanvasRegistry::KCanvasRegistry()
 {
 	m_pservers.setAutoDelete(true);
@@ -37,6 +39,7 @@ KCanvasRegistry::~KCanvasRegistry()
 void KCanvasRegistry::addPaintServerById(const QString &id, KRenderingPaintServer *pserver)
 {
 	m_pservers.insert(id, pserver);
+    pserver->setIdInRegistry(id);
 }
 
 KRenderingPaintServer *KCanvasRegistry::getPaintServerById(const QString &id) const
@@ -44,9 +47,10 @@ KRenderingPaintServer *KCanvasRegistry::getPaintServerById(const QString &id) co
 	return m_pservers[id];
 }
 
-void KCanvasRegistry::addResourceById(const QString &id, KCanvasResource *pserver)
+void KCanvasRegistry::addResourceById(const QString &id, KCanvasResource *resource)
 {
-	m_resources.insert(id, pserver);
+	m_resources.insert(id, resource);
+    resource->setIdInRegistry(id);
 }
 
 KCanvasResource *KCanvasRegistry::getResourceById(const QString &id) const
@@ -58,6 +62,27 @@ void KCanvasRegistry::cleanup()
 {
 	m_pservers.clear();
 	m_resources.clear();
+}
+
+QTextStream &operator<<(QTextStream &ts, const KCanvasRegistry &r)
+{    
+    ts << "KCanvasRegistry: ";
+    if (r.m_resources.count() == 0 && r.m_pservers.count() == 0) 
+    {
+        ts << "empty" << endl;
+    } else 
+    {   
+        ts << endl;
+        for (QDictIterator<KCanvasResource> it(r.m_resources); (*it); ++it) 
+        {            
+            ts << "  KCanvasResource {id=\"" << it.currentKey() << "\" " << *(*it) << "}" << endl;
+        }
+        for (QDictIterator<KRenderingPaintServer> it(r.m_pservers); (*it); ++it)
+        {
+            ts << "  KRenderingPaintServer {id=\"" << it.currentKey() << "\" " << *(*it) <<"}" << endl;
+        }
+    }
+    return ts;
 }
 
 // vim:ts=4:noet

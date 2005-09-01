@@ -56,7 +56,7 @@ public:
     QTextStream &operator<<(void *);
 
     QTextStream &operator<<(const QTextStreamManipulator &);
-
+    int precision(int p);
 private:
     QTextStream(const QTextStream &);
     QTextStream &operator=(const QTextStream &);
@@ -64,6 +64,7 @@ private:
     bool _hasByteArray;
     QByteArray _byteArray;
     QString *_string;
+    int _precision;
 };
 
 class QTextIStream : public QTextStream {

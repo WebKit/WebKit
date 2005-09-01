@@ -1,9 +1,10 @@
+KCanvasRegistry: empty
 KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (17,73) size 453x225 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-    KCanvasContainer at (47,73) size 311x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (47,73) size 311x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M47.50,74.25L358.00,74.25L358.00,127.75L47.50,127.75"]
-    KCanvasContainer at (224,178) size 246x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (224,178) size 246x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M225.00,179.00L470.50,179.00L470.50,232.50L225.00,232.50"]
-    KCanvasContainer at (17,244) size 336x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem {rect} at (17,244) size 336x54 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M17.50,244.75L353.00,244.75L353.00,298.25L17.50,298.25"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+  KCanvasContainer at (17,73) size 453x225 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+    KCanvasContainer at (47,73) size 311x54 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (47,73) size 311x54 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M47.50,74.25L358.00,74.25L358.00,127.75L47.50,127.75"]
+    KCanvasContainer at (224,178) size 246x54 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (224,178) size 246x54 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M225.00,179.00L470.50,179.00L470.50,232.50L225.00,232.50"]
+    KCanvasContainer at (17,244) size 336x54 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem {rect} at (17,244) size 336x54 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M17.50,244.75L353.00,244.75L353.00,298.25L17.50,298.25"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

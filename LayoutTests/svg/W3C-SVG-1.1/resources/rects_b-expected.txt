@@ -1,5 +1,6 @@
+KCanvasRegistry: empty
 KCanvasContainer at (0,0) size 80x80
-  KCanvasItem {rect} at (0,0) size 41x41 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,0.00L40.00,0.00L40.00,40.00L0.00,40.00"]
-  KCanvasItem {rect} at (39,0) size 41x41 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M40.00,0.00L80.00,0.00L80.00,40.00L40.00,40.00"]
-  KCanvasItem {rect} at (0,39) size 41x41 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M0.00,40.00L40.00,40.00L40.00,80.00L0.00,80.00"]
-  KCanvasItem {rect} at (39,39) size 41x41 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M40.00,40.00L80.00,40.00L80.00,80.00L40.00,80.00"]
+  KCanvasItem {rect} at (0,0) size 41x41 [stroke={}] [fill={[type=SOLID] [color=#FF6633]}] [data="M0.00,0.00L40.00,0.00L40.00,40.00L0.00,40.00"]
+  KCanvasItem {rect} at (39,0) size 41x41 [stroke={}] [fill={[type=SOLID] [color=#CCCC99]}] [data="M40.00,0.00L80.00,0.00L80.00,40.00L40.00,40.00"]
+  KCanvasItem {rect} at (0,39) size 41x41 [stroke={}] [fill={[type=SOLID] [color=#CCCC99]}] [data="M0.00,40.00L40.00,40.00L40.00,80.00L0.00,80.00"]
+  KCanvasItem {rect} at (39,39) size 41x41 [stroke={}] [fill={[type=SOLID] [color=#FF6633]}] [data="M40.00,40.00L80.00,40.00L80.00,80.00L40.00,80.00"]

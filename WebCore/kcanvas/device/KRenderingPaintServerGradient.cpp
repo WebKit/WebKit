@@ -25,6 +25,25 @@
 #include "KRenderingPaintServerGradient.h"
 #include "KCanvasMatrix.h"
 
+#include <qtextstream.h>
+#include "KCanvasTreeDebug.h"
+
+//KCGradientSpreadMethod
+QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m)
+{
+    switch (m) 
+    {
+    case SPREADMETHOD_PAD:
+        ts << "PAD"; break;
+    case SPREADMETHOD_REPEAT:
+        ts << "REPEAT"; break;
+    case SPREADMETHOD_REFLECT:
+        ts << "REFLECT"; break;
+    }
+    return ts;
+}
+
+//KCSortedGradientStopList
 KCSortedGradientStopList::KCSortedGradientStopList()
 {
 	setAutoDelete(true);
@@ -51,6 +70,20 @@ int KCSortedGradientStopList::compareItems(QPtrCollection::Item item1, QPtrColle
 		return -1;
 
 	return 1;
+}
+
+QTextStream &operator<<(QTextStream &ts, const KCSortedGradientStopList &l)
+{
+    ts << "[";
+    KCSortedGradientStopList::Iterator it(l); 
+    while(*it)
+    {
+        ts << "(" << (*it)->offset << "," << (*it)->color << ")";
+        ++it;
+        if (*it) ts << ", ";
+    }
+    ts << "]";
+    return ts;
 }
 
 // KRenderingPaintServerGradient
@@ -115,6 +148,20 @@ void KRenderingPaintServerGradient::setGradientTransform(const KCanvasMatrix &ma
 	d->gradientTransform = mat;
 }
 
+QTextStream &KRenderingPaintServerGradient::externalRepresentation(QTextStream &ts) const
+{
+    // abstract, don't stream type
+    ts  << "[stops=" << gradientStops() << "]";
+    if (spreadMethod() != SPREADMETHOD_PAD)
+        ts << "[method=" << spreadMethod() << "]";        
+    if (!boundingBoxMode())
+        ts << " [bounding box mode=" << boundingBoxMode() << "]";
+    if (!gradientTransform().qmatrix().isIdentity())
+        ts << " [transform=" << gradientTransform() << "]";
+    
+    return ts;
+}
+
 // KRenderingPaintServerLinearGradient
 class KRenderingPaintServerLinearGradient::Private
 {
@@ -157,6 +204,15 @@ void KRenderingPaintServerLinearGradient::setGradientEnd(const QPoint &end)
 KCPaintServerType KRenderingPaintServerLinearGradient::type() const
 {
 	return PS_LINEAR_GRADIENT;
+}
+
+QTextStream &KRenderingPaintServerLinearGradient::externalRepresentation(QTextStream &ts) const
+{
+    ts << "[type=LINEAR-GRADIENT] ";    
+    KRenderingPaintServerGradient::externalRepresentation(ts);
+    ts  << " [start=" << gradientStart() << "]"
+        << " [end=" << gradientEnd() << "]";
+    return ts;
 }
 
 // KRenderingPaintServerRadialGradient
@@ -214,4 +270,13 @@ KCPaintServerType KRenderingPaintServerRadialGradient::type() const
 	return PS_RADIAL_GRADIENT;
 }
 
+QTextStream &KRenderingPaintServerRadialGradient::externalRepresentation(QTextStream &ts) const
+{
+    ts << "[type=RADIAL-GRADIENT] "; 
+    KRenderingPaintServerGradient::externalRepresentation(ts);
+    ts << " [center=" << gradientCenter() << "]"
+        << " [focal=" << gradientFocal() << "]"
+        << " [radius=" << gradientRadius() << "]";
+    return ts;
+}
 // vim:ts=4:noet

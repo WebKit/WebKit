@@ -21,6 +21,14 @@
 */
 
 #include "KRenderingPaintServerSolid.h"
+#include <qtextstream.h>
+#include "KCanvasTreeDebug.h"
+
+// this is related to KRenderingPaintServer, but currently it doesn't have its own .cpp file
+QTextStream &operator<<(QTextStream &ts, const KRenderingPaintServer &ps)
+{
+    return ps.externalRepresentation(ts);
+}
 
 class KRenderingPaintServerSolid::Private
 {
@@ -53,6 +61,13 @@ void KRenderingPaintServerSolid::setColor(const QColor &color)
 KCPaintServerType KRenderingPaintServerSolid::type() const
 {
 	return PS_SOLID;
+}
+
+QTextStream &KRenderingPaintServerSolid::externalRepresentation(QTextStream &ts) const
+{
+    ts << "[type=SOLID]"
+        << " [color="<< color() << "]";
+    return ts;
 }
 
 // vim:ts=4:noet

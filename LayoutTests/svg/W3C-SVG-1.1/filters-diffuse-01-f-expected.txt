@@ -1,15 +1,25 @@
+KCanvasRegistry: 
+  KCanvasResource {id="lightingColorB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="diffuseConstantC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="surfaceScaleA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="diffuseConstantA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="surfaceScaleB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="lightingColorC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="diffuseConstantB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="lightingColorA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+  KCanvasResource {id="surfaceScaleC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
 KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (90,80) size 190x170 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-    KCanvasContainer at (90,80) size 190x30 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(0.000000,50.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem at (90,80) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-      KCanvasItem at (160,80) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-      KCanvasItem at (230,80) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
-    KCanvasContainer at (90,150) size 190x30 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(0.000000,120.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem at (90,150) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-      KCanvasItem at (160,150) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-      KCanvasItem at (230,150) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
-    KCanvasContainer at (90,220) size 190x30 [transform={m=((1.000000,0.000000)(0.000000,1.000000)) t=(0.000000,190.000000)}] [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-      KCanvasItem at (90,220) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
-      KCanvasItem at (160,220) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
-      KCanvasItem at (230,220) size 50x30 [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+  KCanvasContainer at (90,80) size 190x170 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+    KCanvasContainer at (90,80) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem at (90,80) size 50x30 [fill={[type=IMAGE]}] [filter="surfaceScaleA"] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+      KCanvasItem at (160,80) size 50x30 [fill={[type=IMAGE]}] [filter="surfaceScaleB"] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
+      KCanvasItem at (230,80) size 50x30 [fill={[type=IMAGE]}] [filter="surfaceScaleC"] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
+    KCanvasContainer at (90,150) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem at (90,150) size 50x30 [fill={[type=IMAGE]}] [filter="diffuseConstantA"] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+      KCanvasItem at (160,150) size 50x30 [fill={[type=IMAGE]}] [filter="diffuseConstantB"] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
+      KCanvasItem at (230,150) size 50x30 [fill={[type=IMAGE]}] [filter="diffuseConstantC"] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
+    KCanvasContainer at (90,220) size 190x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,190.00)}] [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+      KCanvasItem at (90,220) size 50x30 [fill={[type=IMAGE]}] [filter="lightingColorA"] [data="M90.00,30.00L140.00,30.00L140.00,60.00L90.00,60.00"]
+      KCanvasItem at (160,220) size 50x30 [fill={[type=IMAGE]}] [filter="lightingColorB"] [data="M160.00,30.00L210.00,30.00L210.00,60.00L160.00,60.00"]
+      KCanvasItem at (230,220) size 50x30 [fill={[type=IMAGE]}] [filter="lightingColorC"] [data="M230.00,30.00L280.00,30.00L280.00,60.00L230.00,60.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]

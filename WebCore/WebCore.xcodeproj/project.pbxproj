@@ -1388,6 +1388,7 @@
 		A8212D0508794A2300677359 /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
 		A82FBB6608C6241300EFEE23 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
+		A841EC7208C6636600DDA21C /* KCanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4758C44308C5F217009BAF05 /* KCanvasPath.cpp */; };
 		A856E9AE08B45ABC0042E303 /* XPathResultWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D592108ADDFF900136AC1 /* XPathResultWrapper.h */; };
 		A856E9AF08B45ABC0042E303 /* XPathResultWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81D592008ADDFF900136AC1 /* XPathResultWrapper.cpp */; };
 		A856E9B008B45ABC0042E303 /* XPathNSResolverWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D591F08ADDFF900136AC1 /* XPathNSResolverWrapper.h */; };
@@ -2095,6 +2096,7 @@
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; };
+		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; };
 		51111AC007BD812C00B7162C /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; };
@@ -2260,7 +2262,7 @@
 		A802435008AC8651001B29DA /* DOMObjectImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMObjectImpl.cpp; sourceTree = "<group>"; };
 		A802435108AC8651001B29DA /* DOMObjectImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMObjectImpl.h; sourceTree = "<group>"; };
 		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; };
-		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; };
+		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		A81D56A208ACAC7E00136AC1 /* XPointerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPointerHelper.h; sourceTree = "<group>"; };
 		A81D56A308ACAC7E00136AC1 /* XPointerHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPointerHelper.cpp; sourceTree = "<group>"; };
 		A81D581608ADDFF600136AC1 /* Attr.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Attr.idl; sourceTree = "<group>"; };
@@ -5033,6 +5035,7 @@
 				A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */,
 				A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */,
 				A8C0FB86089701F800BA5114 /* KCanvasPath.h */,
+				4758C44308C5F217009BAF05 /* KCanvasPath.cpp */,
 				A8C0FB87089701F800BA5114 /* KCanvasRegistry.cpp */,
 				A8C0FB88089701F800BA5114 /* KCanvasRegistry.h */,
 				A8C0FB89089701F800BA5114 /* KCanvasResourceListener.h */,
@@ -8979,6 +8982,7 @@
 				A856E9DA08B45B1E0042E303 /* expression.cpp in Sources */,
 				A856E9F908B4608F0042E303 /* xpath.y in Sources */,
 				A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */,
+				A841EC7208C6636600DDA21C /* KCanvasPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

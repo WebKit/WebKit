@@ -28,14 +28,17 @@
 #import "KWQTextStream.h"
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
+const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f" "%.6f"}; 
+const int maxPrecision = 6; // must match to precisionFormats
+const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
 
 QTextStream::QTextStream(const QByteArray &ba)
-    : _hasByteArray(true), _byteArray(ba), _string(0)
+    : _hasByteArray(true), _byteArray(ba), _string(0), _precision(defaultPrecision)
 {
 }
 
 QTextStream::QTextStream(QString *s, int mode)
-    : _hasByteArray(false), _string(s)
+    : _hasByteArray(false), _string(s), _precision(defaultPrecision)
 {
     ASSERT(mode == IO_WriteOnly);
 }
@@ -98,14 +101,14 @@ QTextStream &QTextStream::operator<<(unsigned long i)
 QTextStream &QTextStream::operator<<(float f)
 {
     char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%f", f);
+    sprintf(buffer, precisionFormats[_precision], f);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(double d)
 {
     char buffer[integerOrPointerAsStringBufferSize];
-    sprintf(buffer, "%f", d);
+    sprintf(buffer, precisionFormats[_precision], d);
     return *this << buffer;
 }
 
@@ -153,6 +156,16 @@ QTextStream &QTextStream::operator<<(void *p)
 QTextStream &QTextStream::operator<<(const QTextStreamManipulator &m) 
 {
     return m(*this);
+}
+
+int QTextStream::precision(int p) 
+{
+    int oldPrecision = _precision;
+    
+    if (p >= 0 && p <= maxPrecision)
+        _precision = p;
+
+    return oldPrecision;
 }
 
 QTextStream &endl(QTextStream& stream)

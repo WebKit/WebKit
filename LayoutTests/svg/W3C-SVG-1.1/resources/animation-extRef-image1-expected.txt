@@ -1,3 +1,4 @@
+KCanvasRegistry: empty
 KCanvasContainer at (0,0) size 0x0
-  KCanvasContainer at (0,0) size 0x0 [stroke={server=UNIMPLEMENTED, stroke width=2.000000}] [fill={server=UNIMPLEMENTED}]
-  KCanvasContainer at (0,0) size 0x0 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
+  KCanvasContainer at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}]
+  KCanvasContainer at (0,0) size 0x0 [stroke={}] [fill={[type=SOLID] [color=#000000]}]

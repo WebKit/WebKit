@@ -30,6 +30,8 @@
 #include <kcanvas/KCanvasPath.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
+class QTextStream;
+
 // Enumerations
 typedef enum
 {
@@ -39,6 +41,7 @@ typedef enum
 	RS_IMAGE = 2,
 	RS_FILTER = 3
 } KCResourceType;
+
 
 class KCanvasMatrix;
 
@@ -58,12 +61,17 @@ public:
 
 	KCanvasResourceListener *listener() const;
 	void setListener(KCanvasResourceListener *listener);
-
+    
+    QString idInRegistry() const;
+    void setIdInRegistry(const QString& newId);
+    
+    virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
 	bool m_changed : 1;
 
 	KCanvasItemList m_clients;
 	KCanvasResourceListener *m_listener;
+    QString registryId;
 };
 
 class KCanvasClipper : public KCanvasResource
@@ -81,6 +89,7 @@ public:
 
 	KCClipDataList clipData() const;
 
+    QTextStream& externalRepresentation(QTextStream &) const; 
 protected:
 	bool m_viewportMode : 1;
 	KCClipDataList m_clipData;
@@ -107,11 +116,14 @@ public:
 	// Draw onto the canvas
 	void draw(double x, double y, double angle = 0.0);
 
+    QTextStream& externalRepresentation(QTextStream &) const; 
 private:
 	double m_refX, m_refY;
 	float m_angle;
 	KCanvasItem *m_marker;
 };
+
+QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
 
 #endif
 

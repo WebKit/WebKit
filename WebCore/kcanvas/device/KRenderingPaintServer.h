@@ -43,6 +43,7 @@ typedef enum
 	APPLY_TO_STROKE = 2
 } KCPaintTargetType;
 
+class QTextStream;
 class KCanvasItem;
 class KRenderingDeviceContext;
 class KRenderingPaintServer
@@ -54,14 +55,21 @@ public:
 	const KCanvasItem *activeClient() const { return m_activeClient;}
 	void setActiveClient(const KCanvasItem *client) { m_activeClient = client; }
 
+    QString idInRegistry() const {  return m_registryId; }
+    void setIdInRegistry(const QString& newId) { m_registryId = newId; } 
+    
 	virtual KCPaintServerType type() const = 0;
 
 	// Actual rendering function
 	virtual void draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args, KCPaintTargetType type) const = 0;
 
+    virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
 private:
 	const KCanvasItem *m_activeClient;
+    QString m_registryId;
 };
+
+QTextStream &operator<<(QTextStream &, const KRenderingPaintServer &);
 
 #endif
 

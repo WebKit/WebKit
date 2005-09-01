@@ -38,6 +38,7 @@ public:
 	void setImage(const QPixmap &image);
 	const QPixmap &image() const;
 
+    QTextStream &externalRepresentation(QTextStream &) const;
 private:
 	class Private;
 	Private *d;

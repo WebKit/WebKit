@@ -1,4 +1,6 @@
+KCanvasRegistry: 
+  KCanvasResource {id="image" [type=FILTER]  [bounding box=at (-10,-10) size 120x120] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (145,50) size 190x190"]]]}
 KCanvasContainer at (0,0) size 481x361
-  KCanvasContainer at (0,0) size 481x361 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}]
-    KCanvasItem {rect} at (0,0) size 481x361 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [filter=UNIMPLEMENTED] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={server=UNIMPLEMENTED}] [fill={server=UNIMPLEMENTED}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+  KCanvasContainer at (0,0) size 481x361 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+    KCanvasItem {rect} at (0,0) size 481x361 [stroke={}] [fill={[type=SOLID] [color=#000000]}] [filter="image"] [data="M0.00,0.00L480.00,0.00L480.00,360.00L0.00,360.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
