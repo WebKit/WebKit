@@ -34,7 +34,7 @@
 #import "render_layer.h"
 #import "xmlhttprequest.h"
 #ifdef SVG_SUPPORT
-#import "ksvg2/core/KSVGTimeScheduler.h"
+#import "ksvg2/misc/KSVGTimeScheduler.h"
 #endif
 
 using DOM::DocumentImpl;
