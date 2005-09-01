@@ -1,3 +1,11 @@
+2005-09-01  Tim Omernick  <tomernick@apple.com>
+
+        Change made by Darin, reviewed by John and myself.
+
+	- Allow semicolons at the end of method declarations (this is for method implementations; the semicolon is required for interface declarations).
+
+        * Scripts/prepare-ChangeLog:
+
 2005-08-31  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by Darin.

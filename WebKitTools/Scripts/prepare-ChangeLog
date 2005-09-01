@@ -453,7 +453,7 @@ sub get_function_line_ranges_for_c
 
         
         # start of method declaration
-        if ((my $method_char, my $method_spec) = m&^([-+])([^0-9;][^;]*)$&)
+        if ((my $method_char, my $method_spec) = m&^([-+])([^0-9;][^;]*);?$&)
           {
             my $original = $_;
 
