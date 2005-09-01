@@ -402,6 +402,10 @@ void QPainter::drawConvexPolygon(const QPointArray &points)
 
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 
+    CGContextSaveGState(context);
+
+    CGContextSetShouldAntialias(context, FALSE);
+    
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, points[0].x(), points[0].y());
     for (int i = 1; i < npoints; i++)
@@ -418,6 +422,8 @@ void QPainter::drawConvexPolygon(const QPointArray &points)
         CGContextSetLineWidth(context, data->state.pen.width());
         CGContextStrokePath(context);
     }
+
+    CGContextRestoreGState(context);
 }
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix)
