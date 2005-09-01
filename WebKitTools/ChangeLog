@@ -1,3 +1,9 @@
+2005-09-01  John Sullivan  <sullivan@apple.com>
+
+        * Scripts/run-webkit-tests:
+        Excluded a known system leak to reduce noise; added comments about which leaks
+        are being excluded.
+
 2005-09-01  Tim Omernick  <tomernick@apple.com>
 
         Change made by Darin, reviewed by John and myself.
