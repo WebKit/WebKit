@@ -1,3 +1,13 @@
+2005-08-31  Maciej Stachowiak  <mjs@apple.com>
+
+        - updated pixel test baselines that had the button text off by one - I think
+	this was a bug in a 10.4.2 pre-release that I was running
+
+        * layout-tests/fast/forms/001-expected.checksum:
+        * layout-tests/fast/forms/001-expected.png:
+        * layout-tests/fast/forms/input-value-expected.checksum:
+        * layout-tests/fast/forms/input-value-expected.png:
+
 2005-08-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed, tweaked, and landed by Darin.
