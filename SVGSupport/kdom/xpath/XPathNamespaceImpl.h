@@ -25,7 +25,7 @@
 #ifndef XPATHNAMESPACEIMPL_H
 #define XPATHNAMESPACEIMPL_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

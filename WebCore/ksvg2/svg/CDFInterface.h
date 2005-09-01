@@ -23,7 +23,7 @@
 #ifndef KSVG_CDFInterface_H
 #define KSVG_CDFInterface_H
 
-#include <kdom/impl/CDFInterface.h>
+#include <kdom/core/CDFInterface.h>
 
 namespace KSVG
 {

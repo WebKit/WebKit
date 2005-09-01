@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGCSSStyleSheetImpl_H
 #define KSVG_SVGCSSStyleSheetImpl_H
 
-#include <kdom/css/impl/CSSStyleSheetImpl.h>
+#include <kdom/css/CSSStyleSheetImpl.h>
 
 namespace KDOM
 {

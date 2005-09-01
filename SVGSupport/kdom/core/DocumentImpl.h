@@ -35,14 +35,14 @@
 #include <qintdict.h>
 #include <qstringlist.h>
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 #include <kdom/cache/KDOMLoader.h>
-#include <kdom/impl/DOMStringImpl.h>
-#include <kdom/css/impl/DocumentCSSImpl.h>
-#include <kdom/views/impl/DocumentViewImpl.h>
-#include <kdom/range/impl/DocumentRangeImpl.h>
-#include <kdom/events/impl/DocumentEventImpl.h>
-#include <kdom/traversal/impl/DocumentTraversalImpl.h>
+#include <kdom/core/DOMStringImpl.h>
+#include <kdom/css/DocumentCSSImpl.h>
+#include <kdom/views/DocumentViewImpl.h>
+#include <kdom/range/DocumentRangeImpl.h>
+#include <kdom/events/DocumentEventImpl.h>
+#include <kdom/traversal/DocumentTraversalImpl.h>
 #include <kdom/xpointer/impl/XPointerEvaluatorImpl.h>
 #include <kdom/xpath/XPathEvaluatorImpl.h>
 

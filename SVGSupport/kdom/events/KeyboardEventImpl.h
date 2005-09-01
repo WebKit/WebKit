@@ -23,7 +23,7 @@
 #ifndef KDOM_KeyboardEventImpl_H
 #define KDOM_KeyboardEventImpl_H
 
-#include <kdom/events/impl/UIEventImpl.h>
+#include <kdom/events/UIEventImpl.h>
 
 class QKeyEvent;
 

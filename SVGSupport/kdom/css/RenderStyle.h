@@ -31,8 +31,8 @@
 
 #include <qapplication.h>
 
-#include <kdom/css/impl/RenderStyleDefs.h>
-#include <kdom/css/impl/CSSValueListImpl.h>
+#include <kdom/css/RenderStyleDefs.h>
+#include <kdom/css/CSSValueListImpl.h>
 
 namespace KDOM
 {

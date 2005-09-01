@@ -26,7 +26,7 @@
 
 #include "RectImpl.h"
 #include <kdom/css/CSSHelper.h>
-#include <kdom/css/impl/cssvalues.h>
+#include <kdom/css/cssvalues.h>
 #include "CounterImpl.h"
 #include "RenderStyle.h"
 #include "CDFInterface.h"

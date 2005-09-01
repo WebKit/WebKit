@@ -29,7 +29,7 @@
 #include <qstring.h>
 #include <qptrlist.h>
 
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 namespace KDOM
 {

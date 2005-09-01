@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/events/impl/MouseEventImpl.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/events/MouseEventImpl.h>
 #include <kdom/events/kdomevents.h>
 #include <kdom/Helper.h>
 

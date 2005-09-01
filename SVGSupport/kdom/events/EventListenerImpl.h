@@ -24,7 +24,7 @@
 #define KDOM_EventListenerImpl_H
 
 #include <kdom/Shared.h>
-#include <kdom/impl/DocumentImpl.h>
+#include <kdom/core/DocumentImpl.h>
 
 #include <kjs/object.h>
 

@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSStyleSheetImpl_H
 #define KDOM_CSSStyleSheetImpl_H
 
-#include <kdom/css/impl/StyleSheetImpl.h>
+#include <kdom/css/StyleSheetImpl.h>
 
 namespace KDOM
 {

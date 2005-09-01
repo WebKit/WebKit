@@ -29,8 +29,8 @@
 #ifndef KDOM_NodeImpl_H
 #define KDOM_NodeImpl_H
 
-#include <kdom/impl/DOMExceptionImpl.h>
-#include <kdom/events/impl/EventTargetImpl.h>
+#include <kdom/core/DOMExceptionImpl.h>
+#include <kdom/events/EventTargetImpl.h>
 
 //#ifdef _DOM_NodeImpl_h_
 //#warning KDOM and DOM in same file!

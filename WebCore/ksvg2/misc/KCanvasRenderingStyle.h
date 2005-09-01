@@ -23,7 +23,7 @@
 #ifndef KSVG_KCanvasRenderingStyle_H
 #define KSVG_KCanvasRenderingStyle_H
 
-#include <kdom/css/impl/CSSPrimitiveValueImpl.h>
+#include <kdom/css/CSSPrimitiveValueImpl.h>
 
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/device/KRenderingStyle.h>

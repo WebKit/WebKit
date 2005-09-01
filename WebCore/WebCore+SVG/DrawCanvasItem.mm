@@ -32,10 +32,10 @@
 #import <kdom/Helper.h>
 #import <kdom/DOMString.h>
 
-#import <ksvg2/impl/SVGStyledElementImpl.h>
-#import <ksvg2/impl/SVGEllipseElementImpl.h>
-#import <ksvg2/impl/SVGRectElementImpl.h>
-#import <ksvg2/impl/SVGPathElementImpl.h>
+#import <ksvg2/svg/SVGStyledElementImpl.h>
+#import <ksvg2/svg/SVGEllipseElementImpl.h>
+#import <ksvg2/svg/SVGRectElementImpl.h>
+#import <ksvg2/svg/SVGPathElementImpl.h>
 
 #import "KWQTextStream.h"
 

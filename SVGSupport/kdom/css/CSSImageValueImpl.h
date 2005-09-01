@@ -25,7 +25,7 @@
 
 #include <kdom/cache/KDOMCachedImage.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
-#include <kdom/css/impl/CSSPrimitiveValueImpl.h>
+#include <kdom/css/CSSPrimitiveValueImpl.h>
 
 namespace KDOM
 {

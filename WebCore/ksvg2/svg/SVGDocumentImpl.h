@@ -25,11 +25,11 @@
 
 #include <qptrlist.h>
 
-#include <kdom/impl/DocumentImpl.h>
+#include <kdom/core/DocumentImpl.h>
 #include <kdom/cache/KDOMCachedScript.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
-#include <ksvg2/core/KSVGTimeScheduler.h>
+#include <ksvg2/misc/KSVGTimeScheduler.h>
 
 class KCanvas;
 class KCanvasView;

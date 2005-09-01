@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSPageRuleImpl_H
 #define KDOM_CSSPageRuleImpl_H
 
-#include <kdom/css/impl/CSSRuleImpl.h>
+#include <kdom/css/CSSRuleImpl.h>
 
 namespace KDOM
 {

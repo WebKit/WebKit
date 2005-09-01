@@ -23,7 +23,7 @@
 #ifndef KDOM_MediaListImpl_H
 #define KDOM_MediaListImpl_H
 
-#include <kdom/css/impl/StyleBaseImpl.h>
+#include <kdom/css/StyleBaseImpl.h>
 #include <kdom/DOMString.h>
 
 #include <qvaluelist.h>

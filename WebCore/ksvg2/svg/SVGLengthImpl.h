@@ -26,7 +26,7 @@
 #include <kdom/Shared.h>
 #include <kdom/DOMString.h>
 
-#include <ksvg2/impl/SVGHelper.h>
+#include <ksvg2/svg/SVGHelper.h>
 
 class KCanvasItem;
 

@@ -56,7 +56,7 @@
 #include "NamedNodeMapImpl.h"
 #include "CDATASectionImpl.h"
 #include "NodeIteratorImpl.h"
-#include "kdom/css/impl/CSSStyleSelector.h"
+#include "kdom/css/CSSStyleSelector.h"
 #include "DocumentTypeImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "StyleSheetListImpl.h"

@@ -22,7 +22,7 @@
 
 #include <kdom/Shared.h>
 #include <kdom/DOMException.h>
-#include <kdom/impl/DOMExceptionImpl.h>
+#include <kdom/core/DOMExceptionImpl.h>
 
 #include "SVGRect.h"
 #include "SVGPoint.h"

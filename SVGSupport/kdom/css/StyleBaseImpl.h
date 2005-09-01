@@ -32,8 +32,8 @@
 #include <qptrlist.h>
 
 #include <kdom/TreeShared.h>
-#include <kdom/impl/NodeImpl.h>
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/NodeImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 namespace KDOM
 {

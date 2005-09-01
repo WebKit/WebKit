@@ -26,7 +26,7 @@
 #include "DocumentImpl.h"
 #include "CSSValueImpl.h"
 #include "CDFInterface.h"
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssproperties.h>
 #include "CSSStyleSheetImpl.h"
 #include "CSSPrimitiveValueImpl.h"
 #include "CSSStyleDeclarationImpl.h"

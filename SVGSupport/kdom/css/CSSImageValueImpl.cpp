@@ -22,7 +22,7 @@
 
 #include <kdom/cache/KDOMLoader.h>
 
-#include <kdom/css/impl/cssvalues.h>
+#include <kdom/css/cssvalues.h>
 #include "DocumentImpl.h"
 #include "CSSImageValueImpl.h"
 #include "CSSStyleSheetImpl.h"

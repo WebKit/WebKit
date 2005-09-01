@@ -4204,11 +4204,11 @@
 		A8C0F6E9089701F100BA5114 /* ksvg2 */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F6EA089701F100BA5114 /* core */,
+				A8C0F6EA089701F100BA5114 /* misc */,
 				A8C0F6F2089701F100BA5114 /* css */,
 				A8C0F7E8089701F300BA5114 /* ecma */,
 				A8C0F7F1089701F300BA5114 /* events */,
-				A8C0F7FC089701F300BA5114 /* impl */,
+				A8C0F7FC089701F300BA5114 /* svg */,
 				A8C0F8ED089701F400BA5114 /* ksvg.h */,
 				A8C0F8EE089701F400BA5114 /* KSVGFactory.cpp */,
 				A8C0F8EF089701F400BA5114 /* KSVGFactory.h */,
@@ -4224,7 +4224,7 @@
 			path = ../SVGSupport/ksvg2;
 			sourceTree = "<group>";
 		};
-		A8C0F6EA089701F100BA5114 /* core */ = {
+		A8C0F6EA089701F100BA5114 /* misc */ = {
 			isa = PBXGroup;
 			children = (
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
@@ -4234,18 +4234,10 @@
 				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
 				A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */,
 			);
-			path = core;
+			path = misc;
 			sourceTree = "<group>";
 		};
 		A8C0F6F2089701F100BA5114 /* css */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0F6F3089701F100BA5114 /* impl */,
-			);
-			path = css;
-			sourceTree = "<group>";
-		};
-		A8C0F6F3089701F100BA5114 /* impl */ = {
 			isa = PBXGroup;
 			children = (
 				A8C0F6F4089701F100BA5114 /* cssproperties.in */,
@@ -4264,7 +4256,7 @@
 				A8C0F701089701F100BA5114 /* SVGRenderStyleDefs.cpp */,
 				A8C0F702089701F100BA5114 /* SVGRenderStyleDefs.h */,
 			);
-			path = impl;
+			path = css;
 			sourceTree = "<group>";
 		};
 		A8C0F7E8089701F300BA5114 /* ecma */ = {
@@ -4285,8 +4277,11 @@
 		A8C0F7F1089701F300BA5114 /* events */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F7F2089701F300BA5114 /* impl */,
 				A8C0F7F7089701F300BA5114 /* ksvgevents.h */,
+				A8C0F7F3089701F300BA5114 /* SVGEventImpl.cpp */,
+				A8C0F7F4089701F300BA5114 /* SVGEventImpl.h */,
+				A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */,
+				A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */,
 				A8C0F7F8089701F300BA5114 /* SVGEvent.cpp */,
 				A8C0F7F9089701F300BA5114 /* SVGEvent.h */,
 				A8C0F7FA089701F300BA5114 /* SVGZoomEvent.cpp */,
@@ -4295,18 +4290,7 @@
 			path = events;
 			sourceTree = "<group>";
 		};
-		A8C0F7F2089701F300BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0F7F3089701F300BA5114 /* SVGEventImpl.cpp */,
-				A8C0F7F4089701F300BA5114 /* SVGEventImpl.h */,
-				A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */,
-				A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */,
-			);
-			path = impl;
-			sourceTree = "<group>";
-		};
-		A8C0F7FC089701F300BA5114 /* impl */ = {
+		A8C0F7FC089701F300BA5114 /* svg */ = {
 			isa = PBXGroup;
 			children = (
 				A8C0F7FD089701F300BA5114 /* CDFInterface.cpp */,
@@ -4550,7 +4534,7 @@
 				A8C0F8EB089701F400BA5114 /* SVGZoomAndPanImpl.cpp */,
 				A8C0F8EC089701F400BA5114 /* SVGZoomAndPanImpl.h */,
 			);
-			path = impl;
+			path = svg;
 			sourceTree = "<group>";
 		};
 		A8C0F8F7089701F400BA5114 /* scripts */ = {
@@ -4573,7 +4557,7 @@
 				A8C0F9CE089701F500BA5114 /* events */,
 				A8C0F9F7089701F500BA5114 /* Helper.cpp */,
 				A8C0F9F8089701F500BA5114 /* Helper.h */,
-				A8C0F9F9089701F500BA5114 /* impl */,
+				A8C0F9F9089701F500BA5114 /* core */,
 				A8C0FA3A089701F600BA5114 /* kdom.h */,
 				A8C0FA3B089701F600BA5114 /* KDOMPart.cpp */,
 				A8C0FA3C089701F600BA5114 /* KDOMPart.h */,
@@ -4644,15 +4628,6 @@
 			isa = PBXGroup;
 			children = (
 				A8C0F92A089701F400BA5114 /* CSSHelper.h */,
-				A8C0F949089701F400BA5114 /* impl */,
-				A8C0F986089701F500BA5114 /* kdomcss.h */,
-			);
-			path = css;
-			sourceTree = "<group>";
-		};
-		A8C0F949089701F400BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0F94A089701F400BA5114 /* CounterImpl.cpp */,
 				A8C0F94B089701F400BA5114 /* CounterImpl.h */,
 				A8C0F94C089701F400BA5114 /* CSSCharsetRuleImpl.cpp */,
@@ -4689,8 +4664,8 @@
 				A8C0F96B089701F500BA5114 /* CSSValueListImpl.cpp */,
 				A8C0F96C089701F500BA5114 /* CSSValueListImpl.h */,
 				A8C0F96D089701F500BA5114 /* cssvalues.in */,
-				A802434C08AC85EA001B29DA /* DocumentCSSImpl.h */,
 				A802434D08AC85EA001B29DA /* DocumentCSSImpl.cpp */,
+				A802434C08AC85EA001B29DA /* DocumentCSSImpl.h */,
 				A8C0F96E089701F500BA5114 /* DocumentStyleImpl.cpp */,
 				A8C0F96F089701F500BA5114 /* DocumentStyleImpl.h */,
 				A8C0F970089701F500BA5114 /* Font.cpp */,
@@ -4715,8 +4690,9 @@
 				A8C0F983089701F500BA5114 /* StyleSheetListImpl.cpp */,
 				A8C0F984089701F500BA5114 /* StyleSheetListImpl.h */,
 				A8C0F985089701F500BA5114 /* tokenizer.cpp */,
+				A8C0F986089701F500BA5114 /* kdomcss.h */,
 			);
-			path = impl;
+			path = css;
 			sourceTree = "<group>";
 		};
 		A8C0F9BA089701F500BA5114 /* ecma */ = {
@@ -4739,15 +4715,7 @@
 		A8C0F9CE089701F500BA5114 /* events */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F9D9089701F500BA5114 /* impl */,
 				A8C0F9EE089701F500BA5114 /* kdomevents.h */,
-			);
-			path = events;
-			sourceTree = "<group>";
-		};
-		A8C0F9D9089701F500BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0F9DA089701F500BA5114 /* DocumentEventImpl.cpp */,
 				A8C0F9DB089701F500BA5114 /* DocumentEventImpl.h */,
 				A8C0F9DC089701F500BA5114 /* EventExceptionImpl.cpp */,
@@ -4769,10 +4737,10 @@
 				A8C0F9EC089701F500BA5114 /* UIEventImpl.cpp */,
 				A8C0F9ED089701F500BA5114 /* UIEventImpl.h */,
 			);
-			path = impl;
+			path = events;
 			sourceTree = "<group>";
 		};
-		A8C0F9F9089701F500BA5114 /* impl */ = {
+		A8C0F9F9089701F500BA5114 /* core */ = {
 			isa = PBXGroup;
 			children = (
 				A8C0F9FA089701F500BA5114 /* AttrImpl.cpp */,
@@ -4842,21 +4810,13 @@
 				A8C0FA38089701F600BA5114 /* XMLElementImpl.cpp */,
 				A8C0FA39089701F600BA5114 /* XMLElementImpl.h */,
 			);
-			path = impl;
+			path = core;
 			sourceTree = "<group>";
 		};
 		A8C0FA41089701F600BA5114 /* ls */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0FA44089701F600BA5114 /* impl */,
 				A8C0FA55089701F600BA5114 /* kdomls.h */,
-			);
-			path = ls;
-			sourceTree = "<group>";
-		};
-		A8C0FA44089701F600BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0FA45089701F600BA5114 /* LSExceptionImpl.cpp */,
 				A8C0FA46089701F600BA5114 /* LSExceptionImpl.h */,
 				A8C0FA47089701F600BA5114 /* LSInputImpl.cpp */,
@@ -4874,7 +4834,7 @@
 				A8C0FA53089701F600BA5114 /* LSSerializerImpl.cpp */,
 				A8C0FA54089701F600BA5114 /* LSSerializerImpl.h */,
 			);
-			path = impl;
+			path = ls;
 			sourceTree = "<group>";
 		};
 		A8C0FA70089701F600BA5114 /* parser */ = {
@@ -4891,15 +4851,7 @@
 		A8C0FA79089701F600BA5114 /* range */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0FA7C089701F600BA5114 /* impl */,
 				A8C0FA83089701F600BA5114 /* kdomrange.h */,
-			);
-			path = range;
-			sourceTree = "<group>";
-		};
-		A8C0FA7C089701F600BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0FA7D089701F600BA5114 /* DocumentRangeImpl.cpp */,
 				A8C0FA7E089701F600BA5114 /* DocumentRangeImpl.h */,
 				A8C0FA7F089701F600BA5114 /* RangeExceptionImpl.cpp */,
@@ -4907,21 +4859,13 @@
 				A8C0FA81089701F600BA5114 /* RangeImpl.cpp */,
 				A8C0FA82089701F600BA5114 /* RangeImpl.h */,
 			);
-			path = impl;
+			path = range;
 			sourceTree = "<group>";
 		};
 		A8C0FA9B089701F600BA5114 /* traversal */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0FA9E089701F600BA5114 /* impl */,
 				A8C0FAA9089701F600BA5114 /* kdomtraversal.h */,
-			);
-			path = traversal;
-			sourceTree = "<group>";
-		};
-		A8C0FA9E089701F600BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0FA9F089701F600BA5114 /* DocumentTraversalImpl.cpp */,
 				A8C0FAA0089701F600BA5114 /* DocumentTraversalImpl.h */,
 				A8C0FAA1089701F600BA5114 /* NodeFilterImpl.cpp */,
@@ -4933,18 +4877,10 @@
 				A8C0FAA7089701F600BA5114 /* TreeWalkerImpl.cpp */,
 				A8C0FAA8089701F600BA5114 /* TreeWalkerImpl.h */,
 			);
-			path = impl;
+			path = traversal;
 			sourceTree = "<group>";
 		};
 		A8C0FAB3089701F600BA5114 /* views */ = {
-			isa = PBXGroup;
-			children = (
-				A8C0FAB8089701F600BA5114 /* impl */,
-			);
-			path = views;
-			sourceTree = "<group>";
-		};
-		A8C0FAB8089701F600BA5114 /* impl */ = {
 			isa = PBXGroup;
 			children = (
 				A8C0FAB9089701F600BA5114 /* AbstractViewImpl.cpp */,
@@ -4952,7 +4888,7 @@
 				A8C0FABB089701F600BA5114 /* DocumentViewImpl.cpp */,
 				A8C0FABC089701F600BA5114 /* DocumentViewImpl.h */,
 			);
-			path = impl;
+			path = views;
 			sourceTree = "<group>";
 		};
 		A8C0FABD089701F600BA5114 /* xpath */ = {
@@ -7968,7 +7904,7 @@
 			files = (
 			);
 			inputPaths = (
-				kdom/css/impl/cssvalues.in,
+				kdom/css/cssvalues.in,
 				kdom/scripts/cssmakevalues,
 			);
 			name = kdomcssvalues.c/h;
@@ -7978,7 +7914,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cat kdom/css/impl/cssvalues.in > \"$DERIVED_FILE_DIR/kdomcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KDOM -f kdomcssvalues.in";
+			shellScript = "cat kdom/css/cssvalues.in > \"$DERIVED_FILE_DIR/kdomcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KDOM -f kdomcssvalues.in";
 		};
 		A837AEF108B6991100EBFFDC /* ksvgcssproperties.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7986,7 +7922,7 @@
 			files = (
 			);
 			inputPaths = (
-				ksvg2/css/impl/cssproperties.in,
+				ksvg2/css/cssproperties.in,
 				kdom/scripts/cssmakeprops,
 			);
 			name = ksvgcssproperties.c/h;
@@ -7996,7 +7932,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cat ksvg2/css/impl/cssproperties.in > \"$DERIVED_FILE_DIR/ksvgcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakeprops\" -n KSVG -f ksvgcssproperties.in";
+			shellScript = "cat ksvg2/css/cssproperties.in > \"$DERIVED_FILE_DIR/ksvgcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakeprops\" -n KSVG -f ksvgcssproperties.in";
 		};
 		A837AEF308B6992C00EBFFDC /* ksvgcssvalues.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8004,7 +7940,7 @@
 			files = (
 			);
 			inputPaths = (
-				ksvg2/css/impl/cssvalues.in,
+				ksvg2/css/cssvalues.in,
 				kdom/scripts/cssmakevalues,
 			);
 			name = ksvgcssvalues.c/h;
@@ -8014,7 +7950,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cat ksvg2/css/impl/cssvalues.in > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
+			shellScript = "cat ksvg2/css/cssvalues.in > \"$DERIVED_FILE_DIR/ksvgcssvalues.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakevalues\" -n KSVG -f ksvgcssvalues.in";
 		};
 		A856E96708B450330042E303 /* kdomcssproperties.c/h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8022,7 +7958,7 @@
 			files = (
 			);
 			inputPaths = (
-				kdom/css/impl/cssproperties.in,
+				kdom/css/cssproperties.in,
 				kdom/scripts/cssmakeprops,
 			);
 			name = kdomcssproperties.c/h;
@@ -8032,7 +7968,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cat kdom/css/impl/cssproperties.in > \"$DERIVED_FILE_DIR/kdomcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakeprops\" -n KDOM -f kdomcssproperties.in";
+			shellScript = "cat kdom/css/cssproperties.in > \"$DERIVED_FILE_DIR/kdomcssproperties.in\"\ncd \"$DERIVED_FILE_DIR\"\n\"$SRCROOT/kdom/scripts/cssmakeprops\" -n KDOM -f kdomcssproperties.in";
 		};
 		A889240108BDAFAE00FAD7C1 /* Generate JS Bindings */ = {
 			isa = PBXShellScriptBuildPhase;

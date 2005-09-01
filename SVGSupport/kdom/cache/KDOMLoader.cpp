@@ -30,7 +30,7 @@
 #include <kio/scheduler.h>
 #endif
 
-#include <kdom/impl/DocumentImpl.h>
+#include <kdom/core/DocumentImpl.h>
 
 #include "KDOMCache.h"
 #include "KDOMLoader.moc"

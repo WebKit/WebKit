@@ -42,10 +42,10 @@
 #include <qpalette.h>
 
 #include <kdom/Shared.h>
-#include <kdom/css/impl/Font.h>
-#include <kdom/impl/DOMStringImpl.h>
-#include <kdom/css/impl/CounterImpl.h>
-#include <kdom/css/impl/CSSValueImpl.h>
+#include <kdom/css/Font.h>
+#include <kdom/core/DOMStringImpl.h>
+#include <kdom/css/CounterImpl.h>
+#include <kdom/css/CSSValueImpl.h>
 #include <kdom/cache/KDOMCachedImage.h>
 
 // Helper macros for 'RenderStyle'

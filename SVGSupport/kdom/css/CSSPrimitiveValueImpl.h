@@ -25,7 +25,7 @@
 
 #include <kdom/kdom.h>
 #include <kdom/css/kdomcss.h>
-#include <kdom/css/impl/CSSValueImpl.h>
+#include <kdom/css/CSSValueImpl.h>
 
 #include <qcolor.h>
 class QPaintDeviceMetrics;

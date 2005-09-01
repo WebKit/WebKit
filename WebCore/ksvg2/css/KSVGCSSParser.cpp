@@ -28,23 +28,23 @@
 #include <assert.h>
 
 #include <kdom/DOMString.h>
-#include <kdom/impl/DocumentImpl.h>
-#include <kdom/css/impl/cssvalues.h>
-#include <kdom/css/impl/CSSValueImpl.h>
-#include <kdom/css/impl/cssproperties.h>
-#include <kdom/css/impl/CSSValueListImpl.h>
-#include <kdom/css/impl/CSSStyleRuleImpl.h>
-#include <kdom/impl/DOMImplementationImpl.h>
-#include <kdom/css/impl/CSSPrimitiveValueImpl.h>
+#include <kdom/core/DocumentImpl.h>
+#include <kdom/css/cssvalues.h>
+#include <kdom/css/CSSValueImpl.h>
+#include <kdom/css/cssproperties.h>
+#include <kdom/css/CSSValueListImpl.h>
+#include <kdom/css/CSSStyleRuleImpl.h>
+#include <kdom/core/DOMImplementationImpl.h>
+#include <kdom/css/CSSPrimitiveValueImpl.h>
 
 #include "ksvg.h"
 #include "KSVGCSSParser.h"
-#include <ksvg2/css/impl/cssvalues.h>
+#include <ksvg2/css/cssvalues.h>
 #include "SVGPaintImpl.h"
-#include <ksvg2/css/impl/cssproperties.h>
+#include <ksvg2/css/cssproperties.h>
 #include "SVGCSSStyleDeclarationImpl.h"
 
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 using namespace KDOM;
 using namespace KSVG;

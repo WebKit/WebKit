@@ -37,7 +37,7 @@
 #endif // APPLE_CHANGES
 
 #include <kdom/DOMString.h>
-#include <kdom/impl/NodeListImpl.h>
+#include <kdom/core/NodeListImpl.h>
 
 namespace KDOM
 {

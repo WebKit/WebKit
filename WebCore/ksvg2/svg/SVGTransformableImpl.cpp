@@ -23,7 +23,7 @@
 #include <qregexp.h>
 #include <qstringlist.h>
 
-#include <kdom/impl/AttrImpl.h>
+#include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasItem.h>

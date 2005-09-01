@@ -25,7 +25,7 @@
 
 #include <qptrlist.h>
 
-#include <kdom/css/impl/StyleBaseImpl.h>
+#include <kdom/css/StyleBaseImpl.h>
 
 namespace KDOM
 {

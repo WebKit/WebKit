@@ -24,7 +24,7 @@
 #define KSVG_SVGEventImpl_H
 
 #include <ksvg2/events/ksvgevents.h>
-#include <kdom/events/impl/EventImpl.h>
+#include <kdom/events/EventImpl.h>
 
 namespace KSVG
 {

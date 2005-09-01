@@ -45,24 +45,24 @@
 #import <kdom/Helper.h>
 #import <kdom/parser/KDOMParser.h>
 #import <kdom/backends/libxml/LibXMLParser.h>
-#import <kdom/impl/NodeImpl.h>
-#import <kdom/impl/NodeListImpl.h>
-#import <kdom/impl/DOMConfigurationImpl.h>
-#import <kdom/impl/DOMImplementationImpl.h>
-#import <kdom/impl/ElementImpl.h>
+#import <kdom/core/NodeImpl.h>
+#import <kdom/core/NodeListImpl.h>
+#import <kdom/core/DOMConfigurationImpl.h>
+#import <kdom/core/DOMImplementationImpl.h>
+#import <kdom/core/ElementImpl.h>
 #import <kdom/events/kdomevents.h>
-#import <kdom/events/impl/EventImpl.h>
-#import <kdom/events/impl/MouseEventImpl.h>
+#import <kdom/events/EventImpl.h>
+#import <kdom/events/MouseEventImpl.h>
 
 #import <ksvg2/KSVGPart.h>
 #import <ksvg2/KSVGView.h>
-#import <ksvg2/core/KSVGDocumentBuilder.h>
-#import <ksvg2/impl/SVGDocumentImpl.h>
-#import <ksvg2/impl/SVGSVGElementImpl.h>
-#import <ksvg2/impl/SVGDescElementImpl.h>
-#import <ksvg2/impl/SVGStyledElementImpl.h>
-#import <ksvg2/impl/SVGEllipseElementImpl.h>
-#import <ksvg2/impl/SVGRectElementImpl.h>
+#import <ksvg2/misc/KSVGDocumentBuilder.h>
+#import <ksvg2/svg/SVGDocumentImpl.h>
+#import <ksvg2/svg/SVGSVGElementImpl.h>
+#import <ksvg2/svg/SVGDescElementImpl.h>
+#import <ksvg2/svg/SVGStyledElementImpl.h>
+#import <ksvg2/svg/SVGEllipseElementImpl.h>
+#import <ksvg2/svg/SVGRectElementImpl.h>
 
 #undef id
 

@@ -23,8 +23,8 @@
 #ifndef KSVG_SVGElementImpl_H
 #define KSVG_SVGElementImpl_H
 
-#include <ksvg2/impl/svgtags.h>
-#include <kdom/impl/XMLElementImpl.h>
+#include <ksvg2/svg/svgtags.h>
+#include <kdom/core/XMLElementImpl.h>
 
 namespace KDOM
 {

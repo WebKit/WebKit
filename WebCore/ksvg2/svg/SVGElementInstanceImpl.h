@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGElementInstanceImpl_H
 #define KSVG_SVGElementInstanceImpl_H
 
-#include <kdom/events/impl/EventTargetImpl.h>
+#include <kdom/events/EventTargetImpl.h>
 
 namespace KSVG
 {

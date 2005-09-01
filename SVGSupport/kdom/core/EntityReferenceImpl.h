@@ -26,7 +26,7 @@
 #ifndef KDOM_EntityReferenceImpl_H
 #define KDOM_EntityReferenceImpl_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

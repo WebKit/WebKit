@@ -21,9 +21,9 @@
 */
 
 #include <kdom/kdom.h>
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/impl/domattrs.h>
-#include <kdom/impl/CDFInterface.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/domattrs.h>
+#include <kdom/core/CDFInterface.h>
 #include <kdom/DOMString.h>
 
 #include <kcanvas/KCanvas.h>
@@ -47,7 +47,7 @@
 #include "SVGCSSStyleDeclarationImpl.h"
 
 #include "svgattrs.h"
-#include <ksvg2/css/impl/cssproperties.h>
+#include <ksvg2/css/cssproperties.h>
 
 using namespace KSVG;
 

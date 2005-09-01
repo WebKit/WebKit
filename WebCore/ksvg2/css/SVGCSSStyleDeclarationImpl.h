@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGCSSStyleDeclarationImpl_H
 #define KSVG_SVGCSSStyleDeclarationImpl_H
 
-#include <kdom/css/impl/CSSStyleDeclarationImpl.h>
+#include <kdom/css/CSSStyleDeclarationImpl.h>
 
 namespace KDOM
 {

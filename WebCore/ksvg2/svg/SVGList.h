@@ -24,8 +24,8 @@
 #define KSVG_SVGList_H
 
 #include <qptrlist.h>
-#include <kdom/impl/DOMList.h>
-#include <ksvg2/impl/SVGStyledElementImpl.h>
+#include <kdom/core/DOMList.h>
+#include <ksvg2/svg/SVGStyledElementImpl.h>
 
 namespace KSVG
 {

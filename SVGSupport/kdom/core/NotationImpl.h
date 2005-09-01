@@ -26,7 +26,7 @@
 #ifndef KDOM_NotationImpl_H
 #define KDOM_NotationImpl_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

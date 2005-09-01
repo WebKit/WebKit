@@ -23,7 +23,7 @@
 #ifndef KDOM_DocumentCSSImpl_H
 #define KDOM_DocumentCSSImpl_H
 
-#include <kdom/css/impl/DocumentStyleImpl.h>
+#include <kdom/css/DocumentStyleImpl.h>
 
 namespace KDOM
 {

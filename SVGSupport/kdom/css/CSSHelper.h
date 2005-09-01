@@ -25,7 +25,7 @@
 
 #include <kdom/DOMString.h>
 #include <kdom/css/kdomcss.h>
-#include <kdom/css/impl/RenderStyleDefs.h>
+#include <kdom/css/RenderStyleDefs.h>
 
 namespace KDOM
 {

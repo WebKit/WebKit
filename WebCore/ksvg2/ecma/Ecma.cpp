@@ -23,8 +23,8 @@
 #include <kdom/Namespace.h>
 #include <kdom/css/CSSValue.h>
 #include <kdom/events/Event.h>
-#include <kdom/impl/NodeImpl.h>
-#include <kdom/events/impl/EventImpl.h>
+#include <kdom/core/NodeImpl.h>
+#include <kdom/events/EventImpl.h>
 
 #include "ksvg.h"
 #include "Ecma.h"

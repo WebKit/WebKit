@@ -30,7 +30,7 @@
 #ifndef KDOM_XMLElementImpl_H
 #define KDOM_XMLElementImpl_H
 
-#include <kdom/impl/ElementImpl.h>
+#include <kdom/core/ElementImpl.h>
 
 namespace KDOM
 {

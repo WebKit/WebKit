@@ -31,7 +31,7 @@
 #include <qvaluevector.h>
 
 #include <kdom/DOMString.h>
-#include <kdom/css/impl/RenderStyle.h>
+#include <kdom/css/RenderStyle.h>
 
 class KURL;
 class QPaintDeviceMetrics;

@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGCSSParser_H
 #define KSVG_SVGCSSParser_H
 
-#include <kdom/css/impl/KDOMCSSParser.h>
+#include <kdom/css/KDOMCSSParser.h>
 
 namespace KSVG
 {

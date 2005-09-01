@@ -20,7 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/impl/AttrImpl.h>
+#include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
 #include "svgattrs.h"

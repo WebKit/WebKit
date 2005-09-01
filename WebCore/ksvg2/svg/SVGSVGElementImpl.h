@@ -25,7 +25,7 @@
 
 #include <qpoint.h>
 
-#include <kdom/events/impl/DocumentEventImpl.h>
+#include <kdom/events/DocumentEventImpl.h>
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"

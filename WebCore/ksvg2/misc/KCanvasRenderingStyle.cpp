@@ -33,10 +33,10 @@
 #include <kcanvas/device/KRenderingPaintServerSolid.h>
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 
-#include <kdom/impl/DocumentImpl.h>
-#include <kdom/css/impl/RenderStyle.h>
-#include <kdom/css/impl/CSSValueListImpl.h>
-#include <kdom/css/impl/CSSPrimitiveValueImpl.h>
+#include <kdom/core/DocumentImpl.h>
+#include <kdom/css/RenderStyle.h>
+#include <kdom/css/CSSValueListImpl.h>
+#include <kdom/css/CSSPrimitiveValueImpl.h>
 
 #include "ksvg.h"
 #include "SVGLengthImpl.h"

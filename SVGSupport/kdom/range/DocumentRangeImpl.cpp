@@ -22,7 +22,7 @@
 
 #include "RangeImpl.h"
 #include "DocumentRangeImpl.h"
-#include <kdom/impl/DocumentImpl.h>
+#include <kdom/core/DocumentImpl.h>
 
 using namespace KDOM;
 

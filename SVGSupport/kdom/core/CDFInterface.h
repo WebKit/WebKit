@@ -23,7 +23,7 @@
 #ifndef KDOM_CDFInterface_H
 #define KDOM_CDFInterface_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

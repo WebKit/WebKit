@@ -25,7 +25,7 @@
 #include <qimage.h>
 #include <qbuffer.h>
 
-#include <kdom/impl/AttrImpl.h>
+#include <kdom/core/AttrImpl.h>
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/cache/KDOMCachedObject.h>
 
@@ -57,7 +57,7 @@
 #include <kdom/parser/KDOMParserFactory.h>
 #endif
 //#include <kdom/DOMConfiguration.h>
-#include <kdom/impl/DOMConfigurationImpl.h>
+#include <kdom/core/DOMConfigurationImpl.h>
 
 using namespace KSVG;
 

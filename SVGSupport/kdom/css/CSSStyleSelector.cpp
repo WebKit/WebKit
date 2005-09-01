@@ -57,7 +57,7 @@
 #include "CSSMediaRuleImpl.h"
 #include "CSSStyleRuleImpl.h"
 #include "CSSValueListImpl.h"
-#include <kdom/css/impl/CSSStyleSelector.h>
+#include <kdom/css/CSSStyleSelector.h>
 #include "CSSImportRuleImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "CSSImageValueImpl.h"
@@ -66,8 +66,8 @@
 #include "CSSPrimitiveValueImpl.h"
 #include "CSSStyleDeclarationImpl.h"
 
-#include <kdom/css/impl/cssvalues.h>
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssvalues.h>
+#include <kdom/css/cssproperties.h>
 
 using namespace KDOM;
 

@@ -43,7 +43,7 @@
 #include "CDFInterface.h"
 #include "MediaListImpl.h"
 #include "DocumentTypeImpl.h"
-#include "kdom/css/impl/CSSStyleSelector.h"
+#include "kdom/css/CSSStyleSelector.h"
 #include "CSSStyleSheetImpl.h"
 #include "LSSerializerImpl.h"
 #include "DOMImplementationImpl.h"

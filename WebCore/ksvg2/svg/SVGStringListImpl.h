@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGStringListImpl_H
 #define KSVG_SVGStringListImpl_H
 
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 #include "SVGList.h"
 

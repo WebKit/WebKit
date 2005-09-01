@@ -25,9 +25,9 @@
 
 #include <qrect.h>
 
-#include <ksvg2/impl/SVGPaintImpl.h>
-#include <kdom/css/impl/RenderStyle.h>
-#include <ksvg2/css/impl/SVGRenderStyleDefs.h>
+#include <ksvg2/svg/SVGPaintImpl.h>
+#include <kdom/css/RenderStyle.h>
+#include <ksvg2/css/SVGRenderStyleDefs.h>
 
 namespace KSVG
 {

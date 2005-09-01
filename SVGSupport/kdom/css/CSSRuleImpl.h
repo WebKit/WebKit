@@ -24,7 +24,7 @@
 #define KDOM_CSSRuleImpl_H
 
 #include <kdom/css/kdomcss.h>
-#include <kdom/css/impl/StyleBaseImpl.h>
+#include <kdom/css/StyleBaseImpl.h>
 
 namespace KDOM
 {

@@ -23,7 +23,7 @@
 #ifndef KDOM_LSParserImpl_H
 #define KDOM_LSParserImpl_H
 
-#include <kdom/events/impl/EventTargetImpl.h>
+#include <kdom/events/EventTargetImpl.h>
 
 class QBuffer;
 class KURL;

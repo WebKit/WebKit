@@ -22,10 +22,10 @@
 
 #include <qstringlist.h>
 
-#include <kdom/css/impl/RGBColorImpl.h>
+#include <kdom/css/RGBColorImpl.h>
 
 #include "ksvg.h"
-#include <ksvg2/css/impl/cssvalues.h>
+#include <ksvg2/css/cssvalues.h>
 #include "SVGColorImpl.h"
 #include "CDFInterface.h"
 #include "SVGDOMImplementationImpl.h"

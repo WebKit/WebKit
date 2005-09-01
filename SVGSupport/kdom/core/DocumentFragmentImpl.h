@@ -29,7 +29,7 @@
 #ifndef KDOM_DocumentFragmentImpl_H
 #define KDOM_DocumentFragmentImpl_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

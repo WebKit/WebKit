@@ -23,7 +23,7 @@
 #ifndef KDOM_SVGZoomEventImpl_H
 #define KDOM_SVGZoomEventImpl_H
 
-#include <kdom/events/impl/UIEventImpl.h>
+#include <kdom/events/UIEventImpl.h>
 
 #include <ksvg2/events/ksvgevents.h>
 

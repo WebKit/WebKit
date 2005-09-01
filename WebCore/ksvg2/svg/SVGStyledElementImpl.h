@@ -28,7 +28,7 @@
 
 #include <qwmatrix.h>
 #include <kcanvas/KCanvasPath.h>
-#include <kdom/css/impl/RenderStyle.h>
+#include <kdom/css/RenderStyle.h>
 
 class KCanvas;
 class KCanvasView;

@@ -23,7 +23,7 @@
 #ifndef KDOM_MouseEventImpl_H
 #define KDOM_MouseEventImpl_H
 
-#include <kdom/events/impl/UIEventImpl.h>
+#include <kdom/events/UIEventImpl.h>
 
 class QMouseEvent;
 

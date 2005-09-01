@@ -26,8 +26,8 @@
 
 // The auto-generated parts
 #include "domattrs.h"
-#include <kdom/css/impl/cssvalues.h>
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssvalues.h>
+#include <kdom/css/cssproperties.h>
 
 using namespace KDOM;
 

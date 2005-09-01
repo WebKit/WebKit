@@ -21,7 +21,7 @@
 */
 
 #include <kdom/Namespace.h>
-#include <kdom/impl/AttrImpl.h>
+#include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
 #include "svgattrs.h"

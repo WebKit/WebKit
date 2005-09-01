@@ -26,7 +26,7 @@
 #include <qobject.h>
 
 #include <kdom/DOMString.h>
-#include <kdom/impl/DOMErrorHandlerImpl.h>
+#include <kdom/core/DOMErrorHandlerImpl.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
 class KURL;

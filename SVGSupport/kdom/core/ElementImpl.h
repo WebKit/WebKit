@@ -30,7 +30,7 @@
 #ifndef KDOM_ElementImpl_H
 #define KDOM_ElementImpl_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 
 namespace KDOM
 {

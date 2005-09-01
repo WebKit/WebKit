@@ -26,7 +26,7 @@
 #ifndef KDOM_ProcessingInstructionImpl_H
 #define KDOM_ProcessingInstructionImpl_H
 
-#include <kdom/impl/NodeImpl.h>
+#include <kdom/core/NodeImpl.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KDOM

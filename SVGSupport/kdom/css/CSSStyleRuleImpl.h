@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSStyleRuleImpl_H
 #define KDOM_CSSStyleRuleImpl_H
 
-#include <kdom/css/impl/CSSRuleImpl.h>
+#include <kdom/css/CSSRuleImpl.h>
 
 #include <qptrlist.h>
 

@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGDOMImplementationImpl_H
 #define KSVG_SVGDOMImplementationImpl_H
 
-#include <kdom/impl/DOMImplementationImpl.h>
+#include <kdom/core/DOMImplementationImpl.h>
 #include <qstringlist.h>
 
 namespace KDOM

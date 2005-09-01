@@ -43,7 +43,7 @@
 #include <kcanvas/device/quartz/KRenderingDeviceQuartz.h>
 #include <kcanvas/device/quartz/QuartzSupport.h>
 
-#include <ksvg2/impl/SVGStyledElementImpl.h>
+#include <ksvg2/svg/SVGStyledElementImpl.h>
 
 #include <kdom/DOMString.h>
 

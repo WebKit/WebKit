@@ -21,8 +21,8 @@
 */
 
 #include <kdom/DOMString.h>
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/impl/NamedAttrMapImpl.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/NamedAttrMapImpl.h>
 
 #include "svgattrs.h"
 #include "SVGHelper.h"

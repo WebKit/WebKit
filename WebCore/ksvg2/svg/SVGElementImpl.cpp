@@ -23,10 +23,10 @@
 #include <kdom/kdom.h>
 #include <kdom/Namespace.h>
 #include <kdom/DOMString.h>
-#include <kdom/impl/domattrs.h>
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/css/impl/CSSStyleSheetImpl.h>
-#include <kdom/events/impl/EventListenerImpl.h>
+#include <kdom/core/domattrs.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/css/CSSStyleSheetImpl.h>
+#include <kdom/events/EventListenerImpl.h>
 
 #include "ksvg.h"
 #include "svgattrs.h"

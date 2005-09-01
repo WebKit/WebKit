@@ -23,7 +23,7 @@
 #ifndef KDOM_MutationEventImpl_H
 #define KDOM_MutationEventImpl_H
 
-#include <kdom/events/impl/EventImpl.h>
+#include <kdom/events/EventImpl.h>
 
 namespace KDOM
 {

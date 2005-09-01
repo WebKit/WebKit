@@ -20,8 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/impl/NodeImpl.h>
-#include <kdom/impl/DocumentImpl.h>
+#include <kdom/core/NodeImpl.h>
+#include <kdom/core/DocumentImpl.h>
 
 #include "GlobalObject.h"
 #include "Constructors.h"

@@ -23,7 +23,7 @@
 #ifndef KDOM_CommentImpl_H
 #define KDOM_CommentImpl_H
 
-#include <kdom/impl/TextImpl.h>
+#include <kdom/core/TextImpl.h>
 
 namespace KDOM
 {

@@ -28,7 +28,7 @@
 #ifndef KDOM_NodeIteratorImpl_H
 #define KDOM_NodeIteratorImpl_H
 
-#include <kdom/traversal/impl/TraversalImpl.h>
+#include <kdom/traversal/TraversalImpl.h>
 
 namespace KDOM
 {

@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSUnknownRuleImpl_H
 #define KDOM_CSSUnknownRuleImpl_H
 
-#include <kdom/css/impl/CSSRuleImpl.h>
+#include <kdom/css/CSSRuleImpl.h>
 
 namespace KDOM
 {

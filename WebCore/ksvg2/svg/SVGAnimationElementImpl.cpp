@@ -23,10 +23,10 @@
 #include <float.h>
 
 #include <kdom/kdom.h>
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/impl/CDFInterface.h>
-#include <kdom/impl/DOMImplementationImpl.h>
-#include <kdom/css/impl/CSSStyleDeclarationImpl.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/CDFInterface.h>
+#include <kdom/core/DOMImplementationImpl.h>
+#include <kdom/css/CSSStyleDeclarationImpl.h>
 #include <kdom/DOMString.h>
 
 #include "svgattrs.h"

@@ -36,14 +36,14 @@
 
 #include <kdom/Helper.h>
 #include "RectImpl.h"
-#include <kdom/css/impl/KDOMCSSParser.h>
-#include <kdom/css/impl/cssvalues.h>
+#include <kdom/css/KDOMCSSParser.h>
+#include <kdom/css/cssvalues.h>
 #include "CounterImpl.h"
 #include "CSSRuleImpl.h"
 #include "CSSValueImpl.h"
 #include "CDFInterface.h"
 #include "DocumentImpl.h"
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssproperties.h>
 #include "CSSValueListImpl.h"
 #include "CSSStyleRuleImpl.h"
 #include "CSSMediaRuleImpl.h"

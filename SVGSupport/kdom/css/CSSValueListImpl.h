@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSValueListImpl_H
 #define KDOM_CSSValueListImpl_H
 
-#include <kdom/css/impl/CSSValueImpl.h>
+#include <kdom/css/CSSValueImpl.h>
 
 #include <qptrlist.h>
 

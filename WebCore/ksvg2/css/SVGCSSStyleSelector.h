@@ -27,7 +27,7 @@
 #ifndef KSVG_SVGCSSStyleSelector_H
 #define KSVG_SVGCSSStyleSelector_H
 
-#include <kdom/css/impl/CSSStyleSelector.h>
+#include <kdom/css/CSSStyleSelector.h>
 
 namespace KDOM
 {

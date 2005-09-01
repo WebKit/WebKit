@@ -21,12 +21,12 @@
 */
 
 #include <kdom/DOMString.h>
-#include <kdom/css/impl/cssvalues.h>
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssvalues.h>
+#include <kdom/css/cssproperties.h>
 
-#include <ksvg2/css/impl/cssvalues.h>
+#include <ksvg2/css/cssvalues.h>
 #include "KSVGCSSParser.h"
-#include <ksvg2/css/impl/cssproperties.h>
+#include <ksvg2/css/cssproperties.h>
 #include "SVGCSSStyleDeclarationImpl.h"
 
 using namespace KSVG;

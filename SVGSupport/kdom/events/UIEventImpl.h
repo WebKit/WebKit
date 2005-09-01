@@ -23,7 +23,7 @@
 #ifndef KDOM_UIEventImpl_H
 #define KDOM_UIEventImpl_H
 
-#include <kdom/events/impl/EventImpl.h>
+#include <kdom/events/EventImpl.h>
 
 namespace KDOM
 {

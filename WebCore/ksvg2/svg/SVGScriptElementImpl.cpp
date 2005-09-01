@@ -22,7 +22,7 @@
 
 #include <kdom/DOMString.h>
 //#include <kdom/ecma/Ecma.h>
-#include <kdom/impl/AttrImpl.h>
+#include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
 #include "svgattrs.h"

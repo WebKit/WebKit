@@ -23,7 +23,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 #include "ksvg.h"
 #include "SVGMatrixImpl.h"

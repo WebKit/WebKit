@@ -23,7 +23,7 @@
 #ifndef KDOM_CDATASectionImpl_H
 #define KDOM_CDATASectionImpl_H
 
-#include <kdom/impl/TextImpl.h>
+#include <kdom/core/TextImpl.h>
 
 namespace KDOM
 {

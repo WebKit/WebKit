@@ -23,7 +23,7 @@
 #ifndef KDOM_CSSImportRuleImpl_H
 #define KDOM_CSSImportRuleImpl_H
 
-#include <kdom/css/impl/CSSRuleImpl.h>
+#include <kdom/css/CSSRuleImpl.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KDOM

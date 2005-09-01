@@ -27,21 +27,21 @@
 #include <stdlib.h>
 
 #include <kdom/DOMString.h>
-#include <kdom/impl/domattrs.h>
-#include <kdom/impl/CDFInterface.h>
-#include <kdom/impl/DocumentImpl.h>
-#include <kdom/impl/DOMImplementationImpl.h>
+#include <kdom/core/domattrs.h>
+#include <kdom/core/CDFInterface.h>
+#include <kdom/core/DocumentImpl.h>
+#include <kdom/core/DOMImplementationImpl.h>
 
-#include <kdom/css/impl/CSSRuleImpl.h>
-#include <kdom/css/impl/CSSValueImpl.h>
-#include <kdom/css/impl/MediaListImpl.h>
-#include <kdom/css/impl/CSSRuleListImpl.h>
-#include <kdom/css/impl/CSSMediaRuleImpl.h>
-#include <kdom/css/impl/CSSStyleRuleImpl.h>
-#include <kdom/css/impl/CSSImportRuleImpl.h>
-#include <kdom/css/impl/CSSStyleSheetImpl.h>
+#include <kdom/css/CSSRuleImpl.h>
+#include <kdom/css/CSSValueImpl.h>
+#include <kdom/css/MediaListImpl.h>
+#include <kdom/css/CSSRuleListImpl.h>
+#include <kdom/css/CSSMediaRuleImpl.h>
+#include <kdom/css/CSSStyleRuleImpl.h>
+#include <kdom/css/CSSImportRuleImpl.h>
+#include <kdom/css/CSSStyleSheetImpl.h>
 
-#include <kdom/css/impl/KDOMCSSParser.h>
+#include <kdom/css/KDOMCSSParser.h>
 
 #include <kdebug.h>
 

@@ -23,7 +23,7 @@
 #ifndef KDOM_LSSerializerFilterImpl_H
 #define KDOM_LSSerializerFilterImpl_H
 
-#include <kdom/traversal/impl/NodeFilterImpl.h>
+#include <kdom/traversal/NodeFilterImpl.h>
 
 namespace KDOM
 {

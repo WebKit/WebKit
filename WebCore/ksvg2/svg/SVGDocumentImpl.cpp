@@ -32,15 +32,15 @@
 #include <kdom/Namespace.h>
 //#include <kdom/DocumentType.h>
 //#include <kdom/events/Event.h>
-#include <kdom/impl/domattrs.h>
+#include <kdom/core/domattrs.h>
 #include <kdom/cache/KDOMLoader.h>
-#include <kdom/impl/CDFInterface.h>
+#include <kdom/core/CDFInterface.h>
 #include <kdom/cache/KDOMCachedObject.h>
-#include <kdom/css/impl/CSSStyleSheetImpl.h>
-#include <kdom/events/impl/MouseEventImpl.h>
-#include <kdom/css/impl/StyleSheetListImpl.h>
-#include <kdom/events/impl/KeyboardEventImpl.h>
-#include <kdom/impl/ProcessingInstructionImpl.h>
+#include <kdom/css/CSSStyleSheetImpl.h>
+#include <kdom/events/MouseEventImpl.h>
+#include <kdom/css/StyleSheetListImpl.h>
+#include <kdom/events/KeyboardEventImpl.h>
+#include <kdom/core/ProcessingInstructionImpl.h>
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasItem.h>

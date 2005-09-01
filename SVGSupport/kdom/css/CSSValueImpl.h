@@ -27,7 +27,7 @@
 
 #include <kdom/DOMString.h>
 #include <kdom/css/kdomcss.h>
-#include <kdom/css/impl/StyleBaseImpl.h>
+#include <kdom/css/StyleBaseImpl.h>
 
 namespace KDOM
 {

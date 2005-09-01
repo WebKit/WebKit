@@ -24,7 +24,7 @@
 #define KSVG_SVGPathSegImpl_H
 
 #include <kdom/Shared.h>
-#include <kdom/impl/DOMStringImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 #include "ksvg.h"
 //#include "SVGPathSeg.h"

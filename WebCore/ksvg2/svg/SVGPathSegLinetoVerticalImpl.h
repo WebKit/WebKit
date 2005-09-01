@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGPathSegLinetoVerticalImpl_H
 #define KSVG_SVGPathSegLinetoVerticalImpl_H
 
-#include <ksvg2/impl/SVGPathSegImpl.h>
+#include <ksvg2/svg/SVGPathSegImpl.h>
 
 namespace KSVG
 {

@@ -26,11 +26,11 @@
 #include <kdom/Helper.h>
 #include <kdom/DOMString.h>
 #include <kdom/Namespace.h>
-#include <kdom/impl/ElementImpl.h>
-#include <kdom/impl/DocumentImpl.h>
-#include <kdom/impl/DOMExceptionImpl.h>
-#include <kdom/impl/DocumentTypeImpl.h>
-#include <kdom/css/impl/MediaListImpl.h>
+#include <kdom/core/ElementImpl.h>
+#include <kdom/core/DocumentImpl.h>
+#include <kdom/core/DOMExceptionImpl.h>
+#include <kdom/core/DocumentTypeImpl.h>
+#include <kdom/css/MediaListImpl.h>
 
 #include "ksvg.h"
 #include "ksvgevents.h"

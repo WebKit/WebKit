@@ -25,15 +25,15 @@
 #include <ksvg2/ecma/EcmaInterface.h>
 #include "SVGRenderStyle.h"
 
-#include <kdom/impl/domattrs.h>
-#include <kdom/css/impl/cssvalues.h>
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/core/domattrs.h>
+#include <kdom/css/cssvalues.h>
+#include <kdom/css/cssproperties.h>
 
 // The auto-generated parts
 #include "svgtags.h"
 #include "svgattrs.h"
-#include <ksvg2/css/impl/cssvalues.h>
-#include <ksvg2/css/impl/cssproperties.h>
+#include <ksvg2/css/cssvalues.h>
+#include <ksvg2/css/cssproperties.h>
 
 using namespace KSVG;
 

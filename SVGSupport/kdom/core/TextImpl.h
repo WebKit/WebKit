@@ -23,7 +23,7 @@
 #ifndef KDOM_TextImpl_H
 #define KDOM_TextImpl_H
 
-#include <kdom/impl/CharacterDataImpl.h>
+#include <kdom/core/CharacterDataImpl.h>
 
 namespace KDOM
 {

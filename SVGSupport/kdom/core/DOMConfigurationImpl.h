@@ -25,7 +25,7 @@
 
 #include <kdom/Shared.h>
 #include <kdom/DOMString.h>
-#include <kdom/impl/DOMErrorHandlerImpl.h>
+#include <kdom/core/DOMErrorHandlerImpl.h>
 
 namespace KDOM
 {

@@ -36,10 +36,10 @@
 #include "kdomcss.h"
 #include "domattrs.h"
 #include "KDOMCSSParser.h"
-#include <kdom/css/impl/cssvalues.h>
+#include <kdom/css/cssvalues.h>
 #include "DocumentImpl.h"
 #include "CDFInterface.h"
-#include <kdom/css/impl/cssproperties.h>
+#include <kdom/css/cssproperties.h>
 #include "StyleBaseImpl.h"
 #include "CSSStyleSheetImpl.h"
 #include "CSSStyleDeclarationImpl.h"

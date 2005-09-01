@@ -30,8 +30,8 @@
 #ifndef KDOM_NamedAttrMapImpl_H
 #define KDOM_NamedAttrMapImpl_H
 
-#include <kdom/impl/AttrImpl.h>
-#include <kdom/impl/NamedNodeMapImpl.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/NamedNodeMapImpl.h>
 
 namespace KDOM
 {

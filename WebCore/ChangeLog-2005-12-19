@@ -1,5 +1,183 @@
 2005-09-01  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        * WebCore+SVG/DrawCanvasItem.mm: header include changes.
+        * WebCore+SVG/DrawDocument.mm:
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * kdom/cache/KDOMLoader.cpp:
+        * kdom/core/AttrImpl.h:
+        * kdom/core/CDATASectionImpl.h:
+        * kdom/core/CDFInterface.cpp:
+        * kdom/core/CDFInterface.h:
+        * kdom/core/CharacterDataImpl.h:
+        * kdom/core/CommentImpl.h:
+        * kdom/core/DOMConfigurationImpl.h:
+        * kdom/core/DOMImplementationImpl.cpp:
+        * kdom/core/DocumentFragmentImpl.h:
+        * kdom/core/DocumentImpl.cpp:
+        * kdom/core/DocumentImpl.h:
+        * kdom/core/DocumentTypeImpl.h:
+        * kdom/core/ElementImpl.h:
+        * kdom/core/EntityImpl.h:
+        * kdom/core/EntityReferenceImpl.h:
+        * kdom/core/NamedAttrMapImpl.h:
+        * kdom/core/NamedNodeMapImpl.h:
+        * kdom/core/NodeImpl.h:
+        * kdom/core/NotationImpl.h:
+        * kdom/core/ProcessingInstructionImpl.h:
+        * kdom/core/TagNodeListImpl.h:
+        * kdom/core/TextImpl.h:
+        * kdom/core/XMLElementImpl.h:
+        * kdom/css/CSSCharsetRuleImpl.h:
+        * kdom/css/CSSFontFaceRuleImpl.h:
+        * kdom/css/CSSHelper.h:
+        * kdom/css/CSSImageValueImpl.cpp:
+        * kdom/css/CSSImageValueImpl.h:
+        * kdom/css/CSSImportRuleImpl.h:
+        * kdom/css/CSSMediaRuleImpl.h:
+        * kdom/css/CSSPageRuleImpl.h:
+        * kdom/css/CSSPrimitiveValueImpl.cpp:
+        * kdom/css/CSSPrimitiveValueImpl.h:
+        * kdom/css/CSSRuleImpl.h:
+        * kdom/css/CSSStyleDeclarationImpl.cpp:
+        * kdom/css/CSSStyleDeclarationImpl.h:
+        * kdom/css/CSSStyleRuleImpl.h:
+        * kdom/css/CSSStyleSelector.cpp:
+        * kdom/css/CSSStyleSelector.h:
+        * kdom/css/CSSStyleSheetImpl.h:
+        * kdom/css/CSSUnknownRuleImpl.h:
+        * kdom/css/CSSValueImpl.h:
+        * kdom/css/CSSValueListImpl.h:
+        * kdom/css/DocumentCSSImpl.h:
+        * kdom/css/KDOMCSSParser.cpp:
+        * kdom/css/KDOMCSSParser.h:
+        * kdom/css/MediaListImpl.h:
+        * kdom/css/RenderStyle.h:
+        * kdom/css/RenderStyleDefs.h:
+        * kdom/css/StyleBaseImpl.cpp:
+        * kdom/css/StyleBaseImpl.h:
+        * kdom/css/StyleSheetImpl.h:
+        * kdom/css/kdomparsercss.y:
+        * kdom/events/EventListenerImpl.h:
+        * kdom/events/KeyboardEventImpl.h:
+        * kdom/events/MouseEventImpl.h:
+        * kdom/events/MutationEventImpl.h:
+        * kdom/events/UIEventImpl.h:
+        * kdom/ls/LSParserImpl.h:
+        * kdom/ls/LSSerializerFilterImpl.h:
+        * kdom/parser/KDOMParser.h:
+        * kdom/range/DocumentRangeImpl.cpp:
+        * kdom/traversal/NodeIteratorImpl.h:
+        * kdom/traversal/TreeWalkerImpl.h:
+        * kdom/xpath/XPathNamespaceImpl.h:
+        * ksvg2/css/KSVGCSSParser.cpp:
+        * ksvg2/css/KSVGCSSParser.h:
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.cpp:
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.h:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/css/SVGCSSStyleSelector.h:
+        * ksvg2/css/SVGCSSStyleSheetImpl.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/ecma/Ecma.cpp:
+        * ksvg2/ecma/GlobalObject.cpp:
+        * ksvg2/events/SVGEvent.cpp:
+        * ksvg2/events/SVGEventImpl.h:
+        * ksvg2/events/SVGZoomEvent.cpp:
+        * ksvg2/events/SVGZoomEventImpl.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+        * ksvg2/svg/CDFInterface.cpp:
+        * ksvg2/svg/CDFInterface.h:
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGCircleElementImpl.cpp:
+        * ksvg2/svg/SVGClipPathElementImpl.cpp:
+        * ksvg2/svg/SVGColorImpl.cpp:
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        * ksvg2/svg/SVGElementImpl.h:
+        * ksvg2/svg/SVGElementInstanceImpl.h:
+        * ksvg2/svg/SVGEllipseElementImpl.cpp:
+        * ksvg2/svg/SVGExternalResourcesRequiredImpl.cpp:
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        * ksvg2/svg/SVGFEMergeNodeElementImpl.cpp:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        * ksvg2/svg/SVGFilterElementImpl.cpp:
+        * ksvg2/svg/SVGFilterPrimitiveStandardAttributesImpl.cpp:
+        * ksvg2/svg/SVGFitToViewBoxImpl.cpp:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        * ksvg2/svg/SVGLangSpaceImpl.cpp:
+        * ksvg2/svg/SVGLengthImpl.h:
+        * ksvg2/svg/SVGLineElementImpl.cpp:
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        * ksvg2/svg/SVGPathElementImpl.cpp:
+        * ksvg2/svg/SVGPathSegClosePathImpl.h:
+        * ksvg2/svg/SVGPathSegImpl.h:
+        * ksvg2/svg/SVGPathSegLinetoHorizontalImpl.h:
+        * ksvg2/svg/SVGPathSegLinetoImpl.h:
+        * ksvg2/svg/SVGPathSegLinetoVerticalImpl.h:
+        * ksvg2/svg/SVGPathSegMovetoImpl.h:
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        * ksvg2/svg/SVGRectElementImpl.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        * ksvg2/svg/SVGStopElementImpl.cpp:
+        * ksvg2/svg/SVGStringListImpl.h:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * ksvg2/svg/SVGSwitchElementImpl.cpp:
+        * ksvg2/svg/SVGTestsImpl.cpp:
+        * ksvg2/svg/SVGTextContentElementImpl.cpp:
+        * ksvg2/svg/SVGTextPositioningElementImpl.cpp:
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        * ksvg2/svg/SVGURIReferenceImpl.cpp:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        * ksvg2/svg/SVGViewElementImpl.cpp:
+        * ksvg2/svg/SVGZoomAndPanImpl.cpp:
+        I renamed:
+        kdom/impl -> kdom/core
+        kdom/css/impl/* -> kdom/css/*
+        kdom/css/impl/* -> kdom/css/*
+        kdom/ls/impl/* -> kdom/ls/*
+        kdom/events/impl/* -> kdom/events/*
+        kdom/range/impl/* -> kdom/range/*
+        kdom/traversal/impl/* -> kdom/traversal/*
+        ksvg2/core -> ksvg2/misc
+        kdom/impl -> kdom/svg
+        ksvg2/css/impl/* -> ksvg2/css/*
+        ksvg2/events/impl/* -> ksvg2/events/*
+        And made all the necessary header include and project file changes.
+        This now brings our source tree fully up-to-date with all the
+        recent kdom/ksvg2 file re-orgs (which were done per our request).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4790
+
+2005-09-01  Eric Seidel  <eseidel@apple.com>
+
         Rubber stamped by mjs.
 
         Replaced tabs with spaces throughout all of SVGSupport, excepting
