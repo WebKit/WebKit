@@ -73,11 +73,11 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasRegistry &r)
     } else 
     {   
         ts << endl;
-        for (QDictIterator<KCanvasResource> it(r.m_resources); (*it); ++it) 
+        for (Q3DictIterator<KCanvasResource> it(r.m_resources); (*it); ++it) 
         {            
             ts << "  KCanvasResource {id=\"" << it.currentKey() << "\" " << *(*it) << "}" << endl;
         }
-        for (QDictIterator<KRenderingPaintServer> it(r.m_pservers); (*it); ++it)
+        for (Q3DictIterator<KRenderingPaintServer> it(r.m_pservers); (*it); ++it)
         {
             ts << "  KRenderingPaintServer {id=\"" << it.currentKey() << "\" " << *(*it) <<"}" << endl;
         }

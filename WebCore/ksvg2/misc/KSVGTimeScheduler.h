@@ -26,7 +26,7 @@
 #include <qtimer.h>
 #include <qobject.h>
 #include <qdatetime.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include "SVGAnimationElementImpl.h"
 
@@ -38,7 +38,7 @@ namespace KSVG
         SVGAnimationElementImpl *animation;
     } SVGNotificationStruct;
     
-    typedef QValueList<SVGNotificationStruct> SVGNotifyList;
+    typedef Q3ValueList<SVGNotificationStruct> SVGNotifyList;
 
     class TimeScheduler;
     class SVGTimer
@@ -73,7 +73,7 @@ namespace KSVG
         SVGNotifyList m_notifyList;
     };
 
-    typedef QValueList<SVGTimer *> SVGTimerList;
+    typedef Q3ValueList<SVGTimer *> SVGTimerList;
 
     class SVGDocumentImpl;
     class TimeScheduler : public QObject

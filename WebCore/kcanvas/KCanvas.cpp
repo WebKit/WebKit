@@ -21,7 +21,7 @@
 #include <kdebug.h>
 #include <kglobal.h>
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include "KCanvas.h"
 #include "KCanvasView.h"
@@ -53,7 +53,7 @@ public:
     KCanvasRegistry *registry;
     KRenderingDevice *renderingDevice;
 
-    QValueList<const KCanvasView *> viewList;
+    Q3ValueList<const KCanvasView *> viewList;
 };
 
 KCanvas::KCanvas(KRenderingDevice *device) : d(new Private(device))
@@ -107,8 +107,8 @@ void KCanvas::setCanvasSize(const QSize &size)
     d->canvasSize = size;
 
     // Resize all views...
-    QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
-    QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
+    Q3ValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
+    Q3ValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
 
     for(; it != end; ++it)
         const_cast<KCanvasView *>(*it)->canvasSizeChanged(size.width(), size.height());
@@ -134,8 +134,8 @@ KCanvasContainer *KCanvas::rootContainer() const
 void KCanvas::invalidate(const KCanvasItem *item)
 {
     // Invalidate the item in all views
-    QValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
-    QValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
+    Q3ValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
+    Q3ValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
 
     for(; it != end; ++it)
         (*it)->invalidateCanvasItem(item);

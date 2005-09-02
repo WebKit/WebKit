@@ -1302,7 +1302,7 @@ unsigned short NodeImpl::compareDocumentPosition(NodeImpl *other) const
        nodeType() == ENTITY_NODE || nodeType() == NOTATION_NODE)
         return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
 
-    QPtrList<NodeImpl> containers;
+    Q3PtrList<NodeImpl> containers;
     NodeImpl *container = const_cast<NodeImpl *>(this);
     while(container)
     {

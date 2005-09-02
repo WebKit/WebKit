@@ -28,7 +28,7 @@
 #include "expression.h"
 #include "step.h"
 
-template <typename T> class QValueList;
+template <typename T> class Q3ValueList;
 
 class Path : public Expression
 {
@@ -45,7 +45,7 @@ class Path : public Expression
     private:
         virtual Value doEvaluate() const;
 
-        QValueList<Step *> m_steps;
+        Q3ValueList<Step *> m_steps;
         bool m_absolute;
 };
 

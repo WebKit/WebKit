@@ -74,7 +74,7 @@ CSSStyleDeclarationImpl *CSSStyleRuleImpl::style() const
     return m_style;
 }
 
-void CSSStyleRuleImpl::setSelector(QPtrList<CSSSelector> *selector)
+void CSSStyleRuleImpl::setSelector(Q3PtrList<CSSSelector> *selector)
 {
     m_selector = selector;
 }

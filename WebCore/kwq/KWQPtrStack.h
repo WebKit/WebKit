@@ -45,6 +45,8 @@ public:
 
 };
 
+#define Q3PtrStack QPtrStack
+
 #ifdef _KWQ_IOSTREAM_
 
 template<class T>

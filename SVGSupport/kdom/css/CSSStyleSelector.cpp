@@ -34,9 +34,9 @@
 #include <kglobal.h>
 
 #include <qtooltip.h>
-#include <qvaluevector.h>
+#include <q3valuevector.h>
 #include <qapplication.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 
 #include "Font.h"
 #include "KDOMPart.h"
@@ -148,7 +148,7 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl *doc, const QString &userStyleSh
     // add stylesheets from document
     authorStyle = new CSSStyleSelectorList();
 
-    QPtrListIterator<StyleSheetImpl> it(styleSheets->styleSheets);
+    Q3PtrListIterator<StyleSheetImpl> it(styleSheets->styleSheets);
     for(; it.current(); ++it)
     {
            if(it.current()->isCSSStyleSheet())
@@ -228,13 +228,13 @@ void CSSStyleSelector::clear()
 
 #define MAXFONTSIZES 9
 
-void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics *paintDeviceMetrics, int zoomFactor)
+void CSSStyleSelector::computeFontSizes(Q3PaintDeviceMetrics *paintDeviceMetrics, int zoomFactor)
 {
     computeFontSizesFor(paintDeviceMetrics, zoomFactor, m_fontSizes, false);
     computeFontSizesFor(paintDeviceMetrics, zoomFactor, m_fixedFontSizes, true);
 }
 
-void CSSStyleSelector::computeFontSizesFor(QPaintDeviceMetrics *paintDeviceMetrics, int zoomFactor, QValueVector<int> &fontSizes, bool isFixed)
+void CSSStyleSelector::computeFontSizesFor(Q3PaintDeviceMetrics *paintDeviceMetrics, int zoomFactor, Q3ValueVector<int> &fontSizes, bool isFixed)
 {
     Q_UNUSED(isFixed);
         
@@ -303,7 +303,7 @@ static inline void bubbleSort(CSSOrderedProperty **b, CSSOrderedProperty **e)
     }
 }
 
-static inline int nextFontSize(const QValueVector<int> &a, int v, bool smaller)
+static inline int nextFontSize(const Q3ValueVector<int> &a, int v, bool smaller)
 {
     // return the nearest bigger/smaller value in scale a, when v is in range.
     // otherwise increase/decrease value using a 1.2 fixed ratio
@@ -547,8 +547,8 @@ unsigned int CSSStyleSelector::addInlineDeclarations(ElementImpl *e,
     if(!decl && !addDecls)
         return numProps;
 
-    QPtrList<CSSProperty> *values = decl ? decl->values() : 0;
-    QPtrList<CSSProperty> *addValues = addDecls ? addDecls->values() : 0;
+    Q3PtrList<CSSProperty> *values = decl ? decl->values() : 0;
+    Q3PtrList<CSSProperty> *addValues = addDecls ? addDecls->values() : 0;
     if(!values && !addValues)
         return numProps;
 
@@ -1495,7 +1495,7 @@ void CSSStyleSelector::buildLists()
     clearLists();
     // collect all selectors and Properties in lists. Then transfer them to the array for faster lookup.
 
-    QPtrList<CSSSelector> selectorList;
+    Q3PtrList<CSSSelector> selectorList;
     CSSOrderedPropertyList propertyList;
 
     if(m_medium == "print" && defaultPrintStyle)
@@ -1586,7 +1586,7 @@ CSSOrderedRule::~CSSOrderedRule()
 
 // -----------------------------------------------------------------
 
-CSSStyleSelectorList::CSSStyleSelectorList() : QPtrList<CSSOrderedRule>()
+CSSStyleSelectorList::CSSStyleSelectorList() : Q3PtrList<CSSOrderedRule>()
 {
     setAutoDelete(true);
 }
@@ -1613,11 +1613,11 @@ void CSSStyleSelectorList::append(CSSStyleSheetImpl *sheet, DOMStringImpl *mediu
         if(item->isStyleRule())
         {
             CSSStyleRuleImpl *r = static_cast<CSSStyleRuleImpl *>(item);
-            QPtrList<CSSSelector> *s = r->selector();
+            Q3PtrList<CSSSelector> *s = r->selector();
             for(int j = 0; j <(int)s->count(); j++)
             {
                 CSSOrderedRule *rule = new CSSOrderedRule(r, s->at(j), count());
-                QPtrList<CSSOrderedRule>::append(rule);
+                Q3PtrList<CSSOrderedRule>::append(rule);
                 //kdDebug() << "appending StyleRule!" << endl;
             }
         }
@@ -1658,11 +1658,11 @@ void CSSStyleSelectorList::append(CSSStyleSheetImpl *sheet, DOMStringImpl *mediu
                         // It is a StyleRule, so append it to our list
                         CSSStyleRuleImpl *styleRule = static_cast<CSSStyleRuleImpl *>(childItem);
 
-                        QPtrList<CSSSelector> *s = styleRule->selector();
+                        Q3PtrList<CSSSelector> *s = styleRule->selector();
                         for(int j = 0; j <(int) s->count(); j++)
                         {
                             CSSOrderedRule *orderedRule = new CSSOrderedRule(styleRule, s->at(j), count());
-                            QPtrList<CSSOrderedRule>::append(orderedRule);
+                            Q3PtrList<CSSOrderedRule>::append(orderedRule);
                         }
                     }
                     else
@@ -1682,7 +1682,7 @@ void CSSStyleSelectorList::append(CSSStyleSheetImpl *sheet, DOMStringImpl *mediu
     }
 }
 
-void CSSStyleSelectorList::collect(QPtrList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList, Source regular, Source important)
+void CSSStyleSelectorList::collect(Q3PtrList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList, Source regular, Source important)
 {
     CSSOrderedRule *r = first();
     while(r)
@@ -1707,7 +1707,7 @@ void CSSStyleSelectorList::collect(QPtrList<CSSSelector> *selectorList, CSSOrder
 
 // -------------------------------------------------------------------------
 
-int CSSOrderedPropertyList::compareItems(QPtrCollection::Item i1, QPtrCollection::Item i2)
+int CSSOrderedPropertyList::compareItems(Q3PtrCollection::Item i1, Q3PtrCollection::Item i2)
 {
     int diff = static_cast<CSSOrderedProperty *>(i1)->priority -
                static_cast<CSSOrderedProperty *>(i2)->priority;
@@ -1720,7 +1720,7 @@ void CSSOrderedPropertyList::append(CSSStyleDeclarationImpl *decl,
                                     unsigned int selector, unsigned int specificity,
                                     Source regular, Source important)
 {
-    QPtrList<CSSProperty> *values = decl->values();
+    Q3PtrList<CSSProperty> *values = decl->values();
     if(!values)
         return;
 
@@ -1734,14 +1734,14 @@ void CSSOrderedPropertyList::append(CSSStyleDeclarationImpl *decl,
         if(prop->m_nonCSSHint) source = NonCSSHint;
 
         bool first = ((decl && decl->interface()) ? decl->interface()->cssPropertyApplyFirst(prop->m_id) : false);
-        QPtrList<CSSOrderedProperty>::append(new CSSOrderedProperty(prop, selector, first, source, specificity, count()));
+        Q3PtrList<CSSOrderedProperty>::append(new CSSOrderedProperty(prop, selector, first, source, specificity, count()));
     }
 }
 
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 Length CSSStyleSelector::convertToLength(CSSPrimitiveValueImpl *primitiveValue, RenderStyle *style,
-                                         QPaintDeviceMetrics *paintDeviceMetrics, bool *ok)
+                                         Q3PaintDeviceMetrics *paintDeviceMetrics, bool *ok)
 {
     Length l;
     if(!primitiveValue)
@@ -3382,7 +3382,7 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
         {
             // keywords are being used.  Pick the correct default
             // based off the font family.
-            const QValueVector<int> &fontSizes = m_fontSizes;
+            const Q3ValueVector<int> &fontSizes = m_fontSizes;
             switch(primitiveValue->getIdent())
             {
                 case CSS_VAL_XX_SMALL:

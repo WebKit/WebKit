@@ -29,7 +29,7 @@
 #define KDOM_CacheHelper_H
 
 #include <qptrdict.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kdom/cache/KDOMCachedObject.h>
 

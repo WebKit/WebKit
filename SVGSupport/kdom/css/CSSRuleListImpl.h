@@ -25,7 +25,7 @@
 
 #include <kdom/Shared.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 namespace KDOM
 {
@@ -46,7 +46,7 @@ namespace KDOM
         void append(CSSRuleImpl *rule);
 
     protected:
-        QPtrList<CSSRuleImpl> m_lstCSSRules;
+        Q3PtrList<CSSRuleImpl> m_lstCSSRules;
     };
 };
 

@@ -23,7 +23,7 @@
 #ifndef KSVG_SVGDocumentImpl_H
 #define KSVG_SVGDocumentImpl_H
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kdom/core/DocumentImpl.h>
 #include <kdom/cache/KDOMCachedScript.h>
@@ -116,8 +116,8 @@ namespace KSVG
         void addScripts(KDOM::NodeImpl *obj);
 
         KDOM::CachedScript *m_cachedScript;
-        QPtrList<SVGScriptElementImpl> m_scripts;
-        QPtrListIterator<SVGScriptElementImpl> *m_scriptsIt;
+        Q3PtrList<SVGScriptElementImpl> m_scripts;
+        Q3PtrListIterator<SVGScriptElementImpl> *m_scriptsIt;
     };
 };
 

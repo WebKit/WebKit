@@ -26,7 +26,7 @@
 
 #include "NodeImpl.h"
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 using namespace KDOM;
 
@@ -37,7 +37,7 @@ Path::Path()
 
 Path::~Path()
 {
-    QValueList<Step *>::Iterator it, end = m_steps.end();
+    Q3ValueList<Step *>::Iterator it, end = m_steps.end();
     for ( it = m_steps.begin(); it != end; ++it ) {
         delete *it;
     }
@@ -50,7 +50,7 @@ void Path::addStep( Step *step )
 
 void Path::optimize()
 {
-    QValueList<Step *>::Iterator it, end = m_steps.end();
+    Q3ValueList<Step *>::Iterator it, end = m_steps.end();
     for ( it = m_steps.begin(); it != end; ++it ) {
         ( *it )->optimize();
     }
@@ -78,8 +78,8 @@ Value Path::doEvaluate() const
 
     inDomNodes.append( context );
 
-    QValueList<Step *>::ConstIterator it = m_steps.begin();
-    QValueList<Step *>::ConstIterator end = m_steps.end();
+    Q3ValueList<Step *>::ConstIterator it = m_steps.begin();
+    Q3ValueList<Step *>::ConstIterator end = m_steps.end();
     for ( ; it != end; ++it ) {
         Step *step = *it;
         for ( unsigned int i = 0; i < inDomNodes.count(); ++i ) {
@@ -101,7 +101,7 @@ QString Path::dump() const
     QString s = "<path absolute=\"";
     s += m_absolute ? "true" : "false";
     s += "\">";
-    QValueList<Step *>::ConstIterator it, end = m_steps.end();
+    Q3ValueList<Step *>::ConstIterator it, end = m_steps.end();
     for ( it = m_steps.begin(); it != end; ++it ) {
         s += ( *it )->dump();
     }

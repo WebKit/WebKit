@@ -23,7 +23,7 @@
 #ifndef KRenderingStyle_H
 #define KRenderingStyle_H
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qstringlist.h>
 
 // Enumerations
@@ -54,7 +54,7 @@ typedef enum
 } KCImageRendering;
 
 // Special types
-typedef QValueList<float> KCDashArray;
+typedef Q3ValueList<float> KCDashArray;
 
 class KCanvasMatrix;
 class KCanvasFilter;

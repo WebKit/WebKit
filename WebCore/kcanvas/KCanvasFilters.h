@@ -80,7 +80,7 @@ public:
 
 protected:
     QRect m_filterRect;
-    QValueList<KCanvasFilterEffect *> m_effects;
+    Q3ValueList<KCanvasFilterEffect *> m_effects;
     bool m_filterBBoxMode;
     bool m_effectBBoxMode;
 };
@@ -208,14 +208,14 @@ public:
     KCColorMatrixType type() const { return m_type; }
     void setType(KCColorMatrixType type) { m_type = type; }
     
-    QValueList<float> values() const { return m_values; }
-    void setValues(const QValueList<float> &values) { m_values = values; };
+    Q3ValueList<float> values() const { return m_values; }
+    void setValues(const Q3ValueList<float> &values) { m_values = values; };
 
     QTextStream &externalRepresentation(QTextStream &) const;
 
 private:
     KCColorMatrixType m_type;
-    QValueList<float> m_values;
+    Q3ValueList<float> m_values;
 };
 
 typedef enum {
@@ -231,8 +231,8 @@ typedef enum {
      KCComponentTransferType type() const;
     void setType(KCComponentTransferType type) { m_type = type; }
     
-    QValueList<float> tableValues() const;
-    void setTableValues(QValueList<float> tableValues);
+    Q3ValueList<float> tableValues() const;
+    void setTableValues(Q3ValueList<float> tableValues);
     
     float slope() const { return m_slope; }
     void setSlope(float slope) { m_slope = slope; }
@@ -252,7 +252,7 @@ typedef enum {
 
 typedef struct {
     KCComponentTransferType type;
-    QValueList<float> tableValues;
+    Q3ValueList<float> tableValues;
     float slope;
     float intercept;
     float amplitude;
@@ -337,7 +337,7 @@ public:
 private:
     int m_orderX;
     int m_orderY;
-    QValueList<float> m_kernelMatrix; // maybe should be a real matrix?
+    Q3ValueList<float> m_kernelMatrix; // maybe should be a real matrix?
     float m_divisor;
     float m_bias;
     int m_targetX;

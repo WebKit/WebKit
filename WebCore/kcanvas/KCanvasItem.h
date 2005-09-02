@@ -27,7 +27,7 @@
 #include <qrect.h>
 #include <qpoint.h>
 #include <qrect.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kcanvas/KCanvasTypes.h>
 
@@ -99,7 +99,7 @@ private:
 };
 
 // Helper data structure
-typedef QValueList<const KCanvasItem *> KCanvasItemList;
+typedef Q3ValueList<const KCanvasItem *> KCanvasItemList;
 
 #endif
 

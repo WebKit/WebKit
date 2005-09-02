@@ -76,7 +76,7 @@ namespace KSVG
     protected:
         virtual unsigned int addExtraDeclarations(KDOM::ElementImpl *e, unsigned int numProps);
 
-        QMemArray<KDOM::CSSOrderedProperty> presentationAttrs;
+        Q3MemArray<KDOM::CSSOrderedProperty> presentationAttrs;
 
         void loadDefaultStyle(KDOM::DocumentImpl *doc);
 

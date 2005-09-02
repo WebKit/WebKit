@@ -46,8 +46,8 @@ namespace KDOM
         virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
     protected:
-        QPtrList<NodeImpl> logicallyAdjacentTextNodes() const;
-        bool checkChildren(NodeImpl *node, const QPtrList<NodeImpl> &removables) const;
+        Q3PtrList<NodeImpl> logicallyAdjacentTextNodes() const;
+        bool checkChildren(NodeImpl *node, const Q3PtrList<NodeImpl> &removables) const;
     };
 };
 

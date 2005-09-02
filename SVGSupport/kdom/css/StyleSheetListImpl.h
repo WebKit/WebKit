@@ -25,7 +25,7 @@
 
 #include <kdom/Shared.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 namespace KDOM
 {
@@ -43,7 +43,7 @@ namespace KDOM
         void add(StyleSheetImpl *s);
         void remove(StyleSheetImpl *s);
 
-        QPtrList<StyleSheetImpl> styleSheets;
+        Q3PtrList<StyleSheetImpl> styleSheets;
     };
 };
 

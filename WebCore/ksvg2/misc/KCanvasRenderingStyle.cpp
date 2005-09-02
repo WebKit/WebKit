@@ -20,7 +20,7 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 #include <qpaintdevice.h>
 
 #include <kcanvas/KCanvas.h>
@@ -139,7 +139,7 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
     if(dashes)
     {
         KDOM::CSSPrimitiveValueImpl *dash = 0;
-        QPaintDeviceMetrics *paintDeviceMetrics = 0;
+        Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
 
         SVGElementImpl *element = static_cast<SVGElementImpl *>(item->userData());
         if(element && element->ownerDocument())
@@ -191,7 +191,7 @@ double KCanvasRenderingStyle::cssPrimitiveToLength(KCanvasItem *item, KDOM::CSSV
     if(!(cssType > KDOM::CSS_UNKNOWN && cssType <= KDOM::CSS_PC))
         return defaultValue;
 
-    QPaintDeviceMetrics *paintDeviceMetrics = 0;
+    Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
 
     SVGElementImpl *element = static_cast<SVGElementImpl *>(item->userData());
     if(element && element->ownerDocument())

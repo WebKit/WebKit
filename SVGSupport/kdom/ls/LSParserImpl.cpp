@@ -22,7 +22,7 @@
 
 #include <qdir.h>
 #include <qbuffer.h>
-#include <qcstring.h>
+#include <q3cstring.h>
 
 #include <kmimetype.h>
 
@@ -132,7 +132,7 @@ DocumentImpl *LSParserImpl::parse(KURL url, LSInputImpl *input, bool async, Node
     else if(input->byteStream() && !input->byteStream()->isEmpty())
     {
         QString str(input->byteStream()->string());
-        QCString in(str.ascii(), str.length() + 1);
+        Q3CString in(str.ascii(), str.length() + 1);
 
         int a, b;
         unsigned int i = 0;

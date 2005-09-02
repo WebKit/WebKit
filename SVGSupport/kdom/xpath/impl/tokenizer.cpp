@@ -64,8 +64,8 @@ static const char* const nodeTypeNames[] = {
 
 Tokenizer* Tokenizer::s_instance = 0;
 
-QDict<Step::AxisType>* Tokenizer::s_axisNamesDict     = 0;
-QDict<char>* Tokenizer::s_nodeTypeNamesDict = 0;
+Q3Dict<Step::AxisType>* Tokenizer::s_axisNamesDict     = 0;
+Q3Dict<char>* Tokenizer::s_nodeTypeNamesDict = 0;
 
 Tokenizer &Tokenizer::self()
 {
@@ -111,7 +111,7 @@ Tokenizer::XMLCat Tokenizer::charCat(QChar aChar)
 bool Tokenizer::isAxisName(QString name, Step::AxisType *type)
 {
     if (!s_axisNamesDict) {
-        s_axisNamesDict = new QDict<Step::AxisType>;
+        s_axisNamesDict = new Q3Dict<Step::AxisType>;
         s_axisNamesDict->setAutoDelete( true );
         for (unsigned int p = 0; p < axisNamesCount; ++p)
             s_axisNamesDict->insert(QString::fromLatin1(axisNames[p].name),
@@ -129,7 +129,7 @@ bool Tokenizer::isNodeTypeName(QString name)
 {
 #ifndef APPLE_COMPILE_HACK
     if (!s_nodeTypeNamesDict) {
-        s_nodeTypeNamesDict = new QDict<char>;
+        s_nodeTypeNamesDict = new Q3Dict<char>;
         for (int p = 0; nodeTypeNames[p]; ++p)
             s_nodeTypeNamesDict->insert(QString::fromLatin1(nodeTypeNames[p]),
                                         nodeTypeNames /*dummy*/);

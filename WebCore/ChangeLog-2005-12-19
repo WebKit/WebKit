@@ -1,3 +1,228 @@
+2005-09-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * ForwardingHeaders/q3cstring.h: Added.
+        * ForwardingHeaders/q3dict.h: Added.
+        * ForwardingHeaders/q3intdict.h: Added.
+        * ForwardingHeaders/q3memarray.h: Added.
+        * ForwardingHeaders/q3paintdevicemetrics.h: Added.
+        * ForwardingHeaders/q3ptrcollection.h: Added.
+        * ForwardingHeaders/q3ptrlist.h: Added.
+        * ForwardingHeaders/q3ptrstack.h: Added.
+        * ForwardingHeaders/q3valuelist.h: Added.
+        * ForwardingHeaders/q3valuevector.h: Added.
+        * kcanvas/KCanvas.cpp:
+        (KCanvas::setCanvasSize):
+        (KCanvas::invalidate):
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEColorMatrix::values):
+        (KCanvasFEColorMatrix::setValues):
+        * kcanvas/KCanvasItem.h:
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/KCanvasRegistry.cpp:
+        (operator<<):
+        * kcanvas/KCanvasRegistry.h:
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.h:
+        (operator<<):
+        * kcanvas/KCanvasTypes.h:
+        * kcanvas/KCanvasView.cpp:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingDeviceFactory.cpp:
+        (KRenderingDeviceFactory::request):
+        (KRenderingDeviceFactory::deviceList):
+        * kcanvas/device/KRenderingDeviceFactory.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KCSortedGradientStopList::compareItems):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingStyle.h:
+        * kdom/KDOMSettings.cpp:
+        (KDOMSettings::isAdFiltered):
+        * kdom/cache/KDOMCache.cpp:
+        (Cache::init):
+        (Cache::hasPending):
+        (Cache::statistics):
+        * kdom/cache/KDOMCache.h:
+        * kdom/cache/KDOMCacheHelper.h:
+        * kdom/cache/KDOMLoader.cpp:
+        (Loader::numRequests):
+        (Loader::cancelRequests):
+        * kdom/cache/KDOMLoader.h:
+        * kdom/core/DOMList.h:
+        * kdom/core/DocumentImpl.cpp:
+        (DocumentImpl::getElementById):
+        (DocumentImpl::setPaintDevice):
+        (DocumentImpl::getId):
+        * kdom/core/DocumentImpl.h:
+        (KDOM::DocumentImpl::paintDeviceMetrics):
+        (KDOM::DocumentImpl::IdNameMapping::~IdNameMapping):
+        * kdom/core/NamedNodeMapImpl.cpp:
+        (RONamedNodeMapImpl::RONamedNodeMapImpl):
+        (RONamedNodeMapImpl::getNamedItem):
+        * kdom/core/NamedNodeMapImpl.h:
+        * kdom/core/NodeImpl.cpp:
+        (NodeImpl::compareDocumentPosition):
+        * kdom/core/TextImpl.cpp:
+        (TextImpl::wholeText):
+        (TextImpl::checkChildren):
+        (TextImpl::replaceWholeText):
+        (TextImpl::logicallyAdjacentTextNodes):
+        * kdom/core/TextImpl.h:
+        * kdom/css/CSSPrimitiveValueImpl.cpp:
+        (CSSPrimitiveValueImpl::computeLength):
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        * kdom/css/CSSPrimitiveValueImpl.h:
+        * kdom/css/CSSRuleListImpl.h:
+        * kdom/css/CSSStyleDeclarationImpl.cpp:
+        (CSSStyleDeclarationImpl::CSSStyleDeclarationImpl):
+        (CSSStyleDeclarationImpl::operator=):
+        (CSSStyleDeclarationImpl::cssText):
+        (CSSStyleDeclarationImpl::setCssText):
+        (CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (CSSStyleDeclarationImpl::removeProperty):
+        (CSSStyleDeclarationImpl::getPropertyPriority):
+        (CSSStyleDeclarationImpl::setProperty):
+        * kdom/css/CSSStyleDeclarationImpl.h:
+        (KDOM::CSSStyleDeclarationImpl::values):
+        * kdom/css/CSSStyleRuleImpl.cpp:
+        (CSSStyleRuleImpl::setSelector):
+        * kdom/css/CSSStyleRuleImpl.h:
+        (KDOM::CSSStyleRuleImpl::selector):
+        * kdom/css/CSSStyleSelector.cpp:
+        (CSSStyleSelector::CSSStyleSelector):
+        (CSSStyleSelector::computeFontSizes):
+        (CSSStyleSelector::computeFontSizesFor):
+        (nextFontSize):
+        (CSSStyleSelector::addInlineDeclarations):
+        (CSSStyleSelector::buildLists):
+        (CSSStyleSelectorList::CSSStyleSelectorList):
+        (CSSStyleSelectorList::append):
+        (CSSStyleSelectorList::collect):
+        (CSSOrderedPropertyList::compareItems):
+        (CSSOrderedPropertyList::append):
+        (CSSStyleSelector::convertToLength):
+        (CSSStyleSelector::applyRule):
+        * kdom/css/CSSStyleSelector.h:
+        (KDOM::CSSStyleSelector::fontSizes):
+        (KDOM::CSSStyleSelector::fixedFontSizes):
+        * kdom/css/CSSStyleSheetImpl.cpp:
+        (CSSStyleSheetImpl::CSSStyleSheetImpl):
+        * kdom/css/CSSValueListImpl.cpp:
+        (CSSValueListImpl::cssText):
+        * kdom/css/CSSValueListImpl.h:
+        * kdom/css/Font.cpp:
+        (Font::update):
+        * kdom/css/Font.h:
+        * kdom/css/KDOMCSSParser.cpp:
+        (CSSParser::createStyleDeclaration):
+        (CSSParser::createCSSStyleDeclaration):
+        * kdom/css/KDOMCSSParser.h:
+        * kdom/css/MediaListImpl.cpp:
+        (MediaListImpl::mediaText):
+        (MediaListImpl::deleteMedium):
+        * kdom/css/MediaListImpl.h:
+        * kdom/css/StyleBaseImpl.cpp:
+        (StyleBaseImpl::setParsedValue):
+        * kdom/css/StyleBaseImpl.h:
+        * kdom/css/StyleSheetListImpl.cpp:
+        (StyleSheetListImpl::~StyleSheetListImpl):
+        (StyleSheetListImpl::length):
+        (StyleSheetListImpl::item):
+        * kdom/css/StyleSheetListImpl.h:
+        * kdom/ecma/ScriptInterpreter.cpp:
+        (ScriptInterpreter::forgetDOMObject):
+        * kdom/events/EventTargetImpl.cpp:
+        (EventTargetImpl::addEventListener):
+        (EventTargetImpl::removeEventListener):
+        (EventTargetImpl::dispatchEvent):
+        (EventTargetImpl::handleLocalEvents):
+        * kdom/events/EventTargetImpl.h:
+        * kdom/ls/LSParserImpl.cpp:
+        (LSParserImpl::parse):
+        * kdom/parser/KDOMDocumentBuilder.cpp:
+        * kdom/xpath/impl/expression.cpp:
+        (Expression::~Expression):
+        (Expression::optimize):
+        (Expression::isConstant):
+        * kdom/xpath/impl/expression.h:
+        * kdom/xpath/impl/functions.cpp:
+        (Function::setArguments):
+        (FunctionLibrary::getFunction):
+        * kdom/xpath/impl/functions.h:
+        * kdom/xpath/impl/path.cpp:
+        (Path::~Path):
+        (Path::optimize):
+        (Path::doEvaluate):
+        (Path::dump):
+        * kdom/xpath/impl/path.h:
+        * kdom/xpath/impl/step.cpp:
+        (Step::Step):
+        (Step::~Step):
+        (Step::evaluate):
+        (Step::optimize):
+        (Step::dump):
+        * kdom/xpath/impl/step.h:
+        * kdom/xpath/impl/tokenizer.cpp:
+        (Tokenizer::isAxisName):
+        (Tokenizer::isNodeTypeName):
+        * kdom/xpath/impl/tokenizer.h:
+        * kdom/xpath/impl/util.h:
+        * kdom/xpath/impl/variablereference.cpp:
+        (VariableReference::doEvaluate):
+        * kdom/xpointer/impl/ElementSchemeImpl.cpp:
+        (ElementSchemeImpl::evaluate):
+        * kdom/xpointer/impl/ElementSchemeImpl.h:
+        * kdom/xpointer/impl/XPointerEvaluatorImpl.cpp:
+        (XPointerEvaluatorImpl::createXPointer):
+        * kdom/xpointer/impl/XPointerExpressionImpl.cpp:
+        * kdom/xpointer/impl/XPointerExpressionImpl.h:
+        * ksvg2/KSVGFactory.cpp:
+        (KSVGFactory::createPartObject):
+        (KSVGFactory::registerPart):
+        * ksvg2/KSVGFactory.h:
+        (KSVG::KSVGFactory::partList):
+        * ksvg2/css/KSVGCSSParser.cpp:
+        (SVGCSSParser::createCSSStyleDeclaration):
+        * ksvg2/css/KSVGCSSParser.h:
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.cpp:
+        (SVGCSSStyleDeclarationImpl::SVGCSSStyleDeclarationImpl):
+        * ksvg2/css/SVGCSSStyleDeclarationImpl.h:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (SVGCSSStyleSelector::loadDefaultStyle):
+        (SVGCSSStyleSelector::addExtraDeclarations):
+        * ksvg2/css/SVGCSSStyleSelector.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::updateStroke):
+        (KCanvasRenderingStyle::cssPrimitiveToLength):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (SVGTimer::notifyAll):
+        * ksvg2/misc/KSVGTimeScheduler.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::finishedParsing):
+        (SVGDocumentImpl::recalcStyleSelector):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        (SVGFEColorMatrixElementImpl::createCanvasItem):
+        * ksvg2/svg/SVGList.h:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::pixelUnitToMillimeterX):
+        (SVGSVGElementImpl::pixelUnitToMillimeterY):
+        * kwq/KWQCString.h: Added #define q->q3.
+        * kwq/KWQCollection.h:
+        * kwq/KWQDict.h:
+        * kwq/KWQIntDict.h:
+        * kwq/KWQMemArray.h:
+        * kwq/KWQPaintDeviceMetrics.h:
+        * kwq/KWQPtrList.h:
+        * kwq/KWQPtrStack.h:
+        * kwq/KWQValueList.h:
+        * kwq/KWQValueVector.h:
+        Pulled over first section of Qt4 changes from kdom, mapping
+        existing Qt3 classes to their new Qt4 names and adding necessary
+        #defines to kwq to allow supporting both names.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4799
+
 2005-09-01  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John.

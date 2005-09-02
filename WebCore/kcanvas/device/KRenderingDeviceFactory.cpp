@@ -59,7 +59,7 @@ KRenderingDeviceFactory *KRenderingDeviceFactory::self()
 
 KRenderingDevice *KRenderingDeviceFactory::request(const QString &device) const
 {
-    QValueList<KService::Ptr> traderList = KTrader::self()->query("KCanvas/Device", "(Type == 'Service')");
+    Q3ValueList<KService::Ptr> traderList = KTrader::self()->query("KCanvas/Device", "(Type == 'Service')");
     KTrader::OfferList::Iterator it(traderList.begin());
     for( ; it != traderList.end(); ++it)
     {
@@ -83,11 +83,11 @@ KRenderingDevice *KRenderingDeviceFactory::request(const QString &device) const
     return 0;
 }
 
-const QValueList<KRenderingDeviceInfo> KRenderingDeviceFactory::deviceList() const
+const Q3ValueList<KRenderingDeviceInfo> KRenderingDeviceFactory::deviceList() const
 {
-    QValueList<KRenderingDeviceInfo> list;
+    Q3ValueList<KRenderingDeviceInfo> list;
     
-    QValueList<KService::Ptr> traderList = KTrader::self()->query("KCanvas/Device", "(Type == 'Service')");
+    Q3ValueList<KService::Ptr> traderList = KTrader::self()->query("KCanvas/Device", "(Type == 'Service')");
     KTrader::OfferList::Iterator it(traderList.begin());
     for( ; it != traderList.end(); ++it)
     {

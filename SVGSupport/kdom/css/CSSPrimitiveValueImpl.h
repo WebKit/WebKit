@@ -28,7 +28,7 @@
 #include <kdom/css/CSSValueImpl.h>
 
 #include <qcolor.h>
-class QPaintDeviceMetrics;
+class Q3PaintDeviceMetrics;
 
 namespace KDOM
 {
@@ -72,8 +72,8 @@ namespace KDOM
          * this is screen/printer dependent, so we probably need a config option for this,
          * and some tool to calibrate.
          */
-        int computeLength(RenderStyle *style, QPaintDeviceMetrics *devMetrics);
-        double computeLengthFloat(RenderStyle *style, QPaintDeviceMetrics *devMetrics);
+        int computeLength(RenderStyle *style, Q3PaintDeviceMetrics *devMetrics);
+        double computeLengthFloat(RenderStyle *style, Q3PaintDeviceMetrics *devMetrics);
 
         // use with care!
         double floatValue(unsigned short /* unitType */) const { return m_value.num; }

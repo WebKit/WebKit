@@ -28,7 +28,7 @@
 #include <qpainter.h>
 #include <qfontmetrics.h>
 
-class QPaintDeviceMetrics;
+class Q3PaintDeviceMetrics;
 
 namespace KDOM
 {
@@ -66,7 +66,7 @@ public:
 
     bool operator==(const Font &other) const;
     
-    void update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const;
+    void update(Q3PaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const;
 
     /**
      * Draws a piece from the given piece of text.

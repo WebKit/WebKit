@@ -25,7 +25,7 @@
 
 #include <kdom/xpointer/impl/PointerPartImpl.h>
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 #include <qstringlist.h>
 
 namespace KDOM
@@ -56,7 +56,7 @@ namespace XPointer
         void parseChildSequence(const QStringList &steps);
 
         ShortHandImpl *m_shorthand;
-        QValueList<unsigned int> m_childSequence;
+        Q3ValueList<unsigned int> m_childSequence;
     };
 };
 

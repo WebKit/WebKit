@@ -24,7 +24,7 @@
 #define KSVG_KSVGFactory_H
 
 #include <kurl.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kparts/factory.h>
 #include <kparts/historyprovider.h>
@@ -49,7 +49,7 @@ namespace KSVG
         static void registerPart(KSVGPart *part);
         static void deregisterPart(KSVGPart *part);
 
-        static QPtrList<KSVGPart> *partList() { return s_parts; }
+        static Q3PtrList<KSVGPart> *partList() { return s_parts; }
 
         static KInstance *instance();
         static KSVGSettings *defaultSVGSettings();
@@ -72,7 +72,7 @@ namespace KSVG
         static KAboutData *s_about;
         static KSVGSettings *s_settings;
         
-        static QPtrList<KSVGPart> *s_parts;
+        static Q3PtrList<KSVGPart> *s_parts;
     };
 }
 

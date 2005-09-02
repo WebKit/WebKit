@@ -29,7 +29,7 @@
 #include <kglobal.h>
 
 #include <qfontdatabase.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 
 #include "Font.h"
 #include "KDOMSettings.h"
@@ -65,7 +65,7 @@ bool Font::operator==(const Font &other) const
             m_letterSpacing == other.m_letterSpacing);
 }
 
-void Font::update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const
+void Font::update(Q3PaintDeviceMetrics *devMetrics, const KDOMSettings *settings) const
 {
 #ifndef APPLE_COMPILE_HACK
     m_font.setFamily(m_fontDef.family.isEmpty() ? settings->stdFontName() : m_fontDef.family);
@@ -83,7 +83,7 @@ void Font::update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings)
     // all other font properties should be set before this one!!!!
     if(!db.isSmoothlyScalable(m_font.family(), db.styleString(m_font)))
     {
-        const QValueList<int> pointSizes = db.smoothSizes(m_font.family(), db.styleString(m_font));
+        const Q3ValueList<int> pointSizes = db.smoothSizes(m_font.family(), db.styleString(m_font));
         
         // lets see if we find a nice looking font, which is not too far away from the requested one.
         // kdDebug(6080) << "khtml::setFontSize family = " << m_font.family() << " size requested=" << size << endl;
@@ -91,8 +91,8 @@ void Font::update(QPaintDeviceMetrics *devMetrics, const KDOMSettings *settings)
         float diff = 1; // ### 100% deviation
         float bestSize = 0;
 
-        QValueList<int>::ConstIterator it = pointSizes.begin();
-        const QValueList<int>::ConstIterator itEnd = pointSizes.end();
+        Q3ValueList<int>::ConstIterator it = pointSizes.begin();
+        const Q3ValueList<int>::ConstIterator itEnd = pointSizes.end();
 
         for(; it != itEnd; ++it)
         {

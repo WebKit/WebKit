@@ -213,7 +213,7 @@ Expression::Expression()
 
 Expression::~Expression()
 {
-    QValueList<Expression *>::Iterator it, end = m_subExpressions.end();
+    Q3ValueList<Expression *>::Iterator it, end = m_subExpressions.end();
     for ( it = m_subExpressions.begin(); it != end; ++it ) {
         delete *it;
     }
@@ -236,7 +236,7 @@ void Expression::addSubExpression( Expression *expr )
 void Expression::optimize()
 {
     bool allSubExpressionsConstant = true;
-    QValueList<Expression *>::Iterator it, end = m_subExpressions.end();
+    Q3ValueList<Expression *>::Iterator it, end = m_subExpressions.end();
     for ( it = m_subExpressions.begin(); it != end; ++it ) {
         Expression *expr = *it;
         if ( expr->isConstant() ) {
@@ -249,7 +249,7 @@ void Expression::optimize()
     if ( allSubExpressionsConstant ) {
         m_constantValue = new Value( doEvaluate() );
 
-        QValueList<Expression *>::Iterator it, end = m_subExpressions.end();
+        Q3ValueList<Expression *>::Iterator it, end = m_subExpressions.end();
         for ( it = m_subExpressions.begin(); it != end; ++it ) {
             delete *it;
         }
@@ -276,7 +276,7 @@ const Expression *Expression::subExpr( unsigned int i ) const
 
 bool Expression::isConstant() const
 {
-    QValueList<Expression *>::ConstIterator it, end = m_subExpressions.end();
+    Q3ValueList<Expression *>::ConstIterator it, end = m_subExpressions.end();
     for ( it = m_subExpressions.begin(); it != end; ++it ) {
         if ( !( *it )->isConstant() ) {
             return false;

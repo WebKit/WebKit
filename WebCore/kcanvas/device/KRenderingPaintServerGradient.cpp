@@ -59,7 +59,7 @@ void KCSortedGradientStopList::addStop(float offset, const QColor &color)
     sort();
 }
 
-int KCSortedGradientStopList::compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2)
+int KCSortedGradientStopList::compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2)
 {
     KCGradientOffsetPair *pair1 = static_cast<KCGradientOffsetPair *>(item1);
     KCGradientOffsetPair *pair2 = static_cast<KCGradientOffsetPair *>(item2);

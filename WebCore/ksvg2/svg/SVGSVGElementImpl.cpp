@@ -55,7 +55,7 @@
 #include "SVGAnimatedLengthImpl.h"
 #include "KCanvasRenderingStyle.h"
 
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 
 using namespace KSVG;
 
@@ -169,7 +169,7 @@ float SVGSVGElementImpl::pixelUnitToMillimeterX() const
 #ifndef APPLE_COMPILE_HACK
     if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
     {
-        QPaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
+        Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
         return float(metrics->widthMM()) / float(metrics->width());
     }
 #endif
@@ -182,7 +182,7 @@ float SVGSVGElementImpl::pixelUnitToMillimeterY() const
 #ifndef APPLE_COMPILE_HACK
     if(ownerDocument() && ownerDocument()->paintDeviceMetrics())
     {
-        QPaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
+        Q3PaintDeviceMetrics *metrics = ownerDocument()->paintDeviceMetrics();
         return float(metrics->heightMM()) / float(metrics->height());
     }
 #endif

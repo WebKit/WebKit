@@ -45,4 +45,6 @@ class QPtrCollection {
     bool del_item;
 };
 
+#define Q3PtrCollection QPtrCollection
+
 #endif

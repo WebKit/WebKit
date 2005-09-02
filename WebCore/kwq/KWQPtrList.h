@@ -109,6 +109,9 @@ private:
     KWQListIteratorImpl impl;
 };
 
+#define Q3PtrList QPtrList
+#define Q3PtrListIterator QPtrListIterator
+
 #ifdef _KWQ_IOSTREAM_
 
 template<class T>

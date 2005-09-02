@@ -141,7 +141,7 @@ void SVGCSSStyleSelector::loadDefaultStyle(KDOM::DocumentImpl *doc)
     QFile f(locate("data", QString::fromLatin1("ksvg2/svg.css")));
     f.open(IO_ReadOnly);
 
-    QCString file(f.size() + 1);
+    Q3CString file(f.size() + 1);
     int readbytes = f.readBlock(file.data(), f.size());
     f.close();
     if(readbytes >= 0)
@@ -171,7 +171,7 @@ unsigned int SVGCSSStyleSelector::addExtraDeclarations(KDOM::ElementImpl *e, uns
     if(!decl)
         return numProps;
 
-    QPtrList<KDOM::CSSProperty>* values = decl ? decl->values() : 0;
+    Q3PtrList<KDOM::CSSProperty>* values = decl ? decl->values() : 0;
     if(!values)
         return numProps;
 

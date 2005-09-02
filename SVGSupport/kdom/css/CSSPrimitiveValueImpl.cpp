@@ -22,7 +22,7 @@
 
 #include <qregexp.h>
 #include <qfontmetrics.h>
-#include <qpaintdevicemetrics.h>
+#include <q3paintdevicemetrics.h>
 
 #include "RectImpl.h"
 #include <kdom/css/CSSHelper.h>
@@ -208,7 +208,7 @@ RGBColorImpl *CSSPrimitiveValueImpl::getRGBColorValue() const
     return new RGBColorImpl(m_interface, getQRGBColorValue());
 }
 
-int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, QPaintDeviceMetrics *devMetrics)
+int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, Q3PaintDeviceMetrics *devMetrics)
 {
     double result = computeLengthFloat(style, devMetrics);
 
@@ -218,7 +218,7 @@ int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, QPaintDeviceMetrics
     return intResult;
 }
 
-double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, QPaintDeviceMetrics *devMetrics)
+double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, Q3PaintDeviceMetrics *devMetrics)
 {
     unsigned short type = primitiveType();
 

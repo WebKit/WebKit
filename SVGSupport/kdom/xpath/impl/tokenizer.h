@@ -25,7 +25,7 @@
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
 
-#include <qdict.h>
+#include <q3dict.h>
 #include <qstring.h>
 
 #include "step.h"
@@ -56,8 +56,8 @@ private:
     QString m_data;
     int m_lastTokenType;
 
-    static QDict<Step::AxisType>* s_axisNamesDict;
-    static QDict<char>* s_nodeTypeNamesDict;
+    static Q3Dict<Step::AxisType>* s_axisNamesDict;
+    static Q3Dict<char>* s_nodeTypeNamesDict;
     static Tokenizer* s_instance;
 
     enum XMLCat {

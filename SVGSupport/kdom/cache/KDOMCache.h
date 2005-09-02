@@ -28,8 +28,8 @@
 #ifndef KDOM_Cache_H
 #define KDOM_Cache_H
 
-#include <qdict.h>
-#include <qptrlist.h>
+#include <q3dict.h>
+#include <q3ptrlist.h>
 #include <qpixmap.h>
 
 #include "KDOMCachedObject.h"
@@ -88,9 +88,9 @@ namespace KDOM
 
         static Loader *s_loader;
 
-        static QDict<CachedObject> *s_objectDict; // cache
-        static QPtrList<CachedObject> *s_freeList; // freelist
-        static QPtrList<DocumentLoader> *s_docLoaderList; // docloader;
+        static Q3Dict<CachedObject> *s_objectDict; // cache
+        static Q3PtrList<CachedObject> *s_freeList; // freelist
+        static Q3PtrList<DocumentLoader> *s_docLoaderList; // docloader;
 
     private: // Used by 'DocumentLoader' exclusively
         template<typename CachedObjectType, enum CachedObject::Type CachedType>

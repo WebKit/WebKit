@@ -23,7 +23,7 @@
 #ifndef KCanvasPath_H
 #define KCanvasPath_H
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 class QTextStream;
 
@@ -56,7 +56,7 @@ struct KCPathData
 
 QTextStream &operator<<(QTextStream &ts, const KCPathData &d);
 
-class KCPathDataList : public QValueList<KCPathData>
+class KCPathDataList : public Q3ValueList<KCPathData>
 {
 public:
     KCPathDataList() { }
@@ -102,7 +102,7 @@ struct KCClipData
 
 QTextStream &operator<<(QTextStream &ts, const KCClipData &d);
 
-class KCClipDataList : public QValueList<KCClipData>
+class KCClipDataList : public Q3ValueList<KCClipData>
 {
 public:
     KCClipDataList() { }

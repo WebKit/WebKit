@@ -67,8 +67,8 @@ DOMStringImpl *MediaListImpl::mediaText() const
 {
     DOMStringImpl *text = new DOMStringImpl();
     
-    QValueList<DOMString>::ConstIterator it = m_lstMedia.begin();
-    const QValueList<DOMString>::ConstIterator end = m_lstMedia.end();
+    Q3ValueList<DOMString>::ConstIterator it = m_lstMedia.begin();
+    const Q3ValueList<DOMString>::ConstIterator end = m_lstMedia.end();
     
     for(; it != end; ++it)
         text->append((*it).string() + QString::fromLatin1(", "));
@@ -106,8 +106,8 @@ DOMStringImpl *MediaListImpl::item(unsigned long index) const
 
 void MediaListImpl::deleteMedium(DOMStringImpl *oldMedium)
 {
-    QValueList<DOMString>::Iterator it = m_lstMedia.begin();
-    const QValueList<DOMString>::Iterator end = m_lstMedia.end();
+    Q3ValueList<DOMString>::Iterator it = m_lstMedia.begin();
+    const Q3ValueList<DOMString>::Iterator end = m_lstMedia.end();
 
     for(; it != end; ++it)
     {

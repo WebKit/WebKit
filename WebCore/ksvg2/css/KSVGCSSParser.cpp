@@ -509,7 +509,7 @@ bool SVGCSSParser::parseShape(int propId, bool important)
     return ret;
 }
 
-CSSStyleDeclarationImpl *SVGCSSParser::createCSSStyleDeclaration(CSSStyleRuleImpl *rule, QPtrList<CSSProperty> *propList)
+CSSStyleDeclarationImpl *SVGCSSParser::createCSSStyleDeclaration(CSSStyleRuleImpl *rule, Q3PtrList<CSSProperty> *propList)
 {
     return new SVGCSSStyleDeclarationImpl(document()->implementation()->cdfInterface(), rule, propList);
 }

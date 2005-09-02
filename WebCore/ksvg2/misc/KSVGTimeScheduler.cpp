@@ -129,7 +129,7 @@ void SVGTimer::notifyAll()
     // First build a list of animation elements per target element
     // This is important to decide about the order & priority of 
     // the animations -> 'additive' support is handled this way.
-    typedef QMap<SVGElementImpl *, QPtrList<SVGAnimationElementImpl> > TargetAnimationMap;
+    typedef QMap<SVGElementImpl *, Q3PtrList<SVGAnimationElementImpl> > TargetAnimationMap;
     TargetAnimationMap targetMap;
     
     for(unsigned int i = m_notifyList.count(); i > 0; i--)
@@ -157,7 +157,7 @@ void SVGTimer::notifyAll()
         SVGElementImpl *target = const_cast<SVGElementImpl *>(animation->targetElement());
         if(!targetMap.contains(target))
         {
-            QPtrList<SVGAnimationElementImpl> list;
+            Q3PtrList<SVGAnimationElementImpl> list;
             list.append(animation);
                 
             targetMap.insert(target, list);
@@ -171,8 +171,8 @@ void SVGTimer::notifyAll()
 
     for(; tit != tend; ++tit)
     {
-        QPtrList<SVGAnimationElementImpl>::Iterator it = tit.data().begin();
-        QPtrList<SVGAnimationElementImpl>::Iterator end = tit.data().end();
+        Q3PtrList<SVGAnimationElementImpl>::Iterator it = tit.data().begin();
+        Q3PtrList<SVGAnimationElementImpl>::Iterator end = tit.data().end();
 
         QMap<QString, QColor> targetColor; // special <animateColor> case
         SVGTransformListImpl *targetTransforms = 0; // special <animateTransform> case    

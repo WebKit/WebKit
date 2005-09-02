@@ -27,13 +27,13 @@
 
 #include "expression.h"
 
-#include <qdict.h>
-#include <qvaluelist.h>
+#include <q3dict.h>
+#include <q3valuelist.h>
 
 class Function : public Expression
 {
     public:
-        void setArguments( const QValueList<Expression *> &args );
+        void setArguments( const Q3ValueList<Expression *> &args );
         void setName( const QString &name );
 
         virtual QString dump() const;
@@ -55,7 +55,7 @@ class FunctionLibrary
         static FunctionLibrary &self();
 
         Function *getFunction( const char *name,
-                               const QValueList<Expression *> &args = QValueList<Expression *>() ) const;
+                               const Q3ValueList<Expression *> &args = Q3ValueList<Expression *>() ) const;
 
     private:
         struct FunctionRec;
@@ -65,7 +65,7 @@ class FunctionLibrary
         FunctionLibrary &operator=( const FunctionLibrary &rhs );
 
         static FunctionLibrary *s_instance;
-        QDict<FunctionRec> m_functionDict;
+        Q3Dict<FunctionRec> m_functionDict;
 };
 
 #endif // FUNCTIONS_H

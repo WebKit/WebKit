@@ -31,8 +31,8 @@
 
 #include <kurl.h>
 
-#include <qdict.h>
-#include <qintdict.h>
+#include <q3dict.h>
+#include <q3intdict.h>
 #include <qstringlist.h>
 
 #include <kdom/core/NodeImpl.h>
@@ -47,7 +47,7 @@
 #include <kdom/xpath/XPathEvaluatorImpl.h>
 
 class QPaintDevice;
-class QPaintDeviceMetrics;
+class Q3PaintDeviceMetrics;
 
 namespace KDOM
 {
@@ -197,7 +197,7 @@ namespace KDOM
         void setView(KDOMView *view) { m_view = view; }
         KDOMPart *part() const;
 
-        QPaintDeviceMetrics *paintDeviceMetrics() { return m_paintDeviceMetrics; }
+        Q3PaintDeviceMetrics *paintDeviceMetrics() { return m_paintDeviceMetrics; }
         QPaintDevice *paintDevice() const { return m_paintDevice; }
         void setPaintDevice(QPaintDevice *dev);
 
@@ -251,22 +251,22 @@ namespace KDOM
             IdNameMapping(unsigned short start) : idStart(start), count(0) { }
             ~IdNameMapping()
             {
-                QIntDictIterator<DOMStringImpl> it(names);
+                Q3IntDictIterator<DOMStringImpl> it(names);
                 for(; it.current() ; ++it)
                     (it.current())->deref();
             }
 
             unsigned short idStart;
             unsigned short count;
-            QIntDict<DOMStringImpl> names;
-            QDict<NodeImpl::Id> ids;
+            Q3IntDict<DOMStringImpl> names;
+            Q3Dict<NodeImpl::Id> ids;
         };
 
         IdNameMapping *m_attrMap;
         IdNameMapping *m_elementMap;
         IdNameMapping *m_namespaceMap;
 
-        QPtrList<NodeIteratorImpl> m_nodeIterators;
+        Q3PtrList<NodeIteratorImpl> m_nodeIterators;
 
         virtual DOMStringImpl *defaultNS() const;
 
@@ -306,7 +306,7 @@ namespace KDOM
         KDOMView *m_view;
 
         QPaintDevice *m_paintDevice;
-        QPaintDeviceMetrics *m_paintDeviceMetrics;
+        Q3PaintDeviceMetrics *m_paintDeviceMetrics;
 
         // Track the number of currently loading top-level stylesheets.  Sheets
         // loaded using the @import directive are not included in this count.

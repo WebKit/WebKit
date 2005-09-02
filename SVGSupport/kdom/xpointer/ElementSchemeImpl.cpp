@@ -142,8 +142,8 @@ XPointerResultImpl *ElementSchemeImpl::evaluate(NodeImpl *context) const
         resultNode = context; /* Guranteed to be document node. */
 
     Q_ASSERT(resultNode);
-    QValueList<unsigned int>::const_iterator it;
-    QValueList<unsigned int>::const_iterator end(m_childSequence.constEnd());
+    Q3ValueList<unsigned int>::const_iterator it;
+    Q3ValueList<unsigned int>::const_iterator end(m_childSequence.constEnd());
 
     for(it = m_childSequence.constBegin(); it != end; ++it)
     {

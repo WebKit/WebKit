@@ -41,7 +41,7 @@ namespace KSVG
 
         virtual bool parseShape(int propId, bool important);
 
-        virtual KDOM::CSSStyleDeclarationImpl *createCSSStyleDeclaration(KDOM::CSSStyleRuleImpl *rule, QPtrList<KDOM::CSSProperty> *propList);
+        virtual KDOM::CSSStyleDeclarationImpl *createCSSStyleDeclaration(KDOM::CSSStyleRuleImpl *rule, Q3PtrList<KDOM::CSSProperty> *propList);
     };
 }
 

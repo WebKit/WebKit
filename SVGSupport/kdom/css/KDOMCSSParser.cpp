@@ -354,7 +354,7 @@ void CSSParser::addProperty(int propId, CSSValueImpl *value, bool important)
 
 CSSStyleDeclarationImpl *CSSParser::createStyleDeclaration(CSSStyleRuleImpl *rule)
 {
-    QPtrList<CSSProperty> *propList = new QPtrList<CSSProperty>();
+    Q3PtrList<CSSProperty> *propList = new Q3PtrList<CSSProperty>();
     propList->setAutoDelete(true);
     for(int i = 0; i < numParsedProperties; i++)
         propList->append(parsedProperties[i]);
@@ -363,7 +363,7 @@ CSSStyleDeclarationImpl *CSSParser::createStyleDeclaration(CSSStyleRuleImpl *rul
     return createCSSStyleDeclaration(rule, propList);
 }
 
-CSSStyleDeclarationImpl *CSSParser::createCSSStyleDeclaration(CSSStyleRuleImpl *rule, QPtrList<CSSProperty> *propList)
+CSSStyleDeclarationImpl *CSSParser::createCSSStyleDeclaration(CSSStyleRuleImpl *rule, Q3PtrList<CSSProperty> *propList)
 {
     return new CSSStyleDeclarationImpl(document()->implementation()->cdfInterface(), rule, propList);
 }

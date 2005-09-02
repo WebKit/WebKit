@@ -25,7 +25,7 @@
 
 #include <qcolor.h>
 #include <qobject.h>
-#include <qptrstack.h>
+#include <q3ptrstack.h>
 
 #include <kcanvas/KCanvasTypes.h>
 #include <kcanvas/KCanvasFilters.h>
@@ -97,7 +97,7 @@ protected: // To be used by from inherited endPath()
 
 private:
     KCanvasUserData m_currentPath;
-    QPtrStack<KRenderingDeviceContext> m_contextStack;
+    Q3PtrStack<KRenderingDeviceContext> m_contextStack;
 };
 
 #endif

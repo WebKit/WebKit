@@ -25,7 +25,7 @@
 
 #include <kdom/css/CSSRuleImpl.h>
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 namespace KDOM
 {
@@ -47,17 +47,17 @@ namespace KDOM
         // 'CSSRule' functions
         virtual bool isStyleRule() const { return true; }
 
-        void setSelector(QPtrList<CSSSelector> *selector);
+        void setSelector(Q3PtrList<CSSSelector> *selector);
         void setDeclaration(CSSStyleDeclarationImpl *style);
 
-        QPtrList<CSSSelector> *selector() { return m_selector; }
+        Q3PtrList<CSSSelector> *selector() { return m_selector; }
         CSSStyleDeclarationImpl *declaration() { return m_style; }
 
         void setNonCSSHints();
 
     protected:
         CSSStyleDeclarationImpl *m_style;
-        QPtrList<CSSSelector> *m_selector;
+        Q3PtrList<CSSSelector> *m_selector;
     };
 };
 

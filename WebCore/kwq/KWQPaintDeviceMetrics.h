@@ -36,4 +36,6 @@ public:
     int depth() const;
 };
 
+#define Q3PaintDeviceMetrics QPaintDeviceMetrics
+
 #endif

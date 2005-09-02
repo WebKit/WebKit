@@ -23,7 +23,7 @@
 #ifndef KCanvasTypes_H
 #define KCanvasTypes_H
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 // Some default constants
 
@@ -35,9 +35,9 @@ class KCanvasPrivateUserData {
 
 };
 
-typedef QPtrList<KCanvasPrivateUserData> KCanvasUserDataList;
+typedef Q3PtrList<KCanvasPrivateUserData> KCanvasUserDataList;
 #else
-typedef QPtrList<void> KCanvasUserDataList;
+typedef Q3PtrList<void> KCanvasUserDataList;
 #endif
 
 // aka "what to draw"

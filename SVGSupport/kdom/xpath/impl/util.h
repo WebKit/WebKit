@@ -26,13 +26,13 @@
 #define UTIL_H
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 namespace KDOM {
     class NodeImpl;
 }
 
-typedef QValueList<KDOM::NodeImpl *> DomNodeList;
+typedef Q3ValueList<KDOM::NodeImpl *> DomNodeList;
 typedef QString DomString;
 
 /* @return whether the given node is the root node.

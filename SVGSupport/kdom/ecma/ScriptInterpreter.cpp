@@ -26,7 +26,7 @@
 #include <kjs/object.h>
 
 #include <qptrdict.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include "EventImpl.h"
 #include "DocumentImpl.h"
@@ -34,7 +34,7 @@
 
 using namespace KDOM;
 
-typedef QPtrList<ScriptInterpreter> InterpreterList;
+typedef Q3PtrList<ScriptInterpreter> InterpreterList;
 static InterpreterList *s_interpreterList;
 
 class ScriptInterpreter::Private
@@ -127,7 +127,7 @@ void ScriptInterpreter::forgetDOMObject(void *handle)
     if(!s_interpreterList)
         return;
 
-    QPtrListIterator<ScriptInterpreter> it(*s_interpreterList);
+    Q3PtrListIterator<ScriptInterpreter> it(*s_interpreterList);
     while(it.current())
     {
         (*it)->removeDOMObject(handle);

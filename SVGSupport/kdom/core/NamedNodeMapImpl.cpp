@@ -44,7 +44,7 @@ NamedNodeMapImpl::~NamedNodeMapImpl()
 RONamedNodeMapImpl::RONamedNodeMapImpl(DocumentPtr *doc)
 : NamedNodeMapImpl(), m_doc(doc)
 {
-    m_map = new QPtrList<NodeImpl>;
+    m_map = new Q3PtrList<NodeImpl>;
 }
 
 RONamedNodeMapImpl::~RONamedNodeMapImpl()
@@ -94,7 +94,7 @@ NodeImpl *RONamedNodeMapImpl::getNamedItem(DOMStringImpl *name)
 {
     // TODO : id mechanism doesnt work,
     // reverting to old system
-    QPtrListIterator<NodeImpl> it(*m_map);
+    Q3PtrListIterator<NodeImpl> it(*m_map);
     for(; it.current(); ++it)
     {
         if(DOMString(it.current()->nodeName()) == DOMString(name))

@@ -48,7 +48,7 @@ class Step
         Step();
         Step( AxisType axis,
               const DomString &nodeTest,
-              const QValueList<Predicate *> &predicates = QValueList<Predicate *>() );
+              const Q3ValueList<Predicate *> &predicates = Q3ValueList<Predicate *>() );
         ~Step();
 
         DomNodeList evaluate( KDOM::NodeImpl *context ) const;
@@ -62,7 +62,7 @@ class Step
 
         AxisType m_axis;
         DomString m_nodeTest;
-        QValueList<Predicate *> m_predicates;
+        Q3ValueList<Predicate *> m_predicates;
 };
 
 #endif // STEP_H

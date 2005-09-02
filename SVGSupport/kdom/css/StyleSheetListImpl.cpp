@@ -32,7 +32,7 @@ StyleSheetListImpl::StyleSheetListImpl() : Shared()
 
 StyleSheetListImpl::~StyleSheetListImpl()
 {
-    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    Q3PtrListIterator<StyleSheetImpl> it(styleSheets);
     for(; it.current(); ++it)
         it.current()->deref();
 }
@@ -41,7 +41,7 @@ unsigned long StyleSheetListImpl::length() const
 {
     // hack so implicit BODY stylesheets don't get counted here
     unsigned long l = 0;
-    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    Q3PtrListIterator<StyleSheetImpl> it(styleSheets);
     for(; it.current(); ++it)
     {
         if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit())
@@ -54,7 +54,7 @@ unsigned long StyleSheetListImpl::length() const
 StyleSheetImpl *StyleSheetListImpl::item(unsigned long index) const
 {
     unsigned long l = 0;
-    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    Q3PtrListIterator<StyleSheetImpl> it(styleSheets);
     for(; it.current(); ++it)
     {
         if(!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl *>(it.current())->implicit())

@@ -48,7 +48,7 @@ unsigned long int KSVGFactory::s_refcnt = 0;
 KInstance *KSVGFactory::s_instance = 0;
 KAboutData *KSVGFactory::s_about = 0;
 KSVGSettings *KSVGFactory::s_settings = 0;
-QPtrList<KSVGPart> *KSVGFactory::s_parts = 0;
+Q3PtrList<KSVGPart> *KSVGFactory::s_parts = 0;
 
 KSVGFactory::KSVGFactory(bool clone)
 {
@@ -94,7 +94,7 @@ KParts::Part *KSVGFactory::createPartObject(QWidget *parentWidget, const char *w
     bool dummy;
     QRegExp r1(QString::fromLatin1("(WIDTH)(\\s*=\\s*\")(\\d+)(\\w*)(\")"));
     QRegExp r2(QString::fromLatin1("(HEIGHT)(\\s*=\\s*\")(\\d+)(\\w*)(\")"));
-    for(QValueListConstIterator<QString> it = args.begin(); it != args.end(); ++it) 
+    for(Q3ValueListConstIterator<QString> it = args.begin(); it != args.end(); ++it) 
     {
         if(r1.search(*it) > -1)
             width = r1.cap(3).toUInt(&dummy);
@@ -137,7 +137,7 @@ void KSVGFactory::deref()
 void KSVGFactory::registerPart(KSVGPart *part)
 {
     if(!s_parts)
-        s_parts = new QPtrList<KSVGPart>();
+        s_parts = new Q3PtrList<KSVGPart>();
 
     if(!s_parts->containsRef(part))
     {

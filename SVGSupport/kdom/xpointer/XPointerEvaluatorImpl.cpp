@@ -23,7 +23,7 @@
 #include <qmap.h>
 #include <qpair.h>
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kdebug.h>
 
@@ -104,7 +104,7 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(DOMStringImpl *str
     typedef QPair<DOMString, DOMString> StrPair;
     
     /* A list of pair of SchemeName and SchemeData, all valid. */
-    typedef QValueList<StrPair> StrPairList;
+    typedef Q3ValueList<StrPair> StrPairList;
     StrPairList pointerParts;
 
     for(unsigned int i = 0; i < length; i++)

@@ -22,7 +22,7 @@
 #include <kglobal.h>
 
 #include <qregion.h>
-#include <qintdict.h>
+#include <q3intdict.h>
 
 #include "KCanvas.h"
 #include "KCanvasItem.h"

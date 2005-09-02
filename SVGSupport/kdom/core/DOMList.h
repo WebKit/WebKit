@@ -23,7 +23,7 @@
 #ifndef KDOM_DOMList_H
 #define KDOM_DOMList_H
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 #include <kdom/Shared.h>
 
 namespace KDOM
@@ -116,7 +116,7 @@ namespace KDOM
         }
 
     private:
-        QPtrList<T> m_impl;
+        Q3PtrList<T> m_impl;
     };
 };
 

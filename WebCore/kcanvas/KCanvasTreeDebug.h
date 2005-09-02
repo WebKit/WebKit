@@ -25,7 +25,7 @@
 
 #include <qstring.h>
 #include <qtextstream.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 class KCanvasMatrix;
 class QRect;
@@ -51,11 +51,11 @@ QTextStream &operator<<(QTextStream &ts, const QPoint &);
 QTextStream &operator<<(QTextStream &ts, const QStringList &l);
     
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const QValueList<Item*> &l)
+QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item*> &l)
 {
     ts << "[";
-    typename QValueList<Item*>::ConstIterator it = l.begin();
-    typename QValueList<Item*>::ConstIterator it_e = l.end();
+    typename Q3ValueList<Item*>::ConstIterator it = l.begin();
+    typename Q3ValueList<Item*>::ConstIterator it_e = l.end();
     while (it != it_e)
     {
         ts << *(*it);
@@ -68,11 +68,11 @@ QTextStream &operator<<(QTextStream &ts, const QValueList<Item*> &l)
 }
 
 template<typename Item>
-QTextStream &operator<<(QTextStream &ts, const QValueList<Item> &l)
+QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item> &l)
 {
     ts << "[";
-    typename QValueList<Item>::ConstIterator it = l.begin();
-    typename QValueList<Item>::ConstIterator it_e = l.end();
+    typename Q3ValueList<Item>::ConstIterator it = l.begin();
+    typename Q3ValueList<Item>::ConstIterator it_e = l.end();
     while (it != it_e)
     {
         ts << *it;

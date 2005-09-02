@@ -37,7 +37,7 @@ namespace KSVG
     {
     public:
         SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule);
-        SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule, QPtrList<KDOM::CSSProperty> *lstValues);
+        SVGCSSStyleDeclarationImpl(KDOM::CDFInterface *interface, KDOM::CSSRuleImpl *parentRule, Q3PtrList<KDOM::CSSProperty> *lstValues);
         virtual ~SVGCSSStyleDeclarationImpl();
 
         SVGCSSStyleDeclarationImpl &operator=(const SVGCSSStyleDeclarationImpl &other);

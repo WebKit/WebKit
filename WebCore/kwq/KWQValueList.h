@@ -171,4 +171,8 @@ inline std::ostream &operator<<(std::ostream &o, const QValueList<T>&p)
 
 #endif
 
+#define Q3ValueList QValueList
+#define Q3ValueListIterator QValueListIterator
+#define Q3ValueListConstIterator QValueListConstIterator
+
 #endif

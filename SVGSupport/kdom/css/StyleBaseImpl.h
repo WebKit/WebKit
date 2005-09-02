@@ -29,7 +29,7 @@
 #ifndef KDOM_StyleBaseImpl_H
 #define KDOM_StyleBaseImpl_H
 
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kdom/TreeShared.h>
 #include <kdom/core/NodeImpl.h>
@@ -122,7 +122,7 @@ namespace KDOM
         void setParent(StyleBaseImpl *parent);
 
         static void setParsedValue(int propId, const CSSValueImpl *parsedValue,
-                                   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
+                                   bool important, bool nonCSSHint, Q3PtrList<CSSProperty> *propList);
 
         virtual bool parseString(DOMStringImpl *cssString, bool = false);
 
@@ -157,7 +157,7 @@ namespace KDOM
         void append(StyleBaseImpl *item);
 
     protected:
-        QPtrList<StyleBaseImpl> *m_lstChildren;
+        Q3PtrList<StyleBaseImpl> *m_lstChildren;
     };
 
     // this class represents a selector for a StyleRule

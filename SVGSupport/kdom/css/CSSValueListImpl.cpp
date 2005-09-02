@@ -52,7 +52,7 @@ DOMStringImpl *CSSValueListImpl::cssText() const
 {
     DOMStringImpl *result = new DOMStringImpl();
 
-    for(QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator)
+    for(Q3PtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator)
         result->append(iterator.current()->cssText());
 
     return result;

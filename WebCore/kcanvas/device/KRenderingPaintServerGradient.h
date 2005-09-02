@@ -24,7 +24,7 @@
 #define KRenderingPaintServerGradient_H
 
 #include <qcolor.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
@@ -44,17 +44,17 @@ struct KCGradientOffsetPair
     QColor color;
 };
 
-class KCSortedGradientStopList : public QPtrList<KCGradientOffsetPair>
+class KCSortedGradientStopList : public Q3PtrList<KCGradientOffsetPair>
 {
 public:
     KCSortedGradientStopList();
     void addStop(float offset, const QColor &color);
 
-    typedef QPtrListIterator<KCGradientOffsetPair> Iterator;
+    typedef Q3PtrListIterator<KCGradientOffsetPair> Iterator;
 
     
 protected:
-    virtual int compareItems(QPtrCollection::Item item1, QPtrCollection::Item item2);
+    virtual int compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2);
 private:
     friend QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
 };

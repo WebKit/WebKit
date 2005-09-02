@@ -27,7 +27,7 @@
 #define KDOM_CSSPARSER_H
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 #include <kdom/core/DOMStringImpl.h>
 
@@ -153,7 +153,7 @@ namespace KDOM
         static bool validUnit(KDOMCSSValue *value, int unitflags, bool strict);
 
         virtual CSSStyleDeclarationImpl *createCSSStyleDeclaration(CSSStyleRuleImpl *rule,
-                                                                   QPtrList<CSSProperty> *propList);
+                                                                   Q3PtrList<CSSProperty> *propList);
 
     public:
         bool strict;

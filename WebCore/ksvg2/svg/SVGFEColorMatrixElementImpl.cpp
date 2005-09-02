@@ -120,7 +120,7 @@ KCanvasItem *SVGFEColorMatrixElementImpl::createCanvasItem(KCanvas *canvas, KRen
     m_filterEffect = static_cast<KCanvasFEColorMatrix *>(canvas->renderingDevice()->createFilterEffect(FE_COLOR_MATRIX));
     m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).string());
     setStandardAttributes(m_filterEffect);
-    QValueList<float> _values;
+    Q3ValueList<float> _values;
     SVGNumberListImpl *numbers = values()->baseVal();
     unsigned int nr = numbers->numberOfItems();
     for(unsigned int i = 0;i < nr;i++)

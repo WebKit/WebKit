@@ -46,9 +46,9 @@ using namespace KDOM;
 #define KDOM_CACHE_DEFAULT_SIZE 2146304 // 2096 * 1024
 
 Loader *Cache::s_loader = 0;
-QDict<CachedObject> *Cache::s_objectDict = 0;
-QPtrList<CachedObject> *Cache::s_freeList = 0;
-QPtrList<DocumentLoader> *Cache::s_docLoaderList = 0;
+Q3Dict<CachedObject> *Cache::s_objectDict = 0;
+Q3PtrList<CachedObject> *Cache::s_freeList = 0;
+Q3PtrList<DocumentLoader> *Cache::s_docLoaderList = 0;
 
 QPixmap *Cache::nullPixmap;
 QPixmap *Cache::brokenPixmap;
@@ -63,14 +63,14 @@ void Cache::init()
         s_loader = new Loader();
 
     if(!s_objectDict)
-        s_objectDict = new QDict<CachedObject>(KDOM_CACHE_DICT_SIZE, true);
+        s_objectDict = new Q3Dict<CachedObject>(KDOM_CACHE_DICT_SIZE, true);
 
     if(!s_docLoaderList)
-        s_docLoaderList = new QPtrList<DocumentLoader>;
+        s_docLoaderList = new Q3PtrList<DocumentLoader>;
 
     if(!s_freeList)
     {
-        s_freeList = new QPtrList<CachedObject>;
+        s_freeList = new Q3PtrList<CachedObject>;
         s_freeList->setAutoDelete(true);
     }
     
@@ -140,7 +140,7 @@ void Cache::setSize(int bytes)
 
 bool Cache::hasPending(CachedObject::Type type)
 {
-    QDictIterator<CachedObject> it(*s_objectDict);
+    Q3DictIterator<CachedObject> it(*s_objectDict);
     for(it.toFirst(); it.current(); ++it)
     {
         if(it.current()->type() == type &&
@@ -166,7 +166,7 @@ void Cache::statistics()
     int stylesheets = 0;
     int documents = 0;
 
-    QDictIterator<CachedObject> it(*s_objectDict);
+    Q3DictIterator<CachedObject> it(*s_objectDict);
     for(it.toFirst(); it.current(); ++it)
     {
         o = it.current();

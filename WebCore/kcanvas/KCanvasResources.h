@@ -24,7 +24,7 @@
 #define KCanvasResources_H
 
 #include <qstring.h>
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kcanvas/KCanvasItem.h>
 #include <kcanvas/KCanvasPath.h>

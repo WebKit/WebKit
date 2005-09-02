@@ -22,7 +22,7 @@
 
 #include <assert.h>
 
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <kurl.h>
 #include <klocale.h>
@@ -546,7 +546,7 @@ void SVGDocumentImpl::finishedParsing()
 {
     addScripts(rootElement());
 
-    m_scriptsIt = new QPtrListIterator<SVGScriptElementImpl>(m_scripts);
+    m_scriptsIt = new Q3PtrListIterator<SVGScriptElementImpl>(m_scripts);
     executeScripts(false);
 }
 
@@ -622,7 +622,7 @@ void SVGDocumentImpl::recalcStyleSelector()
 
     QString sheetUsed; // Empty sheet
 
-    QPtrList<KDOM::StyleSheetImpl> oldStyleSheets = m_styleSheets->styleSheets;
+    Q3PtrList<KDOM::StyleSheetImpl> oldStyleSheets = m_styleSheets->styleSheets;
     m_styleSheets->styleSheets.clear();
 
     for(int i = 0; i < 2; i++)
@@ -711,7 +711,7 @@ void SVGDocumentImpl::recalcStyleSelector()
     }
 
     // De-reference all the stylesheets in the old list
-    QPtrListIterator<KDOM::StyleSheetImpl> it(oldStyleSheets);
+    Q3PtrListIterator<KDOM::StyleSheetImpl> it(oldStyleSheets);
     for(;it.current(); ++it)
         it.current()->deref();
 

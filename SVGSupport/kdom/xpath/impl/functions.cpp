@@ -328,9 +328,9 @@ QString Interval::asString() const
     return s;
 }
 
-void Function::setArguments( const QValueList<Expression *> &args )
+void Function::setArguments( const Q3ValueList<Expression *> &args )
 {
-    QValueList<Expression *>::ConstIterator it, end = args.end();
+    Q3ValueList<Expression *>::ConstIterator it, end = args.end();
     for ( it = args.begin(); it != end; ++it ) {
         addSubExpression( *it );
     }
@@ -906,7 +906,7 @@ FunctionLibrary::FunctionLibrary()
 }
 
 Function *FunctionLibrary::getFunction( const char *name,
-                                        const QValueList<Expression *> &args ) const
+                                        const Q3ValueList<Expression *> &args ) const
 {
     if ( !m_functionDict.find( name ) ) {
         qWarning( "Function '%s' not supported by this implementation.", name );

@@ -23,7 +23,7 @@
 #ifndef KDOM_XPointer_XPointerExpressionImpl_H
 #define KDOM_XPointer_XPointerExpressionImpl_H
 
-#include <qvaluelist.h>
+#include <q3valuelist.h>
 
 #include <kdom/Shared.h>
 
@@ -42,7 +42,7 @@ namespace XPointer
     class XPointerExpressionImpl : public Shared
     {
     public:
-        typedef QValueList<PointerPartImpl *> List;
+        typedef Q3ValueList<PointerPartImpl *> List;
 
         XPointerExpressionImpl(DOMStringImpl *raw, NodeImpl *relatedNode, DocumentImpl *context);
         virtual ~XPointerExpressionImpl();
