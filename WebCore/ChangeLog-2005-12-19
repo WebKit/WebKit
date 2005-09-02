@@ -1,5 +1,13 @@
 2005-09-02  Darin Adler  <darin@apple.com>
 
+        - added back a test now that Vicki fixed it so it no longer crashes
+
+        * layout-tests/dom/html/level2/html/HTMLFrameElement09.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLFrameElement09-expected.txt: Added.
+        * layout-tests/dom/html/level2/html/HTMLFrameElement09.html-disabled: Removed.
+
+2005-09-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4757
