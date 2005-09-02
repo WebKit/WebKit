@@ -1,3 +1,27 @@
+2005-09-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4757
+          leaks found by code inspection in apply-style command
+
+        * khtml/editing/apply_style_command.h: Change m_style to be a SharedPtr.
+        * khtml/editing/apply_style_command.cpp:
+        (khtml::StyleChange::init): Added use of SharedPtr.
+        (khtml::StyleChange::currentlyHasStyle): Ditto.
+        (khtml::ApplyStyleCommand::ApplyStyleCommand): Ditto.
+        (khtml::ApplyStyleCommand::~ApplyStyleCommand): Ditto.
+        (khtml::ApplyStyleCommand::doApply): Ditto.
+        (khtml::ApplyStyleCommand::applyRelativeFontStyleChange): Ditto.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Ditto.
+        (khtml::hasTextDecorationProperty): Ditto.
+        (khtml::ApplyStyleCommand::extractTextDecorationStyle): Ditto.
+        (khtml::ApplyStyleCommand::extractAndNegateTextDecorationStyle): Ditto.
+        (khtml::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode): Ditto.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Ditto.
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): Ditto.
+        (khtml::ApplyStyleCommand::computedFontSize): Ditto.
+
 2005-09-02  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs (continuation of previous commit).
