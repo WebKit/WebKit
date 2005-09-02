@@ -1,3 +1,14 @@
+2005-09-01  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John.
+ 
+        Test cases added: No new tests, HTMLFrameElement09.html covers this crash
+
+	- fixed <rdar://problem/4224088> crash in KWQKHTMLPart::handledOnloadEvents loading test HTMLFrameElement09.html
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::implicitClose): nil check on the part
+
 2005-09-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

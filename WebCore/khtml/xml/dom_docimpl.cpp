@@ -1348,7 +1348,8 @@ void DocumentImpl::implicitClose()
             dispatchImageLoadEventsNow();
             body->dispatchWindowEvent(loadEvent, false, false);
 #if APPLE_CHANGES
-            KWQ(part())->handledOnloadEvents();
+            if (KHTMLPart *p = part())
+                KWQ(p)->handledOnloadEvents();
 #endif
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
