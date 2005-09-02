@@ -1,3 +1,33 @@
+2005-09-02  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test cases updated:  manual-tests/select_hr.html: 
+        updated for case where selection is changed for a list box that has an <hr> in its list items, even though it doesn't appear in the list.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSelect::slotSelectionChanged):  Added counter that increments only for visible list items (options and optgroups).  Before this change, 
+        list boxes that had invisible <hr>s could have the visible selected option get out of sync from the selected state.
+        (RenderSelect::updateSelection):  ditto.
+        * kwq/KWQListBox.h: Changed enum from ItemType to KWQListBoxItemType and values to KWQListBoxOption, KWQListBoxGroupLabel, and KWQListBoxSeparator.
+        (KWQListBoxItem::KWQListBoxItem): ditto.
+        (QListBox::appendItem): ditto.
+        (QListBox::appendGroupLabel): ditto.
+        * kwq/KWQListBox.mm:
+        (QListBox::appendItem): ditto.
+        (QListBox::sizeForNumberOfLines): ditto.
+        (-[KWQTableView tableView:shouldSelectRow:]): ditto.
+        (-[KWQTableView drawRow:clipRect:]): ditto.
+        * kwq/KWQComboBox.h: 
+        (QComboBox::appendItem): ditto.
+        (QComboBox::appendGroupLabel): ditto.
+        (QComboBox::appendSeparator): ditto.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::setTitle): ditto.
+        (QComboBox::appendItem): ditto.
+        (QComboBox::sizeHint): ditto.
+        (QComboBox::populateMenu): ditto.
+
 2005-09-02  Beth Dakin  <bdakin@apple.com>
 
         Fix for <rdar://problem/4235531> Denver Regression: Safari crash in KWQStringData::makeUnicode

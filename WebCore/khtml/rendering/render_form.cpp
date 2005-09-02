@@ -1324,13 +1324,16 @@ void RenderSelect::slotSelectionChanged()
     // don't use listItems() here as we have to avoid recalculations - changing the
     // option list will make use update options not in the way the user expects them
     QMemArray<HTMLElementImpl*> listItems = element()->m_listItems;
-    for ( unsigned i = 0; i < listItems.count(); i++ )
+    int j = 0;
+    for ( unsigned i = 0; i < listItems.count(); i++ ) {
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
         if (listItems[i]->hasTagName(optionTag))
             static_cast<HTMLOptionElementImpl*>( listItems[i] )
-                ->m_selected = static_cast<KListBox*>( m_widget )->isSelected( i );
-
+                ->m_selected = static_cast<KListBox*>( m_widget )->isSelected( j );
+        if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
+            ++j;
+    }
     element()->onChange();
 }
 
@@ -1368,9 +1371,14 @@ void RenderSelect::updateSelection()
     if (m_useListBox) {
         // if multi-select, we select only the new selected index
         KListBox *listBox = static_cast<KListBox*>(m_widget);
-        for (i = 0; i < int(listItems.size()); i++)
-            listBox->setSelected(i, listItems[i]->hasTagName(optionTag) &&
+        int j = 0;
+        for (i = 0; i < int(listItems.size()); i++) {
+            listBox->setSelected(j, listItems[i]->hasTagName(optionTag) &&
                                 static_cast<HTMLOptionElementImpl*>(listItems[i])->selected());
+            if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
+                ++j;
+            
+        }
     }
     else {
         bool found = false;

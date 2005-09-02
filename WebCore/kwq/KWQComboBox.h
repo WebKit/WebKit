@@ -41,9 +41,9 @@ public:
     ~QComboBox();
     
     void clear();
-    void appendItem(const QString &text) { appendItem(text, Option); }
-    void appendGroupLabel(const QString &text) { appendItem(text, GroupLabel); }
-    void appendSeparator() { appendItem(QString(""), Separator); }
+    void appendItem(const QString &text) { appendItem(text, KWQListBoxOption); }
+    void appendGroupLabel(const QString &text) { appendItem(text, KWQListBoxGroupLabel); }
+    void appendSeparator() { appendItem(QString::null, KWQListBoxSeparator); }
 
     int currentItem() const { return _currentItem; }
     void setCurrentItem(int);
@@ -67,7 +67,7 @@ public:
     void populateMenu();
     
 private:
-    void appendItem(const QString &, ItemType type);
+    void appendItem(const QString &, KWQListBoxItemType);
     const int *dimensions() const;
     NSFont *labelFont() const;
     void setTitle(NSMenuItem *, const KWQListBoxItem &);

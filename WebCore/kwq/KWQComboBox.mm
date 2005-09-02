@@ -113,7 +113,7 @@ QComboBox::~QComboBox()
 
 void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
 {
-    if (title.type == GroupLabel) {
+    if (title.type == KWQListBoxGroupLabel) {
         NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:labelFont(), NSFontAttributeName, nil];
         NSAttributedString *string = [[NSAttributedString alloc] initWithString:title.string.getNSString() attributes:attributes];
         [menuItem setAttributedTitle:string];
@@ -125,7 +125,7 @@ void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
     }
 }
 
-void QComboBox::appendItem(const QString &text, ItemType type)
+void QComboBox::appendItem(const QString &text, KWQListBoxItemType type)
 {
     const KWQListBoxItem listItem(text, type);
     _items.append(listItem);
@@ -135,7 +135,7 @@ void QComboBox::appendItem(const QString &text, ItemType type)
             _menuPopulated = false;
         } else {
             KWQ_BLOCK_EXCEPTIONS;
-            if (type == Separator) {
+            if (type == KWQListBoxSeparator) {
                 NSMenuItem *separator = [NSMenuItem separatorItem];
                 [[button menu] addItem:separator];
             } else {
@@ -172,7 +172,7 @@ QSize QComboBox::sizeHint() const
             style.applyWordRounding = NO;
             do {
                 const QString &s = (*i).string;
-                bool isGroupLabel = ((*i).type == GroupLabel);
+                bool isGroupLabel = ((*i).type == KWQListBoxGroupLabel);
                 ++i;
 
                 WebCoreTextRun run;
@@ -364,7 +364,7 @@ void QComboBox::populateMenu()
         QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
         QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
         for (; i != e; ++i) {
-            if ((*i).type == Separator) {
+            if ((*i).type == KWQListBoxSeparator) {
                 NSMenuItem *separator = [NSMenuItem separatorItem];
                 [[button menu] addItem:separator];
             } else {
