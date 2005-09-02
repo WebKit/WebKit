@@ -283,7 +283,7 @@ QRect CachedImage::valid_rect() const
 
 void CachedImage::do_notify(const QPixmap &p, const QRect &r)
 {
-    for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current(); )
+    for(Q3PtrDictIterator<CachedObjectClient> it(m_clients); it.current(); )
         it()->setPixmap(p, r, this);
 }
 
@@ -376,7 +376,7 @@ void CachedImage::movieStatus(int status)
             }
         }
 
-        for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
+        for(Q3PtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
             it()->notifyFinished(this);
     }
 }
@@ -519,7 +519,7 @@ void CachedImage::data(QBuffer &buffer, bool eof)
             else
                 do_notify(*m_pixmap, m_pixmap->rect());
 
-            for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
+            for(Q3PtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
                 it()->notifyFinished(this);
         }
 #else // APPLE_COMPILE_HACK
@@ -580,7 +580,7 @@ void CachedImage::error(int /* err */, const char * /* text */)
     
     do_notify(pixmap(), QRect(0, 0, 16, 16));
     
-    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+    for(Q3PtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
         it()->notifyFinished(this);
 }
 

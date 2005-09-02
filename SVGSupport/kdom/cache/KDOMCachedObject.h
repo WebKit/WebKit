@@ -29,7 +29,7 @@
 #define KDOM_CachedObject_H
 
 #include <qbuffer.h>
-#include <qptrdict.h>
+#include <q3ptrdict.h>
 #include <qtextcodec.h>
 
 #include <kio/global.h>
@@ -132,7 +132,7 @@ namespace KDOM
     protected:
         void setSize(int size);
 
-        QPtrDict<CachedObjectClient> m_clients;
+        Q3PtrDict<CachedObjectClient> m_clients;
 
         int m_size;
         Type m_type;

@@ -73,7 +73,7 @@ void CachedScript::checkNotify()
     if(m_loading)
         return;
 
-    for(QPtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
+    for(Q3PtrDictIterator<CachedObjectClient> it(m_clients); it.current();)
         it()->notifyFinished(this);
 }
 

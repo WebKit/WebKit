@@ -103,7 +103,7 @@ void CachedStyleSheet::checkNotify()
 
     // it() first increments, then returnes the current item.
     // this avoids skipping an item when setStyleSheet deletes the "current" one.
-    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+    for(Q3PtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
         it()->setStyleSheet(m_url, m_sheet);
 }
 
@@ -116,7 +116,7 @@ void CachedStyleSheet::error(int err, const char *text)
 
     // it() first increments, then returnes the current item.
     // this avoids skipping an item when setStyleSheet deletes the "current" one.
-    for(QPtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
+    for(Q3PtrDictIterator<CachedObjectClient> it( m_clients ); it.current();)
         it()->error(m_err, m_errText);
 }
 

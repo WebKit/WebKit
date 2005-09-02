@@ -28,7 +28,7 @@
 #ifndef KDOM_CacheHelper_H
 #define KDOM_CacheHelper_H
 
-#include <qptrdict.h>
+#include <q3ptrdict.h>
 #include <q3ptrlist.h>
 
 #include <kdom/cache/KDOMCachedObject.h>

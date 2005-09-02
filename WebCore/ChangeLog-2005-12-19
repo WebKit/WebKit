@@ -1,5 +1,40 @@
 2005-09-02  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs (continuation of previous commit).
+
+        * ForwardingHeaders/q3ptrdict.h: Added.
+        * kdom/cache/KDOMCacheHelper.h:
+        * kdom/cache/KDOMCachedDocument.cpp:
+        (CachedDocument::checkNotify):
+        (CachedDocument::error):
+        * kdom/cache/KDOMCachedImage.cpp:
+        (CachedImage::do_notify):
+        (CachedImage::movieStatus):
+        (CachedImage::data):
+        (CachedImage::error):
+        * kdom/cache/KDOMCachedObject.h:
+        * kdom/cache/KDOMCachedScript.cpp:
+        (CachedScript::checkNotify):
+        * kdom/cache/KDOMCachedStyleSheet.cpp:
+        (CachedStyleSheet::checkNotify):
+        (CachedStyleSheet::error):
+        * kdom/cache/KDOMLoader.cpp:
+        (DocumentLoader::setAutoloadImages):
+        (DocumentLoader::setShowAnimations):
+        (Loader::numRequests):
+        (Loader::cancelRequests):
+        (Loader::jobForRequest):
+        * kdom/cache/KDOMLoader.h:
+        * kdom/ecma/Ecma.cpp:
+        (Ecma::createEventListener):
+        * kdom/ecma/ScriptInterpreter.cpp:
+        (ScriptInterpreter::mark):
+        * kwq/KWQPtrDict.h:
+        Re-ran scripts from previous commit, now including QPtrDict.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4799
+
+2005-09-02  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         * ForwardingHeaders/q3cstring.h: Added.

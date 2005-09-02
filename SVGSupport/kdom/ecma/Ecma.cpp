@@ -22,7 +22,7 @@
 
 #include <kdebug.h>
 #include <qvariant.h>
-#include <qptrdict.h>
+#include <q3ptrdict.h>
 
 #include "kdom.h"
 #include "Ecma.h"
@@ -112,7 +112,7 @@ public:
     GlobalObject *globalObject;
     ScriptInterpreter *interpreter;
 
-    QPtrDict<EventListenerImpl> eventListeners;
+    Q3PtrDict<EventListenerImpl> eventListeners;
 };
 
 Ecma::Ecma(DocumentImpl *doc) : d(new Private(doc))
@@ -257,7 +257,7 @@ EventListenerImpl *Ecma::createEventListener(const DOMString &type, const DOMStr
     // We probably deal with sth. like onload="alert('hi');' ...
     DOMString internalType = DOMString("[KDOM] - ") + jsCode;
     
-    QPtrDictIterator<EventListenerImpl> it(d->eventListeners);
+    Q3PtrDictIterator<EventListenerImpl> it(d->eventListeners);
     for( ; it.current(); ++it)
     {
         EventListenerImpl *current = it.current();

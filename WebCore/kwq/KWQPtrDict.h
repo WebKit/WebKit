@@ -82,4 +82,7 @@ private:
     QPtrDictIterator &operator=(const QPtrDictIterator &);
 };
 
+#define Q3PtrDict QPtrDict
+#define Q3PtrDictIterator QPtrDictIterator
+
 #endif
