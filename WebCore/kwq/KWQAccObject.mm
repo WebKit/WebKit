@@ -184,7 +184,7 @@ using khtml::VisiblePosition;
 {
     // FIXME: Do the continuation search like anchorElement does
     for (NodeImpl *elt = m_renderer->element(); elt; elt = elt->parentNode()) {
-        if (elt->getHTMLEventListener(khtmlClickEvent) || elt->getHTMLEventListener(mousedownEvent) || elt->getHTMLEventListener(mouseupEvent))
+        if (elt->getHTMLEventListener(clickEvent) || elt->getHTMLEventListener(mousedownEvent) || elt->getHTMLEventListener(mouseupEvent))
             return static_cast<ElementImpl*>(elt);
     }
     return NULL;

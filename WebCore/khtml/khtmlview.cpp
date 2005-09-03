@@ -179,7 +179,6 @@ public:
         if (clickNode)
 	    clickNode->deref();
         clickNode = 0;
-	isDoubleClick = false;
 	scrollingSelf = false;
 	layoutTimerId = 0;
         delayedLayout = false;
@@ -223,7 +222,6 @@ public:
 #endif
     int clickCount;
     NodeImpl *clickNode;
-    bool isDoubleClick;
 
     int prevMouseX, prevMouseY;
     bool scrollingSelf;
@@ -768,7 +766,6 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     //kdDebug( 6000 ) << "\nmousePressEvent: x=" << xm << ", y=" << ym << endl;
 
-    d->isDoubleClick = false;
     d->mousePressed = true;
 
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MousePress );
@@ -830,7 +827,6 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     //kdDebug( 6000 ) << "mouseDblClickEvent: x=" << xm << ", y=" << ym << endl;
 
-    d->isDoubleClick = true;
 #if APPLE_CHANGES
     // We get this instead of a second mouse-up 
     d->mousePressed = false;
@@ -1807,148 +1803,52 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, DOM::NodeImpl 
     if (d->underMouse)
 	d->underMouse->ref();
 
-    int exceptioncode = 0;
-    int clientX, clientY;
-    viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
-#if APPLE_CHANGES
-    QPoint screenLoc = viewportToGlobal(_mouse->pos());
-    int screenX = screenLoc.x();
-    int screenY = screenLoc.y();
-#else
-    int screenX = _mouse->globalX();
-    int screenY = _mouse->globalY();
-#endif
-    int button = -1;
-    switch (_mouse->button()) {
-	case LeftButton:
-	    button = 0;
-	    break;
-	case MidButton:
-	    button = 1;
-	    break;
-	case RightButton:
-	    button = 2;
-	    break;
-	default:
-	    break;
-    }
-    bool ctrlKey = (_mouse->state() & ControlButton);
-    bool altKey = (_mouse->state() & AltButton);
-    bool shiftKey = (_mouse->state() & ShiftButton);
-    bool metaKey = (_mouse->state() & MetaButton);
-
     // mouseout/mouseover
-    if (setUnder && (d->prevMouseX != clientX || d->prevMouseY != clientY)) {
-
-        // ### this code sucks. we should save the oldUnder instead of calculating
-        // it again. calculating is expensive! (Dirk)
-        NodeImpl *oldUnder = 0;
-	if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
-	    NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
-	    m_part->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
-	    oldUnder = mev.innerNode.get();
-	}
-	if (oldUnder != targetNode) {
-	    // send mouseout event to the old node
-	    if (oldUnder){
-		oldUnder->ref();
-		MouseEventImpl *me = new MouseEventImpl(mouseoutEvent,
-							true,true,m_part->xmlDocImpl()->defaultView(),
-							0,screenX,screenY,clientX,clientY,
-							ctrlKey,altKey,shiftKey,metaKey,
-							button,targetNode);
-		oldUnder->dispatchEvent(me,exceptioncode,true);
-	    }
-
-	    // send mouseover event to the new node
-	    if (targetNode) {
-		MouseEventImpl *me = new MouseEventImpl(mouseoverEvent,
-							true,true,m_part->xmlDocImpl()->defaultView(),
-							0,screenX,screenY,clientX,clientY,
-							ctrlKey,altKey,shiftKey,metaKey,
-							button,oldUnder);
-		targetNode->dispatchEvent(me,exceptioncode,true);
-	    }
-
-            if (oldUnder)
-                oldUnder->deref();
+    if (setUnder) {
+        int clientX, clientY;
+        viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
+        if (d->prevMouseX != clientX || d->prevMouseY != clientY) {
+            // ### this code sucks. we should save the oldUnder instead of calculating
+            // it again. calculating is expensive! (Dirk)
+            // Also, there's no guarantee that the old under node is even around any more,
+            // so we could be sending a mouseout to a node that never got a mouseover.
+            SharedPtr<NodeImpl> oldUnder;
+            if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
+                NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
+                m_part->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
+                oldUnder = mev.innerNode;
+            }
+            if (oldUnder != targetNode) {
+                // send mouseout event to the old node
+                if (oldUnder)
+                    oldUnder->dispatchMouseEvent(_mouse, mouseoutEvent);
+                // send mouseover event to the new node
+                if (targetNode)
+                    targetNode->dispatchMouseEvent(_mouse, mouseoverEvent);
+            }
         }
     }
 
     bool swallowEvent = false;
 
-    if (targetNode) {
-        // FIXME: Should share code with RenderFormElement::slotClicked, and NodeImpl::dispatchMouseEvent,
-        // which do a lot of the same stuff.
-
-	// send the actual event
-	MouseEventImpl *me = new MouseEventImpl(eventType,
-						true,cancelable,m_part->xmlDocImpl()->defaultView(),
-						detail,screenX,screenY,clientX,clientY,
-						ctrlKey,altKey,shiftKey,metaKey,
-						button,0);
-	me->ref();
-	targetNode->dispatchEvent(me,exceptioncode,true);
-	bool defaultHandled = me->defaultHandled();
-	bool defaultPrevented = me->defaultPrevented();
-        if (me->defaultHandled() || me->defaultPrevented())
-            swallowEvent = true;
-	me->deref();
-
-	// Special case: If it's a click event, we also send the khtmlClickEvent or khtmlDblclickEvent. This is not part
-	// of the DOM specs, but is used for compatibility with the traditional onclick="" and ondblclick="" attributes,
-	// as there is no way to tell the difference between single & double clicks using DOM (only the click count is
-	// stored, which is not necessarily the same).
-	if (eventType == clickEvent) {
-	    me = new MouseEventImpl(khtmlClickEvent,
-				    true,cancelable,m_part->xmlDocImpl()->defaultView(),
-				    detail,screenX,screenY,clientX,clientY,
-				    ctrlKey,altKey,shiftKey,metaKey,
-				    button,0);
-	    me->ref();
-	    if (defaultHandled)
-		me->setDefaultHandled();
-	    targetNode->dispatchEvent(me,exceptioncode,true);
-            if (me->defaultHandled())
-                defaultHandled = true;
-            if (me->defaultPrevented())
-                defaultPrevented = true;
-            if (me->defaultHandled() || me->defaultPrevented())
+    if (targetNode)
+        swallowEvent = targetNode->dispatchMouseEvent(_mouse, eventType, detail);
+    
+    if (!swallowEvent && eventType == mousedownEvent) {
+        // Focus should be shifted on mouse down, not on a click.  -dwh
+        // Blur current focus node when a link/button is clicked; this
+        // is expected by some sites that rely on onChange handlers running
+        // from form fields before the button click is processed.
+        DOM::NodeImpl* node = targetNode;
+        for ( ; node && !node->isFocusable(); node = node->parentNode());
+        // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
+        // if the page already set it (e.g., by canceling default behavior).
+        if (node && node->isMouseFocusable()) {
+            if (!m_part->xmlDocImpl()->setFocusNode(node))
                 swallowEvent = true;
-	    me->deref();
-
-            if (d->isDoubleClick) {
-                me = new MouseEventImpl(khtmlDblclickEvent,
-                                        true,cancelable,m_part->xmlDocImpl()->defaultView(),
-                                        detail,screenX,screenY,clientX,clientY,
-                                        ctrlKey,altKey,shiftKey,metaKey,
-                                        button,0);
-                me->ref();
-                if (defaultHandled)
-                    me->setDefaultHandled();
-                targetNode->dispatchEvent(me,exceptioncode,true);
-                if (me->defaultHandled() || me->defaultPrevented())
-                    swallowEvent = true;
-                me->deref();
-            }
-
-            // Also send a DOMActivate event, which causes things like form submissions to occur.
-            if (!defaultPrevented && !targetNode->disabled())
-                targetNode->dispatchUIEvent(DOMActivateEvent, detail);
-        }
-        else if (eventType == mousedownEvent) {
-            // Focus should be shifted on mouse down, not on a click.  -dwh
-            // Blur current focus node when a link/button is clicked; this
-            // is expected by some sites that rely on onChange handlers running
-            // from form fields before the button click is processed.
-	    DOM::NodeImpl* nodeImpl = targetNode;
-	    for ( ; nodeImpl && !nodeImpl->isFocusable(); nodeImpl = nodeImpl->parentNode());
-            // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
-            // if the page already set it (e.g., by canceling default behavior).
-            if (nodeImpl && nodeImpl->isMouseFocusable())
-                swallowEvent |= !m_part->xmlDocImpl()->setFocusNode(nodeImpl);
-            else if (!nodeImpl || !nodeImpl->focused())
-                swallowEvent |= !m_part->xmlDocImpl()->setFocusNode(0);
+        } else if (!node || !node->focused()) {
+            if (!m_part->xmlDocImpl()->setFocusNode(0))
+            swallowEvent = true;
         }
     }
 

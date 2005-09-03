@@ -760,6 +760,9 @@ static QPoint positionForEvent(NSEvent *event)
         case NSOtherMouseDragged:
         case NSMouseMoved:
         case NSScrollWheel:
+            // Note: This has its origin at the bottom left of the window.
+            // The Y coordinate gets flipped by QScrollView::viewportToContents.
+            // We should probably change both this and that to not use "bottom left origin" coordinates at all.
             return QPoint([event locationInWindow]);
         default:
             return QPoint();
@@ -779,8 +782,11 @@ static QPoint globalPositionForEvent(NSEvent *event)
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
         case NSMouseMoved:
-        case NSScrollWheel:
-            return QPoint([[event window] convertBaseToScreen:[event locationInWindow]]);
+        case NSScrollWheel: {
+            NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
+            point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
+            return QPoint(point);
+        }
         default:
             return QPoint();
     }
@@ -832,15 +838,10 @@ QEvent::~QEvent()
 
 // ======== 
 
-QMouseEvent::QMouseEvent(Type type, const QPoint &position, int button, int state)
-    : QEvent(type), _position(position), _button(button), _state(state), _clickCount(1)
-{
-    fixState();
-}
-
 QMouseEvent::QMouseEvent(Type type, NSEvent *event)
     : QEvent(type)
     , _position(positionForEvent(event))
+    , _globalPosition(globalPositionForEvent(event))
     , _button(mouseButtonForEvent(event))
     , _state(nonMouseButtonsForEvent(event))
     , _clickCount(clickCountForEvent(event))
@@ -854,6 +855,7 @@ QMouseEvent::QMouseEvent(Type type)
     NSEvent *event = [NSApp currentEvent];
     if (event) {
         _position = positionForEvent(event);
+        _globalPosition = globalPositionForEvent(event);
         _button = mouseButtonForEvent(event);
         _state = nonMouseButtonsForEvent(event);
         _clickCount = clickCountForEvent(event);

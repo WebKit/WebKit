@@ -691,7 +691,6 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
 
 bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType, int overrideDetail)
 {
-    bool cancelable = true;
     int detail = overrideDetail; // defaults to 0
     AtomicString eventType;
     if (!overrideType.isEmpty()) {
@@ -706,57 +705,22 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
                 break;
             case QEvent::MouseButtonDblClick:
                 eventType = clickEvent;
-#if APPLE_CHANGES
                 detail = _mouse->clickCount();
-#else
-                detail = 1; // ### support for multiple double clicks
-#endif
                 break;
             case QEvent::MouseMove:
                 eventType = mousemoveEvent;
-                cancelable = false;
                 break;
             default:
                 break;
         }
     }
 
-    if (eventType.isEmpty())
-        return false; // shouldn't happen
-
-    int exceptioncode = 0;
-
-#if APPLE_CHANGES
-// Careful here - our viewportToContents() converts points from NSEvents, in NSWindow coord system to
-// our khtmlview's coord system.  This works for QMouseEvents coming from Cocoa because those events
-// hold the location from the NSEvent.  The QMouseEvent param here was made by other khtml code, so it
-// will be a "proper" QT event with coords in terms of this widget.  So in WebCore it would never be
-// right to pass coords from _mouse to viewportToContents().
-#endif
-//    int clientX, clientY;
-//    viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
-    int clientX = _mouse->x(); // ### adjust to be relative to view
-    int clientY = _mouse->y(); // ### adjust to be relative to view
-
-#if APPLE_CHANGES
-    int screenX;
-    int screenY;
-    KHTMLView *view = document->document()->view();
-    if (view) {
-        // This gets us as far as NSWindow coords
-        QPoint windowLoc = view->contentsToViewport(_mouse->pos());
-        // Then from NSWindow coords to screen coords
-        QPoint screenLoc = view->viewportToGlobal(windowLoc);
-        screenX = screenLoc.x();
-        screenY = screenLoc.y();
-    } else {
-        screenX = _mouse->x();
-        screenY = _mouse->y();
-    }
-#else
+    int clientX = 0;
+    int clientY = 0;
+    if (KHTMLView *view = document->document()->view())
+        view->viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
     int screenX = _mouse->globalX();
     int screenY = _mouse->globalY();
-#endif
 
     int button = -1;
     switch (_mouse->button()) {
@@ -772,10 +736,37 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
         default:
             break;
     }
+
     bool ctrlKey = (_mouse->state() & Qt::ControlButton);
     bool altKey = (_mouse->state() & Qt::AltButton);
     bool shiftKey = (_mouse->state() & Qt::ShiftButton);
     bool metaKey = (_mouse->state() & Qt::MetaButton);
+    
+    return dispatchMouseEvent(eventType, button, detail,
+        clientX, clientY, screenX, screenY,
+        ctrlKey, altKey, shiftKey, metaKey);
+}
+
+bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
+{
+    // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
+    // Internet Explorer instead gives the current mouse position and state.
+    return dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, false, false, false, false);
+}
+
+bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int detail,
+    int clientX, int clientY, int screenX, int screenY,
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
+{
+    if (disabled()) // Don't even send DOM events for disabled controls..
+        return true;
+
+    if (eventType.isEmpty())
+        return false; // Shouldn't happen.
+
+    bool cancelable = eventType != mousemoveEvent;
+    
+    int exceptioncode = 0;
 
     bool swallowEvent = false;
 
@@ -790,15 +781,11 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
         swallowEvent = true;
     me->deref();
 
-#if APPLE_CHANGES
-    // Special case: If it's a click event, we also send the KHTML_CLICK or KHTML_DBLCLICK event. This is not part
-    // of the DOM specs, but is used for compatibility with the traditional onclick="" and ondblclick="" attributes,
-    // as there is no way to tell the difference between single & double clicks using DOM (only the click count is
-    // stored, which is not necessarily the same)
-    if (eventType == clickEvent) {
-        eventType = khtmlClickEvent;
-
-        me = new MouseEventImpl(khtmlClickEvent,
+    // Special case: If it's a double click event, we also send the KHTML_DBLCLICK event. This is not part
+    // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
+    // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
+    if (eventType == clickEvent && detail == 2) {
+        me = new MouseEventImpl(khtmlDblclickEvent,
                                 true,cancelable,getDocument()->defaultView(),
                                 detail,screenX,screenY,clientX,clientY,
                                 ctrlKey,altKey,shiftKey,metaKey,
@@ -807,33 +794,13 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
         if (defaultHandled)
             me->setDefaultHandled();
         dispatchEvent(me,exceptioncode,true);
-        if (me->defaultHandled())
-            defaultHandled = true;
-        if (me->defaultPrevented())
-            defaultPrevented = true;
         if (me->defaultHandled() || me->defaultPrevented())
             swallowEvent = true;
         me->deref();
-
-        if (_mouse->isDoubleClick()) {
-            me = new MouseEventImpl(khtmlDblclickEvent,
-                                    true,cancelable,getDocument()->defaultView(),
-                                    detail,screenX,screenY,clientX,clientY,
-                                    ctrlKey,altKey,shiftKey,metaKey,
-                                    button,0);
-            me->ref();
-            if (defaultHandled)
-                me->setDefaultHandled();
-            dispatchEvent(me,exceptioncode,true);
-            if (me->defaultHandled() || me->defaultPrevented())
-                swallowEvent = true;
-            me->deref();
-        }
     }
-#endif
 
     // Also send a DOMActivate event, which causes things like form submissions to occur.
-    if (eventType == khtmlClickEvent && !defaultPrevented && !disabled())
+    if (eventType == clickEvent && !defaultPrevented)
         dispatchUIEvent(DOMActivateEvent, detail);
 
     return swallowEvent;

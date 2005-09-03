@@ -99,7 +99,7 @@ public:
     virtual void setSelectionState(SelectionState s);
 
 #if APPLE_CHANGES 
-    void sendConsumedMouseUp(const QPoint &mousePos, int button, int state);
+    void sendConsumedMouseUp();
     virtual void updateWidgetPositions();
 #endif
 

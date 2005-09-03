@@ -354,12 +354,10 @@ void RenderWidget::layout( )
 }
 
 #if APPLE_CHANGES
-void RenderWidget::sendConsumedMouseUp(const QPoint &mousePos, int button, int state)
+void RenderWidget::sendConsumedMouseUp()
 {
     RenderArena *arena = ref();
-    QMouseEvent e( QEvent::MouseButtonRelease, mousePos, button, state);
-
-    element()->dispatchMouseEvent(&e, mouseupEvent, 0);
+    element()->dispatchSimulatedMouseEvent(mouseupEvent);
     deref(arena);
 }
 #endif
@@ -506,60 +504,16 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
     case QEvent::FocusIn:
         //kdDebug(6000) << "RenderWidget::eventFilter captures FocusIn" << endl;
         elem->getDocument()->setFocusNode(elem);
-//         if ( isEditable() ) {
-//             KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>( elem->view->part()->browserExtension() );
-//             if ( ext )  ext->editableWidgetFocused( m_widget );
-//         }
         break;
     case QEvent::MouseButtonPress:
 //       handleMousePressed(static_cast<QMouseEvent*>(e));
         break;
     case QEvent::MouseButtonRelease:
-//    {
-//         int absX, absY;
-//         absolutePosition(absX,absY);
-//         QMouseEvent* _e = static_cast<QMouseEvent*>(e);
-//         m_button = _e->button();
-//         m_state  = _e->state();
-//         QMouseEvent e2(e->type(),QPoint(absX,absY)+_e->pos(),_e->button(),_e->state());
-
-//         elem->dispatchMouseEvent(&e2,mouseupEvent,m_clickCount);
-
-//         if((m_mousePos - e2.pos()).manhattanLength() <= QApplication::startDragDistance()) {
-//             // DOM2 Events section 1.6.2 says that a click is if the mouse was pressed
-//             // and released in the "same screen location"
-//             // As people usually can't click on the same pixel, we're a bit tolerant here
-//             elem->dispatchMouseEvent(&e2,clickEvent,m_clickCount);
-//         }
-
-//         if(!isRenderButton()) {
-//             // ### DOMActivate is also dispatched for thigs like selects & textareas -
-//             // not sure if this is correct
-//             elem->dispatchUIEvent(DOMActivateEvent,m_isDoubleClick ? 2 : 1);
-//             elem->dispatchMouseEvent(&e2, m_isDoubleClick ? khtmlDblclickEvent : khtmlClickEvent, m_clickCount);
-//             m_isDoubleClick = false;
-//         }
-//         else
-//             // save position for slotClicked - see below -
-//             m_mousePos = e2.pos();
-//     }
-    break;
+        break;
     case QEvent::MouseButtonDblClick:
-//     {
-//         m_isDoubleClick = true;
-//         handleMousePressed(static_cast<QMouseEvent*>(e));
-//     }
-    break;
+        break;
     case QEvent::MouseMove:
-//     {
-//         int absX, absY;
-//         absolutePosition(absX,absY);
-//         QMouseEvent* _e = static_cast<QMouseEvent*>(e);
-//         QMouseEvent e2(e->type(),QPoint(absX,absY)+_e->pos(),_e->button(),_e->state());
-//         elem->dispatchMouseEvent(&e2);
-//         // ### change cursor like in KHTMLView?
-//     }
-    break;
+        break;
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
     {

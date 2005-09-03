@@ -189,7 +189,6 @@ bool ScriptInterpreter::wasRunByUserGesture() const
     bool eventOk = ( // mouse events
       type == clickEvent || type == mousedownEvent ||
       type == mouseupEvent || type == khtmlDblclickEvent ||
-      type == khtmlClickEvent ||
       // keyboard events
       type == keydownEvent || type == keypressEvent ||
       type == keyupEvent ||

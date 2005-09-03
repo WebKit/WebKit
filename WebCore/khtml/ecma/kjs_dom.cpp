@@ -318,7 +318,7 @@ ValueImp *DOMNode::getValueProperty(ExecState *exec, int token) const
   case OnChange:
     return getListener(changeEvent);
   case OnClick:
-    return getListener(khtmlClickEvent);
+    return getListener(clickEvent);
   case OnContextMenu:
     return getListener(contextmenuEvent);
   case OnDblClick:
@@ -472,7 +472,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, ValueImp *value, int 
     setListener(exec,changeEvent,value);
     break;
   case OnClick:
-    setListener(exec,khtmlClickEvent,value);
+    setListener(exec,clickEvent,value);
     break;
   case OnContextMenu:
     setListener(exec,contextmenuEvent,value);

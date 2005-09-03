@@ -540,9 +540,7 @@ void QWidget::sendConsumedMouseUp()
 	(static_cast<const khtml::RenderWidget *>(eventFilterObject()));
 
     KWQ_BLOCK_EXCEPTIONS;
-    widget->sendConsumedMouseUp(QPoint([[NSApp currentEvent] locationInWindow]),
-			      // FIXME: should send real state and button
-			      0, 0);
+    widget->sendConsumedMouseUp();
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

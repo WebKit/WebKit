@@ -72,26 +72,25 @@ typedef QEvent QCustomEvent;
 
 class QMouseEvent : public QEvent {
 public:
-    QMouseEvent(Type, const QPoint &pos, int button, int state);
     QMouseEvent(Type, NSEvent *);
     explicit QMouseEvent(Type); // uses AppKit's current event
 
     const QPoint &pos() const { return _position; }
     int x() const { return _position.x(); }
     int y() const { return _position.y(); }
-    int globalX() const { return _position.x(); } // we never really return global X
-    int globalY() const { return _position.y(); } // we never really return global Y
+    int globalX() const { return _globalPosition.x(); }
+    int globalY() const { return _globalPosition.y(); }
     ButtonState button() const { return static_cast<ButtonState>(_button); }
     ButtonState state() const { return static_cast<ButtonState>(_state); }
     ButtonState stateAfter() const { return static_cast<ButtonState>(_stateAfter); }
 
     int clickCount() const { return _clickCount; }
-    bool isDoubleClick() const { return _clickCount > 0 && _clickCount % 2 == 0; }
 
 private:
     void fixState();
 
     QPoint _position;
+    QPoint _globalPosition;
     int _button;
     int _state;
     int _stateAfter;

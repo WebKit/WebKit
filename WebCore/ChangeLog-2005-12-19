@@ -1,3 +1,80 @@
+2005-09-03  David Hyatt  <hyatt@apple.com>
+
+	This patch substantially reworks how mouse clicking and double clicking work in the DOM.
+
+	(1) screenY has been fixed so that it is no longer flipped.  This makes the values consistent with
+	other browsers on the Mac (like Firefox) and with Windows.
+
+	(2) For synthetic events delivered when the click() method is invoked, the values are simply set to 0
+	and false (e.g., for button, shiftKey, detail and so on).  This behavior matches Firefox.  WinIE uses
+	the current key and mouse state, but this just results in delivery of nonsense data, so we have opted
+	to match Firefox.
+
+	(3) onclick now exactly matches the DOM "click" event definition.  This means that onclick will now
+	fire on every single click (regardless of the click count), and onclick will now be considered the same
+	event as "click", meaning addEventListener "click"s and onclicks can interleave and work correctly during
+	the bubbling phase.  This behavior again deviates deliberately from WinIE and matches Firefox.  (In WinIE,
+	the onclick and ondblclick events are mutually exclusive, with click representing an odd clickCount and
+	dblclick representing an even clickCount).
+
+	(4) ondblclick has been changed to fire only when clickCount is exactly 2.  This matches Firefox.  dblclick
+	remains a separate synthetic event that fires independently of click with a clickCount of 2.  This also
+	matches Firefox behavior.
+
+	(5) mouseover and mouseout have been patched not to fire when they occur on a disabled control.  More generally, no
+	mouse event will be delivered to a disabled element.  The current check only examines the target node, and this
+	is not good enough (but can be improved in a later patch).  Some nodes will be children of disabled ancestors (e.g.,
+	options or children of a <button), and this is not yet taken into account.
+
+	(6) The behavior of shifting focus on a mousedown has been fixed to not occur if preventDefault has been set.  This
+	matches Firefox.
+
+        Reviewed by darin
+
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseMappedAttribute):
+        (HTMLElementImpl::click):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        * khtml/html/html_inlineimpl.cpp:
+        (DOM::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::reset):
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::dispatchMouseEvent):
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::slotClicked):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::sendConsumedMouseUp):
+        (RenderWidget::eventFilter):
+        * khtml/rendering/render_replaced.h:
+        * khtml/xml/EventNames.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::dispatchMouseEvent):
+        (DOM::NodeImpl::dispatchSimulatedMouseEvent):
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject mouseButtonListener]):
+        * kwq/KWQEvent.h:
+        (QMouseEvent::globalX):
+        (QMouseEvent::globalY):
+        (QMouseEvent::clickCount):
+        * kwq/KWQEvent.mm:
+        (positionForEvent):
+        (globalPositionForEvent):
+        (QMouseEvent::QMouseEvent):
+        * kwq/KWQWidget.mm:
+        (QWidget::sendConsumedMouseUp):
+
 2005-09-03  Darin Adler  <darin@apple.com>
 
         - fixed a mistake in the DOM tests, and an organizational issue that made them hard to

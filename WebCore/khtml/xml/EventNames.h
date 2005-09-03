@@ -82,7 +82,6 @@ namespace DOM { namespace EventNames {
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
     \
-    macro(khtmlClick) \
     macro(khtmlDblclick) \
     macro(khtmlDragdrop) \
     macro(khtmlError) \

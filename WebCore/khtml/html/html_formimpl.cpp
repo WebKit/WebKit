@@ -2287,10 +2287,7 @@ void HTMLInputElementImpl::preDispatchEventHandler(EventImpl *evt)
 
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent() &&
-        ( evt->type() == khtmlClickEvent || evt->type() == khtmlDblclickEvent ) &&
-        m_type == IMAGE
-        && m_render) {
+    if (m_type == IMAGE && evt->isMouseEvent() && evt->type() == clickEvent && m_render) {
         // record the mouse position for when we get the DOMActivate event
         MouseEventImpl *me = static_cast<MouseEventImpl*>(evt);
         int offsetX, offsetY;

@@ -278,8 +278,11 @@ public:
     bool dispatchGenericEvent( EventImpl *evt, int &exceptioncode);
     bool dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg);
     bool dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg);
-    bool dispatchMouseEvent(QMouseEvent *e);
     bool dispatchMouseEvent(QMouseEvent *e, const AtomicString &overrideType, int overrideDetail = 0);
+    bool dispatchSimulatedMouseEvent(const AtomicString &eventType);
+    bool dispatchMouseEvent(const AtomicString &eventType, int button, int detail,
+        int clientX, int clientY, int screenX, int screenY,
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
     bool dispatchUIEvent(const AtomicString &eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     bool dispatchKeyEvent(QKeyEvent *key);

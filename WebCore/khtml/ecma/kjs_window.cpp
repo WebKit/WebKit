@@ -895,7 +895,7 @@ ValueImp *Window::getValueProperty(ExecState *exec, int token) const
    case Onchange:
      return getListener(exec, changeEvent);
    case Onclick:
-     return getListener(exec, khtmlClickEvent);
+     return getListener(exec, clickEvent);
    case Ondblclick:
      return getListener(exec, khtmlDblclickEvent);
    case Ondragdrop:
@@ -1139,7 +1139,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, ValueImp *valu
       return;
     case Onclick:
       if (isSafeScript(exec))
-        setListener(exec,khtmlClickEvent,value);
+        setListener(exec,clickEvent,value);
       return;
     case Ondblclick:
       if (isSafeScript(exec))
