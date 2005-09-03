@@ -23,7 +23,7 @@
 #ifndef KDOM_XPointer_ShortHandImpl_H
 #define KDOM_XPointer_ShortHandImpl_H
 
-#include <kdom/xpointer/impl/PointerPartImpl.h>
+#include <kdom/xpointer/PointerPartImpl.h>
 
 namespace KDOM
 {

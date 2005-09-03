@@ -1,3 +1,16 @@
+2005-09-02  Eric Seidel  <eseidel@apple.com>
+
+        No review requested (only affects SVG), continuation of 4790.
+
+        * WebCore.xcodeproj/project.pbxproj: updated include path
+        * kdom/core/DocumentImpl.h: updated #include
+        * kdom/xpointer/ElementSchemeImpl.h: ditto.
+        * kdom/xpointer/ShortHandImpl.h: ditto.
+        * kdom/xpointer/XMLNSSchemeImpl.h: ditto.
+        * kdom/xpointer/XPath1SchemeImpl.h: ditto.
+        * kdom/xpointer/XPointerSchemeImpl.h: ditto.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4790
+
 2005-09-02  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

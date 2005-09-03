@@ -23,7 +23,7 @@
 #ifndef KDOM_XPointer_XMLNSSchemeImpl_H
 #define KDOM_XPointer_XMLNSSchemeImpl_H
 
-#include <kdom/xpointer/impl/NBCImpl.h>
+#include <kdom/xpointer/NBCImpl.h>
 
 namespace KDOM
 {

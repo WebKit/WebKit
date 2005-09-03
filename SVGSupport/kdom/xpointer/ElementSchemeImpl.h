@@ -23,7 +23,7 @@
 #ifndef KDOM_XPointer_ElementSchemeImpl_H
 #define KDOM_XPointer_ElementSchemeImpl_H
 
-#include <kdom/xpointer/impl/PointerPartImpl.h>
+#include <kdom/xpointer/PointerPartImpl.h>
 
 #include <q3valuelist.h>
 #include <qstringlist.h>

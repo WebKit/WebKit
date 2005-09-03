@@ -43,7 +43,7 @@
 #include <kdom/range/DocumentRangeImpl.h>
 #include <kdom/events/DocumentEventImpl.h>
 #include <kdom/traversal/DocumentTraversalImpl.h>
-#include <kdom/xpointer/impl/XPointerEvaluatorImpl.h>
+#include <kdom/xpointer/XPointerEvaluatorImpl.h>
 #include <kdom/xpath/XPathEvaluatorImpl.h>
 
 class QPaintDevice;

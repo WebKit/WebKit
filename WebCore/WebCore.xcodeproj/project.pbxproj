@@ -4915,15 +4915,7 @@
 		A8C0FB2E089701F700BA5114 /* xpointer */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0FB2F089701F700BA5114 /* impl */,
 				A8C0FB46089701F700BA5114 /* kdomxpointer.h */,
-			);
-			path = xpointer;
-			sourceTree = "<group>";
-		};
-		A8C0FB2F089701F700BA5114 /* impl */ = {
-			isa = PBXGroup;
-			children = (
 				A8C0FB30089701F700BA5114 /* ElementSchemeImpl.cpp */,
 				A8C0FB31089701F700BA5114 /* ElementSchemeImpl.h */,
 				A8C0FB32089701F700BA5114 /* NBCImpl.cpp */,
@@ -4949,7 +4941,7 @@
 				A8C0FB44089701F700BA5114 /* XPointerSchemeImpl.cpp */,
 				A8C0FB45089701F700BA5114 /* XPointerSchemeImpl.h */,
 			);
-			path = impl;
+			path = xpointer;
 			sourceTree = "<group>";
 		};
 		A8C0FB51089701F700BA5114 /* kcanvas */ = {
