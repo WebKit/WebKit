@@ -1,3 +1,31 @@
+2005-09-03  Darin Adler  <darin@apple.com>
+
+        - fixed a mistake in the DOM tests, and an organizational issue that made them hard to
+          run with run-webkit-tests (because run-webkit-tests assumes that any file with an .html
+          extension is one of the tests)
+
+        * layout-tests/dom/html/level2/html/HTMLFrameElement09-expected.txt: Updated to expect success.
+        The failure we were seeing was due to an incorrect title in frame.html.
+
+        * layout-tests/dom/html/level2/html/HTMLFrameElement09.html: Updated to get at iframe.html
+        and frame.html from the resources subdirectory.
+
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement11.html-disabled: Updated to get at iframe.html
+        and frame.html from the resources subdirectory.
+
+        * layout-tests/dom/html/level2/html/frame.html: Removed. Since this is not a test, moved it into the
+        resources subdirectory so the layout test engine won't see it.
+        * layout-tests/dom/html/level2/html/iframe.html: Ditto.
+
+        * layout-tests/dom/html/level2/html/resources/frame.html: Moved down here from the directory above.
+        Adjusted URLs that specify resources still in the directory above to use "../" to find those.
+        Also corrected the title of the file which was incorrect and causing HTMLFrameElement09 to fail.
+        * layout-tests/dom/html/level2/html/resources/iframe.html: More of the same.
+
+        * layout-tests/dom/html/level2/html/frame-expected.txt: Removed. This was not a test, so it
+        should not have expected results.
+        * layout-tests/dom/html/level2/html/iframe-expected.txt: Ditto.
+
 2005-09-02  Eric Seidel  <eseidel@apple.com>
 
         No review requested (only affects SVG), continuation of 4790.

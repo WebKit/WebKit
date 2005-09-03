@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderFrameSet {FRAMESET} at (0,0) size 800x600
-      RenderFrameSet {FRAMESET} at (0,0) size 159x600
-        RenderFrame {FRAME} at (0,0) size 159x198
-      RenderFrame {FRAME} at (163,0) size 636x600

@@ -7,7 +7,7 @@
 <SCRIPT type="text/javascript">function loadComplete() { }</SCRIPT>
 <script type='text/javascript' src='selfhtml.js'></script><script charset='UTF-8' type='text/javascript' src='HTMLIFrameElement11.js'></script><script type='text/javascript'>function loadComplete() { startTest(); }</script></HEAD>
 <BODY onload="loadComplete()">
-<IFRAME ID="Iframe1" NAME="Iframe1" SRC="iframe.html">IFRAME1</IFRAME>
-<IFRAME ID="Iframe2" SRC="frame.html" NAME="Iframe2">IFRAME2</IFRAME>
+<IFRAME ID="Iframe1" NAME="Iframe1" SRC="resources/iframe.html">IFRAME1</IFRAME>
+<IFRAME ID="Iframe2" SRC="resources/frame.html" NAME="Iframe2">IFRAME2</IFRAME>
 </BODY>
 </HTML>

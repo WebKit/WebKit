@@ -1,3 +1,2 @@
-Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLFrameElement09	
-Status:	failure
-Detail:	titleLink: assertEquals failed, actual NIST DOM HTML Test - FRAME, expected NIST DOM HTML Test - FRAMESET.
+Test:	http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLFrameElement09
+Status:	Success
