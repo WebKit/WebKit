@@ -61,7 +61,7 @@
 #define strncasecmp(x, y, z) strnicmp(x, y, z)
 #include <float.h>
 #define isfinite(x) _finite(x)
-#define copysign(x) _copysign(x)
+#define copysign(x, y) _copysign(x, y)
 #endif
 
 #include "date_object.lut.h"

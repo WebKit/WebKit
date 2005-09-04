@@ -226,6 +226,9 @@
 
 #include "fast_malloc.h"
 
+#include <assert.h>
+#include <stddef.h>
+
 #define MALLOC_FAILURE_ACTION abort()
 
 #if !WIN32

@@ -26,6 +26,7 @@
 #include "list.h"
 #include "value.h"
 
+#include <setjmp.h>
 #include <algorithm>
 
 #if !WIN32

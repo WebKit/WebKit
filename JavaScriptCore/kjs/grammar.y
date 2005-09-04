@@ -165,7 +165,7 @@ using namespace KJS;
 %type <plist> PropertyNameAndValueList
 %type <pnode> PropertyName
 
-%type <ident> ParenthesizedIdent;
+%type <ident> ParenthesizedIdent
 %type <np>    MemberBracketExpr CallBracketExpr ParenthesizedBracketExpr
 %type <ni>    MemberDotExpr CallDotExpr ParenthesizedDotExpr
 
@@ -188,7 +188,7 @@ Literal:
 
 ParenthesizedIdent:
     IDENT
-  | '(' ParenthesizedIdent ')' { $$ = $2 }
+  | '(' ParenthesizedIdent ')' { $$ = $2; }
 ;
 
 PrimaryExpr:

@@ -71,7 +71,7 @@ class ValueImp {
 
 private:
     ValueImp();
-    ~ValueImp();
+    virtual ~ValueImp();
 
 public:
     // Querying the type.

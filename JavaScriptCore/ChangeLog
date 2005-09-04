@@ -2,6 +2,25 @@
 
         Reviewed, tweaked and landed by Darin.
 
+        - another try at some of the Windows compilation fixes
+          should fix these bugs: 4546, 4831, 4834, 4643, 4830, 4832, 4833, 4835
+
+        * kjs/collector.cpp: Add missing <setjmp.h> include.
+        * kjs/date_object.cpp: Fix broken copysign macro.
+        * kjs/dtoa.cpp: Move macro definitions down after all header includes.
+        * kjs/fast_malloc.cpp: Add missing <assert.h> and <stddef.h> includes.
+        * kjs/function.cpp: Remove broken isxdigit definition.
+        * kjs/grammar.y: Add a missing semicolon (and remove an excess one).
+        * kjs/identifier.cpp: Turn off AVOID_STATIC_CONSTRUCTORS because the placement new syntax
+        doesn't seem to work in Visual C++ (I'm surprised to hear that, by the way).
+        * kjs/value.h: Made ValueImp's destructor virtual because otherwise pointers to ValueImp
+        on the stack aren't right for garbage collection on Windows (don't think it works that
+        way with gcc's virtual table scheme, but it's a harmless change).
+
+2005-09-03  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed, tweaked and landed by Darin.
+
         - some Windows compilation fixes, hoping to fix the problems reported in these bugs:
           4627, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4639, 4640, 4641, 4644, 4645
 
