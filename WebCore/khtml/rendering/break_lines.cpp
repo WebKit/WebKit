@@ -22,6 +22,8 @@
 
 #include "break_lines.h"
 
+#include <qstring.h>
+
 #include <CoreServices/CoreServices.h>
 
 namespace khtml {

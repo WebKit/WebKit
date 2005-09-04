@@ -1,3 +1,9 @@
+2005-09-04  Darin Adler  <darin@apple.com>
+
+        - fixed the build
+
+        * khtml/rendering/break_lines.cpp: Added missing include of <qstring.h>.
+
 2005-09-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Darin.
