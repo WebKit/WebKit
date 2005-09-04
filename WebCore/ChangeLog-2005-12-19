@@ -1,3 +1,12 @@
+2005-09-04  Darin Adler  <darin@apple.com>
+
+        - temporarily disable LEAKS messages that are giving too many false positives
+          we'll turn these back on again once we get them to really mean something.
+
+        * khtml/xml/dom_elementimpl.cpp: (ElementImplCounter::~ElementImplCounter):
+        Commented out the code to fprintf.
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImplCounter::~NodeImplCounter): Ditto.
+
 2005-09-04  Eric Seidel  <eseidel@apple.com>
 
         No review needed, only affects SVG, removing unused files.

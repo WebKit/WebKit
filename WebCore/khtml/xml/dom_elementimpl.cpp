@@ -239,7 +239,7 @@ DOMString AttrImpl::value() const
 struct ElementImplCounter 
 { 
     static int count; 
-    ~ElementImplCounter() { if (count != 0) fprintf(stderr, "LEAK: %d ElementImpl\n", count); } 
+    ~ElementImplCounter() { /* if (count != 0) fprintf(stderr, "LEAK: %d ElementImpl\n", count); */ } 
 };
 int ElementImplCounter::count;
 static ElementImplCounter elementImplCounter;
