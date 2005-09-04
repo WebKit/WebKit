@@ -25,7 +25,7 @@
 // portable, and it would be good to figure out a 100% clean way that still avoids code that
 // runs at init time.
 
-#if !WIN32 // Visual C++ can't handle placement new, it seems.
+#if !WIN32 // can't get this to compile on Visual C++ yet
 #define AVOID_STATIC_CONSTRUCTORS 1
 #endif
 
@@ -37,6 +37,7 @@
 
 #include "fast_malloc.h"
 #include <string.h> // for strlen
+#include <new> // for placement new
 
 #define DUMP_STATISTICS 0
 

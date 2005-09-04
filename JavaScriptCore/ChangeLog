@@ -1,3 +1,8 @@
+2005-09-04  Darin Adler  <darin@apple.com>
+
+        * kjs/identifier.cpp: Fix comment, add missing include.
+        (Follow-on to changes from yesterday.)
+
 2005-09-03  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
 
         Reviewed, tweaked and landed by Darin.
