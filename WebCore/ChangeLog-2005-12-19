@@ -1,5 +1,12 @@
 2005-09-04  Darin Adler  <darin@apple.com>
 
+        - added a layout test from Bugzilla for a bug that was fixed a while back
+
+        * layout-tests/fast/parser/script-tag-with-trailing-slash-expected.txt: Added.
+        * layout-tests/fast/parser/script-tag-with-trailing-slash.html: Added.
+
+2005-09-04  Darin Adler  <darin@apple.com>
+
         - temporarily disable LEAKS messages that are giving too many false positives
           we'll turn these back on again once we get them to really mean something.
 
