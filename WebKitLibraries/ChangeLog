@@ -1,3 +1,8 @@
+2005-09-04  Darin Adler  <darin@apple.com>
+
+        * WebKitSystemInterface.h: Update to latest
+        * libWebKitSystemInterface.a: Ditto.
+
 2005-08-07  Darin Adler  <darin@apple.com>
 
         * libWebKitSystemInterface.a: Universal binary.
