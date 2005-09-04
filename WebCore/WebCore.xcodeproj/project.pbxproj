@@ -4218,7 +4218,6 @@
 				A8C0F8F4089701F400BA5114 /* KWQKSVGPart.mm */,
 				A8C0F8F5089701F400BA5114 /* KWQKSVGView.h */,
 				A8C0F8F6089701F400BA5114 /* KWQKSVGView.mm */,
-				A8C0F8F7089701F400BA5114 /* scripts */,
 			);
 			name = ksvg2;
 			path = ../SVGSupport/ksvg2;
@@ -4535,13 +4534,6 @@
 				A8C0F8EC089701F400BA5114 /* SVGZoomAndPanImpl.h */,
 			);
 			path = svg;
-			sourceTree = "<group>";
-		};
-		A8C0F8F7089701F400BA5114 /* scripts */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = scripts;
 			sourceTree = "<group>";
 		};
 		A8C0F8FE089701F400BA5114 /* kdom */ = {

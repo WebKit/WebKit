@@ -1,5 +1,14 @@
 2005-09-04  Eric Seidel  <eseidel@apple.com>
 
+        No review needed, only affects SVG, removing unused files.
+
+        * WebCore.xcodeproj/project.pbxproj: removed ksvg2/Scripts group.
+        * ksvg2/scripts/ksvgstatus.xsl: Removed.
+        * ksvg2/scripts/regressiontest.sh: Removed.
+        * ksvg2/scripts/regressiontestsetup.sh: Removed.
+
+2005-09-04  Eric Seidel  <eseidel@apple.com>
+
         No review needed, only affects SVG, only replacing line endings.
 
         * ksvg2/svg/SVGFEBlendElementImpl.h: CRLF -> LF
