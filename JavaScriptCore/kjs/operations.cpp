@@ -20,9 +20,9 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
+#include "operations.h"
+
 #include "config.h"
-#endif
 
 #include <stdio.h>
 #include <assert.h>
@@ -39,14 +39,13 @@
 #include <float.h>
 #endif
 
-#include "operations.h"
 #include "object.h"
 
-using namespace KJS;
+namespace KJS {
 
 #if !APPLE_CHANGES
 
-bool KJS::isNaN(double d)
+bool isNaN(double d)
 {
 #ifdef HAVE_FUNC_ISNAN
   return isnan(d);
@@ -57,9 +56,12 @@ bool KJS::isNaN(double d)
 #endif
 }
 
-bool KJS::isInf(double d)
+bool isInf(double d)
 {
-#if defined(HAVE_FUNC_ISINF)
+#if WIN32
+  int fpClass = _fpclass(d);
+  return _FPCLASS_PINF == fpClass || _FPCLASS_NINF == fpClass;
+#elif defined(HAVE_FUNC_ISINF)
   return isinf(d);
 #elif HAVE_FUNC_FINITE
   return finite(d) == 0 && d == d;
@@ -70,12 +72,11 @@ bool KJS::isInf(double d)
 #endif
 }
 
-bool KJS::isPosInf(double d)
+bool isPosInf(double d)
 {
-#if APPLE_CHANGES
-  return isinf(d) && d > 0;
-#else
-#if defined(HAVE_FUNC_ISINF)
+#if WIN32
+  return _FPCLASS_PINF == _fpclass(d);
+#elif defined(HAVE_FUNC_ISINF)
   return (isinf(d) == 1);
 #elif HAVE_FUNC_FINITE
   return finite(d) == 0 && d == d; // ### can we distinguish between + and - ?
@@ -84,15 +85,13 @@ bool KJS::isPosInf(double d)
 #else
   return false;
 #endif
-#endif
 }
 
-bool KJS::isNegInf(double d)
+bool isNegInf(double d)
 {
-#if APPLE_CHANGES
-  return isinf(d) && d < 0;
-#else
-#if defined(HAVE_FUNC_ISINF)
+#if WIN32
+  return _FPCLASS_PINF == _fpclass(d);
+#elif defined(HAVE_FUNC_ISINF)
   return (isinf(d) == -1);
 #elif HAVE_FUNC_FINITE
   return finite(d) == 0 && d == d; // ###
@@ -101,13 +100,12 @@ bool KJS::isNegInf(double d)
 #else
   return false;
 #endif
-#endif
 }
 
 #endif
 
 // ECMA 11.9.3
-bool KJS::equal(ExecState *exec, ValueImp *v1, ValueImp *v2)
+bool equal(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
     Type t1 = v1->type();
     Type t2 = v2->type();
@@ -161,7 +159,7 @@ bool KJS::equal(ExecState *exec, ValueImp *v1, ValueImp *v2)
     return v1 == v2;
 }
 
-bool KJS::strictEqual(ExecState *exec, ValueImp *v1, ValueImp *v2)
+bool strictEqual(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
   Type t1 = v1->type();
   Type t2 = v2->type();
@@ -193,7 +191,7 @@ bool KJS::strictEqual(ExecState *exec, ValueImp *v1, ValueImp *v2)
   return false;
 }
 
-int KJS::relation(ExecState *exec, ValueImp *v1, ValueImp *v2)
+int relation(ExecState *exec, ValueImp *v1, ValueImp *v2)
 {
   ValueImp *p1 = v1->toPrimitive(exec,NumberType);
   ValueImp *p2 = v2->toPrimitive(exec,NumberType);
@@ -210,18 +208,18 @@ int KJS::relation(ExecState *exec, ValueImp *v1, ValueImp *v2)
   return -1; // must be NaN, so undefined
 }
 
-int KJS::maxInt(int d1, int d2)
+int maxInt(int d1, int d2)
 {
   return (d1 > d2) ? d1 : d2;
 }
 
-int KJS::minInt(int d1, int d2)
+int minInt(int d1, int d2)
 {
   return (d1 < d2) ? d1 : d2;
 }
 
 // ECMA 11.6
-ValueImp *KJS::add(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
+ValueImp *add(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 {
   // exception for the Date exception in defaultValue()
   Type preferred = oper == '+' ? UnspecifiedType : NumberType;
@@ -246,7 +244,7 @@ ValueImp *KJS::add(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 }
 
 // ECMA 11.5
-ValueImp *KJS::mult(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
+ValueImp *mult(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
 {
   bool n1KnownToBeInteger;
   double n1 = v1->toNumber(exec, n1KnownToBeInteger);
@@ -268,4 +266,6 @@ ValueImp *KJS::mult(ExecState *exec, ValueImp *v1, ValueImp *v2, char oper)
   }
 
   return jsNumber(result, resultKnownToBeInteger);
+}
+
 }

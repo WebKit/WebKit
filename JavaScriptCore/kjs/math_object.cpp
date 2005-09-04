@@ -32,6 +32,32 @@
 
 #include "math_object.lut.h"
 
+#if WIN32
+
+#include <float.h>
+static int signbit(double d)
+{
+    // FIXME: Not sure if this is exactly right.
+    switch (_fpclass(d)) {
+        case _FPCLASS_NINF:
+        case _FPCLASS_NN:
+        case _FPCLASS_ND:
+        case _FPCLASS_NZ:
+            // It's one of wacky negatives, report as negative.
+            return 1;
+        case _FPCLASS_PINF:
+        case _FPCLASS_PN:
+        case _FPCLASS_PD:
+        case _FPCLASS_PZ:
+            // It's one of wacky positives, report as positive.
+            return 0;
+        default:
+            return d < 0;
+    }
+}
+
+#endif
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif  /*  M_PI  */

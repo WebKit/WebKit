@@ -25,8 +25,6 @@
 #include "internal.h"
 #include "function_object.h"
 
-#include <sys/time.h>
-
 namespace KJS {
 
   class DateInstanceImp : public ObjectImp {

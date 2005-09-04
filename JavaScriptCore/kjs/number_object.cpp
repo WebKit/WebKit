@@ -173,11 +173,11 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
           x = -x;
       }
       
-      if (x >= pow(10,21))
+      if (x >= pow(10.0, 21.0))
           return String(s+UString::from(x));
       
-      double n = floor(x*pow(10,f));
-      if (fabs(n/pow(10,f)-x) > fabs((n+1)/pow(10,f)-x))
+      double n = floor(x*pow(10.0, f));
+      if (fabs(n / pow(10.0, f) - x) > fabs((n + 1) / pow(10.0, f) - x))
           n++;
       
       UString m = integer_part_noexp(n);
@@ -211,9 +211,9 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       int decimalAdjust = 0;
       if (!fractionDigits->isUndefined()) {
           double logx = floor(log10(x));
-          x /= pow(10,logx);
-          double fx = floor(x*pow(10,f))/pow(10,f);
-          double cx = ceil(x*pow(10,f))/pow(10,f);
+          x /= pow(10.0, logx);
+          double fx = floor(x * pow(10.0, f)) / pow(10.0,f);
+          double cx = ceil(x * pow(10.0, f)) / pow(10.0, f);
           
           if (fabs(fx-x) < fabs(cx-x))
               x = fx;
@@ -308,16 +308,16 @@ ValueImp *NumberProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj
       
       if (x != 0) {
           e = int(log10(x));
-          double n = floor(x/pow(10,e-p+1));
-          if (n < pow(10,p-1)) {
+          double n = floor(x / pow(10.0, e - p + 1));
+          if (n < pow(10.0, p - 1)) {
               e = e - 1;
-              n = floor(x/pow(10,e-p+1));
+              n = floor(x / pow(10.0, e - p + 1));
           }
           
-          if (fabs((n+1)*pow(10,e-p+1)-x) < fabs(n*pow(10,e-p+1)-x))
+          if (fabs((n + 1) * pow(10.0, e - p + 1) - x) < fabs(n * pow(10.0, e - p + 1) - x))
               n++;
-          assert(pow(10,p-1) <= n);
-          assert(n < pow(10,p));
+          assert(pow(10.0, p - 1) <= n);
+          assert(n < pow(10.0, p));
           
           m = integer_part_noexp(n);
           if (e < -6 || e >= p) {

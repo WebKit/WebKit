@@ -42,6 +42,12 @@
 
 #include <unicode/uchar.h>
 
+#if WIN32
+// Define a locale-independent isxdigit.
+#undef isxdigit
+inline bool isxdigit(int c) { return _isctype(c, _HEX); }
+#endif
+
 using namespace KXMLCore;
 
 namespace KJS {

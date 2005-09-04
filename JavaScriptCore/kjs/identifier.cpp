@@ -25,9 +25,7 @@
 // portable, and it would be good to figure out a 100% clean way that still avoids code that
 // runs at init time.
 
-#if APPLE_CHANGES
 #define AVOID_STATIC_CONSTRUCTORS 1
-#endif
 
 #if AVOID_STATIC_CONSTRUCTORS
 #define KJS_IDENTIFIER_HIDE_GLOBALS 1
@@ -36,6 +34,7 @@
 #include "identifier.h"
 
 #include "fast_malloc.h"
+#include <string.h> // for strlen
 
 #define DUMP_STATISTICS 0
 
@@ -298,7 +297,7 @@ void Identifier::rehash(int newTableSize)
 
 #if !AVOID_STATIC_CONSTRUCTORS
     // Define an Identifier in the normal way.
-    #define DEFINE_GLOBAL(name, string) extern const Identifier name ## PropertyName(string);
+    #define DEFINE_GLOBAL(name, string) extern const Identifier name(string);
 #else
     // Define an Identifier-sized array of pointers to avoid static initialization.
     // Use an array of pointers instead of an array of char in case there is some alignment issue.

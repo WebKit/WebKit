@@ -34,6 +34,10 @@
 #include "scope_chain.h"
 #include "shared_ptr.h"
 
+#if !WIN32
+#define KJS_MULTIPLE_THREADS 1
+#endif
+
 #define I18N_NOOP(s) s
 
 namespace KJS {

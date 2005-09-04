@@ -48,7 +48,7 @@ namespace KJS {
     int flags() const { return _flags; }
 
     UString match(const UString &s, int i, int *pos = 0, int **ovector = 0);
-    uint subPatterns() const { return _numSubPatterns; }
+    unsigned subPatterns() const { return _numSubPatterns; }
 
   private:
 #ifdef HAVE_PCREPOSIX
@@ -57,7 +57,7 @@ namespace KJS {
     regex_t _regex;
 #endif
     int _flags;
-    uint _numSubPatterns;
+    unsigned _numSubPatterns;
 
     RegExp(const RegExp &);
     RegExp &operator=(const RegExp &);

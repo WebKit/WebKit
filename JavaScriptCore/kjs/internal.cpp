@@ -25,9 +25,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#ifndef NDEBUG
-#include <strings.h>      // for strdup
-#endif
 
 #include "array_object.h"
 #include "bool_object.h"
@@ -49,7 +46,10 @@
 #include "regexp_object.h"
 #include "string_object.h"
 
-#define I18N_NOOP(s) s
+#if WIN32
+#include <float.h>
+#define copysign(a, b) _copysign(a, b)
+#endif
 
 extern int kjsyyparse();
 
@@ -58,7 +58,7 @@ using namespace KXMLCore;
 namespace KJS {
 
 #if !APPLE_CHANGES
-
+ 
 #ifdef WORDS_BIGENDIAN
   const unsigned char NaN_Bytes[] = { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 };
   const unsigned char Inf_Bytes[] = { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 };
@@ -69,11 +69,21 @@ namespace KJS {
   const unsigned char NaN_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f };
   const unsigned char Inf_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf0, 0x7f };
 #endif
-
+ 
   const double NaN = *(const double*) NaN_Bytes;
   const double Inf = *(const double*) Inf_Bytes;
-
+ 
 #endif // APPLE_CHANGES
+
+#if !KJS_MULTIPLE_THREADS
+
+static inline void initializeInterpreterLock() { }
+static inline void lockInterpreter() { }
+static inline void unlockInterpreter() { }
+
+const int interpreterLockCount = 1;
+
+#else
 
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
@@ -103,7 +113,7 @@ static inline void unlockInterpreter()
   pthread_mutex_unlock(&interpreterLock);
 }
 
-
+#endif
 
 // ------------------------------ UndefinedImp ---------------------------------
 

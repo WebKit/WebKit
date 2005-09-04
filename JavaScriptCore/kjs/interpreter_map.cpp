@@ -21,6 +21,7 @@
 
 #include "interpreter_map.h"
 #include "pointer_hash.h"
+#include <stdlib.h>
 
 namespace KJS {
 
@@ -30,7 +31,6 @@ InterpreterMap::KeyValue *InterpreterMap::_table;
 int InterpreterMap::_tableSize;
 int InterpreterMap::_tableSizeMask;
 int InterpreterMap::_keyCount;
-
 
 InterpreterImp * InterpreterMap::getInterpreterForGlobalObject(ObjectImp *global)
 {
@@ -53,7 +53,6 @@ InterpreterImp * InterpreterMap::getInterpreterForGlobalObject(ObjectImp *global
     
     return 0;
 }
-
 
 void InterpreterMap::setInterpreterForGlobalObject(InterpreterImp *interpreter, ObjectImp *global)
 {
@@ -170,6 +169,5 @@ unsigned InterpreterMap::computeHash(ObjectImp *pointer)
 {
     return pointerHash(pointer);
 }
-
 
 } // namespace

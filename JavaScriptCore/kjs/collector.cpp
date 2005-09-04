@@ -28,12 +28,18 @@
 
 #include <algorithm>
 
-#if APPLE_CHANGES
+#if !WIN32
+
 #include <CoreFoundation/CoreFoundation.h>
 #include <pthread.h>
 #include <mach/mach_port.h>
 #include <mach/task.h>
 #include <mach/thread_act.h>
+
+#else
+
+#include <windows.h>
+
 #endif
 
 using std::max;
@@ -173,6 +179,8 @@ allocateNewBlock:
   return newCell;
 }
 
+#if KJS_MULTIPLE_THREADS
+
 struct Collector::Thread {
   Thread(pthread_t pthread, mach_port_t mthread) : posixThread(pthread), machThread(mthread) {}
   Thread *next;
@@ -221,6 +229,8 @@ void Collector::registerThread()
     pthread_setspecific(registeredThreadKey, thread);
   }
 }
+
+#endif
 
 #define IS_POINTER_ALIGNED(p) (((int)(p) & (sizeof(char *) - 1)) == 0)
 
@@ -274,15 +284,28 @@ gotGoodPointer:
 
 void Collector::markCurrentThreadConservatively()
 {
-  jmp_buf registers;
-  setjmp(registers);
+    jmp_buf registers;
+    setjmp(registers);
 
-  pthread_t thread = pthread_self();
-  void *stackBase = pthread_get_stackaddr_np(thread);
-  int dummy;
-  void *stackPointer = &dummy;
-  markStackObjectsConservatively(stackPointer, stackBase);
+#if !WIN32
+    pthread_t thread = pthread_self();
+    void *stackBase = pthread_get_stackaddr_np(thread);
+#else
+    NT_TIB *pTib;
+    __asm {
+        MOV EAX, FS:[18h]
+        MOV pTib, EAX
+    }
+    void *stackBase = (void *)pTib->StackBase;
+#endif
+
+    int dummy;
+    void *stackPointer = &dummy;
+
+    markStackObjectsConservatively(stackPointer, stackBase);
 }
+
+#if KJS_MULTIPLE_THREADS
 
 typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
@@ -323,15 +346,19 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   thread_resume(thread->machThread);
 }
 
+#endif
+
 void Collector::markStackObjectsConservatively()
 {
   markCurrentThreadConservatively();
 
+#if KJS_MULTIPLE_THREADS
   for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
     if (thread->posixThread != pthread_self()) {
       markOtherThreadConservatively(thread);
     }
   }
+#endif
 }
 
 void Collector::markProtectedObjects()

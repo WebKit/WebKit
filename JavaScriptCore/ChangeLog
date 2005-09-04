@@ -1,3 +1,69 @@
+2005-09-03  Krzysztof Kowalczyk  <kkowalczyk@gmail.com>
+
+        Reviewed, tweaked and landed by Darin.
+
+        - some Windows compilation fixes, hoping to fix the problems reported in these bugs:
+          4627, 4629, 4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4639, 4640, 4641, 4644, 4645
+
+        * kjs/collector.cpp: Include <windows.h> on WIN32. Put thread-related code inside
+        KJS_MULTIPLE_THREADS #if directives.
+        (KJS::Collector::markCurrentThreadConservatively): Use NT_TIB to find the stack base on Win32.
+
+        * kjs/config.h: Define HAVE_SYS_TIMEB_H for Win32.
+
+        * kjs/date_object.cpp: Add include of <limits.h>. Add definitions of strncasecmp, isfinite, and
+        copysign for Win32.
+        (KJS::KRFCDate_parseDate): Move "errno = 0" line down closer to the first call to strol -- I believe
+        that on Win32 there's some other call before that setting errno.
+
+        * kjs/date_object.h: Remove unneeded include of <sys/time.h>.
+
+        * kjs/dtoa.cpp: Add an undef of strtod, needed on Win32.
+
+        * kjs/fast_malloc.cpp: Put #if !WIN32 around some customization that's not appropriate on Win32.
+        (KJS::region_list_append): Add a missing cast so this Win32-specific function compiles in C++.
+        (KJS::sbrk): Change parameter type to match the declaration.
+
+        * kjs/function.cpp: (isxdigit): Define a locale-independent isxdigit on Win32.
+
+        * kjs/function.h: Remove unneeded friend class Function for FunctionImp.
+
+        * kjs/identifier.cpp: Took out the APPLE_CHANGES from around the AVOID_STATIC_CONSTRUCTORS
+        define. We ultimately intend to phase out APPLE_CHANGES entirely. Also fix the
+        non-AVOID_STATIC_CONSTRUCTORS code path.
+
+        * kjs/internal.cpp: Remove uneeded include of <strings.h>, which was confused with <string.h>!
+        Add a Win32 implementation of copysign. Put the threads code inside KJS_MULTIPLE_THREADS.
+
+        * kjs/internal.h: Define a KJS_MULTIPLE_THREADS macro on non-Win32 only. Later we can make this
+        specific to Mac OS X if we like.
+
+        * kjs/interpreter_map.cpp: Add missing include of <stdlib.h>.
+
+        * kjs/list.cpp:
+        (KJS::ListImp::markValues): Use std::min instead of MIN.
+        (KJS::List::copy): Ditto.
+        (KJS::List::copyTail): Ditto.
+
+        * kjs/math_object.cpp: (signbit): Add a Win32 implementation of signbit.
+
+        * kjs/nodes.cpp: (Node::finalCheck): Use unsigned instead of uint.
+        Put the use of always_inline inside __GNUC__.
+
+        * kjs/number_object.cpp: (NumberProtoFuncImp::callAsFunction): Use "10.0" instead of "10"
+        inside all the calls to pow to avoid ambiguity caused by overloading of pow on Win32, seen
+        when passing an int rather than a double or float.
+
+        * kjs/operations.cpp:
+        (KJS::isInf): Add Win32 implementation.
+        (KJS::isPosInf): Add Win32 implementation.
+        (KJS::isNegInf): Add Win32 implementation.
+
+        * kjs/regexp.cpp: Use unsigned instead of uint.
+        * kjs/regexp.h: Ditto.
+        * kjs/regexp_object.cpp: Ditto.
+        * kjs/regexp_object.h: Ditto.
+
 2005-09-02  Beth Dakin  <bdakin@apple.com>
 
         Fix for <rdar://problem/4235531> Denver Regression: Safari crash in KWQStringData::makeUnicode

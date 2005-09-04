@@ -83,7 +83,7 @@ namespace KJS {
   
     UString lastString;
     int *lastOvector;
-    uint lastNrSubPatterns;
+    unsigned lastNrSubPatterns;
   };
 
 } // namespace

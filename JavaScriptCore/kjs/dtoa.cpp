@@ -177,6 +177,7 @@
 #endif
 #define INFNAN_CHECK
 #include "dtoa.h"
+#undef strtod /* do not remove: needed for WIN32 */
 #define strtod kjs_strtod
 #define dtoa kjs_dtoa
 #define freedtoa kjs_freedtoa

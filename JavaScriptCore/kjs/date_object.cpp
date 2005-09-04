@@ -51,10 +51,18 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <ctype.h>
+#include <limits.h>
 
 #include "date_object.h"
 #include "error_object.h"
 #include "operations.h"
+
+#if WIN32
+#define strncasecmp(x, y, z) strnicmp(x, y, z)
+#include <float.h>
+#define isfinite(x) _finite(x)
+#define copysign(x) _copysign(x)
+#endif
 
 #include "date_object.lut.h"
 
@@ -1053,9 +1061,6 @@ double KRFCDate_parseDate(const UString &_date)
      int second = 0;
      bool have_time = false;
      
-     // for strtol error checking
-     errno = 0;
-
      // Skip leading space
      while(isspace(*dateString))
      	dateString++;
@@ -1087,6 +1092,7 @@ double KRFCDate_parseDate(const UString &_date)
      	return invalidDate;
 
      // ' 09-Nov-99 23:12:40 GMT'
+     errno = 0;
      day = strtol(dateString, &newPosStr, 10);
      if (errno)
        return invalidDate;

@@ -226,9 +226,12 @@
 
 #include "fast_malloc.h"
 
+#define MALLOC_FAILURE_ACTION abort()
+
+#if !WIN32
 #define MORECORE_CONTIGUOUS 0
 #define MORECORE_CANNOT_TRIM 1
-#define MALLOC_FAILURE_ACTION abort()
+#endif
 
 namespace KJS {
 
@@ -301,7 +304,7 @@ static int slrelease(int *sl);
 
 static long getpagesize(void);
 static long getregionsize(void);
-static void *sbrk(long size);
+static void *sbrk(ptrdiff_t size);
 static void *mmap(void *ptr, long size, long prot, long type, long handle, long arg);
 static long munmap(void *ptr, long size);
 
@@ -5028,7 +5031,7 @@ typedef struct _region_list_entry {
 
 /* Allocate and link a region entry in the region list */
 static int region_list_append (region_list_entry **last, void *base_reserved, long reserve_size) {
-    region_list_entry *next = HeapAlloc (GetProcessHeap (), 0, sizeof (region_list_entry));
+    region_list_entry *next = (region_list_entry *) HeapAlloc (GetProcessHeap (), 0, sizeof (region_list_entry));
     if (! next)
         return FALSE;
     next->top_allocated = (char *) base_reserved;
@@ -5057,13 +5060,13 @@ static int region_list_remove (region_list_entry **last) {
 /* #define SBRK_SCALE  4  */
 
 /* sbrk for windows */
-static void *sbrk (long size) {
+static void *sbrk (ptrdiff_t size) {
     static long g_pagesize, g_my_pagesize;
     static long g_regionsize, g_my_regionsize;
     static region_list_entry *g_last;
     void *result = (void *) MORECORE_FAILURE;
 #ifdef TRACE
-    printf ("sbrk %d\n", size);
+    printf ("sbrk %ld\n", (long) size);
 #endif
 #if defined (USE_MALLOC_LOCK) && defined (NEEDED)
     /* Wait for spin lock */
