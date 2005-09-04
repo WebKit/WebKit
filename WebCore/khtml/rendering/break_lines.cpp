@@ -1,120 +1,64 @@
-#include <break_lines.h>
+/*
+ * This file is part of the DOM implementation for KDE.
+ *
+ * Copyright (C) 2005 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ */
 
-#ifdef HAVE_THAI_BREAKS
-#include "ThBreakIterator.h"
+#include "break_lines.h"
 
-static const QChar *cached = 0;
-static QCString *cachedString = 0;
-static ThBreakIterator *thaiIt = 0;
-#endif
-
-#if APPLE_CHANGES
 #include <CoreServices/CoreServices.h>
-#endif
-
-void cleanupLineBreaker()
-{
-#ifdef HAVE_THAI_BREAKS
-    if ( cachedString )
-	delete cachedString;
-    if ( thaiIt )
-	delete thaiIt;
-    cached = 0;
-#endif
-}
 
 namespace khtml {
-/*
-  This function returns true, if the string can bre broken before the 
-  character at position pos in the string s with length len
-*/
-bool isBreakable(const QChar *s, int pos, int len, bool breakNBSP)
+
+int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
 {
-#if !APPLE_CHANGES
-    const QChar *c = s+pos;
-    unsigned short ch = c->unicode();
-    if ( ch > 0xff ) {
-	// not latin1, need to do more sophisticated checks for asian fonts
-	unsigned char row = c->row();
-	if ( row == 0x0e ) {
-	    // 0e00 - 0e7f == Thai
-	    if ( c->cell() < 0x80 ) {
-#ifdef HAVE_THAI_BREAKS
-		// check for thai
-		if( s != cached ) {
-		    // build up string of thai chars
-		    QTextCodec *thaiCodec = QTextCodec::codecForMib(2259);
-		    if ( !cachedString )
-			cachedString = new QCString;
-		    if ( !thaiIt )
-			thaiIt = ThBreakIterator::createWordInstance(); 
-		    *cachedString = thaiCodec->fromUnicode( QConstString( (QChar *)s, len ).qstring() );
-		}
-		thaiIt->setText((tchar *)cachedString->data());
-		for(int i = thaiIt->first(); i != thaiIt->DONE; i = thaiIt->next() ) {
-		    if( i == pos )
-			return true;
-		    if( i > pos )
-			return false;
-		}
-		return false;
-#else
-		// if we don't have a thai line breaking lib, allow
-		// breaks everywhere except directly before punctuation.
-		return true;
-#endif
-	    } else 
-		return false;
-	}
-	if ( row > 0x2d && row < 0xfb || row == 0x11 )
-	    // asian line breaking. Everywhere allowed except directly
-	    // in front of a punctuation character.
-	    return true;
-	else // no asian font
-	    return c->isSpace();
-    } else {
-	if ( ch == ' ' || ch == '\t' || ch == '\n' )
-	    return true;
-    }
-    return false;
-#else
-    OSStatus status = 0, findStatus = 0;
+    OSStatus status = 0, findStatus = -1;
     static TextBreakLocatorRef breakLocator = 0;
-    UniCharArrayOffset end;
-    const QChar *c = s+pos;
-    unsigned short ch = c->unicode();
-
-    // Newlines and spaces are always breakable, as are non-breaking spaces when breakNBSP is true.
-    // FIXME: Tiger is not allowing breaks on spaces after bullet characters like &#183;.  We don't know
-    // at the moment whether this behavior is correct or not.  Since Tiger is also not allowing breaks on spaces
-    // after hyphen-like characters, this does not seem ideal for the Web.  Therefore for now we override space
-    // characters up front and bypass the Unicode line breaking routines.
-    if (ch == ' ' || ch == '\n' || ch == '\t' || (breakNBSP && ch == 0xa0))
-        return true;
-
-    // If current character, or the previous character aren't simple latin1 then
-    // use the UC line break locator.  UCFindTextBreak will report false if we
-    // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
-    // case.
-    unsigned short lastCh = pos > 0 ? (s+pos-1)->unicode() : 0;
-    if ((ch > 0x7f && ch != 0xa0) || (lastCh > 0x7f && lastCh != 0xa0)) {
-        if (!breakLocator)
-            status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakLineMask, &breakLocator);
-        if (status == 0)
-            findStatus = UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, (const UniChar *)s, len, pos, &end);
-        if (findStatus == 0)
-            return (int)end == pos && !(lastCh == ' ' || lastCh == '\n' || lastCh == '\t' || (breakNBSP && lastCh == 0xa0));
-
-        // If Carbon fails, fail back on simple white space detection.
-    }
+    int nextUCBreak = -1;
+    int i;
+    unsigned short ch, lastCh;
     
-    // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
-    if (lastCh == '-' || lastCh == '?')
-        return true;
-
-    // No other ascii chars are breakable.
-    return false;
-#endif    
+    lastCh = pos > 0 ? str[pos - 1].unicode() : 0;
+    for (i = pos; i < len; i++) {
+        ch = str[i].unicode();
+        if (ch == ' ' || ch == '\n' || ch == '\t' || (breakNBSP && ch == 0xa0))
+            break;
+        // Match WinIE's breaking strategy, which is to always allow breaks after hyphens and question marks.
+        if (lastCh == '-' || lastCh == '?')
+            break;
+        // If current character, or the previous character aren't simple latin1 then
+        // use the UC line break locator.  UCFindTextBreak will report false if we
+        // have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that
+        // case.
+        if ((ch > 0x7f && ch != 0xa0) || (lastCh > 0x7f && lastCh != 0xa0)) {
+            if (nextUCBreak < i) {
+                if (!breakLocator)
+                    status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakLineMask, &breakLocator);
+                if (status == 0)
+                    findStatus = UCFindTextBreak(breakLocator, kUCTextBreakLineMask, 0, (const UniChar *)str, len, i, (UniCharArrayOffset *)&nextUCBreak);
+            }
+            if (findStatus == 0 && i == nextUCBreak && !(lastCh == ' ' || lastCh == '\n' || lastCh == '\t' || (breakNBSP && lastCh == 0xa0)))
+                break;
+        }
+        lastCh = ch;
+    }
+    return i;
 }
 
 };

@@ -1308,15 +1308,17 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     const Font *f = htmlFont( false );
     int wordSpacing = style()->wordSpacing();
     int len = str->l;
+    QChar *txt = str->s;
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
     bool isPre = style()->whiteSpace() == PRE;
     bool firstWord = true;
     bool firstLine = true;
+    int nextBreakable = -1;
     for(int i = 0; i < len; i++)
     {
-        const QChar c = str->s[i];
+        QChar c = txt[i];
         
         bool previousCharacterIsSpace = isSpace;
         
@@ -1354,12 +1356,18 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             continue;
         }
         
-        int wordlen = 0;
-        while (i+wordlen < len && str->s[i+wordlen] != '\n' && str->s[i+wordlen] != ' ' && str->s[i+wordlen] != '\t' &&
-               (i+wordlen == 0 || str->s[i+wordlen].unicode() != SOFT_HYPHEN) && // Skip soft hyphens
-               (wordlen == 0 || !isBreakable( str->s, i+wordlen, str->l)))
-            wordlen++;
+        bool hasBreak = isBreakable(txt, i, len, nextBreakable);
+        int j = i;
+        while (c != '\n' && c != ' ' && c != '\t' && (j == 0 || c.unicode() != SOFT_HYPHEN)) {
+            j++;
+            if (j == len)
+                break;
+            c = txt[j];
+            if (isBreakable(txt, j, len, nextBreakable))
+                break;
+        }
             
+        int wordlen = j - i;
         if (wordlen)
         {
 #if !APPLE_CHANGES
@@ -1370,15 +1378,14 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             currMinWidth += w;
             currMaxWidth += w;
             
-            bool isBreakableCharSpace = (i+wordlen < len) ? ((!isPre && (str->s[i+wordlen] == '\n' || str->s[i+wordlen] == '\t')) || 
-                                                             str->s[i+wordlen] == ' ') : false;
+            bool isBreakableCharSpace = (j < len) && ((!isPre && (c == '\n' || c == '\t')) || c == ' ');
 
-            if (i+wordlen < len && style()->whiteSpace() == NORMAL)
+            if (j < len && style()->whiteSpace() == NORMAL)
                 m_hasBreakableChar = true;
             
             // Add in wordSpacing to our currMaxWidth, but not if this is the last word on a line or the
             // last word in the run.
-            if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
+            if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(j, len-j))
                 currMaxWidth += wordSpacing;
 
             if (firstWord) {
@@ -1386,7 +1393,6 @@ void RenderText::calcMinMaxWidth(int leadWidth)
                 // If the first character in the run is breakable, then we consider ourselves to have a beginning
                 // minimum width of 0, since a break could occur right before our run starts, preventing us from ever
                 // being appended to a previous text run when considering the total minimum width of the containing block.
-                bool hasBreak = isBreakable(str->s, i, str->l);
                 if (hasBreak)
                     m_hasBreakableChar = true;
                 m_beginMinWidth = hasBreak ? 0 : w;
@@ -1420,8 +1426,8 @@ void RenderText::calcMinMaxWidth(int leadWidth)
             }
             else
             {
-                currMaxWidth += f->width(str->s, str->l, i + wordlen, 1, tabWidth(), leadWidth + currMaxWidth);
-                needsWordSpacing = isSpace && !previousCharacterIsSpace && i + wordlen == len-1;
+                currMaxWidth += f->width(txt, len, i, 1, tabWidth(), leadWidth + currMaxWidth);
+                needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len-1;
             }
         }
     }

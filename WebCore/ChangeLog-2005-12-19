@@ -1,3 +1,28 @@
+2005-09-04  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Darin.
+
+        - fixed <rdar://problem/3698926> so slow it feels like a hang calling UCFindTextBreak() tons of times at forum.presence-pc.com (4789)
+          also http://bugzilla.opendarwin.org/show_bug.cgi?id=4789
+
+        No test cases added because this is a performance fix. Existing test cases continue to work.
+
+        * khtml/rendering/break_lines.h: Declare the new nextBreakablePosition and also define a new
+        isBreakable function that adds an in/out "next breakable position" parameter.
+        * khtml/rendering/break_lines.cpp: (khtml::nextBreakablePosition): Replaced the old isBreakable
+        with this function.
+
+        * khtml/rendering/bidi.cpp: (khtml::RenderBlock::findNextLineBreak): Call the new version of
+        isBreakable that uses the previously-found "next breakable" position until we pass it rather
+        than analyzing each position separately to see if we can break there.
+
+        * khtml/rendering/render_text.cpp: (RenderText::calcMinMaxWidth): Call the new isBreakable, and
+        also do some things to streamline and perhaps speed up: a) use an index withing the string rather
+        than within the word when finding a word break, b) use a cached copy of the string base pointer
+        and the string length rather than repeatedly dereferencing str, c) use a cached copy of the current
+        character rather than repeatedly fetching it. Darin also changed one confusing use of ? : to just
+        use && instead.
+
 2005-09-03  David Hyatt  <hyatt@apple.com>
 
 	This patch substantially reworks how mouse clicking and double clicking work in the DOM.
