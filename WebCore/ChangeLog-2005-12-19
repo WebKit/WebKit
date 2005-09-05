@@ -1,5 +1,29 @@
 2005-09-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4393
+          REGRESSION: Unconfirmed text ignored in input type=text
+
+        Test cases added:
+        * manual-tests/input-type-text-unconfirmed-inline-input.html: Added.
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController controlTextDidBeginEditing:]): Call
+        setWantsNotificationForMarkedText:YES on the field editor so we get
+        "text did change" calls even for changes to the marked text.
+        (-[KWQTextFieldController controlTextDidChange:]): Only call the bridge
+        when we have changes and there is no marked text -- this is good because
+        the bridge is used to implement form auto-fill and preserves the existing
+        behavior. A more elegant future fix would be to notify the bridge more often
+        and have the auto-fill code itself implement the "don't auto-fill when there
+        is marked text" rule.
+        (-[NSTextField _KWQ_currentEditor]): Change type to NSTextView so we can
+        use this function to code NSTextView-specific stuff. The field editors are
+        always subclasses of NSTextView.
+
+2005-09-04  Darin Adler  <darin@apple.com>
+
         - added a layout test from Bugzilla for a bug that was fixed a while back
 
         * layout-tests/fast/parser/script-tag-with-trailing-slash-expected.txt: Added.

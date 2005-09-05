@@ -38,11 +38,15 @@
 @end
 
 @interface NSTextField (KWQTextField)
-- (NSText *)_KWQ_currentEditor;
+- (NSTextView *)_KWQ_currentEditor;
 @end
 
 @interface NSCell (KWQTextFieldKnowsAppKitSecrets)
 - (NSMutableDictionary *)_textAttributes;
+@end
+
+@interface NSTextView (KWQTextFieldAppKitSecrets)
+- (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;
 @end
 
 // The three cell subclasses allow us to tell when we get focus without an editor subclass,
@@ -158,6 +162,8 @@
     if (!widget)
 	return;
     
+    [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge textFieldDidBeginEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
 }
@@ -182,13 +188,14 @@
     if (KWQKHTMLPart::handleKeyboardOptionTabInView(field))
         return;
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
+    if (![[field _KWQ_currentEditor] hasMarkedText]) {
+        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        [bridge textDidChangeInTextField:(DOMHTMLInputElement *)[bridge elementForView:field]];
+    }
     
     edited = YES;
-    if (widget) {
+    if (widget)
         widget->textChanged();
-    }
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
@@ -1145,10 +1152,10 @@
 
 // The currentEditor method does not work for secure text fields.
 // This works around that limitation.
-- (NSText *)_KWQ_currentEditor
+- (NSTextView *)_KWQ_currentEditor
 {
     NSResponder *firstResponder = [[self window] firstResponder];
-    if ([firstResponder isKindOfClass:[NSText class]]) {
+    if ([firstResponder isKindOfClass:[NSTextView class]]) {
         NSText *editor = (NSText *)firstResponder;
         id delegate = [editor delegate];
         if (delegate == self)
