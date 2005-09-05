@@ -951,21 +951,52 @@ static NSMutableSet *activeAnimations;
     [activeAnimations addObject:self];
 }
 
+typedef struct {
+    WebImageRenderer *renderer;
+    CFMutableArrayRef viewsToRemove;
+} RemoveRendererParameters;
+
+static void removeAnimatingRendererFromView(const void *key, const void *value, void *context)
+{
+    NSView *view = (NSView *)key;
+    NSMutableSet *renderers = (NSMutableSet *)value;
+    RemoveRendererParameters *parameters = (RemoveRendererParameters *)context;
+    [renderers removeObject:parameters->renderer];
+    if ([renderers count] == 0) {
+        CFMutableArrayRef viewsToRemove = parameters->viewsToRemove;
+        if (viewsToRemove == NULL) {
+            viewsToRemove = CFArrayCreateMutable(NULL, 0, NULL);
+            parameters->viewsToRemove = viewsToRemove;
+        }
+        CFArrayAppendValue(viewsToRemove, view);
+    }
+}
+
+static void removeFromDictionary(const void *value, void *context)
+{
+    CFMutableDictionaryRef dictionary = (CFMutableDictionaryRef)context;
+    CFDictionaryRemoveValue(dictionary, value);
+}
+
 - (void)removeAnimatingRenderer:(WebImageRenderer *)r
 {
-    NSEnumerator *viewEnumerator = [(NSMutableDictionary *)animatingRenderers keyEnumerator];
-    NSView *view;
-    while ((view = [viewEnumerator nextObject])) {
-        NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue(animatingRenderers, view);
-        [renderers removeObject:r];
-        if ([renderers count] == 0) {
-            CFDictionaryRemoveValue(animatingRenderers, view);
+    // It's important not to do anything here to could retain the view, since this is called
+    // from code to stop animations, which is called inside -[WebHTMLView dealloc].
+    // Of course, that's also a design problem we'll have to fix eventually, since dealloc
+    // doesn't happen at all when running with garbage collection.
+    if (animatingRenderers) {
+        RemoveRendererParameters parameters = { r, NULL };
+        CFDictionaryApplyFunction(animatingRenderers, removeAnimatingRendererFromView, &parameters);
+        CFMutableArrayRef viewsToRemove = parameters.viewsToRemove;
+        if (viewsToRemove) {
+            CFRange range = CFRangeMake(0, CFArrayGetCount(viewsToRemove));
+            CFArrayApplyFunction(viewsToRemove, range, removeFromDictionary, animatingRenderers);
+            CFRelease(viewsToRemove);
+            if (CFDictionaryGetCount(animatingRenderers) == 0) {
+                [activeAnimations removeObject:self];
+                [self _stopAnimation];
+            }
         }
-    }
-    
-    if (animatingRenderers && CFDictionaryGetCount(animatingRenderers) == 0) {
-        [activeAnimations removeObject:self];
-        [self _stopAnimation];
     }
 }
 
@@ -986,6 +1017,17 @@ static NSMutableSet *activeAnimations;
     frameTimer = nil;
 }
 
+static void setNeedsDisplayInAnimationRect(const void *key, const void *value, void *context)
+{
+    NSView *view = (NSView *)key;
+    NSSet *renderers = (NSSet *)value;
+    NSEnumerator *rendererEnumerator = [renderers objectEnumerator];
+    WebImageRenderer *renderer;
+    while ((renderer = [rendererEnumerator nextObject])) {
+        [view setNeedsDisplayInRect:[renderer targetAnimationRect]];
+    }
+}
+
 - (void)_nextFrame:(id)context
 {
     // Release the timer that just fired.
@@ -1003,16 +1045,8 @@ static NSMutableSet *activeAnimations;
         currentFrame = 0;
     }
     
-    NSEnumerator *viewEnumerator = [(NSMutableDictionary *)animatingRenderers keyEnumerator];
-    NSView *view;
-    while ((view = [viewEnumerator nextObject])) {
-        NSMutableSet *renderers = [(NSMutableDictionary *)animatingRenderers objectForKey:view];
-        WebImageRenderer *renderer;
-        NSEnumerator *rendererEnumerator = [renderers objectEnumerator];
-        while ((renderer = [rendererEnumerator nextObject])) {
-            [view setNeedsDisplayInRect:[renderer targetAnimationRect]];
-        }
-    }
+    if (animatingRenderers)
+        CFDictionaryApplyFunction(animatingRenderers, setNeedsDisplayInAnimationRect, NULL);
 }
 
 - (BOOL)shouldAnimate

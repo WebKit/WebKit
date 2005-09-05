@@ -1,3 +1,20 @@
+2005-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4357
+          crash related to animated GIFs, reproducible in non-Safari WebKit application
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (removeAnimatingRendererFromView): Added.
+        (removeFromDictionary): Added.
+        (-[WebImageData removeAnimatingRenderer:]): Rewrote using CF functions rather than
+        NS functions so that we never retain the views, since this can be called from
+        a view's dealloc method.
+        (setNeedsDisplayInAnimationRect): Added.
+        (-[WebImageData _nextFrame:]): Rewrote as above, even though in this case it can't
+        be called from the dealloc method.
+
 2005-08-26  David Hyatt  <hyatt@apple.com>
 
 	Add support for a new scaling and tiling function so that border images from CSS3
@@ -10500,10 +10517,10 @@
         Reviewed by Trey.
         
         Work on text-align API. Marked these bugs fixed:
-        <rdar://problem/3655380>: (Editing:Ê-alignCenter:ÊmethodÊunimplementedÊ(WebKitÊeditingÊAPI))
-        <rdar://problem/3655381>: (Editing:Ê-alignJustified:ÊmethodÊunimplementedÊ(WebKitÊeditingÊAPI))
-        <rdar://problem/3655383>: (Editing:Ê-alignLeft:ÊmethodÊunimplementedÊ(WebKitÊeditingÊAPI))
-        <rdar://problem/3655384>: (Editing:Ê-alignRight:ÊmethodÊunimplementedÊ(WebKitÊeditingÊAPI))        
+        <rdar://problem/3655380>: (Editing:Â -alignCenter:Â methodÂ unimplementedÂ (WebKitÂ editingÂ API))
+        <rdar://problem/3655381>: (Editing:Â -alignJustified:Â methodÂ unimplementedÂ (WebKitÂ editingÂ API))
+        <rdar://problem/3655383>: (Editing:Â -alignLeft:Â methodÂ unimplementedÂ (WebKitÂ editingÂ API))
+        <rdar://problem/3655384>: (Editing:Â -alignRight:Â methodÂ unimplementedÂ (WebKitÂ editingÂ API))        
         
         in favor of opening this bug:
         <rdar://problem/3675191>: (Editing: -alignLeft: and friends mostly implemented but not 
@@ -10530,8 +10547,8 @@
 
         Reviewed by Ken.
         
-        - fixed <rdar://problem/3655378>: (Editing:Ê-changeDocumentBackgroundColor:Ê
-        methodÊunimplementedÊ(WebKitÊeditingÊAPI))
+        - fixed <rdar://problem/3655378>: (Editing:Â -changeDocumentBackgroundColor:Â 
+        methodÂ unimplementedÂ (WebKitÂ editingÂ API))
         - made startSpeaking: actually work; previous implementation raised a DOMException
 
         * WebView.subproj/WebHTMLView.m:
