@@ -1,3 +1,19 @@
+2005-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4493
+          add qualifiedName checking for empty string
+
+        * khtml/xml/dom_docimpl.cpp:
+        (qualifiedNameIsValid): Added.
+        (qualifiedNameIsMalformed): Added.
+        (DOMImplementationImpl::createDocumentType): Added checks and exceptions using above functions.
+        (DOMImplementationImpl::createDocument): Ditto.
+
+        * layout-tests/dom/html/level2/core/createDocument08-expected.txt: Updated to expect success.
+        * layout-tests/dom/html/level2/core/createDocumentType04-expected.txt: Ditto.
+
 2005-09-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.

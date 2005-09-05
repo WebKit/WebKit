@@ -106,6 +106,23 @@ const int cLayoutScheduleThreshold = 250;
 
 DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 
+static bool qualifiedNameIsValid(const DOMString &qualifiedName)
+{
+    // Not mentioned in spec: empty qualified names are not valid.
+    if (qualifiedName.isEmpty())
+        return false;
+    // FIXME: Check for illegal characters.
+    // FIXME: Merge/reconcile with DocumentImpl::isValidName.
+    return true;
+}
+
+static bool qualifiedNameIsMalformed(const DOMString &qualifiedName)
+{
+    assert(qualifiedNameIsValid(qualifiedName));
+    // FIXME: Implement this check.
+    return false;
+}
+
 DOMImplementationImpl::DOMImplementationImpl()
 {
 }
@@ -143,21 +160,17 @@ DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qu
         return 0;
     }
 
-#if 0
-    // FIXME: Add these checks (but not in a way that depends on the C++ DOM!)
-
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if (!Element::khtmlValidQualifiedName(qualifiedName)) {
+    if (!qualifiedNameIsValid(qualifiedName)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
-    if (Element::khtmlMalformedQualifiedName(qualifiedName)) {
+    if (qualifiedNameIsMalformed(qualifiedName)) {
         exceptioncode = DOMException::NAMESPACE_ERR;
         return 0;
     }
-#endif
 
     return new DocumentTypeImpl(this,DocumentPtr::nullDocumentPtr(),qualifiedName,publicId,systemId);
 }
@@ -179,14 +192,11 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
         return 0;
     }
 
-#if 0
-    // FIXME: Add this check (but not in a way that depends on the C++ DOM!)
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if (!Element::khtmlValidQualifiedName(qualifiedName)) {
+    if (!qualifiedNameIsValid(qualifiedName)) {
         exceptioncode = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
-#endif
 
     // NAMESPACE_ERR:
     // - Raised if the qualifiedName is malformed,
@@ -201,11 +211,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
             colonpos = i;
     }
 
-    if (
-#if 0
-        // FIXME: Add this check (but not in a way that depends on the C++ DOM!)
-        Element::khtmlMalformedQualifiedName(qualifiedName) ||
-#endif
+    if (qualifiedNameIsMalformed(qualifiedName) ||
         (colonpos >= 0 && namespaceURI.isNull()) ||
         (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
          namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
