@@ -2686,7 +2686,10 @@ static WebHTMLView *lastHitView = nil;
     ASSERT(_private->draggingImageURL);
     
     NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
-    ASSERT(wrapper);    
+    if (wrapper == nil) {
+        ERROR("Failed to create image file. Did the source image change while dragging? (<rdar://problem/4244861>)");
+        return nil;
+    }
     
     // FIXME: Report an error if we fail to create a file.
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];

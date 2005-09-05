@@ -1,3 +1,15 @@
+2005-09-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - change related to <rdar://problem/4211999> Safari quits when click-drag-hold an image 
+        that is set to automatically change.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[NSArray namesOfPromisedFilesDroppedAtDestination:]):
+        handle nil wrapper with ERROR and early return rather than ASSERT, since we now know
+        of a way to reproduce this (written up as 4244861)
+
 2005-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

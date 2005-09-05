@@ -1266,7 +1266,7 @@ bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboa
     NodeImpl *newTarget = mev.innerNode.get();
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
-    if (newTarget->isTextNode()) {
+    if (newTarget && newTarget->isTextNode()) {
         newTarget = newTarget->parentNode();
     }
 

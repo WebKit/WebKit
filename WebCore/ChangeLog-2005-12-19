@@ -1,3 +1,16 @@
+2005-09-05  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed <rdar://problem/4211999> Safari quits when click-drag-hold an image that is 
+        set to automatically change.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::updateDragAndDrop):
+        add missing nil check
+
 2005-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
