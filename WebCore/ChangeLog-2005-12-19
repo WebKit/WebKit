@@ -1,3 +1,12 @@
+2005-09-05  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed and landed by Darin.
+
+        - added a test case that covers 8-digit hexadecimal entities
+
+        * layout-tests/fast/parser/hex-entities-length.html: Added.
+        * layout-tests/fast/parser/hex-entities-length-expected.txt: Added.
+
 2005-09-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
