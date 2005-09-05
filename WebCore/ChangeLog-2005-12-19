@@ -1,3 +1,14 @@
+2005-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4025
+          Reproducible crash (infinite recursion?) choosing Make Link from text field's contextual menu
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController textView:shouldChangeTextInRange:replacementString:]):
+        Allow a replacement string of nil.
+
 2005-09-05  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed and landed by Darin.

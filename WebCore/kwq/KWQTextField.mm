@@ -449,6 +449,8 @@
 
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)range replacementString:(NSString *)string
 {
+    if (string == nil)
+        return YES;
     NSRange newline = [string rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r\n"]];
     if (newline.location == NSNotFound) {
         return YES;
