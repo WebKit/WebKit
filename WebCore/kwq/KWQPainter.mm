@@ -765,12 +765,18 @@ void QPainter::fillRect(const QRect &rect, const QBrush &brush)
 
 void QPainter::addClip(const QRect &rect)
 {
+    if (data->state.paintingDisabled)
+        return;
+
     [NSBezierPath clipRect:rect];
 }
 
 void QPainter::addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
                                   const QSize& bottomLeft, const QSize& bottomRight)
 {
+    if (data->state.paintingDisabled)
+        return;
+
     // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
     // values and our width/height values to make sure the curves can all fit.
     int requiredWidth = kMax(topLeft.width() + topRight.width(), bottomLeft.width() + bottomRight.width());
@@ -840,11 +846,14 @@ bool QPainter::paintingDisabled() const
 
 CGContextRef QPainter::currentContext()
 {
-    return (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    ASSERT(!data->state.paintingDisabled);
+    return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 }
 
 void QPainter::beginTransparencyLayer(float opacity)
 {
+    if (data->state.paintingDisabled)
+        return;
     [NSGraphicsContext saveGraphicsState];
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextSetAlpha(context, opacity);
@@ -853,6 +862,8 @@ void QPainter::beginTransparencyLayer(float opacity)
 
 void QPainter::endTransparencyLayer()
 {
+    if (data->state.paintingDisabled)
+        return;
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextEndTransparencyLayer(context);
     [NSGraphicsContext restoreGraphicsState];
@@ -860,6 +871,8 @@ void QPainter::endTransparencyLayer()
 
 void QPainter::setShadow(int x, int y, int blur, const QColor& color)
 {
+    if (data->state.paintingDisabled)
+        return;
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
@@ -877,12 +890,16 @@ void QPainter::setShadow(int x, int y, int blur, const QColor& color)
 
 void QPainter::clearShadow()
 {
+    if (data->state.paintingDisabled)
+        return;
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
 void QPainter::initFocusRing(int width, int offset)
 {
+    if (data->state.paintingDisabled)
+        return;
     clearFocusRing();
     data->focusRingWidth = width;
     data->hasFocusRingColor = false;
@@ -893,6 +910,8 @@ void QPainter::initFocusRing(int width, int offset)
 
 void QPainter::initFocusRing(int width, int offset, const QColor &color)
 {
+    if (data->state.paintingDisabled)
+        return;
     initFocusRing(width, offset);
     data->hasFocusRingColor = true;
     data->focusRingColor = color;
@@ -900,6 +919,8 @@ void QPainter::initFocusRing(int width, int offset, const QColor &color)
 
 void QPainter::addFocusRingRect(int x, int y, int width, int height)
 {
+    if (data->state.paintingDisabled)
+        return;
     ASSERT(data->focusRingPath);
     NSRect rect = NSMakeRect(x, y, width, height);
     int offset = (data->focusRingWidth-1)/2 + data->focusRingOffset;
@@ -909,9 +930,10 @@ void QPainter::addFocusRingRect(int x, int y, int width, int height)
 
 void QPainter::drawFocusRing()
 {
-    ASSERT(data->focusRingPath);
     if (data->state.paintingDisabled)
         return;
+
+    ASSERT(data->focusRingPath);
 
     if ([data->focusRingPath elementCount] == 0) {
         ERROR("Request to draw focus ring with no control points");

@@ -146,6 +146,8 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
         paintBoxDecorations(i, x, y);
 
     QPainter* p = i.p;
+    if (p->paintingDisabled())
+        return;
     
     if (i.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, x, y, width(), height(), style());
@@ -185,11 +187,11 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
         int oldOperation = 0;
         if (i && !i->compositeOperator().isNull()){
             oldOperation = QPainter::getCompositeOperation(p->currentContext());
-            QPainter::setCompositeOperation (p->currentContext(),i->compositeOperator());
+            QPainter::setCompositeOperation(p->currentContext(), i->compositeOperator());
         }
-        CGContextDrawImage (p->currentContext(), CGRectMake (x, y, cWidth, cHeight), drawnImage());
+        CGContextDrawImage(p->currentContext(), CGRectMake(x, y, cWidth, cHeight), drawnImage());
         if (i && !i->compositeOperator().isNull()) {
-            QPainter::setCompositeOperation (p->currentContext(),oldOperation);
+            QPainter::setCompositeOperation (p->currentContext(), oldOperation);
         }
     }
 

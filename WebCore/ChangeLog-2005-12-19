@@ -2,6 +2,30 @@
 
         Reviewed by John Sullivan.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4274
+          REGRESSION: canvas draws when window loses focus (flipped and in wrong position!)
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4755
+          "CGContext*: invalid context" messages dumped to the console (may indicate a performance hit)
+
+        * khtml/rendering/render_canvasimage.cpp: (RenderCanvasImage::paint):
+        Don't try to paint if painting is disabled.
+
+        * kwq/KWQPainter.mm:
+        (QPainter::addClip): Do nothing if painting is disabled.
+        (QPainter::addRoundedRectClip): Ditto.
+        (QPainter::currentContext): Assert that painting is not disabled.
+        (QPainter::beginTransparencyLayer): Do nothing if painting is disabled.
+        (QPainter::endTransparencyLayer): Ditto.
+        (QPainter::setShadow): Ditto.
+        (QPainter::clearShadow): Ditto.
+        (QPainter::initFocusRing): Ditto.
+        (QPainter::addFocusRingRect): Ditto.
+        (QPainter::drawFocusRing): Ditto.
+
+2005-09-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4393
           REGRESSION: Unconfirmed text ignored in input type=text
 
