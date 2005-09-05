@@ -2003,7 +2003,7 @@ ValueImp *WindowFunc::callAsFunction(ExecState *exec, ObjectImp *thisObj, const 
 	    return Undefined();
         if (JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]))
             if (DocumentImpl *doc = part->xmlDocImpl())
-                doc->addWindowEventListener(AtomicString(args[0]->toString(exec).domString()), listener, args[2]->toBoolean(exec));
+                doc->removeWindowEventListener(AtomicString(args[0]->toString(exec).domString()), listener, args[2]->toBoolean(exec));
         return Undefined();
   case Window::ShowModalDialog:
     return showModalDialog(exec, window, args);
