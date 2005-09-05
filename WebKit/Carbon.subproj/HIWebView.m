@@ -34,32 +34,12 @@
 #include "HIViewAdapter.h"
 #include <WebKitSystemInterface.h>
 
-@interface NSView (AppKitSecretsWebGraphicsBridgeKnowsAbout)
-- (NSView *)_clipViewAncestor;
-@end
-
-@interface NSGraphicsContext (Secret)
-- (void)setCGContext:(CGContextRef)cgContext;
-@end
-
-@interface NSWindow(Secret)
-- (NSGraphicsContext *)_threadContext;
-- (NSView *)_borderView;
+@interface NSWindow (AppKitSecretsHIWebViewKnows)
 - (void)_removeWindowRef;
 @end
 
-@interface NSEvent( Secret )
-- (NSEvent *)_eventRelativeToWindow:(NSWindow *)aWin;
-@end
-
-@interface NSView( Secret )
-- (void) _setHIView:(HIViewRef)view;
-- (void) _clearDirtyRectsForTree;
-- (BOOL) _allowsContextMenus;
-@end
-
-@interface NSMenu( Secret )
-- (void)_popUpMenuWithEvent:(NSEvent*)event forView:(NSView*)view;
+@interface NSView (AppKitSecretsHIWebViewKnows)
+- (void)_clearDirtyRectsForTree;
 @end
 
 @interface MenuItemProxy : NSObject <NSValidatedUserInterfaceItem>
@@ -344,7 +324,6 @@ static void
 Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 {
 	HIRect				bounds;
-	CGContextRef		temp;
 	Rect				drawRect;
 	HIRect				hiRect;
 	bool				createdContext = false;
@@ -365,10 +344,8 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
     
 	HIViewGetBounds( inView->fViewRef, &bounds );
 
-	temp = (CGContextRef)[[inView->fKitWindow _threadContext] graphicsPort];
-	CGContextRetain( temp );
-	[[inView->fKitWindow _threadContext] setCGContext: inContext];
-	[NSGraphicsContext setCurrentContext:[inView->fKitWindow _threadContext] ];
+    CGContextRef savedContext = WKNSWindowOverrideCGContext(inView->fKitWindow, inContext);
+    [NSGraphicsContext setCurrentContext:[inView->fKitWindow graphicsContext]];
 
 	GetRegionBounds( limitRgn, &drawRect );
 
@@ -388,7 +365,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
     else
         [inView->fWebView displayRect:*(NSRect*)&hiRect];
 
-    [[inView->fKitWindow _threadContext] setCGContext: temp];
+    WKNSWindowRestoreCGContext(inView->fKitWindow, savedContext);
 
     if ( !inView->fIsComposited )
     {
@@ -413,8 +390,6 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
         }
      }
 
-    CGContextRelease( temp );
-    
     if ( createdContext )
     {
         CGContextSynchronize( inContext );

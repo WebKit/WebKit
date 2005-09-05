@@ -1,3 +1,14 @@
+2005-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4846
+          REGRESSION: Carbon WebKit applications don't work at all
+
+        * Carbon.subproj/HIWebView.m: Remove lots of unneeded declarations of private stuff.
+        (Draw): Call WKNSWindowOverrideCGContext and WKNSWindowRestoreCGContext rather
+        than calling a non-existent setCGContext: method on the context.
+
 2005-09-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
