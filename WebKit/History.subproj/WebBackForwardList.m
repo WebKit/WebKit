@@ -310,13 +310,14 @@ static BOOL loggedPageCacheSize = NO;
     if (_private->pageCacheSize == COMPUTE_DEFAULT_PAGE_CACHE_SIZE) {
         unsigned s;
         vm_size_t memSize = WebSystemMainMemory();
-        unsigned multiplier = 1;
         
         s = [[WebPreferences standardPreferences] _pageCacheSize];
-        if (memSize > 1024 * 1024 * 1024)
-            multiplier = 4;
-        else if (memSize > 512 * 1024 * 1024)
-            multiplier = 2;
+        if (memSize >= 1024 * 1024 * 1024)
+            _private->pageCacheSize = s;
+        else if (memSize >= 512 * 1024 * 1024)
+	    _private->pageCacheSize = s - 1;
+	else
+	    _private->pageCacheSize = s - 2;
 
 #ifndef NDEBUG
         if (!loggedPageCacheSize){
@@ -324,8 +325,6 @@ static BOOL loggedPageCacheSize = NO;
             loggedPageCacheSize = YES;
         }
 #endif
-
-        _private->pageCacheSize = s * multiplier;
     }
     
     return _private->pageCacheSize;

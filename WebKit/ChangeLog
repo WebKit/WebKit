@@ -1,3 +1,24 @@
+2005-09-06  David Hyatt  <hyatt@apple.com>
+
+	Reduce the # of cached pages for a back/forward list.  The old cache would cache the
+	following per tab:
+	> 1gb memory = 16 pages per tab/window
+	> 512mb memory = 8 pages per tab/window
+	<= 512mb memory = 4 pages per tab/window
+
+	This consumes far too much memory and is way too aggressive.  The new cache sizes are
+	as follows:
+	>= 1gb memory = 3 pages per tab/window
+	>= 512mb memory = 2 pages per tab/window
+	< 512mb memory = 1 page per tab/window
+
+        Reviewed by john
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList pageCacheSize]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2005-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
