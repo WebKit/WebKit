@@ -321,7 +321,7 @@ static BOOL loggedPageCacheSize = NO;
 
 #ifndef NDEBUG
         if (!loggedPageCacheSize){
-            LOG (CacheSizes, "Page cache size set to %d pages.", s * multiplier);
+            LOG (CacheSizes, "Page cache size set to %d pages.", _private->pageCacheSize);
             loggedPageCacheSize = YES;
         }
 #endif

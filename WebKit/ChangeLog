@@ -1,3 +1,13 @@
+2005-09-06  Geoffrey Garen  <ggaren@apple.com>
+
+        - fixed build bustage from last checkin.
+        
+        Reviewed by haytt.
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList pageCacheSize]): updated debug printf since we no
+        longer have a variable called 'multiplier'
+
 2005-09-06  David Hyatt  <hyatt@apple.com>
 
 	Reduce the # of cached pages for a back/forward list.  The old cache would cache the
