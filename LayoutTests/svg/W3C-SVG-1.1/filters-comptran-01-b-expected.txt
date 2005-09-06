@@ -5,13 +5,13 @@ KCanvasRegistry:
   KCanvasResource {id="Table" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
   KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [start=(0,0)] [end=(0,0)]}
 KCanvasContainer at (0,0) size 479x359
-  KCanvasContainer at (15,5) size 449x299 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
+  KCanvasContainer at (15,5) size 449x299 [fill={[type=SOLID] [color=#000000]}]
     KCanvasContainer at (15,5) size 449x299 [transform={m=((0.71,0.00)(0.00,0.71)) t=(15.00,5.00)}]
-      KCanvasItem {rect} at (15,5) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [fill={}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
-      KCanvasContainer at (15,5) size 449x299 [stroke={}] [fill={[type=SOLID] [color=#000000]}]
-        KCanvasItem {rect} at (15,5) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [fill={}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
-        KCanvasItem {rect} at (21,11) size 415x29 [stroke={}] [fill={[id="MyGradient"]}] [filter="Identity"] [data="M10.00,10.00L590.00,10.00L590.00,50.00L10.00,50.00"]
-        KCanvasItem {rect} at (21,83) size 415x29 [stroke={}] [fill={[id="MyGradient"]}] [filter="Table"] [data="M10.00,110.00L590.00,110.00L590.00,150.00L10.00,150.00"]
-        KCanvasItem {rect} at (21,154) size 415x29 [stroke={}] [fill={[id="MyGradient"]}] [filter="Linear"] [data="M10.00,210.00L590.00,210.00L590.00,250.00L10.00,250.00"]
-        KCanvasItem {rect} at (21,226) size 415x29 [stroke={}] [fill={[id="MyGradient"]}] [filter="Gamma"] [data="M10.00,310.00L590.00,310.00L590.00,350.00L10.00,350.00"]
-  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [fill={}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
+      KCanvasItem {rect} at (15,5) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
+      KCanvasContainer at (15,5) size 449x299 [fill={[type=SOLID] [color=#000000]}]
+        KCanvasItem {rect} at (15,5) size 449x299 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00L629.00,1.00L629.00,419.00L1.00,419.00"]
+        KCanvasItem {rect} at (22,12) size 414x28 [fill={[id="MyGradient"]}] [filter="Identity"] [data="M10.00,10.00L590.00,10.00L590.00,50.00L10.00,50.00"]
+        KCanvasItem {rect} at (22,83) size 414x28 [fill={[id="MyGradient"]}] [filter="Table"] [data="M10.00,110.00L590.00,110.00L590.00,150.00L10.00,150.00"]
+        KCanvasItem {rect} at (22,155) size 414x28 [fill={[id="MyGradient"]}] [filter="Linear"] [data="M10.00,210.00L590.00,210.00L590.00,250.00L10.00,250.00"]
+        KCanvasItem {rect} at (22,226) size 414x28 [fill={[id="MyGradient"]}] [filter="Gamma"] [data="M10.00,310.00L590.00,310.00L590.00,350.00L10.00,350.00"]
+  KCanvasItem {rect} at (0,0) size 479x359 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00L479.00,1.00L479.00,359.00L1.00,359.00"]
