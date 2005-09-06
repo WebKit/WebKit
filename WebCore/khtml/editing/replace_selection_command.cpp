@@ -631,7 +631,12 @@ void ReplaceSelectionCommand::doApply()
     // collect information about the current selection, prior to deleting the selection
     Selection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
-
+    
+    if (m_matchStyle) {
+        m_insertionStyle = styleAtPosition(selection.start());
+        m_insertionStyle->ref();
+    }
+    
     VisiblePosition visibleStart(selection.start(), selection.startAffinity());
     VisiblePosition visibleEnd(selection.end(), selection.endAffinity());
     bool startAtStartOfBlock = isStartOfBlock(visibleStart);
@@ -716,10 +721,6 @@ void ReplaceSelectionCommand::doApply()
     startPos = positionOutsideContainingSpecialElement(startPos);
 
     KHTMLPart *part = document()->part();
-    if (m_matchStyle) {
-        m_insertionStyle = styleAtPosition(startPos);
-        m_insertionStyle->ref();
-    }
     
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement

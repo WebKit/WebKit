@@ -1,3 +1,21 @@
+2005-09-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Fixes <rdar://problem/3976872> REGRESSION (Mail): Pasted lines of plain text don't get the proper style if pasted into newlines
+
+        For style matched paste, style information was gathered incorrectly.
+        
+        Test cases added:
+        * layout-tests/editing/pasteboard/3976872-expected.txt: Added.
+        * layout-tests/editing/pasteboard/3976872.html: Added.
+        
+        * khtml/editing/replace_selection_command.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+        Even though the startBlock (selection.start().node()->enclosingBlockFlowElement) is where manipulation 
+        begins on a paste, it can be missing necessary style information.
+
+
 2005-09-06  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
