@@ -1,0 +1,131 @@
+2005-09-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by hyatt.
+
+	- initial import of JavaScriptGlue into our repository
+
+        * English.lproj/InfoPlist.strings: Added.
+        * JSBase.cpp: Added.
+        (JSBase::JSBase):
+        (JSBase::~JSBase):
+        (JSBase::Retain):
+        (JSBase::Release):
+        (JSBase::RetainCount):
+        (JSBase::GetTypeID):
+        (JSBase::CopyDescription):
+        (JSBase::Equal):
+        * JSBase.h: Added.
+        * JSObject.cpp: Added.
+        (JSUserObject::JSUserObject):
+        (JSUserObject::~JSUserObject):
+        (JSUserObject::CopyPropertyNames):
+        (JSUserObject::CopyProperty):
+        (JSUserObject::SetProperty):
+        (JSUserObject::ImplementsCall):
+        (JSUserObject::CallFunction):
+        (JSUserObject::CopyCFValue):
+        (JSUserObject::Equal):
+        (JSUserObject::Mark):
+        (JSUserObject::GetData):
+        * JSObject.h: Added.
+        (JSUserObject::DataType):
+        * JSRun.cpp: Added.
+        (JSRun::JSRun):
+        (JSRun::~JSRun):
+        (JSRun::Flags):
+        (JSRun::GetSource):
+        (JSRun::GlobalObject):
+        (JSRun::GetInterpreter):
+        (JSRun::Evaluate):
+        (JSRun::CheckSyntax):
+        * JSRun.h: Added.
+        (JSInterpreter::JSInterpreter):
+        (JSInterpreter::JSInterpreter::~JSInterpreter):
+        (JSInterpreter::Flags):
+        * JSUtils.cpp: Added.
+        (CFStringToUString):
+        (UStringToCFString):
+        (CFStringToIdentifier):
+        (IdentifierToCFString):
+        (KJSValueToJSObject):
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (KJSValueToCFType):
+        (GetCFNull):
+        * JSUtils.h: Added.
+        (RetainCFType):
+        (ReleaseCFType):
+        * JSValueWrapper.cpp: Added.
+        (JSValueWrapper::JSValueWrapper):
+        (JSValueWrapper::~JSValueWrapper):
+        (JSValueWrapper::GetValue):
+        (JSValueWrapper::GetExecState):
+        (JSValueWrapper::GetJSObectCallBacks):
+        (JSValueWrapper::JSObjectDispose):
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectCopyCFValue):
+        (JSValueWrapper::JSObjectMark):
+        * JSValueWrapper.h: Added.
+        * JavaScriptGlue.cpp: Added.
+        (JSSetCFNull):
+        (JSGetCFNull):
+        (JSRetain):
+        (JSRelease):
+        (JSCopyDescription):
+        (JSEqual):
+        (JSGetTypeID):
+        (JSGetRetainCount):
+        (JSObjectCreate):
+        (JSObjectCreateInternal):
+        (JSObjectCopyCFValue):
+        (JSObjectGetData):
+        (JSObjectCopyProperty):
+        (JSObjectSetProperty):
+        (JSObjectCallFunction):
+        (JSRunCreate):
+        (JSRunCopySource):
+        (JSRunCopyGlobalObject):
+        (JSRunEvaluate):
+        (JSRunCheckSyntax):
+        (JSCollect):
+        (JSTypeGetCFArrayCallBacks):
+        (JSCFRetain):
+        (JSCFRelease):
+        (JSObjectCreateWithCFType):
+        (CFJSObjectDispose):
+        (JSObjectCopyPropertyNames):
+        (CFJSObjectCopyProperty):
+        (CFJSObjectSetProperty):
+        (CFJSObjectCopyCFValue):
+        (CFJSObjectEqual):
+        (CFJSObjectCopyPropertyNames):
+        (JSCreateCFArrayFromJSArray):
+        (JSCreateJSArrayFromCFArray):
+        (JSLockInterpreter):
+        (JSUnlockInterpreter):
+        * JavaScriptGlue.exp: Added.
+        * JavaScriptGlue.h: Added.
+        * JavaScriptGlue.pbproj/project.pbxproj: Added.
+        * UserObjectImp.cpp: Added.
+        (UserObjectPrototypeImp::UserObjectPrototypeImp):
+        (UserObjectPrototypeImp::GlobalUserObjectPrototypeImp):
+        (UserObjectImp::UserObjectImp):
+        (UserObjectImp::~UserObjectImp):
+        (UserObjectImp::classInfo):
+        (UserObjectImp::implementsCall):
+        (UserObjectImp::call):
+        (UserObjectImp::propList):
+        (UserObjectImp::hasProperty):
+        (UserObjectImp::get):
+        (UserObjectImp::put):
+        (UserObjectImp::GetJSUserObject):
+        (UserObjectImp::toPrimitive):
+        (UserObjectImp::toBoolean):
+        (UserObjectImp::toNumber):
+        (UserObjectImp::toString):
+        (UserObjectImp::mark):
+        * UserObjectImp.h: Added.
+

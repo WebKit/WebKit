@@ -1,0 +1,578 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 39;
+	objects = {
+		014CEA440018CDF011CA2923 = {
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OPTIMIZATION_CFLAGS = "-O0";
+				ZERO_LINK = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		014CEA450018CDF011CA2923 = {
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+//010
+//011
+//012
+//013
+//014
+//030
+//031
+//032
+//033
+//034
+		034768DFFF38A50411DB9C8B = {
+			children = (
+				8CBD4F2A074D303A00719ADA,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//030
+//031
+//032
+//033
+//034
+//080
+//081
+//082
+//083
+//084
+		0867D690FE84028FC02AAC07 = {
+			buildSettings = {
+			};
+			buildStyles = (
+				014CEA440018CDF011CA2923,
+				014CEA450018CDF011CA2923,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 0867D691FE84028FC02AAC07;
+			productRefGroup = 034768DFFF38A50411DB9C8B;
+			projectDirPath = "";
+			targets = (
+				0867D69CFE84028FC02AAC07,
+			);
+		};
+		0867D691FE84028FC02AAC07 = {
+			children = (
+				08FB77AEFE84172EC02AAC07,
+				089C1665FE841158C02AAC07,
+				0867D69AFE84028FC02AAC07,
+				034768DFFF38A50411DB9C8B,
+			);
+			isa = PBXGroup;
+			name = JavaScriptGlue;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 = {
+			children = (
+				1058C7B0FEA5585E11CA2CBB,
+				1058C7B2FEA5585E11CA2CBB,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		0867D69BFE84028FC02AAC07 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		0867D69CFE84028FC02AAC07 = {
+			buildPhases = (
+				0867D69DFE84028FC02AAC07,
+				0867D69EFE84028FC02AAC07,
+				0867D69FFE84028FC02AAC07,
+				0867D6A0FE84028FC02AAC07,
+				0867D6A2FE84028FC02AAC07,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = JavaScriptGlue.exp;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks\"";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = JavaScriptGlue;
+				SECTORDER_FLAGS = "-sectorder __TEXT __text \"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptGlue.order\"";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = framework;
+			};
+			dependencies = (
+			);
+			isa = PBXFrameworkTarget;
+			name = JavaScriptGlue;
+			productInstallPath = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+			productName = JavaScriptGlue;
+			productReference = 8CBD4F2A074D303A00719ADA;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>JavaScriptGlue</string>
+	<key>CFBundleGetInfoString</key>
+	<string>JavaScriptGlue version 1.1.0, Copyright 2004, Apple Computer Inc.</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>com.apple.JavaScriptGlue</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.1.0</string>
+	<key>NSPrincipalClass</key>
+	<string></string>
+</dict>
+</plist>
+";
+		};
+		0867D69DFE84028FC02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				F11798B40262465703CA149D,
+				F11798BE026246FD03CA149D,
+				F11798BF026246FD03CA149D,
+				F11798C0026246FD03CA149D,
+				F11798C1026246FD03CA149D,
+				F11798CB0262545403CA149D,
+				F11798D00262579C03CA149D,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0867D69EFE84028FC02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				089C1668FE841158C02AAC07,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0867D69FFE84028FC02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				F1EB7EAC02621EAF03CA149D,
+				F11798B50262465703CA149D,
+				F11798C2026246FD03CA149D,
+				F11798C3026246FD03CA149D,
+				F11798C4026246FD03CA149D,
+				F11798C5026246FD03CA149D,
+				F11798CD0262545403CA149D,
+				F11798D10262579C03CA149D,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0867D6A0FE84028FC02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				F14FC9F40258E9A603CA149D,
+				8C6C2BBA04E05AD30031EC3B,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0867D6A2FE84028FC02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0867D6A5FE840307C02AAC07 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		089C1665FE841158C02AAC07 = {
+			children = (
+				089C1666FE841158C02AAC07,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		089C1666FE841158C02AAC07 = {
+			children = (
+				089C1667FE841158C02AAC07,
+			);
+			isa = PBXVariantGroup;
+			name = InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		089C1667FE841158C02AAC07 = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = English.lproj/InfoPlist.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		089C1668FE841158C02AAC07 = {
+			fileRef = 089C1666FE841158C02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		08FB77AEFE84172EC02AAC07 = {
+			children = (
+				F1EB7EAB02621EAF03CA149D,
+				F11798B20262465703CA149D,
+				F11798B30262465703CA149D,
+				F11798B8026246FD03CA149D,
+				F11798B9026246FD03CA149D,
+				F11798BA026246FD03CA149D,
+				F11798BB026246FD03CA149D,
+				F11798BC026246FD03CA149D,
+				F11798BD026246FD03CA149D,
+				F11798B6026246FD03CA149D,
+				F11798B7026246FD03CA149D,
+				F11798C80262545403CA149D,
+				F11798C90262545403CA149D,
+				F11798CE0262579C03CA149D,
+				F11798CF0262579C03CA149D,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//080
+//081
+//082
+//083
+//084
+//100
+//101
+//102
+//103
+//104
+		1058C7B0FEA5585E11CA2CBB = {
+			children = (
+				F14FC9F30258E9A603CA149D,
+				8C6C2BB904E05AD30031EC3B,
+				8C7C00A6046B01F1002EB936,
+			);
+			isa = PBXGroup;
+			name = "Linked Frameworks";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB = {
+			children = (
+				0867D69BFE84028FC02AAC07,
+				0867D6A5FE840307C02AAC07,
+			);
+			isa = PBXGroup;
+			name = "Other Frameworks";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//100
+//101
+//102
+//103
+//104
+//8C0
+//8C1
+//8C2
+//8C3
+//8C4
+		8C6C2BB904E05AD30031EC3B = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = JavaScriptCore.framework;
+			path = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		8C6C2BBA04E05AD30031EC3B = {
+			fileRef = 8C6C2BB904E05AD30031EC3B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8C7C00A6046B01F1002EB936 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = WebKit.framework;
+			path = /System/Library/Frameworks/WebKit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		8CBD4F2A074D303A00719ADA = {
+			explicitFileType = wrapper.framework;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = JavaScriptGlue.framework;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+//8C0
+//8C1
+//8C2
+//8C3
+//8C4
+//F10
+//F11
+//F12
+//F13
+//F14
+		F11798B20262465703CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JavaScriptGlue.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798B30262465703CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JavaScriptGlue.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798B40262465703CA149D = {
+			fileRef = F11798B30262465703CA149D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F11798B50262465703CA149D = {
+			fileRef = F11798B20262465703CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798B6026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JSUtils.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798B7026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JSUtils.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798B8026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JSBase.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798B9026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JSBase.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798BA026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JSObject.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798BB026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JSObject.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798BC026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JSRun.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798BD026246FD03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JSRun.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798BE026246FD03CA149D = {
+			fileRef = F11798B9026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798BF026246FD03CA149D = {
+			fileRef = F11798B7026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C0026246FD03CA149D = {
+			fileRef = F11798BB026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C1026246FD03CA149D = {
+			fileRef = F11798BD026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C2026246FD03CA149D = {
+			fileRef = F11798BC026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C3026246FD03CA149D = {
+			fileRef = F11798B6026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C4026246FD03CA149D = {
+			fileRef = F11798B8026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C5026246FD03CA149D = {
+			fileRef = F11798BA026246FD03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798C80262545403CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = JSValueWrapper.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798C90262545403CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = JSValueWrapper.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798CB0262545403CA149D = {
+			fileRef = F11798C90262545403CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798CD0262545403CA149D = {
+			fileRef = F11798C80262545403CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798CE0262579C03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = UserObjectImp.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798CF0262579C03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = UserObjectImp.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F11798D00262579C03CA149D = {
+			fileRef = F11798CF0262579C03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F11798D10262579C03CA149D = {
+			fileRef = F11798CE0262579C03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F14FC9F30258E9A603CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F14FC9F40258E9A603CA149D = {
+			fileRef = F14FC9F30258E9A603CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F1EB7EAB02621EAF03CA149D = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.exports;
+			path = JavaScriptGlue.exp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F1EB7EAC02621EAF03CA149D = {
+			fileRef = F1EB7EAB02621EAF03CA149D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+	};
+	rootObject = 0867D690FE84028FC02AAC07;
+}
