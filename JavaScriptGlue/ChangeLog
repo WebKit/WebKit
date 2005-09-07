@@ -1,3 +1,11 @@
+2005-09-06  Geoffrey Garen  <ggaren@apple.com>
+
+        -upgraded project files to XCode 2.1
+
+        * JavaScriptGlue.pbproj/project.pbxproj: Removed.
+        * JavaScriptGlue.xcodeproj/.cvsignore: Added.
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Added.
+
 2005-09-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by hyatt.
