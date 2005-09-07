@@ -2238,7 +2238,10 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
             }
             o = next;
         }
-        if((o->isText() && !o->isBR() && static_cast<RenderText*>(o)->firstTextBox()) || o->isReplaced()) {
+        if (o->parent()->element() == this && !static_cast<RenderText*>(o)->firstTextBox() ) {
+            // do nothing - skip child node of the named anchor if it doesn't have a text box rdar://problems/4233844&4246096
+        }
+        else if((o->isText() && !o->isBR()) || o->isReplaced()) {
             o->container()->absolutePosition( xPos, yPos );
             if (o->isText())
                 xPos += static_cast<RenderText *>(o)->minXPos();

@@ -1,3 +1,19 @@
+2005-09-07 Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Justin.
+ 
+        - fix <rdar://problem/4246096> REGRESSION links to named anchors don't scroll to the right place (4825)
+
+        This is really just a better fix for 4233844. Also consolidated manual-tests/scrollToAnchorWithNewline.html
+	and the test case from Bugzilla bug 4825 into manual-tests/scrollToAnchor.html.
+
+        Test cases added:
+        * manual-tests/scrollToAnchor.html: Added.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::ContainerNodeImpl::getUpperLeftCorner): when calculating scroll position, skip child nodes of the anchor
+        if they do not have text boxes.
+
 2005-09-07  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
 
