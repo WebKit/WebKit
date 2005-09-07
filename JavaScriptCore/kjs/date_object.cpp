@@ -201,7 +201,7 @@ static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
 
     CFTimeInterval interval = absoluteTime + kCFAbsoluteTimeIntervalSince1970;
     if (interval > LONG_MAX) {
-        interval = LONG_MAX;
+        return invalidDate;
     }
 
     return (time_t) interval;
@@ -403,34 +403,81 @@ static double timeZoneOffset(const struct tm *t)
 #endif
 }
 
-static double timeFromArgs(ExecState *exec, const List &args, int maxArgs, double ms, struct tm *t)
+// Converts a list of arguments sent to a Date member function into milliseconds, updating
+// ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
+//
+// Format of member function: f([hour,] [min,] [sec,] [ms])
+static void fillStructuresUsingTimeArgs(ExecState *exec, const List &args, int maxArgs, double *ms, struct tm *t)
 {
-    double result = 0;
+    double milliseconds = 0;
     int idx = 0;
     int numArgs = args.size();
     
-    // process up to max_args arguments
+    // JS allows extra trailing arguments -- ignore them
     if (numArgs > maxArgs)
         numArgs = maxArgs;
+
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
         t->tm_hour = 0;
-        result = args[idx++]->toInt32(exec) * msPerHour;
+        milliseconds += args[idx++]->toInt32(exec) * msPerHour;
     }
+
     // minutes
     if (maxArgs >= 3 && idx < numArgs) {
         t->tm_min = 0;
-        result += args[idx++]->toInt32(exec) * msPerMinute;
+        milliseconds += args[idx++]->toInt32(exec) * msPerMinute;
     }
+    
     // seconds
     if (maxArgs >= 2 && idx < numArgs) {
         t->tm_sec = 0;
-        result += args[idx++]->toInt32(exec) * msPerSecond;
+        milliseconds += args[idx++]->toInt32(exec) * msPerSecond;
     }
-    // read ms from args if present or add the old value
-    result += idx < numArgs ? roundValue(exec, args[idx]) : ms;
-            
-    return result;
+    
+    // milliseconds
+    if (idx < numArgs) {
+        milliseconds += roundValue(exec, args[idx]);
+    } else {
+        milliseconds += *ms;
+    }
+    
+    *ms = milliseconds;
+}
+
+// Converts a list of arguments sent to a Date member function into years, months, and milliseconds, updating
+// ms (representing milliseconds) and t (representing the rest of the date structure) appropriately.
+//
+// Format of member function: f([years,] [months,] [days])
+static void fillStructuresUsingDateArgs(ExecState *exec, const List &args, int maxArgs, double *ms, struct tm *t)
+{
+  int idx = 0;
+  int numArgs = args.size();
+  
+  // JS allows extra trailing arguments -- ignore them
+  if (numArgs > maxArgs)
+    numArgs = maxArgs;
+  
+  // years
+  if (maxArgs >= 3 && idx < numArgs) {
+    t->tm_year = args[idx++]->toInt32(exec) - 1900;
+  }
+  
+  // months
+  if (maxArgs >= 2 && idx < numArgs) {
+    int months = args[idx++]->toInt32(exec);
+
+    // t->tm_year must hold the bulk of the data to avoid overflow when converting
+    // to a CFGregorianDate. (CFGregorianDate.month is an SInt8; CFGregorianDate.year is an SInt32.)
+    t->tm_year += months / 12;
+    t->tm_mon = months % 12;
+  }
+  
+  // days
+  if (idx < numArgs) {
+    t->tm_mday = 0;
+    *ms += args[idx]->toInt32(exec) * msPerDay;
+  }
 }
 
 // ------------------------------ DateInstanceImp ------------------------------
@@ -722,32 +769,25 @@ ValueImp *DateProtoFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj, 
     thisObj->setInternalValue(result);
     break;
   case SetMilliSeconds:
-    ms = roundValue(exec, args[0]);
+    fillStructuresUsingTimeArgs(exec, args, 1, &ms, t);
     break;
   case SetSeconds:
-    ms = timeFromArgs(exec, args, 2, ms, t);
+    fillStructuresUsingTimeArgs(exec, args, 2, &ms, t);
     break;
   case SetMinutes:
-    ms = timeFromArgs(exec, args, 3, ms, t);
+    fillStructuresUsingTimeArgs(exec, args, 3, &ms, t);
     break;
   case SetHours:
-    ms = timeFromArgs(exec, args, 4, ms, t);
+    fillStructuresUsingTimeArgs(exec, args, 4, &ms, t);
     break;
   case SetDate:
-      t->tm_mday = 0;
-      ms += args[0]->toInt32(exec) * msPerDay;
-      break;
+    fillStructuresUsingDateArgs(exec, args, 1, &ms, t);
+    break;
   case SetMonth:
-    t->tm_mon = args[0]->toInt32(exec);
-    if (args.size() >= 2)
-      t->tm_mday = args[1]->toInt32(exec);
+    fillStructuresUsingDateArgs(exec, args, 2, &ms, t);    
     break;
   case SetFullYear:
-    t->tm_year = args[0]->toInt32(exec) - 1900;
-    if (args.size() >= 2)
-      t->tm_mon = args[1]->toInt32(exec);
-    if (args.size() >= 3)
-      t->tm_mday = args[2]->toInt32(exec);
+    fillStructuresUsingDateArgs(exec, args, 3, &ms, t);
     break;
   case SetYear:
     t->tm_year = args[0]->toInt32(exec) >= 1900 ? args[0]->toInt32(exec) - 1900 : args[0]->toInt32(exec);
@@ -822,8 +862,6 @@ ObjectImp *DateObjectImp::construct(ExecState *exec, const List &args)
       else
           value = args[0]->toPrimitive(exec)->toNumber(exec);
   } else {
-    struct tm t;
-    memset(&t, 0, sizeof(t));
     if (isNaN(args[0]->toNumber(exec))
         || isNaN(args[1]->toNumber(exec))
         || (numArgs >= 3 && isNaN(args[2]->toNumber(exec)))
@@ -833,6 +871,8 @@ ObjectImp *DateObjectImp::construct(ExecState *exec, const List &args)
         || (numArgs >= 7 && isNaN(args[6]->toNumber(exec)))) {
       value = NaN;
     } else {
+      struct tm t;
+      memset(&t, 0, sizeof(t));
       int year = args[0]->toInt32(exec);
       t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
       t.tm_mon = args[1]->toInt32(exec);
@@ -892,8 +932,6 @@ ValueImp *DateObjectFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
     return Number(parseDate(args[0]->toString(exec)));
   }
   else { // UTC
-    struct tm t;
-    memset(&t, 0, sizeof(t));
     int n = args.size();
     if (isNaN(args[0]->toNumber(exec))
         || isNaN(args[1]->toNumber(exec))
@@ -904,6 +942,9 @@ ValueImp *DateObjectFuncImp::callAsFunction(ExecState *exec, ObjectImp *thisObj,
         || (n >= 7 && isNaN(args[6]->toNumber(exec)))) {
       return Number(NaN);
     }
+
+    struct tm t;
+    memset(&t, 0, sizeof(t));
     int year = args[0]->toInt32(exec);
     t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
     t.tm_mon = args[1]->toInt32(exec);

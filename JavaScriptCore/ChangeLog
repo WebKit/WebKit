@@ -1,4 +1,19 @@
 2005-09-07  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4781
+        Date.setMonth fails with big values due to overflow
+
+        Reviewed by darin.
+
+        * kjs/date_object.cpp:
+        (timetUsingCF): for consistency, changed return statement to invalidDate instead of LONG_MAX
+        (KJS::fillStructuresUsingTimeArgs): modified for readability
+        (KJS::fillStructuresUsingDateArgs): new function analogous to fillStructuresUsingTimeArgs
+        (KJS::DateProtoFuncImp::callAsFunction): modified to use fillStructuresUsingDateArgs
+        (KJS::DateObjectImp::construct): moved variable declaration to proper scope
+        (KJS::DateObjectFuncImp::callAsFunction): moved variable declaration to proper scope
+
+2005-09-07  Geoffrey Garen  <ggaren@apple.com>
         -updated expected test results to reflect fix for 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
         kjs does not allow named functions in function expressions
