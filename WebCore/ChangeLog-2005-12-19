@@ -1,3 +1,47 @@
+2005-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed storage leaks; one of the leaks caused these 3 bugs:
+
+        <rdar://problem/4231952> leaks of DOMStringImpl called from HTMLTokenizer::processToken, seen running WebKit tests
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4797>
+
+        <rdar://problem/4233800> leak inside DOM::DocumentImpl::DocumentImpl, seen running webkit tests
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4795>
+
+        <rdar://problem/4232812> leaks of NodeImpl called from HTMLParser::textCreateErrorCheck, seen running webkit tests
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=4796>
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setOuterHTML): Put ref/deref around call to replaceChild to avoid leaking the node being replaced.
+        (HTMLElementImpl::setOuterText): Put ref/deref around call to replaceChild to avoid leaking the node being replaced.
+        Also changed removeChild calls to use remove instead, both for simplicity and to fix the leak without having
+        to add a SharedPtr or ref/deref pair.
+
+        * khtml/html/html_tableimpl.cpp:
+        (DOM::HTMLTableElementImpl::setCaption): Put ref/deref around call to replaceChild to avoid leaking the node being
+        replaced.
+        (DOM::HTMLTableElementImpl::setTHead): Ditto.
+        (DOM::HTMLTableElementImpl::setTFoot): Ditto.
+        (DOM::HTMLTableElementImpl::setTBody): Tweaked a bit to match the other functions as closely as possible.
+        No leak here.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (DOM::NodeImpl::remove): Added ref/deref to avoid leaking the node being removed.
+        (DOM::NodeImpl::normalize): Changed two calls to removeChild to calls to remove to prevent leaks.
+
+2005-09-05  Darin Adler  <darin@apple.com>
+
+        Earlier version reviewed by John Sullivan.
+
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::remove): Add a ref/deref pair so that
+        this function will destroy a node if it has no references other than the tree.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::setOuterText): Change code to
+        call remove instead of removeChild, both for simplicity and to fix leak without having
+        to add a SharedPtr or ref/deref pair.
+
 2005-09-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
@@ -14,7 +58,6 @@
         (khtml::ReplaceSelectionCommand::doApply):
         Even though the startBlock (selection.start().node()->enclosingBlockFlowElement) is where manipulation 
         begins on a paste, it can be missing necessary style information.
-
 
 2005-09-06  Eric Seidel  <eseidel@apple.com>
         Fix by Tobias Lidskog <tobiaslidskog@mac.com>
