@@ -231,12 +231,16 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     if (server->type() == PS_RADIAL_GRADIENT)
     {
         const KRenderingPaintServerRadialGradientQuartz *radial = static_cast<const KRenderingPaintServerRadialGradientQuartz *>(server);
+        if (m_shadingCache)
+            CGShadingRelease(m_shadingCache);
         // actually make the gradient
         m_shadingCache = CGShadingRefForRadialGradient(radial);
     }
     else if (server->type() == PS_LINEAR_GRADIENT)
     {
         const KRenderingPaintServerLinearGradientQuartz *linear = static_cast<const KRenderingPaintServerLinearGradientQuartz *>(server);
+        if (m_shadingCache)
+            CGShadingRelease(m_shadingCache);
         // actually make the gradient
         m_shadingCache = CGShadingRefForLinearGradient(linear);
     }

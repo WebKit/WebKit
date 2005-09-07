@@ -127,6 +127,7 @@ KRenderingDeviceContext *KRenderingDeviceQuartz::contextForImage(KCanvasImage *i
 		cgLayer = CGLayerCreateWithContext(currentCGContext(), CGSize(image->size() + QSize(1,1)), NULL);  // FIXME + 1 is a hack
 		// FIXME: we should composite the original image onto the layer...
 		quartzImage->setCGLayer(cgLayer);
+		CGLayerRelease(cgLayer);
 	}
 	KRenderingDeviceContextQuartz *quartzContext = new KRenderingDeviceContextQuartz();
 	CGContextRef cgContext = CGLayerGetContext(cgLayer);

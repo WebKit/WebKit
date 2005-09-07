@@ -1,3 +1,19 @@
+2005-09-07  Eric Seidel  <eseidel@apple.com>
+        Fix by Tobias Lidskog <tobiaslidskog@mac.com>
+
+        Reviewed by eseidel.
+
+        * kcanvas/KCanvasCreator.cpp:
+        (KCanvasCreator::createCanvasPathData):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::contextForImage):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::~SVGDocumentImpl):
+        Fixed several leaks.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4868
+
 2005-09-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
