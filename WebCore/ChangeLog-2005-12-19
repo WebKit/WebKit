@@ -1,3 +1,15 @@
+2005-09-07  Geoffrey Garen  <ggaren@apple.com>
+
+        -added layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4781
+        Date.setMonth fails with big values due to overflow
+
+        Fix is in JavaScriptCore.
+
+        Test cases added:
+
+        * layout-tests/fast/js/date-big-setmonth-expected.txt: Added.
+        * layout-tests/fast/js/date-big-setmonth.html: Added.
+
 2005-09-07 Vicki Murley  <vicki@apple.com>
 
         Reviewed by Justin.

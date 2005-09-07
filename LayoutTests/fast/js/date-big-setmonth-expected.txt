@@ -1,0 +1,5 @@
+This test checks for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=4781 Date.setMonth fails with big values due to overflow.
+
+If the test passes, you will see a "PASSED" message below.
+
+PASSED: date value is 307666800000

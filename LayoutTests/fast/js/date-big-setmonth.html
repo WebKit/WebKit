@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+function print(message) {
+    var paragraph = document.createElement("p");
+    paragraph.appendChild(document.createTextNode(message));
+    document.getElementById("console").appendChild(paragraph);
+}
+
+function test() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+
+    var d = new Date(0);
+    var status = "FAILED: ";
+    d.setMonth(128);
+    if (d.valueOf() == 307666800000) {
+        status = "PASSED: ";
+    }
+    print(status + "date value is " + d.valueOf());
+}
+</script>
+</head>
+<body onload="test();">
+<p>This test checks for a regression against <i>http://bugzilla.opendarwin.org/show_bug.cgi?id=4781 Date.setMonth fails with big values due to overflow</i>.</p>
+<p>If the test passes, you will see a "PASSED" message below.</p>
+<hr>
+<div id='console'/>
+</body>
+</html>
