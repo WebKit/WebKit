@@ -1,3 +1,10 @@
+2005-09-07  Geoffrey Garen  <ggaren@apple.com>
+        -updated expected test results to reflect fix for 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4698
+        kjs does not allow named functions in function expressions
+ 
+        * tests/mozilla/expected.html:
+
 2005-09-04  Darin Adler  <darin@apple.com>
 
         * kjs/identifier.cpp: Fix comment, add missing include.
