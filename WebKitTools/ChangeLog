@@ -1,3 +1,10 @@
+2005-09-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        * Scripts/update-webkitsysteminterface: Added.
+        Builds webkitsysteminterface and moves the built product and header into WebKitLibraries
+
 2005-09-01  John Sullivan  <sullivan@apple.com>
 
         * Scripts/run-webkit-tests:
