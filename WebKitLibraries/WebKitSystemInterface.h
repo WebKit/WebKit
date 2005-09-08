@@ -126,3 +126,5 @@ BOOL WKExecutableLinkedInTigerOrEarlier(void);
 
 CGContextRef WKNSWindowOverrideCGContext(NSWindow *, CGContextRef);
 void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
+
+BOOL WKSupportsMultipartXMixedReplace(NSMutableURLRequest *request);

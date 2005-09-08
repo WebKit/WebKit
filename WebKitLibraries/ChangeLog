@@ -1,3 +1,8 @@
+2005-09-08  Justin Garcia  <justin.garcia@apple.com>
+
+        * WebKitSystemInterface.h: Update to latest
+        * libWebKitSystemInterface.a: ditto
+
 2005-09-04  Darin Adler  <darin@apple.com>
 
         * WebKitSystemInterface.h: Update to latest
