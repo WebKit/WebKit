@@ -1158,7 +1158,7 @@
 {
     NSResponder *firstResponder = [[self window] firstResponder];
     if ([firstResponder isKindOfClass:[NSTextView class]]) {
-        NSText *editor = (NSText *)firstResponder;
+        NSTextView *editor = (NSTextView *)firstResponder;
         id delegate = [editor delegate];
         if (delegate == self)
             return editor;

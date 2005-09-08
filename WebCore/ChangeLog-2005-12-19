@@ -1,3 +1,14 @@
+2005-09-08  Geoffrey Garen  <ggaren@apple.com>
+
+        -fixed gcc 4.0 build bustage due to inconsitent return type
+        
+        Reviewed by john.
+
+        * kwq/KWQTextField.mm:
+        (-[NSTextField _KWQ_currentEditor]): editor is now cast as an NSTextView
+        instead of an NSText (which makes sense regardless of build bustage, 
+        given that we first test for isKindOfClass:[NSTextView class] before defining editor)
+
 2005-09-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
