@@ -29,6 +29,7 @@
 
 #include <q3ptrlist.h>
 #include <q3valuevector.h>
+#include <q3memarray.h>
 
 #include <kdom/DOMString.h>
 #include <kdom/css/RenderStyle.h>

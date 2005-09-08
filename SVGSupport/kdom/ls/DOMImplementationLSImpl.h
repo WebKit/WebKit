@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,29 +20,32 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/core/DOMStringImpl.h>
+#ifndef KDOM_DOMImplementationLSImpl_H
+#define KDOM_DOMImplementationLSImpl_H
 
-#include "SVGEventImpl.h"
-#include "SVGDOMImplementationImpl.h"
-
-using namespace KSVG;
-
-SVGEventImpl::SVGEventImpl() : KDOM::EventImpl((KDOM::EventImplType) TypeSVGEvent)
+namespace KDOM
 {
-}
+    class LSInputImpl;
+    class LSOutputImpl;
+    class LSParserImpl;
+    class DOMStringImpl;
+    class LSSerializerImpl;
 
-SVGEventImpl::~SVGEventImpl()
-{
-}
+    class DOMImplementationLSImpl
+    {
+    public:
+        DOMImplementationLSImpl();
+        virtual ~DOMImplementationLSImpl();
 
-void SVGEventImpl::initEvent(KDOM::DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg)
-{
-    m_id = SVGDOMImplementationImpl::self()->typeToId(eventTypeArg);
+        // 'DOMImplementationLS' functions
+        virtual LSParserImpl *createLSParser(unsigned short mode, DOMStringImpl *schemaType) const;
+        virtual LSInputImpl *createLSInput() const;
+        virtual LSOutputImpl *createLSOutput() const;
+        virtual LSSerializerImpl *createLSSerializer() const;
 
-    m_bubbles = canBubbleArg;
-    m_cancelable = cancelableArg;
+    };
+};
 
-    KDOM_SAFE_SET(m_type, eventTypeArg);
-}
+#endif
 
 // vim:ts=4:noet

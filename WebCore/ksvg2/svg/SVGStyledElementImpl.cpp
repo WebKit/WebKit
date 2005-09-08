@@ -203,11 +203,13 @@ void SVGStyledElementImpl::attach()
     kdDebug(26002) << "[SVGStyledElementImpl::attach] About to attach canvas item for element " << KDOM::DOMString(localName()) << endl;
 
     SVGDocumentImpl *doc = static_cast<SVGDocumentImpl *>(ownerDocument());
-    KCanvas *canvas = (doc ? doc->canvas() : 0);
+    KCanvas *canvas = (doc ? doc->canvas() : 0);    
     if(canvas && implementsCanvasItem())
     {
         SVGRenderStyle *svgStyle = static_cast<SVGRenderStyle *>(renderStyle());
         KCanvasRenderingStyle *renderingStyle = new KCanvasRenderingStyle(canvas, svgStyle);
+        if (m_canvasItem)
+            fprintf(stderr, "DOUBLE ATTACH: <%s> %p\n", KDOM::DOMString(nodeName()).string().ascii(), this);
 
         m_canvasItem = createCanvasItem(canvas, renderingStyle);
         if(m_canvasItem)
@@ -226,6 +228,12 @@ void SVGStyledElementImpl::attach()
             SVGStyledElementImpl *parent = dynamic_cast<SVGStyledElementImpl *>(parentNode());
             if(parent && parent->canvasItem() && parent->allowAttachChildren(this))
                 parent->canvasItem()->appendItem(m_canvasItem);
+            else if (parent) {
+                // FIXME: This exists until we can find a better way to create the root node. -- ecs 8/7/05
+                fprintf(stderr, "FAILED CANVAS INSERTION: <%s>, leaking %p\n", KDOM::DOMString(nodeName()).string().ascii(), this);
+                //delete m_canvasItem; // FIXME leaking items here, until we find a fix for patterns.
+                //m_canvasItem = NULL;
+            }
 
 #ifndef APPLE_COMPILE_HACK
             KSVGSettings settings;

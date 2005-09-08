@@ -229,9 +229,9 @@ DocumentImpl *LSParserImpl::parse(LSInputImpl *input)
     return parse(KURL(), input, m_async);
 }
 
-DocumentImpl *LSParserImpl::parseURI(const DOMString &uri)
+DocumentImpl *LSParserImpl::parseURI(DOMStringImpl *uri)
 {
-    return parse(KURL(uri.string()), 0, m_async);
+    return parse(KURL(uri ? uri->string() : QString()), 0, m_async);
 }
 
 void LSParserImpl::abort() const

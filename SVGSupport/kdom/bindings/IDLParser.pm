@@ -42,7 +42,7 @@ sub Parse
 	my $url = shift;
 
 	print " | *** Starting to parse $url...\n |\n" if(!$beQuiet);
-	open(FILE, "<$url") || die "Couldn't open requested file!";
+	open(FILE, "<$url") || die "Couldn't open requested file (file: $url)!";
 	my @documentContent = <FILE>;
 	close(FILE);
 
@@ -187,7 +187,12 @@ sub ParseInterface
 				my $attributePtrFlag = (defined($2) ? $2 : " "); chop($attributePtrFlag);
 				my $attributeDataType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
 				my $attributeDataName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
+					
+				('' =~ /^/); # Reset variables needed for regexp matching
 				
+				$line =~ /$IDLStructure::raisesSelector/;
+				my $attributeException = (defined($1) ? $1 : "");
+			
 				my $newDataNode = new domAttribute();
 				$newDataNode->type($attributeType);
 				$newDataNode->signature(new domSignature());
@@ -199,9 +204,13 @@ sub ParseInterface
 				my $arrayRef = $dataNode->attributes;
 				push(@$arrayRef, $newDataNode);
 
-				print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" PTR FLAG \"$attributePtrFlag\"\n" if(!$beQuiet);
+				print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" EXCEPTION? \"$attributeException\" PTR FLAG \"$attributePtrFlag\"\n" if(!$beQuiet);
+
+				$attributeException =~ s/\s+//g;
+				@{$newDataNode->raisesExceptions} = split(/,/, $attributeException);
 			} elsif(($line !~ s/^\s*$//g) and ($line !~ /^\s+const/)) {
 				$line =~ /$IDLStructure::interfaceMethodSelector/;
+
 				my $methodPtrFlag = (defined($1) ? $1 : " "); chop($methodPtrFlag);
 				my $methodType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));
 				my $methodName = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
@@ -209,7 +218,7 @@ sub ParseInterface
 				
 				('' =~ /^/); # Reset variables needed for regexp matching
 				
-				$line =~ /$IDLStructure::interfaceExceptionSelector/;
+				$line =~ /$IDLStructure::raisesSelector/;
 				my $methodException = (defined($1) ? $1 : "");
 
 				my $newDataNode = new domFunction();
@@ -220,6 +229,9 @@ sub ParseInterface
 				$newDataNode->signature->hasPtrFlag(($methodPtrFlag =~ /$IDLStructure::ptrSyntax/));
 
 				print "  |  |-  Method; TYPE \"$methodType\" NAME \"$methodName\" EXCEPTION? \"$methodException\" PTR FLAG \"$methodPtrFlag\"\n" if(!$beQuiet);
+
+				$methodException =~ s/\s+//g;
+				@{$newDataNode->raisesExceptions} = split(/,/, $methodException);
 
 				my @params = split(/,/, $methodSignature);
 				foreach(@params) {

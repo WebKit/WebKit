@@ -29,13 +29,12 @@
 #ifndef KDOM_DOMImplementationImpl_H
 #define KDOM_DOMImplementationImpl_H
 
+#include <kdom/ls/DOMImplementationLSImpl.h>
+
 namespace KDOM
 {
     class KDOMView;
     class DOMString;
-    class LSInputImpl;
-    class LSOutputImpl;
-    class LSParserImpl;
     class DocumentImpl;
     class CDFInterface;
     class DOMObjectImpl;
@@ -44,7 +43,7 @@ namespace KDOM
     class DocumentTypeImpl;
     class CSSStyleSheetImpl;
 
-    class DOMImplementationImpl 
+    class DOMImplementationImpl : public DOMImplementationLSImpl
     {
     public:
         DOMImplementationImpl();
@@ -66,14 +65,9 @@ namespace KDOM
          * creating document elements even if a @p qualifiedName and @p namespaceURI is supplied. If true,
          * it follows the specification, e.g, creates an element if the other arguments allows so.
          */
-        virtual DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement = false, KDOMView *view = 0) const;
+        virtual DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement = true, KDOMView *view = 0) const;
 
         virtual CSSStyleSheetImpl *createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
-
-        virtual LSParserImpl *createLSParser(unsigned short mode, DOMStringImpl *schemaType) const;
-        virtual LSInputImpl *createLSInput() const;
-        virtual LSOutputImpl *createLSOutput() const;
-        virtual LSSerializerImpl *createLSSerializer() const;
 
         // Map events to types...
         virtual int typeToId(DOMStringImpl *type);

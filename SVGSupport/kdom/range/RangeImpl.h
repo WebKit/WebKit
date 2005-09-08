@@ -32,8 +32,8 @@ namespace KDOM
 {
 
 class NodeImpl;
-class DOMString;
 class DocumentPtr;
+class DOMStringImpl;
 class DocumentFragmentImpl;
 
 class RangeImpl : public Shared
@@ -74,7 +74,7 @@ public:
     bool isDetached() const;
     
     RangeImpl *cloneRange();
-    DOMString toString();
+    DOMStringImpl *toString();
 
     void setStartAfter(NodeImpl *refNode);
     void setEndBefore(NodeImpl *refNode);

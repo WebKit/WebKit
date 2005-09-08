@@ -23,6 +23,8 @@
 #include <assert.h>
 
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3PtrList>
 
 #include <kdebug.h>
 #include <kaboutdata.h>
@@ -94,7 +96,7 @@ KParts::Part *KSVGFactory::createPartObject(QWidget *parentWidget, const char *w
     bool dummy;
     QRegExp r1(QString::fromLatin1("(WIDTH)(\\s*=\\s*\")(\\d+)(\\w*)(\")"));
     QRegExp r2(QString::fromLatin1("(HEIGHT)(\\s*=\\s*\")(\\d+)(\\w*)(\")"));
-    for(Q3ValueListConstIterator<QString> it = args.begin(); it != args.end(); ++it) 
+    for(QStringList::ConstIterator it = args.begin(); it != args.end(); ++it) 
     {
         if(r1.search(*it) > -1)
             width = r1.cap(3).toUInt(&dummy);

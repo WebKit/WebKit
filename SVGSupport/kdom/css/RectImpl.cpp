@@ -1,6 +1,6 @@
 /*
     Copyright(C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
+                 2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
 
@@ -20,7 +20,6 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/Shared.h>
 #include "RectImpl.h"
 #include "CSSPrimitiveValueImpl.h"
 
@@ -44,50 +43,6 @@ RectImpl::~RectImpl()
         m_bottom->deref();
     if(m_left)
         m_left->deref();
-}
-
-CSSPrimitiveValueImpl *RectImpl::top() const
-{
-    if(!m_top)
-    {
-        m_top = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-        m_top->ref();
-    }
-
-    return m_top;
-}
-
-CSSPrimitiveValueImpl *RectImpl::right() const
-{
-    if(!m_right)
-    {
-        m_right = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-        m_right->ref();
-    }
-
-    return m_right;
-}
-
-CSSPrimitiveValueImpl *RectImpl::bottom() const
-{
-    if(!m_bottom)
-    {
-        m_bottom = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-        m_bottom->ref();
-    }
-
-    return m_bottom;
-}
-
-CSSPrimitiveValueImpl *RectImpl::left() const
-{
-    if(!m_left)
-    {
-        m_left = new CSSPrimitiveValueImpl(m_interface); // TODO: Check ctor
-        m_left->ref();
-    }
-
-    return m_left;
 }
 
 void RectImpl::setTop(CSSPrimitiveValueImpl *top)

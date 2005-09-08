@@ -42,7 +42,6 @@ typedef enum
     RS_FILTER = 3
 } KCResourceType;
 
-
 class KCanvasMatrix;
 
 class KCanvasResource
@@ -51,26 +50,17 @@ public:
     KCanvasResource();
     virtual ~KCanvasResource();
 
-    bool changed() const;
-    void setChanged(bool changed);
-
     virtual void invalidate();
     void addClient(KCanvasItem *item);
 
     const KCanvasItemList &clients() const;
-
-    KCanvasResourceListener *listener() const;
-    void setListener(KCanvasResourceListener *listener);
     
     QString idInRegistry() const;
     void setIdInRegistry(const QString& newId);
     
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
-    bool m_changed : 1;
-
     KCanvasItemList m_clients;
-    KCanvasResourceListener *m_listener;
     QString registryId;
 };
 

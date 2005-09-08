@@ -27,6 +27,7 @@
 #include "KCanvasTreeDebug.h"
 
 // Filters
+
 void KCanvasFilter::addFilterEffect(KCanvasFilterEffect *effect)
 {
     m_effects.append(effect);

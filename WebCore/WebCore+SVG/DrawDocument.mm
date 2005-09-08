@@ -98,14 +98,14 @@ using namespace KSVG;
 
 - (id)init
 {
-	if ((self = [super init])) {
-		// FIXME: HACK: this is needed until post-parse attach works.
-		part = new KSVGPart();
-		svgView = static_cast<KSVGView *>(part->view());
-		dummyCanvasView =  static_cast<KCanvasViewQuartz *>(svgView->canvasView());
-		[self setPrimaryView:dummyCanvasView];
-	}
-	return self;
+    if ((self = [super init])) {
+        // FIXME: HACK: this is needed until post-parse attach works.
+        part = new KSVGPart();
+        svgView = static_cast<KSVGView *>(part->view());
+        dummyCanvasView =  static_cast<KCanvasViewQuartz *>(svgView->canvasView());
+        [self setPrimaryView:dummyCanvasView];
+    }
+    return self;
 }
 
 - (void)dealloc
@@ -114,8 +114,8 @@ using namespace KSVG;
         delete canvas;
     if (svgDocument)
         svgDocument->deref();
-	//delete svgView;
-	delete part;
+    delete svgView;
+    delete part;
     [super dealloc];
 }
 
@@ -143,8 +143,7 @@ using namespace KSVG;
 //          if (NSEqualSizes([self canvasSize], NSMakeSize(-1,-1))) {
 //              [self sizeCanvasToFitContent];
 //          }
-            delete dummyCanvasView;
-            dummyCanvasView = NULL;
+            dummyCanvasView = NULL; // Clear the dummy, the KSVGView owns it and will delete it.
         }
     }
 }

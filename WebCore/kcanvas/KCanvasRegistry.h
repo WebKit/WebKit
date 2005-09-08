@@ -48,7 +48,7 @@ public:
 
 private:
     friend QTextStream &operator<<(QTextStream &, const KCanvasRegistry &);
-    
+
 private:
     Q3Dict<KCanvasResource> m_resources;
     Q3Dict<KRenderingPaintServer> m_pservers;

@@ -43,7 +43,8 @@ ShortHandImpl::ShortHandImpl(DOMStringImpl *str)
 {
     if(!Helper::IsValidNCName(str))
     {
-        kdWarning() << "\"" << str << "\" is not a valid short hand pointer. TODO DOMError." << endl;
+        kdWarning() << "\"" << str->string() << "\" is not a valid short "
+                "hand pointer. TODO DOMError." << endl;
         throw new XPointerExceptionImpl(INVALID_EXPRESSION_ERR);
     }
 }

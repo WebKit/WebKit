@@ -909,7 +909,7 @@ RangeImpl *RangeImpl::cloneRange()
     return new RangeImpl(m_ownerDocument, m_startContainer, m_startOffset, m_endContainer, m_endOffset);
 }
 
-DOMString RangeImpl::toString()
+DOMStringImpl *RangeImpl::toString()
 {
     /* This function converts a dom range to the plain text string that the user would see in this
      * portion of rendered html.
@@ -940,9 +940,10 @@ DOMString RangeImpl::toString()
      *         
      */
     
-    DOMString text;
     if( m_startContainer == m_endContainer && m_startOffset >= m_endOffset)
-        return text;
+        return 0;
+
+    DOMStringImpl *text = new DOMStringImpl();;
 
     bool skipNode = false;
     bool endAfter = false;
@@ -980,15 +981,15 @@ DOMString RangeImpl::toString()
             if(n->nodeType() == TEXT_NODE ||
                n->nodeType() == CDATA_SECTION_NODE) {
     
-                DOMString str(static_cast<TextImpl *>(n)->toString());
-                if( n == m_endContainer || n == m_startContainer)        
-                    str = str.copy();  //copy if we are going to modify.
+                DOMStringImpl *str = static_cast<TextImpl *>(n)->toString();
+                if(n == m_endContainer || n == m_startContainer)
+                    str = str->copy();  //copy if we are going to modify.
     
                 if (n == m_endContainer)
-                    str.truncate(m_endOffset);
+                    str->truncate(m_endOffset);
                 if (n == m_startContainer)
-                    str.remove(0,m_startOffset);
-                text += str;
+                    str->remove(0,m_startOffset);
+                text->append(str);
                 if (n == endNode)
                     break;
             } else 

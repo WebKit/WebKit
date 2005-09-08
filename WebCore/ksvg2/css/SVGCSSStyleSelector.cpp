@@ -30,6 +30,7 @@
 #include <kstandarddirs.h>
 
 #include <qfile.h>
+#include <q3cstring.h>
 #include <qpaintdevice.h>
 
 #include <kdom/core/ElementImpl.h>

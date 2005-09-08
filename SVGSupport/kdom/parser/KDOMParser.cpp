@@ -179,7 +179,8 @@ bool Parser::handleError(DOMErrorImpl *err)
         QString str;
         str.sprintf("[%ld:%ld]: WARNING: %s\n", err->location()->lineNumber(),
                     err->location()->columnNumber(), DOMString(err->message()).string().latin1());
-
+        
+        fprintf(stderr, "%s", str.ascii());
         kdDebug(26001) << str << endl;
     }
     else if(err->severity() == SEVERITY_ERROR)
@@ -187,6 +188,8 @@ bool Parser::handleError(DOMErrorImpl *err)
         QString str;
         str.sprintf("[%ld:%ld]: ERROR: %s\n", err->location()->lineNumber(),
                     err->location()->columnNumber(), DOMString(err->message()).string().latin1());
+        
+        fprintf(stderr, "%s", str.ascii());
         kdDebug(26001) << str << endl;
     }
     else
@@ -194,7 +197,8 @@ bool Parser::handleError(DOMErrorImpl *err)
         QString str;
         str.sprintf("[%ld:%ld]: FATAL ERROR: %s\n", err->location()->lineNumber(),
                     err->location()->columnNumber(), DOMString(err->message()).string().latin1());
-                    
+        
+        fprintf(stderr, "%s", str.ascii());
         kdDebug(26001) << str << endl;
         emit parsingFinished(err);
         assert(0);
@@ -212,14 +216,16 @@ QBuffer *Parser::bufferForUrl(const KURL &url) const
         return 0;
 
     QFile file(temporaryFileName);
-    if(!file.open(IO_ReadOnly))
+    if(!file.open(QIODevice::ReadOnly))
     {
         // Can a file be correctly downloaded but not opened?
         KIO::NetAccess::removeTempFile(temporaryFileName);
         return 0;
     }
 
-    QBuffer *ret = new QBuffer(file.readAll());
+    QBuffer *ret = new QBuffer;
+    ret->open(QBuffer::ReadWrite);
+    ret->write(file.readAll());
     KIO::NetAccess::removeTempFile(temporaryFileName);
 
     return ret;

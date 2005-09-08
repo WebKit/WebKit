@@ -23,6 +23,7 @@
 #include <kdom/DOMString.h>
 //#include <kdom/ecma/Ecma.h>
 #include <kdom/core/AttrImpl.h>
+#include <kdom/core/DOMStringImpl.h>
 
 #include "ksvg.h"
 #include "svgattrs.h"
@@ -61,8 +62,7 @@ void SVGScriptElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
     {
         case ATTR_TYPE:
         {
-            KDOM::DOMStringImpl *type = (attr->value() ? attr->value()->copy() : 0);
-            setType(type);
+            setType(attr->value());
             break;
         }
         default:
@@ -75,9 +75,9 @@ void SVGScriptElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
     };
 }
 
-void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDOM::DOMString &jsCode)
+void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOMStringImpl *jsCode)
 {
-    if(!document)
+    if(!document || !jsCode)
         return;
 #if 0
     KDOM::Ecma *ecmaEngine = document->ecmaEngine();
@@ -107,10 +107,10 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
         SVGDocumentImpl *svgDocument = static_cast<SVGDocumentImpl *>(document);
         if(svgDocument && document->hasListenerType(KDOM::ERROR_EVENT))
         {
-            SVGEventImpl *event = static_cast<SVGEventImpl *>(svgDocument->createEvent("SVGEvents"));
+            SVGEventImpl *event = static_cast<SVGEventImpl *>(svgDocument->createEvent(KDOM::DOMString("SVGEvents").handle()));
             event->ref();
 
-            event->initEvent("error", false, false);
+            event->initEvent(KDOM::DOMString("error").handle(), false, false);
             svgDocument->dispatchRecursiveEvent(event, svgDocument->lastChild());
 
             event->deref();
@@ -126,7 +126,12 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, const KDO
 #ifdef APPLE_CHANGES
     KJS::Interpreter::unlock();
 #endif
-
+#else
+    if (jsCode) {
+        // Hack to close memory leak due to #if 0
+        jsCode->ref();
+        jsCode->deref();
+    }
 #endif
 }
 

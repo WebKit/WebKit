@@ -152,7 +152,7 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl *doc, const QString &userStyleSh
     for(; it.current(); ++it)
     {
            if(it.current()->isCSSStyleSheet())
-            authorStyle->append(static_cast<CSSStyleSheetImpl *>(it.current()), DOMString(m_medium).handle());
+               authorStyle->append(static_cast<CSSStyleSheetImpl *>(it.current()), DOMString(m_medium).handle());
     }
 
     KURL u = url;
@@ -432,7 +432,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     // as author rules, and come before all other style sheets, see hack in append()
     numPropsToApply = addInlineDeclarations(e, e->styleRules(), numPropsToApply);
 
-    // qDebug("styleForElement(%s)", e->tagName().string().latin1());
+    // qDebug("styleForElement(%s)", e->tagName()->string().latin1());
     // qDebug("%d selectors, %d checked,  %d match,  %d properties(of %d)",
     // selectors_size, schecked, smatch, numPropsToApply, properties_size);
 
@@ -473,7 +473,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
         {
             fontDirty = false;
 
-            // qDebug("%d applying %d pseudo props", e->cssTagId(), pseudoProps->count());
+            //qDebug("%d applying %d pseudo props", e->cssTagId(), pseudoProps->count());
             for(unsigned int i = 0; i < numPseudoProps; ++i)
             {
                 if(fontDirty && pseudoProps[i]->priority >= (1 << 30))
@@ -2749,7 +2749,12 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
     case CSS_PROP_CURSOR:
     {
         HANDLE_INHERIT_AND_INITIAL(cursor, Cursor)
-        if(primitiveValue)
+        if(!primitiveValue)
+            break;
+
+        if(primitiveValue->primitiveType() == CSS_URI)
+            /*style->setCursorImage(primitiveValue)*/;
+		else
             style->setCursor((ECursor) (primitiveValue->getIdent() - CSS_VAL_AUTO));
 
         break;
@@ -4202,8 +4207,8 @@ void CSSStyleSelector::applyRule(int id, CSSValueImpl *value)
 
 DOMStringImpl *CSSStyleSelector::getLangAttribute(ElementImpl *e)
 {
-    return e->getAttributeNS(DOMString(NS_XML).handle(),
-                             DOMString("xml:lang").handle());
+    // TODO: Check NS_XML & friends...
+    return e->getAttributeNS(NS_XML.handle(), DOMString("xml:lang").handle());
 }
 
 // vim:ts=4:noet

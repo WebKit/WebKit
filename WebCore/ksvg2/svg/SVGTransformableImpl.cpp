@@ -109,9 +109,9 @@ void SVGTransformableImpl::updateSubtreeMatrices(KDOM::NodeImpl *node)
 
     if(styled && transform && transform->localMatrix())
     {
-        QWMatrix useMatrix = transform->localMatrix()->qmatrix();
+        QMatrix useMatrix = transform->localMatrix()->qmatrix();
     
-        KDOM::ElementImpl *parentElement = dynamic_cast<KDOM::ElementImpl *>(node->parentNode());
+        KDOM::NodeImpl *parentElement = node->parentNode();
         if(parentElement && parentElement->id() == ID_G)
         {
             SVGMatrixImpl *ctm = transform->getCTM();
@@ -133,13 +133,12 @@ void SVGTransformableImpl::updateSubtreeMatrices(KDOM::NodeImpl *node)
 bool SVGTransformableImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
     int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMString value(attr->value());
     if(id == ATTR_TRANSFORM)
     {
         SVGTransformListImpl *localTransforms = transform()->baseVal();
         
         localTransforms->clear();
-        SVGTransformableImpl::parseTransformAttribute(localTransforms, value);
+        SVGTransformableImpl::parseTransformAttribute(localTransforms, attr->value());
 
         // Update cached local matrix
         updateLocalTransform(localTransforms);
@@ -155,10 +154,13 @@ bool SVGTransformableImpl::parseAttribute(KDOM::AttributeImpl *attr)
     return false;
 }
 
-void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, const KDOM::DOMString &transform)
+void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, KDOM::DOMStringImpl *transform)
 {
+    if(!transform)
+        return;
+
     // Split string for handling 1 transform statement at a time
-    QStringList subtransforms = QStringList::split(')', transform.string());
+    QStringList subtransforms = QStringList::split(')', KDOM::DOMString(transform).string());
     QStringList::ConstIterator it = subtransforms.begin();
     QStringList::ConstIterator end = subtransforms.end();
     for(; it != end; ++it)

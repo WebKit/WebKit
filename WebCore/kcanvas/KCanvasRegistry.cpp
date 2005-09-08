@@ -23,7 +23,6 @@
 #include "KCanvasItem.h"
 #include "KCanvasRegistry.h"
 #include "KRenderingPaintServer.h"
-
 #include <qtextstream.h>
 
 KCanvasRegistry::KCanvasRegistry()
@@ -65,16 +64,17 @@ void KCanvasRegistry::cleanup()
 }
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasRegistry &r)
-{    
+{
     ts << "KCanvasRegistry: ";
-    if (r.m_resources.count() == 0 && r.m_pservers.count() == 0) 
+    if (r.m_resources.count() == 0 && r.m_pservers.count() == 0)
     {
         ts << "empty" << endl;
-    } else 
-    {   
+    }
+    else
+    {
         ts << endl;
-        for (Q3DictIterator<KCanvasResource> it(r.m_resources); (*it); ++it) 
-        {            
+        for (Q3DictIterator<KCanvasResource> it(r.m_resources); (*it); ++it)
+        {
             ts << "  KCanvasResource {id=\"" << it.currentKey() << "\" " << *(*it) << "}" << endl;
         }
         for (Q3DictIterator<KRenderingPaintServer> it(r.m_pservers); (*it); ++it)
@@ -82,6 +82,7 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasRegistry &r)
             ts << "  KRenderingPaintServer {id=\"" << it.currentKey() << "\" " << *(*it) <<"}" << endl;
         }
     }
+
     return ts;
 }
 

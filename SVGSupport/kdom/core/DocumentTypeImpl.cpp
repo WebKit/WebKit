@@ -32,6 +32,8 @@
 #include "NamedNodeMapImpl.h"
 #include "DocumentTypeImpl.h"
 
+#include <qtextstream.h>
+
 using namespace KDOM;
 
 DocumentTypeImpl::DocumentTypeImpl(DocumentPtr *doc, DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId) : NodeImpl(doc), m_entities(0), m_notations(0)
@@ -98,7 +100,7 @@ DOMStringImpl *DocumentTypeImpl::internalSubset() const
     QString str;
     QTextOStream subset(&str);
     LSSerializerImpl::PrintInternalSubset(subset, const_cast<DocumentTypeImpl *>(this));
-    return new DOMStringImpl(str);
+    return str.isEmpty() ? 0 : new DOMStringImpl(str);
 }
 
 NodeImpl *DocumentTypeImpl::cloneNode(bool, DocumentPtr *other) const

@@ -790,14 +790,14 @@ void NodeBaseImpl::removeChildren()
     for(n = first, first = 0; n != 0; n = next)
     {
         next = n->nextSibling();
-        
+
         if(n->attached())
             n->detach();
-        
+
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
-        
+
         if(!n->refCount())
             delete n;
         else
@@ -984,7 +984,7 @@ DOMStringImpl *NodeImpl::lookupNamespaceURI(DOMStringImpl *_prefix) const
             }
 
             // EntityReferences may have to be skipped to get to it 
-            if(parentNode())
+            if(parentNode() && parentNode()->nodeType() != DOCUMENT_NODE)
                 return parentNode()->lookupNamespaceURI(_prefix);
 
             return 0; 
@@ -997,7 +997,7 @@ DOMStringImpl *NodeImpl::lookupNamespaceURI(DOMStringImpl *_prefix) const
         case DOCUMENT_FRAGMENT_NODE: 
             return 0;
         case ENTITY_REFERENCE_NODE:
-            return parentNode()->lookupNamespaceURI(_prefix);
+            return parentNode() ? parentNode()->lookupNamespaceURI(_prefix) : 0;
         case ATTRIBUTE_NODE: 
         {
             const AttrImpl *attrPtr = static_cast<const AttrImpl *>(this);

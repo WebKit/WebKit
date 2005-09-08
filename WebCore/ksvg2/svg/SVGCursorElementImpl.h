@@ -20,34 +20,47 @@
     Boston, MA 02111-1307, USA.
 */
 
-#ifndef KSVG_SVGScriptElementImpl_H
-#define KSVG_SVGScriptElementImpl_H
+#ifndef KSVG_SVGCursorElementImpl_H
+#define KSVG_SVGCursorElementImpl_H
+
+#include <qpixmap.h>
 
 #include "SVGElementImpl.h"
+#include "SVGTestsImpl.h"
 #include "SVGURIReferenceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
+#include <kdom/cache/KDOMCachedImage.h>
+#include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KSVG
 {
-    class SVGScriptElementImpl : public SVGElementImpl,
+    class SVGAnimatedLengthImpl;
+
+    class SVGCursorElementImpl : public SVGElementImpl,
+                                 public SVGTestsImpl,
+                                 public SVGExternalResourcesRequiredImpl,
                                  public SVGURIReferenceImpl,
-                                 public SVGExternalResourcesRequiredImpl
+                                 public KDOM::CachedObjectClient
     {
     public:
-        SVGScriptElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id, KDOM::DOMStringImpl *prefix);
-        virtual ~SVGScriptElementImpl();
+        SVGCursorElementImpl(KDOM::DocumentPtr *doc, KDOM::NodeImpl::Id id,  KDOM::DOMStringImpl *prefix);
+        virtual ~SVGCursorElementImpl();
 
-        // 'SVGScriptElement' functions
-        KDOM::DOMStringImpl *type() const;
-        void setType(KDOM::DOMStringImpl *type);
+        // 'SVGCursorElement' functions
+        SVGAnimatedLengthImpl *x() const;
+        SVGAnimatedLengthImpl *y() const;
 
-        // Internal
         virtual void parseAttribute(KDOM::AttributeImpl *attr);
 
-        static void executeScript(KDOM::DocumentImpl *document, KDOM::DOMStringImpl *jsCode);
+        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
+
+        const QPixmap &pixmap() const { return m_image; }
 
     private:
-        KDOM::DOMStringImpl *m_type;
+        mutable SVGAnimatedLengthImpl *m_x;
+        mutable SVGAnimatedLengthImpl *m_y;
+        KDOM::CachedImage *m_cachedImage;
+        QPixmap m_image;
     };
 };
 

@@ -29,32 +29,25 @@
 #include <kstaticdeleter.h>
 
 #include "kdom.h"
-#include "kdomls.h"
 #include <kdom/Helper.h>
-#include "Namespace.h"
 #include "KDOMCache.h"
 #include "kdomevents.h"
 #include "RenderStyle.h"
 #include "ElementImpl.h"
-#include "LSInputImpl.h"
-#include "LSOutputImpl.h"
-#include "LSParserImpl.h"
 #include "DocumentImpl.h"
 #include "CDFInterface.h"
 #include "MediaListImpl.h"
 #include "DocumentTypeImpl.h"
 #include "kdom/css/CSSStyleSelector.h"
 #include "CSSStyleSheetImpl.h"
-#include "LSSerializerImpl.h"
 #include "DOMImplementationImpl.h"
-
 
 using namespace KDOM;
 
 static KStaticDeleter<DOMImplementationImpl> instanceDeleter;
 DOMImplementationImpl *DOMImplementationImpl::s_instance = 0;
 
-DOMImplementationImpl::DOMImplementationImpl()
+DOMImplementationImpl::DOMImplementationImpl() : DOMImplementationLSImpl()
 {
     m_cdfInterface = 0;
 
@@ -156,7 +149,7 @@ DocumentImpl *DOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI,
         doc->setDocType(docType);
 
     /* isEmpty instead if isNull, for the reason given in #61650 */
-    if(qualifiedName && !qualifiedName->isEmpty() && namespaceURI && !namespaceURI->isEmpty() && createDocElement)
+    if(qualifiedName && !qualifiedName->isEmpty() && createDocElement)
         doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName));
 
     if(namespaceURI)
@@ -175,35 +168,6 @@ CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(DOMStringImpl *tit
     sheet->setTitle(title);
     sheet->setMedia(new MediaListImpl(sheet, media));
     return sheet;
-}
-
-LSParserImpl *DOMImplementationImpl::createLSParser(unsigned short mode, DOMStringImpl *schemaTypeImpl) const
-{
-    DOMString schemaType(schemaTypeImpl);
-
-    // NOT_SUPPORTED_ERR: Raised if the requested mode or schema type is not supported.
-    if((mode == 0 || mode > MODE_ASYNCHRONOUS) ||
-        !(schemaType == NS_SCHEMATYPE_DTD || schemaType == NS_SCHEMATYPE_WXS || schemaType.isEmpty()))
-        throw new DOMExceptionImpl(NOT_SUPPORTED_ERR);
-
-    LSParserImpl *ret = new LSParserImpl();
-    ret->setASync(mode == MODE_ASYNCHRONOUS);
-    return ret;
-}
-
-LSInputImpl *DOMImplementationImpl::createLSInput() const
-{
-    return new LSInputImpl();
-}
-
-LSOutputImpl *DOMImplementationImpl::createLSOutput() const
-{
-    return new LSOutputImpl();
-}
-
-LSSerializerImpl *DOMImplementationImpl::createLSSerializer() const
-{
-    return new LSSerializerImpl();
 }
 
 DocumentTypeImpl *DOMImplementationImpl::defaultDocumentType() const
@@ -242,26 +206,27 @@ int DOMImplementationImpl::typeToId(DOMStringImpl *typeImpl)
 DOMStringImpl *DOMImplementationImpl::idToType(int id)
 {
     QString ret;
+
     switch(id)
     {
-        case DOMFOCUSIN_EVENT: ret = "DOMFocusIn";
-        case DOMFOCUSOUT_EVENT: ret = "DOMFocusOut";
-        case DOMACTIVATE_EVENT: ret = "DOMActivate";
-        case CLICK_EVENT: ret = "click";
-        case MOUSEDOWN_EVENT: ret = "mousedown";
-        case MOUSEUP_EVENT: ret = "mouseup";
-        case MOUSEOVER_EVENT: ret = "mouseover";
-        case MOUSEMOVE_EVENT: ret = "mousemove";
-        case MOUSEOUT_EVENT: ret = "mouseout";
-        case KEYDOWN_EVENT: ret = "keydown";
-        case KEYUP_EVENT: ret = "keyup";
-        case DOMSUBTREEMODIFIED_EVENT: ret = "DOMSubtreeModified";
-        case DOMNODEINSERTED_EVENT: ret = "DOMNodeInserted";
-        case DOMNODEREMOVED_EVENT: ret = "DOMNodeRemoved";
-        case DOMNODEREMOVEDFROMDOCUMENT_EVENT: ret = "DOMNodeRemovedFromDocument";
-        case DOMNODEINSERTEDINTODOCUMENT_EVENT: ret = "DOMNodeInsertedIntoDocument";
-        case DOMATTRMODIFIED_EVENT: ret = "DOMAttrModified";
-        case DOMCHARACTERDATAMODIFIED_EVENT: ret = "DOMCharacterDataModified";
+        case DOMFOCUSIN_EVENT: ret = QString::fromLatin1("DOMFocusIn"); break;
+        case DOMFOCUSOUT_EVENT: ret = QString::fromLatin1("DOMFocusOut"); break;
+        case DOMACTIVATE_EVENT: ret = QString::fromLatin1("DOMActivate"); break;
+        case CLICK_EVENT: ret = QString::fromLatin1("click"); break;
+        case MOUSEDOWN_EVENT: ret = QString::fromLatin1("mousedown"); break;
+        case MOUSEUP_EVENT: ret = QString::fromLatin1("mouseup"); break;
+        case MOUSEOVER_EVENT: ret = QString::fromLatin1("mouseover"); break;
+        case MOUSEMOVE_EVENT: ret = QString::fromLatin1("mousemove"); break;
+        case MOUSEOUT_EVENT: ret = QString::fromLatin1("mouseout"); break;
+        case KEYDOWN_EVENT: ret = QString::fromLatin1("keydown"); break;
+        case KEYUP_EVENT: ret = QString::fromLatin1("keyup"); break;
+        case DOMSUBTREEMODIFIED_EVENT: ret = QString::fromLatin1("DOMSubtreeModified"); break;
+        case DOMNODEINSERTED_EVENT: ret = QString::fromLatin1("DOMNodeInserted"); break;
+        case DOMNODEREMOVED_EVENT: ret = QString::fromLatin1("DOMNodeRemoved"); break;
+        case DOMNODEREMOVEDFROMDOCUMENT_EVENT: ret = QString::fromLatin1("DOMNodeRemovedFromDocument"); break;
+        case DOMNODEINSERTEDINTODOCUMENT_EVENT: ret = QString::fromLatin1("DOMNodeInsertedIntoDocument"); break;
+        case DOMATTRMODIFIED_EVENT: ret = QString::fromLatin1("DOMAttrModified"); break;
+        case DOMCHARACTERDATAMODIFIED_EVENT: ret = QString::fromLatin1("DOMCharacterDataModified"); break;
         default: ret = QString::null;
     }
 

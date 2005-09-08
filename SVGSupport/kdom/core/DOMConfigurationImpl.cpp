@@ -477,7 +477,7 @@ DOMStringImpl *DOMConfigurationImpl::normalizeCharacters(DOMStringImpl *dataImpl
     DOMString data(dataImpl);
     QString temp = data.string();
 #ifndef APPLE_COMPILE_HACK
-    temp.compose();
+    temp = temp.normalized(QString::NormalizationForm_D);
 #endif
     return new DOMStringImpl(temp.unicode(), temp.length());
 }

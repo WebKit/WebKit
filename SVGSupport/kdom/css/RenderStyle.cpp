@@ -250,6 +250,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle *other) const
        !(inherited->indent == other->inherited->indent) ||
        !(inherited->lineHeight == other->inherited->lineHeight) ||
        !(inherited->styleImage == other->inherited->styleImage) ||
+       !(inherited->cursorImage == other->inherited->cursorImage) ||
        !(inherited->font == other->inherited->font) ||
        !(inherited->borderHSpacing == other->inherited->borderHSpacing) ||
        !(inherited->borderVSpacing == other->inherited->borderVSpacing))

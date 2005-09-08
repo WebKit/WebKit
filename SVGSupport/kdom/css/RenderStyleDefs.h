@@ -534,6 +534,7 @@ namespace KDOM
         Length lineHeight;
 
         CachedImage *styleImage;
+        CSSValueImpl *cursorImage;
 
         Font font;
         QColor color;

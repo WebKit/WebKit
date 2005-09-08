@@ -90,13 +90,7 @@ void KRenderingFillPainter::setOpacity(float opacity)
 void KRenderingFillPainter::draw(KRenderingDeviceContext *context, const KCanvasCommonArgs &args) const
 {
     if(d->pserver)
-    {
-        KCanvasResource *res = dynamic_cast<KCanvasResource *>(d->pserver);
-        if(res && res->listener())        
-            res->listener()->resourceNotification();
-
         d->pserver->draw(context, args, APPLY_TO_FILL);
-    }
 }
 
 // vim:ts=4:noet

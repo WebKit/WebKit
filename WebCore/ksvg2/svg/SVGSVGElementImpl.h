@@ -122,7 +122,7 @@ namespace KSVG
         static SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix);
 
         // 'DocumentEvent' functions
-        virtual KDOM::EventImpl *createEvent(const KDOM::DOMString &eventType);
+        virtual KDOM::EventImpl *createEvent(KDOM::DOMStringImpl *eventType);
 
         virtual void parseAttribute(KDOM::AttributeImpl *);
 

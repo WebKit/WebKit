@@ -39,49 +39,49 @@ namespace KDOM
      */
     enum NodeType
     {
-        ELEMENT_NODE = 1,
-        ATTRIBUTE_NODE = 2,
-        TEXT_NODE = 3,
-        CDATA_SECTION_NODE = 4,
-        ENTITY_REFERENCE_NODE = 5,
-        ENTITY_NODE = 6,
+        ELEMENT_NODE                = 1,
+        ATTRIBUTE_NODE              = 2,
+        TEXT_NODE                   = 3,
+        CDATA_SECTION_NODE          = 4,
+        ENTITY_REFERENCE_NODE       = 5,
+        ENTITY_NODE                 = 6,
         PROCESSING_INSTRUCTION_NODE = 7,
-        COMMENT_NODE = 8,
-        DOCUMENT_NODE = 9,
-        DOCUMENT_TYPE_NODE = 10,
-        DOCUMENT_FRAGMENT_NODE = 11,
-        NOTATION_NODE = 12
+        COMMENT_NODE                = 8,
+        DOCUMENT_NODE               = 9,
+        DOCUMENT_TYPE_NODE          = 10,
+        DOCUMENT_FRAGMENT_NODE      = 11,
+        NOTATION_NODE               = 12
     };
 
     enum ExceptionCode
     {
-        INDEX_SIZE_ERR = 1,
-        DOMSTRING_SIZE_ERR = 2,
-        HIERARCHY_REQUEST_ERR = 3,
-        WRONG_DOCUMENT_ERR = 4,
-        INVALID_CHARACTER_ERR = 5,
-        NO_DATA_ALLOWED_ERR = 6,
+        INDEX_SIZE_ERR              = 1,
+        DOMSTRING_SIZE_ERR          = 2,
+        HIERARCHY_REQUEST_ERR       = 3,
+        WRONG_DOCUMENT_ERR          = 4,
+        INVALID_CHARACTER_ERR       = 5,
+        NO_DATA_ALLOWED_ERR         = 6,
         NO_MODIFICATION_ALLOWED_ERR = 7,
-        NOT_FOUND_ERR = 8,
-        NOT_SUPPORTED_ERR = 9,
-        INUSE_ATTRIBUTE_ERR = 10,
-        INVALID_STATE_ERR = 11,
-        SYNTAX_ERR = 12,
-        INVALID_MODIFICATION_ERR = 13,
-        NAMESPACE_ERR = 14,
-        INVALID_ACCESS_ERR = 15,
-        VALIDATION_ERR = 16,    // DOM3
-        TYPE_MISMATCH_ERR = 17    // DOM3
+        NOT_FOUND_ERR               = 8,
+        NOT_SUPPORTED_ERR           = 9,
+        INUSE_ATTRIBUTE_ERR         = 10,
+        INVALID_STATE_ERR           = 11,
+        SYNTAX_ERR                  = 12,
+        INVALID_MODIFICATION_ERR    = 13,
+        NAMESPACE_ERR               = 14,
+        INVALID_ACCESS_ERR          = 15,
+        VALIDATION_ERR              = 16,   // DOM3
+        TYPE_MISMATCH_ERR           = 17    // DOM3
     };
 
     enum DocumentPosition
     {
-        DOCUMENT_POSITION_DISCONNECTED                = 0x01,
-        DOCUMENT_POSITION_PRECEDING                    = 0x02,
-        DOCUMENT_POSITION_FOLLOWING                    = 0x04,
-        DOCUMENT_POSITION_CONTAINS                    = 0x08,
-        DOCUMENT_POSITION_CONTAINED_BY                = 0x10,
-        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC    = 0x20
+        DOCUMENT_POSITION_DISCONNECTED              = 0x01,
+        DOCUMENT_POSITION_PRECEDING                 = 0x02,
+        DOCUMENT_POSITION_FOLLOWING                 = 0x04,
+        DOCUMENT_POSITION_CONTAINS                  = 0x08,
+        DOCUMENT_POSITION_CONTAINED_BY              = 0x10,
+        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC   = 0x20
     };
 
     enum DerivationMethods
@@ -94,24 +94,24 @@ namespace KDOM
     
     enum
     {
-        FEATURE_CANONICAL_FORM                    = 0x000001,
-        FEATURE_CDATA_SECTIONS                    = 0x000002,
+        FEATURE_CANONICAL_FORM                  = 0x000001,
+        FEATURE_CDATA_SECTIONS                  = 0x000002,
         FEATURE_COMMENTS                        = 0x000004,
-        FEATURE_DATATYPE_NORMALIZATION            = 0x000008,
+        FEATURE_DATATYPE_NORMALIZATION          = 0x000008,
         FEATURE_ENTITIES                        = 0x000010,
-        FEATURE_WELL_FORMED                        = 0x000020,
-        FEATURE_NAMESPACES                        = 0x000040,
-        FEATURE_NAMESPACE_DECLARATIONS            = 0x000080,
+        FEATURE_WELL_FORMED                     = 0x000020,
+        FEATURE_NAMESPACES                      = 0x000040,
+        FEATURE_NAMESPACE_DECLARATIONS          = 0x000080,
         FEATURE_NORMALIZE_CHARACTERS            = 0x000100,
         FEATURE_SPLIT_CDATA_SECTIONS            = 0x000200,
         FEATURE_VALIDATE                        = 0x000400,
-        FEATURE_VALIDATE_IF_SCHEMA                = 0x000800,
-        FEATURE_WHITESPACE_IN_ELEMENT_CONTENT    = 0x001000,
-        FEATURE_CHECK_CHARACTER_NORMALIZATION    = 0x002000,
+        FEATURE_VALIDATE_IF_SCHEMA              = 0x000800,
+        FEATURE_WHITESPACE_IN_ELEMENT_CONTENT   = 0x001000,
+        FEATURE_CHECK_CHARACTER_NORMALIZATION   = 0x002000,
 
         // LSParser specific
-        FEATURE_CHARSET_OVERRIDES_XML_ENCODING    = 0x004000,
-        FEATURE_DISALLOW_DOCTYPE                = 0x008000,
+        FEATURE_CHARSET_OVERRIDES_XML_ENCODING   = 0x004000,
+        FEATURE_DISALLOW_DOCTYPE                 = 0x008000,
         FEATURE_IGNORE_UNKNOWN_CD                = 0x010000,
         FEATURE_SUPPORTED_MEDIA_TYPE_ONLY        = 0x020000,
 

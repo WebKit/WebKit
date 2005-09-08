@@ -92,7 +92,7 @@ void KCanvasFilterQuartz::prepareFilter(CGContextRef *context, const QRect &bbox
 {
 	if (!KRenderingDeviceQuartz::filtersEnabled()) return;
 	if (m_effects.isEmpty()) {
-		NSLog(@"WARNING: No effects, ignoring filter.");
+		NSLog(@"WARNING: No effects, ignoring filter (%p).", this);
 		return;
 	}
 	ASSERT(m_storedCGContext == NULL);
@@ -284,7 +284,7 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
 
 #define FE_QUARTZ_CHECK_INPUT(input) \
 	if (!input) { \
-		NSLog(@"ERROR: Can't apply filter w/o input image."); \
+		NSLog(@"ERROR: Can't apply filter (%p) w/o input image.", this); \
 		return nil; \
 	}
 

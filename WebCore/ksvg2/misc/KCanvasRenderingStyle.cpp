@@ -83,9 +83,8 @@ void KCanvasRenderingStyle::updateFill(KCanvasItem *item)
         KDOM::DOMString id(fill->uri());
 
         KRenderingPaintServer *fillPaintServer = m_canvas->registry()->getPaintServerById(id.string().mid(1));
-        KCanvasResource *fillPaintResource = dynamic_cast<KCanvasResource *>(fillPaintServer);
-        if(item && fillPaintResource)
-            fillPaintResource->addClient(item);
+        if(item && fillPaintServer)
+            fillPaintServer->addClient(item);
 
         fillPainter()->setPaintServer(fillPaintServer);
     }
@@ -121,9 +120,8 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
         KDOM::DOMString id(stroke->uri());
 
         KRenderingPaintServer *strokePaintServer = m_canvas->registry()->getPaintServerById(id.string().mid(1));
-        KCanvasResource *strokePaintResource = dynamic_cast<KCanvasResource *>(strokePaintServer);
-        if(item && strokePaintResource)
-            strokePaintResource->addClient(item);
+        if(item && strokePaintServer)
+            strokePaintServer->addClient(item);
 
         strokePainter()->setPaintServer(strokePaintServer);
     }
@@ -131,7 +129,7 @@ void KCanvasRenderingStyle::updateStroke(KCanvasItem *item)
     {
         KRenderingPaintServer *strokePaintServer = m_canvas->renderingDevice()->createPaintServer(KCPaintServerType(PS_SOLID));
         KRenderingPaintServerSolid *strokePaintServerSolid = static_cast<KRenderingPaintServerSolid *>(strokePaintServer);
-        
+
         if(stroke->paintType() == SVG_PAINTTYPE_CURRENTCOLOR)
             strokePaintServerSolid->setColor(m_style->color());
         else
@@ -333,6 +331,7 @@ void KCanvasRenderingStyle::removeClipPaths()
 // Markers
 KCanvasMarker *KCanvasRenderingStyle::startMarker() const
 {
+    // TODO: somewhere, somehow addClient should be called on this resource
     return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->startMarker().mid(1)));
 }
 
@@ -343,6 +342,7 @@ void KCanvasRenderingStyle::setStartMarker(KCanvasMarker *)
 
 KCanvasMarker *KCanvasRenderingStyle::midMarker() const
 {
+    // TODO: somewhere, somehow addClient should be called on this resource
     return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->midMarker().mid(1)));
 }
 
@@ -352,6 +352,7 @@ void KCanvasRenderingStyle::setMidMarker(KCanvasMarker *)
 
 KCanvasMarker *KCanvasRenderingStyle::endMarker() const
 {
+    // TODO: somewhere, somehow addClient should be called on this resource
     return static_cast<KCanvasMarker *>(m_canvas->registry()->getResourceById(m_style->endMarker().mid(1)));
 }
 
@@ -373,6 +374,7 @@ KCanvasFilter *KCanvasRenderingStyle::filter() const
     if(lookup.isEmpty())
         return 0;
 
+    // TODO: somewhere, somehow addClient should be called on this resource
     return static_cast<KCanvasFilter *>(m_canvas->registry()->getResourceById(lookup));
 }
 

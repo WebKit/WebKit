@@ -493,15 +493,15 @@ void SVGAnimationElementImpl::close()
     document->timeScheduler()->addTimer(this, qRound(getStartTime()));
 }
 
-KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
+KDOM::DOMStringImpl *SVGAnimationElementImpl::targetAttribute() const
 {
     if(!targetElement())
-        return KDOM::DOMString();
+        return 0;
     
     SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(targetElement());
     KDOM::CDFInterface *interface = (styled ? styled->ownerDocument()->implementation()->cdfInterface() : 0);
     
-    KDOM::DOMString ret;
+    KDOM::DOMStringImpl *ret = 0;
 
     EAttributeType attributeType = m_attributeType;
     if(attributeType == ATTRIBUTETYPE_AUTO)
@@ -525,24 +525,24 @@ KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
         if(styled && styled->style() && interface)
         {
             int id = interface->getPropertyID(m_attributeName.ascii(), m_attributeName.length());
-            ret = KDOM::DOMString(styled->style()->getPropertyValue(id));
+            ret = styled->style()->getPropertyValue(id);
         }
     }
 
-    if(attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
-        ret = KDOM::DOMString(targetElement()->getAttribute(KDOM::DOMString(m_attributeName).handle()));
+    if(attributeType == ATTRIBUTETYPE_XML || (!ret || (ret && ret->isEmpty())))
+        ret = targetElement()->getAttribute(KDOM::DOMString(m_attributeName).handle());
 
     return ret;
 }
 
-void SVGAnimationElementImpl::setTargetAttribute(const KDOM::DOMString &value)
+void SVGAnimationElementImpl::setTargetAttribute(KDOM::DOMStringImpl *value)
 {
-    SVGAnimationElementImpl::setTargetAttribute(targetElement(), KDOM::DOMString(m_attributeName), value, m_attributeType);
+    SVGAnimationElementImpl::setTargetAttribute(targetElement(), KDOM::DOMString(m_attributeName).handle(), value, m_attributeType);
 }
 
-void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, const KDOM::DOMString &name, const KDOM::DOMString &value, EAttributeType type)
+void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::DOMStringImpl *name, KDOM::DOMStringImpl *value, EAttributeType type)
 {
-    if(!target)
+    if(!target || !name || !value)
         return;
     
     SVGStyledElementImpl *styled = dynamic_cast<SVGStyledElementImpl *>(target);
@@ -559,7 +559,7 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, const K
         // search the default XML namespace for the element.
         if(styled && styled->style())
         {
-            int id = interface->getPropertyID(name.string().ascii(), name.string().length());
+            int id = interface->getPropertyID(name->string().ascii(), name->string().length());
             if(styled->style()->getPropertyCSSValue(id))
                 attributeType = ATTRIBUTETYPE_CSS;
         }
@@ -567,11 +567,11 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, const K
     
     if(attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
     {
-        int id = interface->getPropertyID(name.string().ascii(), name.string().length());
-        styled->style()->setProperty(id, value.handle());
+        int id = interface->getPropertyID(name->string().ascii(), name->string().length());
+        styled->style()->setProperty(id, value);
     }
     else if(attributeType == ATTRIBUTETYPE_XML)
-        target->setAttribute(name.handle(), value.handle());
+        target->setAttribute(name, value);
 }
 
 QString SVGAnimationElementImpl::attributeName() const

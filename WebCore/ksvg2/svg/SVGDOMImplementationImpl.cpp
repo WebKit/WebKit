@@ -114,31 +114,32 @@ SVGDOMImplementationImpl *SVGDOMImplementationImpl::self()
     return s_instance;
 }
 
-bool SVGDOMImplementationImpl::hasFeature(KDOM::DOMStringImpl *_feature, KDOM::DOMStringImpl *_version) const
+bool SVGDOMImplementationImpl::hasFeature(KDOM::DOMStringImpl *featureImpl, KDOM::DOMStringImpl *versionImpl) const
 {
-    QString feature = KDOM::DOMString(_feature).upper().string();
-    KDOM::DOMString version(_version);
-    if((version.isEmpty() || version == "1.1") &&
+    QString feature = (featureImpl ? KDOM::DOMString(featureImpl).upper().string() : QString::null);
+    QString version = (versionImpl ? versionImpl->string() : QString::null);
+
+    if((version.isEmpty() || version == QString::fromLatin1("1.1")) &&
        feature.startsWith(QString::fromLatin1("HTTP://WWW.W3.ORG/TR/SVG11/FEATURE#")))
     {
         if(s_features.contains(feature.right(feature.length() - 35)))
             return true;
     }
 
-    if((version.isEmpty() || version == "1.0") &&
+    if((version.isEmpty() || version == QString::fromLatin1("1.0")) &&
        feature.startsWith(QString::fromLatin1("ORG.W3C.")))
     {
         if(s_features.contains(feature.right(feature.length() - 8)))
             return true;
     }
 
-    return KDOM::DOMImplementationImpl::hasFeature(_feature, _version);
+    return KDOM::DOMImplementationImpl::hasFeature(featureImpl, versionImpl);
 }
 
 KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId) const
 {
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if((qualifiedName && !qualifiedName->isEmpty()) || !KDOM::Helper::ValidateAttributeName(qualifiedName))
+    if((!qualifiedName || qualifiedName->isEmpty()) || !KDOM::Helper::ValidateAttributeName(qualifiedName))
         throw new KDOM::DOMExceptionImpl(KDOM::INVALID_CHARACTER_ERR);
 
     // NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
@@ -156,14 +157,19 @@ KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl
     return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0);
 }
 
-KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const
+KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURIImpl, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view) const
 {
+    if(namespaceURIImpl)
+        namespaceURIImpl->ref();
+    if(qualifiedNameImpl)
+        qualifiedNameImpl->ref();
+    KDOM::DOMString namespaceURI(namespaceURIImpl);
     KDOM::DOMString qualifiedName(qualifiedNameImpl);
-    if((namespaceURI && KDOM::DOMString(namespaceURI) != KDOM::NS_SVG) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
-        return KDOM::DOMImplementationImpl::createDocument(namespaceURI, qualifiedNameImpl, doctype, createDocElement, view);
+    if((namespaceURI != KDOM::NS_SVG) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
+        return KDOM::DOMImplementationImpl::createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, createDocElement, view);
 
     int dummy;
-    KDOM::Helper::CheckQualifiedName(qualifiedNameImpl, namespaceURI, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
+    KDOM::Helper::CheckQualifiedName(qualifiedNameImpl, namespaceURIImpl, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
 
     // WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
     //                     document or was created from a different implementation.
@@ -179,9 +185,14 @@ KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl
     // Add root element...
     if(createDocElement)
     {
-        KDOM::ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedNameImpl);
+        KDOM::ElementImpl *svg = doc->createElementNS(namespaceURIImpl, qualifiedNameImpl);
         doc->appendChild(svg);
     }
+
+    if(namespaceURIImpl)
+        namespaceURIImpl->deref();
+    if(qualifiedNameImpl)
+        qualifiedNameImpl->deref();
 
     return doc;
 }
@@ -207,15 +218,18 @@ KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::defaultDocumentType() const
 
 int SVGDOMImplementationImpl::typeToId(KDOM::DOMStringImpl *typeImpl)
 {
-    KDOM::DOMString type(typeImpl);
+    if(!typeImpl)
+        return -1;
 
-    if(type == "load") return KDOM::LOAD_EVENT;
-    else if(type == "unload") return KDOM::UNLOAD_EVENT;
-    else if(type == "abort") return KDOM::ABORT_EVENT;
-    else if(type == "error") return KDOM::ERROR_EVENT;
-    else if(type == "resize") return KDOM::RESIZE_EVENT;
-    else if(type == "scroll") return KDOM::SCROLL_EVENT;
-    else if(type == "zoom") return ZOOM_EVENT;
+    QString type = typeImpl->string();
+
+    if(type == QString::fromLatin1("load")) return KDOM::LOAD_EVENT;
+    else if(type == QString::fromLatin1("unload")) return KDOM::UNLOAD_EVENT;
+    else if(type == QString::fromLatin1("abort")) return KDOM::ABORT_EVENT;
+    else if(type == QString::fromLatin1("error")) return KDOM::ERROR_EVENT;
+    else if(type == QString::fromLatin1("resize")) return KDOM::RESIZE_EVENT;
+    else if(type == QString::fromLatin1("scroll")) return KDOM::SCROLL_EVENT;
+    else if(type == QString::fromLatin1("zoom")) return ZOOM_EVENT;
 
     return KDOM::DOMImplementationImpl::typeToId(typeImpl);
 }
@@ -225,13 +239,13 @@ KDOM::DOMStringImpl *SVGDOMImplementationImpl::idToType(int eventId)
     QString ret;
     switch(eventId)
     {
-        case KDOM::LOAD_EVENT: ret = "load"; break;
-        case KDOM::UNLOAD_EVENT: ret = "unload"; break;
-        case KDOM::ABORT_EVENT: ret = "abort"; break;
-        case KDOM::ERROR_EVENT: ret = "error"; break;
-        case KDOM::RESIZE_EVENT: ret = "resize"; break;
-        case KDOM::SCROLL_EVENT: ret = "scroll"; break;
-        case ZOOM_EVENT: ret = "zoom"; break;
+        case KDOM::LOAD_EVENT: ret = QString::fromLatin1("load"); break;
+        case KDOM::UNLOAD_EVENT: ret = QString::fromLatin1("unload"); break;
+        case KDOM::ABORT_EVENT: ret = QString::fromLatin1("abort"); break;
+        case KDOM::ERROR_EVENT: ret = QString::fromLatin1("error"); break;
+        case KDOM::RESIZE_EVENT: ret = QString::fromLatin1("resize"); break;
+        case KDOM::SCROLL_EVENT: ret = QString::fromLatin1("scroll"); break;
+        case ZOOM_EVENT: ret = QString::fromLatin1("zoom"); break;
         default: return KDOM::DOMImplementationImpl::idToType(eventId);
     }
 

@@ -26,8 +26,8 @@
 #include <qcolor.h>
 #include <q3ptrlist.h>
 
-#include <kcanvas/KCanvasResources.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
+#include <kcanvas/KCanvasResourceListener.h>
 
 typedef enum
 {
@@ -52,7 +52,6 @@ public:
 
     typedef Q3PtrListIterator<KCGradientOffsetPair> Iterator;
 
-    
 protected:
     virtual int compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2);
 private:
@@ -62,8 +61,7 @@ private:
 QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
 
 class KCanvasMatrix;
-class KRenderingPaintServerGradient : public KRenderingPaintServer,
-                                      public KCanvasResource
+class KRenderingPaintServerGradient : public KRenderingPaintServer
 {
 public:
     KRenderingPaintServerGradient();
@@ -85,6 +83,9 @@ public:
 
     KCanvasMatrix gradientTransform() const;
     void setGradientTransform(const KCanvasMatrix &mat);
+
+    KCanvasResourceListener *listener() const;
+    void setListener(KCanvasResourceListener *listener);
 
     QTextStream &externalRepresentation(QTextStream &) const;
 private:

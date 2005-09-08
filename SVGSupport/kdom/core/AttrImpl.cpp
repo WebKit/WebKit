@@ -130,8 +130,8 @@ unsigned short AttrImpl::nodeType() const
 
 DOMStringImpl *AttrImpl::value() const
 {
-    DOMStringImpl *ret =  new DOMStringImpl();
-    
+    DOMStringImpl *ret = new DOMStringImpl("");
+
     for(NodeImpl *child = firstChild(); child != 0; child = child->nextSibling())
         ret->append(DOMString(child->textContent()).string());
 
@@ -183,7 +183,7 @@ void AttrImpl::setPrefix(DOMStringImpl *_prefix)
         throw new DOMExceptionImpl(NO_MODIFICATION_ALLOWED_ERR);
 
     Helper::CheckPrefix(_prefix, localName(), namespaceURI());
-    
+
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is an attribute and the qualifiedName of this node is "xmlns"
     if(DOMString(nodeName()) == "xmlns")
         throw new DOMExceptionImpl(NAMESPACE_ERR);

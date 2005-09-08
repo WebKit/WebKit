@@ -320,7 +320,11 @@ void SVGTimer::notifyAll()
         for(; cit != cend; ++cit)
         {
             if(cit.data().isValid())
-                SVGAnimationElementImpl::setTargetAttribute(tit.key(), cit.key(), cit.data().name());
+            {
+                SVGAnimationElementImpl::setTargetAttribute(tit.key(),
+                                                            KDOM::DOMString(cit.key()).handle(),
+                                                            KDOM::DOMString(cit.data().name()).handle());
+            }
         }
     }
 

@@ -296,7 +296,7 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
 
             DOMStringImpl *prevValue = m_attrs[i].value(); 
             m_attrs[i].setValue(value->copy(), m_ownerElement);
-    
+ 
             dispatchAttrMutationEvent(m_ownerElement, prevValue, value, m_attrs[i].name(), MODIFICATION);
             dispatchSubtreeModifiedEvent();
 
@@ -329,7 +329,7 @@ void NamedAttrMapImpl::setValue(NodeImpl::Id id, DOMStringImpl *value, DOMString
     if(m_ownerElement)
     {
         m_ownerElement->parseAttribute(&m_attrs[m_attrCount - 1]);
-            
+ 
         dispatchAttrMutationEvent(m_ownerElement, 0, value, m_attrs[m_attrCount - 1].name(), ADDITION);
         dispatchSubtreeModifiedEvent();
     }
@@ -441,23 +441,10 @@ NodeImpl *NamedAttrMapImpl::removeNamedItemNS(DOMStringImpl *namespaceURI, DOMSt
 
 void NamedAttrMapImpl::dispatchAttrMutationEvent(NodeImpl *node, DOMStringImpl *prevValue, DOMStringImpl *newValue, DOMStringImpl *name, unsigned short attrChange)
 {
-    if(prevValue)
-        prevValue->ref();
-    if(newValue)
-        newValue->ref();
-    if(name)
-        name->ref();
-
     DocumentImpl *document = (m_ownerElement ? m_ownerElement->ownerDocument() : 0);
     if(!document || !document->hasListenerType(DOMATTRMODIFIED_EVENT))
     {
-        if(prevValue)
-            prevValue->deref();
-        if(newValue)
-            newValue->deref();
-        if(name)
-            name->deref();
-
+        if(name) name->deref();
         return;
     }
 
@@ -474,13 +461,6 @@ void NamedAttrMapImpl::dispatchAttrMutationEvent(NodeImpl *node, DOMStringImpl *
 
     event->deref();
     eventType->deref();
-
-    if(prevValue)
-        prevValue->deref();
-    if(newValue)
-        newValue->deref();
-    if(name)
-        name->deref();
 }
 
 void NamedAttrMapImpl::dispatchSubtreeModifiedEvent()

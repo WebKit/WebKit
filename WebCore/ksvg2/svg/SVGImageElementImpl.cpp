@@ -195,7 +195,7 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
         parser->domConfig()->setParameter(KDOM::ENTITIES.handle(), false);
         parser->domConfig()->setParameter(KDOM::ELEMENT_CONTENT_WHITESPACE.handle(), false);
 
-        QBuffer *temp = new QBuffer(m_cachedDocument->documentBuffer()->buffer());
+        QBuffer *temp = new QBuffer(&m_cachedDocument->documentBuffer()->buffer());
         m_svgDoc = static_cast<SVGDocumentImpl *>(parser->syncParse(temp));
         if(m_svgDoc)
         {
@@ -227,12 +227,17 @@ void SVGImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 #ifndef APPLE_COMPILE_HACK
             KRenderingFillPainter *fillPainter = m_canvasItem->style()->fillPainter();
             if(!fillPainter)
-
+                return;
 
             KRenderingPaintServer *fillPaintServer = fillPainter->paintServer();
             KRenderingPaintServerImage *fillPaintServerImage = static_cast<KRenderingPaintServerImage *>(fillPaintServer);
 
-            KCanvasImageBuffer *imageBuffer = new KCanvasImageBuffer(m_cachedImage->pixmap().convertToImage());
+            QPixmap pixm(m_cachedImage->pixmap_size());
+			kdDebug() << "pixm w : " << pixm.size() << endl;
+			QPainter p(&pixm);
+			ImagePainter ip(m_cachedImage->image());
+			ip.paint(0, 0, &p, 0, 0, pixm.width(), pixm.height());
+            KCanvasImageBuffer *imageBuffer = new KCanvasImageBuffer(pixm);
             fillPaintServerImage->setImage(imageBuffer);
 #endif
 

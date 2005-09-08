@@ -195,11 +195,12 @@ StyleInheritedData::StyleInheritedData() : Shared(), font()
     indent = RenderStyle::initialTextIndent();
     lineHeight = RenderStyle::initialLineHeight();
     styleImage = RenderStyle::initialListStyleImage();
+    cursorImage = RenderStyle::initialCursorImage();
     color = RenderStyle::initialColor();
 
     borderHSpacing = RenderStyle::initialBorderHSpacing();
-       borderVSpacing = RenderStyle::initialBorderVSpacing();
-    
+    borderVSpacing = RenderStyle::initialBorderVSpacing();
+
     quotes = 0;
     widows = RenderStyle::initialWidows();
     orphans = RenderStyle::initialOrphans();
@@ -210,6 +211,7 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData &other) : Shared
 {
     indent = other.indent; lineHeight = other.lineHeight;
     styleImage = other.styleImage; font = other.font;
+    cursorImage = other.cursorImage;
     color = other.color; decorationColor = other.decorationColor;
     borderHSpacing = other.borderHSpacing; borderVSpacing = other.borderVSpacing;
     widows = other.widows; orphans = other.orphans; pageBreakInside = other.pageBreakInside;
@@ -224,6 +226,7 @@ bool StyleInheritedData::operator==(const StyleInheritedData &other) const
     return (indent == other.indent) && (lineHeight == other.lineHeight) &&
            (borderHSpacing == other.borderHSpacing) && (borderVSpacing == other.borderVSpacing) &&
            (styleImage == other.styleImage) && (font == other.font) &&
+           (cursorImage == other.cursorImage) &&
            (color == other.color) && (decorationColor == other.decorationColor) &&
            (widows == other.widows) && (orphans == other.orphans) &&
            (pageBreakInside == other.pageBreakInside) && (quotes == other.quotes);

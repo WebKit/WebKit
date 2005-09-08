@@ -103,7 +103,7 @@ CSSStyleSheetImpl::~CSSStyleSheetImpl()
 
 DOMStringImpl *CSSStyleSheetImpl::type() const
 {
-    return DOMString("text/css").handle();
+    return new DOMStringImpl("text/css");
 }
 
 CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const

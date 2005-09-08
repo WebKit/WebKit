@@ -29,7 +29,6 @@
 #include <kmessagebox.h>
 #include <kglobalsettings.h>
 
-#include <qpair.h>
 #include <qregexp.h>
 #include <q3valuevector.h>
 #include <qfontdatabase.h>
@@ -37,6 +36,11 @@
 #include "KDOMSettings.h"
 
 using namespace KDOM;
+
+QColor txtDefault(DOM_DEFAULT_TXT_COLOR);
+QColor lnkDefault(DOM_DEFAULT_LNK_COLOR);
+QColor vlnkDefault(DOM_DEFAULT_VLNK_COLOR);
+QColor baseDefault(DOM_DEFAULT_BASE_COLOR);
 
 /**
  * @internal
@@ -293,16 +297,16 @@ void KDOMSettings::init(KConfig *config, bool reset)
     {
         config->setGroup("General"); // group will be restored by cgs anyway
         if(reset || config->hasKey("foreground"))
-            d->textColor = config->readColorEntry("foreground", &DOM_DEFAULT_TXT_COLOR);
+            d->textColor = config->readColorEntry("foreground", &txtDefault);
 
         if(reset || config->hasKey("linkColor"))
-            d->linkColor = config->readColorEntry("linkColor", &DOM_DEFAULT_LNK_COLOR);
+            d->linkColor = config->readColorEntry("linkColor", &lnkDefault);
 
         if(reset || config->hasKey("visitedLinkColor"))
-            d->vLinkColor = config->readColorEntry("visitedLinkColor", &DOM_DEFAULT_VLNK_COLOR);
+            d->vLinkColor = config->readColorEntry("visitedLinkColor", &vlnkDefault);
 
         if(reset || config->hasKey("background"))
-            d->baseColor = config->readColorEntry("background", &DOM_DEFAULT_BASE_COLOR);
+            d->baseColor = config->readColorEntry("background", &baseDefault);
     }
 
     if(reset || config->hasGroup("Java/JavaScript Settings"))
@@ -739,7 +743,7 @@ KDOMSettings::KJavaScriptAdvice KDOMSettings::strToAdvice(const QString &str)
 {
     KJavaScriptAdvice ret = KJavaScriptDunno;
 
-    if(!str)
+    if(str.isNull())
         ret = KJavaScriptDunno;
 
     if(str.lower() == QString::fromLatin1("accept"))

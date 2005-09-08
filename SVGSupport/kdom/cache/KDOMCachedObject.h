@@ -82,7 +82,7 @@ namespace KDOM
         };
 
         CachedObject(const DOMString &url, Type type, KIO::CacheControl cachePolicy, int size);
-          virtual ~CachedObject();
+        virtual ~CachedObject();
 
         virtual void data(QBuffer &buffer, bool eof) = 0;
         virtual void error(int err, const char *text) = 0;

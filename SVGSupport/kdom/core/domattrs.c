@@ -34,8 +34,8 @@
 #include "domattrs.h"
 #line 5 "domattrs.gperf"
 struct attrs {
-	int name;
-	int id;
+    int name;
+    int id;
 };
 enum
   {

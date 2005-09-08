@@ -39,9 +39,9 @@ public:
         endMarker = 0;
         midMarker = 0;
         startMarker = 0;
-        
+ 
         filter = 0;
-    
+
         imageRendering = IR_OPTIMIZE_QUALITY;
 
         opacity = 1.0f;

@@ -139,6 +139,7 @@ void DocumentLoader::setAutoloadImages(bool load)
     if(!m_autoloadImages)
         return;
 
+#if 0
     for(Q3PtrDictIterator<CachedObject> it(m_docObjects); it.current(); ++it)
     {
         if(it.current()->type() == CachedObject::Image)
@@ -148,10 +149,10 @@ void DocumentLoader::setAutoloadImages(bool load)
             CachedObject::Status status = img->status();
             if(status != CachedObject::Unknown)
                 continue;
-
             Cache::loader()->load(this, img, true);
         }
     }
+#endif
 }
 
 void DocumentLoader::setShowAnimations(KDOMSettings::KAnimationAdvice showAnimations)

@@ -23,7 +23,7 @@
 #ifndef KCanvasMatrix_H
 #define KCanvasMatrix_H
 
-#include <qwmatrix.h>
+#include <qmatrix.h>
 
 typedef enum
 {
@@ -36,17 +36,17 @@ class KCanvasMatrix
 {
 public:
     KCanvasMatrix();
-    KCanvasMatrix(const QWMatrix &qmatrix);
+    KCanvasMatrix(const QMatrix &qmatrix);
     KCanvasMatrix(const KCanvasMatrix &matrix);
     KCanvasMatrix(double a, double b, double c, double d, double e, double f);
     ~KCanvasMatrix();
 
     // Operators
-    KCanvasMatrix &operator=(const QWMatrix &other);
+    KCanvasMatrix &operator=(const QMatrix &other);
     KCanvasMatrix &operator=(const KCanvasMatrix &other);
 
-    bool operator==(const QWMatrix &other) const;
-    bool operator!=(const QWMatrix &other) const;
+    bool operator==(const QMatrix &other) const;
+    bool operator!=(const QMatrix &other) const;
 
     bool operator==(const KCanvasMatrix &other) const;
     bool operator!=(const KCanvasMatrix &other) const;
@@ -96,10 +96,10 @@ public:
     // (Only works for lineto/moveto operations!)
     KCPathDataList map(const KCPathDataList &pathData) const;
 
-    QWMatrix qmatrix() const;
+    QMatrix qmatrix() const;
 
 private:
-    QWMatrix m_matrix;
+    QMatrix m_matrix;
     KCMatrixOperationMode m_mode;
 };
 

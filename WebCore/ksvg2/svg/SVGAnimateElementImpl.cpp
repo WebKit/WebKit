@@ -43,7 +43,8 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
     if(!m_connected)
     {
         // Save initial attribute value...
-        m_savedTo = targetAttribute().string();
+        KDOM::DOMStringImpl *attr = targetAttribute();
+        m_savedTo = (attr ? attr->string() : QString::null);
 
         // Animation mode handling
         switch(detectAnimationMode())

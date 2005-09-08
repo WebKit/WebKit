@@ -27,15 +27,16 @@
 #define KDOM_ProcessingInstructionImpl_H
 
 #include <kdom/core/NodeImpl.h>
+#include <kdom/css/LinkStyleImpl.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
 namespace KDOM
 {
-    class CSSStyleSheetImpl;
     class CachedStyleSheet;
     class StyleSheetImpl;
 
     class ProcessingInstructionImpl : public NodeBaseImpl,
+                                      public LinkStyleImpl,
                                       private CachedObjectClient
     {
     public:
@@ -60,7 +61,6 @@ namespace KDOM
         virtual NodeImpl *cloneNode(bool deep, DocumentPtr *doc) const;
 
         virtual DOMStringImpl *localHref() const;
-        StyleSheetImpl *sheet() const;
         void checkStyleSheet();
         virtual void setStyleSheet(DOMStringImpl *url, DOMStringImpl *sheet);
         virtual void setStyleSheet(CSSStyleSheetImpl *sheet);
@@ -70,7 +70,6 @@ namespace KDOM
         DOMStringImpl *m_data;
         DOMStringImpl *m_localHref;
         CachedStyleSheet *m_cachedSheet;
-        CSSStyleSheetImpl *m_sheet;
     };
 };
 

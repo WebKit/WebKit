@@ -62,9 +62,12 @@ KCanvas::KCanvas(KRenderingDevice *device) : d(new Private(device))
 
 KCanvas::~KCanvas()
 {
-    delete d->rootContainer;
-    d->rootContainer = NULL;
     reset();
+    Q3ValueListConstIterator<const KCanvasView *> it = d->viewList.constBegin();
+    Q3ValueListConstIterator<const KCanvasView *> end = d->viewList.constEnd();
+
+    for(; it != end; ++it)
+        const_cast<KCanvasView *>(*it)->setCanvas(0);
     delete d;
 }
 
@@ -116,6 +119,12 @@ void KCanvas::setCanvasSize(const QSize &size)
 
 void KCanvas::reset()
 {
+    if(d->rootContainer)
+    {
+        delete d->rootContainer;
+        d->rootContainer = 0;
+    }
+
     registry()->cleanup();
 }
 

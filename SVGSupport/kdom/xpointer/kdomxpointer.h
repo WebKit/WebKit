@@ -96,6 +96,23 @@ namespace XPointer
          */
         INVALID_ENCODING = 4
     };
+
+    /**
+     * An integer indicating what type of result this is.
+     */
+    enum ResultType
+    {
+        /**
+         * The pointer matched no nodes.
+         */
+        NO_MATCH = 1,
+
+        /**
+         * The pointer identifed a single node.
+         */
+        SINGLE_NODE = 2
+    };
+
 };
 };
 

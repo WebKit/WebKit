@@ -56,6 +56,11 @@ namespace KSVG
         SVGSVGElementImpl *ownerSVGElement() const;
         SVGElementImpl *viewportElement() const;
 
+        // Helper methods that returns the attr value if attr is set, otherwise the default value.
+        // It throws NO_MODIFICATION_ALLOWED_ERR if the element is read-only.
+        KDOM::DOMStringImpl *tryGetAttribute(KDOM::DOMStringImpl *name, KDOM::DOMStringImpl *defaultVal = 0) const;
+        KDOM::DOMStringImpl *tryGetAttributeNS(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *localName, KDOM::DOMStringImpl *defaultVal = 0) const;
+
         // Internal
         virtual void parseAttribute(KDOM::AttributeImpl *attr);
 

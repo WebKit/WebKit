@@ -83,6 +83,9 @@ void patternCallback(void *info, CGContextRef context)
 
 void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
+    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
+        listener()->resourceNotification();
+
 	KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
 	CGContextRef context = quartzContext->cgContext();
 	KRenderingStyle *style = args.style();
@@ -165,5 +168,5 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
 
 void KRenderingPaintServerImageQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
-	NSLog(@"KRenderingPaintServerImageQuartz::draw() not implemented!");
+    // FIXME: NOT IMPLEMENTED
 }

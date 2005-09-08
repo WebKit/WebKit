@@ -1,3 +1,338 @@
+2005-09-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Merged various changes from KDE, including:
+        Qt3->Qt4 change: QWMatrix -> QMatrix
+        A few remaining DOMString -> DOMStringImpl changes
+        KRenderingDevicePaintServer now inherits KCanvasResource
+        Various whitespace adjustments.
+        Fewer, clearer logs from kcanvas/device/quartz code.
+        DOM exception support.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4863
+
+        * ForwardingHeaders/qmatrix.h: Added.
+        * WebCore+SVG/DrawDocument.mm:
+        (-[DrawDocumentPrivate init]):
+        (-[DrawDocumentPrivate dealloc]):
+        (-[DrawDocumentPrivate setPrimaryView:]):
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvas.cpp:
+        (KCanvas::~KCanvas):
+        (KCanvas::reset):
+        * kcanvas/KCanvasContainer.cpp:
+        (KCanvasContainer::bbox):
+        (KCanvasContainer::collisions):
+        (KCanvasContainer::first):
+        (KCanvasContainer::last):
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/KCanvasFilters.cpp:
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/KCanvasMatrix.cpp:
+        (KCanvasMatrix::KCanvasMatrix):
+        (KCanvasMatrix::operator=):
+        (KCanvasMatrix::operator==):
+        (KCanvasMatrix::operator!=):
+        (KCanvasMatrix::translate):
+        (KCanvasMatrix::multiply):
+        (KCanvasMatrix::scale):
+        (KCanvasMatrix::rotate):
+        (KCanvasMatrix::rotateFromVector):
+        (KCanvasMatrix::skewX):
+        (KCanvasMatrix::skewY):
+        (KCanvasMatrix::qmatrix):
+        * kcanvas/KCanvasMatrix.h:
+        * kcanvas/KCanvasRegistry.cpp:
+        (operator<<):
+        * kcanvas/KCanvasRegistry.h:
+        * kcanvas/KCanvasResources.cpp:
+        (KCanvasResource::KCanvasResource):
+        (KCanvasMarker::draw):
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasView.cpp:
+        (KCanvasView::setCanvas):
+        * kcanvas/KCanvasView.h:
+        * kcanvas/device/KRenderingFillPainter.cpp:
+        (KRenderingFillPainter::draw):
+        * kcanvas/device/KRenderingPaintServer.h:
+        (KRenderingPaintServer::KRenderingPaintServer):
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KRenderingPaintServerGradient::Private::Private):
+        (KRenderingPaintServerGradient::KRenderingPaintServerGradient):
+        (KRenderingPaintServerGradient::listener):
+        (KRenderingPaintServerGradient::setListener):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerPattern.cpp:
+        (KRenderingPaintServerPattern::Private::Private):
+        (KRenderingPaintServerPattern::KRenderingPaintServerPattern):
+        (KRenderingPaintServerPattern::listener):
+        (KRenderingPaintServerPattern::setListener):
+        * kcanvas/device/KRenderingPaintServerPattern.h:
+        * kcanvas/device/KRenderingStrokePainter.cpp:
+        (KRenderingStrokePainter::setPaintServer):
+        (KRenderingStrokePainter::draw):
+        * kcanvas/device/KRenderingStyle.cpp:
+        (KRenderingStyle::Private::Private):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::prepareFilter):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (cgGradientCallback):
+        (KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz):
+        (KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::draw):
+        (KRenderingPaintServerImageQuartz::draw):
+        * kdom/KDOMSettings.cpp:
+        (KDOMSettings::init):
+        (KDOMSettings::strToAdvice):
+        * kdom/Shared.h:
+        (KDOM::KDOM_SAFE_SET):
+        * kdom/backends/libxml/LibXMLParser.cpp:
+        (sax_start_doc):
+        (sax_internal_subset):
+        (sax_entity_decl):
+        * kdom/bindings/IDLParser.pm:
+        * kdom/bindings/IDLStructure.pm:
+        * kdom/cache/KDOMCache.h:
+        * kdom/cache/KDOMCachedObject.h:
+        * kdom/cache/KDOMLoader.cpp:
+        (DocumentLoader::setAutoloadImages):
+        * kdom/cache/KDOMLoader.h:
+        * kdom/core/AttrImpl.cpp:
+        (AttrImpl::value):
+        (AttrImpl::setPrefix):
+        * kdom/core/DOMConfigurationImpl.cpp:
+        (DOMConfigurationImpl::normalizeCharacters):
+        * kdom/core/DOMImplementationImpl.cpp:
+        (DOMImplementationImpl::DOMImplementationImpl):
+        (DOMImplementationImpl::createDocument):
+        (DOMImplementationImpl::idToType):
+        * kdom/core/DOMImplementationImpl.h:
+        * kdom/core/DocumentImpl.cpp:
+        (DocumentImpl::removeListenerType):
+        (DocumentImpl::getId):
+        * kdom/core/DocumentTypeImpl.cpp:
+        (DocumentTypeImpl::internalSubset):
+        * kdom/core/NamedAttrMapImpl.cpp:
+        (NamedAttrMapImpl::setValue):
+        (NamedAttrMapImpl::dispatchAttrMutationEvent):
+        * kdom/core/NamedNodeMapImpl.cpp:
+        (RONamedNodeMapImpl::getNamedItem):
+        * kdom/core/NodeImpl.cpp:
+        (NodeBaseImpl::removeChildren):
+        (NodeImpl::lookupNamespaceURI):
+        * kdom/core/ProcessingInstructionImpl.cpp:
+        (ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (ProcessingInstructionImpl::~ProcessingInstructionImpl):
+        * kdom/core/ProcessingInstructionImpl.h:
+        * kdom/core/domattrs.c:
+        * kdom/css/CSSPrimitiveValueImpl.cpp:
+        (FontFamilyValueImpl::FontFamilyValueImpl):
+        * kdom/css/CSSStyleRuleImpl.cpp:
+        (CSSStyleRuleImpl::parseString):
+        * kdom/css/CSSStyleRuleImpl.h:
+        * kdom/css/CSSStyleSelector.cpp:
+        (CSSStyleSelector::CSSStyleSelector):
+        (CSSStyleSelector::styleForElement):
+        (CSSStyleSelector::applyRule):
+        (CSSStyleSelector::getLangAttribute):
+        * kdom/css/CSSStyleSelector.h:
+        * kdom/css/CSSStyleSheetImpl.cpp:
+        (CSSStyleSheetImpl::type):
+        * kdom/css/CSSValueImpl.cpp:
+        (ShadowValueImpl::cssText):
+        * kdom/css/Font.h:
+        * kdom/css/LinkStyleImpl.cpp: Added.
+        (LinkStyleImpl::LinkStyleImpl):
+        (LinkStyleImpl::~LinkStyleImpl):
+        (LinkStyleImpl::sheet):
+        * kdom/css/LinkStyleImpl.h: Added.
+        * kdom/css/MediaListImpl.cpp:
+        (MediaListImpl::setMediaText):
+        * kdom/css/RectImpl.cpp:
+        * kdom/css/RectImpl.h:
+        (KDOM::RectImpl::top):
+        (KDOM::RectImpl::right):
+        (KDOM::RectImpl::bottom):
+        (KDOM::RectImpl::left):
+        * kdom/css/RenderStyle.cpp:
+        (RenderStyle::diff):
+        * kdom/css/RenderStyle.h:
+        * kdom/css/RenderStyleDefs.cpp:
+        (StyleInheritedData::StyleInheritedData):
+        (StyleInheritedData::operator==):
+        * kdom/css/RenderStyleDefs.h:
+        * kdom/css/StyleBaseImpl.cpp:
+        (CSSSelector::print):
+        (CSSSelector::extractPseudoType):
+        * kdom/events/EventTargetImpl.cpp:
+        (EventTargetImpl::addEventListener):
+        * kdom/kdom.h:
+        (KDOM::):
+        * kdom/ls/DOMImplementationLSImpl.cpp: Added.
+        (DOMImplementationLSImpl::DOMImplementationLSImpl):
+        (DOMImplementationLSImpl::~DOMImplementationLSImpl):
+        (DOMImplementationLSImpl::createLSParser):
+        (DOMImplementationLSImpl::createLSInput):
+        (DOMImplementationLSImpl::createLSOutput):
+        (DOMImplementationLSImpl::createLSSerializer):
+        * kdom/ls/DOMImplementationLSImpl.h: Added.
+        * kdom/ls/LSParserImpl.cpp:
+        (LSParserImpl::parseURI):
+        * kdom/ls/LSParserImpl.h:
+        * kdom/ls/LSResourceResolverImpl.cpp:
+        (LSResourceResolverImpl::resolveResource):
+        * kdom/ls/LSResourceResolverImpl.h:
+        * kdom/ls/LSSerializerImpl.cpp:
+        (LSSerializerImpl::newLine):
+        (LSSerializerImpl::writeToString):
+        (LSSerializerImpl::escape):
+        (LSSerializerImpl::escapeAttribute):
+        * kdom/ls/LSSerializerImpl.h:
+        * kdom/parser/KDOMParser.cpp:
+        (Parser::handleError):
+        (Parser::bufferForUrl):
+        * kdom/range/RangeImpl.cpp:
+        (RangeImpl::toString):
+        * kdom/range/RangeImpl.h:
+        * kdom/scripts/cssmakeprops:
+        * kdom/scripts/cssmakevalues:
+        * kdom/xpointer/PointerPartImpl.cpp:
+        (PointerPartImpl::PointerPartImpl):
+        * kdom/xpointer/ShortHandImpl.cpp:
+        (ShortHandImpl::ShortHandImpl):
+        * kdom/xpointer/XPointerEvaluatorImpl.cpp:
+        (XPointerEvaluatorImpl::createXPointer):
+        * kdom/xpointer/XPointerResultImpl.h:
+        * kdom/xpointer/kdomxpointer.h:
+        (KDOM::XPointer::):
+        * ksvg2/KSVGFactory.cpp:
+        (KSVGFactory::createPartObject):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/events/SVGEventImpl.cpp:
+        (SVGEventImpl::SVGEventImpl):
+        (SVGEventImpl::initEvent):
+        * ksvg2/events/SVGEventImpl.h:
+        (KSVG::):
+        * ksvg2/events/SVGZoomEventImpl.cpp:
+        (SVGZoomEventImpl::SVGZoomEventImpl):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KCanvasRenderingStyle::updateFill):
+        (KCanvasRenderingStyle::updateStroke):
+        (KCanvasRenderingStyle::startMarker):
+        (KCanvasRenderingStyle::midMarker):
+        (KCanvasRenderingStyle::endMarker):
+        (KCanvasRenderingStyle::filter):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (SVGTimer::notifyAll):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::targetAttribute):
+        (SVGAnimationElementImpl::setTargetAttribute):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        * ksvg2/svg/SVGCursorElementImpl.cpp: Added.
+        (SVGCursorElementImpl::SVGCursorElementImpl):
+        (SVGCursorElementImpl::~SVGCursorElementImpl):
+        (SVGCursorElementImpl::x):
+        (SVGCursorElementImpl::y):
+        (SVGCursorElementImpl::parseAttribute):
+        (SVGCursorElementImpl::notifyFinished):
+        * ksvg2/svg/SVGCursorElementImpl.h: Added.
+        (KSVG::SVGCursorElementImpl::pixmap):
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        (SVGDOMImplementationImpl::hasFeature):
+        (SVGDOMImplementationImpl::createDocumentType):
+        (SVGDOMImplementationImpl::createDocument):
+        (SVGDOMImplementationImpl::typeToId):
+        (SVGDOMImplementationImpl::idToType):
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::SVGDocumentImpl):
+        (SVGDocumentImpl::createSVGElement):
+        (SVGDocumentImpl::createElement):
+        (SVGDocumentImpl::createElementNS):
+        (SVGDocumentImpl::createEvent):
+        (SVGDocumentImpl::notifyFinished):
+        (SVGDocumentImpl::defaultNS):
+        (SVGDocumentImpl::executeScripts):
+        (SVGDocumentImpl::prepareMouseEvent):
+        (SVGDocumentImpl::dispatchUIEvent):
+        (SVGDocumentImpl::dispatchMouseEvent):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::getId):
+        (SVGElementImpl::xmlbase):
+        (SVGElementImpl::tryGetAttribute):
+        (SVGElementImpl::tryGetAttributeNS):
+        (SVGElementImpl::parseAttribute):
+        (SVGElementImpl::addSVGEventListener):
+        * ksvg2/svg/SVGElementImpl.h:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::parseAttribute):
+        * ksvg2/svg/SVGHelper.cpp:
+        (SVGHelper::PercentageOfViewport):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::notifyFinished):
+        * ksvg2/svg/SVGLengthListImpl.cpp:
+        (SVGLengthListImpl::parse):
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::x2):
+        * ksvg2/svg/SVGMatrixImpl.cpp:
+        (SVGMatrixImpl::SVGMatrixImpl):
+        (SVGMatrixImpl::postMultiply):
+        (SVGMatrixImpl::postTranslate):
+        (SVGMatrixImpl::postScale):
+        (SVGMatrixImpl::postScaleNonUniform):
+        (SVGMatrixImpl::postRotate):
+        (SVGMatrixImpl::postRotateFromVector):
+        (SVGMatrixImpl::postFlipX):
+        (SVGMatrixImpl::postFlipY):
+        (SVGMatrixImpl::postSkewX):
+        (SVGMatrixImpl::postSkewY):
+        (SVGMatrixImpl::multiply):
+        (SVGMatrixImpl::setMatrix):
+        (SVGMatrixImpl::qmatrix):
+        * ksvg2/svg/SVGMatrixImpl.h:
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (SVGPatternElementImpl::parseAttribute):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::width):
+        (SVGSVGElementImpl::height):
+        (SVGSVGElementImpl::contentScriptType):
+        (SVGSVGElementImpl::contentStyleType):
+        (SVGSVGElementImpl::setContentStyleType):
+        (SVGSVGElementImpl::createEvent):
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        (SVGScriptElementImpl::parseAttribute):
+        (SVGScriptElementImpl::executeScript):
+        * ksvg2/svg/SVGScriptElementImpl.h:
+        * ksvg2/svg/SVGSetElementImpl.cpp:
+        (SVGSetElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        (SVGStyleElementImpl::xmlspace):
+        (SVGStyleElementImpl::type):
+        (SVGStyleElementImpl::media):
+        (SVGStyleElementImpl::title):
+        (SVGStyleElementImpl::childrenChanged):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::attach):
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::updateSubtreeMatrices):
+        (SVGTransformableImpl::parseAttribute):
+        (SVGTransformableImpl::parseTransformAttribute):
+        * ksvg2/svg/SVGTransformableImpl.h:
+        * kwq/KWQNamespace.h:
+        (Qt::): Added LayoutDirection for Qt4 support
+        * kwq/KWQWMatrix.h: #define mapping QMatrix to QWMatrix
+
 2005-09-07  Geoffrey Garen  <ggaren@apple.com>
 
         -added layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4781

@@ -26,6 +26,7 @@
 #include "KCanvas.h"
 #include "KCanvasItem.h"
 #include "KCanvasMatrix.h"
+#include "KCanvasContainer.h"
 #include "KCanvasResources.h"
 #include "KRenderingDevice.h"
 #include "KCanvasResourceListener.h"
@@ -41,23 +42,10 @@ QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r)
 // KCanvasResource
 KCanvasResource::KCanvasResource()
 {
-    m_changed = true;
-
-    m_listener = 0;
 }
 
 KCanvasResource::~KCanvasResource()
 {
-}
-
-bool KCanvasResource::changed() const
-{
-    return m_changed;
-}
-
-void KCanvasResource::setChanged(bool changed)
-{
-    m_changed = changed;
 }
 
 void KCanvasResource::addClient(KCanvasItem *item)
@@ -71,16 +59,6 @@ void KCanvasResource::addClient(KCanvasItem *item)
 const KCanvasItemList &KCanvasResource::clients() const
 {
     return m_clients;
-}
-
-KCanvasResourceListener *KCanvasResource::listener() const
-{
-    return m_listener;
-}
-
-void KCanvasResource::setListener(KCanvasResourceListener *listener)
-{
-    m_listener = listener;
 }
 
 void KCanvasResource::invalidate()
@@ -211,11 +189,8 @@ void KCanvasMarker::setAutoAngle()
 
 void KCanvasMarker::draw(double x, double y, double angle)
 {
-    kdDebug() << "Drawing marker at : " << x << " , " << y << endl;
     if(m_marker && m_marker->style())
     {
-        setChanged(false);
-
         KCanvasMatrix translation;
         translation.translate(x, y);
 

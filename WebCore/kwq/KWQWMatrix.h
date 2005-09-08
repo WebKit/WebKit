@@ -66,4 +66,6 @@ private:
     CGAffineTransform m_transform;
 };
 
+#define QMatrix QWMatrix
+
 #endif

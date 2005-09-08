@@ -120,7 +120,6 @@ void sax_start_doc(void *closure)
         doc->setInputEncoding(DOMString("UTF-8").handle());
 
     doc->setXmlVersion(DOMString(CONV_STRING(ctxt->version)).handle());
-    xmlSAX2StartDocument(closure);
 }
 
 void sax_end_doc(void *closure)
@@ -259,7 +258,6 @@ void sax_internal_subset(void *closure, const xmlChar *name, const xmlChar *publ
 {
     GET_BUILDER
     docBuilder->startDTD(CONV_STRING(name), CONV_STRING(publicId), CONV_STRING(systemId));
-    xmlSAX2InternalSubset(closure, name, publicId, systemId);
 }
 
 #ifdef __GNUC__
@@ -426,8 +424,6 @@ void sax_entity_decl(void *closure, const xmlChar *name, int type,  const xmlCha
     }
     else
         docBuilder->externalEntityDecl(CONV_STRING(name), CONV_STRING(publicId), CONV_STRING(systemId));
-
-    xmlSAX2EntityDecl(closure, name, type, publicId, systemId, content);
 }
 
 #ifndef APPLE_COMPILE_HACK

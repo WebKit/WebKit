@@ -30,8 +30,6 @@
 #include <kdom/Helper.h>
 #include <kdom/Shared.h>
 #include <kdom/Namespace.h>
-//#include <kdom/DocumentType.h>
-//#include <kdom/events/Event.h>
 #include <kdom/core/domattrs.h>
 #include <kdom/cache/KDOMLoader.h>
 #include <kdom/core/CDFInterface.h>
@@ -76,6 +74,7 @@
 #include "SVGTSpanElementImpl.h"
 #include "SVGImageElementImpl.h"
 #include "SVGTitleElementImpl.h"
+#include "SVGCursorElementImpl.h"
 #include "SVGFilterElementImpl.h"
 #include "SVGFEImageElementImpl.h"
 #include "SVGFEBlendElementImpl.h"
@@ -119,8 +118,10 @@ using namespace KSVG;
 SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *view) : KDOM::DocumentImpl(i, view, ID_LAST_SVGTAG + 1, ATTR_LAST_SVGATTR + 1), KDOM::CachedObjectClient()
 {
     setPaintDevice(svgView()); // Assign our KSVGView as document paint device
-
-    m_namespaceMap->names.insert(0, new KDOM::DOMStringImpl(KDOM::NS_SVG.unicode(), KDOM::NS_SVG.length()));
+    
+    KDOM::DOMStringImpl *svgNamespace = KDOM::NS_SVG.handle();
+    svgNamespace->ref();
+    m_namespaceMap->names.insert(0, svgNamespace);
     m_namespaceMap->count++;
 
     m_canvasView = 0;
@@ -183,10 +184,8 @@ KDOM::DOMStringImpl *SVGDocumentImpl::URL() const
 SVGElementImpl *SVGDocumentImpl::createSVGElement(KDOM::DOMStringImpl *prefix, KDOM::DOMStringImpl *localName)
 {
     SVGElementImpl *element = 0;
-    KDOM::DOMString pref(prefix);
-    if(!prefix || prefix->length() == 0)
-        pref = KDOM::DOMString();
-    QString local = KDOM::DOMString(localName).string();
+
+    QString local = (localName ? localName->string() : QString::null);
     KDOM::NodeImpl::Id id = implementation()->cdfInterface()->getTagID(local.ascii(), local.length());
     switch(id)
     {
@@ -430,10 +429,13 @@ SVGElementImpl *SVGDocumentImpl::createSVGElement(KDOM::DOMStringImpl *prefix, K
             element = new SVGTSpanElementImpl(docPtr(), id, prefix);
             break;
         }
-        default:
+        case ID_CURSOR:
         {
-            return 0;
+            element = new SVGCursorElementImpl(docPtr(), id, prefix);
+            break;
         }
+        default:
+            element = 0;
     };
 
     return element;
@@ -441,9 +443,15 @@ SVGElementImpl *SVGDocumentImpl::createSVGElement(KDOM::DOMStringImpl *prefix, K
 
 KDOM::ElementImpl *SVGDocumentImpl::createElement(KDOM::DOMStringImpl *tagName)
 {
+    if(tagName)
+        tagName->ref();
+
     SVGElementImpl *elem = createSVGElement(0, tagName);
     if(!elem)
         return KDOM::DocumentImpl::createElement(tagName);
+
+    if(tagName)
+        tagName->deref();
 
     return elem;
 }
@@ -455,6 +463,7 @@ KDOM::ElementImpl *SVGDocumentImpl::createElementNS(KDOM::DOMStringImpl *namespa
         namespaceURIImpl->ref();
     if(qualifiedName)
         qualifiedName->ref();
+
     KDOM::DOMStringImpl *prefix = 0, *localName = 0;
     KDOM::Helper::SplitPrefixLocalName(qualifiedName, prefix, localName);
 
@@ -499,10 +508,10 @@ SVGSVGElementImpl *SVGDocumentImpl::rootElement() const
 
 KDOM::EventImpl *SVGDocumentImpl::createEvent(KDOM::DOMStringImpl *eventTypeImpl)
 {
-    KDOM::DOMString eventType(eventTypeImpl);
-    if(eventType == "SVGEvents")
+    QString eventType = (eventTypeImpl ? eventTypeImpl->string() : QString::null);
+    if(eventType == QString::fromLatin1("SVGEvents"))
         return new SVGEventImpl();
-    else if(eventType == "SVGZoomEvents")
+    else if(eventType == QString::fromLatin1("SVGZoomEvents"))
         return new SVGZoomEventImpl();
 
     return DocumentEventImpl::createEvent(eventTypeImpl);
@@ -520,7 +529,7 @@ void SVGDocumentImpl::notifyFinished(KDOM::CachedObject *finishedObj)
         m_cachedScript->deref(this);
         m_cachedScript = 0;
         
-        SVGScriptElementImpl::executeScript(this, scriptSource.string());
+        SVGScriptElementImpl::executeScript(this, KDOM::DOMString(scriptSource.string()).handle());
         executeScripts(true);
     }
 }
@@ -611,7 +620,7 @@ bool SVGDocumentImpl::dispatchKeyEvent(KDOM::EventTargetImpl *target, QKeyEvent 
 
 KDOM::DOMStringImpl *SVGDocumentImpl::defaultNS() const
 {
-    return new KDOM::DOMStringImpl(KDOM::NS_SVG.string());
+    return KDOM::NS_SVG.handle();
 }
 
 void SVGDocumentImpl::recalcStyleSelector()
@@ -784,7 +793,7 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
         else
         {
             // no src attribute - execute from contents of tag
-            SVGScriptElementImpl::executeScript(this, KDOM::DOMString(script->textContent()));
+            SVGScriptElementImpl::executeScript(this, script->textContent());
             ++(*m_scriptsIt);
 
             needsStyleSelectorUpdate = true;
@@ -855,10 +864,10 @@ bool SVGDocumentImpl::prepareMouseEvent(bool, int x, int y, KDOM::MouseEventImpl
         if(m_lastTarget && m_lastTarget != current)
         {
             if(m_lastTarget->hasListenerType(KDOM::DOMFOCUSOUT_EVENT))
-                dispatchUIEvent(m_lastTarget, "DOMFocusOut");
+                dispatchUIEvent(m_lastTarget, KDOM::DOMString("DOMFocusOut").handle());
 
             if(m_lastTarget->hasListenerType(KDOM::MOUSEOUT_EVENT))
-                dispatchMouseEvent(m_lastTarget, "mouseout");
+                dispatchMouseEvent(m_lastTarget, KDOM::DOMString("mouseout").handle());
 
             m_lastTarget = 0;
         }
@@ -929,23 +938,23 @@ bool SVGDocumentImpl::prepareMouseEvent(bool, int x, int y, KDOM::MouseEventImpl
                     if(event->id() == KDOM::MOUSEUP_EVENT)
                     {
                         if(current->hasListenerType(KDOM::CLICK_EVENT))
-                            dispatchMouseEvent(current, "click");
+                            dispatchMouseEvent(current, KDOM::DOMString("click").handle());
 
                         if(current->hasListenerType(KDOM::DOMACTIVATE_EVENT))
-                            dispatchUIEvent(current, "DOMActivate");
+                            dispatchUIEvent(current, KDOM::DOMString("DOMActivate").handle());
 
                         if(current->hasListenerType(KDOM::DOMFOCUSIN_EVENT))
-                            dispatchUIEvent(current, "DOMFocusIn");    
+                            dispatchUIEvent(current, KDOM::DOMString("DOMFocusIn").handle());    
                     }
                     else if(event->id() == KDOM::MOUSEMOVE_EVENT)
                     {
                         if(m_lastTarget && m_lastTarget != current)
                         {
                             if(m_lastTarget->hasListenerType(KDOM::DOMFOCUSOUT_EVENT))
-                                dispatchUIEvent(m_lastTarget, "DOMFocusOut");
+                                dispatchUIEvent(m_lastTarget, KDOM::DOMString("DOMFocusOut").handle());
 
                             if(m_lastTarget->hasListenerType(KDOM::MOUSEOUT_EVENT))
-                                dispatchMouseEvent(m_lastTarget, "mouseout");
+                                dispatchMouseEvent(m_lastTarget, KDOM::DOMString("mouseout").handle());
 
                             m_lastTarget = 0;
                         }
@@ -953,7 +962,7 @@ bool SVGDocumentImpl::prepareMouseEvent(bool, int x, int y, KDOM::MouseEventImpl
                         if(current->hasListenerType(KDOM::MOUSEOVER_EVENT))
                         {
                             if(m_lastTarget != current)
-                                dispatchMouseEvent(current, "mouseover");
+                                dispatchMouseEvent(current, KDOM::DOMString("mouseover").handle());
                         }
                     }
 
@@ -983,28 +992,36 @@ TimeScheduler *SVGDocumentImpl::timeScheduler() const
     return m_timeScheduler;
 }
 
-void SVGDocumentImpl::dispatchUIEvent(KDOM::EventTargetImpl *target, const KDOM::DOMString &type)
+void SVGDocumentImpl::dispatchUIEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type)
 {
     // Setup kdom 'UIEvent'...
-    KDOM::UIEventImpl *event = static_cast<KDOM::UIEventImpl *>(createEvent(KDOM::DOMString("UIEvents").handle()));
+    KDOM::DOMStringImpl *eventType = new KDOM::DOMStringImpl("UIEvents");
+    eventType->ref();
+
+    KDOM::UIEventImpl *event = static_cast<KDOM::UIEventImpl *>(createEvent(eventType));
     event->ref();
 
-    event->initUIEvent(type.handle(), true, true, 0, 0);
+    event->initUIEvent(type, true, true, 0, 0);
     target->dispatchEvent(event);
 
     event->deref();
+    eventType->deref();
 }
 
-void SVGDocumentImpl::dispatchMouseEvent(KDOM::EventTargetImpl *target, const KDOM::DOMString &type)
+void SVGDocumentImpl::dispatchMouseEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type)
 {
     // Setup kdom 'MouseEvent'...
-    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(createEvent(KDOM::DOMString("MouseEvents").handle()));
+    KDOM::DOMStringImpl *eventType = new KDOM::DOMStringImpl("MouseEvents");
+    eventType->ref();
+
+    KDOM::MouseEventImpl *event = static_cast<KDOM::MouseEventImpl *>(createEvent(eventType));
     event->ref();
 
-    event->initEvent(type.handle(), true, true);
+    event->initEvent(type, true, true);
     target->dispatchEvent(event);
 
     event->deref();
+    eventType->deref();
 }
 
 // vim:ts=4:noet

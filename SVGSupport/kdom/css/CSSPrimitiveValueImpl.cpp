@@ -380,7 +380,8 @@ FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString 
     // remove [Xft] qualifiers
     parsedFontName.replace(braceReg, QString::null);
 
-#ifndef APPLE_COMPILE_HACK
+#if 0
+#ifndef APPLE_CHANGES
     const QString &available = KHTMLSettings::availableFamilies();
 
     parsedFontName = parsedFontName.lower();
@@ -410,6 +411,7 @@ FontFamilyValueImpl::FontFamilyValueImpl(CDFInterface *interface, const QString 
     else
         parsedFontName = QString::null;
 
-#endif // APPLE_COMPILE_HACK
+#endif // !APPLE_CHANGES
+#endif
 }
 // vim:ts=4:noet

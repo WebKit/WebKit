@@ -43,12 +43,9 @@ namespace KDOM
     template<class T>
     inline void KDOM_SAFE_SET(T *&a, T *b)
     {
-        if(a != b)
-        {
-            if(a) a->deref();
-            a = b;
-            if(a) a->ref();
-        }
+        if (b) b->ref();
+        if (a) a->deref();
+        a = b;
     }
 };
 

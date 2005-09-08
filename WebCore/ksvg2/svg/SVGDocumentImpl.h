@@ -101,8 +101,8 @@ namespace KSVG
         virtual KDOM::CSSStyleSelector *createStyleSelector(const QString &);
 
     private:
-        void dispatchUIEvent(KDOM::EventTargetImpl *target, const KDOM::DOMString &type);
-        void dispatchMouseEvent(KDOM::EventTargetImpl *target, const KDOM::DOMString &type);
+        void dispatchUIEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type);
+        void dispatchMouseEvent(KDOM::EventTargetImpl *target, KDOM::DOMStringImpl *type);
 
         SVGElementImpl *createSVGElement(KDOM::DOMStringImpl *prefix, KDOM::DOMStringImpl *localName);
 

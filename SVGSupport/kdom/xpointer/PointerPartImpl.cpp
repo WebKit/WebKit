@@ -22,11 +22,11 @@
 
 #include <kdebug.h>
 
-#include "NBCImpl.h"
-
 #include "DOMStringImpl.h"
-#include "PointerPartImpl.h"
+#include "NBCImpl.h"
 #include "XPointerResultImpl.h"
+
+#include "PointerPartImpl.h"
 
 using namespace KDOM;
 using namespace KDOM::XPointer;
@@ -34,7 +34,11 @@ using namespace KDOM::XPointer;
 PointerPartImpl::PointerPartImpl(DOMStringImpl *name, DOMStringImpl *schemeData, NBCImpl *nbc)
 : Shared(), m_data(schemeData), m_name(name), m_nbc(nbc)
 {
-    kdDebug(26550) << "Created PointerPart: name=\"" << name << "\" schemeData=\"" << schemeData << "\"." << endl;
+    Q_ASSERT(m_name);
+    Q_ASSERT(m_data);
+    kdDebug(26550) << "Created PointerPart: " << endl;
+    kdDebug(26550) << "     name = \"" << name->string() << "\"" << endl;
+    kdDebug(26550) << "     schemeData = \"" << (m_data ? schemeData->string() : QString()) << "\"" << endl;
 
     if(m_name)
         m_name->ref();

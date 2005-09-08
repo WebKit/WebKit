@@ -60,7 +60,7 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
         SVGColorImpl *temp = new SVGColorImpl();
         temp->ref();
             
-        temp->setRGBColor(targetAttribute().handle());
+        temp->setRGBColor(targetAttribute());
 
         m_initialColor = temp->color();
         

@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
-                  
+
     This file is part of the KDE project
 
     This library is free software; you can redistribute it and/or
@@ -20,29 +20,23 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include <kdom/core/DOMStringImpl.h>
+#include "LinkStyleImpl.h"
+#include "CSSStyleSheetImpl.h"
 
-#include "SVGEventImpl.h"
-#include "SVGDOMImplementationImpl.h"
+using namespace KDOM;
 
-using namespace KSVG;
-
-SVGEventImpl::SVGEventImpl() : KDOM::EventImpl((KDOM::EventImplType) TypeSVGEvent)
+LinkStyleImpl::LinkStyleImpl() : m_sheet(0)
 {
 }
 
-SVGEventImpl::~SVGEventImpl()
+LinkStyleImpl::~LinkStyleImpl()
 {
+    if(m_sheet)
+        m_sheet->deref();
 }
 
-void SVGEventImpl::initEvent(KDOM::DOMStringImpl *eventTypeArg, bool canBubbleArg, bool cancelableArg)
+StyleSheetImpl *LinkStyleImpl::sheet() const
 {
-    m_id = SVGDOMImplementationImpl::self()->typeToId(eventTypeArg);
-
-    m_bubbles = canBubbleArg;
-    m_cancelable = cancelableArg;
-
-    KDOM_SAFE_SET(m_type, eventTypeArg);
+    return m_sheet;
 }
-
 // vim:ts=4:noet

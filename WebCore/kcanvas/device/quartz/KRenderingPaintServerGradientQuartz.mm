@@ -106,7 +106,6 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
     float inValue = inValues[0];
     
     if (!stopsCount) {
-        NSLog(@"Warning, no gradient stops, assuming black!");
         outColor[0] = 0;
         outColor[1] = 0;
         outColor[2] = 0;
@@ -114,7 +113,6 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
         return;
     } else if (stopsCount == 1) {
         memcpy(outColor, stops[0].colorArray, 4 * sizeof(float));
-        //NSLog(@"singular stop, %f -> r: %f g: %f b: %f a: %f", inValue, outColor[0], outColor[1], outColor[2], outColor[3]);
         return;
     }
     
@@ -150,12 +148,8 @@ static void cgGradientCallback(void *info, const float *inValues, float *outColo
         vector float vResult = vec_madd(vPercent, vNextColor, vPrevResult);
         vec_st(vResult, 0, outColor);
 #endif
-        
     }
-    
-    //NSLog(@"%f -> r: %f g: %f b: %f a: %f", inValue, outColor[0], outColor[1], outColor[2], outColor[3]);
-    
-    // have to handle the spreadMethod()s here SPREADMETHOD_REPEAT, etc.
+    // FIXME: have to handle the spreadMethod()s here SPREADMETHOD_REPEAT, etc.
 }
 
 
@@ -208,11 +202,9 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
     return shading;
 }
 
-
 KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz() :
 m_stopsCache(0), m_stopsCount(0), m_shadingCache(0)
 {
-    
 }
 
 KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz()
@@ -227,6 +219,9 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     // cache our own copy of the stops for faster access.
     // this is legacy code, probably could be reworked.
     if (!m_stopsCache) updateQuartzGradientStopsCache(server->gradientStops());
+    
+    if (!m_stopsCount)
+        NSLog(@"Warning, no gradient stops, gradient (%p) will be all black!", this);
     
     if (server->type() == PS_RADIAL_GRADIENT)
     {
@@ -294,6 +289,9 @@ void KRenderingPaintServerRadialGradientQuartz::invalidate()
 
 void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
 {
+    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
+        listener()->resourceNotification();
+
     // FIXME: total const HACK!
     // We need a hook to call this when the gradient gets updated, before drawn.
     if (!m_shadingCache)
@@ -303,7 +301,10 @@ void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext *re
 }
 
 void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext *renderingContext, const KCanvasCommonArgs &args, KCPaintTargetType type) const
-{	
+{
+    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
+        listener()->resourceNotification();
+        
     // FIXME: total const HACK!
     // We need a hook to call this when the gradient gets updated, before drawn.
     if (!m_shadingCache)

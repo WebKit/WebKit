@@ -1388,6 +1388,12 @@
 		A8212D0508794A2300677359 /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
 		A82FBB6608C6241300EFEE23 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; };
 		A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939885C108B7E3D100E707C4 /* EventNames.cpp */; };
+		A82FC27508C9292E00EFEE23 /* DOMImplementationLSImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A82FC27308C9292E00EFEE23 /* DOMImplementationLSImpl.h */; };
+		A82FC27608C9292E00EFEE23 /* DOMImplementationLSImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82FC27408C9292E00EFEE23 /* DOMImplementationLSImpl.cpp */; };
+		A82FC2F208C9AAE400EFEE23 /* LinkStyleImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A82FC2F008C9AAE400EFEE23 /* LinkStyleImpl.h */; };
+		A82FC2F308C9AAE400EFEE23 /* LinkStyleImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82FC2F108C9AAE400EFEE23 /* LinkStyleImpl.cpp */; };
+		A82FC33D08CBB07C00EFEE23 /* SVGCursorElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */; };
+		A82FC33E08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */; };
 		A841EC7208C6636600DDA21C /* KCanvasPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4758C44308C5F217009BAF05 /* KCanvasPath.cpp */; };
 		A856E9AE08B45ABC0042E303 /* XPathResultWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = A81D592108ADDFF900136AC1 /* XPathResultWrapper.h */; };
 		A856E9AF08B45ABC0042E303 /* XPathResultWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81D592008ADDFF900136AC1 /* XPathResultWrapper.cpp */; };
@@ -2538,6 +2544,12 @@
 		A81D5A8108ADF70400136AC1 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
 		A81D5A8208ADF70400136AC1 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
 		A8212D0708794A2300677359 /* WebCore+SVG.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "WebCore+SVG.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A82FC27308C9292E00EFEE23 /* DOMImplementationLSImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMImplementationLSImpl.h; sourceTree = "<group>"; };
+		A82FC27408C9292E00EFEE23 /* DOMImplementationLSImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMImplementationLSImpl.cpp; sourceTree = "<group>"; };
+		A82FC2F008C9AAE400EFEE23 /* LinkStyleImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkStyleImpl.h; sourceTree = "<group>"; };
+		A82FC2F108C9AAE400EFEE23 /* LinkStyleImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinkStyleImpl.cpp; sourceTree = "<group>"; };
+		A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElementImpl.h; sourceTree = "<group>"; };
+		A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElementImpl.cpp; sourceTree = "<group>"; };
 		A838543108B0A00B000AF580 /* variablereference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variablereference.h; sourceTree = "<group>"; };
 		A838543208B0A00B000AF580 /* variablereference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = variablereference.cpp; sourceTree = "<group>"; };
 		A856E9F808B4608F0042E303 /* xpath.y */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.yacc; path = xpath.y; sourceTree = "<group>"; };
@@ -2589,10 +2601,6 @@
 		A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomEventImpl.cpp; sourceTree = "<group>"; };
 		A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomEventImpl.h; sourceTree = "<group>"; };
 		A8C0F7F7089701F300BA5114 /* ksvgevents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ksvgevents.h; sourceTree = "<group>"; };
-		A8C0F7F8089701F300BA5114 /* SVGEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGEvent.cpp; sourceTree = "<group>"; };
-		A8C0F7F9089701F300BA5114 /* SVGEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGEvent.h; sourceTree = "<group>"; };
-		A8C0F7FA089701F300BA5114 /* SVGZoomEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomEvent.cpp; sourceTree = "<group>"; };
-		A8C0F7FB089701F300BA5114 /* SVGZoomEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomEvent.h; sourceTree = "<group>"; };
 		A8C0F7FD089701F300BA5114 /* CDFInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDFInterface.cpp; sourceTree = "<group>"; };
 		A8C0F7FE089701F300BA5114 /* CDFInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDFInterface.h; sourceTree = "<group>"; };
 		A8C0F7FF089701F300BA5114 /* SVGAElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAElementImpl.cpp; sourceTree = "<group>"; };
@@ -4281,10 +4289,6 @@
 				A8C0F7F4089701F300BA5114 /* SVGEventImpl.h */,
 				A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */,
 				A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */,
-				A8C0F7F8089701F300BA5114 /* SVGEvent.cpp */,
-				A8C0F7F9089701F300BA5114 /* SVGEvent.h */,
-				A8C0F7FA089701F300BA5114 /* SVGZoomEvent.cpp */,
-				A8C0F7FB089701F300BA5114 /* SVGZoomEvent.h */,
 			);
 			path = events;
 			sourceTree = "<group>";
@@ -4346,6 +4350,8 @@
 				A8C0F830089701F300BA5114 /* SVGColorImpl.h */,
 				A8C0F831089701F300BA5114 /* SVGComponentTransferFunctionElementImpl.cpp */,
 				A8C0F832089701F300BA5114 /* SVGComponentTransferFunctionElementImpl.h */,
+				A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */,
+				A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */,
 				A8C0F833089701F300BA5114 /* SVGDefsElementImpl.cpp */,
 				A8C0F834089701F300BA5114 /* SVGDefsElementImpl.h */,
 				A8C0F835089701F300BA5114 /* SVGDescElementImpl.cpp */,
@@ -4665,6 +4671,8 @@
 				A8C0F972089701F500BA5114 /* KDOMCSSParser.cpp */,
 				A8C0F973089701F500BA5114 /* KDOMCSSParser.h */,
 				A8C0F974089701F500BA5114 /* kdomparsercss.y */,
+				A82FC2F008C9AAE400EFEE23 /* LinkStyleImpl.h */,
+				A82FC2F108C9AAE400EFEE23 /* LinkStyleImpl.cpp */,
 				A8C0F975089701F500BA5114 /* MediaListImpl.cpp */,
 				A8C0F976089701F500BA5114 /* MediaListImpl.h */,
 				A8C0F977089701F500BA5114 /* RectImpl.cpp */,
@@ -4808,6 +4816,8 @@
 		A8C0FA41089701F600BA5114 /* ls */ = {
 			isa = PBXGroup;
 			children = (
+				A82FC27308C9292E00EFEE23 /* DOMImplementationLSImpl.h */,
+				A82FC27408C9292E00EFEE23 /* DOMImplementationLSImpl.cpp */,
 				A8C0FA55089701F600BA5114 /* kdomls.h */,
 				A8C0FA45089701F600BA5114 /* LSExceptionImpl.cpp */,
 				A8C0FA46089701F600BA5114 /* LSExceptionImpl.h */,
@@ -6896,6 +6906,9 @@
 				A856E9D708B45B1E0042E303 /* functions.h in Headers */,
 				A856E9D908B45B1E0042E303 /* expression.h in Headers */,
 				A82FBB6608C6241300EFEE23 /* EventNames.h in Headers */,
+				A82FC27508C9292E00EFEE23 /* DOMImplementationLSImpl.h in Headers */,
+				A82FC2F208C9AAE400EFEE23 /* LinkStyleImpl.h in Headers */,
+				A82FC33D08CBB07C00EFEE23 /* SVGCursorElementImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8903,6 +8916,9 @@
 				A856E9F908B4608F0042E303 /* xpath.y in Sources */,
 				A82FBB6708C6241E00EFEE23 /* EventNames.cpp in Sources */,
 				A841EC7208C6636600DDA21C /* KCanvasPath.cpp in Sources */,
+				A82FC27608C9292E00EFEE23 /* DOMImplementationLSImpl.cpp in Sources */,
+				A82FC2F308C9AAE400EFEE23 /* LinkStyleImpl.cpp in Sources */,
+				A82FC33E08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

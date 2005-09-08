@@ -227,7 +227,7 @@ DOMStringImpl *ShadowValueImpl::cssText() const
     DOMString text("");
     if(color)
         text += DOMString(color->cssText());
-    
+
     if(x)
     {
         if(text.length() > 0)
@@ -235,7 +235,7 @@ DOMStringImpl *ShadowValueImpl::cssText() const
         
         text += DOMString(x->cssText());
     }
-    
+
     if(y)
     {
         if(text.length() > 0)
@@ -243,12 +243,12 @@ DOMStringImpl *ShadowValueImpl::cssText() const
         
         text += DOMString(y->cssText());
     }
-    
+
     if(blur)
     {
         if(text.length() > 0)
             text += " ";
-        
+
         text += DOMString(blur->cssText());
     }
 

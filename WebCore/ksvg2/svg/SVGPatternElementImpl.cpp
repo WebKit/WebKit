@@ -25,6 +25,8 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasMatrix.h>
 #include <kcanvas/KCanvasRegistry.h>
+#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingPaintServerPattern.h>
@@ -75,6 +77,8 @@ SVGPatternElementImpl::~SVGPatternElementImpl()
         m_patternContentUnits->deref();
     if(m_patternTransform)
         m_patternTransform->deref();
+    if (m_canvasItem)
+        delete m_canvasItem;
 }
 
 SVGAnimatedEnumerationImpl *SVGPatternElementImpl::patternUnits() const
@@ -149,7 +153,7 @@ void SVGPatternElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
         case ATTR_PATTERNTRANSFORM:
         {
             SVGTransformListImpl *patternTransforms = patternTransform()->baseVal();
-            SVGTransformableImpl::parseTransformAttribute(patternTransforms, value);
+            SVGTransformableImpl::parseTransformAttribute(patternTransforms, attr->value());
             break;
         }
         case ATTR_X:
@@ -395,6 +399,7 @@ KCanvasItem *SVGPatternElementImpl::createCanvasItem(KCanvas *canvas, KRendering
     pserver->setListener(const_cast<SVGPatternElementImpl *>(this));
 
     canvas->registry()->addPaintServerById(KDOM::DOMString(getId()).string(), pserver);
+
     return 0;
 }
 

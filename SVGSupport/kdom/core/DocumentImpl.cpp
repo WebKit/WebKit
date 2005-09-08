@@ -371,7 +371,7 @@ int DocumentImpl::addListenerType(DOMStringImpl *type)
 int DocumentImpl::removeListenerType(DOMStringImpl *type)
 {
     int eventId = implementation()->typeToId(type);
-    addListenerType(eventId);
+    removeListenerType(eventId);
     return eventId;
 }
 
@@ -854,9 +854,11 @@ void DocumentImpl::setPrintStyleSheet(const QString &sheet)
     m_printSheet = sheet;
 }
 
-NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespaceURI, DOMStringImpl *prefix, DOMStringImpl *name, bool readonly) const
+NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespaceURI, DOMStringImpl *prefix, DOMStringImpl *nameImpl, bool readonly) const
 {
-    if(!name || !name->length())
+    DOMString nameDOMString(nameImpl);
+    
+    if(!nameImpl || !nameImpl->length())
         return 0;
 
     IdNameMapping *map;
@@ -874,8 +876,8 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
         }
         case NodeImpl::NamespaceId:
         {
-            // ### Id == 0 can't be used with ((void *) int) based Q3Dicts...
-            if(!strcasecmp(DOMString(name), DOMString(defaultNS())))
+            // ### Id == 0 can't be used with ((void *) int) based QDicts...
+            if(!strcasecmp(nameDOMString, DOMString(defaultNS())))
                 return 0;
     
             map = m_namespaceMap;
@@ -890,11 +892,11 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 
     NodeImpl::Id id, nsid = 0;
     
-    QConstString n(name->unicode(), name->length());
-    
+    QConstString n(nameDOMString.unicode(), nameDOMString.length());
+
     if(type != NodeImpl::NamespaceId)
     {
-        if(name)
+        if(nameImpl)
             nsid = getId(NamespaceId, 0, 0, namespaceURI, false) << 16;
 
         if(!nsid)
@@ -903,22 +905,22 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
             {
                 case NodeImpl::ElementId:
                 {
-                    if((id = interface->getTagID(n.qstring().ascii(), name->length())))
+                    if((id = interface->getTagID(n.qstring().ascii(), nameDOMString.length())))
                         return id;
 
                     // compatibility: upper case - case insensitive
-                    if((id = interface->getTagID(n.qstring().lower().ascii(), name->length())))
+                    if((id = interface->getTagID(n.qstring().lower().ascii(), nameDOMString.length())))
                         return id;
                 
                     break;
                 }
                 default:
                 {
-                    if((id = interface->getAttrID(n.qstring().ascii(), name->length())))
+                    if((id = interface->getAttrID(n.qstring().ascii(), nameDOMString.length())))
                         return id;
 
                     // compatibility: upper case - case insensitive
-                    if((id = interface->getAttrID(n.qstring().lower().ascii(), name->length())))
+                    if((id = interface->getAttrID(n.qstring().lower().ascii(), nameDOMString.length())))
                         return id;
                 }
             }
@@ -927,7 +929,7 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
 
     // Look in the names array for the name
     // compatibility mode has to lookup upper case
-    if(!name)
+    if(!nameImpl)
     {
         id = (NodeImpl::Id) map->ids.find(n.qstring());
         if(!id && type != NodeImpl::NamespaceId)
@@ -953,13 +955,13 @@ NodeImpl::Id DocumentImpl::getId(NodeImpl::IdType type, DOMStringImpl *namespace
     if(readonly)
         return 0;
 
-    if(type != NodeImpl::NamespaceId && !Helper::ValidateQualifiedName(name))
+    if(type != NodeImpl::NamespaceId && !Helper::ValidateQualifiedName(nameImpl))
         throw new DOMExceptionImpl(INVALID_CHARACTER_ERR);
     
     // Name not found, so let's add it
     NodeImpl::Id cid = map->count++ + map->idStart;
-    map->names.insert(cid, name);
-    name->ref();
+    map->names.insert(cid, nameImpl);
+    nameImpl->ref();
     map->ids.insert(n.qstring(), (NodeImpl::Id *)cid);
 
     // and register an alias if needed for DOM1 methods compatibility

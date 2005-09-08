@@ -26,7 +26,7 @@
 
 namespace KDOM
 {
-    class DOMString;
+    class DOMStringImpl;
     class LSInputImpl;
 
     class LSResourceResolverImpl : public Shared
@@ -35,9 +35,9 @@ namespace KDOM
         LSResourceResolverImpl();
         virtual ~LSResourceResolverImpl();
 
-        LSInputImpl *resolveResource(const DOMString &type, const DOMString &ns,
-                                     const DOMString &publicId, const DOMString &systemId,
-                                     const DOMString &baseURI);
+        LSInputImpl *resolveResource(DOMStringImpl *type, DOMStringImpl *ns,
+                                     DOMStringImpl *publicId, DOMStringImpl *systemId,
+                                     DOMStringImpl *baseURI);
 
     };
 };

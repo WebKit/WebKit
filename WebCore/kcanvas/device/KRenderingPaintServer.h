@@ -24,6 +24,7 @@
 #define KRenderingPaintServer_H
 
 #include <kcanvas/KCanvasTypes.h>
+#include <kcanvas/KCanvasResources.h>
 
 // Enumerations
 typedef enum
@@ -46,10 +47,10 @@ typedef enum
 class QTextStream;
 class KCanvasItem;
 class KRenderingDeviceContext;
-class KRenderingPaintServer
+class KRenderingPaintServer : public KCanvasResource
 {
 public:
-    KRenderingPaintServer() { m_activeClient = 0; }
+    KRenderingPaintServer() : KCanvasResource() { m_activeClient = 0; }
     virtual ~KRenderingPaintServer() { }
 
     const KCanvasItem *activeClient() const { return m_activeClient;}

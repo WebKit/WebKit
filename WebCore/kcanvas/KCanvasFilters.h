@@ -207,7 +207,7 @@ class KCanvasFEColorMatrix : public KCanvasFilterEffect
 public:
     KCColorMatrixType type() const { return m_type; }
     void setType(KCColorMatrixType type) { m_type = type; }
-    
+
     Q3ValueList<float> values() const { return m_values; }
     void setValues(const Q3ValueList<float> &values) { m_values = values; };
 

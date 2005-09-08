@@ -79,7 +79,6 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(DOMStringImpl *str
     if(firstParan == -1) /* We have an invalid SchemeName or a ShortHand pointer. Assume the latter. */
     {
         XPointerExpressionImpl *xpr = new XPointerExpressionImpl(stringImpl, relatedNode, THIS);
-        xpr->ref();
 
         ShortHandImpl *sh = new ShortHandImpl(DOMString(stripped).handle());
         sh->ref();
@@ -94,12 +93,12 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(DOMStringImpl *str
     int paranDepth = 0; /* This may be negative if the paranteses are balanced improperly. */
 
     DOMString schemeName;
-
     DOMString schemeData;
-    unsigned int endPrevScheme = 0; /* The index of where the previous scheme ended. That's after it's
-                                       closing parantese. */
-    unsigned int startData = 0; /* The index of where the scheme data starts. That's right after the parantese
-                                   after the scheme name. */
+    unsigned int endPrevScheme = 0; /* The index of where the previous scheme 
+                                       ended. That's after it's closing parantese. */
+    unsigned int startData = 0; /* The index of where the scheme data starts.
+                                   That's right after the parantese after 
+                                   the scheme name. */
 
     typedef QPair<DOMString, DOMString> StrPair;
     
@@ -210,8 +209,10 @@ XPointerExpressionImpl *XPointerEvaluatorImpl::createXPointer(DOMStringImpl *str
             if(prefix && !prefix->isEmpty() && DOMString(currentNBC->lookupNamespaceURI(prefix)).isEmpty())
                 continue; 
 
-            kdDebug() << "Encountered unknown scheme: \"" << DOMString(schemeName).string() << "\"." << endl;
-            PointerPartImpl *p = new PointerPartImpl(schemeName.handle(), schemeData.handle(), currentNBC);
+            kdDebug(26550) << "Encountered unknown scheme: \"" 
+                    << DOMString(schemeName).string() << "\"." << endl;
+            PointerPartImpl *p = new PointerPartImpl(schemeName.handle(),
+                                                     schemeData.handle(), currentNBC);
             p->ref();
             xpr->appendPart(p);
 

@@ -24,6 +24,7 @@
 #define KDOM_XPointer_XPointerResultImpl_H
 
 #include <kdom/Shared.h>
+#include <kdom/xpointer/kdomxpointer.h>
 
 namespace KDOM
 {
@@ -32,22 +33,6 @@ class NodeImpl;
 
 namespace XPointer
 {
-    /**
-     * An integer indicating what type of result this is.
-     */
-    enum ResultType
-    {
-        /**
-         * The pointer matched no nodes.
-         */
-        NO_MATCH = 1,
-
-        /**
-         * The pointer identifed a single node.
-         */
-        SINGLE_NODE = 2
-    };
-
     class XPointerResultImpl : public Shared
     {
     public:

@@ -57,11 +57,8 @@ bool SVGElementImpl::isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringIm
 
 KDOM::DOMStringImpl *SVGElementImpl::getId() const
 {
-    KDOM::DOMString name("id");
-    if(hasAttribute(name.handle()))
-        return getAttribute(name.handle());
-
-    return NULL;
+    KDOM::DOMString id("id");
+    return tryGetAttribute(id.handle());
 }
 
 void SVGElementImpl::setGetId(KDOM::DOMStringImpl *)
@@ -71,11 +68,7 @@ void SVGElementImpl::setGetId(KDOM::DOMStringImpl *)
 
 KDOM::DOMStringImpl *SVGElementImpl::xmlbase() const
 {
-    KDOM::DOMString name("xml:base");
-    if(hasAttribute(name.handle()))
-        return getAttribute(name.handle());
-
-    return NULL;
+    return tryGetAttribute(KDOM::DOMString("xml:base").handle());
 }
 
 void SVGElementImpl::setXmlbase(KDOM::DOMStringImpl *)
@@ -112,14 +105,29 @@ SVGElementImpl *SVGElementImpl::viewportElement() const
     return 0;
 }
 
+KDOM::DOMStringImpl *SVGElementImpl::tryGetAttribute(KDOM::DOMStringImpl *name, KDOM::DOMStringImpl *defaultVal) const
+{
+    if(hasAttribute(name))
+        return getAttribute(name);
+
+    return defaultVal->copy();
+}
+
+KDOM::DOMStringImpl *SVGElementImpl::tryGetAttributeNS(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *localName, KDOM::DOMStringImpl *defaultVal) const
+{
+    if(hasAttributeNS(namespaceURI, localName))
+        return getAttributeNS(namespaceURI, localName);
+
+    return defaultVal->copy();
+}
+
 void SVGElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
 {
-    if(!ownerDocument())
+    const KDOM::DocumentImpl *doc = ownerDocument();
+    if(!doc)
         return;
-    //const KDOM::DocumentImpl *doc = ownerDocument();
 
     int id = (attr->id() & NodeImpl_IdLocalMask);
-    KDOM::DOMString value(attr->value());
     switch(id)
     {
         case ATTR_ONLOAD:
@@ -173,16 +181,16 @@ void SVGElementImpl::parseAttribute(KDOM::AttributeImpl *attr)
     };
 }
 #if 0
-void SVGElementImpl::addSVGEventListener(KDOM::Ecma *ecmaEngine, const KDOM::DOMString &type, const KDOM::DOMString &value)
+void SVGElementImpl::addSVGEventListener(KDOM::Ecma *ecmaEngine, KDOM::DOMStringImpl *type, KDOM::DOMStringImpl *value)
 {
     if(!ecmaEngine)
         return;
-    // FIXME
-    KDOM::EventListenerImpl *listener = 0;//ecmaEngine->createEventListener(type, value);
+
+    KDOM::EventListenerImpl *listener = ecmaEngine->createEventListener(type, value);
     if(listener)
     {
         listener->ref();
-        addEventListener(type.handle(), listener, false);
+        addEventListener(type, listener, false);
     }
 }
 #endif

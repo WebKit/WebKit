@@ -67,7 +67,7 @@ public:
 public:
     // due to c functions
     QuartzGradientStop *m_stopsCache;
-    int                    m_stopsCount;
+    int                 m_stopsCount;
 
 protected:
     void invalidateCaches();

@@ -30,10 +30,11 @@
 
 #include <q3dict.h>
 #include <q3ptrlist.h>
-#include <qpixmap.h>
 
 #include "KDOMCachedObject.h"
 #include "KDOMLoader.h"
+
+class QPixmap;
 
 namespace KDOM
 {

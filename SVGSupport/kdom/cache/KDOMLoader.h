@@ -33,8 +33,8 @@
 #include <q3ptrdict.h>
 #include <qstringlist.h>
 
-#include <kio/job.h>
 #include <kio/global.h>
+#include <kio/job.h>
 
 #include <kdom/KDOMSettings.h>
 #include <kdom/cache/KDOMCachedObject.h>

@@ -36,10 +36,10 @@ namespace KDOM
         virtual ~RectImpl();
 
         // 'Rect' functions
-        CSSPrimitiveValueImpl *top() const;
-        CSSPrimitiveValueImpl *right() const;
-        CSSPrimitiveValueImpl *bottom() const;
-        CSSPrimitiveValueImpl *left() const;
+        CSSPrimitiveValueImpl *top() const { return m_top; }
+        CSSPrimitiveValueImpl *right() const { return m_right; }
+        CSSPrimitiveValueImpl *bottom() const { return m_bottom; }
+        CSSPrimitiveValueImpl *left() const { return m_left; }
 
         void setTop(CSSPrimitiveValueImpl *top);
         void setRight(CSSPrimitiveValueImpl *right);

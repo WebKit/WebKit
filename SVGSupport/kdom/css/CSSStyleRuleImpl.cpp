@@ -63,7 +63,7 @@ void CSSStyleRuleImpl::setSelectorText(DOMStringImpl *)
     // FIXME!
 }
 
-bool CSSStyleRuleImpl::parseString(const DOMString &, bool)
+bool CSSStyleRuleImpl::parseString(DOMStringImpl *, bool)
 {
     // FIXME!
     return false;

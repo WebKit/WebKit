@@ -192,6 +192,7 @@ namespace KDOM
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(short, inherited, orphans, Orphans, orphans, 2)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(EPageBreak, inherited, pageBreakInside, PageBreakInside, pageBreakInside, PB_AUTO)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CachedImage *, inherited, styleImage, ListStyleImage, listStyleImage, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueImpl *, inherited, cursorImage, CursorImage, cursorImage, 0)
 
         // Special cases
         void setHasAutoZIndex() { RS_SET_VARIABLE(box, zAuto, true ); }
