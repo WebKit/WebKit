@@ -1,3 +1,15 @@
+2005-09-08  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Don Melton.
+ 
+	- fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4891 (HTMLIFrameElement11.js checks for 
+	wrong title, causes false failure) and enabled HTMLIFrameElement11.html
+
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement11.js: check for correct title of resources/frame.html
+
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement11.html: Added.
+        * layout-tests/dom/html/level2/html/HTMLIFrameElement11.html-disabled: Removed.
+
 2005-09-08  Geoffrey Garen  <ggaren@apple.com>
 
         -fixed gcc 4.0 build bustage due to inconsitent return type

@@ -100,7 +100,7 @@ function HTMLIFrameElement11() {
 
       vtitle = cd.title;
 
-      assertEquals("titleLink","NIST DOM HTML Test - FRAME",vtitle);
+      assertEquals("titleLink","NIST DOM HTML Test - FRAMESET",vtitle);
        
 }
 
