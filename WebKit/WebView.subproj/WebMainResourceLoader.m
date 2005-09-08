@@ -320,17 +320,21 @@
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
     
-    // FIXME: Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not 
-    // load multipart/x-mixed-replace content.  Pages with such content contain what is 
-    // essentially an infinite load and therefore a memory leak. Both this code and code in
-    // SubresourceLoader must be removed once multipart/x-mixed-replace is fully implemented. 
+    if (loadingMultipartContent) {
+        [[self dataSource] _setupForReplaceByMIMEType:[r MIMEType]];
+        [self clearResourceData];
+    }
+    
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        [dataSource _removeSubresourceLoader:self];
-        [[[dataSource _webView] mainFrame] _checkLoadComplete];
-        [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                         code:NSURLErrorUnsupportedURL
-                                                          URL:[r URL]]];
-        return;
+        if (!supportsMultipartContent) {
+            [dataSource _removeSubresourceLoader:self];
+            [[[dataSource _webView] mainFrame] _checkLoadComplete];
+            [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                             code:NSURLErrorUnsupportedURL
+                                                              URL:[r URL]]];
+            return;
+        }
+        loadingMultipartContent = YES;
     }
         
     // FIXME: This is a workaround to make web archive files work with Foundations that

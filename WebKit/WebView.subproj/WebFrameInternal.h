@@ -48,6 +48,7 @@
                                                         response:(NSURLResponse *)response 
                                                             data:(NSData *)data
                                                            error:(NSError *)error;
+- (void)_setupForReplace;
 @end
 
 @interface NSObject (WebInternalFrameLoadDelegate)

@@ -217,4 +217,7 @@
 - (BOOL)_isDocumentHTML;
 - (NSString *)_title;
 
+- (void)_setupForReplaceByMIMEType:(NSString *)mimeType;
+- (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType;
+- (void)_commitLoadWithData:(NSData *)data;
 @end

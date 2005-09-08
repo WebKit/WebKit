@@ -377,6 +377,11 @@ static BOOL NSURLConnectionSupportsBufferedData;
     return nil;
 }
 
+- (void)clearResourceData
+{
+    [resourceData setLength:0];
+}
+
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     ASSERT(!reachedTerminalState);
@@ -730,6 +735,11 @@ static BOOL NSURLConnectionSupportsBufferedData;
 + (BOOL)inConnectionCallback
 {
     return inNSURLConnectionCallback != 0;
+}
+
+- (void)setSupportsMultipartContent:(BOOL)flag
+{
+    supportsMultipartContent = flag;
 }
 
 @end

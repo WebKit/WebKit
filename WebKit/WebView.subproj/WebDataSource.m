@@ -37,7 +37,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
@@ -397,6 +397,7 @@
             identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
             
         _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
+        [_private->mainResourceLoader setSupportsMultipartContent:WKSupportsMultipartXMixedReplace(_private->request)];
         [_private->mainResourceLoader setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
@@ -665,6 +666,7 @@
             [WebHTMLRepresentation class], @"application/rss+xml",
             [WebHTMLRepresentation class], @"application/atom+xml",
             [WebHTMLRepresentation class], @"application/x-webarchive",
+            [WebHTMLRepresentation class], @"multipart/x-mixed-replace",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
             nil];
@@ -720,7 +722,8 @@
         NSDictionary *headers = [_private->response isKindOfClass:[NSHTTPURLResponse class]]
             ? [(NSHTTPURLResponse *)_private->response allHeaderFields] : nil;
 
-        [frame _closeOldDataSources];
+        if (loadType != WebFrameLoadTypeReplace)
+            [frame _closeOldDataSources];
 
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
@@ -730,12 +733,7 @@
         [frame _transitionToCommitted: pageCache];
 
         NSURL *baseURL = [[self request] _webDataRequestBaseURL];        
-        NSURL *URL = nil;
-        
-        if (baseURL)
-            URL = baseURL;
-        else
-            URL = [_private->response URL];
+        NSURL *URL = baseURL ? baseURL : [_private->response URL];
             
         // WebCore will crash if given an empty URL here.
         // FIXME: could use CFURL, when available, range API to save an allocation here
@@ -775,15 +773,9 @@
 -(void)_receivedData:(NSData *)data
 {    
     _private->gotFirstByte = YES;
-    [self _commitIfReady];
-
-    // parsing some of the page can result in running a script which
-    // could possibly destroy the frame and data source. So retain
-    // self temporarily.
-    [self retain];
-    [[self representation] receivedData:data withDataSource:self];
-    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
-    [self release];
+    
+    if ([self _doesProgressiveLoadWithMIMEType:[[self response] MIMEType]])
+        [self _commitLoadWithData:data];
 }
 
 - (void)_finishedLoading
@@ -1020,6 +1012,59 @@
 {
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
+}
+
+- (BOOL)_doesProgressiveLoadWithMIMEType:(NSString *)MIMEType
+{
+    return [[self webFrame] _loadType] != WebFrameLoadTypeReplace || [MIMEType isEqualToString:@"text/html"];
+}
+
+- (void)_commitLoadWithData:(NSData *)data
+{
+    [self _commitIfReady];
+    // Parsing the page may result in running a script which could destroy the datasource, so retain temporarily
+    [self retain];
+    [[self representation] receivedData:data withDataSource:self];
+    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
+    [self release];
+}
+
+- (void)_revertToProvisionalState
+{
+    [self _setRepresentation:nil];
+    [[self webFrame] _setupForReplace];
+    _private->committed = NO;
+}
+
+- (void)_setupForReplaceByMIMEType:(NSString *)newMIMEType
+{
+    if (!_private->gotFirstByte)
+        return;
+    
+    WebFrame *frame = [self webFrame];
+    NSString *oldMIMEType = [[self response] MIMEType];
+    
+    if (![self _doesProgressiveLoadWithMIMEType:oldMIMEType]) {
+        [self _revertToProvisionalState];
+        [self _commitLoadWithData:[self data]];
+        [frame _transitionToLayoutAcceptable];
+    }
+    
+    [[self representation] finishedLoadingWithDataSource:self];
+    [[self _bridge] end];
+
+    [frame _setLoadType:WebFrameLoadTypeReplace];
+    _private->gotFirstByte = NO;
+
+    if ([self _doesProgressiveLoadWithMIMEType:newMIMEType])
+        [self _revertToProvisionalState];
+
+    [_private->subresourceLoaders makeObjectsPerformSelector:@selector(cancel)];
+    [_private->subresourceLoaders removeAllObjects];
+    [_private->plugInStreamLoaders makeObjectsPerformSelector:@selector(cancel)];
+    [_private->plugInStreamLoaders removeAllObjects];
+    [_private->subresources removeAllObjects];
+    [_private->pendingSubframeArchives removeAllObjects];
 }
 
 @end

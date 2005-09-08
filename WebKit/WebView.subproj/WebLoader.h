@@ -48,6 +48,8 @@
     NSURLConnection *connection;
     NSURLRequest *request;
     BOOL reachedTerminalState;
+    BOOL loadingMultipartContent;
+    BOOL supportsMultipartContent;
 @private
     WebView *webView;
     NSURLResponse *response;
@@ -68,6 +70,7 @@
     BOOL isInitializingConnection;
 #endif
 }
+- (void)setSupportsMultipartContent:(BOOL)flag;
 
 - (BOOL)loadWithRequest:(NSURLRequest *)request;
 
@@ -92,6 +95,7 @@
 
 - (void)addData:(NSData *)data;
 - (NSData *)resourceData;
+- (void)clearResourceData;
 
 // Connection-less callbacks allow us to send callbacks using data attained from a WebResource instead of an NSURLConnection.
 - (NSURLRequest *)willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse;

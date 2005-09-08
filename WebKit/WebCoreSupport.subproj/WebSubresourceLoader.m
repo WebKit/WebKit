@@ -40,6 +40,7 @@
 #import <Foundation/NSURLResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
+#import <WebKitSystemInterface.h>
 
 @implementation WebSubresourceLoader
 
@@ -68,6 +69,7 @@
 {
     WebSubresourceLoader *loader = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
+    [loader setSupportsMultipartContent:WKSupportsMultipartXMixedReplace(newRequest)];
     [source _addSubresourceLoader:loader];
 
     NSEnumerator *e = [customHeaders keyEnumerator];
@@ -148,26 +150,36 @@
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
-    
-    // FIXME: Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not 
-    // load multipart/x-mixed-replace content.  Pages with such content contain what is 
-    // essentially an infinite load and therefore a memory leak. Both this code and code in 
-    // WebMainRecoureClient must be removed once multipart/x-mixed-replace is fully implemented. 
+
     if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
-        [dataSource _removeSubresourceLoader:self];
-        [[[dataSource _webView] mainFrame] _checkLoadComplete];
-        [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                         code:NSURLErrorUnsupportedURL
-                                                          URL:[r URL]]];
-        return;
-    }    
-    
+        if (!supportsMultipartContent) {
+            [dataSource _removeSubresourceLoader:self];
+            [[[dataSource _webView] mainFrame] _checkLoadComplete];
+            [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                             code:NSURLErrorUnsupportedURL
+                                                              URL:[r URL]]];
+            return;
+        }   
+        loadingMultipartContent = YES;
+    }
+
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [coreLoader receivedResponse:r];
+    // The coreLoader can cancel a load if it receives a multipart response for a non-image
+    if (reachedTerminalState) {
+        [self release];
+        return;
+    }
     [super didReceiveResponse:r];
     [self release];
+    
+    if (loadingMultipartContent && [[self resourceData] length]) {
+        // A subresource loader does not load multipart sections progressively, deliver the previously received data to the coreLoader all at once
+        [coreLoader addData:[self resourceData]];
+        [self clearResourceData];
+    }
 }
 
 - (void)didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
@@ -175,7 +187,9 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
-    [coreLoader addData:data];
+    // A subresource loader does not load multipart sections progressively, don't deliver any data to the coreLoader yet
+    if (!loadingMultipartContent)
+        [coreLoader addData:data];
     [super didReceiveData:data lengthReceived:lengthReceived];
     [self release];
 }

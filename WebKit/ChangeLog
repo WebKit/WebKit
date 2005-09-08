@@ -1,3 +1,52 @@
+2005-09-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        WebKit portion of multipart/x-mixed-replace support
+
+        * WebCoreSupport.subproj/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]):
+        Subresource case: Check for Foundation level multipart support
+        (-[WebSubresourceLoader didReceiveResponse:]): 
+        Send previously received data in a multipart section to the coreLoader
+        (-[WebSubresourceLoader didReceiveData:lengthReceived:]): 
+        Don't send data to the coreLoader until it has been completely received
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _startLoading:]): 
+        Main resource case: check for Foundation level multipart support 
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        Some server apps send data right after declaring content multipart/x-mixed-replace, and expect it to be treated as html
+        (-[WebDataSource _commitIfReady:]):
+        Don't ask the WebFrame to close its old WebDataSource when loading a multipart section, because we're going to reuse it
+        (-[WebDataSource _receivedData:]):
+        For non text/html multipart sections, we commit the data all at once, at the end
+        (-[WebDataSource _doesProgressiveLoadWithMIMEType:]):
+        Added heuristic for when to commit the load incrementally
+        (-[WebDataSource _commitLoadWithData:]):
+        Moved from _receivedData into its own function
+        (-[WebDataSource _revertToProvisionalState]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        Commits the data received for the previous multipart section if it wasn't loaded progresively, clears out the WebFrame and WebDatasource for the next multipart section
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]): 
+        The very first multipart section is treated as a normal load, so that the back/forward list and history are updated.
+        All later sections have a new load type, WebFrameLoadTypeReplace, and are treated like reloads
+        (-[WebFrame _checkLoadCompleteForThisFrame]): Ditto
+        (-[WebFrame _itemForRestoringDocState]): Ditto
+        (-[WebFrame _setupForReplace]):
+        Clears out the WebFrame for the next multipart section
+        * WebView.subproj/WebFrameInternal.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]): See above
+        * WebView.subproj/WebLoader.h:
+        * WebView.subproj/WebLoader.m:
+        (-[NSURLProtocol clearResourceData]):
+        (-[NSURLProtocol setSupportsMultipartContent:]):
+        * WebView.subproj/WebMainResourceLoader.m: Straightforward
+        (-[WebMainResourceLoader didReceiveResponse:]):
+
 2005-09-06  Geoffrey Garen  <ggaren@apple.com>
 
         - fixed build bustage from last checkin.
