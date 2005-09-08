@@ -97,6 +97,11 @@ using KIO::TransferJob;
     job = 0;
 }
 
+- (void)jobCanceledLoad
+{
+    [_handle cancel];
+}
+
 - (void)cancel
 {
     if (_job) {

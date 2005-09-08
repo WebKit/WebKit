@@ -72,6 +72,7 @@ public:
     void kill();
 
     void setLoader(KWQResourceLoader *);
+    void cancel();
     
     KURL url() const;
 

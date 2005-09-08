@@ -317,6 +317,15 @@ NSString *KWQResponseMIMEType(NSURLResponse *response)
     return NULL;
 }
 
+bool KWQResponseIsMultipart(NSURLResponse *response)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[response MIMEType] isEqualToString:@"multipart/x-mixed-replace"];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return false;
+}
+
 time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response)
 {
     KWQ_BLOCK_EXCEPTIONS;

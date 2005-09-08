@@ -207,6 +207,11 @@ void TransferJob::setLoader(KWQResourceLoader *loader)
     d->loader = loader;
 }
 
+void TransferJob::cancel()
+{
+    [d->loader jobCanceledLoad];
+}
+
 KURL TransferJob::url() const
 {
     return d->URL;

@@ -1236,6 +1236,7 @@ Request::Request(DocLoader* dl, CachedObject *_object, bool _incremental)
     object->setRequest(this);
     incremental = _incremental;
     m_docLoader = dl;
+    multipart = false;
 }
 
 Request::~Request()
@@ -1660,6 +1661,16 @@ void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
     ASSERT(response);
     r->object->setResponse(response);
     r->object->setExpireDate(KWQCacheObjectExpiresTime(r->m_docLoader, response), false);
+    
+    if (r->multipart) {
+        ASSERT(r->object->isImage());
+        static_cast<CachedImage *>(r->object)->clear();
+        r->m_buffer = QBuffer();
+    } else if (KWQResponseIsMultipart(response)) {
+        r->multipart = true;
+        if (!r->object->isImage())
+            static_cast<KIO::TransferJob*>(job)->cancel();
+    }
 }
 
 #endif
@@ -1685,7 +1696,9 @@ void Loader::slotData( KIO::Job*job, const QByteArray &data )
     r->m_buffer.writeBlock( data.data(), data.size() );
 #endif
 
-    if(r->incremental)
+    if (r->multipart)
+        r->object->data( r->m_buffer, true ); // the loader delivers the data in a multipart section all at once, send eof
+    else if(r->incremental)
         r->object->data( r->m_buffer, false );
 }
 

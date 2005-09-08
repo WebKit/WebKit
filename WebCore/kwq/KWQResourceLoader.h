@@ -42,5 +42,6 @@ namespace KIO {
 - (id)initWithJob:(KIO::TransferJob *)job;
 - (void)setHandle:(id <WebCoreResourceHandle>)handle;
 - (void)jobWillBeDeallocated;
+- (void)jobCanceledLoad;
 
 @end

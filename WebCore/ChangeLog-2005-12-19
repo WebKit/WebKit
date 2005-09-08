@@ -1,3 +1,29 @@
+2005-09-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+
+        WebCore portion of multipart/x-mixed-replace support
+
+        * khtml/misc/loader.cpp:
+        (Request::Request):
+        (Loader::slotReceivedResponse):
+        Only allow a multipart load for images, clear out the old multipart section to prepare for a replace
+        (Loader::slotData):
+        Multipart sections are delivered to the coreLoader by WebKit all at once, send eof to CachedImage::data
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::isImage): Added
+        (khtml::CachedImage::isImage):
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::cancel): 
+        Added a way to cancel a subresource loader from WebCore
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQResponseIsMultipart):
+        * kwq/KWQResourceLoader.h:
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader jobCanceledLoad]):
+
 2005-09-08  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Don Melton.

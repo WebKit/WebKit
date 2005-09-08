@@ -170,6 +170,8 @@ namespace khtml
 	int size() const { return m_size; }
 
         bool isLoaded() const { return !m_loading; }
+        
+        virtual bool isImage() const { return false; }
 
     int accessCount() const { return m_accessCount; }
     void increaseAccessCount() { m_accessCount++; }
@@ -359,8 +361,9 @@ namespace khtml
         virtual bool schedule() const { return true; }
 
 	void checkNotify();
+        
+        virtual bool isImage() const { return true; }
 
-    protected:
 	void clear();
 
     private slots:
@@ -524,6 +527,7 @@ protected:
 	QBuffer m_buffer;
 	CachedObject *object;
         DocLoader* m_docLoader;
+        bool multipart;
      };
 
     /**
