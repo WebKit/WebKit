@@ -1,3 +1,12 @@
+2005-09-08  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John Sullivan.
+ 
+	- fixed <rdar://problem/4168089> CRASH: Using A9 Maps new interface (also occurs on google maps)
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::getAttributeNS): add a check for the document, before checking to see if this is an HTML document
+
 2005-09-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

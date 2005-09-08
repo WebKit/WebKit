@@ -358,7 +358,7 @@ const AtomicString& ElementImpl::getAttributeNS(const DOMString &namespaceURI,
                                                 const DOMString &localName) const
 {
     DOMString ln(localName);
-    if (getDocument()->isHTMLDocument())
+    if (getDocument() && getDocument()->isHTMLDocument())
         ln = localName.lower();
     QualifiedName name(nullAtom, ln.impl(), namespaceURI.impl());
     return getAttribute(name);
