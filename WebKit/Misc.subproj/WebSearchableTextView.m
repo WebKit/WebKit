@@ -146,9 +146,15 @@
             range = [self rangeOfString:string options:options range:searchRange];
         }
         
-        if ((range.length == 0) && wrap) {	/* If not found look at the first part of the string */
+        // If not found, search again from the beginning. Make search range large enough that
+        // we'll find a match even if it partially overlapped the existing selection (including the
+        // case where it exactly matches the existing selection).
+        if ((range.length == 0) && wrap) {	
             searchRange.location = 0;
-            searchRange.length = selectedRange.location;
+            searchRange.length = selectedRange.location + selectedRange.length + [string length];
+            if (searchRange.length > length) {
+                searchRange.length = length;
+            }
             range = [self rangeOfString:string options:options range:searchRange];
         }
     } else {
@@ -163,8 +169,16 @@
             range = [self rangeOfString:string options:options range:searchRange];
         }
         
+        // If not found, search again from the end. Make search range large enough that
+        // we'll find a match even if it partially overlapped the existing selection (including the
+        // case where it exactly matches the existing selection).
         if ((range.length == 0) && wrap) {
-            searchRange.location = NSMaxRange(selectedRange);
+            unsigned stringLength = [string length];
+            if (selectedRange.location > stringLength) {
+                searchRange.location = selectedRange.location - stringLength;
+            } else {
+                searchRange.location = 0;
+            }
             searchRange.length = length - searchRange.location;
             range = [self rangeOfString:string options:options range:searchRange];
         }

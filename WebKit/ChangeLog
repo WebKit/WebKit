@@ -1,3 +1,15 @@
+2005-09-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4070:
+        Find in plain text won't find only occurrence if it overlaps selection
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[NSString findString:selectedRange:options:wrap:]):
+        in the wrap case, extend the search range far enough that text overlapping the
+        selection (including the exact-match case) will be considered.
+
 2005-09-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

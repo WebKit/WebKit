@@ -645,10 +645,9 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     if (resultRange->collapsed(exception) && wrapFlag) {
         searchRange = rangeOfContents(xmlDocImpl());
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
-        // If we got back to the same place we started, that doesn't count as success.
-        if (*resultRange == *selection().toRange()) {
-            return false;
-        }
+        // We used to return false here if we ended up with the same range that we started with
+        // (e.g., the selection was already the only instance of this text). But we decided that
+        // this should be a success case instead, so we'll just fall through in that case.
     }
 
     if (resultRange->collapsed(exception)) {

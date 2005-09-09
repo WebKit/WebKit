@@ -1,3 +1,16 @@
+2005-09-09  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        Test cases added: none, doesn't affect layout
+        
+        - fixed <rdar://problem/4250792> Find in HTML doesn't reveal match if only match was already selected
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        If we end up finding the previously-selected text, just go through the normal success code path
+        instead of bailing out early.
+
 2005-09-08  Vicki Murley  <vicki@apple.com>
 
         Reviewed by John Sullivan.
