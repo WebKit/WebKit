@@ -134,6 +134,19 @@
     _private->current++;
 }
 
+- (void)removeItem:(WebHistoryItem *)item
+{
+    if (!item)
+        return;
+    
+    unsigned itemIndex = [_private->entries indexOfObjectIdenticalTo:item];
+    ASSERT(itemIndex != (unsigned)_private->current);
+    
+    if (itemIndex != NSNotFound && itemIndex != (unsigned)_private->current) {
+        [_private->entries removeObjectAtIndex:itemIndex];
+    }
+}
+
 - (BOOL)containsItem:(WebHistoryItem *)entry
 {
     return [_private->entries indexOfObjectIdenticalTo:entry] != NSNotFound;

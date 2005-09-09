@@ -1,3 +1,16 @@
+2005-09-09  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by John Sullivan.
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList removeItem:]):
+	SPI to remove a given WebHistoryItem.
+
+        * History.subproj/WebBackForwardListPrivate.h: Added.
+
+        * WebKit.xcodeproj/project.pbxproj:
+	Added WebBackForwardListPrivate.h as a private header.
+
 2005-09-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
