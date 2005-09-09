@@ -146,7 +146,7 @@ ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueI
 }
 
 
-ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, Identifier label)
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, const Identifier &label)
 {
     UString message = msg;
     substitute(message, label.ustring());
@@ -162,22 +162,22 @@ ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueI
     return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
 }
 
-ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr, Identifier label)
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr, const Identifier &label)
 {
     UString message = msg;
     substitute(message, v->toString(exec));
     substitute(message, expr->toString());
+    substitute(message, label.ustring());
     return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
 }
 
-ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Identifier label)
+ValueImp *Node::throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, const Identifier &label)
 {
     UString message = msg;
     substitute(message, v->toString(exec));
     substitute(message, label.ustring());
     return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
 }
-
 
 void Node::setExceptionDetailsIfNeeded(ExecState *exec)
 {

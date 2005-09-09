@@ -1,5 +1,17 @@
 2005-09-08  Darin Adler  <darin@apple.com>
 
+        - fixed overloaded versions of throwError so that they substitute *all* 
+          expected parameters into the message string -- some versions used to
+          skip parameters, resulting in "%s" being printed in the error message.
+        
+        Reviewed by Geoff.
+
+        * kjs/nodes.h: Updated declarations to use "const &" and not to name parameters
+        * kjs/nodes.cpp: (Node::throwError): Updated to match above and add one missing
+        call to substitute.
+
+2005-09-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - updated to PCRE 6.1

@@ -98,11 +98,11 @@ namespace KJS {
 
   protected:
     ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg);
-    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr);
-    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, Identifier label);
-    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Identifier ident);
-    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *e1, Node *e2);
-    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *v, Node *expr, Identifier ident);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *, Node *);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, const Identifier &);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *, const Identifier &);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *, Node *, Node *);
+    ValueImp *throwError(ExecState *exec, ErrorType e, const char *msg, ValueImp *, Node *, const Identifier &);
 
     void setExceptionDetailsIfNeeded(ExecState *exec);
     int line;
