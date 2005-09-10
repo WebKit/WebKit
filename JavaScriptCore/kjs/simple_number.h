@@ -26,6 +26,13 @@
 #include <math.h>
 #include <string.h>
 
+// Workaround for a bug in GCC library headers.
+// We'd prefer to just use math.h.
+#if !WIN32
+#include <cmath>
+using std::signbit;
+#endif
+
 namespace KJS {
 
     class ValueImp;

@@ -1,5 +1,12 @@
 2005-09-10  Darin Adler  <darin@apple.com>
 
+        - fixed compilation for WebCore
+
+        * kjs/simple_number.h: Have to include <cmath> here to work around a bug in the GCC
+        standard C++ library headers.
+
+2005-09-10  Darin Adler  <darin@apple.com>
+
         Windows changes by Krzysztof Kowalczyk <kkowalczyk@gmail.com>.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4870
