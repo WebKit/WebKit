@@ -1,0 +1,27 @@
+<script>
+
+function a()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    setTimeout("b()", 0);
+    document.write("a"); 
+}
+
+function b()
+{
+    setTimeout("c()", 0);
+    document.write("b"); 
+}
+
+function c()
+{
+    document.write("If you can see this, then the browser survived; older versions of WebKit would have crashed due to infinite recursion."); 
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+<body onload="a()">

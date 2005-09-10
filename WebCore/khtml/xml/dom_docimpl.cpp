@@ -1322,97 +1322,75 @@ void DocumentImpl::implicitClose()
         return;
     }
 
-    // First fire the onload.
-    
     bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
     bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent && !wasLocationChangePending;
     
-    if (doload) {
-        m_processingLoadEvent = true;
+    if (!doload)
+        return;
 
-        // We have to clear the tokenizer, in case someone document.write()s from the
-        // onLoad event handler, as in Radar 3206524
-        delete m_tokenizer;
-        m_tokenizer = 0;
+    m_processingLoadEvent = true;
 
-        // Create a body element if we don't already have one.
-        // In the case of Radar 3758785, the window.onload was set in some javascript, but never fired because there was no body.  
-        // This behavior now matches Firefox and IE.
-        HTMLElementImpl *body = this->body();
-        if (!body && isHTMLDocument()) {
-            NodeImpl *de = documentElement();
-            if (de) {
-                body = new HTMLBodyElementImpl(docPtr());
-                int exceptionCode = 0;
-                de->appendChild(body, exceptionCode);
-                if (exceptionCode != 0)
-                    body = 0;
-            }
+    // We have to clear the tokenizer, in case someone document.write()s from the
+    // onLoad event handler, as in Radar 3206524.
+    delete m_tokenizer;
+    m_tokenizer = 0;
+
+    // Create a body element if we don't already have one.
+    // In the case of Radar 3758785, the window.onload was set in some javascript, but never fired because there was no body.  
+    // This behavior now matches Firefox and IE.
+    HTMLElementImpl *body = this->body();
+    if (!body && isHTMLDocument()) {
+        NodeImpl *de = documentElement();
+        if (de) {
+            body = new HTMLBodyElementImpl(docPtr());
+            int exceptionCode = 0;
+            de->appendChild(body, exceptionCode);
+            if (exceptionCode != 0)
+                body = 0;
         }
-
-        if (body) {
-            dispatchImageLoadEventsNow();
-            body->dispatchWindowEvent(loadEvent, false, false);
-#if APPLE_CHANGES
-            if (KHTMLPart *p = part())
-                KWQ(p)->handledOnloadEvents();
-#endif
-
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-            if (!ownerElement())
-                printf("onload fired at %d\n", elapsedTime());
-#endif
-        }
-
-        m_processingLoadEvent = false;
     }
-    
+
+    if (body) {
+        dispatchImageLoadEventsNow();
+        body->dispatchWindowEvent(loadEvent, false, false);
+        if (KHTMLPart *p = part())
+            KWQ(p)->handledOnloadEvents();
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (!ownerElement())
+            printf("onload fired at %d\n", elapsedTime());
+#endif
+    }
+
+    m_processingLoadEvent = false;
+
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
-    
-    bool isLocationChangePending = part() && part()->isScheduledLocationChangePending();
-    
-    if (doload && isLocationChangePending && m_startTime.elapsed() < cLayoutScheduleThreshold) {
-	// Just bail out. Before or during the onload we were shifted to another page.
-	// The old i-Bench suite does this. When this happens don't bother painting or laying out.        
-	delete m_tokenizer;
-	m_tokenizer = 0;
-	view()->unscheduleRelayout();
-	return;
-    }
-    
-    if (doload) {
-        // on an explicit document.close(), the tokenizer might still be waiting on scripts,
-        // and in that case we don't want to destroy it because that will prevent the
-        // scripts from getting processed.
-        // FIXME: this check may no longer be necessary, since now it should be impossible
-        // for parsing to be false while stil waiting for scripts
-        if (m_tokenizer && !m_tokenizer->isWaitingForScripts()) {
-            delete m_tokenizer;
-            m_tokenizer = 0;
-        }
 
-        if (m_view)
-            m_view->part()->checkEmitLoadEvent();
+    if (part() && part()->isScheduledLocationChangePending() && m_startTime.elapsed() < cLayoutScheduleThreshold) {
+        // Just bail out. Before or during the onload we were shifted to another page.
+        // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
+        view()->unscheduleRelayout();
+        return;
     }
+
+    if (part())
+        part()->checkEmitLoadEvent();
 
     // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
     // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 
     // layout/painting now would be pointless.
-    if (doload) {
-        if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
-            updateRendering();
-            
-            // Always do a layout after loading if needed.
-            if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
-                view()->layout();
-        }
-#if APPLE_CHANGES
-        if (renderer() && KWQAccObjectCache::accessibilityEnabled())
-            getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
-#endif
+    if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
+        updateRendering();
+        
+        // Always do a layout after loading if needed.
+        if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
+            view()->layout();
     }
+#if APPLE_CHANGES
+    if (renderer() && KWQAccObjectCache::accessibilityEnabled())
+        getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
+#endif
 }
 
 void DocumentImpl::setParsing(bool b)
@@ -1469,7 +1447,8 @@ void DocumentImpl::write( const QString &text )
     
     if (!m_tokenizer) {
         open();
-        write(QString::fromLatin1("<html>"));
+        assert(m_tokenizer);
+        write(QString("<html>"));
     }
     m_tokenizer->write(text, false);
 
