@@ -74,6 +74,7 @@ namespace DOM { namespace HTMLNames {
     macro(html) \
     macro(i) \
     macro(iframe) \
+    macro(image) \
     macro(img) \
     macro(input) \
     macro(ins) \

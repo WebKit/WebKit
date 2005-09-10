@@ -387,6 +387,7 @@ HTMLElementImpl* HTMLElementFactory::createHTMLElement(const AtomicString& tagNa
         gFunctionMap->insert(delTag.localName().impl(), (void*)&modConstructor);
         gFunctionMap->insert(insTag.localName().impl(), (void*)&modConstructor);
         gFunctionMap->insert(aTag.localName().impl(), (void*)&anchorConstructor);
+        gFunctionMap->insert(imageTag.localName().impl(), (void*)&imageConstructor);
         gFunctionMap->insert(imgTag.localName().impl(), (void*)&imageConstructor);
         gFunctionMap->insert(mapTag.localName().impl(), (void*)&mapConstructor);
         gFunctionMap->insert(areaTag.localName().impl(), (void*)&areaConstructor);

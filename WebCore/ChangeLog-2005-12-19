@@ -1,3 +1,19 @@
+2005-09-09  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Dave Hyatt.
+ 
+	- fix <rdar://problem/4234256> REGRESSION: image tag broken in TOT
+
+        Test cases added:
+        * layout-tests/fast/replaced/image-tag-expected.checksum: Added.
+        * layout-tests/fast/replaced/image-tag-expected.png: Added.
+        * layout-tests/fast/replaced/image-tag-expected.txt: Added.
+        * layout-tests/fast/replaced/image-tag.html: Added.
+
+	* khtml/html/htmlnames.h:
+        * khtml/html/htmlfactory.cpp:
+        (DOM::HTMLElementFactory::createHTMLElement): 
+
 2005-09-09  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
