@@ -1,5 +1,11 @@
 2005-09-10  Darin Adler  <darin@apple.com>
 
+        - fixed compilation for WebCore (another try)
+
+        * kjs/simple_number.h: Added more "using" lines.
+
+2005-09-10  Darin Adler  <darin@apple.com>
+
         - fixed compilation for WebCore
 
         * kjs/simple_number.h: Have to include <cmath> here to work around a bug in the GCC
