@@ -1,5 +1,12 @@
 2005-09-10  Darin Adler  <darin@apple.com>
 
+        - remove test case I just added -- it's not working
+
+        * layout-tests/fast/dom/document-write-infinite-recursion-expected.txt: Removed.
+        * layout-tests/fast/dom/document-write-infinite-recursion.html: Removed.
+
+2005-09-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4806
