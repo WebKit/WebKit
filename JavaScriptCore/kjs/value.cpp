@@ -45,7 +45,7 @@ AllocatedValueImp *ConstantValues::jsTrue = NULL;
 AllocatedValueImp *ConstantValues::jsFalse = NULL;
 AllocatedValueImp *ConstantValues::NaN = NULL;
 
-static const double D16 = 65536;
+static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
 
 void *AllocatedValueImp::operator new(size_t size)

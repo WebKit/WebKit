@@ -1,3 +1,26 @@
+2005-09-10  Darin Adler  <darin@apple.com>
+
+        Windows changes by Krzysztof Kowalczyk <kkowalczyk@gmail.com>.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4870
+          win portability: fix IS_NEGATIVE_ZERO macro in simple_number.h
+
+        * kjs/simple_number.h:
+        (KJS::isNegativeZero): Added. Inline function. Has a case for Windows that
+        uses _fpclass and a case for other platforms that uses signbit.
+        (KJS::SimpleNumber::fits): Use inline isNegativeZero instead of macro IS_NEGATIVE_ZERO.
+
+        * kjs/internal.cpp: Remove definition of now-unneeded negZero global.
+
+        * kjs/value.cpp: Touched the file because Xcode didn't know it needed to
+        recompile it.
+
+        - improved test engine
+
+        * tests/mozilla/jsDriver.pl: Sort tests in numeric order instead of using
+        a plain-ASCII sort; now test 33 will be after test 5 in any given set of
+        numbered tests.
+
 2005-09-08  Darin Adler  <darin@apple.com>
 
         - fixed overloaded versions of throwError so that they substitute *all* 

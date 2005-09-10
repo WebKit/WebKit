@@ -264,8 +264,6 @@ bool NumberImp::getUInt32(uint32_t& uint32) const
   return (double)uint32 == val;
 }
 
-double SimpleNumber::negZero = -0.0;
-
 // ------------------------------ LabelStack -----------------------------------
 
 bool LabelStack::push(const Identifier &id)
