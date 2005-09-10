@@ -166,19 +166,17 @@
 {
     if (aContext == 0)
         aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    
-    NSCompositingOperation op = (NSCompositingOperation)operator;
-        
+
     if (isSizeAdjusted) {
         [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
                 fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
                 adjustedSize:CGSizeMake(adjustedSize.width, adjustedSize.height)
-                compositeOperation:op context:aContext];
+                compositeOperation:operator context:aContext];
     }
     else {
         [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
                 fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
-                compositeOperation:op context:aContext];
+                compositeOperation:operator context:aContext];
     }
 
     targetAnimationRect = ir;
