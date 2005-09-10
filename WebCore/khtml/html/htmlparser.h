@@ -29,8 +29,6 @@
 #ifndef HTMLPARSER_H
 #define HTMLPARSER_H
 
-#include "dom/dom_string.h"
-#include "xml/dom_nodeimpl.h"
 #include "html/html_documentimpl.h"
 
 class KHTMLView;
@@ -49,7 +47,7 @@ namespace DOM {
 
 namespace khtml {
     class Token;
-};
+}
 
 /**
  * The parser for html. It receives a stream of tokens from the HTMLTokenizer, and
@@ -114,6 +112,7 @@ protected:
     bool noscriptCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
     bool noframesCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
     bool nolayerCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    bool mapCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
 
     void processCloseTag(khtml::Token *);
 

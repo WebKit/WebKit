@@ -318,8 +318,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             return false;
     } else if (n->isHTMLElement()) {
         HTMLElementImpl* h = static_cast<HTMLElementImpl*>(n);
-        if (h->hasLocalName(trTag) || h->hasLocalName(thTag) ||
-            h->hasLocalName(tdTag)) {
+        if (h->hasLocalName(trTag) || h->hasLocalName(thTag) || h->hasLocalName(tdTag)) {
             if (inStrayTableContent && !isTableRelated(current)) {
                 // pop out to the nearest enclosing table-related tag.
                 while (blockStack && !isTableRelated(current))
@@ -416,10 +415,9 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 if (!n->attached() && HTMLWidget)
                     n->attach();
                 handled = true;
+                return true;
             }
-            else
-                return false;
-            return true;
+            return false;
         } else if (h->hasLocalName(captionTag)) {
             if (isTablePart(current)) {
                 NodeImpl* tsection = current;
@@ -468,13 +466,13 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                     TextImpl *t = static_cast<TextImpl *>(n);
                     if (t->containsOnlyWhitespace())
                         return false;
-				}
-				if (!haveFrameSet) {
-					e = new HTMLBodyElementImpl(document);
-					startBody();
-					insertNode(e);
-					handled = true;
-				}
+                }
+                if (!haveFrameSet) {
+                    e = new HTMLBodyElementImpl(document);
+                    startBody();
+                    insertNode(e);
+                    handled = true;
+                }
             }
         } else if (h->hasLocalName(headTag)) {
             if (n->hasTagName(htmlTag))
@@ -553,8 +551,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                     }
                 }
             }
-        }
-        else if (h->hasLocalName(objectTag)) {
+        } else if (h->hasLocalName(objectTag)) {
             setSkipMode(objectTag);
             return false;
         } else if (h->hasLocalName(ulTag) || h->hasLocalName(olTag) ||
@@ -577,8 +574,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             if (localName == optgroupTag) {
                 popBlock(currentTagName);
                 handled = true;
-            }
-            else if (localName == selectTag) {
+            } else if (localName == selectTag) {
                 // IE treats a nested select as </select>. Let's do the same
                 popBlock(localName);
             }
@@ -599,8 +595,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 handled = true;
             }
         }
-    }
-    else if (current->isDocumentNode()) {
+    } else if (current->isDocumentNode()) {
         if (current->firstChild() == 0) {
             e = new HTMLHtmlElementImpl(document);
             insertNode(e);
@@ -676,7 +671,11 @@ bool HTMLParser::formCreateErrorCheck(Token* t, NodeImpl*& result)
 {
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
-    return !form;
+    if (!form) {
+        form = new HTMLFormElementImpl(document);
+        result = form;
+    }
+    return false;
 }
 
 bool HTMLParser::isindexCreateErrorCheck(Token* t, NodeImpl*& result)
@@ -759,6 +758,13 @@ bool HTMLParser::noscriptCreateErrorCheck(Token* t, NodeImpl*& result)
     return true;
 }
 
+bool HTMLParser::mapCreateErrorCheck(Token* t, NodeImpl*& result)
+{
+    map = new HTMLMapElementImpl(document);
+    result = map;
+    return false;
+}
+
 NodeImpl *HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
@@ -796,19 +802,15 @@ NodeImpl *HTMLParser::getNode(Token* t)
         gFunctionMap.insert(noembedTag.localName().impl(), &HTMLParser::noembedCreateErrorCheck);
         gFunctionMap.insert(noframesTag.localName().impl(), &HTMLParser::noframesCreateErrorCheck);
         gFunctionMap.insert(noscriptTag.localName().impl(), &HTMLParser::noscriptCreateErrorCheck);
+        gFunctionMap.insert(mapTag.localName().impl(), &HTMLParser::mapCreateErrorCheck);
     }
 
     bool proceed = true;
-    NodeImpl* result = 0;
-    CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl());
-    if (errorCheckFunc)
+    NodeImpl *result = 0;
+    if (CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl()))
         proceed = (this->*(errorCheckFunc))(t, result);
-
-    if (proceed) {
+    if (proceed)
         result = HTMLElementFactory::createHTMLElement(t->tagName, doc(), form);
-        if (t->tagName == formTag)
-            form = static_cast<HTMLFormElementImpl*>(result);
-    }
     return result;
 }
 

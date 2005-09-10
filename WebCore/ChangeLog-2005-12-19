@@ -2,6 +2,28 @@
 
         Reviewed by Maciej.
 
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4806
+          REGRESSION <area> elements misnested inside <div> elements not working
+
+        Test cases added:
+        * layout-tests/fast/parser/area-in-div.html: Added.
+        * layout-tests/fast/parser/area-in-div-expected.txt: Added.
+
+        * khtml/html/htmlparser.h: Declared mapCreateErrorCheck.
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleError): Fix formatting and indentation.
+        (HTMLParser::formCreateErrorCheck): Added code to create the form too, so we can
+        squirrel the form pointer away. Return false to prevent the factory from creating it.
+        (HTMLParser::mapCreateErrorCheck): Added. Same kind of thing here, but without the logic
+        that prevents creating a form if there's already a form open.
+        (HTMLParser::getNode): Added the code to put the map function into the table. Also
+        removed the form special-case code here that accomplishes what is now done inside the
+        formCreateErrorCheck above instead.
+
+2005-09-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4367
           Crash when executing setTimeout / Date / document.write Javascript (bugtraq)
 
