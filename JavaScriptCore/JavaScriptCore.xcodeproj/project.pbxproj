@@ -196,7 +196,6 @@
 		93E26BFE08B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
 		93E26BFF08B151D400F85226 /* ucp.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFB08B151D400F85226 /* ucp.h */; };
 		93E26C0008B151D400F85226 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
-		93E26C0F08B1520900F85226 /* ucptable.c in Sources */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 		93E26C1308B1523D00F85226 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 		93E26CCF08B2921900F85226 /* softlinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26CCE08B2921900F85226 /* softlinking.h */; };
 		93E26CD008B2921900F85226 /* softlinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26CCE08B2921900F85226 /* softlinking.h */; };
@@ -340,6 +339,7 @@
 		A85D8284087B2822006A9172 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
 		A85D8285087B2822006A9172 /* libobjc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EC0705C86C9A00E6DF1B /* libobjc.dylib */; };
 		A85D8286087B2822006A9172 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9322A00306C341D3009067BB /* libicucore.dylib */; };
+		A8BC0DFC08D43D6D00379918 /* ucptable.c in Headers */ = {isa = PBXBuildFile; fileRef = 93E26C0D08B1520900F85226 /* ucptable.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -363,7 +363,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "bison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+			script = "rm \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.*\"\nbison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
 		};
 /* End PBXBuildRule section */
 
@@ -1052,6 +1052,7 @@
 				93E26C0008B151D400F85226 /* ucpinternal.h in Headers */,
 				93E26CD008B2921900F85226 /* softlinking.h in Headers */,
 				65EF2DF808BECC8A000894BB /* shared_ptr.h in Headers */,
+				A8BC0DFC08D43D6D00379918 /* ucptable.c in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1444,7 +1445,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$BUILT_PRODUCTS_DIR/dftables\" > \"$DERIVED_FILE_DIR/chartables.c\"";
+			shellScript = "\"$BUILT_PRODUCTS_DIR/dftables\" \"$DERIVED_FILE_DIR/chartables.c\"";
 		};
 		A85D81F2087B2822006A9172 /* date_object.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1703,7 +1704,6 @@
 				93E26BCF08B1512600F85226 /* pcre_ucp_findchar.c in Sources */,
 				93E26BD208B1513800F85226 /* pcre_try_flipped.c in Sources */,
 				93E26BD508B1514100F85226 /* pcre_xclass.c in Sources */,
-				93E26C0F08B1520900F85226 /* ucptable.c in Sources */,
 				93E26CF808B29A1C00F85226 /* pcre_get.c in Sources */,
 				93E26DDD08B2A4F400F85226 /* pcre_printint.c in Sources */,
 			);
