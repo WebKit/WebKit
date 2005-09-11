@@ -584,8 +584,8 @@ sub numericcmp($$)
     # Compare one chunk at a time.
     # Each chunk is either all numeric digits, or all not numeric digits.
     while (@a && @b) {
-	my $a = shift @a;
-	my $b = shift @b;
+        my $a = shift @a;
+        my $b = shift @b;
         
         # Use numeric comparison if chunks are non-equal numbers.
         return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;

@@ -1,5 +1,9 @@
 2005-09-11  Darin Adler  <darin@apple.com>
 
+        * Scripts/run-webkit-tests: Oops. Use spaces, not tabs.
+
+2005-09-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         * Scripts/run-webkit-tests: Sort tests with a new "pathcmp" function that's better in
