@@ -1,3 +1,12 @@
+2005-09-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * Scripts/run-webkit-tests: Sort tests with a new "pathcmp" function that's better in
+        two ways: 1) puts all files in a directory before any files in a subdirectory, and
+        2) sort file names with numeric digits in them in a logical way, so test-33 will come
+        before test-3.
+
 2005-09-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

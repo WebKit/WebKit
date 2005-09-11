@@ -126,13 +126,13 @@ for my $test (@ARGV) {
             push @tests, $test;
         }
     } elsif (-d "$testDirectory/$test") {
-        push @tests, map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
+        push @tests, sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
     } else {
         print "test $test not found\n";
     }
 }
 if (!$foundTestName) {
-    @tests = map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory $findArguments`;
+    @tests = sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory $findArguments`;
 }
 
 die "no tests to run\n" if !@tests;
@@ -547,4 +547,53 @@ sub printLeaks
         print LEAKS $leaksOutput;
         close LEAKS;
     }
+}
+
+# Break up a path into the directory (with slash) and base name.
+sub splitpath($)
+{
+    my ($path) = @_;
+
+    return ($1, $2) if $path =~ m|^(.*/)([^/]+)$|;
+    return ("", $path);
+}
+
+# Sort first by directory, then by file, so all paths in one directory are grouped
+# rather than being interspersed with items from subdirectories.
+# Use numericcmp to sort directory and filenames to make order logical.
+sub pathcmp($$)
+{
+    my ($patha, $pathb) = @_;
+
+    my ($dira, $namea) = splitpath($patha);
+    my ($dirb, $nameb) = splitpath($pathb);
+
+    return numericcmp($dira, $dirb) if $dira ne $dirb;
+    return numericcmp($namea, $nameb);
+}
+
+# Sort numeric parts of strings as numbers, other parts as strings.
+# Makes 1.33 come before 1.3, which is cool.
+sub numericcmp($$)
+{
+    my ($aa, $bb) = @_;
+
+    my @a = split /(\d+)/, $aa;
+    my @b = split /(\d+)/, $bb;
+
+    # Compare one chunk at a time.
+    # Each chunk is either all numeric digits, or all not numeric digits.
+    while (@a && @b) {
+	my $a = shift @a;
+	my $b = shift @b;
+        
+        # Use numeric comparison if chunks are non-equal numbers.
+        return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
+
+        # Use string comparison if chunks are any other kind of non-equal string.
+        return $a cmp $b if $a ne $b;
+    }
+    
+    # One of the two is now empty; compare lengths for result in this case.
+    return @a <=> @b;
 }
