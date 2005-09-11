@@ -1,3 +1,13 @@
+2005-09-11  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4286
+          .Mac prefpane crashes when Safari using CVS WebKit is running
+
+        * Scripts/run-safari: Set WEBKIT_UNSET_DYLD_FRAMEWORK_PATH.
+        * Scripts/run-webkit-app: Ditto.
+
 2005-09-11  Darin Adler  <darin@apple.com>
 
         * Scripts/run-webkit-tests: Oops. Use spaces, not tabs.

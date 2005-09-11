@@ -1,3 +1,18 @@
+2005-09-11  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4286
+          .Mac prefpane crashes when Safari using CVS WebKit is running
+
+        * WebView.subproj/WebView.m: (-[WebView initWithFrame:frameName:groupName:]):
+        If ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH, and WEBKIT_UNSET_DYLD_FRAMEWORK_PATH
+        is set in the environment, then unset DYLD_FRAMEWORK_PATH.
+
+        * WebKit.xcodeproj/project.pbxproj: Set ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH
+        in configurations other than Default -- we don't want that code in production
+        builds, but we want it in builds we do ourselves and nightly builds.
+
 2005-09-10  Ingmar J Stein  <IngmarStein@gmail.com>
 
         Reviewed and landed by Darin.
