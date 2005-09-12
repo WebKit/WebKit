@@ -35,7 +35,7 @@ public:
     
     AtomicStringList* next() const { return m_next; }
     void setNext(AtomicStringList* n) { m_next = n; }
-    const AtomicString& qstring() const { return m_string; }
+    const AtomicString& string() const { return m_string; }
     void setString(const AtomicString& str) { m_string = str; }
 
     AtomicStringList* clone() { return new AtomicStringList(m_string, m_next ? m_next->clone() : 0); }
