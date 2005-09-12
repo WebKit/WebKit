@@ -1,3 +1,31 @@
+2005-09-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - changed back the name of a couple of string() functions that were renamed to qstring() by accident
+
+        * kwq/KWQString.h: (QConstString::string): Changed function name back to string() from qstring().
+        This is a function from Qt, so the name needs to match Qt -- that's just how KWQ works.
+
+        * khtml/xml/dom_atomicstringlist.h: Changed the name of the function that returns the current
+        AtomicString to string() back from qstring()!
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRules): Use string() instead of qstring().
+        (khtml::checkPseudoState): Ditto.
+        (khtml::CSSStyleSelector::checkOneSelector): Ditto.
+        * khtml/dom/dom_string.cpp: (DOM::DOMString::percentage): Ditto.
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::finish): Ditto.
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::DOMStringImpl): Small tweak to streamline a tiny bit by using an already-computed
+        boolean instead of re-checking a couple of data members.
+        (DOM::parseLength): Use string() instead of qstring().
+        (DOM::DOMStringImpl::toInt): Ditto.
+
+        - removed some dead code
+
+        * khtml/xml/dom_elementimpl.cpp: Removed XMLElementImpl.
+
 2005-09-10  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed and landed by Darin.

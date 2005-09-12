@@ -752,7 +752,7 @@ class QConstString : private QString {
 public:
     QConstString(const QChar *, uint);
     ~QConstString();
-    const QString &qstring() const { return *this; }
+    const QString &string() const { return *this; }
 };
 
 #endif

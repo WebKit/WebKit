@@ -43,12 +43,13 @@ DOMStringImpl* DOMStringImpl::empty()
     return &e;
 }
 
-DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) {
+DOMStringImpl::DOMStringImpl(const QChar *str, unsigned len)
+{
     _hash = 0;
     _inTable = false;
     bool havestr = str && len;
-    s = QT_ALLOC_QCHAR_VEC( havestr ? len : 1 );
-    if(str && len) {
+    s = QT_ALLOC_QCHAR_VEC(havestr ? len : 1);
+    if (havestr) {
         memcpy( s, str, len * sizeof(QChar) );
         l = len;
     } else {
@@ -235,7 +236,7 @@ static Length parseLength(QChar *s, unsigned int l)
         ++i;
 
     bool ok;
-    int r = QConstString(s, i).qstring().toInt(&ok);
+    int r = QConstString(s, i).string().toInt(&ok);
 
     /* Skip over any remaining digits, we are not that accurate (5.5% => 5%) */
     while (i < l && (s[i].isDigit() || s[i] == '.'))
@@ -424,7 +425,7 @@ int DOMStringImpl::toInt(bool *ok) const
         }
     }
     
-    return QConstString(s, i).qstring().toInt(ok);
+    return QConstString(s, i).string().toInt(ok);
 }
 
 DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)

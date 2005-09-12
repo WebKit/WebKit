@@ -332,14 +332,10 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
     // then sort the buffer.
     if (element->hasID())
-        matchRulesForList(rules->getIDRules(element->getIDAttribute().impl()),
-                          firstRuleIndex, lastRuleIndex);
-    if (element->hasClass()) {
-        for (const AtomicStringList* singleClass = element->getClassList();
-             singleClass; singleClass = singleClass->next())
-            matchRulesForList(rules->getClassRules(singleClass->qstring().impl()),
-                                                   firstRuleIndex, lastRuleIndex);
-    }
+        matchRulesForList(rules->getIDRules(element->getIDAttribute().impl()), firstRuleIndex, lastRuleIndex);
+    if (element->hasClass())
+        for (const AtomicStringList* singleClass = element->getClassList(); singleClass; singleClass = singleClass->next())
+            matchRulesForList(rules->getClassRules(singleClass->string().impl()), firstRuleIndex, lastRuleIndex);
     matchRulesForList(rules->getTagRules(element->localName().impl()),
                       firstRuleIndex, lastRuleIndex);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
@@ -555,7 +551,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
     }
     
     QConstString cu(attr.unicode(), attr.length());
-    QString u = cu.qstring();
+    QString u = cu.string();
     if ( !u.contains("://") ) {
         if ( u[0] == '/' )
             u.prepend(currentEncodedURL->host);
@@ -1116,7 +1112,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             if (!e->hasClass())
                 return false;
             for (const AtomicStringList* c = e->getClassList(); c; c = c->next())
-                if (c->qstring() == sel->value)
+                if (c->string() == sel->value)
                     return true;
             return false;
         }

@@ -204,7 +204,7 @@ bool DOMString::percentage(int &_percentage) const
     if ( *(m_impl->s+m_impl->l-1) != QChar('%'))
        return false;
 
-    _percentage = QConstString(m_impl->s, m_impl->l-1).qstring().toInt();
+    _percentage = QConstString(m_impl->s, m_impl->l-1).string().toInt();
     return true;
 }
 

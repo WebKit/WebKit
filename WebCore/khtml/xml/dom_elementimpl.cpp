@@ -810,43 +810,6 @@ CSSStyleDeclarationImpl *ElementImpl::style()
 
 // -------------------------------------------------------------------------
 
-/*
-XMLElementImpl::XMLElementImpl(DocumentPtr *doc, DOMStringImpl *_qualifiedName, DOMStringImpl *_namespaceURI)
-    : ElementImpl(doc)
-{
-    int colonpos = -1;
-    for (uint i = 0; i < _qualifiedName->l; ++i)
-        if (_qualifiedName->s[i] == ':') {
-            colonpos = i;
-            break;
-        }
-
-    if (colonpos >= 0) {
-        // we have a prefix
-        DOMStringImpl* localName = _qualifiedName->copy();
-        localName->ref();
-        localName->remove(0,colonpos+1);
-        m_id = doc->document()->tagId(_namespaceURI, localName, false);
-        localName->deref();
-        
-        // FIXME: This is a temporary situation for stage one of the QualifiedName patch.  This is also a really stupid way to
-        // have to handle the prefix.  Way too much copying.  We should make sure the XML tokenizer has done the split
-        // already into prefix and localName.
-        DOMStringImpl* prefix = _qualifiedName->copy();
-        prefix->ref();
-        prefix->truncate(colonpos);
-        m_tagName = QualifiedName(prefix, nullAtom, nullAtom);
-        prefix->deref();
-    }
-    else
-        // no prefix
-        m_id = doc->document()->tagId(_namespaceURI, _qualifiedName, false);
-}
-
-*/
-
-// -------------------------------------------------------------------------
-
 NamedAttrMapImpl::NamedAttrMapImpl(ElementImpl *e)
     : element(e)
     , attrs(0)
