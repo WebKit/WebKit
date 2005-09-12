@@ -1,3 +1,18 @@
+2005-09-12  Eric Seidel  <eseidel@apple.com>
+
+        No review, build fix, only affects SVG.
+
+        Fixes build after qstring() -> string() rename this weekend.
+
+        * kdom/Helper.cpp:
+        (parseLength):
+        * kdom/core/DOMStringImpl.cpp:
+        (DOMStringImpl::toInt):
+        * kdom/core/DocumentImpl.cpp:
+        (DocumentImpl::getId):
+        * kdom/css/CSSStyleSelector.cpp:
+        (checkPseudoState):
+
 2005-09-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
