@@ -1,5 +1,19 @@
 2005-09-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - fixed <rdar://problem/4126166> using JavaScript-assigned accesskeys crashes Safari - DOM::NodeImpl::dispatchEvent
+
+        Test cases added:
+        * layout-tests/fast/events/access-key-self-destruct.html: Added.
+        * layout-tests/fast/events/access-key-self-destruct-expected.txt: Added.
+
+        * khtml/xml/dom_nodeimpl.cpp: (DOM::NodeImpl::dispatchMouseEvent): Ref the node for the duration
+        with a SharedPtr; this helps in cases where the last reference to the node goes away inside the
+        event handler.
+
+2005-09-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - changed back the name of a couple of string() functions that were renamed to qstring() by accident

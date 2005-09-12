@@ -1,0 +1,20 @@
+<script>
+function replace()
+{
+    document.getElementById("target").innerHTML = "If you can see this text and there was no crash, the test was a success.";
+}
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    
+    var event = document.createEvent("KeyboardEvent");
+    event.initKeyboardEvent("keydown", true, true, document.defaultView, "a", 0, true, false, false, false, false);
+    document.dispatchEvent(event);
+}
+</script>
+<body onload="test()">
+<p>This tests what happens when you use accesskey to trigger a script that causes a node to get destroyed
+without ever having a reference to it from JavaScript. With older versions of WebKit this used to cause a crash.</p>
+<p id="target"><a href="javascript:replace()" accesskey="a"></a>If you can see this text, the test was a failure.</p>
+</body>

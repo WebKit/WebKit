@@ -763,6 +763,11 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
     if (eventType.isEmpty())
         return false; // Shouldn't happen.
 
+    // Dispatching the first event can easily result in this node being destroyed.
+    // Since we dispatch up to three events here, we need to make sure we're referenced
+    // so the pointer will be good for the two subsequent ones.
+    SharedPtr<NodeImpl> protect(this);
+
     bool cancelable = eventType != mousemoveEvent;
     
     int exceptioncode = 0;
