@@ -59,7 +59,8 @@
     BOOL suspendKeyUpEvents;
     BOOL hasFocus;
     BOOL currentEventIsUserGesture;
-
+    BOOL isTransparent;
+    
     int32 specifiedHeight;
     int32 specifiedWidth;
             

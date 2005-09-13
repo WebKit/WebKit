@@ -46,5 +46,6 @@
 - (void)invalidateRegion:(NPRegion)invalidateRegion;
 - (void)forceRedraw;
 - (NPError)getVariable:(NPNVariable)variable value:(void *)value;
+- (NPError)setVariable:(NPPVariable)variable value:(void *)value;
 
 @end

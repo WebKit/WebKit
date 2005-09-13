@@ -143,12 +143,12 @@ NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
     return [pluginViewForInstance(instance) getVariable:variable value:value];
 }
 
-// Unsupported functions
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 {
-    LOG(Plugins, "NPN_SetValue");
-    return NPERR_GENERIC_ERROR;
-}	
+    return [pluginViewForInstance(instance) setVariable:variable value:value];
+}
+
+// Unsupported functions
 
 void* NPN_GetJavaEnv(void)
 {

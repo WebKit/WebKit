@@ -308,6 +308,36 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         window.clipRect.left + nPort.portx, window.clipRect.top + nPort.porty,
         window.clipRect.right + nPort.portx, window.clipRect.bottom + nPort.porty);
     
+    // Clip to dirty region when updating in "windowless" mode (transparent)
+    if (forUpdate && isTransparent) {
+        RgnHandle viewClipRegion = NewRgn();
+        
+        // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
+        // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
+        // knows about the true set of dirty rects.
+        NSView *opaqueAncestor = [self opaqueAncestor];
+        const NSRect *dirtyRects;
+        int dirtyRectCount, dirtyRectIndex;
+        [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
+
+        for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
+            NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
+            if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
+                // Create a region for this dirty rect
+                RgnHandle dirtyRectRegion = NewRgn();
+                SetRectRgn(dirtyRectRegion, NSMinX(dirtyRect), NSMinY(dirtyRect), NSMaxX(dirtyRect), NSMaxY(dirtyRect));
+                
+                // Union this dirty rect with the rest of the dirty rects
+                UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
+                DisposeRgn(dirtyRectRegion);
+            }
+        }
+    
+        // Intersect the dirty region with the clip region, so that we only draw over dirty parts
+        SectRgn(clipRegion, viewClipRegion, clipRegion);
+        DisposeRgn(viewClipRegion);
+    }
+    
     portState.forUpdate = forUpdate;
     
     // Switch to the port and set it up.
@@ -406,7 +436,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 #ifndef NDEBUG
     // Draw green to help debug.
     // If we see any green we know something's wrong.
-    if (event->what == updateEvt) {
+    if (!isTransparent && event->what == updateEvt) {
         ForeColor(greenColor);
         const Rect bigRect = { -10000, -10000, 10000, 10000 };
         PaintRect(&bigRect);
@@ -1771,6 +1801,27 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return NPERR_NO_ERROR;
     }
     return NPERR_GENERIC_ERROR;
+}
+
+- (NPError)setVariable:(NPPVariable)variable value:(void *)value
+{
+    switch (variable) {
+        case NPPVpluginTransparentBool:
+        {
+            BOOL newTransparent = (value != 0);
+            
+            // Redisplay if transparency is changing
+            if (isTransparent != newTransparent)
+                [self setNeedsDisplay:YES];
+            
+            isTransparent = newTransparent;
+            
+            return NPERR_NO_ERROR;
+        }
+        
+        default:
+            return NPERR_GENERIC_ERROR;
+    }
 }
 
 @end

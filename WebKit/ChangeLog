@@ -1,3 +1,32 @@
+2005-09-13  Tim Omernick  <tomernick@apple.com>
+
+        Reviewed by Justin Garcia, Darin Adler.
+
+	- <rdar://problem/3163393> Safari does not support Windowless mode in Flash
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+	Added 'isTransparent' instance variable.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:	
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+	When updating a plugin in "windowless" (transparent) mode, clip drawing to the dirty
+	region of the opaque ancestor.  This means that a partially-transparent plugin, which
+	by definition does not clear its port on redraw, will not overdraw the valid parts
+	of its port.
+        (-[WebBaseNetscapePluginView sendEvent:]):
+	Disabled the "green debug background" for transparent plugins -- since they are not
+	expected to cover their entire port every redraw, this debug code makes no sense.
+        (-[WebBaseNetscapePluginView setVariable:value:]):
+	Implemented -setVariable:value:, which is called from NPN_SetValue() (previously
+	unimplemented).
+	Right now we only handle NPPVpluginTransparentBool; if we choose to handle the other
+	plugin variables, then we may do so here.
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+	Added SPI for -[WebBaseNetscapePluginView setVariable:value].
+        * Plugins.subproj/npapi.m:
+        (NPN_SetValue):
+	Implemented this function so that plugins may set state (such as window mode).
+	
 2005-09-11  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed, tweaked, and landed by Darin.
