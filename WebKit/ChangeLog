@@ -1,3 +1,10 @@
+2005-09-14  Timothy Hatcher  <thatcher@apple.com>
+
+        Reviewed by Eric.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+        made WebDashboardRegion.h a private header
+
 2005-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
