@@ -1,5 +1,24 @@
 2005-09-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        No easy way to test this in layout tests, so no test added.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4984
+          REGRESSION placeholder border left behind after image finishes loading
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4985
+          REGRESSION assertion failure in KWQPainter.mm:841
+
+        * kwq/KWQPainter.mm:
+        (QPainter::save): Do nothing if painting is disabled.
+        (QPainter::restore): Ditto.
+        (QPainter::drawRect): Inset so that we "frame" the rectangle rather than "stroking" the
+        rectangle. The former draws inside the rectangle but the latter draws centered on the
+        edge of the rectangle.
+
+2005-09-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4924

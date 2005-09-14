@@ -176,6 +176,9 @@ const QBrush& QPainter::brush() const
 
 void QPainter::save()
 {
+    if (data->state.paintingDisabled)
+        return;
+
     data->stack.push(new QPState(data->state));
 
     CGContextSaveGState(currentContext());
@@ -183,6 +186,9 @@ void QPainter::save()
 
 void QPainter::restore()
 {
+    if (data->state.paintingDisabled)
+        return;
+
     if (data->stack.isEmpty()) {
         ERROR("ERROR void QPainter::restore() stack is empty");
 	return;
@@ -209,7 +215,10 @@ void QPainter::drawRect(int x, int y, int w, int h)
 
     if (data->state.pen.style() != NoPen) {
         setStrokeColorAndLineWidthFromCurrentPen();
-        CGContextStrokeRect(context, CGRectMake(x, y, w, h));
+        float width = data->state.pen.width();
+        if (width < 1)
+            width = 1;
+        CGContextStrokeRect(context, CGRectInset(CGRectMake(x, y, w, h), width / 2, width / 2));
     }
 }
 
