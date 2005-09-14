@@ -78,6 +78,7 @@ void SplitTextNodeCommand::doApply()
         m_text1->ref();
     }
 
+    document()->copyMarkers(m_text2, 0, m_offset, m_text1, 0);
     m_text2->deleteData(0, m_offset, exceptionCode);
     ASSERT(exceptionCode == 0);
 
@@ -92,12 +93,13 @@ void SplitTextNodeCommand::doUnapply()
 {
     ASSERT(m_text1);
     ASSERT(m_text2);
-    
     ASSERT(m_text1->nextSibling() == m_text2);
-
+        
     int exceptionCode = 0;
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
+
+    document()->copyMarkers(m_text1, 0, m_offset, m_text2, 0);
 
     m_text2->parentNode()->removeChild(m_text1, exceptionCode);
     ASSERT(exceptionCode == 0);

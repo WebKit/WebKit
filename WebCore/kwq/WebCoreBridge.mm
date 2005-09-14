@@ -1141,7 +1141,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!doc) {
         return;
     }
-    doc->removeAllMarkers();
+    doc->removeMarkers(DOM::DocumentMarker::Spelling);
 }
 
 - (void)setTextSizeMultiplier:(float)multiplier

@@ -2776,18 +2776,17 @@ void DocumentImpl::addMarker(RangeImpl *range, DocumentMarker::MarkerType type)
     }
 }
 
-void DocumentImpl::removeMarker(RangeImpl *range, DocumentMarker::MarkerType type)
+void DocumentImpl::removeMarkers(RangeImpl *range, DocumentMarker::MarkerType markerType)
 {
     // Use a TextIterator to visit the potentially multiple nodes the range covers.
     for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
         SharedPtr<RangeImpl> textPiece = markedText.range();
         int exception = 0;
-        DocumentMarker marker = {type, textPiece->startOffset(exception), textPiece->endOffset(exception)};
-        removeMarker(textPiece->startContainer(exception), marker);
+        long startOffset = textPiece->startOffset(exception);
+        long length = textPiece->endOffset(exception) - startOffset + 1;
+        removeMarkers(textPiece->startContainer(exception), startOffset, length, markerType);
     }
 }
-
-// FIXME:  We don't deal with markers of more than one type yet
 
 // Markers are stored in order sorted by their location.  They do not overlap each other, as currently
 // required by the drawing code in render_text.cpp.
@@ -2795,9 +2794,8 @@ void DocumentImpl::removeMarker(RangeImpl *range, DocumentMarker::MarkerType typ
 void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker) 
 {
     assert(newMarker.endOffset >= newMarker.startOffset);
-    if (newMarker.endOffset == newMarker.startOffset) {
-        return;     // zero length markers are a NOP
-    }
+    if (newMarker.endOffset == newMarker.startOffset)
+        return;
     
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (!markers) {
@@ -2837,48 +2835,92 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
         node->renderer()->repaint();
 }
 
-void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
+// copies markers from srcNode to dstNode, applying the specified shift delta to the copies.  The shift is
+// useful if, e.g., the caller has created the dstNode from a non-prefix substring of the srcNode.
+void DocumentImpl::copyMarkers(NodeImpl *srcNode, ulong startOffset, long length, NodeImpl *dstNode, long delta, DocumentMarker::MarkerType markerType)
 {
-    assert(target.endOffset >= target.startOffset);
-    if (target.endOffset == target.startOffset) {
-        return;     // zero length markers are a NOP
-    }
-
-    QValueList <DocumentMarker> *markers = m_markers.find(node);
-    if (!markers) {
+    if (length <= 0)
         return;
+    
+    QValueList <DocumentMarker> *markers = m_markers.find(srcNode);
+    if (!markers)
+        return;
+
+    bool docDirty = false;
+    ulong endOffset = startOffset + length - 1;
+    QValueListIterator<DocumentMarker> it;
+    for (it = markers->begin(); it != markers->end(); ++it) {
+        DocumentMarker marker = *it;
+
+        // stop if we are now past the specified range
+        if (marker.startOffset > endOffset)
+            break;
+        
+        // skip marker that is before the specified range or is the wrong type
+        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers))
+            continue;
+
+        // pin the marker to the specified range and apply the shift delta
+        docDirty = true;
+        if (marker.startOffset < startOffset)
+            marker.startOffset = startOffset;
+        if (marker.endOffset > endOffset)
+            marker.endOffset = endOffset;
+        marker.startOffset += delta;
+        marker.endOffset += delta;
+        
+        addMarker(dstNode, marker);
     }
     
+    // repaint the affected node
+    if (docDirty && dstNode->renderer())
+        dstNode->renderer()->repaint();
+}
+
+void DocumentImpl::removeMarkers(NodeImpl *node, ulong startOffset, long length, DocumentMarker::MarkerType markerType)
+{
+    if (length <= 0)
+        return;
+
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (!markers)
+        return;
+    
     bool docDirty = false;
+    ulong endOffset = startOffset + length - 1;
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ) {
         DocumentMarker marker = *it;
 
-        if (target.endOffset <= marker.startOffset) {
-            // This is the first marker that is completely after target.  All done.
+        // markers are returned in order, so stop if we are now past the specified range
+        if (marker.startOffset > endOffset)
             break;
-        } else if (target.startOffset >= marker.endOffset) {
-            // marker is before target.  Keep scanning.
+        
+        // skip marker that is wrong type or before target
+        if (marker.endOffset < startOffset || (marker.type != markerType && markerType != DocumentMarker::AllMarkers)) {
             it++;
-        } else {
-            // at this point we know that marker and target intersect in some way
-            docDirty = true;
+            continue;
+        }
 
-            // pitch the old marker
-            it = markers->remove(it);
-            // it now points to the next node
-            
-            // add either of the resulting slices that are left after removing target
-            if (target.startOffset > marker.startOffset) {
-                DocumentMarker newLeft = marker;
-                newLeft.endOffset = target.startOffset;
-                markers->insert(it, newLeft);
-            }
-            if (marker.endOffset > target.endOffset) {
-                DocumentMarker newRight = marker;
-                newRight.startOffset = target.endOffset;
-                markers->insert(it, newRight);
-            }
+        // at this point we know that marker and target intersect in some way
+        docDirty = true;
+
+        // pitch the old marker
+        it = markers->remove(it);
+        // it now points to the next node
+        
+        // add either of the resulting slices that are left after removing target
+        // NOTE: This adds to the list we are iterating!  That is OK regardless of
+        // whether the iterator sees the new node, since the new node is a keeper.
+        if (startOffset > marker.startOffset) {
+            DocumentMarker newLeft = marker;
+            newLeft.endOffset = startOffset;
+            markers->insert(it, newLeft);
+        }
+        if (marker.endOffset > endOffset) {
+            DocumentMarker newRight = marker;
+            newRight.startOffset = endOffset;
+            markers->insert(it, newRight);
         }
     }
 
@@ -2893,21 +2935,13 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
 QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)
 {
     QValueList <DocumentMarker> *markers = m_markers.find(node);
-    if (markers) {
+    if (markers)
         return *markers;
-    } else {
-        return QValueList <DocumentMarker> ();
-    }
+
+    return QValueList <DocumentMarker> ();
 }
 
-void DocumentImpl::removeAllMarkers(NodeImpl *node, ulong startOffset, long length)
-{
-    // FIXME - yet another cheat that relies on us only having one marker type
-    DocumentMarker marker = {DocumentMarker::Spelling, startOffset, startOffset+length};
-    removeMarker(node, marker);
-}
-
-void DocumentImpl::removeAllMarkers(NodeImpl *node)
+void DocumentImpl::removeMarkers(NodeImpl *node)
 {
     QValueList<DocumentMarker> *markers = m_markers.take(node);
     if (markers) {
@@ -2918,18 +2952,40 @@ void DocumentImpl::removeAllMarkers(NodeImpl *node)
     }
 }
 
-void DocumentImpl::removeAllMarkers()
+void DocumentImpl::removeMarkers(DocumentMarker::MarkerType markerType)
 {
-    QPtrDictIterator< QValueList<DocumentMarker> > it(m_markers);
-    for (; NodeImpl *node = static_cast<NodeImpl *>(it.currentKey()); ++it) {
+    // outer loop: process each markered node in the document
+    QPtrDictIterator< QValueList<DocumentMarker> > dictIterator(m_markers);
+    for (; NodeImpl *node = static_cast<NodeImpl *>(dictIterator.currentKey()); ) {
+        // inner loop: process each marker in the current node
+        QValueList <DocumentMarker> *markers = static_cast<QValueList <DocumentMarker> *>(dictIterator.current());
+        QValueListIterator<DocumentMarker> markerIterator;
+        for (markerIterator = markers->begin(); markerIterator != markers->end(); ) {
+            DocumentMarker marker = *markerIterator;
+
+            // skip nodes that are not of the specified type
+            if (marker.type != markerType && markerType != DocumentMarker::AllMarkers) {
+                ++markerIterator;
+                continue;
+            }
+
+            // pitch the old marker
+            markerIterator = markers->remove(markerIterator);
+            // markerIterator now points to the next node
+        }
+        
+        // delete the node's list if it is now empty
+        if (markers->isEmpty())
+            m_markers.remove(node);
+        
+        // cause the node to be redrawn
         RenderObject *renderer = node->renderer();
         if (renderer)
             renderer->repaint();
     }
-    m_markers.clear();
 }
 
-void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
+void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta, DocumentMarker::MarkerType markerType)
 {
     QValueList <DocumentMarker> *markers = m_markers.find(node);
     if (!markers)
@@ -2939,7 +2995,7 @@ void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
     QValueListIterator<DocumentMarker> it;
     for (it = markers->begin(); it != markers->end(); ++it) {
         DocumentMarker &marker = *it;
-        if (marker.startOffset >= startOffset) {
+        if (marker.startOffset >= startOffset && (markerType == DocumentMarker::AllMarkers || marker.type == markerType)) {
             assert((int)marker.startOffset + delta >= 0);
             marker.startOffset += delta;
             marker.endOffset += delta;

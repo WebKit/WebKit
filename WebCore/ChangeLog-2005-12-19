@@ -1,3 +1,43 @@
+2005-09-13  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4204892> Correcting incorrect spelling in Mail causes others to lose their red squiggles
+
+        Fixed by having SplitTextNodeCommand::doApply copy the markers to the new node, and having SplitTextNodeCommand::doUnapply
+        copy the markers from the merged-in node to the combined node.
+        
+        btw - filed <rdar://problem/4256492> "WebCore editing automated layout tests verify spelling markers"
+        so that we can automate tests for this.
+        
+        Test cases added:
+        * manual-tests/keep_spelling_markers.html: Added.
+
+        * khtml/editing/split_text_node_command.cpp:
+        (khtml::SplitTextNodeCommand::doApply):
+        (khtml::SplitTextNodeCommand::doUnapply):
+        Call new copyMarkers() function.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::removeMarkers):
+        (DocumentImpl::addMarker):
+        (DocumentImpl::copyMarkers):
+        (DocumentImpl::markersForNode):
+        (DocumentImpl::shiftMarkers):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentMarker::):
+        Added copyMarkers() function.  Reorganized code for clarity.
+
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::setData):
+        (CharacterDataImpl::deleteData):
+        (CharacterDataImpl::replaceData):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::respondToChangedSelection):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge unmarkAllMisspellings]):
+        Update calls to marker functions.
+        
 2005-09-12  Eric Seidel  <eseidel@apple.com>
 
         No review, build fix, only affects SVG.

@@ -4092,11 +4092,11 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
 
                 // This only erases a marker in the first word of the selection.
                 // Perhaps peculiar, but it matches AppKit.
-                xmlDocImpl()->removeMarker(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
+                xmlDocImpl()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
             }
         } else {
             // When continuous spell checking is off, no markers appear after the selection changes.
-            xmlDocImpl()->removeAllMarkers();
+            xmlDocImpl()->removeMarkers(DocumentMarker::Spelling);
         }
     }
 
