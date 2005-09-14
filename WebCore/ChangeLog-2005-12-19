@@ -1,3 +1,54 @@
+2005-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+          QPainter should use CGContext as much as possible rather than NSGraphicsContext
+
+        * kwq/KWQPainter.h: Made no-op xForm be an inline. Reformatted to remove extraneous spaces.
+        Removed clearFocusRing. Changed the name of various private functions to remove underscore
+        prefix, and reorganize them.
+
+        * kwq/KWQPainter.mm:
+        (QPainterPrivate::QPainterPrivate): Remove the NSBezierPath for focus.
+        (QPainterPrivate::~QPainterPrivate): Ditto.
+        (QPainter::save): Use CGContext instead of NSGraphicsContext.
+        (QPainter::restore): Ditto.
+        (QPainter::drawRect): Use CGContextFillRect instead of _fillRectXX, and
+        CGContextStrokeRect instead of NSFrameRect.
+        (QPainter::setFillColor): Added. Sets CGContext fill color based on brush.
+        (QPainter::setFillColorFromCurrentBrush): Added. Sets CGContext fill color based on QPainter's
+        current brush.
+        (QPainter::setFillColorFromCurrentPen): Added. Sets CGContext fill color based on QPainter's
+        current pen.
+        (QPainter::setStrokeColorAndLineWidthFromCurrentPen): Added. Set CGContext stroke color and
+        line width based on QPainter's current pen.
+        (QPainter::drawLine): Use CGContextStrokeLineSegments instead of NSBezierPath.
+        (QPainter::drawEllipse): Use CGContextFillEllipseInRect instead of CGContextFillPath and
+        CGContextStrokeEllipseInRect instead of CGContextStrokePath.
+        (QPainter::drawArc): Removed some uneeded type casts, changed to call the new private functions,
+        currentContext and setStrokeColorAndLineWidthFromCurrentPen.
+        (QPainter::drawConvexPolygon): Use new private functions, also use CGContextDrawPath in the
+        case where we want to both fill and stroke the polygon.
+        (QPainter::getCompositeOperation): Remove unneeded cast.
+        (QPainter::setCompositeOperation): Map from name to operation here rather than relying on the
+        code on the WebKit side to do it (allows us to remove names entirely from the WebKit side).
+        (QPainter::compositeOperatorFromString): Remove a local variable and some casts.
+        (getBlendedColorComponent): Rewrote to do the same computation without any conversion to float.
+        (QPainter::fillRect): Use CGContextFillRect instead of _fillRectXXX.
+        (QPainter::addClip): Use CGContextClipToRect instead of NSBezierPath.
+        (QPainter::addRoundedRectClip): Add missing call to CGContextBeginPath.
+        (QPainter::beginTransparencyLayer): Use CGContextSaveGState instead of NSGraphicsContext.
+        (QPainter::endTransparencyLayer): Use CGContextRestoreGState instead of NSGraphicsContext.
+        (QPainter::initFocusRing): Use CGContextBeginPath instead of creating an NSBezierPath.
+        (QPainter::addFocusRingRect): Use CGContextAddRect instead of NSBezierPath.
+        (QPainter::drawFocusRing): Use CGContextFillPath instead of NSBezierPath.
+
+        * khtml/rendering/render_flow.cpp: (RenderFlow::paintFocusRing): Remove call to clearFocusRing. No longer exists.
+        * khtml/rendering/render_object.cpp: (RenderObject::paintOutline): Ditto.
+
+        * kwq/WebCoreImageRendererFactory.h: Remove setCGCompositeOperationFromString method.
+
 2005-09-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

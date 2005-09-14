@@ -1,3 +1,13 @@
+2005-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+          QPainter should use CGContext as much as possible rather than NSGraphicsContext
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m: Remove setCGCompositeOperationFromString
+        method, no longer needed.
+
 2005-09-13  Tim Omernick  <tomernick@apple.com>
 
         Reviewed by Justin Garcia, Darin Adler.

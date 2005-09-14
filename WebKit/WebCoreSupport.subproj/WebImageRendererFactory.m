@@ -85,58 +85,15 @@
     return [[[WebImageRenderer alloc] initWithContentsOfFile:name] autorelease];
 }
 
-struct CompositeOperator
-{
-    NSString *name;
-    NSCompositingOperation value;
-};
-
-#define NUM_COMPOSITE_OPERATORS 14
-struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
-    { @"clear", NSCompositeClear },
-    { @"copy", NSCompositeCopy },
-    { @"source-over", NSCompositeSourceOver },
-    { @"source-in", NSCompositeSourceIn },
-    { @"source-out", NSCompositeSourceOut },
-    { @"source-atop", NSCompositeSourceAtop },
-    { @"destination-over", NSCompositeDestinationOver },
-    { @"destination-in", NSCompositeDestinationIn },
-    { @"destination-out", NSCompositeDestinationOut },
-    { @"destination-atop", NSCompositeDestinationAtop },
-    { @"xor", NSCompositeXOR },
-    { @"darker", NSCompositePlusDarker },
-    { @"highlight", NSCompositeHighlight },
-    { @"lighter", NSCompositeHighlight }    // Per AppKit
-};
-
 - (int)CGCompositeOperationInContext:(CGContextRef)context
 {
-	return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
+    return [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] compositingOperation];
 }
 
 - (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context
 {
-	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
+    [[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
 }
-
-- (void)setCGCompositeOperationFromString:(NSString *)operatorString inContext:(CGContextRef)context
-{
-    NSCompositingOperation op = NSCompositeSourceOver;
-    
-    if (operatorString) {
-        int i;
-        
-        for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-            if ([operatorString caseInsensitiveCompare:NSCompositingOperations[i].name] == NSOrderedSame) {
-                op = NSCompositingOperations[i].value;
-                break;
-            }
-        }
-    }
-    
-	[[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] setCompositingOperation:op];
-}
-
 
 - (NSArray *)supportedMIMETypes
 {
