@@ -180,9 +180,9 @@ static void dump(void)
     NSString *result = nil;
     if (dumpTree) {
         if (dumpAsText) {
-            DOMDocument *document = [frame DOMDocument];
-            if ([document isKindOfClass:[DOMHTMLDocument class]])
-                result = [[[(DOMHTMLDocument *)document body] innerText] stringByAppendingString:@"\n"];
+            DOMElement *documentElement = [[frame DOMDocument] documentElement];
+            if ([documentElement isKindOfClass:[DOMHTMLElement class]])
+                result = [[(DOMHTMLElement *)documentElement innerText] stringByAppendingString:@"\n"];
         } else
             result = [frame renderTreeAsExternalRepresentation];
         

@@ -514,7 +514,7 @@ if ($counts{match} && $counts{match} == $count) {
     print HTML "</html>\n";
     close HTML;
     
-    system "open", $testResults;
+    system "WebKitTools/Scripts/run-safari", $testResults;
 }
 
 sub printLeaks
@@ -524,12 +524,15 @@ sub printLeaks
     print "\n" unless $atLineStart;
     $atLineStart = 1;
 
-    print " ? checking for leaks in $toolName\n";
-    # we are excluding the following reported leaks so they don't get in our way of finding WebKit leaks:
-    # pthread_create: false positive leak of 'THRD', Radar 3387783
-    # _CFPreferencesDomainDeepCopyDictionary: leak apparently in CFPreferences, Radar 4220786
+    # We are excluding the following reported leaks so they don't get in our way when looking for WebKit leaks:
+    #
+    #     pthread_create: false positive leak of 'THRD', Radar 3387783
+    #     _CFPreferencesDomainDeepCopyDictionary: leak apparently in CFPreferences, Radar 4220786
+    #
     # Note that this exclusion doesn't quite work right; sometimes a leak of 'THRD' with no stack trace will
     # still appear in the leaks output.
+
+    print " ? checking for leaks in $toolName\n";
     my $leaksOutput = `leaks -exclude pthread_create -exclude _CFPreferencesDomainDeepCopyDictionary $toolPID`;
     my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
     my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;

@@ -1,3 +1,17 @@
+2005-09-14  Darin Adler  <darin@apple.com>
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4291
+          dumpAsText doesn't work with XHTML documents
+
+        * DumpRenderTree/DumpRenderTree.m: (dump): Dump the innerText of the document element
+        rather than of the body element. This works with typical XHTML documents. We can probably
+        do something even better in the long run, but this fixes the immediate issue.
+
+        - separate tweak
+
+        * Scripts/run-webkit-tests: Show the results in the current built Safari by using
+        run-safari instead of just using "open", which often runs another copy of Safari instead.
+
 2005-09-11  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed, tweaked, and landed by Darin.
