@@ -271,7 +271,7 @@
         int status = [(NSHTTPURLResponse *)r statusCode];
         if (status < 200 || status >= 300) {
             // Handle <object> fallback for error cases.
-            [[[dataSource webFrame] _bridge] mainResourceError];
+            [[[dataSource webFrame] _bridge] handleFallbackContent];
         }
     }
 

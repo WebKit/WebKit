@@ -105,7 +105,8 @@
 {
     // Cancel the load since WebKit plug-ins do their own loading.
     NSURLResponse *response = [dataSource response];
-    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+    // FIXME: See <rdar://problem/4258008>
+    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
                                                     contentURL:[response URL]
                                                  pluginPageURL:nil
                                                     pluginName:[plugin name]

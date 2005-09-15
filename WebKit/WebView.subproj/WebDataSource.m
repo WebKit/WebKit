@@ -794,7 +794,9 @@
     if (isComplete) {
         // Can't call [self _bridge] because we might not have commited yet
         [[[self webFrame] _bridge] stop];
-        [[[self webFrame] _bridge] mainResourceError];
+        // FIXME: WebKitErrorPlugInWillHandleLoad is a workaround for the cancel we do to prevent loading plugin content twice.  See <rdar://problem/4258008>
+        if ([error code] != NSURLErrorCancelled && [error code] != WebKitErrorPlugInWillHandleLoad)
+            [[[self webFrame] _bridge] handleFallbackContent];
     }
 
     [[self webFrame] _receivedMainResourceError:error];

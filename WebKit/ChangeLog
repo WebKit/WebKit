@@ -1,3 +1,22 @@
+2005-09-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+
+        Fixes <rdar://problem/4237479> REGRESSION (Cambridge-Denver): old QuickTime movie continues to play sound after reload
+        We were adding the movie to the document twice after the changes were added to handle fallback content.
+        There are some errors for which we should not render fall back content
+
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        Introduced WebKitErrorPlugInWillHandleLoad to represent the cancel we do
+        to prevent loading plugin content twice
+        
+        * Plugins.subproj/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView dataSourceUpdated:]): Ditto
+        
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]):
+        Don't handleFallbackContent on WebKitErrorPlugInWillHandleLoad or on a user cancel
+
 2005-09-14  Timothy Hatcher  <thatcher@apple.com>
 
         Reviewed by Eric.
