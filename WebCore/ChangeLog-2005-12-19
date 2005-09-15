@@ -1,3 +1,18 @@
+2005-09-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by john
+        
+        Test cases added: none, method rename
+        
+        Part of fix for <rdar://problem/4237479> REGRESSION (Cambridge-Denver): old QuickTime movie continues to play sound after reload
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge handleFallbackContent]):
+        Renamed bridge method mainResourceError to handleFallbackContent, since there are some 
+        main resource errors for which we should not render fallback content.  E.G user cancels 
+        and the cancel we do to prevent loading plugin content twice (see <rdar://problem/4258008>)
+
 2005-09-14  David Harrison  <harrison@apple.com>
 
         Reviewed by Eric.
