@@ -1,0 +1,68 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+.cell { 
+    padding: 12px; 
+    font-size: 24px;
+    height: 48px; 
+}
+
+li {
+	font-size: 12px;
+	font-family: Verdana, Arial, sans-serif;
+}
+
+div.nav {
+ width:120px;
+ }
+
+ul.menu, ul.menu li {
+ margin: 0;padding:0;
+ font-size:10px
+ }
+ul.menu li { padding: 3px; padding-left: 1.6em; padding-right:5px; text-indent: -1.1em !important; text-indent: -.5em; }
+ul.menu li:first-letter { font-size:20px;line-height:10px; }
+
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 6; i++)
+        extendSelectionForwardByWordCommand();    
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing" style="width:120px;">
+<ul class="menu" id="test">
+<li>&middot; <a href="detail.asp?cat=7">Appetizers</a></li>
+<li>&middot; <a href="detail.asp?cat=13">Soups & Salads</a></li>
+<li>&middot; <a href="detail.asp?cat=5">Sandwiches & Burgers</a></li>
+<li>&middot; <a href="detail.asp?cat=14">Steak & Ribs</a></li>
+<li>&middot; <a href="detail.asp?cat=11">Seafood</a></li>
+<li>&middot; <a href="detail.asp?cat=17">Combos</a></li>
+</ul>
+</div>
+
+<!-- 
+    Specifically checks test case in bug:
+    <rdar://problem/4244976> reproducible hang at ocharleys.com in VisiblePosition::initDownstream
+-->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -695,33 +695,41 @@ static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
         iterator = ubrk_open(UBRK_CHARACTER, "en_us", NULL, 0, &status);
         createdIterator = true;
     }
-    if (!iterator) {
+    if (!iterator)
         return NULL;
-    }
+
     status = U_ZERO_ERROR;
     ubrk_setText(iterator, reinterpret_cast<const UChar *>(i->s), i->l, &status);
-    if (status != U_ZERO_ERROR) {
+    if (status != U_ZERO_ERROR)
         return NULL;
-    }
+
     return iterator;
 }
 
 long RenderText::previousOffset (long current) const
 {
     UBreakIterator *iterator = getCharacterBreakIterator(str);
-    if (iterator) {
-        return ubrk_preceding(iterator, current);
-    }
-    return current - 1;
+    if (!iterator)
+        return current - 1;
+
+    long result = ubrk_preceding(iterator, current);
+    if (result == UBRK_DONE)
+        result = current - 1;
+
+    return result;
 }
 
 long RenderText::nextOffset (long current) const
 {
     UBreakIterator *iterator = getCharacterBreakIterator(str);
-    if (iterator) {
-        return ubrk_following(iterator, current);
-    }
-    return current + 1;
+    if (!iterator)
+        return current + 1;
+    
+    long result = ubrk_following(iterator, current);
+    if (result == UBRK_DONE)
+        result = current + 1;
+
+    return result;
 }
 
 int InlineTextBox::textPos() const
@@ -1860,9 +1868,9 @@ InlineBox *RenderText::inlineBox(long offset, EAffinity affinity)
 }
 
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
-                                       int startOffset, int endOffset)
-:RenderText(_node, _str->substring(startOffset, endOffset)), 
-m_start(startOffset), m_end(endOffset), m_generatedContentStr(0)
+                                       int startOffset, int length)
+:RenderText(_node, _str->substring(startOffset, length)), 
+m_start(startOffset), m_end(length), m_generatedContentStr(0)
 {}
 
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str)

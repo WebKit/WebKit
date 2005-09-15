@@ -320,7 +320,7 @@ class RenderTextFragment : public RenderText
 {
 public:
     RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
-                       int startOffset, int endOffset);
+                       int startOffset, int length);
     RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str);
     ~RenderTextFragment();
     

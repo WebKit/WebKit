@@ -3304,75 +3304,84 @@ void RenderBlock::updateFirstLetter()
         currChild = currChild->firstChild();
 
     // Get list markers out of the way.
-    while (currChild && currChild->isListMarker()) currChild = currChild->nextSibling();
+    while (currChild && currChild->isListMarker())
+        currChild = currChild->nextSibling();
     
-    if (currChild) {
-        RenderObject* firstLetterContainer = currChild->parent();
-            if (!firstLetterContainer)
-                firstLetterContainer = this;
+    if (!currChild)
+        return;
     
-        // If the child already has style, then it has already been created, so we just want
-        // to update it.
-        if (currChild->style()->styleType() == RenderStyle::FIRST_LETTER) {
-            RenderStyle* pseudo = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
-                                                                        firstLetterContainer->style(true));
-            currChild->setStyle(pseudo);
-            for (RenderObject* genChild = currChild->firstChild(); genChild; genChild = genChild->nextSibling())
-                if (genChild->isText()) 
-                    genChild->setStyle(pseudo);
-            return;
-        }
-    
-        // If the child does not already have style, we create it here.
-        if (currChild->isText() && !currChild->isBR() && 
-            currChild->parent()->style()->styleType() != RenderStyle::FIRST_LETTER) {
-            
-            RenderText* textObj = static_cast<RenderText*>(currChild);
-            
-            // Create our pseudo style now that we have our firstLetterContainer determined.
-            RenderStyle* pseudoStyle = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
-                                                                        firstLetterContainer->style(true));
-            
-            // Force inline display (except for floating first-letters)
-            pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
-            pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
-            
-            RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
-            firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());
-            
-            // The original string is going to be either a generated content string or a DOM node's
-            // string.  We want the original string before it got transformed in case first-letter has
-            // no text-transform or a different text-transform applied to it.
-            SharedPtr<DOMStringImpl> oldText = textObj->originalString();
-            KHTMLAssert(oldText);
-            
-            if (oldText.notNull() && oldText->l >= 1) {
-                unsigned int length = 0;
-                while ( length < oldText->l &&
-                        ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
-                    length++;
-                length++;
-                //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).qstring() << "'" << endl;
-                
-                RenderTextFragment* remainingText = 
-                    new (renderArena()) RenderTextFragment(textObj->node(), oldText.get(), length, oldText->l-length);
-                remainingText->setStyle(textObj->style());
-                if (remainingText->element())
-                    remainingText->element()->setRenderer(remainingText);
-                
-                RenderObject* nextObj = textObj->nextSibling();
-                firstLetterContainer->removeChild(textObj);
-                firstLetterContainer->addChild(remainingText, nextObj);
-                
-                RenderTextFragment* letter = 
-                    new (renderArena()) RenderTextFragment(remainingText->node(), oldText.get(), 0, length);
-                RenderStyle* newStyle = new (renderArena()) RenderStyle();
-                newStyle->inheritFrom(pseudoStyle);
-                letter->setStyle(newStyle);
-                firstLetter->addChild(letter);
+    RenderObject* firstLetterContainer = currChild->parent();
 
-                textObj->detach();;
-            }
+    // If the child already has style, then it has already been created, so we just want
+    // to update it.
+    if (currChild->style()->styleType() == RenderStyle::FIRST_LETTER) {
+        RenderStyle* pseudo = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
+                                                                    firstLetterContainer->style(true));
+        currChild->setStyle(pseudo);
+        for (RenderObject* genChild = currChild->firstChild(); genChild; genChild = genChild->nextSibling()) {
+            if (genChild->isText()) 
+                genChild->setStyle(pseudo);
+        }
+        return;
+    }
+
+    // If the child does not already have style, we create it here.
+    if (currChild->isText() && !currChild->isBR() && 
+        currChild->parent()->style()->styleType() != RenderStyle::FIRST_LETTER) {
+        
+        RenderText* textObj = static_cast<RenderText*>(currChild);
+        
+        // Create our pseudo style now that we have our firstLetterContainer determined.
+        RenderStyle* pseudoStyle = firstLetterBlock->getPseudoStyle(RenderStyle::FIRST_LETTER,
+                                                                    firstLetterContainer->style(true));
+        
+        // Force inline display (except for floating first-letters)
+        pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
+        pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
+        
+        RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
+        // FIXME: This adds in the wrong place if list markers were skipped above.  Should be
+        // firstLetterContainer->addChild(firstLetter, currChild);
+        firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());
+        
+        // The original string is going to be either a generated content string or a DOM node's
+        // string.  We want the original string before it got transformed in case first-letter has
+        // no text-transform or a different text-transform applied to it.
+        SharedPtr<DOMStringImpl> oldText = textObj->originalString();
+        KHTMLAssert(oldText);
+        
+        if (oldText.notNull() && oldText->l > 0) {
+            unsigned int length = 0;
+            
+            // account for leading spaces and punctuation
+            while ( length < oldText->l && ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
+                length++;
+            
+            // account for first letter
+            length++;
+            //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).qstring() << "'" << endl;
+            
+            // construct text fragment for the text after the first letter
+            // NOTE: this might empty
+            RenderTextFragment* remainingText = 
+                new (renderArena()) RenderTextFragment(textObj->node(), oldText.get(), length, oldText->l-length);
+            remainingText->setStyle(textObj->style());
+            if (remainingText->element())
+                remainingText->element()->setRenderer(remainingText);
+            
+            RenderObject* nextObj = textObj->nextSibling();
+            firstLetterContainer->removeChild(textObj);
+            firstLetterContainer->addChild(remainingText, nextObj);
+            
+            // construct text fragment for the first letter
+            RenderTextFragment* letter = 
+                new (renderArena()) RenderTextFragment(remainingText->node(), oldText.get(), 0, length);
+            RenderStyle* newStyle = new (renderArena()) RenderStyle();
+            newStyle->inheritFrom(pseudoStyle);
+            letter->setStyle(newStyle);
+            firstLetter->addChild(letter);
+
+            textObj->detach();
         }
     }
 }
