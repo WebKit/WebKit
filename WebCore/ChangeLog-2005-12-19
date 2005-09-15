@@ -1,3 +1,8 @@
+2005-09-14  Darin Adler  <darin@apple.com>
+
+        * layout-tests/fast/dom/set-innerHTML-expected.txt: Updated test result now that DumpRenderTree handles
+        this case properly. The old expected result just had the word "error"!
+
 2005-09-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by john

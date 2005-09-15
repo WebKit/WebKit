@@ -1,1 +1,6 @@
-error
+This tests that setting innerHTML on an xhtml document works. If this test is successful, the text below should say "Success", and "namespace is correct".
+
+Success!
+
+namespace is correct
+
