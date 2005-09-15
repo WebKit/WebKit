@@ -2235,6 +2235,8 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
         else if(o->nextSibling())
             o = o->nextSibling();
         else {
+            // FIXME: If the element we're scrolling to doesn't have a child or next sibling and none of the nodes on 
+            // the parent chain have siblings, then this loop returns false prematurely - 4256060
             RenderObject *next = 0;
             while(!next) {
                 o = o->parent();
@@ -2243,7 +2245,7 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
             }
             o = next;
         }
-        if (o->parent()->element() == this && !static_cast<RenderText*>(o)->firstTextBox() ) {
+        if (o->parent()->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
             // do nothing - skip child node of the named anchor if it doesn't have a text box rdar://problems/4233844&4246096
         }
         else if((o->isText() && !o->isBR()) || o->isReplaced()) {
