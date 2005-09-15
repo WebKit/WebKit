@@ -1,3 +1,16 @@
+2005-09-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Eric.
+
+        <rdar://problem/4057623> AX: Dictionary Panel crash in AXAttributeStringSetStyle in Safari (Dictionary has workaround)
+
+        Test cases added: None.  Manual testing is way to awkward, and automated testing
+        is not possible.  Filed following bug to get automation.
+        <rdar://problem/4256882> Need automated testing support for accessibility APIs
+
+        * kwq/KWQAccObject.mm:
+        (AXAttributedStringAppendText):
+
 2005-09-14 Vicki Murley  <vicki@apple.com>
 
         Reviewed by Dave Hyatt.

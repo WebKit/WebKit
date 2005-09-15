@@ -1312,6 +1312,10 @@ static KWQAccObject *AXLinkElementForNode (NodeImpl *node)
 
 static void AXAttributedStringAppendText (NSMutableAttributedString *attrString, NodeImpl *nodeImpl, const QChar *chars, int length)
 {
+    // skip invisible text
+    if (!nodeImpl->renderer())
+        return;
+        
     // easier to calculate the range before appending the string
     NSRange attrStringRange = NSMakeRange([attrString length], length);
     
