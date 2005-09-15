@@ -524,6 +524,8 @@ QString Decoder::decode(const char *data, int len)
                             if (m_type == EncodingFromXMLHeader)
                                 goto found;
                         }
+                        setEncoding("UTF-8", EncodingFromXMLHeader);
+                        goto found;
                     }
 
                     if(*ptr == '/') ptr++, end=true;

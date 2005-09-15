@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body>
+<p>When dumped into a text file by the test controller, this needs to be viewed as UTF-8:</p>
+<p>This is an em dash, —, this is is a delta symbol, ∆, this is an uppercase pi, ∏, and this is a lowercase pi, π.</p>
+<script>if (window.layoutTestController) layoutTestController.dumpAsText();</script>
+</body>
+</html>

@@ -1,3 +1,16 @@
+2005-09-14  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed, tweaked, and landed by Darin.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=3809
+          Should default to UTF-8 or UTF-16 for application/xml documents with omitted charset and encoding declaration
+
+        Test cases added:
+        * layout-tests/fast/encoding/xml-utf-8-default.xml: Added.
+        * layout-tests/fast/encoding/xml-utf-8-default-expected.txt: Added.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Always set encoding when we see an XML header.
+
 2005-09-14  Darin Adler  <darin@apple.com>
 
         * layout-tests/fast/dom/set-innerHTML-expected.txt: Updated test result now that DumpRenderTree handles
