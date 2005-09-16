@@ -1,3 +1,15 @@
+2005-09-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test cases added:
+        None, to-be-landed xhtml dom tests already cover this.
+
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+        One line change to prevent adding text objects as direct
+        children to FrameSet objects in the render tree. 
+
 2005-09-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt.

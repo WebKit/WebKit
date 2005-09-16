@@ -425,7 +425,7 @@ bool TextImpl::rendererIsNeeded(RenderStyle *style)
 
     RenderObject *par = parentNode()->renderer();
     
-    if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol())
+    if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol() || par->isFrameSet())
         return false;
     
     if (style->whiteSpace() == PRE)
