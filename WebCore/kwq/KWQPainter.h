@@ -28,6 +28,7 @@
 
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
+#include "KWQRect.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -52,21 +53,21 @@ public:
 
     QPaintDevice *device() const;
     
-    const QFont& font() const;
-    void setFont(const QFont&);
+    const QFont &font() const;
+    void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
     
-    const QPen& pen() const;
-    void setPen(const QPen&);
+    const QPen &pen() const;
+    void setPen(const QPen &);
     void setPen(PenStyle);
     void setPen(QRgb);
     
-    const QBrush& QPainter::brush() const;
-    void setBrush(const QBrush&);
+    const QBrush &QPainter::brush() const;
+    void setBrush(const QBrush &);
     void setBrush(BrushStyle);
     void setBrush(QRgb);
 
-    QRect xForm(const QRect& r) const { return r; }
+    QRect xForm(const QRect &) const;
 
     void save();
     void restore();
@@ -75,33 +76,32 @@ public:
     void drawLine(int, int, int, int);
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
-    void drawConvexPolygon(const QPointArray&);
+    void drawConvexPolygon(const QPointArray &);
 
-    void fillRect(int, int, int, int, const QBrush&);
-    void fillRect(const QRect&, const QBrush&);
+    void fillRect(int, int, int, int, const QBrush &);
+    void fillRect(const QRect &, const QBrush &);
 
-    void drawPixmap(const QPoint&, const QPixmap&);
-    void drawPixmap(const QPoint&, const QPixmap&, const QRect&);
-    void drawPixmap(const QPoint&, const QPixmap&, const QRect&, const QString&);
-    void drawPixmap(int x, int y, const QPixmap&,
-                    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context = 0);
-    void drawPixmap(int x, int y, int w, int h, const QPixmap&,
-                    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context = 0);
-    void drawFloatPixmap(float x, float y, float w, float h, const QPixmap&,
-                         float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1, CGContextRef context = 0);
-    void drawTiledPixmap(int, int, int, int, const QPixmap&, int sx=0, int sy=0, CGContextRef context = 0);
-    void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap&, int, int, int, int,
-                                  TileRule hRule = STRETCH, TileRule vRule = STRETCH,
-                                  CGContextRef context = 0);
+    void drawPixmap(const QPoint &, const QPixmap &);
+    void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
+    void drawPixmap(const QPoint &, const QPixmap &, const QRect &, const QString &);
+    void drawPixmap( int x, int y, const QPixmap &,
+			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
+    void drawPixmap( int x, int y, int w, int h, const QPixmap &,
+			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
+    void drawFloatPixmap( float x, float y, float w, float h, const QPixmap &,
+			    float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1, CGContextRef context=0);
+    void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0, CGContextRef context=0);
+    void drawScaledAndTiledPixmap(int, int, int, int, const QPixmap &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH,
+                                  CGContextRef context=0);
 
-    void addClip(const QRect&);
+    void addClip(const QRect &);
     void addRoundedRectClip(const QRect& rect, const QSize& topLeft, const QSize& topRight,
                             const QSize& bottomLeft, const QSize& bottomRight);
 
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
 
-    void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString&);
+    void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString &);
     void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
                   const QChar *, int length, int from, int to, int toAdd,
                   const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
@@ -132,25 +132,26 @@ public:
     void initFocusRing(int width, int offset, const QColor& color);
     void addFocusRingRect(int x, int y, int width, int height);
     void drawFocusRing();
+    void clearFocusRing();
     
     CGContextRef currentContext();
     
-    static int compositeOperatorFromString(const QString& aString);
+    static int compositeOperatorFromString (const QString &aString);
     static int getCompositeOperation(CGContextRef context);
-    static void setCompositeOperation(CGContextRef context, const QString& operation);
-    static void setCompositeOperation(CGContextRef context, int operation);
+    static void setCompositeOperation (CGContextRef context, const QString &operation);
+    static void setCompositeOperation (CGContextRef context, int operation);
 
 private:
     // no copying or assignment
-    QPainter(const QPainter&);
-    QPainter& operator=(const QPainter&);
+    QPainter(const QPainter &);
+    QPainter &operator=(const QPainter &);
 
-    void setFillColor(const QBrush&);
-    void setFillColorFromCurrentBrush();
-    void setStrokeColorAndLineWidthFromCurrentPen();
-    void setFillColorFromCurrentPen();
+    void _setColorFromBrush();
+    void _setColorFromPen();
 
-    void updateTextRenderer();
+    void _fillRect(float x, float y, float w, float h, const QColor& color);
+    
+    void _updateRenderer();
 
     QPainterPrivate *data;
     bool _isForPrinting;

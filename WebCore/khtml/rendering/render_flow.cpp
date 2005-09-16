@@ -687,6 +687,7 @@ void RenderFlow::paintFocusRing(QPainter *p, int tx, int ty)
     p->initFocusRing(ow,  style()->outlineOffset(), oc);
     addFocusRingRects(p, tx, ty);
     p->drawFocusRing();
+    p->clearFocusRing();
 }
 #endif
 

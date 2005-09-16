@@ -1,5 +1,11 @@
 2005-09-16  Adele Peterson  <adele@apple.com>
 
+        Rolling out the fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4924
+            QPainter should use CGContext as much as possible rather than NSGraphicsContext 
+        since it caused a performance regression.
+
+2005-09-16  Adele Peterson  <adele@apple.com>
+
         Change by Darin, reviewed by me and Maciej.
 
         Fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=4547
