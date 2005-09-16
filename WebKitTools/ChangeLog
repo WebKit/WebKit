@@ -1,3 +1,11 @@
+2005-09-16  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by geoff
+        
+        Removed a script that is only used by apple internal developers
+
+        * Scripts/update-webkitsysteminterface: Removed.
+
 2005-09-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
