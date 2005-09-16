@@ -1,3 +1,9 @@
+2005-09-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        * Scripts/prepare-ChangeLog: Allow semicolons for protocols too.
+
 2005-09-14  Darin Adler  <darin@apple.com>
 
         - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4291

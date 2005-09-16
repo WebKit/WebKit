@@ -486,7 +486,7 @@ sub get_function_line_ranges_for_c
 
 
         # Find function, interface and method names.
-        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;])|\@(?:implementation|interface)\s+(\w+)[^{]*&g)
+        while (m&((?:[[:word:]]+::)*operator(?:[ \t]*\(\)|[^()]*)|[[:word:]:~]+|[(){}:;])|\@(?:implementation|interface|protocol)\s+(\w+)[^{]*&g)
           {
             # interface name
             if ($2) 
